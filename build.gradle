@@ -4,7 +4,10 @@ buildscript {
         maven {url "http://developer.marklogic.com/maven2/"}
         maven {url "http://rjrudin.github.io/marklogic-java/releases"}
     }
-    dependencies { classpath mlGradleDependency }
+    dependencies {
+        classpath mlGradleDependency
+        classpath propertiesPluginDependency
+    }
 }
 
 apply plugin: 'java'
@@ -26,11 +29,8 @@ dependencies {
     testCompile 'xmlunit:xmlunit:1.3'
 }
 
-if (new File("local.gradle").exists()) {
-    println "Applying local.gradle file"
-    apply from: "local.gradle"
-    println "Applied local.gradle file"
-}
+// this plugin allows us to override the gradle.properties file per environment
+apply plugin: 'net.saliman.properties'
 
 apply plugin: 'ml-gradle'
 

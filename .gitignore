@@ -4,4 +4,4 @@
 /bin/
 /build/
 .classpath
-local.gradle
+gradle-local.properties

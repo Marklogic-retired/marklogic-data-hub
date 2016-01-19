@@ -1,9 +1,0 @@
-/*
- * An environment-based build file can have any Gradle configuration that a
- * normal build.gradle file would. Here, we just override one property for
- * demonstration purposes.
- */
-ext {
-    mlHost = "192.168.1.100"
-    mlAdminUsername = "qaAdminUser"
-}

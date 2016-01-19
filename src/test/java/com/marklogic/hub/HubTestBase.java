@@ -47,12 +47,26 @@ public class HubTestBase {
     private static XMLDocumentManager init() {
         Properties props = new Properties();
         try {
-            props.load(new FileInputStream("gradle.properties"));
+            Properties p = new Properties();
+            p.load(new FileInputStream("gradle.properties"));
+            props.putAll(p);
         }
         catch (IOException e) {
             System.err.println("Properties file not loaded.");
             System.exit(1);
         }
+
+        // try to load the local environment overrides file
+        try {
+            Properties p = new Properties();
+            p.load(new FileInputStream("gradle-local.properties"));
+            props.putAll(p);
+        }
+        catch (IOException e) {
+            System.err.println("Properties file not loaded.");
+            System.exit(1);
+        }
+
         host = props.getProperty("mlHost");
         port = Integer.parseInt(props.getProperty("mlRestPort"));
         user = props.getProperty("mlUsername");
