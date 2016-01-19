@@ -1,0 +1,11 @@
+{
+  "rest-api" : {
+    "name" : "%%NAME%%",
+    "group" : "%%GROUP%%",
+    "database" : "%%DATABASE%%",
+    "modules-database" : "%%MODULES_DATABASE%%",
+    "port" : %%PORT%%,
+    "xdbc-enabled" : true,
+    "error-format" : "json"
+  }
+}

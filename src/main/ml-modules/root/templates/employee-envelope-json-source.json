@@ -1,0 +1,17 @@
+{
+  "header": {
+    "hireDate": {
+      "hub:extractor": {
+        "type": "xpath",
+        "path": "/hire_date",
+        "functions": [
+          {
+            "name": "parseDate",
+            "format": "[M01]/[D01]/[Y001]"
+          }
+        ]
+      }
+    }
+  },
+  "original": "hub:original-document"
+}

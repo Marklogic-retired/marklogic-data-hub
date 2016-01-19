@@ -1,0 +1,16 @@
+<metadata>
+  <title>transformer</title>
+  <description>
+    <div>
+      Hub in a Box Transformer entry point for Java
+    </div>
+  </description>
+  <method name="POST">
+    <param name="name" />
+    <param name="id" />
+  </method>
+  <method name="GET">
+    <param name="flow-name" />
+    <param name="id" />
+  </method>
+</metadata>

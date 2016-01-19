@@ -1,0 +1,19 @@
+<metadata>
+  <title>collector</title>
+  <description>
+    <div>
+      Hub in a Box Collector entry point for Java
+    </div>
+  </description>
+  <method name="POST">
+    <param name="name" />
+    <param name="start" type="xs:int" />
+    <param name="limit" type="xs:int" />
+    <param name="method" />
+  </method>
+<!--
+  <method name="GET">
+    <param name="flow-name" />
+  </method>
+-->
+</metadata>

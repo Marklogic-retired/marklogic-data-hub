@@ -1,0 +1,9 @@
+<flow xmlns="http://marklogic.com/hub-in-a-box">
+  <collector module="default-collector">
+    <options>
+      <collection>
+        <uri>tester</uri>
+      </collection>
+    </options>
+  </collector>
+</flow>

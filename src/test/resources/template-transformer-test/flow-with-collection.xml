@@ -1,0 +1,20 @@
+<flow xmlns="http://marklogic.com/hub-in-a-box">
+  <namespace prefix="e" uri="http://company.com/employee"/>
+
+  <collector module="default-collector">
+    <options>
+      <collection>
+        <uri>tester</uri>
+      </collection>
+    </options>
+  </collector>
+  <transformers>
+    <transformer module="template"
+      ns="http://marklogic.com/hub-in-a-box/transformers/template"
+      function="transform">
+      <options>
+        <template name="template-1.xml"/>
+      </options>
+    </transformer>
+  </transformers>
+</flow>

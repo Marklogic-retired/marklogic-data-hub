@@ -1,0 +1,56 @@
+{
+  "collector": {
+    "uri": "default-collector",
+    "options": [
+      {
+        "option": "collection",
+        "uri": "employees"
+      },
+      {
+        "option": "directory",
+        "uri": "/blah",
+        "depth": "infinity"
+      }
+    ]
+  },
+
+  "transformers": [
+    {
+      "module": "envelope",
+      "options": {
+        "root": {
+          "ns": "http://customer.com/envelope",
+          "name": "envelope"
+        },
+        "header": {
+          "extractors": [
+            {
+              "type": "xpath",
+              "src": "/*:employee/*:hire_date",
+              "ns": "http://customer.com/envelope",
+              "dst": "hire-date",
+              "functions": [
+                {
+                  "name": "parseDate",
+                  "format": "[M01]/[D01]/[Y0001]"
+                }
+              ]
+            },
+            {
+              "type": "xpath",
+              "src": "/*:employee/*:hire_date",
+              "ns": "http://customer.com/envelope",
+              "dst": "hire-date",
+              "functions": [
+                {
+                  "name": "parseDate",
+                  "format": "[M01]/[D01]/[Y0001]"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

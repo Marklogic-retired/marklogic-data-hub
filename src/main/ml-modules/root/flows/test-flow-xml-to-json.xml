@@ -1,0 +1,53 @@
+<flow xmlns="http://marklogic.com/hub-in-a-box">
+
+  <!-- defines 0 or more namespaces used in the paths below -->
+  <namespace prefix="e" uri="http://company.com/employee"/>
+
+  <!--
+    a collector definition. Collectors gather uris or nodes or whatever
+    @module = the name of or path to the collector module to run
+    @ns = the namespace of the module
+    [@function] = the function to run. defaults to collect
+  -->
+  <collector module="default-collector.xqy">
+    <options>
+      <!-- specify a collection for a collection-query -->
+      <collection>
+        <!-- one ore more collection uris -->
+        <uri>employees</uri>
+      </collection>
+
+      <!-- specify a directory for a directory-query -->
+      <directory>
+        <!-- one ore more directory uris -->
+        <uri>/blah/</uri>
+        <uri>/blah2/</uri>
+        <depth>infinity</depth>
+      </directory>
+    </options>
+  </collector>
+
+  <!-- one or more transformers to run against data -->
+  <transformers>
+
+    <!--
+      a transformer definition
+        @module = the name of or path to the transformer module to run
+        @ns = the namespace of the module
+        [@function] = the function to run. defaults to transform
+    -->
+    <transformer module="envelope.xqy"
+      ns="http://marklogic.com/hub-in-a-box/transformers/envelope"
+      function="transform">
+
+      <!-- each transformer has different options -->
+      <options>
+        <!--
+          the template is the outline for the envelope xml
+          it lives in /templates/employee-envelope.xml
+        -->
+        <template name="employee-envelope-xml-source.json"/>
+      </options>
+    </transformer>
+  </transformers>
+</flow>

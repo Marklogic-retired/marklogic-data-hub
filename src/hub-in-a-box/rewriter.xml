@@ -1,0 +1,76 @@
+<rewriter xmlns="http://marklogic.com/xdmp/rewriter">
+  <!-- Data Hub in a Box Rules -->
+  <match-path matches="^/hub/(v\d+|LATEST)">
+    <add-query-param name="api-version">$1</add-query-param>
+
+    <match-path matches="^/hub/(v\d+|LATEST)/swagger/?$">
+      <dispatch>/com.marklogic.hub/endpoints/swagger-ui.xqy</dispatch>
+    </match-path>
+
+    <match-path matches="/hub/(v\d+|LATEST)(/swagger/(css|fonts|images|lang|lib)/.+)">
+      <trace event="Rewriter Evaluator Verbose">Testing 1..2..3</trace>
+      <dispatch>$2</dispatch>
+    </match-path>
+
+    <match-path matches="^/hub/(v\d+|LATEST)/config/entities/?$">
+      <dispatch>/com.marklogic.hub/endpoints/entity-swagger-query.xqy</dispatch>
+    </match-path>
+
+    <match-path matches="^/hub/(v\d+|LATEST)/config/entities/([^/]+)/?([^/]*)$">
+      <add-query-param name="entity-name">$2</add-query-param>
+      <add-query-param name="entity-id">$3</add-query-param>
+
+      <match-method any-of="GET">
+        <match-query-param name="txid">
+          <set-transaction>$0</set-transaction>
+          <set-transaction-mode>query</set-transaction-mode>
+        </match-query-param>
+        <dispatch>/com.marklogic.hub/endpoints/config-entity-query.xqy</dispatch>
+      </match-method>
+      <match-method any-of="PUT DELETE">
+        <match-query-param name="txid">
+          <set-transaction>$0</set-transaction>
+          <set-transaction-mode>update</set-transaction-mode>
+        </match-query-param>
+        <dispatch>/com.marklogic.hub/endpoints/config-entity-update.xqy</dispatch>
+      </match-method>
+    </match-path>
+
+    <match-path matches="^/hub/(v\d+|LATEST)/entities/([^/]+)/?([^/]*)$">
+      <add-query-param name="entity-name">$2</add-query-param>
+      <add-query-param name="entity-id">$3</add-query-param>
+
+      <match-method any-of="GET HEAD">
+        <match-query-param name="txid">
+          <set-transaction>$0</set-transaction>
+          <set-transaction-mode>query</set-transaction-mode>
+        </match-query-param>
+        <dispatch>/com.marklogic.hub/endpoints/entity-item-query.xqy</dispatch>
+      </match-method>
+      <match-method any-of="PUT DELETE">
+        <match-query-param name="txid">
+          <set-transaction>$0</set-transaction>
+          <set-transaction-mode>update</set-transaction-mode>
+        </match-query-param>
+        <dispatch>/com.marklogic.hub/endpoints/entity-item-update.xqy</dispatch>
+      </match-method>
+    </match-path>
+
+    <match-path matches="^/hub/(v\d+|LATEST)/transformers/([^/]+)/?([^/]*)$">
+      <add-query-param name="transformer-name">$1</add-query-param>
+      <add-query-param name="action">$2</add-query-param>
+      <match-method any-of="POST">
+        <match-path matches="^/hub/(v\d+|LATEST)/transformers/([^/]+)/(run|test)$">
+          <dispatch>/com.marklogic.hub/transformers/transformer-controller.xqy</dispatch>
+        </match-path>
+      </match-method>
+      <match-method any-of="GET">
+        <match-path matches="^/hub/(v\d+|LATEST)/transformers/([^/]+)/?(swagger|swagger.json)?$">
+          <dispatch>/com.marklogic.hub/transformers/transformer-controller.xqy</dispatch>
+        </match-path>
+      </match-method>
+    </match-path>
+  </match-path>
+
+  <!-- End Data Hub in a Box Rules -->
+</rewriter>

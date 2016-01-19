@@ -1,0 +1,5 @@
+{
+  "server-name": "%%NAME%%",
+  "authentication": "digest",
+  "url-rewriter": "/com.marklogic.hub/rewriter.xml"
+}

@@ -1,0 +1,15 @@
+<metadata>
+  <title>flow</title>
+  <description>
+    <div>
+      Hub in a Box Flow entry point for Java
+    </div>
+  </description>
+  <method name="GET">
+    <param name="flow-name" />
+    <param name="id" />
+  </method>
+  <method name="POST">
+    <param name="id" />
+  </method>
+</metadata>

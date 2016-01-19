@@ -1,0 +1,24 @@
+<flow xmlns="http://marklogic.com/hub-in-a-box">
+  <namespace prefix="e" uri="http://company.com/employee"/>
+
+  <collector module="default-collector">
+    <options>
+      <collection>
+        <uri>tester</uri>
+      </collection>
+    </options>
+  </collector>
+  <transformers>
+    <transformer module="envelope"
+      ns="http://marklogic.com/hub-in-a-box/transformers/envelope"
+      function="transform">
+      <options>
+        <!-- run the xpath extractor to get the value for <hire-date> -->
+        <extractor type="xpath" path="/e:employee/e:hire_date" dst="hire-date">
+          <!-- 0 or more functions to run against the extracted value -->
+          <function name="parseDate" format="[M01]/[D01]/[Y0001]"/>
+        </extractor>
+      </options>
+    </transformer>
+  </transformers>
+</flow>
