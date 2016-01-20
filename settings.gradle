@@ -6,3 +6,5 @@ include 'services:webservice'
 */
 
 rootProject.name = 'Data Hub In a Box'
+include ':data-hub'
+include ':quick-start'

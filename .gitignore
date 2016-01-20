@@ -2,7 +2,7 @@
 /.gradle/
 /.settings/
 /bin/
-/build/
+build/
 .classpath
 .project
 gradle-local.properties
