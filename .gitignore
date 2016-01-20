@@ -1,8 +1,9 @@
 .DS_Store
-/.gradle/
-/.settings/
-/bin/
+.gradle/
+.settings/
+bin/
 build/
+releases/
 .classpath
 .project
 gradle-local.properties
