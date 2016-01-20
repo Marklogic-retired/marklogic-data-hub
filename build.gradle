@@ -1,0 +1,29 @@
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'eclipse'
+
+    sourceCompatibility = "1.8"
+    targetCompatibility = "1.8"
+
+    repositories {
+        mavenCentral()
+        mavenLocal()
+    }
+
+
+    dependencies {
+        testCompile group: 'junit', name: 'junit', version: '4.+'
+            testCompile 'org.apache.httpcomponents:httpclient:4.1.1'
+    }
+
+    test{
+        testLogging{
+            events 'started','passed', 'skipped'
+        }
+    }
+
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.6'
+}
