@@ -22,6 +22,6 @@
     </transformer>
   </transformers>
   <persisters>
-    <persister module="default-persister"/>
+    <persister module="save"/>
   </persisters>
 </flow>

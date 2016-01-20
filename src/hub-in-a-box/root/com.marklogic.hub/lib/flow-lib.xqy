@@ -20,9 +20,6 @@ module namespace flow = "http://marklogic.com/hub-in-a-box/flow-lib";
 import module namespace hul = "http://marklogic.com/hub-in-a-box/hub-utils-lib"
   at "/com.marklogic.hub/lib/hub-utils-lib.xqy";
 
-import module namespace collector = "http://marklogic.com/hub-in-a-box/collector-lib"
-  at "/com.marklogic.hub/lib/collector-lib.xqy";
-
 import module namespace transformer = "http://marklogic.com/hub-in-a-box/transformer-lib"
   at "/com.marklogic.hub/lib/transformer-lib.xqy";
 
@@ -187,6 +184,13 @@ declare function flow:get-runnable-flow(
       $f
 };
 
+(:
+ : Runs the transformers defined in the flow and return the output
+ : Useful for when you just want transformer output. Doesn't persist
+ :
+ : @param $flow - the flow definition
+ : @param $identifier - the identifier of the thing to transform
+ :)
 declare function flow:run-transformers(
   $flow as object-node(),
   $identifier as xs:string)
@@ -196,7 +200,13 @@ declare function flow:run-transformers(
     map:get($output, "value")
 };
 
-
+(:
+ : Runs the transformers defined in the flow and then persist
+ : This method does not return the transformer output to the caller
+ :
+ : @param $flow - the flow definition
+ : @param $identifier - the identifier of the thing to transform
+ :)
 declare function flow:run-flow(
   $flow as object-node(),
   $identifier as xs:string)

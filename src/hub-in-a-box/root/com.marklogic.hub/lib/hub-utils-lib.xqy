@@ -23,6 +23,8 @@ import module namespace admin = "http://marklogic.com/xdmp/admin"
 import module namespace options = "http://marklogic.com/hub-in-a-box/hub-options"
   at "/com.marklogic.hub/lib/hub-options.xqy";
 
+declare namespace hub = "http://marklogic.com/hub-in-a-box";
+
 declare option xdmp:mapping "false";
 
 (:~
@@ -33,12 +35,9 @@ declare option xdmp:mapping "false";
  :)
 declare function hul:module-list($type) as xs:string*
 {
-  xdmp:invoke-function(function() {
+  hul:run-in-modules(function() {
     cts:uri-match("*" || $type || "/*")
-  },
-  <options xmlns="xdmp:eval">
-    <database>{xdmp:modules-database()}</database>
-  </options>)
+  })
 };
 
 (:~
@@ -49,23 +48,26 @@ declare function hul:module-list($type) as xs:string*
  :)
 declare function hul:module-exists($uri) as xs:boolean
 {
-  xdmp:invoke-function(function() {
+  hul:run-in-modules(function() {
     fn:doc-available($uri)
-  },
-  <options xmlns="xdmp:eval">
-    <database>{xdmp:modules-database()}</database>
-  </options>)
+  })
 };
 
 declare function hul:get-module($uri)
 {
-  xdmp:invoke-function(function() {
+  hul:run-in-modules(function() {
     fn:doc($uri)
-  },
-  <options xmlns="xdmp:eval">
-    <database>{xdmp:modules-database()}</database>
-  </options>)
+  })
 };
+
+declare function hul:run-in-modules($func as function() as item()*)
+{
+  xdmp:invoke-function($func,
+    <options xmlns="xdmp:eval">
+      <database>{xdmp:modules-database()}</database>
+    </options>)
+};
+
 
 (:~
  : resolves the module uri of a collector
@@ -86,6 +88,11 @@ declare function hul:resolve-flow($flow as xs:string) as xs:string?
 declare function hul:resolve-persister($persister as xs:string) as xs:string?
 {
   hul:resolve-module($persister, "persister")
+};
+
+declare function hul:resolve-extractor($extractor as xs:string) as xs:string?
+{
+  hul:resolve-module($extractor, "extractor")
 };
 
 declare function hul:resolve-data(
