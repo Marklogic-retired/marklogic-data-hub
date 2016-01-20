@@ -39,7 +39,7 @@ apply plugin: 'ml-gradle'
 
 ext {
     mlAppConfig {
-        modulePaths.add("src/hub-in-a-box")
+        modulePaths.add("data-hub/src/hub-in-a-box")
         contentXccUrl = "xcc://${mlUsername}:${mlPassword}@${mlHost}:${mlRestPort}/${mlAppConfig.contentDatabaseName}"
     }
 }
