@@ -1,33 +1,67 @@
+/*
+ * Copyright 2012-2016 MarkLogic Corporation
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.marklogic.hub;
 
-import com.marklogic.client.DatabaseClient;
-import com.marklogic.hub.runners.CollectorRunner;
+import java.util.List;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
+
+import com.marklogic.hub.flow.Flow;
+import com.marklogic.hub.flow.SimpleFlow;
 
 public class FlowManager {
+    private static final String HUB_NS = "http://marklogic.com/hub-in-a-box";
 
-    private static int DEFAULT_BATCH_SIZE = 100;
-
-    private int batchSize = DEFAULT_BATCH_SIZE;
-    private DatabaseClient client = null;
-
-    public FlowManager(DatabaseClient client) {
-        this.client = client;
+    List<Flow> getFlows() {
+        return null;
     }
 
-    public int getBatchSize() {
-        return batchSize;
+    void installFlow(Flow flow) {
+
     }
 
-    public void setBatchSize(int batchSize) {
-        this.batchSize = batchSize;
+    void uninstallFlow(String flowName) {
+
     }
 
-    public void startFlow(Flow flow) {
+    // might want to add Job tracking support
+    // by returning a Job or some such.
+    // Depends a lot on if we go full in with spring batch or not
+    void runFlow(Flow flow, int batchSize) {
 
-        CollectorRunner c = new CollectorRunner(client, flow.collector.module);
-        c.run(batchSize, flow.collector.options,
-                uris -> {
-                    // run a transformer for each uri
-                });
+    }
+
+    void runFlowsInParallel(Flow ... flows) {
+
+    }
+
+    Flow flowFromXml(Document doc) {
+        Flow f = null;
+
+        String type = null;
+        NodeList elements = doc.getElementsByTagNameNS(HUB_NS, "type");
+        if (elements.getLength() == 1) {
+            type = elements.item(0).getTextContent();
+        }
+
+        if (type.equals("simple")) {
+            f = new SimpleFlow(doc);
+        }
+
+        return f;
     }
 }

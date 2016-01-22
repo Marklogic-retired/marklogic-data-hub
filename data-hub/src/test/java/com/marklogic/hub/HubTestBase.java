@@ -20,9 +20,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
@@ -42,14 +48,18 @@ public class HubTestBase {
     public static String password;
     public static Authentication authMethod;
     public static DatabaseClient client = null;
+    private static Properties properties = new Properties();
     public static XMLDocumentManager docMgr = init();
 
+    public static Properties getProperties() {
+        return properties;
+    }
+
     private static XMLDocumentManager init() {
-        Properties props = new Properties();
         try {
             Properties p = new Properties();
             p.load(new FileInputStream("gradle.properties"));
-            props.putAll(p);
+            properties.putAll(p);
         }
         catch (IOException e) {
             System.err.println("Properties file not loaded.");
@@ -60,18 +70,18 @@ public class HubTestBase {
         try {
             Properties p = new Properties();
             p.load(new FileInputStream("gradle-local.properties"));
-            props.putAll(p);
+            properties.putAll(p);
         }
         catch (IOException e) {
             System.err.println("Properties file not loaded.");
             System.exit(1);
         }
 
-        host = props.getProperty("mlHost");
-        port = Integer.parseInt(props.getProperty("mlRestPort"));
-        user = props.getProperty("mlUsername");
-        password = props.getProperty("mlPassword");
-        authMethod = Authentication.valueOf(props.getProperty("auth").toUpperCase());
+        host = properties.getProperty("mlHost");
+        port = Integer.parseInt(properties.getProperty("mlRestPort"));
+        user = properties.getProperty("mlUsername");
+        password = properties.getProperty("mlPassword");
+        authMethod = Authentication.valueOf(properties.getProperty("auth").toUpperCase());
 
         client = DatabaseClientFactory.newClient(host, port, user, password, authMethod);
         return client.newXMLDocumentManager();
@@ -94,6 +104,16 @@ public class HubTestBase {
             e.printStackTrace();
             throw e;
         }
+    }
+
+    protected static Document getXmlFromResource(String resourceName) throws IOException, ParserConfigurationException, SAXException {
+        InputStream inputStream = HubTestBase.class.getClassLoader().getResourceAsStream(resourceName);
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+
+        factory.setNamespaceAware(true);
+        DocumentBuilder builder = factory.newDocumentBuilder();
+
+        return builder.parse(inputStream);
     }
 
     protected static void installDoc(String uri, String doc) {

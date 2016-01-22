@@ -1,7 +1,0 @@
-<employee xmlns="http://company.com/employee">
-  <id>123</id>
-  <first_name>Bob</first_name>
-  <last_name>Smith</last_name>
-  <date_of_birth>10/3/1969</date_of_birth>
-  <hire_date>2/5/2014</hire_date>
-</employee>

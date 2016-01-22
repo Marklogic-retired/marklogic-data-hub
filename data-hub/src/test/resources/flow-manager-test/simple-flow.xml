@@ -1,0 +1,10 @@
+<flow xmlns="http://marklogic.com/hub-in-a-box">
+  <name>my-test-flow</name>
+  <type>simple</type>
+  <collector type="query"></collector>
+  <templates>
+    <template type="content"/>
+    <template type="header"/>
+    <template type="rdf"/>
+  </templates>
+</flow>

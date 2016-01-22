@@ -1,6 +1,4 @@
 {
   "server-name": "%%NAME%%",
-  "authentication": "digest",
-  "url-rewriter": "/com.marklogic.hub/rewriter.xml",
-  "error-handler": "/com.marklogic.hub/error-handler.xqy"
+  "authentication": "digest"
 }
