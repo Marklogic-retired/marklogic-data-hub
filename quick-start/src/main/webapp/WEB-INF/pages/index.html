@@ -1,16 +1,17 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorator="templates/base-template">
 <head>
-	<title>Data Hub in a Box</title>
 </head>
 <body>
-	<h1>Data Hub in a Box</h1>
-
-	<div class="alert alert-warning" role="alert"></div>
-	
-	<form th:action="@{/deployToMarkLogic}" method="post">
-		<input type="submit" name="Deploy to MarkLogic" value="Deploy to MarkLogic" /> 
-	</form>
-	
+	<section layout:fragment="content">
+		<div id="message-div" class="row"></div>
+		<div class="row">
+			<div class="col-md-3 text-right">
+				<form th:action="@{/deployToMarkLogic}" method="post">
+		  			<button type="submit" class="btn btn-secondary">Deploy to MarkLogic</button>
+				</form>
+			</div>
+		</div>
+	</section>
 </body>
 </html>

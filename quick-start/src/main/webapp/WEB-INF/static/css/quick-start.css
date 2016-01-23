@@ -1,0 +1,29 @@
+div#header { 
+    background-color: #404040;
+    border: 1px solid #909090;
+    padding: 5px 15px; 
+    color: #ffffff;
+}
+
+#sitename {
+	color: #ffffff;
+	font-size: 25px;
+	font-weight: 400;
+	margin: 0px;
+	color: #FFF;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	overflow: hidden;
+	text-transform: uppercase;
+}
+
+#content {
+	min-height: 450px;
+	padding: 10px;
+}
+
+#footer {
+	font-size: 12px;
+	text-align: center;
+}
+
