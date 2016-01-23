@@ -5,9 +5,12 @@ Quick Start is a single-page web application that is deployed in an embedded Tom
 ## Configuring the Tomcat server port and web app context path
 - edit application.properties file and edit server.port and server.contextPath
 
-## Build and deploy the web app
+## Build and deploy the web app via command line
 - run ```gradle build```
 - run ```java -jar build/libs/quick-start-0.1.0.war```
+
+## Build and deploy the web app via Eclipse
+- Select Application.java then Run as Java Application
 
 ## Go to the main page
 - The main page is accessible at http://localhost:[server.port]/[server.contextPath].
