@@ -33,6 +33,7 @@ dependencies {
 	compile("org.springframework.boot:spring-boot-starter")
     compile("org.springframework.boot:spring-boot-starter-web")
     compile("org.springframework.boot:spring-boot-starter-thymeleaf")
+    compile files('../data-hub/build/libs/data-hub-0.0.9.jar')
     providedRuntime("org.springframework.boot:spring-boot-starter-tomcat")
     testCompile("junit:junit")
 }
