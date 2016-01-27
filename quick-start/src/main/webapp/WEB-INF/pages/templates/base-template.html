@@ -8,6 +8,7 @@
 	<link th:href="@{/static/css/quick-start.css}" rel="stylesheet"></link>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 	<script th:src="@{/static/lib/bootstrap-3.3.6-dist/js/bootstrap.min.js}"></script>
+	<script th:src="@{/static/lib/angular.js/js/angular.min.js}"></script>
 	<script th:src="@{/static/js/quick-start.js}"></script>
 </head>
 <body>
@@ -16,8 +17,7 @@
 			<div class="col-xs-8 col-sm-8 col-md-8"><h1 id="sitename" th:text="#{app.title}"></h1></div>
 		</div>
 	</div>
-	<div class="alert alert-error alert-danger" role="alert" th:if="${#fields.hasErrors('*')} " th:each="err : ${#fields.errors('*')}" th:text="${err}"></div>
-
+	
 	<section id="content" class="container-fluid" layout:fragment="content"></section>
 	
 	<div id="footer" class="container-fluid">
