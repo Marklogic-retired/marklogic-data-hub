@@ -25,22 +25,34 @@ public class EnvironmentConfiguration {
 	
 	
 	public String getMLHost() {
-		return this.properties.getProperty("mlHost");
+		String value = this.properties.getProperty("mlHost");
+		if(value == null) {
+			value = this.environment.getProperty("mlHost.default");
+		}
+		return value;
 	}
 	
-	public String getMLUserName() {
-		return this.properties.getProperty("mlUsername");
+	public String getMLUsername() {
+		String value = this.properties.getProperty("mlUsername");
+		if(value == null) {
+			value = this.environment.getProperty("mlUsername.default");
+		}
+		return value;
 	}
 	
 	public String getMLPassword() {
-		return this.properties.getProperty("mlPassword");
+		String value = this.properties.getProperty("mlPassword");
+		if(value == null) {
+			value = this.environment.getProperty("mlPassword.default");
+		}
+		return value;
 	}
 	
 	public void setMLHost(String mlHost) {
 		this.properties.setProperty("mlHost", mlHost);
 	}
 	
-	public void setMLUserName(String mlUsername) {
+	public void setMLUsername(String mlUsername) {
 		this.properties.setProperty("mlUsername", mlUsername);
 	}
 	
