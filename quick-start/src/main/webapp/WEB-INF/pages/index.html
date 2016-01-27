@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorator="templates/base-template">
+<head>
+</head>
+<body>
+	<section layout:fragment="content">
+		<div id="message-div" class="row"></div>
+		<div class="row">
+			<div class="col-md-3 text-right">
+				<form th:action="@{/deployToMarkLogic}" method="post">
+		  			<button type="submit" class="btn btn-secondary">Deploy to MarkLogic</button>
+				</form>
+			</div>
+		</div>
+	</section>
+</body>
+</html>
