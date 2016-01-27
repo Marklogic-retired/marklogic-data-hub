@@ -6,7 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.marklogic.hub.DataHub;
+import com.marklogic.hub.ServerValidationException;
 import com.marklogic.hub.config.EnvironmentConfiguration;
+import com.marklogic.hub.exception.DataHubException;
 import com.marklogic.hub.web.controller.MainPageController;
 
 @Service
@@ -17,18 +19,51 @@ public class DataHubService {
 	@Autowired
 	private EnvironmentConfiguration environmentConfiguration;
 	
-	private DataHub dataHub;
-	
-	public void deployToMarkLogic() {
-		LOGGER.info("Host is "+environmentConfiguration.getMLHost());
-		LOGGER.info("username is "+environmentConfiguration.getMLUserName());
-		LOGGER.info("password is "+environmentConfiguration.getMLPassword());
-		//dataHub = new DataHub(environmentConfiguration.getMLHost(), environmentConfiguration.getMLUserName(), 
-			//	environmentConfiguration.getMLPassword());
+	public void deployToMarkLogic() throws DataHubException {
+		DataHub dataHub = getDataHub();
+		dataHub.install();
 	}
 	
-	public boolean isInstalled() {
-		return dataHub.isInstalled();
+	private DataHub getDataHub() throws DataHubException {
+		try {
+			LOGGER.info("Host is "+environmentConfiguration.getMLHost());
+			LOGGER.info("username is "+environmentConfiguration.getMLUsername());
+			LOGGER.info("password is "+environmentConfiguration.getMLPassword());
+			return new DataHub(environmentConfiguration.getMLHost(), environmentConfiguration.getMLUsername(), 
+					environmentConfiguration.getMLPassword());
+		} catch(Throwable e) {
+			throw new DataHubException(e.getMessage(), e);
+		}
 	}
+	
+	public boolean isInstalled() throws DataHubException {
+		try {
+			DataHub dataHub = getDataHub();
+			return dataHub.isInstalled();
+		} catch(Throwable e) {
+			throw new DataHubException(e.getMessage(), e);
+		}
+	}
+	
+	public boolean isServerAcceptable() throws DataHubException {
+		DataHub dataHub = getDataHub();
+		try {
+			dataHub.validateServer();
+			return true;
+		} catch(ServerValidationException exception) {
+			return false;
+		} catch(Throwable e) {
+			throw new DataHubException(e.getMessage(), e);
+		}
+	}
+	
+	public void uninstall() throws DataHubException {
+		try {
+			DataHub dataHub = getDataHub();
+			dataHub.uninstall();
+		} catch(Throwable e) {
+			throw new DataHubException(e.getMessage(), e);
+		}
+    }
 
 }

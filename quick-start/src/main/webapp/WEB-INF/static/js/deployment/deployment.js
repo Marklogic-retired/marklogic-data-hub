@@ -4,8 +4,5 @@ Deployment = {};
 
 (function() {
 	'use strict';
-	Deployment.validate = function() {
-		
-	};
-	
+	//add custom functions here
 })();
