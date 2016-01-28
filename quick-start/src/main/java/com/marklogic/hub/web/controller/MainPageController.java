@@ -35,12 +35,28 @@ public class MainPageController extends BaseController {
 		return "index";
 	}
 	
-	@RequestMapping(params = "deployToMarkLogic", method = RequestMethod.POST)
-	public String deployToMarkLogic(@ModelAttribute("deploymentForm") DeploymentForm deploymentForm, BindingResult bindingResult, Model model) {
+	@RequestMapping(params = "install", method = RequestMethod.POST)
+	public String install(@ModelAttribute("deploymentForm") DeploymentForm deploymentForm, BindingResult bindingResult, Model model) {
 		LOGGER.info("Trying to deploy to MarkLogic");
 		updateConfiguration(deploymentForm);
 		try {
-			dataHubService.deployToMarkLogic();
+			dataHubService.install();
+			deploymentForm.setInstalled(true);
+			deploymentForm.setCanBeDeployed(false);
+		} catch(DataHubException e) {
+			LOGGER.error(e.getMessage(), e);
+			displayError(model, null, null, e.getMessage());
+		}
+		return "index";
+	}
+	
+	@RequestMapping(params = "uninstall", method = RequestMethod.POST)
+	public String uninstall(@ModelAttribute("deploymentForm") DeploymentForm deploymentForm, BindingResult bindingResult, Model model) {
+		LOGGER.info("Trying to uninstall from MarkLogic");
+		updateConfiguration(deploymentForm);
+		try {
+			dataHubService.uninstall();
+			deploymentForm.setInstalled(false);
 		} catch(DataHubException e) {
 			LOGGER.error(e.getMessage(), e);
 			displayError(model, null, null, e.getMessage());
@@ -60,10 +76,10 @@ public class MainPageController extends BaseController {
 		updateConfiguration(deploymentForm);
 		try {
 			deploymentForm.setServerAcceptable(dataHubService.isServerAcceptable());
-			deploymentForm.setValidServer(true);
+			deploymentForm.setCanBeDeployed(true);
 		} catch(DataHubException e) {
 			LOGGER.error(e.getMessage(), e);
-			deploymentForm.setValidServer(false);
+			deploymentForm.setCanBeDeployed(false);
 			displayError(model, null, null, e.getMessage());
 		} finally {
 			deploymentForm.setServerValidated(true);

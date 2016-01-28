@@ -8,7 +8,7 @@ public class DeploymentForm {
 	private boolean serverValidated;
 	private boolean serverAcceptable;
 	private boolean installed;
-	private boolean validServer;
+	private boolean canBeDeployed;
 	
 	public String getMlHost() {
 		return mlHost;
@@ -46,11 +46,11 @@ public class DeploymentForm {
 	public void setInstalled(boolean installed) {
 		this.installed = installed;
 	}
-	public boolean isValidServer() {
-		return validServer;
+	public boolean isCanBeDeployed() {
+		return canBeDeployed;
 	}
-	public void setValidServer(boolean validServer) {
-		this.validServer = validServer;
+	public void setCanBeDeployed(boolean canBeDeployed) {
+		this.canBeDeployed = canBeDeployed;
 	}
 	
 }

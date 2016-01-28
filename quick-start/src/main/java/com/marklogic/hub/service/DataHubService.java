@@ -19,9 +19,13 @@ public class DataHubService {
 	@Autowired
 	private EnvironmentConfiguration environmentConfiguration;
 	
-	public void deployToMarkLogic() throws DataHubException {
+	public void install() throws DataHubException {
 		DataHub dataHub = getDataHub();
-		dataHub.install();
+		try {
+			dataHub.install();
+		} catch(Throwable e) {
+			throw new DataHubException(e.getMessage(), e);
+		}
 	}
 	
 	private DataHub getDataHub() throws DataHubException {
@@ -37,8 +41,8 @@ public class DataHubService {
 	}
 	
 	public boolean isInstalled() throws DataHubException {
+		DataHub dataHub = getDataHub();
 		try {
-			DataHub dataHub = getDataHub();
 			return dataHub.isInstalled();
 		} catch(Throwable e) {
 			throw new DataHubException(e.getMessage(), e);
@@ -58,8 +62,8 @@ public class DataHubService {
 	}
 	
 	public void uninstall() throws DataHubException {
+		DataHub dataHub = getDataHub();
 		try {
-			DataHub dataHub = getDataHub();
 			dataHub.uninstall();
 		} catch(Throwable e) {
 			throw new DataHubException(e.getMessage(), e);
