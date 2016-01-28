@@ -20,7 +20,7 @@
 				</ul>
 			</div>
 		</div>
-		<div class="row" data-ng-show="deploymentForm.serverValidated === true">
+		<div class="row" data-ng-show="config.serverValidated">
 	    	<div class="col-md-12">
 		    	<ul class="alert alert-info">
 					<li data-ng-show="config.serverAcceptable" th:text="#{server.is.acceptable}"></li>
