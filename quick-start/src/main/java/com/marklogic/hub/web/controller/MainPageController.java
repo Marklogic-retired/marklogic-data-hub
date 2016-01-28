@@ -45,7 +45,7 @@ public class MainPageController extends BaseController {
 			LOGGER.error(e.getMessage(), e);
 			displayError(model, null, null, e.getMessage());
 		}
-		return "redirect:/";
+		return "index";
 	}
 	
 	private void updateConfiguration(DeploymentForm deploymentForm) {
@@ -68,7 +68,7 @@ public class MainPageController extends BaseController {
 		} finally {
 			deploymentForm.setServerValidated(true);
 		}
-		return "redirect:/";
+		return "index";
 	}
 
 }
