@@ -17,10 +17,16 @@ package com.marklogic.hub.collector;
 
 import java.util.List;
 
-public class QueryCollector implements Collector {
+public class QueryCollector extends ServerCollector {
+
+    public static final String MODULE = "/com.marklogic.hub/collectors/query.xqy";
+
+    public QueryCollector() {
+        super("xquery", MODULE);
+    }
 
     @Override
-    public List<String> run(int page, int pageSize) {
+    public List<String> run() {
         return null;
     }
 

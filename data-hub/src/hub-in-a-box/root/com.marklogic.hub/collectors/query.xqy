@@ -13,9 +13,10 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 :)
+
 xquery version "1.0-ml";
 
-module namespace collector = "http://marklogic.com/hub-in-a-box/collectors/query";
+module namespace plugin = "http://marklogic.com/hub-in-a-box/plugins/query";
 
 import module namespace ast = "http://marklogic.com/appservices/search-ast" at
   "/MarkLogic/appservices/search/ast.xqy";
@@ -25,22 +26,18 @@ import module namespace search-impl = "http://marklogic.com/appservices/search-i
 
 declare option xdmp:mapping "false";
 
-declare function collector:get-estimate(
-  $config as object-node()?) as xs:int
+(:~
+ : Collect IDs plugin
+ :
+ : @param $options - a map containing options. Options are sent from Java
+ :
+ : @return - a sequence of ids or uris
+ :)
+declare function plugin:collect(
+  $options as map:map) as xs:string*
 {
-  let $query := xdmp:unquote($config/query)/*:query
+  let $query := xdmp:unquote(map:get($options, "query"))/*:query
   let $q := map:get(ast:to-query($query, $search-impl:default-options), "query")
   return
-    xdmp:estimate(cts:search(fn:doc(), $q))
-};
-
-declare function collector:collect(
-  $start as xs:int,
-  $limit as xs:int,
-  $config as object-node()?) as xs:string*
-{
-  let $query := xdmp:unquote($config/query)/*:query
-  let $q := map:get(ast:to-query($query, $search-impl:default-options), "query")
-  return
-    cts:uris((), ("skip=" || $start, "limit=" || $limit), $q)
+    cts:uris((), (), $q)
 };

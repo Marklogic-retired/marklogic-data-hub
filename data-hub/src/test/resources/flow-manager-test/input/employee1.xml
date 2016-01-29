@@ -1,0 +1,3 @@
+<employee xmlns="http://company.com/ns/employee">
+  <id>1</id>
+</employee>

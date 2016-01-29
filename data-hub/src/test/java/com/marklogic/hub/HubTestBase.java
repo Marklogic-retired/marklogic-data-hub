@@ -34,9 +34,15 @@ import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
 import com.marklogic.client.DatabaseClientFactory.Authentication;
 import com.marklogic.client.FailedRequestException;
+import com.marklogic.client.admin.ExtensionLibrariesManager;
+import com.marklogic.client.admin.ExtensionLibraryDescriptor;
 import com.marklogic.client.document.XMLDocumentManager;
+import com.marklogic.client.eval.EvalResult;
+import com.marklogic.client.eval.EvalResultIterator;
 import com.marklogic.client.eval.ServerEvaluationCall;
 import com.marklogic.client.io.DocumentMetadataHandle;
+import com.marklogic.client.io.Format;
+import com.marklogic.client.io.InputStreamHandle;
 import com.marklogic.client.io.StringHandle;
 
 public class HubTestBase {
@@ -116,6 +122,24 @@ public class HubTestBase {
         return builder.parse(inputStream);
     }
 
+    protected static int getDocCount() {
+        int count = 0;
+        ServerEvaluationCall eval = client.newServerEval();
+        try {
+            EvalResultIterator resultItr = eval.xquery("xdmp:estimate(fn:doc())").eval();
+            if (resultItr == null || ! resultItr.hasNext()) {
+                return count;
+            }
+
+            EvalResult res = resultItr.next();
+            count = Math.toIntExact((long) res.getNumber());
+
+        }
+        catch(FailedRequestException e) {
+            throw e;
+        }
+        return count;
+    }
     protected static void installDoc(String uri, String doc) {
         docMgr.write(uri, new StringHandle(doc));
     }
@@ -124,11 +148,23 @@ public class HubTestBase {
         docMgr.write(uri, meta, new StringHandle(doc));
     }
 
-    protected static void installModule(String path, String module) {
+    protected static void installModule(String path, String localPath) {
+        ExtensionLibrariesManager libsMgr = client
+                .newServerConfigManager().newExtensionLibrariesManager();
+
+        ExtensionLibraryDescriptor moduleDescriptor = new ExtensionLibraryDescriptor();
+        moduleDescriptor.setPath(path);
+
+        InputStreamHandle handle = new InputStreamHandle(HubTestBase.class.getClassLoader().getResourceAsStream(localPath));
+        handle.withFormat(Format.TEXT);
+        libsMgr.write(moduleDescriptor, handle);
+    }
+
+    protected static void runInModules(String query) {
         ServerEvaluationCall eval = client.newServerEval();
         String installer =
             "xdmp:invoke-function(function() {" +
-            "  xdmp:document-insert(\"" + path + "\", " + module + ")" +
+            query +
             "}," +
             "<options xmlns=\"xdmp:eval\">" +
             "  <database>{xdmp:modules-database()}</database>" +
@@ -138,7 +174,7 @@ public class HubTestBase {
             eval.xquery(installer).eval();
         }
         catch(FailedRequestException e) {
-            logger.error("Failed to install module: " + path, e);
+            logger.error("Failed run code: " + query, e);
             System.out.println(installer);
             e.printStackTrace();
             throw e;

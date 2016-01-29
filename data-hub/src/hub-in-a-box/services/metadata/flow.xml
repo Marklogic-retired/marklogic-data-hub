@@ -1,3 +1,4 @@
+<!-- Copyright 2016 MarkLogic Corporation.  All Rights Reserved. -->
 <metadata>
   <title>flow</title>
   <description>
@@ -7,9 +8,8 @@
   </description>
   <method name="GET">
     <param name="flow-name" />
-    <param name="id" />
   </method>
   <method name="POST">
-    <param name="id" />
+    <param name="identifier" />
   </method>
 </metadata>

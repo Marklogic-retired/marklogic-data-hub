@@ -23,17 +23,22 @@ import java.util.List;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamWriter;
 
-import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import com.marklogic.client.MarkLogicIOException;
 import com.marklogic.hub.collector.Collector;
 import com.marklogic.hub.collector.QueryCollector;
-import com.marklogic.hub.template.ContentTemplate;
-import com.marklogic.hub.template.HeaderTemplate;
-import com.marklogic.hub.template.RdfTemplate;
-import com.marklogic.hub.template.Template;
+import com.marklogic.hub.collector.ServerCollector;
+import com.marklogic.hub.plugin.ContentPlugin;
+import com.marklogic.hub.plugin.HeadersPlugin;
+import com.marklogic.hub.plugin.Plugin;
+import com.marklogic.hub.plugin.TriplesPlugin;
+import com.marklogic.hub.plugin.ServerPlugin;
+import com.marklogic.hub.writer.DefaultWriter;
+import com.marklogic.hub.writer.ServerWriter;
+import com.marklogic.hub.writer.Writer;
 
 public abstract class AbstractFlow implements Flow {
 
@@ -41,10 +46,11 @@ public abstract class AbstractFlow implements Flow {
     private String type;
     private Collector collector;
     private boolean envelopeEnabled = true;
-    protected ArrayList<Template> templates = new ArrayList<Template>();
+    protected ArrayList<Plugin> plugins = new ArrayList<Plugin>();
+    private Writer writer;
 
-    public AbstractFlow(Document xml) {
-        deserialize(xml.getDocumentElement());
+    public AbstractFlow(Element xml) {
+        deserialize(xml);
     }
 
     public AbstractFlow(String name, String type) {
@@ -67,31 +73,67 @@ public abstract class AbstractFlow implements Flow {
                 break;
             case "collector":
                 String colType = node.getAttributes().getNamedItem("type").getNodeValue();
-                if (colType.equals("query")) {
-                    Collector collector = new QueryCollector();
+                if (colType.equals("xquery") || colType.equals("sjs") || colType.equals("xslt")) {
+                    String module = node.getAttributes().getNamedItem("module").getNodeValue();
+                    Collector collector = null;
+                    if (module.equals(QueryCollector.MODULE)) {
+                        collector = new QueryCollector();
+                    }
+                    else {
+                        collector = new ServerCollector(colType, module);
+                    }
                     this.setCollector(collector);
                 }
             break;
-            case "templates":
+            case "plugins":
                 deserialize(node);
                 break;
-            case "template":
-                String templateType = node.getAttributes().getNamedItem("type").getNodeValue();
-                if (templateType.equals("content")) {
-                    ContentTemplate t = new ContentTemplate();
-                    this.templates.add(t);
+            case "plugin":
+                String pluginDest = null;
+                String module = null;
+                String pluginType = node.getAttributes().getNamedItem("type").getNodeValue();
+                if (!pluginType.equals("null")) {
+                    pluginDest = node.getAttributes().getNamedItem("dest").getNodeValue();
+                    module = node.getAttributes().getNamedItem("module").getNodeValue();
                 }
-                else if (templateType.equals("header")) {
-                    HeaderTemplate t = new HeaderTemplate();
-                    this.templates.add(t);
+
+                if (pluginType.equals("xquery") || pluginType.equals("sjs") || pluginType.equals("xslt")) {
+                    if (pluginDest.equals(ContentPlugin.MODULE)) {
+                        ContentPlugin t = new ContentPlugin();
+                        this.plugins.add(t);
+                    }
+                    else if (pluginDest.equals(HeadersPlugin.MODULE)) {
+                        HeadersPlugin t = new HeadersPlugin();
+                        this.plugins.add(t);
+                    }
+                    else if (pluginDest.equals(TriplesPlugin.MODULE)) {
+                        TriplesPlugin t = new TriplesPlugin();
+                        this.plugins.add(t);
+                    }
+                    else {
+                        ServerPlugin t = new ServerPlugin(pluginType, module, pluginDest);
+                        this.plugins.add(t);
+                    }
                 }
-                else if (templateType.equals("rdf")) {
-                    RdfTemplate t = new RdfTemplate();
-                    this.templates.add(t);
+                else if (pluginType.equals("null")) {
+                    this.plugins.add(null);
                 }
-                else if (templateType.equals("null")) {
-                    this.templates.add(null);
+                break;
+            case "writer":
+                module = null;
+                pluginType = node.getAttributes().getNamedItem("type").getNodeValue();
+                if (pluginType.equals("xquery") || pluginType.equals("sjs") || pluginType.equals("xslt")) {
+                    module = node.getAttributes().getNamedItem("module").getNodeValue();
+                    Writer w = null;
+                    if (module.equals(DefaultWriter.MODULE)) {
+                        w = new DefaultWriter();
+                    }
+                    else {
+                        w = new ServerWriter(pluginType, module);
+                    }
+                    this.setWriter(w);
                 }
+
                 break;
             }
         }
@@ -114,6 +156,14 @@ public abstract class AbstractFlow implements Flow {
         this.collector = collector;
     }
 
+    public Writer getWriter() {
+        return this.writer;
+    }
+
+    public void setWriter(Writer writer) {
+        this.writer = writer;
+    }
+
     void enableEnvelope(boolean enable) {
         this.envelopeEnabled = enable;
     }
@@ -133,7 +183,6 @@ public abstract class AbstractFlow implements Flow {
         } catch (Exception e) {
             throw new MarkLogicIOException(e);
         }
-
     }
 
     @Override
@@ -152,17 +201,22 @@ public abstract class AbstractFlow implements Flow {
             serializer.writeCharacters(this.type);
             serializer.writeEndElement();
 
-            serializer.writeStartElement("collector");
-            serializer.writeAttribute("type", "query");
-            serializer.writeEndElement();
+            if (this.collector != null) {
+                this.collector.serialize(serializer);
+            }
 
-            serializer.writeStartElement("templates");
-            for (Template t : this.templates) {
-                serializer.writeStartElement("template");
-                serializer.writeAttribute("type", t.getType());
-                serializer.writeEndElement();
+            serializer.writeStartElement("plugins");
+            for (Plugin t : this.plugins) {
+                if (t != null) {
+                    t.serialize(serializer);
+                }
             }
             serializer.writeEndElement();
+
+            Writer w = this.getWriter();
+            if (w != null) {
+                this.getWriter().serialize(serializer);
+            }
 
             serializer.writeEndElement();
             serializer.writeEndDocument();
@@ -176,12 +230,12 @@ public abstract class AbstractFlow implements Flow {
     }
 
     @Override
-    public void addTemplate(Template template) {
-        templates.add(template);
+    public void addPlugin(Plugin plugin) {
+        plugins.add(plugin);
     }
 
     @Override
-    public List<Template> geTemplates() {
-        return templates;
+    public List<Plugin> getPlugins() {
+        return plugins;
     }
 }

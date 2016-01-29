@@ -15,14 +15,10 @@
  */
 package com.marklogic.hub.flow;
 
-import java.util.List;
+import org.w3c.dom.Element;
 
-import org.w3c.dom.Document;
-
-import com.marklogic.hub.template.ContentTemplate;
-import com.marklogic.hub.template.HeaderTemplate;
-import com.marklogic.hub.template.RdfTemplate;
-import com.marklogic.hub.template.Template;
+import com.marklogic.hub.plugin.Plugin;
+import com.marklogic.hub.plugin.ServerPlugin;
 
 /**
  * A class for representing a simple Flow
@@ -33,52 +29,47 @@ public class SimpleFlow extends AbstractFlow {
     public SimpleFlow(String name) {
         super(name, "simple");
         for (int i = 0; i < 3; i++) {
-            super.addTemplate(null);
+            super.addPlugin(null);
         }
     }
 
-    public SimpleFlow(Document xml) {
+    public SimpleFlow(Element xml) {
         super(xml);
     }
 
     /**
-     * Returns the header template used by this flow
+     * Returns the header plugin used by this flow
      */
-    public HeaderTemplate getHeaderTemplate() {
-        return (HeaderTemplate)this.templates.get(1);
+    public Plugin getHeaderPlugin() {
+        return this.plugins.get(1);
     }
 
     /**
-     * Sets the header template to use
-     * @param template
+     * Sets the header plugin to use
+     * @param plugin
      */
-    public void setHeaderTemplate(HeaderTemplate template) {
-        this.templates.set(1, template);
+    public void setHeaderPlugin(ServerPlugin plugin) {
+        this.plugins.set(1, plugin);
     }
 
-    public ContentTemplate getContentTemplate() {
-        return (ContentTemplate)this.templates.get(0);
+    public Plugin getContentPlugin() {
+        return this.plugins.get(0);
     }
 
-    public void setContentTemplate(ContentTemplate template) {
-        this.templates.set(0, template);
+    public void setContentPlugin(ServerPlugin plugin) {
+        this.plugins.set(0, plugin);
     }
 
-    public RdfTemplate getRdfTemplate() {
-        return (RdfTemplate)this.templates.get(2);
+    public Plugin getTriplesPlugin() {
+        return this.plugins.get(2);
     }
 
-    public void setRdfTemplate(RdfTemplate template) {
-        this.templates.set(2, template);
-    }
-
-    @Override
-    public void addTemplate(Template template) {
-        throw new UnsupportedOperationException("Use setHeaderTemplate, setRdfTemplate, ...");
+    public void setTriplesPlugin(ServerPlugin plugin) {
+        this.plugins.set(2, plugin);
     }
 
     @Override
-    public List<Template> geTemplates() {
-        throw new UnsupportedOperationException("Use getHeaderTemplate, getRdfTemplate, ...");
+    public void addPlugin(Plugin plugin) {
+        throw new UnsupportedOperationException("Use setHeaderPlugin, setTriplesPlugin, ...");
     }
 }

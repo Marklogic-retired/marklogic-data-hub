@@ -17,7 +17,12 @@ package com.marklogic.hub.collector;
 
 import java.util.List;
 
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+
 public interface Collector {
 
-    List<String> run(int page, int pageSize);
+    String getType();
+    List<String> run();
+    void serialize(XMLStreamWriter serializer) throws XMLStreamException;
 }

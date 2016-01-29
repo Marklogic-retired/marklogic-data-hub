@@ -110,9 +110,13 @@ publishing {
 
 ext {
     mlAppConfig {
-        modulePaths.add("data-hub/src/hub-in-a-box")
+        modulePaths = ["data-hub/src/hub-in-a-box"]
         contentXccUrl = "xcc://${mlUsername}:${mlPassword}@${mlHost}:${mlRestPort}/${mlAppConfig.contentDatabaseName}"
     }
+
+    def stagingDbCommand = new com.marklogic.appdeployer.command.databases.DeployDatabaseCommand("staging-database.json")
+    mlAppDeployer.commands.add(stagingDbCommand)
+    mlDatabaseCommands.add(stagingDbCommand)
 }
 
 task generateRewriter(type: com.marklogic.gradle.task.XccTask) {

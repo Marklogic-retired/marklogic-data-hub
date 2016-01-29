@@ -1,3 +1,4 @@
+<!-- Copyright 2016 MarkLogic Corporation.  All Rights Reserved. -->
 <metadata>
   <title>collector</title>
   <description>
@@ -6,14 +7,9 @@
     </div>
   </description>
   <method name="POST">
-    <param name="name" />
-    <param name="start" type="xs:int" />
-    <param name="limit" type="xs:int" />
-    <param name="method" />
+    <param name="module-uri" type="xs:string" />
   </method>
-<!--
   <method name="GET">
-    <param name="flow-name" />
+    <param name="module-uri" type="xs:string" />
   </method>
--->
 </metadata>

@@ -17,8 +17,15 @@ xquery version "1.0-ml";
 
 module namespace service = "http://marklogic.com/rest-api/resource/flow";
 
+import module namespace debug = "http://marklogic.com/hub-in-a-box/debug-lib"
+  at "/com.marklogic.hub/lib/debug-lib.xqy";
+
 import module namespace flow = "http://marklogic.com/hub-in-a-box/flow-lib"
   at "/com.marklogic.hub/lib/flow-lib.xqy";
+
+declare namespace rapi = "http://marklogic.com/rest-api";
+
+declare namespace hub = "http://marklogic.com/hub-in-a-box";
 
 declare option xdmp:mapping "false";
 
@@ -27,24 +34,32 @@ declare function get(
   $params  as map:map
   ) as document-node()*
 {
-  let $flow := flow:get-runnable-flow(map:get($params, "flow-name"))
-  return
-    flow:run-flow($flow, map:get($params, "id"))
+  debug:dump-env(),
+
+  document {
+    let $flow-name := map:get($params, "flow-name")
+    let $resp :=
+      if ($flow-name) then
+        flow:get-flow($flow-name)
+      else
+        flow:get-flows()
+    let $_ := debug:log($resp)
+    return
+     $resp
+  }
 };
 
-declare function post(
+declare %rapi:transaction-mode("update") function post(
   $context as map:map,
   $params  as map:map,
   $input   as document-node()*
   ) as document-node()*
 {
-  let $flow := $input/object-node()
-  let $output := flow:run-transformers($flow, map:get($params, "id"))
+  debug:dump-env(),
+
+  let $flow as element(hub:flow) := $input/hub:flow
+  let $identifier := map:get($params, "identifier")
+  let $_ := flow:run-flow($flow, $identifier, map:map())
   return
-    if ($output instance of document-node()) then
-      $output
-    else
-      document {
-        $output
-      }
+    document { () }
 };

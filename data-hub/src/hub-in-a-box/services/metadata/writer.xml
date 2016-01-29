@@ -1,0 +1,13 @@
+<!-- Copyright 2016 MarkLogic Corporation.  All Rights Reserved. -->
+<metadata>
+  <title>writer</title>
+  <description>
+    <div>
+      Hub in a Box Writer entry point for Java
+    </div>
+  </description>
+  <method name="GET">
+    <param name="module-uri" />
+    <param name="identifier" />
+  </method>
+</metadata>
