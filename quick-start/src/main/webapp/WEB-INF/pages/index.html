@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorator="templates/base-template">
+<head>
+</head>
+<body>
+	<section layout:fragment="content" class="container-fluid">
+		<div id="message-div" class="row"></div>
+		<div th:replace="deployment/deployment :: content">...</div>
+	</section>
+	<div layout:fragment="page-script" th:remove="tag">
+		<div th:replace="deployment/deployment :: page-script" th:remove="tag">...</div>
+	</div>
+</body>
+</html>

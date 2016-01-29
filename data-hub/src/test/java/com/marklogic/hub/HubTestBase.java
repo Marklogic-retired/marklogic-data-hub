@@ -106,10 +106,6 @@ public class HubTestBase {
             e.printStackTrace();
             throw e;
         }
-        catch(Exception e) {
-            e.printStackTrace();
-            throw e;
-        }
     }
 
     protected static Document getXmlFromResource(String resourceName) throws IOException, ParserConfigurationException, SAXException {

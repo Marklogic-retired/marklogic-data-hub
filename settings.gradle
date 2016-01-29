@@ -5,6 +5,6 @@ include 'api'
 include 'services:webservice'
 */
 
-rootProject.name = 'Data Hub In a Box'
+rootProject.name = 'data-hub-in-a-box'
 include ':data-hub'
 include ':quick-start'

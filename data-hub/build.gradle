@@ -120,8 +120,8 @@ ext {
 }
 
 task generateRewriter(type: com.marklogic.gradle.task.XccTask) {
-    String custom = new File("data-hub/src/hub-in-a-box/rewriter.xml").getText('UTF-8')
-    String xqueryToRun = new File("data-hub/src/hub-in-a-box/build-rewriter.xqy").getText('UTF-8')
+    String custom = new File("$projectDir/src/hub-in-a-box/rewriter.xml").getText('UTF-8')
+    String xqueryToRun = new File("$projectDir/src/hub-in-a-box/build-rewriter.xqy").getText('UTF-8')
     xqueryToRun = xqueryToRun.replace('__CUSTOM_REWRITER__', custom)
     xccUrl = contentXccUrl
     xquery = xqueryToRun
