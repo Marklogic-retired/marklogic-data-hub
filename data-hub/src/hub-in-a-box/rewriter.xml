@@ -1,3 +1,4 @@
+<!-- Copyright 2016 MarkLogic Corporation.  All Rights Reserved. -->
 <rewriter xmlns="http://marklogic.com/xdmp/rewriter">
   <!-- Data Hub in a Box Rules -->
   <match-path matches="^/hub/(v\d+|LATEST)">

@@ -1,0 +1,11 @@
+<envelope xmlns="http://marklogic.com/hub-in-a-box/envelope">
+  <headers>
+    <testing xmlns="">123</testing>
+  </headers>
+  <triples></triples>
+  <content>
+    <employee xmlns="http://company.com/ns/employee">
+      <id>1</id>
+    </employee>
+  </content>
+</envelope>

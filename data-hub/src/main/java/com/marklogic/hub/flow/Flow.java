@@ -18,7 +18,8 @@ package com.marklogic.hub.flow;
 import java.util.List;
 
 import com.marklogic.hub.collector.Collector;
-import com.marklogic.hub.template.Template;
+import com.marklogic.hub.plugin.Plugin;
+import com.marklogic.hub.writer.Writer;
 
 public interface Flow {
     String getName();
@@ -27,8 +28,11 @@ public interface Flow {
     Collector getCollector();
     void setCollector(Collector collector);
 
-    void addTemplate(Template template);
+    void addPlugin(Plugin plugin);
 
     // make this immutable
-    List<Template> geTemplates();
+    List<Plugin> getPlugins();
+
+    void setWriter(Writer writer);
+    Writer getWriter();
 }

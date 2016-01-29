@@ -19,20 +19,35 @@ module namespace debug = "http://marklogic.com/hub-in-a-box/debug-lib";
 
 declare option xdmp:mapping "false";
 
+(:~
+ : Determines whether debugging is on or not
+ :
+ : @return - boolean: on or off
+ :)
 declare function debug:on() as xs:boolean
 {
   fn:true()
 };
 
+(:~
+ : Logs if debugging is on
+ :
+ : @param $items - the stuff to log
+ :)
 declare function debug:log($items)
 {
-  xdmp:log($items)
+  if (debug:on()) then
+    xdmp:log($items)
+  else
+    ()
 };
 
-(: TODO: add a switch to turn this on and off :)
+(:~
+ : Dumps the request environment. Useful for debugging
+ :)
 declare function debug:dump-env()
 {
-  xdmp:log((
+  debug:log((
     "",
     "REQUEST DETAILS:",
     "  " || xdmp:get-request-path(),

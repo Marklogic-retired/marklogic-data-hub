@@ -17,9 +17,6 @@ xquery version "1.0-ml";
 
 module namespace service = "http://marklogic.com/rest-api/resource/collector";
 
-import module namespace collector = "http://marklogic.com/hub-in-a-box/collector-lib"
-  at "/com.marklogic.hub/lib/collector-lib.xqy";
-
 import module namespace debug = "http://marklogic.com/hub-in-a-box/debug-lib"
   at "/com.marklogic.hub/lib/debug-lib.xqy";
 
@@ -31,12 +28,12 @@ declare option xdmp:mapping "false";
 (:~
  : Builds a JSON response common to get and post
  :)
-declare function service:build-response($map as map:map)
+declare function service:build-response($items as item()*)
   as document-node()
 {
-  let $items := map:get($map, "items")
-  return
+  document {
     json:to-array($items) ! xdmp:to-json(.)
+  }
 };
 
 (:
@@ -50,26 +47,14 @@ declare function post(
   ) as document-node()*
 {
   debug:dump-env(),
-  let $options := $input/node()
-  let $name := map:get($params, "name")
-  let $method := map:get($params, "method")
-  return
-    if ($method = "estimate") then
-      document {
-        collector:get-estimate($name, $options)
-      }
-    else if($method = "collect") then
-      let $start := map:get($params, "start") cast as xs:int
-      let $limit := map:get($params, "limit") cast as xs:int
-      return
-        document {
-          json:to-array(collector:run-collector($name, $start, $limit, $options)) ! xdmp:to-json(.)
-        }
 
-    else ()
+  (:let $options := $input/node():)
+  let $module-uri as xs:string := map:get($params, "module-uri")
+  return
+    service:build-response(flow:run-collector($module-uri, map:map()))
 };
 
-(:(:
+(:
   Uses a flow definition to run a flow
 :)
 declare function get(
@@ -77,10 +62,9 @@ declare function get(
   $params  as map:map
   ) as document-node()*
 {
-  let $flow-name := map:get($params, "flow-name")
-  let $flow := flow:get-runnable-flow($flow-name)
-  let $response := collector:run-collector($flow)
+  debug:dump-env(),
+
+  let $module-uri as xs:string := map:get($params, "module-uri")
   return
-    $response
-    (:service:build-response($response):)
-};:)
+    service:build-response(flow:run-collector($module-uri, map:map()))
+};
