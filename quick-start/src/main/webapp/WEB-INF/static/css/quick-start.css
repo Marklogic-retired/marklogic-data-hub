@@ -1,7 +1,7 @@
 div#header { 
     background-color: #404040;
     border: 1px solid #909090;
-    padding: 5px 15px; 
+    padding: 15px 15px; 
     color: #ffffff;
 }
 
@@ -25,5 +25,9 @@ div#header {
 #footer {
 	font-size: 12px;
 	text-align: center;
+}
+
+ul.alert {
+    padding-left: 30px;
 }
 
