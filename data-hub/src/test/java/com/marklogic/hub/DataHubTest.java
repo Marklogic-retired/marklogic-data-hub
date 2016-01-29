@@ -11,6 +11,7 @@ import org.junit.rules.ExpectedException;
 
 public class DataHubTest extends HubTestBase {
     private static String host;
+    private static int restPort;
     private static String user;
     private static String password;
 
@@ -21,25 +22,26 @@ public class DataHubTest extends HubTestBase {
     public static void setup() {
         Properties properties = getProperties();
         host = properties.getProperty("mlHost");
+        restPort = Integer.parseInt(properties.getProperty("mlRestPort"));
         user = properties.getProperty("mlUsername");
         password = properties.getProperty("mlPassword");
     }
 
     @Test
     public void testIsInstalled() {
-        DataHub dh = new DataHub(host, user, password);
+        DataHub dh = new DataHub(host, restPort, user, password);
         assertTrue(dh.isInstalled());
     }
 
     @Test
     public void testInstall() {
-        DataHub dh = new DataHub(host, user, password);
+        DataHub dh = new DataHub(host, restPort, user, password);
         dh.install();
     }
 
     @Test
     public void testValidateServer() throws ServerValidationException {
-        DataHub dh = new DataHub(host, user, password);
+        DataHub dh = new DataHub(host, restPort, user, password);
         dh.validateServer();
     }
 

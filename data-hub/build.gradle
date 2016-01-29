@@ -110,7 +110,7 @@ publishing {
 
 ext {
     mlAppConfig {
-        modulePaths.add("data-hub/src/hub-in-a-box")
+        modulePaths = ["data-hub/src/hub-in-a-box"]
         contentXccUrl = "xcc://${mlUsername}:${mlPassword}@${mlHost}:${mlRestPort}/${mlAppConfig.contentDatabaseName}"
     }
 }
