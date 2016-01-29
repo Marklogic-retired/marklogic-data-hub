@@ -46,13 +46,21 @@ public class DataHub {
     public static String HUB_NAME = "data-hub-in-a-box";
     public static int FORESTS_PER_HOST = 4;
     private String host;
+    private int restPort;
     private String username;
     private String password;
+    
+    private final static int DEFAULT_REST_PORT = 8010;
 
     public DataHub(String host, String username, String password) {
+        this(host, DEFAULT_REST_PORT, username, password);
+    }
+    
+    public DataHub(String host, int restPort, String username, String password) {
         config = new ManageConfig(host, 8002, username, password);
         client = new ManageClient(config);
         this.host = host;
+        this.restPort = restPort;
         this.username = username;
         this.password = password;
     }
@@ -86,7 +94,7 @@ public class DataHub {
         AdminManager manager = new AdminManager();
         AppConfig config = new AppConfig();
         config.setHost(host);
-        config.setRestPort(8010);
+        config.setRestPort(restPort);
         config.setName(HUB_NAME);
         config.setRestAdminUsername(username);
         config.setRestAdminPassword(password);
