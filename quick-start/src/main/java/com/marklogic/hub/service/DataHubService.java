@@ -9,12 +9,11 @@ import com.marklogic.hub.DataHub;
 import com.marklogic.hub.ServerValidationException;
 import com.marklogic.hub.config.EnvironmentConfiguration;
 import com.marklogic.hub.exception.DataHubException;
-import com.marklogic.hub.web.controller.MainPageController;
 
 @Service
 public class DataHubService {
 	
-	private static final Logger LOGGER = LoggerFactory.getLogger(MainPageController.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(DataHubService.class);
 	
 	@Autowired
 	private EnvironmentConfiguration environmentConfiguration;
