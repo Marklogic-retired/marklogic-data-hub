@@ -99,7 +99,7 @@ public class DataHub {
         config.setRestAdminUsername(username);
         config.setRestAdminPassword(password);
         List<String> paths = new ArrayList<String>();
-        paths.add(new File("src/hub-in-a-box").getAbsolutePath());
+        paths.add(new File("../data-hub/src/hub-in-a-box").getAbsolutePath());
         config.setModulePaths(paths);
 
         SimpleAppDeployer deployer = new SimpleAppDeployer(client, manager);

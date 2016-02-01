@@ -84,7 +84,13 @@ public class MainPageController extends BaseController {
 		updateConfiguration(deploymentForm);
 		try {
 			deploymentForm.setServerAcceptable(dataHubService.isServerAcceptable());
-			deploymentForm.setCanBeDeployed(deploymentForm.isServerAcceptable());
+			if(deploymentForm.isInstalled()) {
+				deploymentForm.setInstalled(true);
+				deploymentForm.setCanBeDeployed(false);
+			} else {
+				deploymentForm.setInstalled(false);
+				deploymentForm.setCanBeDeployed(deploymentForm.isServerAcceptable());
+			}
 		} catch(DataHubException e) {
 			LOGGER.error(e.getMessage(), e);
 			deploymentForm.setCanBeDeployed(false);
