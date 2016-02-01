@@ -48,6 +48,22 @@ public class EnvironmentConfiguration {
 		return value;
 	}
 	
+	public String getMLRestPort() {
+		String value = this.properties.getProperty("mlRestPort");
+		if(value == null) {
+			value = this.environment.getProperty("mlRestPort.default");
+		}
+		return value;
+	}
+	
+	public String getMLAuth() {
+		String value = this.properties.getProperty("mlAuth");
+		if(value == null) {
+			value = this.environment.getProperty("mlAuth.default");
+		}
+		return value;
+	}
+	
 	public void setMLHost(String mlHost) {
 		this.properties.setProperty("mlHost", mlHost);
 	}

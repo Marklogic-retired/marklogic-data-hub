@@ -54,7 +54,7 @@ public class FlowManager extends ResourceManager {
         this.client.init(NAME, this);
     }
 
-    List<Flow> getFlows() {
+    public List<Flow> getFlows() {
         RequestParameters params = new RequestParameters();
         ServiceResultIterator resultItr = this.getServices().get(params);
         if (resultItr == null || ! resultItr.hasNext()) {
@@ -80,7 +80,7 @@ public class FlowManager extends ResourceManager {
         return flows;
     }
 
-    Flow getFlow(String flowName) {
+    public Flow getFlow(String flowName) {
         RequestParameters params = new RequestParameters();
         params.add("flow-name", flowName);
         ServiceResultIterator resultItr = this.getServices().get(params);
@@ -93,18 +93,18 @@ public class FlowManager extends ResourceManager {
         return flowFromXml(parent.getDocumentElement());
     }
 
-    void installFlow(Flow flow) {
+    public void installFlow(Flow flow) {
 
     }
 
-    void uninstallFlow(String flowName) {
+    public void uninstallFlow(String flowName) {
 
     }
 
     // might want to add Job tracking support
     // by returning a Job or some such.
     // Depends a lot on if we go full in with spring batch or not
-    void runFlow(Flow flow, int batchSize) throws XMLStreamException {
+    public void runFlow(Flow flow, int batchSize) throws XMLStreamException {
         Collector c = flow.getCollector();
         if (c instanceof ServerCollector) {
             ((ServerCollector)c).setClient(client);
