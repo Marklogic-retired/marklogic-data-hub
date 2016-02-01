@@ -57,6 +57,7 @@ public class MainPageController extends BaseController {
 		try {
 			dataHubService.uninstall();
 			deploymentForm.setInstalled(false);
+			deploymentForm.setCanBeDeployed(true);
 		} catch(DataHubException e) {
 			LOGGER.error(e.getMessage(), e);
 			displayError(model, null, null, e.getMessage());
