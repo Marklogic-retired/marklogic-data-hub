@@ -36,6 +36,7 @@ public class MainPageController extends BaseController {
 	@RequestMapping(method = RequestMethod.GET)
 	public String getHomePage(@ModelAttribute("deploymentForm") DeploymentForm deploymentForm, Model model) {
 		deploymentForm.setMlHost(environmentConfiguration.getMLHost());
+		deploymentForm.setMlRestPort(environmentConfiguration.getMLRestPort());
 		deploymentForm.setMlUsername(environmentConfiguration.getMLUsername());
 		deploymentForm.setMlUsername(environmentConfiguration.getMLUsername());
 		deploymentForm.setMlPassword(environmentConfiguration.getMLPassword());
@@ -74,6 +75,7 @@ public class MainPageController extends BaseController {
 	
 	private void updateConfiguration(DeploymentForm deploymentForm) {
 		environmentConfiguration.setMLHost(deploymentForm.getMlHost());
+		environmentConfiguration.setMLRestPort(deploymentForm.getMlRestPort());
 		environmentConfiguration.setMLUsername(deploymentForm.getMlUsername());
 		environmentConfiguration.setMLPassword(deploymentForm.getMlPassword());
 	}

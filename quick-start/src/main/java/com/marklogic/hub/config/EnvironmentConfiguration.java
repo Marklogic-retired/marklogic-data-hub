@@ -68,6 +68,10 @@ public class EnvironmentConfiguration {
 		this.properties.setProperty("mlHost", mlHost);
 	}
 	
+	public void setMLRestPort(String mlRestPort) {
+	    this.properties.setProperty("mlRestPort", mlRestPort);
+	}
+	
 	public void setMLUsername(String mlUsername) {
 		this.properties.setProperty("mlUsername", mlUsername);
 	}

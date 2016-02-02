@@ -29,10 +29,13 @@ public class DataHubService {
 	
 	private DataHub getDataHub() throws DataHubException {
 		try {
-			LOGGER.info("Host is "+environmentConfiguration.getMLHost());
-			LOGGER.info("username is "+environmentConfiguration.getMLUsername());
-			LOGGER.info("password is "+environmentConfiguration.getMLPassword());
-			return new DataHub(environmentConfiguration.getMLHost(), environmentConfiguration.getMLUsername(), 
+            LOGGER.info("Connecting to DataHub at host is {}:{} with user={}",
+                    new Object[] {
+                            environmentConfiguration.getMLHost()
+                            ,environmentConfiguration.getMLRestPort()
+                            ,environmentConfiguration.getMLUsername()
+                            });
+			return new DataHub(environmentConfiguration.getMLHost(), Integer.parseInt(environmentConfiguration.getMLRestPort()), environmentConfiguration.getMLUsername(), 
 					environmentConfiguration.getMLPassword());
 		} catch(Throwable e) {
 			throw new DataHubException(e.getMessage(), e);

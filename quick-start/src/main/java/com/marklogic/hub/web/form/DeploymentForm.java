@@ -2,6 +2,7 @@ package com.marklogic.hub.web.form;
 
 public class DeploymentForm {
     private String mlHost;
+    private String mlRestPort;
     private String mlUsername;
     private String mlPassword;
     private boolean serverValidated;
@@ -15,6 +16,14 @@ public class DeploymentForm {
 
     public void setMlHost(String mlHost) {
         this.mlHost = mlHost;
+    }
+
+    public String getMlRestPort() {
+        return mlRestPort;
+    }
+
+    public void setMlRestPort(String restPort) {
+        this.mlRestPort = restPort;
     }
 
     public String getMlUsername() {
