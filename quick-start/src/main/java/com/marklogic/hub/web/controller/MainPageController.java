@@ -9,6 +9,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.SessionAttributes;
 
 import com.marklogic.hub.config.EnvironmentConfiguration;
 import com.marklogic.hub.exception.DataHubException;
@@ -17,6 +18,7 @@ import com.marklogic.hub.web.form.DeploymentForm;
 
 @Controller
 @RequestMapping("/")
+@SessionAttributes("deploymentForm")
 public class MainPageController extends BaseController {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(MainPageController.class);
@@ -26,9 +28,15 @@ public class MainPageController extends BaseController {
 	@Autowired
 	private DataHubService dataHubService;
 	
+	@ModelAttribute("deploymentForm")
+	public DeploymentForm getDeploymentForm() {
+		return new DeploymentForm();
+	}
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public String getHomePage(@ModelAttribute("deploymentForm") DeploymentForm deploymentForm, Model model) {
 		deploymentForm.setMlHost(environmentConfiguration.getMLHost());
+		deploymentForm.setMlRestPort(environmentConfiguration.getMLRestPort());
 		deploymentForm.setMlUsername(environmentConfiguration.getMLUsername());
 		deploymentForm.setMlUsername(environmentConfiguration.getMLUsername());
 		deploymentForm.setMlPassword(environmentConfiguration.getMLPassword());
@@ -57,6 +65,7 @@ public class MainPageController extends BaseController {
 		try {
 			dataHubService.uninstall();
 			deploymentForm.setInstalled(false);
+			deploymentForm.setCanBeDeployed(true);
 		} catch(DataHubException e) {
 			LOGGER.error(e.getMessage(), e);
 			displayError(model, null, null, e.getMessage());
@@ -66,6 +75,7 @@ public class MainPageController extends BaseController {
 	
 	private void updateConfiguration(DeploymentForm deploymentForm) {
 		environmentConfiguration.setMLHost(deploymentForm.getMlHost());
+		environmentConfiguration.setMLRestPort(deploymentForm.getMlRestPort());
 		environmentConfiguration.setMLUsername(deploymentForm.getMlUsername());
 		environmentConfiguration.setMLPassword(deploymentForm.getMlPassword());
 	}
@@ -76,7 +86,13 @@ public class MainPageController extends BaseController {
 		updateConfiguration(deploymentForm);
 		try {
 			deploymentForm.setServerAcceptable(dataHubService.isServerAcceptable());
-			deploymentForm.setCanBeDeployed(true);
+			if(deploymentForm.isInstalled()) {
+				deploymentForm.setInstalled(true);
+				deploymentForm.setCanBeDeployed(false);
+			} else {
+				deploymentForm.setInstalled(false);
+				deploymentForm.setCanBeDeployed(deploymentForm.isServerAcceptable());
+			}
 		} catch(DataHubException e) {
 			LOGGER.error(e.getMessage(), e);
 			deploymentForm.setCanBeDeployed(false);

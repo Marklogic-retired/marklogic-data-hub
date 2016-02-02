@@ -9,12 +9,11 @@ import com.marklogic.hub.DataHub;
 import com.marklogic.hub.ServerValidationException;
 import com.marklogic.hub.config.EnvironmentConfiguration;
 import com.marklogic.hub.exception.DataHubException;
-import com.marklogic.hub.web.controller.MainPageController;
 
 @Service
 public class DataHubService {
 	
-	private static final Logger LOGGER = LoggerFactory.getLogger(MainPageController.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(DataHubService.class);
 	
 	@Autowired
 	private EnvironmentConfiguration environmentConfiguration;
@@ -30,10 +29,13 @@ public class DataHubService {
 	
 	private DataHub getDataHub() throws DataHubException {
 		try {
-			LOGGER.info("Host is "+environmentConfiguration.getMLHost());
-			LOGGER.info("username is "+environmentConfiguration.getMLUsername());
-			LOGGER.info("password is "+environmentConfiguration.getMLPassword());
-			return new DataHub(environmentConfiguration.getMLHost(), environmentConfiguration.getMLUsername(), 
+            LOGGER.info("Connecting to DataHub at host is {}:{} with user={}",
+                    new Object[] {
+                            environmentConfiguration.getMLHost()
+                            ,environmentConfiguration.getMLRestPort()
+                            ,environmentConfiguration.getMLUsername()
+                            });
+			return new DataHub(environmentConfiguration.getMLHost(), Integer.parseInt(environmentConfiguration.getMLRestPort()), environmentConfiguration.getMLUsername(), 
 					environmentConfiguration.getMLPassword());
 		} catch(Throwable e) {
 			throw new DataHubException(e.getMessage(), e);
