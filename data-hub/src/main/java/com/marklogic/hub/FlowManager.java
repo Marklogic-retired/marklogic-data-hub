@@ -156,7 +156,7 @@ public class FlowManager extends ResourceManager {
         }
     }
 
-    void runFlowsInParallel(Flow ... flows) {
+    public void runFlowsInParallel(Flow ... flows) {
 
     }
 

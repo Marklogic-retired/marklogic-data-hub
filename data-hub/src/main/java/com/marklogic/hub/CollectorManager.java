@@ -20,19 +20,19 @@ import java.util.List;
 import com.marklogic.hub.collector.Collector;
 
 public class CollectorManager {
-    List<Collector> getCollectors() {
+    public List<Collector> getCollectors() {
         return null;
     }
 
-    void installCollector(Collector collector) {
+    public void installCollector(Collector collector) {
 
     }
 
-    void uninstallCollector(String collectorName) {
+    public void uninstallCollector(String collectorName) {
 
     }
 
-    List<String> runCollector(Collector collector) {
+    public List<String> runCollector(Collector collector) {
         return null;
     }
 

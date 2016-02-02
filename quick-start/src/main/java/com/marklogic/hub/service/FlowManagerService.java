@@ -2,6 +2,8 @@ package com.marklogic.hub.service;
 
 import java.util.List;
 
+import javax.xml.stream.XMLStreamException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +14,7 @@ import com.marklogic.client.DatabaseClientFactory;
 import com.marklogic.client.DatabaseClientFactory.Authentication;
 import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.config.EnvironmentConfiguration;
+import com.marklogic.hub.exception.FlowManagerException;
 import com.marklogic.hub.flow.Flow;
 
 @Service
@@ -40,6 +43,30 @@ public class FlowManagerService {
 	public Flow getFlow(String flowName) {
 		FlowManager flowManager = getFlowManager();
 		return flowManager.getFlow(flowName);
+	}
+	
+	public void installFlow(Flow flow) {
+		FlowManager flowManager = getFlowManager();
+		flowManager.installFlow(flow);
+	}
+	
+	public void uninstallFlow(String flowName) {
+		FlowManager flowManager = getFlowManager();
+		flowManager.uninstallFlow(flowName);
+	}
+	
+	public void runFlow(Flow flow, int batchSize) {
+		FlowManager flowManager = getFlowManager();
+		try {
+			flowManager.runFlow(flow, batchSize);
+		} catch (XMLStreamException e) {
+			throw new FlowManagerException(e.getMessage(), e);
+		}
+	}
+	
+	public void runFlowsInParallel(Flow... flows) {
+		FlowManager flowManager = getFlowManager();
+		flowManager.runFlowsInParallel(flows);
 	}
 	
 	
