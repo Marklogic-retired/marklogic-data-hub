@@ -12,12 +12,12 @@ import com.marklogic.hub.exception.DataHubException;
 
 @Service
 public class DataHubService {
-	
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(DataHubService.class);
-	
+
 	@Autowired
 	private EnvironmentConfiguration environmentConfiguration;
-	
+
 	public void install() throws DataHubException {
 		DataHub dataHub = getDataHub();
 		try {
@@ -26,7 +26,16 @@ public class DataHubService {
 			throw new DataHubException(e.getMessage(), e);
 		}
 	}
-	
+
+    public void installUserModules() throws DataHubException {
+        DataHub dataHub = getDataHub();
+        try {
+            dataHub.installUserModules("/tmp/blah/");
+        } catch(Throwable e) {
+            throw new DataHubException(e.getMessage(), e);
+        }
+    }
+
 	private DataHub getDataHub() throws DataHubException {
 		try {
             LOGGER.info("Connecting to DataHub at host is {}:{} with user={}",
@@ -35,13 +44,13 @@ public class DataHubService {
                             ,environmentConfiguration.getMLRestPort()
                             ,environmentConfiguration.getMLUsername()
                             });
-			return new DataHub(environmentConfiguration.getMLHost(), Integer.parseInt(environmentConfiguration.getMLRestPort()), environmentConfiguration.getMLUsername(), 
+			return new DataHub(environmentConfiguration.getMLHost(), Integer.parseInt(environmentConfiguration.getMLRestPort()), environmentConfiguration.getMLUsername(),
 					environmentConfiguration.getMLPassword());
 		} catch(Throwable e) {
 			throw new DataHubException(e.getMessage(), e);
 		}
 	}
-	
+
 	public boolean isInstalled() throws DataHubException {
 		DataHub dataHub = getDataHub();
 		try {
@@ -50,7 +59,7 @@ public class DataHubService {
 			throw new DataHubException(e.getMessage(), e);
 		}
 	}
-	
+
 	public boolean isServerAcceptable() throws DataHubException {
 		DataHub dataHub = getDataHub();
 		try {
@@ -62,7 +71,7 @@ public class DataHubService {
 			throw new DataHubException(e.getMessage(), e);
 		}
 	}
-	
+
 	public void uninstall() throws DataHubException {
 		DataHub dataHub = getDataHub();
 		try {

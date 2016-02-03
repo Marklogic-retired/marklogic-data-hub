@@ -40,9 +40,14 @@ import com.marklogic.hub.writer.DefaultWriter;
 import com.marklogic.hub.writer.ServerWriter;
 import com.marklogic.hub.writer.Writer;
 
+/**
+ * An abstract base class representing a Flow. A flow is a sequence of plugins that transform
+ * a document.
+ */
 public abstract class AbstractFlow implements Flow {
 
-    private String name;
+    private String domainName;
+    private String flowName;
     private String type;
     private Collector collector;
     private boolean envelopeEnabled = true;
@@ -53,8 +58,9 @@ public abstract class AbstractFlow implements Flow {
         deserialize(xml);
     }
 
-    public AbstractFlow(String name, String type) {
-        this.name = name;
+    public AbstractFlow(String domainName, String flowName, String type) {
+        this.domainName = domainName;
+        this.flowName = flowName;
         this.type = type;
     }
 
@@ -69,7 +75,10 @@ public abstract class AbstractFlow implements Flow {
             String nodeName = node.getLocalName();
             switch(nodeName) {
             case "name":
-                this.name = node.getTextContent();
+                this.flowName = node.getTextContent();
+                break;
+            case "domain":
+                this.domainName = node.getTextContent();
                 break;
             case "collector":
                 String colType = node.getAttributes().getNamedItem("type").getNodeValue();
@@ -139,35 +148,67 @@ public abstract class AbstractFlow implements Flow {
         }
     }
 
+    /**
+     * Retrieves the name of the domain that this flow belongs to
+     */
     @Override
-    public String getName() {
-        return this.name;
+    public String getDomainName() {
+        return this.domainName;
     }
 
+    /**
+     * Retrieves the flow name
+     */
+    @Override
+    public String getName() {
+        return this.flowName;
+    }
+
+    /**
+     * Retrieves the type of flow
+     */
     public String getType() {
         return this.type;
     }
 
+    /**
+     * Retrieves the flow's collector
+     */
     public Collector getCollector() {
         return this.collector;
     }
 
+    /**
+     * sets the flow's collector
+     */
     public void setCollector(Collector collector) {
         this.collector = collector;
     }
 
+    /**
+     * Retrieves the flow's writer
+     */
     public Writer getWriter() {
         return this.writer;
     }
 
+    /**
+     * sets the flow's writer
+     */
     public void setWriter(Writer writer) {
         this.writer = writer;
     }
 
+    /**
+     * Whether or not to wrap the document in an envelope
+     */
     void enableEnvelope(boolean enable) {
         this.envelopeEnabled = enable;
     }
 
+    /**
+     * Whether or not the document is wrapped in an envelope
+     */
     boolean isEnvelopeEnabled() {
         return this.envelopeEnabled;
     }
@@ -185,6 +226,9 @@ public abstract class AbstractFlow implements Flow {
         }
     }
 
+    /**
+     * Serializes the flow into an xml string
+     */
     @Override
     public String serialize() {
         try {
@@ -194,7 +238,11 @@ public abstract class AbstractFlow implements Flow {
             serializer.writeStartElement("flow");
 
             serializer.writeStartElement("name");
-            serializer.writeCharacters(this.name);
+            serializer.writeCharacters(this.flowName);
+            serializer.writeEndElement();
+
+            serializer.writeStartElement("domain");
+            serializer.writeCharacters(this.domainName);
             serializer.writeEndElement();
 
             serializer.writeStartElement("type");
@@ -229,11 +277,17 @@ public abstract class AbstractFlow implements Flow {
         }
     }
 
+    /**
+     * Adds a plugin to the flow
+     */
     @Override
     public void addPlugin(Plugin plugin) {
         plugins.add(plugin);
     }
 
+    /**
+     * Gets the plugins in the flow
+     */
     @Override
     public List<Plugin> getPlugins() {
         return plugins;

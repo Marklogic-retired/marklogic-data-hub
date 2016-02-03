@@ -20,7 +20,6 @@ import javax.xml.stream.XMLStreamWriter;
 
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.extensions.ResourceManager;
-import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.util.RequestParameters;
 
 public class ServerWriter extends AbstractWriter {

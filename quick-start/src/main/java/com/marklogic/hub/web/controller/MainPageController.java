@@ -20,19 +20,19 @@ import com.marklogic.hub.web.form.DeploymentForm;
 @RequestMapping("/")
 @SessionAttributes("deploymentForm")
 public class MainPageController extends BaseController {
-	
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(MainPageController.class);
-	
+
 	@Autowired
 	private EnvironmentConfiguration environmentConfiguration;
 	@Autowired
 	private DataHubService dataHubService;
-	
+
 	@ModelAttribute("deploymentForm")
 	public DeploymentForm getDeploymentForm() {
 		return new DeploymentForm();
 	}
-	
+
 	@RequestMapping(method = RequestMethod.GET)
 	public String getHomePage(@ModelAttribute("deploymentForm") DeploymentForm deploymentForm, Model model) {
 		deploymentForm.setMlHost(environmentConfiguration.getMLHost());
@@ -42,7 +42,7 @@ public class MainPageController extends BaseController {
 		deploymentForm.setMlPassword(environmentConfiguration.getMLPassword());
 		return "index";
 	}
-	
+
 	@RequestMapping(params = "install", method = RequestMethod.POST)
 	public String install(@ModelAttribute("deploymentForm") DeploymentForm deploymentForm, BindingResult bindingResult, Model model) {
 		LOGGER.info("Trying to deploy to MarkLogic");
@@ -57,7 +57,7 @@ public class MainPageController extends BaseController {
 		}
 		return "index";
 	}
-	
+
 	@RequestMapping(params = "uninstall", method = RequestMethod.POST)
 	public String uninstall(@ModelAttribute("deploymentForm") DeploymentForm deploymentForm, BindingResult bindingResult, Model model) {
 		LOGGER.info("Trying to uninstall from MarkLogic");
@@ -72,7 +72,19 @@ public class MainPageController extends BaseController {
 		}
 		return "index";
 	}
-	
+
+    @RequestMapping(params = "installUserModules", method = RequestMethod.POST)
+    public String installUserModules(@ModelAttribute("deploymentForm") DeploymentForm deploymentForm, BindingResult bindingResult, Model model) {
+        LOGGER.info("Trying to Install User Modules");
+        updateConfiguration(deploymentForm);
+        try {
+            dataHubService.installUserModules();
+        } catch(DataHubException e) {
+            LOGGER.error(e.getMessage(), e);
+            displayError(model, null, null, e.getMessage());
+        }
+        return "index";
+    }
 	private void updateConfiguration(DeploymentForm deploymentForm) {
 		environmentConfiguration.setMLHost(deploymentForm.getMlHost());
 		environmentConfiguration.setMLRestPort(deploymentForm.getMlRestPort());

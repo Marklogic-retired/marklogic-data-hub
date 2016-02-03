@@ -1,5 +1,6 @@
 <flow xmlns="http://marklogic.com/hub-in-a-box">
   <name>my-test-flow</name>
+  <domain>test</domain>
   <type>simple</type>
   <collector type="xquery" module="/com.marklogic.hub/collectors/query.xqy"></collector>
   <plugins>

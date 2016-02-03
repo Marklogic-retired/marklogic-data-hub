@@ -1,7 +1,6 @@
 package com.marklogic.hub.web.controller;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -22,48 +21,48 @@ import com.marklogic.hub.service.FlowManagerService;
 @Controller
 @RequestMapping("/flows")
 public class FlowManagerController extends BaseController {
-	
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(FlowManagerController.class);
-	
+
 	@Autowired
 	private FlowManagerService flowManagerService;
-	
+
 	@RequestMapping(method = RequestMethod.GET)
 	@ResponseBody
-	public List<Flow> getFlows(Model model) {
-		return flowManagerService.getFlows();
+	public List<Flow> getFlows(String domainName, Model model) {
+		return flowManagerService.getFlows(domainName);
 	}
-	
-	@RequestMapping(value = "/{flowName}", method = RequestMethod.GET)
+
+	@RequestMapping(value = "/{domainName}/{flowName}", method = RequestMethod.GET)
 	@ResponseBody
-	public Flow getFlow(@PathVariable String flowName) {
-		return flowManagerService.getFlow(flowName);
+	public Flow getFlow(@PathVariable String domainName, @PathVariable String flowName) {
+		return flowManagerService.getFlow(domainName, flowName);
 	}
-	
-	@RequestMapping(value = "/{flowName}/install", method = RequestMethod.POST)
-	public void installFlow(@PathVariable String flowName) {
-		final Flow flow = flowManagerService.getFlow(flowName);
+
+	@RequestMapping(value = "/{domainName}/{flowName}/install", method = RequestMethod.POST)
+	public void installFlow(@PathVariable String domainName, @PathVariable String flowName) {
+		final Flow flow = flowManagerService.getFlow(domainName, flowName);
 		flowManagerService.installFlow(flow);
 	}
-	
+
 	@RequestMapping(value = "/{flowName}/uninstall", method = RequestMethod.POST)
 	public void uninstallFlow(@PathVariable String flowName) {
 		flowManagerService.uninstallFlow(flowName);
 	}
-	
-	@RequestMapping(value = "/{flowName}/run", method = RequestMethod.POST)
-	public void runFlow(@PathVariable String flowName) {
-		final Flow flow = flowManagerService.getFlow(flowName);
+
+	@RequestMapping(value = "/{domainName}/{flowName}/run", method = RequestMethod.POST)
+	public void runFlow(@PathVariable String domainName, @PathVariable String flowName) {
+		final Flow flow = flowManagerService.getFlow(domainName, flowName);
 		//TODO update and move BATCH SIZE TO a constant or config - confirm desired behavior
 		flowManagerService.runFlow(flow, 100);
 	}
-	
-	@RequestMapping(value = "/runInParallel", method = RequestMethod.POST)
-	public void runFlowsInParallel(HttpServletRequest request) {
+
+	@RequestMapping(value = "/{domainName}/runInParallel", method = RequestMethod.POST)
+	public void runFlowsInParallel(HttpServletRequest request, @PathVariable String domainName) {
 		String[] flowNames = request.getParameterValues("flowName");
 		List<Flow> flows = new ArrayList<Flow>();
 		for (String flowName: flowNames) {
-			final Flow flow = flowManagerService.getFlow(flowName);
+			final Flow flow = flowManagerService.getFlow(domainName, flowName);
 			flows.add(flow);
 		}
 		flowManagerService.runFlowsInParallel(flows.toArray(new Flow[flows.size()]));

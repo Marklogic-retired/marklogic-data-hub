@@ -13,27 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.marklogic.hub.flow;
+package com.marklogic.hub.domain;
 
-import java.util.List;
+import org.w3c.dom.Element;
 
-import com.marklogic.hub.collector.Collector;
-import com.marklogic.hub.plugin.Plugin;
-import com.marklogic.hub.writer.Writer;
+/**
+ * An implementation of the Domain base class
+ */
+public class DomainImpl extends AbstractDomain {
 
-public interface Flow {
-    String getDomainName();
-    String getName();
-    String serialize();
+    public DomainImpl(Element xml) {
+        super(xml);
+    }
 
-    Collector getCollector();
-    void setCollector(Collector collector);
+    public DomainImpl(String name) {
+        super(name);
+    }
 
-    void addPlugin(Plugin plugin);
-
-    // make this immutable
-    List<Plugin> getPlugins();
-
-    void setWriter(Writer writer);
-    Writer getWriter();
 }

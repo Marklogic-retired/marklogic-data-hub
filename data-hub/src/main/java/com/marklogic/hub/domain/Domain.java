@@ -13,27 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.marklogic.hub.flow;
+package com.marklogic.hub.domain;
 
 import java.util.List;
 
-import com.marklogic.hub.collector.Collector;
-import com.marklogic.hub.plugin.Plugin;
-import com.marklogic.hub.writer.Writer;
+import com.marklogic.hub.flow.Flow;
 
-public interface Flow {
-    String getDomainName();
+/**
+ * A domain object. The data hub groups data by domains.
+ */
+public interface Domain {
+    /**
+     * Gets the Domain name
+     * @return the domain name
+     */
     String getName();
+
+    /**
+     * Serializes the Domain as an XML string
+     * @return the serialized XML string
+     */
     String serialize();
 
-    Collector getCollector();
-    void setCollector(Collector collector);
-
-    void addPlugin(Plugin plugin);
-
-    // make this immutable
-    List<Plugin> getPlugins();
-
-    void setWriter(Writer writer);
-    Writer getWriter();
+    /**
+     * Returns all flows registered to the domain
+     * @return a list of flows
+     */
+    List<Flow> getFlows();
 }
