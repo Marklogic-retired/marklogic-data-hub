@@ -47,7 +47,7 @@ import com.marklogic.hub.writer.Writer;
 public abstract class AbstractFlow implements Flow {
 
     private String domainName;
-    private String name;
+    private String flowName;
     private String type;
     private Collector collector;
     private boolean envelopeEnabled = true;
@@ -58,9 +58,9 @@ public abstract class AbstractFlow implements Flow {
         deserialize(xml);
     }
 
-    public AbstractFlow(String domainName, String name, String type) {
+    public AbstractFlow(String domainName, String flowName, String type) {
         this.domainName = domainName;
-        this.name = name;
+        this.flowName = flowName;
         this.type = type;
     }
 
@@ -75,7 +75,7 @@ public abstract class AbstractFlow implements Flow {
             String nodeName = node.getLocalName();
             switch(nodeName) {
             case "name":
-                this.name = node.getTextContent();
+                this.flowName = node.getTextContent();
                 break;
             case "domain":
                 this.domainName = node.getTextContent();
@@ -161,7 +161,7 @@ public abstract class AbstractFlow implements Flow {
      */
     @Override
     public String getName() {
-        return this.name;
+        return this.flowName;
     }
 
     /**
@@ -238,7 +238,7 @@ public abstract class AbstractFlow implements Flow {
             serializer.writeStartElement("flow");
 
             serializer.writeStartElement("name");
-            serializer.writeCharacters(this.name);
+            serializer.writeCharacters(this.flowName);
             serializer.writeEndElement();
 
             serializer.writeStartElement("domain");
