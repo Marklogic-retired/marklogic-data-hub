@@ -15,7 +15,7 @@
 :)
 xquery version "1.0-ml";
 
-module namespace service = "http://marklogic.com/rest-api/resource/flow";
+module namespace service = "http://marklogic.com/rest-api/resource/domain";
 
 import module namespace debug = "http://marklogic.com/hub-in-a-box/debug-lib"
   at "/com.marklogic.hub/lib/debug-lib.xqy";
@@ -30,10 +30,10 @@ declare namespace hub = "http://marklogic.com/hub-in-a-box";
 declare option xdmp:mapping "false";
 
 (:~
- : Entry point for java to get flow(s).
+ : Entry point for java to get domain(s).
  :
- : if the "flow-name" param is given then return a flow. Otherwise
- : return all flows.
+ : if the "domain-name" param is given then return a domain. Otherwise
+ : return all domains.
  :
  :)
 declare function get(
@@ -45,34 +45,13 @@ declare function get(
 
   document {
     let $domain-name := map:get($params, "domain-name")
-    let $flow-name := map:get($params, "flow-name")
     let $resp :=
-      if ($flow-name) then
-        flow:get-flow($domain-name, $flow-name)
+      if ($domain-name) then
+        flow:get-domain($domain-name)
       else
-        flow:get-flows($domain-name)
+        flow:get-domains()
     let $_ := debug:log($resp)
     return
      $resp
   }
-};
-
-(:~
- : Entry point for java to run a flow.
- :
- : The flow xml is provided in the request body
- :)
-declare %rapi:transaction-mode("update") function post(
-  $context as map:map,
-  $params  as map:map,
-  $input   as document-node()*
-  ) as document-node()*
-{
-  debug:dump-env(),
-
-  let $flow as element(hub:flow) := $input/hub:flow
-  let $identifier := map:get($params, "identifier")
-  let $_ := flow:run-flow($flow, $identifier, map:map())
-  return
-    document { () }
 };

@@ -54,8 +54,14 @@ public class FlowManager extends ResourceManager {
         this.client.init(NAME, this);
     }
 
-    public List<Flow> getFlows() {
+    /**
+     * Retrieves a list of flows installed on the MarkLogic server
+     * @param domainName - the domain from which to fetch the flows
+     * @return - a list of flows for the given domain
+     */
+    public List<Flow> getFlows(String domainName) {
         RequestParameters params = new RequestParameters();
+        params.add("domain-name", domainName);
         ServiceResultIterator resultItr = this.getServices().get(params);
         if (resultItr == null || ! resultItr.hasNext()) {
             return null;
@@ -80,8 +86,15 @@ public class FlowManager extends ResourceManager {
         return flows;
     }
 
-    public Flow getFlow(String flowName) {
+    /**
+     * Retrieves a named flow from a given domain
+     * @param domainName - the domain that the flow belongs to
+     * @param flowName - the name of the flow to get
+     * @return the flow
+     */
+    public Flow getFlow(String domainName, String flowName) {
         RequestParameters params = new RequestParameters();
+        params.add("domain-name", domainName);
         params.add("flow-name", flowName);
         ServiceResultIterator resultItr = this.getServices().get(params);
         if (resultItr == null || ! resultItr.hasNext()) {
@@ -104,7 +117,12 @@ public class FlowManager extends ResourceManager {
     // might want to add Job tracking support
     // by returning a Job or some such.
     // Depends a lot on if we go full in with spring batch or not
-    public void runFlow(Flow flow, int batchSize) throws XMLStreamException {
+    /**
+     * Runs a given flow
+     * @param flow - the flow to run
+     * @param batchSize - the size to use for batching transactions
+     */
+    public void runFlow(Flow flow, int batchSize) {
         Collector c = flow.getCollector();
         if (c instanceof ServerCollector) {
             ((ServerCollector)c).setClient(client);
@@ -160,7 +178,12 @@ public class FlowManager extends ResourceManager {
 
     }
 
-    Flow flowFromXml(Element doc) {
+    /**
+     * Turns an XML document into a flow
+     * @param doc - the xml document representing a flow
+     * @return a Flow instance
+     */
+    public static Flow flowFromXml(Element doc) {
         Flow f = null;
 
         String type = null;
@@ -177,6 +200,9 @@ public class FlowManager extends ResourceManager {
         return f;
     }
 
+    /**
+     * A class to run a flow
+     */
     class FlowRunner extends ResourceManager {
         static final public String NAME = "flow";
 
@@ -185,7 +211,14 @@ public class FlowManager extends ResourceManager {
             client.init(NAME, this);
         }
 
-        public void run(Flow flow, String identifier, Transaction transaction) throws XMLStreamException {
+        /**
+         * Runs the given flow
+         * @param flow - flow to run
+         * @param identifier - the identifier to pass to the flow (Can be a URI or any string)
+         * @param transaction - the transaction to apply to this request
+         * @throws XMLStreamException
+         */
+        public void run(Flow flow, String identifier, Transaction transaction) {
             RequestParameters params = new RequestParameters();
             params.add("identifier", identifier);
 

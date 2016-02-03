@@ -59,11 +59,14 @@
                     <div class="form-group" data-ng-show="config.installed">
                         <button type="submit" name="uninstall" class="btn btn-default" data-ng-disabled="deploymentForm.$invalid">Uninstall</button>
                     </div>
+                    <div class="form-group">
+                        <button type="submit" name="installUserModules" class="btn btn-default" data-ng-disabled="deploymentForm.$invalid">Install User Modules</button>
+                    </div>
                   </form>
             </div>
         </div>
     </section>
-    
+
     <div th:fragment="page-script">
         <script type="text/javascript" th:inline="javascript">
             var myApp = angular.module('deployment', []);

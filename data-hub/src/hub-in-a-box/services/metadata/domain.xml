@@ -1,16 +1,12 @@
 <!-- Copyright 2016 MarkLogic Corporation.  All Rights Reserved. -->
 <metadata>
-  <title>flow</title>
+  <title>domain</title>
   <description>
     <div>
-      Hub in a Box Flow entry point for Java
+      Hub in a Box Domain entry point for Java
     </div>
   </description>
   <method name="GET">
     <param name="domain-name" />
-    <param name="flow-name" />
-  </method>
-  <method name="POST">
-    <param name="identifier" />
   </method>
 </metadata>

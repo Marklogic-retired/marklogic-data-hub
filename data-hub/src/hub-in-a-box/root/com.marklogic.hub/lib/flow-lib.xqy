@@ -25,14 +25,18 @@ import module namespace hul = "http://marklogic.com/hub-in-a-box/hub-utils-lib"
 
 declare namespace hub = "http://marklogic.com/hub-in-a-box";
 
+declare namespace envelope = "http://marklogic.com/hub-in-a-box/envelope";
+
 declare option xdmp:mapping "false";
 
+(: xml describing the default writer :)
 declare variable $DEFAULT-WRITER :=
   element hub:writer {
     attribute type { "xquery" },
     attribute module { "/com.marklogic.hub/writers/default.xqy" }
   };
 
+(: xml describing the default content plugin :)
 declare variable $DEFAULT-CONTENT-PLUGIN :=
   element hub:plugin {
     attribute dest { "content" },
@@ -40,16 +44,24 @@ declare variable $DEFAULT-CONTENT-PLUGIN :=
     attribute module { "/com.marklogic.hub/plugins/raw.xqy" }
   };
 
+(: xml describing a no-op plugin. used when no plugin is given :)
 declare variable $NO-OP-PLUGIN :=
   element hub:plugin {
     attribute type { "null" }
   };
 
-declare variable $FLOWS-DIR := "/ext/flows/";
+(: the directory where domains live :)
+declare variable $DOMAINS-DIR := "/ext/domains/";
 
 declare variable $PLUGIN-NS := "http://marklogic.com/hub-in-a-box/plugins/";
 
-declare function flow:get-type($filename) as xs:string?
+(:
+ : Determines the type of flow given a filename
+ :
+ : @param $filename - name of the module plugin file
+ : @return - a type (xquery, xml, sjs, ...)
+ :)
+declare %private function flow:get-type($filename) as xs:string?
 {
   let $ext as xs:string := hul:get-file-extension($filename)
   return
@@ -67,7 +79,10 @@ declare function flow:get-type($filename) as xs:string?
       fn:error(xs:QName("INVALID_PLUGIN"), $filename)
 };
 
-declare function flow:get-collector(
+(:~
+ : Returns xml describing a collector
+ :)
+declare %private function flow:get-collector(
   $flow-name as xs:string,
   $uris as xs:string*) as element(hub:collector)
 {
@@ -81,7 +96,10 @@ declare function flow:get-collector(
     }
 };
 
-declare function flow:get-plugin(
+(:~
+ : Returns xml describing a plugin
+ :)
+declare %private function flow:get-plugin(
   $flow-name as xs:string,
   $uris as xs:string*,
   $destination as xs:string) as element(hub:plugin)*
@@ -97,7 +115,10 @@ declare function flow:get-plugin(
     }
 };
 
-declare function flow:get-content(
+(:~
+ : Returns xml describing a content plugin
+ :)
+declare %private function flow:get-content(
   $flow-name as xs:string,
   $uris as xs:string*)
 {
@@ -108,7 +129,10 @@ declare function flow:get-content(
       $DEFAULT-CONTENT-PLUGIN
 };
 
-declare function flow:get-headers(
+(:~
+ : Returns xml describing a headers plugin
+ :)
+declare %private function flow:get-headers(
   $flow-name as xs:string,
   $uris as xs:string*)
 {
@@ -119,7 +143,10 @@ declare function flow:get-headers(
       $NO-OP-PLUGIN
 };
 
-declare function flow:get-triples(
+(:~
+ : Returns xml describing a triples plugin
+ :)
+declare %private function flow:get-triples(
   $flow-name as xs:string,
   $uris as xs:string*)
 {
@@ -130,7 +157,10 @@ declare function flow:get-triples(
       $NO-OP-PLUGIN
 };
 
-declare function flow:get-writer(
+(:~
+ : Returns xml describing a writer
+ :)
+declare %private function flow:get-writer(
   $flow-name as xs:string,
   $uris as xs:string*)
 {
@@ -156,26 +186,46 @@ declare function flow:get-writer(
     $DEFAULT-WRITER
 };
 
+(:~
+ : Returns a flow by name. This xml is dynamically constructed
+ : by looking in the modules database.
+ :
+ : @param $domain-name - name of the domain that owns the flow
+ : @param $flow-name - name of the flow to retrieve
+ : @return - xml describing the flow
+ :)
 declare function flow:get-flow(
-  $flow-name as xs:string)
+  $domain-name as xs:string,
+  $flow-name as xs:string) as element(hub:flow)
 {
   let $uris :=
     hul:run-in-modules(function() {
-      cts:uri-match($FLOWS-DIR || $flow-name || "/*")
+      cts:uri-match($DOMAINS-DIR || $domain-name || "/" || $flow-name || "/*")
     })
   return
-    flow:get-flow($flow-name, $uris)
+    flow:get-flow($domain-name, $flow-name, $uris)
 };
 
-declare function flow:get-flow(
+(:~
+ : Returns a flow by name. This xml is dynamically constructed
+ : by looking in the modules database.
+ :
+ : @param $domain-name - name of the domain that owns the flow
+ : @param $flow-name - name of the flow to retrieve
+ : @param $uris - uris used to build the domain xml
+ : @return - xml describing the flow
+ :)
+declare %private function flow:get-flow(
+  $domain-name as xs:string,
   $flow-name as xs:string,
-  $uris as xs:string*)
+  $uris as xs:string*) as element(hub:flow)
 {
+  let $_ := xdmp:log(("domain: " || $domain-name, "flow: " || $flow-name, "uris:", $uris))
   let $map := map:map()
   let $_ :=
     for $dir in $uris
-    let $dir-name := fn:replace($dir, $FLOWS-DIR || $flow-name || "/([^/]+)/$", "$1")
-    let $child-uris := $uris[fn:matches(., $FLOWS-DIR || $flow-name || "/" || $dir-name || "/([^/]+)$")]
+    let $dir-name := fn:replace($dir, $DOMAINS-DIR || $domain-name || "/" || $flow-name || "/([^/]+)/$", "$1")
+    let $child-uris := $uris[fn:matches(., $DOMAINS-DIR || $domain-name || "/" || $flow-name || "/" || $dir-name || "/([^/]+)$")]
     return
       switch ($dir-name)
         case "collector" return
@@ -193,6 +243,7 @@ declare function flow:get-flow(
   return
     <flow xmlns="http://marklogic.com/hub-in-a-box">
       <name>{$flow-name}</name>
+      <domain>{$domain-name}</domain>
       <type>simple</type>
       {map:get($map, "collector")}
       <plugins>
@@ -208,16 +259,23 @@ declare function flow:get-flow(
     </flow>
 };
 
-declare function flow:get-flows() as element(hub:flows)
+(:~
+ : Returns the flows that belong to the given domain in the database
+ :
+ : @param $domain-name - the name of the domain containing the flows
+ : @return - xml describing the flows
+ :)
+declare function flow:get-flows(
+  $domain-name as xs:string) as element(hub:flows)
 {
   let $uris := hul:run-in-modules(function() {
-    cts:uri-match($FLOWS-DIR || "*")
+    cts:uri-match($DOMAINS-DIR || "*")
   })
   let $flows :=
-    for $flow in $uris[fn:matches(., $FLOWS-DIR || "[^/]+/$")]
-    let $name := fn:replace($flow, $FLOWS-DIR || "([^/]+)/$", "$1")
+    for $flow in $uris[fn:matches(., $DOMAINS-DIR || $domain-name || "/[^/]+/$")]
+    let $name := fn:replace($flow, $DOMAINS-DIR || $domain-name || "/([^/]+)/$", "$1")
     return
-      flow:get-flow($name, $uris[fn:matches(., $FLOWS-DIR || $name || "/.+")])
+      flow:get-flow($domain-name, $name, $uris[fn:matches(., $DOMAINS-DIR || $domain-name || "/" || $name || "/.+")])
   return
     <flows xmlns="http://marklogic.com/hub-in-a-box">
     {
@@ -226,9 +284,78 @@ declare function flow:get-flows() as element(hub:flows)
     </flows>
 };
 
+(:~
+ : Returns a domain by name. This xml is dynamically constructed
+ : by looking in the modules database.
+ :
+ : @param $domain-name - name of the domain to retrieve
+ : @return - xml describing the domain
+ :)
+declare function flow:get-domain(
+  $domain-name as xs:string)
+{
+  let $uris :=
+    hul:run-in-modules(function() {
+      cts:uri-match($DOMAINS-DIR || $domain-name || "/*")
+    })
+  return
+    flow:get-domain($domain-name, $uris)
+};
+
+(:~
+ : Returns a domain by name. This xml is dynamically constructed
+ : by looking in the modules database.
+ :
+ : @param $domain-name - name of the domain to retrieve
+ : @param $uris - uris used to build the domain xml
+ : @return - xml describing the domain
+ :)
+declare %private function flow:get-domain(
+  $domain-name as xs:string,
+  $uris as xs:string*)
+  as element(hub:domain)
+{
+  <domain xmlns="http://marklogic.com/hub-in-a-box">
+    <name>{$domain-name}</name>
+    {
+      flow:get-flows($domain-name)
+    }
+  </domain>
+};
+
+(:~
+ : Returns the domains in the database
+ :
+ : @return - xml describing the domains
+ :)
+declare function flow:get-domains() as element(hub:domains)
+{
+  let $uris := hul:run-in-modules(function() {
+    cts:uri-match($DOMAINS-DIR || "*")
+  })
+  let $domains :=
+    for $flow in $uris[fn:matches(., $DOMAINS-DIR || "[^/]+/$")]
+    let $name := fn:replace($flow, $DOMAINS-DIR || "([^/]+)/$", "$1")
+    return
+      flow:get-domain($name, $uris[fn:matches(., $DOMAINS-DIR || $name || "/.+")])
+  return
+    <domains xmlns="http://marklogic.com/hub-in-a-box">
+    {
+      $domains
+    }
+    </domains>
+};
+
+(:~
+ : Runs a collector
+ :
+ : @param $module-uri - the uri of the collector module
+ : @param $options - a map of options passed in by the client
+ : @return - a sequence of strings
+ :)
 declare function flow:run-collector(
   $module-uri as xs:string,
-  $options as map:map)
+  $options as map:map) as xs:string*
 {
   let $module-name := hul:get-module-name($module-uri)
   let $ns := $PLUGIN-NS || fn:lower-case($module-name)
@@ -237,10 +364,18 @@ declare function flow:run-collector(
     $func($options)
 };
 
+(:~
+ : Runs a given flow
+ :
+ : @param $flow - xml describing the flow
+ : @param $idenifier - the identifier to send to the flow steps (URI in corb lingo)
+ : @param $options - a map of options passed in by the client
+ : @return - nothing
+ :)
 declare function flow:run-flow(
   $flow as element(hub:flow),
   $identifier as xs:string,
-  $options as map:map)
+  $options as map:map) as empty-sequence()
 {
   let $content :=
     map:new((
@@ -274,7 +409,14 @@ declare function flow:run-flow(
     ()
 };
 
+(:~
+ : Construct an envelope
+ :
+ : @param $map - a map with all the stuff in it
+ : @return - the newly constructed envelope
+ :)
 declare function flow:make-envelope($map as map:map)
+  as element(envelope:envelope)
 {
   <envelope xmlns="http://marklogic.com/hub-in-a-box/envelope">
     <headers>{map:get($map, "headers")}</headers>
@@ -283,6 +425,17 @@ declare function flow:make-envelope($map as map:map)
   </envelope>
 };
 
+(:~
+ : Run a given plugin
+ :
+ : @param $plugin - xml describing the plugin to run
+ : @param $idenifier - the identifier to send to the flow steps (URI in corb lingo)
+ : @param $content - the output of the content plugin
+ : @param $headers - the output of the headers plugin
+ : @param $triples - the output of the triples plugin
+ : @param $options - a map of options passed in by the client
+ : @return - the output of the plugin. It varies.
+ :)
 declare function flow:run-plugin(
   $plugin as element(hub:plugin),
   $identifier as xs:string,
@@ -300,10 +453,19 @@ declare function flow:run-plugin(
     $func($identifier, $content, $headers, $triples, $options)
 };
 
+(:~
+ : Run a given writer
+ :
+ : @param $writer - xml describing the writer to run
+ : @param $idenifier - the identifier to send to the flow steps (URI in corb lingo)
+ : @param $envelope - the envelope
+ : @param $options - a map of options passed in by the client
+ : @return - the output of the writer. It varies.
+ :)
 declare function flow:run-writer(
   $writer as element(hub:writer),
   $identifier as xs:string,
-  $node as element(),
+  $envelope as element(),
   $options as map:map)
 {
   let $module-uri as xs:string := $writer/@module
@@ -311,5 +473,5 @@ declare function flow:run-writer(
   let $ns := $PLUGIN-NS || fn:lower-case($module-name)
   let $func := xdmp:function(fn:QName($ns, "write"), $module-uri)
   return
-    $func($identifier, $node, $options)
+    $func($identifier, $envelope, $options)
 };
