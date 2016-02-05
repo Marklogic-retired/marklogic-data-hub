@@ -39,42 +39,67 @@ public class EnvironmentConfiguration {
 
 	public String getMLHost() {
 		String value = this.properties.getProperty("mlHost");
-		if (value == null) {
-			value = this.environment.getProperty("mlHost.default");
+		if (value != null) {
+			return value;
 		}
-		return value;
+		value = this.environment.getProperty("mlHost");
+		if (value != null) {
+			this.properties.setProperty("mlHost", value);
+			return value;
+		}
+		return this.environment.getProperty("mlHost.default");
 	}
 
 	public String getMLUsername() {
 		String value = this.properties.getProperty("mlUsername");
-		if (value == null) {
-			value = this.environment.getProperty("mlUsername.default");
+		if (value != null) {
+			return value;
 		}
-		return value;
+		value = this.environment.getProperty("mlUsername");
+		if (value != null) {
+			this.properties.setProperty("mlUsername", value);
+			return value;
+		}
+		return this.environment.getProperty("mlUsername.default");
 	}
 
 	public String getMLPassword() {
 		String value = this.properties.getProperty("mlPassword");
-		if (value == null) {
-			value = this.environment.getProperty("mlPassword.default");
+		if (value != null) {
+			return value;
 		}
-		return value;
+		value = this.environment.getProperty("mlPassword");
+		if (value != null) {
+			this.properties.setProperty("mlPassword", value);
+			return value;
+		}
+		return this.environment.getProperty("mlPassword.default");
 	}
 
 	public String getMLRestPort() {
 		String value = this.properties.getProperty("mlRestPort");
-		if (value == null) {
-			value = this.environment.getProperty("mlRestPort.default");
+		if (value != null) {
+			return value;
 		}
-		return value;
+		value = this.environment.getProperty("mlRestPort");
+		if (value != null) {
+			this.properties.setProperty("mlRestPort", value);
+			return value;
+		}
+		return this.environment.getProperty("mlRestPort.default");
 	}
 
 	public String getMLAuth() {
 		String value = this.properties.getProperty("mlAuth");
-		if (value == null) {
-			value = this.environment.getProperty("mlAuth.default");
+		if (value != null) {
+			return value;
 		}
-		return value;
+		value = this.environment.getProperty("mlAuth");
+		if (value != null) {
+			this.properties.setProperty("mlAuth", value);
+			return value;
+		}
+		return this.environment.getProperty("mlAuth.default");
 	}
 
 	public void setMLHost(String mlHost) {

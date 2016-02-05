@@ -9,6 +9,17 @@ Quick Start is a single-page web application that is deployed in an embedded Tom
 - run ```gradle build```
 - run ```java -jar build/libs/quick-start-0.1.0.war```
 
+
+## To pass properties to the app, either do the following (in order of priority):
+- Add environment.properties in the quick-start directory with the following properties:
+mlRestPort=<host>
+mlHost=<port>
+mlUsername=<username>
+mlPassword=<password>
+OR
+- Add the command line properties --mlHost=<host> --mlRestPort=<port> --mlUsername=<username> --mlPassword=<password>
+
+
 ## Build and deploy the web app via Eclipse
 - Select Application.java then Run as Java Application
 
