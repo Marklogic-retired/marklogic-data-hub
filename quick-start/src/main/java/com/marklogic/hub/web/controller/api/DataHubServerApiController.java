@@ -40,6 +40,8 @@ public class DataHubServerApiController extends BaseController {
             loginForm.setHasErrors(false);
             loginForm.setSkipLogin(true);
             
+            environmentConfiguration.saveConfigurationToFile();
+            
             session.setAttribute("loginForm", loginForm);
         }
         catch (DataHubException e) {
@@ -52,7 +54,14 @@ public class DataHubServerApiController extends BaseController {
     
     @RequestMapping(value="login", method = RequestMethod.GET)
     public LoginForm getLoginStatus(HttpSession session) {
-        return (LoginForm) session.getAttribute("loginForm");
+    	LoginForm loginForm = (LoginForm) session.getAttribute("loginForm");
+    	if(loginForm == null) {
+    		loginForm = new LoginForm();
+    		this.environmentConfiguration.loadConfigurationFromFile();
+    		this.retrieveEnvironmentConfiguration(loginForm);
+    		session.setAttribute("loginForm", loginForm);
+    	}
+        return loginForm;
     }
     
     @RequestMapping(value="install", method = RequestMethod.POST)
@@ -75,5 +84,12 @@ public class DataHubServerApiController extends BaseController {
         environmentConfiguration.setMLRestPort(loginForm.getMlRestPort());
         environmentConfiguration.setMLUsername(loginForm.getMlUsername());
         environmentConfiguration.setMLPassword(loginForm.getMlPassword());
+    }
+    
+    private void retrieveEnvironmentConfiguration(LoginForm loginForm) {
+    	loginForm.setMlHost(environmentConfiguration.getMLHost());
+    	loginForm.setMlRestPort(environmentConfiguration.getMLRestPort());
+    	loginForm.setMlUsername(environmentConfiguration.getMLUsername());
+    	loginForm.setMlPassword(environmentConfiguration.getMLPassword());
     }
 }
