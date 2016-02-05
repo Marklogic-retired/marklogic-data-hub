@@ -10,7 +10,7 @@ module.factory('DataHub', [
     ) {
         var service = {
             
-            login : function (loginForm) {
+        	login : function (loginForm) {
                 var promise = $http
                 .post('api/data-hub/login', loginForm)
                 .success(function (data) {
@@ -33,6 +33,18 @@ module.factory('DataHub', [
                     service.status = null;
                 });
                 
+                return promise;
+            }
+            
+            ,logout : function () {
+                var promise = $http
+                .post('api/data-hub/logout')
+                .success(function (data) {
+                    service.status = data;
+                })
+                .error(function () {
+                    service.status = null;
+                });
                 return promise;
             }
             

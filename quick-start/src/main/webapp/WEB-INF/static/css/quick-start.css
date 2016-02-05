@@ -34,3 +34,14 @@ ul.alert {
 .spacing-top {
     margin-top: 10px;
 }
+
+div#sitemenu {
+	text-align: right;
+	color: #ffffff;
+}
+
+button#headerDropdownMenu {
+    background-color: #404040;
+    border: 0px;
+    color: #ffffff;
+}

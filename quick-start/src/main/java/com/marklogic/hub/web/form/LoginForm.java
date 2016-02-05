@@ -9,7 +9,7 @@ public class LoginForm extends BaseForm {
     private String mlPassword;
     private boolean serverVersionAccepted;
     private boolean installed;
-    private boolean skipLogin;
+    private boolean loggedIn;
     
     public String getMlHost() {
         return mlHost;
@@ -59,13 +59,14 @@ public class LoginForm extends BaseForm {
         this.installed = installed;
     }
 
-	public boolean isSkipLogin() {
-		return skipLogin;
+	public boolean isLoggedIn() {
+		return loggedIn;
 	}
 
-	public void setSkipLogin(boolean skipLogin) {
-		this.skipLogin = skipLogin;
+	public void setLoggedIn(boolean loggedIn) {
+		this.loggedIn = loggedIn;
 	}
-    
+
+	
     
 }

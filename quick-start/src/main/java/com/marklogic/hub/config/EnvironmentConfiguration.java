@@ -150,5 +150,13 @@ public class EnvironmentConfiguration {
 			}
 		}
 	}
+	
+	public void removeSavedConfiguration() {
+		this.properties = new Properties();
+	    File file = new File(PROPERTIES_FILENAME);
+	    if(file.exists()) {
+	    	file.delete();
+	    }
+	}
 
 }

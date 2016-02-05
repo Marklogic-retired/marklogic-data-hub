@@ -38,7 +38,7 @@ public class DataHubServerApiController extends BaseController {
             loginForm.setInstalled(dataHubService.isInstalled());
             loginForm.setServerVersionAccepted(dataHubService.isServerAcceptable());
             loginForm.setHasErrors(false);
-            loginForm.setSkipLogin(true);
+            loginForm.setLoggedIn(true);
             
             environmentConfiguration.saveConfigurationToFile();
             
@@ -46,6 +46,7 @@ public class DataHubServerApiController extends BaseController {
         }
         catch (DataHubException e) {
             LOGGER.error("Login failed", e);
+            loginForm.setLoggedIn(false);
             displayError(loginForm, null, null, e.getMessage());
         }
         
@@ -62,6 +63,15 @@ public class DataHubServerApiController extends BaseController {
     		session.setAttribute("loginForm", loginForm);
     	}
         return loginForm;
+    }
+    
+    @RequestMapping(value="logout", method = RequestMethod.POST)
+    public LoginForm postLogout(HttpSession session) {
+    	LoginForm loginForm = (LoginForm) session.getAttribute("loginForm");
+    	loginForm.setLoggedIn(false);
+    	this.environmentConfiguration.removeSavedConfiguration();
+    	this.retrieveEnvironmentConfiguration(loginForm);
+    	return loginForm;
     }
     
     @RequestMapping(value="install", method = RequestMethod.POST)

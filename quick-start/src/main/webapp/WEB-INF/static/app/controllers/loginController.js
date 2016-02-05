@@ -33,7 +33,7 @@ module.controller('loginController', [
         
         DataHub.getLoginStatus().then(function (request) {
         	$scope.loginForm = DataHub.status;
-            if (DataHub.status && DataHub.status.skipLogin) {
+            if (DataHub.status && DataHub.status.loggedIn) {
             	$location.path('/top');
             }
         });
