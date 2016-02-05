@@ -1,0 +1,44 @@
+<header></header>
+
+<div class="container">
+    <div class="row spacing-top">
+        <div class="col-xs-12">
+            <form ng-submit="login()">
+                <div class="center-block" style="width: 350px;">
+                    <div class="well">
+                        <div class="row">
+                            <div class="text-center">
+                                    <h4 class="no_margin_top"><strong>Login</strong></h4>
+                            </div>
+                        </div>
+                        <div class="row center-block alert alert-danger" ng-if="loginFailedError">
+                            <span>Login failed. Please check your username or password.</span>
+                        </div>
+                        <div class="form-group">
+                            <label th:text="#{label.host}" for="mlHost"></label>
+                            <input class="form-control" name="mlHost" type="text" ng-model="loginForm.mlHost" th:placeHolder="#{placeholder.host}" required="required"/>
+                        </div>
+                        <div class="form-group">
+                            <label th:text="#{label.restPort}" for="restPort"></label>
+                            <input name="mlRestPort" type="text" ng-model="loginForm.mlRestPort" class="form-control" th:placeHolder="#{placeholder.restPort}" required="required"/>
+                        </div>
+                        <div class="form-group">
+                            <label th:text="#{label.username}" for="mlUsername"></label>
+                            <input name="mlUsername" type="text" ng-model="loginForm.mlUsername" class="form-control" th:placeHolder="#{placeholder.username}" required="required"/>
+                        </div>
+                        <div class="form-group">
+                            <label th:text="#{label.password}" for="mlPassword"></label>
+                            <input name="mlPassword" type="password" ng-model="loginForm.mlPassword" class="form-control" th:placeHolder="#{placeholder.password}" required="required"/>
+                        </div>
+                        
+                        <div class="row center-block text-center">
+                            <div class="col-md-12">
+                                <button class="btn btn-primary width_100" ng-click="login">Login</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
