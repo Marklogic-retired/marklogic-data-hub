@@ -14,15 +14,27 @@ module.controller('loginController', [
         ,DataHub
     ) {
         $scope.loginForm = {};
+        $scope.hasErrors = false;
+        $scope.errors = {};
         
         $scope.login = function() {
             DataHub.login($scope.loginForm)
                 .then(function(request) {
-                    
-                    if (request.status == 200) {
-                        $location.path('/top');
+                	if(DataHub.status && !DataHub.status.hasErrors) {
+                		$scope.hasErrors = false;
+                		$scope.errors = null;
+                    	$location.path('/top');
+                    } else if(DataHub.status){
+                    	$scope.hasErrors = true;
+                    	$scope.errors = DataHub.status.errors;
                     }
                 });
         };
+        
+        DataHub.getLoginStatus().then(function (request) {
+            if (DataHub.status && DataHub.status.skipLogin) {
+            	$location.path('/top');
+            }
+        });
     }
 ]);

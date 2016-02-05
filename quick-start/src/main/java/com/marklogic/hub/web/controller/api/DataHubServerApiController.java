@@ -16,11 +16,12 @@ import org.springframework.web.bind.annotation.RestController;
 import com.marklogic.hub.config.EnvironmentConfiguration;
 import com.marklogic.hub.exception.DataHubException;
 import com.marklogic.hub.service.DataHubService;
+import com.marklogic.hub.web.controller.BaseController;
 import com.marklogic.hub.web.form.LoginForm;
 
 @RestController
 @RequestMapping("/api/data-hub")
-public class DataHubServerApiController {
+public class DataHubServerApiController extends BaseController {
     private static final Logger LOGGER = LoggerFactory.getLogger(DataHubServerApiController.class);
 
     @Autowired
@@ -36,14 +37,14 @@ public class DataHubServerApiController {
             
             loginForm.setInstalled(dataHubService.isInstalled());
             loginForm.setServerVersionAccepted(dataHubService.isServerAcceptable());
-            loginForm.setLoginAccepted(true);
+            loginForm.setHasErrors(false);
+            loginForm.setSkipLogin(true);
             
             session.setAttribute("loginForm", loginForm);
         }
         catch (DataHubException e) {
             LOGGER.error("Login failed", e);
-            
-            loginForm.setLoginAccepted(false);
+            displayError(loginForm, null, null, e.getMessage());
         }
         
         return loginForm;
