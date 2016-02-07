@@ -93,7 +93,7 @@ module.factory('Access', [
                 var deferred = $q.defer();
                 
                 DataHub.getLoginStatus().then(function (request) {
-                    if (DataHub.status != null && DataHub.status.loginAccepted) {
+                    if (DataHub.status != null && !DataHub.status.hasErrors) {
                         deferred.resolve(Access.OK);
                     }
                     else {

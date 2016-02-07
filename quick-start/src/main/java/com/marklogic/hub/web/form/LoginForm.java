@@ -1,14 +1,16 @@
 package com.marklogic.hub.web.form;
 
-public class LoginForm {
+
+public class LoginForm extends BaseForm {
+	
     private String mlHost;
     private String mlRestPort;
     private String mlUsername;
     private String mlPassword;
-    private boolean loginAccepted;
     private boolean serverVersionAccepted;
     private boolean installed;
-
+    private boolean loggedIn;
+    
     public String getMlHost() {
         return mlHost;
     }
@@ -40,14 +42,6 @@ public class LoginForm {
     public void setMlPassword(String mlPassword) {
         this.mlPassword = mlPassword;
     }
-    
-    public boolean isLoginAccepted() {
-        return loginAccepted;
-    }
-
-    public void setLoginAccepted(boolean loginAccepted) {
-        this.loginAccepted = loginAccepted;
-    }
 
     public boolean isServerVersionAccepted() {
         return serverVersionAccepted;
@@ -64,4 +58,15 @@ public class LoginForm {
     public void setInstalled(boolean installed) {
         this.installed = installed;
     }
+
+	public boolean isLoggedIn() {
+		return loggedIn;
+	}
+
+	public void setLoggedIn(boolean loggedIn) {
+		this.loggedIn = loggedIn;
+	}
+
+	
+    
 }

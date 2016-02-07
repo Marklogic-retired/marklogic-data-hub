@@ -1,7 +1,7 @@
 <header></header>
 
 <div class="container">
-    <div class="row spacing-top">
+	<div class="row spacing-top">
         <div class="col-xs-12">
             <form ng-submit="login()">
                 <div class="center-block" style="width: 350px;">
@@ -11,8 +11,12 @@
                                     <h4 class="no_margin_top"><strong>Login</strong></h4>
                             </div>
                         </div>
-                        <div class="row center-block alert alert-danger" ng-if="loginFailedError">
-                            <span>Login failed. Please check your username or password.</span>
+                        <div class="row center-block" ng-if="hasErrors">
+				        	<div class="col-md-12">
+				                <ul class="alert alert-danger">
+				                    <li ng-repeat="error in errors">{{error}}</li>
+				                </ul>
+				            </div>
                         </div>
                         <div class="form-group">
                             <label th:text="#{label.host}" for="mlHost"></label>

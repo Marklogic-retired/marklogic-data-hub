@@ -11,6 +11,8 @@ import org.springframework.context.NoSuchMessageException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 
+import com.marklogic.hub.web.form.BaseForm;
+
 @Controller
 public class BaseController {
 	
@@ -41,5 +43,20 @@ public class BaseController {
 	public void displayErrors(Model model, List<String> errors) {
 		model.addAttribute("errors", errors);
 		model.addAttribute("hasErrors", true);
+	}
+	
+	public void displayError(BaseForm form, String errorKey, Object[] messageParams, String defaultError) {
+		List<String> errors = new ArrayList<String>();
+		String error = defaultError;
+		if(errorKey != null) {
+			error = this.convertMessage(errorKey, messageParams, defaultError);
+		}
+		errors.add(error);
+		displayErrors(form, errors);
+	}
+	
+	public void displayErrors(BaseForm form, List<String> errors) {
+		form.setErrors(errors);
+		form.setHasErrors(true);
 	}
 }

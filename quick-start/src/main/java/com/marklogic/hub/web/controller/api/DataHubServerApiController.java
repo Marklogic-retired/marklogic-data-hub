@@ -16,11 +16,12 @@ import org.springframework.web.bind.annotation.RestController;
 import com.marklogic.hub.config.EnvironmentConfiguration;
 import com.marklogic.hub.exception.DataHubException;
 import com.marklogic.hub.service.DataHubService;
+import com.marklogic.hub.web.controller.BaseController;
 import com.marklogic.hub.web.form.LoginForm;
 
 @RestController
 @RequestMapping("/api/data-hub")
-public class DataHubServerApiController {
+public class DataHubServerApiController extends BaseController {
     private static final Logger LOGGER = LoggerFactory.getLogger(DataHubServerApiController.class);
 
     @Autowired
@@ -36,14 +37,17 @@ public class DataHubServerApiController {
             
             loginForm.setInstalled(dataHubService.isInstalled());
             loginForm.setServerVersionAccepted(dataHubService.isServerAcceptable());
-            loginForm.setLoginAccepted(true);
+            loginForm.setHasErrors(false);
+            loginForm.setLoggedIn(true);
+            
+            environmentConfiguration.saveConfigurationToFile();
             
             session.setAttribute("loginForm", loginForm);
         }
         catch (DataHubException e) {
             LOGGER.error("Login failed", e);
-            
-            loginForm.setLoginAccepted(false);
+            loginForm.setLoggedIn(false);
+            displayError(loginForm, null, null, e.getMessage());
         }
         
         return loginForm;
@@ -51,7 +55,23 @@ public class DataHubServerApiController {
     
     @RequestMapping(value="login", method = RequestMethod.GET)
     public LoginForm getLoginStatus(HttpSession session) {
-        return (LoginForm) session.getAttribute("loginForm");
+    	LoginForm loginForm = (LoginForm) session.getAttribute("loginForm");
+    	if(loginForm == null) {
+    		loginForm = new LoginForm();
+    		this.environmentConfiguration.loadConfigurationFromFile();
+    		this.retrieveEnvironmentConfiguration(loginForm);
+    		session.setAttribute("loginForm", loginForm);
+    	}
+        return loginForm;
+    }
+    
+    @RequestMapping(value="logout", method = RequestMethod.POST)
+    public LoginForm postLogout(HttpSession session) {
+    	LoginForm loginForm = (LoginForm) session.getAttribute("loginForm");
+    	loginForm.setLoggedIn(false);
+    	this.environmentConfiguration.removeSavedConfiguration();
+    	this.retrieveEnvironmentConfiguration(loginForm);
+    	return loginForm;
     }
     
     @RequestMapping(value="install", method = RequestMethod.POST)
@@ -74,5 +94,12 @@ public class DataHubServerApiController {
         environmentConfiguration.setMLRestPort(loginForm.getMlRestPort());
         environmentConfiguration.setMLUsername(loginForm.getMlUsername());
         environmentConfiguration.setMLPassword(loginForm.getMlPassword());
+    }
+    
+    private void retrieveEnvironmentConfiguration(LoginForm loginForm) {
+    	loginForm.setMlHost(environmentConfiguration.getMLHost());
+    	loginForm.setMlRestPort(environmentConfiguration.getMLRestPort());
+    	loginForm.setMlUsername(environmentConfiguration.getMLUsername());
+    	loginForm.setMlPassword(environmentConfiguration.getMLPassword());
     }
 }
