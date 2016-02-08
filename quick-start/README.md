@@ -12,12 +12,13 @@ Quick Start is a single-page web application that is deployed in an embedded Tom
 
 ## To pass properties to the app, either do the following (in order of priority):
 - Add environment.properties in the quick-start directory with the following properties:
+userPluginDir=<userPluginDir>
 mlRestPort=<host>
 mlHost=<port>
 mlUsername=<username>
 mlPassword=<password>
 OR
-- Add the command line properties --mlHost=<host> --mlRestPort=<port> --mlUsername=<username> --mlPassword=<password>
+- Add the command line properties --mlHost=<host> --mlRestPort=<port> --mlUsername=<username> --mlPassword=<password> --userPluginDir=<userPluginDir>
 
 
 ## Build and deploy the web app via Eclipse

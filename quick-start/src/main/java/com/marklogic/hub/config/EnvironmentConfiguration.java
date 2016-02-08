@@ -101,6 +101,19 @@ public class EnvironmentConfiguration {
 		}
 		return this.environment.getProperty("mlAuth.default");
 	}
+	
+	public String getUserPluginDir() {
+		String value = this.properties.getProperty("userPluginDir");
+		if (value != null) {
+			return value;
+		}
+		value = this.environment.getProperty("userPluginDir");
+		if (value != null) {
+			this.properties.setProperty("userPluginDir", value);
+			return value;
+		}
+		return this.environment.getProperty("userPluginDir.default");
+	}
 
 	public void setMLHost(String mlHost) {
 		this.properties.setProperty("mlHost", mlHost);
@@ -116,6 +129,10 @@ public class EnvironmentConfiguration {
 
 	public void setMLPassword(String mlPassword) {
 		this.properties.setProperty("mlPassword", mlPassword);
+	}
+	
+	public void setUserPluginDir(String userPluginDir) {
+		this.properties.setProperty("userPluginDir", userPluginDir);
 	}
 	
 	public void loadConfigurationFromFile() {
