@@ -7,3 +7,4 @@ releases/
 .classpath
 .project
 gradle-local.properties
+/quick-start/environment.properties
