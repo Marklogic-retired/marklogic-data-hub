@@ -5,16 +5,13 @@ body {
 
 h1 {
 	color: #2a2d2b;
+	font-size: 50px;
 }
 h2 {
 	color: #336699;
 }
 h3 {
 	color: #2a2d2b;
-}
-
-a.nav {
-	color: white;
 }
 
 a:hover {
@@ -47,7 +44,7 @@ div#header .alert {
 	color: #fff;
 }
 
-.alert-info, .brand-info {
+.alert-info, .brand-info, .btn-success {
 	background-color: #4a9e43;
 }
 
@@ -55,8 +52,12 @@ div#header .alert {
 	background-color: #ff2a00;
 }
 
-.brand-primary {
+.brand-primary, .btn-primary {
 	background-color: #336699;
+}
+
+.btn-default {
+    background-color: #444547;
 }
 
 div#message {
@@ -64,7 +65,7 @@ div#message {
 }
 
 .divider {
-	border: 5px solid #2a2d2b;  
+	border: 10px solid #2a2d2b;  
 }
 
 #content {
@@ -104,7 +105,15 @@ div#sidebar {
 	min-height: 450px;
 }
 
+div#sidebar h1, div#sidebar h2, div#sidebar h3, div#sidebar a {
+	color: #fff;
+}
+
 div#center {
 	background-color: #fff;
 	min-height: 450px;
+}
+
+ul.custom-list {
+	
 }

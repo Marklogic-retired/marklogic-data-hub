@@ -1,5 +1,8 @@
 package com.marklogic.hub.web.form;
 
+import java.util.List;
+
+import com.marklogic.hub.model.DomainModel;
 
 public class LoginForm extends BaseForm {
 	
@@ -11,6 +14,7 @@ public class LoginForm extends BaseForm {
     private boolean serverVersionAccepted;
     private boolean installed;
     private boolean loggedIn;
+    private List<DomainModel> domains;
     
     public String getMlHost() {
         return mlHost;
@@ -67,7 +71,7 @@ public class LoginForm extends BaseForm {
 	public void setLoggedIn(boolean loggedIn) {
 		this.loggedIn = loggedIn;
 	}
-
+	
 	public String getUserPluginDir() {
 		return userPluginDir;
 	}
@@ -76,6 +80,13 @@ public class LoginForm extends BaseForm {
 		this.userPluginDir = userPluginDir;
 	}
 
+	public List<DomainModel> getDomains() {
+		return domains;
+	}
+
+	public void setDomains(List<DomainModel> domains) {
+		this.domains = domains;
+	}
 	
     
 }
