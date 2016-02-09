@@ -90,6 +90,9 @@ public class DataHubServerApiController extends BaseController {
     		this.retrieveEnvironmentConfiguration(loginForm);
     		session.setAttribute("loginForm", loginForm);
     	}
+    	else {
+    	    loginForm.setDomains(domainManagerService.getDomains());
+    	}
         return loginForm;
     }
     
