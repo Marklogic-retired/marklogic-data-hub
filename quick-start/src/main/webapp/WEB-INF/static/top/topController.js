@@ -29,7 +29,10 @@ module.controller('topController', [
         };
         
         $scope.saveDomain = function() {
-        	DataHub.saveDomain($scope.domainForm);
+        	DataHub.saveDomain($scope.domainForm)
+        	.success(function () {
+        		$('#domainModal').modal('hide');
+            });
         };
         
         $scope.updateDomainStatus = function() {
