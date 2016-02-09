@@ -7,10 +7,12 @@ var module = angular.module('dhib.quickstart.controller.top', dependencies);
 module.controller('topController', [
     '$scope'
     ,'$location'
+    ,'$timeout'
     ,'DataHub'
     ,function(
         $scope
         ,$location
+        ,$timeout
         ,DataHub
     ) {
         $scope.status = DataHub.status;
@@ -24,10 +26,22 @@ module.controller('topController', [
     	        backdrop: 'static',
     	        keyboard: true
     	    });
-        },
+        };
         
         $scope.saveDomain = function() {
         	DataHub.saveDomain($scope.domainForm);
-        }
+        };
+        
+        $scope.updateDomainStatus = function() {
+            DataHub.getDomainChangeList()
+            .success(function (domainChangeList) {
+                DataHub.status.domains = domainChangeList;
+            })
+            .then(function () {
+                $timeout($scope.updateDomainStatus, 50);
+            });
+        };
+        
+        $scope.updateDomainStatus();
     }
 ]);

@@ -72,6 +72,9 @@ module.factory('DataHub', [
                 
                 return promise;
             }
+            ,getDomainChangeList : function() {
+                return $http.get('api/domains/change-list');
+            }
         };
         
         return service;

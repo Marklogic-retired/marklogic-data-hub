@@ -49,7 +49,9 @@ public class DomainModelFactory {
 	public DomainModel createDomain(String domainName, String domainFilePath) {
 		DomainModel domainModel = new DomainModel();
 		domainModel.setDomainName(domainName);
-		domainModel.setSynched(this.domainsInServer.containsKey(domainName));
+		// TODO: update this once DomainManager is able to return a correct list of domains
+		//domainModel.setSynched(this.domainsInServer.containsKey(domainName));
+		domainModel.setSynched(true);
 
 		FlowModelFactory flowModelFactory = new FlowModelFactory(
 				this.domainsInServer.get(domainName), domainName);
