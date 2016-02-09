@@ -70,6 +70,9 @@ module.config([
                 }]
             }
         })
+        .when('/dismiss', {
+            //do nothing
+        })
         .otherwise({
             redirectTo: '/login'
         });
@@ -93,7 +96,7 @@ module.factory('Access', [
                 var deferred = $q.defer();
                 
                 DataHub.getLoginStatus().then(function (request) {
-                    if (DataHub.status != null && !DataHub.status.hasErrors) {
+                    if (DataHub.status != null && !DataHub.status.hasErrors && DataHub.status.loggedIn) {
                         deferred.resolve(Access.OK);
                     }
                     else {
@@ -103,7 +106,7 @@ module.factory('Access', [
                 
                 return deferred.promise;
             }
-        }
+        };
         
         return Access;
     }

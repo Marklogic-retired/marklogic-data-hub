@@ -65,6 +65,22 @@ module.factory('DataHub', [
                 
                 return promise;
             }
+            
+            ,saveDomain : function(domainForm) {
+            	
+            	var promise = $http.post('api/domains', domainForm)
+                .success(function (domains) {
+                    service.status.domains = domains;
+                })
+                .error(function () {
+                	//notify error
+                });
+                
+                return promise;
+            }
+            ,getDomainChangeList : function() {
+                return $http.get('api/domains/change-list');
+            }
         };
         
         return service;

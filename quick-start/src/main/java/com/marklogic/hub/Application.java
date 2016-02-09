@@ -17,11 +17,8 @@ package com.marklogic.hub;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
-import org.thymeleaf.templateresolver.ITemplateResolver;
-import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
 @SpringBootApplication
 public class Application extends WebMvcConfigurerAdapter {
@@ -30,19 +27,8 @@ public class Application extends WebMvcConfigurerAdapter {
         SpringApplication.run(Application.class, args);
     }
     
-    @Bean
-	public ITemplateResolver templateResolver() {
-		ServletContextTemplateResolver templateResolver = new ServletContextTemplateResolver();
-		templateResolver.setPrefix("/WEB-INF/pages/");
-		templateResolver.setSuffix(".html");
-		templateResolver.setTemplateMode("HTML5");
-		templateResolver.setCacheable(false);
-
-		return templateResolver;
-	}
-
-	@Override
-	public void addResourceHandlers(ResourceHandlerRegistry registry) {
-		registry.addResourceHandler("/static/**").addResourceLocations("/WEB-INF/static/");
-	}
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/**").addResourceLocations("/WEB-INF/static/");
+    }
 }

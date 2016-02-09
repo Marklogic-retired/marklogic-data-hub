@@ -1,6 +1,7 @@
 package com.marklogic.hub.web.controller.api;
 
 import java.io.File;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.marklogic.hub.config.EnvironmentConfiguration;
 import com.marklogic.hub.exception.DataHubException;
 import com.marklogic.hub.service.DataHubService;
+import com.marklogic.hub.service.DomainManagerService;
 import com.marklogic.hub.web.controller.BaseController;
 import com.marklogic.hub.web.form.LoginForm;
 
@@ -32,6 +34,9 @@ public class DataHubServerApiController extends BaseController {
     @Autowired
     private DataHubService dataHubService;
     
+    @Autowired
+    private DomainManagerService domainManagerService;
+    
     @RequestMapping(value="login", method = RequestMethod.POST, consumes={MediaType.APPLICATION_JSON_UTF8_VALUE}, produces={MediaType.APPLICATION_JSON_UTF8_VALUE})
     public LoginForm postLogin(@RequestBody LoginForm loginForm, BindingResult bindingResult, HttpSession session, HttpServletRequest request) throws Exception {
         try {
@@ -43,6 +48,7 @@ public class DataHubServerApiController extends BaseController {
 	            loginForm.setServerVersionAccepted(dataHubService.isServerAcceptable());
 	            loginForm.setHasErrors(false);
 	            loginForm.setLoggedIn(true);
+	            loginForm.setDomains(domainManagerService.getDomains());
 	            
 	            environmentConfiguration.saveConfigurationToFile();
 	            
@@ -84,6 +90,9 @@ public class DataHubServerApiController extends BaseController {
     		this.retrieveEnvironmentConfiguration(loginForm);
     		session.setAttribute("loginForm", loginForm);
     	}
+    	else {
+    	    loginForm.setDomains(domainManagerService.getDomains());
+    	}
         return loginForm;
     }
     
@@ -107,8 +116,8 @@ public class DataHubServerApiController extends BaseController {
     }
     
     @RequestMapping(value="install-user-modules", method = RequestMethod.POST)
-    public void installUserModules() {
-        dataHubService.installUserModules();
+    public Set<File> installUserModules() {
+    	return dataHubService.installUserModules();
     }
     
     private void updateEnvironmentConfiguration(LoginForm loginForm) {

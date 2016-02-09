@@ -14,17 +14,26 @@ module.directive('header', [
             restrict: 'E'
             ,scope : {
                 activeTab : '=',
-                username : '='
+                status : '='
             }
             ,transclude: true
             ,templateUrl : function(element, attrs) {
-                return attrs.templateUrl || 'directives/header.html';
+                return attrs.templateUrl || 'app/directives/header.html';
             }
             ,link : function(scope, element, attrs) {
             	scope.logout = function () {
             		DataHub.logout();
             		$location.path('/login');
-            	}
+            	},
+            	scope.install = function () {
+                    DataHub.install();
+                },
+                scope.uninstall = function () {
+                    DataHub.uninstall();
+                },
+                scope.installUserModules = function () {
+                    DataHub.installUserModules();
+                }
             }
             ,controller : function($scope, $element, $attrs, $transclude) {
             }

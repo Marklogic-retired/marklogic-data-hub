@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="quickStartApp">
+<head>
+    <title>Data Hub Quick Start</title>
+    
+    <meta http-equiv="cache-control" content="max-age=0" />
+    <meta http-equiv="cache-control" content="no-cache" />
+    <meta http-equiv="expires" content="0" />
+    <meta http-equiv="expires" content="-1" />
+    <meta http-equiv="pragma" content="no-cache" />
+    
+    <!-- Angular -->
+    <script src="lib/angular.js/js/angular.js"></script>
+    <script src="lib/angular.js/js/angular-route.js"></script>
+    
+    <!-- Angular Dependencies -->
+    <script src="lib/jquery/js/jquery.min.js"></script>
+    
+    <!-- Bootstrap -->
+    <script src="lib/bootstrap-3.3.6-dist/js/bootstrap.min.js"></script>
+    
+    <!-- App-Specific JS -->
+    <script src="app/quickStartApp.js"></script>
+    <script src="app/services/dataHubService.js"></script>
+    
+    <script src="app/directives/headerDirective.js"></script>
+    <script src="app/directives/footerDirective.js"></script>
+    
+    <script src="login/loginController.js"></script>
+    <script src="top/topController.js"></script>
+    
+    <!-- Bootstrap CSS -->
+    <link href="lib/bootstrap-3.3.6-dist/css/bootstrap.min.css" rel="stylesheet"></link>
+    <link href="lib/font-awesome/css/font-awesome.min.css" rel="stylesheet"></link>
+    
+    
+    <!-- App-Specific CSS -->
+    <link href="css/quick-start.css" rel="stylesheet"></link>
+</head>
+<body>
+    <div ng-view=""></div>
+</body>
+</html>

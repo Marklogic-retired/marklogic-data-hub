@@ -1,4 +1,4 @@
-package com.marklogic.hub.web.controller;
+package com.marklogic.hub.web.controller.api;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,21 +8,22 @@ import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.service.FlowManagerService;
+import com.marklogic.hub.web.controller.BaseController;
 
-@Controller
-@RequestMapping("/flows")
-public class FlowManagerController extends BaseController {
+@RestController
+@RequestMapping("/api/flows")
+public class FlowApiController extends BaseController {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(FlowManagerController.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(FlowApiController.class);
 
 	@Autowired
 	private FlowManagerService flowManagerService;

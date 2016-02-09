@@ -1,30 +1,102 @@
+body {
+	color: #2a2d2b;
+	background-color: lightgrey;
+}
+
+h1 {
+	color: #2a2d2b;
+	font-size: 50px;
+}
+h2 {
+	color: #336699;
+}
+h3 {
+	color: #2a2d2b;
+}
+
+a:hover {
+	font-weight: bold;
+	text-decoration: underline;
+}
+
 div#header { 
-    background-color: #404040;
-    border: 1px solid #909090;
+    background-color: #fff;
     padding: 15px 15px; 
     color: #ffffff;
 }
+.btn, div#header .btn, div#content div#sidebar .btn, ul.dropdown-menu{
+	font-family: "Lucida Grande","Lucida Sans Unicode", "Lucida Sans", Geneva, Verdana, sans-serif;
+	font-size: 24px;
+	margin: 2px;
+}
 
-#sitename {
-	color: #ffffff;
-	font-size: 25px;
-	font-weight: 400;
-	margin: 0px;
-	color: #FFF;
-	text-overflow: ellipsis;
-	white-space: nowrap;
-	overflow: hidden;
-	text-transform: uppercase;
+.btn, div#content .btn {
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-size: 18px;
+}
+
+div#header .alert {
+	margin: 5px 0px;
+	text-align: left;
+}
+
+.alert {
+	color: #fff;
+}
+
+.alert-info, .brand-info, .btn-success {
+	background-color: #4a9e43;
+}
+
+.alert-danger, .brand-danger {
+	background-color: #ff2a00;
+}
+
+.brand-primary, .btn-primary {
+	background-color: #336699;
+}
+
+.btn {
+	color: #fff;
+}
+
+.btn-default {
+    background-color: #444547;
+}
+
+.btn-default:hover {
+    background-color: #444547;
+    border-color: #2a2d2b;
+    color: #fff;
+}
+
+.sycned {
+	color: #4a9e43;
+}
+
+.unsycned {
+	color: #ff2a00;
+}
+
+div#message {
+	margin: 0px 5px;
+}
+
+.divider {
+	border: 10px solid #2a2d2b;  
 }
 
 #content {
 	min-height: 450px;
-	padding: 10px;
+	padding: 0px;
+	box-shadow: 0px 5px 5px #888888;
+	background-color: #fff;
 }
 
 #footer {
 	font-size: 12px;
 	text-align: center;
+	margin: 10px 0px;
 }
 
 ul.alert {
@@ -44,4 +116,30 @@ button#headerDropdownMenu {
     background-color: #404040;
     border: 0px;
     color: #ffffff;
+}
+
+div#sidebar {
+	background-color: #444547;
+	min-height: 450px;
+}
+
+div#sidebar h1, div#sidebar h2, div#sidebar h3, div#sidebar a {
+	color: #fff;
+}
+
+div#center {
+	background-color: #fff;
+	min-height: 450px;
+}
+
+ul.custom-list {
+	
+}
+
+div#buttons {
+	text-align: center;
+}
+
+.modal-footer {
+    border-top: 0px;
 }
