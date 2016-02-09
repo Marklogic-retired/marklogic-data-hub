@@ -44,11 +44,11 @@ div#header .alert {
 	color: #fff;
 }
 
-.alert-info, .brand-info, .btn-success, .sycned {
+.alert-info, .brand-info, .btn-success {
 	background-color: #4a9e43;
 }
 
-.alert-danger, .brand-danger, .unsycned {
+.alert-danger, .brand-danger {
 	background-color: #ff2a00;
 }
 
@@ -58,6 +58,14 @@ div#header .alert {
 
 .btn-default {
     background-color: #444547;
+}
+
+.sycned {
+	color: #4a9e43;
+}
+
+.unsycned {
+	color: #ff2a00;
 }
 
 div#message {
