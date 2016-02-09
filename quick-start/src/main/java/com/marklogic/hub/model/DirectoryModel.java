@@ -5,6 +5,7 @@ import java.util.List;
 
 public class DirectoryModel {
 
+	private String parentDirPath;
 	private String directoryName;
 	private List<DirectoryModel> directories = new ArrayList<>();
 	private List<String> files = new ArrayList<>();
@@ -26,6 +27,12 @@ public class DirectoryModel {
 	}
 	public void setFiles(List<String> files) {
 		this.files = files;
+	}
+	public String getParentDirPath() {
+		return parentDirPath;
+	}
+	public void setParentDirPath(String parentDirPath) {
+		this.parentDirPath = parentDirPath;
 	}
 	
 	

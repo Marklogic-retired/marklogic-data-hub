@@ -43,20 +43,27 @@ public class FlowModelFactory {
 		this.createEmptyFlowDirectories(userPluginDir, flowName, flowType);
 		return flowModel;
 	}
-	
-	private void createEmptyFlowDirectories(String userPluginDir, String flowName,
-			FlowType flowType) {
-		String flowPath = userPluginDir + File.separator
+
+	private void createEmptyFlowDirectories(String userPluginDir,
+			String flowName, FlowType flowType) {
+		String flowParentPath = userPluginDir + File.separator
 				+ FileUtil.DOMAINS_FOLDER + File.separator + domainName
 				+ File.separator + flowType.getName();
-		FileUtil.createFolderIfNecessary(flowPath, flowName);
-		//create empty plugin directories
-		DirectoryModelFactory directoryModelFactory = new DirectoryModelFactory(flowName);
-		DirectoryModel directoryModel = directoryModelFactory.getDirectoryModel();
-		directoryModelFactory.addEmptyDirectories(new String[]{"content", "headers", "triples", "validations"});
-		if(flowType == FlowType.CONFORM) {
-			directoryModelFactory.addEmptyDirectories(new String[]{"custom-flow", "collector", "writer"});
-			directoryModelFactory.addDirectory("egress", new String[]{"document-transforms", "search-options", "REST-extensions"});
+		String newFlowPath = FileUtil.createFolderIfNecessary(flowParentPath,
+				flowName);
+		// create empty plugin directories
+		DirectoryModelFactory directoryModelFactory = new DirectoryModelFactory(
+				flowParentPath, flowName);
+		DirectoryModel directoryModel = directoryModelFactory
+				.getDirectoryModel();
+		directoryModelFactory.addEmptyDirectories(newFlowPath, new String[] {
+				"content", "headers", "triples", "validations" });
+		if (flowType == FlowType.CONFORM) {
+			directoryModelFactory.addEmptyDirectories(newFlowPath,
+					new String[] { "custom-flow", "collector", "writer" });
+			directoryModelFactory.addDirectory(newFlowPath, "egress",
+					new String[] { "document-transforms", "search-options",
+							"REST-extensions" });
 		}
 		FileUtil.createDirectories(directoryModel);
 	}
