@@ -1,9 +1,14 @@
 <div id="header" class="container-fluid">
     <div class="row">
-        <div class="col-xs-11 col-sm-8 col-md-8"><h1 id="sitename">Data Hub in a Box</h1></div>
-        <div id="sitemenu" class="dropdown" ng-if="username">
+        <div class="col-xs-4 col-sm-4 col-md-4">
+        	<img src="images/logo.png">
+        </div>
+        <div id="sitemenu" class="col-xs-8 col-sm-8 col-md-8 dropdown" ng-if="status != null">
+        	<button type="submit" name="installUserModules" class="btn btn-primary" ng-if="status.installed" ng-click="installUserModules()">Deploy to server</button>
+			<button type="submit" name="install" class="btn btn-default" ng-if="!status.installed" ng-click="install())">Install</button>
+			<button type="submit" name="uninstall" class="btn btn-primary" ng-if="status.installed" ng-click="uninstall()">Uninstall</button>
 			<button class="btn btn-default dropdown-toggle" type="button" id="headerDropdownMenu" data-toggle="dropdown" aria-expanded="true">
-			    Welcome {{username}}! <span class="caret"></span>
+			    Welcome {{status.mlUsername}}! <span class="caret"></span>
 			</button>
 			<ul class="dropdown-menu dropdown-menu-right" role="menu" aria-labelledby="headerDropdownMenu">
 			  <li role="presentation"><a href="javascript:void(0)" ng-click="logout()">Logout</a></li>
@@ -11,3 +16,4 @@
 		</div>
     </div>
 </div>
+<hr class="divider"></hr>

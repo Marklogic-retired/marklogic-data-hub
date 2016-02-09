@@ -1,6 +1,7 @@
 package com.marklogic.hub.web.controller.api;
 
 import java.io.File;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -107,8 +108,8 @@ public class DataHubServerApiController extends BaseController {
     }
     
     @RequestMapping(value="install-user-modules", method = RequestMethod.POST)
-    public void installUserModules() {
-        dataHubService.installUserModules();
+    public Set<File> installUserModules() {
+    	return dataHubService.installUserModules();
     }
     
     private void updateEnvironmentConfiguration(LoginForm loginForm) {

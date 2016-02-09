@@ -1,5 +1,8 @@
 package com.marklogic.hub.service;
 
+import java.io.File;
+import java.util.Set;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,10 +30,10 @@ public class DataHubService {
 		}
 	}
 
-    public void installUserModules() throws DataHubException {
+    public Set<File> installUserModules() throws DataHubException {
         DataHub dataHub = getDataHub();
         try {
-            dataHub.installUserModules(environmentConfiguration.getUserPluginDir());
+            return dataHub.installUserModules(environmentConfiguration.getUserPluginDir());
         } catch(Throwable e) {
             throw new DataHubException(e.getMessage(), e);
         }

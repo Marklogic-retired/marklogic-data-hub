@@ -1,8 +1,28 @@
+h1 {
+	color: #2a2d2b;
+}
+h2 {
+	color: #336699;
+}
+h3 {
+	color: #2a2d2b;
+}
+
+
 div#header { 
-    background-color: #404040;
-    border: 1px solid #909090;
+    background-color: #fff;
     padding: 15px 15px; 
     color: #ffffff;
+}
+
+div#header .btn, div#nav .btn, ul.dropdown-menu{
+	font-family: "Lucida Grande","Lucida Sans Unicode", "Lucida Sans", Geneva, Verdana, sans-serif;
+	font-size: 24px;
+}
+
+div#content .btn {
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-size: 12px;
 }
 
 #sitename {
@@ -15,6 +35,10 @@ div#header {
 	white-space: nowrap;
 	overflow: hidden;
 	text-transform: uppercase;
+}
+
+.divider {
+	border: 5px solid #2a2d2b;  
 }
 
 #content {
@@ -38,6 +62,11 @@ ul.alert {
 div#sitemenu {
 	text-align: right;
 	color: #ffffff;
+	padding-right: 50px;
+}
+
+div#sitemenu .dropdown-menu-right {
+	margin-right: 50px;
 }
 
 button#headerDropdownMenu {
