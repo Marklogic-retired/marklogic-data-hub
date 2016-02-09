@@ -18,7 +18,7 @@ module.directive('header', [
             }
             ,transclude: true
             ,templateUrl : function(element, attrs) {
-                return attrs.templateUrl || 'directives/header.html';
+                return attrs.templateUrl || 'app/directives/header.html';
             }
             ,link : function(scope, element, attrs) {
             	scope.logout = function () {

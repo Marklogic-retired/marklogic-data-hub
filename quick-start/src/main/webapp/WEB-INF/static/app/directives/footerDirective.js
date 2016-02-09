@@ -15,7 +15,7 @@ module.directive('footer', [
             }
             ,transclude: true
             ,templateUrl : function(element, attrs) {
-                return attrs.templateUrl || 'directives/footer.html';
+                return attrs.templateUrl || 'app/directives/footer.html';
             }
             ,link : function(scope, element, attrs) {
             }
