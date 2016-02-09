@@ -24,15 +24,15 @@ div#header {
     padding: 15px 15px; 
     color: #ffffff;
 }
-div#header .btn, div#nav .btn, ul.dropdown-menu{
+.btn, div#header .btn, div#content div#sidebar .btn, ul.dropdown-menu{
 	font-family: "Lucida Grande","Lucida Sans Unicode", "Lucida Sans", Geneva, Verdana, sans-serif;
 	font-size: 24px;
 	margin: 2px;
 }
 
-div#content .btn {
+.btn, div#content .btn {
 	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-	font-size: 12px;
+	font-size: 18px;
 }
 
 div#header .alert {
@@ -56,8 +56,18 @@ div#header .alert {
 	background-color: #336699;
 }
 
+.btn {
+	color: #fff;
+}
+
 .btn-default {
     background-color: #444547;
+}
+
+.btn-default:hover {
+    background-color: #444547;
+    border-color: #2a2d2b;
+    color: #fff;
 }
 
 .sycned {
@@ -124,4 +134,12 @@ div#center {
 
 ul.custom-list {
 	
+}
+
+div#buttons {
+	text-align: center;
+}
+
+.modal-footer {
+    border-top: 0px;
 }

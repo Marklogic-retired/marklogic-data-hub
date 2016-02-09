@@ -14,20 +14,20 @@ module.controller('topController', [
         ,DataHub
     ) {
         $scope.status = DataHub.status;
+        $scope.domainForm = {};
         
         console.log('status');
         console.log($scope.status);
         
-        $scope.install = function () {
-            DataHub.install();
-        };
+        $scope.createDomain = function() {
+        	$('#domainModal').modal({
+    	        backdrop: 'static',
+    	        keyboard: true
+    	    });
+        },
         
-        $scope.uninstall = function () {
-            DataHub.uninstall();
-        };
-        
-        $scope.installUserModules = function () {
-            DataHub.installUserModules();
-        };
+        $scope.saveDomain = function() {
+        	DataHub.saveDomain($scope.domainForm);
+        }
     }
 ]);

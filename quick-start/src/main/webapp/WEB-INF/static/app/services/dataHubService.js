@@ -65,6 +65,13 @@ module.factory('DataHub', [
                 
                 return promise;
             }
+            
+            ,saveDomain : function(domainForm) {
+            	
+            	var promise = $http.post('api/domains', domainForm);
+                
+                return promise;
+            }
         };
         
         return service;

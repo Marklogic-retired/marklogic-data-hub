@@ -45,8 +45,9 @@ public class DomainManagerService {
 		List<DomainModel> domains = new ArrayList<>();
 		DomainManager domainManager = getDomainManager();
 		List<Domain> domainsInServer = domainManager.getDomains();
+		String domainsPath = FileUtil.createFolderIfNecessary(environmentConfiguration.getUserPluginDir(), FileUtil.DOMAINS_FOLDER);
 		List<String> domainNames = FileUtil
-				.listDirectFolders(environmentConfiguration.getUserPluginDir());
+				.listDirectFolders(domainsPath);
 		DomainModelFactory domainModelFactory = new DomainModelFactory(
 				domainsInServer);
 		for (String domainName : domainNames) {
@@ -61,5 +62,14 @@ public class DomainManagerService {
 	public Domain getDomain(String domainName) {
 		DomainManager domainManager = getDomainManager();
 		return domainManager.getDomain(domainName);
+	}
+
+	public DomainModel createDomain(String domainName, String inputFlowName,
+			String conformFlowName) {
+		DomainModelFactory domainModelFactory = new DomainModelFactory();
+		DomainModel domainModel = domainModelFactory.createNewDomain(
+				environmentConfiguration.getUserPluginDir(), domainName,
+				inputFlowName, conformFlowName);
+		return domainModel;
 	}
 }
