@@ -1,9 +1,9 @@
 <div id="header" class="container-fluid">
     <div class="row">
-        <div class="col-xs-4 col-sm-4 col-md-4">
-        	<img src="images/logo.png">
+        <div class="col-xs-6 col-sm-6 col-md-6 logo">
+        	<img id="img_logo" src="images/logo.png">
         </div>
-        <div id="sitemenu" class="col-xs-8 col-sm-8 col-md-8 dropdown" ng-if="status != null">
+        <div id="sitemenu" class="col-xs-6 col-sm-6 col-md-6 dropdown" ng-if="status != null">
         	<button type="submit" name="installUserModules" class="btn btn-primary" ng-if="status.installed" ng-click="installUserModules()">Deploy to server</button>
 			<button type="submit" name="install" class="btn btn-default" ng-if="!status.installed" ng-click="install())">Install</button>
 			<button type="submit" name="uninstall" class="btn btn-primary" ng-if="status.installed" ng-click="uninstall()">Uninstall</button>
@@ -15,5 +15,14 @@
 			</ul>
 		</div>
     </div>
+    <div id="message" class="alert alert-info" ng-if="status != null">
+		<a href="dismiss" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+        <ul>
+            <li ng-if="status.serverVersionAccepted">ML version is acceptable.</li>
+            <li ng-if="!status.serverVersionAccepted">ML version is unacceptable.</li>
+            <li ng-if="status.installed">Data Hub is already installed.</li>
+            <li ng-if="!status.installed">Data Hub is not yet installed.</li>
+        </ul>
+    </div>
 </div>
-<hr class="divider"></hr>
+<div class="divider"></div>

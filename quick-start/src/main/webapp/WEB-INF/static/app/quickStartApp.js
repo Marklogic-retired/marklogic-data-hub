@@ -70,6 +70,9 @@ module.config([
                 }]
             }
         })
+        .when('/dismiss', {
+            //do nothing
+        })
         .otherwise({
             redirectTo: '/login'
         });
