@@ -70,6 +70,7 @@ div#message {
 #content {
 	min-height: 450px;
 	padding: 0px;
+	box-shadow: 0px 5px 5px #888888;
 }
 
 #footer {
