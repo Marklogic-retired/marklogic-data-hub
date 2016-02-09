@@ -7,6 +7,7 @@ public class LoginForm extends BaseForm {
     private String mlRestPort;
     private String mlUsername;
     private String mlPassword;
+    private String userPluginDir;
     private boolean serverVersionAccepted;
     private boolean installed;
     private boolean loggedIn;
@@ -65,6 +66,14 @@ public class LoginForm extends BaseForm {
 
 	public void setLoggedIn(boolean loggedIn) {
 		this.loggedIn = loggedIn;
+	}
+
+	public String getUserPluginDir() {
+		return userPluginDir;
+	}
+
+	public void setUserPluginDir(String userPluginDir) {
+		this.userPluginDir = userPluginDir;
 	}
 
 	

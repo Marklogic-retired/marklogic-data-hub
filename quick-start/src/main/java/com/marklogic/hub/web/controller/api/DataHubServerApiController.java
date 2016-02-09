@@ -1,5 +1,7 @@
 package com.marklogic.hub.web.controller.api;
 
+import java.io.File;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -33,16 +35,22 @@ public class DataHubServerApiController extends BaseController {
     @RequestMapping(value="login", method = RequestMethod.POST, consumes={MediaType.APPLICATION_JSON_UTF8_VALUE}, produces={MediaType.APPLICATION_JSON_UTF8_VALUE})
     public LoginForm postLogin(@RequestBody LoginForm loginForm, BindingResult bindingResult, HttpSession session, HttpServletRequest request) throws Exception {
         try {
-            updateEnvironmentConfiguration(loginForm);
-            
-            loginForm.setInstalled(dataHubService.isInstalled());
-            loginForm.setServerVersionAccepted(dataHubService.isServerAcceptable());
-            loginForm.setHasErrors(false);
-            loginForm.setLoggedIn(true);
-            
-            environmentConfiguration.saveConfigurationToFile();
-            
-            session.setAttribute("loginForm", loginForm);
+        	if(isValidDirectory(loginForm.getUserPluginDir())) {
+        		
+	            updateEnvironmentConfiguration(loginForm);
+	            
+	            loginForm.setInstalled(dataHubService.isInstalled());
+	            loginForm.setServerVersionAccepted(dataHubService.isServerAcceptable());
+	            loginForm.setHasErrors(false);
+	            loginForm.setLoggedIn(true);
+	            
+	            environmentConfiguration.saveConfigurationToFile();
+	            
+	            session.setAttribute("loginForm", loginForm);
+        	} else {
+        		loginForm.setLoggedIn(false);
+                displayError(loginForm, null, null, loginForm.getUserPluginDir() + " is not a valid directory.");
+        	}
         }
         catch (DataHubException e) {
             LOGGER.error("Login failed", e);
@@ -53,7 +61,21 @@ public class DataHubServerApiController extends BaseController {
         return loginForm;
     }
     
-    @RequestMapping(value="login", method = RequestMethod.GET)
+    private boolean isValidDirectory(String userPluginDir) {
+		File file = new File(userPluginDir);
+		if(file.exists() && file.isDirectory()) {
+			return true;
+		}
+		
+		File parentFile = file.getParentFile();
+		if(parentFile.exists() && parentFile.isDirectory()) {
+			file.mkdir();
+			return true;
+		}
+		return false;
+	}
+
+	@RequestMapping(value="login", method = RequestMethod.GET)
     public LoginForm getLoginStatus(HttpSession session) {
     	LoginForm loginForm = (LoginForm) session.getAttribute("loginForm");
     	if(loginForm == null) {
@@ -94,6 +116,7 @@ public class DataHubServerApiController extends BaseController {
         environmentConfiguration.setMLRestPort(loginForm.getMlRestPort());
         environmentConfiguration.setMLUsername(loginForm.getMlUsername());
         environmentConfiguration.setMLPassword(loginForm.getMlPassword());
+        environmentConfiguration.setUserPluginDir(loginForm.getUserPluginDir());
     }
     
     private void retrieveEnvironmentConfiguration(LoginForm loginForm) {
@@ -101,5 +124,6 @@ public class DataHubServerApiController extends BaseController {
     	loginForm.setMlRestPort(environmentConfiguration.getMLRestPort());
     	loginForm.setMlUsername(environmentConfiguration.getMLUsername());
     	loginForm.setMlPassword(environmentConfiguration.getMLPassword());
+    	loginForm.setUserPluginDir(environmentConfiguration.getUserPluginDir());
     }
 }
