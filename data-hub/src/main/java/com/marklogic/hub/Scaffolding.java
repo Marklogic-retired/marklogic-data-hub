@@ -34,19 +34,19 @@ public class Scaffolding {
 
         File collectorDir = new File(flowDir, "collector");
         collectorDir.mkdirs();
-        writeFile("scaffolidng/collector.xqy", Paths.get(collectorDir.getPath(), "collector.xqy"));
+        writeFile("scaffolding/collector.xqy", Paths.get(collectorDir.getPath(), "collector.xqy"));
 
         File contentDir = new File(flowDir, "content");
         contentDir.mkdirs();
-        writeFile("scaffolidng/content.xqy", Paths.get(contentDir.getPath(), "content.xqy"));
+        writeFile("scaffolding/content.xqy", Paths.get(contentDir.getPath(), "content.xqy"));
 
         File headerDir = new File(flowDir, "header");
         headerDir.mkdirs();
-        writeFile("scaffolidng/header.xqy", Paths.get(contentDir.getPath(), "header.xqy"));
+        writeFile("scaffolding/header.xqy", Paths.get(contentDir.getPath(), "header.xqy"));
 
         File triplesDir = new File(flowDir, "triples");
         triplesDir.mkdirs();
-        writeFile("scaffolidng/triples.xqy", Paths.get(contentDir.getPath(), "triples.xqy"));
+        writeFile("scaffolding/triples.xqy", Paths.get(contentDir.getPath(), "triples.xqy"));
     }
 
     private static void writeFile(String srcFile, Path dstFile) throws IOException {

@@ -21,6 +21,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.springframework.web.client.ResourceAccessException;
 
 import com.marklogic.appdeployer.AppConfig;
@@ -46,6 +49,8 @@ import com.marklogic.mgmt.appservers.ServerManager;
 
 public class DataHub {
 
+    static final private Logger logger = LoggerFactory.getLogger(DataHub.class);
+
     private ManageConfig config;
     private ManageClient client;
     public static String HUB_NAME = "data-hub-in-a-box";
@@ -56,6 +61,10 @@ public class DataHub {
     private String password;
 
     private final static int DEFAULT_REST_PORT = 8010;
+
+    public DataHub(HubConfig config) {
+        this(config.getHost(), config.getAdminUsername(), config.getAdminPassword());
+    }
 
     public DataHub(String host, String username, String password) {
         this(host, DEFAULT_REST_PORT, username, password);
