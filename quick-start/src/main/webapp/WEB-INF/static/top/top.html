@@ -1,11 +1,14 @@
 <header status="status"></header>
 
-<div id="content" class="container">
-    <div class="row spacing-top">
-        <div class="col-xs-12">
-            
-        </div>
+<div id="content" class="container-fluid">
+  <div class="row-fluid">
+    <div id="sidebar" class="col-md-4">
+      <div ng-include="'top/domains.html'"></div>
     </div>
+    <div id="center" class="col-md-8">
+      <div ng-include="'top/flows.html'"></div>
+    </div>
+  </div>
 </div>
 
 <footer></footer>

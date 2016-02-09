@@ -1,3 +1,8 @@
+body {
+	color: #2a2d2b;
+	background-color: lightgrey;
+}
+
 h1 {
 	color: #2a2d2b;
 }
@@ -8,6 +13,14 @@ h3 {
 	color: #2a2d2b;
 }
 
+a.nav {
+	color: white;
+}
+
+a:hover {
+	font-weight: bold;
+	text-decoration: underline;
+}
 
 div#header { 
     background-color: #fff;
@@ -30,20 +43,24 @@ div#header .alert {
 	text-align: left;
 }
 
-div#message {
-	margin: 0px 5px;
+.alert {
+	color: #fff;
 }
 
-#sitename {
-	color: #ffffff;
-	font-size: 25px;
-	font-weight: 400;
-	margin: 0px;
-	color: #FFF;
-	text-overflow: ellipsis;
-	white-space: nowrap;
-	overflow: hidden;
-	text-transform: uppercase;
+.alert-info, .brand-info {
+	background-color: #4a9e43;
+}
+
+.alert-danger, .brand-danger {
+	background-color: #ff2a00;
+}
+
+.brand-primary {
+	background-color: #336699;
+}
+
+div#message {
+	margin: 0px 5px;
 }
 
 .divider {
@@ -52,12 +69,13 @@ div#message {
 
 #content {
 	min-height: 450px;
-	padding: 10px;
+	padding: 0px;
 }
 
 #footer {
 	font-size: 12px;
 	text-align: center;
+	margin: 10px 0px;
 }
 
 ul.alert {
@@ -73,12 +91,18 @@ div#sitemenu {
 	color: #ffffff;
 }
 
-div#sitemenu .dropdown-menu-right {
-	
-}
-
 button#headerDropdownMenu {
     background-color: #404040;
     border: 0px;
     color: #ffffff;
+}
+
+div#sidebar {
+	background-color: #444547;
+	min-height: 450px;
+}
+
+div#center {
+	background-color: #fff;
+	min-height: 450px;
 }
