@@ -196,14 +196,19 @@ declare %private function flow:get-writer(
  :)
 declare function flow:get-flow(
   $domain-name as xs:string,
-  $flow-name as xs:string) as element(hub:flow)
+  $flow-name as xs:string,
+  $flow-type as xs:string?) as element(hub:flow)
 {
   let $uris :=
     hul:run-in-modules(function() {
-      cts:uri-match($DOMAINS-DIR || $domain-name || "/" || $flow-name || "/*")
+      let $type :=
+        if ($flow-type) then $flow-type
+        else "*"
+      return
+        cts:uri-match($DOMAINS-DIR || $domain-name || "/" || $type || "/" || $flow-name || "/*")
     })
   return
-    flow:get-flow($domain-name, $flow-name, $uris)
+    flow:get-flow($domain-name, $flow-name, $flow-type, $uris)
 };
 
 (:~
@@ -218,14 +223,19 @@ declare function flow:get-flow(
 declare %private function flow:get-flow(
   $domain-name as xs:string,
   $flow-name as xs:string,
+  $flow-type as xs:string?,
   $uris as xs:string*) as element(hub:flow)
 {
-  let $_ := xdmp:log(("domain: " || $domain-name, "flow: " || $flow-name, "uris:", $uris))
+  let $_ := xdmp:log(("domain: " || $domain-name, "flow: " || $flow-name, "flow-type: " || $flow-type, "uris:", $uris))
+  let $real-flow-type := fn:replace($uris[1], $DOMAINS-DIR || $domain-name || "/([^/]+)/" || $flow-name || ".*$", "$1")
   let $map := map:map()
   let $_ :=
     for $dir in $uris
-    let $dir-name := fn:replace($dir, $DOMAINS-DIR || $domain-name || "/" || $flow-name || "/([^/]+)/$", "$1")
-    let $child-uris := $uris[fn:matches(., $DOMAINS-DIR || $domain-name || "/" || $flow-name || "/" || $dir-name || "/([^/]+)$")]
+    let $type :=
+      if ($flow-type) then $flow-type
+      else "[^/]+"
+    let $dir-name := fn:replace($dir, $DOMAINS-DIR || $domain-name || "/" || $type || "/" || $flow-name || "/([^/]+)/$", "$1")
+    let $child-uris := $uris[fn:matches(., $DOMAINS-DIR || $domain-name || "/" || $type || "/" || $flow-name || "/" || $dir-name || "/([^/]+)$")]
     return
       switch ($dir-name)
         case "collector" return
@@ -244,7 +254,8 @@ declare %private function flow:get-flow(
     <flow xmlns="http://marklogic.com/hub-in-a-box">
       <name>{$flow-name}</name>
       <domain>{$domain-name}</domain>
-      <type>simple</type>
+      <format>simple</format>
+      <type>{$real-flow-type}</type>
       {map:get($map, "collector")}
       <plugins>
       {
@@ -272,10 +283,10 @@ declare function flow:get-flows(
     cts:uri-match($DOMAINS-DIR || "*")
   })
   let $flows :=
-    for $flow in $uris[fn:matches(., $DOMAINS-DIR || $domain-name || "/[^/]+/$")]
-    let $name := fn:replace($flow, $DOMAINS-DIR || $domain-name || "/([^/]+)/$", "$1")
+    for $flow in $uris[fn:matches(., $DOMAINS-DIR || $domain-name || "/(input|canonical)/[^/]+/$")]
+    let $name := fn:replace($flow, $DOMAINS-DIR || $domain-name || "/(input|canonical)/([^/]+)/$", "$2")
     return
-      flow:get-flow($domain-name, $name, $uris[fn:matches(., $DOMAINS-DIR || $domain-name || "/" || $name || "/.+")])
+      flow:get-flow($domain-name, $name, (), $uris[fn:matches(., $DOMAINS-DIR || $domain-name || "/(input|canonical)/" || $name || "/.+")])
   return
     <flows xmlns="http://marklogic.com/hub-in-a-box">
     {

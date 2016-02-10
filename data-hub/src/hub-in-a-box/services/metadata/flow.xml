@@ -9,6 +9,7 @@
   <method name="GET">
     <param name="domain-name" />
     <param name="flow-name" />
+    <param name="flow-type" />
   </method>
   <method name="POST">
     <param name="identifier" />

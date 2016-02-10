@@ -93,9 +93,16 @@ public class FlowManager extends ResourceManager {
      * @return the flow
      */
     public Flow getFlow(String domainName, String flowName) {
+        return getFlow(domainName, flowName, null);
+    }
+
+    public Flow getFlow(String domainName, String flowName, String flowType) {
         RequestParameters params = new RequestParameters();
         params.add("domain-name", domainName);
         params.add("flow-name", flowName);
+        if (flowType != null) {
+            params.add("flow-type", flowType);
+        }
         ServiceResultIterator resultItr = this.getServices().get(params);
         if (resultItr == null || ! resultItr.hasNext()) {
             return null;
@@ -146,9 +153,16 @@ public class FlowManager extends ResourceManager {
         FlowRunner runner = new FlowRunner(client);
         List<String> ids = c.run();
 
-        Transaction transaction = client.openTransaction();
+        Transaction transaction = null;
         try {
-            for (String id : ids) {
+            for (int i = 0; i < ids.size(); i++) {
+                if (i % batchSize == 0) {
+                    if (transaction != null) {
+                        transaction.commit();
+                    }
+                    transaction = client.openTransaction();
+                }
+                String id = ids.get(i);
 
                 // all of the Plugins need to be run in MarkLogic
                 if (allServer) {
@@ -167,10 +181,14 @@ public class FlowManager extends ResourceManager {
                 }
 
             }
-            transaction.commit();
+            if (transaction != null) {
+                transaction.commit();
+            }
         }
         catch(Exception e) {
-            transaction.rollback();
+            if (transaction != null) {
+                transaction.rollback();
+            }
         }
     }
 
@@ -186,13 +204,13 @@ public class FlowManager extends ResourceManager {
     public static Flow flowFromXml(Element doc) {
         Flow f = null;
 
-        String type = null;
-        NodeList elements = doc.getElementsByTagNameNS(HUB_NS, "type");
+        String format = null;
+        NodeList elements = doc.getElementsByTagNameNS(HUB_NS, "format");
         if (elements.getLength() == 1) {
-            type = elements.item(0).getTextContent();
+            format = elements.item(0).getTextContent();
         }
 
-        if (type.equals("simple")) {
+        if (format.equals("simple")) {
             SimpleFlow sf = new SimpleFlow(doc);
             f = sf;
         }

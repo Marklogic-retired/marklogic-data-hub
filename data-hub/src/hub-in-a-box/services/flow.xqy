@@ -46,9 +46,10 @@ declare function get(
   document {
     let $domain-name := map:get($params, "domain-name")
     let $flow-name := map:get($params, "flow-name")
+    let $flow-type := map:get($params, "flow-type")
     let $resp :=
       if ($flow-name) then
-        flow:get-flow($domain-name, $flow-name)
+        flow:get-flow($domain-name, $flow-name, $flow-type)
       else
         flow:get-flows($domain-name)
     let $_ := debug:log($resp)

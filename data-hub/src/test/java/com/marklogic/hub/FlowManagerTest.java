@@ -58,16 +58,16 @@ public class FlowManagerTest extends HubTestBase {
         installDoc("/incoming/employee1.xml", meta, getResource("flow-manager-test/input/employee1.xml"));
         installDoc("/incoming/employee2.xml", meta, getResource("flow-manager-test/input/employee2.xml"));
         runInModules(
-                "xdmp:directory-create(\"/ext/domains/test/my-test-flow1/collector/\")," +
-                "xdmp:directory-create(\"/ext/domains/test/my-test-flow1/headers/\")," +
-                "xdmp:directory-create(\"/ext/domains/test/my-test-flow1/triples/\")," +
-                "xdmp:directory-create(\"/ext/domains/test/my-test-flow1/content/\")," +
-                "xdmp:directory-create(\"/ext/domains/test/my-test-flow2/collector/\")," +
-                "xdmp:directory-create(\"/ext/domains/test/my-test-flow2/headers/\")," +
-                "xdmp:directory-create(\"/ext/domains/test/my-test-flow2/triples/\")," +
-                "xdmp:directory-create(\"/ext/domains/test/my-test-flow2/content/\")");
-        installModule("/ext/domains/test/my-test-flow1/collector/collector.xqy", "flow-manager-test/my-test-flow1/collector/collector.xqy");
-        installModule("/ext/domains/test/my-test-flow2/collector/collector.xqy", "flow-manager-test/my-test-flow1/collector/collector.xqy");
+                "xdmp:directory-create(\"/ext/domains/test/canonical/my-test-flow1/collector/\")," +
+                "xdmp:directory-create(\"/ext/domains/test/canonical/my-test-flow1/headers/\")," +
+                "xdmp:directory-create(\"/ext/domains/test/canonical/my-test-flow1/triples/\")," +
+                "xdmp:directory-create(\"/ext/domains/test/canonical/my-test-flow1/content/\")," +
+                "xdmp:directory-create(\"/ext/domains/test/canonical/my-test-flow2/collector/\")," +
+                "xdmp:directory-create(\"/ext/domains/test/canonical/my-test-flow2/headers/\")," +
+                "xdmp:directory-create(\"/ext/domains/test/canonical/my-test-flow2/triples/\")," +
+                "xdmp:directory-create(\"/ext/domains/test/canonical/my-test-flow2/content/\")");
+        installModule("/ext/domains/test/canonical/my-test-flow1/collector/collector.xqy", "flow-manager-test/my-test-flow1/collector/collector.xqy");
+        installModule("/ext/domains/test/canonical/my-test-flow2/collector/collector.xqy", "flow-manager-test/my-test-flow1/collector/collector.xqy");
     }
 
     @AfterClass
@@ -100,8 +100,8 @@ public class FlowManagerTest extends HubTestBase {
 
     @Test
     public void testEmptyFlow() throws IOException {
-        runInModules("xdmp:directory-create(\"/ext/domains/test/empty-flow/\")");
-        installModule("/ext/domains/test/empty-flow/collector/collector.xqy", "flow-manager-test/my-test-flow1/collector/collector.xqy");
+        runInModules("xdmp:directory-create(\"/ext/domains/test/canonical/empty-flow/\")");
+        installModule("/ext/domains/test/canonical/empty-flow/collector/collector.xqy", "flow-manager-test/my-test-flow1/collector/collector.xqy");
 
         FlowManager fm = new FlowManager(client);
         SimpleFlow flow1 = (SimpleFlow)fm.getFlow("test", "empty-flow");
@@ -109,7 +109,7 @@ public class FlowManagerTest extends HubTestBase {
 
         ServerCollector c = (ServerCollector)flow1.getCollector();
         assertEquals("xquery", c.getType());
-        assertEquals("/ext/domains/test/empty-flow/collector/collector.xqy", c.getModule());
+        assertEquals("/ext/domains/test/canonical/empty-flow/collector/collector.xqy", c.getModule());
 
         ServerPlugin t = (ServerPlugin)flow1.getContentPlugin();
         assertEquals("xquery", t.getType());
@@ -121,12 +121,12 @@ public class FlowManagerTest extends HubTestBase {
         DefaultWriter w = (DefaultWriter)flow1.getWriter();
         assertNotNull(w);
 
-        runInModules("xdmp:directory-delete(\"/ext/domains/test/empty-flow/\")");
+        runInModules("xdmp:directory-delete(\"/ext/domains/test/canonical/empty-flow/\")");
     }
 
     @Test
     public void testSimpleFlowToXml() throws IOException, ParserConfigurationException, SAXException {
-        SimpleFlow flow = new SimpleFlow("test", "my-test-flow");
+        SimpleFlow flow = new SimpleFlow("test", "my-test-flow", "canonical");
         flow.setCollector(new QueryCollector());
         flow.setContentPlugin(new ContentPlugin());
         flow.setHeaderPlugin(new HeadersPlugin());
@@ -149,7 +149,7 @@ public class FlowManagerTest extends HubTestBase {
 
         ServerCollector c = (ServerCollector)flow1.getCollector();
         assertEquals("xquery", c.getType());
-        assertEquals("/ext/domains/test/my-test-flow1/collector/collector.xqy", c.getModule());
+        assertEquals("/ext/domains/test/canonical/my-test-flow1/collector/collector.xqy", c.getModule());
 
         ServerPlugin t = (ServerPlugin)flow1.getContentPlugin();
         assertEquals("xquery", t.getType());
@@ -166,7 +166,7 @@ public class FlowManagerTest extends HubTestBase {
 
         c = (ServerCollector)flow1.getCollector();
         assertEquals("xquery", c.getType());
-        assertEquals("/ext/domains/test/my-test-flow1/collector/collector.xqy", c.getModule());
+        assertEquals("/ext/domains/test/canonical/my-test-flow1/collector/collector.xqy", c.getModule());
 
         t = (ServerPlugin)flow2.getContentPlugin();
         assertEquals("xquery", t.getType());
@@ -187,7 +187,7 @@ public class FlowManagerTest extends HubTestBase {
 
         ServerCollector c = (ServerCollector)flow1.getCollector();
         assertEquals("xquery", c.getType());
-        assertEquals("/ext/domains/test/my-test-flow1/collector/collector.xqy", c.getModule());
+        assertEquals("/ext/domains/test/canonical/my-test-flow1/collector/collector.xqy", c.getModule());
 
         ServerPlugin t = (ServerPlugin)flow1.getContentPlugin();
         assertEquals("xquery", t.getType());
@@ -212,8 +212,8 @@ public class FlowManagerTest extends HubTestBase {
 
     @Test
     public void testRunFlowWithHeader() throws SAXException, IOException, ParserConfigurationException, XMLStreamException {
-        installModule("/ext/domains/test/my-test-flow-with-header/collector/collector.xqy", "flow-manager-test/my-test-flow-with-header/collector/collector.xqy");
-        installModule("/ext/domains/test/my-test-flow-with-header/headers/headers.xqy", "flow-manager-test/my-test-flow-with-header/headers/headers.xqy");
+        installModule("/ext/domains/test/canonical/my-test-flow-with-header/collector/collector.xqy", "flow-manager-test/my-test-flow-with-header/collector/collector.xqy");
+        installModule("/ext/domains/test/canonical/my-test-flow-with-header/headers/headers.xqy", "flow-manager-test/my-test-flow-with-header/headers/headers.xqy");
 
         assertEquals(2, getDocCount());
         FlowManager fm = new FlowManager(client);
@@ -223,15 +223,15 @@ public class FlowManagerTest extends HubTestBase {
         assertXMLEqual(getXmlFromResource("flow-manager-test/conformed-with-header/conformed1.xml"), docMgr.read("/conformed/incoming/employee1.xml").next().getContent(new DOMHandle()).get() );
         assertXMLEqual(getXmlFromResource("flow-manager-test/conformed-with-header/conformed2.xml"), docMgr.read("/conformed/incoming/employee2.xml").next().getContent(new DOMHandle()).get());
 
-        runInModules("xdmp:directory-delete(\"/ext/domains/test/my-test-flow-with-header/\")");
+        runInModules("xdmp:directory-delete(\"/ext/domains/test/canonical/my-test-flow-with-header/\")");
     }
 
     @Test
     public void testRunFlowWithAll() throws SAXException, IOException, ParserConfigurationException, XMLStreamException {
-        installModule("/ext/domains/test/my-test-flow-with-all/collector/collector.xqy", "flow-manager-test/my-test-flow-with-all/collector/collector.xqy");
-        installModule("/ext/domains/test/my-test-flow-with-all/headers/headers.xqy", "flow-manager-test/my-test-flow-with-all/headers/headers.xqy");
-        installModule("/ext/domains/test/my-test-flow-with-all/content/content.xqy", "flow-manager-test/my-test-flow-with-all/content/content.xqy");
-        installModule("/ext/domains/test/my-test-flow-with-all/triples/triples.xqy", "flow-manager-test/my-test-flow-with-all/triples/triples.xqy");
+        installModule("/ext/domains/test/canonical/my-test-flow-with-all/collector/collector.xqy", "flow-manager-test/my-test-flow-with-all/collector/collector.xqy");
+        installModule("/ext/domains/test/canonical/my-test-flow-with-all/headers/headers.xqy", "flow-manager-test/my-test-flow-with-all/headers/headers.xqy");
+        installModule("/ext/domains/test/canonical/my-test-flow-with-all/content/content.xqy", "flow-manager-test/my-test-flow-with-all/content/content.xqy");
+        installModule("/ext/domains/test/canonical/my-test-flow-with-all/triples/triples.xqy", "flow-manager-test/my-test-flow-with-all/triples/triples.xqy");
 
         assertEquals(2, getDocCount());
         FlowManager fm = new FlowManager(client);
@@ -241,6 +241,6 @@ public class FlowManagerTest extends HubTestBase {
         assertXMLEqual(getXmlFromResource("flow-manager-test/conformed-with-all/conformed1.xml"), docMgr.read("/conformed/incoming/employee1.xml").next().getContent(new DOMHandle()).get() );
         assertXMLEqual(getXmlFromResource("flow-manager-test/conformed-with-all/conformed2.xml"), docMgr.read("/conformed/incoming/employee2.xml").next().getContent(new DOMHandle()).get());
 
-        runInModules("xdmp:directory-delete(\"/ext/domains/test/my-test-flow-with-all/\")");
+        runInModules("xdmp:directory-delete(\"/ext/domains/test/canonical/my-test-flow-with-all/\")");
     }
 }
