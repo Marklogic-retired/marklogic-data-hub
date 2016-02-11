@@ -45,16 +45,16 @@ public class DomainManagerService {
 		List<DomainModel> domains = new ArrayList<>();
 		DomainManager domainManager = getDomainManager();
 		List<Domain> domainsInServer = domainManager.getDomains();
-		String domainsPath = FileUtil.createFolderIfNecessary(environmentConfiguration.getUserPluginDir(), FileUtil.DOMAINS_FOLDER);
-		List<String> domainNames = FileUtil
-				.listDirectFolders(domainsPath);
+		String domainsPath = FileUtil.createFolderIfNecessary(
+				environmentConfiguration.getUserPluginDir(),
+				FileUtil.DOMAINS_FOLDER);
+		List<String> domainNames = FileUtil.listDirectFolders(domainsPath);
 		DomainModelFactory domainModelFactory = new DomainModelFactory(
 				domainsInServer);
 		for (String domainName : domainNames) {
 			LOGGER.debug("Domain : " + domainName);
-			domains.add(domainModelFactory.createDomain(domainName,
-					environmentConfiguration.getUserPluginDir()
-							+ File.separator + domainName));
+			domains.add(domainModelFactory.createDomain(domainName, domainsPath
+					+ File.separator + domainName));
 		}
 		return domains;
 	}

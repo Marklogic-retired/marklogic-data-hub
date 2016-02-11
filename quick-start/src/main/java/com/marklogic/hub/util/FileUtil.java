@@ -22,12 +22,26 @@ public class FileUtil {
 		if (rootDirectory.exists() && rootDirectory.isDirectory()) {
 			File[] files = rootDirectory.listFiles();
 			for (File file : files) {
-				if (file.isDirectory()) {
+				if (file.isDirectory() && !file.isHidden()) {
 					folders.add(file.getName());
 				}
 			}
 		}
 		return folders;
+	}
+
+	public static List<String> listDirectFiles(String path) {
+		List<String> filenames = new ArrayList<>();
+		File rootDirectory = new File(path);
+		if (rootDirectory.exists() && rootDirectory.isDirectory()) {
+			File[] files = rootDirectory.listFiles();
+			for (File file : files) {
+				if (!file.isDirectory() && !file.isHidden()) {
+					filenames.add(file.getName());
+				}
+			}
+		}
+		return filenames;
 	}
 
 	public static String createFolderIfNecessary(String path, String folderName) {

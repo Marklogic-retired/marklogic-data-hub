@@ -5,64 +5,65 @@ import java.util.List;
 import com.marklogic.hub.model.DomainModel;
 
 public class LoginForm extends BaseForm {
-	
-    private String mlHost;
-    private String mlRestPort;
-    private String mlUsername;
-    private String mlPassword;
-    private String userPluginDir;
-    private boolean serverVersionAccepted;
-    private boolean installed;
-    private boolean loggedIn;
-    private List<DomainModel> domains;
-    
-    public String getMlHost() {
-        return mlHost;
-    }
 
-    public void setMlHost(String mlHost) {
-        this.mlHost = mlHost;
-    }
+	private String mlHost;
+	private String mlRestPort;
+	private String mlUsername;
+	private String mlPassword;
+	private String userPluginDir;
+	private boolean serverVersionAccepted;
+	private boolean installed;
+	private boolean loggedIn;
+	private List<DomainModel> domains;
+	private DomainModel selectedDomain;
 
-    public String getMlRestPort() {
-        return mlRestPort;
-    }
+	public String getMlHost() {
+		return mlHost;
+	}
 
-    public void setMlRestPort(String restPort) {
-        this.mlRestPort = restPort;
-    }
+	public void setMlHost(String mlHost) {
+		this.mlHost = mlHost;
+	}
 
-    public String getMlUsername() {
-        return mlUsername;
-    }
+	public String getMlRestPort() {
+		return mlRestPort;
+	}
 
-    public void setMlUsername(String mlUsername) {
-        this.mlUsername = mlUsername;
-    }
+	public void setMlRestPort(String restPort) {
+		this.mlRestPort = restPort;
+	}
 
-    public String getMlPassword() {
-        return mlPassword;
-    }
+	public String getMlUsername() {
+		return mlUsername;
+	}
 
-    public void setMlPassword(String mlPassword) {
-        this.mlPassword = mlPassword;
-    }
+	public void setMlUsername(String mlUsername) {
+		this.mlUsername = mlUsername;
+	}
 
-    public boolean isServerVersionAccepted() {
-        return serverVersionAccepted;
-    }
-    
-    public void setServerVersionAccepted(boolean serverVersionAccepted) {
-        this.serverVersionAccepted = serverVersionAccepted;
-    }
+	public String getMlPassword() {
+		return mlPassword;
+	}
 
-    public boolean isInstalled() {
-        return installed;
-    }
+	public void setMlPassword(String mlPassword) {
+		this.mlPassword = mlPassword;
+	}
 
-    public void setInstalled(boolean installed) {
-        this.installed = installed;
-    }
+	public boolean isServerVersionAccepted() {
+		return serverVersionAccepted;
+	}
+
+	public void setServerVersionAccepted(boolean serverVersionAccepted) {
+		this.serverVersionAccepted = serverVersionAccepted;
+	}
+
+	public boolean isInstalled() {
+		return installed;
+	}
+
+	public void setInstalled(boolean installed) {
+		this.installed = installed;
+	}
 
 	public boolean isLoggedIn() {
 		return loggedIn;
@@ -71,7 +72,7 @@ public class LoginForm extends BaseForm {
 	public void setLoggedIn(boolean loggedIn) {
 		this.loggedIn = loggedIn;
 	}
-	
+
 	public String getUserPluginDir() {
 		return userPluginDir;
 	}
@@ -87,6 +88,13 @@ public class LoginForm extends BaseForm {
 	public void setDomains(List<DomainModel> domains) {
 		this.domains = domains;
 	}
-	
-    
+
+	public DomainModel getSelectedDomain() {
+		return selectedDomain;
+	}
+
+	public void setSelectedDomain(DomainModel selectedDomain) {
+		this.selectedDomain = selectedDomain;
+	}
+
 }

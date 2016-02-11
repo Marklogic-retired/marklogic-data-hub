@@ -1,0 +1,43 @@
+<h1>{{status.selectedDomain.domainName}}</h1>
+<h2>Input Flows</h2><button type="submit" name="newInputFlow" class="btn btn-primary" ng-click="createFlow(status.selectedDomain.domainName, 'input')">New</button>
+<ul>
+    <li class="nav" ng-repeat="flow in status.selectedDomain.inputFlows">
+    	<h3><i ng-class="flow.synched ? 'fa fa-file-text-o sycned' : 'fa fa-file-text-o unsycned'"></i>{{flow.flowName}}</h3>
+    	<div class="button-group-right">
+	    	<button type="submit" name="runFlow" class="btn btn-success" ng-click="runFlow(flow.domainName, flow.flowName)" ng-disabled="!flow.synched">Run</button>
+	    	<button type="submit" name="testFlow" class="btn btn-success" ng-click="testFlow(flow.domainName,flow.flowName)" ng-disabled="!flow.synched">Test</button>
+	    </div>
+	    <ul ng-if="flow.directory.directories.length > 0">
+    		<li class="folder" ng-repeat="directory in flow.directory.directories">
+    			<h4>{{directory.directoryName}}</h4><span ng-click="toggleFolder($event)" data-state="close" ng-if="!checkIfEmpty(directory)">&#9660</span>
+    		</li>
+    	</ul>
+    	<ul ng-if="flow.directory.files.length > 0">
+    		<li class="file" ng-repeat="file in flow.directory.files">
+    			<h4>{{file}}</h4>
+    		</li>
+    	</ul>
+    </li>
+</ul>
+<div class="divider"></div>
+<h2>Conformance Flows</h2><button type="submit" name="newConformFlow" class="btn btn-primary" ng-click="createFlow(status.selectedDomain.domainName, 'conform')">New</button>
+<ul>
+    <li class="nav" ng-repeat="flow in status.selectedDomain.conformFlows">
+    	<h3><i ng-class="flow.synched ? 'fa fa-file-text-o sycned' : 'fa fa-file-text-o unsycned'"></i>{{flow.flowName}}</h3>
+    	<div class="button-group-right">
+    		<button type="submit" name="runFlow" class="btn btn-success" ng-click="runFlow('flow.domainName, flow.flowName')" ng-disabled="!flow.synched">Run</button>
+    		<button type="submit" name="testFlow" class="btn btn-success" ng-click="testFlow('flow.domainName, flow.flowName')" ng-disabled="!flow.synched">Test</button>
+    	</div>
+    	<ul ng-if="flow.directory.directories.length > 0">
+    		<li class="folder" ng-repeat="directory in flow.directory.directories">
+    			<h4>{{directory.directoryName}}</h4><span ng-click="toggleFolder($event)" data-state="close" ng-if="!checkIfEmpty(directory)">&#9660</span>
+    		</li>
+    	</ul>
+    	<ul ng-if="flow.directory.files.length > 0">
+    		<li class="file" ng-repeat="file in flow.directory.files">
+    			<h4>{{file}}</h4>
+    		</li>
+    	</ul>
+    </li>
+</ul>
+<div ng-include="'top/modal/flowModal.html'"></div>
