@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/bin/bash
 
 # runs command from parameters and exits with the eoror code of the command
 # if it fails
