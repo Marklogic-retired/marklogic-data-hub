@@ -1,6 +1,6 @@
 language: java
 install:
 - if [ "${TRAVIS_SECURE_ENV_VARS}" = "true" ] ; then ./shared/dev-tasks/travis-install-ml.sh
-  release ; else (exit 0) ; fi
+  ; else (exit 0) ; fi
 - if [ "${TRAVIS_SECURE_ENV_VARS}" = "true" ] ; then ./shared/dev-tasks/setup-marklogic.sh
   ; else (exit 0) ; fi
