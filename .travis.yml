@@ -9,6 +9,6 @@ script:
   ./gradlew -d check
 install:
 - if [ "${TRAVIS_SECURE_ENV_VARS}" = "true" ] ; then ./shared/dev-tasks/travis-install-ml.sh
-  ; else (exit 0) ; fi
+  release ; else (exit 0) ; fi
 - if [ "${TRAVIS_SECURE_ENV_VARS}" = "true" ] ; then ./shared/dev-tasks/setup-marklogic.sh
   ; else (exit 0) ; fi
