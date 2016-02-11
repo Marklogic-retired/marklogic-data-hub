@@ -69,7 +69,6 @@ public class HubTestBase {
         }
         catch (IOException e) {
             System.err.println("Properties file not loaded.");
-            System.exit(1);
         }
 
         // try to load the local environment overrides file
@@ -79,8 +78,7 @@ public class HubTestBase {
             properties.putAll(p);
         }
         catch (IOException e) {
-            System.err.println("Properties file not loaded.");
-            System.exit(1);
+            System.err.println("gradle-local.roperties file not loaded.");
         }
 
         host = properties.getProperty("mlHost");
