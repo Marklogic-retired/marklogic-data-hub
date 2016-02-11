@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env sh
 
 # runs command from parameters and exits with the eoror code of the command
 # if it fails
@@ -11,7 +11,8 @@ function successOrExit {
     fi
 }
 
-set | grep TRAVIS
+set
+#| grep TRAVIS
 
 test $1 && arg1=$1
 if [[ $arg1 = 'release' ]]; then

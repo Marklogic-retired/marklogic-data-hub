@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env sh
 
 sudo /etc/init.d/MarkLogic start
 sleep 10
