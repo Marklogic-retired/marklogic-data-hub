@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
 import com.marklogic.client.DatabaseClientFactory.Authentication;
+import com.marklogic.client.MarkLogicServerException;
 import com.marklogic.hub.DomainManager;
 import com.marklogic.hub.config.EnvironmentConfiguration;
 import com.marklogic.hub.domain.Domain;
@@ -43,8 +44,7 @@ public class DomainManagerService {
 
 	public List<DomainModel> getDomains() {
 		List<DomainModel> domains = new ArrayList<>();
-		DomainManager domainManager = getDomainManager();
-		List<Domain> domainsInServer = domainManager.getDomains();
+		List<Domain> domainsInServer = this.getDomainsInServer();
 		String domainsPath = FileUtil.createFolderIfNecessary(
 				environmentConfiguration.getUserPluginDir(),
 				FileUtil.DOMAINS_FOLDER);
@@ -57,6 +57,19 @@ public class DomainManagerService {
 					+ File.separator + domainName));
 		}
 		return domains;
+	}
+
+	private List<Domain> getDomainsInServer() {
+		List<Domain> domainsInServer = new ArrayList<>();
+		try {
+			DomainManager domainManager = getDomainManager();
+			domainsInServer = domainManager.getDomains();
+		} catch (MarkLogicServerException e) {
+			// TODO catch this temporarily
+			// This should not return an error as the deploy to server should
+			// validate the plugins beforehand
+		}
+		return domainsInServer;
 	}
 
 	public Domain getDomain(String domainName) {
