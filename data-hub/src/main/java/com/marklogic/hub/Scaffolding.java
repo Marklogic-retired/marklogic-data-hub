@@ -29,8 +29,9 @@ public class Scaffolding {
         domainDir.mkdirs();
     }
 
-    public static void createFlow(String name, File domainPath) throws IOException {
-        File flowDir = new File(domainPath, name);
+    public static void createFlow(String name, String type, File domainPath) throws IOException {
+        File typeDir = new File(domainPath, type);
+        File flowDir = new File(typeDir, name);
 
         File collectorDir = new File(flowDir, "collector");
         collectorDir.mkdirs();

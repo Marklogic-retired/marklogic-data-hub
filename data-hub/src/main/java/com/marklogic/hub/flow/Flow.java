@@ -22,8 +22,12 @@ import com.marklogic.hub.plugin.Plugin;
 import com.marklogic.hub.writer.Writer;
 
 public interface Flow {
+    static final String INPUT_FLOW = "input";
+    static final String CANONICAL_FLOW = "canonical";
+
     String getDomainName();
     String getName();
+    String getType();
     String serialize();
 
     Collector getCollector();

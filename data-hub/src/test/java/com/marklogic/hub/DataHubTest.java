@@ -15,8 +15,10 @@
  */
 package com.marklogic.hub;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
 import java.util.Properties;
 
 import org.junit.BeforeClass;
@@ -43,15 +45,28 @@ public class DataHubTest extends HubTestBase {
     }
 
     @Test
-    public void testIsInstalled() {
+    public void testInstall() throws IOException {
         DataHub dh = new DataHub(host, restPort, user, password);
+        if (dh.isInstalled()) {
+            // uninstall first
+            dh.uninstall();
+        }
+
+        assertFalse(dh.isInstalled());
+        dh.install();
         assertTrue(dh.isInstalled());
     }
 
     @Test
-    public void testInstall() {
+    public void testUnInstall() throws IOException {
         DataHub dh = new DataHub(host, restPort, user, password);
-        dh.install();
+        if (false == dh.isInstalled()) {
+            // uninstall first
+            dh.install();
+        }
+        assertTrue(dh.isInstalled());
+        dh.uninstall();
+        assertFalse(dh.isInstalled());
     }
 
     @Test
