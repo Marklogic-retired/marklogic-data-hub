@@ -16,6 +16,7 @@
 package com.marklogic.hub;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -23,10 +24,11 @@ import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.web.client.ResourceAccessException;
 
 import com.marklogic.appdeployer.AppConfig;
+import com.marklogic.appdeployer.ConfigDir;
 import com.marklogic.appdeployer.command.Command;
 import com.marklogic.appdeployer.command.appservers.UpdateRestApiServersCommand;
 import com.marklogic.appdeployer.command.databases.DeployContentDatabasesCommand;
@@ -111,11 +113,7 @@ public class DataHub {
         }
     }
 
-    /**
-     * Installs the data hub configuration and server-side modules into MarkLogic
-     */
-    public void install() {
-        AdminManager manager = new AdminManager();
+    private AppConfig getAppConfig() throws IOException {
         AppConfig config = new AppConfig();
         config.setHost(host);
         config.setRestPort(restPort);
@@ -123,9 +121,21 @@ public class DataHub {
         config.setRestAdminUsername(username);
         config.setRestAdminPassword(password);
         List<String> paths = new ArrayList<String>();
+        // TODO: this is broken when run within a jar
+        // Modules are not getting loaded
         paths.add(new File("../data-hub/src/hub-in-a-box").getAbsolutePath());
+        config.setConfigDir(new ConfigDir(new File(new ClassPathResource("ml-config").getPath())));
         config.setModulePaths(paths);
+        return config;
+    }
 
+    /**
+     * Installs the data hub configuration and server-side modules into MarkLogic
+     * @throws IOException
+     */
+    public void install() throws IOException {
+        AdminManager manager = new AdminManager();
+        AppConfig config = getAppConfig();
         SimpleAppDeployer deployer = new SimpleAppDeployer(client, manager);
         deployer.setCommands(getCommands(config));
         deployer.deploy(config);
@@ -198,8 +208,16 @@ public class DataHub {
         return commands;
     }
 
-    public void uninstall() {
-
+    /**
+     * Uninstalls the data hub configuration and server-side modules from MarkLogic
+     * @throws IOException
+     */
+    public void uninstall() throws IOException {
+        AdminManager manager = new AdminManager();
+        AppConfig config = getAppConfig();
+        SimpleAppDeployer deployer = new SimpleAppDeployer(client, manager);
+        deployer.setCommands(getCommands(config));
+        deployer.undeploy(config);
     }
 
 }

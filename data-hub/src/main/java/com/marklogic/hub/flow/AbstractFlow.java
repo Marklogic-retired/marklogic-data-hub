@@ -175,6 +175,7 @@ public abstract class AbstractFlow implements Flow {
     /**
      * Retrieves the type of flow
      */
+    @Override
     public String getType() {
         return this.type;
     }

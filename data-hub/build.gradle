@@ -9,7 +9,7 @@ plugins {
 
 repositories {
     jcenter()
-    maven {url 'http://developer.marklogic.com/maven2/'}
+    maven { url 'http://developer.marklogic.com/maven2/' }
 }
 
 version = '0.0.9'
@@ -21,7 +21,7 @@ targetCompatibility = 1.8
 
 dependencies {
     compile 'com.marklogic:marklogic-xcc:8.0.4.2'
-    compile 'com.marklogic:java-client-api:3.0.3'
+    compile 'com.marklogic:java-client-api:3.0.4'
     compile mlAppDeployerDependency
     compile 'commons-io:commons-io:2.4'
     testCompile 'junit:junit:4.12'
@@ -108,7 +108,8 @@ publishing {
 
 ext {
     mlAppConfig {
-        modulePaths = ["data-hub/src/hub-in-a-box"]
+        modulePaths = ["data-hub/src/main/resources/ml-modules"]
+        mlConfigDir = "data-hub/src/main/resources/ml-config"
     }
 
     def stagingDbCommand = new com.marklogic.appdeployer.command.databases.DeployDatabaseCommand("staging-database.json")
