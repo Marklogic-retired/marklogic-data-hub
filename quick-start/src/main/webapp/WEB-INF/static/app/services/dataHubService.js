@@ -78,8 +78,85 @@ module.factory('DataHub', [
                 
                 return promise;
             }
+            
+            ,displayDomain : function(domainName) {
+            	return $http.post('api/domains/display', domainName);
+            }
+            
             ,getDomainChangeList : function() {
                 return $http.get('api/domains/change-list');
+            }
+           
+            ,runFlow : function(domainName, flowName) {
+            	var data = {
+            		domainName: domainName,
+            		flowName: flowName
+            	};
+            	var promise = $http.post('api/flows/run', data)
+                .success(function () {
+                	service.displayMessage('Flow run is successful.', 'success', 'notification', false);
+                })
+                .error(function () {
+                	service.displayMessage('Flow run is successful.', 'success', 'notification', false);
+                });
+                
+                return promise;
+            }
+            
+            ,testFlow : function(domainName, flowName) {
+            	var data = {
+                	domainName: domainName,
+                	flowName: flowName
+                };
+            	var promise = $http.post('api/flows/test', data)
+                .success(function () {
+                    service.displayMessage('Flow test is successful.', 'success', 'notification', false);
+                })
+                .error(function () {
+                	service.displayMessage('Flow test is unsuccessful.', 'error', 'notification', false);
+                });
+                
+                return promise;
+            }
+            
+            ,saveFlow : function(flowForm) {
+            	
+            	var promise = $http.post('api/flows', flowForm)
+                .success(function (selectedDomain) {
+                    service.status.selectedDomain = selectedDomain;
+                })
+                .error(function () {
+                	//notify error
+                });
+                
+                return promise;
+            }
+            
+            
+            ,displayMessage : function(message,messageType,elementId,isModal) {
+            	var targetDiv = elementId;
+            	if(typeof elementId === 'undefined') {
+            		elementId = 'messageDiv';
+            	}
+            	var messageClass = "alert";
+            	if(messageType === 'error') {
+            		messageClass + " alert-error alert-danger";
+            	} else if (messageType === 'success') {
+            		messageClass + " alert-success";
+            	} else if (messageType === 'warning') {
+            		messageClass + " alert-warning";
+            	}
+            	$('#'+elementId).html('<div class="'+messageClass+'">'+
+            			'<a href="#" class="close" data-dismiss="alert">&times;</a>'+message+'</div>');
+            			
+            	if(isModal) {
+            		$('.modal-body').scrollTop(0);
+            	} else {
+            		$('#'+elementId).scrollTop(0);
+            	}
+            	setTimeout(function () {
+            		$('.alert').fadeOut();
+            	}, 5000);
             }
         };
         

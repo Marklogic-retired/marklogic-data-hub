@@ -1,13 +1,11 @@
 package com.marklogic.hub.factory;
 
-import java.io.File;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.marklogic.hub.domain.Domain;
 import com.marklogic.hub.flow.Flow;
-import com.marklogic.hub.model.DirectoryModel;
 import com.marklogic.hub.model.FlowModel;
 import com.marklogic.hub.model.FlowType;
 import com.marklogic.hub.util.FileUtil;
@@ -35,27 +33,26 @@ public class FlowModelFactory {
 		}
 	}
 
-	public FlowModel createNewFlow(String userPluginDir, String flowName,
+	public FlowModel createNewFlow(String parentDirPath, String flowName,
 			FlowType flowType) {
 		FlowModel flowModel = new FlowModel();
 		flowModel.setDomainName(domainName);
 		flowModel.setFlowName(flowName);
-		this.createEmptyFlowDirectories(userPluginDir, flowName, flowType);
+		flowModel.setSynched(false);
+		this.createEmptyFlowDirectories(parentDirPath, flowName, flowType);
+		DirectoryModelFactory directoryModelFactory = new DirectoryModelFactory(
+				parentDirPath, flowName);
+		flowModel.setDirectory(directoryModelFactory.listFilesAndDirectories());
 		return flowModel;
 	}
 
-	private void createEmptyFlowDirectories(String userPluginDir,
+	private void createEmptyFlowDirectories(String parentDirPath,
 			String flowName, FlowType flowType) {
-		String flowParentPath = userPluginDir + File.separator
-				+ FileUtil.DOMAINS_FOLDER + File.separator + domainName
-				+ File.separator + flowType.getName();
-		String newFlowPath = FileUtil.createFolderIfNecessary(flowParentPath,
+		String newFlowPath = FileUtil.createFolderIfNecessary(parentDirPath,
 				flowName);
 		// create empty plugin directories
 		DirectoryModelFactory directoryModelFactory = new DirectoryModelFactory(
-				flowParentPath, flowName);
-		DirectoryModel directoryModel = directoryModelFactory
-				.getDirectoryModel();
+				parentDirPath, flowName);
 		directoryModelFactory.addEmptyDirectories(newFlowPath, new String[] {
 				"content", "headers", "triples", "validations" });
 		if (flowType == FlowType.CONFORM) {
@@ -65,13 +62,17 @@ public class FlowModelFactory {
 					new String[] { "document-transforms", "search-options",
 							"REST-extensions" });
 		}
-		FileUtil.createDirectories(directoryModel);
+		directoryModelFactory.saveDirectories();
 	}
 
-	public FlowModel createFlow(String flowName, FlowType flowType) {
+	public FlowModel createFlow(String flowsFilePath, String flowName,
+			FlowType flowType) {
 		FlowModel flowModel = new FlowModel();
 		flowModel.setDomainName(domainName);
 		flowModel.setFlowName(flowName);
+		DirectoryModelFactory directoryModelFactory = new DirectoryModelFactory(
+				flowsFilePath, flowName);
+		flowModel.setDirectory(directoryModelFactory.listFilesAndDirectories());
 		Flow flow = this.flowsInServer.get(flowName);
 		boolean synched = false;
 		// TODO: confirm the value of the collector's type
@@ -82,5 +83,4 @@ public class FlowModelFactory {
 		flowModel.setSynched(synched);
 		return flowModel;
 	}
-
 }

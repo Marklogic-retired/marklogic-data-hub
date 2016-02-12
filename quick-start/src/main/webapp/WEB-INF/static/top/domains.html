@@ -1,10 +1,10 @@
 <h1>Data Domains</h1>
-<ul class="custom-list">
+<ul>
     <li class="nav" ng-repeat="domain in status.domains">
-    	<h3><i ng-class="domain.synched ? 'fa fa-file-text-o sycned' : 'fa fa-file-text-o unsycned'"></i> <a href="/flows">{{domain.domainName}}</a></h3>
+    	<h3><i ng-class="domain.synched ? 'fa fa-file-text-o sycned' : 'fa fa-file-text-o unsycned'"></i><a href="javascript:void(0)" ng-click="displayDomain(domain.domainName)">{{domain.domainName}}</a></h3>
     </li>
 </ul>
-<div id="buttons">
+<div class="button-group-center">
 	<button type="submit" name="install" class="btn btn-primary" ng-click="createDomain()">New Domain</button>
 </div>
 <div ng-include="'top/modal/domainModal.html'"></div>
