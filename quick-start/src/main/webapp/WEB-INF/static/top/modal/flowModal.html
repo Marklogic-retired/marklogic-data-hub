@@ -6,12 +6,8 @@
         <h4 class="modal-title" id="myModalLabel">Flow</h4>
       </div>
       <div class="modal-body" id="myModalBody">
-        <div class="row" ng-if="hasErrors">
-          <div class="col-md-12">
-            <ul class="alert alert-danger">
-              <li ng-repeat="error in errors">{{error}}</li>
-            </ul>
-          </div>
+        <div class="row" ng-if="flowForm.hasErrors">
+          <div id="flowModalMessage" class="modalMessage col-xs-12 col-md-12"></div>
         </div>
         <div class="row">
           <div id="details" class="col-xs-12 col-md-12">

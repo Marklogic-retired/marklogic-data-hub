@@ -55,6 +55,7 @@ module.controller('topController', [
         $scope.createFlow = function(domainName, flowType) {
         	$scope.flowForm.domainName = domainName;
         	$scope.flowForm.flowType = flowType;
+        	$scope.flowForm.hasErrors = false;
         	$('#flowModal').modal({
     	        backdrop: 'static',
     	        keyboard: true
@@ -78,8 +79,12 @@ module.controller('topController', [
         $scope.saveFlow = function() {
         	DataHub.saveFlow($scope.flowForm)
         	.success(function () {
+        		$scope.flowForm.hasErrors = false;
         		$('#flowModal').modal('hide');
-            });
+            })
+            .error(function () {
+            	$scope.flowForm.hasErrors = true;
+            })
         };
         
         setTimeout(function () {
