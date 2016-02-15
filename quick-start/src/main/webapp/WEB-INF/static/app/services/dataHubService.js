@@ -69,11 +69,11 @@ module.factory('DataHub', [
             ,saveDomain : function(domainForm) {
             	
             	var promise = $http.post('api/domains', domainForm)
-                .success(function (domains) {
-                    service.status.domains = domains;
+                .success(function (status) {
+                    service.status = status;
                 })
-                .error(function () {
-                	//notify error
+                .error(function (error) {
+                	service.displayMessage(error.message, 'error', 'domainModalMessage', true);
                 });
                 
                 return promise;
@@ -125,8 +125,8 @@ module.factory('DataHub', [
                 .success(function (selectedDomain) {
                     service.status.selectedDomain = selectedDomain;
                 })
-                .error(function () {
-                	//notify error
+                .error(function (error) {
+                	service.displayMessage(error.message, 'error', 'flowModalMessage', true);
                 });
                 
                 return promise;
@@ -138,16 +138,16 @@ module.factory('DataHub', [
             	if(typeof elementId === 'undefined') {
             		elementId = 'messageDiv';
             	}
-            	var messageClass = "alert";
+            	var messageClass = 'alert';
             	if(messageType === 'error') {
-            		messageClass + " alert-error alert-danger";
+            		messageClass += ' alert-error alert-danger';
             	} else if (messageType === 'success') {
-            		messageClass + " alert-success";
+            		messageClass += ' alert-success';
             	} else if (messageType === 'warning') {
-            		messageClass + " alert-warning";
+            		messageClass += ' alert-warning';
             	}
             	$('#'+elementId).html('<div class="'+messageClass+'">'+
-            			'<a href="#" class="close" data-dismiss="alert">&times;</a>'+message+'</div>');
+            			'<a href="dismiss" class="close" data-dismiss="alert">&times;</a>'+message+'</div>');
             			
             	if(isModal) {
             		$('.modal-body').scrollTop(0);

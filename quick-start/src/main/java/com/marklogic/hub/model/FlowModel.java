@@ -1,44 +1,43 @@
 package com.marklogic.hub.model;
 
-
 public class FlowModel {
 
-	private String domainName;
-	private String flowName;
-	private boolean isSynched;
-	private DirectoryModel directory;
+    private String domainName;
+    private String flowName;
+    private boolean isSynched;
+    private TreeData treeData;
 
-	public String getDomainName() {
-		return domainName;
-	}
+    public String getDomainName() {
+        return domainName;
+    }
 
-	public void setDomainName(String domainName) {
-		this.domainName = domainName;
+    public void setDomainName(String domainName) {
+        this.domainName = domainName;
 
-	}
+    }
 
-	public String getFlowName() {
-		return flowName;
-	}
+    public String getFlowName() {
+        return flowName;
+    }
 
-	public void setFlowName(String flowName) {
-		this.flowName = flowName;
-	}
+    public void setFlowName(String flowName) {
+        this.flowName = flowName;
+    }
 
-	public boolean isSynched() {
-		return isSynched;
-	}
+    public boolean isSynched() {
+        return isSynched;
+    }
 
-	public void setSynched(boolean isSynched) {
-		this.isSynched = isSynched;
-	}
+    public void setSynched(boolean isSynched) {
+        this.isSynched = isSynched;
+    }
 
-	public DirectoryModel getDirectory() {
-		return directory;
-	}
+    public TreeData getTreeData() {
+        return treeData;
+    }
 
-	public void setDirectory(DirectoryModel directory) {
-		this.directory = directory;
-	}
+    public void setTreeData(TreeData treeData) {
+        this.treeData = treeData;
+    }
 
 }
