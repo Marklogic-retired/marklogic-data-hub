@@ -185,3 +185,16 @@ li.folder, li.file {
   display: -ms-flexbox;
   display:         flex;
 }
+
+ul.abn-tree {
+    padding-left: 30px;
+}
+
+ul.abn-tree li.abn-tree-row a {
+    color: #2a2d2b;
+    font-size: 18px;
+}
+
+ul.nav.abn-tree i {
+    font-size: 18px;
+}

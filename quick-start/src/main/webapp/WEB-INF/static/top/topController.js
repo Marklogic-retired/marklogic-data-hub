@@ -19,9 +19,6 @@ module.controller('topController', [
         $scope.domainForm = {};
         $scope.flowForm = {};
         
-        console.log('status');
-        console.log($scope.status);
-        
         $scope.createDomain = function() {
         	$('#domainModal').modal({
     	        backdrop: 'static',
@@ -85,27 +82,10 @@ module.controller('topController', [
             });
         };
         
-        $scope.toggleFolder = function(event) {
-        	var folder = event.currentTarget;
-        	var state = $(folder).data('state')
-        	if(state === 'close') {
-        		$(folder).data('state', 'open');
-        		$(folder).html('&#9650');
-        	} else {
-        		$(folder).data('state', 'close');
-        		$(folder).html('&#9660');
-        	}
-        };
-        
-        $scope.checkIfEmpty = function(directory) {
-        	if(directory.directories.length === 0 && directory.files.length === 0) {
-        		return true;
-        	}
-        	return false;
-        };
-        
         setTimeout(function () {
         	$('.alert').fadeOut();
         }, 5000);
+        
+        
     }
 ]);
