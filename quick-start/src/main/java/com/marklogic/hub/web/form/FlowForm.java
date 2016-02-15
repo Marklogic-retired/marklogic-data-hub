@@ -37,7 +37,7 @@ public class FlowForm extends BaseForm {
 
     public void validate(List<FlowModel> flowList)
             throws FormValidationException {
-        if (this.flowName == null || "".equals(this.flowName)) {
+        if (this.flowName == null || "".equals(this.flowName.trim())) {
             throw new FormValidationException("Flow Name is required.");
         }
         for (FlowModel flowModel : flowList) {

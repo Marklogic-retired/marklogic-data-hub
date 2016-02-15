@@ -22,7 +22,8 @@ public class TreeDataFactory {
 
     private TreeData addEmptyDirectory(String parentDirPath, String label,
             TreeData parentTreeData) {
-        TreeData treeData = new TreeData(parentDirPath, label);
+        String absolutePath = parentDirPath + File.separator + label;
+        TreeData treeData = new TreeData(absolutePath, label);
         parentTreeData.getChildren().add(treeData);
         return treeData;
     }
@@ -31,9 +32,9 @@ public class TreeDataFactory {
             String... childLabels) {
         TreeData childTreeData = this.addEmptyDirectory(parentDirPath, label,
                 treeData);
-        String newDirecoryPath = parentDirPath + File.separator + label;
+        String newDirectoryPath = parentDirPath + File.separator + label;
         for (String childLabel : childLabels) {
-            this.addEmptyDirectory(newDirecoryPath, childLabel, childTreeData);
+            this.addEmptyDirectory(newDirectoryPath, childLabel, childTreeData);
         }
     }
 

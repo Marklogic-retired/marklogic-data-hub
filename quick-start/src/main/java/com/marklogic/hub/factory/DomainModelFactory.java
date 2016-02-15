@@ -42,10 +42,10 @@ public class DomainModelFactory {
         String domainDirPath = userPluginDir + File.separator
                 + FileUtil.DOMAINS_FOLDER + File.separator + domainName;
         FlowModel inputFlow = flowModelFactory.createNewFlow(domainDirPath
-                + File.separator + FlowType.INPUT, inputFlowName,
+                + File.separator + FlowType.INPUT.getName(), inputFlowName,
                 FlowType.INPUT);
         FlowModel conformFlow = flowModelFactory.createNewFlow(domainDirPath
-                + File.separator + FlowType.CONFORM, conformFlowName,
+                + File.separator + FlowType.CONFORM.getName(), conformFlowName,
                 FlowType.CONFORM);
 
         domainModel.getInputFlows().add(inputFlow);

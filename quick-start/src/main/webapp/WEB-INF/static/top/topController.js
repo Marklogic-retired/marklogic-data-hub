@@ -20,6 +20,7 @@ module.controller('topController', [
         $scope.flowForm = {};
         
         $scope.createDomain = function() {
+        	$scope.domainForm.hasErrors = false;
         	$('#domainModal').modal({
     	        backdrop: 'static',
     	        keyboard: true
@@ -29,8 +30,13 @@ module.controller('topController', [
         $scope.saveDomain = function() {
         	DataHub.saveDomain($scope.domainForm)
         	.success(function () {
+        		$scope.domainForm.hasErrors = false;
+        		$scope.status = DataHub.status;
         		$('#domainModal').modal('hide');
-            });
+            })
+            .error(function () {
+            	$scope.domainForm.hasErrors = true;
+            })
         };
         
         $scope.displayDomain = function(domainName) {
@@ -80,6 +86,7 @@ module.controller('topController', [
         	DataHub.saveFlow($scope.flowForm)
         	.success(function () {
         		$scope.flowForm.hasErrors = false;
+        		$scope.status = DataHub.status;
         		$('#flowModal').modal('hide');
             })
             .error(function () {

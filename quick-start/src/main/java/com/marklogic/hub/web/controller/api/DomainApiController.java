@@ -36,151 +36,156 @@ import com.marklogic.hub.web.form.LoginForm;
 @RequestMapping("/api/domains")
 @Scope("session")
 public class DomainApiController implements InitializingBean, DisposableBean,
-		FileSystemEventListener {
+        FileSystemEventListener {
 
-	@Autowired
-	private EnvironmentConfiguration environmentConfiguration;
+    @Autowired
+    private EnvironmentConfiguration environmentConfiguration;
 
-	@Autowired
-	private DomainManagerService domainManagerService;
+    @Autowired
+    private DomainManagerService domainManagerService;
 
-	@Autowired
-	private FileSystemWatcherService watcherService;
+    @Autowired
+    private FileSystemWatcherService watcherService;
 
-	// TODO: this list of modified domains should be cleared when the user
-	// deploys the user modules
-	// also, this should also get notified when the user deploys the user
-	// modules so we can update the UI
-	private Set<String> modifiedDomains = Collections
-			.synchronizedSet(new LinkedHashSet<>());
+    // TODO: this list of modified domains should be cleared when the user
+    // deploys the user modules
+    // also, this should also get notified when the user deploys the user
+    // modules so we can update the UI
+    private Set<String> modifiedDomains = Collections
+            .synchronizedSet(new LinkedHashSet<>());
 
-	@RequestMapping(method = RequestMethod.GET)
-	@ResponseBody
-	public List<DomainModel> getDomains(HttpSession session) {
-		LoginForm loginForm = (LoginForm) session.getAttribute("loginForm");
-		List<DomainModel> domains = domainManagerService.getDomains();
-		loginForm.setDomains(domains);
-		return domains;
-	}
+    @RequestMapping(method = RequestMethod.GET)
+    @ResponseBody
+    public List<DomainModel> getDomains(HttpSession session) {
+        LoginForm loginForm = (LoginForm) session.getAttribute("loginForm");
+        List<DomainModel> domains = domainManagerService.getDomains();
+        loginForm.setDomains(domains);
+        return domains;
+    }
 
-	@RequestMapping(value = "display", method = RequestMethod.POST)
-	@ResponseBody
-	public DomainModel displayDomain(@RequestBody String domainName,
-			HttpSession session) {
-		LoginForm loginForm = (LoginForm) session.getAttribute("loginForm");
-		List<DomainModel> domains = domainManagerService.getDomains();
-		DomainModel domainModel = this.getDomainFromList(domains, domainName);
-		loginForm.setSelectedDomain(domainModel);
-		return domainModel;
-	}
+    @RequestMapping(value = "display", method = RequestMethod.POST)
+    @ResponseBody
+    public DomainModel displayDomain(@RequestBody String domainName,
+            HttpSession session) {
+        LoginForm loginForm = (LoginForm) session.getAttribute("loginForm");
+        List<DomainModel> domains = domainManagerService.getDomains();
+        DomainModel domainModel = this.getDomainFromList(domains, domainName);
+        loginForm.setSelectedDomain(domainModel);
+        return domainModel;
+    }
 
-	private DomainModel getDomainFromList(List<DomainModel> domains,
-			String domainName) {
-		for (DomainModel domainModel : domains) {
-			if (domainModel.getDomainName().equalsIgnoreCase(domainName)) {
-				return domainModel;
-			}
-		}
-		return null;
-	}
+    private DomainModel getDomainFromList(List<DomainModel> domains,
+            String domainName) {
+        for (DomainModel domainModel : domains) {
+            if (domainModel.getDomainName().equalsIgnoreCase(domainName)) {
+                return domainModel;
+            }
+        }
+        return null;
+    }
 
-	@RequestMapping(method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_UTF8_VALUE }, produces = { MediaType.APPLICATION_JSON_UTF8_VALUE })
-	@ResponseBody
-	public List<DomainModel> saveDomain(@RequestBody DomainForm domainForm,
-			BindingResult bindingResult, HttpSession session) {
-		DomainModel domainModel = domainManagerService.createDomain(
-				domainForm.getDomainName(), domainForm.getInputFlowName(),
-				domainForm.getConformFlowName());
-		LoginForm loginForm = (LoginForm) session.getAttribute("loginForm");
-		List<DomainModel> domains = loginForm.getDomains();
-		domains.add(domainModel);
-		return domains;
-	}
+    @RequestMapping(method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_UTF8_VALUE }, produces = { MediaType.APPLICATION_JSON_UTF8_VALUE })
+    @ResponseBody
+    public LoginForm saveDomain(@RequestBody DomainForm domainForm,
+            BindingResult bindingResult, HttpSession session) {
+        LoginForm loginForm = (LoginForm) session.getAttribute("loginForm");
+        List<DomainModel> domains = loginForm.getDomains();
 
-	/**
-	 * Get a list of domains that has changed. This API does not return until a
-	 * change has occurred.
-	 * 
-	 * @param session
-	 * @return
-	 */
-	@RequestMapping(value = "change-list", method = RequestMethod.GET)
-	public List<DomainModel> getDomainChangeList(HttpSession session) {
-		synchronized (this) {
-			try {
-				this.wait();
-			} catch (InterruptedException e) {
-			}
-		}
+        domainForm.validate(domains);
 
-		LoginForm loginForm = (LoginForm) session.getAttribute("loginForm");
+        DomainModel domainModel = domainManagerService.createDomain(
+                domainForm.getDomainName(), domainForm.getInputFlowName(),
+                domainForm.getConformFlowName());
 
-		List<DomainModel> domains = domainManagerService.getDomains();
-		synchronized (modifiedDomains) {
-			for (String domain : modifiedDomains) {
-				for (DomainModel domainModel : domains) {
-					if (domain.equals(domainModel.getDomainName())) {
-						domainModel.setSynched(false);
-					}
-				}
-			}
-			modifiedDomains.clear();
-		}
+        domains.add(domainModel);
+        loginForm.setSelectedDomain(domainModel);
+        return loginForm;
+    }
 
-		loginForm.setDomains(domains);
-		session.setAttribute("loginForm", loginForm);
+    /**
+     * Get a list of domains that has changed. This API does not return until a
+     * change has occurred.
+     * 
+     * @param session
+     * @return
+     */
+    @RequestMapping(value = "change-list", method = RequestMethod.GET)
+    public List<DomainModel> getDomainChangeList(HttpSession session) {
+        synchronized (this) {
+            try {
+                this.wait();
+            } catch (InterruptedException e) {
+            }
+        }
 
-		return domains;
-	}
+        LoginForm loginForm = (LoginForm) session.getAttribute("loginForm");
 
-	@Override
-	public void afterPropertiesSet() throws Exception {
-		String pluginDir = environmentConfiguration.getUserPluginDir();
-		watcherService.watch(pluginDir, this);
-	}
+        List<DomainModel> domains = domainManagerService.getDomains();
+        synchronized (modifiedDomains) {
+            for (String domain : modifiedDomains) {
+                for (DomainModel domainModel : domains) {
+                    if (domain.equals(domainModel.getDomainName())) {
+                        domainModel.setSynched(false);
+                    }
+                }
+            }
+            modifiedDomains.clear();
+        }
 
-	@Override
-	public void destroy() throws Exception {
-		synchronized (this) {
-			this.notify();
-		}
-	}
+        loginForm.setDomains(domains);
+        session.setAttribute("loginForm", loginForm);
 
-	@Override
-	public void onWatchEvent(Path path, WatchEvent<Path> event) {
-		synchronized (this) {
-			try {
-				String realPath = path.toRealPath(LinkOption.NOFOLLOW_LINKS)
-						.toString();
-				String modifiedDomain = getDomainName(realPath);
-				if (modifiedDomain != null) {
-					modifiedDomains.add(modifiedDomain);
-				}
+        return domains;
+    }
 
-				this.notify();
-			} catch (IOException e) {
-			}
-		}
-	}
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        String pluginDir = environmentConfiguration.getUserPluginDir();
+        watcherService.watch(pluginDir, this);
+    }
 
-	private String getDomainName(String path) {
-		try {
-			String domainsPath = new File(
-					environmentConfiguration.getUserPluginDir()
-							+ File.separator + "domains").toPath()
-					.toRealPath(LinkOption.NOFOLLOW_LINKS).toString();
+    @Override
+    public void destroy() throws Exception {
+        synchronized (this) {
+            this.notify();
+        }
+    }
 
-			if (path.indexOf(domainsPath) == 0) {
-				String suffix = path.substring(domainsPath.length());
-				String[] pathTokens = suffix.split("[/\\\\]");
+    @Override
+    public void onWatchEvent(Path path, WatchEvent<Path> event) {
+        synchronized (this) {
+            try {
+                String realPath = path.toRealPath(LinkOption.NOFOLLOW_LINKS)
+                        .toString();
+                String modifiedDomain = getDomainName(realPath);
+                if (modifiedDomain != null) {
+                    modifiedDomains.add(modifiedDomain);
+                }
 
-				return pathTokens != null && pathTokens.length > 1 ? pathTokens[1]
-						: null;
-			} else {
-				return null;
-			}
-		} catch (IOException e) {
-			return null;
-		}
-	}
+                this.notify();
+            } catch (IOException e) {
+            }
+        }
+    }
+
+    private String getDomainName(String path) {
+        try {
+            String domainsPath = new File(
+                    environmentConfiguration.getUserPluginDir()
+                            + File.separator + "domains").toPath()
+                    .toRealPath(LinkOption.NOFOLLOW_LINKS).toString();
+
+            if (path.indexOf(domainsPath) == 0) {
+                String suffix = path.substring(domainsPath.length());
+                String[] pathTokens = suffix.split("[/\\\\]");
+
+                return pathTokens != null && pathTokens.length > 1 ? pathTokens[1]
+                        : null;
+            } else {
+                return null;
+            }
+        } catch (IOException e) {
+            return null;
+        }
+    }
 }

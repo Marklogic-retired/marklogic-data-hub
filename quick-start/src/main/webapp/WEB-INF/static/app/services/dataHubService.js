@@ -70,10 +70,10 @@ module.factory('DataHub', [
             	
             	var promise = $http.post('api/domains', domainForm)
                 .success(function (status) {
-                    service.status.domains = domains;
+                    service.status = status;
                 })
-                .error(function () {
-                	//notify error
+                .error(function (error) {
+                	service.displayMessage(error.message, 'error', 'domainModalMessage', true);
                 });
                 
                 return promise;
@@ -124,10 +124,8 @@ module.factory('DataHub', [
             	var promise = $http.post('api/flows', flowForm)
                 .success(function (selectedDomain) {
                     service.status.selectedDomain = selectedDomain;
-                    service.hasErrors = false;
                 })
                 .error(function (error) {
-                	service.hasErrors = true;
                 	service.displayMessage(error.message, 'error', 'flowModalMessage', true);
                 });
                 
