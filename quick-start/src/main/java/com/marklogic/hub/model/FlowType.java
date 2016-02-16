@@ -28,4 +28,8 @@ public enum FlowType {
 		}
 		return null;
 	}
+
+	public String toString() {
+	    return name;
+	}
 }

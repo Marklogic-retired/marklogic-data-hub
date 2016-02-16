@@ -53,6 +53,12 @@ public class FlowManagerTest extends HubTestBase {
     @BeforeClass
     public static void setup() throws IOException {
         XMLUnit.setIgnoreWhitespace(true);
+
+        DataHub dh = new DataHub(host, port, user, password);
+        if (false == dh.isInstalled()) {
+            dh.install();
+        }
+
         DocumentMetadataHandle meta = new DocumentMetadataHandle();
         meta.getCollections().add("tester");
         installDoc("/incoming/employee1.xml", meta, getResource("flow-manager-test/input/employee1.xml"));

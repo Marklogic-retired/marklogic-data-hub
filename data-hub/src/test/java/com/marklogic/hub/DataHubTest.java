@@ -27,26 +27,12 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 public class DataHubTest extends HubTestBase {
-    private static String host;
-    private static int restPort;
-    private static String user;
-    private static String password;
-
     @Rule
     public final ExpectedException exception = ExpectedException.none();
 
-    @BeforeClass
-    public static void setup() {
-        Properties properties = getProperties();
-        host = properties.getProperty("mlHost");
-        restPort = Integer.parseInt(properties.getProperty("mlRestPort"));
-        user = properties.getProperty("mlUsername");
-        password = properties.getProperty("mlPassword");
-    }
-
     @Test
     public void testInstall() throws IOException {
-        DataHub dh = new DataHub(host, restPort, user, password);
+        DataHub dh = new DataHub(host, port, user, password);
         if (dh.isInstalled()) {
             // uninstall first
             dh.uninstall();
@@ -59,9 +45,8 @@ public class DataHubTest extends HubTestBase {
 
     @Test
     public void testUnInstall() throws IOException {
-        DataHub dh = new DataHub(host, restPort, user, password);
+        DataHub dh = new DataHub(host, port, user, password);
         if (false == dh.isInstalled()) {
-            // uninstall first
             dh.install();
         }
         assertTrue(dh.isInstalled());
@@ -71,7 +56,7 @@ public class DataHubTest extends HubTestBase {
 
     @Test
     public void testValidateServer() throws ServerValidationException {
-        DataHub dh = new DataHub(host, restPort, user, password);
+        DataHub dh = new DataHub(host, port, user, password);
         dh.validateServer();
     }
 
