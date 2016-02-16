@@ -46,17 +46,18 @@ module.controller('topController', [
             })
         };
         
-        $scope.updateDomainStatus = function() {
-            DataHub.getDomainChangeList()
-            .success(function (domainChangeList) {
-                DataHub.status.domains = domainChangeList;
+        $scope.getStatusChange = function() {
+            DataHub.getStatusChange()
+            .success(function (loginStatus) {
+                DataHub.status = loginStatus;
+                $scope.status = DataHub.status;
             })
             .then(function () {
-                $timeout($scope.updateDomainStatus, 50);
+                $timeout($scope.getStatusChange, 50);
             });
         };
         
-        $scope.updateDomainStatus();
+        $scope.getStatusChange();
         
         $scope.createFlow = function(domainName, flowType) {
         	$scope.flowForm.domainName = domainName;

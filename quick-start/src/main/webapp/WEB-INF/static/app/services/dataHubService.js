@@ -83,8 +83,8 @@ module.factory('DataHub', [
             	return $http.post('api/domains/display', domainName);
             }
             
-            ,getDomainChangeList : function() {
-                return $http.get('api/domains/change-list');
+            ,getStatusChange : function() {
+                return $http.get('api/domains/status-change');
             }
            
             ,runFlow : function(domainName, flowName) {

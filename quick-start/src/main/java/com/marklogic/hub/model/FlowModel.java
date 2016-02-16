@@ -40,4 +40,18 @@ public class FlowModel {
         this.treeData = treeData;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("{");
+        sb.append("domainName=");
+        sb.append(domainName);
+        sb.append("flowName=");
+        sb.append(flowName);
+        sb.append("isSynched=");
+        sb.append(isSynched);
+        sb.append("}");
+        
+        return sb.toString();
+    }
 }

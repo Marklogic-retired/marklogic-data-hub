@@ -2,6 +2,7 @@ package com.marklogic.hub.factory;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -94,4 +95,12 @@ public class DomainModelFactory {
         return flows;
     }
 
+    public static Map<String, DomainModel> toDomainModelMap(List<DomainModel> domains) {
+        Map<String, DomainModel> domainModelMap = new HashMap<String, DomainModel>();
+        for (DomainModel model : domains) {
+            domainModelMap.put(model.getDomainName(), model);
+        }
+        
+        return domainModelMap;
+    }
 }

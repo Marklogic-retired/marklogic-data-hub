@@ -22,7 +22,7 @@ public enum FlowType {
 
 	public static FlowType getFlowType(String type) {
 		for (FlowType flowType : FlowType.values()) {
-			if (flowType.getType().equals(type)) {
+			if (flowType.getName().equals(type)) {
 				return flowType;
 			}
 		}
