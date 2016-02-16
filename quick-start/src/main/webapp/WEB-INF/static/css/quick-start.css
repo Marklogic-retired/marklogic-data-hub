@@ -48,7 +48,7 @@ div#header .alert {
 	color: #fff;
 }
 
-.alert-info, .brand-info, .btn-success {
+.alert-info, .alert-success, .brand-info, .btn-success {
 	background-color: #4a9e43;
 }
 
