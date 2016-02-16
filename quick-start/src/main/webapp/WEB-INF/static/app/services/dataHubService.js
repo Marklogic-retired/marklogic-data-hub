@@ -103,6 +103,22 @@ module.factory('DataHub', [
                 return promise;
             }
             
+            ,runInputFlow : function(domainName, flowName) {
+                var data = {
+                    domainName: domainName,
+                    flowName: flowName
+                };
+                var promise = $http.post('api/flows/run/input', data)
+                .success(function () {
+                    service.displayMessage('Flow run is successful.', 'success', 'notification', false);
+                })
+                .error(function () {
+                    service.displayMessage('Flow run is successful.', 'success', 'notification', false);
+                });
+                
+                return promise;
+            }
+            
             ,testFlow : function(domainName, flowName) {
             	var data = {
                 	domainName: domainName,

@@ -17,10 +17,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.marklogic.hub.Mlcp;
+import com.marklogic.hub.Mlcp.SourceOptions;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.model.DomainModel;
 import com.marklogic.hub.model.FlowModel;
 import com.marklogic.hub.model.FlowType;
+import com.marklogic.hub.model.RunFlowModel;
 import com.marklogic.hub.service.FlowManagerService;
 import com.marklogic.hub.web.controller.BaseController;
 import com.marklogic.hub.web.form.FlowForm;
@@ -105,6 +108,27 @@ public class FlowApiController extends BaseController {
         // TODO update and move BATCH SIZE TO a constant or config - confirm
         // desired behavior
         flowManagerService.runFlow(flow, 100);
+    }
+    
+    @RequestMapping(value="/run/input", method = RequestMethod.POST)
+    public void runInputFlow(@RequestBody RunFlowModel runFlow) {
+        String inputPath = "./plugins/input";
+        
+        // TODO: this must come from path or environment variables?
+        String mlcpPath = "./mlcp/bin/";
+        String osName = System.getProperty("os.name");
+        if (osName != null && osName.toLowerCase().startsWith("windows")) {
+            mlcpPath += "mlcp.bat";
+        }
+        else {
+            mlcpPath += "mlcp";
+        }
+        
+        Mlcp mlcp = new Mlcp(mlcpPath);
+        
+        SourceOptions sourceOptions = new SourceOptions(runFlow.getDomainName(), runFlow.getFlowName(), FlowType.INPUT.getName());
+        mlcp.addSourceDirectory(inputPath, sourceOptions);
+        mlcp.loadContent();
     }
 
     @RequestMapping(value = "/runInParallel", method = RequestMethod.POST)

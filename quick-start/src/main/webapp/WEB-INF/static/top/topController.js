@@ -76,6 +76,13 @@ module.controller('topController', [
             });
         };
         
+        $scope.runInputFlow = function(domainName, flowName) {
+            DataHub.runInputFlow(domainName, flowName)
+            .success(function () {
+                
+            });
+        };
+        
         $scope.testFlow = function(domainName, flowName) {
         	DataHub.testFlow(domainName, flowName)
         	.success(function () {
