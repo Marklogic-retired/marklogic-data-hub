@@ -69,7 +69,6 @@ public class HubTestBase {
         }
         catch (IOException e) {
             System.err.println("Properties file not loaded.");
-            System.exit(1);
         }
 
         // try to load the local environment overrides file
@@ -80,7 +79,6 @@ public class HubTestBase {
         }
         catch (IOException e) {
             System.err.println("Properties file not loaded.");
-            System.exit(1);
         }
 
         host = properties.getProperty("mlHost");
