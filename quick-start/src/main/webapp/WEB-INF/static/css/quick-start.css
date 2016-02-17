@@ -48,7 +48,7 @@ div#header .alert {
 	color: #fff;
 }
 
-.alert-info, .brand-info, .btn-success {
+.alert-info, .alert-success, .brand-info, .btn-success {
 	background-color: #4a9e43;
 }
 
@@ -184,4 +184,17 @@ li.folder, li.file {
   display: -webkit-flex;
   display: -ms-flexbox;
   display:         flex;
+}
+
+ul.abn-tree {
+    padding-left: 30px;
+}
+
+ul.abn-tree li.abn-tree-row a {
+    color: #2a2d2b;
+    font-size: 18px;
+}
+
+ul.nav.abn-tree i {
+    font-size: 18px;
 }

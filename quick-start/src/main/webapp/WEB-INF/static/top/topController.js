@@ -19,10 +19,8 @@ module.controller('topController', [
         $scope.domainForm = {};
         $scope.flowForm = {};
         
-        console.log('status');
-        console.log($scope.status);
-        
         $scope.createDomain = function() {
+        	$scope.domainForm.hasErrors = false;
         	$('#domainModal').modal({
     	        backdrop: 'static',
     	        keyboard: true
@@ -32,8 +30,13 @@ module.controller('topController', [
         $scope.saveDomain = function() {
         	DataHub.saveDomain($scope.domainForm)
         	.success(function () {
+        		$scope.domainForm.hasErrors = false;
+        		$scope.status = DataHub.status;
         		$('#domainModal').modal('hide');
-            });
+            })
+            .error(function () {
+            	$scope.domainForm.hasErrors = true;
+            })
         };
         
         $scope.displayDomain = function(domainName) {
@@ -43,21 +46,23 @@ module.controller('topController', [
             })
         };
         
-        $scope.updateDomainStatus = function() {
-            DataHub.getDomainChangeList()
-            .success(function (domainChangeList) {
-                DataHub.status.domains = domainChangeList;
+        $scope.getStatusChange = function() {
+            DataHub.getStatusChange()
+            .success(function (loginStatus) {
+                DataHub.status = loginStatus;
+                $scope.status = DataHub.status;
             })
             .then(function () {
-                $timeout($scope.updateDomainStatus, 50);
+                $timeout($scope.getStatusChange, 50);
             });
         };
         
-        $scope.updateDomainStatus();
+        $scope.getStatusChange();
         
         $scope.createFlow = function(domainName, flowType) {
         	$scope.flowForm.domainName = domainName;
         	$scope.flowForm.flowType = flowType;
+        	$scope.flowForm.hasErrors = false;
         	$('#flowModal').modal({
     	        backdrop: 'static',
     	        keyboard: true
@@ -71,6 +76,13 @@ module.controller('topController', [
             });
         };
         
+        $scope.runInputFlow = function(domainName, flowName) {
+            DataHub.runInputFlow(domainName, flowName)
+            .success(function () {
+                
+            });
+        };
+        
         $scope.testFlow = function(domainName, flowName) {
         	DataHub.testFlow(domainName, flowName)
         	.success(function () {
@@ -81,31 +93,19 @@ module.controller('topController', [
         $scope.saveFlow = function() {
         	DataHub.saveFlow($scope.flowForm)
         	.success(function () {
+        		$scope.flowForm.hasErrors = false;
+        		$scope.status = DataHub.status;
         		$('#flowModal').modal('hide');
-            });
-        };
-        
-        $scope.toggleFolder = function(event) {
-        	var folder = event.currentTarget;
-        	var state = $(folder).data('state')
-        	if(state === 'close') {
-        		$(folder).data('state', 'open');
-        		$(folder).html('&#9650');
-        	} else {
-        		$(folder).data('state', 'close');
-        		$(folder).html('&#9660');
-        	}
-        };
-        
-        $scope.checkIfEmpty = function(directory) {
-        	if(directory.directories.length === 0 && directory.files.length === 0) {
-        		return true;
-        	}
-        	return false;
+            })
+            .error(function () {
+            	$scope.flowForm.hasErrors = true;
+            })
         };
         
         setTimeout(function () {
         	$('.alert').fadeOut();
         }, 5000);
+        
+        
     }
 ]);

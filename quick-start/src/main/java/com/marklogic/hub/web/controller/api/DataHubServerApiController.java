@@ -1,6 +1,7 @@
 package com.marklogic.hub.web.controller.api;
 
 import java.io.File;
+import java.util.List;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
@@ -9,6 +10,7 @@ import javax.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.http.MediaType;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,13 +20,16 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.marklogic.hub.config.EnvironmentConfiguration;
 import com.marklogic.hub.exception.DataHubException;
+import com.marklogic.hub.model.DomainModel;
 import com.marklogic.hub.service.DataHubService;
 import com.marklogic.hub.service.DomainManagerService;
+import com.marklogic.hub.web.bean.SyncStatusBean;
 import com.marklogic.hub.web.controller.BaseController;
 import com.marklogic.hub.web.form.LoginForm;
 
 @RestController
 @RequestMapping("/api/data-hub")
+@Scope("session")
 public class DataHubServerApiController extends BaseController {
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(DataHubServerApiController.class);
@@ -37,6 +42,9 @@ public class DataHubServerApiController extends BaseController {
 
 	@Autowired
 	private DomainManagerService domainManagerService;
+	
+	@Autowired
+	private SyncStatusBean syncStatus;
 
 	@RequestMapping(value = "login", method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_UTF8_VALUE }, produces = { MediaType.APPLICATION_JSON_UTF8_VALUE })
 	public LoginForm postLogin(@RequestBody LoginForm loginForm,
@@ -123,8 +131,27 @@ public class DataHubServerApiController extends BaseController {
 	}
 
 	@RequestMapping(value = "install-user-modules", method = RequestMethod.POST)
-	public Set<File> installUserModules() {
-		return dataHubService.installUserModules();
+	public Set<File> installUserModules(HttpSession session) {
+	    synchronized (syncStatus) {
+	        Set<File> files = dataHubService.installUserModules();
+
+	        // refresh the list of domains saved in the session
+	        List<DomainModel> domains = domainManagerService.getDomains();
+	        LoginForm loginForm = (LoginForm) session.getAttribute("loginForm");
+	        loginForm.refreshDomains(domains);
+
+	        // set synched = true
+	        for (DomainModel domainModel : loginForm.getDomains()) {
+	            domainModel.setSynched(true);
+	            domainModel.setInputFlowsSynched(true);
+	            domainModel.setConformFlowsSynched(true);
+	        }
+
+	        syncStatus.clearModifications();
+	        syncStatus.notifyAll();
+
+	        return files;
+	    }
 	}
 
 	private void updateEnvironmentConfiguration(LoginForm loginForm) {

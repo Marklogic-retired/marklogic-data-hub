@@ -17,10 +17,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.marklogic.hub.Mlcp;
+import com.marklogic.hub.Mlcp.SourceOptions;
+import com.marklogic.hub.config.EnvironmentConfiguration;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.model.DomainModel;
 import com.marklogic.hub.model.FlowModel;
 import com.marklogic.hub.model.FlowType;
+import com.marklogic.hub.model.RunFlowModel;
 import com.marklogic.hub.service.FlowManagerService;
 import com.marklogic.hub.web.controller.BaseController;
 import com.marklogic.hub.web.form.FlowForm;
@@ -30,80 +34,113 @@ import com.marklogic.hub.web.form.LoginForm;
 @RequestMapping("/api/flows")
 public class FlowApiController extends BaseController {
 
-	private static final Logger LOGGER = LoggerFactory
-			.getLogger(FlowApiController.class);
+    private static final Logger LOGGER = LoggerFactory
+            .getLogger(FlowApiController.class);
 
-	@Autowired
-	private FlowManagerService flowManagerService;
+    @Autowired
+    private EnvironmentConfiguration environmentConfiguration;
+    
+    @Autowired
+    private FlowManagerService flowManagerService;
 
-	@RequestMapping(value = "/flow", method = RequestMethod.GET)
-	@ResponseBody
-	public Flow getFlow(HttpServletRequest request) {
-		final String domainName = request.getParameter("domainName");
-		final String flowName = request.getParameter("flowName");
-		return flowManagerService.getFlow(domainName, flowName);
-	}
+    @RequestMapping(value = "/flow", method = RequestMethod.GET)
+    @ResponseBody
+    public Flow getFlow(HttpServletRequest request) {
+        final String domainName = request.getParameter("domainName");
+        final String flowName = request.getParameter("flowName");
+        return flowManagerService.getFlow(domainName, flowName);
+    }
 
-	@RequestMapping(method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_UTF8_VALUE }, produces = { MediaType.APPLICATION_JSON_UTF8_VALUE })
-	@ResponseBody
-	public DomainModel saveFlow(@RequestBody FlowForm flowForm,
-			BindingResult bindingResult, HttpSession session) {
-		FlowModel flowModel = flowManagerService.createFlow(
-				flowForm.getDomainName(), flowForm.getFlowName(),
-				flowForm.getFlowType());
-		LoginForm loginForm = (LoginForm) session.getAttribute("loginForm");
-		DomainModel selectedDomain = loginForm.getSelectedDomain();
-		if (FlowType.getFlowType(flowForm.getFlowType()) == FlowType.CONFORM) {
-			selectedDomain.getConformFlows().add(flowModel);
-		} else {
-			selectedDomain.getInputFlows().add(flowModel);
-		}
-		return selectedDomain;
-	}
+    @RequestMapping(method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_UTF8_VALUE }, produces = { MediaType.APPLICATION_JSON_UTF8_VALUE })
+    @ResponseBody
+    public DomainModel saveFlow(@RequestBody FlowForm flowForm,
+            BindingResult bindingResult, HttpSession session) {
+        LoginForm loginForm = (LoginForm) session.getAttribute("loginForm");
+        DomainModel selectedDomain = loginForm.getSelectedDomain();
+        List<FlowModel> flowList = this
+                .getAllFlowsOfSelectedDomain(selectedDomain);
 
-	@RequestMapping(value = "/install", method = RequestMethod.POST)
-	public void installFlow(HttpServletRequest request) {
-		final String domainName = request.getParameter("domainName");
-		final String flowName = request.getParameter("flowName");
-		final Flow flow = flowManagerService.getFlow(domainName, flowName);
-		flowManagerService.installFlow(flow);
-	}
+        flowForm.validate(flowList);
 
-	@RequestMapping(value = "/uninstall", method = RequestMethod.POST)
-	public void uninstallFlow(HttpServletRequest request) {
-		final String flowName = request.getParameter("flowName");
-		flowManagerService.uninstallFlow(flowName);
-	}
+        FlowModel flowModel = flowManagerService.createFlow(
+                flowForm.getDomainName(), flowForm.getFlowName(),
+                flowForm.getFlowType());
 
-	@RequestMapping(value = "/test", method = RequestMethod.POST)
-	public void testFlow(HttpServletRequest request) {
-		final String domainName = request.getParameter("domainName");
-		final String flowName = request.getParameter("flowName");
-		final Flow flow = flowManagerService.getFlow(domainName, flowName);
-		flowManagerService.testFlow(flow);
-	}
+        if (FlowType.getFlowType(flowForm.getFlowType()) == FlowType.CONFORM) {
+            selectedDomain.getConformFlows().add(flowModel);
+        } else {
+            selectedDomain.getInputFlows().add(flowModel);
+        }
+        return selectedDomain;
+    }
 
-	@RequestMapping(value = "/run", method = RequestMethod.POST)
-	public void runFlow(HttpServletRequest request) {
-		final String domainName = request.getParameter("domainName");
-		final String flowName = request.getParameter("flowName");
-		final Flow flow = flowManagerService.getFlow(domainName, flowName);
-		// TODO update and move BATCH SIZE TO a constant or config - confirm
-		// desired behavior
-		flowManagerService.runFlow(flow, 100);
-	}
+    private List<FlowModel> getAllFlowsOfSelectedDomain(
+            DomainModel selectedDomain) {
+        List<FlowModel> flowList = new ArrayList<>();
+        flowList.addAll(selectedDomain.getInputFlows());
+        flowList.addAll(selectedDomain.getConformFlows());
+        return flowList;
+    }
 
-	@RequestMapping(value = "/runInParallel", method = RequestMethod.POST)
-	public void runFlowsInParallel(HttpServletRequest request) {
-		final String domainName = request.getParameter("domainName");
-		String[] flowNames = request.getParameterValues("flowName");
-		List<Flow> flows = new ArrayList<Flow>();
-		for (String flowName : flowNames) {
-			final Flow flow = flowManagerService.getFlow(domainName, flowName);
-			flows.add(flow);
-		}
-		flowManagerService.runFlowsInParallel(flows.toArray(new Flow[flows
-				.size()]));
-	}
+    @RequestMapping(value = "/install", method = RequestMethod.POST)
+    public void installFlow(HttpServletRequest request) {
+        final String domainName = request.getParameter("domainName");
+        final String flowName = request.getParameter("flowName");
+        final Flow flow = flowManagerService.getFlow(domainName, flowName);
+        flowManagerService.installFlow(flow);
+    }
+
+    @RequestMapping(value = "/uninstall", method = RequestMethod.POST)
+    public void uninstallFlow(HttpServletRequest request) {
+        final String flowName = request.getParameter("flowName");
+        flowManagerService.uninstallFlow(flowName);
+    }
+
+    @RequestMapping(value = "/test", method = RequestMethod.POST)
+    public void testFlow(HttpServletRequest request) {
+        final String domainName = request.getParameter("domainName");
+        final String flowName = request.getParameter("flowName");
+        final Flow flow = flowManagerService.getFlow(domainName, flowName);
+        flowManagerService.testFlow(flow);
+    }
+
+    @RequestMapping(value = "/run", method = RequestMethod.POST)
+    public void runFlow(@RequestBody RunFlowModel runFlow) {
+        final Flow flow = flowManagerService.getFlow(runFlow.getDomainName(), runFlow.getFlowName());
+        // TODO update and move BATCH SIZE TO a constant or config - confirm
+        // desired behavior
+        flowManagerService.runFlow(flow, 100);
+    }
+    
+    @RequestMapping(value="/run/input", method = RequestMethod.POST)
+    public void runInputFlow(@RequestBody RunFlowModel runFlow) {
+        // TODO: this must come from UI, but we don't have a mockup yet
+        String inputPath = "./plugins/input";
+        
+        Mlcp mlcp = new Mlcp(
+                        environmentConfiguration.getMlcpHomeDir()
+                        ,environmentConfiguration.getMLHost()
+                        ,environmentConfiguration.getMLRestPort()
+                        ,environmentConfiguration.getMLUsername()
+                        ,environmentConfiguration.getMLPassword()
+                    );
+        
+        SourceOptions sourceOptions = new SourceOptions(runFlow.getDomainName(), runFlow.getFlowName(), FlowType.INPUT.getName());
+        mlcp.addSourceDirectory(inputPath, sourceOptions);
+        mlcp.loadContent();
+    }
+
+    @RequestMapping(value = "/runInParallel", method = RequestMethod.POST)
+    public void runFlowsInParallel(HttpServletRequest request) {
+        final String domainName = request.getParameter("domainName");
+        String[] flowNames = request.getParameterValues("flowName");
+        List<Flow> flows = new ArrayList<Flow>();
+        for (String flowName : flowNames) {
+            final Flow flow = flowManagerService.getFlow(domainName, flowName);
+            flows.add(flow);
+        }
+        flowManagerService.runFlowsInParallel(flows.toArray(new Flow[flows
+                .size()]));
+    }
 
 }

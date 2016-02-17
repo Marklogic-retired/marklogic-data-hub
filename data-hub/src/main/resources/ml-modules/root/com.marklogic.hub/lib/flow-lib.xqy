@@ -405,7 +405,9 @@ declare function flow:run-flow(
           map:get($content, "triple"),
           $options)
       return
-        map:put($content, $destination, $resp)
+        if (fn:empty($destination))
+        then ()
+        else map:put($content, $destination, $resp)
     },
     map:new((
       map:entry("isolation", "different-transaction"),
@@ -456,12 +458,17 @@ declare function flow:run-plugin(
   $options as map:map)
 {
   let $module-uri := $plugin/@module
-  let $destination := $plugin/@dest
-  let $module-name := hul:get-module-name($module-uri)
-  let $ns := $PLUGIN-NS || fn:lower-case($module-name)
-  let $func := xdmp:function(fn:QName($ns, "create-" || $destination), $module-uri)
   return
-    $func($identifier, $content, $headers, $triples, $options)
+    if (fn:empty($module-uri))
+    then
+      ()
+    else
+      let $destination := $plugin/@dest
+      let $module-name := hul:get-module-name($module-uri)
+      let $ns := $PLUGIN-NS || fn:lower-case($module-name)
+      let $func := xdmp:function(fn:QName($ns, "create-" || $destination), $module-uri)
+      return
+        $func($identifier, $content, $headers, $triples, $options)
 };
 
 (:~

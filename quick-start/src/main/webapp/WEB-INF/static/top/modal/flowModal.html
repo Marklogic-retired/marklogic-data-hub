@@ -1,4 +1,4 @@
-<div class="modal fade" id="flowModal" role="dialog">
+<div class="modal fade" id="flowModal" role="dialog"> 
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -6,13 +6,9 @@
         <h4 class="modal-title" id="myModalLabel">New Flow</h4>
       </div>
       <div class="modal-body" id="myModalBody">
-        <div class="row" ng-if="hasErrors">
-          <div class="col-md-12">
-            <ul class="alert alert-danger">
-              <li ng-repeat="error in errors">{{error}}</li>
-            </ul>
+        <div class="row" ng-show="flowForm.hasErrors">
+          <div id="flowModalMessage" class="modalMessage col-xs-12 col-md-12"></div>
           </div>
-        </div>
         <div class="row">
            <div id="details" class="col-xs-12 col-md-12">
              <form ng-submit="saveFlow()">
@@ -28,11 +24,10 @@
       </div>
       <div class="modal-footer">
         <div class="col-xs-12 col-md-12">
-          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-          <button type="button" class="btn btn-success" ng-click="saveFlow()">Submit</button>
+	      <button class="btn btn-default" data-dismiss="modal">Cancel</button>
+	      <button class="btn btn-success" ng-click="saveFlow()">Submit</button>
           </div>
         </div>
       </div>
-    </div>
   </div>
 </div>
