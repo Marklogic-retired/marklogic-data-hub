@@ -33,8 +33,29 @@ public class Mlcp {
     
     private String mlcpPath;
     
-    public Mlcp(String mlcpPath) {
-        this.mlcpPath = mlcpPath;
+    private String host;
+    
+    private String port;
+    
+    private String user;
+    
+    private String password;
+    
+    public Mlcp(String mlcpHome, String host, String port, String user, String password) {
+        this.host = host;
+        this.port = port;
+        this.user = user;
+        this.password = password;
+        
+        // set the mlcp executable path based on OS
+        this.mlcpPath = mlcpHome;
+        String osName = System.getProperty("os.name");
+        if (osName != null && osName.toLowerCase().startsWith("windows")) {
+            mlcpPath += "/bin/mlcp.bat";
+        }
+        else {
+            mlcpPath += "/bin/mlcp.sh";
+        }
     }
     
     public void addSourceDirectory(String directoryPath, SourceOptions options) {
@@ -54,13 +75,13 @@ public class Mlcp {
                 arguments.add("-mode");
                 arguments.add("local");
                 arguments.add("-host");
-                arguments.add("localhost");
+                arguments.add(host);
                 arguments.add("-port");
-                arguments.add("8053");
+                arguments.add(port);
                 arguments.add("-username");
-                arguments.add("admin");
+                arguments.add(user);
                 arguments.add("-password");
-                arguments.add("admin");
+                arguments.add(password);
                 
                 // add arguments related to the source
                 List<String> sourceArguments = source.getMlcpArguments();

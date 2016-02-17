@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.marklogic.hub.Mlcp;
 import com.marklogic.hub.Mlcp.SourceOptions;
+import com.marklogic.hub.config.EnvironmentConfiguration;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.model.DomainModel;
 import com.marklogic.hub.model.FlowModel;
@@ -36,6 +37,9 @@ public class FlowApiController extends BaseController {
     private static final Logger LOGGER = LoggerFactory
             .getLogger(FlowApiController.class);
 
+    @Autowired
+    private EnvironmentConfiguration environmentConfiguration;
+    
     @Autowired
     private FlowManagerService flowManagerService;
 
@@ -114,17 +118,13 @@ public class FlowApiController extends BaseController {
     public void runInputFlow(@RequestBody RunFlowModel runFlow) {
         String inputPath = "./plugins/input";
         
-        // TODO: this must come from path or environment variables?
-        String mlcpPath = "./mlcp/bin/";
-        String osName = System.getProperty("os.name");
-        if (osName != null && osName.toLowerCase().startsWith("windows")) {
-            mlcpPath += "mlcp.bat";
-        }
-        else {
-            mlcpPath += "mlcp";
-        }
-        
-        Mlcp mlcp = new Mlcp(mlcpPath);
+        Mlcp mlcp = new Mlcp(
+                        environmentConfiguration.getMlcpHomeDir()
+                        ,environmentConfiguration.getMLHost()
+                        ,environmentConfiguration.getMLRestPort()
+                        ,environmentConfiguration.getMLUsername()
+                        ,environmentConfiguration.getMLPassword()
+                    );
         
         SourceOptions sourceOptions = new SourceOptions(runFlow.getDomainName(), runFlow.getFlowName(), FlowType.INPUT.getName());
         mlcp.addSourceDirectory(inputPath, sourceOptions);

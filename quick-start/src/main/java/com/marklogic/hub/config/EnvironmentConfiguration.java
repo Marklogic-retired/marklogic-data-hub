@@ -114,6 +114,19 @@ public class EnvironmentConfiguration {
 		}
 		return this.environment.getProperty("userPluginDir.default");
 	}
+	
+	public String getMlcpHomeDir() {
+	    String value = this.properties.getProperty("mlcpHome");
+	    if (value != null) {
+	        return value;
+	    }
+	    value = this.environment.getProperty("mlcpHome");
+	    if (value != null) {
+	        this.properties.setProperty("userPluginDir", value);
+	        return value;
+	    }
+	    return "./mlcp";
+	}
 
 	public void setMLHost(String mlHost) {
 		this.properties.setProperty("mlHost", mlHost);
@@ -133,6 +146,10 @@ public class EnvironmentConfiguration {
 	
 	public void setUserPluginDir(String userPluginDir) {
 		this.properties.setProperty("userPluginDir", userPluginDir);
+	}
+	
+	public void setMlcpHome(String mlcpHomeDir) {
+	    this.properties.setProperty("mlcpHome", mlcpHomeDir);
 	}
 	
 	public void loadConfigurationFromFile() {
