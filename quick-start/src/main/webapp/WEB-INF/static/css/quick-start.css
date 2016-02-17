@@ -198,3 +198,17 @@ ul.abn-tree li.abn-tree-row a {
 ul.nav.abn-tree i {
     font-size: 18px;
 }
+
+.spinner {
+    float: right;
+    position: relative;
+    left: -50%;
+    text-align: left;
+    z-index: 1000;
+    color: #ff2a00;
+}
+
+.spinner > .child {
+    position: relative;
+    left: 50%;
+}

@@ -127,7 +127,7 @@ module.factory('DataHub', [
                 	service.displayMessage('Flow run is successful.', 'success', 'notification', false);
                 })
                 .error(function () {
-                	service.displayMessage('Flow run is successful.', 'success', 'notification', false);
+                	service.displayMessage('Flow run is unsuccessful.', 'error', 'notification', false);
                 });
                 
                 return promise;
