@@ -1,10 +1,12 @@
 package com.marklogic.hub.factory;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.marklogic.hub.Scaffolding;
 import com.marklogic.hub.domain.Domain;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.model.FlowModel;
@@ -34,14 +36,19 @@ public class FlowModelFactory {
         }
     }
 
-    public FlowModel createNewFlow(String parentDirPath, String flowName,
-            FlowType flowType) {
+    public FlowModel createNewFlow(String domainDirPath, String flowName,
+            FlowType flowType) throws IOException {
         FlowModel flowModel = new FlowModel();
         flowModel.setDomainName(domainName);
         flowModel.setFlowName(flowName);
         flowModel.setSynched(false);
-        this.createEmptyFlowDirectories(parentDirPath, flowName, flowType);
-        String absolutePath = parentDirPath + File.separator + flowName;
+
+        Scaffolding.createFlow(flowName, flowType.getName(), new File(
+                domainDirPath));
+
+        String absolutePath = domainDirPath + File.separator
+                + flowType.getName() + File.separator + flowName;
+
         TreeDataFactory treeDataFactory = new TreeDataFactory(absolutePath,
                 flowName);
         flowModel.setTreeData(treeDataFactory.listFilesAndDirectories());

@@ -1,12 +1,14 @@
 package com.marklogic.hub.factory;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.marklogic.hub.Scaffolding;
 import com.marklogic.hub.domain.Domain;
 import com.marklogic.hub.model.DomainModel;
 import com.marklogic.hub.model.FlowModel;
@@ -31,7 +33,7 @@ public class DomainModelFactory {
     }
 
     public DomainModel createNewDomain(String userPluginDir, String domainName,
-            String inputFlowName, String conformFlowName) {
+            String inputFlowName, String conformFlowName) throws IOException {
         DomainModel domainModel = new DomainModel();
         domainModel.setDomainName(domainName);
         domainModel.setInputFlows(new ArrayList<>());
@@ -39,22 +41,19 @@ public class DomainModelFactory {
 
         String domainsPath = userPluginDir + File.separator
                 + FileUtil.DOMAINS_FOLDER;
-        FileUtil.createFolderIfNecessary(domainsPath, domainName);
+        Scaffolding.createDomain(domainName, new File(domainsPath));
 
         FlowModelFactory flowModelFactory = new FlowModelFactory(domainName);
         String domainDirPath = domainsPath + File.separator + domainName;
         if (inputFlowName != null) {
-            FlowModel inputFlow = flowModelFactory.createNewFlow(domainDirPath
-                    + File.separator + FlowType.INPUT.getName(), inputFlowName,
-                    FlowType.INPUT);
+            FlowModel inputFlow = flowModelFactory.createNewFlow(domainDirPath,
+                    inputFlowName, FlowType.INPUT);
             domainModel.getInputFlows().add(inputFlow);
         }
 
         if (conformFlowName != null) {
-            FlowModel conformFlow = flowModelFactory
-                    .createNewFlow(domainDirPath + File.separator
-                            + FlowType.CONFORM.getName(), conformFlowName,
-                            FlowType.CONFORM);
+            FlowModel conformFlow = flowModelFactory.createNewFlow(
+                    domainDirPath, conformFlowName, FlowType.CONFORM);
             domainModel.getConformFlows().add(conformFlow);
         }
 
