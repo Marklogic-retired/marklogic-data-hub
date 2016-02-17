@@ -1,6 +1,7 @@
 package com.marklogic.hub.web.controller.api;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -60,14 +61,13 @@ public class DataHubServerApiController extends BaseController {
 						.isServerAcceptable());
 				loginForm.setHasErrors(false);
 				loginForm.setLoggedIn(true);
-				loginForm.setDomains(domainManagerService.getDomains());
-				loginForm.setSelectedDomain(loginForm.getDomains() != null
-						&& !loginForm.getDomains().isEmpty() ? loginForm
-						.getDomains().get(0) : null);
+                environmentConfiguration.saveConfigurationToFile();
+                session.setAttribute("loginForm", loginForm);
 
-				environmentConfiguration.saveConfigurationToFile();
+                if (loginForm.isInstalled()) {
+                    this.loadUserModules(loginForm);
+                }
 
-				session.setAttribute("loginForm", loginForm);
 			} else {
 				loginForm.setLoggedIn(false);
 				displayError(loginForm, null, null,
@@ -83,7 +83,19 @@ public class DataHubServerApiController extends BaseController {
 		return loginForm;
 	}
 
-	private boolean isValidDirectory(String userPluginDir) {
+    private void loadUserModules(LoginForm loginForm) {
+        loginForm.setDomains(domainManagerService.getDomains());
+        loginForm.setSelectedDomain(loginForm.getDomains() != null
+                && !loginForm.getDomains().isEmpty() ? loginForm.getDomains()
+                .get(0) : null);
+    }
+
+    private void unLoadUserModules(LoginForm loginForm) {
+        loginForm.setDomains(new ArrayList<DomainModel>());
+        loginForm.setSelectedDomain(null);
+    }
+
+    private boolean isValidDirectory(String userPluginDir) {
 		File file = new File(userPluginDir);
 		if (file.exists() && file.isDirectory()) {
 			return true;
@@ -105,8 +117,8 @@ public class DataHubServerApiController extends BaseController {
 			this.environmentConfiguration.loadConfigurationFromFile();
 			this.retrieveEnvironmentConfiguration(loginForm);
 			session.setAttribute("loginForm", loginForm);
-		} else {
-			loginForm.setDomains(domainManagerService.getDomains());
+        } else if (loginForm.isInstalled()) {
+            loginForm.setDomains(domainManagerService.getDomains());
 		}
 		return loginForm;
 	}
@@ -121,13 +133,19 @@ public class DataHubServerApiController extends BaseController {
 	}
 
 	@RequestMapping(value = "install", method = RequestMethod.POST)
-	public void install() {
+    public void install(HttpSession session) {
 		dataHubService.install();
+        LoginForm loginForm = (LoginForm) session.getAttribute("loginForm");
+        loginForm.setInstalled(true);
+        this.loadUserModules(loginForm);
 	}
 
 	@RequestMapping(value = "uninstall", method = RequestMethod.POST)
-	public void uninstall() {
-		dataHubService.uninstall();
+    public void uninstall(HttpSession session) {
+        dataHubService.uninstall();
+        LoginForm loginForm = (LoginForm) session.getAttribute("loginForm");
+        loginForm.setInstalled(false);
+        this.unLoadUserModules(loginForm);
 	}
 
 	@RequestMapping(value = "install-user-modules", method = RequestMethod.POST)

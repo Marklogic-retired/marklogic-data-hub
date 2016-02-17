@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.nio.file.WatchEvent;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpSession;
@@ -106,10 +107,13 @@ public class DomainApiController implements InitializingBean, DisposableBean,
             }
 
             // refresh the list of domains saved in the session
-            List<DomainModel> domains = domainManagerService.getDomains();
+            List<DomainModel> domains = new ArrayList<DomainModel>();
             LoginForm loginForm = (LoginForm) session.getAttribute("loginForm");
-            loginForm.refreshDomains(domains);
-            loginForm.updateWithSyncStatus(syncStatus);
+            if (loginForm.isInstalled()) {
+                domains = domainManagerService.getDomains();
+                loginForm.refreshDomains(domains);
+                loginForm.updateWithSyncStatus(syncStatus);
+            }
             
             // clear all pending updates
             syncStatus.clearModifications();
