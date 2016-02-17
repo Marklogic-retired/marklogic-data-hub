@@ -45,6 +45,11 @@ public class DomainForm extends BaseForm {
                         "Domain Name should be unique.");
             }
         }
+        if ((this.inputFlowName == null || "".equals(this.inputFlowName.trim()))
+                && (this.conformFlowName == null || ""
+                        .equals(this.conformFlowName.trim()))) {
+            throw new FormValidationException(
+                    "Either the Ingest Flow Name or the Conformance Flow Name must be supplied.");
+        }
     }
-
 }
