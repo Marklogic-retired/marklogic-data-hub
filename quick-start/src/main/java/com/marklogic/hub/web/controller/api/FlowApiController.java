@@ -1,6 +1,5 @@
 package com.marklogic.hub.web.controller.api;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,7 +26,6 @@ import com.marklogic.hub.model.FlowModel;
 import com.marklogic.hub.model.FlowType;
 import com.marklogic.hub.model.RunFlowModel;
 import com.marklogic.hub.service.FlowManagerService;
-import com.marklogic.hub.util.FileUtil;
 import com.marklogic.hub.web.controller.BaseController;
 import com.marklogic.hub.web.form.FlowForm;
 import com.marklogic.hub.web.form.LoginForm;
@@ -107,10 +105,8 @@ public class FlowApiController extends BaseController {
     }
 
     @RequestMapping(value = "/run", method = RequestMethod.POST)
-    public void runFlow(HttpServletRequest request) {
-        final String domainName = request.getParameter("domainName");
-        final String flowName = request.getParameter("flowName");
-        final Flow flow = flowManagerService.getFlow(domainName, flowName);
+    public void runFlow(@RequestBody RunFlowModel runFlow) {
+        final Flow flow = flowManagerService.getFlow(runFlow.getDomainName(), runFlow.getFlowName());
         // TODO update and move BATCH SIZE TO a constant or config - confirm
         // desired behavior
         flowManagerService.runFlow(flow, 100);
@@ -118,10 +114,8 @@ public class FlowApiController extends BaseController {
     
     @RequestMapping(value="/run/input", method = RequestMethod.POST)
     public void runInputFlow(@RequestBody RunFlowModel runFlow) {
-		String inputPath = environmentConfiguration.getUserPluginDir()
-		        + File.separator + FileUtil.DOMAINS_FOLDER + File.separator
-		        + runFlow.getDomainName() + File.separator
-		        + FlowType.INPUT.getName();
+        // TODO: this must come from UI, but we don't have a mockup yet
+        String inputPath = "./plugins/input";
         
         Mlcp mlcp = new Mlcp(
                         environmentConfiguration.getMlcpHomeDir()
