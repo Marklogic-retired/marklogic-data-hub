@@ -53,16 +53,16 @@ public class DomainManagerTest extends HubTestBase {
         installDoc("/incoming/employee1.xml", meta, getResource("flow-manager-test/input/employee1.xml"));
         installDoc("/incoming/employee2.xml", meta, getResource("flow-manager-test/input/employee2.xml"));
         runInModules(
-                "xdmp:directory-create(\"/ext/domains/test/my-test-flow1/collector/\")," +
-                "xdmp:directory-create(\"/ext/domains/test/my-test-flow1/headers/\")," +
-                "xdmp:directory-create(\"/ext/domains/test/my-test-flow1/triples/\")," +
-                "xdmp:directory-create(\"/ext/domains/test/my-test-flow1/content/\")," +
-                "xdmp:directory-create(\"/ext/domains/test/my-test-flow2/collector/\")," +
-                "xdmp:directory-create(\"/ext/domains/test/my-test-flow2/headers/\")," +
-                "xdmp:directory-create(\"/ext/domains/test/my-test-flow2/triples/\")," +
-                "xdmp:directory-create(\"/ext/domains/test/my-test-flow2/content/\")");
-        installModule("/ext/domains/test/my-test-flow1/collector/collector.xqy", "flow-manager-test/my-test-flow1/collector/collector.xqy");
-        installModule("/ext/domains/test/my-test-flow2/collector/collector.xqy", "flow-manager-test/my-test-flow1/collector/collector.xqy");
+                "xdmp:directory-create(\"/ext/domains/test/conformance/my-test-flow1/collector/\")," +
+                "xdmp:directory-create(\"/ext/domains/test/conformance/my-test-flow1/headers/\")," +
+                "xdmp:directory-create(\"/ext/domains/test/conformance/my-test-flow1/triples/\")," +
+                "xdmp:directory-create(\"/ext/domains/test/conformance/my-test-flow1/content/\")," +
+                "xdmp:directory-create(\"/ext/domains/test/conformance/my-test-flow2/collector/\")," +
+                "xdmp:directory-create(\"/ext/domains/test/conformance/my-test-flow2/headers/\")," +
+                "xdmp:directory-create(\"/ext/domains/test/conformance/my-test-flow2/triples/\")," +
+                "xdmp:directory-create(\"/ext/domains/test/conformance/my-test-flow2/content/\")");
+        installModule("/ext/domains/test/conformance/my-test-flow1/collector/collector.xqy", "flow-manager-test/my-test-flow1/collector/collector.xqy");
+        installModule("/ext/domains/test/conformance/my-test-flow2/collector/collector.xqy", "flow-manager-test/my-test-flow1/collector/collector.xqy");
     }
 
     @AfterClass
@@ -91,7 +91,7 @@ public class DomainManagerTest extends HubTestBase {
 
         ServerCollector c = (ServerCollector)flow1.getCollector();
         assertEquals("xquery", c.getType());
-        assertEquals("/ext/domains/test/my-test-flow1/collector/collector.xqy", c.getModule());
+        assertEquals("/ext/domains/test/conformance/my-test-flow1/collector/collector.xqy", c.getModule());
 
         ServerPlugin t = (ServerPlugin)flow1.getContentPlugin();
         assertEquals("xquery", t.getType());
@@ -109,7 +109,7 @@ public class DomainManagerTest extends HubTestBase {
 
         c = (ServerCollector)flow1.getCollector();
         assertEquals("xquery", c.getType());
-        assertEquals("/ext/domains/test/my-test-flow1/collector/collector.xqy", c.getModule());
+        assertEquals("/ext/domains/test/conformance/my-test-flow1/collector/collector.xqy", c.getModule());
 
         t = (ServerPlugin)flow2.getContentPlugin();
         assertEquals("xquery", t.getType());
@@ -137,7 +137,7 @@ public class DomainManagerTest extends HubTestBase {
 
         ServerCollector c = (ServerCollector)flow1.getCollector();
         assertEquals("xquery", c.getType());
-        assertEquals("/ext/domains/test/my-test-flow1/collector/collector.xqy", c.getModule());
+        assertEquals("/ext/domains/test/conformance/my-test-flow1/collector/collector.xqy", c.getModule());
 
         ServerPlugin t = (ServerPlugin)flow1.getContentPlugin();
         assertEquals("xquery", t.getType());
@@ -154,7 +154,7 @@ public class DomainManagerTest extends HubTestBase {
 
         c = (ServerCollector)flow1.getCollector();
         assertEquals("xquery", c.getType());
-        assertEquals("/ext/domains/test/my-test-flow1/collector/collector.xqy", c.getModule());
+        assertEquals("/ext/domains/test/conformance/my-test-flow1/collector/collector.xqy", c.getModule());
 
         t = (ServerPlugin)flow2.getContentPlugin();
         assertEquals("xquery", t.getType());
