@@ -122,7 +122,7 @@ public class EnvironmentConfiguration {
 	    }
 	    value = this.environment.getProperty("mlcpHome");
 	    if (value != null) {
-	        this.properties.setProperty("userPluginDir", value);
+	        this.properties.setProperty("mlcpHome", value);
 	        return value;
 	    }
 	    return "./mlcp";
