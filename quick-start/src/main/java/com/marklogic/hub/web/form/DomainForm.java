@@ -45,14 +45,6 @@ public class DomainForm extends BaseForm {
                         "Domain Name should be unique.");
             }
         }
-        if (this.inputFlowName == null || "".equals(this.inputFlowName.trim())) {
-            throw new FormValidationException("Ingest Flow Name is required.");
-        }
-        if (this.conformFlowName == null
-                || "".equals(this.conformFlowName.trim())) {
-            throw new FormValidationException(
-                    "Conformance Flow Name is required.");
-        }
     }
 
 }

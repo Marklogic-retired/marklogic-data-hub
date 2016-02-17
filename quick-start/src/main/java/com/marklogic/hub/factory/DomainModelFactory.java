@@ -37,25 +37,26 @@ public class DomainModelFactory {
         domainModel.setInputFlows(new ArrayList<>());
         domainModel.setConformFlows(new ArrayList<>());
 
-		String domainsPath = userPluginDir + File.separator + FileUtil.DOMAINS_FOLDER;
-		FileUtil.createFolderIfNecessary(domainsPath, domainName);
+        String domainsPath = userPluginDir + File.separator
+                + FileUtil.DOMAINS_FOLDER;
+        FileUtil.createFolderIfNecessary(domainsPath, domainName);
 
         FlowModelFactory flowModelFactory = new FlowModelFactory(domainName);
-		String domainDirPath = domainsPath + File.separator + domainName;
-		if (inputFlowName != null) {
-        FlowModel inputFlow = flowModelFactory.createNewFlow(domainDirPath
-                + File.separator + FlowType.INPUT.getName(), inputFlowName,
-                FlowType.INPUT);
+        String domainDirPath = domainsPath + File.separator + domainName;
+        if (inputFlowName != null) {
+            FlowModel inputFlow = flowModelFactory.createNewFlow(domainDirPath
+                    + File.separator + FlowType.INPUT.getName(), inputFlowName,
+                    FlowType.INPUT);
             domainModel.getInputFlows().add(inputFlow);
-		}
+        }
 
-		if (conformFlowName != null) {
-        FlowModel conformFlow = flowModelFactory.createNewFlow(domainDirPath
-                + File.separator + FlowType.CONFORM.getName(), conformFlowName,
-                FlowType.CONFORM);
-
-        domainModel.getConformFlows().add(conformFlow);
-		}
+        if (conformFlowName != null) {
+            FlowModel conformFlow = flowModelFactory
+                    .createNewFlow(domainDirPath + File.separator
+                            + FlowType.CONFORM.getName(), conformFlowName,
+                            FlowType.CONFORM);
+            domainModel.getConformFlows().add(conformFlow);
+        }
 
         return domainModel;
     }
@@ -100,12 +101,13 @@ public class DomainModelFactory {
         return flows;
     }
 
-    public static Map<String, DomainModel> toDomainModelMap(List<DomainModel> domains) {
+    public static Map<String, DomainModel> toDomainModelMap(
+            List<DomainModel> domains) {
         Map<String, DomainModel> domainModelMap = new HashMap<String, DomainModel>();
         for (DomainModel model : domains) {
             domainModelMap.put(model.getDomainName(), model);
         }
-        
+
         return domainModelMap;
     }
 }
