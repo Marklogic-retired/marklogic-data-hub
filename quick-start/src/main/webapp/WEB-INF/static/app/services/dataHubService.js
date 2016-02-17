@@ -110,10 +110,10 @@ module.factory('DataHub', [
                 };
                 var promise = $http.post('api/flows/run/input', data)
                 .success(function () {
-                    service.displayMessage('Flow run is successful.', 'success', 'notification', false);
+                    service.displayMessage('Flow data load is successful.', 'success', 'notification', false);
                 })
                 .error(function () {
-                    service.displayMessage('Flow run is successful.', 'success', 'notification', false);
+                    service.displayMessage('Flow data load is unsuccessful.', 'error', 'notification', false);
                 });
                 
                 return promise;
