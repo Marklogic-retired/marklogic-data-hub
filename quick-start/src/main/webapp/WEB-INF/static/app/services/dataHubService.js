@@ -49,19 +49,37 @@ module.factory('DataHub', [
             }
             
             ,install : function () {
-                var promise = $http.post('api/data-hub/install');
+                var promise = $http.post('api/data-hub/install')
+                .success(function () {
+                	service.displayMessage('Install is successful.', 'success', 'notification', false);
+                })
+                .error(function () {
+                	service.displayMessage('Install is unsuccessful.', 'error', 'notification', false);
+                });
                 
                 return promise;
             }
             
             ,uninstall : function () {
-                var promise = $http.post('api/data-hub/uninstall');
+                var promise = $http.post('api/data-hub/uninstall')
+                .success(function () {
+                	service.displayMessage('Uninstall is successful.', 'success', 'notification', false);
+                })
+                .error(function () {
+                	service.displayMessage('Uninstall is unsuccessful.', 'error', 'notification', false);
+                });
                 
                 return promise;
             }
             
             ,installUserModules : function () {
-                var promise = $http.post('api/data-hub/install-user-modules');
+                var promise = $http.post('api/data-hub/install-user-modules')
+                .success(function () {
+                	service.displayMessage('Deploy to server is successful.', 'success', 'notification', false);
+                })
+                .error(function () {
+                	service.displayMessage('Deploy to server is unsuccessful.', 'error', 'notification', false);
+                });
                 
                 return promise;
             }
@@ -71,6 +89,7 @@ module.factory('DataHub', [
             	var promise = $http.post('api/domains', domainForm)
                 .success(function (status) {
                     service.status = status;
+                    service.displayMessage('New domain is created successfully.', 'success', 'notification', false);
                 })
                 .error(function (error) {
                 	service.displayMessage(error.message, 'error', 'domainModalMessage', true);
@@ -140,6 +159,7 @@ module.factory('DataHub', [
             	var promise = $http.post('api/flows', flowForm)
                 .success(function (selectedDomain) {
                     service.status.selectedDomain = selectedDomain;
+                    service.displayMessage('New flow is created successfully.', 'success', 'notification', false);
                 })
                 .error(function (error) {
                 	service.displayMessage(error.message, 'error', 'flowModalMessage', true);
