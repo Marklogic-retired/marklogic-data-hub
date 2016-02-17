@@ -1,12 +1,15 @@
 var dependencies = [
+	'ngRoute'
 ];
 var module = angular.module('dhib.quickstart.service.data-hub', dependencies);
 module.factory('DataHub', [
     '$http'
     ,'$q'
+    ,'$route'
     ,function(
         $http
         ,$q
+        ,$route
     ) {
         var service = {
             
@@ -48,10 +51,16 @@ module.factory('DataHub', [
                 return promise;
             }
             
+            ,reloadRoute : function () {
+            	$route.reload();
+            }
+            
             ,install : function () {
                 var promise = $http.post('api/data-hub/install')
-                .success(function () {
+                .success(function (status) {
+                	service.status = status;
                 	service.displayMessage('Install is successful.', 'success', 'notification', false);
+                	service.reloadRoute();
                 })
                 .error(function () {
                 	service.displayMessage('Install is unsuccessful.', 'error', 'notification', false);
@@ -62,8 +71,10 @@ module.factory('DataHub', [
             
             ,uninstall : function () {
                 var promise = $http.post('api/data-hub/uninstall')
-                .success(function () {
+                .success(function (status) {
+                	service.status = status;
                 	service.displayMessage('Uninstall is successful.', 'success', 'notification', false);
+                	service.reloadRoute();
                 })
                 .error(function () {
                 	service.displayMessage('Uninstall is unsuccessful.', 'error', 'notification', false);

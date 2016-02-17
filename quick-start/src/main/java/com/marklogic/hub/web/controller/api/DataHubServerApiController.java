@@ -133,19 +133,21 @@ public class DataHubServerApiController extends BaseController {
 	}
 
 	@RequestMapping(value = "install", method = RequestMethod.POST)
-    public void install(HttpSession session) {
+    public LoginForm install(HttpSession session) {
 		dataHubService.install();
         LoginForm loginForm = (LoginForm) session.getAttribute("loginForm");
         loginForm.setInstalled(true);
         this.loadUserModules(loginForm);
+        return loginForm;
 	}
 
 	@RequestMapping(value = "uninstall", method = RequestMethod.POST)
-    public void uninstall(HttpSession session) {
+    public LoginForm uninstall(HttpSession session) {
         dataHubService.uninstall();
         LoginForm loginForm = (LoginForm) session.getAttribute("loginForm");
         loginForm.setInstalled(false);
         this.unLoadUserModules(loginForm);
+        return loginForm;
 	}
 
 	@RequestMapping(value = "install-user-modules", method = RequestMethod.POST)
