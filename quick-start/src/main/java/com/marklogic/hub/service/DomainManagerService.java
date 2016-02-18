@@ -66,7 +66,7 @@ public class DomainManagerService {
         try {
             DomainManager domainManager = getDomainManager();
             domainsInServer = domainManager.getDomains();
-        } catch (MarkLogicServerException e) {
+        } catch (Exception e) {
             // TODO catch this temporarily
             // This should not return an error as the deploy to server should
             // validate the plugins beforehand
