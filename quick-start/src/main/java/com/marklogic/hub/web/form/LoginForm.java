@@ -1,5 +1,6 @@
 package com.marklogic.hub.web.form;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -19,7 +20,7 @@ public class LoginForm extends BaseForm {
 	private boolean serverVersionAccepted;
 	private boolean installed;
 	private boolean loggedIn;
-	private List<DomainModel> domains;
+    private List<DomainModel> domains = new ArrayList<DomainModel>();
 	private DomainModel selectedDomain;
 
 	public String getMlHost() {

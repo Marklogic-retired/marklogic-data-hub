@@ -1,12 +1,15 @@
 var dependencies = [
+	'ngRoute'
 ];
 var module = angular.module('dhib.quickstart.service.data-hub', dependencies);
 module.factory('DataHub', [
     '$http'
     ,'$q'
+    ,'$route'
     ,function(
         $http
         ,$q
+        ,$route
     ) {
         var service = {
             
@@ -48,20 +51,46 @@ module.factory('DataHub', [
                 return promise;
             }
             
+            ,reloadRoute : function () {
+            	$route.reload();
+            }
+            
             ,install : function () {
-                var promise = $http.post('api/data-hub/install');
+                var promise = $http.post('api/data-hub/install')
+                .success(function (status) {
+                	service.status = status;
+                	service.displayMessage('Install is successful.', 'success', 'notification', false);
+                	service.reloadRoute();
+                })
+                .error(function () {
+                	service.displayMessage('Install is unsuccessful.', 'error', 'notification', false);
+                });
                 
                 return promise;
             }
             
             ,uninstall : function () {
-                var promise = $http.post('api/data-hub/uninstall');
+                var promise = $http.post('api/data-hub/uninstall')
+                .success(function (status) {
+                	service.status = status;
+                	service.displayMessage('Uninstall is successful.', 'success', 'notification', false);
+                	service.reloadRoute();
+                })
+                .error(function () {
+                	service.displayMessage('Uninstall is unsuccessful.', 'error', 'notification', false);
+                });
                 
                 return promise;
             }
             
             ,installUserModules : function () {
-                var promise = $http.post('api/data-hub/install-user-modules');
+                var promise = $http.post('api/data-hub/install-user-modules')
+                .success(function () {
+                	service.displayMessage('Deploy to server is successful.', 'success', 'notification', false);
+                })
+                .error(function () {
+                	service.displayMessage('Deploy to server is unsuccessful.', 'error', 'notification', false);
+                });
                 
                 return promise;
             }
@@ -71,6 +100,7 @@ module.factory('DataHub', [
             	var promise = $http.post('api/domains', domainForm)
                 .success(function (status) {
                     service.status = status;
+                    service.displayMessage('New domain is created successfully.', 'success', 'notification', false);
                 })
                 .error(function (error) {
                 	service.displayMessage(error.message, 'error', 'domainModalMessage', true);
@@ -97,7 +127,7 @@ module.factory('DataHub', [
                 	service.displayMessage('Flow run is successful.', 'success', 'notification', false);
                 })
                 .error(function () {
-                	service.displayMessage('Flow run is successful.', 'success', 'notification', false);
+                	service.displayMessage('Flow run is unsuccessful.', 'error', 'notification', false);
                 });
                 
                 return promise;
@@ -110,10 +140,10 @@ module.factory('DataHub', [
                 };
                 var promise = $http.post('api/flows/run/input', data)
                 .success(function () {
-                    service.displayMessage('Flow run is successful.', 'success', 'notification', false);
+                    service.displayMessage('Flow data load is successful.', 'success', 'notification', false);
                 })
                 .error(function () {
-                    service.displayMessage('Flow run is successful.', 'success', 'notification', false);
+                    service.displayMessage('Flow data load is unsuccessful.', 'error', 'notification', false);
                 });
                 
                 return promise;
@@ -140,6 +170,7 @@ module.factory('DataHub', [
             	var promise = $http.post('api/flows', flowForm)
                 .success(function (selectedDomain) {
                     service.status.selectedDomain = selectedDomain;
+                    service.displayMessage('New flow is created successfully.', 'success', 'notification', false);
                 })
                 .error(function (error) {
                 	service.displayMessage(error.message, 'error', 'flowModalMessage', true);

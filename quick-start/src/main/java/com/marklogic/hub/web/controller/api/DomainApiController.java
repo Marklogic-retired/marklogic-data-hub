@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.nio.file.WatchEvent;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpSession;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.marklogic.hub.config.EnvironmentConfiguration;
 import com.marklogic.hub.model.DomainModel;
 import com.marklogic.hub.model.FlowType;
+import com.marklogic.hub.service.DataHubService;
 import com.marklogic.hub.service.DomainManagerService;
 import com.marklogic.hub.service.FileSystemEventListener;
 import com.marklogic.hub.service.FileSystemWatcherService;
@@ -43,6 +45,9 @@ public class DomainApiController implements InitializingBean, DisposableBean,
     
     @Autowired
     private EnvironmentConfiguration environmentConfiguration;
+
+    @Autowired
+    private DataHubService dataHubService;
 
     @Autowired
     private DomainManagerService domainManagerService;
@@ -106,10 +111,19 @@ public class DomainApiController implements InitializingBean, DisposableBean,
             }
 
             // refresh the list of domains saved in the session
-            List<DomainModel> domains = domainManagerService.getDomains();
+            List<DomainModel> domains = new ArrayList<DomainModel>();
             LoginForm loginForm = (LoginForm) session.getAttribute("loginForm");
-            loginForm.refreshDomains(domains);
-            loginForm.updateWithSyncStatus(syncStatus);
+            // add checking if data hub is installed and the server is
+            // acceptable. Something may have changed the server or removed the
+            // data hub outside the app
+            loginForm.setInstalled(dataHubService.isInstalled());
+            loginForm.setServerVersionAccepted(dataHubService
+                    .isServerAcceptable());
+            if (loginForm.isInstalled()) {
+                domains = domainManagerService.getDomains();
+                loginForm.refreshDomains(domains);
+                loginForm.updateWithSyncStatus(syncStatus);
+            }
             
             // clear all pending updates
             syncStatus.clearModifications();

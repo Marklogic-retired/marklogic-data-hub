@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
 import com.marklogic.client.DatabaseClientFactory.Authentication;
-import com.marklogic.client.MarkLogicServerException;
 import com.marklogic.hub.DomainManager;
 import com.marklogic.hub.config.EnvironmentConfiguration;
 import com.marklogic.hub.domain.Domain;
@@ -67,9 +66,7 @@ public class DomainManagerService {
             DomainManager domainManager = getDomainManager();
             domainsInServer = domainManager.getDomains();
         } catch (Exception e) {
-            // TODO catch this temporarily
-            // This should not return an error as the deploy to server should
-            // validate the plugins beforehand
+            LOGGER.error(e.getMessage(), e);
         }
         return domainsInServer;
     }

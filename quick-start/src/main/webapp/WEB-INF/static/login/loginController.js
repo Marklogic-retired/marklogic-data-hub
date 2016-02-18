@@ -16,10 +16,13 @@ module.controller('loginController', [
         $scope.loginForm = {};
         $scope.hasErrors = false;
         $scope.errors = {};
+        $scope.loading = false;
         
         $scope.login = function() {
+        	$scope.loading = true;
             DataHub.login($scope.loginForm)
                 .then(function(request) {
+                	$scope.loading = false;
                 	if(DataHub.status && !DataHub.status.hasErrors) {
                 		$scope.hasErrors = false;
                 		$scope.errors = null;
