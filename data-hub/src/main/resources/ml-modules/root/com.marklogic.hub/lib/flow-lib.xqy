@@ -283,10 +283,10 @@ declare function flow:get-flows(
     cts:uri-match($DOMAINS-DIR || "*")
   })
   let $flows :=
-    for $flow in $uris[fn:matches(., $DOMAINS-DIR || $domain-name || "/(input|canonical)/[^/]+/$")]
-    let $name := fn:replace($flow, $DOMAINS-DIR || $domain-name || "/(input|canonical)/([^/]+)/$", "$2")
+    for $flow in $uris[fn:matches(., $DOMAINS-DIR || $domain-name || "/(input|conformance)/[^/]+/$")]
+    let $name := fn:replace($flow, $DOMAINS-DIR || $domain-name || "/(input|conformance)/([^/]+)/$", "$2")
     return
-      flow:get-flow($domain-name, $name, (), $uris[fn:matches(., $DOMAINS-DIR || $domain-name || "/(input|canonical)/" || $name || "/.+")])
+      flow:get-flow($domain-name, $name, (), $uris[fn:matches(., $DOMAINS-DIR || $domain-name || "/(input|conformance)/" || $name || "/.+")])
   return
     <flows xmlns="http://marklogic.com/hub-in-a-box">
     {

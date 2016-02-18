@@ -2,7 +2,7 @@ package com.marklogic.hub.model;
 
 public enum FlowType {
 
-	INPUT("input", "Input Flow"), CONFORM("conform", "Conformance Flow");
+	INPUT("input", "Input Flow"), CONFORM("conformance", "Conformance Flow");
 
 	public String name;
 	public String type;
