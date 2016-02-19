@@ -107,10 +107,15 @@ public class LoadModulesCommand extends AbstractCommand {
             for (Resource r : resources) {
                 String path = r.getURL().getPath();
                 if (path.contains("!")) {
-                    path = path.split("!")[1];
+                    String[] splits = path.split("!");
+                    path = splits[splits.length - 1];
                 }
 
                 String rootPathAbs = resolver.getResource(rootPath).getURL().getPath();
+                if (rootPathAbs.contains("!")) {
+                    String[] splits = rootPathAbs.split("!");
+                    rootPathAbs = splits[splits.length - 1];
+                }
                 if (path.startsWith(rootPathAbs)) {
                     path = path.substring(rootPathAbs.length());
                     if (logger.isDebugEnabled()) {
