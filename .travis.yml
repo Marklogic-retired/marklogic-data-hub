@@ -5,8 +5,6 @@ sudo: true
 before_install:
 - echo 'America/Los_Angeles' | sudo tee /etc/timezone
 - sudo dpkg-reconfigure --frontend noninteractive tzdata
-script:
-  ./gradlew -d check
 install:
 - env
 - if [ "${TRAVIS_SECURE_ENV_VARS}" = "true" ] ; then ./shared/dev-tasks/travis-install-ml.sh
