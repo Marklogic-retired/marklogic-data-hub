@@ -54,10 +54,7 @@ public class FlowManagerTest extends HubTestBase {
     public static void setup() throws IOException {
         XMLUnit.setIgnoreWhitespace(true);
 
-        DataHub dh = new DataHub(host, port, user, password);
-        if (false == dh.isInstalled()) {
-            dh.install();
-        }
+        installHub();
 
         DocumentMetadataHandle meta = new DocumentMetadataHandle();
         meta.getCollections().add("tester");
@@ -77,10 +74,8 @@ public class FlowManagerTest extends HubTestBase {
     }
 
     @AfterClass
-    public static void teardown() {
-        runInModules("xdmp:directory-delete(\"/ext/\")");
-        docMgr.delete("/incoming/employee1.xml");
-        docMgr.delete("/incoming/employee2.xml");
+    public static void teardown() throws IOException {
+        uninstallHub();
     }
 
     @After
@@ -93,8 +88,7 @@ public class FlowManagerTest extends HubTestBase {
     public void testSimpleFlowFromXml() throws IOException, ParserConfigurationException, SAXException {
         Document d = getXmlFromResource("flow-manager-test/simple-flow.xml");
 
-        FlowManager fm = new FlowManager(client);
-        SimpleFlow flow = (SimpleFlow)fm.flowFromXml(d.getDocumentElement());
+        SimpleFlow flow = (SimpleFlow)FlowManager.flowFromXml(d.getDocumentElement());
         assertThat(flow, instanceOf(SimpleFlow.class));
         assertEquals(flow.getName(), "my-test-flow");
         assertNotNull(flow.getCollector());

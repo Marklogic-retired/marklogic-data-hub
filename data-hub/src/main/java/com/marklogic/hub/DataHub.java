@@ -25,6 +25,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.web.client.ResourceAccessException;
 
 import com.marklogic.appdeployer.AppConfig;
@@ -35,14 +36,13 @@ import com.marklogic.appdeployer.command.databases.DeployContentDatabasesCommand
 import com.marklogic.appdeployer.command.databases.DeploySchemasDatabaseCommand;
 import com.marklogic.appdeployer.command.databases.DeployTriggersDatabaseCommand;
 import com.marklogic.appdeployer.command.modules.AssetModulesFinder;
-import com.marklogic.appdeployer.command.modules.LoadModulesCommand;
 import com.marklogic.appdeployer.command.restapis.DeployRestApiServersCommand;
 import com.marklogic.appdeployer.command.security.DeployRolesCommand;
 import com.marklogic.appdeployer.command.security.DeployUsersCommand;
 import com.marklogic.appdeployer.impl.SimpleAppDeployer;
 import com.marklogic.client.modulesloader.Modules;
 import com.marklogic.client.modulesloader.ModulesFinder;
-import com.marklogic.client.modulesloader.impl.DefaultModulesLoader;
+import com.marklogic.hub.commands.LoadModulesCommand;
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.ManageConfig;
 import com.marklogic.mgmt.admin.AdminConfig;
@@ -121,9 +121,7 @@ public class DataHub {
         config.setRestAdminUsername(username);
         config.setRestAdminPassword(password);
         List<String> paths = new ArrayList<String>();
-        // TODO: this is broken when run within a jar
-        // Modules are not getting loaded
-        paths.add(new File("../data-hub/src/hub-in-a-box").getAbsolutePath());
+        paths.add(new ClassPathResource("ml-modules").getPath());
         config.setConfigDir(new ConfigDir(new File(new ClassPathResource("ml-config").getPath())));
         config.setModulePaths(paths);
         return config;
@@ -146,8 +144,9 @@ public class DataHub {
      *
      * @param pathToUserModules - the absolute path to the user's modules folder
      * @return the set of files that was loaded into MarkLogic
+     * @throws IOException
      */
-    public Set<File> installUserModules(String pathToUserModules) {
+    public Set<File> installUserModules(String pathToUserModules) throws IOException {
         AppConfig config = new AppConfig();
         config.setHost(host);
         config.setRestPort(restPort);
@@ -160,14 +159,14 @@ public class DataHub {
         ModulesFinder finder = new AssetModulesFinder();
         Modules modules = finder.findModules(new File(pathToUserModules));
 
-        List<File> dirs = modules.getAssetDirectories();
+        List<Resource> dirs = modules.getAssetDirectories();
         if (dirs == null || dirs.isEmpty()) {
             return new HashSet<File>();
         }
 
         String[] paths = new String[dirs.size()];
         for (int i = 0; i < dirs.size(); i++) {
-            paths[i] = dirs.get(i).getAbsolutePath();
+            paths[i] = dirs.get(i).getFile().getAbsolutePath();
         }
         return loader.loadAssetsViaREST(paths);
     }
@@ -199,11 +198,7 @@ public class DataHub {
         commands.addAll(serverCommands);
 
         // Modules
-        LoadModulesCommand lmc = new LoadModulesCommand();
-        DefaultModulesLoader dml = new DefaultModulesLoader(config.newXccAssetLoader());
-        dml.setModulesManager(null);
-        lmc.setModulesLoader(dml);
-        commands.add(lmc);
+        commands.add(new LoadModulesCommand());
 
         return commands;
     }
