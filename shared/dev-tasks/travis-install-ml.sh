@@ -29,22 +29,16 @@ if [[ $arg1 = 'release' ]]; then
 
   echo "********* Downloading MarkLogic $ver"
 
-  status=$(curl -k --head --write-out %{http_code} --silent --output /dev/null $url)
-  if [[ $status = 200 ]]; then
-    successOrExit curl -k -o ./$fname $url
+  successOrExit curl -k -o ./$fname $url
 
-    fname=$(pwd)/$fname
+  fname=$(pwd)/$fname
 
-    sudo apt-get update
-    sudo apt-get install wajig alien rpm lsb-base dpkg-dev debhelper build-essential
-    (cd /etc && sudo ln -s default sysconfig)
-    sudo wajig rpminstall $fname
+  sudo apt-get update
+  sudo apt-get install wajig alien rpm lsb-base dpkg-dev debhelper build-essential
+  (cd /etc && sudo ln -s default sysconfig)
+  sudo wajig rpminstall $fname
 
-    echo "********* MarkLogic $ver installed"
-  else
-    echo "CANNOT DOWNLOAD: status = $status for version $ver (URL=secure/suppressed)"
-    exit 1
-  fi
+  echo "********* MarkLogic $ver installed"
 else
   # find today
   day=$(date +"%Y%m%d")
