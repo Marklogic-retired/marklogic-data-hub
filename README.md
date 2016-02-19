@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/marklogic/data-hub-in-a-box.svg?branch=master)](https://travis-ci.org/marklogic/data-hub-in-a-box)
+
 # Data Hub In a Box
 
 Go from nothing to Enterprise Data Hub in a matter of minutes.

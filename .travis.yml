@@ -1,0 +1,13 @@
+language: java
+jdk:
+  - oraclejdk8
+sudo: true
+before_install:
+- echo 'America/Los_Angeles' | sudo tee /etc/timezone
+- sudo dpkg-reconfigure --frontend noninteractive tzdata
+install:
+- env
+- if [ "${TRAVIS_SECURE_ENV_VARS}" = "true" ] ; then ./shared/dev-tasks/travis-install-ml.sh
+  release ; else (exit 0) ; fi
+- if [ "${TRAVIS_SECURE_ENV_VARS}" = "true" ] ; then ./shared/dev-tasks/setup-marklogic.sh
+  ; else (exit 0) ; fi
