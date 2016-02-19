@@ -95,6 +95,13 @@ public class HubTestBase {
 
     }
 
+    protected static void installHub() throws IOException {
+        new DataHub(host, port, user, password).install();
+    }
+
+    protected static void uninstallHub() throws IOException {
+        new DataHub(host, port, user, password).uninstall();
+    }
     protected static String getResource(String resourceName) throws IOException {
         try {
             InputStream inputStream = HubTestBase.class.getClassLoader().getResourceAsStream(resourceName);
