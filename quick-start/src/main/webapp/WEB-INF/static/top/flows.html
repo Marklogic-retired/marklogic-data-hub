@@ -1,0 +1,26 @@
+<h1>{{status.selectedDomain.domainName}}</h1>
+<h2>Input Flows</h2><button type="submit" name="newInputFlow" class="btn btn-primary" ng-click="createFlow(status.selectedDomain.domainName, 'input')">New</button>
+<ul>
+    <li class="nav" ng-repeat="flow in status.selectedDomain.inputFlows">
+    	<h3><i ng-class="flow.synched ? 'fa fa-file-text-o sycned' : 'fa fa-file-text-o unsycned'"></i>{{flow.flowName}}</h3>
+    	<div class="button-group-right">
+        <button type="submit" name="runFlow" class="btn btn-success" ng-click="runInputFlow(flow.domainName, flow.flowName)" ng-disabled="!flow.synched">Load Data</button>
+	    	<button type="submit" name="runFlow" class="btn btn-success" ng-click="runFlow(flow.domainName, flow.flowName)" ng-disabled="!flow.synched">Run</button>
+	    	<button type="submit" name="testFlow" class="btn btn-success" ng-click="testFlow(flow.domainName,flow.flowName)" ng-disabled="!flow.synched">Test</button>
+	    </div>
+	    <abn-tree tree-data="flow.treeData.children" icon-leaf="fa fa-file-text-o" icon-expand="fa fa-folder-o" icon-collapse="fa fa-folder-open-o" expand-level="1"></abn-tree>
+    </li>
+</ul>
+<div class="divider"></div>
+<h2>Conformance Flows</h2><button type="submit" name="newConformFlow" class="btn btn-primary" ng-click="createFlow(status.selectedDomain.domainName, 'conform')">New</button>
+<ul>
+    <li class="nav" ng-repeat="flow in status.selectedDomain.conformFlows">
+    	<h3><i ng-class="flow.synched ? 'fa fa-file-text-o sycned' : 'fa fa-file-text-o unsycned'"></i>{{flow.flowName}}</h3>
+    	<div class="button-group-right">
+    		<button type="submit" name="runFlow" class="btn btn-success" ng-click="runFlow(flow.domainName, flow.flowName)" ng-disabled="!flow.synched">Run</button>
+    		<button type="submit" name="testFlow" class="btn btn-success" ng-click="testFlow(flow.domainName, flow.flowName)" ng-disabled="!flow.synched">Test</button>
+    	</div>
+    	<abn-tree tree-data="flow.treeData.children" icon-leaf="fa fa-file-text-o" icon-expand="fa fa-folder-o" icon-collapse="fa fa-folder-open-o" expand-level="1"></abn-tree>
+    </li>
+</ul>
+<div ng-include="'top/modal/flowModal.html'"></div>

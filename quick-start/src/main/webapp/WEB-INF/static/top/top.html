@@ -1,12 +1,12 @@
-<header status="status"></header>
-
+<header></header>
+<spinner></spinner>
 <div id="content" class="container-fluid">
-  <div class="row-fluid">
+  <div class="row-fluid row-flex">
     <div id="sidebar" class="col-md-4">
-      <div ng-include="'top/domains.html'"></div>
+      <div ng-include="'top/domains.html'" ng-if="status.domains"></div>
     </div>
     <div id="center" class="col-md-8">
-      <div ng-include="'top/flows.html'"></div>
+      <div ng-include="'top/flows.html'" ng-if="status.selectedDomain"></div>
     </div>
   </div>
 </div>

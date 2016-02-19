@@ -12,11 +12,6 @@ module.directive('header', [
     ) {
     	return {
             restrict: 'E'
-            ,scope : {
-                activeTab : '=',
-                status : '='
-            }
-            ,transclude: true
             ,templateUrl : function(element, attrs) {
                 return attrs.templateUrl || 'app/directives/header.html';
             }
@@ -26,13 +21,25 @@ module.directive('header', [
             		$location.path('/login');
             	},
             	scope.install = function () {
-                    DataHub.install();
+            		scope.loading = true;
+                    DataHub.install()
+                    .finally(function () {
+                    	scope.loading = false;
+                    });
                 },
                 scope.uninstall = function () {
-                    DataHub.uninstall();
+                	scope.loading = true;
+                    DataHub.uninstall()
+                    .finally(function () {
+                    	scope.loading = false;
+                    });
                 },
                 scope.installUserModules = function () {
-                    DataHub.installUserModules();
+                	scope.loading = true;
+                    DataHub.installUserModules()
+                    .finally(function () {
+                    	scope.loading = false;
+                    });
                 }
             }
             ,controller : function($scope, $element, $attrs, $transclude) {

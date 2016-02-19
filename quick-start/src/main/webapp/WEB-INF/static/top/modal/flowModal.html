@@ -1,0 +1,33 @@
+<div class="modal fade" id="flowModal" role="dialog"> 
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title" id="myModalLabel">New Flow</h4>
+      </div>
+      <div class="modal-body" id="myModalBody">
+        <div class="row" ng-show="flowForm.hasErrors">
+          <div id="flowModalMessage" class="modalMessage col-xs-12 col-md-12"></div>
+          </div>
+        <div class="row">
+           <div id="details" class="col-xs-12 col-md-12">
+             <form ng-submit="saveFlow()">
+               <input name="domainName" type="hidden" ng-model="flowForm.domainName"/>
+               <input name="flowType" type="hidden" ng-model="flowForm.flowType"/>
+              <div class="form-group">
+                <label for="flowName">Flow Name</label>
+                <input class="form-control" name="flowName" type="text" ng-model="flowForm.flowName" placeHolder="Enter Flow Name" required="required"/>
+              </div>
+             </form>
+           </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <div class="col-xs-12 col-md-12">
+	      <button class="btn btn-default" data-dismiss="modal">Cancel</button>
+	      <button class="btn btn-success" ng-click="saveFlow()">Submit</button>
+          </div>
+        </div>
+      </div>
+  </div>
+</div>

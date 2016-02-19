@@ -17,34 +17,124 @@ module.controller('topController', [
     ) {
         $scope.status = DataHub.status;
         $scope.domainForm = {};
-        
-        console.log('status');
-        console.log($scope.status);
+        $scope.flowForm = {};
+        $scope.loading = false;
         
         $scope.createDomain = function() {
-        	$('#domainModal').modal({
-    	        backdrop: 'static',
-    	        keyboard: true
-    	    });
+            $scope.loading = true;
+            $scope.domainForm.hasErrors = false;
+            $('#domainModal').modal({
+                backdrop: 'static',
+                keyboard: true
+            });
+            $scope.loading = false;
         };
         
         $scope.saveDomain = function() {
-        	DataHub.saveDomain($scope.domainForm)
-        	.success(function () {
-        		$('#domainModal').modal('hide');
+            $scope.loading = true;
+            DataHub.saveDomain($scope.domainForm)
+            .success(function () {
+                $scope.domainForm.hasErrors = false;
+                $scope.status = DataHub.status;
+                $('#domainModal').modal('hide');
+            })
+            .error(function () {
+                $scope.domainForm.hasErrors = true;
+            })
+            .finally(function () {
+                $scope.loading = false;
             });
         };
         
-        $scope.updateDomainStatus = function() {
-            DataHub.getDomainChangeList()
-            .success(function (domainChangeList) {
-                DataHub.status.domains = domainChangeList;
+        $scope.displayDomain = function(domainName) {
+            $scope.loading = true;
+            DataHub.displayDomain(domainName)
+            .success(function (selectedDomain) {
+                DataHub.status.selectedDomain = selectedDomain;
+            })
+            .finally(function () {
+                $scope.loading = false;
+            });
+        };
+        
+        $scope.getStatusChange = function() {
+            DataHub.getStatusChange()
+            .success(function (loginStatus) {
+                DataHub.status = loginStatus;
+                $scope.status = DataHub.status;
             })
             .then(function () {
-                $timeout($scope.updateDomainStatus, 50);
+                $timeout($scope.getStatusChange, 50);
             });
         };
         
-        $scope.updateDomainStatus();
+        $scope.getStatusChange();
+        
+        $scope.createFlow = function(domainName, flowType) {
+            $scope.loading = true;
+            $scope.flowForm.domainName = domainName;
+            $scope.flowForm.flowType = flowType;
+            $scope.flowForm.hasErrors = false;
+            $('#flowModal').modal({
+                backdrop: 'static',
+                keyboard: true
+            });
+            $scope.loading = false;
+        };
+        
+        $scope.runFlow = function(domainName, flowName) {
+            $scope.loading = true;
+            DataHub.runFlow(domainName, flowName)
+            .success(function () {
+                
+            })
+            .finally(function () {
+                $scope.loading = false;
+            });
+        };
+        
+        $scope.runInputFlow = function(domainName, flowName) {
+            $scope.loading = true;
+            DataHub.runInputFlow(domainName, flowName)
+            .success(function () {
+                
+            })
+            .finally(function () {
+                $scope.loading = false;
+            });
+        };
+        
+        $scope.testFlow = function(domainName, flowName) {
+            $scope.loading = true;
+            DataHub.testFlow(domainName, flowName)
+            .success(function () {
+                
+            })
+            .finally(function () {
+                $scope.loading = false;
+            });
+        };
+        
+        $scope.saveFlow = function() {
+            $scope.loading = true;
+            DataHub.saveFlow($scope.flowForm)
+            .success(function () {
+                $scope.flowForm.hasErrors = false;
+                $scope.status = DataHub.status;
+                $('#flowModal').modal('hide');
+            })
+            .error(function () {
+                $scope.flowForm.hasErrors = true;
+            })
+            .finally(function () {
+                $scope.loading = false;
+            });
+        };
+        
+        setTimeout(function () {
+            $('.alert').fadeOut();
+        }, 5000);
+        
+        
     }
 ]);

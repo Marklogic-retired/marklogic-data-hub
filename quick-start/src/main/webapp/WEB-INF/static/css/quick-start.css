@@ -19,6 +19,10 @@ a:hover {
 	text-decoration: underline;
 }
 
+ul {
+    padding-left: 5px;
+}
+
 div#header { 
     background-color: #fff;
     padding: 15px 15px; 
@@ -44,7 +48,7 @@ div#header .alert {
 	color: #fff;
 }
 
-.alert-info, .brand-info, .btn-success {
+.alert-info, .alert-success, .brand-info, .btn-success {
 	background-color: #4a9e43;
 }
 
@@ -83,7 +87,7 @@ div#message {
 }
 
 .divider {
-	border: 10px solid #2a2d2b;  
+	border: 10px solid #2a2d2b;
 }
 
 #content {
@@ -91,6 +95,20 @@ div#message {
 	padding: 0px;
 	box-shadow: 0px 5px 5px #888888;
 	background-color: #fff;
+}
+
+#content .divider {
+	border: 3px solid #2a2d2b;
+	margin: 20px -50px;
+}
+
+#content h2, #content li>h3, #content li>h4  {
+    display: inline-block;
+    margin-right: 10px;
+}
+
+#content .btn {
+    vertical-align: baseline;
 }
 
 #footer {
@@ -127,19 +145,70 @@ div#sidebar h1, div#sidebar h2, div#sidebar h3, div#sidebar a {
 	color: #fff;
 }
 
+li>h1, li>h2, li>h3, li>h4 {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
 div#center {
 	background-color: #fff;
 	min-height: 450px;
+	padding: 30px 50px;
 }
 
-ul.custom-list {
-	
-}
-
-div#buttons {
+div.button-group-center {
 	text-align: center;
+	margin: 30px;
+}
+
+div.button-group-right {
+	float: right;
 }
 
 .modal-footer {
     border-top: 0px;
+}
+
+.fa {
+    margin-right: 10px;
+    font-size: 36px;
+}
+
+li.folder, li.file {
+    list-style: none;
+    margin-left: 36px;
+}
+
+.row-flex {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display:         flex;
+}
+
+ul.abn-tree {
+    padding-left: 30px;
+}
+
+ul.abn-tree li.abn-tree-row a {
+    color: #2a2d2b;
+    font-size: 18px;
+}
+
+ul.nav.abn-tree i {
+    font-size: 18px;
+}
+
+.spinner {
+    float: right;
+    position: relative;
+    left: -50%;
+    text-align: left;
+    z-index: 1000;
+    color: #ff2a00;
+}
+
+.spinner > .child {
+    position: relative;
+    left: 50%;
 }

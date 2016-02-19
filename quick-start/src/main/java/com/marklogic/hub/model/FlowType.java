@@ -2,11 +2,11 @@ package com.marklogic.hub.model;
 
 public enum FlowType {
 
-	INPUT("input","Input Flow"), CONFORM("conform","Conformance Flow");
-	
+	INPUT("input", "Input Flow"), CONFORM("conformance", "Conformance Flow");
+
 	public String name;
 	public String type;
-	
+
 	FlowType(String name, String type) {
 		this.name = name;
 		this.type = type;
@@ -18,5 +18,18 @@ public enum FlowType {
 
 	public String getType() {
 		return type;
+	}
+
+	public static FlowType getFlowType(String type) {
+		for (FlowType flowType : FlowType.values()) {
+			if (flowType.getName().equals(type)) {
+				return flowType;
+			}
+		}
+		return null;
+	}
+
+	public String toString() {
+	    return name;
 	}
 }

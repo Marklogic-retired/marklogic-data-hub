@@ -245,4 +245,7 @@ public class FlowManager extends ResourceManager {
             this.getServices().post(params, handle, transaction);
         }
     }
+	public void testFlow(Flow flow) {
+
+	}
 }
