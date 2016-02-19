@@ -133,10 +133,11 @@ module.factory('DataHub', [
                 return promise;
             }
             
-            ,runInputFlow : function(domainName, flowName) {
+            ,runInputFlow : function(domainName, flowName, path) {
                 var data = {
-                    domainName: domainName,
-                    flowName: flowName
+                    'domainName' : domainName
+                    ,'flowName': flowName
+                    ,'inputPath' : path
                 };
                 var promise = $http.post('api/flows/run/input', data)
                 .success(function () {
