@@ -18,15 +18,19 @@ package com.marklogic.hub;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.web.client.ResourceAccessException;
 
+import com.google.gson.Gson;
 import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.appdeployer.ConfigDir;
 import com.marklogic.appdeployer.command.Command;
@@ -42,7 +46,9 @@ import com.marklogic.appdeployer.command.security.DeployUsersCommand;
 import com.marklogic.appdeployer.impl.SimpleAppDeployer;
 import com.marklogic.client.modulesloader.Modules;
 import com.marklogic.client.modulesloader.ModulesFinder;
+import com.marklogic.client.modulesloader.ModulesManager;
 import com.marklogic.client.modulesloader.impl.DefaultModulesLoader;
+import com.marklogic.hub.util.GsonUtil;
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.ManageConfig;
 import com.marklogic.mgmt.admin.AdminConfig;
@@ -51,7 +57,7 @@ import com.marklogic.mgmt.appservers.ServerManager;
 
 public class DataHub {
 
-    static final private Logger logger = LoggerFactory.getLogger(DataHub.class);
+    static final private Logger LOGGER = LoggerFactory.getLogger(DataHub.class);
 
     private ManageConfig config;
     private ManageClient client;
@@ -61,6 +67,8 @@ public class DataHub {
     private int restPort;
     private String username;
     private String password;
+
+    private File assetInstallTimeFile;
 
     private final static int DEFAULT_REST_PORT = 8010;
 
@@ -80,7 +88,11 @@ public class DataHub {
         this.username = username;
         this.password = password;
     }
-
+    
+    public void setAssetInstallTimeFile(File assetInstallTimeFile) {
+        this.assetInstallTimeFile = assetInstallTimeFile;
+    }
+    
     /**
      * Determines if the data hub is installed in MarkLogic
      * @return true if installed, false otherwise
@@ -144,10 +156,12 @@ public class DataHub {
     /**
      * Installs User Provided modules into the Data Hub
      *
-     * @param pathToUserModules - the absolute path to the user's modules folder
-     * @return the set of files that was loaded into MarkLogic
+     * @param pathToUserModules
+     *            - the absolute path to the user's modules folder
+     * @return the canonical/absolute path of files that was loaded, together
+     *         with its install time
      */
-    public Set<File> installUserModules(String pathToUserModules) {
+    public Map<File, Date> installUserModules(String pathToUserModules) {
         AppConfig config = new AppConfig();
         config.setHost(host);
         config.setRestPort(restPort);
@@ -156,20 +170,44 @@ public class DataHub {
         config.setRestAdminPassword(password);
 
         RestAssetLoader loader = new RestAssetLoader(config.newDatabaseClient());
+        DataHubModuleManager modulesManager = new DataHubModuleManager();
+        if (assetInstallTimeFile != null) {
+            loader.setModulesManager(modulesManager);
+        }
 
         ModulesFinder finder = new AssetModulesFinder();
         Modules modules = finder.findModules(new File(pathToUserModules));
 
         List<File> dirs = modules.getAssetDirectories();
         if (dirs == null || dirs.isEmpty()) {
-            return new HashSet<File>();
+            return new HashMap<>();
         }
 
         String[] paths = new String[dirs.size()];
         for (int i = 0; i < dirs.size(); i++) {
             paths[i] = dirs.get(i).getAbsolutePath();
         }
-        return loader.loadAssetsViaREST(paths);
+        Set<File> loadedFiles = loader.loadAssetsViaREST(paths);
+        
+        if (assetInstallTimeFile != null) {
+            Gson gson = GsonUtil.createGson();
+            
+            String json = gson.toJson(modulesManager.getLastInstallInfo());
+            try {
+                FileUtils.write(assetInstallTimeFile, json);
+            } catch (IOException e) {
+                LOGGER.error("Cannot write asset install info.", e);
+            }
+            
+            return modulesManager.getLastInstallInfo();
+        }
+        else {
+            Map<File, Date> fileMap = new HashMap<>();
+            for (File file : loadedFiles) {
+                fileMap.put(file, file.exists() ? new Date(file.lastModified()) : null);
+            }
+            return fileMap;
+        }
     }
 
     private List<Command> getCommands(AppConfig config) {
@@ -201,7 +239,6 @@ public class DataHub {
         // Modules
         LoadModulesCommand lmc = new LoadModulesCommand();
         DefaultModulesLoader dml = new DefaultModulesLoader(config.newXccAssetLoader());
-        dml.setModulesManager(null);
         lmc.setModulesLoader(dml);
         commands.add(lmc);
 
@@ -219,5 +256,44 @@ public class DataHub {
         deployer.setCommands(getCommands(config));
         deployer.undeploy(config);
     }
+    
+    private class DataHubModuleManager implements ModulesManager {
+        private Map<File, Date> lastInstallInfo = new HashMap<>();
+        
+        public Map<File, Date> getLastInstallInfo() {
+            return lastInstallInfo;
+        }
+        
+        @Override
+        public void initialize() {
+            LOGGER.debug("initializing DataHubModuleManager");
+        }
 
+        @Override
+        public boolean hasFileBeenModifiedSinceLastInstalled(File file) {
+            Date lastInstallDate = null;
+            try {
+                lastInstallDate = lastInstallInfo.get(new File(file.getCanonicalPath()));
+            } catch (IOException e) {
+                LOGGER.warn("Cannot get canonical path of {}. Using absolute path instead.", file);
+                lastInstallDate = lastInstallInfo.get(new File(file.getAbsolutePath()));
+            }
+            
+            // a file has been modified if it has not been previously installed (new file)
+            // or when its modified time is after the last install time
+            return lastInstallDate == null || file.lastModified() > lastInstallDate.getTime();
+        }
+
+        @Override
+        public void saveLastInstalledTimestamp(File file, Date date) {
+            try {
+                LOGGER.trace("saving last timestamp of " + file.getCanonicalPath() + ": " + date);
+                lastInstallInfo.put(new File(file.getCanonicalPath()), date);
+            } catch (IOException e) {
+                LOGGER.warn("Cannot store canonical path of {}. Storing absolute path instead.", file);
+                lastInstallInfo.put(new File(file.getAbsolutePath()), date);
+            }
+        }
+        
+    }
 }

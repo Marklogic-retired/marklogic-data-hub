@@ -2,13 +2,8 @@ package com.marklogic.hub.web.form;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
-import com.marklogic.hub.factory.DomainModelFactory;
 import com.marklogic.hub.model.DomainModel;
-import com.marklogic.hub.model.FlowModel;
-import com.marklogic.hub.web.bean.SyncStatusBean;
 
 public class LoginForm extends BaseForm {
 
@@ -95,99 +90,6 @@ public class LoginForm extends BaseForm {
 		this.domains = domains;
 	}
 	
-	public void refreshDomains(List<DomainModel> domains) {
-	    Map<String, DomainModel> domainMap = DomainModelFactory.toDomainModelMap(this.domains);
-	    Map<String, DomainModel> newDomainMap = DomainModelFactory.toDomainModelMap(domains);
-	    
-	    for (DomainModel model : domains) {
-	        DomainModel oldModel = domainMap.get(model.getDomainName());
-	        model.copySyncStatusFrom(oldModel);
-	    }
-	    
-	    if (selectedDomain != null) {
-	        DomainModel oldModel = domainMap.get(selectedDomain.getDomainName());
-	        DomainModel newDomainModel = newDomainMap.get(selectedDomain.getDomainName());
-	        if (newDomainModel != null) {
-	            newDomainModel.copySyncStatusFrom(oldModel);
-	            selectedDomain = newDomainModel;
-	        }
-	    }
-	    
-	    this.domains = domains;
-	}
-	
-	public void updateWithSyncStatus(SyncStatusBean syncStatus) {
-	    updateModifiedDomains(syncStatus.getModifiedDomains());
-	    updateModifiedInputFlows(syncStatus.getModifiedInputFlows());
-	    updateModifiedConformFlows(syncStatus.getModifiedConformFlows());
-	}
-	
-	public void updateModifiedDomains(Set<String> modifiedDomains) {
-	    if (modifiedDomains.isEmpty()) {
-	        return;
-	    }
-
-	    for (DomainModel domainModel : domains) {
-	        if (modifiedDomains.contains(domainModel.getDomainName())) {
-	            domainModel.setSynched(false);
-	        }
-	    }
-
-	    if (selectedDomain != null) {
-	        if (modifiedDomains.contains(selectedDomain.getDomainName())) {
-	            selectedDomain.setSynched(false);
-	        }
-	    }
-	}
-	
-	public void updateModifiedInputFlows(Map<String, Set<String>> modifiedInputFlows) {
-	    if (modifiedInputFlows.isEmpty()) {
-	        return;
-	    }
-	    
-	    for (DomainModel domainModel : domains) {
-	        Set<String> modifiedFlows = modifiedInputFlows.get(domainModel.getDomainName());
-	        if (modifiedFlows == null || modifiedFlows.isEmpty()) {
-	            continue;
-	        }
-	        
-	        List<FlowModel> flowList = domainModel.getInputFlows();
-	        if (flowList == null || flowList.isEmpty()) {
-	            continue;
-	        }
-	        
-	        for (FlowModel flow : flowList) {
-	            if (modifiedFlows.contains(flow.getFlowName())) {
-	                flow.setSynched(false);
-	            }
-	        }
-	    }
-	}
-	
-	public void updateModifiedConformFlows(Map<String, Set<String>> modifiedConformFlows) {
-	    if (modifiedConformFlows.isEmpty()) {
-            return;
-        }
-        
-        for (DomainModel domainModel : domains) {
-            Set<String> modifiedFlows = modifiedConformFlows.get(domainModel.getDomainName());
-            if (modifiedFlows == null || modifiedFlows.isEmpty()) {
-                continue;
-            }
-            
-            List<FlowModel> flowList = domainModel.getConformFlows();
-            if (flowList == null || flowList.isEmpty()) {
-                continue;
-            }
-            
-            for (FlowModel flow : flowList) {
-                if (modifiedFlows.contains(flow.getFlowName())) {
-                    flow.setSynched(false);
-                }
-            }
-        }
-	}
-
 	public DomainModel getSelectedDomain() {
 		return selectedDomain;
 	}
@@ -203,6 +105,12 @@ public class LoginForm extends BaseForm {
 	                setSelectedDomain(domain);
 	            }
 	        }
+	    }
+	}
+	
+	public void refreshSelectedDomain() {
+	    if (selectedDomain != null) {
+	        selectDomain(selectedDomain.getDomainName());
 	    }
 	}
 }

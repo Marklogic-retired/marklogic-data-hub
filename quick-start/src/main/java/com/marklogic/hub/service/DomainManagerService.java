@@ -8,6 +8,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import com.marklogic.client.DatabaseClient;
@@ -19,9 +20,12 @@ import com.marklogic.hub.domain.Domain;
 import com.marklogic.hub.exception.DomainManagerException;
 import com.marklogic.hub.factory.DomainModelFactory;
 import com.marklogic.hub.model.DomainModel;
+import com.marklogic.hub.model.FlowModel;
+import com.marklogic.hub.model.FlowType;
 import com.marklogic.hub.util.FileUtil;
 
 @Service
+@Scope("session")
 public class DomainManagerService {
 
     private static final Logger LOGGER = LoggerFactory
@@ -29,6 +33,9 @@ public class DomainManagerService {
 
     @Autowired
     private EnvironmentConfiguration environmentConfiguration;
+    
+    @Autowired
+    private SyncStatusService syncStatusService;
 
     public DomainManager getDomainManager() {
 
@@ -57,7 +64,27 @@ public class DomainManagerService {
             domains.add(domainModelFactory.createDomain(domainName, domainsPath
                     + File.separator + domainName));
         }
+        
+        // update the sync status of the domains and flows
+        // TODO: if we improve DomainModelFactory and FlowModelFactory implementation,
+        // we may be able to set the status correctly during model creation.
+        updateSyncStatus(domains);
+        
         return domains;
+    }
+    
+    protected void updateSyncStatus(List<DomainModel> domains) {
+        for (DomainModel domainModel : domains) {
+            domainModel.setSynched(syncStatusService.isDomainSynched(domainModel.getDomainName()));
+            
+            for (FlowModel flowModel : domainModel.getInputFlows()) {
+                flowModel.setSynched(syncStatusService.isFlowSynched(domainModel.getDomainName(), FlowType.INPUT, flowModel.getFlowName()));
+            }
+            
+            for (FlowModel flowModel : domainModel.getConformFlows()) {
+                flowModel.setSynched(syncStatusService.isFlowSynched(domainModel.getDomainName(), FlowType.CONFORM, flowModel.getFlowName()));
+            }
+        }
     }
 
     private List<Domain> getDomainsInServer() {

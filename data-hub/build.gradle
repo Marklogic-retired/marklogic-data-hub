@@ -24,6 +24,7 @@ dependencies {
     compile 'com.marklogic:java-client-api:3.0.4'
     compile mlAppDeployerDependency
     compile 'commons-io:commons-io:2.4'
+    compile 'com.google.code.gson:gson:2.6.1'
     testCompile 'junit:junit:4.12'
     testCompile 'xmlunit:xmlunit:1.3'
     testCompile 'org.hamcrest:hamcrest-junit:2.0.0.0'

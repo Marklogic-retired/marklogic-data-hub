@@ -127,6 +127,19 @@ public class EnvironmentConfiguration {
 	    }
 	    return "./mlcp";
 	}
+	
+	public String getAssetInstallTimeFilePath() {
+	    String value = this.properties.getProperty("assetInstallTimeFile");
+	    if (value != null) {
+	        return value;
+	    }
+	    value = this.environment.getProperty("assetInstallTimeFile");
+	    if (value != null) {
+	        this.properties.setProperty("assetInstallTimeFile", value);
+	        return value;
+	    }
+	    return "./assetInstallTime.json";
+	}
 
 	public void setMLHost(String mlHost) {
 		this.properties.setProperty("mlHost", mlHost);
@@ -150,6 +163,10 @@ public class EnvironmentConfiguration {
 	
 	public void setMlcpHome(String mlcpHomeDir) {
 	    this.properties.setProperty("mlcpHome", mlcpHomeDir);
+	}
+	
+	public void setAssetInstallTimeFilePath(String assetInstallTimeFilePath) {
+	    this.properties.setProperty("assetInstallTimeFile", assetInstallTimeFilePath);
 	}
 	
 	public void loadConfigurationFromFile() {
