@@ -16,14 +16,16 @@ set
 
 test $1 && arg1=$1
 if [[ $arg1 = 'release' ]]; then
-  fname=MarkLogic-8.0-20150819.x86_64.rpm
-  ver=8.0-4
+  ver=8.0-4.2
+  fname=MarkLogic-${ver}.x86_64.rpm
   fnamedeb="marklogic_"
   fnamedeb=$fnamedeb$ver
   suff="_amd64.deb"
   fnamedeb=$fnamedeb$suff
 
-  url=$MLRELEASE_URL
+  curl -c cookies.txt --data "email=${MLBUILD_USER}&password=${MLBUILD_PASSWORD}" https://developer.marklogic.com/login
+  dl_link=$(curl -b cookies.txt --data "download=/download/binaries/8.0/${fname}" https://developer.marklogic.com/get-download-url | perl -pe 's/.*"path":"([^"]+).*/\1/')
+  url="https://developer.marklogic.com${dl_link}"
 
   echo "********* Downloading MarkLogic $ver"
 
