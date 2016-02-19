@@ -116,13 +116,13 @@ public class EnvironmentConfiguration {
 	}
 	
 	public String getMlcpHomeDir() {
-	    String value = this.properties.getProperty("mlcpHome");
+	    String value = this.properties.getProperty("mlcpHomeDir");
 	    if (value != null) {
 	        return value;
 	    }
-	    value = this.environment.getProperty("mlcpHome");
+	    value = this.environment.getProperty("mlcpHomeDir");
 	    if (value != null) {
-	        this.properties.setProperty("mlcpHome", value);
+	        this.properties.setProperty("mlcpHomeDir", value);
 	        return value;
 	    }
 	    return "./mlcp";
@@ -161,8 +161,8 @@ public class EnvironmentConfiguration {
 		this.properties.setProperty("userPluginDir", userPluginDir);
 	}
 	
-	public void setMlcpHome(String mlcpHomeDir) {
-	    this.properties.setProperty("mlcpHome", mlcpHomeDir);
+	public void setMlcpHomeDir(String mlcpHomeDir) {
+	    this.properties.setProperty("mlcpHomeDir", mlcpHomeDir);
 	}
 	
 	public void setAssetInstallTimeFilePath(String assetInstallTimeFilePath) {

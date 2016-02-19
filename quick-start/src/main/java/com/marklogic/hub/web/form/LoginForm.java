@@ -12,6 +12,7 @@ public class LoginForm extends BaseForm {
 	private String mlUsername;
 	private String mlPassword;
 	private String userPluginDir;
+	private String mlcpHomeDir;
 	private boolean serverVersionAccepted;
 	private boolean installed;
 	private boolean loggedIn;
@@ -56,6 +57,14 @@ public class LoginForm extends BaseForm {
 
 	public void setServerVersionAccepted(boolean serverVersionAccepted) {
 		this.serverVersionAccepted = serverVersionAccepted;
+	}
+
+	public String getMlcpHomeDir() {
+	  return mlcpHomeDir;
+	}
+
+	public void setMlcpHomeDir(String mlcpHomeDir) {
+	  this.mlcpHomeDir = mlcpHomeDir;
 	}
 
 	public boolean isInstalled() {
