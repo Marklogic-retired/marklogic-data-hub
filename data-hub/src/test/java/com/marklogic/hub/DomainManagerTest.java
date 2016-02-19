@@ -43,10 +43,7 @@ public class DomainManagerTest extends HubTestBase {
     public static void setup() throws IOException {
         XMLUnit.setIgnoreWhitespace(true);
 
-        DataHub dh = new DataHub(host, port, user, password);
-        if (false == dh.isInstalled()) {
-            dh.install();
-        }
+        installHub();
 
         DocumentMetadataHandle meta = new DocumentMetadataHandle();
         meta.getCollections().add("tester");
@@ -66,10 +63,8 @@ public class DomainManagerTest extends HubTestBase {
     }
 
     @AfterClass
-    public static void teardown() {
-        runInModules("xdmp:directory-delete(\"/ext/\")");
-        docMgr.delete("/incoming/employee1.xml");
-        docMgr.delete("/incoming/employee2.xml");
+    public static void teardown() throws IOException {
+        uninstallHub();
     }
 
     @Test

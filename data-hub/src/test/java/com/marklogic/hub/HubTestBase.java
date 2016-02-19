@@ -78,7 +78,7 @@ public class HubTestBase {
             properties.putAll(p);
         }
         catch (IOException e) {
-            System.err.println("Properties file not loaded.");
+            System.err.println("gradle-local.roperties file not loaded.");
         }
 
         host = properties.getProperty("mlHost");
@@ -95,6 +95,13 @@ public class HubTestBase {
 
     }
 
+    protected static void installHub() throws IOException {
+        new DataHub(host, port, user, password).install();
+    }
+
+    protected static void uninstallHub() throws IOException {
+        new DataHub(host, port, user, password).uninstall();
+    }
     protected static String getResource(String resourceName) throws IOException {
         try {
             InputStream inputStream = HubTestBase.class.getClassLoader().getResourceAsStream(resourceName);
