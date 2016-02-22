@@ -17,10 +17,10 @@ declare option xdmp:mapping "false";
  :)
 declare function plugin:create-triples(
   $id as xs:string,
-  $content as element()?,
-  $headers as element()*,
+  $content as node()?,
+  $headers as node()*,
   $triples as element()*,
-  $options as map:map) as element(sem:triple)*
+  $options as map:map) as sem:triple*
 {
   ()
 };
