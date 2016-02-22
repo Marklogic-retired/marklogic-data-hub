@@ -114,9 +114,6 @@ public class FlowApiController extends BaseController {
     
     @RequestMapping(value="/run/input", method = RequestMethod.POST)
     public void runInputFlow(@RequestBody RunFlowModel runFlow) {
-        // TODO: this must come from UI, but we don't have a mockup yet
-        String inputPath = "./plugins/input";
-        
         Mlcp mlcp = new Mlcp(
                         environmentConfiguration.getMlcpHomeDir()
                         ,environmentConfiguration.getMLHost()
@@ -126,7 +123,7 @@ public class FlowApiController extends BaseController {
                     );
         
         SourceOptions sourceOptions = new SourceOptions(runFlow.getDomainName(), runFlow.getFlowName(), FlowType.INPUT.getName());
-        mlcp.addSourceDirectory(inputPath, sourceOptions);
+        mlcp.addSourceDirectory(runFlow.getInputPath(), sourceOptions);
         mlcp.loadContent();
     }
 

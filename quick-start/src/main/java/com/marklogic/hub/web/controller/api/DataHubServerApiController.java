@@ -1,9 +1,12 @@
 package com.marklogic.hub.web.controller.api;
 
 import java.io.File;
+import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -24,7 +27,7 @@ import com.marklogic.hub.exception.DataHubException;
 import com.marklogic.hub.model.DomainModel;
 import com.marklogic.hub.service.DataHubService;
 import com.marklogic.hub.service.DomainManagerService;
-import com.marklogic.hub.web.bean.SyncStatusBean;
+import com.marklogic.hub.service.SyncStatusService;
 import com.marklogic.hub.web.controller.BaseController;
 import com.marklogic.hub.web.form.LoginForm;
 
@@ -45,7 +48,7 @@ public class DataHubServerApiController extends BaseController {
 	private DomainManagerService domainManagerService;
 	
 	@Autowired
-	private SyncStatusBean syncStatus;
+	private SyncStatusService syncStatusService;
 
 	@RequestMapping(value = "login", method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_UTF8_VALUE }, produces = { MediaType.APPLICATION_JSON_UTF8_VALUE })
 	public LoginForm postLogin(@RequestBody LoginForm loginForm,
@@ -118,7 +121,17 @@ public class DataHubServerApiController extends BaseController {
 			this.retrieveEnvironmentConfiguration(loginForm);
 			session.setAttribute("loginForm", loginForm);
         } else if (loginForm.isInstalled()) {
+            try {
+                syncStatusService.loadAssetInstallTimeFile();
+                syncStatusService.refreshSyncStatus();
+            } catch (IOException e) {
+                LOGGER.error("Error encountered refresh sync status", e);
+            } catch (ParseException e) {
+                LOGGER.error("Error encountered refresh sync status", e);
+            }
+            
             loginForm.setDomains(domainManagerService.getDomains());
+            loginForm.refreshSelectedDomain();
 		}
 		return loginForm;
 	}
@@ -129,6 +142,9 @@ public class DataHubServerApiController extends BaseController {
 		loginForm.setLoggedIn(false);
 		this.environmentConfiguration.removeSavedConfiguration();
 		this.retrieveEnvironmentConfiguration(loginForm);
+		
+		session.invalidate();
+		
 		return loginForm;
 	}
 
@@ -151,25 +167,23 @@ public class DataHubServerApiController extends BaseController {
 	}
 
 	@RequestMapping(value = "install-user-modules", method = RequestMethod.POST)
-	public Set<File> installUserModules(HttpSession session) {
-	    synchronized (syncStatus) {
-	        Set<File> files = dataHubService.installUserModules();
+	public Map<File, Date> installUserModules(HttpSession session) {
+	    synchronized (syncStatusService) {
+	        Map<File, Date> files = dataHubService.installUserModules();
+	        try {
+	            syncStatusService.setInstalledFiles(files);
 
-	        // refresh the list of domains saved in the session
-	        List<DomainModel> domains = domainManagerService.getDomains();
-	        LoginForm loginForm = (LoginForm) session.getAttribute("loginForm");
-	        loginForm.refreshDomains(domains);
-
-	        // set synched = true
-	        for (DomainModel domainModel : loginForm.getDomains()) {
-	            domainModel.setSynched(true);
-	            domainModel.setInputFlowsSynched(true);
-	            domainModel.setConformFlowsSynched(true);
+	            // refresh the list of domains saved in the session
+	            LoginForm loginForm = (LoginForm) session.getAttribute("loginForm");
+	            List<DomainModel> domains = domainManagerService.getDomains();
+	            loginForm.setDomains(domains);
+	            loginForm.refreshSelectedDomain();
+	            
+	            syncStatusService.notifyAll();
+	        } catch (IOException e) {
+	            e.printStackTrace();
 	        }
-
-	        syncStatus.clearModifications();
-	        syncStatus.notifyAll();
-
+	        
 	        return files;
 	    }
 	}
@@ -180,6 +194,7 @@ public class DataHubServerApiController extends BaseController {
 		environmentConfiguration.setMLUsername(loginForm.getMlUsername());
 		environmentConfiguration.setMLPassword(loginForm.getMlPassword());
 		environmentConfiguration.setUserPluginDir(loginForm.getUserPluginDir());
+		environmentConfiguration.setMlcpHomeDir(loginForm.getMlcpHomeDir());
 	}
 
 	private void retrieveEnvironmentConfiguration(LoginForm loginForm) {
@@ -188,5 +203,6 @@ public class DataHubServerApiController extends BaseController {
 		loginForm.setMlUsername(environmentConfiguration.getMLUsername());
 		loginForm.setMlPassword(environmentConfiguration.getMLPassword());
 		loginForm.setUserPluginDir(environmentConfiguration.getUserPluginDir());
+		loginForm.setMlcpHomeDir(environmentConfiguration.getMlcpHomeDir());
 	}
 }

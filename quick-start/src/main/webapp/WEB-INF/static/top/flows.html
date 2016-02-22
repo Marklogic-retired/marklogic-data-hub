@@ -4,9 +4,8 @@
     <li class="nav" ng-repeat="flow in status.selectedDomain.inputFlows">
     	<h3><i ng-class="flow.synched ? 'fa fa-file-text-o sycned' : 'fa fa-file-text-o unsycned'"></i>{{flow.flowName}}</h3>
     	<div class="button-group-right">
-        <button type="submit" name="runFlow" class="btn btn-success" ng-click="runInputFlow(flow.domainName, flow.flowName)" ng-disabled="!flow.synched">Load Data</button>
+        <button type="submit" name="runFlow" class="btn btn-success" ng-click="showLoadDataForm(flow.domainName, flow.flowName)" ng-disabled="!flow.synched">Load Data</button>
 	    	<button type="submit" name="runFlow" class="btn btn-success" ng-click="runFlow(flow.domainName, flow.flowName)" ng-disabled="!flow.synched">Run</button>
-	    	<button type="submit" name="testFlow" class="btn btn-success" ng-click="testFlow(flow.domainName,flow.flowName)" ng-disabled="!flow.synched">Test</button>
 	    </div>
 	    <abn-tree tree-data="flow.treeData.children" icon-leaf="fa fa-file-text-o" icon-expand="fa fa-folder-o" icon-collapse="fa fa-folder-open-o" expand-level="1"></abn-tree>
     </li>
@@ -24,3 +23,4 @@
     </li>
 </ul>
 <div ng-include="'top/modal/flowModal.html'"></div>
+<div ng-include="'top/modal/loadDataModal.html'"></div>

@@ -18,6 +18,7 @@ module.controller('topController', [
         $scope.status = DataHub.status;
         $scope.domainForm = {};
         $scope.flowForm = {};
+        $scope.loadDataForm = {};
         $scope.loading = false;
         
         $scope.createDomain = function() {
@@ -82,6 +83,21 @@ module.controller('topController', [
             $scope.loading = false;
         };
         
+        $scope.showLoadDataForm = function(domainName, flowName) {
+            $scope.loading = true;
+            $scope.loadDataForm = {
+                'hasErrors' : false
+                ,'domainName' : domainName
+                ,'flowName' : flowName
+                ,'inputPath' : 'input'
+            };
+            $('#loadDataModal').modal({
+                backdrop: 'static',
+                keyboard: true
+            });
+            $scope.loading = false;
+        };
+        
         $scope.runFlow = function(domainName, flowName) {
             $scope.loading = true;
             DataHub.runFlow(domainName, flowName)
@@ -93,9 +109,10 @@ module.controller('topController', [
             });
         };
         
-        $scope.runInputFlow = function(domainName, flowName) {
+        $scope.runInputFlow = function() {
             $scope.loading = true;
-            DataHub.runInputFlow(domainName, flowName)
+            $('#loadDataModal').modal('hide');
+            DataHub.runInputFlow($scope.loadDataForm.domainName, $scope.loadDataForm.flowName, $scope.loadDataForm.inputPath)
             .success(function () {
                 
             })
