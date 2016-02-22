@@ -21,7 +21,7 @@ declare option xdmp:mapping "false";
 
 declare function plugin:write(
   $id as xs:string,
-  $content as element(),
+  $content as node(),
   $context as map:map)
 {
   xdmp:document-insert("/conformed" || $id, $content)

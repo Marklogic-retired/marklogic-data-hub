@@ -388,9 +388,22 @@ declare function flow:run-flow(
   $identifier as xs:string,
   $options as map:map) as empty-sequence()
 {
+  flow:run-flow($flow, $identifier, (), $options)
+};
+
+declare function flow:run-plugins(
+  $flow as element(hub:flow),
+  $identifier as xs:string,
+  $content as node()?,
+  $options as map:map
+) as element(envelope:envelope)
+{
   let $content :=
     map:new((
-      map:entry("identifier", $identifier)
+      map:entry("identifier", $identifier),
+      if ($content) then
+        map:entry("content", $content)
+      else ()
     ))
   let $_ :=
     xdmp:invoke-function(function() {
@@ -413,7 +426,17 @@ declare function flow:run-flow(
       map:entry("isolation", "different-transaction"),
       map:entry("transactionMode", "query")
     )))
-  let $envelope := flow:make-envelope($content)
+  return
+    flow:make-envelope($content)
+};
+
+declare function flow:run-flow(
+  $flow as element(hub:flow),
+  $identifier as xs:string,
+  $content as node()?,
+  $options as map:map) as empty-sequence()
+{
+  let $envelope := flow:run-plugins($flow, $identifier, $content, $options)
   let $_ :=
     for $writer in $flow/hub:writer
     return
@@ -452,9 +475,9 @@ declare function flow:make-envelope($map as map:map)
 declare function flow:run-plugin(
   $plugin as element(hub:plugin),
   $identifier as xs:string,
-  $content as element()?,
-  $headers as element()*,
-  $triples as element(sem:triple)*,
+  $content as node()?,
+  $headers as node()*,
+  $triples as sem:triple*,
   $options as map:map)
 {
   let $module-uri := $plugin/@module
@@ -483,7 +506,7 @@ declare function flow:run-plugin(
 declare function flow:run-writer(
   $writer as element(hub:writer),
   $identifier as xs:string,
-  $envelope as element(),
+  $envelope as element(envelope:envelope),
   $options as map:map)
 {
   let $module-uri as xs:string := $writer/@module
