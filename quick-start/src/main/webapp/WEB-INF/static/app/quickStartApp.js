@@ -6,6 +6,8 @@ var dependencies = [
     ,'dhib.quickstart.directives.footer'
     ,'dhib.quickstart.directives.spinner'
     ,'angularBootstrapNavTree'
+    ,'ngAnimate'
+    ,'ui.bootstrap'
 ];
 var module = angular.module('quickStartApp', dependencies);
 

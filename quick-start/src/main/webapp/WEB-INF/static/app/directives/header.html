@@ -5,7 +5,6 @@
         </div>
         <div id="sitemenu" class="col-xs-6 col-sm-6 col-md-6 dropdown" ng-if="status != null">
         	<button type="submit" name="installUserModules" class="btn btn-primary" ng-if="status.installed" ng-click="installUserModules()">Deploy to server</button>
-			<button type="submit" name="install" class="btn btn-default" ng-if="!status.installed" ng-click="install()">Install</button>
 			<button type="submit" name="uninstall" class="btn btn-primary" ng-if="status.installed" ng-click="uninstall()">Uninstall</button>
 			<button class="btn btn-default dropdown-toggle" type="button" id="headerDropdownMenu" data-toggle="dropdown" aria-expanded="true">
 			    Welcome {{status.mlUsername}}! <span class="caret"></span>
@@ -15,7 +14,7 @@
 			</ul>
 		</div>
     </div>
-    <div id="message" class="alert alert-info" ng-if="status != null">
+    <div id="message" class="alert alert-info" ng-if="status != null && action.type !== 'Uninstall'">
 		<a href="dismiss" class="close" data-dismiss="alert" aria-label="close">&times;</a>
         <ul>
             <li ng-if="status.serverVersionAccepted">ML version is acceptable.</li>

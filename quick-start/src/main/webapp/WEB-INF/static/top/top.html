@@ -1,6 +1,13 @@
 <header></header>
 <spinner></spinner>
-<div id="content" class="container-fluid">
+<div id="progressBar" ng-if="action.type">
+  <div class="row-fluid row-flex">
+    <div class="col-md-12">
+      <uib-progressbar class="progress-striped active" value="100" type="{{action.progressType}}">{{action.message}}</uib-progressbar>
+    </div>
+  </div>
+</div>
+<div id="content" class="container-fluid" ng-if="!action.type">
   <div class="row-fluid row-flex">
     <div id="sidebar" class="col-md-4">
       <div ng-include="'top/domains.html'" ng-if="status.domains"></div>

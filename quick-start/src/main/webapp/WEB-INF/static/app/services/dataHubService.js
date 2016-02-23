@@ -12,12 +12,19 @@ module.factory('DataHub', [
         ,$route
     ) {
         var service = {
+        		
+        	action : {}
             
-        	login : function (loginForm) {
+        	,login : function (loginForm) {
                 var promise = $http
                 .post('api/data-hub/login', loginForm)
                 .success(function (data) {
                     service.status = data;
+                    if(!service.status.installed) {
+                    	service.action.type = "Install";
+                    	service.action.message = "Install in progress...";
+                    	service.action.progressType = "success";
+                    }
                 })
                 .error(function () {
                     service.status = null;
@@ -59,25 +66,39 @@ module.factory('DataHub', [
                 var promise = $http.post('api/data-hub/install')
                 .success(function (status) {
                 	service.status = status;
+                	service.action.type = null;
                 	service.displayMessage('Install is successful.', 'success', 'notification', false);
                 	service.reloadRoute();
                 })
                 .error(function () {
-                	service.displayMessage('Install is unsuccessful.', 'error', 'notification', false);
+                	service.action.message = "Install is unsuccessful.";
+                	service.action.progressType = "danger";
+                	//service.displayMessage('Install is unsuccessful.', 'error', 'notification', false);
                 });
                 
                 return promise;
+            }
+            
+            ,preUninstall : function() {
+            	service.action.type = 'Uninstall';
+            	service.action.progressType = 'success';
+            	service.action.message = 'Uninstall is in progress';
+            	service.reloadRoute();
             }
             
             ,uninstall : function () {
                 var promise = $http.post('api/data-hub/uninstall')
                 .success(function (status) {
                 	service.status = status;
-                	service.displayMessage('Uninstall is successful.', 'success', 'notification', false);
-                	service.reloadRoute();
+                	service.action.type = "Uninstall";
+                	service.action.message = "Uninstall is successful.";
+                	//service.displayMessage('Uninstall is successful.', 'success', 'notification', false);
+                	//service.reloadRoute();
                 })
                 .error(function () {
-                	service.displayMessage('Uninstall is unsuccessful.', 'error', 'notification', false);
+                	service.action.message = "Uninstall is unsuccessful.";
+                	service.action.progressType = "danger";
+                	//service.displayMessage('Uninstall is unsuccessful.', 'error', 'notification', false);
                 });
                 
                 return promise;
