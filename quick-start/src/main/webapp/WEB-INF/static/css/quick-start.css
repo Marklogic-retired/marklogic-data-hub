@@ -217,9 +217,8 @@ ul.nav.abn-tree i {
 
 .fa-spin {
 	font-size: 80px;
+	width: 0px;
 	margin: 0px;
-	float: right;
-    z-index: 1000;
 }
 
 .nav, .pagination, .carousel, .panel-title a { 
