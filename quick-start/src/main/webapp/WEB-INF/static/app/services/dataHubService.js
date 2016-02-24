@@ -22,7 +22,7 @@ module.factory('DataHub', [
                     service.status = data;
                     if(!service.status.installed) {
                     	service.action.type = "Install";
-                    	service.action.message = "Install in progress...";
+                    	service.action.message = "Install is in progress...";
                     	service.action.progressType = "success";
                     }
                 })

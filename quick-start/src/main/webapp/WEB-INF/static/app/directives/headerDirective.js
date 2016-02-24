@@ -17,6 +17,9 @@ module.directive('header', [
             }
             ,link : function(scope, element, attrs) {
             	scope.logout = function () {
+            		if(scope.action.type != null) {
+            			return;
+            		}
             		scope.loading = true;
             		DataHub.logout()
             		.finally(function () {
@@ -28,10 +31,12 @@ module.directive('header', [
             		DataHub.preUninstall();
                 },
                 scope.installUserModules = function () {
-                	scope.loading = true;
+                	scope.action.type = 'Deploy to Server';
+                	scope.action.progressType = 'success';
+                	scope.action.message = 'Deploy to Server is in progress';
                     DataHub.installUserModules()
                     .finally(function () {
-                    	scope.loading = false;
+                    	scope.action.type = null;
                     });
                 }
             }
