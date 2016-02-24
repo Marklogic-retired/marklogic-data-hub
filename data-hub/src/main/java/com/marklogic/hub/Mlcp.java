@@ -23,15 +23,12 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.marklogic.hub.util.IOUtil;
-import com.marklogic.hub.util.IOUtil.LogLevel;
-
 public class Mlcp {
     private static final Logger LOGGER = LoggerFactory.getLogger(Mlcp.class);
 
+    private final static String DEFAULT_HADOOP_HOME_DIR= "./hadoop/";
+    
     private List<MlcpSource> sources = new ArrayList<>();
-
-    private String mlcpPath;
 
     private String host;
 
@@ -41,21 +38,13 @@ public class Mlcp {
 
     private String password;
 
-    public Mlcp(String mlcpHome, String host, String port, String user, String password) {
+    public Mlcp(String host, String port, String user, String password) throws IOException {
         this.host = host;
         this.port = port;
         this.user = user;
         this.password = password;
-
-        // set the mlcp executable path based on OS
-        this.mlcpPath = mlcpHome;
-        String osName = System.getProperty("os.name");
-        if (osName != null && osName.toLowerCase().startsWith("windows")) {
-            mlcpPath += "/bin/mlcp.bat";
-        }
-        else {
-            mlcpPath += "/bin/mlcp.sh";
-        }
+        
+        setHadoopHomeDir();
     }
 
     public void addSourceDirectory(String directoryPath, SourceOptions options) {
@@ -70,7 +59,7 @@ public class Mlcp {
             try {
                 List<String> arguments = new ArrayList<>();
 
-                arguments.add(mlcpPath);
+//                arguments.add(mlcpPath);
                 arguments.add("import");
                 arguments.add("-mode");
                 arguments.add("local");
@@ -86,17 +75,9 @@ public class Mlcp {
                 // add arguments related to the source
                 List<String> sourceArguments = source.getMlcpArguments();
                 arguments.addAll(sourceArguments);
-
-                ProcessBuilder pb = new ProcessBuilder(arguments.toArray(new String[0]));
-                Process process = pb.start();
-
-                inputThread = IOUtil.createInputStreamSink(process.getInputStream(), LOGGER, LogLevel.DEBUG);
-                errorThread = IOUtil.createInputStreamSink(process.getErrorStream(), LOGGER, LogLevel.ERROR);
-
-                inputThread.start();
-                errorThread.start();
-
-                process.waitFor();
+                
+                DataHubContentPump contentPump = new DataHubContentPump(arguments);
+                contentPump.execute();
             }
             catch (Exception e) {
                 LOGGER.error("Failed to load {}", source.getSourcePath(), e);
@@ -110,6 +91,14 @@ public class Mlcp {
                 }
             }
         }
+    }
+    
+    protected void setHadoopHomeDir() throws IOException {
+        String home = System.getProperty("hadoop.home.dir");
+        if (home == null) {
+            home = DEFAULT_HADOOP_HOME_DIR;
+        }
+        System.setProperty("hadoop.home.dir", new File(home).getCanonicalPath());
     }
 
     private static class MlcpSource {

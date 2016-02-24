@@ -1,10 +1,14 @@
 .DS_Store
 .gradle/
 .settings/
-bin/
+data-hub/bin/
+quick-start/bin/
 build/
 releases/
 .classpath
 .project
 gradle-local.properties
 /quick-start/environment.properties
+/quick-start/assetInstallTime.json
+/quick-start/input
+/quick-start/plugins
