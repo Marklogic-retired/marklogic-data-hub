@@ -8,6 +8,7 @@ var dependencies = [
     ,'angularBootstrapNavTree'
     ,'ngAnimate'
     ,'ui.bootstrap'
+    ,'ngMaterial'
 ];
 var module = angular.module('quickStartApp', dependencies);
 

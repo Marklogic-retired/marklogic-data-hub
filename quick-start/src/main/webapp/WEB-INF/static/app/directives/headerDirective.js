@@ -4,10 +4,12 @@ var module = angular.module('dhib.quickstart.directives.header', dependencies);
 module.directive('header', [
     '$http'
     ,'$location'
+    ,'$mdDialog'
     ,'DataHub'
     ,function(
         $http
         ,$location
+        ,$mdDialog
         ,DataHub
     ) {
     	return {
@@ -27,8 +29,18 @@ module.directive('header', [
             			$location.path('/login');
                     });
             	},
-            	scope.uninstall = function () {
-            		DataHub.preUninstall();
+            	scope.uninstall = function (ev) {
+            		var confirm = $mdDialog.confirm().title('Confirm Uninstall')
+	                    .textContent('Do you really want to continue uninstalling data hub?')
+	                    .ariaLabel('Uninstall')
+	                    .targetEvent(ev)
+	                    .ok('Yes')
+	                    .cancel('No');
+            		$mdDialog.show(confirm).then(function() {
+            			DataHub.preUninstall();
+		            }, function() {
+		                //do nothing
+		            });
                 },
                 scope.installUserModules = function () {
                 	scope.action.type = 'Deploy to Server';
