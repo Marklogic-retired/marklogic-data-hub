@@ -8,11 +8,13 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.marklogic.client.io.Format;
+import com.marklogic.hub.PluginFormat;
 import com.marklogic.hub.Scaffolding;
 import com.marklogic.hub.domain.Domain;
 import com.marklogic.hub.model.DomainModel;
 import com.marklogic.hub.model.FlowModel;
-import com.marklogic.hub.model.FlowType;
+import com.marklogic.hub.flow.FlowType;
 import com.marklogic.hub.util.FileUtil;
 
 public class DomainModelFactory {
@@ -33,27 +35,29 @@ public class DomainModelFactory {
     }
 
     public DomainModel createNewDomain(String userPluginDir, String domainName,
-            String inputFlowName, String conformFlowName) throws IOException {
+            String inputFlowName, String conformFlowName, PluginFormat pluginFormat,
+            Format dataFormat) throws IOException {
         DomainModel domainModel = new DomainModel();
         domainModel.setDomainName(domainName);
         domainModel.setInputFlows(new ArrayList<>());
         domainModel.setConformFlows(new ArrayList<>());
 
-        String domainsPath = userPluginDir + File.separator
-                + FileUtil.DOMAINS_FOLDER;
-        Scaffolding.createDomain(domainName, new File(domainsPath));
+        File domainsPath = new File(userPluginDir, FileUtil.DOMAINS_FOLDER);
+        Scaffolding.createDomain(domainName, domainsPath);
 
         FlowModelFactory flowModelFactory = new FlowModelFactory(domainName);
-        String domainDirPath = domainsPath + File.separator + domainName;
+        File domainDirPath = new File(domainsPath, domainName);
         if (inputFlowName != null) {
             FlowModel inputFlow = flowModelFactory.createNewFlow(domainDirPath,
-                    inputFlowName, FlowType.INPUT);
+                    inputFlowName, FlowType.INPUT, pluginFormat, dataFormat);
             domainModel.getInputFlows().add(inputFlow);
         }
 
         if (conformFlowName != null) {
             FlowModel conformFlow = flowModelFactory.createNewFlow(
-                    domainDirPath, conformFlowName, FlowType.CONFORM);
+                    domainDirPath, conformFlowName,
+                    FlowType.CONFORMANCE, pluginFormat,
+                    dataFormat);
             domainModel.getConformFlows().add(conformFlow);
         }
 
@@ -83,14 +87,14 @@ public class DomainModelFactory {
     private List<FlowModel> getConformFlows(FlowModelFactory flowModelFactory,
             String domainFilePath) {
         return this
-                .getFlows(flowModelFactory, domainFilePath, FlowType.CONFORM);
+                .getFlows(flowModelFactory, domainFilePath, FlowType.CONFORMANCE);
     }
 
     private List<FlowModel> getFlows(FlowModelFactory flowModelFactory,
             String domainFilePath, FlowType flowType) {
         List<FlowModel> flows = new ArrayList<>();
         String flowsFilePath = domainFilePath + File.separator
-                + flowType.getName();
+                + flowType.toString();
         List<String> flowNames = FileUtil.listDirectFolders(flowsFilePath);
         for (String flowName : flowNames) {
             FlowModel flowModel = flowModelFactory.createFlow(flowsFilePath,

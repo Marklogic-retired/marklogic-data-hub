@@ -27,13 +27,14 @@ import com.marklogic.client.extensions.ResourceServices.ServiceResult;
 import com.marklogic.client.extensions.ResourceServices.ServiceResultIterator;
 import com.marklogic.client.io.JacksonDatabindHandle;
 import com.marklogic.client.util.RequestParameters;
+import com.marklogic.hub.plugin.PluginType;
 
 public class ServerCollector extends AbstractCollector {
 
     private DatabaseClient client = null;
     private String module;
 
-    public ServerCollector(String type, String module) {
+    public ServerCollector(PluginType type, String module) {
         super(type);
         this.module = module;
     }
@@ -53,7 +54,7 @@ public class ServerCollector extends AbstractCollector {
     @Override
     public void serialize(XMLStreamWriter serializer) throws XMLStreamException {
         serializer.writeStartElement("collector");
-        serializer.writeAttribute("type", getType());
+        serializer.writeAttribute("type", getType().toString());
         serializer.writeAttribute("module", this.module);
         serializer.writeEndElement();
 

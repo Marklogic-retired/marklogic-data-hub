@@ -18,45 +18,66 @@ package com.marklogic.hub;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.marklogic.client.io.Format;
+import com.marklogic.hub.flow.Flow;
+import com.marklogic.hub.flow.FlowType;
+import com.marklogic.hub.flow.SimpleFlow;
+
 public class Scaffolding {
+
+    static final private Logger LOGGER = LoggerFactory.getLogger(Scaffolding.class);
 
     public static void createDomain(String domainName, File userlandPath) {
         File domainDir = new File(userlandPath, domainName);
         domainDir.mkdirs();
     }
 
-    public static void createFlow(String name, String type, File domainPath)
+    public static void createFlow(File domainPath, String domainName, String name, FlowType flowType, PluginFormat pluginFormat, Format dataFormat)
             throws IOException {
-        File typeDir = new File(domainPath, type);
+        File typeDir = new File(domainPath, flowType.toString());
         File flowDir = new File(typeDir, name);
 
-        File collectorDir = new File(flowDir, "collector");
-        collectorDir.mkdirs();
-        writeFile("scaffolding/collector.xqy",
-                Paths.get(collectorDir.getPath(), "collector.xqy"));
+        if (flowType.equals(FlowType.CONFORMANCE)) {
+            File collectorDir = new File(flowDir, "collector");
+            collectorDir.mkdirs();
+            writeFile("scaffolding/" + flowType + "/" + pluginFormat + "/collector." + pluginFormat,
+                    Paths.get(collectorDir.getPath(), "collector." + pluginFormat));
+        }
 
         File contentDir = new File(flowDir, "content");
         contentDir.mkdirs();
-        writeFile("scaffolding/content.xqy",
-                Paths.get(contentDir.getPath(), "content.xqy"));
+        writeFile("scaffolding/" + flowType + "/" + pluginFormat + "/content." + pluginFormat,
+                Paths.get(contentDir.getPath(), "content." + pluginFormat));
 
         File headerDir = new File(flowDir, "headers");
         headerDir.mkdirs();
-        writeFile("scaffolding/headers.xqy",
-                Paths.get(headerDir.getPath(), "headers.xqy"));
+        writeFile("scaffolding/" + flowType + "/" + pluginFormat + "/headers." + pluginFormat,
+                Paths.get(headerDir.getPath(), "headers." + pluginFormat));
 
         File triplesDir = new File(flowDir, "triples");
         triplesDir.mkdirs();
-        writeFile("scaffolding/triples.xqy",
-                Paths.get(triplesDir.getPath(), "triples.xqy"));
+        writeFile("scaffolding/" + flowType + "/" + pluginFormat + "/triples." + pluginFormat,
+                Paths.get(triplesDir.getPath(), "triples." + pluginFormat));
+
+        SimpleFlow flow = new SimpleFlow(domainName, name, flowType, dataFormat);
+        flow.serialize();
+        File flowFile = new File(flowDir, name + ".xml");
+        try(PrintWriter out = new PrintWriter(flowFile)) {
+            out.println(flow.serialize());
+        }
     }
 
     private static void writeFile(String srcFile, Path dstFile)
             throws IOException {
+        LOGGER.info(srcFile);
         InputStream inputStream = Scaffolding.class.getClassLoader()
                 .getResourceAsStream(srcFile);
         Files.copy(inputStream, dstFile);

@@ -18,10 +18,12 @@ package com.marklogic.hub.writer;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import com.marklogic.hub.plugin.PluginType;
+
 public abstract class AbstractWriter implements Writer {
 
     @Override
-    public abstract String getType();
+    public abstract PluginType getType();
 
     @Override
     public abstract void write(String identifier);

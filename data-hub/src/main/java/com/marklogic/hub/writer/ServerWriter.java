@@ -21,20 +21,21 @@ import javax.xml.stream.XMLStreamWriter;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.extensions.ResourceManager;
 import com.marklogic.client.util.RequestParameters;
+import com.marklogic.hub.plugin.PluginType;
 
 public class ServerWriter extends AbstractWriter {
 
-    private String type;
+    private PluginType type;
     private String module;
     private DatabaseClient client;
 
-    public ServerWriter(String type, String module) {
+    public ServerWriter(PluginType type, String module) {
         this.type = type;
         this.module = module;
     }
 
     @Override
-    public String getType() {
+    public PluginType getType() {
         return this.type;
     }
 
@@ -55,7 +56,7 @@ public class ServerWriter extends AbstractWriter {
     @Override
     public void serialize(XMLStreamWriter serializer) throws XMLStreamException {
         serializer.writeStartElement("writer");
-        serializer.writeAttribute("type", this.type);
+        serializer.writeAttribute("type", this.type.toString());
         serializer.writeAttribute("module", this.module);
         serializer.writeEndElement();
     }

@@ -38,12 +38,15 @@ import org.xml.sax.SAXException;
 
 import com.marklogic.client.io.DOMHandle;
 import com.marklogic.client.io.DocumentMetadataHandle;
+import com.marklogic.client.io.Format;
 import com.marklogic.hub.collector.QueryCollector;
 import com.marklogic.hub.collector.ServerCollector;
 import com.marklogic.hub.flow.Flow;
+import com.marklogic.hub.flow.FlowType;
 import com.marklogic.hub.flow.SimpleFlow;
 import com.marklogic.hub.plugin.ContentPlugin;
 import com.marklogic.hub.plugin.HeadersPlugin;
+import com.marklogic.hub.plugin.PluginType;
 import com.marklogic.hub.plugin.TriplesPlugin;
 import com.marklogic.hub.plugin.ServerPlugin;
 import com.marklogic.hub.writer.DefaultWriter;
@@ -108,11 +111,11 @@ public class FlowManagerTest extends HubTestBase {
         assertEquals("empty-flow", flow1.getName());
 
         ServerCollector c = (ServerCollector)flow1.getCollector();
-        assertEquals("xquery", c.getType());
+        assertEquals(PluginType.XQUERY, c.getType());
         assertEquals("/ext/domains/test/conformance/empty-flow/collector/collector.xqy", c.getModule());
 
         ServerPlugin t = (ServerPlugin)flow1.getContentPlugin();
-        assertEquals("xquery", t.getType());
+        assertEquals(PluginType.XQUERY, t.getType());
         assertEquals("/com.marklogic.hub/plugins/raw.xqy", t.getModule());
 
         assertNull(flow1.getHeaderPlugin());
@@ -126,7 +129,7 @@ public class FlowManagerTest extends HubTestBase {
 
     @Test
     public void testSimpleFlowToXml() throws IOException, ParserConfigurationException, SAXException {
-        SimpleFlow flow = new SimpleFlow("test", "my-test-flow", "conformance");
+        SimpleFlow flow = new SimpleFlow("test", "my-test-flow", FlowType.CONFORMANCE, Format.XML);
         flow.setCollector(new QueryCollector());
         flow.setContentPlugin(new ContentPlugin());
         flow.setHeaderPlugin(new HeadersPlugin());
@@ -139,6 +142,8 @@ public class FlowManagerTest extends HubTestBase {
 
     @Test
     public void testGetFlows() {
+        installModule("/ext/domains/test/conformance/my-test-flow1/my-test-flow1.xml", "flow-manager-test/my-test-flow1/my-test-flow1.xml");
+
         FlowManager fm = new FlowManager(client);
         List<Flow> flows = fm.getFlows("test");
         assertEquals(2, flows.size());
@@ -146,13 +151,16 @@ public class FlowManagerTest extends HubTestBase {
         // flow 1
         SimpleFlow flow1 = (SimpleFlow)flows.get(0);
         assertEquals("my-test-flow1", flow1.getName());
+        assertEquals(Format.XML, flow1.getDataFormat());
+        assertEquals("test", flow1.getDomainName());
+        assertEquals(FlowType.CONFORMANCE, flow1.getType());
 
         ServerCollector c = (ServerCollector)flow1.getCollector();
-        assertEquals("xquery", c.getType());
+        assertEquals(PluginType.XQUERY, c.getType());
         assertEquals("/ext/domains/test/conformance/my-test-flow1/collector/collector.xqy", c.getModule());
 
         ServerPlugin t = (ServerPlugin)flow1.getContentPlugin();
-        assertEquals("xquery", t.getType());
+        assertEquals(PluginType.XQUERY, t.getType());
         assertEquals("/com.marklogic.hub/plugins/raw.xqy", t.getModule());
         assertNull(flow1.getHeaderPlugin());
         assertNull(flow1.getTriplesPlugin());
@@ -165,11 +173,11 @@ public class FlowManagerTest extends HubTestBase {
         assertEquals("my-test-flow2", flow2.getName());
 
         c = (ServerCollector)flow1.getCollector();
-        assertEquals("xquery", c.getType());
+        assertEquals(PluginType.XQUERY, c.getType());
         assertEquals("/ext/domains/test/conformance/my-test-flow1/collector/collector.xqy", c.getModule());
 
         t = (ServerPlugin)flow2.getContentPlugin();
-        assertEquals("xquery", t.getType());
+        assertEquals(PluginType.XQUERY, t.getType());
         assertEquals("/com.marklogic.hub/plugins/raw.xqy", t.getModule());
         assertNull(flow2.getHeaderPlugin());
 
@@ -180,17 +188,20 @@ public class FlowManagerTest extends HubTestBase {
 
     @Test
     public void getTestFlow() {
+        installModule("/ext/domains/test/conformance/my-test-flow1/my-test-flow1.xml", "flow-manager-test/my-test-flow1/my-test-flow1-json.xml");
+
         FlowManager fm = new FlowManager(client);
         SimpleFlow flow1 = (SimpleFlow)fm.getFlow("test", "my-test-flow1");
 
         assertEquals("my-test-flow1", flow1.getName());
+        assertEquals(Format.JSON, flow1.getDataFormat());
 
         ServerCollector c = (ServerCollector)flow1.getCollector();
-        assertEquals("xquery", c.getType());
+        assertEquals(PluginType.XQUERY, c.getType());
         assertEquals("/ext/domains/test/conformance/my-test-flow1/collector/collector.xqy", c.getModule());
 
         ServerPlugin t = (ServerPlugin)flow1.getContentPlugin();
-        assertEquals("xquery", t.getType());
+        assertEquals(PluginType.XQUERY, t.getType());
         assertEquals("/com.marklogic.hub/plugins/raw.xqy", t.getModule());
         assertNull(flow1.getHeaderPlugin());
         assertNull(flow1.getTriplesPlugin());
@@ -201,6 +212,7 @@ public class FlowManagerTest extends HubTestBase {
 
     @Test
     public void testRunFlow() throws SAXException, IOException, ParserConfigurationException, XMLStreamException {
+        installModule("/ext/domains/test/conformance/my-test-flow1/my-test-flow1.xml", "flow-manager-test/my-test-flow1/my-test-flow1.xml");
         assertEquals(2, getDocCount());
         FlowManager fm = new FlowManager(client);
         SimpleFlow flow1 = (SimpleFlow)fm.getFlow("test", "my-test-flow1");
@@ -228,6 +240,7 @@ public class FlowManagerTest extends HubTestBase {
 
     @Test
     public void testRunFlowWithAll() throws SAXException, IOException, ParserConfigurationException, XMLStreamException {
+        installModule("/ext/domains/test/conformance/my-test-flow-with-all/my-test-flow-with-all.xml", "flow-manager-test/my-test-flow-with-all/my-test-flow-with-all.xml");
         installModule("/ext/domains/test/conformance/my-test-flow-with-all/collector/collector.xqy", "flow-manager-test/my-test-flow-with-all/collector/collector.xqy");
         installModule("/ext/domains/test/conformance/my-test-flow-with-all/headers/headers.xqy", "flow-manager-test/my-test-flow-with-all/headers/headers.xqy");
         installModule("/ext/domains/test/conformance/my-test-flow-with-all/content/content.xqy", "flow-manager-test/my-test-flow-with-all/content/content.xqy");

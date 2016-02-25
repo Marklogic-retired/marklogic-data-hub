@@ -17,6 +17,8 @@ package com.marklogic.hub.flow;
 
 import org.w3c.dom.Element;
 
+import com.marklogic.client.io.Format;
+import com.marklogic.hub.FlowComplexity;
 import com.marklogic.hub.plugin.Plugin;
 import com.marklogic.hub.plugin.ServerPlugin;
 
@@ -26,8 +28,8 @@ import com.marklogic.hub.plugin.ServerPlugin;
  */
 public class SimpleFlow extends AbstractFlow {
 
-    public SimpleFlow(String domainName, String flowName, String type) {
-        super(domainName, flowName, type, "simple");
+    public SimpleFlow(String domainName, String flowName, FlowType type, Format dataFormat) {
+        super(domainName, flowName, type, dataFormat, FlowComplexity.SIMPLE);
         for (int i = 0; i < 3; i++) {
             super.addPlugin(null);
         }

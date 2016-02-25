@@ -20,16 +20,18 @@ import java.util.List;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import com.marklogic.hub.plugin.PluginType;
+
 public abstract class AbstractCollector implements Collector {
 
-    private String type;
+    private PluginType type;
 
-    public AbstractCollector(String type) {
+    public AbstractCollector(PluginType type) {
         this.type = type;
     }
 
     @Override
-    public String getType() {
+    public PluginType getType() {
         return this.type;
     }
 

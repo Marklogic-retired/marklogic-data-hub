@@ -27,6 +27,7 @@ import com.marklogic.hub.collector.ServerCollector;
 import com.marklogic.hub.domain.Domain;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.SimpleFlow;
+import com.marklogic.hub.plugin.PluginType;
 import com.marklogic.hub.plugin.ServerPlugin;
 import com.marklogic.hub.writer.DefaultWriter;
 
@@ -85,11 +86,11 @@ public class DomainManagerTest extends HubTestBase {
         assertEquals("my-test-flow1", flow1.getName());
 
         ServerCollector c = (ServerCollector)flow1.getCollector();
-        assertEquals("xquery", c.getType());
+        assertEquals(PluginType.XQUERY, c.getType());
         assertEquals("/ext/domains/test/conformance/my-test-flow1/collector/collector.xqy", c.getModule());
 
         ServerPlugin t = (ServerPlugin)flow1.getContentPlugin();
-        assertEquals("xquery", t.getType());
+        assertEquals(PluginType.XQUERY, t.getType());
         assertEquals("/com.marklogic.hub/plugins/raw.xqy", t.getModule());
         assertNull(flow1.getHeaderPlugin());
         assertNull(flow1.getTriplesPlugin());
@@ -103,11 +104,11 @@ public class DomainManagerTest extends HubTestBase {
         assertEquals("my-test-flow2", flow2.getName());
 
         c = (ServerCollector)flow1.getCollector();
-        assertEquals("xquery", c.getType());
+        assertEquals(PluginType.XQUERY, c.getType());
         assertEquals("/ext/domains/test/conformance/my-test-flow1/collector/collector.xqy", c.getModule());
 
         t = (ServerPlugin)flow2.getContentPlugin();
-        assertEquals("xquery", t.getType());
+        assertEquals(PluginType.XQUERY, t.getType());
         assertEquals("/com.marklogic.hub/plugins/raw.xqy", t.getModule());
         assertNull(flow2.getHeaderPlugin());
 
@@ -131,11 +132,11 @@ public class DomainManagerTest extends HubTestBase {
         assertEquals("my-test-flow1", flow1.getName());
 
         ServerCollector c = (ServerCollector)flow1.getCollector();
-        assertEquals("xquery", c.getType());
+        assertEquals(PluginType.XQUERY, c.getType());
         assertEquals("/ext/domains/test/conformance/my-test-flow1/collector/collector.xqy", c.getModule());
 
         ServerPlugin t = (ServerPlugin)flow1.getContentPlugin();
-        assertEquals("xquery", t.getType());
+        assertEquals(PluginType.XQUERY, t.getType());
         assertEquals("/com.marklogic.hub/plugins/raw.xqy", t.getModule());
         assertNull(flow1.getHeaderPlugin());
         assertNull(flow1.getTriplesPlugin());
@@ -148,11 +149,11 @@ public class DomainManagerTest extends HubTestBase {
         assertEquals("my-test-flow2", flow2.getName());
 
         c = (ServerCollector)flow1.getCollector();
-        assertEquals("xquery", c.getType());
+        assertEquals(PluginType.XQUERY, c.getType());
         assertEquals("/ext/domains/test/conformance/my-test-flow1/collector/collector.xqy", c.getModule());
 
         t = (ServerPlugin)flow2.getContentPlugin();
-        assertEquals("xquery", t.getType());
+        assertEquals(PluginType.XQUERY, t.getType());
         assertEquals("/com.marklogic.hub/plugins/raw.xqy", t.getModule());
         assertNull(flow2.getHeaderPlugin());
 

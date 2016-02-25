@@ -28,12 +28,15 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import com.marklogic.client.MarkLogicIOException;
+import com.marklogic.client.io.Format;
+import com.marklogic.hub.FlowComplexity;
 import com.marklogic.hub.collector.Collector;
 import com.marklogic.hub.collector.QueryCollector;
 import com.marklogic.hub.collector.ServerCollector;
 import com.marklogic.hub.plugin.ContentPlugin;
 import com.marklogic.hub.plugin.HeadersPlugin;
 import com.marklogic.hub.plugin.Plugin;
+import com.marklogic.hub.plugin.PluginType;
 import com.marklogic.hub.plugin.TriplesPlugin;
 import com.marklogic.hub.plugin.ServerPlugin;
 import com.marklogic.hub.writer.DefaultWriter;
@@ -48,8 +51,9 @@ public abstract class AbstractFlow implements Flow {
 
     private String domainName;
     private String flowName;
-    private String type;
-    private String format;
+    private FlowType type;
+    private Format dataFormat = Format.XML;
+    private FlowComplexity flowComplexity;
     private Collector collector;
     private boolean envelopeEnabled = true;
     protected ArrayList<Plugin> plugins = new ArrayList<Plugin>();
@@ -59,11 +63,12 @@ public abstract class AbstractFlow implements Flow {
         deserialize(xml);
     }
 
-    public AbstractFlow(String domainName, String flowName, String type, String format) {
+    public AbstractFlow(String domainName, String flowName, FlowType type, Format dataFormat, FlowComplexity flowComplexity) {
         this.domainName = domainName;
         this.flowName = flowName;
         this.type = type;
-        this.format = format;
+        this.dataFormat = dataFormat;
+        this.flowComplexity = flowComplexity;
     }
 
     private void deserialize(Node xml) {
@@ -80,17 +85,20 @@ public abstract class AbstractFlow implements Flow {
                 this.flowName = node.getTextContent();
                 break;
             case "type":
-                this.type = node.getTextContent();
+                this.type = FlowType.getFlowType(node.getTextContent());
                 break;
-            case "format":
-                this.format = node.getTextContent();
+            case "complexity":
+                this.flowComplexity = FlowComplexity.getFlowComplexity(node.getTextContent());
+                break;
+            case "data-format":
+                this.dataFormat = Format.getFromMimetype(node.getTextContent());
                 break;
             case "domain":
                 this.domainName = node.getTextContent();
                 break;
             case "collector":
-                String colType = node.getAttributes().getNamedItem("type").getNodeValue();
-                if (colType.equals("xquery") || colType.equals("sjs") || colType.equals("xslt")) {
+                PluginType colType = PluginType.getPluginType(node.getAttributes().getNamedItem("type").getNodeValue());
+                if (colType.equals(PluginType.XQUERY) || colType.equals(PluginType.JAVASCRIPT) || colType.equals(PluginType.XSLT)) {
                     String module = node.getAttributes().getNamedItem("module").getNodeValue();
                     Collector collector = null;
                     if (module.equals(QueryCollector.MODULE)) {
@@ -108,13 +116,13 @@ public abstract class AbstractFlow implements Flow {
             case "plugin":
                 String pluginDest = null;
                 String module = null;
-                String pluginType = node.getAttributes().getNamedItem("type").getNodeValue();
-                if (!pluginType.equals("null")) {
+                PluginType pluginType = PluginType.getPluginType(node.getAttributes().getNamedItem("type").getNodeValue());
+                if (!pluginType.equals(PluginType.NULL)) {
                     pluginDest = node.getAttributes().getNamedItem("dest").getNodeValue();
                     module = node.getAttributes().getNamedItem("module").getNodeValue();
                 }
 
-                if (pluginType.equals("xquery") || pluginType.equals("sjs") || pluginType.equals("xslt")) {
+                if (pluginType.equals(PluginType.XQUERY) || pluginType.equals(PluginType.JAVASCRIPT) || pluginType.equals(PluginType.XSLT)) {
                     if (pluginDest.equals(ContentPlugin.MODULE)) {
                         ContentPlugin t = new ContentPlugin();
                         this.plugins.add(t);
@@ -132,14 +140,14 @@ public abstract class AbstractFlow implements Flow {
                         this.plugins.add(t);
                     }
                 }
-                else if (pluginType.equals("null")) {
+                else if (pluginType.equals(PluginType.NULL)) {
                     this.plugins.add(null);
                 }
                 break;
             case "writer":
                 module = null;
-                pluginType = node.getAttributes().getNamedItem("type").getNodeValue();
-                if (pluginType.equals("xquery") || pluginType.equals("sjs") || pluginType.equals("xslt")) {
+                pluginType = PluginType.getPluginType(node.getAttributes().getNamedItem("type").getNodeValue());
+                if (pluginType.equals(PluginType.XQUERY) || pluginType.equals(PluginType.JAVASCRIPT) || pluginType.equals(PluginType.XSLT)) {
                     module = node.getAttributes().getNamedItem("module").getNodeValue();
                     Writer w = null;
                     if (module.equals(DefaultWriter.MODULE)) {
@@ -176,16 +184,19 @@ public abstract class AbstractFlow implements Flow {
      * Retrieves the type of flow
      */
     @Override
-    public String getType() {
+    public FlowType getType() {
         return this.type;
     }
 
-    /**
-     * Retrieves the format of the flow
-     */
-    public String getFormat() {
-        return this.format;
+    @Override
+    public Format getDataFormat() {
+        return this.dataFormat;
     }
+
+    public void setDataFormat(Format format) {
+        this.dataFormat = format;
+    }
+
     /**
      * Retrieves the flow's collector
      */
@@ -261,11 +272,15 @@ public abstract class AbstractFlow implements Flow {
             serializer.writeEndElement();
 
             serializer.writeStartElement("type");
-            serializer.writeCharacters(this.type);
+            serializer.writeCharacters(this.type.toString());
             serializer.writeEndElement();
 
-            serializer.writeStartElement("format");
-            serializer.writeCharacters(this.format);
+            serializer.writeStartElement("complexity");
+            serializer.writeCharacters(this.flowComplexity.toString());
+            serializer.writeEndElement();
+
+            serializer.writeStartElement("data-format");
+            serializer.writeCharacters(this.dataFormat.getDefaultMimetype());
             serializer.writeEndElement();
 
             if (this.collector != null) {

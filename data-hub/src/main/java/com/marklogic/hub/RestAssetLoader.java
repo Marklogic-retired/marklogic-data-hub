@@ -28,6 +28,8 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.commons.io.FilenameUtils;
+
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.admin.ExtensionLibrariesManager;
 import com.marklogic.client.admin.ExtensionLibraryDescriptor;
@@ -142,7 +144,19 @@ public class RestAssetLoader extends LoggingObject implements FileVisitor<Path> 
         moduleDescriptor.setPath(uri);
 
         FileHandle handle = new FileHandle(f);
-        handle.setFormat(Format.TEXT);
+
+        String ext = FilenameUtils.getExtension(f.getName());
+        switch(ext) {
+        case "xml":
+            handle.setFormat(Format.XML);
+            break;
+        case "json":
+            handle.setFormat(Format.JSON);
+            break;
+        default:
+            handle.setFormat(Format.TEXT);
+        }
+
         libsMgr.write(moduleDescriptor, handle);
 
         if (modulesManager != null) {

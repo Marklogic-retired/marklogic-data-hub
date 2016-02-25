@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.marklogic.hub.PluginFormat;
 import com.marklogic.hub.config.EnvironmentConfiguration;
 import com.marklogic.hub.model.DomainModel;
 import com.marklogic.hub.service.DataHubService;
@@ -34,7 +35,7 @@ import com.marklogic.hub.web.form.LoginForm;
 @Scope("session")
 public class DomainApiController implements InitializingBean, DisposableBean,
         FileSystemEventListener {
-    
+
     @Autowired
     private EnvironmentConfiguration environmentConfiguration;
 
@@ -43,13 +44,13 @@ public class DomainApiController implements InitializingBean, DisposableBean,
 
     @Autowired
     private DomainManagerService domainManagerService;
-    
+
     @Autowired
     private FileSystemWatcherService watcherService;
 
     @Autowired
     private SyncStatusService syncStatusService;
-    
+
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
     public List<DomainModel> getDomains(HttpSession session) {
@@ -65,7 +66,7 @@ public class DomainApiController implements InitializingBean, DisposableBean,
             HttpSession session) {
         LoginForm loginForm = (LoginForm) session.getAttribute("loginForm");
         loginForm.selectDomain(domainName);
-        
+
         return loginForm.getSelectedDomain();
     }
 
@@ -80,7 +81,9 @@ public class DomainApiController implements InitializingBean, DisposableBean,
 
         DomainModel domainModel = domainManagerService.createDomain(
                 domainForm.getDomainName(), domainForm.getInputFlowName(),
-                domainForm.getConformFlowName());
+                domainForm.getConformFlowName(),
+                domainForm.getPluginFormat(),
+                domainForm.getDataFormat());
 
         domains.add(domainModel);
         loginForm.setSelectedDomain(domainModel);
@@ -90,7 +93,7 @@ public class DomainApiController implements InitializingBean, DisposableBean,
     /**
      * Get a list of domains that has changed. This API does not return until a
      * change has occurred.
-     * 
+     *
      * @param session
      * @return
      */
@@ -104,7 +107,7 @@ public class DomainApiController implements InitializingBean, DisposableBean,
 
             // refresh the list of domains saved in the session
             LoginForm loginForm = (LoginForm) session.getAttribute("loginForm");
-            
+
             // add checking if data hub is installed and the server is
             // acceptable. Something may have changed the server or removed the
             // data hub outside the app
@@ -115,10 +118,10 @@ public class DomainApiController implements InitializingBean, DisposableBean,
                 loginForm.setDomains(domains);
                 loginForm.refreshSelectedDomain();
             }
-            
+
             // refresh the session loginForm
             session.setAttribute("loginForm", loginForm);
-            
+
             return loginForm;
         }
     }
@@ -141,7 +144,7 @@ public class DomainApiController implements InitializingBean, DisposableBean,
         synchronized (syncStatusService) {
             try {
                 syncStatusService.updateSyncStatus(path.toFile());
-                
+
                 syncStatusService.notifyAll();
             } catch (IOException e) {
             }

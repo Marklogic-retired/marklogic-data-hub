@@ -20,7 +20,7 @@ public class TriplesPlugin extends ServerPlugin {
     public static final String MODULE = "/com.marklogic.hub/plugins/triples.xqy";
 
     public TriplesPlugin() {
-        super("xquery", MODULE, "triples");
+        super(PluginType.XQUERY, MODULE, "triples");
     }
 
     @Override

@@ -14,7 +14,9 @@ import org.springframework.stereotype.Service;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
 import com.marklogic.client.DatabaseClientFactory.Authentication;
+import com.marklogic.client.io.Format;
 import com.marklogic.hub.DomainManager;
+import com.marklogic.hub.PluginFormat;
 import com.marklogic.hub.config.EnvironmentConfiguration;
 import com.marklogic.hub.domain.Domain;
 import com.marklogic.hub.exception.DomainManagerException;
@@ -33,7 +35,7 @@ public class DomainManagerService {
 
     @Autowired
     private EnvironmentConfiguration environmentConfiguration;
-    
+
     @Autowired
     private SyncStatusService syncStatusService;
 
@@ -64,23 +66,23 @@ public class DomainManagerService {
             domains.add(domainModelFactory.createDomain(domainName, domainsPath
                     + File.separator + domainName));
         }
-        
+
         // update the sync status of the domains and flows
         // TODO: if we improve DomainModelFactory and FlowModelFactory implementation,
         // we may be able to set the status correctly during model creation.
         updateSyncStatus(domains);
-        
+
         return domains;
     }
-    
+
     protected void updateSyncStatus(List<DomainModel> domains) {
         for (DomainModel domainModel : domains) {
             domainModel.setSynched(syncStatusService.isDomainSynched(domainModel.getDomainName()));
-            
+
             for (FlowModel flowModel : domainModel.getInputFlows()) {
                 flowModel.setSynched(syncStatusService.isFlowSynched(domainModel.getDomainName(), FlowType.INPUT, flowModel.getFlowName()));
             }
-            
+
             for (FlowModel flowModel : domainModel.getConformFlows()) {
                 flowModel.setSynched(syncStatusService.isFlowSynched(domainModel.getDomainName(), FlowType.CONFORM, flowModel.getFlowName()));
             }
@@ -104,13 +106,13 @@ public class DomainManagerService {
     }
 
     public DomainModel createDomain(String domainName, String inputFlowName,
-            String conformFlowName) {
+            String conformFlowName, PluginFormat pluginFormat, Format dataFormat) {
         DomainModelFactory domainModelFactory = new DomainModelFactory();
         DomainModel domainModel;
         try {
             domainModel = domainModelFactory.createNewDomain(
                     environmentConfiguration.getUserPluginDir(), domainName,
-                    inputFlowName, conformFlowName);
+                    inputFlowName, conformFlowName, pluginFormat, dataFormat);
         } catch (IOException e) {
             throw new DomainManagerException(e.getMessage(), e);
         }

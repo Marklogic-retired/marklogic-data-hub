@@ -19,7 +19,7 @@ public class HeadersPlugin extends ServerPlugin {
     public static final String MODULE = "/com.marklogic.hub/plugins/header.xqy";
 
     public HeadersPlugin() {
-        super("xquery", MODULE, "header");
+        super(PluginType.XQUERY, MODULE, "header");
     }
 
     @Override
