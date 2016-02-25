@@ -204,13 +204,13 @@ public class FlowManager extends ResourceManager {
     public static Flow flowFromXml(Element doc) {
         Flow f = null;
 
-        String format = null;
-        NodeList elements = doc.getElementsByTagNameNS(HUB_NS, "format");
+        String complexity = null;
+        NodeList elements = doc.getElementsByTagNameNS(HUB_NS, "complexity");
         if (elements.getLength() == 1) {
-            format = elements.item(0).getTextContent();
+            complexity = elements.item(0).getTextContent();
         }
 
-        if (format.equals("simple")) {
+        if (complexity.equals(FlowComplexity.SIMPLE.toString())) {
             SimpleFlow sf = new SimpleFlow(doc);
             f = sf;
         }

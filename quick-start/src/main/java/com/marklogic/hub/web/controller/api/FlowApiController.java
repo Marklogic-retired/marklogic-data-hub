@@ -1,5 +1,6 @@
 package com.marklogic.hub.web.controller.api;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -117,17 +118,21 @@ public class FlowApiController extends BaseController {
 
     @RequestMapping(value="/run/input", method = RequestMethod.POST)
     public void runInputFlow(@RequestBody RunFlowModel runFlow) {
-        Mlcp mlcp = new Mlcp(
-                        environmentConfiguration.getMlcpHomeDir()
-                        ,environmentConfiguration.getMLHost()
-                        ,environmentConfiguration.getMLRestPort()
-                        ,environmentConfiguration.getMLUsername()
-                        ,environmentConfiguration.getMLPassword()
-                    );
+        try {
+            Mlcp mlcp = new Mlcp(
+                            environmentConfiguration.getMLHost()
+                            ,environmentConfiguration.getMLRestPort()
+                            ,environmentConfiguration.getMLUsername()
+                            ,environmentConfiguration.getMLPassword()
+                        );
 
-        SourceOptions sourceOptions = new SourceOptions(runFlow.getDomainName(), runFlow.getFlowName(), FlowType.INPUT.toString());
-        mlcp.addSourceDirectory(runFlow.getInputPath(), sourceOptions);
-        mlcp.loadContent();
+            SourceOptions sourceOptions = new SourceOptions(runFlow.getDomainName(), runFlow.getFlowName(), FlowType.INPUT.toString());
+            mlcp.addSourceDirectory(runFlow.getInputPath(), sourceOptions);
+            mlcp.loadContent();
+        }
+        catch (IOException e) {
+            LOGGER.error("Error encountered while trying to run flow:  " + runFlow.getDomainName() + " > " + runFlow.getFlowName(), e);
+        }
     }
 
     @RequestMapping(value = "/runInParallel", method = RequestMethod.POST)

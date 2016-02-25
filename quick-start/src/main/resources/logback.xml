@@ -15,6 +15,7 @@
   <logger name="com.marklogic" level="WARN"/>
   <logger name="com.marklogic.appdeployer" level="INFO"/>
   <logger name="com.marklogic.hub" level="DEBUG"/>
+  <logger name="com.marklogic.contentpump" level="DEBUG"/>
   
   <root level="DEBUG">
     <appender-ref ref="STDOUT" />
