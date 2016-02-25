@@ -23,12 +23,12 @@ import com.marklogic.client.extensions.ResourceManager;
 import com.marklogic.client.util.RequestParameters;
 
 public class ServerPlugin extends AbstractPlugin {
-    private String type;
+    private PluginType type;
     private String module;
     private String destination;
     private DatabaseClient client;
 
-    public ServerPlugin(String type, String module, String destination) {
+    public ServerPlugin(PluginType type, String module, String destination) {
         this.type = type;
         this.module = module;
         this.destination = destination;
@@ -46,7 +46,7 @@ public class ServerPlugin extends AbstractPlugin {
     }
 
     @Override
-    public String getType() {
+    public PluginType getType() {
         return this.type;
     }
 
@@ -60,7 +60,7 @@ public class ServerPlugin extends AbstractPlugin {
 
     public void serialize(XMLStreamWriter serializer) throws XMLStreamException {
         serializer.writeStartElement("plugin");
-        serializer.writeAttribute("type", this.type);
+        serializer.writeAttribute("type", this.type.toString());
         serializer.writeAttribute("module", this.module);
         serializer.writeAttribute("dest", this.destination);
         serializer.writeEndElement();

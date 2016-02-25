@@ -19,14 +19,14 @@ import com.marklogic.hub.service.CollectorManagerService;
 @Controller
 @RequestMapping("/collectors")
 public class CollectorManagerController extends BaseController {
-	
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(CollectorManagerController.class);
-	
+
 	@Autowired
 	private CollectorManagerService collectorManagerService;
-	
+
 	private Map<String, Collector> collectorsMap;
-	
+
 	@RequestMapping(method = RequestMethod.GET)
 	@ResponseBody
 	public List<Collector> getCollectors() {
@@ -38,7 +38,7 @@ public class CollectorManagerController extends BaseController {
     private void updateCollectorsMap(List<Collector> collectors) {
     	collectorsMap = new LinkedHashMap<>();
     	for (Collector collector : collectors) {
-    		collectorsMap.put(collector.getType(), collector);
+    		collectorsMap.put(collector.getType().toString(), collector);
 		}
 	}
 

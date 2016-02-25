@@ -15,11 +15,13 @@
  */
 package com.marklogic.hub.writer;
 
+import com.marklogic.hub.plugin.PluginType;
+
 public class DefaultWriter extends ServerWriter {
 
     public static final String MODULE = "/com.marklogic.hub/writers/default.xqy";
 
     public DefaultWriter() {
-        super("xquery", MODULE);
+        super(PluginType.XQUERY, MODULE);
     }
 }

@@ -19,7 +19,7 @@ public class ContentPlugin extends ServerPlugin {
     public static final String MODULE = "/com.marklogic.hub/plugins/content.xqy";
 
     public ContentPlugin() {
-        super("xquery", MODULE, "content");
+        super(PluginType.XQUERY, MODULE, "content");
     }
 
     @Override

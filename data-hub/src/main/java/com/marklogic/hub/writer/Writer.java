@@ -18,8 +18,10 @@ package com.marklogic.hub.writer;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import com.marklogic.hub.plugin.PluginType;
+
 public interface Writer {
-    String getType();
+    PluginType getType();
 
     void write(String identifier);
     void serialize(XMLStreamWriter serializer) throws XMLStreamException;

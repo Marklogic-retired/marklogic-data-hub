@@ -20,9 +20,11 @@ import java.util.List;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import com.marklogic.hub.plugin.PluginType;
+
 public interface Collector {
 
-    String getType();
+    PluginType getType();
     List<String> run();
     void serialize(XMLStreamWriter serializer) throws XMLStreamException;
 }

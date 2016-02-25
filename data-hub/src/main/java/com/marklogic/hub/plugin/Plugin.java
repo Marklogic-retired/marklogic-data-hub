@@ -19,7 +19,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
 public interface Plugin {
-    String getType();
+    PluginType getType();
     String getDest();
     void run(String identifier);
     void serialize(XMLStreamWriter serializer) throws XMLStreamException;

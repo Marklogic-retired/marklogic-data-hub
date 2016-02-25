@@ -36,6 +36,7 @@ import com.marklogic.hub.collector.ServerCollector;
 import com.marklogic.hub.plugin.ContentPlugin;
 import com.marklogic.hub.plugin.HeadersPlugin;
 import com.marklogic.hub.plugin.Plugin;
+import com.marklogic.hub.plugin.PluginType;
 import com.marklogic.hub.plugin.TriplesPlugin;
 import com.marklogic.hub.plugin.ServerPlugin;
 import com.marklogic.hub.writer.DefaultWriter;
@@ -96,8 +97,8 @@ public abstract class AbstractFlow implements Flow {
                 this.domainName = node.getTextContent();
                 break;
             case "collector":
-                String colType = node.getAttributes().getNamedItem("type").getNodeValue();
-                if (colType.equals("xquery") || colType.equals("sjs") || colType.equals("xslt")) {
+                PluginType colType = PluginType.getPluginType(node.getAttributes().getNamedItem("type").getNodeValue());
+                if (colType.equals(PluginType.XQUERY) || colType.equals(PluginType.JAVASCRIPT) || colType.equals(PluginType.XSLT)) {
                     String module = node.getAttributes().getNamedItem("module").getNodeValue();
                     Collector collector = null;
                     if (module.equals(QueryCollector.MODULE)) {
@@ -115,13 +116,13 @@ public abstract class AbstractFlow implements Flow {
             case "plugin":
                 String pluginDest = null;
                 String module = null;
-                String pluginType = node.getAttributes().getNamedItem("type").getNodeValue();
-                if (!pluginType.equals("null")) {
+                PluginType pluginType = PluginType.getPluginType(node.getAttributes().getNamedItem("type").getNodeValue());
+                if (!pluginType.equals(PluginType.NULL)) {
                     pluginDest = node.getAttributes().getNamedItem("dest").getNodeValue();
                     module = node.getAttributes().getNamedItem("module").getNodeValue();
                 }
 
-                if (pluginType.equals("xquery") || pluginType.equals("sjs") || pluginType.equals("xslt")) {
+                if (pluginType.equals(PluginType.XQUERY) || pluginType.equals(PluginType.JAVASCRIPT) || pluginType.equals(PluginType.XSLT)) {
                     if (pluginDest.equals(ContentPlugin.MODULE)) {
                         ContentPlugin t = new ContentPlugin();
                         this.plugins.add(t);
@@ -139,14 +140,14 @@ public abstract class AbstractFlow implements Flow {
                         this.plugins.add(t);
                     }
                 }
-                else if (pluginType.equals("null")) {
+                else if (pluginType.equals(PluginType.NULL)) {
                     this.plugins.add(null);
                 }
                 break;
             case "writer":
                 module = null;
-                pluginType = node.getAttributes().getNamedItem("type").getNodeValue();
-                if (pluginType.equals("xquery") || pluginType.equals("sjs") || pluginType.equals("xslt")) {
+                pluginType = PluginType.getPluginType(node.getAttributes().getNamedItem("type").getNodeValue());
+                if (pluginType.equals(PluginType.XQUERY) || pluginType.equals(PluginType.JAVASCRIPT) || pluginType.equals(PluginType.XSLT)) {
                     module = node.getAttributes().getNamedItem("module").getNodeValue();
                     Writer w = null;
                     if (module.equals(DefaultWriter.MODULE)) {

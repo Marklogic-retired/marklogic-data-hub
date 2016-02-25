@@ -58,6 +58,16 @@ declare variable $DOMAINS-DIR := "/ext/domains/";
 
 declare variable $PLUGIN-NS := "http://marklogic.com/hub-in-a-box/plugins/";
 
+declare variable $TYPE-XQUERY := "xquery";
+
+declare variable $TYPE-JAVASCRIPT := "javascript";
+
+declare variable $TYPE-XSLT := "xslt";
+
+declare variable $TYPE-XML := "xml";
+
+declare variable $TYPE-JSON := "json";
+
 (:
  : Determines the type of flow given a filename
  :
@@ -69,15 +79,15 @@ declare %private function flow:get-type($filename) as xs:string?
   let $ext as xs:string := hul:get-file-extension($filename)
   return
     if ($ext = hul:get-xqy-extensions()) then
-      "xquery"
+      $TYPE-XQUERY
     else if ($ext = hul:get-sjs-extensions()) then
-      "sjs"
+      $TYPE-JAVASCRIPT
     else if ($ext = hul:get-xslt-extensions()) then
-      "xslt"
+      $TYPE-XSLT
     else if ($ext = "xml") then
-      "xml"
+      $TYPE-XML
     else if ($ext = "json") then
-      "json"
+      $TYPE-JSON
     else
       fn:error(xs:QName("INVALID_PLUGIN"), $filename)
 };
@@ -386,7 +396,7 @@ declare function flow:run-collector(
   let $filename as xs:string := hul:get-file-from-uri($module-uri)
   let $type := flow:get-type($filename)
   let $ns :=
-    if ($type eq "sjs") then ()
+    if ($type eq $TYPE-JAVASCRIPT) then ()
     else
       $PLUGIN-NS || fn:lower-case($module-name)
   let $func := xdmp:function(fn:QName($ns, "collect"), $module-uri)
@@ -513,11 +523,11 @@ declare function flow:run-plugin(
       let $filename as xs:string := hul:get-file-from-uri($module-uri)
       let $type := flow:get-type($filename)
       let $ns :=
-        if ($type eq "sjs") then ()
+        if ($type eq $TYPE-JAVASCRIPT) then ()
         else
           $PLUGIN-NS || fn:lower-case($module-name)
       let $func-name :=
-        if ($type eq "sjs") then
+        if ($type eq $TYPE-JAVASCRIPT) then
           "create" || functx:capitalize-first($destination)
         else
           "create-" || $destination
