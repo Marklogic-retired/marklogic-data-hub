@@ -20,6 +20,7 @@ module.controller('topController', [
         $scope.flowForm = {};
         $scope.loadDataForm = {};
         $scope.loading = false;
+        $scope.action = DataHub.action;
         
         $scope.createDomain = function() {
             $scope.loading = true;
@@ -69,9 +70,7 @@ module.controller('topController', [
             });
         };
         
-        $scope.getStatusChange();
-        
-        $scope.createFlow = function(domainName, flowType) {
+    	$scope.createFlow = function(domainName, flowType) {
             $scope.loading = true;
             $scope.flowForm.domainName = domainName;
             $scope.flowForm.flowType = flowType;
@@ -147,6 +146,26 @@ module.controller('topController', [
                 $scope.loading = false;
             });
         };
+        
+        $scope.install = function () {
+    		DataHub.install();
+        };
+        
+        $scope.uninstall = function () {
+    		DataHub.uninstall()
+    		.success(function () {
+    			DataHub.logout();
+    			$location.path('/login');
+            });
+        };
+        
+        if($scope.action.type !== null && $scope.action.type === 'Install') {
+        	$scope.install();
+        } else if($scope.action.type !== null && $scope.action.type === 'Uninstall') {
+        	$scope.uninstall();
+        } else if($scope.status !== null){
+        	$scope.getStatusChange();
+        }
         
         setTimeout(function () {
             $('.alert').fadeOut();

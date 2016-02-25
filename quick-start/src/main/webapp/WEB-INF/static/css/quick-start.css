@@ -211,4 +211,47 @@ ul.nav.abn-tree i {
 .spinner > .child {
     position: relative;
     left: 50%;
+    float: right;
+    z-index: 1000;
+}
+
+.fa-spin {
+	font-size: 80px;
+	width: 0px;
+	margin: 0px;
+}
+
+.nav, .pagination, .carousel, .panel-title a { 
+	cursor: pointer; 
+}
+
+#progressBar {
+	background-color: #444547;
+	display: table;
+    height: 450px;
+    width: 100%;
+}
+
+#progressBar > div {
+	display: table-cell;
+    vertical-align: middle;
+}
+
+#progressBar > div {
+	margin-left: auto;
+    margin-right: auto; 
+    width: 200px;
+}
+
+.progress {
+    height: 30px;
+}
+
+.progress span {
+    font-size: 25px;
+    line-height: 20px;
+}
+
+.progress-bar {
+    padding: 3px;
 }

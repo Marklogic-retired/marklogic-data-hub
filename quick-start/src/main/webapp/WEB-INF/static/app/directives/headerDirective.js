@@ -4,10 +4,12 @@ var module = angular.module('dhib.quickstart.directives.header', dependencies);
 module.directive('header', [
     '$http'
     ,'$location'
+    ,'$mdDialog'
     ,'DataHub'
     ,function(
         $http
         ,$location
+        ,$mdDialog
         ,DataHub
     ) {
     	return {
@@ -17,28 +19,36 @@ module.directive('header', [
             }
             ,link : function(scope, element, attrs) {
             	scope.logout = function () {
-            		DataHub.logout();
-            		$location.path('/login');
-            	},
-            	scope.install = function () {
+            		if(scope.action.type != null) {
+            			return;
+            		}
             		scope.loading = true;
-                    DataHub.install()
-                    .finally(function () {
-                    	scope.loading = false;
+            		DataHub.logout()
+            		.finally(function () {
+            			scope.loading = false;
+            			$location.path('/login');
                     });
-                },
-                scope.uninstall = function () {
-                	scope.loading = true;
-                    DataHub.uninstall()
-                    .finally(function () {
-                    	scope.loading = false;
-                    });
+            	},
+            	scope.uninstall = function (ev) {
+            		var confirm = $mdDialog.confirm().title('Confirm Uninstall')
+	                    .textContent('Do you really want to continue uninstalling data hub?')
+	                    .ariaLabel('Uninstall')
+	                    .targetEvent(ev)
+	                    .ok('Yes')
+	                    .cancel('No');
+            		$mdDialog.show(confirm).then(function() {
+            			DataHub.preUninstall();
+		            }, function() {
+		                //do nothing
+		            });
                 },
                 scope.installUserModules = function () {
-                	scope.loading = true;
+                	scope.action.type = 'Deploy to Server';
+                	scope.action.progressType = 'success';
+                	scope.action.message = 'Deploy to Server is in progress';
                     DataHub.installUserModules()
                     .finally(function () {
-                    	scope.loading = false;
+                    	scope.action.type = null;
                     });
                 }
             }
