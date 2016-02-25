@@ -98,7 +98,7 @@ public class LoginForm extends BaseForm {
 	public void setDomains(List<DomainModel> domains) {
 		this.domains = domains;
 	}
-	
+
 	public DomainModel getSelectedDomain() {
 		return selectedDomain;
 	}
@@ -112,11 +112,12 @@ public class LoginForm extends BaseForm {
 	        for (DomainModel domain : domains) {
 	            if (domain.getDomainName().equals(domainName)) {
 	                setSelectedDomain(domain);
+	                return;
 	            }
 	        }
 	    }
 	}
-	
+
 	public void refreshSelectedDomain() {
 	    if (selectedDomain != null) {
 	        selectDomain(selectedDomain.getDomainName());

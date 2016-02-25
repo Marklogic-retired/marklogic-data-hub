@@ -17,17 +17,16 @@ package com.marklogic.hub.flow;
 
 import java.util.List;
 
+import com.marklogic.client.io.Format;
 import com.marklogic.hub.collector.Collector;
 import com.marklogic.hub.plugin.Plugin;
 import com.marklogic.hub.writer.Writer;
 
 public interface Flow {
-    static final String INPUT_FLOW = "input";
-    static final String CANONICAL_FLOW = "canonical";
-
     String getDomainName();
     String getName();
-    String getType();
+    FlowType getType();
+    Format getDataFormat();
     String serialize();
 
     Collector getCollector();

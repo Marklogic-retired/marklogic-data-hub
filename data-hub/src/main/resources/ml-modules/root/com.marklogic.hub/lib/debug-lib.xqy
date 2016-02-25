@@ -47,30 +47,43 @@ declare function debug:log($items)
  :)
 declare function debug:dump-env()
 {
-  debug:log((
-    "",
-    "REQUEST DETAILS:",
-    "  " || xdmp:get-request-path(),
-    "",
-    "  [Headers]",
-    for $h in xdmp:get-request-header-names()
-    return
-      "    " || $h || " => " || xdmp:get-request-header($h),
-    "",
-    "  [Request Params]",
-    for $p in xdmp:get-request-field-names()
-    return
-      "    " || $p || " => " || xdmp:get-request-field($p),
-    let $body := xdmp:get-request-body()
-    return
-      if (fn:exists($body)) then
-      (
-        "",
-        "  [Body]",
-        $body
-      )
-      else (),
-    "",
-    ""
-  ))
+  let $request-path := xdmp:get-request-path()
+  let $request-path :=
+    if ($request-path = '/MarkLogic/rest-api/endpoints/resource-service-query.xqy') then
+      let $params := fn:string-join(
+        for $f in xdmp:get-request-field-names()[fn:starts-with(., "rs:")]
+        return
+          $f || "=" || xdmp:get-request-field($f),
+      "&amp;")
+      return
+        "/v1/resources/" || xdmp:get-request-field("name") || "?" || $params
+    else
+      $request-path
+  return
+    debug:log((
+      "",
+      "REQUEST DETAILS:",
+      "  [" || xdmp:get-request-method() || "]  " || $request-path,
+      "",
+      "  [Headers]",
+      for $h in xdmp:get-request-header-names()
+      return
+        "    " || $h || " => " || xdmp:get-request-header($h),
+      "",
+      "  [Request Params]",
+      for $p in xdmp:get-request-field-names()
+      return
+        "    " || $p || " => " || xdmp:get-request-field($p),
+      let $body := xdmp:get-request-body()
+      return
+        if (fn:exists($body)) then
+        (
+          "",
+          "  [Body]",
+          $body
+        )
+        else (),
+      "",
+      ""
+    ))
 };

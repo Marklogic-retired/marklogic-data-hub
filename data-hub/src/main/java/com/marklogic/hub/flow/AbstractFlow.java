@@ -28,6 +28,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import com.marklogic.client.MarkLogicIOException;
+import com.marklogic.client.io.Format;
+import com.marklogic.hub.FlowComplexity;
 import com.marklogic.hub.collector.Collector;
 import com.marklogic.hub.collector.QueryCollector;
 import com.marklogic.hub.collector.ServerCollector;
@@ -48,8 +50,9 @@ public abstract class AbstractFlow implements Flow {
 
     private String domainName;
     private String flowName;
-    private String type;
-    private String format;
+    private FlowType type;
+    private Format dataFormat = Format.XML;
+    private FlowComplexity flowComplexity;
     private Collector collector;
     private boolean envelopeEnabled = true;
     protected ArrayList<Plugin> plugins = new ArrayList<Plugin>();
@@ -59,11 +62,12 @@ public abstract class AbstractFlow implements Flow {
         deserialize(xml);
     }
 
-    public AbstractFlow(String domainName, String flowName, String type, String format) {
+    public AbstractFlow(String domainName, String flowName, FlowType type, Format dataFormat, FlowComplexity flowComplexity) {
         this.domainName = domainName;
         this.flowName = flowName;
         this.type = type;
-        this.format = format;
+        this.dataFormat = dataFormat;
+        this.flowComplexity = flowComplexity;
     }
 
     private void deserialize(Node xml) {
@@ -80,10 +84,13 @@ public abstract class AbstractFlow implements Flow {
                 this.flowName = node.getTextContent();
                 break;
             case "type":
-                this.type = node.getTextContent();
+                this.type = FlowType.getFlowType(node.getTextContent());
                 break;
-            case "format":
-                this.format = node.getTextContent();
+            case "complexity":
+                this.flowComplexity = FlowComplexity.getFlowComplexity(node.getTextContent());
+                break;
+            case "data-format":
+                this.dataFormat = Format.getFromMimetype(node.getTextContent());
                 break;
             case "domain":
                 this.domainName = node.getTextContent();
@@ -176,16 +183,19 @@ public abstract class AbstractFlow implements Flow {
      * Retrieves the type of flow
      */
     @Override
-    public String getType() {
+    public FlowType getType() {
         return this.type;
     }
 
-    /**
-     * Retrieves the format of the flow
-     */
-    public String getFormat() {
-        return this.format;
+    @Override
+    public Format getDataFormat() {
+        return this.dataFormat;
     }
+
+    public void setDataFormat(Format format) {
+        this.dataFormat = format;
+    }
+
     /**
      * Retrieves the flow's collector
      */
@@ -261,11 +271,15 @@ public abstract class AbstractFlow implements Flow {
             serializer.writeEndElement();
 
             serializer.writeStartElement("type");
-            serializer.writeCharacters(this.type);
+            serializer.writeCharacters(this.type.toString());
             serializer.writeEndElement();
 
-            serializer.writeStartElement("format");
-            serializer.writeCharacters(this.format);
+            serializer.writeStartElement("complexity");
+            serializer.writeCharacters(this.flowComplexity.toString());
+            serializer.writeEndElement();
+
+            serializer.writeStartElement("data-format");
+            serializer.writeCharacters(this.dataFormat.getDefaultMimetype());
             serializer.writeEndElement();
 
             if (this.collector != null) {

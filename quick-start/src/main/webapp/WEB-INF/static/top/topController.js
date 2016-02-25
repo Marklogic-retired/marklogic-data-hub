@@ -17,10 +17,12 @@ module.controller('topController', [
     ) {
         $scope.status = DataHub.status;
         $scope.domainForm = {};
-        $scope.flowForm = {};
+        $scope.flowForm = {
+          extension: 'sjs'
+        };
         $scope.loadDataForm = {};
         $scope.loading = false;
-        
+
         $scope.createDomain = function() {
             $scope.loading = true;
             $scope.domainForm.hasErrors = false;
@@ -30,7 +32,7 @@ module.controller('topController', [
             });
             $scope.loading = false;
         };
-        
+
         $scope.saveDomain = function() {
             $scope.loading = true;
             DataHub.saveDomain($scope.domainForm)
@@ -46,7 +48,7 @@ module.controller('topController', [
                 $scope.loading = false;
             });
         };
-        
+
         $scope.displayDomain = function(domainName) {
             $scope.loading = true;
             DataHub.displayDomain(domainName)
@@ -57,7 +59,7 @@ module.controller('topController', [
                 $scope.loading = false;
             });
         };
-        
+
         $scope.getStatusChange = function() {
             DataHub.getStatusChange()
             .success(function (loginStatus) {
@@ -68,13 +70,14 @@ module.controller('topController', [
                 $timeout($scope.getStatusChange, 50);
             });
         };
-        
+
         $scope.getStatusChange();
-        
-        $scope.createFlow = function(domainName, flowType) {
+
+        $scope.createFlow = function(domainName, flowType, extension) {
             $scope.loading = true;
             $scope.flowForm.domainName = domainName;
             $scope.flowForm.flowType = flowType;
+            $scope.flowForm.extension = extension;
             $scope.flowForm.hasErrors = false;
             $('#flowModal').modal({
                 backdrop: 'static',
@@ -82,7 +85,7 @@ module.controller('topController', [
             });
             $scope.loading = false;
         };
-        
+
         $scope.showLoadDataForm = function(domainName, flowName) {
             $scope.loading = true;
             $scope.loadDataForm = {
@@ -97,41 +100,41 @@ module.controller('topController', [
             });
             $scope.loading = false;
         };
-        
+
         $scope.runFlow = function(domainName, flowName) {
             $scope.loading = true;
             DataHub.runFlow(domainName, flowName)
             .success(function () {
-                
+
             })
             .finally(function () {
                 $scope.loading = false;
             });
         };
-        
+
         $scope.runInputFlow = function() {
             $scope.loading = true;
             $('#loadDataModal').modal('hide');
             DataHub.runInputFlow($scope.loadDataForm.domainName, $scope.loadDataForm.flowName, $scope.loadDataForm.inputPath)
             .success(function () {
-                
+
             })
             .finally(function () {
                 $scope.loading = false;
             });
         };
-        
+
         $scope.testFlow = function(domainName, flowName) {
             $scope.loading = true;
             DataHub.testFlow(domainName, flowName)
             .success(function () {
-                
+
             })
             .finally(function () {
                 $scope.loading = false;
             });
         };
-        
+
         $scope.saveFlow = function() {
             $scope.loading = true;
             DataHub.saveFlow($scope.flowForm)
@@ -147,11 +150,11 @@ module.controller('topController', [
                 $scope.loading = false;
             });
         };
-        
+
         setTimeout(function () {
             $('.alert').fadeOut();
         }, 5000);
-        
-        
+
+
     }
 ]);

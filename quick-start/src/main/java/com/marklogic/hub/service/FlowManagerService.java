@@ -12,13 +12,15 @@ import org.springframework.stereotype.Service;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
 import com.marklogic.client.DatabaseClientFactory.Authentication;
+import com.marklogic.client.io.Format;
 import com.marklogic.hub.FlowManager;
+import com.marklogic.hub.PluginFormat;
 import com.marklogic.hub.config.EnvironmentConfiguration;
 import com.marklogic.hub.exception.FlowManagerException;
 import com.marklogic.hub.factory.FlowModelFactory;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.model.FlowModel;
-import com.marklogic.hub.model.FlowType;
+import com.marklogic.hub.flow.FlowType;
 import com.marklogic.hub.util.FileUtil;
 
 @Service
@@ -79,15 +81,13 @@ public class FlowManagerService {
     }
 
     public FlowModel createFlow(String domainName, String flowName,
-            String flowType) {
+            FlowType flowType, PluginFormat pluginFormat, Format dataFormat) {
         FlowModelFactory flowModelFactory = new FlowModelFactory(domainName);
-        String domainDirPath = environmentConfiguration.getUserPluginDir()
-                + File.separator + FileUtil.DOMAINS_FOLDER + File.separator
-                + domainName;
+        File domainsDirPath = new File(environmentConfiguration.getUserPluginDir(), FileUtil.DOMAINS_FOLDER);
         FlowModel flowModel;
         try {
-            flowModel = flowModelFactory.createNewFlow(domainDirPath, flowName,
-                    FlowType.getFlowType(flowType));
+            flowModel = flowModelFactory.createNewFlow(domainsDirPath, flowName,
+                    flowType, pluginFormat, dataFormat);
         } catch (IOException e) {
             throw new FlowManagerException(e.getMessage(), e);
         }

@@ -2,14 +2,19 @@ package com.marklogic.hub.web.form;
 
 import java.util.List;
 
+import com.marklogic.client.io.Format;
+import com.marklogic.hub.PluginFormat;
 import com.marklogic.hub.exception.FormValidationException;
+import com.marklogic.hub.flow.FlowType;
 import com.marklogic.hub.model.FlowModel;
 
 public class FlowForm extends BaseForm {
 
     private String domainName;
-    private String flowType;
+    private FlowType flowType;
     private String flowName;
+    private PluginFormat pluginFormat;
+    private Format dataFormat;
 
     public String getDomainName() {
         return domainName;
@@ -19,12 +24,28 @@ public class FlowForm extends BaseForm {
         this.domainName = domainName;
     }
 
-    public String getFlowType() {
+    public FlowType getFlowType() {
         return flowType;
     }
 
     public void setFlowType(String flowType) {
-        this.flowType = flowType;
+        this.flowType = FlowType.getFlowType(flowType);
+    }
+
+    public PluginFormat getPluginFormat() {
+        return pluginFormat;
+    }
+
+    public void setPluginFormat(String pluginFormat) {
+        this.pluginFormat = PluginFormat.getPluginFormat(pluginFormat);
+    }
+
+    public Format getDataFormat() {
+        return dataFormat;
+    }
+
+    public void setDataFormat(String dataFormat) {
+        this.dataFormat = Format.getFromMimetype(dataFormat);
     }
 
     public String getFlowName() {

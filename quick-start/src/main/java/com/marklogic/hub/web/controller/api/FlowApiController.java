@@ -21,9 +21,9 @@ import com.marklogic.hub.Mlcp;
 import com.marklogic.hub.Mlcp.SourceOptions;
 import com.marklogic.hub.config.EnvironmentConfiguration;
 import com.marklogic.hub.flow.Flow;
+import com.marklogic.hub.flow.FlowType;
 import com.marklogic.hub.model.DomainModel;
 import com.marklogic.hub.model.FlowModel;
-import com.marklogic.hub.model.FlowType;
 import com.marklogic.hub.model.RunFlowModel;
 import com.marklogic.hub.service.FlowManagerService;
 import com.marklogic.hub.web.controller.BaseController;
@@ -39,7 +39,7 @@ public class FlowApiController extends BaseController {
 
     @Autowired
     private EnvironmentConfiguration environmentConfiguration;
-    
+
     @Autowired
     private FlowManagerService flowManagerService;
 
@@ -63,10 +63,13 @@ public class FlowApiController extends BaseController {
         flowForm.validate(flowList);
 
         FlowModel flowModel = flowManagerService.createFlow(
-                flowForm.getDomainName(), flowForm.getFlowName(),
-                flowForm.getFlowType());
+                flowForm.getDomainName(),
+                flowForm.getFlowName(),
+                flowForm.getFlowType(),
+                flowForm.getPluginFormat(),
+                flowForm.getDataFormat());
 
-        if (FlowType.getFlowType(flowForm.getFlowType()) == FlowType.CONFORM) {
+        if (flowForm.getFlowType().equals(FlowType.CONFORMANCE)) {
             selectedDomain.getConformFlows().add(flowModel);
         } else {
             selectedDomain.getInputFlows().add(flowModel);
@@ -111,7 +114,7 @@ public class FlowApiController extends BaseController {
         // desired behavior
         flowManagerService.runFlow(flow, 100);
     }
-    
+
     @RequestMapping(value="/run/input", method = RequestMethod.POST)
     public void runInputFlow(@RequestBody RunFlowModel runFlow) {
         Mlcp mlcp = new Mlcp(
@@ -121,8 +124,8 @@ public class FlowApiController extends BaseController {
                         ,environmentConfiguration.getMLUsername()
                         ,environmentConfiguration.getMLPassword()
                     );
-        
-        SourceOptions sourceOptions = new SourceOptions(runFlow.getDomainName(), runFlow.getFlowName(), FlowType.INPUT.getName());
+
+        SourceOptions sourceOptions = new SourceOptions(runFlow.getDomainName(), runFlow.getFlowName(), FlowType.INPUT.toString());
         mlcp.addSourceDirectory(runFlow.getInputPath(), sourceOptions);
         mlcp.loadContent();
     }

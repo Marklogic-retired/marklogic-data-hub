@@ -24,6 +24,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -157,7 +158,18 @@ public class HubTestBase {
         moduleDescriptor.setPath(path);
 
         InputStreamHandle handle = new InputStreamHandle(HubTestBase.class.getClassLoader().getResourceAsStream(localPath));
-        handle.withFormat(Format.TEXT);
+        String ext = FilenameUtils.getExtension(path);
+        switch(ext) {
+        case "xml":
+            handle.setFormat(Format.XML);
+            break;
+        case "json":
+            handle.setFormat(Format.JSON);
+            break;
+        default:
+            handle.setFormat(Format.TEXT);
+        }
+
         libsMgr.write(moduleDescriptor, handle);
     }
 

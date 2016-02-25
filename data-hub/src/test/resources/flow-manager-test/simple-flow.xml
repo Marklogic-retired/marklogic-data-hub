@@ -2,7 +2,8 @@
   <name>my-test-flow</name>
   <domain>test</domain>
   <type>conformance</type>
-  <format>simple</format>
+  <complexity>simple</complexity>
+  <data-format>application/xml</data-format>
   <collector type="xquery" module="/com.marklogic.hub/collectors/query.xqy"></collector>
   <plugins>
     <plugin dest="content" type="xquery" module="/com.marklogic.hub/plugins/content.xqy" />
