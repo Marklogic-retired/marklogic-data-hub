@@ -47,8 +47,8 @@ import com.marklogic.hub.flow.SimpleFlow;
 import com.marklogic.hub.plugin.ContentPlugin;
 import com.marklogic.hub.plugin.HeadersPlugin;
 import com.marklogic.hub.plugin.PluginType;
-import com.marklogic.hub.plugin.TriplesPlugin;
 import com.marklogic.hub.plugin.ServerPlugin;
+import com.marklogic.hub.plugin.TriplesPlugin;
 import com.marklogic.hub.writer.DefaultWriter;
 
 public class FlowManagerTest extends HubTestBase {
@@ -214,9 +214,11 @@ public class FlowManagerTest extends HubTestBase {
     public void testRunFlow() throws SAXException, IOException, ParserConfigurationException, XMLStreamException {
         installModule("/ext/domains/test/conformance/my-test-flow1/my-test-flow1.xml", "flow-manager-test/my-test-flow1/my-test-flow1.xml");
         assertEquals(2, getDocCount());
+        JobFinishedListener listener = new JobFinishedListener();
         FlowManager fm = new FlowManager(client);
         SimpleFlow flow1 = (SimpleFlow)fm.getFlow("test", "my-test-flow1");
-        fm.runFlow(flow1, 10);
+        fm.runFlow(flow1, 10, listener);
+        listener.waitForFinish();
         assertEquals(4, getDocCount());
         assertXMLEqual(getXmlFromResource("flow-manager-test/conformed/conformed1.xml"), docMgr.read("/conformed/incoming/employee1.xml").next().getContent(new DOMHandle()).get() );
         assertXMLEqual(getXmlFromResource("flow-manager-test/conformed/conformed2.xml"), docMgr.read("/conformed/incoming/employee2.xml").next().getContent(new DOMHandle()).get());
@@ -228,9 +230,11 @@ public class FlowManagerTest extends HubTestBase {
         installModule("/ext/domains/test/conformance/my-test-flow-with-header/headers/headers.xqy", "flow-manager-test/my-test-flow-with-header/headers/headers.xqy");
 
         assertEquals(2, getDocCount());
+        JobFinishedListener listener = new JobFinishedListener();
         FlowManager fm = new FlowManager(client);
         SimpleFlow flow1 = (SimpleFlow)fm.getFlow("test", "my-test-flow-with-header");
-        fm.runFlow(flow1, 10);
+        fm.runFlow(flow1, 10, listener);
+        listener.waitForFinish();
         assertEquals(4, getDocCount());
         assertXMLEqual(getXmlFromResource("flow-manager-test/conformed-with-header/conformed1.xml"), docMgr.read("/conformed/incoming/employee1.xml").next().getContent(new DOMHandle()).get() );
         assertXMLEqual(getXmlFromResource("flow-manager-test/conformed-with-header/conformed2.xml"), docMgr.read("/conformed/incoming/employee2.xml").next().getContent(new DOMHandle()).get());
@@ -246,10 +250,12 @@ public class FlowManagerTest extends HubTestBase {
         installModule("/ext/domains/test/conformance/my-test-flow-with-all/content/content.xqy", "flow-manager-test/my-test-flow-with-all/content/content.xqy");
         installModule("/ext/domains/test/conformance/my-test-flow-with-all/triples/triples.xqy", "flow-manager-test/my-test-flow-with-all/triples/triples.xqy");
 
+        JobFinishedListener listener = new JobFinishedListener();
         assertEquals(2, getDocCount());
         FlowManager fm = new FlowManager(client);
         SimpleFlow flow1 = (SimpleFlow)fm.getFlow("test", "my-test-flow-with-all");
-        fm.runFlow(flow1, 10);
+        fm.runFlow(flow1, 10, listener);
+        listener.waitForFinish();
         assertEquals(4, getDocCount());
         assertXMLEqual(getXmlFromResource("flow-manager-test/conformed-with-all/conformed1.xml"), docMgr.read("/conformed/incoming/employee1.xml").next().getContent(new DOMHandle()).get() );
         assertXMLEqual(getXmlFromResource("flow-manager-test/conformed-with-all/conformed2.xml"), docMgr.read("/conformed/incoming/employee2.xml").next().getContent(new DOMHandle()).get());

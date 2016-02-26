@@ -20,6 +20,21 @@ import java.util.List;
 
 import javax.xml.stream.XMLStreamException;
 
+import org.springframework.batch.core.Job;
+import org.springframework.batch.core.JobExecutionListener;
+import org.springframework.batch.core.JobParameters;
+import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
+import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.batch.core.job.builder.SimpleJobBuilder;
+import org.springframework.batch.core.launch.JobLauncher;
+import org.springframework.batch.core.launch.support.SimpleJobLauncher;
+import org.springframework.batch.core.repository.JobRepository;
+import org.springframework.batch.core.repository.support.MapJobRepositoryFactoryBean;
+import org.springframework.batch.core.step.tasklet.TaskletStep;
+import org.springframework.batch.item.ItemReader;
+import org.springframework.batch.item.ItemWriter;
+import org.springframework.batch.support.transaction.ResourcelessTransactionManager;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -38,20 +53,58 @@ import com.marklogic.hub.collector.Collector;
 import com.marklogic.hub.collector.ServerCollector;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.SimpleFlow;
-import com.marklogic.hub.plugin.Plugin;
-import com.marklogic.hub.plugin.ServerPlugin;
-import com.marklogic.hub.writer.ServerWriter;
-import com.marklogic.hub.writer.Writer;
+import com.marklogic.spring.batch.hub.CollectorReader;
+import com.marklogic.spring.batch.hub.FlowWriter;
 
 public class FlowManager extends ResourceManager {
     private static final String HUB_NS = "http://marklogic.com/hub-in-a-box";
-    static final public String NAME = "flow";
+    private static final String NAME = "flow";
+    private static final int DEFAULT_THREAD_COUNT = 8;
+
     private DatabaseClient client;
+
+    private JobBuilderFactory jobBuilderFactory;
+    private StepBuilderFactory stepBuilderFactory;
+    private JobLauncher jobLauncher;
+    private ThreadPoolTaskExecutor executor;
+    private int threadCount = DEFAULT_THREAD_COUNT;
 
     public FlowManager(DatabaseClient client) {
         super();
         this.client = client;
         this.client.init(NAME, this);
+        initializeDefaultSpringBatchComponents();
+    }
+
+    public void setThreadCount(int count) {
+        threadCount = count;
+        executor.setCorePoolSize(threadCount);
+        executor.setMaxPoolSize(threadCount);
+    }
+
+    protected void initializeDefaultSpringBatchComponents() {
+        ResourcelessTransactionManager transactionManager = new ResourcelessTransactionManager();
+        MapJobRepositoryFactoryBean f = new MapJobRepositoryFactoryBean(transactionManager);
+        try {
+            f.afterPropertiesSet();
+            JobRepository jobRepository = f.getObject();
+            this.jobBuilderFactory = new JobBuilderFactory(jobRepository);
+            this.stepBuilderFactory = new StepBuilderFactory(jobRepository, transactionManager);
+            SimpleJobLauncher jbl = new SimpleJobLauncher();
+            jbl.setJobRepository(jobRepository);
+
+            this.executor = new ThreadPoolTaskExecutor();
+            executor.setCorePoolSize(threadCount);
+            executor.setMaxPoolSize(threadCount);
+            executor.initialize();
+            executor.setWaitForTasksToCompleteOnShutdown(true);
+            jbl.setTaskExecutor(executor);
+
+            jbl.afterPropertiesSet();
+            this.jobLauncher = jbl;
+        } catch (Exception ex) {
+            throw new RuntimeException("Unable to initialize SqlMigrator, cause: " + ex.getMessage(), ex);
+        }
     }
 
     /**
@@ -121,6 +174,10 @@ public class FlowManager extends ResourceManager {
 
     }
 
+    public void runFlow(Flow flow, int batchSize) {
+        runFlow(flow, batchSize, null);
+    }
+
     // might want to add Job tracking support
     // by returning a Job or some such.
     // Depends a lot on if we go full in with spring batch or not
@@ -128,67 +185,32 @@ public class FlowManager extends ResourceManager {
      * Runs a given flow
      * @param flow - the flow to run
      * @param batchSize - the size to use for batching transactions
+     * @param listener - the JobExecutionListener to receive status updates about the job
      */
-    public void runFlow(Flow flow, int batchSize) {
+    public void runFlow(Flow flow, int batchSize, JobExecutionListener listener) {
         Collector c = flow.getCollector();
         if (c instanceof ServerCollector) {
             ((ServerCollector)c).setClient(client);
         }
+        ItemReader<String> reader = new CollectorReader(c);
+        ItemWriter<String> writer = new FlowWriter(client, flow);
 
-        boolean allServer = true;
-        for (Plugin t : flow.getPlugins()) {
-            if (t instanceof ServerPlugin) {
-                ((ServerPlugin)t).setClient(client);
-            }
-            else if (t != null) {
-                allServer = false;
-            }
+        TaskletStep step = stepBuilderFactory.get("testStep")
+                .<String, String> chunk(batchSize)
+                .reader(reader).writer(writer).build();
+
+        String jobName = flow.getDomainName() + ":" + flow.getType() + ":" + flow.getName() + "-" + System.currentTimeMillis();
+        SimpleJobBuilder builder = jobBuilderFactory.get(jobName).start(step);
+        if (listener != null) {
+            builder = builder.listener(listener);
         }
+        Job job = builder.build();
 
-        Writer w = flow.getWriter();
-        if (w instanceof ServerWriter) {
-            ((ServerWriter)w).setClient(client);
-        }
-
-        FlowRunner runner = new FlowRunner(client);
-        List<String> ids = c.run();
-
-        Transaction transaction = null;
         try {
-            for (int i = 0; i < ids.size(); i++) {
-                if (i % batchSize == 0) {
-                    if (transaction != null) {
-                        transaction.commit();
-                    }
-                    transaction = client.openTransaction();
-                }
-                String id = ids.get(i);
-
-                // all of the Plugins need to be run in MarkLogic
-                if (allServer) {
-                    runner.run(flow, id, transaction);
-                }
-
-                // this path is for when java is in the mix
-                // TODO: make this work
-                else {
-//                    for (Plugin t : flow.getPlugins()) {
-//                        if (t != null) {
-//                            t.run(id);
-//                        }
-//                    }
-                    w.write(id);
-                }
-
-            }
-            if (transaction != null) {
-                transaction.commit();
-            }
+            jobLauncher.run(job, new JobParameters());
         }
-        catch(Exception e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
+        catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -222,9 +244,9 @@ public class FlowManager extends ResourceManager {
      * A class to run a flow
      */
     class FlowRunner extends ResourceManager {
-        static final public String NAME = "flow";
+        private static final String NAME = "flow";
 
-        public FlowRunner(DatabaseClient client) {
+        public FlowRunner(DatabaseClient client, Flow flow, String identifier, Transaction transaction) {
             super();
             client.init(NAME, this);
         }
