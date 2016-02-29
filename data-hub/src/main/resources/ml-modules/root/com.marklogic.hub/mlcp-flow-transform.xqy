@@ -22,6 +22,7 @@ declare function mlcpFlow:transform(
     map:get($paramMap, 'flow-type'))
 
   let $envelope := flow:run-plugins($flow, $uri, map:get($content, "value"), $paramMap)
+  let $_ := map:put($content, "value", $envelope)
   return
     $content
 };

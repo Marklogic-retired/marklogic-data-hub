@@ -10,7 +10,7 @@
  * @return - your content
  */
 function createContent(id, content, headers, triples, options) {
-  return fn.doc(id);
+  return content;
 }
 
 module.exports = {
