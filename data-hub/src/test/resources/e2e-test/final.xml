@@ -1,0 +1,7 @@
+<envelope xmlns="http://marklogic.com/hub-in-a-box/envelope">
+  <headers></headers>
+  <triples></triples>
+  <content>
+    <testing xmlns="">123</testing>
+  </content>
+</envelope>

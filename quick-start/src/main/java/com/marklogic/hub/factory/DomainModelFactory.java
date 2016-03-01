@@ -34,7 +34,7 @@ public class DomainModelFactory {
         }
     }
 
-    public DomainModel createNewDomain(String userPluginDir, String domainName,
+    public DomainModel createNewDomain(File userPluginDir, String domainName,
             String inputFlowName, String conformFlowName, PluginFormat pluginFormat,
             Format dataFormat) throws IOException {
         DomainModel domainModel = new DomainModel();
@@ -42,20 +42,18 @@ public class DomainModelFactory {
         domainModel.setInputFlows(new ArrayList<>());
         domainModel.setConformFlows(new ArrayList<>());
 
-        File domainsPath = new File(userPluginDir, FileUtil.DOMAINS_FOLDER);
-        Scaffolding.createDomain(domainName, domainsPath);
+        Scaffolding.createDomain(domainName, userPluginDir);
 
         FlowModelFactory flowModelFactory = new FlowModelFactory(domainName);
-        File domainDirPath = new File(domainsPath, domainName);
         if (inputFlowName != null) {
-            FlowModel inputFlow = flowModelFactory.createNewFlow(domainDirPath,
+            FlowModel inputFlow = flowModelFactory.createNewFlow(userPluginDir,
                     inputFlowName, FlowType.INPUT, pluginFormat, dataFormat);
             domainModel.getInputFlows().add(inputFlow);
         }
 
         if (conformFlowName != null) {
             FlowModel conformFlow = flowModelFactory.createNewFlow(
-                    domainDirPath, conformFlowName,
+                    userPluginDir, conformFlowName,
                     FlowType.CONFORMANCE, pluginFormat,
                     dataFormat);
             domainModel.getConformFlows().add(conformFlow);

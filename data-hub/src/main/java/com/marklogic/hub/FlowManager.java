@@ -15,11 +15,14 @@
  */
 package com.marklogic.hub;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.stream.XMLStreamException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecutionListener;
 import org.springframework.batch.core.JobParameters;
@@ -49,9 +52,11 @@ import com.marklogic.client.io.DOMHandle;
 import com.marklogic.client.io.Format;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.util.RequestParameters;
+import com.marklogic.hub.Mlcp.SourceOptions;
 import com.marklogic.hub.collector.Collector;
 import com.marklogic.hub.collector.ServerCollector;
 import com.marklogic.hub.flow.Flow;
+import com.marklogic.hub.flow.FlowType;
 import com.marklogic.hub.flow.SimpleFlow;
 import com.marklogic.spring.batch.hub.CollectorReader;
 import com.marklogic.spring.batch.hub.FlowWriter;
@@ -60,6 +65,8 @@ public class FlowManager extends ResourceManager {
     private static final String HUB_NS = "http://marklogic.com/hub-in-a-box";
     private static final String NAME = "flow";
     private static final int DEFAULT_THREAD_COUNT = 8;
+
+    static final private Logger LOGGER = LoggerFactory.getLogger(FlowManager.class);
 
     private DatabaseClient client;
 
@@ -149,12 +156,12 @@ public class FlowManager extends ResourceManager {
         return getFlow(domainName, flowName, null);
     }
 
-    public Flow getFlow(String domainName, String flowName, String flowType) {
+    public Flow getFlow(String domainName, String flowName, FlowType flowType) {
         RequestParameters params = new RequestParameters();
         params.add("domain-name", domainName);
         params.add("flow-name", flowName);
         if (flowType != null) {
-            params.add("flow-type", flowType);
+            params.add("flow-type", flowType.toString());
         }
         ServiceResultIterator resultItr = this.getServices().get(params);
         if (resultItr == null || ! resultItr.hasNext()) {
@@ -211,6 +218,18 @@ public class FlowManager extends ResourceManager {
         }
         catch (Exception e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    public void runInputFlow(Flow flow, HubConfig config) {
+        try {
+            Mlcp mlcp = new Mlcp(config.getHost(), config.getPort(), config.getAdminUsername(), config.getAdminPassword());
+            SourceOptions sourceOptions = new SourceOptions(flow.getDomainName(), flow.getName(), FlowType.INPUT.toString());
+            mlcp.addSourceDirectory(config.getModulesPath(), sourceOptions);
+            mlcp.loadContent();
+        }
+        catch (IOException e) {
+            LOGGER.error("Error encountered while trying to run flow:  " + flow.getDomainName() + " > " + flow.getName(), e);
         }
     }
 

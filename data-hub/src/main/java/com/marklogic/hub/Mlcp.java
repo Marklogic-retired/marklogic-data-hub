@@ -27,23 +27,23 @@ public class Mlcp {
     private static final Logger LOGGER = LoggerFactory.getLogger(Mlcp.class);
 
     private final static String DEFAULT_HADOOP_HOME_DIR= "./hadoop/";
-    
+
     private List<MlcpSource> sources = new ArrayList<>();
 
     private String host;
 
-    private String port;
+    private int port;
 
     private String user;
 
     private String password;
 
-    public Mlcp(String host, String port, String user, String password) throws IOException {
+    public Mlcp(String host, int port, String user, String password) throws IOException {
         this.host = host;
         this.port = port;
         this.user = user;
         this.password = password;
-        
+
         setHadoopHomeDir();
     }
 
@@ -66,7 +66,7 @@ public class Mlcp {
                 arguments.add("-host");
                 arguments.add(host);
                 arguments.add("-port");
-                arguments.add(port);
+                arguments.add(Integer.toString(port));
                 arguments.add("-username");
                 arguments.add(user);
                 arguments.add("-password");
@@ -75,7 +75,7 @@ public class Mlcp {
                 // add arguments related to the source
                 List<String> sourceArguments = source.getMlcpArguments();
                 arguments.addAll(sourceArguments);
-                
+
                 DataHubContentPump contentPump = new DataHubContentPump(arguments);
                 contentPump.execute();
             }
@@ -92,7 +92,7 @@ public class Mlcp {
             }
         }
     }
-    
+
     protected void setHadoopHomeDir() throws IOException {
         String home = System.getProperty("hadoop.home.dir");
         if (home == null) {

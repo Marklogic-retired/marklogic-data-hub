@@ -37,18 +37,17 @@ public class FlowModelFactory {
         }
     }
 
-    public FlowModel createNewFlow(File domainDirPath, String flowName,
+    public FlowModel createNewFlow(File userPluginDirPath, String flowName,
             FlowType flowType, PluginFormat pluginFormat, Format dataFormat) throws IOException {
         FlowModel flowModel = new FlowModel();
         flowModel.setDomainName(domainName);
         flowModel.setFlowName(flowName);
         flowModel.setSynched(false);
 
-        Scaffolding.createFlow(domainDirPath, domainName, flowName, flowType, pluginFormat, dataFormat);
+        Scaffolding.createFlow(domainName, flowName, flowType, pluginFormat, dataFormat, userPluginDirPath);
 
-        String absolutePath = domainDirPath + File.separator
-                + flowType + File.separator + flowName;
-
+        File domainDirPath = Scaffolding.getFlowDir(userPluginDirPath, domainName, flowName, flowType);
+        String absolutePath = domainDirPath.getAbsolutePath();
         TreeDataFactory treeDataFactory = new TreeDataFactory(absolutePath,
                 flowName);
         flowModel.setTreeData(treeDataFactory.listFilesAndDirectories());
