@@ -96,6 +96,15 @@ public class HubTestBase {
 
     }
 
+    protected static HubConfig getHubConfig(String pluginDir) {
+        HubConfig config = new HubConfig(pluginDir);
+        config.setHost(host);
+        config.setPort(port);
+        config.setAdminUsername(user);
+        config.setAdminPassword(password);
+        return config;
+    }
+
     protected static void installHub() throws IOException {
         new DataHub(host, port, user, password).install();
     }

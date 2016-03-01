@@ -35,15 +35,27 @@ public class Scaffolding {
 
     static final private Logger LOGGER = LoggerFactory.getLogger(Scaffolding.class);
 
+    public static File getDomainDir(File userlandDir, String domainName) {
+        File domainsDir = new File(userlandDir, "domains");
+        File domainDir = new File(domainsDir, domainName);
+        return domainDir;
+    }
+
+    public static File getFlowDir(File userlandDir, String domainName, String flowName, FlowType flowType) {
+        File domainDir = getDomainDir(userlandDir, domainName);
+        File typeDir = new File(domainDir, flowType.toString());
+        File flowDir = new File(typeDir, flowName);
+        return flowDir;
+    }
+
     public static void createDomain(String domainName, File userlandPath) {
-        File domainDir = new File(userlandPath, domainName);
+        File domainDir = getDomainDir(userlandPath, domainName);
         domainDir.mkdirs();
     }
 
-    public static void createFlow(File domainPath, String domainName, String name, FlowType flowType, PluginFormat pluginFormat, Format dataFormat)
+    public static void createFlow(String domainName, String flowName, FlowType flowType, PluginFormat pluginFormat, Format dataFormat, File userlandDir)
             throws IOException {
-        File typeDir = new File(domainPath, flowType.toString());
-        File flowDir = new File(typeDir, name);
+        File flowDir = getFlowDir(userlandDir, domainName, flowName, flowType);
 
         if (flowType.equals(FlowType.CONFORMANCE)) {
             File collectorDir = new File(flowDir, "collector");
@@ -67,9 +79,9 @@ public class Scaffolding {
         writeFile("scaffolding/" + flowType + "/" + pluginFormat + "/triples." + pluginFormat,
                 Paths.get(triplesDir.getPath(), "triples." + pluginFormat));
 
-        SimpleFlow flow = new SimpleFlow(domainName, name, flowType, dataFormat);
+        SimpleFlow flow = new SimpleFlow(domainName, flowName, flowType, dataFormat);
         flow.serialize();
-        File flowFile = new File(flowDir, name + ".xml");
+        File flowFile = new File(flowDir, flowName + ".xml");
         try(PrintWriter out = new PrintWriter(flowFile)) {
             out.println(flow.serialize());
         }

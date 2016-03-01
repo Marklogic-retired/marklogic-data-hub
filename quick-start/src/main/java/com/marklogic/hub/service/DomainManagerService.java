@@ -110,8 +110,9 @@ public class DomainManagerService {
         DomainModelFactory domainModelFactory = new DomainModelFactory();
         DomainModel domainModel;
         try {
+            File pluginDir = new File(environmentConfiguration.getUserPluginDir());
             domainModel = domainModelFactory.createNewDomain(
-                    environmentConfiguration.getUserPluginDir(), domainName,
+                    pluginDir, domainName,
                     inputFlowName, conformFlowName, pluginFormat, dataFormat);
         } catch (IOException e) {
             throw new DomainManagerException(e.getMessage(), e);

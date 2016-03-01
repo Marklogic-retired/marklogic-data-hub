@@ -535,6 +535,11 @@ declare function flow:run-plugin(
       let $resp := $func($identifier, $content, $headers, $triples, $options)
       return
         typeswitch($resp)
+          case document-node() return
+            if (fn:count($resp/node()) > 1) then
+              fn:error("Too Many Nodes!. Return just 1 node")
+            else
+              $resp/node()
           case json:array return
             if ($data-format = 'application/xml') then
               json:array-values($resp)
