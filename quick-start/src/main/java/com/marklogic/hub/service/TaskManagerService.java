@@ -1,6 +1,7 @@
 package com.marklogic.hub.service;
 
 import java.math.BigInteger;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -21,12 +22,12 @@ public class TaskManagerService {
 
     private BigInteger lastTaskId = BigInteger.ZERO;
     
-    private Map<BigInteger, Task> taskMap = new HashMap<>();
+    private Map<BigInteger, Task> taskMap = Collections.synchronizedMap(new HashMap<>());
     
     public TaskManagerService() {
     }
     
-    public synchronized BigInteger addTask(Runnable runnable) {
+    public BigInteger addTask(Runnable runnable) {
         BigInteger taskId = fetchNextTaskId();
         
         Task task = new Task(runnable);
@@ -37,7 +38,7 @@ public class TaskManagerService {
         return taskId;
     }
     
-    public synchronized Object waitTask(BigInteger taskId) {
+    public Object waitTask(BigInteger taskId) {
         Task task = taskMap.get(taskId);
         if (task != null) {
             return task.awaitCompletion();
@@ -46,14 +47,14 @@ public class TaskManagerService {
         return null;
     }
     
-    public synchronized void stopTask(BigInteger taskId) {
+    public void stopTask(BigInteger taskId) {
         Task task = taskMap.get(taskId);
         if (task != null) {
             task.stopOrCancelTask();
         }
     }
     
-    public synchronized void removeTask(BigInteger taskId) {
+    public void removeTask(BigInteger taskId) {
         taskMap.remove(taskId);
     }
     
@@ -86,7 +87,7 @@ public class TaskManagerService {
             this.interrupt();
         }
         
-        public synchronized Object awaitCompletion() {
+        public Object awaitCompletion() {
             try {
                 return taskResult.get();
             } catch (InterruptedException e) {

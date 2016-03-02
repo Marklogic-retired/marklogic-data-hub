@@ -1,5 +1,6 @@
 var dependencies = [
     'dhib.quickstart.service.data-hub'
+    ,'dhib.quickstart.service.modal'
 ];
 
 var module = angular.module('dhib.quickstart.controller.top', dependencies);
@@ -9,12 +10,14 @@ module.controller('topController', [
     ,'$location'
     ,'$timeout'
     ,'DataHub'
+    ,'ModalService'
     ,'TaskManager'
     ,function(
         $scope
         ,$location
         ,$timeout
         ,DataHub
+        ,ModalService
         ,TaskManager
     ) {
         $scope.status = DataHub.status;
@@ -85,21 +88,36 @@ module.controller('topController', [
             $scope.loading = false;
         };
 
-        $scope.showLoadDataForm = function(domainName, flowName) {
-            $scope.loading = true;
-            $scope.loadDataForm = {
-                'hasErrors' : false
-                ,'domainName' : domainName
-                ,'flowName' : flowName
-                ,'inputPath' : 'input'
-            };
-            $('#loadDataModal').modal({
-                backdrop: 'static',
-                keyboard: true
+        $scope.runInputFlow = function(flow) {
+            ModalService.openLoadDataModal().then(function (inputPath) {
+                DataHub.runInputFlow(flow.domainName, flow.flowName, inputPath)
+                .success(function (taskId) {
+                    flow.inputFlowTaskId = taskId;
+                    
+                    console.log('Running input flow using task id: ' + flow.inputFlowTaskId);
+                    
+                    TaskManager.waitForTask(flow.inputFlowTaskId)
+                    .success(function (result) {
+                        console.log('done waiting for task. task result:');
+                        console.log(result);
+                        
+                        DataHub.displayMessage('Flow data load is successful.', 'success', 'notification', false);
+                    })
+                    .error(function () {
+                        DataHub.displayMessage('Flow data load is unsuccessful.', 'error', 'notification', false);
+                    })
+                    .finally(function () {
+                        flow.inputFlowTaskId = null;
+                        $scope.loading = false;
+                    });
+                });
             });
-            $scope.loading = false;
         };
-
+        
+        $scope.cancelInputFlow = function(flow) {
+            TaskManager.cancelTask(flow.inputFlowTaskId);
+        };
+        
         $scope.runFlow = function(domainName, flowName) {
             $scope.loading = true;
             DataHub.runFlow(domainName, flowName)
@@ -110,38 +128,7 @@ module.controller('topController', [
                 $scope.loading = false;
             });
         };
-
-        $scope.runInputFlow = function() {
-            $scope.loading = true;
-            
-            $('#loadDataModal').modal('hide');
-            
-            DataHub.runInputFlow($scope.loadDataForm.domainName, $scope.loadDataForm.flowName, $scope.loadDataForm.inputPath)
-            .success(function (taskId) {
-                $scope.inputFlowTaskId = taskId;
-                
-                console.log('Running input flow using task id: ' + $scope.inputFlowTaskId);
-                
-                TaskManager.waitForTask($scope.inputFlowTaskId)
-                .success(function (result) {
-                    console.log('done waiting for task. task result:');
-                    console.log(result);
-                    
-                    DataHub.displayMessage('Flow data load is successful.', 'success', 'notification', false);
-                })
-                .error(function () {
-                    DataHub.displayMessage('Flow data load is unsuccessful.', 'error', 'notification', false);
-                })
-                .finally(function () {
-                    $scope.loading = false;
-                });
-            });
-        };
         
-        $scope.cancelInputFlow = function() {
-            TaskManager.cancelTask($scope.inputFlowTaskId);
-        };
-
         $scope.testFlow = function(domainName, flowName) {
             $scope.loading = true;
             DataHub.testFlow(domainName, flowName)
