@@ -20,7 +20,8 @@
     	<div class="button-group-right">
         <button type="submit" name="runFlow" class="btn btn-success" ng-click="runFlow(flow)" ng-disabled="!flow.synched" ng-if="flow.runFlowTaskId == null">Run</button>
         <button type="submit" name="runFlow" class="btn btn-success" ng-click="cancelRunFlow(flow)" ng-if="flow.runFlowTaskId != null">Cancel Run</button>
-    		<button type="submit" name="testFlow" class="btn btn-success" ng-click="testFlow(flow.domainName, flow.flowName)" ng-disabled="!flow.synched">Test</button>
+    		<button type="submit" name="testFlow" class="btn btn-success" ng-click="testFlow(flow)" ng-disabled="!flow.synched" ng-if="flow.testFlowTaskId == null">Test</button>
+            <button type="submit" name="testFlow" class="btn btn-success" ng-click="cancelTestFlow(flow)" ng-if="flow.testFlowTaskId != null">Cancel Test</button>
     	</div>
     	<abn-tree tree-data="flow.treeData.children" icon-leaf="fa fa-file-text-o" icon-expand="fa fa-folder-o" icon-collapse="fa fa-folder-open-o" expand-level="1"></abn-tree>
     </li>

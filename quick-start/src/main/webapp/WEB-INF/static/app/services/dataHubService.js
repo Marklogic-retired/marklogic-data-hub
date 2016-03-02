@@ -160,15 +160,7 @@ module.factory('DataHub', [
                 	domainName: domainName,
                 	flowName: flowName
                 };
-            	var promise = $http.post('api/flows/test', data)
-                .success(function () {
-                    service.displayMessage('Flow test is successful.', 'success', 'notification', false);
-                })
-                .error(function () {
-                	service.displayMessage('Flow test is unsuccessful.', 'error', 'notification', false);
-                });
-                
-                return promise;
+                return $http.post('api/flows/test', data)
             }
             
             ,saveFlow : function(flowForm) {

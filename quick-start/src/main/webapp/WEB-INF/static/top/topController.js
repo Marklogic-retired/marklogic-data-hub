@@ -146,15 +146,32 @@ module.controller('topController', [
             TaskManager.cancelTask(flow.runFlowTaskId);
         };
         
-        $scope.testFlow = function(domainName, flowName) {
+        $scope.testFlow = function(flow) {
             $scope.loading = true;
-            DataHub.testFlow(domainName, flowName)
-            .success(function () {
-
+            
+            DataHub.testFlow(flow.domainName, flow.flowName)
+            .success(function (taskId) {
+                flow.testFlowTaskId = taskId;
+                
+                TaskManager.waitForTask(flow.testFlowTaskId)
+                .success(function (result) {
+                    DataHub.displayMessage('Flow test is successful.', 'success', 'notification', false);
+                })
+                .error(function () {
+                    DataHub.displayMessage('Flow test is unsuccessful.', 'error', 'notification', false);
+                })
+                .finally(function () {
+                    flow.testFlowTaskId = null;
+                    $scope.loading = false;
+                });
             })
-            .finally(function () {
+            .error(function () {
                 $scope.loading = false;
             });
+        };
+        
+        $scope.cancelTestFlow = function(flow) {
+            TaskManager.cancelTask(flow.testFlowTaskId);
         };
 
         $scope.saveFlow = function() {

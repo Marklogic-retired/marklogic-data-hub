@@ -106,25 +106,33 @@ public class FlowApiController extends BaseController {
     }
 
     @RequestMapping(value = "/test", method = RequestMethod.POST)
-    public void testFlow(HttpServletRequest request) {
-        final String domainName = request.getParameter("domainName");
-        final String flowName = request.getParameter("flowName");
-        final Flow flow = flowManagerService.getFlow(domainName, flowName);
-        flowManagerService.testFlow(flow);
+    public BigInteger testFlow(HttpServletRequest request) {
+        Runnable task = new Runnable() {
+            
+            @Override
+            public void run() {
+                final String domainName = request.getParameter("domainName");
+                final String flowName = request.getParameter("flowName");
+                final Flow flow = flowManagerService.getFlow(domainName, flowName);
+                flowManagerService.testFlow(flow);
+            }
+        };
+        
+        return taskManagerService.addTask(task);
     }
 
     @RequestMapping(value = "/run", method = RequestMethod.POST)
     public BigInteger runFlow(@RequestBody RunFlowModel runFlow) {
         Runnable task = new Runnable() {
-          @Override
-          public void run() {
-            final Flow flow = flowManagerService.getFlow(runFlow.getDomainName(), runFlow.getFlowName());
-            // TODO update and move BATCH SIZE TO a constant or config - confirm
-            // desired behavior
-            flowManagerService.runFlow(flow, 100);
-          }
+            @Override
+            public void run() {
+                final Flow flow = flowManagerService.getFlow(runFlow.getDomainName(), runFlow.getFlowName());
+                // TODO update and move BATCH SIZE TO a constant or config - confirm
+                // desired behavior
+                flowManagerService.runFlow(flow, 100);
+            }
         };
-        
+
         return taskManagerService.addTask(task);
     }
 
