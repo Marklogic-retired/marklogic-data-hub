@@ -160,15 +160,7 @@ module.factory('DataHub', [
                     ,'flowName': flowName
                     ,'inputPath' : path
                 };
-                var promise = $http.post('api/flows/run/input', data)
-                .success(function () {
-                    service.displayMessage('Flow data load is successful.', 'success', 'notification', false);
-                })
-                .error(function () {
-                    service.displayMessage('Flow data load is unsuccessful.', 'error', 'notification', false);
-                });
-                
-                return promise;
+                return $http.post('api/flows/run/input', data)
             }
             
             ,testFlow : function(domainName, flowName) {
@@ -231,4 +223,32 @@ module.factory('DataHub', [
         
         return service;
     }
-])
+]);
+module.factory('TaskManager', [
+    '$http'
+    ,'$q'
+    ,'$route'
+    ,function(
+        $http
+        ,$q
+        ,$route
+    ) {
+        var service = {
+            waitForTask : function (taskId) {
+                var params = {
+                    'taskId' : taskId
+                };
+                return $http.get('api/task/wait', {'params' : params});
+            }
+            
+            ,cancelTask : function (taskId) {
+                var params = {
+                    'taskId' : taskId
+                };
+                return $http.post('api/task/stop', params);
+            }
+        }
+        
+        return service;
+    }
+]);

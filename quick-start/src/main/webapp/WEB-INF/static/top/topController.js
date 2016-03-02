@@ -9,11 +9,13 @@ module.controller('topController', [
     ,'$location'
     ,'$timeout'
     ,'DataHub'
+    ,'TaskManager'
     ,function(
         $scope
         ,$location
         ,$timeout
         ,DataHub
+        ,TaskManager
     ) {
         $scope.status = DataHub.status;
         $scope.domainForm = {};
@@ -111,14 +113,33 @@ module.controller('topController', [
 
         $scope.runInputFlow = function() {
             $scope.loading = true;
+            
             $('#loadDataModal').modal('hide');
+            
             DataHub.runInputFlow($scope.loadDataForm.domainName, $scope.loadDataForm.flowName, $scope.loadDataForm.inputPath)
-            .success(function () {
-
-            })
-            .finally(function () {
-                $scope.loading = false;
+            .success(function (taskId) {
+                $scope.inputFlowTaskId = taskId;
+                
+                console.log('Running input flow using task id: ' + $scope.inputFlowTaskId);
+                
+                TaskManager.waitForTask($scope.inputFlowTaskId)
+                .success(function (result) {
+                    console.log('done waiting for task. task result:');
+                    console.log(result);
+                    
+                    DataHub.displayMessage('Flow data load is successful.', 'success', 'notification', false);
+                })
+                .error(function () {
+                    DataHub.displayMessage('Flow data load is unsuccessful.', 'error', 'notification', false);
+                })
+                .finally(function () {
+                    $scope.loading = false;
+                });
             });
+        };
+        
+        $scope.cancelInputFlow = function() {
+            TaskManager.cancelTask($scope.inputFlowTaskId);
         };
 
         $scope.testFlow = function(domainName, flowName) {

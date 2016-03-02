@@ -1,6 +1,7 @@
 package com.marklogic.hub.web.controller.api;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,6 +28,7 @@ import com.marklogic.hub.model.DomainModel;
 import com.marklogic.hub.model.FlowModel;
 import com.marklogic.hub.model.RunFlowModel;
 import com.marklogic.hub.service.FlowManagerService;
+import com.marklogic.hub.service.TaskManagerService;
 import com.marklogic.hub.web.controller.BaseController;
 import com.marklogic.hub.web.form.FlowForm;
 import com.marklogic.hub.web.form.LoginForm;
@@ -43,6 +45,9 @@ public class FlowApiController extends BaseController {
 
     @Autowired
     private FlowManagerService flowManagerService;
+    
+    @Autowired
+    private TaskManagerService taskManagerService;
 
     @RequestMapping(value = "/flow", method = RequestMethod.GET)
     @ResponseBody
@@ -117,24 +122,29 @@ public class FlowApiController extends BaseController {
     }
 
     @RequestMapping(value="/run/input", method = RequestMethod.POST)
-    public void runInputFlow(@RequestBody RunFlowModel runFlow) {
-        try {
-            Mlcp mlcp = new Mlcp(
-                            environmentConfiguration.getMLHost()
+    public BigInteger runInputFlow(@RequestBody RunFlowModel runFlow) {
+        Runnable task = new Runnable() {
+            public void run() {
+                try {
+                    Mlcp mlcp = new Mlcp(
+                                    environmentConfiguration.getMLHost()
                             ,Integer.parseInt(environmentConfiguration.getMLRestPort())
-                            ,environmentConfiguration.getMLUsername()
-                            ,environmentConfiguration.getMLPassword()
-                        );
+                                    ,environmentConfiguration.getMLUsername()
+                                    ,environmentConfiguration.getMLPassword()
+                                );
 
-            SourceOptions sourceOptions = new SourceOptions(runFlow.getDomainName(), runFlow.getFlowName(), FlowType.INPUT.toString());
-            mlcp.addSourceDirectory(runFlow.getInputPath(), sourceOptions);
-            mlcp.loadContent();
-        }
-        catch (IOException e) {
-            LOGGER.error("Error encountered while trying to run flow:  " + runFlow.getDomainName() + " > " + runFlow.getFlowName(), e);
-        }
+                    SourceOptions sourceOptions = new SourceOptions(runFlow.getDomainName(), runFlow.getFlowName(), FlowType.INPUT.toString());
+                    mlcp.addSourceDirectory(runFlow.getInputPath(), sourceOptions);
+                    mlcp.loadContent();
+                }
+                catch (IOException e) {
+                    LOGGER.error("Error encountered while trying to run flow:  " + runFlow.getDomainName() + " > " + runFlow.getFlowName(), e);
+                }
+            }
+        };
+        return taskManagerService.addTask(task);
     }
-
+    
     @RequestMapping(value = "/runInParallel", method = RequestMethod.POST)
     public void runFlowsInParallel(HttpServletRequest request) {
         final String domainName = request.getParameter("domainName");
