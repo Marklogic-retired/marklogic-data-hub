@@ -143,15 +143,7 @@ module.factory('DataHub', [
             		domainName: domainName,
             		flowName: flowName
             	};
-            	var promise = $http.post('api/flows/run', data)
-                .success(function () {
-                	service.displayMessage('Flow run is successful.', 'success', 'notification', false);
-                })
-                .error(function () {
-                	service.displayMessage('Flow run is unsuccessful.', 'error', 'notification', false);
-                });
-                
-                return promise;
+            	return $http.post('api/flows/run', data)
             }
             
             ,runInputFlow : function(domainName, flowName, path) {

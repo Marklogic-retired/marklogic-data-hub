@@ -114,11 +114,18 @@ public class FlowApiController extends BaseController {
     }
 
     @RequestMapping(value = "/run", method = RequestMethod.POST)
-    public void runFlow(@RequestBody RunFlowModel runFlow) {
-        final Flow flow = flowManagerService.getFlow(runFlow.getDomainName(), runFlow.getFlowName());
-        // TODO update and move BATCH SIZE TO a constant or config - confirm
-        // desired behavior
-        flowManagerService.runFlow(flow, 100);
+    public BigInteger runFlow(@RequestBody RunFlowModel runFlow) {
+        Runnable task = new Runnable() {
+          @Override
+          public void run() {
+            final Flow flow = flowManagerService.getFlow(runFlow.getDomainName(), runFlow.getFlowName());
+            // TODO update and move BATCH SIZE TO a constant or config - confirm
+            // desired behavior
+            flowManagerService.runFlow(flow, 100);
+          }
+        };
+        
+        return taskManagerService.addTask(task);
     }
 
     @RequestMapping(value="/run/input", method = RequestMethod.POST)

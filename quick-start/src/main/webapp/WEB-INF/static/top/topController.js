@@ -90,17 +90,14 @@ module.controller('topController', [
 
         $scope.runInputFlow = function(flow) {
             ModalService.openLoadDataModal().then(function (inputPath) {
+                $scope.loading = true;
+                
                 DataHub.runInputFlow(flow.domainName, flow.flowName, inputPath)
                 .success(function (taskId) {
                     flow.inputFlowTaskId = taskId;
                     
-                    console.log('Running input flow using task id: ' + flow.inputFlowTaskId);
-                    
                     TaskManager.waitForTask(flow.inputFlowTaskId)
                     .success(function (result) {
-                        console.log('done waiting for task. task result:');
-                        console.log(result);
-                        
                         DataHub.displayMessage('Flow data load is successful.', 'success', 'notification', false);
                     })
                     .error(function () {
@@ -110,6 +107,9 @@ module.controller('topController', [
                         flow.inputFlowTaskId = null;
                         $scope.loading = false;
                     });
+                })
+                .error(function () {
+                    $scope.loading = false;
                 });
             });
         };
@@ -118,15 +118,32 @@ module.controller('topController', [
             TaskManager.cancelTask(flow.inputFlowTaskId);
         };
         
-        $scope.runFlow = function(domainName, flowName) {
+        $scope.runFlow = function(flow) {
             $scope.loading = true;
-            DataHub.runFlow(domainName, flowName)
-            .success(function () {
-
+            
+            DataHub.runFlow(flow.domainName, flow.flowName)
+            .success(function (taskId) {
+                flow.runFlowTaskId = taskId;
+                
+                TaskManager.waitForTask(flow.runFlowTaskId)
+                .success(function (result) {
+                    DataHub.displayMessage('Flow run is successful.', 'success', 'notification', false);
+                })
+                .error(function () {
+                    DataHub.displayMessage('Flow run is unsuccessful.', 'error', 'notification', false);
+                })
+                .finally(function () {
+                    flow.runFlowTaskId = null;
+                    $scope.loading = false;
+                });
             })
-            .finally(function () {
+            .error(function () {
                 $scope.loading = false;
             });
+        };
+        
+        $scope.cancelRunFlow = function(flow) {
+            TaskManager.cancelTask(flow.runFlowTaskId);
         };
         
         $scope.testFlow = function(domainName, flowName) {
