@@ -47,10 +47,16 @@ public class DefaultHubConfigFactory extends PropertySourceFactory {
             c.setHost(prop);
         }
 
-        prop = getProperty("mlPort");
+        prop = getProperty("mlStagingPort");
         if (prop != null) {
-            logger.info("App REST port: " + prop);
-            c.setPort(Integer.parseInt(prop));
+            logger.info("Staging App REST port: " + prop);
+            c.setStagingPort(Integer.parseInt(prop));
+        }
+
+        prop = getProperty("mlFinalPort");
+        if (prop != null) {
+            logger.info("Final App REST port: " + prop);
+            c.setFinalPort(Integer.parseInt(prop));
         }
 
         prop = getProperty("mlAdminUsername");

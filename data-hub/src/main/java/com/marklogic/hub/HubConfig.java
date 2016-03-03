@@ -20,7 +20,8 @@ public class HubConfig {
     public static final String DEFAULT_USERNAME = "admin";
     public static final String DEFAULT_PASSWORD = "admin";
     public static final String DEFAULT_HOST = "localhost";
-    public static final Integer DEFAULT_PORT = 8010;
+    public static final Integer DEFAULT_STAGING_PORT = 8010;
+    public static final Integer DEFAULT_FINAL_PORT = 8011;
     public static final String DEFAULT_APP_NAME = "my-data-hub";
     public final static String DEFAULT_MODULES_PATH = "src/data-hub";
 
@@ -28,7 +29,8 @@ public class HubConfig {
     private String adminUsername = DEFAULT_USERNAME;
     private String adminPassword = DEFAULT_PASSWORD;
     private String host = DEFAULT_HOST;
-    private Integer port = DEFAULT_PORT;
+    private Integer stagingPort = DEFAULT_STAGING_PORT;
+    private Integer finalPort = DEFAULT_FINAL_PORT;
     private String modulesPath;
 
     public HubConfig() {
@@ -85,14 +87,25 @@ public class HubConfig {
     }
 
     /**
-     * @return the port of the REST API server used for loading modules
+     * @return the port of the Staging REST API server used for loading modules
      */
-    public Integer getPort() {
-        return port;
+    public Integer getStagingPort() {
+        return stagingPort;
     }
 
-    public void setPort(Integer port) {
-        this.port = port;
+    public void setStagingPort(Integer port) {
+        this.stagingPort = port;
+    }
+
+    /**
+     * @return the port of the Final REST API server used for loading modules
+     */
+    public Integer getFinalPort() {
+        return finalPort;
+    }
+
+    public void setFinalPort(Integer port) {
+        this.finalPort = port;
     }
 
     public String getModulesPath() {

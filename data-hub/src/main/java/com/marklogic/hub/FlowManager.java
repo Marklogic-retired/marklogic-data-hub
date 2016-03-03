@@ -223,7 +223,7 @@ public class FlowManager extends ResourceManager {
 
     public void runInputFlow(Flow flow, HubConfig config) {
         try {
-            Mlcp mlcp = new Mlcp(config.getHost(), config.getPort(), config.getAdminUsername(), config.getAdminPassword());
+            Mlcp mlcp = new Mlcp(config.getHost(), config.getStagingPort(), config.getAdminUsername(), config.getAdminPassword());
             SourceOptions sourceOptions = new SourceOptions(flow.getDomainName(), flow.getName(), FlowType.INPUT.toString());
             mlcp.addSourceDirectory(config.getModulesPath(), sourceOptions);
             mlcp.loadContent();

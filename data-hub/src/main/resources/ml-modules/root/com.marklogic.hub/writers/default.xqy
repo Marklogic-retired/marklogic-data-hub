@@ -24,5 +24,5 @@ declare function plugin:write(
   $content as node(),
   $context as map:map)
 {
-  xdmp:document-insert("/conformed" || $id, $content)
+  xdmp:document-insert($id, $content)
 };

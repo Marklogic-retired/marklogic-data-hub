@@ -121,7 +121,7 @@ public class FlowApiController extends BaseController {
         try {
             Mlcp mlcp = new Mlcp(
                             environmentConfiguration.getMLHost()
-                            ,Integer.parseInt(environmentConfiguration.getMLRestPort())
+                            ,Integer.parseInt(environmentConfiguration.getMLStagingRestPort())
                             ,environmentConfiguration.getMLUsername()
                             ,environmentConfiguration.getMLPassword()
                         );

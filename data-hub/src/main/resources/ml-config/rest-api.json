@@ -1,8 +1,8 @@
 {
   "rest-api" : {
-    "name" : "%%NAME%%",
+    "name" : "data-hub-in-a-box-STAGING",
     "group" : "%%GROUP%%",
-    "database" : "%%DATABASE%%",
+    "database" : "data-hub-in-a-box-STAGING",
     "modules-database" : "%%MODULES_DATABASE%%",
     "port" : %%PORT%%,
     "xdbc-enabled" : true,

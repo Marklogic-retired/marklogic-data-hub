@@ -50,19 +50,36 @@ public class HubTestBase {
     static final private Logger logger = LoggerFactory.getLogger(HubTestBase.class);
 
     public static String host;
-    public static int port;
+    public static int stagingPort;
+    public static int finalPort;
     public static String user;
     public static String password;
     public static Authentication authMethod;
-    public static DatabaseClient client = null;
+    public static DatabaseClient stagingClient = null;
+    public static DatabaseClient finalClient = null;
     private static Properties properties = new Properties();
-    public static XMLDocumentManager docMgr = init();
+    private static boolean initialized = false;
+    public static XMLDocumentManager stagingDocMgr = getStagingMgr();
+    public static XMLDocumentManager finalDocMgr = getFinalMgr();
 
     public static Properties getProperties() {
         return properties;
     }
 
-    private static XMLDocumentManager init() {
+    private static XMLDocumentManager getStagingMgr() {
+        if (!initialized) {
+            init();
+        }
+        return stagingClient.newXMLDocumentManager();
+    }
+
+    private static XMLDocumentManager getFinalMgr() {
+        if (!initialized) {
+            init();
+        }
+        return finalClient.newXMLDocumentManager();
+    }
+    private static void init() {
         try {
             Properties p = new Properties();
             p.load(new FileInputStream("gradle.properties"));
@@ -83,13 +100,14 @@ public class HubTestBase {
         }
 
         host = properties.getProperty("mlHost");
-        port = Integer.parseInt(properties.getProperty("mlRestPort"));
+        stagingPort = Integer.parseInt(properties.getProperty("mlStagingRestPort"));
+        finalPort = Integer.parseInt(properties.getProperty("mlFinalRestPort"));
         user = properties.getProperty("mlUsername");
         password = properties.getProperty("mlPassword");
         authMethod = Authentication.valueOf(properties.getProperty("auth").toUpperCase());
 
-        client = DatabaseClientFactory.newClient(host, port, user, password, authMethod);
-        return client.newXMLDocumentManager();
+        stagingClient = DatabaseClientFactory.newClient(host, stagingPort, user, password, authMethod);
+        finalClient = DatabaseClientFactory.newClient(host, finalPort, user, password, authMethod);
     }
 
     public HubTestBase() {
@@ -99,18 +117,19 @@ public class HubTestBase {
     protected static HubConfig getHubConfig(String pluginDir) {
         HubConfig config = new HubConfig(pluginDir);
         config.setHost(host);
-        config.setPort(port);
+        config.setStagingPort(stagingPort);
+        config.setFinalPort(finalPort);
         config.setAdminUsername(user);
         config.setAdminPassword(password);
         return config;
     }
 
     protected static void installHub() throws IOException {
-        new DataHub(host, port, user, password).install();
+        new DataHub(host, stagingPort, finalPort, user, password).install();
     }
 
     protected static void uninstallHub() throws IOException {
-        new DataHub(host, port, user, password).uninstall();
+        new DataHub(host, stagingPort, finalPort, user, password).uninstall();
     }
     protected static String getResource(String resourceName) throws IOException {
         try {
@@ -133,34 +152,43 @@ public class HubTestBase {
         return builder.parse(inputStream);
     }
 
-    protected static int getDocCount() {
+    protected static int getStagingDocCount() {
+        return getDocCount("data-hub-in-a-box-STAGING");
+    }
+
+    protected static int getFinalDocCount() {
+        return getDocCount("data-hub-in-a-box-FINAL");
+    }
+
+    protected static int getDocCount(String database) {
         int count = 0;
-        ServerEvaluationCall eval = client.newServerEval();
-        try {
-            EvalResultIterator resultItr = eval.xquery("xdmp:estimate(fn:doc())").eval();
-            if (resultItr == null || ! resultItr.hasNext()) {
-                return count;
-            }
-
-            EvalResult res = resultItr.next();
-            count = Math.toIntExact((long) res.getNumber());
-
+        EvalResultIterator resultItr = runInDatabase("xdmp:estimate(fn:doc())", database);
+        if (resultItr == null || ! resultItr.hasNext()) {
+            return count;
         }
-        catch(FailedRequestException e) {
-            throw e;
-        }
+        EvalResult res = resultItr.next();
+        count = Math.toIntExact((long) res.getNumber());
         return count;
     }
-    protected static void installDoc(String uri, String doc) {
-        docMgr.write(uri, new StringHandle(doc));
+
+    protected static void installStagingDoc(String uri, String doc) {
+        stagingDocMgr.write(uri, new StringHandle(doc));
     }
 
-    protected static void installDoc(String uri, DocumentMetadataHandle meta, String doc) {
-        docMgr.write(uri, meta, new StringHandle(doc));
+    protected static void installStagingDoc(String uri, DocumentMetadataHandle meta, String doc) {
+        stagingDocMgr.write(uri, meta, new StringHandle(doc));
+    }
+
+    protected static void installFinalDoc(String uri, String doc) {
+        finalDocMgr.write(uri, new StringHandle(doc));
+    }
+
+    protected static void installFinalDoc(String uri, DocumentMetadataHandle meta, String doc) {
+        finalDocMgr.write(uri, meta, new StringHandle(doc));
     }
 
     protected static void installModule(String path, String localPath) {
-        ExtensionLibrariesManager libsMgr = client
+        ExtensionLibrariesManager libsMgr = stagingClient
                 .newServerConfigManager().newExtensionLibrariesManager();
 
         ExtensionLibraryDescriptor moduleDescriptor = new ExtensionLibraryDescriptor();
@@ -182,18 +210,22 @@ public class HubTestBase {
         libsMgr.write(moduleDescriptor, handle);
     }
 
-    protected static void runInModules(String query) {
-        ServerEvaluationCall eval = client.newServerEval();
+    protected static EvalResultIterator runInModules(String query) {
+        return runInDatabase(query, "data-hub-in-a-box-modules");
+    }
+
+    protected static EvalResultIterator runInDatabase(String query, String databaseName) {
+        ServerEvaluationCall eval = stagingClient.newServerEval();
         String installer =
             "xdmp:invoke-function(function() {" +
             query +
             "}," +
             "<options xmlns=\"xdmp:eval\">" +
-            "  <database>{xdmp:modules-database()}</database>" +
+            "  <database>{xdmp:database(\"" + databaseName + "\")}</database>" +
             "  <transaction-mode>update-auto-commit</transaction-mode>" +
             "</options>)";
         try {
-            eval.xquery(installer).eval();
+            return eval.xquery(installer).eval();
         }
         catch(FailedRequestException e) {
             logger.error("Failed run code: " + query, e);
@@ -204,7 +236,7 @@ public class HubTestBase {
     }
 
     protected static void uninstallModule(String path) {
-        ServerEvaluationCall eval = client.newServerEval();
+        ServerEvaluationCall eval = stagingClient.newServerEval();
         String installer =
             "xdmp:invoke-function(function() {" +
             "  xdmp:document-delete(\"" + path + "\")" +
