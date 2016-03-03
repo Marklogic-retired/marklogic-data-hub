@@ -131,6 +131,12 @@ public class LoadModulesCommand extends AbstractCommand {
                 ExtensionMetadataAndParams emap = extensionMetadataProvider.provideExtensionMetadataAndParams(r);
                 this.modulesLoader.installService(r, emap.metadata, emap.methods.toArray(new MethodParameters[] {}));
             }
+
+            resources = findResources("classpath:/ml-modules/transforms", "/**/*.xq*");
+            for (Resource r : resources) {
+                ExtensionMetadataAndParams emap = extensionMetadataProvider.provideExtensionMetadataAndParams(r);
+                this.modulesLoader.installTransform(r, emap.metadata);
+            }
         }
         catch (IOException e) {
             e.printStackTrace();
