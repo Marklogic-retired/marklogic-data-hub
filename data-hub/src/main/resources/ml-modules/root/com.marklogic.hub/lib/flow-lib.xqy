@@ -436,27 +436,21 @@ declare function flow:run-plugins(
     ))
   let $data-format := $flow/hub:data-format
   let $_ :=
-    xdmp:invoke-function(function() {
-      for $plugin in $flow/hub:plugins/hub:plugin
-      let $destination := $plugin/@dest
-      let $resp :=
-        flow:run-plugin(
-          $plugin,
-          $data-format,
-          $identifier,
-          map:get($content, "content"),
-          map:get($content, "headers"),
-          map:get($content, "triple"),
-          $options)
-      return
-        if (fn:empty($destination))
-        then ()
-        else map:put($content, $destination, $resp)
-    },
-    map:new((
-      map:entry("isolation", "different-transaction"),
-      map:entry("transactionMode", "query")
-    )))
+    for $plugin in $flow/hub:plugins/hub:plugin
+    let $destination := $plugin/@dest
+    let $resp :=
+      flow:run-plugin(
+        $plugin,
+        $data-format,
+        $identifier,
+        map:get($content, "content"),
+        map:get($content, "headers"),
+        map:get($content, "triple"),
+        $options)
+    return
+      if (fn:empty($destination))
+      then ()
+      else map:put($content, $destination, $resp)
   return
     flow:make-envelope($content, $data-format)
 };
@@ -469,9 +463,17 @@ declare function flow:run-flow(
 {
   let $envelope := flow:run-plugins($flow, $identifier, $content, $options)
   let $_ :=
-    for $writer in $flow/hub:writer
-    return
-      flow:run-writer($writer, $identifier, $envelope, $options)
+    xdmp:invoke-function(function() {
+      for $writer in $flow/hub:writer
+      return
+        flow:run-writer($writer, $identifier, $envelope, $options)
+    },
+    map:new((
+      map:entry("isolation", "different-transaction"),
+      map:entry("database", xdmp:database("data-hub-in-a-box-FINAL")),
+      map:entry("transactionMode", "update-auto-commit")
+    )))
+
   return
     ()
 };
@@ -484,6 +486,7 @@ declare function flow:run-flow(
  :)
 declare function flow:make-envelope($map as map:map, $data-format as xs:string)
 {
+  xdmp:log(("map:", $map)),
   if ($data-format eq "application/json") then
     xdmp:to-json($map)/node()
   else

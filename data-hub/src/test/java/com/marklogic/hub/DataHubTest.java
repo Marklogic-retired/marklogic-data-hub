@@ -19,9 +19,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
-import java.util.Properties;
 
-import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -32,7 +30,7 @@ public class DataHubTest extends HubTestBase {
 
     @Test
     public void testInstall() throws IOException {
-        DataHub dh = new DataHub(host, port, user, password);
+        DataHub dh = new DataHub(host, stagingPort, finalPort, user, password);
         if (dh.isInstalled()) {
             // uninstall first
             dh.uninstall();
@@ -45,7 +43,7 @@ public class DataHubTest extends HubTestBase {
 
     @Test
     public void testUnInstall() throws IOException {
-        DataHub dh = new DataHub(host, port, user, password);
+        DataHub dh = new DataHub(host, stagingPort, finalPort, user, password);
         if (false == dh.isInstalled()) {
             dh.install();
         }
@@ -56,7 +54,7 @@ public class DataHubTest extends HubTestBase {
 
     @Test
     public void testValidateServer() throws ServerValidationException {
-        DataHub dh = new DataHub(host, port, user, password);
+        DataHub dh = new DataHub(host, stagingPort, finalPort, user, password);
         dh.validateServer();
     }
 

@@ -38,7 +38,7 @@ public class FlowManagerService {
                 .valueOf(environmentConfiguration.getMLAuth().toUpperCase());
         DatabaseClient client = DatabaseClientFactory.newClient(
                 environmentConfiguration.getMLHost(),
-                Integer.parseInt(environmentConfiguration.getMLRestPort()),
+                Integer.parseInt(environmentConfiguration.getMLStagingRestPort()),
                 environmentConfiguration.getMLUsername(),
                 environmentConfiguration.getMLPassword(), authMethod);
         return new FlowManager(client);

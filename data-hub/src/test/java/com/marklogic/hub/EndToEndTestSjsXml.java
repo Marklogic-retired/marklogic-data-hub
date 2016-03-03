@@ -20,7 +20,7 @@ import com.marklogic.client.io.Format;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.FlowType;
 
-public class EndToEndTestXqyXml extends HubTestBase {
+public class EndToEndTestSjsXml extends HubTestBase {
     private static final String DOMAIN = "e2edomain";
     private static File pluginsDir = new File("./ye-olde-plugins");
 
@@ -31,8 +31,8 @@ public class EndToEndTestXqyXml extends HubTestBase {
         installHub();
 
         Scaffolding.createDomain(DOMAIN, pluginsDir);
-        Scaffolding.createFlow(DOMAIN, "testinput", FlowType.INPUT, PluginFormat.XQUERY, Format.XML, pluginsDir);
-        Scaffolding.createFlow(DOMAIN, "testconformance", FlowType.CONFORMANCE, PluginFormat.XQUERY, Format.XML, pluginsDir);
+        Scaffolding.createFlow(DOMAIN, "testinput", FlowType.INPUT, PluginFormat.JAVASCRIPT, Format.XML, pluginsDir);
+        Scaffolding.createFlow(DOMAIN, "testconformance", FlowType.CONFORMANCE, PluginFormat.JAVASCRIPT, Format.XML, pluginsDir);
 
         new DataHub(host, stagingPort, finalPort, user, password).installUserModules("./ye-olde-plugins");
     }

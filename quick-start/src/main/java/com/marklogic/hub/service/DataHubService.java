@@ -45,13 +45,16 @@ public class DataHubService {
             LOGGER.info("Connecting to DataHub at host is {}:{} with user={}",
                     new Object[] {
                             environmentConfiguration.getMLHost()
-                            ,environmentConfiguration.getMLRestPort()
+                            ,environmentConfiguration.getMLStagingRestPort()
                             ,environmentConfiguration.getMLUsername()
                             });
-            DataHub dataHub = new DataHub(environmentConfiguration.getMLHost(), Integer.parseInt(environmentConfiguration.getMLRestPort()), environmentConfiguration.getMLUsername(),
+            DataHub dataHub = new DataHub(environmentConfiguration.getMLHost(),
+                    Integer.parseInt(environmentConfiguration.getMLStagingRestPort()),
+                    Integer.parseInt(environmentConfiguration.getMLFinalRestPort()),
+                    environmentConfiguration.getMLUsername(),
                     environmentConfiguration.getMLPassword());
             dataHub.setAssetInstallTimeFile(new File(environmentConfiguration.getAssetInstallTimeFilePath()));
-            
+
             return dataHub;
 		} catch(Throwable e) {
 			throw new DataHubException(e.getMessage(), e);
@@ -87,7 +90,7 @@ public class DataHubService {
 			throw new DataHubException(e.getMessage(), e);
 		}
     }
-	
-	
+
+
 
 }
