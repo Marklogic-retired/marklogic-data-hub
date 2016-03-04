@@ -15,9 +15,14 @@
  */
 package com.marklogic.hub;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+
 import java.io.IOException;
 import java.util.List;
 
+import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -31,13 +36,6 @@ import com.marklogic.hub.plugin.PluginType;
 import com.marklogic.hub.plugin.ServerPlugin;
 import com.marklogic.hub.writer.DefaultWriter;
 
-import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-
-import org.custommonkey.xmlunit.XMLUnit;
-
 public class DomainManagerTest extends HubTestBase {
 
     @BeforeClass
@@ -48,8 +46,8 @@ public class DomainManagerTest extends HubTestBase {
 
         DocumentMetadataHandle meta = new DocumentMetadataHandle();
         meta.getCollections().add("tester");
-        installDoc("/incoming/employee1.xml", meta, getResource("flow-manager-test/input/employee1.xml"));
-        installDoc("/incoming/employee2.xml", meta, getResource("flow-manager-test/input/employee2.xml"));
+        installStagingDoc("/incoming/employee1.xml", meta, getResource("flow-manager-test/input/employee1.xml"));
+        installStagingDoc("/incoming/employee2.xml", meta, getResource("flow-manager-test/input/employee2.xml"));
         runInModules(
                 "xdmp:directory-create(\"/ext/domains/test/conformance/my-test-flow1/collector/\")," +
                 "xdmp:directory-create(\"/ext/domains/test/conformance/my-test-flow1/headers/\")," +
@@ -70,7 +68,7 @@ public class DomainManagerTest extends HubTestBase {
 
     @Test
     public void testGetDomains() {
-        DomainManager fm = new DomainManager(client);
+        DomainManager fm = new DomainManager(stagingClient);
         List<Domain> domains = fm.getDomains();
         assertEquals(1, domains.size());
 
@@ -119,7 +117,7 @@ public class DomainManagerTest extends HubTestBase {
 
     @Test
     public void testGetDomain() {
-        DomainManager fm = new DomainManager(client);
+        DomainManager fm = new DomainManager(stagingClient);
         Domain domain = fm.getDomain("test");
 
         assertEquals("test", domain.getName());

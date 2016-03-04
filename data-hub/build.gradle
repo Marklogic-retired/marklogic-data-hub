@@ -119,10 +119,29 @@ publishing {
 ext {
     mlAppConfig {
         modulePaths = ["data-hub/src/main/resources/ml-modules"]
-        mlConfigDir = "data-hub/src/main/resources/ml-config"
+        // mlConfigDir = "data-hub/src/main/resources/ml-config"
     }
 
+    // don't deploy the content database
+    cmd = mlAppDeployer.getCommand("DeployContentDatabasesCommand")
+    index = mlAppDeployer.commands.indexOf(cmd)
+    mlAppDeployer.commands.remove(cmd)
+    mlDatabaseCommands.remove(cmd)
+
     def stagingDbCommand = new com.marklogic.appdeployer.command.databases.DeployDatabaseCommand("staging-database.json")
-    mlAppDeployer.commands.add(stagingDbCommand)
+    stagingDbCommand.setForestsPerHost(3);
+    mlAppDeployer.commands.add(index, stagingDbCommand)
     mlDatabaseCommands.add(stagingDbCommand)
+
+    def finalDbCommand = new com.marklogic.appdeployer.command.databases.DeployDatabaseCommand("final-database.json")
+    finalDbCommand.setForestsPerHost(3);
+    mlAppDeployer.commands.add(index + 1, finalDbCommand)
+    mlDatabaseCommands.add(finalDbCommand)
+
+    println(mlAppDeployer.commands.toString())
+    println("")
+    println("")
+    println(mlDatabaseCommands.toString())
+
+
 }

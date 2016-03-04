@@ -16,7 +16,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 /***
- * 
+ *
  * @author mturiana This class is used to get the value of the keys in
  *         application.properties
  */
@@ -76,18 +76,31 @@ public class EnvironmentConfiguration {
 		return this.environment.getProperty("mlPassword.default");
 	}
 
-	public String getMLRestPort() {
-		String value = this.properties.getProperty("mlRestPort");
+	public String getMLStagingRestPort() {
+		String value = this.properties.getProperty("mlStagingRestPort");
 		if (value != null) {
 			return value;
 		}
-		value = this.environment.getProperty("mlRestPort");
+		value = this.environment.getProperty("mlStagingRestPort");
 		if (value != null) {
-			this.properties.setProperty("mlRestPort", value);
+			this.properties.setProperty("mlStagingRestPort", value);
 			return value;
 		}
-		return this.environment.getProperty("mlRestPort.default");
+		return this.environment.getProperty("mlStagingRestPort.default");
 	}
+
+    public String getMLFinalRestPort() {
+        String value = this.properties.getProperty("mlFinalRestPort");
+        if (value != null) {
+            return value;
+        }
+        value = this.environment.getProperty("mlFinalRestPort");
+        if (value != null) {
+            this.properties.setProperty("mlFinalRestPort", value);
+            return value;
+        }
+        return this.environment.getProperty("mlFinalRestPort.default");
+    }
 
 	public String getMLAuth() {
 		String value = this.properties.getProperty("mlAuth");
@@ -101,7 +114,7 @@ public class EnvironmentConfiguration {
 		}
 		return this.environment.getProperty("mlAuth.default");
 	}
-	
+
 	public String getUserPluginDir() {
 		String value = this.properties.getProperty("userPluginDir");
 		if (value != null) {
@@ -114,7 +127,7 @@ public class EnvironmentConfiguration {
 		}
 		return this.environment.getProperty("userPluginDir.default");
 	}
-	
+
 	public String getAssetInstallTimeFilePath() {
 	    String value = this.properties.getProperty("assetInstallTimeFile");
 	    if (value != null) {
@@ -143,15 +156,15 @@ public class EnvironmentConfiguration {
 	public void setMLPassword(String mlPassword) {
 		this.properties.setProperty("mlPassword", mlPassword);
 	}
-	
+
 	public void setUserPluginDir(String userPluginDir) {
 		this.properties.setProperty("userPluginDir", userPluginDir);
 	}
-	
+
 	public void setAssetInstallTimeFilePath(String assetInstallTimeFilePath) {
 	    this.properties.setProperty("assetInstallTimeFile", assetInstallTimeFilePath);
 	}
-	
+
 	public void loadConfigurationFromFile() {
 	    InputStream is = null;
 	    try {
@@ -160,8 +173,8 @@ public class EnvironmentConfiguration {
 	        	is = new FileInputStream( file );
 	        	properties.load( is );
 	        }
-	    } catch ( Exception e ) { 
-	    	is = null; 
+	    } catch ( Exception e ) {
+	    	is = null;
 	    }
 	}
 
@@ -184,7 +197,7 @@ public class EnvironmentConfiguration {
 			}
 		}
 	}
-	
+
 	public void removeSavedConfiguration() {
 		this.properties = new Properties();
 	    File file = new File(PROPERTIES_FILENAME);

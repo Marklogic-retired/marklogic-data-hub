@@ -1,5 +1,5 @@
 {
-  "database-name": "%%DATABASE%%",
+  "database-name": "data-hub-in-a-box-FINAL",
   "triple-index": true,
   "collection-lexicon":true
 }

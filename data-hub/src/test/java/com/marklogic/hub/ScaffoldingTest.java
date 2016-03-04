@@ -1,6 +1,9 @@
 package com.marklogic.hub;
 
-import static org.junit.Assert.*;
+import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -8,13 +11,11 @@ import java.io.IOException;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.xml.sax.SAXException;
-import org.custommonkey.xmlunit.XMLUnit;
-import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual;
 
 import com.marklogic.client.io.Format;
 import com.marklogic.hub.flow.FlowType;
