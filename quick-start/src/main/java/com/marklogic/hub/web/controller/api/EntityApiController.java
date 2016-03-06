@@ -19,21 +19,20 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.marklogic.hub.PluginFormat;
 import com.marklogic.hub.config.EnvironmentConfiguration;
-import com.marklogic.hub.model.DomainModel;
+import com.marklogic.hub.model.EntityModel;
 import com.marklogic.hub.service.DataHubService;
-import com.marklogic.hub.service.DomainManagerService;
+import com.marklogic.hub.service.EntityManagerService;
 import com.marklogic.hub.service.FileSystemEventListener;
 import com.marklogic.hub.service.FileSystemWatcherService;
 import com.marklogic.hub.service.SyncStatusService;
-import com.marklogic.hub.web.form.DomainForm;
+import com.marklogic.hub.web.form.EntityForm;
 import com.marklogic.hub.web.form.LoginForm;
 
 @RestController
-@RequestMapping("/api/domains")
+@RequestMapping("/api/entities")
 @Scope("session")
-public class DomainApiController implements InitializingBean, DisposableBean,
+public class EntityApiController implements InitializingBean, DisposableBean,
         FileSystemEventListener {
 
     @Autowired
@@ -43,7 +42,7 @@ public class DomainApiController implements InitializingBean, DisposableBean,
     private DataHubService dataHubService;
 
     @Autowired
-    private DomainManagerService domainManagerService;
+    private EntityManagerService entityManagerService;
 
     @Autowired
     private FileSystemWatcherService watcherService;
@@ -53,45 +52,44 @@ public class DomainApiController implements InitializingBean, DisposableBean,
 
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
-    public List<DomainModel> getDomains(HttpSession session) {
+    public List<EntityModel> getEntities(HttpSession session) {
         LoginForm loginForm = (LoginForm) session.getAttribute("loginForm");
-        List<DomainModel> domains = domainManagerService.getDomains();
-        loginForm.setDomains(domains);
-        return domains;
+        List<EntityModel> entities = entityManagerService.getEntities();
+        loginForm.setEntities(entities);
+        return entities;
     }
 
     @RequestMapping(value = "display", method = RequestMethod.POST)
     @ResponseBody
-    public DomainModel displayDomain(@RequestBody String domainName,
+    public EntityModel displayEntity(@RequestBody String entityName,
             HttpSession session) {
         LoginForm loginForm = (LoginForm) session.getAttribute("loginForm");
-        loginForm.selectDomain(domainName);
+        loginForm.selectEntity(entityName);
 
-        return loginForm.getSelectedDomain();
+        return loginForm.getSelectedEntity();
     }
 
     @RequestMapping(method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_UTF8_VALUE }, produces = { MediaType.APPLICATION_JSON_UTF8_VALUE })
     @ResponseBody
-    public LoginForm saveDomain(@RequestBody DomainForm domainForm,
+    public LoginForm saveEntity(@RequestBody EntityForm entityForm,
             BindingResult bindingResult, HttpSession session) {
         LoginForm loginForm = (LoginForm) session.getAttribute("loginForm");
-        List<DomainModel> domains = loginForm.getDomains();
+        List<EntityModel> entities = loginForm.getEntities();
 
-        domainForm.validate(domains);
+        entityForm.validate(entities);
 
-        DomainModel domainModel = domainManagerService.createDomain(
-                domainForm.getDomainName(), domainForm.getInputFlowName(),
-                domainForm.getConformFlowName(),
-                domainForm.getPluginFormat(),
-                domainForm.getDataFormat());
+        EntityModel entityModel = entityManagerService.createEntity(
+                entityForm.getEntityName(), entityForm.getInputFlowName(),
+                entityForm.getConformFlowName(), entityForm.getPluginFormat(),
+                entityForm.getDataFormat());
 
-        domains.add(domainModel);
-        loginForm.setSelectedDomain(domainModel);
+        entities.add(entityModel);
+        loginForm.setSelectedEntity(entityModel);
         return loginForm;
     }
 
     /**
-     * Get a list of domains that has changed. This API does not return until a
+     * Get a list of entities that has changed. This API does not return until a
      * change has occurred.
      *
      * @param session
@@ -105,7 +103,7 @@ public class DomainApiController implements InitializingBean, DisposableBean,
             } catch (InterruptedException e) {
             }
 
-            // refresh the list of domains saved in the session
+            // refresh the list of entities saved in the session
             LoginForm loginForm = (LoginForm) session.getAttribute("loginForm");
 
             // add checking if data hub is installed and the server is
@@ -114,9 +112,9 @@ public class DomainApiController implements InitializingBean, DisposableBean,
             loginForm.setInstalled(dataHubService.isInstalled());
             loginForm.setServerVersionAccepted(dataHubService.isServerAcceptable());
             if (loginForm.isInstalled()) {
-                List<DomainModel> domains = domainManagerService.getDomains();
-                loginForm.setDomains(domains);
-                loginForm.refreshSelectedDomain();
+                List<EntityModel> entities = entityManagerService.getEntities();
+                loginForm.setEntities(entities);
+                loginForm.refreshSelectedEntity();
             }
 
             // refresh the session loginForm

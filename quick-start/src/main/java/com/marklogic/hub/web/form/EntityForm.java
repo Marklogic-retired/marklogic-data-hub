@@ -5,22 +5,22 @@ import java.util.List;
 import com.marklogic.client.io.Format;
 import com.marklogic.hub.PluginFormat;
 import com.marklogic.hub.exception.FormValidationException;
-import com.marklogic.hub.model.DomainModel;
+import com.marklogic.hub.model.EntityModel;
 
-public class DomainForm extends BaseForm {
+public class EntityForm extends BaseForm {
 
-    private String domainName;
+    private String entityName;
     private String inputFlowName;
     private String conformFlowName;
     private PluginFormat pluginFormat;
     private Format dataFormat;
 
-    public String getDomainName() {
-        return domainName;
+    public String getEntityName() {
+        return entityName;
     }
 
-    public void setDomainName(String domainName) {
-        this.domainName = domainName;
+    public void setEntityName(String entityName) {
+        this.entityName = entityName;
     }
 
     public String getInputFlowName() {
@@ -55,17 +55,17 @@ public class DomainForm extends BaseForm {
         this.dataFormat = Format.getFromMimetype(dataFormat);
     }
 
-    public void validate(List<DomainModel> domainList) {
-        if (this.domainName == null || "".equals(this.domainName.trim())) {
-            throw new FormValidationException("Domain Name is required.");
+    public void validate(List<EntityModel> entityList) {
+        if (this.entityName == null || "".equals(this.entityName.trim())) {
+            throw new FormValidationException("Entity Name is required.");
         }
         if (this.pluginFormat == null) {
             throw new FormValidationException("Extension is required.");
         }
-        for (DomainModel domainModel : domainList) {
-            if (domainModel.getDomainName().equals(this.domainName)) {
+        for (EntityModel entityModel : entityList) {
+            if (entityModel.getEntityName().equals(this.entityName)) {
                 throw new FormValidationException(
-                        "Domain Name should be unique.");
+                        "Entity Name should be unique.");
             }
         }
         if ((this.inputFlowName == null || "".equals(this.inputFlowName.trim()))

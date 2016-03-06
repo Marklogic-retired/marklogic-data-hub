@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.marklogic.hub.domain;
+package com.marklogic.hub.entity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,18 +26,18 @@ import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.flow.Flow;
 
 /**
- * Abstract Base class for Domains
+ * Abstract Base class for entities
  */
-public abstract class AbstractDomain implements Domain {
+public abstract class AbstractEntity implements Entity {
 
     private String name;
     private ArrayList<Flow> flows = new ArrayList<Flow>();
 
-    public AbstractDomain(Element xml) {
+    public AbstractEntity(Element xml) {
         deserialize(xml);
     }
 
-    public AbstractDomain(String name) {
+    public AbstractEntity(String name) {
         this.name = name;
     }
 
@@ -65,7 +65,7 @@ public abstract class AbstractDomain implements Domain {
     }
 
     /**
-     * Returns the name of the Domain
+     * Returns the name of the Entity
      */
     @Override
     public String getName() {
@@ -74,7 +74,7 @@ public abstract class AbstractDomain implements Domain {
     }
 
     /**
-     * Serializes the domain to an XML string
+     * Serializes the entity to an XML string
      */
     @Override
     public String serialize() {
@@ -83,7 +83,7 @@ public abstract class AbstractDomain implements Domain {
     }
 
     /**
-     * Returns the domain's flows
+     * Returns the entity's flows
      */
     @Override
     public List<Flow> getFlows() {

@@ -35,18 +35,22 @@ public class ScaffoldingTest extends HubTestBase {
     }
 
     @Test
-    public void createDomain() {
+    public void createEntity() {
         assertFalse(pluginsDir.exists());
 
-        Scaffolding.createDomain("my-fun-test", pluginsDir);
+        Scaffolding.createEntity("my-fun-test", pluginsDir);
         assertTrue(pluginsDir.exists());
 
-        File domainDir = Scaffolding.getDomainDir(pluginsDir, "my-fun-test");
-        assertTrue(domainDir.exists());
-        assertEquals(new File("./test-ye-plugins/domains/my-fun-test").toPath(), domainDir.toPath());
+        File entityDir = Scaffolding.getEntityDir(pluginsDir, "my-fun-test");
+        assertTrue(entityDir.exists());
+        assertEquals(
+                new File("./test-ye-plugins/entities/my-fun-test").toPath(),
+                entityDir.toPath());
 
         File flowDir = Scaffolding.getFlowDir(pluginsDir, "my-fun-test", "blah", FlowType.INPUT);
-        assertEquals(new File("./test-ye-plugins/domains/my-fun-test/input/blah").toPath(), flowDir.toPath());
+        assertEquals(new File(
+                "./test-ye-plugins/entities/my-fun-test/input/blah").toPath(),
+                flowDir.toPath());
         assertFalse(flowDir.exists());
     }
 
@@ -73,21 +77,21 @@ public class ScaffoldingTest extends HubTestBase {
     private void createInputFlow(PluginFormat pluginFormat, Format dataFormat) throws IOException, SAXException {
         assertFalse(pluginsDir.exists());
 
-        Scaffolding.createDomain("my-fun-test", pluginsDir);
+        Scaffolding.createEntity("my-fun-test", pluginsDir);
         assertTrue(pluginsDir.exists());
 
-        File domainDir = Scaffolding.getDomainDir(pluginsDir, "my-fun-test");
-        assertTrue(domainDir.exists());
-        assertEquals(new File("./test-ye-plugins/domains/my-fun-test").toPath(), domainDir.toPath());
+        File entityDir = Scaffolding.getEntityDir(pluginsDir, "my-fun-test");
+        assertTrue(entityDir.exists());
+        assertEquals(new File("./test-ye-plugins/entities/my-fun-test").toPath(), entityDir.toPath());
 
         Scaffolding.createFlow("my-fun-test", "test-input", FlowType.INPUT, pluginFormat, dataFormat, pluginsDir);
         File flowDir = Scaffolding.getFlowDir(pluginsDir, "my-fun-test", "test-input", FlowType.INPUT);
-        assertEquals(new File("./test-ye-plugins/domains/my-fun-test/input/test-input").toPath(), flowDir.toPath());
+        assertEquals(new File("./test-ye-plugins/entities/my-fun-test/input/test-input").toPath(), flowDir.toPath());
         assertTrue(flowDir.exists());
 
         File flowDescriptor = new File(flowDir, "test-input.xml");
         assertTrue(flowDescriptor.exists());
-        String flowXML ="<flow xmlns=\"http://marklogic.com/hub-in-a-box\"><name>test-input</name><domain>my-fun-test</domain><type>input</type><complexity>simple</complexity><data-format>" + dataFormat.getDefaultMimetype() + "</data-format><plugins></plugins></flow>";
+        String flowXML ="<flow xmlns=\"http://marklogic.com/hub-in-a-box\"><name>test-input</name><entity>my-fun-test</entity><type>input</type><complexity>simple</complexity><data-format>" + dataFormat.getDefaultMimetype() + "</data-format><plugins></plugins></flow>";
         assertXMLEqual(flowXML, IOUtils.toString(new FileInputStream(flowDescriptor)));
 
         File collectorDir = new File(flowDir, "collector");
@@ -112,21 +116,21 @@ public class ScaffoldingTest extends HubTestBase {
     private void createConformanceFlow(PluginFormat pluginFormat, Format dataFormat) throws IOException, SAXException {
         assertFalse(pluginsDir.exists());
 
-        Scaffolding.createDomain("my-fun-test", pluginsDir);
+        Scaffolding.createEntity("my-fun-test", pluginsDir);
         assertTrue(pluginsDir.exists());
 
-        File domainDir = Scaffolding.getDomainDir(pluginsDir, "my-fun-test");
-        assertTrue(domainDir.exists());
-        assertEquals(new File("./test-ye-plugins/domains/my-fun-test").toPath(), domainDir.toPath());
+        File entityDir = Scaffolding.getEntityDir(pluginsDir, "my-fun-test");
+        assertTrue(entityDir.exists());
+        assertEquals(new File("./test-ye-plugins/entities/my-fun-test").toPath(), entityDir.toPath());
 
         Scaffolding.createFlow("my-fun-test", "test-conformance", FlowType.CONFORMANCE, pluginFormat, dataFormat, pluginsDir);
         File flowDir = Scaffolding.getFlowDir(pluginsDir, "my-fun-test", "test-conformance", FlowType.CONFORMANCE);
-        assertEquals(new File("./test-ye-plugins/domains/my-fun-test/conformance/test-conformance").toPath(), flowDir.toPath());
+        assertEquals(new File("./test-ye-plugins/entities/my-fun-test/conformance/test-conformance").toPath(), flowDir.toPath());
         assertTrue(flowDir.exists());
 
         File flowDescriptor = new File(flowDir, "test-conformance.xml");
         assertTrue(flowDescriptor.exists());
-        String flowXML ="<flow xmlns=\"http://marklogic.com/hub-in-a-box\"><name>test-conformance</name><domain>my-fun-test</domain><type>conformance</type><complexity>simple</complexity><data-format>" + dataFormat.getDefaultMimetype() + "</data-format><plugins></plugins></flow>";
+        String flowXML ="<flow xmlns=\"http://marklogic.com/hub-in-a-box\"><name>test-conformance</name><entity>my-fun-test</entity><type>conformance</type><complexity>simple</complexity><data-format>" + dataFormat.getDefaultMimetype() + "</data-format><plugins></plugins></flow>";
         assertXMLEqual(flowXML, IOUtils.toString(new FileInputStream(flowDescriptor)));
 
         File collectorDir = new File(flowDir, "collector");

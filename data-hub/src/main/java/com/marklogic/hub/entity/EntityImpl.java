@@ -13,31 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.marklogic.hub.domain;
+package com.marklogic.hub.entity;
 
-import java.util.List;
-
-import com.marklogic.hub.flow.Flow;
+import org.w3c.dom.Element;
 
 /**
- * A domain object. The data hub groups data by domains.
+ * An implementation of the Entity base class
  */
-public interface Domain {
-    /**
-     * Gets the Domain name
-     * @return the domain name
-     */
-    String getName();
+public class EntityImpl extends AbstractEntity {
 
-    /**
-     * Serializes the Domain as an XML string
-     * @return the serialized XML string
-     */
-    String serialize();
+    public EntityImpl(Element xml) {
+        super(xml);
+    }
 
-    /**
-     * Returns all flows registered to the domain
-     * @return a list of flows
-     */
-    List<Flow> getFlows();
+    public EntityImpl(String name) {
+        super(name);
+    }
+
 }

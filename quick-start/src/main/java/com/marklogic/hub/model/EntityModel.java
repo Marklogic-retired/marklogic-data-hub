@@ -4,19 +4,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class DomainModel {
+public class EntityModel {
 
-	private String domainName;
+    private String entityName;
 	private List<FlowModel> inputFlows;
 	private List<FlowModel> conformFlows;
 	private boolean isSynched;
 
-	public String getDomainName() {
-		return domainName;
+    public String getEntityName() {
+        return entityName;
 	}
 
-	public void setDomainName(String domainName) {
-		this.domainName = domainName;
+    public void setEntityName(String entityName) {
+        this.entityName = entityName;
 	}
 
 	public List<FlowModel> getInputFlows() {
@@ -83,11 +83,11 @@ public class DomainModel {
         }
     }
 	
-	public void copySyncStatusFrom(DomainModel oldModel) {
+	public void copySyncStatusFrom(EntityModel oldModel) {
 	    if (oldModel == null) {
 	        return;
 	    }
-	    if (!domainName.equals(oldModel.getDomainName())) {
+        if (!entityName.equals(oldModel.getEntityName())) {
 	        return;
 	    }
 	    
@@ -118,8 +118,8 @@ public class DomainModel {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("{");
-        sb.append("domainName=");
-        sb.append(domainName);
+        sb.append("entityName=");
+        sb.append(entityName);
         sb.append("isSynched=");
         sb.append(isSynched);
         sb.append("}");

@@ -16,43 +16,43 @@ module.controller('topController', [
         ,DataHub
     ) {
         $scope.status = DataHub.status;
-        $scope.domainForm = {};
+        $scope.entityForm = {};
         $scope.flowForm = {};
         $scope.loadDataForm = {};
         $scope.loading = false;
         $scope.action = DataHub.action;
 
-        $scope.createDomain = function() {
+        $scope.createEntity = function() {
             $scope.loading = true;
-            $scope.domainForm.hasErrors = false;
-            $('#domainModal').modal({
+            $scope.entityForm.hasErrors = false;
+            $('#entityModal').modal({
                 backdrop: 'static',
                 keyboard: true
             });
             $scope.loading = false;
         };
 
-        $scope.saveDomain = function() {
+        $scope.saveEntity = function() {
             $scope.loading = true;
-            DataHub.saveDomain($scope.domainForm)
+            DataHub.saveEntity($scope.entityForm)
             .success(function () {
-                $scope.domainForm.hasErrors = false;
+                $scope.entityForm.hasErrors = false;
                 $scope.status = DataHub.status;
-                $('#domainModal').modal('hide');
+                $('#entityModal').modal('hide');
             })
             .error(function () {
-                $scope.domainForm.hasErrors = true;
+                $scope.entityForm.hasErrors = true;
             })
             .finally(function () {
                 $scope.loading = false;
             });
         };
 
-        $scope.displayDomain = function(domainName) {
+        $scope.displayEntity = function(entityName) {
             $scope.loading = true;
-            DataHub.displayDomain(domainName)
-            .success(function (selectedDomain) {
-                DataHub.status.selectedDomain = selectedDomain;
+            DataHub.displayEntity(entityName)
+            .success(function (selectedEntity) {
+                DataHub.status.selectedEntity = selectedEntity;
             })
             .finally(function () {
                 $scope.loading = false;
@@ -70,9 +70,9 @@ module.controller('topController', [
             });
         };
 
-        $scope.createFlow = function(domainName, flowType, extension) {
+        $scope.createFlow = function(entityName, flowType, extension) {
             $scope.loading = true;
-            $scope.flowForm.domainName = domainName;
+            $scope.flowForm.entityName = entityName;
             $scope.flowForm.flowType = flowType;
             $scope.flowForm.extension = extension;
             $scope.flowForm.hasErrors = false;
@@ -83,11 +83,11 @@ module.controller('topController', [
             $scope.loading = false;
         };
 
-        $scope.showLoadDataForm = function(domainName, flowName) {
+        $scope.showLoadDataForm = function(entityName, flowName) {
             $scope.loading = true;
             $scope.loadDataForm = {
                 'hasErrors' : false
-                ,'domainName' : domainName
+                ,'entityName' : entityName
                 ,'flowName' : flowName
                 ,'inputPath' : 'input'
             };
@@ -98,9 +98,9 @@ module.controller('topController', [
             $scope.loading = false;
         };
 
-        $scope.runFlow = function(domainName, flowName) {
+        $scope.runFlow = function(entityName, flowName) {
             $scope.loading = true;
-            DataHub.runFlow(domainName, flowName)
+            DataHub.runFlow(entityName, flowName)
             .success(function () {
 
             })
@@ -112,7 +112,7 @@ module.controller('topController', [
         $scope.runInputFlow = function() {
             $scope.loading = true;
             $('#loadDataModal').modal('hide');
-            DataHub.runInputFlow($scope.loadDataForm.domainName, $scope.loadDataForm.flowName, $scope.loadDataForm.inputPath)
+            DataHub.runInputFlow($scope.loadDataForm.entityName, $scope.loadDataForm.flowName, $scope.loadDataForm.inputPath)
             .success(function () {
 
             })
@@ -121,9 +121,9 @@ module.controller('topController', [
             });
         };
 
-        $scope.testFlow = function(domainName, flowName) {
+        $scope.testFlow = function(entityName, flowName) {
             $scope.loading = true;
-            DataHub.testFlow(domainName, flowName)
+            DataHub.testFlow(entityName, flowName)
             .success(function () {
 
             })
