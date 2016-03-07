@@ -7,7 +7,7 @@ Quick Start is a single-page web application that is deployed in an embedded Tom
 
 ## Build and deploy the web app via command line
 - run ```gradle build```
-- run ```java -jar build/libs/quick-start-0.1.0.war```
+- run ```java -jar build/libs/quick-start-0.1.0.war``` (or whatever the current version is in /build/libs/)
 
 
 ## To pass properties to the app, either do the following (in order of priority):
@@ -23,6 +23,7 @@ OR
 
 ## Build and deploy the web app via Eclipse
 - Select Application.java then Run as Java Application
+- To develop in eclipse, run ```../gradlew eclipse``` for both quick start and DHIB and make DHIB a project dependency
 
 ## Go to the main page
 - The main page is accessible at http://localhost:[server.port]/[server.contextPath].
