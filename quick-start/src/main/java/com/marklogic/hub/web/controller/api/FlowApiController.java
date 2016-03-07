@@ -8,8 +8,12 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.http.concurrent.BasicFuture;
+import org.apache.http.concurrent.Cancellable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.batch.core.JobExecution;
+import org.springframework.batch.core.JobExecutionListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.validation.BindingResult;
@@ -27,6 +31,7 @@ import com.marklogic.hub.flow.FlowType;
 import com.marklogic.hub.model.DomainModel;
 import com.marklogic.hub.model.FlowModel;
 import com.marklogic.hub.model.RunFlowModel;
+import com.marklogic.hub.service.CancellableTask;
 import com.marklogic.hub.service.FlowManagerService;
 import com.marklogic.hub.service.TaskManagerService;
 import com.marklogic.hub.web.controller.BaseController;
@@ -107,14 +112,23 @@ public class FlowApiController extends BaseController {
 
     @RequestMapping(value = "/test", method = RequestMethod.POST)
     public BigInteger testFlow(HttpServletRequest request) {
-        Runnable task = new Runnable() {
+        CancellableTask task = new CancellableTask() {
+            
+            private JobExecution jobExecution;
             
             @Override
-            public void run() {
+            public void cancel(BasicFuture<?> resultFuture) {
+                if (jobExecution != null) {
+                    jobExecution.stop();
+                }
+            }
+            
+            @Override
+            public void run(BasicFuture<?> resultFuture) {
                 final String domainName = request.getParameter("domainName");
                 final String flowName = request.getParameter("flowName");
                 final Flow flow = flowManagerService.getFlow(domainName, flowName);
-                flowManagerService.testFlow(flow);
+                this.jobExecution = flowManagerService.testFlow(flow);
             }
         };
         
@@ -123,13 +137,33 @@ public class FlowApiController extends BaseController {
 
     @RequestMapping(value = "/run", method = RequestMethod.POST)
     public BigInteger runFlow(@RequestBody RunFlowModel runFlow) {
-        Runnable task = new Runnable() {
+        CancellableTask task = new CancellableTask() {
+            
+            private JobExecution jobExecution;
+
             @Override
-            public void run() {
+            public void cancel(BasicFuture<?> resultFuture) {
+                if (jobExecution != null) {
+                    jobExecution.stop();
+                }
+            }
+            
+            @Override
+            public void run(BasicFuture<?> resultFuture) {
                 final Flow flow = flowManagerService.getFlow(runFlow.getDomainName(), runFlow.getFlowName());
                 // TODO update and move BATCH SIZE TO a constant or config - confirm
                 // desired behavior
-                flowManagerService.runFlow(flow, 100);
+                this.jobExecution = flowManagerService.runFlow(flow, 100, new JobExecutionListener() {
+                    
+                    @Override
+                    public void beforeJob(JobExecution jobExecution) {
+                    }
+                    
+                    @Override
+                    public void afterJob(JobExecution jobExecution) {
+                        resultFuture.completed(null);
+                    }
+                });
             }
         };
 
@@ -138,8 +172,15 @@ public class FlowApiController extends BaseController {
 
     @RequestMapping(value="/run/input", method = RequestMethod.POST)
     public BigInteger runInputFlow(@RequestBody RunFlowModel runFlow) {
-        Runnable task = new Runnable() {
-            public void run() {
+        CancellableTask task = new CancellableTask() {
+            
+            @Override
+            public void cancel(BasicFuture<?> resultFuture) {
+                // TODO: stop MLCP. We don't have a way to do this yet.
+            }
+            
+            @Override
+            public void run(BasicFuture<?> resultFuture) {
                 try {
                     Mlcp mlcp = new Mlcp(
                                     environmentConfiguration.getMLHost()
@@ -151,6 +192,8 @@ public class FlowApiController extends BaseController {
                     SourceOptions sourceOptions = new SourceOptions(runFlow.getDomainName(), runFlow.getFlowName(), FlowType.INPUT.toString());
                     mlcp.addSourceDirectory(runFlow.getInputPath(), sourceOptions);
                     mlcp.loadContent();
+                    
+                    resultFuture.completed(null);
                 }
                 catch (IOException e) {
                     LOGGER.error("Error encountered while trying to run flow:  " + runFlow.getDomainName() + " > " + runFlow.getFlowName(), e);

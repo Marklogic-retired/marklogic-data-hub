@@ -22,24 +22,24 @@ public class TaskManagerService {
 
     private BigInteger lastTaskId = BigInteger.ZERO;
     
-    private Map<BigInteger, Task> taskMap = Collections.synchronizedMap(new HashMap<>());
+    private Map<BigInteger, TaskWrapper> taskMap = Collections.synchronizedMap(new HashMap<>());
     
     public TaskManagerService() {
     }
     
-    public BigInteger addTask(Runnable runnable) {
+    public BigInteger addTask(CancellableTask task) {
         BigInteger taskId = fetchNextTaskId();
         
-        Task task = new Task(runnable);
-        taskMap.put(taskId, task);
+        TaskWrapper taskRunner = new TaskWrapper(task);
+        taskMap.put(taskId, taskRunner);
         
-        executorService.submit(task);
+        executorService.submit(taskRunner);
         
         return taskId;
     }
     
     public Object waitTask(BigInteger taskId) {
-        Task task = taskMap.get(taskId);
+        TaskWrapper task = taskMap.get(taskId);
         if (task != null) {
             return task.awaitCompletion();
         }
@@ -48,7 +48,7 @@ public class TaskManagerService {
     }
     
     public void stopTask(BigInteger taskId) {
-        Task task = taskMap.get(taskId);
+        TaskWrapper task = taskMap.get(taskId);
         if (task != null) {
             task.stopOrCancelTask();
         }
@@ -59,7 +59,7 @@ public class TaskManagerService {
     }
     
     public boolean isTaskFinished(BigInteger taskId) {
-        Task task = taskMap.get(taskId);
+        TaskWrapper task = taskMap.get(taskId);
         return task == null;
     }
     
@@ -68,23 +68,22 @@ public class TaskManagerService {
         return lastTaskId;
     }
     
-    private class Task extends Thread {
+    private class TaskWrapper extends Thread {
         
-        private Runnable runnable;
+        private CancellableTask task;
         
         private BasicFuture<Object> taskResult = new BasicFuture<>(null);
 
-        public Task(Runnable runnable) {
-            this.runnable = runnable;
+        public TaskWrapper(CancellableTask task) {
+            this.task = task;
         }
         
         public void stopOrCancelTask() {
+            task.cancel(taskResult);
+            
             // flag cancellation
             // this will notify anyone waiting for this task
             taskResult.cancel();
-            
-            // interrupt this thread to stop further execution
-            this.interrupt();
         }
         
         public Object awaitCompletion() {
@@ -101,10 +100,7 @@ public class TaskManagerService {
         public void run() {
             try {
                 if (!taskResult.isDone()) {
-                    runnable.run();
-                    
-                    // the task has completed
-                    taskResult.completed(null);
+                    task.run(taskResult);
                 }
             }
             catch (Exception e) {
