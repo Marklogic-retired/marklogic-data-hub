@@ -95,9 +95,11 @@ public class DomainModelFactory {
                 + flowType.toString();
         List<String> flowNames = FileUtil.listDirectFolders(flowsFilePath);
         for (String flowName : flowNames) {
-            FlowModel flowModel = flowModelFactory.createFlow(flowsFilePath,
-                    flowName, flowType);
-            flows.add(flowModel);
+            if (!flowName.toLowerCase().equals("rest")) {
+                FlowModel flowModel = flowModelFactory.createFlow(flowsFilePath,
+                        flowName, flowType);
+                flows.add(flowModel);
+            }
         }
         return flows;
     }

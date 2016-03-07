@@ -1,8 +1,6 @@
 package com.marklogic.hub.service;
 
 import java.io.File;
-import java.util.Date;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,10 +29,10 @@ public class DataHubService {
 		}
 	}
 
-    public Map<File, Date> installUserModules() throws DataHubException {
+    public void installUserModules() throws DataHubException {
         DataHub dataHub = getDataHub();
         try {
-            return dataHub.installUserModules(environmentConfiguration.getUserPluginDir());
+            dataHub.installUserModules(environmentConfiguration.getUserPluginDir());
         } catch(Throwable e) {
             throw new DataHubException(e.getMessage(), e);
         }

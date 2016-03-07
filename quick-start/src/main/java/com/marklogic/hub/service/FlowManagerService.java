@@ -19,9 +19,8 @@ import com.marklogic.hub.config.EnvironmentConfiguration;
 import com.marklogic.hub.exception.FlowManagerException;
 import com.marklogic.hub.factory.FlowModelFactory;
 import com.marklogic.hub.flow.Flow;
-import com.marklogic.hub.model.FlowModel;
 import com.marklogic.hub.flow.FlowType;
-import com.marklogic.hub.util.FileUtil;
+import com.marklogic.hub.model.FlowModel;
 
 @Service
 public class FlowManagerService {

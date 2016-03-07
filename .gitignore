@@ -9,6 +9,6 @@ releases/
 .project
 gradle-local.properties
 /quick-start/environment.properties
-/quick-start/assetInstallTime.json
+/quick-start/assetInstallTime.properties
 /quick-start/input
 /quick-start/plugins

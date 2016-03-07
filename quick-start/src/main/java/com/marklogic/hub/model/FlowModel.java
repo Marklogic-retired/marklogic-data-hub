@@ -51,7 +51,7 @@ public class FlowModel {
         sb.append("isSynched=");
         sb.append(isSynched);
         sb.append("}");
-        
+
         return sb.toString();
     }
 }

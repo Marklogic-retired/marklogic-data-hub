@@ -1,6 +1,5 @@
 package com.marklogic.hub.web.controller.api;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.WatchEvent;
 import java.util.List;
@@ -19,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.marklogic.hub.PluginFormat;
 import com.marklogic.hub.config.EnvironmentConfiguration;
 import com.marklogic.hub.model.DomainModel;
 import com.marklogic.hub.service.DataHubService;
@@ -142,12 +140,9 @@ public class DomainApiController implements InitializingBean, DisposableBean,
     @Override
     public void onWatchEvent(Path path, WatchEvent<Path> event) {
         synchronized (syncStatusService) {
-            try {
-                syncStatusService.updateSyncStatus(path.toFile());
+            domainManagerService.getDomains();
 
-                syncStatusService.notifyAll();
-            } catch (IOException e) {
-            }
+            syncStatusService.notifyAll();
         }
     }
 }

@@ -138,7 +138,7 @@ public class EnvironmentConfiguration {
 	        this.properties.setProperty("assetInstallTimeFile", value);
 	        return value;
 	    }
-	    return "./assetInstallTime.json";
+	    return "./assetInstallTime.properties";
 	}
 
 	public void setMLHost(String mlHost) {

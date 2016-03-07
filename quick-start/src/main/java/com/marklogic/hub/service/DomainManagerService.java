@@ -75,17 +75,22 @@ public class DomainManagerService {
         return domains;
     }
 
-    protected void updateSyncStatus(List<DomainModel> domains) {
+    public void updateSyncStatus(List<DomainModel> domains) {
         for (DomainModel domainModel : domains) {
-            domainModel.setSynched(syncStatusService.isDomainSynched(domainModel.getDomainName()));
-
+            boolean flowsSynched = true;
             for (FlowModel flowModel : domainModel.getInputFlows()) {
-                flowModel.setSynched(syncStatusService.isFlowSynched(domainModel.getDomainName(), FlowType.INPUT, flowModel.getFlowName()));
+                boolean flowSynched = syncStatusService.isFlowSynched(domainModel.getDomainName(), FlowType.INPUT, flowModel.getFlowName());
+                flowsSynched = flowsSynched && flowSynched;
+                flowModel.setSynched(flowSynched);
             }
 
             for (FlowModel flowModel : domainModel.getConformFlows()) {
-                flowModel.setSynched(syncStatusService.isFlowSynched(domainModel.getDomainName(), FlowType.CONFORM, flowModel.getFlowName()));
+                boolean flowSynched = syncStatusService.isFlowSynched(domainModel.getDomainName(), FlowType.CONFORM, flowModel.getFlowName());
+                flowsSynched = flowsSynched && flowSynched;
+                flowModel.setSynched(flowSynched);
             }
+
+            domainModel.setSynched(flowsSynched);
         }
     }
 
