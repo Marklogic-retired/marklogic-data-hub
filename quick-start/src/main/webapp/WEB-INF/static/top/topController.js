@@ -1,5 +1,6 @@
 var dependencies = [
     'dhib.quickstart.service.data-hub'
+    ,'dhib.quickstart.service.modal'
 ];
 
 var module = angular.module('dhib.quickstart.controller.top', dependencies);
@@ -9,11 +10,15 @@ module.controller('topController', [
     ,'$location'
     ,'$timeout'
     ,'DataHub'
+    ,'ModalService'
+    ,'TaskManager'
     ,function(
         $scope
         ,$location
         ,$timeout
         ,DataHub
+        ,ModalService
+        ,TaskManager
     ) {
         $scope.status = DataHub.status;
         $scope.domainForm = {};
@@ -83,53 +88,111 @@ module.controller('topController', [
             $scope.loading = false;
         };
 
-        $scope.showLoadDataForm = function(domainName, flowName) {
-            $scope.loading = true;
-            $scope.loadDataForm = {
-                'hasErrors' : false
-                ,'domainName' : domainName
-                ,'flowName' : flowName
-                ,'inputPath' : 'input'
-            };
-            $('#loadDataModal').modal({
-                backdrop: 'static',
-                keyboard: true
+        $scope.runInputFlow = function(flow) {
+            ModalService.openLoadDataModal().then(function (inputPath) {
+                $scope.loading = true;
+                flow.inputFlowCancelled = false;
+                
+                DataHub.runInputFlow(flow.domainName, flow.flowName, inputPath)
+                .success(function (taskId) {
+                    flow.inputFlowTaskId = taskId;
+                    
+                    TaskManager.waitForTask(flow.inputFlowTaskId)
+                    .success(function (result) {
+                        if (!flow.inputFlowCancelled) {
+                            DataHub.displayMessage('Load data successful.', 'success', 'notification', false);
+                        }
+                    })
+                    .error(function () {
+                        if (!flow.inputFlowCancelled) {
+                            DataHub.displayMessage('Load data unsuccessful.', 'error', 'notification', false);
+                        }
+                    })
+                    .finally(function () {
+                        flow.inputFlowTaskId = null;
+                        $scope.loading = false;
+                    });
+                })
+                .error(function () {
+                    $scope.loading = false;
+                });
             });
-            $scope.loading = false;
         };
-
-        $scope.runFlow = function(domainName, flowName) {
+        
+        $scope.cancelInputFlow = function(flow) {
+            flow.inputFlowCancelled = true;
+            DataHub.displayMessage('Load data cancelled.', 'success', 'notification', false);
+            TaskManager.cancelTask(flow.inputFlowTaskId);
+        };
+        
+        $scope.runFlow = function(flow) {
             $scope.loading = true;
-            DataHub.runFlow(domainName, flowName)
-            .success(function () {
-
+            flow.runFlowCancelled = false;
+            
+            DataHub.runFlow(flow.domainName, flow.flowName)
+            .success(function (taskId) {
+                flow.runFlowTaskId = taskId;
+                
+                TaskManager.waitForTask(flow.runFlowTaskId)
+                .success(function (result) {
+                    if (!flow.runFlowCancelled) {
+                        DataHub.displayMessage('Flow run is successful.', 'success', 'notification', false);
+                    }
+                })
+                .error(function () {
+                    if (!flow.runFlowCancelled) {
+                        DataHub.displayMessage('Flow run is unsuccessful.', 'error', 'notification', false);
+                    }
+                })
+                .finally(function () {
+                    flow.runFlowTaskId = null;
+                    $scope.loading = false;
+                });
             })
-            .finally(function () {
+            .error(function () {
                 $scope.loading = false;
             });
         };
-
-        $scope.runInputFlow = function() {
+        
+        $scope.cancelRunFlow = function(flow) {
+            flow.runFlowCancelled = true;
+            DataHub.displayMessage('Flow run cancelled.', 'success', 'notification', false);
+            TaskManager.cancelTask(flow.runFlowTaskId);
+        };
+        
+        $scope.testFlow = function(flow) {
             $scope.loading = true;
-            $('#loadDataModal').modal('hide');
-            DataHub.runInputFlow($scope.loadDataForm.domainName, $scope.loadDataForm.flowName, $scope.loadDataForm.inputPath)
-            .success(function () {
-
+            flow.testFlowCancelled = false;
+            
+            DataHub.testFlow(flow.domainName, flow.flowName)
+            .success(function (taskId) {
+                flow.testFlowTaskId = taskId;
+                
+                TaskManager.waitForTask(flow.testFlowTaskId)
+                .success(function (result) {
+                    if (!flow.testFlowTaskId) {
+                        DataHub.displayMessage('Flow test is successful.', 'success', 'notification', false);
+                    }
+                })
+                .error(function () {
+                    if (!flow.testFlowTaskId) {
+                        DataHub.displayMessage('Flow test is unsuccessful.', 'error', 'notification', false);
+                    }
+                })
+                .finally(function () {
+                    flow.testFlowTaskId = null;
+                    $scope.loading = false;
+                });
             })
-            .finally(function () {
+            .error(function () {
                 $scope.loading = false;
             });
         };
-
-        $scope.testFlow = function(domainName, flowName) {
-            $scope.loading = true;
-            DataHub.testFlow(domainName, flowName)
-            .success(function () {
-
-            })
-            .finally(function () {
-                $scope.loading = false;
-            });
+        
+        $scope.cancelTestFlow = function(flow) {
+            flow.testFlowCancelled = true;
+            DataHub.displayMessage('Flow test cancelled.', 'success', 'notification', false);
+            TaskManager.cancelTask(flow.testFlowTaskId);
         };
 
         $scope.saveFlow = function() {

@@ -143,15 +143,7 @@ module.factory('DataHub', [
             		domainName: domainName,
             		flowName: flowName
             	};
-            	var promise = $http.post('api/flows/run', data)
-                .success(function () {
-                	service.displayMessage('Flow run is successful.', 'success', 'notification', false);
-                })
-                .error(function () {
-                	service.displayMessage('Flow run is unsuccessful.', 'error', 'notification', false);
-                });
-                
-                return promise;
+            	return $http.post('api/flows/run', data)
             }
             
             ,runInputFlow : function(domainName, flowName, path) {
@@ -160,15 +152,7 @@ module.factory('DataHub', [
                     ,'flowName': flowName
                     ,'inputPath' : path
                 };
-                var promise = $http.post('api/flows/run/input', data)
-                .success(function () {
-                    service.displayMessage('Flow data load is successful.', 'success', 'notification', false);
-                })
-                .error(function () {
-                    service.displayMessage('Flow data load is unsuccessful.', 'error', 'notification', false);
-                });
-                
-                return promise;
+                return $http.post('api/flows/run/input', data)
             }
             
             ,testFlow : function(domainName, flowName) {
@@ -176,15 +160,7 @@ module.factory('DataHub', [
                 	domainName: domainName,
                 	flowName: flowName
                 };
-            	var promise = $http.post('api/flows/test', data)
-                .success(function () {
-                    service.displayMessage('Flow test is successful.', 'success', 'notification', false);
-                })
-                .error(function () {
-                	service.displayMessage('Flow test is unsuccessful.', 'error', 'notification', false);
-                });
-                
-                return promise;
+                return $http.post('api/flows/test', data)
             }
             
             ,saveFlow : function(flowForm) {
@@ -231,4 +207,32 @@ module.factory('DataHub', [
         
         return service;
     }
-])
+]);
+module.factory('TaskManager', [
+    '$http'
+    ,'$q'
+    ,'$route'
+    ,function(
+        $http
+        ,$q
+        ,$route
+    ) {
+        var service = {
+            waitForTask : function (taskId) {
+                var params = {
+                    'taskId' : taskId
+                };
+                return $http.get('api/task/wait', {'params' : params});
+            }
+            
+            ,cancelTask : function (taskId) {
+                var params = {
+                    'taskId' : taskId
+                };
+                return $http.post('api/task/stop', params);
+            }
+        }
+        
+        return service;
+    }
+]);

@@ -1,14 +1,19 @@
 package com.marklogic.hub.web.controller.api;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.http.concurrent.BasicFuture;
+import org.apache.http.concurrent.Cancellable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.batch.core.JobExecution;
+import org.springframework.batch.core.JobExecutionListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.validation.BindingResult;
@@ -26,7 +31,9 @@ import com.marklogic.hub.flow.FlowType;
 import com.marklogic.hub.model.DomainModel;
 import com.marklogic.hub.model.FlowModel;
 import com.marklogic.hub.model.RunFlowModel;
+import com.marklogic.hub.service.CancellableTask;
 import com.marklogic.hub.service.FlowManagerService;
+import com.marklogic.hub.service.TaskManagerService;
 import com.marklogic.hub.web.controller.BaseController;
 import com.marklogic.hub.web.form.FlowForm;
 import com.marklogic.hub.web.form.LoginForm;
@@ -43,6 +50,9 @@ public class FlowApiController extends BaseController {
 
     @Autowired
     private FlowManagerService flowManagerService;
+    
+    @Autowired
+    private TaskManagerService taskManagerService;
 
     @RequestMapping(value = "/flow", method = RequestMethod.GET)
     @ResponseBody
@@ -101,40 +111,98 @@ public class FlowApiController extends BaseController {
     }
 
     @RequestMapping(value = "/test", method = RequestMethod.POST)
-    public void testFlow(HttpServletRequest request) {
-        final String domainName = request.getParameter("domainName");
-        final String flowName = request.getParameter("flowName");
-        final Flow flow = flowManagerService.getFlow(domainName, flowName);
-        flowManagerService.testFlow(flow);
+    public BigInteger testFlow(HttpServletRequest request) {
+        CancellableTask task = new CancellableTask() {
+            
+            private JobExecution jobExecution;
+            
+            @Override
+            public void cancel(BasicFuture<?> resultFuture) {
+                if (jobExecution != null) {
+                    jobExecution.stop();
+                }
+            }
+            
+            @Override
+            public void run(BasicFuture<?> resultFuture) {
+                final String domainName = request.getParameter("domainName");
+                final String flowName = request.getParameter("flowName");
+                final Flow flow = flowManagerService.getFlow(domainName, flowName);
+                this.jobExecution = flowManagerService.testFlow(flow);
+            }
+        };
+        
+        return taskManagerService.addTask(task);
     }
 
     @RequestMapping(value = "/run", method = RequestMethod.POST)
-    public void runFlow(@RequestBody RunFlowModel runFlow) {
-        final Flow flow = flowManagerService.getFlow(runFlow.getDomainName(), runFlow.getFlowName());
-        // TODO update and move BATCH SIZE TO a constant or config - confirm
-        // desired behavior
-        flowManagerService.runFlow(flow, 100);
+    public BigInteger runFlow(@RequestBody RunFlowModel runFlow) {
+        CancellableTask task = new CancellableTask() {
+            
+            private JobExecution jobExecution;
+
+            @Override
+            public void cancel(BasicFuture<?> resultFuture) {
+                if (jobExecution != null) {
+                    jobExecution.stop();
+                }
+            }
+            
+            @Override
+            public void run(BasicFuture<?> resultFuture) {
+                final Flow flow = flowManagerService.getFlow(runFlow.getDomainName(), runFlow.getFlowName());
+                // TODO update and move BATCH SIZE TO a constant or config - confirm
+                // desired behavior
+                this.jobExecution = flowManagerService.runFlow(flow, 100, new JobExecutionListener() {
+                    
+                    @Override
+                    public void beforeJob(JobExecution jobExecution) {
+                    }
+                    
+                    @Override
+                    public void afterJob(JobExecution jobExecution) {
+                        resultFuture.completed(null);
+                    }
+                });
+            }
+        };
+
+        return taskManagerService.addTask(task);
     }
 
     @RequestMapping(value="/run/input", method = RequestMethod.POST)
-    public void runInputFlow(@RequestBody RunFlowModel runFlow) {
-        try {
-            Mlcp mlcp = new Mlcp(
-                            environmentConfiguration.getMLHost()
+    public BigInteger runInputFlow(@RequestBody RunFlowModel runFlow) {
+        CancellableTask task = new CancellableTask() {
+            
+            @Override
+            public void cancel(BasicFuture<?> resultFuture) {
+                // TODO: stop MLCP. We don't have a way to do this yet.
+            }
+            
+            @Override
+            public void run(BasicFuture<?> resultFuture) {
+                try {
+                    Mlcp mlcp = new Mlcp(
+                                    environmentConfiguration.getMLHost()
                             ,Integer.parseInt(environmentConfiguration.getMLStagingRestPort())
-                            ,environmentConfiguration.getMLUsername()
-                            ,environmentConfiguration.getMLPassword()
-                        );
+                                    ,environmentConfiguration.getMLUsername()
+                                    ,environmentConfiguration.getMLPassword()
+                                );
 
-            SourceOptions sourceOptions = new SourceOptions(runFlow.getDomainName(), runFlow.getFlowName(), FlowType.INPUT.toString());
-            mlcp.addSourceDirectory(runFlow.getInputPath(), sourceOptions);
-            mlcp.loadContent();
-        }
-        catch (IOException e) {
-            LOGGER.error("Error encountered while trying to run flow:  " + runFlow.getDomainName() + " > " + runFlow.getFlowName(), e);
-        }
+                    SourceOptions sourceOptions = new SourceOptions(runFlow.getDomainName(), runFlow.getFlowName(), FlowType.INPUT.toString());
+                    mlcp.addSourceDirectory(runFlow.getInputPath(), sourceOptions);
+                    mlcp.loadContent();
+                    
+                    resultFuture.completed(null);
+                }
+                catch (IOException e) {
+                    LOGGER.error("Error encountered while trying to run flow:  " + runFlow.getDomainName() + " > " + runFlow.getFlowName(), e);
+                }
+            }
+        };
+        return taskManagerService.addTask(task);
     }
-
+    
     @RequestMapping(value = "/runInParallel", method = RequestMethod.POST)
     public void runFlowsInParallel(HttpServletRequest request) {
         final String domainName = request.getParameter("domainName");
