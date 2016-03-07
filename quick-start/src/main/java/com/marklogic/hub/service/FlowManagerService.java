@@ -6,6 +6,8 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.batch.core.JobExecution;
+import org.springframework.batch.core.JobExecutionListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,9 +21,8 @@ import com.marklogic.hub.config.EnvironmentConfiguration;
 import com.marklogic.hub.exception.FlowManagerException;
 import com.marklogic.hub.factory.FlowModelFactory;
 import com.marklogic.hub.flow.Flow;
-import com.marklogic.hub.model.FlowModel;
 import com.marklogic.hub.flow.FlowType;
-import com.marklogic.hub.util.FileUtil;
+import com.marklogic.hub.model.FlowModel;
 
 @Service
 public class FlowManagerService {
@@ -65,14 +66,18 @@ public class FlowManagerService {
         flowManager.uninstallFlow(flowName);
     }
 
-    public void testFlow(Flow flow) {
+    public JobExecution testFlow(Flow flow) {
         FlowManager flowManager = getFlowManager();
-        flowManager.testFlow(flow);
+        return flowManager.testFlow(flow);
     }
 
-    public void runFlow(Flow flow, int batchSize) {
+    public JobExecution runFlow(Flow flow, int batchSize) {
+        return runFlow(flow, batchSize, null);
+    }
+    
+    public JobExecution runFlow(Flow flow, int batchSize, JobExecutionListener listener) {
         FlowManager flowManager = getFlowManager();
-        flowManager.runFlow(flow, batchSize);
+        return flowManager.runFlow(flow, batchSize, listener);
     }
 
     public void runFlowsInParallel(Flow... flows) {

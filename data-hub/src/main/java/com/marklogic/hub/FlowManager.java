@@ -24,6 +24,7 @@ import javax.xml.stream.XMLStreamException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.Job;
+import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobExecutionListener;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
@@ -186,8 +187,8 @@ public class FlowManager extends ResourceManager {
 
     }
 
-    public void runFlow(Flow flow, int batchSize) {
-        runFlow(flow, batchSize, null);
+    public JobExecution runFlow(Flow flow, int batchSize) {
+        return runFlow(flow, batchSize, null);
     }
 
     // might want to add Job tracking support
@@ -198,8 +199,9 @@ public class FlowManager extends ResourceManager {
      * @param flow - the flow to run
      * @param batchSize - the size to use for batching transactions
      * @param listener - the JobExecutionListener to receive status updates about the job
+     * @return 
      */
-    public void runFlow(Flow flow, int batchSize, JobExecutionListener listener) {
+    public JobExecution runFlow(Flow flow, int batchSize, JobExecutionListener listener) {
         Collector c = flow.getCollector();
         if (c instanceof ServerCollector) {
             ((ServerCollector)c).setClient(client);
@@ -220,7 +222,7 @@ public class FlowManager extends ResourceManager {
         Job job = builder.build();
 
         try {
-            jobLauncher.run(job, new JobParameters());
+            return jobLauncher.run(job, new JobParameters());
         }
         catch (Exception e) {
             throw new RuntimeException(e);
@@ -296,7 +298,7 @@ public class FlowManager extends ResourceManager {
             this.getServices().post(params, handle, transaction);
         }
     }
-	public void testFlow(Flow flow) {
-
+	public JobExecution testFlow(Flow flow) {
+	    return null;
 	}
 }

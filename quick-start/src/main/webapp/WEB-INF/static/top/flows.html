@@ -4,8 +4,10 @@
     <li class="nav" ng-repeat="flow in status.selectedEntity.inputFlows">
     	<h3><i ng-class="flow.synched ? 'fa fa-file-text-o sycned' : 'fa fa-file-text-o unsycned'"></i>{{flow.flowName}}</h3>
     	<div class="button-group-right">
-        <button type="submit" name="runFlow" class="btn btn-success" ng-click="showLoadDataForm(flow.entityName, flow.flowName)" ng-disabled="!flow.synched">Load Data</button>
-	    	<button type="submit" name="runFlow" class="btn btn-success" ng-click="runFlow(flow.entityName, flow.flowName)" ng-disabled="!flow.synched">Run</button>
+        <button type="submit" name="runFlow" class="btn btn-success" ng-click="runInputFlow(flow)" ng-disabled="!flow.synched" ng-if="flow.inputFlowTaskId == null">Load Data</button>
+        <button type="submit" name="runFlow" class="btn btn-success" ng-click="cancelInputFlow(flow)" ng-if="flow.inputFlowTaskId != null">Cancel Load Data</button>
+	      <button type="submit" name="runFlow" class="btn btn-success" ng-click="runFlow(flow)" ng-disabled="!flow.synched" ng-if="flow.runFlowTaskId == null">Run</button>
+        <button type="submit" name="runFlow" class="btn btn-success" ng-click="cancelRunFlow(flow)" ng-if="flow.runFlowTaskId != null">Cancel Run</button>
 	    </div>
 	    <abn-tree tree-data="flow.treeData.children" icon-leaf="fa fa-file-text-o" icon-expand="fa fa-folder-o" icon-collapse="fa fa-folder-open-o" expand-level="1"></abn-tree>
     </li>
@@ -16,8 +18,10 @@
     <li class="nav" ng-repeat="flow in status.selectedEntity.conformFlows">
     	<h3><i ng-class="flow.synched ? 'fa fa-file-text-o sycned' : 'fa fa-file-text-o unsycned'"></i>{{flow.flowName}}</h3>
     	<div class="button-group-right">
-    		<button type="submit" name="runFlow" class="btn btn-success" ng-click="runFlow(flow.entityName, flow.flowName)" ng-disabled="!flow.synched">Run</button>
-    		<button type="submit" name="testFlow" class="btn btn-success" ng-click="testFlow(flow.entityName, flow.flowName)" ng-disabled="!flow.synched">Test</button>
+        <button type="submit" name="runFlow" class="btn btn-success" ng-click="runFlow(flow)" ng-disabled="!flow.synched" ng-if="flow.runFlowTaskId == null">Run</button>
+        <button type="submit" name="runFlow" class="btn btn-success" ng-click="cancelRunFlow(flow)" ng-if="flow.runFlowTaskId != null">Cancel Run</button>
+    		<button type="submit" name="testFlow" class="btn btn-success" ng-click="testFlow(flow)" ng-disabled="!flow.synched" ng-if="flow.testFlowTaskId == null">Test</button>
+            <button type="submit" name="testFlow" class="btn btn-success" ng-click="cancelTestFlow(flow)" ng-if="flow.testFlowTaskId != null">Cancel Test</button>
     	</div>
     	<abn-tree tree-data="flow.treeData.children" icon-leaf="fa fa-file-text-o" icon-expand="fa fa-folder-o" icon-collapse="fa fa-folder-open-o" expand-level="1"></abn-tree>
     </li>
