@@ -21,43 +21,43 @@ module.controller('topController', [
         ,TaskManager
     ) {
         $scope.status = DataHub.status;
-        $scope.domainForm = {};
+        $scope.entityForm = {};
         $scope.flowForm = {};
         $scope.loadDataForm = {};
         $scope.loading = false;
         $scope.action = DataHub.action;
 
-        $scope.createDomain = function() {
+        $scope.createEntity = function() {
             $scope.loading = true;
-            $scope.domainForm.hasErrors = false;
-            $('#domainModal').modal({
+            $scope.entityForm.hasErrors = false;
+            $('#entityModal').modal({
                 backdrop: 'static',
                 keyboard: true
             });
             $scope.loading = false;
         };
 
-        $scope.saveDomain = function() {
+        $scope.saveEntity = function() {
             $scope.loading = true;
-            DataHub.saveDomain($scope.domainForm)
+            DataHub.saveEntity($scope.entityForm)
             .success(function () {
-                $scope.domainForm.hasErrors = false;
+                $scope.entityForm.hasErrors = false;
                 $scope.status = DataHub.status;
-                $('#domainModal').modal('hide');
+                $('#entityModal').modal('hide');
             })
             .error(function () {
-                $scope.domainForm.hasErrors = true;
+                $scope.entityForm.hasErrors = true;
             })
             .finally(function () {
                 $scope.loading = false;
             });
         };
 
-        $scope.displayDomain = function(domainName) {
+        $scope.displayEntity = function(entityName) {
             $scope.loading = true;
-            DataHub.displayDomain(domainName)
-            .success(function (selectedDomain) {
-                DataHub.status.selectedDomain = selectedDomain;
+            DataHub.displayEntity(entityName)
+            .success(function (selectedEntity) {
+                DataHub.status.selectedEntity = selectedEntity;
             })
             .finally(function () {
                 $scope.loading = false;
@@ -75,9 +75,9 @@ module.controller('topController', [
             });
         };
 
-        $scope.createFlow = function(domainName, flowType, extension) {
+        $scope.createFlow = function(entityName, flowType, extension) {
             $scope.loading = true;
-            $scope.flowForm.domainName = domainName;
+            $scope.flowForm.entityName = entityName;
             $scope.flowForm.flowType = flowType;
             $scope.flowForm.extension = extension;
             $scope.flowForm.hasErrors = false;
@@ -90,35 +90,35 @@ module.controller('topController', [
 
         $scope.runInputFlow = function(flow) {
             ModalService.openLoadDataModal().then(function (inputPath) {
-                $scope.loading = true;
+            $scope.loading = true;
                 flow.inputFlowCancelled = false;
-                
-                DataHub.runInputFlow(flow.domainName, flow.flowName, inputPath)
+
+                DataHub.runInputFlow(flow.entityName, flow.flowName, inputPath)
                 .success(function (taskId) {
                     flow.inputFlowTaskId = taskId;
-                    
+
                     TaskManager.waitForTask(flow.inputFlowTaskId)
                     .success(function (result) {
                         if (!flow.inputFlowCancelled) {
                             DataHub.displayMessage('Load data successful.', 'success', 'notification', false);
                         }
-                    })
+            })
                     .error(function () {
                         if (!flow.inputFlowCancelled) {
                             DataHub.displayMessage('Load data unsuccessful.', 'error', 'notification', false);
                         }
                     })
-                    .finally(function () {
+            .finally(function () {
                         flow.inputFlowTaskId = null;
-                        $scope.loading = false;
-                    });
+                $scope.loading = false;
+            });
                 })
                 .error(function () {
                     $scope.loading = false;
                 });
             });
         };
-        
+
         $scope.cancelInputFlow = function(flow) {
             flow.inputFlowCancelled = true;
             DataHub.displayMessage('Load data cancelled.', 'success', 'notification', false);
@@ -128,8 +128,8 @@ module.controller('topController', [
         $scope.runFlow = function(flow) {
             $scope.loading = true;
             flow.runFlowCancelled = false;
-            
-            DataHub.runFlow(flow.domainName, flow.flowName)
+
+            DataHub.runFlow(flow.entityName, flow.flowName)
             .success(function (taskId) {
                 flow.runFlowTaskId = taskId;
                 
@@ -138,22 +138,22 @@ module.controller('topController', [
                     if (!flow.runFlowCancelled) {
                         DataHub.displayMessage('Flow run is successful.', 'success', 'notification', false);
                     }
-                })
+            })
                 .error(function () {
                     if (!flow.runFlowCancelled) {
                         DataHub.displayMessage('Flow run is unsuccessful.', 'error', 'notification', false);
                     }
                 })
-                .finally(function () {
+            .finally(function () {
                     flow.runFlowTaskId = null;
-                    $scope.loading = false;
-                });
+                $scope.loading = false;
+            });
             })
             .error(function () {
                 $scope.loading = false;
             });
         };
-        
+
         $scope.cancelRunFlow = function(flow) {
             flow.runFlowCancelled = true;
             DataHub.displayMessage('Flow run cancelled.', 'success', 'notification', false);
@@ -163,8 +163,8 @@ module.controller('topController', [
         $scope.testFlow = function(flow) {
             $scope.loading = true;
             flow.testFlowCancelled = false;
-            
-            DataHub.testFlow(flow.domainName, flow.flowName)
+
+            DataHub.testFlow(flow.entityName, flow.flowName)
             .success(function (taskId) {
                 flow.testFlowTaskId = taskId;
                 
@@ -173,22 +173,22 @@ module.controller('topController', [
                     if (!flow.testFlowTaskId) {
                         DataHub.displayMessage('Flow test is successful.', 'success', 'notification', false);
                     }
-                })
+            })
                 .error(function () {
                     if (!flow.testFlowTaskId) {
                         DataHub.displayMessage('Flow test is unsuccessful.', 'error', 'notification', false);
                     }
                 })
-                .finally(function () {
+            .finally(function () {
                     flow.testFlowTaskId = null;
-                    $scope.loading = false;
-                });
+                $scope.loading = false;
+            });
             })
             .error(function () {
                 $scope.loading = false;
             });
         };
-        
+
         $scope.cancelTestFlow = function(flow) {
             flow.testFlowCancelled = true;
             DataHub.displayMessage('Flow test cancelled.', 'success', 'notification', false);

@@ -46,14 +46,14 @@ public class FlowManagerService {
 
     }
 
-    public List<Flow> getFlows(String domainName) {
+    public List<Flow> getFlows(String entityName) {
         FlowManager flowManager = getFlowManager();
-        return flowManager.getFlows(domainName);
+        return flowManager.getFlows(entityName);
     }
 
-    public Flow getFlow(String domainName, String flowName) {
+    public Flow getFlow(String entityName, String flowName) {
         FlowManager flowManager = getFlowManager();
-        return flowManager.getFlow(domainName, flowName);
+        return flowManager.getFlow(entityName, flowName);
     }
 
     public void installFlow(Flow flow) {
@@ -85,9 +85,9 @@ public class FlowManagerService {
         flowManager.runFlowsInParallel(flows);
     }
 
-    public FlowModel createFlow(String domainName, String flowName,
+    public FlowModel createFlow(String entityName, String flowName,
             FlowType flowType, PluginFormat pluginFormat, Format dataFormat) {
-        FlowModelFactory flowModelFactory = new FlowModelFactory(domainName);
+        FlowModelFactory flowModelFactory = new FlowModelFactory(entityName);
         File pluginDir = new File(environmentConfiguration.getUserPluginDir());
         FlowModel flowModel;
         try {

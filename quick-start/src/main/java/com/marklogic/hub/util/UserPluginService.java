@@ -21,17 +21,17 @@ public class UserPluginService {
 
     public UserPluginFileInfo getUserPluginFileInfo(String path) {
         try {
-            String domainsPath = new File(environmentConfiguration.getUserPluginDir() + File.separator + "domains").getCanonicalPath();
+            String entitiesPath = new File(environmentConfiguration.getUserPluginDir() + File.separator + "entities").getCanonicalPath();
 
-            String domainName = null;
+            String entityName = null;
             String flowName = null;
             FlowType flowType = null;
-            if (path.indexOf(domainsPath) == 0) {
-                String suffix = path.substring(domainsPath.length());
+            if (path.indexOf(entitiesPath) == 0) {
+                String suffix = path.substring(entitiesPath.length());
                 String[] pathTokens = suffix.split("[/\\\\]");
 
                 if (pathTokens != null) {
-                    domainName = pathTokens.length >= 2 ? pathTokens[1] : null;
+                    entityName = pathTokens.length >= 2 ? pathTokens[1] : null;
                     flowName = pathTokens.length >= 4 ? pathTokens[3] : null;
 
                     String flowTypeStr = pathTokens.length >= 3 ? pathTokens[2] : null;
@@ -39,7 +39,7 @@ public class UserPluginService {
                 }
             }
             
-            return new UserPluginFileInfo(domainName, flowName, flowType);
+            return new UserPluginFileInfo(entityName, flowName, flowType);
         } catch (IOException e) {
             LOGGER.error("Cannot get info from path: " + path, e);
             return new UserPluginFileInfo(null, null, null);

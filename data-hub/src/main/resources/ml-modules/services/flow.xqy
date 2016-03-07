@@ -44,14 +44,14 @@ declare function get(
   debug:dump-env(),
 
   document {
-    let $domain-name := map:get($params, "domain-name")
+    let $entity-name := map:get($params, "entity-name")
     let $flow-name := map:get($params, "flow-name")
     let $flow-type := map:get($params, "flow-type")
     let $resp :=
       if ($flow-name) then
-        flow:get-flow($domain-name, $flow-name, $flow-type)
+        flow:get-flow($entity-name, $flow-name, $flow-type)
       else
-        flow:get-flows($domain-name)
+        flow:get-flows($entity-name)
     let $_ := debug:log($resp)
     return
      $resp

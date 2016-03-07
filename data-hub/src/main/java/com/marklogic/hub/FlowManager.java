@@ -117,12 +117,14 @@ public class FlowManager extends ResourceManager {
 
     /**
      * Retrieves a list of flows installed on the MarkLogic server
-     * @param domainName - the domain from which to fetch the flows
-     * @return - a list of flows for the given domain
+     * 
+     * @param entityName
+     *            - the entity from which to fetch the flows
+     * @return - a list of flows for the given entity
      */
-    public List<Flow> getFlows(String domainName) {
+    public List<Flow> getFlows(String entityName) {
         RequestParameters params = new RequestParameters();
-        params.add("domain-name", domainName);
+        params.add("entity-name", entityName);
         ServiceResultIterator resultItr = this.getServices().get(params);
         if (resultItr == null || ! resultItr.hasNext()) {
             return null;
@@ -148,18 +150,21 @@ public class FlowManager extends ResourceManager {
     }
 
     /**
-     * Retrieves a named flow from a given domain
-     * @param domainName - the domain that the flow belongs to
-     * @param flowName - the name of the flow to get
+     * Retrieves a named flow from a given entity
+     * 
+     * @param entityName
+     *            - the entity that the flow belongs to
+     * @param flowName
+     *            - the name of the flow to get
      * @return the flow
      */
-    public Flow getFlow(String domainName, String flowName) {
-        return getFlow(domainName, flowName, null);
+    public Flow getFlow(String entityName, String flowName) {
+        return getFlow(entityName, flowName, null);
     }
 
-    public Flow getFlow(String domainName, String flowName, FlowType flowType) {
+    public Flow getFlow(String entityName, String flowName, FlowType flowType) {
         RequestParameters params = new RequestParameters();
-        params.add("domain-name", domainName);
+        params.add("entity-name", entityName);
         params.add("flow-name", flowName);
         if (flowType != null) {
             params.add("flow-type", flowType.toString());
@@ -208,7 +213,8 @@ public class FlowManager extends ResourceManager {
                 .<String, String> chunk(batchSize)
                 .reader(reader).writer(writer).build();
 
-        String jobName = flow.getDomainName() + ":" + flow.getType() + ":" + flow.getName() + "-" + System.currentTimeMillis();
+        String jobName = flow.getEntityName() + ":" + flow.getType() + ":"
+                + flow.getName() + "-" + System.currentTimeMillis();
         SimpleJobBuilder builder = jobBuilderFactory.get(jobName).start(step);
         if (listener != null) {
             builder = builder.listener(listener);
@@ -226,12 +232,16 @@ public class FlowManager extends ResourceManager {
     public void runInputFlow(Flow flow, HubConfig config) {
         try {
             Mlcp mlcp = new Mlcp(config.getHost(), config.getStagingPort(), config.getAdminUsername(), config.getAdminPassword());
-            SourceOptions sourceOptions = new SourceOptions(flow.getDomainName(), flow.getName(), FlowType.INPUT.toString());
+            SourceOptions sourceOptions = new SourceOptions(
+                    flow.getEntityName(), flow.getName(),
+                    FlowType.INPUT.toString());
             mlcp.addSourceDirectory(config.getModulesPath(), sourceOptions);
             mlcp.loadContent();
         }
         catch (IOException e) {
-            LOGGER.error("Error encountered while trying to run flow:  " + flow.getDomainName() + " > " + flow.getName(), e);
+            LOGGER.error(
+                    "Error encountered while trying to run flow:  "
+                            + flow.getEntityName() + " > " + flow.getName(), e);
         }
     }
 

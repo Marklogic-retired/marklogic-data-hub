@@ -27,7 +27,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.marklogic.client.io.Format;
-import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.FlowType;
 import com.marklogic.hub.flow.SimpleFlow;
 
@@ -35,27 +34,30 @@ public class Scaffolding {
 
     static final private Logger LOGGER = LoggerFactory.getLogger(Scaffolding.class);
 
-    public static File getDomainDir(File userlandDir, String domainName) {
-        File domainsDir = new File(userlandDir, "domains");
-        File domainDir = new File(domainsDir, domainName);
-        return domainDir;
+    public static File getEntityDir(File userlandDir, String entityName) {
+        File entitiesDir = new File(userlandDir, "entities");
+        File entityDir = new File(entitiesDir, entityName);
+        return entityDir;
     }
 
-    public static File getFlowDir(File userlandDir, String domainName, String flowName, FlowType flowType) {
-        File domainDir = getDomainDir(userlandDir, domainName);
-        File typeDir = new File(domainDir, flowType.toString());
+    public static File getFlowDir(File userlandDir, String entityName,
+            String flowName, FlowType flowType) {
+        File entityDir = getEntityDir(userlandDir, entityName);
+        File typeDir = new File(entityDir, flowType.toString());
         File flowDir = new File(typeDir, flowName);
         return flowDir;
     }
 
-    public static void createDomain(String domainName, File userlandPath) {
-        File domainDir = getDomainDir(userlandPath, domainName);
-        domainDir.mkdirs();
+    public static void createEntity(String entityName, File userlandPath) {
+        File entityDir = getEntityDir(userlandPath, entityName);
+        entityDir.mkdirs();
     }
 
-    public static void createFlow(String domainName, String flowName, FlowType flowType, PluginFormat pluginFormat, Format dataFormat, File userlandDir)
+    public static void createFlow(String entityName, String flowName,
+            FlowType flowType, PluginFormat pluginFormat, Format dataFormat,
+            File userlandDir)
             throws IOException {
-        File flowDir = getFlowDir(userlandDir, domainName, flowName, flowType);
+        File flowDir = getFlowDir(userlandDir, entityName, flowName, flowType);
 
         if (flowType.equals(FlowType.CONFORMANCE)) {
             File collectorDir = new File(flowDir, "collector");
@@ -79,7 +81,8 @@ public class Scaffolding {
         writeFile("scaffolding/" + flowType + "/" + pluginFormat + "/triples." + pluginFormat,
                 Paths.get(triplesDir.getPath(), "triples." + pluginFormat));
 
-        SimpleFlow flow = new SimpleFlow(domainName, flowName, flowType, dataFormat);
+        SimpleFlow flow = new SimpleFlow(entityName, flowName, flowType,
+                dataFormat);
         flow.serialize();
         File flowFile = new File(flowDir, flowName + ".xml");
         try(PrintWriter out = new PrintWriter(flowFile)) {

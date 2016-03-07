@@ -44,9 +44,9 @@ public class SyncStatusService  implements InitializingBean {
     private Map<File, Date> lastInstallMap = new HashMap<>();
     
     /**
-     * A map that contains the sync status of a domain.
+     * A map that contains the sync status of a entity.
      */
-    private Map<String, Boolean> domainStatusMap = new LinkedHashMap<>();
+    private Map<String, Boolean> entityStatusMap = new LinkedHashMap<>();
     
     /**
      * A map that contains the sync status of a flow.
@@ -94,8 +94,8 @@ public class SyncStatusService  implements InitializingBean {
     }
     
     /**
-     * Refresh the sync status of all domains and flows. This method will read
-     * the user plugin directory and update the sync status of all domains and
+     * Refresh the sync status of all entities and flows. This method will read
+     * the user plugin directory and update the sync status of all entities and
      * flows based on the last modified time of files found.
      * 
      * @throws IOException
@@ -113,8 +113,9 @@ public class SyncStatusService  implements InitializingBean {
     }
     
     /**
-     * Update the domain/flow sync status of the domain/flow where this file belongs to.
-     * This will overwrite any existing domain/flow sync status for the file.
+     * Update the entity/flow sync status of the entity/flow where this file
+     * belongs to. This will overwrite any existing entity/flow sync status for
+     * the file.
      * 
      * @param file
      * @throws IOException
@@ -129,26 +130,32 @@ public class SyncStatusService  implements InitializingBean {
         
         boolean synched = isSynched(file);
         
-        if (fileInfo.getDomainName() != null) {
-            boolean domainSynched = synched;
+        if (fileInfo.getEntityName() != null) {
+            boolean entitySynched = synched;
             if (!install) {
-                domainSynched = domainSynched && isDomainSynched(fileInfo.getDomainName());
+                entitySynched = entitySynched
+                        && isEntitySynched(fileInfo.getEntityName());
             }
-            setDomainSynched(fileInfo.getDomainName(), domainSynched);
+            setEntitySynched(fileInfo.getEntityName(), entitySynched);
             
             if (fileInfo.getFlowName() != null && fileInfo.getFlowType() != null) {
                 boolean flowSynched = synched;
                 if (!install) {
-                    flowSynched = flowSynched && isFlowSynched(fileInfo.getDomainName(), fileInfo.getFlowType(), fileInfo.getFlowName()); 
+                    flowSynched = flowSynched
+                            && isFlowSynched(fileInfo.getEntityName(),
+                                    fileInfo.getFlowType(),
+                                    fileInfo.getFlowName());
                 }
-                setFlowSynched(fileInfo.getDomainName(), fileInfo.getFlowType(), fileInfo.getFlowName(), flowSynched && synched);
+                setFlowSynched(fileInfo.getEntityName(),
+                        fileInfo.getFlowType(), fileInfo.getFlowName(),
+                        flowSynched && synched);
             }
         }
     }
     
     public void setInstalledFiles(Map<File, Date> files) throws IOException {
         lastInstallMap.clear();
-        domainStatusMap.clear();
+        entityStatusMap.clear();
         flowStatusMap.clear();
         
         for (File file : files.keySet()) {
@@ -178,20 +185,22 @@ public class SyncStatusService  implements InitializingBean {
         return file.lastModified() <= lastInstalledTime.getTime();
     }
     
-    public boolean isDomainSynched(String domainName) {
-        Boolean synched = domainStatusMap.get(domainName);
+    public boolean isEntitySynched(String entityName) {
+        Boolean synched = entityStatusMap.get(entityName);
         return synched == null ? false : synched;
     }
     
-    protected void setDomainSynched(String domainName, boolean synched) {
+    protected void setEntitySynched(String entityName, boolean synched) {
         if (!synched) {
             System.out.println("not synched");
         }
-        domainStatusMap.put(domainName, synched);
+        entityStatusMap.put(entityName, synched);
     }
     
-    public boolean isFlowSynched(String domainName, FlowType flowType, String flowName) {
-        Map<FlowType, Map<String, Boolean>> flowTypeMap = flowStatusMap.get(domainName);
+    public boolean isFlowSynched(String entityName, FlowType flowType,
+            String flowName) {
+        Map<FlowType, Map<String, Boolean>> flowTypeMap = flowStatusMap
+                .get(entityName);
         if (flowTypeMap == null) {
             return false;
         }
@@ -205,15 +214,17 @@ public class SyncStatusService  implements InitializingBean {
         return synched == null ? false : synched;
     }
     
-    protected void setFlowSynched(String domainName, FlowType flowType, String flowName, boolean synched) {
+    protected void setFlowSynched(String entityName, FlowType flowType,
+            String flowName, boolean synched) {
         if (!synched) {
             System.out.println("not synched");
         }
         
-        Map<FlowType, Map<String, Boolean>> flowTypeMap = flowStatusMap.get(domainName);
+        Map<FlowType, Map<String, Boolean>> flowTypeMap = flowStatusMap
+                .get(entityName);
         if (flowTypeMap == null) {
             flowTypeMap = new HashMap<>();
-            flowStatusMap.put(domainName, flowTypeMap);
+            flowStatusMap.put(entityName, flowTypeMap);
         }
         
         Map<String, Boolean> statusMap = flowTypeMap.get(flowType);

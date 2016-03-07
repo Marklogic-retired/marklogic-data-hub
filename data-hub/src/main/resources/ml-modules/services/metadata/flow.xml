@@ -7,7 +7,7 @@
     </div>
   </description>
   <method name="GET">
-    <param name="domain-name" />
+    <param name="entity-name" />
     <param name="flow-name" />
     <param name="flow-type" />
   </method>

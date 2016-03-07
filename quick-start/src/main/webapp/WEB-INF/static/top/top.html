@@ -10,10 +10,10 @@
 <div id="content" class="container-fluid" ng-if="!action.type">
   <div class="row-fluid row-flex">
     <div id="sidebar" class="col-md-4">
-      <div ng-include="'top/domains.html'" ng-if="status.domains"></div>
+      <div ng-include="'top/entities.html'" ng-if="status.entities"></div>
     </div>
     <div id="center" class="col-md-8">
-      <div ng-include="'top/flows.html'" ng-if="status.selectedDomain"></div>
+      <div ng-include="'top/flows.html'" ng-if="status.selectedEntity"></div>
     </div>
   </div>
 </div>

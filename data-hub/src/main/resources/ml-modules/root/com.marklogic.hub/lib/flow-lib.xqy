@@ -53,8 +53,8 @@ declare variable $NO-OP-PLUGIN :=
     attribute type { "null" }
   };
 
-(: the directory where domains live :)
-declare variable $DOMAINS-DIR := "/ext/domains/";
+(: the directory where entities live :)
+declare variable $ENTITIES-DIR := "/ext/entities/";
 
 declare variable $PLUGIN-NS := "http://marklogic.com/hub-in-a-box/plugins/";
 
@@ -203,12 +203,12 @@ declare %private function flow:get-writer(
  : Returns a flow by name. This xml is dynamically constructed
  : by looking in the modules database.
  :
- : @param $domain-name - name of the domain that owns the flow
+ : @param $entity-name - name of the entity that owns the flow
  : @param $flow-name - name of the flow to retrieve
  : @return - xml describing the flow
  :)
 declare function flow:get-flow(
-  $domain-name as xs:string,
+  $entity-name as xs:string,
   $flow-name as xs:string,
   $flow-type as xs:string?) as element(hub:flow)
 {
@@ -218,37 +218,37 @@ declare function flow:get-flow(
         if ($flow-type) then $flow-type
         else "*"
       return
-        cts:uri-match($DOMAINS-DIR || $domain-name || "/" || $type || "/" || $flow-name || "/*")
+        cts:uri-match($ENTITIES-DIR || $entity-name || "/" || $type || "/" || $flow-name || "/*")
     })
   return
-    flow:get-flow($domain-name, $flow-name, $flow-type, $uris)
+    flow:get-flow($entity-name, $flow-name, $flow-type, $uris)
 };
 
 (:~
  : Returns a flow by name. This xml is dynamically constructed
  : by looking in the modules database.
  :
- : @param $domain-name - name of the domain that owns the flow
+ : @param $entity-name - name of the entity that owns the flow
  : @param $flow-name - name of the flow to retrieve
- : @param $uris - uris used to build the domain xml
+ : @param $uris - uris used to build the entity xml
  : @return - xml describing the flow
  :)
 declare %private function flow:get-flow(
-  $domain-name as xs:string,
+  $entity-name as xs:string,
   $flow-name as xs:string,
   $flow-type as xs:string?,
   $uris as xs:string*) as element(hub:flow)
 {
-  let $_ := xdmp:log(("domain: " || $domain-name, "flow: " || $flow-name, "flow-type: " || $flow-type, "uris:", $uris))
-  let $real-flow-type := fn:replace($uris[1], $DOMAINS-DIR || $domain-name || "/([^/]+)/" || $flow-name || ".*$", "$1")
+  let $_ := xdmp:log(("entity: " || $entity-name, "flow: " || $flow-name, "flow-type: " || $flow-type, "uris:", $uris))
+  let $real-flow-type := fn:replace($uris[1], $ENTITIES-DIR || $entity-name || "/([^/]+)/" || $flow-name || ".*$", "$1")
   let $map := map:map()
   let $_ :=
     for $dir in $uris
     let $type :=
       if ($flow-type) then $flow-type
       else "[^/]+"
-    let $dir-name := fn:replace($dir, $DOMAINS-DIR || $domain-name || "/" || $type || "/" || $flow-name || "/([^/]+)/$", "$1")
-    let $child-uris := $uris[fn:matches(., $DOMAINS-DIR || $domain-name || "/" || $type || "/" || $flow-name || "/" || $dir-name || "/([^/]+)$")]
+    let $dir-name := fn:replace($dir, $ENTITIES-DIR || $entity-name || "/" || $type || "/" || $flow-name || "/([^/]+)/$", "$1")
+    let $child-uris := $uris[fn:matches(., $ENTITIES-DIR || $entity-name || "/" || $type || "/" || $flow-name || "/" || $dir-name || "/([^/]+)$")]
     return
       switch ($dir-name)
         case "collector" return
@@ -264,14 +264,14 @@ declare %private function flow:get-flow(
         default return
           ()
   let $flow := hul:run-in-modules(function() {
-    let $uri := $DOMAINS-DIR || $domain-name || "/" || $real-flow-type || "/" || $flow-name || "/" || $flow-name || ".xml"
+    let $uri := $ENTITIES-DIR || $entity-name || "/" || $real-flow-type || "/" || $flow-name || "/" || $flow-name || ".xml"
     return
       fn:doc($uri)/hub:flow
   })
   return
     <flow xmlns="http://marklogic.com/hub-in-a-box">
       <name>{$flow-name}</name>
-      <domain>{$domain-name}</domain>
+      <entity>{$entity-name}</entity>
       <complexity>{ ($flow/hub:complexity/fn:data(), "simple")[1] }</complexity>
       <data-format>{ $flow/hub:data-format/fn:data() }</data-format>
       <type>{$real-flow-type}</type>
@@ -295,22 +295,22 @@ declare %private function flow:get-flow(
 };
 
 (:~
- : Returns the flows that belong to the given domain in the database
+ : Returns the flows that belong to the given entity in the database
  :
- : @param $domain-name - the name of the domain containing the flows
+ : @param $entity-name - the name of the entity containing the flows
  : @return - xml describing the flows
  :)
 declare function flow:get-flows(
-  $domain-name as xs:string) as element(hub:flows)
+  $entity-name as xs:string) as element(hub:flows)
 {
   let $uris := hul:run-in-modules(function() {
-    cts:uri-match($DOMAINS-DIR || "*")
+    cts:uri-match($ENTITIES-DIR || "*")
   })
   let $flows :=
-    for $flow in $uris[fn:matches(., $DOMAINS-DIR || $domain-name || "/(input|conformance)/[^/]+/$")]
-    let $name := fn:replace($flow, $DOMAINS-DIR || $domain-name || "/(input|conformance)/([^/]+)/$", "$2")
+    for $flow in $uris[fn:matches(., $ENTITIES-DIR || $entity-name || "/(input|conformance)/[^/]+/$")]
+    let $name := fn:replace($flow, $ENTITIES-DIR || $entity-name || "/(input|conformance)/([^/]+)/$", "$2")
     return
-      flow:get-flow($domain-name, $name, (), $uris[fn:matches(., $DOMAINS-DIR || $domain-name || "/(input|conformance)/" || $name || "/.+")])
+      flow:get-flow($entity-name, $name, (), $uris[fn:matches(., $ENTITIES-DIR || $entity-name || "/(input|conformance)/" || $name || "/.+")])
   return
     <flows xmlns="http://marklogic.com/hub-in-a-box">
     {
@@ -320,65 +320,65 @@ declare function flow:get-flows(
 };
 
 (:~
- : Returns a domain by name. This xml is dynamically constructed
+ : Returns a entity by name. This xml is dynamically constructed
  : by looking in the modules database.
  :
- : @param $domain-name - name of the domain to retrieve
- : @return - xml describing the domain
+ : @param $entity-name - name of the entity to retrieve
+ : @return - xml describing the entity
  :)
-declare function flow:get-domain(
-  $domain-name as xs:string)
+declare function flow:get-entity(
+  $entity-name as xs:string)
 {
   let $uris :=
     hul:run-in-modules(function() {
-      cts:uri-match($DOMAINS-DIR || $domain-name || "/*")
+      cts:uri-match($ENTITIES-DIR || $entity-name || "/*")
     })
   return
-    flow:get-domain($domain-name, $uris)
+    flow:get-entity($entity-name, $uris)
 };
 
 (:~
- : Returns a domain by name. This xml is dynamically constructed
+ : Returns a entity by name. This xml is dynamically constructed
  : by looking in the modules database.
  :
- : @param $domain-name - name of the domain to retrieve
- : @param $uris - uris used to build the domain xml
- : @return - xml describing the domain
+ : @param $entity-name - name of the entity to retrieve
+ : @param $uris - uris used to build the entity xml
+ : @return - xml describing the entity
  :)
-declare %private function flow:get-domain(
-  $domain-name as xs:string,
+declare %private function flow:get-entity(
+  $entity-name as xs:string,
   $uris as xs:string*)
-  as element(hub:domain)
+  as element(hub:entity)
 {
-  <domain xmlns="http://marklogic.com/hub-in-a-box">
-    <name>{$domain-name}</name>
+  <entity xmlns="http://marklogic.com/hub-in-a-box">
+    <name>{$entity-name}</name>
     {
-      flow:get-flows($domain-name)
+      flow:get-flows($entity-name)
     }
-  </domain>
+  </entity>
 };
 
 (:~
- : Returns the domains in the database
+ : Returns the entities in the database
  :
- : @return - xml describing the domains
+ : @return - xml describing the entities
  :)
-declare function flow:get-domains() as element(hub:domains)
+declare function flow:get-entities() as element(hub:entities)
 {
   let $uris := hul:run-in-modules(function() {
-    cts:uri-match($DOMAINS-DIR || "*")
+    cts:uri-match($ENTITIES-DIR || "*")
   })
-  let $domains :=
-    for $flow in $uris[fn:matches(., $DOMAINS-DIR || "[^/]+/$")]
-    let $name := fn:replace($flow, $DOMAINS-DIR || "([^/]+)/$", "$1")
+  let $entities :=
+    for $flow in $uris[fn:matches(., $ENTITIES-DIR || "[^/]+/$")]
+    let $name := fn:replace($flow, $ENTITIES-DIR || "([^/]+)/$", "$1")
     return
-      flow:get-domain($name, $uris[fn:matches(., $DOMAINS-DIR || $name || "/.+")])
+      flow:get-entity($name, $uris[fn:matches(., $ENTITIES-DIR || $name || "/.+")])
   return
-    <domains xmlns="http://marklogic.com/hub-in-a-box">
+    <entities xmlns="http://marklogic.com/hub-in-a-box">
     {
-      $domains
+      $entities
     }
-    </domains>
+    </entities>
 };
 
 (:~

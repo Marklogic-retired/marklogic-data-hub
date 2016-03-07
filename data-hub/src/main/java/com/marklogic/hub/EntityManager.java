@@ -29,24 +29,25 @@ import com.marklogic.client.extensions.ResourceServices.ServiceResult;
 import com.marklogic.client.extensions.ResourceServices.ServiceResultIterator;
 import com.marklogic.client.io.DOMHandle;
 import com.marklogic.client.util.RequestParameters;
-import com.marklogic.hub.domain.Domain;
-import com.marklogic.hub.domain.DomainImpl;
+import com.marklogic.hub.entity.Entity;
+import com.marklogic.hub.entity.EntityImpl;
 
-public class DomainManager extends ResourceManager {
-    static final public String NAME = "domain";
+public class EntityManager extends ResourceManager {
+    static final public String NAME = "entity";
     private DatabaseClient client;
 
-    public DomainManager(DatabaseClient client) {
+    public EntityManager(DatabaseClient client) {
         super();
         this.client = client;
         this.client.init(NAME, this);
     }
 
     /**
-     * Retrieves a list of domains from the Server
-     * @return a list of domains
+     * Retrieves a list of entities from the Server
+     * 
+     * @return a list of entities
      */
-    public List<Domain> getDomains() {
+    public List<Entity> getEntities() {
         RequestParameters params = new RequestParameters();
         ServiceResultIterator resultItr = this.getServices().get(params);
         if (resultItr == null || ! resultItr.hasNext()) {
@@ -57,29 +58,31 @@ public class DomainManager extends ResourceManager {
         Document parent = res.getContent(handle).get();
         NodeList children = parent.getDocumentElement().getChildNodes();
 
-        ArrayList<Domain> domains = null;
+        ArrayList<Entity> entities = null;
         if (children.getLength() > 0) {
-            domains = new ArrayList<Domain>();
+            entities = new ArrayList<Entity>();
         }
 
         Node node;
         for (int i = 0; i < children.getLength(); i++) {
             node = children.item(i);
             if (node.getNodeType() == Node.ELEMENT_NODE) {
-                domains.add(domainFromXml((Element)children.item(i)));
+                entities.add(entityFromXml((Element) children.item(i)));
             }
         }
-        return domains;
+        return entities;
     }
 
     /**
-     * Retrieve a named domain
-     * @param domainName - the name of the domain to retrieve
-     * @return a domain
+     * Retrieve a named entity
+     * 
+     * @param entityName
+     *            - the name of the entity to retrieve
+     * @return a entity
      */
-    public Domain getDomain(String domainName) {
+    public Entity getEntity(String entityName) {
         RequestParameters params = new RequestParameters();
-        params.add("domain-name", domainName);
+        params.add("entity-name", entityName);
         ServiceResultIterator resultItr = this.getServices().get(params);
         if (resultItr == null || ! resultItr.hasNext()) {
             return null;
@@ -87,12 +90,12 @@ public class DomainManager extends ResourceManager {
         ServiceResult res = resultItr.next();
         DOMHandle handle = new DOMHandle();
         Document parent = res.getContent(handle).get();
-        return new DomainImpl(parent.getDocumentElement());
+        return new EntityImpl(parent.getDocumentElement());
     }
 
 
-    private Domain domainFromXml(Element doc) {
-        Domain d = new DomainImpl(doc);
+    private Entity entityFromXml(Element doc) {
+        Entity d = new EntityImpl(doc);
         return d;
     }
 }

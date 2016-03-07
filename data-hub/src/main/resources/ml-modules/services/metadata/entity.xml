@@ -1,12 +1,12 @@
 <!-- Copyright 2016 MarkLogic Corporation.  All Rights Reserved. -->
 <metadata>
-  <title>domain</title>
+  <title>entity</title>
   <description>
     <div>
-      Hub in a Box Domain entry point for Java
+      Hub in a Box Entity entry point for Java
     </div>
   </description>
   <method name="GET">
-    <param name="domain-name" />
+    <param name="entity-name" />
   </method>
 </metadata>

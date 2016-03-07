@@ -2,17 +2,17 @@ package com.marklogic.hub.model;
 
 public class FlowModel {
 
-    private String domainName;
+    private String entityName;
     private String flowName;
     private boolean isSynched;
     private TreeData treeData;
 
-    public String getDomainName() {
-        return domainName;
+    public String getEntityName() {
+        return entityName;
     }
 
-    public void setDomainName(String domainName) {
-        this.domainName = domainName;
+    public void setEntityName(String entityName) {
+        this.entityName = entityName;
 
     }
 
@@ -44,8 +44,8 @@ public class FlowModel {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("{");
-        sb.append("domainName=");
-        sb.append(domainName);
+        sb.append("entityName=");
+        sb.append(entityName);
         sb.append("flowName=");
         sb.append(flowName);
         sb.append("isSynched=");

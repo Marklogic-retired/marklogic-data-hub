@@ -28,8 +28,9 @@ import com.marklogic.hub.plugin.ServerPlugin;
  */
 public class SimpleFlow extends AbstractFlow {
 
-    public SimpleFlow(String domainName, String flowName, FlowType type, Format dataFormat) {
-        super(domainName, flowName, type, dataFormat, FlowComplexity.SIMPLE);
+    public SimpleFlow(String entityName, String flowName, FlowType type,
+            Format dataFormat) {
+        super(entityName, flowName, type, dataFormat, FlowComplexity.SIMPLE);
         for (int i = 0; i < 3; i++) {
             super.addPlugin(null);
         }

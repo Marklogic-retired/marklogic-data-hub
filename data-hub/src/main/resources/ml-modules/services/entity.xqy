@@ -15,7 +15,7 @@
 :)
 xquery version "1.0-ml";
 
-module namespace service = "http://marklogic.com/rest-api/resource/domain";
+module namespace service = "http://marklogic.com/rest-api/resource/entity";
 
 import module namespace debug = "http://marklogic.com/hub-in-a-box/debug-lib"
   at "/com.marklogic.hub/lib/debug-lib.xqy";
@@ -30,10 +30,10 @@ declare namespace hub = "http://marklogic.com/hub-in-a-box";
 declare option xdmp:mapping "false";
 
 (:~
- : Entry point for java to get domain(s).
+ : Entry point for java to get entity(s).
  :
- : if the "domain-name" param is given then return a domain. Otherwise
- : return all domains.
+ : if the "entity-name" param is given then return a entity. Otherwise
+ : return all entities.
  :
  :)
 declare function get(
@@ -44,12 +44,12 @@ declare function get(
   debug:dump-env(),
 
   document {
-    let $domain-name := map:get($params, "domain-name")
+    let $entity-name := map:get($params, "entity-name")
     let $resp :=
-      if ($domain-name) then
-        flow:get-domain($domain-name)
+      if ($entity-name) then
+        flow:get-entity($entity-name)
       else
-        flow:get-domains()
+        flow:get-entities()
     let $_ := debug:log($resp)
     return
      $resp
