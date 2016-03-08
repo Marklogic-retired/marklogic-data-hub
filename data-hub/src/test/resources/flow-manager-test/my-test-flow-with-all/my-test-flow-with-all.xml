@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <flow xmlns="http://marklogic.com/hub-in-a-box">
   <name>my-test-flow-with-all</name>
-  <domain>test</domain>
+  <entity>test</entity>
   <type>conformance</type>
   <complexity>simple</complexity>
   <data-format>application/xml</data-format>

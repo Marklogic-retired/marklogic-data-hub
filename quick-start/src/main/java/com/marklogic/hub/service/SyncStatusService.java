@@ -33,10 +33,6 @@ public class SyncStatusService  implements InitializingBean {
     @Override
     public void afterPropertiesSet() throws Exception {
         File assetInstallTimeFile = new File(environmentConfiguration.getAssetInstallTimeFilePath());
-        if (!assetInstallTimeFile.exists() || !assetInstallTimeFile.isFile()) {
-            return;
-        }
-
         moduleManager = new PropertiesModuleManager(assetInstallTimeFile);
     }
 
@@ -53,10 +49,10 @@ public class SyncStatusService  implements InitializingBean {
     }
 
 
-    public boolean isFlowSynched(String domainName, FlowType flowType, String flowName) {
+    public boolean isFlowSynched(String entityName, FlowType flowType, String flowName) {
         moduleManager.initialize();
         String pluginDir = environmentConfiguration.getUserPluginDir();
-        Path flowDir = Paths.get(pluginDir, "domains", domainName, flowType.toString(), flowName);
+        Path flowDir = Paths.get(pluginDir, "entities", entityName, flowType.toString(), flowName);
 
         this.synched = true;
         try {
@@ -73,6 +69,9 @@ public class SyncStatusService  implements InitializingBean {
 
         @Override
         public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+            if (dir.endsWith("REST")) {
+                return FileVisitResult.SKIP_SUBTREE;
+            }
             return FileVisitResult.CONTINUE;
         }
 

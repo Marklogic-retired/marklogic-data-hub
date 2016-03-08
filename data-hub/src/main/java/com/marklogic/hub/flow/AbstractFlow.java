@@ -49,7 +49,7 @@ import com.marklogic.hub.writer.Writer;
  */
 public abstract class AbstractFlow implements Flow {
 
-    private String domainName;
+    private String entityName;
     private String flowName;
     private FlowType type;
     private Format dataFormat = Format.XML;
@@ -63,8 +63,9 @@ public abstract class AbstractFlow implements Flow {
         deserialize(xml);
     }
 
-    public AbstractFlow(String domainName, String flowName, FlowType type, Format dataFormat, FlowComplexity flowComplexity) {
-        this.domainName = domainName;
+    public AbstractFlow(String entityName, String flowName, FlowType type,
+            Format dataFormat, FlowComplexity flowComplexity) {
+        this.entityName = entityName;
         this.flowName = flowName;
         this.type = type;
         this.dataFormat = dataFormat;
@@ -93,8 +94,8 @@ public abstract class AbstractFlow implements Flow {
             case "data-format":
                 this.dataFormat = Format.getFromMimetype(node.getTextContent());
                 break;
-            case "domain":
-                this.domainName = node.getTextContent();
+            case "entity":
+                this.entityName = node.getTextContent();
                 break;
             case "collector":
                 PluginType colType = PluginType.getPluginType(node.getAttributes().getNamedItem("type").getNodeValue());
@@ -165,11 +166,11 @@ public abstract class AbstractFlow implements Flow {
     }
 
     /**
-     * Retrieves the name of the domain that this flow belongs to
+     * Retrieves the name of the entity that this flow belongs to
      */
     @Override
-    public String getDomainName() {
-        return this.domainName;
+    public String getEntityName() {
+        return this.entityName;
     }
 
     /**
@@ -267,8 +268,8 @@ public abstract class AbstractFlow implements Flow {
             serializer.writeCharacters(this.flowName);
             serializer.writeEndElement();
 
-            serializer.writeStartElement("domain");
-            serializer.writeCharacters(this.domainName);
+            serializer.writeStartElement("entity");
+            serializer.writeCharacters(this.entityName);
             serializer.writeEndElement();
 
             serializer.writeStartElement("type");

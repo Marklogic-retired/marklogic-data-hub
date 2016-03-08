@@ -30,49 +30,49 @@ import org.springframework.stereotype.Service;
 @Service
 public class FileSystemWatcherService implements DisposableBean {
     private static final Logger LOGGER = LoggerFactory.getLogger(FileSystemWatcherService.class);
-    
+
     private WatchService watcher;
     private Thread watcherThread;
     private Map<WatchKey,Path> keys = new HashMap<>();
-    
+
     private List<FileSystemEventListener> listeners = Collections.synchronizedList(new ArrayList<>());
     private Map<Path, FileSystemEventListener> pathListeners = Collections.synchronizedMap(new HashMap<>());
-    
+
     @PostConstruct
     protected synchronized void onPostConstruct() throws Exception {
         watcher = FileSystems.getDefault().newWatchService();
-        
+
         watcherThread = new DirectoryWatcherThread("directory-watcher-thread");
         watcherThread.start();
     }
-    
+
     /**
      * Recursively listen for file system events in the specified path name.
-     * 
+     *
      * @param pathName
      * @throws IOException
      */
     public synchronized void watch(String pathName) throws IOException {
         watch(pathName, null);
     }
-    
+
     public synchronized void watch(String pathName, FileSystemEventListener listener) throws IOException {
         File file = new File(pathName);
         Path path = file.toPath();
-        
+
         pathListeners.put(path, listener);
-        
+
         registerAll(path);
     }
-    
+
     public void addListener(FileSystemEventListener listener) {
         listeners.add(listener);
     }
-    
+
     public void removeListener(FileSystemEventListener listener) {
         listeners.remove(listener);
     }
-    
+
     protected void notifyListeners(Path path, WatchEvent<Path> event) {
         // notify listeners on this path and this path's ancestors
         Path currentPath = path;
@@ -86,10 +86,10 @@ public class FileSystemWatcherService implements DisposableBean {
                     LOGGER.error("Exception occured on listener", e);
                 }
             }
-            
+
             currentPath = currentPath.getParent();
         }
-        
+
         // notify global listeners
         synchronized (listeners) {
             for (FileSystemEventListener listener : listeners) {
@@ -102,7 +102,7 @@ public class FileSystemWatcherService implements DisposableBean {
             }
         }
     }
-    
+
     /**
      * Register the given directory with the WatchService
      */
@@ -131,28 +131,31 @@ public class FileSystemWatcherService implements DisposableBean {
             public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs)
                 throws IOException
             {
+                if (dir.endsWith("REST")) {
+                    return FileVisitResult.SKIP_SUBTREE;
+                }
                 register(dir);
                 return FileVisitResult.CONTINUE;
             }
         });
     }
-    
+
     @Override
     public synchronized void destroy() throws Exception {
         watcher.close();
     }
-    
+
     @SuppressWarnings("unchecked")
     static <T> WatchEvent<T> cast(WatchEvent<?> event) {
         return (WatchEvent<T>)event;
     }
-    
+
     private class DirectoryWatcherThread extends Thread {
 
         public DirectoryWatcherThread(String name) {
             super(name);
         }
-        
+
         @Override
         public void run() {
             for (;;) {
@@ -183,7 +186,7 @@ public class FileSystemWatcherService implements DisposableBean {
 
                     // print out event
                     LOGGER.trace("Event received: %s for: %s", event.kind().name(), child);
-                    
+
                     // notify listeners
                     notifyListeners(dir, ev);
 

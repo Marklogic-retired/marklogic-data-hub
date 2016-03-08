@@ -1,6 +1,7 @@
 .DS_Store
 .gradle/
 .settings/
+.metadata/
 data-hub/bin/
 quick-start/bin/
 build/

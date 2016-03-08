@@ -45,12 +45,13 @@ import com.marklogic.appdeployer.command.security.DeployUsersCommand;
 import com.marklogic.appdeployer.impl.SimpleAppDeployer;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
-import com.marklogic.client.modulesloader.impl.DefaultModulesLoader;
 import com.marklogic.client.modulesloader.impl.PropertiesModuleManager;
+import com.marklogic.client.modulesloader.impl.XccAssetLoader;
 import com.marklogic.hub.commands.DeployHubDatabaseCommand;
 import com.marklogic.hub.commands.DeployModulesDatabaseCommand;
 import com.marklogic.hub.commands.DeployRestApiCommand;
 import com.marklogic.hub.commands.LoadModulesCommand;
+import com.marklogic.hub.util.HubFileFilter;
 import com.marklogic.hub.util.HubModulesLoader;
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.ManageConfig;
@@ -63,9 +64,9 @@ import com.marklogic.rest.util.Fragment;
 public class DataHub {
 
     static final private Logger LOGGER = LoggerFactory.getLogger(DataHub.class);
-    static final private String STAGING_NAME = "data-hub-in-a-box-STAGING";
-    static final private String FINAL_NAME = "data-hub-in-a-box-FINAL";
-    static final private String MODULES_DB_NAME = "data-hub-in-a-box-modules";
+    static final public String STAGING_NAME = "data-hub-in-a-box-STAGING";
+    static final public String FINAL_NAME = "data-hub-in-a-box-FINAL";
+    static final public String MODULES_DB_NAME = "data-hub-in-a-box-modules";
     private ManageConfig config;
     private ManageClient client;
     public static String HUB_NAME = "data-hub-in-a-box";
@@ -76,7 +77,7 @@ public class DataHub {
     private String username;
     private String password;
 
-    private File assetInstallTimeFile;
+    private File assetInstallTimeFile = new File("./assetInstallTime.properties");
 
     private final static int DEFAULT_STAGING_REST_PORT = 8010;
     private final static int DEFAULT_FINAL_REST_PORT = 8011;
@@ -186,6 +187,10 @@ public class DataHub {
      * @throws IOException
      */
     public void install() throws IOException {
+        // clean up any lingering cache for deployed modules
+        PropertiesModuleManager moduleManager = new PropertiesModuleManager(this.assetInstallTimeFile);
+        moduleManager.deletePropertiesFile();
+
         AdminManager manager = new AdminManager();
         AppConfig config = getAppConfig();
         SimpleAppDeployer deployer = new SimpleAppDeployer(client, manager);
@@ -215,37 +220,35 @@ public class DataHub {
         DatabaseClient finalClient = DatabaseClientFactory.newClient(host, finalRestPort, username, password,
                 config.getRestAuthentication(), config.getRestSslContext(), config.getRestSslHostnameVerifier());
 
-        PropertiesModuleManager modulesManager = new PropertiesModuleManager(assetInstallTimeFile);
 
         Set<File> loadedFiles = new HashSet<File>();
 
-        DefaultModulesLoader modulesLoader = new DefaultModulesLoader(config.newXccAssetLoader());
-        HubModulesLoader hubModulesLoader = new HubModulesLoader(config.newXccAssetLoader());
-        if (assetInstallTimeFile != null) {
-            modulesLoader.setModulesManager(modulesManager);
-            hubModulesLoader.setModulesManager(modulesManager);
-        }
-        Path startPath = Paths.get(pathToUserModules, "domains");
+        XccAssetLoader assetLoader = config.newXccAssetLoader();
+        assetLoader.setFileFilter(new HubFileFilter());
+
+        PropertiesModuleManager moduleManager = new PropertiesModuleManager(this.assetInstallTimeFile);
+        HubModulesLoader hubModulesLoader = new HubModulesLoader(assetLoader, moduleManager);
+        File baseDir = Paths.get(pathToUserModules).normalize().toAbsolutePath().toFile();
+        loadedFiles.addAll(hubModulesLoader.loadModules(baseDir, new AssetModulesFinder(), stagingClient));
+        Path startPath = Paths.get(pathToUserModules, "entities");
+
         Files.walkFileTree(startPath, new SimpleFileVisitor<Path>() {
             @Override
             public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs)
                 throws IOException
             {
-                boolean isRest = dir.endsWith("REST") || dir.endsWith("rest");
+                boolean isRest = dir.endsWith("REST");
+
                 String dirStr = dir.toString();
                 boolean isInputDir = dirStr.matches(".*/input/.*");
-                boolean isConformanceDir = dirStr.matches(".*conformance/.*");
+                boolean isConformanceDir = dirStr.matches(".*/conformance/.*");
                 if (isRest) {
                     if (isInputDir) {
-                        loadedFiles.addAll(modulesLoader.loadModules(dir.normalize().toAbsolutePath().toFile(), new AllButAssetsModulesFinder(), stagingClient));
+                        loadedFiles.addAll(hubModulesLoader.loadModules(dir.normalize().toAbsolutePath().toFile(), new AllButAssetsModulesFinder(), stagingClient));
                     }
                     else if (isConformanceDir) {
-                        loadedFiles.addAll(modulesLoader.loadModules(dir.normalize().toAbsolutePath().toFile(), new AllButAssetsModulesFinder(), finalClient));
+                        loadedFiles.addAll(hubModulesLoader.loadModules(dir.normalize().toAbsolutePath().toFile(), new AllButAssetsModulesFinder(), finalClient));
                     }
-                    return FileVisitResult.SKIP_SUBTREE;
-                }
-                else if (isInputDir || isConformanceDir) {
-                    loadedFiles.addAll(hubModulesLoader.loadModules(dir.normalize().toAbsolutePath().toFile(), new AssetModulesFinder(), stagingClient));
                     return FileVisitResult.SKIP_SUBTREE;
                 }
                 else {
@@ -302,5 +305,9 @@ public class DataHub {
         SimpleAppDeployer deployer = new SimpleAppDeployer(client, manager);
         deployer.setCommands(getCommands(config));
         deployer.undeploy(config);
+
+        // clean up any lingering cache for deployed modules
+        PropertiesModuleManager moduleManager = new PropertiesModuleManager(this.assetInstallTimeFile);
+        moduleManager.deletePropertiesFile();
     }
 }

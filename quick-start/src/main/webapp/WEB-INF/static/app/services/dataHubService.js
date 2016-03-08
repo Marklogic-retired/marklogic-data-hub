@@ -116,82 +116,58 @@ module.factory('DataHub', [
                 return promise;
             }
             
-            ,saveDomain : function(domainForm) {
+            ,saveEntity : function(entityForm) {
             	
-            	var promise = $http.post('api/domains', domainForm)
+            	var promise = $http.post('api/entities', entityForm)
                 .success(function (status) {
                     service.status = status;
-                    service.displayMessage('New domain is created successfully.', 'success', 'notification', false);
+                    service.displayMessage('New entity is created successfully.', 'success', 'notification', false);
                 })
                 .error(function (error) {
-                	service.displayMessage(error.message, 'error', 'domainModalMessage', true);
+                	service.displayMessage(error.message, 'error', 'entityModalMessage', true);
                 });
                 
                 return promise;
             }
             
-            ,displayDomain : function(domainName) {
-            	return $http.post('api/domains/display', domainName);
+            ,displayEntity : function(entityName) {
+            	return $http.post('api/entities/display', entityName);
             }
             
             ,getStatusChange : function() {
-                return $http.get('api/domains/status-change');
+                return $http.get('api/entities/status-change');
             }
            
-            ,runFlow : function(domainName, flowName) {
+            ,runFlow : function(entityName, flowName) {
             	var data = {
-            		domainName: domainName,
+            		entityName: entityName,
             		flowName: flowName
             	};
-            	var promise = $http.post('api/flows/run', data)
-                .success(function () {
-                	service.displayMessage('Flow run is successful.', 'success', 'notification', false);
-                })
-                .error(function () {
-                	service.displayMessage('Flow run is unsuccessful.', 'error', 'notification', false);
-                });
-                
-                return promise;
+            	return $http.post('api/flows/run', data)
             }
             
-            ,runInputFlow : function(domainName, flowName, path) {
+            ,runInputFlow : function(entityName, flowName, path) {
                 var data = {
-                    'domainName' : domainName
+                    'entityName' : entityName
                     ,'flowName': flowName
                     ,'inputPath' : path
                 };
-                var promise = $http.post('api/flows/run/input', data)
-                .success(function () {
-                    service.displayMessage('Flow data load is successful.', 'success', 'notification', false);
-                })
-                .error(function () {
-                    service.displayMessage('Flow data load is unsuccessful.', 'error', 'notification', false);
-                });
-                
-                return promise;
+                return $http.post('api/flows/run/input', data)
             }
             
-            ,testFlow : function(domainName, flowName) {
+            ,testFlow : function(entityName, flowName) {
             	var data = {
-                	domainName: domainName,
+            		entityName: entityName,
                 	flowName: flowName
                 };
-            	var promise = $http.post('api/flows/test', data)
-                .success(function () {
-                    service.displayMessage('Flow test is successful.', 'success', 'notification', false);
-                })
-                .error(function () {
-                	service.displayMessage('Flow test is unsuccessful.', 'error', 'notification', false);
-                });
-                
-                return promise;
+                return $http.post('api/flows/test', data)
             }
             
             ,saveFlow : function(flowForm) {
             	
             	var promise = $http.post('api/flows', flowForm)
-                .success(function (selectedDomain) {
-                    service.status.selectedDomain = selectedDomain;
+                .success(function (selectedEntity) {
+                    service.status.selectedEntity = selectedEntity;
                     service.displayMessage('New flow is created successfully.', 'success', 'notification', false);
                 })
                 .error(function (error) {
@@ -231,4 +207,32 @@ module.factory('DataHub', [
         
         return service;
     }
-])
+]);
+module.factory('TaskManager', [
+    '$http'
+    ,'$q'
+    ,'$route'
+    ,function(
+        $http
+        ,$q
+        ,$route
+    ) {
+        var service = {
+            waitForTask : function (taskId) {
+                var params = {
+                    'taskId' : taskId
+                };
+                return $http.get('api/task/wait', {'params' : params});
+            }
+            
+            ,cancelTask : function (taskId) {
+                var params = {
+                    'taskId' : taskId
+                };
+                return $http.post('api/task/stop', params);
+            }
+        }
+        
+        return service;
+    }
+]);

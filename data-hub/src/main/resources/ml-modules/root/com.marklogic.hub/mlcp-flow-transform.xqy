@@ -17,7 +17,7 @@ declare function mlcpFlow:transform(
   let $_ := $paramNodes ! map:put($paramMap, fn:local-name(.), ./string())
 
   let $flow := flow:get-flow(
-    map:get($paramMap, 'domain-name'),
+    map:get($paramMap, 'entity-name'),
     map:get($paramMap, 'flow-name'),
     map:get($paramMap, 'flow-type'))
 

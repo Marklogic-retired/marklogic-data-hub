@@ -14,7 +14,7 @@ public class FileUtil {
     private static final Logger LOGGER = LoggerFactory
             .getLogger(FileUtil.class);
 
-    public static final String DOMAINS_FOLDER = "domains";
+    public static final String ENTITIES_FOLDER = "entities";
 
     public static List<String> listDirectFolders(String path) {
         List<String> folders = new ArrayList<>();

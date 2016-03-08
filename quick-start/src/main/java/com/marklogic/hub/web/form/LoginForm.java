@@ -3,7 +3,7 @@ package com.marklogic.hub.web.form;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.marklogic.hub.model.DomainModel;
+import com.marklogic.hub.model.EntityModel;
 
 public class LoginForm extends BaseForm {
 
@@ -15,8 +15,8 @@ public class LoginForm extends BaseForm {
 	private boolean serverVersionAccepted;
 	private boolean installed;
 	private boolean loggedIn;
-    private List<DomainModel> domains = new ArrayList<DomainModel>();
-	private DomainModel selectedDomain;
+    private List<EntityModel> entities = new ArrayList<EntityModel>();
+    private EntityModel selectedEntity;
 
 	public String getMlHost() {
 		return mlHost;
@@ -82,36 +82,36 @@ public class LoginForm extends BaseForm {
 		this.userPluginDir = userPluginDir;
 	}
 
-	public List<DomainModel> getDomains() {
-		return domains;
-	}
+    public List<EntityModel> getEntities() {
+        return entities;
+    }
 
-	public void setDomains(List<DomainModel> domains) {
-		this.domains = domains;
-	}
+    public void setEntities(List<EntityModel> entities) {
+        this.entities = entities;
+    }
 
-	public DomainModel getSelectedDomain() {
-		return selectedDomain;
-	}
+    public EntityModel getSelectedEntity() {
+        return selectedEntity;
+    }
 
-	public void setSelectedDomain(DomainModel selectedDomain) {
-		this.selectedDomain = selectedDomain;
-	}
+    public void setSelectedEntity(EntityModel selectedEntity) {
+        this.selectedEntity = selectedEntity;
+    }
 
-	public void selectDomain(String domainName) {
-	    if (domains != null) {
-	        for (DomainModel domain : domains) {
-	            if (domain.getDomainName().equals(domainName)) {
-	                setSelectedDomain(domain);
+    public void selectEntity(String entityName) {
+        if (entities != null) {
+            for (EntityModel entity : entities) {
+                if (entity.getEntityName().equals(entityName)) {
+                    setSelectedEntity(entity);
 	                return;
 	            }
 	        }
 	    }
 	}
 
-	public void refreshSelectedDomain() {
-	    if (selectedDomain != null) {
-	        selectDomain(selectedDomain.getDomainName());
+    public void refreshSelectedEntity() {
+        if (selectedEntity != null) {
+            selectEntity(selectedEntity.getEntityName());
 	    }
 	}
 }

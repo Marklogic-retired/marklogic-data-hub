@@ -54,13 +54,10 @@ public class HubModulesLoader extends LoggingObject implements com.marklogic.cli
      */
     private boolean catchExceptions = false;
 
-    public HubModulesLoader() {
-        this(null);
-    }
-
-    public HubModulesLoader(XccAssetLoader xccAssetLoader) {
+    public HubModulesLoader(XccAssetLoader xccAssetLoader, PropertiesModuleManager modulesManager) {
         this.extensionMetadataProvider = new DefaultExtensionMetadataProvider();
-        this.modulesManager = new PropertiesModuleManager();
+
+        this.modulesManager = modulesManager;
         this.xccAssetLoader = xccAssetLoader;
     }
 
@@ -72,7 +69,6 @@ public class HubModulesLoader extends LoggingObject implements com.marklogic.cli
         }
 
         Modules modules = modulesFinder.findModules(baseDir);
-        modules.getAssetDirectories().add(new FileSystemResource(baseDir));
 
         Set<File> loadedModules = new HashSet<>();
 

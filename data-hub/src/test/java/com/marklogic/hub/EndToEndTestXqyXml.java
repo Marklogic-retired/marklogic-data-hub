@@ -21,20 +21,26 @@ import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.FlowType;
 
 public class EndToEndTestXqyXml extends HubTestBase {
-    private static final String DOMAIN = "e2edomain";
+    private static final String ENTITY = "e2eentity";
     private static File pluginsDir = new File("./ye-olde-plugins");
 
     @BeforeClass
     public static void setup() throws IOException {
         XMLUnit.setIgnoreWhitespace(true);
 
+        if (pluginsDir.isDirectory() && pluginsDir.exists()) {
+            FileUtils.deleteDirectory(pluginsDir);
+        }
+
         installHub();
 
-        Scaffolding.createDomain(DOMAIN, pluginsDir);
-        Scaffolding.createFlow(DOMAIN, "testinput", FlowType.INPUT, PluginFormat.XQUERY, Format.XML, pluginsDir);
-        Scaffolding.createFlow(DOMAIN, "testconformance", FlowType.CONFORMANCE, PluginFormat.XQUERY, Format.XML, pluginsDir);
+        Scaffolding.createEntity(ENTITY, pluginsDir);
+        Scaffolding.createFlow(ENTITY, "testinput", FlowType.INPUT,
+                PluginFormat.XQUERY, Format.XML, pluginsDir);
+        Scaffolding.createFlow(ENTITY, "testconformance", FlowType.CONFORMANCE,
+                PluginFormat.XQUERY, Format.XML, pluginsDir);
 
-        new DataHub(host, stagingPort, finalPort, user, password).installUserModules("./ye-olde-plugins");
+        new DataHub(host, stagingPort, finalPort, user, password).installUserModules(pluginsDir.toString());
     }
 
     @AfterClass
@@ -46,8 +52,9 @@ public class EndToEndTestXqyXml extends HubTestBase {
     @Test
     public void runFlows() throws IOException, ParserConfigurationException, SAXException {
         FlowManager fm = new FlowManager(stagingClient);
-        Flow inputFlow = fm.getFlow(DOMAIN, "testinput", FlowType.INPUT);
-        Flow conformanceFlow = fm.getFlow(DOMAIN, "testconformance", FlowType.CONFORMANCE);
+        Flow inputFlow = fm.getFlow(ENTITY, "testinput", FlowType.INPUT);
+        Flow conformanceFlow = fm.getFlow(ENTITY, "testconformance",
+                FlowType.CONFORMANCE);
 
         URL url = HubTestBase.class.getClassLoader().getResource("e2e-test/input");
         HubConfig config = getHubConfig(url.getPath());

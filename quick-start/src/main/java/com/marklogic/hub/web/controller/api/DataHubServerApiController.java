@@ -19,9 +19,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.marklogic.hub.config.EnvironmentConfiguration;
 import com.marklogic.hub.exception.DataHubException;
-import com.marklogic.hub.model.DomainModel;
+import com.marklogic.hub.model.EntityModel;
 import com.marklogic.hub.service.DataHubService;
-import com.marklogic.hub.service.DomainManagerService;
+import com.marklogic.hub.service.EntityManagerService;
 import com.marklogic.hub.service.SyncStatusService;
 import com.marklogic.hub.web.controller.BaseController;
 import com.marklogic.hub.web.form.LoginForm;
@@ -40,7 +40,7 @@ public class DataHubServerApiController extends BaseController {
 	private DataHubService dataHubService;
 
 	@Autowired
-	private DomainManagerService domainManagerService;
+    private EntityManagerService entityManagerService;
 
 	@Autowired
 	private SyncStatusService syncStatusService;
@@ -82,15 +82,15 @@ public class DataHubServerApiController extends BaseController {
 	}
 
     private void loadUserModules(LoginForm loginForm) {
-        loginForm.setDomains(domainManagerService.getDomains());
-        loginForm.setSelectedDomain(loginForm.getDomains() != null
-                && !loginForm.getDomains().isEmpty() ? loginForm.getDomains()
+        loginForm.setEntities(entityManagerService.getEntities());
+        loginForm.setSelectedEntity(loginForm.getEntities() != null
+                && !loginForm.getEntities().isEmpty() ? loginForm.getEntities()
                 .get(0) : null);
     }
 
     private void unLoadUserModules(LoginForm loginForm) {
-        loginForm.setDomains(new ArrayList<DomainModel>());
-        loginForm.setSelectedDomain(null);
+        loginForm.setEntities(new ArrayList<EntityModel>());
+        loginForm.setSelectedEntity(null);
     }
 
     private boolean isValidDirectory(String userPluginDir) {
@@ -116,8 +116,8 @@ public class DataHubServerApiController extends BaseController {
 			this.retrieveEnvironmentConfiguration(loginForm);
 			session.setAttribute("loginForm", loginForm);
         } else if (loginForm.isInstalled()) {
-            loginForm.setDomains(domainManagerService.getDomains());
-            loginForm.refreshSelectedDomain();
+            loginForm.setEntities(entityManagerService.getEntities());
+            loginForm.refreshSelectedEntity();
 		}
 		return loginForm;
 	}
@@ -154,15 +154,15 @@ public class DataHubServerApiController extends BaseController {
 
 	@RequestMapping(value = "install-user-modules", method = RequestMethod.POST)
 	public void installUserModules(HttpSession session) {
-        synchronized (syncStatusService) {
+	    synchronized (syncStatusService) {
             dataHubService.installUserModules();
 
-            // refresh the list of domains saved in the session
+            // refresh the list of entities saved in the session
             LoginForm loginForm = (LoginForm) session.getAttribute("loginForm");
-            loginForm.setDomains(domainManagerService.getDomains());
-            loginForm.refreshSelectedDomain();
+            loginForm.setEntities(entityManagerService.getEntities());
+            loginForm.refreshSelectedEntity();
             syncStatusService.notifyAll();
-        }
+	    }
 	}
 
 	private void updateEnvironmentConfiguration(LoginForm loginForm) {

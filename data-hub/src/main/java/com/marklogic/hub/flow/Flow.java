@@ -23,7 +23,7 @@ import com.marklogic.hub.plugin.Plugin;
 import com.marklogic.hub.writer.Writer;
 
 public interface Flow {
-    String getDomainName();
+    String getEntityName();
     String getName();
     FlowType getType();
     Format getDataFormat();

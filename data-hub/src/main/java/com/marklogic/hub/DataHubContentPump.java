@@ -1,6 +1,5 @@
 package com.marklogic.hub;
 
-import java.io.File;
 import java.util.List;
 
 import com.marklogic.contentpump.ContentPump;
@@ -17,10 +16,10 @@ public class DataHubContentPump extends ContentPump {
     public DataHubContentPump(String[] arguments) {
         this.arguments = arguments;
     }
-    
+
     /**
      * Run the Content Pump.
-     * 
+     *
      * @return true if the content pump executed successfully, false otherwise.
      */
     public boolean execute() {
@@ -34,7 +33,7 @@ public class DataHubContentPump extends ContentPump {
             System.err.println(ex.getMessage());
             System.err.println("Try 'mlcp help' for usage.");
         }
-        
+
         return rc == 0;
     }
 }

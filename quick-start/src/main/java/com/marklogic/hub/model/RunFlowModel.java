@@ -1,12 +1,12 @@
 package com.marklogic.hub.model;
 
 public class RunFlowModel {
-    private String domainName;
+    private String entityName;
     private String flowName;
     private String inputPath;
 
-    public String getDomainName() {
-        return domainName;
+    public String getEntityName() {
+        return entityName;
     }
 
     public String getFlowName() {

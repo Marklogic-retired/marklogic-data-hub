@@ -152,20 +152,20 @@ public class Mlcp {
     }
 
     public static class SourceOptions {
-        private String domainName;
+        private String entityName;
         private String flowName;
         private String flowType;
         private String inputFileType;
         private String inputFilePattern;
 
-        public SourceOptions(String domainName, String flowName, String flowType) {
-            this.domainName = domainName;
+        public SourceOptions(String entityName, String flowName, String flowType) {
+            this.entityName = entityName;
             this.flowName = flowName;
             this.flowType = flowType;
         }
 
-        public String getDomainName() {
-            return domainName;
+        public String getEntityName() {
+            return entityName;
         }
 
         public String getFlowName() {
@@ -193,7 +193,9 @@ public class Mlcp {
         }
 
         protected String getTransformParams() {
-            return String.format("<params><domain-name>%s</domain-name><flow-name>%s</flow-name><flow-type>%s</flow-type></params>", domainName, flowName, flowType);
+            return String
+                    .format("<params><entity-name>%s</entity-name><flow-name>%s</flow-name><flow-type>%s</flow-type></params>",
+                            entityName, flowName, flowType);
         }
     }
 }

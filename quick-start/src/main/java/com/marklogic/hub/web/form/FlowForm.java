@@ -10,18 +10,18 @@ import com.marklogic.hub.model.FlowModel;
 
 public class FlowForm extends BaseForm {
 
-    private String domainName;
+    private String entityName;
     private FlowType flowType;
     private String flowName;
     private PluginFormat pluginFormat;
     private Format dataFormat;
 
-    public String getDomainName() {
-        return domainName;
+    public String getEntityName() {
+        return entityName;
     }
 
-    public void setDomainName(String domainName) {
-        this.domainName = domainName;
+    public void setEntityName(String entityName) {
+        this.entityName = entityName;
     }
 
     public FlowType getFlowType() {

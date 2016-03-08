@@ -1,32 +1,22 @@
-<div class="modal fade" id="loadDataModal" role="dialog">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-        <h4 class="modal-title" id="myModalLabel">Load Data</h4>
-      </div>
-      <div class="modal-body" id="myModalBody">
-        <div class="row" ng-show="loadDataForm.hasErrors">
-          <div id="loadDataModalMessage" class="modalMessage col-xs-12 col-md-12"></div>
-          </div>
-        <div class="row">
-           <div id="details" class="col-xs-12 col-md-12">
-             <form ng-submit="runInputFlow()">
-               <input name="path" type="hidden" ng-model="loadDataForm.path"/>
-               <div class="form-group">
-                 <label for="inputPath">Path</label>
-                 <input class="form-control" name="inputPath" type="text" ng-model="loadDataForm.inputPath" placeHolder="Enter Path" required="required"/>
-               </div>
-             </form>
-           </div>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <div class="col-xs-12 col-md-12">
-          <button class="btn btn-default" data-dismiss="modal">Cancel</button>
-          <button class="btn btn-success" ng-click="runInputFlow()">Submit</button>
-        </div>
-      </div>
-    </div>
+<div class="modal-header">
+  <button type="button" class="close" ng-click="cancel()"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+  <h4 class="modal-title" id="myModalLabel">Load Data</h4>
+</div>
+<div class="modal-body" id="myModalBody">
+  <div class="row">
+     <div id="details" class="col-xs-12 col-md-12">
+       <form ng-submit="ok()">
+         <div class="form-group">
+           <label for="inputPath">Path</label>
+           <input class="form-control" name="inputPath" type="text" ng-model="inputPath" placeHolder="Enter Path" required="required"/>
+         </div>
+       </form>
+     </div>
+  </div>
+</div>
+<div class="modal-footer">
+  <div class="col-xs-12 col-md-12">
+    <button class="btn btn-default" ng-click="cancel()">Cancel</button>
+    <button class="btn btn-success" ng-click="ok()">Submit</button>
   </div>
 </div>

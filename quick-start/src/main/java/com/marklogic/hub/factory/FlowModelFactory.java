@@ -9,7 +9,7 @@ import java.util.Map;
 import com.marklogic.client.io.Format;
 import com.marklogic.hub.PluginFormat;
 import com.marklogic.hub.Scaffolding;
-import com.marklogic.hub.domain.Domain;
+import com.marklogic.hub.entity.Entity;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.FlowType;
 import com.marklogic.hub.model.FlowModel;
@@ -17,18 +17,18 @@ import com.marklogic.hub.model.FlowModel;
 public class FlowModelFactory {
 
     private Map<String, Flow> flowsInServer = new LinkedHashMap<>();
-    private String domainName;
+    private String entityName;
 
-    public FlowModelFactory(String domainName) {
-        // use this when creating a new domain in the client
-        this.domainName = domainName;
+    public FlowModelFactory(String entityName) {
+        // use this when creating a new entity in the client
+        this.entityName = entityName;
     }
 
-    public FlowModelFactory(Domain domain, String domainName) {
+    public FlowModelFactory(Entity entity, String entityName) {
         // use this when comparing flows in the client and server
-        this.domainName = domainName;
-        if (domain != null) {
-            List<Flow> flows = domain.getFlows();
+        this.entityName = entityName;
+        if (entity != null) {
+            List<Flow> flows = entity.getFlows();
             if (flows != null) {
                 for (Flow flow : flows) {
                     flowsInServer.put(flow.getName(), flow);
@@ -40,14 +40,16 @@ public class FlowModelFactory {
     public FlowModel createNewFlow(File userPluginDirPath, String flowName,
             FlowType flowType, PluginFormat pluginFormat, Format dataFormat) throws IOException {
         FlowModel flowModel = new FlowModel();
-        flowModel.setDomainName(domainName);
+        flowModel.setEntityName(entityName);
         flowModel.setFlowName(flowName);
         flowModel.setSynched(false);
 
-        Scaffolding.createFlow(domainName, flowName, flowType, pluginFormat, dataFormat, userPluginDirPath);
+        Scaffolding.createFlow(entityName, flowName, flowType, pluginFormat,
+                dataFormat, userPluginDirPath);
 
-        File domainDirPath = Scaffolding.getFlowDir(userPluginDirPath, domainName, flowName, flowType);
-        String absolutePath = domainDirPath.getAbsolutePath();
+        File entityDirPath = Scaffolding.getFlowDir(userPluginDirPath,
+                entityName, flowName, flowType);
+        String absolutePath = entityDirPath.getAbsolutePath();
         TreeDataFactory treeDataFactory = new TreeDataFactory(absolutePath,
                 flowName);
         flowModel.setTreeData(treeDataFactory.listFilesAndDirectories());
@@ -57,7 +59,7 @@ public class FlowModelFactory {
     public FlowModel createFlow(String parentDirPath, String flowName,
             FlowType flowType) {
         FlowModel flowModel = new FlowModel();
-        flowModel.setDomainName(domainName);
+        flowModel.setEntityName(entityName);
         flowModel.setFlowName(flowName);
         String absolutePath = parentDirPath + File.separator + flowName;
         TreeDataFactory treeDataFactory = new TreeDataFactory(absolutePath,

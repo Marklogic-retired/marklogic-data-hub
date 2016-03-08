@@ -11,6 +11,8 @@ This project allows you to deploy a skeleton Data Hub into MarkLogic. With some 
 - create a data-hub/gradle-local.properties file and point it to your MarkLogic server _(see data-hub/gradle-local.sample)_
 - run ```./gradlew mlDeploy```
 
+  - currently, use quickstart to deploy. just run ./gradlew build -x test to build, then use quickstart
+
 ## Running Tests
 - run ```./gradlew test```
 

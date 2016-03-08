@@ -6,6 +6,8 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.batch.core.JobExecution;
+import org.springframework.batch.core.JobExecutionListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -44,14 +46,14 @@ public class FlowManagerService {
 
     }
 
-    public List<Flow> getFlows(String domainName) {
+    public List<Flow> getFlows(String entityName) {
         FlowManager flowManager = getFlowManager();
-        return flowManager.getFlows(domainName);
+        return flowManager.getFlows(entityName);
     }
 
-    public Flow getFlow(String domainName, String flowName) {
+    public Flow getFlow(String entityName, String flowName) {
         FlowManager flowManager = getFlowManager();
-        return flowManager.getFlow(domainName, flowName);
+        return flowManager.getFlow(entityName, flowName);
     }
 
     public void installFlow(Flow flow) {
@@ -64,14 +66,18 @@ public class FlowManagerService {
         flowManager.uninstallFlow(flowName);
     }
 
-    public void testFlow(Flow flow) {
+    public JobExecution testFlow(Flow flow) {
         FlowManager flowManager = getFlowManager();
-        flowManager.testFlow(flow);
+        return flowManager.testFlow(flow);
     }
 
-    public void runFlow(Flow flow, int batchSize) {
+    public JobExecution runFlow(Flow flow, int batchSize) {
+        return runFlow(flow, batchSize, null);
+    }
+    
+    public JobExecution runFlow(Flow flow, int batchSize, JobExecutionListener listener) {
         FlowManager flowManager = getFlowManager();
-        flowManager.runFlow(flow, batchSize);
+        return flowManager.runFlow(flow, batchSize, listener);
     }
 
     public void runFlowsInParallel(Flow... flows) {
@@ -79,9 +85,9 @@ public class FlowManagerService {
         flowManager.runFlowsInParallel(flows);
     }
 
-    public FlowModel createFlow(String domainName, String flowName,
+    public FlowModel createFlow(String entityName, String flowName,
             FlowType flowType, PluginFormat pluginFormat, Format dataFormat) {
-        FlowModelFactory flowModelFactory = new FlowModelFactory(domainName);
+        FlowModelFactory flowModelFactory = new FlowModelFactory(entityName);
         File pluginDir = new File(environmentConfiguration.getUserPluginDir());
         FlowModel flowModel;
         try {
