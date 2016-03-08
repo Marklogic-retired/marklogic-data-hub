@@ -95,6 +95,7 @@ public class EntityModelFactory {
                 + flowType.toString();
         List<String> flowNames = FileUtil.listDirectFolders(flowsFilePath);
         for (String flowName : flowNames) {
+            // REST directory is not a flow. It's the rest options. skip it.
             if (flowName.equals("REST")) {
                 continue;
             }
