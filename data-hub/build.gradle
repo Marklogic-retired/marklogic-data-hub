@@ -13,7 +13,6 @@ repositories {
     maven { url 'http://developer.marklogic.com/maven2/' }
 }
 
-version = '0.0.9'
 group   = 'com.marklogic'
 
 sourceCompatibility = 1.8

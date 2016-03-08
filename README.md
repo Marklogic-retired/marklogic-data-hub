@@ -7,16 +7,35 @@ Go from nothing to Enterprise Data Hub in a matter of minutes.
 
 This project allows you to deploy a skeleton Data Hub into MarkLogic. With some basic configuration you will be running an Enterprise Data Hub in no time.
 
-## Installing into MarkLogic
-- create a data-hub/gradle-local.properties file and point it to your MarkLogic server _(see data-hub/gradle-local.sample)_
-- run ```./gradlew mlDeploy```
+# Quick Start
+Want to get up and running quickly? Try the quick-start jar.
 
-  - currently, use quickstart to deploy. just run ./gradlew build -x test to build, then use quickstart
+- Download the jar from the [releases page](https://github.com/marklogic/data-hub-in-a-box/releases/latest).
+- Run the Jar
+  `java -jar quick-start-1.0.0-alpha.1.jar`
+- Open the Quickstart Application in your browser:
+  http://localhost:8080
 
-## Running Tests
-- run ```./gradlew test```
 
-## Using with an IDE
-### Eclipse
-run ```./gradlew eclipse```
+# Hacking on the Hub
+If you want to start hacking on the internals of the Hub then look here.
+
+#### Clone the Repo
+First clone the repo
+
+#### Building the Hub
+Note that the Unit tests take a very long time to run. This command skips them
+run: `./gradlew build -x test`
+
+#### Running the Hub
+run: `./gradlew bootRun`
+
+#### Running Tests
+run: `./gradlew test`
+
+#### Using with an IDE
+##### Eclipse
+To generate eclipse project files run:
+`./gradlew eclipse`
+
 Then import the project into eclipse
