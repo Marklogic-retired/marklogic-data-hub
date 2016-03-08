@@ -78,21 +78,22 @@ public class EntityManagerService {
 
     protected void updateSyncStatus(List<EntityModel> entities) {
         for (EntityModel entityModel : entities) {
-            entityModel.setSynched(syncStatusService
-                    .isEntitySynched(entityModel.getEntityName()));
-
+            boolean flowsSynched = true;
             for (FlowModel flowModel : entityModel.getInputFlows()) {
-                flowModel.setSynched(syncStatusService.isFlowSynched(
-                        entityModel.getEntityName(), FlowType.INPUT,
-                        flowModel.getFlowName()));
+                boolean flowSynched = syncStatusService.isFlowSynched(entityModel.getEntityName(), FlowType.INPUT, flowModel.getFlowName());
+                flowsSynched = flowsSynched && flowSynched;
+                flowModel.setSynched(flowSynched);
             }
 
             for (FlowModel flowModel : entityModel.getConformFlows()) {
-                flowModel.setSynched(syncStatusService.isFlowSynched(
-                        entityModel.getEntityName(), FlowType.CONFORM,
-                        flowModel.getFlowName()));
+                boolean flowSynched = syncStatusService.isFlowSynched(entityModel.getEntityName(), FlowType.CONFORM, flowModel.getFlowName());
+                flowsSynched = flowsSynched && flowSynched;
+                flowModel.setSynched(flowSynched);
             }
+
+            entityModel.setSynched(flowsSynched);
         }
+
     }
 
     private List<Entity> getEntitysInServer() {

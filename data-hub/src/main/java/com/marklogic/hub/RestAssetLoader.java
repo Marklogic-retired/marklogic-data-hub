@@ -31,8 +31,7 @@ import java.util.Set;
 import org.apache.commons.io.FilenameUtils;
 
 import com.marklogic.client.DatabaseClient;
-import com.marklogic.client.admin.ExtensionLibrariesManager;
-import com.marklogic.client.admin.ExtensionLibraryDescriptor;
+import com.marklogic.client.Transaction;
 import com.marklogic.client.helper.LoggingObject;
 import com.marklogic.client.io.FileHandle;
 import com.marklogic.client.io.Format;
@@ -56,6 +55,7 @@ public class RestAssetLoader extends LoggingObject implements FileVisitor<Path> 
     private Path currentAssetPath;
     private Path currentRootPath;
     private Set<File> filesLoaded;
+    private Transaction currentTransaction = null;
 
     private ModulesManager modulesManager;
 
@@ -67,18 +67,25 @@ public class RestAssetLoader extends LoggingObject implements FileVisitor<Path> 
      * For walking one or many paths and loading modules in each of them.
      */
     public Set<File> loadAssetsViaREST(String... paths) {
+        currentTransaction = client.openTransaction();
         filesLoaded = new HashSet<>();
-        for (String path : paths) {
-            if (logger.isDebugEnabled()) {
-                logger.debug(format("Loading assets from path: %s", path));
+        try {
+            for (String path : paths) {
+                if (logger.isDebugEnabled()) {
+                    logger.debug(format("Loading assets from path: %s", path));
+                }
+                this.currentAssetPath = Paths.get(path);
+                this.currentRootPath = this.currentAssetPath;
+                try {
+                    Files.walkFileTree(this.currentAssetPath, this);
+                } catch (IOException ie) {
+                    throw new RuntimeException(format("Error while walking assets file tree: %s", ie.getMessage()), ie);
+                }
             }
-            this.currentAssetPath = Paths.get(path);
-            this.currentRootPath = this.currentAssetPath;
-            try {
-                Files.walkFileTree(this.currentAssetPath, this);
-            } catch (IOException ie) {
-                throw new RuntimeException(format("Error while walking assets file tree: %s", ie.getMessage()), ie);
-            }
+            currentTransaction.commit();
+        }
+        catch(Exception e) {
+            currentTransaction.rollback();
         }
         return filesLoaded;
     }
@@ -137,12 +144,6 @@ public class RestAssetLoader extends LoggingObject implements FileVisitor<Path> 
             return;
         }
 
-        ExtensionLibrariesManager libsMgr = client
-                .newServerConfigManager().newExtensionLibrariesManager();
-
-        ExtensionLibraryDescriptor moduleDescriptor = new ExtensionLibraryDescriptor();
-        moduleDescriptor.setPath(uri);
-
         FileHandle handle = new FileHandle(f);
 
         String ext = FilenameUtils.getExtension(f.getName());
@@ -157,7 +158,7 @@ public class RestAssetLoader extends LoggingObject implements FileVisitor<Path> 
             handle.setFormat(Format.TEXT);
         }
 
-        libsMgr.write(moduleDescriptor, handle);
+        client.newDocumentManager().write(uri, handle, currentTransaction);
 
         if (modulesManager != null) {
             modulesManager.saveLastInstalledTimestamp(f, new Date());

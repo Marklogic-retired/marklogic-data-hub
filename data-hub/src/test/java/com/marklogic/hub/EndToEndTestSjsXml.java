@@ -28,6 +28,10 @@ public class EndToEndTestSjsXml extends HubTestBase {
     public static void setup() throws IOException {
         XMLUnit.setIgnoreWhitespace(true);
 
+        if (pluginsDir.isDirectory() && pluginsDir.exists()) {
+            FileUtils.deleteDirectory(pluginsDir);
+        }
+
         installHub();
 
         Scaffolding.createEntity(ENTITY, pluginsDir);
@@ -36,7 +40,7 @@ public class EndToEndTestSjsXml extends HubTestBase {
         Scaffolding.createFlow(ENTITY, "testconformance", FlowType.CONFORMANCE,
                 PluginFormat.JAVASCRIPT, Format.XML, pluginsDir);
 
-        new DataHub(host, stagingPort, finalPort, user, password).installUserModules("./ye-olde-plugins");
+        new DataHub(host, stagingPort, finalPort, user, password).installUserModules(pluginsDir.toString());
     }
 
     @AfterClass

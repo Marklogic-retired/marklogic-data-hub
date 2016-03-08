@@ -17,60 +17,56 @@ package com.marklogic.hub;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 import org.springframework.web.client.ResourceAccessException;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.google.gson.Gson;
 import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.appdeployer.ConfigDir;
 import com.marklogic.appdeployer.command.Command;
-import com.marklogic.appdeployer.command.appservers.UpdateRestApiServersCommand;
-//import com.marklogic.appdeployer.command.databases.DeployDatabaseCommand;
 import com.marklogic.appdeployer.command.databases.DeploySchemasDatabaseCommand;
 import com.marklogic.appdeployer.command.databases.DeployTriggersDatabaseCommand;
+import com.marklogic.appdeployer.command.modules.AllButAssetsModulesFinder;
 import com.marklogic.appdeployer.command.modules.AssetModulesFinder;
-import com.marklogic.appdeployer.command.restapis.DeployRestApiServersCommand;
 import com.marklogic.appdeployer.command.security.DeployRolesCommand;
 import com.marklogic.appdeployer.command.security.DeployUsersCommand;
 import com.marklogic.appdeployer.impl.SimpleAppDeployer;
-import com.marklogic.client.modulesloader.Modules;
-import com.marklogic.client.modulesloader.ModulesFinder;
-import com.marklogic.client.modulesloader.ModulesManager;
+import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.DatabaseClientFactory;
+import com.marklogic.client.modulesloader.impl.PropertiesModuleManager;
+import com.marklogic.client.modulesloader.impl.XccAssetLoader;
 import com.marklogic.hub.commands.DeployHubDatabaseCommand;
 import com.marklogic.hub.commands.DeployModulesDatabaseCommand;
 import com.marklogic.hub.commands.DeployRestApiCommand;
 import com.marklogic.hub.commands.LoadModulesCommand;
-import com.marklogic.hub.util.GsonUtil;
+import com.marklogic.hub.util.HubFileFilter;
+import com.marklogic.hub.util.HubModulesLoader;
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.ManageConfig;
 import com.marklogic.mgmt.admin.AdminConfig;
 import com.marklogic.mgmt.admin.AdminManager;
 import com.marklogic.mgmt.appservers.ServerManager;
 import com.marklogic.mgmt.databases.DatabaseManager;
-import com.marklogic.mgmt.restapis.RestApiManager;
 import com.marklogic.rest.util.Fragment;
 
 public class DataHub {
 
     static final private Logger LOGGER = LoggerFactory.getLogger(DataHub.class);
-    static final private String STAGING_NAME = "data-hub-in-a-box-STAGING";
-    static final private String FINAL_NAME = "data-hub-in-a-box-FINAL";
-    static final private String MODULES_DB_NAME = "data-hub-in-a-box-modules";
+    static final public String STAGING_NAME = "data-hub-in-a-box-STAGING";
+    static final public String FINAL_NAME = "data-hub-in-a-box-FINAL";
+    static final public String MODULES_DB_NAME = "data-hub-in-a-box-modules";
     private ManageConfig config;
     private ManageClient client;
     public static String HUB_NAME = "data-hub-in-a-box";
@@ -81,7 +77,7 @@ public class DataHub {
     private String username;
     private String password;
 
-    private File assetInstallTimeFile;
+    private File assetInstallTimeFile = new File("./assetInstallTime.properties");
 
     private final static int DEFAULT_STAGING_REST_PORT = 8010;
     private final static int DEFAULT_FINAL_REST_PORT = 8011;
@@ -191,6 +187,10 @@ public class DataHub {
      * @throws IOException
      */
     public void install() throws IOException {
+        // clean up any lingering cache for deployed modules
+        PropertiesModuleManager moduleManager = new PropertiesModuleManager(this.assetInstallTimeFile);
+        moduleManager.deletePropertiesFile();
+
         AdminManager manager = new AdminManager();
         AppConfig config = getAppConfig();
         SimpleAppDeployer deployer = new SimpleAppDeployer(client, manager);
@@ -207,53 +207,56 @@ public class DataHub {
      *         with its install time
      * @throws IOException
      */
-    public Map<File, Date> installUserModules(String pathToUserModules) throws IOException {
+    public Set<File> installUserModules(String pathToUserModules) throws IOException {
         AppConfig config = new AppConfig();
         config.setHost(host);
-        config.setRestPort(stagingRestPort);
+        config.setRestPort(finalRestPort);
         config.setName(HUB_NAME);
         config.setRestAdminUsername(username);
         config.setRestAdminPassword(password);
 
-        RestAssetLoader loader = new RestAssetLoader(config.newDatabaseClient());
-        DataHubModuleManager modulesManager = new DataHubModuleManager();
-        if (assetInstallTimeFile != null) {
-            loader.setModulesManager(modulesManager);
-        }
+        DatabaseClient stagingClient = DatabaseClientFactory.newClient(host, stagingRestPort, username, password,
+                config.getRestAuthentication(), config.getRestSslContext(), config.getRestSslHostnameVerifier());
+        DatabaseClient finalClient = DatabaseClientFactory.newClient(host, finalRestPort, username, password,
+                config.getRestAuthentication(), config.getRestSslContext(), config.getRestSslHostnameVerifier());
 
-        ModulesFinder finder = new AssetModulesFinder();
-        Modules modules = finder.findModules(new File(pathToUserModules));
 
-        List<Resource> dirs = modules.getAssetDirectories();
-        if (dirs == null || dirs.isEmpty()) {
-            return new HashMap<>();
-        }
+        Set<File> loadedFiles = new HashSet<File>();
 
-        String[] paths = new String[dirs.size()];
-        for (int i = 0; i < dirs.size(); i++) {
-            paths[i] = dirs.get(i).getFile().getAbsolutePath();
-        }
-        Set<File> loadedFiles = loader.loadAssetsViaREST(paths);
+        XccAssetLoader assetLoader = config.newXccAssetLoader();
+        assetLoader.setFileFilter(new HubFileFilter());
 
-        if (assetInstallTimeFile != null) {
-            Gson gson = GsonUtil.createGson();
+        PropertiesModuleManager moduleManager = new PropertiesModuleManager(this.assetInstallTimeFile);
+        HubModulesLoader hubModulesLoader = new HubModulesLoader(assetLoader, moduleManager);
+        File baseDir = Paths.get(pathToUserModules).normalize().toAbsolutePath().toFile();
+        loadedFiles.addAll(hubModulesLoader.loadModules(baseDir, new AssetModulesFinder(), stagingClient));
+        Path startPath = Paths.get(pathToUserModules, "entities");
 
-            String json = gson.toJson(modulesManager.getLastInstallInfo());
-            try {
-                FileUtils.write(assetInstallTimeFile, json);
-            } catch (IOException e) {
-                LOGGER.error("Cannot write asset install info.", e);
+        Files.walkFileTree(startPath, new SimpleFileVisitor<Path>() {
+            @Override
+            public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs)
+                throws IOException
+            {
+                boolean isRest = dir.endsWith("REST");
+
+                String dirStr = dir.toString();
+                boolean isInputDir = dirStr.matches(".*/input/.*");
+                boolean isConformanceDir = dirStr.matches(".*/conformance/.*");
+                if (isRest) {
+                    if (isInputDir) {
+                        loadedFiles.addAll(hubModulesLoader.loadModules(dir.normalize().toAbsolutePath().toFile(), new AllButAssetsModulesFinder(), stagingClient));
+                    }
+                    else if (isConformanceDir) {
+                        loadedFiles.addAll(hubModulesLoader.loadModules(dir.normalize().toAbsolutePath().toFile(), new AllButAssetsModulesFinder(), finalClient));
+                    }
+                    return FileVisitResult.SKIP_SUBTREE;
+                }
+                else {
+                    return FileVisitResult.CONTINUE;
+                }
             }
-
-            return modulesManager.getLastInstallInfo();
-        }
-        else {
-            Map<File, Date> fileMap = new HashMap<>();
-            for (File file : loadedFiles) {
-                fileMap.put(file, file.exists() ? new Date(file.lastModified()) : null);
-            }
-            return fileMap;
-        }
+        });
+        return loadedFiles;
     }
 
     private List<Command> getCommands(AppConfig config) {
@@ -302,45 +305,9 @@ public class DataHub {
         SimpleAppDeployer deployer = new SimpleAppDeployer(client, manager);
         deployer.setCommands(getCommands(config));
         deployer.undeploy(config);
-    }
 
-    private class DataHubModuleManager implements ModulesManager {
-        private Map<File, Date> lastInstallInfo = new HashMap<>();
-
-        public Map<File, Date> getLastInstallInfo() {
-            return lastInstallInfo;
-        }
-
-        @Override
-        public void initialize() {
-            LOGGER.debug("initializing DataHubModuleManager");
-        }
-
-        @Override
-        public boolean hasFileBeenModifiedSinceLastInstalled(File file) {
-            Date lastInstallDate = null;
-            try {
-                lastInstallDate = lastInstallInfo.get(new File(file.getCanonicalPath()));
-            } catch (IOException e) {
-                LOGGER.warn("Cannot get canonical path of {}. Using absolute path instead.", file);
-                lastInstallDate = lastInstallInfo.get(new File(file.getAbsolutePath()));
-            }
-
-            // a file has been modified if it has not been previously installed (new file)
-            // or when its modified time is after the last install time
-            return lastInstallDate == null || file.lastModified() > lastInstallDate.getTime();
-        }
-
-        @Override
-        public void saveLastInstalledTimestamp(File file, Date date) {
-            try {
-                LOGGER.trace("saving last timestamp of " + file.getCanonicalPath() + ": " + date);
-                lastInstallInfo.put(new File(file.getCanonicalPath()), date);
-            } catch (IOException e) {
-                LOGGER.warn("Cannot store canonical path of {}. Storing absolute path instead.", file);
-                lastInstallInfo.put(new File(file.getAbsolutePath()), date);
-            }
-        }
-
+        // clean up any lingering cache for deployed modules
+        PropertiesModuleManager moduleManager = new PropertiesModuleManager(this.assetInstallTimeFile);
+        moduleManager.deletePropertiesFile();
     }
 }

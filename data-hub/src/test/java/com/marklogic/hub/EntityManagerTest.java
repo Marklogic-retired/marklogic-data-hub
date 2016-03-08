@@ -49,16 +49,16 @@ public class EntityManagerTest extends HubTestBase {
         installStagingDoc("/incoming/employee1.xml", meta, getResource("flow-manager-test/input/employee1.xml"));
         installStagingDoc("/incoming/employee2.xml", meta, getResource("flow-manager-test/input/employee2.xml"));
         runInModules(
-                "xdmp:directory-create(\"/ext/entities/test/conformance/my-test-flow1/collector/\")," +
-                "xdmp:directory-create(\"/ext/entities/test/conformance/my-test-flow1/headers/\")," +
-                "xdmp:directory-create(\"/ext/entities/test/conformance/my-test-flow1/triples/\")," +
-                "xdmp:directory-create(\"/ext/entities/test/conformance/my-test-flow1/content/\")," +
-                "xdmp:directory-create(\"/ext/entities/test/conformance/my-test-flow2/collector/\")," +
-                "xdmp:directory-create(\"/ext/entities/test/conformance/my-test-flow2/headers/\")," +
-                "xdmp:directory-create(\"/ext/entities/test/conformance/my-test-flow2/triples/\")," +
-                "xdmp:directory-create(\"/ext/entities/test/conformance/my-test-flow2/content/\")");
-        installModule("/ext/entities/test/conformance/my-test-flow1/collector/collector.xqy", "flow-manager-test/my-test-flow1/collector/collector.xqy");
-        installModule("/ext/entities/test/conformance/my-test-flow2/collector/collector.xqy", "flow-manager-test/my-test-flow1/collector/collector.xqy");
+                "xdmp:directory-create(\"/entities/test/conformance/my-test-flow1/collector/\")," +
+                "xdmp:directory-create(\"/entities/test/conformance/my-test-flow1/headers/\")," +
+                "xdmp:directory-create(\"/entities/test/conformance/my-test-flow1/triples/\")," +
+                "xdmp:directory-create(\"/entities/test/conformance/my-test-flow1/content/\")," +
+                "xdmp:directory-create(\"/entities/test/conformance/my-test-flow2/collector/\")," +
+                "xdmp:directory-create(\"/entities/test/conformance/my-test-flow2/headers/\")," +
+                "xdmp:directory-create(\"/entities/test/conformance/my-test-flow2/triples/\")," +
+                "xdmp:directory-create(\"/entities/test/conformance/my-test-flow2/content/\")");
+        installModule("/entities/test/conformance/my-test-flow1/collector/collector.xqy", "flow-manager-test/my-test-flow1/collector/collector.xqy");
+        installModule("/entities/test/conformance/my-test-flow2/collector/collector.xqy", "flow-manager-test/my-test-flow1/collector/collector.xqy");
     }
 
     @AfterClass
@@ -85,7 +85,7 @@ public class EntityManagerTest extends HubTestBase {
 
         ServerCollector c = (ServerCollector)flow1.getCollector();
         assertEquals(PluginType.XQUERY, c.getType());
-        assertEquals("/ext/entities/test/conformance/my-test-flow1/collector/collector.xqy", c.getModule());
+        assertEquals("/entities/test/conformance/my-test-flow1/collector/collector.xqy", c.getModule());
 
         ServerPlugin t = (ServerPlugin)flow1.getContentPlugin();
         assertEquals(PluginType.XQUERY, t.getType());
@@ -103,7 +103,7 @@ public class EntityManagerTest extends HubTestBase {
 
         c = (ServerCollector)flow1.getCollector();
         assertEquals(PluginType.XQUERY, c.getType());
-        assertEquals("/ext/entities/test/conformance/my-test-flow1/collector/collector.xqy", c.getModule());
+        assertEquals("/entities/test/conformance/my-test-flow1/collector/collector.xqy", c.getModule());
 
         t = (ServerPlugin)flow2.getContentPlugin();
         assertEquals(PluginType.XQUERY, t.getType());
@@ -131,7 +131,7 @@ public class EntityManagerTest extends HubTestBase {
 
         ServerCollector c = (ServerCollector)flow1.getCollector();
         assertEquals(PluginType.XQUERY, c.getType());
-        assertEquals("/ext/entities/test/conformance/my-test-flow1/collector/collector.xqy", c.getModule());
+        assertEquals("/entities/test/conformance/my-test-flow1/collector/collector.xqy", c.getModule());
 
         ServerPlugin t = (ServerPlugin)flow1.getContentPlugin();
         assertEquals(PluginType.XQUERY, t.getType());
@@ -148,7 +148,7 @@ public class EntityManagerTest extends HubTestBase {
 
         c = (ServerCollector)flow1.getCollector();
         assertEquals(PluginType.XQUERY, c.getType());
-        assertEquals("/ext/entities/test/conformance/my-test-flow1/collector/collector.xqy", c.getModule());
+        assertEquals("/entities/test/conformance/my-test-flow1/collector/collector.xqy", c.getModule());
 
         t = (ServerPlugin)flow2.getContentPlugin();
         assertEquals(PluginType.XQUERY, t.getType());

@@ -61,8 +61,6 @@ public class JarExtensionMetadataProvider extends LoggingObject {
                     }
                 }
             } catch (Exception e) {
-                logger.warn("Unable to build metadata from resource file: " + r.getURL().toString()
-                        + "; cause: " + e.getMessage(), e);
                 setDefaults(m, r);
             }
         } else {

@@ -63,19 +63,19 @@ public class FlowManagerTest extends HubTestBase {
         meta.getCollections().add("tester");
         installStagingDoc("/employee1.xml", meta, getResource("flow-manager-test/input/employee1.xml"));
         installStagingDoc("/employee2.xml", meta, getResource("flow-manager-test/input/employee2.xml"));
-        runInModules("xdmp:directory-create(\"/ext/entities/test/conformance/my-test-flow1/collector/\"),"
-                + "xdmp:directory-create(\"/ext/entities/test/conformance/my-test-flow1/headers/\"),"
-                + "xdmp:directory-create(\"/ext/entities/test/conformance/my-test-flow1/triples/\"),"
-                + "xdmp:directory-create(\"/ext/entities/test/conformance/my-test-flow1/content/\"),"
-                + "xdmp:directory-create(\"/ext/entities/test/conformance/my-test-flow2/collector/\"),"
-                + "xdmp:directory-create(\"/ext/entities/test/conformance/my-test-flow2/headers/\"),"
-                + "xdmp:directory-create(\"/ext/entities/test/conformance/my-test-flow2/triples/\"),"
-                + "xdmp:directory-create(\"/ext/entities/test/conformance/my-test-flow2/content/\")");
+        runInModules("xdmp:directory-create(\"/entities/test/conformance/my-test-flow1/collector/\"),"
+                + "xdmp:directory-create(\"/entities/test/conformance/my-test-flow1/headers/\"),"
+                + "xdmp:directory-create(\"/entities/test/conformance/my-test-flow1/triples/\"),"
+                + "xdmp:directory-create(\"/entities/test/conformance/my-test-flow1/content/\"),"
+                + "xdmp:directory-create(\"/entities/test/conformance/my-test-flow2/collector/\"),"
+                + "xdmp:directory-create(\"/entities/test/conformance/my-test-flow2/headers/\"),"
+                + "xdmp:directory-create(\"/entities/test/conformance/my-test-flow2/triples/\"),"
+                + "xdmp:directory-create(\"/entities/test/conformance/my-test-flow2/content/\")");
         installModule(
-                "/ext/entities/test/conformance/my-test-flow1/collector/collector.xqy",
+                "/entities/test/conformance/my-test-flow1/collector/collector.xqy",
                 "flow-manager-test/my-test-flow1/collector/collector.xqy");
         installModule(
-                "/ext/entities/test/conformance/my-test-flow2/collector/collector.xqy",
+                "/entities/test/conformance/my-test-flow2/collector/collector.xqy",
                 "flow-manager-test/my-test-flow1/collector/collector.xqy");
     }
 
@@ -106,8 +106,8 @@ public class FlowManagerTest extends HubTestBase {
 
     @Test
     public void testEmptyFlow() throws IOException {
-        runInModules("xdmp:directory-create(\"/ext/entities/test/conformance/empty-flow/\")");
-        installModule("/ext/entities/test/conformance/empty-flow/collector/collector.xqy", "flow-manager-test/my-test-flow1/collector/collector.xqy");
+        runInModules("xdmp:directory-create(\"/entities/test/conformance/empty-flow/\")");
+        installModule("/entities/test/conformance/empty-flow/collector/collector.xqy", "flow-manager-test/my-test-flow1/collector/collector.xqy");
 
         FlowManager fm = new FlowManager(stagingClient);
         SimpleFlow flow1 = (SimpleFlow)fm.getFlow("test", "empty-flow");
@@ -115,7 +115,7 @@ public class FlowManagerTest extends HubTestBase {
 
         ServerCollector c = (ServerCollector)flow1.getCollector();
         assertEquals(PluginType.XQUERY, c.getType());
-        assertEquals("/ext/entities/test/conformance/empty-flow/collector/collector.xqy", c.getModule());
+        assertEquals("/entities/test/conformance/empty-flow/collector/collector.xqy", c.getModule());
 
         ServerPlugin t = (ServerPlugin)flow1.getContentPlugin();
         assertEquals(PluginType.XQUERY, t.getType());
@@ -127,7 +127,7 @@ public class FlowManagerTest extends HubTestBase {
         DefaultWriter w = (DefaultWriter)flow1.getWriter();
         assertNotNull(w);
 
-        runInModules("xdmp:directory-delete(\"/ext/entities/test/conformance/empty-flow/\")");
+        runInModules("xdmp:directory-delete(\"/entities/test/conformance/empty-flow/\")");
     }
 
     @Test
@@ -145,7 +145,7 @@ public class FlowManagerTest extends HubTestBase {
 
     @Test
     public void testGetFlows() {
-        installModule("/ext/entities/test/conformance/my-test-flow1/my-test-flow1.xml", "flow-manager-test/my-test-flow1/my-test-flow1.xml");
+        installModule("/entities/test/conformance/my-test-flow1/my-test-flow1.xml", "flow-manager-test/my-test-flow1/my-test-flow1.xml");
 
         FlowManager fm = new FlowManager(stagingClient);
         List<Flow> flows = fm.getFlows("test");
@@ -160,7 +160,7 @@ public class FlowManagerTest extends HubTestBase {
 
         ServerCollector c = (ServerCollector)flow1.getCollector();
         assertEquals(PluginType.XQUERY, c.getType());
-        assertEquals("/ext/entities/test/conformance/my-test-flow1/collector/collector.xqy", c.getModule());
+        assertEquals("/entities/test/conformance/my-test-flow1/collector/collector.xqy", c.getModule());
 
         ServerPlugin t = (ServerPlugin)flow1.getContentPlugin();
         assertEquals(PluginType.XQUERY, t.getType());
@@ -177,7 +177,7 @@ public class FlowManagerTest extends HubTestBase {
 
         c = (ServerCollector)flow1.getCollector();
         assertEquals(PluginType.XQUERY, c.getType());
-        assertEquals("/ext/entities/test/conformance/my-test-flow1/collector/collector.xqy", c.getModule());
+        assertEquals("/entities/test/conformance/my-test-flow1/collector/collector.xqy", c.getModule());
 
         t = (ServerPlugin)flow2.getContentPlugin();
         assertEquals(PluginType.XQUERY, t.getType());
@@ -191,7 +191,7 @@ public class FlowManagerTest extends HubTestBase {
 
     @Test
     public void getTestFlow() {
-        installModule("/ext/entities/test/conformance/my-test-flow1/my-test-flow1.xml", "flow-manager-test/my-test-flow1/my-test-flow1-json.xml");
+        installModule("/entities/test/conformance/my-test-flow1/my-test-flow1.xml", "flow-manager-test/my-test-flow1/my-test-flow1-json.xml");
 
         FlowManager fm = new FlowManager(stagingClient);
         SimpleFlow flow1 = (SimpleFlow)fm.getFlow("test", "my-test-flow1");
@@ -201,7 +201,7 @@ public class FlowManagerTest extends HubTestBase {
 
         ServerCollector c = (ServerCollector)flow1.getCollector();
         assertEquals(PluginType.XQUERY, c.getType());
-        assertEquals("/ext/entities/test/conformance/my-test-flow1/collector/collector.xqy", c.getModule());
+        assertEquals("/entities/test/conformance/my-test-flow1/collector/collector.xqy", c.getModule());
 
         ServerPlugin t = (ServerPlugin)flow1.getContentPlugin();
         assertEquals(PluginType.XQUERY, t.getType());
@@ -215,7 +215,7 @@ public class FlowManagerTest extends HubTestBase {
 
     @Test
     public void testRunFlow() throws SAXException, IOException, ParserConfigurationException, XMLStreamException {
-        installModule("/ext/entities/test/conformance/my-test-flow1/my-test-flow1.xml", "flow-manager-test/my-test-flow1/my-test-flow1.xml");
+        installModule("/entities/test/conformance/my-test-flow1/my-test-flow1.xml", "flow-manager-test/my-test-flow1/my-test-flow1.xml");
         assertEquals(2, getStagingDocCount());
         assertEquals(0, getFinalDocCount());
         JobFinishedListener listener = new JobFinishedListener();
@@ -231,8 +231,8 @@ public class FlowManagerTest extends HubTestBase {
 
     @Test
     public void testRunFlowWithHeader() throws SAXException, IOException, ParserConfigurationException, XMLStreamException {
-        installModule("/ext/entities/test/conformance/my-test-flow-with-header/collector/collector.xqy", "flow-manager-test/my-test-flow-with-header/collector/collector.xqy");
-        installModule("/ext/entities/test/conformance/my-test-flow-with-header/headers/headers.xqy", "flow-manager-test/my-test-flow-with-header/headers/headers.xqy");
+        installModule("/entities/test/conformance/my-test-flow-with-header/collector/collector.xqy", "flow-manager-test/my-test-flow-with-header/collector/collector.xqy");
+        installModule("/entities/test/conformance/my-test-flow-with-header/headers/headers.xqy", "flow-manager-test/my-test-flow-with-header/headers/headers.xqy");
 
         assertEquals(2, getStagingDocCount());
         assertEquals(0, getFinalDocCount());
@@ -246,16 +246,16 @@ public class FlowManagerTest extends HubTestBase {
         assertXMLEqual(getXmlFromResource("flow-manager-test/conformed-with-header/conformed1.xml"), finalDocMgr.read("/employee1.xml").next().getContent(new DOMHandle()).get() );
         assertXMLEqual(getXmlFromResource("flow-manager-test/conformed-with-header/conformed2.xml"), finalDocMgr.read("/employee2.xml").next().getContent(new DOMHandle()).get());
 
-        runInModules("xdmp:directory-delete(\"/ext/entities/test/conformance/my-test-flow-with-header/\")");
+        runInModules("xdmp:directory-delete(\"/entities/test/conformance/my-test-flow-with-header/\")");
     }
 
     @Test
     public void testRunFlowWithAll() throws SAXException, IOException, ParserConfigurationException, XMLStreamException {
-        installModule("/ext/entities/test/conformance/my-test-flow-with-all/my-test-flow-with-all.xml", "flow-manager-test/my-test-flow-with-all/my-test-flow-with-all.xml");
-        installModule("/ext/entities/test/conformance/my-test-flow-with-all/collector/collector.xqy", "flow-manager-test/my-test-flow-with-all/collector/collector.xqy");
-        installModule("/ext/entities/test/conformance/my-test-flow-with-all/headers/headers.xqy", "flow-manager-test/my-test-flow-with-all/headers/headers.xqy");
-        installModule("/ext/entities/test/conformance/my-test-flow-with-all/content/content.xqy", "flow-manager-test/my-test-flow-with-all/content/content.xqy");
-        installModule("/ext/entities/test/conformance/my-test-flow-with-all/triples/triples.xqy", "flow-manager-test/my-test-flow-with-all/triples/triples.xqy");
+        installModule("/entities/test/conformance/my-test-flow-with-all/my-test-flow-with-all.xml", "flow-manager-test/my-test-flow-with-all/my-test-flow-with-all.xml");
+        installModule("/entities/test/conformance/my-test-flow-with-all/collector/collector.xqy", "flow-manager-test/my-test-flow-with-all/collector/collector.xqy");
+        installModule("/entities/test/conformance/my-test-flow-with-all/headers/headers.xqy", "flow-manager-test/my-test-flow-with-all/headers/headers.xqy");
+        installModule("/entities/test/conformance/my-test-flow-with-all/content/content.xqy", "flow-manager-test/my-test-flow-with-all/content/content.xqy");
+        installModule("/entities/test/conformance/my-test-flow-with-all/triples/triples.xqy", "flow-manager-test/my-test-flow-with-all/triples/triples.xqy");
 
         JobFinishedListener listener = new JobFinishedListener();
         assertEquals(2, getStagingDocCount());
@@ -269,6 +269,6 @@ public class FlowManagerTest extends HubTestBase {
         assertXMLEqual(getXmlFromResource("flow-manager-test/conformed-with-all/conformed1.xml"), finalDocMgr.read("/employee1.xml").next().getContent(new DOMHandle()).get() );
         assertXMLEqual(getXmlFromResource("flow-manager-test/conformed-with-all/conformed2.xml"), finalDocMgr.read("/employee2.xml").next().getContent(new DOMHandle()).get());
 
-        runInModules("xdmp:directory-delete(\"/ext/entities/test/conformance/my-test-flow-with-all/\")");
+        runInModules("xdmp:directory-delete(\"/entities/test/conformance/my-test-flow-with-all/\")");
     }
 }

@@ -1,12 +1,7 @@
 package com.marklogic.hub.web.controller.api;
 
 import java.io.File;
-import java.io.IOException;
-import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -46,7 +41,7 @@ public class DataHubServerApiController extends BaseController {
 
 	@Autowired
     private EntityManagerService entityManagerService;
-	
+
 	@Autowired
 	private SyncStatusService syncStatusService;
 
@@ -121,15 +116,6 @@ public class DataHubServerApiController extends BaseController {
 			this.retrieveEnvironmentConfiguration(loginForm);
 			session.setAttribute("loginForm", loginForm);
         } else if (loginForm.isInstalled()) {
-            try {
-                syncStatusService.loadAssetInstallTimeFile();
-                syncStatusService.refreshSyncStatus();
-            } catch (IOException e) {
-                LOGGER.error("Error encountered refresh sync status", e);
-            } catch (ParseException e) {
-                LOGGER.error("Error encountered refresh sync status", e);
-            }
-            
             loginForm.setEntities(entityManagerService.getEntities());
             loginForm.refreshSelectedEntity();
 		}
@@ -142,9 +128,9 @@ public class DataHubServerApiController extends BaseController {
 		loginForm.setLoggedIn(false);
 		this.environmentConfiguration.removeSavedConfiguration();
 		this.retrieveEnvironmentConfiguration(loginForm);
-		
+
 		session.invalidate();
-		
+
 		return loginForm;
 	}
 
@@ -167,24 +153,15 @@ public class DataHubServerApiController extends BaseController {
 	}
 
 	@RequestMapping(value = "install-user-modules", method = RequestMethod.POST)
-	public Map<File, Date> installUserModules(HttpSession session) {
+	public void installUserModules(HttpSession session) {
 	    synchronized (syncStatusService) {
-	        Map<File, Date> files = dataHubService.installUserModules();
-	        try {
-	            syncStatusService.setInstalledFiles(files);
+            dataHubService.installUserModules();
 
-                // refresh the list of entities saved in the session
-	            LoginForm loginForm = (LoginForm) session.getAttribute("loginForm");
-                List<EntityModel> entities = entityManagerService.getEntities();
-                loginForm.setEntities(entities);
-                loginForm.refreshSelectedEntity();
-	            
-	            syncStatusService.notifyAll();
-	        } catch (IOException e) {
-	            e.printStackTrace();
-	        }
-	        
-	        return files;
+            // refresh the list of entities saved in the session
+            LoginForm loginForm = (LoginForm) session.getAttribute("loginForm");
+            loginForm.setEntities(entityManagerService.getEntities());
+            loginForm.refreshSelectedEntity();
+            syncStatusService.notifyAll();
 	    }
 	}
 

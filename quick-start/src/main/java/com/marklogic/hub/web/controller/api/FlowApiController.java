@@ -9,7 +9,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.http.concurrent.BasicFuture;
-import org.apache.http.concurrent.Cancellable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.JobExecution;
@@ -113,16 +112,16 @@ public class FlowApiController extends BaseController {
     @RequestMapping(value = "/test", method = RequestMethod.POST)
     public BigInteger testFlow(HttpServletRequest request) {
         CancellableTask task = new CancellableTask() {
-            
+
             private JobExecution jobExecution;
-            
+
             @Override
             public void cancel(BasicFuture<?> resultFuture) {
                 if (jobExecution != null) {
                     jobExecution.stop();
                 }
             }
-            
+
             @Override
             public void run(BasicFuture<?> resultFuture) {
         final String entityName = request.getParameter("entityName");
@@ -138,7 +137,7 @@ public class FlowApiController extends BaseController {
     @RequestMapping(value = "/run", method = RequestMethod.POST)
     public BigInteger runFlow(@RequestBody RunFlowModel runFlow) {
         CancellableTask task = new CancellableTask() {
-            
+
             private JobExecution jobExecution;
 
             @Override
@@ -147,7 +146,7 @@ public class FlowApiController extends BaseController {
                     jobExecution.stop();
                 }
             }
-            
+
             @Override
             public void run(BasicFuture<?> resultFuture) {
         final Flow flow = flowManagerService.getFlow(runFlow.getEntityName(),
@@ -155,7 +154,7 @@ public class FlowApiController extends BaseController {
         // TODO update and move BATCH SIZE TO a constant or config - confirm
         // desired behavior
                 this.jobExecution = flowManagerService.runFlow(flow, 100, new JobExecutionListener() {
-                    
+
                     @Override
                     public void beforeJob(JobExecution jobExecution) {
     }
@@ -174,12 +173,12 @@ public class FlowApiController extends BaseController {
     @RequestMapping(value="/run/input", method = RequestMethod.POST)
     public BigInteger runInputFlow(@RequestBody RunFlowModel runFlow) {
         CancellableTask task = new CancellableTask() {
-            
+
             @Override
             public void cancel(BasicFuture<?> resultFuture) {
                 // TODO: stop MLCP. We don't have a way to do this yet.
             }
-            
+
             @Override
             public void run(BasicFuture<?> resultFuture) {
         try {
@@ -195,7 +194,7 @@ public class FlowApiController extends BaseController {
                     FlowType.INPUT.toString());
             mlcp.addSourceDirectory(runFlow.getInputPath(), sourceOptions);
             mlcp.loadContent();
-                    
+
                     resultFuture.completed(null);
         }
         catch (IOException e) {

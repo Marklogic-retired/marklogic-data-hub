@@ -1,6 +1,5 @@
 package com.marklogic.hub.web.controller.api;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.WatchEvent;
 import java.util.List;
@@ -140,12 +139,9 @@ public class EntityApiController implements InitializingBean, DisposableBean,
     @Override
     public void onWatchEvent(Path path, WatchEvent<Path> event) {
         synchronized (syncStatusService) {
-            try {
-                syncStatusService.updateSyncStatus(path.toFile());
+            entityManagerService.getEntities();
 
-                syncStatusService.notifyAll();
-            } catch (IOException e) {
-            }
+            syncStatusService.notifyAll();
         }
     }
 }

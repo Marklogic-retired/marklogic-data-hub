@@ -35,12 +35,12 @@ import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
 import com.marklogic.client.DatabaseClientFactory.Authentication;
 import com.marklogic.client.FailedRequestException;
-import com.marklogic.client.admin.ExtensionLibrariesManager;
-import com.marklogic.client.admin.ExtensionLibraryDescriptor;
+import com.marklogic.client.document.GenericDocumentManager;
 import com.marklogic.client.document.XMLDocumentManager;
 import com.marklogic.client.eval.EvalResult;
 import com.marklogic.client.eval.EvalResultIterator;
 import com.marklogic.client.eval.ServerEvaluationCall;
+import com.marklogic.client.io.DOMHandle;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.Format;
 import com.marklogic.client.io.InputStreamHandle;
@@ -56,11 +56,14 @@ public class HubTestBase {
     public static String password;
     public static Authentication authMethod;
     public static DatabaseClient stagingClient = null;
+    public static DatabaseClient stagingModulesClient = null;
     public static DatabaseClient finalClient = null;
+    public static DatabaseClient finalModulesClient = null;
     private static Properties properties = new Properties();
     private static boolean initialized = false;
     public static XMLDocumentManager stagingDocMgr = getStagingMgr();
     public static XMLDocumentManager finalDocMgr = getFinalMgr();
+    public static GenericDocumentManager modMgr = getModMgr();
 
     public static Properties getProperties() {
         return properties;
@@ -73,12 +76,20 @@ public class HubTestBase {
         return stagingClient.newXMLDocumentManager();
     }
 
+    private static GenericDocumentManager getModMgr() {
+        if (!initialized) {
+            init();
+        }
+        return stagingModulesClient.newDocumentManager();
+    }
+
     private static XMLDocumentManager getFinalMgr() {
         if (!initialized) {
             init();
         }
         return finalClient.newXMLDocumentManager();
     }
+
     private static void init() {
         try {
             Properties p = new Properties();
@@ -107,7 +118,9 @@ public class HubTestBase {
         authMethod = Authentication.valueOf(properties.getProperty("auth").toUpperCase());
 
         stagingClient = DatabaseClientFactory.newClient(host, stagingPort, user, password, authMethod);
+        stagingModulesClient  = DatabaseClientFactory.newClient(host, stagingPort, DataHub.MODULES_DB_NAME, user, password, authMethod);
         finalClient = DatabaseClientFactory.newClient(host, finalPort, user, password, authMethod);
+        finalModulesClient  = DatabaseClientFactory.newClient(host, stagingPort, DataHub.MODULES_DB_NAME, user, password, authMethod);
     }
 
     public HubTestBase() {
@@ -140,6 +153,14 @@ public class HubTestBase {
             e.printStackTrace();
             throw e;
         }
+    }
+
+    protected static String getModulesFile(String uri) {
+        return modMgr.read(uri).next().getContent(new StringHandle()).get();
+    }
+
+    protected static Document getModulesDocument(String uri) {
+        return modMgr.read(uri).next().getContent(new DOMHandle()).get();
     }
 
     protected static Document getXmlFromResource(String resourceName) throws IOException, ParserConfigurationException, SAXException {
@@ -188,11 +209,6 @@ public class HubTestBase {
     }
 
     protected static void installModule(String path, String localPath) {
-        ExtensionLibrariesManager libsMgr = stagingClient
-                .newServerConfigManager().newExtensionLibrariesManager();
-
-        ExtensionLibraryDescriptor moduleDescriptor = new ExtensionLibraryDescriptor();
-        moduleDescriptor.setPath(path);
 
         InputStreamHandle handle = new InputStreamHandle(HubTestBase.class.getClassLoader().getResourceAsStream(localPath));
         String ext = FilenameUtils.getExtension(path);
@@ -207,7 +223,7 @@ public class HubTestBase {
             handle.setFormat(Format.TEXT);
         }
 
-        libsMgr.write(moduleDescriptor, handle);
+        modMgr.write(path, handle);
     }
 
     protected static EvalResultIterator runInModules(String query) {

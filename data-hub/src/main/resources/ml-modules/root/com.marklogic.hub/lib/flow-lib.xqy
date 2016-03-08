@@ -54,7 +54,7 @@ declare variable $NO-OP-PLUGIN :=
   };
 
 (: the directory where entities live :)
-declare variable $ENTITIES-DIR := "/ext/entities/";
+declare variable $ENTITIES-DIR := "/entities/";
 
 declare variable $PLUGIN-NS := "http://marklogic.com/hub-in-a-box/plugins/";
 
