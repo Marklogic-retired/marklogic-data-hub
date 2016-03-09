@@ -77,9 +77,12 @@ public class SyncStatusService  implements InitializingBean {
 
         @Override
         public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-            synched = synched && isSynched(file.normalize().toAbsolutePath().toFile());
-            if (!synched) {
-                return FileVisitResult.TERMINATE;
+            // don't look at hidden files like .DS_Store
+            if (!file.getFileName().toString().startsWith(".")) {
+                synched = synched && isSynched(file.normalize().toAbsolutePath().toFile());
+                if (!synched) {
+                    return FileVisitResult.TERMINATE;
+                }
             }
 
             return FileVisitResult.CONTINUE;

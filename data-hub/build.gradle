@@ -26,7 +26,7 @@ dependencies {
     compile 'com.marklogic:ml-javaclient-util:2.6.1'
     compile 'com.marklogic:ml-app-deployer:2.0'
     compile 'commons-io:commons-io:2.4'
-    compile 'com.google.code.gson:gson:2.6.1'
+    compile 'org.apache.commons:commons-csv:1.2'
     compile("com.marklogic:mlcp:8.0-4") {
         exclude module : 'servlet-api'
         exclude group: 'com.google.guava', module: 'guava'

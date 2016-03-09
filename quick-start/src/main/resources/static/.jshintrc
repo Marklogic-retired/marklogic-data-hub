@@ -1,0 +1,25 @@
+{
+  "browser": true,
+  "node": true,
+  "camelcase": true,
+  "curly": true,
+  "eqeqeq": true,
+  "immed": true,
+  "indent": 2,
+  "latedef": "nofunc",
+  "newcap": true,
+  "quotmark": "single",
+  "undef": true,
+  "unused": "vars",
+  "strict": true,
+  "trailing": true,
+  "globals": {
+    "angular": false,
+    "google": false,
+    "$": false,
+    "Highcharts": false,
+    "_": false,
+    "moment": false,
+    "MLSearchController": false
+  }
+}

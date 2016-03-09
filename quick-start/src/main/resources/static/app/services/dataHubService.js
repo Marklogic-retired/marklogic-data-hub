@@ -1,238 +1,225 @@
-var dependencies = [
-	'ngRoute'
-];
-var module = angular.module('dhib.quickstart.service.data-hub', dependencies);
-module.factory('DataHub', [
-    '$http'
-    ,'$q'
-    ,'$route'
-    ,function(
-        $http
-        ,$q
-        ,$route
-    ) {
-        var service = {
-        		
-        	action : {}
-            
-        	,login : function (loginForm) {
-                var promise = $http
-                .post('api/data-hub/login', loginForm)
-                .success(function (data) {
-                    service.status = data;
-                    if(!service.status.installed) {
-                    	service.action.type = "Install";
-                    	service.action.message = "Install is in progress...";
-                    	service.action.progressType = "success";
-                    }
-                })
-                .error(function () {
-                    service.status = null;
-                });
-                
-                return promise;
-            }
-            
-            ,getLoginStatus : function () {
-                var promise = $http
-                .get('api/data-hub/login')
-                .success(function (data) {
-                    service.status = data;
-                })
-                .error(function () {
-                    service.status = null;
-                });
-                
-                return promise;
-            }
-            
-            ,logout : function () {
-                var promise = $http
-                .post('api/data-hub/logout')
-                .success(function (data) {
-                    service.status = data;
-                })
-                .error(function () {
-                    service.status = null;
-                });
-                return promise;
-            }
-            
-            ,reloadRoute : function () {
-            	$route.reload();
-            }
-            
-            ,install : function () {
-                var promise = $http.post('api/data-hub/install')
-                .success(function (status) {
-                	service.status = status;
-                	service.action.type = null;
-                	service.displayMessage('Install is successful.', 'success', 'notification', false);
-                	service.reloadRoute();
-                })
-                .error(function () {
-                	service.action.message = "Install is unsuccessful.";
-                	service.action.progressType = "danger";
-                	//service.displayMessage('Install is unsuccessful.', 'error', 'notification', false);
-                });
-                
-                return promise;
-            }
-            
-            ,preUninstall : function() {
-            	service.action.type = 'Uninstall';
-            	service.action.progressType = 'success';
-            	service.action.message = 'Uninstall is in progress';
-            	service.reloadRoute();
-            }
-            
-            ,uninstall : function () {
-                var promise = $http.post('api/data-hub/uninstall')
-                .success(function (status) {
-                	service.status = status;
-                	service.action.type = "Uninstall";
-                	service.action.message = "Uninstall is successful.";
-                	//service.displayMessage('Uninstall is successful.', 'success', 'notification', false);
-                	//service.reloadRoute();
-                })
-                .error(function () {
-                	service.action.message = "Uninstall is unsuccessful.";
-                	service.action.progressType = "danger";
-                	//service.displayMessage('Uninstall is unsuccessful.', 'error', 'notification', false);
-                });
-                
-                return promise;
-            }
-            
-            ,installUserModules : function () {
-                var promise = $http.post('api/data-hub/install-user-modules')
-                .success(function () {
-                	service.displayMessage('Deploy to server is successful.', 'success', 'notification', false);
-                })
-                .error(function () {
-                	service.displayMessage('Deploy to server is unsuccessful.', 'error', 'notification', false);
-                });
-                
-                return promise;
-            }
-            
-            ,saveEntity : function(entityForm) {
-            	
-            	var promise = $http.post('api/entities', entityForm)
-                .success(function (status) {
-                    service.status = status;
-                    service.displayMessage('New entity is created successfully.', 'success', 'notification', false);
-                })
-                .error(function (error) {
-                	service.displayMessage(error.message, 'error', 'entityModalMessage', true);
-                });
-                
-                return promise;
-            }
-            
-            ,displayEntity : function(entityName) {
-            	return $http.post('api/entities/display', entityName);
-            }
-            
-            ,getStatusChange : function() {
-                return $http.get('api/entities/status-change');
-            }
-           
-            ,runFlow : function(entityName, flowName) {
-            	var data = {
-            		entityName: entityName,
-            		flowName: flowName
-            	};
-            	return $http.post('api/flows/run', data)
-            }
-            
-            ,runInputFlow : function(entityName, flowName, path) {
-                var data = {
-                    'entityName' : entityName
-                    ,'flowName': flowName
-                    ,'inputPath' : path
-                };
-                return $http.post('api/flows/run/input', data)
-            }
-            
-            ,testFlow : function(entityName, flowName) {
-            	var data = {
-            		entityName: entityName,
-                	flowName: flowName
-                };
-                return $http.post('api/flows/test', data)
-            }
-            
-            ,saveFlow : function(flowForm) {
-            	
-            	var promise = $http.post('api/flows', flowForm)
-                .success(function (selectedEntity) {
-                    service.status.selectedEntity = selectedEntity;
-                    service.displayMessage('New flow is created successfully.', 'success', 'notification', false);
-                })
-                .error(function (error) {
-                	service.displayMessage(error.message, 'error', 'flowModalMessage', true);
-                });
-                
-                return promise;
-            }
-            
-            
-            ,displayMessage : function(message,messageType,elementId,isModal) {
-            	var targetDiv = elementId;
-            	if(typeof elementId === 'undefined') {
-            		elementId = 'messageDiv';
-            	}
-            	var messageClass = 'alert';
-            	if(messageType === 'error') {
-            		messageClass += ' alert-error alert-danger';
-            	} else if (messageType === 'success') {
-            		messageClass += ' alert-success';
-            	} else if (messageType === 'warning') {
-            		messageClass += ' alert-warning';
-            	}
-            	$('#'+elementId).html('<div class="'+messageClass+'">'+
-            			'<a href="dismiss" class="close" data-dismiss="alert">&times;</a>'+message+'</div>');
-            			
-            	if(isModal) {
-            		$('.modal-body').scrollTop(0);
-            	} else {
-            		$('#'+elementId).scrollTop(0);
-            	}
-            	setTimeout(function () {
-            		$('.alert').fadeOut();
-            	}, 5000);
-            }
-        };
-        
-        return service;
-    }
-]);
-module.factory('TaskManager', [
-    '$http'
-    ,'$q'
-    ,'$route'
-    ,function(
-        $http
-        ,$q
-        ,$route
-    ) {
-        var service = {
-            waitForTask : function (taskId) {
-                var params = {
-                    'taskId' : taskId
-                };
-                return $http.get('api/task/wait', {'params' : params});
-            }
-            
-            ,cancelTask : function (taskId) {
-                var params = {
-                    'taskId' : taskId
-                };
-                return $http.post('api/task/stop', params);
-            }
+(function () {
+
+  'use strict';
+
+  angular.module('dhib.quickstart.service.data-hub', ['ngRoute'])
+    .service('DataHub', DataHubService)
+    .service('TaskManager', TaskManagerService);
+
+  function DataHubService($http, $q, $route) {
+    var self = this;
+
+    angular.extend(self, {
+      action: {},
+
+      login: login,
+      getLoginStatus: getLoginStatus,
+      logout: logout,
+      reloadRoute: reloadRoute,
+      install: install,
+      preUninstall: preUninstall,
+      uninstall: uninstall,
+      installUserModules: installUserModules,
+      saveEntity: saveEntity,
+      displayEntity: displayEntity,
+      getStatusChange: getStatusChange,
+      runFlow: runFlow,
+      runInputFlow: runInputFlow,
+      testFlow: testFlow,
+      saveFlow: saveFlow,
+      displayMessage: displayMessage
+    });
+
+    function login(loginForm) {
+      return $http.post('api/data-hub/login', loginForm)
+      .success(function (data) {
+        self.status = data;
+        if(!self.status.installed) {
+          self.action.type = 'Install';
+          self.action.message = 'Install is in progress...';
+          self.action.progressType = 'success';
         }
-        
-        return service;
+      })
+      .error(function () {
+        self.status = null;
+      });
     }
-]);
+
+    function getLoginStatus() {
+      return $http.get('api/data-hub/login')
+      .success(function (data) {
+        self.status = data;
+      })
+      .error(function () {
+        self.status = null;
+      });
+    }
+
+    function logout() {
+      return $http.post('api/data-hub/logout')
+      .success(function (data) {
+        self.status = data;
+      })
+      .error(function () {
+        self.status = null;
+      });
+    }
+
+    function reloadRoute() {
+      $route.reload();
+    }
+
+    function install() {
+      return $http.post('api/data-hub/install')
+      .success(function (status) {
+        self.status = status;
+        self.action.type = null;
+        self.displayMessage('Install is successful.', 'success', 'notification', false);
+        self.reloadRoute();
+      })
+      .error(function () {
+        self.action.message = 'Install is unsuccessful.';
+        self.action.progressType = 'danger';
+        //self.displayMessage('Install is unsuccessful.', 'error', 'notification', false);
+      });
+    }
+
+    function preUninstall() {
+      self.action.type = 'Uninstall';
+      self.action.progressType = 'success';
+      self.action.message = 'Uninstall is in progress';
+      self.reloadRoute();
+    }
+
+    function uninstall() {
+      return $http.post('api/data-hub/uninstall')
+      .success(function (status) {
+        self.status = status;
+        self.action.type = 'Uninstall';
+        self.action.message = 'Uninstall is successful.';
+        //self.displayMessage('Uninstall is successful.', 'success', 'notification', false);
+        //self.reloadRoute();
+      })
+      .error(function () {
+        self.action.message = 'Uninstall is unsuccessful.';
+        self.action.progressType = 'danger';
+        //self.displayMessage('Uninstall is unsuccessful.', 'error', 'notification', false);
+      });
+    }
+
+    function installUserModules() {
+      return $http.post('api/data-hub/install-user-modules')
+      .success(function () {
+        self.displayMessage('Deploy to server is successful.', 'success', 'notification', false);
+      })
+      .error(function () {
+        self.displayMessage('Deploy to server is unsuccessful.', 'error', 'notification', false);
+      });
+    }
+
+    function saveEntity(entityForm) {
+      return $http.post('api/entities', entityForm)
+      .success(function (status) {
+        self.status = status;
+        self.displayMessage('New entity is created successfully.', 'success', 'notification', false);
+      })
+      .error(function (error) {
+        self.displayMessage(error.message, 'error', 'entityModalMessage', true);
+      });
+    }
+
+    function displayEntity(entityName) {
+      return $http.post('api/entities/display', entityName);
+    }
+
+    function getStatusChange() {
+      return $http.get('api/entities/status-change');
+    }
+
+    function runFlow(entityName, flowName) {
+      var data = {
+        entityName: entityName,
+        flowName: flowName
+      };
+      return $http.post('api/flows/run', data);
+    }
+
+    function runInputFlow(entityName, flowName, mlcpOptions) {
+      var data = {
+        'entityName': entityName,
+        'flowName': flowName,
+        'inputPath': mlcpOptions.inputPath,
+        'collection': mlcpOptions.collection,
+        'dataFormat': mlcpOptions.dataFormat
+      };
+      return $http.post('api/flows/run/input', data);
+    }
+
+    function testFlow(entityName, flowName) {
+      var data = {
+        entityName: entityName,
+        flowName: flowName
+      };
+      return $http.post('api/flows/test', data);
+    }
+
+    function saveFlow(flowForm) {
+      return $http.post('api/flows', flowForm)
+      .success(function (selectedEntity) {
+        self.status.selectedEntity = selectedEntity;
+        self.displayMessage('New flow is created successfully.', 'success', 'notification', false);
+      })
+      .error(function (error) {
+        self.displayMessage(error.message, 'error', 'flowModalMessage', true);
+      });
+    }
+
+
+    function displayMessage(message,messageType,elementId,isModal) {
+      if(typeof elementId === 'undefined') {
+        elementId = 'messageDiv';
+      }
+      var messageClass = 'alert';
+      if(messageType === 'error') {
+        messageClass += ' alert-error alert-danger';
+      } else if (messageType === 'success') {
+        messageClass += ' alert-success';
+      } else if (messageType === 'warning') {
+        messageClass += ' alert-warning';
+      }
+      $('#'+elementId).html('<div class="'+messageClass+'">'+
+          '<a href="dismiss" class="close" data-dismiss="alert">&times;</a>'+message+'</div>');
+
+      if(isModal) {
+        $('.modal-body').scrollTop(0);
+      } else {
+        $('#'+elementId).scrollTop(0);
+      }
+      setTimeout(function () {
+        $('.alert').fadeOut();
+      }, 5000);
+    }
+  }
+
+  function TaskManagerService($http, $q, $route) {
+    var self = this;
+    angular.extend(self, {
+      waitForTask: waitForTask,
+      cancelTask: cancelTask
+    });
+
+    function waitForTask(taskId) {
+      var params = {
+        'taskId': taskId
+      };
+      return $http.get('api/task/wait', {'params': params});
+    }
+
+    function cancelTask(taskId) {
+      var params = {
+        'taskId': taskId
+      };
+      return $http.post('api/task/stop', params);
+    }
+  }
+})();
