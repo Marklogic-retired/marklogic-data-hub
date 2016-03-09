@@ -1,10 +1,10 @@
 plugins {
     id 'net.saliman.properties' version '1.4.4'
-    id 'com.marklogic.ml-gradle' version '2.0'
     id 'java'
     id 'eclipse'
     id 'idea'
     id 'maven-publish'
+    id 'com.jfrog.bintray' version '1.6'
 }
 
 repositories {
@@ -13,11 +13,10 @@ repositories {
     maven { url 'http://developer.marklogic.com/maven2/' }
 }
 
-group   = 'com.marklogic'
+group = 'com.marklogic'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
-
 
 dependencies {
     compile 'org.springframework.batch:spring-batch-core:3.0.6.RELEASE'
@@ -27,7 +26,7 @@ dependencies {
     compile 'com.marklogic:ml-app-deployer:2.0'
     compile 'commons-io:commons-io:2.4'
     compile 'org.apache.commons:commons-csv:1.2'
-    compile("com.marklogic:mlcp:8.0-4") {
+    compile('com.marklogic:mlcp:8.0-4') {
         exclude module : 'servlet-api'
         exclude group: 'com.google.guava', module: 'guava'
     }
@@ -49,97 +48,76 @@ task sourcesJar(type: Jar, dependsOn: classes) {
 }
 
 javadoc {
-   options.overview = "src/main/resources/overview.html"
+   options.overview = 'src/main/resources/overview.html'
 }
 
 Node pomCustomizations = new NodeBuilder(). project {
-        name 'hub-in-a-box'
-        packaging 'jar'
-        textdescription 'Library for Creating an Enterprise Data Hub on MarkLogic'
-        url 'https://github.com/marklogic/hub-in-a-box'
+    name 'marklogic-data-hub'
+    packaging 'jar'
+    textdescription 'Library for Creating an Enterprise Data Hub on MarkLogic'
+    url 'https://github.com/marklogic/marklogic-data-hub'
 
-        scm {
-            url 'git@github.com:marklogic/hub-in-a-box.git'
-                connection 'scm:git@github.com:marklogic/hub-in-a-box.git'
-                developerConnection 'scm:git@github.com:marklogic/hub-in-a-box.git'
-        }
+    scm {
+        url 'git@github.com:marklogic/marklogic-data-hub.git'
+        connection 'scm:git@github.com:marklogic/marklogic-data-hub.git'
+        developerConnection 'scm:git@github.com:marklogic/marklogic-data-hub.git'
+    }
 
-        licenses {
-            license {
-                name 'The Apache Software License, Version 2.0'
-                    url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-            }
+    licenses {
+        license {
+            name 'The Apache Software License, Version 2.0'
+            url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
         }
+    }
 
-        developers {
-            developer {
-                name 'MarkLogic'
-                    email 'java-sig@marklogic.com'
-                    organization 'MarkLogic'
-                    organizationUrl 'https://www.marklogic.com'
-            }
-            developer {
-                name 'MarkLogic Github Contributors'
-                    email 'general@developer.marklogic.com'
-                    organization 'Github Contributors'
-                    organizationUrl 'https://github.com/marklogic/hub-in-a-box/graphs/contributors'
-            }
+    developers {
+        developer {
+            name 'MarkLogic'
+            email 'java-sig@marklogic.com'
+            organization 'MarkLogic'
+            organizationUrl 'https://www.marklogic.com'
         }
+        developer {
+            name 'MarkLogic Github Contributors'
+            email 'general@developer.marklogic.com'
+            organization 'Github Contributors'
+            organizationUrl 'https://github.com/marklogic/marklogic-data-hub/graphs/contributors'
+        }
+    }
 }
 
 publishing {
-  publications {
-    mainJava(MavenPublication) {
-      from components.java
+    publications {
+        main(MavenPublication) {
+            from components.java
+            artifact sourcesJar
+            artifact javadocJar
 
-      pom.withXml {
-        asNode().append(pomCustomizations.developers)
-        asNode().append(pomCustomizations.name)
-        asNode().append(pomCustomizations.packaging)
-        asNode().append(pomCustomizations.url)
-        asNode().append(pomCustomizations.scm)
-        asNode().append(pomCustomizations.licenses)
-        asNode().appendNode("description", pomCustomizations.textdescription.text)
-      }
-
-      artifact sourcesJar
-
-      artifact javadocJar
-
+            pom.withXml {
+                asNode().appendNode('description', pomCustomizations.textdescription.text())
+                asNode().append(pomCustomizations.developers)
+                asNode().append(pomCustomizations.name)
+                asNode().append(pomCustomizations.packaging)
+                asNode().append(pomCustomizations.url)
+                asNode().append(pomCustomizations.scm)
+                asNode().append(pomCustomizations.licenses)
+            }
+        }
     }
-  }
-  repositories {
-    maven {
-      url publishUrl
-    }
-  }
 }
 
-ext {
-    mlAppConfig {
-        modulePaths = ["marklogic-data-hub/src/main/resources/ml-modules"]
+bintray {
+    user = project.hasProperty('bintrayUser') ? project.property('bintrayUser') : System.getenv('BINTRAY_USER')
+    key = project.hasProperty('bintrayApiKey') ? project.property('bintrayApiKey') : System.getenv('BINTRAY_API_KEY')
+    publications = ['main']
+    pkg {
+        repo = 'maven'
+        name = project.name
+        desc = pomCustomizations.textdescription.text()
+        // userOrg = user
+        licenses = ['Apache-2.0']
+        websiteUrl = pomCustomizations.url
+        vcsUrl = pomCustomizations.scm.url
+        issueTrackerUrl = 'https://github.com/marklogic/marklogic-data-hub/issues'
     }
-
-    // don't deploy the content database
-    cmd = mlAppDeployer.getCommand("DeployContentDatabasesCommand")
-    index = mlAppDeployer.commands.indexOf(cmd)
-    mlAppDeployer.commands.remove(cmd)
-    mlDatabaseCommands.remove(cmd)
-
-    def stagingDbCommand = new com.marklogic.appdeployer.command.databases.DeployDatabaseCommand("staging-database.json")
-    stagingDbCommand.setForestsPerHost(3);
-    mlAppDeployer.commands.add(index, stagingDbCommand)
-    mlDatabaseCommands.add(stagingDbCommand)
-
-    def finalDbCommand = new com.marklogic.appdeployer.command.databases.DeployDatabaseCommand("final-database.json")
-    finalDbCommand.setForestsPerHost(3);
-    mlAppDeployer.commands.add(index + 1, finalDbCommand)
-    mlDatabaseCommands.add(finalDbCommand)
-
-    println(mlAppDeployer.commands.toString())
-    println("")
-    println("")
-    println(mlDatabaseCommands.toString())
-
-
 }
