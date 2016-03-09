@@ -3,7 +3,7 @@
   <title>entity</title>
   <description>
     <div>
-      Hub in a Box Entity entry point for Java
+      Data Hub Entity entry point for Java
     </div>
   </description>
   <method name="GET">

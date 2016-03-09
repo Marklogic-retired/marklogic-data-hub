@@ -3,7 +3,7 @@
   <title>writer</title>
   <description>
     <div>
-      Hub in a Box Writer entry point for Java
+      Data Hub Writer entry point for Java
     </div>
   </description>
   <method name="GET">

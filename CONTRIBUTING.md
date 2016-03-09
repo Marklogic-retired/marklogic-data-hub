@@ -1,6 +1,6 @@
-# Contributing to Data Hub in a Box
+# Contributing to MarkLogic Data Hub
 
-Data Hub in a Box welcomes new contributors. This document will guide you
+MarkLogic Data Hub welcomes new contributors. This document will guide you
 through the process.
 
  - [Issues and Bugs](#issue)
@@ -35,15 +35,15 @@ chances of your issue being dealt with quickly:
 
 ### Submitting a Pull Request
 
-#### Fork Data Hub in a Box
+#### Fork marklogic-data-hub
 
-Fork the project [on GitHub](https://github.com/marklogic/data-hub-in-a-box/fork) and clone
+Fork the project [on GitHub](https://github.com/marklogic/marklogic-data-hub/fork) and clone
 your copy.
 
 ```sh
-$ git clone git@github.com:username/data-hub-in-a-box.git
-$ cd data-hub-in-a-box
-$ git remote add upstream git://github.com/marklogic/data-hub-in-a-box.git
+$ git clone git@github.com:username/marklogic-data-hub.git
+$ cd marklogic-data-hub
+$ git remote add upstream git://github.com/marklogic/marklogic-data-hub.git
 ```
 
 All bug fixes and new features go into the dev branch.
@@ -133,7 +133,7 @@ $ git push origin my-feature-branch
 
 #### Submit the pull request
 
-Go to https://github.com/username/data-hub-in-a-box and select your feature branch. Click
+Go to https://github.com/username/marklogic-data-hub and select your feature branch. Click
 the 'Pull Request' button and fill out the form.
 
 Pull requests are usually reviewed within a few days. If you get comments
@@ -173,5 +173,5 @@ from the main (upstream) repository:
     git pull --ff upstream dev
     ```
 
-[issue tracker]: https://github.com/marklogic/data-hub-in-a-box/issues
+[issue tracker]: https://github.com/marklogic/marklogic-data-hub/issues
 [.editorconfig]: http://editorconfig.org/

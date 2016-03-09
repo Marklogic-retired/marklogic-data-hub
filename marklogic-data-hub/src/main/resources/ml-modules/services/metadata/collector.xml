@@ -3,7 +3,7 @@
   <title>collector</title>
   <description>
     <div>
-      Hub in a Box Collector entry point for Java
+      Data Hub Collector entry point for Java
     </div>
   </description>
   <method name="POST">

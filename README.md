@@ -10,7 +10,7 @@ This project allows you to deploy a skeleton Data Hub into MarkLogic. With some 
 # Quick Start
 Want to get up and running quickly? Try the quick-start jar.
 
-- Download the jar from the [releases page](https://github.com/marklogic/data-hub-in-a-box/releases/latest).
+- Download the jar from the [releases page](https://github.com/marklogic/marklogic-data-hub/releases/latest).
 - Run the Jar
   `java -jar quick-start-1.0.0-alpha.1.jar`
 - Open the Quickstart Application in your browser:

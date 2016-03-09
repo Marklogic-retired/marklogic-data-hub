@@ -3,7 +3,7 @@
   <title>flow</title>
   <description>
     <div>
-      Hub in a Box Flow entry point for Java
+      Data Hub Flow entry point for Java
     </div>
   </description>
   <method name="GET">
