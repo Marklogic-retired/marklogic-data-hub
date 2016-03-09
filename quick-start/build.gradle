@@ -32,7 +32,7 @@ configurations {
 dependencies {
     compile('org.springframework.boot:spring-boot-starter')
     compile('org.springframework.boot:spring-boot-starter-web')
-    compile project(':data-hub')
+    compile project(':marklogic-data-hub')
     providedRuntime('org.springframework.boot:spring-boot-starter-tomcat')
     testCompile('junit:junit')
 }

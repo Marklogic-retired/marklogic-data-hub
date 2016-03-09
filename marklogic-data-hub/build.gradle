@@ -117,8 +117,7 @@ publishing {
 
 ext {
     mlAppConfig {
-        modulePaths = ["data-hub/src/main/resources/ml-modules"]
-        // mlConfigDir = "data-hub/src/main/resources/ml-config"
+        modulePaths = ["marklogic-data-hub/src/main/resources/ml-modules"]
     }
 
     // don't deploy the content database

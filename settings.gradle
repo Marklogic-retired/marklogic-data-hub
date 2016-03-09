@@ -5,6 +5,6 @@ include 'api'
 include 'services:webservice'
 */
 
-rootProject.name = 'data-hub-in-a-box'
-include ':data-hub'
+rootProject.name = 'marklogic-data-hub'
+include ':marklogic-data-hub'
 include ':quick-start'
