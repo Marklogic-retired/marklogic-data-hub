@@ -1,28 +1,28 @@
 <div id="header" class="container-fluid">
-    <div class="row">
-        <div class="col-xs-6 col-sm-6 col-md-6 logo">
-          <img id="img_logo" src="images/logo.svg">
-        </div>
-        <div id="sitemenu" class="col-xs-6 col-sm-6 col-md-6 dropdown" ng-if="status != null">
-          <button type="submit" name="installUserModules" class="btn btn-primary" ng-if="status.installed" ng-click="installUserModules()" ng-disabled="action.type != null">Deploy to server</button>
-      <button type="submit" name="uninstall" class="btn btn-primary" ng-if="status.installed" ng-click="uninstall()" ng-disabled="action.type != null">Uninstall</button>
-      <button class="btn btn-default dropdown-toggle" type="button" id="headerDropdownMenu" data-toggle="dropdown" aria-expanded="true">
-          Welcome {{status.mlUsername}}! <span class="caret"></span>
-      </button>
-      <ul class="dropdown-menu dropdown-menu-right" role="menu" aria-labelledby="headerDropdownMenu">
-        <li role="presentation"><a href="javascript:void(0)" ng-click="logout()">Logout</a></li>
-      </ul>
+  <div class="row">
+    <div class="col-xs-6 col-sm-6 col-md-6 logo">
+      <img id="img_logo" src="images/logo.svg">
     </div>
-    </div>
-    <div id="message" class="alert alert-info" ng-if="status != null && action.type === 'Install'">
-        <a href="dismiss" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-        <ul>
-            <li ng-if="status.serverVersionAccepted">ML version is acceptable.</li>
-            <li ng-if="!status.serverVersionAccepted">ML version is unacceptable.</li>
-            <li ng-if="status.installed">Data Hub is already installed.</li>
-            <li ng-if="!status.installed">Data Hub is not yet installed.</li>
-        </ul>
-    </div>
-    <div id="notification"></div>
+    <div id="sitemenu" class="col-xs-6 col-sm-6 col-md-6 dropdown" ng-if="status != null">
+      <button type="submit" name="installUserModules" class="btn btn-primary" ng-if="status.installed" ng-click="installUserModules()" ng-disabled="action.type != null">Deploy to server</button>
+    <button type="submit" name="uninstall" class="btn btn-primary" ng-if="status.installed" ng-click="uninstall()" ng-disabled="action.type != null">Uninstall</button>
+    <button class="btn btn-default dropdown-toggle" type="button" id="headerDropdownMenu" data-toggle="dropdown" aria-expanded="true">
+      Welcome {{status.mlUsername}}! <span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu dropdown-menu-right" role="menu" aria-labelledby="headerDropdownMenu">
+    <li role="presentation"><a href="javascript:void(0)" ng-click="logout()">Logout</a></li>
+    </ul>
+  </div>
+  </div>
+  <div id="message" class="alert alert-info" ng-if="status != null && action.type === 'Install'">
+    <a href="dismiss" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+    <ul>
+      <li ng-if="status.serverVersionAccepted">ML version is acceptable.</li>
+      <li ng-if="!status.serverVersionAccepted">ML version is unacceptable.</li>
+      <li ng-if="status.installed">Data Hub is already installed.</li>
+      <li ng-if="!status.installed">Data Hub is not yet installed.</li>
+    </ul>
+  </div>
+  <div id="notification"></div>
 </div>
 <div class="divider"></div>

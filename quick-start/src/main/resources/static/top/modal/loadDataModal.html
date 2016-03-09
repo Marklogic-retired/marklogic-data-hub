@@ -4,14 +4,31 @@
 </div>
 <div class="modal-body" id="myModalBody">
   <div class="row">
-     <div id="details" class="col-xs-12 col-md-12">
-       <form ng-submit="ok()">
-         <div class="form-group">
-           <label for="inputPath">Path</label>
-           <input class="form-control" name="inputPath" type="text" ng-model="inputPath" placeHolder="Enter Path" required="required"/>
-         </div>
-       </form>
-     </div>
+    <div id="details" class="col-xs-12 col-md-12">
+      <form ng-submit="ok()">
+        <div class="form-group">
+          <label for="inputPath">Path</label>
+          <input class="form-control" name="inputPath" type="text" ng-model="inputPath" placeHolder="Enter Path" required="required"/>
+        </div>
+        <div class="form-group">
+          <label for="collection">Collection</label>
+          <input class="form-control" name="collection" type="text" ng-model="collection" placeHolder="Enter a Collection to apply (optional)" required="required"/>
+        </div>
+        <div class="form-group">
+          <label for="dataFormat">Data Format</label>
+          <select class="form-control" name="dataFormat" ng-model="dataFormat">
+            <option value="aggregates">Aggregates</option>
+            <option value="archive">Archive</option>
+            <option value="delimited_text">Delimited Text</option>
+            <option value="delimited_json">Delimited Json</option>
+            <option value="documents">Documents</option>
+            <option value="forest">Forest</option>
+            <option value="rdf">RDF</option>
+            <option value="sequencefile">Sequence File</option>
+          </select>
+        </div>
+      </form>
+    </div>
   </div>
 </div>
 <div class="modal-footer">

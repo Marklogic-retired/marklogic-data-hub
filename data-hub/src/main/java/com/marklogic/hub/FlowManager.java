@@ -117,7 +117,7 @@ public class FlowManager extends ResourceManager {
 
     /**
      * Retrieves a list of flows installed on the MarkLogic server
-     * 
+     *
      * @param entityName
      *            - the entity from which to fetch the flows
      * @return - a list of flows for the given entity
@@ -151,7 +151,7 @@ public class FlowManager extends ResourceManager {
 
     /**
      * Retrieves a named flow from a given entity
-     * 
+     *
      * @param entityName
      *            - the entity that the flow belongs to
      * @param flowName
@@ -199,7 +199,7 @@ public class FlowManager extends ResourceManager {
      * @param flow - the flow to run
      * @param batchSize - the size to use for batching transactions
      * @param listener - the JobExecutionListener to receive status updates about the job
-     * @return 
+     * @return
      */
     public JobExecution runFlow(Flow flow, int batchSize, JobExecutionListener listener) {
         Collector c = flow.getCollector();

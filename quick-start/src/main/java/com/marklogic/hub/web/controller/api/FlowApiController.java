@@ -192,6 +192,8 @@ public class FlowApiController extends BaseController {
             SourceOptions sourceOptions = new SourceOptions(
                     runFlow.getEntityName(), runFlow.getFlowName(),
                     FlowType.INPUT.toString());
+            sourceOptions.setInputFileType(runFlow.getDataFormat());
+            sourceOptions.setCollection(runFlow.getCollection());
             mlcp.addSourceDirectory(runFlow.getInputPath(), sourceOptions);
             mlcp.loadContent();
 

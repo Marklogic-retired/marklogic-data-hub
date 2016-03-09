@@ -134,6 +134,11 @@ public class Mlcp {
                 arguments.add(sourceOptions.getInputFilePattern());
             }
 
+            if (sourceOptions.getCollection() != null) {
+                arguments.add("-output_collections");
+                arguments.add(sourceOptions.getCollection());
+            }
+
             // by default, cut the source directory path to make URIs shorter
             String uriReplace = canonicalPath + ",''";
             uriReplace = uriReplace.replaceAll("\\\\", "/");
@@ -157,6 +162,7 @@ public class Mlcp {
         private String flowType;
         private String inputFileType;
         private String inputFilePattern;
+        private String collection;
 
         public SourceOptions(String entityName, String flowName, String flowType) {
             this.entityName = entityName;
@@ -190,6 +196,14 @@ public class Mlcp {
 
         public void setInputFilePattern(String inputFilePattern) {
             this.inputFilePattern = inputFilePattern;
+        }
+
+        public String getCollection() {
+            return collection;
+        }
+
+        public void setCollection(String collection) {
+            this.collection = collection;
         }
 
         protected String getTransformParams() {
