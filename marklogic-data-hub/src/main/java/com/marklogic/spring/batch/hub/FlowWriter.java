@@ -46,6 +46,7 @@ public class FlowWriter extends ResourceManager  implements ItemWriter<String> {
           if (transaction != null) {
               transaction.rollback();
           }
+          throw e;
       }
     }
 }

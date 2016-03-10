@@ -11,6 +11,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.http.concurrent.BasicFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobExecutionListener;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -124,11 +125,11 @@ public class FlowApiController extends BaseController {
 
             @Override
             public void run(BasicFuture<?> resultFuture) {
-        final String entityName = request.getParameter("entityName");
-        final String flowName = request.getParameter("flowName");
-        final Flow flow = flowManagerService.getFlow(entityName, flowName);
+                final String entityName = request.getParameter("entityName");
+                final String flowName = request.getParameter("flowName");
+                final Flow flow = flowManagerService.getFlow(entityName, flowName);
                 this.jobExecution = flowManagerService.testFlow(flow);
-    }
+            }
         };
 
         return taskManagerService.addTask(task);
@@ -149,19 +150,36 @@ public class FlowApiController extends BaseController {
 
             @Override
             public void run(BasicFuture<?> resultFuture) {
-        final Flow flow = flowManagerService.getFlow(runFlow.getEntityName(),
-                runFlow.getFlowName());
-        // TODO update and move BATCH SIZE TO a constant or config - confirm
-        // desired behavior
+                final Flow flow = flowManagerService.getFlow(runFlow.getEntityName(), runFlow.getFlowName());
+                // TODO update and move BATCH SIZE TO a constant or config - confirm
+                // desired behavior
                 this.jobExecution = flowManagerService.runFlow(flow, 100, new JobExecutionListener() {
 
                     @Override
                     public void beforeJob(JobExecution jobExecution) {
-    }
+                    }
 
                     @Override
                     public void afterJob(JobExecution jobExecution) {
-                        resultFuture.completed(null);
+                        ExitStatus status = jobExecution.getExitStatus();
+                        if (ExitStatus.FAILED.getExitCode().equals(status.getExitCode())) {
+                            List<Throwable> errors = jobExecution.getAllFailureExceptions();
+                            if (errors.size() > 0) {
+                                Throwable throwable = errors.get(0);
+                                if (Exception.class.isInstance(throwable)) {
+                                    resultFuture.failed((Exception) throwable);
+                                }
+                                else {
+                                    resultFuture.failed(new Exception(errors.get(0)));
+                                }
+                            }
+                            else {
+                                resultFuture.failed(null);
+                            }
+                        }
+                        else {
+                            resultFuture.completed(null);
+                        }
                     }
                 });
             }
@@ -181,30 +199,31 @@ public class FlowApiController extends BaseController {
 
             @Override
             public void run(BasicFuture<?> resultFuture) {
-        try {
-            Mlcp mlcp = new Mlcp(
+                try {
+                    Mlcp mlcp = new Mlcp(
                             environmentConfiguration.getMLHost()
                             ,Integer.parseInt(environmentConfiguration.getMLStagingRestPort())
                             ,environmentConfiguration.getMLUsername()
                             ,environmentConfiguration.getMLPassword()
-                        );
+                            );
 
-            SourceOptions sourceOptions = new SourceOptions(
-                    runFlow.getEntityName(), runFlow.getFlowName(),
-                    FlowType.INPUT.toString());
-            sourceOptions.setInputFileType(runFlow.getDataFormat());
-            sourceOptions.setCollection(runFlow.getCollection());
-            mlcp.addSourceDirectory(runFlow.getInputPath(), sourceOptions);
-            mlcp.loadContent();
+                    SourceOptions sourceOptions = new SourceOptions(
+                            runFlow.getEntityName(), runFlow.getFlowName(),
+                            FlowType.INPUT.toString());
+                    sourceOptions.setInputFileType(runFlow.getDataFormat());
+                    sourceOptions.setCollection(runFlow.getCollection());
+                    mlcp.addSourceDirectory(runFlow.getInputPath(), sourceOptions);
+                    mlcp.loadContent();
 
                     resultFuture.completed(null);
-        }
-        catch (IOException e) {
-            LOGGER.error("Error encountered while trying to run flow:  "
-                    + runFlow.getEntityName() + " > " + runFlow.getFlowName(),
-                    e);
-        }
-    }
+                }
+                catch (IOException e) {
+                    LOGGER.error("Error encountered while trying to run flow:  "
+                            + runFlow.getEntityName() + " > " + runFlow.getFlowName(),
+                            e);
+                    resultFuture.failed(e);
+                }
+            }
         };
         return taskManagerService.addTask(task);
     }

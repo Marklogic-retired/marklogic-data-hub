@@ -1,6 +1,8 @@
 package com.marklogic.hub.web.controller.api;
 
 import java.math.BigInteger;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -25,15 +27,24 @@ public class TaskManagerApiController {
     public Object waitTask(HttpServletRequest request, HttpServletResponse response) {
         String taskIdStr = request.getParameter("taskId");
         
+        Map<String, Object> resultMap = new HashMap<>();
+        resultMap.put("taskId", taskIdStr);
+        resultMap.put("success", false);
+        
         try {
             BigInteger taskId = new BigInteger(taskIdStr);
-            return taskManagerService.waitTask(taskId);
+            Object result = taskManagerService.waitTask(taskId);
+            
+            resultMap.put("result", result);
+            resultMap.put("success", true);
         }
         catch (NumberFormatException e) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            resultMap.put("errorMessage", "Invalid task id");
+        } catch (Exception e) {
+            resultMap.put("errorMessage", e.getMessage());
         }
         
-        return null;
+        return resultMap;
     }
     
     @RequestMapping(value="/stop", method = RequestMethod.POST)
