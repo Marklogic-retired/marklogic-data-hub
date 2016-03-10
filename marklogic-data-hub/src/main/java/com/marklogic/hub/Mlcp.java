@@ -52,14 +52,12 @@ public class Mlcp {
         sources.add(source);
     }
 
-    public void loadContent() {
+    public boolean loadContent() {
+        boolean success = true;
         for (MlcpSource source : sources) {
-            Thread inputThread = null;
-            Thread errorThread = null;
             try {
                 List<String> arguments = new ArrayList<>();
 
-//                arguments.add(mlcpPath);
                 arguments.add("import");
                 arguments.add("-mode");
                 arguments.add("local");
@@ -77,20 +75,13 @@ public class Mlcp {
                 arguments.addAll(sourceArguments);
 
                 DataHubContentPump contentPump = new DataHubContentPump(arguments);
-                contentPump.execute();
+                success = success && contentPump.execute();
             }
             catch (Exception e) {
                 LOGGER.error("Failed to load {}", source.getSourcePath(), e);
             }
-            finally {
-                if (inputThread != null) {
-                    inputThread.interrupt();
-                }
-                if (errorThread != null) {
-                    errorThread.interrupt();
-                }
-            }
         }
+        return success;
     }
 
     protected void setHadoopHomeDir() throws IOException {
