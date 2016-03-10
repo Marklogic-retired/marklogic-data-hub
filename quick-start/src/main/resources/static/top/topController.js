@@ -132,7 +132,12 @@
         TaskManager.waitForTask(flow.runFlowTaskId)
         .success(function (result) {
           if (!flow.runFlowCancelled) {
-            DataHub.displayMessage('Flow run is successful.', 'success', 'notification', false);
+            if (result.success) {
+              DataHub.displayMessage('Flow run is successful.', 'success', 'notification', false);
+            }
+            else {
+              DataHub.displayMessage(result.errorMessage, 'error', 'notification', false);
+            }
           }
         })
         .error(function () {
