@@ -15,7 +15,7 @@
 :)
 xquery version "1.0-ml";
 
-module namespace hul = "http://marklogic.com/hub-in-a-box/hub-utils-lib";
+module namespace hul = "http://marklogic.com/data-hub/hub-utils-lib";
 
 import module namespace admin = "http://marklogic.com/xdmp/admin"
   at "/MarkLogic/admin.xqy";
@@ -23,7 +23,7 @@ import module namespace admin = "http://marklogic.com/xdmp/admin"
 import module namespace cvt = "http://marklogic.com/cpf/convert"
       at "/MarkLogic/conversion/convert.xqy";
 
-declare namespace hub = "http://marklogic.com/hub-in-a-box";
+declare namespace hub = "http://marklogic.com/data-hub";
 
 declare option xdmp:mapping "false";
 

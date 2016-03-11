@@ -15,20 +15,20 @@
 :)
 xquery version "1.0-ml";
 
-module namespace flow = "http://marklogic.com/hub-in-a-box/flow-lib";
+module namespace flow = "http://marklogic.com/data-hub/flow-lib";
 
-import module namespace debug = "http://marklogic.com/hub-in-a-box/debug-lib"
+import module namespace debug = "http://marklogic.com/data-hub/debug-lib"
   at "/com.marklogic.hub/lib/debug-lib.xqy";
 
-import module namespace hul = "http://marklogic.com/hub-in-a-box/hub-utils-lib"
+import module namespace hul = "http://marklogic.com/data-hub/hub-utils-lib"
   at "/com.marklogic.hub/lib/hub-utils-lib.xqy";
 
 import module namespace functx = "http://www.functx.com"
   at "/MarkLogic/functx/functx-1.0-nodoc-2007-01.xqy";
 
-declare namespace hub = "http://marklogic.com/hub-in-a-box";
+declare namespace hub = "http://marklogic.com/data-hub";
 
-declare namespace envelope = "http://marklogic.com/hub-in-a-box/envelope";
+declare namespace envelope = "http://marklogic.com/data-hub/envelope";
 
 declare option xdmp:mapping "false";
 
@@ -56,7 +56,7 @@ declare variable $NO-OP-PLUGIN :=
 (: the directory where entities live :)
 declare variable $ENTITIES-DIR := "/entities/";
 
-declare variable $PLUGIN-NS := "http://marklogic.com/hub-in-a-box/plugins/";
+declare variable $PLUGIN-NS := "http://marklogic.com/data-hub/plugins/";
 
 declare variable $TYPE-XQUERY := "xquery";
 
@@ -269,7 +269,7 @@ declare %private function flow:get-flow(
       fn:doc($uri)/hub:flow
   })
   return
-    <flow xmlns="http://marklogic.com/hub-in-a-box">
+    <flow xmlns="http://marklogic.com/data-hub">
       <name>{$flow-name}</name>
       <entity>{$entity-name}</entity>
       <complexity>{ ($flow/hub:complexity/fn:data(), "simple")[1] }</complexity>
@@ -312,7 +312,7 @@ declare function flow:get-flows(
     return
       flow:get-flow($entity-name, $name, (), $uris[fn:matches(., $ENTITIES-DIR || $entity-name || "/(input|conformance)/" || $name || "/.+")])
   return
-    <flows xmlns="http://marklogic.com/hub-in-a-box">
+    <flows xmlns="http://marklogic.com/data-hub">
     {
       $flows
     }
@@ -350,7 +350,7 @@ declare %private function flow:get-entity(
   $uris as xs:string*)
   as element(hub:entity)
 {
-  <entity xmlns="http://marklogic.com/hub-in-a-box">
+  <entity xmlns="http://marklogic.com/data-hub">
     <name>{$entity-name}</name>
     {
       flow:get-flows($entity-name)
@@ -374,7 +374,7 @@ declare function flow:get-entities() as element(hub:entities)
     return
       flow:get-entity($name, $uris[fn:matches(., $ENTITIES-DIR || $name || "/.+")])
   return
-    <entities xmlns="http://marklogic.com/hub-in-a-box">
+    <entities xmlns="http://marklogic.com/data-hub">
     {
       $entities
     }
@@ -470,7 +470,7 @@ declare function flow:run-flow(
     },
     map:new((
       map:entry("isolation", "different-transaction"),
-      map:entry("database", xdmp:database("data-hub-in-a-box-FINAL")),
+      map:entry("database", xdmp:database("data-hub-FINAL")),
       map:entry("transactionMode", "update-auto-commit")
     )))
 
@@ -490,7 +490,7 @@ declare function flow:make-envelope($map as map:map, $data-format as xs:string)
   if ($data-format eq "application/json") then
     xdmp:to-json($map)/node()
   else
-    <envelope xmlns="http://marklogic.com/hub-in-a-box/envelope">
+    <envelope xmlns="http://marklogic.com/data-hub/envelope">
       <headers>{map:get($map, "headers")}</headers>
       <triples>{map:get($map, "triples")}</triples>
       <content>{map:get($map, "content")}</content>

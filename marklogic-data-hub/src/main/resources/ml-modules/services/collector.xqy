@@ -17,10 +17,10 @@ xquery version "1.0-ml";
 
 module namespace service = "http://marklogic.com/rest-api/resource/collector";
 
-import module namespace debug = "http://marklogic.com/hub-in-a-box/debug-lib"
+import module namespace debug = "http://marklogic.com/data-hub/debug-lib"
   at "/com.marklogic.hub/lib/debug-lib.xqy";
 
-import module namespace flow = "http://marklogic.com/hub-in-a-box/flow-lib"
+import module namespace flow = "http://marklogic.com/data-hub/flow-lib"
   at "/com.marklogic.hub/lib/flow-lib.xqy";
 
 declare option xdmp:mapping "false";

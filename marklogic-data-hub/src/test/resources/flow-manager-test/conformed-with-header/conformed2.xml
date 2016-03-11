@@ -1,4 +1,4 @@
-<envelope xmlns="http://marklogic.com/hub-in-a-box/envelope">
+<envelope xmlns="http://marklogic.com/data-hub/envelope">
   <headers>
     <testing xmlns="">123</testing>
   </headers>

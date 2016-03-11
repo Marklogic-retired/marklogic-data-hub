@@ -15,7 +15,7 @@
 :)
 xquery version "1.0-ml";
 
-module namespace debug = "http://marklogic.com/hub-in-a-box/debug-lib";
+module namespace debug = "http://marklogic.com/data-hub/debug-lib";
 
 declare option xdmp:mapping "false";
 

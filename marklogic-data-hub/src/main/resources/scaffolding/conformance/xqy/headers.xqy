@@ -1,8 +1,8 @@
 xquery version "1.0-ml";
 
-module namespace plugin = "http://marklogic.com/hub-in-a-box/plugins/headers";
+module namespace plugin = "http://marklogic.com/data-hub/plugins/headers";
 
-declare namespace envelope = "http://marklogic.com/hub-in-a-box/envelope";
+declare namespace envelope = "http://marklogic.com/data-hub/envelope";
 
 declare option xdmp:mapping "false";
 

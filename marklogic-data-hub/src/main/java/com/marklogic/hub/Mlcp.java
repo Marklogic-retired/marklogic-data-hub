@@ -149,7 +149,7 @@ public class Mlcp {
             arguments.add("-transform_module");
             arguments.add("/com.marklogic.hub/mlcp-flow-transform.xqy");
             arguments.add("-transform_namespace");
-            arguments.add("http://marklogic.com/hub-in-a-box/mlcp-flow-transform");
+            arguments.add("http://marklogic.com/data-hub/mlcp-flow-transform");
             arguments.add("-transform_param");
             arguments.add("\"" + sourceOptions.getTransformParams() + "\"");
             return arguments;

@@ -1,5 +1,5 @@
 {
-  "database-name": "data-hub-in-a-box-STAGING",
+  "database-name": "data-hub-STAGING",
   "triple-index": true,
   "collection-lexicon":true
 }

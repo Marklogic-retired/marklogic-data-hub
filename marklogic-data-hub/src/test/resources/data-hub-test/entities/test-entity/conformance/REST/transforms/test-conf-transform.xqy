@@ -2,7 +2,7 @@ xquery version "1.0-ml";
 
 module namespace transform = "http://marklogic.com/rest-api/transform/test-conf-transform";
 
-declare namespace envelope = "http://marklogic.com/hub-in-a-box/envelope";
+declare namespace envelope = "http://marklogic.com/data-hub/envelope";
 
 declare function transform(
   $context as map:map,

@@ -1,6 +1,6 @@
 xquery version "1.0-ml";
 
-module namespace plugin = "http://marklogic.com/hub-in-a-box/plugins/triples";
+module namespace plugin = "http://marklogic.com/data-hub/plugins/triples";
 
 declare option xdmp:mapping "false";
 
