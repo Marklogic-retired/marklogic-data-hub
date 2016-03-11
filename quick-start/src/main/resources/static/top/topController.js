@@ -166,12 +166,12 @@
 
         TaskManager.waitForTask(flow.testFlowTaskId)
         .success(function (result) {
-          if (!flow.testFlowTaskId) {
+          if (!flow.testFlowCancelled) {
             DataHub.displayMessage('Flow test is successful.', 'success', 'notification', false);
           }
         })
         .error(function () {
-          if (!flow.testFlowTaskId) {
+          if (!flow.testFlowCancelled) {
             DataHub.displayMessage('Flow test is unsuccessful.', 'error', 'notification', false);
           }
         })
