@@ -24,29 +24,7 @@
     $scope.action = DataHub.action;
 
     $scope.createEntity = function() {
-      $scope.loading = true;
-      $scope.entityForm.hasErrors = false;
-      $('#entityModal').modal({
-        backdrop: 'static',
-        keyboard: true
-      });
-      $scope.loading = false;
-    };
-
-    $scope.saveEntity = function() {
-      $scope.loading = true;
-      DataHub.saveEntity($scope.entityForm)
-      .success(function () {
-        $scope.entityForm.hasErrors = false;
-        $scope.status = DataHub.status;
-        $('#entityModal').modal('hide');
-      })
-      .error(function () {
-        $scope.entityForm.hasErrors = true;
-      })
-      .finally(function () {
-        $scope.loading = false;
-      });
+      ModalService.openEntityModal();
     };
 
     $scope.displayEntity = function(entityName) {
@@ -72,16 +50,7 @@
     };
 
     $scope.createFlow = function(entityName, flowType, extension) {
-      $scope.loading = true;
-      $scope.flowForm.entityName = entityName;
-      $scope.flowForm.flowType = flowType;
-      $scope.flowForm.extension = extension;
-      $scope.flowForm.hasErrors = false;
-      $('#flowModal').modal({
-        backdrop: 'static',
-        keyboard: true
-      });
-      $scope.loading = false;
+      ModalService.openFlowModal(entityName, flowType, extension);
     };
 
     $scope.runInputFlow = function(flow) {
@@ -166,12 +135,12 @@
 
         TaskManager.waitForTask(flow.testFlowTaskId)
         .success(function (result) {
-          if (!flow.testFlowTaskId) {
+          if (!flow.testFlowCancelled) {
             DataHub.displayMessage('Flow test is successful.', 'success', 'notification', false);
           }
         })
         .error(function () {
-          if (!flow.testFlowTaskId) {
+          if (!flow.testFlowCancelled) {
             DataHub.displayMessage('Flow test is unsuccessful.', 'error', 'notification', false);
           }
         })
@@ -189,22 +158,6 @@
       flow.testFlowCancelled = true;
       DataHub.displayMessage('Flow test cancelled.', 'success', 'notification', false);
       TaskManager.cancelTask(flow.testFlowTaskId);
-    };
-
-    $scope.saveFlow = function() {
-      $scope.loading = true;
-      DataHub.saveFlow($scope.flowForm)
-      .success(function () {
-        $scope.flowForm.hasErrors = false;
-        $scope.status = DataHub.status;
-        $('#flowModal').modal('hide');
-      })
-      .error(function () {
-        $scope.flowForm.hasErrors = true;
-      })
-      .finally(function () {
-        $scope.loading = false;
-      });
     };
 
     $scope.install = function () {
