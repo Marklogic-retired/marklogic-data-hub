@@ -123,9 +123,6 @@
         self.status = status;
         self.displayMessage('New entity is created successfully.', 'success', 'notification', false);
       })
-      .error(function (error) {
-        self.displayMessage(error.message, 'error', 'entityModalMessage', true);
-      });
     }
 
     function displayEntity(entityName) {
@@ -168,12 +165,8 @@
       .success(function (selectedEntity) {
         self.status.selectedEntity = selectedEntity;
         self.displayMessage('New flow is created successfully.', 'success', 'notification', false);
-      })
-      .error(function (error) {
-        self.displayMessage(error.message, 'error', 'flowModalMessage', true);
       });
     }
-
 
     function displayMessage(message,messageType,elementId,isModal) {
       if(typeof elementId === 'undefined') {
