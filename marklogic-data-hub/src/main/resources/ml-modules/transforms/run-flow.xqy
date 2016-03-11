@@ -14,7 +14,7 @@ declare function runFlow:transform(
   let $entityName := map:get($params, 'entity-name')
   let $flowName := map:get($params, 'flow-name')
 
-  let $flow := flow:get-flow($entityName,$flowName,())
+  let $flow := flow:get-flow($entityName,$flowName, "input")
 
   let $uri := map:get($context, 'uri')
 
