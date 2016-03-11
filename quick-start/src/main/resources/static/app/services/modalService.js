@@ -11,9 +11,9 @@
   function ModalService($uibModal) {
     var self = this;
     angular.extend(self, {
-      openLoadDataModal: openLoadDataModal
-      ,openEntityModal: openEntityModal
-      ,openFlowModal: openFlowModal
+      openLoadDataModal: openLoadDataModal,
+      openEntityModal: openEntityModal,
+      openFlowModal: openFlowModal
     });
 
     function openLoadDataModal() {
@@ -53,11 +53,11 @@
         resolve : {
           'entityName' : function () {
             return entityName;
-          }
-          ,'flowType' : function () {
+          },
+          'flowType' : function () {
             return flowType;
-          }
-          ,'extension' : function () {
+          },
+          'extension' : function () {
             return extension;
           }
         }
@@ -113,10 +113,10 @@
   
   function FlowModalController($scope, $uibModalInstance, DataHub, entityName, flowType, extension) {
     $scope.flowForm = {
-        'entityName' : entityName
-        ,'flowType' : flowType
-        ,'extension' : extension
-    };
+        'entityName' : entityName,
+        'flowType' : flowType,
+        'extension' : extension
+      };
     $scope.errorMessage =null;
     $scope.hasError = false;
     

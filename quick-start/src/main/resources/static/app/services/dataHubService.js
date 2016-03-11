@@ -122,7 +122,7 @@
       .success(function (status) {
         self.status = status;
         self.displayMessage('New entity is created successfully.', 'success', 'notification', false);
-      })
+      });
     }
 
     function displayEntity(entityName) {
