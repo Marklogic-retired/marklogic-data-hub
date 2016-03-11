@@ -59,7 +59,7 @@ Example:
 `<id>1</id>`
 `</employee>`
 
-To insert/update this document with uri '/employee1.xml' into the database 'data-hub-in-a-box-STAGING' (with host 'localhost' and port '8010'), given a user 'admin' with password 'admin' and rest-writer role AND to be able to run the flow 'IngestFlow' of the 'Customer' entity, run the following:
+To insert/update this document with uri '/employee1.xml' into the database 'data-hub-STAGING' (with host 'localhost' and port '8010'), given a user 'admin' with password 'admin' and rest-writer role AND to be able to run the flow 'IngestFlow' of the 'Customer' entity, run the following:
 
 `curl --anyauth --user admin:admin -X PUT -T ./documents/employee1.xml -H "Content-type:application/xml" 'http://localhost:8010/LATEST/documents?uri=/employee1.xml&transform=run-flow&trans:entity-name=Customer&trans:flow-name=IngestFlow'`
 
@@ -75,7 +75,7 @@ If it is JSON ('application/json'), the content will be:
 Else if it is XML ('application/xml'), it will be:
 
 `<?xml  version="1.0" encoding="UTF-8"?>`
-`<envelope xmlns="http://marklogic.com/hub-in-a-box/envelope">`
+`<envelope xmlns="http://marklogic.com/data-hub/envelope">`
 `<headers>`
 `</headers>`
 `<triples>`
