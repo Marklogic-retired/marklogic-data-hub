@@ -246,7 +246,7 @@ public abstract class AbstractFlow implements Flow {
 
         try {
             XMLStreamWriter serializer = factory.createXMLStreamWriter(out, "UTF-8");
-            serializer.setDefaultNamespace("http://marklogic.com/hub-in-a-box");
+            serializer.setDefaultNamespace("http://marklogic.com/data-hub");
             return serializer;
         } catch (Exception e) {
             throw new MarkLogicIOException(e);

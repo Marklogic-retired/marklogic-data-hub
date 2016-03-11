@@ -1,8 +1,8 @@
 xquery version "1.0-ml";
 
-module namespace mlcpFlow = "http://marklogic.com/hub-in-a-box/mlcp-flow-transform";
+module namespace mlcpFlow = "http://marklogic.com/data-hub/mlcp-flow-transform";
 
-import module namespace flow = "http://marklogic.com/hub-in-a-box/flow-lib"
+import module namespace flow = "http://marklogic.com/data-hub/flow-lib"
   at "/com.marklogic.hub/lib/flow-lib.xqy";
 
 declare function mlcpFlow:transform(

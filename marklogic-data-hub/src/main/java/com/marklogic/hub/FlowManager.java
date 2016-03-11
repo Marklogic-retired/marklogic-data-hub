@@ -63,7 +63,7 @@ import com.marklogic.spring.batch.hub.CollectorReader;
 import com.marklogic.spring.batch.hub.FlowWriter;
 
 public class FlowManager extends ResourceManager {
-    private static final String HUB_NS = "http://marklogic.com/hub-in-a-box";
+    private static final String HUB_NS = "http://marklogic.com/data-hub";
     private static final String NAME = "flow";
     private static final int DEFAULT_THREAD_COUNT = 8;
 

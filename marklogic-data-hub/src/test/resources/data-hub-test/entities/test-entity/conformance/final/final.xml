@@ -1,1 +1,1 @@
-<?xml version="1.0" ?><flow xmlns="http://marklogic.com/hub-in-a-box"><name>final</name><entity>patientrecords</entity><type>conformance</type><complexity>simple</complexity><data-format>application/xml</data-format><plugins></plugins></flow>
+<?xml version="1.0" ?><flow xmlns="http://marklogic.com/data-hub"><name>final</name><entity>patientrecords</entity><type>conformance</type><complexity>simple</complexity><data-format>application/xml</data-format><plugins></plugins></flow>

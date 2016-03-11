@@ -15,7 +15,7 @@
 :)
 xquery version "1.0-ml";
 
-module namespace plugin = "http://marklogic.com/hub-in-a-box/plugins/default";
+module namespace plugin = "http://marklogic.com/data-hub/plugins/default";
 
 declare option xdmp:mapping "false";
 
