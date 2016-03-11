@@ -28,8 +28,6 @@ public class SyncStatusService  implements InitializingBean {
 
     private PropertiesModuleManager moduleManager;
 
-    private boolean synched = false;
-
     @Override
     public void afterPropertiesSet() throws Exception {
         File assetInstallTimeFile = new File(environmentConfiguration.getAssetInstallTimeFilePath());
@@ -54,24 +52,28 @@ public class SyncStatusService  implements InitializingBean {
         String pluginDir = environmentConfiguration.getUserPluginDir();
         Path flowDir = Paths.get(pluginDir, "entities", entityName, flowType.toString(), flowName);
 
-        this.synched = true;
+        boolean synched = false;
         try {
-            Files.walkFileTree(new File(flowDir.toString()).toPath(), new PluginDirectoryVisitor());
+            PluginDirectoryVisitor visitor = new PluginDirectoryVisitor();
+            Files.walkFileTree(new File(flowDir.toString()).toPath(), visitor);
+            
+            synched = visitor.isSynched();
         } catch (IOException e) {
-            // TODO Auto-generated catch block
-            this.synched = false;
+            synched = false;
         }
 
-        return this.synched;
+        return synched;
     }
 
     private class PluginDirectoryVisitor implements FileVisitor<Path> {
-
+        private boolean synched = true;
+        
+        public boolean isSynched() {
+            return synched;
+        }
+        
         @Override
         public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-            if (dir.endsWith("REST")) {
-                return FileVisitResult.SKIP_SUBTREE;
-            }
             return FileVisitResult.CONTINUE;
         }
 
@@ -79,7 +81,7 @@ public class SyncStatusService  implements InitializingBean {
         public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
             // don't look at hidden files like .DS_Store
             if (!file.getFileName().toString().startsWith(".")) {
-                synched = synched && isSynched(file.normalize().toAbsolutePath().toFile());
+                synched = synched && SyncStatusService.this.isSynched(file.normalize().toAbsolutePath().toFile());
                 if (!synched) {
                     return FileVisitResult.TERMINATE;
                 }
