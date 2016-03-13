@@ -44,6 +44,7 @@
           scope.action.message = 'Deploy to Server is in progress';
           DataHub.installUserModules()
           .finally(function () {
+        	scope.status = DataHub.status;  
             scope.action.type = null;
           });
         };

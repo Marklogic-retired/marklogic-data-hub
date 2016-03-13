@@ -109,7 +109,8 @@
 
     function installUserModules() {
       return $http.post('api/data-hub/install-user-modules')
-      .success(function () {
+      .success(function (data) {
+    	self.status = data;
         self.displayMessage('Deploy to server is successful.', 'success', 'notification', false);
       })
       .error(function () {
