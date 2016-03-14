@@ -8,7 +8,8 @@ import com.marklogic.hub.model.EntityModel;
 public class LoginForm extends BaseForm {
 
 	private String mlHost;
-	private String mlRestPort;
+	private String mlStagingRestPort;
+	private String mlFinalRestPort;
 	private String mlUsername;
 	private String mlPassword;
 	private String userPluginDir;
@@ -26,15 +27,23 @@ public class LoginForm extends BaseForm {
 		this.mlHost = mlHost;
 	}
 
-	public String getMlRestPort() {
-		return mlRestPort;
-	}
+	public String getMlStagingRestPort() {
+        return mlStagingRestPort;
+    }
 
-	public void setMlRestPort(String restPort) {
-		this.mlRestPort = restPort;
-	}
+    public void setMlStagingRestPort(String mlStagingRestPort) {
+        this.mlStagingRestPort = mlStagingRestPort;
+    }
 
-	public String getMlUsername() {
+    public String getMlFinalRestPort() {
+        return mlFinalRestPort;
+    }
+
+    public void setMlFinalRestPort(String mlFinalRestPort) {
+        this.mlFinalRestPort = mlFinalRestPort;
+    }
+
+    public String getMlUsername() {
 		return mlUsername;
 	}
 

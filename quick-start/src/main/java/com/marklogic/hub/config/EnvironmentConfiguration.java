@@ -27,6 +27,16 @@ public class EnvironmentConfiguration {
 			.getLogger(EnvironmentConfiguration.class);
 
 	private static final String PROPERTIES_FILENAME = "environment.properties";
+	private static final String DEFAULT_SUFFIX = ".default";
+	private static final String SERVER_PORT = "server.port";
+	private static final String ML_HOST = "mlHost";
+	private static final String ML_USERNAME = "mlUsername";
+	private static final String ML_PASSWORD = "mlPassword";
+	private static final String ML_STAGING_REST_PORT = "mlStagingRestPort";
+	private static final String ML_FINAL_REST_PORT = "mlFinalRestPort";
+	private static final String ML_AUTH = "mlAuth";
+	private static final String USER_PLUGIN_DIR = "userPluginDir";
+	private static final String ASSET_INSTALL_TIME_FILE = "assetInstallTimeFile";
 
 	@Autowired
 	private Environment environment;
@@ -34,33 +44,33 @@ public class EnvironmentConfiguration {
 	private Properties properties = new Properties();
 
 	public String getServerPort() {
-		return this.environment.getProperty("server.port");
+		return this.environment.getProperty(SERVER_PORT);
 	}
 
 	public String getMLHost() {
-		String value = this.properties.getProperty("mlHost");
+		String value = this.properties.getProperty(ML_HOST);
 		if (value != null) {
 			return value;
 		}
-		value = this.environment.getProperty("mlHost");
+		value = this.environment.getProperty(ML_HOST);
 		if (value != null) {
-			this.properties.setProperty("mlHost", value);
+			this.properties.setProperty(ML_HOST, value);
 			return value;
 		}
-		return this.environment.getProperty("mlHost.default");
+		return this.environment.getProperty(ML_HOST + DEFAULT_SUFFIX);
 	}
 
 	public String getMLUsername() {
-		String value = this.properties.getProperty("mlUsername");
+		String value = this.properties.getProperty(ML_USERNAME);
 		if (value != null) {
 			return value;
 		}
-		value = this.environment.getProperty("mlUsername");
+		value = this.environment.getProperty(ML_USERNAME);
 		if (value != null) {
-			this.properties.setProperty("mlUsername", value);
+			this.properties.setProperty(ML_USERNAME, value);
 			return value;
 		}
-		return this.environment.getProperty("mlUsername.default");
+		return this.environment.getProperty(ML_USERNAME + DEFAULT_SUFFIX);
 	}
 
 	public String getMLPassword() {
@@ -68,101 +78,105 @@ public class EnvironmentConfiguration {
 		if (value != null) {
 			return value;
 		}
-		value = this.environment.getProperty("mlPassword");
+		value = this.environment.getProperty(ML_PASSWORD);
 		if (value != null) {
-			this.properties.setProperty("mlPassword", value);
+			this.properties.setProperty(ML_PASSWORD, value);
 			return value;
 		}
-		return this.environment.getProperty("mlPassword.default");
+		return this.environment.getProperty(ML_PASSWORD + DEFAULT_SUFFIX);
 	}
 
 	public String getMLStagingRestPort() {
-		String value = this.properties.getProperty("mlStagingRestPort");
+		String value = this.properties.getProperty(ML_STAGING_REST_PORT);
 		if (value != null) {
 			return value;
 		}
-		value = this.environment.getProperty("mlStagingRestPort");
+		value = this.environment.getProperty(ML_STAGING_REST_PORT);
 		if (value != null) {
-			this.properties.setProperty("mlStagingRestPort", value);
+			this.properties.setProperty(ML_STAGING_REST_PORT, value);
 			return value;
 		}
-		return this.environment.getProperty("mlStagingRestPort.default");
+		return this.environment.getProperty(ML_STAGING_REST_PORT + DEFAULT_SUFFIX);
 	}
 
     public String getMLFinalRestPort() {
-        String value = this.properties.getProperty("mlFinalRestPort");
+        String value = this.properties.getProperty(ML_FINAL_REST_PORT);
         if (value != null) {
             return value;
         }
-        value = this.environment.getProperty("mlFinalRestPort");
+        value = this.environment.getProperty(ML_FINAL_REST_PORT);
         if (value != null) {
-            this.properties.setProperty("mlFinalRestPort", value);
+            this.properties.setProperty(ML_FINAL_REST_PORT, value);
             return value;
         }
-        return this.environment.getProperty("mlFinalRestPort.default");
+        return this.environment.getProperty(ML_FINAL_REST_PORT + DEFAULT_SUFFIX);
     }
 
 	public String getMLAuth() {
-		String value = this.properties.getProperty("mlAuth");
+		String value = this.properties.getProperty(ML_AUTH);
 		if (value != null) {
 			return value;
 		}
-		value = this.environment.getProperty("mlAuth");
+		value = this.environment.getProperty(ML_AUTH);
 		if (value != null) {
-			this.properties.setProperty("mlAuth", value);
+			this.properties.setProperty(ML_AUTH, value);
 			return value;
 		}
-		return this.environment.getProperty("mlAuth.default");
+		return this.environment.getProperty(ML_AUTH + DEFAULT_SUFFIX);
 	}
 
 	public String getUserPluginDir() {
-		String value = this.properties.getProperty("userPluginDir");
+		String value = this.properties.getProperty(USER_PLUGIN_DIR);
 		if (value != null) {
 			return value;
 		}
-		value = this.environment.getProperty("userPluginDir");
+		value = this.environment.getProperty(USER_PLUGIN_DIR);
 		if (value != null) {
-			this.properties.setProperty("userPluginDir", value);
+			this.properties.setProperty(USER_PLUGIN_DIR, value);
 			return value;
 		}
-		return this.environment.getProperty("userPluginDir.default");
+		return this.environment.getProperty(USER_PLUGIN_DIR + DEFAULT_SUFFIX);
 	}
 
 	public String getAssetInstallTimeFilePath() {
-	    String value = this.properties.getProperty("assetInstallTimeFile");
+	    String value = this.properties.getProperty(ASSET_INSTALL_TIME_FILE);
 	    if (value != null) {
 	        return value;
 	    }
-	    value = this.environment.getProperty("assetInstallTimeFile");
+	    value = this.environment.getProperty(ASSET_INSTALL_TIME_FILE);
 	    if (value != null) {
-	        this.properties.setProperty("assetInstallTimeFile", value);
+	        this.properties.setProperty(ASSET_INSTALL_TIME_FILE, value);
 	        return value;
 	    }
 	    return "./assetInstallTime.properties";
 	}
 
 	public void setMLHost(String mlHost) {
-		this.properties.setProperty("mlHost", mlHost);
+		this.properties.setProperty(ML_HOST, mlHost);
 	}
 
-	public void setMLRestPort(String mlRestPort) {
-		this.properties.setProperty("mlRestPort", mlRestPort);
+	public void setMLStagingRestPort(String mlStagingRestPort) {
+		this.properties.setProperty(ML_STAGING_REST_PORT, mlStagingRestPort);
 	}
+	
+	public void setMLFinalRestPort(String mlFinalRestPort) {
+        this.properties.setProperty(ML_FINAL_REST_PORT, mlFinalRestPort);
+    }
 
 	public void setMLUsername(String mlUsername) {
-		this.properties.setProperty("mlUsername", mlUsername);
+		this.properties.setProperty(ML_USERNAME, mlUsername);
 	}
 
 	public void setMLPassword(String mlPassword) {
-		this.properties.setProperty("mlPassword", mlPassword);
+		this.properties.setProperty(ML_PASSWORD, mlPassword);
 	}
 
 	public void setUserPluginDir(String userPluginDir) {
-		this.properties.setProperty("userPluginDir", userPluginDir);
+		this.properties.setProperty(USER_PLUGIN_DIR, userPluginDir);
 	}
 
 	public void setAssetInstallTimeFilePath(String assetInstallTimeFilePath) {
-	    this.properties.setProperty("assetInstallTimeFile", assetInstallTimeFilePath);
+	    this.properties.setProperty(ASSET_INSTALL_TIME_FILE, assetInstallTimeFilePath);
 	}
 
 	public void loadConfigurationFromFile() {
