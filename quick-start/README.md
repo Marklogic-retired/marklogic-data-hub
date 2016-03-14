@@ -1,4 +1,4 @@
-# Data Hub In a Box - Quick Start
+# MarkLogic Data Hub - Quick Start
 
 Quick Start is a single-page web application that is deployed in an embedded Tomcat. 
 

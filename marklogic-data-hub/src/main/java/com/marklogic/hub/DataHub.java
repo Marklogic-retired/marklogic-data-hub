@@ -64,12 +64,12 @@ import com.marklogic.rest.util.Fragment;
 public class DataHub {
 
     static final private Logger LOGGER = LoggerFactory.getLogger(DataHub.class);
-    static final public String STAGING_NAME = "data-hub-in-a-box-STAGING";
-    static final public String FINAL_NAME = "data-hub-in-a-box-FINAL";
-    static final public String MODULES_DB_NAME = "data-hub-in-a-box-modules";
+    static final public String STAGING_NAME = "data-hub-STAGING";
+    static final public String FINAL_NAME = "data-hub-FINAL";
+    static final public String MODULES_DB_NAME = "data-hub-modules";
     private ManageConfig config;
     private ManageClient client;
-    public static String HUB_NAME = "data-hub-in-a-box";
+    public static String HUB_NAME = "data-hub";
     public static int FORESTS_PER_HOST = 4;
     private String host;
     private int stagingRestPort;

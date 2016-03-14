@@ -174,11 +174,11 @@ public class HubTestBase {
     }
 
     protected static int getStagingDocCount() {
-        return getDocCount("data-hub-in-a-box-STAGING");
+        return getDocCount("data-hub-STAGING");
     }
 
     protected static int getFinalDocCount() {
-        return getDocCount("data-hub-in-a-box-FINAL");
+        return getDocCount("data-hub-FINAL");
     }
 
     protected static int getDocCount(String database) {
@@ -227,7 +227,7 @@ public class HubTestBase {
     }
 
     protected static EvalResultIterator runInModules(String query) {
-        return runInDatabase(query, "data-hub-in-a-box-modules");
+        return runInDatabase(query, "data-hub-modules");
     }
 
     protected static EvalResultIterator runInDatabase(String query, String databaseName) {

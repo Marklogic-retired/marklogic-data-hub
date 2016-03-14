@@ -105,11 +105,11 @@ public class DataHubTest extends HubTestBase {
 
         assertXMLEqual(
                 getXmlFromResource("data-hub-test/entities/test-entity/input/REST/options/doctors.xml"),
-                getModulesDocument("/Default/data-hub-in-a-box-STAGING/rest-api/options/doctors.xml"));
+                getModulesDocument("/Default/data-hub-STAGING/rest-api/options/doctors.xml"));
 
         assertXMLEqual(
                 getXmlFromResource("data-hub-test/entities/test-entity/conformance/REST/options/patients.xml"),
-                getModulesDocument("/Default/data-hub-in-a-box-FINAL/rest-api/options/patients.xml"));
+                getModulesDocument("/Default/data-hub-FINAL/rest-api/options/patients.xml"));
 
 
         assertXMLEqual(

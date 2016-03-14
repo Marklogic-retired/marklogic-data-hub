@@ -1,4 +1,4 @@
-<flow xmlns="http://marklogic.com/hub-in-a-box">
+<flow xmlns="http://marklogic.com/data-hub">
   <name>my-test-flow</name>
   <entity>test</entity>
   <type>conformance</type>

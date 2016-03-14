@@ -16,7 +16,7 @@
 
 xquery version "1.0-ml";
 
-module namespace plugin = "http://marklogic.com/hub-in-a-box/plugins/query";
+module namespace plugin = "http://marklogic.com/data-hub/plugins/query";
 
 import module namespace ast = "http://marklogic.com/appservices/search-ast" at
   "/MarkLogic/appservices/search/ast.xqy";

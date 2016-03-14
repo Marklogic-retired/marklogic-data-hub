@@ -91,7 +91,7 @@ public class ScaffoldingTest extends HubTestBase {
 
         File flowDescriptor = new File(flowDir, "test-input.xml");
         assertTrue(flowDescriptor.exists());
-        String flowXML ="<flow xmlns=\"http://marklogic.com/hub-in-a-box\"><name>test-input</name><entity>my-fun-test</entity><type>input</type><complexity>simple</complexity><data-format>" + dataFormat.getDefaultMimetype() + "</data-format><plugins></plugins></flow>";
+        String flowXML ="<flow xmlns=\"http://marklogic.com/data-hub\"><name>test-input</name><entity>my-fun-test</entity><type>input</type><complexity>simple</complexity><data-format>" + dataFormat.getDefaultMimetype() + "</data-format><plugins></plugins></flow>";
         assertXMLEqual(flowXML, IOUtils.toString(new FileInputStream(flowDescriptor)));
 
         File collectorDir = new File(flowDir, "collector");
@@ -130,7 +130,7 @@ public class ScaffoldingTest extends HubTestBase {
 
         File flowDescriptor = new File(flowDir, "test-conformance.xml");
         assertTrue(flowDescriptor.exists());
-        String flowXML ="<flow xmlns=\"http://marklogic.com/hub-in-a-box\"><name>test-conformance</name><entity>my-fun-test</entity><type>conformance</type><complexity>simple</complexity><data-format>" + dataFormat.getDefaultMimetype() + "</data-format><plugins></plugins></flow>";
+        String flowXML ="<flow xmlns=\"http://marklogic.com/data-hub\"><name>test-conformance</name><entity>my-fun-test</entity><type>conformance</type><complexity>simple</complexity><data-format>" + dataFormat.getDefaultMimetype() + "</data-format><plugins></plugins></flow>";
         assertXMLEqual(flowXML, IOUtils.toString(new FileInputStream(flowDescriptor)));
 
         File collectorDir = new File(flowDir, "collector");
