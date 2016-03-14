@@ -43,6 +43,7 @@ javascript.source {
         js {
             srcDir "src/main/resources/static"
             include "**/*.js"
+            exclude "lib/**/*"
         }
     }
 }
