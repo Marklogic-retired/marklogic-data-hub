@@ -41,7 +41,7 @@ dependencies {
 javascript.source {
     dev {
         js {
-            srcDir "src/main/resources/static/app"
+            srcDir "src/main/resources/static"
             include "**/*.js"
         }
     }
@@ -55,3 +55,6 @@ jshint {
     tasks.jshint.reporter = 'checkstyle'
     options = ["--config":"src/main/resources/static/.jshintrc"]
 }
+
+
+test.dependsOn tasks.jshint
