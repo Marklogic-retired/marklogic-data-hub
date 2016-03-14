@@ -153,7 +153,7 @@ public class DataHubServerApiController extends BaseController {
 	}
 
 	@RequestMapping(value = "install-user-modules", method = RequestMethod.POST)
-	public void installUserModules(HttpSession session) {
+	public LoginForm installUserModules(HttpSession session) {
 	    synchronized (syncStatusService) {
             dataHubService.installUserModules();
 
@@ -162,6 +162,8 @@ public class DataHubServerApiController extends BaseController {
             loginForm.setEntities(entityManagerService.getEntities());
             loginForm.refreshSelectedEntity();
             syncStatusService.notifyAll();
+            
+            return loginForm;
 	    }
 	}
 

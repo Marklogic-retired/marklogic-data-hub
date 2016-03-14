@@ -23,7 +23,7 @@
             $location.path('/login');
           });
         };
-
+        
         scope.uninstall = function (ev) {
           var confirm = $mdDialog.confirm().title('Confirm Uninstall')
             .textContent('Do you really want to continue uninstalling data hub?')
@@ -44,6 +44,7 @@
           scope.action.message = 'Deploy to Server is in progress';
           DataHub.installUserModules()
           .finally(function () {
+            scope.status = DataHub.status;
             scope.action.type = null;
           });
         };

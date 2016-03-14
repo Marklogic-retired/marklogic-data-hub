@@ -4,6 +4,7 @@ import java.nio.file.Path;
 import java.nio.file.WatchEvent;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.DisposableBean;
@@ -95,7 +96,9 @@ public class EntityApiController implements InitializingBean, DisposableBean,
      * @return
      */
     @RequestMapping(value = "status-change", method = RequestMethod.GET)
-    public LoginForm getStatusChange(HttpSession session) {
+    public LoginForm getStatusChange(HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        
         synchronized (syncStatusService) {
             try {
                 syncStatusService.wait();
