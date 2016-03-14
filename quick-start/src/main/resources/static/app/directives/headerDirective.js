@@ -13,7 +13,7 @@
       },
       link : function(scope, element, attrs) {
         scope.logout = function () {
-          if(scope.action.type !== null) {
+          if(scope.action.type !== null && typeof scope.action.type !== 'undefined') {
             return;
           }
           scope.loading = true;

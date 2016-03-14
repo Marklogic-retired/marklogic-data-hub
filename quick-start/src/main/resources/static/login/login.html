@@ -23,8 +23,12 @@
               <input class="form-control" name="mlHost" type="text" ng-model="loginForm.mlHost" placeHolder="Enter Host" required="required"/>
             </div>
             <div class="form-group">
-              <label for="restPort">Rest Port</label>
-              <input name="mlRestPort" type="text" ng-model="loginForm.mlRestPort" class="form-control" placeHolder="Enter Rest Port" required="required"/>
+              <label for="restPort">Staging REST Port</label>
+              <input name="mlStagingRestPort" type="text" ng-model="loginForm.mlStagingRestPort" class="form-control" placeHolder="Enter Staging Rest Port" required="required"/>
+            </div>
+            <div class="form-group">
+              <label for="restPort">Final REST Port</label>
+              <input name="mlFinalRestPort" type="text" ng-model="loginForm.mlFinalRestPort" class="form-control" placeHolder="Enter Final Rest Port" required="required"/>
             </div>
             <div class="form-group">
               <label for="mlUsername">Username</label>
