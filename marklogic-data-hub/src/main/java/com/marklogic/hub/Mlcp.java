@@ -52,8 +52,7 @@ public class Mlcp {
         sources.add(source);
     }
 
-    public boolean loadContent() {
-        boolean success = true;
+    public void loadContent() throws IOException {
         for (MlcpSource source : sources) {
             try {
                 List<String> arguments = new ArrayList<>();
@@ -75,13 +74,11 @@ public class Mlcp {
                 arguments.addAll(sourceArguments);
 
                 DataHubContentPump contentPump = new DataHubContentPump(arguments);
-                success = success && contentPump.execute();
-            }
-            catch (Exception e) {
-                LOGGER.error("Failed to load {}", source.getSourcePath(), e);
+                contentPump.execute();
+            } catch (IOException e) {
+                throw new IOException("Cannot load data from: " + source.getSourcePath() + " due to: " + e.getMessage());
             }
         }
-        return success;
     }
 
     protected void setHadoopHomeDir() throws IOException {
