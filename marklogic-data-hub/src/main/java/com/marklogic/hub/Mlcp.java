@@ -52,14 +52,11 @@ public class Mlcp {
         sources.add(source);
     }
 
-    public void loadContent() {
+    public void loadContent() throws IOException {
         for (MlcpSource source : sources) {
-            Thread inputThread = null;
-            Thread errorThread = null;
             try {
                 List<String> arguments = new ArrayList<>();
 
-//                arguments.add(mlcpPath);
                 arguments.add("import");
                 arguments.add("-mode");
                 arguments.add("local");
@@ -78,17 +75,8 @@ public class Mlcp {
 
                 DataHubContentPump contentPump = new DataHubContentPump(arguments);
                 contentPump.execute();
-            }
-            catch (Exception e) {
-                LOGGER.error("Failed to load {}", source.getSourcePath(), e);
-            }
-            finally {
-                if (inputThread != null) {
-                    inputThread.interrupt();
-                }
-                if (errorThread != null) {
-                    errorThread.interrupt();
-                }
+            } catch (IOException e) {
+                throw new IOException("Cannot load data from: " + source.getSourcePath() + " due to: " + e.getMessage());
             }
         }
     }

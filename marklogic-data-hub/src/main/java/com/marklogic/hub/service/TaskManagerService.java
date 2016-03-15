@@ -38,7 +38,7 @@ public class TaskManagerService {
         return taskId;
     }
     
-    public Object waitTask(BigInteger taskId) {
+    public Object waitTask(BigInteger taskId) throws Exception {
         TaskWrapper task = taskMap.get(taskId);
         if (task != null) {
             return task.awaitCompletion();
@@ -86,13 +86,14 @@ public class TaskManagerService {
             taskResult.cancel();
         }
         
-        public Object awaitCompletion() {
+        public Object awaitCompletion() throws Exception {
             try {
                 return taskResult.get();
-            } catch (InterruptedException e) {
-                return null;
+            }
+            catch (InterruptedException e) {
+                throw new Exception(e.getMessage(), e);
             } catch (ExecutionException e) {
-                return null;
+                throw new Exception(e.getMessage(), e);
             }
         }
         

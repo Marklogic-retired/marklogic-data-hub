@@ -1,5 +1,6 @@
 package com.marklogic.spring.batch.hub;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.batch.item.ExecutionContext;
@@ -26,7 +27,12 @@ public class CollectorReader extends LoggingObject implements ItemStreamReader<S
 
     @Override
     public void open(ExecutionContext executionContext) throws ItemStreamException {
-        this.results = collector.run();
+        if (collector != null) {
+            this.results = collector.run();
+        }
+        else {
+            this.results = new ArrayList<>();
+        }
     }
 
     @Override
