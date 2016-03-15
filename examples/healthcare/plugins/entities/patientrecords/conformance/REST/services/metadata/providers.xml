@@ -1,0 +1,11 @@
+<metadata>
+  <title>providers</title>
+  <description>
+    <div>
+      Get Providers for a Person
+    </div>
+  </description>
+  <method name="GET">
+    <param name="patient-id" type="xs:string" />
+  </method>
+</metadata>
