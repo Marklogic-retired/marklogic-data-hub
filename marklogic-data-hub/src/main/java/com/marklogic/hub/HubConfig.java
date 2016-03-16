@@ -24,6 +24,7 @@ public class HubConfig {
     public static final Integer DEFAULT_FINAL_PORT = 8011;
     public static final String DEFAULT_APP_NAME = "my-data-hub";
     public final static String DEFAULT_MODULES_PATH = "src/data-hub";
+    public static final String DEFAULT_AUTH_METHOD = "digest";
 
     private String name = DEFAULT_APP_NAME;
     private String adminUsername = DEFAULT_USERNAME;
@@ -31,6 +32,8 @@ public class HubConfig {
     private String host = DEFAULT_HOST;
     private Integer stagingPort = DEFAULT_STAGING_PORT;
     private Integer finalPort = DEFAULT_FINAL_PORT;
+    private String authMethod = DEFAULT_AUTH_METHOD;
+
     private String modulesPath;
 
     public HubConfig() {
@@ -116,4 +119,11 @@ public class HubConfig {
         this.modulesPath = modulesPath;
     }
 
+    public String getAuthMethod() {
+        return this.authMethod;
+    }
+
+    public void setAuthMethod(String authMethod) {
+        this.authMethod = authMethod;
+    }
 }

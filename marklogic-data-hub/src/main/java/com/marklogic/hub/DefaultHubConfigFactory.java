@@ -80,6 +80,15 @@ public class DefaultHubConfigFactory extends PropertySourceFactory {
         if (prop != null) {
             c.setModulesPath(prop);
         }
+        else {
+            c.setModulesPath("./plugins");
+        }
+
+        prop = getProperty("mlAuth");
+        if (prop != null) {
+            c.setAuthMethod(prop);
+        }
+
         return c;
     }
 

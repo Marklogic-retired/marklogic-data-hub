@@ -34,12 +34,11 @@ public class DataHubContentPump extends ContentPump {
     /**
      * Run the Content Pump.
      *
-     * @return true if the content pump executed successfully, false otherwise.
-     * @throws IOException 
+     * @throws IOException
      */
     public void execute() throws IOException {
         String[] expandedArgs = null;
-        
+
         PrintStream sysout = System.out;
         PrintStream mlcpOutputStream = null;
         BufferedReader mlcpBufferedReader = null;
@@ -49,7 +48,7 @@ public class DataHubContentPump extends ContentPump {
             mlcpOutputFile = File.createTempFile("mlcp", ".txt");
             mlcpOutputStream = new PrintStream(mlcpOutputFile);
             System.setOut(mlcpOutputStream);
-            
+
             // run mlcp
             expandedArgs = OptionsFileUtil.expandArguments(arguments);
             runCommand(expandedArgs);
@@ -62,11 +61,11 @@ public class DataHubContentPump extends ContentPump {
             if (mlcpOutputStream != null) {
                 mlcpOutputStream.close();
             }
-            
+
             // revert to the original standard output
             System.setOut(sysout);
         }
-        
+
         // read the mlcp output and get any error message
         StringBuilder errorMessage = new StringBuilder();
         try {
@@ -102,11 +101,11 @@ public class DataHubContentPump extends ContentPump {
                     // intentionally empty
                 }
             }
-            
+
             // delete the temporary file
             mlcpOutputFile.delete();
         }
-        
+
         if (errorMessage.length() > 0) {
             throw new IOException("Load data failed with:\r\n" + errorMessage.toString());
         }
