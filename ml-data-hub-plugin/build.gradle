@@ -1,0 +1,84 @@
+buildscript {
+    repositories {
+        jcenter()
+        maven { url 'http://developer.marklogic.com/maven2' }
+    }
+    dependencies {
+        classpath "com.gradle.publish:plugin-publish-plugin:0.9.2"
+    }
+}
+
+plugins {
+    id "groovy"
+    id "maven-publish"
+    id "eclipse"
+    id "idea"
+    id "com.jfrog.bintray" version "1.6"
+}
+
+apply plugin: "com.gradle.plugin-publish"
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    jcenter()
+    maven { url 'http://developer.marklogic.com/maven2' }
+}
+
+dependencies {
+    compile gradleApi()
+    compile 'com.marklogic:marklogic-data-hub:+'
+    compile 'com.marklogic:marklogic-xcc:8.0.4.2'
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier 'sources'
+    from sourceSets.main.allJava
+    from sourceSets.main.allGroovy
+}
+
+publishing {
+    publications {
+        main(MavenPublication) {
+            from components.java
+            artifact sourcesJar
+        }
+    }
+}
+
+bintray {
+    user = project.hasProperty('bintrayUser') ? project.property('bintrayUser') : System.getenv('BINTRAY_USER')
+    key = project.hasProperty('bintrayApiKey') ? project.property('bintrayApiKey') : System.getenv('BINTRAY_API_KEY')
+    publications = ['main']
+    pkg {
+        repo = 'maven'
+        name = 'ml-data-hub-plugin'
+        desc = 'A gradle plugin for Data Hub tasks'
+        // userOrg = user
+        licenses = ['Apache-2.0']
+        websiteUrl = 'https://github.com/marklogic/marklogic-data-hub'
+        issueTrackerUrl = 'https://github.com/marklogic/marklogic-data-hub/issues'
+    }
+}
+
+pluginBundle {
+    website = 'http://www.gradle.org/'
+    vcsUrl = 'https://github.com/marklogic/marklogic-data-hub.git'
+    description = 'ml-data-hub-plugin A gradle plugin for Data Hub tasks'
+    tags = ['marklogic']
+
+    plugins {
+        mldatahubPlugin {
+            id = 'com.marklogic.ml-data-hub-plugin'
+            displayName = 'Gradle tasks for MarkLogic Data Hub'
+            description = 'Gradle plugin for configuring and deploying the MarkLogic Data Hub'
+            tags = ['marklogic']
+            version = "0.0.9"
+        }
+    }
+
+    mavenCoordinates {
+        version = "0.0.9"
+    }
+}
