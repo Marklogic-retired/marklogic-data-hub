@@ -207,8 +207,13 @@ ul.nav.abn-tree i {
     padding: 3px;
 }
 
+.modal-sm {
+	width: 600px;
+}
+
 .modal-content {
-    width: 600px;
+		width:inherit;
+    height:inherit;
 		margin: 0 auto;
 }
 
