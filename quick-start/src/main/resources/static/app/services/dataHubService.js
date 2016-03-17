@@ -1,4 +1,4 @@
-(function () {
+(function() {
 
   'use strict';
 
@@ -28,42 +28,43 @@
       runInputFlow: runInputFlow,
       testFlow: testFlow,
       saveFlow: saveFlow,
-      displayMessage: displayMessage
+      displayMessage: displayMessage,
+      searchPath: searchPath
     });
 
     function login(loginForm) {
       return $http.post('api/data-hub/login', loginForm)
-      .success(function (data) {
-        self.status = data;
-        if(!self.status.installed) {
-          self.action.type = 'Install';
-          self.action.message = 'Install is in progress...';
-          self.action.progressType = 'success';
-        }
-      })
-      .error(function () {
-        self.status = null;
-      });
+        .success(function(data) {
+          self.status = data;
+          if (!self.status.installed) {
+            self.action.type = 'Install';
+            self.action.message = 'Install is in progress...';
+            self.action.progressType = 'success';
+          }
+        })
+        .error(function() {
+          self.status = null;
+        });
     }
 
     function getLoginStatus() {
       return $http.get('api/data-hub/login')
-      .success(function (data) {
-        self.status = data;
-      })
-      .error(function () {
-        self.status = null;
-      });
+        .success(function(data) {
+          self.status = data;
+        })
+        .error(function() {
+          self.status = null;
+        });
     }
 
     function logout() {
       return $http.post('api/data-hub/logout')
-      .success(function (data) {
-        self.status = data;
-      })
-      .error(function () {
-        self.status = null;
-      });
+        .success(function(data) {
+          self.status = data;
+        })
+        .error(function() {
+          self.status = null;
+        });
     }
 
     function reloadRoute() {
@@ -72,17 +73,17 @@
 
     function install() {
       return $http.post('api/data-hub/install')
-      .success(function (status) {
-        self.status = status;
-        self.action.type = null;
-        self.displayMessage('Install is successful.', 'success', 'notification', false);
-        self.reloadRoute();
-      })
-      .error(function () {
-        self.action.message = 'Install is unsuccessful.';
-        self.action.progressType = 'danger';
-        //self.displayMessage('Install is unsuccessful.', 'error', 'notification', false);
-      });
+        .success(function(status) {
+          self.status = status;
+          self.action.type = null;
+          self.displayMessage('Install is successful.', 'success', 'notification', false);
+          self.reloadRoute();
+        })
+        .error(function() {
+          self.action.message = 'Install is unsuccessful.';
+          self.action.progressType = 'danger';
+          //self.displayMessage('Install is unsuccessful.', 'error', 'notification', false);
+        });
     }
 
     function preUninstall() {
@@ -94,18 +95,18 @@
 
     function uninstall() {
       return $http.post('api/data-hub/uninstall')
-      .success(function (status) {
-        self.status = status;
-        self.action.type = 'Uninstall';
-        self.action.message = 'Uninstall is successful.';
-        //self.displayMessage('Uninstall is successful.', 'success', 'notification', false);
-        //self.reloadRoute();
-      })
-      .error(function () {
-        self.action.message = 'Uninstall is unsuccessful.';
-        self.action.progressType = 'danger';
-        //self.displayMessage('Uninstall is unsuccessful.', 'error', 'notification', false);
-      });
+        .success(function(status) {
+          self.status = status;
+          self.action.type = 'Uninstall';
+          self.action.message = 'Uninstall is successful.';
+          //self.displayMessage('Uninstall is successful.', 'success', 'notification', false);
+          //self.reloadRoute();
+        })
+        .error(function() {
+          self.action.message = 'Uninstall is unsuccessful.';
+          self.action.progressType = 'danger';
+          //self.displayMessage('Uninstall is unsuccessful.', 'error', 'notification', false);
+        });
     }
 
     function installUserModules() {
@@ -129,10 +130,10 @@
 
     function saveEntity(entityForm) {
       return $http.post('api/entities', entityForm)
-      .success(function (status) {
-        self.status = status;
-        self.displayMessage('New entity is created successfully.', 'success', 'notification', false);
-      });
+        .success(function(status) {
+          self.status = status;
+          self.displayMessage('New entity is created successfully.', 'success', 'notification', false);
+        });
     }
 
     function displayEntity(entityName) {
@@ -172,33 +173,41 @@
 
     function saveFlow(flowForm) {
       return $http.post('api/flows', flowForm)
-      .success(function (selectedEntity) {
-        self.status.selectedEntity = selectedEntity;
-        self.displayMessage('New flow is created successfully.', 'success', 'notification', false);
-      });
+        .success(function(selectedEntity) {
+          self.status.selectedEntity = selectedEntity;
+          self.displayMessage('New flow is created successfully.', 'success', 'notification', false);
+        });
     }
 
-    function displayMessage(message,messageType,elementId,isModal) {
-      if(typeof elementId === 'undefined') {
+    function searchPath(pathPrefix) {
+      var data = {
+        path: pathPrefix
+      };
+
+      return $http.post('api/utils/searchPath', data);
+    }
+
+    function displayMessage(message, messageType, elementId, isModal) {
+      if (typeof elementId === 'undefined') {
         elementId = 'messageDiv';
       }
       var messageClass = 'alert';
-      if(messageType === 'error') {
+      if (messageType === 'error') {
         messageClass += ' alert-error alert-danger';
       } else if (messageType === 'success') {
         messageClass += ' alert-success';
       } else if (messageType === 'warning') {
         messageClass += ' alert-warning';
       }
-      $('#'+elementId).html('<div class="'+messageClass+'">'+
-          '<a href="dismiss" class="close" data-dismiss="alert">&times;</a>'+message+'</div>');
+      $('#' + elementId).html('<div class="' + messageClass + '">' +
+        '<a href="dismiss" class="close" data-dismiss="alert">&times;</a>' + message + '</div>');
 
-      if(isModal) {
+      if (isModal) {
         $('.modal-body').scrollTop(0);
       } else {
-        $('#'+elementId).scrollTop(0);
+        $('#' + elementId).scrollTop(0);
       }
-      setTimeout(function () {
+      setTimeout(function() {
         $('.alert').fadeOut();
       }, 5000);
     }
@@ -215,7 +224,9 @@
       var params = {
         'taskId': taskId
       };
-      return $http.get('api/task/wait', {'params': params});
+      return $http.get('api/task/wait', {
+        'params': params
+      });
     }
 
     function cancelTask(taskId) {
