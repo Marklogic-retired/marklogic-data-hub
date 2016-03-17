@@ -9,14 +9,17 @@
       <form ng-submit="ok()">
         <div class="form-group">
           <label for="inputPath">Path</label>
-
-          <input class="form-control" name="inputPath" type="text" ng-model="inputPath" placeHolder="Enter Path" required="required" ng-keyup="searchPath($event.keyCode)">
-
-          <treecontrol class="tree-classic" tree-model="dataForTheTree"
-          options="treeOptions" on-node-toggle="onNodeToggle(node,expanded)"
-            on-selection="onSelection(node,selected)">
-            {{node.folder}}
-          </treecontrol>
+          <input class="form-control" name="inputPath" type="text" ng-model="inputPath"
+          placeHolder="Enter Path" required="required"
+          ng-keyup="searchPath($event.keyCode)">
+          <div class="panel panel-primary tree-scroller-cust1">
+            <div class="panel-body">
+              <treecontrol class="tree-classic" tree-model="dataForTheTree"
+              options="treeOptions" on-node-toggle="onNodeToggle(node,expanded)" on-selection="onSelection(node,selected)">
+                {{node.folder}}
+              </treecontrol>
+            </div>
+          </div>
 
         </div>
         <div class="form-group">
