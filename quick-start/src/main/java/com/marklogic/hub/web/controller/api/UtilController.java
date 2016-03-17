@@ -65,13 +65,4 @@ public class UtilController extends BaseController {
 
 		return returnValue;
 	}
-	
-	/*
-
-	public static void main(String[] args) {
-		new UtilController().searchPathUnix("/");
-		new UtilController().searchPathUnix("/Users");
-		new UtilController().searchPathUnix("");
-	}
-	*/
 }
