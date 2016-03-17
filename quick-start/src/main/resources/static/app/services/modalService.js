@@ -97,28 +97,28 @@
 
     function isLeaf(node) {
       return false;
-    };
+    }
 
     $scope.treeOptions = {
-      nodeChildren: "children",
+      nodeChildren: 'children',
       dirSelectable: true,
       multiSelection: false,
       isLeaf: isLeaf,
       injectClasses: {
-        ul: "a1",
-        li: "a2",
-        liSelected: "a7",
-        iExpanded: "a3",
-        iCollapsed: "a4",
-        iLeaf: "a5",
-        label: "a6",
-        labelSelected: "a8"
+        ul: 'a1',
+        li: 'a2',
+        liSelected: 'a7',
+        iExpanded: 'a3',
+        iCollapsed: 'a4',
+        iLeaf: 'a5',
+        label: 'a6',
+        labelSelected: 'a8'
       }
     };
 
     $scope.searchPath = function(basePath, node) {
       DataHub.searchPath(basePath).success(function(data) {
-        if (node == null) {
+        if (node == null) { // jshint ignore:line
           //initialize root
           $scope.dataForTheTree = data.paths.slice();
         } else {
@@ -129,7 +129,7 @@
 
     $scope.dataForTheTree = [];
     //initialize root
-    $scope.searchPath("");
+    $scope.searchPath('');
   }
 
   function EntityModalController($scope, $uibModalInstance, DataHub) {
