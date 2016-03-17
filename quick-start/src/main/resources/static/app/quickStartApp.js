@@ -12,7 +12,9 @@
     'angularBootstrapNavTree',
     'ngAnimate',
     'ui.bootstrap',
-    'ngMaterial'
+    'ngMaterial',
+    'treeControl'
+    //'angucomplete-alt'
   ];
   angular.module('quickStartApp', dependencies)
     .factory('$exceptionHandler', ExceptionHandler)
