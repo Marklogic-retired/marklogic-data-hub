@@ -6,7 +6,7 @@
     .service('DataHub', DataHubService)
     .service('TaskManager', TaskManagerService);
 
-  function DataHubService($http, $q, $route) {
+  function DataHubService($http, $q, $route, $rootScope) {
     var self = this;
 
     angular.extend(self, {
@@ -20,6 +20,7 @@
       preUninstall: preUninstall,
       uninstall: uninstall,
       installUserModules: installUserModules,
+      validateUserModules: validateUserModules,
       saveEntity: saveEntity,
       displayEntity: displayEntity,
       getStatusChange: getStatusChange,
@@ -109,12 +110,20 @@
 
     function installUserModules() {
       return $http.post('api/data-hub/install-user-modules')
-      .success(function (data) {
-        self.status = data;
-        self.displayMessage('Deploy to server is successful.', 'success', 'notification', false);
+      .then(function (resp) {
+        return validateUserModules().then(function() {
+          self.status = resp.data;
+          self.displayMessage('Deploy to server is successful.', 'success', 'notification', false);
+        });
       })
-      .error(function () {
+      .catch(function () {
         self.displayMessage('Deploy to server is unsuccessful.', 'error', 'notification', false);
+      });
+    }
+
+    function validateUserModules() {
+      return $http.get('api/data-hub/validate-user-modules').then(function(resp) {
+        $rootScope.$broadcast('hub:deploy:errors', resp.data.errors);
       });
     }
 

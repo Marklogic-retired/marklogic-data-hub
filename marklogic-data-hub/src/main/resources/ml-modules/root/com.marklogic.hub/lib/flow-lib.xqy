@@ -574,3 +574,63 @@ declare function flow:run-writer(
   return
     $func($identifier, $envelope, $options)
 };
+
+declare function flow:make-error-json($ex) {
+  map:new((
+    map:entry("msg", $ex/error:format-string/fn:data()),
+    let $f := $ex/error:stack/error:frame[1]
+    return
+      (
+        map:entry("uri", $f/error:uri/fn:data()),
+        map:entry("line", $f/error:line/fn:data()),
+        map:entry("column", $f/error:column/fn:data())
+      )
+  ))
+};
+
+declare function flow:validate-entities()
+{
+  let $errors := json:array()
+  let $options := map:map()
+  let $_ :=
+    for $entity in flow:get-entities()/hub:entity
+    for $flow in $entity/hub:flows/hub:flow
+    let $data-format := $flow/hub:data-format
+    (: validate collector :)
+    let $_ :=
+      let $collector := $flow/hub:collector
+      return
+        if ($collector) then
+          try {
+            flow:run-collector($collector/@module, $options)
+          }
+          catch($ex) {
+            json:array-push($errors, flow:make-error-json($ex))
+          }
+        else ()
+    (: validate plugins :)
+    let $_ :=
+      for $plugin in $flow/hub:plugins/hub:plugin
+      let $destination := $plugin/@dest
+      return
+        try {
+          flow:run-plugin(
+            $plugin,
+            $data-format,
+            "123",
+            (),
+            (),
+            (),
+            $options)
+        }
+        catch($ex) {
+          json:array-push($errors, flow:make-error-json($ex))
+        }
+    return
+      ()
+  return
+    map:new(
+      map:entry("errors", $errors)
+    )
+};
+
