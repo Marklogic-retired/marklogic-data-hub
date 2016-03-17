@@ -591,12 +591,6 @@ declare function flow:make-error-json($ex) {
 declare function flow:validate-entities()
 {
   let $errors := json:array()
-  let $identifier := "123"
-  let $content :=
-    map:new((
-      map:entry("identifier", $identifier),
-      map:entry("content", <x/>)
-    ))
   let $options := map:map()
   let $_ :=
     for $entity in flow:get-entities()/hub:entity
@@ -623,10 +617,10 @@ declare function flow:validate-entities()
           flow:run-plugin(
             $plugin,
             $data-format,
-            $identifier,
-            map:get($content, "content"),
-            map:get($content, "headers"),
-            map:get($content, "triple"),
+            "123",
+            (),
+            (),
+            (),
             $options)
         }
         catch($ex) {
