@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.hub.config.EnvironmentConfiguration;
 import com.marklogic.hub.exception.DataHubException;
 import com.marklogic.hub.model.EntityModel;
@@ -30,35 +31,35 @@ import com.marklogic.hub.web.form.LoginForm;
 @RequestMapping("/api/data-hub")
 @Scope("session")
 public class DataHubServerApiController extends BaseController {
-	private static final Logger LOGGER = LoggerFactory
-			.getLogger(DataHubServerApiController.class);
+    private static final Logger LOGGER = LoggerFactory
+            .getLogger(DataHubServerApiController.class);
 
-	@Autowired
-	private EnvironmentConfiguration environmentConfiguration;
+    @Autowired
+    private EnvironmentConfiguration environmentConfiguration;
 
-	@Autowired
-	private DataHubService dataHubService;
+    @Autowired
+    private DataHubService dataHubService;
 
-	@Autowired
+    @Autowired
     private EntityManagerService entityManagerService;
 
-	@Autowired
-	private SyncStatusService syncStatusService;
+    @Autowired
+    private SyncStatusService syncStatusService;
 
-	@RequestMapping(value = "login", method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_UTF8_VALUE }, produces = { MediaType.APPLICATION_JSON_UTF8_VALUE })
-	public LoginForm postLogin(@RequestBody LoginForm loginForm,
-			BindingResult bindingResult, HttpSession session,
-			HttpServletRequest request) throws Exception {
-		try {
-			if (isValidDirectory(loginForm.getUserPluginDir())) {
+    @RequestMapping(value = "login", method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_UTF8_VALUE }, produces = { MediaType.APPLICATION_JSON_UTF8_VALUE })
+    public LoginForm postLogin(@RequestBody LoginForm loginForm,
+            BindingResult bindingResult, HttpSession session,
+            HttpServletRequest request) throws Exception {
+        try {
+            if (isValidDirectory(loginForm.getUserPluginDir())) {
 
-				updateEnvironmentConfiguration(loginForm);
+                updateEnvironmentConfiguration(loginForm);
 
-				loginForm.setInstalled(dataHubService.isInstalled());
-				loginForm.setServerVersionAccepted(dataHubService
-						.isServerAcceptable());
-				loginForm.setHasErrors(false);
-				loginForm.setLoggedIn(true);
+                loginForm.setInstalled(dataHubService.isInstalled());
+                loginForm.setServerVersionAccepted(dataHubService
+                        .isServerAcceptable());
+                loginForm.setHasErrors(false);
+                loginForm.setLoggedIn(true);
                 environmentConfiguration.saveConfigurationToFile();
                 session.setAttribute("loginForm", loginForm);
 
@@ -66,20 +67,20 @@ public class DataHubServerApiController extends BaseController {
                     this.loadUserModules(loginForm);
                 }
 
-			} else {
-				loginForm.setLoggedIn(false);
-				displayError(loginForm, null, null,
-						loginForm.getUserPluginDir()
-								+ " is not a valid directory.");
-			}
-		} catch (DataHubException e) {
-			LOGGER.error("Login failed", e);
-			loginForm.setLoggedIn(false);
-			displayError(loginForm, null, null, e.getMessage());
-		}
+            } else {
+                loginForm.setLoggedIn(false);
+                displayError(loginForm, null, null,
+                        loginForm.getUserPluginDir()
+                                + " is not a valid directory.");
+            }
+        } catch (DataHubException e) {
+            LOGGER.error("Login failed", e);
+            loginForm.setLoggedIn(false);
+            displayError(loginForm, null, null, e.getMessage());
+        }
 
-		return loginForm;
-	}
+        return loginForm;
+    }
 
     private void loadUserModules(LoginForm loginForm) {
         loginForm.setEntities(entityManagerService.getEntities());
@@ -94,67 +95,67 @@ public class DataHubServerApiController extends BaseController {
     }
 
     private boolean isValidDirectory(String userPluginDir) {
-		File file = new File(userPluginDir);
-		if (file.exists() && file.isDirectory()) {
-			return true;
-		}
+        File file = new File(userPluginDir);
+        if (file.exists() && file.isDirectory()) {
+            return true;
+        }
 
-		File parentFile = file.getParentFile();
-		if (parentFile.exists() && parentFile.isDirectory()) {
-			file.mkdir();
-			return true;
-		}
-		return false;
-	}
+        File parentFile = file.getParentFile();
+        if (parentFile.exists() && parentFile.isDirectory()) {
+            file.mkdir();
+            return true;
+        }
+        return false;
+    }
 
-	@RequestMapping(value = "login", method = RequestMethod.GET)
-	public LoginForm getLoginStatus(HttpSession session) {
-		LoginForm loginForm = (LoginForm) session.getAttribute("loginForm");
-		if (loginForm == null) {
-			loginForm = new LoginForm();
-			this.environmentConfiguration.loadConfigurationFromFile();
-			this.retrieveEnvironmentConfiguration(loginForm);
-			session.setAttribute("loginForm", loginForm);
+    @RequestMapping(value = "login", method = RequestMethod.GET)
+    public LoginForm getLoginStatus(HttpSession session) {
+        LoginForm loginForm = (LoginForm) session.getAttribute("loginForm");
+        if (loginForm == null) {
+            loginForm = new LoginForm();
+            this.environmentConfiguration.loadConfigurationFromFile();
+            this.retrieveEnvironmentConfiguration(loginForm);
+            session.setAttribute("loginForm", loginForm);
         } else if (loginForm.isInstalled()) {
             loginForm.setEntities(entityManagerService.getEntities());
             loginForm.refreshSelectedEntity();
-		}
-		return loginForm;
-	}
+        }
+        return loginForm;
+    }
 
-	@RequestMapping(value = "logout", method = RequestMethod.POST)
-	public LoginForm postLogout(HttpSession session) {
-		LoginForm loginForm = (LoginForm) session.getAttribute("loginForm");
-		loginForm.setLoggedIn(false);
-		this.environmentConfiguration.removeSavedConfiguration();
-		this.retrieveEnvironmentConfiguration(loginForm);
+    @RequestMapping(value = "logout", method = RequestMethod.POST)
+    public LoginForm postLogout(HttpSession session) {
+        LoginForm loginForm = (LoginForm) session.getAttribute("loginForm");
+        loginForm.setLoggedIn(false);
+        this.environmentConfiguration.removeSavedConfiguration();
+        this.retrieveEnvironmentConfiguration(loginForm);
 
-		session.invalidate();
+        session.invalidate();
 
-		return loginForm;
-	}
+        return loginForm;
+    }
 
-	@RequestMapping(value = "install", method = RequestMethod.POST)
+    @RequestMapping(value = "install", method = RequestMethod.POST)
     public LoginForm install(HttpSession session) {
-		dataHubService.install();
+        dataHubService.install();
         LoginForm loginForm = (LoginForm) session.getAttribute("loginForm");
         loginForm.setInstalled(true);
         this.loadUserModules(loginForm);
         return loginForm;
-	}
+    }
 
-	@RequestMapping(value = "uninstall", method = RequestMethod.POST)
+    @RequestMapping(value = "uninstall", method = RequestMethod.POST)
     public LoginForm uninstall(HttpSession session) {
         dataHubService.uninstall();
         LoginForm loginForm = (LoginForm) session.getAttribute("loginForm");
         loginForm.setInstalled(false);
         this.unLoadUserModules(loginForm);
         return loginForm;
-	}
+    }
 
-	@RequestMapping(value = "install-user-modules", method = RequestMethod.POST)
-	public LoginForm installUserModules(HttpSession session) {
-	    synchronized (syncStatusService) {
+    @RequestMapping(value = "install-user-modules", method = RequestMethod.POST)
+    public LoginForm installUserModules(HttpSession session) {
+        synchronized (syncStatusService) {
             dataHubService.installUserModules();
 
             // refresh the list of entities saved in the session
@@ -162,26 +163,33 @@ public class DataHubServerApiController extends BaseController {
             loginForm.setEntities(entityManagerService.getEntities());
             loginForm.refreshSelectedEntity();
             syncStatusService.notifyAll();
-            
+
             return loginForm;
-	    }
-	}
+        }
+    }
 
-	private void updateEnvironmentConfiguration(LoginForm loginForm) {
-		environmentConfiguration.setMLHost(loginForm.getMlHost());
-		environmentConfiguration.setMLStagingRestPort(loginForm.getMlStagingRestPort());
-		environmentConfiguration.setMLFinalRestPort(loginForm.getMlFinalRestPort());
-		environmentConfiguration.setMLUsername(loginForm.getMlUsername());
-		environmentConfiguration.setMLPassword(loginForm.getMlPassword());
-		environmentConfiguration.setUserPluginDir(loginForm.getUserPluginDir());
-	}
+    @RequestMapping(value = "validate-user-modules", method = RequestMethod.GET)
+    public JsonNode validateUserModules(HttpSession session) {
+        synchronized (syncStatusService) {
+            return dataHubService.validateUserModules();
+        }
+    }
 
-	private void retrieveEnvironmentConfiguration(LoginForm loginForm) {
-		loginForm.setMlHost(environmentConfiguration.getMLHost());
-		loginForm.setMlStagingRestPort(environmentConfiguration.getMLStagingRestPort());
-		loginForm.setMlFinalRestPort(environmentConfiguration.getMLFinalRestPort());
-		loginForm.setMlUsername(environmentConfiguration.getMLUsername());
-		loginForm.setMlPassword(environmentConfiguration.getMLPassword());
-		loginForm.setUserPluginDir(environmentConfiguration.getUserPluginDir());
-	}
+    private void updateEnvironmentConfiguration(LoginForm loginForm) {
+        environmentConfiguration.setMLHost(loginForm.getMlHost());
+        environmentConfiguration.setMLStagingRestPort(loginForm.getMlStagingRestPort());
+        environmentConfiguration.setMLFinalRestPort(loginForm.getMlFinalRestPort());
+        environmentConfiguration.setMLUsername(loginForm.getMlUsername());
+        environmentConfiguration.setMLPassword(loginForm.getMlPassword());
+        environmentConfiguration.setUserPluginDir(loginForm.getUserPluginDir());
+    }
+
+    private void retrieveEnvironmentConfiguration(LoginForm loginForm) {
+        loginForm.setMlHost(environmentConfiguration.getMLHost());
+        loginForm.setMlStagingRestPort(environmentConfiguration.getMLStagingRestPort());
+        loginForm.setMlFinalRestPort(environmentConfiguration.getMLFinalRestPort());
+        loginForm.setMlUsername(environmentConfiguration.getMLUsername());
+        loginForm.setMlPassword(environmentConfiguration.getMLPassword());
+        loginForm.setUserPluginDir(environmentConfiguration.getUserPluginDir());
+    }
 }

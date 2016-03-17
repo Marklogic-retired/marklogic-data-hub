@@ -33,6 +33,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.web.client.ResourceAccessException;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.appdeployer.ConfigDir;
 import com.marklogic.appdeployer.command.Command;
@@ -45,8 +46,13 @@ import com.marklogic.appdeployer.command.security.DeployUsersCommand;
 import com.marklogic.appdeployer.impl.SimpleAppDeployer;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
+import com.marklogic.client.extensions.ResourceManager;
+import com.marklogic.client.extensions.ResourceServices.ServiceResult;
+import com.marklogic.client.extensions.ResourceServices.ServiceResultIterator;
+import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.client.modulesloader.impl.PropertiesModuleManager;
 import com.marklogic.client.modulesloader.impl.XccAssetLoader;
+import com.marklogic.client.util.RequestParameters;
 import com.marklogic.hub.commands.DeployHubDatabaseCommand;
 import com.marklogic.hub.commands.DeployModulesDatabaseCommand;
 import com.marklogic.hub.commands.DeployRestApiCommand;
@@ -198,6 +204,16 @@ public class DataHub {
         deployer.deploy(config);
     }
 
+    private DatabaseClient getDatabaseClient(int port) {
+        AppConfig config = new AppConfig();
+        config.setHost(host);
+        config.setName(HUB_NAME);
+        config.setRestAdminUsername(username);
+        config.setRestAdminPassword(password);
+        DatabaseClient client = DatabaseClientFactory.newClient(host, port, username, password,
+                config.getRestAuthentication(), config.getRestSslContext(), config.getRestSslHostnameVerifier());
+        return client;
+    }
     /**
      * Installs User Provided modules into the Data Hub
      *
@@ -215,10 +231,8 @@ public class DataHub {
         config.setRestAdminUsername(username);
         config.setRestAdminPassword(password);
 
-        DatabaseClient stagingClient = DatabaseClientFactory.newClient(host, stagingRestPort, username, password,
-                config.getRestAuthentication(), config.getRestSslContext(), config.getRestSslHostnameVerifier());
-        DatabaseClient finalClient = DatabaseClientFactory.newClient(host, finalRestPort, username, password,
-                config.getRestAuthentication(), config.getRestSslContext(), config.getRestSslHostnameVerifier());
+        DatabaseClient stagingClient = getDatabaseClient(stagingRestPort);
+        DatabaseClient finalClient = getDatabaseClient(finalRestPort);
 
 
         Set<File> loadedFiles = new HashSet<File>();
@@ -257,6 +271,12 @@ public class DataHub {
             }
         });
         return loadedFiles;
+    }
+
+    public JsonNode validateUserModules() {
+        DatabaseClient client = getDatabaseClient(stagingRestPort);
+        EntitiesValidator ev = new EntitiesValidator(client);
+        return ev.validate();
     }
 
     private List<Command> getCommands(AppConfig config) {
@@ -309,5 +329,25 @@ public class DataHub {
         // clean up any lingering cache for deployed modules
         PropertiesModuleManager moduleManager = new PropertiesModuleManager(this.assetInstallTimeFile);
         moduleManager.deletePropertiesFile();
+    }
+
+    class EntitiesValidator extends ResourceManager {
+        private static final String NAME = "validate";
+
+        public EntitiesValidator(DatabaseClient client) {
+            super();
+            client.init(NAME, this);
+        }
+
+        public JsonNode validate() {
+            RequestParameters params = new RequestParameters();
+            ServiceResultIterator resultItr = this.getServices().get(params);
+            if (resultItr == null || ! resultItr.hasNext()) {
+                return null;
+            }
+            ServiceResult res = resultItr.next();
+            JacksonHandle handle = new JacksonHandle();
+            return res.getContent(handle).get();
+        }
     }
 }

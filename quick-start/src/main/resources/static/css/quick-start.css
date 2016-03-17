@@ -23,9 +23,9 @@ ul {
     padding-left: 5px;
 }
 
-div#header { 
+div#header {
     background-color: #fff;
-    padding: 15px 15px; 
+    padding: 15px 15px;
     color: #ffffff;
 }
 .btn, div#header .btn, div#content div#sidebar .btn, ul.dropdown-menu{
@@ -221,8 +221,8 @@ ul.nav.abn-tree i {
 	margin: 0px;
 }
 
-.nav, .pagination, .carousel, .panel-title a { 
-	cursor: pointer; 
+.nav, .pagination, .carousel, .panel-title a {
+	cursor: pointer;
 }
 
 #progressBar {
@@ -239,7 +239,7 @@ ul.nav.abn-tree i {
 
 #progressBar > div {
 	margin-left: auto;
-    margin-right: auto; 
+    margin-right: auto;
     width: 200px;
 }
 
@@ -254,4 +254,24 @@ ul.nav.abn-tree i {
 
 .progress-bar {
     padding: 3px;
+}
+
+.deploy-errors {
+    border: 2px solid red;
+    padding: 10px;
+    background-color: #333;
+    color: white;
+}
+
+
+.deploy-errors h3 {
+    color: white;
+    margin: 0px 0px 10px 0px;
+}
+.error-msg {
+    font-weight: bold;
+}
+
+.error-loc {
+    margin-left: 20px;
 }
