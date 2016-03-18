@@ -15,9 +15,13 @@
  */
 package com.marklogic.hub;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -33,7 +37,7 @@ import com.marklogic.hub.flow.SimpleFlow;
 public class Scaffolding {
 
     static final private Logger LOGGER = LoggerFactory.getLogger(Scaffolding.class);
-
+    
     public static File getEntityDir(File userlandDir, String entityName) {
         File entitiesDir = new File(userlandDir, "entities");
         File entityDir = new File(entitiesDir, entityName);
@@ -96,5 +100,108 @@ public class Scaffolding {
         InputStream inputStream = Scaffolding.class.getClassLoader()
                 .getResourceAsStream(srcFile);
         Files.copy(inputStream, dstFile);
+    }
+    
+    public static void createRestExtension(String entityName, String extensionName,
+            FlowType flowType, PluginFormat pluginFormat, File userlandDir) throws IOException {
+        LOGGER.info(extensionName);
+        String scaffoldRestServicesPath = "scaffolding/rest/services/";
+        String fileContent = getFileContent(scaffoldRestServicesPath + pluginFormat + "/template." + pluginFormat, extensionName);
+        File dstFile = createEmptyRestExtensionFile(entityName, extensionName, flowType, pluginFormat, userlandDir);
+        writeToFile(fileContent, dstFile);
+        writeMetadataForFile(dstFile, scaffoldRestServicesPath + "metadata/template.xml", extensionName);
+    }
+    
+    public static void createRestTransform(String entityName, String transformName,
+            FlowType flowType, PluginFormat pluginFormat, File userlandDir) throws IOException {
+        LOGGER.info(transformName);
+        String scaffoldRestTransformsPath = "scaffolding/rest/transforms/";
+        String fileContent = getFileContent(scaffoldRestTransformsPath + pluginFormat + "/template." + pluginFormat, transformName);
+        File dstFile = createEmptyRestTransformFile(entityName, transformName, flowType, pluginFormat, userlandDir);
+        writeToFile(fileContent, dstFile);
+        writeMetadataForFile(dstFile, scaffoldRestTransformsPath + "metadata/template.xml", transformName);
+    }
+    
+    private static void writeToFile(String fileContent, File dstFile)
+            throws IOException {
+        LOGGER.info(fileContent);
+        LOGGER.info(dstFile.getAbsolutePath());
+        FileWriter fw = new FileWriter(dstFile);
+        BufferedWriter bw = new BufferedWriter(fw);
+        bw.write(fileContent);
+        bw.close();
+    }
+    
+    private static File createEmptyRestExtensionFile(String entityName, String extensionName,
+            FlowType flowType, PluginFormat pluginFormat, File userlandDir) throws IOException {
+        File restDir = getRestDirectory(userlandDir, entityName, flowType);
+        return createEmptyFile(restDir, "services", extensionName + "." + pluginFormat);
+    }
+    
+    private static File createEmptyRestTransformFile(String entityName, String transformName,
+            FlowType flowType, PluginFormat pluginFormat, File userlandDir) throws IOException {
+        File restDir = getRestDirectory(userlandDir, entityName, flowType);
+        return createEmptyFile(restDir, "transforms", transformName + "." + pluginFormat);
+    }
+    
+    private static File createEmptyFile(File directory, String subDirectoryName, String fileName) throws IOException {
+        File fileDirectory = directory;
+        if(subDirectoryName!=null) {
+            fileDirectory = new File(directory, subDirectoryName);
+        }
+        fileDirectory.mkdirs();
+        File file = new File(fileDirectory, fileName);
+        file.createNewFile();
+        return file;
+    }
+    
+    private static File getRestDirectory(File userlandDir, String entityName, 
+            FlowType flowType) {
+        return getFlowDir(userlandDir, entityName,
+                "REST", flowType);
+    }
+    
+    private static void writeMetadataForFile(File file, String metadataTemplatePath, String metadataName) throws IOException {
+        String fileContent = getFileContent(metadataTemplatePath, metadataName);
+        File metadataFile = createEmptyMetadataForFile(file, metadataName);
+        writeToFile(fileContent, metadataFile);
+    }
+    
+    private static File createEmptyMetadataForFile(File file, String metadataName) throws IOException {
+        File metadataDir = new File(file.getParentFile(), "metadata");
+        metadataDir.mkdir();
+        File metadataFile = new File(metadataDir, metadataName + ".xml");
+        metadataFile.createNewFile();
+        return metadataFile;
+    }
+
+    private static String getFileContent(String srcFile, String placeholder) throws IOException {
+        StringBuilder output = new StringBuilder();
+        InputStream inputStream = null;
+        BufferedReader rdr = null;
+        try {
+            inputStream = Scaffolding.class.getClassLoader()
+                    .getResourceAsStream(srcFile);
+            rdr = new BufferedReader(new InputStreamReader(inputStream));
+            String bufferedLine = null;
+            while ((bufferedLine = rdr.readLine()) != null) {
+                if(bufferedLine.contains("placeholder")) {
+                    bufferedLine = bufferedLine.replace("placeholder", placeholder);
+                }
+                output.append(bufferedLine);
+                output.append("\n");
+            }
+        } catch (IOException e) {
+            LOGGER.error(e.getMessage(), e);
+            throw e;
+        } finally {
+            if(inputStream != null) {
+                inputStream.close();
+            }
+            if(rdr != null) {
+                rdr.close();
+            }
+        }
+        return output.toString();
     }
 }
