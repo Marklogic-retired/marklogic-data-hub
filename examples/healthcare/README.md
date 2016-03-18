@@ -37,7 +37,7 @@ The sample data is located in the input/ folder.
 
 
 # Entities
-Entities represent the data you are modeling. For this example we provide the **patientrecords** entity. Inside this entity definition you will find all of the example flows.
+Entities represent the data you are modeling. For this example we provide the **Patients** entity. Inside this entity definition you will find all of the example flows.
 
 # Flows
 Flows are sets of plugins that work together to create an envelope document.
