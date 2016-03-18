@@ -22,7 +22,8 @@ import com.marklogic.hub.flow.FlowType;
 
 public class ScaffoldingTest extends HubTestBase {
 
-    private File pluginsDir = new File("./test-ye-plugins");
+    private String pluginPath = "./test-ye-plugins";
+    private File pluginsDir = new File(pluginPath);
 
     @BeforeClass
     public static void setup() {
@@ -44,12 +45,12 @@ public class ScaffoldingTest extends HubTestBase {
         File entityDir = Scaffolding.getEntityDir(pluginsDir, "my-fun-test");
         assertTrue(entityDir.exists());
         assertEquals(
-                new File("./test-ye-plugins/entities/my-fun-test").toPath(),
+                new File(pluginPath + "/entities/my-fun-test").toPath(),
                 entityDir.toPath());
 
         File flowDir = Scaffolding.getFlowDir(pluginsDir, "my-fun-test", "blah", FlowType.INPUT);
         assertEquals(new File(
-                "./test-ye-plugins/entities/my-fun-test/input/blah").toPath(),
+                pluginPath + "/entities/my-fun-test/input/blah").toPath(),
                 flowDir.toPath());
         assertFalse(flowDir.exists());
     }
@@ -82,11 +83,11 @@ public class ScaffoldingTest extends HubTestBase {
 
         File entityDir = Scaffolding.getEntityDir(pluginsDir, "my-fun-test");
         assertTrue(entityDir.exists());
-        assertEquals(new File("./test-ye-plugins/entities/my-fun-test").toPath(), entityDir.toPath());
+        assertEquals(new File(pluginPath + "/entities/my-fun-test").toPath(), entityDir.toPath());
 
         Scaffolding.createFlow("my-fun-test", "test-input", FlowType.INPUT, pluginFormat, dataFormat, pluginsDir);
         File flowDir = Scaffolding.getFlowDir(pluginsDir, "my-fun-test", "test-input", FlowType.INPUT);
-        assertEquals(new File("./test-ye-plugins/entities/my-fun-test/input/test-input").toPath(), flowDir.toPath());
+        assertEquals(new File(pluginPath + "/entities/my-fun-test/input/test-input").toPath(), flowDir.toPath());
         assertTrue(flowDir.exists());
 
         File flowDescriptor = new File(flowDir, "test-input.xml");
@@ -121,11 +122,11 @@ public class ScaffoldingTest extends HubTestBase {
 
         File entityDir = Scaffolding.getEntityDir(pluginsDir, "my-fun-test");
         assertTrue(entityDir.exists());
-        assertEquals(new File("./test-ye-plugins/entities/my-fun-test").toPath(), entityDir.toPath());
+        assertEquals(new File(pluginPath + "/entities/my-fun-test").toPath(), entityDir.toPath());
 
         Scaffolding.createFlow("my-fun-test", "test-conformance", FlowType.CONFORMANCE, pluginFormat, dataFormat, pluginsDir);
         File flowDir = Scaffolding.getFlowDir(pluginsDir, "my-fun-test", "test-conformance", FlowType.CONFORMANCE);
-        assertEquals(new File("./test-ye-plugins/entities/my-fun-test/conformance/test-conformance").toPath(), flowDir.toPath());
+        assertEquals(new File(pluginPath + "/entities/my-fun-test/conformance/test-conformance").toPath(), flowDir.toPath());
         assertTrue(flowDir.exists());
 
         File flowDescriptor = new File(flowDir, "test-conformance.xml");
@@ -152,5 +153,73 @@ public class ScaffoldingTest extends HubTestBase {
         File triplesContent = new File(triplesDir, "triples." + pluginFormat.toString());
         assertTrue(triplesDir.exists());
         assertTrue(triplesContent.exists());
+    }
+    
+    @Test
+    public void createXqyRestExtension() throws IOException {
+        String entityName = "my-fun-test";
+        String extensionName = "myExtension";
+        FlowType flowType = FlowType.CONFORMANCE;
+        PluginFormat pluginFormat = PluginFormat.XQUERY;
+        Scaffolding.createRestExtension(entityName, extensionName, flowType, pluginFormat, pluginsDir);
+        File restDir = new File(pluginsDir.getAbsolutePath() + "/entities/"+ entityName + "/"+ flowType.name() +"/REST");
+        assertTrue(restDir.exists());
+        File restServicesDir = new File(restDir, "services");
+        assertTrue(restServicesDir.exists());
+        File restExtensionFile = new File(restServicesDir, extensionName + "." + pluginFormat);
+        assertTrue(restExtensionFile.exists());
+        File restExtensionMetadataDir = new File(restServicesDir, "metadata");
+        assertTrue(restExtensionMetadataDir.exists());
+        File restExtensionMetadataFile = new File(restExtensionMetadataDir, extensionName + ".xml");
+        assertTrue(restExtensionMetadataFile.exists());
+    }
+    
+    @Test
+    public void createSjsRestExtension() throws IOException {
+        String entityName = "my-fun-test";
+        String extensionName = "myExtension";
+        FlowType flowType = FlowType.INPUT;
+        PluginFormat pluginFormat = PluginFormat.JAVASCRIPT;
+        Scaffolding.createRestExtension(entityName, extensionName, flowType, pluginFormat, pluginsDir);
+        File restDir = new File(pluginsDir.getAbsolutePath() + "/entities/"+ entityName + "/"+ flowType.name() +"/REST");
+        assertTrue(restDir.exists());
+        File restServicesDir = new File(restDir, "services");
+        assertTrue(restServicesDir.exists());
+        File restExtensionFile = new File(restServicesDir, extensionName + "." + pluginFormat);
+        assertTrue(restExtensionFile.exists());
+        File restExtensionMetadataDir = new File(restServicesDir, "metadata");
+        assertTrue(restExtensionMetadataDir.exists());
+        File restExtensionMetadataFile = new File(restExtensionMetadataDir, extensionName + ".xml");
+        assertTrue(restExtensionMetadataFile.exists());
+    }
+    
+    @Test
+    public void createXqyRestTransform() throws IOException {
+        String entityName = "my-fun-test";
+        String transformName = "myTransform";
+        FlowType flowType = FlowType.CONFORMANCE;
+        PluginFormat pluginFormat = PluginFormat.XQUERY;
+        Scaffolding.createRestTransform(entityName, transformName, flowType, pluginFormat, pluginsDir);
+        File restDir = new File(pluginsDir.getAbsolutePath() + "/entities/"+ entityName + "/"+ flowType.name() +"/REST");
+        assertTrue(restDir.exists());
+        File restTransformDir = new File(restDir, "transforms");
+        assertTrue(restTransformDir.exists());
+        File restTransformFile = new File(restTransformDir, transformName + "." + pluginFormat);
+        assertTrue(restTransformFile.exists());
+    }
+    
+    @Test
+    public void createSjsRestTransform() throws IOException {
+        String entityName = "my-fun-test";
+        String transformName = "myTransform";
+        FlowType flowType = FlowType.CONFORMANCE;
+        PluginFormat pluginFormat = PluginFormat.JAVASCRIPT;
+        Scaffolding.createRestTransform(entityName, transformName, flowType, pluginFormat, pluginsDir);
+        File restDir = new File(pluginsDir.getAbsolutePath() + "/entities/"+ entityName + "/"+ flowType.name() +"/REST");
+        assertTrue(restDir.exists());
+        File restTransformDir = new File(restDir, "transforms");
+        assertTrue(restTransformDir.exists());
+        File restTransformFile = new File(restTransformDir, transformName + "." + pluginFormat);
+        assertTrue(restTransformFile.exists());
     }
 }
