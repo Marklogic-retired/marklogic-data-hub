@@ -626,6 +626,15 @@ declare function flow:validate-entities()
         else
           "create-" || $destination
       return
+        (:
+         : Note that we are static checking the files.
+         : This is because there is no reasonable way to actually
+         : call the plugins and pass in data that will work for all plugins.
+         :
+         : The disadvantage to static checking is that we will not catch typos
+         : like ctsdoc <- (missing period) because Javascript is dynamically
+         : typed. Static checking will only catch syntax errors in sjs.
+         :)
         try {
           if ($type eq $flow:TYPE-XQUERY) then
             xdmp:eval(
