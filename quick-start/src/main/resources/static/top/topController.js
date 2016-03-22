@@ -66,16 +66,16 @@
           .success(function (result) {
             if (!flow.inputFlowCancelled) {
               if (result.success) {
-                DataHub.displayMessage('Load data successful.', 'success', 'notification', false);
+                DataHub.displayMessage('Load data successful.', 'success');
               }
               else {
-                DataHub.displayMessage(result.errorMessage, 'error', 'notification', false);
+                DataHub.displayMessage(result.errorMessage, 'error');
               }
             }
           })
           .error(function () {
             if (!flow.inputFlowCancelled) {
-              DataHub.displayMessage('Load data unsuccessful.', 'error', 'notification', false);
+              DataHub.displayMessage('Load data unsuccessful.', 'error');
             }
           })
           .finally(function () {
@@ -91,7 +91,7 @@
 
     $scope.cancelInputFlow = function(flow) {
       flow.inputFlowCancelled = true;
-      DataHub.displayMessage('Load data cancelled.', 'success', 'notification', false);
+      DataHub.displayMessage('Load data cancelled.', 'success');
       TaskManager.cancelTask(flow.inputFlowTaskId);
     };
 
@@ -107,16 +107,16 @@
         .success(function (result) {
           if (!flow.runFlowCancelled) {
             if (result.success) {
-              DataHub.displayMessage('Flow run is successful.', 'success', 'notification', false);
+              DataHub.displayMessage('Flow run is successful.', 'success');
             }
             else {
-              DataHub.displayMessage(result.errorMessage, 'error', 'notification', false);
+              DataHub.displayMessage(result.errorMessage, 'error');
             }
           }
         })
         .error(function () {
           if (!flow.runFlowCancelled) {
-            DataHub.displayMessage('Flow run is unsuccessful.', 'error', 'notification', false);
+            DataHub.displayMessage('Flow run is unsuccessful.', 'error');
           }
         })
         .finally(function () {
@@ -131,7 +131,7 @@
 
     $scope.cancelRunFlow = function(flow) {
       flow.runFlowCancelled = true;
-      DataHub.displayMessage('Flow run cancelled.', 'success', 'notification', false);
+      DataHub.displayMessage('Flow run cancelled.', 'success');
       TaskManager.cancelTask(flow.runFlowTaskId);
     };
 
@@ -146,12 +146,12 @@
         TaskManager.waitForTask(flow.testFlowTaskId)
         .success(function (result) {
           if (!flow.testFlowCancelled) {
-            DataHub.displayMessage('Flow test is successful.', 'success', 'notification', false);
+            DataHub.displayMessage('Flow test is successful.', 'success');
           }
         })
         .error(function () {
           if (!flow.testFlowCancelled) {
-            DataHub.displayMessage('Flow test is unsuccessful.', 'error', 'notification', false);
+            DataHub.displayMessage('Flow test is unsuccessful.', 'error');
           }
         })
         .finally(function () {
@@ -166,7 +166,7 @@
 
     $scope.cancelTestFlow = function(flow) {
       flow.testFlowCancelled = true;
-      DataHub.displayMessage('Flow test cancelled.', 'success', 'notification', false);
+      DataHub.displayMessage('Flow test cancelled.', 'success');
       TaskManager.cancelTask(flow.testFlowTaskId);
     };
 

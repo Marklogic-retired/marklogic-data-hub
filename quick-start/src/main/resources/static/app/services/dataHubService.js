@@ -76,13 +76,13 @@
         .success(function(status) {
           self.status = status;
           self.action.type = null;
-          self.displayMessage('Install is successful.', 'success', 'notification', false);
+          self.displayMessage('Install is successful.', 'success');
           self.reloadRoute();
         })
         .error(function() {
           self.action.message = 'Install is unsuccessful.';
           self.action.progressType = 'danger';
-          //self.displayMessage('Install is unsuccessful.', 'error', 'notification', false);
+          //self.displayMessage('Install is unsuccessful.', 'error');
         });
     }
 
@@ -99,13 +99,13 @@
           self.status = status;
           self.action.type = 'Uninstall';
           self.action.message = 'Uninstall is successful.';
-          //self.displayMessage('Uninstall is successful.', 'success', 'notification', false);
+          //self.displayMessage('Uninstall is successful.', 'success');
           //self.reloadRoute();
         })
         .error(function() {
           self.action.message = 'Uninstall is unsuccessful.';
           self.action.progressType = 'danger';
-          //self.displayMessage('Uninstall is unsuccessful.', 'error', 'notification', false);
+          //self.displayMessage('Uninstall is unsuccessful.', 'error');
         });
     }
 
@@ -114,11 +114,11 @@
       .then(function (resp) {
         return validateUserModules().then(function() {
           self.status = resp.data;
-          self.displayMessage('Deploy to server is successful.', 'success', 'notification', false);
+          self.displayMessage('Deploy to server is successful.', 'success');
         });
       })
       .catch(function () {
-        self.displayMessage('Deploy to server is unsuccessful.', 'error', 'notification', false);
+        self.displayMessage('Deploy to server is unsuccessful.', 'error');
       });
     }
 
@@ -132,7 +132,7 @@
       return $http.post('api/entities', entityForm)
         .success(function(status) {
           self.status = status;
-          self.displayMessage('New entity is created successfully.', 'success', 'notification', false);
+          self.displayMessage('New entity is created successfully.', 'success');
         });
     }
 
@@ -175,7 +175,7 @@
       return $http.post('api/flows', flowForm)
         .success(function(selectedEntity) {
           self.status.selectedEntity = selectedEntity;
-          self.displayMessage('New flow is created successfully.', 'success', 'notification', false);
+          self.displayMessage('New flow is created successfully.', 'success');
         });
     }
 
@@ -187,18 +187,7 @@
       return $http.post('api/utils/searchPath', data);
     }
 
-    function displayMessage(message, messageType, elementId, isModal) {
-
-      /*
-      if (isModal) {
-        $('.modal-body').scrollTop(0);
-      } else {
-        $('#' + elementId).scrollTop(0);
-      }
-      */
-
-      //alert ("notif calles");
-      //$rootScope.showNotification = true;
+    function displayMessage(message, messageType, elementId) {
       $rootScope.notificationBar.messageType = messageType;
       $rootScope.notificationBar.message = message;
       $rootScope.notificationBar.show = true;
