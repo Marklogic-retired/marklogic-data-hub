@@ -131,10 +131,6 @@ public class FileSystemWatcherService implements DisposableBean {
             public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs)
                 throws IOException
             {
-                // REST directory is not a flow. It's the rest options. skip it.
-                if (dir.endsWith("REST")) {
-                    return FileVisitResult.SKIP_SUBTREE;
-                }
                 register(dir);
                 return FileVisitResult.CONTINUE;
             }
