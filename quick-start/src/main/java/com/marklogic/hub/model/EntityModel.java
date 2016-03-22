@@ -10,6 +10,8 @@ public class EntityModel {
 	private List<FlowModel> inputFlows;
 	private List<FlowModel> conformFlows;
 	private boolean isSynched;
+	private RestModel inputRest;
+	private RestModel conformRest;
 
     public String getEntityName() {
         return entityName;
@@ -82,37 +84,22 @@ public class EntityModel {
             }
         }
     }
-	
-	public void copySyncStatusFrom(EntityModel oldModel) {
-	    if (oldModel == null) {
-	        return;
-	    }
-        if (!entityName.equals(oldModel.getEntityName())) {
-	        return;
-	    }
-	    
-	    setSynched(oldModel.isSynched());
-	    
-	    Map<String, FlowModel> inputFlowModels = oldModel.getInputFlowsAsMap();
-	    if (inputFlows != null) {
-	        for (FlowModel model : inputFlows) {
-	            FlowModel oldFlow = inputFlowModels.get(model.getFlowName());
-	            if (oldFlow != null) {
-	                model.setSynched(oldFlow.isSynched());
-	            }
-	        }
-	    }
-	    
-	    Map<String, FlowModel> conformFlowModels = oldModel.getConformFlowsAsMap();
-        if (conformFlows != null) {
-            for (FlowModel model : conformFlows) {
-                FlowModel oldFlow = conformFlowModels.get(model.getFlowName());
-                if (oldFlow != null) {
-                    model.setSynched(oldFlow.isSynched());
-                }
-            }
-        }
-	}
+
+    public RestModel getInputRest() {
+        return inputRest;
+    }
+
+    public void setInputRest(RestModel inputRest) {
+        this.inputRest = inputRest;
+    }
+
+    public RestModel getConformRest() {
+        return conformRest;
+    }
+
+    public void setConformRest(RestModel conformRest) {
+        this.conformRest = conformRest;
+    }
 	
     @Override
     public String toString() {

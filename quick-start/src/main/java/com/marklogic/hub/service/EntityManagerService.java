@@ -64,38 +64,12 @@ public class EntityManagerService {
         for (String entityName : entityNames) {
             LOGGER.debug("Entity : " + entityName);
             entities.add(entityModelFactory.createEntity(entityName,
-                    entitiesPath + File.separator + entityName));
+                    entitiesPath + File.separator + entityName, syncStatusService));
         }
-
-        // update the sync status of the entities and flows
-        // TODO: if we improve EntityModelFactory and FlowModelFactory
-        // implementation,
-        // we may be able to set the status correctly during model creation.
-        updateSyncStatus(entities);
-
+        
         return entities;
     }
-
-    protected void updateSyncStatus(List<EntityModel> entities) {
-        for (EntityModel entityModel : entities) {
-            boolean flowsSynched = true;
-            for (FlowModel flowModel : entityModel.getInputFlows()) {
-                boolean flowSynched = syncStatusService.isFlowSynched(entityModel.getEntityName(), FlowType.INPUT, flowModel.getFlowName());
-                flowsSynched = flowsSynched && flowSynched;
-                flowModel.setSynched(flowSynched);
-            }
-
-            for (FlowModel flowModel : entityModel.getConformFlows()) {
-                boolean flowSynched = syncStatusService.isFlowSynched(entityModel.getEntityName(), FlowType.CONFORM, flowModel.getFlowName());
-                flowsSynched = flowsSynched && flowSynched;
-                flowModel.setSynched(flowSynched);
-            }
-
-            entityModel.setSynched(flowsSynched);
-        }
-
-    }
-
+    
     private List<Entity> getEntitysInServer() {
         List<Entity> entitiesInServer = new ArrayList<>();
         try {

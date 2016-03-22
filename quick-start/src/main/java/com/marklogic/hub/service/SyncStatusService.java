@@ -6,7 +6,6 @@ import java.nio.file.FileVisitResult;
 import java.nio.file.FileVisitor;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 
 import org.springframework.beans.factory.InitializingBean;
@@ -17,7 +16,6 @@ import org.springframework.web.context.WebApplicationContext;
 
 import com.marklogic.client.modulesloader.impl.PropertiesModuleManager;
 import com.marklogic.hub.config.EnvironmentConfiguration;
-import com.marklogic.hub.model.FlowType;
 
 @Service
 @Scope(scopeName=WebApplicationContext.SCOPE_SESSION)
@@ -47,15 +45,12 @@ public class SyncStatusService  implements InitializingBean {
     }
 
 
-    public boolean isFlowSynched(String entityName, FlowType flowType, String flowName) {
+    public boolean isDirectorySynched(String absolutePath) {
         moduleManager.initialize();
-        String pluginDir = environmentConfiguration.getUserPluginDir();
-        Path flowDir = Paths.get(pluginDir, "entities", entityName, flowType.toString(), flowName);
-
         boolean synched = false;
         try {
             PluginDirectoryVisitor visitor = new PluginDirectoryVisitor();
-            Files.walkFileTree(new File(flowDir.toString()).toPath(), visitor);
+            Files.walkFileTree(new File(absolutePath).toPath(), visitor);
             
             synched = visitor.isSynched();
         } catch (IOException e) {
@@ -80,7 +75,7 @@ public class SyncStatusService  implements InitializingBean {
         @Override
         public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
             // don't look at hidden files like .DS_Store
-            if (!file.getFileName().toString().startsWith(".")) {
+            if (!file.getFileName().toString().startsWith(".") && !file.toAbsolutePath().toString().contains("metadata")) {
                 synched = synched && SyncStatusService.this.isSynched(file.normalize().toAbsolutePath().toFile());
                 if (!synched) {
                     return FileVisitResult.TERMINATE;
