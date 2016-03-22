@@ -22,9 +22,7 @@
           message: ""
         };
 
-        scope.notificationBar = $rootScope.notificationBar;
-
-        scope.$watch('notificationBar.show == true', function(newValue, oldValue) {
+        $rootScope.$watch('notificationBar.show == true', function(newValue, oldValue) {
           if (newValue != oldValue) {
             $timeout(function() {
               $rootScope.notificationBar.show = false;
