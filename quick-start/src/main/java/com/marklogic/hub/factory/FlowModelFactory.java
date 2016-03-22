@@ -2,6 +2,7 @@ package com.marklogic.hub.factory;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +14,7 @@ import com.marklogic.hub.entity.Entity;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.FlowType;
 import com.marklogic.hub.model.FlowModel;
+import com.marklogic.hub.service.SyncStatusService;
 
 public class FlowModelFactory {
 
@@ -57,7 +59,7 @@ public class FlowModelFactory {
     }
 
     public FlowModel createFlow(String parentDirPath, String flowName,
-            FlowType flowType) {
+            FlowType flowType, SyncStatusService syncStatusService) {
         FlowModel flowModel = new FlowModel();
         flowModel.setEntityName(entityName);
         flowModel.setFlowName(flowName);
@@ -67,10 +69,9 @@ public class FlowModelFactory {
         flowModel.setTreeData(treeDataFactory.listFilesAndDirectories());
         Flow flow = this.flowsInServer.get(flowName);
         boolean synched = false;
-        // TODO: confirm the value of the collector's type
-        if (flow != null && flow.getCollector() != null
-                && flowType.equals(flow.getCollector().getType())) {
-            synched = true;
+        if (flow != null && flow.getType() != null
+                && flowType.equals(flow.getType())) {
+            synched = syncStatusService.isDirectorySynched(absolutePath);
         }
         flowModel.setSynched(synched);
         return flowModel;

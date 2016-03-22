@@ -142,8 +142,6 @@ public class EntityApiController implements InitializingBean, DisposableBean,
     @Override
     public void onWatchEvent(Path path, WatchEvent<Path> event) {
         synchronized (syncStatusService) {
-            entityManagerService.getEntities();
-
             syncStatusService.notifyAll();
         }
     }

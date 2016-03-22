@@ -15,6 +15,8 @@ import com.marklogic.hub.entity.Entity;
 import com.marklogic.hub.flow.FlowType;
 import com.marklogic.hub.model.EntityModel;
 import com.marklogic.hub.model.FlowModel;
+import com.marklogic.hub.model.RestModel;
+import com.marklogic.hub.service.SyncStatusService;
 import com.marklogic.hub.util.FileUtil;
 
 public class EntityModelFactory {
@@ -62,48 +64,54 @@ public class EntityModelFactory {
         return entityModel;
     }
 
-    public EntityModel createEntity(String entityName, String entityFilePath) {
+    public EntityModel createEntity(String entityName, String entityFilePath, SyncStatusService syncStatusService) {
         EntityModel entityModel = new EntityModel();
         entityModel.setEntityName(entityName);
+        //this will be updated after traversing its modules
         entityModel.setSynched(this.entitiesInServer.containsKey(entityName));
-
+        
         FlowModelFactory flowModelFactory = new FlowModelFactory(
                 this.entitiesInServer.get(entityName), entityName);
-        entityModel.setInputFlows(this.getInputFlows(flowModelFactory,
-                entityFilePath));
-        entityModel.setConformFlows(this.getConformFlows(flowModelFactory,
-                entityFilePath));
+        RestModelFactory restModelFactory = new RestModelFactory(entityName);
+        setEntityModules(entityModel, entityFilePath, flowModelFactory, restModelFactory, syncStatusService);
 
         return entityModel;
     }
 
-    private List<FlowModel> getInputFlows(FlowModelFactory flowModelFactory,
-            String entityFilePath) {
-        return this.getFlows(flowModelFactory, entityFilePath, FlowType.INPUT);
+    //set the values of modules of the entity such as flows, rest, etc.
+    private void setEntityModules(EntityModel entityModel, String entityFilePath, 
+            FlowModelFactory flowModelFactory, RestModelFactory restModelFactory, SyncStatusService syncStatusService) {
+        this.setEntityModules(entityModel, entityFilePath, FlowType.INPUT, flowModelFactory, restModelFactory, syncStatusService);
+        this.setEntityModules(entityModel, entityFilePath, FlowType.CONFORMANCE, flowModelFactory, restModelFactory, syncStatusService);
     }
 
-    private List<FlowModel> getConformFlows(FlowModelFactory flowModelFactory,
-            String entityFilePath) {
-        return this
-                .getFlows(flowModelFactory, entityFilePath, FlowType.CONFORMANCE);
-    }
-
-    private List<FlowModel> getFlows(FlowModelFactory flowModelFactory,
-            String entityFilePath, FlowType flowType) {
-        List<FlowModel> flows = new ArrayList<>();
-        String flowsFilePath = entityFilePath + File.separator
+    private void setEntityModules(EntityModel entityModel, String entityFilePath, 
+            FlowType flowType, FlowModelFactory flowModelFactory, 
+            RestModelFactory restModelFactory, SyncStatusService syncStatusService) {
+        String modulesParentDirectory = entityFilePath + File.separator
                 + flowType.toString();
-        List<String> flowNames = FileUtil.listDirectFolders(flowsFilePath);
-        for (String flowName : flowNames) {
-            // REST directory is not a flow. It's the rest options. skip it.
-            if (flowName.equals("REST")) {
-                continue;
+        List<String> folderNames = FileUtil.listDirectFolders(modulesParentDirectory);
+        
+        List<FlowModel> flows = new ArrayList<>();
+        RestModel restModel = null;
+        for (String folderName : folderNames) {
+            if (folderName.equalsIgnoreCase(RestModelFactory.REST_FOLDER_NAME)) {
+                restModel = restModelFactory.createRest(modulesParentDirectory, syncStatusService);
+                entityModel.setSynched(entityModel.isSynched() && restModel.isSynched());
+            } else {
+                FlowModel flowModel = flowModelFactory.createFlow(modulesParentDirectory,
+                        folderName, flowType, syncStatusService);
+                entityModel.setSynched(entityModel.isSynched() && flowModel.isSynched());
+                flows.add(flowModel);
             }
-            FlowModel flowModel = flowModelFactory.createFlow(flowsFilePath,
-                    flowName, flowType);
-            flows.add(flowModel);
         }
-        return flows;
+        if(flowType == FlowType.INPUT) {
+            entityModel.setInputFlows(flows);
+            entityModel.setInputRest(restModel);
+        } else {
+            entityModel.setConformFlows(flows);
+            entityModel.setConformRest(restModel);
+        }
     }
 
     public static Map<String, EntityModel> toEntityModelMap(
