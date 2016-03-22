@@ -195,10 +195,6 @@
     $scope.$on('hub:deploy:errors', function($event, errors) {
       $scope.deployErrors = errors;
     });
-
-    setTimeout(function () {
-      $('.alert').fadeOut();
-    }, 5000);
   }
 
 })();
