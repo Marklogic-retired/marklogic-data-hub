@@ -188,28 +188,20 @@
     }
 
     function displayMessage(message, messageType, elementId, isModal) {
-      if (typeof elementId === 'undefined') {
-        elementId = 'messageDiv';
-      }
-      var messageClass = 'alert';
-      if (messageType === 'error') {
-        messageClass += ' alert-error alert-danger';
-      } else if (messageType === 'success') {
-        messageClass += ' alert-success';
-      } else if (messageType === 'warning') {
-        messageClass += ' alert-warning';
-      }
-      $('#' + elementId).html('<div class="' + messageClass + '">' +
-        '<a href="dismiss" class="close" data-dismiss="alert">&times;</a>' + message + '</div>');
 
+      /*
       if (isModal) {
         $('.modal-body').scrollTop(0);
       } else {
         $('#' + elementId).scrollTop(0);
       }
-      setTimeout(function() {
-        $('.alert').fadeOut();
-      }, 5000);
+      */
+
+      //alert ("notif calles");
+      //$rootScope.showNotification = true;
+      $rootScope.notificationBar.messageType = messageType;
+      $rootScope.notificationBar.message = message;
+      $rootScope.notificationBar.show = true;
     }
   }
 
