@@ -122,10 +122,9 @@ public class Mlcp {
                 arguments.add(sourceOptions.getInputFilePattern());
             }
 
-            if (sourceOptions.getCollection() != null) {
-                arguments.add("-output_collections");
-                arguments.add(sourceOptions.getCollection());
-            }
+            String collections = this.getOutputCollections();
+            arguments.add("-output_collections");
+            arguments.add("\"" + collections + "\"");
 
             // by default, cut the source directory path to make URIs shorter
             String uriReplace = canonicalPath + ",''";
@@ -141,6 +140,20 @@ public class Mlcp {
             arguments.add("-transform_param");
             arguments.add("\"" + sourceOptions.getTransformParams() + "\"");
             return arguments;
+        }
+
+        private String getOutputCollections() {
+            StringBuilder collectionsBuilder = new StringBuilder();
+            collectionsBuilder.append(sourceOptions.getEntityName());
+            collectionsBuilder.append(",");
+            collectionsBuilder.append(sourceOptions.getFlowName());
+            collectionsBuilder.append(",");
+            collectionsBuilder.append(sourceOptions.getFlowType());
+            if(sourceOptions.getCollection() != null) {
+                collectionsBuilder.append(",");
+                collectionsBuilder.append(sourceOptions.getCollection());
+            }
+            return collectionsBuilder.toString();
         }
     }
 
