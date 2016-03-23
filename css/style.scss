@@ -7,12 +7,9 @@
 $scotch-primary: rgb(255, 69, 69);
 $scotch-secondary: #FF7B7B;
 
-// %oswald { font-family: 'Oswald', sans-serif; }
-// %roboto { font-family: 'Roboto Condensed', sans-serif; }
 %font { font-family: "Helvetica Neue",Helvetica,Arial,sans-serif; }
 
 body {
-  // @extend %roboto;
   @extend %font;
   font-size: 18px;
   line-height: 30px;
@@ -20,9 +17,7 @@ body {
   -webkit-font-smoothing: antialiased;
   background-color: #f7f7f7;
 }
-// p {
-//   margin-bottom: 0px;
-// }
+
 section, header, footer, main, article, nav, aside { position: relative; }
 
 article {
@@ -43,9 +38,8 @@ a {
 .btn {
   text-transform: uppercase;
   font-weight: 400;
-  // @extend %oswald;
 }
-// h1, h2, h3, h4, h5, h6 { @extend %oswald; }
+
 ::selection {
   background: #086AFF;
   color: #fff;
@@ -89,7 +83,6 @@ h1.special {
   overflow: hidden;
   margin: 0;
   text-transform: uppercase;
-  // @extend %oswald;
   font-size: 20pt;
   line-height: 50px;
   font-weight: 700;
@@ -196,7 +189,6 @@ h1.special {
       font-size: 12px;
       line-height: 1.5;
       text-transform: uppercase;
-      // @extend %oswald;
     }
   }
 
@@ -222,7 +214,6 @@ aside {
   font-size: 17px;
   color: #525252;
   margin: 16px 0;
-  // @extend %oswald;
 
   span {
     text-transform: uppercase;
@@ -232,11 +223,7 @@ aside {
 
 .site-footer {
   border-top: 1px solid #ccc;
-  // position: absolute;
   padding-top: 10px;
-  // bottom: 0px;
-  // left: 0px;
-  // right: 0px;
 }
 
 .pagination-wrap {
@@ -297,11 +284,9 @@ aside {
   }
 }
 
-// .col-md-12 {
-  img {
-    max-width: 100%;
-  }
-// }
+img {
+  max-width: 100%;
+}
 
 .section {
   border: 1px solid #ccc;
