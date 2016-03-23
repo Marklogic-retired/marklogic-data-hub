@@ -9,6 +9,7 @@
     'dhib.quickstart.directives.header',
     'dhib.quickstart.directives.footer',
     'dhib.quickstart.directives.spinner',
+    'dhib.quickstart.directives.notification',
     'angularBootstrapNavTree',
     'ngAnimate',
     'ui.bootstrap',
