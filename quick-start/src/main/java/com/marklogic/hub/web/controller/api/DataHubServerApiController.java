@@ -127,7 +127,6 @@ public class DataHubServerApiController extends BaseController {
     public LoginForm postLogout(HttpSession session) {
         LoginForm loginForm = (LoginForm) session.getAttribute("loginForm");
         loginForm.setLoggedIn(false);
-        this.environmentConfiguration.removeSavedConfiguration();
         this.retrieveEnvironmentConfiguration(loginForm);
 
         session.invalidate();
