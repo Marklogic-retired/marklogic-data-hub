@@ -16,13 +16,15 @@ The tweets are zipped into a .zip file in the input/ folder.
 
 1. Point the Login box to your MarkLogic installation.
 
-1. Create the "tweets" Entity.
-  Click on "New Entity"
-    Entity Name: Tweet
-    Ingest Flow Name: ingest-tweets
-    Conformance Flow Name: conform-tweets
-    Plugin Type: Javascript
-    Data Format: JSON
+1. Create the "tweets" Entity.  
+
+  Click on **"New Entity"**  
+  
+    **Entity Name:** Tweet  
+    **Ingest Flow Name:** ingest-tweets  
+    **Conformance Flow Name:** conform-tweets  
+    **Plugin Type:** Javascript  
+    **Data Format:** JSON  
 
 1. Deploy your modules by pressing the **Deploy Modules** button.
 
