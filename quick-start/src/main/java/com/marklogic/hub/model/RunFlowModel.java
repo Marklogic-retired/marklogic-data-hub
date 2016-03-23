@@ -6,6 +6,7 @@ public class RunFlowModel {
     private String inputPath;
     private String collection;
     private String dataFormat;
+    private boolean inputCompressed;
 
     public String getEntityName() {
         return entityName;
@@ -25,5 +26,9 @@ public class RunFlowModel {
 
     public String getDataFormat() {
         return dataFormat;
+    }
+
+    public boolean getInputCompressed() {
+        return inputCompressed;
     }
 }

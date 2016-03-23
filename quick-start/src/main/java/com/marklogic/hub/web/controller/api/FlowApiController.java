@@ -212,6 +212,7 @@ public class FlowApiController extends BaseController {
                             FlowType.INPUT.toString());
                     sourceOptions.setInputFileType(runFlow.getDataFormat());
                     sourceOptions.setCollection(runFlow.getCollection());
+                    sourceOptions.setInputCompressed(runFlow.getInputCompressed());
                     mlcp.addSourceDirectory(runFlow.getInputPath(), sourceOptions);
                     mlcp.loadContent();
 
