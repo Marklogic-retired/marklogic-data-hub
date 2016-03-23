@@ -1,0 +1,5 @@
+main:
+    - { url: '/', text: 'What?' }
+    - { url: '/how', text: 'How?' }
+    - { url: '/getting-started', text: 'Getting Started' }
+    - { url: 'https://github.com/marklogic/marklogic-data-hub', text: 'Fork on GitHub' }

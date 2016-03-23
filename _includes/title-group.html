@@ -1,0 +1,31 @@
+<div class="title-group">
+    <h1 class="special">
+        <span>
+        {% if page.title %}
+            {{ page.title }}
+        {% else %}
+            {{ site.data.global.title }}
+        {% endif %}
+        </span>
+    </h1>
+    {% if page.id %}
+    <aside>
+        {{ page.date | date: "%m.%d.%y" }}
+        {% if page.categories != empty %}
+            &middot;
+            {% for category in page.categories %}
+                <span>{{ category }}</span>
+            {% endfor %}
+        {% endif %}
+    </aside>
+    {% endif %}
+    <p class="lead">
+        {% if page.lead_text %}
+            {{ page.lead_text }}
+        {% elsif post.lead_text %}
+            {{ post.lead_text }}
+        {% else %}
+            {{ site.data.global.description }}
+        {% endif %}
+    </p>
+</div>
