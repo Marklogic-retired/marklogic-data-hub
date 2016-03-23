@@ -154,11 +154,12 @@
 
     function runInputFlow(entityName, flowName, mlcpOptions) {
       var data = {
-        'entityName': entityName,
-        'flowName': flowName,
-        'inputPath': mlcpOptions.inputPath,
-        'collection': mlcpOptions.collection,
-        'dataFormat': mlcpOptions.dataFormat
+        entityName: entityName,
+        flowName: flowName,
+        inputPath: mlcpOptions.inputPath,
+        collection: mlcpOptions.collection,
+        dataFormat: mlcpOptions.dataFormat,
+        inputCompressed: mlcpOptions.inputCompressed
       };
       return $http.post('api/flows/run/input', data);
     }

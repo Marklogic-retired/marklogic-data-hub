@@ -69,16 +69,15 @@
   }
 
   function LoadDataModalController($scope, $uibModalInstance, DataHub) {
-    $scope.inputPath = 'input';
-    $scope.dataFormat = 'documents';
-    $scope.collection = null;
+    $scope.loadDataForm = {
+      inputPath: '.',
+      dataFormat: 'documents',
+      inputCompressed: false,
+      collection: null
+    };
 
     $scope.ok = function() {
-      $uibModalInstance.close({
-        inputPath: $scope.inputPath,
-        dataFormat: $scope.dataFormat,
-        collection: $scope.collection
-      });
+      $uibModalInstance.close($scope.loadDataForm);
     };
 
     $scope.cancel = function() {
@@ -86,7 +85,7 @@
     };
 
     $scope.onSelection = function(node, selected) {
-      $scope.inputPath = node.path;
+      $scope.loadDataForm.inputPath = node.path;
     };
 
     $scope.onNodeToggle = function(node, expanded) {
@@ -129,11 +128,14 @@
 
     $scope.dataForTheTree = [];
     //initialize root
-    $scope.searchPath('');
+    $scope.searchPath($scope.loadDataForm.inputPath);
   }
 
   function EntityModalController($scope, $uibModalInstance, DataHub) {
-    $scope.entityForm = {};
+    $scope.entityForm = {
+      pluginFormat: 'sjs',
+      dataFormat: 'application/json'
+    };
     $scope.errorMessage = null;
     $scope.hasError = false;
 
@@ -160,9 +162,10 @@
 
   function FlowModalController($scope, $uibModalInstance, DataHub, entityName, flowType, extension) {
     $scope.flowForm = {
-      'entityName': entityName,
-      'flowType': flowType,
-      'extension': extension
+      entityName: entityName,
+      flowType: flowType,
+      pluginFormat: 'sjs',
+      dataFormat: 'application/json'
     };
     $scope.errorMessage = null;
     $scope.hasError = false;

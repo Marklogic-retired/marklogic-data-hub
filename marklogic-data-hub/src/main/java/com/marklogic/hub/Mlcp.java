@@ -126,6 +126,10 @@ public class Mlcp {
             arguments.add("-output_collections");
             arguments.add("\"" + collections + "\"");
 
+            if (sourceOptions.getInputCompressed()) {
+                arguments.add("-input_compressed");
+            }
+
             // by default, cut the source directory path to make URIs shorter
             String uriReplace = canonicalPath + ",''";
             uriReplace = uriReplace.replaceAll("\\\\", "/");
@@ -164,6 +168,7 @@ public class Mlcp {
         private String inputFileType;
         private String inputFilePattern;
         private String collection;
+        private boolean inputCompressed = false;
 
         public SourceOptions(String entityName, String flowName, String flowType) {
             this.entityName = entityName;
@@ -205,6 +210,14 @@ public class Mlcp {
 
         public void setCollection(String collection) {
             this.collection = collection;
+        }
+
+        public void setInputCompressed(boolean inputCompressed) {
+            this.inputCompressed = inputCompressed;
+        }
+
+        public boolean getInputCompressed() {
+            return this.inputCompressed;
         }
 
         protected String getTransformParams() {
