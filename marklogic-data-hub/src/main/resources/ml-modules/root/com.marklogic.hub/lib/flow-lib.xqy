@@ -486,9 +486,16 @@ declare function flow:run-flow(
  :)
 declare function flow:make-envelope($map as map:map, $data-format as xs:string)
 {
-  xdmp:log(("map:", $map)),
   if ($data-format eq "application/json") then
-    xdmp:to-json($map)/node()
+    let $headers := fn:head((map:get($map, "headers"), json:array()))
+    let $triples := fn:head((map:get($map, "triples"), json:array()))
+    let $content := fn:head((map:get($map, "content"), json:object()))
+    return
+      xdmp:to-json(map:new((
+        map:entry("headers", $headers),
+        map:entry("triples", $triples),
+        map:entry("content", $content)
+      )))/node()
   else
     <envelope xmlns="http://marklogic.com/data-hub/envelope">
       <headers>{map:get($map, "headers")}</headers>
