@@ -10,7 +10,7 @@
  * @return - an array of triples
  */
 function createTriples(id, content, headers, triples, options) {
-  return null;
+  return [];
 }
 
 module.exports = {

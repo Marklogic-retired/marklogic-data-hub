@@ -10,7 +10,7 @@
  * @return - an array of header objects
  */
 function createHeaders(id, content, headers, triples, options) {
-  return null;
+  return [];
 }
 
 module.exports = {

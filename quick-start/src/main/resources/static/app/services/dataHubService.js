@@ -38,7 +38,7 @@
           self.status = data;
           if (!self.status.installed) {
             self.action.type = 'Install';
-            self.action.message = 'Install is in progress...';
+            self.action.message = 'Installing the Data Hub into MarkLogic...';
             self.action.progressType = 'success';
           }
         })
