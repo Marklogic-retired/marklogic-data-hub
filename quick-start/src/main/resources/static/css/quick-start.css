@@ -276,4 +276,8 @@ ul.nav.abn-tree i {
     display: none;
 }
 
+div.api-doc > div {
+    padding: 15px;
+}
+
 
