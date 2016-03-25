@@ -18,12 +18,12 @@
 
         $rootScope.notificationBar = {
           show: false,
-          messageType: "",
-          message: ""
+          messageType: '',
+          message: ''
         };
 
         $rootScope.$watch('notificationBar.show == true', function(newValue, oldValue) {
-          if (newValue != oldValue) {
+          if (newValue !== oldValue) {
             $timeout(function() {
               $rootScope.notificationBar.show = false;
             }, 5000);
