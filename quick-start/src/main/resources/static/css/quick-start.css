@@ -23,8 +23,13 @@ ul {
 div#header {
     background-color: #fff;
     padding: 15px 15px;
+    color: #2a2d2b;
+}
+
+button, div#header button {
     color: #ffffff;
 }
+
 .btn, div#header .btn, div#content div#sidebar .btn, ul.dropdown-menu {
     font-family: "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Geneva, Verdana, sans-serif;
     font-size: 24px;
@@ -264,3 +269,11 @@ ul.nav.abn-tree i {
 .fade.ng-leave.ng-leave-active {
   opacity:0;
 }
+
+/* This is specifically for Swagger UI */
+
+.swagger-validator {
+    display: none;
+}
+
+

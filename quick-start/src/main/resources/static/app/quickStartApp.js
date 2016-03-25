@@ -6,6 +6,7 @@
     'ngRoute',
     'dhib.quickstart.controller.login',
     'dhib.quickstart.controller.top',
+    'dhib.quickstart.controller.api.doc',
     'dhib.quickstart.directives.header',
     'dhib.quickstart.directives.footer',
     'dhib.quickstart.directives.spinner',
@@ -14,8 +15,10 @@
     'ngAnimate',
     'ui.bootstrap',
     'ngMaterial',
-    'treeControl'
+    'treeControl',
     //'angucomplete-alt'
+    'ngSanitize',
+    'swaggerUi'
   ];
   angular.module('quickStartApp', dependencies)
     .factory('$exceptionHandler', ExceptionHandler)
@@ -97,6 +100,10 @@
     })
     .when('/dismiss', {
       //do nothing
+    })
+    .when('/api-doc', {
+    	templateUrl: 'doc/apiDoc.html',
+    	controller: 'apiDocController'
     })
     .otherwise({
       redirectTo: '/login'

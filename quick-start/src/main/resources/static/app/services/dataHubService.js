@@ -6,7 +6,7 @@
     .service('DataHub', DataHubService)
     .service('TaskManager', TaskManagerService);
 
-  function DataHubService($http, $q, $route, $rootScope) {
+  function DataHubService($http, $q, $route, $rootScope, $window) {
     var self = this;
 
     angular.extend(self, {
@@ -29,7 +29,8 @@
       testFlow: testFlow,
       saveFlow: saveFlow,
       displayMessage: displayMessage,
-      searchPath: searchPath
+      searchPath: searchPath,
+      showApiDoc: showApiDoc
     });
 
     function login(loginForm) {
@@ -193,6 +194,11 @@
       $rootScope.notificationBar.message = message;
       $rootScope.notificationBar.show = true;
     }
+    
+    function showApiDoc() {
+    	$window.open('#/api-doc', '_blank');
+    }
+    
   }
 
   function TaskManagerService($http, $q, $route) {
