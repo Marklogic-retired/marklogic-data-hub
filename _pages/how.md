@@ -121,10 +121,10 @@ Now searching your data become much easier.
 The MarkLogic Data Hub groups your data into Business Entities. These are groupings of data that serve a common business function. An example may be Employees or Customers or SalesLeads.
 
 ## Ingest
-During the Ingest phase data is loaded into MarkLogic's staging area. This data can be fed through [Flows](#flows) to create Enveloped versions of the data.
+During the Ingest phase data is loaded into MarkLogic's staging area. This data can be fed through Flows to create Enveloped versions of the data.
 
 ## Conform
-During the Conformance phase data is processed in bulk. The data is moved from the Staging area into the Final area and processed into Envelopes via [Flows](#flows).
+During the Conformance phase data is processed in bulk. The data is moved from the Staging area into the Final area and processed into Envelopes via Flows.
 
 ## Flows
 With each Business Entity you can define multiple Input and Conformance Flows. A Flow is a grouping of plugins that work together to create the envelope that holds your data. There is one plugin for each piece of the envelope (headers, triples, and content).

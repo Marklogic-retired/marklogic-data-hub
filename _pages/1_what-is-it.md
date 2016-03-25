@@ -11,9 +11,9 @@ permalink: /
 ### Ingest
 First thing is first. Load all of your data into MarkLogic... every last bit. Upon ingest, data is stored in a staging area. Data can be loaded via:
 
-- [MarkLogic Content Pump](https://docs.marklogic.com/guide/mlcp) - a Java command-line utility for ingesting content into MarkLogic.
-- [MarkLogic Java Client API](https://github.com/marklogic/java-client-api) - A Java API for interacting with MarkLogic
-- [REST APIs](https://docs.marklogic.com/guide/rest-dev/documents#id_11953) - MarkLogic exposes RESTful APIs for loading content
+- [MarkLogic Content Pump](https://docs.marklogic.com/guide/mlcp){:target="_blank"} - a Java command-line utility for ingesting content into MarkLogic.
+- [MarkLogic Java Client API](https://github.com/marklogic/java-client-api){:target="_blank"} - A Java API for interacting with MarkLogic
+- [REST APIs](https://docs.marklogic.com/guide/rest-dev/documents#id_11953){:target="_blank"} - MarkLogic exposes RESTful APIs for loading content
 
 </div>
 
