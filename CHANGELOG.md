@@ -1,5 +1,43 @@
 # Change Log
 
+## [v1.0.0-alpha.4](https://github.com/marklogic/marklogic-data-hub/tree/v1.0.0-alpha.4) (2016-03-25)
+[Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v1.0.0-alpha.3...v1.0.0-alpha.4)
+
+**Closed issues:**
+
+- HTTP Calls are cached in IE [\#156](https://github.com/marklogic/marklogic-data-hub/issues/156)
+- add sample data for tweets [\#154](https://github.com/marklogic/marklogic-data-hub/issues/154)
+- get\_content transform not working for json files [\#152](https://github.com/marklogic/marklogic-data-hub/issues/152)
+- Support loading of compressed archives [\#149](https://github.com/marklogic/marklogic-data-hub/issues/149)
+- Don't reset User Prefs on logout [\#146](https://github.com/marklogic/marklogic-data-hub/issues/146)
+- Vet plugins isn't quite right [\#140](https://github.com/marklogic/marklogic-data-hub/issues/140)
+- for hl7 example change patientRecord to Patient [\#137](https://github.com/marklogic/marklogic-data-hub/issues/137)
+- Create Conformance flow not working [\#135](https://github.com/marklogic/marklogic-data-hub/issues/135)
+- Error on New Flow [\#133](https://github.com/marklogic/marklogic-data-hub/issues/133)
+- Hub wide modules folder for xqy/sjs [\#129](https://github.com/marklogic/marklogic-data-hub/issues/129)
+- Fix delay after deploying modules [\#114](https://github.com/marklogic/marklogic-data-hub/issues/114)
+- Detect \(vet\) bad user plugins [\#91](https://github.com/marklogic/marklogic-data-hub/issues/91)
+- Better file browsing on load-data [\#88](https://github.com/marklogic/marklogic-data-hub/issues/88)
+- Input Flow doesn't report back failures [\#67](https://github.com/marklogic/marklogic-data-hub/issues/67)
+
+**Merged pull requests:**
+
+- fixed \#156 -cached in ie [\#157](https://github.com/marklogic/marklogic-data-hub/pull/157) ([paxtonhare](https://github.com/paxtonhare))
+- fixed \#154 - added sample tweets [\#155](https://github.com/marklogic/marklogic-data-hub/pull/155) ([paxtonhare](https://github.com/paxtonhare))
+- fixed \#152 - get\_content transform not working for json [\#153](https://github.com/marklogic/marklogic-data-hub/pull/153) ([paxtonhare](https://github.com/paxtonhare))
+- fixed \#146 - don't reset user prefs on logout [\#151](https://github.com/marklogic/marklogic-data-hub/pull/151) ([paxtonhare](https://github.com/paxtonhare))
+- fixed \#149 - load compressed archives [\#150](https://github.com/marklogic/marklogic-data-hub/pull/150) ([paxtonhare](https://github.com/paxtonhare))
+- 142 - Add default collections when loading data using flows [\#148](https://github.com/marklogic/marklogic-data-hub/pull/148) ([maeisabelle](https://github.com/maeisabelle))
+- 101 - Handle detection of REST directory [\#147](https://github.com/marklogic/marklogic-data-hub/pull/147) ([maeisabelle](https://github.com/maeisabelle))
+- \#104 make ui code more angular [\#144](https://github.com/marklogic/marklogic-data-hub/pull/144) ([divino](https://github.com/divino))
+- fixed \#140 - vet plugins not working correctly [\#141](https://github.com/marklogic/marklogic-data-hub/pull/141) ([paxtonhare](https://github.com/paxtonhare))
+- fixed \#137 - renamed patientrecords to Patients [\#139](https://github.com/marklogic/marklogic-data-hub/pull/139) ([paxtonhare](https://github.com/paxtonhare))
+- fixed \#135 - create conformance flow not working [\#136](https://github.com/marklogic/marklogic-data-hub/pull/136) ([paxtonhare](https://github.com/paxtonhare))
+- 102 - Scaffolding for Rest [\#134](https://github.com/marklogic/marklogic-data-hub/pull/134) ([maeisabelle](https://github.com/maeisabelle))
+- fixed \#91 - check plugins during install for errors [\#132](https://github.com/marklogic/marklogic-data-hub/pull/132) ([paxtonhare](https://github.com/paxtonhare))
+- \#88 folder browser [\#131](https://github.com/marklogic/marklogic-data-hub/pull/131) ([divino](https://github.com/divino))
+- adding a gradle plugin for the hub [\#128](https://github.com/marklogic/marklogic-data-hub/pull/128) ([paxtonhare](https://github.com/paxtonhare))
+
 ## [v1.0.0-alpha.3](https://github.com/marklogic/marklogic-data-hub/tree/v1.0.0-alpha.3) (2016-03-15)
 [Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v1.0.0-alpha.2...v1.0.0-alpha.3)
 
