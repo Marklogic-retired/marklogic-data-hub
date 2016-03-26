@@ -24,5 +24,10 @@ declare function plugin:create-content(
   $triples as sem:triple*,
   $options as map:map) as node()?
 {
-  fn:doc($id)/envelope:envelope/envelope:content/node()
+  let $doc := fn:doc($id)
+  return
+    if ($doc/envelope:envelope) then
+      $doc/envelope:envelope/envelope:content/node()
+    else
+      $doc/content
 };
