@@ -13,6 +13,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.xml.sax.SAXException;
@@ -161,7 +162,11 @@ public class ScaffoldingTest extends HubTestBase {
         String extensionName = "myExtension";
         FlowType flowType = FlowType.CONFORMANCE;
         PluginFormat pluginFormat = PluginFormat.XQUERY;
-        Scaffolding.createRestExtension(entityName, extensionName, flowType, pluginFormat, pluginsDir);
+        try {
+            Scaffolding.createRestExtension(entityName, extensionName, flowType, pluginFormat, pluginsDir);
+        } catch (ScaffoldingValidationException e) {
+            Assert.fail(e.getMessage());
+        }
         File restDir = new File(pluginsDir.getAbsolutePath() + "/entities/"+ entityName + "/"+ flowType.name() +"/REST");
         assertTrue(restDir.exists());
         File restServicesDir = new File(restDir, "services");
@@ -180,7 +185,11 @@ public class ScaffoldingTest extends HubTestBase {
         String extensionName = "myExtension";
         FlowType flowType = FlowType.INPUT;
         PluginFormat pluginFormat = PluginFormat.JAVASCRIPT;
-        Scaffolding.createRestExtension(entityName, extensionName, flowType, pluginFormat, pluginsDir);
+        try {
+            Scaffolding.createRestExtension(entityName, extensionName, flowType, pluginFormat, pluginsDir);
+        } catch (ScaffoldingValidationException e) {
+            Assert.fail(e.getMessage());
+        }
         File restDir = new File(pluginsDir.getAbsolutePath() + "/entities/"+ entityName + "/"+ flowType.name() +"/REST");
         assertTrue(restDir.exists());
         File restServicesDir = new File(restDir, "services");
@@ -199,7 +208,11 @@ public class ScaffoldingTest extends HubTestBase {
         String transformName = "myTransform";
         FlowType flowType = FlowType.CONFORMANCE;
         PluginFormat pluginFormat = PluginFormat.XQUERY;
-        Scaffolding.createRestTransform(entityName, transformName, flowType, pluginFormat, pluginsDir);
+        try {
+            Scaffolding.createRestTransform(entityName, transformName, flowType, pluginFormat, pluginsDir);
+        } catch (ScaffoldingValidationException e) {
+            Assert.fail(e.getMessage());
+        }
         File restDir = new File(pluginsDir.getAbsolutePath() + "/entities/"+ entityName + "/"+ flowType.name() +"/REST");
         assertTrue(restDir.exists());
         File restTransformDir = new File(restDir, "transforms");
@@ -214,7 +227,11 @@ public class ScaffoldingTest extends HubTestBase {
         String transformName = "myTransform";
         FlowType flowType = FlowType.CONFORMANCE;
         PluginFormat pluginFormat = PluginFormat.JAVASCRIPT;
-        Scaffolding.createRestTransform(entityName, transformName, flowType, pluginFormat, pluginsDir);
+        try {
+            Scaffolding.createRestTransform(entityName, transformName, flowType, pluginFormat, pluginsDir);
+        } catch (ScaffoldingValidationException e) {
+            Assert.fail(e.getMessage());
+        }
         File restDir = new File(pluginsDir.getAbsolutePath() + "/entities/"+ entityName + "/"+ flowType.name() +"/REST");
         assertTrue(restDir.exists());
         File restTransformDir = new File(restDir, "transforms");
