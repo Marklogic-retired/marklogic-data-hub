@@ -234,7 +234,8 @@ public class FlowManager extends ResourceManager {
             Mlcp mlcp = new Mlcp(config.getHost(), config.getStagingPort(), config.getAdminUsername(), config.getAdminPassword());
             SourceOptions sourceOptions = new SourceOptions(
                     flow.getEntityName(), flow.getName(),
-                    FlowType.INPUT.toString());
+                    FlowType.INPUT.toString(),
+                    flow.getDataFormat().toString());
             mlcp.addSourceDirectory(config.getModulesPath(), sourceOptions);
             mlcp.loadContent();
         }

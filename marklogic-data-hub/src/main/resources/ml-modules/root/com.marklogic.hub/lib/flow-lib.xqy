@@ -239,7 +239,10 @@ declare %private function flow:get-flow(
   $flow-type as xs:string?,
   $uris as xs:string*) as element(hub:flow)
 {
-  let $_ := xdmp:log(("entity: " || $entity-name, "flow: " || $flow-name, "flow-type: " || $flow-type, "uris:", $uris))
+  let $_ :=
+    if (debug:on()) then
+      debug:log(("entity: " || $entity-name, "flow: " || $flow-name, "flow-type: " || $flow-type, "uris:", $uris))
+    else ()
   let $real-flow-type := fn:replace($uris[1], $ENTITIES-DIR || $entity-name || "/([^/]+)/" || $flow-name || ".*$", "$1")
   let $map := map:map()
   let $_ :=
@@ -576,7 +579,12 @@ declare function flow:run-writer(
 {
   let $module-uri as xs:string := $writer/@module
   let $module-name := hul:get-module-name($module-uri)
-  let $ns := $PLUGIN-NS || fn:lower-case($module-name)
+  let $filename as xs:string := hul:get-file-from-uri($module-uri)
+  let $type := flow:get-type($filename)
+  let $ns :=
+    if ($type eq $TYPE-JAVASCRIPT) then ()
+    else
+      $PLUGIN-NS || fn:lower-case($module-name)
   let $func := xdmp:function(fn:QName($ns, "write"), $module-uri)
   return
     $func($identifier, $envelope, $options)

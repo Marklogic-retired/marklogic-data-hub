@@ -23,6 +23,8 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.marklogic.client.io.Format;
+
 public class Mlcp {
     private static final Logger LOGGER = LoggerFactory.getLogger(Mlcp.class);
 
@@ -73,6 +75,7 @@ public class Mlcp {
                 List<String> sourceArguments = source.getMlcpArguments();
                 arguments.addAll(sourceArguments);
 
+                LOGGER.info(arguments.toString());
                 DataHubContentPump contentPump = new DataHubContentPump(arguments);
                 contentPump.execute();
             } catch (IOException e) {
@@ -107,6 +110,9 @@ public class Mlcp {
             String canonicalPath = file.getCanonicalPath();
 
             List<String> arguments = new ArrayList<>();
+            arguments.add("-generate_uri");
+            arguments.add("true");
+
             arguments.add("-input_file_path");
             arguments.add(canonicalPath);
             arguments.add("-input_file_type");
@@ -137,6 +143,9 @@ public class Mlcp {
             arguments.add("-output_uri_replace");
             arguments.add("\"" + uriReplace + "\"");
 
+            arguments.add("-document_type");
+            arguments.add(sourceOptions.getDataFormat());
+
             arguments.add("-transform_module");
             arguments.add("/com.marklogic.hub/mlcp-flow-transform.xqy");
             arguments.add("-transform_namespace");
@@ -165,15 +174,23 @@ public class Mlcp {
         private String entityName;
         private String flowName;
         private String flowType;
+        private String dataFormat = "json";
         private String inputFileType;
         private String inputFilePattern;
         private String collection;
         private boolean inputCompressed = false;
 
-        public SourceOptions(String entityName, String flowName, String flowType) {
+        public SourceOptions(String entityName, String flowName, String flowType, String dataFormat) {
             this.entityName = entityName;
             this.flowName = flowName;
             this.flowType = flowType;
+
+            if (dataFormat.equals(Format.XML)) {
+                this.dataFormat = "xml";
+            }
+            else if (dataFormat.equals(Format.JSON)) {
+                this.dataFormat = "json";
+            }
         }
 
         public String getEntityName() {
@@ -186,6 +203,10 @@ public class Mlcp {
 
         public String getFlowType() {
             return flowType;
+        }
+
+        public String getDataFormat() {
+            return dataFormat;
         }
 
         public String getInputFileType() {

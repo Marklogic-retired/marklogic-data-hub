@@ -37,7 +37,7 @@ import com.marklogic.hub.flow.SimpleFlow;
 public class Scaffolding {
 
     static final private Logger LOGGER = LoggerFactory.getLogger(Scaffolding.class);
-    
+
     public static File getEntityDir(File userlandDir, String entityName) {
         File entitiesDir = new File(userlandDir, "entities");
         File entityDir = new File(entitiesDir, entityName);
@@ -68,6 +68,11 @@ public class Scaffolding {
             collectorDir.mkdirs();
             writeFile("scaffolding/" + flowType + "/" + pluginFormat + "/collector." + pluginFormat,
                     Paths.get(collectorDir.getPath(), "collector." + pluginFormat));
+
+            File writerDir = new File(flowDir, "writer");
+            writerDir.mkdirs();
+            writeFile("scaffolding/" + flowType + "/" + pluginFormat + "/writer." + pluginFormat,
+                    Paths.get(writerDir.getPath(), "writer." + pluginFormat));
         }
 
         File contentDir = new File(flowDir, "content");
@@ -101,7 +106,7 @@ public class Scaffolding {
                 .getResourceAsStream(srcFile);
         Files.copy(inputStream, dstFile);
     }
-    
+
     public static void createRestExtension(String entityName, String extensionName,
             FlowType flowType, PluginFormat pluginFormat, File userlandDir) throws IOException {
         LOGGER.info(extensionName);
@@ -111,7 +116,7 @@ public class Scaffolding {
         writeToFile(fileContent, dstFile);
         writeMetadataForFile(dstFile, scaffoldRestServicesPath + "metadata/template.xml", extensionName);
     }
-    
+
     public static void createRestTransform(String entityName, String transformName,
             FlowType flowType, PluginFormat pluginFormat, File userlandDir) throws IOException {
         LOGGER.info(transformName);
@@ -121,7 +126,7 @@ public class Scaffolding {
         writeToFile(fileContent, dstFile);
         writeMetadataForFile(dstFile, scaffoldRestTransformsPath + "metadata/template.xml", transformName);
     }
-    
+
     private static void writeToFile(String fileContent, File dstFile)
             throws IOException {
         LOGGER.info(fileContent);
@@ -131,19 +136,19 @@ public class Scaffolding {
         bw.write(fileContent);
         bw.close();
     }
-    
+
     private static File createEmptyRestExtensionFile(String entityName, String extensionName,
             FlowType flowType, PluginFormat pluginFormat, File userlandDir) throws IOException {
         File restDir = getRestDirectory(userlandDir, entityName, flowType);
         return createEmptyFile(restDir, "services", extensionName + "." + pluginFormat);
     }
-    
+
     private static File createEmptyRestTransformFile(String entityName, String transformName,
             FlowType flowType, PluginFormat pluginFormat, File userlandDir) throws IOException {
         File restDir = getRestDirectory(userlandDir, entityName, flowType);
         return createEmptyFile(restDir, "transforms", transformName + "." + pluginFormat);
     }
-    
+
     private static File createEmptyFile(File directory, String subDirectoryName, String fileName) throws IOException {
         File fileDirectory = directory;
         if(subDirectoryName!=null) {
@@ -154,19 +159,19 @@ public class Scaffolding {
         file.createNewFile();
         return file;
     }
-    
-    private static File getRestDirectory(File userlandDir, String entityName, 
+
+    private static File getRestDirectory(File userlandDir, String entityName,
             FlowType flowType) {
         return getFlowDir(userlandDir, entityName,
                 "REST", flowType);
     }
-    
+
     private static void writeMetadataForFile(File file, String metadataTemplatePath, String metadataName) throws IOException {
         String fileContent = getFileContent(metadataTemplatePath, metadataName);
         File metadataFile = createEmptyMetadataForFile(file, metadataName);
         writeToFile(fileContent, metadataFile);
     }
-    
+
     private static File createEmptyMetadataForFile(File file, String metadataName) throws IOException {
         File metadataDir = new File(file.getParentFile(), "metadata");
         metadataDir.mkdir();
