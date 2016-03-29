@@ -1,7 +1,10 @@
 <div id="header" class="container-fluid">
   <div class="row">
     <div class="col-xs-6 col-sm-6 col-md-6 logo">
-      <img id="img_logo" src="images/logo.svg">
+      <div class="row">
+         <div class="col-xs-11 col-sm-11 col-md-11"><img id="img_logo" src="images/logo.svg" align="left"></div>
+         <div class="col-xs-1 col-sm-1 col-md-1"><i class="fa fa-question-circle" ng-click="showApiDoc()"></i></div>
+      </div>
     </div>
     <div id="sitemenu" class="col-xs-6 col-sm-6 col-md-6 dropdown" ng-if="status != null">
       <button type="submit" name="installUserModules" class="btn btn-primary" ng-if="status.installed" ng-click="installUserModules()" ng-disabled="action.type != null">Deploy to server</button>

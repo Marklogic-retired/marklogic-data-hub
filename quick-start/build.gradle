@@ -33,6 +33,8 @@ dependencies {
     compile('org.springframework.boot:spring-boot-starter')
     compile('org.springframework.boot:spring-boot-starter-web')
     compile project(':marklogic-data-hub')
+    compile('io.springfox:springfox-swagger2:2.4.0')
+    compile('org.webjars.bower:angular-swagger-ui:0.3.1')
     providedRuntime('org.springframework.boot:spring-boot-starter-tomcat')
     testCompile('junit:junit')
 }

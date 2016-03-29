@@ -48,6 +48,11 @@
             scope.action.type = null;
           });
         };
+        
+        scope.showApiDoc = function() {
+        	DataHub.showApiDoc();
+        };
+        
       }
     };
   }
