@@ -6,14 +6,7 @@
  * @return - an array of ids or uris
  */
 function collect(options) {
-  var y = [];
-  for (var x of fn.collection('hr-csv-dumps')) {
-    var empid = x.root.content.emp_id;
-    if (empid) {
-      y.push(empid);
-    }
-  }
-  return fn.distinctValues(xdmp.arrayValues(y));
+  return cts.uris(null, null, cts.collectionQuery('hr-json-dumps'));
 }
 
 module.exports = {

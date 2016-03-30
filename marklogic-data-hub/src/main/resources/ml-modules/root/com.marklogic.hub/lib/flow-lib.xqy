@@ -616,12 +616,26 @@ declare function flow:validate-entities()
       let $collector := $flow/hub:collector
       return
         if ($collector) then
-          try {
-            flow:run-collector($collector/@module, $options)
-          }
-          catch($ex) {
-            json:array-push($errors, flow:make-error-json($ex))
-          }
+          let $module-uri := $collector/@module
+          let $module-name := hul:get-module-name($module-uri)
+          let $filename as xs:string := hul:get-file-from-uri($module-uri)
+          let $type := flow:get-type($filename)
+          let $ns :=
+            if ($type eq $TYPE-JAVASCRIPT) then ()
+            else
+              $PLUGIN-NS || fn:lower-case($module-name)
+          return
+            if ($type eq $flow:TYPE-XQUERY) then
+              xdmp:eval(
+                'import module namespace x = "' || $ns || '" at "' || $module-uri || '"; ' ||
+                '()',
+                map:new(map:entry("staticCheck", fn:true()))
+              )
+            else
+              xdmp:javascript-eval(
+                'var x = require("' || $module-uri || '");',
+                map:new(map:entry("staticCheck", fn:true()))
+              )
         else ()
     (: validate plugins :)
     let $_ :=

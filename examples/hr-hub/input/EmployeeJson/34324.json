@@ -1,0 +1,17 @@
+{
+  "id": "34324",
+  "firstName": "Robert",
+  "lastName": "Smith",
+  "dateOfBirth": "01/01/1981",
+  "hireDate": "09/01/2014",
+  "salaryHistory": [
+    {
+      "effectiveDate": "09/01/2014",
+      "salary": 59832
+    },
+    {
+      "effectiveDate": "09/14/2015",
+      "salary": 60832
+    }
+  ]
+}
