@@ -194,11 +194,11 @@
       $rootScope.notificationBar.message = message;
       $rootScope.notificationBar.show = true;
     }
-    
+
     function showApiDoc() {
-    	$window.open('#/api-doc', '_blank');
+      $window.open('#/api-doc', '_blank');
     }
-    
+
   }
 
   function TaskManagerService($http, $q, $route) {

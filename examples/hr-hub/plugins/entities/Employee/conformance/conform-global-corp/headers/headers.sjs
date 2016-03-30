@@ -1,5 +1,5 @@
 /*
- * Create Headers Plugin
+ * Create Headers Plugin for Global Corp data
  *
  * @param id       - the identifier returned by the collector
  * @param content  - your final content
