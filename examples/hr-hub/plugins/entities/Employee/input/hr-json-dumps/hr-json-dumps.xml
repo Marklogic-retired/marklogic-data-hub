@@ -1,1 +1,0 @@
-<?xml version="1.0" ?><flow xmlns="http://marklogic.com/data-hub"><name>hr-json-dumps</name><entity>Employee</entity><type>input</type><complexity>simple</complexity><data-format>application/json</data-format><plugins></plugins></flow>

@@ -1,1 +1,0 @@
-<?xml version="1.0" ?><flow xmlns="http://marklogic.com/data-hub"><name>create-employees</name><entity>Employee</entity><type>conformance</type><complexity>simple</complexity><data-format>application/json</data-format><plugins></plugins></flow>

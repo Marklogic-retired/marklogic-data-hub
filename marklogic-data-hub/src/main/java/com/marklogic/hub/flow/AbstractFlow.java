@@ -37,11 +37,12 @@ import com.marklogic.hub.plugin.ContentPlugin;
 import com.marklogic.hub.plugin.HeadersPlugin;
 import com.marklogic.hub.plugin.Plugin;
 import com.marklogic.hub.plugin.PluginType;
-import com.marklogic.hub.plugin.TriplesPlugin;
 import com.marklogic.hub.plugin.ServerPlugin;
+import com.marklogic.hub.plugin.TriplesPlugin;
 import com.marklogic.hub.writer.DefaultWriter;
 import com.marklogic.hub.writer.ServerWriter;
 import com.marklogic.hub.writer.Writer;
+import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
 
 /**
  * An abstract base class representing a Flow. A flow is a sequence of plugins that transform
@@ -240,12 +241,12 @@ public abstract class AbstractFlow implements Flow {
         return this.envelopeEnabled;
     }
 
-    protected XMLStreamWriter makeXMLSerializer(OutputStream out) {
+    protected IndentingXMLStreamWriter makeXMLSerializer(OutputStream out) {
         XMLOutputFactory factory = XMLOutputFactory.newInstance();
         factory.setProperty(XMLOutputFactory.IS_REPAIRING_NAMESPACES, true);
 
         try {
-            XMLStreamWriter serializer = factory.createXMLStreamWriter(out, "UTF-8");
+            IndentingXMLStreamWriter serializer = new IndentingXMLStreamWriter(factory.createXMLStreamWriter(out, "UTF-8"));
             serializer.setDefaultNamespace("http://marklogic.com/data-hub");
             return serializer;
         } catch (Exception e) {
@@ -264,18 +265,8 @@ public abstract class AbstractFlow implements Flow {
             serializer.writeStartDocument();
             serializer.writeStartElement("flow");
 
-            serializer.writeStartElement("name");
-            serializer.writeCharacters(this.flowName);
-            serializer.writeEndElement();
-
-            serializer.writeStartElement("entity");
-            serializer.writeCharacters(this.entityName);
-            serializer.writeEndElement();
-
-            serializer.writeStartElement("type");
-            serializer.writeCharacters(this.type.toString());
-            serializer.writeEndElement();
-
+            // only save the essential information that can't be gleaned from
+            // the directory tree.
             serializer.writeStartElement("complexity");
             serializer.writeCharacters(this.flowComplexity.toString());
             serializer.writeEndElement();
