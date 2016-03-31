@@ -5,6 +5,8 @@ lead_text: ''
 permalink: /how/
 ---
 
+The MarkLogic Data Hub is organized into Entities, Flow, and Plugins.
+
 ![Hub Internals](https://raw.githubusercontent.com/marklogic/marklogic-data-hub/design/images/hub-internals-gray.png)
 
 ## Envelope Pattern
@@ -117,8 +119,8 @@ With the envelope you can normalize the fields into a preferred format:
 
 Now searching your data become much easier.
 
-## Business Entities
-The MarkLogic Data Hub groups your data into Business Entities. These are groupings of data that serve a common business function. An example may be Employees or Customers or SalesLeads.
+## Entities
+The MarkLogic Data Hub groups your data into Entities. These Entities are logical groupings of data that serve a common business function. An example may be Employees or Customers or SalesLeads.
 
 ## Ingest
 During the Ingest phase data is loaded into MarkLogic's staging area. This data can be fed through Flows to create Enveloped versions of the data.
@@ -135,5 +137,5 @@ With each Business Entity you can define multiple Input and Conformance Flows. A
 
 Conformance Flows require two additional plugins:
 
-- **Collector plugin.** The collector plugin returns a list of documents that will be batch processed by the conformance flow.
-- **Writer plugin.** The writer plugin is responsible for saving the final envelope to disk.
+- **Collector plugin.** The collector plugin returns a list of strings that will be batch processed by the conformance flow. These strings can be anything from document URIs in the database to IDs. Collectors are only used for Conformnace Flows. Conformance Flows run as batches and need a list of things to operate on. Input Flows run per document and do not need Collectors.
+- **Writer plugin.** The writer plugin is responsible for saving the final envelope to disk. \*The writer plugin is not present for the Input flow because the caller is responsible for writing. Typically the caller is [MarkLogic Content Pump](https://docs.marklogic.com/guide/mlcp){:target="_blank"} or the [MarkLogic REST API](http://docs.marklogic.com/REST/client){:target="_blank"}

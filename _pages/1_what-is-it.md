@@ -9,7 +9,7 @@ permalink: /
 <div class="section" markdown="1">
 
 ### Ingest
-First thing is first. Load all of your data into MarkLogic... every last bit. Upon ingest, data is stored in a staging area. Data can be loaded via:
+First thing is first. Load all of your data into MarkLogic... every last bit. Upon ingest, data is stored in a staging area. During the ingest phase you can enhance your data with extra metadata like provenance. Where did this data come from and when did it get ingested? Data can be loaded via:
 
 - [MarkLogic Content Pump](https://docs.marklogic.com/guide/mlcp){:target="_blank"} - a Java command-line utility for ingesting content into MarkLogic.
 - [MarkLogic Java Client API](https://github.com/marklogic/java-client-api){:target="_blank"} - A Java API for interacting with MarkLogic

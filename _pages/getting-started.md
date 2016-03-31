@@ -10,7 +10,7 @@ permalink: /getting-started/
 QuickStart is a simple User Interface that you can run locally to start working with the Data Hub quickly. With QuickStart you will have a working hub in a matter of minutes. No need to worry about deployment strategies or configuration details. Simply run the jar and point it at your MarkLogic installation.
 
 <div class="jumbotron" markdown="1">
-**\*QuickStart is not meant for production applications. We assume that you are running QuickStart on your local host.**
+**\*The MarkLogic Data Hub is production grade. However, this tutorial is meant to get you started quickly. As such we assume that you are running QuickStart on your local host.**
 </div>
 
 ## QuickStart Architecture
