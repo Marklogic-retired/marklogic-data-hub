@@ -23,7 +23,7 @@
             $location.path('/login');
           });
         };
-        
+
         scope.uninstall = function (ev) {
           var confirm = $mdDialog.confirm().title('Confirm Uninstall')
             .textContent('Do you really want to continue uninstalling data hub?')
@@ -48,11 +48,11 @@
             scope.action.type = null;
           });
         };
-        
+
         scope.showApiDoc = function() {
           DataHub.showApiDoc();
         };
-        
+
       }
     };
   }

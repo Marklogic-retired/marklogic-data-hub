@@ -212,7 +212,9 @@ public class FlowApiController extends BaseController {
 
                     SourceOptions sourceOptions = new SourceOptions(
                             runFlow.getEntityName(), runFlow.getFlowName(),
-                            FlowType.INPUT.toString());
+                            FlowType.INPUT.toString(),
+                            runFlow.getDataFormat());
+
                     sourceOptions.setInputFileType(runFlow.getDataFormat());
                     sourceOptions.setCollection(runFlow.getCollection());
                     sourceOptions.setInputCompressed(runFlow.getInputCompressed());

@@ -29,7 +29,7 @@ repositories {
 dependencies {
     compile gradleApi()
     compile 'com.marklogic:marklogic-data-hub:+'
-    compile 'com.marklogic:marklogic-xcc:8.0.4.2'
+    compile 'com.marklogic:marklogic-xcc:8.0.5'
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {

@@ -1,0 +1,17 @@
+{
+  "id": "32920",
+  "firstName": "Rosanne",
+  "lastName": "Henckle",
+  "dateOfBirth": "05/19/1979",
+  "hireDate": "11/12/2015",
+  "salaryHistory": [
+    {
+      "effectiveDate": "11/12/2015",
+      "salary": 63439
+    },
+    {
+      "effectiveDate": "01/14/2016",
+      "salary": 66300
+    }
+  ]
+}

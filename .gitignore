@@ -9,7 +9,7 @@ releases/
 .classpath
 .project
 gradle-local.properties
-/quick-start/environment.properties
-/quick-start/assetInstallTime.properties
+environment.properties
+assetInstallTime.properties
 /quick-start/input
 /quick-start/plugins

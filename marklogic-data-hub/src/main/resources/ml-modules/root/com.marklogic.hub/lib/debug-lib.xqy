@@ -26,7 +26,12 @@ declare option xdmp:mapping "false";
  :)
 declare function debug:on() as xs:boolean
 {
-  fn:true()
+  fn:not(
+    fn:empty((
+      xdmp:get-server-field("DEBUG", ()),
+      fn:doc('/debug')/*:debug
+    )[1])
+  )
 };
 
 (:~
