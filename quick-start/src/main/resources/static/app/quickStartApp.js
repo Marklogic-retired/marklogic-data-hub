@@ -102,8 +102,8 @@
       //do nothing
     })
     .when('/api-doc', {
-    	templateUrl: 'doc/apiDoc.html',
-    	controller: 'apiDocController'
+      templateUrl: 'doc/apiDoc.html',
+      controller: 'apiDocController'
     })
     .otherwise({
       redirectTo: '/login'
