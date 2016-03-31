@@ -30,7 +30,7 @@ The tweets are zipped into a .zip file in the input/ folder.
 
 1. Load the tweets by pressing the **Load Data** button next to ingest-tweets. When prompted, choose the input folder. Set the collection to **tweets**. Set the Data Format to **Documents**. Check the **Input Files are Compressed** checkbox. Now Press **Submit**.
 
-1. At this point you have loaded the sample tweets. You can browse the data via [QConsole](http://localhost:8000/qconsole) or by searching the REST endpoint on the Staging Http Server [http://localhost:8010/v1/search](http://localhost:8010/v1/search). *Your port may be different if you changed it during setup*
+1. At this point you have loaded the sample tweets. You can browse the data via [QConsole](http://localhost:8000/qconsole) in the data-hub-STAGING database or by searching the REST endpoint on the Staging Http Server [http://localhost:8010/v1/search](http://localhost:8010/v1/search). *Your port may be different if you changed it during setup*
 
 1. To run the conformance flow simply press the **Run** button next to the "conform-tweets" flow.
 
