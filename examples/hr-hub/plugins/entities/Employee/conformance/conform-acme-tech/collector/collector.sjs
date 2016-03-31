@@ -6,7 +6,8 @@
  * @return - an array of ids or uris
  */
 function collect(options) {
-  return cts.uris(null, null, cts.collectionQuery('hr-json-dumps'));
+  // return all URIs for the 'load-acme-tech' collection
+  return cts.uris(null, null, cts.collectionQuery('load-acme-tech'));
 }
 
 module.exports = {
