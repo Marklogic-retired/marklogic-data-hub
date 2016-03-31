@@ -52,7 +52,7 @@ public class DataHubContentPump extends ContentPump {
             // run mlcp
             expandedArgs = OptionsFileUtil.expandArguments(arguments);
             runCommand(expandedArgs);
-        } catch (Exception ex) {
+        } catch (Throwable ex) {
             LOG.error("Error while expanding arguments", ex);
             System.err.println(ex.getMessage());
             System.err.println("Try 'mlcp help' for usage.");
