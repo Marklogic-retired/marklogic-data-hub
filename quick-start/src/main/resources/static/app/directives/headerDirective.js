@@ -50,7 +50,7 @@
         };
         
         scope.showApiDoc = function() {
-        	DataHub.showApiDoc();
+          DataHub.showApiDoc();
         };
         
       }
