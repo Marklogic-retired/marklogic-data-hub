@@ -196,7 +196,7 @@
     }
     
     function showApiDoc() {
-    	$window.open('#/api-doc', '_blank');
+      $window.open('#/api-doc', '_blank');
     }
     
   }
