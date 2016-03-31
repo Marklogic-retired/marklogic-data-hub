@@ -30,7 +30,7 @@ dependencies {
         exclude module : 'servlet-api'
         exclude group: 'com.google.guava', module: 'guava'
     }
-    compile 'com.google.guava:guava:11.0.2'
+    compile 'com.google.guava:guava:19.0'
     testCompile 'org.springframework.batch:spring-batch-test:3.0.6.RELEASE'
     testCompile 'junit:junit:4.12'
     testCompile 'xmlunit:xmlunit:1.3'

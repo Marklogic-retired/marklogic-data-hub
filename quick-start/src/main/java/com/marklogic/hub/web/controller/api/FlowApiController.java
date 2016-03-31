@@ -190,6 +190,9 @@ public class FlowApiController extends BaseController {
 
     @RequestMapping(value="/run/input", method = RequestMethod.POST)
     public BigInteger runInputFlow(@RequestBody RunFlowModel runFlow) {
+        
+        saveInputPath(runFlow);
+        
         CancellableTask task = new CancellableTask() {
 
             @Override
@@ -229,6 +232,23 @@ public class FlowApiController extends BaseController {
             }
         };
         return taskManagerService.addTask(task);
+    }
+    
+    @RequestMapping(value = "/input-path", method = RequestMethod.GET, produces = { MediaType.TEXT_PLAIN_VALUE })
+    @ResponseBody
+    public String getPreviousInputPath(HttpServletRequest request) {
+        String entityName = request.getParameter("entityName");
+        String flowName = request.getParameter("flowName");
+        return getPreviousInputPath(entityName,flowName);
+    }
+    
+    private String getPreviousInputPath(String entityName, String flowName) {
+        String value = environmentConfiguration.getFlowInputPath(entityName, flowName);
+        return value == null ? "." : value;
+    }
+
+    private void saveInputPath(RunFlowModel runFlow) {
+        environmentConfiguration.saveOrUpdateFlowInputPath(runFlow.getEntityName(), runFlow.getFlowName(), runFlow.getInputPath());
     }
 
     @RequestMapping(value = "/runInParallel", method = RequestMethod.POST)

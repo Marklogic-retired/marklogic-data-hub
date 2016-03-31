@@ -30,7 +30,8 @@
       saveFlow: saveFlow,
       displayMessage: displayMessage,
       searchPath: searchPath,
-      showApiDoc: showApiDoc
+      showApiDoc: showApiDoc,
+      getPreviousInputPath : getPreviousInputPath
     });
 
     function login(loginForm) {
@@ -197,6 +198,16 @@
 
     function showApiDoc() {
       $window.open('#/api-doc', '_blank');
+    }
+
+    function getPreviousInputPath(entityName, flowName) {
+      var params = {
+        entityName: entityName,
+        flowName: flowName
+      };
+      return $http.get('api/flows/input-path', {
+        'params': params
+      });
     }
 
   }

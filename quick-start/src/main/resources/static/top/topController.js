@@ -54,7 +54,8 @@
     };
 
     $scope.runInputFlow = function(flow) {
-      ModalService.openLoadDataModal().then(function (result) {
+      ModalService.openLoadDataModal(flow.entityName, flow.flowName)
+      .then(function (result) {
         $scope.loading = true;
         flow.inputFlowCancelled = false;
 

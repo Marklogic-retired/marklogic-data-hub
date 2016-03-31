@@ -108,8 +108,11 @@ public class Scaffolding {
     }
 
     public static void createRestExtension(String entityName, String extensionName,
-            FlowType flowType, PluginFormat pluginFormat, File userlandDir) throws IOException {
+            FlowType flowType, PluginFormat pluginFormat, File userlandDir) throws IOException, ScaffoldingValidationException {
         LOGGER.info(extensionName);
+        if(!ScaffoldingValidator.isUniqueRestServiceExtension(userlandDir, extensionName)) {
+            throw new ScaffoldingValidationException("A rest service extension with the same name as " + extensionName + " already exists.");
+        }
         String scaffoldRestServicesPath = "scaffolding/rest/services/";
         String fileContent = getFileContent(scaffoldRestServicesPath + pluginFormat + "/template." + pluginFormat, extensionName);
         File dstFile = createEmptyRestExtensionFile(entityName, extensionName, flowType, pluginFormat, userlandDir);
@@ -118,8 +121,11 @@ public class Scaffolding {
     }
 
     public static void createRestTransform(String entityName, String transformName,
-            FlowType flowType, PluginFormat pluginFormat, File userlandDir) throws IOException {
+            FlowType flowType, PluginFormat pluginFormat, File userlandDir) throws IOException, ScaffoldingValidationException {
         LOGGER.info(transformName);
+        if(!ScaffoldingValidator.isUniqueRestTransform(userlandDir, transformName)) {
+            throw new ScaffoldingValidationException("A rest transform with the same name as " + transformName + " already exists.");
+        }
         String scaffoldRestTransformsPath = "scaffolding/rest/transforms/";
         String fileContent = getFileContent(scaffoldRestTransformsPath + pluginFormat + "/template." + pluginFormat, transformName);
         File dstFile = createEmptyRestTransformFile(entityName, transformName, flowType, pluginFormat, userlandDir);
@@ -208,5 +214,14 @@ public class Scaffolding {
             }
         }
         return output.toString();
+    }
+    
+    public static String getAbsolutePath(String first, String... more) {
+        StringBuilder absolutePath = new StringBuilder(first);
+        for (String path : more) {
+            absolutePath.append(File.separator);
+            absolutePath.append(path);
+        }
+        return absolutePath.toString();
     }
 }

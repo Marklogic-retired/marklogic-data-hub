@@ -113,7 +113,7 @@ public class DataHubServerApiController extends BaseController {
         LoginForm loginForm = (LoginForm) session.getAttribute("loginForm");
         if (loginForm == null) {
             loginForm = new LoginForm();
-            this.environmentConfiguration.loadConfigurationFromFile();
+            this.environmentConfiguration.loadConfigurationFromFiles();
             this.retrieveEnvironmentConfiguration(loginForm);
             session.setAttribute("loginForm", loginForm);
         } else if (loginForm.isInstalled()) {

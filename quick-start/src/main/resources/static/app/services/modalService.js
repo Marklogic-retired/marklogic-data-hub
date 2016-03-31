@@ -17,14 +17,22 @@
       openFlowModal: openFlowModal
     });
 
-    function openLoadDataModal() {
+    function openLoadDataModal(entityName, flowName) {
       var modalInstance = $uibModal.open({
         animation: true,
         templateUrl: 'top/modal/loadDataModal.html',
         controller: 'loadDataModalController',
         size: 'sm',
         backdrop: 'static',
-        keyboard: true
+        keyboard: true,
+        resolve: {
+          'entityName': function() {
+            return entityName;
+          },
+          'flowName': function() {
+            return flowName;
+          }
+        }
       });
 
       return modalInstance.result;
@@ -68,12 +76,14 @@
     }
   }
 
-  function LoadDataModalController($scope, $uibModalInstance, DataHub) {
+  function LoadDataModalController($scope, $uibModalInstance, DataHub, entityName, flowName) {
     $scope.loadDataForm = {
       inputPath: '.',
       dataFormat: 'documents',
       inputCompressed: false,
-      collection: null
+      collection: null,
+      entityName: entityName,
+      flowName: flowName
     };
 
     $scope.ok = function() {
@@ -125,10 +135,23 @@
         }
       });
     };
-
+    
     $scope.dataForTheTree = [];
+    
+    $scope.loadPreviousInputPath = function(entityName, flowName) {
+      DataHub.getPreviousInputPath(entityName, flowName)
+        .success(function(inputPath) {
+          $scope.loadDataForm.inputPath = inputPath;
+          $scope.searchPath($scope.loadDataForm.inputPath);
+        })
+        .error(function(error) {
+          $scope.hasError = true;
+          $scope.errorMessage = error.message;
+        });
+    };
+
     //initialize root
-    $scope.searchPath($scope.loadDataForm.inputPath);
+    $scope.loadPreviousInputPath($scope.loadDataForm.entityName, $scope.loadDataForm.flowName);
   }
 
   function EntityModalController($scope, $uibModalInstance, DataHub) {
