@@ -1,5 +1,30 @@
 # Change Log
 
+## [v1.0.0-beta.1](https://github.com/marklogic/marklogic-data-hub/tree/v1.0.0-beta.1) (2016-04-01)
+[Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v1.0.0-alpha.4...v1.0.0-beta.1)
+
+**Closed issues:**
+
+- JsHint Error on Build [\#170](https://github.com/marklogic/marklogic-data-hub/issues/170)
+- Better error handling when session has expired [\#166](https://github.com/marklogic/marklogic-data-hub/issues/166)
+- Identifier ending up in json files [\#159](https://github.com/marklogic/marklogic-data-hub/issues/159)
+- conform content plugins don't work on json [\#158](https://github.com/marklogic/marklogic-data-hub/issues/158)
+- Automatically assign a collection to docs based on flow and entity names [\#142](https://github.com/marklogic/marklogic-data-hub/issues/142)
+- Remember latest load data parameter per flow [\#130](https://github.com/marklogic/marklogic-data-hub/issues/130)
+- Docs overhaul [\#103](https://github.com/marklogic/marklogic-data-hub/issues/103)
+- Add REST scaffolding [\#102](https://github.com/marklogic/marklogic-data-hub/issues/102)
+- Change detection should pick up REST changes [\#101](https://github.com/marklogic/marklogic-data-hub/issues/101)
+
+**Merged pull requests:**
+
+- 130 - Remember the last input path per flow [\#172](https://github.com/marklogic/marklogic-data-hub/pull/172) ([maeisabelle](https://github.com/maeisabelle))
+- Cleanup - Fix Jshint errors [\#171](https://github.com/marklogic/marklogic-data-hub/pull/171) ([maeisabelle](https://github.com/maeisabelle))
+- set server.session.timeout=0 to make session last forever. [\#169](https://github.com/marklogic/marklogic-data-hub/pull/169) ([divino](https://github.com/divino))
+- Add hr hub [\#167](https://github.com/marklogic/marklogic-data-hub/pull/167) ([paxtonhare](https://github.com/paxtonhare))
+- 143 - Added validation for duplicate REST service extensions and transforms. [\#163](https://github.com/marklogic/marklogic-data-hub/pull/163) ([maeisabelle](https://github.com/maeisabelle))
+- fixed \#158 [\#161](https://github.com/marklogic/marklogic-data-hub/pull/161) ([paxtonhare](https://github.com/paxtonhare))
+- 75 - Swagger UI to browse the Hub APIs [\#160](https://github.com/marklogic/marklogic-data-hub/pull/160) ([maeisabelle](https://github.com/maeisabelle))
+
 ## [v1.0.0-alpha.4](https://github.com/marklogic/marklogic-data-hub/tree/v1.0.0-alpha.4) (2016-03-25)
 [Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v1.0.0-alpha.3...v1.0.0-alpha.4)
 
