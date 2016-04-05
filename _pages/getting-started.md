@@ -124,7 +124,7 @@ Because we are dealing with two separate data sources we will put the logic for 
 
 Use your favorite text editor to open the data-hub/plugins/entities/Employee/conformance/conform-global-corp/headers/headers.sjs file. Replace its contents with this:
 
-<script src="http://gist-it.appspot.com/https://github.com/paxtonhare/marklogic-data-hub/blob/add_hr_hub/examples/hr-hub/plugins/entities/Employee/conformance/conform-global-corp/headers/headers.sjs"></script>
+<script src="http://gist-it.appspot.com/https://github.com/marklogic/marklogic-data-hub/blob/add_hr_hub/examples/hr-hub/plugins/entities/Employee/conformance/conform-global-corp/headers/headers.sjs"></script>
 
 ### Global Corp Collector
 
@@ -132,13 +132,13 @@ The collector is a plugin that provides a list of items to the Conformance flow 
 
 Use your favorite text editor to open the data-hub/plugins/entities/Employee/conformance/conform-global-corp/collector/collector.sjs file. Replace its contents with this:
 
-<script src="http://gist-it.appspot.com/https://github.com/paxtonhare/marklogic-data-hub/blob/add_hr_hub/examples/hr-hub/plugins/entities/Employee/conformance/conform-global-corp/collector/collector.sjs"></script>
+<script src="http://gist-it.appspot.com/https://github.com/marklogic/marklogic-data-hub/blob/add_hr_hub/examples/hr-hub/plugins/entities/Employee/conformance/conform-global-corp/collector/collector.sjs"></script>
 
 ### Acme Tech header plugin
 
 Use your favorite text editor to open the data-hub/plugins/entities/Employee/conformance/conform-acme-tech/headers/headers.sjs file. Replace its contents with this:
 
-<script src="http://gist-it.appspot.com/https://github.com/paxtonhare/marklogic-data-hub/blob/add_hr_hub/examples/hr-hub/plugins/entities/Employee/conformance/conform-acme-tech/headers/headers.sjs"></script>
+<script src="http://gist-it.appspot.com/https://github.com/marklogic/marklogic-data-hub/blob/add_hr_hub/examples/hr-hub/plugins/entities/Employee/conformance/conform-acme-tech/headers/headers.sjs"></script>
 
 ### Acme Tech Collector
 
@@ -146,7 +146,7 @@ For Acme Tech we want to return a list of URIs. Since the Acme Tech data came to
 
 Use your favorite text editor to open the data-hub/plugins/entities/Employee/conformance/conform-acme-tech/collector/collector.sjs file. Replace its contents with this:
 
-<script src="http://gist-it.appspot.com/https://github.com/paxtonhare/marklogic-data-hub/blob/add_hr_hub/examples/hr-hub/plugins/entities/Employee/conformance/conform-acme-tech/collector/collector.sjs"></script>
+<script src="http://gist-it.appspot.com/https://github.com/marklogic/marklogic-data-hub/blob/add_hr_hub/examples/hr-hub/plugins/entities/Employee/conformance/conform-acme-tech/collector/collector.sjs"></script>
 
 ## 11 - Conform the data
 
