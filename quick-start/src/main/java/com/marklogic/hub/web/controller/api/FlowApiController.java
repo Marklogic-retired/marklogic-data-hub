@@ -203,6 +203,8 @@ public class FlowApiController extends BaseController {
             @Override
             public void run(BasicFuture<?> resultFuture) {
                 try {
+                	Flow flow = flowManagerService.getFlow(runFlow.getEntityName(), runFlow.getFlowName());
+                	
                     Mlcp mlcp = new Mlcp(
                             environmentConfiguration.getMLHost()
                             ,Integer.parseInt(environmentConfiguration.getMLStagingRestPort())
@@ -213,7 +215,7 @@ public class FlowApiController extends BaseController {
                     SourceOptions sourceOptions = new SourceOptions(
                             runFlow.getEntityName(), runFlow.getFlowName(),
                             FlowType.INPUT.toString(),
-                            runFlow.getDataFormat());
+                            flow.getDataFormat());
 
                     sourceOptions.setInputFileType(runFlow.getDataFormat());
                     sourceOptions.setCollection(runFlow.getCollection());
@@ -223,6 +225,7 @@ public class FlowApiController extends BaseController {
 
                     resultFuture.completed(null);
                 }
+                
                 catch (IOException e) {
                     LOGGER.error("Error encountered while trying to run flow:  "
                             + runFlow.getEntityName() + " > " + runFlow.getFlowName(),
@@ -231,6 +234,7 @@ public class FlowApiController extends BaseController {
                 }
             }
         };
+        
         return taskManagerService.addTask(task);
     }
     

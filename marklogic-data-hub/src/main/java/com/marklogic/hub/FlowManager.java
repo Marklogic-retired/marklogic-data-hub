@@ -235,7 +235,7 @@ public class FlowManager extends ResourceManager {
             SourceOptions sourceOptions = new SourceOptions(
                     flow.getEntityName(), flow.getName(),
                     FlowType.INPUT.toString(),
-                    flow.getDataFormat().toString());
+                    flow.getDataFormat());
             mlcp.addSourceDirectory(config.getModulesPath(), sourceOptions);
             mlcp.loadContent();
         }
