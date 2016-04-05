@@ -89,7 +89,7 @@ public class DataHub {
     private final static int DEFAULT_FINAL_REST_PORT = 8011;
 
     public DataHub(HubConfig config) {
-        this(config.getHost(), config.getAdminUsername(), config.getAdminPassword());
+        this(config.getHost(), config.getStagingPort(), config.getFinalPort(), config.getAdminUsername(), config.getAdminPassword());
     }
 
     public DataHub(String host, String username, String password) {

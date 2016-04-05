@@ -9,6 +9,7 @@ buildscript {
 }
 
 plugins {
+    id 'net.saliman.properties' version '1.4.4'
     id "groovy"
     id "maven-publish"
     id "eclipse"
@@ -64,7 +65,7 @@ bintray {
 
 pluginBundle {
     website = 'http://www.gradle.org/'
-    vcsUrl = 'https://github.com/marklogic/marklogic-data-hub.git'
+    vcsUrl = 'git@github.com:marklogic/marklogic-data-hub.git'
     description = 'ml-data-hub-plugin A gradle plugin for Data Hub tasks'
     tags = ['marklogic']
 
@@ -74,11 +75,6 @@ pluginBundle {
             displayName = 'Gradle tasks for MarkLogic Data Hub'
             description = 'Gradle plugin for configuring and deploying the MarkLogic Data Hub'
             tags = ['marklogic']
-            version = "0.0.9"
         }
-    }
-
-    mavenCoordinates {
-        version = "0.0.9"
     }
 }
