@@ -27,7 +27,7 @@ public interface Flow {
     String getName();
     FlowType getType();
     Format getDataFormat();
-    String serialize();
+    String serialize(boolean full);
 
     Collector getCollector();
     void setCollector(Collector collector);

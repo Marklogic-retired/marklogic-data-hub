@@ -1,6 +1,6 @@
 xquery version "1.0-ml";
 
-module namespace plugin = "http://marklogic.com/data-hub/plugins/default";
+module namespace plugin = "http://marklogic.com/data-hub/plugins";
 
 declare option xdmp:mapping "false";
 
@@ -11,12 +11,12 @@ declare option xdmp:mapping "false";
  : @param $envelope - the final envelope
  : @param $options  - a map containing options. Options are sent from Java
  :
- : @return - zero or more header nodes
+ : @return - nothing
  :)
 declare function plugin:write(
   $id as xs:string,
-  $content as node(),
+  $envelope as node(),
   $options as map:map) as empty-sequence()
 {
-  xdmp:document-insert($id, $content)
+  xdmp:document-insert($id, $envelope)
 };

@@ -17,6 +17,7 @@ import org.xml.sax.SAXException;
 
 import com.marklogic.client.io.DOMHandle;
 import com.marklogic.client.io.Format;
+import com.marklogic.client.io.StringHandle;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.FlowType;
 
@@ -33,6 +34,8 @@ public class EndToEndTestXqyXml extends HubTestBase {
         }
 
         installHub();
+
+        enableDebugging();
 
         Scaffolding.createEntity(ENTITY, pluginsDir);
         Scaffolding.createFlow(ENTITY, "testinput", FlowType.INPUT,

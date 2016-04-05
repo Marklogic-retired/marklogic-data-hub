@@ -1,6 +1,6 @@
 xquery version "1.0-ml";
 
-module namespace plugin = "http://marklogic.com/data-hub/plugins/collector";
+module namespace plugin = "http://marklogic.com/data-hub/plugins";
 
 declare option xdmp:mapping "false";
 

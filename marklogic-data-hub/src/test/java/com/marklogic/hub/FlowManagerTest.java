@@ -138,7 +138,7 @@ public class FlowManagerTest extends HubTestBase {
         flow.setHeaderPlugin(new HeadersPlugin());
         flow.setTriplesPlugin(new TriplesPlugin());
         String expected = getResource("flow-manager-test/simple-flow.xml");
-        String actual = flow.serialize();
+        String actual = flow.serialize(true);
         System.out.println(actual);
         assertXMLEqual(expected, actual);
     }

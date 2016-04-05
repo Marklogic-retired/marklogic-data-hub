@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <flow xmlns="http://marklogic.com/data-hub">
-  <name>my-test-flow1</name>
-  <entity>test</entity>
-  <type>conformance</type>
   <complexity>simple</complexity>
   <data-format>application/xml</data-format>
   <plugins>

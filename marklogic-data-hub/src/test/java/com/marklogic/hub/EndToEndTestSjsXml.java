@@ -34,6 +34,8 @@ public class EndToEndTestSjsXml extends HubTestBase {
 
         installHub();
 
+        enableDebugging();
+
         Scaffolding.createEntity(ENTITY, pluginsDir);
         Scaffolding.createFlow(ENTITY, "testinput", FlowType.INPUT,
                 PluginFormat.JAVASCRIPT, Format.XML, pluginsDir);

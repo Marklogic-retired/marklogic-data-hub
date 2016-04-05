@@ -127,6 +127,10 @@ public class HubTestBase {
 
     }
 
+    protected static void enableDebugging() {
+        stagingDocMgr.write("/debug", new StringHandle("<debug>true</debug>"));
+    }
+
     protected static HubConfig getHubConfig(String pluginDir) {
         HubConfig config = new HubConfig(pluginDir);
         config.setHost(host);

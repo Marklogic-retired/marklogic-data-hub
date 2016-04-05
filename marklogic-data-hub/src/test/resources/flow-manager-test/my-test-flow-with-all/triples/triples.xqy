@@ -1,6 +1,6 @@
 xquery version "1.0-ml";
 
-module namespace plugin = "http://marklogic.com/data-hub/plugins/triples";
+module namespace plugin = "http://marklogic.com/data-hub/plugins";
 
 declare option xdmp:mapping "false";
 
@@ -19,7 +19,6 @@ declare function plugin:create-triples(
   $id as xs:string,
   $content as node()?,
   $headers as node()*,
-  $triples as element()*,
   $options as map:map) as sem:triple*
 {
   sem:triple("this-test", "is", "awesome")

@@ -56,7 +56,7 @@ declare variable $NO-OP-PLUGIN :=
 (: the directory where entities live :)
 declare variable $ENTITIES-DIR := "/entities/";
 
-declare variable $PLUGIN-NS := "http://marklogic.com/data-hub/plugins/";
+declare variable $PLUGIN-NS := "http://marklogic.com/data-hub/plugins";
 
 declare variable $TYPE-XQUERY := "xquery";
 
@@ -67,6 +67,14 @@ declare variable $TYPE-XSLT := "xslt";
 declare variable $TYPE-XML := "xml";
 
 declare variable $TYPE-JSON := "json";
+
+declare %private function flow:get-module-ns(
+  $type as xs:string) as xs:string?
+{
+  if ($type eq $TYPE-JAVASCRIPT) then ()
+  else
+    $PLUGIN-NS
+};
 
 (:
  : Determines the type of flow given a filename
@@ -395,13 +403,9 @@ declare function flow:run-collector(
   $module-uri as xs:string,
   $options as map:map) as xs:string*
 {
-  let $module-name := hul:get-module-name($module-uri)
   let $filename as xs:string := hul:get-file-from-uri($module-uri)
   let $type := flow:get-type($filename)
-  let $ns :=
-    if ($type eq $TYPE-JAVASCRIPT) then ()
-    else
-      $PLUGIN-NS || fn:lower-case($module-name)
+  let $ns := flow:get-module-ns($type)
   let $func := xdmp:function(fn:QName($ns, "collect"), $module-uri)
   return
     $func($options)
@@ -438,6 +442,9 @@ declare function flow:run-plugins(
       else ()
     ))
   let $data-format := $flow/hub:data-format
+  let $_ := xdmp:log($flow)
+  let $flow-type := $flow/hub:type
+  let $flow-complexity := $flow/hub:complexity
   let $_ :=
     for $plugin in $flow/hub:plugins/hub:plugin
     let $destination := $plugin/@dest
@@ -449,6 +456,8 @@ declare function flow:run-plugins(
         map:get($content, "content"),
         map:get($content, "headers"),
         map:get($content, "triple"),
+        $flow-type,
+        $flow-complexity = "simple",
         $options)
     return
       if (fn:empty($destination))
@@ -525,6 +534,8 @@ declare function flow:run-plugin(
   $content as item()?,
   $headers as item()*,
   $triples as sem:triple*,
+  $flow-type as xs:string,
+  $simple as xs:boolean,
   $options as map:map)
 {
   let $module-uri := $plugin/@module
@@ -532,20 +543,30 @@ declare function flow:run-plugin(
     if (fn:empty($module-uri)) then ()
     else
       let $destination := $plugin/@dest
-      let $module-name := hul:get-module-name($module-uri)
       let $filename as xs:string := hul:get-file-from-uri($module-uri)
       let $type := flow:get-type($filename)
-      let $ns :=
-        if ($type eq $TYPE-JAVASCRIPT) then ()
-        else
-          $PLUGIN-NS || fn:lower-case($module-name)
+      let $ns := flow:get-module-ns($type)
       let $func-name :=
         if ($type eq $TYPE-JAVASCRIPT) then
           "create" || functx:capitalize-first($destination)
         else
           "create-" || $destination
       let $func := xdmp:function(fn:QName($ns, $func-name), $module-uri)
-      let $resp := $func($identifier, $content, $headers, $triples, $options)
+      let $resp :=
+        if ($simple) then
+          switch ($destination)
+            case "content" return
+              if ($flow-type = "input") then
+                $func($identifier, $content, $options)
+              else
+                $func($identifier, $options)
+            case "headers" return
+              $func($identifier, $content, $options)
+            case "triples" return
+              $func($identifier, $content, $headers, $options)
+            default return ()
+        else
+          $func($identifier, $content, $headers, $triples, $options)
       return
         typeswitch($resp)
           case document-node() return
@@ -578,13 +599,9 @@ declare function flow:run-writer(
   $options as map:map)
 {
   let $module-uri as xs:string := $writer/@module
-  let $module-name := hul:get-module-name($module-uri)
   let $filename as xs:string := hul:get-file-from-uri($module-uri)
   let $type := flow:get-type($filename)
-  let $ns :=
-    if ($type eq $TYPE-JAVASCRIPT) then ()
-    else
-      $PLUGIN-NS || fn:lower-case($module-name)
+  let $ns := flow:get-module-ns($type)
   let $func := xdmp:function(fn:QName($ns, "write"), $module-uri)
   return
     $func($identifier, $envelope, $options)
@@ -617,13 +634,9 @@ declare function flow:validate-entities()
       return
         if ($collector) then
           let $module-uri := $collector/@module
-          let $module-name := hul:get-module-name($module-uri)
           let $filename as xs:string := hul:get-file-from-uri($module-uri)
           let $type := flow:get-type($filename)
-          let $ns :=
-            if ($type eq $TYPE-JAVASCRIPT) then ()
-            else
-              $PLUGIN-NS || fn:lower-case($module-name)
+          let $ns := flow:get-module-ns($type)
           return
             if ($type eq $flow:TYPE-XQUERY) then
               xdmp:eval(
@@ -642,13 +655,9 @@ declare function flow:validate-entities()
       for $plugin in $flow/hub:plugins/hub:plugin
       let $destination := $plugin/@dest
       let $module-uri := $plugin/@module
-      let $module-name := hul:get-module-name($module-uri)
       let $filename as xs:string := hul:get-file-from-uri($module-uri)
       let $type := flow:get-type($filename)
-      let $ns :=
-        if ($type eq $flow:TYPE-JAVASCRIPT) then ()
-        else
-          $flow:PLUGIN-NS || fn:lower-case($module-name)
+      let $ns := flow:get-module-ns($type)
       let $func-name :=
         if ($type eq $flow:TYPE-JAVASCRIPT) then
           "create" || functx:capitalize-first($destination)
