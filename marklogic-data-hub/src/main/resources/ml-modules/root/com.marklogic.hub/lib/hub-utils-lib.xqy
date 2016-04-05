@@ -90,11 +90,6 @@ declare function hul:get-file-from-uri($uri)
   cvt:basename($uri)
 };
 
-declare function hul:get-module-name($uri as xs:string)
-{
-  fn:replace(hul:get-file-from-uri($uri), "(.+)\.[^\.]+$", "$1")
-};
-
 declare function hul:get-file-extension($filename as xs:string)
 {
   fn:replace($filename, ".*\.([^\.]+)$", "$1")

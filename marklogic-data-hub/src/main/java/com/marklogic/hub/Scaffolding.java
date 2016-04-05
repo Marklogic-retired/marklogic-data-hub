@@ -92,10 +92,9 @@ public class Scaffolding {
 
         SimpleFlow flow = new SimpleFlow(entityName, flowName, flowType,
                 dataFormat);
-        flow.serialize();
         File flowFile = new File(flowDir, flowName + ".xml");
         try(PrintWriter out = new PrintWriter(flowFile)) {
-            out.println(flow.serialize());
+            out.println(flow.serialize(false));
         }
     }
 
@@ -215,7 +214,7 @@ public class Scaffolding {
         }
         return output.toString();
     }
-    
+
     public static String getAbsolutePath(String first, String... more) {
         StringBuilder absolutePath = new StringBuilder(first);
         for (String path : more) {

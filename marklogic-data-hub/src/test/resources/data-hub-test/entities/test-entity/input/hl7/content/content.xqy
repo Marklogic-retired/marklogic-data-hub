@@ -1,6 +1,6 @@
 xquery version "1.0-ml";
 
-module namespace plugin = "http://marklogic.com/data-hub/plugins/content";
+module namespace plugin = "http://marklogic.com/data-hub/plugins";
 
 declare namespace envelope = "http://marklogic.com/data-hub/envelope";
 
@@ -19,10 +19,8 @@ declare option xdmp:mapping "false";
  :)
 declare function plugin:create-content(
   $id as xs:string,
-  $content as node()?,
-  $headers as node()*,
-  $triples as sem:triple*,
+  $raw-content as node()?
   $options as map:map) as node()?
 {
-  $content
+  $raw-content
 };

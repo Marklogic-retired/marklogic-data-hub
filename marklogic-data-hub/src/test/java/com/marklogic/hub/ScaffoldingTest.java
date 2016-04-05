@@ -93,7 +93,7 @@ public class ScaffoldingTest extends HubTestBase {
 
         File flowDescriptor = new File(flowDir, "test-input.xml");
         assertTrue(flowDescriptor.exists());
-        String flowXML ="<flow xmlns=\"http://marklogic.com/data-hub\"><name>test-input</name><entity>my-fun-test</entity><type>input</type><complexity>simple</complexity><data-format>" + dataFormat.getDefaultMimetype() + "</data-format><plugins></plugins></flow>";
+        String flowXML ="<flow xmlns=\"http://marklogic.com/data-hub\"><complexity>simple</complexity><data-format>" + dataFormat.getDefaultMimetype() + "</data-format><plugins></plugins></flow>";
         assertXMLEqual(flowXML, IOUtils.toString(new FileInputStream(flowDescriptor)));
 
         File collectorDir = new File(flowDir, "collector");
@@ -132,7 +132,7 @@ public class ScaffoldingTest extends HubTestBase {
 
         File flowDescriptor = new File(flowDir, "test-conformance.xml");
         assertTrue(flowDescriptor.exists());
-        String flowXML ="<flow xmlns=\"http://marklogic.com/data-hub\"><name>test-conformance</name><entity>my-fun-test</entity><type>conformance</type><complexity>simple</complexity><data-format>" + dataFormat.getDefaultMimetype() + "</data-format><plugins></plugins></flow>";
+        String flowXML ="<flow xmlns=\"http://marklogic.com/data-hub\"><complexity>simple</complexity><data-format>" + dataFormat.getDefaultMimetype() + "</data-format><plugins></plugins></flow>";
         assertXMLEqual(flowXML, IOUtils.toString(new FileInputStream(flowDescriptor)));
 
         File collectorDir = new File(flowDir, "collector");
@@ -155,7 +155,7 @@ public class ScaffoldingTest extends HubTestBase {
         assertTrue(triplesDir.exists());
         assertTrue(triplesContent.exists());
     }
-    
+
     @Test
     public void createXqyRestExtension() throws IOException {
         String entityName = "my-fun-test";
@@ -178,7 +178,7 @@ public class ScaffoldingTest extends HubTestBase {
         File restExtensionMetadataFile = new File(restExtensionMetadataDir, extensionName + ".xml");
         assertTrue(restExtensionMetadataFile.exists());
     }
-    
+
     @Test
     public void createSjsRestExtension() throws IOException {
         String entityName = "my-fun-test";
@@ -201,7 +201,7 @@ public class ScaffoldingTest extends HubTestBase {
         File restExtensionMetadataFile = new File(restExtensionMetadataDir, extensionName + ".xml");
         assertTrue(restExtensionMetadataFile.exists());
     }
-    
+
     @Test
     public void createXqyRestTransform() throws IOException {
         String entityName = "my-fun-test";
@@ -220,7 +220,7 @@ public class ScaffoldingTest extends HubTestBase {
         File restTransformFile = new File(restTransformDir, transformName + "." + pluginFormat);
         assertTrue(restTransformFile.exists());
     }
-    
+
     @Test
     public void createSjsRestTransform() throws IOException {
         String entityName = "my-fun-test";

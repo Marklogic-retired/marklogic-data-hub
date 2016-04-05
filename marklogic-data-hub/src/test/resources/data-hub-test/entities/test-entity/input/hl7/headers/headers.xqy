@@ -1,6 +1,6 @@
 xquery version "1.0-ml";
 
-module namespace plugin = "http://marklogic.com/data-hub/plugins/headers";
+module namespace plugin = "http://marklogic.com/data-hub/plugins";
 
 declare namespace envelope = "http://marklogic.com/data-hub/envelope";
 
@@ -22,8 +22,6 @@ declare option xdmp:mapping "false";
 declare function plugin:create-headers(
   $id as xs:string,
   $content as node()?,
-  $headers as node()*,
-  $triples as sem:triple*,
   $options as map:map) as node()*
 {
   (

@@ -294,7 +294,7 @@ public class FlowManager extends ResourceManager {
             RequestParameters params = new RequestParameters();
             params.add("identifier", identifier);
 
-            StringHandle handle = new StringHandle(flow.serialize());
+            StringHandle handle = new StringHandle(flow.serialize(true));
             handle.setFormat(Format.XML);
             this.getServices().post(params, handle, transaction);
         }

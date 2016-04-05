@@ -36,7 +36,7 @@ public class FlowWriter extends ResourceManager  implements ItemWriter<String> {
                 RequestParameters params = new RequestParameters();
                 params.add("identifier", id);
 
-                StringHandle handle = new StringHandle(flow.serialize());
+                StringHandle handle = new StringHandle(flow.serialize(true));
                 handle.setFormat(Format.XML);
                 this.getServices().post(params, handle, transaction);
             }

@@ -258,7 +258,7 @@ public abstract class AbstractFlow implements Flow {
      * Serializes the flow into an xml string
      */
     @Override
-    public String serialize() {
+    public String serialize(boolean full) {
         try {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             XMLStreamWriter serializer = makeXMLSerializer(out);
@@ -267,8 +267,20 @@ public abstract class AbstractFlow implements Flow {
             serializer.writeCharacters(System.getProperty("line.separator"));
             serializer.writeStartElement("flow");
 
-            // only save the essential information that can't be gleaned from
-            // the directory tree.
+            if (full) {
+                serializer.writeStartElement("name");
+                serializer.writeCharacters(this.flowName);
+                serializer.writeEndElement();
+
+                serializer.writeStartElement("entity");
+                serializer.writeCharacters(this.entityName);
+                serializer.writeEndElement();
+
+                serializer.writeStartElement("type");
+                serializer.writeCharacters(this.type.toString());
+                serializer.writeEndElement();
+            }
+
             serializer.writeStartElement("complexity");
             serializer.writeCharacters(this.flowComplexity.toString());
             serializer.writeEndElement();
