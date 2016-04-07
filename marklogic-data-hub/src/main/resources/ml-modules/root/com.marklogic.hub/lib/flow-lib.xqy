@@ -279,6 +279,7 @@ declare %private function flow:get-flow(
     return
       fn:doc($uri)/hub:flow
   })
+  where $flow
   return
     <flow xmlns="http://marklogic.com/data-hub">
       <name>{$flow-name}</name>

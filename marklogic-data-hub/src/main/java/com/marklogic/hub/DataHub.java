@@ -254,8 +254,8 @@ public class DataHub {
                 boolean isRest = dir.endsWith("REST");
 
                 String dirStr = dir.toString();
-                boolean isInputDir = dirStr.matches(".*/input/.*");
-                boolean isConformanceDir = dirStr.matches(".*/conformance/.*");
+                boolean isInputDir = dirStr.matches(".*[/\\\\]input[/\\\\].*");
+                boolean isConformanceDir = dirStr.matches(".*[/\\\\]conformance[/\\\\].*");
                 if (isRest) {
                     if (isInputDir) {
                         loadedFiles.addAll(hubModulesLoader.loadModules(dir.normalize().toAbsolutePath().toFile(), new AllButAssetsModulesFinder(), stagingClient));
