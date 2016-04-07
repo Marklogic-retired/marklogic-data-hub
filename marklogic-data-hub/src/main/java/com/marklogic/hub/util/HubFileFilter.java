@@ -10,7 +10,7 @@ public class HubFileFilter implements FileFilter {
 
     @Override
     public boolean accept(File f) {
-        boolean result = f != null && !f.getName().startsWith(".") && !f.toString().matches(".*/REST/.*");
+        boolean result = f != null && !f.getName().startsWith(".") && !f.toString().matches(".*[/\\\\]REST[/\\\\].*");
         return result;
     }
 
