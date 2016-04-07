@@ -21,5 +21,5 @@ declare function plugin:create-headers(
   $options as map:map) as node()*
 {
   (: () :)
-  xdmp:xslt-invoke("header-template.xsl", $content)
+  xdmp:xslt-invoke("headertemplate.xsl", $content)
 };

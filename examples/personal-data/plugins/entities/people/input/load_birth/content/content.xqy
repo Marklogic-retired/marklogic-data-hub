@@ -21,5 +21,5 @@ declare function plugin:create-content(
   $options as map:map) as node()?
 {
   (: $raw-content :)
-  xdmp:xslt-invoke("content-template.xsl", $raw-content)
+  xdmp:xslt-invoke("contenttemplate.xsl", $raw-content)
 };
