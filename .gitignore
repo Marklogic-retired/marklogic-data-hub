@@ -13,3 +13,4 @@ environment.properties
 assetInstallTime.properties
 /quick-start/input
 /quick-start/plugins
+flow.properties
