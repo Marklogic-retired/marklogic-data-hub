@@ -57,19 +57,19 @@ ext {
     mlAppDeployer.commands.remove(deployDbCmd)
 
     // install the staging database
-    def stagingDbCommand = new com.marklogic.appdeployer.command.databases.DeployDatabaseCommand("staging-db.json")
+    def stagingDbCommand = new com.marklogic.appdeployer.command.databases.DeployDatabaseCommand("staging-database.json")
     mlAppDeployer.commands.add(stagingDbCommand)
-    mlDatabaseCommands.add(0, stagingDbCommand)
+    mlDatabaseCommands.add(stagingDbCommand)
 
     // install the final database
-    def finalDbCommand = new com.marklogic.appdeployer.command.databases.DeployDatabaseCommand("final-db.json")
+    def finalDbCommand = new com.marklogic.appdeployer.command.databases.DeployDatabaseCommand("final-database.json")
     mlAppDeployer.commands.add(finalDbCommand)
-    mlDatabaseCommands.add(1, finalDbCommand)
+    mlDatabaseCommands.add(finalDbCommand)
 
     // install the modules database
-    def modulesDbCommand = new com.marklogic.appdeployer.command.databases.DeployDatabaseCommand("modules-db.json")
+    def modulesDbCommand = new com.marklogic.appdeployer.command.databases.DeployDatabaseCommand("modules-database.json")
     mlAppDeployer.commands.add(modulesDbCommand)
-    mlDatabaseCommands.add(2, modulesDbCommand)
+    mlDatabaseCommands.add(modulesDbCommand)
 
     // temp workaround for ml-gradle issue #78
     // https://github.com/rjrudin/ml-gradle/issues/78
