@@ -22,6 +22,7 @@ public class HubConfig {
     public static final String DEFAULT_HOST = "localhost";
     public static final Integer DEFAULT_STAGING_PORT = 8010;
     public static final Integer DEFAULT_FINAL_PORT = 8011;
+    public static final Integer DEFAULT_TRACE_PORT = 8012;
     public static final String DEFAULT_APP_NAME = "my-data-hub";
     public final static String DEFAULT_MODULES_PATH = "src/data-hub";
     public static final String DEFAULT_AUTH_METHOD = "digest";
@@ -32,6 +33,7 @@ public class HubConfig {
     private String host = DEFAULT_HOST;
     private Integer stagingPort = DEFAULT_STAGING_PORT;
     private Integer finalPort = DEFAULT_FINAL_PORT;
+    private Integer tracePort = DEFAULT_TRACE_PORT;
     private String authMethod = DEFAULT_AUTH_METHOD;
 
     private String modulesPath;
@@ -109,6 +111,17 @@ public class HubConfig {
 
     public void setFinalPort(Integer port) {
         this.finalPort = port;
+    }
+
+    /**
+     * @return the port of the Final REST API server used for loading modules
+     */
+    public Integer getTracePort() {
+        return tracePort;
+    }
+
+    public void setTracePort(Integer port) {
+        this.tracePort = port;
     }
 
     public String getModulesPath() {

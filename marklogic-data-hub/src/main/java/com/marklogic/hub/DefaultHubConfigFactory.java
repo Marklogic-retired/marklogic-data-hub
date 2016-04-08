@@ -59,6 +59,12 @@ public class DefaultHubConfigFactory extends PropertySourceFactory {
             c.setFinalPort(Integer.parseInt(prop));
         }
 
+        prop = getProperty("mlTracePort");
+        if (prop != null) {
+            logger.info("Trace App REST port: " + prop);
+            c.setTracePort(Integer.parseInt(prop));
+        }
+
         prop = getProperty("mlAdminUsername");
         if (prop != null) {
             logger.info("REST admin username: " + prop);

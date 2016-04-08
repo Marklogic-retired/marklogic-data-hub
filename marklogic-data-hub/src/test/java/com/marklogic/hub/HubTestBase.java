@@ -52,6 +52,7 @@ public class HubTestBase {
     public static String host;
     public static int stagingPort;
     public static int finalPort;
+    public static int tracePort;
     public static String user;
     public static String password;
     public static Authentication authMethod;
@@ -59,6 +60,8 @@ public class HubTestBase {
     public static DatabaseClient stagingModulesClient = null;
     public static DatabaseClient finalClient = null;
     public static DatabaseClient finalModulesClient = null;
+    public static DatabaseClient traceClient = null;
+    public static DatabaseClient traceModulesClient = null;
     private static Properties properties = new Properties();
     private static boolean initialized = false;
     public static XMLDocumentManager stagingDocMgr = getStagingMgr();
@@ -113,6 +116,7 @@ public class HubTestBase {
         host = properties.getProperty("mlHost");
         stagingPort = Integer.parseInt(properties.getProperty("mlStagingRestPort"));
         finalPort = Integer.parseInt(properties.getProperty("mlFinalRestPort"));
+        tracePort = Integer.parseInt(properties.getProperty("mlTraceRestPort"));
         user = properties.getProperty("mlUsername");
         password = properties.getProperty("mlPassword");
         authMethod = Authentication.valueOf(properties.getProperty("auth").toUpperCase());
@@ -121,6 +125,8 @@ public class HubTestBase {
         stagingModulesClient  = DatabaseClientFactory.newClient(host, stagingPort, DataHub.MODULES_DB_NAME, user, password, authMethod);
         finalClient = DatabaseClientFactory.newClient(host, finalPort, user, password, authMethod);
         finalModulesClient  = DatabaseClientFactory.newClient(host, stagingPort, DataHub.MODULES_DB_NAME, user, password, authMethod);
+        traceClient = DatabaseClientFactory.newClient(host, tracePort, user, password, authMethod);
+        traceModulesClient  = DatabaseClientFactory.newClient(host, stagingPort, DataHub.MODULES_DB_NAME, user, password, authMethod);
     }
 
     public HubTestBase() {
@@ -142,11 +148,11 @@ public class HubTestBase {
     }
 
     protected static void installHub() throws IOException {
-        new DataHub(host, stagingPort, finalPort, user, password).install();
+        new DataHub(host, stagingPort, finalPort, tracePort, user, password).install();
     }
 
     protected static void uninstallHub() throws IOException {
-        new DataHub(host, stagingPort, finalPort, user, password).uninstall();
+        new DataHub(host, stagingPort, finalPort, tracePort, user, password).uninstall();
     }
     protected static String getResource(String resourceName) throws IOException {
         try {

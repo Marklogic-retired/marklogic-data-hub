@@ -42,6 +42,10 @@ ext {
         customTokens.put("%%FINAL_SERVER_PORT%%", mlFinalAppserverPort)
         customTokens.put("%%FINAL_DB_NAME%%", mlFinalDbName)
 
+        customTokens.put("%%TRACE_SERVER_NAME%%", mlTraceAppserverName)
+        customTokens.put("%%TRACE_SERVER_PORT%%", mlTraceAppserverPort)
+        customTokens.put("%%TRACE_DB_NAME%%", mlTraceDbName)
+
         customTokens.put("%%MODULES_DB_NAME%%", mlModulesDbName)
     }
 }
@@ -65,6 +69,11 @@ ext {
     def finalDbCommand = new com.marklogic.appdeployer.command.databases.DeployDatabaseCommand("final-database.json")
     mlAppDeployer.commands.add(finalDbCommand)
     mlDatabaseCommands.add(finalDbCommand)
+
+    // install the trace database
+    def traceDbCommand = new com.marklogic.appdeployer.command.databases.DeployDatabaseCommand("trace-database.json")
+    mlAppDeployer.commands.add(traceDbCommand)
+    mlDatabaseCommands.add(traceDbCommand)
 
     // install the modules database
     def modulesDbCommand = new com.marklogic.appdeployer.command.databases.DeployDatabaseCommand("modules-database.json")

@@ -55,6 +55,7 @@ public class DataHubService {
             DataHub dataHub = new DataHub(environmentConfiguration.getMLHost(),
                     Integer.parseInt(environmentConfiguration.getMLStagingRestPort()),
                     Integer.parseInt(environmentConfiguration.getMLFinalRestPort()),
+                    Integer.parseInt(environmentConfiguration.getMLTraceRestPort()),
                     environmentConfiguration.getMLUsername(),
                     environmentConfiguration.getMLPassword());
             dataHub.setAssetInstallTimeFile(new File(environmentConfiguration.getAssetInstallTimeFilePath()));

@@ -44,7 +44,7 @@ public class DataHubTest extends HubTestBase {
 
     @Test
     public void testValidateServer() throws ServerValidationException {
-        DataHub dh = new DataHub(host, stagingPort, finalPort, user, password);
+        DataHub dh = new DataHub(host, stagingPort, finalPort, tracePort, user, password);
         dh.validateServer();
     }
 
@@ -58,7 +58,7 @@ public class DataHubTest extends HubTestBase {
 
     @Test
     public void testInstallUserModules() throws IOException, ParserConfigurationException, SAXException {
-        DataHub dh = new DataHub(host, stagingPort, finalPort, user, password);
+        DataHub dh = new DataHub(host, stagingPort, finalPort, tracePort, user, password);
         if (dh.isInstalled()) {
             dh.uninstall();
         }

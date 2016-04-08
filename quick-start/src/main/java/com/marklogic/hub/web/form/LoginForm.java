@@ -10,6 +10,7 @@ public class LoginForm extends BaseForm {
 	private String mlHost;
 	private String mlStagingRestPort;
 	private String mlFinalRestPort;
+	private String mlTraceRestPort;
 	private String mlUsername;
 	private String mlPassword;
 	private String userPluginDir;
@@ -41,6 +42,14 @@ public class LoginForm extends BaseForm {
 
     public void setMlFinalRestPort(String mlFinalRestPort) {
         this.mlFinalRestPort = mlFinalRestPort;
+    }
+
+    public String getMlTraceRestPort() {
+        return mlTraceRestPort;
+    }
+
+    public void setMlTraceRestPort(String mlTraceRestPort) {
+        this.mlTraceRestPort = mlTraceRestPort;
     }
 
     public String getMlUsername() {

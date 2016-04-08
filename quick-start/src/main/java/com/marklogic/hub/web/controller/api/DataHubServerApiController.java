@@ -178,6 +178,7 @@ public class DataHubServerApiController extends BaseController {
         environmentConfiguration.setMLHost(loginForm.getMlHost());
         environmentConfiguration.setMLStagingRestPort(loginForm.getMlStagingRestPort());
         environmentConfiguration.setMLFinalRestPort(loginForm.getMlFinalRestPort());
+        environmentConfiguration.setMlTraceRestPort(loginForm.getMlTraceRestPort());
         environmentConfiguration.setMLUsername(loginForm.getMlUsername());
         environmentConfiguration.setMLPassword(loginForm.getMlPassword());
         environmentConfiguration.setUserPluginDir(loginForm.getUserPluginDir());
@@ -187,6 +188,7 @@ public class DataHubServerApiController extends BaseController {
         loginForm.setMlHost(environmentConfiguration.getMLHost());
         loginForm.setMlStagingRestPort(environmentConfiguration.getMLStagingRestPort());
         loginForm.setMlFinalRestPort(environmentConfiguration.getMLFinalRestPort());
+        loginForm.setMlTraceRestPort(environmentConfiguration.getMLTraceRestPort());
         loginForm.setMlUsername(environmentConfiguration.getMLUsername());
         loginForm.setMlPassword(environmentConfiguration.getMLPassword());
         loginForm.setUserPluginDir(environmentConfiguration.getUserPluginDir());

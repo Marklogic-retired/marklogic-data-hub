@@ -72,6 +72,7 @@ public class DataHub {
     static final private Logger LOGGER = LoggerFactory.getLogger(DataHub.class);
     static final public String STAGING_NAME = "data-hub-STAGING";
     static final public String FINAL_NAME = "data-hub-FINAL";
+    static final public String TRACING_NAME = "data-hub-TRACING";
     static final public String MODULES_DB_NAME = "data-hub-modules";
     private ManageConfig config;
     private ManageClient client;
@@ -80,6 +81,7 @@ public class DataHub {
     private String host;
     private int stagingRestPort;
     private int finalRestPort;
+    private int tracingRestPort;
     private String username;
     private String password;
 
@@ -87,21 +89,23 @@ public class DataHub {
 
     private final static int DEFAULT_STAGING_REST_PORT = 8010;
     private final static int DEFAULT_FINAL_REST_PORT = 8011;
+    private final static int DEFAULT_TRACING_REST_PORT = 8012;
 
     public DataHub(HubConfig config) {
-        this(config.getHost(), config.getStagingPort(), config.getFinalPort(), config.getAdminUsername(), config.getAdminPassword());
+        this(config.getHost(), config.getStagingPort(), config.getFinalPort(), config.getTracePort(), config.getAdminUsername(), config.getAdminPassword());
     }
 
     public DataHub(String host, String username, String password) {
-        this(host, DEFAULT_STAGING_REST_PORT, DEFAULT_FINAL_REST_PORT, username, password);
+        this(host, DEFAULT_STAGING_REST_PORT, DEFAULT_FINAL_REST_PORT, DEFAULT_TRACING_REST_PORT, username, password);
     }
 
-    public DataHub(String host, int stagingRestPort, int finalRestPort, String username, String password) {
+    public DataHub(String host, int stagingRestPort, int finalRestPort, int tracingRestPort, String username, String password) {
         config = new ManageConfig(host, 8002, username, password);
         client = new ManageClient(config);
         this.host = host;
         this.stagingRestPort = stagingRestPort;
         this.finalRestPort = finalRestPort;
+        this.tracingRestPort = tracingRestPort;
         this.username = username;
         this.password = password;
     }
@@ -214,6 +218,7 @@ public class DataHub {
                 config.getRestAuthentication(), config.getRestSslContext(), config.getRestSslHostnameVerifier());
         return client;
     }
+
     /**
      * Installs User Provided modules into the Data Hub
      *
@@ -298,6 +303,9 @@ public class DataHub {
         finalDb.setForestsPerHost(FORESTS_PER_HOST);
         dbCommands.add(finalDb);
 
+        DeployHubDatabaseCommand tracingDb = new DeployHubDatabaseCommand(TRACING_NAME);
+        dbCommands.add(tracingDb);
+
         dbCommands.add(new DeployModulesDatabaseCommand(MODULES_DB_NAME));
         dbCommands.add(new DeployTriggersDatabaseCommand());
         dbCommands.add(new DeploySchemasDatabaseCommand());
@@ -306,6 +314,7 @@ public class DataHub {
         // App Servers
         commands.add(new DeployRestApiCommand(STAGING_NAME, stagingRestPort));
         commands.add(new DeployRestApiCommand(FINAL_NAME, finalRestPort));
+        commands.add(new DeployRestApiCommand(TRACING_NAME, tracingRestPort));
 
         // Modules
         commands.add(new LoadModulesCommand());
