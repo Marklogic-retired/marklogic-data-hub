@@ -1,4 +1,4 @@
-(function () {
+(function() {
 
   'use strict';
 
@@ -30,23 +30,23 @@
     $scope.displayEntity = function(entityName) {
       $scope.loading = true;
       DataHub.displayEntity(entityName)
-      .success(function (selectedEntity) {
-        DataHub.status.selectedEntity = selectedEntity;
-      })
-      .finally(function () {
-        $scope.loading = false;
-      });
+        .success(function(selectedEntity) {
+          DataHub.status.selectedEntity = selectedEntity;
+        })
+        .finally(function() {
+          $scope.loading = false;
+        });
     };
 
     $scope.getStatusChange = function() {
       DataHub.getStatusChange()
-      .success(function (loginStatus) {
-        DataHub.status = loginStatus;
-        $scope.status = DataHub.status;
-      })
-      .then(function () {
-        $timeout($scope.getStatusChange, 50);
-      });
+        .success(function(loginStatus) {
+          DataHub.status = loginStatus;
+          $scope.status = DataHub.status;
+        })
+        .then(function() {
+          $timeout($scope.getStatusChange, 50);
+        });
     };
 
     $scope.createFlow = function(entityName, flowType, extension) {
@@ -55,39 +55,38 @@
 
     $scope.runInputFlow = function(flow) {
       ModalService.openLoadDataModal(flow.entityName, flow.flowName)
-      .then(function (result) {
-        $scope.loading = true;
-        flow.inputFlowCancelled = false;
+        .then(function(result) {
+          $scope.loading = true;
+          flow.inputFlowCancelled = false;
 
-        DataHub.runInputFlow(flow.entityName, flow.flowName, result)
-        .success(function (taskId) {
-          flow.inputFlowTaskId = taskId;
+          DataHub.runInputFlow(flow.entityName, flow.flowName, result)
+            .success(function(taskId) {
+              flow.inputFlowTaskId = taskId;
 
-          TaskManager.waitForTask(flow.inputFlowTaskId)
-          .success(function (result) {
-            if (!flow.inputFlowCancelled) {
-              if (result.success) {
-                DataHub.displayMessage('Load data successful.', 'success');
-              }
-              else {
-                DataHub.displayMessage(result.errorMessage, 'error');
-              }
-            }
-          })
-          .error(function () {
-            if (!flow.inputFlowCancelled) {
-              DataHub.displayMessage('Load data unsuccessful.', 'error');
-            }
-          })
-          .finally(function () {
-            flow.inputFlowTaskId = null;
-            $scope.loading = false;
-          });
-        })
-        .error(function () {
-          $scope.loading = false;
+              TaskManager.waitForTask(flow.inputFlowTaskId)
+                .success(function(result) {
+                  if (!flow.inputFlowCancelled) {
+                    if (result.success) {
+                      DataHub.displayMessage('Load data successful.', 'success');
+                    } else {
+                      DataHub.displayMessage(result.errorMessage, 'error');
+                    }
+                  }
+                })
+                .error(function() {
+                  if (!flow.inputFlowCancelled) {
+                    DataHub.displayMessage('Load data unsuccessful.', 'error');
+                  }
+                })
+                .finally(function() {
+                  flow.inputFlowTaskId = null;
+                  $scope.loading = false;
+                });
+            })
+            .error(function() {
+              $scope.loading = false;
+            });
         });
-      });
     };
 
     $scope.cancelInputFlow = function(flow) {
@@ -101,33 +100,32 @@
       flow.runFlowCancelled = false;
 
       DataHub.runFlow(flow.entityName, flow.flowName)
-      .success(function (taskId) {
-        flow.runFlowTaskId = taskId;
+        .success(function(taskId) {
+          flow.runFlowTaskId = taskId;
 
-        TaskManager.waitForTask(flow.runFlowTaskId)
-        .success(function (result) {
-          if (!flow.runFlowCancelled) {
-            if (result.success) {
-              DataHub.displayMessage('Flow run is successful.', 'success');
-            }
-            else {
-              DataHub.displayMessage(result.errorMessage, 'error');
-            }
-          }
+          TaskManager.waitForTask(flow.runFlowTaskId)
+            .success(function(result) {
+              if (!flow.runFlowCancelled) {
+                if (result.success) {
+                  DataHub.displayMessage('Flow run is successful.', 'success');
+                } else {
+                  DataHub.displayMessage(result.errorMessage, 'error');
+                }
+              }
+            })
+            .error(function() {
+              if (!flow.runFlowCancelled) {
+                DataHub.displayMessage('Flow run is unsuccessful.', 'error');
+              }
+            })
+            .finally(function() {
+              flow.runFlowTaskId = null;
+              $scope.loading = false;
+            });
         })
-        .error(function () {
-          if (!flow.runFlowCancelled) {
-            DataHub.displayMessage('Flow run is unsuccessful.', 'error');
-          }
-        })
-        .finally(function () {
-          flow.runFlowTaskId = null;
+        .error(function() {
           $scope.loading = false;
         });
-      })
-      .error(function () {
-        $scope.loading = false;
-      });
     };
 
     $scope.cancelRunFlow = function(flow) {
@@ -141,28 +139,28 @@
       flow.testFlowCancelled = false;
 
       DataHub.testFlow(flow.entityName, flow.flowName)
-      .success(function (taskId) {
-        flow.testFlowTaskId = taskId;
+        .success(function(taskId) {
+          flow.testFlowTaskId = taskId;
 
-        TaskManager.waitForTask(flow.testFlowTaskId)
-        .success(function (result) {
-          if (!flow.testFlowCancelled) {
-            DataHub.displayMessage('Flow test is successful.', 'success');
-          }
+          TaskManager.waitForTask(flow.testFlowTaskId)
+            .success(function(result) {
+              if (!flow.testFlowCancelled) {
+                DataHub.displayMessage('Flow test is successful.', 'success');
+              }
+            })
+            .error(function() {
+              if (!flow.testFlowCancelled) {
+                DataHub.displayMessage('Flow test is unsuccessful.', 'error');
+              }
+            })
+            .finally(function() {
+              flow.testFlowTaskId = null;
+              $scope.loading = false;
+            });
         })
-        .error(function () {
-          if (!flow.testFlowCancelled) {
-            DataHub.displayMessage('Flow test is unsuccessful.', 'error');
-          }
-        })
-        .finally(function () {
-          flow.testFlowTaskId = null;
+        .error(function() {
           $scope.loading = false;
         });
-      })
-      .error(function () {
-        $scope.loading = false;
-      });
     };
 
     $scope.cancelTestFlow = function(flow) {
@@ -171,25 +169,23 @@
       TaskManager.cancelTask(flow.testFlowTaskId);
     };
 
-    $scope.install = function () {
+    $scope.install = function() {
       DataHub.install();
     };
 
-    $scope.uninstall = function () {
+    $scope.uninstall = function() {
       DataHub.uninstall()
-      .success(function () {
-        DataHub.logout();
-        $location.path('/login');
-      });
+        .success(function() {
+          DataHub.logout();
+          $location.path('/login');
+        });
     };
 
-    if($scope.action.type !== null && $scope.action.type === 'Install') {
+    if ($scope.action.type !== null && $scope.action.type === 'Install') {
       $scope.install();
-    }
-    else if($scope.action.type !== null && $scope.action.type === 'Uninstall') {
+    } else if ($scope.action.type !== null && $scope.action.type === 'Uninstall') {
       $scope.uninstall();
-    }
-    else if($scope.status !== null){
+    } else if ($scope.status !== null) {
       $scope.getStatusChange();
     }
 

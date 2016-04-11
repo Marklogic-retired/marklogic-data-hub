@@ -2,6 +2,8 @@ package com.marklogic.hub.web.controller.api;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Iterator;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -129,7 +131,10 @@ public class DataHubServerApiController extends BaseController {
         loginForm.setLoggedIn(false);
         this.retrieveEnvironmentConfiguration(loginForm);
 
-        session.invalidate();
+        Enumeration<String> attrNames = session.getAttributeNames();
+        while(attrNames.hasMoreElements()) {
+        	session.removeAttribute(attrNames.nextElement());
+        }
 
         return loginForm;
     }
