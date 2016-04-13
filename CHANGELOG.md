@@ -1,5 +1,43 @@
 # Change Log
 
+## [v1.0.0-beta.2](https://github.com/marklogic/marklogic-data-hub/tree/v1.0.0-beta.2) (2016-04-13)
+[Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v1.0.0-beta.1...v1.0.0-beta.2)
+
+**Implemented enhancements:**
+
+- Handle duplicate REST service extensions and transforms [\#143](https://github.com/marklogic/marklogic-data-hub/issues/143)
+
+**Fixed bugs:**
+
+- Bug deploying rest services - maybe missing \<hub:plugins\> config ? [\#187](https://github.com/marklogic/marklogic-data-hub/issues/187)
+- Session invalidated bug [\#109](https://github.com/marklogic/marklogic-data-hub/issues/109)
+
+**Closed issues:**
+
+- Enable Tracing in the Hub [\#199](https://github.com/marklogic/marklogic-data-hub/issues/199)
+- REST folder is being deployed as assets [\#189](https://github.com/marklogic/marklogic-data-hub/issues/189)
+- Create Hub example for simple gradle integration [\#184](https://github.com/marklogic/marklogic-data-hub/issues/184)
+- Error while loading data [\#179](https://github.com/marklogic/marklogic-data-hub/issues/179)
+- Uninstall hub results in error [\#177](https://github.com/marklogic/marklogic-data-hub/issues/177)
+- Define different func signatures for simple vs advanced Flows [\#174](https://github.com/marklogic/marklogic-data-hub/issues/174)
+- Revisit comments in plugin template files [\#168](https://github.com/marklogic/marklogic-data-hub/issues/168)
+- Add writer to scaffolding for conformance flow [\#115](https://github.com/marklogic/marklogic-data-hub/issues/115)
+- Make UI code more angular [\#104](https://github.com/marklogic/marklogic-data-hub/issues/104)
+- Swagger UI [\#75](https://github.com/marklogic/marklogic-data-hub/issues/75)
+- Swagger JSON Endpoint [\#74](https://github.com/marklogic/marklogic-data-hub/issues/74)
+- gradle plugin to run hub functions from a gradle project [\#58](https://github.com/marklogic/marklogic-data-hub/issues/58)
+
+**Merged pull requests:**
+
+- 177 uninstall hub results in error [\#196](https://github.com/marklogic/marklogic-data-hub/pull/196) ([divino](https://github.com/divino))
+- adding trace server, db, forests [\#195](https://github.com/marklogic/marklogic-data-hub/pull/195) ([paxtonhare](https://github.com/paxtonhare))
+- fixing filenames for databases [\#191](https://github.com/marklogic/marklogic-data-hub/pull/191) ([paxtonhare](https://github.com/paxtonhare))
+- fixed \#187 [\#190](https://github.com/marklogic/marklogic-data-hub/pull/190) ([paxtonhare](https://github.com/paxtonhare))
+- fixed \#184 [\#188](https://github.com/marklogic/marklogic-data-hub/pull/188) ([paxtonhare](https://github.com/paxtonhare))
+- prepping for beta 2 release [\#181](https://github.com/marklogic/marklogic-data-hub/pull/181) ([paxtonhare](https://github.com/paxtonhare))
+- Get document type from the dataFormat of the entity [\#180](https://github.com/marklogic/marklogic-data-hub/pull/180) ([divino](https://github.com/divino))
+- update plugin signatures [\#178](https://github.com/marklogic/marklogic-data-hub/pull/178) ([paxtonhare](https://github.com/paxtonhare))
+
 ## [v1.0.0-beta.1](https://github.com/marklogic/marklogic-data-hub/tree/v1.0.0-beta.1) (2016-04-01)
 [Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v1.0.0-alpha.4...v1.0.0-beta.1)
 
