@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.http.concurrent.BasicFuture;
+import org.codehaus.jettison.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.ExitStatus;
@@ -217,16 +218,15 @@ public class FlowApiController extends BaseController {
                             FlowType.INPUT.toString(),
                             flow.getDataFormat());
 
-                    sourceOptions.setInputFileType(runFlow.getDataFormat());
-                    sourceOptions.setCollection(runFlow.getCollection());
-                    sourceOptions.setInputCompressed(runFlow.getInputCompressed());
+                    sourceOptions.setInputFileType(runFlow.getInputFileType());
+                    sourceOptions.setOtherOptions(runFlow.getOtherOptions());
                     mlcp.addSourceDirectory(runFlow.getInputPath(), sourceOptions);
                     mlcp.loadContent();
 
                     resultFuture.completed(null);
                 }
                 
-                catch (IOException e) {
+                catch (IOException | JSONException e) {
                     LOGGER.error("Error encountered while trying to run flow:  "
                             + runFlow.getEntityName() + " > " + runFlow.getFlowName(),
                             e);

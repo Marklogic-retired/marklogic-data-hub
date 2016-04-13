@@ -21,6 +21,7 @@ import java.util.List;
 
 import javax.xml.stream.XMLStreamException;
 
+import org.codehaus.jettison.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.Job;
@@ -239,7 +240,7 @@ public class FlowManager extends ResourceManager {
             mlcp.addSourceDirectory(config.getModulesPath(), sourceOptions);
             mlcp.loadContent();
         }
-        catch (IOException e) {
+        catch (IOException | JSONException e) {
             LOGGER.error(
                     "Error encountered while trying to run flow:  "
                             + flow.getEntityName() + " > " + flow.getName(), e);

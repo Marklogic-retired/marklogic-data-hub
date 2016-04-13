@@ -9,10 +9,9 @@
       <form ng-submit="ok()">
         <div class="form-group">
           <label for="inputPath">Path</label>
-          <input class="form-control" name="inputPath" type="text" ng-model="loadDataForm.inputPath"
-          placeHolder="Enter Path" required="required"
-          ng-change="searchPath(loadDataForm.inputPath)">
-          <div class="panel panel-primary tree-scroller-cust1">
+          <input id="inputPath" class="form-control" name="inputPath" type="text" ng-model="loadDataForm.inputPath"
+            placeHolder="Enter Path" required="required" ng-change="searchPath(loadDataForm.inputPath)" ng-focus="showInputPathTreeBrowser = true">
+          <div id="inputPathTreeBrowser" class="panel panel-primary tree-scroller-cust1" ng-show="showInputPathTreeBrowser">
             <div class="panel-body">
               <treecontrol class="tree-classic" tree-model="dataForTheTree"
               options="treeOptions" on-node-toggle="onNodeToggle(node,expanded)" on-selection="onSelection(node,selected)">
@@ -20,15 +19,10 @@
               </treecontrol>
             </div>
           </div>
-
         </div>
         <div class="form-group">
-          <label for="collection">Collection</label>
-          <input class="form-control" name="collection" type="text" ng-model="loadDataForm.collection" placeHolder="Enter a Collection to apply (optional)" required="required" />
-        </div>
-        <div class="form-group">
-          <label for="dataFormat">Data Format</label>
-          <select class="form-control" name="dataFormat" ng-model="loadDataForm.dataFormat">
+          <label for="inputFileType">Input File Type</label>
+          <select class="form-control" name="inputFileType" ng-model="loadDataForm.inputFileType" ng-change="updateMlcpCommand()" ng-focus="hideInputPathTreeBrowser()">
             <option value="aggregates">Aggregates</option>
             <option value="archive">Archive</option>
             <option value="delimited_text">Delimited Text</option>
@@ -39,10 +33,32 @@
             <option value="sequencefile">Sequence File</option>
           </select>
         </div>
-        <div class="checkbox">
-          <label>
-            <input type="checkbox" ng-model="loadDataForm.inputCompressed"> Input Files are Compressed
-          </label>
+        <div class="form-group">
+          <uib-accordion close-others="true">
+            <uib-accordion-group heading="{{group.category}}" ng-repeat="group in groups" ng-show="showBasedOnCategoryAndInputFileType(group.category,loadDataForm.inputFileType)">
+			        <div class="form-group" ng-repeat="setting in group.settings">
+			          <label class="control-label" for="{{setting['Field']}}" title="{{setting['Description']}}">{{setting['Label']}}</label><br/>
+			          <input type="text" class="form-control" name="{{setting['Field']}}" ng-if="isText(setting['Type'])" ng-model="setting['Value']" placeholder="{{setting['Placeholder Value'] ? setting['Placeholder Value'] : ''}}" ng-change="updateMlcpCommand()" ng-focus="hideInputPathTreeBrowser()"/>
+			          <label class="radio-custom" ng-if="setting['Type'] === 'boolean'">
+                  <input type="radio" name="{{setting['Field']}}" ng-model="setting['Value']" value="true" ng-change="updateMlcpCommand()" ng-focus="hideInputPathTreeBrowser()">
+                  True 
+                </label>
+                <label class="radio-custom" ng-if="setting['Type'] === 'boolean'">
+                  <input type="radio" name="{{setting['Field']}}" ng-model="setting['Value']" value="false" ng-change="updateMlcpCommand()" ng-focus="hideInputPathTreeBrowser()">
+                  False 
+                </label>
+			          <select class="form-control" name="{{setting['Field']}}" ng-if="setting['Type'] === 'type'" ng-model="setting['Value']" ng-change="updateMlcpCommand()" ng-focus="hideInputPathTreeBrowser()">
+			            <option ng-repeat="option in setting['Options']" value="{{option.value}}">{{option.label}}</option> 
+			          </select>
+			        </div>
+			      </uib-accordion-group>
+			    </uib-accordion>
+        </div>
+        <div class="form-group">
+           <h4>MLCP Command</h4>
+        </div>
+        <div class="form-group">
+          <section class="code">{{mlcpCommand}}</section>
         </div>
       </form>
     </div>
@@ -51,6 +67,6 @@
 <div class="modal-footer">
   <div class="col-xs-12 col-md-12">
     <button class="btn btn-default" ng-click="cancel()">Cancel</button>
-    <button class="btn btn-success" ng-click="ok()">Submit</button>
+    <button class="btn btn-success" ng-click="ok()">Load Data</button>
   </div>
 </div>

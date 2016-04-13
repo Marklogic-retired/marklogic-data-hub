@@ -31,7 +31,8 @@
       displayMessage: displayMessage,
       searchPath: searchPath,
       showApiDoc: showApiDoc,
-      getPreviousInputPath : getPreviousInputPath
+      getPreviousInputPath: getPreviousInputPath,
+      getJsonFile: getJsonFile
     });
 
     function login(loginForm) {
@@ -154,14 +155,13 @@
       return $http.post('api/flows/run', data);
     }
 
-    function runInputFlow(entityName, flowName, mlcpOptions) {
+    function runInputFlow(entityName, flowName, form) {
       var data = {
         entityName: entityName,
         flowName: flowName,
-        inputPath: mlcpOptions.inputPath,
-        collection: mlcpOptions.collection,
-        dataFormat: mlcpOptions.dataFormat,
-        inputCompressed: mlcpOptions.inputCompressed
+        inputPath: form.inputPath,
+        dataFormat: form.dataFormat,
+        otherOptions: form.otherOptions
       };
       return $http.post('api/flows/run/input', data);
     }
@@ -194,6 +194,7 @@
       $rootScope.notificationBar.messageType = messageType;
       $rootScope.notificationBar.message = message;
       $rootScope.notificationBar.show = true;
+      console.log(message);
     }
 
     function showApiDoc() {
@@ -208,6 +209,10 @@
       return $http.get('api/flows/input-path', {
         'params': params
       });
+    }
+    
+    function getJsonFile(filePath) {
+    	return $http.get(filePath);
     }
 
   }

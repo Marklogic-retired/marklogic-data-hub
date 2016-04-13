@@ -22,7 +22,7 @@
         animation: true,
         templateUrl: 'top/modal/loadDataModal.html',
         controller: 'loadDataModalController',
-        size: 'sm',
+        size: 'lg',
         backdrop: 'static',
         keyboard: true,
         resolve: {
@@ -79,13 +79,14 @@
   function LoadDataModalController($scope, $uibModalInstance, DataHub, entityName, flowName) {
     $scope.loadDataForm = {
       inputPath: '.',
-      dataFormat: 'documents',
-      inputCompressed: false,
-      collection: null,
-      entityName: entityName,
-      flowName: flowName
+      inputFileType: 'documents',
+      otherOptions: ''
     };
-
+    
+    $scope.mlcpInitialCommand = '';
+    $scope.mlcpCommand = '';
+    $scope.groups = [];
+    
     $scope.ok = function() {
       $uibModalInstance.close($scope.loadDataForm);
     };
@@ -126,32 +127,135 @@
     };
 
     $scope.searchPath = function(basePath, node) {
-      DataHub.searchPath(basePath).success(function(data) {
-        if (node == null) { // jshint ignore:line
-          //initialize root
-          $scope.dataForTheTree = data.paths.slice();
-        } else {
-          node.children = data.paths;
-        }
-      });
+    	DataHub.searchPath(basePath).success(function(data) {
+    		$scope.updateMlcpCommand();
+        	$scope.loadTree(data, node);
+        });
+    };
+    
+    $scope.loadTree = function(data, node) {
+      if (node == null) { // jshint ignore:line
+        //initialize root
+        $scope.dataForTheTree = data.paths.slice();
+      } else {
+        node.children = data.paths;
+      }
+      $scope.showInputPathTreeBrowser = true;
+    };
+    
+    $scope.searchPathThenHideTree = function(basePath, node) {
+        DataHub.searchPath(basePath).success(function(data) {
+        	$scope.loadTree(data, node);
+        })
+        .then(function() {
+        	$scope.showInputPathTreeBrowser = false;
+        });
     };
     
     $scope.dataForTheTree = [];
     
-    $scope.loadPreviousInputPath = function(entityName, flowName) {
+    $scope.loadPreviousInputPath = function() {
       DataHub.getPreviousInputPath(entityName, flowName)
         .success(function(inputPath) {
           $scope.loadDataForm.inputPath = inputPath;
-          $scope.searchPath($scope.loadDataForm.inputPath);
+          $scope.searchPathThenHideTree($scope.loadDataForm.inputPath);
         })
         .error(function(error) {
           $scope.hasError = true;
           $scope.errorMessage = error.message;
         });
     };
-
+    
     //initialize root
-    $scope.loadPreviousInputPath($scope.loadDataForm.entityName, $scope.loadDataForm.flowName);
+    $scope.loadPreviousInputPath();
+    $scope.mlcpInitialCommand = constructInitialMlcpCommand(DataHub);
+    
+    $scope.updateMlcpCommand = function() {
+    	$scope.mlcpCommand = updateMlcpCommand($scope.mlcpInitialCommand, $scope.loadDataForm, $scope.groups);
+    };
+    
+    //TODO - load previous settings
+    $scope.loadSettings = function() {
+      DataHub.getJsonFile('/json/inputOptions.json')
+        .success(function(data) { 
+          console.log("success!");
+          var updatedData = JSON.stringify(data).replace(/{{entityName}}/g, entityName)
+            .replace(/{{flowName}}/g, flowName);
+          var jsonObj = $.parseJSON(updatedData);
+          $scope.groups = jsonObj.groups;
+        })
+        .error(function(error) { 
+          console.log(error);
+        })
+        .then(function () {
+        	$scope.updateMlcpCommand();
+        });
+    };
+    
+    $scope.loadSettings();
+    
+    $scope.isText = function(type) {
+      if(type === 'string' || type === 'comma-list' || type === 'number' || type === 'character') {
+        return true;
+      } else {
+        return false;
+      }
+    };
+    
+    $scope.hideInputPathTreeBrowser = function() {
+      $scope.showInputPathTreeBrowser = false;
+    };
+    
+    $scope.showBasedOnCategoryAndInputFileType = function(category, inputFileType) {
+      if(category === 'Delimited text options' && $scope.loadDataForm.inputFileType !== 'delimited_text') {
+        return false;
+      } else if(category === 'Aggregate XML options' && $scope.loadDataForm.inputFileType !== 'aggregates') {
+        return false;
+      }
+      return true;
+    };
+    
+  }
+  
+  function constructInitialMlcpCommand(DataHub) {
+	var mlcpCommand = 'mlcp';
+	  
+	var mlcpExtension = '.sh';
+	if ( navigator.appVersion.indexOf('Win') != -1 ) {
+	  mlcpExtension = '.bat'
+	}
+	  
+	mlcpCommand += mlcpExtension + ' import -mode local';
+	mlcpCommand += ' -host ' + DataHub.status.mlHost;
+	mlcpCommand += ' -port ' + DataHub.status.mlStagingRestPort;
+	mlcpCommand += ' -username ' + DataHub.status.mlUsername;
+	mlcpCommand += ' -password ' + DataHub.status.mlPassword;
+	  
+	return mlcpCommand;
+  }
+  
+  function updateMlcpCommand(initialMlcpCommand, loadDataForm, groups) {
+	var mlcpCommand = initialMlcpCommand;
+	mlcpCommand += ' -input_file_path ' + loadDataForm.inputPath;
+	mlcpCommand += ' -input_file_type ' + loadDataForm.inputFileType;
+	mlcpCommand += ' -output_uri_replace "' + loadDataForm.inputPath + ',\'\'"';
+	
+	var otherOptions = [];
+	$.each(groups, function(i, group) {
+		$.each(group.settings, function(i, setting) {
+			if(setting['Value']) {
+				var key = setting['Field'];
+				var value = '"' + setting['Value'] + '"';
+				mlcpCommand += ' ' + key + ' ' + value;
+				var option = {};
+				option[key] = value;
+				otherOptions.push(option);
+			}
+		});
+	});
+	
+	loadDataForm.otherOptions = otherOptions.length > 0 ? JSON.stringify(otherOptions) : '';
+	return mlcpCommand;
   }
 
   function EntityModalController($scope, $uibModalInstance, DataHub) {
