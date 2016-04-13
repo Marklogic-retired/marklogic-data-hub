@@ -42,7 +42,7 @@ public class EndToEndTestXqyXml extends HubTestBase {
         Scaffolding.createFlow(ENTITY, "testconformance", FlowType.CONFORMANCE,
                 PluginFormat.XQUERY, Format.XML, pluginsDir);
 
-        new DataHub(host, stagingPort, finalPort, user, password).installUserModules(pluginsDir.toString());
+        new DataHub(getHubConfig()).installUserModules(pluginsDir.toString());
     }
 
     @AfterClass

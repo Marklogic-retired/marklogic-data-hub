@@ -2,7 +2,6 @@ package com.marklogic.hub.factory;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;

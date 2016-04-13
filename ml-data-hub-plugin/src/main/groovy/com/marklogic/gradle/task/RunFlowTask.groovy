@@ -58,12 +58,12 @@ class RunFlowTask extends DefaultTask {
 
     FlowManager getFlowManager() {
         HubConfig hc = getHubConfig()
-        Authentication authMethod = Authentication.valueOf(hc.getAuthMethod().toUpperCase())
+        Authentication authMethod = Authentication.valueOf(hc.authMethod.toUpperCase())
         DatabaseClient client = DatabaseClientFactory.newClient(
-                hc.getHost(),
-                hc.getStagingPort(),
-                hc.getAdminUsername(),
-                hc.getAdminPassword(),
+                hc.host,
+                hc.stagingPort,
+                hc.adminUsername,
+                hc.adminPassword,
                 authMethod);
         return new FlowManager(client)
     }

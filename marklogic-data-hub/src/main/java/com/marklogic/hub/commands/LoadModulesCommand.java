@@ -5,7 +5,9 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.commons.io.IOUtils;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
@@ -67,7 +69,7 @@ public class LoadModulesCommand extends AbstractCommand {
         return list;
     }
 
-    protected void loadFile(String uri, InputStream inputStream) throws IOException {
+    protected void loadFile(String uri, InputStream inputStream, AppConfig config) throws IOException {
         ContentCreateOptions options = new ContentCreateOptions();
         options.setFormat(DocumentFormat.TEXT);
         options.setPermissions(permissionsParser.parsePermissions(this.permissions));
@@ -79,7 +81,15 @@ public class LoadModulesCommand extends AbstractCommand {
             logger.info(format("Inserting module with URI: %s", uri));
         }
 
-        Content content = ContentFactory.newContent(uri, inputStream, options);
+        String fileContents = IOUtils.toString(inputStream);
+        Map<String, String> customTokens = config.getCustomTokens();
+        if (customTokens != null) {
+            for (String key : customTokens.keySet()) {
+                fileContents = fileContents.replace(key, customTokens.get(key));
+            }
+        }
+
+        Content content = ContentFactory.newContent(uri, fileContents, options);
         try {
             activeSession.insertContent(content);
         } catch (RequestException re) {
@@ -103,6 +113,7 @@ public class LoadModulesCommand extends AbstractCommand {
         try {
             String rootPath = "/ml-modules/root";
 
+            AppConfig appConfig = context.getAppConfig();
             List<Resource> resources = findResources("classpath:" + rootPath, "/**/*.xqy");
             for (Resource r : resources) {
                 String path = r.getURL().getPath();
@@ -123,7 +134,7 @@ public class LoadModulesCommand extends AbstractCommand {
                     }
                 }
 
-                loadFile(path, r.getInputStream());
+                loadFile(path, r.getInputStream(), appConfig);
             }
 
             resources = findResources("classpath:/ml-modules/services", "/**/*.xq*");

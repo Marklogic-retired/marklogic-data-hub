@@ -38,55 +38,135 @@ public class DefaultHubConfigFactory extends PropertySourceFactory {
         prop = getProperty("mlAppName");
         if (prop != null) {
             logger.info("App name: " + prop);
-            c.setName(prop);
+            c.name = prop;
         }
 
         prop = getProperty("mlHost");
         if (prop != null) {
             logger.info("App host: " + prop);
-            c.setHost(prop);
+            c.host = prop;
+        }
+
+        prop = getProperty("mlStagingDbName");
+        if (prop != null) {
+            logger.info("mlStagingDbName: " + prop);
+            c.stagingDbName = prop;
+        }
+
+        prop = getProperty("mlStagingAppserverName");
+        if (prop != null) {
+            logger.info("mlStagingAppserverName: " + prop);
+            c.stagingHttpName = prop;
         }
 
         prop = getProperty("mlStagingPort");
         if (prop != null) {
             logger.info("Staging App REST port: " + prop);
-            c.setStagingPort(Integer.parseInt(prop));
+            c.stagingPort = Integer.parseInt(prop);
+        }
+
+        prop = getProperty("mlStagingForestsPerHost");
+        if (prop != null) {
+            logger.info("Staging Forests Per Host: " + prop);
+            c.stagingForestsPerHost = Integer.parseInt(prop);
+        }
+
+        prop = getProperty("mlFinalDbName");
+        if (prop != null) {
+            logger.info("mlFinalDbName: " + prop);
+            c.finalDbName = prop;
+        }
+
+        prop = getProperty("mlFinalAppserverName");
+        if (prop != null) {
+            logger.info("mlFinalAppserverName: " + prop);
+            c.finalHttpName = prop;
         }
 
         prop = getProperty("mlFinalPort");
         if (prop != null) {
             logger.info("Final App REST port: " + prop);
-            c.setFinalPort(Integer.parseInt(prop));
+            c.finalPort = Integer.parseInt(prop);
+        }
+
+        prop = getProperty("mlFinalForestsPerHost");
+        if (prop != null) {
+            logger.info("Final Forests Per Host: " + prop);
+            c.finalForestsPerHost = Integer.parseInt(prop);
+        }
+
+        prop = getProperty("mlTraceDbName");
+        if (prop != null) {
+            logger.info("mlTraceDbName: " + prop);
+            c.tracingDbName = prop;
+        }
+
+        prop = getProperty("mlTraceAppserverName");
+        if (prop != null) {
+            logger.info("mlTraceAppserverName: " + prop);
+            c.tracingHttpName = prop;
+        }
+
+        prop = getProperty("mlTracePort");
+        if (prop != null) {
+            logger.info("Trace App REST port: " + prop);
+            c.tracePort = Integer.parseInt(prop);
+        }
+
+        prop = getProperty("mlTraceForestsPerHost");
+        if (prop != null) {
+            logger.info("Trace Forests Per Host: " + prop);
+            c.tracingForestsPerHost = Integer.parseInt(prop);
+        }
+
+        prop = getProperty("mlModulesDbName");
+        if (prop != null) {
+            logger.info("mlModulesDbName: " + prop);
+            c.modulesDbName = prop;
+        }
+
+        prop = getProperty("mlTriggersDbName");
+        if (prop != null) {
+            logger.info("mlTriggersDbName: " + prop);
+            c.triggersDbName = prop;
+        }
+
+        prop = getProperty("mlSchemasDbName");
+        if (prop != null) {
+            logger.info("mlSchemasDbName: " + prop);
+            c.schemasDbName = prop;
         }
 
         prop = getProperty("mlAdminUsername");
         if (prop != null) {
             logger.info("REST admin username: " + prop);
-            c.setAdminUsername(prop);
+            c.adminUsername = prop;
         } else if (mlUsername != null) {
             logger.info("REST admin username: " + mlUsername);
-            c.setAdminUsername(mlUsername);
+            c.adminUsername = mlUsername;
         }
 
         prop = getProperty("mlAdminPassword");
         if (prop != null) {
-            c.setAdminPassword(prop);
+            c.adminPassword = prop;
         }
         else if (mlPassword != null) {
-            c.setAdminPassword(mlPassword);
+            c.adminPassword = mlPassword;
         }
 
         prop = getProperty("hubModulesPath");
         if (prop != null) {
-            c.setModulesPath(prop);
+            c.modulesPath = prop;
         }
         else {
-            c.setModulesPath("./plugins");
+            c.modulesPath = "./plugins";
         }
+        logger.info("Hub Plugins Path: " + c.modulesPath);
 
         prop = getProperty("mlAuth");
         if (prop != null) {
-            c.setAuthMethod(prop);
+            logger.info("mlAuth: " + prop);
+            c.authMethod = prop;
         }
 
         return c;

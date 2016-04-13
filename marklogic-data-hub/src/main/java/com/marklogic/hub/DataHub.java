@@ -26,6 +26,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -70,40 +71,29 @@ import com.marklogic.rest.util.Fragment;
 public class DataHub {
 
     static final private Logger LOGGER = LoggerFactory.getLogger(DataHub.class);
-    static final public String STAGING_NAME = "data-hub-STAGING";
-    static final public String FINAL_NAME = "data-hub-FINAL";
-    static final public String MODULES_DB_NAME = "data-hub-modules";
+
     private ManageConfig config;
     private ManageClient client;
-    public static String HUB_NAME = "data-hub";
-    public static int FORESTS_PER_HOST = 4;
-    private String host;
-    private int stagingRestPort;
-    private int finalRestPort;
-    private String username;
-    private String password;
 
     private File assetInstallTimeFile = new File("./assetInstallTime.properties");
+    private HubConfig hubConfig;
 
-    private final static int DEFAULT_STAGING_REST_PORT = 8010;
-    private final static int DEFAULT_FINAL_REST_PORT = 8011;
-
-    public DataHub(HubConfig config) {
-        this(config.getHost(), config.getStagingPort(), config.getFinalPort(), config.getAdminUsername(), config.getAdminPassword());
+    public DataHub(HubConfig hubConfig) {
+        init(hubConfig);
     }
 
     public DataHub(String host, String username, String password) {
-        this(host, DEFAULT_STAGING_REST_PORT, DEFAULT_FINAL_REST_PORT, username, password);
+        hubConfig = new HubConfig();
+        hubConfig.host = host;
+        hubConfig.adminUsername = username;
+        hubConfig.adminPassword = password;
+        init(hubConfig);
     }
 
-    public DataHub(String host, int stagingRestPort, int finalRestPort, String username, String password) {
-        config = new ManageConfig(host, 8002, username, password);
+    private void init(HubConfig hubConfig) {
+        this.hubConfig = hubConfig;
+        config = new ManageConfig(hubConfig.host, 8002, hubConfig.adminUsername, hubConfig.adminPassword);
         client = new ManageClient(config);
-        this.host = host;
-        this.stagingRestPort = stagingRestPort;
-        this.finalRestPort = finalRestPort;
-        this.username = username;
-        this.password = password;
     }
 
     public void setAssetInstallTimeFile(File assetInstallTimeFile) {
@@ -117,35 +107,47 @@ public class DataHub {
     public boolean isInstalled() {
         ServerManager sm = new ServerManager(client);
         DatabaseManager dm = new DatabaseManager(client);
-        boolean stagingAppServerExists = sm.exists(STAGING_NAME);
-        boolean finalAppServerExists = sm.exists(FINAL_NAME);
-        boolean appserversOk = (stagingAppServerExists && finalAppServerExists);
+        boolean stagingAppServerExists = sm.exists(hubConfig.stagingHttpName);
+        boolean finalAppServerExists = sm.exists(hubConfig.finalHttpName);
+        boolean tracingAppServerExists = sm.exists(hubConfig.tracingHttpName);
+        boolean appserversOk = (stagingAppServerExists && finalAppServerExists && tracingAppServerExists);
 
-        boolean stagingDbExists = dm.exists(STAGING_NAME);
-        boolean finalDbExists = dm.exists(FINAL_NAME);
+        boolean stagingDbExists = dm.exists(hubConfig.stagingDbName);
+        boolean finalDbExists = dm.exists(hubConfig.finalDbName);
+        boolean tracingDbExists = dm.exists(hubConfig.stagingDbName);
 
         boolean stagingForestsExist = false;
         boolean finalForestsExist = false;
+        boolean tracingForestsExist = false;
 
         boolean stagingIndexesOn = false;
         boolean finalIndexesOn = false;
+        boolean tracingIndexesOn = false;
 
         if (stagingDbExists) {
-            Fragment f = dm.getPropertiesAsXml(STAGING_NAME);
+            Fragment f = dm.getPropertiesAsXml(hubConfig.stagingDbName);
             stagingIndexesOn = Boolean.parseBoolean(f.getElementValue("//m:triple-index"));
             stagingIndexesOn = stagingIndexesOn && Boolean.parseBoolean(f.getElementValue("//m:collection-lexicon"));
-            stagingForestsExist = (dm.getForestIds(STAGING_NAME).size() == FORESTS_PER_HOST);
+            stagingForestsExist = (dm.getForestIds(hubConfig.stagingDbName).size() == hubConfig.stagingForestsPerHost);
         }
 
         if (finalDbExists) {
-            Fragment f = dm.getPropertiesAsXml(FINAL_NAME);
+            Fragment f = dm.getPropertiesAsXml(hubConfig.finalDbName);
             finalIndexesOn = Boolean.parseBoolean(f.getElementValue("//m:triple-index"));
             finalIndexesOn = finalIndexesOn && Boolean.parseBoolean(f.getElementValue("//m:collection-lexicon"));
-            finalForestsExist = (dm.getForestIds(FINAL_NAME).size() == FORESTS_PER_HOST);
+            finalForestsExist = (dm.getForestIds(hubConfig.finalDbName).size() == hubConfig.finalForestsPerHost);
         }
+
+        if (tracingDbExists) {
+            tracingIndexesOn = true;
+            int forests = dm.getForestIds(hubConfig.tracingDbName).size();
+            tracingForestsExist = (forests == hubConfig.tracingForestsPerHost);
+        }
+
         boolean dbsOk = (stagingDbExists && stagingIndexesOn &&
-                finalDbExists && finalIndexesOn);
-        boolean forestsOk = (stagingForestsExist && finalForestsExist);
+                finalDbExists && finalIndexesOn &&
+                tracingDbExists && tracingIndexesOn);
+        boolean forestsOk = (stagingForestsExist && finalForestsExist && tracingForestsExist);
 
         return (appserversOk && dbsOk && forestsOk);
     }
@@ -157,9 +159,9 @@ public class DataHub {
     public void validateServer() throws ServerValidationException {
         try {
             AdminConfig adminConfig = new AdminConfig();
-            adminConfig.setHost(host);
-            adminConfig.setUsername(username);
-            adminConfig.setPassword(password);
+            adminConfig.setHost(hubConfig.host);
+            adminConfig.setUsername(hubConfig.adminUsername);
+            adminConfig.setPassword(hubConfig.adminPassword);
             AdminManager am = new AdminManager(adminConfig);
             String versionString = am.getServerVersion();
             int major = Integer.parseInt(versionString.substring(0, 1));
@@ -175,16 +177,26 @@ public class DataHub {
 
     private AppConfig getAppConfig() throws IOException {
         AppConfig config = new AppConfig();
-        config.setHost(host);
-        config.setRestPort(stagingRestPort);
-        config.setName(HUB_NAME);
-        config.setRestAdminUsername(username);
-        config.setRestAdminPassword(password);
+        config.setHost(hubConfig.host);
+        config.setRestPort(hubConfig.stagingPort);
+        config.setName(hubConfig.name);
+        config.setRestAdminUsername(hubConfig.adminUsername);
+        config.setRestAdminPassword(hubConfig.adminPassword);
+        config.setModulesDatabaseName(hubConfig.modulesDbName);
+
         List<String> paths = new ArrayList<String>();
         paths.add(new ClassPathResource("ml-modules").getPath());
+
         String configPath = new ClassPathResource("ml-config").getPath();
         config.setConfigDir(new ConfigDir(new File(configPath)));
         config.setModulePaths(paths);
+
+        Map<String, String> customTokens = config.getCustomTokens();
+        customTokens.put("%%STAGING_DATABASE%%", hubConfig.stagingDbName);
+        customTokens.put("%%FINAL_DATABASE%%", hubConfig.finalDbName);
+        customTokens.put("%%TRACING_DATABASE%%", hubConfig.tracingDbName);
+        customTokens.put("%%MODULES_DATABASE%%", hubConfig.modulesDbName);
+
         return config;
     }
 
@@ -193,6 +205,7 @@ public class DataHub {
      * @throws IOException
      */
     public void install() throws IOException {
+        LOGGER.debug("Installing the Data Hub into MarkLogic");
         // clean up any lingering cache for deployed modules
         PropertiesModuleManager moduleManager = new PropertiesModuleManager(this.assetInstallTimeFile);
         moduleManager.deletePropertiesFile();
@@ -206,14 +219,15 @@ public class DataHub {
 
     private DatabaseClient getDatabaseClient(int port) {
         AppConfig config = new AppConfig();
-        config.setHost(host);
-        config.setName(HUB_NAME);
-        config.setRestAdminUsername(username);
-        config.setRestAdminPassword(password);
-        DatabaseClient client = DatabaseClientFactory.newClient(host, port, username, password,
+        config.setHost(hubConfig.host);
+        config.setName(hubConfig.name);
+        config.setRestAdminUsername(hubConfig.adminUsername);
+        config.setRestAdminPassword(hubConfig.adminPassword);
+        DatabaseClient client = DatabaseClientFactory.newClient(hubConfig.host, port, hubConfig.adminUsername, hubConfig.adminPassword,
                 config.getRestAuthentication(), config.getRestSslContext(), config.getRestSslHostnameVerifier());
         return client;
     }
+
     /**
      * Installs User Provided modules into the Data Hub
      *
@@ -224,15 +238,12 @@ public class DataHub {
      * @throws IOException
      */
     public Set<File> installUserModules(String pathToUserModules) throws IOException {
-        AppConfig config = new AppConfig();
-        config.setHost(host);
-        config.setRestPort(finalRestPort);
-        config.setName(HUB_NAME);
-        config.setRestAdminUsername(username);
-        config.setRestAdminPassword(password);
+        LOGGER.debug("Installing user modules into MarkLogic");
 
-        DatabaseClient stagingClient = getDatabaseClient(stagingRestPort);
-        DatabaseClient finalClient = getDatabaseClient(finalRestPort);
+        AppConfig config = getAppConfig();
+
+        DatabaseClient stagingClient = getDatabaseClient(hubConfig.stagingPort);
+        DatabaseClient finalClient = getDatabaseClient(hubConfig.finalPort);
 
 
         Set<File> loadedFiles = new HashSet<File>();
@@ -274,7 +285,8 @@ public class DataHub {
     }
 
     public JsonNode validateUserModules() {
-        DatabaseClient client = getDatabaseClient(stagingRestPort);
+        LOGGER.debug("validating user modules");
+        DatabaseClient client = getDatabaseClient(hubConfig.stagingPort);
         EntitiesValidator ev = new EntitiesValidator(client);
         return ev.validate();
     }
@@ -290,22 +302,27 @@ public class DataHub {
 
         // Databases
         List<Command> dbCommands = new ArrayList<Command>();
-        DeployHubDatabaseCommand staging = new DeployHubDatabaseCommand(STAGING_NAME);
-        staging.setForestsPerHost(FORESTS_PER_HOST);
+        DeployHubDatabaseCommand staging = new DeployHubDatabaseCommand(hubConfig.stagingDbName);
+        staging.setForestsPerHost(hubConfig.stagingForestsPerHost);
         dbCommands.add(staging);
 
-        DeployHubDatabaseCommand finalDb = new DeployHubDatabaseCommand(FINAL_NAME);
-        finalDb.setForestsPerHost(FORESTS_PER_HOST);
+        DeployHubDatabaseCommand finalDb = new DeployHubDatabaseCommand(hubConfig.finalDbName);
+        finalDb.setForestsPerHost(hubConfig.finalForestsPerHost);
         dbCommands.add(finalDb);
 
-        dbCommands.add(new DeployModulesDatabaseCommand(MODULES_DB_NAME));
+        DeployHubDatabaseCommand tracingDb = new DeployHubDatabaseCommand(hubConfig.tracingDbName);
+        tracingDb.setForestsPerHost(hubConfig.tracingForestsPerHost);
+        dbCommands.add(tracingDb);
+
+        dbCommands.add(new DeployModulesDatabaseCommand(hubConfig.modulesDbName));
         dbCommands.add(new DeployTriggersDatabaseCommand());
         dbCommands.add(new DeploySchemasDatabaseCommand());
         commands.addAll(dbCommands);
 
         // App Servers
-        commands.add(new DeployRestApiCommand(STAGING_NAME, stagingRestPort));
-        commands.add(new DeployRestApiCommand(FINAL_NAME, finalRestPort));
+        commands.add(new DeployRestApiCommand(hubConfig.stagingHttpName, hubConfig.stagingPort));
+        commands.add(new DeployRestApiCommand(hubConfig.finalHttpName, hubConfig.finalPort));
+        commands.add(new DeployRestApiCommand(hubConfig.tracingHttpName, hubConfig.tracePort));
 
         // Modules
         commands.add(new LoadModulesCommand());
@@ -320,6 +337,7 @@ public class DataHub {
      * @throws IOException
      */
     public void uninstall() throws IOException {
+        LOGGER.debug("Uninstalling the Data Hub from MarkLogic");
         AdminManager manager = new AdminManager();
         AppConfig config = getAppConfig();
         SimpleAppDeployer deployer = new SimpleAppDeployer(client, manager);
