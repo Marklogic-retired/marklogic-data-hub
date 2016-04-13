@@ -46,7 +46,7 @@ class CreateFlowTask extends DefaultTask {
             return
         }
 
-        def userlandPath = new File(getHubConfig().getModulesPath())
+        def userlandPath = new File(getHubConfig().modulesPath)
         Scaffolding.createFlow(entityName, flowName, flowType, pluginFormat, dataFormat, userlandPath)
     }
 

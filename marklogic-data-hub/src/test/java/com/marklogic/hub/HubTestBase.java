@@ -49,6 +49,7 @@ import com.marklogic.client.io.StringHandle;
 public class HubTestBase {
     static final private Logger logger = LoggerFactory.getLogger(HubTestBase.class);
 
+    public static final String PLUGIN_PATH = "./ye-olde-plugins";
     public static String host;
     public static int stagingPort;
     public static int finalPort;
@@ -122,11 +123,12 @@ public class HubTestBase {
         authMethod = Authentication.valueOf(properties.getProperty("auth").toUpperCase());
 
         stagingClient = DatabaseClientFactory.newClient(host, stagingPort, user, password, authMethod);
-        stagingModulesClient  = DatabaseClientFactory.newClient(host, stagingPort, DataHub.MODULES_DB_NAME, user, password, authMethod);
+        stagingModulesClient  = DatabaseClientFactory.newClient(host, stagingPort, HubConfig.DEFAULT_MODULES_DB_NAME, user, password, authMethod);
         finalClient = DatabaseClientFactory.newClient(host, finalPort, user, password, authMethod);
-        finalModulesClient  = DatabaseClientFactory.newClient(host, stagingPort, DataHub.MODULES_DB_NAME, user, password, authMethod);
+        finalModulesClient  = DatabaseClientFactory.newClient(host, stagingPort, HubConfig.DEFAULT_MODULES_DB_NAME, user, password, authMethod);
         traceClient = DatabaseClientFactory.newClient(host, tracePort, user, password, authMethod);
-        traceModulesClient  = DatabaseClientFactory.newClient(host, stagingPort, DataHub.MODULES_DB_NAME, user, password, authMethod);
+        traceModulesClient  = DatabaseClientFactory.newClient(host, stagingPort, HubConfig.DEFAULT_MODULES_DB_NAME, user, password, authMethod);
+
     }
 
     public HubTestBase() {
@@ -137,22 +139,27 @@ public class HubTestBase {
         stagingDocMgr.write("/debug", new StringHandle("<debug>true</debug>"));
     }
 
+    protected static HubConfig getHubConfig() {
+        return getHubConfig(PLUGIN_PATH);
+    }
+
     protected static HubConfig getHubConfig(String pluginDir) {
-        HubConfig config = new HubConfig(pluginDir);
-        config.setHost(host);
-        config.setStagingPort(stagingPort);
-        config.setFinalPort(finalPort);
-        config.setAdminUsername(user);
-        config.setAdminPassword(password);
-        return config;
+        HubConfig hubConfig = new HubConfig(pluginDir);
+        hubConfig.host = host;
+        hubConfig.stagingPort = stagingPort;
+        hubConfig.finalPort = finalPort;
+        hubConfig.tracePort = tracePort;
+        hubConfig.adminUsername = user;
+        hubConfig.adminPassword = password;
+        return hubConfig;
     }
 
     protected static void installHub() throws IOException {
-        new DataHub(host, stagingPort, finalPort, tracePort, user, password).install();
+        new DataHub(getHubConfig()).install();
     }
 
     protected static void uninstallHub() throws IOException {
-        new DataHub(host, stagingPort, finalPort, tracePort, user, password).uninstall();
+        new DataHub(getHubConfig()).uninstall();
     }
     protected static String getResource(String resourceName) throws IOException {
         try {
@@ -184,11 +191,15 @@ public class HubTestBase {
     }
 
     protected static int getStagingDocCount() {
-        return getDocCount("data-hub-STAGING");
+        return getDocCount(HubConfig.DEFAULT_STAGING_NAME);
     }
 
     protected static int getFinalDocCount() {
-        return getDocCount("data-hub-FINAL");
+        return getDocCount(HubConfig.DEFAULT_FINAL_NAME);
+    }
+
+    protected static int getTracingDocCount() {
+        return getDocCount(HubConfig.DEFAULT_TRACING_NAME);
     }
 
     protected static int getDocCount(String database) {
@@ -237,7 +248,7 @@ public class HubTestBase {
     }
 
     protected static EvalResultIterator runInModules(String query) {
-        return runInDatabase(query, "data-hub-modules");
+        return runInDatabase(query, HubConfig.DEFAULT_MODULES_DB_NAME);
     }
 
     protected static EvalResultIterator runInDatabase(String query, String databaseName) {

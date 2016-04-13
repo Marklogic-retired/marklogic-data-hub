@@ -19,24 +19,56 @@ public class HubConfig {
 
     public static final String DEFAULT_USERNAME = "admin";
     public static final String DEFAULT_PASSWORD = "admin";
+
     public static final String DEFAULT_HOST = "localhost";
+
+    public static final String DEFAULT_STAGING_NAME = "data-hub-STAGING";
+    public static final String DEFAULT_FINAL_NAME = "data-hub-FINAL";
+    public static final String DEFAULT_TRACING_NAME = "data-hub-TRACING";
+    public static final String DEFAULT_MODULES_DB_NAME = "data-hub-MODULES";
+    public static final String DEFAULT_TRIGGERS_DB_NAME = "data-hub-TRIGGERS";
+    public static final String DEFAULT_SCHEMAS_DB_NAME = "data-hub-SCHEMAS";
+
     public static final Integer DEFAULT_STAGING_PORT = 8010;
     public static final Integer DEFAULT_FINAL_PORT = 8011;
     public static final Integer DEFAULT_TRACE_PORT = 8012;
+
     public static final String DEFAULT_APP_NAME = "my-data-hub";
-    public final static String DEFAULT_MODULES_PATH = "src/data-hub";
+    public static final String DEFAULT_MODULES_PATH = "src/data-hub";
+
     public static final String DEFAULT_AUTH_METHOD = "digest";
 
-    private String name = DEFAULT_APP_NAME;
-    private String adminUsername = DEFAULT_USERNAME;
-    private String adminPassword = DEFAULT_PASSWORD;
-    private String host = DEFAULT_HOST;
-    private Integer stagingPort = DEFAULT_STAGING_PORT;
-    private Integer finalPort = DEFAULT_FINAL_PORT;
-    private Integer tracePort = DEFAULT_TRACE_PORT;
-    private String authMethod = DEFAULT_AUTH_METHOD;
+    public static final Integer DEFAULT_FORESTS_PER_HOST = 4;
 
-    private String modulesPath;
+    public String name = DEFAULT_APP_NAME;
+
+    public String adminUsername = DEFAULT_USERNAME;
+    public String adminPassword = DEFAULT_PASSWORD;
+
+    public String host = DEFAULT_HOST;
+
+    public String stagingDbName = DEFAULT_STAGING_NAME;
+    public String stagingHttpName = DEFAULT_STAGING_NAME;
+    public int stagingForestsPerHost = DEFAULT_FORESTS_PER_HOST;
+    public Integer stagingPort = DEFAULT_STAGING_PORT;
+
+    public String finalDbName = DEFAULT_FINAL_NAME;
+    public String finalHttpName = DEFAULT_FINAL_NAME;
+    public int finalForestsPerHost = DEFAULT_FORESTS_PER_HOST;
+    public Integer finalPort = DEFAULT_FINAL_PORT;
+
+    public String tracingDbName = DEFAULT_TRACING_NAME;
+    public String tracingHttpName = DEFAULT_TRACING_NAME;
+    public int tracingForestsPerHost = DEFAULT_FORESTS_PER_HOST;
+    public Integer tracePort = DEFAULT_TRACE_PORT;
+
+    public String modulesDbName = DEFAULT_MODULES_DB_NAME;
+    public String triggersDbName = DEFAULT_TRIGGERS_DB_NAME;
+    public String schemasDbName = DEFAULT_SCHEMAS_DB_NAME;
+
+    public String authMethod = DEFAULT_AUTH_METHOD;
+
+    public String modulesPath;
 
     public HubConfig() {
         this(DEFAULT_MODULES_PATH);
@@ -44,99 +76,5 @@ public class HubConfig {
 
     public HubConfig(String modulesPath) {
         this.modulesPath = modulesPath;
-    }
-
-    /**
-     * @return the name of the application, which is then used to generate app server and database names unless those
-     *         are set via their respective properties
-     */
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    /**
-     * @return the host that clients using this class will connect to
-     */
-    public String getHost() {
-        return host;
-    }
-
-    public void setHost(String host) {
-        this.host = host;
-    }
-
-    /**
-     * @return the name of a MarkLogic user with the rest-admin role who can then load modules via a REST API server
-     */
-    public String getAdminUsername() {
-        return adminUsername;
-    }
-
-    public void setAdminUsername(String username) {
-        this.adminUsername = username;
-    }
-
-    /**
-     * @return the password for the user identified by {@code restAdminUsername}
-     */
-    public String getAdminPassword() {
-        return adminPassword;
-    }
-
-    public void setAdminPassword(String password) {
-        this.adminPassword = password;
-    }
-
-    /**
-     * @return the port of the Staging REST API server used for loading modules
-     */
-    public Integer getStagingPort() {
-        return stagingPort;
-    }
-
-    public void setStagingPort(Integer port) {
-        this.stagingPort = port;
-    }
-
-    /**
-     * @return the port of the Final REST API server used for loading modules
-     */
-    public Integer getFinalPort() {
-        return finalPort;
-    }
-
-    public void setFinalPort(Integer port) {
-        this.finalPort = port;
-    }
-
-    /**
-     * @return the port of the Final REST API server used for loading modules
-     */
-    public Integer getTracePort() {
-        return tracePort;
-    }
-
-    public void setTracePort(Integer port) {
-        this.tracePort = port;
-    }
-
-    public String getModulesPath() {
-        return this.modulesPath;
-    }
-
-    public void setModulesPath(String modulesPath) {
-        this.modulesPath = modulesPath;
-    }
-
-    public String getAuthMethod() {
-        return this.authMethod;
-    }
-
-    public void setAuthMethod(String authMethod) {
-        this.authMethod = authMethod;
     }
 }

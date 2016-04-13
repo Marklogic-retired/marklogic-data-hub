@@ -15,10 +15,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
+import com.marklogic.hub.DataHub;
+import com.marklogic.hub.HubConfig;
+
 /***
  *
- * @author mturiana 
- * 
+ * @author mturiana
+ *
  * This class is used to get the value of the keys from the properties file
  */
 @Component
@@ -250,5 +253,16 @@ public class EnvironmentConfiguration {
 	public String getFlowInputPath(String entityName, String flowName) {
 	    return this.flowProperties.getProperty(entityName + "-" + flowName);
     }
+
+	public HubConfig getHubConfig() {
+	    HubConfig hubConfig = new HubConfig();
+	    hubConfig.host = getMLHost();
+	    hubConfig.stagingPort = Integer.parseInt(getMLStagingRestPort());
+	    hubConfig.finalPort = Integer.parseInt(getMLFinalRestPort());
+	    hubConfig.tracePort = Integer.parseInt(getMLTraceRestPort());
+	    hubConfig.adminUsername = getMLUsername();
+	    hubConfig.adminPassword = getMLPassword();
+	    return hubConfig;
+	}
 
 }
