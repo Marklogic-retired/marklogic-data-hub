@@ -1,18 +1,8 @@
 package com.marklogic.gradle.task
 
-import com.marklogic.hub.HubConfig;
-
-import com.marklogic.client.DatabaseClient;
-import com.marklogic.client.DatabaseClientFactory;
-import com.marklogic.client.DatabaseClientFactory.Authentication;
-import com.marklogic.hub.DataHub;
-import com.marklogic.hub.FlowManager;
-import com.marklogic.hub.flow.Flow;
-
-import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
 
-class RunFlowTask extends DefaultTask {
+class RunFlowTask extends HubTask {
 
     @TaskAction
     void runFlow() {
@@ -37,8 +27,8 @@ class RunFlowTask extends DefaultTask {
             return
         }
 
-        FlowManager fm = getFlowManager()
-        Flow flow = fm.getFlow(entityName, flowName, flowType)
+        def fm = getFlowManager()
+        def flow = fm.getFlow(entityName, flowName, flowType)
         if (flow) {
             println("Running Flow: [" + entityName + ":" + flowName + "] with batch size: " + batchSize)
             fm.runFlow(flow, batchSize)
@@ -47,25 +37,4 @@ class RunFlowTask extends DefaultTask {
             println("Flow Not Found: [" + entityName + ":" + flowName + "]")
         }
     }
-
-    HubConfig getHubConfig() {
-        getProject().property("hubConfig")
-    }
-
-    DataHub getDataHub() {
-        getProject().property("dataHub")
-    }
-
-    FlowManager getFlowManager() {
-        HubConfig hc = getHubConfig()
-        Authentication authMethod = Authentication.valueOf(hc.authMethod.toUpperCase())
-        DatabaseClient client = DatabaseClientFactory.newClient(
-                hc.host,
-                hc.stagingPort,
-                hc.adminUsername,
-                hc.adminPassword,
-                authMethod);
-        return new FlowManager(client)
-    }
-
 }

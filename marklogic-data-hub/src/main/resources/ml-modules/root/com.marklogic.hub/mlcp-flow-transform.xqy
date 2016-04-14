@@ -5,6 +5,11 @@ module namespace mlcpFlow = "http://marklogic.com/data-hub/mlcp-flow-transform";
 import module namespace flow = "http://marklogic.com/data-hub/flow-lib"
   at "/com.marklogic.hub/lib/flow-lib.xqy";
 
+import module namespace trace = "http://marklogic.com/data-hub/trace"
+  at "/com.marklogic.hub/lib/trace-lib.xqy";
+
+declare namespace hub = "http://marklogic.com/data-hub";
+
 declare function mlcpFlow:transform(
   $content as map:map,
   $context as map:map
@@ -23,6 +28,26 @@ declare function mlcpFlow:transform(
 
   let $envelope := flow:run-plugins($flow, $uri, map:get($content, "value"), $paramMap)
   let $_ := map:put($content, "value", $envelope)
+  let $_ :=
+    if (trace:enabled()) then
+      trace:create-trace(
+        trace:plugin-trace(
+          $uri,
+          if ($envelope instance of element()) then ()
+          else
+            null-node {},
+          "mlcp-writer",
+          $flow/hub:type,
+          $envelope,
+          if ($envelope instance of element()) then ()
+          else
+            null-node {},
+          xs:dayTimeDuration("PT0S"),
+          if ($envelope instance of element()) then "xml"
+          else "json"
+        )
+      )
+    else ()
   return
     $content
 };

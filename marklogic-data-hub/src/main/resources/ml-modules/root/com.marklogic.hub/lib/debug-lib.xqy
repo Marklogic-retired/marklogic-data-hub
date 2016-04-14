@@ -19,6 +19,11 @@ module namespace debug = "http://marklogic.com/data-hub/debug-lib";
 
 declare option xdmp:mapping "false";
 
+declare function debug:enable($enable as xs:boolean)
+{
+  xdmp:set-server-field("HUB_DEBUG", $enable)
+};
+
 (:~
  : Determines whether debugging is on or not
  :
@@ -26,12 +31,7 @@ declare option xdmp:mapping "false";
  :)
 declare function debug:on() as xs:boolean
 {
-  fn:not(
-    fn:empty((
-      xdmp:get-server-field("DEBUG", ()),
-      fn:doc('/debug')/*:debug
-    )[1])
-  )
+  xdmp:get-server-field("HUB_DEBUG", fn:false())
 };
 
 (:~

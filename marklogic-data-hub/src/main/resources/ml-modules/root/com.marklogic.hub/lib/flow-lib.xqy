@@ -414,20 +414,39 @@ declare function flow:run-collector(
   let $ns := flow:get-module-ns($type)
   let $func := xdmp:function(fn:QName($ns, "collect"), $module-uri)
   let $before := xdmp:elapsed-time()
-  let $resp := $func($options)
-  let $duration := xdmp:elapsed-time() - $before
+  let $resp :=
+    try {
+      $func($options)
+    }
+    catch($ex) {
+      xdmp:log($ex),
+      trace:create-trace(
+        trace:error-trace(
+          (),
+          $module-uri,
+          "collector",
+          "conformance",
+          $ex,
+          (),
+          xdmp:elapsed-time() - $before,
+          "json"
+        )
+      ),
+      xdmp:rethrow()
+    }
   let $_ :=
     trace:create-trace(
-      (
-        <trace:plugin-type>collector</trace:plugin-type>,
-        <trace:plugin-module-uri>{$module-uri}</trace:plugin-module-uri>,
-        <trace:output>
-        {
-          $resp ! <trace:item>{.}</trace:item>
-        }
-        </trace:output>
-      ),
-      $duration)
+      trace:plugin-trace(
+        null-node {},
+        $module-uri,
+        "collector",
+        "conformance",
+        null-node {},
+        json:to-array($resp),
+        xdmp:elapsed-time() - $before,
+        "json"
+      )
+    )
   return
     $resp
 };
@@ -499,7 +518,7 @@ declare function flow:run-flow(
     xdmp:invoke-function(function() {
       for $writer in $flow/hub:writer
       return
-        flow:run-writer($writer, $identifier, $envelope, $options)
+        flow:run-writer($writer, $identifier, $envelope, $flow/hub:type, $options)
     },
     map:new((
       map:entry("isolation", "different-transaction"),
@@ -573,22 +592,87 @@ declare function flow:run-plugin(
         else
           "create-" || $destination
       let $func := xdmp:function(fn:QName($ns, $func-name), $module-uri)
+      let $trace-input :=
+        if (trace:enabled()) then
+          if ($data-format = 'application/xml') then
+            switch($destination)
+              case "content" return
+                if ($flow-type = "input") then
+                  element trace:rawContent { $content }
+                else
+                  ()
+              case "headers" return
+                element trace:content { $content }
+              case "triples" return
+              (
+                element trace:content { $content },
+                element trace:headers { $headers }
+              )
+              default return ()
+          else
+            let $o := json:object()
+            let $_ :=
+              let $content :=
+                (
+                  if ($content instance of document-node()) then
+                    $content/node()
+                  else
+                    $content,
+                  null-node{}
+                )[1]
+              return
+                switch($destination)
+                  case "content" return
+                    if ($flow-type = "input") then
+                      map:put($o, "rawContent", $content)
+                    else
+                      ()
+                  case "headers" return
+                    map:put($o, "content", $content)
+                  case "triples" return
+                  (
+                    map:put($o, "content", $content),
+                    map:put($o, "headers", ($headers, null-node{})[1])
+                  )
+                  default return ()
+            return
+             $o
+        else ()
       let $before := xdmp:elapsed-time()
       let $resp :=
-        if ($simple) then
-          switch ($destination)
-            case "content" return
-              if ($flow-type = "input") then
+        try {
+          if ($simple) then
+            switch ($destination)
+              case "content" return
+                if ($flow-type = "input") then
+                  $func($identifier, $content, $options)
+                else
+                  $func($identifier, $options)
+              case "headers" return
                 $func($identifier, $content, $options)
-              else
-                $func($identifier, $options)
-            case "headers" return
-              $func($identifier, $content, $options)
-            case "triples" return
-              $func($identifier, $content, $headers, $options)
-            default return ()
-        else
-          $func($identifier, $content, $headers, $triples, $options)
+              case "triples" return
+                $func($identifier, $content, $headers, $options)
+              default return ()
+          else
+            $func($identifier, $content, $headers, $triples, $options)
+        }
+        catch($ex) {
+          xdmp:log($ex),
+          trace:create-trace(
+            trace:error-trace(
+              $identifier,
+              $module-uri,
+              $destination,
+              $flow-type,
+              $ex,
+              $trace-input,
+              xdmp:elapsed-time() - $before,
+              if ($data-format = 'application/xml') then "xml"
+              else "json"
+            )
+          ),
+          xdmp:rethrow()
+        }
       let $duration := xdmp:elapsed-time() - $before
       let $resp :=
         typeswitch($resp)
@@ -607,20 +691,21 @@ declare function flow:run-plugin(
       let $_ :=
         if (trace:enabled()) then
           trace:create-trace(
-            (
-              <trace:plugin-type>{$destination}</trace:plugin-type>,
-              <trace:plugin-module-uri>{$module-uri}</trace:plugin-module-uri>,
-              <trace:input>
-                <trace:id>{$identifier}</trace:id>
-                <trace:content>{$content}</trace:content>
-                <trace:headers>{$headers}</trace:headers>
-                <trace:triples>{$triples}</trace:triples>
-              </trace:input>,
-              <trace:output>
-              {$resp}
-              </trace:output>
-            ),
-            $duration)
+            trace:plugin-trace(
+              $identifier,
+              $module-uri,
+              $destination,
+              $flow-type,
+              $trace-input,
+              if ($data-format = 'application/xml') then
+               $resp
+              else
+                ($resp, null-node{})[1],
+              $duration,
+              if ($data-format = 'application/xml') then "xml"
+              else "json"
+            )
+          )
         else ()
       return
         $resp
@@ -639,6 +724,7 @@ declare function flow:run-writer(
   $writer as element(hub:writer),
   $identifier as xs:string,
   $envelope as item(),
+  $flow-type as xs:string,
   $options as map:map)
 {
   let $module-uri as xs:string := $writer/@module
@@ -647,19 +733,43 @@ declare function flow:run-writer(
   let $ns := flow:get-module-ns($type)
   let $func := xdmp:function(fn:QName($ns, "write"), $module-uri)
   let $before := xdmp:elapsed-time()
-  let $resp := $func($identifier, $envelope, $options)
+  let $resp :=
+    try {
+      $func($identifier, $envelope, $options)
+    }
+    catch($ex) {
+      xdmp:log($ex),
+      trace:create-trace(
+        trace:error-trace(
+          $identifier,
+          $module-uri,
+          "writer",
+          $flow-type,
+          $ex,
+          $envelope,
+          xdmp:elapsed-time() - $before,
+          if ($envelope instance of element()) then "xml"
+          else "json"
+        )
+      ),
+      xdmp:rethrow()
+    }
   let $duration := xdmp:elapsed-time() - $before
   let $_ :=
     trace:create-trace(
-      (
-        <trace:id>{$identifier}</trace:id>,
-        <trace:plugin-type>writer</trace:plugin-type>,
-        <trace:plugin-module-uri>{$module-uri}</trace:plugin-module-uri>,
-        <trace:input>
-          {$envelope}
-        </trace:input>
-      ),
-      $duration)
+      trace:plugin-trace(
+        $identifier,
+        $module-uri,
+        $flow-type,
+        "writer",
+        $envelope,
+        if ($envelope instance of element()) then ()
+        else null-node {},
+        $duration,
+        if ($envelope instance of element()) then "xml"
+        else "json"
+      )
+    )
   return
     $resp
 };

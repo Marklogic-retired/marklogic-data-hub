@@ -5,6 +5,11 @@ module namespace runFlow = "http://marklogic.com/rest-api/transform/run-flow";
 import module namespace flow = "http://marklogic.com/data-hub/flow-lib"
 at "/com.marklogic.hub/lib/flow-lib.xqy";
 
+import module namespace trace = "http://marklogic.com/data-hub/trace"
+  at "/com.marklogic.hub/lib/trace-lib.xqy";
+
+declare namespace hub = "http://marklogic.com/data-hub";
+
 declare function runFlow:transform(
   $context as map:map,
   $params as map:map,
@@ -18,8 +23,27 @@ declare function runFlow:transform(
 
   let $uri := map:get($context, 'uri')
 
-  let $transformedContent := flow:run-plugins($flow, $uri, $content, $params)
-
-  return document { $transformedContent }
+  let $envelope := flow:run-plugins($flow, $uri, $content, $params)
+  let $_ :=
+    if (trace:enabled()) then
+      trace:create-trace(
+        trace:plugin-trace(
+          $uri,
+          if ($envelope instance of element()) then ()
+          else
+            null-node {},
+          $flow/hub:type,
+          "rest-document-writer",
+          $envelope,
+          if ($envelope instance of element()) then ()
+          else
+            null-node {},
+          xs:dayTimeDuration("PT0S"),
+          if ($envelope instance of element()) then "xml"
+          else "json"
+        )
+      )
+    else ()
+  return document { $envelope }
 
 };
