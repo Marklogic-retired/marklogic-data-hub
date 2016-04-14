@@ -61,23 +61,7 @@ public class Mlcp {
 	public void loadContent() throws IOException, JSONException {
 		for (MlcpSource source : sources) {
 			try {
-				List<String> arguments = new ArrayList<>();
-
-				arguments.add("import");
-				arguments.add("-mode");
-				arguments.add("local");
-				arguments.add("-host");
-				arguments.add(host);
-				arguments.add("-port");
-				arguments.add(Integer.toString(port));
-				arguments.add("-username");
-				arguments.add(user);
-				arguments.add("-password");
-				arguments.add(password);
-
-				// add arguments related to the source
-				List<String> sourceArguments = source.getMlcpArguments();
-				arguments.addAll(sourceArguments);
+				List<String> arguments = getMlcpOptions(source);
 
 				LOGGER.info(arguments.toString());
 				DataHubContentPump contentPump = new DataHubContentPump(arguments);
@@ -97,8 +81,9 @@ public class Mlcp {
 		System.setProperty("hadoop.home.dir", new File(home).getCanonicalPath());
 	}
 
-	private static class MlcpSource {
-		private String sourcePath;
+	public static class MlcpSource {
+		private static final String DOCUMENT_TYPE_KEY = "-document_type";
+        private String sourcePath;
 		private SourceOptions sourceOptions;
 
 		public MlcpSource(String sourcePath, SourceOptions sourceOptions) {
@@ -110,42 +95,26 @@ public class Mlcp {
 			return sourcePath;
 		}
 
-		public List<String> getMlcpArguments() throws IOException, JSONException {
+        public List<String> getMlcpArguments() throws IOException, JSONException {
 			File file = new File(sourcePath);
 			String canonicalPath = file.getCanonicalPath();
 
 			List<String> arguments = new ArrayList<>();
-			arguments.add("-generate_uri");
-			arguments.add("true");
-
+			
 			arguments.add("-input_file_path");
 			arguments.add(canonicalPath);
-//			arguments.add("-input_file_type");
-//			if (sourceOptions.getInputFileType() == null) {
-//				arguments.add("documents");
-//			} else {
-//				arguments.add(sourceOptions.getInputFileType());
-//			}
-
-//			String collections = this.getOutputCollections();
-//			arguments.add("-output_collections");
-//			arguments.add("\"" + collections + "\"");
-//
-//			if (sourceOptions.getInputCompressed()) {
-//				arguments.add("-input_compressed");
-//			}
-
-			// by default, cut the source directory path to make URIs shorter
-//			String uriReplace = canonicalPath + ",''";
-//			uriReplace = uriReplace.replaceAll("\\\\", "/");
-//
-//			arguments.add("-output_uri_replace");
-//			arguments.add("\"" + uriReplace + "\"");
-
-			arguments.add("-document_type");
-			arguments.add(sourceOptions.getDataFormat());
 			
+			arguments.add("-output_uri_replace");
+			arguments.add("\""+canonicalPath+",''\"");
+
 			addOtherArguments(arguments, sourceOptions.getOtherOptions());
+			
+			//add document type only if it does not exist in the list
+			if(!arguments.contains(DOCUMENT_TYPE_KEY)) {
+			    arguments.add(DOCUMENT_TYPE_KEY);
+			    arguments.add(sourceOptions.getDataFormat());
+			}
+            
 			return arguments;
 		}
 
@@ -219,4 +188,25 @@ public class Mlcp {
             this.otherOptions = otherOptions;
         }
 	}
+
+    public List<String> getMlcpOptions(MlcpSource source) throws IOException, JSONException {
+        List<String> mlcpOptions = new ArrayList<>();
+
+        mlcpOptions.add("import");
+        mlcpOptions.add("-mode");
+        mlcpOptions.add("local");
+        mlcpOptions.add("-host");
+        mlcpOptions.add(host);
+        mlcpOptions.add("-port");
+        mlcpOptions.add(Integer.toString(port));
+        mlcpOptions.add("-username");
+        mlcpOptions.add(user);
+        mlcpOptions.add("-password");
+        mlcpOptions.add(password);
+
+        List<String> sourceArguments = source.getMlcpArguments();
+        mlcpOptions.addAll(sourceArguments);
+        
+        return mlcpOptions;
+    }
 }

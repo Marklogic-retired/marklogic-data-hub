@@ -94,6 +94,22 @@
     $scope.cancel = function() {
       $uibModalInstance.dismiss();
     };
+    
+    $scope.download = function() {
+    	$scope.loading = true;
+      	DataHub.downloadMlcpOptionsFile(entityName, flowName, $scope.loadDataForm)
+      	.success(function(data) {
+      	  var anchor = angular.element('<a/>');
+      	  anchor.attr({
+      	    href: 'data:attachment/csv;charset=utf-8,' + encodeURI(data),
+      	    target: '_blank',
+      	    download: 'mlcpOptions.txt'
+      	  })[0].click();
+      	})
+      	.then(function() {
+      		$scope.loading = false;
+      	});
+    };
 
     $scope.onSelection = function(node, selected) {
       $scope.loadDataForm.inputPath = node.path;

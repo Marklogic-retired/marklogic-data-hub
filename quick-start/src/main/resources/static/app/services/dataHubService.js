@@ -32,7 +32,8 @@
       searchPath: searchPath,
       showApiDoc: showApiDoc,
       getPreviousInputPath: getPreviousInputPath,
-      getJsonFile: getJsonFile
+      getJsonFile: getJsonFile,
+      downloadMlcpOptionsFile: downloadMlcpOptionsFile
     });
 
     function login(loginForm) {
@@ -194,7 +195,6 @@
       $rootScope.notificationBar.messageType = messageType;
       $rootScope.notificationBar.message = message;
       $rootScope.notificationBar.show = true;
-      console.log(message);
     }
 
     function showApiDoc() {
@@ -213,6 +213,17 @@
     
     function getJsonFile(filePath) {
     	return $http.get(filePath);
+    }
+    
+    function downloadMlcpOptionsFile(entityName, flowName, form) {
+    	var data = {
+    	  entityName: entityName,
+    	  flowName: flowName,
+    	  inputPath: form.inputPath,
+    	  dataFormat: form.dataFormat,
+    	  otherOptions: form.otherOptions
+    	};
+    	return $http.post('api/flows/options/download', data);
     }
 
   }

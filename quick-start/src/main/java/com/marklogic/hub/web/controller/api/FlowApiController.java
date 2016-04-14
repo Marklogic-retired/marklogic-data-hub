@@ -1,7 +1,10 @@
 package com.marklogic.hub.web.controller.api;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,7 +19,11 @@ import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobExecutionListener;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,13 +32,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.marklogic.hub.Mlcp;
+import com.marklogic.hub.Mlcp.MlcpSource;
 import com.marklogic.hub.Mlcp.SourceOptions;
 import com.marklogic.hub.config.EnvironmentConfiguration;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.FlowType;
 import com.marklogic.hub.model.EntityModel;
 import com.marklogic.hub.model.FlowModel;
-import com.marklogic.hub.model.RunFlowModel;
+import com.marklogic.hub.model.FlowOptionsModel;
 import com.marklogic.hub.service.CancellableTask;
 import com.marklogic.hub.service.FlowManagerService;
 import com.marklogic.hub.service.TaskManagerService;
@@ -45,6 +53,10 @@ public class FlowApiController extends BaseController {
 
     private static final Logger LOGGER = LoggerFactory
             .getLogger(FlowApiController.class);
+    
+    private static final String MLCP_OPTIONS_FILENAME = "mlcpOptions.txt";
+
+    private static final String NEW_LINE = "\n";
 
     @Autowired
     private EnvironmentConfiguration environmentConfiguration;
@@ -137,7 +149,7 @@ public class FlowApiController extends BaseController {
     }
 
     @RequestMapping(value = "/run", method = RequestMethod.POST)
-    public BigInteger runFlow(@RequestBody RunFlowModel runFlow) {
+    public BigInteger runFlow(@RequestBody FlowOptionsModel runFlow) {
         CancellableTask task = new CancellableTask() {
 
             private JobExecution jobExecution;
@@ -190,9 +202,9 @@ public class FlowApiController extends BaseController {
     }
 
     @RequestMapping(value="/run/input", method = RequestMethod.POST)
-    public BigInteger runInputFlow(@RequestBody RunFlowModel runFlow) {
+    public BigInteger runInputFlow(@RequestBody FlowOptionsModel flowOptionsModel) {
         
-        saveInputPath(runFlow);
+        saveInputPath(flowOptionsModel);
         
         CancellableTask task = new CancellableTask() {
 
@@ -204,23 +216,8 @@ public class FlowApiController extends BaseController {
             @Override
             public void run(BasicFuture<?> resultFuture) {
                 try {
-                	Flow flow = flowManagerService.getFlow(runFlow.getEntityName(), runFlow.getFlowName());
-                	
-                    Mlcp mlcp = new Mlcp(
-                            environmentConfiguration.getMLHost()
-                            ,Integer.parseInt(environmentConfiguration.getMLStagingRestPort())
-                            ,environmentConfiguration.getMLUsername()
-                            ,environmentConfiguration.getMLPassword()
-                            );
-
-                    SourceOptions sourceOptions = new SourceOptions(
-                            runFlow.getEntityName(), runFlow.getFlowName(),
-                            FlowType.INPUT.toString(),
-                            flow.getDataFormat());
-
-                    sourceOptions.setInputFileType(runFlow.getInputFileType());
-                    sourceOptions.setOtherOptions(runFlow.getOtherOptions());
-                    mlcp.addSourceDirectory(runFlow.getInputPath(), sourceOptions);
+                    SourceOptions sourceOptions = createSourceOptionsInstance(flowOptionsModel);
+                	Mlcp mlcp = createMlcpInstance(flowOptionsModel,sourceOptions);
                     mlcp.loadContent();
 
                     resultFuture.completed(null);
@@ -228,7 +225,7 @@ public class FlowApiController extends BaseController {
                 
                 catch (IOException | JSONException e) {
                     LOGGER.error("Error encountered while trying to run flow:  "
-                            + runFlow.getEntityName() + " > " + runFlow.getFlowName(),
+                            + flowOptionsModel.getEntityName() + " > " + flowOptionsModel.getFlowName(),
                             e);
                     resultFuture.failed(e);
                 }
@@ -238,6 +235,31 @@ public class FlowApiController extends BaseController {
         return taskManagerService.addTask(task);
     }
     
+    protected Mlcp createMlcpInstance(FlowOptionsModel flowOptionsModel, SourceOptions sourceOptions) throws NumberFormatException, IOException {
+        Mlcp mlcp = new Mlcp(
+                environmentConfiguration.getMLHost()
+                ,Integer.parseInt(environmentConfiguration.getMLStagingRestPort())
+                ,environmentConfiguration.getMLUsername()
+                ,environmentConfiguration.getMLPassword()
+                );
+        mlcp.addSourceDirectory(flowOptionsModel.getInputPath(), sourceOptions);
+        return mlcp;
+    }
+    
+    protected SourceOptions createSourceOptionsInstance(FlowOptionsModel flowOptionsModel) throws NumberFormatException, IOException {
+        Flow flow = flowManagerService.getFlow(flowOptionsModel.getEntityName(), flowOptionsModel.getFlowName());
+        
+        SourceOptions sourceOptions = new SourceOptions(
+                flowOptionsModel.getEntityName(), flowOptionsModel.getFlowName(),
+                FlowType.INPUT.toString(),
+                flow.getDataFormat());
+
+        sourceOptions.setInputFileType(flowOptionsModel.getInputFileType());
+        sourceOptions.setOtherOptions(flowOptionsModel.getOtherOptions());
+        
+        return sourceOptions;
+    }
+
     @RequestMapping(value = "/input-path", method = RequestMethod.GET, produces = { MediaType.TEXT_PLAIN_VALUE })
     @ResponseBody
     public String getPreviousInputPath(HttpServletRequest request) {
@@ -251,7 +273,7 @@ public class FlowApiController extends BaseController {
         return value == null ? "." : value;
     }
 
-    private void saveInputPath(RunFlowModel runFlow) {
+    private void saveInputPath(FlowOptionsModel runFlow) {
         environmentConfiguration.saveOrUpdateFlowInputPath(runFlow.getEntityName(), runFlow.getFlowName(), runFlow.getInputPath());
     }
 
@@ -267,5 +289,33 @@ public class FlowApiController extends BaseController {
         flowManagerService.runFlowsInParallel(flows.toArray(new Flow[flows
                 .size()]));
     }
+    
+    @RequestMapping(value = "/options/download", method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_UTF8_VALUE }, produces = { MediaType.TEXT_PLAIN_VALUE })
+    public ResponseEntity<InputStreamResource> downloadMlcpConfig(@RequestBody FlowOptionsModel flowOptionsModel) throws IOException, NumberFormatException, JSONException {
+        String mlcpConfigContent = buildMlcpConfigContent(flowOptionsModel);
+        byte[] contentBytes = mlcpConfigContent.getBytes(StandardCharsets.UTF_8);
+        InputStream inputStream = new ByteArrayInputStream(contentBytes);
+        HttpHeaders headers = new HttpHeaders();
+        addRemoveCachingInHeaders(headers);
+        headers.add("content-disposition", "attachment; filename=" + MLCP_OPTIONS_FILENAME);
+        return ResponseEntity
+              .ok()
+              .contentLength(contentBytes.length)
+              .contentType(MediaType.TEXT_PLAIN)
+              .headers(headers)
+              .body(new InputStreamResource(inputStream));
+    }
 
+    private String buildMlcpConfigContent(FlowOptionsModel flowOptionsModel) throws NumberFormatException, IOException, JSONException {
+        SourceOptions sourceOptions = createSourceOptionsInstance(flowOptionsModel);
+        Mlcp mlcp = createMlcpInstance(flowOptionsModel,sourceOptions);
+        List<String> mlcpOptions = mlcp.getMlcpOptions(new MlcpSource(flowOptionsModel.getInputPath(), sourceOptions));
+        return StringUtils.collectionToDelimitedString(mlcpOptions, NEW_LINE);
+    }
+
+    private void addRemoveCachingInHeaders(HttpHeaders headers) {
+        headers.add("Cache-Control", "no-cache, no-store, must-revalidate");
+        headers.add("Pragma", "no-cache");
+        headers.add("Expires", "0");
+    }
 }

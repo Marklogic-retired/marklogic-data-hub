@@ -1,6 +1,6 @@
 package com.marklogic.hub.model;
 
-public class RunFlowModel {
+public class FlowOptionsModel {
     private String entityName;
     private String flowName;
     private String inputPath;
