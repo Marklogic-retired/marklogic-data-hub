@@ -232,12 +232,12 @@ public class FlowManager extends ResourceManager {
 
     public void runInputFlow(Flow flow, HubConfig config) {
         try {
-            Mlcp mlcp = new Mlcp(config.getHost(), config.getStagingPort(), config.getAdminUsername(), config.getAdminPassword());
+            Mlcp mlcp = new Mlcp(config.host, config.stagingPort, config.adminUsername, config.adminPassword);
             SourceOptions sourceOptions = new SourceOptions(
                     flow.getEntityName(), flow.getName(),
                     FlowType.INPUT.toString(),
                     flow.getDataFormat());
-            mlcp.addSourceDirectory(config.getModulesPath(), sourceOptions);
+            mlcp.addSourceDirectory(config.modulesPath, sourceOptions);
             mlcp.loadContent();
         }
         catch (IOException | JSONException e) {

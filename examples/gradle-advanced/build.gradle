@@ -31,16 +31,20 @@ ext {
         modulesDatabaseName = mlModulesDbName
         triggersDatabaseName = mlTriggersDbName
         schemasDatabaseName = mlSchemasDbName
-        restPort = Integer.parseInt(mlStagingAppserverPort)
+        restPort = Integer.parseInt(mlStagingPort)
 
         // Configure custom tokens for our json files
         customTokens.put("%%STAGING_SERVER_NAME%%", mlStagingAppserverName)
-        customTokens.put("%%STAGING_SERVER_PORT%%", mlStagingAppserverPort)
+        customTokens.put("%%STAGING_SERVER_PORT%%", mlStagingPort)
         customTokens.put("%%STAGING_DB_NAME%%", mlStagingDbName)
 
         customTokens.put("%%FINAL_SERVER_NAME%%", mlFinalAppserverName)
-        customTokens.put("%%FINAL_SERVER_PORT%%", mlFinalAppserverPort)
+        customTokens.put("%%FINAL_SERVER_PORT%%", mlFinalPort)
         customTokens.put("%%FINAL_DB_NAME%%", mlFinalDbName)
+
+        customTokens.put("%%TRACE_SERVER_NAME%%", mlTraceAppserverName)
+        customTokens.put("%%TRACE_SERVER_PORT%%", mlTracePort)
+        customTokens.put("%%TRACE_DB_NAME%%", mlTraceDbName)
 
         customTokens.put("%%MODULES_DB_NAME%%", mlModulesDbName)
     }
@@ -58,13 +62,21 @@ ext {
 
     // install the staging database
     def stagingDbCommand = new com.marklogic.appdeployer.command.databases.DeployDatabaseCommand("staging-database.json")
+    stagingDbCommand.setForestsPerHost(Integer.parseInt(mlStagingForestsPerHost));
     mlAppDeployer.commands.add(stagingDbCommand)
     mlDatabaseCommands.add(stagingDbCommand)
 
     // install the final database
     def finalDbCommand = new com.marklogic.appdeployer.command.databases.DeployDatabaseCommand("final-database.json")
+    finalDbCommand.setForestsPerHost(Integer.parseInt(mlFinalForestsPerHost));
     mlAppDeployer.commands.add(finalDbCommand)
     mlDatabaseCommands.add(finalDbCommand)
+
+    // install the trace database
+    def traceDbCommand = new com.marklogic.appdeployer.command.databases.DeployDatabaseCommand("trace-database.json")
+    traceDbCommand.setForestsPerHost(Integer.parseInt(mlTraceForestsPerHost));
+    mlAppDeployer.commands.add(traceDbCommand)
+    mlDatabaseCommands.add(traceDbCommand)
 
     // install the modules database
     def modulesDbCommand = new com.marklogic.appdeployer.command.databases.DeployDatabaseCommand("modules-database.json")

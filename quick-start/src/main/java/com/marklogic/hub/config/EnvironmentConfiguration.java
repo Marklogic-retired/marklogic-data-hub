@@ -15,10 +15,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
+import com.marklogic.hub.DataHub;
+import com.marklogic.hub.HubConfig;
+
 /***
  *
- * @author mturiana 
- * 
+ * @author mturiana
+ *
  * This class is used to get the value of the keys from the properties file
  */
 @Component
@@ -36,6 +39,7 @@ public class EnvironmentConfiguration {
 	private static final String ML_PASSWORD = "mlPassword";
 	private static final String ML_STAGING_REST_PORT = "mlStagingRestPort";
 	private static final String ML_FINAL_REST_PORT = "mlFinalRestPort";
+	private static final String ML_TRACE_REST_PORT = "mlTraceRestPort";
 	private static final String ML_AUTH = "mlAuth";
 	private static final String USER_PLUGIN_DIR = "userPluginDir";
 	private static final String ASSET_INSTALL_TIME_FILE = "assetInstallTimeFile";
@@ -115,6 +119,19 @@ public class EnvironmentConfiguration {
         return this.environment.getProperty(ML_FINAL_REST_PORT + DEFAULT_SUFFIX);
     }
 
+    public String getMLTraceRestPort() {
+        String value = this.environmentProperties.getProperty(ML_TRACE_REST_PORT);
+        if (value != null) {
+            return value;
+        }
+        value = this.environment.getProperty(ML_TRACE_REST_PORT);
+        if (value != null) {
+            this.environmentProperties.setProperty(ML_TRACE_REST_PORT, value);
+            return value;
+        }
+        return this.environment.getProperty(ML_TRACE_REST_PORT + DEFAULT_SUFFIX);
+    }
+
 	public String getMLAuth() {
 		String value = this.environmentProperties.getProperty(ML_AUTH);
 		if (value != null) {
@@ -161,10 +178,14 @@ public class EnvironmentConfiguration {
 	public void setMLStagingRestPort(String mlStagingRestPort) {
 		this.environmentProperties.setProperty(ML_STAGING_REST_PORT, mlStagingRestPort);
 	}
-	
+
 	public void setMLFinalRestPort(String mlFinalRestPort) {
         this.environmentProperties.setProperty(ML_FINAL_REST_PORT, mlFinalRestPort);
     }
+
+	public void setMlTraceRestPort(String mlTraceRestPort) {
+	    this.environmentProperties.setProperty(ML_TRACE_REST_PORT, mlTraceRestPort);
+	}
 
 	public void setMLUsername(String mlUsername) {
 		this.environmentProperties.setProperty(ML_USERNAME, mlUsername);
@@ -186,7 +207,7 @@ public class EnvironmentConfiguration {
 	    loadConfigurationFromFile(environmentProperties, ENVIRONMENT_PROPERTIES_FILENAME);
 	    loadConfigurationFromFile(environmentProperties, FLOW_PROPERTIES_FILENAME);
 	}
-	
+
 	public void loadConfigurationFromFile(Properties configProperties, String fileName) {
         InputStream is = null;
         try {
@@ -203,7 +224,7 @@ public class EnvironmentConfiguration {
 	public void saveConfigurationToFile() {
 		saveConfigurationToFile(environmentProperties, ENVIRONMENT_PROPERTIES_FILENAME);
 	}
-	
+
 	private void saveConfigurationToFile(Properties configProperties, String fileName) {
         OutputStream out = null;
         try {
@@ -223,14 +244,25 @@ public class EnvironmentConfiguration {
             }
         }
     }
-	
+
 	public void saveOrUpdateFlowInputPath(String entityName, String flowName, String inputPath) {
 	    this.flowProperties.setProperty(entityName + "-" + flowName, inputPath);
 	    saveConfigurationToFile(flowProperties, FLOW_PROPERTIES_FILENAME);
     }
-	
+
 	public String getFlowInputPath(String entityName, String flowName) {
 	    return this.flowProperties.getProperty(entityName + "-" + flowName);
     }
+
+	public HubConfig getHubConfig() {
+	    HubConfig hubConfig = new HubConfig();
+	    hubConfig.host = getMLHost();
+	    hubConfig.stagingPort = Integer.parseInt(getMLStagingRestPort());
+	    hubConfig.finalPort = Integer.parseInt(getMLFinalRestPort());
+	    hubConfig.tracePort = Integer.parseInt(getMLTraceRestPort());
+	    hubConfig.adminUsername = getMLUsername();
+	    hubConfig.adminPassword = getMLPassword();
+	    return hubConfig;
+	}
 
 }

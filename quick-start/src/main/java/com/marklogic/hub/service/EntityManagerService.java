@@ -22,8 +22,6 @@ import com.marklogic.hub.entity.Entity;
 import com.marklogic.hub.exception.EntityManagerException;
 import com.marklogic.hub.factory.EntityModelFactory;
 import com.marklogic.hub.model.EntityModel;
-import com.marklogic.hub.model.FlowModel;
-import com.marklogic.hub.model.FlowType;
 import com.marklogic.hub.util.FileUtil;
 
 @Service
@@ -66,10 +64,10 @@ public class EntityManagerService {
             entities.add(entityModelFactory.createEntity(entityName,
                     entitiesPath + File.separator + entityName, syncStatusService));
         }
-        
+
         return entities;
     }
-    
+
     private List<Entity> getEntitysInServer() {
         List<Entity> entitiesInServer = new ArrayList<>();
         try {

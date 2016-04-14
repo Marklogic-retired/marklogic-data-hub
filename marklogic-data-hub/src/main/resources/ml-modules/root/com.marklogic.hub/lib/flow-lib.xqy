@@ -17,6 +17,9 @@ xquery version "1.0-ml";
 
 module namespace flow = "http://marklogic.com/data-hub/flow-lib";
 
+import module namespace config = "http://marklogic.com/data-hub/config"
+  at "/com.marklogic.hub/lib/config.xqy";
+
 import module namespace debug = "http://marklogic.com/data-hub/debug-lib"
   at "/com.marklogic.hub/lib/debug-lib.xqy";
 
@@ -25,6 +28,9 @@ import module namespace hul = "http://marklogic.com/data-hub/hub-utils-lib"
 
 import module namespace functx = "http://www.functx.com"
   at "/MarkLogic/functx/functx-1.0-nodoc-2007-01.xqy";
+
+import module namespace trace = "http://marklogic.com/data-hub/trace"
+  at "/com.marklogic.hub/lib/trace-lib.xqy";
 
 declare namespace hub = "http://marklogic.com/data-hub";
 
@@ -279,7 +285,6 @@ declare %private function flow:get-flow(
     return
       fn:doc($uri)/hub:flow
   })
-  where $flow
   return
     <flow xmlns="http://marklogic.com/data-hub">
       <name>{$flow-name}</name>
@@ -408,8 +413,23 @@ declare function flow:run-collector(
   let $type := flow:get-type($filename)
   let $ns := flow:get-module-ns($type)
   let $func := xdmp:function(fn:QName($ns, "collect"), $module-uri)
+  let $before := xdmp:elapsed-time()
+  let $resp := $func($options)
+  let $duration := xdmp:elapsed-time() - $before
+  let $_ :=
+    trace:create-trace(
+      (
+        <trace:plugin-type>collector</trace:plugin-type>,
+        <trace:plugin-module-uri>{$module-uri}</trace:plugin-module-uri>,
+        <trace:output>
+        {
+          $resp ! <trace:item>{.}</trace:item>
+        }
+        </trace:output>
+      ),
+      $duration)
   return
-    $func($options)
+    $resp
 };
 
 (:~
@@ -483,7 +503,7 @@ declare function flow:run-flow(
     },
     map:new((
       map:entry("isolation", "different-transaction"),
-      map:entry("database", xdmp:database("data-hub-FINAL")),
+      map:entry("database", xdmp:database($config:FINAL-DATABASE)),
       map:entry("transactionMode", "update-auto-commit")
     )))
 
@@ -539,11 +559,11 @@ declare function flow:run-plugin(
   $simple as xs:boolean,
   $options as map:map)
 {
-  let $module-uri := $plugin/@module
+  let $module-uri as xs:string := $plugin/@module
   return
     if (fn:empty($module-uri)) then ()
     else
-      let $destination := $plugin/@dest
+      let $destination as xs:string := $plugin/@dest
       let $filename as xs:string := hul:get-file-from-uri($module-uri)
       let $type := flow:get-type($filename)
       let $ns := flow:get-module-ns($type)
@@ -553,6 +573,7 @@ declare function flow:run-plugin(
         else
           "create-" || $destination
       let $func := xdmp:function(fn:QName($ns, $func-name), $module-uri)
+      let $before := xdmp:elapsed-time()
       let $resp :=
         if ($simple) then
           switch ($destination)
@@ -568,7 +589,8 @@ declare function flow:run-plugin(
             default return ()
         else
           $func($identifier, $content, $headers, $triples, $options)
-      return
+      let $duration := xdmp:elapsed-time() - $before
+      let $resp :=
         typeswitch($resp)
           case document-node() return
             if (fn:count($resp/node()) > 1) then
@@ -582,6 +604,26 @@ declare function flow:run-plugin(
               $resp
           default return
             $resp
+      let $_ :=
+        if (trace:enabled()) then
+          trace:create-trace(
+            (
+              <trace:plugin-type>{$destination}</trace:plugin-type>,
+              <trace:plugin-module-uri>{$module-uri}</trace:plugin-module-uri>,
+              <trace:input>
+                <trace:id>{$identifier}</trace:id>
+                <trace:content>{$content}</trace:content>
+                <trace:headers>{$headers}</trace:headers>
+                <trace:triples>{$triples}</trace:triples>
+              </trace:input>,
+              <trace:output>
+              {$resp}
+              </trace:output>
+            ),
+            $duration)
+        else ()
+      return
+        $resp
 };
 
 (:~
@@ -604,8 +646,22 @@ declare function flow:run-writer(
   let $type := flow:get-type($filename)
   let $ns := flow:get-module-ns($type)
   let $func := xdmp:function(fn:QName($ns, "write"), $module-uri)
+  let $before := xdmp:elapsed-time()
+  let $resp := $func($identifier, $envelope, $options)
+  let $duration := xdmp:elapsed-time() - $before
+  let $_ :=
+    trace:create-trace(
+      (
+        <trace:id>{$identifier}</trace:id>,
+        <trace:plugin-type>writer</trace:plugin-type>,
+        <trace:plugin-module-uri>{$module-uri}</trace:plugin-module-uri>,
+        <trace:input>
+          {$envelope}
+        </trace:input>
+      ),
+      $duration)
   return
-    $func($identifier, $envelope, $options)
+    $resp
 };
 
 declare function flow:make-error-json($ex) {

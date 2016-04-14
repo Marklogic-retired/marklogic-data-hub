@@ -16,7 +16,7 @@ class DeployUserModulesTask extends DefaultTask {
             return
         }
 
-        def pathToUserModules = new File(getHubConfig().getModulesPath())
+        def pathToUserModules = new File(getHubConfig().modulesPath)
         dh.installUserModules(pathToUserModules)
     }
 

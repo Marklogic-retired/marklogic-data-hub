@@ -107,6 +107,7 @@ public class FlowManagerTest extends HubTestBase {
     @Test
     public void testEmptyFlow() throws IOException {
         runInModules("xdmp:directory-create(\"/entities/test/conformance/empty-flow/\")");
+        installModule("/entities/test/conformance/empty-flow/empty-flow.xml", "flow-manager-test/my-test-flow1/my-test-flow1.xml");
         installModule("/entities/test/conformance/empty-flow/collector/collector.xqy", "flow-manager-test/my-test-flow1/collector/collector.xqy");
 
         FlowManager fm = new FlowManager(stagingClient);
