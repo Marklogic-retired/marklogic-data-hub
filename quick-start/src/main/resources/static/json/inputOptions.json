@@ -56,11 +56,29 @@
         ]
     },
     {
-        "Label": "Input compressed",
+        "Label": "Input files are compressed?",
         "Field": "-input_compressed",
         "Type": "boolean",
         "Description": "Whether or not the source data is compressed. Default: false.",
         "Placeholder Value": "whether or not the source data is compressed"
+    },
+    {
+        "Label": "Input files codec",
+        "Field": "-input_compression_codec",
+        "Type": "type",
+        "Description": "When -input_compressed is true, the code used for compression. Accepted values: zip, gzip.",
+        "Options": [
+          {
+            "label": "zip",
+            "value": "zip"
+          },
+          {
+            "label": "gzip",
+            "value": "gzip"
+          }
+        ],
+        "FilterField": "-input_compressed",
+        "FilterValue": "true"
     },
     {
         "Label": "Namespace",
@@ -111,7 +129,7 @@
         "Placeholder Value": "default is first column"
     },
     {
-        "Label": "Generate URI",
+        "Label": "Generate URI?",
         "Field": "-generate_uri",
         "Type": "boolean",
         "Description": "When importing content with -input_file_type delimited_text, whether or not MarkLogic Server should automatically generate document URIs. Default: false.",
@@ -125,7 +143,7 @@
         "Placeholder Value": "default is root"
     },
     {
-        "Label": "Split input",
+        "Label": "Split input?",
         "Field": "-split_input",
         "Type": "boolean",
         "Description": "Whether or not to divide input data into logical chunks to support more concurrency. Only supported when -input_file_type is one of the following: delimited_text. Default: false for local mode, true for distributed mode. For details, see Improving Throughput with -split_input.",
