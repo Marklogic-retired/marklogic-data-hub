@@ -37,16 +37,9 @@
           <uib-accordion close-others="true">
             <uib-accordion-group heading="{{group.category}}" ng-repeat="group in groups" ng-show="showBasedOnCategoryAndInputFileType(group.category,loadDataForm.inputFileType)">
 			        <div class="form-group" ng-repeat="setting in group.settings">
-			          <label class="control-label" for="{{setting['Field']}}" title="{{setting['Description']}}">{{setting['Label']}}</label><br/>
+			          <input type="checkbox" name="{{setting['Field']}}" ng-if="setting['Type'] === 'boolean'" ng-model="setting['Value']" value="true" ng-change="updateMlcpCommand()" ng-focus="hideInputPathTreeBrowser()">
+                <label class="control-label" for="{{setting['Field']}}" title="{{setting['Description']}}">{{setting['Label']}}</label><br ng-if="setting['Type'] !== 'boolean'"/>
 			          <input type="text" class="form-control" name="{{setting['Field']}}" ng-if="isText(setting['Type'])" ng-model="setting['Value']" placeholder="{{setting['Placeholder Value'] ? setting['Placeholder Value'] : ''}}" ng-change="updateMlcpCommand()" ng-focus="hideInputPathTreeBrowser()"/>
-			          <label class="radio-custom" ng-if="setting['Type'] === 'boolean'">
-                  <input type="radio" name="{{setting['Field']}}" ng-model="setting['Value']" value="true" ng-change="updateMlcpCommand()" ng-focus="hideInputPathTreeBrowser()">
-                  True 
-                </label>
-                <label class="radio-custom" ng-if="setting['Type'] === 'boolean'">
-                  <input type="radio" name="{{setting['Field']}}" ng-model="setting['Value']" value="false" ng-change="updateMlcpCommand()" ng-focus="hideInputPathTreeBrowser()">
-                  False 
-                </label>
 			          <select class="form-control" name="{{setting['Field']}}" ng-if="setting['Type'] === 'type'" ng-model="setting['Value']" ng-change="updateMlcpCommand()" ng-focus="hideInputPathTreeBrowser()">
 			            <option ng-repeat="option in setting['Options']" value="{{option.value}}">{{option.label}}</option> 
 			          </select>
