@@ -36,7 +36,7 @@
         <div class="form-group">
           <uib-accordion close-others="true">
             <uib-accordion-group heading="{{group.category}}" ng-repeat="group in groups" ng-show="showBasedOnCategoryAndInputFileType(group.category,loadDataForm.inputFileType)">
-			        <div class="form-group" ng-repeat="setting in group.settings">
+			        <div class="form-group" ng-repeat="setting in group.settings" ng-show="showIfHasNoFilterFieldOrWithSpecifiedValue(setting['FilterField'],setting['FilterValue'],group.settings)">
 			          <input type="checkbox" name="{{setting['Field']}}" ng-if="setting['Type'] === 'boolean'" ng-model="setting['Value']" value="true" ng-change="updateMlcpCommand()" ng-focus="hideInputPathTreeBrowser()">
                 <label class="control-label" for="{{setting['Field']}}" title="{{setting['Description']}}">{{setting['Label']}}</label><br ng-if="setting['Type'] !== 'boolean'"/>
 			          <input type="text" class="form-control" name="{{setting['Field']}}" ng-if="isText(setting['Type'])" ng-model="setting['Value']" placeholder="{{setting['Placeholder Value'] ? setting['Placeholder Value'] : ''}}" ng-change="updateMlcpCommand()" ng-focus="hideInputPathTreeBrowser()"/>

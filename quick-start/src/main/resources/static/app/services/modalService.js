@@ -3,10 +3,23 @@
   'use strict';
 
   angular.module('dhib.quickstart.service.modal', ['ui.bootstrap'])
+    .filter('GetByFieldAndValue', GetByFieldAndValue)
     .service('ModalService', ModalService)
     .controller('loadDataModalController', LoadDataModalController)
     .controller('entityModalController', EntityModalController)
     .controller('flowModalController', FlowModalController);
+  
+  function GetByFieldAndValue() {
+    return function(field, value, collection) {
+	  var i=0, len=collection.length;
+	  for (; i<len; i++) {
+	    if (String(collection[i]['Field']) === String(field) && String(collection[i]['Value']) === String(value)) {
+	      return collection[i];
+	    }
+	  }
+	  return null;
+	}
+  }
 
   function ModalService($uibModal) {
     var self = this;
@@ -76,7 +89,7 @@
     }
   }
 
-  function LoadDataModalController($scope, $uibModalInstance, DataHub, entityName, flowName) {
+  function LoadDataModalController($scope, $uibModalInstance, $filter, DataHub, entityName, flowName) {
     $scope.loadDataForm = {
       inputPath: '.',
       inputFileType: 'documents',
@@ -223,15 +236,26 @@
     };
     
     $scope.showBasedOnCategoryAndInputFileType = function(category, inputFileType) {
-      if(category === 'Delimited text options' && $scope.loadDataForm.inputFileType !== 'delimited_text') {
-        return false;
-      } else if(category === 'Aggregate XML options' && $scope.loadDataForm.inputFileType !== 'aggregates') {
-        return false;
+      return showBasedOnCategoryAndInputFileType(category, inputFileType);
+    };
+    
+    $scope.showIfHasNoFilterFieldOrWithSpecifiedValue = function(field,value,collection) {
+      if(angular.isUndefined(field) || $filter('GetByFieldAndValue')(field,value,collection)) {
+        return true;
       }
-      return true;
+      return false;
     };
     
   }
+  
+  function showBasedOnCategoryAndInputFileType(category, inputFileType) {
+      if(category === 'Delimited text options' && inputFileType !== 'delimited_text') {
+        return false;
+      } else if(category === 'Aggregate XML options' && inputFileType !== 'aggregates') {
+        return false;
+      }
+      return true;
+  };
   
   function constructInitialMlcpCommand(DataHub) {
 	var mlcpCommand = 'mlcp';
@@ -258,16 +282,18 @@
 	
 	var otherOptions = [];
 	$.each(groups, function(i, group) {
-		$.each(group.settings, function(i, setting) {
-			if(setting['Value']) {
-				var key = setting['Field'];
-				var value = '"' + setting['Value'] + '"';
-				mlcpCommand += ' ' + key + ' ' + value;
-				var option = {};
-				option[key] = value;
-				otherOptions.push(option);
+		if(showBasedOnCategoryAndInputFileType(group.category, loadDataForm.inputFileType)) {
+		  $.each(group.settings, function(i, setting) {
+		    if(setting['Value']) {
+			  var key = setting['Field'];
+			  var value = '"' + setting['Value'] + '"';
+			  mlcpCommand += ' ' + key + ' ' + value;
+			  var option = {};
+			  option[key] = value;
+			  otherOptions.push(option);
 			}
-		});
+		  });
+		}
 	});
 	
 	loadDataForm.otherOptions = otherOptions.length > 0 ? JSON.stringify(otherOptions) : '';
