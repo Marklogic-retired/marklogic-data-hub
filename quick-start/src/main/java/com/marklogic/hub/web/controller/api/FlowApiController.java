@@ -56,8 +56,6 @@ public class FlowApiController extends BaseController {
     
     private static final String MLCP_OPTIONS_FILENAME = "mlcpOptions.txt";
 
-    private static final String NEW_LINE = "\n";
-
     @Autowired
     private EnvironmentConfiguration environmentConfiguration;
 
@@ -216,9 +214,7 @@ public class FlowApiController extends BaseController {
             @Override
             public void run(BasicFuture<?> resultFuture) {
                 try {
-                    SourceOptions sourceOptions = createSourceOptionsInstance(flowOptionsModel);
-                	Mlcp mlcp = createMlcpInstance(flowOptionsModel,sourceOptions);
-                    mlcp.loadContent();
+                    flowManagerService.loadData(flowOptionsModel);
 
                     resultFuture.completed(null);
                 }
@@ -235,31 +231,6 @@ public class FlowApiController extends BaseController {
         return taskManagerService.addTask(task);
     }
     
-    protected Mlcp createMlcpInstance(FlowOptionsModel flowOptionsModel, SourceOptions sourceOptions) throws NumberFormatException, IOException {
-        Mlcp mlcp = new Mlcp(
-                environmentConfiguration.getMLHost()
-                ,Integer.parseInt(environmentConfiguration.getMLStagingRestPort())
-                ,environmentConfiguration.getMLUsername()
-                ,environmentConfiguration.getMLPassword()
-                );
-        mlcp.addSourceDirectory(flowOptionsModel.getInputPath(), sourceOptions);
-        return mlcp;
-    }
-    
-    protected SourceOptions createSourceOptionsInstance(FlowOptionsModel flowOptionsModel) throws NumberFormatException, IOException {
-        Flow flow = flowManagerService.getFlow(flowOptionsModel.getEntityName(), flowOptionsModel.getFlowName());
-        
-        SourceOptions sourceOptions = new SourceOptions(
-                flowOptionsModel.getEntityName(), flowOptionsModel.getFlowName(),
-                FlowType.INPUT.toString(),
-                flow.getDataFormat());
-
-        sourceOptions.setInputFileType(flowOptionsModel.getInputFileType());
-        sourceOptions.setOtherOptions(flowOptionsModel.getOtherOptions());
-        
-        return sourceOptions;
-    }
-
     @RequestMapping(value = "/input-path", method = RequestMethod.GET, produces = { MediaType.TEXT_PLAIN_VALUE })
     @ResponseBody
     public String getPreviousInputPath(HttpServletRequest request) {
@@ -292,7 +263,7 @@ public class FlowApiController extends BaseController {
     
     @RequestMapping(value = "/options/download", method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_UTF8_VALUE }, produces = { MediaType.TEXT_PLAIN_VALUE })
     public ResponseEntity<InputStreamResource> downloadMlcpConfig(@RequestBody FlowOptionsModel flowOptionsModel) throws IOException, NumberFormatException, JSONException {
-        String mlcpConfigContent = buildMlcpConfigContent(flowOptionsModel);
+        String mlcpConfigContent = flowManagerService.buildMlcpConfigContent(flowOptionsModel);
         byte[] contentBytes = mlcpConfigContent.getBytes(StandardCharsets.UTF_8);
         InputStream inputStream = new ByteArrayInputStream(contentBytes);
         HttpHeaders headers = new HttpHeaders();
@@ -304,13 +275,6 @@ public class FlowApiController extends BaseController {
               .contentType(MediaType.TEXT_PLAIN)
               .headers(headers)
               .body(new InputStreamResource(inputStream));
-    }
-
-    private String buildMlcpConfigContent(FlowOptionsModel flowOptionsModel) throws NumberFormatException, IOException, JSONException {
-        SourceOptions sourceOptions = createSourceOptionsInstance(flowOptionsModel);
-        Mlcp mlcp = createMlcpInstance(flowOptionsModel,sourceOptions);
-        List<String> mlcpOptions = mlcp.getMlcpOptions(new MlcpSource(flowOptionsModel.getInputPath(), sourceOptions));
-        return StringUtils.collectionToDelimitedString(mlcpOptions, NEW_LINE);
     }
 
     private void addRemoveCachingInHeaders(HttpHeaders headers) {
