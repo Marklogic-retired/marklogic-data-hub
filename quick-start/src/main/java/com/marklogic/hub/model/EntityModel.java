@@ -7,25 +7,25 @@ import java.util.Map;
 public class EntityModel {
 
     private String entityName;
- private List<FlowModel> inputFlows;
- private List<FlowModel> harmonizeFlows;
- private boolean isSynched;
- private RestModel inputRest;
- private RestModel harmonizeRest;
+    private List<FlowModel> inputFlows;
+    private List<FlowModel> harmonizeFlows;
+    private boolean isSynched;
+    private RestModel inputRest;
+    private RestModel harmonizeRest;
 
     public String getEntityName() {
         return entityName;
- }
+    }
 
     public void setEntityName(String entityName) {
         this.entityName = entityName;
- }
+    }
 
- public List<FlowModel> getInputFlows() {
-  return inputFlows;
- }
+    public List<FlowModel> getInputFlows() {
+        return inputFlows;
+    }
 
- public Map<String, FlowModel> getInputFlowsAsMap() {
+    public Map<String, FlowModel> getInputFlowsAsMap() {
         Map<String, FlowModel> flowModels = new HashMap<>();
 
         if (inputFlows != null) {
@@ -37,47 +37,47 @@ public class EntityModel {
         return flowModels;
     }
 
- public void setInputFlows(List<FlowModel> inputFlows) {
-  this.inputFlows = inputFlows;
- }
+    public void setInputFlows(List<FlowModel> inputFlows) {
+        this.inputFlows = inputFlows;
+    }
 
- public List<FlowModel> getHarmonizeFlows() {
-  return harmonizeFlows;
- }
+    public List<FlowModel> getHarmonizeFlows() {
+        return harmonizeFlows;
+    }
 
- public Map<String, FlowModel> getHarmonizeFlowsAsMap() {
+    public Map<String, FlowModel> getHarmonizeFlowsAsMap() {
      Map<String, FlowModel> flowModels = new HashMap<>();
 
-     if (harmonizeFlows != null) {
-         for (FlowModel model : harmonizeFlows) {
-             flowModels.put(model.getFlowName(), model);
-         }
-     }
+        if (harmonizeFlows != null) {
+            for (FlowModel model : harmonizeFlows) {
+                flowModels.put(model.getFlowName(), model);
+            }
+        }
 
-     return flowModels;
- }
+        return flowModels;
+    }
 
- public void setHarmonizeFlows(List<FlowModel> harmonizeFlows) {
-  this.harmonizeFlows = harmonizeFlows;
- }
+    public void setHarmonizeFlows(List<FlowModel> harmonizeFlows) {
+        this.harmonizeFlows = harmonizeFlows;
+    }
 
- public boolean isSynched() {
-  return isSynched;
- }
+    public boolean isSynched() {
+        return isSynched;
+    }
 
- public void setSynched(boolean isSynched) {
-  this.isSynched = isSynched;
- }
+    public void setSynched(boolean isSynched) {
+        this.isSynched = isSynched;
+    }
 
- public void setInputFlowsSynched(boolean synched) {
-     if (inputFlows != null) {
-         for (FlowModel model : inputFlows) {
-             model.setSynched(synched);
-         }
-     }
- }
+    public void setInputFlowsSynched(boolean synched) {
+        if (inputFlows != null) {
+            for (FlowModel model : inputFlows) {
+                model.setSynched(synched);
+            }
+        }
+    }
 
- public void setHarmonizeFlowsSynched(boolean synched) {
+    public void setHarmonizeFlowsSynched(boolean synched) {
         if (harmonizeFlows != null) {
             for (FlowModel model : harmonizeFlows) {
                 model.setSynched(synched);
