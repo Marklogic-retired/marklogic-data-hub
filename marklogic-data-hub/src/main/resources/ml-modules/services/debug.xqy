@@ -15,42 +15,36 @@
 :)
 xquery version "1.0-ml";
 
-module namespace service = "http://marklogic.com/rest-api/resource/entity";
+module namespace service = "http://marklogic.com/rest-api/resource/debug";
 
 import module namespace debug = "http://marklogic.com/data-hub/debug-lib"
   at "/com.marklogic.hub/lib/debug-lib.xqy";
 
-import module namespace flow = "http://marklogic.com/data-hub/flow-lib"
-  at "/com.marklogic.hub/lib/flow-lib.xqy";
-
 declare namespace rapi = "http://marklogic.com/rest-api";
-
-declare namespace hub = "http://marklogic.com/data-hub";
 
 declare option xdmp:mapping "false";
 
-(:~
- : Entry point for java to get entity(s).
- :
- : if the "entity-name" param is given then return a entity. Otherwise
- : return all entities.
- :
- :)
 declare function get(
   $context as map:map,
   $params  as map:map
   ) as document-node()*
 {
-  debug:dump-env("GET ENTITY(s)"),
+  debug:dump-env(),
 
-  document {
-    let $entity-name := map:get($params, "entity-name")
-    let $resp :=
-      if ($entity-name) then
-        flow:get-entity($entity-name)
-      else
-        flow:get-entities()
-    return
-     $resp
-  }
+  document { debug:on() }
+};
+
+declare %rapi:transaction-mode("update") function post(
+  $context as map:map,
+  $params  as map:map,
+  $input   as document-node()*
+  ) as document-node()*
+{
+  debug:dump-env(),
+
+  let $enable := map:get($params, "enable") = ("true", "yes")
+  let $_ := debug:enable($enable)
+  return
+    (),
+  document { () }
 };

@@ -1,12 +1,8 @@
 package com.marklogic.gradle.task
 
-import com.marklogic.hub.DataHub;
-import com.marklogic.hub.HubConfig;
-
-import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
 
-class DeployUserModulesTask extends DefaultTask {
+class DeployUserModulesTask extends HubTask {
 
     @TaskAction
     void deployUserModules() {
@@ -19,13 +15,4 @@ class DeployUserModulesTask extends DefaultTask {
         def pathToUserModules = new File(getHubConfig().modulesPath)
         dh.installUserModules(pathToUserModules)
     }
-
-    HubConfig getHubConfig() {
-        getProject().property("hubConfig")
-    }
-
-    DataHub getDataHub() {
-        getProject().property("dataHub")
-    }
-
 }

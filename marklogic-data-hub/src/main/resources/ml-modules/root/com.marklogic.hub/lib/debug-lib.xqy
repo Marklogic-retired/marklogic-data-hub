@@ -19,6 +19,12 @@ module namespace debug = "http://marklogic.com/data-hub/debug-lib";
 
 declare option xdmp:mapping "false";
 
+declare function debug:enable($enable as xs:boolean)
+{
+  xdmp:set-server-field("HUB_DEBUG", $enable),
+  xdmp:set-server-field("MarkLogic.DEBUG", $enable)
+};
+
 (:~
  : Determines whether debugging is on or not
  :
@@ -26,12 +32,7 @@ declare option xdmp:mapping "false";
  :)
 declare function debug:on() as xs:boolean
 {
-  fn:not(
-    fn:empty((
-      xdmp:get-server-field("DEBUG", ()),
-      fn:doc('/debug')/*:debug
-    )[1])
-  )
+  xdmp:get-server-field("HUB_DEBUG", fn:false())
 };
 
 (:~
@@ -52,6 +53,11 @@ declare function debug:log($items)
  :)
 declare function debug:dump-env()
 {
+  debug:dump-env(())
+};
+
+declare function debug:dump-env($name as xs:string?)
+{
   let $request-path := xdmp:get-request-path()
   let $request-path :=
     if ($request-path = '/MarkLogic/rest-api/endpoints/resource-service-query.xqy') then
@@ -67,7 +73,16 @@ declare function debug:dump-env()
   return
     debug:log((
       "",
+      "",
+      "################################################################",
       "REQUEST DETAILS:",
+      "",
+      if ($name) then
+        (
+          "  **" || $name || "**",
+          ""
+        )
+      else (),
       "  [" || xdmp:get-request-method() || "]  " || $request-path,
       "",
       "  [Headers]",
@@ -85,10 +100,25 @@ declare function debug:dump-env()
         (
           "",
           "  [Body]",
-          $body
+          "  " || xdmp:describe($body, (), ())
         )
         else (),
       "",
+      "################################################################",
+      "",
+      "",
       ""
     ))
+};
+
+declare function debug:dump-map($m as map:map)
+{
+  debug:dump-map($m, ())
+};
+
+declare function debug:dump-map($m as map:map, $prefix)
+{
+  for $key in map:keys($m)
+  return
+    $prefix || $key || " => " || map:get($m, $key)
 };

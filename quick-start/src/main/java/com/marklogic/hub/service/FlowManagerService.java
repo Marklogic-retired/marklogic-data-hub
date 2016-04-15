@@ -52,7 +52,7 @@ public class FlowManagerService {
                 .valueOf(environmentConfiguration.getMLAuth().toUpperCase());
         DatabaseClient client = DatabaseClientFactory.newClient(
                 environmentConfiguration.getMLHost(),
-                Integer.parseInt(environmentConfiguration.getMLStagingRestPort()),
+                Integer.parseInt(environmentConfiguration.getMLStagingPort()),
                 environmentConfiguration.getMLUsername(),
                 environmentConfiguration.getMLPassword(), authMethod);
         return new FlowManager(client);
@@ -87,7 +87,7 @@ public class FlowManagerService {
     public JobExecution runFlow(Flow flow, int batchSize) {
         return runFlow(flow, batchSize, null);
     }
-    
+
     public JobExecution runFlow(Flow flow, int batchSize, JobExecutionListener listener) {
         FlowManager flowManager = getFlowManager();
         return flowManager.runFlow(flow, batchSize, listener);
@@ -135,7 +135,7 @@ public class FlowManagerService {
     private Mlcp createMlcpInstance(FlowOptionsModel flowOptionsModel, SourceOptions sourceOptions) throws IOException {
         Mlcp mlcp = new Mlcp(
                 environmentConfiguration.getMLHost()
-                ,Integer.parseInt(environmentConfiguration.getMLStagingRestPort())
+                ,Integer.parseInt(environmentConfiguration.getMLStagingPort())
                 ,environmentConfiguration.getMLUsername()
                 ,environmentConfiguration.getMLPassword()
                 );

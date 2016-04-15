@@ -39,9 +39,9 @@ public class EnvironmentConfiguration {
 	private static final String ML_HOST = "mlHost";
 	private static final String ML_USERNAME = "mlUsername";
 	private static final String ML_PASSWORD = "mlPassword";
-	private static final String ML_STAGING_REST_PORT = "mlStagingRestPort";
-	private static final String ML_FINAL_REST_PORT = "mlFinalRestPort";
-	private static final String ML_TRACE_REST_PORT = "mlTraceRestPort";
+	private static final String ML_STAGING_REST_PORT = "mlStagingPort";
+	private static final String ML_FINAL_REST_PORT = "mlFinalPort";
+	private static final String ML_TRACE_REST_PORT = "mlTracePort";
 	private static final String ML_AUTH = "mlAuth";
 	private static final String USER_PLUGIN_DIR = "userPluginDir";
 	private static final String ASSET_INSTALL_TIME_FILE = "assetInstallTimeFile";
@@ -95,7 +95,7 @@ public class EnvironmentConfiguration {
 		return this.environment.getProperty(ML_PASSWORD + DEFAULT_SUFFIX);
 	}
 
-	public String getMLStagingRestPort() {
+	public String getMLStagingPort() {
 		String value = this.environmentProperties.getProperty(ML_STAGING_REST_PORT);
 		if (value != null) {
 			return value;
@@ -108,7 +108,7 @@ public class EnvironmentConfiguration {
 		return this.environment.getProperty(ML_STAGING_REST_PORT + DEFAULT_SUFFIX);
 	}
 
-    public String getMLFinalRestPort() {
+    public String getMLFinalPort() {
         String value = this.environmentProperties.getProperty(ML_FINAL_REST_PORT);
         if (value != null) {
             return value;
@@ -121,7 +121,7 @@ public class EnvironmentConfiguration {
         return this.environment.getProperty(ML_FINAL_REST_PORT + DEFAULT_SUFFIX);
     }
 
-    public String getMLTraceRestPort() {
+    public String getMLTracePort() {
         String value = this.environmentProperties.getProperty(ML_TRACE_REST_PORT);
         if (value != null) {
             return value;
@@ -177,16 +177,16 @@ public class EnvironmentConfiguration {
 		this.environmentProperties.setProperty(ML_HOST, mlHost);
 	}
 
-	public void setMLStagingRestPort(String mlStagingRestPort) {
-		this.environmentProperties.setProperty(ML_STAGING_REST_PORT, mlStagingRestPort);
+	public void setMLStagingPort(String mlStagingPort) {
+		this.environmentProperties.setProperty(ML_STAGING_REST_PORT, mlStagingPort);
 	}
 
-	public void setMLFinalRestPort(String mlFinalRestPort) {
-        this.environmentProperties.setProperty(ML_FINAL_REST_PORT, mlFinalRestPort);
+	public void setMLFinalPort(String mlFinalPort) {
+        this.environmentProperties.setProperty(ML_FINAL_REST_PORT, mlFinalPort);
     }
 
-	public void setMlTraceRestPort(String mlTraceRestPort) {
-	    this.environmentProperties.setProperty(ML_TRACE_REST_PORT, mlTraceRestPort);
+	public void setMlTracePort(String mlTracePort) {
+	    this.environmentProperties.setProperty(ML_TRACE_REST_PORT, mlTracePort);
 	}
 
 	public void setMLUsername(String mlUsername) {
@@ -270,9 +270,9 @@ public class EnvironmentConfiguration {
 	public HubConfig getHubConfig() {
 	    HubConfig hubConfig = new HubConfig();
 	    hubConfig.host = getMLHost();
-	    hubConfig.stagingPort = Integer.parseInt(getMLStagingRestPort());
-	    hubConfig.finalPort = Integer.parseInt(getMLFinalRestPort());
-	    hubConfig.tracePort = Integer.parseInt(getMLTraceRestPort());
+	    hubConfig.stagingPort = Integer.parseInt(getMLStagingPort());
+	    hubConfig.finalPort = Integer.parseInt(getMLFinalPort());
+	    hubConfig.tracePort = Integer.parseInt(getMLTracePort());
 	    hubConfig.adminUsername = getMLUsername();
 	    hubConfig.adminPassword = getMLPassword();
 	    return hubConfig;
