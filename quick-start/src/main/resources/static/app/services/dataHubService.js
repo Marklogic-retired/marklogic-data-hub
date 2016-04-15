@@ -31,7 +31,9 @@
       displayMessage: displayMessage,
       searchPath: searchPath,
       showApiDoc: showApiDoc,
-      getPreviousInputPath : getPreviousInputPath
+      getPreviousOptions: getPreviousOptions,
+      getJsonFile: getJsonFile,
+      downloadMlcpOptionsFile: downloadMlcpOptionsFile
     });
 
     function login(loginForm) {
@@ -154,15 +156,7 @@
       return $http.post('api/flows/run', data);
     }
 
-    function runInputFlow(entityName, flowName, mlcpOptions) {
-      var data = {
-        entityName: entityName,
-        flowName: flowName,
-        inputPath: mlcpOptions.inputPath,
-        collection: mlcpOptions.collection,
-        dataFormat: mlcpOptions.dataFormat,
-        inputCompressed: mlcpOptions.inputCompressed
-      };
+    function runInputFlow(data) {
       return $http.post('api/flows/run/input', data);
     }
 
@@ -200,14 +194,22 @@
       $window.open('#/api-doc', '_blank');
     }
 
-    function getPreviousInputPath(entityName, flowName) {
+    function getPreviousOptions(entityName, flowName) {
       var params = {
         entityName: entityName,
         flowName: flowName
       };
-      return $http.get('api/flows/input-path', {
+      return $http.get('api/flows/options', {
         'params': params
       });
+    }
+    
+    function getJsonFile(filePath) {
+      return $http.get(filePath);
+    }
+    
+    function downloadMlcpOptionsFile(data) {
+      return $http.post('api/flows/options/download', data);
     }
 
   }

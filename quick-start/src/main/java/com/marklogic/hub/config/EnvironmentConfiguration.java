@@ -1,9 +1,11 @@
 package com.marklogic.hub.config;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -15,6 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
+import com.google.common.base.Charsets;
+import com.google.common.io.Files;
 import com.marklogic.hub.HubConfig;
 
 /***
@@ -30,7 +34,6 @@ public class EnvironmentConfiguration {
 			.getLogger(EnvironmentConfiguration.class);
 
 	private static final String ENVIRONMENT_PROPERTIES_FILENAME = "environment.properties";
-	private static final String FLOW_PROPERTIES_FILENAME = "flow.properties";
 	private static final String DEFAULT_SUFFIX = ".default";
 	private static final String SERVER_PORT = "server.port";
 	private static final String ML_HOST = "mlHost";
@@ -42,12 +45,12 @@ public class EnvironmentConfiguration {
 	private static final String ML_AUTH = "mlAuth";
 	private static final String USER_PLUGIN_DIR = "userPluginDir";
 	private static final String ASSET_INSTALL_TIME_FILE = "assetInstallTimeFile";
+	private static final String MLCP_OPTIONS_DIR = "mlcp-options";
 
 	@Autowired
 	private Environment environment;
 
 	private Properties environmentProperties = new Properties();
-	private Properties flowProperties = new Properties();
 
 	public String getServerPort() {
 		return this.environment.getProperty(SERVER_PORT);
@@ -204,7 +207,6 @@ public class EnvironmentConfiguration {
 
 	public void loadConfigurationFromFiles() {
 	    loadConfigurationFromFile(environmentProperties, ENVIRONMENT_PROPERTIES_FILENAME);
-	    loadConfigurationFromFile(environmentProperties, FLOW_PROPERTIES_FILENAME);
 	}
 
 	public void loadConfigurationFromFile(Properties configProperties, String fileName) {
@@ -244,13 +246,25 @@ public class EnvironmentConfiguration {
         }
     }
 
-	public void saveOrUpdateFlowInputPath(String entityName, String flowName, String inputPath) {
-	    this.flowProperties.setProperty(entityName + "-" + flowName, inputPath);
-	    saveConfigurationToFile(flowProperties, FLOW_PROPERTIES_FILENAME);
+	public void saveOrUpdateFlowMlcpOptionsToFile(String entityName, String flowName, String mlcpOptionsFileContent) throws IOException {
+	    String filePath = getMlcpOptionsFilePath(entityName, flowName);
+	    FileWriter fw = new FileWriter(filePath);
+        BufferedWriter bw = new BufferedWriter(fw);
+        bw.write(mlcpOptionsFileContent);
+        bw.close();
     }
 
-	public String getFlowInputPath(String entityName, String flowName) {
-	    return this.flowProperties.getProperty(entityName + "-" + flowName);
+	private String getMlcpOptionsFilePath(String entityName, String flowName) {
+	    return "." + File.separator + MLCP_OPTIONS_DIR + File.separator + entityName + "-" + flowName + ".txt";
+    }
+
+    public String getFlowMlcpOptionsFromFile(String entityName, String flowName) throws IOException {
+        String filePath = getMlcpOptionsFilePath(entityName, flowName);
+        File file = new File(filePath);
+	    if(file.exists()) {
+	        return Files.toString(file, Charsets.UTF_8);
+	    }
+	    return null;
     }
 
 	public HubConfig getHubConfig() {
