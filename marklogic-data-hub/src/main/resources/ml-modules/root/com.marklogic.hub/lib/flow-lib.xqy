@@ -26,6 +26,9 @@ import module namespace debug = "http://marklogic.com/data-hub/debug-lib"
 import module namespace hul = "http://marklogic.com/data-hub/hub-utils-lib"
   at "/com.marklogic.hub/lib/hub-utils-lib.xqy";
 
+import module namespace json="http://marklogic.com/xdmp/json"
+  at "/MarkLogic/json/json.xqy";
+
 import module namespace functx = "http://www.functx.com"
   at "/MarkLogic/functx/functx-1.0-nodoc-2007-01.xqy";
 
@@ -195,15 +198,6 @@ declare %private function flow:get-writer(
     for $uri in $uris
     let $filename as xs:string := hul:get-file-from-uri($uri)
     let $type := flow:get-type($filename)
-    let $_ :=
-      if (debug:on()) then
-        debug:log((
-          "$flow-name: " || $flow-name,
-          "$uri: " || $uri,
-          "$filename: " || $filename,
-          "$type: " || $type
-        ))
-      else ()
     return
       element hub:writer {
         attribute type { $type },
@@ -253,10 +247,6 @@ declare %private function flow:get-flow(
   $flow-type as xs:string?,
   $uris as xs:string*) as element(hub:flow)
 {
-  let $_ :=
-    if (debug:on()) then
-      debug:log(("entity: " || $entity-name, "flow: " || $flow-name, "flow-type: " || $flow-type, "uris:", $uris))
-    else ()
   let $real-flow-type := fn:replace($uris[1], $ENTITIES-DIR || $entity-name || "/([^/]+)/" || $flow-name || ".*$", "$1")
   let $map := map:map()
   let $_ :=
@@ -482,7 +472,6 @@ declare function flow:run-plugins(
       else ()
     ))
   let $data-format := $flow/hub:data-format
-  let $_ := xdmp:log($flow)
   let $flow-type := $flow/hub:type
   let $flow-complexity := $flow/hub:complexity
   let $_ :=
@@ -681,6 +670,16 @@ declare function flow:run-plugin(
               fn:error("Too Many Nodes!. Return just 1 node")
             else
               $resp/node()
+          default return
+            $resp
+
+      let $resp :=
+        typeswitch($resp)
+          case object-node() | json:object return
+            if ($data-format = 'application/xml') then
+              json:transform-from-json($resp, json:config("custom"))
+            else
+              $resp
           case json:array return
             if ($data-format = 'application/xml') then
               json:array-values($resp)

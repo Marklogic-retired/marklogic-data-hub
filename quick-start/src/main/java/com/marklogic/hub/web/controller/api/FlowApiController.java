@@ -190,9 +190,9 @@ public class FlowApiController extends BaseController {
 
     @RequestMapping(value="/run/input", method = RequestMethod.POST)
     public BigInteger runInputFlow(@RequestBody RunFlowModel runFlow) {
-        
+
         saveInputPath(runFlow);
-        
+
         CancellableTask task = new CancellableTask() {
 
             @Override
@@ -204,10 +204,10 @@ public class FlowApiController extends BaseController {
             public void run(BasicFuture<?> resultFuture) {
                 try {
                 	Flow flow = flowManagerService.getFlow(runFlow.getEntityName(), runFlow.getFlowName());
-                	
+
                     Mlcp mlcp = new Mlcp(
                             environmentConfiguration.getMLHost()
-                            ,Integer.parseInt(environmentConfiguration.getMLStagingRestPort())
+                            ,Integer.parseInt(environmentConfiguration.getMLStagingPort())
                             ,environmentConfiguration.getMLUsername()
                             ,environmentConfiguration.getMLPassword()
                             );
@@ -225,7 +225,7 @@ public class FlowApiController extends BaseController {
 
                     resultFuture.completed(null);
                 }
-                
+
                 catch (IOException e) {
                     LOGGER.error("Error encountered while trying to run flow:  "
                             + runFlow.getEntityName() + " > " + runFlow.getFlowName(),
@@ -234,10 +234,10 @@ public class FlowApiController extends BaseController {
                 }
             }
         };
-        
+
         return taskManagerService.addTask(task);
     }
-    
+
     @RequestMapping(value = "/input-path", method = RequestMethod.GET, produces = { MediaType.TEXT_PLAIN_VALUE })
     @ResponseBody
     public String getPreviousInputPath(HttpServletRequest request) {
@@ -245,7 +245,7 @@ public class FlowApiController extends BaseController {
         String flowName = request.getParameter("flowName");
         return getPreviousInputPath(entityName,flowName);
     }
-    
+
     private String getPreviousInputPath(String entityName, String flowName) {
         String value = environmentConfiguration.getFlowInputPath(entityName, flowName);
         return value == null ? "." : value;

@@ -115,9 +115,9 @@ public class HubTestBase {
         }
 
         host = properties.getProperty("mlHost");
-        stagingPort = Integer.parseInt(properties.getProperty("mlStagingRestPort"));
-        finalPort = Integer.parseInt(properties.getProperty("mlFinalRestPort"));
-        tracePort = Integer.parseInt(properties.getProperty("mlTraceRestPort"));
+        stagingPort = Integer.parseInt(properties.getProperty("mlStagingPort"));
+        finalPort = Integer.parseInt(properties.getProperty("mlFinalPort"));
+        tracePort = Integer.parseInt(properties.getProperty("mlTracePort"));
         user = properties.getProperty("mlUsername");
         password = properties.getProperty("mlPassword");
         authMethod = Authentication.valueOf(properties.getProperty("auth").toUpperCase());
@@ -136,7 +136,11 @@ public class HubTestBase {
     }
 
     protected static void enableDebugging() {
-        stagingDocMgr.write("/debug", new StringHandle("<debug>true</debug>"));
+        new Debugging(stagingClient).enable();
+    }
+
+    protected static void enableTracing() {
+        new Tracing(stagingClient).enable();
     }
 
     protected static HubConfig getHubConfig() {

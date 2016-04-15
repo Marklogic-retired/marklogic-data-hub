@@ -8,9 +8,9 @@ import com.marklogic.hub.model.EntityModel;
 public class LoginForm extends BaseForm {
 
 	private String mlHost;
-	private String mlStagingRestPort;
-	private String mlFinalRestPort;
-	private String mlTraceRestPort;
+	private String mlStagingPort;
+	private String mlFinalPort;
+	private String mlTracePort;
 	private String mlUsername;
 	private String mlPassword;
 	private String userPluginDir;
@@ -28,28 +28,28 @@ public class LoginForm extends BaseForm {
 		this.mlHost = mlHost;
 	}
 
-	public String getMlStagingRestPort() {
-        return mlStagingRestPort;
+	public String getMlStagingPort() {
+        return mlStagingPort;
     }
 
-    public void setMlStagingRestPort(String mlStagingRestPort) {
-        this.mlStagingRestPort = mlStagingRestPort;
+    public void setMlStagingPort(String mlStagingPort) {
+        this.mlStagingPort = mlStagingPort;
     }
 
-    public String getMlFinalRestPort() {
-        return mlFinalRestPort;
+    public String getMlFinalPort() {
+        return mlFinalPort;
     }
 
-    public void setMlFinalRestPort(String mlFinalRestPort) {
-        this.mlFinalRestPort = mlFinalRestPort;
+    public void setMlFinalPort(String mlFinalPort) {
+        this.mlFinalPort = mlFinalPort;
     }
 
-    public String getMlTraceRestPort() {
-        return mlTraceRestPort;
+    public String getMlTracePort() {
+        return mlTracePort;
     }
 
-    public void setMlTraceRestPort(String mlTraceRestPort) {
-        this.mlTraceRestPort = mlTraceRestPort;
+    public void setMlTracePort(String mlTracePort) {
+        this.mlTracePort = mlTracePort;
     }
 
     public String getMlUsername() {

@@ -2,6 +2,9 @@ xquery version "1.0-ml";
 
 module namespace mlcpFlow = "http://marklogic.com/data-hub/mlcp-flow-transform";
 
+import module namespace debug = "http://marklogic.com/data-hub/debug-lib"
+  at "/com.marklogic.hub/lib/debug-lib.xqy";
+
 import module namespace flow = "http://marklogic.com/data-hub/flow-lib"
   at "/com.marklogic.hub/lib/flow-lib.xqy";
 
@@ -10,11 +13,32 @@ import module namespace trace = "http://marklogic.com/data-hub/trace"
 
 declare namespace hub = "http://marklogic.com/data-hub";
 
+declare option xdmp:mapping "false";
+
 declare function mlcpFlow:transform(
   $content as map:map,
   $context as map:map
 ) as map:map*
 {
+  if (debug:on()) then
+    debug:log((
+      "",
+      "",
+      "################################################################",
+      "  MLCP INPUT TRANSFORM",
+      "",
+      "",
+      "$content:",
+      debug:dump-map($content, "  "),
+      "",
+      "$context: ",
+      debug:dump-map($context, "  "),
+      "",
+      "################################################################",
+      "",
+      ""
+    ))
+  else (),
   let $uri := map:get($content, "uri")
 
   let $paramNodes := xdmp:unquote(map:get($context, 'transform_param'))/node()/*
@@ -26,7 +50,13 @@ declare function mlcpFlow:transform(
     map:get($paramMap, 'flow-name'),
     map:get($paramMap, 'flow-type'))
 
-  let $envelope := flow:run-plugins($flow, $uri, map:get($content, "value"), $paramMap)
+  let $envelope := try {
+    flow:run-plugins($flow, $uri, map:get($content, "value"), $paramMap)
+  }
+  catch($ex) {
+    xdmp:log($ex),
+    xdmp:rethrow()
+  }
   let $_ := map:put($content, "value", $envelope)
   let $_ :=
     if (trace:enabled()) then

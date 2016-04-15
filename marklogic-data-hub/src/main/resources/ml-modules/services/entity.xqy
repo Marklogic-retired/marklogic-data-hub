@@ -41,7 +41,7 @@ declare function get(
   $params  as map:map
   ) as document-node()*
 {
-  debug:dump-env(),
+  debug:dump-env("GET ENTITY(s)"),
 
   document {
     let $entity-name := map:get($params, "entity-name")
@@ -50,7 +50,6 @@ declare function get(
         flow:get-entity($entity-name)
       else
         flow:get-entities()
-    let $_ := debug:log($resp)
     return
      $resp
   }

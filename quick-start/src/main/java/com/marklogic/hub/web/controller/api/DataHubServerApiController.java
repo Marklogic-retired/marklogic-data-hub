@@ -181,9 +181,9 @@ public class DataHubServerApiController extends BaseController {
 
     private void updateEnvironmentConfiguration(LoginForm loginForm) {
         environmentConfiguration.setMLHost(loginForm.getMlHost());
-        environmentConfiguration.setMLStagingRestPort(loginForm.getMlStagingRestPort());
-        environmentConfiguration.setMLFinalRestPort(loginForm.getMlFinalRestPort());
-        environmentConfiguration.setMlTraceRestPort(loginForm.getMlTraceRestPort());
+        environmentConfiguration.setMLStagingPort(loginForm.getMlStagingPort());
+        environmentConfiguration.setMLFinalPort(loginForm.getMlFinalPort());
+        environmentConfiguration.setMlTracePort(loginForm.getMlTracePort());
         environmentConfiguration.setMLUsername(loginForm.getMlUsername());
         environmentConfiguration.setMLPassword(loginForm.getMlPassword());
         environmentConfiguration.setUserPluginDir(loginForm.getUserPluginDir());
@@ -191,9 +191,9 @@ public class DataHubServerApiController extends BaseController {
 
     private void retrieveEnvironmentConfiguration(LoginForm loginForm) {
         loginForm.setMlHost(environmentConfiguration.getMLHost());
-        loginForm.setMlStagingRestPort(environmentConfiguration.getMLStagingRestPort());
-        loginForm.setMlFinalRestPort(environmentConfiguration.getMLFinalRestPort());
-        loginForm.setMlTraceRestPort(environmentConfiguration.getMLTraceRestPort());
+        loginForm.setMlStagingPort(environmentConfiguration.getMLStagingPort());
+        loginForm.setMlFinalPort(environmentConfiguration.getMLFinalPort());
+        loginForm.setMlTracePort(environmentConfiguration.getMLTracePort());
         loginForm.setMlUsername(environmentConfiguration.getMLUsername());
         loginForm.setMlPassword(environmentConfiguration.getMLPassword());
         loginForm.setUserPluginDir(environmentConfiguration.getUserPluginDir());
