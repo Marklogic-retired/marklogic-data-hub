@@ -131,13 +131,15 @@ public class Mlcp {
 			    arguments.add(sourceOptions.getDataFormat());
 			}
 
-			arguments.add("-transform_module");
-	        arguments.add("/com.marklogic.hub/mlcp-flow-transform.xqy");
-	        arguments.add("-transform_namespace");
-	        arguments.add("http://marklogic.com/data-hub/mlcp-flow-transform");
-	        arguments.add("-transform_param");
-	        arguments.add("\"" + sourceOptions.getTransformParams() + "\"");
-
+			String transformModule = sourceOptions.getTransformModule();
+			if (transformModule != null) {
+    			arguments.add("-transform_module");
+    	        arguments.add("\"" + transformModule +"\"");
+    	        arguments.add("-transform_namespace");
+    	        arguments.add("\"" + sourceOptions.getTransformNamespace() +"\"");
+    	        arguments.add("-transform_param");
+    	        arguments.add("\"" + sourceOptions.getTransformParams() + "\"");
+			}
 
 			return arguments;
 		}
@@ -167,6 +169,8 @@ public class Mlcp {
 		private String dataFormat = "json";
 		private String inputFileType;
 		private String otherOptions;
+		private String transformModule;
+		private String transformNamespace;
 
 		public SourceOptions(String entityName, String flowName, String flowType, Format dataFormat) {
 			this.entityName = entityName;
@@ -216,6 +220,22 @@ public class Mlcp {
             return String.format(
                     "<params><entity-name>%s</entity-name><flow-name>%s</flow-name><flow-type>%s</flow-type></params>",
                     entityName, flowName, flowType);
+        }
+
+        public String getTransformModule() {
+            return transformModule;
+        }
+
+        public void setTransformModule(String transformModule) {
+            this.transformModule = transformModule;
+        }
+
+        public String getTransformNamespace() {
+            return transformNamespace;
+        }
+
+        public void setTransformNamespace(String transformNamespace) {
+            this.transformNamespace = transformNamespace;
         }
 	}
 
