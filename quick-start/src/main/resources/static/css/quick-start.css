@@ -286,6 +286,11 @@ section {
     box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
 }
 
+.navbar-default {
+    background-color: #2a2d2b;
+    color: white;
+}
+
 /* This is specifically for Swagger UI */
 
 .swagger-validator {
