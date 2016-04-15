@@ -85,14 +85,14 @@ public class EntityManagerService {
     }
 
     public EntityModel createEntity(String EntityName, String inputFlowName,
-            String conformFlowName, PluginFormat pluginFormat, Format dataFormat) {
+            String harmonizeFlowName, PluginFormat pluginFormat, Format dataFormat) {
         EntityModelFactory EntityModelFactory = new EntityModelFactory();
         EntityModel EntityModel;
         try {
             File pluginDir = new File(environmentConfiguration.getUserPluginDir());
             EntityModel = EntityModelFactory.createNewEntity(pluginDir,
                     EntityName,
-                    inputFlowName, conformFlowName, pluginFormat, dataFormat);
+                    inputFlowName, harmonizeFlowName, pluginFormat, dataFormat);
         } catch (IOException e) {
             throw new EntityManagerException(e.getMessage(), e);
         }

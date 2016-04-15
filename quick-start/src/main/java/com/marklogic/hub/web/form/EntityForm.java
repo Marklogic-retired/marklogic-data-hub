@@ -11,7 +11,7 @@ public class EntityForm extends BaseForm {
 
     private String entityName;
     private String inputFlowName;
-    private String conformFlowName;
+    private String harmonizeFlowName;
     private PluginFormat pluginFormat;
     private Format dataFormat;
 
@@ -31,12 +31,12 @@ public class EntityForm extends BaseForm {
         this.inputFlowName = inputFlowName;
     }
 
-    public String getConformFlowName() {
-        return conformFlowName;
+    public String getHarmonizeFlowName() {
+        return harmonizeFlowName;
     }
 
-    public void setConformFlowName(String conformFlowName) {
-        this.conformFlowName = conformFlowName;
+    public void setHarmonizeFlowName(String harmonizeFlowName) {
+        this.harmonizeFlowName = harmonizeFlowName;
     }
 
     public PluginFormat getPluginFormat() {
@@ -69,10 +69,10 @@ public class EntityForm extends BaseForm {
             }
         }
         if ((this.inputFlowName == null || "".equals(this.inputFlowName.trim()))
-                && (this.conformFlowName == null || ""
-                        .equals(this.conformFlowName.trim()))) {
+                && (this.harmonizeFlowName == null || ""
+                        .equals(this.harmonizeFlowName.trim()))) {
             throw new FormValidationException(
-                    "Either the Ingest Flow Name or the Conformance Flow Name must be supplied.");
+                    "Either the Ingest Flow Name or the Harmonize Flow Name must be supplied.");
         }
     }
 }

@@ -37,12 +37,12 @@ public class EntityModelFactory {
     }
 
     public EntityModel createNewEntity(File userPluginDir, String entityName,
-            String inputFlowName, String conformFlowName, PluginFormat pluginFormat,
+            String inputFlowName, String harmonizeFlowName, PluginFormat pluginFormat,
             Format dataFormat) throws IOException {
         EntityModel entityModel = new EntityModel();
         entityModel.setEntityName(entityName);
         entityModel.setInputFlows(new ArrayList<>());
-        entityModel.setConformFlows(new ArrayList<>());
+        entityModel.setHarmonizeFlows(new ArrayList<>());
 
         Scaffolding.createEntity(entityName, userPluginDir);
 
@@ -53,12 +53,12 @@ public class EntityModelFactory {
             entityModel.getInputFlows().add(inputFlow);
         }
 
-        if (conformFlowName != null) {
-            FlowModel conformFlow = flowModelFactory.createNewFlow(
-                    userPluginDir, conformFlowName,
-                    FlowType.CONFORMANCE, pluginFormat,
+        if (harmonizeFlowName != null) {
+            FlowModel harmonizeFlow = flowModelFactory.createNewFlow(
+                    userPluginDir, harmonizeFlowName,
+                    FlowType.HARMONIZE, pluginFormat,
                     dataFormat);
-            entityModel.getConformFlows().add(conformFlow);
+            entityModel.getHarmonizeFlows().add(harmonizeFlow);
         }
 
         return entityModel;
@@ -69,7 +69,7 @@ public class EntityModelFactory {
         entityModel.setEntityName(entityName);
         //this will be updated after traversing its modules
         entityModel.setSynched(this.entitiesInServer.containsKey(entityName));
-        
+
         FlowModelFactory flowModelFactory = new FlowModelFactory(
                 this.entitiesInServer.get(entityName), entityName);
         RestModelFactory restModelFactory = new RestModelFactory(entityName);
@@ -79,19 +79,19 @@ public class EntityModelFactory {
     }
 
     //set the values of modules of the entity such as flows, rest, etc.
-    private void setEntityModules(EntityModel entityModel, String entityFilePath, 
+    private void setEntityModules(EntityModel entityModel, String entityFilePath,
             FlowModelFactory flowModelFactory, RestModelFactory restModelFactory, SyncStatusService syncStatusService) {
         this.setEntityModules(entityModel, entityFilePath, FlowType.INPUT, flowModelFactory, restModelFactory, syncStatusService);
-        this.setEntityModules(entityModel, entityFilePath, FlowType.CONFORMANCE, flowModelFactory, restModelFactory, syncStatusService);
+        this.setEntityModules(entityModel, entityFilePath, FlowType.HARMONIZE, flowModelFactory, restModelFactory, syncStatusService);
     }
 
-    private void setEntityModules(EntityModel entityModel, String entityFilePath, 
-            FlowType flowType, FlowModelFactory flowModelFactory, 
+    private void setEntityModules(EntityModel entityModel, String entityFilePath,
+            FlowType flowType, FlowModelFactory flowModelFactory,
             RestModelFactory restModelFactory, SyncStatusService syncStatusService) {
         String modulesParentDirectory = entityFilePath + File.separator
                 + flowType.toString();
         List<String> folderNames = FileUtil.listDirectFolders(modulesParentDirectory);
-        
+
         List<FlowModel> flows = new ArrayList<>();
         RestModel restModel = null;
         for (String folderName : folderNames) {
@@ -109,8 +109,8 @@ public class EntityModelFactory {
             entityModel.setInputFlows(flows);
             entityModel.setInputRest(restModel);
         } else {
-            entityModel.setConformFlows(flows);
-            entityModel.setConformRest(restModel);
+            entityModel.setHarmonizeFlows(flows);
+            entityModel.setHarmonizeRest(restModel);
         }
     }
 

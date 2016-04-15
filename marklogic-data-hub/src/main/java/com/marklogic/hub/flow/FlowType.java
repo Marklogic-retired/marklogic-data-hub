@@ -1,7 +1,7 @@
 package com.marklogic.hub.flow;
 
 public enum FlowType {
-    INPUT("input"), CONFORMANCE("conformance");
+    INPUT("input"), HARMONIZE("harmonize");
 
     private String type;
     FlowType(String type) {

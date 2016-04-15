@@ -267,12 +267,12 @@ public class DataHub {
 
                 String dirStr = dir.toString();
                 boolean isInputDir = dirStr.matches(".*[/\\\\]input[/\\\\].*");
-                boolean isConformanceDir = dirStr.matches(".*[/\\\\]conformance[/\\\\].*");
+                boolean isHarmonizeDir = dirStr.matches(".*[/\\\\]harmonize[/\\\\].*");
                 if (isRest) {
                     if (isInputDir) {
                         loadedFiles.addAll(hubModulesLoader.loadModules(dir.normalize().toAbsolutePath().toFile(), new AllButAssetsModulesFinder(), stagingClient));
                     }
-                    else if (isConformanceDir) {
+                    else if (isHarmonizeDir) {
                         loadedFiles.addAll(hubModulesLoader.loadModules(dir.normalize().toAbsolutePath().toFile(), new AllButAssetsModulesFinder(), finalClient));
                     }
                     return FileVisitResult.SKIP_SUBTREE;

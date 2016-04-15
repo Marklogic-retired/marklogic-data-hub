@@ -62,8 +62,8 @@ public class ScaffoldingTest extends HubTestBase {
     }
 
     @Test
-    public void createXqyConformanceFlow() throws IOException, SAXException {
-        createConformanceFlow(PluginFormat.XQUERY, Format.XML);
+    public void createXqyHarmonizeFlow() throws IOException, SAXException {
+        createHarmonizeFlow(PluginFormat.XQUERY, Format.XML);
     }
 
     @Test
@@ -72,8 +72,8 @@ public class ScaffoldingTest extends HubTestBase {
     }
 
     @Test
-    public void createSjsConformanceFlow() throws IOException, SAXException {
-        createConformanceFlow(PluginFormat.JAVASCRIPT, Format.JSON);
+    public void createSjsHarmonizeFlow() throws IOException, SAXException {
+        createHarmonizeFlow(PluginFormat.JAVASCRIPT, Format.JSON);
     }
 
     private void createInputFlow(PluginFormat pluginFormat, Format dataFormat) throws IOException, SAXException {
@@ -115,7 +115,7 @@ public class ScaffoldingTest extends HubTestBase {
         assertTrue(triplesContent.exists());
     }
 
-    private void createConformanceFlow(PluginFormat pluginFormat, Format dataFormat) throws IOException, SAXException {
+    private void createHarmonizeFlow(PluginFormat pluginFormat, Format dataFormat) throws IOException, SAXException {
         assertFalse(pluginsDir.exists());
 
         Scaffolding.createEntity("my-fun-test", pluginsDir);
@@ -125,12 +125,12 @@ public class ScaffoldingTest extends HubTestBase {
         assertTrue(entityDir.exists());
         assertEquals(new File(pluginPath + "/entities/my-fun-test").toPath(), entityDir.toPath());
 
-        Scaffolding.createFlow("my-fun-test", "test-conformance", FlowType.CONFORMANCE, pluginFormat, dataFormat, pluginsDir);
-        File flowDir = Scaffolding.getFlowDir(pluginsDir, "my-fun-test", "test-conformance", FlowType.CONFORMANCE);
-        assertEquals(new File(pluginPath + "/entities/my-fun-test/conformance/test-conformance").toPath(), flowDir.toPath());
+        Scaffolding.createFlow("my-fun-test", "test-harmonize", FlowType.HARMONIZE, pluginFormat, dataFormat, pluginsDir);
+        File flowDir = Scaffolding.getFlowDir(pluginsDir, "my-fun-test", "test-harmonize", FlowType.HARMONIZE);
+        assertEquals(new File(pluginPath + "/entities/my-fun-test/harmonize/test-harmonize").toPath(), flowDir.toPath());
         assertTrue(flowDir.exists());
 
-        File flowDescriptor = new File(flowDir, "test-conformance.xml");
+        File flowDescriptor = new File(flowDir, "test-harmonize.xml");
         assertTrue(flowDescriptor.exists());
         String flowXML ="<flow xmlns=\"http://marklogic.com/data-hub\"><complexity>simple</complexity><data-format>" + dataFormat.getDefaultMimetype() + "</data-format><plugins></plugins></flow>";
         assertXMLEqual(flowXML, IOUtils.toString(new FileInputStream(flowDescriptor)));
@@ -160,7 +160,7 @@ public class ScaffoldingTest extends HubTestBase {
     public void createXqyRestExtension() throws IOException {
         String entityName = "my-fun-test";
         String extensionName = "myExtension";
-        FlowType flowType = FlowType.CONFORMANCE;
+        FlowType flowType = FlowType.HARMONIZE;
         PluginFormat pluginFormat = PluginFormat.XQUERY;
         try {
             Scaffolding.createRestExtension(entityName, extensionName, flowType, pluginFormat, pluginsDir);
@@ -206,7 +206,7 @@ public class ScaffoldingTest extends HubTestBase {
     public void createXqyRestTransform() throws IOException {
         String entityName = "my-fun-test";
         String transformName = "myTransform";
-        FlowType flowType = FlowType.CONFORMANCE;
+        FlowType flowType = FlowType.HARMONIZE;
         PluginFormat pluginFormat = PluginFormat.XQUERY;
         try {
             Scaffolding.createRestTransform(entityName, transformName, flowType, pluginFormat, pluginsDir);
@@ -225,7 +225,7 @@ public class ScaffoldingTest extends HubTestBase {
     public void createSjsRestTransform() throws IOException {
         String entityName = "my-fun-test";
         String transformName = "myTransform";
-        FlowType flowType = FlowType.CONFORMANCE;
+        FlowType flowType = FlowType.HARMONIZE;
         PluginFormat pluginFormat = PluginFormat.JAVASCRIPT;
         try {
             Scaffolding.createRestTransform(entityName, transformName, flowType, pluginFormat, pluginsDir);
