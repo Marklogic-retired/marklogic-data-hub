@@ -226,8 +226,8 @@ public class FlowManagerTest extends HubTestBase {
         listener.waitForFinish();
         assertEquals(2, getStagingDocCount());
         assertEquals(2, getFinalDocCount());
-        assertXMLEqual(getXmlFromResource("flow-manager-test/harmonizeed/harmonizeed1.xml"), finalDocMgr.read("/employee1.xml").next().getContent(new DOMHandle()).get() );
-        assertXMLEqual(getXmlFromResource("flow-manager-test/harmonizeed/harmonizeed2.xml"), finalDocMgr.read("/employee2.xml").next().getContent(new DOMHandle()).get());
+        assertXMLEqual(getXmlFromResource("flow-manager-test/harmonized/harmonized1.xml"), finalDocMgr.read("/employee1.xml").next().getContent(new DOMHandle()).get() );
+        assertXMLEqual(getXmlFromResource("flow-manager-test/harmonized/harmonized2.xml"), finalDocMgr.read("/employee2.xml").next().getContent(new DOMHandle()).get());
     }
 
     @Test
@@ -244,8 +244,8 @@ public class FlowManagerTest extends HubTestBase {
         listener.waitForFinish();
         assertEquals(2, getStagingDocCount());
         assertEquals(2, getFinalDocCount());
-        assertXMLEqual(getXmlFromResource("flow-manager-test/harmonizeed-with-header/harmonizeed1.xml"), finalDocMgr.read("/employee1.xml").next().getContent(new DOMHandle()).get() );
-        assertXMLEqual(getXmlFromResource("flow-manager-test/harmonizeed-with-header/harmonizeed2.xml"), finalDocMgr.read("/employee2.xml").next().getContent(new DOMHandle()).get());
+        assertXMLEqual(getXmlFromResource("flow-manager-test/harmonized-with-header/harmonized1.xml"), finalDocMgr.read("/employee1.xml").next().getContent(new DOMHandle()).get() );
+        assertXMLEqual(getXmlFromResource("flow-manager-test/harmonized-with-header/harmonized2.xml"), finalDocMgr.read("/employee2.xml").next().getContent(new DOMHandle()).get());
 
         runInModules("xdmp:directory-delete(\"/entities/test/harmonize/my-test-flow-with-header/\")");
     }
@@ -267,8 +267,8 @@ public class FlowManagerTest extends HubTestBase {
         listener.waitForFinish();
         assertEquals(2, getStagingDocCount());
         assertEquals(2, getFinalDocCount());
-        assertXMLEqual(getXmlFromResource("flow-manager-test/harmonizeed-with-all/harmonizeed1.xml"), finalDocMgr.read("/employee1.xml").next().getContent(new DOMHandle()).get() );
-        assertXMLEqual(getXmlFromResource("flow-manager-test/harmonizeed-with-all/harmonizeed2.xml"), finalDocMgr.read("/employee2.xml").next().getContent(new DOMHandle()).get());
+        assertXMLEqual(getXmlFromResource("flow-manager-test/harmonized-with-all/harmonized1.xml"), finalDocMgr.read("/employee1.xml").next().getContent(new DOMHandle()).get() );
+        assertXMLEqual(getXmlFromResource("flow-manager-test/harmonized-with-all/harmonized2.xml"), finalDocMgr.read("/employee2.xml").next().getContent(new DOMHandle()).get());
 
         runInModules("xdmp:directory-delete(\"/entities/test/harmonize/my-test-flow-with-all/\")");
     }
