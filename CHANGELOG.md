@@ -1,5 +1,17 @@
 # Change Log
 
+## [v1.0.0-beta.3](https://github.com/marklogic/marklogic-data-hub/tree/v1.0.0-beta.3)
+
+[Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v1.0.0-beta.2...v1.0.0-beta.3)
+
+**Merged pull requests:**
+
+- Harmonize [\#207](https://github.com/marklogic/marklogic-data-hub/pull/207) ([paxtonhare](https://github.com/paxtonhare))
+- 205 - Minor load data improvements [\#206](https://github.com/marklogic/marklogic-data-hub/pull/206) ([maeisabelle](https://github.com/maeisabelle))
+- 164 - Load data improvements [\#204](https://github.com/marklogic/marklogic-data-hub/pull/204) ([maeisabelle](https://github.com/maeisabelle))
+- 164 - Load Data Improvements [\#203](https://github.com/marklogic/marklogic-data-hub/pull/203) ([maeisabelle](https://github.com/maeisabelle))
+- Gradle fixes [\#202](https://github.com/marklogic/marklogic-data-hub/pull/202) ([paxtonhare](https://github.com/paxtonhare))
+
 ## [v1.0.0-beta.2](https://github.com/marklogic/marklogic-data-hub/tree/v1.0.0-beta.2) (2016-04-13)
 [Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v1.0.0-beta.1...v1.0.0-beta.2)
 
