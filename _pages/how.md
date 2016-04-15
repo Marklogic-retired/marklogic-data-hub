@@ -80,7 +80,7 @@ With the envelope you can normalize the fields into a preferred format:
 <div class="row">
 <div class="col-md-6" markdown="1">
 
-**/conformed-1.json**
+**/harmonized-1.json**
 
 ~~~
 {
@@ -99,7 +99,7 @@ With the envelope you can normalize the fields into a preferred format:
 
 <div class="col-md-6" markdown="1">
 
-**/conformed-2.json**
+**/harmonized-2.json**
 
 ~~~
 {
@@ -125,17 +125,17 @@ The MarkLogic Data Hub groups your data into Entities. These Entities are logica
 ## Ingest
 During the Ingest phase data is loaded into MarkLogic's staging area. This data can be fed through Flows to create Enveloped versions of the data.
 
-## Conform
-During the Conformance phase data is processed in bulk. The data is moved from the Staging area into the Final area and processed into Envelopes via Flows.
+## Harmonize
+During the Harmonize phase data is processed in bulk. The data is moved from the Staging area into the Final area and processed into Envelopes via Flows.
 
 ## Flows
-With each Business Entity you can define multiple Input and Conformance Flows. A Flow is a grouping of plugins that work together to create the envelope that holds your data. There is one plugin for each piece of the envelope (headers, triples, and content).
+With each Business Entity you can define multiple Input and Harmonize Flows. A Flow is a grouping of plugins that work together to create the envelope that holds your data. There is one plugin for each piece of the envelope (headers, triples, and content).
 
 - **Content Plugin.** The content plugin tells the system which data to store in the content section of the envelope.
 - **Headers Plugin.** The headers plugin returns a list of headers to store in the headers section of the envelope.
 - **Triples Plugin.** The triples plugin returns a list of semantic triples to store in the triples section of the envelope.
 
-Conformance Flows require two additional plugins:
+Harmonize Flows require two additional plugins:
 
-- **Collector plugin.** The collector plugin returns a list of strings that will be batch processed by the conformance flow. These strings can be anything from document URIs in the database to IDs. Collectors are only used for Conformnace Flows. Conformance Flows run as batches and need a list of things to operate on. Input Flows run per document and do not need Collectors.
+- **Collector plugin.** The collector plugin returns a list of strings that will be batch processed by the harmonize flow. These strings can be anything from document URIs in the database to IDs. Collectors are only used for Harmonize Flows. Harmonize Flows run as batches and need a list of things to operate on. Input Flows run per document and do not need Collectors.
 - **Writer plugin.** The writer plugin is responsible for saving the final envelope to disk. \*The writer plugin is not present for the Input flow because the caller is responsible for writing. Typically the caller is [MarkLogic Content Pump](https://docs.marklogic.com/guide/mlcp){:target="_blank"} or the [MarkLogic REST API](http://docs.marklogic.com/REST/client){:target="_blank"}

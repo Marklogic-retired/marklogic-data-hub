@@ -19,8 +19,8 @@ First thing is first. Load all of your data into MarkLogic... every last bit. Up
 
 <div class="section" markdown="1">
 
-### Conform
-Now that the data is loaded into the Staging area you will want to conform it. This can be as simple as keeping the data as-is or as involved as you want to make it. Some common actions that can be performed as part of the conformance step are:
+### Harmonize
+Now that the data is loaded into the Staging area you will want to harmonize it. This can be as simple as keeping the data as-is or as involved as you want to make it. Some common actions that can be performed as part of the harmonize step are:
 
 - Normalize dates and other fields
 - Enrich data with additional information

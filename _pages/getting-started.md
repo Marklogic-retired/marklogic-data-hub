@@ -78,7 +78,7 @@ You have just created an Entity with some basic Flows.
 
 > **Input Flows** are responsible for getting data into the Hub staging area. 
 
-> **Conformance Flows** are responsible for batch transformation of data from staging to final.
+> **Harmonize Flows** are responsible for batch transformation of data from staging to final.
 
 Now press **Deploy to Server**. You have just deployed your plugins into MarkLogic server. Plugins are the "stored procedures" that make up flows.
 
@@ -94,7 +94,7 @@ Behind the scenes QuickStart is running [MarkLogic Content Pump](https://docs.ma
 
 ## 8 - Create Flows for Acme Tech
 
-Next you will want to create an Input and Conformance flow for Acme Tech. Start by clicking the **New** button next to Input Flows. Then fill out the form. Continue by clicking the **New** button next to Conformance Flows. Then fill out the form.
+Next you will want to create an Input and Harmonize flow for Acme Tech. Start by clicking the **New** button next to Input Flows. Then fill out the form. Continue by clicking the **New** button next to Harmonize Flows. Then fill out the form.
 
 ![Create Acme Flows](../images/create-acme-flows.gif)
 
@@ -106,9 +106,9 @@ Behind the scenes QuickStart is running [MarkLogic Content Pump](https://docs.ma
 
 ![Run Input Flow](../images/run-acme-input-flow.gif)
 
-## 10 - Prep for Conform
+## 10 - Prep for Harmonize
 
-All of our data is loaded into the staging area. While it's possible to conform the data right now it's not very useful. The out of the box conformance plugins will simply copy the staging data to the final data area.
+All of our data is loaded into the staging area. While it's possible to harmonize the data right now it's not very useful. The out of the box harmonize plugins will simply copy the staging data to the final data area.
 
 We are going to enhance the data a bit so that it can be more easily searched and accessed. To do this we will identify some commonalities between our two data sets and choose a few fields to extract into the header section of our final envelopes.
 
@@ -122,41 +122,41 @@ Because we are dealing with two separate data sources we will put the logic for 
 
 ### Global Corp Header Plugin
 
-Use your favorite text editor to open the data-hub/plugins/entities/Employee/conformance/conform-global-corp/headers/headers.sjs file. Replace its contents with this:
+Use your favorite text editor to open the data-hub/plugins/entities/Employee/harmonize/armonize-global-corp/headers/headers.sjs file. Replace its contents with this:
 
-<script src="http://gist-it.appspot.com/https://github.com/marklogic/marklogic-data-hub/blob/master/examples/hr-hub/plugins/entities/Employee/conformance/conform-global-corp/headers/headers.sjs"></script>
+<script src="http://gist-it.appspot.com/https://github.com/marklogic/marklogic-data-hub/blob/master/examples/hr-hub/plugins/entities/Employee/harmonize/harmonize-global-corp/headers/headers.sjs"></script>
 
 ### Global Corp Collector
 
-The collector is a plugin that provides a list of items to the Conformance flow to be acted upon. By default the out of the box collector will return all document URIs in the system. We need to change this. For Global Corp we want to return a list of Employee IDs. This allows us to iterate over each employee ID and create an employee document per ID.
+The collector is a plugin that provides a list of items to the Harmonize flow to be acted upon. By default the out of the box collector will return all document URIs in the system. We need to change this. For Global Corp we want to return a list of Employee IDs. This allows us to iterate over each employee ID and create an employee document per ID.
 
-Use your favorite text editor to open the data-hub/plugins/entities/Employee/conformance/conform-global-corp/collector/collector.sjs file. Replace its contents with this:
+Use your favorite text editor to open the data-hub/plugins/entities/Employee/harmonize/harmonize-global-corp/collector/collector.sjs file. Replace its contents with this:
 
-<script src="http://gist-it.appspot.com/https://github.com/marklogic/marklogic-data-hub/blob/master/examples/hr-hub/plugins/entities/Employee/conformance/conform-global-corp/collector/collector.sjs"></script>
+<script src="http://gist-it.appspot.com/https://github.com/marklogic/marklogic-data-hub/blob/master/examples/hr-hub/plugins/entities/Employee/harmonize/harmonize-global-corp/collector/collector.sjs"></script>
 
 ### Acme Tech header plugin
 
-Use your favorite text editor to open the data-hub/plugins/entities/Employee/conformance/conform-acme-tech/headers/headers.sjs file. Replace its contents with this:
+Use your favorite text editor to open the data-hub/plugins/entities/Employee/harmonize/harmonize-acme-tech/headers/headers.sjs file. Replace its contents with this:
 
-<script src="http://gist-it.appspot.com/https://github.com/marklogic/marklogic-data-hub/blob/master/examples/hr-hub/plugins/entities/Employee/conformance/conform-acme-tech/headers/headers.sjs"></script>
+<script src="http://gist-it.appspot.com/https://github.com/marklogic/marklogic-data-hub/blob/master/examples/hr-hub/plugins/entities/Employee/harmonize/harmonize-acme-tech/headers/headers.sjs"></script>
 
 ### Acme Tech Collector
 
 For Acme Tech we want to return a list of URIs. Since the Acme Tech data came to us as JSON documents, there is only one document for every employee.
 
-Use your favorite text editor to open the data-hub/plugins/entities/Employee/conformance/conform-acme-tech/collector/collector.sjs file. Replace its contents with this:
+Use your favorite text editor to open the data-hub/plugins/entities/Employee/harmonize/harmonize-acme-tech/collector/collector.sjs file. Replace its contents with this:
 
-<script src="http://gist-it.appspot.com/https://github.com/marklogic/marklogic-data-hub/blob/master/examples/hr-hub/plugins/entities/Employee/conformance/conform-acme-tech/collector/collector.sjs"></script>
+<script src="http://gist-it.appspot.com/https://github.com/marklogic/marklogic-data-hub/blob/master/examples/hr-hub/plugins/entities/Employee/harmonize/harmonize-acme-tech/collector/collector.sjs"></script>
 
-## 11 - Conform the data
+## 11 - Harmonize the data
 
-You ingested your data. You created plugins that will extract common fields into the headers. You edited the collectors to only operate on certain data. Now you are ready to conform. Simply press the **Run** button next to both conformance flows.
+You ingested your data. You created plugins that will extract common fields into the headers. You edited the collectors to only operate on certain data. Now you are ready to harmonize. Simply press the **Run** button next to both harmonize flows.
 
-![Run Conform Flow](../images/run-conform-flow.gif)
+![Run Harmonize Flow](../images/run-harmonize-flow.gif)
 
 ## 12 - Consume the Data
 
-Now you can access your data via several REST endpoints. Your conformed data is available on the Final HTTP server. The defaul port is 8011. A full list of REST endpoints is available here: [http://docs.marklogic.com/REST/client](http://docs.marklogic.com/REST/client){:target="_blank"}
+Now you can access your data via several REST endpoints. Your harmonized data is available on the Final HTTP server. The defaul port is 8011. A full list of REST endpoints is available here: [http://docs.marklogic.com/REST/client](http://docs.marklogic.com/REST/client){:target="_blank"}
 
 Open the [Staging Search Endpoint](http://localhost:8010/v1/search?format=json){:target="_blank"} against your local instance.
 
@@ -170,5 +170,5 @@ Open the [Final Search Endpoint](http://localhost:8011/v1/search?format=json){:t
 Congratulations! You just created a Data Hub.
 
 - You loaded CSV and JSON files.
-- You conformed your data by extracting common header fields.
+- You harmonized your data by extracting common header fields.
 - Your data is now fully accessible via the [MarkLogic REST API](http://docs.marklogic.com/REST/client){:target="_blank"}
