@@ -18,17 +18,31 @@ package com.marklogic.hub;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
+import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.marklogic.client.io.Format;
 
 public class Mlcp {
-	private static final Logger LOGGER = LoggerFactory.getLogger(Mlcp.class);
-
-	private final static String DEFAULT_HADOOP_HOME_DIR = "./hadoop/";
+    
+    public static final String DOCUMENT_TYPE_KEY = "-document_type";
+    public static final String INPUT_FILE_PATH_KEY = "-input_file_path";
+    public static final String INPUT_FILE_TYPE_KEY = "-input_file_type";
+    public static final String OUTPUT_URI_REPLACE_KEY = "-output_uri_replace";
+    public static final String MODE_KEY = "-mode";
+    public static final String HOST_KEY = "-host";
+    public static final String PORT_KEY = "-port";
+    public static final String USERNAME_KEY = "-username";
+    public static final String PASSWORD_KEY = "-password";
+    
+   	private static final Logger LOGGER = LoggerFactory.getLogger(Mlcp.class);
+	private static final String DEFAULT_HADOOP_HOME_DIR = "./hadoop/";
 
 	private List<MlcpSource> sources = new ArrayList<>();
 
@@ -54,26 +68,10 @@ public class Mlcp {
 		sources.add(source);
 	}
 
-	public void loadContent() throws IOException {
+	public void loadContent() throws IOException, JSONException {
 		for (MlcpSource source : sources) {
 			try {
-				List<String> arguments = new ArrayList<>();
-
-				arguments.add("import");
-				arguments.add("-mode");
-				arguments.add("local");
-				arguments.add("-host");
-				arguments.add(host);
-				arguments.add("-port");
-				arguments.add(Integer.toString(port));
-				arguments.add("-username");
-				arguments.add(user);
-				arguments.add("-password");
-				arguments.add(password);
-
-				// add arguments related to the source
-				List<String> sourceArguments = source.getMlcpArguments();
-				arguments.addAll(sourceArguments);
+				List<String> arguments = getMlcpOptions(source);
 
 				LOGGER.info(arguments.toString());
 				DataHubContentPump contentPump = new DataHubContentPump(arguments);
@@ -93,7 +91,7 @@ public class Mlcp {
 		System.setProperty("hadoop.home.dir", new File(home).getCanonicalPath());
 	}
 
-	private static class MlcpSource {
+	public static class MlcpSource {
 		private String sourcePath;
 		private SourceOptions sourceOptions;
 
@@ -106,68 +104,48 @@ public class Mlcp {
 			return sourcePath;
 		}
 
-		public List<String> getMlcpArguments() throws IOException {
+        public List<String> getMlcpArguments() throws IOException, JSONException {
 			File file = new File(sourcePath);
 			String canonicalPath = file.getCanonicalPath();
 
 			List<String> arguments = new ArrayList<>();
-			arguments.add("-generate_uri");
-			arguments.add("true");
-
-			arguments.add("-input_file_path");
+			
+			arguments.add(INPUT_FILE_PATH_KEY);
 			arguments.add(canonicalPath);
-			arguments.add("-input_file_type");
-			if (sourceOptions.getInputFileType() == null) {
-				arguments.add("documents");
-			} else {
-				arguments.add(sourceOptions.getInputFileType());
+			
+			arguments.add(OUTPUT_URI_REPLACE_KEY);
+			arguments.add("\""+canonicalPath+",''\"");
+			
+			arguments.add(INPUT_FILE_TYPE_KEY);
+            arguments.add(sourceOptions.getInputFileType());
+
+			addOtherArguments(arguments, sourceOptions.getOtherOptions());
+			
+			//add document type only if it does not exist in the list
+			if(!arguments.contains(DOCUMENT_TYPE_KEY)) {
+			    arguments.add(DOCUMENT_TYPE_KEY);
+			    arguments.add(sourceOptions.getDataFormat());
 			}
-
-			if (sourceOptions.getInputFilePattern() != null) {
-				arguments.add("-input_file_pattern");
-				arguments.add(sourceOptions.getInputFilePattern());
-			}
-
-			String collections = this.getOutputCollections();
-			arguments.add("-output_collections");
-			arguments.add("\"" + collections + "\"");
-
-			if (sourceOptions.getInputCompressed()) {
-				arguments.add("-input_compressed");
-			}
-
-			// by default, cut the source directory path to make URIs shorter
-			String uriReplace = canonicalPath + ",''";
-			uriReplace = uriReplace.replaceAll("\\\\", "/");
-
-			arguments.add("-output_uri_replace");
-			arguments.add("\"" + uriReplace + "\"");
-
-			arguments.add("-document_type");
-			arguments.add(sourceOptions.getDataFormat());
-
-			arguments.add("-transform_module");
-			arguments.add("/com.marklogic.hub/mlcp-flow-transform.xqy");
-			arguments.add("-transform_namespace");
-			arguments.add("http://marklogic.com/data-hub/mlcp-flow-transform");
-			arguments.add("-transform_param");
-			arguments.add("\"" + sourceOptions.getTransformParams() + "\"");
+            
 			return arguments;
 		}
 
-		private String getOutputCollections() {
-			StringBuilder collectionsBuilder = new StringBuilder();
-			collectionsBuilder.append(sourceOptions.getEntityName());
-			collectionsBuilder.append(",");
-			collectionsBuilder.append(sourceOptions.getFlowName());
-			collectionsBuilder.append(",");
-			collectionsBuilder.append(sourceOptions.getFlowType());
-			if (sourceOptions.getCollection() != null) {
-				collectionsBuilder.append(",");
-				collectionsBuilder.append(sourceOptions.getCollection());
-			}
-			return collectionsBuilder.toString();
-		}
+        private void addOtherArguments(List<String> arguments,
+                String otherOptions) throws JSONException {
+            JSONArray jsonArray = new JSONArray(otherOptions);
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                @SuppressWarnings("rawtypes")
+                Iterator keysIterator = jsonObject.keys();
+                while(keysIterator.hasNext()) {
+                    String key = (String)keysIterator.next();
+                    arguments.add(key);
+                    arguments.add(jsonObject.getString(key));
+                }
+                
+            }
+            
+        }
 	}
 
 	public static class SourceOptions {
@@ -176,9 +154,7 @@ public class Mlcp {
 		private String flowType;
 		private String dataFormat = "json";
 		private String inputFileType;
-		private String inputFilePattern;
-		private String collection;
-		private boolean inputCompressed = false;
+		private String otherOptions;
 
 		public SourceOptions(String entityName, String flowName, String flowType, Format dataFormat) {
 			this.entityName = entityName;
@@ -215,35 +191,34 @@ public class Mlcp {
 		public void setInputFileType(String inputFileType) {
 			this.inputFileType = inputFileType;
 		}
+		
+		public String getOtherOptions() {
+            return otherOptions;
+        }
 
-		public String getInputFilePattern() {
-			return inputFilePattern;
-		}
-
-		public void setInputFilePattern(String inputFilePattern) {
-			this.inputFilePattern = inputFilePattern;
-		}
-
-		public String getCollection() {
-			return collection;
-		}
-
-		public void setCollection(String collection) {
-			this.collection = collection;
-		}
-
-		public void setInputCompressed(boolean inputCompressed) {
-			this.inputCompressed = inputCompressed;
-		}
-
-		public boolean getInputCompressed() {
-			return this.inputCompressed;
-		}
-
-		protected String getTransformParams() {
-			return String.format(
-					"<params><entity-name>%s</entity-name><flow-name>%s</flow-name><flow-type>%s</flow-type></params>",
-					entityName, flowName, flowType);
-		}
+        public void setOtherOptions(String otherOptions) {
+            this.otherOptions = otherOptions;
+        }
 	}
+
+    public List<String> getMlcpOptions(MlcpSource source) throws IOException, JSONException {
+        List<String> mlcpOptions = new ArrayList<>();
+
+        mlcpOptions.add("import");
+        mlcpOptions.add(MODE_KEY);
+        mlcpOptions.add("local");
+        mlcpOptions.add(HOST_KEY);
+        mlcpOptions.add(host);
+        mlcpOptions.add(PORT_KEY);
+        mlcpOptions.add(Integer.toString(port));
+        mlcpOptions.add(USERNAME_KEY);
+        mlcpOptions.add(user);
+        mlcpOptions.add(PASSWORD_KEY);
+        mlcpOptions.add(password);
+
+        List<String> sourceArguments = source.getMlcpArguments();
+        mlcpOptions.addAll(sourceArguments);
+        
+        return mlcpOptions;
+    }
 }
