@@ -41,7 +41,7 @@ declare function get(
   $params  as map:map
   ) as document-node()*
 {
-  debug:dump-env(),
+  debug:dump-env("GET FLOW"),
 
   document {
     let $entity-name := map:get($params, "entity-name")
@@ -52,7 +52,6 @@ declare function get(
         flow:get-flow($entity-name, $flow-name, $flow-type)
       else
         flow:get-flows($entity-name)
-    let $_ := debug:log($resp)
     return
      $resp
   }
@@ -69,7 +68,7 @@ declare %rapi:transaction-mode("update") function post(
   $input   as document-node()*
   ) as document-node()*
 {
-  debug:dump-env(),
+  debug:dump-env("RUN FLOW"),
 
   let $flow as element(hub:flow) := $input/hub:flow
   let $identifier := map:get($params, "identifier")

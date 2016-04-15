@@ -1,5 +1,5 @@
 {
-  "database-name": "%%FINAL_DB_NAME%%",
+  "database-name": "%%TRACE_DB_NAME%%",
   "range-element-index": [],
   "schema-database": "%%SCHEMAS_DATABASE%%",
   "triggers-database": "%%TRIGGERS_DATABASE%%",

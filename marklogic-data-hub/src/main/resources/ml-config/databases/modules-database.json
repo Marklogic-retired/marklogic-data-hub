@@ -1,0 +1,5 @@
+{
+  "database-name": "%%MODULES_DB_NAME%%",
+  "collection-lexicon": true,
+  "uri-lexicon": true
+}

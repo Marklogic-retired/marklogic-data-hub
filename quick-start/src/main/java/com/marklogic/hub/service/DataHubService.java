@@ -49,7 +49,7 @@ public class DataHubService {
             LOGGER.info("Connecting to DataHub at host is {}:{} with user={}",
                     new Object[] {
                             environmentConfiguration.getMLHost()
-                            ,environmentConfiguration.getMLStagingRestPort()
+                            ,environmentConfiguration.getMLStagingPort()
                             ,environmentConfiguration.getMLUsername()
                             });
             DataHub dataHub = new DataHub(environmentConfiguration.getHubConfig());

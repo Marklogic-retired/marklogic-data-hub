@@ -43,7 +43,7 @@ public class EntityManagerService {
                 .valueOf(environmentConfiguration.getMLAuth().toUpperCase());
         DatabaseClient client = DatabaseClientFactory.newClient(
                 environmentConfiguration.getMLHost(),
-                Integer.parseInt(environmentConfiguration.getMLStagingRestPort()),
+                Integer.parseInt(environmentConfiguration.getMLStagingPort()),
                 environmentConfiguration.getMLUsername(),
                 environmentConfiguration.getMLPassword(), authMethod);
         return new EntityManager(client);

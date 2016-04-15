@@ -1,15 +1,13 @@
 package com.marklogic.gradle.task
 
 import com.marklogic.hub.Scaffolding;
-import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.PluginFormat;
 import com.marklogic.hub.flow.FlowType;
 import com.marklogic.client.io.Format;
 
-import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
 
-class CreateFlowTask extends DefaultTask {
+class CreateFlowTask extends HubTask {
 
     void createFlow(FlowType flowType) {
         def entityName = project.hasProperty("entityName") ? project.property("entityName") : null
@@ -48,9 +46,5 @@ class CreateFlowTask extends DefaultTask {
 
         def userlandPath = new File(getHubConfig().modulesPath)
         Scaffolding.createFlow(entityName, flowName, flowType, pluginFormat, dataFormat, userlandPath)
-    }
-
-    HubConfig getHubConfig() {
-        getProject().property("hubConfig")
     }
 }

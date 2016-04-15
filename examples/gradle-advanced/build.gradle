@@ -10,7 +10,7 @@ plugins {
     id 'eclipse'
     id 'idea'
     id 'net.saliman.properties' version '1.4.5'
-    id 'com.marklogic.ml-data-hub-plugin' version '1.0.0-beta.1'
+    id 'com.marklogic.ml-data-hub-plugin' version '1.0.0-beta.2'
     id 'com.marklogic.ml-gradle' version '2.1.0'
 }
 

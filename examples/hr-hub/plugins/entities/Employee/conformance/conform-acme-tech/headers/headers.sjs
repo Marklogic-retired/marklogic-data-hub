@@ -5,7 +5,7 @@
  * @param content  - the output of your content plugin
  * @param options  - an object containing options. Options are sent from Java
  *
- * @return - an array of header objects
+ * @return - an object of headers
  */
 function createHeaders(id, content, options) {
   var latest = xs.date('1900-01-01');
@@ -20,17 +20,11 @@ function createHeaders(id, content, options) {
     }
   }
 
-  return [
-    {
-      employeeId: content.id
-    },
-    {
-      hireDate: xs.date(xdmp.parseDateTime('[M01]/[D01]/[Y0001]', content.hireDate))
-    },
-    {
-      salary: xs.int(salary)
-    }
-  ];
+  return {
+    employeeId: content.id,
+    hireDate: xs.date(xdmp.parseDateTime('[M01]/[D01]/[Y0001]', content.hireDate)),
+    salary: xs.int(salary)
+  };
 }
 
 module.exports = {

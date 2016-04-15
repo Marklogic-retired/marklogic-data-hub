@@ -59,7 +59,7 @@ public class HubConfig {
 
     public String tracingDbName = DEFAULT_TRACING_NAME;
     public String tracingHttpName = DEFAULT_TRACING_NAME;
-    public int tracingForestsPerHost = DEFAULT_FORESTS_PER_HOST;
+    public int tracingForestsPerHost = 1;
     public Integer tracePort = DEFAULT_TRACE_PORT;
 
     public String modulesDbName = DEFAULT_MODULES_DB_NAME;

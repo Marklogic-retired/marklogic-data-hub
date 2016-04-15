@@ -58,6 +58,7 @@ import com.marklogic.hub.commands.DeployHubDatabaseCommand;
 import com.marklogic.hub.commands.DeployModulesDatabaseCommand;
 import com.marklogic.hub.commands.DeployRestApiCommand;
 import com.marklogic.hub.commands.LoadModulesCommand;
+import com.marklogic.hub.commands.UpdateRestApiServersCommand;
 import com.marklogic.hub.util.HubFileFilter;
 import com.marklogic.hub.util.HubModulesLoader;
 import com.marklogic.mgmt.ManageClient;
@@ -315,14 +316,16 @@ public class DataHub {
         dbCommands.add(tracingDb);
 
         dbCommands.add(new DeployModulesDatabaseCommand(hubConfig.modulesDbName));
-        dbCommands.add(new DeployTriggersDatabaseCommand());
-        dbCommands.add(new DeploySchemasDatabaseCommand());
         commands.addAll(dbCommands);
 
         // App Servers
         commands.add(new DeployRestApiCommand(hubConfig.stagingHttpName, hubConfig.stagingPort));
         commands.add(new DeployRestApiCommand(hubConfig.finalHttpName, hubConfig.finalPort));
         commands.add(new DeployRestApiCommand(hubConfig.tracingHttpName, hubConfig.tracePort));
+
+        commands.add(new UpdateRestApiServersCommand(hubConfig.stagingHttpName));
+        commands.add(new UpdateRestApiServersCommand(hubConfig.finalHttpName));
+        commands.add(new UpdateRestApiServersCommand(hubConfig.tracingHttpName));
 
         // Modules
         commands.add(new LoadModulesCommand());
