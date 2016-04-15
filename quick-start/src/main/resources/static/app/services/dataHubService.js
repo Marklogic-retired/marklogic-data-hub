@@ -205,11 +205,11 @@
     }
     
     function getJsonFile(filePath) {
-    	return $http.get(filePath);
+      return $http.get(filePath);
     }
     
     function downloadMlcpOptionsFile(data) {
-    	return $http.post('api/flows/options/download', data);
+      return $http.post('api/flows/options/download', data);
     }
 
   }

@@ -55,7 +55,7 @@
 
     $scope.runInputFlow = function(flow) {
       $scope.loading = true;
-      DataHub.getPreviousOptions(flow.entityName, flow.flowName)	
+      DataHub.getPreviousOptions(flow.entityName, flow.flowName)
         .success(function(options) {
           $scope.loading = false;
           ModalService.openLoadDataModal(options)
