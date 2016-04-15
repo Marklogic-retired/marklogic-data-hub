@@ -45,7 +45,6 @@ public class EnvironmentConfiguration {
 	private static final String ML_AUTH = "mlAuth";
 	private static final String USER_PLUGIN_DIR = "userPluginDir";
 	private static final String ASSET_INSTALL_TIME_FILE = "assetInstallTimeFile";
-	private static final String MLCP_OPTIONS_DIR = "mlcp-options";
 
 	@Autowired
 	private Environment environment;
@@ -255,7 +254,7 @@ public class EnvironmentConfiguration {
     }
 
 	private String getMlcpOptionsFilePath(String entityName, String flowName) {
-	    return "." + File.separator + MLCP_OPTIONS_DIR + File.separator + entityName + "-" + flowName + ".txt";
+	    return "." + File.separator + entityName + "-" + flowName + ".txt";
     }
 
     public String getFlowMlcpOptionsFromFile(String entityName, String flowName) throws IOException {

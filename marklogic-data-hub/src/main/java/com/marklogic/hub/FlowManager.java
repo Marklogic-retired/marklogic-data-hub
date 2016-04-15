@@ -237,6 +237,7 @@ public class FlowManager extends ResourceManager {
                     flow.getEntityName(), flow.getName(),
                     FlowType.INPUT.toString(),
                     flow.getDataFormat());
+            sourceOptions.setInputFileType("documents");
             mlcp.addSourceDirectory(config.modulesPath, sourceOptions);
             mlcp.loadContent();
         }

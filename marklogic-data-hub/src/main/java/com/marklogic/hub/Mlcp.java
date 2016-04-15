@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
 import com.marklogic.client.io.Format;
 
 public class Mlcp {
-    
+
     public static final String DOCUMENT_TYPE_KEY = "-document_type";
     public static final String INPUT_FILE_PATH_KEY = "-input_file_path";
     public static final String INPUT_FILE_TYPE_KEY = "-input_file_type";
@@ -40,7 +40,7 @@ public class Mlcp {
     public static final String PORT_KEY = "-port";
     public static final String USERNAME_KEY = "-username";
     public static final String PASSWORD_KEY = "-password";
-    
+
    	private static final Logger LOGGER = LoggerFactory.getLogger(Mlcp.class);
 	private static final String DEFAULT_HADOOP_HOME_DIR = "./hadoop/";
 
@@ -109,24 +109,36 @@ public class Mlcp {
 			String canonicalPath = file.getCanonicalPath();
 
 			List<String> arguments = new ArrayList<>();
-			
+
 			arguments.add(INPUT_FILE_PATH_KEY);
 			arguments.add(canonicalPath);
-			
+
 			arguments.add(OUTPUT_URI_REPLACE_KEY);
 			arguments.add("\""+canonicalPath+",''\"");
-			
+
 			arguments.add(INPUT_FILE_TYPE_KEY);
             arguments.add(sourceOptions.getInputFileType());
 
-			addOtherArguments(arguments, sourceOptions.getOtherOptions());
-			
+
+            String other = sourceOptions.getOtherOptions();
+            if (other != null) {
+                addOtherArguments(arguments, other);
+            }
+
 			//add document type only if it does not exist in the list
 			if(!arguments.contains(DOCUMENT_TYPE_KEY)) {
 			    arguments.add(DOCUMENT_TYPE_KEY);
 			    arguments.add(sourceOptions.getDataFormat());
 			}
-            
+
+			arguments.add("-transform_module");
+	        arguments.add("/com.marklogic.hub/mlcp-flow-transform.xqy");
+	        arguments.add("-transform_namespace");
+	        arguments.add("http://marklogic.com/data-hub/mlcp-flow-transform");
+	        arguments.add("-transform_param");
+	        arguments.add("\"" + sourceOptions.getTransformParams() + "\"");
+
+
 			return arguments;
 		}
 
@@ -142,9 +154,9 @@ public class Mlcp {
                     arguments.add(key);
                     arguments.add(jsonObject.getString(key));
                 }
-                
+
             }
-            
+
         }
 	}
 
@@ -191,13 +203,19 @@ public class Mlcp {
 		public void setInputFileType(String inputFileType) {
 			this.inputFileType = inputFileType;
 		}
-		
+
 		public String getOtherOptions() {
             return otherOptions;
         }
 
         public void setOtherOptions(String otherOptions) {
             this.otherOptions = otherOptions;
+        }
+
+        protected String getTransformParams() {
+            return String.format(
+                    "<params><entity-name>%s</entity-name><flow-name>%s</flow-name><flow-type>%s</flow-type></params>",
+                    entityName, flowName, flowType);
         }
 	}
 
@@ -218,7 +236,7 @@ public class Mlcp {
 
         List<String> sourceArguments = source.getMlcpArguments();
         mlcpOptions.addAll(sourceArguments);
-        
+
         return mlcpOptions;
     }
 }
