@@ -11,9 +11,9 @@
     </li>
 </ul>
 <div class="divider"></div>
-<h2>Conformance Flows</h2><button type="submit" name="newConformFlow" class="btn btn-primary" ng-click="createFlow(status.selectedEntity.entityName, 'conformance')">New</button>
+<h2>Harmonize Flows</h2><button type="submit" name="newHarmonizeFlow" class="btn btn-primary" ng-click="createFlow(status.selectedEntity.entityName, 'harmonize')">New</button>
 <ul>
-    <li class="nav" ng-repeat="flow in status.selectedEntity.conformFlows">
+    <li class="nav" ng-repeat="flow in status.selectedEntity.harmonizeFlows">
       <h3><i ng-class="flow.synched ? 'fa fa-file-text-o sycned' : 'fa fa-file-text-o unsycned'"></i>{{flow.flowName}}</h3>
       <div class="button-group-right">
         <button type="submit" name="runFlow" class="btn btn-success" ng-click="runFlow(flow)" ng-disabled="!flow.synched" ng-if="flow.runFlowTaskId == null">Run</button>

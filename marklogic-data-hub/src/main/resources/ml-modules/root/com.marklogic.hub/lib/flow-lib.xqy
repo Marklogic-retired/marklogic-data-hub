@@ -314,10 +314,10 @@ declare function flow:get-flows(
     cts:uri-match($ENTITIES-DIR || "*")
   })
   let $flows :=
-    for $flow in $uris[fn:matches(., $ENTITIES-DIR || $entity-name || "/(input|conformance)/[^/]+/$")]
-    let $name := fn:replace($flow, $ENTITIES-DIR || $entity-name || "/(input|conformance)/([^/]+)/$", "$2")
+    for $flow in $uris[fn:matches(., $ENTITIES-DIR || $entity-name || "/(input|harmonize)/[^/]+/$")]
+    let $name := fn:replace($flow, $ENTITIES-DIR || $entity-name || "/(input|harmonize)/([^/]+)/$", "$2")
     return
-      flow:get-flow($entity-name, $name, (), $uris[fn:matches(., $ENTITIES-DIR || $entity-name || "/(input|conformance)/" || $name || "/.+")])
+      flow:get-flow($entity-name, $name, (), $uris[fn:matches(., $ENTITIES-DIR || $entity-name || "/(input|harmonize)/" || $name || "/.+")])
   return
     <flows xmlns="http://marklogic.com/data-hub">
     {
@@ -415,7 +415,7 @@ declare function flow:run-collector(
           (),
           $module-uri,
           "collector",
-          "conformance",
+          "harmonize",
           $ex,
           (),
           xdmp:elapsed-time() - $before,
@@ -430,7 +430,7 @@ declare function flow:run-collector(
         null-node {},
         $module-uri,
         "collector",
-        "conformance",
+        "harmonize",
         null-node {},
         json:to-array($resp),
         xdmp:elapsed-time() - $before,

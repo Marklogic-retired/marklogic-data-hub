@@ -23,7 +23,7 @@ Global Corp has exported the Employee data from a relational database. They are 
 Acme Tech uses a SAAS for managing employees. The data is provided as JSON documents that came straight out of the SAAS REST API.
 
 # What is this example?
-In this example we are loading the CSV table dumps from Global Corp and the JSON documents from Acme Tech into the Hub staging area. We then conform the two data sources into the final area by extracting common header fields. The header fields we extract are:
+In this example we are loading the CSV table dumps from Global Corp and the JSON documents from Acme Tech into the Hub staging area. We then harmonize the two data sources into the final area by extracting common header fields. The header fields we extract are:
 
 - Employee ID
 - Employee Hire Date

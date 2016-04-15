@@ -31,9 +31,9 @@ The sample data is located in the input/ folder.
 
 1. At this point you have loaded the sample data. You can browse the data via [QConsole](http://localhost:8000/qconsole) or by searching the REST endpoint on the Staging Http Server [http://localhost:8010/v1/search](http://localhost:8010/v1/search). *Your port may be different if you changed it during setup*
 
-1. To run the conformance flows simply press the **Run** button next to the final flow.
+1. To run the harmonize flows simply press the **Run** button next to the final flow.
 
-1. Now you have conformed the data into your final database. You can browse the data via [QConsole](http://localhost:8000/qconsole) or by searching the REST endpoint on the Final Http Server [http://localhost:8011/v1/search](http://localhost:8011/v1/search). *Your port may be different if you changed it during setup*
+1. Now you have harmonized the data into your final database. You can browse the data via [QConsole](http://localhost:8000/qconsole) or by searching the REST endpoint on the Final Http Server [http://localhost:8011/v1/search](http://localhost:8011/v1/search). *Your port may be different if you changed it during setup*
 
 
 # Entities
@@ -43,7 +43,7 @@ Entities represent the data you are modeling. For this example we provide the **
 Flows are sets of plugins that work together to create an envelope document.
 
 - [Input Flows](#input-flows) work on incoming data and store it in the Staging database.
-- [Conformance Flows](#conformance-flows) work on staged data and transform and store it into the Final database.
+- [Harmonize Flows](#harmonize-flows) work on staged data and transform and store it into the Final database.
 
 ## Input Flows
 
@@ -53,9 +53,9 @@ The hl7 Flow is intended to ingest C-CDA C32 Hl7 XML files. When running the hl7
 ### nppes
 The nppes Flow is intended to ingest NPPES csv files. This flow will split each row of the NPPES file into a separate XML document in the staging database. When running the hl7 flow simply point it at input/nppes. Set the collection to **nppes** and set the document type to **Delimited Text**.
 
-## Conformance Flows
+## Harmonize Flows
 
-There is only one conformance flow provided. This final flow will create a conformed XML document that contains the original C32 xml as the content of an envelope. It will also extract various data from th3 C32 into the header section for easier queryability.
+There is only one harmonize flow provided. This final flow will create a harmonized XML document that contains the original C32 xml as the content of an envelope. It will also extract various data from th3 C32 into the header section for easier queryability.
 
 ## Final REST services
 

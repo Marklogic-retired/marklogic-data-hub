@@ -22,7 +22,7 @@ The tweets are zipped into a .zip file in the input/ folder.
   
     **Entity Name:** Tweet  
     **Ingest Flow Name:** ingest-tweets  
-    **Conformance Flow Name:** conform-tweets  
+    **Harmonize Flow Name:** harmonize-tweets  
     **Plugin Type:** Javascript  
     **Data Format:** JSON  
 
@@ -32,9 +32,9 @@ The tweets are zipped into a .zip file in the input/ folder.
 
 1. At this point you have loaded the sample tweets. You can browse the data via [QConsole](http://localhost:8000/qconsole) in the data-hub-STAGING database or by searching the REST endpoint on the Staging Http Server [http://localhost:8010/v1/search](http://localhost:8010/v1/search). *Your port may be different if you changed it during setup*
 
-1. To run the conformance flow simply press the **Run** button next to the "conform-tweets" flow.
+1. To run the harmonize flow simply press the **Run** button next to the "harmonize-tweets" flow.
 
-1. Now you have conformed the data into your final database. You can browse the data via [QConsole](http://localhost:8000/qconsole) or by searching the REST endpoint on the Final Http Server [http://localhost:8011/v1/search](http://localhost:8011/v1/search). *Your port may be different if you changed it during setup*
+1. Now you have harmonizeed the data into your final database. You can browse the data via [QConsole](http://localhost:8000/qconsole) or by searching the REST endpoint on the Final Http Server [http://localhost:8011/v1/search](http://localhost:8011/v1/search). *Your port may be different if you changed it during setup*
 
 
 # Entities
@@ -44,13 +44,13 @@ Entities represent the data you are modeling. For this example you created the *
 Flows are sets of plugins that work together to create an envelope document.
 
 - [Input Flows](#input-flows) work on incoming data and store it in the Staging database.
-- [Conformance Flows](#conformance-flows) work on staged data and transform and store it into the Final database.
+- [Harmonize Flows](#harmonize-flows) work on staged data and transform and store it into the Final database.
 
 ## Input Flows
 
 ### input-tweets
 The auto-generated input Flow will ingest the compressed tweets as JSON files.
 
-## Conformance Flows
+## Harmonize Flows
 
-This "conform-tweets" flow will create a conformed JSON document that contains the original tweet JSON as the content of an envelope.
+This "harmonize-tweets" flow will create a harmonizeed JSON document that contains the original tweet JSON as the content of an envelope.

@@ -8,7 +8,7 @@
     .controller('loadDataModalController', LoadDataModalController)
     .controller('entityModalController', EntityModalController)
     .controller('flowModalController', FlowModalController);
-  
+
   function GetByFieldAndValue() {
     return function(field, value, collection) {
       var i=0, len=collection.length;
@@ -91,7 +91,7 @@
     $scope.mlcpInitialCommand = '';
     $scope.mlcpCommand = '';
     $scope.groups = [];
-    
+
     $scope.ok = function() {
       $uibModalInstance.close($scope.loadDataForm);
     };
@@ -99,7 +99,7 @@
     $scope.cancel = function() {
       $uibModalInstance.dismiss();
     };
-    
+
     $scope.download = function() {
       $scope.loading = true;
       DataHub.downloadMlcpOptionsFile($scope.loadDataForm)
@@ -153,7 +153,7 @@
         $scope.loadTree(data, node);
       });
     };
-    
+
     $scope.loadTree = function(data, node) {
       if (node == null) { // jshint ignore:line
         //initialize root
@@ -163,7 +163,7 @@
       }
       $scope.showInputPathTreeBrowser = true;
     };
-    
+
     $scope.searchPathThenHideTree = function(basePath, node) {
       DataHub.searchPath(basePath).success(function(data) {
         $scope.loadTree(data, node);
@@ -172,16 +172,16 @@
         $scope.showInputPathTreeBrowser = false;
       });
     };
-    
+
     $scope.dataForTheTree = [];
-    
+
     $scope.searchPathThenHideTree($scope.loadDataForm.inputPath);
     $scope.mlcpInitialCommand = constructInitialMlcpCommand(DataHub);
-    
+
     $scope.updateMlcpCommand = function() {
       $scope.mlcpCommand = updateMlcpCommand($scope.mlcpInitialCommand, $scope.loadDataForm, $scope.groups);
     };
-    
+
     $scope.loadSettings = function() {
       DataHub.getJsonFile('/json/inputOptions.json')
         .success(function(data) {
@@ -197,9 +197,9 @@
           $scope.updateMlcpCommand();
         });
     };
-    
+
     $scope.loadSettings();
-    
+
     $scope.isText = function(type) {
       if(type === 'string' || type === 'comma-list' || type === 'number' || type === 'character') {
         return true;
@@ -207,40 +207,41 @@
         return false;
       }
     };
-    
+
     $scope.hideInputPathTreeBrowser = function() {
       $scope.showInputPathTreeBrowser = false;
     };
-    
+
     $scope.showBasedOnCategoryAndInputFileType = function(category, inputFileType) {
       return showBasedOnCategoryAndInputFileType(category, inputFileType);
     };
-    
+
     $scope.showIfHasNoFilterFieldOrWithSpecifiedValue = function(field,value,collection) {
       if(angular.isUndefined(field) || $filter('GetByFieldAndValue')(field,value,collection)) {
         return true;
       }
       return false;
     };
-    
+
     $scope.makeDefaultValueReadOnlyIfApplicable = function($event) {
       var elem = $event.currentTarget;
-      var readOnlyLengthData = elem.getAttribute("data-read-only-length");
+      var readOnlyLengthData = elem.getAttribute('data-read-only-length');
       if(readOnlyLengthData) {
-    	var readOnlyLength = parseInt(readOnlyLengthData);
-        if (($event.which != 37 && ($event.which != 39))
-    	  && ((elem.selectionStart < readOnlyLength)
-    	  || ((elem.selectionStart === readOnlyLength) && ($event.which === 8)))) {
+        var readOnlyLength = parseInt(readOnlyLengthData);
+        if (($event.which !== 37 && ($event.which !== 39)) &&
+          ((elem.selectionStart < readOnlyLength) ||
+            ((elem.selectionStart === readOnlyLength) &&
+              ($event.which === 8)))) {
           $event.preventDefault();
-    	  return false;  
-    	}	
+          return false;
+        }
       }
     };
   }
-  
+
   /*
-   * update $scope.groups and add a ReadOnlyLength 
-   * for options with default value to disable removal of default value 
+   * update $scope.groups and add a ReadOnlyLength
+   * for options with default value to disable removal of default value
    * for options with type 'comma-list', set it to the length of the default value
    * for options with type 'string', set it to -1 which means it should be readonly
    */
@@ -250,14 +251,15 @@
         if(setting.Value) {
           if(setting.Type === 'comma-list') {
             setting.ReadOnlyLength = setting.Value.length;
-          } else if(setting.Type === 'string') {
+          }
+          else if(setting.Type === 'string') {
             setting.ReadOnlyLength = -1;
-	      }
+          }
         }
       });
     });
   }
-  
+
   function updateGroupsBasedOnPreviousSettings(groups, otherOptions) {
     if(otherOptions !== null) {
       var optionsMap = $.parseJSON(otherOptions);
@@ -271,7 +273,7 @@
       });
     }
   }
-  
+
   function showBasedOnCategoryAndInputFileType(category, inputFileType) {
     if(category === 'Delimited text options' && inputFileType !== 'delimited_text') {
       return false;
@@ -280,7 +282,7 @@
     }
     return true;
   }
-  
+
   function constructInitialMlcpCommand(DataHub) {
     var mlcpCommand = 'mlcp';
     var mlcpExtension = '.sh';
@@ -294,13 +296,13 @@
     mlcpCommand += ' -password ' + DataHub.status.mlPassword;
     return mlcpCommand;
   }
-  
+
   function updateMlcpCommand(initialMlcpCommand, loadDataForm, groups) {
     var mlcpCommand = initialMlcpCommand;
     mlcpCommand += ' -input_file_path ' + loadDataForm.inputPath;
     mlcpCommand += ' -input_file_type ' + loadDataForm.inputFileType;
     mlcpCommand += ' -output_uri_replace "' + loadDataForm.inputPath + ',\'\'"';
-    
+
     var otherOptions = [];
     $.each(groups, function(i, group) {
       if(showBasedOnCategoryAndInputFileType(group.category, loadDataForm.inputFileType)) {
@@ -316,7 +318,7 @@
         });
       }
     });
-	
+
     loadDataForm.otherOptions = otherOptions.length > 0 ? JSON.stringify(otherOptions) : null;
     return mlcpCommand;
   }

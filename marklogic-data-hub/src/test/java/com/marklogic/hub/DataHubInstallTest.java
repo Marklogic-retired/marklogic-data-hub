@@ -50,21 +50,21 @@ public class DataHubInstallTest extends HubTestBase {
         dataHub.installUserModules(path);
 
         assertEquals(
-                getResource("data-hub-test/entities/test-entity/conformance/final/collector/collector.xqy"),
-                getModulesFile("/entities/test-entity/conformance/final/collector/collector.xqy"));
+                getResource("data-hub-test/entities/test-entity/harmonize/final/collector/collector.xqy"),
+                getModulesFile("/entities/test-entity/harmonize/final/collector/collector.xqy"));
         assertEquals(
-                getResource("data-hub-test/entities/test-entity/conformance/final/content/content.xqy"),
-                getModulesFile("/entities/test-entity/conformance/final/content/content.xqy"));
+                getResource("data-hub-test/entities/test-entity/harmonize/final/content/content.xqy"),
+                getModulesFile("/entities/test-entity/harmonize/final/content/content.xqy"));
         assertEquals(
-                getResource("data-hub-test/entities/test-entity/conformance/final/headers/headers.xqy"),
-                getModulesFile("/entities/test-entity/conformance/final/headers/headers.xqy"));
+                getResource("data-hub-test/entities/test-entity/harmonize/final/headers/headers.xqy"),
+                getModulesFile("/entities/test-entity/harmonize/final/headers/headers.xqy"));
         assertEquals(
-                getResource("data-hub-test/entities/test-entity/conformance/final/triples/triples.xqy"),
-                getModulesFile("/entities/test-entity/conformance/final/triples/triples.xqy"));
+                getResource("data-hub-test/entities/test-entity/harmonize/final/triples/triples.xqy"),
+                getModulesFile("/entities/test-entity/harmonize/final/triples/triples.xqy"));
 
         assertXMLEqual(
-                getXmlFromResource("data-hub-test/entities/test-entity/conformance/final/final.xml"),
-                getModulesDocument("/entities/test-entity/conformance/final/final.xml"));
+                getXmlFromResource("data-hub-test/entities/test-entity/harmonize/final/final.xml"),
+                getModulesDocument("/entities/test-entity/harmonize/final/final.xml"));
 
 
         assertEquals(
@@ -85,14 +85,14 @@ public class DataHubInstallTest extends HubTestBase {
                 getModulesDocument("/Default/" + HubConfig.DEFAULT_STAGING_NAME + "/rest-api/options/doctors.xml"));
 
         assertXMLEqual(
-                getXmlFromResource("data-hub-test/entities/test-entity/conformance/REST/options/patients.xml"),
+                getXmlFromResource("data-hub-test/entities/test-entity/harmonize/REST/options/patients.xml"),
                 getModulesDocument("/Default/" + HubConfig.DEFAULT_FINAL_NAME + "/rest-api/options/patients.xml"));
 
         assertXMLEqual(
                 getXmlFromResource("data-hub-helpers/test-conf-metadata.xml"),
                 getModulesDocument("/marklogic.rest.transform/test-conf-transform/assets/metadata.xml"));
         assertEquals(
-                getResource("data-hub-test/entities/test-entity/conformance/REST/transforms/test-conf-transform.xqy"),
+                getResource("data-hub-test/entities/test-entity/harmonize/REST/transforms/test-conf-transform.xqy"),
                 getModulesFile("/marklogic.rest.transform/test-conf-transform/assets/transform.xqy"));
 
         assertXMLEqual(

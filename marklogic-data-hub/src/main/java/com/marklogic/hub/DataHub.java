@@ -38,8 +38,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.appdeployer.ConfigDir;
 import com.marklogic.appdeployer.command.Command;
-import com.marklogic.appdeployer.command.databases.DeploySchemasDatabaseCommand;
-import com.marklogic.appdeployer.command.databases.DeployTriggersDatabaseCommand;
 import com.marklogic.appdeployer.command.modules.AllButAssetsModulesFinder;
 import com.marklogic.appdeployer.command.modules.AssetModulesFinder;
 import com.marklogic.appdeployer.command.security.DeployRolesCommand;
@@ -267,12 +265,12 @@ public class DataHub {
 
                 String dirStr = dir.toString();
                 boolean isInputDir = dirStr.matches(".*[/\\\\]input[/\\\\].*");
-                boolean isConformanceDir = dirStr.matches(".*[/\\\\]conformance[/\\\\].*");
+                boolean isHarmonizeDir = dirStr.matches(".*[/\\\\]harmonize[/\\\\].*");
                 if (isRest) {
                     if (isInputDir) {
                         loadedFiles.addAll(hubModulesLoader.loadModules(dir.normalize().toAbsolutePath().toFile(), new AllButAssetsModulesFinder(), stagingClient));
                     }
-                    else if (isConformanceDir) {
+                    else if (isHarmonizeDir) {
                         loadedFiles.addAll(hubModulesLoader.loadModules(dir.normalize().toAbsolutePath().toFile(), new AllButAssetsModulesFinder(), finalClient));
                     }
                     return FileVisitResult.SKIP_SUBTREE;

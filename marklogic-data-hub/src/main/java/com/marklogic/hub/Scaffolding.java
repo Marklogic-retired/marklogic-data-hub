@@ -63,7 +63,7 @@ public class Scaffolding {
             throws IOException {
         File flowDir = getFlowDir(userlandDir, entityName, flowName, flowType);
 
-        if (flowType.equals(FlowType.CONFORMANCE)) {
+        if (flowType.equals(FlowType.HARMONIZE)) {
             File collectorDir = new File(flowDir, "collector");
             collectorDir.mkdirs();
             writeFile("scaffolding/" + flowType + "/" + pluginFormat + "/collector." + pluginFormat,

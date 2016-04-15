@@ -9,12 +9,12 @@ public class ScaffoldingValidator {
 
     public static boolean isUniqueRestServiceExtension(File pluginsDir, String name) {
         String entityNameFilter = "[a-zA-Z0-9_.-]+";
-        String flowTypeFilter = "(" + FlowType.INPUT + "|" + FlowType.CONFORMANCE + ")";
+        String flowTypeFilter = "(" + FlowType.INPUT + "|" + FlowType.HARMONIZE + ")";
         String pluginFormatFilter = "(" + PluginFormat.XQUERY + "|" + PluginFormat.JAVASCRIPT + ")";
         String absoluteFilePathFilter = Scaffolding.getAbsolutePath(pluginsDir.getAbsolutePath(), "entities", entityNameFilter, flowTypeFilter, "REST", "services", name + "." + pluginFormatFilter);
         return !checkIfFileExists(pluginsDir, absoluteFilePathFilter);
     }
-    
+
     private static boolean checkIfFileExists(File rootDirectory, String absoluteFilePathFilter) {
         File[] list = rootDirectory.listFiles();
         if (list != null) {
@@ -32,7 +32,7 @@ public class ScaffoldingValidator {
         }
         return false;
     }
-    
+
     public boolean checkIfFolderExists(File rootDirectory, String absoluteFilePathFilter) {
         File[] list = rootDirectory.listFiles();
         if (list != null) {
@@ -47,10 +47,10 @@ public class ScaffoldingValidator {
         }
         return false;
     }
-    
+
     public static boolean isUniqueRestTransform(File pluginsDir, String name) {
         String entityNameFilter = "[a-zA-Z0-9_.-]+";
-        String flowTypeFilter = "(" + FlowType.INPUT + "|" + FlowType.CONFORMANCE + ")";
+        String flowTypeFilter = "(" + FlowType.INPUT + "|" + FlowType.HARMONIZE + ")";
         String pluginFormatFilter = "(" + PluginFormat.XQUERY + "|" + PluginFormat.JAVASCRIPT + ")";
         String absoluteFilePathFilter = Scaffolding.getAbsolutePath(pluginsDir.getAbsolutePath(), "entities", entityNameFilter, flowTypeFilter, "REST", "transforms", name + "." + pluginFormatFilter);
         return !checkIfFileExists(pluginsDir, absoluteFilePathFilter);

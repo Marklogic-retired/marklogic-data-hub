@@ -3,10 +3,10 @@ package com.marklogic.gradle.task
 import com.marklogic.hub.flow.FlowType;
 import org.gradle.api.tasks.TaskAction
 
-class CreateConformanceFlowTask extends CreateFlowTask {
+class CreateHarmonizeFlowTask extends CreateFlowTask {
 
     @TaskAction
-    void createConformanceFlow() {
-        createFlow(FlowType.CONFORMANCE)
+    void createHarmonizeFlow() {
+        createFlow(FlowType.HARMONIZE)
     }
 }

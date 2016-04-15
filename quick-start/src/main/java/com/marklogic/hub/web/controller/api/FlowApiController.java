@@ -88,8 +88,8 @@ public class FlowApiController extends BaseController {
                 flowForm.getPluginFormat(),
                 flowForm.getDataFormat());
 
-        if (flowForm.getFlowType().equals(FlowType.CONFORMANCE)) {
-            selectedEntity.getConformFlows().add(flowModel);
+        if (flowForm.getFlowType().equals(FlowType.HARMONIZE)) {
+            selectedEntity.getHarmonizeFlows().add(flowModel);
         } else {
             selectedEntity.getInputFlows().add(flowModel);
         }
@@ -100,7 +100,7 @@ public class FlowApiController extends BaseController {
             EntityModel selectedEntity) {
         List<FlowModel> flowList = new ArrayList<>();
         flowList.addAll(selectedEntity.getInputFlows());
-        flowList.addAll(selectedEntity.getConformFlows());
+        flowList.addAll(selectedEntity.getHarmonizeFlows());
         return flowList;
     }
 

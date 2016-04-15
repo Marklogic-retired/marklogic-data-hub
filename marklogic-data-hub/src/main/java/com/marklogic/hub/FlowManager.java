@@ -237,6 +237,9 @@ public class FlowManager extends ResourceManager {
                     flow.getEntityName(), flow.getName(),
                     FlowType.INPUT.toString(),
                     flow.getDataFormat());
+            sourceOptions.setInputFileType("documents");
+            sourceOptions.setTransformModule("/com.marklogic.hub/mlcp-flow-transform.xqy");
+            sourceOptions.setTransformNamespace("http://marklogic.com/data-hub/mlcp-flow-transform");
             mlcp.addSourceDirectory(config.modulesPath, sourceOptions);
             mlcp.loadContent();
         }

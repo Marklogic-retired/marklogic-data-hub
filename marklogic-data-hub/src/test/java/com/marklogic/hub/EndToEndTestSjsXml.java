@@ -40,7 +40,7 @@ public class EndToEndTestSjsXml extends HubTestBase {
         Scaffolding.createEntity(ENTITY, pluginsDir);
         Scaffolding.createFlow(ENTITY, "testinput", FlowType.INPUT,
                 PluginFormat.JAVASCRIPT, Format.XML, pluginsDir);
-        Scaffolding.createFlow(ENTITY, "testconformance", FlowType.CONFORMANCE,
+        Scaffolding.createFlow(ENTITY, "testharmonize", FlowType.HARMONIZE,
                 PluginFormat.JAVASCRIPT, Format.XML, pluginsDir);
 
         new DataHub(getHubConfig()).installUserModules(pluginsDir.toString());
@@ -56,8 +56,8 @@ public class EndToEndTestSjsXml extends HubTestBase {
     public void runFlows() throws IOException, ParserConfigurationException, SAXException {
         FlowManager fm = new FlowManager(stagingClient);
         Flow inputFlow = fm.getFlow(ENTITY, "testinput", FlowType.INPUT);
-        Flow conformanceFlow = fm.getFlow(ENTITY, "testconformance",
-                FlowType.CONFORMANCE);
+        Flow harmonizeFlow = fm.getFlow(ENTITY, "testharmonize",
+                FlowType.HARMONIZE);
 
         URL url = HubTestBase.class.getClassLoader().getResource("e2e-test/input");
         HubConfig config = getHubConfig(url.getPath());
@@ -65,9 +65,9 @@ public class EndToEndTestSjsXml extends HubTestBase {
 
         assertXMLEqual(getXmlFromResource("e2e-test/staged.xml"), stagingDocMgr.read("/input.xml").next().getContent(new DOMHandle()).get());
 
-        JobFinishedListener conformanceFlowListener = new JobFinishedListener();
-        fm.runFlow(conformanceFlow, 10, conformanceFlowListener);
-        conformanceFlowListener.waitForFinish();
+        JobFinishedListener harmonizeFlowListener = new JobFinishedListener();
+        fm.runFlow(harmonizeFlow, 10, harmonizeFlowListener);
+        harmonizeFlowListener.waitForFinish();
         assertXMLEqual(getXmlFromResource("e2e-test/final.xml"), finalDocMgr.read("/input.xml").next().getContent(new DOMHandle()).get());
     }
 }
