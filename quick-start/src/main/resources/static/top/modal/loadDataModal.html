@@ -6,6 +6,13 @@
 <div class="modal-body" id="myModalBody">
   <div class="row">
     <div id="details" class="col-xs-12 col-md-12">
+      <nav class="navbar navbar-default">
+        <div class="container-fluid">
+          <div class="navbar-header">
+            <h4><i class="fa fa-info-circle"></i>Hover over the labels to view the description</h4>
+          </div>
+        </div>
+      </nav>
       <form ng-submit="ok()">
         <div class="form-group">
           <label for="inputPath">Path</label>
@@ -38,8 +45,9 @@
             <uib-accordion-group heading="{{group.category}}" ng-repeat="group in groups" ng-show="showBasedOnCategoryAndInputFileType(group.category,loadDataForm.inputFileType)">
 			        <div class="form-group" ng-repeat="setting in group.settings" ng-show="showIfHasNoFilterFieldOrWithSpecifiedValue(setting['FilterField'],setting['FilterValue'],group.settings)">
 			          <input type="checkbox" name="{{setting['Field']}}" ng-if="setting['Type'] === 'boolean'" ng-model="setting['Value']" value="true" ng-change="updateMlcpCommand()" ng-focus="hideInputPathTreeBrowser()">
-                <label class="control-label" for="{{setting['Field']}}" title="{{setting['Description']}}">{{setting['Label']}}</label><br ng-if="setting['Type'] !== 'boolean'"/>
-			          <input type="text" class="form-control" name="{{setting['Field']}}" ng-if="isText(setting['Type'])" ng-model="setting['Value']" placeholder="{{setting['Placeholder Value'] ? setting['Placeholder Value'] : ''}}" ng-change="updateMlcpCommand()" ng-focus="hideInputPathTreeBrowser()"/>
+                <label class="control-label" for="{{setting['Field']}}" popover-trigger="mouseenter" uib-popover="{{setting['Description']}}">{{setting['Label']}}</label><br ng-if="setting['Type'] !== 'boolean'"/>
+			          <input type="text" class="form-control" name="{{setting['Field']}}" ng-if="isText(setting['Type'])" ng-model="setting['Value']" placeholder="{{setting['Placeholder Value'] ? setting['Placeholder Value'] : ''}}" ng-change="updateMlcpCommand()" ng-focus="hideInputPathTreeBrowser()" 
+			            data-read-only-length="{{setting['ReadOnlyLength']}}" ng-readonly="setting['ReadOnlyLength']===-1" ng-keypress="makeDefaultValueReadOnlyIfApplicable($event)" ng-keydown="makeDefaultValueReadOnlyIfApplicable($event)"/>
 			          <select class="form-control" name="{{setting['Field']}}" ng-if="setting['Type'] === 'type'" ng-model="setting['Value']" ng-change="updateMlcpCommand()" ng-focus="hideInputPathTreeBrowser()">
 			            <option ng-repeat="option in setting['Options']" value="{{option.value}}">{{option.label}}</option> 
 			          </select>

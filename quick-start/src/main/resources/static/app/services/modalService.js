@@ -191,6 +191,7 @@
           $scope.groups = jsonObj.groups;
           //load previous settings to $scope.groups based on $scope.loadDataForm.otherOptions
           updateGroupsBasedOnPreviousSettings($scope.groups, $scope.loadDataForm.otherOptions);
+          addReadOnlyLengthToGroupSettingWithDefaultValue($scope.groups);
         })
         .then(function () {
           $scope.updateMlcpCommand();
@@ -222,6 +223,39 @@
       return false;
     };
     
+    $scope.makeDefaultValueReadOnlyIfApplicable = function($event) {
+      var elem = $event.currentTarget;
+      var readOnlyLengthData = elem.getAttribute("data-read-only-length");
+      if(readOnlyLengthData) {
+    	var readOnlyLength = parseInt(readOnlyLengthData);
+        if (($event.which != 37 && ($event.which != 39))
+    	  && ((elem.selectionStart < readOnlyLength)
+    	  || ((elem.selectionStart === readOnlyLength) && ($event.which === 8)))) {
+          $event.preventDefault();
+    	  return false;  
+    	}	
+      }
+    };
+  }
+  
+  /*
+   * update $scope.groups and add a ReadOnlyLength 
+   * for options with default value to disable removal of default value 
+   * for options with type 'comma-list', set it to the length of the default value
+   * for options with type 'string', set it to -1 which means it should be readonly
+   */
+  function addReadOnlyLengthToGroupSettingWithDefaultValue(groups) {
+    $.each(groups, function(i, group) {
+      $.each(group.settings, function(i, setting) {
+        if(setting.Value) {
+          if(setting.Type === 'comma-list') {
+            setting.ReadOnlyLength = setting.Value.length;
+          } else if(setting.Type === 'string') {
+            setting.ReadOnlyLength = -1;
+	      }
+        }
+      });
+    });
   }
   
   function updateGroupsBasedOnPreviousSettings(groups, otherOptions) {
