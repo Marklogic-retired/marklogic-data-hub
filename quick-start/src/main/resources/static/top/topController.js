@@ -54,38 +54,43 @@
     };
 
     $scope.runInputFlow = function(flow) {
-      ModalService.openLoadDataModal(flow.entityName, flow.flowName)
-        .then(function(result) {
-          $scope.loading = true;
-          flow.inputFlowCancelled = false;
+      $scope.loading = true;
+      DataHub.getPreviousOptions(flow.entityName, flow.flowName)	
+        .success(function(options) {
+          $scope.loading = false;
+          ModalService.openLoadDataModal(options)
+          .then(function(result) {
+            $scope.loading = true;
+            flow.inputFlowCancelled = false;
 
-          DataHub.runInputFlow(flow.entityName, flow.flowName, result)
-            .success(function(taskId) {
-              flow.inputFlowTaskId = taskId;
+            DataHub.runInputFlow(result)
+              .success(function(taskId) {
+                flow.inputFlowTaskId = taskId;
 
-              TaskManager.waitForTask(flow.inputFlowTaskId)
-                .success(function(result) {
-                  if (!flow.inputFlowCancelled) {
-                    if (result.success) {
-                      DataHub.displayMessage('Load data successful.', 'success');
-                    } else {
-                      DataHub.displayMessage(result.errorMessage, 'error');
+                TaskManager.waitForTask(flow.inputFlowTaskId)
+                  .success(function(result) {
+                    if (!flow.inputFlowCancelled) {
+                      if (result.success) {
+                        DataHub.displayMessage('Load data successful.', 'success');
+                      } else {
+                        DataHub.displayMessage(result.errorMessage, 'error');
+                      }
                     }
-                  }
-                })
-                .error(function() {
-                  if (!flow.inputFlowCancelled) {
-                    DataHub.displayMessage('Load data unsuccessful.', 'error');
-                  }
-                })
-                .finally(function() {
-                  flow.inputFlowTaskId = null;
-                  $scope.loading = false;
-                });
-            })
-            .error(function() {
-              $scope.loading = false;
-            });
+                  })
+                  .error(function() {
+                    if (!flow.inputFlowCancelled) {
+                      DataHub.displayMessage('Load data unsuccessful.', 'error');
+                    }
+                  })
+                  .finally(function() {
+                    flow.inputFlowTaskId = null;
+                    $scope.loading = false;
+                  });
+              })
+              .error(function() {
+                $scope.loading = false;
+              });
+          });
         });
     };
 

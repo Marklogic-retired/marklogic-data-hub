@@ -30,7 +30,7 @@
       openFlowModal: openFlowModal
     });
 
-    function openLoadDataModal(entityName, flowName) {
+    function openLoadDataModal(options) {
       var modalInstance = $uibModal.open({
         animation: true,
         templateUrl: 'top/modal/loadDataModal.html',
@@ -39,11 +39,8 @@
         backdrop: 'static',
         keyboard: true,
         resolve: {
-          'entityName': function() {
-            return entityName;
-          },
-          'flowName': function() {
-            return flowName;
+          'options': function() {
+            return options;
           }
         }
       });
@@ -89,13 +86,8 @@
     }
   }
 
-  function LoadDataModalController($scope, $uibModalInstance, $filter, DataHub, entityName, flowName) {
-    $scope.loadDataForm = {
-      inputPath: '.',
-      inputFileType: 'documents',
-      otherOptions: ''
-    };
-    
+  function LoadDataModalController($scope, $uibModalInstance, $filter, DataHub, options) {
+    $scope.loadDataForm = options;
     $scope.mlcpInitialCommand = '';
     $scope.mlcpCommand = '';
     $scope.groups = [];
@@ -110,7 +102,7 @@
     
     $scope.download = function() {
     	$scope.loading = true;
-      	DataHub.downloadMlcpOptionsFile(entityName, flowName, $scope.loadDataForm)
+      	DataHub.downloadMlcpOptionsFile($scope.loadDataForm)
       	.success(function(data) {
       	  var anchor = angular.element('<a/>');
       	  anchor.attr({
@@ -183,35 +175,23 @@
     
     $scope.dataForTheTree = [];
     
-    $scope.loadPreviousInputPath = function() {
-      DataHub.getPreviousInputPath(entityName, flowName)
-        .success(function(inputPath) {
-          $scope.loadDataForm.inputPath = inputPath;
-          $scope.searchPathThenHideTree($scope.loadDataForm.inputPath);
-        })
-        .error(function(error) {
-          $scope.hasError = true;
-          $scope.errorMessage = error.message;
-        });
-    };
-    
-    //initialize root
-    $scope.loadPreviousInputPath();
+    $scope.searchPathThenHideTree($scope.loadDataForm.inputPath);
     $scope.mlcpInitialCommand = constructInitialMlcpCommand(DataHub);
     
     $scope.updateMlcpCommand = function() {
     	$scope.mlcpCommand = updateMlcpCommand($scope.mlcpInitialCommand, $scope.loadDataForm, $scope.groups);
     };
     
-    //TODO - load previous settings
     $scope.loadSettings = function() {
       DataHub.getJsonFile('/json/inputOptions.json')
         .success(function(data) { 
           console.log("success!");
-          var updatedData = JSON.stringify(data).replace(/{{entityName}}/g, entityName)
-            .replace(/{{flowName}}/g, flowName);
+          var updatedData = JSON.stringify(data).replace(/{{entityName}}/g, $scope.loadDataForm.entityName)
+            .replace(/{{flowName}}/g, $scope.loadDataForm.flowName);
           var jsonObj = $.parseJSON(updatedData);
           $scope.groups = jsonObj.groups;
+          //load previous settings to $scope.groups based on $scope.loadDataForm.otherOptions
+          updateGroupsBasedOnPreviousSettings($scope.groups, $scope.loadDataForm.otherOptions);
         })
         .error(function(error) { 
           console.log(error);
@@ -246,6 +226,20 @@
       return false;
     };
     
+  }
+  
+  function updateGroupsBasedOnPreviousSettings(groups, otherOptions) {
+	if(otherOptions !== null) {
+	  var optionsMap = $.parseJSON(otherOptions);
+      $.each(groups, function(i, group) {
+        $.each(group.settings, function(i, setting) {
+          if(optionsMap[setting['Field']]) {
+            var value = optionsMap[setting['Field']].replace(/"/g, '');
+            setting['Value'] = value;
+          }
+        });
+      });  
+	}
   }
   
   function showBasedOnCategoryAndInputFileType(category, inputFileType) {
@@ -296,7 +290,7 @@
 		}
 	});
 	
-	loadDataForm.otherOptions = otherOptions.length > 0 ? JSON.stringify(otherOptions) : '';
+	loadDataForm.otherOptions = otherOptions.length > 0 ? JSON.stringify(otherOptions) : null;
 	return mlcpCommand;
   }
 

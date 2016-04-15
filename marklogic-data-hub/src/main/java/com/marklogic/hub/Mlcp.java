@@ -30,9 +30,19 @@ import org.slf4j.LoggerFactory;
 import com.marklogic.client.io.Format;
 
 public class Mlcp {
-	private static final Logger LOGGER = LoggerFactory.getLogger(Mlcp.class);
-
-	private final static String DEFAULT_HADOOP_HOME_DIR = "./hadoop/";
+    
+    public static final String DOCUMENT_TYPE_KEY = "-document_type";
+    public static final String INPUT_FILE_PATH_KEY = "-input_file_path";
+    public static final String INPUT_FILE_TYPE_KEY = "-input_file_type";
+    public static final String OUTPUT_URI_REPLACE_KEY = "-output_uri_replace";
+    public static final String MODE_KEY = "-mode";
+    public static final String HOST_KEY = "-host";
+    public static final String PORT_KEY = "-port";
+    public static final String USERNAME_KEY = "-username";
+    public static final String PASSWORD_KEY = "-password";
+    
+   	private static final Logger LOGGER = LoggerFactory.getLogger(Mlcp.class);
+	private static final String DEFAULT_HADOOP_HOME_DIR = "./hadoop/";
 
 	private List<MlcpSource> sources = new ArrayList<>();
 
@@ -82,8 +92,7 @@ public class Mlcp {
 	}
 
 	public static class MlcpSource {
-		private static final String DOCUMENT_TYPE_KEY = "-document_type";
-        private String sourcePath;
+		private String sourcePath;
 		private SourceOptions sourceOptions;
 
 		public MlcpSource(String sourcePath, SourceOptions sourceOptions) {
@@ -101,11 +110,14 @@ public class Mlcp {
 
 			List<String> arguments = new ArrayList<>();
 			
-			arguments.add("-input_file_path");
+			arguments.add(INPUT_FILE_PATH_KEY);
 			arguments.add(canonicalPath);
 			
-			arguments.add("-output_uri_replace");
+			arguments.add(OUTPUT_URI_REPLACE_KEY);
 			arguments.add("\""+canonicalPath+",''\"");
+			
+			arguments.add(INPUT_FILE_TYPE_KEY);
+            arguments.add(sourceOptions.getInputFileType());
 
 			addOtherArguments(arguments, sourceOptions.getOtherOptions());
 			
@@ -193,15 +205,15 @@ public class Mlcp {
         List<String> mlcpOptions = new ArrayList<>();
 
         mlcpOptions.add("import");
-        mlcpOptions.add("-mode");
+        mlcpOptions.add(MODE_KEY);
         mlcpOptions.add("local");
-        mlcpOptions.add("-host");
+        mlcpOptions.add(HOST_KEY);
         mlcpOptions.add(host);
-        mlcpOptions.add("-port");
+        mlcpOptions.add(PORT_KEY);
         mlcpOptions.add(Integer.toString(port));
-        mlcpOptions.add("-username");
+        mlcpOptions.add(USERNAME_KEY);
         mlcpOptions.add(user);
-        mlcpOptions.add("-password");
+        mlcpOptions.add(PASSWORD_KEY);
         mlcpOptions.add(password);
 
         List<String> sourceArguments = source.getMlcpArguments();

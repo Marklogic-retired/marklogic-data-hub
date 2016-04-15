@@ -31,9 +31,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.marklogic.hub.Mlcp;
-import com.marklogic.hub.Mlcp.MlcpSource;
-import com.marklogic.hub.Mlcp.SourceOptions;
 import com.marklogic.hub.config.EnvironmentConfiguration;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.FlowType;
@@ -200,9 +197,9 @@ public class FlowApiController extends BaseController {
     }
 
     @RequestMapping(value="/run/input", method = RequestMethod.POST)
-    public BigInteger runInputFlow(@RequestBody FlowOptionsModel flowOptionsModel) {
+    public BigInteger runInputFlow(@RequestBody FlowOptionsModel flowOptionsModel) throws IOException, JSONException {
         
-        saveInputPath(flowOptionsModel);
+        saveMlcpOptionsToFile(flowOptionsModel);
         
         CancellableTask task = new CancellableTask() {
 
@@ -231,21 +228,31 @@ public class FlowApiController extends BaseController {
         return taskManagerService.addTask(task);
     }
     
-    @RequestMapping(value = "/input-path", method = RequestMethod.GET, produces = { MediaType.TEXT_PLAIN_VALUE })
+    @RequestMapping(value = "/options", method = RequestMethod.GET, produces = { MediaType.APPLICATION_JSON_UTF8_VALUE })
     @ResponseBody
-    public String getPreviousInputPath(HttpServletRequest request) {
+    public FlowOptionsModel getPreviousLoadOptions(HttpServletRequest request) throws IOException {
         String entityName = request.getParameter("entityName");
         String flowName = request.getParameter("flowName");
-        return getPreviousInputPath(entityName,flowName);
+        return loadMlcpOptionsFromFile(entityName,flowName);
     }
     
-    private String getPreviousInputPath(String entityName, String flowName) {
-        String value = environmentConfiguration.getFlowInputPath(entityName, flowName);
-        return value == null ? "." : value;
+    private FlowOptionsModel loadMlcpOptionsFromFile(String entityName, String flowName) throws IOException {
+        FlowOptionsModel flowOptionsModel = new FlowOptionsModel();
+        flowOptionsModel.setEntityName(entityName);
+        flowOptionsModel.setFlowName(flowName);
+        flowOptionsModel.setInputPath(".");
+        flowOptionsModel.setInputFileType("documents");
+        String optionsFileContent = environmentConfiguration.getFlowMlcpOptionsFromFile(entityName, flowName);
+        if(optionsFileContent != null) {
+            flowManagerService.populateMlcpOptions(flowOptionsModel, optionsFileContent);
+        }
+        return flowOptionsModel;
     }
 
-    private void saveInputPath(FlowOptionsModel runFlow) {
-        environmentConfiguration.saveOrUpdateFlowInputPath(runFlow.getEntityName(), runFlow.getFlowName(), runFlow.getInputPath());
+    private void saveMlcpOptionsToFile(FlowOptionsModel flowOptionsModel) throws IOException, JSONException {
+        String mlcpOptionsFileContent = flowManagerService.buildMlcpConfigContent(flowOptionsModel);
+        environmentConfiguration.saveOrUpdateFlowMlcpOptionsToFile(flowOptionsModel.getEntityName(), 
+                flowOptionsModel.getFlowName(), mlcpOptionsFileContent);
     }
 
     @RequestMapping(value = "/runInParallel", method = RequestMethod.POST)

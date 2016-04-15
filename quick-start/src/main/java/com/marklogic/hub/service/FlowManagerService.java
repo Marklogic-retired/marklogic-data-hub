@@ -2,9 +2,12 @@ package com.marklogic.hub.service;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.JobExecution;
@@ -19,9 +22,9 @@ import com.marklogic.client.DatabaseClientFactory.Authentication;
 import com.marklogic.client.io.Format;
 import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.Mlcp;
-import com.marklogic.hub.PluginFormat;
 import com.marklogic.hub.Mlcp.MlcpSource;
 import com.marklogic.hub.Mlcp.SourceOptions;
+import com.marklogic.hub.PluginFormat;
 import com.marklogic.hub.config.EnvironmentConfiguration;
 import com.marklogic.hub.exception.FlowManagerException;
 import com.marklogic.hub.factory.FlowModelFactory;
@@ -37,6 +40,8 @@ public class FlowManagerService {
             .getLogger(FlowManagerService.class);
     
     private static final String NEW_LINE = "\n";
+
+    private static final String DASH = "-";
 
     @Autowired
     private EnvironmentConfiguration environmentConfiguration;
@@ -138,10 +143,50 @@ public class FlowManagerService {
         return mlcp;
     }
     
-    public String buildMlcpConfigContent(FlowOptionsModel flowOptionsModel) throws NumberFormatException, IOException, JSONException {
+    public String buildMlcpConfigContent(FlowOptionsModel flowOptionsModel) throws IOException, JSONException {
         SourceOptions sourceOptions = createSourceOptionsInstance(flowOptionsModel);
         Mlcp mlcp = createMlcpInstance(flowOptionsModel,sourceOptions);
         List<String> mlcpOptions = mlcp.getMlcpOptions(new MlcpSource(flowOptionsModel.getInputPath(), sourceOptions));
         return StringUtils.collectionToDelimitedString(mlcpOptions, NEW_LINE);
+    }
+    
+    public void populateMlcpOptions(FlowOptionsModel flowOptionsModel, String optionsFileContent) {
+        //put options to map to have option key-value pairs
+        String[] options = StringUtils.delimitedListToStringArray(optionsFileContent, NEW_LINE);
+        Map<String,String> optionsMap = new HashMap<String,String>();
+        String key = null;
+        for (String option : options) {
+            if(option.startsWith(DASH)) {
+                key = option;
+            } else {
+                optionsMap.put(key, option);
+            }
+        }
+        
+        //populate the flowOptionsModel
+        LOGGER.debug("Options for flow with entity name "+ flowOptionsModel.getEntityName() + 
+                " and flow name "+ flowOptionsModel.getFlowName());
+        //start with the required options
+        String inputPath = optionsMap.get(Mlcp.INPUT_FILE_PATH_KEY);
+        String inputFileType = optionsMap.get(Mlcp.INPUT_FILE_TYPE_KEY);
+        LOGGER.debug("{" + Mlcp.INPUT_FILE_PATH_KEY + ": "+ inputPath + "," + Mlcp.INPUT_FILE_TYPE_KEY + ":" + inputFileType + "}");
+        flowOptionsModel.setInputPath(inputPath);
+        flowOptionsModel.setInputFileType(inputFileType);
+        
+        //then the other options
+        //by removing the unnecessary options from the map
+        optionsMap.remove(Mlcp.INPUT_FILE_PATH_KEY);
+        optionsMap.remove(Mlcp.INPUT_FILE_TYPE_KEY);
+        optionsMap.remove(null);
+        optionsMap.remove(Mlcp.MODE_KEY);
+        optionsMap.remove(Mlcp.HOST_KEY);
+        optionsMap.remove(Mlcp.PORT_KEY);
+        optionsMap.remove(Mlcp.USERNAME_KEY);
+        optionsMap.remove(Mlcp.PASSWORD_KEY);
+        //then converting the map to a json string
+        String otherOptions = new JSONObject(optionsMap).toString();
+        LOGGER.debug("Other options = "+ otherOptions);
+        flowOptionsModel.setOtherOptions(otherOptions);
+        
     }
 }
