@@ -15,6 +15,10 @@
  */
 package com.marklogic.hub;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Properties;
+
 public class HubConfig {
 
     public static final String DEFAULT_USERNAME = "admin";
@@ -69,6 +73,9 @@ public class HubConfig {
     public String authMethod = DEFAULT_AUTH_METHOD;
 
     public String modulesPath;
+    
+    public String hubUsername;
+    public String hubPassword;
 
     public HubConfig() {
         this(DEFAULT_MODULES_PATH);
@@ -76,5 +83,26 @@ public class HubConfig {
 
     public HubConfig(String modulesPath) {
         this.modulesPath = modulesPath;
+    }
+    
+    public String toString() {
+        return adminUsername + ":" + adminPassword + "@" + host + ":" + stagingPort;
+    }
+    
+    public static HubConfig getDefaultInstance() throws IOException {
+        Properties properties = new Properties();
+        properties.load(new FileInputStream("gradle.properties"));
+        
+        HubConfig hubConfig = new HubConfig();
+        hubConfig.host = properties.getProperty("mlHost");
+        hubConfig.stagingPort = Integer.parseInt(properties.getProperty("mlStagingPort"));
+        hubConfig.finalPort = Integer.parseInt(properties.getProperty("mlFinalPort"));
+        hubConfig.tracePort = Integer.parseInt(properties.getProperty("mlTracePort"));
+        hubConfig.adminUsername = properties.getProperty("mlUsername");
+        hubConfig.adminPassword = properties.getProperty("mlPassword");
+        hubConfig.authMethod = properties.getProperty("auth");
+        hubConfig.hubUsername = properties.getProperty("hubUsername");
+        hubConfig.hubPassword = properties.getProperty("hubPassword");
+        return hubConfig;
     }
 }

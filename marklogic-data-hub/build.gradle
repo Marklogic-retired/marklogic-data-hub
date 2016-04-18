@@ -189,3 +189,9 @@ ext {
     def lmc = mlAppDeployer.getCommand("LoadModulesCommand")
     lmc.setModulesLoader(new com.marklogic.client.modulesloader.impl.DefaultModulesLoader(mlAppConfig.newXccAssetLoader()))
 }
+
+task createHubUser(type:JavaExec) {
+   main = 'com.marklogic.hub.CommandLineUtil'
+   classpath = sourceSets.main.runtimeClasspath
+   args = ['com.marklogic.hub.DataHubUser', 'createHubUser']
+}
