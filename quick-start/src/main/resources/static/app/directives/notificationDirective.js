@@ -21,16 +21,7 @@
           messageType: '',
           message: ''
         };
-
-        $rootScope.$watch('notificationBar.show == true', function(newValue, oldValue) {
-          if (newValue !== oldValue) {
-            $timeout(function() {
-              $rootScope.notificationBar.show = false;
-            }, 5000);
-          }
-        });
-
-
+        
       }
     };
   }
