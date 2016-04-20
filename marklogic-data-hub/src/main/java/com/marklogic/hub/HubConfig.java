@@ -44,6 +44,8 @@ public class HubConfig {
 
     public String adminUsername = DEFAULT_USERNAME;
     public String adminPassword = DEFAULT_PASSWORD;
+    public String username = DEFAULT_USERNAME;
+    public String password = DEFAULT_PASSWORD;
 
     public String host = DEFAULT_HOST;
 
