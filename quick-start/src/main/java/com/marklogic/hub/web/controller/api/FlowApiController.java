@@ -1,10 +1,7 @@
 package com.marklogic.hub.web.controller.api;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.math.BigInteger;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,11 +16,7 @@ import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobExecutionListener;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.InputStreamResource;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,6 +24,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.hub.config.EnvironmentConfiguration;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.FlowType;
@@ -50,8 +45,6 @@ public class FlowApiController extends BaseController {
 
     private static final Logger LOGGER = LoggerFactory
             .getLogger(FlowApiController.class);
-    
-    private static final String MLCP_OPTIONS_FILENAME = "mlcpOptions.txt";
 
     @Autowired
     private EnvironmentConfiguration environmentConfiguration;
@@ -158,7 +151,7 @@ public class FlowApiController extends BaseController {
 
             @Override
             public void run(BasicFuture<?> resultFuture) {
-                final Flow flow = flowManagerService.getFlow(runFlow.getEntityName(), runFlow.getFlowName());
+                final Flow flow = flowManagerService.getFlow(runFlow.entityName, runFlow.flowName);
                 // TODO update and move BATCH SIZE TO a constant or config - confirm
                 // desired behavior
                 this.jobExecution = flowManagerService.runFlow(flow, 100, new JobExecutionListener() {
@@ -197,10 +190,14 @@ public class FlowApiController extends BaseController {
     }
 
     @RequestMapping(value="/run/input", method = RequestMethod.POST)
-    public BigInteger runInputFlow(@RequestBody FlowOptionsModel flowOptionsModel) throws IOException, JSONException {
-        
-        saveMlcpOptionsToFile(flowOptionsModel);
-        
+    public BigInteger runInputFlow(@RequestBody JsonNode json) throws IOException, JSONException {
+
+        final String entityName = json.get("flow").get("entityName").asText();
+        final String flowName = json.get("flow").get("flowName").asText();
+
+        environmentConfiguration.saveOrUpdateFlowMlcpOptionsToFile(entityName,
+                flowName, json.get("mlcp").toString());
+
         CancellableTask task = new CancellableTask() {
 
             @Override
@@ -211,48 +208,30 @@ public class FlowApiController extends BaseController {
             @Override
             public void run(BasicFuture<?> resultFuture) {
                 try {
-                    flowManagerService.loadData(flowOptionsModel);
+                    flowManagerService.loadData(json.get("mlcp"));
 
                     resultFuture.completed(null);
                 }
-                
-                catch (IOException | JSONException e) {
-                    LOGGER.error("Error encountered while trying to run flow:  "
-                            + flowOptionsModel.getEntityName() + " > " + flowOptionsModel.getFlowName(),
-                            e);
+
+                catch (IOException e) {
+                    LOGGER.error(e.toString());
                     resultFuture.failed(e);
                 }
             }
         };
-        
+
         return taskManagerService.addTask(task);
     }
-    
+
     @RequestMapping(value = "/options", method = RequestMethod.GET, produces = { MediaType.APPLICATION_JSON_UTF8_VALUE })
     @ResponseBody
-    public FlowOptionsModel getPreviousLoadOptions(HttpServletRequest request) throws IOException {
+    public JsonNode getPreviousLoadOptions(HttpServletRequest request) throws IOException {
         String entityName = request.getParameter("entityName");
         String flowName = request.getParameter("flowName");
-        return loadMlcpOptionsFromFile(entityName,flowName);
-    }
-    
-    private FlowOptionsModel loadMlcpOptionsFromFile(String entityName, String flowName) throws IOException {
-        FlowOptionsModel flowOptionsModel = new FlowOptionsModel();
-        flowOptionsModel.setEntityName(entityName);
-        flowOptionsModel.setFlowName(flowName);
-        flowOptionsModel.setInputPath(".");
-        flowOptionsModel.setInputFileType("documents");
         String optionsFileContent = environmentConfiguration.getFlowMlcpOptionsFromFile(entityName, flowName);
-        if(optionsFileContent != null) {
-            flowManagerService.populateMlcpOptions(flowOptionsModel, optionsFileContent);
-        }
-        return flowOptionsModel;
-    }
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.readTree(optionsFileContent);
 
-    private void saveMlcpOptionsToFile(FlowOptionsModel flowOptionsModel) throws IOException, JSONException {
-        String mlcpOptionsFileContent = flowManagerService.buildMlcpConfigContent(flowOptionsModel);
-        environmentConfiguration.saveOrUpdateFlowMlcpOptionsToFile(flowOptionsModel.getEntityName(), 
-                flowOptionsModel.getFlowName(), mlcpOptionsFileContent);
     }
 
     @RequestMapping(value = "/runInParallel", method = RequestMethod.POST)
@@ -266,27 +245,5 @@ public class FlowApiController extends BaseController {
         }
         flowManagerService.runFlowsInParallel(flows.toArray(new Flow[flows
                 .size()]));
-    }
-    
-    @RequestMapping(value = "/options/download", method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_UTF8_VALUE }, produces = { MediaType.TEXT_PLAIN_VALUE })
-    public ResponseEntity<InputStreamResource> downloadMlcpConfig(@RequestBody FlowOptionsModel flowOptionsModel) throws IOException, NumberFormatException, JSONException {
-        String mlcpConfigContent = flowManagerService.buildMlcpConfigContent(flowOptionsModel);
-        byte[] contentBytes = mlcpConfigContent.getBytes(StandardCharsets.UTF_8);
-        InputStream inputStream = new ByteArrayInputStream(contentBytes);
-        HttpHeaders headers = new HttpHeaders();
-        addRemoveCachingInHeaders(headers);
-        headers.add("content-disposition", "attachment; filename=" + MLCP_OPTIONS_FILENAME);
-        return ResponseEntity
-              .ok()
-              .contentLength(contentBytes.length)
-              .contentType(MediaType.TEXT_PLAIN)
-              .headers(headers)
-              .body(new InputStreamResource(inputStream));
-    }
-
-    private void addRemoveCachingInHeaders(HttpHeaders headers) {
-        headers.add("Cache-Control", "no-cache, no-store, must-revalidate");
-        headers.add("Pragma", "no-cache");
-        headers.add("Expires", "0");
     }
 }

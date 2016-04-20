@@ -5,7 +5,7 @@
   angular.module('dhib.quickstart.directives.notification', [])
     .directive('notification', NotificationDirective);
 
-  function NotificationDirective($http, $location, $mdDialog, DataHub, $rootScope, $timeout) {
+  function NotificationDirective($http, $location, DataHub, $rootScope, $timeout) {
 
     return {
       restrict: 'E',
@@ -21,7 +21,7 @@
           messageType: '',
           message: ''
         };
-        
+
       }
     };
   }

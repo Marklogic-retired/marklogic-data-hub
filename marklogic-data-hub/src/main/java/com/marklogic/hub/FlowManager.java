@@ -54,7 +54,6 @@ import com.marklogic.client.io.DOMHandle;
 import com.marklogic.client.io.Format;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.util.RequestParameters;
-import com.marklogic.hub.Mlcp.SourceOptions;
 import com.marklogic.hub.collector.Collector;
 import com.marklogic.hub.collector.ServerCollector;
 import com.marklogic.hub.flow.Flow;
@@ -227,26 +226,6 @@ public class FlowManager extends ResourceManager {
         }
         catch (Exception e) {
             throw new RuntimeException(e);
-        }
-    }
-
-    public void runInputFlow(Flow flow, HubConfig config) {
-        try {
-            Mlcp mlcp = new Mlcp(config.host, config.stagingPort, config.adminUsername, config.adminPassword);
-            SourceOptions sourceOptions = new SourceOptions(
-                    flow.getEntityName(), flow.getName(),
-                    FlowType.INPUT.toString(),
-                    flow.getDataFormat());
-            sourceOptions.setInputFileType("documents");
-            sourceOptions.setTransformModule("/com.marklogic.hub/mlcp-flow-transform.xqy");
-            sourceOptions.setTransformNamespace("http://marklogic.com/data-hub/mlcp-flow-transform");
-            mlcp.addSourceDirectory(config.modulesPath, sourceOptions);
-            mlcp.loadContent();
-        }
-        catch (IOException | JSONException e) {
-            LOGGER.error(
-                    "Error encountered while trying to run flow:  "
-                            + flow.getEntityName() + " > " + flow.getName(), e);
         }
     }
 

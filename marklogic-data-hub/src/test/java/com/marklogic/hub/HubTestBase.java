@@ -187,7 +187,7 @@ public class HubTestBase {
     protected static Document getXmlFromResource(String resourceName) throws IOException, ParserConfigurationException, SAXException {
         InputStream inputStream = HubTestBase.class.getClassLoader().getResourceAsStream(resourceName);
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-
+        factory.setIgnoringElementContentWhitespace(true);
         factory.setNamespaceAware(true);
         DocumentBuilder builder = factory.newDocumentBuilder();
 

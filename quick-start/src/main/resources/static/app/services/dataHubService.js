@@ -31,9 +31,7 @@
       displayMessage: displayMessage,
       searchPath: searchPath,
       showApiDoc: showApiDoc,
-      getPreviousOptions: getPreviousOptions,
-      getJsonFile: getJsonFile,
-      downloadMlcpOptionsFile: downloadMlcpOptionsFile
+      getPreviousOptions: getPreviousOptions
     });
 
     function login(loginForm) {
@@ -203,15 +201,6 @@
         'params': params
       });
     }
-    
-    function getJsonFile(filePath) {
-      return $http.get(filePath);
-    }
-    
-    function downloadMlcpOptionsFile(data) {
-      return $http.post('api/flows/options/download', data);
-    }
-
   }
 
   function TaskManagerService($http, $q, $route) {
