@@ -2,7 +2,7 @@ package com.marklogic.gradle.task
 
 import org.gradle.api.tasks.TaskAction
 
-class EnableDebuggingTask extends DefaultTask {
+class EnableDebuggingTask extends HubTask {
 
     @TaskAction
     void enableDebugging() {

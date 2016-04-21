@@ -18,7 +18,9 @@ subprojects {
 
     test{
         testLogging{
-            events 'started','passed', 'skipped'
+            events 'started','passed', 'skipped', 'failed', 'standardError', 'standardOut'
+
+            showStandardStreams true
         }
     }
 

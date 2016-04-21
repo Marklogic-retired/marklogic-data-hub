@@ -1,5 +1,6 @@
 package com.marklogic.gradle.task
 
+import com.marklogic.hub.DataHub;
 import com.marklogic.hub.Tracing;
 import com.marklogic.hub.HubConfig;
 

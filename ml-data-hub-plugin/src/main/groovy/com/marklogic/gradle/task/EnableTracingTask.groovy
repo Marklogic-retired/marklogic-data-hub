@@ -2,7 +2,7 @@ package com.marklogic.gradle.task
 
 import org.gradle.api.tasks.TaskAction
 
-class EnableTracingTask extends DefaultTask {
+class EnableTracingTask extends HubTask {
 
     @TaskAction
     void enableTracing() {
