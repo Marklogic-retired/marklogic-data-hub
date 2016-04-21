@@ -15,15 +15,11 @@
  */
 package com.marklogic.hub;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.stream.XMLStreamException;
 
-import org.codehaus.jettison.json.JSONException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobExecutionListener;
@@ -66,8 +62,6 @@ public class FlowManager extends ResourceManager {
     private static final String HUB_NS = "http://marklogic.com/data-hub";
     private static final String NAME = "flow";
     private static final int DEFAULT_THREAD_COUNT = 8;
-
-    static final private Logger LOGGER = LoggerFactory.getLogger(FlowManager.class);
 
     private DatabaseClient client;
 

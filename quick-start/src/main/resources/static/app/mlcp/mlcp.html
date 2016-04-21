@@ -8,7 +8,7 @@
     <div id="details" class="col-xs-12 col-md-12">
       <form ng-submit="ctrl.ok()">
         <div class="form-group">
-          <label for="ifp">Location of Files to Load</label>
+          <label for="ifp" popover-trigger="mouseenter" uib-popover="The location of a folder containing the files you wish to load.">Location of Files to Load</label>
           <input id="ifp" class="form-control" name="ifp" type="text" ng-model="mlcp.input_file_path"
             placeHolder="Enter Path" required="required" ng-focus="showInputPathTreeBrowser = true">
           <div id="inputPathTreeBrowser" class="panel panel-primary tree-scroller-cust1" ng-show="showInputPathTreeBrowser">
@@ -21,7 +21,7 @@
           </div>
         </div>
         <div class="form-group">
-          <label for="input_file_type">Input File Type</label>
+          <label for="input_file_type" popover-trigger="mouseenter" uib-popover="The input file type. Accepted value: aggregates, archive, delimited_text, delimited_json, documents, forest, rdf, sequencefile. Default: documents.">Input File Type</label>
           <select class="form-control" name="input_file_type" ng-model="mlcp.input_file_type" ng-focus="ctrl.hideFileTree()">
             <option value="aggregates">Aggregates</option>
             <option value="archive">Archive</option>
@@ -51,7 +51,7 @@
           </uib-accordion>
         </div>
         <div class="form-group">
-          <h4>MLCP Command<i class="glyphicon glyphicon-copy copy-icon" aria-hidden="true" ngclipboard data-clipboard-target="#mlcpcmd"></i></h4>
+          <h4><span popover-trigger="mouseenter" uib-popover="This is the MLCP Command line that we generated from the options you chose.">MLCP Command</span><i popover-trigger="mouseenter" uib-popover="Copy MLCP command to the clipboard." class="glyphicon glyphicon-copy copy-icon" aria-hidden="true" ngclipboard data-clipboard-target="#mlcpcmd"></i></h4>
         </div>
         <div class="form-group">
           <section class="code">

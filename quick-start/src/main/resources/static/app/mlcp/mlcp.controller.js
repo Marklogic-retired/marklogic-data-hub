@@ -69,9 +69,9 @@
     }
 
     function isGroupVisible(category) {
-      if(category === 'Delimited text options' && $scope.mlcp.input_file_type !== 'delimited_text') {
+      if(category === 'Delimited Text Options' && $scope.mlcp.input_file_type !== 'delimited_text') {
         return false;
-      } else if(category === 'Aggregate XML options' && $scope.mlcp.input_file_type !== 'aggregates') {
+      } else if(category === 'Aggregate XML Options' && $scope.mlcp.input_file_type !== 'aggregates') {
         return false;
       }
       return true;
