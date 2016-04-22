@@ -20,13 +20,17 @@ public class DeployRestApiCommand extends AbstractCommand implements UndoableCom
 
     private String name;
     private Integer port;
+    private String databaseName;
+    private int forestsPerHost;
     private boolean deleteModulesDatabase = false;
-    private boolean deleteContentDatabase = false;
+    private boolean deleteContentDatabase = true;
 
-    public DeployRestApiCommand(String name, int port) {
+    public DeployRestApiCommand(String name, int port, String databaseName, int forestsPerHost) {
         super();
         this.name = name;
         this.port = port;
+        this.databaseName = databaseName;
+        this.forestsPerHost = forestsPerHost;
         setExecuteSortOrder(SortOrderConstants.DEPLOY_REST_API_SERVERS);
     }
 
@@ -65,11 +69,11 @@ public class DeployRestApiCommand extends AbstractCommand implements UndoableCom
         ObjectNode n = node.putObject("rest-api");
         n.put("name", name);
         n.put("group", config.getGroupName());
-        n.put("database", name);
+        n.put("database", databaseName);
         n.put("modules-database", config.getModulesDatabaseName());
         n.put("port", "%%PORT%%");
         n.put("xdbc-enabled", true);
-        n.put("forests-per-host", config.getContentForestsPerHost());
+        n.put("forests-per-host", forestsPerHost);
         n.put("error-format", "json");
 
         try {

@@ -9,7 +9,7 @@ public class DeployModulesDatabaseCommand extends DeployDatabaseCommand {
         super();
         this.setDatabaseName(databaseName);
         this.setCreateDatabaseWithoutFile(true);
-        this.setExecuteSortOrder(SortOrderConstants.DEPLOY_OTHER_DATABASES);
+        this.setExecuteSortOrder(SortOrderConstants.DEPLOY_OTHER_SERVERS);
     }
 
     @Override
