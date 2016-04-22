@@ -1,4 +1,6 @@
-[![Build Status](https://travis-ci.org/marklogic/marklogic-data-hub.svg?branch=master)](https://travis-ci.org/marklogic/marklogic-data-hub)
+**Linux** => [![Build Status](https://travis-ci.org/marklogic/marklogic-data-hub.svg?branch=master)](https://travis-ci.org/marklogic/marklogic-data-hub)
+
+**Windows** => [![Windows Build Status](https://ci.appveyor.com/api/projects/status/kgj0k5na59uhkvbv?svg=true)](https://ci.appveyor.com/api/projects/status/kgj0k5na59uhkvbv?svg=true)
 
 # MarkLogic Data Hub
 
