@@ -4,6 +4,13 @@
   <h4 class="modal-title" id="myModalLabel">Load Data</h4>
 </div>
 <div class="modal-body" id="myModalBody">
+  <div class="row" ng-show="hasError">
+    <div class="col-xs-12 col-md-12">
+      <div class="alert alert-danger">
+        {{ errorMessage }}
+      </div>
+    </div>
+  </div>
   <div class="row">
     <div id="details" class="col-xs-12 col-md-12">
       <form ng-submit="ctrl.ok()">
