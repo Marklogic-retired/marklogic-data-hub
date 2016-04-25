@@ -29,28 +29,13 @@
       }
     });
 
-    $scope.errorMessage = null;
-    $scope.hasError = false;
-    
     $scope.mlcp = angular.extend({
       input_file_type: 'documents',
     }, mlcpOptions);
-    
-    
+
     function ok() {
-      if(isValidInputFilePath) {
-        $uibModalInstance.close($scope.mlcp);
-      }
-    }
-    
-    function isValidInputFilePath() {
       if($scope.mlcp.input_file_path) {
-        $scope.hasError = false;
-        $scope.errorMessage = null;
-        return true;
-      } else {
-        $scope.hasError = true;
-        $scope.errorMessage = 'The Location of Files to Load is required.';
+        $uibModalInstance.close($scope.mlcp);
       }
     }
 
@@ -88,7 +73,8 @@
     function isGroupVisible(category) {
       if(category === 'Delimited Text Options' && $scope.mlcp.input_file_type !== 'delimited_text') {
         return false;
-      } else if(category === 'Aggregate XML Options' && $scope.mlcp.input_file_type !== 'aggregates') {
+      }
+      else if(category === 'Aggregate XML Options' && $scope.mlcp.input_file_type !== 'aggregates') {
         return false;
       }
       return true;
@@ -138,7 +124,7 @@
       addMlcpOption(options, 'input_file_path', inputFilePath, true);
       addMlcpOption(options, 'input_file_type', input_file_type, true);
       addMlcpOption(options, 'output_uri_replace', '"' + inputFilePath + ',\'\'"', true);
-      
+
       angular.forEach(self.groups, function(group) {
         if (isGroupVisible(group.category)) {
           $.each(group.settings, function(i, setting) {
@@ -155,7 +141,7 @@
       });
       return options;
     }
-    
+
     function addMlcpOption(options, key, value, isOtherOption) {
       options.push('-' + key);
       if(value) {
@@ -177,7 +163,7 @@
     }
 
     $scope.$watch('mlcp.input_file_path', function(value) {
-      if(isValidInputFilePath(value)) {
+      if(value) {
         searchPath(value);
       }
     });
