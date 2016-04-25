@@ -36,7 +36,7 @@ public class DataHubUser {
             String role = isAdmin? "'admin'" : "('rest-admin','xa-admin','manage-admin-internal')";
             String query = "xquery version \"1.0-ml\";" +
                     "import module namespace sec=\"http://marklogic.com/xdmp/security\" at \"/MarkLogic/security.xqy\";" +
-                    "sec:create-user('" + username + "', '" + username + "', '" + password + "' ," + role + ", (), ())";
+                    "sec:create-user('" + username + "', '" + username + "', '" + password + "' ," + role + ", (xdmp:permission('rest-admin', 'update')), ())";
             
             ResultSequence rs = executeQuery(query);
 
