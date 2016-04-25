@@ -4,7 +4,6 @@ import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -55,15 +54,10 @@ public class EndToEndTestSjsXml extends HubTestBase {
     @Test
     public void runFlows() throws IOException, ParserConfigurationException, SAXException {
         FlowManager fm = new FlowManager(stagingClient);
-        Flow inputFlow = fm.getFlow(ENTITY, "testinput", FlowType.INPUT);
         Flow harmonizeFlow = fm.getFlow(ENTITY, "testharmonize",
                 FlowType.HARMONIZE);
 
-        URL url = HubTestBase.class.getClassLoader().getResource("e2e-test/input");
-        HubConfig config = getHubConfig(url.getPath());
-        fm.runInputFlow(inputFlow, config);
-
-        assertXMLEqual(getXmlFromResource("e2e-test/staged.xml"), stagingDocMgr.read("/input.xml").next().getContent(new DOMHandle()).get());
+        stagingDocMgr.write("/input.xml", new DOMHandle(getXmlFromResource("e2e-test/staged.xml")));
 
         JobFinishedListener harmonizeFlowListener = new JobFinishedListener();
         fm.runFlow(harmonizeFlow, 10, harmonizeFlowListener);

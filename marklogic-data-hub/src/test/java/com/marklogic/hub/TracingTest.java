@@ -3,6 +3,9 @@ package com.marklogic.hub;
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Paths;
 
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.After;
@@ -18,14 +21,15 @@ import com.marklogic.hub.flow.Flow;
 
 public class TracingTest extends HubTestBase {
     @BeforeClass
-    public static void setup() throws IOException {
+    public static void setup() throws IOException, URISyntaxException {
         XMLUnit.setIgnoreWhitespace(true);
 
         installHub();
 
         enableDebugging();
 
-        String path = TracingTest.class.getClassLoader().getResource("tracing-test").getPath();
+        URL url = DataHubInstallTest.class.getClassLoader().getResource("tracing-test");
+        String path = Paths.get(url.toURI()).toFile().getAbsolutePath();
 
         PropertiesModuleManager modulesManager = new PropertiesModuleManager();
         modulesManager.deletePropertiesFile();

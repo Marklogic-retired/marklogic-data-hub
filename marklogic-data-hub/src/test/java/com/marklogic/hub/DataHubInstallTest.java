@@ -5,6 +5,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Paths;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -22,7 +25,7 @@ public class DataHubInstallTest extends HubTestBase {
     @BeforeClass
     public static void setup() throws IOException {
         XMLUnit.setIgnoreWhitespace(true);
-        dataHub = new DataHub(getHubConfig("./ye-olde-plugins"));
+        dataHub = new DataHub(getHubConfig(Paths.get(".", "ye-olde-plugins").toString()));
         dataHub.install();
     }
 
@@ -41,8 +44,9 @@ public class DataHubInstallTest extends HubTestBase {
     }
 
     @Test
-    public void testInstallUserModules() throws IOException, ParserConfigurationException, SAXException {
-        String path = DataHubInstallTest.class.getClassLoader().getResource("data-hub-test").getPath();
+    public void testInstallUserModules() throws IOException, ParserConfigurationException, SAXException, URISyntaxException {
+        URL url = DataHubInstallTest.class.getClassLoader().getResource("data-hub-test");
+        String path = Paths.get(url.toURI()).toFile().getAbsolutePath();
 
         PropertiesModuleManager modulesManager = new PropertiesModuleManager();
         modulesManager.deletePropertiesFile();

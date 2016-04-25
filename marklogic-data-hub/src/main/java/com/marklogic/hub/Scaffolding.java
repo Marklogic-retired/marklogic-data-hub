@@ -95,6 +95,7 @@ public class Scaffolding {
         File flowFile = new File(flowDir, flowName + ".xml");
         try(PrintWriter out = new PrintWriter(flowFile)) {
             out.println(flow.serialize(false));
+            out.close();
         }
     }
 

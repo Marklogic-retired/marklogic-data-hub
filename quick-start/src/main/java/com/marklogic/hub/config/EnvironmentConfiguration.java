@@ -299,7 +299,7 @@ public class EnvironmentConfiguration {
 	    if(file.exists()) {
 	        return Files.toString(file, Charsets.UTF_8);
 	    }
-	    return null;
+	    return "{}";
     }
 
 	public HubConfig getHubConfig() {

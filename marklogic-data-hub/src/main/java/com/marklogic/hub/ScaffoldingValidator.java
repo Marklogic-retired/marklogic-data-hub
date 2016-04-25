@@ -24,6 +24,8 @@ public class ScaffoldingValidator {
                         return true;
                     }
                 } else {
+                    absoluteFilePathFilter = absoluteFilePathFilter.replace("\\", "\\\\");
+
                     if(Pattern.matches(absoluteFilePathFilter,file.getAbsolutePath())) {
                         return true;
                     }
