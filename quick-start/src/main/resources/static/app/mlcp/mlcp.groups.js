@@ -238,8 +238,8 @@
           }
         ];
         angular.forEach(previousOptions, function(value, key) {
-          $.each(groups, function(i, group) {
-            $.each(group.settings, function(i, setting) {
+          angular.forEach(groups, function(group) {
+            angular.forEach(group.settings, function(setting) {
               if (setting.field === key) {
                 setting.value = value.replace(/"/g, '');
               }
