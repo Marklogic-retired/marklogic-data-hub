@@ -29,6 +29,7 @@ import com.marklogic.xcc.ContentSourceFactory;
 import com.marklogic.xcc.DocumentFormat;
 import com.marklogic.xcc.SecurityOptions;
 import com.marklogic.xcc.Session;
+import com.marklogic.xcc.Session.TransactionMode;
 import com.marklogic.xcc.exceptions.RequestException;
 
 public class LoadModulesCommand extends AbstractCommand {
@@ -104,6 +105,7 @@ public class LoadModulesCommand extends AbstractCommand {
         ContentSource cs = ContentSourceFactory.newContentSource(config.getHost(), port, config.getRestAdminUsername(), config.getRestAdminPassword(), config.getModulesDatabaseName(),
                 securityOptions);
         activeSession = cs.newSession();
+        activeSession.setTransactionMode(TransactionMode.UPDATE);
     }
 
     @Override
@@ -136,20 +138,34 @@ public class LoadModulesCommand extends AbstractCommand {
 
                 loadFile(path, r.getInputStream(), appConfig);
             }
+            activeSession.commit();
 
+            logger.info("Loading Service Extensions");
+            long startTime = System.nanoTime();
             resources = findResources("classpath:/ml-modules/services", "/**/*.xq*");
             for (Resource r : resources) {
                 ExtensionMetadataAndParams emap = extensionMetadataProvider.provideExtensionMetadataAndParams(r);
                 this.modulesLoader.installService(r, emap.metadata, emap.methods.toArray(new MethodParameters[] {}));
             }
 
+            long endTime = System.nanoTime();
+            long duration = (endTime - startTime);
+            logger.info("Service Extensions took: " + (duration / 1000000000) + " seconds");
+
+            logger.info("Loading Rest Transforms");
+            startTime = System.nanoTime();
             resources = findResources("classpath:/ml-modules/transforms", "/**/*.xq*");
             for (Resource r : resources) {
                 ExtensionMetadataAndParams emap = extensionMetadataProvider.provideExtensionMetadataAndParams(r);
                 this.modulesLoader.installTransform(r, emap.metadata);
             }
+            endTime = System.nanoTime();
+            duration = (endTime - startTime);
+            logger.info("Rest Transforms took: " + (duration / 1000000000) + " seconds");
+
+            logger.info("Finished Loading Modules");
         }
-        catch (IOException e) {
+        catch (IOException | RequestException e) {
             e.printStackTrace();
         }
     }
