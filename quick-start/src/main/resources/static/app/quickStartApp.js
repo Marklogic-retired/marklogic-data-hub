@@ -15,6 +15,7 @@
     'ngAnimate',
     'ui.bootstrap',
     'angular-confirm',
+    'ngSanitize',
     'swaggerUi',
     'mlcp'
   ];
