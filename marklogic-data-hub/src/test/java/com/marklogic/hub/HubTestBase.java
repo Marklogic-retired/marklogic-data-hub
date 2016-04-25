@@ -54,6 +54,8 @@ public class HubTestBase {
     public static int stagingPort;
     public static int finalPort;
     public static int tracePort;
+    public static String adminUser;
+    public static String adminPassword;
     public static String user;
     public static String password;
     public static Authentication authMethod;
@@ -118,6 +120,8 @@ public class HubTestBase {
         stagingPort = Integer.parseInt(properties.getProperty("mlStagingPort"));
         finalPort = Integer.parseInt(properties.getProperty("mlFinalPort"));
         tracePort = Integer.parseInt(properties.getProperty("mlTracePort"));
+        adminUser = properties.getProperty("mlAdminUsername");
+        adminPassword = properties.getProperty("mlAdminPassword");
         user = properties.getProperty("mlUsername");
         password = properties.getProperty("mlPassword");
         authMethod = Authentication.valueOf(properties.getProperty("auth").toUpperCase());
@@ -153,8 +157,10 @@ public class HubTestBase {
         hubConfig.stagingPort = stagingPort;
         hubConfig.finalPort = finalPort;
         hubConfig.tracePort = tracePort;
-        hubConfig.adminUsername = user;
-        hubConfig.adminPassword = password;
+        hubConfig.adminUsername = adminUser;
+        hubConfig.adminPassword = adminPassword;
+        hubConfig.username = user;
+        hubConfig.password = password;
         return hubConfig;
     }
 

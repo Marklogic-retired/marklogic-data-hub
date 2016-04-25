@@ -15,6 +15,9 @@
  */
 package com.marklogic.hub;
 
+import java.io.File;
+import java.io.IOException;
+
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -26,8 +29,9 @@ public class DataHubTest extends HubTestBase {
     public final ExpectedException exception = ExpectedException.none();
 
     @BeforeClass
-    public static void setup() {
+    public static void setup() throws Exception {
         XMLUnit.setIgnoreWhitespace(true);
+        DataHubUser.createHubUserIfNotExists();
     }
 
     @Test
@@ -41,5 +45,15 @@ public class DataHubTest extends HubTestBase {
         DataHub dh = new DataHub("blah", user, password);
         exception.expect(ServerValidationException.class);
         dh.validateServer();
+    }
+    
+    @Test
+    public void testInstallUserModules() throws IOException {
+        DataHub dh = new DataHub(getHubConfig());
+        File entitiesDir = new File(PLUGIN_PATH, "entities");
+        if(!entitiesDir.exists()) {
+            entitiesDir.mkdirs();
+        }
+        dh.installUserModules(PLUGIN_PATH);
     }
 }
