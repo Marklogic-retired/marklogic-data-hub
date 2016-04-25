@@ -20,7 +20,7 @@
       hideFileTree: hideFileTree,
       isText: isText,
       dataForTheTree: [],
-      groups: mlcpGroups.groups(entityName, flowName),
+      groups: mlcpGroups.groups(entityName, flowName, mlcpOptions),
       treeOptions: {
         nodeChildren: 'children',
         dirSelectable: false,
@@ -34,7 +34,9 @@
     }, mlcpOptions);
 
     function ok() {
-      $uibModalInstance.close($scope.mlcp);
+      if($scope.mlcp.input_file_path) {
+        $uibModalInstance.close($scope.mlcp);
+      }
     }
 
     function cancel() {
@@ -71,7 +73,8 @@
     function isGroupVisible(category) {
       if(category === 'Delimited Text Options' && $scope.mlcp.input_file_type !== 'delimited_text') {
         return false;
-      } else if(category === 'Aggregate XML Options' && $scope.mlcp.input_file_type !== 'aggregates') {
+      }
+      else if(category === 'Aggregate XML Options' && $scope.mlcp.input_file_type !== 'aggregates') {
         return false;
       }
       return true;
@@ -109,24 +112,18 @@
 
     function buildMlcpOptions() {
       var options = [];
-      options.push('import');
-      options.push('-mode');
-      options.push('local');
-      options.push('-host');
-      options.push(DataHub.status.mlHost);
-      options.push('-port');
-      options.push(DataHub.status.mlStagingPort);
-      options.push('-username');
-      options.push(DataHub.status.mlUsername);
-      options.push('-password');
-      options.push(DataHub.status.mlPassword);
-
-      options.push('-input_file_path');
-      options.push($scope.mlcp.input_file_path);
-      options.push('-input_file_type');
-      options.push($scope.mlcp.input_file_type);
-      options.push('-output_uri_replace');
-      options.push('"' + $scope.mlcp.input_file_path + ',\'\'"');
+      var inputFilePath = $scope.mlcp.input_file_path;
+      var input_file_type = $scope.mlcp.input_file_type;
+      $scope.mlcp = {};
+      addMlcpOption(options, 'import', null, false);
+      addMlcpOption(options, 'mode', 'local', false);
+      addMlcpOption(options, 'host', DataHub.status.mlHost, false);
+      addMlcpOption(options, 'port', DataHub.status.mlStagingPort, false);
+      addMlcpOption(options, 'username', DataHub.status.mlUsername, false);
+      addMlcpOption(options, 'password', DataHub.status.mlPassword, false);
+      addMlcpOption(options, 'input_file_path', inputFilePath, true);
+      addMlcpOption(options, 'input_file_type', input_file_type, true);
+      addMlcpOption(options, 'output_uri_replace', '"' + inputFilePath + ',\'\'"', true);
 
       angular.forEach(self.groups, function(group) {
         if (isGroupVisible(group.category)) {
@@ -137,13 +134,22 @@
               if (setting.type !== 'boolean') {
                 value = '"' + setting.value + '"';
               }
-              options.push('-' + key);
-              options.push(value);
+              addMlcpOption(options, key, value, true);
             }
           });
         }
       });
       return options;
+    }
+
+    function addMlcpOption(options, key, value, isOtherOption) {
+      options.push('-' + key);
+      if(value) {
+        options.push(value);
+        if(isOtherOption) {
+          $scope.mlcp[key] = value;
+        }
+      }
     }
 
     function updateMlcpCommand() {
@@ -157,7 +163,9 @@
     }
 
     $scope.$watch('mlcp.input_file_path', function(value) {
-      searchPath(value);
+      if(value) {
+        searchPath(value);
+      }
     });
 
     $scope.$watch('mlcp', function(value) {

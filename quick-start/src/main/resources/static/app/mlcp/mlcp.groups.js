@@ -8,8 +8,8 @@
 
   function MlcpGroupsFactory() {
     return {
-      groups: function(entityName, flowName) {
-        return [
+      groups: function(entityName, flowName, previousOptions) {
+        var groups = [
           {
             category: 'General Options',
             settings: [
@@ -237,6 +237,16 @@
             ]
           }
         ];
+        angular.forEach(previousOptions, function(value, key) {
+          angular.forEach(groups, function(group) {
+            angular.forEach(group.settings, function(setting) {
+              if (setting.field === key) {
+                setting.value = value.replace(/"/g, '');
+              }
+            });
+          });
+        });
+        return groups;
       }
     };
   }

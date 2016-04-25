@@ -3,14 +3,14 @@
     <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
   <h4 class="modal-title" id="myModalLabel">Load Data</h4>
 </div>
-<div class="modal-body" id="myModalBody">
+<div class="modal-body" id="myModalBody" ng-cloak>
   <div class="row">
     <div id="details" class="col-xs-12 col-md-12">
-      <form ng-submit="ctrl.ok()">
-        <div class="form-group">
+      <form name="loadDataForm" ng-submit="ctrl.ok()">
+        <div class="form-group" ng-class="{ 'has-error' : !loadDataForm.ifp.$valid }">
           <label for="ifp" popover-trigger="mouseenter" uib-popover="The location of a folder containing the files you wish to load.">Location of Files to Load</label>
           <input id="ifp" class="form-control" name="ifp" type="text" ng-model="mlcp.input_file_path"
-            placeHolder="Enter Path" required="required" ng-focus="showInputPathTreeBrowser = true">
+            placeHolder="Enter Path (required)" required="required" ng-focus="showInputPathTreeBrowser = true">
           <div id="inputPathTreeBrowser" class="panel panel-primary tree-scroller-cust1" ng-show="showInputPathTreeBrowser">
             <div class="panel-body">
               <treecontrol class="tree-classic" tree-model="ctrl.dataForTheTree"
