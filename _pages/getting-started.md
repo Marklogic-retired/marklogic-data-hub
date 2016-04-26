@@ -1,23 +1,16 @@
 ---
 layout: inner
-title: Getting Started
+title: Getting Started Tutorial
 lead_text: ''
-permalink: /getting-started/
+permalink: /
 ---
 
-# QuickStart
-
-QuickStart is a simple User Interface that you can run locally to start working with the Data Hub quickly. With QuickStart you will have a working hub in a matter of minutes. No need to worry about deployment strategies or configuration details. Simply run the jar and point it at your MarkLogic installation.
-
-<div class="jumbotron" markdown="1">
-**\*The MarkLogic Data Hub is production grade. However, this tutorial is meant to get you started quickly. As such we assume that you are running QuickStart on your local host.**
-</div>
-
-## QuickStart Architecture
-![QuickStart Architecture](https://raw.githubusercontent.com/marklogic/marklogic-data-hub/design/images/quickstart-architecture-gray.png)
-
-# Tutorial
+## Building an HR Hub
 This tutorial will walk you through setting up a very simple hub for HR data. Your company Global Corp has provided you with CSV dumps of 3 tables. Additionally you are receiving JSON data files from a recently acquired company Acme Tech. You are responsible for loading data from both systems into your data hub to make them accessible to internal systems.
+
+### QuickStart
+This tutorial uses quickStart, a simple User Interface that you can run locally to start working with the Data Hub quickly. With QuickStart you will have a working hub in a matter of minutes. No need to worry about deployment strategies or configuration details. Simply run the jar and point it at your MarkLogic installation.
+
 
 ## 1 - Download and Install MarkLogic
 
@@ -64,13 +57,13 @@ java -jar quick-start-*.jar
 - Open the QuickStart Application in your browser:
   [http://localhost:8080](http://localhost:8080){:target="_blank"}
 
-## 5 - Install the Hub
+## 5 - Login to the Hub
 
-After opening the QuickStart Application provide the hostname, username, and password for your MarkLogic installation. Press the Login Button. The hub will automatically install into your MarkLogic instance.
+After opening the QuickStart Application you must provide the hostname, admin username, and admin password for your MarkLogic installation. Press the Login Button. The hub will automatically install any necessary modules into your MarkLogic instance.
 
-![Login Screen](../images/login-screen.png)
+![Login Screen](../images/login-screen.png){:height="500px"}
 
-## 6 - Create Your First Entity
+## 6 - Create Your First Entity and Flows
 
 Entities are the business objects that you will be working with in the hub. Start by defining a new Entity for Employees. Click the **New Entity** button. Now fill out the popup with information about your entity. 
 
@@ -80,33 +73,36 @@ You have just created an Entity with some basic Flows.
 
 > **Harmonize Flows** are responsible for batch transformation of data from staging to final.
 
+Next you will want to create an Input and Harmonize flow for Global Corp. Start by clicking the **New** button next to Input Flows. Then fill out the form. Continue by clicking the **New** button next to Harmonize Flows. Then fill out the form.
+
 Now press **Deploy to Server**. You have just deployed your plugins into MarkLogic server. Plugins are the "stored procedures" that make up flows.
 
 ![New Entity](../images/new-employee-entity.gif)
 
-## 7 - Ingest Global Corp Data
+## 7 - Ingest Acme Tech Data
 
-Now that your entity is created you want to ingest some data. QuickStart uses the [MarkLogic Content Pump](https://docs.marklogic.com/guide/mlcp){:target="_blank"} to ingest data. Press the **Load Data** button next to an input flow. Point the dialog to the input/GlobalCorp directory. Choose the **Delimited Text** Data Format and then press **Submit**.
+Now that your entity is created you want to ingest some data. QuickStart uses the [MarkLogic Content Pump](https://docs.marklogic.com/guide/mlcp){:target="_blank"} to ingest data. Press the **Load Data** button next to the **load-acme-tech** input flow. Point the dialog to the input/AcmeTech directory. Choose the **Documents** Data Format and then press **Submit**.
+
+Behind the scenes QuickStart is running [MarkLogic Content Pump](https://docs.marklogic.com/guide/mlcp) to ingest the Json documents.
+
+![Run Input Flow](../images/run-acme-input-flow.gif)
+
+## 8 - Ingest Global Corp Data
+
+Now you need to load the data for Global Corp.
+
+- Press the **Load Data** button next to the **load-global-corp** input flow.
+- Point the dialog to the input/GlobalCorp directory.
+- Choose the **Delimited Text** Data Format.
+- Expand the **Delimited Text Options** section.
+- Check the **Generate URI?** option.
+- Press the **Submit** button.
 
 Behind the scenes QuickStart is running [MarkLogic Content Pump](https://docs.marklogic.com/guide/mlcp) to ingest the CSV data files. During ingest they are converted to JSON because you chose **json** as your Data Format for your flow.
 
 ![Run Input Flow](../images/run-input-flow.gif)
 
-## 8 - Create Flows for Acme Tech
-
-Next you will want to create an Input and Harmonize flow for Acme Tech. Start by clicking the **New** button next to Input Flows. Then fill out the form. Continue by clicking the **New** button next to Harmonize Flows. Then fill out the form.
-
-![Create Acme Flows](../images/create-acme-flows.gif)
-
-## 9 - Ingest Acme Tech Data
-
-Now you need to load the data for Acme Tech. Press the **Load Data** button next to an input flow. Point the dialog to the input/AcmeTech directory. Choose the **Documents** Data Format and then press **Submit**.
-
-Behind the scenes QuickStart is running [MarkLogic Content Pump](https://docs.marklogic.com/guide/mlcp) to ingest the CSV data files. During ingest they are converted to JSON because you chose **json** as your Data Format for your flow.
-
-![Run Input Flow](../images/run-acme-input-flow.gif)
-
-## 10 - Prep for Harmonize
+## 9 - Prep for Harmonize
 
 All of our data is loaded into the staging area. While it's possible to harmonize the data right now it's not very useful. The out of the box harmonize plugins will simply copy the staging data to the final data area.
 
@@ -119,20 +115,6 @@ For this tutorial we will pull out 3 headers:
 - salary
 
 Because we are dealing with two separate data sources we will put the logic for each source into its own flow.
-
-### Global Corp Header Plugin
-
-Use your favorite text editor to open the data-hub/plugins/entities/Employee/harmonize/armonize-global-corp/headers/headers.sjs file. Replace its contents with this:
-
-<script src="http://gist-it.appspot.com/https://github.com/marklogic/marklogic-data-hub/blob/master/examples/hr-hub/plugins/entities/Employee/harmonize/harmonize-global-corp/headers/headers.sjs"></script>
-
-### Global Corp Collector
-
-The collector is a plugin that provides a list of items to the Harmonize flow to be acted upon. By default the out of the box collector will return all document URIs in the system. We need to change this. For Global Corp we want to return a list of Employee IDs. This allows us to iterate over each employee ID and create an employee document per ID.
-
-Use your favorite text editor to open the data-hub/plugins/entities/Employee/harmonize/harmonize-global-corp/collector/collector.sjs file. Replace its contents with this:
-
-<script src="http://gist-it.appspot.com/https://github.com/marklogic/marklogic-data-hub/blob/master/examples/hr-hub/plugins/entities/Employee/harmonize/harmonize-global-corp/collector/collector.sjs"></script>
 
 ### Acme Tech header plugin
 
@@ -148,13 +130,27 @@ Use your favorite text editor to open the data-hub/plugins/entities/Employee/har
 
 <script src="http://gist-it.appspot.com/https://github.com/marklogic/marklogic-data-hub/blob/master/examples/hr-hub/plugins/entities/Employee/harmonize/harmonize-acme-tech/collector/collector.sjs"></script>
 
-## 11 - Harmonize the data
+### Global Corp Header Plugin
+
+Use your favorite text editor to open the data-hub/plugins/entities/Employee/harmonize/armonize-global-corp/headers/headers.sjs file. Replace its contents with this:
+
+<script src="http://gist-it.appspot.com/https://github.com/marklogic/marklogic-data-hub/blob/master/examples/hr-hub/plugins/entities/Employee/harmonize/harmonize-global-corp/headers/headers.sjs"></script>
+
+### Global Corp Collector
+
+The collector is a plugin that provides a list of items to the Harmonize flow to be acted upon. By default the out of the box collector will return all document URIs in the system. We need to change this. For Global Corp we want to return a list of Employee IDs. This allows us to iterate over each employee ID and create an employee document per ID.
+
+Use your favorite text editor to open the data-hub/plugins/entities/Employee/harmonize/harmonize-global-corp/collector/collector.sjs file. Replace its contents with this:
+
+<script src="http://gist-it.appspot.com/https://github.com/marklogic/marklogic-data-hub/blob/master/examples/hr-hub/plugins/entities/Employee/harmonize/harmonize-global-corp/collector/collector.sjs"></script>
+
+## 10 - Harmonize the data
 
 You ingested your data. You created plugins that will extract common fields into the headers. You edited the collectors to only operate on certain data. Now you are ready to harmonize. Simply press the **Run** button next to both harmonize flows.
 
 ![Run Harmonize Flow](../images/run-harmonize-flow.gif)
 
-## 12 - Consume the Data
+## 11 - Consume the Data
 
 Now you can access your data via several REST endpoints. Your harmonized data is available on the Final HTTP server. The defaul port is 8011. A full list of REST endpoints is available here: [http://docs.marklogic.com/REST/client](http://docs.marklogic.com/REST/client){:target="_blank"}
 
@@ -165,10 +161,10 @@ Open the [Final Search Endpoint](http://localhost:8011/v1/search?format=json){:t
 *Picture here is the Final Search endpoint.*
 ![Rest Search](../images/rest-screenshot.png)
 
-## 13 - Wrapping Up
+## 12 - Wrapping Up
 
 Congratulations! You just created a Data Hub.
 
-- You loaded CSV and JSON files.
+- You loaded JSON and CSV files.
 - You harmonized your data by extracting common header fields.
 - Your data is now fully accessible via the [MarkLogic REST API](http://docs.marklogic.com/REST/client){:target="_blank"}

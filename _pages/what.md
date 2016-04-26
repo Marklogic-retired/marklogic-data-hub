@@ -1,7 +1,7 @@
 ---
-layout: page
+layout: inner
 title: What is it?
-permalink: /
+permalink: /what/
 ---
 
 ![What is it](https://raw.githubusercontent.com/marklogic/marklogic-data-hub/design/images/what-is-marklogic-data-hub-gray.png)

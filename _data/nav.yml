@@ -1,5 +1,5 @@
 main:
-    - { url: '/marklogic-data-hub/', text: 'What?' }
+    - { url: '/marklogic-data-hub/', text: 'Getting Started' }
+    - { url: '/marklogic-data-hub/what', text: 'What?' }
     - { url: '/marklogic-data-hub/how', text: 'How?' }
-    - { url: '/marklogic-data-hub/getting-started', text: 'Getting Started' }
     - { url: 'https://github.com/marklogic/marklogic-data-hub', text: 'Fork on GitHub' }
