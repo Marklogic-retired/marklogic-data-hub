@@ -46,14 +46,11 @@ $ cd marklogic-data-hub
 $ git remote add upstream git://github.com/marklogic/marklogic-data-hub.git
 ```
 
-All bug fixes and new features go into the dev branch.
-
 We ask that you open an issue in the [issue tracker][] and get agreement from
 at least one of the project maintainers before you start coding.
 
 Nothing is more frustrating than seeing your hard work go to waste because
 your vision does not align with that of a project maintainer.
-
 
 #### Create a branch for your changes
 
@@ -61,7 +58,7 @@ Okay, so you have decided to fix something. Create a feature branch
 and start hacking:
 
 ```sh
-$ git checkout -b my-feature-branch -t origin/dev
+$ git checkout -b my-feature-branch -t origin/master
 ```
 
 #### Formatting code
