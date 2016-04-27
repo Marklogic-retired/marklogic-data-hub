@@ -5,6 +5,8 @@ lead_text: ''
 permalink: /
 ---
 
+{% include base.html %}
+
 ## Building an HR Hub
 This tutorial will walk you through setting up a very simple hub for HR data. Your company Global Corp has provided you with CSV dumps of 3 tables. Additionally you are receiving JSON data files from a recently acquired company Acme Tech. You are responsible for loading data from both systems into your data hub to make them accessible to internal systems.
 
@@ -39,11 +41,11 @@ mkdir input
 ~~~
 {: .language-bash}
 
-- Download the [Zip file of sample data](../data/hr-data.zip){:target="_blank"} into the **input** folder you just created. Now extract it.
+- Download the [Zip file of sample data]({{base}}/data/hr-data.zip){:target="_blank"} into the **input** folder you just created. Now extract it.
 
 Your directory should look like this:
 
-![Directory Tree](../images/dir-tree.png)
+![Directory Tree](images/dir-tree.png)
 
 ## 4 - Run the QuickStart
 
@@ -61,7 +63,7 @@ java -jar quick-start-*.jar
 
 After opening the QuickStart Application you must provide the hostname, admin username, and admin password for your MarkLogic installation. Press the Login Button. The hub will automatically install any necessary modules into your MarkLogic instance.
 
-![Login Screen](../images/login-screen.png){:height="500px"}
+![Login Screen]({{base}}/images/login-screen.png){:height="500px"}
 
 ## 6 - Create Your First Entity and Flows
 
@@ -77,7 +79,7 @@ Next you will want to create an Input and Harmonize flow for Global Corp. Start 
 
 Now press **Deploy to Server**. You have just deployed your plugins into MarkLogic server. Plugins are the "stored procedures" that make up flows.
 
-![New Entity](../images/new-employee-entity.gif)
+![New Entity]({{base}}/images/new-employee-entity.gif)
 
 ## 7 - Ingest Acme Tech Data
 
@@ -85,7 +87,7 @@ Now that your entity is created you want to ingest some data. QuickStart uses th
 
 Behind the scenes QuickStart is running [MarkLogic Content Pump](https://docs.marklogic.com/guide/mlcp) to ingest the Json documents.
 
-![Run Input Flow](../images/run-acme-input-flow.gif)
+![Run Input Flow]({{base}}/images/run-acme-input-flow.gif)
 
 ## 8 - Ingest Global Corp Data
 
@@ -100,7 +102,7 @@ Now you need to load the data for Global Corp.
 
 Behind the scenes QuickStart is running [MarkLogic Content Pump](https://docs.marklogic.com/guide/mlcp) to ingest the CSV data files. During ingest they are converted to JSON because you chose **json** as your Data Format for your flow.
 
-![Run Input Flow](../images/run-input-flow.gif)
+![Run Input Flow]({{base}}/images/run-input-flow.gif)
 
 ## 9 - Prep for Harmonize
 
@@ -148,7 +150,7 @@ Use your favorite text editor to open the data-hub/plugins/entities/Employee/har
 
 You ingested your data. You created plugins that will extract common fields into the headers. You edited the collectors to only operate on certain data. Now you are ready to harmonize. Simply press the **Run** button next to both harmonize flows.
 
-![Run Harmonize Flow](../images/run-harmonize-flow.gif)
+![Run Harmonize Flow]({{base}}/images/run-harmonize-flow.gif)
 
 ## 11 - Consume the Data
 
@@ -159,7 +161,7 @@ Open the [Staging Search Endpoint](http://localhost:8010/v1/search?format=json){
 Open the [Final Search Endpoint](http://localhost:8011/v1/search?format=json){:target="_blank"} against your local instance.
 
 *Picture here is the Final Search endpoint.*
-![Rest Search](../images/rest-screenshot.png)
+![Rest Search]({{base}}/images/rest-screenshot.png)
 
 ## 12 - Wrapping Up
 
