@@ -75,9 +75,6 @@ public class HubConfig {
     public String authMethod = DEFAULT_AUTH_METHOD;
 
     public String modulesPath;
-    
-    public String hubUsername;
-    public String hubPassword;
 
     public HubConfig() {
         this(DEFAULT_MODULES_PATH);
@@ -104,8 +101,8 @@ public class HubConfig {
         hubConfig.adminUsername = properties.getProperty("mlAdminUsername");
         hubConfig.adminPassword = properties.getProperty("mlAdminPassword");
         hubConfig.authMethod = properties.getProperty("auth");
-        hubConfig.hubUsername = properties.getProperty("mlUsername");
-        hubConfig.hubPassword = properties.getProperty("mlPassword");
+        hubConfig.username = properties.getProperty("mlUsername");
+        hubConfig.password = properties.getProperty("mlPassword");
         return hubConfig;
     }
 }

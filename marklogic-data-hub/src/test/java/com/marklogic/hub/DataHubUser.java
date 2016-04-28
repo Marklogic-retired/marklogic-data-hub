@@ -80,12 +80,12 @@ public class DataHubUser {
     }
     
     public static void createHubUser() throws Exception {
-        createUser(hubConfig.hubUsername, hubConfig.hubPassword, false);
+        createUser(hubConfig.username, hubConfig.password, false);
     }
     
     public static void createHubUserIfNotExists() throws Exception {
-        if(!userExists(hubConfig.hubUsername)) {
-            createUser(hubConfig.hubUsername, hubConfig.hubPassword, false);
+        if(!userExists(hubConfig.username)) {
+            createUser(hubConfig.username, hubConfig.password, false);
         }
     }
     
