@@ -14,7 +14,7 @@ public class LoginForm extends BaseForm {
 	private String mlUsername;
 	private String mlPassword;
 	private String mlAdminUsername;
-    private String mlAdminPassword;
+	private String mlAdminPassword;
 	private String userPluginDir;
 	private boolean serverVersionAccepted;
 	private boolean installed;
