@@ -93,6 +93,8 @@ Now you need to load the data for Global Corp.
 
 - Press the **Load Data** button next to the **load-global-corp** input flow.
 - Point the dialog to the input/GlobalCorp directory.
+- Expand the **General Options** section.
+- Change **Document Type** to **json**.
 - Choose the **Delimited Text** Data Format.
 - Expand the **Delimited Text Options** section.
 - Check the **Generate URI?** option.
@@ -116,12 +118,6 @@ For this tutorial we will pull out 3 headers:
 
 Because we are dealing with two separate data sources we will put the logic for each source into its own flow.
 
-### Acme Tech header plugin
-
-Use your favorite text editor to open the data-hub/plugins/entities/Employee/harmonize/harmonize-acme-tech/headers/headers.sjs file. Replace its contents with this:
-
-<script src="http://gist-it.appspot.com/https://github.com/marklogic/marklogic-data-hub/blob/master/examples/hr-hub/plugins/entities/Employee/harmonize/harmonize-acme-tech/headers/headers.sjs"></script>
-
 ### Acme Tech Collector
 
 For Acme Tech we want to return a list of URIs. Since the Acme Tech data came to us as JSON documents, there is only one document for every employee.
@@ -130,11 +126,11 @@ Use your favorite text editor to open the data-hub/plugins/entities/Employee/har
 
 <script src="http://gist-it.appspot.com/https://github.com/marklogic/marklogic-data-hub/blob/master/examples/hr-hub/plugins/entities/Employee/harmonize/harmonize-acme-tech/collector/collector.sjs"></script>
 
-### Global Corp Header Plugin
+### Acme Tech header plugin
 
-Use your favorite text editor to open the data-hub/plugins/entities/Employee/harmonize/armonize-global-corp/headers/headers.sjs file. Replace its contents with this:
+Use your favorite text editor to open the data-hub/plugins/entities/Employee/harmonize/harmonize-acme-tech/headers/headers.sjs file. Replace its contents with this:
 
-<script src="http://gist-it.appspot.com/https://github.com/marklogic/marklogic-data-hub/blob/master/examples/hr-hub/plugins/entities/Employee/harmonize/harmonize-global-corp/headers/headers.sjs"></script>
+<script src="http://gist-it.appspot.com/https://github.com/marklogic/marklogic-data-hub/blob/master/examples/hr-hub/plugins/entities/Employee/harmonize/harmonize-acme-tech/headers/headers.sjs"></script>
 
 ### Global Corp Collector
 
@@ -143,6 +139,18 @@ The collector is a plugin that provides a list of items to the Harmonize flow to
 Use your favorite text editor to open the data-hub/plugins/entities/Employee/harmonize/harmonize-global-corp/collector/collector.sjs file. Replace its contents with this:
 
 <script src="http://gist-it.appspot.com/https://github.com/marklogic/marklogic-data-hub/blob/master/examples/hr-hub/plugins/entities/Employee/harmonize/harmonize-global-corp/collector/collector.sjs"></script>
+
+### Global Corp Content Plugin
+
+For Global corp we are going to use the harmonize step to recreate employee records for every employee ID that is in our staging area. Recall that for the collector we are returning employee IDs instead of URIs. Open up your favorite text editor to the data-hub/plugins/entities/Employee/harmonize/harmonize-global-corp/content/content.sjs file. Replace its contents with this:
+
+<script src="http://gist-it.appspot.com/https://github.com/marklogic/marklogic-data-hub/blob/master/examples/hr-hub/plugins/entities/Employee/harmonize/harmonize-global-corp/content/content.sjs"></script>
+
+### Global Corp Header Plugin
+
+Use your favorite text editor to open the data-hub/plugins/entities/Employee/harmonize/armonize-global-corp/headers/headers.sjs file. Replace its contents with this:
+
+<script src="http://gist-it.appspot.com/https://github.com/marklogic/marklogic-data-hub/blob/master/examples/hr-hub/plugins/entities/Employee/harmonize/harmonize-global-corp/headers/headers.sjs"></script>
 
 ## 10 - Harmonize the data
 
