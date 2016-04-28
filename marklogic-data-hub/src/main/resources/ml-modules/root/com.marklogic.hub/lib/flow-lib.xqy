@@ -410,7 +410,7 @@ declare function flow:run-collector(
     }
     catch($ex) {
       xdmp:log($ex),
-      trace:create-trace(
+      trace:log-error-trace(
         trace:error-trace(
           (),
           $module-uri,
@@ -425,7 +425,7 @@ declare function flow:run-collector(
       xdmp:rethrow()
     }
   let $_ :=
-    trace:create-trace(
+    trace:log-trace(
       trace:plugin-trace(
         null-node {},
         $module-uri,
@@ -647,7 +647,7 @@ declare function flow:run-plugin(
         }
         catch($ex) {
           xdmp:log($ex),
-          trace:create-trace(
+          trace:log-error-trace(
             trace:error-trace(
               $identifier,
               $module-uri,
@@ -689,7 +689,7 @@ declare function flow:run-plugin(
             $resp
       let $_ :=
         if (trace:enabled()) then
-          trace:create-trace(
+          trace:log-trace(
             trace:plugin-trace(
               $identifier,
               $module-uri,
@@ -738,7 +738,7 @@ declare function flow:run-writer(
     }
     catch($ex) {
       xdmp:log($ex),
-      trace:create-trace(
+      trace:log-error-trace(
         trace:error-trace(
           $identifier,
           $module-uri,
@@ -755,7 +755,7 @@ declare function flow:run-writer(
     }
   let $duration := xdmp:elapsed-time() - $before
   let $_ :=
-    trace:create-trace(
+    trace:log-trace(
       trace:plugin-trace(
         $identifier,
         $module-uri,

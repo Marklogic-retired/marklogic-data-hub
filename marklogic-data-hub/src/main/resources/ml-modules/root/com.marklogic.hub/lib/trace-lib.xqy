@@ -38,10 +38,24 @@ declare function trace:enabled() as xs:boolean
   xdmp:get-server-field("HUB-TRACING-ENABLED", fn:false())
 };
 
-declare function trace:create-trace($trace)
+declare function trace:log-trace($trace)
 {
-  if (trace:enabled()) then
+  trace:create-trace($trace, fn:false())
+};
+
+declare function trace:log-error-trace($trace)
+{
+  trace:create-trace($trace, fn:true())
+};
+
+declare %private function trace:create-trace($trace, $force as xs:boolean)
+{
+  if ($force or trace:enabled()) then
     xdmp:eval('
+      xquery version "1.0-ml";
+
+      declare option xdmp:mapping "false";
+
       declare variable $trace external;
 
       xdmp:document-insert(
@@ -115,7 +129,7 @@ declare function trace:error-trace(
       let $_ := map:put($config, "ignore-attribute-names", xs:QName("xsi:schemaLocation"))
       let $_ := map:put($config, "whitespace", "ignore")
       return
-        json:transform-to-json($error, $config)
+        json:transform-to-json($error, $config)/object-node()
     return
       object-node {
         "trace": object-node {
@@ -125,7 +139,7 @@ declare function trace:error-trace(
           "plugin-type": $plugin-type,
           "flow-type": $flow-type,
           "error": $error,
-          "input": $input,
+          "input": ($input, null-node{})[1],
           "duration": $duration
         }
       }
