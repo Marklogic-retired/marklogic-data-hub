@@ -52,6 +52,7 @@ public class DataHubServerApiController extends BaseController {
 			MediaType.APPLICATION_JSON_UTF8_VALUE }, produces = { MediaType.APPLICATION_JSON_UTF8_VALUE })
 	public LoginForm postLogin(@RequestBody LoginForm loginForm, BindingResult bindingResult, HttpSession session,
 			HttpServletRequest request) throws Exception {
+		LOGGER.debug("POST: login");
 		try {
 			if (isValidDirectory(loginForm.getUserPluginDir())) {
 
@@ -61,6 +62,7 @@ public class DataHubServerApiController extends BaseController {
 				loginForm.setServerVersionAccepted(dataHubService.isServerAcceptable());
 				loginForm.setHasErrors(false);
 				loginForm.setLoggedIn(true);
+				loginForm.setUninstalling(false);
 				environmentConfiguration.saveConfigurationToFile();
 				session.setAttribute("loginForm", loginForm);
 
@@ -106,32 +108,26 @@ public class DataHubServerApiController extends BaseController {
 		return false;
 	}
 
-	@RequestMapping(value = "login", method = RequestMethod.GET)
+	@RequestMapping(value = "login-status", method = RequestMethod.GET)
 	public LoginForm getLoginStatus(HttpSession session) {
+		LOGGER.debug("GET: login-status");
 		LoginForm loginForm = (LoginForm) session.getAttribute("loginForm");
+		
 		if (loginForm == null) {
+			// need to load last configuration
 			loginForm = new LoginForm();
 			this.environmentConfiguration.loadConfigurationFromFiles();
 			this.retrieveEnvironmentConfiguration(loginForm);
+			loginForm.setUninstalling(false);
 			session.setAttribute("loginForm", loginForm);
-
 		} else if (loginForm.isInstalled()) {
 			loginForm.setEntities(entityManagerService.getEntities());
 			loginForm.refreshSelectedEntity();
-
-			List<EntityModel> entities = loginForm.getEntities();
-			for (Iterator iterator = entities.iterator(); iterator.hasNext();) {
-				EntityModel entityModel = (EntityModel) iterator.next();
-				if (!entityModel.isSynched()) {
-					synchronized (syncStatusService) {
-						LOGGER.debug("not synched ... installing modules ...");
-						this.installUserModules(session);
-						LOGGER.debug("modules installed.");
-					}
-					break;
-				}
+			synchronized (syncStatusService) {
+				LOGGER.debug("installing modules ...");
+				this.installUserModules(session);
+				LOGGER.debug("modules installed.");
 			}
-
 		}
 
 		LOGGER.debug("after login: " + loginForm.toString());
@@ -141,8 +137,10 @@ public class DataHubServerApiController extends BaseController {
 
 	@RequestMapping(value = "logout", method = RequestMethod.POST)
 	public LoginForm postLogout(HttpSession session) {
+		LOGGER.debug("POST: logout");
 		LoginForm loginForm = (LoginForm) session.getAttribute("loginForm");
 		loginForm.setLoggedIn(false);
+		loginForm.setUninstalling(false);
 		this.retrieveEnvironmentConfiguration(loginForm);
 
 		Enumeration<String> attrNames = session.getAttributeNames();
@@ -155,6 +153,7 @@ public class DataHubServerApiController extends BaseController {
 
 	@RequestMapping(value = "install", method = RequestMethod.POST)
 	public LoginForm install(HttpSession session) {
+		LOGGER.debug("POST: install");
 		dataHubService.install();
 		LoginForm loginForm = (LoginForm) session.getAttribute("loginForm");
 		loginForm.setInstalled(true);
@@ -164,8 +163,10 @@ public class DataHubServerApiController extends BaseController {
 
 	@RequestMapping(value = "uninstall", method = RequestMethod.POST)
 	public LoginForm uninstall(HttpSession session) {
-		dataHubService.uninstall();
+		LOGGER.debug("POST: uninstall");
 		LoginForm loginForm = (LoginForm) session.getAttribute("loginForm");
+		loginForm.setUninstalling(true);
+		dataHubService.uninstall();
 		loginForm.setInstalled(false);
 		this.unLoadUserModules(loginForm);
 		return loginForm;
@@ -173,6 +174,7 @@ public class DataHubServerApiController extends BaseController {
 
 	@RequestMapping(value = "install-user-modules", method = RequestMethod.POST)
 	public LoginForm installUserModules(HttpSession session) {
+		LOGGER.debug("POST: install-user-modules");
 		synchronized (syncStatusService) {
 			dataHubService.installUserModules();
 
@@ -188,6 +190,7 @@ public class DataHubServerApiController extends BaseController {
 
 	@RequestMapping(value = "validate-user-modules", method = RequestMethod.GET)
 	public JsonNode validateUserModules(HttpSession session) {
+		LOGGER.debug("GET: validate-user-modules");
 		synchronized (syncStatusService) {
 			return dataHubService.validateUserModules();
 		}

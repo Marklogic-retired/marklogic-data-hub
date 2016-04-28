@@ -99,34 +99,40 @@ public class EntityApiController implements InitializingBean, DisposableBean, Fi
 	 */
 	@RequestMapping(value = "status-change", method = RequestMethod.GET)
 	public LoginForm getStatusChange(HttpServletRequest request) {
+		LOGGER.debug("GET: status-change");
 		HttpSession session = request.getSession();
 
 		synchronized (syncStatusService) {
 			try {
 				syncStatusService.wait();
-				LOGGER.debug("status change");
 			} catch (InterruptedException e) {
 			}
 
 			// refresh the list of entities saved in the session
 			LoginForm loginForm = (LoginForm) session.getAttribute("loginForm");
-			if (null == loginForm) {
-				loginForm = new LoginForm();
-			}
+			if (null != loginForm && loginForm.isLoggedIn()) {
+				LOGGER.debug("status change:" + loginForm.toString());
+				// add checking if data hub is installed and the server is
+				// acceptable. Something may have changed the server or removed
+				// the
+				// data hub outside the app
 
-			// add checking if data hub is installed and the server is
-			// acceptable. Something may have changed the server or removed the
-			// data hub outside the app
-			loginForm.setInstalled(dataHubService.isInstalled());
-			loginForm.setServerVersionAccepted(dataHubService.isServerAcceptable());
-			if (loginForm.isInstalled()) {
-				List<EntityModel> entities = entityManagerService.getEntities();
-				loginForm.setEntities(entities);
-				loginForm.refreshSelectedEntity();
-			}
+				if (!loginForm.isUninstalling()) {
+					loginForm.setInstalled(dataHubService.isInstalled());
+					loginForm.setServerVersionAccepted(dataHubService.isServerAcceptable());
+					if (loginForm.isInstalled()) {
+						// if (loginForm.isInstalled()) {
+						List<EntityModel> entities = entityManagerService.getEntities();
+						loginForm.setEntities(entities);
+						loginForm.refreshSelectedEntity();
+					}
+				}
 
-			// refresh the session loginForm
-			session.setAttribute("loginForm", loginForm);
+				// refresh the session loginForm
+				session.setAttribute("loginForm", loginForm);
+				// LOGGER.debug("installing modules ...");
+				// dataHubService.installUserModules();
+			}
 
 			return loginForm;
 		}
@@ -148,10 +154,8 @@ public class EntityApiController implements InitializingBean, DisposableBean, Fi
 	@Override
 	public void onWatchEvent(Path path, WatchEvent<Path> event) {
 		synchronized (syncStatusService) {
-        	LOGGER.debug("change detected ...");
+			LOGGER.debug("change detected ...");
 			syncStatusService.notifyAll();
-        	LOGGER.debug("installing modules ...");
-			dataHubService.installUserModules();
 		}
 	}
 }

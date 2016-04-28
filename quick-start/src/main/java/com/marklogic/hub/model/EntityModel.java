@@ -107,7 +107,7 @@ public class EntityModel {
         sb.append("{");
         sb.append("entityName=");
         sb.append(entityName);
-        sb.append("isSynched=");
+        sb.append(" isSynched=");
         sb.append(isSynched);
         sb.append("}");
 

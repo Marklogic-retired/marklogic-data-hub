@@ -52,7 +52,7 @@
     }
 
     function getLoginStatus() {
-      return $http.get('api/data-hub/login')
+      return $http.get('api/data-hub/login-status')
         .success(function(data) {
           self.status = data;
         })
@@ -203,11 +203,11 @@
         'params': params
       });
     }
-    
+
     function getJsonFile(filePath) {
       return $http.get(filePath);
     }
-    
+
     function downloadMlcpOptionsFile(data) {
       return $http.post('api/flows/options/download', data);
     }
