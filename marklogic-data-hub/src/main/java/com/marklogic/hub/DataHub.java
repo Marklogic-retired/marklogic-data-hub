@@ -40,8 +40,6 @@ import com.marklogic.appdeployer.ConfigDir;
 import com.marklogic.appdeployer.command.Command;
 import com.marklogic.appdeployer.command.modules.AllButAssetsModulesFinder;
 import com.marklogic.appdeployer.command.modules.AssetModulesFinder;
-import com.marklogic.appdeployer.command.security.DeployRolesCommand;
-import com.marklogic.appdeployer.command.security.DeployUsersCommand;
 import com.marklogic.appdeployer.impl.SimpleAppDeployer;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
@@ -66,6 +64,7 @@ import com.marklogic.mgmt.admin.AdminManager;
 import com.marklogic.mgmt.appservers.ServerManager;
 import com.marklogic.mgmt.databases.DatabaseManager;
 import com.marklogic.rest.util.Fragment;
+import com.marklogic.rest.util.ResourcesFragment;
 
 public class DataHub {
 
@@ -106,14 +105,17 @@ public class DataHub {
     public boolean isInstalled() {
         ServerManager sm = new ServerManager(client);
         DatabaseManager dm = new DatabaseManager(client);
-        boolean stagingAppServerExists = sm.exists(hubConfig.stagingHttpName);
-        boolean finalAppServerExists = sm.exists(hubConfig.finalHttpName);
-        boolean tracingAppServerExists = sm.exists(hubConfig.tracingHttpName);
+
+        ResourcesFragment srf = sm.getAsXml();
+        boolean stagingAppServerExists = srf.resourceExists(hubConfig.stagingHttpName);
+        boolean finalAppServerExists = srf.resourceExists(hubConfig.finalHttpName);
+        boolean tracingAppServerExists = srf.resourceExists(hubConfig.tracingHttpName);
         boolean appserversOk = (stagingAppServerExists && finalAppServerExists && tracingAppServerExists);
 
-        boolean stagingDbExists = dm.exists(hubConfig.stagingDbName);
-        boolean finalDbExists = dm.exists(hubConfig.finalDbName);
-        boolean tracingDbExists = dm.exists(hubConfig.stagingDbName);
+        ResourcesFragment drf = dm.getAsXml();
+        boolean stagingDbExists = drf.resourceExists(hubConfig.stagingDbName);
+        boolean finalDbExists = drf.resourceExists(hubConfig.finalDbName);
+        boolean tracingDbExists = drf.resourceExists(hubConfig.stagingDbName);
 
         boolean stagingForestsExist = false;
         boolean finalForestsExist = false;
@@ -127,20 +129,20 @@ public class DataHub {
             Fragment f = dm.getPropertiesAsXml(hubConfig.stagingDbName);
             stagingIndexesOn = Boolean.parseBoolean(f.getElementValue("//m:triple-index"));
             stagingIndexesOn = stagingIndexesOn && Boolean.parseBoolean(f.getElementValue("//m:collection-lexicon"));
-            stagingForestsExist = (dm.getForestIds(hubConfig.stagingDbName).size() == hubConfig.stagingForestsPerHost);
+            stagingForestsExist = (f.getElements("//m:forest").size() == hubConfig.stagingForestsPerHost);
         }
 
         if (finalDbExists) {
             Fragment f = dm.getPropertiesAsXml(hubConfig.finalDbName);
             finalIndexesOn = Boolean.parseBoolean(f.getElementValue("//m:triple-index"));
             finalIndexesOn = finalIndexesOn && Boolean.parseBoolean(f.getElementValue("//m:collection-lexicon"));
-            finalForestsExist = (dm.getForestIds(hubConfig.finalDbName).size() == hubConfig.finalForestsPerHost);
+            finalForestsExist = (f.getElements("//m:forest").size() == hubConfig.finalForestsPerHost);
         }
 
         if (tracingDbExists) {
             tracingIndexesOn = true;
-            int forests = dm.getForestIds(hubConfig.tracingDbName).size();
-            tracingForestsExist = (forests == hubConfig.tracingForestsPerHost);
+            Fragment f = dm.getPropertiesAsXml(hubConfig.tracingDbName);
+            tracingForestsExist = (f.getElements("//m:forest").size() == hubConfig.tracingForestsPerHost);
         }
 
         boolean dbsOk = (stagingDbExists && stagingIndexesOn &&
@@ -157,11 +159,7 @@ public class DataHub {
      */
     public void validateServer() throws ServerValidationException {
         try {
-            AdminConfig adminConfig = new AdminConfig();
-            adminConfig.setHost(hubConfig.host);
-            adminConfig.setUsername(hubConfig.adminUsername);
-            adminConfig.setPassword(hubConfig.adminPassword);
-            AdminManager am = new AdminManager(adminConfig);
+            AdminManager am = getAdminManager();
             String versionString = am.getServerVersion();
             int major = Integer.parseInt(versionString.substring(0, 1));
             int minor = Integer.parseInt(versionString.substring(2, 3) + versionString.substring(4, 5));
@@ -209,16 +207,21 @@ public class DataHub {
      * @throws IOException
      */
     public void install() throws IOException {
+        long startTime = System.nanoTime();
         LOGGER.debug("Installing the Data Hub into MarkLogic");
+
         // clean up any lingering cache for deployed modules
         PropertiesModuleManager moduleManager = new PropertiesModuleManager(this.assetInstallTimeFile);
         moduleManager.deletePropertiesFile();
 
-        AdminManager manager = new AdminManager();
         AppConfig config = getAppConfig(true);
-        SimpleAppDeployer deployer = new SimpleAppDeployer(client, manager);
+        SimpleAppDeployer deployer = new SimpleAppDeployer(client, getAdminManager());
         deployer.setCommands(getCommands(config));
+
         deployer.deploy(config);
+        long endTime = System.nanoTime();
+        long duration = (endTime - startTime);
+        LOGGER.info("Install took: " + (duration / 1000000000) + " seconds");
     }
 
     private DatabaseClient getDatabaseClient(int port, boolean isAdmin) {
@@ -302,12 +305,6 @@ public class DataHub {
     private List<Command> getCommands(AppConfig config) {
         List<Command> commands = new ArrayList<Command>();
 
-        // Security
-        List<Command> securityCommands = new ArrayList<Command>();
-        securityCommands.add(new DeployRolesCommand());
-        securityCommands.add(new DeployUsersCommand());
-        commands.addAll(securityCommands);
-
         // Databases
         List<Command> dbCommands = new ArrayList<Command>();
         DeployHubDatabaseCommand staging = new DeployHubDatabaseCommand(hubConfig.stagingDbName);
@@ -326,9 +323,9 @@ public class DataHub {
         commands.addAll(dbCommands);
 
         // App Servers
-        commands.add(new DeployRestApiCommand(hubConfig.stagingHttpName, hubConfig.stagingPort));
-        commands.add(new DeployRestApiCommand(hubConfig.finalHttpName, hubConfig.finalPort));
-        commands.add(new DeployRestApiCommand(hubConfig.tracingHttpName, hubConfig.tracePort));
+        commands.add(new DeployRestApiCommand(hubConfig.stagingHttpName, hubConfig.stagingPort, hubConfig.stagingDbName, hubConfig.stagingForestsPerHost));
+        commands.add(new DeployRestApiCommand(hubConfig.finalHttpName, hubConfig.finalPort, hubConfig.finalDbName, hubConfig.finalForestsPerHost));
+        commands.add(new DeployRestApiCommand(hubConfig.tracingHttpName, hubConfig.tracePort, hubConfig.tracingDbName, hubConfig.tracingForestsPerHost));
 
         commands.add(new UpdateRestApiServersCommand(hubConfig.stagingHttpName));
         commands.add(new UpdateRestApiServersCommand(hubConfig.finalHttpName));
@@ -340,23 +337,35 @@ public class DataHub {
         return commands;
     }
 
-
+    private AdminManager getAdminManager() {
+        AdminConfig adminConfig = new AdminConfig();
+        adminConfig.setHost(hubConfig.host);
+        adminConfig.setUsername(hubConfig.adminUsername);
+        adminConfig.setPassword(hubConfig.adminPassword);
+        AdminManager manager = new AdminManager(adminConfig);
+        return manager;
+    }
 
     /**
      * Uninstalls the data hub configuration and server-side modules from MarkLogic
      * @throws IOException
      */
     public void uninstall() throws IOException {
+        long startTime = System.nanoTime();
         LOGGER.debug("Uninstalling the Data Hub from MarkLogic");
-        AdminManager manager = new AdminManager();
         AppConfig config = getAppConfig(true);
-        SimpleAppDeployer deployer = new SimpleAppDeployer(client, manager);
+        AdminManager adminManager = getAdminManager();
+        adminManager.setWaitForRestartCheckInterval(250);
+        SimpleAppDeployer deployer = new SimpleAppDeployer(client, adminManager);
         deployer.setCommands(getCommands(config));
         deployer.undeploy(config);
 
         // clean up any lingering cache for deployed modules
         PropertiesModuleManager moduleManager = new PropertiesModuleManager(this.assetInstallTimeFile);
         moduleManager.deletePropertiesFile();
+        long endTime = System.nanoTime();
+        long duration = (endTime - startTime);
+        LOGGER.info("Uninstall took: " + (duration / 1000000000) + " seconds");
     }
 
     class EntitiesValidator extends ResourceManager {

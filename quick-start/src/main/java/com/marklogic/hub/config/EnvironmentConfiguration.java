@@ -9,6 +9,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Paths;
 import java.util.Properties;
 
 import org.slf4j.Logger;
@@ -299,7 +300,8 @@ public class EnvironmentConfiguration {
 	    if(file.exists()) {
 	        return Files.toString(file, Charsets.UTF_8);
 	    }
-	    return "{}";
+	    String currentDirectory = Paths.get("").toAbsolutePath().toString();
+	    return "{ \"input_file_path\": \"" + currentDirectory + "\" }";
     }
 
 	public HubConfig getHubConfig() {

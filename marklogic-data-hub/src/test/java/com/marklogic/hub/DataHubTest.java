@@ -92,7 +92,7 @@ public class DataHubTest extends HubTestBase {
         
         //get entities and flows
         EntityManager entityManager = new EntityManager(stagingClient);
-        FlowManager flowManager = new FlowManager(finalClient);
+        FlowManager flowManager = new FlowManager(stagingClient);
         List<Entity> entitiesInServer = entityManager.getEntities();
         
         for (Entity entity : entitiesInServer) {
