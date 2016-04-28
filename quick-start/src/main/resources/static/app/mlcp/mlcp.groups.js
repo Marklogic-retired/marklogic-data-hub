@@ -241,7 +241,7 @@
           angular.forEach(groups, function(group) {
             angular.forEach(group.settings, function(setting) {
               if (setting.field === key) {
-                setting.value = value.replace(/"/g, '');
+                setting.value = (value && value.replace) ? value.replace(/"/g, '') : value;
               }
             });
           });
