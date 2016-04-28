@@ -62,12 +62,16 @@ public class DataHubServerApiController extends BaseController {
 				loginForm.setServerVersionAccepted(dataHubService.isServerAcceptable());
 				loginForm.setHasErrors(false);
 				loginForm.setLoggedIn(true);
-				loginForm.setUninstalling(false);
 				environmentConfiguration.saveConfigurationToFile();
 				session.setAttribute("loginForm", loginForm);
 
 				if (loginForm.isInstalled()) {
 					this.loadUserModules(loginForm);
+					//synchronized (syncStatusService) {
+					//	LOGGER.debug("installing modules ...");
+					//	this.installUserModules(session);
+					//	LOGGER.debug("modules installed.");
+					//}
 				} 
 
 			} else {
@@ -118,7 +122,6 @@ public class DataHubServerApiController extends BaseController {
 			loginForm = new LoginForm();
 			this.environmentConfiguration.loadConfigurationFromFiles();
 			this.retrieveEnvironmentConfiguration(loginForm);
-			loginForm.setUninstalling(false);
 			session.setAttribute("loginForm", loginForm);
 		} else if (loginForm.isInstalled()) {
 			loginForm.setEntities(entityManagerService.getEntities());
@@ -140,7 +143,6 @@ public class DataHubServerApiController extends BaseController {
 		LOGGER.debug("POST: logout");
 		LoginForm loginForm = (LoginForm) session.getAttribute("loginForm");
 		loginForm.setLoggedIn(false);
-		loginForm.setUninstalling(false);
 		this.retrieveEnvironmentConfiguration(loginForm);
 
 		Enumeration<String> attrNames = session.getAttributeNames();
@@ -165,7 +167,6 @@ public class DataHubServerApiController extends BaseController {
 	public LoginForm uninstall(HttpSession session) {
 		LOGGER.debug("POST: uninstall");
 		LoginForm loginForm = (LoginForm) session.getAttribute("loginForm");
-		loginForm.setUninstalling(true);
 		dataHubService.uninstall();
 		loginForm.setInstalled(false);
 		this.unLoadUserModules(loginForm);

@@ -117,14 +117,17 @@ public class EntityApiController implements InitializingBean, DisposableBean, Fi
 				// the
 				// data hub outside the app
 
-				if (!loginForm.isUninstalling()) {
-					loginForm.setInstalled(dataHubService.isInstalled());
-					loginForm.setServerVersionAccepted(dataHubService.isServerAcceptable());
-					if (loginForm.isInstalled()) {
-						// if (loginForm.isInstalled()) {
-						List<EntityModel> entities = entityManagerService.getEntities();
-						loginForm.setEntities(entities);
-						loginForm.refreshSelectedEntity();
+				loginForm.setInstalled(dataHubService.isInstalled());
+				loginForm.setServerVersionAccepted(dataHubService.isServerAcceptable());
+				if (loginForm.isInstalled()) {
+					// if (loginForm.isInstalled()) {
+					List<EntityModel> entities = entityManagerService.getEntities();
+					loginForm.setEntities(entities);
+					loginForm.refreshSelectedEntity();
+					synchronized (syncStatusService) {
+						LOGGER.debug("installing modules ...");
+						dataHubService.installUserModules();
+						LOGGER.debug("modules installed.");
 					}
 				}
 

@@ -18,7 +18,6 @@ public class LoginForm extends BaseForm {
 	private boolean serverVersionAccepted;
 	private boolean installed;
 	private boolean loggedIn;
-	private boolean uninstalling;
     private List<EntityModel> entities = new ArrayList<EntityModel>();
     private EntityModel selectedEntity;
 
@@ -90,14 +89,6 @@ public class LoginForm extends BaseForm {
 		return loggedIn;
 	}
 
-	public boolean isUninstalling() {
-		return uninstalling;
-	}
-
-	public void setUninstalling(boolean uninstalling) {
-		this.uninstalling = uninstalling;
-	}
-
 	public void setLoggedIn(boolean loggedIn) {
 		this.loggedIn = loggedIn;
 	}
@@ -153,7 +144,7 @@ public class LoginForm extends BaseForm {
 		return "LoginForm [mlHost=" + mlHost + ", mlStagingPort=" + mlStagingPort + ", mlFinalPort=" + mlFinalPort
 				+ ", mlTracePort=" + mlTracePort + ", mlUsername=" + mlUsername + ", mlPassword=" + mlPassword
 				+ ", userPluginDir=" + userPluginDir + ", serverVersionAccepted=" + serverVersionAccepted
-				+ ", installed=" + installed + ", loggedIn=" + loggedIn + " uninstalling=" + uninstalling  
+				+ ", installed=" + installed + ", loggedIn=" + loggedIn   
 				+ ", entities=" + entities + ", selectedEntity="
 				+ selectedEntity + "]";
 	}

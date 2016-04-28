@@ -9,7 +9,6 @@ public class EntityModel {
     private String entityName;
     private List<FlowModel> inputFlows;
     private List<FlowModel> harmonizeFlows;
-    private boolean isSynched;
     private RestModel inputRest;
     private RestModel harmonizeRest;
 
@@ -61,30 +60,6 @@ public class EntityModel {
         this.harmonizeFlows = harmonizeFlows;
     }
 
-    public boolean isSynched() {
-        return isSynched;
-    }
-
-    public void setSynched(boolean isSynched) {
-        this.isSynched = isSynched;
-    }
-
-    public void setInputFlowsSynched(boolean synched) {
-        if (inputFlows != null) {
-            for (FlowModel model : inputFlows) {
-                model.setSynched(synched);
-            }
-        }
-    }
-
-    public void setHarmonizeFlowsSynched(boolean synched) {
-        if (harmonizeFlows != null) {
-            for (FlowModel model : harmonizeFlows) {
-                model.setSynched(synched);
-            }
-        }
-    }
-
     public RestModel getInputRest() {
         return inputRest;
     }
@@ -107,8 +82,6 @@ public class EntityModel {
         sb.append("{");
         sb.append("entityName=");
         sb.append(entityName);
-        sb.append(" isSynched=");
-        sb.append(isSynched);
         sb.append("}");
 
         return sb.toString();

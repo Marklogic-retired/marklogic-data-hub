@@ -43,7 +43,6 @@ public class FlowModelFactory {
         FlowModel flowModel = new FlowModel();
         flowModel.setEntityName(entityName);
         flowModel.setFlowName(flowName);
-        flowModel.setSynched(false);
 
         Scaffolding.createFlow(entityName, flowName, flowType, pluginFormat,
                 dataFormat, userPluginDirPath);
@@ -72,7 +71,6 @@ public class FlowModelFactory {
                 && flowType.equals(flow.getType())) {
             synched = syncStatusService.isDirectorySynched(absolutePath);
         }
-        flowModel.setSynched(synched);
         return flowModel;
     }
 }
