@@ -1,0 +1,71 @@
+<div class="modal-header">
+  <button type="button" class="close" ng-click="ctrl.cancel()">
+    <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+  <h4 class="modal-title" id="myModalLabel">Load Data</h4>
+</div>
+<div class="modal-body" id="myModalBody" ng-cloak>
+  <div class="row">
+    <div id="details" class="col-xs-12 col-md-12">
+      <form name="loadDataForm" ng-submit="ctrl.ok()">
+        <div class="form-group" ng-class="{ 'has-error' : !loadDataForm.ifp.$valid }">
+          <label for="ifp" popover-trigger="mouseenter" uib-popover="The location of a folder containing the files you wish to load.">Location of Files to Load</label>
+          <input id="ifp" class="form-control" name="ifp" type="text" ng-model="mlcp.input_file_path"
+            placeHolder="Enter Path (required)" required="required" ng-focus="showInputPathTreeBrowser = true">
+          <div id="inputPathTreeBrowser" class="panel panel-primary tree-scroller-cust1" ng-show="showInputPathTreeBrowser">
+            <div class="panel-body">
+              <treecontrol class="tree-classic" tree-model="ctrl.dataForTheTree"
+              options="ctrl.treeOptions" on-node-toggle="ctrl.onNodeToggle(node,expanded)">
+                {{node.folder}}
+              </treecontrol>
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="input_file_type" popover-trigger="mouseenter" uib-popover="The input file type. Accepted value: aggregates, archive, delimited_text, delimited_json, documents, forest, rdf, sequencefile. Default: documents.">Input File Type</label>
+          <select class="form-control" name="input_file_type" ng-model="mlcp.input_file_type" ng-focus="ctrl.hideFileTree()">
+            <option value="aggregates">Aggregates</option>
+            <option value="archive">Archive</option>
+            <option value="delimited_text">Delimited Text</option>
+            <option value="delimited_json">Delimited Json</option>
+            <option value="documents">Documents</option>
+            <option value="forest">Forest</option>
+            <option value="rdf">RDF</option>
+            <option value="sequencefile">Sequence File</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <uib-accordion close-others="true">
+            <uib-accordion-group heading="{{group.category}}" ng-repeat="group in ctrl.groups" ng-show="ctrl.isGroupVisible(group.category)">
+              <p class="hint"><strong>Hint:</strong> Hover over the labels to view the description</p>
+              <div class="form-group" ng-repeat="setting in ::group.settings">
+               <!-- ng-show="ctrl.isFieldVisible(setting.filter, group.settings)"> -->
+                <input type="checkbox" name="{{setting.field}}" ng-if="setting.type === 'boolean'" ng-model="setting.value" ng-focus="ctrl.hideFileTree()">
+                <label class="control-label" for="{{setting.field}}" popover-trigger="mouseenter" uib-popover="{{setting.description}}">{{setting.label}}</label><br ng-if="setting.type !== 'boolean'"/>
+                <input type="text" class="form-control" name="{{setting.field}}" ng-if="ctrl.isText(setting.type)" ng-model="setting.value" placeholder="{{setting.placeholder ? setting.placeholder : ''}}" ng-focus="ctrl.hideFileTree()"
+                  ng-readonly="setting.readOnly" ng-keypress="makeDefaultValueReadOnlyIfApplicable($event)"/>
+                <select class="form-control" name="{{setting.field}}" ng-if="setting.type === 'type'" ng-model="setting.value" ng-focus="ctrl.hideFileTree()">
+                  <option ng-repeat="option in ::setting.options" value="{{option.value}}">{{option.label}}</option>
+                </select>
+              </div>
+            </uib-accordion-group>
+          </uib-accordion>
+        </div>
+        <div class="form-group">
+          <h4><span popover-trigger="mouseenter" uib-popover="This is the MLCP Command line that we generated from the options you chose.">MLCP Command</span><i popover-trigger="mouseenter" uib-popover="Copy MLCP command to the clipboard." class="glyphicon glyphicon-copy copy-icon" aria-hidden="true" ngclipboard data-clipboard-target="#mlcpcmd"></i></h4>
+        </div>
+        <div class="form-group">
+          <section class="code">
+            <textarea id="mlcpcmd" rows="6" readonly ng-model="ctrl.mlcpCommand"></textarea>
+          </section>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<div class="modal-footer">
+  <div class="col-xs-12 col-md-12">
+    <button class="btn btn-default" ng-click="ctrl.cancel()">Cancel</button>
+    <button class="btn btn-primary" ng-click="ctrl.download()">Download Config</button>
+    <button class="btn btn-success" ng-click="ctrl.ok()">Load Data</button>
+  </div>
+</div>

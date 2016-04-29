@@ -1,7 +1,1 @@
-<envelope xmlns="http://marklogic.com/data-hub/envelope">
-  <headers></headers>
-  <triples></triples>
-  <content>
-    <testing xmlns="">123</testing>
-  </content>
-</envelope>
+<envelope xmlns="http://marklogic.com/data-hub/envelope"><headers></headers><triples></triples><content><testing xmlns="">123</testing></content></envelope>

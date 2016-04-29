@@ -15,15 +15,11 @@
  */
 package com.marklogic.hub;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.stream.XMLStreamException;
 
-import org.codehaus.jettison.json.JSONException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobExecutionListener;
@@ -54,7 +50,6 @@ import com.marklogic.client.io.DOMHandle;
 import com.marklogic.client.io.Format;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.util.RequestParameters;
-import com.marklogic.hub.Mlcp.SourceOptions;
 import com.marklogic.hub.collector.Collector;
 import com.marklogic.hub.collector.ServerCollector;
 import com.marklogic.hub.flow.Flow;
@@ -67,8 +62,6 @@ public class FlowManager extends ResourceManager {
     private static final String HUB_NS = "http://marklogic.com/data-hub";
     private static final String NAME = "flow";
     private static final int DEFAULT_THREAD_COUNT = 8;
-
-    static final private Logger LOGGER = LoggerFactory.getLogger(FlowManager.class);
 
     private DatabaseClient client;
 
@@ -227,26 +220,6 @@ public class FlowManager extends ResourceManager {
         }
         catch (Exception e) {
             throw new RuntimeException(e);
-        }
-    }
-
-    public void runInputFlow(Flow flow, HubConfig config) {
-        try {
-            Mlcp mlcp = new Mlcp(config.host, config.stagingPort, config.adminUsername, config.adminPassword);
-            SourceOptions sourceOptions = new SourceOptions(
-                    flow.getEntityName(), flow.getName(),
-                    FlowType.INPUT.toString(),
-                    flow.getDataFormat());
-            sourceOptions.setInputFileType("documents");
-            sourceOptions.setTransformModule("/com.marklogic.hub/mlcp-flow-transform.xqy");
-            sourceOptions.setTransformNamespace("http://marklogic.com/data-hub/mlcp-flow-transform");
-            mlcp.addSourceDirectory(config.modulesPath, sourceOptions);
-            mlcp.loadContent();
-        }
-        catch (IOException | JSONException e) {
-            LOGGER.error(
-                    "Error encountered while trying to run flow:  "
-                            + flow.getEntityName() + " > " + flow.getName(), e);
         }
     }
 

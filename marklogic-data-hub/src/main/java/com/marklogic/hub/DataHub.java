@@ -40,8 +40,6 @@ import com.marklogic.appdeployer.ConfigDir;
 import com.marklogic.appdeployer.command.Command;
 import com.marklogic.appdeployer.command.modules.AllButAssetsModulesFinder;
 import com.marklogic.appdeployer.command.modules.AssetModulesFinder;
-import com.marklogic.appdeployer.command.security.DeployRolesCommand;
-import com.marklogic.appdeployer.command.security.DeployUsersCommand;
 import com.marklogic.appdeployer.impl.SimpleAppDeployer;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
@@ -66,6 +64,7 @@ import com.marklogic.mgmt.admin.AdminManager;
 import com.marklogic.mgmt.appservers.ServerManager;
 import com.marklogic.mgmt.databases.DatabaseManager;
 import com.marklogic.rest.util.Fragment;
+import com.marklogic.rest.util.ResourcesFragment;
 
 public class DataHub {
 
@@ -105,269 +104,279 @@ public class DataHub {
 	 * @return true if installed, false otherwise
 	 */
 	public boolean isInstalled() {
-		ServerManager sm = new ServerManager(client);
-		DatabaseManager dm = new DatabaseManager(client);
-		boolean stagingAppServerExists = sm.exists(hubConfig.stagingHttpName);
-		boolean finalAppServerExists = sm.exists(hubConfig.finalHttpName);
-		boolean tracingAppServerExists = sm.exists(hubConfig.tracingHttpName);
-		boolean appserversOk = (stagingAppServerExists && finalAppServerExists && tracingAppServerExists);
+	    ServerManager sm = new ServerManager(client);
+        DatabaseManager dm = new DatabaseManager(client);
 
-		boolean stagingDbExists = dm.exists(hubConfig.stagingDbName);
-		boolean finalDbExists = dm.exists(hubConfig.finalDbName);
-		boolean tracingDbExists = dm.exists(hubConfig.stagingDbName);
+        ResourcesFragment srf = sm.getAsXml();
+        boolean stagingAppServerExists = srf.resourceExists(hubConfig.stagingHttpName);
+        boolean finalAppServerExists = srf.resourceExists(hubConfig.finalHttpName);
+        boolean tracingAppServerExists = srf.resourceExists(hubConfig.tracingHttpName);
+        boolean appserversOk = (stagingAppServerExists && finalAppServerExists && tracingAppServerExists);
 
-		boolean stagingForestsExist = false;
-		boolean finalForestsExist = false;
-		boolean tracingForestsExist = false;
+        ResourcesFragment drf = dm.getAsXml();
+        boolean stagingDbExists = drf.resourceExists(hubConfig.stagingDbName);
+        boolean finalDbExists = drf.resourceExists(hubConfig.finalDbName);
+        boolean tracingDbExists = drf.resourceExists(hubConfig.stagingDbName);
 
-		boolean stagingIndexesOn = false;
-		boolean finalIndexesOn = false;
-		boolean tracingIndexesOn = false;
+        boolean stagingForestsExist = false;
+        boolean finalForestsExist = false;
+        boolean tracingForestsExist = false;
 
-		if (stagingDbExists) {
-			Fragment f = dm.getPropertiesAsXml(hubConfig.stagingDbName);
-			stagingIndexesOn = Boolean.parseBoolean(f.getElementValue("//m:triple-index"));
-			stagingIndexesOn = stagingIndexesOn && Boolean.parseBoolean(f.getElementValue("//m:collection-lexicon"));
-			stagingForestsExist = (dm.getForestIds(hubConfig.stagingDbName).size() == hubConfig.stagingForestsPerHost);
-		}
+        boolean stagingIndexesOn = false;
+        boolean finalIndexesOn = false;
+        boolean tracingIndexesOn = false;
 
-		if (finalDbExists) {
-			Fragment f = dm.getPropertiesAsXml(hubConfig.finalDbName);
-			finalIndexesOn = Boolean.parseBoolean(f.getElementValue("//m:triple-index"));
-			finalIndexesOn = finalIndexesOn && Boolean.parseBoolean(f.getElementValue("//m:collection-lexicon"));
-			finalForestsExist = (dm.getForestIds(hubConfig.finalDbName).size() == hubConfig.finalForestsPerHost);
-		}
+        if (stagingDbExists) {
+            Fragment f = dm.getPropertiesAsXml(hubConfig.stagingDbName);
+            stagingIndexesOn = Boolean.parseBoolean(f.getElementValue("//m:triple-index"));
+            stagingIndexesOn = stagingIndexesOn && Boolean.parseBoolean(f.getElementValue("//m:collection-lexicon"));
+            stagingForestsExist = (f.getElements("//m:forest").size() == hubConfig.stagingForestsPerHost);
+        }
 
-		if (tracingDbExists) {
-			tracingIndexesOn = true;
-			int forests = dm.getForestIds(hubConfig.tracingDbName).size();
-			tracingForestsExist = (forests == hubConfig.tracingForestsPerHost);
-		}
+        if (finalDbExists) {
+            Fragment f = dm.getPropertiesAsXml(hubConfig.finalDbName);
+            finalIndexesOn = Boolean.parseBoolean(f.getElementValue("//m:triple-index"));
+            finalIndexesOn = finalIndexesOn && Boolean.parseBoolean(f.getElementValue("//m:collection-lexicon"));
+            finalForestsExist = (f.getElements("//m:forest").size() == hubConfig.finalForestsPerHost);
+        }
 
-		boolean dbsOk = (stagingDbExists && stagingIndexesOn && finalDbExists && finalIndexesOn && tracingDbExists
-				&& tracingIndexesOn);
-		boolean forestsOk = (stagingForestsExist && finalForestsExist && tracingForestsExist);
+        if (tracingDbExists) {
+            tracingIndexesOn = true;
+            Fragment f = dm.getPropertiesAsXml(hubConfig.tracingDbName);
+            tracingForestsExist = (f.getElements("//m:forest").size() == hubConfig.tracingForestsPerHost);
+        }
 
-		return (appserversOk && dbsOk && forestsOk);
+        boolean dbsOk = (stagingDbExists && stagingIndexesOn &&
+                finalDbExists && finalIndexesOn &&
+                tracingDbExists && tracingIndexesOn);
+        boolean forestsOk = (stagingForestsExist && finalForestsExist && tracingForestsExist);
+
+        return (appserversOk && dbsOk && forestsOk);
 	}
 
 	/**
-	 * Validates the MarkLogic server to ensure compatibility with the hub
-	 * 
-	 * @throws ServerValidationException
-	 *             if the server is not compatible
-	 */
-	public void validateServer() throws ServerValidationException {
-		try {
-			AdminConfig adminConfig = new AdminConfig();
-			adminConfig.setHost(hubConfig.host);
-			adminConfig.setUsername(hubConfig.adminUsername);
-			adminConfig.setPassword(hubConfig.adminPassword);
-			AdminManager am = new AdminManager(adminConfig);
-			String versionString = am.getServerVersion();
-			int major = Integer.parseInt(versionString.substring(0, 1));
-			int minor = Integer.parseInt(versionString.substring(2, 3) + versionString.substring(4, 5));
-			if (major < 8 || minor < 4) {
-				throw new ServerValidationException("Invalid MarkLogic Server Version: " + versionString);
-			}
-		} catch (ResourceAccessException e) {
-			throw new ServerValidationException(e.toString());
-		}
-	}
+     * Validates the MarkLogic server to ensure compatibility with the hub
+     * @throws ServerValidationException if the server is not compatible
+     */
+    public void validateServer() throws ServerValidationException {
+        try {
+            AdminManager am = getAdminManager();
+            String versionString = am.getServerVersion();
+            int major = Integer.parseInt(versionString.substring(0, 1));
+            int minor = Integer.parseInt(versionString.substring(2, 3) + versionString.substring(4, 5));
+            if (major < 8 || minor < 4) {
+                throw new ServerValidationException("Invalid MarkLogic Server Version: " + versionString);
+            }
+        }
+        catch(ResourceAccessException e) {
+            throw new ServerValidationException(e.toString());
+        }
+    }
 
-	private AppConfig getAppConfig() throws IOException {
-		AppConfig config = new AppConfig();
-		config.setHost(hubConfig.host);
-		config.setRestPort(hubConfig.stagingPort);
-		config.setName(hubConfig.name);
-		config.setRestAdminUsername(hubConfig.adminUsername);
-		config.setRestAdminPassword(hubConfig.adminPassword);
-		config.setModulesDatabaseName(hubConfig.modulesDbName);
+    private AppConfig getAppConfig() throws IOException {
+        AppConfig config = new AppConfig();
+        config.setHost(hubConfig.host);
+        config.setRestPort(hubConfig.stagingPort);
+        config.setName(hubConfig.name);
+        config.setRestAdminUsername(hubConfig.adminUsername);
+        config.setRestAdminPassword(hubConfig.adminPassword);
+        config.setModulesDatabaseName(hubConfig.modulesDbName);
 
-		List<String> paths = new ArrayList<String>();
-		paths.add(new ClassPathResource("ml-modules").getPath());
+        List<String> paths = new ArrayList<String>();
+        paths.add(new ClassPathResource("ml-modules").getPath());
 
-		String configPath = new ClassPathResource("ml-config").getPath();
-		config.setConfigDir(new ConfigDir(new File(configPath)));
-		config.setModulePaths(paths);
+        String configPath = new ClassPathResource("ml-config").getPath();
+        config.setConfigDir(new ConfigDir(new File(configPath)));
+        config.setModulePaths(paths);
 
-		Map<String, String> customTokens = config.getCustomTokens();
-		customTokens.put("%%STAGING_DATABASE%%", hubConfig.stagingDbName);
-		customTokens.put("%%FINAL_DATABASE%%", hubConfig.finalDbName);
-		customTokens.put("%%TRACING_DATABASE%%", hubConfig.tracingDbName);
-		customTokens.put("%%MODULES_DATABASE%%", hubConfig.modulesDbName);
+        Map<String, String> customTokens = config.getCustomTokens();
+        customTokens.put("%%STAGING_DATABASE%%", hubConfig.stagingDbName);
+        customTokens.put("%%FINAL_DATABASE%%", hubConfig.finalDbName);
+        customTokens.put("%%TRACING_DATABASE%%", hubConfig.tracingDbName);
+        customTokens.put("%%MODULES_DATABASE%%", hubConfig.modulesDbName);
 
-		return config;
-	}
+        return config;
+    }
 
-	/**
-	 * Installs the data hub configuration and server-side modules into
-	 * MarkLogic
-	 * 
-	 * @throws IOException
-	 */
-	public void install() throws IOException {
-		LOGGER.debug("Installing the Data Hub into MarkLogic");
-		// clean up any lingering cache for deployed modules
-		PropertiesModuleManager moduleManager = new PropertiesModuleManager(this.assetInstallTimeFile);
-		moduleManager.deletePropertiesFile();
+    /**
+     * Installs the data hub configuration and server-side modules into MarkLogic
+     * @throws IOException
+     */
+    public void install() throws IOException {
+        long startTime = System.nanoTime();
+        LOGGER.debug("Installing the Data Hub into MarkLogic");
 
-		AdminManager manager = new AdminManager();
-		AppConfig config = getAppConfig();
-		SimpleAppDeployer deployer = new SimpleAppDeployer(client, manager);
-		deployer.setCommands(getCommands(config));
-		deployer.deploy(config);
-	}
+        // clean up any lingering cache for deployed modules
+        PropertiesModuleManager moduleManager = new PropertiesModuleManager(this.assetInstallTimeFile);
+        moduleManager.deletePropertiesFile();
 
-	private DatabaseClient getDatabaseClient(int port) {
-		AppConfig config = new AppConfig();
-		config.setHost(hubConfig.host);
-		config.setName(hubConfig.name);
-		config.setRestAdminUsername(hubConfig.adminUsername);
-		config.setRestAdminPassword(hubConfig.adminPassword);
-		DatabaseClient client = DatabaseClientFactory.newClient(hubConfig.host, port, hubConfig.adminUsername,
-				hubConfig.adminPassword, config.getRestAuthentication(), config.getRestSslContext(),
-				config.getRestSslHostnameVerifier());
-		return client;
-	}
+        AppConfig config = getAppConfig();
+        SimpleAppDeployer deployer = new SimpleAppDeployer(client, getAdminManager());
+        deployer.setCommands(getCommands(config));
 
-	/**
-	 * Installs User Provided modules into the Data Hub
-	 *
-	 * @param pathToUserModules
-	 *            - the absolute path to the user's modules folder
-	 * @return the canonical/absolute path of files that was loaded, together
-	 *         with its install time
-	 * @throws IOException
-	 */
-	public Set<File> installUserModules(String pathToUserModules) throws IOException {
-		LOGGER.debug("Installing user modules into MarkLogic");
+        deployer.deploy(config);
+        long endTime = System.nanoTime();
+        long duration = (endTime - startTime);
+        LOGGER.info("Install took: " + (duration / 1000000000) + " seconds");
+    }
 
-		AppConfig config = getAppConfig();
+    private DatabaseClient getDatabaseClient(int port) {
+        AppConfig config = new AppConfig();
+        config.setHost(hubConfig.host);
+        config.setName(hubConfig.name);
+        config.setRestAdminUsername(hubConfig.adminUsername);
+        config.setRestAdminPassword(hubConfig.adminPassword);
+        DatabaseClient client = DatabaseClientFactory.newClient(hubConfig.host, port, hubConfig.adminUsername, hubConfig.adminPassword,
+                config.getRestAuthentication(), config.getRestSslContext(), config.getRestSslHostnameVerifier());
+        return client;
+    }
 
-		DatabaseClient stagingClient = getDatabaseClient(hubConfig.stagingPort);
-		DatabaseClient finalClient = getDatabaseClient(hubConfig.finalPort);
+    /**
+     * Installs User Provided modules into the Data Hub
+     *
+     * @param pathToUserModules
+     *            - the absolute path to the user's modules folder
+     * @return the canonical/absolute path of files that was loaded, together
+     *         with its install time
+     * @throws IOException
+     */
+    public Set<File> installUserModules(String pathToUserModules) throws IOException {
+        LOGGER.debug("Installing user modules into MarkLogic");
 
-		Set<File> loadedFiles = new HashSet<File>();
+        AppConfig config = getAppConfig();
 
-		XccAssetLoader assetLoader = config.newXccAssetLoader();
-		assetLoader.setFileFilter(new HubFileFilter());
+        DatabaseClient stagingClient = getDatabaseClient(hubConfig.stagingPort);
+        DatabaseClient finalClient = getDatabaseClient(hubConfig.finalPort);
 
-		PropertiesModuleManager moduleManager = new PropertiesModuleManager(this.assetInstallTimeFile);
-		HubModulesLoader hubModulesLoader = new HubModulesLoader(assetLoader, moduleManager);
-		File baseDir = Paths.get(pathToUserModules).normalize().toAbsolutePath().toFile();
-		loadedFiles.addAll(hubModulesLoader.loadModules(baseDir, new AssetModulesFinder(), stagingClient));
-		Path startPath = Paths.get(pathToUserModules, "entities");
 
-		Files.walkFileTree(startPath, new SimpleFileVisitor<Path>() {
-			@Override
-			public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-				boolean isRest = dir.endsWith("REST");
+        Set<File> loadedFiles = new HashSet<File>();
 
-				String dirStr = dir.toString();
-				boolean isInputDir = dirStr.matches(".*[/\\\\]input[/\\\\].*");
-				boolean isHarmonizeDir = dirStr.matches(".*[/\\\\]harmonize[/\\\\].*");
-				if (isRest) {
-					if (isInputDir) {
-						loadedFiles.addAll(hubModulesLoader.loadModules(dir.normalize().toAbsolutePath().toFile(),
-								new AllButAssetsModulesFinder(), stagingClient));
-					} else if (isHarmonizeDir) {
-						loadedFiles.addAll(hubModulesLoader.loadModules(dir.normalize().toAbsolutePath().toFile(),
-								new AllButAssetsModulesFinder(), finalClient));
-					}
-					return FileVisitResult.SKIP_SUBTREE;
-				} else {
-					return FileVisitResult.CONTINUE;
-				}
-			}
-		});
-		return loadedFiles;
-	}
+        XccAssetLoader assetLoader = config.newXccAssetLoader();
+        assetLoader.setFileFilter(new HubFileFilter());
 
-	public JsonNode validateUserModules() {
-		LOGGER.debug("validating user modules");
-		DatabaseClient client = getDatabaseClient(hubConfig.stagingPort);
-		EntitiesValidator ev = new EntitiesValidator(client);
-		return ev.validate();
-	}
+        PropertiesModuleManager moduleManager = new PropertiesModuleManager(this.assetInstallTimeFile);
+        HubModulesLoader hubModulesLoader = new HubModulesLoader(assetLoader, moduleManager);
+        File baseDir = Paths.get(pathToUserModules).normalize().toAbsolutePath().toFile();
+        loadedFiles.addAll(hubModulesLoader.loadModules(baseDir, new AssetModulesFinder(), stagingClient));
+        Path startPath = Paths.get(pathToUserModules, "entities");
 
-	private List<Command> getCommands(AppConfig config) {
-		List<Command> commands = new ArrayList<Command>();
+        Files.walkFileTree(startPath, new SimpleFileVisitor<Path>() {
+            @Override
+            public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs)
+                throws IOException
+            {
+                boolean isRest = dir.endsWith("REST");
 
-		// Security
-		List<Command> securityCommands = new ArrayList<Command>();
-		securityCommands.add(new DeployRolesCommand());
-		securityCommands.add(new DeployUsersCommand());
-		commands.addAll(securityCommands);
+                String dirStr = dir.toString();
+                boolean isInputDir = dirStr.matches(".*[/\\\\]input[/\\\\].*");
+                boolean isHarmonizeDir = dirStr.matches(".*[/\\\\]harmonize[/\\\\].*");
+                if (isRest) {
+                    if (isInputDir) {
+                        loadedFiles.addAll(hubModulesLoader.loadModules(dir.normalize().toAbsolutePath().toFile(), new AllButAssetsModulesFinder(), stagingClient));
+                    }
+                    else if (isHarmonizeDir) {
+                        loadedFiles.addAll(hubModulesLoader.loadModules(dir.normalize().toAbsolutePath().toFile(), new AllButAssetsModulesFinder(), finalClient));
+                    }
+                    return FileVisitResult.SKIP_SUBTREE;
+                }
+                else {
+                    return FileVisitResult.CONTINUE;
+                }
+            }
+        });
+        return loadedFiles;
+    }
 
-		// Databases
-		List<Command> dbCommands = new ArrayList<Command>();
-		DeployHubDatabaseCommand staging = new DeployHubDatabaseCommand(hubConfig.stagingDbName);
-		staging.setForestsPerHost(hubConfig.stagingForestsPerHost);
-		dbCommands.add(staging);
+    public JsonNode validateUserModules() {
+        LOGGER.debug("validating user modules");
+        DatabaseClient client = getDatabaseClient(hubConfig.stagingPort);
+        EntitiesValidator ev = new EntitiesValidator(client);
+        return ev.validate();
+    }
 
-		DeployHubDatabaseCommand finalDb = new DeployHubDatabaseCommand(hubConfig.finalDbName);
-		finalDb.setForestsPerHost(hubConfig.finalForestsPerHost);
-		dbCommands.add(finalDb);
+    private List<Command> getCommands(AppConfig config) {
+        List<Command> commands = new ArrayList<Command>();
 
-		DeployHubDatabaseCommand tracingDb = new DeployHubDatabaseCommand(hubConfig.tracingDbName);
-		tracingDb.setForestsPerHost(hubConfig.tracingForestsPerHost);
-		dbCommands.add(tracingDb);
+        // Databases
+        List<Command> dbCommands = new ArrayList<Command>();
+        DeployHubDatabaseCommand staging = new DeployHubDatabaseCommand(hubConfig.stagingDbName);
+        staging.setForestsPerHost(hubConfig.stagingForestsPerHost);
+        dbCommands.add(staging);
 
-		dbCommands.add(new DeployModulesDatabaseCommand(hubConfig.modulesDbName));
-		commands.addAll(dbCommands);
+        DeployHubDatabaseCommand finalDb = new DeployHubDatabaseCommand(hubConfig.finalDbName);
+        finalDb.setForestsPerHost(hubConfig.finalForestsPerHost);
+        dbCommands.add(finalDb);
 
-		// App Servers
-		commands.add(new DeployRestApiCommand(hubConfig.stagingHttpName, hubConfig.stagingPort));
-		commands.add(new DeployRestApiCommand(hubConfig.finalHttpName, hubConfig.finalPort));
-		commands.add(new DeployRestApiCommand(hubConfig.tracingHttpName, hubConfig.tracePort));
+        DeployHubDatabaseCommand tracingDb = new DeployHubDatabaseCommand(hubConfig.tracingDbName);
+        tracingDb.setForestsPerHost(hubConfig.tracingForestsPerHost);
+        dbCommands.add(tracingDb);
 
-		commands.add(new UpdateRestApiServersCommand(hubConfig.stagingHttpName));
-		commands.add(new UpdateRestApiServersCommand(hubConfig.finalHttpName));
-		commands.add(new UpdateRestApiServersCommand(hubConfig.tracingHttpName));
+        dbCommands.add(new DeployModulesDatabaseCommand(hubConfig.modulesDbName));
+        commands.addAll(dbCommands);
 
-		// Modules
-		commands.add(new LoadModulesCommand());
+        // App Servers
+        commands.add(new DeployRestApiCommand(hubConfig.stagingHttpName, hubConfig.stagingPort, hubConfig.stagingDbName, hubConfig.stagingForestsPerHost));
+        commands.add(new DeployRestApiCommand(hubConfig.finalHttpName, hubConfig.finalPort, hubConfig.finalDbName, hubConfig.finalForestsPerHost));
+        commands.add(new DeployRestApiCommand(hubConfig.tracingHttpName, hubConfig.tracePort, hubConfig.tracingDbName, hubConfig.tracingForestsPerHost));
 
-		return commands;
-	}
+        commands.add(new UpdateRestApiServersCommand(hubConfig.stagingHttpName));
+        commands.add(new UpdateRestApiServersCommand(hubConfig.finalHttpName));
+        commands.add(new UpdateRestApiServersCommand(hubConfig.tracingHttpName));
 
-	/**
-	 * Uninstalls the data hub configuration and server-side modules from
-	 * MarkLogic
-	 * 
-	 * @throws IOException
-	 */
-	public void uninstall() throws IOException {
-		LOGGER.debug("Uninstalling the Data Hub from MarkLogic");
-		AdminManager manager = new AdminManager();
-		AppConfig config = getAppConfig();
-		SimpleAppDeployer deployer = new SimpleAppDeployer(client, manager);
-		deployer.setCommands(getCommands(config));
-		deployer.undeploy(config);
+        // Modules
+        commands.add(new LoadModulesCommand());
 
-		// clean up any lingering cache for deployed modules
-		PropertiesModuleManager moduleManager = new PropertiesModuleManager(this.assetInstallTimeFile);
-		moduleManager.deletePropertiesFile();
-	}
+        return commands;
+    }
 
-	class EntitiesValidator extends ResourceManager {
-		private static final String NAME = "validate";
+    private AdminManager getAdminManager() {
+        AdminConfig adminConfig = new AdminConfig();
+        adminConfig.setHost(hubConfig.host);
+        adminConfig.setUsername(hubConfig.adminUsername);
+        adminConfig.setPassword(hubConfig.adminPassword);
+        AdminManager manager = new AdminManager(adminConfig);
+        return manager;
+    }
 
-		public EntitiesValidator(DatabaseClient client) {
-			super();
-			client.init(NAME, this);
-		}
+    /**
+     * Uninstalls the data hub configuration and server-side modules from MarkLogic
+     * @throws IOException
+     */
+    public void uninstall() throws IOException {
+        long startTime = System.nanoTime();
+        LOGGER.debug("Uninstalling the Data Hub from MarkLogic");
+        AppConfig config = getAppConfig();
+        AdminManager adminManager = getAdminManager();
+        adminManager.setWaitForRestartCheckInterval(250);
+        SimpleAppDeployer deployer = new SimpleAppDeployer(client, adminManager);
+        deployer.setCommands(getCommands(config));
+        deployer.undeploy(config);
 
-		public JsonNode validate() {
-			RequestParameters params = new RequestParameters();
-			ServiceResultIterator resultItr = this.getServices().get(params);
-			if (resultItr == null || !resultItr.hasNext()) {
-				return null;
-			}
-			ServiceResult res = resultItr.next();
-			JacksonHandle handle = new JacksonHandle();
-			return res.getContent(handle).get();
-		}
-	}
+        // clean up any lingering cache for deployed modules
+        PropertiesModuleManager moduleManager = new PropertiesModuleManager(this.assetInstallTimeFile);
+        moduleManager.deletePropertiesFile();
+        long endTime = System.nanoTime();
+        long duration = (endTime - startTime);
+        LOGGER.info("Uninstall took: " + (duration / 1000000000) + " seconds");
+    }
+
+    class EntitiesValidator extends ResourceManager {
+        private static final String NAME = "validate";
+
+        public EntitiesValidator(DatabaseClient client) {
+            super();
+            client.init(NAME, this);
+        }
+
+        public JsonNode validate() {
+            RequestParameters params = new RequestParameters();
+            ServiceResultIterator resultItr = this.getServices().get(params);
+            if (resultItr == null || ! resultItr.hasNext()) {
+                return null;
+            }
+            ServiceResult res = resultItr.next();
+            JacksonHandle handle = new JacksonHandle();
+            return res.getContent(handle).get();
+        }
+    }
 }

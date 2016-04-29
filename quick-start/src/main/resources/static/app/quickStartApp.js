@@ -14,11 +14,10 @@
     'angularBootstrapNavTree',
     'ngAnimate',
     'ui.bootstrap',
-    'ngMaterial',
-    'treeControl',
-    //'angucomplete-alt'
+    'angular-confirm',
     'ngSanitize',
-    'swaggerUi'
+    'swaggerUi',
+    'mlcp'
   ];
   angular.module('quickStartApp', dependencies)
     .factory('$exceptionHandler', ExceptionHandler)

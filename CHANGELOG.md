@@ -1,7 +1,31 @@
 # Change Log
 
-## [v1.0.0-beta.3](https://github.com/marklogic/marklogic-data-hub/tree/v1.0.0-beta.3)
+## [v1.0.0-beta.4](https://github.com/marklogic/marklogic-data-hub/tree/HEAD)
 
+[Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v1.0.0-beta.3...v1.0.0-beta.4)
+
+**Implemented enhancements:**
+
+- Minor improvements to Load Data Feature [\#205](https://github.com/marklogic/marklogic-data-hub/issues/205)
+
+**Fixed bugs:**
+
+- File permission error running hadoop to do data load [\#89](https://github.com/marklogic/marklogic-data-hub/issues/89)
+
+**Closed issues:**
+
+- Rename conform/conformance to harmonize [\#201](https://github.com/marklogic/marklogic-data-hub/issues/201)
+- Errors only flash on the GUI for a short time [\#192](https://github.com/marklogic/marklogic-data-hub/issues/192)
+- Investigate MLCP UI for creating MLCP cmd line options [\#164](https://github.com/marklogic/marklogic-data-hub/issues/164)
+- Examples need demo scripts [\#99](https://github.com/marklogic/marklogic-data-hub/issues/99)
+- DataHub.installUserModules should be "syncUserModules" [\#45](https://github.com/marklogic/marklogic-data-hub/issues/45)
+
+**Merged pull requests:**
+
+- Fix mlcp windows issue 89 [\#215](https://github.com/marklogic/marklogic-data-hub/pull/215) ([paxtonhare](https://github.com/paxtonhare))
+- 192 - Removed automatic closing of notification [\#208](https://github.com/marklogic/marklogic-data-hub/pull/208) ([maeisabelle](https://github.com/maeisabelle))
+
+## [v1.0.0-beta.3](https://github.com/marklogic/marklogic-data-hub/tree/v1.0.0-beta.3) (2016-04-15)
 [Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v1.0.0-beta.2...v1.0.0-beta.3)
 
 **Merged pull requests:**

@@ -14,7 +14,11 @@ public class DeployHubDatabaseCommand extends DeployDatabaseCommand {
         super();
         this.setDatabaseName(databaseName);
         this.setCreateDatabaseWithoutFile(true);
-        this.setExecuteSortOrder(SortOrderConstants.DEPLOY_CONTENT_DATABASES);
+        this.setExecuteSortOrder(SortOrderConstants.DEPLOY_OTHER_SERVERS);
+    }
+
+    @Override
+    public void undo(CommandContext context) {
     }
 
     @Override

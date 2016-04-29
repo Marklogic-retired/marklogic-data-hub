@@ -12,7 +12,7 @@
     .controller('topController', TopController);
 
   function TopController($scope, $location, $timeout, DataHub,
-    ModalService, TaskManager) {
+    ModalService, TaskManager, mlcp) {
 
     $scope.status = DataHub.status;
     $scope.entityForm = {};
@@ -56,14 +56,18 @@
     $scope.runInputFlow = function(flow) {
       $scope.loading = true;
       DataHub.getPreviousOptions(flow.entityName, flow.flowName)
-        .success(function(options) {
+        .success(function(mlcpOptions) {
           $scope.loading = false;
-          ModalService.openLoadDataModal(options)
+          mlcp.showModal(flow.entityName, flow.flowName, mlcpOptions)
           .then(function(result) {
             $scope.loading = true;
             flow.inputFlowCancelled = false;
 
-            DataHub.runInputFlow(result)
+            var data = {
+              flow: flow,
+              mlcp: result
+            };
+            DataHub.runInputFlow(data)
               .success(function(taskId) {
                 flow.inputFlowTaskId = taskId;
 

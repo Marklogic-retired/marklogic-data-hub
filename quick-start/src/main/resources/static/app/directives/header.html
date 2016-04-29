@@ -8,7 +8,7 @@
     </div>
     <div id="sitemenu" class="col-xs-6 col-sm-6 col-md-6 dropdown" ng-if="status != null">
       <button type="submit" name="installUserModules" class="btn btn-primary" ng-if="status.installed" ng-click="installUserModules()" ng-disabled="action.type != null">Deploy to server</button>
-      <button type="submit" name="uninstall" class="btn btn-primary" ng-if="status.installed" ng-click="uninstall()" ng-disabled="action.type != null">Uninstall</button>
+      <button type="submit" name="uninstall" class="btn btn-primary" ng-if="status.installed" ng-click="uninstall()" confirm-settings="{size: 'sm', animation: false}" confirm="Do you really want to continue uninstalling data hub?" confirm-title="Confirm Uninstall" ng-disabled="action.type != null">Uninstall</button>
       <button class="btn btn-default dropdown-toggle" type="button" id="headerDropdownMenu" data-toggle="dropdown" aria-expanded="true">
         Welcome {{status.mlUsername}}! <span class="caret"></span>
       </button>
