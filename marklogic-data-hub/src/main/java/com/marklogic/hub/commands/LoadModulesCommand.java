@@ -22,7 +22,6 @@ import com.marklogic.client.modulesloader.impl.DefaultModulesLoader;
 import com.marklogic.client.modulesloader.impl.XccAssetLoader;
 import com.marklogic.client.modulesloader.xcc.CommaDelimitedPermissionsParser;
 import com.marklogic.client.modulesloader.xcc.DefaultDocumentFormatGetter;
-import com.marklogic.client.modulesloader.xcc.DocumentFormatGetter;
 import com.marklogic.client.modulesloader.xcc.PermissionsParser;
 import com.marklogic.xcc.Content;
 import com.marklogic.xcc.ContentCreateOptions;

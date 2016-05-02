@@ -692,7 +692,7 @@ declare function flow:run-plugin(
             $flow-type,
             $trace-input,
             if ($data-format = 'application/xml') then
-             $resp
+              $resp
             else
               ($resp, null-node{})[1],
             $duration

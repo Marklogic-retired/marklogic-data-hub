@@ -322,9 +322,9 @@ public class DataHub {
         commands.add(new DeployRestApiCommand(hubConfig.finalHttpName, hubConfig.finalPort, hubConfig.finalDbName, hubConfig.finalForestsPerHost));
         commands.add(new DeployRestApiCommand(hubConfig.tracingHttpName, hubConfig.tracePort, hubConfig.tracingDbName, hubConfig.tracingForestsPerHost));
 
-        commands.add(new UpdateRestApiServersCommand(hubConfig.stagingHttpName, "/com.marklogic.hub/staging-rewriter.xml"));
-        commands.add(new UpdateRestApiServersCommand(hubConfig.finalHttpName, "/com.marklogic.hub/final-rewriter.xml"));
-        commands.add(new UpdateRestApiServersCommand(hubConfig.tracingHttpName, "/com.marklogic.hub/tracing-rewriter.xml"));
+        commands.add(new UpdateRestApiServersCommand(hubConfig.stagingHttpName));
+        commands.add(new UpdateRestApiServersCommand(hubConfig.finalHttpName));
+        commands.add(new UpdateRestApiServersCommand(hubConfig.tracingHttpName));
 
         // Modules
         commands.add(new LoadModulesCommand());
