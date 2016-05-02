@@ -36,6 +36,7 @@ import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.support.transaction.ResourcelessTransactionManager;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.util.StopWatch;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -55,6 +56,7 @@ import com.marklogic.hub.collector.ServerCollector;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.FlowType;
 import com.marklogic.hub.flow.SimpleFlow;
+import com.marklogic.hub.util.PerformanceLogger;
 import com.marklogic.spring.batch.hub.CollectorReader;
 import com.marklogic.spring.batch.hub.FlowWriter;
 
@@ -153,7 +155,11 @@ public class FlowManager extends ResourceManager {
      * @return the flow
      */
     public Flow getFlow(String entityName, String flowName) {
-        return getFlow(entityName, flowName, null);
+        StopWatch stopWatch = PerformanceLogger.monitorTimeInsideMethod();
+        Flow flow = getFlow(entityName, flowName, null);
+        PerformanceLogger.logTimeInsideMethod(stopWatch, this.getClass().getName(), 
+                "getFlow", new Object[]{entityName, flowName});
+        return flow;
     }
 
     public Flow getFlow(String entityName, String flowName, FlowType flowType) {
@@ -196,6 +202,8 @@ public class FlowManager extends ResourceManager {
      * @return
      */
     public JobExecution runFlow(Flow flow, int batchSize, JobExecutionListener listener) {
+        StopWatch stopWatch = PerformanceLogger.monitorTimeInsideMethod();
+        
         Collector c = flow.getCollector();
         if (c instanceof ServerCollector) {
             ((ServerCollector)c).setClient(client);
@@ -217,9 +225,11 @@ public class FlowManager extends ResourceManager {
 
         try {
             return jobLauncher.run(job, new JobParameters());
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
+        } finally {
+            PerformanceLogger.logTimeInsideMethod(stopWatch, this.getClass().getName(), 
+                    "runFlow", new Object[]{flow,batchSize,listener});
         }
     }
 
