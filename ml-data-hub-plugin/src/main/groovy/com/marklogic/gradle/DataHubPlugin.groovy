@@ -12,6 +12,10 @@ import com.marklogic.gradle.task.CreateEntityTask;
 import com.marklogic.gradle.task.CreateHarmonizeFlowTask;
 import com.marklogic.gradle.task.CreateInputFlowTask;
 import com.marklogic.gradle.task.RunFlowTask;
+import com.marklogic.gradle.task.EnableDebuggingTask;
+import com.marklogic.gradle.task.DisableDebuggingTask;
+import com.marklogic.gradle.task.EnableTracingTask;
+import com.marklogic.gradle.task.DisableTracingTask;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.gradle.ProjectPropertySource;
 
@@ -32,6 +36,10 @@ class DataHubPlugin implements Plugin<Project> {
         // No group or description on these so they don't show up in "gradle tasks"
         project.task("installHub", group: deployGroup, type: InstallHubTask)
         project.task("uninstallHub", group: deployGroup, type: UninstallHubTask)
+        project.task("enableDebugging", group: deployGroup, type: EnableDebuggingTask)
+        project.task("disableDebugging", group: deployGroup, type: DisableDebuggingTask)
+        project.task("enableTracing", group: deployGroup, type: EnableTracingTask)
+        project.task("disableTracing", group: deployGroup, type: DisableTracingTask)
 
         String scaffoldGroup = "MarkLogic Data Hub Scaffolding"
         project.task("createEntity", group: scaffoldGroup, type: CreateEntityTask)
