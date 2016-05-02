@@ -23,6 +23,9 @@ import module namespace debug = "http://marklogic.com/data-hub/debug-lib"
 import module namespace flow = "http://marklogic.com/data-hub/flow-lib"
   at "/com.marklogic.hub/lib/flow-lib.xqy";
 
+import module namespace perflog = "http://marklogic.com/data-hub/perflog-lib"
+  at "/com.marklogic.hub/lib/perflog-lib.xqy";  
+
 declare namespace rapi = "http://marklogic.com/rest-api";
 
 declare namespace hub = "http://marklogic.com/data-hub";
@@ -41,16 +44,18 @@ declare function get(
   $params  as map:map
   ) as document-node()*
 {
-  debug:dump-env("GET ENTITY(s)"),
+  perflog:logit('Entity.get',function() {
+    debug:dump-env("GET ENTITY(s)"),
 
-  document {
-    let $entity-name := map:get($params, "entity-name")
-    let $resp :=
-      if ($entity-name) then
-        flow:get-entity($entity-name)
-      else
-        flow:get-entities()
-    return
-     $resp
-  }
+    document {
+      let $entity-name := map:get($params, "entity-name")
+      let $resp :=
+        if ($entity-name) then
+          flow:get-entity($entity-name)
+        else
+          flow:get-entities()
+      return
+       $resp
+    }
+  })
 };

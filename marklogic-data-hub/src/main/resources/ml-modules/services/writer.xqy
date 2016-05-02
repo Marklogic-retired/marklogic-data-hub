@@ -23,6 +23,9 @@ import module namespace debug = "http://marklogic.com/data-hub/debug-lib"
 import module namespace flow = "http://marklogic.com/data-hub/flow-lib"
   at "/com.marklogic.hub/lib/flow-lib.xqy";
 
+import module namespace perflog = "http://marklogic.com/data-hub/perflog-lib"
+  at "/com.marklogic.hub/lib/perflog-lib.xqy";
+
 declare namespace rapi = "http://marklogic.com/rest-api";
 
 declare option xdmp:mapping "false";
@@ -32,11 +35,13 @@ declare %rapi:transaction-mode("update") function get(
   $params  as map:map
   ) as document-node()*
 {
-  debug:dump-env(),
+  perflog:logit('Writer.get',function() {
+    debug:dump-env(),
 
-  let $module-uri := map:get($params, "module-uri")
-  let $identifier := map:get($params, "identifier")
-  return
-    (),
-  document { () }
+    let $module-uri := map:get($params, "module-uri")
+    let $identifier := map:get($params, "identifier")
+    return
+      (),
+    document { () }
+  })
 };

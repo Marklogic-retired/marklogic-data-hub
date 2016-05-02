@@ -23,6 +23,9 @@ import module namespace debug = "http://marklogic.com/data-hub/debug-lib"
 import module namespace flow = "http://marklogic.com/data-hub/flow-lib"
   at "/com.marklogic.hub/lib/flow-lib.xqy";
 
+import module namespace perflog = "http://marklogic.com/data-hub/perflog-lib"
+  at "/com.marklogic.hub/lib/perflog-lib.xqy";
+
 declare option xdmp:mapping "false";
 
 (:~
@@ -37,9 +40,11 @@ declare function get(
   $params  as map:map
   ) as document-node()*
 {
-  debug:dump-env(),
-  xdmp:set-response-content-type("application/json"),
-  document {
-    xdmp:to-json(flow:validate-entities())
-  }
+  perflog:logit('Validate.get',function() {
+    debug:dump-env(),
+    xdmp:set-response-content-type("application/json"),
+    document {
+      xdmp:to-json(flow:validate-entities())
+    }
+  })
 };

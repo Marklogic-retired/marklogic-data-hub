@@ -2,6 +2,9 @@ xquery version "1.0-ml";
 
 module namespace transform = "http://marklogic.com/rest-api/transform/get-content";
 
+import module namespace perflog = "http://marklogic.com/data-hub/perflog-lib"
+  at "/com.marklogic.hub/lib/perflog-lib.xqy";
+
 declare namespace envelope = "http://marklogic.com/data-hub/envelope";
 
 declare function transform(
@@ -10,16 +13,18 @@ declare function transform(
   $content as document-node()
   ) as document-node()
 {
-  document {
-    if ($content/envelope:envelope) then
-    (
-      map:put($context, "output-type", "application/xml"),
-      $content/envelope:envelope/envelope:content/node()
-    )
-    else
-    (
-      map:put($context, "output-type", "application/json"),
-      $content/content
-    )
-  }
+  perflog:logit('GetContent.transform',function() {
+    document {
+      if ($content/envelope:envelope) then
+      (
+        map:put($context, "output-type", "application/xml"),
+        $content/envelope:envelope/envelope:content/node()
+      )
+      else
+      (
+        map:put($context, "output-type", "application/json"),
+        $content/content
+      )
+    }
+  })
 };

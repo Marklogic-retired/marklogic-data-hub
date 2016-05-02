@@ -23,6 +23,9 @@ import module namespace debug = "http://marklogic.com/data-hub/debug-lib"
 import module namespace flow = "http://marklogic.com/data-hub/flow-lib"
   at "/com.marklogic.hub/lib/flow-lib.xqy";
 
+import module namespace perflog = "http://marklogic.com/data-hub/perflog-lib"
+  at "/com.marklogic.hub/lib/perflog-lib.xqy";
+
 declare option xdmp:mapping "false";
 
 (:~
@@ -31,9 +34,11 @@ declare option xdmp:mapping "false";
 declare function service:build-response($items as item()*)
   as document-node()
 {
-  document {
-    json:to-array($items) ! xdmp:to-json(.)
-  }
+  perflog:logit('Collector.buildResponse',function() {
+    document {
+      json:to-array($items) ! xdmp:to-json(.)
+    }
+  })
 };
 
 (:
@@ -46,12 +51,14 @@ declare function post(
   $input   as document-node()*
   ) as document-node()*
 {
-  debug:dump-env(),
+  perflog:logit('Collector.post',function() {
+    debug:dump-env(),
 
-  (:let $options := $input/node():)
-  let $module-uri as xs:string := map:get($params, "module-uri")
-  return
-    service:build-response(flow:run-collector($module-uri, map:map()))
+    (:let $options := $input/node():)
+    let $module-uri as xs:string := map:get($params, "module-uri")
+    return
+      service:build-response(flow:run-collector($module-uri, map:map()))
+  })
 };
 
 (:
@@ -62,9 +69,11 @@ declare function get(
   $params  as map:map
   ) as document-node()*
 {
-  debug:dump-env(),
+  perflog:logit('Collector.get',function() {
+    debug:dump-env(),
 
-  let $module-uri as xs:string := map:get($params, "module-uri")
-  return
-    service:build-response(flow:run-collector($module-uri, map:map()))
+    let $module-uri as xs:string := map:get($params, "module-uri")
+    return
+      service:build-response(flow:run-collector($module-uri, map:map()))
+  })
 };
