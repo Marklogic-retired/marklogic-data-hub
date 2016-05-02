@@ -23,55 +23,94 @@ import module namespace config = "http://marklogic.com/data-hub/config"
 import module namespace json="http://marklogic.com/xdmp/json"
   at "/MarkLogic/json/json.xqy";
 
+import module namespace search = "http://marklogic.com/appservices/search"
+  at "/MarkLogic/appservices/search/search.xqy";
+
 declare option xdmp:mapping "false";
 
 declare variable $FORMAT-XML := "xml";
 declare variable $FORMAT-JSON := "json";
 
+declare %private variable $current-trace-settings := map:map();
+
+declare %private variable $current-trace := map:new((
+  map:entry("trace-id", xdmp:random()),
+  map:entry("created", fn:current-dateTime())
+));
+
 declare function trace:enable-tracing($enabled as xs:boolean)
 {
-  xdmp:set-server-field("HUB-TRACING-ENABLED", $enabled)
+  xdmp:document-insert(
+    "/com.marklogic.hub/__tracing_enabled__.xml",
+    element trace:is-tracing-enabled { if ($enabled) then 1 else 0 })
 };
 
 declare function trace:enabled() as xs:boolean
 {
-  xdmp:get-server-field("HUB-TRACING-ENABLED", fn:false())
+  let $value := cts:element-values(xs:QName("trace:is-tracing-enabled"), (), "limit=1")
+  return
+    if ($value) then
+      $value eq 1
+    else
+      fn:false()
 };
 
-declare function trace:log-trace($trace)
+declare function trace:has-errors()
 {
-  trace:create-trace($trace, fn:false())
+  map:get($current-trace-settings, "_has_errors") eq fn:true()
 };
 
-declare function trace:log-error-trace($trace)
+declare function trace:init-trace($format as xs:string)
 {
-  trace:create-trace($trace, fn:true())
+  map:put($current-trace-settings, "data-format", $format)
 };
 
-declare %private function trace:create-trace($trace, $force as xs:boolean)
+declare function trace:write-trace()
 {
-  if ($force or trace:enabled()) then
-    xdmp:eval('
-      xquery version "1.0-ml";
+  if (trace:enabled() or trace:has-errors()) then
+    let $format := map:get($current-trace-settings, "data-format")
+    let $trace :=
+      if ($format eq $FORMAT-JSON) then
+        xdmp:to-json($current-trace)
+      else
+        element trace {
+          element trace-id { map:get($current-trace, "trace-id") },
+          element created { map:get($current-trace, "created") },
+          element identifier { map:get($current-trace, "identifier") },
+          for $key in ("collector-plugin", "content-plugin", "headers-plugin", "triples-plugin", "writer-plugin")
+          let $m := map:get($current-trace, $key)
+          return
+            if (fn:exists($m)) then
+              element { $key } {
+                element plugin-module-uri { map:get($m, "plugin-module-uri") },
+                element input { map:get($m, "input") },
+                element output { map:get($m, "output") },
+                element duration { map:get($m, "duration") }
+              }
+            else ()
+        }
+    return
+      xdmp:eval('
+        xquery version "1.0-ml";
 
-      declare option xdmp:mapping "false";
+        declare option xdmp:mapping "false";
 
-      declare variable $trace external;
+        declare variable $trace external;
 
-      xdmp:document-insert(
-        "/" || xdmp:random(),
-        $trace,
-        xdmp:default-permissions(),
-        ($trace/*:type)
-      )
-    ',
-    map:new((
-      map:entry("trace", $trace)
-    )),
-    map:new((
-      map:entry("database", xdmp:database($config:TRACING-DATABASE)),
-      map:entry("transactionMode", "update-auto-commit")
-    )))
+        xdmp:document-insert(
+          "/" || $trace/trace-id,
+          $trace,
+          xdmp:default-permissions(),
+          ($trace/*:type)
+        )
+      ',
+      map:new((
+        map:entry("trace", $trace)
+      )),
+      map:new((
+        map:entry("database", xdmp:database($config:TRACING-DATABASE)),
+        map:entry("transactionMode", "update-auto-commit")
+      )))
   else ()
 };
 
@@ -82,34 +121,18 @@ declare function trace:plugin-trace(
   $flow-type as xs:string,
   $input,
   $output,
-  $duration as xs:dayTimeDuration,
-  $format as xs:string?)
+  $duration as xs:dayTimeDuration)
 {
-  if ($format eq $FORMAT-JSON) then
-    object-node {
-      "trace" : object-node {
-        "type": "plugin-trace",
-        "created": fn:current-dateTime(),
-        "id": $identifier,
-        "plugin-type": $plugin-type,
-        "flow-type": $flow-type,
-        "input": $input,
-        "output": $output,
-        "duration": $duration
-      }
-    }
-  else
-    <trace xmlns="http://marklogic.com/data-hub/trace">
-      <type>input-trace</type>
-      <created>{fn:current-dateTime()}</created>
-      <id>{$identifier}</id>
-      <plugin-type>{$plugin-type}</plugin-type>
-      <flow-type>{$flow-type}</flow-type>
-      <plugin-module-uri>{$module-uri}</plugin-module-uri>
-      <input>{$input}</input>
-      <output>{$output}</output>
-      <duration>{$duration}</duration>
-    </trace>
+  map:put($current-trace, "identifier", $identifier),
+  map:put($current-trace, "flow-type", $flow-type),
+  let $plugin-map := map:new((
+    map:entry("plugin-module-uri", $module-uri),
+    map:entry("input", $input),
+    map:entry("output", $output),
+    map:entry("duration", $duration)
+  ))
+  return
+    map:put($current-trace, $plugin-type || "-plugin", $plugin-map)
 };
 
 declare function trace:error-trace(
@@ -117,44 +140,33 @@ declare function trace:error-trace(
   $module-uri as xs:string,
   $plugin-type as xs:string,
   $flow-type as xs:string,
-  $error as element(error:error),
   $input,
-  $duration as xs:dayTimeDuration,
-  $format as xs:string?)
+  $error as element(error:error),
+  $duration as xs:dayTimeDuration)
 {
-  if ($format eq $FORMAT-JSON) then
-    let $error :=
-      let $config := json:config("custom")
-      let $_ := map:put($config, "array-element-names", xs:QName("error:frame"))
-      let $_ := map:put($config, "ignore-attribute-names", xs:QName("xsi:schemaLocation"))
-      let $_ := map:put($config, "whitespace", "ignore")
-      return
-        json:transform-to-json($error, $config)/object-node()
-    return
-      object-node {
-        "trace": object-node {
-          "type": "error-trace",
-          "created": fn:current-dateTime(),
-          "id": $identifier,
-          "plugin-type": $plugin-type,
-          "flow-type": $flow-type,
-          "error": $error,
-          "input": ($input, null-node{})[1],
-          "duration": $duration
-        }
-      }
-  else
-    <trace xmlns="http://marklogic.com/data-hub/trace">
-      <type>error-trace</type>
-      <created>{fn:current-dateTime()}</created>
-      {
-        $identifier ! <id>{.}</id>
-      }
-      <plugin-type>{$plugin-type}</plugin-type>
-      <flow-type>{$flow-type}</flow-type>
-      <plugin-module-uri>{$module-uri}</plugin-module-uri>
-      <error>{$error}</error>
-      <input>{$input}</input>
-      <duration>{$duration}</duration>
-    </trace>
+  map:put($current-trace, "identifier", $identifier),
+  map:put($current-trace, "flow-type", $flow-type),
+  map:put($current-trace-settings, "_has_errors", fn:true()),
+  let $plugin-map := map:new((
+    map:entry("plugin-module-uri", $module-uri),
+    map:entry("input", $input),
+    map:entry("error", $error),
+    map:entry("duration", $duration)
+  ))
+  let $_ := map:put($current-trace, $plugin-type || "-plugin", $plugin-map)
+  let $_ := trace:write-trace()
+  return ()
+};
+
+declare function trace:find-traces($q)
+{
+  let $query := search:parse($q)
+  let $results := cts:element-values(xs:QName("trace-id"), (), (), $query)
+  return
+    json:to-array($results)
+};
+
+declare function trace:get-traces($page as xs:int, $page-count as xs:int)
+{
+  ()
 };
