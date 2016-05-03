@@ -68,6 +68,7 @@ public class EntityModelFactory {
         EntityModel entityModel = new EntityModel();
         entityModel.setEntityName(entityName);
         //this will be updated after traversing its modules
+        entityModel.setSynched(this.entitiesInServer.containsKey(entityName));
 
         FlowModelFactory flowModelFactory = new FlowModelFactory(
                 this.entitiesInServer.get(entityName), entityName);
@@ -96,9 +97,11 @@ public class EntityModelFactory {
         for (String folderName : folderNames) {
             if (folderName.equalsIgnoreCase(RestModelFactory.REST_FOLDER_NAME)) {
                 restModel = restModelFactory.createRest(modulesParentDirectory, syncStatusService);
+                entityModel.setSynched(entityModel.isSynched() && restModel.isSynched());
             } else {
                 FlowModel flowModel = flowModelFactory.createFlow(modulesParentDirectory,
                         folderName, flowType, syncStatusService);
+                entityModel.setSynched(entityModel.isSynched() && flowModel.isSynched());
                 flows.add(flowModel);
             }
         }

@@ -7,7 +7,6 @@ import com.marklogic.hub.model.EntityModel;
 
 public class LoginForm extends BaseForm {
 
-
 	private String mlHost;
 	private String mlStagingPort;
 	private String mlFinalPort;
@@ -120,10 +119,7 @@ public class LoginForm extends BaseForm {
     public void selectEntity(String entityName) {
         if (entities != null) {
             for (EntityModel entity : entities) {
-            	if (null == entityName) {
-            		setSelectedEntity(entity);
-            		return;
-            	} else if (entity.getEntityName().equals(entityName)) {
+                if (entity.getEntityName().equals(entityName)) {
                     setSelectedEntity(entity);
 	                return;
 	            }
@@ -134,19 +130,6 @@ public class LoginForm extends BaseForm {
     public void refreshSelectedEntity() {
         if (selectedEntity != null) {
             selectEntity(selectedEntity.getEntityName());
-	    } else {
-	    	selectEntity(null);
 	    }
 	}
-    
-	@Override
-	public String toString() {
-		return "LoginForm [mlHost=" + mlHost + ", mlStagingPort=" + mlStagingPort + ", mlFinalPort=" + mlFinalPort
-				+ ", mlTracePort=" + mlTracePort + ", mlUsername=" + mlUsername + ", mlPassword=" + mlPassword
-				+ ", userPluginDir=" + userPluginDir + ", serverVersionAccepted=" + serverVersionAccepted
-				+ ", installed=" + installed + ", loggedIn=" + loggedIn   
-				+ ", entities=" + entities + ", selectedEntity="
-				+ selectedEntity + "]";
-	}
-
 }

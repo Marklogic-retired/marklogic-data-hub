@@ -50,7 +50,7 @@
     }
 
     function getLoginStatus() {
-      return $http.get('api/data-hub/login-status')
+      return $http.get('api/data-hub/login')
         .success(function(data) {
           self.status = data;
         })

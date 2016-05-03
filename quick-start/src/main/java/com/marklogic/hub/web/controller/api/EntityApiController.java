@@ -2,14 +2,11 @@ package com.marklogic.hub.web.controller.api;
 
 import java.nio.file.Path;
 import java.nio.file.WatchEvent;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,128 +34,116 @@ import com.marklogic.hub.web.form.LoginForm;
 @Scope("session")
 public class EntityApiController implements InitializingBean, DisposableBean, FileSystemEventListener {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(EntityApiController.class);
+    @Autowired
+    private EnvironmentConfiguration environmentConfiguration;
 
-	@Autowired
-	private EnvironmentConfiguration environmentConfiguration;
+    @Autowired
+    private DataHubService dataHubService;
 
-	@Autowired
-	private DataHubService dataHubService;
+    @Autowired
+    private EntityManagerService entityManagerService;
 
-	@Autowired
-	private EntityManagerService entityManagerService;
+    @Autowired
+    private FileSystemWatcherService watcherService;
 
-	@Autowired
-	private FileSystemWatcherService watcherService;
+    @Autowired
+    private SyncStatusService syncStatusService;
 
-	@Autowired
-	private SyncStatusService syncStatusService;
+    @RequestMapping(method = RequestMethod.GET)
+    @ResponseBody
+    public List<EntityModel> getEntities(HttpSession session) {
+        LoginForm loginForm = (LoginForm) session.getAttribute("loginForm");
+        List<EntityModel> entities = entityManagerService.getEntities();
+        loginForm.setEntities(entities);
+        return entities;
+    }
 
-	@RequestMapping(method = RequestMethod.GET)
-	@ResponseBody
-	public List<EntityModel> getEntities(HttpSession session) {
-		LoginForm loginForm = (LoginForm) session.getAttribute("loginForm");
-		List<EntityModel> entities = entityManagerService.getEntities();
-		loginForm.setEntities(entities);
-		return entities;
-	}
+    @RequestMapping(value = "display", method = RequestMethod.POST)
+    @ResponseBody
+    public EntityModel displayEntity(@RequestBody String entityName, HttpSession session) {
+        LoginForm loginForm = (LoginForm) session.getAttribute("loginForm");
+        loginForm.selectEntity(entityName);
 
-	@RequestMapping(value = "display", method = RequestMethod.POST)
-	@ResponseBody
-	public EntityModel displayEntity(@RequestBody String entityName, HttpSession session) {
-		LoginForm loginForm = (LoginForm) session.getAttribute("loginForm");
-		loginForm.selectEntity(entityName);
+        return loginForm.getSelectedEntity();
+    }
 
-		return loginForm.getSelectedEntity();
-	}
+    @RequestMapping(method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_UTF8_VALUE }, produces = {
+        MediaType.APPLICATION_JSON_UTF8_VALUE })
+    @ResponseBody
+    public LoginForm saveEntity(@RequestBody EntityForm entityForm, BindingResult bindingResult, HttpSession session) {
+        LoginForm loginForm = (LoginForm) session.getAttribute("loginForm");
+        List<EntityModel> entities = loginForm.getEntities();
 
-	@RequestMapping(method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_UTF8_VALUE }, produces = {
-			MediaType.APPLICATION_JSON_UTF8_VALUE })
-	@ResponseBody
-	public LoginForm saveEntity(@RequestBody EntityForm entityForm, BindingResult bindingResult, HttpSession session) {
-		LoginForm loginForm = (LoginForm) session.getAttribute("loginForm");
-		List<EntityModel> entities = loginForm.getEntities();
+        entityForm.validate(entities);
 
-		entityForm.validate(entities);
+        EntityModel entityModel = entityManagerService.createEntity(entityForm.getEntityName(),
+        entityForm.getInputFlowName(), entityForm.getHarmonizeFlowName(), entityForm.getPluginFormat(),
+        entityForm.getDataFormat());
 
-		EntityModel entityModel = entityManagerService.createEntity(entityForm.getEntityName(),
-				entityForm.getInputFlowName(), entityForm.getHarmonizeFlowName(), entityForm.getPluginFormat(),
-				entityForm.getDataFormat());
+        entities.add(entityModel);
+        loginForm.setSelectedEntity(entityModel);
+        return loginForm;
+    }
 
-		entities.add(entityModel);
-		loginForm.setSelectedEntity(entityModel);
-		return loginForm;
-	}
+    /**
+    * Get a list of entities that has changed. This API does not return until a
+    * change has occurred.
+    *
+    * @param session
+    * @return
+    */
+    @RequestMapping(value = "status-change", method = RequestMethod.GET)
+    public LoginForm getStatusChange(HttpServletRequest request) {
+        HttpSession session = request.getSession();
 
-	/**
-	 * Get a list of entities that has changed. This API does not return until a
-	 * change has occurred.
-	 *
-	 * @param session
-	 * @return
-	 */
-	@RequestMapping(value = "status-change", method = RequestMethod.GET)
-	public LoginForm getStatusChange(HttpServletRequest request) {
-		LOGGER.debug("GET: status-change");
-		HttpSession session = request.getSession();
+        synchronized (syncStatusService) {
+            try {
+                syncStatusService.wait();
+            }
+            catch (InterruptedException e) {
+            }
 
-		synchronized (syncStatusService) {
-			try {
-				syncStatusService.wait();
-			} catch (InterruptedException e) {
-			}
+            // refresh the list of entities saved in the session
+            LoginForm loginForm = (LoginForm) session.getAttribute("loginForm");
+            if (null == loginForm) {
+                loginForm = new LoginForm();
+            }
 
-			// refresh the list of entities saved in the session
-			LoginForm loginForm = (LoginForm) session.getAttribute("loginForm");
-			if (null != loginForm && loginForm.isLoggedIn()) {
-				LOGGER.debug("status change:" + loginForm.toString());
-				// add checking if data hub is installed and the server is
-				// acceptable. Something may have changed the server or removed
-				// the
-				// data hub outside the app
+            // add checking if data hub is installed and the server is
+            // acceptable. Something may have changed the server or removed the
+            // data hub outside the app
+            loginForm.setInstalled(dataHubService.isInstalled());
+            loginForm.setServerVersionAccepted(dataHubService.isServerAcceptable());
+            if (loginForm.isInstalled()) {
+                List<EntityModel> entities = entityManagerService.getEntities();
+                loginForm.setEntities(entities);
+                loginForm.refreshSelectedEntity();
+            }
 
-				loginForm.setInstalled(dataHubService.isInstalled());
-				loginForm.setServerVersionAccepted(dataHubService.isServerAcceptable());
-				if (loginForm.isInstalled()) {
-					// if (loginForm.isInstalled()) {
-					List<EntityModel> entities = entityManagerService.getEntities();
-					loginForm.setEntities(entities);
-					loginForm.refreshSelectedEntity();
-					synchronized (syncStatusService) {
-						LOGGER.debug("installing modules ...");
-						dataHubService.installUserModules();
-						LOGGER.debug("modules installed.");
-					}
-				}
+            // refresh the session loginForm
+            session.setAttribute("loginForm", loginForm);
 
-				// refresh the session loginForm
-				session.setAttribute("loginForm", loginForm);
-				// LOGGER.debug("installing modules ...");
-				// dataHubService.installUserModules();
-			}
+            return loginForm;
+        }
+    }
 
-			return loginForm;
-		}
-	}
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        String pluginDir = environmentConfiguration.getUserPluginDir();
+        watcherService.watch(pluginDir, this);
+    }
 
-	@Override
-	public void afterPropertiesSet() throws Exception {
-		String pluginDir = environmentConfiguration.getUserPluginDir();
-		watcherService.watch(pluginDir, this);
-	}
+    @Override
+    public void destroy() throws Exception {
+        synchronized (syncStatusService) {
+            syncStatusService.notifyAll();
+        }
+    }
 
-	@Override
-	public void destroy() throws Exception {
-		synchronized (syncStatusService) {
-			syncStatusService.notifyAll();
-		}
-	}
-
-	@Override
-	public void onWatchEvent(Path path, WatchEvent<Path> event) {
-		synchronized (syncStatusService) {
-			LOGGER.debug("change detected ...");
-			syncStatusService.notifyAll();
-		}
-	}
+    @Override
+    public void onWatchEvent(Path path, WatchEvent<Path> event) {
+        synchronized (syncStatusService) {
+            syncStatusService.notifyAll();
+        }
+    }
 }
