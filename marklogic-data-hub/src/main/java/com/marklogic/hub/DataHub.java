@@ -69,43 +69,42 @@ import com.marklogic.rest.util.ResourcesFragment;
 
 public class DataHub {
 
-	static final private Logger LOGGER = LoggerFactory.getLogger(DataHub.class);
+    static final private Logger LOGGER = LoggerFactory.getLogger(DataHub.class);
 
-	private ManageConfig config;
-	private ManageClient client;
+    private ManageConfig config;
+    private ManageClient client;
 
-	private File assetInstallTimeFile = new File("./assetInstallTime.properties");
-	private HubConfig hubConfig;
+    private File assetInstallTimeFile = new File("./assetInstallTime.properties");
+    private HubConfig hubConfig;
 
-	public DataHub(HubConfig hubConfig) {
-		init(hubConfig);
-	}
+    public DataHub(HubConfig hubConfig) {
+        init(hubConfig);
+    }
 
-	public DataHub(String host, String username, String password) {
-		hubConfig = new HubConfig();
-		hubConfig.host = host;
-		hubConfig.adminUsername = username;
-		hubConfig.adminPassword = password;
-		init(hubConfig);
-	}
+    public DataHub(String host, String username, String password) {
+        hubConfig = new HubConfig();
+        hubConfig.host = host;
+        hubConfig.adminUsername = username;
+        hubConfig.adminPassword = password;
+        init(hubConfig);
+    }
 
-	private void init(HubConfig hubConfig) {
-		this.hubConfig = hubConfig;
-		config = new ManageConfig(hubConfig.host, 8002, hubConfig.adminUsername, hubConfig.adminPassword);
-		client = new ManageClient(config);
-	}
+    private void init(HubConfig hubConfig) {
+        this.hubConfig = hubConfig;
+        config = new ManageConfig(hubConfig.host, 8002, hubConfig.adminUsername, hubConfig.adminPassword);
+        client = new ManageClient(config);
+    }
 
-	public void setAssetInstallTimeFile(File assetInstallTimeFile) {
-		this.assetInstallTimeFile = assetInstallTimeFile;
-	}
+    public void setAssetInstallTimeFile(File assetInstallTimeFile) {
+        this.assetInstallTimeFile = assetInstallTimeFile;
+    }
 
-	/**
-	 * Determines if the data hub is installed in MarkLogic
-	 * 
-	 * @return true if installed, false otherwise
-	 */
-	public boolean isInstalled() {
-	    ServerManager sm = new ServerManager(client);
+    /**
+     * Determines if the data hub is installed in MarkLogic
+     * @return true if installed, false otherwise
+     */
+    public boolean isInstalled() {
+        ServerManager sm = new ServerManager(client);
         DatabaseManager dm = new DatabaseManager(client);
 
         ResourcesFragment srf = sm.getAsXml();
@@ -153,9 +152,9 @@ public class DataHub {
         boolean forestsOk = (stagingForestsExist && finalForestsExist && tracingForestsExist);
 
         return (appserversOk && dbsOk && forestsOk);
-	}
+    }
 
-	/**
+    /**
      * Validates the MarkLogic server to ensure compatibility with the hub
      * @throws ServerValidationException if the server is not compatible
      */

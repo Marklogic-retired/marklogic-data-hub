@@ -3,8 +3,6 @@ package com.marklogic.hub.web.controller.api;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -34,186 +32,169 @@ import com.marklogic.hub.web.form.LoginForm;
 @RequestMapping("/api/data-hub")
 @Scope("session")
 public class DataHubServerApiController extends BaseController {
-	private static final Logger LOGGER = LoggerFactory.getLogger(DataHubServerApiController.class);
+    private static final Logger LOGGER = LoggerFactory
+            .getLogger(DataHubServerApiController.class);
 
-	@Autowired
-	private EnvironmentConfiguration environmentConfiguration;
+    @Autowired
+    private EnvironmentConfiguration environmentConfiguration;
 
-	@Autowired
-	private DataHubService dataHubService;
+    @Autowired
+    private DataHubService dataHubService;
 
-	@Autowired
-	private EntityManagerService entityManagerService;
+    @Autowired
+    private EntityManagerService entityManagerService;
 
-	@Autowired
-	private SyncStatusService syncStatusService;
+    @Autowired
+    private SyncStatusService syncStatusService;
 
-	@RequestMapping(value = "login", method = RequestMethod.POST, consumes = {
-			MediaType.APPLICATION_JSON_UTF8_VALUE }, produces = { MediaType.APPLICATION_JSON_UTF8_VALUE })
-	public LoginForm postLogin(@RequestBody LoginForm loginForm, BindingResult bindingResult, HttpSession session,
-			HttpServletRequest request) throws Exception {
-		LOGGER.debug("POST: login");
-		try {
-			if (isValidDirectory(loginForm.getUserPluginDir())) {
+    @RequestMapping(value = "login", method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_UTF8_VALUE }, produces = { MediaType.APPLICATION_JSON_UTF8_VALUE })
+    public LoginForm postLogin(@RequestBody LoginForm loginForm,
+            BindingResult bindingResult, HttpSession session,
+            HttpServletRequest request) throws Exception {
+        try {
+            if (isValidDirectory(loginForm.getUserPluginDir())) {
 
-				updateEnvironmentConfiguration(loginForm);
+                updateEnvironmentConfiguration(loginForm);
 
-				loginForm.setInstalled(dataHubService.isInstalled());
-				loginForm.setServerVersionAccepted(dataHubService.isServerAcceptable());
-				loginForm.setHasErrors(false);
-				loginForm.setLoggedIn(true);
-				environmentConfiguration.saveConfigurationToFile();
-				session.setAttribute("loginForm", loginForm);
+                loginForm.setInstalled(dataHubService.isInstalled());
+                loginForm.setServerVersionAccepted(dataHubService
+                        .isServerAcceptable());
+                loginForm.setHasErrors(false);
+                loginForm.setLoggedIn(true);
+                environmentConfiguration.saveConfigurationToFile();
+                session.setAttribute("loginForm", loginForm);
 
-				if (loginForm.isInstalled()) {
-					this.loadUserModules(loginForm);
-					//synchronized (syncStatusService) {
-					//	LOGGER.debug("installing modules ...");
-					//	this.installUserModules(session);
-					//	LOGGER.debug("modules installed.");
-					//}
-				} 
+                if (loginForm.isInstalled()) {
+                    this.loadUserModules(loginForm);
+                }
 
-			} else {
-				loginForm.setLoggedIn(false);
-				displayError(loginForm, null, null, loginForm.getUserPluginDir() + " is not a valid directory.");
-			}
-		} catch (DataHubException e) {
-			LOGGER.error("Login failed", e);
-			loginForm.setLoggedIn(false);
-			displayError(loginForm, null, null, e.getMessage());
-		}
+            } else {
+                loginForm.setLoggedIn(false);
+                displayError(loginForm, null, null,
+                        loginForm.getUserPluginDir()
+                                + " is not a valid directory.");
+            }
+        } catch (DataHubException e) {
+            LOGGER.error("Login failed", e);
+            loginForm.setLoggedIn(false);
+            displayError(loginForm, null, null, e.getMessage());
+        }
 
-		return loginForm;
-	}
+        return loginForm;
+    }
 
-	private void loadUserModules(LoginForm loginForm) {
-		loginForm.setEntities(entityManagerService.getEntities());
-		loginForm.setSelectedEntity(loginForm.getEntities() != null && !loginForm.getEntities().isEmpty()
-				? loginForm.getEntities().get(0) : null);
-	}
+    private void loadUserModules(LoginForm loginForm) {
+        loginForm.setEntities(entityManagerService.getEntities());
+        loginForm.setSelectedEntity(loginForm.getEntities() != null
+                && !loginForm.getEntities().isEmpty() ? loginForm.getEntities()
+                .get(0) : null);
+    }
 
-	private void unLoadUserModules(LoginForm loginForm) {
-		loginForm.setEntities(new ArrayList<EntityModel>());
-		loginForm.setSelectedEntity(null);
-	}
+    private void unLoadUserModules(LoginForm loginForm) {
+        loginForm.setEntities(new ArrayList<EntityModel>());
+        loginForm.setSelectedEntity(null);
+    }
 
-	private boolean isValidDirectory(String userPluginDir) {
-		File file = new File(userPluginDir);
-		if (file.exists() && file.isDirectory()) {
-			return true;
-		}
+    private boolean isValidDirectory(String userPluginDir) {
+        File file = new File(userPluginDir);
+        if (file.exists() && file.isDirectory()) {
+            return true;
+        }
 
-		File parentFile = file.getParentFile();
-		if (parentFile.exists() && parentFile.isDirectory()) {
-			file.mkdir();
-			return true;
-		}
-		return false;
-	}
+        File parentFile = file.getParentFile();
+        if (parentFile.exists() && parentFile.isDirectory()) {
+            file.mkdir();
+            return true;
+        }
+        return false;
+    }
 
-	@RequestMapping(value = "login-status", method = RequestMethod.GET)
-	public LoginForm getLoginStatus(HttpSession session) {
-		LOGGER.debug("GET: login-status");
-		LoginForm loginForm = (LoginForm) session.getAttribute("loginForm");
-		
-		if (loginForm == null) {
-			// need to load last configuration
-			loginForm = new LoginForm();
-			this.environmentConfiguration.loadConfigurationFromFiles();
-			this.retrieveEnvironmentConfiguration(loginForm);
-			session.setAttribute("loginForm", loginForm);
-		} else if (loginForm.isInstalled()) {
-			loginForm.setEntities(entityManagerService.getEntities());
-			loginForm.refreshSelectedEntity();
-			synchronized (syncStatusService) {
-				LOGGER.debug("installing modules ...");
-				this.installUserModules(session);
-				LOGGER.debug("modules installed.");
-			}
-		}
+    @RequestMapping(value = "login", method = RequestMethod.GET)
+    public LoginForm getLoginStatus(HttpSession session) {
+        LoginForm loginForm = (LoginForm) session.getAttribute("loginForm");
+        if (loginForm == null) {
+            loginForm = new LoginForm();
+            this.environmentConfiguration.loadConfigurationFromFiles();
+            this.retrieveEnvironmentConfiguration(loginForm);
+            session.setAttribute("loginForm", loginForm);
+        } else if (loginForm.isInstalled()) {
+            loginForm.setEntities(entityManagerService.getEntities());
+            loginForm.refreshSelectedEntity();
+        }
+        return loginForm;
+    }
 
-		LOGGER.debug("after login: " + loginForm.toString());
+    @RequestMapping(value = "logout", method = RequestMethod.POST)
+    public LoginForm postLogout(HttpSession session) {
+        LoginForm loginForm = (LoginForm) session.getAttribute("loginForm");
+        loginForm.setLoggedIn(false);
+        this.retrieveEnvironmentConfiguration(loginForm);
 
-		return loginForm;
-	}
+        Enumeration<String> attrNames = session.getAttributeNames();
+        while(attrNames.hasMoreElements()) {
+        	session.removeAttribute(attrNames.nextElement());
+        }
 
-	@RequestMapping(value = "logout", method = RequestMethod.POST)
-	public LoginForm postLogout(HttpSession session) {
-		LOGGER.debug("POST: logout");
-		LoginForm loginForm = (LoginForm) session.getAttribute("loginForm");
-		loginForm.setLoggedIn(false);
-		this.retrieveEnvironmentConfiguration(loginForm);
+        return loginForm;
+    }
 
-		Enumeration<String> attrNames = session.getAttributeNames();
-		while (attrNames.hasMoreElements()) {
-			session.removeAttribute(attrNames.nextElement());
-		}
+    @RequestMapping(value = "install", method = RequestMethod.POST)
+    public LoginForm install(HttpSession session) {
+        dataHubService.install();
+        LoginForm loginForm = (LoginForm) session.getAttribute("loginForm");
+        loginForm.setInstalled(true);
+        this.loadUserModules(loginForm);
+        return loginForm;
+    }
 
-		return loginForm;
-	}
+    @RequestMapping(value = "uninstall", method = RequestMethod.POST)
+    public LoginForm uninstall(HttpSession session) {
+        dataHubService.uninstall();
+        LoginForm loginForm = (LoginForm) session.getAttribute("loginForm");
+        loginForm.setInstalled(false);
+        this.unLoadUserModules(loginForm);
+        return loginForm;
+    }
 
-	@RequestMapping(value = "install", method = RequestMethod.POST)
-	public LoginForm install(HttpSession session) {
-		LOGGER.debug("POST: install");
-		dataHubService.install();
-		LoginForm loginForm = (LoginForm) session.getAttribute("loginForm");
-		loginForm.setInstalled(true);
-		this.loadUserModules(loginForm);
-		return loginForm;
-	}
+    @RequestMapping(value = "install-user-modules", method = RequestMethod.POST)
+    public LoginForm installUserModules(HttpSession session) {
+        synchronized (syncStatusService) {
+            dataHubService.installUserModules();
 
-	@RequestMapping(value = "uninstall", method = RequestMethod.POST)
-	public LoginForm uninstall(HttpSession session) {
-		LOGGER.debug("POST: uninstall");
-		LoginForm loginForm = (LoginForm) session.getAttribute("loginForm");
-		dataHubService.uninstall();
-		loginForm.setInstalled(false);
-		this.unLoadUserModules(loginForm);
-		return loginForm;
-	}
+            // refresh the list of entities saved in the session
+            LoginForm loginForm = (LoginForm) session.getAttribute("loginForm");
+            loginForm.setEntities(entityManagerService.getEntities());
+            loginForm.refreshSelectedEntity();
+            syncStatusService.notifyAll();
 
-	@RequestMapping(value = "install-user-modules", method = RequestMethod.POST)
-	public LoginForm installUserModules(HttpSession session) {
-		LOGGER.debug("POST: install-user-modules");
-		synchronized (syncStatusService) {
-			dataHubService.installUserModules();
+            return loginForm;
+        }
+    }
 
-			// refresh the list of entities saved in the session
-			LoginForm loginForm = (LoginForm) session.getAttribute("loginForm");
-			loginForm.setEntities(entityManagerService.getEntities());
-			loginForm.refreshSelectedEntity();
-			syncStatusService.notifyAll();
+    @RequestMapping(value = "validate-user-modules", method = RequestMethod.GET)
+    public JsonNode validateUserModules(HttpSession session) {
+        synchronized (syncStatusService) {
+            return dataHubService.validateUserModules();
+        }
+    }
 
-			return loginForm;
-		}
-	}
+    private void updateEnvironmentConfiguration(LoginForm loginForm) {
+        environmentConfiguration.setMLHost(loginForm.getMlHost());
+        environmentConfiguration.setMLStagingPort(loginForm.getMlStagingPort());
+        environmentConfiguration.setMLFinalPort(loginForm.getMlFinalPort());
+        environmentConfiguration.setMlTracePort(loginForm.getMlTracePort());
+        environmentConfiguration.setMLUsername(loginForm.getMlUsername());
+        environmentConfiguration.setMLPassword(loginForm.getMlPassword());
+        environmentConfiguration.setUserPluginDir(loginForm.getUserPluginDir());
+    }
 
-	@RequestMapping(value = "validate-user-modules", method = RequestMethod.GET)
-	public JsonNode validateUserModules(HttpSession session) {
-		LOGGER.debug("GET: validate-user-modules");
-		synchronized (syncStatusService) {
-			return dataHubService.validateUserModules();
-		}
-	}
-
-	private void updateEnvironmentConfiguration(LoginForm loginForm) {
-		environmentConfiguration.setMLHost(loginForm.getMlHost());
-		environmentConfiguration.setMLStagingPort(loginForm.getMlStagingPort());
-		environmentConfiguration.setMLFinalPort(loginForm.getMlFinalPort());
-		environmentConfiguration.setMlTracePort(loginForm.getMlTracePort());
-		environmentConfiguration.setMLUsername(loginForm.getMlUsername());
-		environmentConfiguration.setMLPassword(loginForm.getMlPassword());
-		environmentConfiguration.setUserPluginDir(loginForm.getUserPluginDir());
-	}
-
-	private void retrieveEnvironmentConfiguration(LoginForm loginForm) {
-		loginForm.setMlHost(environmentConfiguration.getMLHost());
-		loginForm.setMlStagingPort(environmentConfiguration.getMLStagingPort());
-		loginForm.setMlFinalPort(environmentConfiguration.getMLFinalPort());
-		loginForm.setMlTracePort(environmentConfiguration.getMLTracePort());
-		loginForm.setMlUsername(environmentConfiguration.getMLUsername());
-		loginForm.setMlPassword(environmentConfiguration.getMLPassword());
-		loginForm.setUserPluginDir(environmentConfiguration.getUserPluginDir());
-	}
+    private void retrieveEnvironmentConfiguration(LoginForm loginForm) {
+        loginForm.setMlHost(environmentConfiguration.getMLHost());
+        loginForm.setMlStagingPort(environmentConfiguration.getMLStagingPort());
+        loginForm.setMlFinalPort(environmentConfiguration.getMLFinalPort());
+        loginForm.setMlTracePort(environmentConfiguration.getMLTracePort());
+        loginForm.setMlUsername(environmentConfiguration.getMLUsername());
+        loginForm.setMlPassword(environmentConfiguration.getMLPassword());
+        loginForm.setUserPluginDir(environmentConfiguration.getUserPluginDir());
+    }
 }
