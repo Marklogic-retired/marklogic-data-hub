@@ -58,7 +58,7 @@ public class TracingTest extends HubTestBase {
     }
 
     @Test
-    public void runFlowSansTracing() {
+    public void runXMLFlowSansTracing() {
         assertEquals(0, getFinalDocCount());
         assertEquals(0, getTracingDocCount());
 
@@ -66,7 +66,7 @@ public class TracingTest extends HubTestBase {
         assertFalse(t.isEnabled());
 
         FlowManager fm = new FlowManager(stagingClient);
-        Flow flow = fm.getFlow("trace-entity", "traceme");
+        Flow flow = fm.getFlow("trace-entity", "tracemeXML");
 
         JobFinishedListener listener = new JobFinishedListener();
         fm.runFlow(flow, 10, listener);
@@ -77,7 +77,26 @@ public class TracingTest extends HubTestBase {
     }
 
     @Test
-    public void runFlowWithTracing() {
+    public void runJSONFlowSansTracing() {
+        assertEquals(0, getFinalDocCount());
+        assertEquals(0, getTracingDocCount());
+
+        Tracing t = new Tracing(stagingClient);
+        assertFalse(t.isEnabled());
+
+        FlowManager fm = new FlowManager(stagingClient);
+        Flow flow = fm.getFlow("trace-entity", "tracemeJSON");
+
+        JobFinishedListener listener = new JobFinishedListener();
+        fm.runFlow(flow, 10, listener);
+        listener.waitForFinish();
+
+        assertEquals(5, getFinalDocCount());
+        assertEquals(0, getTracingDocCount());
+    }
+
+    @Test
+    public void runXMLFlowWithTracing() {
         assertEquals(0, getFinalDocCount());
         assertEquals(0, getTracingDocCount());
 
@@ -88,14 +107,75 @@ public class TracingTest extends HubTestBase {
         assertTrue(t.isEnabled());
 
         FlowManager fm = new FlowManager(stagingClient);
-        Flow flow = fm.getFlow("trace-entity", "traceme");
+        Flow flow = fm.getFlow("trace-entity", "tracemeXML");
 
         JobFinishedListener listener = new JobFinishedListener();
         fm.runFlow(flow, 10, listener);
         listener.waitForFinish();
 
         assertEquals(5, getFinalDocCount());
-        assertEquals(21, getTracingDocCount());
+        assertEquals(6, getTracingDocCount());
+    }
+
+    @Test
+    public void runJSONFlowWithTracing() {
+        assertEquals(0, getFinalDocCount());
+        assertEquals(0, getTracingDocCount());
+
+        Tracing t = new Tracing(stagingClient);
+        assertFalse(t.isEnabled());
+
+        t.enable();
+        assertTrue(t.isEnabled());
+
+        FlowManager fm = new FlowManager(stagingClient);
+        Flow flow = fm.getFlow("trace-entity", "tracemeJSON");
+
+        JobFinishedListener listener = new JobFinishedListener();
+        fm.runFlow(flow, 10, listener);
+        listener.waitForFinish();
+
+        assertEquals(5, getFinalDocCount());
+        assertEquals(6, getTracingDocCount());
+    }
+
+
+    @Test
+    public void runXMLErrorFlowWithoutTracing() {
+        assertEquals(0, getFinalDocCount());
+        assertEquals(0, getTracingDocCount());
+
+        Tracing t = new Tracing(stagingClient);
+        assertFalse(t.isEnabled());
+
+        FlowManager fm = new FlowManager(stagingClient);
+        Flow flow = fm.getFlow("trace-entity", "tracemeXMLError");
+
+        JobFinishedListener listener = new JobFinishedListener();
+        fm.runFlow(flow, 10, listener);
+        listener.waitForFinish();
+
+        assertEquals(0, getFinalDocCount());
+        assertEquals(1, getTracingDocCount());
+    }
+
+    @Test
+    public void runJSONErrorFlowWithoutTracing() {
+        assertEquals(0, getFinalDocCount());
+        assertEquals(0, getTracingDocCount());
+
+        Tracing t = new Tracing(stagingClient);
+        assertFalse(t.isEnabled());
+
+        FlowManager fm = new FlowManager(stagingClient);
+        Flow flow = fm.getFlow("trace-entity", "tracemeJSONError");
+
+        JobFinishedListener listener = new JobFinishedListener();
+        fm.runFlow(flow, 10, listener);
+        listener.waitForFinish();
+
+        assertEquals(0, getFinalDocCount());
+        assertEquals(1, getTracingDocCount());
     }
 
 

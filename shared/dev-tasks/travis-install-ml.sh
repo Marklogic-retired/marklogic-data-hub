@@ -15,8 +15,8 @@ set | grep TRAVIS
 
 test $1 && arg1=$1
 if [[ $arg1 = 'release' ]]; then
-  ver=8.0-5
-  fname=MarkLogic-${ver}.x86_64.rpm
+  ver=${ML_VERSION}
+  fname=MarkLogic-RHEL6-${ver}.x86_64.rpm
   fnamedeb="marklogic_"
   fnamedeb=$fnamedeb$ver
   suff="_amd64.deb"

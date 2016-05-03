@@ -54,9 +54,6 @@ declare function post(
     service:build-response(flow:run-collector($module-uri, map:map()))
 };
 
-(:
-  Uses a flow definition to run a flow
-:)
 declare function get(
   $context as map:map,
   $params  as map:map
