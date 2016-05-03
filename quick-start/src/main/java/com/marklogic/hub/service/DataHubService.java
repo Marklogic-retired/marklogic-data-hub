@@ -31,8 +31,10 @@ public class DataHubService {
     }
 
     public void installUserModules() throws DataHubException {
+    	LOGGER.debug("installUserModules");
         DataHub dataHub = getDataHub();
         try {
+        	LOGGER.debug("pluginDir:" + environmentConfiguration.getUserPluginDir());
             dataHub.installUserModules(environmentConfiguration.getUserPluginDir());
         } catch(Throwable e) {
             throw new DataHubException(e.getMessage(), e);

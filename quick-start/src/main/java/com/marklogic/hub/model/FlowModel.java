@@ -4,7 +4,6 @@ public class FlowModel {
 
     private String entityName;
     private String flowName;
-    private boolean isSynched;
     private TreeData treeData;
 
     public String getEntityName() {
@@ -24,14 +23,6 @@ public class FlowModel {
         this.flowName = flowName;
     }
 
-    public boolean isSynched() {
-        return isSynched;
-    }
-
-    public void setSynched(boolean isSynched) {
-        this.isSynched = isSynched;
-    }
-
     public TreeData getTreeData() {
         return treeData;
     }
@@ -46,10 +37,8 @@ public class FlowModel {
         sb.append("{");
         sb.append("entityName=");
         sb.append(entityName);
-        sb.append("flowName=");
+        sb.append(" flowName=");
         sb.append(flowName);
-        sb.append("isSynched=");
-        sb.append(isSynched);
         sb.append("}");
 
         return sb.toString();
