@@ -10,6 +10,16 @@ import com.marklogic.appdeployer.command.databases.DeployDatabaseCommand;
  */
 public class DeployHubDatabaseCommand extends DeployDatabaseCommand {
 
+    public enum DBType {
+        STAGING, FINAL, TRACING;
+    }
+
+    private DBType dbType;
+
+    public void setDbType(DBType dbType) {
+        this.dbType = dbType;
+    }
+
     public DeployHubDatabaseCommand(String databaseName) {
         super();
         this.setDatabaseName(databaseName);
@@ -23,8 +33,42 @@ public class DeployHubDatabaseCommand extends DeployDatabaseCommand {
 
     @Override
     protected String getPayload(CommandContext context) {
-        return format("{\"database-name\": \"%s\","
-                + "\"triple-index\": true,"
-                + "\"collection-lexicon\":true}", getDatabaseName());
+        String payload =
+                "{" +
+                "  \"database-name\": \"%s\"," +
+                "  \"triple-index\": true," +
+                "  \"collection-lexicon\":true";
+        if (this.dbType.equals(DBType.STAGING)) {
+            payload += "," +
+                    "\"range-element-index\": [" +
+                    "  {" +
+                    "    \"scalar-type\": \"unsignedInt\"," +
+                    "    \"namespace-uri\": \"http://marklogic.com/data-hub/trace\"," +
+                    "    \"localname\": \"is-tracing-enabled\"," +
+                    "    \"collation\": \"\"," +
+                    "    \"range-value-positions\": false," +
+                    "    \"invalid-values\": \"reject\"" +
+                    "  }" +
+                    "]";
+        }
+        else if (this.dbType.equals(DBType.FINAL)) {
+
+        }
+        else if (this.dbType.equals(DBType.TRACING)) {
+            payload += "," +
+                    "\"range-element-index\": [" +
+                    "  {" +
+                    "    \"scalar-type\": \"string\"," +
+                    "    \"namespace-uri\": \"\"," +
+                    "    \"localname\": \"trace-id\"," +
+                    "    \"collation\": \"http://marklogic.com/collation/codepoint\"," +
+                    "    \"range-value-positions\": false," +
+                    "    \"invalid-values\": \"reject\"" +
+                    "  }" +
+                    "]";
+        }
+        payload += "}";
+
+        return format(payload, getDatabaseName());
     }
 }

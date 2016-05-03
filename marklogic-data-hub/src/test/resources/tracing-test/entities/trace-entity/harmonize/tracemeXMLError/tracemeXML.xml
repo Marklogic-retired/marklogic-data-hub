@@ -1,0 +1,6 @@
+<?xml version="1.0" ?>
+<flow xmlns="http://marklogic.com/data-hub">
+  <complexity>simple</complexity>
+  <data-format>application/xml</data-format>
+  <plugins></plugins>
+</flow>
