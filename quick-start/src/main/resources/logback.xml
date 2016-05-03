@@ -8,16 +8,15 @@
     </encoder>
   </appender>
 
-  <logger name="org.springframework" level="INFO"/>
-  <logger name="org.thymeleaf" level="INFO"/>
-  <logger name="org.apache.http" level="INFO"/>
-  
-  <logger name="com.marklogic" level="WARN"/>
+  <logger name="org.springframework" level="WARN"/>
+  <logger name="org.apache.http" level="WARN"/>
+
+  <logger name="com.marklogic" level="INFO"/>
   <logger name="com.marklogic.appdeployer" level="INFO"/>
-  <logger name="com.marklogic.hub" level="DEBUG"/>
-  <logger name="com.marklogic.contentpump" level="DEBUG"/>
-  
-  <root level="DEBUG">
+  <logger name="com.marklogic.hub" level="INFO"/>
+  <logger name="com.marklogic.contentpump" level="INFO"/>
+
+  <root level="WARN">
     <appender-ref ref="STDOUT" />
   </root>
 </configuration>

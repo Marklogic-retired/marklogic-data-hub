@@ -54,30 +54,27 @@ declare function mlcpFlow:transform(
     flow:run-plugins($flow, $uri, map:get($content, "value"), $paramMap)
   }
   catch($ex) {
-    xdmp:log($ex),
+    xdmp:log(xdmp:describe($ex, (), ())),
     xdmp:rethrow()
   }
   let $_ := map:put($content, "value", $envelope)
   let $_ :=
     if (trace:enabled()) then
-      trace:create-trace(
-        trace:plugin-trace(
-          $uri,
-          if ($envelope instance of element()) then ()
-          else
-            null-node {},
-          "mlcp-writer",
-          $flow/hub:type,
-          $envelope,
-          if ($envelope instance of element()) then ()
-          else
-            null-node {},
-          xs:dayTimeDuration("PT0S"),
-          if ($envelope instance of element()) then "xml"
-          else "json"
-        )
+      trace:plugin-trace(
+        $uri,
+        if ($envelope instance of element()) then ()
+        else
+          null-node {},
+        "writer",
+        $flow/hub:type,
+        $envelope,
+        if ($envelope instance of element()) then ()
+        else
+          null-node {},
+        xs:dayTimeDuration("PT0S")
       )
     else ()
+  let $_ := trace:write-trace()
   return
     $content
 };

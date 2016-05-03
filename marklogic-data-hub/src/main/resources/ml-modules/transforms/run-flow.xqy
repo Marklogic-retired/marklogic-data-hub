@@ -22,29 +22,29 @@ declare function runFlow:transform(
   perflog:logit('RunFlow.transform',function() {
     let $entityName := map:get($params, 'entity-name')
     let $flowName := map:get($params, 'flow-name')
+
     let $flow := flow:get-flow($entityName,$flowName, "input")
+
     let $uri := map:get($context, 'uri')
+
     let $envelope := flow:run-plugins($flow, $uri, $content, $params)
     let $_ :=
       if (trace:enabled()) then
-        trace:create-trace(
-          trace:plugin-trace(
-            $uri,
-            if ($envelope instance of element()) then ()
-            else
-              null-node {},
-            $flow/hub:type,
-            "rest-document-writer",
-            $envelope,
-            if ($envelope instance of element()) then ()
-            else
-              null-node {},
-            xs:dayTimeDuration("PT0S"),
-            if ($envelope instance of element()) then "xml"
-            else "json"
-          )
+        trace:plugin-trace(
+          $uri,
+          if ($envelope instance of element()) then ()
+          else
+            null-node {},
+          $flow/hub:type,
+          "writer",
+          $envelope,
+          if ($envelope instance of element()) then ()
+          else
+            null-node {},
+          xs:dayTimeDuration("PT0S")
         )
       else ()
+    let $_ := trace:write-trace()
     return document { $envelope }
   })
 };

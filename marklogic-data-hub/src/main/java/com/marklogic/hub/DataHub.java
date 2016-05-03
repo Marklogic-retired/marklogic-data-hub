@@ -56,6 +56,7 @@ import com.marklogic.hub.commands.DeployModulesDatabaseCommand;
 import com.marklogic.hub.commands.DeployRestApiCommand;
 import com.marklogic.hub.commands.LoadModulesCommand;
 import com.marklogic.hub.commands.UpdateRestApiServersCommand;
+import com.marklogic.hub.commands.DeployHubDatabaseCommand.DBType;
 import com.marklogic.hub.util.HubFileFilter;
 import com.marklogic.hub.util.HubModulesLoader;
 import com.marklogic.hub.util.PerformanceLogger;
@@ -324,14 +325,17 @@ public class DataHub {
         List<Command> dbCommands = new ArrayList<Command>();
         DeployHubDatabaseCommand staging = new DeployHubDatabaseCommand(hubConfig.stagingDbName);
         staging.setForestsPerHost(hubConfig.stagingForestsPerHost);
+        staging.setDbType(DBType.STAGING);
         dbCommands.add(staging);
 
         DeployHubDatabaseCommand finalDb = new DeployHubDatabaseCommand(hubConfig.finalDbName);
         finalDb.setForestsPerHost(hubConfig.finalForestsPerHost);
+        finalDb.setDbType(DBType.FINAL);
         dbCommands.add(finalDb);
 
         DeployHubDatabaseCommand tracingDb = new DeployHubDatabaseCommand(hubConfig.tracingDbName);
         tracingDb.setForestsPerHost(hubConfig.tracingForestsPerHost);
+        tracingDb.setDbType(DBType.TRACING);
         dbCommands.add(tracingDb);
 
         dbCommands.add(new DeployModulesDatabaseCommand(hubConfig.modulesDbName));
@@ -371,7 +375,6 @@ public class DataHub {
         
         AppConfig config = getAppConfig();
         AdminManager adminManager = getAdminManager();
-        adminManager.setWaitForRestartCheckInterval(250);
         SimpleAppDeployer deployer = new SimpleAppDeployer(client, adminManager);
         deployer.setCommands(getCommands(config));
         deployer.undeploy(config);

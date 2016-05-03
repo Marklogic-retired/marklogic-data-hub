@@ -19,14 +19,15 @@ import com.marklogic.appdeployer.command.SortOrderConstants;
 import com.marklogic.client.admin.ResourceExtensionsManager.MethodParameters;
 import com.marklogic.client.modulesloader.ExtensionMetadataAndParams;
 import com.marklogic.client.modulesloader.impl.DefaultModulesLoader;
+import com.marklogic.client.modulesloader.impl.XccAssetLoader;
 import com.marklogic.client.modulesloader.xcc.CommaDelimitedPermissionsParser;
+import com.marklogic.client.modulesloader.xcc.DefaultDocumentFormatGetter;
 import com.marklogic.client.modulesloader.xcc.PermissionsParser;
 import com.marklogic.xcc.Content;
 import com.marklogic.xcc.ContentCreateOptions;
 import com.marklogic.xcc.ContentFactory;
 import com.marklogic.xcc.ContentSource;
 import com.marklogic.xcc.ContentSourceFactory;
-import com.marklogic.xcc.DocumentFormat;
 import com.marklogic.xcc.SecurityOptions;
 import com.marklogic.xcc.Session;
 import com.marklogic.xcc.Session.TransactionMode;
@@ -72,7 +73,12 @@ public class LoadModulesCommand extends AbstractCommand {
 
     protected void loadFile(String uri, InputStream inputStream, AppConfig config) throws IOException {
         ContentCreateOptions options = new ContentCreateOptions();
-        options.setFormat(DocumentFormat.TEXT);
+        if (uri.endsWith("xml")) {
+            options.setFormatXml();
+        }
+        else {
+            options.setFormatText();
+        }
         options.setPermissions(permissionsParser.parsePermissions(this.permissions));
         if (this.collections != null) {
             options.setCollections(collections);
@@ -100,7 +106,12 @@ public class LoadModulesCommand extends AbstractCommand {
 
     protected void initializeActiveSession(CommandContext context) {
         AppConfig config = context.getAppConfig();
-        this.modulesLoader = new DefaultModulesLoader(context.getAppConfig().newXccAssetLoader());
+        XccAssetLoader xccAssetLoader = context.getAppConfig().newXccAssetLoader();
+        DefaultDocumentFormatGetter documentFormatGetter = new DefaultDocumentFormatGetter();
+        documentFormatGetter.getBinaryExtensions().add("woff2");
+        documentFormatGetter.getBinaryExtensions().add("otf");
+        xccAssetLoader.setDocumentFormatGetter(documentFormatGetter);
+        this.modulesLoader = new DefaultModulesLoader(xccAssetLoader);
         this.modulesLoader.setDatabaseClient(config.newDatabaseClient());
         ContentSource cs = ContentSourceFactory.newContentSource(config.getHost(), port, config.getRestAdminUsername(), config.getRestAdminPassword(), config.getModulesDatabaseName(),
                 securityOptions);
@@ -116,7 +127,7 @@ public class LoadModulesCommand extends AbstractCommand {
             String rootPath = "/ml-modules/root";
 
             AppConfig appConfig = context.getAppConfig();
-            List<Resource> resources = findResources("classpath:" + rootPath, "/**/*.xqy");
+            List<Resource> resources = findResources("classpath:" + rootPath, "/**/*.x??");
             for (Resource r : resources) {
                 String path = r.getURL().getPath();
                 if (path.contains("!")) {

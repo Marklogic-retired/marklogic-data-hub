@@ -61,9 +61,6 @@ declare function post(
   })
 };
 
-(:
-  Uses a flow definition to run a flow
-:)
 declare function get(
   $context as map:map,
   $params  as map:map
