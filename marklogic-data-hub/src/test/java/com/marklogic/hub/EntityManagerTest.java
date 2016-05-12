@@ -48,15 +48,6 @@ public class EntityManagerTest extends HubTestBase {
         meta.getCollections().add("tester");
         installStagingDoc("/incoming/employee1.xml", meta, getResource("flow-manager-test/input/employee1.xml"));
         installStagingDoc("/incoming/employee2.xml", meta, getResource("flow-manager-test/input/employee2.xml"));
-        runInModules(
-                "xdmp:directory-create(\"/entities/test/harmonize/my-test-flow1/collector/\")," +
-                "xdmp:directory-create(\"/entities/test/harmonize/my-test-flow1/headers/\")," +
-                "xdmp:directory-create(\"/entities/test/harmonize/my-test-flow1/triples/\")," +
-                "xdmp:directory-create(\"/entities/test/harmonize/my-test-flow1/content/\")," +
-                "xdmp:directory-create(\"/entities/test/harmonize/my-test-flow2/collector/\")," +
-                "xdmp:directory-create(\"/entities/test/harmonize/my-test-flow2/headers/\")," +
-                "xdmp:directory-create(\"/entities/test/harmonize/my-test-flow2/triples/\")," +
-                "xdmp:directory-create(\"/entities/test/harmonize/my-test-flow2/content/\")");
         installModule("/entities/test/harmonize/my-test-flow1/collector/collector.xqy", "flow-manager-test/my-test-flow1/collector/collector.xqy");
         installModule("/entities/test/harmonize/my-test-flow2/collector/collector.xqy", "flow-manager-test/my-test-flow1/collector/collector.xqy");
     }

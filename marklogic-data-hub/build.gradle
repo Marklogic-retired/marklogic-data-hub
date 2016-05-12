@@ -5,7 +5,7 @@ plugins {
     id 'idea'
     id 'maven-publish'
     id 'com.jfrog.bintray' version '1.6'
-    id 'com.marklogic.ml-gradle' version '2.1.0'
+    id 'com.marklogic.ml-gradle' version '2.2.0-RC1'
 }
 
 repositories {
@@ -21,13 +21,10 @@ targetCompatibility = 1.8
 
 dependencies {
     compile 'org.springframework.batch:spring-batch-core:3.0.6.RELEASE'
-    compile 'com.marklogic:marklogic-xcc:8.0.5'
     compile 'com.marklogic:java-client-api:3.0.4'
-    compile 'com.marklogic:ml-javaclient-util:2.6.1'
-    compile 'com.marklogic:ml-app-deployer:2.0'
+    compile 'com.marklogic:ml-javaclient-util:2.9.0-RC1'
+    compile 'com.marklogic:ml-app-deployer:2.2.0-RC1'
     compile 'commons-io:commons-io:2.4'
-    compile 'org.apache.commons:commons-csv:1.2'
-    compile 'org.glassfish.jaxb:txw2:2.2.11'
     testCompile 'org.springframework.batch:spring-batch-test:3.0.6.RELEASE'
     testCompile 'junit:junit:4.12'
     testCompile 'xmlunit:xmlunit:1.3'

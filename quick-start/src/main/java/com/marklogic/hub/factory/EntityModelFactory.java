@@ -36,7 +36,7 @@ public class EntityModelFactory {
         }
     }
 
-    public EntityModel createNewEntity(File userPluginDir, String entityName,
+    public EntityModel createNewEntity(File projectDir, String entityName,
             String inputFlowName, String harmonizeFlowName, PluginFormat pluginFormat,
             Format dataFormat) throws IOException {
         EntityModel entityModel = new EntityModel();
@@ -44,18 +44,18 @@ public class EntityModelFactory {
         entityModel.setInputFlows(new ArrayList<>());
         entityModel.setHarmonizeFlows(new ArrayList<>());
 
-        Scaffolding.createEntity(entityName, userPluginDir);
+        new Scaffolding(projectDir.toString()).createEntity(entityName);
 
         FlowModelFactory flowModelFactory = new FlowModelFactory(entityName);
         if (inputFlowName != null) {
-            FlowModel inputFlow = flowModelFactory.createNewFlow(userPluginDir,
+            FlowModel inputFlow = flowModelFactory.createNewFlow(projectDir,
                     inputFlowName, FlowType.INPUT, pluginFormat, dataFormat);
             entityModel.getInputFlows().add(inputFlow);
         }
 
         if (harmonizeFlowName != null) {
             FlowModel harmonizeFlow = flowModelFactory.createNewFlow(
-                    userPluginDir, harmonizeFlowName,
+                    projectDir, harmonizeFlowName,
                     FlowType.HARMONIZE, pluginFormat,
                     dataFormat);
             entityModel.getHarmonizeFlows().add(harmonizeFlow);

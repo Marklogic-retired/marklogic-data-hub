@@ -4,6 +4,8 @@ import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -21,14 +23,15 @@ import com.marklogic.hub.flow.FlowType;
 
 public class EndToEndTestSjsXml extends HubTestBase {
     private static final String ENTITY = "e2eentity";
-    private static File pluginsDir = new File("./ye-olde-plugins");
+    private static Path projectDir = Paths.get(".", "ye-olde-project");
 
     @BeforeClass
     public static void setup() throws IOException {
         XMLUnit.setIgnoreWhitespace(true);
 
-        if (pluginsDir.isDirectory() && pluginsDir.exists()) {
-            FileUtils.deleteDirectory(pluginsDir);
+        File projectDirFile = projectDir.toFile();
+        if (projectDirFile.isDirectory() && projectDirFile.exists()) {
+            FileUtils.deleteDirectory(projectDirFile);
         }
 
         installHub();
@@ -36,19 +39,20 @@ public class EndToEndTestSjsXml extends HubTestBase {
         enableDebugging();
         enableTracing();
 
-        Scaffolding.createEntity(ENTITY, pluginsDir);
-        Scaffolding.createFlow(ENTITY, "testinput", FlowType.INPUT,
-                PluginFormat.JAVASCRIPT, Format.XML, pluginsDir);
-        Scaffolding.createFlow(ENTITY, "testharmonize", FlowType.HARMONIZE,
-                PluginFormat.JAVASCRIPT, Format.XML, pluginsDir);
+        Scaffolding scaffolding = new Scaffolding(projectDir.toString());
+        scaffolding.createEntity(ENTITY);
+        scaffolding.createFlow(ENTITY, "testinput", FlowType.INPUT,
+                PluginFormat.JAVASCRIPT, Format.XML);
+        scaffolding.createFlow(ENTITY, "testharmonize", FlowType.HARMONIZE,
+                PluginFormat.JAVASCRIPT, Format.XML);
 
-        new DataHub(getHubConfig()).installUserModules(pluginsDir.toString());
+        new DataHub(getHubConfig()).installUserModules();
     }
 
     @AfterClass
     public static void teardown() throws IOException {
         uninstallHub();
-        FileUtils.deleteDirectory(pluginsDir);
+        FileUtils.deleteDirectory(projectDir.toFile());
     }
 
     @Test

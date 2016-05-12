@@ -1,6 +1,7 @@
 package com.marklogic.hub.web.controller.api;
 
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.WatchEvent;
 import java.util.List;
 
@@ -129,7 +130,7 @@ public class EntityApiController implements InitializingBean, DisposableBean, Fi
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        String pluginDir = environmentConfiguration.getUserPluginDir();
+        String pluginDir = Paths.get(environmentConfiguration.getProjectDir(), "plugins").toString();
         watcherService.watch(pluginDir, this);
     }
 

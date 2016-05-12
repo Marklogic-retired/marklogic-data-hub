@@ -49,17 +49,17 @@ public class HubConfig {
 
     public String stagingDbName = DEFAULT_STAGING_NAME;
     public String stagingHttpName = DEFAULT_STAGING_NAME;
-    public int stagingForestsPerHost = DEFAULT_FORESTS_PER_HOST;
+    public Integer stagingForestsPerHost = DEFAULT_FORESTS_PER_HOST;
     public Integer stagingPort = DEFAULT_STAGING_PORT;
 
     public String finalDbName = DEFAULT_FINAL_NAME;
     public String finalHttpName = DEFAULT_FINAL_NAME;
-    public int finalForestsPerHost = DEFAULT_FORESTS_PER_HOST;
+    public Integer finalForestsPerHost = DEFAULT_FORESTS_PER_HOST;
     public Integer finalPort = DEFAULT_FINAL_PORT;
 
     public String tracingDbName = DEFAULT_TRACING_NAME;
     public String tracingHttpName = DEFAULT_TRACING_NAME;
-    public int tracingForestsPerHost = 1;
+    public Integer tracingForestsPerHost = 1;
     public Integer tracePort = DEFAULT_TRACE_PORT;
 
     public String modulesDbName = DEFAULT_MODULES_DB_NAME;
@@ -68,13 +68,13 @@ public class HubConfig {
 
     public String authMethod = DEFAULT_AUTH_METHOD;
 
-    public String modulesPath;
+    public String projectDir;
 
     public HubConfig() {
         this(DEFAULT_MODULES_PATH);
     }
 
-    public HubConfig(String modulesPath) {
-        this.modulesPath = modulesPath;
+    public HubConfig(String projectDir) {
+        this.projectDir = projectDir;
     }
 }

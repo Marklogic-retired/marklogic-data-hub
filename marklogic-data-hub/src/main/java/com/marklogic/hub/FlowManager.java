@@ -193,7 +193,7 @@ public class FlowManager extends ResourceManager {
      * @param flow - the flow to run
      * @param batchSize - the size to use for batching transactions
      * @param listener - the JobExecutionListener to receive status updates about the job
-     * @return
+     * @return a JobExecution instance
      */
     public JobExecution runFlow(Flow flow, int batchSize, JobExecutionListener listener) {
         Collector c = flow.getCollector();

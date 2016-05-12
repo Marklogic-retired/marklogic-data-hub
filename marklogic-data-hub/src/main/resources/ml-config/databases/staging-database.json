@@ -2,6 +2,30 @@
   "database-name": "%%STAGING_DB_NAME%%",
   "range-element-index": [
     {
+      "scalar-type": "dateTime",
+      "namespace-uri": "http://marklogic.com/xdmp/dls",
+      "localname": "created",
+      "collation": "",
+      "range-value-positions": false,
+      "invalid-values": "reject"
+    },
+    {
+      "scalar-type": "dateTime",
+      "namespace-uri": "http://marklogic.com/xdmp/dls",
+      "localname": "replaced",
+      "collation": "",
+      "range-value-positions": false,
+      "invalid-values": "reject"
+    },
+    {
+      "scalar-type": "unsignedLong",
+      "namespace-uri": "http://marklogic.com/xdmp/dls",
+      "localname": "version-id",
+      "collation": "",
+      "range-value-positions": false,
+      "invalid-values": "reject"
+    },
+    {
       "scalar-type": "unsignedInt",
       "namespace-uri": "http://marklogic.com/data-hub/trace",
       "localname": "is-tracing-enabled",

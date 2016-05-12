@@ -2,6 +2,8 @@ package com.marklogic.hub.service;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,8 +55,9 @@ public class EntityManagerService {
     public List<EntityModel> getEntities() {
         List<EntityModel> entities = new ArrayList<>();
         List<Entity> entitiesInServer = this.getEntitysInServer();
+        Path pluginDir = Paths.get(environmentConfiguration.getProjectDir(), "plugins");
         String entitiesPath = FileUtil.createFolderIfNecessary(
-                environmentConfiguration.getUserPluginDir(),
+                pluginDir.toString(),
                 FileUtil.ENTITIES_FOLDER);
         List<String> entityNames = FileUtil.listDirectFolders(entitiesPath);
         EntityModelFactory entityModelFactory = new EntityModelFactory(
@@ -89,8 +92,8 @@ public class EntityManagerService {
         EntityModelFactory EntityModelFactory = new EntityModelFactory();
         EntityModel EntityModel;
         try {
-            File pluginDir = new File(environmentConfiguration.getUserPluginDir());
-            EntityModel = EntityModelFactory.createNewEntity(pluginDir,
+            File projectDir = new File(environmentConfiguration.getProjectDir());
+            EntityModel = EntityModelFactory.createNewEntity(projectDir,
                     EntityName,
                     inputFlowName, harmonizeFlowName, pluginFormat, dataFormat);
         } catch (IOException e) {

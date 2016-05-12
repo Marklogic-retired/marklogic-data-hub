@@ -21,33 +21,34 @@ import com.marklogic.hub.flow.FlowType;
 
 public class EndToEndTestXqyXml extends HubTestBase {
     private static final String ENTITY = "e2eentity";
-    private static File pluginsDir = new File("./ye-olde-plugins");
+    private static File projectDir = new File("ye-olde-project");
 
     @BeforeClass
     public static void setup() throws IOException {
         XMLUnit.setIgnoreWhitespace(true);
 
-        if (pluginsDir.isDirectory() && pluginsDir.exists()) {
-            FileUtils.deleteDirectory(pluginsDir);
+        if (projectDir.isDirectory() && projectDir.exists()) {
+            FileUtils.deleteDirectory(projectDir);
         }
 
         installHub();
 
         enableDebugging();
 
-        Scaffolding.createEntity(ENTITY, pluginsDir);
-        Scaffolding.createFlow(ENTITY, "testinput", FlowType.INPUT,
-                PluginFormat.XQUERY, Format.XML, pluginsDir);
-        Scaffolding.createFlow(ENTITY, "testharmonize", FlowType.HARMONIZE,
-                PluginFormat.XQUERY, Format.XML, pluginsDir);
+        Scaffolding scaffolding = new Scaffolding(projectDir.toString());
+        scaffolding.createEntity(ENTITY);
+        scaffolding.createFlow(ENTITY, "testinput", FlowType.INPUT,
+                PluginFormat.XQUERY, Format.XML);
+        scaffolding.createFlow(ENTITY, "testharmonize", FlowType.HARMONIZE,
+                PluginFormat.XQUERY, Format.XML);
 
-        new DataHub(getHubConfig()).installUserModules(pluginsDir.toString());
+        new DataHub(getHubConfig()).installUserModules();
     }
 
     @AfterClass
     public static void teardown() throws IOException {
         uninstallHub();
-        FileUtils.deleteDirectory(pluginsDir);
+        FileUtils.deleteDirectory(projectDir);
     }
 
     @Test
