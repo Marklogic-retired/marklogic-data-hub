@@ -54,7 +54,7 @@ bintray {
     publications = ['main']
     pkg {
         repo = 'maven'
-        name = 'ml-data-hub-plugin'
+        name = 'ml-data-hub'
         desc = 'A gradle plugin for Data Hub tasks'
         // userOrg = user
         licenses = ['Apache-2.0']
@@ -66,15 +66,15 @@ bintray {
 pluginBundle {
     website = 'http://www.gradle.org/'
     vcsUrl = 'git@github.com:marklogic/marklogic-data-hub.git'
-    description = 'ml-data-hub-plugin A gradle plugin for Data Hub tasks'
-    tags = ['marklogic']
+    description = 'ml-data-hub A gradle plugin for Data Hub tasks'
+    tags = ['marklogic', 'data hub']
 
     plugins {
         mldatahubPlugin {
-            id = 'com.marklogic.ml-data-hub-plugin'
+            id = 'com.marklogic.ml-data-hub'
             displayName = 'Gradle tasks for MarkLogic Data Hub'
             description = 'Gradle plugin for configuring and deploying the MarkLogic Data Hub'
-            tags = ['marklogic']
+            tags = ['marklogic', 'data hub']
         }
     }
 }

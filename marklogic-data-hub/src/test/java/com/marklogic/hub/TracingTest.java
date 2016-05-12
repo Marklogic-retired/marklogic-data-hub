@@ -34,8 +34,8 @@ public class TracingTest extends HubTestBase {
         PropertiesModuleManager modulesManager = new PropertiesModuleManager();
         modulesManager.deletePropertiesFile();
 
-        DataHub dataHub = new DataHub(getHubConfig());
-        dataHub.installUserModules(path);
+        DataHub dataHub = new DataHub(getHubConfig(path));
+        dataHub.installUserModules();
      }
 
     @AfterClass

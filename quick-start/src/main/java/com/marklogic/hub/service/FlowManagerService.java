@@ -86,10 +86,11 @@ public class FlowManagerService {
     public FlowModel createFlow(String entityName, String flowName,
             FlowType flowType, PluginFormat pluginFormat, Format dataFormat) {
         FlowModelFactory flowModelFactory = new FlowModelFactory(entityName);
-        File pluginDir = new File(environmentConfiguration.getUserPluginDir());
+
+        File projectDir = new File(environmentConfiguration.getProjectDir());
         FlowModel flowModel;
         try {
-            flowModel = flowModelFactory.createNewFlow(pluginDir, flowName,
+            flowModel = flowModelFactory.createNewFlow(projectDir, flowName,
                     flowType, pluginFormat, dataFormat);
         } catch (IOException e) {
             throw new FlowManagerException(e.getMessage(), e);

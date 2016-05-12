@@ -44,7 +44,9 @@ class CreateFlowTask extends HubTask {
             return
         }
 
-        def userlandPath = new File(getHubConfig().modulesPath)
-        Scaffolding.createFlow(entityName, flowName, flowType, pluginFormat, dataFormat, userlandPath)
+        def projectDir = getHubConfig().projectDir
+        Scaffolding scaffolding = new Scaffolding(projectDir)
+        println "Creating an " + pluginFormat + " " + flowType + " flow named " + flowName + " for entity " + entityName
+        scaffolding.createFlow(entityName, flowName, flowType, pluginFormat, dataFormat)
     }
 }

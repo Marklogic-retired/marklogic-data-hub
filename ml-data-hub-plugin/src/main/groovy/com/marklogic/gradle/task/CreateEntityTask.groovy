@@ -16,10 +16,11 @@ class CreateEntityTask extends DefaultTask {
             println "entityName property is required."
             return
         }
-        def userlandPath = new File(getHubConfig().modulesPath)
+        def projectDir = getHubConfig().projectDir
         println "entityName: " + entityName
-        println "userlandPath: " + userlandPath.toString()
-        Scaffolding.createEntity(entityName, userlandPath)
+        println "projectDir: " + projectDir.toString()
+        Scaffolding scaffolding = new Scaffolding(projectDir)
+        scaffolding.createEntity(entityName)
     }
 
     HubConfig getHubConfig() {

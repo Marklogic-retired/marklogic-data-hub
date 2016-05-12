@@ -11,6 +11,8 @@ import com.marklogic.client.DatabaseClientFactory.Authentication;
 import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.flow.Flow;
 
+import com.marklogic.appdeployer.command.CommandContext
+
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
 
@@ -45,5 +47,9 @@ class HubTask extends DefaultTask {
                 hc.adminUsername,
                 hc.adminPassword,
                 authMethod);
+    }
+
+    CommandContext getCommandContext() {
+        getProject().property("mlCommandContext")
     }
 }

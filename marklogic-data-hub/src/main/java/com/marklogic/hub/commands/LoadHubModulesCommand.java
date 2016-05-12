@@ -33,7 +33,7 @@ import com.marklogic.xcc.Session;
 import com.marklogic.xcc.Session.TransactionMode;
 import com.marklogic.xcc.exceptions.RequestException;
 
-public class LoadModulesCommand extends AbstractCommand {
+public class LoadHubModulesCommand extends AbstractCommand {
     private Integer port = 8000;
     private SecurityOptions securityOptions;
     private Session activeSession;
@@ -47,7 +47,7 @@ public class LoadModulesCommand extends AbstractCommand {
 
     private JarExtensionMetadataProvider extensionMetadataProvider;
 
-    public LoadModulesCommand() {
+    public LoadHubModulesCommand() {
         setExecuteSortOrder(SortOrderConstants.LOAD_MODULES);
         this.extensionMetadataProvider = new JarExtensionMetadataProvider();
     }
@@ -56,7 +56,7 @@ public class LoadModulesCommand extends AbstractCommand {
      * Public so that a client can initialize the ModulesLoader and then access it via the getter; this is useful for a
      * tool like ml-gradle, where the ModulesLoader can be reused by multiple tasks.
      *
-     * @param context
+     * @param context - the command context
      */
     public void initializeDefaultModulesLoader(CommandContext context) {
         logger.info("Initializing instance of DefaultModulesLoader");
@@ -127,7 +127,7 @@ public class LoadModulesCommand extends AbstractCommand {
             String rootPath = "/ml-modules/root";
 
             AppConfig appConfig = context.getAppConfig();
-            List<Resource> resources = findResources("classpath:" + rootPath, "/**/*.x??");
+            List<Resource> resources = findResources("classpath*:" + rootPath, "/**/*.x??");
             for (Resource r : resources) {
                 String path = r.getURL().getPath();
                 if (path.contains("!")) {
@@ -153,7 +153,7 @@ public class LoadModulesCommand extends AbstractCommand {
 
             logger.info("Loading Service Extensions");
             long startTime = System.nanoTime();
-            resources = findResources("classpath:/ml-modules/services", "/**/*.xq*");
+            resources = findResources("classpath*:/ml-modules/services", "/**/*.xq*");
             for (Resource r : resources) {
                 ExtensionMetadataAndParams emap = extensionMetadataProvider.provideExtensionMetadataAndParams(r);
                 this.modulesLoader.installService(r, emap.metadata, emap.methods.toArray(new MethodParameters[] {}));
@@ -165,7 +165,7 @@ public class LoadModulesCommand extends AbstractCommand {
 
             logger.info("Loading Rest Transforms");
             startTime = System.nanoTime();
-            resources = findResources("classpath:/ml-modules/transforms", "/**/*.xq*");
+            resources = findResources("classpath*:/ml-modules/transforms", "/**/*.xq*");
             for (Resource r : resources) {
                 ExtensionMetadataAndParams emap = extensionMetadataProvider.provideExtensionMetadataAndParams(r);
                 this.modulesLoader.installTransform(r, emap.metadata);
