@@ -30,7 +30,7 @@ public class ProjectPropertySource extends LoggingObject implements PropertySour
      *
      * This currently only includes properties that start with "ml". This is to avoid picking up very generically-named
      * properties in Gradle, such as "name" and "version", which may conflict with properties from other sources.
-     * @return
+     * @return - Properties
      */
     @Override
     public Properties getProperties() {

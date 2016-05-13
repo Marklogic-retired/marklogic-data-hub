@@ -20,7 +20,7 @@ module namespace flow = "http://marklogic.com/data-hub/flow-lib";
 import module namespace config = "http://marklogic.com/data-hub/config"
   at "/com.marklogic.hub/lib/config.xqy";
 
-import module namespace debug = "http://marklogic.com/data-hub/debug-lib"
+import module namespace debug = "http://marklogic.com/data-hub/debug"
   at "/com.marklogic.hub/lib/debug-lib.xqy";
 
 import module namespace hul = "http://marklogic.com/data-hub/hub-utils-lib"

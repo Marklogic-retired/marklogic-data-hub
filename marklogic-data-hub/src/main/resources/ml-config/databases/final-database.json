@@ -24,6 +24,14 @@
       "collation": "",
       "range-value-positions": false,
       "invalid-values": "reject"
+    },
+    {
+      "scalar-type": "unsignedInt",
+      "namespace-uri": "http://marklogic.com/data-hub/debug",
+      "localname": "is-debugging-enabled",
+      "collation": "",
+      "range-value-positions": false,
+      "invalid-values": "reject"
     }
   ],
   "schema-database": "%%SCHEMAS_DATABASE%%",

@@ -2,6 +2,7 @@ package com.marklogic.gradle.task
 
 import com.marklogic.hub.DataHub;
 import com.marklogic.hub.Tracing;
+import com.marklogic.hub.Debugging;
 import com.marklogic.hub.HubConfig;
 
 import com.marklogic.client.DatabaseClient;
@@ -30,8 +31,8 @@ class HubTask extends DefaultTask {
         return new Tracing(getStagingClient())
     }
 
-    Tracing getDebugging() {
-        return new Tracing(getStagingClient())
+    Debugging getDebugging() {
+        return new Debugging(getStagingClient())
     }
 
     FlowManager getFlowManager() {

@@ -15,14 +15,15 @@
 :)
 xquery version "1.0-ml";
 
-module namespace debug = "http://marklogic.com/data-hub/debug-lib";
+module namespace debug = "http://marklogic.com/data-hub/debug";
 
 declare option xdmp:mapping "false";
 
 declare function debug:enable($enable as xs:boolean)
 {
-  xdmp:set-server-field("HUB_DEBUG", $enable),
-  xdmp:set-server-field("MarkLogic.DEBUG", $enable)
+  xdmp:document-insert(
+    "/com.marklogic.hub/__debug_enabled__.xml",
+    element debug:is-debugging-enabled { if ($enable) then 1 else 0 })
 };
 
 (:~
@@ -32,7 +33,13 @@ declare function debug:enable($enable as xs:boolean)
  :)
 declare function debug:on() as xs:boolean
 {
-  xdmp:get-server-field("HUB_DEBUG", fn:false())
+  let $value := cts:element-values(xs:QName("debug:is-debugging-enabled"), (), ("type=unsignedInt","limit=1"))
+  return
+    if ($value) then
+      $value eq 1
+    else
+      fn:false()
+
 };
 
 (:~

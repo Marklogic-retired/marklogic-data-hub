@@ -17,7 +17,7 @@ xquery version "1.0-ml";
 
 module namespace service = "http://marklogic.com/rest-api/resource/collector";
 
-import module namespace debug = "http://marklogic.com/data-hub/debug-lib"
+import module namespace debug = "http://marklogic.com/data-hub/debug"
   at "/com.marklogic.hub/lib/debug-lib.xqy";
 
 import module namespace flow = "http://marklogic.com/data-hub/flow-lib"
