@@ -48,6 +48,5 @@ declare %rapi:transaction-mode("update") function post(
   let $enable := map:get($params, "enable") = ("true", "yes")
   let $_ := trace:enable-tracing($enable)
   return
-    (),
-  document { () }
+    document { () }
 };

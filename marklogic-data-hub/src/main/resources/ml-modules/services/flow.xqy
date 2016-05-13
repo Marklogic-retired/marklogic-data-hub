@@ -23,6 +23,9 @@ import module namespace debug = "http://marklogic.com/data-hub/debug-lib"
 import module namespace flow = "http://marklogic.com/data-hub/flow-lib"
   at "/com.marklogic.hub/lib/flow-lib.xqy";
 
+import module namespace perf = "http://marklogic.com/data-hub/perflog-lib"
+  at "/com.marklogic.hub/lib/perflog-lib.xqy";
+
 declare namespace rapi = "http://marklogic.com/rest-api";
 
 declare namespace hub = "http://marklogic.com/data-hub";
@@ -43,18 +46,20 @@ declare function get(
 {
   debug:dump-env("GET FLOW"),
 
-  document {
-    let $entity-name := map:get($params, "entity-name")
-    let $flow-name := map:get($params, "flow-name")
-    let $flow-type := map:get($params, "flow-type")
-    let $resp :=
-      if ($flow-name) then
-        flow:get-flow($entity-name, $flow-name, $flow-type)
-      else
-        flow:get-flows($entity-name)
-    return
-     $resp
-  }
+  perf:log('/v1/resources/flow:get', function() {
+    document {
+      let $entity-name := map:get($params, "entity-name")
+      let $flow-name := map:get($params, "flow-name")
+      let $flow-type := map:get($params, "flow-type")
+      let $resp :=
+        if ($flow-name) then
+          flow:get-flow($entity-name, $flow-name, $flow-type)
+        else
+          flow:get-flows($entity-name)
+      return
+       $resp
+    }
+  })
 };
 
 (:~
@@ -70,9 +75,11 @@ declare %rapi:transaction-mode("update") function post(
 {
   debug:dump-env("RUN FLOW"),
 
-  let $flow as element(hub:flow) := $input/hub:flow
-  let $identifier := map:get($params, "identifier")
-  let $_ := flow:run-flow($flow, $identifier, map:map())
-  return
-    document { () }
+  perf:log('/v1/resources/flow:post', function() {
+    let $flow as element(hub:flow) := $input/hub:flow
+    let $identifier := map:get($params, "identifier")
+    let $_ := flow:run-flow($flow, $identifier, map:map())
+    return
+      document { () }
+  })
 };

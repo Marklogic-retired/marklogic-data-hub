@@ -23,6 +23,9 @@ import module namespace debug = "http://marklogic.com/data-hub/debug-lib"
 import module namespace flow = "http://marklogic.com/data-hub/flow-lib"
   at "/com.marklogic.hub/lib/flow-lib.xqy";
 
+import module namespace perf = "http://marklogic.com/data-hub/perflog-lib"
+  at "/com.marklogic.hub/lib/perflog-lib.xqy";
+
 declare option xdmp:mapping "false";
 
 (:~
@@ -48,10 +51,12 @@ declare function post(
 {
   debug:dump-env(),
 
-  (:let $options := $input/node():)
-  let $module-uri as xs:string := map:get($params, "module-uri")
-  return
-    service:build-response(flow:run-collector($module-uri, map:map()))
+  perf:log('/v1/resources/collector:post', function() {
+    (:let $options := $input/node():)
+    let $module-uri as xs:string := map:get($params, "module-uri")
+    return
+      service:build-response(flow:run-collector($module-uri, map:map()))
+  })
 };
 
 declare function get(
@@ -61,7 +66,9 @@ declare function get(
 {
   debug:dump-env(),
 
-  let $module-uri as xs:string := map:get($params, "module-uri")
-  return
-    service:build-response(flow:run-collector($module-uri, map:map()))
+  perf:log('/v1/resources/collector:get', function() {
+    let $module-uri as xs:string := map:get($params, "module-uri")
+    return
+      service:build-response(flow:run-collector($module-uri, map:map()))
+  })
 };

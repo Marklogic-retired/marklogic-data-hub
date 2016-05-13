@@ -15,16 +15,6 @@
  */
 package com.marklogic.hub;
 
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.web.client.ResourceAccessException;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.appdeployer.ConfigDir;
@@ -46,14 +36,7 @@ import com.marklogic.appdeployer.command.forests.ConfigureForestReplicasCommand;
 import com.marklogic.appdeployer.command.groups.DeployGroupsCommand;
 import com.marklogic.appdeployer.command.mimetypes.DeployMimetypesCommand;
 import com.marklogic.appdeployer.command.schemas.LoadSchemasCommand;
-import com.marklogic.appdeployer.command.security.DeployAmpsCommand;
-import com.marklogic.appdeployer.command.security.DeployCertificateAuthoritiesCommand;
-import com.marklogic.appdeployer.command.security.DeployCertificateTemplatesCommand;
-import com.marklogic.appdeployer.command.security.DeployExternalSecurityCommand;
-import com.marklogic.appdeployer.command.security.DeployPrivilegesCommand;
-import com.marklogic.appdeployer.command.security.DeployProtectedCollectionsCommand;
-import com.marklogic.appdeployer.command.security.DeployRolesCommand;
-import com.marklogic.appdeployer.command.security.DeployUsersCommand;
+import com.marklogic.appdeployer.command.security.*;
 import com.marklogic.appdeployer.command.tasks.DeployScheduledTasksCommand;
 import com.marklogic.appdeployer.command.triggers.DeployTriggersCommand;
 import com.marklogic.appdeployer.command.viewschemas.DeployViewSchemasCommand;
@@ -68,6 +51,7 @@ import com.marklogic.client.modulesloader.impl.PropertiesModuleManager;
 import com.marklogic.client.util.RequestParameters;
 import com.marklogic.hub.commands.LoadHubModulesCommand;
 import com.marklogic.hub.commands.LoadUserModulesCommand;
+import com.marklogic.hub.util.PerformanceLogger;
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.ManageConfig;
 import com.marklogic.mgmt.admin.AdminConfig;
@@ -76,6 +60,15 @@ import com.marklogic.mgmt.appservers.ServerManager;
 import com.marklogic.mgmt.databases.DatabaseManager;
 import com.marklogic.rest.util.Fragment;
 import com.marklogic.rest.util.ResourcesFragment;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.web.client.ResourceAccessException;
+
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class DataHub {
 
@@ -109,6 +102,8 @@ public class DataHub {
      * @return true if installed, false otherwise
      */
     public boolean isInstalled() {
+        long startTime = PerformanceLogger.monitorTimeInsideMethod();
+
         ServerManager sm = new ServerManager(client);
         DatabaseManager dm = new DatabaseManager(client);
 
@@ -156,6 +151,8 @@ public class DataHub {
                 tracingDbExists && tracingIndexesOn);
         boolean forestsOk = (stagingForestsExist && finalForestsExist && tracingForestsExist);
 
+        PerformanceLogger.logTimeInsideMethod(startTime, "DataHub.isInstalled");
+
         return (appserversOk && dbsOk && forestsOk);
     }
 
@@ -164,6 +161,7 @@ public class DataHub {
      * @throws ServerValidationException if the server is not compatible
      */
     public void validateServer() throws ServerValidationException {
+        long startTime = PerformanceLogger.monitorTimeInsideMethod();
         try {
             AdminManager am = getAdminManager();
             String versionString = am.getServerVersion();
@@ -176,6 +174,7 @@ public class DataHub {
         catch(ResourceAccessException e) {
             throw new ServerValidationException(e.toString());
         }
+        PerformanceLogger.logTimeInsideMethod(startTime, "DataHub.validateServer");
     }
 
     private AppConfig getAppConfig() {
@@ -230,14 +229,13 @@ public class DataHub {
     }
 
     public void initProject() {
-        long startTime = System.nanoTime();
+        long startTime = PerformanceLogger.monitorTimeInsideMethod();
         LOGGER.info("Initializing the Hub Project");
 
         HubProject hp = new HubProject(hubConfig);
         hp.init();
-        long endTime = System.nanoTime();
-        long duration = (endTime - startTime);
-        LOGGER.info("Initialize took: " + (duration / 1000000000) + " seconds");
+
+        PerformanceLogger.logTimeInsideMethod(startTime, "DataHub.initProject");
     }
 
     private DatabaseClient getDatabaseClient(int port) {
@@ -255,8 +253,7 @@ public class DataHub {
      * Installs User Provided modules into the Data Hub
      */
     public void installUserModules() {
-        long startTime = System.nanoTime();
-
+        long startTime = PerformanceLogger.monitorTimeInsideMethod();
         LOGGER.debug("Installing user modules into MarkLogic");
 
         List<Command> commands = new ArrayList<Command>();
@@ -266,17 +263,20 @@ public class DataHub {
         SimpleAppDeployer deployer = new SimpleAppDeployer(client, getAdminManager());
         deployer.setCommands(commands);
         deployer.deploy(config);
-        long endTime = System.nanoTime();
-        long duration = (endTime - startTime);
-        LOGGER.info("Installing User Modules took: " + (duration / 1000000000) + " seconds");
-
+        PerformanceLogger.logTimeInsideMethod(startTime, "DataHub.installUserModules");
     }
 
     public JsonNode validateUserModules() {
+        long startTime = PerformanceLogger.monitorTimeInsideMethod();
         LOGGER.debug("validating user modules");
+
         DatabaseClient client = getDatabaseClient(hubConfig.stagingPort);
         EntitiesValidator ev = new EntitiesValidator(client);
-        return ev.validate();
+        JsonNode jsonNode = ev.validate();
+
+        PerformanceLogger.logTimeInsideMethod(startTime, "DataHub.validateUserModules");
+
+        return jsonNode;
     }
 
     private List<Command> getCommands(AppConfig config) {
@@ -377,10 +377,9 @@ public class DataHub {
      * Installs the data hub configuration and server-side modules into MarkLogic
      */
     public void install() {
-
         initProject();
 
-        long startTime = System.nanoTime();
+        long startTime = PerformanceLogger.monitorTimeInsideMethod();
         LOGGER.info("Installing the Data Hub into MarkLogic");
 
         // clean up any lingering cache for deployed modules
@@ -392,17 +391,16 @@ public class DataHub {
         deployer.setCommands(getCommands(config));
         deployer.deploy(config);
 
-        long endTime = System.nanoTime();
-        long duration = (endTime - startTime);
-        LOGGER.info("Install took: " + (duration / 1000000000) + " seconds");
+        PerformanceLogger.logTimeInsideMethod(startTime, "DataHub.install");
     }
 
     /**
      * Uninstalls the data hub configuration and server-side modules from MarkLogic
      */
     public void uninstall() {
-        long startTime = System.nanoTime();
+        long startTime = PerformanceLogger.monitorTimeInsideMethod();
         LOGGER.debug("Uninstalling the Data Hub from MarkLogic");
+
         AppConfig config = getAppConfig();
         SimpleAppDeployer deployer = new SimpleAppDeployer(client, getAdminManager());
         deployer.setCommands(getCommands(config));
@@ -411,9 +409,8 @@ public class DataHub {
         // clean up any lingering cache for deployed modules
         PropertiesModuleManager moduleManager = new PropertiesModuleManager();
         moduleManager.deletePropertiesFile();
-        long endTime = System.nanoTime();
-        long duration = (endTime - startTime);
-        LOGGER.info("Uninstall took: " + (duration / 1000000000) + " seconds");
+
+        PerformanceLogger.logTimeInsideMethod(startTime, "DataHub.uninstall");
     }
 
     class EntitiesValidator extends ResourceManager {

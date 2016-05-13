@@ -11,6 +11,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.MediaType;
 import org.springframework.validation.BindingResult;
@@ -33,6 +34,7 @@ import com.marklogic.hub.web.form.LoginForm;
 @RestController
 @RequestMapping("/api/entities")
 @Scope("session")
+@EnableAspectJAutoProxy(proxyTargetClass = true)
 public class EntityApiController implements InitializingBean, DisposableBean, FileSystemEventListener {
 
     @Autowired

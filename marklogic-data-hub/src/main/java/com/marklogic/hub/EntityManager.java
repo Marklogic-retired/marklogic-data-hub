@@ -31,6 +31,7 @@ import com.marklogic.client.io.DOMHandle;
 import com.marklogic.client.util.RequestParameters;
 import com.marklogic.hub.entity.Entity;
 import com.marklogic.hub.entity.EntityImpl;
+import com.marklogic.hub.util.PerformanceLogger;
 
 public class EntityManager extends ResourceManager {
     static final public String NAME = "entity";
@@ -44,10 +45,12 @@ public class EntityManager extends ResourceManager {
 
     /**
      * Retrieves a list of entities from the Server
-     * 
+     *
      * @return a list of entities
      */
     public List<Entity> getEntities() {
+        long startTime = PerformanceLogger.monitorTimeInsideMethod();
+
         RequestParameters params = new RequestParameters();
         ServiceResultIterator resultItr = this.getServices().get(params);
         if (resultItr == null || ! resultItr.hasNext()) {
@@ -70,12 +73,15 @@ public class EntityManager extends ResourceManager {
                 entities.add(entityFromXml((Element) children.item(i)));
             }
         }
+
+        PerformanceLogger.logTimeInsideMethod(startTime, "EntityManager.getEntities");
+
         return entities;
     }
 
     /**
      * Retrieve a named entity
-     * 
+     *
      * @param entityName
      *            - the name of the entity to retrieve
      * @return a entity
