@@ -2,6 +2,7 @@
 .gradle/
 .settings/
 .metadata/
+.idea/
 marklogic-data-hub/bin/
 quick-start/bin/
 build/

@@ -47,7 +47,7 @@ declare function trace:enable-tracing($enabled as xs:boolean)
 
 declare function trace:enabled() as xs:boolean
 {
-  let $value := cts:element-values(xs:QName("trace:is-tracing-enabled"), (), "limit=1")
+  let $value := cts:element-values(xs:QName("trace:is-tracing-enabled"), (), ("type=unsignedInt","limit=1"))
   return
     if ($value) then
       $value eq 1

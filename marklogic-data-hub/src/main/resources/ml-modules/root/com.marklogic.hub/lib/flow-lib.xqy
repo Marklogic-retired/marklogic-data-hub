@@ -517,16 +517,9 @@ declare function flow:run-flow(
 {
   let $envelope := flow:run-plugins($flow, $identifier, $content, $options)
   let $_ :=
-    xdmp:invoke-function(function() {
-      for $writer in $flow/hub:writer
-      return
-        flow:run-writer($writer, $identifier, $envelope, $flow/hub:type, $options)
-    },
-    map:new((
-      map:entry("isolation", "different-transaction"),
-      map:entry("database", xdmp:database($config:FINAL-DATABASE)),
-      map:entry("transactionMode", "update-auto-commit")
-    )))
+    for $writer in $flow/hub:writer
+    return
+      flow:run-writer($writer, $identifier, $envelope, $flow/hub:type, $options)
   let $_ := trace:write-trace()
   return
     ()
@@ -739,7 +732,14 @@ declare function flow:run-writer(
   let $before := xdmp:elapsed-time()
   let $resp :=
     try {
-      $func($identifier, $envelope, $options)
+      xdmp:invoke-function(function() {
+        $func($identifier, $envelope, $options)
+      },
+      map:new((
+        map:entry("isolation", "different-transaction"),
+        map:entry("database", xdmp:database($config:FINAL-DATABASE)),
+        map:entry("transactionMode", "update-auto-commit")
+      )))
     }
     catch($ex) {
       xdmp:log(xdmp:describe($ex, (), ())),
