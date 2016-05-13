@@ -13,6 +13,8 @@ public class LoginForm extends BaseForm {
 	private String mlTracePort;
 	private String mlUsername;
 	private String mlPassword;
+	private String mlAdminUsername;
+	private String mlAdminPassword;
 	private String userPluginDir;
 	private boolean serverVersionAccepted;
 	private boolean installed;
@@ -68,7 +70,23 @@ public class LoginForm extends BaseForm {
 		this.mlPassword = mlPassword;
 	}
 
-	public boolean isServerVersionAccepted() {
+	public String getMlAdminUsername() {
+        return mlAdminUsername;
+    }
+
+    public void setMlAdminUsername(String mlAdminUsername) {
+        this.mlAdminUsername = mlAdminUsername;
+    }
+
+    public String getMlAdminPassword() {
+        return mlAdminPassword;
+    }
+
+    public void setMlAdminPassword(String mlAdminPassword) {
+        this.mlAdminPassword = mlAdminPassword;
+    }
+
+    public boolean isServerVersionAccepted() {
 		return serverVersionAccepted;
 	}
 

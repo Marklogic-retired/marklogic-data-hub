@@ -46,6 +46,8 @@ public class EnvironmentConfiguration {
 	private static final String ML_AUTH = "mlAuth";
 	private static final String USER_PLUGIN_DIR = "userPluginDir";
 	private static final String ASSET_INSTALL_TIME_FILE = "assetInstallTimeFile";
+	private static final String ML_ADMIN_USERNAME = "mlAdminUsername";
+    private static final String ML_ADMIN_PASSWORD = "mlAdminPassword";
 
 	@Autowired
 	private Environment environment;
@@ -83,7 +85,7 @@ public class EnvironmentConfiguration {
 	}
 
 	public String getMLPassword() {
-		String value = this.environmentProperties.getProperty("mlPassword");
+		String value = this.environmentProperties.getProperty(ML_PASSWORD);
 		if (value != null) {
 			return value;
 		}
@@ -94,6 +96,32 @@ public class EnvironmentConfiguration {
 		}
 		return this.environment.getProperty(ML_PASSWORD + DEFAULT_SUFFIX);
 	}
+	
+	public String getMLAdminUsername() {
+        String value = this.environmentProperties.getProperty(ML_ADMIN_USERNAME);
+        if (value != null) {
+            return value;
+        }
+        value = this.environment.getProperty(ML_ADMIN_USERNAME);
+        if (value != null) {
+            this.environmentProperties.setProperty(ML_ADMIN_USERNAME, value);
+            return value;
+        }
+        return this.environment.getProperty(ML_ADMIN_USERNAME + DEFAULT_SUFFIX);
+    }
+
+    public String getMLAdminPassword() {
+        String value = this.environmentProperties.getProperty(ML_ADMIN_PASSWORD);
+        if (value != null) {
+            return value;
+        }
+        value = this.environment.getProperty(ML_ADMIN_PASSWORD);
+        if (value != null) {
+            this.environmentProperties.setProperty(ML_ADMIN_PASSWORD, value);
+            return value;
+        }
+        return this.environment.getProperty(ML_ADMIN_PASSWORD + DEFAULT_SUFFIX);
+    }
 
 	public String getMLStagingPort() {
 		String value = this.environmentProperties.getProperty(ML_STAGING_REST_PORT);
@@ -196,6 +224,14 @@ public class EnvironmentConfiguration {
 	public void setMLPassword(String mlPassword) {
 		this.environmentProperties.setProperty(ML_PASSWORD, mlPassword);
 	}
+	
+	public void setMLAdminUsername(String mlAdminUsername) {
+        this.environmentProperties.setProperty(ML_ADMIN_USERNAME, mlAdminUsername);
+    }
+
+    public void setMLAdminPassword(String mlAdminPassword) {
+        this.environmentProperties.setProperty(ML_ADMIN_PASSWORD, mlAdminPassword);
+    }
 
 	public void setUserPluginDir(String userPluginDir) {
 		this.environmentProperties.setProperty(USER_PLUGIN_DIR, userPluginDir);
@@ -274,8 +310,10 @@ public class EnvironmentConfiguration {
 	    hubConfig.stagingPort = Integer.parseInt(getMLStagingPort());
 	    hubConfig.finalPort = Integer.parseInt(getMLFinalPort());
 	    hubConfig.tracePort = Integer.parseInt(getMLTracePort());
-	    hubConfig.adminUsername = getMLUsername();
-	    hubConfig.adminPassword = getMLPassword();
+	    hubConfig.adminUsername = getMLAdminUsername();
+	    hubConfig.adminPassword = getMLAdminPassword();
+	    hubConfig.username = getMLUsername();
+	    hubConfig.password = getMLPassword();
 	    return hubConfig;
 	}
 

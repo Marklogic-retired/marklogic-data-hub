@@ -173,13 +173,18 @@ public class DataHub {
         }
     }
 
-    private AppConfig getAppConfig() throws IOException {
+    private AppConfig getAppConfig(boolean isAdmin) throws IOException {
         AppConfig config = new AppConfig();
         config.setHost(hubConfig.host);
         config.setRestPort(hubConfig.stagingPort);
         config.setName(hubConfig.name);
-        config.setRestAdminUsername(hubConfig.adminUsername);
-        config.setRestAdminPassword(hubConfig.adminPassword);
+        if(isAdmin) {
+            config.setRestAdminUsername(hubConfig.adminUsername);
+            config.setRestAdminPassword(hubConfig.adminPassword);
+        } else {
+            config.setRestAdminUsername(hubConfig.username);
+            config.setRestAdminPassword(hubConfig.password);
+        }
         config.setModulesDatabaseName(hubConfig.modulesDbName);
 
         List<String> paths = new ArrayList<String>();
@@ -210,7 +215,7 @@ public class DataHub {
         PropertiesModuleManager moduleManager = new PropertiesModuleManager(this.assetInstallTimeFile);
         moduleManager.deletePropertiesFile();
 
-        AppConfig config = getAppConfig();
+        AppConfig config = getAppConfig(true);
         SimpleAppDeployer deployer = new SimpleAppDeployer(client, getAdminManager());
         deployer.setCommands(getCommands(config));
 
@@ -220,13 +225,18 @@ public class DataHub {
         LOGGER.info("Install took: " + (duration / 1000000000) + " seconds");
     }
 
-    private DatabaseClient getDatabaseClient(int port) {
+    private DatabaseClient getDatabaseClient(int port, boolean isAdmin) {
         AppConfig config = new AppConfig();
         config.setHost(hubConfig.host);
         config.setName(hubConfig.name);
-        config.setRestAdminUsername(hubConfig.adminUsername);
-        config.setRestAdminPassword(hubConfig.adminPassword);
-        DatabaseClient client = DatabaseClientFactory.newClient(hubConfig.host, port, hubConfig.adminUsername, hubConfig.adminPassword,
+        if(isAdmin) {
+            config.setRestAdminUsername(hubConfig.adminUsername);
+            config.setRestAdminPassword(hubConfig.adminPassword);
+        } else {
+            config.setRestAdminUsername(hubConfig.username);
+            config.setRestAdminPassword(hubConfig.password);
+        }
+        DatabaseClient client = DatabaseClientFactory.newClient(config.getHost(), port, config.getRestAdminUsername(), config.getRestAdminPassword(),
                 config.getRestAuthentication(), config.getRestSslContext(), config.getRestSslHostnameVerifier());
         return client;
     }
@@ -243,12 +253,11 @@ public class DataHub {
     public Set<File> installUserModules(String pathToUserModules) throws IOException {
         LOGGER.debug("Installing user modules into MarkLogic");
 
-        AppConfig config = getAppConfig();
+        boolean isAdmin = false;
+        AppConfig config = getAppConfig(isAdmin);
 
-        DatabaseClient stagingClient = getDatabaseClient(hubConfig.stagingPort);
-        DatabaseClient finalClient = getDatabaseClient(hubConfig.finalPort);
-
-
+        DatabaseClient stagingClient = getDatabaseClient(hubConfig.stagingPort, isAdmin);
+        DatabaseClient finalClient = getDatabaseClient(hubConfig.finalPort, isAdmin);
         Set<File> loadedFiles = new HashSet<File>();
 
         XccAssetLoader assetLoader = config.newXccAssetLoader();
@@ -289,7 +298,7 @@ public class DataHub {
 
     public JsonNode validateUserModules() {
         LOGGER.debug("validating user modules");
-        DatabaseClient client = getDatabaseClient(hubConfig.stagingPort);
+        DatabaseClient client = getDatabaseClient(hubConfig.stagingPort, false);
         EntitiesValidator ev = new EntitiesValidator(client);
         return ev.validate();
     }
@@ -348,7 +357,7 @@ public class DataHub {
     public void uninstall() throws IOException {
         long startTime = System.nanoTime();
         LOGGER.debug("Uninstalling the Data Hub from MarkLogic");
-        AppConfig config = getAppConfig();
+        AppConfig config = getAppConfig(true);
         AdminManager adminManager = getAdminManager();
         SimpleAppDeployer deployer = new SimpleAppDeployer(client, adminManager);
         deployer.setCommands(getCommands(config));

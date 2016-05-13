@@ -34,6 +34,16 @@ public class DefaultHubConfigFactory extends PropertySourceFactory {
         String prop = null;
         String mlUsername = getProperty("mlUsername");
         String mlPassword = getProperty("mlPassword");
+        
+        if (mlUsername != null) {
+            logger.info("REST username: " + mlUsername);
+            c.username = mlUsername;
+        }
+        
+        if (mlPassword != null) {
+            logger.info("REST password: " + mlPassword);
+            c.password = mlPassword;
+        }
 
         prop = getProperty("mlAppName");
         if (prop != null) {
