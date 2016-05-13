@@ -29,38 +29,50 @@ import java.nio.file.Paths;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.StopWatch;
 
 import com.marklogic.client.io.Format;
 import com.marklogic.hub.flow.FlowType;
 import com.marklogic.hub.flow.SimpleFlow;
+import com.marklogic.hub.util.PerformanceLogger;
 
 public class Scaffolding {
 
     static final private Logger LOGGER = LoggerFactory.getLogger(Scaffolding.class);
 
     public static File getEntityDir(File userlandDir, String entityName) {
+        StopWatch stopWatch = PerformanceLogger.monitorTimeInsideMethod();
         File entitiesDir = new File(userlandDir, "entities");
         File entityDir = new File(entitiesDir, entityName);
+        PerformanceLogger.logTimeInsideMethod(stopWatch, Scaffolding.class.getName(), 
+                "getEntityDir", new Object[]{userlandDir, entityName});
         return entityDir;
     }
 
     public static File getFlowDir(File userlandDir, String entityName,
             String flowName, FlowType flowType) {
+        StopWatch stopWatch = PerformanceLogger.monitorTimeInsideMethod();
         File entityDir = getEntityDir(userlandDir, entityName);
         File typeDir = new File(entityDir, flowType.toString());
         File flowDir = new File(typeDir, flowName);
+        PerformanceLogger.logTimeInsideMethod(stopWatch, Scaffolding.class.getName(), 
+                "getEntityDir", new Object[]{userlandDir, entityName});
         return flowDir;
     }
 
     public static void createEntity(String entityName, File userlandPath) {
+        StopWatch stopWatch = PerformanceLogger.monitorTimeInsideMethod();
         File entityDir = getEntityDir(userlandPath, entityName);
         entityDir.mkdirs();
+        PerformanceLogger.logTimeInsideMethod(stopWatch, Scaffolding.class.getName(), 
+                "createEntity", new Object[]{entityName, userlandPath});
     }
 
     public static void createFlow(String entityName, String flowName,
             FlowType flowType, PluginFormat pluginFormat, Format dataFormat,
             File userlandDir)
             throws IOException {
+        StopWatch stopWatch = PerformanceLogger.monitorTimeInsideMethod();
         File flowDir = getFlowDir(userlandDir, entityName, flowName, flowType);
 
         if (flowType.equals(FlowType.HARMONIZE)) {
@@ -97,6 +109,8 @@ public class Scaffolding {
             out.println(flow.serialize(false));
             out.close();
         }
+        PerformanceLogger.logTimeInsideMethod(stopWatch, Scaffolding.class.getName(), 
+                "createFlow", new Object[]{entityName, flowName, flowType, pluginFormat, dataFormat, userlandDir});
     }
 
     private static void writeFile(String srcFile, Path dstFile)
@@ -109,7 +123,7 @@ public class Scaffolding {
 
     public static void createRestExtension(String entityName, String extensionName,
             FlowType flowType, PluginFormat pluginFormat, File userlandDir) throws IOException, ScaffoldingValidationException {
-        LOGGER.info(extensionName);
+        StopWatch stopWatch = PerformanceLogger.monitorTimeInsideMethod();
         if(!ScaffoldingValidator.isUniqueRestServiceExtension(userlandDir, extensionName)) {
             throw new ScaffoldingValidationException("A rest service extension with the same name as " + extensionName + " already exists.");
         }
@@ -118,11 +132,13 @@ public class Scaffolding {
         File dstFile = createEmptyRestExtensionFile(entityName, extensionName, flowType, pluginFormat, userlandDir);
         writeToFile(fileContent, dstFile);
         writeMetadataForFile(dstFile, scaffoldRestServicesPath + "metadata/template.xml", extensionName);
+        PerformanceLogger.logTimeInsideMethod(stopWatch, Scaffolding.class.getName(), 
+                "createRestExtension", new Object[]{entityName, extensionName, flowType, pluginFormat, userlandDir});
     }
 
     public static void createRestTransform(String entityName, String transformName,
             FlowType flowType, PluginFormat pluginFormat, File userlandDir) throws IOException, ScaffoldingValidationException {
-        LOGGER.info(transformName);
+        StopWatch stopWatch = PerformanceLogger.monitorTimeInsideMethod();
         if(!ScaffoldingValidator.isUniqueRestTransform(userlandDir, transformName)) {
             throw new ScaffoldingValidationException("A rest transform with the same name as " + transformName + " already exists.");
         }
@@ -131,6 +147,8 @@ public class Scaffolding {
         File dstFile = createEmptyRestTransformFile(entityName, transformName, flowType, pluginFormat, userlandDir);
         writeToFile(fileContent, dstFile);
         writeMetadataForFile(dstFile, scaffoldRestTransformsPath + "metadata/template.xml", transformName);
+        PerformanceLogger.logTimeInsideMethod(stopWatch, Scaffolding.class.getName(), 
+                "createRestTransform", new Object[]{entityName, transformName, flowType, pluginFormat, userlandDir});
     }
 
     private static void writeToFile(String fileContent, File dstFile)

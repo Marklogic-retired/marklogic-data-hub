@@ -18,6 +18,7 @@ package com.marklogic.hub;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.util.StopWatch;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -31,6 +32,7 @@ import com.marklogic.client.io.DOMHandle;
 import com.marklogic.client.util.RequestParameters;
 import com.marklogic.hub.entity.Entity;
 import com.marklogic.hub.entity.EntityImpl;
+import com.marklogic.hub.util.PerformanceLogger;
 
 public class EntityManager extends ResourceManager {
     static final public String NAME = "entity";
@@ -48,6 +50,8 @@ public class EntityManager extends ResourceManager {
      * @return a list of entities
      */
     public List<Entity> getEntities() {
+        StopWatch stopWatch = PerformanceLogger.monitorTimeInsideMethod();
+        
         RequestParameters params = new RequestParameters();
         ServiceResultIterator resultItr = this.getServices().get(params);
         if (resultItr == null || ! resultItr.hasNext()) {
@@ -70,6 +74,10 @@ public class EntityManager extends ResourceManager {
                 entities.add(entityFromXml((Element) children.item(i)));
             }
         }
+        
+        PerformanceLogger.logTimeInsideMethod(stopWatch, this.getClass().getName(), 
+                "getEntities", (Object[])null);
+        
         return entities;
     }
 

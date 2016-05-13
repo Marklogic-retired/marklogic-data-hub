@@ -19,6 +19,9 @@ module namespace service = "http://marklogic.com/rest-api/resource/debug";
 
 import module namespace debug = "http://marklogic.com/data-hub/debug-lib"
   at "/com.marklogic.hub/lib/debug-lib.xqy";
+  
+import module namespace perflog = "http://marklogic.com/data-hub/perflog-lib"
+  at "/com.marklogic.hub/lib/perflog-lib.xqy";
 
 declare namespace rapi = "http://marklogic.com/rest-api";
 
@@ -29,9 +32,11 @@ declare function get(
   $params  as map:map
   ) as document-node()*
 {
-  debug:dump-env(),
+  perflog:logit('Debug.get',function() {
+    debug:dump-env(),
 
-  document { debug:on() }
+    document { debug:on() }
+  })
 };
 
 declare %rapi:transaction-mode("update") function post(
@@ -40,11 +45,13 @@ declare %rapi:transaction-mode("update") function post(
   $input   as document-node()*
   ) as document-node()*
 {
-  debug:dump-env(),
+  perflog:logit('Debug.post',function() {
+    debug:dump-env(),
 
-  let $enable := map:get($params, "enable") = ("true", "yes")
-  let $_ := debug:enable($enable)
-  return
-    (),
-  document { () }
+    let $enable := map:get($params, "enable") = ("true", "yes")
+    let $_ := debug:enable($enable)
+    return
+      (),
+    document { () }
+  })
 };

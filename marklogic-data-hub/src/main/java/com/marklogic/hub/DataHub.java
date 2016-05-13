@@ -32,6 +32,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.util.StopWatch;
 import org.springframework.web.client.ResourceAccessException;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -58,6 +59,7 @@ import com.marklogic.hub.commands.UpdateRestApiServersCommand;
 import com.marklogic.hub.commands.DeployHubDatabaseCommand.DBType;
 import com.marklogic.hub.util.HubFileFilter;
 import com.marklogic.hub.util.HubModulesLoader;
+import com.marklogic.hub.util.PerformanceLogger;
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.ManageConfig;
 import com.marklogic.mgmt.admin.AdminConfig;
@@ -104,6 +106,9 @@ public class DataHub {
      * @return true if installed, false otherwise
      */
     public boolean isInstalled() {
+        
+        StopWatch stopWatch = PerformanceLogger.monitorTimeInsideMethod();
+        
         ServerManager sm = new ServerManager(client);
         DatabaseManager dm = new DatabaseManager(client);
 
@@ -150,6 +155,9 @@ public class DataHub {
                 finalDbExists && finalIndexesOn &&
                 tracingDbExists && tracingIndexesOn);
         boolean forestsOk = (stagingForestsExist && finalForestsExist && tracingForestsExist);
+        
+        PerformanceLogger.logTimeInsideMethod(stopWatch, this.getClass().getName(), 
+                "isInstalled", (Object[])null);
 
         return (appserversOk && dbsOk && forestsOk);
     }
@@ -159,6 +167,7 @@ public class DataHub {
      * @throws ServerValidationException if the server is not compatible
      */
     public void validateServer() throws ServerValidationException {
+        StopWatch stopWatch = PerformanceLogger.monitorTimeInsideMethod();
         try {
             AdminManager am = getAdminManager();
             String versionString = am.getServerVersion();
@@ -171,6 +180,8 @@ public class DataHub {
         catch(ResourceAccessException e) {
             throw new ServerValidationException(e.toString());
         }
+        PerformanceLogger.logTimeInsideMethod(stopWatch, this.getClass().getName(), 
+                "validateServer", (Object[])null);
     }
 
     private AppConfig getAppConfig() throws IOException {
@@ -203,7 +214,8 @@ public class DataHub {
      * @throws IOException
      */
     public void install() throws IOException {
-        long startTime = System.nanoTime();
+        StopWatch stopWatch = PerformanceLogger.monitorTimeInsideMethod();
+        
         LOGGER.debug("Installing the Data Hub into MarkLogic");
 
         // clean up any lingering cache for deployed modules
@@ -215,9 +227,9 @@ public class DataHub {
         deployer.setCommands(getCommands(config));
 
         deployer.deploy(config);
-        long endTime = System.nanoTime();
-        long duration = (endTime - startTime);
-        LOGGER.info("Install took: " + (duration / 1000000000) + " seconds");
+        
+        PerformanceLogger.logTimeInsideMethod(stopWatch, this.getClass().getName(), 
+                "install", (Object[])null);
     }
 
     private DatabaseClient getDatabaseClient(int port) {
@@ -241,6 +253,7 @@ public class DataHub {
      * @throws IOException
      */
     public Set<File> installUserModules(String pathToUserModules) throws IOException {
+        StopWatch stopWatch = PerformanceLogger.monitorTimeInsideMethod();
         LOGGER.debug("Installing user modules into MarkLogic");
 
         AppConfig config = getAppConfig();
@@ -284,14 +297,25 @@ public class DataHub {
                 }
             }
         });
+        
+        PerformanceLogger.logTimeInsideMethod(stopWatch, this.getClass().getName(), 
+                "installUserModules", (Object[])null);
+        
         return loadedFiles;
     }
 
     public JsonNode validateUserModules() {
+        StopWatch stopWatch = PerformanceLogger.monitorTimeInsideMethod();
         LOGGER.debug("validating user modules");
+        
         DatabaseClient client = getDatabaseClient(hubConfig.stagingPort);
         EntitiesValidator ev = new EntitiesValidator(client);
-        return ev.validate();
+        JsonNode jsonNode = ev.validate();
+        
+        PerformanceLogger.logTimeInsideMethod(stopWatch, this.getClass().getName(), 
+                "validateUserModules", (Object[])null);
+        
+        return jsonNode;
     }
 
     private List<Command> getCommands(AppConfig config) {
@@ -346,8 +370,9 @@ public class DataHub {
      * @throws IOException
      */
     public void uninstall() throws IOException {
-        long startTime = System.nanoTime();
+        StopWatch stopWatch = PerformanceLogger.monitorTimeInsideMethod();
         LOGGER.debug("Uninstalling the Data Hub from MarkLogic");
+        
         AppConfig config = getAppConfig();
         AdminManager adminManager = getAdminManager();
         SimpleAppDeployer deployer = new SimpleAppDeployer(client, adminManager);
@@ -357,9 +382,9 @@ public class DataHub {
         // clean up any lingering cache for deployed modules
         PropertiesModuleManager moduleManager = new PropertiesModuleManager(this.assetInstallTimeFile);
         moduleManager.deletePropertiesFile();
-        long endTime = System.nanoTime();
-        long duration = (endTime - startTime);
-        LOGGER.info("Uninstall took: " + (duration / 1000000000) + " seconds");
+        
+        PerformanceLogger.logTimeInsideMethod(stopWatch, this.getClass().getName(), 
+                "uninstall", (Object[])null);
     }
 
     class EntitiesValidator extends ResourceManager {
