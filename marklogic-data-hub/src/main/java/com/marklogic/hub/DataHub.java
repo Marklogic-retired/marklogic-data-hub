@@ -165,9 +165,8 @@ public class DataHub {
         try {
             AdminManager am = getAdminManager();
             String versionString = am.getServerVersion();
-            int major = Integer.parseInt(versionString.substring(0, 1));
-            int minor = Integer.parseInt(versionString.substring(2, 3) + versionString.substring(4, 5));
-            if (major < 8 || minor < 4) {
+            float version = Float.valueOf(versionString.substring(0, 1) + "." + versionString.substring(2, 3));
+            if (version < 8.4) {
                 throw new ServerValidationException("Invalid MarkLogic Server Version: " + versionString);
             }
         }
