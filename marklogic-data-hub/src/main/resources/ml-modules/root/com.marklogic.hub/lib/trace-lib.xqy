@@ -77,6 +77,7 @@ declare function trace:write-trace()
           element trace-id { map:get($current-trace, "trace-id") },
           element created { map:get($current-trace, "created") },
           element identifier { map:get($current-trace, "identifier") },
+          element flow-type { map:get($current-trace, "flow-type") },
           for $key in ("collector-plugin", "content-plugin", "headers-plugin", "triples-plugin", "writer-plugin")
           let $m := map:get($current-trace, $key)
           return
@@ -158,15 +159,167 @@ declare function trace:error-trace(
   return ()
 };
 
-declare function trace:find-traces($q)
+declare function trace:camel-case( $str as xs:string ) as xs:string
 {
-  let $query := search:parse($q)
-  let $results := cts:element-values(xs:QName("trace-id"), (), (), $query)
-  return
-    json:to-array($results)
+ if( fn:contains($str , "-" ) ) then
+    let $subs :=  fn:tokenize($str,"-")
+    return
+      fn:string-join((
+        $subs[1],
+        for $s in $subs[ fn:position() gt 1 ]
+        return (
+          fn:upper-case( fn:substring($s , 1 , 1 )) , fn:lower-case(fn:substring($s,2)))),"")
+ else $str
+
 };
 
-declare function trace:get-traces($page as xs:int, $page-count as xs:int)
+declare function trace:_walk_json($nodes as node()* ,$o)
 {
-  ()
+  let $quote-options :=
+    <options xmlns="xdmp:quote">
+      <indent>yes</indent>
+      <indent-untyped>yes</indent-untyped>
+    </options>
+
+  for $n in $nodes
+  return
+    typeswitch($n)
+      case element(input) return
+        let $oo := json:object()
+        let $_ :=
+          for $x in $n/*
+          return
+            map:put($oo, trace:camel-case(fn:local-name($x)), xdmp:quote($x, $quote-options))
+        return
+          map:put($o, "input", $oo)
+      case element(output) return
+        map:put($o, trace:camel-case(fn:local-name($n)), xdmp:quote($n/node(), $quote-options))
+      case element(duration) return
+        map:put($o, "duration", fn:seconds-from-duration(xs:dayTimeDuration($n)))
+      case element() return
+        if ($n/*) then
+          let $oo := json:object()
+          let $_ := trace:_walk_json($n/*, $oo)
+          return
+            map:put($o, trace:camel-case(fn:local-name($n)), $oo)
+        else
+          map:put($o, trace:camel-case(fn:local-name($n)), fn:data($n))
+      default return
+        $n
+};
+
+declare function trace:trace-to-json($trace)
+{
+  if ($trace instance of element()) then
+    let $o := json:object()
+    let $_ := trace:_walk_json($trace/*, $o)
+    return
+      $o
+  else
+    $trace
+};
+
+declare function trace:trace-to-json-slim($trace)
+{
+  if ($trace instance of element()) then
+    let $o := json:object()
+    let $_ := (
+      map:put($o, "traceId", $trace/trace-id/string()),
+      map:put($o, "created", $trace/created/string()),
+      map:put($o, "identifier", $trace/identifier/string()),
+      map:put($o, "flowType", $trace/flow-type/string())
+    )
+    return
+      $o
+  else
+    let $o := json:object()
+    let $_ := (
+      map:put($o, "traceId", $trace/traceId),
+      map:put($o, "created", $trace/created),
+      map:put($o, "identifier", $trace/identifier),
+      map:put($o, "flowType", $trace/flowType)
+    )
+    return
+      $o
+};
+
+declare function trace:find-traces(
+  $q,
+  $page as xs:unsignedLong,
+  $page-length as xs:unsignedLong)
+{
+  let $options :=
+    <options xmlns="http://marklogic.com/appservices/search">
+      <return-results>false</return-results>
+      <return-facets>true</return-facets>
+    </options>
+  let $query := search:parse($q)
+  let $count := xdmp:estimate(cts:search(/trace, cts:query($query)))
+  let $start := ($page - 1) * $page-length + 1
+  let $end := fn:min(($start + $page-length - 1, $count))
+  let $results :=
+    for $result in search:resolve-nodes($query, $options, $start, $page-length)
+    return
+      trace:trace-to-json-slim($result/trace)
+  return
+    object-node {
+      "start": $start,
+      "end": $end,
+      "total": $count,
+      "page": $page,
+      "pageCount": $page-length,
+      "traces": json:to-array($results)
+    }
+};
+
+declare function trace:get-traces($page as xs:int, $page-length as xs:int)
+{
+  let $start := ($page - 1) * $page-length + 1
+  let $end := $start + $page-length - 1
+  let $count := xdmp:estimate(/trace)
+  let $traces :=
+    for $trace in cts:search(/trace, cts:true-query(), ("unfiltered", cts:index-order(cts:element-reference(xs:QName("created")), "descending")))[$start to $end]
+    return
+      trace:trace-to-json($trace)
+  return
+    object-node {
+      "start": $start,
+      "end": $end,
+      "total": $count,
+      "page": $page,
+      "pageCount": $page-length,
+      "traces": json:to-array($traces)
+    }
+};
+
+declare function trace:get-trace($id as xs:string)
+{
+  trace:trace-to-json(/trace[trace-id = $id])
+};
+
+declare function trace:get-trace-ids($q as xs:string?)
+{
+  let $query :=
+    if ($q) then
+      cts:element-value-query(xs:QName("identifier"), fn:lower-case($q) || "*", "wildcarded")
+    else ()
+  let $_ := xdmp:log($query)
+  let $results :=
+    cts:element-value-co-occurrences(
+      xs:QName("trace-id"),
+      xs:QName("identifier"),
+      (
+        "limit=10",
+        "collation=http://marklogic.com/collation/codepoint"
+      ),
+      $query)
+  let $results :=
+    for $r in $results
+    return
+      object-node {
+        "traceId": fn:data($r/*:value[1]),
+        "identifier": fn:data($r/*:value[2])
+      }
+  return
+    json:to-array($results)
 };

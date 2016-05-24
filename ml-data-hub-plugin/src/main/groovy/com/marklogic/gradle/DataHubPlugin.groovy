@@ -36,7 +36,7 @@ import com.marklogic.appdeployer.command.appservers.UpdateRestApiServersCommand
 import com.marklogic.appdeployer.command.cpf.DeployCpfConfigsCommand
 import com.marklogic.appdeployer.command.cpf.DeployDomainsCommand
 import com.marklogic.appdeployer.command.cpf.DeployPipelinesCommand
-import com.marklogic.appdeployer.command.databases.DeployOtherDatabasesCommand;
+import com.marklogic.appdeployer.command.databases.DeployOtherDatabasesCommand
 import com.marklogic.appdeployer.command.databases.DeploySchemasDatabaseCommand
 import com.marklogic.appdeployer.command.databases.DeployTriggersDatabaseCommand
 import com.marklogic.appdeployer.command.flexrep.DeployConfigsCommand
