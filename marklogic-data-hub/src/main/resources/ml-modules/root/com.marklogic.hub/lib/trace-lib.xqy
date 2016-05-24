@@ -221,26 +221,15 @@ declare function trace:trace-to-json($trace)
 
 declare function trace:trace-to-json-slim($trace)
 {
-  if ($trace instance of element()) then
-    let $o := json:object()
-    let $_ := (
-      map:put($o, "traceId", $trace/trace-id/string()),
-      map:put($o, "created", $trace/created/string()),
-      map:put($o, "identifier", $trace/identifier/string()),
-      map:put($o, "flowType", $trace/flow-type/string())
-    )
-    return
-      $o
-  else
-    let $o := json:object()
-    let $_ := (
-      map:put($o, "traceId", $trace/traceId),
-      map:put($o, "created", $trace/created),
-      map:put($o, "identifier", $trace/identifier),
-      map:put($o, "flowType", $trace/flowType)
-    )
-    return
-      $o
+  let $o := json:object()
+  let $_ := (
+    map:put($o, "traceId", $trace/trace-id/string()),
+    map:put($o, "created", $trace/created/string()),
+    map:put($o, "identifier", $trace/identifier/string()),
+    map:put($o, "flowType", $trace/flow-type/string())
+  )
+  return
+    $o
 };
 
 declare function trace:find-traces(
@@ -254,13 +243,13 @@ declare function trace:find-traces(
       <return-facets>true</return-facets>
     </options>
   let $query := search:parse($q)
-  let $count := xdmp:estimate(cts:search(/trace, cts:query($query)))
+  let $count := xdmp:estimate(cts:search(fn:doc(), cts:query($query)))
   let $start := ($page - 1) * $page-length + 1
   let $end := fn:min(($start + $page-length - 1, $count))
   let $results :=
     for $result in search:resolve-nodes($query, $options, $start, $page-length)
     return
-      trace:trace-to-json-slim($result/trace)
+      trace:trace-to-json-slim($result/node())
   return
     object-node {
       "start": $start,

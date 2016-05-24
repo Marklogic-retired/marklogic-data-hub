@@ -8,12 +8,16 @@
     </div>
     <div id="sitemenu" class="col-xs-6 col-sm-6 col-md-6 dropdown" ng-if="status != null">
       <button type="submit" name="installUserModules" class="btn btn-primary" ng-if="status.installed" ng-click="installUserModules()" ng-disabled="action.type != null">Deploy to server</button>
-      <button type="submit" name="uninstall" class="btn btn-primary" ng-if="status.installed" ng-click="uninstall()" confirm-settings="{size: 'sm', animation: false}" confirm="Do you really want to continue uninstalling data hub?" confirm-title="Confirm Uninstall" ng-disabled="action.type != null">Uninstall</button>
       <button class="btn btn-default dropdown-toggle" type="button" id="headerDropdownMenu" data-toggle="dropdown" aria-expanded="true">
         Welcome {{status.mlUsername}}! <span class="caret"></span>
       </button>
       <ul class="dropdown-menu dropdown-menu-right" role="menu" aria-labelledby="headerDropdownMenu">
-        <li role="presentation"><a href="javascript:void(0)" ng-click="logout()">Logout</a></li>
+        <li role="presentation"><a href ng-if="status.installed" ng-click="uninstall()"  confirm-settings="{size: 'sm', animation: false}" confirm="Do you really want to continue uninstalling data hub?" confirm-title="Confirm Uninstall" ng-disabled="action.type != null">Uninstall</a></li>
+        <li role="separator" class="divider divider-menu"></li>
+        <li role="presentation"><a href ng-click="toggleTracing()">{{getTracingButton()}}</a></li>
+        <li role="presentation"><a ng-href="{{getTracingUri()}}" target="_blank">Trace Viewer</a></li>
+        <li role="separator" class="divider divider-menu"></li>
+        <li role="presentation"><a href ng-click="logout()">Logout</a></li>
       </ul>
     </div>
   </div>

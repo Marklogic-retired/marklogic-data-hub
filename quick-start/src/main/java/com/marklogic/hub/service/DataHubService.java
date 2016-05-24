@@ -43,7 +43,7 @@ public class DataHubService {
         return dataHub.validateUserModules();
     }
 
-    private DataHub getDataHub() throws DataHubException {
+    public DataHub getDataHub() throws DataHubException {
         try {
             LOGGER.info("Connecting to DataHub at host is {}:{} with user={}",
                     new Object[] {

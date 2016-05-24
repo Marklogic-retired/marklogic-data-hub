@@ -76,6 +76,9 @@ div#message {
 .divider {
     border: 10px solid #2a2d2b;
 }
+.divider-menu {
+    border: 1px solid #2a2d2b;
+}
 #content {
     min-height: 450px;
     padding: 0px;
