@@ -357,7 +357,7 @@ declare function trace:get-trace($id as xs:string)
       cts:json-property-range-query("traceId", "=", $id, ("collation=http://marklogic.com/collation/codepoint"))
     ))
   return
-    trace:trace-to-json(cts:search(fn:doc(), $query)[1])
+    trace:trace-to-json(cts:search(fn:doc(), $query)[1]/node())
 };
 
 declare function trace:get-traceIds($q as xs:string?)
