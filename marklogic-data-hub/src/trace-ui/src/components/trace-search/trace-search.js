@@ -38,7 +38,7 @@ export class TraceSearch {
   }
 
   search() {
-    const q = this.query || '*';
+    const q = this.query || '';
     const p = this.page || 1;
     return this.traceService.search(q, p).then(resp => {
       this.searchResponse = resp.data;

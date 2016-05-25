@@ -28,7 +28,7 @@
     {
       "scalar-type": "string",
       "namespace-uri": "",
-      "localname": "trace-id",
+      "localname": "traceId",
       "collation": "http://marklogic.com/collation/codepoint",
       "range-value-positions": false,
       "invalid-values": "reject"

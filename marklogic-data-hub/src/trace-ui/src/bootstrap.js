@@ -10,6 +10,8 @@ import 'codemirror/mode/javascript/javascript';
 
 import 'angular-ui-codemirror';
 import 'angular-moment';
+import 'jsonformatter';
+import 'jsonformatter/dist/json-formatter.min.css';
 
 import {bootstrap} from 'ng-forward';
 import {componentHooks} from 'ng-forward/cjs/decorators/component';
@@ -23,4 +25,4 @@ componentHooks._extendDDO.push((ddo) => {
   ddo.controllerAs = 'ctrl';
 });
 
-bootstrap(App, ['ui.router', 'ui.codemirror', 'angularMoment']);
+bootstrap(App, ['ui.router', 'ui.codemirror', 'angularMoment', 'jsonFormatter']);

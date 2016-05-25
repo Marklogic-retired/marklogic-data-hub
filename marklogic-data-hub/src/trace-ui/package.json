@@ -25,6 +25,7 @@
     "codemirror": "^5.15.0",
     "eventemitter2": "^0.4.14",
     "font-awesome": "^4.3.0",
+    "jsonformatter": "^0.6.0",
     "lodash": "^3.9.3",
     "material-design-icons": "^2.0.0",
     "moment": "^2.13.0",

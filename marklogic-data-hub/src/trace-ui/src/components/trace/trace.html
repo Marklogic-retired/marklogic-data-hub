@@ -1,5 +1,5 @@
 <section class="plugin-nav" layout="row" layout-align="center center">
-  <md-content class="md-whiteframe-2dp" flex="66">
+  <md-content class="md-whiteframe-2dp" flex>
     <md-subheader>
       <div>Trace {{ctrl.trace.traceId}}</div>
       <div>Identifier: {{ctrl.trace.identifier}}</div>
@@ -35,8 +35,9 @@
       </div>
     </md-toolbar>
     <md-content layout-margin>
-      <md-subheader ng-init="collapsed = false" ng-click="collapsed = !collapsed" ng-repeat-start="(key, value) in ctrl.currentPlugin.input">{{key}} <md-icon>keyboard_arrow_down</md-icon></md-subheader>
-      <div class="cm" ng-if="!collapsed" ng-repeat-end ui-codemirror="ctrl.codeMirrorConfig" ng-model="value"></div>
+      <md-subheader ng-init="collapsed = false" ng-click="collapsed = !collapsed" ng-repeat-start="(key, value) in ctrl.currentPlugin.input">{{key}} <md-icon>{{ collapsed ? 'keyboard_arrow_left' : 'keyboard_arrow_down'}}</md-icon></md-subheader>
+      <json-formatter class="json-formatter" ng-if="!collapsed && ctrl.trace.format === 'json'" json="value" open="1"></json-formatter>
+      <div class="cm" ng-if="!collapsed && ctrl.trace.format === 'xml'" ng-repeat-end ui-codemirror="ctrl.codeMirrorConfig" ng-model="value"></div>
     </md-content>
   </div>
   <div class="md-whiteframe-z1" flex>
@@ -45,9 +46,13 @@
         <h3 class="ng-binding">output</h3>
       </div>
     </md-toolbar>
-    <md-content layout-margin ng-init="ctrl.outputCollapsed = false" >
-      <md-subheader ng-click="ctrl.outputCollapsed = !ctrl.outputCollapsed" ng-if="ctrl.currentPlugin.output">Output <md-icon>keyboard_arrow_down</md-icon></md-subheader>
-      <div class="cm" ng-if="!ctrl.outputCollapsed && ctrl.currentPlugin.output" ui-codemirror="ctrl.codeMirrorConfig" ng-model="ctrl.currentPlugin.output"></div>
+    <md-content layout-margin ng-init="ctrl.outputCollapsed = false; ctrl.errorCollapsed = false" >
+      <md-subheader ng-click="ctrl.outputCollapsed = !ctrl.outputCollapsed" ng-if="ctrl.currentPlugin.output">Output <md-icon>{{ ctrl.outputCollapsed ? 'keyboard_arrow_left' : 'keyboard_arrow_down'}}</md-icon></md-subheader>
+      <json-formatter class="json-formatter" ng-if="!ctrl.outputCollapsed && ctrl.currentPlugin.output && ctrl.trace.format === 'json'" json="ctrl.currentPlugin.output" open="1"></json-formatter>
+      <div class="cm" ng-if="!ctrl.outputCollapsed && ctrl.currentPlugin.output && ctrl.trace.format === 'xml'" ui-codemirror="ctrl.codeMirrorConfig" ng-model="ctrl.currentPlugin.output"></div>
+
+      <md-subheader ng-click="ctrl.errorCollapsed = !ctrl.errorCollapsed" ng-if="ctrl.currentPlugin.error">Error <md-icon>{{ ctrl.errorCollapsed ? 'keyboard_arrow_left' : 'keyboard_arrow_down'}}</md-icon></md-subheader>
+      <div class="cm" ng-if="!ctrl.errorCollapsed && ctrl.currentPlugin.error" ui-codemirror="ctrl.codeMirrorConfig" ng-model="ctrl.currentPlugin.error"></div>
     </md-content>
   </div>
 </div>

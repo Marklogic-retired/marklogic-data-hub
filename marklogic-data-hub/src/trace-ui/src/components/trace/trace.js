@@ -37,19 +37,22 @@ export class Trace {
     this.traceService.getTrace(this.identifier).then(resp => {
       this.trace = resp.data;
       this.$rootScope.$broadcast('$titleChange', 'Trace for identifier: ' + this.trace.identifier);
-      this.plugins = [
+      const plugins = [
+        'collector',
         'content',
         'headers',
         'triples',
         'writer',
       ];
-      if (this.trace.flowType === 'harmonize') {
-        this.plugins.unshift('collector');
-        this.setCurrent('collector');
+      this.plugins = [];
+      for (let i = 0; i < plugins.length; i++) {
+        const pt = plugins[i] + 'Plugin';
+        if (this.trace[pt]) {
+          this.plugins.push(plugins[i]);
+        }
       }
-      else {
-        this.setCurrent('content');
-      }
+
+      this.setCurrent(this.plugins[0]);
     });
   }
 

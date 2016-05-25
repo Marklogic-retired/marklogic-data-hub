@@ -34,7 +34,7 @@ declare variable $FORMAT-JSON := "json";
 declare %private variable $current-trace-settings := map:map();
 
 declare %private variable $current-trace := map:new((
-  map:entry("trace-id", xdmp:random()),
+  map:entry("traceId", xdmp:random()),
   map:entry("created", fn:current-dateTime())
 ));
 
@@ -74,16 +74,17 @@ declare function trace:write-trace()
         xdmp:to-json($current-trace)
       else
         element trace {
-          element trace-id { map:get($current-trace, "trace-id") },
+          element format { map:get($current-trace, "format") },
+          element traceId { map:get($current-trace, "traceId") },
           element created { map:get($current-trace, "created") },
           element identifier { map:get($current-trace, "identifier") },
-          element flow-type { map:get($current-trace, "flow-type") },
-          for $key in ("collector-plugin", "content-plugin", "headers-plugin", "triples-plugin", "writer-plugin")
+          element flowType { map:get($current-trace, "flowType") },
+          for $key in ("collectorPlugin", "contentPlugin", "headersPlugin", "triplesPlugin", "writerPlugin")
           let $m := map:get($current-trace, $key)
           return
             if (fn:exists($m)) then
               element { $key } {
-                element plugin-module-uri { map:get($m, "plugin-module-uri") },
+                element pluginModuleUri { map:get($m, "pluginModuleUri") },
                 element input { map:get($m, "input") },
                 element output { map:get($m, "output") },
                 element duration { map:get($m, "duration") }
@@ -99,10 +100,10 @@ declare function trace:write-trace()
         declare variable $trace external;
 
         xdmp:document-insert(
-          "/" || $trace/trace-id,
+          "/" || $trace/traceId,
           $trace,
           xdmp:default-permissions(),
-          ($trace/*:type)
+          ("trace", $trace/*:type)
         )
       ',
       map:new((
@@ -119,58 +120,72 @@ declare function trace:plugin-trace(
   $identifier,
   $module-uri,
   $plugin-type as xs:string,
-  $flow-type as xs:string,
+  $flowType as xs:string,
   $input,
   $output,
   $duration as xs:dayTimeDuration)
 {
+  let $format :=
+    let $o :=
+      if ($input instance of document-node()) then
+        $input/node()
+      else
+        $input
+    return
+      typeswitch($o)
+        case element() return "xml"
+        case object-node() return "json"
+        case array-node() return "json"
+        default return "xml"
+  return
+    map:put($current-trace, "format", $format),
   map:put($current-trace, "identifier", $identifier),
-  map:put($current-trace, "flow-type", $flow-type),
+  map:put($current-trace, "flowType", $flowType),
   let $plugin-map := map:new((
-    map:entry("plugin-module-uri", $module-uri),
+    map:entry("pluginModuleUri", $module-uri),
     map:entry("input", $input),
     map:entry("output", $output),
     map:entry("duration", $duration)
   ))
   return
-    map:put($current-trace, $plugin-type || "-plugin", $plugin-map)
+    map:put($current-trace, $plugin-type || "Plugin", $plugin-map)
 };
 
 declare function trace:error-trace(
   $identifier as xs:string?,
   $module-uri as xs:string,
   $plugin-type as xs:string,
-  $flow-type as xs:string,
+  $flowType as xs:string,
   $input,
   $error as element(error:error),
   $duration as xs:dayTimeDuration)
 {
+  let $format :=
+    let $o :=
+      if ($input instance of document-node()) then
+        $input/node()
+      else
+        $input
+    return
+      typeswitch($o)
+        case element() return "xml"
+        case object-node() return "json"
+        case array-node() return "json"
+        default return "xml"
+  return
+    map:put($current-trace, "format", $format),
   map:put($current-trace, "identifier", $identifier),
-  map:put($current-trace, "flow-type", $flow-type),
+  map:put($current-trace, "flowType", $flowType),
   map:put($current-trace-settings, "_has_errors", fn:true()),
   let $plugin-map := map:new((
-    map:entry("plugin-module-uri", $module-uri),
+    map:entry("pluginModuleUri", $module-uri),
     map:entry("input", $input),
     map:entry("error", $error),
     map:entry("duration", $duration)
   ))
-  let $_ := map:put($current-trace, $plugin-type || "-plugin", $plugin-map)
+  let $_ := map:put($current-trace, $plugin-type || "Plugin", $plugin-map)
   let $_ := trace:write-trace()
   return ()
-};
-
-declare function trace:camel-case( $str as xs:string ) as xs:string
-{
- if( fn:contains($str , "-" ) ) then
-    let $subs :=  fn:tokenize($str,"-")
-    return
-      fn:string-join((
-        $subs[1],
-        for $s in $subs[ fn:position() gt 1 ]
-        return (
-          fn:upper-case( fn:substring($s , 1 , 1 )) , fn:lower-case(fn:substring($s,2)))),"")
- else $str
-
 };
 
 declare function trace:_walk_json($nodes as node()* ,$o)
@@ -184,16 +199,46 @@ declare function trace:_walk_json($nodes as node()* ,$o)
   for $n in $nodes
   return
     typeswitch($n)
+      case array-node() return
+        let $name as xs:string := fn:string(fn:node-name($n))
+        return
+          map:put($o, $name, xdmp:quote($n))
+      case object-node() return
+        let $oo := json:object()
+        let $name as xs:string := fn:string(fn:node-name($n))
+        return
+          if ($name = "input") then
+            if ($n/node()) then
+              let $_ :=
+                for $x in $n/node()
+                let $nn := fn:string(fn:node-name($x))
+                return
+                  map:put($oo, $nn, xdmp:quote($x, $quote-options))
+              return
+                map:put($o, $name, $oo)
+            else
+              map:put($o, $name, null-node {})
+          else if ($name = "output") then
+            map:put($o, $name, xdmp:quote($n, $quote-options))
+          else
+            let $_ := trace:_walk_json($n/node(), $oo)
+            return
+              map:put($o, $name, $oo)
+      case number-node() |
+           boolean-node() |
+           null-node() |
+           text() return
+        map:put($o, fn:string(fn:node-name($n)), fn:data($n))
       case element(input) return
         let $oo := json:object()
         let $_ :=
           for $x in $n/*
           return
-            map:put($oo, trace:camel-case(fn:local-name($x)), xdmp:quote($x, $quote-options))
+            map:put($oo, fn:local-name($x), xdmp:quote($x, $quote-options))
         return
           map:put($o, "input", $oo)
       case element(output) return
-        map:put($o, trace:camel-case(fn:local-name($n)), xdmp:quote($n/node(), $quote-options))
+        map:put($o, fn:local-name($n), xdmp:quote($n/node(), $quote-options))
       case element(duration) return
         map:put($o, "duration", fn:seconds-from-duration(xs:dayTimeDuration($n)))
       case element() return
@@ -201,9 +246,9 @@ declare function trace:_walk_json($nodes as node()* ,$o)
           let $oo := json:object()
           let $_ := trace:_walk_json($n/*, $oo)
           return
-            map:put($o, trace:camel-case(fn:local-name($n)), $oo)
+            map:put($o, fn:local-name($n), $oo)
         else
-          map:put($o, trace:camel-case(fn:local-name($n)), fn:data($n))
+          map:put($o, fn:local-name($n), fn:data($n))
       default return
         $n
 };
@@ -212,7 +257,14 @@ declare function trace:trace-to-json($trace)
 {
   if ($trace instance of element()) then
     let $o := json:object()
-    let $_ := trace:_walk_json($trace/*, $o)
+    let $walk-me :=
+      let $n := $trace/node()
+      return
+        if ($n instance of object-node()) then
+          $n/node()
+        else
+          $n
+    let $_ := trace:_walk_json($walk-me, $o)
     return
       $o
   else
@@ -221,15 +273,26 @@ declare function trace:trace-to-json($trace)
 
 declare function trace:trace-to-json-slim($trace)
 {
-  let $o := json:object()
-  let $_ := (
-    map:put($o, "traceId", $trace/trace-id/string()),
-    map:put($o, "created", $trace/created/string()),
-    map:put($o, "identifier", $trace/identifier/string()),
-    map:put($o, "flowType", $trace/flow-type/string())
-  )
-  return
-    $o
+  (:if ($trace instance of element()) then:)
+    let $o := json:object()
+    let $_ := (
+      map:put($o, "traceId", $trace/traceId/string()),
+      map:put($o, "created", $trace/created/string()),
+      map:put($o, "identifier", $trace/identifier/string()),
+      map:put($o, "flowType", $trace/flowType/string())
+    )
+    return
+      $o
+(:  else
+    let $o := json:object()
+    let $_ := (
+      map:put($o, "traceId", $trace/traceId),
+      map:put($o, "created", $trace/created),
+      map:put($o, "identifier", $trace/identifier),
+      map:put($o, "flowType", $trace/flowType)
+    )
+    return
+      $o:)
 };
 
 declare function trace:find-traces(
@@ -239,11 +302,16 @@ declare function trace:find-traces(
 {
   let $options :=
     <options xmlns="http://marklogic.com/appservices/search">
+      <additional-query>{cts:collection-query("trace")}</additional-query>
       <return-results>false</return-results>
       <return-facets>true</return-facets>
+      <sort-order type="xs:dateTime"
+          direction="descending">
+        <element ns="" name="created"/>
+      </sort-order>
     </options>
   let $query := search:parse($q)
-  let $count := xdmp:estimate(cts:search(fn:doc(), cts:query($query)))
+  let $count := search:estimate($query, $options)
   let $start := ($page - 1) * $page-length + 1
   let $end := fn:min(($start + $page-length - 1, $count))
   let $results :=
@@ -283,19 +351,24 @@ declare function trace:get-traces($page as xs:int, $page-length as xs:int)
 
 declare function trace:get-trace($id as xs:string)
 {
-  trace:trace-to-json(/trace[trace-id = $id])
+  let $query :=
+    cts:or-query((
+      cts:element-range-query(xs:QName("traceId"), "=", $id, ("collation=http://marklogic.com/collation/codepoint")),
+      cts:json-property-range-query("traceId", "=", $id, ("collation=http://marklogic.com/collation/codepoint"))
+    ))
+  return
+    trace:trace-to-json(cts:search(fn:doc(), $query)[1])
 };
 
-declare function trace:get-trace-ids($q as xs:string?)
+declare function trace:get-traceIds($q as xs:string?)
 {
   let $query :=
     if ($q) then
       cts:element-value-query(xs:QName("identifier"), fn:lower-case($q) || "*", "wildcarded")
     else ()
-  let $_ := xdmp:log($query)
   let $results :=
     cts:element-value-co-occurrences(
-      xs:QName("trace-id"),
+      xs:QName("traceId"),
       xs:QName("identifier"),
       (
         "limit=10",
