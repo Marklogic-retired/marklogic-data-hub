@@ -1,0 +1,25 @@
+.container {
+  .pagination {
+    a,span {
+      height: 50px;
+      width: 50px;
+      color: rgba(0,0,0,.5);
+      cursor: pointer;
+      display: inline-block;
+      line-height: 50px;
+    }
+    span.active {
+      background: rgb(121,85,72);
+      border-radius: 50%;
+      color: white;
+    }
+    span.active:hover {
+      color: white;
+    }
+    span:hover {
+      color: rgba(0,0,0,1);
+    }
+    font-size: 20px;
+    text-align: center;
+  }
+}

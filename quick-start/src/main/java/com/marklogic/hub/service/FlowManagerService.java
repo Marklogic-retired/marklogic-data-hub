@@ -11,9 +11,6 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.marklogic.client.DatabaseClient;
-import com.marklogic.client.DatabaseClientFactory;
-import com.marklogic.client.DatabaseClientFactory.Authentication;
 import com.marklogic.client.io.Format;
 import com.marklogic.contentpump.bean.MlcpBean;
 import com.marklogic.hub.FlowManager;
@@ -29,19 +26,10 @@ import com.marklogic.hub.model.FlowModel;
 public class FlowManagerService {
 
     @Autowired
-    private EnvironmentConfiguration environmentConfiguration;
+    private EnvironmentConfiguration environmentConfig;
 
     public FlowManager getFlowManager() {
-
-        Authentication authMethod = Authentication
-                .valueOf(environmentConfiguration.getMLAuth().toUpperCase());
-        DatabaseClient client = DatabaseClientFactory.newClient(
-                environmentConfiguration.getMLHost(),
-                Integer.parseInt(environmentConfiguration.getMLStagingPort()),
-                environmentConfiguration.getMLUsername(),
-                environmentConfiguration.getMLPassword(), authMethod);
-        return new FlowManager(client);
-
+        return new FlowManager(environmentConfig.getStagingClient());
     }
 
     public List<Flow> getFlows(String entityName) {
@@ -87,7 +75,7 @@ public class FlowManagerService {
             FlowType flowType, PluginFormat pluginFormat, Format dataFormat) {
         FlowModelFactory flowModelFactory = new FlowModelFactory(entityName);
 
-        File projectDir = new File(environmentConfiguration.getProjectDir());
+        File projectDir = new File(environmentConfig.getProjectDir());
         FlowModel flowModel;
         try {
             flowModel = flowModelFactory.createNewFlow(projectDir, flowName,
@@ -100,12 +88,12 @@ public class FlowManagerService {
 
     public void loadData(JsonNode json) throws IOException {
         MlcpBean bean = new ObjectMapper().readerFor(MlcpBean.class).readValue(json);
-        bean.setHost(environmentConfiguration.getMLHost());
-        bean.setPort(Integer.parseInt(environmentConfiguration.getMLStagingPort()));
+        bean.setHost(environmentConfig.getMLHost());
+        bean.setPort(Integer.parseInt(environmentConfig.getMLStagingPort()));
 
         // Assume that the HTTP credentials will work for mlcp
-        bean.setUsername(environmentConfiguration.getMLUsername());
-        bean.setPassword(environmentConfiguration.getMLPassword());
+        bean.setUsername(environmentConfig.getMLUsername());
+        bean.setPassword(environmentConfig.getMLPassword());
 
         File file = new File(json.get("input_file_path").asText());
         String canonicalPath = file.getCanonicalPath();

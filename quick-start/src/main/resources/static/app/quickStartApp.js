@@ -17,7 +17,8 @@
     'angular-confirm',
     'ngSanitize',
     'swaggerUi',
-    'mlcp'
+    'mlcp',
+    'tracing'
   ];
   angular.module('quickStartApp', dependencies)
     .factory('$exceptionHandler', ExceptionHandler)

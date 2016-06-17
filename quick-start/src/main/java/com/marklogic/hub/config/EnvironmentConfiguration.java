@@ -20,6 +20,9 @@ import org.springframework.stereotype.Component;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
+import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.DatabaseClientFactory;
+import com.marklogic.client.DatabaseClientFactory.Authentication;
 import com.marklogic.hub.HubConfig;
 
 /***
@@ -261,5 +264,29 @@ public class EnvironmentConfiguration {
 	    hubConfig.projectDir = getProjectDir();
 	    return hubConfig;
 	}
+
+	public DatabaseClient getStagingClient() {
+        Authentication authMethod = Authentication
+                .valueOf(getMLAuth().toUpperCase());
+
+        DatabaseClient client = DatabaseClientFactory.newClient(
+                getMLHost(),
+                Integer.parseInt(getMLStagingPort()),
+                getMLUsername(),
+                getMLPassword(), authMethod);
+        return client;
+	}
+
+	public DatabaseClient getFinalClient() {
+	    Authentication authMethod = Authentication
+	            .valueOf(getMLAuth().toUpperCase());
+
+        DatabaseClient client = DatabaseClientFactory.newClient(
+                getMLHost(),
+                Integer.parseInt(getMLFinalPort()),
+                getMLUsername(),
+                getMLPassword(), authMethod);
+        return client;
+    }
 
 }

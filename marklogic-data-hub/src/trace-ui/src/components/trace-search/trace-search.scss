@@ -1,0 +1,19 @@
+.md-button[disabled],
+.md-button.md-fab[disabled] {
+  cursor: initial;
+}
+
+.md-button[disabled].error,
+.md-button.md-fab[disabled].error {
+  background: red;
+}
+
+.md-button[disabled].input,
+.md-button.md-fab[disabled].input {
+  background: green;
+}
+
+.md-button[disabled].harmonize,
+.md-button.md-fab[disabled].harmonize {
+  background: blue;
+}

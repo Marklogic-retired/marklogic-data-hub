@@ -1,0 +1,111 @@
+.gray {
+  background-color: #f5f5f5;
+}
+
+.green {
+  background-color: #b9f6ca;
+}
+
+.md-button.md-fab.plugin {
+  // width: inherit;
+  width: 125px;
+  height: 80px;
+  border-radius: 10%;
+
+  .md-ripple-container {
+    border-radius: 10%;
+  }
+}
+
+.md-button.md-fab.start {
+  background-color: green;
+  &:hover {
+    background-color: green;
+  }
+}
+
+.md-button.md-fab.end {
+  background-color: red;
+  &:hover {
+    background-color: red;
+  }
+}
+
+.md-button:not([disabled]).plugin.md-raised,
+.md-button.md-fab.plugin.active {
+  box-shadow: 0px 0px 5px 5px rgba(0, 0, 0, 0.75);
+
+  &:hover,
+  &:active {
+    box-shadow: 0px 0px 5px 5px rgba(0, 0, 0, 0.75);
+  }
+}
+
+.plugin-nav {
+  margin-bottom: 10px;
+
+  md-content {
+    text-align: center;
+    padding: 1em;
+  }
+}
+
+.md-subheader.md-default-theme, .md-subheader {
+  background-color: transparent;
+}
+
+.plugin-io {
+  .md-subheader .md-subheader-inner {
+    padding: 10px 0px 10px 16px;
+  }
+
+  .md-subheader {
+    cursor: pointer;
+  }
+}
+
+.cm {
+  max-width: 100%;
+  border-bottom: 1px solid #ccc;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.CodeMirror {
+  height: 600px;
+}
+
+.plugin-name {
+  line-height: 30px;
+}
+
+.plugin-duration {
+  line-height: 20px;
+  font-size: 70%;
+
+  .unit {
+    font-size: 80%;
+    font-weight: bold;
+  }
+}
+
+*:focus {
+  outline: none;
+}
+
+.CodeMirror-gutters {
+  background-color: rgba(121,85,72, 0.5) !important;
+  color: black !important;
+  border: none;
+}
+
+.CodeMirror-linenumber {
+  color: black;
+}
+
+.json-formatter {
+  background-color: white;
+  padding: 5px;
+}
