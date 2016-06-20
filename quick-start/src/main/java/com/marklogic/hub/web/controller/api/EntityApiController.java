@@ -1,6 +1,7 @@
 package com.marklogic.hub.web.controller.api;
 
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.WatchEvent;
 import java.util.List;
 
@@ -10,6 +11,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.MediaType;
 import org.springframework.validation.BindingResult;
@@ -32,6 +34,7 @@ import com.marklogic.hub.web.form.LoginForm;
 @RestController
 @RequestMapping("/api/entities")
 @Scope("session")
+@EnableAspectJAutoProxy(proxyTargetClass = true)
 public class EntityApiController implements InitializingBean, DisposableBean, FileSystemEventListener {
 
     @Autowired
@@ -129,7 +132,7 @@ public class EntityApiController implements InitializingBean, DisposableBean, Fi
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        String pluginDir = environmentConfiguration.getUserPluginDir();
+        String pluginDir = Paths.get(environmentConfiguration.getProjectDir(), "plugins").toString();
         watcherService.watch(pluginDir, this);
     }
 

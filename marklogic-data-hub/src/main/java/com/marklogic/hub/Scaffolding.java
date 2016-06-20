@@ -33,107 +33,124 @@ import org.slf4j.LoggerFactory;
 import com.marklogic.client.io.Format;
 import com.marklogic.hub.flow.FlowType;
 import com.marklogic.hub.flow.SimpleFlow;
+import com.marklogic.hub.util.PerformanceLogger;
 
 public class Scaffolding {
 
     static final private Logger LOGGER = LoggerFactory.getLogger(Scaffolding.class);
 
-    public static File getEntityDir(File userlandDir, String entityName) {
-        File entitiesDir = new File(userlandDir, "entities");
-        File entityDir = new File(entitiesDir, entityName);
-        return entityDir;
+    private String projectDir;
+    private Path pluginsDir;
+    private Path entitiesDir;
+    private ScaffoldingValidator validator;
+
+    public Scaffolding(String projectDir) {
+        this.projectDir = projectDir;
+        this.pluginsDir = Paths.get(this.projectDir, "plugins");
+        this.entitiesDir = this.pluginsDir.resolve("entities");
+        validator = new ScaffoldingValidator(projectDir);
     }
 
-    public static File getFlowDir(File userlandDir, String entityName,
-            String flowName, FlowType flowType) {
-        File entityDir = getEntityDir(userlandDir, entityName);
-        File typeDir = new File(entityDir, flowType.toString());
-        File flowDir = new File(typeDir, flowName);
+    public Path getFlowDir(String entityName, String flowName, FlowType flowType) {
+        long startTime = PerformanceLogger.monitorTimeInsideMethod();
+        Path entityDir = entitiesDir.resolve(entityName);
+        Path typeDir = entityDir.resolve(flowType.toString());
+        Path flowDir = typeDir.resolve(flowName);
+        PerformanceLogger.logTimeInsideMethod(startTime, "Scaffolding.getFlowDir");
         return flowDir;
     }
 
-    public static void createEntity(String entityName, File userlandPath) {
-        File entityDir = getEntityDir(userlandPath, entityName);
-        entityDir.mkdirs();
+    public void createEntity(String entityName) {
+        long startTime = PerformanceLogger.monitorTimeInsideMethod();
+        Path entityDir = entitiesDir.resolve(entityName);
+        entityDir.toFile().mkdirs();
+        PerformanceLogger.logTimeInsideMethod(startTime, "Scaffolding.createEntity");
     }
 
-    public static void createFlow(String entityName, String flowName,
-            FlowType flowType, PluginFormat pluginFormat, Format dataFormat,
-            File userlandDir)
+    public void createFlow(String entityName, String flowName,
+            FlowType flowType, PluginFormat pluginFormat, Format dataFormat)
             throws IOException {
-        File flowDir = getFlowDir(userlandDir, entityName, flowName, flowType);
+        long startTime = PerformanceLogger.monitorTimeInsideMethod();
+        Path flowDir = getFlowDir(entityName, flowName, flowType);
 
         if (flowType.equals(FlowType.HARMONIZE)) {
-            File collectorDir = new File(flowDir, "collector");
-            collectorDir.mkdirs();
+            Path collectorDir = flowDir.resolve("collector");
+            collectorDir.toFile().mkdirs();
             writeFile("scaffolding/" + flowType + "/" + pluginFormat + "/collector." + pluginFormat,
-                    Paths.get(collectorDir.getPath(), "collector." + pluginFormat));
+                    collectorDir.resolve("collector." + pluginFormat));
 
-            File writerDir = new File(flowDir, "writer");
-            writerDir.mkdirs();
+            Path writerDir = flowDir.resolve("writer");
+            writerDir.toFile().mkdirs();
             writeFile("scaffolding/" + flowType + "/" + pluginFormat + "/writer." + pluginFormat,
-                    Paths.get(writerDir.getPath(), "writer." + pluginFormat));
+                    writerDir.resolve("writer." + pluginFormat));
         }
 
-        File contentDir = new File(flowDir, "content");
-        contentDir.mkdirs();
+        Path contentDir = flowDir.resolve("content");
+        contentDir.toFile().mkdirs();
         writeFile("scaffolding/" + flowType + "/" + pluginFormat + "/content." + pluginFormat,
-                Paths.get(contentDir.getPath(), "content." + pluginFormat));
+                contentDir.resolve("content." + pluginFormat));
 
-        File headerDir = new File(flowDir, "headers");
-        headerDir.mkdirs();
+        Path headerDir = flowDir.resolve("headers");
+        headerDir.toFile().mkdirs();
         writeFile("scaffolding/" + flowType + "/" + pluginFormat + "/headers." + pluginFormat,
-                Paths.get(headerDir.getPath(), "headers." + pluginFormat));
+                headerDir.resolve("headers." + pluginFormat));
 
-        File triplesDir = new File(flowDir, "triples");
-        triplesDir.mkdirs();
+        Path triplesDir = flowDir.resolve("triples");
+        triplesDir.toFile().mkdirs();
         writeFile("scaffolding/" + flowType + "/" + pluginFormat + "/triples." + pluginFormat,
-                Paths.get(triplesDir.getPath(), "triples." + pluginFormat));
+                triplesDir.resolve("triples." + pluginFormat));
 
         SimpleFlow flow = new SimpleFlow(entityName, flowName, flowType,
                 dataFormat);
-        File flowFile = new File(flowDir, flowName + ".xml");
-        try(PrintWriter out = new PrintWriter(flowFile)) {
+        Path flowFile = flowDir.resolve(flowName + ".xml");
+        try(PrintWriter out = new PrintWriter(flowFile.toFile())) {
             out.println(flow.serialize(false));
             out.close();
         }
+        PerformanceLogger.logTimeInsideMethod(startTime, "Scaffolding.createFlow");
     }
 
-    private static void writeFile(String srcFile, Path dstFile)
-            throws IOException {
-        LOGGER.info(srcFile);
-        InputStream inputStream = Scaffolding.class.getClassLoader()
-                .getResourceAsStream(srcFile);
-        Files.copy(inputStream, dstFile);
+    private void writeFile(String srcFile, Path dstFile) throws IOException {
+        if (!dstFile.toFile().exists()) {
+            InputStream inputStream = Scaffolding.class.getClassLoader()
+                    .getResourceAsStream(srcFile);
+            Files.copy(inputStream, dstFile);
+        }
     }
 
-    public static void createRestExtension(String entityName, String extensionName,
-            FlowType flowType, PluginFormat pluginFormat, File userlandDir) throws IOException, ScaffoldingValidationException {
+    public void createRestExtension(String entityName, String extensionName,
+            FlowType flowType, PluginFormat pluginFormat) throws IOException, ScaffoldingValidationException {
         LOGGER.info(extensionName);
-        if(!ScaffoldingValidator.isUniqueRestServiceExtension(userlandDir, extensionName)) {
+
+        long startTime = PerformanceLogger.monitorTimeInsideMethod();
+
+        if(!validator.isUniqueRestServiceExtension(extensionName)) {
             throw new ScaffoldingValidationException("A rest service extension with the same name as " + extensionName + " already exists.");
         }
         String scaffoldRestServicesPath = "scaffolding/rest/services/";
         String fileContent = getFileContent(scaffoldRestServicesPath + pluginFormat + "/template." + pluginFormat, extensionName);
-        File dstFile = createEmptyRestExtensionFile(entityName, extensionName, flowType, pluginFormat, userlandDir);
+        File dstFile = createEmptyRestExtensionFile(entityName, extensionName, flowType, pluginFormat);
         writeToFile(fileContent, dstFile);
         writeMetadataForFile(dstFile, scaffoldRestServicesPath + "metadata/template.xml", extensionName);
+        PerformanceLogger.logTimeInsideMethod(startTime, "Scaffolding.createRestExtension");
     }
 
-    public static void createRestTransform(String entityName, String transformName,
-            FlowType flowType, PluginFormat pluginFormat, File userlandDir) throws IOException, ScaffoldingValidationException {
+    public void createRestTransform(String entityName, String transformName,
+            FlowType flowType, PluginFormat pluginFormat) throws IOException, ScaffoldingValidationException {
         LOGGER.info(transformName);
-        if(!ScaffoldingValidator.isUniqueRestTransform(userlandDir, transformName)) {
+        long startTime = PerformanceLogger.monitorTimeInsideMethod();
+        if(!validator.isUniqueRestTransform(transformName)) {
             throw new ScaffoldingValidationException("A rest transform with the same name as " + transformName + " already exists.");
         }
         String scaffoldRestTransformsPath = "scaffolding/rest/transforms/";
         String fileContent = getFileContent(scaffoldRestTransformsPath + pluginFormat + "/template." + pluginFormat, transformName);
-        File dstFile = createEmptyRestTransformFile(entityName, transformName, flowType, pluginFormat, userlandDir);
+        File dstFile = createEmptyRestTransformFile(entityName, transformName, flowType, pluginFormat);
         writeToFile(fileContent, dstFile);
         writeMetadataForFile(dstFile, scaffoldRestTransformsPath + "metadata/template.xml", transformName);
+        PerformanceLogger.logTimeInsideMethod(startTime, "Scaffolding.createRestTransform");
     }
 
-    private static void writeToFile(String fileContent, File dstFile)
+    private void writeToFile(String fileContent, File dstFile)
             throws IOException {
         LOGGER.info(fileContent);
         LOGGER.info(dstFile.getAbsolutePath());
@@ -143,42 +160,44 @@ public class Scaffolding {
         bw.close();
     }
 
-    private static File createEmptyRestExtensionFile(String entityName, String extensionName,
-            FlowType flowType, PluginFormat pluginFormat, File userlandDir) throws IOException {
-        File restDir = getRestDirectory(userlandDir, entityName, flowType);
+    private File createEmptyRestExtensionFile(String entityName, String extensionName,
+            FlowType flowType, PluginFormat pluginFormat) throws IOException {
+        Path restDir = getRestDirectory(entityName, flowType);
         return createEmptyFile(restDir, "services", extensionName + "." + pluginFormat);
     }
 
-    private static File createEmptyRestTransformFile(String entityName, String transformName,
-            FlowType flowType, PluginFormat pluginFormat, File userlandDir) throws IOException {
-        File restDir = getRestDirectory(userlandDir, entityName, flowType);
+    private File createEmptyRestTransformFile(String entityName, String transformName,
+            FlowType flowType, PluginFormat pluginFormat) throws IOException {
+        Path restDir = getRestDirectory(entityName, flowType);
         return createEmptyFile(restDir, "transforms", transformName + "." + pluginFormat);
     }
 
-    private static File createEmptyFile(File directory, String subDirectoryName, String fileName) throws IOException {
-        File fileDirectory = directory;
-        if(subDirectoryName!=null) {
-            fileDirectory = new File(directory, subDirectoryName);
+    private File createEmptyFile(Path directory, String subDirectoryName, String fileName) throws IOException {
+        Path fileDirectory = directory;
+        if(subDirectoryName != null) {
+            fileDirectory = directory.resolve(subDirectoryName);
         }
-        fileDirectory.mkdirs();
-        File file = new File(fileDirectory, fileName);
+        fileDirectory.toFile().mkdirs();
+        File file = fileDirectory.resolve(fileName).toFile();
         file.createNewFile();
         return file;
     }
 
-    private static File getRestDirectory(File userlandDir, String entityName,
-            FlowType flowType) {
-        return getFlowDir(userlandDir, entityName,
-                "REST", flowType);
+    public Path getEntityDir(String entityName) {
+        return entitiesDir.resolve(entityName);
     }
 
-    private static void writeMetadataForFile(File file, String metadataTemplatePath, String metadataName) throws IOException {
+    private Path getRestDirectory(String entityName, FlowType flowType) {
+        return getFlowDir(entityName, "REST", flowType);
+    }
+
+    private void writeMetadataForFile(File file, String metadataTemplatePath, String metadataName) throws IOException {
         String fileContent = getFileContent(metadataTemplatePath, metadataName);
         File metadataFile = createEmptyMetadataForFile(file, metadataName);
         writeToFile(fileContent, metadataFile);
     }
 
-    private static File createEmptyMetadataForFile(File file, String metadataName) throws IOException {
+    private File createEmptyMetadataForFile(File file, String metadataName) throws IOException {
         File metadataDir = new File(file.getParentFile(), "metadata");
         metadataDir.mkdir();
         File metadataFile = new File(metadataDir, metadataName + ".xml");
@@ -186,7 +205,7 @@ public class Scaffolding {
         return metadataFile;
     }
 
-    private static String getFileContent(String srcFile, String placeholder) throws IOException {
+    private String getFileContent(String srcFile, String placeholder) throws IOException {
         StringBuilder output = new StringBuilder();
         InputStream inputStream = null;
         BufferedReader rdr = null;

@@ -42,6 +42,7 @@ public class SimpleFlow extends AbstractFlow {
 
     /**
      * Returns the header plugin used by this flow
+     * @return the header plugin
      */
     public Plugin getHeaderPlugin() {
         return this.plugins.get(1);
@@ -49,12 +50,16 @@ public class SimpleFlow extends AbstractFlow {
 
     /**
      * Sets the header plugin to use
-     * @param plugin
+     * @param plugin - the new Header Plugin
      */
     public void setHeaderPlugin(ServerPlugin plugin) {
         this.plugins.set(1, plugin);
     }
 
+    /**
+     * Returns the content plugin used by this flow
+     * @return the content plugin
+     */
     public Plugin getContentPlugin() {
         return this.plugins.get(0);
     }

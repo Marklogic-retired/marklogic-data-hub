@@ -20,7 +20,7 @@ module namespace flow = "http://marklogic.com/data-hub/flow-lib";
 import module namespace config = "http://marklogic.com/data-hub/config"
   at "/com.marklogic.hub/lib/config.xqy";
 
-import module namespace debug = "http://marklogic.com/data-hub/debug-lib"
+import module namespace debug = "http://marklogic.com/data-hub/debug"
   at "/com.marklogic.hub/lib/debug-lib.xqy";
 
 import module namespace hul = "http://marklogic.com/data-hub/hub-utils-lib"
@@ -250,11 +250,12 @@ declare %private function flow:get-flow(
   let $real-flow-type := fn:replace($uris[1], $ENTITIES-DIR || $entity-name || "/([^/]+)/" || $flow-name || ".*$", "$1")
   let $map := map:map()
   let $_ :=
-    for $dir in $uris
     let $type :=
       if ($flow-type) then $flow-type
       else "[^/]+"
-    let $dir-name := fn:replace($dir, $ENTITIES-DIR || $entity-name || "/" || $type || "/" || $flow-name || "/([^/]+)/$", "$1")
+    let $regex := $ENTITIES-DIR || $entity-name || "/" || $type || "/" || $flow-name || "/([^/]+)/.*$"
+    for $dir in $uris
+    let $dir-name := fn:replace($dir, $regex, "$1")
     let $child-uris := $uris[fn:matches(., $ENTITIES-DIR || $entity-name || "/" || $type || "/" || $flow-name || "/" || $dir-name || "/([^/]+)$")]
     return
       switch ($dir-name)
@@ -313,11 +314,17 @@ declare function flow:get-flows(
   let $uris := hul:run-in-modules(function() {
     cts:uri-match($ENTITIES-DIR || "*")
   })
+  let $flow-names :=
+    fn:distinct-values(
+      let $regex := $ENTITIES-DIR || $entity-name || "/(input|harmonize)/([^/]+)/.*$"
+      for $flow in $uris[fn:matches(., $regex)]
+      let $name := fn:replace($flow, $regex, "$2")
+      return
+        $name)
   let $flows :=
-    for $flow in $uris[fn:matches(., $ENTITIES-DIR || $entity-name || "/(input|harmonize)/[^/]+/$")]
-    let $name := fn:replace($flow, $ENTITIES-DIR || $entity-name || "/(input|harmonize)/([^/]+)/$", "$2")
+    for $flow-name in $flow-names
     return
-      flow:get-flow($entity-name, $name, (), $uris[fn:matches(., $ENTITIES-DIR || $entity-name || "/(input|harmonize)/" || $name || "/.+")])
+      flow:get-flow($entity-name, $flow-name, (), $uris[fn:matches(., $ENTITIES-DIR || $entity-name || "/(input|harmonize)/" || $flow-name || "/.+")])
   return
     <flows xmlns="http://marklogic.com/data-hub">
     {
@@ -375,11 +382,17 @@ declare function flow:get-entities() as element(hub:entities)
   let $uris := hul:run-in-modules(function() {
     cts:uri-match($ENTITIES-DIR || "*")
   })
+  let $entity-names :=
+    fn:distinct-values(
+      let $regex := $ENTITIES-DIR || "([^/]+)/.*$"
+      for $flow in $uris[fn:matches(., $regex)]
+      let $name := fn:replace($flow, $regex, "$1")
+      return
+        $name)
   let $entities :=
-    for $flow in $uris[fn:matches(., $ENTITIES-DIR || "[^/]+/$")]
-    let $name := fn:replace($flow, $ENTITIES-DIR || "([^/]+)/$", "$1")
+    for $entity-name in $entity-names
     return
-      flow:get-entity($name, $uris[fn:matches(., $ENTITIES-DIR || $name || "/.+")])
+      flow:get-entity($entity-name, $uris[fn:matches(., $ENTITIES-DIR || $entity-name || "/.+")])
   return
     <entities xmlns="http://marklogic.com/data-hub">
     {
@@ -504,16 +517,9 @@ declare function flow:run-flow(
 {
   let $envelope := flow:run-plugins($flow, $identifier, $content, $options)
   let $_ :=
-    xdmp:invoke-function(function() {
-      for $writer in $flow/hub:writer
-      return
-        flow:run-writer($writer, $identifier, $envelope, $flow/hub:type, $options)
-    },
-    map:new((
-      map:entry("isolation", "different-transaction"),
-      map:entry("database", xdmp:database($config:FINAL-DATABASE)),
-      map:entry("transactionMode", "update-auto-commit")
-    )))
+    for $writer in $flow/hub:writer
+    return
+      flow:run-writer($writer, $identifier, $envelope, $flow/hub:type, $options)
   let $_ := trace:write-trace()
   return
     ()
@@ -726,7 +732,14 @@ declare function flow:run-writer(
   let $before := xdmp:elapsed-time()
   let $resp :=
     try {
-      $func($identifier, $envelope, $options)
+      xdmp:invoke-function(function() {
+        $func($identifier, $envelope, $options)
+      },
+      map:new((
+        map:entry("isolation", "different-transaction"),
+        map:entry("database", xdmp:database($config:FINAL-DATABASE)),
+        map:entry("transactionMode", "update-auto-commit")
+      )))
     }
     catch($ex) {
       xdmp:log(xdmp:describe($ex, (), ())),

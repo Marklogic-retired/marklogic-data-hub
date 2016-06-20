@@ -17,11 +17,14 @@ xquery version "1.0-ml";
 
 module namespace service = "http://marklogic.com/rest-api/resource/entity";
 
-import module namespace debug = "http://marklogic.com/data-hub/debug-lib"
+import module namespace debug = "http://marklogic.com/data-hub/debug"
   at "/com.marklogic.hub/lib/debug-lib.xqy";
 
 import module namespace flow = "http://marklogic.com/data-hub/flow-lib"
   at "/com.marklogic.hub/lib/flow-lib.xqy";
+
+import module namespace perf = "http://marklogic.com/data-hub/perflog-lib"
+  at "/com.marklogic.hub/lib/perflog-lib.xqy";
 
 declare namespace rapi = "http://marklogic.com/rest-api";
 
@@ -43,14 +46,16 @@ declare function get(
 {
   debug:dump-env("GET ENTITY(s)"),
 
-  document {
-    let $entity-name := map:get($params, "entity-name")
-    let $resp :=
-      if ($entity-name) then
-        flow:get-entity($entity-name)
-      else
-        flow:get-entities()
-    return
-     $resp
-  }
+  perf:log('/v1/resources/entity:get', function() {
+    document {
+      let $entity-name := map:get($params, "entity-name")
+      let $resp :=
+        if ($entity-name) then
+          flow:get-entity($entity-name)
+        else
+          flow:get-entities()
+      return
+       $resp
+    }
+  })
 };

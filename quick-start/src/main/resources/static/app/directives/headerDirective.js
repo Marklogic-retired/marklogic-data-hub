@@ -5,7 +5,7 @@
   angular.module('dhib.quickstart.directives.header', [])
     .directive('header', HeaderDirective);
 
-  function HeaderDirective($http, $location, DataHub) {
+  function HeaderDirective($http, $location, DataHub, tracingService) {
     return {
       restrict: 'E',
       templateUrl : function(element, attrs) {
@@ -42,6 +42,37 @@
         scope.showApiDoc = function() {
           DataHub.showApiDoc();
         };
+
+        scope.tracingEnabled = false;
+
+        scope.getTracingButton = function() {
+          var txt = '';
+          txt += (scope.tracingEnabled) ? 'Disable' : 'Enable';
+          txt += ' Tracing';
+          return txt;
+        };
+
+        scope.getTracingUri = function() {
+          return 'http://' + scope.status.mlHost + ':' +
+            scope.status.mlTracePort + '/';
+        };
+
+        scope.toggleTracing = function() {
+          if (scope.tracingEnabled) {
+            tracingService.disableTracing().then(function() {
+              scope.tracingEnabled = false;
+            });
+          }
+          else {
+            tracingService.enableTracing().then(function() {
+              scope.tracingEnabled = true;
+            });
+          }
+        };
+
+        tracingService.isEnabled().then(function(resp) {
+          scope.tracingEnabled = resp.data.enabled;
+        });
 
       }
     };

@@ -20,6 +20,9 @@ import org.springframework.stereotype.Component;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
+import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.DatabaseClientFactory;
+import com.marklogic.client.DatabaseClientFactory.Authentication;
 import com.marklogic.hub.HubConfig;
 
 /***
@@ -44,8 +47,7 @@ public class EnvironmentConfiguration {
 	private static final String ML_FINAL_REST_PORT = "mlFinalPort";
 	private static final String ML_TRACE_REST_PORT = "mlTracePort";
 	private static final String ML_AUTH = "mlAuth";
-	private static final String USER_PLUGIN_DIR = "userPluginDir";
-	private static final String ASSET_INSTALL_TIME_FILE = "assetInstallTimeFile";
+	private static final String PROJECT_DIR = "projectDir";
 
 	@Autowired
 	private Environment environment;
@@ -147,30 +149,17 @@ public class EnvironmentConfiguration {
 		return this.environment.getProperty(ML_AUTH + DEFAULT_SUFFIX);
 	}
 
-	public String getUserPluginDir() {
-		String value = this.environmentProperties.getProperty(USER_PLUGIN_DIR);
+	public String getProjectDir() {
+		String value = this.environmentProperties.getProperty(PROJECT_DIR);
 		if (value != null) {
 			return value;
 		}
-		value = this.environment.getProperty(USER_PLUGIN_DIR);
+		value = this.environment.getProperty(PROJECT_DIR);
 		if (value != null) {
-			this.environmentProperties.setProperty(USER_PLUGIN_DIR, value);
+			this.environmentProperties.setProperty(PROJECT_DIR, value);
 			return value;
 		}
-		return this.environment.getProperty(USER_PLUGIN_DIR + DEFAULT_SUFFIX);
-	}
-
-	public String getAssetInstallTimeFilePath() {
-	    String value = this.environmentProperties.getProperty(ASSET_INSTALL_TIME_FILE);
-	    if (value != null) {
-	        return value;
-	    }
-	    value = this.environment.getProperty(ASSET_INSTALL_TIME_FILE);
-	    if (value != null) {
-	        this.environmentProperties.setProperty(ASSET_INSTALL_TIME_FILE, value);
-	        return value;
-	    }
-	    return "./assetInstallTime.properties";
+		return this.environment.getProperty(PROJECT_DIR + DEFAULT_SUFFIX);
 	}
 
 	public void setMLHost(String mlHost) {
@@ -197,12 +186,8 @@ public class EnvironmentConfiguration {
 		this.environmentProperties.setProperty(ML_PASSWORD, mlPassword);
 	}
 
-	public void setUserPluginDir(String userPluginDir) {
-		this.environmentProperties.setProperty(USER_PLUGIN_DIR, userPluginDir);
-	}
-
-	public void setAssetInstallTimeFilePath(String assetInstallTimeFilePath) {
-	    this.environmentProperties.setProperty(ASSET_INSTALL_TIME_FILE, assetInstallTimeFilePath);
+	public void setProjectDir(String projectDir) {
+		this.environmentProperties.setProperty(PROJECT_DIR, projectDir);
 	}
 
 	public void loadConfigurationFromFiles() {
@@ -276,7 +261,32 @@ public class EnvironmentConfiguration {
 	    hubConfig.tracePort = Integer.parseInt(getMLTracePort());
 	    hubConfig.adminUsername = getMLUsername();
 	    hubConfig.adminPassword = getMLPassword();
+	    hubConfig.projectDir = getProjectDir();
 	    return hubConfig;
 	}
+
+	public DatabaseClient getStagingClient() {
+        Authentication authMethod = Authentication
+                .valueOf(getMLAuth().toUpperCase());
+
+        DatabaseClient client = DatabaseClientFactory.newClient(
+                getMLHost(),
+                Integer.parseInt(getMLStagingPort()),
+                getMLUsername(),
+                getMLPassword(), authMethod);
+        return client;
+	}
+
+	public DatabaseClient getFinalClient() {
+	    Authentication authMethod = Authentication
+	            .valueOf(getMLAuth().toUpperCase());
+
+        DatabaseClient client = DatabaseClientFactory.newClient(
+                getMLHost(),
+                Integer.parseInt(getMLFinalPort()),
+                getMLUsername(),
+                getMLPassword(), authMethod);
+        return client;
+    }
 
 }

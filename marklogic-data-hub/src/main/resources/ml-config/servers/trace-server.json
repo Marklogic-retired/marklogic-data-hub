@@ -9,6 +9,6 @@
   "authentication": "digest",
   "default-error-format": "json",
   "error-handler": "/MarkLogic/rest-api/error-handler.xqy",
-  "url-rewriter": "/MarkLogic/rest-api/rewriter.xml",
+  "url-rewriter": "/com.marklogic.hub/tracing-rewriter.xml",
   "rewrite-resolves-globally": true
 }

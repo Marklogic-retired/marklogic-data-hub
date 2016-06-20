@@ -1,0 +1,19 @@
+plugins {
+    id 'java'
+    id 'eclipse'
+    id 'idea'
+    id 'net.saliman.properties' version '1.4.5'
+    id 'com.marklogic.ml-gradle' version '2.1.0'
+    id 'com.marklogic.ml-data-hub' version '1.0.0-beta.6'
+}
+
+repositories {
+    mavenLocal()
+    jcenter()
+    maven {url 'http://developer.marklogic.com/maven2/'}
+}
+
+dependencies {
+    compile 'com.marklogic:marklogic-data-hub:+'
+    compile 'com.marklogic:marklogic-xcc:8.0.5'
+}

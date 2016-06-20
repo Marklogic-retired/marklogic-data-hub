@@ -55,6 +55,7 @@ import com.marklogic.hub.collector.ServerCollector;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.FlowType;
 import com.marklogic.hub.flow.SimpleFlow;
+import com.marklogic.hub.util.PerformanceLogger;
 import com.marklogic.spring.batch.hub.CollectorReader;
 import com.marklogic.spring.batch.hub.FlowWriter;
 
@@ -153,7 +154,10 @@ public class FlowManager extends ResourceManager {
      * @return the flow
      */
     public Flow getFlow(String entityName, String flowName) {
-        return getFlow(entityName, flowName, null);
+        long startTime = PerformanceLogger.monitorTimeInsideMethod();
+        Flow flow = getFlow(entityName, flowName, null);
+        PerformanceLogger.logTimeInsideMethod(startTime, "FlowManager.getFlow");
+        return flow;
     }
 
     public Flow getFlow(String entityName, String flowName, FlowType flowType) {
@@ -193,9 +197,11 @@ public class FlowManager extends ResourceManager {
      * @param flow - the flow to run
      * @param batchSize - the size to use for batching transactions
      * @param listener - the JobExecutionListener to receive status updates about the job
-     * @return
+     * @return a JobExecution instance
      */
     public JobExecution runFlow(Flow flow, int batchSize, JobExecutionListener listener) {
+        long startTime = PerformanceLogger.monitorTimeInsideMethod();
+
         Collector c = flow.getCollector();
         if (c instanceof ServerCollector) {
             ((ServerCollector)c).setClient(client);
@@ -217,9 +223,10 @@ public class FlowManager extends ResourceManager {
 
         try {
             return jobLauncher.run(job, new JobParameters());
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
+        } finally {
+            PerformanceLogger.logTimeInsideMethod(startTime, "FlowManager.runFlow");
         }
     }
 

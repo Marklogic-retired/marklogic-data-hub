@@ -34,8 +34,8 @@ public class TracingTest extends HubTestBase {
         PropertiesModuleManager modulesManager = new PropertiesModuleManager();
         modulesManager.deletePropertiesFile();
 
-        DataHub dataHub = new DataHub(getHubConfig());
-        dataHub.installUserModules(path);
+        DataHub dataHub = new DataHub(getHubConfig(path));
+        dataHub.installUserModules();
      }
 
     @AfterClass
@@ -160,6 +160,25 @@ public class TracingTest extends HubTestBase {
     }
 
     @Test
+    public void runXMLWriterErrorFlowWithoutTracing() {
+        assertEquals(0, getFinalDocCount());
+        assertEquals(0, getTracingDocCount());
+
+        Tracing t = new Tracing(stagingClient);
+        assertFalse(t.isEnabled());
+
+        FlowManager fm = new FlowManager(stagingClient);
+        Flow flow = fm.getFlow("trace-entity", "tracemeXMLWriterError");
+
+        JobFinishedListener listener = new JobFinishedListener();
+        fm.runFlow(flow, 10, listener);
+        listener.waitForFinish();
+
+        assertEquals(0, getFinalDocCount());
+        assertEquals(1, getTracingDocCount());
+    }
+
+    @Test
     public void runJSONErrorFlowWithoutTracing() {
         assertEquals(0, getFinalDocCount());
         assertEquals(0, getTracingDocCount());
@@ -179,4 +198,22 @@ public class TracingTest extends HubTestBase {
     }
 
 
+    @Test
+    public void runJSONWriterErrorFlowWithoutTracing() {
+        assertEquals(0, getFinalDocCount());
+        assertEquals(0, getTracingDocCount());
+
+        Tracing t = new Tracing(stagingClient);
+        assertFalse(t.isEnabled());
+
+        FlowManager fm = new FlowManager(stagingClient);
+        Flow flow = fm.getFlow("trace-entity", "tracemeJSONWriterError");
+
+        JobFinishedListener listener = new JobFinishedListener();
+        fm.runFlow(flow, 10, listener);
+        listener.waitForFinish();
+
+        assertEquals(0, getFinalDocCount());
+        assertEquals(1, getTracingDocCount());
+    }
 }

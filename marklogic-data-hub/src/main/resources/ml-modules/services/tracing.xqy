@@ -17,7 +17,7 @@ xquery version "1.0-ml";
 
 module namespace service = "http://marklogic.com/rest-api/resource/tracing";
 
-import module namespace debug = "http://marklogic.com/data-hub/debug-lib"
+import module namespace debug = "http://marklogic.com/data-hub/debug"
   at "/com.marklogic.hub/lib/debug-lib.xqy";
 
 import module namespace trace = "http://marklogic.com/data-hub/trace"
@@ -48,6 +48,5 @@ declare %rapi:transaction-mode("update") function post(
   let $enable := map:get($params, "enable") = ("true", "yes")
   let $_ := trace:enable-tracing($enable)
   return
-    (),
-  document { () }
+    document { () }
 };

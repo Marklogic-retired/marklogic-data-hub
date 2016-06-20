@@ -13,7 +13,7 @@ public class LoginForm extends BaseForm {
 	private String mlTracePort;
 	private String mlUsername;
 	private String mlPassword;
-	private String userPluginDir;
+	private String projectDir;
 	private boolean serverVersionAccepted;
 	private boolean installed;
 	private boolean loggedIn;
@@ -92,12 +92,12 @@ public class LoginForm extends BaseForm {
 		this.loggedIn = loggedIn;
 	}
 
-	public String getUserPluginDir() {
-		return userPluginDir;
+	public String getProjectDir() {
+		return projectDir;
 	}
 
-	public void setUserPluginDir(String userPluginDir) {
-		this.userPluginDir = userPluginDir;
+	public void setProjectDir(String projectDir) {
+		this.projectDir = projectDir;
 	}
 
     public List<EntityModel> getEntities() {

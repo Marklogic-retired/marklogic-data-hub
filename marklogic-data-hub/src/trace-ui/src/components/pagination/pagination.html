@@ -1,0 +1,15 @@
+<div class="container" ng-if="ctrl.total > 0">
+  Showing Results {{ ctrl.start }} to {{ctrl.end}} of {{ctrl.total}}
+  <div class="pagination">
+    <a ng-click="ctrl.gotoPage(1)">&lt;&lt;</a>
+    <a ng-click="ctrl.gotoPage(ctrl.page - 1)">&lt;</a>
+    <span ng-repeat="page in ctrl.pages"
+      ng-click="ctrl.gotoPage(page)"
+      ng-class="{'active': page === ctrl.page}">{{page}}</span>
+    <a ng-click="ctrl.gotoPage(ctrl.page + 1)">&gt;</a>
+    <a ng-click="ctrl.gotoPage(ctrl.totalPages)">&gt;&gt;</a>
+  </div>
+</div>
+<div class="container" ng-if="ctrl.total <= 0">
+  No Traces Found
+</div>

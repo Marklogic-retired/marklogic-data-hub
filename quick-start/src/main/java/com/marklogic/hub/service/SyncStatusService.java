@@ -9,27 +9,21 @@ import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.marklogic.client.modulesloader.impl.PropertiesModuleManager;
-import com.marklogic.hub.config.EnvironmentConfiguration;
 
 @Service
 @Scope(scopeName=WebApplicationContext.SCOPE_SESSION)
 public class SyncStatusService  implements InitializingBean {
 
-    @Autowired
-    private EnvironmentConfiguration environmentConfiguration;
-
     private PropertiesModuleManager moduleManager;
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        File assetInstallTimeFile = new File(environmentConfiguration.getAssetInstallTimeFilePath());
-        moduleManager = new PropertiesModuleManager(assetInstallTimeFile);
+        moduleManager = new PropertiesModuleManager();
     }
 
     /**
@@ -51,7 +45,7 @@ public class SyncStatusService  implements InitializingBean {
         try {
             PluginDirectoryVisitor visitor = new PluginDirectoryVisitor();
             Files.walkFileTree(new File(absolutePath).toPath(), visitor);
-            
+
             synched = visitor.isSynched();
         } catch (IOException e) {
             synched = false;
@@ -62,11 +56,11 @@ public class SyncStatusService  implements InitializingBean {
 
     private class PluginDirectoryVisitor implements FileVisitor<Path> {
         private boolean synched = true;
-        
+
         public boolean isSynched() {
             return synched;
         }
-        
+
         @Override
         public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
             return FileVisitResult.CONTINUE;

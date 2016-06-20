@@ -1,0 +1,58 @@
+<section class="plugin-nav" layout="row" layout-align="center center">
+  <md-content class="md-whiteframe-2dp" flex>
+    <md-subheader>
+      <div>Trace {{ctrl.trace.traceId}}</div>
+      <div>Identifier: {{ctrl.trace.identifier}}</div>
+      <div>Created: {{ctrl.trace.created | amUtc | amDateFormat:'MM/DD/YYYY HH:mm:ss'}}</div>
+    </md-subheader>
+    <md-button ng-disabled="true" class="md-fab start" aria-label="start"></md-button>
+    <md-icon>arrow_forward</md-icon>
+    <md-button ng-click="ctrl.setCurrent(plugin)"
+      class="md-fab plugin" aria-label="{{plugin}}"
+      ng-class="{'active': (ctrl.currentPluginType === plugin)}"
+      ng-repeat-start="plugin in ctrl.plugins">
+      <div class="plugin-name">{{plugin}}</div>
+      <div class="plugin-duration">{{ctrl.trace[plugin + 'Plugin'].duration}}<span class="unit">s</span></div>
+    </md-button>
+    <md-icon ng-repeat-end>arrow_forward</md-icon>
+    <md-button ng-disabled="true" class="md-fab end" aria-label="end"></md-button>
+  </md-content>
+</section>
+
+<section class="plugin-nav" layout="row" layout-align="center center">
+  <md-content ng-show="ctrl.currentPluginType" flex="66">
+    <md-subheader>{{ctrl.currentPluginType}} Plugin</md-subheader>
+    <div>Module URI: {{ctrl.currentPlugin.pluginModuleUri}}</div>
+    <div>Duration: {{ctrl.currentPlugin.duration}}s</div>
+  </md-content>
+</section>
+
+<div flex layout-margin layout="row" layout-align="center top" class="plugin-io">
+  <div class="md-whiteframe-z1" flex>
+    <md-toolbar class="md-primary">
+      <div class="md-toolbar-tools">
+        <h3 class="ng-binding">Input</h3>
+      </div>
+    </md-toolbar>
+    <md-content layout-margin>
+      <md-subheader ng-init="collapsed = false" ng-click="collapsed = !collapsed" ng-repeat-start="(key, value) in ctrl.currentPlugin.input">{{key}} <md-icon>{{ collapsed ? 'keyboard_arrow_left' : 'keyboard_arrow_down'}}</md-icon></md-subheader>
+      <json-formatter class="json-formatter" ng-if="!collapsed && ctrl.trace.format === 'json'" json="value" open="1"></json-formatter>
+      <div class="cm" ng-if="!collapsed && ctrl.trace.format === 'xml'" ng-repeat-end ui-codemirror="ctrl.codeMirrorConfig" ng-model="value"></div>
+    </md-content>
+  </div>
+  <div class="md-whiteframe-z1" flex>
+    <md-toolbar class="md-primary">
+      <div class="md-toolbar-tools">
+        <h3 class="ng-binding">output</h3>
+      </div>
+    </md-toolbar>
+    <md-content layout-margin ng-init="ctrl.outputCollapsed = false; ctrl.errorCollapsed = false" >
+      <md-subheader ng-click="ctrl.outputCollapsed = !ctrl.outputCollapsed" ng-if="ctrl.currentPlugin.output">Output <md-icon>{{ ctrl.outputCollapsed ? 'keyboard_arrow_left' : 'keyboard_arrow_down'}}</md-icon></md-subheader>
+      <json-formatter class="json-formatter" ng-if="!ctrl.outputCollapsed && ctrl.currentPlugin.output && ctrl.trace.format === 'json'" json="ctrl.currentPlugin.output" open="1"></json-formatter>
+      <div class="cm" ng-if="!ctrl.outputCollapsed && ctrl.currentPlugin.output && ctrl.trace.format === 'xml'" ui-codemirror="ctrl.codeMirrorConfig" ng-model="ctrl.currentPlugin.output"></div>
+
+      <md-subheader ng-click="ctrl.errorCollapsed = !ctrl.errorCollapsed" ng-if="ctrl.currentPlugin.error">Error <md-icon>{{ ctrl.errorCollapsed ? 'keyboard_arrow_left' : 'keyboard_arrow_down'}}</md-icon></md-subheader>
+      <div class="cm" ng-if="!ctrl.errorCollapsed && ctrl.currentPlugin.error" ui-codemirror="ctrl.codeMirrorConfig" ng-model="ctrl.currentPlugin.error"></div>
+    </md-content>
+  </div>
+</div>

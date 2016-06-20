@@ -1,61 +1,68 @@
 package com.marklogic.hub;
 
 import java.io.File;
+import java.nio.file.Paths;
 import java.util.regex.Pattern;
 
 import com.marklogic.hub.flow.FlowType;
 
 public class ScaffoldingValidator {
 
-    public static boolean isUniqueRestServiceExtension(File pluginsDir, String name) {
-        String entityNameFilter = "[a-zA-Z0-9_.-]+";
-        String flowTypeFilter = "(" + FlowType.INPUT + "|" + FlowType.HARMONIZE + ")";
-        String pluginFormatFilter = "(" + PluginFormat.XQUERY + "|" + PluginFormat.JAVASCRIPT + ")";
-        String absoluteFilePathFilter = Scaffolding.getAbsolutePath(pluginsDir.getAbsolutePath(), "entities", entityNameFilter, flowTypeFilter, "REST", "services", name + "." + pluginFormatFilter);
-        return !checkIfFileExists(pluginsDir, absoluteFilePathFilter);
-    }
+   private File pluginsDir;
 
-    private static boolean checkIfFileExists(File rootDirectory, String absoluteFilePathFilter) {
-        File[] list = rootDirectory.listFiles();
-        if (list != null) {
-            for (File file : list) {
-                if (file.isDirectory()) {
-                    if(checkIfFileExists(file, absoluteFilePathFilter)) {
-                        return true;
-                    }
-                } else {
-                    absoluteFilePathFilter = absoluteFilePathFilter.replace("\\", "\\\\");
+   public ScaffoldingValidator(String projectDir) {
+       this.pluginsDir = Paths.get(projectDir, "plugins").toFile();
+   }
 
-                    if(Pattern.matches(absoluteFilePathFilter,file.getAbsolutePath())) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
+   public boolean isUniqueRestServiceExtension(String name) {
+       String entityNameFilter = "[a-zA-Z0-9_.-]+";
+       String flowTypeFilter = "(" + FlowType.INPUT + "|" + FlowType.HARMONIZE + ")";
+       String pluginFormatFilter = "(" + PluginFormat.XQUERY + "|" + PluginFormat.JAVASCRIPT + ")";
+       String absoluteFilePathFilter = Scaffolding.getAbsolutePath(pluginsDir.getAbsolutePath(), "entities", entityNameFilter, flowTypeFilter, "REST", "services", name + "." + pluginFormatFilter);
+       return !checkIfFileExists(pluginsDir, absoluteFilePathFilter);
+   }
 
-    public boolean checkIfFolderExists(File rootDirectory, String absoluteFilePathFilter) {
-        File[] list = rootDirectory.listFiles();
-        if (list != null) {
-            for (File file : list) {
-                if (file.isDirectory()) {
-                    if(Pattern.matches(absoluteFilePathFilter,file.getAbsolutePath())) {
-                        return true;
-                    }
-                    checkIfFileExists(file, absoluteFilePathFilter);
-                }
-            }
-        }
-        return false;
-    }
+   private boolean checkIfFileExists(File rootDirectory, String absoluteFilePathFilter) {
+       File[] list = rootDirectory.listFiles();
+       if (list != null) {
+           for (File file : list) {
+               if (file.isDirectory()) {
+                   if(checkIfFileExists(file, absoluteFilePathFilter)) {
+                       return true;
+                   }
+               } else {
+                   absoluteFilePathFilter = absoluteFilePathFilter.replace("\\", "\\\\");
 
-    public static boolean isUniqueRestTransform(File pluginsDir, String name) {
-        String entityNameFilter = "[a-zA-Z0-9_.-]+";
-        String flowTypeFilter = "(" + FlowType.INPUT + "|" + FlowType.HARMONIZE + ")";
-        String pluginFormatFilter = "(" + PluginFormat.XQUERY + "|" + PluginFormat.JAVASCRIPT + ")";
-        String absoluteFilePathFilter = Scaffolding.getAbsolutePath(pluginsDir.getAbsolutePath(), "entities", entityNameFilter, flowTypeFilter, "REST", "transforms", name + "." + pluginFormatFilter);
-        return !checkIfFileExists(pluginsDir, absoluteFilePathFilter);
-    }
+                   if(Pattern.matches(absoluteFilePathFilter,file.getAbsolutePath())) {
+                       return true;
+                   }
+               }
+           }
+       }
+       return false;
+   }
+
+   public boolean checkIfFolderExists(File rootDirectory, String absoluteFilePathFilter) {
+       File[] list = rootDirectory.listFiles();
+       if (list != null) {
+           for (File file : list) {
+               if (file.isDirectory()) {
+                   if(Pattern.matches(absoluteFilePathFilter,file.getAbsolutePath())) {
+                       return true;
+                   }
+                   checkIfFileExists(file, absoluteFilePathFilter);
+               }
+           }
+       }
+       return false;
+   }
+
+   public boolean isUniqueRestTransform(String name) {
+       String entityNameFilter = "[a-zA-Z0-9_.-]+";
+       String flowTypeFilter = "(" + FlowType.INPUT + "|" + FlowType.HARMONIZE + ")";
+       String pluginFormatFilter = "(" + PluginFormat.XQUERY + "|" + PluginFormat.JAVASCRIPT + ")";
+       String absoluteFilePathFilter = Scaffolding.getAbsolutePath(pluginsDir.getAbsolutePath(), "entities", entityNameFilter, flowTypeFilter, "REST", "transforms", name + "." + pluginFormatFilter);
+       return !checkIfFileExists(pluginsDir, absoluteFilePathFilter);
+   }
 
 }

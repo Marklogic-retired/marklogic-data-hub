@@ -1,6 +1,5 @@
 package com.marklogic.hub.web.controller.api;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Enumeration;
 
@@ -52,27 +51,20 @@ public class DataHubServerApiController extends BaseController {
             BindingResult bindingResult, HttpSession session,
             HttpServletRequest request) throws Exception {
         try {
-            if (isValidDirectory(loginForm.getUserPluginDir())) {
 
-                updateEnvironmentConfiguration(loginForm);
+            dataHubService.initHubProject();
+            updateEnvironmentConfiguration(loginForm);
 
-                loginForm.setInstalled(dataHubService.isInstalled());
-                loginForm.setServerVersionAccepted(dataHubService
-                        .isServerAcceptable());
-                loginForm.setHasErrors(false);
-                loginForm.setLoggedIn(true);
-                environmentConfiguration.saveConfigurationToFile();
-                session.setAttribute("loginForm", loginForm);
+            loginForm.setInstalled(dataHubService.isInstalled());
+            loginForm.setServerVersionAccepted(dataHubService
+                    .isServerAcceptable());
+            loginForm.setHasErrors(false);
+            loginForm.setLoggedIn(true);
+            environmentConfiguration.saveConfigurationToFile();
+            session.setAttribute("loginForm", loginForm);
 
-                if (loginForm.isInstalled()) {
-                    this.loadUserModules(loginForm);
-                }
-
-            } else {
-                loginForm.setLoggedIn(false);
-                displayError(loginForm, null, null,
-                        loginForm.getUserPluginDir()
-                                + " is not a valid directory.");
+            if (loginForm.isInstalled()) {
+                this.loadUserModules(loginForm);
             }
         } catch (DataHubException e) {
             LOGGER.error("Login failed", e);
@@ -95,19 +87,19 @@ public class DataHubServerApiController extends BaseController {
         loginForm.setSelectedEntity(null);
     }
 
-    private boolean isValidDirectory(String userPluginDir) {
-        File file = new File(userPluginDir);
-        if (file.exists() && file.isDirectory()) {
-            return true;
-        }
-
-        File parentFile = file.getParentFile();
-        if (parentFile.exists() && parentFile.isDirectory()) {
-            file.mkdir();
-            return true;
-        }
-        return false;
-    }
+//    private boolean isValidDirectory(String projectDir) {
+//        File file = new File(projectDir);
+//        if (file.exists() && file.isDirectory()) {
+//            return true;
+//        }
+//
+//        File parentFile = file.getParentFile();
+//        if (parentFile.exists() && parentFile.isDirectory()) {
+//            file.mkdir();
+//            return true;
+//        }
+//        return false;
+//    }
 
     @RequestMapping(value = "login", method = RequestMethod.GET)
     public LoginForm getLoginStatus(HttpSession session) {
@@ -185,7 +177,7 @@ public class DataHubServerApiController extends BaseController {
         environmentConfiguration.setMlTracePort(loginForm.getMlTracePort());
         environmentConfiguration.setMLUsername(loginForm.getMlUsername());
         environmentConfiguration.setMLPassword(loginForm.getMlPassword());
-        environmentConfiguration.setUserPluginDir(loginForm.getUserPluginDir());
+        environmentConfiguration.setProjectDir(loginForm.getProjectDir());
     }
 
     private void retrieveEnvironmentConfiguration(LoginForm loginForm) {
@@ -195,6 +187,6 @@ public class DataHubServerApiController extends BaseController {
         loginForm.setMlTracePort(environmentConfiguration.getMLTracePort());
         loginForm.setMlUsername(environmentConfiguration.getMLUsername());
         loginForm.setMlPassword(environmentConfiguration.getMLPassword());
-        loginForm.setUserPluginDir(environmentConfiguration.getUserPluginDir());
+        loginForm.setProjectDir(environmentConfiguration.getProjectDir());
     }
 }

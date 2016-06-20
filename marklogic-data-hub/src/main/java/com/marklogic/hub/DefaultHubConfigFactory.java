@@ -156,12 +156,12 @@ public class DefaultHubConfigFactory extends PropertySourceFactory {
 
         prop = getProperty("hubModulesPath");
         if (prop != null) {
-            c.modulesPath = prop;
+            c.projectDir = prop;
         }
         else {
-            c.modulesPath = "./plugins";
+            c.projectDir = ".";
         }
-        logger.info("Hub Plugins Path: " + c.modulesPath);
+        logger.info("Hub Project Dir: " + c.projectDir);
 
         prop = getProperty("mlAuth");
         if (prop != null) {

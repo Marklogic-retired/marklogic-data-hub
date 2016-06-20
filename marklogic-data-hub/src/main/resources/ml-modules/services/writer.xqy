@@ -17,11 +17,14 @@ xquery version "1.0-ml";
 
 module namespace service = "http://marklogic.com/rest-api/resource/writer";
 
-import module namespace debug = "http://marklogic.com/data-hub/debug-lib"
+import module namespace debug = "http://marklogic.com/data-hub/debug"
   at "/com.marklogic.hub/lib/debug-lib.xqy";
 
 import module namespace flow = "http://marklogic.com/data-hub/flow-lib"
   at "/com.marklogic.hub/lib/flow-lib.xqy";
+
+import module namespace perf = "http://marklogic.com/data-hub/perflog-lib"
+  at "/com.marklogic.hub/lib/perflog-lib.xqy";
 
 declare namespace rapi = "http://marklogic.com/rest-api";
 
@@ -33,10 +36,11 @@ declare %rapi:transaction-mode("update") function get(
   ) as document-node()*
 {
   debug:dump-env(),
-
-  let $module-uri := map:get($params, "module-uri")
-  let $identifier := map:get($params, "identifier")
-  return
-    (),
-  document { () }
+  perf:log('/v1/resources/writer:get', function() {
+    let $module-uri := map:get($params, "module-uri")
+    let $identifier := map:get($params, "identifier")
+    return
+      (),
+    document { () }
+  })
 };

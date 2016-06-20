@@ -15,6 +15,7 @@
  */
 package com.marklogic.hub;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,6 +25,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -49,7 +51,7 @@ import com.marklogic.client.io.StringHandle;
 public class HubTestBase {
     static final private Logger logger = LoggerFactory.getLogger(HubTestBase.class);
 
-    public static final String PLUGIN_PATH = "./ye-olde-plugins";
+    public static final String PROJECT_PATH = "ye-olde-project";
     public static String host;
     public static int stagingPort;
     public static int finalPort;
@@ -128,7 +130,6 @@ public class HubTestBase {
         finalModulesClient  = DatabaseClientFactory.newClient(host, stagingPort, HubConfig.DEFAULT_MODULES_DB_NAME, user, password, authMethod);
         traceClient = DatabaseClientFactory.newClient(host, tracePort, user, password, authMethod);
         traceModulesClient  = DatabaseClientFactory.newClient(host, stagingPort, HubConfig.DEFAULT_MODULES_DB_NAME, user, password, authMethod);
-
     }
 
     public HubTestBase() {
@@ -144,11 +145,11 @@ public class HubTestBase {
     }
 
     protected static HubConfig getHubConfig() {
-        return getHubConfig(PLUGIN_PATH);
+        return getHubConfig(PROJECT_PATH);
     }
 
-    protected static HubConfig getHubConfig(String pluginDir) {
-        HubConfig hubConfig = new HubConfig(pluginDir);
+    protected static HubConfig getHubConfig(String projectDir) {
+        HubConfig hubConfig = new HubConfig(projectDir);
         hubConfig.host = host;
         hubConfig.stagingPort = stagingPort;
         hubConfig.finalPort = finalPort;
@@ -164,7 +165,9 @@ public class HubTestBase {
 
     protected static void uninstallHub() throws IOException {
         new DataHub(getHubConfig()).uninstall();
+        FileUtils.deleteDirectory(new File(PROJECT_PATH));
     }
+
     protected static String getResource(String resourceName) throws IOException {
         try {
             InputStream inputStream = HubTestBase.class.getClassLoader().getResourceAsStream(resourceName);

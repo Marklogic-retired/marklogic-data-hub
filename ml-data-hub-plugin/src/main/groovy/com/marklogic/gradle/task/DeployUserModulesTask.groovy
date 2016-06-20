@@ -11,8 +11,6 @@ class DeployUserModulesTask extends HubTask {
             println("Data Hub is not installed.")
             return
         }
-
-        def pathToUserModules = new File(getHubConfig().modulesPath)
-        dh.installUserModules(pathToUserModules)
+        dh.installUserModules()
     }
 }

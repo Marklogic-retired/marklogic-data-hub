@@ -8,6 +8,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import org.apache.commons.io.FileUtils;
@@ -24,8 +25,9 @@ import com.marklogic.hub.flow.FlowType;
 
 public class ScaffoldingTest extends HubTestBase {
 
-    private String pluginPath = "./test-ye-plugins";
-    private File pluginsDir = new File(pluginPath);
+    private String projectPath = "./test-ye-project";
+    private File projectDir = new File(projectPath);
+    private File pluginDir = new File(projectPath, "plugins");
 
     @BeforeClass
     public static void setup() {
@@ -34,24 +36,25 @@ public class ScaffoldingTest extends HubTestBase {
 
     @After
     public void teardown() throws IOException {
-        FileUtils.deleteDirectory(pluginsDir);
+        FileUtils.deleteDirectory(projectDir);
     }
 
     @Test
     public void createEntity() {
-        Scaffolding.createEntity("my-fun-test", pluginsDir);
-        assertTrue(pluginsDir.exists());
+        Scaffolding scaffolding = new Scaffolding(projectDir.toString());
+        scaffolding.createEntity("my-fun-test");
+        assertTrue(projectDir.exists());
 
-        File entityDir = Scaffolding.getEntityDir(pluginsDir, "my-fun-test");
-        assertTrue(entityDir.exists());
+        Path entityDir = scaffolding.getEntityDir("my-fun-test");
+        assertTrue(entityDir.toFile().exists());
         assertEquals(
-                Paths.get(pluginPath.toString(), "entities", "my-fun-test"),
-                entityDir.toPath());
+                Paths.get(pluginDir.toString(), "entities", "my-fun-test"),
+                entityDir);
 
-        File flowDir = Scaffolding.getFlowDir(pluginsDir, "my-fun-test", "blah", FlowType.INPUT);
-        assertEquals(Paths.get(pluginPath.toString(), "entities", "my-fun-test", "input", "blah"),
-                flowDir.toPath());
-        assertFalse(flowDir.exists());
+        Path flowDir = scaffolding.getFlowDir("my-fun-test", "blah", FlowType.INPUT);
+        assertEquals(Paths.get(pluginDir.toString(), "entities", "my-fun-test", "input", "blah"),
+                flowDir);
+        assertFalse(flowDir.toFile().exists());
     }
 
     @Test
@@ -75,83 +78,85 @@ public class ScaffoldingTest extends HubTestBase {
     }
 
     private void createInputFlow(PluginFormat pluginFormat, Format dataFormat) throws IOException, SAXException {
-        Scaffolding.createEntity("my-fun-test", pluginsDir);
-        assertTrue(pluginsDir.exists());
+        Scaffolding scaffolding = new Scaffolding(projectDir.toString());
+        scaffolding.createEntity("my-fun-test");
+        assertTrue(projectDir.exists());
 
-        File entityDir = Scaffolding.getEntityDir(pluginsDir, "my-fun-test");
-        assertTrue(entityDir.exists());
-        assertEquals(Paths.get(pluginPath.toString(), "entities", "my-fun-test"), entityDir.toPath());
+        Path entityDir = scaffolding.getEntityDir("my-fun-test");
+        assertTrue(entityDir.toFile().exists());
+        assertEquals(Paths.get(pluginDir.toString(), "entities", "my-fun-test"), entityDir);
 
-        Scaffolding.createFlow("my-fun-test", "test-input", FlowType.INPUT, pluginFormat, dataFormat, pluginsDir);
-        File flowDir = Scaffolding.getFlowDir(pluginsDir, "my-fun-test", "test-input", FlowType.INPUT);
-        assertEquals(Paths.get(pluginPath.toString(), "entities", "my-fun-test", "input", "test-input"), flowDir.toPath());
-        assertTrue(flowDir.exists());
+        scaffolding.createFlow("my-fun-test", "test-input", FlowType.INPUT, pluginFormat, dataFormat);
+        Path flowDir = scaffolding.getFlowDir("my-fun-test", "test-input", FlowType.INPUT);
+        assertEquals(Paths.get(pluginDir.toString(), "entities", "my-fun-test", "input", "test-input"), flowDir);
+        assertTrue(flowDir.toFile().exists());
 
-        File flowDescriptor = new File(flowDir, "test-input.xml");
-        assertTrue(flowDescriptor.exists());
+        Path flowDescriptor = flowDir.resolve("test-input.xml");
+        assertTrue(flowDescriptor.toFile().exists());
         String flowXML ="<flow xmlns=\"http://marklogic.com/data-hub\"><complexity>simple</complexity><data-format>" + dataFormat.getDefaultMimetype() + "</data-format><plugins></plugins></flow>";
-        FileInputStream fs = new FileInputStream(flowDescriptor);
+        FileInputStream fs = new FileInputStream(flowDescriptor.toFile());
         assertXMLEqual(flowXML, IOUtils.toString(fs));
         fs.close();
 
-        File collectorDir = new File(flowDir, "collector");
-        assertFalse(collectorDir.exists());
+        Path collectorDir = flowDir.resolve("collector");
+        assertFalse(collectorDir.toFile().exists());
 
-        File contentDir = new File(flowDir, "content");
-        File defaultContent = new File(contentDir, "content." + pluginFormat.toString());
-        assertTrue(contentDir.exists());
-        assertTrue(defaultContent.exists());
+        Path contentDir = flowDir.resolve("content");
+        Path defaultContent = contentDir.resolve("content." + pluginFormat.toString());
+        assertTrue(contentDir.toFile().exists());
+        assertTrue(defaultContent.toFile().exists());
 
-        File headersDir = new File(flowDir, "headers");
-        File defaultHeaders= new File(headersDir, "headers." + pluginFormat.toString());
-        assertTrue(headersDir.exists());
-        assertTrue(defaultHeaders.exists());
+        Path headersDir = flowDir.resolve("headers");
+        Path defaultHeaders= headersDir.resolve("headers." + pluginFormat.toString());
+        assertTrue(headersDir.toFile().exists());
+        assertTrue(defaultHeaders.toFile().exists());
 
-        File triplesDir = new File(flowDir, "triples");
-        File triplesContent = new File(triplesDir, "triples." + pluginFormat.toString());
-        assertTrue(triplesDir.exists());
-        assertTrue(triplesContent.exists());
+        Path triplesDir = flowDir.resolve("triples");
+        Path triplesContent = triplesDir.resolve("triples." + pluginFormat.toString());
+        assertTrue(triplesDir.toFile().exists());
+        assertTrue(triplesContent.toFile().exists());
     }
 
     private void createHarmonizeFlow(PluginFormat pluginFormat, Format dataFormat) throws IOException, SAXException {
-        Scaffolding.createEntity("my-fun-test", pluginsDir);
-        assertTrue(pluginsDir.exists());
+        Scaffolding scaffolding = new Scaffolding(projectDir.toString());
+        scaffolding.createEntity("my-fun-test");
+        assertTrue(projectDir.exists());
 
-        File entityDir = Scaffolding.getEntityDir(pluginsDir, "my-fun-test");
-        assertTrue(entityDir.exists());
-        assertEquals(Paths.get(pluginPath.toString(), "entities", "my-fun-test"), entityDir.toPath());
+        Path entityDir = scaffolding.getEntityDir("my-fun-test");
+        assertTrue(entityDir.toFile().exists());
+        assertEquals(Paths.get(pluginDir.toString(), "entities", "my-fun-test"), entityDir);
 
-        Scaffolding.createFlow("my-fun-test", "test-harmonize", FlowType.HARMONIZE, pluginFormat, dataFormat, pluginsDir);
-        File flowDir = Scaffolding.getFlowDir(pluginsDir, "my-fun-test", "test-harmonize", FlowType.HARMONIZE);
-        assertEquals(Paths.get(pluginPath.toString(), "entities", "my-fun-test", "harmonize", "test-harmonize"), flowDir.toPath());
-        assertTrue(flowDir.exists());
+        scaffolding.createFlow("my-fun-test", "test-harmonize", FlowType.HARMONIZE, pluginFormat, dataFormat);
+        Path flowDir = scaffolding.getFlowDir("my-fun-test", "test-harmonize", FlowType.HARMONIZE);
+        assertEquals(Paths.get(pluginDir.toString(), "entities", "my-fun-test", "harmonize", "test-harmonize"), flowDir);
+        assertTrue(flowDir.toFile().exists());
 
-        File flowDescriptor = new File(flowDir, "test-harmonize.xml");
-        assertTrue(flowDescriptor.exists());
+        Path flowDescriptor = flowDir.resolve("test-harmonize.xml");
+        assertTrue(flowDescriptor.toFile().exists());
         String flowXML ="<flow xmlns=\"http://marklogic.com/data-hub\"><complexity>simple</complexity><data-format>" + dataFormat.getDefaultMimetype() + "</data-format><plugins></plugins></flow>";
-        FileInputStream fs = new FileInputStream(flowDescriptor);
+        FileInputStream fs = new FileInputStream(flowDescriptor.toFile());
         assertXMLEqual(flowXML, IOUtils.toString(fs));
         fs.close();
 
-        File collectorDir = new File(flowDir, "collector");
-        File defaultCollector = new File(collectorDir, "collector." + pluginFormat.toString());
-        assertTrue(collectorDir.exists());
-        assertTrue(defaultCollector.exists());
+        Path collectorDir = flowDir.resolve("collector");
+        Path defaultCollector = collectorDir.resolve("collector." + pluginFormat.toString());
+        assertTrue(collectorDir.toFile().exists());
+        assertTrue(defaultCollector.toFile().exists());
 
-        File contentDir = new File(flowDir, "content");
-        File defaultContent = new File(contentDir, "content." + pluginFormat.toString());
-        assertTrue(contentDir.exists());
-        assertTrue(defaultContent.exists());
+        Path contentDir = flowDir.resolve("content");
+        Path defaultContent = contentDir.resolve("content." + pluginFormat.toString());
+        assertTrue(contentDir.toFile().exists());
+        assertTrue(defaultContent.toFile().exists());
 
-        File headersDir = new File(flowDir, "headers");
-        File defaultHeaders= new File(headersDir, "headers." + pluginFormat.toString());
-        assertTrue(headersDir.exists());
-        assertTrue(defaultHeaders.exists());
+        Path headersDir = flowDir.resolve("headers");
+        Path defaultHeaders = headersDir.resolve("headers." + pluginFormat.toString());
+        assertTrue(headersDir.toFile().exists());
+        assertTrue(defaultHeaders.toFile().exists());
 
-        File triplesDir = new File(flowDir, "triples");
-        File triplesContent = new File(triplesDir, "triples." + pluginFormat.toString());
-        assertTrue(triplesDir.exists());
-        assertTrue(triplesContent.exists());
+        Path triplesDir = flowDir.resolve("triples");
+        Path triplesContent = triplesDir.resolve("triples." + pluginFormat.toString());
+        assertTrue(triplesDir.toFile().exists());
+        assertTrue(triplesContent.toFile().exists());
     }
 
     @Test
@@ -160,21 +165,22 @@ public class ScaffoldingTest extends HubTestBase {
         String extensionName = "myExtension";
         FlowType flowType = FlowType.HARMONIZE;
         PluginFormat pluginFormat = PluginFormat.XQUERY;
+        Scaffolding scaffolding = new Scaffolding(projectDir.toString());
         try {
-            Scaffolding.createRestExtension(entityName, extensionName, flowType, pluginFormat, pluginsDir);
+            scaffolding.createRestExtension(entityName, extensionName, flowType, pluginFormat);
         } catch (ScaffoldingValidationException e) {
             Assert.fail(e.getMessage());
         }
-        File restDir = Paths.get(pluginsDir.toString(), "entities", entityName, flowType.name(), "REST").toAbsolutePath().normalize().toFile();
-        assertTrue(restDir.exists());
-        File restServicesDir = new File(restDir, "services");
-        assertTrue(restServicesDir.exists());
-        File restExtensionFile = new File(restServicesDir, extensionName + "." + pluginFormat);
-        assertTrue(restExtensionFile.exists());
-        File restExtensionMetadataDir = new File(restServicesDir, "metadata");
-        assertTrue(restExtensionMetadataDir.exists());
-        File restExtensionMetadataFile = new File(restExtensionMetadataDir, extensionName + ".xml");
-        assertTrue(restExtensionMetadataFile.exists());
+        Path restDir = Paths.get(pluginDir.toString(), "entities", entityName, flowType.name(), "REST").toAbsolutePath().normalize();
+        assertTrue(restDir.toFile().exists());
+        Path restServicesDir = restDir.resolve("services");
+        assertTrue(restServicesDir.toFile().exists());
+        Path restExtensionFile = restServicesDir.resolve(extensionName + "." + pluginFormat);
+        assertTrue(restExtensionFile.toFile().exists());
+        Path restExtensionMetadataDir = restServicesDir.resolve("metadata");
+        assertTrue(restExtensionMetadataDir.toFile().exists());
+        Path restExtensionMetadataFile = restExtensionMetadataDir.resolve(extensionName + ".xml");
+        assertTrue(restExtensionMetadataFile.toFile().exists());
     }
 
     @Test
@@ -183,21 +189,22 @@ public class ScaffoldingTest extends HubTestBase {
         String extensionName = "myExtension";
         FlowType flowType = FlowType.INPUT;
         PluginFormat pluginFormat = PluginFormat.JAVASCRIPT;
+        Scaffolding scaffolding = new Scaffolding(projectDir.toString());
         try {
-            Scaffolding.createRestExtension(entityName, extensionName, flowType, pluginFormat, pluginsDir);
+            scaffolding.createRestExtension(entityName, extensionName, flowType, pluginFormat);
         } catch (ScaffoldingValidationException e) {
             Assert.fail(e.getMessage());
         }
-        File restDir = Paths.get(pluginsDir.toString(), "entities", entityName, flowType.name(), "REST").toAbsolutePath().normalize().toFile();
-        assertTrue(restDir.exists());
-        File restServicesDir = new File(restDir, "services");
-        assertTrue(restServicesDir.exists());
-        File restExtensionFile = new File(restServicesDir, extensionName + "." + pluginFormat);
-        assertTrue(restExtensionFile.exists());
-        File restExtensionMetadataDir = new File(restServicesDir, "metadata");
-        assertTrue(restExtensionMetadataDir.exists());
-        File restExtensionMetadataFile = new File(restExtensionMetadataDir, extensionName + ".xml");
-        assertTrue(restExtensionMetadataFile.exists());
+        Path restDir = Paths.get(pluginDir.toString(), "entities", entityName, flowType.name(), "REST").toAbsolutePath().normalize();
+        assertTrue(restDir.toFile().exists());
+        Path restServicesDir = restDir.resolve("services");
+        assertTrue(restServicesDir.toFile().exists());
+        Path restExtensionFile = restServicesDir.resolve(extensionName + "." + pluginFormat);
+        assertTrue(restExtensionFile.toFile().exists());
+        Path restExtensionMetadataDir = restServicesDir.resolve("metadata");
+        assertTrue(restExtensionMetadataDir.toFile().exists());
+        Path restExtensionMetadataFile = restExtensionMetadataDir.resolve(extensionName + ".xml");
+        assertTrue(restExtensionMetadataFile.toFile().exists());
     }
 
     @Test
@@ -206,17 +213,18 @@ public class ScaffoldingTest extends HubTestBase {
         String transformName = "myTransform";
         FlowType flowType = FlowType.HARMONIZE;
         PluginFormat pluginFormat = PluginFormat.XQUERY;
+        Scaffolding scaffolding = new Scaffolding(projectDir.toString());
         try {
-            Scaffolding.createRestTransform(entityName, transformName, flowType, pluginFormat, pluginsDir);
+            scaffolding.createRestTransform(entityName, transformName, flowType, pluginFormat);
         } catch (ScaffoldingValidationException e) {
             Assert.fail(e.getMessage());
         }
-        File restDir = Paths.get(pluginsDir.toString(), "entities", entityName, flowType.name(), "REST").toAbsolutePath().normalize().toFile();
-        assertTrue(restDir.exists());
-        File restTransformDir = new File(restDir, "transforms");
-        assertTrue(restTransformDir.exists());
-        File restTransformFile = new File(restTransformDir, transformName + "." + pluginFormat);
-        assertTrue(restTransformFile.exists());
+        Path restDir = Paths.get(pluginDir.toString(), "entities", entityName, flowType.name(), "REST").toAbsolutePath().normalize();
+        assertTrue(restDir.toFile().exists());
+        Path restTransformDir = restDir.resolve("transforms");
+        assertTrue(restTransformDir.toFile().exists());
+        Path restTransformFile = restTransformDir.resolve(transformName + "." + pluginFormat);
+        assertTrue(restTransformFile.toFile().exists());
     }
 
     @Test
@@ -225,16 +233,17 @@ public class ScaffoldingTest extends HubTestBase {
         String transformName = "myTransform";
         FlowType flowType = FlowType.HARMONIZE;
         PluginFormat pluginFormat = PluginFormat.JAVASCRIPT;
+        Scaffolding scaffolding = new Scaffolding(projectDir.toString());
         try {
-            Scaffolding.createRestTransform(entityName, transformName, flowType, pluginFormat, pluginsDir);
+            scaffolding.createRestTransform(entityName, transformName, flowType, pluginFormat);
         } catch (ScaffoldingValidationException e) {
             Assert.fail(e.getMessage());
         }
-        File restDir = Paths.get(pluginsDir.toString(), "entities", entityName, flowType.name(), "REST").toAbsolutePath().normalize().toFile();
-        assertTrue(restDir.exists());
-        File restTransformDir = new File(restDir, "transforms");
-        assertTrue(restTransformDir.exists());
-        File restTransformFile = new File(restTransformDir, transformName + "." + pluginFormat);
-        assertTrue(restTransformFile.exists());
+        Path restDir = Paths.get(pluginDir.toString(), "entities", entityName, flowType.name(), "REST").toAbsolutePath().normalize();
+        assertTrue(restDir.toFile().exists());
+        Path restTransformDir = restDir.resolve("transforms");
+        assertTrue(restTransformDir.toFile().exists());
+        Path restTransformFile = restTransformDir.resolve(transformName + "." + pluginFormat);
+        assertTrue(restTransformFile.toFile().exists());
     }
 }

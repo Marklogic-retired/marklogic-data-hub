@@ -2,6 +2,7 @@ package com.marklogic.gradle.task
 
 import com.marklogic.hub.DataHub;
 import com.marklogic.hub.Tracing;
+import com.marklogic.hub.Debugging;
 import com.marklogic.hub.HubConfig;
 
 import com.marklogic.client.DatabaseClient;
@@ -10,6 +11,8 @@ import com.marklogic.client.DatabaseClientFactory.Authentication;
 
 import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.flow.Flow;
+
+import com.marklogic.appdeployer.command.CommandContext
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
@@ -28,8 +31,8 @@ class HubTask extends DefaultTask {
         return new Tracing(getStagingClient())
     }
 
-    Tracing getDebugging() {
-        return new Tracing(getStagingClient())
+    Debugging getDebugging() {
+        return new Debugging(getStagingClient())
     }
 
     FlowManager getFlowManager() {
@@ -45,5 +48,9 @@ class HubTask extends DefaultTask {
                 hc.adminUsername,
                 hc.adminPassword,
                 authMethod);
+    }
+
+    CommandContext getCommandContext() {
+        getProject().property("mlCommandContext")
     }
 }
