@@ -1,5 +1,6 @@
 package com.marklogic.hub.commands;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -22,6 +23,7 @@ import com.marklogic.client.modulesloader.impl.DefaultModulesLoader;
 import com.marklogic.client.modulesloader.impl.XccAssetLoader;
 import com.marklogic.client.modulesloader.xcc.CommaDelimitedPermissionsParser;
 import com.marklogic.client.modulesloader.xcc.DefaultDocumentFormatGetter;
+import com.marklogic.client.modulesloader.xcc.DocumentFormatGetter;
 import com.marklogic.client.modulesloader.xcc.PermissionsParser;
 import com.marklogic.xcc.Content;
 import com.marklogic.xcc.ContentCreateOptions;
@@ -40,6 +42,7 @@ public class LoadHubModulesCommand extends AbstractCommand {
 
     private DefaultModulesLoader modulesLoader;
     private ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+    private DocumentFormatGetter documentFormatGetter = new DefaultDocumentFormatGetter();
     private PermissionsParser permissionsParser = new CommaDelimitedPermissionsParser();
 
     private String permissions = "rest-admin,read,rest-admin,update,rest-extension-user,execute";
@@ -73,12 +76,7 @@ public class LoadHubModulesCommand extends AbstractCommand {
 
     protected void loadFile(String uri, InputStream inputStream, AppConfig config) throws IOException {
         ContentCreateOptions options = new ContentCreateOptions();
-        if (uri.endsWith("xml")) {
-            options.setFormatXml();
-        }
-        else {
-            options.setFormatText();
-        }
+        options.setFormat(documentFormatGetter.getDocumentFormat(new File(uri)));
         options.setPermissions(permissionsParser.parsePermissions(this.permissions));
         if (this.collections != null) {
             options.setCollections(collections);
@@ -107,10 +105,6 @@ public class LoadHubModulesCommand extends AbstractCommand {
     protected void initializeActiveSession(CommandContext context) {
         AppConfig config = context.getAppConfig();
         XccAssetLoader xccAssetLoader = context.getAppConfig().newXccAssetLoader();
-        DefaultDocumentFormatGetter documentFormatGetter = new DefaultDocumentFormatGetter();
-        documentFormatGetter.getBinaryExtensions().add("woff2");
-        documentFormatGetter.getBinaryExtensions().add("otf");
-        xccAssetLoader.setDocumentFormatGetter(documentFormatGetter);
         this.modulesLoader = new DefaultModulesLoader(xccAssetLoader);
         this.modulesLoader.setDatabaseClient(config.newDatabaseClient());
         ContentSource cs = ContentSourceFactory.newContentSource(config.getHost(), port, config.getRestAdminUsername(), config.getRestAdminPassword(), config.getModulesDatabaseName(),
@@ -127,33 +121,39 @@ public class LoadHubModulesCommand extends AbstractCommand {
             String rootPath = "/ml-modules/root";
 
             AppConfig appConfig = context.getAppConfig();
-            List<Resource> resources = findResources("classpath*:" + rootPath, "/**/*.x??");
-            for (Resource r : resources) {
-                String path = r.getURL().getPath();
-                if (path.contains("!")) {
-                    String[] splits = path.split("!");
-                    path = splits[splits.length - 1];
-                }
+            ArrayList<String> classpaths = new ArrayList<String>();
+            classpaths.add("/com.marklogic.hub/**/*.x??");
+            classpaths.add("/trace-ui/**/*");
 
-                String rootPathAbs = resolver.getResource(rootPath).getURL().getPath();
-                if (rootPathAbs.contains("!")) {
-                    String[] splits = rootPathAbs.split("!");
-                    rootPathAbs = splits[splits.length - 1];
-                }
-                if (path.startsWith(rootPathAbs)) {
-                    path = path.substring(rootPathAbs.length());
-                    if (logger.isDebugEnabled()) {
-                        logger.debug("Path without root path: " + path);
+            for (String classpath : classpaths) {
+                List<Resource> resources = findResources("classpath*:" + rootPath, classpath);
+                for (Resource r : resources) {
+                    String path = r.getURL().getPath();
+                    if (path.contains("!")) {
+                        String[] splits = path.split("!");
+                        path = splits[splits.length - 1];
                     }
-                }
 
-                loadFile(path, r.getInputStream(), appConfig);
+                    String rootPathAbs = resolver.getResource(rootPath).getURL().getPath();
+                    if (rootPathAbs.contains("!")) {
+                        String[] splits = rootPathAbs.split("!");
+                        rootPathAbs = splits[splits.length - 1];
+                    }
+                    if (path.startsWith(rootPathAbs)) {
+                        path = path.substring(rootPathAbs.length());
+                        if (logger.isDebugEnabled()) {
+                            logger.debug("Path without root path: " + path);
+                        }
+                    }
+
+                    loadFile(path, r.getInputStream(), appConfig);
+                }
             }
             activeSession.commit();
 
             logger.info("Loading Service Extensions");
             long startTime = System.nanoTime();
-            resources = findResources("classpath*:/ml-modules/services", "/**/*.xq*");
+            List<Resource> resources = findResources("classpath*:/ml-modules/services", "/**/*.xq*");
             for (Resource r : resources) {
                 ExtensionMetadataAndParams emap = extensionMetadataProvider.provideExtensionMetadataAndParams(r);
                 this.modulesLoader.installService(r, emap.metadata, emap.methods.toArray(new MethodParameters[] {}));

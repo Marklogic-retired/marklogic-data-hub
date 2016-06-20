@@ -50,12 +50,12 @@
           txt += (scope.tracingEnabled) ? 'Disable' : 'Enable';
           txt += ' Tracing';
           return txt;
-        }
+        };
 
         scope.getTracingUri = function() {
           return 'http://' + scope.status.mlHost + ':' +
             scope.status.mlTracePort + '/';
-        }
+        };
 
         scope.toggleTracing = function() {
           if (scope.tracingEnabled) {
@@ -68,7 +68,7 @@
               scope.tracingEnabled = true;
             });
           }
-        }
+        };
 
         tracingService.isEnabled().then(function(resp) {
           scope.tracingEnabled = resp.data.enabled;

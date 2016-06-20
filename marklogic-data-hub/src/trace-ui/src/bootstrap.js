@@ -8,7 +8,7 @@ window.CodeMirror = CodeMirror;
 import 'codemirror/mode/xml/xml';
 import 'codemirror/mode/javascript/javascript';
 
-import 'angular-ui-codemirror';
+import './components/ui-codemirror/ui-codemirror';
 import 'angular-moment';
 import 'jsonformatter';
 import 'jsonformatter/dist/json-formatter.min.css';
