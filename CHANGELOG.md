@@ -1,7 +1,24 @@
 # Change Log
 
-## [v1.0.0-beta.5](https://github.com/marklogic/marklogic-data-hub/tree/v1.0.0-beta.5)
+## [v1.0.0-beta.6](https://github.com/marklogic/marklogic-data-hub/tree/v1.0.0-beta.6) (2016-06-20)
+[Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v1.0.0-beta.5...v1.0.0-beta.6)
 
+**Fixed bugs:**
+
+- Error in writer caused exception with tracing [\#235](https://github.com/marklogic/marklogic-data-hub/issues/235)
+- Need to specify collation in query in trace-lib.xqy [\#230](https://github.com/marklogic/marklogic-data-hub/issues/230)
+
+**Closed issues:**
+
+- Better gradle integration [\#232](https://github.com/marklogic/marklogic-data-hub/issues/232)
+- isInstalled fails on 9 nightly [\#216](https://github.com/marklogic/marklogic-data-hub/issues/216)
+- Add example project for advanced gradle [\#185](https://github.com/marklogic/marklogic-data-hub/issues/185)
+
+**Merged pull requests:**
+
+- Refactored the hub gradle integration [\#233](https://github.com/marklogic/marklogic-data-hub/pull/233) ([paxtonhare](https://github.com/paxtonhare))
+
+## [v1.0.0-beta.5](https://github.com/marklogic/marklogic-data-hub/tree/v1.0.0-beta.5) (2016-05-03)
 [Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v1.0.0-beta.4...v1.0.0-beta.5)
 
 **Fixed bugs:**
@@ -9,13 +26,19 @@
 - Fix bugs in load data feature [\#219](https://github.com/marklogic/marklogic-data-hub/issues/219)
 - Error running hadoop [\#121](https://github.com/marklogic/marklogic-data-hub/issues/121)
 
+**Closed issues:**
+
+- Refactor to Auto deploy code [\#197](https://github.com/marklogic/marklogic-data-hub/issues/197)
+
 **Merged pull requests:**
 
+- Revert "fixed \#197" [\#227](https://github.com/marklogic/marklogic-data-hub/pull/227) ([paxtonhare](https://github.com/paxtonhare))
 - Tracing [\#226](https://github.com/marklogic/marklogic-data-hub/pull/226) ([paxtonhare](https://github.com/paxtonhare))
 - fixing bug in restoring previous load options [\#223](https://github.com/marklogic/marklogic-data-hub/pull/223) ([paxtonhare](https://github.com/paxtonhare))
 - 219 - Fix Bugs in Load Data Feature [\#220](https://github.com/marklogic/marklogic-data-hub/pull/220) ([maeisabelle](https://github.com/maeisabelle))
 - Changes to fix JS errors in Swagger UI in master [\#218](https://github.com/marklogic/marklogic-data-hub/pull/218) ([maeisabelle](https://github.com/maeisabelle))
 - enhance performance of hub install [\#217](https://github.com/marklogic/marklogic-data-hub/pull/217) ([paxtonhare](https://github.com/paxtonhare))
+- fixed \#197 [\#213](https://github.com/marklogic/marklogic-data-hub/pull/213) ([divino](https://github.com/divino))
 
 ## [v1.0.0-beta.4](https://github.com/marklogic/marklogic-data-hub/tree/v1.0.0-beta.4) (2016-04-21)
 [Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v1.0.0-beta.3...v1.0.0-beta.4)
