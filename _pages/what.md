@@ -4,7 +4,7 @@ title: What is it?
 permalink: /what/
 ---
 
-![What is it](https://raw.githubusercontent.com/marklogic/marklogic-data-hub/design/images/what-is-marklogic-data-hub-gray.png)
+![What is it](//raw.githubusercontent.com/marklogic/marklogic-data-hub/design/images/what-is-marklogic-data-hub-gray.png)
 
 <div class="section" markdown="1">
 

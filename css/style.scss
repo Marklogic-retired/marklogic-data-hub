@@ -3,6 +3,8 @@
 @import '../_sass/bootstrap';
 @import '../_sass/syntax-highlighting';
 
+@import '//fonts.googleapis.com/css?family=Roboto+Condensed:300,300italic,400,400italic,700,700italic|Oswald:300,400,700';
+@import 'href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css';
 
 $scotch-primary: rgb(255, 69, 69);
 $scotch-secondary: #FF7B7B;
@@ -293,4 +295,12 @@ img {
   background-color: white;
   padding: 0.5em 1em;
   margin: 2em 0px;
+}
+
+.embed-git {
+  background-color: #f8f8ff;
+  pre {
+    background-color: transparent;
+    padding: .25em .5em .5em .5em !important
+  }
 }

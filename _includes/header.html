@@ -31,18 +31,6 @@
     <meta name="application-name" content="{{ site.data.global.title }} - {{ site.data.global.description }}">
     <meta name="msapplication-TileImage" content="{{ site.data.global.url }}/img/favicons/favicon-144.png">
     <meta name="msapplication-TileColor" content="#ffffff">
-
-    <!-- Fonts -->
-    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto+Condensed:300,300italic,400,400italic,700,700italic|Oswald:300,400,700">
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
-
-    <!-- Styles -->
-    <link rel="stylesheet" href="{{ site.data.global.url }}/css/style.css">
-    <!--[if lt IE 9]>
-        <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.2/html5shiv.min.js"></script>
-        <script src="{{ site.data.global.url }}/js/respond.min.js"></script>
-    <![endif]-->
-
 </head>
 <body class="{{ post.title | downcase | replace:' ','-' | replace:',','' | strip_html }}{% if page.category %} category-{{ page.category }}{% endif %}{% if page.layout-class %} layout-{{ page.layout-class }}{% endif %}">
 

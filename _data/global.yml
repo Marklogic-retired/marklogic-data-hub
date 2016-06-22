@@ -1,5 +1,5 @@
 # Site Settings
-title: 'MarkLogic Data Hub'
+title: 'MarkLogic Data Hub Framework'
 description: 'A data hub framework for MarkLogic'
 url: '/marklogic-data-hub' # the base hostname & protocol for your site
 footer_text: 'Copyright © 2016 MarkLogic Corporation. All Rights Reserved. MARKLOGIC® is a registered trademark of MarkLogic Corporation.'

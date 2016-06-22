@@ -1,4 +1,5 @@
 # Where things are
+repository: marklogic/marklogic-data-hub
 source:      .
 destination: ./_site
 plugins_dir:     ./_plugins
@@ -22,7 +23,7 @@ unpublished: false
 
 # Plugins
 whitelist: []
-gems:      [jekyll-paginate]
+gems: ["jekyll-assets", "jekyll-press"]
 
 # Conversion
 markdown:    kramdown
@@ -38,8 +39,6 @@ baseurl: "/marklogic-data-hub" # does not include hostname
 
 # Outputting
 permalink:     /:title.html
-paginate: 10
-paginate_path: /page:num
 timezone:      null
 
 quiet:    false
@@ -70,3 +69,14 @@ kramdown:
 
 
 include: ['_pages']
+
+jekyll-press:
+  exclude: 'atom.xml' # Exclude files from processing - file name, glob pattern or array of file names and glob patterns
+  js_options: {}      # js minifier options
+  css_options: {}     # css minifier options
+  html_options: {}    # html minifier options
+
+assets:
+  compress:
+    js:  true
+    css: true

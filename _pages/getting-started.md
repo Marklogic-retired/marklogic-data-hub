@@ -8,13 +8,16 @@ permalink: /
 ## Building an HR Hub
 This tutorial will walk you through setting up a very simple hub for HR data. Your company Global Corp has provided you with CSV dumps of 3 tables. Additionally you are receiving JSON data files from a recently acquired company Acme Tech. You are responsible for loading data from both systems into your data hub to make them accessible to internal systems.
 
+### In a Hurry?
+The finished version of this tutorial is available for you to download and play with. [Finished HR Hub Example](https://github.com/marklogic/marklogic-data-hub/tree/master/examples/hr-hub){:target="_blank"}
+
 ### QuickStart
 This tutorial uses quickStart, a simple User Interface that you can run locally to start working with the Data Hub quickly. With QuickStart you will have a working hub in a matter of minutes. No need to worry about deployment strategies or configuration details. Simply run the jar and point it at your MarkLogic installation.
 
 
 ## 1 - Download and Install MarkLogic
 
-Follow the instructions [here](http://docs.marklogic.com/guide/installation){:target="_blank"}{:target="_blank"} for installing MarkLogic.
+Follow the instructions [here](https://docs.marklogic.com/guide/installation){:target="_blank"} for installing MarkLogic.
 
 <iframe width="420" height="315" src="https://www.youtube.com/embed/WaRi9HMtz5Q" frameborder="0" allowfullscreen></iframe>
 
@@ -124,13 +127,13 @@ For Acme Tech we want to return a list of URIs. Since the Acme Tech data came to
 
 Use your favorite text editor to open the data-hub/plugins/entities/Employee/harmonize/harmonize-acme-tech/collector/collector.sjs file. Replace its contents with this:
 
-<script src="http://gist-it.appspot.com/https://github.com/marklogic/marklogic-data-hub/blob/master/examples/hr-hub/plugins/entities/Employee/harmonize/harmonize-acme-tech/collector/collector.sjs"></script>
+<div class="embed-git" href="//raw.githubusercontent.com/marklogic/marklogic-data-hub/master/examples/hr-hub/plugins/entities/Employee/harmonize/harmonize-acme-tech/collector/collector.sjs"></div>
 
 ### Acme Tech header plugin
 
 Use your favorite text editor to open the data-hub/plugins/entities/Employee/harmonize/harmonize-acme-tech/headers/headers.sjs file. Replace its contents with this:
 
-<script src="http://gist-it.appspot.com/https://github.com/marklogic/marklogic-data-hub/blob/master/examples/hr-hub/plugins/entities/Employee/harmonize/harmonize-acme-tech/headers/headers.sjs"></script>
+<div class="embed-git" href="//raw.githubusercontent.com/marklogic/marklogic-data-hub/master/examples/hr-hub/plugins/entities/Employee/harmonize/harmonize-acme-tech/headers/headers.sjs"></div>
 
 ### Global Corp Collector
 
@@ -138,19 +141,19 @@ The collector is a plugin that provides a list of items to the Harmonize flow to
 
 Use your favorite text editor to open the data-hub/plugins/entities/Employee/harmonize/harmonize-global-corp/collector/collector.sjs file. Replace its contents with this:
 
-<script src="http://gist-it.appspot.com/https://github.com/marklogic/marklogic-data-hub/blob/master/examples/hr-hub/plugins/entities/Employee/harmonize/harmonize-global-corp/collector/collector.sjs"></script>
+<div class="embed-git" href="//raw.githubusercontent.com/marklogic/marklogic-data-hub/master/examples/hr-hub/plugins/entities/Employee/harmonize/harmonize-global-corp/collector/collector.sjs"></div>
 
 ### Global Corp Content Plugin
 
 For Global corp we are going to use the harmonize step to recreate employee records for every employee ID that is in our staging area. Recall that for the collector we are returning employee IDs instead of URIs. Open up your favorite text editor to the data-hub/plugins/entities/Employee/harmonize/harmonize-global-corp/content/content.sjs file. Replace its contents with this:
 
-<script src="http://gist-it.appspot.com/https://github.com/marklogic/marklogic-data-hub/blob/master/examples/hr-hub/plugins/entities/Employee/harmonize/harmonize-global-corp/content/content.sjs"></script>
+<div class="embed-git" href="//raw.githubusercontent.com/marklogic/marklogic-data-hub/master/examples/hr-hub/plugins/entities/Employee/harmonize/harmonize-global-corp/content/content.sjs"></div>
 
 ### Global Corp Header Plugin
 
 Use your favorite text editor to open the data-hub/plugins/entities/Employee/harmonize/armonize-global-corp/headers/headers.sjs file. Replace its contents with this:
 
-<script src="http://gist-it.appspot.com/https://github.com/marklogic/marklogic-data-hub/blob/master/examples/hr-hub/plugins/entities/Employee/harmonize/harmonize-global-corp/headers/headers.sjs"></script>
+<div class="embed-git" href="//raw.githubusercontent.com/marklogic/marklogic-data-hub/master/examples/hr-hub/plugins/entities/Employee/harmonize/harmonize-global-corp/headers/headers.sjs"></div>
 
 ## 10 - Harmonize the data
 
@@ -160,7 +163,7 @@ You ingested your data. You created plugins that will extract common fields into
 
 ## 11 - Consume the Data
 
-Now you can access your data via several REST endpoints. Your harmonized data is available on the Final HTTP server. The defaul port is 8011. A full list of REST endpoints is available here: [http://docs.marklogic.com/REST/client](http://docs.marklogic.com/REST/client){:target="_blank"}
+Now you can access your data via several REST endpoints. Your harmonized data is available on the Final HTTP server. The defaul port is 8011. A full list of REST endpoints is available here: [https://docs.marklogic.com/REST/client](https://docs.marklogic.com/REST/client){:target="_blank"}
 
 Open the [Staging Search Endpoint](http://localhost:8010/v1/search?format=json){:target="_blank"} against your local instance.
 
@@ -175,4 +178,4 @@ Congratulations! You just created a Data Hub.
 
 - You loaded JSON and CSV files.
 - You harmonized your data by extracting common header fields.
-- Your data is now fully accessible via the [MarkLogic REST API](http://docs.marklogic.com/REST/client){:target="_blank"}
+- Your data is now fully accessible via the [MarkLogic REST API](https://docs.marklogic.com/REST/client){:target="_blank"}
