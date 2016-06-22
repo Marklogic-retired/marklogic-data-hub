@@ -11,4 +11,4 @@ This project allows you to deploy a skeleton Data Hub into MarkLogic. With some 
 
 # Getting Started
 
-Head over to our [Getting Started Tutorial](http://marklogic.github.io/marklogic-data-hub/) to get up and running with the Data Hub.
+Head over to our [Getting Started Tutorial](https://marklogic.github.io/marklogic-data-hub/) to get up and running with the Data Hub.
