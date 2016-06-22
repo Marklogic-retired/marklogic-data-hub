@@ -74,7 +74,7 @@ public class LoadHubModulesCommand extends AbstractCommand {
         return list;
     }
 
-    protected void loadFile(String uri, InputStream inputStream, AppConfig config) throws IOException {
+    protected Content prepContent(String uri, InputStream inputStream, AppConfig config) throws IOException {
         ContentCreateOptions options = new ContentCreateOptions();
         options.setFormat(documentFormatGetter.getDocumentFormat(new File(uri)));
         options.setPermissions(permissionsParser.parsePermissions(this.permissions));
@@ -95,11 +95,7 @@ public class LoadHubModulesCommand extends AbstractCommand {
         }
 
         Content content = ContentFactory.newContent(uri, fileContents, options);
-        try {
-            activeSession.insertContent(content);
-        } catch (RequestException re) {
-            throw new RuntimeException("Unable to insert content at URI: " + uri + "; cause: " + re.getMessage(), re);
-        }
+        return content;
     }
 
     protected void initializeActiveSession(CommandContext context) {
@@ -110,7 +106,6 @@ public class LoadHubModulesCommand extends AbstractCommand {
         ContentSource cs = ContentSourceFactory.newContentSource(config.getHost(), port, config.getRestAdminUsername(), config.getRestAdminPassword(), config.getModulesDatabaseName(),
                 securityOptions);
         activeSession = cs.newSession();
-        activeSession.setTransactionMode(TransactionMode.UPDATE);
     }
 
     @Override
@@ -125,6 +120,7 @@ public class LoadHubModulesCommand extends AbstractCommand {
             classpaths.add("/com.marklogic.hub/**/*.x??");
             classpaths.add("/trace-ui/**/*");
 
+            ArrayList<Content> content = new ArrayList<Content>();
             for (String classpath : classpaths) {
                 List<Resource> resources = findResources("classpath*:" + rootPath, classpath);
                 for (Resource r : resources) {
@@ -146,10 +142,13 @@ public class LoadHubModulesCommand extends AbstractCommand {
                         }
                     }
 
-                    loadFile(path, r.getInputStream(), appConfig);
+                    content.add(prepContent(path, r.getInputStream(), appConfig));
                 }
             }
-            activeSession.commit();
+
+            if (content.size() > 0) {
+                activeSession.insertContent(content.toArray(new Content[0]));
+            }
 
             logger.info("Loading Service Extensions");
             long startTime = System.nanoTime();
