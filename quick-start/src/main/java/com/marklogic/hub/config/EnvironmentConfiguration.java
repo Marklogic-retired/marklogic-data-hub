@@ -37,15 +37,33 @@ public class EnvironmentConfiguration {
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(EnvironmentConfiguration.class);
 
-	private static final String ENVIRONMENT_PROPERTIES_FILENAME = "environment.properties";
+	private static final String GRADLE_PROPERTIES_FILENAME = "gradle.properties";
+	private static final String LOCAL_PROPERTIES_FILENAME = "local.properties";
 	private static final String DEFAULT_SUFFIX = ".default";
 	private static final String SERVER_PORT = "server.port";
 	private static final String ML_HOST = "mlHost";
 	private static final String ML_USERNAME = "mlUsername";
 	private static final String ML_PASSWORD = "mlPassword";
+	private static final String ML_STAGING_APPSERVER_NAME = "mlStagingAppserverName";
+	private static final String ML_FINAL_APPSERVER_NAME = "mlFinalAppserverName";
+	private static final String ML_TRACE_APPSERVER_NAME = "mlTraceAppserverName";
+
 	private static final String ML_STAGING_REST_PORT = "mlStagingPort";
 	private static final String ML_FINAL_REST_PORT = "mlFinalPort";
 	private static final String ML_TRACE_REST_PORT = "mlTracePort";
+
+    private static final String ML_STAGING_DATABASE_NAME = "mlStagingDbName";
+    private static final String ML_FINAL_DATABASE_NAME = "mlFinalDbName";
+    private static final String ML_TRACE_DATABASE_NAME = "mlTraceDbName";
+
+    private static final String ML_STAGING_FORESTS_PER_HOST = "mlStagingForestsPerHost";
+    private static final String ML_FINAL_FORESTS_PER_HOST = "mlFinalForestsPerHost";
+    private static final String ML_TRACE_FORESTS_PER_HOST = "mlTraceForestsPerHost";
+
+    private static final String ML_MODULES_DATABASE_NAME = "mlModulesDbName";
+    private static final String ML_TRIGGERS_DATABASE_NAME = "mlTriggersDbName";
+    private static final String ML_SCHEMAS_DATABASE_NAME = "mlSchemasDbName";
+
 	private static final String ML_AUTH = "mlAuth";
 	private static final String PROJECT_DIR = "projectDir";
 
@@ -97,6 +115,45 @@ public class EnvironmentConfiguration {
 		return this.environment.getProperty(ML_PASSWORD + DEFAULT_SUFFIX);
 	}
 
+   public String getMLStagingAppserverName() {
+        String value = this.environmentProperties.getProperty(ML_STAGING_APPSERVER_NAME);
+        if (value != null) {
+            return value;
+        }
+        value = this.environment.getProperty(ML_STAGING_APPSERVER_NAME);
+        if (value != null) {
+            this.environmentProperties.setProperty(ML_STAGING_APPSERVER_NAME, value);
+            return value;
+        }
+        return this.environment.getProperty(ML_STAGING_APPSERVER_NAME + DEFAULT_SUFFIX);
+    }
+
+   public String getMLFinalAppserverName() {
+       String value = this.environmentProperties.getProperty(ML_FINAL_APPSERVER_NAME);
+       if (value != null) {
+           return value;
+       }
+       value = this.environment.getProperty(ML_FINAL_APPSERVER_NAME);
+       if (value != null) {
+           this.environmentProperties.setProperty(ML_FINAL_APPSERVER_NAME, value);
+           return value;
+       }
+       return this.environment.getProperty(ML_FINAL_APPSERVER_NAME + DEFAULT_SUFFIX);
+   }
+
+   public String getMLTraceAppserverName() {
+       String value = this.environmentProperties.getProperty(ML_TRACE_APPSERVER_NAME);
+       if (value != null) {
+           return value;
+       }
+       value = this.environment.getProperty(ML_TRACE_APPSERVER_NAME);
+       if (value != null) {
+           this.environmentProperties.setProperty(ML_TRACE_APPSERVER_NAME, value);
+           return value;
+       }
+       return this.environment.getProperty(ML_TRACE_APPSERVER_NAME + DEFAULT_SUFFIX);
+   }
+
 	public String getMLStagingPort() {
 		String value = this.environmentProperties.getProperty(ML_STAGING_REST_PORT);
 		if (value != null) {
@@ -135,6 +192,123 @@ public class EnvironmentConfiguration {
         }
         return this.environment.getProperty(ML_TRACE_REST_PORT + DEFAULT_SUFFIX);
     }
+
+   public String getMLStagingDatabaseName() {
+        String value = this.environmentProperties.getProperty(ML_STAGING_DATABASE_NAME);
+        if (value != null) {
+            return value;
+        }
+        value = this.environment.getProperty(ML_STAGING_DATABASE_NAME);
+        if (value != null) {
+            this.environmentProperties.setProperty(ML_STAGING_DATABASE_NAME, value);
+            return value;
+        }
+        return this.environment.getProperty(ML_STAGING_DATABASE_NAME + DEFAULT_SUFFIX);
+    }
+
+   public String getMLFinalDatabaseName() {
+       String value = this.environmentProperties.getProperty(ML_FINAL_DATABASE_NAME);
+       if (value != null) {
+           return value;
+       }
+       value = this.environment.getProperty(ML_FINAL_DATABASE_NAME);
+       if (value != null) {
+           this.environmentProperties.setProperty(ML_FINAL_DATABASE_NAME, value);
+           return value;
+       }
+       return this.environment.getProperty(ML_FINAL_DATABASE_NAME + DEFAULT_SUFFIX);
+   }
+
+   public String getMLTraceDatabaseName() {
+       String value = this.environmentProperties.getProperty(ML_TRACE_DATABASE_NAME);
+       if (value != null) {
+           return value;
+       }
+       value = this.environment.getProperty(ML_TRACE_DATABASE_NAME);
+       if (value != null) {
+           this.environmentProperties.setProperty(ML_TRACE_DATABASE_NAME, value);
+           return value;
+       }
+       return this.environment.getProperty(ML_TRACE_DATABASE_NAME + DEFAULT_SUFFIX);
+   }
+
+   public String getMLStagingForestsPerHost() {
+        String value = this.environmentProperties.getProperty(ML_STAGING_FORESTS_PER_HOST);
+        if (value != null) {
+            return value;
+        }
+        value = this.environment.getProperty(ML_STAGING_FORESTS_PER_HOST);
+        if (value != null) {
+            this.environmentProperties.setProperty(ML_STAGING_FORESTS_PER_HOST, value);
+            return value;
+        }
+        return this.environment.getProperty(ML_STAGING_FORESTS_PER_HOST + DEFAULT_SUFFIX);
+    }
+
+   public String getMLFinalForestsPerHost() {
+       String value = this.environmentProperties.getProperty(ML_FINAL_FORESTS_PER_HOST);
+       if (value != null) {
+           return value;
+       }
+       value = this.environment.getProperty(ML_FINAL_FORESTS_PER_HOST);
+       if (value != null) {
+           this.environmentProperties.setProperty(ML_FINAL_FORESTS_PER_HOST, value);
+           return value;
+       }
+       return this.environment.getProperty(ML_FINAL_FORESTS_PER_HOST + DEFAULT_SUFFIX);
+   }
+
+   public String getMLTraceForestsPerHost() {
+       String value = this.environmentProperties.getProperty(ML_TRACE_FORESTS_PER_HOST);
+       if (value != null) {
+           return value;
+       }
+       value = this.environment.getProperty(ML_TRACE_FORESTS_PER_HOST);
+       if (value != null) {
+           this.environmentProperties.setProperty(ML_TRACE_FORESTS_PER_HOST, value);
+           return value;
+       }
+       return this.environment.getProperty(ML_TRACE_FORESTS_PER_HOST + DEFAULT_SUFFIX);
+   }
+
+   public String getMLModulesDatabaseName() {
+       String value = this.environmentProperties.getProperty(ML_MODULES_DATABASE_NAME);
+       if (value != null) {
+           return value;
+       }
+       value = this.environment.getProperty(ML_MODULES_DATABASE_NAME);
+       if (value != null) {
+           this.environmentProperties.setProperty(ML_MODULES_DATABASE_NAME, value);
+           return value;
+       }
+       return this.environment.getProperty(ML_MODULES_DATABASE_NAME + DEFAULT_SUFFIX);
+   }
+
+   public String getMLTriggersDatabaseName() {
+       String value = this.environmentProperties.getProperty(ML_TRIGGERS_DATABASE_NAME);
+       if (value != null) {
+           return value;
+       }
+       value = this.environment.getProperty(ML_TRIGGERS_DATABASE_NAME);
+       if (value != null) {
+           this.environmentProperties.setProperty(ML_TRIGGERS_DATABASE_NAME, value);
+           return value;
+       }
+       return this.environment.getProperty(ML_TRIGGERS_DATABASE_NAME + DEFAULT_SUFFIX);
+   }
+
+   public String getMLSchemasDatabaseName() {
+       String value = this.environmentProperties.getProperty(ML_SCHEMAS_DATABASE_NAME);
+       if (value != null) {
+           return value;
+       }
+       value = this.environment.getProperty(ML_SCHEMAS_DATABASE_NAME);
+       if (value != null) {
+           this.environmentProperties.setProperty(ML_SCHEMAS_DATABASE_NAME, value);
+           return value;
+       }
+       return this.environment.getProperty(ML_SCHEMAS_DATABASE_NAME + DEFAULT_SUFFIX);
+   }
 
 	public String getMLAuth() {
 		String value = this.environmentProperties.getProperty(ML_AUTH);
@@ -191,7 +365,15 @@ public class EnvironmentConfiguration {
 	}
 
 	public void loadConfigurationFromFiles() {
-	    loadConfigurationFromFile(environmentProperties, ENVIRONMENT_PROPERTIES_FILENAME);
+	    loadConfigurationFromFile(environmentProperties, GRADLE_PROPERTIES_FILENAME);
+	    String environment = System.getenv("environmentName");
+	    if (environment == null) {
+	        environment = "local";
+	    }
+	    String envPropertiesFile = "gradle-" + environment + ".properties";
+	    LOGGER.info("envPropertiesFile = " + envPropertiesFile);
+	    loadConfigurationFromFile(environmentProperties, envPropertiesFile);
+	    LOGGER.info(environmentProperties.toString());
 	}
 
 	public void loadConfigurationFromFile(Properties configProperties, String fileName) {
@@ -201,6 +383,7 @@ public class EnvironmentConfiguration {
             if(file.exists()) {
                 is = new FileInputStream( file );
                 configProperties.load( is );
+                is.close();
             }
         } catch ( Exception e ) {
             is = null;
@@ -208,7 +391,7 @@ public class EnvironmentConfiguration {
     }
 
 	public void saveConfigurationToFile() {
-		saveConfigurationToFile(environmentProperties, ENVIRONMENT_PROPERTIES_FILENAME);
+		saveConfigurationToFile(environmentProperties, LOCAL_PROPERTIES_FILENAME);
 	}
 
 	private void saveConfigurationToFile(Properties configProperties, String fileName) {
@@ -256,9 +439,21 @@ public class EnvironmentConfiguration {
 	public HubConfig getHubConfig() {
 	    HubConfig hubConfig = new HubConfig();
 	    hubConfig.host = getMLHost();
+        hubConfig.stagingHttpName = getMLStagingAppserverName();
+        hubConfig.finalHttpName = getMLFinalAppserverName();
+	    hubConfig.tracingHttpName = getMLTraceAppserverName();
 	    hubConfig.stagingPort = Integer.parseInt(getMLStagingPort());
 	    hubConfig.finalPort = Integer.parseInt(getMLFinalPort());
 	    hubConfig.tracePort = Integer.parseInt(getMLTracePort());
+        hubConfig.stagingDbName = getMLStagingDatabaseName();
+        hubConfig.finalDbName = getMLFinalDatabaseName();
+        hubConfig.tracingDbName = getMLTraceDatabaseName();
+        hubConfig.stagingForestsPerHost = Integer.parseInt(getMLStagingForestsPerHost());
+        hubConfig.finalForestsPerHost = Integer.parseInt(getMLFinalForestsPerHost());
+        hubConfig.tracingForestsPerHost = Integer.parseInt(getMLTraceForestsPerHost());
+        hubConfig.modulesDbName = getMLModulesDatabaseName();
+        hubConfig.triggersDbName = getMLTriggersDatabaseName();
+        hubConfig.schemasDbName = getMLSchemasDatabaseName();
 	    hubConfig.adminUsername = getMLUsername();
 	    hubConfig.adminPassword = getMLPassword();
 	    hubConfig.projectDir = getProjectDir();

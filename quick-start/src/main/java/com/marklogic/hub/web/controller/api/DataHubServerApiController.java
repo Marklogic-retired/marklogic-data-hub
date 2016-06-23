@@ -60,7 +60,7 @@ public class DataHubServerApiController extends BaseController {
                     .isServerAcceptable());
             loginForm.setHasErrors(false);
             loginForm.setLoggedIn(true);
-            environmentConfiguration.saveConfigurationToFile();
+//            environmentConfiguration.saveConfigurationToFile();
             session.setAttribute("loginForm", loginForm);
 
             if (loginForm.isInstalled()) {
