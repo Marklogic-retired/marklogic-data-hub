@@ -1,5 +1,5 @@
 {
-  "database-name": "%%TRACE_DB_NAME%%",
+  "database-name": "%%mlTraceDbName%%",
   "range-element-index": [
     {
       "scalar-type": "dateTime",

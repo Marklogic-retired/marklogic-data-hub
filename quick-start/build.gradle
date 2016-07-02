@@ -32,10 +32,15 @@ configurations {
 dependencies {
     compile('org.springframework.boot:spring-boot-starter')
     compile('org.springframework.boot:spring-boot-starter-web')
+    compile('org.springframework.boot:spring-boot-starter-websocket')
+    compile('org.springframework:spring-messaging')
     compile project(':marklogic-data-hub')
     compile('io.springfox:springfox-swagger2:2.4.0')
     compile('org.webjars.bower:angular-swagger-ui:0.3.1')
     compile('org.apache.commons:commons-csv:1.2')
+
+    // Optional Boot library - see https://docs.spring.io/spring-boot/docs/current/reference/html/using-boot-devtools.html
+    compile("org.springframework.boot:spring-boot-devtools")
 
     // Needed for the Upload feature using mlcp
     compile('com.marklogic:mlcp-util:0.2.0') {
@@ -43,9 +48,7 @@ dependencies {
         exclude group: 'com.google.guava', module: 'guava'
     }
     compile 'com.google.guava:guava:19.0'
-    compile 'org.springframework.boot:spring-boot-starter-aop:1.3.3.RELEASE'
-
-    providedRuntime('org.springframework.boot:spring-boot-starter-tomcat')
+    compile 'org.springframework.boot:spring-boot-starter-aop:1.3.5.RELEASE'
     testCompile('junit:junit')
 }
 
@@ -60,14 +63,30 @@ javascript.source {
     }
 }
 
-jshint {
-    tasks.jshint.source = javascript.source.dev.js.files
-    tasks.jshint.dest = file("${buildDir}/jshint.out")
-    tasks.jshint.ignoreExitCode = false
-    tasks.jshint.outputToStdOut = true
-    tasks.jshint.reporter = 'checkstyle'
-    options = ["--config":"src/main/resources/static/.jshintrc"]
+task npmInstallUI(type:Exec) {
+    workingDir '.'
+    commandLine 'npm', 'install'
 }
 
+task buildUI(type:Exec) {
+    workingDir '.'
+    commandLine 'npm', 'run', 'build'
+    dependsOn tasks.npmInstallUI
+}
 
-test.dependsOn tasks.jshint
+task watchUI(type:Exec) {
+    workingDir '.'
+    commandLine 'npm', 'start'
+    dependsOn tasks.npmInstallUI
+}
+
+// build.dependsOn buildUI
+
+bootRun {
+  addResources = true
+}
+
+springBoot {
+  executable = true
+  mainClass = "com.marklogic.quickstart.Application"
+}

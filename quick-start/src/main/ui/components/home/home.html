@@ -1,0 +1,78 @@
+<section layout="row" flex>
+  <md-sidenav
+    class="md-sidenav-left"
+    md-component-id="left"
+    md-is-locked-open="$mdMedia('gt-md')"
+    md-disable-backdrop
+    md-whiteframe="1">
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>
+          <span>Entities</span>
+        </h2>
+        <span flex></span>
+        <md-button class="md-icon-button" aria-label="New Entity" (click)="ctrl.newEntity($event)">
+          <i class="fa fa-plus"></i>
+        </md-button>
+      </div>
+    </md-toolbar>
+    <md-content layout-fill>
+      <md-list class="entities">
+        <md-list-item class="entity-item"
+          ng-repeat="entity in ctrl.entities"
+          ng-class="ctrl.isActiveEntity(entity)"
+          (click)="ctrl.setEntity(entity)">
+          <p>{{ entity.entityName }}</p>
+        </md-list-item>
+      </md-list>
+    </md-content>
+  </md-sidenav>
+  <md-content flex layout-padding>
+    <section layout-padding layout="row" layout-align="center start">
+      <section flex layout="column" ng-if="ctrl.entity">
+        <h1>{{ctrl.entity.entityName}} Flows</h1>
+        <h3>{{ctrl.entity.dataFormat}}</h3>
+
+        <section flex layout="column" layout-align="start start">
+          <section flex layout="row">
+            <h1>Input Flows</h1>
+            <md-button class="md-icon-button" aria-label="New Input Flow" (click)="ctrl.newInputFlow($event)">
+              <i class="fa fa-plus"></i>
+            </md-button>
+          </section>
+          <md-list class="flows">
+            <md-list-item class="flow-item" ng-repeat="flow in ctrl.entity.inputFlows">
+              <p>
+                <span>{{ flow.flowName }}</span>
+                <md-button class="md-icon-button" aria-label="Run Input Flow" (click)="ctrl.runInputFlow($event, flow)">
+                  <i class="fa fa-play"></i>
+                </md-button>
+              </p>
+            </md-list-item>
+          </md-list>
+        </section>
+
+        <section flex layout="column" layout-align="start start">
+          <section flex layout="row">
+            <h1>Harmonize Flows</h1>
+            <md-button class="md-icon-button" aria-label="New Input Flow" (click)="ctrl.newHarmonizeFlow($event)">
+              <i class="fa fa-plus"></i>
+            </md-button>
+          </section>
+          <md-list class="flows">
+            <md-list-item class="flow-item" ng-repeat="flow in ctrl.entity.harmonizeFlows">
+              <p>
+                <span>{{ flow.flowName }}</span>
+                <md-button class="md-icon-button" aria-label="Run Input Flow" (click)="ctrl.runHarmonizeFlow(flow)">
+                  <i class="fa fa-play"></i>
+                </md-button>
+              </p>
+
+            </md-list-item>
+          </md-list>
+        </section>
+
+      </section>
+    </section>
+  </md-content>
+</section>

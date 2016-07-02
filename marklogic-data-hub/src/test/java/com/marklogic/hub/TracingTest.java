@@ -46,14 +46,14 @@ public class TracingTest extends HubTestBase {
     @Before
     public void beforeEach() {
         runInDatabase("cts:uris() ! xdmp:document-delete(.)", HubConfig.DEFAULT_FINAL_NAME);
-        runInDatabase("cts:uris() ! xdmp:document-delete(.)", HubConfig.DEFAULT_TRACING_NAME);
+        runInDatabase("cts:uris() ! xdmp:document-delete(.)", HubConfig.DEFAULT_TRACE_NAME);
         new Tracing(stagingClient).disable();
     }
 
     @After
     public void afterEach() {
         runInDatabase("cts:uris() ! xdmp:document-delete(.)", HubConfig.DEFAULT_FINAL_NAME);
-        runInDatabase("cts:uris() ! xdmp:document-delete(.)", HubConfig.DEFAULT_TRACING_NAME);
+        runInDatabase("cts:uris() ! xdmp:document-delete(.)", HubConfig.DEFAULT_TRACE_NAME);
         new Tracing(stagingClient).disable();
     }
 

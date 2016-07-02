@@ -32,27 +32,28 @@ public class HubProject {
         this.configDir = Paths.get(this.projectDirStr, "config");
         this.pluginsDir = Paths.get(this.projectDirStr, "plugins");
 
-        customTokens.put("%%ML_HOST%%", hubConfig.host);
-        customTokens.put("%%STAGING_SERVER_NAME%%", hubConfig.stagingHttpName);
-        customTokens.put("%%STAGING_SERVER_PORT%%", hubConfig.stagingPort.toString());
-        customTokens.put("%%STAGING_DB_NAME%%", hubConfig.stagingDbName);
-        customTokens.put("%%STAGING_FORESTS_PER_HOST%%", hubConfig.stagingForestsPerHost.toString());
+        customTokens.put("%%mlHost%%", hubConfig.host);
+        customTokens.put("%%mlStagingAppserverName%%", hubConfig.stagingHttpName);
+        customTokens.put("%%mlStagingPort%%", hubConfig.stagingPort.toString());
+        customTokens.put("%%mlStagingDbName%%", hubConfig.stagingDbName);
+        customTokens.put("%%mlStagingForestsPerHost%%", hubConfig.stagingForestsPerHost.toString());
 
-        customTokens.put("%%FINAL_SERVER_NAME%%", hubConfig.finalHttpName);
-        customTokens.put("%%FINAL_SERVER_PORT%%", hubConfig.finalPort.toString());
-        customTokens.put("%%FINAL_DB_NAME%%", hubConfig.finalDbName);
-        customTokens.put("%%FINAL_FORESTS_PER_HOST%%", hubConfig.finalForestsPerHost.toString());
+        customTokens.put("%%mlFinalAppserverName%%", hubConfig.finalHttpName);
+        customTokens.put("%%mlFinalPort%%", hubConfig.finalPort.toString());
+        customTokens.put("%%mlFinalDbName%%", hubConfig.finalDbName);
+        customTokens.put("%%mlFinalForestsPerHost%%", hubConfig.finalForestsPerHost.toString());
 
-        customTokens.put("%%TRACE_SERVER_NAME%%", hubConfig.tracingHttpName);
-        customTokens.put("%%TRACE_SERVER_PORT%%", hubConfig.tracePort.toString());
-        customTokens.put("%%TRACE_DB_NAME%%", hubConfig.tracingDbName);
-        customTokens.put("%%TRACE_FORESTS_PER_HOST%%", hubConfig.tracingForestsPerHost.toString());
+        customTokens.put("%%mlTraceAppserverName%%", hubConfig.traceHttpName);
+        customTokens.put("%%mlTracePort%%", hubConfig.tracePort.toString());
+        customTokens.put("%%mlTraceDbName%%", hubConfig.traceDbName);
+        customTokens.put("%%mlTraceForestsPerHost%%", hubConfig.traceForestsPerHost.toString());
 
-        customTokens.put("%%MODULES_DB_NAME%%", hubConfig.modulesDbName);
+        customTokens.put("%%mlModulesDbName%%", hubConfig.modulesDbName);
     }
 
     public void init() {
         try {
+            LOGGER.error("PLUGINS DIR: " + pluginsDir.toString());
             this.pluginsDir.toFile().mkdirs();
 
             Path serversDir = configDir.resolve("servers");
@@ -71,7 +72,8 @@ public class HubProject {
             writeResourceFile("ml-config/databases/triggers-database.json", databasesDir.resolve("triggers-database.json"));
 
             writeResourceFile("scaffolding/build_gradle", projectDir.resolve("build.gradle"));
-            writeResourceFile(Paths.get("scaffolding", "gradle_properties"), projectDir.resolve("gradle.properties"));
+            writeResourceFileWithReplace("scaffolding/gradle_properties", projectDir.resolve("gradle.properties"));
+            writeResourceFile("scaffolding/gradle-local_properties", projectDir.resolve("gradle-local.properties"));
         }
         catch(IOException e) {
             throw new RuntimeException(e);
@@ -86,15 +88,16 @@ public class HubProject {
         }
     }
 
-    private void writeResourceFile(Path file, Path dest) throws IOException {
-        if (!dest.toFile().exists()) {
-            InputStream inputStream = HubProject.class.getClassLoader().getResourceAsStream(file.toString());
+    private void writeResourceFileWithReplace(String srcFile, Path dstFile) throws IOException {
+        if (!dstFile.toFile().exists()) {
+            LOGGER.info("Getting file with Replace: " + srcFile);
+            InputStream inputStream = HubProject.class.getClassLoader().getResourceAsStream(srcFile);
 
             String fileContents = IOUtils.toString(inputStream);
             for (String key : customTokens.keySet()) {
                 fileContents = fileContents.replace(key, customTokens.get(key));
             }
-            FileWriter writer = new FileWriter(dest.toFile());
+            FileWriter writer = new FileWriter(dstFile.toFile());
             writer.write(fileContents);
             writer.close();
         }

@@ -7,6 +7,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -40,9 +41,9 @@ public class ScaffoldingTest extends HubTestBase {
     }
 
     @Test
-    public void createEntity() {
+    public void createEntity() throws FileNotFoundException {
         Scaffolding scaffolding = new Scaffolding(projectDir.toString());
-        scaffolding.createEntity("my-fun-test");
+        scaffolding.createEntity("my-fun-test", Format.XML);
         assertTrue(projectDir.exists());
 
         Path entityDir = scaffolding.getEntityDir("my-fun-test");
@@ -79,7 +80,7 @@ public class ScaffoldingTest extends HubTestBase {
 
     private void createInputFlow(PluginFormat pluginFormat, Format dataFormat) throws IOException, SAXException {
         Scaffolding scaffolding = new Scaffolding(projectDir.toString());
-        scaffolding.createEntity("my-fun-test");
+        scaffolding.createEntity("my-fun-test", Format.XML);
         assertTrue(projectDir.exists());
 
         Path entityDir = scaffolding.getEntityDir("my-fun-test");
@@ -119,7 +120,7 @@ public class ScaffoldingTest extends HubTestBase {
 
     private void createHarmonizeFlow(PluginFormat pluginFormat, Format dataFormat) throws IOException, SAXException {
         Scaffolding scaffolding = new Scaffolding(projectDir.toString());
-        scaffolding.createEntity("my-fun-test");
+        scaffolding.createEntity("my-fun-test", Format.XML);
         assertTrue(projectDir.exists());
 
         Path entityDir = scaffolding.getEntityDir("my-fun-test");

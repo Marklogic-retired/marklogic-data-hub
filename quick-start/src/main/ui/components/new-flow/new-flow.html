@@ -1,0 +1,42 @@
+<md-dialog class="new-flow" aria-label="Create {{ctrl.flowType}} Flow" ng-cloak>
+  <form>
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>Create {{ctrl.flowType}} Flow</h2>
+        <span flex></span>
+        <md-button class="md-icon-button" aria-label="cancel" ng-click="ctrl.cancel()">
+          <i class="fa fa-close"></i>
+        </md-button>
+      </div>
+    </md-toolbar>
+    <md-dialog-content class="entity-content">
+      <div class="md-dialog-content" flex layout="column">
+        <md-input-container>
+          <label>{{ctrl.flowType}} Flow Name</label>
+          <input md-autofocus ng-model="ctrl.flow.flowName">
+        </md-input-container>
+        <label>Plugin Type</label>
+        <select-list
+          [items]="ctrl.pluginFormats"
+          [selected]="ctrl.flow.pluginFormat"
+          label="label" identifier="value"
+          (selected-item)="ctrl.flow.pluginFormat = $event.detail"></select-list>
+        <label>Data Format</label>
+        <select-list
+          read-only="true"
+          [items]="ctrl.dataFormats"
+          [selected]="ctrl.dataFormat"
+          label="label" identifier="value"></select-list>
+      </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+      <span flex></span>
+      <md-button class="md-raised" aria-label="cancel" ng-click="ctrl.cancel()">
+       Cancel
+      </md-button>
+      <md-button class="md-primary md-raised" aria-label="create" ng-click="ctrl.create()">
+        Create
+      </md-button>
+    </md-dialog-actions>
+  </form>
+</md-dialog>

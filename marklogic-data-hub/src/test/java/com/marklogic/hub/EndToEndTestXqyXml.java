@@ -36,7 +36,7 @@ public class EndToEndTestXqyXml extends HubTestBase {
         enableDebugging();
 
         Scaffolding scaffolding = new Scaffolding(projectDir.toString());
-        scaffolding.createEntity(ENTITY);
+        scaffolding.createEntity(ENTITY, Format.XML);
         scaffolding.createFlow(ENTITY, "testinput", FlowType.INPUT,
                 PluginFormat.XQUERY, Format.XML);
         scaffolding.createFlow(ENTITY, "testharmonize", FlowType.HARMONIZE,

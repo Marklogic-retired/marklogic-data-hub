@@ -145,19 +145,19 @@ ext {
         restPort = Integer.parseInt(mlStagingPort)
 
         // Configure custom tokens for our json files
-        customTokens.put("%%STAGING_SERVER_NAME%%", mlStagingAppserverName)
-        customTokens.put("%%STAGING_SERVER_PORT%%", mlStagingPort)
-        customTokens.put("%%STAGING_DB_NAME%%", mlStagingDbName)
+        customTokens.put("%%mlStagingAppserverName%%", mlStagingAppserverName)
+        customTokens.put("%%mlStagingPort%%", mlStagingPort)
+        customTokens.put("%%mlStagingDbName%%", mlStagingDbName)
 
-        customTokens.put("%%FINAL_SERVER_NAME%%", mlFinalAppserverName)
-        customTokens.put("%%FINAL_SERVER_PORT%%", mlFinalPort)
-        customTokens.put("%%FINAL_DB_NAME%%", mlFinalDbName)
+        customTokens.put("%%mlFinalAppserverName%%", mlFinalAppserverName)
+        customTokens.put("%%mlFinalPort%%", mlFinalPort)
+        customTokens.put("%%mlFinalDbName%%", mlFinalDbName)
 
-        customTokens.put("%%TRACE_SERVER_NAME%%", mlTraceAppserverName)
-        customTokens.put("%%TRACE_SERVER_PORT%%", mlTracePort)
-        customTokens.put("%%TRACE_DB_NAME%%", mlTraceDbName)
+        customTokens.put("%%mlTraceAppserverName%%", mlTraceAppserverName)
+        customTokens.put("%%mlTracePort%%", mlTracePort)
+        customTokens.put("%%mlTraceDbName%%", mlTraceDbName)
 
-        customTokens.put("%%MODULES_DB_NAME%%", mlModulesDbName)
+        customTokens.put("%%mlModulesDbName%%", mlModulesDbName)
 
         modulePaths = ["marklogic-data-hub/src/main/resources/ml-modules"]
     }

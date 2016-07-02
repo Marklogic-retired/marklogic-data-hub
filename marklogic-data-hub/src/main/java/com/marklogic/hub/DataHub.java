@@ -82,6 +82,7 @@ public class DataHub {
 
     static final private Logger LOGGER = LoggerFactory.getLogger(DataHub.class);
 
+
     private ManageConfig config;
     private ManageClient client;
 
@@ -118,21 +119,21 @@ public class DataHub {
         ResourcesFragment srf = sm.getAsXml();
         boolean stagingAppServerExists = srf.resourceExists(hubConfig.stagingHttpName);
         boolean finalAppServerExists = srf.resourceExists(hubConfig.finalHttpName);
-        boolean tracingAppServerExists = srf.resourceExists(hubConfig.tracingHttpName);
-        boolean appserversOk = (stagingAppServerExists && finalAppServerExists && tracingAppServerExists);
+        boolean traceAppServerExists = srf.resourceExists(hubConfig.traceHttpName);
+        boolean appserversOk = (stagingAppServerExists && finalAppServerExists && traceAppServerExists);
 
         ResourcesFragment drf = dm.getAsXml();
         boolean stagingDbExists = drf.resourceExists(hubConfig.stagingDbName);
         boolean finalDbExists = drf.resourceExists(hubConfig.finalDbName);
-        boolean tracingDbExists = drf.resourceExists(hubConfig.stagingDbName);
+        boolean traceDbExists = drf.resourceExists(hubConfig.traceDbName);
 
         boolean stagingForestsExist = false;
         boolean finalForestsExist = false;
-        boolean tracingForestsExist = false;
+        boolean traceForestsExist = false;
 
         boolean stagingIndexesOn = false;
         boolean finalIndexesOn = false;
-        boolean tracingIndexesOn = false;
+        boolean traceIndexesOn = false;
 
         if (stagingDbExists) {
             Fragment f = dm.getPropertiesAsXml(hubConfig.stagingDbName);
@@ -148,16 +149,16 @@ public class DataHub {
             finalForestsExist = (f.getElements("//m:forest").size() == hubConfig.finalForestsPerHost);
         }
 
-        if (tracingDbExists) {
-            tracingIndexesOn = true;
-            Fragment f = dm.getPropertiesAsXml(hubConfig.tracingDbName);
-            tracingForestsExist = (f.getElements("//m:forest").size() == hubConfig.tracingForestsPerHost);
+        if (traceDbExists) {
+            traceIndexesOn = true;
+            Fragment f = dm.getPropertiesAsXml(hubConfig.traceDbName);
+            traceForestsExist = (f.getElements("//m:forest").size() == hubConfig.traceForestsPerHost);
         }
 
         boolean dbsOk = (stagingDbExists && stagingIndexesOn &&
                 finalDbExists && finalIndexesOn &&
-                tracingDbExists && tracingIndexesOn);
-        boolean forestsOk = (stagingForestsExist && finalForestsExist && tracingForestsExist);
+                traceDbExists && traceIndexesOn);
+        boolean forestsOk = (stagingForestsExist && finalForestsExist && traceForestsExist);
 
         PerformanceLogger.logTimeInsideMethod(startTime, "DataHub.isInstalled");
 
@@ -208,7 +209,7 @@ public class DataHub {
         HashMap<String, Integer> forestCounts = new HashMap<String, Integer>();
         forestCounts.put(hubConfig.stagingDbName, hubConfig.stagingForestsPerHost);
         forestCounts.put(hubConfig.finalDbName, hubConfig.finalForestsPerHost);
-        forestCounts.put(hubConfig.tracingDbName, hubConfig.tracingForestsPerHost);
+        forestCounts.put(hubConfig.traceDbName, hubConfig.traceForestsPerHost);
         forestCounts.put(hubConfig.modulesDbName, 1);
         config.setForestCounts(forestCounts);
 
@@ -217,22 +218,24 @@ public class DataHub {
 
         Map<String, String> customTokens = config.getCustomTokens();
 
-        customTokens.put("%%STAGING_SERVER_NAME%%", hubConfig.stagingHttpName);
-        customTokens.put("%%STAGING_SERVER_PORT%%", hubConfig.stagingPort.toString());
-        customTokens.put("%%STAGING_DB_NAME%%", hubConfig.stagingDbName);
-        customTokens.put("%%STAGING_FORESTS_PER_HOST%%", hubConfig.stagingForestsPerHost.toString());
+        customTokens.put("%%mlStagingAppserverName%%", hubConfig.stagingHttpName);
+        customTokens.put("%%mlStagingPort%%", hubConfig.stagingPort.toString());
+        customTokens.put("%%mlStagingDbName%%", hubConfig.stagingDbName);
+        customTokens.put("%%mlStagingForestsPerHost%%", hubConfig.stagingForestsPerHost.toString());
 
-        customTokens.put("%%FINAL_SERVER_NAME%%", hubConfig.finalHttpName);
-        customTokens.put("%%FINAL_SERVER_PORT%%", hubConfig.finalPort.toString());
-        customTokens.put("%%FINAL_DB_NAME%%", hubConfig.finalDbName);
-        customTokens.put("%%FINAL_FORESTS_PER_HOST%%", hubConfig.finalForestsPerHost.toString());
+        customTokens.put("%%mlFinalAppserverName%%", hubConfig.finalHttpName);
+        customTokens.put("%%mlFinalPort%%", hubConfig.finalPort.toString());
+        customTokens.put("%%mlFinalDbName%%", hubConfig.finalDbName);
+        customTokens.put("%%mlFinalForestsPerHost%%", hubConfig.finalForestsPerHost.toString());
 
-        customTokens.put("%%TRACE_SERVER_NAME%%", hubConfig.tracingHttpName);
-        customTokens.put("%%TRACE_SERVER_PORT%%", hubConfig.tracePort.toString());
-        customTokens.put("%%TRACE_DB_NAME%%", hubConfig.tracingDbName);
-        customTokens.put("%%TRACE_FORESTS_PER_HOST%%", hubConfig.tracingForestsPerHost.toString());
+        customTokens.put("%%mlTraceAppserverName%%", hubConfig.traceHttpName);
+        customTokens.put("%%mlTracePort%%", hubConfig.tracePort.toString());
+        customTokens.put("%%mlTraceDbName%%", hubConfig.traceDbName);
+        customTokens.put("%%mlTraceForestsPerHost%%", hubConfig.traceForestsPerHost.toString());
 
-        customTokens.put("%%MODULES_DB_NAME%%", hubConfig.modulesDbName);
+        customTokens.put("%%mlModulesDbName%%", hubConfig.modulesDbName);
+        customTokens.put("%%mlTriggersDbName%%", hubConfig.triggersDbName);
+        customTokens.put("%%mlSchemasDbName%%", hubConfig.schemasDbName);
     }
 
     public void initProject() {
@@ -383,7 +386,7 @@ public class DataHub {
     /**
      * Installs the data hub configuration and server-side modules into MarkLogic
      */
-    public void install() {
+    public void install(StatusListener listener) {
         initProject();
 
         long startTime = PerformanceLogger.monitorTimeInsideMethod();
@@ -394,7 +397,7 @@ public class DataHub {
         moduleManager.deletePropertiesFile();
 
         AppConfig config = getAppConfig();
-        SimpleAppDeployer deployer = new SimpleAppDeployer(client, getAdminManager());
+        HubAppDeployer deployer = new HubAppDeployer(client, getAdminManager(), listener);
         deployer.setCommands(getCommands(config));
         deployer.deploy(config);
 
@@ -404,12 +407,12 @@ public class DataHub {
     /**
      * Uninstalls the data hub configuration and server-side modules from MarkLogic
      */
-    public void uninstall() {
+    public void uninstall(StatusListener listener) {
         long startTime = PerformanceLogger.monitorTimeInsideMethod();
         LOGGER.debug("Uninstalling the Data Hub from MarkLogic");
 
         AppConfig config = getAppConfig();
-        SimpleAppDeployer deployer = new SimpleAppDeployer(client, getAdminManager());
+        HubAppDeployer deployer = new HubAppDeployer(client, getAdminManager(), listener);
         deployer.setCommands(getCommands(config));
         deployer.undeploy(config);
 

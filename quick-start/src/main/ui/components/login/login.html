@@ -1,0 +1,211 @@
+<h1>Data Hub Quick Start</h1>
+<div layout="padding" layout-align="center center">
+  <md-tabs flex="90" md-dynamic-height md-selected="ctrl.tabIndex" class="hidden-tabs" md-border-bottom md-autoselect>
+    <md-tab label="ProjectDir">
+      <section layout="row" layout-align="center center">
+        <section flex="60" class="init-box" layout="column" layout-align="center center" md-whiteframe-16dp >
+          <div layout="column" layout-align="center center" ng-if="ctrl.projects.length > 0">
+            <h3>Choose an existing project</h3>
+            <md-button ng-show="ctrl.showFolderBrowser" type="button" (click)="ctrl.showFolderBrowser = !ctrl.showFolderBrowser" class="md-primary shrink-me">Choose</md-button>
+            <select-list ng-show="!ctrl.showFolderBrowser"
+              [items]="ctrl.projects"
+              [selected]="ctrl.lastProject"
+              (selected-item)="ctrl.project = $event.detail"
+              label="path" identifier="id"
+              class="shrink-me md-whiteframe-2dp"></select-list>
+            <p>or</p>
+          </div>
+
+          <div layout="column" layout-align="center center">
+            <h3>Browse for a Project Folder</h3>
+            <md-button ng-show="!ctrl.showFolderBrowser" type="button" (click)="ctrl.showFolderBrowser = !ctrl.showFolderBrowser" class="md-primary shrink-me">Browse</md-button>
+            <folder-browser
+              ng-show="ctrl.showFolderBrowser"
+              class="shrink-me"
+              start-path='.'
+              (folder-chosen)="ctrl.folderClicked($event)">
+            </folder-browser>
+          </div>
+
+          <div layout="row" layout-align="center center" class="init-buttons">
+            <md-button type="button" (click)="ctrl.chooseProject()" ng-disabled="!ctrl.canProjectNext()" class="md-raised md-primary">Next</md-button>
+          </div>
+        </section>
+      </section>
+    </md-tab>
+
+
+
+    <md-tab label="InitIfNeeded">
+      <section layout="row" layout-align="center center">
+        <section flex="60" class="init-box" layout="column" layout-align="center center" md-whiteframe-16dp >
+          <p>{{ctrl.currentProject.path}}</p>
+          <h1>This project needs to be initialized</h1>
+
+          <form flex layout-fill layout="column" class="initForm">
+            <md-input-container>
+              <label>DataHub Name</label>
+              <input type="text" ng-model="ctrl.initSettings.name" required="required" />
+            </md-input-container>
+            <md-input-container>
+              <label>MarkLogic Host</label>
+              <input type="text" ng-model="ctrl.initSettings.host" required="required" />
+            </md-input-container>
+            <h3 class="md-primary">Staging</h3>
+            <section layout="column" class="sub-section">
+              <md-input-container>
+                <label>Staging Appserver Name</label>
+                <input type="text" ng-model="ctrl.initSettings.stagingHttpName" required="required" />
+              </md-input-container>
+              <md-input-container>
+                <label>Staging Appserver Port</label>
+                <input type="number" ng-model="ctrl.initSettings.stagingPort" required="required" />
+              </md-input-container>
+              <md-input-container>
+                <label>Staging Database Name</label>
+                <input type="text" ng-model="ctrl.initSettings.stagingDbName" required="required" />
+              </md-input-container>
+              <md-input-container>
+                <label>Staging Forests Per Host</label>
+                <input type="number" ng-model="ctrl.initSettings.stagingForestsPerHost" required="required" />
+              </md-input-container>
+            </section>
+            <h3 class="md-primary">Final</h3>
+            <section layout="column" class="sub-section">
+              <md-input-container>
+                <label>Final Appserver Name</label>
+                <input type="text" ng-model="ctrl.initSettings.finalHttpName" required="required" />
+              </md-input-container>
+              <md-input-container>
+                <label>Final Appserver Port</label>
+                <input type="number" ng-model="ctrl.initSettings.finalPort" required="required" />
+              </md-input-container>
+              <md-input-container>
+                <label>Final Database Name</label>
+                <input type="text" ng-model="ctrl.initSettings.finalDbName" required="required" />
+              </md-input-container>
+              <md-input-container>
+                <label>Final Forests Per Host</label>
+                <input type="number" ng-model="ctrl.initSettings.finalForestsPerHost" required="required" />
+              </md-input-container>
+            </section>
+            <h3 class="md-primary">Trace</h3>
+            <section layout="column" class="sub-section">
+              <md-input-container>
+                <label>Trace Appserver Name</label>
+                <input type="text" ng-model="ctrl.initSettings.traceHttpName" required="required" />
+              </md-input-container>
+              <md-input-container>
+                <label>Trace Appserver Port</label>
+                <input type="number" ng-model="ctrl.initSettings.tracePort" required="required" />
+              </md-input-container>
+              <md-input-container>
+                <label>Trace Database Name</label>
+                <input type="text" ng-model="ctrl.initSettings.traceDbName" required="required" />
+              </md-input-container>
+              <md-input-container>
+                <label>Trace Forests Per Host</label>
+                <input type="number" ng-model="ctrl.initSettings.traceForestsPerHost" required="required" />
+              </md-input-container>
+            </section>
+            <h3 class="md-primary">Other</h3>
+            <section layout="column" class="sub-section">
+              <md-input-container>
+                <label>Modules Database Name</label>
+                <input type="text" ng-model="ctrl.initSettings.modulesDbName" required="required" />
+              </md-input-container>
+              <md-input-container>
+                <label>Triggers Database Port</label>
+                <input type="text" ng-model="ctrl.initSettings.triggersDbName" required="required" />
+              </md-input-container>
+              <md-input-container>
+                <label>Schemas Database Name</label>
+                <input type="text" ng-model="ctrl.initSettings.schemasDbName" required="required" />
+              </md-input-container>
+              <md-input-container>
+                <label>Authentication Method</label>
+                <md-select ng-model="ctrl.initSettings.authMethod">
+                  <md-option>digest</md-option>
+                  <md-option>basic</md-option>
+                </md-select>
+              </md-input-container>
+            </section>
+          </form>
+
+          <div layout="row" layout-align="center center" class="init-buttons">
+            <md-button type="button" (click)="ctrl.back()">&lt; Go Back</md-button>
+            <md-button type="button" (click)="ctrl.restoreInitDefaults()">Restore Defaults</md-button>
+            <md-button type="button" (click)="ctrl.initProject()" class="md-raised md-primary">Initialize</md-button>
+          </div>
+        </section>
+      </section>
+    </md-tab>
+
+
+
+    <md-tab label="Environment">
+      <section layout="row" layout-align="center center">
+        <section flex="60" class="init-box" layout-fill layout="column" layout-align="center center" md-whiteframe-16dp>
+          <h1>Choose Your Project Environment</h1>
+
+          <select-list
+            [items]="ctrl.currentProject.environments"
+            [selected]="ctrl.currentProject.environments[0]"
+            (selected-item)="ctrl.gotEnvironment($event.detail)"
+            class="shrink-me md-whiteframe-2dp"></select-list>
+
+          <div layout="row" layout-align="center center" class="init-buttons">
+            <md-button type="button" (click)="ctrl.back()">&lt; Back</md-button>
+            <md-button type="button" ng-disabled="!ctrl.currentEnvironmentString" (click)="ctrl.environmentNext()" class="md-raised md-primary">Next &gt;</md-button>
+          </div>
+        </section>
+      </section>
+    </md-tab>
+
+    <md-tab label="Login">
+      <section layout="row" layout-align="center center">
+        <section flex="60" class="login-box" layout="column" layout-align="center center" md-whiteframe-16dp>
+          <h1>Login to the Data Hub</h1>
+          <form flex layout-fill layout-padding layout="column" class="initForm" (ng-submit)="ctrl.login()">
+            <md-input-container>
+              <label>User Name</label>
+              <input id="username" type="text" ng-model="ctrl.loginInfo.username" required="required" />
+            </md-input-container>
+            <md-input-container>
+              <label>Password</label>
+              <input id="password" type="password" ng-model="ctrl.loginInfo.password" required="required" />
+            </md-input-container>
+          </form>
+          <div layout="row" layout-align="center center" class="init-buttons">
+            <md-button type="button" (click)="ctrl.back()">&lt; Back</md-button>
+            <md-button type="button" class="md-raised md-primary" (click)="ctrl.login()">Login</md-button>
+          </div>
+        </section>
+      </section>
+    </md-tab>
+
+    <md-tab label="InstalledCheck">
+      <section layout="row" layout-align="center center">
+        <section flex="60" layout="column" layout-align="center center" md-whiteframe-16dp>
+          <div layout="column" layout-align="center center">
+            <h1>Checking Project...</h1>
+            <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+          </div>
+        </section>
+      </section>
+    </md-tab>
+
+    <md-tab label="Installer">
+      <div layout="column" layout-align="center center">
+        <md-progress-circular ng-if="!ctrl.progressHidden" md-mode="determinate" value="{{ctrl.percentComplete}}"></md-progress-circular>
+        <section flex layout-padding class="md-whiteframe-16dp install-box">
+          <pre>{{ctrl.message}}</pre>
+        </section>
+        <div layout="row" layout-align="center center" class="init-buttons">
+          <md-button type="button" (click)="ctrl.back()">&lt; Back</md-button>
+          <md-button type="button" ng-disabled="!ctrl.currentEnvironment" (click)="ctrl.environmentNext()" class="md-raised md-primary">Next &gt;</md-button>
+        </div>
+      </div>
+    </md-tab>
+  </md-tabs>
+</div>

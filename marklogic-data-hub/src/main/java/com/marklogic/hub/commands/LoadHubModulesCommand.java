@@ -32,7 +32,6 @@ import com.marklogic.xcc.ContentSource;
 import com.marklogic.xcc.ContentSourceFactory;
 import com.marklogic.xcc.SecurityOptions;
 import com.marklogic.xcc.Session;
-import com.marklogic.xcc.Session.TransactionMode;
 import com.marklogic.xcc.exceptions.RequestException;
 
 public class LoadHubModulesCommand extends AbstractCommand {

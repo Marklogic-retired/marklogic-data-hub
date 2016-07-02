@@ -98,13 +98,13 @@ public class DefaultHubConfigFactory extends PropertySourceFactory {
         prop = getProperty("mlTraceDbName");
         if (prop != null) {
             logger.info("mlTraceDbName: " + prop);
-            c.tracingDbName = prop;
+            c.traceDbName = prop;
         }
 
         prop = getProperty("mlTraceAppserverName");
         if (prop != null) {
             logger.info("mlTraceAppserverName: " + prop);
-            c.tracingHttpName = prop;
+            c.traceHttpName = prop;
         }
 
         prop = getProperty("mlTracePort");
@@ -116,7 +116,7 @@ public class DefaultHubConfigFactory extends PropertySourceFactory {
         prop = getProperty("mlTraceForestsPerHost");
         if (prop != null) {
             logger.info("Trace Forests Per Host: " + prop);
-            c.tracingForestsPerHost = Integer.parseInt(prop);
+            c.traceForestsPerHost = Integer.parseInt(prop);
         }
 
         prop = getProperty("mlModulesDbName");

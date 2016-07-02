@@ -1,0 +1,10 @@
+bin/
+build/
+.idea
+.classpath
+.project
+.gradle
+.settings
+node_modules
+src/main/resources/static
+.DS_Store

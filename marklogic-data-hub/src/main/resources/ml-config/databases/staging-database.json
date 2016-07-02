@@ -1,5 +1,5 @@
 {
-  "database-name": "%%STAGING_DB_NAME%%",
+  "database-name": "%%mlStagingDbName%%",
   "range-element-index": [
     {
       "scalar-type": "dateTime",

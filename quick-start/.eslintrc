@@ -1,0 +1,28 @@
+{
+  "extends": [
+    "defaults",
+    "defaults/configurations/airbnb",
+    "defaults/rules/eslint/es6/off"
+  ],
+  "plugins": [
+    "babel"
+  ],
+  "env": {
+    "node": true
+  },
+  "rules": {
+    "indent": [2, 2, {"SwitchCase": 1}],
+    "max-len": [1, 120, 4],
+    "consistent-this": [2, "self"],
+    "no-use-before-define": [2, "nofunc"],
+    "no-eq-null": 0,
+    "eqeqeq": [2, "allow-null"],
+    "no-unused-vars": [2, {"varsIgnorePattern": "[A-Z].+"}],
+    "spaced-comment": 0,
+    "valid-jsdoc": [2, {"prefer": {"return": "returns"}, "requireReturn": false}],
+    "new-cap": 0,
+    "babel/new-cap": 2,
+    "brace-style": 1,
+    "no-console": 0
+  }
+}

@@ -15,17 +15,16 @@
  */
 package com.marklogic.hub;
 
-public class HubConfig {
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
-    public static final String DEFAULT_USERNAME = "admin";
-    public static final String DEFAULT_PASSWORD = "admin";
+public class HubConfig {
 
     public static final String DEFAULT_HOST = "localhost";
 
     public static final String DEFAULT_STAGING_NAME = "data-hub-STAGING";
     public static final String DEFAULT_FINAL_NAME = "data-hub-FINAL";
-    public static final String DEFAULT_TRACING_NAME = "data-hub-TRACING";
-    public static final String DEFAULT_MODULES_DB_NAME = "data-hub-MODULES";
+    public static final String DEFAULT_TRACE_NAME = "data-hub-TRACING";
+    public static final String DEFAULT_mlModulesDbName = "data-hub-MODULES";
     public static final String DEFAULT_TRIGGERS_DB_NAME = "data-hub-TRIGGERS";
     public static final String DEFAULT_SCHEMAS_DB_NAME = "data-hub-SCHEMAS";
 
@@ -42,8 +41,10 @@ public class HubConfig {
 
     public String name = DEFAULT_APP_NAME;
 
-    public String adminUsername = DEFAULT_USERNAME;
-    public String adminPassword = DEFAULT_PASSWORD;
+    @JsonIgnore
+    public String adminUsername;
+    @JsonIgnore
+    public String adminPassword;
 
     public String host = DEFAULT_HOST;
 
@@ -57,12 +58,12 @@ public class HubConfig {
     public Integer finalForestsPerHost = DEFAULT_FORESTS_PER_HOST;
     public Integer finalPort = DEFAULT_FINAL_PORT;
 
-    public String tracingDbName = DEFAULT_TRACING_NAME;
-    public String tracingHttpName = DEFAULT_TRACING_NAME;
-    public Integer tracingForestsPerHost = 1;
+    public String traceDbName = DEFAULT_TRACE_NAME;
+    public String traceHttpName = DEFAULT_TRACE_NAME;
+    public Integer traceForestsPerHost = 1;
     public Integer tracePort = DEFAULT_TRACE_PORT;
 
-    public String modulesDbName = DEFAULT_MODULES_DB_NAME;
+    public String modulesDbName = DEFAULT_mlModulesDbName;
     public String triggersDbName = DEFAULT_TRIGGERS_DB_NAME;
     public String schemasDbName = DEFAULT_SCHEMAS_DB_NAME;
 

@@ -1,0 +1,30 @@
+.home-component {
+  > h2 {
+    color: black;
+  }
+}
+
+new-entity {
+  label {
+    margin-bottom: 10px;
+  }
+}
+
+form {
+  md-toolbar {
+    min-height: 40px;
+    max-height: 40px;
+    height: 40px;
+  }
+}
+
+.entity-item {
+  &.active {
+    background-color: rgba(121,85,72,.25);
+  }
+
+  &:hover {
+    background-color: rgba(121,85,72,.15);
+    cursor: pointer;
+  }
+}

@@ -1,0 +1,53 @@
+<md-dialog class="new-entity" aria-label="Create Entity" ng-cloak>
+  <form>
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>Create Entity</h2>
+        <span flex></span>
+        <md-button class="md-icon-button" ng-click="ctrl.cancel()">
+          <i class="fa fa-close"></i>
+        </md-button>
+      </div>
+    </md-toolbar>
+    <md-dialog-content class="entity-content">
+      <div class="md-dialog-content" flex layout="column">
+        <md-input-container>
+          <label>Entity Name</label>
+          <input md-autofocus ng-model="ctrl.entity.entityName">
+        </md-input-container>
+
+        <section flex layout="row">
+          <md-input-container>
+            <label>Ingest Flow Name</label>
+            <input ng-model="ctrl.entity.inputFlows[0].flowName">
+          </md-input-container>
+          <md-input-container>
+            <label>Harmonize Flow Name</label>
+            <input ng-model="ctrl.entity.harmonizeFlows[0].flowName">
+          </md-input-container>
+        </section>
+        <label>Plugin Type</label>
+        <select-list
+          [items]="ctrl.pluginFormats"
+          [selected]="ctrl.entity.pluginFormat"
+          label="label" identifier="value"
+          (selected-item)="ctrl.entity.pluginFormat = $event.detail"></select-list>
+        <label>Data Format</label>
+        <select-list
+          [items]="ctrl.dataFormats"
+          [selected]="ctrl.entity.dataFormat"
+          label="label" identifier="value"
+          (selected-item)="ctrl.entity.dataFormat = $event.detail"></select-list>
+      </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+      <span flex></span>
+      <md-button class="md-raised" ng-click="ctrl.cancel()">
+       Cancel
+      </md-button>
+      <md-button class="md-primary md-raised" ng-click="ctrl.create()">
+        Create
+      </md-button>
+    </md-dialog-actions>
+  </form>
+</md-dialog>

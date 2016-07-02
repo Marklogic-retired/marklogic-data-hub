@@ -1,0 +1,80 @@
+folder-browser {
+  width: 60%;
+  border: 1px solid rgba(0,0,0,0.15);
+}
+
+.foldertree {
+  margin: 0px;
+  padding: 10px;
+  list-style: none;
+
+  .filetree {
+    padding: 0px 10px;
+  }
+
+  div.entry {
+    padding: 2px;
+    &:hover {
+      background-color: rgba(121,85,72,.25);
+    }
+    cursor: pointer;
+  }
+  p {
+    display: inline-block;
+    margin: 2px;
+  }
+}
+
+
+.current-folder {
+  background-color: rgba(121,85,72,.5);
+  padding: 5px;
+
+  div {
+    font-weight: bold;
+  }
+
+  input {
+    width: 100%;
+  }
+
+  md-input-container {
+    margin-bottom: 0px;
+    padding-bottom: 0px;
+  }
+
+}
+
+md-input-container {
+  margin-bottom: 0px;
+  padding-bottom: 0px;
+}
+
+.foldertree-container {
+  position: relative;
+
+  .ajax-progress {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0px;
+    bottom: 0;
+    background-color: rgba(255,255,255,0.55);
+  }
+}
+
+.foldertree {
+
+  max-height: 200px;
+  overflow: auto;
+  *:focus {
+    outline: none;
+  }
+
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none;   /* Chrome/Safari/Opera */
+  -khtml-user-select: none;    /* Konqueror */
+  -moz-user-select: none;      /* Firefox */
+  -ms-user-select: none;       /* Internet Explorer/Edge */
+  user-select: none;
+}

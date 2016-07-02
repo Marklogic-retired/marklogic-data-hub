@@ -125,11 +125,11 @@ public class HubTestBase {
         authMethod = Authentication.valueOf(properties.getProperty("auth").toUpperCase());
 
         stagingClient = DatabaseClientFactory.newClient(host, stagingPort, user, password, authMethod);
-        stagingModulesClient  = DatabaseClientFactory.newClient(host, stagingPort, HubConfig.DEFAULT_MODULES_DB_NAME, user, password, authMethod);
+        stagingModulesClient  = DatabaseClientFactory.newClient(host, stagingPort, HubConfig.DEFAULT_mlModulesDbName, user, password, authMethod);
         finalClient = DatabaseClientFactory.newClient(host, finalPort, user, password, authMethod);
-        finalModulesClient  = DatabaseClientFactory.newClient(host, stagingPort, HubConfig.DEFAULT_MODULES_DB_NAME, user, password, authMethod);
+        finalModulesClient  = DatabaseClientFactory.newClient(host, stagingPort, HubConfig.DEFAULT_mlModulesDbName, user, password, authMethod);
         traceClient = DatabaseClientFactory.newClient(host, tracePort, user, password, authMethod);
-        traceModulesClient  = DatabaseClientFactory.newClient(host, stagingPort, HubConfig.DEFAULT_MODULES_DB_NAME, user, password, authMethod);
+        traceModulesClient  = DatabaseClientFactory.newClient(host, stagingPort, HubConfig.DEFAULT_mlModulesDbName, user, password, authMethod);
     }
 
     public HubTestBase() {
@@ -160,11 +160,19 @@ public class HubTestBase {
     }
 
     protected static void installHub() throws IOException {
-        new DataHub(getHubConfig()).install();
+        new DataHub(getHubConfig()).install(new StatusListener() {
+            @Override
+            public void onStatusChange(int percentComplete, String message) {
+            }
+        });
     }
 
     protected static void uninstallHub() throws IOException {
-        new DataHub(getHubConfig()).uninstall();
+        new DataHub(getHubConfig()).uninstall(new StatusListener() {
+            @Override
+            public void onStatusChange(int percentComplete, String message) {
+            }
+        });
         FileUtils.deleteDirectory(new File(PROJECT_PATH));
     }
 
@@ -206,7 +214,7 @@ public class HubTestBase {
     }
 
     protected static int getTracingDocCount() {
-        return getDocCount(HubConfig.DEFAULT_TRACING_NAME);
+        return getDocCount(HubConfig.DEFAULT_TRACE_NAME);
     }
 
     protected static int getDocCount(String database) {
@@ -255,7 +263,7 @@ public class HubTestBase {
     }
 
     protected static EvalResultIterator runInModules(String query) {
-        return runInDatabase(query, HubConfig.DEFAULT_MODULES_DB_NAME);
+        return runInDatabase(query, HubConfig.DEFAULT_mlModulesDbName);
     }
 
     protected static EvalResultIterator runInDatabase(String query, String databaseName) {

@@ -1,0 +1,79 @@
+<md-dialog class="mlcp-dialog" aria-label="Run Input Flow" ng-cloak>
+  <form>
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>Run Input Flow</h2>
+        <span flex></span>
+        <md-button class="md-icon-button" aria-label="cancel" ng-click="ctrl.cancel()">
+          <i class="fa fa-close"></i>
+        </md-button>
+      </div>
+    </md-toolbar>
+    <md-dialog-content class="mlcp-content">
+      <div class="md-dialog-content" flex layout="column">
+        <section class="group-container" flex layout="column" ng-init="inputFilesGroup = {}">
+          <md-subheader class="md-primary md-no-sticky"
+            (click)="inputFilesGroup.collapsed = !inputFilesGroup.collapsed"><i class="fa fa-caret-right" ng-class="ctrl.getGroupClass(inputFilesGroup)"></i> Input Files</md-subheader>
+
+          <section class="group-section slideDown" flex layout="column" ng-hide="inputFilesGroup.collapsed">
+            <folder-browser
+              [start-path]="ctrl.mlcp.input_file_path"
+              (folder-chosen)="ctrl.folderClicked($event)">
+            </folder-browser>
+          </section>
+        </section>
+
+        <section class="group-container" flex layout="column" ng-repeat="group in ctrl.groups" ng-show="ctrl.isGroupVisible(group.category)">
+          <md-subheader class="md-primary md-no-sticky"
+            (click)="group.collapsed = !group.collapsed"><i class="fa fa-caret-right" ng-class="ctrl.getGroupClass(group)"></i> {{group.category}}</md-subheader>
+          <section class="group-section slideDown" flex layout="column" ng-hide="group.collapsed">
+            <p class="hint"><strong>Hint:</strong> Hover over the labels to view the description</p>
+            <div flex layout="column" class="setting" ng-repeat="setting in ::group.settings">
+              <md-tooltip class="custom-tt" md-delay="500" md-direction="top">
+                <pre>{{setting.description}}</pre>
+              </md-tooltip>
+              <md-switch name="{{setting.field}}" ng-if="setting.type === 'boolean'" ng-model="setting.value" ng-focus="ctrl.hideFileTree()">
+              {{setting.label}}</md-switch>
+              <md-input-container ng-if="setting.type !== 'boolean'">
+                <label for="{{setting.field}}" ng-focus="setting.tipVisible = true">
+                  {{setting.label}}
+                </label>
+                <input type="text" class="form-control" name="{{setting.field}}" ng-if="ctrl.isText(setting.type)" ng-model="setting.value" placeholder="{{setting.placeholder ? setting.placeholder : ''}}" ng-focus="ctrl.hideFileTree()"
+                  ng-readonly="setting.readOnly" ng-keypress="makeDefaultValueReadOnlyIfApplicable($event)"/>
+                <md-select class="form-control" name="{{setting.field}}" ng-if="setting.type === 'type'" ng-model="setting.value" ng-focus="ctrl.hideFileTree()">
+                  <md-option ng-repeat="option in ::setting.options" value="{{option.value}}">{{option.label}}</md-option>
+                </md-select>
+              </md-input-container>
+            </div>
+          </section>
+        </section>
+        <h4>
+          <span>
+            <md-tooltip class="custom-tt" md-delay="500" md-direction="top">
+            This is the MLCP Command line that we generated from the options you chose.
+            </md-tooltip>
+            MLCP Command
+          </span>
+          <i popover-trigger="mouseenter" class="fa fa-copy"
+            aria-hidden="true" ngclipboard ngclipboard-success="ctrl.cmdCopied()" data-clipboard-target="#mlcpcmd">
+            <md-tooltip md-direction="top">
+              Copy MLCP command to the clipboard.
+            </md-tooltip>
+          </i>
+        </h4>
+        <section class="mlcp-cmd" flex layout="column">
+          <pre id="mlcpcmd">{{ctrl.mlcpCommand}}</pre>
+        </section>
+      </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+      <span flex></span>
+      <md-button class="md-raised" aria-label="cancel" ng-click="ctrl.cancel()">
+       Cancel
+      </md-button>
+      <md-button class="md-primary md-raised" aria-label="create" ng-click="ctrl.runImport()">
+        Import
+      </md-button>
+    </md-dialog-actions>
+  </form>
+</md-dialog>
