@@ -49,6 +49,8 @@ public class HubProject {
         customTokens.put("%%mlTraceForestsPerHost%%", hubConfig.traceForestsPerHost.toString());
 
         customTokens.put("%%mlModulesDbName%%", hubConfig.modulesDbName);
+        customTokens.put("%%mlTriggersDbName%%", hubConfig.triggersDbName);
+        customTokens.put("%%mlSchemasDbName%%", hubConfig.schemasDbName);
     }
 
     public void init() {

@@ -1,0 +1,39 @@
+<div @fadeState="vizState" class="modal-backdrop"></div>
+<div @growState="vizState" class="dialog-container">
+  <div class="dialog new-flow-dialog">
+    <md-toolbar color="primary">
+      <h4 class="modal-title">Create Flow</h4>
+      <span flex></span>
+      <button md-icon-button (click)="cancel()" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </md-toolbar>
+    <div class="dialog-content">
+      <div class="modal-body">
+        <div class="md-dialog-content" flex layout="column">
+          <md-input placeholder="{{flowType}} Flow Name" md-autofocus [(ngModel)]="flow.flowName"></md-input>
+          <label>Plugin Type</label>
+          <select-list
+            [items]="pluginFormats"
+            [initialSelectedItem]="pluginFormats[0]"
+            label="label" identifier="value"
+            (selectedItem)="flow.pluginFormat = $event.detail"></select-list>
+          <label>Data Format</label>
+          <select-list
+            read-only="true"
+            [items]="dataFormats"
+            [initialSelectedItem]="dataFormats[0]"
+            label="label" identifier="value"></select-list>
+        </div>
+      </div>
+      <div class="modal-footer" layout="row" layout-align="end center">
+        <button md-raised-button aria-label="cancel" (click)="cancel()">
+         Cancel
+        </button>
+        <button md-raised-button color="primary" aria-label="create" (click)="create()">
+          Create
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,172 @@
+<!-- No header, and the drawer stays open on larger screens (fixed drawer). -->
+<div class="mdl-layout mdl-layout--fixed-drawer">
+  <div class="mdl-layout__drawer">
+    <span class="mdl-layout-title">Entities</span>
+    <ul class="entities mdl-list">
+      <li
+        class="entity mdl-list__item"
+        [ngClass]="isActiveEntity(entity)"
+        *ngFor="let entity of entities">
+        <span class="mdl-list__item-primary-content" (click)="setEntity(entity)">
+        <i class="material-icons mdl-list__item-icon">domain</i>
+        {{ entity.entityName }}
+        </span>
+        <div class="subheader">Input Flows</div>
+        <ul class="flows mdl-list">
+          <li
+            class="flow mdl-list__item"
+            *ngFor="let flow of entity.inputFlows">
+            <span class="mdl-list__item-primary-content">
+              <i class="material-icons mdl-list__item-icon">transform</i>
+              {{ flow.flowName }}
+            </span>
+            <span class="mdl-list__item-secondary-action" (click)="runInputFlow($event, flow)">
+              <button class="mdl-button mdl-js-button mdl-button--icon">
+                <i class="material-icons mdl-list__item-icon">play_circle_outline</i>
+              </button>
+            </span>
+          </li>
+        </ul>
+        <div class="subheader">Harmonize Flows</div>
+        <ul class="flows mdl-list">
+          <li
+            class="flow mdl-list__item"
+            *ngFor="let flow of entity.harmonizeFlows">
+            <span class="mdl-list__item-primary-content">
+              <i class="material-icons mdl-list__item-icon">transform</i>
+              {{ flow.flowName }}
+            </span>
+            <span class="mdl-list__item-secondary-action" (click)="runHarmonizeFlow(flow)">
+              <button class="mdl-button mdl-js-button mdl-button--icon">
+                <i class="material-icons mdl-list__item-icon">play_circle_outline</i>
+              </button>
+            </span>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+  <main class="mdl-layout__content">
+    <div class="page-content">
+      <pre flex class="mlcp-status">{{ mlcpStatus }}</pre>
+    </div>
+  </main>
+</div>
+<mlcp></mlcp>
+<new-entity></new-entity>
+<new-flow></new-flow>
+<!-- <md-sidenav-layout>
+  <md-sidenav #start mode="side" [opened]="true" flex>
+    <md-toolbar color="primary">
+      <h2>Entities</h2>
+      <div flex></div>
+      <button md-icon-button aria-label="New Entity" (click)="showNewEntity($event)">
+        <i class="fa fa-plus"></i>
+      </button>
+    </md-toolbar>
+    <div class="row">
+      <div class="col-md-12">
+        <ul class="entities">
+          <li class="entity"
+            *ngFor="let entity of entities"
+            ng-class="isActiveEntity(entity)"
+            (click)="setEntity(entity)">
+            <h3>{{ entity.entityName }}</h3>
+            <section flex layout="column" layout-align="start start">
+              <section flex layout="row">
+                <h1>Input Flows</h1>
+                <md-button class="md-icon-button" aria-label="New Input Flow" (click)="newInputFlow($event)">
+                  <i class="fa fa-plus"></i>
+                </md-button>
+              </section>
+              <md-list class="flows">
+                <md-list-item class="flow-item" *ngFor="let flow of entity.inputFlows">
+                  <p>
+                    <span>{{ flow.flowName }}</span>
+                    <md-button class="md-icon-button" aria-label="Run Input Flow" (click)="runInputFlow($event, flow, myTemplate)">
+                      <i class="fa fa-play"></i>
+                    </md-button>
+                  </p>
+                </md-list-item>
+              </md-list>
+            </section>
+
+            <section flex layout="column" layout-align="start start">
+              <section flex layout="row">
+                <h1>Harmonize Flows</h1>
+                <md-button class="md-icon-button" aria-label="New Input Flow" (click)="newHarmonizeFlow($event)">
+                  <i class="fa fa-plus"></i>
+                </md-button>
+              </section>
+              <md-list class="flows">
+                <md-list-item class="flow-item" *ngFor="let flow of entity.harmonizeFlows">
+                  <p>
+                    <span>{{ flow.flowName }}</span>
+                    <md-button class="md-icon-button" aria-label="Run Input Flow" (click)="runHarmonizeFlow(flow)">
+                      <i class="fa fa-play"></i>
+                    </md-button>
+                  </p>
+
+                </md-list-item>
+              </md-list>
+            </section>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </md-sidenav>
+  <div>
+    <section layout="row">
+      <section *ngIf="entity">
+        <h1>{{entity.entityName}} Flows</h1>
+        <h3>{{entity.dataFormat}}</h3>
+
+        <section flex layout="column" layout-align="start start">
+          <section flex layout="row">
+            <h1>Input Flows</h1>
+            <md-button class="md-icon-button" aria-label="New Input Flow" (click)="newInputFlow($event)">
+              <i class="fa fa-plus"></i>
+            </md-button>
+          </section>
+          <md-list class="flows">
+            <md-list-item class="flow-item" *ngFor="let flow of entity.inputFlows">
+              <p>
+                <span>{{ flow.flowName }}</span>
+                <md-button class="md-icon-button" aria-label="Run Input Flow" (click)="runInputFlow($event, flow, myTemplate)">
+                  <i class="fa fa-play"></i>
+                </md-button>
+              </p>
+            </md-list-item>
+          </md-list>
+        </section>
+
+        <section flex layout="column" layout-align="start start">
+          <section flex layout="row">
+            <h1>Harmonize Flows</h1>
+            <md-button class="md-icon-button" aria-label="New Input Flow" (click)="newHarmonizeFlow($event)">
+              <i class="fa fa-plus"></i>
+            </md-button>
+          </section>
+          <md-list class="flows">
+            <md-list-item class="flow-item" *ngFor="let flow of entity.harmonizeFlows">
+              <p>
+                <span>{{ flow.flowName }}</span>
+                <md-button class="md-icon-button" aria-label="Run Input Flow" (click)="runHarmonizeFlow(flow)">
+                  <i class="fa fa-play"></i>
+                </md-button>
+              </p>
+
+            </md-list-item>
+          </md-list>
+        </section>
+      </section>
+      <section flex layout-padding>
+        <pre flex class="mlcp-status">{{ mlcpStatus }}</pre>
+      </section>
+    </section>
+  </div>
+</md-sidenav-layout>
+<mlcp></mlcp>
+<new-entity></new-entity>
+<new-flow></new-flow>
+ -->

@@ -1,0 +1,179 @@
+<div class="credentials-prompt">
+  <div class="marklogic-logo" id="mla-marklogic-logo">
+    <img src="/assets/img/logo.png">
+  </div>
+  <div class="login-wrapper" layout="row" layout-align="center start">
+    <section layout="column" layout-align="center center">
+      <h1 id="mla-loginPage-Text">Data Hub Quick Start</h1>
+      <section flex layout-padding class="install-status" *ngIf="installationStatus">
+        <pre>{{installationStatus}}</pre>
+      </section>
+
+    </section>
+    <div flex></div>
+    <div class="tab-group">
+      <div id="ProjectDirTab" class="tab-content" [hidden]="!tabs.ProjectDir">
+        <section layout="row" layout-align="center center">
+          <section class="init-box" layout="column" layout-align="center center">
+            <div class="project-browser" layout="column" layout-align="center center" *ngIf="projects && projects.length > 0">
+              <h3>Choose an existing project</h3>
+              <div class="shrinkable" @visibleState="showFolderBrowser ? 'active': 'hidden'" layout="column" layout-align="center center">
+                <button md-button (click)="showFolderBrowser = !showFolderBrowser">Choose</button>
+              </div>
+              <select-list
+                @visibleState="showFolderBrowser ? 'hidden' : 'active'"
+                [items]="projects"
+                [initialSelectedItem]="lastProject"
+                [allowRemove]="true"
+                (selectedItem)="project = $event"
+                (removedItem)="removeProject($event)"
+                label="path" identifier="id"
+                md-whiteframe-2dp></select-list>
+              <p>or</p>
+            </div>
+
+            <div layout="column" layout-align="center center">
+              <h3>Browse for a Project Folder</h3>
+              <div class="shrinkable" @visibleState="showFolderBrowser ? 'hidden': 'active'" layout="column" layout-align="center center">
+                <button md-button (click)="showFolderBrowser = !showFolderBrowser" class="shrink-me">Browse</button>
+              </div>
+
+              <folder-browser
+                @visibleState="showFolderBrowser ? 'active' : 'hidden'"
+                class="shrink-me"
+                start-path='.'
+                (folderChosen)="folderClicked($event)">
+              </folder-browser>
+            </div>
+
+            <div layout="row" layout-align="end center" class="init-buttons">
+              <button md-raised-button (click)="chooseProject()" [disabled]="!canProjectNext()">Next</button>
+            </div>
+          </section>
+        </section>
+      </div>
+
+
+      <div id="InitIfNeededTab" class="tab-content" [hidden]="!tabs.InitIfNeeded">
+        <section layout="row" layout-align="center center" *ngIf="currentProject">
+          <section class="init-box" layout="column" layout-align="center center">
+            <h3>This project needs to be initialized</h3>
+            <p>The project located at {{currentProject.path}} needs to be initialized.</p>
+
+            <div flex layout="column" class="scroller">
+              <form flex layout-padding layout="column" class="initForm">
+                <h3 class="md-primary">General</h3>
+                <div class="sub-section">
+                  <md-input placeholder="DataHub Name" type="text" name="name" [(ngModel)]="initSettings.name" required="required"></md-input>
+                  <md-input placeholder="MarkLogic Host" type="text" name="host" [(ngModel)]="initSettings.host" required="required"></md-input>
+                </div>
+                <h3 class="md-primary">Staging</h3>
+                <section class="sub-section">
+                  <md-input placeholder="Staging Appserver Name" type="text" name="stagingHttpName" [(ngModel)]="initSettings.stagingHttpName" required="required"></md-input>
+                  <md-input placeholder="Staging Appserver Port" type="number" name="stagingPort" [(ngModel)]="initSettings.stagingPort" required="required"></md-input>
+                  <md-input placeholder="Staging Database Name" type="text" name="stagingDbName" [(ngModel)]="initSettings.stagingDbName" required="required"></md-input>
+                  <md-input placeholder="Staging Forests Per Host" type="number" name="stagingForestsPerHost" [(ngModel)]="initSettings.stagingForestsPerHost" required="required"></md-input>
+                </section>
+                <h3 class="md-primary">Final</h3>
+                <section class="sub-section">
+                  <md-input placeholder="Final Appserver Name" type="text" name="finalHttpName" [(ngModel)]="initSettings.finalHttpName" required="required"></md-input>
+                  <md-input placeholder="Final Appserver Port" type="number" name="finalPort" [(ngModel)]="initSettings.finalPort" required="required"></md-input>
+                  <md-input placeholder="Final Database Name" type="text" name="finalDbName" [(ngModel)]="initSettings.finalDbName" required="required"></md-input>
+                  <md-input placeholder="Final Forests Per Host" type="number" name="finalForestsPerHost" [(ngModel)]="initSettings.finalForestsPerHost" required="required"></md-input>
+                </section>
+                <h3 class="md-primary">Trace</h3>
+                <section class="sub-section">
+                  <md-input placeholder="Trace Appserver Name" type="text" name="traceHttpName" [(ngModel)]="initSettings.traceHttpName" required="required"></md-input>
+                  <md-input placeholder="Trace Appserver Port" type="number" name="tracePort" [(ngModel)]="initSettings.tracePort" required="required"></md-input>
+                  <md-input placeholder="Trace Database Name" type="text" name="traceDbName" [(ngModel)]="initSettings.traceDbName" required="required"></md-input>
+                  <md-input placeholder="Trace Forests Per Host" type="number" name="traceForestsPerHost" [(ngModel)]="initSettings.traceForestsPerHost" required="required"></md-input>
+                </section>
+                <h3 class="md-primary">Other</h3>
+                <section class="sub-section">
+                  <md-input placeholder="Modules Database Name" type="text" name="modulesDbName" [(ngModel)]="initSettings.modulesDbName" required="required"></md-input>
+                  <md-input placeholder="Triggers Database Port" type="text" name="triggersDbName" [(ngModel)]="initSettings.triggersDbName" required="required"></md-input>
+                  <md-input placeholder="Schemas Database Name" type="text" name="schemasDbName" [(ngModel)]="initSettings.schemasDbName" required="required"></md-input>
+                  <div>
+                    <div><label>Authentication Method</label></div>
+                    <md-radio-group name="authMethod" [(ngModel)]="initSettings.authMethod">
+                      <md-radio-button value="digest">digest</md-radio-button>
+                      <md-radio-button value="basic">basic</md-radio-button>
+                    </md-radio-group>
+                  </div>
+                </section>
+              </form>
+            </div>
+
+            <div layout="row" layout-align="center center" class="init-buttons">
+              <button md-button (click)="back()">&lt; Back</button>
+              <button md-button (click)="restoreInitDefaults()">Restore Defaults</button>
+              <button md-raised-button (click)="initProject()">Initialize</button>
+            </div>
+          </section>
+        </section>
+      </div>
+
+
+      <div id="EnvironmentTab" class="tab-content" [hidden]="!tabs.Environment">
+        <section layout="row" layout-align="center center" *ngIf="currentProject">
+          <section class="init-box" layout-fill layout="column" layout-align="center center">
+            <h3>Choose Your Project Environment</h3>
+
+            <select-list
+              [items]="currentProject.environments"
+              [initialSelectedItem]="currentProject.environments[0]"
+              (selectedItem)="gotEnvironment($event)"
+              md-whiteframe-2dp
+              class="shrink-me"></select-list>
+
+            <div layout="row" layout-align="center center" class="init-buttons">
+              <button md-button (click)="back()">&lt; Back</button>
+              <button md-raised-button [disabled]="!currentEnvironmentString" (click)="environmentNext()">Next &gt;</button>
+            </div>
+          </section>
+        </section>
+      </div>
+
+      <div id="LoginTab" class="tab-content" [hidden]="!tabs.Login">
+        <section layout="row" layout-align="center center">
+          <section class="login-box" layout="column" layout-align="center center">
+            <h3>Login to the Data Hub</h3>
+            <form flex layout-fill layout-padding layout="column" class="loginForm" (submit)="login()">
+              <md-input placeholder="User Name" id="username" name="username" type="text" [(ngModel)]="loginInfo.username" required="required"></md-input>
+              <md-input placeholder="Password" name="password" type="password" [(ngModel)]="loginInfo.password" required="required"></md-input>
+            </form>
+            <div layout="row" layout-align="center center" class="init-buttons">
+              <button md-button (click)="back()">&lt; Back</button>
+              <button md-raised-button (click)="login()">Login</button>
+            </div>
+          </section>
+        </section>
+      </div>
+
+      <div id="InstalledCheckTab" class="tab-content" [hidden]="!tabs.InstalledCheck">
+        <section layout="row" layout-align="center center">
+          <section layout="column" layout-align="center center">
+            <div layout="column" layout-align="center center">
+              <h3>Checking Project...</h3>
+              <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+            </div>
+          </section>
+        </section>
+      </div>
+
+      <div id="InstallerTab" class="tab-content" [hidden]="!tabs.Installer">
+        <div layout="column" layout-align="center center">
+          <md-progress-circular *ngIf="!progressHidden" md-mode="determinate" value="{{percentComplete}}"></md-progress-circular>
+          <section flex layout-padding class="install-box">
+            <pre>{{message}}</pre>
+          </section>
+          <div layout="row" layout-align="center center" class="init-buttons">
+            <button md-button (click)="back()">&lt; Back</button>
+            <button md-raised-button [disabled]="!currentEnvironment" (click)="environmentNext()">Next &gt;</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-xs-1"></div>
+  </div>
+</div>

@@ -1,5 +1,6 @@
 package com.marklogic.quickstart.service;
 
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,7 @@ public class DataHubService {
         try {
             dataHub.install(listener);
         } catch(Throwable e) {
+            listener.onStatusChange(100, ExceptionUtils.getStackTrace(e));
             throw new DataHubException(e.getMessage(), e);
         }
     }

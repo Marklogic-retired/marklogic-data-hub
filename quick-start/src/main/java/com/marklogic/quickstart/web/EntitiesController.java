@@ -6,10 +6,15 @@ import java.util.Collection;
 
 import javax.servlet.http.HttpSession;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,12 +25,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.marklogic.hub.StatusListener;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.FlowType;
 import com.marklogic.quickstart.model.EntityModel;
 import com.marklogic.quickstart.model.EnvironmentConfig;
 import com.marklogic.quickstart.model.FlowModel;
 import com.marklogic.quickstart.model.Project;
+import com.marklogic.quickstart.model.StatusMessage;
 import com.marklogic.quickstart.service.CancellableTask;
 import com.marklogic.quickstart.service.EntityManagerService;
 import com.marklogic.quickstart.service.FlowManagerService;
@@ -35,6 +42,8 @@ import com.marklogic.quickstart.service.TaskManagerService;
 @Controller
 @Scope("session")
 public class EntitiesController {
+
+    protected final static Logger logger = LoggerFactory.getLogger(EntitiesController.class);
 
     @Autowired
     private ProjectManagerService projectManagerService;
@@ -47,6 +56,9 @@ public class EntitiesController {
 
     @Autowired
     private TaskManagerService taskManagerService;
+
+    @Autowired
+    private SimpMessagingTemplate template;
 
     @Autowired
     EnvironmentConfig envConfig;
@@ -200,6 +212,13 @@ public class EntitiesController {
         return resp;
     }
 
+    @MessageMapping("/mlcp-status")
+    @SendTo("/topic/mlcp-status")
+    @ResponseBody
+    public StatusMessage mlcpStatus(String message) {
+        return new StatusMessage(0, message);
+    }
+
     @RequestMapping(value = "/entities/{entityName}/flows/{flowType}/{flowName}/run/input", method = RequestMethod.POST)
     public ResponseEntity<BigInteger> runInputFlow(
             HttpSession session,
@@ -223,7 +242,13 @@ public class EntitiesController {
             flowManagerService.saveOrUpdateFlowMlcpOptionsToFile(entityName,
                     flowName, json.toString());
 
-            CancellableTask task = flowManagerService.runMlcp(json);
+            CancellableTask task = flowManagerService.runMlcp(json, new StatusListener() {
+                @Override
+                public void onStatusChange(int percentComplete, String message) {
+                    logger.info(message);
+                    template.convertAndSend("/topic/mlcp-status", new StatusMessage(percentComplete, message));
+                }
+            });
             return new ResponseEntity<BigInteger>(taskManagerService.addTask(task), HttpStatus.OK);
         }
         if (resp == null) {

@@ -1,0 +1,15 @@
+<header class="mdl-layout__header">
+  <div class="mdl-layout__header-row">
+    <!-- Title -->
+    <span class="mdl-layout-title">Data Hub Quick Start</span>
+    <!-- Add spacer, to align navigation to the right -->
+    <div class="mdl-layout-spacer"></div>
+    <mdl-button #menuButton="mdlButton" (click)="headerMenu.toggle($event, menuButton)" mdl-button-type="icon" mdl-ripple>
+      <i class="material-icons">person</i>
+    </mdl-button>
+
+    <mdl-menu #headerMenu="mdlMenu" mdl-menu-position="bottom-right">
+      <mdl-menu-item mdl-ripple (click)="logout()">Logout</mdl-menu-item>
+    </mdl-menu>
+  </div>
+</header>

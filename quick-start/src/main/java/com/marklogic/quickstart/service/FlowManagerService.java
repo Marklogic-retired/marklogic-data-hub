@@ -1,9 +1,12 @@
 package com.marklogic.quickstart.service;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -24,12 +27,14 @@ import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 import com.marklogic.contentpump.bean.MlcpBean;
 import com.marklogic.hub.FlowManager;
+import com.marklogic.hub.StatusListener;
 import com.marklogic.hub.flow.AbstractFlow;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.FlowType;
 import com.marklogic.quickstart.model.EnvironmentConfig;
 import com.marklogic.quickstart.model.FlowModel;
 import com.marklogic.quickstart.util.FileUtil;
+import com.marklogic.quickstart.util.SnooperOutputStream;
 
 @Service
 @Scope("session")
@@ -144,7 +149,7 @@ public class FlowManagerService {
         return "{ \"input_file_path\": \"" + envConfig.projectDir + "\" }";
     }
 
-    public CancellableTask runMlcp(JsonNode json) throws IOException {
+    public CancellableTask runMlcp(JsonNode json, StatusListener listener) throws IOException {
         CancellableTask task = new CancellableTask() {
 
             @Override
@@ -168,7 +173,16 @@ public class FlowManagerService {
                     bean.setInput_file_path(canonicalPath);
 
                     bean.setOutput_uri_replace("\"" + canonicalPath.replace("\\", "\\\\") + ", ''\"");
+
+                    PrintStream sysout = System.out;
+                    SnooperOutputStream sos = new SnooperOutputStream(listener, sysout);
+                    PrintStream ps = new PrintStream(sos);
+                    System.setOut(ps);
+
                     bean.run();
+
+                    System.out.flush();
+                    System.setOut(sysout);
                     resultFuture.completed(null);
                 }
 

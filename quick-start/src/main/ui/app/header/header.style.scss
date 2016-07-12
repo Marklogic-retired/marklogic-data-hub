@@ -1,0 +1,9 @@
+@import 'variables';
+
+header {
+  background-color: $color-primary;
+}
+
+.mdl-layout__header-row {
+  padding: 0 40px 0 40px;
+}

@@ -112,10 +112,12 @@ public class ProjectsController implements FileSystemEventListener {
     public EnvironmentConfig getEnvironment(@PathVariable int projectId,
             @PathVariable String environment) {
 
-        Project project = pm.getProject(projectId);
-        EnvironmentConfig ec = new EnvironmentConfig();
-        ec.init(project.path, environment);
-        return ec;
+        requireAuth();
+
+        // make sure the project exists
+        pm.getProject(projectId);
+
+        return envConfig;
     }
 
     @RequestMapping(value = "/projects/{projectId}/{environment}/login", method = RequestMethod.POST)
@@ -124,6 +126,10 @@ public class ProjectsController implements FileSystemEventListener {
             @PathVariable String environment,
             @RequestBody LoginInfo loginInfo,
             HttpSession session) throws IOException {
+
+        if (loginInfo.username == null || loginInfo.password == null) {
+            throw new NotAuthorizedException();
+        }
 
         Project project = pm.getProject(projectId);
         try {
@@ -134,7 +140,9 @@ public class ProjectsController implements FileSystemEventListener {
             session.setAttribute("currentProjectId", projectId);
             session.setAttribute("currentEnvironment", environment);
 
-            dataHubService.installUserModules();
+            if (envConfig.installed) {
+                dataHubService.installUserModules();
+            }
 
             String pluginDir = Paths.get(envConfig.projectDir, "plugins").toString();
             watcherService.watch(pluginDir, this);
@@ -206,12 +214,14 @@ public class ProjectsController implements FileSystemEventListener {
     }
 
     private void requireAuth() {
-        if (!envConfig.isInitialized()) {
+        if (!envConfig.isInitialized) {
             throw new NotAuthorizedException();
         }
     }
     @Override
     public void onWatchEvent(Path path, WatchEvent<Path> event) {
-        dataHubService.installUserModules();
+        if (envConfig.installed) {
+            dataHubService.installUserModules();
+        }
     }
 }

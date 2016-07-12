@@ -1,0 +1,26 @@
+export class HubSettings {
+  host: string = null;
+
+  stagingDbName: string = null;
+  stagingHttpName: string = null;
+  stagingForestsPerHost: number = null;
+  stagingPort: number = null;
+
+  finalDbName: string = null;
+  finalHttpName: string = null;
+  finalForestsPerHost: number = null;
+  finalPort: number = null;
+
+  traceDbName: string = null;
+  traceHttpName: string = null;
+  traceForestsPerHost: number = null;
+  tracePort: number = null;
+
+  modulesDbName: string = null;
+  triggersDbName: string = null;
+  schemasDbName: string = null;
+
+  authMethod: string = null;
+
+  constructor() {};
+}

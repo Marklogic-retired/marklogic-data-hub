@@ -38,16 +38,14 @@ public class EnvironmentConfig {
         init(projectDir, environment, null);
     }
 
-    public boolean isInitialized() {
-        return isInitialized;
-    }
-
     public void init(String projectDir, String environment, LoginInfo loginInfo) {
         this.projectDir = projectDir;
         this.environment = environment;
         mlSettings = new HubConfig(this.projectDir);
-        mlSettings.adminUsername = loginInfo.username;
-        mlSettings.adminPassword = loginInfo.password;
+        if (loginInfo != null) {
+            mlSettings.adminUsername = loginInfo.username;
+            mlSettings.adminPassword = loginInfo.password;
+        }
         loadConfigurationFromFiles();
 
         DataHub dh = new DataHub(mlSettings);
@@ -62,44 +60,50 @@ public class EnvironmentConfig {
         loadConfigurationFromFile(environmentProperties, envPropertiesFile);
         LOGGER.info(environmentProperties.toString());
 
-        setEnvPropString("mlAppName", mlSettings.name);
+        mlSettings.name = getEnvPropString("mlAppName", mlSettings.name);
 
-        setEnvPropString("mlHost", mlSettings.host);
+        mlSettings.host = getEnvPropString("mlHost", mlSettings.host);
 
-        setEnvPropString("mlStagingDbName", mlSettings.stagingDbName);
-        setEnvPropString("mlStagingAppserverName", mlSettings.stagingHttpName);
-        setEnvPropInteger("mlStagingForestsPerHost", mlSettings.stagingForestsPerHost);
-        setEnvPropInteger("mlStagingPort", mlSettings.stagingPort);
+        mlSettings.stagingDbName = getEnvPropString("mlStagingDbName", mlSettings.stagingDbName);
+        mlSettings.stagingHttpName = getEnvPropString("mlStagingAppserverName", mlSettings.stagingHttpName);
+        mlSettings.stagingForestsPerHost = getEnvPropInteger("mlStagingForestsPerHost", mlSettings.stagingForestsPerHost);
+        mlSettings.stagingPort = getEnvPropInteger("mlStagingPort", mlSettings.stagingPort);
 
-        setEnvPropString("mlFinalDbName", mlSettings.finalDbName);
-        setEnvPropString("mlFinalAppserverName", mlSettings.finalHttpName);
-        setEnvPropInteger("mlFinalForestsPerHost", mlSettings.finalForestsPerHost);
-        setEnvPropInteger("mlFinalPort", mlSettings.finalPort);
+        mlSettings.finalDbName = getEnvPropString("mlFinalDbName", mlSettings.finalDbName);
+        mlSettings.finalHttpName = getEnvPropString("mlFinalAppserverName", mlSettings.finalHttpName);
+        mlSettings.finalForestsPerHost = getEnvPropInteger("mlFinalForestsPerHost", mlSettings.finalForestsPerHost);
+        mlSettings.finalPort = getEnvPropInteger("mlFinalPort", mlSettings.finalPort);
 
-        setEnvPropString("mlTraceDbName", mlSettings.traceDbName);
-        setEnvPropString("mlTraceAppserverName", mlSettings.traceHttpName);
-        setEnvPropInteger("mlTraceForestsPerHost", mlSettings.traceForestsPerHost);
-        setEnvPropInteger("mlTracePort", mlSettings.tracePort);
+        mlSettings.traceDbName = getEnvPropString("mlTraceDbName", mlSettings.traceDbName);
+        mlSettings.traceHttpName = getEnvPropString("mlTraceAppserverName", mlSettings.traceHttpName);
+        mlSettings.traceForestsPerHost = getEnvPropInteger("mlTraceForestsPerHost", mlSettings.traceForestsPerHost);
+        mlSettings.tracePort = getEnvPropInteger("mlTracePort", mlSettings.tracePort);
 
-        setEnvPropString("mlModulesDbName", mlSettings.modulesDbName);
-        setEnvPropString("mlTriggersDbName", mlSettings.triggersDbName);
-        setEnvPropString("mlSchemasDbName", mlSettings.schemasDbName);
+        mlSettings.modulesDbName = getEnvPropString("mlModulesDbName", mlSettings.modulesDbName);
+        mlSettings.triggersDbName = getEnvPropString("mlTriggersDbName", mlSettings.triggersDbName);
+        mlSettings.schemasDbName = getEnvPropString("mlSchemasDbName", mlSettings.schemasDbName);
 
-        setEnvPropString("mlAuth", mlSettings.authMethod);
+        mlSettings.authMethod = getEnvPropString("mlAuth", mlSettings.authMethod);
     }
 
-    private void setEnvPropString(String key, String target) {
+    private String getEnvPropString(String key, String fallback) {
         String value = this.environmentProperties.getProperty(key);
-        if (value != null) {
-            target = value;
+        if (value == null) {
+            value = fallback;
         }
+        return value;
     }
 
-    private void setEnvPropInteger(String key, Integer target) {
+    private int getEnvPropInteger(String key, int fallback) {
         String value = this.environmentProperties.getProperty(key);
+        int res;
         if (value != null) {
-            target = Integer.parseInt(value);
+            res = Integer.parseInt(value);
         }
+        else {
+            res = fallback;
+        }
+        return res;
     }
 
     public void loadConfigurationFromFile(Properties configProperties, String fileName) {

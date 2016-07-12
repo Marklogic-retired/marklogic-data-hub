@@ -1,0 +1,41 @@
+<div @fadeState="vizState" class="modal-backdrop"></div>
+<div @growState="vizState" class="dialog-container">
+  <div class="dialog new-entity-dialog">
+    <md-toolbar color="primary">
+      <h4 class="modal-title">Create Entity</h4>
+      <span flex></span>
+      <button md-icon-button (click)="cancel()" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </md-toolbar>
+    <div class="dialog-content">
+      <div class="modal-body">
+        <div class="md-dialog-content" flex layout="column">
+          <md-input placeholder="Entity Name" autofocus [(ngModel)]="entity.entityName"></md-input>
+          <md-input placeholder="Ingest Flow Name" [(ngModel)]="entity.inputFlows[0].flowName"></md-input>
+          <md-input placeholder="Harmonize Flow Name" [(ngModel)]="entity.harmonizeFlows[0].flowName"></md-input>
+          <label>Plugin Type</label>
+          <select-list
+            [items]="pluginFormats"
+            [initialSelectedItem]="pluginFormats[0]"
+            label="label" identifier="value"
+            (selectedItem)="entity.pluginFormat = $event"></select-list>
+          <label>Data Format</label>
+          <select-list
+            [items]="dataFormats"
+            [initialSelectedItem]="dataFormats[0]"
+            label="label" identifier="value"
+            (selectedItem)="entity.dataFormat = $event"></select-list>
+        </div>
+      </div>
+      <div class="modal-footer" layout="row" layout-align="end center">
+        <button md-raised-button (click)="cancel()">
+         Cancel
+        </button>
+        <button md-raised-button color="primary" (click)="create()">
+          Create
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

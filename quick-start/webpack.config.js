@@ -1,149 +1,19 @@
-var HtmlWebpackPlugin = require('html-webpack-plugin');
-var CleanWebpackPlugin = require('clean-webpack-plugin');
-var ExtractTextPlugin = require('extract-text-webpack-plugin');
-var webpack = require('webpack');
-var pathUtil = require('path');
-var autoprefixer = require('autoprefixer');
-var packageJson = require('./package.json');
-var pathUtil = require('path');
-var vendors = [];
-var dependency;
-var modulePackage;
+/**
+ * @author: @AngularClass
+ */
 
-for (dependency in packageJson.dependencies) {
-  if (packageJson.dependencies.hasOwnProperty(dependency)) {
-    modulePackage = require(pathUtil.join(dependency, 'package.json'));
-    if (pathUtil.extname(modulePackage.main) === '.js') {
-      vendors.push(dependency);
-    }
-  }
+// Look in ./config folder for webpack.dev.js
+switch (process.env.NODE_ENV) {
+  case 'prod':
+  case 'production':
+    module.exports = require('./config/webpack.prod');
+    break;
+  case 'test':
+  case 'testing':
+    module.exports = require('./config/webpack.test');
+    break;
+  case 'dev':
+  case 'development':
+  default:
+    module.exports = require('./config/webpack.dev');
 }
-
-module.exports = {
-  entry: {
-    app: './src/main/ui/bootstrap.js',
-    vendor: vendors,
-  },
-  output: {
-    path: 'src/main/resources/static',
-    filename: '[name].js',
-    chunkFilename: '[name].js',
-    publicPath: '',
-  },
-  resolve: {
-    root: __dirname + '/node_modules',
-    modulesDirectories: ['node_modules'],
-    alias: {
-      'npm': __dirname + '/node_modules',
-    },
-  },
-  module: {
-    loaders: [
-      {
-        test: /\.js$/,
-        loaders: [
-          'babel?cacheDirectory',
-          'eslint',
-        ],
-        include: [new RegExp('^' + __dirname + '/src/main/ui')],
-      },
-      {
-        test: /\.scss$/,
-        loader: ExtractTextPlugin.extract([
-          'css?sourceMap',
-          'postcss',
-          'sass?sourceMap',
-        ].join('!')),
-        include: [new RegExp('^' + __dirname + '/src/main/ui')],
-      },
-      {
-        test: /\.css/,
-        loader: ExtractTextPlugin.extract([
-          'css?sourceMap',
-          'postcss',
-        ].join('!')),
-      },
-      {
-        test: /\.html/,
-        loader: 'html?minimize=false',
-        include: [new RegExp('^' + __dirname + '/src/main/ui')],
-      },
-      {
-        test: /\.(woff|woff2|ttf|eot|svg)(\?v=[0-9]+\.[0-9]+\.[0-9]+)?$/,
-        loader: 'file?name=resources/[name].[ext]?[hash]',
-      },
-      {
-        test: /\.(jpe?g|png|gif)$/i,
-        loaders: [
-          'file?hash=sha512&digest=hex&name=resources/[name].[ext]?[hash]',
-          'image-webpack?bypassOnDebug&optimizationLevel=7&interlaced=false',
-        ],
-      },
-    ],
-  },
-  plugins: [
-    new webpack.ProvidePlugin({
-      $: 'jquery',
-      jQuery: 'jquery',
-      'window.jQuery': 'jquery',
-    }),
-    new CleanWebpackPlugin([
-      'src/main/resources/static',
-      'src/main/resources/templates',
-    ], {
-      // Without `root` CleanWebpackPlugin won't point to our
-      // project and will fail to work.
-      root: pathUtil.resolve(process.cwd()),
-      verbose: true,
-    }),
-    // This will copy the index.html to the build directory and insert script tags
-    new HtmlWebpackPlugin({
-      template: 'src/main/ui/index.html',
-      // filename: 'templates/index.html'
-    }),
-    // new HtmlWebpackPlugin({
-    //   template: 'src/main/ui/login.html',
-    //   filename: 'templates/login.html'
-    // }),
-    // This will extract all css styles into a separate file
-    new ExtractTextPlugin('[name].css'),
-    // This will make sure that libraries won't be packed into multiple files
-    new webpack.optimize.CommonsChunkPlugin({
-      names: ['vendor'],
-      filename: 'vendor.js',
-      minChunks: Infinity,
-    }),
-    new webpack.DefinePlugin({
-      DEBUG: true,
-    }),
-  ],
-  devServer: {
-    contentBase: 'src/main/resources/static',
-    noInfo: true,
-    inline: true,
-    historyApiFallback: true,
-  },
-  devtool: 'source-map',
-  // devtool: 'eval-cheap-module-source-map',
-  eslint: {
-    emitWarning: true,
-    formatter: function formatter(results) {
-      return results
-        .map(function mapResults(result) {
-          var rules = result.messages
-            .map(function mapMessages(message) {
-              return message.ruleId;
-            })
-            .filter(function deduplicateMessages(rule, pos, arr) {
-              return arr.indexOf(rule) === pos;
-            })
-            .join(', ');
-          return result.errorCount + ' errors / ' + result.warningCount + ' warnings (' + rules + ')';
-        })
-        .join('\n');
-    },
-  },
-  postcss: function postcss() {
-    return [autoprefixer({browsers: ['last 2 version']})];
-  },
-};
