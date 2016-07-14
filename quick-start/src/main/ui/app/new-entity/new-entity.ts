@@ -3,6 +3,8 @@ trigger, state, style, transition, animate } from '@angular/core';
 
 import { SelectList } from '../select-list/select-list.component';
 
+import * as _ from 'lodash';
+
 @Component({
   selector: 'new-entity',
   templateUrl: './new-entity.html',
@@ -15,7 +17,7 @@ import { SelectList } from '../select-list/select-list.component';
         visibility: 'hidden'
       })),
       state('active', style({
-        opacity: 0.48,
+        opacity: 1,
         visibility: 'visible'
       })),
       transition('hidden => active', animate('0.5s ease-in')),
@@ -52,21 +54,17 @@ export class NewEntity {
     { label: 'XML', value: 'XML' },
   ];
 
-  entity: any = {
-    inputFlows: [
-      {},
-    ],
-    harmonizeFlows: [
-      {},
-    ]
+  DEFAULTENTITY: any = {
+    inputFlows: [],
+    harmonizeFlows: []
   };
 
-  constructor() {
-    this.entity.pluginFormat = this.pluginFormats[0];
-    this.entity.dataFormat = this.dataFormats[0];
-  }
+  entity: any = _.clone(this.DEFAULTENTITY);
+
+  constructor() {}
 
   show() {
+    this.entity = _.clone(this.DEFAULTENTITY);
     this.finishedEvent = new EventEmitter<boolean>(true);
     this.vizState = 'active';
     return this.finishedEvent;
@@ -74,6 +72,14 @@ export class NewEntity {
 
   hide() {
     this.vizState = 'hidden';
+  }
+
+  private newInputFlow() {
+    this.entity.inputFlows.push({});
+  }
+
+  private newHarmonizeFlow() {
+    this.entity.harmonizeFlows.push({});
   }
 
   private create() {

@@ -2,7 +2,6 @@ package com.marklogic.quickstart.model;
 
 import java.util.List;
 
-import com.marklogic.client.io.Format;
 import com.marklogic.hub.PluginFormat;
 
 public class EntityModel {
@@ -12,7 +11,6 @@ public class EntityModel {
     public List<FlowModel> harmonizeFlows;
 
     public PluginFormat pluginFormat;
-    public Format dataFormat;
 
     public EntityModel() {}
 

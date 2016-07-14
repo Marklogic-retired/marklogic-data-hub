@@ -1,9 +1,7 @@
 package com.marklogic.quickstart.service;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -16,9 +14,6 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import com.marklogic.hub.Scaffolding;
-import com.marklogic.hub.entity.AbstractEntity;
-import com.marklogic.hub.entity.Entity;
-import com.marklogic.hub.entity.EntityImpl;
 import com.marklogic.hub.flow.FlowType;
 //import com.marklogic.quickstart.factory.EntityModelFactory;
 import com.marklogic.quickstart.model.EntityModel;
@@ -86,33 +81,6 @@ public class EntityManagerService {
             entityModel = new EntityModel(entityName);
             entityModel.inputFlows = flowManagerService.getFlows(projectDir, entityName, FlowType.INPUT);
             entityModel.harmonizeFlows = flowManagerService.getFlows(projectDir, entityName, FlowType.HARMONIZE);
-
-            File entityXmlFile = entityPath.resolve(entityName + ".xml").toFile();
-            Entity entity = AbstractEntity.loadFromFile(entityXmlFile);
-            if (entity != null) {
-                entityModel.dataFormat = entity.getDataFormat();
-            }
-            else {
-                if (entityModel.inputFlows.size() > 0) {
-                    entityModel.dataFormat = entityModel.inputFlows.get(0).dataFormat;
-                }
-                else if (entityModel.harmonizeFlows.size() > 0) {
-                    entityModel.dataFormat = entityModel.harmonizeFlows.get(0).dataFormat;
-                }
-
-                if (entityModel.dataFormat != null) {
-                    entity = new EntityImpl(entityName, entityModel.dataFormat);
-                    try(PrintWriter out = new PrintWriter(entityXmlFile)) {
-                        out.println(entity.serialize());
-                        out.close();
-                    } catch (FileNotFoundException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
-                }
-
-            }
-
         }
 
         return entityModel;
@@ -143,14 +111,14 @@ public class EntityManagerService {
     public EntityModel createEntity(String projectDir, EntityModel newEntity) throws IOException {
         Scaffolding scaffolding = new Scaffolding(projectDir);
 
-        scaffolding.createEntity(newEntity.entityName, newEntity.dataFormat);
+        scaffolding.createEntity(newEntity.entityName);
 
         for (FlowModel flow : newEntity.inputFlows) {
-            scaffolding.createFlow(newEntity.entityName, flow.flowName, FlowType.INPUT, newEntity.pluginFormat, newEntity.dataFormat);
+            scaffolding.createFlow(newEntity.entityName, flow.flowName, FlowType.INPUT, flow.pluginFormat, flow.dataFormat);
         }
 
         for (FlowModel flow : newEntity.harmonizeFlows) {
-            scaffolding.createFlow(newEntity.entityName, flow.flowName, FlowType.HARMONIZE, newEntity.pluginFormat, newEntity.dataFormat);
+            scaffolding.createFlow(newEntity.entityName, flow.flowName, FlowType.HARMONIZE, flow.pluginFormat, flow.dataFormat);
         }
 
         return getEntity(projectDir, newEntity.entityName);
@@ -159,8 +127,8 @@ public class EntityManagerService {
     public FlowModel createFlow(String projectDir, EntityModel entity, FlowType flowType, FlowModel newFlow) throws IOException {
         Scaffolding scaffolding = new Scaffolding(projectDir);
         newFlow.entityName = entity.entityName;
-        LOGGER.info("data format: " + entity.dataFormat);
-        scaffolding.createFlow(entity.entityName, newFlow.flowName, flowType, newFlow.pluginFormat, entity.dataFormat);
+        LOGGER.info("data format: " + newFlow.dataFormat);
+        scaffolding.createFlow(entity.entityName, newFlow.flowName, flowType, newFlow.pluginFormat, newFlow.dataFormat);
         return getFlow(projectDir, entity.entityName, flowType, newFlow.flowName);
     }
 }

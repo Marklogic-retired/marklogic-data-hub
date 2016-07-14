@@ -29,6 +29,10 @@ export class Select implements OnInit {
   constructor() {}
 
   ngOnInit() {
+    this.selectInitial();
+  }
+
+  selectInitial() {
     if (this.initialSelectedItem && this.items && this.items.length > 0) {
       _.each(this.items, item => {
         if (this.value && item[this.value] === this.initialSelectedItem) {
@@ -37,6 +41,12 @@ export class Select implements OnInit {
           this.selectItem(item, true);
         }
       });
+    }
+  }
+
+  ngOnChanges(changes) {
+    if (changes.initialSelectedItem) {
+      this.selectInitial();
     }
   }
 

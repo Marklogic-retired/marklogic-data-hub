@@ -3,10 +3,8 @@
 import { Injectable } from '@angular/core';
 
 import { Observable } from 'rxjs/Observable';
-import { Subject } from 'rxjs/Rx'
+import { Subject } from 'rxjs/Rx';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-
-import { STOMPConfig } from './config';
 
 import * as SockJS from 'sockjs-client';
 
@@ -22,12 +20,12 @@ export enum STOMPState {
 };
 
 /** look up states for the STOMP service */
-export const StateLookup: string[] = [
-  "CLOSED",
-  "TRYING",
-  "CONNECTED",
-  "SUBSCRIBED",
-  "DISCONNECTING"
+export const STATELOOKUP: string[] = [
+  'CLOSED',
+  'TRYING',
+  'CONNECTED',
+  'SUBSCRIBED',
+  'DISCONNECTING'
 ];
 
 /**
@@ -50,14 +48,17 @@ export class STOMPService {
   // Publishes new messages to Observers
   public messages: Subject<Message>;
 
-  // Configuration structure with MQ creds
-  private config: STOMPConfig;
-
   // STOMP Client from stomp.js
   private client: Client;
 
+  private endpoint: string;
+
+  private _subscribeQueue: Array<any> = [];
+
   // Resolve Promise made to calling class, when connected
   private resolvePromise: { (...args: any[]): void };
+
+  private resolveSubQueue: { (...args: any[]): void };
 
   /** Constructor */
   public constructor() {
@@ -67,33 +68,26 @@ export class STOMPService {
 
 
   /** Set up configuration */
-  public configure(config?: STOMPConfig): void {
+  public configure(endpoint: string): void {
+
+    this.endpoint = endpoint;
 
     // Check for errors:
-    if (this.state.getValue() != STOMPState.CLOSED)
-      throw Error("Already running!");
-    if (config === null && this.config === null)
-      throw Error("No configuration provided!");
+    if (this.state.getValue() !== STOMPState.CLOSED) {
+      throw Error('Already running!');
+    }
 
-    // Set our configuration
-    if(config != null)
-      this.config = config;
-
-    // Connecting via SSL Websocket?
-    var scheme: string = 'http';
-    if (this.config.https) scheme = 'wss';
-
-    let sockJsClient = SockJS(this.config.endpoint);
+    let sockJsClient = SockJS(endpoint);
 
     // Attempt connection, passing in a callback
     this.client = Stomp.over(sockJsClient);
 
     // Configure client heartbeating
-    this.client.heartbeat.incoming = this.config.heartbeat_in;
-    this.client.heartbeat.outgoing = this.config.heartbeat_out;
+    this.client.heartbeat.incoming = 0;
+    this.client.heartbeat.outgoing = 20000;
 
     // Set function to debug print messages
-    this.client.debug = this.debug;
+    // this.client.debug = this.debug;
   }
 
 
@@ -103,20 +97,21 @@ export class STOMPService {
    */
   public try_connect(): Promise<{}> {
 
-    if(this.state.getValue() != STOMPState.CLOSED)
-      throw Error("Can't try_connect if not CLOSED!");
-    if(this.client === null)
-      throw Error("Client not configured!");
+    if (this.state.getValue() !== STOMPState.CLOSED) {
+      throw Error('Can\'t try_connect if not CLOSED!');
+    }
+    if (this.client === null) {
+      throw Error('Client not configured!');
+    }
 
     // Attempt connection, passing in a callback
     this.client.connect(
-      this.config.user,
-      this.config.pass,
-      this.on_connect,
-      this.on_error
+      null,
+      null,
+      this.onConnect,
+      this.onError
     );
 
-    console.log("connecting...");
     this.state.next(STOMPState.TRYING);
 
     return new Promise(
@@ -140,25 +135,9 @@ export class STOMPService {
 
 
   /** Send a message to all topics */
-  public publish(message: string) {
-
-    for (var t of this.config.publish)
-      this.client.send(t, {}, message);
+  public publish(endpoint: string, message: string) {
+    this.client.send(endpoint, {}, message);
   }
-
-
-  /** Subscribe to server message queues */
-  private subscribe(): void {
-
-    // Subscribe to our configured queues
-    for (var t of this.config.subscribe)
-      this.client.subscribe(t, this.on_message, <any>{ ack: 'auto' });
-
-    // Update the state
-    if (this.config.subscribe.length > 0)
-      this.state.next( STOMPState.SUBSCRIBED );
-  }
-
 
   /**
    * Callback Functions
@@ -176,13 +155,12 @@ export class STOMPService {
 
 
   // Callback run on successfully connecting to server
-  public on_connect = () => {
+  public onConnect = () => {
 
     // Indicate our connected state to observers
     this.state.next( STOMPState.CONNECTED );
 
-    // Subscribe to message queues
-    this.subscribe();
+    this.subscribeQueue();
 
     // Resolve our Promise to the caller
     this.resolvePromise();
@@ -193,33 +171,52 @@ export class STOMPService {
 
 
   // Handle errors from stomp.js
-  public on_error = (error: string) => {
+  public onError = (error: string) => {
 
     console.error('Error: ' + error);
 
     // Check for dropped connection and try reconnecting
-    if (error.indexOf("Lost connection") != -1) {
+    if (error.indexOf('Lost connection') !== -1) {
 
       // Reset state indicator
       this.state.next( STOMPState.CLOSED );
-
-      // Attempt reconnection
-      console.log("Reconnecting in 5 seconds...");
-      setTimeout(() => {
-        this.configure();
-        this.try_connect();
-      }, 5000);
     }
   }
 
 
   // On message RX, notify the Observable with the message object
-  public on_message = (message: Message) => {
-
+  public onMessage = (message: Message) => {
     if (message.body) {
       this.messages.next(message);
     } else {
-      console.error("Empty message received!");
+      console.error('Empty message received!');
     }
+  }
+
+  /** Subscribe to server message queues */
+  public subscribe(endpoint: string): Promise<string> {
+
+    if (this.state.getValue() === STOMPState.TRYING) {
+      this._subscribeQueue.push(endpoint);
+    } else {
+      let resp = this.client.subscribe(
+        endpoint, this.onMessage, <any>{ ack: 'auto' });
+      this.resolveSubQueue.apply(resp.id);
+    }
+
+    return new Promise(
+      (resolve, reject) => this.resolveSubQueue = resolve
+    );
+  }
+
+  public unsubscribe(id) {
+    this.client.unsubscribe(id);
+  }
+
+  private subscribeQueue() {
+    for (let endpoint of this._subscribeQueue) {
+      this.subscribe(endpoint);
+    }
+    this._subscribeQueue = [];
   }
 }

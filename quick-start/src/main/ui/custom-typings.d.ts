@@ -78,7 +78,7 @@ interface WebpackModule {
 }
 
 interface WebpackRequireEnsureCallback {
-    (req: WebpackRequire): void
+    (req: WebpackRequire): void;
 }
 
 interface WebpackRequire {
@@ -114,7 +114,7 @@ interface Global extends GlobalEnvironment  {}
  * https://github.com/jmesnil/stomp-websocket
  *
  */
-declare module "stompjs/lib/stomp.min" {
+declare module 'stompjs/lib/stomp.min' {
 
   export interface Client {
     heartbeat: any;
@@ -124,9 +124,9 @@ declare module "stompjs/lib/stomp.min" {
     connect(...args: any[]);
     disconnect(disconnectCallback: () => any, headers?: any);
 
-    send(destination: string, headers?:any, body?: string);
+    send(destination: string, headers?: any, body?: string);
     subscribe(destination: string, callback?: (message: Message) => any, body?: string);
-    unsubscribe();
+    unsubscribe(id: string);
 
     begin(transaction: string);
     commit(transaction: string);
@@ -193,7 +193,7 @@ declare namespace __SockJSClient {
   interface Options {
     server?: string;
     sessionId?: number | SessionGenerator;
-    transports?: string | string[]
+    transports?: string | string[];
   }
 
   enum State {
@@ -217,7 +217,7 @@ declare module 'sockjs-client' {
   import Options = __SockJSClient.Options;
   import State = __SockJSClient.State;
 
-  var SockJS: {
+  let SockJS: {
     new(url: string, _reserved?: any, options?: Options): SockJSClass;
     (url: string, _reserved?: any, options?: Options): SockJSClass;
     prototype: SockJSClass;

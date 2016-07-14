@@ -27,9 +27,11 @@ import { HubSettings } from './hub-settings.model';
     trigger('visibleState', [
       state('hidden', style({
         height: 0,
+        overflow: 'hidden'
       })),
       state('active', style({
         height: '*',
+        overflow: '*'
       })),
       transition('hidden => active', animate('0.5s ease-in')),
       transition('active => hidden', animate('0.5s ease-in'))
@@ -40,6 +42,7 @@ import { HubSettings } from './hub-settings.model';
 export class Login {
   defaultSettings: HubSettings;
   initSettings: HubSettings = new HubSettings();
+  showInitAdvanced: boolean = false;
 
   currentTab: string = 'ProjectDir';
 
@@ -48,6 +51,7 @@ export class Login {
   tabs = {
     ProjectDir: true,
     InitIfNeeded: false,
+    PostInit: false,
     Environment: false,
     Login: false,
     InstalledCheck: false,
@@ -89,7 +93,6 @@ export class Login {
     private renderer: Renderer) {
 
     projectService.getProjects().subscribe(resp => {
-      console.log(resp);
       this.projects = resp.projects;
 
       if (this.projects.length > 0) {
@@ -131,17 +134,16 @@ export class Login {
     if (this.visitedTabs.length > 0) {
       this.disableTabs();
       this.currentTab = this.visitedTabs.pop();
-      console.log('previous tab: ' + this.currentTab);
       this.tabs[this.currentTab] = true;
     }
   }
 
   gotoTab(tabName) {
-    console.log('gotoTab: ' + tabName);
     this.disableTabs();
     this.tabs[tabName] = true;
 
-    if (this.currentTab !== 'InstalledCheck') {
+    const skipUs = ['InstalledCheck', 'InitIfNeeded', 'PostInit'];
+    if (skipUs.indexOf(this.currentTab) < 0) {
       this.visitedTabs.push(this.currentTab);
     }
     this.currentTab = tabName;
@@ -155,30 +157,23 @@ export class Login {
   chooseProject() {
     if (this.showFolderBrowser && this.folder) {
       // create a new project
-      this.projectService.addProject(this.folder).subscribe(project => {
-        this.gotProject(project);
-      });
+      this.projectService.addProject(this.folder).subscribe(this.gotProject);
     } else if (!this.showFolderBrowser && this.project) {
       // select the project
-      this.projectService.getProject(this.project).subscribe(project => {
-        this.gotProject(project);
-      });
+      this.projectService.getProject(this.project).subscribe(this.gotProject);
     }
   }
 
   removeProject(project) {
     this.projectService.removeProject(project).subscribe(() => {
       _.remove(this.projects, p => { return p.id === project.id; });
+      if (this.projects.length === 0) {
+        this.showFolderBrowser = true;
+      }
     });
   }
 
-  projectSelected($event) {
-    console.log('event');
-    console.log(arguments);
-  }
-
-  gotProject(project) {
-    console.log('gotProject');
+  gotProject = (project) => {
     this.currentProject = project;
     if (project.initialized) {
       // go straight to the environment choose
@@ -237,10 +232,15 @@ export class Login {
   initProject() {
     this.projectService.initProject(
       this.currentProject.id,
-      this.initSettings).subscribe(project => {
+      this.initSettings
+    ).subscribe(project => {
       this.currentProject = project;
-      this.gotoTab('Environment');
+      this.gotoTab('PostInit');
     });
+  }
+
+  postInitNext() {
+    this.gotoTab('Environment');
   }
 
   login() {
@@ -255,6 +255,16 @@ export class Login {
       error => {
         this.auth.setAuthenticated(false);
       });
+  }
+
+  private hubNameChanged() {
+    const name = this.initSettings.name;
+    this.initSettings.stagingHttpName = name + '-STAGING';
+    this.initSettings.stagingDbName = name + '-STAGING';
+    this.initSettings.finalHttpName = name + '-STAGING';
+    this.initSettings.finalDbName = name + '-STAGING';
+    this.initSettings.traceHttpName = name + '-STAGING';
+    this.initSettings.traceDbName = name + '-STAGING';
   }
 
   private disableTabs() {

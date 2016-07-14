@@ -1,8 +1,20 @@
-@import '../../assets/css/variables';
+@import 'variables';
+
+$highlight-color: unquote("rgb(#{$palette-datahub-A100})");
+$folder-color: unquote("rgb(#{$palette-datahub-50})");
 
 :host {
-  display: block;
+  display: flex;
+  flex-direction: column;
+  flex: 1 1;
+  margin: 0px;
+  padding: 0px;
 }
+
+.container {
+  border: 1px solid rgb(177, 199, 217);
+}
+
 .mdl-textfield {
   width: 100%;
 }
@@ -23,7 +35,7 @@
   div.entry {
     padding: 2px;
     &:hover {
-      background-color: rgba(121,85,72,.25);
+      background-color: $highlight-color;
     }
     cursor: pointer;
 
@@ -37,8 +49,8 @@
 
 
 .current-folder {
-  background-color: #ddd;
-  padding: 5px;
+  background-color: $folder-color;
+  padding: 0px 5px;
 
   div {
     font-weight: bold;
@@ -76,8 +88,7 @@ md-input-container {
 
 .foldertree {
 
-  max-height: 200px;
-  height: 200px;
+  max-height: 150px;
   overflow: auto;
   *:focus {
     outline: none;

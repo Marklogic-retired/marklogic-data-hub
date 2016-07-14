@@ -32,8 +32,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.marklogic.client.io.Format;
-import com.marklogic.hub.entity.Entity;
-import com.marklogic.hub.entity.EntityImpl;
 import com.marklogic.hub.flow.FlowType;
 import com.marklogic.hub.flow.SimpleFlow;
 import com.marklogic.hub.util.PerformanceLogger;
@@ -63,17 +61,10 @@ public class Scaffolding {
         return flowDir;
     }
 
-    public void createEntity(String entityName, Format dataFormat) throws FileNotFoundException {
+    public void createEntity(String entityName) throws FileNotFoundException {
         long startTime = PerformanceLogger.monitorTimeInsideMethod();
         Path entityDir = entitiesDir.resolve(entityName);
         entityDir.toFile().mkdirs();
-
-        Entity e = new EntityImpl(entityName, dataFormat);
-        Path flowFile = entityDir.resolve(entityName + ".xml");
-        try(PrintWriter out = new PrintWriter(flowFile.toFile())) {
-            out.println(e.serialize());
-            out.close();
-        }
 
         PerformanceLogger.logTimeInsideMethod(startTime, "Scaffolding.createEntity");
     }
@@ -122,6 +113,7 @@ public class Scaffolding {
     }
 
     private void writeFile(String srcFile, Path dstFile) throws IOException {
+        LOGGER.info("writing: " + srcFile + " => " + dstFile.toString());
         if (!dstFile.toFile().exists()) {
             InputStream inputStream = Scaffolding.class.getClassLoader()
                     .getResourceAsStream(srcFile);

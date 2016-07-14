@@ -12,8 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,11 +23,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.marklogic.client.UnauthorizedUserException;
 import com.marklogic.hub.StatusListener;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.FlowType;
+import com.marklogic.quickstart.exception.NotFoundException;
 import com.marklogic.quickstart.model.EntityModel;
-import com.marklogic.quickstart.model.EnvironmentConfig;
 import com.marklogic.quickstart.model.FlowModel;
 import com.marklogic.quickstart.model.Project;
 import com.marklogic.quickstart.model.StatusMessage;
@@ -41,7 +40,7 @@ import com.marklogic.quickstart.service.TaskManagerService;
 
 @Controller
 @Scope("session")
-public class EntitiesController {
+public class EntitiesController extends BaseController {
 
     protected final static Logger logger = LoggerFactory.getLogger(EntitiesController.class);
 
@@ -59,9 +58,6 @@ public class EntitiesController {
 
     @Autowired
     private SimpMessagingTemplate template;
-
-    @Autowired
-    EnvironmentConfig envConfig;
 
     @RequestMapping(value = "/entities/", method = RequestMethod.GET)
     @ResponseBody
@@ -210,13 +206,6 @@ public class EntitiesController {
         }
 
         return resp;
-    }
-
-    @MessageMapping("/mlcp-status")
-    @SendTo("/topic/mlcp-status")
-    @ResponseBody
-    public StatusMessage mlcpStatus(String message) {
-        return new StatusMessage(0, message);
     }
 
     @RequestMapping(value = "/entities/{entityName}/flows/{flowType}/{flowName}/run/input", method = RequestMethod.POST)

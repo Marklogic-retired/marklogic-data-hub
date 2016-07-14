@@ -2,6 +2,7 @@ import { Component, Input, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { Entity } from '../entities/entity.model';
+import { Flow } from '../entities/flow.model';
 
 import { EntitiesService } from '../entities/entities.service';
 
@@ -11,6 +12,7 @@ import { NewFlow } from '../new-flow/new-flow';
 
 import { STOMPService } from '../stomp/stomp.service';
 
+import * as _ from 'lodash';
 
 @Component({
   selector: 'home',
@@ -26,6 +28,7 @@ export class Home {
 
   entities: Array<Entity>;
   entity: Entity;
+  flow: Flow;
 
   mlcpProgressHidden: boolean = true;
   mlcpPercentComplete: number;
@@ -35,11 +38,18 @@ export class Home {
     private entitiesService: EntitiesService,
     private router: Router
   ) {
+    entitiesService.entityMessageEmitter.subscribe(path => {
+      this.getEntities();
+    });
+    this.getEntities();
+  }
+
+  getEntities() {
     this.entitiesService.getEntities().subscribe(entities => {
       this.entities = entities;
-      if (this.entities.length > 0) {
-        this.setEntity(this.entities[0]);
-      }
+      _.each(this.entities, entity => {
+        entity.collapsed = true;
+      });
     },
     error => {
       if (error.status === 401) {
@@ -49,7 +59,14 @@ export class Home {
   }
 
   setEntity(entity) {
-    this.entity = entity;
+    const collapsed = entity.collapsed;
+
+    _.each(this.entities, e => { e.collapsed = true; });
+    entity.collapsed = !collapsed;
+  }
+
+  setFlow(flow) {
+    this.flow = flow;
   }
 
   isActiveEntity(entity) {
@@ -76,7 +93,7 @@ export class Home {
   }
 
   showNewFlow(ev, flowType) {
-    this.newFlow.show().subscribe(newFlow => {
+    this.newFlow.show(flowType).subscribe(newFlow => {
       this.entitiesService.createFlow(this.entity, flowType, newFlow).subscribe(flow => {
         if (flowType === 'INPUT') {
           this.entity.inputFlows.push(flow);
@@ -87,9 +104,9 @@ export class Home {
     });
   }
 
-  runInputFlow(ev, flow) {
+  runInputFlow(ev: Event, flow) {
     this.mlcpStatus = '';
-    this.entitiesService.messageEmitter.subscribe((payload) => {
+    this.entitiesService.mlcpMessageEmitter.subscribe((payload) => {
       this.mlcpPercentComplete = payload.percentComplete;
       this.mlcpStatus += '\n' + payload.message;
 
@@ -101,10 +118,10 @@ export class Home {
     });
     this.entitiesService.getInputFlowOptions(flow).subscribe(mlcpOptions => {
       this.mlcp.show(mlcpOptions, flow, ev).subscribe((options) => {
-        console.log('mlcp result!' + JSON.stringify(options));
         this.entitiesService.runInputFlow(flow, options);
       });
     });
+    ev.stopPropagation();
   }
 
   runHarmonizeFlow(flow) {

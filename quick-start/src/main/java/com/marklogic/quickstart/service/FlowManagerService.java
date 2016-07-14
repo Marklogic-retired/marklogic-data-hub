@@ -1,8 +1,6 @@
 package com.marklogic.quickstart.service;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -33,6 +31,7 @@ import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.FlowType;
 import com.marklogic.quickstart.model.EnvironmentConfig;
 import com.marklogic.quickstart.model.FlowModel;
+import com.marklogic.quickstart.model.PluginModel;
 import com.marklogic.quickstart.util.FileUtil;
 import com.marklogic.quickstart.util.SnooperOutputStream;
 
@@ -60,6 +59,18 @@ public class FlowManagerService {
             FlowModel flow = new FlowModel(entityName, flowName);
             if (f != null) {
                 flow.dataFormat = f.getDataFormat();
+            }
+            Path pluginsPath = flowPath.resolve(flowName);
+            List<String> pluginNames = FileUtil.listDirectFolders(pluginsPath.toFile());
+            for (String pluginName : pluginNames) {
+                Path pluginPath = pluginsPath.resolve(pluginName);
+                List<String> pluginFiles = FileUtil.listDirectFiles(pluginPath.toString());
+                PluginModel pm = new PluginModel();
+                pm.pluginType = pluginName;
+                for (String pluginFile : pluginFiles) {
+                    pm.files.add(pluginFile);
+                }
+                flow.plugins.add(pm);
             }
             flows.add(flow);
         }

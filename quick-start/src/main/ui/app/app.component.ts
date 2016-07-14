@@ -31,7 +31,6 @@ export class App {
 
   constructor(private auth: AuthService) {
     auth.authenticated.subscribe(authenticated => {
-      console.log('updated auth: ' + authenticated);
       this.authenticated = authenticated;
     });
   }

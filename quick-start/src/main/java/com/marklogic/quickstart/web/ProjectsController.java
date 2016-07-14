@@ -42,7 +42,7 @@ import com.marklogic.quickstart.service.ProjectManagerService;
 
 @Controller
 @Scope("session")
-public class ProjectsController implements FileSystemEventListener {
+public class ProjectsController extends BaseController implements FileSystemEventListener {
     protected final static Logger logger = LoggerFactory.getLogger(ProjectsController.class);
 
     @Autowired
@@ -53,9 +53,6 @@ public class ProjectsController implements FileSystemEventListener {
 
     @Autowired
     private SimpMessagingTemplate template;
-
-    @Autowired
-    EnvironmentConfig envConfig;
 
     @Autowired
     private ProjectManagerService pm;
@@ -165,13 +162,6 @@ public class ProjectsController implements FileSystemEventListener {
         return new ResponseEntity<HttpStatus>(HttpStatus.NO_CONTENT);
     }
 
-    @MessageMapping("/install-status")
-    @SendTo("/topic/install-status")
-    @ResponseBody
-    public StatusMessage installStatus(String message) {
-        return new StatusMessage(0, message);
-    }
-
     @RequestMapping(value = "/projects/{projectId}/{environment}/install", method = RequestMethod.PUT)
     @ResponseBody
     public ResponseEntity<?> install(@PathVariable int projectId,
@@ -213,15 +203,11 @@ public class ProjectsController implements FileSystemEventListener {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    private void requireAuth() {
-        if (!envConfig.isInitialized) {
-            throw new NotAuthorizedException();
-        }
-    }
     @Override
     public void onWatchEvent(Path path, WatchEvent<Path> event) {
         if (envConfig.installed) {
             dataHubService.installUserModules();
+            template.convertAndSend("/topic/entity-status", new StatusMessage(0, path.toString()));
         }
     }
 }

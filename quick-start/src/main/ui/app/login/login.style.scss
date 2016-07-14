@@ -2,6 +2,10 @@
 
 $ml-blue: unquote("rgb(#{$palette-datahub-500})");
 
+$path-bg-color: unquote("rgb(#{$palette-datahub-50})");
+
+$path-fg-color: unquote("rgb(#{$palette-datahub-700})");
+
 $subtle-background: unquote("rgb(#{$palette-datahub-400})");
 
 $bg-color: unquote("rgb(#{$palette-datahub-A100})");
@@ -111,6 +115,19 @@ h3 {
   }
 }
 
+$openDuration: 0.5s;
+.fa-caret-right {
+  transform: rotate(90deg);
+  -webkit-transform: rotate(90deg);
+  transition: transform $openDuration ease-in-out;
+  -webkit-transition: -webkit-transform $openDuration ease-in-out;
+}
+
+.fa-caret-right.collapsed {
+  transform: rotate(0deg);
+  -webkit-transform: rotate(0deg);
+}
+
 .tab-content {
   background-color: $subtle-background;
   padding: 2rem;
@@ -156,5 +173,15 @@ h3 {
     overflow: hidden;
     max-height: 0;
     position: relative;
+  }
+}
+
+
+#PostInit {
+  .project-path {
+    background-color: $path-bg-color;
+    padding: 15px;
+    border-radius: 5px;
+    color: $path-fg-color;
   }
 }

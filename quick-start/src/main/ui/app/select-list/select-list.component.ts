@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, OnChanges } from '@angular/core';
 
 import * as _ from 'lodash';
 
@@ -15,7 +15,7 @@ import * as _ from 'lodash';
  * @restrict E
  *
  */
-export class SelectList implements OnInit {
+export class SelectList implements OnInit, OnChanges {
   @Input() items: any;
   @Input() initialSelectedItem: string;
   @Input() label: string;
@@ -29,12 +29,23 @@ export class SelectList implements OnInit {
   constructor() {}
 
   ngOnInit() {
+    this.selectInitial();
+  }
+
+  selectInitial() {
     if (this.initialSelectedItem && this.items && this.items.length > 0) {
       _.each(this.items, item => {
         if (item === this.initialSelectedItem) {
           this.selectItem(item, true);
         }
       });
+    }
+  }
+
+  ngOnChanges(changes) {
+    console.log(changes);
+    if (changes.initialSelectedItem) {
+      this.selectInitial();
     }
   }
 

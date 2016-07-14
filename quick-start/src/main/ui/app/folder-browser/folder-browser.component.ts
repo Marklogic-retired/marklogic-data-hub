@@ -24,7 +24,6 @@ export class FolderBrowser implements OnInit, OnChanges {
   ngOnInit() {
     this.getFolders(this.startPath);
     this.inputPath.registerOnChange(value => {
-      console.log('on changed: ' + value);
       this.currentPath = value;
       this.changedPath();
     });
@@ -37,7 +36,6 @@ export class FolderBrowser implements OnInit, OnChanges {
   }
 
   changedPath() {
-    console.log('changedPath: ' + this.currentPath);
     this.getFolders(this.currentPath);
   }
 

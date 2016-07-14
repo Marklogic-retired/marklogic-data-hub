@@ -9,59 +9,57 @@
     </div>
     <div class="mdl-dialog__content">
       <div class="modal-body">
-        <form>
-          <div class="group-container" flex layout="column">
-            <h3 (click)="toggleSection('inputFiles')"><i class="fa fa-caret-right" [ngClass]="getSectionClass('inputFiles')"></i> Input Files</h3>
-            <div class="group-section slideDown" flex layout="column" [ngClass]="getSectionClass('inputFiles')">
-              <folder-browser
-                [startPath]="inputFilePath"
-                (folderChosen)="folderClicked($event)">
-              </folder-browser>
-            </div>
+        <div class="group-container" flex layout="column">
+          <h3 (click)="toggleSection('inputFiles')"><i class="fa fa-caret-right" [ngClass]="getSectionClass('inputFiles')"></i> Input Files</h3>
+          <div class="group-section slideDown" flex layout="column" [ngClass]="getSectionClass('inputFiles')">
+            <folder-browser
+              [startPath]="inputFilePath"
+              (folderChosen)="folderClicked($event)">
+            </folder-browser>
           </div>
+        </div>
 
-          <div class="group-container" flex layout="column" *ngFor="let group of groups" [hidden]="!isGroupVisible(group.category)">
-            <h3 (click)="toggleSection(group.category)"><i class="fa fa-caret-right" [ngClass]="getSectionClass(group.category)"></i> {{group.category}}</h3>
-            <div class="group-section slideDown" flex layout="column" [ngClass]="getSectionClass(group.category)">
-              <p class="hint"><strong>Hint:</strong> Hover over the labels to view the description</p>
-              <div flex layout="column" class="setting" *ngFor="let setting of group.settings">
-                <md-slide-toggle [tooltip]="setting.description" name="{{setting.field}}" *ngIf="setting.type === 'boolean'" [checked]="setting.value" (change)="updateSetting(setting, $event.checked)">
-                {{setting.label}}</md-slide-toggle>
-                <md-input [tooltip]="setting.description" [placeholder]="setting.label" type="text" class="form-control" name="{{setting.field}}" *ngIf="isText(setting.type)" [value]="setting.value" (input)="updateSetting(setting, $event.target.value)"
-                  [readonly]="setting.readOnly"></md-input>
-                <custom-select
-                  [id]="setting.field"
-                  [labelText]="setting.label"
-                  [items]="setting.options"
-                  [initialSelectedItem]="setting.value"
-                  (selectedItem)="setting.value = $event"
-                  *ngIf="setting.type === 'type'"
-                  [tooltip]="setting.description"
-                  label="label"
-                  value="value"></custom-select>
-              </div>
+        <div class="group-container" flex layout="column" *ngFor="let group of groups" [hidden]="!isGroupVisible(group.category)">
+          <h3 (click)="toggleSection(group.category)"><i class="fa fa-caret-right" [ngClass]="getSectionClass(group.category)"></i> {{group.category}}</h3>
+          <div class="group-section slideDown" flex layout="column" [ngClass]="getSectionClass(group.category)">
+            <p class="hint"><strong>Hint:</strong> Hover over the labels to view the description</p>
+            <div flex layout="column" class="setting" *ngFor="let setting of group.settings">
+              <md-slide-toggle [tooltip]="setting.description" name="{{setting.field}}" *ngIf="setting.type === 'boolean'" [checked]="setting.value" (change)="updateSetting(setting, $event.checked)">
+              {{setting.label}}</md-slide-toggle>
+              <md-input [tooltip]="setting.description" [placeholder]="setting.label" type="text" class="form-control" name="{{setting.field}}" *ngIf="isText(setting.type)" [value]="setting.value" (input)="updateSetting(setting, $event.target.value)"
+                [readonly]="setting.readOnly"></md-input>
+              <custom-select
+                [id]="setting.field"
+                [labelText]="setting.label"
+                [items]="setting.options"
+                [initialSelectedItem]="setting.value"
+                (selectedItem)="setting.value = $event"
+                *ngIf="setting.type === 'type'"
+                [tooltip]="setting.description"
+                label="label"
+                value="value"></custom-select>
             </div>
           </div>
-          <h4>
-            <span tooltip="This is the MLCP Command line that we generated from the options you chose.">
-              MLCP Command
-            </span>
-            <button
-              class="mdl-button mdl-js-button mdl-button--icon"
-              [ngIIclipboard]="mlcpcmd"
-              (cbOnSuccess)="cmdCopied()">
-              <i class="fa fa-copy" aria-hidden="true">
-              </i>
-            </button>
-          </h4>
-          <div class="mlcp-cmd" flex layout="column">
-            <div id="mlcp-cmd-copied" class="mdl-js-snackbar mdl-snackbar">
-              <div class="mdl-snackbar__text"></div>
-              <button class="mdl-snackbar__action" type="button" aria-hidden="true"></button>
-            </div>
-            <pre #mlcpcmd>{{mlcpCommand}}</pre>
+        </div>
+        <h4>
+          <span tooltip="This is the MLCP Command line that we generated from the options you chose.">
+            MLCP Command
+          </span>
+          <button
+            class="mdl-button mdl-js-button mdl-button--icon"
+            [ngIIclipboard]="mlcpcmd"
+            (cbOnSuccess)="cmdCopied()">
+            <i class="fa fa-copy" aria-hidden="true">
+            </i>
+          </button>
+        </h4>
+        <div class="mlcp-cmd" flex layout="column">
+          <div id="mlcp-cmd-copied" class="mdl-js-snackbar mdl-snackbar">
+            <div class="mdl-snackbar__text"></div>
+            <button class="mdl-snackbar__action" type="button" aria-hidden="true"></button>
           </div>
-        </form>
+          <pre #mlcpcmd>{{mlcpCommand}}</pre>
+        </div>
       </div>
       <div class="mdl-dialog__actions">
         <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" (click)="cancel()">Cancel</button>

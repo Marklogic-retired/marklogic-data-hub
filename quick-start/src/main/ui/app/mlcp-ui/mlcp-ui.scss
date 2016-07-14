@@ -2,16 +2,6 @@
 
 $openDuration: 0.5s;
 
-.mdl-dialog__title {
-  font-size: 1.5rem;
-  padding: 12px 24px 12px;
-  .mdl-button--fab.mdl-button--mini-fab {
-    height: 30px;
-    min-width: 30px;
-    width: 30px;
-  }
-}
-
 .mlcp-dialog {
   min-width: 500px;
   width: 500px;
@@ -20,11 +10,8 @@ $openDuration: 0.5s;
     margin-top: 10px;
   }
 
-  folder-browser {
-    width: inherit;
-    margin: 8px;
-    border: none;
-    padding: 0px;
+  .mdl-dialog__content {
+    padding: 0px 24px 8px 24px;
   }
 
   .md-subheader ._md-subheader-inner {
@@ -36,7 +23,7 @@ $openDuration: 0.5s;
 
     > h3 {
       cursor: pointer;
-      margin: 2px 0;
+      margin: 2px 3px;
       font-size: 20px;
 
       .fa {
@@ -53,6 +40,10 @@ $openDuration: 0.5s;
     }
   }
 
+  h4 {
+    font-size: 20px;
+    margin: 10px 0px;
+  }
   $heightDuration: 0.5s;
   $fadeDuration: 1s;
 

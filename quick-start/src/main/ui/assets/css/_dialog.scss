@@ -50,7 +50,16 @@
   flex-direction: column;
 }
 
-.mdl-dialog__title {
+.mdl-dialog div.mdl-dialog__title {
+
+  font-size: 1.5rem;
+
+  .mdl-button--fab.mdl-button--mini-fab {
+    height: 30px;
+    min-width: 30px;
+    width: 30px;
+  }
+
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -74,7 +83,7 @@
 }
 
 .modal-body {
-  max-height: 300px;
+  max-height: 350px;
   overflow: auto;
 }
 

@@ -1,0 +1,9 @@
+<h1>tasks</h1>
+
+<ul *ngIf="tasks && tasks.length > 0">
+  <li *ngFor="let task of tasks">
+    <span>ID: {{task.taskId}}</span>
+    <span>Running: {{task.running}}</span>
+  </li>
+</ul>
+<div *ngIf="!tasks || tasks.length === 0">No Tasks</div>

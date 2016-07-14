@@ -481,7 +481,6 @@ export class MlcpUi {
   }
 
   updateSetting(setting, value) {
-    console.log('value: ' + value);
     setting.value = value;
     this.updateMlcpCommand();
   }
@@ -497,8 +496,6 @@ export class MlcpUi {
   }
 
   folderClicked($event) {
-    console.log('folderClicked');
-    console.log($event);
     this.inputFilePath = $event;
     this.updateMlcpCommand();
   }

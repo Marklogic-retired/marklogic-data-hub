@@ -1,9 +1,26 @@
 @import 'variables';
 
+$highlight-color: unquote("rgb(#{$palette-datahub-A100})");
+
 header {
   background-color: $color-primary;
 }
 
 .mdl-layout__header-row {
-  padding: 0 40px 0 40px;
+  padding: 0 40px 0 20px;
+}
+
+/deep/ .mdl-menu__container {
+  overflow: hidden;
+}
+
+img {
+  margin-right: 20px;
+  width: 32px;
+}
+
+.mdl-menu__item {
+  &:hover {
+    background-color: $highlight-color;
+  }
 }

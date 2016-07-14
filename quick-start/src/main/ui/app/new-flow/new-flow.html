@@ -1,39 +1,39 @@
-<div @fadeState="vizState" class="modal-backdrop"></div>
-<div @growState="vizState" class="dialog-container">
-  <div class="dialog new-flow-dialog">
-    <md-toolbar color="primary">
-      <h4 class="modal-title">Create Flow</h4>
-      <span flex></span>
-      <button md-icon-button (click)="cancel()" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
+<div @fadeState="vizState" class="dialog-container">
+  <div @growState="vizState"class="mdl-dialog new-flow-dialog">
+    <div class="mdl-dialog__title">
+      <div>Create {{flowType}} Flow</div>
+      <div class="mdl-layout-spacer"></div>
+      <button (click)="cancel()" class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab">
+        <i class="material-icons">clear</i>
       </button>
-    </md-toolbar>
-    <div class="dialog-content">
-      <div class="modal-body">
-        <div class="md-dialog-content" flex layout="column">
-          <md-input placeholder="{{flowType}} Flow Name" md-autofocus [(ngModel)]="flow.flowName"></md-input>
-          <label>Plugin Type</label>
-          <select-list
-            [items]="pluginFormats"
-            [initialSelectedItem]="pluginFormats[0]"
-            label="label" identifier="value"
-            (selectedItem)="flow.pluginFormat = $event.detail"></select-list>
-          <label>Data Format</label>
-          <select-list
-            read-only="true"
-            [items]="dataFormats"
-            [initialSelectedItem]="dataFormats[0]"
-            label="label" identifier="value"></select-list>
+    </div>
+    <div class="mdl-dialog__content">
+      <form (submit)="create()">
+        <div class="modal-body">
+          <div class="md-dialog-content" flex layout="column">
+            <md-input name="flowType" placeholder="{{flowType}} Flow Name" md-autofocus [(ngModel)]="flow.flowName"></md-input>
+            <label>Plugin Type</label>
+            <select-list
+              #pluginFormatList
+              [items]="pluginFormats"
+              [initialSelectedItem]="pluginFormats[0]"
+              label="label" identifier="value"
+              (selectedItem)="flow.pluginFormat = $event"></select-list>
+            <label>Data Format</label>
+            <select-list
+              #dataFormatList
+              [items]="dataFormats"
+              [initialSelectedItem]="dataFormats[0]"
+              (selectedItem)="flow.dataFormat = $event"
+              label="label" identifier="value"></select-list>
+          </div>
         </div>
-      </div>
-      <div class="modal-footer" layout="row" layout-align="end center">
-        <button md-raised-button aria-label="cancel" (click)="cancel()">
-         Cancel
-        </button>
-        <button md-raised-button color="primary" aria-label="create" (click)="create()">
-          Create
-        </button>
-      </div>
+        <div class="mdl-dialog__actions">
+          <button type="button" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" (click)="cancel()">Cancel</button>
+          <button type="submit" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect">Create</button>
+        </div>
+      </form>
     </div>
   </div>
+  <div class="modal-backdrop"></div>
 </div>

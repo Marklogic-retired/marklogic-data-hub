@@ -1,8 +1,9 @@
-import { Component, Input, Inject, EventEmitter, OnInit,
+import { Component, Input, Inject, EventEmitter, OnInit, ViewChild,
 trigger, state, style, transition, animate } from '@angular/core';
 
 import { SelectList } from '../select-list/select-list.component';
 
+import * as _ from 'lodash';
 
 @Component({
   selector: 'new-flow',
@@ -16,7 +17,7 @@ import { SelectList } from '../select-list/select-list.component';
         visibility: 'hidden'
       })),
       state('active', style({
-        opacity: 0.48,
+        opacity: 1,
         visibility: 'visible'
       })),
       transition('hidden => active', animate('0.5s ease-in')),
@@ -41,8 +42,13 @@ import { SelectList } from '../select-list/select-list.component';
   ],
 })
 export class NewFlow {
+  @ViewChild('pluginFormatList') pluginFormatList: SelectList;
+  @ViewChild('dataFormatList') dataFormatList: SelectList;
+
   finishedEvent: EventEmitter<any>;
   vizState: string = 'hidden';
+
+  flowType: string;
 
   pluginFormats = [
     { label: 'Javascript', value: 'JAVASCRIPT' },
@@ -53,15 +59,22 @@ export class NewFlow {
     { label: 'XML', value: 'XML' },
   ];
 
-  flow = {
-    pluginFormat: null,
+  emptyFlow = {
+    pluginFormat: 'JAVASCRIPT',
+    dataFormat: 'JSON'
   };
+
+  flow = _.clone(this.emptyFlow);
 
   dataFormat: any;
 
   constructor() {}
 
-  show() {
+  show(flowType: string) {
+    this.pluginFormatList.selectInitial();
+    this.dataFormatList.selectInitial();
+    this.flowType = _.capitalize(flowType);
+    this.flow = _.clone(this.emptyFlow);
     this.finishedEvent = new EventEmitter<boolean>(true);
     this.vizState = 'active';
     return this.finishedEvent;

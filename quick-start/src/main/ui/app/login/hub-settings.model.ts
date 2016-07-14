@@ -1,5 +1,6 @@
 export class HubSettings {
   host: string = null;
+  name: string = null;
 
   stagingDbName: string = null;
   stagingHttpName: string = null;

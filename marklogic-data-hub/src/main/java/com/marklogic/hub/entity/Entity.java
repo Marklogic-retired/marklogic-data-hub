@@ -17,7 +17,6 @@ package com.marklogic.hub.entity;
 
 import java.util.List;
 
-import com.marklogic.client.io.Format;
 import com.marklogic.hub.flow.Flow;
 
 /**
@@ -30,13 +29,6 @@ public interface Entity {
      * @return the entity name
      */
     String getName();
-
-    /**
-     * Gets the Entity Data format
-     *
-     * @return the data format
-     */
-    Format getDataFormat();
 
     /**
      * Serializes the Entity as an XML string

@@ -17,8 +17,6 @@ package com.marklogic.hub.entity;
 
 import org.w3c.dom.Element;
 
-import com.marklogic.client.io.Format;
-
 /**
  * An implementation of the Entity base class
  */
@@ -28,8 +26,8 @@ public class EntityImpl extends AbstractEntity {
         super(xml);
     }
 
-    public EntityImpl(String name, Format dataFormat) {
-        super(name, dataFormat);
+    public EntityImpl(String name) {
+        super(name);
     }
 
 }

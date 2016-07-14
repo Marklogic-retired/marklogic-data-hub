@@ -125,11 +125,11 @@ public class HubTestBase {
         authMethod = Authentication.valueOf(properties.getProperty("auth").toUpperCase());
 
         stagingClient = DatabaseClientFactory.newClient(host, stagingPort, user, password, authMethod);
-        stagingModulesClient  = DatabaseClientFactory.newClient(host, stagingPort, HubConfig.DEFAULT_mlModulesDbName, user, password, authMethod);
+        stagingModulesClient  = DatabaseClientFactory.newClient(host, stagingPort, HubConfig.DEFAULT_MODULES_DB_NAME, user, password, authMethod);
         finalClient = DatabaseClientFactory.newClient(host, finalPort, user, password, authMethod);
-        finalModulesClient  = DatabaseClientFactory.newClient(host, stagingPort, HubConfig.DEFAULT_mlModulesDbName, user, password, authMethod);
+        finalModulesClient  = DatabaseClientFactory.newClient(host, stagingPort, HubConfig.DEFAULT_MODULES_DB_NAME, user, password, authMethod);
         traceClient = DatabaseClientFactory.newClient(host, tracePort, user, password, authMethod);
-        traceModulesClient  = DatabaseClientFactory.newClient(host, stagingPort, HubConfig.DEFAULT_mlModulesDbName, user, password, authMethod);
+        traceModulesClient  = DatabaseClientFactory.newClient(host, stagingPort, HubConfig.DEFAULT_MODULES_DB_NAME, user, password, authMethod);
     }
 
     public HubTestBase() {
@@ -263,7 +263,7 @@ public class HubTestBase {
     }
 
     protected static EvalResultIterator runInModules(String query) {
-        return runInDatabase(query, HubConfig.DEFAULT_mlModulesDbName);
+        return runInDatabase(query, HubConfig.DEFAULT_MODULES_DB_NAME);
     }
 
     protected static EvalResultIterator runInDatabase(String query, String databaseName) {

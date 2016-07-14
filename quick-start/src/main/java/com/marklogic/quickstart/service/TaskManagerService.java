@@ -1,6 +1,7 @@
 package com.marklogic.quickstart.service;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -14,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.marklogic.quickstart.exception.NotFoundException;
+import com.marklogic.quickstart.model.TaskModel;
 
 @Service
 public class TaskManagerService {
@@ -38,6 +40,18 @@ public class TaskManagerService {
         executorService.submit(taskRunner);
 
         return taskId;
+    }
+
+    public ArrayList<TaskModel> getTasks() {
+        ArrayList<TaskModel> tasks = new ArrayList<TaskModel>();
+        for (BigInteger key : taskMap.keySet()) {
+            TaskWrapper tw = taskMap.get(key);
+            TaskModel tm = new TaskModel();
+            tm.taskId = key.toString();
+            tm.running = (tw != null);
+            tasks.add(tm);
+        }
+        return tasks;
     }
 
     public Object waitTask(BigInteger taskId) throws Exception {

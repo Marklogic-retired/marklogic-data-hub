@@ -1,5 +1,8 @@
 package com.marklogic.quickstart.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.marklogic.client.io.Format;
 import com.marklogic.hub.PluginFormat;
 
@@ -9,6 +12,7 @@ public class FlowModel {
     public String flowName;
     public PluginFormat pluginFormat;
     public Format dataFormat;
+    public List<PluginModel> plugins = new ArrayList<PluginModel>();
 
     public FlowModel() {}
 
@@ -25,6 +29,10 @@ public class FlowModel {
         sb.append(entityName);
         sb.append("flowName=");
         sb.append(flowName);
+        sb.append("pluginFormat=");
+        sb.append(pluginFormat.toString());
+        sb.append("dataFomrat=");
+        sb.append(dataFormat.toString());
         sb.append("}");
 
         return sb.toString();
