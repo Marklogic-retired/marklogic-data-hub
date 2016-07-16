@@ -35,14 +35,12 @@ import { TooltipDirective } from '../tooltip/tooltip.directive';
       state('hidden', style({
         top: 0,
         left: 0,
-        width: 0,
-        height: 0,
+        transform: 'scale(0)'
       })),
       state('active', style({
         top: '*',
         left: '*',
-        width: '*',
-        height: '*',
+        transform: 'scale(1)'
       })),
       transition('hidden => active', animate('0.5s ease-in')),
       transition('active => hidden', animate('0.5s ease-in'))

@@ -10,6 +10,7 @@ $subtle-background: unquote("rgb(#{$palette-datahub-400})");
 
 $bg-color: unquote("rgb(#{$palette-datahub-A100})");
 
+$install-border: unquote("rgb(#{$palette-datahub-800})");
 /deep/ md-list {
   padding-top: 0px;
 }
@@ -69,12 +70,12 @@ h3 {
   overflow: auto;
   width: 500px;
   height: 500px;
-  border: 1px solid black;
-  background-color: #222;
+  border: 1px solid $install-border;
+  background-color: $bg-color;
 
-  pre {
-    color: greenyellow;
-  }
+  // pre {
+  //   color: greenyellow;
+  // }
 }
 
 .tab-group {
@@ -155,25 +156,6 @@ $openDuration: 0.5s;
   p {
     color: white;
   }
-
-  $openDuration: 0.5s;
-
-  $heightDuration: 0.5s;
-  $fadeDuration: 1s;
-  $easingFunc: ease-in-out;
-
-  /deep/ .panel-collapse {
-    &.in {
-      max-height: 1000px;
-    }
-
-    -webkit-transition: max-height $heightDuration $easingFunc;//, opacity $fadeDuration $easingFunc;
-    -moz-transition: max-height $heightDuration $easingFunc;//, opacity $fadeDuration $easingFunc;
-    transition: max-height $heightDuration $easingFunc;//, opacity $fadeDuration $easingFunc;
-    overflow: hidden;
-    max-height: 0;
-    position: relative;
-  }
 }
 
 
@@ -183,5 +165,42 @@ $openDuration: 0.5s;
     padding: 15px;
     border-radius: 5px;
     color: $path-fg-color;
+  }
+}
+
+
+#InstallerTab {
+  .fa-thumbs-up {
+    color: white;
+    font-size: 40pt;
+  }
+
+  .install-progress {
+    color: white;
+  }
+
+  $openDuration: 0.5s;
+
+  $heightDuration: 0.5s;
+  $fadeDuration: 1s;
+  $easingFunc: ease-in-out;
+
+  .shrinky {
+    max-height: 5000px;
+    overflow: hidden;
+    position: relative;
+    -webkit-transition: max-height $heightDuration $easingFunc;
+    -moz-transition: max-height $heightDuration $easingFunc;
+    transition: max-height $heightDuration $easingFunc;
+
+    &.collapsed {
+      max-height: 0px;
+    }
+  }
+}
+
+/deep/ md-progress-circle {
+  path {
+    stroke: white;
   }
 }

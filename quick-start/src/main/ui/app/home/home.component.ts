@@ -1,5 +1,4 @@
 import { Component, Input, ViewChild } from '@angular/core';
-import { Router } from '@angular/router';
 
 import { Entity } from '../entities/entity.model';
 import { Flow } from '../entities/flow.model';
@@ -10,15 +9,13 @@ import { MlcpUi } from '../mlcp-ui';
 import { NewEntity } from '../new-entity/new-entity';
 import { NewFlow } from '../new-flow/new-flow';
 
-import { STOMPService } from '../stomp/stomp.service';
-
 import * as _ from 'lodash';
 
 @Component({
   selector: 'home',
   templateUrl: './home.template.html',
   directives: [MlcpUi, NewEntity, NewFlow],
-  providers: [EntitiesService, STOMPService],
+  providers: [],
   styleUrls: ['./home.style.scss'],
 })
 export class Home {
@@ -29,15 +26,13 @@ export class Home {
   entities: Array<Entity>;
   entity: Entity;
   flow: Flow;
+  flowType: string;
 
   mlcpProgressHidden: boolean = true;
   mlcpPercentComplete: number;
   mlcpStatus: string;
 
-  constructor(
-    private entitiesService: EntitiesService,
-    private router: Router
-  ) {
+  constructor(private entitiesService: EntitiesService) {
     entitiesService.entityMessageEmitter.subscribe(path => {
       this.getEntities();
     });
@@ -50,11 +45,6 @@ export class Home {
       _.each(this.entities, entity => {
         entity.collapsed = true;
       });
-    },
-    error => {
-      if (error.status === 401) {
-        this.router.navigate(['login']);
-      }
     });
   }
 
@@ -65,8 +55,10 @@ export class Home {
     entity.collapsed = !collapsed;
   }
 
-  setFlow(flow) {
+  setFlow(entity, flow, flowType) {
+    this.entity = entity;
     this.flow = flow;
+    this.flowType = flowType;
   }
 
   isActiveEntity(entity) {

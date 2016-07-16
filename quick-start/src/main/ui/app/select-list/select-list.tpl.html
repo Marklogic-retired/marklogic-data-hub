@@ -2,6 +2,6 @@
   <md-list-item *ngFor="let item of items" (click)="selectItem(item)">
     <i [ngClass]="getItemClass(item)" class="fa fa-check"></i>
     <span flex>{{ getItemText(item) }}</span>
-    <i *ngIf="allowRemove" (click)="removeItem(item)" class="fa fa-trash"></i>
+    <i *ngIf="allowRemove" (click)="removeItem(item, $event)" class="fa fa-trash"></i>
   </md-list-item>
 </md-list>

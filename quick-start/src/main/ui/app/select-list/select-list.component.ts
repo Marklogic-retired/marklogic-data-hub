@@ -43,7 +43,6 @@ export class SelectList implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes) {
-    console.log(changes);
     if (changes.initialSelectedItem) {
       this.selectInitial();
     }
@@ -65,8 +64,9 @@ export class SelectList implements OnInit, OnChanges {
     this.selectedItem.emit(value);
   }
 
-  removeItem(item) {
+  removeItem(item, event: Event) {
     this.removedItem.emit(item);
+    event.stopPropagation();
   }
 
   getItemText(item) {

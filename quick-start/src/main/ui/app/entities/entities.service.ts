@@ -1,7 +1,6 @@
 import { Injectable, EventEmitter } from '@angular/core';
 import { Http, Response } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
-import { AuthService } from '../auth/auth.service';
 import { Message } from 'stompjs/lib/stomp.min';
 import { STOMPService } from '../stomp/stomp.service';
 
@@ -18,11 +17,8 @@ export class EntitiesService {
 
   constructor(
     private http: Http,
-    private auth: AuthService,
     private stomp: STOMPService
   ) {
-    this.stomp.configure('/websocket');
-    this.stomp.try_connect();
     this.stomp.messages.subscribe(this.onWebsockMessage);
   }
 
@@ -68,9 +64,6 @@ export class EntitiesService {
   }
 
   public extractData = (res: Response) => {
-    if (!this.auth.isAuthenticated()) {
-      this.auth.setAuthenticated(true);
-    }
     return res.json();
   }
 

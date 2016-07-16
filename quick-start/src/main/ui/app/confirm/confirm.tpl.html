@@ -1,0 +1,15 @@
+<div @fadeState="showIt" class="dialog-container">
+  <div @growState="showIt"class="mdl-dialog confirm-dialog">
+    <div class="mdl-dialog__title">{{title}}</div>
+    <div class="mdl-dialog__content">
+      <div class="modal-body">
+      {{textContent}}
+      </div>
+      <div class="mdl-dialog__actions">
+        <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect" (click)="ok()">{{okText}}</button>
+        <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" (click)="cancel()">{{cancelText}}</button>
+      </div>
+    </div>
+  </div>
+  <div class="modal-backdrop"></div>
+</div>

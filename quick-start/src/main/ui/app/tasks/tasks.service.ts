@@ -1,23 +1,16 @@
 import { Injectable, EventEmitter } from '@angular/core';
 import { Http, Response } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
-import { AuthService } from '../auth';
 
 @Injectable()
 export class TaskService {
-  constructor(
-    private http: Http,
-    private auth: AuthService
-  ) {}
+  constructor(private http: Http) {}
 
   getTasks() {
     return this.get('/tasks/');
   }
 
   private extractData = (res: Response) => {
-    if (!this.auth.isAuthenticated()) {
-      this.auth.setAuthenticated(true);
-    }
     return res.json();
   }
 

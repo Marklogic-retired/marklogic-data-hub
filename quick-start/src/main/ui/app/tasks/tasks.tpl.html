@@ -1,9 +1,20 @@
-<h1>tasks</h1>
+<div layout-padding layout="column">
+  <h1>Tasks</h1>
 
-<ul *ngIf="tasks && tasks.length > 0">
-  <li *ngFor="let task of tasks">
-    <span>ID: {{task.taskId}}</span>
-    <span>Running: {{task.running}}</span>
-  </li>
-</ul>
-<div *ngIf="!tasks || tasks.length === 0">No Tasks</div>
+  <table *ngIf="tasks && tasks.length > 0"
+    class="mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp">
+    <thead>
+      <tr>
+        <th class="mdl-data-table__cell--non-numeric">Task ID</th>
+        <th class="mdl-data-table__cell--non-numeric">Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let task of tasks">
+        <td class="mdl-data-table__cell--non-numeric">{{task.taskId}}</td>
+        <td>{{task.running ? 'Running' : 'Stopped'}}</td>
+      </tr>
+    </tbody>
+  </table>
+  <div *ngIf="!tasks || tasks.length === 0">No Tasks</div>
+</div>

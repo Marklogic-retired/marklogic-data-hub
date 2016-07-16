@@ -69,6 +69,13 @@ public class ProjectsController extends BaseController implements FileSystemEven
         return resp;
     }
 
+    @RequestMapping(value = "/current-env", method = RequestMethod.GET)
+    @ResponseBody
+    public EnvironmentConfig getCurrentEnvironment() {
+        requireAuth();
+        return envConfig;
+    }
+
     @RequestMapping(value = "/projects/", method = RequestMethod.POST)
     @ResponseBody
     public Project addProject(@RequestParam String path) throws ClassNotFoundException, IOException {
@@ -191,6 +198,26 @@ public class ProjectsController extends BaseController implements FileSystemEven
         requireAuth();
 
         // make sure the project exists
+        pm.getProject(projectId);
+
+        // uninstall the hub
+        dataHubService.uninstall(envConfig.mlSettings, new StatusListener() {
+            @Override
+            public void onStatusChange(int percentComplete, String message) {
+                template.convertAndSend("/topic/uninstall-status", new StatusMessage(percentComplete, message));
+            }
+        });
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/current-project/uninstall", method = RequestMethod.DELETE)
+    @ResponseBody
+    public ResponseEntity<?> unInstall(HttpSession session) {
+
+        requireAuth();
+
+        // make sure the project exists
+        Integer projectId = (Integer)session.getAttribute("currentProjectId");
         pm.getProject(projectId);
 
         // uninstall the hub

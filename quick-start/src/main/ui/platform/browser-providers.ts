@@ -32,9 +32,9 @@ export const APPLICATION_PROVIDERS = [
 
   ...HTTP_PROVIDERS,
   ...MATERIAL_PROVIDERS,
-  ...MDL_SERVICES,
+  ...MDL_SERVICES
 
-  { provide: LocationStrategy, useClass: HashLocationStrategy }
+  // { provide: LocationStrategy, useClass: HashLocationStrategy }
 ];
 
 export const PROVIDERS = [

@@ -7,23 +7,28 @@ import { STOMPService } from '../stomp/stomp.service';
 @Injectable()
 export class InstallService {
 
-  messageEmitter = null;
+  messageEmitter: EventEmitter<any> = new EventEmitter<any>();
   private messages: Observable<Message>;
 
   constructor(
     private http: Http,
     private stomp: STOMPService) {
-    this.messageEmitter = new EventEmitter();
+    this.stomp.messages.subscribe(this.onMessage);
   }
 
-  install() {
-    this.stomp.messages.subscribe(this.onMessage);
+  install(projectId, environment) {
     this.stomp.subscribe('/topic/install-status');
-    this.http.put('/projects/1/local/install', null).subscribe(() => {});
+    this.http.put(`/projects/${projectId}/${environment}/install`, null).subscribe(() => {});
+  }
+
+  uninstall() {
+    this.stomp.subscribe('/topic/uninstall-status');
+    this.http.delete('/current-project/uninstall').subscribe(() => {});
   }
 
   public onMessage = (message: Message) => {
-    if (message.headers.destination === '/topic/install-status') {
+    if (message.headers.destination === '/topic/install-status' ||
+      message.headers.destination === '/topic/uninstall-status') {
       let json = JSON.parse(message.body);
       this.messageEmitter.next(json);
     }

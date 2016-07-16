@@ -180,6 +180,14 @@ export class STOMPService {
 
       // Reset state indicator
       this.state.next( STOMPState.CLOSED );
+
+      // Attempt reconnection
+      console.log('Reconnecting in 5 seconds...');
+      setTimeout(() => {
+        this.configure(this.endpoint);
+        this.try_connect();
+      }, 5000);
+
     }
   }
 
@@ -196,6 +204,9 @@ export class STOMPService {
   /** Subscribe to server message queues */
   public subscribe(endpoint: string): Promise<string> {
 
+    let promise = new Promise(
+      (resolve, reject) => this.resolveSubQueue = resolve
+    );
     if (this.state.getValue() === STOMPState.TRYING) {
       this._subscribeQueue.push(endpoint);
     } else {
@@ -204,9 +215,7 @@ export class STOMPService {
       this.resolveSubQueue.apply(resp.id);
     }
 
-    return new Promise(
-      (resolve, reject) => this.resolveSubQueue = resolve
-    );
+    return promise;
   }
 
   public unsubscribe(id) {

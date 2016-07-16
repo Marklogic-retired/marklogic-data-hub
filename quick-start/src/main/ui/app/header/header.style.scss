@@ -1,9 +1,14 @@
 @import 'variables';
 
 $highlight-color: unquote("rgb(#{$palette-datahub-A100})");
+$bg-color: unquote("rgb(#{$palette-datahub-500})");
 
-header {
-  background-color: $color-primary;
+header.mdl-layout__header {
+  background-color: $bg-color;
+}
+
+.debug-status {
+  position: relative;
 }
 
 .mdl-layout__header-row {
@@ -22,5 +27,17 @@ img {
 .mdl-menu__item {
   &:hover {
     background-color: $highlight-color;
+  }
+}
+
+a.active {
+  position: relative;
+  &::after {
+    content: ' ';
+    border-bottom: 1px solid rgba(255,255,255,0.35);
+    position: absolute;
+    left: 20%;
+    right: 20%;
+    bottom: 25%;
   }
 }

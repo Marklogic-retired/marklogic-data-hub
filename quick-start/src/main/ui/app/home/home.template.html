@@ -17,8 +17,7 @@
         <div class="mdl-list__item-primary-content"
           [ngClass]="entity.collapsed ? '' : 'active'"
           (click)="setEntity(entity)">
-          <mdl-button mdl-button-type="mini-fab" mdl-colored>E</mdl-button>
-          {{ entity.entityName }}
+          <i class="fa fa-industry"></i> {{ entity.entityName }}
           <div class="mdl-layout-spacer"></div>
           <i class="fa fa-caret-left" [ngClass]="entity.collapsed ? 'collapsed' : ''"></i>
         </div>
@@ -35,7 +34,7 @@
               <li
                 class="flow mdl-list__item"
                 *ngFor="let flow of entity.inputFlows"
-                (click)="setFlow(flow)">
+                (click)="setFlow(entity, flow, 'Input')">
                 <span class="mdl-list__item-primary-content">
                   <i class="material-icons mdl-list__item-icon">transform</i>
                   {{ flow.flowName }}
@@ -58,7 +57,7 @@
               <li
                 class="flow mdl-list__item"
                 *ngFor="let flow of entity.harmonizeFlows"
-                (click)="setFlow(flow)">
+                (click)="setFlow(entity, flow, 'Harmonize')">
                 <span class="mdl-list__item-primary-content">
                   <i class="material-icons mdl-list__item-icon">transform</i>
                   {{ flow.flowName }}
@@ -76,9 +75,13 @@
     </ul>
   </div>
   <main class="mdl-layout__content">
-    <div class="page-content">
+    <div class="page-content" layout-padding>
+      <div flex class="mlcp-status" layout="column" *ngIf="mlcpStatus">
+        <h4>MLCP Output</h4>
+        <pre flex>{{ mlcpStatus }}</pre>
+      </div>
       <div class="current-flow" *ngIf="flow">
-        <h2>{{flow.flowName}}</h2>
+        <h2>{{flow.flowName}} {{flowType}} flow</h2>
         <h3>Plugins</h3>
         <ul>
           <li *ngFor="let plugin of flow.plugins">
@@ -91,7 +94,6 @@
           </li>
         </ul>
       </div>
-      <pre flex class="mlcp-status">{{ mlcpStatus }}</pre>
     </div>
   </main>
   <mlcp></mlcp>

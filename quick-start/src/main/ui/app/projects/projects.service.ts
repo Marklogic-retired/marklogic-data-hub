@@ -10,6 +10,10 @@ export class ProjectService {
 
   constructor(private http: Http) {}
 
+  currentProject() {
+    return this.get('/current-env');
+  }
+
   getProjects() {
     return this.get('/projects/');
   }

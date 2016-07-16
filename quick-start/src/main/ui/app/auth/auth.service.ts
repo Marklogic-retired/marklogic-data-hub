@@ -2,10 +2,12 @@ import { Injectable, EventEmitter } from '@angular/core';
 
 @Injectable()
 export class AuthService {
-  _authenticated: boolean = false;
+  _authenticated: boolean;
   authenticated: EventEmitter<any> = new EventEmitter();
 
-  constructor() {}
+  constructor() {
+    this.setAuthenticated(false);
+  }
 
   isAuthenticated() {
     return this._authenticated;

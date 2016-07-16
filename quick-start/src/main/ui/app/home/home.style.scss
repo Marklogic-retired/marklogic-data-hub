@@ -4,6 +4,7 @@ $highlight-color: unquote("rgb(#{$palette-datahub-50})");
 $hover-color: unquote("rgb(#{$palette-datahub-A100})");
 $layout-title-color: unquote("rgb(#{$palette-datahub-100})");
 $button-color: unquote("rgb(#{$palette-datahub-500})");
+$mlcp-border: unquote("rgb(#{$palette-datahub-800})");
 $list-bg-color: #f1f1ff;
 $heightDuration: 0.5s;
 $fadeDuration: 1s;
@@ -84,17 +85,8 @@ $openDuration: 0.5s;
   padding: 0px;
 }
 
-.mdl-list__item .mdl-list__item-primary-content mdl-button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 14px;
-  cursor: inherit;
-  height: 30px;
-  min-width: 30px;
-  width: 30px;
-  margin: 0px 16px 0px 0px;
-  background: $button-color;
+.mdl-list__item .mdl-list__item-primary-content i.fa-industry {
+  margin-right: 10px;
 }
 
 .mdl-list__item-primary-content {
@@ -108,7 +100,7 @@ $openDuration: 0.5s;
     background-color: $hover-color;
   }
 
-  .fa {
+  .fa-caret-left {
     transform: rotate(-90deg);
     -webkit-transform: rotate(-90deg);
     transition: transform $openDuration ease-in-out;
@@ -121,4 +113,15 @@ $openDuration: 0.5s;
     -webkit-transform: rotate(0deg);
   }
 
+}
+
+.mlcp-status {
+  margin: 2rem;
+  pre {
+    margin: 0px;
+    border: 1px solid $mlcp-border;
+    background-color: $hover-color;
+    padding: 1rem;
+    overflow: auto;
+  }
 }

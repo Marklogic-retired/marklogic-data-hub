@@ -14,23 +14,8 @@ public class AppController {
     /**
      * Assumes that the root URL should use a template named "index", which presumably will setup the Angular app.
      */
-    @RequestMapping(value = "/", method = RequestMethod.GET)
+    @RequestMapping(value = {"/", "/login", "/home", "/settings", "/tasks", "/404"}, method = RequestMethod.GET)
     public String index() {
-        return "index.html";
-    }
-
-    @RequestMapping(value = "/login", method = RequestMethod.GET)
-    public String login() {
-        return "index.html";
-    }
-
-    @RequestMapping(value = "/install", method = RequestMethod.GET)
-    public String install() {
-        return "index.html";
-    }
-
-    @RequestMapping(value = "/404", method = RequestMethod.GET)
-    public String notFound() {
         return "index.html";
     }
 }

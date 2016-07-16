@@ -16,6 +16,8 @@ import { ENV_PROVIDERS, decorateComponentRef } from './platform/environment';
 */
 import { App, APP_PROVIDERS } from './app';
 
+import { AUTH_PROVIDERS } from './app/auth';
+
 /*
  * Bootstrap our Angular app with a top level component `App` and inject
  * our Services and Providers into Angular's dependency injection
@@ -27,6 +29,7 @@ export function main(initialHmrState?: any): Promise<any> {
     ...PLATFORM_PROVIDERS,
     ...ENV_PROVIDERS,
     ...APP_PROVIDERS,
+    ...AUTH_PROVIDERS
   ])
   .then(decorateComponentRef)
   .catch(err => console.error(err));

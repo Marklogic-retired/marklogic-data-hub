@@ -179,15 +179,30 @@
         </section>
       </div>
 
-      <div id="InstallerTab" class="tab-content" [hidden]="!tabs.Installer">
+      <div id="InstallerTab" class="tab-content" [hidden]="!tabs.Installer" *ngIf="currentEnvironment">
         <div layout="column" layout-align="center center">
-          <md-progress-circular *ngIf="!progressHidden" md-mode="determinate" value="{{percentComplete}}"></md-progress-circular>
-          <section flex layout-padding class="install-box">
-            <pre>{{message}}</pre>
-          </section>
+          <div class="shrinky" [ngClass]="(!installing && !currentEnvironment.installed) ? '' : 'collapsed'" layout="column" layout-align="center center">
+            <h3>Installation Needed</h3>
+            <p>In order to continue you must install the Data Hub Framework into
+            MarkLogic server.
+            </p>
+            <div>
+              <button type="button" md-raised-button (click)="install()">Install</button>
+            </div>
+          </div>
+          <div class="install-progress shrinky" [ngClass]="installing ? '' : 'collapsed'" layout="column" layout-align="center center">
+            <md-progress-circle md-mode="determinate" [value]="percentComplete"></md-progress-circle>
+            <div>Installing...</div>
+            <div>{{percentComplete}}% complete</div>
+          </div>
+          <div class="shrinky" [ngClass]="currentEnvironment.installed ? '' : 'collapsed'" layout="column" layout-align="center center">
+            <i class="fa fa-thumbs-up"></i>
+            <p>Installation into MarkLogic is complete!</p>
+          </div>
+
           <div layout="row" layout-align="center center" class="init-buttons">
             <button type="button" md-button (click)="back()">&lt; Back</button>
-            <button type="button" md-raised-button [disabled]="!currentEnvironment" (click)="environmentNext()">Next &gt;</button>
+            <button type="button" md-raised-button [disabled]="!currentEnvironment.installed" (click)="installNext()">Finished</button>
           </div>
         </div>
       </div>
