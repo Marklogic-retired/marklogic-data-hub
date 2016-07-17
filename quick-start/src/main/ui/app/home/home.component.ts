@@ -28,6 +28,8 @@ export class Home {
   flow: Flow;
   flowType: string;
 
+  collapsedMap: Map<string, boolean> = new Map<string, boolean>();
+
   mlcpProgressHidden: boolean = true;
   mlcpPercentComplete: number;
   mlcpStatus: string;
@@ -39,20 +41,28 @@ export class Home {
     this.getEntities();
   }
 
+  isCollapsed(entity: Entity) {
+    return this.collapsedMap.get(entity.entityName);
+  }
+
   getEntities() {
     this.entitiesService.getEntities().subscribe(entities => {
       this.entities = entities;
       _.each(this.entities, entity => {
-        entity.collapsed = true;
+        let previous = this.collapsedMap.get(entity.entityName);
+        if (_.isUndefined(previous)) {
+          previous = true;
+        }
+        this.collapsedMap.set(entity.entityName, previous);
       });
     });
   }
 
   setEntity(entity) {
-    const collapsed = entity.collapsed;
+    const collapsed = this.collapsedMap.get(entity.entityName);
 
-    _.each(this.entities, e => { e.collapsed = true; });
-    entity.collapsed = !collapsed;
+    _.each(this.entities, e => { this.collapsedMap.set(e.entityName, true); });
+    this.collapsedMap.set(entity.entityName, !collapsed);
   }
 
   setFlow(entity, flow, flowType) {
@@ -76,21 +86,21 @@ export class Home {
     });
   }
 
-  newInputFlow(ev) {
-    return this.showNewFlow(ev, 'INPUT');
+  newInputFlow(ev, entity: Entity) {
+    return this.showNewFlow(ev, entity, 'INPUT');
   }
 
-  newHarmonizeFlow(ev) {
-    return this.showNewFlow(ev, 'HARMONIZE');
+  newHarmonizeFlow(ev, entity: Entity) {
+    return this.showNewFlow(ev, entity, 'HARMONIZE');
   }
 
-  showNewFlow(ev, flowType) {
+  showNewFlow(ev, entity: Entity, flowType) {
     this.newFlow.show(flowType).subscribe(newFlow => {
-      this.entitiesService.createFlow(this.entity, flowType, newFlow).subscribe(flow => {
+      this.entitiesService.createFlow(entity, flowType, newFlow).subscribe(flow => {
         if (flowType === 'INPUT') {
-          this.entity.inputFlows.push(flow);
+          entity.inputFlows.push(flow);
         } else if (flowType === 'HARMONIZE') {
-          this.entity.harmonizeFlows.push(flow);
+          entity.harmonizeFlows.push(flow);
         }
       });
     });

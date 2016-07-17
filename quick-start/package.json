@@ -92,7 +92,6 @@
     "sockjs-client": "^1.1.1",
     "stompjs": "^2.3.3",
     "verbose": "^0.2.3",
-    "web-animations-js": "^2.2.1",
     "zone.js": "~0.6.12"
   },
   "devDependencies": {

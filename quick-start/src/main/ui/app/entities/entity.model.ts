@@ -8,6 +8,5 @@ export class Entity {
   pluginFormat: string;
   dataFormat: string;
 
-  collapsed: boolean = true;
   constructor() {}
 }

@@ -15,18 +15,18 @@
         [ngClass]="isActiveEntity(entity)"
         *ngFor="let entity of entities">
         <div class="mdl-list__item-primary-content"
-          [ngClass]="entity.collapsed ? '' : 'active'"
+          [ngClass]="isCollapsed(entity) ? '' : 'active'"
           (click)="setEntity(entity)">
           <i class="fa fa-industry"></i> {{ entity.entityName }}
           <div class="mdl-layout-spacer"></div>
-          <i class="fa fa-caret-left" [ngClass]="entity.collapsed ? 'collapsed' : ''"></i>
+          <i class="fa fa-caret-left" [ngClass]="isCollapsed(entity) ? 'collapsed' : ''"></i>
         </div>
-        <div class="flow-container" [ngClass]="entity.collapsed ? 'collapsed' : ''">
+        <div class="flow-container" [ngClass]="isCollapsed(entity) ? 'collapsed' : ''">
           <div class="padder">
             <div class="subheader">
               Input Flows
               <div class="mdl-layout-spacer"></div>
-              <button md-icon-button aria-label="New Input Flow" (click)="newInputFlow($event)">
+              <button md-icon-button aria-label="New Input Flow" (click)="newInputFlow($event, entity)">
                 <i class="fa fa-plus"></i>
               </button>
             </div>
@@ -49,7 +49,7 @@
             <div class="subheader">
               Harmonize Flows
               <div class="mdl-layout-spacer"></div>
-              <button md-icon-button aria-label="New Harmonize Flow" (click)="newHarmonizeFlow($event)">
+              <button md-icon-button aria-label="New Harmonize Flow" (click)="newHarmonizeFlow($event, entity)">
                 <i class="fa fa-plus"></i>
               </button>
             </div>
