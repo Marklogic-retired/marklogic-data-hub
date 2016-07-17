@@ -36,10 +36,6 @@ import 'rxjs/add/operator/mergeMap';
 // import '@angular2-material/toolbar';
 // look in src/platform/angular2-material2 and src/platform/providers
 
-// import 'angular2-mdl';
-
-import 'clipboard';
-
 import 'lodash';
 
 if ('production' === ENV) {

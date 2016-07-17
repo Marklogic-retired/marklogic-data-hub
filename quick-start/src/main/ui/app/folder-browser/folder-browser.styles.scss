@@ -3,14 +3,6 @@
 $highlight-color: unquote("rgb(#{$palette-datahub-A100})");
 $folder-color: unquote("rgb(#{$palette-datahub-50})");
 
-:host {
-  display: flex;
-  flex-direction: column;
-  flex: 1 1;
-  margin: 0px;
-  padding: 0px;
-}
-
 .container {
   border: 1px solid rgb(177, 199, 217);
 }

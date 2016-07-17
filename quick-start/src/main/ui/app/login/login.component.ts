@@ -1,5 +1,4 @@
-import { Component, Input, Renderer, trigger,
-   state, style, transition, animate } from '@angular/core';
+import { Component, Input, Renderer } from '@angular/core';
 import { Router } from '@angular/router';
 
 import * as _ from 'lodash';
@@ -21,21 +20,7 @@ import { HubSettings } from './hub-settings.model';
     SelectList
   ],
   providers: [],
-  styleUrls: ['./login.style.scss'],
-  animations: [
-    trigger('visibleState', [
-      state('hidden', style({
-        height: 0,
-        overflow: 'hidden'
-      })),
-      state('active', style({
-        height: '*',
-        overflow: '*'
-      })),
-      transition('hidden => active', animate('0.5s ease-in')),
-      transition('active => hidden', animate('0.5s ease-in'))
-    ]),
-  ],
+  styleUrls: ['./login.style.scss']
 })
 
 export class Login {
@@ -276,10 +261,13 @@ export class Login {
     const name = this.initSettings.name;
     this.initSettings.stagingHttpName = name + '-STAGING';
     this.initSettings.stagingDbName = name + '-STAGING';
-    this.initSettings.finalHttpName = name + '-STAGING';
-    this.initSettings.finalDbName = name + '-STAGING';
-    this.initSettings.traceHttpName = name + '-STAGING';
-    this.initSettings.traceDbName = name + '-STAGING';
+    this.initSettings.finalHttpName = name + '-FINAL';
+    this.initSettings.finalDbName = name + '-FINAL';
+    this.initSettings.traceHttpName = name + '-TRACING';
+    this.initSettings.traceDbName = name + '-TRACING';
+    this.initSettings.modulesDbName = name + '-MODULES';
+    this.initSettings.triggersDbName = name + '-TRIGGERS';
+    this.initSettings.schemasDbName = name + '-SCHEMAS';
   }
 
   private disableTabs() {

@@ -33,6 +33,7 @@ public class HubProject {
         this.pluginsDir = Paths.get(this.projectDirStr, "plugins");
 
         customTokens.put("%%mlHost%%", hubConfig.host);
+        customTokens.put("%%mlAppName%%", hubConfig.name);
         customTokens.put("%%mlStagingAppserverName%%", hubConfig.stagingHttpName);
         customTokens.put("%%mlStagingPort%%", hubConfig.stagingPort.toString());
         customTokens.put("%%mlStagingDbName%%", hubConfig.stagingDbName);

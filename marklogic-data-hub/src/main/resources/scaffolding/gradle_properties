@@ -8,7 +8,7 @@
 #
 # ....
 mlHost=%%mlHost%%
-mlAppName=marklogic-data-hub
+mlAppName=%%mlAppName%%
 
 mlStagingAppserverName=%%mlStagingAppserverName%%
 mlStagingPort=%%mlStagingPort%%
@@ -17,7 +17,7 @@ mlStagingForestsPerHost=%%mlStagingForestsPerHost%%
 
 mlFinalAppserverName=%%mlFinalAppserverName%%
 mlFinalPort=%%mlFinalPort%%
-mlFinalDbName=data-%%mlFinalDbName%%
+mlFinalDbName=%%mlFinalDbName%%
 mlFinalForestsPerHost=%%mlFinalForestsPerHost%%
 
 mlTraceAppserverName=%%mlTraceAppserverName%%

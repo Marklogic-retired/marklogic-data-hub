@@ -30,7 +30,7 @@ public class DataHubInstallTest extends HubTestBase {
     public static void setup() throws IOException {
         XMLUnit.setIgnoreWhitespace(true);
         dataHub = new DataHub(getHubConfig(projectPath.toString()));
-
+        dataHub.initProject();
         dataHub.install(new StatusListener() {
             @Override
             public void onStatusChange(int percentComplete, String message) {

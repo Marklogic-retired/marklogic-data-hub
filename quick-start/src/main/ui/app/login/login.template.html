@@ -13,54 +13,53 @@
     <div flex></div>
     <div class="tab-group">
       <div id="ProjectDirTab" class="tab-content" [hidden]="!tabs.ProjectDir">
-        <section layout="row" layout-align="center center">
-          <section class="init-box" layout="column" layout-align="center center">
-            <div class="project-browser" layout="column" layout-align="center center" *ngIf="projects && projects.length > 0">
-              <h3>Choose an existing project</h3>
-              <div class="shrinkable" @visibleState="showFolderBrowser ? 'active': 'hidden'" layout="column" layout-align="center center">
-                <button type="button" md-button (click)="showFolderBrowser = !showFolderBrowser">Choose</button>
-              </div>
-              <select-list
-                @visibleState="showFolderBrowser ? 'hidden' : 'active'"
-                [items]="projects"
-                [initialSelectedItem]="lastProject"
-                [allowRemove]="true"
-                (selectedItem)="project = $event"
-                (removedItem)="removeProject($event)"
-                label="path" identifier="id"
-                md-whiteframe-2dp></select-list>
-              <p>or</p>
+        <section class="init-box" layout="column" layout-align="center center">
+          <div class="project-browser" layout="column" layout-align="center center" *ngIf="projects && projects.length > 0">
+            <h3>Choose an existing project</h3>
+            <div class="shrinkable shrinky" [ngClass]="{'collapsed': !showFolderBrowser}" layout="column" layout-align="center center">
+              <button type="button" md-button (click)="showFolderBrowser = !showFolderBrowser">Choose</button>
+            </div>
+            <select-list
+              class="shrinky"
+              [ngClass]="{'collapsed': showFolderBrowser}"
+              [items]="projects"
+              [initialSelectedItem]="lastProject"
+              [allowRemove]="true"
+              (selectedItem)="project = $event"
+              (removedItem)="removeProject($event)"
+              label="path" identifier="id"
+              md-whiteframe-2dp></select-list>
+            <p>or</p>
+          </div>
+
+          <div layout="column" layout-align="center center">
+            <h3>Browse for a Project Folder</h3>
+            <div class="shrinkable shrinky" [ngClass]="{'collapsed': showFolderBrowser}" layout="column" layout-align="center center">
+              <button type="button" md-button (click)="showFolderBrowser = !showFolderBrowser" class="shrink-me">Browse</button>
             </div>
 
-            <div layout="column" layout-align="center center">
-              <h3>Browse for a Project Folder</h3>
-              <div class="shrinkable" @visibleState="showFolderBrowser ? 'hidden': 'active'" layout="column" layout-align="center center">
-                <button type="button" md-button (click)="showFolderBrowser = !showFolderBrowser" class="shrink-me">Browse</button>
-              </div>
+            <folder-browser
+              [ngClass]="{'collapsed': !showFolderBrowser}"
+              class="shrink-me shrinky"
+              start-path='.'
+              (folderChosen)="folderClicked($event)">
+            </folder-browser>
+          </div>
 
-              <folder-browser
-                @visibleState="showFolderBrowser ? 'active' : 'hidden'"
-                class="shrink-me"
-                start-path='.'
-                (folderChosen)="folderClicked($event)">
-              </folder-browser>
-            </div>
-
-            <div layout="row" layout-align="end center" class="init-buttons">
-              <button type="button" md-raised-button (click)="chooseProject()" [disabled]="!canProjectNext()">Next</button>
-            </div>
-          </section>
+          <div layout="row" layout-align="end center" class="init-buttons">
+            <button type="button" md-raised-button (click)="chooseProject()" [disabled]="!canProjectNext()">Next</button>
+          </div>
         </section>
       </div>
 
 
       <div id="InitIfNeededTab" class="tab-content" [hidden]="!tabs.InitIfNeeded">
         <section layout="row" layout-align="center center" *ngIf="currentProject">
-          <section class="init-box" layout="column" layout-align="center center">
+          <section class="init-box" flex layout="column" layout-align="center center">
             <h3>This project needs to be initialized</h3>
             <p>The project located at {{currentProject.path}} needs to be initialized.</p>
 
-            <form flex layout-padding layout="column" class="initForm" (submit)="initProject()">
+            <form class="initForm" (submit)="initProject()">
               <div flex layout="column" class="scroller">
                 <div class="sub-section">
                   <md-input placeholder="DataHub Name" type="text" name="name" [(ngModel)]="initSettings.name" (input)="hubNameChanged()"  required="required"></md-input>
@@ -70,7 +69,7 @@
                   Advanced Settings
                   <i class="fa fa-caret-right" [ngClass]="showInitAdvanced ? '' : 'collapsed'"></i>
                 </button>
-                <div class="advanced" @visibleState="showInitAdvanced ? 'active' : 'hidden'">
+                <div class="advanced shrinky" [ngClass]="{'collapsed': !showInitAdvanced}">
                   <h3 class="md-primary">Staging</h3>
                   <section class="sub-section" layout="column">
                     <md-input placeholder="Staging Appserver Name" type="text" name="stagingHttpName" [(ngModel)]="initSettings.stagingHttpName" required="required"></md-input>
@@ -107,7 +106,7 @@
                   </section>
                 </div>
               </div>
-              <div layout="row" layout-align="center center" class="init-buttons">
+              <div layout="row" layout-align="end center" class="init-buttons">
                 <button type="button" md-button (click)="back()">&lt; Back</button>
                 <button type="button" md-button (click)="restoreInitDefaults()">Restore Defaults</button>
                 <button type="submit" md-raised-button>Initialize</button>
@@ -125,7 +124,7 @@
           <p class="project-path">{{currentProject.path}}</p>
           <p>Read more about the project structure on the <a target="_blank" href="https://github.com/marklogic/marklogic-data-hub/wiki/Project-Directory-Structure">github wiki</a>.</p>
         </section>
-        <div layout="row" layout-align="center center" class="init-buttons">
+        <div layout="row" layout-align="end center" class="init-buttons">
           <button type="button" md-button (click)="back()">&lt; Back</button>
           <button type="button" md-raised-button (click)="postInitNext()">Next</button>
         </div>
@@ -144,7 +143,7 @@
               md-whiteframe-2dp
               class="shrink-me"></select-list>
 
-            <div layout="row" layout-align="center center" class="init-buttons">
+            <div layout="row" layout-align="end center" class="init-buttons">
               <button type="button" md-button (click)="back()">&lt; Back</button>
               <button type="button" md-raised-button [disabled]="!currentEnvironmentString" (click)="environmentNext()">Next &gt;</button>
             </div>
@@ -154,14 +153,16 @@
 
       <div id="LoginTab" class="tab-content" [hidden]="!tabs.Login">
         <section layout="row" layout-align="center center">
-          <section class="login-box" layout="column" layout-align="center center">
+          <section class="login-box" flex layout="column" layout-align="center center">
             <h3>Login to the Data Hub</h3>
-            <form flex layout-fill layout-padding layout="column" class="loginForm" (submit)="login()">
-              <md-input placeholder="MarkLogic User Name" id="username" name="username" type="text" [(ngModel)]="loginInfo.username" required="required"></md-input>
-              <md-input placeholder="MarkLogic Password" name="password" type="password" [(ngModel)]="loginInfo.password" required="required"></md-input>
-              <div layout="row" layout-align="center center" class="init-buttons">
-                <button md-button type="button" (click)="back()">&lt; Back</button>
-                <button md-raised-button type="submit">Login</button>
+            <form class="loginForm" (submit)="login()">
+              <div flex layout-fill layout-padding layout="column">
+                <md-input placeholder="MarkLogic User Name" id="username" name="username" type="text" [(ngModel)]="loginInfo.username" required="required"></md-input>
+                <md-input placeholder="MarkLogic Password" name="password" type="password" [(ngModel)]="loginInfo.password" required="required"></md-input>
+                <div layout="row" layout-align="end center" class="init-buttons">
+                  <button md-button type="button" (click)="back()">&lt; Back</button>
+                  <button md-raised-button type="submit">Login</button>
+                </div>
               </div>
             </form>
           </section>
@@ -200,7 +201,7 @@
             <p>Installation into MarkLogic is complete!</p>
           </div>
 
-          <div layout="row" layout-align="center center" class="init-buttons">
+          <div layout="row" layout-align="end center" class="init-buttons">
             <button type="button" md-button (click)="back()">&lt; Back</button>
             <button type="button" md-raised-button [disabled]="!currentEnvironment.installed" (click)="installNext()">Finished</button>
           </div>

@@ -81,7 +81,6 @@
     "@angularclass/webpack-toolkit": "^1.3.3",
     "angular2-clipboard": "^0.2.12",
     "angular2-mdl": "^1.0.0-rc1",
-    "clipboard": "^1.5.12",
     "core-js": "^2.4.0",
     "font-awesome": "^4.6.3",
     "http-server": "^0.9.0",
@@ -93,6 +92,7 @@
     "sockjs-client": "^1.1.1",
     "stompjs": "^2.3.3",
     "verbose": "^0.2.3",
+    "web-animations-js": "^2.2.1",
     "zone.js": "~0.6.12"
   },
   "devDependencies": {

@@ -117,7 +117,7 @@ public class LoadHubModulesCommand extends AbstractCommand {
             AppConfig appConfig = context.getAppConfig();
             ArrayList<String> classpaths = new ArrayList<String>();
             classpaths.add("/com.marklogic.hub/**/*.x??");
-            classpaths.add("/trace-ui/**/*");
+            classpaths.add("/trace-ui/**/*.*");
 
             ArrayList<Content> content = new ArrayList<Content>();
             for (String classpath : classpaths) {

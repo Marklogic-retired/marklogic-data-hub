@@ -18,7 +18,7 @@ $install-border: unquote("rgb(#{$palette-datahub-800})");
 .credentials-prompt {
   background-color: $ml-blue;
   width: 100vw;
-  height: 100vh;
+  min-height: 100vh;
   position: absolute;
 }
 
@@ -108,6 +108,7 @@ h3 {
   select-list {
     margin-top: 1rem;
     overflow: hidden;
+    width: 100%;
   }
 
   .shrinkable {
@@ -168,6 +169,20 @@ $openDuration: 0.5s;
   }
 }
 
+#InitIfNeededTab {
+  p {
+    max-width: 100%;
+  }
+
+  .shrinky {
+    overflow: visible;
+    max-height: 5000px;
+
+    &.collapsed {
+      max-height: 0px;
+    }
+  }
+}
 
 #InstallerTab {
   .fa-thumbs-up {
@@ -178,24 +193,25 @@ $openDuration: 0.5s;
   .install-progress {
     color: white;
   }
+}
 
-  $openDuration: 0.5s;
+$openDuration: 0.5s;
 
-  $heightDuration: 0.5s;
-  $fadeDuration: 1s;
-  $easingFunc: ease-in-out;
+$heightDuration: 1.5s;
+$easingFunc: ease-in-out;
 
-  .shrinky {
-    max-height: 5000px;
-    overflow: hidden;
-    position: relative;
-    -webkit-transition: max-height $heightDuration $easingFunc;
-    -moz-transition: max-height $heightDuration $easingFunc;
-    transition: max-height $heightDuration $easingFunc;
 
-    &.collapsed {
-      max-height: 0px;
-    }
+.shrinky {
+  max-height: 250px;
+  overflow: hidden;
+  position: relative;
+  -webkit-transition: max-height $heightDuration $easingFunc;
+  -moz-transition: max-height $heightDuration $easingFunc;
+  transition: max-height $heightDuration $easingFunc;
+  transform-origin: top;
+
+  &.collapsed {
+    max-height: 0px;
   }
 }
 
@@ -203,4 +219,9 @@ $openDuration: 0.5s;
   path {
     stroke: white;
   }
+}
+
+form {
+  display: block;
+  width: 100%;
 }
