@@ -176,11 +176,16 @@ $openDuration: 0.5s;
 
   .shrinky {
     overflow: visible;
-    max-height: 5000px;
+    max-height: none;
 
     &.collapsed {
+      overflow: hidden;
       max-height: 0px;
     }
+  }
+
+  .advanced-section {
+    text-align: center;
   }
 }
 

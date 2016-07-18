@@ -27,11 +27,17 @@ public class Project {
         File buildGradle = new File(this.path, "build.gradle");
         File gradleProperties = new File(this.path, "gradle.properties");
         File configDir = new File(this.path, "config");
+        File databasesDir = new File(configDir, "databases");
+        File serversDir = new File(configDir, "servers");
 
         return buildGradle.exists() &&
                gradleProperties.exists() &&
                configDir.exists() &&
-               configDir.isDirectory();
+               configDir.isDirectory() &&
+               databasesDir.exists() &&
+               databasesDir.isDirectory() &&
+               serversDir.exists() &&
+               serversDir.isDirectory();
     }
 
     public List<String> getEnvironments() {

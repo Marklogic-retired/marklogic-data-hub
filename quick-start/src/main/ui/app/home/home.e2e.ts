@@ -1,22 +1,29 @@
 describe('App', () => {
 
-  beforeEach(() => {
-    // change hash depending on router LocationStrategy
-    browser.get('/#/home');
+  beforeAll(() => {
+    console.log('login.e2e.ts');
   });
 
+  beforeEach(() => {
+    // change hash depending on router LocationStrategy
+    browser.get('/');
+  });
 
   it('should have a title', () => {
     let subject = browser.getTitle();
-    let result  = 'Angular2 Webpack Starter by @gdi2290 from @AngularClass';
+    let result  = 'Data Hub QuickStart';
     expect(subject).toEqual(result);
+
+    browser.getCurrentUrl().then(url => {
+      expect(url.endsWith('/login')).toBe(false);
+      expect(url.endsWith('/')).toBe(true);
+    });
   });
 
-  it('should have `your content here` x-large', () => {
-    let subject = element(by.css('[x-large]')).getText();
-    let result  = 'Your Content Here';
-    expect(subject).toEqual(result);
-  });
-
+  // it('should create an entity', () => {
+  //   const inputFlowButton = element(by.css('#new-input-flow'));
+  //   inputFlowButton.click();
+  //   browser.waitForAngular();
+  // });
 
 });

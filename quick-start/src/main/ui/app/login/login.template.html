@@ -65,10 +65,12 @@
                   <md-input placeholder="DataHub Name" type="text" name="name" [(ngModel)]="initSettings.name" (input)="hubNameChanged()"  required="required"></md-input>
                   <md-input placeholder="MarkLogic Host" type="text" name="host" [(ngModel)]="initSettings.host" required="required"></md-input>
                 </div>
-                <button type="button" md-button (click)="showInitAdvanced = !showInitAdvanced">
-                  Advanced Settings
-                  <i class="fa fa-caret-right" [ngClass]="showInitAdvanced ? '' : 'collapsed'"></i>
-                </button>
+                <div class="sub-section advanced-section">
+                  <button id="advanced-toggler" type="button" md-button (click)="showInitAdvanced = !showInitAdvanced">
+                    Advanced Settings
+                    <i class="fa fa-caret-right" [ngClass]="showInitAdvanced ? '' : 'collapsed'"></i>
+                  </button>
+                </div>
                 <div class="advanced shrinky" [ngClass]="{'collapsed': !showInitAdvanced}">
                   <h3 class="md-primary">Staging</h3>
                   <section class="sub-section" layout="column">
@@ -108,7 +110,7 @@
               </div>
               <div layout="row" layout-align="end center" class="init-buttons">
                 <button type="button" md-button (click)="back()">&lt; Back</button>
-                <button type="button" md-button (click)="restoreInitDefaults()">Restore Defaults</button>
+                <button type="button" md-button (click)="restoreInitDefaults($event)">Restore Defaults</button>
                 <button type="submit" md-raised-button>Initialize</button>
               </div>
             </form>
@@ -188,7 +190,7 @@
             MarkLogic server.
             </p>
             <div>
-              <button type="button" md-raised-button (click)="install()">Install</button>
+              <button type="button" id="installer-button" md-raised-button (click)="install()">Install</button>
             </div>
           </div>
           <div class="install-progress shrinky" [ngClass]="installing ? '' : 'collapsed'" layout="column" layout-align="center center">
@@ -203,7 +205,7 @@
 
           <div layout="row" layout-align="end center" class="init-buttons">
             <button type="button" md-button (click)="back()">&lt; Back</button>
-            <button type="button" md-raised-button [disabled]="!currentEnvironment.installed" (click)="installNext()">Finished</button>
+            <button id="finished-button" type="button" md-raised-button [disabled]="!currentEnvironment.installed" (click)="installNext()">Finished</button>
           </div>
         </div>
       </div>

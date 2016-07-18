@@ -7,26 +7,26 @@ describe('App', () => {
 
   it('should have a title', () => {
     let subject = browser.getTitle();
-    let result  = 'Angular2 Webpack Starter by @gdi2290 from @AngularClass';
+    let result  = 'Data Hub QuickStart';
     expect(subject).toEqual(result);
   });
 
-  it('should have header', () => {
-    let subject = element(by.css('h1')).isPresent();
+  it('should not have the nav bar', () => {
+    let subject = element(by.css('header')).isPresent();
+    let result  = false;
+    expect(subject).toEqual(result);
+  });
+
+  it('should have <login>', () => {
+    let subject = element(by.css('app login')).isPresent();
     let result  = true;
     expect(subject).toEqual(result);
   });
 
-  it('should have <home>', () => {
-    let subject = element(by.css('app home')).isPresent();
-    let result  = true;
-    expect(subject).toEqual(result);
-  });
-
-  it('should have buttons', () => {
-    let subject = element(by.css('button')).getText();
-    let result  = 'Index';
-    expect(subject).toEqual(result);
-  });
+  // it('should have buttons', () => {
+  //   let subject = element(by.css('button')).getText();
+  //   let result  = 'Index';
+  //   expect(subject).toEqual(result);
+  // });
 
 });

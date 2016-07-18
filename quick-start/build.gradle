@@ -52,17 +52,6 @@ dependencies {
     testCompile('junit:junit')
 }
 
-
-javascript.source {
-    dev {
-        js {
-            srcDir "src/main/resources/static"
-            include "**/*.js"
-            exclude "lib/**/*"
-        }
-    }
-}
-
 task npmInstallUI(type:Exec) {
     workingDir '.'
     commandLine 'npm', 'install'
@@ -70,23 +59,25 @@ task npmInstallUI(type:Exec) {
 
 task buildUI(type:Exec) {
     workingDir '.'
-    commandLine 'npm', 'run', 'build'
+    commandLine 'npm', 'run', 'build:prod'
     dependsOn tasks.npmInstallUI
 }
 
 task watchUI(type:Exec) {
     workingDir '.'
-    commandLine 'npm', 'start'
+    commandLine 'npm', 'run', 'watch'
     dependsOn tasks.npmInstallUI
 }
 
-// build.dependsOn buildUI
+build.dependsOn buildUI
 
 bootRun {
   addResources = true
+  environment 'spring.profiles.active', 'dev'
 }
 
 springBoot {
   executable = true
+  // excludeDevtools = true
   mainClass = "com.marklogic.quickstart.Application"
 }

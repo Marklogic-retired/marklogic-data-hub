@@ -3,10 +3,12 @@ import {
   Component,
   Injectable,
   DynamicComponentLoader,
+  ElementRef,
+  Renderer,
   ComponentResolver,
   Injector,
-  ViewContainerRef,
-  trigger, state, style, transition, animate
+  ViewChild,
+  ViewContainerRef
 } from '@angular/core';
 
 import { Subject, Observable } from 'rxjs/Rx';
@@ -22,46 +24,26 @@ const ANIMATION_TIME = 500;
 @Component({
   selector: 'confirm-component',
   styleUrls: ['./confirm.style.scss'],
-  templateUrl: './confirm.tpl.html',
-  animations: [
-    trigger('fadeState', [
-      state('hidden', style({
-        opacity: 0,
-        visibility: 'hidden'
-      })),
-      state('active', style({
-        opacity: 1,
-        visibility: 'visible'
-      })),
-      transition('* => active', animate('0.5s ease-in')),
-      transition('active => hidden', animate('0.5s ease-in'))
-    ]),
-    trigger('growState', [
-      state('hidden', style({
-        overflow: 'hidden',
-        top: 0,
-        left: 0,
-        transform: 'scale(0)'
-      })),
-      state('active', style({
-        overflow: '*',
-        top: '*',
-        left: '*',
-        transform: 'scale(1)'
-      })),
-      transition('* => active', animate('0.5s ease-in')),
-      transition('active => hidden', animate('0.5s ease-in'))
-    ]),
-  ]
+  templateUrl: './confirm.tpl.html'
 })
 export class ConfirmComponent {
   public title: string;
   public textContent: string;
   public okText: string;
   public cancelText: string;
-  private showIt: string = 'hidden';
 
+  @ViewChild('dlg') dlg: ElementRef;
+
+  private _showIt: boolean = false;
   private subject: Subject<void> = new Subject<void>();
+  private _startX: string;
+  private _startY: string;
+
+  constructor(private renderer: Renderer) {}
+
+  isActive() {
+    return this._showIt;
+  }
 
   public ok() {
     this.hide().then(() => {
@@ -75,14 +57,32 @@ export class ConfirmComponent {
     });
   }
 
-  public show(): Observable<void> {
-    this.showIt = 'active';
+  public show($evt: MouseEvent): Observable<void> {
+    const dlg = this.dlg.nativeElement;
+    this._startX = $evt.clientX - (dlg.clientWidth / 2) + 'px';
+    this._startY = $evt.clientY - (dlg.clientHeight / 2) + 'px';
+    this.renderer.setElementStyle(dlg, 'left', this._startX);
+    this.renderer.setElementStyle(dlg, 'top', this._startY);
+
+    const left = (window.innerWidth / 2) - (dlg.clientWidth / 2);
+    const top = (window.innerHeight / 2) - (dlg.clientHeight / 2);
+
+    this.renderer.setElementStyle(dlg, 'left', left + 'px');
+    this.renderer.setElementStyle(dlg, 'top', top + 'px');
+    this.renderer.setElementStyle(dlg, 'transform', 'scale(1)');
+
+    this._showIt = true;
     return this.subject.share();
   }
 
   public hide(): Promise<void> {
-    this.showIt = 'hidden';
-    return new Promise<void>(function(resolve, reject) {
+    const dlg = this.dlg.nativeElement;
+    this.renderer.setElementStyle(dlg, 'left', this._startX);
+    this.renderer.setElementStyle(dlg, 'top', this._startY);
+    this.renderer.setElementStyle(dlg, 'transform', 'scale(0)');
+    this._showIt = false;
+
+    return new Promise<void>((resolve, reject) => {
       // fire after the view animation is done
       setTimeout(() => {
         resolve();
@@ -114,7 +114,7 @@ export class ConfirmService {
     this.defaultViewContainerRef = vcRef;
   }
 
-  public showConfirm(msg: IConfirmMessage): Promise<ConfirmComponent> {
+  public showConfirm(msg: IConfirmMessage, $evt: MouseEvent): Promise<ConfirmComponent> {
 
     let optTimeout        = msg.timeout || 2750;
     let viewContainerRef  = msg.vcRef || this.defaultViewContainerRef;
@@ -135,7 +135,7 @@ export class ConfirmService {
       confirmComponent.cancelText = msg.cancelText;
       return new Promise<ConfirmComponent>(function(resolve, reject) {
         setTimeout(() => {
-          let subject: Observable<any> = confirmComponent.show();
+          let subject: Observable<any> = confirmComponent.show($evt);
           subject.subscribe(() => {
             cRef.destroy();
             resolve();

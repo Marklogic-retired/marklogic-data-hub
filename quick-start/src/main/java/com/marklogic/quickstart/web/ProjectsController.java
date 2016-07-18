@@ -73,7 +73,7 @@ public class ProjectsController extends BaseController implements FileSystemEven
     @ResponseBody
     public EnvironmentConfig getCurrentEnvironment() {
         requireAuth();
-        return envConfig;
+        return envConfig.refresh();
     }
 
     @RequestMapping(value = "/projects/", method = RequestMethod.POST)
@@ -121,7 +121,8 @@ public class ProjectsController extends BaseController implements FileSystemEven
         // make sure the project exists
         pm.getProject(projectId);
 
-        return envConfig;
+
+        return envConfig.refresh();
     }
 
     @RequestMapping(value = "/projects/{projectId}/{environment}/login", method = RequestMethod.POST)

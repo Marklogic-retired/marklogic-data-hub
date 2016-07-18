@@ -65,7 +65,10 @@ export class SelectList implements OnInit, OnChanges {
   }
 
   removeItem(item, event: Event) {
-    this.removedItem.emit(item);
+    this.removedItem.emit({
+      item: item,
+      event: event
+    });
     event.stopPropagation();
   }
 

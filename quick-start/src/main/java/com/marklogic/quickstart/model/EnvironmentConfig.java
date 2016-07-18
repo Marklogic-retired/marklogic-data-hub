@@ -48,9 +48,16 @@ public class EnvironmentConfig {
         }
         loadConfigurationFromFiles();
 
-        DataHub dh = new DataHub(mlSettings);
-        installed = dh.isInstalled();
         isInitialized = true;
+        refresh();
+    }
+
+    public EnvironmentConfig refresh() {
+        if (isInitialized) {
+            DataHub dh = new DataHub(mlSettings);
+            installed = dh.isInstalled();
+        }
+        return this;
     }
 
     public void loadConfigurationFromFiles() {

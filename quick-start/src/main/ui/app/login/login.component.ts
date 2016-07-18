@@ -157,13 +157,15 @@ export class Login {
     }
   }
 
-  removeProject(project) {
+  removeProject($event) { // project, $evt: MouseEvent) {
+    const project = $event.item;
+    const event = $event.event;
     this.confirm.showConfirm({
       title: 'Remove Project?',
       message: 'Remove the project from the list of projects? Does not destroy anything on disk.',
       okText: 'Remove',
       cancelText: 'Cancel'
-    }).then(() => {
+    }, event).then(() => {
       this.projectService.removeProject(project).subscribe(() => {
         _.remove(this.projects, p => { return p.id === project.id; });
         if (this.projects.length === 0) {
@@ -188,13 +190,13 @@ export class Login {
     }
   }
 
-  restoreInitDefaults() {
+  restoreInitDefaults($evt: MouseEvent) {
     this.confirm.showConfirm({
       title: 'Are you sure?',
       message: 'Really restore the default settings?',
       okText: 'Restore',
       cancelText: 'Cancel'
-    }).then(() => {
+    }, $evt).then(() => {
       this.initSettings = _.clone(this.defaultSettings);
     }).catch(() => {});
   }

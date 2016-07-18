@@ -1,9 +1,9 @@
 import {
   Component, ChangeDetectorRef, ElementRef, Inject, AfterViewInit
 } from '@angular/core';
-import {NgClass, NgStyle} from '@angular/common';
-import {positionService} from './position';
-import {TooltipOptions} from './tooltip-options.class';
+import { NgClass, NgStyle } from '@angular/common';
+import { positionService } from './position';
+import { TooltipOptions } from './tooltip-options.class';
 
 @Component({
   selector: 'tooltip-container',
@@ -33,12 +33,12 @@ export class TooltipContainerComponent implements AfterViewInit {
   private hostEl:ElementRef;
   /* tslint:enable */
 
-  private element:ElementRef;
-  private cdr:ChangeDetectorRef;
+  private element: ElementRef;
+  private cdr: ChangeDetectorRef;
 
-  public constructor(element:ElementRef,
-                     cdr:ChangeDetectorRef,
-                     @Inject(TooltipOptions) options:TooltipOptions) {
+  public constructor(element: ElementRef,
+                     cdr: ChangeDetectorRef,
+                     @Inject(TooltipOptions) options: TooltipOptions) {
     this.element = element;
     this.cdr = cdr;
     Object.assign(this, options);
@@ -47,7 +47,7 @@ export class TooltipContainerComponent implements AfterViewInit {
     this.classMap['tooltip-' + options.placement] = true;
   }
 
-  public ngAfterViewInit():void {
+  public ngAfterViewInit(): void {
     let p = positionService
       .positionElements(
         this.hostEl.nativeElement,

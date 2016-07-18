@@ -193,10 +193,6 @@ module.exports = {
 
   sassLoader: {
     includePaths: [
-      // 'node_modules/bootstrap/scss',
-      // 'node_modules/bootstrap-material-design/sass',
-      // 'node_modules/font-awesome/scss',
-      // 'node_modules/font-awesome',
       'src/main/ui/assets/css',
       'node_modules'
     ]

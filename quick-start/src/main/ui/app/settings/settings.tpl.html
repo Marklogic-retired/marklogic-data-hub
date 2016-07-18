@@ -8,7 +8,7 @@
   </div>
 
   <div>
-    <mdl-button mdl-button-type="raised" mdl-colored mdl-ripple (click)="uninstall()">Uninstall Hub</mdl-button>
+    <mdl-button mdl-button-type="raised" mdl-colored mdl-ripple (click)="uninstall($event)">Uninstall Hub</mdl-button>
   </div>
 
   <section flex layout-padding class="install-status" *ngIf="uninstallStatus">

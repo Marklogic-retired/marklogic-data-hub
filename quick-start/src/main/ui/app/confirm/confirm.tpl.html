@@ -1,5 +1,5 @@
-<div @fadeState="showIt" class="dialog-container">
-  <div @growState="showIt"class="mdl-dialog confirm-dialog">
+<div class="dialog-container" [ngClass]="{'active': isActive()}">
+  <div #dlg class="mdl-dialog confirm-dialog" [ngClass]="{'active': isActive()}">
     <div class="mdl-dialog__title">{{title}}</div>
     <div class="mdl-dialog__content">
       <div class="modal-body">

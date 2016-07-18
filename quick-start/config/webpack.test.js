@@ -91,7 +91,6 @@ module.exports = {
         helpers.root('node_modules/@angular2-material'),
         helpers.root('node_modules/@angular')
       ]}
-
     ],
 
     /**
@@ -145,8 +144,19 @@ module.exports = {
        *
        * See: https://github.com/webpack/raw-loader
        */
-      { test: /\.html$/, loader: 'raw-loader', exclude: [helpers.root('src/main/ui/index.html')] }
+      { test: /\.html$/, loader: 'raw-loader', exclude: [helpers.root('src/main/ui/index.html')] },
 
+      {
+        test: /\.scss$/,
+        exclude: /node_modules/,
+        loaders: ['raw-loader', 'sass-loader'] // sass-loader not scss-loader
+      },
+
+      // { test: /\.(woff2?|ttf|eot|svg)$/, loader: 'url?limit=10000' },
+      {
+        test: /\.(woff2?|ttf|eot|svg)(\?v=\d+\.\d+\.\d+)?$/,
+        loader: "file?name=fonts/[name].[ext]"
+      }
     ],
 
     /**
@@ -171,6 +181,13 @@ module.exports = {
         ]
       }
 
+    ]
+  },
+
+  sassLoader: {
+    includePaths: [
+      'src/main/ui/assets/css',
+      'node_modules'
     ]
   },
 

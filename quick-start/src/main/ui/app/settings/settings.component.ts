@@ -47,13 +47,13 @@ export class Settings {
     }
   }
 
-  uninstall() {
+  uninstall($event: MouseEvent) {
     this.confirm.showConfirm({
       okText: 'Yes',
       cancelText: 'No',
       title: 'Uninstall?',
       message: 'Uninstall the hub from MarkLogic?'
-    }).then(() => {
+    }, $event).then(() => {
       this.uninstallStatus = '';
       this.install.messageEmitter.subscribe(payload => {
         this.percentComplete = payload.percentComplete;
