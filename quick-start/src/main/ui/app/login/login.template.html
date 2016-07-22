@@ -159,11 +159,15 @@
             <h3>Login to the Data Hub</h3>
             <form class="loginForm" (submit)="login()">
               <div flex layout-fill layout-padding layout="column">
+                <div class="center-text" [hidden]="!loggingIn">
+                  <md-progress-circle mode="indeterminate"></md-progress-circle>
+                </div>
+                <div class="error" *ngIf="loginError">Invalid username or password</div>
                 <md-input placeholder="MarkLogic User Name" id="username" name="username" type="text" [(ngModel)]="loginInfo.username" required="required"></md-input>
                 <md-input placeholder="MarkLogic Password" name="password" type="password" [(ngModel)]="loginInfo.password" required="required"></md-input>
                 <div layout="row" layout-align="end center" class="init-buttons">
                   <button md-button type="button" (click)="back()">&lt; Back</button>
-                  <button md-raised-button type="submit">Login</button>
+                  <button md-raised-button type="submit" [disabled]="loggingIn">Login</button>
                 </div>
               </div>
             </form>
@@ -176,7 +180,7 @@
           <section layout="column" layout-align="center center">
             <div layout="column" layout-align="center center">
               <h3>Checking Project...</h3>
-              <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+              <md-progress-circle mode="indeterminate"></md-progress-circle>
             </div>
           </section>
         </section>
@@ -194,7 +198,7 @@
             </div>
           </div>
           <div class="install-progress shrinky" [ngClass]="installing ? '' : 'collapsed'" layout="column" layout-align="center center">
-            <md-progress-circle md-mode="determinate" [value]="percentComplete"></md-progress-circle>
+            <md-progress-circle mode="determinate" [value]="percentComplete"></md-progress-circle>
             <div>Installing...</div>
             <div>{{percentComplete}}% complete</div>
           </div>

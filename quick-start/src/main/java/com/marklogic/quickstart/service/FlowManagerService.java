@@ -157,7 +157,7 @@ public class FlowManagerService {
         if(file.exists()) {
             return Files.toString(file, Charsets.UTF_8);
         }
-        return "{ \"input_file_path\": \"" + envConfig.projectDir + "\" }";
+        return "{ \"input_file_path\": \"" + envConfig.projectDir.replace("\\", "\\\\") + "\" }";
     }
 
     public CancellableTask runMlcp(JsonNode json, StatusListener listener) throws IOException {

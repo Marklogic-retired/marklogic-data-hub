@@ -3,11 +3,14 @@ package com.marklogic.hub.commands;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import com.marklogic.client.modulesloader.impl.PropertiesModuleManager;
+import com.marklogic.hub.HubConfig;
 import org.apache.commons.io.IOUtils;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
@@ -49,19 +52,12 @@ public class LoadHubModulesCommand extends AbstractCommand {
 
     private JarExtensionMetadataProvider extensionMetadataProvider;
 
-    public LoadHubModulesCommand() {
+    private HubConfig hubConfig;
+
+    public LoadHubModulesCommand(HubConfig hubConfig) {
         setExecuteSortOrder(SortOrderConstants.LOAD_MODULES);
         this.extensionMetadataProvider = new JarExtensionMetadataProvider();
-    }
-
-    /**
-     * Public so that a client can initialize the ModulesLoader and then access it via the getter; this is useful for a
-     * tool like ml-gradle, where the ModulesLoader can be reused by multiple tasks.
-     *
-     * @param context - the command context
-     */
-    public void initializeDefaultModulesLoader(CommandContext context) {
-        logger.info("Initializing instance of DefaultModulesLoader");
+        this.hubConfig = hubConfig;
     }
 
     private List<Resource> findResources(String basePath, String... paths) throws IOException {
@@ -100,7 +96,10 @@ public class LoadHubModulesCommand extends AbstractCommand {
     protected void initializeActiveSession(CommandContext context) {
         AppConfig config = context.getAppConfig();
         XccAssetLoader xccAssetLoader = context.getAppConfig().newXccAssetLoader();
+
         this.modulesLoader = new DefaultModulesLoader(xccAssetLoader);
+        File timestampFile = Paths.get(hubConfig.projectDir, ".tmp", "hub-modules-deploy-timestamps.properties").toFile();
+        this.modulesLoader.setModulesManager(new PropertiesModuleManager(timestampFile));
         this.modulesLoader.setDatabaseClient(config.newDatabaseClient());
         ContentSource cs = ContentSourceFactory.newContentSource(config.getHost(), port, config.getRestAdminUsername(), config.getRestAdminPassword(), config.getModulesDatabaseName(),
                 securityOptions);

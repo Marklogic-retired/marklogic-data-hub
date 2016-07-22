@@ -230,3 +230,20 @@ form {
   display: block;
   width: 100%;
 }
+
+.error {
+  color: red;
+  text-align: center;
+  padding: 10px;
+  background-color: rgba(255,255,255,0.15);
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+.center-text {
+  md-progress-circle {
+    margin: 0pt auto;
+    width: 25px;
+    height: 25px;
+  }
+}

@@ -11,7 +11,11 @@
     <mdl-button mdl-button-type="raised" mdl-colored mdl-ripple (click)="uninstall($event)">Uninstall Hub</mdl-button>
   </div>
 
-  <section flex layout-padding class="install-status" *ngIf="uninstallStatus">
-    <pre>{{uninstallStatus}}</pre>
+  <section flex layout-padding layout="column" class="uninstall-status" *ngIf="uninstallStatus">
+    <h3>Uninstall Status</h3>
+    <md-progress-bar mode="determinate" [value]="percentComplete"></md-progress-bar>
+    <div flex>
+      <pre>{{uninstallStatus}}</pre>
+    </div>
   </section>
 </div>

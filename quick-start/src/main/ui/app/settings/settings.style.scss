@@ -1,0 +1,30 @@
+@import 'variables';
+
+/deep/ md-progress-bar[mode="determinate"] {
+  box-sizing: border-box;
+
+  .md-progress-bar-buffer {
+    background-color: unquote("rgb(#{$palette-datahub-A100})");
+  }
+
+  .md-progress-bar-fill::after {
+    background-color: unquote("rgb(#{$palette-datahub-500})");
+  }
+}
+
+pre {
+  margin: 0px;
+  border: 1px solid unquote("rgb(#{$palette-datahub-800})");
+  background-color: unquote("rgb(#{$palette-datahub-A100})");
+  padding: 1rem;
+  overflow: auto;
+  display: flex;
+  flex: 1;
+}
+
+
+.uninstall-status {
+  h3 {
+    text-align: center;
+  }
+}

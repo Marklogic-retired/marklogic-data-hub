@@ -1,5 +1,6 @@
 package com.marklogic.quickstart.service;
 
+import com.marklogic.hub.FinishedListener;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,25 +22,28 @@ public class DataHubService {
     private static final Logger logger = LoggerFactory.getLogger(DataHubService.class);
 
     @Autowired
-    private EnvironmentConfig environmentConfiguration;
+    private EnvironmentConfig envConfig;
 
     @Async
-    public void install(HubConfig config, StatusListener listener) throws DataHubException {
+    public void install(HubConfig config, StatusListener listener, FinishedListener finishedListener) throws DataHubException {
         logger.info("Installing Data Hub");
         DataHub dataHub = new DataHub(config);
         try {
             dataHub.install(listener);
+            finishedListener.onFinished(true);
         } catch(Throwable e) {
+            finishedListener.onFinished(false);
             listener.onStatusChange(100, ExceptionUtils.getStackTrace(e));
             throw new DataHubException(e.getMessage(), e);
         }
+
     }
 
     @Async
-    public void installUserModules() {
+    public void installUserModules(boolean forceLoad) {
         DataHub dataHub = getDataHub();
         try {
-            dataHub.installUserModules();
+            dataHub.installUserModules(forceLoad);
         } catch(Throwable e) {
             throw new DataHubException(e.getMessage(), e);
         }
@@ -51,7 +55,7 @@ public class DataHubService {
 //    }
 
     public DataHub getDataHub() throws DataHubException {
-        return new DataHub(environmentConfiguration.mlSettings);
+        return new DataHub(envConfig.mlSettings);
     }
 
 //    public boolean isServerAcceptable() throws DataHubException {

@@ -7,6 +7,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.marklogic.quickstart.exception.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,6 +82,10 @@ public class EntityManagerService {
             entityModel = new EntityModel(entityName);
             entityModel.inputFlows = flowManagerService.getFlows(projectDir, entityName, FlowType.INPUT);
             entityModel.harmonizeFlows = flowManagerService.getFlows(projectDir, entityName, FlowType.HARMONIZE);
+        }
+
+        if (entityModel == null) {
+            throw new NotFoundException();
         }
 
         return entityModel;

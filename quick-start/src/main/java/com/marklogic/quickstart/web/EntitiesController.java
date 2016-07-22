@@ -6,6 +6,7 @@ import java.util.Collection;
 
 import javax.servlet.http.HttpSession;
 
+import com.marklogic.quickstart.exception.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,12 +23,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.marklogic.client.UnauthorizedUserException;
 import com.marklogic.hub.StatusListener;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.FlowType;
-import com.marklogic.quickstart.exception.NotFoundException;
 import com.marklogic.quickstart.model.EntityModel;
 import com.marklogic.quickstart.model.FlowModel;
 import com.marklogic.quickstart.model.Project;
@@ -40,7 +38,7 @@ import com.marklogic.quickstart.service.TaskManagerService;
 
 @Controller
 @Scope("session")
-public class EntitiesController extends BaseController {
+class EntitiesController extends BaseController {
 
     protected final static Logger logger = LoggerFactory.getLogger(EntitiesController.class);
 
@@ -61,110 +59,67 @@ public class EntitiesController extends BaseController {
 
     @RequestMapping(value = "/entities/", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<Collection<EntityModel>> getEntities(HttpSession session) throws ClassNotFoundException, IOException {
-        ResponseEntity<Collection<EntityModel>> resp;
+    public Collection<EntityModel> getEntities(HttpSession session) throws ClassNotFoundException, IOException {
+
+        requireAuth();
 
         Integer projectId = (Integer)session.getAttribute("currentProjectId");
         String environment = (String)session.getAttribute("currentEnvironment");
 
-        Project project = null;
-        if (projectId != null) {
-            project = projectManagerService.getProject(projectId);
+        Project project = projectManagerService.getProject(projectId);
+
+        if (!project.getEnvironments().contains(environment)) {
+            throw new NotFoundException();
         }
 
-        if (environment != null && project != null && project.getEnvironments().contains(environment)) {
-            Collection<EntityModel> entities = entityManagerService.getEntities(envConfig.projectDir);
-            resp = new ResponseEntity<Collection<EntityModel>>(entities, HttpStatus.OK);
-        }
-        else {
-            resp = new ResponseEntity<Collection<EntityModel>>(HttpStatus.UNAUTHORIZED);
-        }
-
-        return resp;
+        return entityManagerService.getEntities(envConfig.projectDir);
     }
 
     @RequestMapping(value = "/entities/", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<EntityModel> createEntity(HttpSession session,
+    public EntityModel createEntity(HttpSession session,
             @RequestBody EntityModel newEntity) throws ClassNotFoundException, IOException {
-        ResponseEntity<EntityModel> resp;
+
+        requireAuth();
 
         Integer projectId = (Integer)session.getAttribute("currentProjectId");
         String environment = (String)session.getAttribute("currentEnvironment");
 
-        Project project = null;
-        if (projectId != null) {
-            project = projectManagerService.getProject(projectId);
-        }
-
-        if (environment != null && project != null) {
-            EntityModel entity = entityManagerService.createEntity(envConfig.projectDir, newEntity);
-            resp = new ResponseEntity<EntityModel>(entity, HttpStatus.OK);
-        }
-        else {
-            resp = new ResponseEntity<EntityModel>(HttpStatus.UNAUTHORIZED);
-        }
-
-        return resp;
+        Project project = projectManagerService.getProject(projectId);
+        return entityManagerService.createEntity(envConfig.projectDir, newEntity);
     }
 
     @RequestMapping(value = "/entities/{entityName}", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<EntityModel> getEntity(@PathVariable String entityName, HttpSession session) throws ClassNotFoundException, IOException {
-        ResponseEntity<EntityModel> resp;
+    public EntityModel getEntity(@PathVariable String entityName, HttpSession session) throws ClassNotFoundException, IOException {
+        requireAuth();
 
         Integer projectId = (Integer)session.getAttribute("currentProjectId");
-        String environment = (String)session.getAttribute("currentEnvironment");
 
-        Project project = null;
-        if (projectId != null) {
-            project = projectManagerService.getProject(projectId);
-        }
+        // ensure project exists
+        projectManagerService.getProject(projectId);
 
-        if (environment != null && project != null) {
-            EntityModel entity = entityManagerService.getEntity(envConfig.mlSettings.projectDir, entityName);
-            resp = new ResponseEntity<EntityModel>(entity, HttpStatus.OK);
-        }
-        else {
-            resp = new ResponseEntity<EntityModel>(HttpStatus.UNAUTHORIZED);
-        }
-
-        return resp;
+        return entityManagerService.getEntity(envConfig.mlSettings.projectDir, entityName);
     }
 
 
     @RequestMapping(value = "/entities/{entityName}/flows/{flowType}", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<FlowModel> createFlow(
+    public FlowModel createFlow(
             HttpSession session,
             @PathVariable String entityName,
             @PathVariable FlowType flowType,
             @RequestBody FlowModel newFlow) throws ClassNotFoundException, IOException {
-        ResponseEntity<FlowModel> resp;
+        requireAuth();
 
         Integer projectId = (Integer)session.getAttribute("currentProjectId");
         String environment = (String)session.getAttribute("currentEnvironment");
 
-        Project project = null;
-        if (projectId != null) {
-            project = projectManagerService.getProject(projectId);
-        }
+        Project project = projectManagerService.getProject(projectId);
 
-        if (environment != null && project != null) {
-            EntityModel entity = entityManagerService.getEntity(envConfig.projectDir, entityName);
-            if (entity != null) {
-                FlowModel flow = entityManagerService.createFlow(envConfig.projectDir, entity, flowType, newFlow);
-                resp = new ResponseEntity<FlowModel>(flow, HttpStatus.OK);
-            }
-            else {
-                resp = new ResponseEntity<FlowModel>(HttpStatus.NOT_FOUND);
-            }
-        }
-        else {
-            resp = new ResponseEntity<FlowModel>(HttpStatus.UNAUTHORIZED);
-        }
+        EntityModel entity = entityManagerService.getEntity(envConfig.projectDir, entityName);
 
-        return resp;
+        return entityManagerService.createFlow(envConfig.projectDir, entity, flowType, newFlow);
     }
 
     @RequestMapping(value = "/entities/{entityName}/flows/{flowType}/{flowName}/run", method = RequestMethod.POST)
@@ -175,40 +130,34 @@ public class EntitiesController extends BaseController {
             @PathVariable FlowType flowType,
             @PathVariable String flowName,
             @RequestParam(required=false, defaultValue="100") Integer batchSize) {
+
+        requireAuth();
+
         ResponseEntity<BigInteger> resp = null;
 
         Integer projectId = (Integer)session.getAttribute("currentProjectId");
         String environment = (String)session.getAttribute("currentEnvironment");
 
-        Project project = null;
-        if (projectId != null) {
-            project = projectManagerService.getProject(projectId);
+        Project project = projectManagerService.getProject(projectId);
+
+        Flow flow = flowManagerService.getServerFlow(entityName, flowName, flowType);
+        if (flow == null) {
+            resp = new ResponseEntity<BigInteger>(HttpStatus.CONFLICT);
         }
-
-        if (environment != null && project != null) {
-            Flow flow = flowManagerService.getServerFlow(entityName, flowName, flowType);
-            if (flow != null) {
-                if (batchSize == null) {
-                    batchSize = 100;
-                }
-
-                CancellableTask task = flowManagerService.runFlow(flow, batchSize);
-                resp = new ResponseEntity<BigInteger>(taskManagerService.addTask(task), HttpStatus.OK);
+        else {
+            if (batchSize == null) {
+                batchSize = 100;
             }
-            else {
-                // this means that the flow hasn't been deployed
-                resp = new ResponseEntity<BigInteger>(HttpStatus.CONFLICT);
-            }
-        }
 
-        if (resp == null) {
-            resp = new ResponseEntity<BigInteger>(HttpStatus.UNAUTHORIZED);
+            CancellableTask task = flowManagerService.runFlow(flow, batchSize);
+            resp = new ResponseEntity<BigInteger>(taskManagerService.addTask(task), HttpStatus.OK);
         }
 
         return resp;
     }
 
     @RequestMapping(value = "/entities/{entityName}/flows/{flowType}/{flowName}/run/input", method = RequestMethod.POST)
+    @ResponseBody
     public ResponseEntity<BigInteger> runInputFlow(
             HttpSession session,
             @PathVariable String entityName,
@@ -216,34 +165,26 @@ public class EntitiesController extends BaseController {
             @PathVariable String flowName,
             @RequestBody JsonNode json) throws IOException {
 
+        requireAuth();
+
         ResponseEntity<BigInteger> resp = null;
 
         Integer projectId = (Integer)session.getAttribute("currentProjectId");
         String environment = (String)session.getAttribute("currentEnvironment");
 
-        Project project = null;
-        if (projectId != null) {
-            project = projectManagerService.getProject(projectId);
-        }
+        Project project = projectManagerService.getProject(projectId);
 
-        if (environment != null && project != null) {
+        flowManagerService.saveOrUpdateFlowMlcpOptionsToFile(entityName,
+                flowName, json.toString());
 
-            flowManagerService.saveOrUpdateFlowMlcpOptionsToFile(entityName,
-                    flowName, json.toString());
-
-            CancellableTask task = flowManagerService.runMlcp(json, new StatusListener() {
-                @Override
-                public void onStatusChange(int percentComplete, String message) {
-                    logger.info(message);
-                    template.convertAndSend("/topic/mlcp-status", new StatusMessage(percentComplete, message));
-                }
-            });
-            return new ResponseEntity<BigInteger>(taskManagerService.addTask(task), HttpStatus.OK);
-        }
-        if (resp == null) {
-            resp = new ResponseEntity<BigInteger>(HttpStatus.UNAUTHORIZED);
-        }
-        return resp;
+        CancellableTask task = flowManagerService.runMlcp(json, new StatusListener() {
+            @Override
+            public void onStatusChange(int percentComplete, String message) {
+                logger.info(message);
+                template.convertAndSend("/topic/mlcp-status", new StatusMessage(percentComplete, message));
+            }
+        });
+        return new ResponseEntity<BigInteger>(taskManagerService.addTask(task), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/entities/{entityName}/flows/{flowType}/{flowName}/cancel/{taskId}", method = RequestMethod.DELETE)
@@ -254,47 +195,37 @@ public class EntitiesController extends BaseController {
             @PathVariable String flowName,
             @PathVariable BigInteger taskId) throws IOException {
 
+        requireAuth();
+
         Integer projectId = (Integer)session.getAttribute("currentProjectId");
-        String environment = (String)session.getAttribute("currentEnvironment");
 
-        Project project = null;
-        if (taskId != null && projectId != null) {
-            project = projectManagerService.getProject(projectId);
-        }
+        Project project = projectManagerService.getProject(projectId);
 
-        if (environment != null && project != null) {
-            taskManagerService.stopTask(taskId);
-        }
+        taskManagerService.stopTask(taskId);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @RequestMapping(value = "/entities/{entityName}/flows/{flowType}/{flowName}/run/input", method = RequestMethod.GET)
-    public ResponseEntity<JsonNode> getInputFlowOptions(
+    @RequestMapping(
+        value = "/entities/{entityName}/flows/{flowType}/{flowName}/run/input",
+        method = RequestMethod.GET,
+        produces="application/json"
+    )
+    @ResponseBody
+    public String getInputFlowOptions(
             HttpSession session,
             @PathVariable String entityName,
             @PathVariable FlowType flowType,
             @PathVariable String flowName) throws IOException {
 
-        ResponseEntity<JsonNode> resp = null;
+        requireAuth();
 
         Integer projectId = (Integer)session.getAttribute("currentProjectId");
-        String environment = (String)session.getAttribute("currentEnvironment");
 
-        Project project = null;
         if (projectId != null) {
-            project = projectManagerService.getProject(projectId);
+            projectManagerService.getProject(projectId);
         }
 
-        if (environment != null && project != null) {
-
-            String optionsFileContent = flowManagerService.getFlowMlcpOptionsFromFile(entityName, flowName);
-            ObjectMapper mapper = new ObjectMapper();
-            return new ResponseEntity<JsonNode>(mapper.readTree(optionsFileContent), HttpStatus.OK);
-        }
-        if (resp == null) {
-            resp = new ResponseEntity<JsonNode>(HttpStatus.UNAUTHORIZED);
-        }
-        return resp;
+        return flowManagerService.getFlowMlcpOptionsFromFile(entityName, flowName);
     }
 }

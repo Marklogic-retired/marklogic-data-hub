@@ -32,6 +32,9 @@ export class Login {
 
   visitedTabs = [];
 
+  loginError: boolean = false;
+  loggingIn: boolean = false;
+
   tabs = {
     ProjectDir: true,
     InitIfNeeded: false,
@@ -246,6 +249,8 @@ export class Login {
   }
 
   login() {
+    this.loginError = false;
+    this.loggingIn = true;
     this.projectService.login(
       this.currentProject.id,
       this.currentEnvironmentString,
@@ -253,9 +258,14 @@ export class Login {
     ).subscribe(() => {
         this.auth.setAuthenticated(true);
         this.loginNext();
+        this.loginError = false;
+        this.loggingIn = false;
       },
       error => {
+        this.loginError = true;
+        console.log('login failed!');
         this.auth.setAuthenticated(false);
+        this.loggingIn = false;
       });
   }
 

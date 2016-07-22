@@ -42,7 +42,7 @@ export class FolderBrowser implements OnInit, OnChanges {
   getFolders(path) {
     if (path) {
       this.isLoading = true;
-      return this.http.get('/api/utils/searchPath?path=' + path)
+      return this.http.get('/api/utils/searchPath?path=' + encodeURIComponent(path))
       .map(this.extractData)
       .subscribe(resp => {
         this.folders = resp.folders;

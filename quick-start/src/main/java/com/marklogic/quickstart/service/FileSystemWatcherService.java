@@ -2,23 +2,10 @@ package com.marklogic.quickstart.service;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.FileSystems;
-import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
-import java.nio.file.LinkOption;
-import java.nio.file.Path;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.StandardWatchEventKinds;
-import java.nio.file.WatchEvent;
+import java.nio.file.*;
 import java.nio.file.WatchEvent.Kind;
-import java.nio.file.WatchKey;
-import java.nio.file.WatchService;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.annotation.PostConstruct;
 
@@ -36,7 +23,6 @@ public class FileSystemWatcherService implements DisposableBean {
     private Map<WatchKey,Path> keys = new HashMap<>();
 
     private List<FileSystemEventListener> listeners = Collections.synchronizedList(new ArrayList<>());
-    private Map<Path, FileSystemEventListener> pathListeners = Collections.synchronizedMap(new HashMap<>());
 
     @PostConstruct
     protected synchronized void onPostConstruct() throws Exception {
@@ -52,17 +38,12 @@ public class FileSystemWatcherService implements DisposableBean {
      * @param pathName
      * @throws IOException
      */
-    public synchronized void watch(String pathName) throws IOException {
-        watch(pathName, null);
+    public synchronized void unwatch(String pathName) throws IOException {
+        unregisterAll(Paths.get(pathName));
     }
 
-    public synchronized void watch(String pathName, FileSystemEventListener listener) throws IOException {
-        File file = new File(pathName);
-        Path path = file.toPath();
-
-        pathListeners.put(path, listener);
-
-        registerAll(path);
+    public synchronized void watch(String pathName) throws IOException {
+        registerAll(Paths.get(pathName));
     }
 
     public void addListener(FileSystemEventListener listener) {
@@ -74,22 +55,6 @@ public class FileSystemWatcherService implements DisposableBean {
     }
 
     protected void notifyListeners(Path path, WatchEvent<Path> event) {
-        // notify listeners on this path and this path's ancestors
-        Path currentPath = path;
-        while (currentPath != null) {
-            FileSystemEventListener pathListener = pathListeners.get(currentPath);
-            if (pathListener != null) {
-                try {
-                    pathListener.onWatchEvent(path, event);
-                }
-                catch (Exception e) {
-                    LOGGER.error("Exception occured on listener", e);
-                }
-            }
-
-            currentPath = currentPath.getParent();
-        }
-
         // notify global listeners
         synchronized (listeners) {
             for (FileSystemEventListener listener : listeners) {
@@ -108,17 +73,30 @@ public class FileSystemWatcherService implements DisposableBean {
      */
     private void register(Path dir) throws IOException {
         WatchKey key = dir.register(watcher, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_DELETE, StandardWatchEventKinds.ENTRY_MODIFY);
-        if (LOGGER.isTraceEnabled()) {
+        if (LOGGER.isInfoEnabled()) {
             Path prev = keys.get(key);
             if (prev == null) {
-                LOGGER.trace("register: {}", dir);
+                LOGGER.info("register: {}", dir);
             } else {
                 if (!dir.equals(prev)) {
-                    LOGGER.trace("update: {} -> {}", prev, dir);
+                    LOGGER.info("update: {} -> {}", prev, dir);
                 }
             }
         }
         keys.put(key, dir);
+    }
+
+    private void unregister(Path dir) throws IOException {
+        Iterator<Map.Entry<WatchKey, Path>> it = keys.entrySet().iterator();
+        while(it.hasNext()) {
+            Map.Entry<WatchKey, Path> entry = it.next();
+            WatchKey key = entry.getKey();
+            if (key.equals(dir)) {
+                LOGGER.info("unregister: {}", dir);
+                key.cancel();
+                it.remove();
+            }
+        }
     }
 
     /**
@@ -132,6 +110,19 @@ public class FileSystemWatcherService implements DisposableBean {
                 throws IOException
             {
                 register(dir);
+                return FileVisitResult.CONTINUE;
+            }
+        });
+    }
+
+    private void unregisterAll(final Path start) throws IOException {
+        // register directory and sub-directories
+        Files.walkFileTree(start, new SimpleFileVisitor<Path>() {
+            @Override
+            public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs)
+                throws IOException
+            {
+                unregister(dir);
                 return FileVisitResult.CONTINUE;
             }
         });
@@ -160,13 +151,13 @@ public class FileSystemWatcherService implements DisposableBean {
                 WatchKey key;
                 try {
                     key = watcher.take();
-                } catch (InterruptedException x) {
+                } catch (InterruptedException | ClosedWatchServiceException e ) {
                     return;
                 }
 
                 Path dir = keys.get(key);
                 if (dir == null) {
-                    LOGGER.trace("WatchKey not recognized!!");
+                    LOGGER.info("WatchKey not recognized!!");
                     continue;
                 }
 
@@ -182,7 +173,7 @@ public class FileSystemWatcherService implements DisposableBean {
                     Path child = dir.resolve(context);
 
                     // print out event
-                    LOGGER.trace("Event received: %s for: %s", event.kind().name(), child);
+                    LOGGER.info("Event received: %s for: %s", event.kind().name(), child);
 
                     // notify listeners
                     notifyListeners(dir, ev);

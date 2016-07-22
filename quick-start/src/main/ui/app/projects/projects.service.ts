@@ -19,7 +19,7 @@ export class ProjectService {
   }
 
   addProject(path) {
-    return this.post(`/projects/?path=${path}`, null);
+    return this.post(`/projects/?path=${encodeURIComponent(path)}`, null);
   }
 
   removeProject(project) {
@@ -47,6 +47,10 @@ export class ProjectService {
     resp.subscribe(() => {
       this.projectId = projectId;
       this.environment = environment;
+    },
+    () => {
+      this.projectId = null;
+      this.environment = null;
     });
     return resp;
   }

@@ -63,7 +63,10 @@ public class HubProjectTest extends HubTestBase {
         File gradleProperties = new File(projectPath, "gradle.properties");
         assertTrue(gradleProperties.exists());
         Properties props = new Properties();
-        props.load(new FileInputStream(gradleProperties));
+        FileInputStream propsStream = new FileInputStream(gradleProperties);
+        props.load(propsStream);
+        propsStream.close();
+
         assertEquals(config.host, props.getProperty("mlHost"));
         assertEquals(config.name, props.getProperty("mlAppName"));
 

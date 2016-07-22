@@ -10,6 +10,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
+import com.marklogic.hub.FinishedListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -146,11 +147,12 @@ public class ProjectsController extends BaseController implements FileSystemEven
             session.setAttribute("currentEnvironment", environment);
 
             if (envConfig.installed) {
-                dataHubService.installUserModules();
+                dataHubService.installUserModules(false);
             }
 
             String pluginDir = Paths.get(envConfig.projectDir, "plugins").toString();
-            watcherService.watch(pluginDir, this);
+            watcherService.watch(pluginDir);
+            watcherService.addListener(this);
 
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
@@ -161,13 +163,17 @@ public class ProjectsController extends BaseController implements FileSystemEven
 
     @RequestMapping(value = "/projects/{projectId}/{environment}/logout", method = RequestMethod.DELETE)
     @ResponseBody
-    public ResponseEntity<HttpStatus> logoutFromProject(HttpSession session) {
+    public ResponseEntity<?> logoutFromProject(HttpSession session) throws IOException {
+
+        String pluginDir = Paths.get(envConfig.projectDir, "plugins").toString();
+        watcherService.removeListener(this);
+        watcherService.unwatch(pluginDir);
 
         Enumeration<String> attrNames = session.getAttributeNames();
         while(attrNames.hasMoreElements()) {
             session.removeAttribute(attrNames.nextElement());
         }
-        return new ResponseEntity<HttpStatus>(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @RequestMapping(value = "/projects/{projectId}/{environment}/install", method = RequestMethod.PUT)
@@ -185,6 +191,15 @@ public class ProjectsController extends BaseController implements FileSystemEven
             @Override
             public void onStatusChange(int percentComplete, String message) {
                 template.convertAndSend("/topic/install-status", new StatusMessage(percentComplete, message));
+            }
+        }, new FinishedListener() {
+            @Override
+            public void onFinished(boolean success) {
+                envConfig.isInitialized = success;
+                if (success) {
+                    logger.info("OnFinished: installing user modules");
+                    dataHubService.installUserModules(true);
+                }
             }
         });
 
@@ -234,7 +249,7 @@ public class ProjectsController extends BaseController implements FileSystemEven
     @Override
     public void onWatchEvent(Path path, WatchEvent<Path> event) {
         if (envConfig.installed) {
-            dataHubService.installUserModules();
+            dataHubService.installUserModules(false);
             template.convertAndSend("/topic/entity-status", new StatusMessage(0, path.toString()));
         }
     }

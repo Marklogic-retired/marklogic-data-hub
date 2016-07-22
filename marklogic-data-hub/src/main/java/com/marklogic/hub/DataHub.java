@@ -88,6 +88,8 @@ public class DataHub {
 
     private HubConfig hubConfig;
 
+    private AdminManager adminManager;
+
     public DataHub(HubConfig hubConfig) {
         init(hubConfig);
     }
@@ -104,6 +106,16 @@ public class DataHub {
         this.hubConfig = hubConfig;
         config = new ManageConfig(hubConfig.host, 8002, hubConfig.adminUsername, hubConfig.adminPassword);
         client = new ManageClient(config);
+
+        AdminConfig adminConfig = new AdminConfig();
+        adminConfig.setHost(hubConfig.host);
+        adminConfig.setUsername(hubConfig.adminUsername);
+        adminConfig.setPassword(hubConfig.adminPassword);
+        adminManager = new AdminManager(adminConfig);
+    }
+
+    public void setAdminManager(AdminManager manager) {
+        this.adminManager = manager;
     }
 
     /**
@@ -172,12 +184,18 @@ public class DataHub {
     public void validateServer() throws ServerValidationException {
         long startTime = PerformanceLogger.monitorTimeInsideMethod();
         try {
-            AdminManager am = getAdminManager();
-            String versionString = am.getServerVersion();
-            float version = Float.valueOf(versionString.substring(0, 1) + "." + versionString.substring(2, 3));
-            if (version < 8.4) {
+            String versionString = adminManager.getServerVersion();
+            String alteredString = versionString.replaceAll("[^\\d]+", "");
+            if (alteredString.length() < 3) {
+                alteredString += "0";
+            }
+            int major = Integer.parseInt(alteredString.substring(0, 1));
+            int ver = Integer.parseInt(alteredString.substring(0, 3));
+            boolean isNightly = versionString.matches("[^-]+-\\d{8}");
+            if (major < 8 || (!isNightly && ver < 804)) {
                 throw new ServerValidationException("Invalid MarkLogic Server Version: " + versionString);
             }
+
         }
         catch(ResourceAccessException e) {
             throw new ServerValidationException(e.toString());
@@ -263,14 +281,21 @@ public class DataHub {
      * Installs User Provided modules into the Data Hub
      */
     public void installUserModules() {
+        installUserModules(false);
+    }
+
+    public void installUserModules(boolean force) {
         long startTime = PerformanceLogger.monitorTimeInsideMethod();
         LOGGER.debug("Installing user modules into MarkLogic");
 
         List<Command> commands = new ArrayList<Command>();
-        commands.add(new LoadUserModulesCommand(hubConfig));
+        LoadUserModulesCommand lumc = new LoadUserModulesCommand(hubConfig);
+        lumc.setForceLoad(force);
+        commands.add(lumc);
+
 
         AppConfig config = getAppConfig();
-        SimpleAppDeployer deployer = new SimpleAppDeployer(client, getAdminManager());
+        SimpleAppDeployer deployer = new SimpleAppDeployer(client, adminManager);
         deployer.setCommands(commands);
         deployer.deploy(config);
         PerformanceLogger.logTimeInsideMethod(startTime, "DataHub.installUserModules");
@@ -319,7 +344,7 @@ public class DataHub {
         commands.add(new DeployOtherServersCommand());
 
         // Modules
-        commands.add(new LoadHubModulesCommand());
+        commands.add(new LoadHubModulesCommand(hubConfig));
 
         // Alerting
         List<Command> alertCommands = new ArrayList<Command>();
@@ -374,15 +399,6 @@ public class DataHub {
         return commands;
     }
 
-    private AdminManager getAdminManager() {
-        AdminConfig adminConfig = new AdminConfig();
-        adminConfig.setHost(hubConfig.host);
-        adminConfig.setUsername(hubConfig.adminUsername);
-        adminConfig.setPassword(hubConfig.adminPassword);
-        AdminManager manager = new AdminManager(adminConfig);
-        return manager;
-    }
-
     /**
      * Installs the data hub configuration and server-side modules into MarkLogic
      */
@@ -397,7 +413,7 @@ public class DataHub {
         moduleManager.deletePropertiesFile();
 
         AppConfig config = getAppConfig();
-        HubAppDeployer deployer = new HubAppDeployer(client, getAdminManager(), listener);
+        HubAppDeployer deployer = new HubAppDeployer(client, adminManager, listener);
         deployer.setCommands(getCommands(config));
         deployer.deploy(config);
 
@@ -412,7 +428,7 @@ public class DataHub {
         LOGGER.debug("Uninstalling the Data Hub from MarkLogic");
 
         AppConfig config = getAppConfig();
-        HubAppDeployer deployer = new HubAppDeployer(client, getAdminManager(), listener);
+        HubAppDeployer deployer = new HubAppDeployer(client, adminManager, listener);
         deployer.setCommands(getCommands(config));
         deployer.undeploy(config);
 
