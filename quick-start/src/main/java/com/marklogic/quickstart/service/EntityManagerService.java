@@ -1,5 +1,16 @@
 package com.marklogic.quickstart.service;
 
+import com.marklogic.hub.Scaffolding;
+import com.marklogic.hub.flow.FlowType;
+import com.marklogic.quickstart.exception.NotFoundException;
+import com.marklogic.quickstart.model.EntityModel;
+import com.marklogic.quickstart.model.FlowModel;
+import com.marklogic.quickstart.util.FileUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -7,22 +18,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.marklogic.quickstart.exception.NotFoundException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Service;
-
-import com.marklogic.hub.Scaffolding;
-import com.marklogic.hub.flow.FlowType;
-//import com.marklogic.quickstart.factory.EntityModelFactory;
-import com.marklogic.quickstart.model.EntityModel;
-import com.marklogic.quickstart.model.FlowModel;
-import com.marklogic.quickstart.util.FileUtil;
-
 @Service
-@Scope("session")
 public class EntityManagerService {
 
     private static final Logger LOGGER = LoggerFactory
@@ -30,20 +26,6 @@ public class EntityManagerService {
 
     @Autowired
     private FlowManagerService flowManagerService;
-
-//    public EntityManager getEntityManager(HubConfig config) {
-//
-//        Authentication authMethod = Authentication
-//                .valueOf(config.authMethod.toUpperCase());
-//        DatabaseClient client = DatabaseClientFactory.newClient(
-//                config.host,
-//                config.stagingPort,
-//                config.adminUsername,
-//                config.adminPassword,
-//                authMethod);
-//        return new EntityManager(client);
-//
-//    }
 
     public List<EntityModel> getEntities(String projectDir) {
         List<EntityModel> entities = new ArrayList<EntityModel>();
@@ -59,18 +41,6 @@ public class EntityManagerService {
 
         return entities;
     }
-
-//    private List<Entity> getEntitysInServer() {
-//        List<Entity> entitiesInServer = new ArrayList<>();
-//        try {
-//            EntityManager entityManager = getEntityManager();
-//            entitiesInServer = entityManager.getEntities();
-//        } catch (Exception e) {
-//            LOGGER.error(e.getMessage(), e);
-//        }
-//        return entitiesInServer;
-//    }
-//
 
     public EntityModel getEntity(String projectDir, String entityName) {
         EntityModel entityModel = null;
@@ -110,7 +80,6 @@ public class EntityManagerService {
 
         return null;
     }
-
 
 
     public EntityModel createEntity(String projectDir, EntityModel newEntity) throws IOException {

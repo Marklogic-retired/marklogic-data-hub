@@ -62,7 +62,7 @@
                   <i class="material-icons mdl-list__item-icon">transform</i>
                   {{ flow.flowName }}
                 </span>
-                <span class="run-harmonize-flow mdl-list__item-secondary-action" (click)="runHarmonizeFlow(flow)">
+                <span class="run-harmonize-flow mdl-list__item-secondary-action" (click)="runHarmonizeFlow($event, flow)">
                   <button class="mdl-button mdl-js-button mdl-button--icon">
                     <i class="material-icons mdl-list__item-icon">play_circle_outline</i>
                   </button>
@@ -76,10 +76,6 @@
   </div>
   <main class="mdl-layout__content">
     <div class="page-content" layout-padding>
-      <div flex class="mlcp-status" layout="column" *ngIf="mlcpStatus">
-        <h4>MLCP Output</h4>
-        <pre flex>{{ mlcpStatus }}</pre>
-      </div>
       <div class="current-flow" *ngIf="flow">
         <h2>{{flow.flowName}} {{flowType}} flow</h2>
         <h3>Plugins</h3>

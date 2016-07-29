@@ -212,7 +212,7 @@ export class STOMPService {
     } else {
       let resp = this.client.subscribe(
         endpoint, this.onMessage, <any>{ ack: 'auto' });
-      this.resolveSubQueue.apply(resp.id);
+      this.resolveSubQueue(resp.id);
     }
 
     return promise;

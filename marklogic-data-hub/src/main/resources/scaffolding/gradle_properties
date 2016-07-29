@@ -25,6 +25,11 @@ mlTracePort=%%mlTracePort%%
 mlTraceDbName=%%mlTraceDbName%%
 mlTraceForestsPerHost=%%mlTraceForestsPerHost%%
 
+mlJobAppserverName=%%mlJobAppserverName%%
+mlJobPort=%%mlJobPort%%
+mlJobDbName=%%mlJobDbName%%
+mlJobForestsPerHost=%%mlJobForestsPerHost%%
+
 mlModulesDbName=%%mlModulesDbName%%
 mlTriggersDbName=%%mlTriggersDbName%%
 mlSchemasDbName=%%mlSchemasDbName%%

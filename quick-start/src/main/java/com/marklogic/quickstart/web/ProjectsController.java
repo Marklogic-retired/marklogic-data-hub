@@ -1,5 +1,26 @@
 package com.marklogic.quickstart.web;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.StatusListener;
+import com.marklogic.quickstart.exception.NotAuthorizedException;
+import com.marklogic.quickstart.model.EnvironmentConfig;
+import com.marklogic.quickstart.model.LoginInfo;
+import com.marklogic.quickstart.model.Project;
+import com.marklogic.quickstart.model.StatusMessage;
+import com.marklogic.quickstart.service.DataHubService;
+import com.marklogic.quickstart.service.FileSystemEventListener;
+import com.marklogic.quickstart.service.FileSystemWatcherService;
+import com.marklogic.quickstart.service.ProjectManagerService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpClientErrorException;
+
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -8,43 +29,9 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.servlet.http.HttpSession;
-
-import com.marklogic.hub.FinishedListener;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.client.HttpClientErrorException;
-
-import com.marklogic.hub.HubConfig;
-import com.marklogic.hub.StatusListener;
-import com.marklogic.quickstart.exception.NotAuthorizedException;
-import com.marklogic.quickstart.model.EnvironmentConfig;
-import com.marklogic.quickstart.model.StatusMessage;
-import com.marklogic.quickstart.model.LoginInfo;
-import com.marklogic.quickstart.model.Project;
-import com.marklogic.quickstart.service.DataHubService;
-import com.marklogic.quickstart.service.FileSystemEventListener;
-import com.marklogic.quickstart.service.FileSystemWatcherService;
-import com.marklogic.quickstart.service.ProjectManagerService;
-
 @Controller
-@Scope("session")
+@RequestMapping(value = "/projects")
 public class ProjectsController extends BaseController implements FileSystemEventListener {
-    protected final static Logger logger = LoggerFactory.getLogger(ProjectsController.class);
 
     @Autowired
     private DataHubService dataHubService;
@@ -58,7 +45,7 @@ public class ProjectsController extends BaseController implements FileSystemEven
     @Autowired
     private ProjectManagerService pm;
 
-    @RequestMapping(value = "/projects/", method = RequestMethod.GET)
+    @RequestMapping(value = "/", method = RequestMethod.GET)
     @ResponseBody
     public Map<String, Object> getProjects() throws ClassNotFoundException, IOException {
         Map<String, Object> resp = new HashMap<String, Object>();
@@ -70,33 +57,26 @@ public class ProjectsController extends BaseController implements FileSystemEven
         return resp;
     }
 
-    @RequestMapping(value = "/current-env", method = RequestMethod.GET)
-    @ResponseBody
-    public EnvironmentConfig getCurrentEnvironment() {
-        requireAuth();
-        return envConfig.refresh();
-    }
-
-    @RequestMapping(value = "/projects/", method = RequestMethod.POST)
+    @RequestMapping(value = "/", method = RequestMethod.POST)
     @ResponseBody
     public Project addProject(@RequestParam String path) throws ClassNotFoundException, IOException {
         return pm.addProject(path);
     }
 
-    @RequestMapping(value = "/projects/{projectId}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{projectId}", method = RequestMethod.GET)
     @ResponseBody
     public Project getProject(@PathVariable int projectId) {
         return pm.getProject(projectId);
     }
 
-    @RequestMapping(value = "/projects/{projectId}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/{projectId}", method = RequestMethod.DELETE)
     @ResponseBody
     public ResponseEntity<?> removeProject(@PathVariable int projectId) throws IOException {
         pm.removeProject(projectId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @RequestMapping(value = "/projects/{projectId}/initialize", method = RequestMethod.POST)
+    @RequestMapping(value = "/{projectId}/initialize", method = RequestMethod.POST)
     @ResponseBody
     public Project initializeProject(@PathVariable int projectId, @RequestBody HubConfig config) {
         Project project = pm.getProject(projectId);
@@ -104,7 +84,7 @@ public class ProjectsController extends BaseController implements FileSystemEven
         return project;
     }
 
-    @RequestMapping(value = "/projects/{projectId}/defaults", method = RequestMethod.GET)
+    @RequestMapping(value = "/{projectId}/defaults", method = RequestMethod.GET)
     @ResponseBody
     public HubConfig getDefaults(@PathVariable int projectId) {
         Project project = pm.getProject(projectId);
@@ -112,10 +92,10 @@ public class ProjectsController extends BaseController implements FileSystemEven
     }
 
 
-    @RequestMapping(value = "/projects/{projectId}/{environment}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{projectId}/{environment}", method = RequestMethod.GET)
     @ResponseBody
-    public EnvironmentConfig getEnvironment(@PathVariable int projectId,
-            @PathVariable String environment) {
+    public String getEnvironment(@PathVariable int projectId,
+            @PathVariable String environment) throws JsonProcessingException {
 
         requireAuth();
 
@@ -123,10 +103,12 @@ public class ProjectsController extends BaseController implements FileSystemEven
         pm.getProject(projectId);
 
 
-        return envConfig.refresh();
+        envConfig.refresh();
+
+        return envConfig.toJson();
     }
 
-    @RequestMapping(value = "/projects/{projectId}/{environment}/login", method = RequestMethod.POST)
+    @RequestMapping(value = "/{projectId}/{environment}/login", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<?> loginToProject(@PathVariable int projectId,
             @PathVariable String environment,
@@ -146,13 +128,11 @@ public class ProjectsController extends BaseController implements FileSystemEven
             session.setAttribute("currentProjectId", projectId);
             session.setAttribute("currentEnvironment", environment);
 
-            if (envConfig.installed) {
-                dataHubService.installUserModules(false);
+            if (envConfig.isInstalled()) {
+                dataHubService.installUserModules(envConfig.getMlSettings(), false);
+                startProjectWatcher();
             }
 
-            String pluginDir = Paths.get(envConfig.projectDir, "plugins").toString();
-            watcherService.watch(pluginDir);
-            watcherService.addListener(this);
 
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
@@ -161,11 +141,11 @@ public class ProjectsController extends BaseController implements FileSystemEven
         }
     }
 
-    @RequestMapping(value = "/projects/{projectId}/{environment}/logout", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/{projectId}/{environment}/logout", method = RequestMethod.DELETE)
     @ResponseBody
     public ResponseEntity<?> logoutFromProject(HttpSession session) throws IOException {
 
-        String pluginDir = Paths.get(envConfig.projectDir, "plugins").toString();
+        String pluginDir = Paths.get(envConfig.getProjectDir(), "plugins").toString();
         watcherService.removeListener(this);
         watcherService.unwatch(pluginDir);
 
@@ -176,37 +156,37 @@ public class ProjectsController extends BaseController implements FileSystemEven
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @RequestMapping(value = "/projects/{projectId}/{environment}/install", method = RequestMethod.PUT)
+    @RequestMapping(value = "/{projectId}/{environment}/install", method = RequestMethod.PUT)
     @ResponseBody
     public ResponseEntity<?> install(@PathVariable int projectId,
-            @PathVariable String environment) {
+            @PathVariable String environment) throws IOException {
 
         requireAuth();
 
         // make sure the project exists
         pm.getProject(projectId);
 
+        final EnvironmentConfig cachedConfig = envConfig;
+
         // install the hub
-        dataHubService.install(envConfig.mlSettings, new StatusListener() {
+        boolean installed = dataHubService.install(envConfig.getMlSettings(), new StatusListener() {
             @Override
             public void onStatusChange(int percentComplete, String message) {
                 template.convertAndSend("/topic/install-status", new StatusMessage(percentComplete, message));
             }
-        }, new FinishedListener() {
-            @Override
-            public void onFinished(boolean success) {
-                envConfig.isInitialized = success;
-                if (success) {
-                    logger.info("OnFinished: installing user modules");
-                    dataHubService.installUserModules(true);
-                }
-            }
         });
+
+        envConfig.setInitialized(installed);
+        if (installed) {
+            logger.info("OnFinished: installing user modules");
+            dataHubService.installUserModules(cachedConfig.getMlSettings(), true);
+            startProjectWatcher();
+        }
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @RequestMapping(value = "/projects/{projectId}/{environment}/uninstall", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/{projectId}/{environment}/uninstall", method = RequestMethod.DELETE)
     @ResponseBody
     public ResponseEntity<?> unInstall(@PathVariable int projectId,
             @PathVariable String environment) {
@@ -217,7 +197,7 @@ public class ProjectsController extends BaseController implements FileSystemEven
         pm.getProject(projectId);
 
         // uninstall the hub
-        dataHubService.uninstall(envConfig.mlSettings, new StatusListener() {
+        dataHubService.uninstall(envConfig.getMlSettings(), new StatusListener() {
             @Override
             public void onStatusChange(int percentComplete, String message) {
                 template.convertAndSend("/topic/uninstall-status", new StatusMessage(percentComplete, message));
@@ -226,31 +206,17 @@ public class ProjectsController extends BaseController implements FileSystemEven
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/current-project/uninstall", method = RequestMethod.DELETE)
-    @ResponseBody
-    public ResponseEntity<?> unInstall(HttpSession session) {
-
-        requireAuth();
-
-        // make sure the project exists
-        Integer projectId = (Integer)session.getAttribute("currentProjectId");
-        pm.getProject(projectId);
-
-        // uninstall the hub
-        dataHubService.uninstall(envConfig.mlSettings, new StatusListener() {
-            @Override
-            public void onStatusChange(int percentComplete, String message) {
-                template.convertAndSend("/topic/uninstall-status", new StatusMessage(percentComplete, message));
-            }
-        });
-        return new ResponseEntity<>(HttpStatus.OK);
+    private void startProjectWatcher() throws IOException {
+        String pluginDir = Paths.get(envConfig.getProjectDir(), "plugins").toString();
+        if (!watcherService.hasListener(this)) {
+            watcherService.watch(pluginDir);
+            watcherService.addListener(this);
+        }
     }
 
     @Override
-    public void onWatchEvent(Path path, WatchEvent<Path> event) {
-        if (envConfig.installed) {
-            dataHubService.installUserModules(false);
-            template.convertAndSend("/topic/entity-status", new StatusMessage(0, path.toString()));
-        }
+    public void onWatchEvent(HubConfig hubConfig, Path path, WatchEvent<Path> event) {
+        dataHubService.installUserModules(hubConfig, false);
+        template.convertAndSend("/topic/entity-status", new StatusMessage(0, path.toString()));
     }
 }

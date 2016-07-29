@@ -1,12 +1,13 @@
 package com.marklogic.quickstart.service;
 
+import com.marklogic.hub.HubConfig;
+import org.springframework.stereotype.Component;
+
 import java.nio.file.Path;
 import java.nio.file.WatchEvent;
-
-import org.springframework.stereotype.Component;
 
 @Component
 public interface FileSystemEventListener {
 
-    void onWatchEvent(Path path, WatchEvent<Path> event);
+    void onWatchEvent(HubConfig hubConfig, Path path, WatchEvent<Path> event);
 }

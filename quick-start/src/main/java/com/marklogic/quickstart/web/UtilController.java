@@ -1,5 +1,14 @@
 package com.marklogic.quickstart.web;
 
+import com.marklogic.quickstart.model.SearchPathModel;
+import com.marklogic.quickstart.util.FileUtil;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -8,28 +17,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-
-import com.marklogic.quickstart.model.SearchPathModel;
-import com.marklogic.quickstart.util.FileUtil;
-
 @Controller
 @RequestMapping("/api/utils")
-public class UtilController {
-
-	private static final Logger LOGGER = LoggerFactory.getLogger(UtilController.class);
+public class UtilController extends BaseController {
 
 	@RequestMapping(value = "/searchPath", method = RequestMethod.GET)
 	@ResponseBody
 	public Map<String, Object> searchPath(@RequestParam String path) {
-		LOGGER.debug("Search Path:" + path);
+		logger.debug("Search Path:" + path);
 		List<SearchPathModel> paths = new ArrayList<SearchPathModel>();
 		String currentPath;
 

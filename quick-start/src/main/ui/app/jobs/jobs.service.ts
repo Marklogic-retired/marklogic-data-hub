@@ -1,13 +1,15 @@
-import { Injectable, EventEmitter } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Http, Response } from '@angular/http';
-import { Observable } from 'rxjs/Observable';
 
 @Injectable()
-export class TaskService {
+export class JobService {
+  start: number = 1;
+  count: number = 10;
+
   constructor(private http: Http) {}
 
-  getTasks() {
-    return this.get('/tasks/');
+  getJobs() {
+    return this.get(`/api/jobs/?start=${this.start}&count=${this.count}`);
   }
 
   private extractData = (res: Response) => {

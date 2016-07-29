@@ -11,7 +11,7 @@ import com.marklogic.hub.util.PerformanceLogger;
 @Component
 public class AspectLoggerService {
 
-    @Around("execution(* com.marklogic.hub..*.*(..))")
+    @Around("execution(* com.marklogic.hub.*.*(..)) || execution(* com.marklogic.quickstart.*.*(..))")
     public Object logTimeInsideMethod(ProceedingJoinPoint joinPoint) throws Throwable {
         long startTime = PerformanceLogger.monitorTimeInsideMethod();
 

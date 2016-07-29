@@ -15,12 +15,11 @@
  */
 package com.marklogic.hub.flow;
 
-import org.w3c.dom.Element;
-
 import com.marklogic.client.io.Format;
 import com.marklogic.hub.FlowComplexity;
 import com.marklogic.hub.plugin.Plugin;
 import com.marklogic.hub.plugin.ServerPlugin;
+import org.w3c.dom.Element;
 
 /**
  * A class for representing a simple Flow
@@ -39,6 +38,8 @@ public class SimpleFlow extends AbstractFlow {
     public SimpleFlow(Element xml) {
         super(xml);
     }
+
+    public SimpleFlow() {}
 
     /**
      * Returns the header plugin used by this flow

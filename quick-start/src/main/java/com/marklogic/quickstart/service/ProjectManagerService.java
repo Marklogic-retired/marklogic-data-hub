@@ -1,30 +1,19 @@
 package com.marklogic.quickstart.service;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.prefs.Preferences;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Service;
-
+import com.marklogic.client.helper.LoggingObject;
 import com.marklogic.quickstart.exception.BadRequestException;
 import com.marklogic.quickstart.exception.NotFoundException;
 import com.marklogic.quickstart.model.Project;
 import com.marklogic.quickstart.model.ProjectInfo;
+import org.springframework.stereotype.Service;
+
+import java.io.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.prefs.Preferences;
 
 @Service
-@Scope("session")
-public class ProjectManagerService {
-
-    protected final static Logger logger = LoggerFactory.getLogger(ProjectManagerService.class);
+public class ProjectManagerService extends LoggingObject {
 
     public Map<Integer, ProjectInfo> projects = new HashMap<Integer, ProjectInfo>();
     Preferences prefs = Preferences.userNodeForPackage(ProjectManagerService.class);
@@ -32,7 +21,6 @@ public class ProjectManagerService {
 
     @SuppressWarnings("unchecked")
     public ProjectManagerService() throws ClassNotFoundException, IOException {
-        logger.info("constructor for ProjectManagerService");
         byte[] bytes = prefs.getByteArray("projects", null);
         if (bytes != null) {
             projects = (HashMap<Integer, ProjectInfo>) bytes2Object(bytes);

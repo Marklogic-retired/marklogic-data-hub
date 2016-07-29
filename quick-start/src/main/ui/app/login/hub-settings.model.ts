@@ -17,6 +17,11 @@ export class HubSettings {
   traceForestsPerHost: number = null;
   tracePort: number = null;
 
+  jobDbName: string = null;
+  jobHttpName: string = null;
+  jobForestsPerHost: number = null;
+  jobPort: number = null;
+
   modulesDbName: string = null;
   triggersDbName: string = null;
   schemasDbName: string = null;

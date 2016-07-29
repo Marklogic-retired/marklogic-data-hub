@@ -5,9 +5,15 @@
     <span class="mdl-layout-title">Data Hub Quick Start</span>
     <!-- Add spacer, to align navigation to the right -->
     <div class="mdl-layout-spacer"></div>
+    <div *ngIf="getRunningJobCount() !== 0" layout="row" layout-align="center center" class="job-progress" (click)="gotoJobs()">
+      <span class="label">Running {{getRunningJobCount()}} jobs</span>
+      <md-progress-bar mode="determinate" [value]="getPercentComplete()"></md-progress-bar>
+      <span class="percent">{{getPercentComplete()}}%</span>
+    </div>
+    <div class="mdl-layout-spacer"></div>
     <nav class="mdl-navigation mdl-layout--large-screen-only">
       <a class="mdl-navigation__link" [ngClass]="{'active': isActive('/')}" [routerLink]="['']"><i class="fa fa-industry"></i> Entities</a>
-      <a class="mdl-navigation__link" [ngClass]="{'active': isActive('/tasks')}" [routerLink]="['tasks']"><i class="fa fa-tasks"></i> Tasks</a>
+      <a class="mdl-navigation__link" [ngClass]="{'active': isActive('/jobs')}" [routerLink]="['jobs']"><i class="fa fa-tasks"></i> <span *ngIf="getRunningJobCount() !== 0" [mdl-badge]="getRunningJobCount()">Jobs</span><span *ngIf="getRunningJobCount() === 0">Jobs</span></a>
       <a class="mdl-navigation__link" target="_blank" [href]="getTraceUrl()"><i class="fa fa-flash"></i> Traces</a>
       <a class="mdl-navigation__link" [ngClass]="{'active': isActive('/settings')}" [routerLink]="['settings']"><i class="fa fa-gear"></i> Settings</a>
     </nav>

@@ -41,3 +41,19 @@ a.active {
     bottom: 25%;
   }
 }
+
+md-progress-bar {
+  width: 100px;
+}
+
+.job-progress {
+  cursor: pointer;
+
+  span.label {
+    margin-right: 5px;
+  }
+
+  span.percent {
+    margin-left: 5px;
+  }
+}

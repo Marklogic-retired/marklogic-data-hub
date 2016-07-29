@@ -93,6 +93,13 @@
                     <md-input placeholder="Trace Database Name" type="text" name="traceDbName" [(ngModel)]="initSettings.traceDbName" required="required"></md-input>
                     <md-input placeholder="Trace Forests Per Host" type="number" name="traceForestsPerHost" [(ngModel)]="initSettings.traceForestsPerHost" required="required"></md-input>
                   </section>
+                  <h3 class="md-primary">Job</h3>
+                  <section class="sub-section" layout="column">
+                    <md-input placeholder="Job Appserver Name" type="text" name="jobHttpName" [(ngModel)]="initSettings.jobHttpName" required="required"></md-input>
+                    <md-input placeholder="Job Appserver Port" type="number" name="jobPort" [(ngModel)]="initSettings.jobPort" required="required"></md-input>
+                    <md-input placeholder="Job Database Name" type="text" name="jobDbName" [(ngModel)]="initSettings.jobDbName" required="required"></md-input>
+                    <md-input placeholder="Job Forests Per Host" type="number" name="jobForestsPerHost" [(ngModel)]="initSettings.jobForestsPerHost" required="required"></md-input>
+                  </section>
                   <h3 class="md-primary">Other</h3>
                   <section class="sub-section" layout="column">
                     <md-input placeholder="Modules Database Name" type="text" name="modulesDbName" [(ngModel)]="initSettings.modulesDbName" required="required"></md-input>

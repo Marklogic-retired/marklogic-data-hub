@@ -33,6 +33,8 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.springframework.batch.core.JobExecution;
+import org.springframework.batch.core.JobExecutionListener;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -110,7 +112,7 @@ public class FlowManagerTest extends HubTestBase {
         installModule("/entities/test/harmonize/empty-flow/empty-flow.xml", "flow-manager-test/my-test-flow1/my-test-flow1.xml");
         installModule("/entities/test/harmonize/empty-flow/collector/collector.xqy", "flow-manager-test/my-test-flow1/collector/collector.xqy");
 
-        FlowManager fm = new FlowManager(stagingClient);
+        FlowManager fm = new FlowManager(getHubConfig());
         SimpleFlow flow1 = (SimpleFlow)fm.getFlow("test", "empty-flow");
         assertEquals("empty-flow", flow1.getName());
 
@@ -148,7 +150,7 @@ public class FlowManagerTest extends HubTestBase {
     public void testGetFlows() {
         installModule("/entities/test/harmonize/my-test-flow1/my-test-flow1.xml", "flow-manager-test/my-test-flow1/my-test-flow1.xml");
 
-        FlowManager fm = new FlowManager(stagingClient);
+        FlowManager fm = new FlowManager(getHubConfig());
         List<Flow> flows = fm.getFlows("test");
         assertEquals(2, flows.size());
 
@@ -194,7 +196,7 @@ public class FlowManagerTest extends HubTestBase {
     public void getTestFlow() {
         installModule("/entities/test/harmonize/my-test-flow1/my-test-flow1.xml", "flow-manager-test/my-test-flow1/my-test-flow1-json.xml");
 
-        FlowManager fm = new FlowManager(stagingClient);
+        FlowManager fm = new FlowManager(getHubConfig());
         SimpleFlow flow1 = (SimpleFlow)fm.getFlow("test", "my-test-flow1");
 
         assertEquals("my-test-flow1", flow1.getName());
@@ -220,7 +222,7 @@ public class FlowManagerTest extends HubTestBase {
         assertEquals(2, getStagingDocCount());
         assertEquals(0, getFinalDocCount());
         JobFinishedListener listener = new JobFinishedListener();
-        FlowManager fm = new FlowManager(stagingClient);
+        FlowManager fm = new FlowManager(getHubConfig());
         SimpleFlow flow1 = (SimpleFlow)fm.getFlow("test", "my-test-flow1");
         fm.runFlow(flow1, 10, listener);
         listener.waitForFinish();
@@ -238,7 +240,7 @@ public class FlowManagerTest extends HubTestBase {
         assertEquals(2, getStagingDocCount());
         assertEquals(0, getFinalDocCount());
         JobFinishedListener listener = new JobFinishedListener();
-        FlowManager fm = new FlowManager(stagingClient);
+        FlowManager fm = new FlowManager(getHubConfig());
         SimpleFlow flow1 = (SimpleFlow)fm.getFlow("test", "my-test-flow-with-header");
         fm.runFlow(flow1, 10, listener);
         listener.waitForFinish();
@@ -261,7 +263,7 @@ public class FlowManagerTest extends HubTestBase {
         JobFinishedListener listener = new JobFinishedListener();
         assertEquals(2, getStagingDocCount());
         assertEquals(0, getFinalDocCount());
-        FlowManager fm = new FlowManager(stagingClient);
+        FlowManager fm = new FlowManager(getHubConfig());
         SimpleFlow flow1 = (SimpleFlow)fm.getFlow("test", "my-test-flow-with-all");
         fm.runFlow(flow1, 10, listener);
         listener.waitForFinish();

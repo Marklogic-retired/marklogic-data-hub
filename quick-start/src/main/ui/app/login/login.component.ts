@@ -80,7 +80,6 @@ export class Login {
     private router: Router,
     private renderer: Renderer) {
 
-    auth.setAuthenticated(false);
     projectService.getProjects().subscribe(resp => {
       this.projects = resp.projects;
 
@@ -102,7 +101,7 @@ export class Login {
     this.installing = true;
 
     this.installationStatus = '';
-    this.installService.messageEmitter.subscribe((payload) => {
+    let emitter = this.installService.messageEmitter.subscribe((payload) => {
       this.percentComplete = payload.percentComplete;
       this.installationStatus += '\n' + payload.message;
 
@@ -111,6 +110,7 @@ export class Login {
           this.installing = false;
         }, 1000);
         this.currentEnvironment.installed = true;
+        emitter.unsubscribe();
       }
     });
     this.installService.install(
@@ -226,7 +226,8 @@ export class Login {
 
       if (this.currentEnvironment.installed) {
         // goto login tab
-        this.router.navigate(['']);
+        let redirect = this.auth.redirectUrl || '';
+        this.router.navigate([redirect]);
       } else {
         // go to install hub tab
         this.gotoTab('Installer');
@@ -277,6 +278,8 @@ export class Login {
     this.initSettings.finalDbName = name + '-FINAL';
     this.initSettings.traceHttpName = name + '-TRACING';
     this.initSettings.traceDbName = name + '-TRACING';
+    this.initSettings.jobHttpName = name + '-JOBS';
+    this.initSettings.jobDbName = name + '-JOBS';
     this.initSettings.modulesDbName = name + '-MODULES';
     this.initSettings.triggersDbName = name + '-TRIGGERS';
     this.initSettings.schemasDbName = name + '-SCHEMAS';

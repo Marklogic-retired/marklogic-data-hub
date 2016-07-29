@@ -2,19 +2,16 @@ import { Injectable, EventEmitter } from '@angular/core';
 
 @Injectable()
 export class AuthService {
-  _authenticated: boolean;
   authenticated: EventEmitter<any> = new EventEmitter();
-
-  constructor() {
-    this.setAuthenticated(false);
-  }
+  redirectUrl: string;
+  constructor() {}
 
   isAuthenticated() {
-    return this._authenticated;
+    return localStorage.getItem('_isAuthenticated_') === 'true';
   }
 
   setAuthenticated(authed: boolean) {
-    this._authenticated = authed;
-    this.authenticated.emit(this._authenticated);
+    localStorage.setItem('_isAuthenticated_', authed.toString());
+    this.authenticated.emit(authed);
   }
 }

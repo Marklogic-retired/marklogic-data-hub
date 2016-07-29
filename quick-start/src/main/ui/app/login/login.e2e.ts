@@ -71,6 +71,7 @@ describe('App', () => {
     subject.click().then(() => {
       // give it time
       browser.waitForAngular();
+      browser.sleep(1000);
 
       expect(projectDirTab.isDisplayed()).toEqual(false);
       expect(initIfNeededTab.isDisplayed()).toEqual(true);

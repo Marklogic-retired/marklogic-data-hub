@@ -1,31 +1,11 @@
 package com.marklogic.quickstart.service;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.commons.io.FileUtils;
-import org.apache.http.concurrent.BasicFuture;
-import org.springframework.batch.core.ExitStatus;
-import org.springframework.batch.core.JobExecution;
-import org.springframework.batch.core.JobExecutionListener;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Service;
-
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
-import com.marklogic.contentpump.bean.MlcpBean;
+import com.marklogic.client.helper.LoggingObject;
 import com.marklogic.hub.FlowManager;
-import com.marklogic.hub.StatusListener;
+import com.marklogic.hub.JobStatusListener;
 import com.marklogic.hub.flow.AbstractFlow;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.FlowType;
@@ -33,18 +13,43 @@ import com.marklogic.quickstart.model.EnvironmentConfig;
 import com.marklogic.quickstart.model.FlowModel;
 import com.marklogic.quickstart.model.PluginModel;
 import com.marklogic.quickstart.util.FileUtil;
-import com.marklogic.quickstart.util.SnooperOutputStream;
+import com.marklogic.spring.batch.hub.FlowConfig;
+import com.marklogic.spring.batch.hub.StagingConfig;
+import org.apache.commons.io.FileUtils;
+import org.springframework.batch.core.Job;
+import org.springframework.batch.core.JobExecution;
+import org.springframework.batch.core.JobParameters;
+import org.springframework.batch.core.JobParametersBuilder;
+import org.springframework.batch.core.launch.JobLauncher;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.stereotype.Service;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 @Service
-@Scope("session")
-public class FlowManagerService {
+public class FlowManagerService extends LoggingObject{
 
     private static final String PROJECT_TMP_FOLDER = ".tmp";
     @Autowired
     private EnvironmentConfig envConfig;
 
     public FlowManager getFlowManager() {
-        return new FlowManager(envConfig.getStagingClient());
+        return new FlowManager(envConfig.getMlSettings());
     }
 
     public List<FlowModel> getFlows(String projectDir, String entityName, FlowType flowType) {
@@ -83,54 +88,10 @@ public class FlowManagerService {
         return flowManager.getFlow(entityName, flowName, flowType);
     }
 
-    public CancellableTask runFlow(Flow flow, int batchSize) {
+    public JobExecution runFlow(Flow flow, int batchSize, JobStatusListener statusListener) {
 
-        CancellableTask task = new CancellableTask() {
-
-            private JobExecution jobExecution;
-
-            @Override
-            public void cancel(BasicFuture<?> resultFuture) {
-                if (jobExecution != null) {
-                    jobExecution.stop();
-                }
-            }
-
-            @Override
-            public void run(BasicFuture<?> resultFuture) {
-                FlowManager flowManager = getFlowManager();
-                this.jobExecution = flowManager.runFlow(flow, batchSize, new JobExecutionListener() {
-
-                    @Override
-                    public void beforeJob(JobExecution jobExecution) {}
-
-                    @Override
-                    public void afterJob(JobExecution jobExecution) {
-                        ExitStatus status = jobExecution.getExitStatus();
-                        if (ExitStatus.FAILED.getExitCode().equals(status.getExitCode())) {
-                            List<Throwable> errors = jobExecution.getAllFailureExceptions();
-                            if (errors.size() > 0) {
-                                Throwable throwable = errors.get(0);
-                                if (Exception.class.isInstance(throwable)) {
-                                    resultFuture.failed((Exception) throwable);
-                                }
-                                else {
-                                    resultFuture.failed(new Exception(errors.get(0)));
-                                }
-                            }
-                            else {
-                                resultFuture.failed(null);
-                            }
-                        }
-                        else {
-                            resultFuture.completed(null);
-                        }
-                    }
-                });
-            }
-        };
-
-        return task;
+        FlowManager flowManager = getFlowManager();
+        return flowManager.runFlow(flow, batchSize, statusListener);
     }
 
     private Path getMlcpOptionsFilePath(Path destFolder, String entityName, String flowName) {
@@ -138,7 +99,7 @@ public class FlowManagerService {
     }
 
     public void saveOrUpdateFlowMlcpOptionsToFile(String entityName, String flowName, String mlcpOptionsFileContent) throws IOException {
-        Path destFolder = Paths.get(envConfig.projectDir, PROJECT_TMP_FOLDER);
+        Path destFolder = Paths.get(envConfig.getProjectDir(), PROJECT_TMP_FOLDER);
         File destFolderFile = destFolder.toFile();
         if (!destFolderFile.exists()) {
             FileUtils.forceMkdir(destFolderFile);
@@ -151,57 +112,79 @@ public class FlowManagerService {
     }
 
     public String getFlowMlcpOptionsFromFile(String entityName, String flowName) throws IOException {
-        Path destFolder = Paths.get(envConfig.projectDir, PROJECT_TMP_FOLDER);
+        Path destFolder = Paths.get(envConfig.getProjectDir(), PROJECT_TMP_FOLDER);
         Path filePath = getMlcpOptionsFilePath(destFolder, entityName, flowName);
         File file = filePath.toFile();
         if(file.exists()) {
             return Files.toString(file, Charsets.UTF_8);
         }
-        return "{ \"input_file_path\": \"" + envConfig.projectDir.replace("\\", "\\\\") + "\" }";
+        return "{ \"input_file_path\": \"" + envConfig.getProjectDir().replace("\\", "\\\\") + "\" }";
     }
 
-    public CancellableTask runMlcp(JsonNode json, StatusListener listener) throws IOException {
-        CancellableTask task = new CancellableTask() {
+    protected ConfigurableApplicationContext buildApplicationContext(JobStatusListener statusListener) throws Exception {
+        AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
+        ctx.register(StagingConfig.class);
+        ctx.register(FlowConfig.class);
+        ctx.register(RunInputFlowConfig.class);
+        ctx.getBeanFactory().registerSingleton("hubConfig", envConfig.getMlSettings());
+        ctx.getBeanFactory().registerSingleton("statusListener", statusListener);
+        ctx.refresh();
+        return ctx;
+    }
 
-            @Override
-            public void cancel(BasicFuture<?> resultFuture) {
-                // TODO: stop MLCP. We don't have a way to do this yet.
-            }
+    private JobParameters buildJobParameters(JsonNode json) throws ParserConfigurationException, IOException, SAXException {
+        JobParametersBuilder jpb = new JobParametersBuilder();
+        jpb.addString("mlcpOptions", json.toString());
+        jpb.addString("uid", UUID.randomUUID().toString());
 
-            @Override
-            public void run(BasicFuture<?> resultFuture) {
-                try {
-                    MlcpBean bean = new ObjectMapper().readerFor(MlcpBean.class).readValue(json);
-                    bean.setHost(envConfig.mlSettings.host);
-                    bean.setPort(envConfig.mlSettings.stagingPort);
+        // convert the transform params into job params to be stored in ML for later reference
+        JsonNode tp = json.get("transform_param");
+        if (tp != null) {
+            String transformParams = tp.textValue();
+            transformParams = transformParams.replace("\"", "");
+            logger.info("transformParams: " + transformParams);
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            ByteArrayInputStream bis = new ByteArrayInputStream(transformParams.getBytes(StandardCharsets.UTF_8));
+            Document doc = builder.parse(bis);
+            bis.close();
 
-                    // Assume that the HTTP credentials will work for mlcp
-                    bean.setUsername(envConfig.mlSettings.adminUsername);
-                    bean.setPassword(envConfig.mlSettings.adminPassword);
-
-                    File file = new File(json.get("input_file_path").asText());
-                    String canonicalPath = file.getCanonicalPath();
-                    bean.setInput_file_path(canonicalPath);
-
-                    bean.setOutput_uri_replace("\"" + canonicalPath.replace("\\", "\\\\") + ", ''\"");
-
-                    PrintStream sysout = System.out;
-                    SnooperOutputStream sos = new SnooperOutputStream(listener, sysout);
-                    PrintStream ps = new PrintStream(sos);
-                    System.setOut(ps);
-
-                    bean.run();
-
-                    System.out.flush();
-                    System.setOut(sysout);
-                    resultFuture.completed(null);
+            NodeList nodes = doc.getElementsByTagName("params");
+            if (nodes.getLength() == 1) {
+                Node params = nodes.item(0);
+                NodeList childNodes = params.getChildNodes();
+                for (int i = 0; i < childNodes.getLength(); i++) {
+                    Node child = childNodes.item(i);
+                    if (child.getNodeType() == Node.ELEMENT_NODE) {
+                        String name = child.getNodeName();
+                        switch (name) {
+                            case "entity-name":
+                                jpb.addString("entityName", child.getTextContent());
+                                break;
+                            case "flow-name":
+                                jpb.addString("flowName", child.getTextContent());
+                                break;
+                            case "flow-type":
+                                jpb.addString("flowType", child.getTextContent());
+                        }
+                    }
                 }
-
-                catch (IOException e) {
-                    resultFuture.failed(e);
-                }
             }
-        };
-        return task;
+        }
+        return jpb.toJobParameters();
+    }
+
+    public JobExecution runMlcp(JsonNode json, JobStatusListener statusListener) {
+        JobExecution result = null;
+        try {
+            ConfigurableApplicationContext ctx = buildApplicationContext(statusListener);
+            JobParameters params = buildJobParameters(json);
+            JobLauncher launcher = ctx.getBean(JobLauncher.class);
+            Job job = ctx.getBean(Job.class);
+            result = launcher.run(job, params);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 }

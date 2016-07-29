@@ -81,6 +81,7 @@
     "@angularclass/webpack-toolkit": "^1.3.3",
     "angular2-clipboard": "^0.2.12",
     "angular2-mdl": "^1.0.0-rc1",
+    "angular2-moment": "^0.8.1",
     "core-js": "^2.4.0",
     "font-awesome": "^4.6.3",
     "http-server": "^0.9.0",

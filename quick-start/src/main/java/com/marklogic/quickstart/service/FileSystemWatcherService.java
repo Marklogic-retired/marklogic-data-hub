@@ -1,22 +1,28 @@
 package com.marklogic.quickstart.service;
 
-import java.io.File;
+import com.marklogic.client.helper.LoggingObject;
+import com.marklogic.hub.HubConfig;
+import com.marklogic.quickstart.model.EnvironmentConfig;
+import com.sun.nio.file.SensitivityWatchEventModifier;
+import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.WatchEvent.Kind;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
 
-import javax.annotation.PostConstruct;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.DisposableBean;
-import org.springframework.stereotype.Service;
-
 @Service
-public class FileSystemWatcherService implements DisposableBean {
-    private static final Logger LOGGER = LoggerFactory.getLogger(FileSystemWatcherService.class);
+@Scope(proxyMode=ScopedProxyMode.TARGET_CLASS, value="session")
+public class FileSystemWatcherService extends LoggingObject implements DisposableBean {
+
+    @Autowired
+    EnvironmentConfig envConfig;
 
     private WatchService watcher;
     private Thread watcherThread;
@@ -28,7 +34,7 @@ public class FileSystemWatcherService implements DisposableBean {
     protected synchronized void onPostConstruct() throws Exception {
         watcher = FileSystems.getDefault().newWatchService();
 
-        watcherThread = new DirectoryWatcherThread("directory-watcher-thread");
+        watcherThread = new DirectoryWatcherThread("directory-watcher-thread", envConfig.getMlSettings());
         watcherThread.start();
     }
 
@@ -50,19 +56,23 @@ public class FileSystemWatcherService implements DisposableBean {
         listeners.add(listener);
     }
 
+    public boolean hasListener(FileSystemEventListener listener) {
+        return listeners.contains(listener);
+    }
+
     public void removeListener(FileSystemEventListener listener) {
         listeners.remove(listener);
     }
 
-    protected void notifyListeners(Path path, WatchEvent<Path> event) {
+    protected void notifyListeners(HubConfig hubConfig, Path path, WatchEvent<Path> event) {
         // notify global listeners
         synchronized (listeners) {
             for (FileSystemEventListener listener : listeners) {
                 try {
-                    listener.onWatchEvent(path, event);
+                    listener.onWatchEvent(hubConfig, path, event);
                 }
                 catch (Exception e) {
-                    LOGGER.error("Exception occured on listener", e);
+                    logger.error("Exception occured on listener", e);
                 }
             }
         }
@@ -72,14 +82,14 @@ public class FileSystemWatcherService implements DisposableBean {
      * Register the given directory with the WatchService
      */
     private void register(Path dir) throws IOException {
-        WatchKey key = dir.register(watcher, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_DELETE, StandardWatchEventKinds.ENTRY_MODIFY);
-        if (LOGGER.isInfoEnabled()) {
+        WatchKey key = dir.register(watcher, new WatchEvent.Kind[]{StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_DELETE, StandardWatchEventKinds.ENTRY_MODIFY}, SensitivityWatchEventModifier.HIGH);
+        if (logger.isInfoEnabled()) {
             Path prev = keys.get(key);
             if (prev == null) {
-                LOGGER.info("register: {}", dir);
+                logger.info("register: {}", dir);
             } else {
                 if (!dir.equals(prev)) {
-                    LOGGER.info("update: {} -> {}", prev, dir);
+                    logger.info("update: {} -> {}", prev, dir);
                 }
             }
         }
@@ -92,7 +102,7 @@ public class FileSystemWatcherService implements DisposableBean {
             Map.Entry<WatchKey, Path> entry = it.next();
             WatchKey key = entry.getKey();
             if (key.equals(dir)) {
-                LOGGER.info("unregister: {}", dir);
+                logger.info("unregister: {}", dir);
                 key.cancel();
                 it.remove();
             }
@@ -140,8 +150,10 @@ public class FileSystemWatcherService implements DisposableBean {
 
     private class DirectoryWatcherThread extends Thread {
 
-        public DirectoryWatcherThread(String name) {
+        private HubConfig hubConfig;
+        public DirectoryWatcherThread(String name, HubConfig hubConfig) {
             super(name);
+            this.hubConfig = hubConfig;
         }
 
         @Override
@@ -157,7 +169,7 @@ public class FileSystemWatcherService implements DisposableBean {
 
                 Path dir = keys.get(key);
                 if (dir == null) {
-                    LOGGER.info("WatchKey not recognized!!");
+                    logger.info("WatchKey not recognized!!");
                     continue;
                 }
 
@@ -173,10 +185,10 @@ public class FileSystemWatcherService implements DisposableBean {
                     Path child = dir.resolve(context);
 
                     // print out event
-                    LOGGER.info("Event received: %s for: %s", event.kind().name(), child);
+                    logger.info("Event received: {} for: {}", event.kind().name(), child);
 
                     // notify listeners
-                    notifyListeners(dir, ev);
+                    notifyListeners(hubConfig, dir, ev);
 
                     // if directory is created, then register it and its sub-directories
                     // we are always listening recursively
@@ -186,7 +198,7 @@ public class FileSystemWatcherService implements DisposableBean {
                                 registerAll(child);
                             }
                         } catch (IOException x) {
-                            LOGGER.error("Cannot watch newly created directory: " + child.getFileName().toAbsolutePath(), x);
+                            logger.error("Cannot watch newly created directory: " + child.getFileName().toAbsolutePath(), x);
                         }
                     }
                 }

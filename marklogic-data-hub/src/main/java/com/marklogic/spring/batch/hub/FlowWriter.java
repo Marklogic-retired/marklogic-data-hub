@@ -27,7 +27,7 @@ public class FlowWriter extends ResourceManager  implements ItemWriter<String> {
     }
 
     @Override
-    public void write(List<? extends String> items) throws Exception {
+    public void write(List<? extends String> items) {
 
         Transaction transaction = null;
         try {
@@ -46,6 +46,7 @@ public class FlowWriter extends ResourceManager  implements ItemWriter<String> {
           if (transaction != null) {
               transaction.rollback();
           }
+            e.printStackTrace();
           throw e;
       }
     }

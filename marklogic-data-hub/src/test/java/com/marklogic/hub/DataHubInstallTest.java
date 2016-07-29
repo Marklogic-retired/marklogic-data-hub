@@ -1,17 +1,5 @@
 package com.marklogic.hub;
 
-import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import java.io.File;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.file.Paths;
-
-import javax.xml.parsers.ParserConfigurationException;
-
 import org.apache.commons.io.FileUtils;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.AfterClass;
@@ -19,7 +7,16 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
-import com.marklogic.client.modulesloader.impl.PropertiesModuleManager;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Paths;
+
+import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class DataHubInstallTest extends HubTestBase {
 
@@ -63,11 +60,8 @@ public class DataHubInstallTest extends HubTestBase {
         URL url = DataHubInstallTest.class.getClassLoader().getResource("data-hub-test");
         String path = Paths.get(url.toURI()).toFile().getAbsolutePath();
 
-        PropertiesModuleManager modulesManager = new PropertiesModuleManager();
-        modulesManager.deletePropertiesFile();
-
         dataHub = new DataHub(getHubConfig(path));
-        dataHub.installUserModules();
+        dataHub.installUserModules(true);
 
         assertEquals(
                 getResource("data-hub-test/plugins/entities/test-entity/harmonize/final/collector/collector.xqy"),

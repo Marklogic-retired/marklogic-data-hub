@@ -5,6 +5,8 @@ import * as _ from 'lodash';
 
 import { AuthService } from '../auth/auth.service';
 import { ProjectService } from '../projects/projects.service';
+import { JobListenerService } from '../jobs/job-listener.service';
+import { FlowStatus } from '../entities/flow-status.model';
 
 @Component({
   selector: 'header',
@@ -19,14 +21,23 @@ export class Header {
   constructor(
     private projectService: ProjectService,
     private auth: AuthService,
+    private jobListener: JobListenerService,
     private router: Router
-  ) {
-    projectService.currentProject().subscribe(env => {
-      this.currentEnv = env;
-    });
+  ) {}
+
+  private gotoJobs() {
+    this.router.navigate(['jobs']);
   }
 
-  getTraceUrl() {
+  private getRunningJobCount(): number {
+    return this.jobListener.runningJobCount();
+  }
+
+  private getPercentComplete(): number {
+    return this.jobListener.totalPercentComplete();
+  }
+
+  private getTraceUrl(): string {
     if (this.currentEnv) {
       return '//' + this.currentEnv.mlSettings.host + ':' +
         this.currentEnv.mlSettings.tracePort + '/';
@@ -35,14 +46,14 @@ export class Header {
     return '';
   }
 
-  logout() {
+  private logout() {
     this.projectService.logout().subscribe(() => {
       this.auth.setAuthenticated(false);
       this.router.navigate(['login']);
     });
   }
 
-  isActive(url: string): boolean {
+  private isActive(url: string): boolean {
     return this.router.url === url;
   }
 }

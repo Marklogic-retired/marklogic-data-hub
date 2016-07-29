@@ -34,7 +34,6 @@ import org.slf4j.LoggerFactory;
 import com.marklogic.client.io.Format;
 import com.marklogic.hub.flow.FlowType;
 import com.marklogic.hub.flow.SimpleFlow;
-import com.marklogic.hub.util.PerformanceLogger;
 
 public class Scaffolding {
 
@@ -53,26 +52,21 @@ public class Scaffolding {
     }
 
     public Path getFlowDir(String entityName, String flowName, FlowType flowType) {
-        long startTime = PerformanceLogger.monitorTimeInsideMethod();
         Path entityDir = entitiesDir.resolve(entityName);
         Path typeDir = entityDir.resolve(flowType.toString());
         Path flowDir = typeDir.resolve(flowName);
-        PerformanceLogger.logTimeInsideMethod(startTime, "Scaffolding.getFlowDir");
         return flowDir;
     }
 
     public void createEntity(String entityName) throws FileNotFoundException {
-        long startTime = PerformanceLogger.monitorTimeInsideMethod();
         Path entityDir = entitiesDir.resolve(entityName);
         entityDir.toFile().mkdirs();
 
-        PerformanceLogger.logTimeInsideMethod(startTime, "Scaffolding.createEntity");
     }
 
     public void createFlow(String entityName, String flowName,
             FlowType flowType, PluginFormat pluginFormat, Format dataFormat)
             throws IOException {
-        long startTime = PerformanceLogger.monitorTimeInsideMethod();
         Path flowDir = getFlowDir(entityName, flowName, flowType);
 
         if (flowType.equals(FlowType.HARMONIZE)) {
@@ -109,7 +103,6 @@ public class Scaffolding {
             out.println(flow.serialize(false));
             out.close();
         }
-        PerformanceLogger.logTimeInsideMethod(startTime, "Scaffolding.createFlow");
     }
 
     private void writeFile(String srcFile, Path dstFile) throws IOException {
@@ -125,8 +118,6 @@ public class Scaffolding {
             FlowType flowType, PluginFormat pluginFormat) throws IOException, ScaffoldingValidationException {
         LOGGER.info(extensionName);
 
-        long startTime = PerformanceLogger.monitorTimeInsideMethod();
-
         if(!validator.isUniqueRestServiceExtension(extensionName)) {
             throw new ScaffoldingValidationException("A rest service extension with the same name as " + extensionName + " already exists.");
         }
@@ -135,13 +126,11 @@ public class Scaffolding {
         File dstFile = createEmptyRestExtensionFile(entityName, extensionName, flowType, pluginFormat);
         writeToFile(fileContent, dstFile);
         writeMetadataForFile(dstFile, scaffoldRestServicesPath + "metadata/template.xml", extensionName);
-        PerformanceLogger.logTimeInsideMethod(startTime, "Scaffolding.createRestExtension");
     }
 
     public void createRestTransform(String entityName, String transformName,
             FlowType flowType, PluginFormat pluginFormat) throws IOException, ScaffoldingValidationException {
         LOGGER.info(transformName);
-        long startTime = PerformanceLogger.monitorTimeInsideMethod();
         if(!validator.isUniqueRestTransform(transformName)) {
             throw new ScaffoldingValidationException("A rest transform with the same name as " + transformName + " already exists.");
         }
@@ -150,7 +139,6 @@ public class Scaffolding {
         File dstFile = createEmptyRestTransformFile(entityName, transformName, flowType, pluginFormat);
         writeToFile(fileContent, dstFile);
         writeMetadataForFile(dstFile, scaffoldRestTransformsPath + "metadata/template.xml", transformName);
-        PerformanceLogger.logTimeInsideMethod(startTime, "Scaffolding.createRestTransform");
     }
 
     private void writeToFile(String fileContent, File dstFile)

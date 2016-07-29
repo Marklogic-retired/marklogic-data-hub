@@ -1,38 +1,81 @@
 package com.marklogic.quickstart.model;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.util.Properties;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
 import com.marklogic.client.DatabaseClientFactory.Authentication;
 import com.marklogic.hub.DataHub;
 import com.marklogic.hub.HubConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.stereotype.Component;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.util.Properties;
 
 @Component
-@Scope("session")
+@Scope(proxyMode=ScopedProxyMode.TARGET_CLASS, value="session")
 public class EnvironmentConfig {
 
     private static final Logger LOGGER = LoggerFactory
             .getLogger(EnvironmentConfig.class);
     private static final String GRADLE_PROPERTIES_FILENAME = "gradle.properties";
 
-    public String projectDir;
-    public String environment;
-    public boolean installed = false;
-    public boolean isInitialized = false;
+    private String projectDir;
+    private String environment;
 
-    public HubConfig mlSettings;
+    private boolean installed = false;
+    private boolean isInitialized = false;
+
+    private HubConfig mlSettings;
 
     private Properties environmentProperties = new Properties();
+
+    public boolean isInstalled() {
+        return installed;
+    }
+
+    public void setInstalled(boolean installed) {
+        this.installed = installed;
+    }
+
+    public String getEnvironment() {
+        return environment;
+    }
+
+    public void setEnvironment(String environment) {
+        this.environment = environment;
+    }
+
+    public String getProjectDir() {
+        return projectDir;
+    }
+
+    public void setProjectDir(String projectDir) {
+        this.projectDir = projectDir;
+    }
+
+    public boolean isInitialized() {
+        return isInitialized;
+    }
+
+    public void setInitialized(boolean initialized) {
+        isInitialized = initialized;
+    }
+
+    public HubConfig getMlSettings() {
+        return mlSettings;
+    }
+
+    public void setMlSettings(HubConfig mlSettings) {
+        this.mlSettings = mlSettings;
+    }
 
     public void init(String projectDir, String environment) {
         init(projectDir, environment, null);
@@ -89,6 +132,11 @@ public class EnvironmentConfig {
         mlSettings.traceHttpName = getEnvPropString("mlTraceAppserverName", mlSettings.traceHttpName);
         mlSettings.traceForestsPerHost = getEnvPropInteger("mlTraceForestsPerHost", mlSettings.traceForestsPerHost);
         mlSettings.tracePort = getEnvPropInteger("mlTracePort", mlSettings.tracePort);
+
+        mlSettings.jobDbName = getEnvPropString("mlJobDbName", mlSettings.jobDbName);
+        mlSettings.jobHttpName = getEnvPropString("mlJobAppserverName", mlSettings.jobHttpName);
+        mlSettings.jobForestsPerHost = getEnvPropInteger("mlJobForestsPerHost", mlSettings.jobForestsPerHost);
+        mlSettings.jobPort = getEnvPropInteger("mlJobPort", mlSettings.jobPort);
 
         mlSettings.modulesDbName = getEnvPropString("mlModulesDbName", mlSettings.modulesDbName);
         mlSettings.triggersDbName = getEnvPropString("mlTriggersDbName", mlSettings.triggersDbName);
@@ -155,5 +203,23 @@ public class EnvironmentConfig {
                 mlSettings.adminUsername,
                 mlSettings.adminPassword, authMethod);
         return client;
+    }
+
+    @JsonIgnore
+    public DatabaseClient getJobClient() {
+        Authentication authMethod = Authentication
+            .valueOf(mlSettings.authMethod.toUpperCase());
+
+        DatabaseClient client = DatabaseClientFactory.newClient(
+            mlSettings.host,
+            mlSettings.jobPort,
+            mlSettings.adminUsername,
+            mlSettings.adminPassword, authMethod);
+        return client;
+    }
+
+    public String toJson() throws JsonProcessingException {
+        ObjectMapper om = new ObjectMapper();
+        return om.writeValueAsString(this);
     }
 }

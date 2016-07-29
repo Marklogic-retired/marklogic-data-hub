@@ -1,23 +1,19 @@
 package com.marklogic.quickstart.web;
 
-import java.io.IOException;
-
-import javax.servlet.http.HttpSession;
-
-import org.springframework.context.annotation.Scope;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.hub.Debugging;
 import com.marklogic.hub.Tracing;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/settings")
-@Scope("session")
 public class SettingsController extends BaseController {
 
     private Tracing getTracing() {

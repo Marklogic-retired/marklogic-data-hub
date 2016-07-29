@@ -49,6 +49,11 @@ public class HubProject {
         customTokens.put("%%mlTraceDbName%%", hubConfig.traceDbName);
         customTokens.put("%%mlTraceForestsPerHost%%", hubConfig.traceForestsPerHost.toString());
 
+        customTokens.put("%%mlJobAppserverName%%", hubConfig.jobHttpName);
+        customTokens.put("%%mlJobPort%%", hubConfig.jobPort.toString());
+        customTokens.put("%%mlJobDbName%%", hubConfig.jobDbName);
+        customTokens.put("%%mlJobForestsPerHost%%", hubConfig.jobForestsPerHost.toString());
+
         customTokens.put("%%mlModulesDbName%%", hubConfig.modulesDbName);
         customTokens.put("%%mlTriggersDbName%%", hubConfig.triggersDbName);
         customTokens.put("%%mlSchemasDbName%%", hubConfig.schemasDbName);
@@ -64,12 +69,14 @@ public class HubProject {
             writeResourceFile("ml-config/servers/staging-server.json", serversDir.resolve("staging-server.json"));
             writeResourceFile("ml-config/servers/final-server.json", serversDir.resolve("final-server.json"));
             writeResourceFile("ml-config/servers/trace-server.json", serversDir.resolve("trace-server.json"));
+            writeResourceFile("ml-config/servers/job-server.json", serversDir.resolve("job-server.json"));
 
             Path databasesDir = configDir.resolve("databases");
             databasesDir.toFile().mkdirs();
             writeResourceFile("ml-config/databases/staging-database.json", databasesDir.resolve("staging-database.json"));
             writeResourceFile("ml-config/databases/final-database.json", databasesDir.resolve("final-database.json"));
             writeResourceFile("ml-config/databases/trace-database.json", databasesDir.resolve("trace-database.json"));
+            writeResourceFile("ml-config/databases/job-database.json", databasesDir.resolve("job-database.json"));
             writeResourceFile("ml-config/databases/modules-database.json", databasesDir.resolve("modules-database.json"));
             writeResourceFile("ml-config/databases/schemas-database.json", databasesDir.resolve("schemas-database.json"));
             writeResourceFile("ml-config/databases/triggers-database.json", databasesDir.resolve("triggers-database.json"));

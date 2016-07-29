@@ -24,6 +24,7 @@ public class HubConfig {
     public static final String DEFAULT_STAGING_NAME = "data-hub-STAGING";
     public static final String DEFAULT_FINAL_NAME = "data-hub-FINAL";
     public static final String DEFAULT_TRACE_NAME = "data-hub-TRACING";
+    public static final String DEFAULT_JOB_NAME = "data-hub-JOBS";
     public static final String DEFAULT_MODULES_DB_NAME = "data-hub-MODULES";
     public static final String DEFAULT_TRIGGERS_DB_NAME = "data-hub-TRIGGERS";
     public static final String DEFAULT_SCHEMAS_DB_NAME = "data-hub-SCHEMAS";
@@ -31,6 +32,7 @@ public class HubConfig {
     public static final Integer DEFAULT_STAGING_PORT = 8010;
     public static final Integer DEFAULT_FINAL_PORT = 8011;
     public static final Integer DEFAULT_TRACE_PORT = 8012;
+    public static final Integer DEFAULT_JOB_PORT = 8013;
 
     public static final String DEFAULT_APP_NAME = "data-hub";
     public static final String DEFAULT_MODULES_PATH = "src/data-hub";
@@ -62,6 +64,11 @@ public class HubConfig {
     public String traceHttpName = DEFAULT_TRACE_NAME;
     public Integer traceForestsPerHost = 1;
     public Integer tracePort = DEFAULT_TRACE_PORT;
+
+    public String jobDbName = DEFAULT_JOB_NAME;
+    public String jobHttpName = DEFAULT_JOB_NAME;
+    public Integer jobForestsPerHost = 1;
+    public Integer jobPort = DEFAULT_JOB_PORT;
 
     public String modulesDbName = DEFAULT_MODULES_DB_NAME;
     public String triggersDbName = DEFAULT_TRIGGERS_DB_NAME;

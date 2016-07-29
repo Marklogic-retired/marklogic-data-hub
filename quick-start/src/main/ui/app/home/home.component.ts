@@ -1,9 +1,11 @@
-import { Component, Input, ViewChild } from '@angular/core';
+import { Component, Input, ViewChild, ViewContainerRef } from '@angular/core';
 
 import { Entity } from '../entities/entity.model';
 import { Flow } from '../entities/flow.model';
 
 import { EntitiesService } from '../entities/entities.service';
+
+import { MdlSnackbarService } from 'angular2-mdl';
 
 import { MlcpUi } from '../mlcp-ui';
 import { NewEntity } from '../new-entity/new-entity';
@@ -30,11 +32,12 @@ export class Home {
 
   collapsedMap: Map<string, boolean> = new Map<string, boolean>();
 
-  mlcpProgressHidden: boolean = true;
-  mlcpPercentComplete: number;
-  mlcpStatus: string;
-
-  constructor(private entitiesService: EntitiesService) {
+  constructor(
+    private entitiesService: EntitiesService,
+    private snackbar: MdlSnackbarService,
+    private vcRef: ViewContainerRef
+  ) {
+    snackbar.setDefaultViewContainerRef(vcRef);
     entitiesService.entityMessageEmitter.subscribe(path => {
       this.getEntities();
     });
@@ -106,27 +109,23 @@ export class Home {
     });
   }
 
-  runInputFlow(ev: Event, flow) {
-    this.mlcpStatus = '';
-    this.entitiesService.mlcpMessageEmitter.subscribe((payload) => {
-      this.mlcpPercentComplete = payload.percentComplete;
-      this.mlcpStatus += '\n' + payload.message;
-
-      if (this.mlcpPercentComplete === 100) {
-        setTimeout(() => {
-          this.mlcpProgressHidden = true;
-        }, 1000);
-      }
-    });
+  runInputFlow(ev: Event, flow: Flow) {
     this.entitiesService.getInputFlowOptions(flow).subscribe(mlcpOptions => {
       this.mlcp.show(mlcpOptions, flow, ev).subscribe((options) => {
         this.entitiesService.runInputFlow(flow, options);
+        this.snackbar.showSnackbar({
+          message: flow.entityName + ': ' + flow.flowName + ' starting...',
+        });
       });
     });
     ev.stopPropagation();
   }
 
-  runHarmonizeFlow(flow) {
+  runHarmonizeFlow(ev: Event, flow: Flow) {
     this.entitiesService.runHarmonizeFlow(flow);
+    this.snackbar.showSnackbar({
+      message: flow.entityName + ': ' + flow.flowName + ' starting...',
+    });
+    ev.stopPropagation();
   }
 }

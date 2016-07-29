@@ -73,6 +73,8 @@ public abstract class AbstractFlow implements Flow {
     protected ArrayList<Plugin> plugins = new ArrayList<Plugin>();
     private Writer writer;
 
+    public AbstractFlow() {}
+
     public AbstractFlow(Element xml) {
         deserialize(xml);
     }

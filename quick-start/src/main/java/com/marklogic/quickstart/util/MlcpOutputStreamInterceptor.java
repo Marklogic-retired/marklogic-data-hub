@@ -1,17 +1,21 @@
 package com.marklogic.quickstart.util;
 
+import com.marklogic.hub.StatusListener;
+
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.Arrays;
 
-import com.marklogic.hub.StatusListener;
-
-public class SnooperOutputStream extends OutputStream {
+/**
+ * This class intercepts the Mlcp stdout and pipes it to a listener while
+ * also sending to the original stdout
+ */
+public class MlcpOutputStreamInterceptor extends OutputStream {
     private StatusListener listener;
     private PrintStream oldStream;
 
     private int currentPc = 0;
-    public SnooperOutputStream(StatusListener listener, PrintStream oldStream) {
+    public MlcpOutputStreamInterceptor(StatusListener listener, PrintStream oldStream) {
         this.listener = listener;
         this.oldStream = oldStream;
     }
@@ -19,7 +23,6 @@ public class SnooperOutputStream extends OutputStream {
     @Override
     public synchronized void write(int b) {
         oldStream.write(b);
-//        listener.onStatusChange(0, this.toString());
     }
 
     @Override
@@ -30,13 +33,13 @@ public class SnooperOutputStream extends OutputStream {
             throw new IndexOutOfBoundsException();
         }
 
-//        String status = Arrays.toString(Arrays.copyOfRange(b, off, off + len - 1));
         byte[] buf = Arrays.copyOfRange(b, off, off + len - 1);
         String status = new String(buf);
 
         try {
             int pc = Integer.parseInt(status.replaceFirst(".*completed (\\d+)\\%", "$1"));
-            if (pc > currentPc) {
+            // don't send 100% because more stuff happens after 100% is reported here
+            if (pc > currentPc && pc != 100) {
                 currentPc = pc;
             }
         }

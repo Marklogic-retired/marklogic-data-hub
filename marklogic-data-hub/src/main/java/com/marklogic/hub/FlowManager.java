@@ -15,99 +15,58 @@
  */
 package com.marklogic.hub;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.xml.stream.XMLStreamException;
-
+import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.DatabaseClientFactory;
+import com.marklogic.client.extensions.ResourceManager;
+import com.marklogic.client.extensions.ResourceServices.ServiceResult;
+import com.marklogic.client.extensions.ResourceServices.ServiceResultIterator;
+import com.marklogic.client.io.DOMHandle;
+import com.marklogic.client.util.RequestParameters;
+import com.marklogic.hub.flow.Flow;
+import com.marklogic.hub.flow.FlowType;
+import com.marklogic.hub.flow.SimpleFlow;
+import com.marklogic.spring.batch.hub.FlowConfig;
+import com.marklogic.spring.batch.hub.RunHarmonizeFlowConfig;
+import com.marklogic.spring.batch.hub.StagingConfig;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
-import org.springframework.batch.core.JobExecutionListener;
 import org.springframework.batch.core.JobParameters;
-import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
-import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
-import org.springframework.batch.core.job.builder.SimpleJobBuilder;
+import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.launch.JobLauncher;
-import org.springframework.batch.core.launch.support.SimpleJobLauncher;
-import org.springframework.batch.core.repository.JobRepository;
-import org.springframework.batch.core.repository.support.MapJobRepositoryFactoryBean;
-import org.springframework.batch.core.step.tasklet.TaskletStep;
-import org.springframework.batch.item.ItemReader;
-import org.springframework.batch.item.ItemWriter;
-import org.springframework.batch.support.transaction.ResourcelessTransactionManager;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.marklogic.client.DatabaseClient;
-import com.marklogic.client.Transaction;
-import com.marklogic.client.extensions.ResourceManager;
-import com.marklogic.client.extensions.ResourceServices.ServiceResult;
-import com.marklogic.client.extensions.ResourceServices.ServiceResultIterator;
-import com.marklogic.client.io.DOMHandle;
-import com.marklogic.client.io.Format;
-import com.marklogic.client.io.StringHandle;
-import com.marklogic.client.util.RequestParameters;
-import com.marklogic.hub.collector.Collector;
-import com.marklogic.hub.collector.ServerCollector;
-import com.marklogic.hub.flow.Flow;
-import com.marklogic.hub.flow.FlowType;
-import com.marklogic.hub.flow.SimpleFlow;
-import com.marklogic.hub.util.PerformanceLogger;
-import com.marklogic.spring.batch.hub.CollectorReader;
-import com.marklogic.spring.batch.hub.FlowWriter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 public class FlowManager extends ResourceManager {
     private static final String HUB_NS = "http://marklogic.com/data-hub";
     private static final String NAME = "flow";
-    private static final int DEFAULT_THREAD_COUNT = 8;
 
     private DatabaseClient client;
+    private HubConfig hubConfig;
 
-    private JobBuilderFactory jobBuilderFactory;
-    private StepBuilderFactory stepBuilderFactory;
-    private JobLauncher jobLauncher;
-    private ThreadPoolTaskExecutor executor;
-    private int threadCount = DEFAULT_THREAD_COUNT;
+    private DatabaseClient getClient() {
+        DatabaseClientFactory.Authentication authMethod = DatabaseClientFactory.Authentication
+            .valueOf(hubConfig.authMethod.toUpperCase());
 
-    public FlowManager(DatabaseClient client) {
+        return DatabaseClientFactory.newClient(
+            hubConfig.host,
+            hubConfig.stagingPort,
+            hubConfig.adminUsername,
+            hubConfig.adminPassword, authMethod);
+    }
+
+    public FlowManager(HubConfig hubConfig) {
         super();
-        this.client = client;
+        this.hubConfig = hubConfig;
+        this.client = getClient();
         this.client.init(NAME, this);
-        initializeDefaultSpringBatchComponents();
-    }
-
-    public void setThreadCount(int count) {
-        threadCount = count;
-        executor.setCorePoolSize(threadCount);
-        executor.setMaxPoolSize(threadCount);
-    }
-
-    protected void initializeDefaultSpringBatchComponents() {
-        ResourcelessTransactionManager transactionManager = new ResourcelessTransactionManager();
-        MapJobRepositoryFactoryBean f = new MapJobRepositoryFactoryBean(transactionManager);
-        try {
-            f.afterPropertiesSet();
-            JobRepository jobRepository = f.getObject();
-            this.jobBuilderFactory = new JobBuilderFactory(jobRepository);
-            this.stepBuilderFactory = new StepBuilderFactory(jobRepository, transactionManager);
-            SimpleJobLauncher jbl = new SimpleJobLauncher();
-            jbl.setJobRepository(jobRepository);
-
-            this.executor = new ThreadPoolTaskExecutor();
-            executor.setCorePoolSize(threadCount);
-            executor.setMaxPoolSize(threadCount);
-            executor.initialize();
-            executor.setWaitForTasksToCompleteOnShutdown(true);
-            jbl.setTaskExecutor(executor);
-
-            jbl.afterPropertiesSet();
-            this.jobLauncher = jbl;
-        } catch (Exception ex) {
-            throw new RuntimeException("Unable to initialize SqlMigrator, cause: " + ex.getMessage(), ex);
-        }
     }
 
     /**
@@ -131,7 +90,7 @@ public class FlowManager extends ResourceManager {
 
         ArrayList<Flow> flows = null;
         if (children.getLength() > 0) {
-            flows = new ArrayList<Flow>();
+            flows = new ArrayList<>();
         }
 
         Node node;
@@ -154,9 +113,7 @@ public class FlowManager extends ResourceManager {
      * @return the flow
      */
     public Flow getFlow(String entityName, String flowName) {
-        long startTime = PerformanceLogger.monitorTimeInsideMethod();
         Flow flow = getFlow(entityName, flowName, null);
-        PerformanceLogger.logTimeInsideMethod(startTime, "FlowManager.getFlow");
         return flow;
     }
 
@@ -177,61 +134,48 @@ public class FlowManager extends ResourceManager {
         return flowFromXml(parent.getDocumentElement());
     }
 
-    public void installFlow(Flow flow) {
-
+    private ConfigurableApplicationContext buildApplicationContext(Flow flow, JobStatusListener statusListener) {
+        AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
+        ctx.register(StagingConfig.class);
+        ctx.register(FlowConfig.class);
+        ctx.register(RunHarmonizeFlowConfig.class);
+        ctx.getBeanFactory().registerSingleton("hubConfig", hubConfig);
+        ctx.getBeanFactory().registerSingleton("flow", flow);
+        ctx.getBeanFactory().registerSingleton("statusListener", statusListener);
+        ctx.refresh();
+        return ctx;
     }
 
-    public void uninstallFlow(String flowName) {
-
+    private JobParameters buildJobParameters(Flow flow, int batchSize) {
+        JobParametersBuilder jpb = new JobParametersBuilder();
+        jpb.addLong("chunk", Integer.toUnsignedLong(batchSize));
+        jpb.addString("uid", UUID.randomUUID().toString());
+        jpb.addString("jobType", flow.getType().toString());
+        jpb.addString("entityName", flow.getEntityName());
+        jpb.addString("flowName", flow.getName());
+        return jpb.toJobParameters();
     }
 
-    public JobExecution runFlow(Flow flow, int batchSize) {
-        return runFlow(flow, batchSize, null);
-    }
-
-    // might want to add Job tracking support
-    // by returning a Job or some such.
-    // Depends a lot on if we go full in with spring batch or not
     /**
      * Runs a given flow
      * @param flow - the flow to run
      * @param batchSize - the size to use for batching transactions
-     * @param listener - the JobExecutionListener to receive status updates about the job
      * @return a JobExecution instance
      */
-    public JobExecution runFlow(Flow flow, int batchSize, JobExecutionListener listener) {
-        long startTime = PerformanceLogger.monitorTimeInsideMethod();
-
-        Collector c = flow.getCollector();
-        if (c instanceof ServerCollector) {
-            ((ServerCollector)c).setClient(client);
-        }
-        ItemReader<String> reader = new CollectorReader(c);
-        ItemWriter<String> writer = new FlowWriter(client, flow);
-
-        TaskletStep step = stepBuilderFactory.get("testStep")
-                .<String, String> chunk(batchSize)
-                .reader(reader).writer(writer).build();
-
-        String jobName = flow.getEntityName() + ":" + flow.getType() + ":"
-                + flow.getName() + "-" + System.currentTimeMillis();
-        SimpleJobBuilder builder = jobBuilderFactory.get(jobName).start(step);
-        if (listener != null) {
-            builder = builder.listener(listener);
-        }
-        Job job = builder.build();
-
+    public JobExecution runFlow(Flow flow, int batchSize, JobStatusListener statusListener) {
+        JobExecution result = null;
         try {
-            return jobLauncher.run(job, new JobParameters());
+            ConfigurableApplicationContext ctx = buildApplicationContext(flow, statusListener);
+
+            JobParameters params = buildJobParameters(flow, batchSize);
+            JobLauncher launcher = ctx.getBean(JobLauncher.class);
+            Job job = ctx.getBean(Job.class);
+            result = launcher.run(job, params);
         } catch (Exception e) {
-            throw new RuntimeException(e);
-        } finally {
-            PerformanceLogger.logTimeInsideMethod(startTime, "FlowManager.runFlow");
+            e.printStackTrace();
         }
-    }
 
-    public void runFlowsInParallel(Flow ... flows) {
-
+        return result;
     }
 
     /**
@@ -249,41 +193,9 @@ public class FlowManager extends ResourceManager {
         }
 
         if (complexity.equals(FlowComplexity.SIMPLE.toString())) {
-            SimpleFlow sf = new SimpleFlow(doc);
-            f = sf;
+            f = new SimpleFlow(doc);
         }
 
         return f;
     }
-
-    /**
-     * A class to run a flow
-     */
-    class FlowRunner extends ResourceManager {
-        private static final String NAME = "flow";
-
-        public FlowRunner(DatabaseClient client, Flow flow, String identifier, Transaction transaction) {
-            super();
-            client.init(NAME, this);
-        }
-
-        /**
-         * Runs the given flow
-         * @param flow - flow to run
-         * @param identifier - the identifier to pass to the flow (Can be a URI or any string)
-         * @param transaction - the transaction to apply to this request
-         * @throws XMLStreamException
-         */
-        public void run(Flow flow, String identifier, Transaction transaction) {
-            RequestParameters params = new RequestParameters();
-            params.add("identifier", identifier);
-
-            StringHandle handle = new StringHandle(flow.serialize(true));
-            handle.setFormat(Format.XML);
-            this.getServices().post(params, handle, transaction);
-        }
-    }
-	public JobExecution testFlow(Flow flow) {
-	    return null;
-	}
 }

@@ -1,6 +1,3 @@
-/*
- * Angular 2 decorators and services
- */
 import { Component, ViewEncapsulation,
   ViewContainerRef, OnInit } from '@angular/core';
 
@@ -12,11 +9,13 @@ import { ConfirmService } from './confirm';
 
 import { EntitiesService } from './entities/entities.service';
 
+import { Header } from './header/header.component';
+
 import { InstallService } from './installer';
 
-import { ProjectService } from './projects/projects.service';
+import { JobListenerService } from './jobs/job-listener.service';
 
-import { Header } from './header/header.component';
+import { ProjectService } from './projects/projects.service';
 
 import { SettingsService } from './settings/settings.service';
 
@@ -30,10 +29,10 @@ import { STOMPService } from './stomp/stomp.service';
   selector: 'app',
   encapsulation: ViewEncapsulation.None,
   providers: [
-    AuthService,
     ConfirmService,
     EntitiesService,
     InstallService,
+    JobListenerService,
     ProjectService,
     SettingsService,
     STOMPService
@@ -72,21 +71,12 @@ export class App implements OnInit {
   }
 
   ngOnInit() {
-    this.projectService.currentProject().subscribe(() => {
-      this.auth.setAuthenticated(true);
-    });
-
+    if (!(this.projectService.projectId && this.projectService.environment)) {
+      this.router.navigate(['login']);
+    }
   }
 
   canShowHeader() {
     return this.authenticated && this.router.url !== '/login';
   }
 }
-
-/*
- * Please review the https://github.com/AngularClass/angular2-examples/ repo for
- * more angular app examples that you may copy/paste
- * (The examples may not be updated as quickly. Please open an issue on github for us to update it)
- * For help or questions please contact us at @AngularClass on twitter
- * or our chat on Slack at https://AngularClass.com/slack-join
- */

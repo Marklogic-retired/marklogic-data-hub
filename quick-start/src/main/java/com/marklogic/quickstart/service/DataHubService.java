@@ -1,62 +1,47 @@
 package com.marklogic.quickstart.service;
 
-import com.marklogic.hub.FinishedListener;
-import org.apache.commons.lang.exception.ExceptionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Service;
-
+import com.marklogic.client.helper.LoggingObject;
 import com.marklogic.hub.DataHub;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.StatusListener;
+import com.marklogic.hub.util.PerformanceLogger;
 import com.marklogic.quickstart.exception.DataHubException;
-import com.marklogic.quickstart.model.EnvironmentConfig;
+import org.apache.commons.lang.exception.ExceptionUtils;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Service;
 
 @Service
-@Scope("session")
-public class DataHubService {
+public class DataHubService extends LoggingObject {
 
-    private static final Logger logger = LoggerFactory.getLogger(DataHubService.class);
-
-    @Autowired
-    private EnvironmentConfig envConfig;
-
-    @Async
-    public void install(HubConfig config, StatusListener listener, FinishedListener finishedListener) throws DataHubException {
+    public boolean install(HubConfig config, StatusListener listener) throws DataHubException {
         logger.info("Installing Data Hub");
         DataHub dataHub = new DataHub(config);
         try {
             dataHub.install(listener);
-            finishedListener.onFinished(true);
+            return true;
         } catch(Throwable e) {
-            finishedListener.onFinished(false);
             listener.onStatusChange(100, ExceptionUtils.getStackTrace(e));
-            throw new DataHubException(e.getMessage(), e);
         }
-
+        return false;
     }
 
     @Async
-    public void installUserModules(boolean forceLoad) {
-        DataHub dataHub = getDataHub();
+    public void installUserModules(HubConfig config, boolean forceLoad) {
+        long startTime = PerformanceLogger.monitorTimeInsideMethod();
+
+        DataHub dataHub = new DataHub(config);
         try {
             dataHub.installUserModules(forceLoad);
         } catch(Throwable e) {
             throw new DataHubException(e.getMessage(), e);
         }
+        PerformanceLogger.logTimeInsideMethod(startTime, "DataHubService.installUserModules");
     }
 
 //    public JsonNode validateUserModules() {
 //        DataHub dataHub = getDataHub();
 //        return dataHub.validateUserModules();
 //    }
-
-    public DataHub getDataHub() throws DataHubException {
-        return new DataHub(envConfig.mlSettings);
-    }
 
 //    public boolean isServerAcceptable() throws DataHubException {
 //        DataHub dataHub = getDataHub();
@@ -70,7 +55,7 @@ public class DataHubService {
 //        }
 //    }
 
-    @Async
+
     public void uninstall(HubConfig config, StatusListener listener) throws DataHubException {
         DataHub dataHub = new DataHub(config);
         try {

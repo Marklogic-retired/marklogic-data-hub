@@ -29,7 +29,7 @@ repositories {
 
 dependencies {
     compile gradleApi()
-    compile 'com.marklogic:marklogic-data-hub:+'
+    compile 'com.marklogic:marklogic-data-hub:1.0.0-beta.6'
     compile 'com.marklogic:marklogic-xcc:8.0.5'
 }
 

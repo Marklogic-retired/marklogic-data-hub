@@ -7,13 +7,15 @@ import {
 } from '@angular/http';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
+import { AuthService } from './auth.service';
 import * as _ from 'lodash';
 
 class HttpInterceptor extends Http {
   constructor(
     backend: ConnectionBackend,
     defaultOptions: RequestOptions,
-    private _router: Router) {
+    private _router: Router,
+    private auth: AuthService) {
     super(backend, defaultOptions);
   }
 
@@ -51,6 +53,7 @@ class HttpInterceptor extends Http {
   intercept(observable: Observable<Response>): Observable<Response> {
     return observable.catch((err, source) => {
       if (err.status  === 401 && !_.endsWith(err.url, '/login')) {
+          this.auth.redirectUrl = this._router.routerState.snapshot.url;
           this._router.navigate(['login']);
           return Observable.empty();
         } else {
@@ -61,14 +64,13 @@ class HttpInterceptor extends Http {
   }
 }
 
-export const AUTH_PROVIDERS = [
-  // provide(LocationStrategy, { useClass: HashLocationStrategy }),
+export const HTTP_PROVIDER =
   provide(Http, {
     useFactory: (
       xhrBackend: XHRBackend,
       requestOptions: RequestOptions,
-      router: Router
-    ) => new HttpInterceptor(xhrBackend, requestOptions, router),
-    deps: [XHRBackend, RequestOptions, Router]
-  })
-];
+      router: Router,
+      auth: AuthService
+    ) => new HttpInterceptor(xhrBackend, requestOptions, router, auth),
+    deps: [XHRBackend, RequestOptions, Router, AuthService]
+  });

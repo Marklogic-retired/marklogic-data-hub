@@ -1,23 +1,15 @@
 package com.marklogic.hub;
 
-import static org.junit.Assert.assertEquals;
+import com.marklogic.hub.flow.Flow;
+import org.custommonkey.xmlunit.XMLUnit;
+import org.junit.*;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Paths;
 
-import org.custommonkey.xmlunit.XMLUnit;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
 import static org.junit.Assert.*;
-
-import com.marklogic.client.modulesloader.impl.PropertiesModuleManager;
-import com.marklogic.hub.flow.Flow;
 
 public class TracingTest extends HubTestBase {
     @BeforeClass
@@ -31,11 +23,8 @@ public class TracingTest extends HubTestBase {
         URL url = DataHubInstallTest.class.getClassLoader().getResource("tracing-test");
         String path = Paths.get(url.toURI()).toFile().getAbsolutePath();
 
-        PropertiesModuleManager modulesManager = new PropertiesModuleManager();
-        modulesManager.deletePropertiesFile();
-
         DataHub dataHub = new DataHub(getHubConfig(path));
-        dataHub.installUserModules();
+        dataHub.installUserModules(true);
      }
 
     @AfterClass
@@ -65,7 +54,7 @@ public class TracingTest extends HubTestBase {
         Tracing t = new Tracing(stagingClient);
         assertFalse(t.isEnabled());
 
-        FlowManager fm = new FlowManager(stagingClient);
+        FlowManager fm = new FlowManager(getHubConfig());
         Flow flow = fm.getFlow("trace-entity", "tracemeXML");
 
         JobFinishedListener listener = new JobFinishedListener();
@@ -84,7 +73,7 @@ public class TracingTest extends HubTestBase {
         Tracing t = new Tracing(stagingClient);
         assertFalse(t.isEnabled());
 
-        FlowManager fm = new FlowManager(stagingClient);
+        FlowManager fm = new FlowManager(getHubConfig());
         Flow flow = fm.getFlow("trace-entity", "tracemeJSON");
 
         JobFinishedListener listener = new JobFinishedListener();
@@ -106,7 +95,7 @@ public class TracingTest extends HubTestBase {
         t.enable();
         assertTrue(t.isEnabled());
 
-        FlowManager fm = new FlowManager(stagingClient);
+        FlowManager fm = new FlowManager(getHubConfig());
         Flow flow = fm.getFlow("trace-entity", "tracemeXML");
 
         JobFinishedListener listener = new JobFinishedListener();
@@ -128,7 +117,7 @@ public class TracingTest extends HubTestBase {
         t.enable();
         assertTrue(t.isEnabled());
 
-        FlowManager fm = new FlowManager(stagingClient);
+        FlowManager fm = new FlowManager(getHubConfig());
         Flow flow = fm.getFlow("trace-entity", "tracemeJSON");
 
         JobFinishedListener listener = new JobFinishedListener();
@@ -148,7 +137,7 @@ public class TracingTest extends HubTestBase {
         Tracing t = new Tracing(stagingClient);
         assertFalse(t.isEnabled());
 
-        FlowManager fm = new FlowManager(stagingClient);
+        FlowManager fm = new FlowManager(getHubConfig());
         Flow flow = fm.getFlow("trace-entity", "tracemeXMLError");
 
         JobFinishedListener listener = new JobFinishedListener();
@@ -167,7 +156,7 @@ public class TracingTest extends HubTestBase {
         Tracing t = new Tracing(stagingClient);
         assertFalse(t.isEnabled());
 
-        FlowManager fm = new FlowManager(stagingClient);
+        FlowManager fm = new FlowManager(getHubConfig());
         Flow flow = fm.getFlow("trace-entity", "tracemeXMLWriterError");
 
         JobFinishedListener listener = new JobFinishedListener();
@@ -186,7 +175,7 @@ public class TracingTest extends HubTestBase {
         Tracing t = new Tracing(stagingClient);
         assertFalse(t.isEnabled());
 
-        FlowManager fm = new FlowManager(stagingClient);
+        FlowManager fm = new FlowManager(getHubConfig());
         Flow flow = fm.getFlow("trace-entity", "tracemeJSONError");
 
         JobFinishedListener listener = new JobFinishedListener();
@@ -206,7 +195,7 @@ public class TracingTest extends HubTestBase {
         Tracing t = new Tracing(stagingClient);
         assertFalse(t.isEnabled());
 
-        FlowManager fm = new FlowManager(stagingClient);
+        FlowManager fm = new FlowManager(getHubConfig());
         Flow flow = fm.getFlow("trace-entity", "tracemeJSONWriterError");
 
         JobFinishedListener listener = new JobFinishedListener();

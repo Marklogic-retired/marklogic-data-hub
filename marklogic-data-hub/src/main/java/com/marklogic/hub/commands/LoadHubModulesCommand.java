@@ -9,6 +9,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.DatabaseClientFactory;
+import com.marklogic.client.admin.QueryOptionsManager;
+import com.marklogic.client.admin.ServerConfigurationManager;
+import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.modulesloader.impl.PropertiesModuleManager;
 import com.marklogic.hub.HubConfig;
 import org.apache.commons.io.IOUtils;
@@ -99,11 +104,19 @@ public class LoadHubModulesCommand extends AbstractCommand {
 
         this.modulesLoader = new DefaultModulesLoader(xccAssetLoader);
         File timestampFile = Paths.get(hubConfig.projectDir, ".tmp", "hub-modules-deploy-timestamps.properties").toFile();
-        this.modulesLoader.setModulesManager(new PropertiesModuleManager(timestampFile));
+        PropertiesModuleManager propsManager = new PropertiesModuleManager(timestampFile);
+        propsManager.deletePropertiesFile();
+        this.modulesLoader.setModulesManager(propsManager);
         this.modulesLoader.setDatabaseClient(config.newDatabaseClient());
         ContentSource cs = ContentSourceFactory.newContentSource(config.getHost(), port, config.getRestAdminUsername(), config.getRestAdminPassword(), config.getModulesDatabaseName(),
                 securityOptions);
         activeSession = cs.newSession();
+    }
+
+    private DatabaseClient jobDbClient() {
+        DatabaseClientFactory.Authentication authMethod = DatabaseClientFactory.Authentication
+            .valueOf(hubConfig.authMethod.toUpperCase());
+        return DatabaseClientFactory.newClient(hubConfig.host, hubConfig.jobPort, hubConfig.jobDbName, hubConfig.adminUsername, hubConfig.adminPassword, authMethod);
     }
 
     @Override
@@ -170,6 +183,18 @@ public class LoadHubModulesCommand extends AbstractCommand {
             endTime = System.nanoTime();
             duration = (endTime - startTime);
             logger.info("Rest Transforms took: " + (duration / 1000000000) + " seconds");
+
+            logger.info("Loading Job Rest Options");
+            // switch to job db to do this:
+            this.modulesLoader.setDatabaseClient(jobDbClient());
+            startTime = System.nanoTime();
+            resources = findResources("classpath*:/ml-modules/options", "/**/*.xml");
+            for (Resource r : resources) {
+                this.modulesLoader.installQueryOptions(r);
+            }
+            endTime = System.nanoTime();
+            duration = (endTime - startTime);
+            logger.info("Job Rest Options took: " + (duration / 1000000000) + " seconds");
 
             logger.info("Finished Loading Modules");
         }

@@ -34,9 +34,9 @@ public class FlowManagerServiceTest {
     @Test
     public void getFlowMlcpOptionsFromFileNix() throws Exception {
         String pdir = "/some/crazy/path/to/project";
-        envConfig.mlSettings = new HubConfig(pdir);
-        envConfig.projectDir = pdir;
-        envConfig.environment = "local";
+        envConfig.setMlSettings(new HubConfig(pdir));
+        envConfig.setProjectDir(pdir);
+        envConfig.setEnvironment("local");
 
         String options = fm.getFlowMlcpOptionsFromFile("test-entity", "test-flow");
         assertEquals("{ \"input_file_path\": \"/some/crazy/path/to/project\" }", options);
@@ -46,9 +46,9 @@ public class FlowManagerServiceTest {
     public void getFlowMlcpOptionsFromFileWin() throws Exception {
         String pdir = "C:\\some\\crazy\\path\\to\\project";
 
-        envConfig.mlSettings = new HubConfig(pdir);
-        envConfig.projectDir = pdir;
-        envConfig.environment = "local";
+        envConfig.setMlSettings(new HubConfig(pdir));
+        envConfig.setProjectDir(pdir);
+        envConfig.setEnvironment("local");
 
         String options = fm.getFlowMlcpOptionsFromFile("test-entity", "test-flow");
         assertEquals("{ \"input_file_path\": \"C:\\\\some\\\\crazy\\\\path\\\\to\\\\project\" }", options);

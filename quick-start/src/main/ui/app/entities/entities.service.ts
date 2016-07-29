@@ -3,23 +3,30 @@ import { Http, Response } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 import { Message } from 'stompjs/lib/stomp.min';
 import { STOMPService } from '../stomp/stomp.service';
+import { ProjectService } from '../projects/projects.service';
+
+import { Entity } from './entity.model';
+import { Flow } from './flow.model';
 
 @Injectable()
 export class EntitiesService {
-  mlcpMessageEmitter: EventEmitter<string> = new EventEmitter<string>();
   entityMessageEmitter: EventEmitter<string> = new EventEmitter<string>();
 
-  private messages: Observable<Message>;
   private stompIds: any = {
     entities: null,
-    mlcp: null
   };
+
+  private projectId: string;
+  private environment: string;
 
   constructor(
     private http: Http,
-    private stomp: STOMPService
+    private stomp: STOMPService,
+    private projectService: ProjectService
   ) {
     this.stomp.messages.subscribe(this.onWebsockMessage);
+    this.projectId = projectService.projectId;
+    this.environment = projectService.environment;
   }
 
   subscribeToEntities() {
@@ -30,36 +37,33 @@ export class EntitiesService {
 
   getEntities() {
     this.subscribeToEntities();
-    return this.get('/entities/');
+    return this.get(this.url('/entities/'));
   }
 
-  getEntity(entityName) {
-    return this.get(`/entities/${entityName}`);
+  getEntity(entityName: string) {
+    return this.get(this.url(`/entities/${entityName}`));
   }
 
-  createEntity(entity) {
-    return this.post('/entities/', entity);
+  createEntity(entity: Entity) {
+    return this.post(this.url('/entities/'), entity);
   }
 
-  createFlow(entity, flowType, flow) {
-    return this.post(`/entities/${entity.entityName}/flows/${flowType}`, flow);
+  createFlow(entity: Entity, flowType, flow: Flow) {
+    return this.post(this.url(`/entities/${entity.entityName}/flows/${flowType}`), flow);
   }
 
-  getInputFlowOptions(flow) {
-    return this.get(`/entities/${flow.entityName}/flows/INPUT/${flow.flowName}/run/input`);
+  getInputFlowOptions(flow: Flow) {
+    const url = this.url(`/entities/${flow.entityName}/flows/INPUT/${flow.flowName}/run/input`);
+    return this.get(url);
   }
 
-  runInputFlow(flow, mlcpOptions) {
-    if (!this.stompIds.mlcp) {
-      this.stompIds.mlcp = this.stomp.subscribe('/topic/mlcp-status');
-    }
-
-    const url = `/entities/${flow.entityName}/flows/INPUT/${flow.flowName}/run/input`;
+  runInputFlow(flow: Flow, mlcpOptions) {
+    const url = this.url(`/entities/${flow.entityName}/flows/INPUT/${flow.flowName}/run/input`);
     return this.post(url, mlcpOptions).subscribe(() => {});
   }
 
-  runHarmonizeFlow(flow) {
-    const url = `/entities/${flow.entityName}/flows/HARMONIZE/${flow.flowName}/run`;
+  runHarmonizeFlow(flow: Flow) {
+    const url = this.url(`/entities/${flow.entityName}/flows/HARMONIZE/${flow.flowName}/run`);
     return this.post(url, null).subscribe(() => {});
   }
 
@@ -68,33 +72,21 @@ export class EntitiesService {
   }
 
   public onWebsockMessage = (message: Message) => {
-    let json = JSON.parse(message.body);
-    if (message.headers.destination === '/topic/mlcp-status') {
-      this.onMlcpMessage(json);
-    } else if (message.headers.destination === '/topic/entity-status') {
-      this.onEntityMessage(json.message);
+    if (message.headers.destination === '/topic/entity-status') {
+      let json = JSON.parse(message.body);
+      this.entityMessageEmitter.next(json.message);
     }
   }
 
-  private onMlcpMessage(json) {
-    this.mlcpMessageEmitter.next(json);
-
-    if (json.percentComplete === 100) {
-      if (this.stompIds.mlcp) {
-        this.stomp.unsubscribe(this.stompIds.mlcp);
-      }
-    }
-  }
-
-  private onEntityMessage(path) {
-    this.entityMessageEmitter.next(path);
-  }
-
-  private get(url) {
+  private get(url: string) {
     return this.http.get(url).map(this.extractData);
   }
 
-  private post(url, data) {
+  private post(url: string, data) {
     return this.http.post(url, data).map(this.extractData);
+  }
+
+  private url(u: string): string {
+    return `/projects/${this.projectId}/${this.environment}${u}`;
   }
 }

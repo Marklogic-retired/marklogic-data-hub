@@ -21,9 +21,11 @@ targetCompatibility = 1.8
 
 dependencies {
     compile 'org.springframework.batch:spring-batch-core:3.0.6.RELEASE'
+    compile 'org.springframework:spring-jdbc:4.2.6.RELEASE'
     compile 'com.marklogic:java-client-api:3.0.4'
     compile 'com.marklogic:ml-javaclient-util:2.9.0'
     compile 'com.marklogic:ml-app-deployer:2.2.0'
+    compile 'com.marklogic:marklogic-spring-batch-core:0.5.2'
     compile 'commons-io:commons-io:2.4'
     testCompile 'org.springframework.batch:spring-batch-test:3.0.6.RELEASE'
     testCompile 'junit:junit:4.12'
@@ -158,7 +160,13 @@ ext {
         customTokens.put("%%mlTracePort%%", mlTracePort)
         customTokens.put("%%mlTraceDbName%%", mlTraceDbName)
 
+        customTokens.put("%%mlJobAppserverName%%", mlJobAppserverName)
+        customTokens.put("%%mlJobPort%%", mlJobPort)
+        customTokens.put("%%mlJobDbName%%", mlJobDbName)
+
         customTokens.put("%%mlModulesDbName%%", mlModulesDbName)
+        customTokens.put("%%mlTriggersDbName%%", mlTriggersDbName)
+        customTokens.put("%%mlSchemasDbName%%", mlSchemasDbName)
 
         modulePaths = ["marklogic-data-hub/src/main/resources/ml-modules"]
     }

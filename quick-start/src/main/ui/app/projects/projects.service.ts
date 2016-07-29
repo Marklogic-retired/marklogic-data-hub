@@ -8,10 +8,9 @@ export class ProjectService {
   projectId: string;
   environment: string;
 
-  constructor(private http: Http) {}
-
-  currentProject() {
-    return this.get('/current-env');
+  constructor(private http: Http) {
+    this.projectId = localStorage.getItem('_projectId_');
+    this.environment = localStorage.getItem('_environment_');
   }
 
   getProjects() {
@@ -47,6 +46,8 @@ export class ProjectService {
     resp.subscribe(() => {
       this.projectId = projectId;
       this.environment = environment;
+      localStorage.setItem('_projectId_', this.projectId);
+      localStorage.setItem('_environment_', this.environment);
     },
     () => {
       this.projectId = null;
