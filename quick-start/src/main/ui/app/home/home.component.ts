@@ -30,8 +30,6 @@ export class Home {
   flow: Flow;
   flowType: string;
 
-  collapsedMap: Map<string, boolean> = new Map<string, boolean>();
-
   constructor(
     private entitiesService: EntitiesService,
     private snackbar: MdlSnackbarService,
@@ -44,44 +42,41 @@ export class Home {
     this.getEntities();
   }
 
-  isCollapsed(entity: Entity) {
-    return this.collapsedMap.get(entity.entityName);
+  isCollapsed(entity: Entity): boolean {
+    let collapsed: string = localStorage.getItem(entity.entityName + '-collapsed');
+    if (collapsed === null) {
+      collapsed = 'true';
+    }
+    return collapsed === 'true';
   }
 
-  getEntities() {
+  setCollapsed(entity: Entity, collapsed: boolean): void {
+    localStorage.setItem(entity.entityName + '-collapsed', collapsed.toString());
+  }
+
+  getEntities(): void {
     this.entitiesService.getEntities().subscribe(entities => {
       this.entities = entities;
-      _.each(this.entities, entity => {
-        let previous = this.collapsedMap.get(entity.entityName);
-        if (_.isUndefined(previous)) {
-          previous = true;
-        }
-        this.collapsedMap.set(entity.entityName, previous);
-      });
     });
   }
 
-  setEntity(entity) {
-    const collapsed = this.collapsedMap.get(entity.entityName);
-
-    _.each(this.entities, e => { this.collapsedMap.set(e.entityName, true); });
-    this.collapsedMap.set(entity.entityName, !collapsed);
+  setEntity(entity): void {
+    const collapsed: boolean = this.isCollapsed(entity);
+    _.each(this.entities, e => { this.setCollapsed(e, true); });
+    this.setCollapsed(entity, !collapsed);
   }
 
-  setFlow(entity, flow, flowType) {
+  setFlow(entity, flow, flowType): void {
     this.entity = entity;
     this.flow = flow;
     this.flowType = flowType;
   }
 
-  isActiveEntity(entity) {
-    if (this.entity === entity) {
-      return 'active';
-    }
-    return '';
+  isActiveEntity(entity): boolean {
+    return this.entity === entity;
   }
 
-  showNewEntity(ev) {
+  showNewEntity(ev): void {
     this.newEntity.show().subscribe(newEntity => {
       this.entitiesService.createEntity(newEntity).subscribe(entity => {
         this.entities.push(entity);
@@ -89,15 +84,15 @@ export class Home {
     });
   }
 
-  newInputFlow(ev, entity: Entity) {
-    return this.showNewFlow(ev, entity, 'INPUT');
+  newInputFlow(ev: Event, entity: Entity): void {
+    this.showNewFlow(ev, entity, 'INPUT');
   }
 
-  newHarmonizeFlow(ev, entity: Entity) {
-    return this.showNewFlow(ev, entity, 'HARMONIZE');
+  newHarmonizeFlow(ev: Event, entity: Entity): void {
+    this.showNewFlow(ev, entity, 'HARMONIZE');
   }
 
-  showNewFlow(ev, entity: Entity, flowType) {
+  showNewFlow(ev: Event, entity: Entity, flowType): void {
     this.newFlow.show(flowType).subscribe(newFlow => {
       this.entitiesService.createFlow(entity, flowType, newFlow).subscribe(flow => {
         if (flowType === 'INPUT') {
@@ -109,7 +104,7 @@ export class Home {
     });
   }
 
-  runInputFlow(ev: Event, flow: Flow) {
+  runInputFlow(ev: Event, flow: Flow): void {
     this.entitiesService.getInputFlowOptions(flow).subscribe(mlcpOptions => {
       this.mlcp.show(mlcpOptions, flow, ev).subscribe((options) => {
         this.entitiesService.runInputFlow(flow, options);
@@ -121,7 +116,7 @@ export class Home {
     ev.stopPropagation();
   }
 
-  runHarmonizeFlow(ev: Event, flow: Flow) {
+  runHarmonizeFlow(ev: Event, flow: Flow): void {
     this.entitiesService.runHarmonizeFlow(flow);
     this.snackbar.showSnackbar({
       message: flow.entityName + ': ' + flow.flowName + ' starting...',

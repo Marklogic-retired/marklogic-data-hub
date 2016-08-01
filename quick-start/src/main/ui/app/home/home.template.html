@@ -12,16 +12,16 @@
     <ul class="entities mdl-list">
       <li
         class="entity mdl-list__item"
-        [ngClass]="isActiveEntity(entity)"
+        [ngClass]="{ 'active' : isActiveEntity(entity) }"
         *ngFor="let entity of entities">
         <div class="mdl-list__item-primary-content"
-          [ngClass]="isCollapsed(entity) ? '' : 'active'"
+          [ngClass]="{ 'active' : !isCollapsed(entity) }"
           (click)="setEntity(entity)">
           <i class="fa fa-industry"></i> {{ entity.entityName }}
           <div class="mdl-layout-spacer"></div>
-          <i class="fa fa-caret-left" [ngClass]="isCollapsed(entity) ? 'collapsed' : ''"></i>
+          <i class="fa fa-caret-left" [ngClass]="{ 'collapsed' : isCollapsed(entity) }"></i>
         </div>
-        <div class="flow-container" [ngClass]="isCollapsed(entity) ? 'collapsed' : ''">
+        <div class="flow-container" [ngClass]="{ 'collapsed' : isCollapsed(entity) }">
           <div class="padder">
             <div class="subheader">
               Input Flows

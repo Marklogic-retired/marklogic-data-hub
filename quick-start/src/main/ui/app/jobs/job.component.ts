@@ -18,6 +18,7 @@ import * as _ from 'lodash';
 })
 export class Jobs {
 
+  loadingJobs: boolean = false;
   jobs: Array<Job>;
   showJobOutput: Job;
   runningFlows: Map<number, string> = new Map<number, string>();
@@ -39,38 +40,18 @@ export class Jobs {
     }, 2000);
   };
 
-  // public onWebsockMessage = (message: Message) => {
-  //   if (message.headers.destination === '/topic/flow-status') {
-  //     let status: FlowStatus = JSON.parse(message.body);
-  //     const finished: boolean = status.percentComplete === 100;
-
-  //     // either add or remove to list of running flows
-  //     if (finished) {
-  //       setTimeout(() => {
-  //         this.getJobs();
-  //         this.runningFlows.delete(status.jobId);
-  //       }, 1000);
-  //     } else {
-  //       let existing: string = '';
-  //       if (this.runningFlows.has(status.jobId)) {
-  //         existing = this.runningFlows.get(status.jobId);
-  //       } else {
-  //         // there is a new job in town
-  //         this.getJobs();
-  //       }
-  //       existing += status.message + '\n';
-  //       this.runningFlows.set(status.jobId, existing);
-  //     }
-  //   }
-  // }
-
   private hasLiveOutput(job: Job): boolean {
     return this.jobListener.jobHasOutput(job.jobId);
   }
 
   private getJobs(): void {
+    this.loadingJobs = true;
     this.jobService.getJobs().subscribe(jobs => {
       this.jobs = jobs;
+    },
+    () => {},
+    () => {
+      this.loadingJobs = false;
     });
   }
 
