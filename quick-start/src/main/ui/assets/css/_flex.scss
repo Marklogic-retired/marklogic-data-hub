@@ -94,6 +94,18 @@
   padding: 8px;
 }
 
+[layout-margin],
+[layout-margin-gt-sm],
+[layout-margin-md],
+[layout-margin] > *,
+[layout-margin-gt-sm] > *,
+[layout-margin-md] > *,
+[layout-margin] > .flex,
+[layout-margin] > .flex-gt-sm,
+[layout-margin] > .flex-md {
+  margin: 8px;
+}
+
 [layout="row"] {
   -webkit-flex-direction: row;
   -ms-flex-direction: row;

@@ -1,0 +1,35 @@
+<options xmlns="http://marklogic.com/appservices/search">
+  <additional-query>
+    <cts:collection-query xmlns:cts="http://marklogic.com/cts">
+      <cts:uri>trace</cts:uri>
+    </cts:collection-query>
+  </additional-query>
+  <constraint name="flowType">
+    <value>
+      <element name="flowType" ns="" />
+    </value>
+  </constraint>
+  <constraint name="flowFormat">
+    <value>
+      <element name="format" ns="" />
+    </value>
+  </constraint>
+  <constraint name="identifier">
+    <value>
+      <element name="identifier" ns="" />
+    </value>
+  </constraint>
+  <operator name="sort">
+    <state name="date-desc">
+      <sort-order direction="descending" type="xs:dateTime">
+        <element ns="" name="created"/>
+      </sort-order>
+    </state>
+    <state name="date-asc">
+      <sort-order direction="ascending" type="xs:dateTime">
+        <element ns="" name="created"/>
+      </sort-order>
+    </state>
+  </operator>
+  <transform-results apply="raw" />
+</options>

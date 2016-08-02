@@ -11,8 +11,8 @@ public class AppController extends LoggingObject {
     /**
      * Assumes that the root URL should use a template named "index", which presumably will setup the Angular app.
      */
-    @RequestMapping(value = {"/", "/login", "/home", "/settings", "/jobs", "/404"}, method = RequestMethod.GET)
+    @RequestMapping(value = {"/", "/login", "/home", "/settings", "/jobs", "/traces/**", "/404"}, method = RequestMethod.GET)
     public String index() {
-        return "index.html";
+        return "/index.html";
     }
 }

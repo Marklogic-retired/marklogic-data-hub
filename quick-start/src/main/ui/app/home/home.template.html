@@ -39,7 +39,7 @@
                   <i class="material-icons mdl-list__item-icon">transform</i>
                   {{ flow.flowName }}
                 </span>
-                <span class="run-input-flow mdl-list__item-secondary-action" (click)="runInputFlow($event, flow)">
+                <span class="run-input-flow mdl-list__item-secondary-action" (click)="runFlow($event, flow, 'input')">
                   <button class="mdl-button mdl-js-button mdl-button--icon">
                     <i class="material-icons mdl-list__item-icon">play_circle_outline</i>
                   </button>
@@ -62,7 +62,7 @@
                   <i class="material-icons mdl-list__item-icon">transform</i>
                   {{ flow.flowName }}
                 </span>
-                <span class="run-harmonize-flow mdl-list__item-secondary-action" (click)="runHarmonizeFlow($event, flow)">
+                <span class="run-harmonize-flow mdl-list__item-secondary-action" (click)="runFlow($event, flow, 'harmonize')">
                   <button class="mdl-button mdl-js-button mdl-button--icon">
                     <i class="material-icons mdl-list__item-icon">play_circle_outline</i>
                   </button>
@@ -78,6 +78,11 @@
     <div class="page-content" layout-padding>
       <div class="current-flow" *ngIf="flow">
         <h2>{{flow.flowName}} {{flowType}} flow</h2>
+        <h3>
+          <button md-raised-button color="primary" aria-label="Run Flow" (click)="runFlow($event, flow, flowType)">
+            Run Flow
+          </button>
+        </h3>
         <h3>Plugins</h3>
         <ul>
           <li *ngFor="let plugin of flow.plugins">

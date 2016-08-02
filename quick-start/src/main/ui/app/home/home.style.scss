@@ -90,6 +90,7 @@ $openDuration: 0.5s;
 }
 
 .mdl-list__item-primary-content {
+  overflow: auto;
   cursor: pointer;
   width: 100%;
   padding: 12px 8px;

@@ -119,6 +119,12 @@ public class LoadHubModulesCommand extends AbstractCommand {
         return DatabaseClientFactory.newClient(hubConfig.host, hubConfig.jobPort, hubConfig.jobDbName, hubConfig.adminUsername, hubConfig.adminPassword, authMethod);
     }
 
+    private DatabaseClient traceDbClient() {
+        DatabaseClientFactory.Authentication authMethod = DatabaseClientFactory.Authentication
+            .valueOf(hubConfig.authMethod.toUpperCase());
+        return DatabaseClientFactory.newClient(hubConfig.host, hubConfig.tracePort, hubConfig.traceDbName, hubConfig.adminUsername, hubConfig.adminPassword, authMethod);
+    }
+
     @Override
     public void execute(CommandContext context) {
         initializeActiveSession(context);
@@ -184,11 +190,23 @@ public class LoadHubModulesCommand extends AbstractCommand {
             duration = (endTime - startTime);
             logger.info("Rest Transforms took: " + (duration / 1000000000) + " seconds");
 
+            logger.info("Loading Trace Rest Options");
+            // switch to job db to do this:
+            this.modulesLoader.setDatabaseClient(traceDbClient());
+            startTime = System.nanoTime();
+            resources = findResources("classpath*:/ml-modules/options", "/**/traces.xml");
+            for (Resource r : resources) {
+                this.modulesLoader.installQueryOptions(r);
+            }
+            endTime = System.nanoTime();
+            duration = (endTime - startTime);
+            logger.info("Trace Rest Options took: " + (duration / 1000000000) + " seconds");
+
             logger.info("Loading Job Rest Options");
             // switch to job db to do this:
             this.modulesLoader.setDatabaseClient(jobDbClient());
             startTime = System.nanoTime();
-            resources = findResources("classpath*:/ml-modules/options", "/**/*.xml");
+            resources = findResources("classpath*:/ml-modules/options", "/**/spring-batch.xml");
             for (Resource r : resources) {
                 this.modulesLoader.installQueryOptions(r);
             }

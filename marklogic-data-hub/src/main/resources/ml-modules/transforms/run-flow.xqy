@@ -35,8 +35,8 @@ declare function runFlow:transform(
           if ($envelope instance of element()) then ()
           else
             null-node {},
-          $flow/hub:type,
           "writer",
+          $flow/hub:type,
           $envelope,
           if ($envelope instance of element()) then ()
           else

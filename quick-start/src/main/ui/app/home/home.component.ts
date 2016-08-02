@@ -104,6 +104,15 @@ export class Home {
     });
   }
 
+  runFlow(ev: Event, flow: Flow, flowType: string) {
+    const lower = flowType.toLowerCase();
+    if (lower === 'input') {
+      this.runInputFlow(ev, flow);
+    } else if (lower === 'harmonize') {
+      this.runHarmonizeFlow(ev, flow);
+    }
+  }
+
   runInputFlow(ev: Event, flow: Flow): void {
     this.entitiesService.getInputFlowOptions(flow).subscribe(mlcpOptions => {
       this.mlcp.show(mlcpOptions, flow, ev).subscribe((options) => {

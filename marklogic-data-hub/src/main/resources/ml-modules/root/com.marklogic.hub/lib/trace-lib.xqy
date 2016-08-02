@@ -79,6 +79,7 @@ declare function trace:write-trace()
           element created { map:get($current-trace, "created") },
           element identifier { map:get($current-trace, "identifier") },
           element flowType { map:get($current-trace, "flowType") },
+          element hasError { trace:has-errors() },
           for $key in ("collectorPlugin", "contentPlugin", "headersPlugin", "triplesPlugin", "writerPlugin")
           let $m := map:get($current-trace, $key)
           return

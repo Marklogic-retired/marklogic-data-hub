@@ -206,6 +206,19 @@ public class EnvironmentConfig {
     }
 
     @JsonIgnore
+    public DatabaseClient getTraceClient() {
+        Authentication authMethod = Authentication
+            .valueOf(mlSettings.authMethod.toUpperCase());
+
+        DatabaseClient client = DatabaseClientFactory.newClient(
+            mlSettings.host,
+            mlSettings.tracePort,
+            mlSettings.adminUsername,
+            mlSettings.adminPassword, authMethod);
+        return client;
+    }
+
+    @JsonIgnore
     public DatabaseClient getJobClient() {
         Authentication authMethod = Authentication
             .valueOf(mlSettings.authMethod.toUpperCase());
