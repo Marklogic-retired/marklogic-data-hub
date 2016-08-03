@@ -40,7 +40,7 @@ public class LoadUserModulesCommand extends AbstractCommand {
 
     private DatabaseClient getDatabaseClient(AppConfig config, int port) {
 
-        DatabaseClient client = DatabaseClientFactory.newClient(hubConfig.host, port, hubConfig.adminUsername, hubConfig.adminPassword,
+        DatabaseClient client = DatabaseClientFactory.newClient(hubConfig.host, port, hubConfig.username, hubConfig.password,
                 config.getRestAuthentication(), config.getRestSslContext(), config.getRestSslHostnameVerifier());
         return client;
     }

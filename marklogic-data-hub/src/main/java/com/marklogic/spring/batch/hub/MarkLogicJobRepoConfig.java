@@ -15,8 +15,8 @@ public class MarkLogicJobRepoConfig extends FlowConfig {
         DatabaseClientConfig config = new DatabaseClientConfig(
             hubConfig.host,
             hubConfig.jobPort,
-            hubConfig.adminUsername,
-            hubConfig.adminPassword
+            hubConfig.username,
+            hubConfig.password
         );
 
         config.setDatabase(hubConfig.jobDbName);
@@ -31,8 +31,8 @@ public class MarkLogicJobRepoConfig extends FlowConfig {
         DatabaseClientConfig config = new DatabaseClientConfig(
             hubConfig.host,
             hubConfig.jobPort,
-            hubConfig.adminUsername,
-            hubConfig.adminPassword
+            hubConfig.username,
+            hubConfig.password
         );
 
         config.setDatabase(hubConfig.jobDbName);

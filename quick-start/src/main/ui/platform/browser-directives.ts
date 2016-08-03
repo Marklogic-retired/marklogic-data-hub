@@ -12,7 +12,7 @@ import { REACTIVE_FORM_DIRECTIVES } from '@angular/forms';
 // TODO(gdi2290): replace with @angular2-material/all
 import { MATERIAL_DIRECTIVES } from './angular2-material2';
 
-import { MDL_DIRECTIVES } from './angular2-mdl';
+import { MDL_DIRECTIVES } from 'angular2-mdl';
 
 // application_directives: directives that are global through out the application
 export const APPLICATION_DIRECTIVES = [

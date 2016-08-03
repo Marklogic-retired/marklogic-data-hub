@@ -87,20 +87,20 @@ public class DataHub {
     public DataHub(String host, String username, String password) {
         hubConfig = new HubConfig();
         hubConfig.host = host;
-        hubConfig.adminUsername = username;
-        hubConfig.adminPassword = password;
+        hubConfig.username = username;
+        hubConfig.password = password;
         init(hubConfig);
     }
 
     private void init(HubConfig hubConfig) {
         this.hubConfig = hubConfig;
-        config = new ManageConfig(hubConfig.host, 8002, hubConfig.adminUsername, hubConfig.adminPassword);
+        config = new ManageConfig(hubConfig.host, 8002, hubConfig.username, hubConfig.password);
         client = new ManageClient(config);
 
         AdminConfig adminConfig = new AdminConfig();
         adminConfig.setHost(hubConfig.host);
-        adminConfig.setUsername(hubConfig.adminUsername);
-        adminConfig.setPassword(hubConfig.adminPassword);
+        adminConfig.setUsername(hubConfig.username);
+        adminConfig.setPassword(hubConfig.password);
         adminManager = new AdminManager(adminConfig);
     }
 
@@ -208,8 +208,8 @@ public class DataHub {
         config.setHost(hubConfig.host);
         config.setRestPort(hubConfig.stagingPort);
         config.setName(hubConfig.name);
-        config.setRestAdminUsername(hubConfig.adminUsername);
-        config.setRestAdminPassword(hubConfig.adminPassword);
+        config.setRestAdminUsername(hubConfig.username);
+        config.setRestAdminPassword(hubConfig.password);
         config.setModulesDatabaseName(hubConfig.modulesDbName);
 
         config.setTriggersDatabaseName(hubConfig.triggersDbName);
@@ -267,9 +267,9 @@ public class DataHub {
         AppConfig config = new AppConfig();
         config.setHost(hubConfig.host);
         config.setName(hubConfig.name);
-        config.setRestAdminUsername(hubConfig.adminUsername);
-        config.setRestAdminPassword(hubConfig.adminPassword);
-        DatabaseClient client = DatabaseClientFactory.newClient(hubConfig.host, port, hubConfig.adminUsername, hubConfig.adminPassword,
+        config.setRestAdminUsername(hubConfig.username);
+        config.setRestAdminPassword(hubConfig.password);
+        DatabaseClient client = DatabaseClientFactory.newClient(hubConfig.host, port, hubConfig.username, hubConfig.password,
                 config.getRestAuthentication(), config.getRestSslContext(), config.getRestSslHostnameVerifier());
         return client;
     }

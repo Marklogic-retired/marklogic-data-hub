@@ -9,6 +9,8 @@ import { ConfirmService } from './confirm';
 
 import { EntitiesService } from './entities/entities.service';
 
+import { EnvironmentService } from './environment';
+
 import { Header } from './header/header.component';
 
 import { InstallService } from './installer';
@@ -53,6 +55,7 @@ export class App implements OnInit {
 
   constructor(
     private auth: AuthService,
+    private envService: EnvironmentService,
     private stomp: STOMPService,
     private projectService: ProjectService,
     private confirm: ConfirmService,
@@ -77,6 +80,6 @@ export class App implements OnInit {
   }
 
   canShowHeader() {
-    return this.authenticated && this.router.url !== '/login';
+    return this.authenticated && this.router.url !== '/login' && this.envService.settings;
   }
 }

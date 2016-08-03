@@ -15,7 +15,7 @@ import { disableDeprecatedForms, provideForms } from '@angular/forms';
 // TODO(gdi2290): replace with @angular2-material/all
 import { MATERIAL_PROVIDERS } from './angular2-material2';
 
-import { MDL_SERVICES } from './angular2-mdl';
+import { MDL_SERVICES } from 'angular2-mdl';
 
 import { routes } from '../app/app.routes';
 

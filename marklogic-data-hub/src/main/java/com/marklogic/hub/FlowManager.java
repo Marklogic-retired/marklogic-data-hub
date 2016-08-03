@@ -58,8 +58,8 @@ public class FlowManager extends ResourceManager {
         return DatabaseClientFactory.newClient(
             hubConfig.host,
             hubConfig.stagingPort,
-            hubConfig.adminUsername,
-            hubConfig.adminPassword, authMethod);
+            hubConfig.username,
+            hubConfig.password, authMethod);
     }
 
     public FlowManager(HubConfig hubConfig) {

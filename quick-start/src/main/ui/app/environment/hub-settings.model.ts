@@ -26,6 +26,7 @@ export class HubSettings {
   triggersDbName: string = null;
   schemasDbName: string = null;
 
+  username: string = null;
   authMethod: string = null;
 
   constructor() {};

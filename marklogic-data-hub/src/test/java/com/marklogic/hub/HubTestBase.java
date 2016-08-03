@@ -154,8 +154,8 @@ public class HubTestBase {
         hubConfig.stagingPort = stagingPort;
         hubConfig.finalPort = finalPort;
         hubConfig.tracePort = tracePort;
-        hubConfig.adminUsername = user;
-        hubConfig.adminPassword = password;
+        hubConfig.username = user;
+        hubConfig.password = password;
         return hubConfig;
     }
 

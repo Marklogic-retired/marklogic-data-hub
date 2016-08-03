@@ -11,6 +11,8 @@ import { FolderBrowser } from '../folder-browser/folder-browser.component';
 import { SelectList } from '../select-list/select-list.component';
 import { Select } from '../select/select.component';
 import { TooltipDirective } from '../tooltip/tooltip.directive';
+import { Flow } from '../entities/flow.model';
+import { EnvironmentService } from '../environment';
 
 @Component({
   selector: 'mlcp',
@@ -51,6 +53,8 @@ export class MlcpUi {
   inputFilePath: string = '.';
   mlcp = {};
 
+  flow: Flow;
+
   finishedEvent: EventEmitter<any>;
 
   startX: number = 0;
@@ -81,12 +85,17 @@ export class MlcpUi {
     }
   };
 
-  constructor(private snackbar: MdlSnackbarService, private vcRef: ViewContainerRef) {
+  constructor(
+    private snackbar: MdlSnackbarService,
+    private vcRef: ViewContainerRef,
+    private envService: EnvironmentService) {
     snackbar.setDefaultViewContainerRef(vcRef);
   }
 
-  show(mlcpOptions, flow, $event): EventEmitter<boolean> {
+  show(mlcpOptions, flow: Flow, $event): EventEmitter<boolean> {
     this.finishedEvent = new EventEmitter<boolean>(true);
+
+    this.flow = flow;
 
     this.inputFilePath = mlcpOptions.input_file_path || '.';
     this.groups = this.getGroups(flow.entityName, flow.flowName, mlcpOptions);
@@ -489,7 +498,11 @@ export class MlcpUi {
     let mlcpCommand = 'mlcp';
     mlcpCommand += (navigator.appVersion.indexOf('Win') !== -1) ? '.bat' : '.sh';
 
-    mlcpCommand += ' ' + this.buildMlcpOptions().join(' ');
+    let host = this.envService.settings.host;
+    let port = this.envService.settings.stagingPort;
+    let username = this.envService.settings.username;
+
+    mlcpCommand += ` -host ${host} -port ${port} -username ${username} -password ***** ${this.buildMlcpOptions().join(' ')}`;
 
     this.mlcpCommand = mlcpCommand;
     return mlcpCommand;

@@ -28,8 +28,8 @@ public class StagingConfig extends LoggingObject {
         DatabaseClientConfig config = new DatabaseClientConfig(
             hubConfig.host,
             hubConfig.stagingPort,
-            hubConfig.adminUsername,
-            hubConfig.adminPassword
+            hubConfig.username,
+            hubConfig.password
         );
 
         config.setDatabase(hubConfig.stagingDbName);
@@ -44,8 +44,8 @@ public class StagingConfig extends LoggingObject {
         DatabaseClientConfig config = new DatabaseClientConfig(
             hubConfig.host,
             hubConfig.jobPort,
-            hubConfig.adminUsername,
-            hubConfig.adminPassword
+            hubConfig.username,
+            hubConfig.password
         );
 
         config.setDatabase(hubConfig.jobDbName);

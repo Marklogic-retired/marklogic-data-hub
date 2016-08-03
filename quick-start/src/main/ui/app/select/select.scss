@@ -11,10 +11,12 @@ label {
   transform-origin: bottom left;
   position: absolute;
   left: 0;
+  top: 4px
 }
 
 .container {
   position: relative;
+  display: inline-block;
   border-bottom: 1px solid rgba(0,0,0,0.12);
 }
 

@@ -86,8 +86,8 @@ public class EnvironmentConfig {
         this.environment = environment;
         mlSettings = new HubConfig(this.projectDir);
         if (loginInfo != null) {
-            mlSettings.adminUsername = loginInfo.username;
-            mlSettings.adminPassword = loginInfo.password;
+            mlSettings.username = loginInfo.username;
+            mlSettings.password = loginInfo.password;
         }
         loadConfigurationFromFiles();
 
@@ -187,8 +187,8 @@ public class EnvironmentConfig {
         DatabaseClient client = DatabaseClientFactory.newClient(
                 mlSettings.host,
                 mlSettings.stagingPort,
-                mlSettings.adminUsername,
-                mlSettings.adminPassword, authMethod);
+                mlSettings.username,
+                mlSettings.password, authMethod);
         return client;
     }
 
@@ -200,8 +200,8 @@ public class EnvironmentConfig {
         DatabaseClient client = DatabaseClientFactory.newClient(
                 mlSettings.host,
                 mlSettings.finalPort,
-                mlSettings.adminUsername,
-                mlSettings.adminPassword, authMethod);
+                mlSettings.username,
+                mlSettings.password, authMethod);
         return client;
     }
 
@@ -213,8 +213,8 @@ public class EnvironmentConfig {
         DatabaseClient client = DatabaseClientFactory.newClient(
             mlSettings.host,
             mlSettings.tracePort,
-            mlSettings.adminUsername,
-            mlSettings.adminPassword, authMethod);
+            mlSettings.username,
+            mlSettings.password, authMethod);
         return client;
     }
 
@@ -226,8 +226,8 @@ public class EnvironmentConfig {
         DatabaseClient client = DatabaseClientFactory.newClient(
             mlSettings.host,
             mlSettings.jobPort,
-            mlSettings.adminUsername,
-            mlSettings.adminPassword, authMethod);
+            mlSettings.username,
+            mlSettings.password, authMethod);
         return client;
     }
 

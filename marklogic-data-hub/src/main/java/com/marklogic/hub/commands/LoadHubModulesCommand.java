@@ -11,9 +11,6 @@ import java.util.Map;
 
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
-import com.marklogic.client.admin.QueryOptionsManager;
-import com.marklogic.client.admin.ServerConfigurationManager;
-import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.modulesloader.impl.PropertiesModuleManager;
 import com.marklogic.hub.HubConfig;
 import org.apache.commons.io.IOUtils;
@@ -116,13 +113,13 @@ public class LoadHubModulesCommand extends AbstractCommand {
     private DatabaseClient jobDbClient() {
         DatabaseClientFactory.Authentication authMethod = DatabaseClientFactory.Authentication
             .valueOf(hubConfig.authMethod.toUpperCase());
-        return DatabaseClientFactory.newClient(hubConfig.host, hubConfig.jobPort, hubConfig.jobDbName, hubConfig.adminUsername, hubConfig.adminPassword, authMethod);
+        return DatabaseClientFactory.newClient(hubConfig.host, hubConfig.jobPort, hubConfig.jobDbName, hubConfig.username, hubConfig.password, authMethod);
     }
 
     private DatabaseClient traceDbClient() {
         DatabaseClientFactory.Authentication authMethod = DatabaseClientFactory.Authentication
             .valueOf(hubConfig.authMethod.toUpperCase());
-        return DatabaseClientFactory.newClient(hubConfig.host, hubConfig.tracePort, hubConfig.traceDbName, hubConfig.adminUsername, hubConfig.adminPassword, authMethod);
+        return DatabaseClientFactory.newClient(hubConfig.host, hubConfig.tracePort, hubConfig.traceDbName, hubConfig.username, hubConfig.password, authMethod);
     }
 
     @Override

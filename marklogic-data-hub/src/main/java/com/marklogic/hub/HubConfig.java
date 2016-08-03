@@ -43,10 +43,9 @@ public class HubConfig {
 
     public String name = DEFAULT_APP_NAME;
 
+    public String username;
     @JsonIgnore
-    public String adminUsername;
-    @JsonIgnore
-    public String adminPassword;
+    public String password;
 
     public String host = DEFAULT_HOST;
 

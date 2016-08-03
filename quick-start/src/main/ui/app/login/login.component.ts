@@ -10,7 +10,7 @@ import { ConfirmService } from '../confirm';
 import { FolderBrowser } from '../folder-browser/folder-browser.component';
 import { SelectList } from '../select-list/select-list.component';
 import { LoginInfo } from './login-info.model';
-import { HubSettings } from './hub-settings.model';
+import { HubSettings } from '../environment/hub-settings.model';
 
 @Component({
   selector: 'login',
