@@ -4,7 +4,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.MarkLogicIOException;
 import com.marklogic.client.document.GenericDocumentManager;
+import com.marklogic.client.document.ServerTransform;
 import com.marklogic.client.helper.LoggingObject;
+import com.marklogic.client.io.Format;
 import com.marklogic.client.io.SearchHandle;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.query.QueryManager;
@@ -83,8 +85,9 @@ public class TraceManager extends LoggingObject {
         return result;
     }
 
-    public SearchHandle getTraces(String query, long start, long count) {
+    public StringHandle getTraces(String query, long start, long count) {
         QueryManager queryMgr = databaseClient.newQueryManager();
+        queryMgr.setPageLength(count);
 
         StructuredQueryBuilder sb = queryMgr.newStructuredQueryBuilder(SEARCH_OPTIONS_NAME);
 
@@ -99,13 +102,15 @@ public class TraceManager extends LoggingObject {
         String searchXml = serializeQuery(sb, sqd, sort);
 
         RawCombinedQueryDefinition querydef = queryMgr.newRawCombinedQueryDefinition(new StringHandle(searchXml), SEARCH_OPTIONS_NAME);
-        queryMgr.setPageLength(count);
-        SearchHandle results = queryMgr.search(querydef, new SearchHandle(), start);
+        querydef.setResponseTransform(new ServerTransform("trace-search"));
+        StringHandle sh = new StringHandle();
+        sh.setFormat(Format.JSON);
+        StringHandle results = queryMgr.search(querydef, sh, start);
         return results;
     }
 
     public JsonNode getTrace(String traceId) {
         GenericDocumentManager docMgr = databaseClient.newDocumentManager();
-        return docMgr.readAs("/" + traceId, JsonNode.class);
+        return docMgr.readAs("/" + traceId, JsonNode.class, new ServerTransform("trace-json"));
     }
 }

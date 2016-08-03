@@ -32,11 +32,7 @@ public class TracesController extends BaseController {
     @ResponseBody
     public String getTraces(@RequestParam(required = false) String query, @RequestParam long start, @RequestParam long count) throws JsonProcessingException {
         requireAuth();
-        ObjectMapper om = new ObjectMapper();
-        SimpleModule module = new SimpleModule();
-        module.addSerializer(SearchHandle.class, new SearchHandleSerializer());
-        om.registerModule(module);
-        return om.writeValueAsString(traceManager.getTraces(query, start, count));
+        return traceManager.getTraces(query, start, count).get();
     }
 
     @RequestMapping(value = "/{traceId}", method = RequestMethod.GET)

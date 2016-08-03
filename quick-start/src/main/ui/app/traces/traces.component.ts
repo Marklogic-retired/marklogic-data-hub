@@ -38,7 +38,7 @@ export class Traces {
     ).subscribe(response => {
       this.searchResponse = response;
       this.traces = _.map(response.results, (result) => {
-        return result['doc'];
+        return result['content'];
       });
     },
     () => {},

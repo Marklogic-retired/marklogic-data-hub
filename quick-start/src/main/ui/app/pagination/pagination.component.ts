@@ -40,7 +40,7 @@ export class Pagination implements OnInit, OnChanges {
     if (this.start && this.pageLength) {
       this.end = Math.min(this.start + this.pageLength - 1, this.total);
       this.currentPage = (this.start - 1) / this.pageLength + 1;
-      this.totalPages = Math.floor(this.total / this.pageLength);
+      this.totalPages = Math.ceil(this.total / this.pageLength);
       s = this.currentPage - 4;
       s = (s < 1) ? 1 : s;
       e = s + 8;

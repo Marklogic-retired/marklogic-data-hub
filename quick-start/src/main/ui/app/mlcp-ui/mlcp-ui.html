@@ -33,7 +33,7 @@
                 [labelText]="setting.label"
                 [items]="setting.options"
                 [initialSelectedItem]="setting.value"
-                (selectedItem)="setting.value = $event"
+                (selectedItem)="updateSetting(setting, $event)"
                 *ngIf="setting.type === 'type'"
                 [tooltip]="setting.description"
                 label="label"

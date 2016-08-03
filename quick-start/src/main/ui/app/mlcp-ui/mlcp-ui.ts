@@ -57,6 +57,7 @@ export class MlcpUi {
   startY: number = 0;
 
   vizState: string = 'hidden';
+  isVisible: boolean = false;
 
   groups: Array<any>;
 
@@ -97,6 +98,7 @@ export class MlcpUi {
       this.startY = $event.clientY;
     }
     this.vizState = 'active';
+    this.isVisible = true;
     return this.finishedEvent;
   }
 
@@ -506,6 +508,7 @@ export class MlcpUi {
 
   hide() {
     this.vizState = 'hidden';
+    this.isVisible = false;
   }
 
   private cancel() {

@@ -40,25 +40,21 @@
 </section>
 
 <div flex layout-margin layout="row" layout-align="center top" class="plugin-io" *ngIf="currentPlugin">
-  <div md-whiteframe-z1 flex layout="column">
+  <div md-whiteframe-z1 flex layout="column" class="half-width">
     <md-toolbar class="md-primary">
       <div class="md-toolbar-tools">
         <h3>Input</h3>
       </div>
     </md-toolbar>
     <md-content layout-margin>
-    <!-- (key, value) -->
       <template ngFor let-input="$implicit" [ngForOf]="getKeys(currentPlugin.input)">
         <md-subheader ng-init="collapsed = false" (click)="collapsed = !collapsed">{{input}} <md-icon>{{ collapsed ? 'keyboard_arrow_left' : 'keyboard_arrow_down'}}</md-icon></md-subheader>
         <pre *ngIf="!collapsed && trace.format === 'json'">{{currentPlugin.input[input] | json}}</pre>
-<!--         <json-formatter class="json-formatter"  json="currentPlugin.input[input]" open="1"></json-formatter>
-        <div class="cm" *ngIf="!collapsed && trace.format === 'xml'" ui-codemirror="codeMirrorConfig" ng-model="currentPlugin.input[input]"></div> -->
-        <codemirror *ngIf="!collapsed && trace.format === 'xml'" [(ngModel)]="currentPlugin.input[input]"></codemirror>
-
+        <codemirror *ngIf="!collapsed && trace.format === 'xml'" [(ngModel)]="currentPlugin.input[input]" [config]="codeMirrorConfig"></codemirror>
       </template>
     </md-content>
   </div>
-  <div md-whiteframe-z1 flex layout="column">
+  <div md-whiteframe-z1 flex layout="column" class="half-width">
     <md-toolbar class="md-primary">
       <div class="md-toolbar-tools">
         <h3>output</h3>
@@ -67,10 +63,7 @@
     <md-content layout-margin ng-init="outputCollapsed = false; errorCollapsed = false" >
       <md-subheader (click)="outputCollapsed = !outputCollapsed" *ngIf="currentPlugin.output">Output <md-icon>{{ outputCollapsed ? 'keyboard_arrow_left' : 'keyboard_arrow_down'}}</md-icon></md-subheader>
       <pre *ngIf="!outputCollapsed && currentPlugin.output && trace.format === 'json'">{{currentPlugin.output | json}}</pre>
-      <codemirror *ngIf="!outputCollapsed && currentPlugin.output && trace.format === 'xml'" [(ngModel)]="currentPlugin.output"></codemirror>
-<!--       <json-formatter class="json-formatter" *ngIf="!outputCollapsed && currentPlugin.output && trace.format === 'json'" json="currentPlugin.output" open="1"></json-formatter>
-      <div class="cm" *ngIf="!outputCollapsed && currentPlugin.output && trace.format === 'xml'" ui-codemirror="codeMirrorConfig" ng-model="currentPlugin.output"></div> -->
-
+      <codemirror *ngIf="!outputCollapsed && currentPlugin.output && trace.format === 'xml'" [(ngModel)]="currentPlugin.output" [config]="codeMirrorConfig"></codemirror>
       <md-subheader (click)="errorCollapsed = !errorCollapsed" *ngIf="currentPlugin.error">Error <md-icon>{{ errorCollapsed ? 'keyboard_arrow_left' : 'keyboard_arrow_down'}}</md-icon></md-subheader>
       <codemirror *ngIf="!errorCollapsed && currentPlugin.error" [(ngModel)]="currentPlugin.error" [config]="codeMirrorConfig"></codemirror>
     </md-content>
