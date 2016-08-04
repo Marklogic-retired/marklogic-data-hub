@@ -183,6 +183,11 @@ public class LoadHubModulesCommand extends AbstractCommand {
                 ExtensionMetadataAndParams emap = extensionMetadataProvider.provideExtensionMetadataAndParams(r);
                 this.modulesLoader.installTransform(r, emap.metadata);
             }
+            resources = findResources("classpath*:/ml-modules/transforms", "/**/*.sjs");
+            for (Resource r : resources) {
+                ExtensionMetadataAndParams emap = extensionMetadataProvider.provideExtensionMetadataAndParams(r);
+                this.modulesLoader.installTransform(r, emap.metadata);
+            }
             endTime = System.nanoTime();
             duration = (endTime - startTime);
             logger.info("Rest Transforms took: " + (duration / 1000000000) + " seconds");

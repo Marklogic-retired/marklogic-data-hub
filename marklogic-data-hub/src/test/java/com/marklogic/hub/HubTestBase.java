@@ -56,6 +56,7 @@ public class HubTestBase {
     public static int stagingPort;
     public static int finalPort;
     public static int tracePort;
+    public static int jobPort;
     public static String user;
     public static String password;
     public static Authentication authMethod;
@@ -65,6 +66,8 @@ public class HubTestBase {
     public static DatabaseClient finalModulesClient = null;
     public static DatabaseClient traceClient = null;
     public static DatabaseClient traceModulesClient = null;
+    public static DatabaseClient jobClient = null;
+    public static DatabaseClient jobModulesClient = null;
     private static Properties properties = new Properties();
     private static boolean initialized = false;
     public static XMLDocumentManager stagingDocMgr = getStagingMgr();
@@ -120,6 +123,7 @@ public class HubTestBase {
         stagingPort = Integer.parseInt(properties.getProperty("mlStagingPort"));
         finalPort = Integer.parseInt(properties.getProperty("mlFinalPort"));
         tracePort = Integer.parseInt(properties.getProperty("mlTracePort"));
+        jobPort = Integer.parseInt(properties.getProperty("mlJobPort"));
         user = properties.getProperty("mlUsername");
         password = properties.getProperty("mlPassword");
         authMethod = Authentication.valueOf(properties.getProperty("auth").toUpperCase());
@@ -130,6 +134,8 @@ public class HubTestBase {
         finalModulesClient  = DatabaseClientFactory.newClient(host, stagingPort, HubConfig.DEFAULT_MODULES_DB_NAME, user, password, authMethod);
         traceClient = DatabaseClientFactory.newClient(host, tracePort, user, password, authMethod);
         traceModulesClient  = DatabaseClientFactory.newClient(host, stagingPort, HubConfig.DEFAULT_MODULES_DB_NAME, user, password, authMethod);
+        jobClient = DatabaseClientFactory.newClient(host, jobPort, user, password, authMethod);
+        jobModulesClient  = DatabaseClientFactory.newClient(host, stagingPort, HubConfig.DEFAULT_MODULES_DB_NAME, user, password, authMethod);
     }
 
     public HubTestBase() {
@@ -154,6 +160,7 @@ public class HubTestBase {
         hubConfig.stagingPort = stagingPort;
         hubConfig.finalPort = finalPort;
         hubConfig.tracePort = tracePort;
+        hubConfig.jobPort = jobPort;
         hubConfig.username = user;
         hubConfig.password = password;
         return hubConfig;

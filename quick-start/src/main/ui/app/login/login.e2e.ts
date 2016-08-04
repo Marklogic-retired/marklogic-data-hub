@@ -14,17 +14,17 @@ describe('App', () => {
 
     browser.get('/login');
 
-    // clear out any items in the project list
-    return element.all(by.css('select-list md-list-item .fa-trash')).map(item => {
-      return item.click().then(() => {
-        let removeButton = element.all(by.css('confirm-component button')).first();
-        return browser.wait(ec.elementToBeClickable(removeButton)).then(() => {
-          return removeButton.click().then(() => {
-            return browser.wait(ec.not(ec.presenceOf(removeButton)));
-          });
-        });
-      });
-    });
+    // // clear out any items in the project list
+    // return element.all(by.css('select-list md-list-item .fa-trash')).map(item => {
+    //   return item.click().then(() => {
+    //     let removeButton = element.all(by.css('confirm-component button')).first();
+    //     return browser.wait(ec.elementToBeClickable(removeButton)).then(() => {
+    //       return removeButton.click().then(() => {
+    //         return browser.wait(ec.not(ec.presenceOf(removeButton)));
+    //       });
+    //     });
+    //   });
+    // });
   });
 
   beforeEach(() => {
@@ -175,6 +175,7 @@ describe('App', () => {
       return finishedButton.click();
     }).then(() => {
       browser.waitForAngular();
+      browser.sleep(5000);
       browser.getCurrentUrl().then(url => {
         expect(url.endsWith('/login')).toBe(false);
         expect(url.endsWith('/')).toBe(true);
