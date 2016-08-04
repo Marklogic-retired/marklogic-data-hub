@@ -1,0 +1,19 @@
+<div class="container">
+  <div class="current-folder" flex layout="column">
+    <!-- <md-input placeholder="Current Folder" name="currentPath" [(ngModel)]="currentPath" required="required" (change)="changedPath()"></md-input> -->
+    <mdl-textfield type="text" label="Current Folder" [(value)]="currentPath" floating-label></mdl-textfield>
+  </div>
+  <div class="foldertree-container">
+    <div *ngIf="isLoading" layout="row" layout-sm="column" class="ajax-progress" layout-align="center start">
+      <md-progress-circle mode="indeterminate"></md-progress-circle>
+    </div>
+    <ul class="foldertree">
+      <li *ngFor="let folder of folders">
+        <div class="entry" (click)="entryClicked(folder)">
+          <i class="fa fa-folder-o"></i>
+          <p>{{folder.name}}</p>
+        </div>
+      </li>
+    </ul>
+  </div>
+</div>

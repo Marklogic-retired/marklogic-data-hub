@@ -4,7 +4,7 @@ module namespace config = "http://marklogic.com/data-hub/config";
 
 declare option xdmp:mapping "false";
 
-declare variable $STAGING-DATABASE := "%%STAGING_DB_NAME%%";
-declare variable $FINAL-DATABASE := "%%FINAL_DB_NAME%%";
-declare variable $TRACING-DATABASE := "%%TRACE_DB_NAME%%";
-declare variable $MODULES-DATABASE := "%%MODULES_DB_NAME%%";
+declare variable $STAGING-DATABASE := "%%mlStagingDbName%%";
+declare variable $FINAL-DATABASE := "%%mlFinalDbName%%";
+declare variable $TRACING-DATABASE := "%%mlTraceDbName%%";
+declare variable $MODULES-DATABASE := "%%mlModulesDbName%%";

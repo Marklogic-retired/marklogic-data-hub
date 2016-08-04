@@ -31,7 +31,7 @@ public class DefaultHubConfigFactory extends PropertySourceFactory {
     public HubConfig newHubConfig() {
         HubConfig c = new HubConfig();
 
-        String prop = null;
+        String prop;
         String mlUsername = getProperty("mlUsername");
         String mlPassword = getProperty("mlPassword");
 
@@ -98,13 +98,13 @@ public class DefaultHubConfigFactory extends PropertySourceFactory {
         prop = getProperty("mlTraceDbName");
         if (prop != null) {
             logger.info("mlTraceDbName: " + prop);
-            c.tracingDbName = prop;
+            c.traceDbName = prop;
         }
 
         prop = getProperty("mlTraceAppserverName");
         if (prop != null) {
             logger.info("mlTraceAppserverName: " + prop);
-            c.tracingHttpName = prop;
+            c.traceHttpName = prop;
         }
 
         prop = getProperty("mlTracePort");
@@ -116,7 +116,31 @@ public class DefaultHubConfigFactory extends PropertySourceFactory {
         prop = getProperty("mlTraceForestsPerHost");
         if (prop != null) {
             logger.info("Trace Forests Per Host: " + prop);
-            c.tracingForestsPerHost = Integer.parseInt(prop);
+            c.traceForestsPerHost = Integer.parseInt(prop);
+        }
+
+        prop = getProperty("mlJobDbName");
+        if (prop != null) {
+            logger.info("mlJobDbName: " + prop);
+            c.jobDbName = prop;
+        }
+
+        prop = getProperty("mlJobAppserverName");
+        if (prop != null) {
+            logger.info("mlJobAppserverName: " + prop);
+            c.jobHttpName = prop;
+        }
+
+        prop = getProperty("mlJobPort");
+        if (prop != null) {
+            logger.info("Job App REST port: " + prop);
+            c.jobPort = Integer.parseInt(prop);
+        }
+
+        prop = getProperty("mlJobForestsPerHost");
+        if (prop != null) {
+            logger.info("Job Forests Per Host: " + prop);
+            c.jobForestsPerHost = Integer.parseInt(prop);
         }
 
         prop = getProperty("mlModulesDbName");
@@ -140,18 +164,18 @@ public class DefaultHubConfigFactory extends PropertySourceFactory {
         prop = getProperty("mlAdminUsername");
         if (prop != null) {
             logger.info("REST admin username: " + prop);
-            c.adminUsername = prop;
+            c.username = prop;
         } else if (mlUsername != null) {
             logger.info("REST admin username: " + mlUsername);
-            c.adminUsername = mlUsername;
+            c.username = mlUsername;
         }
 
         prop = getProperty("mlAdminPassword");
         if (prop != null) {
-            c.adminPassword = prop;
+            c.password = prop;
         }
         else if (mlPassword != null) {
-            c.adminPassword = mlPassword;
+            c.password = mlPassword;
         }
 
         prop = getProperty("hubModulesPath");
@@ -171,5 +195,4 @@ public class DefaultHubConfigFactory extends PropertySourceFactory {
 
         return c;
     }
-
 }

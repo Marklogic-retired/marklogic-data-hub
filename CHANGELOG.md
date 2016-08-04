@@ -1,5 +1,26 @@
 # Change Log
 
+## [v1.0.0-rc.1](https://github.com/marklogic/marklogic-data-hub/tree/v1.0.0-rc.1)
+
+[Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v1.0.0-beta.6...v1.0.0-rc.1)
+
+**Fixed bugs:**
+
+- Failed test : DataHubTest.testInstallUserModules [\#106](https://github.com/marklogic/marklogic-data-hub/issues/106)
+
+**Closed issues:**
+
+- Unable to run the harmonize flows [\#242](https://github.com/marklogic/marklogic-data-hub/issues/242)
+- ML Version is unnaceptable [\#241](https://github.com/marklogic/marklogic-data-hub/issues/241)
+- rename config to marklogic-config [\#239](https://github.com/marklogic/marklogic-data-hub/issues/239)
+- Allow many developers to share a server, each with their own Data Hub [\#237](https://github.com/marklogic/marklogic-data-hub/issues/237)
+- Change colors and icons to match other MarkLogic content/GUIs [\#236](https://github.com/marklogic/marklogic-data-hub/issues/236)
+- Tracing UI [\#210](https://github.com/marklogic/marklogic-data-hub/issues/210)
+- During install, list the artifacts being created [\#194](https://github.com/marklogic/marklogic-data-hub/issues/194)
+- Performance tracing [\#193](https://github.com/marklogic/marklogic-data-hub/issues/193)
+- Refactor the Spring Boot API [\#145](https://github.com/marklogic/marklogic-data-hub/issues/145)
+- Support index configuration as a part of pushbutton deploy.  [\#10](https://github.com/marklogic/marklogic-data-hub/issues/10)
+
 ## [v1.0.0-beta.6](https://github.com/marklogic/marklogic-data-hub/tree/v1.0.0-beta.6) (2016-06-20)
 [Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v1.0.0-beta.5...v1.0.0-beta.6)
 

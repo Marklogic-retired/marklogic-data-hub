@@ -1,9 +1,0 @@
-<h1>Data Entities</h1>
-<ul>
-    <li class="nav" ng-repeat="entity in status.entities">
-      <h3><i ng-class="entity.synched ? 'fa fa-file-text-o sycned' : 'fa fa-file-text-o unsycned'"></i><a href="javascript:void(0)" ng-click="displayEntity(entity.entityName)">{{entity.entityName}}</a></h3>
-    </li>
-</ul>
-<div class="button-group-center" ng-if="status.installed">
-  <button type="submit" name="install" class="btn btn-primary" ng-click="createEntity()">New Entity</button>
-</div>

@@ -4,17 +4,17 @@ buildscript {
         maven { url 'http://developer.marklogic.com/maven2' }
     }
     dependencies {
-        classpath "com.gradle.publish:plugin-publish-plugin:0.9.2"
+        classpath "com.gradle.publish:plugin-publish-plugin:0.9.5"
     }
 }
 
 plugins {
-    id 'net.saliman.properties' version '1.4.4'
+    id 'net.saliman.properties' version '1.4.5'
     id "groovy"
     id "maven-publish"
     id "eclipse"
     id "idea"
-    id "com.jfrog.bintray" version "1.6"
+    id "com.jfrog.bintray" version "1.7.1"
 }
 
 apply plugin: "com.gradle.plugin-publish"

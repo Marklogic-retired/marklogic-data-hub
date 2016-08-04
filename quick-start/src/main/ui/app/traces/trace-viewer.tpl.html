@@ -1,0 +1,72 @@
+<section layout-padding flex class="plugin-nav" layout="row" layout-align="center center" *ngIf="trace">
+  <div md-whiteframe-2dp class="center-frame" layout-padding layout="column" layout-align="center center">
+    <div layout="column" flex layout-align="center center">
+      <div>Trace {{trace.traceId}}</div>
+      <div>Identifier: {{trace.identifier}}</div>
+      <div>Created: {{trace.created}}</div>
+    </div>
+    <!-- <md-button disabled="true" class="md-fab start" aria-label="start"></md-button> -->
+    <div layout="row" flex layout="row" layout-align="center center">
+      <button
+        disabled="true"
+        class="start mdl-button mdl-js-button mdl-button--fab mdl-button--colored">
+      </button>
+      <md-icon>arrow_forward</md-icon>
+      <template ngFor let-plugin="$implicit" [ngForOf]="plugins" let-i="index">
+        <button
+          (click)="setCurrent(plugin)"
+          class="plugin mdl-button mdl-js-button mdl-button--fab mdl-button--colored"
+          [ngClass]="{'active': (currentPluginType === plugin)}">
+          <div class="plugin-name">{{plugin}}</div>
+          <div class="plugin-duration">{{trace[plugin + 'Plugin'].duration}}<span class="unit">s</span></div>
+        </button>
+        <md-icon>arrow_forward</md-icon>
+      </template>
+      <!-- <md-button disabled="true" class="md-fab end" aria-label="end"></md-button> -->
+      <button
+        disabled="true"
+        class="end mdl-button mdl-js-button mdl-button--fab mdl-button--colored">
+      </button>
+    </div>
+  </div>
+</section>
+
+<section class="plugin-nav" layout="row" layout-align="center center" *ngIf="currentPlugin">
+  <div [hidden]="!currentPluginType" flex layout="column" layout-align="center center">
+    <md-subheader>{{currentPluginType}} Plugin</md-subheader>
+    <div>Module URI: {{currentPlugin.pluginModuleUri}}</div>
+    <div>Duration: {{currentPlugin.duration}}s</div>
+  </div>
+</section>
+
+<div flex layout-margin layout="row" layout-align="center top" class="plugin-io" *ngIf="currentPlugin">
+  <div md-whiteframe-z1 flex layout="column" class="half-width">
+    <md-toolbar class="md-primary">
+      <div class="md-toolbar-tools">
+        <h3>Input</h3>
+      </div>
+    </md-toolbar>
+    <md-content layout-margin>
+      <template ngFor let-input="$implicit" [ngForOf]="getKeys(currentPlugin.input)">
+        <md-subheader ng-init="collapsed = false" (click)="collapsed = !collapsed">{{input}} <md-icon>{{ collapsed ? 'keyboard_arrow_left' : 'keyboard_arrow_down'}}</md-icon></md-subheader>
+        <pre *ngIf="!collapsed && trace.format === 'json'">{{currentPlugin.input[input] | json}}</pre>
+        <codemirror *ngIf="!collapsed && trace.format === 'xml'" [(ngModel)]="currentPlugin.input[input]" [config]="codeMirrorConfig"></codemirror>
+      </template>
+    </md-content>
+  </div>
+  <div md-whiteframe-z1 flex layout="column" class="half-width">
+    <md-toolbar class="md-primary">
+      <div class="md-toolbar-tools">
+        <h3>output</h3>
+      </div>
+    </md-toolbar>
+    <md-content layout-margin ng-init="outputCollapsed = false; errorCollapsed = false" >
+      <md-subheader (click)="outputCollapsed = !outputCollapsed" *ngIf="currentPlugin.output">Output <md-icon>{{ outputCollapsed ? 'keyboard_arrow_left' : 'keyboard_arrow_down'}}</md-icon></md-subheader>
+      <pre *ngIf="!outputCollapsed && currentPlugin.output && trace.format === 'json'">{{currentPlugin.output | json}}</pre>
+      <codemirror *ngIf="!outputCollapsed && currentPlugin.output && trace.format === 'xml'" [(ngModel)]="currentPlugin.output" [config]="codeMirrorConfig"></codemirror>
+      <md-subheader (click)="errorCollapsed = !errorCollapsed" *ngIf="currentPlugin.error">Error <md-icon>{{ errorCollapsed ? 'keyboard_arrow_left' : 'keyboard_arrow_down'}}</md-icon></md-subheader>
+      <codemirror *ngIf="!errorCollapsed && currentPlugin.error" [(ngModel)]="currentPlugin.error" [config]="codeMirrorConfig"></codemirror>
+    </md-content>
+  </div>
+</div>
+

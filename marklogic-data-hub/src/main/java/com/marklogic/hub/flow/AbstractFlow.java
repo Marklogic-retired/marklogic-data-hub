@@ -15,11 +15,18 @@
  */
 package com.marklogic.hub.flow;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.OutputKeys;
@@ -28,9 +35,11 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 import com.marklogic.client.MarkLogicIOException;
 import com.marklogic.client.io.Format;
@@ -64,6 +73,8 @@ public abstract class AbstractFlow implements Flow {
     protected ArrayList<Plugin> plugins = new ArrayList<Plugin>();
     private Writer writer;
 
+    public AbstractFlow() {}
+
     public AbstractFlow(Element xml) {
         deserialize(xml);
     }
@@ -75,6 +86,33 @@ public abstract class AbstractFlow implements Flow {
         this.type = type;
         this.dataFormat = dataFormat;
         this.flowComplexity = flowComplexity;
+    }
+
+    public static AbstractFlow loadFromFile(File file) {
+        AbstractFlow entity = null;
+        try {
+            FileInputStream is = new FileInputStream(file);
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            factory.setNamespaceAware(true);
+            DocumentBuilder builder = null;
+            builder = factory.newDocumentBuilder();
+            Document doc = builder.parse(is);
+            is.close();
+            entity = new SimpleFlow(doc.getDocumentElement());
+        } catch (FileNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (ParserConfigurationException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (SAXException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return entity;
     }
 
     private void deserialize(Node xml) {

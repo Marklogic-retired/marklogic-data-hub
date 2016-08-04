@@ -1,0 +1,11 @@
+@import 'variables';
+
+.new-flow-dialog {
+  min-width: 500px;
+  width: 70%;
+
+  pre {
+    height: 500px;
+    overflow: auto;
+  }
+}

@@ -6,9 +6,6 @@ import java.util.List;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.item.ItemStreamException;
 import org.springframework.batch.item.ItemStreamReader;
-import org.springframework.batch.item.NonTransientResourceException;
-import org.springframework.batch.item.ParseException;
-import org.springframework.batch.item.UnexpectedInputException;
 
 import com.marklogic.client.helper.LoggingObject;
 import com.marklogic.hub.collector.Collector;
@@ -26,17 +23,19 @@ public class CollectorReader extends LoggingObject implements ItemStreamReader<S
     }
 
     @Override
-    public void open(ExecutionContext executionContext) throws ItemStreamException {
+    public void open(ExecutionContext executionContext) {
         if (collector != null) {
             this.results = collector.run();
         }
         else {
             this.results = new ArrayList<>();
         }
+
+        executionContext.putInt("totalItems", this.results.size());
     }
 
     @Override
-    public String read() throws Exception, UnexpectedInputException, ParseException, NonTransientResourceException {
+    public String read() {
         String result = null;
 
         if (results.size() > this.index) {

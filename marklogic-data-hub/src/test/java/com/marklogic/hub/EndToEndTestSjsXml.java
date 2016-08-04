@@ -57,7 +57,7 @@ public class EndToEndTestSjsXml extends HubTestBase {
 
     @Test
     public void runFlows() throws IOException, ParserConfigurationException, SAXException {
-        FlowManager fm = new FlowManager(stagingClient);
+        FlowManager fm = new FlowManager(getHubConfig());
         Flow harmonizeFlow = fm.getFlow(ENTITY, "testharmonize",
                 FlowType.HARMONIZE);
 

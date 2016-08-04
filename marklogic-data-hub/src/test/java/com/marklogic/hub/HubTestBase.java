@@ -56,6 +56,7 @@ public class HubTestBase {
     public static int stagingPort;
     public static int finalPort;
     public static int tracePort;
+    public static int jobPort;
     public static String user;
     public static String password;
     public static Authentication authMethod;
@@ -65,6 +66,8 @@ public class HubTestBase {
     public static DatabaseClient finalModulesClient = null;
     public static DatabaseClient traceClient = null;
     public static DatabaseClient traceModulesClient = null;
+    public static DatabaseClient jobClient = null;
+    public static DatabaseClient jobModulesClient = null;
     private static Properties properties = new Properties();
     private static boolean initialized = false;
     public static XMLDocumentManager stagingDocMgr = getStagingMgr();
@@ -120,6 +123,7 @@ public class HubTestBase {
         stagingPort = Integer.parseInt(properties.getProperty("mlStagingPort"));
         finalPort = Integer.parseInt(properties.getProperty("mlFinalPort"));
         tracePort = Integer.parseInt(properties.getProperty("mlTracePort"));
+        jobPort = Integer.parseInt(properties.getProperty("mlJobPort"));
         user = properties.getProperty("mlUsername");
         password = properties.getProperty("mlPassword");
         authMethod = Authentication.valueOf(properties.getProperty("auth").toUpperCase());
@@ -130,6 +134,8 @@ public class HubTestBase {
         finalModulesClient  = DatabaseClientFactory.newClient(host, stagingPort, HubConfig.DEFAULT_MODULES_DB_NAME, user, password, authMethod);
         traceClient = DatabaseClientFactory.newClient(host, tracePort, user, password, authMethod);
         traceModulesClient  = DatabaseClientFactory.newClient(host, stagingPort, HubConfig.DEFAULT_MODULES_DB_NAME, user, password, authMethod);
+        jobClient = DatabaseClientFactory.newClient(host, jobPort, user, password, authMethod);
+        jobModulesClient  = DatabaseClientFactory.newClient(host, stagingPort, HubConfig.DEFAULT_MODULES_DB_NAME, user, password, authMethod);
     }
 
     public HubTestBase() {
@@ -154,17 +160,26 @@ public class HubTestBase {
         hubConfig.stagingPort = stagingPort;
         hubConfig.finalPort = finalPort;
         hubConfig.tracePort = tracePort;
-        hubConfig.adminUsername = user;
-        hubConfig.adminPassword = password;
+        hubConfig.jobPort = jobPort;
+        hubConfig.username = user;
+        hubConfig.password = password;
         return hubConfig;
     }
 
     protected static void installHub() throws IOException {
-        new DataHub(getHubConfig()).install();
+        new DataHub(getHubConfig()).install(new StatusListener() {
+            @Override
+            public void onStatusChange(int percentComplete, String message) {
+            }
+        });
     }
 
     protected static void uninstallHub() throws IOException {
-        new DataHub(getHubConfig()).uninstall();
+        new DataHub(getHubConfig()).uninstall(new StatusListener() {
+            @Override
+            public void onStatusChange(int percentComplete, String message) {
+            }
+        });
         FileUtils.deleteDirectory(new File(PROJECT_PATH));
     }
 
@@ -206,7 +221,7 @@ public class HubTestBase {
     }
 
     protected static int getTracingDocCount() {
-        return getDocCount(HubConfig.DEFAULT_TRACING_NAME);
+        return getDocCount(HubConfig.DEFAULT_TRACE_NAME);
     }
 
     protected static int getDocCount(String database) {

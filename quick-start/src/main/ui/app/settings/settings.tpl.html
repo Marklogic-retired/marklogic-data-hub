@@ -1,0 +1,21 @@
+<div layout-padding layout="column">
+  <div class="debug-status">
+    <md-slide-toggle [checked]="debugEnabled()" (change)="toggleDebug($event.checked)">Debugging</md-slide-toggle>
+  </div>
+
+  <div class="trace-status">
+    <md-slide-toggle [checked]="traceEnabled()" (change)="toggleTrace($event.checked)">Tracing</md-slide-toggle>
+  </div>
+
+  <div>
+    <mdl-button mdl-button-type="raised" mdl-colored mdl-ripple (click)="uninstall($event)">Uninstall Hub</mdl-button>
+  </div>
+
+  <section flex layout-padding layout="column" class="uninstall-status" *ngIf="uninstallStatus">
+    <h3>Uninstall Status</h3>
+    <md-progress-bar mode="determinate" [value]="percentComplete"></md-progress-bar>
+    <div flex>
+      <pre>{{uninstallStatus}}</pre>
+    </div>
+  </section>
+</div>

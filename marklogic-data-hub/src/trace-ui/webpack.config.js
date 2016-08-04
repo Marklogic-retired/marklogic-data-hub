@@ -13,7 +13,7 @@ var modulePackage;
 for (dependency in packageJson.dependencies) {
   if (packageJson.dependencies.hasOwnProperty(dependency)) {
     modulePackage = require(pathUtil.join(dependency, 'package.json'));
-    if (pathUtil.extname(modulePackage.main) === '.js') {
+    if (modulePackage.main && pathUtil.extname(modulePackage.main) === '.js') {
       vendors.push(dependency);
     }
   }

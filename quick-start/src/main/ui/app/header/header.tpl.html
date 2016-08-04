@@ -1,0 +1,28 @@
+<header class="mdl-layout__header">
+  <div class="mdl-layout__header-row">
+    <!-- Title -->
+    <img src="/assets/img/hub-icon.svg">
+    <span class="mdl-layout-title">Data Hub Quick Start</span>
+    <!-- Add spacer, to align navigation to the right -->
+    <div class="mdl-layout-spacer"></div>
+    <div *ngIf="getRunningJobCount() !== 0" layout="row" layout-align="center center" class="job-progress" (click)="gotoJobs()">
+      <span class="label">Running {{getRunningJobCount()}} jobs</span>
+      <md-progress-bar mode="determinate" [value]="getPercentComplete()"></md-progress-bar>
+      <span class="percent">{{getPercentComplete()}}%</span>
+    </div>
+    <div class="mdl-layout-spacer"></div>
+    <nav class="mdl-navigation mdl-layout--large-screen-only">
+      <a class="mdl-navigation__link" [ngClass]="{'active': isActive('/')}" [routerLink]="['']"><i class="fa fa-industry"></i> Entities</a>
+      <a class="mdl-navigation__link" [ngClass]="{'active': isActive('/jobs')}" [routerLink]="['jobs']"><i class="fa fa-tasks"></i> <span *ngIf="getRunningJobCount() !== 0" [mdl-badge]="getRunningJobCount()">Jobs</span><span *ngIf="getRunningJobCount() === 0">Jobs</span></a>
+      <a class="mdl-navigation__link" [ngClass]="{'active': isActive('/traces')}" [routerLink]="['traces']"><i class="fa fa-flash"></i> Traces</a>
+      <a class="mdl-navigation__link" [ngClass]="{'active': isActive('/settings')}" [routerLink]="['settings']"><i class="fa fa-gear"></i> Settings</a>
+    </nav>
+    <mdl-button #menuButton="mdlButton" (click)="headerMenu.toggle($event, menuButton)" mdl-button-type="icon" mdl-ripple>
+      <i class="material-icons">person</i>
+    </mdl-button>
+
+    <mdl-menu #headerMenu="mdlMenu" mdl-menu-position="bottom-right">
+      <mdl-menu-item mdl-ripple (click)="logout()">Logout</mdl-menu-item>
+    </mdl-menu>
+  </div>
+</header>

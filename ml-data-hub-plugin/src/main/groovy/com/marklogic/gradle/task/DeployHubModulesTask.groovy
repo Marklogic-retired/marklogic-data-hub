@@ -7,7 +7,7 @@ class DeployHubModulesTask extends HubTask {
 
     @TaskAction
     void deployHubModules() {
-        def cmd = new LoadHubModulesCommand()
+        def cmd = new LoadHubModulesCommand(getHubConfig())
         cmd.execute(getCommandContext())
     }
 }

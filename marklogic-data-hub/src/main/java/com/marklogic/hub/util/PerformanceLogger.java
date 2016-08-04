@@ -13,7 +13,7 @@ public class PerformanceLogger {
 
     public static void logTimeInsideMethod(long startTime, String location) {
         long endTime = System.nanoTime();
-        long duration = (endTime - startTime) / 1000000000;
+        double duration = ((double)endTime - (double)startTime) / 1000000000.0;
 
         StringBuilder logMessage = new StringBuilder();
         logMessage.append("PERFORMANCE: ");
