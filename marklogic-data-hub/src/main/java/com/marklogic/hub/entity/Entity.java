@@ -25,21 +25,21 @@ import com.marklogic.hub.flow.Flow;
 public interface Entity {
     /**
      * Gets the Entity name
-     * 
+     *
      * @return the entity name
      */
     String getName();
 
     /**
      * Serializes the Entity as an XML string
-     * 
+     *
      * @return the serialized XML string
      */
     String serialize();
 
     /**
      * Returns all flows registered to the entity
-     * 
+     *
      * @return a list of flows
      */
     List<Flow> getFlows();

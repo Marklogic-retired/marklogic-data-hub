@@ -1,0 +1,36 @@
+mdl-button {
+  text-transform: none;
+  padding: 0px;
+}
+
+label {
+  color: rgba(0, 0, 0, 0.38);
+  -webkit-transform: translateY(-100%) scale(0.75);
+  transform: translateY(-100%) scale(0.75);
+  -webkit-transform-origin: bottom left;
+  transform-origin: bottom left;
+  position: absolute;
+  left: 0;
+  top: 4px
+}
+
+.container {
+  position: relative;
+  display: inline-block;
+  border-bottom: 1px solid rgba(0,0,0,0.12);
+}
+
+.dropdown {
+  left: 2px;
+  position: relative;
+  display: inline-block;
+  margin: 10px 0px;
+  color: black;
+  cursor: pointer;
+
+  i {
+    position: relative;
+    top: 5px;
+    margin-left: 10px;
+  }
+}

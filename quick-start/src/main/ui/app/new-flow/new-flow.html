@@ -1,0 +1,39 @@
+<div @fadeState="vizState" class="dialog-container">
+  <div @growState="vizState"class="mdl-dialog new-flow-dialog">
+    <div class="mdl-dialog__title">
+      <div>Create {{flowType}} Flow</div>
+      <div class="mdl-layout-spacer"></div>
+      <button (click)="cancel()" class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab">
+        <i class="material-icons">clear</i>
+      </button>
+    </div>
+    <div class="mdl-dialog__content">
+      <form (submit)="create()">
+        <div class="modal-body">
+          <div class="md-dialog-content" flex layout="column">
+            <md-input name="flowType" placeholder="{{flowType}} Flow Name" md-autofocus [(ngModel)]="flow.flowName"></md-input>
+            <label>Plugin Type</label>
+            <select-list
+              #pluginFormatList
+              [items]="pluginFormats"
+              [initialSelectedItem]="pluginFormats[0]"
+              label="label" identifier="value"
+              (selectedItem)="flow.pluginFormat = $event"></select-list>
+            <label>Data Format</label>
+            <select-list
+              #dataFormatList
+              [items]="dataFormats"
+              [initialSelectedItem]="dataFormats[0]"
+              (selectedItem)="flow.dataFormat = $event"
+              label="label" identifier="value"></select-list>
+          </div>
+        </div>
+        <div class="mdl-dialog__actions">
+          <button type="submit" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect">Create</button>
+          <button type="button" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" (click)="cancel()">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div class="modal-backdrop"></div>
+</div>

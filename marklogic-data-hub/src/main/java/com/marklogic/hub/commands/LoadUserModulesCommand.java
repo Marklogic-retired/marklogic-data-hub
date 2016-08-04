@@ -19,6 +19,7 @@ import com.marklogic.appdeployer.command.modules.AssetModulesFinder;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
 import com.marklogic.client.modulesloader.impl.DefaultModulesLoader;
+import com.marklogic.client.modulesloader.impl.PropertiesModuleManager;
 import com.marklogic.client.modulesloader.impl.XccAssetLoader;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.util.HubFileFilter;
@@ -27,13 +28,19 @@ public class LoadUserModulesCommand extends AbstractCommand {
 
     private HubConfig hubConfig;
 
+    public void setForceLoad(boolean forceLoad) {
+        this.forceLoad = forceLoad;
+    }
+
+    private boolean forceLoad = false;
+
     public LoadUserModulesCommand(HubConfig hubConfig) {
         this.hubConfig = hubConfig;
     }
 
     private DatabaseClient getDatabaseClient(AppConfig config, int port) {
 
-        DatabaseClient client = DatabaseClientFactory.newClient(hubConfig.host, port, hubConfig.adminUsername, hubConfig.adminPassword,
+        DatabaseClient client = DatabaseClientFactory.newClient(hubConfig.host, port, hubConfig.username, hubConfig.password,
                 config.getRestAuthentication(), config.getRestSslContext(), config.getRestSslHostnameVerifier());
         return client;
     }
@@ -52,6 +59,12 @@ public class LoadUserModulesCommand extends AbstractCommand {
 
         Path userModulesPath = Paths.get(hubConfig.projectDir, "plugins");
         DefaultModulesLoader modulesLoader = new DefaultModulesLoader(assetLoader);
+        File timestampFile = Paths.get(hubConfig.projectDir, ".tmp", "user-modules-deploy-timestamps.properties").toFile();
+        PropertiesModuleManager pmm = new PropertiesModuleManager(timestampFile);
+        if (forceLoad) {
+            pmm.deletePropertiesFile();
+        }
+        modulesLoader.setModulesManager(pmm);
         File baseDir = userModulesPath.normalize().toAbsolutePath().toFile();
         loadedFiles.addAll(modulesLoader.loadModules(baseDir, new AssetModulesFinder(), stagingClient));
         Path startPath = userModulesPath.resolve("entities");

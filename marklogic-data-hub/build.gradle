@@ -21,14 +21,17 @@ targetCompatibility = 1.8
 
 dependencies {
     compile 'org.springframework.batch:spring-batch-core:3.0.6.RELEASE'
+    compile 'org.springframework:spring-jdbc:4.2.6.RELEASE'
     compile 'com.marklogic:java-client-api:3.0.4'
     compile 'com.marklogic:ml-javaclient-util:2.9.0'
     compile 'com.marklogic:ml-app-deployer:2.2.0'
+    compile 'com.marklogic:marklogic-spring-batch-core:0.5.2'
     compile 'commons-io:commons-io:2.4'
     testCompile 'org.springframework.batch:spring-batch-test:3.0.6.RELEASE'
     testCompile 'junit:junit:4.12'
     testCompile 'xmlunit:xmlunit:1.3'
     testCompile 'org.hamcrest:hamcrest-junit:2.0.0.0'
+    testCompile 'org.easymock:easymock:3.4'
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
@@ -145,59 +148,26 @@ ext {
         restPort = Integer.parseInt(mlStagingPort)
 
         // Configure custom tokens for our json files
-        customTokens.put("%%STAGING_SERVER_NAME%%", mlStagingAppserverName)
-        customTokens.put("%%STAGING_SERVER_PORT%%", mlStagingPort)
-        customTokens.put("%%STAGING_DB_NAME%%", mlStagingDbName)
+        customTokens.put("%%mlStagingAppserverName%%", mlStagingAppserverName)
+        customTokens.put("%%mlStagingPort%%", mlStagingPort)
+        customTokens.put("%%mlStagingDbName%%", mlStagingDbName)
 
-        customTokens.put("%%FINAL_SERVER_NAME%%", mlFinalAppserverName)
-        customTokens.put("%%FINAL_SERVER_PORT%%", mlFinalPort)
-        customTokens.put("%%FINAL_DB_NAME%%", mlFinalDbName)
+        customTokens.put("%%mlFinalAppserverName%%", mlFinalAppserverName)
+        customTokens.put("%%mlFinalPort%%", mlFinalPort)
+        customTokens.put("%%mlFinalDbName%%", mlFinalDbName)
 
-        customTokens.put("%%TRACE_SERVER_NAME%%", mlTraceAppserverName)
-        customTokens.put("%%TRACE_SERVER_PORT%%", mlTracePort)
-        customTokens.put("%%TRACE_DB_NAME%%", mlTraceDbName)
+        customTokens.put("%%mlTraceAppserverName%%", mlTraceAppserverName)
+        customTokens.put("%%mlTracePort%%", mlTracePort)
+        customTokens.put("%%mlTraceDbName%%", mlTraceDbName)
 
-        customTokens.put("%%MODULES_DB_NAME%%", mlModulesDbName)
+        customTokens.put("%%mlJobAppserverName%%", mlJobAppserverName)
+        customTokens.put("%%mlJobPort%%", mlJobPort)
+        customTokens.put("%%mlJobDbName%%", mlJobDbName)
+
+        customTokens.put("%%mlModulesDbName%%", mlModulesDbName)
+        customTokens.put("%%mlTriggersDbName%%", mlTriggersDbName)
+        customTokens.put("%%mlSchemasDbName%%", mlSchemasDbName)
 
         modulePaths = ["marklogic-data-hub/src/main/resources/ml-modules"]
     }
-}
-
-ext {
-    // don't create the REST Api. We will do it manually
-    mlAppDeployer.commands.remove(mlAppDeployer.getCommand("DeployRestApiServersCommand"))
-    mlAppDeployer.commands.remove(mlAppDeployer.getCommand("UpdateRestApiServersCommand"))
-
-    // remove the original deploy content database command
-    // as we do not need it.
-    def deployDbCmd = mlAppDeployer.getCommand("DeployContentDatabasesCommand")
-    mlAppDeployer.commands.remove(deployDbCmd)
-
-    // install the staging database
-    def stagingDbCommand = new com.marklogic.appdeployer.command.databases.DeployDatabaseCommand("staging-database.json")
-    stagingDbCommand.setForestsPerHost(Integer.parseInt(mlStagingForestsPerHost));
-    mlAppDeployer.commands.add(stagingDbCommand)
-    mlDatabaseCommands.add(stagingDbCommand)
-
-    // install the final database
-    def finalDbCommand = new com.marklogic.appdeployer.command.databases.DeployDatabaseCommand("final-database.json")
-    finalDbCommand.setForestsPerHost(Integer.parseInt(mlFinalForestsPerHost));
-    mlAppDeployer.commands.add(finalDbCommand)
-    mlDatabaseCommands.add(finalDbCommand)
-
-    // install the trace database
-    def traceDbCommand = new com.marklogic.appdeployer.command.databases.DeployDatabaseCommand("trace-database.json")
-    traceDbCommand.setForestsPerHost(Integer.parseInt(mlTraceForestsPerHost));
-    mlAppDeployer.commands.add(traceDbCommand)
-    mlDatabaseCommands.add(traceDbCommand)
-
-    // install the modules database
-    def modulesDbCommand = new com.marklogic.appdeployer.command.databases.DeployDatabaseCommand("modules-database.json")
-    mlAppDeployer.commands.add(modulesDbCommand)
-    mlDatabaseCommands.add(modulesDbCommand)
-
-    // temp workaround for ml-gradle issue #78
-    // https://github.com/rjrudin/ml-gradle/issues/78
-    def lmc = mlAppDeployer.getCommand("LoadModulesCommand")
-    lmc.setModulesLoader(new com.marklogic.client.modulesloader.impl.DefaultModulesLoader(mlAppConfig.newXccAssetLoader()))
 }

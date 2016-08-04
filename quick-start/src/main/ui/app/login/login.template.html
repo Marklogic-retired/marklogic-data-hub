@@ -1,0 +1,226 @@
+<div class="credentials-prompt">
+  <div class="marklogic-logo" id="mla-marklogic-logo">
+    <img src="/assets/img/logo.png">
+  </div>
+  <div class="login-wrapper" layout="row" layout-align="center start">
+    <section layout="column" layout-align="center center">
+      <h1 id="mla-loginPage-Text">Data Hub Quick Start</h1>
+      <section flex layout-padding class="install-status" *ngIf="installationStatus">
+        <pre>{{installationStatus}}</pre>
+      </section>
+
+    </section>
+    <div flex></div>
+    <div class="tab-group">
+      <div id="ProjectDirTab" class="tab-content" [hidden]="!tabs.ProjectDir">
+        <section class="init-box" layout="column" layout-align="center center">
+          <div class="project-browser" layout="column" layout-align="center center" *ngIf="projects && projects.length > 0">
+            <h3>Choose an existing project</h3>
+            <div class="shrinkable shrinky" [ngClass]="{'collapsed': !showFolderBrowser}" layout="column" layout-align="center center">
+              <button type="button" md-button (click)="showFolderBrowser = !showFolderBrowser">Choose</button>
+            </div>
+            <select-list
+              class="shrinky"
+              [ngClass]="{'collapsed': showFolderBrowser}"
+              [items]="projects"
+              [initialSelectedItem]="lastProject"
+              [allowRemove]="true"
+              (selectedItem)="project = $event"
+              (removedItem)="removeProject($event)"
+              label="path" identifier="id"
+              md-whiteframe-2dp></select-list>
+            <p>or</p>
+          </div>
+
+          <div layout="column" layout-align="center center">
+            <h3>Browse for a Project Folder</h3>
+            <div class="shrinkable shrinky" [ngClass]="{'collapsed': showFolderBrowser}" layout="column" layout-align="center center">
+              <button type="button" md-button (click)="showFolderBrowser = !showFolderBrowser" class="shrink-me">Browse</button>
+            </div>
+
+            <folder-browser
+              [ngClass]="{'collapsed': !showFolderBrowser}"
+              class="shrink-me shrinky"
+              start-path='.'
+              (folderChosen)="folderClicked($event)">
+            </folder-browser>
+          </div>
+
+          <div layout="row" layout-align="end center" class="init-buttons">
+            <button type="button" md-raised-button (click)="chooseProject()" [disabled]="!canProjectNext()">Next</button>
+          </div>
+        </section>
+      </div>
+
+
+      <div id="InitIfNeededTab" class="tab-content" [hidden]="!tabs.InitIfNeeded">
+        <section layout="row" layout-align="center center" *ngIf="currentProject">
+          <section class="init-box" flex layout="column" layout-align="center center">
+            <h3>This project needs to be initialized</h3>
+            <p>The project located at {{currentProject.path}} needs to be initialized.</p>
+
+            <form class="initForm" (submit)="initProject()">
+              <div flex layout="column" class="scroller">
+                <div class="sub-section">
+                  <md-input placeholder="DataHub Name" type="text" name="name" [(ngModel)]="initSettings.name" (input)="hubNameChanged()"  required="required"></md-input>
+                  <md-input placeholder="MarkLogic Host" type="text" name="host" [(ngModel)]="initSettings.host" required="required"></md-input>
+                </div>
+                <div class="sub-section advanced-section">
+                  <button id="advanced-toggler" type="button" md-button (click)="showInitAdvanced = !showInitAdvanced">
+                    Advanced Settings
+                    <i class="fa fa-caret-right" [ngClass]="showInitAdvanced ? '' : 'collapsed'"></i>
+                  </button>
+                </div>
+                <div class="advanced shrinky" [ngClass]="{'collapsed': !showInitAdvanced}">
+                  <h3 class="md-primary">Staging</h3>
+                  <section class="sub-section" layout="column">
+                    <md-input placeholder="Staging Appserver Name" type="text" name="stagingHttpName" [(ngModel)]="initSettings.stagingHttpName" required="required"></md-input>
+                    <md-input placeholder="Staging Appserver Port" type="number" name="stagingPort" [(ngModel)]="initSettings.stagingPort" required="required"></md-input>
+                    <md-input placeholder="Staging Database Name" type="text" name="stagingDbName" [(ngModel)]="initSettings.stagingDbName" required="required"></md-input>
+                    <md-input placeholder="Staging Forests Per Host" type="number" name="stagingForestsPerHost" [(ngModel)]="initSettings.stagingForestsPerHost" required="required"></md-input>
+                  </section>
+                  <h3 class="md-primary">Final</h3>
+                  <section class="sub-section" layout="column">
+                    <md-input placeholder="Final Appserver Name" type="text" name="finalHttpName" [(ngModel)]="initSettings.finalHttpName" required="required"></md-input>
+                    <md-input placeholder="Final Appserver Port" type="number" name="finalPort" [(ngModel)]="initSettings.finalPort" required="required"></md-input>
+                    <md-input placeholder="Final Database Name" type="text" name="finalDbName" [(ngModel)]="initSettings.finalDbName" required="required"></md-input>
+                    <md-input placeholder="Final Forests Per Host" type="number" name="finalForestsPerHost" [(ngModel)]="initSettings.finalForestsPerHost" required="required"></md-input>
+                  </section>
+                  <h3 class="md-primary">Trace</h3>
+                  <section class="sub-section" layout="column">
+                    <md-input placeholder="Trace Appserver Name" type="text" name="traceHttpName" [(ngModel)]="initSettings.traceHttpName" required="required"></md-input>
+                    <md-input placeholder="Trace Appserver Port" type="number" name="tracePort" [(ngModel)]="initSettings.tracePort" required="required"></md-input>
+                    <md-input placeholder="Trace Database Name" type="text" name="traceDbName" [(ngModel)]="initSettings.traceDbName" required="required"></md-input>
+                    <md-input placeholder="Trace Forests Per Host" type="number" name="traceForestsPerHost" [(ngModel)]="initSettings.traceForestsPerHost" required="required"></md-input>
+                  </section>
+                  <h3 class="md-primary">Job</h3>
+                  <section class="sub-section" layout="column">
+                    <md-input placeholder="Job Appserver Name" type="text" name="jobHttpName" [(ngModel)]="initSettings.jobHttpName" required="required"></md-input>
+                    <md-input placeholder="Job Appserver Port" type="number" name="jobPort" [(ngModel)]="initSettings.jobPort" required="required"></md-input>
+                    <md-input placeholder="Job Database Name" type="text" name="jobDbName" [(ngModel)]="initSettings.jobDbName" required="required"></md-input>
+                    <md-input placeholder="Job Forests Per Host" type="number" name="jobForestsPerHost" [(ngModel)]="initSettings.jobForestsPerHost" required="required"></md-input>
+                  </section>
+                  <h3 class="md-primary">Other</h3>
+                  <section class="sub-section" layout="column">
+                    <md-input placeholder="Modules Database Name" type="text" name="modulesDbName" [(ngModel)]="initSettings.modulesDbName" required="required"></md-input>
+                    <md-input placeholder="Triggers Database Port" type="text" name="triggersDbName" [(ngModel)]="initSettings.triggersDbName" required="required"></md-input>
+                    <md-input placeholder="Schemas Database Name" type="text" name="schemasDbName" [(ngModel)]="initSettings.schemasDbName" required="required"></md-input>
+                    <div>
+                      <div><label>Authentication Method</label></div>
+                      <md-radio-group name="authMethod" [(ngModel)]="initSettings.authMethod">
+                        <md-radio-button value="digest">digest</md-radio-button>
+                        <md-radio-button value="basic">basic</md-radio-button>
+                      </md-radio-group>
+                    </div>
+                  </section>
+                </div>
+              </div>
+              <div layout="row" layout-align="end center" class="init-buttons">
+                <button type="button" md-button (click)="back()">&lt; Back</button>
+                <button type="button" md-button (click)="restoreInitDefaults($event)">Restore Defaults</button>
+                <button type="submit" md-raised-button>Initialize</button>
+              </div>
+            </form>
+
+          </section>
+        </section>
+      </div>
+
+      <div id="PostInit" class="tab-content" [hidden]="!tabs.PostInit">
+        <section layout="column" layout-align="center center" *ngIf="currentProject">
+          <h3>Project Initialized <i class="fa fa-thumbs-up"></i></h3>
+          <p>Project files have been created in</p>
+          <p class="project-path">{{currentProject.path}}</p>
+          <p>Read more about the project structure on the <a target="_blank" href="https://github.com/marklogic/marklogic-data-hub/wiki/Project-Directory-Structure">github wiki</a>.</p>
+        </section>
+        <div layout="row" layout-align="end center" class="init-buttons">
+          <button type="button" md-button (click)="back()">&lt; Back</button>
+          <button type="button" md-raised-button (click)="postInitNext()">Next</button>
+        </div>
+      </div>
+
+
+      <div id="EnvironmentTab" class="tab-content" [hidden]="!tabs.Environment">
+        <section layout="row" layout-align="center center" *ngIf="currentProject">
+          <section class="init-box" layout-fill layout="column" layout-align="center center">
+            <h3>Choose Your Project Environment</h3>
+
+            <select-list
+              [items]="currentProject.environments"
+              [initialSelectedItem]="currentProject.environments[0]"
+              (selectedItem)="gotEnvironment($event)"
+              md-whiteframe-2dp
+              class="shrink-me"></select-list>
+
+            <div layout="row" layout-align="end center" class="init-buttons">
+              <button type="button" md-button (click)="back()">&lt; Back</button>
+              <button type="button" md-raised-button [disabled]="!currentEnvironmentString" (click)="environmentNext()">Next &gt;</button>
+            </div>
+          </section>
+        </section>
+      </div>
+
+      <div id="LoginTab" class="tab-content" [hidden]="!tabs.Login">
+        <section layout="row" layout-align="center center">
+          <section class="login-box" flex layout="column" layout-align="center center">
+            <h3>Login to the Data Hub</h3>
+            <form class="loginForm" (submit)="login()">
+              <div flex layout-fill layout-padding layout="column">
+                <div class="center-text" [hidden]="!loggingIn">
+                  <md-progress-circle mode="indeterminate"></md-progress-circle>
+                </div>
+                <div class="error" *ngIf="loginError">Invalid username or password</div>
+                <md-input placeholder="MarkLogic User Name" id="username" name="username" type="text" [(ngModel)]="loginInfo.username" required="required"></md-input>
+                <md-input placeholder="MarkLogic Password" name="password" type="password" [(ngModel)]="loginInfo.password" required="required"></md-input>
+                <div layout="row" layout-align="end center" class="init-buttons">
+                  <button md-button type="button" (click)="back()">&lt; Back</button>
+                  <button md-raised-button type="submit" [disabled]="loggingIn">Login</button>
+                </div>
+              </div>
+            </form>
+          </section>
+        </section>
+      </div>
+
+      <div id="InstalledCheckTab" class="tab-content" [hidden]="!tabs.InstalledCheck">
+        <section layout="row" layout-align="center center">
+          <section flex layout="column" layout-align="center center">
+            <h3>Checking Project...</h3>
+            <div class="center-text">
+              <md-progress-circle mode="indeterminate"></md-progress-circle>
+            </div>
+          </section>
+        </section>
+      </div>
+
+      <div id="InstallerTab" class="tab-content" [hidden]="!tabs.Installer" *ngIf="currentEnvironment">
+        <div layout="column" layout-align="center center">
+          <div class="shrinky" [ngClass]="(!installing && !currentEnvironment.installed) ? '' : 'collapsed'" layout="column" layout-align="center center">
+            <h3>Installation Needed</h3>
+            <p>In order to continue you must install the Data Hub Framework into
+            MarkLogic server.
+            </p>
+            <div>
+              <button type="button" id="installer-button" md-raised-button (click)="install()">Install</button>
+            </div>
+          </div>
+          <div class="install-progress shrinky" [ngClass]="installing ? '' : 'collapsed'" layout="column" layout-align="center center">
+            <md-progress-circle mode="determinate" [value]="percentComplete"></md-progress-circle>
+            <div>Installing...</div>
+            <div>{{percentComplete}}% complete</div>
+          </div>
+          <div class="shrinky" [ngClass]="currentEnvironment.installed ? '' : 'collapsed'" layout="column" layout-align="center center">
+            <i class="fa fa-thumbs-up"></i>
+            <p>Installation into MarkLogic is complete!</p>
+          </div>
+
+          <div layout="row" layout-align="end center" class="init-buttons">
+            <button type="button" md-button (click)="back()">&lt; Back</button>
+            <button id="finished-button" type="button" md-raised-button [disabled]="!currentEnvironment.installed" (click)="installNext()">Finished</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-xs-1"></div>
+  </div>
+</div>

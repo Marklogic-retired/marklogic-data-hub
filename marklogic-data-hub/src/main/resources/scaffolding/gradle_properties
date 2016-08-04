@@ -1,21 +1,35 @@
-mlHost=%%ML_HOST%%
-mlAppName=marklogic-data-hub
+# These settings are used by the Data Hub Framework when
+# communicating with MarkLogic.
+# The values in this file are meant as project-wide settings.
+# You can override these properties for a specific environment
+# by creating a gradle-{environment}.properties file.
+# For example, to create a properties file for your prod environment create a file
+# named gradle-prod.properties.
+#
+# ....
+mlHost=%%mlHost%%
+mlAppName=%%mlAppName%%
 
-mlStagingAppserverName=data-hub-STAGING
-mlStagingPort=%%STAGING_SERVER_PORT%%
-mlStagingDbName=data-hub-STAGING
-mlStagingForestsPerHost=4
+mlStagingAppserverName=%%mlStagingAppserverName%%
+mlStagingPort=%%mlStagingPort%%
+mlStagingDbName=%%mlStagingDbName%%
+mlStagingForestsPerHost=%%mlStagingForestsPerHost%%
 
-mlFinalAppserverName=data-hub-FINAL
-mlFinalPort=%%FINAL_SERVER_PORT%%
-mlFinalDbName=data-hub-FINAL
-mlFinalForestsPerHost=4
+mlFinalAppserverName=%%mlFinalAppserverName%%
+mlFinalPort=%%mlFinalPort%%
+mlFinalDbName=%%mlFinalDbName%%
+mlFinalForestsPerHost=%%mlFinalForestsPerHost%%
 
-mlTraceAppserverName=data-hub-TRACING
-mlTracePort=%%TRACE_SERVER_PORT%%
-mlTraceDbName=data-hub-TRACING
-mlTraceForestsPerHost=1
+mlTraceAppserverName=%%mlTraceAppserverName%%
+mlTracePort=%%mlTracePort%%
+mlTraceDbName=%%mlTraceDbName%%
+mlTraceForestsPerHost=%%mlTraceForestsPerHost%%
 
-mlModulesDbName=data-hub-MODULES
-mlTriggersDbName=data-hub-TRIGGERS
-mlSchemasDbName=data-hub-SCHEMAS
+mlJobAppserverName=%%mlJobAppserverName%%
+mlJobPort=%%mlJobPort%%
+mlJobDbName=%%mlJobDbName%%
+mlJobForestsPerHost=%%mlJobForestsPerHost%%
+
+mlModulesDbName=%%mlModulesDbName%%
+mlTriggersDbName=%%mlTriggersDbName%%
+mlSchemasDbName=%%mlSchemasDbName%%

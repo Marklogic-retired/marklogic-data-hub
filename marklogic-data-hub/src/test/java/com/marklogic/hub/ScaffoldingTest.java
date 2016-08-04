@@ -7,6 +7,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -40,7 +41,7 @@ public class ScaffoldingTest extends HubTestBase {
     }
 
     @Test
-    public void createEntity() {
+    public void createEntity() throws FileNotFoundException {
         Scaffolding scaffolding = new Scaffolding(projectDir.toString());
         scaffolding.createEntity("my-fun-test");
         assertTrue(projectDir.exists());

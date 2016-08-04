@@ -15,31 +15,114 @@
  */
 package com.marklogic.hub;
 
+import com.marklogic.mgmt.admin.AdminManager;
 import org.custommonkey.xmlunit.XMLUnit;
+import org.easymock.EasyMockRule;
+import org.easymock.Mock;
+import org.easymock.TestSubject;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.springframework.web.client.ResourceAccessException;
+
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
 
 public class DataHubTest extends HubTestBase {
     @Rule
-    public final ExpectedException exception = ExpectedException.none();
+    public EasyMockRule mocks = new EasyMockRule(this);
+
+    @Mock
+    private AdminManager am;
+
+    @TestSubject
+    private DataHub dh = new DataHub(getHubConfig());
 
     @BeforeClass
     public static void setup() {
         XMLUnit.setIgnoreWhitespace(true);
     }
 
-    @Test
-    public void testValidateServer() throws ServerValidationException {
-        DataHub dh = new DataHub(getHubConfig());
+    @Before
+    public void beforeTests() {
+        dh.setAdminManager(am);
+    }
+
+    @Test(expected = ServerValidationException.class)
+    public void testValidateServerPriorTo8withDot() throws ServerValidationException {
+        expect(am.getServerVersion()).andStubReturn("7.0-6.6");
+        replay(am);
+        dh.validateServer();
+    }
+
+    @Test(expected = ServerValidationException.class)
+    public void testValidateServerPriorTo8sansDot() throws ServerValidationException {
+        expect(am.getServerVersion()).andReturn("7.0");
+        replay(am);
+        dh.validateServer();
+    }
+
+    @Test(expected = ServerValidationException.class)
+    public void testValidateServerPriorTo804() throws ServerValidationException {
+        expect(am.getServerVersion()).andReturn("8.0-3.4");
+        replay(am);
         dh.validateServer();
     }
 
     @Test
+    public void testValidateServer804() throws ServerValidationException {
+        expect(am.getServerVersion()).andReturn("8.0-4");
+        replay(am);
+        dh.validateServer();
+    }
+
+    @Test
+    public void testValidateServerBeyond804() throws ServerValidationException {
+        expect(am.getServerVersion()).andReturn("8.0-5");
+        replay(am);
+        dh.validateServer();
+    }
+
+    @Test
+    public void testValidateServerBeyond804WithDot() throws ServerValidationException {
+        expect(am.getServerVersion()).andReturn("8.0-5.2");
+        replay(am);
+        dh.validateServer();
+    }
+
+    @Test
+    public void testValidateServe8nightly() throws ServerValidationException {
+        expect(am.getServerVersion()).andReturn("8.0-20160719");
+        replay(am);
+        dh.validateServer();
+    }
+
+    @Test
+    public void testValidateServer9nightly() throws ServerValidationException {
+        expect(am.getServerVersion()).andReturn("9.0-20160719");
+        replay(am);
+        dh.validateServer();
+    }
+
+    @Test
+    public void testValidateServer9() throws ServerValidationException {
+        expect(am.getServerVersion()).andReturn("9.0");
+        replay(am);
+        dh.validateServer();
+    }
+
+    @Test
+    public void testValidateServerBeyond9() throws ServerValidationException {
+        expect(am.getServerVersion()).andReturn("9.0-2");
+        replay(am);
+        dh.validateServer();
+    }
+
+    @Test(expected = ServerValidationException.class)
     public void testValidateInvalidServer() throws ServerValidationException {
-        DataHub dh = new DataHub("blah", user, password);
-        exception.expect(ServerValidationException.class);
+        expect(am.getServerVersion()).andThrow(new ResourceAccessException("oops"));
+        replay(am);
         dh.validateServer();
     }
 }

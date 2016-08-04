@@ -1,19 +1,8 @@
 package com.marklogic.hub;
 
-import org.springframework.batch.core.JobExecution;
-import org.springframework.batch.core.JobExecutionListener;
-
-public class JobFinishedListener implements JobExecutionListener{
+public class JobFinishedListener implements JobStatusListener {
 
     private boolean isFinished = false;
-
-    @Override
-    public void beforeJob(JobExecution jobExecution) {}
-
-    @Override
-    public void afterJob(JobExecution jobExecution) {
-        isFinished = true;
-    }
 
     public boolean isFinished() {
         return isFinished;
@@ -26,5 +15,10 @@ public class JobFinishedListener implements JobExecutionListener{
             }
             Thread.yield();
         }
+    }
+
+    @Override
+    public void onStatusChange(long jobId, int percentComplete, String message) {
+        isFinished = (percentComplete == 100);
     }
 }

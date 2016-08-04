@@ -1,0 +1,249 @@
+@import 'variables';
+
+$ml-blue: unquote("rgb(#{$palette-datahub-500})");
+
+$path-bg-color: unquote("rgb(#{$palette-datahub-50})");
+
+$path-fg-color: unquote("rgb(#{$palette-datahub-700})");
+
+$subtle-background: unquote("rgb(#{$palette-datahub-400})");
+
+$bg-color: unquote("rgb(#{$palette-datahub-A100})");
+
+$install-border: unquote("rgb(#{$palette-datahub-800})");
+/deep/ md-list {
+  padding-top: 0px;
+}
+
+.credentials-prompt {
+  background-color: $ml-blue;
+  width: 100vw;
+  min-height: 100vh;
+  position: absolute;
+}
+
+a {
+  color: #48afb3;
+}
+
+.marklogic-logo {
+  padding: 20px;
+  img{
+    height: 30px;
+  }
+}
+
+h1, h3, :host /deep/ button[md-button] {
+  color: white;
+}
+
+h3 {
+  font-size: 26px;
+}
+
+.login-wrapper {
+  width: 90%;
+  margin: 1rem auto;
+}
+
+.initForm {
+  h3 {
+    margin-bottom: 0px;
+  }
+}
+
+.init-box > div {
+  width: 100%;
+}
+
+.init-buttons {
+  margin-top: 20px;
+
+  .btn {
+    margin-left: 15px;
+  }
+}
+
+.install-status {
+  max-width: 500px;
+  max-height: 500px;
+  overflow: auto;
+  width: 500px;
+  height: 500px;
+  border: 1px solid $install-border;
+  background-color: $bg-color;
+
+  // pre {
+  //   color: greenyellow;
+  // }
+}
+
+.tab-group {
+  min-width: 500px;
+  max-width: 500px;
+  width: 500px;
+}
+
+#ProjectDirTab {
+
+  .project-browser {
+    p {
+      margin: 2rem 0;
+    }
+  }
+
+  folder-browser {
+    width: 100%;
+    overflow: hidden;
+
+    /deep/ .folder-browser {
+      border: 1px solid $ml-blue;
+    }
+
+    /deep/ input {
+      color: black;
+    }
+  }
+
+  select-list {
+    margin-top: 1rem;
+    overflow: hidden;
+    width: 100%;
+  }
+
+  .shrinkable {
+    width: 100%;
+    overflow: hidden;
+  }
+}
+
+$openDuration: 0.5s;
+.fa-caret-right {
+  transform: rotate(90deg);
+  -webkit-transform: rotate(90deg);
+  transition: transform $openDuration ease-in-out;
+  -webkit-transition: -webkit-transform $openDuration ease-in-out;
+}
+
+.fa-caret-right.collapsed {
+  transform: rotate(0deg);
+  -webkit-transform: rotate(0deg);
+}
+
+.tab-content {
+  background-color: $subtle-background;
+  padding: 2rem;
+  box-shadow: 0px 8px 10px -5px rgba(0, 0, 0, 0.2), 0px 16px 24px 2px rgba(0, 0, 0, 0.14), 0px 6px 30px 5px rgba(0, 0, 0, 0.12);
+
+  /deep/ input,
+  /deep/ label,
+  /deep/ label.md-input-placeholder {
+    color: white;
+  }
+
+  /deep/ div.md-input-underline {
+    border-top: 1px solid rgba(255,255,255,0.25);
+  }
+
+  .scroller {
+    max-height: 350px;
+    overflow: auto;
+  }
+
+  h3 {
+    margin-bottom: 2rem;
+  }
+
+  p {
+    color: white;
+  }
+}
+
+
+#PostInit {
+  .project-path {
+    background-color: $path-bg-color;
+    padding: 15px;
+    border-radius: 5px;
+    color: $path-fg-color;
+  }
+}
+
+#InitIfNeededTab {
+  p {
+    max-width: 100%;
+  }
+
+  .shrinky {
+    overflow: visible;
+    max-height: none;
+
+    &.collapsed {
+      overflow: hidden;
+      max-height: 0px;
+    }
+  }
+
+  .advanced-section {
+    text-align: center;
+  }
+}
+
+#InstallerTab {
+  .fa-thumbs-up {
+    color: white;
+    font-size: 40pt;
+  }
+
+  .install-progress {
+    color: white;
+  }
+}
+
+$openDuration: 0.5s;
+
+$heightDuration: 1.5s;
+$easingFunc: ease-in-out;
+
+
+.shrinky {
+  max-height: 250px;
+  overflow: hidden;
+  position: relative;
+  -webkit-transition: max-height $heightDuration $easingFunc;
+  -moz-transition: max-height $heightDuration $easingFunc;
+  transition: max-height $heightDuration $easingFunc;
+  transform-origin: top;
+
+  &.collapsed {
+    max-height: 0px;
+  }
+}
+
+/deep/ md-progress-circle {
+  path {
+    stroke: white;
+  }
+}
+
+form {
+  display: block;
+  width: 100%;
+}
+
+.error {
+  color: red;
+  text-align: center;
+  padding: 10px;
+  background-color: rgba(255,255,255,0.15);
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+.center-text {
+  md-progress-circle {
+    margin: 0pt auto;
+    width: 25px;
+    height: 25px;
+  }
+}

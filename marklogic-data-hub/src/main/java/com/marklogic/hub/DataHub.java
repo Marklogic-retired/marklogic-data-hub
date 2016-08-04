@@ -15,16 +15,6 @@
  */
 package com.marklogic.hub;
 
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.web.client.ResourceAccessException;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.appdeployer.ConfigDir;
@@ -46,14 +36,7 @@ import com.marklogic.appdeployer.command.forests.ConfigureForestReplicasCommand;
 import com.marklogic.appdeployer.command.groups.DeployGroupsCommand;
 import com.marklogic.appdeployer.command.mimetypes.DeployMimetypesCommand;
 import com.marklogic.appdeployer.command.schemas.LoadSchemasCommand;
-import com.marklogic.appdeployer.command.security.DeployAmpsCommand;
-import com.marklogic.appdeployer.command.security.DeployCertificateAuthoritiesCommand;
-import com.marklogic.appdeployer.command.security.DeployCertificateTemplatesCommand;
-import com.marklogic.appdeployer.command.security.DeployExternalSecurityCommand;
-import com.marklogic.appdeployer.command.security.DeployPrivilegesCommand;
-import com.marklogic.appdeployer.command.security.DeployProtectedCollectionsCommand;
-import com.marklogic.appdeployer.command.security.DeployRolesCommand;
-import com.marklogic.appdeployer.command.security.DeployUsersCommand;
+import com.marklogic.appdeployer.command.security.*;
 import com.marklogic.appdeployer.command.tasks.DeployScheduledTasksCommand;
 import com.marklogic.appdeployer.command.triggers.DeployTriggersCommand;
 import com.marklogic.appdeployer.command.viewschemas.DeployViewSchemasCommand;
@@ -64,11 +47,9 @@ import com.marklogic.client.extensions.ResourceManager;
 import com.marklogic.client.extensions.ResourceServices.ServiceResult;
 import com.marklogic.client.extensions.ResourceServices.ServiceResultIterator;
 import com.marklogic.client.io.JacksonHandle;
-import com.marklogic.client.modulesloader.impl.PropertiesModuleManager;
 import com.marklogic.client.util.RequestParameters;
 import com.marklogic.hub.commands.LoadHubModulesCommand;
 import com.marklogic.hub.commands.LoadUserModulesCommand;
-import com.marklogic.hub.util.PerformanceLogger;
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.ManageConfig;
 import com.marklogic.mgmt.admin.AdminConfig;
@@ -77,15 +58,27 @@ import com.marklogic.mgmt.appservers.ServerManager;
 import com.marklogic.mgmt.databases.DatabaseManager;
 import com.marklogic.rest.util.Fragment;
 import com.marklogic.rest.util.ResourcesFragment;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.web.client.ResourceAccessException;
+
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class DataHub {
 
     static final private Logger LOGGER = LoggerFactory.getLogger(DataHub.class);
 
+
     private ManageConfig config;
     private ManageClient client;
 
     private HubConfig hubConfig;
+
+    private AdminManager adminManager;
 
     public DataHub(HubConfig hubConfig) {
         init(hubConfig);
@@ -94,15 +87,25 @@ public class DataHub {
     public DataHub(String host, String username, String password) {
         hubConfig = new HubConfig();
         hubConfig.host = host;
-        hubConfig.adminUsername = username;
-        hubConfig.adminPassword = password;
+        hubConfig.username = username;
+        hubConfig.password = password;
         init(hubConfig);
     }
 
     private void init(HubConfig hubConfig) {
         this.hubConfig = hubConfig;
-        config = new ManageConfig(hubConfig.host, 8002, hubConfig.adminUsername, hubConfig.adminPassword);
+        config = new ManageConfig(hubConfig.host, 8002, hubConfig.username, hubConfig.password);
         client = new ManageClient(config);
+
+        AdminConfig adminConfig = new AdminConfig();
+        adminConfig.setHost(hubConfig.host);
+        adminConfig.setUsername(hubConfig.username);
+        adminConfig.setPassword(hubConfig.password);
+        adminManager = new AdminManager(adminConfig);
+    }
+
+    public void setAdminManager(AdminManager manager) {
+        this.adminManager = manager;
     }
 
     /**
@@ -110,29 +113,31 @@ public class DataHub {
      * @return true if installed, false otherwise
      */
     public boolean isInstalled() {
-        long startTime = PerformanceLogger.monitorTimeInsideMethod();
-
         ServerManager sm = new ServerManager(client);
         DatabaseManager dm = new DatabaseManager(client);
 
         ResourcesFragment srf = sm.getAsXml();
         boolean stagingAppServerExists = srf.resourceExists(hubConfig.stagingHttpName);
         boolean finalAppServerExists = srf.resourceExists(hubConfig.finalHttpName);
-        boolean tracingAppServerExists = srf.resourceExists(hubConfig.tracingHttpName);
-        boolean appserversOk = (stagingAppServerExists && finalAppServerExists && tracingAppServerExists);
+        boolean traceAppServerExists = srf.resourceExists(hubConfig.traceHttpName);
+        boolean jobAppServerExists = srf.resourceExists(hubConfig.jobHttpName);
+        boolean appserversOk = (stagingAppServerExists && finalAppServerExists && traceAppServerExists && jobAppServerExists);
 
         ResourcesFragment drf = dm.getAsXml();
         boolean stagingDbExists = drf.resourceExists(hubConfig.stagingDbName);
         boolean finalDbExists = drf.resourceExists(hubConfig.finalDbName);
-        boolean tracingDbExists = drf.resourceExists(hubConfig.stagingDbName);
+        boolean traceDbExists = drf.resourceExists(hubConfig.traceDbName);
+        boolean jobDbExists = drf.resourceExists(hubConfig.jobDbName);
 
         boolean stagingForestsExist = false;
         boolean finalForestsExist = false;
-        boolean tracingForestsExist = false;
+        boolean traceForestsExist = false;
+        boolean jobForestsExist = false;
 
         boolean stagingIndexesOn = false;
         boolean finalIndexesOn = false;
-        boolean tracingIndexesOn = false;
+        boolean traceIndexesOn = false;
+        boolean jobIndexesOn = false;
 
         if (stagingDbExists) {
             Fragment f = dm.getPropertiesAsXml(hubConfig.stagingDbName);
@@ -148,18 +153,23 @@ public class DataHub {
             finalForestsExist = (f.getElements("//m:forest").size() == hubConfig.finalForestsPerHost);
         }
 
-        if (tracingDbExists) {
-            tracingIndexesOn = true;
-            Fragment f = dm.getPropertiesAsXml(hubConfig.tracingDbName);
-            tracingForestsExist = (f.getElements("//m:forest").size() == hubConfig.tracingForestsPerHost);
+        if (traceDbExists) {
+            traceIndexesOn = true;
+            Fragment f = dm.getPropertiesAsXml(hubConfig.traceDbName);
+            traceForestsExist = (f.getElements("//m:forest").size() == hubConfig.traceForestsPerHost);
+        }
+
+        if (jobDbExists) {
+            jobIndexesOn = true;
+            Fragment f = dm.getPropertiesAsXml(hubConfig.jobDbName);
+            jobForestsExist = (f.getElements("//m:forest").size() == hubConfig.jobForestsPerHost);
         }
 
         boolean dbsOk = (stagingDbExists && stagingIndexesOn &&
                 finalDbExists && finalIndexesOn &&
-                tracingDbExists && tracingIndexesOn);
-        boolean forestsOk = (stagingForestsExist && finalForestsExist && tracingForestsExist);
-
-        PerformanceLogger.logTimeInsideMethod(startTime, "DataHub.isInstalled");
+                traceDbExists && traceIndexesOn &&
+                jobDbExists && jobIndexesOn);
+        boolean forestsOk = (stagingForestsExist && finalForestsExist && traceForestsExist && jobForestsExist);
 
         return (appserversOk && dbsOk && forestsOk);
     }
@@ -169,19 +179,23 @@ public class DataHub {
      * @throws ServerValidationException if the server is not compatible
      */
     public void validateServer() throws ServerValidationException {
-        long startTime = PerformanceLogger.monitorTimeInsideMethod();
         try {
-            AdminManager am = getAdminManager();
-            String versionString = am.getServerVersion();
-            float version = Float.valueOf(versionString.substring(0, 1) + "." + versionString.substring(2, 3));
-            if (version < 8.4) {
+            String versionString = adminManager.getServerVersion();
+            String alteredString = versionString.replaceAll("[^\\d]+", "");
+            if (alteredString.length() < 3) {
+                alteredString += "0";
+            }
+            int major = Integer.parseInt(alteredString.substring(0, 1));
+            int ver = Integer.parseInt(alteredString.substring(0, 3));
+            boolean isNightly = versionString.matches("[^-]+-\\d{8}");
+            if (major < 8 || (!isNightly && ver < 804)) {
                 throw new ServerValidationException("Invalid MarkLogic Server Version: " + versionString);
             }
+
         }
         catch(ResourceAccessException e) {
             throw new ServerValidationException(e.toString());
         }
-        PerformanceLogger.logTimeInsideMethod(startTime, "DataHub.validateServer");
     }
 
     private AppConfig getAppConfig() {
@@ -194,8 +208,8 @@ public class DataHub {
         config.setHost(hubConfig.host);
         config.setRestPort(hubConfig.stagingPort);
         config.setName(hubConfig.name);
-        config.setRestAdminUsername(hubConfig.adminUsername);
-        config.setRestAdminPassword(hubConfig.adminPassword);
+        config.setRestAdminUsername(hubConfig.username);
+        config.setRestAdminPassword(hubConfig.password);
         config.setModulesDatabaseName(hubConfig.modulesDbName);
 
         config.setTriggersDatabaseName(hubConfig.triggersDbName);
@@ -208,7 +222,7 @@ public class DataHub {
         HashMap<String, Integer> forestCounts = new HashMap<String, Integer>();
         forestCounts.put(hubConfig.stagingDbName, hubConfig.stagingForestsPerHost);
         forestCounts.put(hubConfig.finalDbName, hubConfig.finalForestsPerHost);
-        forestCounts.put(hubConfig.tracingDbName, hubConfig.tracingForestsPerHost);
+        forestCounts.put(hubConfig.traceDbName, hubConfig.traceForestsPerHost);
         forestCounts.put(hubConfig.modulesDbName, 1);
         config.setForestCounts(forestCounts);
 
@@ -217,41 +231,45 @@ public class DataHub {
 
         Map<String, String> customTokens = config.getCustomTokens();
 
-        customTokens.put("%%STAGING_SERVER_NAME%%", hubConfig.stagingHttpName);
-        customTokens.put("%%STAGING_SERVER_PORT%%", hubConfig.stagingPort.toString());
-        customTokens.put("%%STAGING_DB_NAME%%", hubConfig.stagingDbName);
-        customTokens.put("%%STAGING_FORESTS_PER_HOST%%", hubConfig.stagingForestsPerHost.toString());
+        customTokens.put("%%mlStagingAppserverName%%", hubConfig.stagingHttpName);
+        customTokens.put("%%mlStagingPort%%", hubConfig.stagingPort.toString());
+        customTokens.put("%%mlStagingDbName%%", hubConfig.stagingDbName);
+        customTokens.put("%%mlStagingForestsPerHost%%", hubConfig.stagingForestsPerHost.toString());
 
-        customTokens.put("%%FINAL_SERVER_NAME%%", hubConfig.finalHttpName);
-        customTokens.put("%%FINAL_SERVER_PORT%%", hubConfig.finalPort.toString());
-        customTokens.put("%%FINAL_DB_NAME%%", hubConfig.finalDbName);
-        customTokens.put("%%FINAL_FORESTS_PER_HOST%%", hubConfig.finalForestsPerHost.toString());
+        customTokens.put("%%mlFinalAppserverName%%", hubConfig.finalHttpName);
+        customTokens.put("%%mlFinalPort%%", hubConfig.finalPort.toString());
+        customTokens.put("%%mlFinalDbName%%", hubConfig.finalDbName);
+        customTokens.put("%%mlFinalForestsPerHost%%", hubConfig.finalForestsPerHost.toString());
 
-        customTokens.put("%%TRACE_SERVER_NAME%%", hubConfig.tracingHttpName);
-        customTokens.put("%%TRACE_SERVER_PORT%%", hubConfig.tracePort.toString());
-        customTokens.put("%%TRACE_DB_NAME%%", hubConfig.tracingDbName);
-        customTokens.put("%%TRACE_FORESTS_PER_HOST%%", hubConfig.tracingForestsPerHost.toString());
+        customTokens.put("%%mlTraceAppserverName%%", hubConfig.traceHttpName);
+        customTokens.put("%%mlTracePort%%", hubConfig.tracePort.toString());
+        customTokens.put("%%mlTraceDbName%%", hubConfig.traceDbName);
+        customTokens.put("%%mlTraceForestsPerHost%%", hubConfig.traceForestsPerHost.toString());
 
-        customTokens.put("%%MODULES_DB_NAME%%", hubConfig.modulesDbName);
+        customTokens.put("%%mlJobAppserverName%%", hubConfig.jobHttpName);
+        customTokens.put("%%mlJobPort%%", hubConfig.jobPort.toString());
+        customTokens.put("%%mlJobDbName%%", hubConfig.jobDbName);
+        customTokens.put("%%mlJobForestsPerHost%%", hubConfig.jobForestsPerHost.toString());
+
+        customTokens.put("%%mlModulesDbName%%", hubConfig.modulesDbName);
+        customTokens.put("%%mlTriggersDbName%%", hubConfig.triggersDbName);
+        customTokens.put("%%mlSchemasDbName%%", hubConfig.schemasDbName);
     }
 
     public void initProject() {
-        long startTime = PerformanceLogger.monitorTimeInsideMethod();
         LOGGER.info("Initializing the Hub Project");
 
         HubProject hp = new HubProject(hubConfig);
         hp.init();
-
-        PerformanceLogger.logTimeInsideMethod(startTime, "DataHub.initProject");
     }
 
     private DatabaseClient getDatabaseClient(int port) {
         AppConfig config = new AppConfig();
         config.setHost(hubConfig.host);
         config.setName(hubConfig.name);
-        config.setRestAdminUsername(hubConfig.adminUsername);
-        config.setRestAdminPassword(hubConfig.adminPassword);
-        DatabaseClient client = DatabaseClientFactory.newClient(hubConfig.host, port, hubConfig.adminUsername, hubConfig.adminPassword,
+        config.setRestAdminUsername(hubConfig.username);
+        config.setRestAdminPassword(hubConfig.password);
+        DatabaseClient client = DatabaseClientFactory.newClient(hubConfig.host, port, hubConfig.username, hubConfig.password,
                 config.getRestAuthentication(), config.getRestSslContext(), config.getRestSslHostnameVerifier());
         return client;
     }
@@ -260,28 +278,30 @@ public class DataHub {
      * Installs User Provided modules into the Data Hub
      */
     public void installUserModules() {
-        long startTime = PerformanceLogger.monitorTimeInsideMethod();
+        installUserModules(false);
+    }
+
+    public void installUserModules(boolean force) {
         LOGGER.debug("Installing user modules into MarkLogic");
 
         List<Command> commands = new ArrayList<Command>();
-        commands.add(new LoadUserModulesCommand(hubConfig));
+        LoadUserModulesCommand lumc = new LoadUserModulesCommand(hubConfig);
+        lumc.setForceLoad(force);
+        commands.add(lumc);
+
 
         AppConfig config = getAppConfig();
-        SimpleAppDeployer deployer = new SimpleAppDeployer(client, getAdminManager());
+        SimpleAppDeployer deployer = new SimpleAppDeployer(client, adminManager);
         deployer.setCommands(commands);
         deployer.deploy(config);
-        PerformanceLogger.logTimeInsideMethod(startTime, "DataHub.installUserModules");
     }
 
     public JsonNode validateUserModules() {
-        long startTime = PerformanceLogger.monitorTimeInsideMethod();
         LOGGER.debug("validating user modules");
 
         DatabaseClient client = getDatabaseClient(hubConfig.stagingPort);
         EntitiesValidator ev = new EntitiesValidator(client);
         JsonNode jsonNode = ev.validate();
-
-        PerformanceLogger.logTimeInsideMethod(startTime, "DataHub.validateUserModules");
 
         return jsonNode;
     }
@@ -316,7 +336,7 @@ public class DataHub {
         commands.add(new DeployOtherServersCommand());
 
         // Modules
-        commands.add(new LoadHubModulesCommand());
+        commands.add(new LoadHubModulesCommand(hubConfig));
 
         // Alerting
         List<Command> alertCommands = new ArrayList<Command>();
@@ -371,53 +391,30 @@ public class DataHub {
         return commands;
     }
 
-    private AdminManager getAdminManager() {
-        AdminConfig adminConfig = new AdminConfig();
-        adminConfig.setHost(hubConfig.host);
-        adminConfig.setUsername(hubConfig.adminUsername);
-        adminConfig.setPassword(hubConfig.adminPassword);
-        AdminManager manager = new AdminManager(adminConfig);
-        return manager;
-    }
-
     /**
      * Installs the data hub configuration and server-side modules into MarkLogic
      */
-    public void install() {
+    public void install(StatusListener listener) {
         initProject();
 
-        long startTime = PerformanceLogger.monitorTimeInsideMethod();
         LOGGER.info("Installing the Data Hub into MarkLogic");
 
-        // clean up any lingering cache for deployed modules
-        PropertiesModuleManager moduleManager = new PropertiesModuleManager();
-        moduleManager.deletePropertiesFile();
-
         AppConfig config = getAppConfig();
-        SimpleAppDeployer deployer = new SimpleAppDeployer(client, getAdminManager());
+        HubAppDeployer deployer = new HubAppDeployer(client, adminManager, listener);
         deployer.setCommands(getCommands(config));
         deployer.deploy(config);
-
-        PerformanceLogger.logTimeInsideMethod(startTime, "DataHub.install");
     }
 
     /**
      * Uninstalls the data hub configuration and server-side modules from MarkLogic
      */
-    public void uninstall() {
-        long startTime = PerformanceLogger.monitorTimeInsideMethod();
+    public void uninstall(StatusListener listener) {
         LOGGER.debug("Uninstalling the Data Hub from MarkLogic");
 
         AppConfig config = getAppConfig();
-        SimpleAppDeployer deployer = new SimpleAppDeployer(client, getAdminManager());
+        HubAppDeployer deployer = new HubAppDeployer(client, adminManager, listener);
         deployer.setCommands(getCommands(config));
         deployer.undeploy(config);
-
-        // clean up any lingering cache for deployed modules
-        PropertiesModuleManager moduleManager = new PropertiesModuleManager();
-        moduleManager.deletePropertiesFile();
-
-        PerformanceLogger.logTimeInsideMethod(startTime, "DataHub.uninstall");
     }
 
     class EntitiesValidator extends ResourceManager {

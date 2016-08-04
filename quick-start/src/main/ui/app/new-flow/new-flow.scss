@@ -1,0 +1,21 @@
+.new-flow-dialog {
+  min-width: 500px;
+  width: 500px;
+
+  label {
+    margin: 10px 0;
+  }
+
+  select-list {
+    border: 1px solid #ccc;
+    margin-bottom: 10px;
+
+    md-list {
+      padding: 0px;
+    }
+  }
+
+  .md-dialog-content {
+    padding-bottom: 0px;
+  }
+}

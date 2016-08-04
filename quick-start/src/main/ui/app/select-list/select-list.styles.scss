@@ -1,0 +1,59 @@
+@import 'variables';
+
+$primary: unquote("rgb(#{$color-primary})");
+$highlight-color: unquote("rgb(#{$palette-datahub-A100})");
+
+.select-list {
+
+  display: block;
+
+  padding-top: 0px;
+
+  md-list-item {
+    display: block;
+  }
+  background-color: white;
+  &.readonly {
+    color: #ccc;
+
+    cursor: inherit;
+
+    .fa-check {
+      &.active {
+        color: #ccc;
+      }
+    }
+
+    /deep/ .md-list-item {
+      &:hover {
+        background-color: transparent;
+      }
+    }
+  }
+
+  cursor: pointer;
+
+  .fa-check {
+    margin-right: 10px;
+
+    color: transparent;
+
+    &.active {
+      color: $primary;
+    }
+  }
+
+  .fa-trash {
+    color: red;
+    margin-left: 20px;
+  }
+
+  /deep/ .md-list-item {
+    &:hover {
+      background-color: $highlight-color;
+    }
+  }
+
+  min-width: 200px;
+
+}

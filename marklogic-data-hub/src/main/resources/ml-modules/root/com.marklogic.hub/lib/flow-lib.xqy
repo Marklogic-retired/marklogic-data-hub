@@ -759,8 +759,8 @@ declare function flow:run-writer(
     trace:plugin-trace(
       $identifier,
       $module-uri,
-      $flow-type,
       "writer",
+      $flow-type,
       $envelope,
       if ($envelope instance of element()) then ()
       else null-node {},

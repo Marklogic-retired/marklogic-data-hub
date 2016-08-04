@@ -5,6 +5,8 @@ public enum PluginFormat {
 
     private String name;
 
+    PluginFormat() {}
+
     PluginFormat(String name) {
         this.name = name;
     }

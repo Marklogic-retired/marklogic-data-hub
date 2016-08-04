@@ -3,11 +3,16 @@ package com.marklogic.hub.commands;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.DatabaseClientFactory;
+import com.marklogic.client.modulesloader.impl.PropertiesModuleManager;
+import com.marklogic.hub.HubConfig;
 import org.apache.commons.io.IOUtils;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
@@ -32,7 +37,6 @@ import com.marklogic.xcc.ContentSource;
 import com.marklogic.xcc.ContentSourceFactory;
 import com.marklogic.xcc.SecurityOptions;
 import com.marklogic.xcc.Session;
-import com.marklogic.xcc.Session.TransactionMode;
 import com.marklogic.xcc.exceptions.RequestException;
 
 public class LoadHubModulesCommand extends AbstractCommand {
@@ -50,19 +54,12 @@ public class LoadHubModulesCommand extends AbstractCommand {
 
     private JarExtensionMetadataProvider extensionMetadataProvider;
 
-    public LoadHubModulesCommand() {
+    private HubConfig hubConfig;
+
+    public LoadHubModulesCommand(HubConfig hubConfig) {
         setExecuteSortOrder(SortOrderConstants.LOAD_MODULES);
         this.extensionMetadataProvider = new JarExtensionMetadataProvider();
-    }
-
-    /**
-     * Public so that a client can initialize the ModulesLoader and then access it via the getter; this is useful for a
-     * tool like ml-gradle, where the ModulesLoader can be reused by multiple tasks.
-     *
-     * @param context - the command context
-     */
-    public void initializeDefaultModulesLoader(CommandContext context) {
-        logger.info("Initializing instance of DefaultModulesLoader");
+        this.hubConfig = hubConfig;
     }
 
     private List<Resource> findResources(String basePath, String... paths) throws IOException {
@@ -101,11 +98,28 @@ public class LoadHubModulesCommand extends AbstractCommand {
     protected void initializeActiveSession(CommandContext context) {
         AppConfig config = context.getAppConfig();
         XccAssetLoader xccAssetLoader = context.getAppConfig().newXccAssetLoader();
+
         this.modulesLoader = new DefaultModulesLoader(xccAssetLoader);
+        File timestampFile = Paths.get(hubConfig.projectDir, ".tmp", "hub-modules-deploy-timestamps.properties").toFile();
+        PropertiesModuleManager propsManager = new PropertiesModuleManager(timestampFile);
+        propsManager.deletePropertiesFile();
+        this.modulesLoader.setModulesManager(propsManager);
         this.modulesLoader.setDatabaseClient(config.newDatabaseClient());
         ContentSource cs = ContentSourceFactory.newContentSource(config.getHost(), port, config.getRestAdminUsername(), config.getRestAdminPassword(), config.getModulesDatabaseName(),
                 securityOptions);
         activeSession = cs.newSession();
+    }
+
+    private DatabaseClient jobDbClient() {
+        DatabaseClientFactory.Authentication authMethod = DatabaseClientFactory.Authentication
+            .valueOf(hubConfig.authMethod.toUpperCase());
+        return DatabaseClientFactory.newClient(hubConfig.host, hubConfig.jobPort, hubConfig.jobDbName, hubConfig.username, hubConfig.password, authMethod);
+    }
+
+    private DatabaseClient traceDbClient() {
+        DatabaseClientFactory.Authentication authMethod = DatabaseClientFactory.Authentication
+            .valueOf(hubConfig.authMethod.toUpperCase());
+        return DatabaseClientFactory.newClient(hubConfig.host, hubConfig.tracePort, hubConfig.traceDbName, hubConfig.username, hubConfig.password, authMethod);
     }
 
     @Override
@@ -118,7 +132,7 @@ public class LoadHubModulesCommand extends AbstractCommand {
             AppConfig appConfig = context.getAppConfig();
             ArrayList<String> classpaths = new ArrayList<String>();
             classpaths.add("/com.marklogic.hub/**/*.x??");
-            classpaths.add("/trace-ui/**/*");
+            classpaths.add("/trace-ui/**/*.*");
 
             ArrayList<Content> content = new ArrayList<Content>();
             for (String classpath : classpaths) {
@@ -169,9 +183,38 @@ public class LoadHubModulesCommand extends AbstractCommand {
                 ExtensionMetadataAndParams emap = extensionMetadataProvider.provideExtensionMetadataAndParams(r);
                 this.modulesLoader.installTransform(r, emap.metadata);
             }
+            resources = findResources("classpath*:/ml-modules/transforms", "/**/*.sjs");
+            for (Resource r : resources) {
+                ExtensionMetadataAndParams emap = extensionMetadataProvider.provideExtensionMetadataAndParams(r);
+                this.modulesLoader.installTransform(r, emap.metadata);
+            }
             endTime = System.nanoTime();
             duration = (endTime - startTime);
             logger.info("Rest Transforms took: " + (duration / 1000000000) + " seconds");
+
+            logger.info("Loading Trace Rest Options");
+            // switch to job db to do this:
+            this.modulesLoader.setDatabaseClient(traceDbClient());
+            startTime = System.nanoTime();
+            resources = findResources("classpath*:/ml-modules/options", "/**/traces.xml");
+            for (Resource r : resources) {
+                this.modulesLoader.installQueryOptions(r);
+            }
+            endTime = System.nanoTime();
+            duration = (endTime - startTime);
+            logger.info("Trace Rest Options took: " + (duration / 1000000000) + " seconds");
+
+            logger.info("Loading Job Rest Options");
+            // switch to job db to do this:
+            this.modulesLoader.setDatabaseClient(jobDbClient());
+            startTime = System.nanoTime();
+            resources = findResources("classpath*:/ml-modules/options", "/**/spring-batch.xml");
+            for (Resource r : resources) {
+                this.modulesLoader.installQueryOptions(r);
+            }
+            endTime = System.nanoTime();
+            duration = (endTime - startTime);
+            logger.info("Job Rest Options took: " + (duration / 1000000000) + " seconds");
 
             logger.info("Finished Loading Modules");
         }

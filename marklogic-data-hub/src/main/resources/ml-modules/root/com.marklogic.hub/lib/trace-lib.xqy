@@ -55,9 +55,9 @@ declare function trace:enabled() as xs:boolean
       fn:false()
 };
 
-declare function trace:has-errors()
+declare function trace:has-errors() as xs:boolean
 {
-  map:get($current-trace-settings, "_has_errors") eq fn:true()
+  (map:get($current-trace-settings, "_has_errors"), fn:false())[1] eq fn:true()
 };
 
 declare function trace:init-trace($format as xs:string)
@@ -79,6 +79,7 @@ declare function trace:write-trace()
           element created { map:get($current-trace, "created") },
           element identifier { map:get($current-trace, "identifier") },
           element flowType { map:get($current-trace, "flowType") },
+          element hasError { trace:has-errors() },
           for $key in ("collectorPlugin", "contentPlugin", "headersPlugin", "triplesPlugin", "writerPlugin")
           let $m := map:get($current-trace, $key)
           return
@@ -241,6 +242,8 @@ declare function trace:_walk_json($nodes as node()* ,$o)
         map:put($o, fn:local-name($n), xdmp:quote($n/node(), $quote-options))
       case element(duration) return
         map:put($o, "duration", fn:seconds-from-duration(xs:dayTimeDuration($n)))
+      case element(hasError) return
+        map:put($o, "hasError", xs:boolean($n))
       case element() return
         if ($n/*) then
           let $oo := json:object()

@@ -1,0 +1,15 @@
+<div class="dialog-container" [ngClass]="{'active': isActive()}">
+  <div #dlg class="mdl-dialog confirm-dialog" [ngClass]="{'active': isActive()}">
+    <div class="mdl-dialog__title">{{title}}</div>
+    <div class="mdl-dialog__content">
+      <div class="modal-body">
+      {{textContent}}
+      </div>
+      <div class="mdl-dialog__actions">
+        <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect" (click)="ok()">{{okText}}</button>
+        <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" (click)="cancel()">{{cancelText}}</button>
+      </div>
+    </div>
+  </div>
+  <div class="modal-backdrop"></div>
+</div>

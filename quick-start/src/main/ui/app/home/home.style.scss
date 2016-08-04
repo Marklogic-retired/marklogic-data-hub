@@ -1,0 +1,128 @@
+@import 'variables';
+
+$highlight-color: unquote("rgb(#{$palette-datahub-50})");
+$hover-color: unquote("rgb(#{$palette-datahub-A100})");
+$layout-title-color: unquote("rgb(#{$palette-datahub-100})");
+$button-color: unquote("rgb(#{$palette-datahub-500})");
+$mlcp-border: unquote("rgb(#{$palette-datahub-800})");
+$list-bg-color: #f1f1ff;
+$heightDuration: 0.5s;
+$fadeDuration: 1s;
+
+$easingFunc: cubic-bezier(0.165, 0.840, 0.440, 1.000);
+$openDuration: 0.5s;
+
+.mdl-layout__drawer {
+  width: 300px;
+}
+
+.mdl-layout--fixed-drawer > .mdl-layout__content {
+  margin-left: 300px;
+}
+
+.entities {
+  margin-top: 0px;
+  padding-top: 0px;
+}
+
+.entity {
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.flow-container {
+  .padder {
+    padding: 10px;
+  }
+  padding: 0px;
+  width: 100%;
+  box-sizing: border-box;
+  max-height: 5000px;
+  overflow: hidden;
+  position: relative;
+  -webkit-transition: max-height $heightDuration $easingFunc;
+  -moz-transition: max-height $heightDuration $easingFunc;
+  transition: max-height $heightDuration $easingFunc;
+  background-color: $list-bg-color;
+
+  &.collapsed {
+    max-height: 0px;
+    background-color: initial;
+  }
+
+}
+
+.flow {
+  &:hover {
+    background-color: $hover-color;
+  }
+}
+.subheader {
+  font-weight: bold;
+  margin: 0px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.mdl-list {
+  width: 100%;
+  padding: 0px;
+}
+
+.mdl-layout__drawer > .mdl-layout__title,
+.mdl-layout__drawer > .mdl-layout-title {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  padding-left: 20px;
+  padding-right: 20px;
+  background-color: $layout-title-color;
+  color: black;
+}
+
+.mdl-list__item {
+  padding: 0px;
+}
+
+.mdl-list__item .mdl-list__item-primary-content i.fa-industry {
+  margin-right: 10px;
+}
+
+.mdl-list__item-primary-content {
+  overflow: auto;
+  cursor: pointer;
+  width: 100%;
+  padding: 12px 8px;
+  &.active {
+    background-color: $highlight-color;
+  }
+  &:hover {
+    background-color: $hover-color;
+  }
+
+  .fa-caret-left {
+    transform: rotate(-90deg);
+    -webkit-transform: rotate(-90deg);
+    transition: transform $openDuration ease-in-out;
+    -webkit-transition: -webkit-transform $openDuration ease-in-out;
+    margin-right: 20px;
+  }
+
+  .fa.collapsed {
+    transform: rotate(0deg);
+    -webkit-transform: rotate(0deg);
+  }
+
+}
+
+.mlcp-status {
+  margin: 2rem;
+  pre {
+    margin: 0px;
+    border: 1px solid $mlcp-border;
+    background-color: $hover-color;
+    padding: 1rem;
+    overflow: auto;
+  }
+}
