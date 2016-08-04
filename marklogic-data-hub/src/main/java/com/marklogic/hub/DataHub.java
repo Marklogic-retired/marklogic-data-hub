@@ -26,7 +26,6 @@ import com.marklogic.appdeployer.command.appservers.DeployOtherServersCommand;
 import com.marklogic.appdeployer.command.cpf.DeployCpfConfigsCommand;
 import com.marklogic.appdeployer.command.cpf.DeployDomainsCommand;
 import com.marklogic.appdeployer.command.cpf.DeployPipelinesCommand;
-import com.marklogic.appdeployer.command.databases.DeployOtherDatabasesCommand;
 import com.marklogic.appdeployer.command.databases.DeploySchemasDatabaseCommand;
 import com.marklogic.appdeployer.command.databases.DeployTriggersDatabaseCommand;
 import com.marklogic.appdeployer.command.flexrep.DeployConfigsCommand;
@@ -48,6 +47,7 @@ import com.marklogic.client.extensions.ResourceServices.ServiceResult;
 import com.marklogic.client.extensions.ResourceServices.ServiceResultIterator;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.client.util.RequestParameters;
+import com.marklogic.hub.commands.DeployHubDatabasesCommand;
 import com.marklogic.hub.commands.LoadHubModulesCommand;
 import com.marklogic.hub.commands.LoadUserModulesCommand;
 import com.marklogic.mgmt.ManageClient;
@@ -323,7 +323,7 @@ public class DataHub {
 
         // Databases
         List<Command> dbCommands = new ArrayList<>();
-        dbCommands.add(new DeployOtherDatabasesCommand());
+        dbCommands.add(new DeployHubDatabasesCommand());
         dbCommands.add(new DeployTriggersDatabaseCommand());
         dbCommands.add(new DeploySchemasDatabaseCommand());
         commands.addAll(dbCommands);

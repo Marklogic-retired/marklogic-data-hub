@@ -1,42 +1,14 @@
 package com.marklogic.gradle
 
-import org.gradle.api.Plugin
-import org.gradle.api.Project
-import org.slf4j.LoggerFactory
-
-import com.marklogic.appdeployer.AppConfig
 import com.marklogic.appdeployer.AppDeployer
-import com.marklogic.hub.DefaultHubConfigFactory
-import com.marklogic.hub.DataHub
-import com.marklogic.hub.commands.LoadHubModulesCommand
-import com.marklogic.hub.commands.LoadUserModulesCommand
-
-import com.marklogic.gradle.task.InitProjectTask
-import com.marklogic.gradle.task.CreateEntityTask
-import com.marklogic.gradle.task.CreateHarmonizeFlowTask
-import com.marklogic.gradle.task.CreateInputFlowTask
-import com.marklogic.gradle.task.RunFlowTask
-import com.marklogic.gradle.task.EnableDebuggingTask
-import com.marklogic.gradle.task.DisableDebuggingTask
-import com.marklogic.gradle.task.EnableTracingTask
-import com.marklogic.gradle.task.DisableTracingTask
-import com.marklogic.gradle.task.DeployHubModulesTask
-import com.marklogic.gradle.task.DeployUserModulesTask
-import com.marklogic.gradle.task.HubWatchTask
-import com.marklogic.hub.HubConfig
-import com.marklogic.gradle.ProjectPropertySource
-
 import com.marklogic.appdeployer.command.Command
-import com.marklogic.appdeployer.command.CommandContext
 import com.marklogic.appdeployer.command.alert.DeployAlertActionsCommand
 import com.marklogic.appdeployer.command.alert.DeployAlertConfigsCommand
 import com.marklogic.appdeployer.command.alert.DeployAlertRulesCommand
 import com.marklogic.appdeployer.command.appservers.DeployOtherServersCommand
-import com.marklogic.appdeployer.command.appservers.UpdateRestApiServersCommand
 import com.marklogic.appdeployer.command.cpf.DeployCpfConfigsCommand
 import com.marklogic.appdeployer.command.cpf.DeployDomainsCommand
 import com.marklogic.appdeployer.command.cpf.DeployPipelinesCommand
-import com.marklogic.appdeployer.command.databases.DeployOtherDatabasesCommand
 import com.marklogic.appdeployer.command.databases.DeploySchemasDatabaseCommand
 import com.marklogic.appdeployer.command.databases.DeployTriggersDatabaseCommand
 import com.marklogic.appdeployer.command.flexrep.DeployConfigsCommand
@@ -45,19 +17,21 @@ import com.marklogic.appdeployer.command.flexrep.DeployTargetsCommand
 import com.marklogic.appdeployer.command.forests.ConfigureForestReplicasCommand
 import com.marklogic.appdeployer.command.groups.DeployGroupsCommand
 import com.marklogic.appdeployer.command.mimetypes.DeployMimetypesCommand
-import com.marklogic.appdeployer.command.restapis.DeployRestApiServersCommand
-import com.marklogic.appdeployer.command.schemas.LoadSchemasCommand
-import com.marklogic.appdeployer.command.security.DeployAmpsCommand
-import com.marklogic.appdeployer.command.security.DeployCertificateAuthoritiesCommand
-import com.marklogic.appdeployer.command.security.DeployCertificateTemplatesCommand
-import com.marklogic.appdeployer.command.security.DeployExternalSecurityCommand
-import com.marklogic.appdeployer.command.security.DeployPrivilegesCommand
-import com.marklogic.appdeployer.command.security.DeployProtectedCollectionsCommand
-import com.marklogic.appdeployer.command.security.DeployRolesCommand
-import com.marklogic.appdeployer.command.security.DeployUsersCommand
+import com.marklogic.appdeployer.command.security.*
 import com.marklogic.appdeployer.command.tasks.DeployScheduledTasksCommand
 import com.marklogic.appdeployer.command.triggers.DeployTriggersCommand
 import com.marklogic.appdeployer.command.viewschemas.DeployViewSchemasCommand
+import com.marklogic.gradle.ProjectPropertySource
+import com.marklogic.gradle.task.*
+import com.marklogic.hub.DataHub
+import com.marklogic.hub.DefaultHubConfigFactory
+import com.marklogic.hub.HubConfig
+import com.marklogic.hub.commands.DeployHubDatabasesCommand
+import com.marklogic.hub.commands.LoadHubModulesCommand
+import com.marklogic.hub.commands.LoadUserModulesCommand
+import org.gradle.api.Plugin
+import org.gradle.api.Project
+import org.slf4j.LoggerFactory
 
 class DataHubPlugin implements Plugin<Project> {
 
@@ -123,7 +97,7 @@ class DataHubPlugin implements Plugin<Project> {
 
         // Databases
         List<Command> dbCommands = new ArrayList<>()
-        dbCommands.add(new DeployOtherDatabasesCommand())
+        dbCommands.add(new DeployHubDatabasesCommand())
         dbCommands.add(new DeployTriggersDatabaseCommand())
         dbCommands.add(new DeploySchemasDatabaseCommand())
         project.mlDatabaseCommands.clear()

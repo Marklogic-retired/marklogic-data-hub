@@ -34,6 +34,7 @@ public class HubProject {
 
         customTokens.put("%%mlHost%%", hubConfig.host);
         customTokens.put("%%mlAppName%%", hubConfig.name);
+        customTokens.put("%%mlAdminUsername%%", hubConfig.username);
         customTokens.put("%%mlStagingAppserverName%%", hubConfig.stagingHttpName);
         customTokens.put("%%mlStagingPort%%", hubConfig.stagingPort.toString());
         customTokens.put("%%mlStagingDbName%%", hubConfig.stagingDbName);
@@ -105,7 +106,11 @@ public class HubProject {
 
             String fileContents = IOUtils.toString(inputStream);
             for (String key : customTokens.keySet()) {
-                fileContents = fileContents.replace(key, customTokens.get(key));
+
+                String value = customTokens.get(key);
+                if (value != null) {
+                    fileContents = fileContents.replace(key, value);
+                }
             }
             FileWriter writer = new FileWriter(dstFile.toFile());
             writer.write(fileContents);
