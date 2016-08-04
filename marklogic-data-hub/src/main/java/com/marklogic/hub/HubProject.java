@@ -29,7 +29,7 @@ public class HubProject {
         this.hubConfig = config;
         this.projectDirStr = config.projectDir;
         this.projectDir = Paths.get(this.projectDirStr);
-        this.configDir = Paths.get(this.projectDirStr, "config");
+        this.configDir = Paths.get(this.projectDirStr, "marklogic-config");
         this.pluginsDir = Paths.get(this.projectDirStr, "plugins");
 
         customTokens.put("%%mlHost%%", hubConfig.host);

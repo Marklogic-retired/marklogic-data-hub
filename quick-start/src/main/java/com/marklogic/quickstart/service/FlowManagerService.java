@@ -60,6 +60,8 @@ public class FlowManagerService extends LoggingObject{
         Path flowPath = entityPath.resolve(flowType.toString());
         List<String> flowNames = FileUtil.listDirectFolders(flowPath.toFile());
         for (String flowName : flowNames) {
+            if (flowName.equals("REST")) continue;
+
             Flow f = AbstractFlow.loadFromFile(flowPath.resolve(flowName).resolve(flowName + ".xml").toFile());
             FlowModel flow = new FlowModel(entityName, flowName);
             if (f != null) {

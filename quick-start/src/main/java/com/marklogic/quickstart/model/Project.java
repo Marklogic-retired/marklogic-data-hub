@@ -26,7 +26,7 @@ public class Project {
     public boolean isInitialized() {
         File buildGradle = new File(this.path, "build.gradle");
         File gradleProperties = new File(this.path, "gradle.properties");
-        File configDir = new File(this.path, "config");
+        File configDir = new File(this.path, "marklogic-config");
         File databasesDir = new File(configDir, "databases");
         File serversDir = new File(configDir, "servers");
 

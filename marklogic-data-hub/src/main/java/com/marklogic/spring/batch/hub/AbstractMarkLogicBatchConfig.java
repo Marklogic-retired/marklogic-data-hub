@@ -45,7 +45,7 @@ public abstract class AbstractMarkLogicBatchConfig extends LoggingObject impleme
     /**
      * Convenience method for retrieving the "main" DatabaseClient instance.
      *
-     * @return
+     * @return a database client
      */
     protected DatabaseClient getDatabaseClient() {
         return databaseClientProvider.getDatabaseClient();

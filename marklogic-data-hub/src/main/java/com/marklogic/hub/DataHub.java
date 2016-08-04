@@ -226,7 +226,7 @@ public class DataHub {
         forestCounts.put(hubConfig.modulesDbName, 1);
         config.setForestCounts(forestCounts);
 
-        ConfigDir configDir = new ConfigDir(Paths.get(hubConfig.projectDir, "config").toFile());
+        ConfigDir configDir = new ConfigDir(Paths.get(hubConfig.projectDir, "marklogic-config").toFile());
         config.setConfigDir(configDir);
 
         Map<String, String> customTokens = config.getCustomTokens();
@@ -393,6 +393,7 @@ public class DataHub {
 
     /**
      * Installs the data hub configuration and server-side modules into MarkLogic
+     * @param listener - the callback method to receive status updates
      */
     public void install(StatusListener listener) {
         initProject();
@@ -407,6 +408,7 @@ public class DataHub {
 
     /**
      * Uninstalls the data hub configuration and server-side modules from MarkLogic
+     * @param listener - the callback method to receive status updates
      */
     public void uninstall(StatusListener listener) {
         LOGGER.debug("Uninstalling the Data Hub from MarkLogic");
