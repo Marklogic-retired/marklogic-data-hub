@@ -10,6 +10,9 @@
 mlHost=%%mlHost%%
 mlAppName=%%mlAppName%%
 
+mlAdminUsername=
+mlAdminPassword=
+
 mlStagingAppserverName=%%mlStagingAppserverName%%
 mlStagingPort=%%mlStagingPort%%
 mlStagingDbName=%%mlStagingDbName%%

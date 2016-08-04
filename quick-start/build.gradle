@@ -19,6 +19,7 @@ plugins {
 }
 
 apply plugin: 'spring-boot'
+apply plugin: 'war'
 
 repositories {
     jcenter()
@@ -70,11 +71,15 @@ task watchUI(type:Exec) {
 build.dependsOn buildUI
 
 bootRun {
-  addResources = true
-  environment 'spring.profiles.active', 'dev'
+    addResources = true
+    environment 'spring.profiles.active', 'dev'
 }
 
 springBoot {
-  executable = true
-  mainClass = "com.marklogic.quickstart.Application"
+    executable = true
+    mainClass = "com.marklogic.quickstart.Application"
+}
+
+war {
+    baseName = 'quick-start'
 }

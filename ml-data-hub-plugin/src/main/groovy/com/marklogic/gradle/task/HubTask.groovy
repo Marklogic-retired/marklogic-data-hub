@@ -45,8 +45,8 @@ class HubTask extends DefaultTask {
         return DatabaseClientFactory.newClient(
                 hc.host,
                 hc.stagingPort,
-                hc.adminUsername,
-                hc.adminPassword,
+                hc.username,
+                hc.password,
                 authMethod);
     }
 
