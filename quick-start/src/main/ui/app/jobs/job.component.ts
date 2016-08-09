@@ -80,4 +80,14 @@ export class Jobs {
     }
     return '';
   }
+
+  private getIconClass(flowType: string) {
+    if (flowType === 'Harmonize') {
+      return 'mdi-looks';
+    }
+    else if (flowType === 'Input') {
+      return 'mdi-import';
+    }
+    return '';
+  }
 }

@@ -20,6 +20,10 @@ $openDuration: 0.5s;
   margin-left: 300px;
 }
 
+.page-content {
+  padding: 24px;
+}
+
 .entities {
   margin-top: 0px;
   padding-top: 0px;
@@ -85,8 +89,10 @@ $openDuration: 0.5s;
   padding: 0px;
 }
 
-.mdl-list__item .mdl-list__item-primary-content i.fa-industry {
-  margin-right: 10px;
+.mdl-list__item .mdl-list__item-primary-content {
+  i {
+    margin-right: 10px;
+  }
 }
 
 .mdl-list__item-primary-content {
@@ -124,5 +130,11 @@ $openDuration: 0.5s;
     background-color: $hover-color;
     padding: 1rem;
     overflow: auto;
+  }
+}
+
+.current-flow {
+  ul {
+    list-style: none;
   }
 }

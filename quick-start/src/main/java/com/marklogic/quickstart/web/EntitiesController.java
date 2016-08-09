@@ -137,6 +137,28 @@ class EntitiesController extends BaseController {
         return resp;
     }
 
+    @RequestMapping(value = "/entities/{entityName}/flows/{flowType}/{flowName}/save-input-options", method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseEntity<?> saveInputFlowOptions(
+        @PathVariable int projectId,
+        @PathVariable String environment,
+        @PathVariable String entityName,
+        @PathVariable FlowType flowType,
+        @PathVariable String flowName,
+        @RequestBody JsonNode json) throws IOException {
+
+        requireAuth();
+
+        ResponseEntity<BigInteger> resp = null;
+
+        projectManagerService.getProject(projectId);
+
+        flowManagerService.saveOrUpdateFlowMlcpOptionsToFile(entityName,
+            flowName, json.toString());
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
     @RequestMapping(value = "/entities/{entityName}/flows/{flowType}/{flowName}/run/input", method = RequestMethod.POST)
     @ResponseBody
     public JobExecution runInputFlow(

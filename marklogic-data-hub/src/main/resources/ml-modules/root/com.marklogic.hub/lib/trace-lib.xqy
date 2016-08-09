@@ -71,7 +71,28 @@ declare function trace:write-trace()
     let $format := map:get($current-trace-settings, "data-format")
     let $trace :=
       if ($format eq $FORMAT-JSON) then
-        xdmp:to-json($current-trace)
+        xdmp:to-json((
+          map:new((
+            map:entry("format", map:get($current-trace, "format")),
+            map:entry("traceId", map:get($current-trace, "traceId")),
+            map:entry("created", map:get($current-trace, "created")),
+            map:entry("identifier", map:get($current-trace, "identifier")),
+            map:entry("flowType", map:get($current-trace, "flowType")),
+            map:entry("hasError", trace:has-errors()),
+            for $key in ("collectorPlugin", "contentPlugin", "headersPlugin", "triplesPlugin", "writerPlugin")
+            let $m := map:get($current-trace, $key)
+            return
+              if (fn:exists($m)) then
+                map:entry($key, map:new((
+                  map:entry("pluginModuleUri", map:get($m, "pluginModuleUri")),
+                  map:entry("input", map:get($m, "input")),
+                  map:entry("output", map:get($m, "output")),
+                  map:entry("error", map:get($m, "error")),
+                  map:entry("duration", map:get($m, "duration"))
+                )))
+              else ()
+          ))
+        ))
       else
         element trace {
           element format { map:get($current-trace, "format") },
@@ -88,6 +109,7 @@ declare function trace:write-trace()
                 element pluginModuleUri { map:get($m, "pluginModuleUri") },
                 element input { map:get($m, "input") },
                 element output { map:get($m, "output") },
+                element error { map:get($m, "error") },
                 element duration { map:get($m, "duration") }
               }
             else ()
@@ -195,6 +217,7 @@ declare function trace:_walk_json($nodes as node()* ,$o)
     <options xmlns="xdmp:quote">
       <indent>yes</indent>
       <indent-untyped>yes</indent-untyped>
+      <omit-xml-declaration>yes</omit-xml-declaration>
     </options>
 
   for $n in $nodes
@@ -205,31 +228,63 @@ declare function trace:_walk_json($nodes as node()* ,$o)
         return
           map:put($o, $name, xdmp:quote($n))
       case object-node() return
-        let $oo := json:object()
+        let $oo := map:new()
         let $name as xs:string := fn:string(fn:node-name($n))
         return
           if ($name = "input") then
             if ($n/node()) then
               let $_ :=
                 for $x in $n/node()
+                (: try to unquote xml for formatting :)
+                let $unquoted :=
+                  if ($x instance of text()) then
+                    try {
+                      xdmp:quote(xdmp:unquote(fn:string($x)), $quote-options)
+                    }
+                    catch($ex) {
+                      $x
+                    }
+                  else
+                    $x
                 let $nn := fn:string(fn:node-name($x))
                 return
-                  map:put($oo, $nn, xdmp:quote($x, $quote-options))
+                  map:put($oo, $nn, $unquoted)
               return
                 map:put($o, $name, $oo)
             else
               map:put($o, $name, null-node {})
           else if ($name = "output") then
-            map:put($o, $name, xdmp:quote($n, $quote-options))
+            (: try to unquote xml for formatting :)
+            let $unquoted :=
+              if ($n instance of text()) then
+                try {
+                  xdmp:quote(xdmp:unquote(fn:string($n)), $quote-options)
+                }
+                catch($ex) {
+                  $n
+                }
+              else
+                $n
+            return
+              map:put($o, $name, $unquoted)
           else
             let $_ := trace:_walk_json($n/node(), $oo)
             return
               map:put($o, $name, $oo)
       case number-node() |
            boolean-node() |
-           null-node() |
-           text() return
+           null-node() return
         map:put($o, fn:string(fn:node-name($n)), fn:data($n))
+      case text() return
+        let $unquoted :=
+          try {
+            xdmp:quote(xdmp:unquote(fn:string($n)), $quote-options)
+          }
+          catch($ex) {
+            $n
+          }
+        return
+          map:put($o, fn:string(fn:node-name($n)), $unquoted)
       case element(input) return
         let $oo := json:object()
         let $_ :=
@@ -258,20 +313,17 @@ declare function trace:_walk_json($nodes as node()* ,$o)
 
 declare function trace:trace-to-json($trace)
 {
-  if ($trace instance of element()) then
-    let $o := json:object()
-    let $walk-me :=
-      let $n := $trace/node()
-      return
-        if ($n instance of object-node()) then
-          $n/node()
-        else
-          $n
-    let $_ := trace:_walk_json($walk-me, $o)
+  let $o := json:object()
+  let $walk-me :=
+    let $n := $trace/node()
     return
-      $o
-  else
-    $trace
+      if ($n instance of object-node()) then
+        $n/node()
+      else
+        $n
+  let $_ := trace:_walk_json($walk-me, $o)
+  return
+    $o
 };
 
 declare function trace:trace-to-json-slim($trace)

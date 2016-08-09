@@ -12,6 +12,7 @@ import java.util.Map;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
 import com.marklogic.client.modulesloader.impl.PropertiesModuleManager;
+import com.marklogic.hub.DataHub;
 import com.marklogic.hub.HubConfig;
 import org.apache.commons.io.IOUtils;
 import org.springframework.core.io.Resource;
@@ -45,7 +46,7 @@ public class LoadHubModulesCommand extends AbstractCommand {
     private Session activeSession;
 
     private DefaultModulesLoader modulesLoader;
-    private ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+    private ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver(DataHub.class.getClassLoader());
     private DocumentFormatGetter documentFormatGetter = new DefaultDocumentFormatGetter();
     private PermissionsParser permissionsParser = new CommaDelimitedPermissionsParser();
 

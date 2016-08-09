@@ -145,6 +145,11 @@
           <section class="init-box" layout-fill layout="column" layout-align="center center">
             <h3>Choose Your Project Environment</h3>
 
+            <p class="help-text">Each Hub Project can be deployed to multiple environments. Environments are
+            determined by the presence of a gradle-{env}.properties file in your hub project
+            directory. By default the Quick Start only creates a local environment file.
+            Read more <a target="_blank" href="https://github.com/marklogic/marklogic-data-hub/wiki/Data-Hub-QuickStart-Project-Environments">on the Data Hub Framework Wiki</a>.
+            </p>
             <select-list
               [items]="currentProject.environments"
               [initialSelectedItem]="currentProject.environments[0]"

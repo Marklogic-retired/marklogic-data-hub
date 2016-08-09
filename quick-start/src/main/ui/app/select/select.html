@@ -1,10 +1,10 @@
 <div class="container">
-  <mdl-button (click)="toggleMenu($event)" mdl-ripple>
-    {{getItemText(currentItem)}}
-    <mdl-icon>arrow_drop_down</mdl-icon>
+  <mdl-button (click)="toggleMenu($event)" mdl-ripple [ngClass]="{'novalue' : !hasValue()}">
+    {{getButtonText()}}
+    <i class="fa fa-caret-down"></i>
   </mdl-button>
   <mdl-menu mdl-menu-position="bottom-left">
      <mdl-menu-item mdl-ripple *ngFor="let item of items" (click)="selectItem(item)">{{getItemText(item)}}</mdl-menu-item>
   </mdl-menu>
-  <label>{{labelText}}</label>
+  <label *ngIf="hasValue()">{{labelText}}</label>
 </div>

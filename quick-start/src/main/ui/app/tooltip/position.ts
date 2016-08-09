@@ -58,7 +58,7 @@ export class PositionService {
         return hostElPos.left;
       },
       right: function ():number {
-        return hostElPos.left + hostElPos.width;
+        return hostElPos.left + hostElPos.width + 10;
       }
     };
 

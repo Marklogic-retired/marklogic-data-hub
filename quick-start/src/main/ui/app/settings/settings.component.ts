@@ -8,13 +8,15 @@ import { ProjectService } from '../projects';
 
 import { ConfirmService } from '../confirm';
 
+import { TooltipDirective } from '../tooltip/tooltip.directive';
+
 import * as _ from 'lodash';
 
 @Component({
   selector: 'settings',
   templateUrl: './settings.tpl.html',
-  directives: [],
-  providers: [SettingsService, InstallService],
+  directives: [TooltipDirective],
+  providers: [],
   styleUrls: ['./settings.style.scss'],
 })
 export class Settings {

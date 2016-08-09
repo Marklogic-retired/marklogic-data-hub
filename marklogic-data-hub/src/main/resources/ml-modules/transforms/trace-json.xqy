@@ -18,9 +18,13 @@ declare function transform(
 {
   perf:log('/transforms/trace-json:transform', function() {
 
+    map:put($context, "output-types", "application/json"),
     document {
-      map:put($context, "output-types", "application/json"),
-      xdmp:to-json(trace:trace-to-json($content/trace))
+      if ($content/trace) then
+        xdmp:to-json(trace:trace-to-json($content/trace))
+      else if ($content/node() instance of object-node()) then
+        xdmp:to-json(trace:trace-to-json($content/node()))
+      else ()
     }
   })
 };

@@ -60,13 +60,16 @@ export class Home {
     });
   }
 
-  setEntity(entity): void {
+  toggleEntity(entity): void {
     const collapsed: boolean = this.isCollapsed(entity);
     _.each(this.entities, e => { this.setCollapsed(e, true); });
     this.setCollapsed(entity, !collapsed);
   }
 
   setFlow(entity, flow, flowType): void {
+    if (this.mlcp.isVisible()) {
+      this.mlcp.cancel();
+    }
     this.entity = entity;
     this.flow = flow;
     this.flowType = flowType;

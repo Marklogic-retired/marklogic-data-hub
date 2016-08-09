@@ -2,7 +2,7 @@ $zindex-tooltip:           99999 !default;
 $font-size-sm:   .875rem !default;
 $tooltip-max-width:           200px !default;
 $tooltip-color:               #fff !default;
-$tooltip-bg:                  #000 !default;
+$tooltip-bg:                  rgba(0,0,0,0.75) !default;
 $tooltip-opacity:             .9 !default;
 $tooltip-padding-y:           10px !default;
 $tooltip-padding-x:           10px !default;
