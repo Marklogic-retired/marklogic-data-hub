@@ -1,6 +1,5 @@
 <header class="mdl-layout__header">
   <div class="mdl-layout__header-row">
-    <!-- Title -->
     <img src="/assets/img/hub-icon.svg">
     <span class="mdl-layout-title">Data Hub Quick Start</span>
     <!-- Add spacer, to align navigation to the right -->
@@ -18,7 +17,7 @@
       <a class="mdl-navigation__link" [ngClass]="{'active': isActive('/settings')}" [routerLink]="['settings']"><i class="fa fa-gear"></i> Settings</a>
     </nav>
     <mdl-button #menuButton="mdlButton" (click)="headerMenu.toggle($event, menuButton)" mdl-button-type="icon" mdl-ripple>
-      <i class="material-icons">person</i>
+      <i class="mdi mdi-account"></i>
     </mdl-button>
 
     <mdl-menu #headerMenu="mdlMenu" mdl-menu-position="bottom-right">

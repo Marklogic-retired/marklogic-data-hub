@@ -16,7 +16,7 @@
         *ngFor="let entity of entities">
         <div class="mdl-list__item-primary-content"
           [ngClass]="{ 'active' : !isCollapsed(entity) }"
-          (click)="setEntity(entity)">
+          (click)="toggleEntity(entity)">
           <i class="fa fa-industry"></i> {{ entity.entityName }}
           <div class="mdl-layout-spacer"></div>
           <i class="fa fa-caret-left" [ngClass]="{ 'collapsed' : isCollapsed(entity) }"></i>
@@ -36,13 +36,8 @@
                 *ngFor="let flow of entity.inputFlows"
                 (click)="setFlow(entity, flow, 'Input')">
                 <span class="mdl-list__item-primary-content">
-                  <i class="material-icons mdl-list__item-icon">transform</i>
+                  <i class="mdi mdi-import"></i>
                   {{ flow.flowName }}
-                </span>
-                <span class="run-input-flow mdl-list__item-secondary-action" (click)="runFlow($event, flow, 'input')">
-                  <button class="mdl-button mdl-js-button mdl-button--icon">
-                    <i class="material-icons mdl-list__item-icon">play_circle_outline</i>
-                  </button>
                 </span>
               </li>
             </ul>
@@ -59,13 +54,8 @@
                 *ngFor="let flow of entity.harmonizeFlows"
                 (click)="setFlow(entity, flow, 'Harmonize')">
                 <span class="mdl-list__item-primary-content">
-                  <i class="material-icons mdl-list__item-icon">transform</i>
+                  <i class="mdi mdi-looks"></i>
                   {{ flow.flowName }}
-                </span>
-                <span class="run-harmonize-flow mdl-list__item-secondary-action" (click)="runFlow($event, flow, 'harmonize')">
-                  <button class="mdl-button mdl-js-button mdl-button--icon">
-                    <i class="material-icons mdl-list__item-icon">play_circle_outline</i>
-                  </button>
                 </span>
               </li>
             </ul>
@@ -79,17 +69,17 @@
       <div class="current-flow" *ngIf="flow">
         <h2>{{flow.flowName}} {{flowType}} flow</h2>
         <h3>
-          <button md-raised-button color="primary" aria-label="Run Flow" (click)="runFlow($event, flow, flowType)">
-            Run Flow
-          </button>
+          <mdl-button mdl-button-type="raised" mdl-colored="primary" mdl-ripple (click)="runFlow($event, flow, flowType)">
+            Run Flow <i class="fa fa-play-circle-o"></i>
+          </mdl-button>
         </h3>
         <h3>Plugins</h3>
-        <ul>
+        <ul class="plugin-list">
           <li *ngFor="let plugin of flow.plugins">
-            <h4>{{plugin.pluginType}}</h4>
+            <h4><i class="fa fa-folder-open-o"></i> {{plugin.pluginType}}</h4>
             <ul>
               <li *ngFor="let file of plugin.files">
-                <p>{{file}}</p>
+                <i class="fa fa-file-code-o"></i> {{file}}
               </li>
             </ul>
           </li>

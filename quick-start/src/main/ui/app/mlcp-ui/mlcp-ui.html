@@ -1,5 +1,5 @@
-<div [ngClass]="{'visible' : isVisible }" class="content">
-  <div *ngIf="flow">
+<div [ngClass]="{'visible' : _isVisible }" class="content">
+  <div *ngIf="flow" class="padded">
     <h3>Run Input Flow - {{flow.entityName}} : {{flow.flowName}}</h3>
     <div>
       <div class="group-container" flex layout="column">
@@ -17,10 +17,15 @@
         <div class="group-section slideDown" [ngClass]="getSectionClass(group.category)">
           <p class="hint"><strong>Hint:</strong> Hover over the labels to view the description</p>
           <div class="setting" *ngFor="let setting of group.settings">
-            <md-slide-toggle tooltipAppendToBody="true" [tooltip]="setting.description" name="{{setting.field}}" *ngIf="setting.type === 'boolean'" [checked]="setting.value" (change)="updateSetting(setting, $event.checked)">
+            <md-slide-toggle class="primary-color" [tooltip]="setting.description" name="{{setting.field}}" *ngIf="setting.type === 'boolean'" [checked]="setting.value" (change)="updateSetting(setting, $event.checked)">
             {{setting.label}}</md-slide-toggle>
-            <md-input tooltipAppendToBody="true" [tooltip]="setting.description" [placeholder]="setting.label" type="text" class="form-control" name="{{setting.field}}" *ngIf="isText(setting.type)" [value]="setting.value" (input)="updateSetting(setting, $event.target.value)"
-              [disabled]="setting.readOnly"></md-input>
+            <mdl-textfield [type]="setting.type" [tooltip]="setting.description"
+              [label]="setting.label"
+              name="{{setting.field}}" *ngIf="isText(setting.type)"
+              [value]="setting.value"
+              (input)="updateSetting(setting, $event.target.value)"
+              [disabled]="setting.readOnly"
+              floating-label></mdl-textfield>
             <custom-select
               [id]="setting.field"
               [labelText]="setting.label"
@@ -28,7 +33,6 @@
               [initialSelectedItem]="setting.value"
               (selectedItem)="updateSetting(setting, $event)"
               *ngIf="setting.type === 'type'"
-              tooltipAppendToBody="true"
               [tooltip]="setting.description"
               label="label"
               value="value"></custom-select>
@@ -36,7 +40,7 @@
         </div>
       </div>
       <h4>
-        <span tooltipAppendToBody="true" tooltip="This is the MLCP Command line that we generated from the options you chose.">
+        <span tooltip="This is the MLCP Command line that we generated from the options you chose.">
           MLCP Command
         </span>
         <button
@@ -56,8 +60,9 @@
       </div>
     </div>
     <div class="mdl-dialog__actions">
-      <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect" (click)="runImport()">Run Import</button>
-      <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" (click)="cancel()">Cancel</button>
+      <mdl-button mdl-button-type="raised" mdl-colored="primary" mdl-ripple (click)="runImport()">Run Import</mdl-button>
+      <mdl-button mdl-button-type="raised" mdl-colored mdl-ripple (click)="saveOptions()">Save Options</mdl-button>
+      <mdl-button mdl-button-type="raised" mdl-ripple (click)="cancel()">Cancel</mdl-button>
     </div>
   </div>
 </div>

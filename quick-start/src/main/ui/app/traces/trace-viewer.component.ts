@@ -5,7 +5,7 @@ import { TimeAgoPipe } from 'angular2-moment';
 import { TraceService } from './trace.service';
 import { Trace } from './trace.model';
 
-import { Codemirror } from 'ng2-codemirror';
+import { Codemirror } from '../codemirror';
 
 import * as moment from 'moment';
 
@@ -32,13 +32,16 @@ export class TraceViewer implements OnInit, OnDestroy {
   private currentPluginType: string;
   private currentPlugin: Plugin;
 
+  private collapsed = {};
+  private outputCollapsed = false;
+  private errorCollapsed = false
+
   private codeMirrorConfig = {
     lineNumbers: true,
     indentWithTabs: true,
     lineWrapping: true,
     readOnly: true,
-    cursorBlinkRate: 0,
-    mode: 'xml'
+    cursorBlinkRate: 0
   };
 
   constructor(
@@ -83,6 +86,13 @@ export class TraceViewer implements OnInit, OnDestroy {
   }
 
   private getKeys(thing) {
-    return _.keys(thing);
+    return _.keys(thing).sort();
+  }
+
+  private formatData(data) {
+    if (_.isObject(data) || _.isArray(data)) {
+      return JSON.stringify(data, null, '  ');
+    }
+    return data;
   }
 }

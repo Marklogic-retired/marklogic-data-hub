@@ -19,7 +19,7 @@ plugins {
 }
 
 apply plugin: 'spring-boot'
-apply plugin: 'war'
+// apply plugin: 'war'
 
 repositories {
     jcenter()
@@ -80,6 +80,6 @@ springBoot {
     mainClass = "com.marklogic.quickstart.Application"
 }
 
-war {
-    baseName = 'quick-start'
-}
+// war {
+//     baseName = 'quick-start'
+// }

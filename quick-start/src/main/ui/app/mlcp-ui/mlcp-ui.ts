@@ -7,6 +7,7 @@ import * as _ from 'lodash';
 
 import { ClipboardDirective } from 'angular2-clipboard';
 
+import { EntitiesService } from '../entities/entities.service';
 import { FolderBrowser } from '../folder-browser/folder-browser.component';
 import { SelectList } from '../select-list/select-list.component';
 import { Select } from '../select/select.component';
@@ -60,8 +61,7 @@ export class MlcpUi {
   startX: number = 0;
   startY: number = 0;
 
-  vizState: string = 'hidden';
-  isVisible: boolean = false;
+  _isVisible: boolean = false;
 
   groups: Array<any>;
 
@@ -88,6 +88,7 @@ export class MlcpUi {
   constructor(
     private snackbar: MdlSnackbarService,
     private vcRef: ViewContainerRef,
+    private entitiesService: EntitiesService,
     private envService: EnvironmentService) {
     snackbar.setDefaultViewContainerRef(vcRef);
   }
@@ -106,8 +107,7 @@ export class MlcpUi {
       this.startX = $event.clientX;
       this.startY = $event.clientY;
     }
-    this.vizState = 'active';
-    this.isVisible = true;
+    this._isVisible = true;
     return this.finishedEvent;
   }
 
@@ -177,6 +177,7 @@ export class MlcpUi {
             field: 'output_cleandir',
             type: 'boolean',
             description: 'A comma separated list of (role,capability) pairs to apply to loaded documents.\nDefault: The default permissions associated with the user inserting the document.\n\nExample: -output_permissions role1,read,role2,update',
+            value: false
           },
           {
             label: 'Output URI Prefix',
@@ -196,6 +197,10 @@ export class MlcpUi {
             type: 'type',
             description: 'The type of document to create when -input_file_type is documents or sequencefile. Accepted values: mixed (documents only), xml, json, text, binary.\nDefault: mixed for documents, xml for sequencefile.',
             options: [
+              {
+                label: '',
+                value: null,
+              },
               {
                 label: 'mixed (documents only)',
                 value: 'mixed',
@@ -237,6 +242,10 @@ export class MlcpUi {
             type: 'type',
             description: 'When -input_compressed is true, the code used for compression. Accepted values: zip, gzip.',
             options: [
+              {
+                label: '',
+                value: null,
+              },
               {
                 label: 'zip',
                 value: 'zip',
@@ -457,6 +466,7 @@ export class MlcpUi {
   buildMlcpOptions() {
     let options = [];
 
+    this.mlcp = {};
     this.addMlcpOption(options, 'import', null, false);
     this.addMlcpOption(options, 'mode', 'local', false);
     this.addMlcpOption(options, 'input_file_path', this.inputFilePath, true);
@@ -520,13 +530,24 @@ export class MlcpUi {
   }
 
   hide() {
-    this.vizState = 'hidden';
-    this.isVisible = false;
+    this._isVisible = false;
   }
 
-  private cancel() {
+  public isVisible() {
+    return this._isVisible;
+  }
+
+  public cancel() {
     this.hide();
     this.finishedEvent.error(false);
+  }
+
+  private saveOptions() {
+    this.entitiesService.saveInputFlowOptions(this.flow, this.mlcp).subscribe(() => {
+      this.snackbar.showSnackbar({
+        message: 'MLCP options saved.',
+      });
+    })
   }
 
   private runImport() {

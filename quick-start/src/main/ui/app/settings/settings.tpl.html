@@ -1,10 +1,16 @@
-<div layout-padding layout="column">
+<div layout-padding layout="column" layout-align="center center">
+  <h1>Data Hub Settings</h1>
+
   <div class="debug-status">
-    <md-slide-toggle [checked]="debugEnabled()" (change)="toggleDebug($event.checked)">Debugging</md-slide-toggle>
+    <md-slide-toggle
+      tooltip="Enables or Disables Debug Logging for Hub HTTP Requests to MarkLogic."
+      class="primary-color" [checked]="debugEnabled()" (change)="toggleDebug($event.checked)">Debugging</md-slide-toggle>
   </div>
 
   <div class="trace-status">
-    <md-slide-toggle [checked]="traceEnabled()" (change)="toggleTrace($event.checked)">Tracing</md-slide-toggle>
+    <md-slide-toggle
+      tooltip="Enables or Disable Trace Logging for Flows"
+      class="primary-color" [checked]="traceEnabled()" (change)="toggleTrace($event.checked)">Tracing</md-slide-toggle>
   </div>
 
   <div>

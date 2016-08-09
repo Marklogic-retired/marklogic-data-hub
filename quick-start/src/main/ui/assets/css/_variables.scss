@@ -1,10 +1,5 @@
 @import 'material-design-lite/src/color-definitions';
 
-
-// $subtle-background: rgba(121,141,157,0.25);
-
-// $ml-blue: #152939;
-
 $palette-datahub:
 "177, 199, 217"
 "125, 163, 192"
@@ -20,6 +15,8 @@ $palette-datahub:
 "125, 163, 192"
 "52, 83, 107"
 "22, 35, 45"
+"204, 82, 79"
+"42, 86, 53"
 ;
 
 $palette-datahub-50: nth($palette-datahub, 1);
@@ -36,6 +33,8 @@ $palette-datahub-A100: nth($palette-datahub, 11);
 $palette-datahub-A200: nth($palette-datahub, 12);
 $palette-datahub-A400: nth($palette-datahub, 13);
 $palette-datahub-A700: nth($palette-datahub, 14);
+$palette-datahub-red: nth($palette-datahub, 15);
+$palette-datahub-green: nth($palette-datahub, 16);
 
 
 $trim-color-classes: true;

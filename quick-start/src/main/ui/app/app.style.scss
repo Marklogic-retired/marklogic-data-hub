@@ -3,48 +3,16 @@
 @import 'dialog';
 @import 'tooltip';
 
-@font-face {
-  font-family: 'Material Icons';
-  font-style: normal;
-  font-weight: 400;
-  src: url(/assets/fonts/MaterialIcons-Regular.eot); /* For IE6-8 */
-  src: local('Material Icons'),
-       local('MaterialIcons-Regular'),
-       url(/assets/fonts/MaterialIcons-Regular.woff2) format('woff2'),
-       url(/assets/fonts/MaterialIcons-Regular.woff) format('woff'),
-       url(/assets/fonts/MaterialIcons-Regular.ttf) format('truetype');
+$font-path: '/assets/fonts';
+
+$mdi-font-path: $font-path;
+@import 'mdi/scss/materialdesignicons';
+
+.mdi {
+  font-size: 24px;
 }
 
-.material-icons {
-  font-family: 'Material Icons';
-  font-weight: normal;
-  font-style: normal;
-  font-size: 24px;  /* Preferred icon size */
-  display: inline-block;
-  width: 1em;
-  height: 1em;
-  line-height: 1;
-  text-transform: none;
-  letter-spacing: normal;
-  word-wrap: normal;
-  white-space: nowrap;
-  direction: ltr;
-
-  /* Support for all WebKit browsers. */
-  -webkit-font-smoothing: antialiased;
-  /* Support for Safari and Chrome. */
-  text-rendering: optimizeLegibility;
-
-  /* Support for Firefox. */
-  -moz-osx-font-smoothing: grayscale;
-
-  /* Support for IE. */
-  font-feature-settings: 'liga';
-}
-
-
-$fa-font-path: '/assets/fonts';
-$subtle-background: rgba(121,141,157,0.25);
+$fa-font-path: $font-path;
 @import 'font-awesome/scss/font-awesome';
 
 html, body {
@@ -75,4 +43,59 @@ main {
 
 .mdl-snackbar {
   z-index: 9999999;
+}
+
+$slide-bar-color: unquote("rgb(#{$palette-datahub-100})");
+$slide-bar-handle-color: unquote("rgb(#{$palette-datahub-500})");
+
+md-slide-toggle.primary-color.md-checked {
+  label {
+    div.md-slide-toggle-bar {
+      background-color: $slide-bar-color;
+    }
+
+    div.md-slide-toggle-thumb {
+      background-color: $slide-bar-handle-color;
+    }
+  }
+}
+
+mdl-switch.mdl-switch.is-upgraded {
+  width: inherit;
+}
+
+.mdl-switch__label {
+  position: static;
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 24px;
+  margin-left: 24px;
+}
+
+$error-color: unquote("rgb(#{$palette-datahub-red})");
+
+.mdl-data-table tbody tr {
+  cursor: pointer;
+}
+
+.mdl-data-table tbody tr.error:hover {
+  background-color: $error-color;
+}
+
+tr.error {
+  background-color: $error-color;
+  font-weight: bold;
+}
+
+table[left-align].mdl-data-table[left-align] td,
+table[left-align].mdl-data-table[left-align] th {
+  text-align: left;
+}
+
+$button-color: unquote("rgb(#{$palette-datahub-500})");
+
+button.md-primary[md-raised-button],
+button.md-primary[md-fab],
+button.md-primary[md-mini-fab] {
+  background-color: $button-color;
 }

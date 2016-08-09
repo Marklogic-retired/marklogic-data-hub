@@ -57,6 +57,11 @@ export class EntitiesService {
     return this.get(url);
   }
 
+  saveInputFlowOptions(flow: Flow, mlcpOptions) {
+    const url = this.url(`/entities/${flow.entityName}/flows/INPUT/${flow.flowName}/save-input-options`);
+    return this.http.post(url, mlcpOptions);
+  }
+
   runInputFlow(flow: Flow, mlcpOptions) {
     const url = this.url(`/entities/${flow.entityName}/flows/INPUT/${flow.flowName}/run/input`);
     return this.post(url, mlcpOptions).subscribe(() => {});

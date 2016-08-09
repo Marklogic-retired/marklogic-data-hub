@@ -3,59 +3,15 @@
     <div class="mdl-dialog__title">
       <div>Create Entity</div>
       <div class="mdl-layout-spacer"></div>
-      <button (click)="cancel()" class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab">
-        <i class="material-icons">clear</i>
-      </button>
+      <mdl-button mdl-button-type="mini-fab" mdl-colored mdl-ripple (click)="cancel()">
+        <i class="mdi mdi-close"></i>
+      </mdl-button>
     </div>
     <div class="mdl-dialog__content">
       <form (submit)="create()">
         <div class="modal-body">
           <div class="md-dialog-content" flex layout="column">
-            <md-input name="entityName" placeholder="Entity Name" autofocus [(ngModel)]="entity.entityName"></md-input>
-<!--
-            <h4>
-              Input Flows
-              <button type="button" md-icon-button aria-label="New Input Flow" (click)="newInputFlow()">
-                <i class="fa fa-plus"></i>
-              </button>
-            </h4>
-            <section *ngFor="let flow of entity.inputFlows" class="ingest-flow" layout="column">
-              <md-input name="ingestFlowName" placeholder="Ingest Flow Name" [(ngModel)]="flow.flowName"></md-input>
-              <label>Plugin Type</label>
-              <select-list
-                [items]="pluginFormats"
-                [initialSelectedItem]="pluginFormats[0]"
-                label="label" identifier="value"
-                (selectedItem)="flow.pluginFormat = $event"></select-list>
-              <label>Data Format</label>
-              <select-list
-                [items]="dataFormats"
-                [initialSelectedItem]="dataFormats[0]"
-                label="label" identifier="value"
-                (selectedItem)="flow.dataFormat = $event"></select-list>
-            </section>
-            <h4>
-              Harmonize Flows
-              <button type="button" md-icon-button aria-label="New Input Flow" (click)="newHarmonizeFlow()">
-                <i class="fa fa-plus"></i>
-              </button>
-            </h4>
-            <section *ngFor="let flow of entity.harmonizeFlows" class="harmonize-flow" layout="column">
-              <md-input name="ingestFlowName" placeholder="Ingest Flow Name" [(ngModel)]="flow.flowName"></md-input>
-              <label>Plugin Type</label>
-              <select-list
-                [items]="pluginFormats"
-                [initialSelectedItem]="flow.pluginFormat || pluginFormats[0]"
-                label="label" identifier="value"
-                (selectedItem)="flow.pluginFormat = $event"></select-list>
-              <label>Data Format</label>
-              <select-list
-                [items]="dataFormats"
-                [initialSelectedItem]="flow.dataFormat || dataFormats[0]"
-                label="label" identifier="value"
-                (selectedItem)="flow.dataFormat = $event"></select-list>
-            </section>
--->
+            <md-input name="entityName" required placeholder="Entity Name" autofocus [(ngModel)]="entity.entityName"></md-input>
           </div>
         </div>
         <div class="mdl-dialog__actions">

@@ -58,6 +58,7 @@ export class NewFlow {
   ];
 
   emptyFlow = {
+    flowName: null,
     pluginFormat: 'JAVASCRIPT',
     dataFormat: 'JSON'
   };
@@ -83,8 +84,10 @@ export class NewFlow {
   }
 
   private create() {
-    this.hide();
-    this.finishedEvent.emit(this.flow);
+    if (this.flow.flowName && this.flow.flowName.length > 0) {
+      this.hide();
+      this.finishedEvent.emit(this.flow);
+    }
   }
 
   private cancel() {
