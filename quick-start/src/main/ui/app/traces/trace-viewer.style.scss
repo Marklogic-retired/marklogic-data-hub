@@ -2,7 +2,11 @@
 @import "material";
 
 $gutter-color: unquote("rgb(#{$palette-datahub-A100})");
+$active-border-color: unquote("rgb(#{$palette-datahub-900})");
 $bg-color: unquote("rgb(#{$palette-datahub-500})");
+$subheader-bg-color: unquote("rgb(#{$palette-datahub-300})");
+$red-color: unquote("rgb(#{$palette-datahub-red})");
+$green-color: unquote("rgb(#{$palette-datahub-green})");
 
 .gray {
   background-color: #f5f5f5;
@@ -15,30 +19,39 @@ $bg-color: unquote("rgb(#{$palette-datahub-500})");
 .plugin {
   width: 125px;
   height: 80px;
-  border-radius: 10%;
   font-size: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 
   .md-ripple-container {
     border-radius: 10%;
   }
 }
 
-.start {
-  background-color: green;
+.mdi-arrow-right {
+  margin: 0px 15px;
+}
+
+.mdl-button--colored[disabled][disabled].start {
+  background-color: $green-color;
   &:hover {
-    background-color: green;
+    background-color: $green-color;
   }
 }
 
-.end {
-  background-color: red;
+.mdl-button--colored[disabled][disabled].end {
+  background-color: $red-color;
   &:hover {
-    background-color: red;
+    background-color: $red-color;
   }
 }
 
 .plugin.active {
-  box-shadow: 0 0 8px rgba(0, 0, 0, 0.18), 0 8px 16px rgba(0, 0, 0, 0.36);
+  font-weight: bold;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.28), 0 8px 16px rgba(0, 0, 0, 0.46);
+  border: 1px solid $active-border-color;
 }
 
 .plugin-nav {
@@ -50,19 +63,16 @@ $bg-color: unquote("rgb(#{$palette-datahub-500})");
   }
 }
 
-.md-subheader.md-default-theme, .md-subheader {
-  background-color: transparent;
+md-subheader {
+  display: block;
+  padding: 10px 10px 10px 16px;
+  cursor: pointer;
+  background-color: $subheader-bg-color;
+  color: white;
+  border-bottom: 1px solid $gutter-color;
 }
 
 .plugin-io {
-  .md-subheader .md-subheader-inner {
-    padding: 10px 0px 10px 16px;
-  }
-
-  .md-subheader {
-    cursor: pointer;
-  }
-
   md-toolbar.md-primary {
     background: $bg-color;
   }

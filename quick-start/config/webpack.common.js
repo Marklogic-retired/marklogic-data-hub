@@ -254,7 +254,7 @@ module.exports = {
     }]),
 
     new CopyWebpackPlugin([{
-      from: 'node_modules/material-design-icons/iconfont',
+      from: 'node_modules/mdi/fonts',
       to: 'assets/fonts'
     }]),
 

@@ -48,6 +48,7 @@ class DataHubPlugin implements Plugin<Project> {
         project.task("hubDisableDebugging", group: deployGroup, type: DisableDebuggingTask)
         project.task("hubEnableTracing", group: deployGroup, type: EnableTracingTask)
         project.task("hubDisableTracing", group: deployGroup, type: DisableTracingTask)
+        project.task("hubInstallModules", type: DeployHubModulesTask)
 
         String scaffoldGroup = "MarkLogic Data Hub Scaffolding"
         project.task("hubInit", group: scaffoldGroup, type: InitProjectTask)

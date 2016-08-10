@@ -1,7 +1,7 @@
-<div layout-padding layout="column">
+<div layout-padding layout="column" layout-align="center center">
   <h1>Traces</h1>
 
-  <div layout="column" flex layout-align="center center">
+  <div layout="column" flex layout-align="center center" class="trace-search">
     <div class="search-box" flex layout-align="center center" layout="row">
       <form (submit)="getTraces()" flex layout-align="center center" layout="row">
         <input type="search" name="searchText" [(ngModel)]="searchText" placeholder="Enter you search query here...">
@@ -15,19 +15,19 @@
             [total]="searchResponse.total"
             [pageLength]="searchResponse.pageLength"
             (pageChanged)="pageChanged($event)"></pagination>
-      <table
+      <table left-align
         class="mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp">
         <thead>
           <tr>
-            <th class="mdl-data-table__cell--non-numeric">Identifier</th>
             <th class="mdl-data-table__cell--non-numeric">Type</th>
+            <th class="mdl-data-table__cell--non-numeric">Identifier</th>
             <th class="mdl-data-table__cell--non-numeric">Created</th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let trace of traces" [routerLink]="['/traces', trace.traceId]">
+          <tr *ngFor="let trace of traces" [routerLink]="['/traces', trace.traceId]" [ngClass]="{'error' : trace.hasError }">
+            <td><i class="mdi" [ngClass]="getIconClass(trace)"></i> {{trace.flowType}}</td>
             <td class="mdl-data-table__cell--non-numeric">{{trace.identifier}}</td>
-            <td>{{trace.flowType}}</td>
             <td>{{trace.created | amTimeAgo}}</td>
           </tr>
         </tbody>

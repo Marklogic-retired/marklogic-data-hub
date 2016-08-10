@@ -50,6 +50,19 @@ export class Select implements OnInit {
     }
   }
 
+  hasValue() {
+    let value = null;
+    if (this.currentItem) {
+      if (this.value) {
+        value = this.currentItem[this.value];
+      } else {
+        value = this.currentItem;
+      }
+    }
+
+    return value !== null;
+  }
+
   toggleMenu($event) {
     this.menuChild.toggle($event, this.buttonChild);
   }
@@ -70,6 +83,14 @@ export class Select implements OnInit {
     this.selectedItem.emit(value);
   }
 
+  getButtonText() {
+    if (this.hasValue()) {
+      return this.getItemText(this.currentItem);
+    }
+    else {
+      return this.labelText;
+    }
+  }
   getItemText(item) {
     let resp = null;
     if (item) {

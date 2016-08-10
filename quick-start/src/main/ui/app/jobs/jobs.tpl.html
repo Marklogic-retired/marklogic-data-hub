@@ -1,12 +1,12 @@
-<div layout-padding layout="column">
+<div layout-padding layout="column" layout-align="center center">
   <h1>Jobs</h1>
 
-  <table *ngIf="jobs && jobs.length > 0"
+  <table left-align *ngIf="jobs && jobs.length > 0"
     class="mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp">
     <thead>
       <tr>
-        <th class="mdl-data-table__cell--non-numeric">Job ID</th>
         <th class="mdl-data-table__cell--non-numeric">Type</th>
+        <th class="mdl-data-table__cell--non-numeric">Job ID</th>
         <th class="mdl-data-table__cell--non-numeric">Entity Name</th>
         <th class="mdl-data-table__cell--non-numeric">Flow Name</th>
         <th class="mdl-data-table__cell--non-numeric">Status</th>
@@ -16,18 +16,19 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let job of jobs">
-        <td class="mdl-data-table__cell--non-numeric">{{job.jobId}}</td>
-        <td>{{job.jobName}}</td>
+      <tr *ngFor="let job of jobs" [ngClass]="{'error' : job.status === 'FAILED' }">
+        <td><i class="mdi" [ngClass]="getIconClass(job.jobName)"></i> {{job.jobName}}</td>
+        <td>{{job.jobId}}</td>
         <td>{{job.entityName}}</td>
         <td>{{job.flowName}}</td>
         <td>{{job.status}}</td>
         <td>{{job.startTime | amTimeAgo}}</td>
         <td><span *ngIf="job.endTime">{{getDuration(job)}} seconds</span></td>
         <td>
-          <button *ngIf="job.jobOutput || hasLiveOutput(job)" color="primary" md-raised-button aria-label="Show Console Output" (click)="showConsole(job)">
-            <i class="fa fa-terminal"></i>
-          </button>
+          <mdl-button
+            *ngIf="job.jobOutput || hasLiveOutput(job)"
+            mdl-button-type="raised" mdl-colored="primary" mdl-ripple
+            (click)="showConsole(job)"><i class="fa fa-terminal"></i></mdl-button>
         </td>
       </tr>
     </tbody>
@@ -46,7 +47,7 @@
         <div>Job Output for {{showJobOutput.jobId}}</div>
         <div class="mdl-layout-spacer"></div>
         <button (click)="cancelConsole()" class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab">
-          <i class="material-icons">clear</i>
+          <i class="fa fa-close"></i>
         </button>
       </div>
       <div class="mdl-dialog__content">

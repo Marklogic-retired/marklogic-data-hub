@@ -81,8 +81,10 @@ export class NewEntity {
   }
 
   private create() {
-    this.hide();
-    this.finishedEvent.emit(this.entity);
+    if (this.entity.entityName && this.entity.entityName.length > 0) {
+      this.hide();
+      this.finishedEvent.emit(this.entity);
+    }
   }
 
   private cancel() {

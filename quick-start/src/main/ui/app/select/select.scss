@@ -1,6 +1,10 @@
 mdl-button {
   text-transform: none;
   padding: 0px;
+
+  &.novalue {
+    color: rgba(0, 0, 0, 0.38);
+  }
 }
 
 label {
@@ -11,13 +15,14 @@ label {
   transform-origin: bottom left;
   position: absolute;
   left: 0;
-  top: 4px
+  top: 4px;
+  min-width: 200px;
 }
 
 .container {
   position: relative;
   display: inline-block;
-  border-bottom: 1px solid rgba(0,0,0,0.12);
+  margin-top: 10px;
 }
 
 .dropdown {

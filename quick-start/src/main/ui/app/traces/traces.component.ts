@@ -51,4 +51,14 @@ export class Traces {
     this.currentPage = page;
     this.getTraces();
   }
+
+  private getIconClass(trace: Trace) {
+    if (trace.flowType === 'harmonize') {
+      return 'mdi-looks';
+    }
+    else if (trace.flowType === 'input') {
+      return 'mdi-import';
+    }
+    return '';
+  }
 }

@@ -13,7 +13,7 @@ export class TooltipDirective {
   /* tslint:disable */
   @Input('tooltip') public content:string;
   @Input('tooltipHtml') public htmlContent:string | TemplateRef<any>;
-  @Input('tooltipPlacement') public placement:string = 'top';
+  @Input('tooltipPlacement') public placement:string = 'right';
   @Input('tooltipIsOpen') public isOpen:boolean;
   @Input('tooltipEnable') public enable:boolean = true;
   @Input('tooltipAnimation') public animation:boolean = true;

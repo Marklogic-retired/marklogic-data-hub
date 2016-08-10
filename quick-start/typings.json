@@ -1,6 +1,7 @@
 {
   "globalDependencies": {
     "angular-protractor": "registry:dt/angular-protractor#1.5.0+20160425143459",
+    "codemirror": "registry:dt/codemirror#0.0.0+20160619021621",
     "core-js": "registry:dt/core-js#0.0.0+20160602141332",
     "hammerjs": "registry:dt/hammerjs#2.0.4+20160417130828",
     "jasmine": "registry:dt/jasmine#2.2.0+20160621224255",

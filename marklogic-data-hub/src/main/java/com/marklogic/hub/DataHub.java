@@ -45,6 +45,7 @@ import com.marklogic.client.DatabaseClientFactory;
 import com.marklogic.client.extensions.ResourceManager;
 import com.marklogic.client.extensions.ResourceServices.ServiceResult;
 import com.marklogic.client.extensions.ResourceServices.ServiceResultIterator;
+import com.marklogic.client.helper.LoggingObject;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.client.util.RequestParameters;
 import com.marklogic.hub.commands.DeployHubDatabasesCommand;
@@ -58,8 +59,6 @@ import com.marklogic.mgmt.appservers.ServerManager;
 import com.marklogic.mgmt.databases.DatabaseManager;
 import com.marklogic.rest.util.Fragment;
 import com.marklogic.rest.util.ResourcesFragment;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.client.ResourceAccessException;
 
 import java.nio.file.Paths;
@@ -68,10 +67,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class DataHub {
-
-    static final private Logger LOGGER = LoggerFactory.getLogger(DataHub.class);
-
+public class DataHub extends LoggingObject {
 
     private ManageConfig config;
     private ManageClient client;
@@ -257,7 +253,7 @@ public class DataHub {
     }
 
     public void initProject() {
-        LOGGER.info("Initializing the Hub Project");
+        logger.info("Initializing the Hub Project");
 
         HubProject hp = new HubProject(hubConfig);
         hp.init();
@@ -269,9 +265,8 @@ public class DataHub {
         config.setName(hubConfig.name);
         config.setRestAdminUsername(hubConfig.username);
         config.setRestAdminPassword(hubConfig.password);
-        DatabaseClient client = DatabaseClientFactory.newClient(hubConfig.host, port, hubConfig.username, hubConfig.password,
+        return DatabaseClientFactory.newClient(hubConfig.host, port, hubConfig.username, hubConfig.password,
                 config.getRestAuthentication(), config.getRestSslContext(), config.getRestSslHostnameVerifier());
-        return client;
     }
 
     /**
@@ -282,9 +277,9 @@ public class DataHub {
     }
 
     public void installUserModules(boolean force) {
-        LOGGER.debug("Installing user modules into MarkLogic");
+        logger.debug("Installing user modules into MarkLogic");
 
-        List<Command> commands = new ArrayList<Command>();
+        List<Command> commands = new ArrayList<>();
         LoadUserModulesCommand lumc = new LoadUserModulesCommand(hubConfig);
         lumc.setForceLoad(force);
         commands.add(lumc);
@@ -297,7 +292,7 @@ public class DataHub {
     }
 
     public JsonNode validateUserModules() {
-        LOGGER.debug("validating user modules");
+        logger.debug("validating user modules");
 
         DatabaseClient client = getDatabaseClient(hubConfig.stagingPort);
         EntitiesValidator ev = new EntitiesValidator(client);
@@ -307,10 +302,10 @@ public class DataHub {
     }
 
     private List<Command> getCommands(AppConfig config) {
-        List<Command> commands = new ArrayList<Command>();
+        List<Command> commands = new ArrayList<>();
 
         // Security
-        List<Command> securityCommands = new ArrayList<Command>();
+        List<Command> securityCommands = new ArrayList<>();
         securityCommands.add(new DeployRolesCommand());
         securityCommands.add(new DeployUsersCommand());
         securityCommands.add(new DeployAmpsCommand());
@@ -339,52 +334,52 @@ public class DataHub {
         commands.add(new LoadHubModulesCommand(hubConfig));
 
         // Alerting
-        List<Command> alertCommands = new ArrayList<Command>();
+        List<Command> alertCommands = new ArrayList<>();
         alertCommands.add(new DeployAlertConfigsCommand());
         alertCommands.add(new DeployAlertActionsCommand());
         alertCommands.add(new DeployAlertRulesCommand());
         commands.addAll(alertCommands);
 
         // CPF
-        List<Command> cpfCommands = new ArrayList<Command>();
+        List<Command> cpfCommands = new ArrayList<>();
         cpfCommands.add(new DeployCpfConfigsCommand());
         cpfCommands.add(new DeployDomainsCommand());
         cpfCommands.add(new DeployPipelinesCommand());
         commands.addAll(cpfCommands);
 
         // Flexrep
-        List<Command> flexrepCommands = new ArrayList<Command>();
+        List<Command> flexrepCommands = new ArrayList<>();
         flexrepCommands.add(new DeployConfigsCommand());
         flexrepCommands.add(new DeployTargetsCommand());
         flexrepCommands.add(new DeployFlexrepCommand());
         commands.addAll(flexrepCommands);
 
         // Groups
-        List<Command> groupCommands = new ArrayList<Command>();
+        List<Command> groupCommands = new ArrayList<>();
         groupCommands.add(new DeployGroupsCommand());
         commands.addAll(groupCommands);
 
-        List<Command> mimetypeCommands = new ArrayList<Command>();
+        List<Command> mimetypeCommands = new ArrayList<>();
         mimetypeCommands.add(new DeployMimetypesCommand());
         commands.addAll(mimetypeCommands);
 
         // Forest replicas
-        List<Command> replicaCommands = new ArrayList<Command>();
+        List<Command> replicaCommands = new ArrayList<>();
         replicaCommands.add(new ConfigureForestReplicasCommand());
         commands.addAll(replicaCommands);
 
         // Tasks
-        List<Command> taskCommands = new ArrayList<Command>();
+        List<Command> taskCommands = new ArrayList<>();
         taskCommands.add(new DeployScheduledTasksCommand());
         commands.addAll(taskCommands);
 
         // Triggers
-        List<Command> triggerCommands = new ArrayList<Command>();
+        List<Command> triggerCommands = new ArrayList<>();
         triggerCommands.add(new DeployTriggersCommand());
         commands.addAll(triggerCommands);
 
         // SQL Views
-        List<Command> viewCommands = new ArrayList<Command>();
+        List<Command> viewCommands = new ArrayList<>();
         viewCommands.add(new DeployViewSchemasCommand());
         commands.addAll(viewCommands);
 
@@ -398,7 +393,7 @@ public class DataHub {
     public void install(StatusListener listener) {
         initProject();
 
-        LOGGER.info("Installing the Data Hub into MarkLogic");
+        logger.info("Installing the Data Hub into MarkLogic");
 
         AppConfig config = getAppConfig();
         HubAppDeployer deployer = new HubAppDeployer(client, adminManager, listener);
@@ -411,7 +406,7 @@ public class DataHub {
      * @param listener - the callback method to receive status updates
      */
     public void uninstall(StatusListener listener) {
-        LOGGER.debug("Uninstalling the Data Hub from MarkLogic");
+        logger.debug("Uninstalling the Data Hub from MarkLogic");
 
         AppConfig config = getAppConfig();
         HubAppDeployer deployer = new HubAppDeployer(client, adminManager, listener);
