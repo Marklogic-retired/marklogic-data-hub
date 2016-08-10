@@ -1,7 +1,15 @@
 # Change Log
 
-## [v1.0.0-rc.1](https://github.com/marklogic/marklogic-data-hub/tree/v1.0.0-rc.1)
+## [v1.0.0-rc.2](https://github.com/marklogic/marklogic-data-hub/tree/v1.0.0-rc.2)
 
+[Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v1.0.0-rc.1...v1.0.0-rc.2)
+
+**Closed issues:**
+
+- gradle isn't deploying modules properly [\#244](https://github.com/marklogic/marklogic-data-hub/issues/244)
+- Remove Tweets Example [\#234](https://github.com/marklogic/marklogic-data-hub/issues/234)
+
+## [v1.0.0-rc.1](https://github.com/marklogic/marklogic-data-hub/tree/v1.0.0-rc.1) (2016-08-04)
 [Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v1.0.0-beta.6...v1.0.0-rc.1)
 
 **Fixed bugs:**
