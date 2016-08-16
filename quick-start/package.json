@@ -6,7 +6,7 @@
   "scripts": {
     "rimraf": "rimraf",
     "clean": "npm cache clean && npm run rimraf -- node_modules doc typings coverage src/main/resources/static",
-    "clean:dist": "npm run rimraf -- src/main/resources/static src/main/resources/templates",
+    "clean.dist": "npm run rimraf -- src/main/resources/static src/main/resources/templates",
     "build.dev": "gulp build.dev --color",
     "build.dev.watch": "gulp build.dev.watch --color",
     "build.e2e": "gulp build.e2e --color",
