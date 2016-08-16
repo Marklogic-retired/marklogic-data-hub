@@ -35,7 +35,8 @@ export class Home {
     private snackbar: MdlSnackbarService,
     private vcRef: ViewContainerRef
   ) {
-    snackbar.setDefaultViewContainerRef(vcRef);
+    let vref: any = vcRef;
+    snackbar.setDefaultViewContainerRef(vref);
     entitiesService.entityMessageEmitter.subscribe(path => {
       this.getEntities();
     });

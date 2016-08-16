@@ -4,9 +4,9 @@
     <span class="mdl-layout-title">
       Entities
       <div class="mdl-layout-spacer"></div>
-      <button id="new-entity" md-icon-button aria-label="New Entity" (click)="showNewEntity($event)">
+      <mdl-button mdl-button-type="icon" id="new-entity" (click)="showNewEntity($event)">
         <i class="fa fa-plus"></i>
-      </button>
+      </mdl-button>
     </span>
 
     <ul class="entities mdl-list">
@@ -26,9 +26,9 @@
             <div class="subheader">
               Input Flows
               <div class="mdl-layout-spacer"></div>
-              <button id="new-input-flow" md-icon-button aria-label="New Input Flow" (click)="newInputFlow($event, entity)">
+              <mdl-button mdl-button-type="icon" id="new-input-flow" aria-label="New Input Flow" (click)="newInputFlow($event, entity)">
                 <i class="fa fa-plus"></i>
-              </button>
+              </mdl-button>
             </div>
             <ul class="flows mdl-list">
               <li
@@ -44,9 +44,9 @@
             <div class="subheader">
               Harmonize Flows
               <div class="mdl-layout-spacer"></div>
-              <button id="new-harmonize-flow" md-icon-button aria-label="New Harmonize Flow" (click)="newHarmonizeFlow($event, entity)">
+              <mdl-button mdl-button-type="icon" id="new-harmonize-flow" aria-label="New Harmonize Flow" (click)="newHarmonizeFlow($event, entity)">
                 <i class="fa fa-plus"></i>
-              </button>
+              </mdl-button>
             </div>
             <ul class="flows mdl-list">
               <li

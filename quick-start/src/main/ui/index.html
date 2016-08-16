@@ -1,21 +1,17 @@
 <!DOCTYPE html>
-<html lang="">
+<html lang="" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="utf-8">
-  <meta http-equiv="x-ua-compatible" content="ie=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="utf-8"/>
+  <meta http-equiv="x-ua-compatible" content="ie=edge"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
 
   <title><%= webpackConfig.metadata.title %></title>
 
-  <meta name="description" content="<%= webpackConfig.metadata.title %>">
-
-  <% if (webpackConfig.htmlElements.headTags) { %>
-  <!-- Configured Head Tags  -->
-  <%= webpackConfig.htmlElements.headTags %>
-  <% } %>
+  <meta name="description" content="<%= webpackConfig.metadata.title %>"/>
 
   <!-- base url -->
-  <base href="<%= webpackConfig.metadata.baseUrl %>">
+  <base th:href="@{/}"/>
+
   <style>
   .notransition * {
     -webkit-transition: none !important;
@@ -51,6 +47,12 @@
     </style>
     Quick Start Loading...
   </app>
+
+  <script th:inline="javascript">
+  /*<![CDATA[*/
+    window.BASE_URL = [[@{/}]].replace(/^(.*)\/$/, '$1');
+  /*]]>*/
+  </script>
 
   <% if (webpackConfig.metadata.isDevServer) { %>
   <!-- Webpack Dev Server reload -->

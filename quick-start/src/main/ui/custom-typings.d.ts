@@ -5,7 +5,7 @@
 
 typings install dt~node --save --global
 
- * If you can't find the type definition in the registry we can make an ambient definition in
+ * If you can't find the type definition in the registry we can make an ambient/global definition in
  * this file for now. For example
 
  declare module "my-module" {
@@ -77,14 +77,11 @@ interface WebpackModule {
   };
 }
 
-interface WebpackRequireEnsureCallback {
-    (req: WebpackRequire): void;
-}
 
 interface WebpackRequire {
     (id: string): any;
     (paths: string[], callback: (...modules: any[]) => void): void;
-    ensure(ids: string[], callback: WebpackRequireEnsureCallback, chunkName?: string): void;
+    ensure(ids: string[], callback: (req: WebpackRequire) => void, chunkName?: string): void;
     context(directory: string, useSubDirectories?: boolean, regExp?: RegExp): WebpackContext;
 }
 

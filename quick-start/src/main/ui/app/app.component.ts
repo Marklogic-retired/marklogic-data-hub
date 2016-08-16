@@ -7,19 +7,9 @@ import { AuthService } from './auth';
 
 import { ConfirmService } from './confirm';
 
-import { EntitiesService } from './entities/entities.service';
-
 import { EnvironmentService } from './environment';
 
-import { Header } from './header/header.component';
-
-import { InstallService } from './installer';
-
-import { JobListenerService } from './jobs/job-listener.service';
-
 import { ProjectService } from './projects/projects.service';
-
-import { SettingsService } from './settings/settings.service';
 
 import { STOMPService } from './stomp/stomp.service';
 
@@ -30,21 +20,14 @@ import { STOMPService } from './stomp/stomp.service';
 @Component({
   selector: 'app',
   encapsulation: ViewEncapsulation.None,
-  providers: [
-    ConfirmService,
-    EntitiesService,
-    InstallService,
-    JobListenerService,
-    ProjectService,
-    SettingsService,
-    STOMPService
-  ],
-  directives: [Header],
   styles: [
+    // require('styles/material.scss'),
+    // require('@angular2-material/core/style/core.css'),
+    // require('@angular2-material/core/overlay/overlay.css'),
     require('./app.style.scss')
   ],
   template: `
-    <header *ngIf="canShowHeader()"></header>
+    <hub-header *ngIf="canShowHeader()"></hub-header>
     <main>
       <router-outlet></router-outlet>
     </main>
@@ -69,7 +52,7 @@ export class App implements OnInit {
       this.authenticated = authenticated;
     });
 
-    this.stomp.configure('/websocket');
+    this.stomp.configure(window['BASE_URL'] + '/websocket');
     this.stomp.try_connect();
   }
 

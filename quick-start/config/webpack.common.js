@@ -12,7 +12,6 @@ const helpers = require('./helpers');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ForkCheckerPlugin = require('awesome-typescript-loader').ForkCheckerPlugin;
-const HtmlElementsPlugin = require('./html-elements-plugin');
 
 /*
  * Webpack Constants
@@ -53,10 +52,9 @@ module.exports = {
    * See: http://webpack.github.io/docs/configuration.html#entry
    */
   entry: {
-
-    'polyfills': './src/main/ui/polyfills.ts',
-    'vendor':    './src/main/ui/vendor.ts',
-    'main':      './src/main/ui/bootstrap.ts'
+    'polyfills': './src/main/ui/polyfills.browser.ts',
+    'vendor':    './src/main/ui/vendor.browser.ts',
+    'main':      './src/main/ui/main.browser.ts'
 
   },
 
@@ -118,6 +116,8 @@ module.exports = {
           helpers.root('node_modules/@angular'),
           helpers.root('node_modules/@ngrx'),
           helpers.root('node_modules/@angular2-material'),
+          helpers.root('node_modules/primeng'),
+          helpers.root('node_modules/quill')
         ]
       }
 
@@ -268,35 +268,9 @@ module.exports = {
      */
     new HtmlWebpackPlugin({
       template: 'src/main/ui/index.html',
-      chunksSortMode: 'dependency'
+      chunksSortMode: 'dependency',
+      filename: '../templates/index.html'
     }),
-
-    /*
-     * Plugin: HtmlHeadConfigPlugin
-     * Description: Generate html tags based on javascript maps.
-     *
-     * If a publicPath is set in the webpack output configuration, it will be automatically added to
-     * href attributes, you can disable that by adding a "=href": false property.
-     * You can also enable it to other attribute by settings "=attName": true.
-     *
-     * The configuration supplied is map between a location (key) and an element definition object (value)
-     * The location (key) is then exported to the template under then htmlElements property in webpack configuration.
-     *
-     * Example:
-     *  Adding this plugin configuration
-     *  new HtmlElementsPlugin({
-     *    headTags: { ... }
-     *  })
-     *
-     *  Means we can use it in the template like this:
-     *  <%= webpackConfig.htmlElements.headTags %>
-     *
-     * Dependencies: HtmlWebpackPlugin
-     */
-    new HtmlElementsPlugin({
-      headTags: require('./head-config.common')
-    }),
-
   ],
 
   /*

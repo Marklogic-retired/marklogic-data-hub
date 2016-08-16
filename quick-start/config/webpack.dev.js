@@ -91,6 +91,7 @@ module.exports = webpackMerge(commonConfig, {
 
     library: 'ac_[name]',
     libraryTarget: 'var',
+    publicPath: ''
   },
 
   plugins: [

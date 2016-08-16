@@ -49,4 +49,22 @@ $color-primary-contrast: $color-dark-contrast !default;
 // Our accent is dark, so use $color-dark-contrast for overlaid text.
 $color-accent-contrast: $color-dark-contrast !default;
 
+mdl-button {
+  i.fa {
+    font-size: 14px;
+  }
+}
+
+/deep/ md-progress-bar[mode="determinate"] {
+  box-sizing: border-box;
+
+  .md-progress-bar-buffer {
+    background-color: unquote("rgb(#{$palette-datahub-A100})");
+  }
+
+  .md-progress-bar-fill::after {
+    background-color: unquote("rgb(#{$palette-datahub-900})");
+  }
+}
+
 @import 'material-design-lite/src/material-design-lite';

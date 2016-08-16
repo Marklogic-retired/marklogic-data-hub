@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 import { TimeAgoPipe } from 'angular2-moment';
 import { TraceService } from './trace.service';
 import { Trace } from './trace.model';
@@ -27,7 +28,10 @@ export class Traces {
   traces: Array<Trace>;
   runningFlows: Map<number, string> = new Map<number, string>();
 
-  constructor(private traceService: TraceService) {
+  constructor(
+    private traceService: TraceService,
+    private router: Router
+  ) {
     this.getTraces();
   }
 
@@ -60,5 +64,9 @@ export class Traces {
       return 'mdi-import';
     }
     return '';
+  }
+
+  private showTrace(traceId) {
+    this.router.navigate(['/traces', traceId]);
   }
 }

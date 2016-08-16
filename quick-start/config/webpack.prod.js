@@ -83,7 +83,9 @@ module.exports = webpackMerge(commonConfig, {
      *
      * See: http://webpack.github.io/docs/configuration.html#output-chunkfilename
      */
-    chunkFilename: '[id].[chunkhash].chunk.js'
+    chunkFilename: '[id].[chunkhash].chunk.js',
+
+    publicPath: ''
 
   },
 

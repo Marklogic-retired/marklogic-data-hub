@@ -21,7 +21,7 @@ export class InstallService {
     this.stomp.subscribe('/topic/install-status').then(msgId => {
       unsubscribeId = msgId;
     });
-    this.http.put(`/projects/${projectId}/${environment}/install`, null).subscribe(() => {
+    this.http.put(`/projects/${projectId}/${environment}/install`, '').subscribe(() => {
       this.stomp.unsubscribe(unsubscribeId);
     });
   }

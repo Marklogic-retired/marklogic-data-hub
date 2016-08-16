@@ -1,4 +1,4 @@
-import { RouterConfig } from '@angular/router';
+import { provideRouter, Routes } from '@angular/router';
 import { Home } from './home';
 import { Login } from './login';
 import { Jobs } from './jobs';
@@ -7,7 +7,7 @@ import { Settings } from './settings';
 import { NoContent } from './no-content';
 import { AuthGuard } from './auth/auth-guard.service';
 
-export const routes: RouterConfig = [
+export const routes: Routes = [
   { path: '', component: Home, canActivate: [AuthGuard] },
   { path: 'home', component: Home, canActivate: [AuthGuard] },
   { path: 'jobs', component: Jobs, canActivate: [AuthGuard] },
@@ -18,3 +18,5 @@ export const routes: RouterConfig = [
   // make sure you match the component type string to the require in asyncRoutes
   { path: '**',    component: NoContent },
 ];
+
+export const APP_ROUTE_PROVIDER = provideRouter(routes);

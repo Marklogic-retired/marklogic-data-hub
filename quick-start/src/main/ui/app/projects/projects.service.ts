@@ -18,7 +18,7 @@ export class ProjectService {
   }
 
   addProject(path) {
-    return this.post(`/projects/?path=${encodeURIComponent(path)}`, null);
+    return this.post(`/projects/?path=${encodeURIComponent(path)}`, '');
   }
 
   removeProject(project) {

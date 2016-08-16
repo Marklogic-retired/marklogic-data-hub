@@ -6,7 +6,6 @@ import { MdlTextFieldComponent } from 'angular2-mdl';
 @Component({
   selector: 'folder-browser',
   templateUrl: './folder-browser.tpl.html',
-  inputs: ['startPath'],
   styleUrls: ['./folder-browser.styles.scss'],
 })
 export class FolderBrowser implements OnInit, OnChanges {

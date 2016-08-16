@@ -69,7 +69,7 @@ export class EntitiesService {
 
   runHarmonizeFlow(flow: Flow) {
     const url = this.url(`/entities/${flow.entityName}/flows/HARMONIZE/${flow.flowName}/run`);
-    return this.post(url, null).subscribe(() => {});
+    return this.post(url, '').subscribe(() => {});
   }
 
   public extractData = (res: Response) => {

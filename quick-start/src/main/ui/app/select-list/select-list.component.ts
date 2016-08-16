@@ -5,7 +5,6 @@ import * as _ from 'lodash';
 @Component({
   selector: 'select-list',
   templateUrl: './select-list.tpl.html',
-  inputs: ['items', 'selected', 'label', 'identifier', 'readOnly'],
   styleUrls: ['./select-list.styles.scss'],
 })
 

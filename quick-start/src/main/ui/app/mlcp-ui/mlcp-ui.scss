@@ -77,6 +77,10 @@ $easingFunc: ease-in-out;
   }
 }
 
+md-input {
+  width: 100%;
+}
+
 @media (min-width: 960px) {
   md-tooltip.custom-tt ._md-content {
     max-width: 400px;

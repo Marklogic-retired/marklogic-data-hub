@@ -89,8 +89,10 @@ export class MlcpUi {
     private snackbar: MdlSnackbarService,
     private vcRef: ViewContainerRef,
     private entitiesService: EntitiesService,
-    private envService: EnvironmentService) {
-    snackbar.setDefaultViewContainerRef(vcRef);
+    private envService: EnvironmentService
+  ) {
+    let vref: any = vcRef;
+    snackbar.setDefaultViewContainerRef(vref);
   }
 
   show(mlcpOptions, flow: Flow, $event): EventEmitter<boolean> {

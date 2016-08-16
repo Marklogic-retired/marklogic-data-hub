@@ -59,6 +59,9 @@ export class PositionService {
       },
       right: function ():number {
         return hostElPos.left + hostElPos.width + 10;
+      },
+      innerRight: function ():number {
+        return hostElPos.left + hostElPos.width - targetElWidth;
       }
     };
 
@@ -77,6 +80,7 @@ export class PositionService {
     let targetElPos:{top:number, left:number};
     switch (pos0) {
       case 'right':
+      case 'innerRight':
         targetElPos = {
           top: shiftHeight[pos1](),
           left: shiftWidth[pos0]()
