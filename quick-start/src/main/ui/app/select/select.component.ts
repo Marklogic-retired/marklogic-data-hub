@@ -8,7 +8,7 @@ import * as _ from 'lodash';
 @Component({
   selector: 'custom-select',
   templateUrl: './select.html',
-  styleUrls: ['./select.scss'],
+  styleUrls: ['./select.css'],
 })
 export class Select implements OnInit {
   @Input() id: any;
@@ -21,7 +21,7 @@ export class Select implements OnInit {
   @Input() allowRemove: boolean = false;
   @Output() selectedItem = new EventEmitter();
 
-  currentItem = null;
+  currentItem: any = null;
 
   @ViewChild(MdlButtonComponent) private buttonChild: MdlButtonComponent;
   @ViewChild(MdlMenuComponent) private menuChild: MdlMenuComponent;
@@ -44,14 +44,14 @@ export class Select implements OnInit {
     }
   }
 
-  ngOnChanges(changes) {
+  ngOnChanges(changes: any) {
     if (changes.initialSelectedItem) {
       this.selectInitial();
     }
   }
 
-  hasValue() {
-    let value = null;
+  hasValue(): boolean {
+    let value: any = null;
     if (this.currentItem) {
       if (this.value) {
         value = this.currentItem[this.value];
@@ -63,18 +63,18 @@ export class Select implements OnInit {
     return value !== null;
   }
 
-  toggleMenu($event) {
+  toggleMenu($event: Event): void {
     this.menuChild.toggle($event, this.buttonChild);
   }
 
-  selectItem(item, allowed) {
+  selectItem(item: any, allowed: boolean): void {
     if (this.isReadOnly() && !allowed) {
       return;
     }
 
     this.currentItem = item;
 
-    let value;
+    let value: any;
     if (this.value) {
       value = this.currentItem[this.value];
     } else {
@@ -86,13 +86,13 @@ export class Select implements OnInit {
   getButtonText() {
     if (this.hasValue()) {
       return this.getItemText(this.currentItem);
-    }
-    else {
+    } else {
       return this.labelText;
     }
   }
-  getItemText(item) {
-    let resp = null;
+
+  getItemText(item: any) {
+    let resp: any = null;
     if (item) {
       if (this.label) {
         resp = item[this.label];
@@ -103,7 +103,7 @@ export class Select implements OnInit {
     return resp;
   }
 
-  getItemClass(item) {
+  getItemClass(item: any): string {
     if (this.currentItem === item) {
       return 'active';
     }
@@ -111,15 +111,15 @@ export class Select implements OnInit {
     return '';
   }
 
-  isActive(item) {
+  isActive(item: any): boolean {
     return this.currentItem === item;
   }
 
-  isReadOnly() {
+  isReadOnly(): boolean {
     return this.readOnly;
   }
 
-  getDynClass() {
+  getDynClass(): string {
     let clz = '';
     if (this.isReadOnly()) {
       clz = 'readonly';

@@ -8,7 +8,7 @@ import * as _ from 'lodash';
 @Component({
   selector: 'new-flow',
   templateUrl: './new-flow.html',
-  styleUrls: ['./new-flow.scss'],
+  styleUrls: ['./new-flow.css'],
   directives: [SelectList],
   animations: [
     trigger('fadeState', [
@@ -58,7 +58,7 @@ export class NewFlow {
   ];
 
   emptyFlow = {
-    flowName: null,
+    flowName: <string>null,
     pluginFormat: 'JAVASCRIPT',
     dataFormat: 'JSON'
   };

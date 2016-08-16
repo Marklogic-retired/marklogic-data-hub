@@ -6,7 +6,7 @@ import * as _ from 'lodash';
   selector: 'pagination',
   templateUrl: './pagination.tpl.html',
   directives: [],
-  styleUrls: ['./pagination.style.scss'],
+  styleUrls: ['./pagination.style.css'],
 })
 export class Pagination implements OnInit, OnChanges {
   @Input() start: number;
@@ -27,16 +27,16 @@ export class Pagination implements OnInit, OnChanges {
     this.calculatePaging();
   }
 
-  ngOnChanges(changes) {
+  ngOnChanges(changes: any) {
     if (changes.start || changes.pageLength) {
       this.calculatePaging();
     }
   }
 
-  calculatePaging() {
-    let s;
-    let e;
-    let i;
+  calculatePaging(): void {
+    let s: number;
+    let e: number;
+    let i: number;
     if (this.start && this.pageLength) {
       this.end = Math.min(this.start + this.pageLength - 1, this.total);
       this.currentPage = (this.start - 1) / this.pageLength + 1;
@@ -57,7 +57,7 @@ export class Pagination implements OnInit, OnChanges {
     }
   }
 
-  gotoPage(page) {
+  gotoPage(page: number): void {
     if (page >= 1 && page <= this.totalPages) {
       this.pageChanged.next(page);
     }

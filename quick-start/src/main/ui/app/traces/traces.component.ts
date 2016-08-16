@@ -3,8 +3,8 @@ import { Router } from '@angular/router';
 import { TimeAgoPipe } from 'angular2-moment';
 import { TraceService } from './trace.service';
 import { Trace } from './trace.model';
-import { SearchResponse } from '../search';
-import { Pagination } from '../pagination';
+import { SearchResponse } from '../search/index';
+import { Pagination } from '../pagination/index';
 
 import * as moment from 'moment';
 
@@ -16,7 +16,7 @@ import * as _ from 'lodash';
   directives: [Pagination],
   pipes: [TimeAgoPipe],
   providers: [TraceService],
-  styleUrls: ['./traces.style.scss'],
+  styleUrls: ['./traces.style.css'],
 })
 export class Traces {
 
@@ -41,8 +41,8 @@ export class Traces {
       this.searchText, this.currentPage, this.pageLength
     ).subscribe(response => {
       this.searchResponse = response;
-      this.traces = _.map(response.results, (result) => {
-        return result['content'];
+      this.traces = _.map(response.results, (result: any) => {
+        return result.content;
       });
     },
     () => {},
@@ -59,14 +59,13 @@ export class Traces {
   private getIconClass(trace: Trace) {
     if (trace.flowType === 'harmonize') {
       return 'mdi-looks';
-    }
-    else if (trace.flowType === 'input') {
+    } else if (trace.flowType === 'input') {
       return 'mdi-import';
     }
     return '';
   }
 
-  private showTrace(traceId) {
+  private showTrace(traceId: string) {
     this.router.navigate(['/traces', traceId]);
   }
 }

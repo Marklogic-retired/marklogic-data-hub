@@ -3,7 +3,7 @@ import { CanActivate, Router, ActivatedRouteSnapshot,
          RouterStateSnapshot } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
 import { AuthService } from './auth.service';
-import { EnvironmentService } from '../environment';
+import { EnvironmentService } from '../environment/index';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -12,7 +12,9 @@ export class AuthGuard implements CanActivate {
     private envService: EnvironmentService,
     private router: Router) {}
 
-  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> | boolean {
+  canActivate(
+    route: ActivatedRouteSnapshot,
+    state: RouterStateSnapshot): Observable<boolean> | boolean {
       if (this.authService.isAuthenticated()) {
         return this.envService.getEnvironment();
       }

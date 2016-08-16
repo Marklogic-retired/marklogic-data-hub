@@ -6,7 +6,7 @@ import { MdlTextFieldComponent } from 'angular2-mdl';
 @Component({
   selector: 'folder-browser',
   templateUrl: './folder-browser.tpl.html',
-  styleUrls: ['./folder-browser.styles.scss'],
+  styleUrls: ['./folder-browser.styles.css'],
 })
 export class FolderBrowser implements OnInit, OnChanges {
   @Input() startPath: string = '.';
@@ -22,13 +22,13 @@ export class FolderBrowser implements OnInit, OnChanges {
 
   ngOnInit() {
     this.getFolders(this.startPath);
-    this.inputPath.registerOnChange(value => {
+    this.inputPath.registerOnChange((value: string) => {
       this.currentPath = value;
       this.changedPath();
     });
   }
 
-  ngOnChanges(changes) {
+  ngOnChanges(changes: any) {
     if (changes.startPath) {
       this.getFolders(changes.startPath.currentValue);
     }
@@ -38,10 +38,10 @@ export class FolderBrowser implements OnInit, OnChanges {
     this.getFolders(this.currentPath);
   }
 
-  getFolders(path) {
+  getFolders(path: string): void {
     if (path) {
       this.isLoading = true;
-      return this.http.get('/api/utils/searchPath?path=' + encodeURIComponent(path))
+      this.http.get('/api/utils/searchPath?path=' + encodeURIComponent(path))
       .map(this.extractData)
       .subscribe(resp => {
         this.folders = resp.folders;
@@ -57,7 +57,7 @@ export class FolderBrowser implements OnInit, OnChanges {
     }
   }
 
-  entryClicked(entry) {
+  entryClicked(entry: any): void {
     this.getFolders(entry.path);
   }
 

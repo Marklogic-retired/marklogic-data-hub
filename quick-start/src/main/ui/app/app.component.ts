@@ -3,15 +3,20 @@ import { Component, ViewEncapsulation,
 
 import { Router } from '@angular/router';
 
-import { AuthService } from './auth';
+import { AuthService } from './auth/index';
 
-import { ConfirmService } from './confirm';
+import { ConfirmService } from './confirm/index';
 
-import { EnvironmentService } from './environment';
+import { EnvironmentService } from './environment/index';
 
 import { ProjectService } from './projects/projects.service';
 
 import { STOMPService } from './stomp/stomp.service';
+
+interface CustomWindow {
+  BASE_URL: string;
+}
+declare var window: CustomWindow;
 
 /*
  * App Component
@@ -20,11 +25,8 @@ import { STOMPService } from './stomp/stomp.service';
 @Component({
   selector: 'app',
   encapsulation: ViewEncapsulation.None,
-  styles: [
-    // require('styles/material.scss'),
-    // require('@angular2-material/core/style/core.css'),
-    // require('@angular2-material/core/overlay/overlay.css'),
-    require('./app.style.scss')
+  styleUrls: [
+    './app.style.css'
   ],
   template: `
     <hub-header *ngIf="canShowHeader()"></hub-header>
@@ -48,11 +50,12 @@ export class App implements OnInit {
     confirm.setDefaultViewContainerRef(vcRef);
     // get the auth state and listen for changes
     this.authenticated = auth.isAuthenticated();
-    auth.authenticated.subscribe(authenticated => {
+    auth.authenticated.subscribe((authenticated: boolean) => {
       this.authenticated = authenticated;
     });
 
-    this.stomp.configure(window['BASE_URL'] + '/websocket');
+    let baseUrl: string = window.BASE_URL;
+    this.stomp.configure(baseUrl + '/websocket');
     this.stomp.try_connect();
   }
 

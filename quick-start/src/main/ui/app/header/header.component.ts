@@ -12,7 +12,7 @@ import { FlowStatus } from '../entities/flow-status.model';
   selector: 'hub-header',
   templateUrl: './header.tpl.html',
   providers: [],
-  styleUrls: ['./header.style.scss'],
+  styleUrls: ['./header.style.css'],
 })
 export class Header {
 

@@ -218,7 +218,7 @@ export class STOMPService {
     return promise;
   }
 
-  public unsubscribe(id) {
+  public unsubscribe(id: string) {
     this.client.unsubscribe(id);
   }
 

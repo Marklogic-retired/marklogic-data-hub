@@ -18,11 +18,11 @@ export class TraceService {
     return res.json();
   }
 
-  private get(url) {
+  private get(url: string) {
     return this.http.get(url).map(this.extractData);
   }
 
-  private post(url, data) {
+  private post(url: string, data: any) {
     return this.http.post(url, data).map(this.extractData);
   }
 }

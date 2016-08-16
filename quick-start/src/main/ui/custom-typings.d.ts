@@ -33,73 +33,73 @@ import * as _ from 'lodash'
 
 
 // Extra variables that live on Global that will be replaced by webpack DefinePlugin
-declare var ENV: string;
-declare var HMR: boolean;
+// declare var ENV: string;
+// declare var HMR: boolean;
 
-interface GlobalEnvironment {
-  ENV;
-  HMR;
-}
+// interface GlobalEnvironment {
+//   ENV: any;
+//   HMR: any;
+// }
 
-interface Es6PromiseLoader {
-  (id: string): (exportName?: string) => Promise<any>;
-}
+// interface Es6PromiseLoader {
+//   (id: string): (exportName?: string) => Promise<any>;
+// }
 
-type FactoryEs6PromiseLoader = () => Es6PromiseLoader;
-type FactoryPromise = () => Promise<any>;
+// type FactoryEs6PromiseLoader = () => Es6PromiseLoader;
+// type FactoryPromise = () => Promise<any>;
 
-type AsyncRoutes = {
-  [component: string]: Es6PromiseLoader |
-                               Function |
-                FactoryEs6PromiseLoader |
-                         FactoryPromise
-};
-
-
-type IdleCallbacks = Es6PromiseLoader |
-                             Function |
-              FactoryEs6PromiseLoader |
-                       FactoryPromise ;
-
-interface WebpackModule {
-  hot: {
-    data?: any,
-    idle: any,
-    accept(dependencies?: string | string[], callback?: (updatedDependencies?: any) => void): void;
-    decline(dependencies?: string | string[]): void;
-    dispose(callback?: (data?: any) => void): void;
-    addDisposeHandler(callback?: (data?: any) => void): void;
-    removeDisposeHandler(callback?: (data?: any) => void): void;
-    check(autoApply?: any, callback?: (err?: Error, outdatedModules?: any[]) => void): void;
-    apply(options?: any, callback?: (err?: Error, outdatedModules?: any[]) => void): void;
-    status(callback?: (status?: string) => void): void | string;
-    removeStatusHandler(callback?: (status?: string) => void): void;
-  };
-}
+// type AsyncRoutes = {
+//   [component: string]: Es6PromiseLoader |
+//                                Function |
+//                 FactoryEs6PromiseLoader |
+//                          FactoryPromise
+// };
 
 
-interface WebpackRequire {
-    (id: string): any;
-    (paths: string[], callback: (...modules: any[]) => void): void;
-    ensure(ids: string[], callback: (req: WebpackRequire) => void, chunkName?: string): void;
-    context(directory: string, useSubDirectories?: boolean, regExp?: RegExp): WebpackContext;
-}
+// type IdleCallbacks = Es6PromiseLoader |
+//                              Function |
+//               FactoryEs6PromiseLoader |
+//                        FactoryPromise ;
 
-interface WebpackContext extends WebpackRequire {
-    keys(): string[];
-}
+// interface WebpackModule {
+//   hot: {
+//     data?: any,
+//     idle: any,
+//     accept(dependencies?: string | string[], callback?: (updatedDependencies?: any) => void): void;
+//     decline(dependencies?: string | string[]): void;
+//     dispose(callback?: (data?: any) => void): void;
+//     addDisposeHandler(callback?: (data?: any) => void): void;
+//     removeDisposeHandler(callback?: (data?: any) => void): void;
+//     check(autoApply?: any, callback?: (err?: Error, outdatedModules?: any[]) => void): void;
+//     apply(options?: any, callback?: (err?: Error, outdatedModules?: any[]) => void): void;
+//     status(callback?: (status?: string) => void): void | string;
+//     removeStatusHandler(callback?: (status?: string) => void): void;
+//   };
+// }
 
-interface ErrorStackTraceLimit {
-  stackTraceLimit: number;
-}
+
+// interface WebpackRequire {
+//     (id: string): any;
+//     (paths: string[], callback: (...modules: any[]) => void): void;
+//     ensure(ids: string[], callback: (req: WebpackRequire) => void, chunkName?: string): void;
+//     context(directory: string, useSubDirectories?: boolean, regExp?: RegExp): WebpackContext;
+// }
+
+// interface WebpackContext extends WebpackRequire {
+//     keys(): string[];
+// }
+
+// interface ErrorStackTraceLimit {
+//   stackTraceLimit: number;
+// }
 
 
-// Extend typings
-interface NodeRequire extends WebpackRequire {}
-interface ErrorConstructor extends ErrorStackTraceLimit {}
-interface NodeRequireFunction extends Es6PromiseLoader  {}
-interface NodeModule extends WebpackModule {}
-interface Global extends GlobalEnvironment  {}
+// // Extend typings
+// interface NodeRequire extends WebpackRequire {}
+// interface ErrorConstructor extends ErrorStackTraceLimit {}
+// interface NodeRequireFunction extends Es6PromiseLoader  {}
+// interface NodeModule extends WebpackModule {}
+// interface Global extends GlobalEnvironment  {}
 
 
 
@@ -116,21 +116,21 @@ declare module 'stompjs/lib/stomp.min' {
   export interface Client {
     heartbeat: any;
 
-    debug(...args: string[]);
+    debug(...args: string[]): any;
 
-    connect(...args: any[]);
-    disconnect(disconnectCallback: () => any, headers?: any);
+    connect(...args: any[]): any;
+    disconnect(disconnectCallback: () => any, headers?: any): any;
 
-    send(destination: string, headers?: any, body?: string);
-    subscribe(destination: string, callback?: (message: Message) => any, body?: string);
-    unsubscribe(id: string);
+    send(destination: string, headers?: any, body?: string): any;
+    subscribe(destination: string, callback?: (message: Message) => any, body?: string): any;
+    unsubscribe(id: string): any;
 
-    begin(transaction: string);
-    commit(transaction: string);
-    abort(transaction: string);
+    begin(transaction: string): any;
+    commit(transaction: string): any;
+    abort(transaction: string): any;
 
-    ack(messageID: string, subscription: string, headers?: any);
-    nack(messageID: string, subscription: string, headers?: any);
+    ack(messageID: string, subscription: string, headers?: any): any;
+    nack(messageID: string, subscription: string, headers?: any): any;
   }
 
   export interface Message {
@@ -138,27 +138,27 @@ declare module 'stompjs/lib/stomp.min' {
     headers: any;
     body: string;
 
-    ack(headers?: any);
-    nack(headers?: any);
+    ack(headers?: any): any;
+    nack(headers?: any): any;
   }
 
   export interface Frame {
-    constructor(command: string, headers?: any, body?: string);
+    constructor(command: string, headers?: any, body?: string): any;
 
     toString(): string;
-    sizeOfUTF8(s: string);
-    unmarshall(datas: any);
-    marshall(command: string, headers?, body?);
+    sizeOfUTF8(s: string): any;
+    unmarshall(datas: any): any;
+    marshall(command: string, headers?: any, body?: any): any;
   }
 
   export interface Stomp {
     client: Client;
     Frame: Frame;
 
-    over(ws: WebSocket);
+    over(ws: WebSocket): any;
   }
 
-  export var Stomp;
+  export var Stomp: any;
 }
 
 

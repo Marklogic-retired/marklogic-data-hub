@@ -5,7 +5,7 @@ import * as _ from 'lodash';
 @Component({
   selector: 'select-list',
   templateUrl: './select-list.tpl.html',
-  styleUrls: ['./select-list.styles.scss'],
+  styleUrls: ['./select-list.styles.css'],
 })
 
 /**
@@ -24,7 +24,7 @@ export class SelectList implements OnInit, OnChanges {
   @Output() selectedItem = new EventEmitter();
   @Output() removedItem = new EventEmitter();
 
-  currentItem = null;
+  currentItem: any = null;
   constructor() {}
 
   ngOnInit() {
@@ -41,20 +41,20 @@ export class SelectList implements OnInit, OnChanges {
     }
   }
 
-  ngOnChanges(changes) {
+  ngOnChanges(changes: any) {
     if (changes.initialSelectedItem) {
       this.selectInitial();
     }
   }
 
-  selectItem(item, allowed) {
+  selectItem(item: any, allowed: boolean): void {
     if (this.isReadOnly() && !allowed) {
       return;
     }
 
     this.currentItem = item;
 
-    let value;
+    let value: any;
     if (this.identifier) {
       value = this.currentItem[this.identifier];
     } else {
@@ -63,7 +63,7 @@ export class SelectList implements OnInit, OnChanges {
     this.selectedItem.emit(value);
   }
 
-  removeItem(item, event: Event) {
+  removeItem(item: any, event: Event): void {
     this.removedItem.emit({
       item: item,
       event: event
@@ -71,8 +71,8 @@ export class SelectList implements OnInit, OnChanges {
     event.stopPropagation();
   }
 
-  getItemText(item) {
-    let resp;
+  getItemText(item: any) {
+    let resp: any;
     if (this.label) {
       resp = item[this.label];
     } else {
@@ -81,7 +81,7 @@ export class SelectList implements OnInit, OnChanges {
     return resp;
   }
 
-  getItemClass(item) {
+  getItemClass(item: any): string {
     if (this.currentItem === item) {
       return 'active';
     }
@@ -89,15 +89,15 @@ export class SelectList implements OnInit, OnChanges {
     return '';
   }
 
-  isActive(item) {
+  isActive(item: any): boolean {
     return this.currentItem === item;
   }
 
-  isReadOnly() {
+  isReadOnly(): boolean {
     return this.readOnly;
   }
 
-  getDynClass() {
+  getDynClass(): string {
     let clz = '';
     if (this.isReadOnly()) {
       clz = 'readonly';

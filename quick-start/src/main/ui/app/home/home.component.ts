@@ -7,7 +7,7 @@ import { EntitiesService } from '../entities/entities.service';
 
 import { MdlSnackbarService } from 'angular2-mdl';
 
-import { MlcpUi } from '../mlcp-ui';
+import { MlcpUi } from '../mlcp-ui/index';
 import { NewEntity } from '../new-entity/new-entity';
 import { NewFlow } from '../new-flow/new-flow';
 
@@ -18,7 +18,7 @@ import * as _ from 'lodash';
   templateUrl: './home.template.html',
   directives: [MlcpUi, NewEntity, NewFlow],
   providers: [],
-  styleUrls: ['./home.style.scss'],
+  styleUrls: ['./home.style.css'],
 })
 export class Home {
   @ViewChild(MlcpUi) mlcp: MlcpUi;
@@ -37,7 +37,7 @@ export class Home {
   ) {
     let vref: any = vcRef;
     snackbar.setDefaultViewContainerRef(vref);
-    entitiesService.entityMessageEmitter.subscribe(path => {
+    entitiesService.entityMessageEmitter.subscribe((path: string) => {
       this.getEntities();
     });
     this.getEntities();
@@ -61,13 +61,13 @@ export class Home {
     });
   }
 
-  toggleEntity(entity): void {
+  toggleEntity(entity: Entity): void {
     const collapsed: boolean = this.isCollapsed(entity);
     _.each(this.entities, e => { this.setCollapsed(e, true); });
     this.setCollapsed(entity, !collapsed);
   }
 
-  setFlow(entity, flow, flowType): void {
+  setFlow(entity: Entity, flow: Flow, flowType: string): void {
     if (this.mlcp.isVisible()) {
       this.mlcp.cancel();
     }
@@ -76,13 +76,13 @@ export class Home {
     this.flowType = flowType;
   }
 
-  isActiveEntity(entity): boolean {
+  isActiveEntity(entity: Entity): boolean {
     return this.entity === entity;
   }
 
-  showNewEntity(ev): void {
-    this.newEntity.show().subscribe(newEntity => {
-      this.entitiesService.createEntity(newEntity).subscribe(entity => {
+  showNewEntity(ev: Event): void {
+    this.newEntity.show().subscribe((newEntity: Entity) => {
+      this.entitiesService.createEntity(newEntity).subscribe((entity: Entity) => {
         this.entities.push(entity);
       });
     });
@@ -96,9 +96,9 @@ export class Home {
     this.showNewFlow(ev, entity, 'HARMONIZE');
   }
 
-  showNewFlow(ev: Event, entity: Entity, flowType): void {
-    this.newFlow.show(flowType).subscribe(newFlow => {
-      this.entitiesService.createFlow(entity, flowType, newFlow).subscribe(flow => {
+  showNewFlow(ev: Event, entity: Entity, flowType: string): void {
+    this.newFlow.show(flowType).subscribe((newFlow: Flow) => {
+      this.entitiesService.createFlow(entity, flowType, newFlow).subscribe((flow: Flow) => {
         if (flowType === 'INPUT') {
           entity.inputFlows.push(flow);
         } else if (flowType === 'HARMONIZE') {
@@ -108,7 +108,7 @@ export class Home {
     });
   }
 
-  runFlow(ev: Event, flow: Flow, flowType: string) {
+  runFlow(ev: MouseEvent, flow: Flow, flowType: string) {
     const lower = flowType.toLowerCase();
     if (lower === 'input') {
       this.runInputFlow(ev, flow);
@@ -117,9 +117,9 @@ export class Home {
     }
   }
 
-  runInputFlow(ev: Event, flow: Flow): void {
+  runInputFlow(ev: MouseEvent, flow: Flow): void {
     this.entitiesService.getInputFlowOptions(flow).subscribe(mlcpOptions => {
-      this.mlcp.show(mlcpOptions, flow, ev).subscribe((options) => {
+      this.mlcp.show(mlcpOptions, flow, ev).subscribe((options: any) => {
         this.entitiesService.runInputFlow(flow, options);
         this.snackbar.showSnackbar({
           message: flow.entityName + ': ' + flow.flowName + ' starting...',
