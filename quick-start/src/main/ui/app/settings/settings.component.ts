@@ -2,11 +2,11 @@ import { Component, Input } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { SettingsService } from './settings.service';
-import { InstallService } from '../installer';
+import { InstallService } from '../installer/index';
 
-import { ProjectService } from '../projects';
+import { ProjectService } from '../projects/index';
 
-import { ConfirmService } from '../confirm';
+import { ConfirmService } from '../confirm/index';
 
 import { TooltipDirective } from '../tooltip/tooltip.directive';
 
@@ -17,7 +17,7 @@ import * as _ from 'lodash';
   templateUrl: './settings.tpl.html',
   directives: [TooltipDirective],
   providers: [],
-  styleUrls: ['./settings.style.scss'],
+  styleUrls: ['./settings.style.css'],
 })
 export class Settings {
 
@@ -36,23 +36,23 @@ export class Settings {
     return this.settings.debugEnabled;
   }
 
-  toggleDebug(checked) {
+  toggleDebug(checked: boolean): void {
     if (checked !== this.settings.debugEnabled) {
       this.settings.toggleDebugging();
     }
   }
 
-  traceEnabled() {
+  traceEnabled(): boolean {
     return this.settings.traceEnabled;
   }
 
-  toggleTrace(checked) {
+  toggleTrace(checked: boolean): void {
     if (checked !== this.settings.traceEnabled) {
       this.settings.toggleTracing();
     }
   }
 
-  uninstall($event: MouseEvent) {
+  uninstall($event: MouseEvent): void {
     this.confirm.showConfirm({
       okText: 'Yes',
       cancelText: 'No',
@@ -60,7 +60,7 @@ export class Settings {
       message: 'Uninstall the hub from MarkLogic?'
     }, $event).then(() => {
       this.uninstallStatus = '';
-      let emitter = this.install.messageEmitter.subscribe(payload => {
+      let emitter = this.install.messageEmitter.subscribe((payload: any) => {
         this.percentComplete = payload.percentComplete;
         this.uninstallStatus += '\n' + payload.message;
 

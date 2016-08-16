@@ -48,7 +48,7 @@ export class EntitiesService {
     return this.post(this.url('/entities/'), entity);
   }
 
-  createFlow(entity: Entity, flowType, flow: Flow) {
+  createFlow(entity: Entity, flowType: string, flow: Flow) {
     return this.post(this.url(`/entities/${entity.entityName}/flows/${flowType}`), flow);
   }
 
@@ -57,19 +57,20 @@ export class EntitiesService {
     return this.get(url);
   }
 
-  saveInputFlowOptions(flow: Flow, mlcpOptions) {
-    const url = this.url(`/entities/${flow.entityName}/flows/INPUT/${flow.flowName}/save-input-options`);
+  saveInputFlowOptions(flow: Flow, mlcpOptions: any) {
+    const url = this.url(
+      `/entities/${flow.entityName}/flows/INPUT/${flow.flowName}/save-input-options`);
     return this.http.post(url, mlcpOptions);
   }
 
-  runInputFlow(flow: Flow, mlcpOptions) {
+  runInputFlow(flow: Flow, mlcpOptions: any) {
     const url = this.url(`/entities/${flow.entityName}/flows/INPUT/${flow.flowName}/run/input`);
     return this.post(url, mlcpOptions).subscribe(() => {});
   }
 
   runHarmonizeFlow(flow: Flow) {
     const url = this.url(`/entities/${flow.entityName}/flows/HARMONIZE/${flow.flowName}/run`);
-    return this.post(url, null).subscribe(() => {});
+    return this.post(url, '').subscribe(() => {});
   }
 
   public extractData = (res: Response) => {
@@ -87,7 +88,7 @@ export class EntitiesService {
     return this.http.get(url).map(this.extractData);
   }
 
-  private post(url: string, data) {
+  private post(url: string, data: any) {
     return this.http.post(url, data).map(this.extractData);
   }
 

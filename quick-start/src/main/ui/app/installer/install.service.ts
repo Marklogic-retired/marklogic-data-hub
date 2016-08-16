@@ -16,19 +16,19 @@ export class InstallService {
     this.stomp.messages.subscribe(this.onMessage);
   }
 
-  install(projectId, environment) {
-    let unsubscribeId;
-    this.stomp.subscribe('/topic/install-status').then(msgId => {
+  install(projectId: string, environment: string) {
+    let unsubscribeId: string;
+    this.stomp.subscribe('/topic/install-status').then((msgId: string) => {
       unsubscribeId = msgId;
     });
-    this.http.put(`/projects/${projectId}/${environment}/install`, null).subscribe(() => {
+    this.http.put(`/projects/${projectId}/${environment}/install`, '').subscribe(() => {
       this.stomp.unsubscribe(unsubscribeId);
     });
   }
 
   uninstall(projectId: string, environment: string) {
-    let unsubscribeId;
-    this.stomp.subscribe('/topic/uninstall-status').then(msgId => {
+    let unsubscribeId: string;
+    this.stomp.subscribe('/topic/uninstall-status').then((msgId: string) => {
       unsubscribeId = msgId;
     });
     this.http.delete(`/projects/${projectId}/${environment}/uninstall`).subscribe(() => {

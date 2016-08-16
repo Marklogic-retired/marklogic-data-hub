@@ -8,7 +8,7 @@ import * as _ from 'lodash';
 @Component({
   selector: 'new-entity',
   templateUrl: './new-entity.html',
-  styleUrls: ['./new-entity.scss'],
+  styleUrls: ['./new-entity.css'],
   directives: [SelectList],
   animations: [
     trigger('fadeState', [

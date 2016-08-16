@@ -23,7 +23,7 @@ const ANIMATION_TIME = 500;
 
 @Component({
   selector: 'confirm-component',
-  styleUrls: ['./confirm.style.scss'],
+  styleUrls: ['./confirm.style.css'],
   templateUrl: './confirm.tpl.html'
 })
 export class ConfirmComponent {

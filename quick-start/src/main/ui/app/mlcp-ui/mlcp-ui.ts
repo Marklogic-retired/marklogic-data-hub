@@ -13,14 +13,18 @@ import { SelectList } from '../select-list/select-list.component';
 import { Select } from '../select/select.component';
 import { TooltipDirective } from '../tooltip/tooltip.directive';
 import { Flow } from '../entities/flow.model';
-import { EnvironmentService } from '../environment';
+import { EnvironmentService } from '../environment/index';
+
+interface MlcpOptions {
+  [key: string]: any;
+}
 
 @Component({
   selector: 'mlcp',
   templateUrl: './mlcp-ui.html',
   providers: [],
   directives: [ClipboardDirective, FolderBrowser, SelectList, Select, TooltipDirective],
-  styleUrls: ['./mlcp-ui.scss'],
+  styleUrls: ['./mlcp-ui.css'],
   animations: [
     trigger('fadeState', [
       state('hidden', style({
@@ -52,7 +56,7 @@ import { EnvironmentService } from '../environment';
 })
 export class MlcpUi {
   inputFilePath: string = '.';
-  mlcp = {};
+  mlcp = <MlcpOptions>{};
 
   flow: Flow;
 
@@ -89,11 +93,13 @@ export class MlcpUi {
     private snackbar: MdlSnackbarService,
     private vcRef: ViewContainerRef,
     private entitiesService: EntitiesService,
-    private envService: EnvironmentService) {
-    snackbar.setDefaultViewContainerRef(vcRef);
+    private envService: EnvironmentService
+  ) {
+    let vref: any = vcRef;
+    snackbar.setDefaultViewContainerRef(vref);
   }
 
-  show(mlcpOptions, flow: Flow, $event): EventEmitter<boolean> {
+  show(mlcpOptions: any, flow: Flow, $event: MouseEvent): EventEmitter<boolean> {
     this.finishedEvent = new EventEmitter<boolean>(true);
 
     this.flow = flow;
@@ -112,7 +118,7 @@ export class MlcpUi {
   }
 
   /* tslint:disable:max-line-length */
-  getGroups(entityName, flowName, previousOptions) {
+  getGroups(entityName: string, flowName: string, previousOptions: any) {
     const groups = [
       {
         category: 'General Options',
@@ -408,7 +414,7 @@ export class MlcpUi {
   }
   /* tslint:enable:max-line-length */
 
-  isGroupVisible(category) {
+  isGroupVisible(category: string): boolean {
     const inputFileType = this.groups[0].settings[0].value;
     if (category === 'Delimited Text Options' && inputFileType !== 'delimited_text') {
       return false;
@@ -418,7 +424,7 @@ export class MlcpUi {
     return true;
   }
 
-  isFieldVisible(filter, collection) {
+  isFieldVisible(filter: any, collection: Array<any>): boolean {
     if (filter) {
       const field = filter.field;
       const value = filter.value;
@@ -427,7 +433,7 @@ export class MlcpUi {
     return true;
   }
 
-  getByFieldAndValue(field, value, collection) {
+  getByFieldAndValue(field: any, value: any, collection: Array<any>) {
     let i = 0;
     const len = collection.length;
     for (; i < len; i++) {
@@ -440,7 +446,7 @@ export class MlcpUi {
   }
 
 
-  isText(type) {
+  isText(type: string): boolean {
     if (type === 'string' || type === 'comma-list' || type === 'number' || type === 'character') {
       return true;
     }
@@ -448,23 +454,23 @@ export class MlcpUi {
     return false;
   }
 
-  toggleSection(group) {
+  toggleSection(group: string): void {
     const section = this.sections[group];
     section.collapsed = !section.collapsed;
   }
 
-  getSectionCollapsed(group) {
+  getSectionCollapsed(group: string): boolean {
     const section = this.sections[group];
     return section.collapsed;
   }
 
-  getSectionClass(group) {
+  getSectionClass(group: string): string {
     const section = this.sections[group];
     return section.collapsed ? 'collapsed' : '';
   }
 
-  buildMlcpOptions() {
-    let options = [];
+  buildMlcpOptions(): Array<any> {
+    let options: Array<any> = [];
 
     this.mlcp = {};
     this.addMlcpOption(options, 'import', null, false);
@@ -489,7 +495,7 @@ export class MlcpUi {
     return options;
   }
 
-  addMlcpOption(options, key, value, isOtherOption) {
+  addMlcpOption(options: any, key: string, value: any, isOtherOption: boolean): void {
     options.push('-' + key);
     if (value) {
       options.push(value);
@@ -499,58 +505,60 @@ export class MlcpUi {
     }
   }
 
-  updateSetting(setting, value) {
+  updateSetting(setting: any, value: any): void {
     setting.value = value;
     this.updateMlcpCommand();
   }
 
-  updateMlcpCommand() {
-    let mlcpCommand = 'mlcp';
+  updateMlcpCommand(): string {
+    let mlcpCommand: string = 'mlcp';
     mlcpCommand += (navigator.appVersion.indexOf('Win') !== -1) ? '.bat' : '.sh';
 
     let host = this.envService.settings.host;
     let port = this.envService.settings.stagingPort;
     let username = this.envService.settings.username;
 
-    mlcpCommand += ` -host ${host} -port ${port} -username ${username} -password ***** ${this.buildMlcpOptions().join(' ')}`;
+    let otherOptions = this.buildMlcpOptions().join(' ');
+    mlcpCommand +=
+      ` -host ${host} -port ${port} -username ${username} -password ***** ${otherOptions}`;
 
     this.mlcpCommand = mlcpCommand;
     return mlcpCommand;
   }
 
-  folderClicked($event) {
-    this.inputFilePath = $event;
+  folderClicked(folder: string): void {
+    this.inputFilePath = folder;
     this.updateMlcpCommand();
   }
 
-  cmdCopied() {
+  cmdCopied(): void {
     this.snackbar.showSnackbar({
       message: 'MLCP command copied to the clipboard.',
     });
   }
 
-  hide() {
+  hide(): void {
     this._isVisible = false;
   }
 
-  public isVisible() {
+  public isVisible(): boolean {
     return this._isVisible;
   }
 
-  public cancel() {
+  public cancel(): void {
     this.hide();
     this.finishedEvent.error(false);
   }
 
-  private saveOptions() {
+  private saveOptions(): void {
     this.entitiesService.saveInputFlowOptions(this.flow, this.mlcp).subscribe(() => {
       this.snackbar.showSnackbar({
-        message: 'MLCP options saved.',
+        message: 'MLCP options saved.'
       });
-    })
+    });
   }
 
-  private runImport() {
+  private runImport(): void {
     this.hide();
     this.finishedEvent.emit(this.mlcp);
   }

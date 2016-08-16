@@ -6,7 +6,7 @@ import { HubSettings } from './hub-settings.model';
 @Injectable()
 export class EnvironmentService {
 
-  public settings: HubSettings
+  public settings: HubSettings;
 
   constructor(private http: Http) {}
 
