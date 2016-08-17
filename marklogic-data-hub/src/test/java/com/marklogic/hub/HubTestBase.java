@@ -25,6 +25,8 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -210,6 +212,12 @@ public class HubTestBase {
         DocumentBuilder builder = factory.newDocumentBuilder();
 
         return builder.parse(inputStream);
+    }
+
+    protected static JsonNode getJsonFromResource(String resourceName) throws IOException {
+        InputStream inputStream = HubTestBase.class.getClassLoader().getResourceAsStream(resourceName);
+        ObjectMapper om = new ObjectMapper();
+        return om.readTree(inputStream);
     }
 
     protected static int getStagingDocCount() {

@@ -42,6 +42,9 @@ import com.marklogic.appdeployer.command.viewschemas.DeployViewSchemasCommand;
 import com.marklogic.appdeployer.impl.SimpleAppDeployer;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
+import com.marklogic.client.FailedRequestException;
+import com.marklogic.client.eval.EvalResultIterator;
+import com.marklogic.client.eval.ServerEvaluationCall;
 import com.marklogic.client.extensions.ResourceManager;
 import com.marklogic.client.extensions.ResourceServices.ServiceResult;
 import com.marklogic.client.extensions.ResourceServices.ServiceResultIterator;
@@ -274,6 +277,41 @@ public class DataHub extends LoggingObject {
      */
     public void installUserModules() {
         installUserModules(false);
+    }
+
+    /**
+     * Removes user's modules from the modules db
+     */
+    public void clearUserModules() {
+        try {
+            runInDatabase(
+                "cts:uris((),(),cts:not-query(cts:collection-query('hub-core-module')))[\n" +
+                    "  fn:not(\n" +
+                    "    fn:ends-with(., \"options/spring-batch.xml\") or\n" +
+                    "    fn:ends-with(., \"options/traces.xml\") or\n" +
+                    "    fn:matches(., \"/marklogic.rest.resource/(collector|debug|entity|flow|tracing|validate|writer)/assets/(metadata\\.xml|resource\\.(xqy|sjs))\") or\n" +
+                    "    fn:matches(., \"/marklogic.rest.transform/(get-content|run-flow|trace-json|trace-search)/assets/(metadata\\.xml|transform\\.(xqy|sjs))\")\n" +
+                    "  )\n" +
+                    "] ! xdmp:document-delete(.)\n",
+                hubConfig.modulesDbName
+            );
+        }
+        catch(FailedRequestException e) {
+            logger.error("Failed to clear user modules");
+        }
+    }
+
+    private EvalResultIterator runInDatabase(String query, String databaseName) {
+        ServerEvaluationCall eval = getDatabaseClient(hubConfig.stagingPort).newServerEval();
+        String xqy =
+            "xdmp:invoke-function(function() {" +
+                query +
+                "}," +
+                "<options xmlns=\"xdmp:eval\">" +
+                "  <database>{xdmp:database(\"" + databaseName + "\")}</database>" +
+                "  <transaction-mode>update-auto-commit</transaction-mode>" +
+                "</options>)";
+        return eval.xquery(xqy).eval();
     }
 
     public void installUserModules(boolean force) {

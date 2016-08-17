@@ -688,7 +688,12 @@ declare function flow:run-plugin(
             else
               $resp
           default return
-            $resp
+            if ($data-format = 'application/json' and
+                $type = $TYPE-XQUERY and
+                $destination = "triples") then
+              json:to-array($resp)
+            else
+              $resp
       let $_ :=
         if (trace:enabled()) then
           trace:plugin-trace(

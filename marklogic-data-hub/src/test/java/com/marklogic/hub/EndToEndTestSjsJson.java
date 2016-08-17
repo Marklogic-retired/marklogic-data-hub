@@ -1,34 +1,30 @@
 package com.marklogic.hub;
 
-import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual;
+import com.marklogic.client.io.Format;
+import com.marklogic.client.io.JacksonHandle;
+import com.marklogic.client.io.StringHandle;
+import com.marklogic.hub.flow.Flow;
+import com.marklogic.hub.flow.FlowType;
+import org.apache.commons.io.FileUtils;
+import org.json.JSONException;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.skyscreamer.jsonassert.JSONAssert;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.apache.commons.io.FileUtils;
-import org.custommonkey.xmlunit.XMLUnit;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.xml.sax.SAXException;
-
-import com.marklogic.client.io.DOMHandle;
-import com.marklogic.client.io.Format;
-import com.marklogic.hub.flow.Flow;
-import com.marklogic.hub.flow.FlowType;
-
-public class EndToEndTestSjsXml extends HubTestBase {
+public class EndToEndTestSjsJson extends HubTestBase {
     private static final String ENTITY = "e2eentity";
     private static Path projectDir = Paths.get(".", "ye-olde-project");
 
     @BeforeClass
     public static void setup() throws IOException {
-        XMLUnit.setIgnoreWhitespace(true);
-
         File projectDirFile = projectDir.toFile();
         if (projectDirFile.isDirectory() && projectDirFile.exists()) {
             FileUtils.deleteDirectory(projectDirFile);
@@ -42,9 +38,9 @@ public class EndToEndTestSjsXml extends HubTestBase {
         Scaffolding scaffolding = new Scaffolding(projectDir.toString());
         scaffolding.createEntity(ENTITY);
         scaffolding.createFlow(ENTITY, "testinput", FlowType.INPUT,
-                PluginFormat.JAVASCRIPT, Format.XML);
+            PluginFormat.JAVASCRIPT, Format.JSON);
         scaffolding.createFlow(ENTITY, "testharmonize", FlowType.HARMONIZE,
-                PluginFormat.JAVASCRIPT, Format.XML);
+            PluginFormat.JAVASCRIPT, Format.JSON);
 
         DataHub dh = new DataHub(getHubConfig());
         dh.clearUserModules();
@@ -62,16 +58,18 @@ public class EndToEndTestSjsXml extends HubTestBase {
     }
 
     @Test
-    public void runFlows() throws IOException, ParserConfigurationException, SAXException {
+    public void runFlows() throws IOException, ParserConfigurationException, SAXException, JSONException {
         FlowManager fm = new FlowManager(getHubConfig());
         Flow harmonizeFlow = fm.getFlow(ENTITY, "testharmonize",
-                FlowType.HARMONIZE);
+            FlowType.HARMONIZE);
 
-        stagingDocMgr.write("/input.xml", new DOMHandle(getXmlFromResource("e2e-test/staged.xml")));
+        stagingDocMgr.write("/input.json", new JacksonHandle(getJsonFromResource("e2e-test/staged.json")));
 
         JobFinishedListener harmonizeFlowListener = new JobFinishedListener();
         fm.runFlow(harmonizeFlow, 10, harmonizeFlowListener);
         harmonizeFlowListener.waitForFinish();
-        assertXMLEqual(getXmlFromResource("e2e-test/final.xml"), finalDocMgr.read("/input.xml").next().getContent(new DOMHandle()).get());
+        String expected = getResource("e2e-test/final.json");
+        String actual = finalDocMgr.read("/input.json").next().getContent(new StringHandle()).get();
+        JSONAssert.assertEquals(expected, actual, false);
     }
 }
