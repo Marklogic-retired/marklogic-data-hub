@@ -118,6 +118,7 @@
     "gulp-sass-lint": "^1.2.0",
     "gulp-shell": "~0.5.2",
     "gulp-sourcemaps": "2.0.0-alpha",
+    "gulp-sym": "0.0.14",
     "gulp-template": "^4.0.0",
     "gulp-tslint": "^6.0.1",
     "gulp-typescript": "~2.13.6",

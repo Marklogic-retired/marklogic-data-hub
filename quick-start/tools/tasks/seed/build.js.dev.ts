@@ -4,10 +4,16 @@ import * as merge from 'merge-stream';
 import * as util from 'gulp-util';
 import { join } from 'path';
 
-import { APP_DEST, APP_SRC, TOOLS_DIR, TYPED_COMPILE_INTERVAL } from '../../config';
+import { APP_DEST, APP_SRC, TOOLS_DIR, TMP_DIR, TYPED_COMPILE_INTERVAL } from '../../config';
 import { makeTsProject, templateLocals } from '../../utils';
 
 const plugins = <any>gulpLoadPlugins();
+
+const INLINE_OPTIONS = {
+  base: TMP_DIR,
+  useRelativePaths: true,
+  removeLineBreaks: true
+};
 
 let typedBuildCounter = TYPED_COMPILE_INTERVAL; // Always start with the typed build.
 
@@ -22,9 +28,9 @@ export = () => {
     TOOLS_DIR + '/manual_typings/**/*.d.ts'
   ]);
   let src = [
-    join(APP_SRC, '**/*.ts'),
-    '!' + join(APP_SRC, '**/*.spec.ts'),
-    '!' + join(APP_SRC, '**/*.e2e-spec.ts')
+    join(APP_DEST, '**/*.ts'),
+    '!' + join(APP_DEST, '**/*.spec.ts'),
+    '!' + join(APP_DEST, '**/*.e2e-spec.ts')
   ];
 
   let projectFiles = gulp.src(src);
@@ -44,6 +50,7 @@ export = () => {
 
   result = projectFiles
     .pipe(plugins.plumber())
+    .pipe(plugins.inlineNg2Template(INLINE_OPTIONS))
     .pipe(plugins.sourcemaps.init())
     .pipe(plugins.typescript(tsProject))
     .on('error', () => {

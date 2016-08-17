@@ -35,6 +35,9 @@ public class EnvironmentConfig {
 
     private HubConfig mlSettings;
 
+
+    private DataHub dataHub;
+
     private Properties environmentProperties = new Properties();
 
     public boolean isInstalled() {
@@ -91,20 +94,9 @@ public class EnvironmentConfig {
         }
         loadConfigurationFromFiles();
 
-        checkInstalled();
+        dataHub = new DataHub(mlSettings);
+        installed = dataHub.isInstalled();
         isInitialized = true;
-    }
-
-    private void checkInstalled() {
-        DataHub dh = new DataHub(mlSettings);
-        installed = dh.isInstalled();
-    }
-
-    public EnvironmentConfig refresh() {
-        if (isInitialized) {
-            checkInstalled();
-        }
-        return this;
     }
 
     public void loadConfigurationFromFiles() {

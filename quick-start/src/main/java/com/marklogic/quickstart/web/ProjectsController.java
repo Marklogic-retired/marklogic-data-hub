@@ -101,10 +101,6 @@ public class ProjectsController extends BaseController implements FileSystemEven
 
         // make sure the project exists
         pm.getProject(projectId);
-
-
-        envConfig.refresh();
-
         return envConfig.toJson();
     }
 

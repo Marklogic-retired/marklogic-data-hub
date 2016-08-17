@@ -18,3 +18,4 @@ src/main/resources/templates
 src/main/ui/**/*.js
 src/main/ui/**/*.map
 coverage/
+tmp/

@@ -194,7 +194,7 @@ export class SeedConfig {
    * The folder for temporary files.
    * @type {string}
    */
-  TMP_DIR = `${this.DIST_DIR}/tmp`;
+  TMP_DIR = 'tmp';
 
   /**
    * The folder for the built files, corresponding to the current environment.
@@ -449,7 +449,7 @@ export class SeedConfig {
       open: argv['b'] ? false : true,
       injectChanges: false,
       server: {
-        baseDir: `${this.DIST_DIR}/empty/`,
+        baseDir: `${this.DIST_DIR}/`,
         routes: {
           [`${this.APP_BASE}${this.APP_DEST}`]: this.APP_DEST,
           [`${this.APP_BASE}node_modules`]: 'node_modules',
