@@ -30,9 +30,9 @@ declare var window: CustomWindow;
   ],
   template: `
     <hub-header *ngIf="canShowHeader()"></hub-header>
-    <main>
+    <div class="main">
       <router-outlet></router-outlet>
-    </main>
+    </div>
   `
 })
 export class App implements OnInit {

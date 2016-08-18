@@ -17,6 +17,7 @@
         <div class="mdl-list__item-primary-content"
           [ngClass]="{ 'active' : !isCollapsed(entity) }"
           (click)="toggleEntity(entity)">
+          <i class="fa fa-bug" *ngIf="entityHasError(entity.entityName)"></i>
           <i class="fa fa-industry"></i> {{ entity.entityName }}
           <div class="mdl-layout-spacer"></div>
           <i class="fa fa-caret-left" [ngClass]="{ 'collapsed' : isCollapsed(entity) }"></i>
@@ -33,11 +34,14 @@
             <ul class="flows mdl-list">
               <li
                 class="flow mdl-list__item"
+                [ngClass]="{'active': isActiveFlow(flow)}"
                 *ngFor="let flow of entity.inputFlows"
                 (click)="setFlow(entity, flow, 'Input')">
                 <span class="mdl-list__item-primary-content">
                   <i class="mdi mdi-import"></i>
                   {{ flow.flowName }}
+                  <span class="mdl-layout-spacer"></span>
+                  <i class="fa fa-bug" *ngIf="flowHasError(entity.entityName, flow.flowName)"></i>
                 </span>
               </li>
             </ul>
@@ -51,11 +55,14 @@
             <ul class="flows mdl-list">
               <li
                 class="flow mdl-list__item"
+                [ngClass]="{'active': isActiveFlow(flow)}"
                 *ngFor="let flow of entity.harmonizeFlows"
                 (click)="setFlow(entity, flow, 'Harmonize')">
                 <span class="mdl-list__item-primary-content">
                   <i class="mdi mdi-looks"></i>
                   {{ flow.flowName }}
+                  <span class="mdl-layout-spacer"></span>
+                  <i class="fa fa-bug" *ngIf="flowHasError(entity.entityName, flow.flowName)"></i>
                 </span>
               </li>
             </ul>
@@ -67,7 +74,7 @@
   <main class="mdl-layout__content">
     <div class="page-content" layout-padding>
       <div class="current-flow" *ngIf="flow">
-        <h2>{{flow.flowName}} {{flowType}} flow</h2>
+        <h2>{{flow.flowName}} {{flowType}} flow <i class="fa fa-bug" *ngIf="flowHasError(entity.entityName, flow.flowName)"></i></h2>
         <h3>
           <mdl-button mdl-button-type="raised" mdl-colored="primary" mdl-ripple (click)="runFlow($event, flow, flowType)">
             Run Flow <i class="fa fa-play-circle-o"></i>
@@ -75,11 +82,16 @@
         </h3>
         <h3>Plugins</h3>
         <ul class="plugin-list">
-          <li *ngFor="let plugin of flow.plugins">
-            <h4><i class="fa fa-folder-open-o"></i> {{plugin.pluginType}}</h4>
+          <li *ngFor="let plugin of flow.plugins" [ngClass]="{'error': pluginHasError(flow, plugin.pluginType) }">
+            <h4>
+              <i class="fa fa-bug" *ngIf="pluginHasError(flow, plugin.pluginType)"></i>
+              <i class="fa fa-folder-open-o"></i>
+              {{plugin.pluginType}}
+              </h4>
             <ul>
               <li *ngFor="let file of plugin.files">
                 <i class="fa fa-file-code-o"></i> {{file}}
+                <pre *ngIf="pluginHasError(flow, plugin.pluginType)" class="error-msg">{{getErrorMessage(flow, plugin.pluginType)}}</pre>
               </li>
             </ul>
           </li>

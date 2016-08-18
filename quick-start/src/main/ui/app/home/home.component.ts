@@ -7,9 +7,12 @@ import { EntitiesService } from '../entities/entities.service';
 
 import { MdlSnackbarService } from 'angular2-mdl';
 
+import { MdDialog, MdDialogConfig, MdDialogRef } from '../dialog/dialog';
+
 import { MlcpUi } from '../mlcp-ui/index';
 import { NewEntity } from '../new-entity/new-entity';
 import { NewFlow } from '../new-flow/new-flow';
+import { DeployService } from '../deploy/deploy.service';
 
 import * as _ from 'lodash';
 
@@ -29,18 +32,54 @@ export class Home {
   entity: Entity;
   flow: Flow;
   flowType: string;
+  config: MdDialogConfig = new MdDialogConfig();
 
   constructor(
     private entitiesService: EntitiesService,
+    private deployService: DeployService,
     private snackbar: MdlSnackbarService,
+    private dialog: MdDialog,
     private vcRef: ViewContainerRef
   ) {
     let vref: any = vcRef;
     snackbar.setDefaultViewContainerRef(vref);
+    this.config.viewContainerRef = this.vcRef;
+
     entitiesService.entityMessageEmitter.subscribe((path: string) => {
       this.getEntities();
     });
     this.getEntities();
+    this.deployService.validateUserModules();
+  }
+
+  getErrors() {
+    return this.deployService.errors;
+  }
+
+  entityHasError(entityName: string): boolean {
+    let errors = this.getErrors();
+    return !!(errors && errors[entityName]);
+  }
+
+  flowHasError(entityName: string, flowName: string): boolean {
+    let errors = this.getErrors();
+    return !!(errors && errors[entityName] && errors[entityName][flowName]);
+  }
+
+  pluginHasError(flow: Flow, pluginType: string) {
+    let errors = this.getErrors();
+    return !!(
+      errors &&
+      errors[flow.entityName] &&
+      errors[flow.entityName][flow.flowName] &&
+      errors[flow.entityName][flow.flowName][pluginType]
+    );
+  }
+
+  getErrorMessage(flow: Flow, pluginType: string) {
+    let errors = this.getErrors();
+    let o = errors[flow.entityName][flow.flowName][pluginType];
+    return `ERROR:\n${o.msg}\n\nat\n\n${o.uri}:${o.line}:${o.column}`;
   }
 
   isCollapsed(entity: Entity): boolean {
@@ -76,6 +115,10 @@ export class Home {
     this.flowType = flowType;
   }
 
+  isActiveFlow(flow: Flow): boolean {
+    return this.flow === flow;
+  }
+
   isActiveEntity(entity: Entity): boolean {
     return this.entity === entity;
   }
@@ -109,11 +152,16 @@ export class Home {
   }
 
   runFlow(ev: MouseEvent, flow: Flow, flowType: string) {
-    const lower = flowType.toLowerCase();
-    if (lower === 'input') {
-      this.runInputFlow(ev, flow);
-    } else if (lower === 'harmonize') {
-      this.runHarmonizeFlow(ev, flow);
+    if (this.flowHasError(flow.entityName, flow.flowName)) {
+      this.dialog.open(HasBugsDialog, this.config).then(() => {});
+    }
+    else {
+      const lower = flowType.toLowerCase();
+      if (lower === 'input') {
+        this.runInputFlow(ev, flow);
+      } else if (lower === 'harmonize') {
+        this.runHarmonizeFlow(ev, flow);
+      }
     }
   }
 
@@ -136,4 +184,16 @@ export class Home {
     });
     ev.stopPropagation();
   }
+}
+
+@Component({
+  selector: 'has-bugs-dialog',
+  template: `
+  <h3 class="bug-title"><i class="fa fa-bug"></i>This flow has a bug!</h3>
+  <p>You must fix it before you can run it.</p>
+  <mdl-button mdl-button-type="raised" mdl-colored="primary" mdl-ripple (click)="dialogRef.close()">OK</mdl-button>`,
+  styleUrls: ['./home.style.css']
+})
+export class HasBugsDialog {
+  constructor(public dialogRef: MdDialogRef<HasBugsDialog>) { }
 }

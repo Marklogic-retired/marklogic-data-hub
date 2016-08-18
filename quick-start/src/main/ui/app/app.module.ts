@@ -15,6 +15,7 @@ import { NoContent } from './no-content/index';
 import { Traces, TraceViewer } from './traces/index';
 
 import { ConfirmService } from './confirm/index';
+import { DeployService } from './deploy/deploy.service';
 import { EntitiesService } from './entities/entities.service';
 import { EnvironmentService } from './environment/index';
 import { InstallService } from './installer/index';
@@ -35,6 +36,7 @@ import { STOMPService } from './stomp/stomp.service';
   providers: [
     AUTH_PROVIDERS,
     ConfirmService,
+    DeployService,
     EntitiesService,
     InstallService,
     JobListenerService,

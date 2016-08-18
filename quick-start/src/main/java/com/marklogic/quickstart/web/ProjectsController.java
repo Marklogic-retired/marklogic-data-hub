@@ -1,9 +1,11 @@
 package com.marklogic.quickstart.web;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.StatusListener;
 import com.marklogic.quickstart.exception.NotAuthorizedException;
+import com.marklogic.quickstart.listeners.ValidateListener;
 import com.marklogic.quickstart.model.EnvironmentConfig;
 import com.marklogic.quickstart.model.LoginInfo;
 import com.marklogic.quickstart.model.Project;
@@ -125,7 +127,7 @@ public class ProjectsController extends BaseController implements FileSystemEven
             session.setAttribute("currentEnvironment", environment);
 
             if (envConfig.isInstalled()) {
-                dataHubService.installUserModules(envConfig.getMlSettings(), false);
+                installUserModules(envConfig.getMlSettings(), false);
                 startProjectWatcher();
             }
 
@@ -175,7 +177,7 @@ public class ProjectsController extends BaseController implements FileSystemEven
         envConfig.setInitialized(installed);
         if (installed) {
             logger.info("OnFinished: installing user modules");
-            dataHubService.installUserModules(cachedConfig.getMlSettings(), true);
+            installUserModules(cachedConfig.getMlSettings(), true);
             startProjectWatcher();
         }
 
@@ -202,6 +204,54 @@ public class ProjectsController extends BaseController implements FileSystemEven
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @RequestMapping(value = "/{projectId}/{environment}/install-user-modules", method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseEntity<?> installUserModules(@PathVariable int projectId,
+                                     @PathVariable String environment) throws IOException {
+
+        requireAuth();
+
+        // make sure the project exists
+        pm.getProject(projectId);
+
+        // install the use modules
+        installUserModules(envConfig.getMlSettings(), true);
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @RequestMapping(value = "/{projectId}/{environment}/validate-user-modules", method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseEntity<?> validateUserModules(@PathVariable int projectId,
+                                                @PathVariable String environment) throws IOException {
+
+        requireAuth();
+
+        // make sure the project exists
+        pm.getProject(projectId);
+
+        // install the use modules
+        installUserModules(envConfig.getMlSettings(), true);
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @RequestMapping(value = "/{projectId}/{environment}/uninstall-user-modules", method = RequestMethod.DELETE)
+    @ResponseBody
+    public ResponseEntity<?> unInstallUserModules(@PathVariable int projectId,
+                                       @PathVariable String environment) {
+
+        requireAuth();
+
+        // make sure the project exists
+        pm.getProject(projectId);
+
+        // uninstall the hub
+        dataHubService.uninstallUserModules(envConfig.getMlSettings());
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     private void startProjectWatcher() throws IOException {
         String pluginDir = Paths.get(envConfig.getProjectDir(), "plugins").toString();
         if (!watcherService.hasListener(this)) {
@@ -210,9 +260,20 @@ public class ProjectsController extends BaseController implements FileSystemEven
         }
     }
 
+    private void installUserModules(HubConfig hubConfig, boolean force) {
+        dataHubService.installUserModules(hubConfig, force);
+        dataHubService.validateUserModules(hubConfig, new ValidateListener() {
+            @Override
+            public void onValidate(JsonNode validation) {
+                template.convertAndSend("/topic/validate-status", validation);
+            }
+        });
+    }
+
     @Override
     public void onWatchEvent(HubConfig hubConfig, Path path, WatchEvent<Path> event) {
         dataHubService.installUserModules(hubConfig, false);
+        installUserModules(hubConfig, false);
         template.convertAndSend("/topic/entity-status", new StatusMessage(0, path.toString()));
     }
 }

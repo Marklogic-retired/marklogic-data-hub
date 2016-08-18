@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { MdButtonToggleModule } from '@angular2-material/button-toggle/button-toggle';
 import { MdButtonModule } from '@angular2-material/button/button';
 import { MdCheckboxModule } from '@angular2-material/checkbox/checkbox';
+import { MdDialogModule } from '../dialog/dialog';
 import { MdRadioModule } from '@angular2-material/radio/radio';
 import { MdSlideToggleModule } from '@angular2-material/slide-toggle/slide-toggle';
 import { MdSliderModule } from '@angular2-material/slider/slider';
@@ -28,6 +29,7 @@ const MATERIAL_MODULES = [
   MdButtonToggleModule,
   MdCardModule,
   MdCheckboxModule,
+  MdDialogModule,
   MdGridListModule,
   MdIconModule,
   MdInputModule,
