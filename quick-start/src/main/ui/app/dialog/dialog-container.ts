@@ -1,13 +1,13 @@
-import {Component, ComponentRef, ViewChild, AfterViewInit} from '@angular/core';
+import { Component, ComponentRef, ViewChild, AfterViewInit } from '@angular/core';
 import {
   BasePortalHost,
   ComponentPortal,
   TemplatePortal
 } from '@angular2-material/core/portal/portal';
-import {PortalHostDirective} from '@angular2-material/core/portal/portal-directives';
-import {PromiseCompleter} from '@angular2-material/core/async/promise-completer';
-import {MdDialogConfig} from './dialog-config';
-import {MdDialogContentAlreadyAttachedError} from './dialog-errors';
+import { PortalHostDirective } from '@angular2-material/core/portal/portal-directives';
+import { PromiseCompleter } from '@angular2-material/core/async/promise-completer';
+import { MdDialogConfig } from './dialog-config';
+import { MdDialogContentAlreadyAttachedError } from './dialog-errors';
 
 
 /**
@@ -27,6 +27,9 @@ export class MdDialogContainer extends BasePortalHost implements AfterViewInit {
   /** The portal host inside of this container into which the dialog content will be loaded. */
   @ViewChild(PortalHostDirective) _portalHost: PortalHostDirective;
 
+  /** The dialog configuration. */
+  dialogConfig: MdDialogConfig;
+
   /**
    * Completer used to resolve the promise for cases when a portal is attempted to be attached,
    * but AfterViewInit has not yet occured.
@@ -36,15 +39,12 @@ export class MdDialogContainer extends BasePortalHost implements AfterViewInit {
   /** Portal to be attached upon AfterViewInit. */
   private _deferredAttachPortal: ComponentPortal<any>;
 
-  /** The dialog configuration. */
-  dialogConfig: MdDialogConfig;
-
   /** TODO: internal */
   ngAfterViewInit() {
     // If there was an attempted call to `attachComponentPortal` before this lifecycle stage,
     // we actually perform the attachment now that the `@ViewChild` is resolved.
     if (this._deferredAttachCompleter) {
-      this.attachComponentPortal(this._deferredAttachPortal).then(componentRef => {
+      this.attachComponentPortal(this._deferredAttachPortal).then((componentRef: any) => {
         this._deferredAttachCompleter.resolve(componentRef);
 
         this._deferredAttachPortal = null;

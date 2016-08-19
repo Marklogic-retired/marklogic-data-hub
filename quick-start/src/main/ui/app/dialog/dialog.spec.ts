@@ -1,9 +1,9 @@
-import {inject, fakeAsync, async, ComponentFixture, TestBed} from '@angular/core/testing';
-import {NgModule, Component, Directive, ViewChild, ViewContainerRef} from '@angular/core';
-import {MdDialog, MdDialogModule} from './dialog';
-import {OverlayContainer} from '@angular2-material/core/overlay/overlay-container';
-import {MdDialogConfig} from './dialog-config';
-import {MdDialogRef} from './dialog-ref';
+import { inject, fakeAsync, async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { NgModule, Component, Directive, ViewChild, ViewContainerRef } from '@angular/core';
+import { MdDialog, MdDialogModule } from './dialog';
+import { OverlayContainer } from '@angular2-material/core/overlay/overlay-container';
+import { MdDialogConfig } from './dialog-config';
+import { MdDialogRef } from './dialog-ref';
 
 
 describe('MdDialog', () => {

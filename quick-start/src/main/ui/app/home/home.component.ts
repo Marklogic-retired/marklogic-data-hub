@@ -65,7 +65,7 @@ export class Home {
 
   hasErrors(): boolean {
     let errors = this.getErrors();
-    return !!(errors && _.keys(errors).length > 0)
+    return !!(errors && _.keys(errors).length > 0);
   }
 
   entityHasError(entityName: string): boolean {
@@ -166,8 +166,7 @@ export class Home {
   runFlow(ev: MouseEvent, flow: Flow, flowType: string) {
     if (this.flowHasError(flow.entityName, flow.flowName)) {
       this.dialog.open(HasBugsDialog, this.config).then(() => {});
-    }
-    else {
+    } else {
       const lower = flowType.toLowerCase();
       if (lower === 'input') {
         this.runInputFlow(ev, flow);
@@ -205,6 +204,7 @@ export class Home {
   }
 }
 
+/* tslint:disable:max-line-length */
 @Component({
   selector: 'has-bugs-dialog',
   template: `
@@ -216,3 +216,4 @@ export class Home {
 export class HasBugsDialog {
   constructor(public dialogRef: MdDialogRef<HasBugsDialog>) { }
 }
+/* tslint:enable:max-line-length */

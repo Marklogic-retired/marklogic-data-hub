@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.StatusListener;
+import com.marklogic.hub.Tracing;
 import com.marklogic.quickstart.exception.NotAuthorizedException;
 import com.marklogic.quickstart.listeners.DeployUserModulesListener;
 import com.marklogic.quickstart.listeners.ValidateListener;
@@ -177,6 +178,10 @@ public class ProjectsController extends BaseController implements FileSystemEven
 
         envConfig.setInitialized(installed);
         if (installed) {
+            if (environment.equals("local")) {
+                Tracing tracing = new Tracing(envConfig.getStagingClient());
+                tracing.enable();
+            }
             logger.info("OnFinished: installing user modules");
             installUserModules(cachedConfig.getMlSettings(), true);
             startProjectWatcher();

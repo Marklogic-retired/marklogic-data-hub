@@ -1,4 +1,4 @@
-import {NgModule, Injector, ComponentRef, Injectable} from '@angular/core';
+import { NgModule, Injector, ComponentRef, Injectable } from '@angular/core';
 import {
   Overlay,
   OverlayModule,
@@ -7,14 +7,14 @@ import {
   OverlayState,
   ComponentPortal,
 } from '@angular2-material/core/core';
-import {ComponentType} from '@angular2-material/core/overlay/generic-component-type';
-import {MdDialogConfig} from './dialog-config';
-import {MdDialogRef} from './dialog-ref';
-import {DialogInjector} from './dialog-injector';
-import {MdDialogContainer} from './dialog-container';
+import { ComponentType } from '@angular2-material/core/overlay/generic-component-type';
+import { MdDialogConfig } from './dialog-config';
+import { MdDialogRef } from './dialog-ref';
+import { DialogInjector } from './dialog-injector';
+import { MdDialogContainer } from './dialog-container';
 
-export {MdDialogConfig} from './dialog-config';
-export {MdDialogRef} from './dialog-ref';
+export { MdDialogConfig } from './dialog-config';
+export { MdDialogRef } from './dialog-ref';
 
 
 // TODO(jelbourn): add shortcuts for `alert` and `confirm`.
@@ -64,8 +64,8 @@ export class MdDialog {
    * @param config The dialog configuration.
    * @returns A promise resolving to a ComponentRef for the attached container.
    */
-  private _attachDialogContainer(overlay: OverlayRef, config: MdDialogConfig):
-      Promise<ComponentRef<MdDialogContainer>> {
+  /* tslint:disable:max-line-length */
+  private _attachDialogContainer(overlay: OverlayRef, config: MdDialogConfig): Promise<ComponentRef<MdDialogContainer>> {
     let containerPortal = new ComponentPortal(MdDialogContainer, config.viewContainerRef);
     return overlay.attach(containerPortal).then((containerRef: ComponentRef<MdDialogContainer>) => {
       // Pass the config directly to the container so that it can consume any relevant settings.
@@ -73,6 +73,7 @@ export class MdDialog {
       return containerRef;
     });
   }
+  /* tslint:enable:max-line-length */
 
   /**
    * Attaches the user-provided component to the already-created MdDialogContainer.

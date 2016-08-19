@@ -1,4 +1,4 @@
-import {ViewContainerRef} from '@angular/core';
+import { ViewContainerRef } from '@angular/core';
 
 /** Valid ARIA roles for a dialog element. */
 export type DialogRole = 'dialog' | 'alertdialog'
