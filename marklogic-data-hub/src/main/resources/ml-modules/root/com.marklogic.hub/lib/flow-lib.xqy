@@ -775,22 +775,44 @@ declare function flow:run-writer(
     $resp
 };
 
-declare function flow:make-error-json($ex) {
-  map:new((
-    map:entry("msg", $ex/error:format-string/fn:data()),
-    let $f := $ex/error:stack/error:frame[1]
-    return
-      (
-        map:entry("uri", $f/error:uri/fn:data()),
-        map:entry("line", $f/error:line/fn:data()),
-        map:entry("column", $f/error:column/fn:data())
-      )
-  ))
+declare function flow:make-error-json(
+  $errors as json:object,
+  $entity as xs:string,
+  $flow  as xs:string,
+  $plugin as xs:string,
+  $ex
+) {
+  xdmp:log($ex),
+  let $eo :=
+    if (map:contains($errors, $entity)) then
+      map:get($errors, $entity)
+    else
+      let $e := map:map()
+      let $_ := map:put($errors, $entity, $e)
+      return
+        $e
+  let $fo :=
+    if (map:contains($eo, $flow)) then
+      map:get($eo, $flow)
+    else
+      let $f := map:map()
+      let $_ := map:put($eo, $flow, $f)
+      return
+        $f
+
+  let $f := $ex/error:stack/error:frame[1]
+  return
+    map:put($fo, $plugin, map:new((
+      map:entry("uri", $f/error:uri/fn:data()),
+      map:entry("line", $f/error:line/fn:data()),
+      map:entry("column", $f/error:column/fn:data()),
+      map:entry("msg", $ex/error:format-string/fn:data())
+    )))
 };
 
 declare function flow:validate-entities()
 {
-  let $errors := json:array()
+  let $errors := json:object()
   let $options := map:map()
   let $_ :=
     for $entity in flow:get-entities()/hub:entity
@@ -798,26 +820,36 @@ declare function flow:validate-entities()
     let $data-format := $flow/hub:data-format
     (: validate collector :)
     let $_ :=
-      let $collector := $flow/hub:collector
-      return
-        if ($collector) then
-          let $module-uri := $collector/@module
-          let $filename as xs:string := hul:get-file-from-uri($module-uri)
-          let $type := flow:get-type($filename)
-          let $ns := flow:get-module-ns($type)
-          return
-            if ($type eq $flow:TYPE-XQUERY) then
-              xdmp:eval(
-                'import module namespace x = "' || $ns || '" at "' || $module-uri || '"; ' ||
-                '()',
-                map:new(map:entry("staticCheck", fn:true()))
-              )
-            else
-              xdmp:javascript-eval(
-                'var x = require("' || $module-uri || '");',
-                map:new(map:entry("staticCheck", fn:true()))
-              )
-        else ()
+      try {
+        let $collector := $flow/hub:collector
+        return
+          if ($collector) then
+            let $module-uri := $collector/@module
+            let $filename as xs:string := hul:get-file-from-uri($module-uri)
+            let $type := flow:get-type($filename)
+            let $ns := flow:get-module-ns($type)
+            return
+              if ($type eq $flow:TYPE-XQUERY) then
+                xdmp:eval(
+                  'import module namespace x = "' || $ns || '" at "' || $module-uri || '"; ' ||
+                  '()',
+                  map:new(map:entry("staticCheck", fn:true()))
+                )
+              else
+                xdmp:javascript-eval(
+                  'var x = require("' || $module-uri || '");',
+                  map:new(map:entry("staticCheck", fn:true()))
+                )
+          else ()
+      }
+      catch($ex) {
+        flow:make-error-json(
+          $errors,
+          $entity/hub:name,
+          $flow/hub:name,
+          "collector",
+          $ex)
+      }
     (: validate plugins :)
     let $_ :=
       for $plugin in $flow/hub:plugins/hub:plugin
@@ -855,7 +887,12 @@ declare function flow:validate-entities()
             )
         }
         catch($ex) {
-          json:array-push($errors, flow:make-error-json($ex))
+          flow:make-error-json(
+            $errors,
+            $entity/hub:name,
+            $flow/hub:name,
+            $destination,
+            $ex)
         }
     return
       ()

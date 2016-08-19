@@ -5,6 +5,7 @@ $hover-color: unquote("rgb(#{$palette-datahub-A100})");
 $layout-title-color: unquote("rgb(#{$palette-datahub-100})");
 $button-color: unquote("rgb(#{$palette-datahub-500})");
 $mlcp-border: unquote("rgb(#{$palette-datahub-800})");
+$error: unquote("rgb(#{$palette-datahub-red})");
 $list-bg-color: #f1f1ff;
 $heightDuration: 0.5s;
 $fadeDuration: 1s;
@@ -12,8 +13,22 @@ $fadeDuration: 1s;
 $easingFunc: cubic-bezier(0.165, 0.840, 0.440, 1.000);
 $openDuration: 0.5s;
 
+$footer-height: 80px;
+$header-height: 64px;
+
 .mdl-layout__drawer {
   width: 300px;
+  position: absolute;
+  top: 0px;
+  bottom: 0px;
+
+  ul.entities {
+    position: absolute;
+    bottom: $footer-height;
+    overflow: auto;
+    top: $header-height;
+    margin: 0px;
+  }
 }
 
 .mdl-layout--fixed-drawer > .mdl-layout__content {
@@ -83,6 +98,10 @@ $openDuration: 0.5s;
   padding-right: 20px;
   background-color: $layout-title-color;
   color: black;
+
+  .fa-bug {
+    margin-right: 10px;
+  }
 }
 
 .mdl-list__item {
@@ -95,14 +114,15 @@ $openDuration: 0.5s;
   }
 }
 
+.flow.active {
+  background-color: rgba(0,0,0,0.10);
+}
+
 .mdl-list__item-primary-content {
   overflow: auto;
   cursor: pointer;
   width: 100%;
   padding: 12px 8px;
-  &.active {
-    background-color: $highlight-color;
-  }
   &:hover {
     background-color: $hover-color;
   }
@@ -136,5 +156,62 @@ $openDuration: 0.5s;
 .current-flow {
   ul {
     list-style: none;
+  }
+}
+
+.fa-bug {
+  color: $error;
+  -webkit-animation: dancing-bug 1s linear infinite alternate; /* Safari 4+ */
+  -moz-animation:    dancing-bug 1s linear infinite alternate; /* Fx 5+ */
+  -o-animation:      dancing-bug 1s linear infinite alternate; /* Opera 12+ */
+  animation:         dancing-bug 1s linear infinite alternate; /* IE 10+, Fx 29+ */
+}
+
+@keyframes dancing-bug {
+  0%   { transform: rotate(-45deg); }
+  100% { transform: rotate(45deg); }
+}
+
+.plugin-list li {
+
+  ul {
+    padding-left: 15px;
+  }
+
+  h4 {
+    margin-top: 0px;
+  }
+
+  padding: 10px;
+
+  &.error {
+    border: 1px solid $error;
+    background-color: rgba(255,0,0,0.10);
+  }
+}
+
+pre.error-msg {
+  border: 1px solid black;
+  padding: 10px;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.15);
+}
+
+.bug-title {
+  margin-top: 0px;
+}
+
+/deep/ .footer {
+  border-top: 1px solid #ccc;
+  background-color: rgb(125, 163, 192);
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  text-align: center;
+  height: $footer-height;
+
+  p {
+    margin: 5px 0;
   }
 }

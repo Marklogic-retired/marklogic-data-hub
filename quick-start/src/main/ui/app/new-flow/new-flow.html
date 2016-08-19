@@ -1,10 +1,10 @@
-<div [@fadeState]="vizState" class="dialog-container">
-  <div [@growState]="vizState"class="mdl-dialog new-flow-dialog">
+<div [ngClass]="{'visible': _isVisible}" class="dialog-container">
+  <div class="mdl-dialog new-flow-dialog">
     <div class="mdl-dialog__title">
       <div>Create {{flowType}} Flow</div>
       <div class="mdl-layout-spacer"></div>
-      <mdl-button mdl-button-type="mini-fab" mdl-colored mdl-ripple (click)="cancel()">
-        <i class="mdi mdi-close"></i>
+      <mdl-button mdl-button-type="icon" (click)="cancel()">
+        <i class="fa fa-close"></i>
       </mdl-button>
     </div>
     <div class="mdl-dialog__content">

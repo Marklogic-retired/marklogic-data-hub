@@ -1,8 +1,6 @@
-import { Injectable, EventEmitter } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Http, Response } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
-import { Message } from 'stompjs/lib/stomp.min';
-import { STOMPService } from '../stomp/stomp.service';
 import { ProjectService } from '../projects/projects.service';
 
 import { Entity } from './entity.model';
@@ -10,33 +8,18 @@ import { Flow } from './flow.model';
 
 @Injectable()
 export class EntitiesService {
-  entityMessageEmitter: EventEmitter<string> = new EventEmitter<string>();
-
-  private stompIds: any = {
-    entities: null,
-  };
-
   private projectId: string;
   private environment: string;
 
   constructor(
     private http: Http,
-    private stomp: STOMPService,
     private projectService: ProjectService
   ) {
-    this.stomp.messages.subscribe(this.onWebsockMessage);
     this.projectId = projectService.projectId;
     this.environment = projectService.environment;
   }
 
-  subscribeToEntities() {
-    if (!this.stompIds.entities) {
-      this.stompIds.entities = this.stomp.subscribe('/topic/entity-status');
-    }
-  }
-
   getEntities() {
-    this.subscribeToEntities();
     return this.get(this.url('/entities/'));
   }
 
@@ -75,13 +58,6 @@ export class EntitiesService {
 
   public extractData = (res: Response) => {
     return res.json();
-  }
-
-  public onWebsockMessage = (message: Message) => {
-    if (message.headers.destination === '/topic/entity-status') {
-      let json = JSON.parse(message.body);
-      this.entityMessageEmitter.next(json.message);
-    }
   }
 
   private get(url: string) {

@@ -24,35 +24,7 @@ interface MlcpOptions {
   templateUrl: './mlcp-ui.html',
   providers: [],
   directives: [ClipboardDirective, FolderBrowser, SelectList, Select, TooltipDirective],
-  styleUrls: ['./mlcp-ui.css'],
-  animations: [
-    trigger('fadeState', [
-      state('hidden', style({
-        opacity: 0,
-        visibility: 'hidden'
-      })),
-      state('active', style({
-        opacity: 1,
-        visibility: 'visible'
-      })),
-      transition('hidden => active', animate('0.5s ease-in')),
-      transition('active => hidden', animate('0.5s ease-in'))
-    ]),
-    trigger('growState', [
-      state('hidden', style({
-        top: 0,
-        left: 0,
-        transform: 'scale(0)'
-      })),
-      state('active', style({
-        top: '*',
-        left: '*',
-        transform: 'scale(1)'
-      })),
-      transition('hidden => active', animate('0.5s ease-in')),
-      transition('active => hidden', animate('0.5s ease-in'))
-    ]),
-  ],
+  styleUrls: ['./mlcp-ui.css']
 })
 export class MlcpUi {
   inputFilePath: string = '.';
