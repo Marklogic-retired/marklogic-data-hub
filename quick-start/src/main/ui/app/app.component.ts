@@ -30,7 +30,7 @@ declare var window: CustomWindow;
   ],
   template: `
     <hub-header *ngIf="canShowHeader()"></hub-header>
-    <div class="main">
+    <div class="main" [ngStyle]="{'top': headerOffset() }">
       <router-outlet></router-outlet>
     </div>
   `
@@ -67,5 +67,9 @@ export class App implements OnInit {
 
   canShowHeader() {
     return this.authenticated && this.router.url !== '/login' && this.envService.settings;
+  }
+
+  headerOffset(): string {
+    return this.canShowHeader() ? '64px' : '0px';
   }
 }

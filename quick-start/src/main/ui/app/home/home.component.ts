@@ -1,7 +1,9 @@
 import { Component, Input, ViewChild, ViewContainerRef } from '@angular/core';
 
+import { TimeAgoPipe } from 'angular2-moment';
 import { Entity } from '../entities/entity.model';
 import { Flow } from '../entities/flow.model';
+import { TooltipDirective } from '../tooltip/tooltip.directive';
 
 import { EntitiesService } from '../entities/entities.service';
 
@@ -19,7 +21,8 @@ import * as _ from 'lodash';
 @Component({
   selector: 'home',
   templateUrl: './home.template.html',
-  directives: [MlcpUi, NewEntity, NewFlow],
+  directives: [MlcpUi, NewEntity, NewFlow, TooltipDirective],
+  pipes: [TimeAgoPipe],
   providers: [],
   styleUrls: ['./home.style.css'],
 })
@@ -45,15 +48,24 @@ export class Home {
     snackbar.setDefaultViewContainerRef(vref);
     this.config.viewContainerRef = this.vcRef;
 
-    entitiesService.entityMessageEmitter.subscribe((path: string) => {
+    deployService.onDeploy.subscribe(() => {
       this.getEntities();
     });
     this.getEntities();
     this.deployService.validateUserModules();
   }
 
+  getLastDeployed() {
+    return this.deployService.getLastDeployed();
+  }
+
   getErrors() {
     return this.deployService.errors;
+  }
+
+  hasErrors(): boolean {
+    let errors = this.getErrors();
+    return !!(errors && _.keys(errors).length > 0)
   }
 
   entityHasError(entityName: string): boolean {
@@ -183,6 +195,13 @@ export class Home {
       message: flow.entityName + ': ' + flow.flowName + ' starting...',
     });
     ev.stopPropagation();
+  }
+
+  redeployModules() {
+    this.deployService.redeployUserModules().subscribe(() => {});
+    this.snackbar.showSnackbar({
+      message: 'Redeploying Modules...',
+    });
   }
 }
 

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.StatusListener;
 import com.marklogic.quickstart.exception.NotAuthorizedException;
+import com.marklogic.quickstart.listeners.DeployUserModulesListener;
 import com.marklogic.quickstart.listeners.ValidateListener;
 import com.marklogic.quickstart.model.EnvironmentConfig;
 import com.marklogic.quickstart.model.LoginInfo;
@@ -33,7 +34,7 @@ import java.util.Map;
 
 @Controller
 @RequestMapping(value = "/projects")
-public class ProjectsController extends BaseController implements FileSystemEventListener {
+public class ProjectsController extends BaseController implements FileSystemEventListener, ValidateListener, DeployUserModulesListener {
 
     @Autowired
     private DataHubService dataHubService;
@@ -204,9 +205,23 @@ public class ProjectsController extends BaseController implements FileSystemEven
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/{projectId}/{environment}/install-user-modules", method = RequestMethod.POST)
+    @RequestMapping(value = "/{projectId}/{environment}/last-deployed", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<?> installUserModules(@PathVariable int projectId,
+    public String getLastDeployed(@PathVariable int projectId,
+                                                  @PathVariable String environment) throws IOException {
+
+        requireAuth();
+
+        // make sure the project exists
+        pm.getProject(projectId);
+
+        // reinstall the user modules
+        return dataHubService.getLastDeployed(envConfig.getMlSettings());
+    }
+
+    @RequestMapping(value = "/{projectId}/{environment}/reinstall-user-modules", method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseEntity<?> reinstallUserModules(@PathVariable int projectId,
                                      @PathVariable String environment) throws IOException {
 
         requireAuth();
@@ -214,8 +229,8 @@ public class ProjectsController extends BaseController implements FileSystemEven
         // make sure the project exists
         pm.getProject(projectId);
 
-        // install the use modules
-        installUserModules(envConfig.getMlSettings(), true);
+        // reinstall the user modules
+        dataHubService.reinstallUserModules(envConfig.getMlSettings(), this, this);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
@@ -231,7 +246,7 @@ public class ProjectsController extends BaseController implements FileSystemEven
         pm.getProject(projectId);
 
         // install the use modules
-        installUserModules(envConfig.getMlSettings(), true);
+        dataHubService.validateUserModules(envConfig.getMlSettings(), this);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
@@ -261,19 +276,21 @@ public class ProjectsController extends BaseController implements FileSystemEven
     }
 
     private void installUserModules(HubConfig hubConfig, boolean force) {
-        dataHubService.installUserModules(hubConfig, force);
-        dataHubService.validateUserModules(hubConfig, new ValidateListener() {
-            @Override
-            public void onValidate(JsonNode validation) {
-                template.convertAndSend("/topic/validate-status", validation);
-            }
-        });
+        dataHubService.installUserModules(hubConfig, force, this, this);
+    }
+
+    @Override
+    public void onValidate(JsonNode validation) {
+        template.convertAndSend("/topic/validate-status", validation);
     }
 
     @Override
     public void onWatchEvent(HubConfig hubConfig, Path path, WatchEvent<Path> event) {
-        dataHubService.installUserModules(hubConfig, false);
         installUserModules(hubConfig, false);
-        template.convertAndSend("/topic/entity-status", new StatusMessage(0, path.toString()));
+    }
+
+    @Override
+    public void onDeploy(String status) {
+        template.convertAndSend("/topic/deploy-status", status);
     }
 }
