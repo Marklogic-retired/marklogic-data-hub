@@ -8,9 +8,13 @@ This example shows how to load binary documents with the Hub Framework.
 
 1. Open your web browser to [http://localhost:8080](http://localhost:8080).
 
-1. Browse to this folder via the Hub login screen.
+1. Browse to this folder from the login screen.
 
-1. Login to the Data Hub using your MarkLogic credentials.
+1. Initialize the project (if necessary)
+
+1. Login with your MarkLogic credentials
+
+1. Install the Hub into MarkLogic (if necessary)
 
 1. Load the sample pdf.
 
