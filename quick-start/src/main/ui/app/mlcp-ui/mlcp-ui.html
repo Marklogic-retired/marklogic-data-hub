@@ -33,6 +33,7 @@
               [placeholder]="setting.label"
               name="{{setting.field}}" *ngIf="isText(setting.type)"
               [ngModel]="setting.value"
+              (change)="updateSetting(setting, $event.target.value)"
               [disabled]="setting.readOnly"></md-input>
             <custom-select
               [id]="setting.field"

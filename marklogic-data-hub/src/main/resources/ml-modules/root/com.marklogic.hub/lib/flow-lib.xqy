@@ -593,7 +593,15 @@ declare function flow:run-plugin(
             switch($destination)
               case "content" return
                 if ($flow-type = "input") then
-                  element rawContent { $content }
+                  let $kind := try {
+                    xdmp:node-kind($content)
+                  }
+                  catch($ex) {}
+                  return
+                    if ($kind eq "binary") then
+                      element rawContent { "binary document" }
+                    else
+                      element rawContent { $content }
                 else
                   ()
               case "headers" return
@@ -619,7 +627,15 @@ declare function flow:run-plugin(
                 switch($destination)
                   case "content" return
                     if ($flow-type = "input") then
-                      map:put($o, "rawContent", $content)
+                      let $kind := try {
+                        xdmp:node-kind($content)
+                      }
+                      catch($ex) {}
+                      return
+                        if ($kind eq "binary") then
+                          map:put($o, "rawContent", "binary document")
+                        else
+                          map:put($o, "rawContent", $content)
                     else
                       ()
                   case "headers" return
@@ -636,20 +652,26 @@ declare function flow:run-plugin(
       let $before := xdmp:elapsed-time()
       let $resp :=
         try {
-          if ($simple) then
-            switch ($destination)
-              case "content" return
-                if ($flow-type = "input") then
+          let $resp :=
+            if ($simple) then
+              switch ($destination)
+                case "content" return
+                  if ($flow-type = "input") then
+                    $func($identifier, $content, $options)
+                  else
+                    $func($identifier, $options)
+                case "headers" return
                   $func($identifier, $content, $options)
-                else
-                  $func($identifier, $options)
-              case "headers" return
-                $func($identifier, $content, $options)
-              case "triples" return
-                $func($identifier, $content, $headers, $options)
-              default return ()
-          else
-            $func($identifier, $content, $headers, $triples, $options)
+                case "triples" return
+                  $func($identifier, $content, $headers, $options)
+                default return ()
+            else
+              $func($identifier, $content, $headers, $triples, $options)
+          return
+            if ($resp instance of binary()) then
+              fn:error(xs:QName("CANT_RETURN_BINARY"), "You can't put a binary inside of an envelope.")
+            else
+              $resp
         }
         catch($ex) {
           xdmp:log(xdmp:describe($ex, (), ())),
