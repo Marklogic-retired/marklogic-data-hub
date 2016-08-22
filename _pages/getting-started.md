@@ -62,52 +62,110 @@ java -jar quick-start-*.jar
 
 ## 5 - Login to the Hub
 
-After opening the QuickStart Application you must provide the hostname, admin username, and admin password for your MarkLogic installation. Press the Login Button. The hub will automatically install any necessary modules into your MarkLogic instance.
+After opening the QuickStart Application you must step through a wizard to properly configure the Hub.
 
-![Login Screen]({{site.baseurl}}/images/login-screen.png){:height="500px"}
+Browse to the directory where your hub where live.
+![Hub Directory]({{site.baseurl}}/images/hub-wizard-1.png)
 
-## 6 - Create Your First Entity and Flows
+Initialize your Data Hub Project Directory.
+![Hub Directory]({{site.baseurl}}/images/hub-wizard-2.png)
 
-Entities are the business objects that you will be working with in the hub. Start by defining a new Entity for Employees. Click the **New Entity** button. Now fill out the popup with information about your entity. 
+Click Next.
+![Hub Directory]({{site.baseurl}}/images/hub-wizard-3.png)
 
-You have just created an Entity with some basic Flows.
+Choose the Local Environment.
+![Hub Directory]({{site.baseurl}}/images/hub-wizard-4.png)
+
+Login to the Hub with your MarkLogic credentials
+![Hub Directory]({{site.baseurl}}/images/hub-wizard-5.png)
+
+Install the Hub into MarkLogic
+![Hub Directory]({{site.baseurl}}/images/hub-wizard-6.png)
+
+Click Finished
+![Hub Directory]({{site.baseurl}}/images/hub-wizard-7.png)
+
+## 6 - Create Your First Entity
+
+Entities are the business objects that you will be working with in the hub. Start by defining a new Entity for Employees. Click the **New Entity** button. Now fill out the popup with your entity name. If you are using the example code we provide then make sure to name this "Employees".
+
+![New Entity]({{site.baseurl}}/images/create-employee.png)
+
+You have just created an Entity.
+
+## 7 - Create Your First Flows
 
 > **Input Flows** are responsible for getting data into the Hub staging area. 
 
 > **Harmonize Flows** are responsible for batch transformation of data from staging to final.
 
-Next you will want to create an Input and Harmonize flow for Global Corp. Start by clicking the **New** button next to Input Flows. Then fill out the form. Continue by clicking the **New** button next to Harmonize Flows. Then fill out the form.
+First you will create an Input and Harmonize flow for Acme Tech. Start by
+clicking the Employee Entity to expand it. Now click the **+** button next to the Input Flows then fill out the form.
 
-Now press **Deploy to Server**. You have just deployed your plugins into MarkLogic server. Plugins are the "stored procedures" that make up flows.
+Name the flow **"load-acme-tech"** and leave the default values for Plugin Type and Data Format.
 
-![New Entity]({{site.baseurl}}/images/new-employee-entity.gif)
+![New Acme Tech Flows]({{site.baseurl}}/images/create-acme-tech-1.png)
 
-## 7 - Ingest Acme Tech Data
+Now click the **+** button next to the Harmonize Flows then fill out the form. Name the flow **"harmonize-acme-tech"** and leave the default values for Plugin Type and Data Format.
 
-Now that your entity is created you want to ingest some data. QuickStart uses the [MarkLogic Content Pump](https://docs.marklogic.com/guide/mlcp){:target="_blank"} to ingest data. Press the **Load Data** button next to the **load-acme-tech** input flow. Point the dialog to the input/AcmeTech directory. Choose the **Documents** Data Format and then press **Submit**.
+![New Acme Tech Flows]({{site.baseurl}}/images/create-acme-tech-2.png)
 
-Behind the scenes QuickStart is running [MarkLogic Content Pump](https://docs.marklogic.com/guide/mlcp) to ingest the Json documents.
+__** It's important to keep the names the same if you plan on using our code examples. The code examples are performing collection queries tied to the names of these flows.__
 
-![Run Input Flow]({{site.baseurl}}/images/run-acme-input-flow.gif)
+Next you will want to create an Input and Harmonize flow for Global Corp. Start by clicking the **+** button next to Input Flows. Then fill out the form. Name the flow **"load-global-corp"** and leave the default values for Plugin Type and Data Format.
 
-## 8 - Ingest Global Corp Data
+![New Acme Tech Flows]({{site.baseurl}}/images/create-global-corp-1.png)
+
+Now click the **+** button next to the Harmonize Flows then fill out the form. Name the flow **"harmonize-global-corp"** and leave the default values for Plugin Type and Data Format.
+
+![New Acme Tech Flows]({{site.baseurl}}/images/create-global-corp-2.png)
+
+The Quick Start application automatically deploys your flows to the server for you any time you make a change. You can manually force a redeploy by pressing the Redeploy Button at the bottom left of the screen.
+
+## 8 - Ingest Acme Tech Data
+
+Now that your entity is created you want to ingest some data. QuickStart uses the [MarkLogic Content Pump](https://docs.marklogic.com/guide/mlcp){:target="_blank"} to ingest data.
+
+1. Click on the **load-acme-tech** input flow to highlight it.
+1. Now click on the "Run Flow" button in the right pane. You will see a screen that allows you to configure your MLCP run.
+![Click Acme Tech]({{site.baseurl}}/images/load-acme-tech-1.png)
+
+1. Point the browser box to the input/AcmeTech directory.
+![Browse to Input Folder]({{site.baseurl}}/images/load-acme-tech-2.png)
+1. Expand the **General Options** section.
+1. Make sure the **Documents** Data Format is selected.
+![Choose Documents]({{site.baseurl}}/images/load-acme-tech-3.png)
+1. Now scroll down and press the "Run Import" button.
+![Run Acme Tech]({{site.baseurl}}/images/load-acme-tech-4.png)
+
+QuickStart will kick off a [MarkLogic Content Pump](https://docs.marklogic.com/guide/mlcp) job to ingest the Json documents. You can monitor the progress of the job by navigating to the Jobs tab and clicking on the "Show Console Output" button next to the Job.
+![View Acme Tech Job Output]({{site.baseurl}}/images/view-acme-tech-job-output.png)
+
+## 9 - Ingest Global Corp Data
 
 Now you need to load the data for Global Corp.
 
-- Press the **Load Data** button next to the **load-global-corp** input flow.
-- Point the dialog to the input/GlobalCorp directory.
-- Expand the **General Options** section.
-- Change **Document Type** to **json**.
-- Choose the **Delimited Text** Data Format.
-- Expand the **Delimited Text Options** section.
-- Check the **Generate URI?** option.
-- Press the **Submit** button.
+1. Click on the **load-global-corp** input flow to highlight it.
+1. Now click on the "Run Flow" button in the right pane. You will see a screen that allows you to configure your MLCP run.
+![Click Global Corp]({{site.baseurl}}/images/load-global-corp-1.png)
+1. Point the browser box to the input/GlobalCorp directory.
+![Browse to Input Folder]({{site.baseurl}}/images/load-global-corp-2.png)
+1. Expand the General Options section.
+1. Choose the **Delimited Text** Data Format.
+![Choose Delimited Text]({{site.baseurl}}/images/load-global-corp-3.png)
+1. Change **Document Type** to **json**.
+![Choose Json]({{site.baseurl}}/images/load-global-corp-4.png)
+1. Expand the **Delimited Text Options** section.
+1. Check the **Generate URI?** option.
+![Click Generate URI]({{site.baseurl}}/images/load-global-corp-5.png)
+1. Now scroll down and press the "Run Import" button.
+![Click Global Corp]({{site.baseurl}}/images/load-global-corp-6.png)
 
-Behind the scenes QuickStart is running [MarkLogic Content Pump](https://docs.marklogic.com/guide/mlcp) to ingest the CSV data files. During ingest they are converted to JSON because you chose **json** as your Data Format for your flow.
+QuickStart will kick off a [MarkLogic Content Pump](https://docs.marklogic.com/guide/mlcp) job to ingest the Json documents. You can monitor the progress of the job by navigating to the Jobs tab and clicking on the "Show Console Output" button next to the Job.
 
-![Run Input Flow]({{site.baseurl}}/images/run-input-flow.gif)
+![Monitor Job Progress]({{site.baseurl}}/images/load-global-corp-7.png)
 
-## 9 - Prep for Harmonize
+## 10 - Prep for Harmonize
 
 All of our data is loaded into the staging area. While it's possible to harmonize the data right now it's not very useful. The out of the box harmonize plugins will simply copy the staging data to the final data area.
 
@@ -155,13 +213,19 @@ Use your favorite text editor to open the data-hub/plugins/entities/Employee/har
 
 <div class="embed-git" href="//raw.githubusercontent.com/marklogic/marklogic-data-hub/master/examples/hr-hub/plugins/entities/Employee/harmonize/harmonize-global-corp/headers/headers.sjs"></div>
 
-## 10 - Harmonize the data
+## 11 - Harmonize the data
 
 You ingested your data. You created plugins that will extract common fields into the headers. You edited the collectors to only operate on certain data. Now you are ready to harmonize. Simply press the **Run** button next to both harmonize flows.
 
-![Run Harmonize Flow]({{site.baseurl}}/images/run-harmonize-flow.gif)
+Running Acme Tech
+![Run Harmonize Flow]({{site.baseurl}}/images/run-acme-tech.png)
 
-## 11 - Consume the Data
+Running Global Corp
+![Run Harmonize Flow]({{site.baseurl}}/images/run-global-corp.png)
+
+As with the Input Flows you can see the job status in the Jobs tab.
+
+## 12 - Consume the Data
 
 Now you can access your data via several REST endpoints. Your harmonized data is available on the Final HTTP server. The defaul port is 8011. A full list of REST endpoints is available here: [https://docs.marklogic.com/REST/client](https://docs.marklogic.com/REST/client){:target="_blank"}
 
@@ -172,7 +236,7 @@ Open the [Final Search Endpoint](http://localhost:8011/v1/search?format=json){:t
 *Picture here is the Final Search endpoint.*
 ![Rest Search]({{site.baseurl}}/images/rest-screenshot.png)
 
-## 12 - Wrapping Up
+## 13 - Wrapping Up
 
 Congratulations! You just created a Data Hub.
 
