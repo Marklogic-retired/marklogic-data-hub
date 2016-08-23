@@ -32,6 +32,11 @@ declare function mlcpFlow:transform(
         map:get($paramMap, 'flow-name'),
         map:get($paramMap, 'flow-type'))
 
+      let $_ :=
+        if ($flow) then ()
+        else
+          fn:error(xs:QName("MISSING_FLOW"), "The specified flow " || map:get($paramMap, "flow-name") || " is missing.")
+
       let $envelope := try {
         flow:run-plugins($flow, $uri, map:get($content, "value"), $paramMap)
       }

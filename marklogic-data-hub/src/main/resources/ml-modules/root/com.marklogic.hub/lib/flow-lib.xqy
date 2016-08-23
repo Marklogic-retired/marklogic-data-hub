@@ -218,7 +218,7 @@ declare %private function flow:get-writer(
 declare function flow:get-flow(
   $entity-name as xs:string,
   $flow-name as xs:string,
-  $flow-type as xs:string?) as element(hub:flow)
+  $flow-type as xs:string?) as element(hub:flow)?
 {
   let $uris :=
     hul:run-in-modules(function() {
@@ -228,6 +228,7 @@ declare function flow:get-flow(
       return
         cts:uri-match($ENTITIES-DIR || $entity-name || "/" || $type || "/" || $flow-name || "/*")
     })
+  where fn:count($uris) > 0
   return
     flow:get-flow($entity-name, $flow-name, $flow-type, $uris)
 };
@@ -573,7 +574,7 @@ declare function flow:run-plugin(
   $simple as xs:boolean,
   $options as map:map)
 {
-  let $module-uri as xs:string := $plugin/@module
+  let $module-uri as xs:string? := $plugin/@module
   return
     if (fn:empty($module-uri)) then ()
     else
