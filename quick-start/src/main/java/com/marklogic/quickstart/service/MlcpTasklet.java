@@ -41,6 +41,8 @@ public class MlcpTasklet implements Tasklet {
         bean.setPassword(hubConfig.password);
 
         File file = new File(mlcpOptions.get("input_file_path").asText());
+        String canonicalPath = file.getCanonicalPath();
+        bean.setInput_file_path(canonicalPath);
 
         PrintStream sysout = System.out;
         MlcpOutputStreamInterceptor sos = new MlcpOutputStreamInterceptor(new StatusListener() {

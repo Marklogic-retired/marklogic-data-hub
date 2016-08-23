@@ -168,7 +168,7 @@ export class MlcpUi {
             field: 'output_uri_replace',
             type: 'string',
             description: 'A comma separated list of (regex,string) pairs that define string replacements to apply to the URIs of documents added to the database. The replacement strings must be enclosed in single quotes. For example, -output_uri_replace "regex1,\'string1\',regext2,\'string2\'"',
-            value: '"' + this.inputFilePath + ',\'\'"'
+            value: this.outputUriReplaceValue()
           },
           {
             label: 'Output URI Suffix',
@@ -504,8 +504,22 @@ export class MlcpUi {
     return mlcpCommand;
   }
 
+  outputUriReplaceValue() {
+    return `${this.inputFilePath.replace(/\\/g, '\\\\')},''`;
+  }
+
   folderClicked(folder: string): void {
     this.inputFilePath = folder;
+
+    // update the outputUriReplace options
+    let generalGroup = _.find(this.groups, (group: any) => {
+      return group.category === 'General Options';
+    });
+    let outputUriReplace = _.find(generalGroup.settings, (setting: any) => {
+      return setting.field === 'output_uri_replace';
+    });
+    outputUriReplace.value = this.outputUriReplaceValue();
+
     this.updateMlcpCommand();
   }
 
