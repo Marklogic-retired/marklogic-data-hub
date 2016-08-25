@@ -12,7 +12,7 @@ This tutorial will walk you through setting up a very simple hub for HR data. Yo
 The finished version of this tutorial is available for you to download and play with. [Finished HR Hub Example](https://github.com/marklogic/marklogic-data-hub/tree/master/examples/hr-hub){:target="_blank"}
 
 ### QuickStart
-This tutorial uses quickStart, a simple User Interface that you can run locally to start working with the Data Hub quickly. With QuickStart you will have a working hub in a matter of minutes. No need to worry about deployment strategies or configuration details. Simply run the jar and point it at your MarkLogic installation.
+This tutorial uses quickStart, a simple User Interface that you can run locally to start working with the Data Hub quickly. With QuickStart you will have a working hub in a matter of minutes. No need to worry about deployment strategies or configuration details. Simply run the war and point it at your MarkLogic installation.
 
 
 ## 1 - Download and Install MarkLogic
@@ -31,7 +31,7 @@ cd data-hub
 ~~~
 {: .language-bash}
 
-- Download the quick-start-*.jar from the [releases page](https://github.com/marklogic/marklogic-data-hub/releases/latest){:target="_blank"} and place it in the folder you just created.
+- Download the quick-start-*.war from the [releases page](https://github.com/marklogic/marklogic-data-hub/releases/latest){:target="_blank"} and place it in the folder you just created.
 
 ## 3 - Download the Sample Data
 
@@ -54,7 +54,7 @@ Your directory should look like this:
 - Run the Jar
 
 ~~~
-java -jar quick-start-*.jar
+java -jar quick-start-*.war
 ~~~
 {: .language-bash}
 - Open the QuickStart Application in your browser:
