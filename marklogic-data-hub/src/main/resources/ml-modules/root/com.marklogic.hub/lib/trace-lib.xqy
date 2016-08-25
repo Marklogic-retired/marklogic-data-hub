@@ -295,6 +295,8 @@ declare function trace:_walk_json($nodes as node()* ,$o)
           map:put($o, "input", $oo)
       case element(output) return
         map:put($o, fn:local-name($n), xdmp:quote($n/node(), $quote-options))
+      case element(error) return
+        map:put($o, fn:local-name($n), xdmp:quote($n/node(), $quote-options))
       case element(duration) return
         map:put($o, "duration", fn:seconds-from-duration(xs:dayTimeDuration($n)))
       case element(hasError) return
@@ -306,7 +308,7 @@ declare function trace:_walk_json($nodes as node()* ,$o)
           return
             map:put($o, fn:local-name($n), $oo)
         else
-          map:put($o, fn:local-name($n), fn:data($n))
+          map:put($o, fn:local-name($n), $n/fn:data(.))
       default return
         $n
 };
@@ -328,26 +330,17 @@ declare function trace:trace-to-json($trace)
 
 declare function trace:trace-to-json-slim($trace)
 {
-  (:if ($trace instance of element()) then:)
-    let $o := json:object()
-    let $_ := (
-      map:put($o, "traceId", $trace/traceId/string()),
-      map:put($o, "created", $trace/created/string()),
-      map:put($o, "identifier", $trace/identifier/string()),
-      map:put($o, "flowType", $trace/flowType/string())
-    )
-    return
-      $o
-(:  else
-    let $o := json:object()
-    let $_ := (
-      map:put($o, "traceId", $trace/traceId),
-      map:put($o, "created", $trace/created),
-      map:put($o, "identifier", $trace/identifier),
-      map:put($o, "flowType", $trace/flowType)
-    )
-    return
-      $o:)
+  let $o := json:object()
+  let $_ := (
+    map:put($o, "traceId", $trace/traceId/string()),
+    map:put($o, "created", $trace/created/string()),
+    map:put($o, "hasError", $trace/hasError/xs:boolean(.)),
+    map:put($o, "identifier", $trace/identifier/string()),
+    map:put($o, "flowType", $trace/flowType/string()),
+    map:put($o, "format", $trace/format/string())
+  )
+  return
+    $o
 };
 
 declare function trace:find-traces(

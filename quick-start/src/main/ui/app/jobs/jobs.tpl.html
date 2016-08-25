@@ -41,14 +41,14 @@
   </div>
   <div *ngIf="!loadingJobs && (!jobs || jobs.length === 0)">No Jobs</div>
 
-  <div *ngIf="showJobOutput" class="dialog-container">
+  <div *ngIf="showJobOutput" class="visible dialog-container">
     <div class="mdl-dialog new-flow-dialog">
       <div class="mdl-dialog__title">
         <div>Job Output for {{showJobOutput.jobId}}</div>
         <div class="mdl-layout-spacer"></div>
-        <button (click)="cancelConsole()" class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab">
+        <mdl-button mdl-button-type="icon" (click)="cancelConsole()">
           <i class="fa fa-close"></i>
-        </button>
+        </mdl-button>
       </div>
       <div class="mdl-dialog__content">
         <pre>{{getJobOutput(showJobOutput)}}</pre>

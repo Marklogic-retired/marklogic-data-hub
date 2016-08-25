@@ -3,25 +3,20 @@ import { Component, ViewEncapsulation,
 
 import { Router } from '@angular/router';
 
-import { AuthService } from './auth';
+import { AuthService } from './auth/index';
 
-import { ConfirmService } from './confirm';
+import { ConfirmService } from './confirm/index';
 
-import { EntitiesService } from './entities/entities.service';
-
-import { EnvironmentService } from './environment';
-
-import { Header } from './header/header.component';
-
-import { InstallService } from './installer';
-
-import { JobListenerService } from './jobs/job-listener.service';
+import { EnvironmentService } from './environment/index';
 
 import { ProjectService } from './projects/projects.service';
 
-import { SettingsService } from './settings/settings.service';
-
 import { STOMPService } from './stomp/stomp.service';
+
+interface CustomWindow {
+  BASE_URL: string;
+}
+declare var window: CustomWindow;
 
 /*
  * App Component
@@ -30,24 +25,14 @@ import { STOMPService } from './stomp/stomp.service';
 @Component({
   selector: 'app',
   encapsulation: ViewEncapsulation.None,
-  providers: [
-    ConfirmService,
-    EntitiesService,
-    InstallService,
-    JobListenerService,
-    ProjectService,
-    SettingsService,
-    STOMPService
-  ],
-  directives: [Header],
-  styles: [
-    require('./app.style.scss')
+  styleUrls: [
+    './app.style.css'
   ],
   template: `
-    <header *ngIf="canShowHeader()"></header>
-    <main>
+    <hub-header *ngIf="canShowHeader()"></hub-header>
+    <div class="main" [ngStyle]="{'top': headerOffset() }">
       <router-outlet></router-outlet>
-    </main>
+    </div>
   `
 })
 export class App implements OnInit {
@@ -65,11 +50,12 @@ export class App implements OnInit {
     confirm.setDefaultViewContainerRef(vcRef);
     // get the auth state and listen for changes
     this.authenticated = auth.isAuthenticated();
-    auth.authenticated.subscribe(authenticated => {
+    auth.authenticated.subscribe((authenticated: boolean) => {
       this.authenticated = authenticated;
     });
 
-    this.stomp.configure('/websocket');
+    let baseUrl: string = window.BASE_URL;
+    this.stomp.configure(baseUrl + '/websocket');
     this.stomp.try_connect();
   }
 
@@ -81,5 +67,9 @@ export class App implements OnInit {
 
   canShowHeader() {
     return this.authenticated && this.router.url !== '/login' && this.envService.settings;
+  }
+
+  headerOffset(): string {
+    return this.canShowHeader() ? '64px' : '0px';
   }
 }

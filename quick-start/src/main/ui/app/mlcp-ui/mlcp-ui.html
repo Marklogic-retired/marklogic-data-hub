@@ -17,15 +17,24 @@
         <div class="group-section slideDown" [ngClass]="getSectionClass(group.category)">
           <p class="hint"><strong>Hint:</strong> Hover over the labels to view the description</p>
           <div class="setting" *ngFor="let setting of group.settings">
-            <md-slide-toggle class="primary-color" [tooltip]="setting.description" name="{{setting.field}}" *ngIf="setting.type === 'boolean'" [checked]="setting.value" (change)="updateSetting(setting, $event.checked)">
-            {{setting.label}}</md-slide-toggle>
-            <mdl-textfield [type]="setting.type" [tooltip]="setting.description"
-              [label]="setting.label"
+            <md-slide-toggle
+              class="primary-color"
+              [tooltip]="setting.description"
+              tooltipPlacement="innerRight"
+              name="{{setting.field}}"
+              *ngIf="setting.type === 'boolean'"
+              [checked]="setting.value"
+              (change)="updateSetting(setting, $event.checked)">
+              {{setting.label}}
+            </md-slide-toggle>
+            <md-input [type]="setting.type"
+              [tooltip]="setting.description"
+              tooltipPlacement="innerRight"
+              [placeholder]="setting.label"
               name="{{setting.field}}" *ngIf="isText(setting.type)"
-              [value]="setting.value"
-              (input)="updateSetting(setting, $event.target.value)"
-              [disabled]="setting.readOnly"
-              floating-label></mdl-textfield>
+              [ngModel]="setting.value"
+              (change)="updateSetting(setting, $event.target.value)"
+              [disabled]="setting.readOnly"></md-input>
             <custom-select
               [id]="setting.field"
               [labelText]="setting.label"

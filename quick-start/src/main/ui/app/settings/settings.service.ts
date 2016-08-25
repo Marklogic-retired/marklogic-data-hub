@@ -22,13 +22,13 @@ export class SettingsService {
   }
 
   enableTracing() {
-    return this.http.post('/settings/trace/enable', null).subscribe(() => {
+    return this.http.post('/settings/trace/enable', '').subscribe(() => {
       this.traceEnabled = true;
     });
   }
 
   disableTracing() {
-    return this.http.post('/settings/trace/disable', null).subscribe(() => {
+    return this.http.post('/settings/trace/disable', '').subscribe(() => {
       this.traceEnabled = false;
     });
   }
@@ -42,13 +42,13 @@ export class SettingsService {
   }
 
   enableDebugging() {
-    return this.http.post('/settings/debug/enable', null).subscribe(() => {
+    return this.http.post('/settings/debug/enable', '').subscribe(() => {
       this.debugEnabled = true;
     });
   }
 
   disableDebugging() {
-    return this.http.post('/settings/debug/disable', null).subscribe(() => {
+    return this.http.post('/settings/debug/disable', '').subscribe(() => {
       this.debugEnabled = false;
     });
   }
@@ -69,11 +69,11 @@ export class SettingsService {
     return res.json();
   }
 
-  private get(url) {
+  private get(url: string) {
     return this.http.get(url).map(this.extractData);
   }
 
-  private post(url, data) {
+  private post(url: string, data: any) {
     return this.http.post(url, data).map(this.extractData);
   }
 }

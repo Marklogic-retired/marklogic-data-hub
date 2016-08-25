@@ -5,7 +5,7 @@ import { TimeAgoPipe } from 'angular2-moment';
 import { TraceService } from './trace.service';
 import { Trace } from './trace.model';
 
-import { Codemirror } from '../codemirror';
+import { Codemirror } from '../codemirror/index';
 
 import * as moment from 'moment';
 
@@ -19,8 +19,7 @@ import * as _ from 'lodash';
   pipes: [TimeAgoPipe],
   providers: [TraceService],
   styleUrls: [
-    './trace-viewer.style.scss',
-    '../../../../../node_modules/codemirror/lib/codemirror.css'
+    './trace-viewer.style.css'
   ],
 })
 export class TraceViewer implements OnInit, OnDestroy {
@@ -34,7 +33,7 @@ export class TraceViewer implements OnInit, OnDestroy {
 
   private collapsed = {};
   private outputCollapsed = false;
-  private errorCollapsed = false
+  private errorCollapsed = false;
 
   private codeMirrorConfig = {
     lineNumbers: true,
@@ -80,16 +79,16 @@ export class TraceViewer implements OnInit, OnDestroy {
     this.sub.unsubscribe();
   }
 
-  private setCurrent(type) {
+  private setCurrent(type: string) {
     this.currentPluginType = type;
     this.currentPlugin = this.trace[type + 'Plugin'];
   }
 
-  private getKeys(thing) {
+  private getKeys(thing: any) {
     return _.keys(thing).sort();
   }
 
-  private formatData(data) {
+  private formatData(data: any) {
     if (_.isObject(data) || _.isArray(data)) {
       return JSON.stringify(data, null, '  ');
     }

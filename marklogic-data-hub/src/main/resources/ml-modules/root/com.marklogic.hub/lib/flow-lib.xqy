@@ -218,7 +218,7 @@ declare %private function flow:get-writer(
 declare function flow:get-flow(
   $entity-name as xs:string,
   $flow-name as xs:string,
-  $flow-type as xs:string?) as element(hub:flow)
+  $flow-type as xs:string?) as element(hub:flow)?
 {
   let $uris :=
     hul:run-in-modules(function() {
@@ -228,6 +228,7 @@ declare function flow:get-flow(
       return
         cts:uri-match($ENTITIES-DIR || $entity-name || "/" || $type || "/" || $flow-name || "/*")
     })
+  where fn:count($uris) > 0
   return
     flow:get-flow($entity-name, $flow-name, $flow-type, $uris)
 };
@@ -573,7 +574,7 @@ declare function flow:run-plugin(
   $simple as xs:boolean,
   $options as map:map)
 {
-  let $module-uri as xs:string := $plugin/@module
+  let $module-uri as xs:string? := $plugin/@module
   return
     if (fn:empty($module-uri)) then ()
     else
@@ -593,7 +594,15 @@ declare function flow:run-plugin(
             switch($destination)
               case "content" return
                 if ($flow-type = "input") then
-                  element rawContent { $content }
+                  let $kind := try {
+                    xdmp:node-kind($content)
+                  }
+                  catch($ex) {}
+                  return
+                    if ($kind eq "binary") then
+                      element rawContent { "binary document" }
+                    else
+                      element rawContent { $content }
                 else
                   ()
               case "headers" return
@@ -619,7 +628,15 @@ declare function flow:run-plugin(
                 switch($destination)
                   case "content" return
                     if ($flow-type = "input") then
-                      map:put($o, "rawContent", $content)
+                      let $kind := try {
+                        xdmp:node-kind($content)
+                      }
+                      catch($ex) {}
+                      return
+                        if ($kind eq "binary") then
+                          map:put($o, "rawContent", "binary document")
+                        else
+                          map:put($o, "rawContent", $content)
                     else
                       ()
                   case "headers" return
@@ -636,20 +653,26 @@ declare function flow:run-plugin(
       let $before := xdmp:elapsed-time()
       let $resp :=
         try {
-          if ($simple) then
-            switch ($destination)
-              case "content" return
-                if ($flow-type = "input") then
+          let $resp :=
+            if ($simple) then
+              switch ($destination)
+                case "content" return
+                  if ($flow-type = "input") then
+                    $func($identifier, $content, $options)
+                  else
+                    $func($identifier, $options)
+                case "headers" return
                   $func($identifier, $content, $options)
-                else
-                  $func($identifier, $options)
-              case "headers" return
-                $func($identifier, $content, $options)
-              case "triples" return
-                $func($identifier, $content, $headers, $options)
-              default return ()
-          else
-            $func($identifier, $content, $headers, $triples, $options)
+                case "triples" return
+                  $func($identifier, $content, $headers, $options)
+                default return ()
+            else
+              $func($identifier, $content, $headers, $triples, $options)
+          return
+            if ($resp instance of binary()) then
+              fn:error(xs:QName("CANT_RETURN_BINARY"), "You can't put a binary inside of an envelope.")
+            else
+              $resp
         }
         catch($ex) {
           xdmp:log(xdmp:describe($ex, (), ())),
@@ -688,7 +711,12 @@ declare function flow:run-plugin(
             else
               $resp
           default return
-            $resp
+            if ($data-format = 'application/json' and
+                $type = $TYPE-XQUERY and
+                $destination = "triples") then
+              json:to-array($resp)
+            else
+              $resp
       let $_ :=
         if (trace:enabled()) then
           trace:plugin-trace(
@@ -770,22 +798,44 @@ declare function flow:run-writer(
     $resp
 };
 
-declare function flow:make-error-json($ex) {
-  map:new((
-    map:entry("msg", $ex/error:format-string/fn:data()),
-    let $f := $ex/error:stack/error:frame[1]
-    return
-      (
-        map:entry("uri", $f/error:uri/fn:data()),
-        map:entry("line", $f/error:line/fn:data()),
-        map:entry("column", $f/error:column/fn:data())
-      )
-  ))
+declare function flow:make-error-json(
+  $errors as json:object,
+  $entity as xs:string,
+  $flow  as xs:string,
+  $plugin as xs:string,
+  $ex
+) {
+  xdmp:log($ex),
+  let $eo :=
+    if (map:contains($errors, $entity)) then
+      map:get($errors, $entity)
+    else
+      let $e := map:map()
+      let $_ := map:put($errors, $entity, $e)
+      return
+        $e
+  let $fo :=
+    if (map:contains($eo, $flow)) then
+      map:get($eo, $flow)
+    else
+      let $f := map:map()
+      let $_ := map:put($eo, $flow, $f)
+      return
+        $f
+
+  let $f := $ex/error:stack/error:frame[1]
+  return
+    map:put($fo, $plugin, map:new((
+      map:entry("uri", $f/error:uri/fn:data()),
+      map:entry("line", $f/error:line/fn:data()),
+      map:entry("column", $f/error:column/fn:data()),
+      map:entry("msg", $ex/error:format-string/fn:data())
+    )))
 };
 
 declare function flow:validate-entities()
 {
-  let $errors := json:array()
+  let $errors := json:object()
   let $options := map:map()
   let $_ :=
     for $entity in flow:get-entities()/hub:entity
@@ -793,26 +843,36 @@ declare function flow:validate-entities()
     let $data-format := $flow/hub:data-format
     (: validate collector :)
     let $_ :=
-      let $collector := $flow/hub:collector
-      return
-        if ($collector) then
-          let $module-uri := $collector/@module
-          let $filename as xs:string := hul:get-file-from-uri($module-uri)
-          let $type := flow:get-type($filename)
-          let $ns := flow:get-module-ns($type)
-          return
-            if ($type eq $flow:TYPE-XQUERY) then
-              xdmp:eval(
-                'import module namespace x = "' || $ns || '" at "' || $module-uri || '"; ' ||
-                '()',
-                map:new(map:entry("staticCheck", fn:true()))
-              )
-            else
-              xdmp:javascript-eval(
-                'var x = require("' || $module-uri || '");',
-                map:new(map:entry("staticCheck", fn:true()))
-              )
-        else ()
+      try {
+        let $collector := $flow/hub:collector
+        return
+          if ($collector) then
+            let $module-uri := $collector/@module
+            let $filename as xs:string := hul:get-file-from-uri($module-uri)
+            let $type := flow:get-type($filename)
+            let $ns := flow:get-module-ns($type)
+            return
+              if ($type eq $flow:TYPE-XQUERY) then
+                xdmp:eval(
+                  'import module namespace x = "' || $ns || '" at "' || $module-uri || '"; ' ||
+                  '()',
+                  map:new(map:entry("staticCheck", fn:true()))
+                )
+              else
+                xdmp:javascript-eval(
+                  'var x = require("' || $module-uri || '");',
+                  map:new(map:entry("staticCheck", fn:true()))
+                )
+          else ()
+      }
+      catch($ex) {
+        flow:make-error-json(
+          $errors,
+          $entity/hub:name,
+          $flow/hub:name,
+          "collector",
+          $ex)
+      }
     (: validate plugins :)
     let $_ :=
       for $plugin in $flow/hub:plugins/hub:plugin
@@ -850,7 +910,12 @@ declare function flow:validate-entities()
             )
         }
         catch($ex) {
-          json:array-push($errors, flow:make-error-json($ex))
+          flow:make-error-json(
+            $errors,
+            $entity/hub:name,
+            $flow/hub:name,
+            $destination,
+            $ex)
         }
     return
       ()

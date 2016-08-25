@@ -8,43 +8,15 @@ import * as _ from 'lodash';
 @Component({
   selector: 'new-flow',
   templateUrl: './new-flow.html',
-  styleUrls: ['./new-flow.scss'],
-  directives: [SelectList],
-  animations: [
-    trigger('fadeState', [
-      state('hidden', style({
-        opacity: 0,
-        visibility: 'hidden'
-      })),
-      state('active', style({
-        opacity: 1,
-        visibility: 'visible'
-      })),
-      transition('hidden => active', animate('0.5s ease-in')),
-      transition('active => hidden', animate('0.5s ease-in'))
-    ]),
-    trigger('growState', [
-      state('hidden', style({
-        top: 0,
-        left: 0,
-        transform: 'scale(0)'
-      })),
-      state('active', style({
-        top: '*',
-        left: '*',
-        transform: 'scale(1)'
-      })),
-      transition('hidden => active', animate('0.5s ease-in')),
-      transition('active => hidden', animate('0.5s ease-in'))
-    ]),
-  ]
+  styleUrls: ['./new-flow.css'],
+  directives: [SelectList]
 })
 export class NewFlow {
   @ViewChild('pluginFormatList') pluginFormatList: SelectList;
   @ViewChild('dataFormatList') dataFormatList: SelectList;
 
   finishedEvent: EventEmitter<any>;
-  vizState: string = 'hidden';
+  _isVisible: boolean = false;
 
   flowType: string;
 
@@ -58,7 +30,7 @@ export class NewFlow {
   ];
 
   emptyFlow = {
-    flowName: null,
+    flowName: <string>null,
     pluginFormat: 'JAVASCRIPT',
     dataFormat: 'JSON'
   };
@@ -75,12 +47,12 @@ export class NewFlow {
     this.flowType = _.capitalize(flowType);
     this.flow = _.clone(this.emptyFlow);
     this.finishedEvent = new EventEmitter<boolean>(true);
-    this.vizState = 'active';
+    this._isVisible = true;
     return this.finishedEvent;
   }
 
   hide() {
-    this.vizState = 'hidden';
+    this._isVisible = false;
   }
 
   private create() {

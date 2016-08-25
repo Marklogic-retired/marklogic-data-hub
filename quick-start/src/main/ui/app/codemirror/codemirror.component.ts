@@ -7,7 +7,8 @@ import {
   ViewChild,
   EventEmitter,
   Provider,
-  forwardRef
+  forwardRef,
+  ViewEncapsulation
 } from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 
@@ -31,24 +32,28 @@ const CODEMIRROR_CONTROL_VALUE_ACCESSOR = new Provider(
  */
 @Component({
   selector: 'codemirror',
+  encapsulation: ViewEncapsulation.None,
   providers: [CODEMIRROR_CONTROL_VALUE_ACCESSOR],
   template: `<textarea #host></textarea>`,
+  styleUrls: [
+    './codemirror.style.css'
+  ],
 })
 export class Codemirror {
 
-  @Input() config;
+  @Input() config: any;
 
   @Output() change = new EventEmitter();
-  editor;
-  @ViewChild('host') host;
+  // editor;
+  @ViewChild('host') host: any;
 
-  _value = '';
-  @Output() instance = null;
+  _value: string = '';
+  @Output() instance: any = null;
 
   /**
    * Constructor
    */
-  constructor(){}
+  constructor() {}
 
   get value(): any { return this._value; };
   @Input() set value(v) {
@@ -61,14 +66,12 @@ export class Codemirror {
   /**
    * On component destroy
    */
-  ngOnDestroy(){
-
-  }
+  ngOnDestroy() {}
 
   /**
    * On component view init
    */
-  ngAfterViewInit(){
+  ngAfterViewInit() {
     this.config = this.config || {};
     this.codemirrorInit(this.config);
   }
@@ -76,7 +79,7 @@ export class Codemirror {
   /**
    * Initialize codemirror
    */
-  codemirrorInit(config){
+  codemirrorInit(config: any) {
     this.instance = CodeMirror.fromTextArea(this.host.nativeElement, config);
     this.instance.on('change', () => {
       this.updateValue(this.instance.getValue());
@@ -86,7 +89,7 @@ export class Codemirror {
   /**
    * Value update process
    */
-  updateValue(value){
+  updateValue(value: any) {
     this.value = value;
     this.onChange(value);
     this.onTouched();
@@ -96,16 +99,16 @@ export class Codemirror {
   /**
    * Implements ControlValueAccessor
    */
-  writeValue(value){
+  writeValue(value: any) {
     this._value = value;
     if (this.instance) {
       this.instance.setValue(value || '');
     }
   }
-  onChange(_){}
-  onTouched(){}
-  registerOnChange(fn){this.onChange = fn;}
-  registerOnTouched(fn){this.onTouched = fn;}
-  _onChangeCallback(_){}
-  _onTouchedCallback(){}
+  onChange(_: any) {}
+  onTouched() {}
+  registerOnChange(fn: any) { this.onChange = fn; }
+  registerOnTouched(fn: any) { this.onTouched = fn; }
+  _onChangeCallback(_: any) {}
+  _onTouchedCallback() {}
 }

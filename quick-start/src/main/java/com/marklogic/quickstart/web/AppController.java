@@ -13,6 +13,6 @@ public class AppController extends LoggingObject {
      */
     @RequestMapping(value = {"/", "/login", "/home", "/settings", "/jobs", "/traces/**", "/404"}, method = RequestMethod.GET)
     public String index() {
-        return "/index.html";
+        return "index";
     }
 }

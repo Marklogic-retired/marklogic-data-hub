@@ -3,10 +3,26 @@
 @import 'dialog';
 @import 'tooltip';
 
-$font-path: '/assets/fonts';
+$font-path: 'assets/fonts';
 
 $mdi-font-path: $font-path;
 @import 'mdi/scss/materialdesignicons';
+
+app {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+div.main {
+  position: absolute;
+  top: 64px;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
 
 .mdi {
   font-size: 24px;
@@ -35,10 +51,6 @@ a {
   a:focus {
     outline: none;
   }
-}
-
-main {
-  height: 100%;
 }
 
 .mdl-snackbar {

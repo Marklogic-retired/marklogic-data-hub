@@ -46,7 +46,13 @@ public class EndToEndTestSjsXml extends HubTestBase {
         scaffolding.createFlow(ENTITY, "testharmonize", FlowType.HARMONIZE,
                 PluginFormat.JAVASCRIPT, Format.XML);
 
-        new DataHub(getHubConfig()).installUserModules();
+        DataHub dh = new DataHub(getHubConfig());
+        dh.clearUserModules();
+        dh.installUserModules();
+
+        installModule("/entities/" + ENTITY + "/harmonize/testharmonize/headers/headers.sjs", "e2e-test/sjs-flow/headers/headers.sjs");
+        installModule("/entities/" + ENTITY + "/harmonize/testharmonize/triples/triples.sjs", "e2e-test/sjs-flow/triples/triples.sjs");
+
     }
 
     @AfterClass

@@ -14,7 +14,7 @@ import * as _ from 'lodash';
   directives: [],
   pipes: [TimeAgoPipe],
   providers: [JobService],
-  styleUrls: ['./jobs.style.scss'],
+  styleUrls: ['./jobs.style.css'],
 })
 export class Jobs {
 
@@ -84,8 +84,7 @@ export class Jobs {
   private getIconClass(flowType: string) {
     if (flowType === 'Harmonize') {
       return 'mdi-looks';
-    }
-    else if (flowType === 'Input') {
+    } else if (flowType === 'Input') {
       return 'mdi-import';
     }
     return '';

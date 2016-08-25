@@ -21,9 +21,13 @@ The sample data is located in the input/ folder.
 
 1. Open your web browser to [http://localhost:8080](http://localhost:8080).
 
-1. Point the Login box to your MarkLogic installation.
+1. Browse to this folder from the login screen.
 
-1. Deploy your modules by pressing the **Deploy Modules** button.
+1. Initialize the project (if necessary)
+
+1. Login with your MarkLogic credentials
+
+1. Install the Hub into MarkLogic (if necessary)
 
 1. Load hl7 data by pressing the **Load Data** button next to hl7. When prompted Set the Path to **input/hl7**. Set the collection to **hl7**. Set the Data Format to **Documents**. Now Press **Submit**.
 

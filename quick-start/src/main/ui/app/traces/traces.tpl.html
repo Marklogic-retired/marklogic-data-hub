@@ -25,7 +25,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let trace of traces" [routerLink]="['/traces', trace.traceId]" [ngClass]="{'error' : trace.hasError }">
+          <tr *ngFor="let trace of traces" (click)="showTrace(trace.traceId)" [ngClass]="{'error' : trace.hasError }">
             <td><i class="mdi" [ngClass]="getIconClass(trace)"></i> {{trace.flowType}}</td>
             <td class="mdl-data-table__cell--non-numeric">{{trace.identifier}}</td>
             <td>{{trace.created | amTimeAgo}}</td>

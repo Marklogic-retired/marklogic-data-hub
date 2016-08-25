@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Http, Response } from '@angular/http';
+import { HubSettings } from '../environment/hub-settings.model';
 
 @Injectable()
 export class ProjectService {
@@ -17,31 +18,31 @@ export class ProjectService {
     return this.get('/projects/');
   }
 
-  addProject(path) {
-    return this.post(`/projects/?path=${encodeURIComponent(path)}`, null);
+  addProject(path: string) {
+    return this.post(`/projects/?path=${encodeURIComponent(path)}`, '');
   }
 
-  removeProject(project) {
+  removeProject(project: any) {
     return this.http.delete(`/projects/${project.id}`);
   }
 
-  getProject(projectId) {
+  getProject(projectId: string) {
     return this.get(`/projects/${projectId}`);
   }
 
-  getProjectDefaults(projectId) {
+  getProjectDefaults(projectId: string) {
     return this.get(`/projects/${projectId}/defaults`);
   }
 
-  getProjectEnvironment(projectId, environment) {
+  getProjectEnvironment(projectId: string, environment: string) {
     return this.get(`/projects/${projectId}/${environment}`);
   }
 
-  initProject(projectId, settings) {
+  initProject(projectId: string, settings: HubSettings) {
     return this.post(`/projects/${projectId}/initialize`, settings);
   }
 
-  login(projectId, environment, loginInfo) {
+  login(projectId: string, environment: string, loginInfo: any) {
     let resp = this.http.post(`/projects/${projectId}/${environment}/login`, loginInfo).share();
     resp.subscribe(() => {
       this.projectId = projectId;
@@ -64,11 +65,11 @@ export class ProjectService {
     return res.json();
   }
 
-  private get(url) {
+  private get(url: string) {
     return this.http.get(url).map(this.extractData);
   }
 
-  private post(url, data) {
+  private post(url: string, data: any) {
     return this.http.post(url, data).map(this.extractData);
   }
 

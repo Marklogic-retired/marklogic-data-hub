@@ -13,46 +13,22 @@ import { SelectList } from '../select-list/select-list.component';
 import { Select } from '../select/select.component';
 import { TooltipDirective } from '../tooltip/tooltip.directive';
 import { Flow } from '../entities/flow.model';
-import { EnvironmentService } from '../environment';
+import { EnvironmentService } from '../environment/index';
+
+interface MlcpOptions {
+  [key: string]: any;
+}
 
 @Component({
   selector: 'mlcp',
   templateUrl: './mlcp-ui.html',
   providers: [],
   directives: [ClipboardDirective, FolderBrowser, SelectList, Select, TooltipDirective],
-  styleUrls: ['./mlcp-ui.scss'],
-  animations: [
-    trigger('fadeState', [
-      state('hidden', style({
-        opacity: 0,
-        visibility: 'hidden'
-      })),
-      state('active', style({
-        opacity: 1,
-        visibility: 'visible'
-      })),
-      transition('hidden => active', animate('0.5s ease-in')),
-      transition('active => hidden', animate('0.5s ease-in'))
-    ]),
-    trigger('growState', [
-      state('hidden', style({
-        top: 0,
-        left: 0,
-        transform: 'scale(0)'
-      })),
-      state('active', style({
-        top: '*',
-        left: '*',
-        transform: 'scale(1)'
-      })),
-      transition('hidden => active', animate('0.5s ease-in')),
-      transition('active => hidden', animate('0.5s ease-in'))
-    ]),
-  ],
+  styleUrls: ['./mlcp-ui.css']
 })
 export class MlcpUi {
   inputFilePath: string = '.';
-  mlcp = {};
+  mlcp = <MlcpOptions>{};
 
   flow: Flow;
 
@@ -89,11 +65,13 @@ export class MlcpUi {
     private snackbar: MdlSnackbarService,
     private vcRef: ViewContainerRef,
     private entitiesService: EntitiesService,
-    private envService: EnvironmentService) {
-    snackbar.setDefaultViewContainerRef(vcRef);
+    private envService: EnvironmentService
+  ) {
+    let vref: any = vcRef;
+    snackbar.setDefaultViewContainerRef(vref);
   }
 
-  show(mlcpOptions, flow: Flow, $event): EventEmitter<boolean> {
+  show(mlcpOptions: any, flow: Flow, $event: MouseEvent): EventEmitter<boolean> {
     this.finishedEvent = new EventEmitter<boolean>(true);
 
     this.flow = flow;
@@ -112,7 +90,7 @@ export class MlcpUi {
   }
 
   /* tslint:disable:max-line-length */
-  getGroups(entityName, flowName, previousOptions) {
+  getGroups(entityName: string, flowName: string, previousOptions: any) {
     const groups = [
       {
         category: 'General Options',
@@ -184,6 +162,13 @@ export class MlcpUi {
             field: 'output_uri_prefix',
             type: 'string',
             description: 'URI prefix to the id specified by -output_idname. Used to construct output document URIs.',
+          },
+          {
+            label: 'Output URI Replace',
+            field: 'output_uri_replace',
+            type: 'string',
+            description: 'A comma separated list of (regex,string) pairs that define string replacements to apply to the URIs of documents added to the database. The replacement strings must be enclosed in single quotes. For example, -output_uri_replace "regex1,\'string1\',regext2,\'string2\'"',
+            value: this.outputUriReplaceValue()
           },
           {
             label: 'Output URI Suffix',
@@ -408,7 +393,7 @@ export class MlcpUi {
   }
   /* tslint:enable:max-line-length */
 
-  isGroupVisible(category) {
+  isGroupVisible(category: string): boolean {
     const inputFileType = this.groups[0].settings[0].value;
     if (category === 'Delimited Text Options' && inputFileType !== 'delimited_text') {
       return false;
@@ -418,7 +403,7 @@ export class MlcpUi {
     return true;
   }
 
-  isFieldVisible(filter, collection) {
+  isFieldVisible(filter: any, collection: Array<any>): boolean {
     if (filter) {
       const field = filter.field;
       const value = filter.value;
@@ -427,7 +412,7 @@ export class MlcpUi {
     return true;
   }
 
-  getByFieldAndValue(field, value, collection) {
+  getByFieldAndValue(field: any, value: any, collection: Array<any>) {
     let i = 0;
     const len = collection.length;
     for (; i < len; i++) {
@@ -440,7 +425,7 @@ export class MlcpUi {
   }
 
 
-  isText(type) {
+  isText(type: string): boolean {
     if (type === 'string' || type === 'comma-list' || type === 'number' || type === 'character') {
       return true;
     }
@@ -448,29 +433,28 @@ export class MlcpUi {
     return false;
   }
 
-  toggleSection(group) {
+  toggleSection(group: string): void {
     const section = this.sections[group];
     section.collapsed = !section.collapsed;
   }
 
-  getSectionCollapsed(group) {
+  getSectionCollapsed(group: string): boolean {
     const section = this.sections[group];
     return section.collapsed;
   }
 
-  getSectionClass(group) {
+  getSectionClass(group: string): string {
     const section = this.sections[group];
     return section.collapsed ? 'collapsed' : '';
   }
 
-  buildMlcpOptions() {
-    let options = [];
+  buildMlcpOptions(): Array<any> {
+    let options: Array<any> = [];
 
     this.mlcp = {};
     this.addMlcpOption(options, 'import', null, false);
     this.addMlcpOption(options, 'mode', 'local', false);
     this.addMlcpOption(options, 'input_file_path', this.inputFilePath, true);
-    this.addMlcpOption(options, 'output_uri_replace', '"' + this.inputFilePath + ',\'\'"', true);
 
     _.each(this.groups, (group) => {
       if (this.isGroupVisible(group.category)) {
@@ -489,7 +473,7 @@ export class MlcpUi {
     return options;
   }
 
-  addMlcpOption(options, key, value, isOtherOption) {
+  addMlcpOption(options: any, key: string, value: any, isOtherOption: boolean): void {
     options.push('-' + key);
     if (value) {
       options.push(value);
@@ -499,58 +483,74 @@ export class MlcpUi {
     }
   }
 
-  updateSetting(setting, value) {
+  updateSetting(setting: any, value: any): void {
     setting.value = value;
     this.updateMlcpCommand();
   }
 
-  updateMlcpCommand() {
-    let mlcpCommand = 'mlcp';
+  updateMlcpCommand(): string {
+    let mlcpCommand: string = 'mlcp';
     mlcpCommand += (navigator.appVersion.indexOf('Win') !== -1) ? '.bat' : '.sh';
 
     let host = this.envService.settings.host;
     let port = this.envService.settings.stagingPort;
     let username = this.envService.settings.username;
 
-    mlcpCommand += ` -host ${host} -port ${port} -username ${username} -password ***** ${this.buildMlcpOptions().join(' ')}`;
+    let otherOptions = this.buildMlcpOptions().join(' ');
+    mlcpCommand +=
+      ` -host ${host} -port ${port} -username ${username} -password ***** ${otherOptions}`;
 
     this.mlcpCommand = mlcpCommand;
     return mlcpCommand;
   }
 
-  folderClicked($event) {
-    this.inputFilePath = $event;
+  outputUriReplaceValue() {
+    return `${this.inputFilePath.replace(/\\/g, '\\\\')},''`;
+  }
+
+  folderClicked(folder: string): void {
+    this.inputFilePath = folder;
+
+    // update the outputUriReplace options
+    let generalGroup = _.find(this.groups, (group: any) => {
+      return group.category === 'General Options';
+    });
+    let outputUriReplace = _.find(generalGroup.settings, (setting: any) => {
+      return setting.field === 'output_uri_replace';
+    });
+    outputUriReplace.value = this.outputUriReplaceValue();
+
     this.updateMlcpCommand();
   }
 
-  cmdCopied() {
+  cmdCopied(): void {
     this.snackbar.showSnackbar({
       message: 'MLCP command copied to the clipboard.',
     });
   }
 
-  hide() {
+  hide(): void {
     this._isVisible = false;
   }
 
-  public isVisible() {
+  public isVisible(): boolean {
     return this._isVisible;
   }
 
-  public cancel() {
+  public cancel(): void {
     this.hide();
     this.finishedEvent.error(false);
   }
 
-  private saveOptions() {
+  private saveOptions(): void {
     this.entitiesService.saveInputFlowOptions(this.flow, this.mlcp).subscribe(() => {
       this.snackbar.showSnackbar({
-        message: 'MLCP options saved.',
+        message: 'MLCP options saved.'
       });
-    })
+    });
   }
 
-  private runImport() {
+  private runImport(): void {
     this.hide();
     this.finishedEvent.emit(this.mlcp);
   }

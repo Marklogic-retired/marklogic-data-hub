@@ -118,7 +118,10 @@ class DataHubPlugin implements Plugin<Project> {
         // Modules
         List<Command> modulesCommands = new ArrayList<Command>()
         modulesCommands.add(new LoadHubModulesCommand(project.hubConfig))
-        modulesCommands.add(new LoadUserModulesCommand(project.hubConfig))
+        def loadUserMods = new LoadUserModulesCommand(project.hubConfig)
+        // force reload
+        loadUserMods.setForceLoad(true)
+        modulesCommands.add(loadUserMods)
         commands.addAll(modulesCommands)
 
         // Alerting

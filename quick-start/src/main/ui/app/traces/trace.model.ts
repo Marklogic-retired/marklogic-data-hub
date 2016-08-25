@@ -11,4 +11,6 @@ export class Trace {
   headersPlugin: Plugin;
   triplesPlugin: Plugin;
   writerPlugin: Plugin;
+
+  [key: string]: any;
 }

@@ -42,7 +42,12 @@ public class EndToEndTestXqyXml extends HubTestBase {
         scaffolding.createFlow(ENTITY, "testharmonize", FlowType.HARMONIZE,
                 PluginFormat.XQUERY, Format.XML);
 
-        new DataHub(getHubConfig()).installUserModules();
+        DataHub dh = new DataHub(getHubConfig());
+        dh.clearUserModules();
+        dh.installUserModules();
+
+        installModule("/entities/" + ENTITY + "/harmonize/testharmonize/headers/headers.xqy", "e2e-test/xqy-flow/headers/headers-xml.xqy");
+        installModule("/entities/" + ENTITY + "/harmonize/testharmonize/triples/triples.xqy", "e2e-test/xqy-flow/triples/triples.xqy");
     }
 
     @AfterClass

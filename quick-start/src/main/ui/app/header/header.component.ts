@@ -9,10 +9,10 @@ import { JobListenerService } from '../jobs/job-listener.service';
 import { FlowStatus } from '../entities/flow-status.model';
 
 @Component({
-  selector: 'header',
+  selector: 'hub-header',
   templateUrl: './header.tpl.html',
   providers: [],
-  styleUrls: ['./header.style.scss'],
+  styleUrls: ['./header.style.css'],
 })
 export class Header {
 

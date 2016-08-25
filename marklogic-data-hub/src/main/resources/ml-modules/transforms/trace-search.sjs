@@ -1,13 +1,12 @@
 var trace = require("/com.marklogic.hub/lib/trace-lib.xqy");
 
-
-function transform(contenxt, params, content) {
+function transform(context, params, content) {
   var response = content.toObject();
 
   for (var i = 0; i < response.results.length; i++) {
     var result = response.results[i];
     var doc = cts.doc(result.uri).root;
-    result.content = trace.traceToJson(doc);
+    result.content = trace.traceToJsonSlim(doc);
     response.pageLength = response['page-length'];
   }
   return response;

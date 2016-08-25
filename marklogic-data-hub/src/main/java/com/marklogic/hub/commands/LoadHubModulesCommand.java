@@ -76,6 +76,7 @@ public class LoadHubModulesCommand extends AbstractCommand {
         ContentCreateOptions options = new ContentCreateOptions();
         options.setFormat(documentFormatGetter.getDocumentFormat(new File(uri)));
         options.setPermissions(permissionsParser.parsePermissions(this.permissions));
+        options.setCollections(new String[]{"hub-core-module"});
         if (this.collections != null) {
             options.setCollections(collections);
         }

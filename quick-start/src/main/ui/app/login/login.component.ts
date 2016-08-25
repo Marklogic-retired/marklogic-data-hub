@@ -5,8 +5,8 @@ import * as _ from 'lodash';
 
 import { AuthService } from '../auth/auth.service';
 import { ProjectService } from '../projects/projects.service';
-import { InstallService } from '../installer';
-import { ConfirmService } from '../confirm';
+import { InstallService } from '../installer/index';
+import { ConfirmService } from '../confirm/index';
 import { FolderBrowser } from '../folder-browser/folder-browser.component';
 import { SelectList } from '../select-list/select-list.component';
 import { LoginInfo } from './login-info.model';
@@ -20,7 +20,7 @@ import { HubSettings } from '../environment/hub-settings.model';
     SelectList
   ],
   providers: [],
-  styleUrls: ['./login.style.scss']
+  styleUrls: ['./login.style.css']
 })
 
 export class Login {
@@ -30,12 +30,12 @@ export class Login {
 
   currentTab: string = 'ProjectDir';
 
-  visitedTabs = [];
+  visitedTabs: Array<string> = [];
 
   loginError: boolean = false;
   loggingIn: boolean = false;
 
-  tabs = {
+  tabs: any = {
     ProjectDir: true,
     InitIfNeeded: false,
     PostInit: false,
@@ -101,7 +101,7 @@ export class Login {
     this.installing = true;
 
     this.installationStatus = '';
-    let emitter = this.installService.messageEmitter.subscribe((payload) => {
+    let emitter = this.installService.messageEmitter.subscribe((payload: any) => {
       this.percentComplete = payload.percentComplete;
       this.installationStatus += '\n' + payload.message;
 
@@ -122,7 +122,7 @@ export class Login {
     this.router.navigate(['']);
   }
 
-  folderClicked(folder) {
+  folderClicked(folder: string): void {
     this.folder = folder;
   }
 
@@ -134,7 +134,7 @@ export class Login {
     }
   }
 
-  gotoTab(tabName) {
+  gotoTab(tabName: string): void {
     this.disableTabs();
     this.tabs[tabName] = true;
 
@@ -160,7 +160,7 @@ export class Login {
     }
   }
 
-  removeProject($event) { // project, $evt: MouseEvent) {
+  removeProject($event: any) {
     const project = $event.item;
     const event = $event.event;
     this.confirm.showConfirm({
@@ -178,7 +178,7 @@ export class Login {
     }).catch(() => {});
   }
 
-  gotProject = (project) => {
+  gotProject = (project: any) => {
     this.currentProject = project;
     if (project.initialized) {
       // go straight to the environment choose
@@ -204,7 +204,7 @@ export class Login {
     }).catch(() => {});
   }
 
-  gotEnvironment(environment) {
+  gotEnvironment(environment: string) {
     this.currentEnvironmentString = environment;
   }
 
@@ -239,7 +239,7 @@ export class Login {
     this.projectService.initProject(
       this.currentProject.id,
       this.initSettings
-    ).subscribe(project => {
+    ).subscribe((project: any) => {
       this.currentProject = project;
       this.gotoTab('PostInit');
     });
