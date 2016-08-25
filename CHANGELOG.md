@@ -1,7 +1,30 @@
 # Change Log
 
-## [v1.0.0-rc.2](https://github.com/marklogic/marklogic-data-hub/tree/v1.0.0-rc.2)
+## [v1.0.0-rc.3](https://github.com/marklogic/marklogic-data-hub/tree/v1.0.0-rc.3)
 
+[Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v1.0.0-rc.2...v1.0.0-rc.3)
+
+**Fixed bugs:**
+
+- Better support for mixed flow and file type [\#228](https://github.com/marklogic/marklogic-data-hub/issues/228)
+
+**Closed issues:**
+
+- better support for binaries [\#259](https://github.com/marklogic/marklogic-data-hub/issues/259)
+- Get traces is super slow [\#258](https://github.com/marklogic/marklogic-data-hub/issues/258)
+- Job Output window stuck and not close-able [\#256](https://github.com/marklogic/marklogic-data-hub/issues/256)
+- mlcp uri replace is busted when run from cygwin [\#255](https://github.com/marklogic/marklogic-data-hub/issues/255)
+- Enable tracing by default [\#254](https://github.com/marklogic/marklogic-data-hub/issues/254)
+- Clear modules / Redeploy [\#252](https://github.com/marklogic/marklogic-data-hub/issues/252)
+- quickstart should be deployable to an appserver under a subdir [\#249](https://github.com/marklogic/marklogic-data-hub/issues/249)
+- Install status window too narrow [\#248](https://github.com/marklogic/marklogic-data-hub/issues/248)
+- gradle tasks need to force deploy content [\#246](https://github.com/marklogic/marklogic-data-hub/issues/246)
+- Running MLCP on non-existing flow causes error [\#243](https://github.com/marklogic/marklogic-data-hub/issues/243)
+- Loading GlobalCorp dataset results in deadlocks [\#225](https://github.com/marklogic/marklogic-data-hub/issues/225)
+- Deploy modules button should clear out the modules first [\#214](https://github.com/marklogic/marklogic-data-hub/issues/214)
+- Better error handling for failed hub install [\#176](https://github.com/marklogic/marklogic-data-hub/issues/176)
+
+## [v1.0.0-rc.2](https://github.com/marklogic/marklogic-data-hub/tree/v1.0.0-rc.2) (2016-08-10)
 [Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v1.0.0-rc.1...v1.0.0-rc.2)
 
 **Closed issues:**
