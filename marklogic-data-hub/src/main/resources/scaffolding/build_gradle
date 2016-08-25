@@ -4,7 +4,7 @@ plugins {
     id 'idea'
     id 'net.saliman.properties' version '1.4.5'
     id 'com.marklogic.ml-gradle' version '2.3.1'
-    id 'com.marklogic.ml-data-hub' version '1.0.0-rc.2'
+    id 'com.marklogic.ml-data-hub' version '1.0.0-rc.3'
 }
 
 repositories {
