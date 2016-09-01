@@ -20,12 +20,15 @@ declare function runFlow:transform(
   ) as document-node()
 {
   perf:log('/transforms/run-flow:transform', function() {
-    let $entityName := map:get($params, 'entity-name')
-    let $flowName := map:get($params, 'flow-name')
-
-    let $flow := flow:get-flow($entityName,$flowName, "input")
+    let $entity-name := map:get($params, 'entity-name')
+    let $flow-name := map:get($params, 'flow-name')
 
     let $uri := map:get($context, 'uri')
+    let $flow := flow:get-flow($entity-name, $flow-name, "input")
+    let $_ :=
+      if ($flow) then ()
+      else
+        fn:error(xs:QName("MISSING_FLOW"), "The specified flow " || $entity-name || ":" || $flow-name || " is missing.")
 
     let $envelope := flow:run-plugins($flow, $uri, $content, $params)
     let $_ :=

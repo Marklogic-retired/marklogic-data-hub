@@ -19,3 +19,4 @@ assetInstallTime.properties
 /quick-start/plugins
 flow.properties
 node_modules/
+.tmp/
