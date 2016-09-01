@@ -87,88 +87,16 @@ public class EnvironmentConfig {
     public void init(String projectDir, String environment, LoginInfo loginInfo) {
         this.projectDir = projectDir;
         this.environment = environment;
-        mlSettings = new HubConfig(this.projectDir);
+
+        mlSettings = HubConfig.hubFromEnvironment(this.projectDir, environment);
         if (loginInfo != null) {
             mlSettings.username = loginInfo.username;
             mlSettings.password = loginInfo.password;
         }
-        loadConfigurationFromFiles();
 
         dataHub = new DataHub(mlSettings);
         installed = dataHub.isInstalled();
         isInitialized = true;
-    }
-
-    public void loadConfigurationFromFiles() {
-        loadConfigurationFromFile(environmentProperties, GRADLE_PROPERTIES_FILENAME);
-        String envPropertiesFile = "gradle-" + environment + ".properties";
-        LOGGER.info("envPropertiesFile = " + envPropertiesFile);
-        loadConfigurationFromFile(environmentProperties, envPropertiesFile);
-        LOGGER.info(environmentProperties.toString());
-
-        mlSettings.name = getEnvPropString("mlAppName", mlSettings.name);
-
-        mlSettings.host = getEnvPropString("mlHost", mlSettings.host);
-
-        mlSettings.stagingDbName = getEnvPropString("mlStagingDbName", mlSettings.stagingDbName);
-        mlSettings.stagingHttpName = getEnvPropString("mlStagingAppserverName", mlSettings.stagingHttpName);
-        mlSettings.stagingForestsPerHost = getEnvPropInteger("mlStagingForestsPerHost", mlSettings.stagingForestsPerHost);
-        mlSettings.stagingPort = getEnvPropInteger("mlStagingPort", mlSettings.stagingPort);
-
-        mlSettings.finalDbName = getEnvPropString("mlFinalDbName", mlSettings.finalDbName);
-        mlSettings.finalHttpName = getEnvPropString("mlFinalAppserverName", mlSettings.finalHttpName);
-        mlSettings.finalForestsPerHost = getEnvPropInteger("mlFinalForestsPerHost", mlSettings.finalForestsPerHost);
-        mlSettings.finalPort = getEnvPropInteger("mlFinalPort", mlSettings.finalPort);
-
-        mlSettings.traceDbName = getEnvPropString("mlTraceDbName", mlSettings.traceDbName);
-        mlSettings.traceHttpName = getEnvPropString("mlTraceAppserverName", mlSettings.traceHttpName);
-        mlSettings.traceForestsPerHost = getEnvPropInteger("mlTraceForestsPerHost", mlSettings.traceForestsPerHost);
-        mlSettings.tracePort = getEnvPropInteger("mlTracePort", mlSettings.tracePort);
-
-        mlSettings.jobDbName = getEnvPropString("mlJobDbName", mlSettings.jobDbName);
-        mlSettings.jobHttpName = getEnvPropString("mlJobAppserverName", mlSettings.jobHttpName);
-        mlSettings.jobForestsPerHost = getEnvPropInteger("mlJobForestsPerHost", mlSettings.jobForestsPerHost);
-        mlSettings.jobPort = getEnvPropInteger("mlJobPort", mlSettings.jobPort);
-
-        mlSettings.modulesDbName = getEnvPropString("mlModulesDbName", mlSettings.modulesDbName);
-        mlSettings.triggersDbName = getEnvPropString("mlTriggersDbName", mlSettings.triggersDbName);
-        mlSettings.schemasDbName = getEnvPropString("mlSchemasDbName", mlSettings.schemasDbName);
-
-        mlSettings.authMethod = getEnvPropString("mlAuth", mlSettings.authMethod);
-    }
-
-    private String getEnvPropString(String key, String fallback) {
-        String value = this.environmentProperties.getProperty(key);
-        if (value == null) {
-            value = fallback;
-        }
-        return value;
-    }
-
-    private int getEnvPropInteger(String key, int fallback) {
-        String value = this.environmentProperties.getProperty(key);
-        int res;
-        if (value != null) {
-            res = Integer.parseInt(value);
-        }
-        else {
-            res = fallback;
-        }
-        return res;
-    }
-
-    public void loadConfigurationFromFile(Properties configProperties, String fileName) {
-        InputStream is = null;
-        try {
-            File file = new File(this.projectDir, fileName);
-            if(file.exists()) {
-                is = new FileInputStream( file );
-                configProperties.load( is );
-                is.close();
-            }
-        } catch ( Exception e ) {
-            is = null;
-        }
     }
 
     @JsonIgnore
