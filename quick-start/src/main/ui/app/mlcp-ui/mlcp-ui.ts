@@ -454,6 +454,17 @@ export class MlcpUi {
     this.mlcp = {};
     this.addMlcpOption(options, 'import', null, false);
     this.addMlcpOption(options, 'mode', 'local', false);
+
+    let host = this.envService.settings.host;
+    let port = this.envService.settings.stagingPort;
+    let username = this.envService.settings.username;
+
+
+    this.addMlcpOption(options, 'host', host, false);
+    this.addMlcpOption(options, 'port', port, false);
+    this.addMlcpOption(options, 'username', username, false);
+    this.addMlcpOption(options, 'password', '*****', false);
+
     this.addMlcpOption(options, 'input_file_path', this.inputFilePath, true);
 
     _.each(this.groups, (group) => {
@@ -491,14 +502,7 @@ export class MlcpUi {
   updateMlcpCommand(): string {
     let mlcpCommand: string = 'mlcp';
     mlcpCommand += (navigator.appVersion.indexOf('Win') !== -1) ? '.bat' : '.sh';
-
-    let host = this.envService.settings.host;
-    let port = this.envService.settings.stagingPort;
-    let username = this.envService.settings.username;
-
-    let otherOptions = this.buildMlcpOptions().join(' ');
-    mlcpCommand +=
-      ` -host ${host} -port ${port} -username ${username} -password ***** ${otherOptions}`;
+    mlcpCommand += ' ' + this.buildMlcpOptions().join(' ');
 
     this.mlcpCommand = mlcpCommand;
     return mlcpCommand;
