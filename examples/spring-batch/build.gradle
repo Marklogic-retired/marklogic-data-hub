@@ -1,0 +1,30 @@
+plugins {
+    id 'java'
+    id 'eclipse'
+    id 'idea'
+    id 'application'
+    id 'net.saliman.properties' version '1.4.5'
+    id 'com.marklogic.ml-gradle' version '2.3.1'
+    id 'com.marklogic.ml-data-hub' version '1.0.0-rc.4'
+}
+
+repositories {
+    mavenLocal()
+    jcenter()
+    maven {url 'http://developer.marklogic.com/maven2/'}
+}
+
+dependencies {
+    compile 'com.marklogic:marklogic-data-hub:1.0.0-rc.4'
+    compile "com.marklogic:marklogic-spring-batch-core:0.6.0"
+    compile "com.marklogic:ml-javaclient-util:2.9.1"
+    testCompile "com.marklogic:marklogic-spring-batch-test:0.6.0"
+}
+
+distributions {
+    main {
+        baseName = 'baseJob'
+    }
+}
+
+mainClassName = "com.marklogic.spring.batch.hub.HubJobRunner"
