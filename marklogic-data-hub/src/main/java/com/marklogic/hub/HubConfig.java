@@ -16,8 +16,14 @@
 package com.marklogic.hub;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.marklogic.client.helper.LoggingObject;
 
-public class HubConfig {
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.util.Properties;
+
+public class HubConfig extends LoggingObject {
 
     public static final String DEFAULT_HOST = "localhost";
 
@@ -40,6 +46,8 @@ public class HubConfig {
     public static final String DEFAULT_AUTH_METHOD = "digest";
 
     public static final Integer DEFAULT_FORESTS_PER_HOST = 4;
+
+    private static final String GRADLE_PROPERTIES_FILENAME = "gradle.properties";
 
     public String name = DEFAULT_APP_NAME;
 
@@ -84,4 +92,98 @@ public class HubConfig {
     public HubConfig(String projectDir) {
         this.projectDir = projectDir;
     }
+
+    /**
+     * Creates a hub config from a Project dir and environment.
+     * @param projectDir - the project directory
+     * @param environment - the environment to use
+     * @return a new HubConfig
+     */
+    public static HubConfig hubFromEnvironment(String projectDir, String environment) {
+        HubConfig config = new HubConfig(projectDir);
+        Properties environmentProperties = config.getProperties(environment);
+        config.loadConfigurationFromProperties(environmentProperties);
+        return config;
+    }
+
+    private Properties getProperties(String environment) {
+        Properties environmentProperties = new Properties();
+
+        loadConfigurationFromFile(environmentProperties, GRADLE_PROPERTIES_FILENAME);
+        String envPropertiesFile = "gradle-" + environment + ".properties";
+        loadConfigurationFromFile(environmentProperties, envPropertiesFile);
+
+        return environmentProperties;
+    }
+
+    public void loadConfigurationFromProperties(Properties environmentProperties) {
+        name = getEnvPropString(environmentProperties, "mlAppName", name);
+
+        host = getEnvPropString(environmentProperties, "mlHost", host);
+
+        stagingDbName = getEnvPropString(environmentProperties, "mlStagingDbName", stagingDbName);
+        stagingHttpName = getEnvPropString(environmentProperties, "mlStagingAppserverName", stagingHttpName);
+        stagingForestsPerHost = getEnvPropInteger(environmentProperties, "mlStagingForestsPerHost", stagingForestsPerHost);
+        stagingPort = getEnvPropInteger(environmentProperties, "mlStagingPort", stagingPort);
+
+        finalDbName = getEnvPropString(environmentProperties, "mlFinalDbName", finalDbName);
+        finalHttpName = getEnvPropString(environmentProperties, "mlFinalAppserverName", finalHttpName);
+        finalForestsPerHost = getEnvPropInteger(environmentProperties, "mlFinalForestsPerHost", finalForestsPerHost);
+        finalPort = getEnvPropInteger(environmentProperties, "mlFinalPort", finalPort);
+
+        traceDbName = getEnvPropString(environmentProperties, "mlTraceDbName", traceDbName);
+        traceHttpName = getEnvPropString(environmentProperties, "mlTraceAppserverName", traceHttpName);
+        traceForestsPerHost = getEnvPropInteger(environmentProperties, "mlTraceForestsPerHost", traceForestsPerHost);
+        tracePort = getEnvPropInteger(environmentProperties, "mlTracePort", tracePort);
+
+        jobDbName = getEnvPropString(environmentProperties, "mlJobDbName", jobDbName);
+        jobHttpName = getEnvPropString(environmentProperties, "mlJobAppserverName", jobHttpName);
+        jobForestsPerHost = getEnvPropInteger(environmentProperties, "mlJobForestsPerHost", jobForestsPerHost);
+        jobPort = getEnvPropInteger(environmentProperties, "mlJobPort", jobPort);
+
+        modulesDbName = getEnvPropString(environmentProperties, "mlModulesDbName", modulesDbName);
+        triggersDbName = getEnvPropString(environmentProperties, "mlTriggersDbName", triggersDbName);
+        schemasDbName = getEnvPropString(environmentProperties, "mlSchemasDbName", schemasDbName);
+
+        authMethod = getEnvPropString(environmentProperties, "mlAuth", authMethod);
+
+        username = getEnvPropString(environmentProperties, "mlAdminUsername", username);
+        password = getEnvPropString(environmentProperties, "mlAdminPassword", password);
+    }
+
+    private String getEnvPropString(Properties environmentProperties, String key, String fallback) {
+        String value = environmentProperties.getProperty(key);
+        if (value == null) {
+            value = fallback;
+        }
+        return value;
+    }
+
+    private int getEnvPropInteger(Properties environmentProperties, String key, int fallback) {
+        String value = environmentProperties.getProperty(key);
+        int res;
+        if (value != null) {
+            res = Integer.parseInt(value);
+        }
+        else {
+            res = fallback;
+        }
+        return res;
+    }
+
+    private void loadConfigurationFromFile(Properties configProperties, String fileName) {
+        InputStream is = null;
+        try {
+            File file = new File(this.projectDir, fileName);
+            if(file.exists()) {
+                is = new FileInputStream( file );
+                configProperties.load( is );
+                is.close();
+            }
+        }
+        catch ( Exception e ) {
+            is = null;
+        }
+    }
+
 }
