@@ -1,7 +1,19 @@
 # Change Log
 
-## [v1.0.0-rc.3](https://github.com/marklogic/marklogic-data-hub/tree/v1.0.0-rc.3)
+## [v1.0.0-rc.4](https://github.com/marklogic/marklogic-data-hub/tree/v1.0.0-rc.4)
 
+[Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v1.0.0-rc.3...v1.0.0-rc.4)
+
+**Implemented enhancements:**
+
+- Add Spring Batch Example [\#263](https://github.com/marklogic/marklogic-data-hub/issues/263)
+
+**Closed issues:**
+
+- MLCP Command for CSV files is generated incorrectly  [\#261](https://github.com/marklogic/marklogic-data-hub/issues/261)
+- update examples now that rc.2 is out [\#247](https://github.com/marklogic/marklogic-data-hub/issues/247)
+
+## [v1.0.0-rc.3](https://github.com/marklogic/marklogic-data-hub/tree/v1.0.0-rc.3) (2016-08-25)
 [Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v1.0.0-rc.2...v1.0.0-rc.3)
 
 **Fixed bugs:**
@@ -51,6 +63,7 @@
 - Performance tracing [\#193](https://github.com/marklogic/marklogic-data-hub/issues/193)
 - Refactor the Spring Boot API [\#145](https://github.com/marklogic/marklogic-data-hub/issues/145)
 - Support index configuration as a part of pushbutton deploy.  [\#10](https://github.com/marklogic/marklogic-data-hub/issues/10)
+- UI rework based on new screen designs [\#70](https://github.com/marklogic/marklogic-data-hub/issues/70)
 
 ## [v1.0.0-beta.6](https://github.com/marklogic/marklogic-data-hub/tree/v1.0.0-beta.6) (2016-06-20)
 [Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v1.0.0-beta.5...v1.0.0-beta.6)
