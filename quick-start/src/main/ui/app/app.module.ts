@@ -4,6 +4,7 @@ import { HttpModule } from '@angular/http';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { MdlModule } from 'angular2-mdl';
+import { ClipboardModule } from 'angular2-clipboard';
 import { App, routes } from './index';
 import { MaterialModule } from './material/index';
 import { AUTH_PROVIDERS } from './auth/index';
@@ -31,7 +32,8 @@ import { STOMPService } from './stomp/stomp.service';
     HttpModule,
     MaterialModule,
     MdlModule,
-    RouterModule.forRoot(routes)
+    RouterModule.forRoot(routes),
+    ClipboardModule
   ],
   providers: [
     AUTH_PROVIDERS,

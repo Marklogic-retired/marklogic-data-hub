@@ -5,8 +5,6 @@ import { MdlSnackbarService } from 'angular2-mdl';
 
 import * as _ from 'lodash';
 
-import { ClipboardDirective } from 'angular2-clipboard';
-
 import { EntitiesService } from '../entities/entities.service';
 import { FolderBrowser } from '../folder-browser/folder-browser.component';
 import { SelectList } from '../select-list/select-list.component';
@@ -23,7 +21,7 @@ interface MlcpOptions {
   selector: 'mlcp',
   templateUrl: './mlcp-ui.html',
   providers: [],
-  directives: [ClipboardDirective, FolderBrowser, SelectList, Select, TooltipDirective],
+  directives: [FolderBrowser, SelectList, Select, TooltipDirective],
   styleUrls: ['./mlcp-ui.css']
 })
 export class MlcpUi {
@@ -51,6 +49,9 @@ export class MlcpUi {
       collapsed: true
     },
     'Delimited Text Options': {
+      collapsed: true
+    },
+    'Delimited Json Options': {
       collapsed: true
     },
     'Aggregate XML Options': {
@@ -284,7 +285,7 @@ export class MlcpUi {
             label: 'Generate URI?',
             field: 'generate_uri',
             type: 'boolean',
-            description: 'When importing content with -input_file_type delimited_text, whether or not MarkLogic Server should automatically generate document URIs.\nDefault: false.',
+            description: 'Whether or not MarkLogic Server should automatically generate document URIs.\nDefault: false.',
             placeholder: 'default is false for delimited_text, true for delimited_json',
           },
           {
@@ -303,9 +304,9 @@ export class MlcpUi {
           },
           {
             label: 'URI ID',
-            field: 'delimited_uri_id',
+            field: 'uri_id',
             type: 'string',
-            description: 'When importing content -input_file_type delimited_text, the column name that contributes to the id portion of the URI for inserted documents.\nDefault: The first column.',
+            description: 'The column name that contributes to the id portion of the URI for inserted documents. Default: The first column.',
             placeholder: 'default is first column',
           },
           {
@@ -325,6 +326,27 @@ export class MlcpUi {
         collapsed: true,
       },
       {
+        category: 'Delimited Json Options',
+        caption: 'If the selected file ends in .csv, .xls, or .xlsx, the server will assume that the input file type is \'delimited_text\'.',
+        settings: [
+          {
+            label: 'Generate URI?',
+            field: 'generate_uri',
+            type: 'boolean',
+            description: 'Whether or not MarkLogic Server should automatically generate document URIs.\nDefault: false.',
+            placeholder: 'default is false for delimited_text, true for delimited_json',
+          },
+          {
+            label: 'URI ID',
+            field: 'uri_id',
+            type: 'string',
+            description: 'The element, attribute, or property name within the document to use as the document URI. Default: None; the URI is based on the file name, as described in Default Document URI Construction.',
+            placeholder: 'default is first column',
+          }
+        ],
+        collapsed: true
+      }
+      {
         category: 'Aggregate XML Options',
         settings: [
           {
@@ -341,11 +363,11 @@ export class MlcpUi {
           },
           {
             label: 'URI ID',
-            field: 'aggregate_uri_id',
+            field: 'uri_id',
             type: 'string',
-            description: 'When splitting an aggregate input file into multiple documents, the element or attribute name within the document root to use as the document URI.\nDefault: In local mode, hashcode-seqnum, where the hashcode is derived from the split number; in distribute mode, taskid-seqnum.',
-            placeholder: 'name of the element from which to derive the document URI',
-          },
+            description: 'The element, attribute, or property name within the document to use as the document URI. Default: None; the URI is based on the file name, as described in Default Document URI Construction.',
+            placeholder: 'default is first column',
+          }
         ],
         collapsed: true,
       },
@@ -396,6 +418,8 @@ export class MlcpUi {
   isGroupVisible(category: string): boolean {
     const inputFileType = this.groups[0].settings[0].value;
     if (category === 'Delimited Text Options' && inputFileType !== 'delimited_text') {
+      return false;
+    } else if (category === 'Delimited Json Options' && inputFileType !== 'delimited_json') {
       return false;
     } else if (category === 'Aggregate XML Options' && inputFileType !== 'aggregates') {
       return false;
