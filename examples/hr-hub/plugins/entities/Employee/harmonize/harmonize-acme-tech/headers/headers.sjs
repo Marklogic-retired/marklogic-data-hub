@@ -22,7 +22,7 @@ function createHeaders(id, content, options) {
 
   return {
     employeeId: content.id,
-    hireDate: xs.date(xdmp.parseDateTime('[M01]/[D01]/[Y0001]', content.hireDate)),
+    dateOfHire: xs.date(xdmp.parseDateTime('[M01]/[D01]/[Y0001]', content.hireDate)),
     salary: xs.int(salary)
   };
 }

@@ -55,6 +55,11 @@ dependencies {
     testCompile("org.springframework.boot:spring-boot-starter-test:${springBootVersion}")
 }
 
+configurations {
+    all*.exclude group: 'xml-apis'
+    all*.exclude group: 'xerces'
+}
+
 task npmInstallUI(type:Exec) {
     workingDir '.'
     commandLine 'npm', 'install'

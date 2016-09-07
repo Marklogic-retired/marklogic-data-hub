@@ -345,7 +345,7 @@ export class MlcpUi {
           }
         ],
         collapsed: true
-      }
+      },
       {
         category: 'Aggregate XML Options',
         settings: [
