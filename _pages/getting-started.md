@@ -209,7 +209,7 @@ For Global corp we are going to use the harmonize step to recreate employee reco
 
 ### Global Corp Header Plugin
 
-Use your favorite text editor to open the data-hub/plugins/entities/Employee/harmonize/armonize-global-corp/headers/headers.sjs file. Replace its contents with this:
+Use your favorite text editor to open the data-hub/plugins/entities/Employee/harmonize/harmonize-global-corp/headers/headers.sjs file. Replace its contents with this:
 
 <div class="embed-git" href="//raw.githubusercontent.com/marklogic/marklogic-data-hub/master/examples/hr-hub/plugins/entities/Employee/harmonize/harmonize-global-corp/headers/headers.sjs"></div>
 
