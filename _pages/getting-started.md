@@ -21,7 +21,7 @@ Follow the instructions [here](https://docs.marklogic.com/guide/installation){:t
 
 <iframe width="420" height="315" src="https://www.youtube.com/embed/WaRi9HMtz5Q" frameborder="0" allowfullscreen></iframe>
 
-## 2 - Download the QuickStart Jar
+## 2 - Download the QuickStart War
 
 - Create a folder for this hub project and cd into it.
 
@@ -51,7 +51,7 @@ Your directory should look like this:
 ## 4 - Run the QuickStart
 
 - Open a terminal window in the data-hub directory
-- Run the Jar
+- Run the War
 
 ~~~
 java -jar quick-start-*.war
