@@ -18,6 +18,7 @@
   <logger name="com.marklogic.appdeployer" level="INFO"/>
   <logger name="com.marklogic.hub" level="INFO"/>
   <logger name="com.marklogic.contentpump" level="INFO"/>
+  <logger name="org.apache.catalina.webresources.Cache" level="SEVERE"/>
 
   <root level="WARN">
     <appender-ref ref="STDOUT" />

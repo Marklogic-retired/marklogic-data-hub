@@ -174,6 +174,9 @@ public class ProjectsController extends BaseController implements FileSystemEven
             public void onStatusChange(int percentComplete, String message) {
                 template.convertAndSend("/topic/install-status", new StatusMessage(percentComplete, message));
             }
+
+            @Override
+            public void onError() {}
         });
 
         envConfig.setInitialized(installed);
@@ -206,6 +209,9 @@ public class ProjectsController extends BaseController implements FileSystemEven
             public void onStatusChange(int percentComplete, String message) {
                 template.convertAndSend("/topic/uninstall-status", new StatusMessage(percentComplete, message));
             }
+
+            @Override
+            public void onError() {}
         });
         return new ResponseEntity<>(HttpStatus.OK);
     }

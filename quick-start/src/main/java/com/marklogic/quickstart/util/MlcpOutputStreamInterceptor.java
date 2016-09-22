@@ -35,6 +35,9 @@ public class MlcpOutputStreamInterceptor extends OutputStream {
 
         byte[] buf = Arrays.copyOfRange(b, off, off + len - 1);
         String status = new String(buf);
+        if (status.contains("ERROR")) {
+            listener.onError();
+        }
 
         try {
             int pc = Integer.parseInt(status.replaceFirst(".*completed (\\d+)\\%", "$1"));
