@@ -14,6 +14,12 @@ The finished version of this tutorial is available for you to download and play 
 ### QuickStart
 This tutorial uses quickStart, a simple User Interface that you can run locally to start working with the Data Hub quickly. With QuickStart you will have a working hub in a matter of minutes. No need to worry about deployment strategies or configuration details. Simply run the war and point it at your MarkLogic installation.
 
+## Prerequisites
+
+Before you can run the hub you will need to have some some software installed.
+
+- [Java 8](http://www.oracle.com/technetwork/java/javase/downloads/index.html)
+- [MarkLogic 8.02+](http://developer.marklogic.com/products)
 
 ## 1 - Download and Install MarkLogic
 
