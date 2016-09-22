@@ -3,7 +3,7 @@
     <img src="assets/img/logo.png">
   </div>
   <div class="login-wrapper" layout="row" layout-align="center start">
-    <section layout="column" layout-align="center center">
+    <section layout="column" layout-align="center center" class="left-pane">
       <h1 id="mla-loginPage-Text">Data Hub Quick Start</h1>
       <section flex layout-padding class="install-status" *ngIf="installationStatus">
         <pre>{{installationStatus}}</pre>
@@ -17,9 +17,9 @@
           <div class="project-browser" layout="column" layout-align="center center" *ngIf="projects && projects.length > 0">
             <h3>Choose an existing project</h3>
             <div class="shrinkable shrinky" [ngClass]="{'collapsed': !showFolderBrowser}" layout="column" layout-align="center center">
-              <button type="button" md-button (click)="showFolderBrowser = !showFolderBrowser">Choose</button>
+              <button type="button" mdl-button (click)="showFolderBrowser = !showFolderBrowser">Choose</button>
             </div>
-            <select-list
+            <app-select-list
               class="shrinky"
               [ngClass]="{'collapsed': showFolderBrowser}"
               [items]="projects"
@@ -28,26 +28,26 @@
               (selectedItem)="project = $event"
               (removedItem)="removeProject($event)"
               label="path" identifier="id"
-              md-whiteframe-2dp></select-list>
+              md-whiteframe-2dp></app-select-list>
             <p>or</p>
           </div>
 
           <div layout="column" layout-align="center center">
             <h3>Browse for a Project Folder</h3>
             <div class="shrinkable shrinky" [ngClass]="{'collapsed': showFolderBrowser}" layout="column" layout-align="center center">
-              <button type="button" md-button (click)="showFolderBrowser = !showFolderBrowser" class="shrink-me">Browse</button>
+              <button type="button" mdl-button (click)="showFolderBrowser = !showFolderBrowser" class="shrink-me">Browse</button>
             </div>
 
-            <folder-browser
+            <app-folder-browser
               [ngClass]="{'collapsed': !showFolderBrowser}"
               class="shrink-me shrinky"
               start-path='.'
               (folderChosen)="folderClicked($event)">
-            </folder-browser>
+            </app-folder-browser>
           </div>
 
           <div layout="row" layout-align="end center" class="init-buttons">
-            <button type="button" md-raised-button (click)="chooseProject()" [disabled]="!canProjectNext()">Next</button>
+            <button type="button" mdl-button mdl-button-type="raised" (click)="chooseProject()" >Next</button>
           </div>
         </section>
       </div>
@@ -62,11 +62,11 @@
             <form class="initForm" (submit)="initProject()">
               <div flex layout="column" class="scroller">
                 <div class="sub-section">
-                  <md-input placeholder="DataHub Name" type="text" name="name" [(ngModel)]="initSettings.name" (input)="hubNameChanged()"  required="required"></md-input>
-                  <md-input placeholder="MarkLogic Host" type="text" name="host" [(ngModel)]="initSettings.host" required="required"></md-input>
+                  <mdl-textfield floating-label label="DataHub Name" type="text" name="name" [(ngModel)]="initSettings.name" (input)="hubNameChanged()"  required="required"></mdl-textfield>
+                  <mdl-textfield floating-label label="MarkLogic Host" type="text" name="host" [(ngModel)]="initSettings.host" required="required"></mdl-textfield>
                 </div>
                 <div class="sub-section advanced-section">
-                  <button id="advanced-toggler" type="button" md-button (click)="showInitAdvanced = !showInitAdvanced">
+                  <button id="advanced-toggler" type="button" mdl-button (click)="showInitAdvanced = !showInitAdvanced">
                     Advanced Settings
                     <i class="fa fa-caret-right" [ngClass]="showInitAdvanced ? '' : 'collapsed'"></i>
                   </button>
@@ -74,51 +74,55 @@
                 <div class="advanced shrinky" [ngClass]="{'collapsed': !showInitAdvanced}">
                   <h3 class="md-primary">Staging</h3>
                   <section class="sub-section" layout="column">
-                    <md-input placeholder="Staging Appserver Name" type="text" name="stagingHttpName" [(ngModel)]="initSettings.stagingHttpName" required="required"></md-input>
-                    <md-input placeholder="Staging Appserver Port" type="number" name="stagingPort" [(ngModel)]="initSettings.stagingPort" required="required"></md-input>
-                    <md-input placeholder="Staging Database Name" type="text" name="stagingDbName" [(ngModel)]="initSettings.stagingDbName" required="required"></md-input>
-                    <md-input placeholder="Staging Forests Per Host" type="number" name="stagingForestsPerHost" [(ngModel)]="initSettings.stagingForestsPerHost" required="required"></md-input>
+                    <mdl-textfield floating-label label="Staging Appserver Name" type="text" name="stagingHttpName" [(ngModel)]="initSettings.stagingHttpName" required="required"></mdl-textfield>
+                    <mdl-textfield floating-label label="Staging Appserver Port" type="number" name="stagingPort" [(ngModel)]="initSettings.stagingPort" required="required"></mdl-textfield>
+                    <mdl-textfield floating-label label="Staging Database Name" type="text" name="stagingDbName" [(ngModel)]="initSettings.stagingDbName" required="required"></mdl-textfield>
+                    <mdl-textfield floating-label label="Staging Forests Per Host" type="number" name="stagingForestsPerHost" [(ngModel)]="initSettings.stagingForestsPerHost" required="required"></mdl-textfield>
                   </section>
                   <h3 class="md-primary">Final</h3>
                   <section class="sub-section" layout="column">
-                    <md-input placeholder="Final Appserver Name" type="text" name="finalHttpName" [(ngModel)]="initSettings.finalHttpName" required="required"></md-input>
-                    <md-input placeholder="Final Appserver Port" type="number" name="finalPort" [(ngModel)]="initSettings.finalPort" required="required"></md-input>
-                    <md-input placeholder="Final Database Name" type="text" name="finalDbName" [(ngModel)]="initSettings.finalDbName" required="required"></md-input>
-                    <md-input placeholder="Final Forests Per Host" type="number" name="finalForestsPerHost" [(ngModel)]="initSettings.finalForestsPerHost" required="required"></md-input>
+                    <mdl-textfield floating-label label="Final Appserver Name" type="text" name="finalHttpName" [(ngModel)]="initSettings.finalHttpName" required="required"></mdl-textfield>
+                    <mdl-textfield floating-label label="Final Appserver Port" type="number" name="finalPort" [(ngModel)]="initSettings.finalPort" required="required"></mdl-textfield>
+                    <mdl-textfield floating-label label="Final Database Name" type="text" name="finalDbName" [(ngModel)]="initSettings.finalDbName" required="required"></mdl-textfield>
+                    <mdl-textfield floating-label label="Final Forests Per Host" type="number" name="finalForestsPerHost" [(ngModel)]="initSettings.finalForestsPerHost" required="required"></mdl-textfield>
                   </section>
                   <h3 class="md-primary">Trace</h3>
                   <section class="sub-section" layout="column">
-                    <md-input placeholder="Trace Appserver Name" type="text" name="traceHttpName" [(ngModel)]="initSettings.traceHttpName" required="required"></md-input>
-                    <md-input placeholder="Trace Appserver Port" type="number" name="tracePort" [(ngModel)]="initSettings.tracePort" required="required"></md-input>
-                    <md-input placeholder="Trace Database Name" type="text" name="traceDbName" [(ngModel)]="initSettings.traceDbName" required="required"></md-input>
-                    <md-input placeholder="Trace Forests Per Host" type="number" name="traceForestsPerHost" [(ngModel)]="initSettings.traceForestsPerHost" required="required"></md-input>
+                    <mdl-textfield floating-label label="Trace Appserver Name" type="text" name="traceHttpName" [(ngModel)]="initSettings.traceHttpName" required="required"></mdl-textfield>
+                    <mdl-textfield floating-label label="Trace Appserver Port" type="number" name="tracePort" [(ngModel)]="initSettings.tracePort" required="required"></mdl-textfield>
+                    <mdl-textfield floating-label label="Trace Database Name" type="text" name="traceDbName" [(ngModel)]="initSettings.traceDbName" required="required"></mdl-textfield>
+                    <mdl-textfield floating-label label="Trace Forests Per Host" type="number" name="traceForestsPerHost" [(ngModel)]="initSettings.traceForestsPerHost" required="required"></mdl-textfield>
                   </section>
                   <h3 class="md-primary">Job</h3>
                   <section class="sub-section" layout="column">
-                    <md-input placeholder="Job Appserver Name" type="text" name="jobHttpName" [(ngModel)]="initSettings.jobHttpName" required="required"></md-input>
-                    <md-input placeholder="Job Appserver Port" type="number" name="jobPort" [(ngModel)]="initSettings.jobPort" required="required"></md-input>
-                    <md-input placeholder="Job Database Name" type="text" name="jobDbName" [(ngModel)]="initSettings.jobDbName" required="required"></md-input>
-                    <md-input placeholder="Job Forests Per Host" type="number" name="jobForestsPerHost" [(ngModel)]="initSettings.jobForestsPerHost" required="required"></md-input>
+                    <mdl-textfield floating-label label="Job Appserver Name" type="text" name="jobHttpName" [(ngModel)]="initSettings.jobHttpName" required="required"></mdl-textfield>
+                    <mdl-textfield floating-label label="Job Appserver Port" type="number" name="jobPort" [(ngModel)]="initSettings.jobPort" required="required"></mdl-textfield>
+                    <mdl-textfield floating-label label="Job Database Name" type="text" name="jobDbName" [(ngModel)]="initSettings.jobDbName" required="required"></mdl-textfield>
+                    <mdl-textfield floating-label label="Job Forests Per Host" type="number" name="jobForestsPerHost" [(ngModel)]="initSettings.jobForestsPerHost" required="required"></mdl-textfield>
                   </section>
                   <h3 class="md-primary">Other</h3>
                   <section class="sub-section" layout="column">
-                    <md-input placeholder="Modules Database Name" type="text" name="modulesDbName" [(ngModel)]="initSettings.modulesDbName" required="required"></md-input>
-                    <md-input placeholder="Triggers Database Port" type="text" name="triggersDbName" [(ngModel)]="initSettings.triggersDbName" required="required"></md-input>
-                    <md-input placeholder="Schemas Database Name" type="text" name="schemasDbName" [(ngModel)]="initSettings.schemasDbName" required="required"></md-input>
+                    <mdl-textfield floating-label label="Modules Database Name" type="text" name="modulesDbName" [(ngModel)]="initSettings.modulesDbName" required="required"></mdl-textfield>
+                    <mdl-textfield floating-label label="Triggers Database Port" type="text" name="triggersDbName" [(ngModel)]="initSettings.triggersDbName" required="required"></mdl-textfield>
+                    <mdl-textfield floating-label label="Schemas Database Name" type="text" name="schemasDbName" [(ngModel)]="initSettings.schemasDbName" required="required"></mdl-textfield>
                     <div>
                       <div><label>Authentication Method</label></div>
-                      <md-radio-group name="authMethod" [(ngModel)]="initSettings.authMethod">
-                        <md-radio-button value="digest">digest</md-radio-button>
-                        <md-radio-button value="basic">basic</md-radio-button>
-                      </md-radio-group>
+                      <mdl-radio name="authMethod" [(ngModel)]="initSettings.authMethod" value="digest">digest</mdl-radio>
+                      <mdl-radio name="authMethod" [(ngModel)]="initSettings.authMethod" value="basic">basic</mdl-radio>
                     </div>
                   </section>
                 </div>
               </div>
               <div layout="row" layout-align="end center" class="init-buttons">
-                <button type="button" md-button (click)="back()">&lt; Back</button>
-                <button type="button" md-button (click)="restoreInitDefaults($event)">Restore Defaults</button>
-                <button type="submit" md-raised-button>Initialize</button>
+                <button type="button" mdl-button (click)="back()">&lt; Back</button>
+                <button
+                  type="button"
+                  mdl-button
+                  appConfirm title="Are you sure?"
+                  appendToBody="true"
+                  message="Really restore the default settings?"
+                  (confirm)="restoreInitDefaults($event)">Restore Defaults</button>
+                <button type="submit" mdl-button mdl-button-type="raised">Initialize</button>
               </div>
             </form>
 
@@ -134,8 +138,8 @@
           <p>Read more about the project structure on the <a target="_blank" href="https://github.com/marklogic/marklogic-data-hub/wiki/Project-Directory-Structure">github wiki</a>.</p>
         </section>
         <div layout="row" layout-align="end center" class="init-buttons">
-          <button type="button" md-button (click)="back()">&lt; Back</button>
-          <button type="button" md-raised-button (click)="postInitNext()">Next</button>
+          <button type="button" mdl-button (click)="back()">&lt; Back</button>
+          <button type="button" mdl-button mdl-button-type="raised" (click)="postInitNext()">Next</button>
         </div>
       </div>
 
@@ -150,16 +154,16 @@
             directory. By default the Quick Start only creates a local environment file.
             Read more <a target="_blank" href="https://github.com/marklogic/marklogic-data-hub/wiki/Data-Hub-QuickStart-Project-Environments">on the Data Hub Framework Wiki</a>.
             </p>
-            <select-list
+            <app-select-list
               [items]="currentProject.environments"
               [initialSelectedItem]="currentProject.environments[0]"
               (selectedItem)="gotEnvironment($event)"
               md-whiteframe-2dp
-              class="shrink-me"></select-list>
+              class="shrink-me"></app-select-list>
 
             <div layout="row" layout-align="end center" class="init-buttons">
-              <button type="button" md-button (click)="back()">&lt; Back</button>
-              <button type="button" md-raised-button [disabled]="!currentEnvironmentString" (click)="environmentNext()">Next &gt;</button>
+              <button type="button" mdl-button (click)="back()">&lt; Back</button>
+              <button type="button" mdl-button mdl-button-type="raised" [disabled]="!currentEnvironmentString" (click)="environmentNext()">Next &gt;</button>
             </div>
           </section>
         </section>
@@ -172,14 +176,14 @@
             <form class="loginForm" (submit)="login()">
               <div flex layout-fill layout-padding layout="column">
                 <div class="center-text" [hidden]="!loggingIn">
-                  <md-progress-circle mode="indeterminate"></md-progress-circle>
+                  <mdl-spinner single-color active></mdl-spinner>
                 </div>
                 <div class="error" *ngIf="loginError">Invalid username or password</div>
-                <md-input placeholder="MarkLogic User Name" id="username" name="username" type="text" [(ngModel)]="loginInfo.username" required="required"></md-input>
-                <md-input placeholder="MarkLogic Password" name="password" type="password" [(ngModel)]="loginInfo.password" required="required"></md-input>
+                <mdl-textfield label="MarkLogic User Name" id="username" name="username" type="text" [(ngModel)]="loginInfo.username" required="required" floating-label></mdl-textfield>
+                <mdl-textfield label="MarkLogic Password" name="password" type="password" [(ngModel)]="loginInfo.password" required="required" floating-label></mdl-textfield>
                 <div layout="row" layout-align="end center" class="init-buttons">
-                  <button md-button type="button" (click)="back()">&lt; Back</button>
-                  <button md-raised-button type="submit" [disabled]="loggingIn">Login</button>
+                  <button mdl-button type="button" (click)="back()">&lt; Back</button>
+                  <button mdl-button mdl-button-type="raised" type="submit" [disabled]="loggingIn">Login</button>
                 </div>
               </div>
             </form>
@@ -192,7 +196,7 @@
           <section flex layout="column" layout-align="center center">
             <h3>Checking Project...</h3>
             <div class="center-text">
-              <md-progress-circle mode="indeterminate"></md-progress-circle>
+              <mdl-spinner single-color active></mdl-spinner>
             </div>
           </section>
         </section>
@@ -206,11 +210,11 @@
             MarkLogic server.
             </p>
             <div>
-              <button type="button" id="installer-button" md-raised-button (click)="install()">Install</button>
+              <button type="button" id="installer-button" mdl-button mdl-button-type="raised" (click)="install()">Install</button>
             </div>
           </div>
           <div class="install-progress shrinky" [ngClass]="installing ? '' : 'collapsed'" layout="column" layout-align="center center">
-            <md-progress-circle mode="determinate" [value]="percentComplete"></md-progress-circle>
+            <mdl-progress [progress]="percentComplete"></mdl-progress>
             <div>Installing...</div>
             <div>{{percentComplete}}% complete</div>
           </div>
@@ -220,8 +224,8 @@
           </div>
 
           <div layout="row" layout-align="end center" class="init-buttons">
-            <button type="button" md-button (click)="back()">&lt; Back</button>
-            <button id="finished-button" type="button" md-raised-button [disabled]="!currentEnvironment.installed" (click)="installNext()">Finished</button>
+            <button type="button" mdl-button (click)="back()">&lt; Back</button>
+            <button id="finished-button" type="button" mdl-button mdl-button-type="raised" [disabled]="!currentEnvironment.installed" (click)="installNext()">Finished</button>
           </div>
         </div>
       </div>

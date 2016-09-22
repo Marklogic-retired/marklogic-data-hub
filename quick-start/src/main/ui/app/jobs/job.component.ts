@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { TimeAgoPipe } from 'angular2-moment';
 import { Job } from './job.model';
 import { JobService } from './jobs.service';
 import { JobListenerService } from './job-listener.service';
@@ -9,14 +8,11 @@ import * as moment from 'moment';
 import * as _ from 'lodash';
 
 @Component({
-  selector: 'jobs',
+  selector: 'app-jobs',
   templateUrl: './jobs.tpl.html',
-  directives: [],
-  pipes: [TimeAgoPipe],
-  providers: [JobService],
-  styleUrls: ['./jobs.style.css'],
+  styleUrls: ['./jobs.style.scss'],
 })
-export class Jobs {
+export class JobsComponent {
 
   loadingJobs: boolean = false;
   jobs: Array<Job>;
@@ -55,19 +51,19 @@ export class Jobs {
     });
   }
 
-  private getDuration(job: Job): number {
+  getDuration(job: Job): number {
     return moment(job.endTime).diff(moment(job.startTime), 'seconds');
   }
 
-  private showConsole(job: Job): void {
+  showConsole(job: Job): void {
     this.showJobOutput = job;
   }
 
-  private cancelConsole(): void {
+  cancelConsole(): void {
     this.showJobOutput = null;
   }
 
-  private getJobOutput(job: Job): string {
+  getJobOutput(job: Job): string {
     if (job.jobOutput) {
       return job.jobOutput;
     } else if (this.hasLiveOutput(job)) {
@@ -81,7 +77,7 @@ export class Jobs {
     return '';
   }
 
-  private getIconClass(flowType: string) {
+  getIconClass(flowType: string) {
     if (flowType === 'Harmonize') {
       return 'mdi-looks';
     } else if (flowType === 'Input') {

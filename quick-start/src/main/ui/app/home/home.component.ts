@@ -1,9 +1,7 @@
-import { Component, Input, ViewChild, ViewContainerRef } from '@angular/core';
+import { Component, ViewChild, ViewContainerRef } from '@angular/core';
 
-import { TimeAgoPipe } from 'angular2-moment';
 import { Entity } from '../entities/entity.model';
 import { Flow } from '../entities/flow.model';
-import { TooltipDirective } from '../tooltip/tooltip.directive';
 
 import { EntitiesService } from '../entities/entities.service';
 
@@ -11,25 +9,23 @@ import { MdlSnackbarService } from 'angular2-mdl';
 
 import { MdDialog, MdDialogConfig, MdDialogRef } from '../dialog/dialog';
 
-import { MlcpUi } from '../mlcp-ui/index';
-import { NewEntity } from '../new-entity/new-entity';
-import { NewFlow } from '../new-flow/new-flow';
+import { MlcpUiComponent } from '../mlcp-ui';
+import { NewEntityComponent } from '../new-entity/new-entity';
+import { NewFlowComponent } from '../new-flow/new-flow';
+
 import { DeployService } from '../deploy/deploy.service';
 
 import * as _ from 'lodash';
 
 @Component({
-  selector: 'home',
-  templateUrl: './home.template.html',
-  directives: [MlcpUi, NewEntity, NewFlow, TooltipDirective],
-  pipes: [TimeAgoPipe],
-  providers: [],
-  styleUrls: ['./home.style.css'],
+  selector: 'app-home',
+  templateUrl: './home.component.html',
+  styleUrls: ['./home.component.scss'],
 })
-export class Home {
-  @ViewChild(MlcpUi) mlcp: MlcpUi;
-  @ViewChild(NewEntity) newEntity: NewEntity;
-  @ViewChild(NewFlow) newFlow: NewFlow;
+export class HomeComponent {
+  @ViewChild(MlcpUiComponent) mlcp: MlcpUiComponent;
+  @ViewChild(NewEntityComponent) newEntity: NewEntityComponent;
+  @ViewChild(NewFlowComponent) newFlow: NewFlowComponent;
 
   entities: Array<Entity>;
   entity: Entity;
@@ -138,7 +134,8 @@ export class Home {
   showNewEntity(ev: Event): void {
     this.newEntity.show().subscribe((newEntity: Entity) => {
       this.entitiesService.createEntity(newEntity).subscribe((entity: Entity) => {
-        this.entities.push(entity);
+        this.entities.splice(_.sortedIndexBy(this.entities, entity, 'entityName'), 0, entity);
+        this.toggleEntity(entity);
       });
     });
   }
@@ -165,7 +162,7 @@ export class Home {
 
   runFlow(ev: MouseEvent, flow: Flow, flowType: string) {
     if (this.flowHasError(flow.entityName, flow.flowName)) {
-      this.dialog.open(HasBugsDialog, this.config).then(() => {});
+      this.dialog.open(HasBugsDialogComponent, this.config).afterClosed().subscribe(() => {});
     } else {
       const lower = flowType.toLowerCase();
       if (lower === 'input') {
@@ -206,14 +203,14 @@ export class Home {
 
 /* tslint:disable:max-line-length */
 @Component({
-  selector: 'has-bugs-dialog',
+  selector: 'app-has-bugs-dialog',
   template: `
   <h3 class="bug-title"><i class="fa fa-bug"></i>This flow has a bug!</h3>
   <p>You must fix it before you can run it.</p>
   <mdl-button mdl-button-type="raised" mdl-colored="primary" mdl-ripple (click)="dialogRef.close()">OK</mdl-button>`,
-  styleUrls: ['./home.style.css']
+  styleUrls: ['./home.component.scss']
 })
-export class HasBugsDialog {
-  constructor(public dialogRef: MdDialogRef<HasBugsDialog>) { }
+export class HasBugsDialogComponent {
+  constructor(public dialogRef: MdDialogRef<HasBugsDialogComponent>) { }
 }
 /* tslint:enable:max-line-length */

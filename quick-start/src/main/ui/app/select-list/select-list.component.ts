@@ -3,9 +3,9 @@ import { Component, Input, Output, EventEmitter, OnInit, OnChanges } from '@angu
 import * as _ from 'lodash';
 
 @Component({
-  selector: 'select-list',
+  selector: 'app-select-list',
   templateUrl: './select-list.tpl.html',
-  styleUrls: ['./select-list.styles.css'],
+  styleUrls: ['./select-list.styles.scss'],
 })
 
 /**
@@ -14,7 +14,7 @@ import * as _ from 'lodash';
  * @restrict E
  *
  */
-export class SelectList implements OnInit, OnChanges {
+export class SelectListComponent implements OnInit, OnChanges {
   @Input() items: any;
   @Input() initialSelectedItem: string;
   @Input() label: string;
@@ -68,7 +68,9 @@ export class SelectList implements OnInit, OnChanges {
       item: item,
       event: event
     });
-    event.stopPropagation();
+    if (event) {
+      event.stopPropagation();
+    }
   }
 
   getItemText(item: any) {

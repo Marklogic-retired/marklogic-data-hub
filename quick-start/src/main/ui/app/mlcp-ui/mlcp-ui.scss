@@ -1,24 +1,12 @@
-@import 'variables';
+@import '../../styles/variables';
 
 $openDuration: 0.5s;
 $duration: 0.25s;
 $easingFunc: ease-in-out;
 
 .content {
-  padding: 24px;
+  padding: 0px;
   background-color: #e9eef4;
-  position: absolute;
-  top: 0;
-  left: 100%;
-  right: 0;
-
-  -webkit-transition: left $duration $easingFunc;
-  -moz-transition: left $duration $easingFunc;
-  transition: left $duration $easingFunc;
-
-  &.visible {
-    left: 0;
-  }
 }
 
 .setting {
@@ -27,10 +15,6 @@ $easingFunc: ease-in-out;
 
 .mdl-dialog__content {
   padding: 0px 24px 8px 24px;
-}
-
-.md-subheader ._md-subheader-inner {
-  padding-left: 5px;
 }
 
 .group-container {
@@ -65,6 +49,7 @@ $fadeDuration: 1s;
 $easingFunc: ease-in-out;
 
 .group-section {
+  flex: none;  // fixes a bug in IE rendering
   max-height: 5000px;
   overflow: hidden;
   position: relative;
@@ -75,10 +60,6 @@ $easingFunc: ease-in-out;
   &.collapsed {
     max-height: 0px;
   }
-}
-
-md-input {
-  width: 100%;
 }
 
 @media (min-width: 960px) {
@@ -110,4 +91,8 @@ md-input {
 
 .padded {
   padding: 15px;
+}
+
+.mdl-textfield {
+  width: 100%;
 }

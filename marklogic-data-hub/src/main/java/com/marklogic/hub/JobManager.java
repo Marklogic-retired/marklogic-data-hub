@@ -32,10 +32,14 @@ public class JobManager extends LoggingObject {
     private DatabaseClient databaseClient;
 
     private HubConfig hubConfig;
-    public JobManager(HubConfig hubConfig, DatabaseClient client) {
+    private XMLDocumentManager mgr;
+    private QueryManager queryMgr;
 
+    public JobManager(HubConfig hubConfig, DatabaseClient client) {
         this.hubConfig = hubConfig;
         this.databaseClient = client;
+        this.mgr = databaseClient.newXMLDocumentManager();
+        this.queryMgr = databaseClient.newQueryManager();
     }
 
     private JobExplorer explorer() {
@@ -49,8 +53,6 @@ public class JobManager extends LoggingObject {
 
     public List<MarkLogicJobInstance> getJobInstances(long start, long count) {
         List<MarkLogicJobInstance> jobInstances = new ArrayList<>();
-        XMLDocumentManager mgr = databaseClient.newXMLDocumentManager();
-        QueryManager queryMgr = databaseClient.newQueryManager();
 
         String sort = "date-desc";
         StringHandle rawHandle = new StringHandle(

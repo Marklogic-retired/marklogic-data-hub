@@ -1,6 +1,6 @@
 describe('App', () => {
 
-  let ec = protractor.ExpectedConditions;
+  // let ec = protractor.ExpectedConditions;
   let projectDirTab = element(by.css('#ProjectDirTab'));
   let initIfNeededTab = element(by.css('#InitIfNeededTab'));
   let postInitTab = element(by.css('#PostInit'));
@@ -10,7 +10,7 @@ describe('App', () => {
 
   beforeAll(() => {
     console.log('login.e2e.ts');
-    browser.executeScript("document.body.className += ' notransition';");
+    browser.executeScript(`document.body.className += ' notransition';`);
 
     browser.get('/login');
 

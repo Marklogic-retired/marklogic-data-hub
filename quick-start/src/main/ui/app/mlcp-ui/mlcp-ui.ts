@@ -1,30 +1,26 @@
-import { Component, Input, ViewContainerRef, trigger,
-   state, style, transition, animate, EventEmitter } from '@angular/core';
+import { Component, HostBinding, ViewContainerRef, EventEmitter } from '@angular/core';
 
 import { MdlSnackbarService } from 'angular2-mdl';
 
 import * as _ from 'lodash';
 
 import { EntitiesService } from '../entities/entities.service';
-import { FolderBrowser } from '../folder-browser/folder-browser.component';
-import { SelectList } from '../select-list/select-list.component';
-import { Select } from '../select/select.component';
-import { TooltipDirective } from '../tooltip/tooltip.directive';
 import { Flow } from '../entities/flow.model';
-import { EnvironmentService } from '../environment/index';
+import { EnvironmentService } from '../environment';
 
 interface MlcpOptions {
   [key: string]: any;
 }
 
 @Component({
-  selector: 'mlcp',
+  selector: 'app-mlcp',
   templateUrl: './mlcp-ui.html',
   providers: [],
-  directives: [FolderBrowser, SelectList, Select, TooltipDirective],
-  styleUrls: ['./mlcp-ui.css']
+  styleUrls: ['./mlcp-ui.scss']
 })
-export class MlcpUi {
+export class MlcpUiComponent {
+  @HostBinding('style.display') display: string = 'none';
+
   inputFilePath: string = '.';
   mlcp = <MlcpOptions>{};
 
@@ -86,6 +82,7 @@ export class MlcpUi {
       this.startX = $event.clientX;
       this.startY = $event.clientY;
     }
+    this.display = 'block';
     this._isVisible = true;
     return this.finishedEvent;
   }
@@ -476,20 +473,20 @@ export class MlcpUi {
     let options: Array<any> = [];
 
     this.mlcp = {};
-    this.addMlcpOption(options, 'import', null, false);
-    this.addMlcpOption(options, 'mode', 'local', false);
+    this.addMlcpOption(options, 'import', null, false, false);
+    this.addMlcpOption(options, 'mode', 'local', false, true);
 
     let host = this.envService.settings.host;
     let port = this.envService.settings.stagingPort;
     let username = this.envService.settings.username;
 
 
-    this.addMlcpOption(options, 'host', host, false);
-    this.addMlcpOption(options, 'port', port, false);
-    this.addMlcpOption(options, 'username', username, false);
-    this.addMlcpOption(options, 'password', '*****', false);
+    this.addMlcpOption(options, 'host', host, false, true);
+    this.addMlcpOption(options, 'port', port, false, true);
+    this.addMlcpOption(options, 'username', username, false, true);
+    this.addMlcpOption(options, 'password', '*****', false, true);
 
-    this.addMlcpOption(options, 'input_file_path', this.inputFilePath, true);
+    this.addMlcpOption(options, 'input_file_path', this.inputFilePath, true, true);
 
     _.each(this.groups, (group) => {
       if (this.isGroupVisible(group.category)) {
@@ -500,7 +497,7 @@ export class MlcpUi {
             if (setting.type !== 'boolean') {
               value = '"' + setting.value + '"';
             }
-            this.addMlcpOption(options, key, value, true);
+            this.addMlcpOption(options, key, value, true, true);
           }
         });
       }
@@ -508,8 +505,13 @@ export class MlcpUi {
     return options;
   }
 
-  addMlcpOption(options: any, key: string, value: any, isOtherOption: boolean): void {
-    options.push('-' + key);
+  addMlcpOption(options: any, key: string, value: any, isOtherOption: boolean, appendDash: boolean): void {
+    if (appendDash) {
+      options.push('-' + key);
+    } else {
+      options.push(key);
+    }
+
     if (value) {
       options.push(value);
       if (isOtherOption) {
@@ -524,7 +526,7 @@ export class MlcpUi {
   }
 
   updateMlcpCommand(): string {
-    let mlcpCommand: string = 'mlcp';
+    let mlcpCommand = 'mlcp';
     mlcpCommand += (navigator.appVersion.indexOf('Win') !== -1) ? '.bat' : '.sh';
     mlcpCommand += ' ' + this.buildMlcpOptions().join(' ');
 
@@ -558,19 +560,20 @@ export class MlcpUi {
   }
 
   hide(): void {
+    this.display = 'none';
     this._isVisible = false;
   }
 
-  public isVisible(): boolean {
+  isVisible(): boolean {
     return this._isVisible;
   }
 
-  public cancel(): void {
+  cancel(): void {
     this.hide();
     this.finishedEvent.error(false);
   }
 
-  private saveOptions(): void {
+  saveOptions(): void {
     this.entitiesService.saveInputFlowOptions(this.flow, this.mlcp).subscribe(() => {
       this.snackbar.showSnackbar({
         message: 'MLCP options saved.'
@@ -578,7 +581,7 @@ export class MlcpUi {
     });
   }
 
-  private runImport(): void {
+  runImport(): void {
     this.hide();
     this.finishedEvent.emit(this.mlcp);
   }

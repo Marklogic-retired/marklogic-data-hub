@@ -1,28 +1,32 @@
 import { Component, OnInit, OnDestroy, ViewEncapsulation } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 
-import { TimeAgoPipe } from 'angular2-moment';
 import { TraceService } from './trace.service';
 import { Trace } from './trace.model';
-
-import { Codemirror } from '../codemirror/index';
-
-import * as moment from 'moment';
 
 import * as _ from 'lodash';
 
 @Component({
-  selector: 'trace-viewer',
+  selector: 'app-trace-viewer',
   encapsulation: ViewEncapsulation.None,
   templateUrl: './trace-viewer.tpl.html',
-  directives: [Codemirror],
-  pipes: [TimeAgoPipe],
   providers: [TraceService],
   styleUrls: [
-    './trace-viewer.style.css'
+    './trace-viewer.style.scss'
   ],
 })
-export class TraceViewer implements OnInit, OnDestroy {
+export class TraceViewerComponent implements OnInit, OnDestroy {
+
+  collapsed = {};
+  outputCollapsed = false;
+  errorCollapsed = false;
+  codeMirrorConfig = {
+    lineNumbers: true,
+    indentWithTabs: true,
+    lineWrapping: true,
+    readOnly: true,
+    cursorBlinkRate: 0
+  };
 
   private sub: any;
   private trace: Trace;
@@ -30,18 +34,6 @@ export class TraceViewer implements OnInit, OnDestroy {
 
   private currentPluginType: string;
   private currentPlugin: Plugin;
-
-  private collapsed = {};
-  private outputCollapsed = false;
-  private errorCollapsed = false;
-
-  private codeMirrorConfig = {
-    lineNumbers: true,
-    indentWithTabs: true,
-    lineWrapping: true,
-    readOnly: true,
-    cursorBlinkRate: 0
-  };
 
   constructor(
     private route: ActivatedRoute,
@@ -51,7 +43,6 @@ export class TraceViewer implements OnInit, OnDestroy {
   ngOnInit() {
     this.sub = this.route.params.subscribe(params => {
      let id = params['id'];
-     console.log('id: ' + id);
      this.traceService.getTrace(id).subscribe(trace => {
        this.trace = trace;
 
@@ -79,19 +70,19 @@ export class TraceViewer implements OnInit, OnDestroy {
     this.sub.unsubscribe();
   }
 
-  private setCurrent(type: string) {
-    this.currentPluginType = type;
-    this.currentPlugin = this.trace[type + 'Plugin'];
-  }
-
-  private getKeys(thing: any) {
+  getKeys(thing: any) {
     return _.keys(thing).sort();
   }
 
-  private formatData(data: any) {
+  formatData(data: any) {
     if (_.isObject(data) || _.isArray(data)) {
       return JSON.stringify(data, null, '  ');
     }
     return data;
+  }
+
+  private setCurrent(type: string) {
+    this.currentPluginType = type;
+    this.currentPlugin = this.trace[type + 'Plugin'];
   }
 }

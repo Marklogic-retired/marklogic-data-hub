@@ -1,11 +1,5 @@
 import { Injectable } from '@angular/core';
-import { provide } from '@angular/core';
-import {
-  HTTP_PROVIDERS,
-  BaseRequestOptions,
-  RequestOptions,
-  RequestOptionsArgs
-} from '@angular/http';
+import { RequestOptions, RequestOptionsArgs } from '@angular/http';
 
 interface CustomWindow {
   BASE_URL: string;
@@ -22,5 +16,7 @@ class HubRequestOptions extends RequestOptions {
   }
 }
 
-export const REQUEST_PROVIDER =
-  provide(RequestOptions, { useClass: HubRequestOptions });
+export const REQUEST_PROVIDER = {
+  provide: RequestOptions,
+  useClass: HubRequestOptions
+};

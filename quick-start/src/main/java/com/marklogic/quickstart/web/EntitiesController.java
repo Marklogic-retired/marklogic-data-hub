@@ -26,7 +26,7 @@ import java.math.BigInteger;
 import java.util.Collection;
 
 @Controller
-@RequestMapping("/projects/{projectId}/{environment}")
+@RequestMapping("/api/projects/{projectId}/{environment}")
 class EntitiesController extends BaseController {
 
     @Autowired

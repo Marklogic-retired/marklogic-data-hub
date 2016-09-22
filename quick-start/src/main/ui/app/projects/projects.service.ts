@@ -15,35 +15,35 @@ export class ProjectService {
   }
 
   getProjects() {
-    return this.get('/projects/');
+    return this.get('/api/projects/');
   }
 
   addProject(path: string) {
-    return this.post(`/projects/?path=${encodeURIComponent(path)}`, '');
+    return this.post(`/api/projects/?path=${encodeURIComponent(path)}`, '');
   }
 
   removeProject(project: any) {
-    return this.http.delete(`/projects/${project.id}`);
+    return this.http.delete(`/api/projects/${project.id}`);
   }
 
   getProject(projectId: string) {
-    return this.get(`/projects/${projectId}`);
+    return this.get(`/api/projects/${projectId}`);
   }
 
   getProjectDefaults(projectId: string) {
-    return this.get(`/projects/${projectId}/defaults`);
+    return this.get(`/api/projects/${projectId}/defaults`);
   }
 
   getProjectEnvironment(projectId: string, environment: string) {
-    return this.get(`/projects/${projectId}/${environment}`);
+    return this.get(`/api/projects/${projectId}/${environment}`);
   }
 
   initProject(projectId: string, settings: HubSettings) {
-    return this.post(`/projects/${projectId}/initialize`, settings);
+    return this.post(`/api/projects/${projectId}/initialize`, settings);
   }
 
   login(projectId: string, environment: string, loginInfo: any) {
-    let resp = this.http.post(`/projects/${projectId}/${environment}/login`, loginInfo).share();
+    let resp = this.http.post(`/api/projects/${projectId}/${environment}/login`, loginInfo).share();
     resp.subscribe(() => {
       this.projectId = projectId;
       this.environment = environment;
@@ -58,7 +58,7 @@ export class ProjectService {
   }
 
   logout() {
-    return this.http.delete(`/projects/${this.projectId}/${this.environment}/logout`);
+    return this.http.delete(`/api/projects/${this.projectId}/${this.environment}/logout`);
   }
 
   private extractData(res: Response) {

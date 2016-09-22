@@ -1,20 +1,17 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 
-import * as _ from 'lodash';
-
 import { AuthService } from '../auth/auth.service';
 import { ProjectService } from '../projects/projects.service';
 import { JobListenerService } from '../jobs/job-listener.service';
-import { FlowStatus } from '../entities/flow-status.model';
 
 @Component({
-  selector: 'hub-header',
+  selector: 'app-header',
   templateUrl: './header.tpl.html',
   providers: [],
-  styleUrls: ['./header.style.css'],
+  styleUrls: ['./header.style.scss'],
 })
-export class Header {
+export class HeaderComponent {
 
   currentEnv: any;
 
@@ -25,19 +22,19 @@ export class Header {
     private router: Router
   ) {}
 
-  private gotoJobs() {
+  gotoJobs() {
     this.router.navigate(['jobs']);
   }
 
-  private getRunningJobCount(): number {
+  getRunningJobCount(): number {
     return this.jobListener.runningJobCount();
   }
 
-  private getPercentComplete(): number {
+  getPercentComplete(): number {
     return this.jobListener.totalPercentComplete();
   }
 
-  private getTraceUrl(): string {
+  getTraceUrl(): string {
     if (this.currentEnv) {
       return '//' + this.currentEnv.mlSettings.host + ':' +
         this.currentEnv.mlSettings.tracePort + '/';
@@ -46,14 +43,14 @@ export class Header {
     return '';
   }
 
-  private logout() {
+  logout() {
     this.projectService.logout().subscribe(() => {
       this.auth.setAuthenticated(false);
       this.router.navigate(['login']);
     });
   }
 
-  private isActive(url: string): boolean {
+  isActive(url: string): boolean {
     return this.router.url === url;
   }
 }

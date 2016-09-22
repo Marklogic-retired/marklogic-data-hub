@@ -1,4 +1,0 @@
-export = {
-  ENV: 'DEV'
-};
-

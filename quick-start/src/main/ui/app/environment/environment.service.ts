@@ -14,7 +14,8 @@ export class EnvironmentService {
     const projectId = localStorage.getItem('_projectId_');
     const environment = localStorage.getItem('_environment_');
 
-    return this.http.get(`/projects/${projectId}/${environment}`).map(res => {
+    const uri = `/api/projects/${projectId}/${environment}`;
+    return this.http.get(uri).map((res: Response) => {
       const json = res.json();
       this.settings = json['mlSettings'];
       return true;

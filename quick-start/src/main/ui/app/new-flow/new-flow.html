@@ -11,21 +11,21 @@
       <form (submit)="create()">
         <div class="modal-body">
           <div class="md-dialog-content" flex layout="column">
-            <md-input name="flowType" required placeholder="{{flowType}} Flow Name" md-autofocus [(ngModel)]="flow.flowName"></md-input>
+            <mdl-textfield name="flowType" type="text" required label="{{flowType}} Flow Name" autofocus [(ngModel)]="flow.flowName" floating-label></mdl-textfield>
             <label>Plugin Type</label>
-            <select-list
+            <app-select-list
               #pluginFormatList
               [items]="pluginFormats"
               [initialSelectedItem]="pluginFormats[0]"
               label="label" identifier="value"
-              (selectedItem)="flow.pluginFormat = $event"></select-list>
+              (selectedItem)="flow.pluginFormat = $event"></app-select-list>
             <label>Data Format</label>
-            <select-list
+            <app-select-list
               #dataFormatList
               [items]="dataFormats"
               [initialSelectedItem]="dataFormats[0]"
               (selectedItem)="flow.dataFormat = $event"
-              label="label" identifier="value"></select-list>
+              label="label" identifier="value"></app-select-list>
           </div>
         </div>
         <div class="mdl-dialog__actions">

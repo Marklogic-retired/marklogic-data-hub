@@ -1,4 +1,4 @@
-@import 'variables';
+@import '../../styles/variables';
 
 pre {
   margin: 0px;
@@ -15,4 +15,9 @@ pre {
   h3 {
     text-align: center;
   }
+}
+
+/deep/ .mdl-progress {
+  width: 90%;
+  margin: 0pt auto;
 }

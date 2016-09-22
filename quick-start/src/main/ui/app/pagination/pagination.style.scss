@@ -1,6 +1,14 @@
-@import "variables";
+@import '../../styles/variables';
 
 $bg-color: unquote("rgb(#{$palette-datahub-500})");
+
+.container {
+  margin: 10px 0px;
+
+  .pagination {
+    margin: 10px 0px;
+  }
+}
 
 a,span {
   height: 50px;

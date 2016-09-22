@@ -3,7 +3,7 @@
   width: 500px;
 
   label {
-    margin: 10px 0;
+    margin: 5px 0;
   }
 
   select-list {
@@ -17,5 +17,9 @@
 
   .md-dialog-content {
     padding-bottom: 0px;
+  }
+
+  mdl-textfield {
+    width: 100%;
   }
 }

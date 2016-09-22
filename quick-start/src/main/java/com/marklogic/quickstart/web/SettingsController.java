@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.hub.Debugging;
 import com.marklogic.hub.Tracing;
+import org.springframework.boot.autoconfigure.h2.H2ConsoleProperties;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -13,15 +14,24 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 @RestController
-@RequestMapping("/settings")
+@RequestMapping("/api/settings")
 public class SettingsController extends BaseController {
 
+    private Tracing tracing = null;
+    private Debugging debugging = null;
+
     private Tracing getTracing() {
-        return new Tracing(envConfig.getStagingClient());
+        if (tracing == null) {
+            tracing = new Tracing(envConfig.getStagingClient());
+        }
+        return tracing;
     }
 
     private Debugging getDebugging() {
-        return new Debugging(envConfig.getStagingClient());
+        if (debugging == null) {
+            debugging = new Debugging(envConfig.getStagingClient());
+        }
+        return debugging;
     }
 
     @RequestMapping(value="/trace/enable", method = RequestMethod.POST)

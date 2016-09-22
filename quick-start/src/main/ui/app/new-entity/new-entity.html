@@ -11,7 +11,7 @@
       <form (submit)="create()">
         <div class="modal-body">
           <div class="md-dialog-content" flex layout="column">
-            <md-input name="entityName" required placeholder="Entity Name" autofocus [(ngModel)]="entity.entityName"></md-input>
+            <mdl-textfield name="entityName" type="text" required label="Entity Name" autofocus [(ngModel)]="entity.entityName" floating-label></mdl-textfield>
           </div>
         </div>
         <div class="mdl-dialog__actions">

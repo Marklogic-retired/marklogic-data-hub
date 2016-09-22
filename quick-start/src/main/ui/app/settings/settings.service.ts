@@ -1,6 +1,5 @@
-import { Injectable, EventEmitter } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Http, Response } from '@angular/http';
-import { Observable } from 'rxjs/Observable';
 
 @Injectable()
 export class SettingsService {
@@ -22,13 +21,13 @@ export class SettingsService {
   }
 
   enableTracing() {
-    return this.http.post('/settings/trace/enable', '').subscribe(() => {
+    return this.http.post('/api/settings/trace/enable', '').subscribe(() => {
       this.traceEnabled = true;
     });
   }
 
   disableTracing() {
-    return this.http.post('/settings/trace/disable', '').subscribe(() => {
+    return this.http.post('/api/settings/trace/disable', '').subscribe(() => {
       this.traceEnabled = false;
     });
   }
@@ -42,25 +41,25 @@ export class SettingsService {
   }
 
   enableDebugging() {
-    return this.http.post('/settings/debug/enable', '').subscribe(() => {
+    return this.http.post('/api/settings/debug/enable', '').subscribe(() => {
       this.debugEnabled = true;
     });
   }
 
   disableDebugging() {
-    return this.http.post('/settings/debug/disable', '').subscribe(() => {
+    return this.http.post('/api/settings/debug/disable', '').subscribe(() => {
       this.debugEnabled = false;
     });
   }
 
   private isTracingEnabled() {
-    return this.get('/settings/trace/is-enabled').subscribe(resp => {
+    return this.get('/api/settings/trace/is-enabled').subscribe(resp => {
       this.traceEnabled = resp.enabled;
     });
   }
 
   private isDebuggingEnabled() {
-    return this.get('/settings/debug/is-enabled').subscribe(resp => {
+    return this.get('/api/settings/debug/is-enabled').subscribe(resp => {
       this.debugEnabled = resp.enabled;
     });
   }
@@ -71,9 +70,5 @@ export class SettingsService {
 
   private get(url: string) {
     return this.http.get(url).map(this.extractData);
-  }
-
-  private post(url: string, data: any) {
-    return this.http.post(url, data).map(this.extractData);
   }
 }

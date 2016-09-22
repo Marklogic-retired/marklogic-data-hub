@@ -1,33 +1,25 @@
-import { Component, Input } from '@angular/core';
+import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { SettingsService } from './settings.service';
-import { InstallService } from '../installer/index';
+import { InstallService } from '../installer';
 
-import { ProjectService } from '../projects/index';
-
-import { ConfirmService } from '../confirm/index';
-
-import { TooltipDirective } from '../tooltip/tooltip.directive';
-
-import * as _ from 'lodash';
+import { ProjectService } from '../projects';
 
 @Component({
-  selector: 'settings',
+  selector: 'app-settings',
   templateUrl: './settings.tpl.html',
-  directives: [TooltipDirective],
-  providers: [],
-  styleUrls: ['./settings.style.css'],
+  styleUrls: ['./settings.style.scss'],
 })
-export class Settings {
+export class SettingsComponent {
 
   uninstallStatus: string;
   percentComplete: number;
+  isUninstalling: boolean = false;
 
   constructor(
     private settings: SettingsService,
     private install: InstallService,
-    private confirm: ConfirmService,
     private projectService: ProjectService,
     private router: Router
   ) {}
@@ -52,26 +44,20 @@ export class Settings {
     }
   }
 
-  uninstall($event: MouseEvent): void {
-    this.confirm.showConfirm({
-      okText: 'Yes',
-      cancelText: 'No',
-      title: 'Uninstall?',
-      message: 'Uninstall the hub from MarkLogic?'
-    }, $event).then(() => {
-      this.uninstallStatus = '';
-      let emitter = this.install.messageEmitter.subscribe((payload: any) => {
-        this.percentComplete = payload.percentComplete;
-        this.uninstallStatus += '\n' + payload.message;
+  uninstall(): void {
+    this.uninstallStatus = '';
+    this.isUninstalling = true;
+    let emitter = this.install.messageEmitter.subscribe((payload: any) => {
+      this.percentComplete = payload.percentComplete;
+      this.uninstallStatus += '\n' + payload.message;
 
-        if (this.percentComplete === 100) {
-          emitter.unsubscribe();
-          setTimeout(() => {
-            this.router.navigate(['login']);
-          }, 1000);
-        }
-      });
-      this.install.uninstall(this.projectService.projectId, this.projectService.environment);
-    }).catch(() => {});
+      if (this.percentComplete === 100) {
+        emitter.unsubscribe();
+        setTimeout(() => {
+          this.router.navigate(['login']);
+        }, 1000);
+      }
+    });
+    this.install.uninstall(this.projectService.projectId, this.projectService.environment);
   }
 }

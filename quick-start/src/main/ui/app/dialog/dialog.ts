@@ -1,4 +1,4 @@
-import { NgModule, Injector, ComponentRef, Injectable } from '@angular/core';
+import {NgModule, ModuleWithProviders, Injector, ComponentRef, Injectable} from '@angular/core';
 import {
   Overlay,
   OverlayModule,
@@ -6,15 +6,16 @@ import {
   OverlayRef,
   OverlayState,
   ComponentPortal,
-} from '@angular2-material/core/core';
-import { ComponentType } from '@angular2-material/core/overlay/generic-component-type';
-import { MdDialogConfig } from './dialog-config';
-import { MdDialogRef } from './dialog-ref';
-import { DialogInjector } from './dialog-injector';
-import { MdDialogContainer } from './dialog-container';
+  OVERLAY_PROVIDERS,
+} from '@angular2-material/core';
+import {ComponentType} from '@angular2-material/core';
+import {MdDialogConfig} from './dialog-config';
+import {MdDialogRef} from './dialog-ref';
+import {DialogInjector} from './dialog-injector';
+import {MdDialogContainer} from './dialog-container';
 
-export { MdDialogConfig } from './dialog-config';
-export { MdDialogRef } from './dialog-ref';
+export {MdDialogConfig} from './dialog-config';
+export {MdDialogRef} from './dialog-ref';
 
 
 // TODO(jelbourn): add shortcuts for `alert` and `confirm`.
@@ -39,13 +40,11 @@ export class MdDialog {
    * @param component Type of the component to load into the load.
    * @param config
    */
-  open<T>(component: ComponentType<T>, config: MdDialogConfig): Promise<MdDialogRef<T>> {
-    let overlayRef: OverlayRef;
+  open<T>(component: ComponentType<T>, config: MdDialogConfig): MdDialogRef<T> {
+    let overlayRef = this._createOverlay(config);
+    let dialogContainer = this._attachDialogContainer(overlayRef, config);
 
-    return this._createOverlay(config)
-        .then(overlay => overlayRef = overlay)
-        .then(overlay => this._attachDialogContainer(overlay, config))
-        .then(containerRef => this._attachDialogContent(component, containerRef, overlayRef));
+    return this._attachDialogContent(component, dialogContainer, overlayRef);
   }
 
   /**
@@ -53,7 +52,7 @@ export class MdDialog {
    * @param dialogConfig The dialog configuration.
    * @returns A promise resolving to the OverlayRef for the created overlay.
    */
-  private _createOverlay(dialogConfig: MdDialogConfig): Promise<OverlayRef> {
+  private _createOverlay(dialogConfig: MdDialogConfig): OverlayRef {
     let overlayState = this._getOverlayState(dialogConfig);
     return this._overlay.create(overlayState);
   }
@@ -64,33 +63,29 @@ export class MdDialog {
    * @param config The dialog configuration.
    * @returns A promise resolving to a ComponentRef for the attached container.
    */
-  /* tslint:disable:max-line-length */
-  private _attachDialogContainer(overlay: OverlayRef, config: MdDialogConfig): Promise<ComponentRef<MdDialogContainer>> {
+  private _attachDialogContainer(overlay: OverlayRef, config: MdDialogConfig): MdDialogContainer {
     let containerPortal = new ComponentPortal(MdDialogContainer, config.viewContainerRef);
-    return overlay.attach(containerPortal).then((containerRef: ComponentRef<MdDialogContainer>) => {
-      // Pass the config directly to the container so that it can consume any relevant settings.
-      containerRef.instance.dialogConfig = config;
-      return containerRef;
-    });
+
+    let containerRef: ComponentRef<MdDialogContainer> = overlay.attach(containerPortal);
+    containerRef.instance.dialogConfig = config;
+
+    return containerRef.instance;
   }
-  /* tslint:enable:max-line-length */
 
   /**
    * Attaches the user-provided component to the already-created MdDialogContainer.
    * @param component The type of component being loaded into the dialog.
-   * @param containerRef Reference to the wrapping MdDialogContainer.
+   * @param dialogContainer Reference to the wrapping MdDialogContainer.
    * @param overlayRef Reference to the overlay in which the dialog resides.
    * @returns A promise resolving to the MdDialogRef that should be returned to the user.
    */
   private _attachDialogContent<T>(
       component: ComponentType<T>,
-      containerRef: ComponentRef<MdDialogContainer>,
-      overlayRef: OverlayRef): Promise<MdDialogRef<T>> {
-    let dialogContainer = containerRef.instance;
-
+      dialogContainer: MdDialogContainer,
+      overlayRef: OverlayRef): MdDialogRef<T> {
     // Create a reference to the dialog we're creating in order to give the user a handle
     // to modify and close it.
-    let dialogRef = new MdDialogRef(overlayRef);
+    let dialogRef = <MdDialogRef<T>> new MdDialogRef(overlayRef);
 
     // We create an injector specifically for the component we're instantiating so that it can
     // inject the MdDialogRef. This allows a component loaded inside of a dialog to close itself
@@ -98,10 +93,11 @@ export class MdDialog {
     let dialogInjector = new DialogInjector(dialogRef, this._injector);
 
     let contentPortal = new ComponentPortal(component, null, dialogInjector);
-    return dialogContainer.attachComponentPortal(contentPortal).then(contentRef => {
-      dialogRef.componentInstance = contentRef.instance;
-      return dialogRef;
-    });
+
+    let contentRef = dialogContainer.attachComponentPortal(contentPortal);
+    dialogRef.componentInstance = contentRef.instance;
+
+    return dialogRef;
   }
 
   /**
@@ -127,6 +123,12 @@ export class MdDialog {
   exports: [MdDialogContainer],
   declarations: [MdDialogContainer],
   entryComponents: [MdDialogContainer],
-  providers: [MdDialog],
 })
-export class MdDialogModule { }
+export class MdDialogModule {
+  static forRoot(): ModuleWithProviders {
+    return {
+      ngModule: MdDialogModule,
+      providers: [MdDialog, OVERLAY_PROVIDERS],
+    };
+  }
+}

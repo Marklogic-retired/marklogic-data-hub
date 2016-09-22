@@ -60,9 +60,14 @@ configurations {
     all*.exclude group: 'xerces'
 }
 
+task cleanUI(type: Delete) {
+  delete 'src/main/resources/static', 'src/main/resources/templates'
+}
+
 task npmInstallUI(type:Exec) {
     workingDir '.'
     commandLine 'npm', 'install'
+    dependsOn tasks.cleanUI
 }
 
 task buildUI(type:Exec) {
@@ -71,13 +76,21 @@ task buildUI(type:Exec) {
     dependsOn tasks.npmInstallUI
 }
 
-task watchUI(type:Exec) {
-    workingDir '.'
-    commandLine 'npm', 'run', 'watch'
-    dependsOn tasks.npmInstallUI
+task copyUIAssets(type: Copy) {
+    from 'dist'
+    into 'src/main/resources/static'
+    exclude '*.html'
+    dependsOn tasks.buildUI
 }
 
-processResources.dependsOn buildUI
+task copyIndexHtml(type: Copy) {
+    from 'dist'
+    into 'src/main/resources/templates'
+    include '*.html'
+    dependsOn tasks.copyUIAssets
+}
+
+processResources.dependsOn copyIndexHtml
 
 bootRun {
     addResources = true

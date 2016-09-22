@@ -1,21 +1,37 @@
+# See http://help.github.com/ignore-files/ for more about ignoring files.
+
+# compiled output
+/dist
+/tmp
+
+# dependencies
+/node_modules
+/bower_components
+
+# IDEs and editors
+/.idea
+.project
+.classpath
+*.launch
+.settings/
+
+# misc
+/.sass-cache
+/connect.lock
+/coverage/*
+/libpeerconnection.log
+npm-debug.log
+testem.log
+/typings
+
+# e2e
+/e2e/*.js
+/e2e/*.map
+
+#System Files
+.DS_Store
+Thumbs.db
 bin/
 build/
-.idea
-.classpath
-.project
-.gradle
-.settings
-node_modules
-src/main/resources/static
-src/main/resources/templates
-.DS_Store
-
-# Typing #
-/src/typings/tsd/
-/typings/
-/tsd_typings/
-.webpack.json
-src/main/ui/**/*.js
-src/main/ui/**/*.map
-coverage/
-tmp/
+src/main/resources/static/
+src/main/resources/templates/

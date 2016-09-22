@@ -1,17 +1,13 @@
-import { Component, Input, Inject, EventEmitter,
-trigger, state, style, transition, animate } from '@angular/core';
-
-import { SelectList } from '../select-list/select-list.component';
+import { Component, EventEmitter } from '@angular/core';
 
 import * as _ from 'lodash';
 
 @Component({
-  selector: 'new-entity',
+  selector: 'app-new-entity',
   templateUrl: './new-entity.html',
-  styleUrls: ['./new-entity.css'],
-  directives: [SelectList]
+  styleUrls: ['./new-entity.scss']
 })
-export class NewEntity {
+export class NewEntityComponent {
   finishedEvent: EventEmitter<any>;
   _isVisible: boolean = false;
 
@@ -44,22 +40,22 @@ export class NewEntity {
     this._isVisible = false;
   }
 
-  private newInputFlow() {
+  newInputFlow() {
     this.entity.inputFlows.push({});
   }
 
-  private newHarmonizeFlow() {
+  newHarmonizeFlow() {
     this.entity.harmonizeFlows.push({});
   }
 
-  private create() {
+  create() {
     if (this.entity.entityName && this.entity.entityName.length > 0) {
       this.hide();
       this.finishedEvent.emit(this.entity);
     }
   }
 
-  private cancel() {
+  cancel() {
     this.hide();
     this.finishedEvent.error(false);
   }

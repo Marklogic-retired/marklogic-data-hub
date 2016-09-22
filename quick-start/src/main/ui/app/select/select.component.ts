@@ -1,16 +1,16 @@
-import { Component, Input, EventEmitter, OnInit, Output,
-  ElementRef, ViewChild } from '@angular/core';
+import { Component, Input, EventEmitter,
+  OnInit, OnChanges, Output, ViewChild } from '@angular/core';
 
 import { MdlMenuComponent, MdlButtonComponent } from 'angular2-mdl';
 
 import * as _ from 'lodash';
 
 @Component({
-  selector: 'custom-select',
+  selector: 'app-custom-select',
   templateUrl: './select.html',
-  styleUrls: ['./select.css'],
+  styleUrls: ['./select.scss'],
 })
-export class Select implements OnInit {
+export class SelectComponent implements OnInit, OnChanges {
   @Input() id: any;
   @Input() items: any;
   @Input() initialSelectedItem: string;

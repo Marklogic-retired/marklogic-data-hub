@@ -48,8 +48,13 @@ public class FlowManagerService extends LoggingObject{
     @Autowired
     private EnvironmentConfig envConfig;
 
+    private FlowManager fm = null;
+
     public FlowManager getFlowManager() {
-        return new FlowManager(envConfig.getMlSettings());
+        if (fm == null) {
+            fm = new FlowManager(envConfig.getMlSettings());
+        }
+        return fm;
     }
 
     public List<FlowModel> getFlows(String projectDir, String entityName, FlowType flowType) {
