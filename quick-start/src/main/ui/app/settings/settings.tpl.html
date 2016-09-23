@@ -4,13 +4,13 @@
   <div class="debug-status">
     <mdl-switch
       mdl-tooltip="Enables or Disables Debug Logging for Hub HTTP Requests to MarkLogic."
-      class="primary-color" [ngModel]="debugEnabled()" (change)="toggleDebug($event.checked)">Debugging</mdl-switch>
+      class="primary-color" [ngModel]="debugEnabled()" (change)="toggleDebug($event)">Debugging</mdl-switch>
   </div>
 
   <div class="trace-status">
     <mdl-switch
       mdl-tooltip="Enables or Disable Trace Logging for Flows"
-      class="primary-color" [ngModel]="traceEnabled()" (change)="toggleTrace($event.checked)">Tracing</mdl-switch>
+      class="primary-color" [ngModel]="traceEnabled()" (change)="toggleTrace($event)">Tracing</mdl-switch>
   </div>
 
   <div>

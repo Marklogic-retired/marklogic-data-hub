@@ -23,16 +23,16 @@
               tooltipPlacement="right"
               *ngIf="setting.type === 'boolean'"
               [ngModel]="setting.value"
-              (change)="updateSetting(setting, $event.checked)">
+              (change)="updateSetting(setting, $event)">
               {{setting.label}}
             </mdl-switch>
             <mdl-textfield floating-label type="text"
               [tooltip]="setting.description"
               tooltipPlacement="innerRight"
-              [placeholder]="setting.label"
+              [label]="setting.label"
               name="{{setting.field}}" *ngIf="isText(setting.type)"
               [ngModel]="setting.value"
-              (change)="updateSetting(setting, $event.target.value)"
+              (input)="updateSetting(setting, $event.target.value)"
               [disabled]="setting.readOnly"></mdl-textfield>
             <app-custom-select
               [id]="setting.field"

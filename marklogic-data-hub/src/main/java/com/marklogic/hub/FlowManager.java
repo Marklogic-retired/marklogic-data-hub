@@ -150,9 +150,9 @@ public class FlowManager extends ResourceManager {
         JobParametersBuilder jpb = new JobParametersBuilder();
         jpb.addLong("chunk", Integer.toUnsignedLong(batchSize));
         jpb.addString("uid", UUID.randomUUID().toString());
-        jpb.addString("jobType", flow.getType().toString());
-        jpb.addString("entityName", flow.getEntityName());
-        jpb.addString("flowName", flow.getName());
+        jpb.addString("flowType", flow.getType().toString());
+        jpb.addString("entity", flow.getEntityName());
+        jpb.addString("flow", flow.getName());
         return jpb.toJobParameters();
     }
 

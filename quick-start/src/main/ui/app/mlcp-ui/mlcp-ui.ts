@@ -392,7 +392,7 @@ export class MlcpUiComponent {
             field: 'transform_param',
             type: 'string',
             description: 'Optional extra data to pass through to a custom transformation function. Ignored if -transform_module is not specified.\nDefault: no namespace. For details, see Transforming Content During Ingestion.',
-            value: '<params><entity-name>' + entityName + '</entity-name><flow-name>' + flowName + '</flow-name><flow-type>input</flow-type></params>',
+            value: `entity=${entityName},flow=${flowName},flowType=input`,
             readOnly: true,
           },
         ],

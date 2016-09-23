@@ -25,16 +25,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Service;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import java.io.*;
-import java.nio.charset.StandardCharsets;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -139,7 +135,7 @@ public class FlowManagerService extends LoggingObject{
         return ctx;
     }
 
-    private JobParameters buildJobParameters(JsonNode json) throws ParserConfigurationException, IOException, SAXException {
+    private JobParameters buildJobParameters(JsonNode json) throws ParserConfigurationException, IOException {
         JobParametersBuilder jpb = new JobParametersBuilder();
         jpb.addString("mlcpOptions", json.toString());
         jpb.addString("uid", UUID.randomUUID().toString());
@@ -147,35 +143,12 @@ public class FlowManagerService extends LoggingObject{
         // convert the transform params into job params to be stored in ML for later reference
         JsonNode tp = json.get("transform_param");
         if (tp != null) {
-            String transformParams = tp.textValue();
-            transformParams = transformParams.replace("\"", "");
-            logger.info("transformParams: " + transformParams);
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            ByteArrayInputStream bis = new ByteArrayInputStream(transformParams.getBytes(StandardCharsets.UTF_8));
-            Document doc = builder.parse(bis);
-            bis.close();
+            String transformParams = tp.textValue().replace("\"", "");
+            String[] pairs = transformParams.split(",");
 
-            NodeList nodes = doc.getElementsByTagName("params");
-            if (nodes.getLength() == 1) {
-                Node params = nodes.item(0);
-                NodeList childNodes = params.getChildNodes();
-                for (int i = 0; i < childNodes.getLength(); i++) {
-                    Node child = childNodes.item(i);
-                    if (child.getNodeType() == Node.ELEMENT_NODE) {
-                        String name = child.getNodeName();
-                        switch (name) {
-                            case "entity-name":
-                                jpb.addString("entityName", child.getTextContent());
-                                break;
-                            case "flow-name":
-                                jpb.addString("flowName", child.getTextContent());
-                                break;
-                            case "flow-type":
-                                jpb.addString("flowType", child.getTextContent());
-                        }
-                    }
-                }
+            for (String pair : pairs) {
+                String[] tokens = pair.split("=");
+                jpb.addString(tokens[0], tokens[1]);
             }
         }
         return jpb.toJobParameters();
