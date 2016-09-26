@@ -73,9 +73,9 @@ $header-height: 48px;
 
 .flow-container {
   .padder {
-    padding: 10px;
+    padding: 0px 10px;
   }
-  padding: 0px;
+  padding: 0px 10px;
   width: 100%;
   box-sizing: border-box;
   max-height: 5000px;
@@ -86,6 +86,12 @@ $header-height: 48px;
   transition: max-height $heightDuration $easingFunc;
   background-color: $list-bg-color;
 
+  .mdl-list__item {
+    min-height: 32px;
+  }
+  .mdl-list__item-primary-content {
+    padding: 0px 8px;
+  }
   &.collapsed {
     max-height: 0px;
     background-color: initial;
@@ -104,6 +110,7 @@ $header-height: 48px;
   width: 100%;
   display: flex;
   align-items: center;
+  color: #666;
 }
 
 .mdl-list {
