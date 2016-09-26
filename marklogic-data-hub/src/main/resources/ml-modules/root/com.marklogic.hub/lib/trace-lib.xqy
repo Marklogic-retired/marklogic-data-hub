@@ -40,19 +40,29 @@ declare %private variable $current-trace := map:new((
 
 declare function trace:enable-tracing($enabled as xs:boolean)
 {
-  xdmp:document-insert(
-    "/com.marklogic.hub/__tracing_enabled__.xml",
-    element trace:is-tracing-enabled { if ($enabled) then 1 else 0 })
+  xdmp:eval('
+    declare namespace trace = "http://marklogic.com/data-hub/trace";
+    declare variable $enabled external;
+    xdmp:document-insert(
+      "/com.marklogic.hub/settings/__tracing_enabled__.xml",
+      element trace:is-tracing-enabled { if ($enabled) then 1 else 0 })
+  ',
+  map:new((map:entry("enabled", $enabled))),
+  map:new(map:entry("database", xdmp:modules-database())))
 };
 
 declare function trace:enabled() as xs:boolean
 {
-  let $value := cts:element-values(xs:QName("trace:is-tracing-enabled"), (), ("type=unsignedInt","limit=1"))
-  return
-    if ($value) then
-      $value eq 1
-    else
-      fn:false()
+  xdmp:eval('
+    declare namespace trace = "http://marklogic.com/data-hub/trace";
+    fn:exists(
+      cts:search(
+        fn:doc("/com.marklogic.hub/settings/__tracing_enabled__.xml"),
+        cts:element-value-query(xs:QName("trace:is-tracing-enabled"), "1", ("exact")),
+        ("unfiltered", "score-zero", "unchecked", "unfaceted")
+      )
+    )
+  ',(), map:new(map:entry("database", xdmp:modules-database())))
 };
 
 declare function trace:has-errors() as xs:boolean
