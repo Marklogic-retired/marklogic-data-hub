@@ -44,6 +44,11 @@ $green-color: unquote("rgb(#{$palette-datahub-green})");
   }
 }
 
+.mdl-button--primary.mdl-button--primary.mdl-button--raised.error {
+  background-color: $red-color;
+  border: 1px solid red;
+}
+
 .plugin.active {
   font-weight: bold;
   box-shadow: 0 0 8px rgba(0, 0, 0, 0.28), 0 8px 16px rgba(0, 0, 0, 0.46);

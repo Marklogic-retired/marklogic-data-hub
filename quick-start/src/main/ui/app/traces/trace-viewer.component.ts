@@ -81,6 +81,18 @@ export class TraceViewerComponent implements OnInit, OnDestroy {
     return data;
   }
 
+  getButtonClasses(plugin) {
+    let classes = [];
+    if (this.currentPluginType === plugin) {
+      classes.push('active');
+    }
+
+    if (this.trace[plugin + 'Plugin'].error) {
+      classes.push('error');
+    }
+    return classes.join(' ');
+  }
+
   private setCurrent(type: string) {
     this.currentPluginType = type;
     this.currentPlugin = this.trace[type + 'Plugin'];

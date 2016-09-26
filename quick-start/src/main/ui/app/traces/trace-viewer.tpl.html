@@ -15,7 +15,7 @@
         <mdl-button mdl-button-type="raised" mdl-colored="primary"
           (click)="setCurrent(plugin)"
           class="plugin"
-          [ngClass]="{'active': (currentPluginType === plugin)}">
+          [ngClass]="getButtonClasses(plugin)">
           <div class="plugin-name">{{plugin}}</div>
           <div class="plugin-duration">{{trace[plugin + 'Plugin'].duration}}<span class="unit">s</span></div>
         </mdl-button>

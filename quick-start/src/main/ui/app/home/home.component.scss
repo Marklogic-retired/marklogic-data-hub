@@ -75,7 +75,7 @@ $header-height: 48px;
   .padder {
     padding: 0px 10px;
   }
-  padding: 0px 10px;
+  padding: 0px 0px 0px 20px;
   width: 100%;
   box-sizing: border-box;
   max-height: 5000px;
@@ -104,7 +104,7 @@ $header-height: 48px;
     background-color: $hover-color;
   }
 }
-.subheader {
+.flow-subheader {
   font-weight: bold;
   margin: 0px;
   width: 100%;

@@ -25,7 +25,7 @@
           </div>
           <div class="flow-container" [ngClass]="{ 'collapsed' : isCollapsed(entity) }">
             <div class="padder">
-              <div class="subheader">
+              <div class="flow-subheader">
                 Input Flows
                 <div class="mdl-layout-spacer"></div>
                 <mdl-button mdl-button-type="icon" id="new-input-flow" aria-label="New Input Flow" (click)="newInputFlow($event, entity)">
@@ -46,7 +46,7 @@
                   </span>
                 </li>
               </ul>
-              <div class="subheader">
+              <div class="flow-subheader">
                 Harmonize Flows
                 <div class="mdl-layout-spacer"></div>
                 <mdl-button mdl-button-type="icon" id="new-harmonize-flow" aria-label="New Harmonize Flow" (click)="newHarmonizeFlow($event, entity)">
