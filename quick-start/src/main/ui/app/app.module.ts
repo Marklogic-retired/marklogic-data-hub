@@ -42,6 +42,7 @@ import { SettingsService } from './settings/settings.service';
 import { STOMPService } from './stomp/stomp.service';
 import { ClipboardDirective } from './clipboard/clipboard.directive';
 import { TraceService } from './traces/trace.service';
+import { HarmonizeFlowOptionsComponent } from './harmonize-flow-options/harmonize-flow-options.component';
 
 @NgModule({
   declarations: [
@@ -61,7 +62,8 @@ import { TraceService } from './traces/trace.service';
     TracesComponent,
     TraceViewerComponent,
     NoContentComponent,
-    ClipboardDirective
+    ClipboardDirective,
+    HarmonizeFlowOptionsComponent
   ],
   imports: [
     BrowserModule,

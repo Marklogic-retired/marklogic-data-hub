@@ -91,10 +91,10 @@ public class FlowManagerService extends LoggingObject{
         return flowManager.getFlow(entityName, flowName, flowType);
     }
 
-    public JobExecution runFlow(Flow flow, int batchSize, JobStatusListener statusListener) {
+    public JobExecution runFlow(Flow flow, int batchSize, int threadCount, JobStatusListener statusListener) {
 
         FlowManager flowManager = getFlowManager();
-        return flowManager.runFlow(flow, batchSize, statusListener);
+        return flowManager.runFlow(flow, batchSize, threadCount, statusListener);
     }
 
     private Path getMlcpOptionsFilePath(Path destFolder, String entityName, String flowName) {

@@ -3,11 +3,15 @@
 .job-status-dialog {
   min-width: 500px;
   width: 70%;
-
+  max-height: 95%;
   pre {
     height: 100%;
     width: 100%;
     overflow: auto;
+  }
+
+  .mdl-dialog__content {
+    overflow: scroll;
   }
 }
 
