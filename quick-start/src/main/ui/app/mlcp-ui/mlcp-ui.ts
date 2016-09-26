@@ -152,14 +152,14 @@ export class MlcpUiComponent {
             label: 'Clean Target Database Directory?',
             field: 'output_cleandir',
             type: 'boolean',
-            description: 'A comma separated list of (role,capability) pairs to apply to loaded documents.\nDefault: The default permissions associated with the user inserting the document.\n\nExample: -output_permissions role1,read,role2,update',
+            description: 'Whether or not to delete all content in the output database directory prior to loading.',
             value: false
           },
           {
             label: 'Output URI Prefix',
             field: 'output_uri_prefix',
             type: 'string',
-            description: 'URI prefix to the id specified by -output_idname. Used to construct output document URIs.',
+            description: 'Specify a prefix to prepend to the default URI. Used to construct output document URIs. For details, see Controlling Database URIs During Ingestion.',
           },
           {
             label: 'Output URI Replace',
@@ -172,13 +172,13 @@ export class MlcpUiComponent {
             label: 'Output URI Suffix',
             field: 'output_uri_suffix',
             type: 'string',
-            description: 'URI suffix to the id specified by -output_idname. Used to construct output document URIs.',
+            description: 'Specify a suffix to append to the default URI Used to construct output document URIs. For details, see Controlling Database URIs During Ingestion.',
           },
           {
             label: 'Document Type',
             field: 'document_type',
             type: 'type',
-            description: 'The type of document to create when -input_file_type is documents or sequencefile. Accepted values: mixed (documents only), xml, json, text, binary.\nDefault: mixed for documents, xml for sequencefile.',
+            description: 'The type of document to create when -input_file_type is documents, sequencefile or delimited_text. Accepted values: mixed (documents only), xml, json, text, binary. Default: mixed for documents, xml for sequencefile, and xml for delimited_text.',
             options: [
               {
                 label: '',
@@ -217,7 +217,6 @@ export class MlcpUiComponent {
             field: 'input_compressed',
             type: 'boolean',
             description: 'Whether or not the source data is compressed.\nDefault: false.',
-            placeholder: 'whether or not the source data is compressed',
           },
           {
             label: 'Input Compression Codec',
@@ -248,28 +247,24 @@ export class MlcpUiComponent {
             field: 'namespace',
             type: 'string',
             description: 'The default namespace for all XML documents created during loading.',
-            placeholder: 'default namespace for all XML documents created during loading',
           },
           {
             label: 'XML Repair Level',
             field: 'xml_repair_level',
             type: 'string',
             description: 'The degree of repair to attempt on XML documents in order to create well-formed XML. Accepted values: default,full, none.\nDefault: default, which depends on the configured MarkLogic Server default XQuery version: In XQuery 1.0 and 1.0-ml the default is none. In XQuery 0.9-ml the default is full.',
-            placeholder: 'default, full, or none',
           },
           {
             label: 'Thread Count',
             field: 'thread_count',
             type: 'number',
             description: 'The number of threads to spawn for concurrent loading. The total number of threads spawned by the process can be larger than this number, but this option caps the number of concurrent sessions with MarkLogic Server. Only available in local mode.\nDefault: 4.',
-            placeholder: 'default is 4',
           },
           {
             label: 'Batch Size',
             field: 'batch_size',
             type: 'number',
             description: 'The number of documents to process in a single request to MarkLogic Server. This option is ignored when you use -transform_module; a transform always sets the batch size to 1.\nDefault: 100.',
-            placeholder: 'default is 100; set to 1 when transform is used',
           },
         ],
         collapsed: true,
@@ -283,35 +278,30 @@ export class MlcpUiComponent {
             field: 'generate_uri',
             type: 'boolean',
             description: 'Whether or not MarkLogic Server should automatically generate document URIs.\nDefault: false.',
-            placeholder: 'default is false for delimited_text, true for delimited_json',
           },
           {
             label: 'Split Input?',
             field: 'split_input',
             type: 'boolean',
             description: 'Whether or not to divide input data into logical chunks to support more concurrency. Only supported when -input_file_type is one of the following: delimited_text.\nDefault: false for local mode, true for distributed mode. For details, see Improving Throughput with -split_input.',
-            placeholder: 'whether or not to divide input data into logical chunks to support more concurrency.',
           },
           {
             label: 'Delimiter',
             field: 'delimiter',
             type: 'character',
             description: 'When importing content with -input_file_type delimited_text, the delimiting character.\nDefault: comma (,).',
-            placeholder: 'default is comma',
           },
           {
             label: 'URI ID',
             field: 'uri_id',
             type: 'string',
             description: 'The column name that contributes to the id portion of the URI for inserted documents. Default: The first column.',
-            placeholder: 'default is first column',
           },
           {
             label: 'Delimited Root Name',
             field: 'delimited_root_name',
             type: 'string',
             description: 'When importing content with -input_file_type delimited_text, the localname of the document root element.\nDefault: root.',
-            placeholder: 'default is root',
           },
           {
             label: 'Data Type',
@@ -331,14 +321,12 @@ export class MlcpUiComponent {
             field: 'generate_uri',
             type: 'boolean',
             description: 'Whether or not MarkLogic Server should automatically generate document URIs.\nDefault: false.',
-            placeholder: 'default is false for delimited_text, true for delimited_json',
           },
           {
             label: 'URI ID',
             field: 'uri_id',
             type: 'string',
             description: 'The element, attribute, or property name within the document to use as the document URI. Default: None; the URI is based on the file name, as described in Default Document URI Construction.',
-            placeholder: 'default is first column',
           }
         ],
         collapsed: true
@@ -363,7 +351,6 @@ export class MlcpUiComponent {
             field: 'uri_id',
             type: 'string',
             description: 'The element, attribute, or property name within the document to use as the document URI. Default: None; the URI is based on the file name, as described in Default Document URI Construction.',
-            placeholder: 'default is first column',
           }
         ],
         collapsed: true,
