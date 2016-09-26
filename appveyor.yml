@@ -8,7 +8,7 @@ environment:
     secure: nioOZ/YaPcyFoqN9bVZHMllinShpPT+lG1uyi78H23c=
   ML_PASSWORD:
     secure: LaFtKimqM2zAtGUkciP5RA==
-  ML_VERSION: 8.0-5.1
+  ML_VERSION: 8.0-5.8
 install:
 - ps: >-
     function HttpPost($cookieContainer, $url, $postData) {
