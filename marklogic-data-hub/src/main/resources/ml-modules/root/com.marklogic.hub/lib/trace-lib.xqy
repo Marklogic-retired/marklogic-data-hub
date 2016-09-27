@@ -33,10 +33,15 @@ declare variable $FORMAT-JSON := "json";
 
 declare %private variable $current-trace-settings := map:map();
 
-declare %private variable $current-trace := map:new((
-  map:entry("traceId", xdmp:random()),
-  map:entry("created", fn:current-dateTime())
-));
+declare %private variable $current-trace := trace:new-trace();
+
+declare function trace:new-trace()
+{
+  map:new((
+    map:entry("traceId", xdmp:random()),
+    map:entry("created", fn:current-dateTime())
+  ))
+};
 
 declare function trace:enable-tracing($enabled as xs:boolean)
 {
@@ -77,7 +82,7 @@ declare function trace:init-trace($format as xs:string)
 
 declare function trace:write-trace()
 {
-  if (trace:enabled() or trace:has-errors()) then
+  if (trace:enabled() or trace:has-errors()) then (
     let $format := map:get($current-trace-settings, "data-format")
     let $trace :=
       if ($format eq $FORMAT-JSON) then
@@ -145,7 +150,9 @@ declare function trace:write-trace()
       map:new((
         map:entry("database", xdmp:database($config:TRACING-DATABASE)),
         map:entry("transactionMode", "update-auto-commit")
-      )))
+      ))),
+    xdmp:set($current-trace, trace:new-trace())
+  )
   else ()
 };
 

@@ -1,6 +1,6 @@
 buildscript {
     ext {
-        springBootVersion = '1.4.0.RELEASE'
+        springBootVersion = '1.4.1.RELEASE'
     }
     repositories {
         jcenter()
@@ -38,7 +38,6 @@ targetCompatibility = 1.8
 dependencies {
     compile("org.springframework.boot:spring-boot-starter:${springBootVersion}")
     compile("org.springframework.boot:spring-boot-starter-web:${springBootVersion}")
-    compile("org.springframework.boot:spring-boot-starter-jetty:${springBootVersion}")
     compile("org.springframework.boot:spring-boot-starter-websocket:${springBootVersion}")
     compile("org.springframework.boot:spring-boot-starter-thymeleaf:${springBootVersion}")
     compile("org.aspectj:aspectjweaver:1.8.9")
@@ -59,7 +58,6 @@ dependencies {
 configurations {
     all*.exclude group: 'xml-apis'
     all*.exclude group: 'xerces'
-    compile.exclude module: "spring-boot-starter-tomcat"
 }
 
 task cleanUI(type: Delete) {
