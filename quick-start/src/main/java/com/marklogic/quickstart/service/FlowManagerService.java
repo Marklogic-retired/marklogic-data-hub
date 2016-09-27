@@ -1,8 +1,6 @@
 package com.marklogic.quickstart.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.google.common.base.Charsets;
-import com.google.common.io.Files;
 import com.marklogic.client.helper.LoggingObject;
 import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.JobStatusListener;
@@ -31,6 +29,9 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -119,7 +120,8 @@ public class FlowManagerService extends LoggingObject{
         Path filePath = getMlcpOptionsFilePath(destFolder, entityName, flowName);
         File file = filePath.toFile();
         if(file.exists()) {
-            return Files.toString(file, Charsets.UTF_8);
+            byte[] encoded = Files.readAllBytes(filePath);
+            return new String(encoded, StandardCharsets.UTF_8);
         }
         return "{ \"input_file_path\": \"" + envConfig.getProjectDir().replace("\\", "\\\\") + "\" }";
     }

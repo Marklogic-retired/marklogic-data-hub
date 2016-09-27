@@ -49,7 +49,8 @@ dependencies {
     compile("org.springframework.boot:spring-boot-devtools:${springBootVersion}")
 
     // Needed for the Upload feature using mlcp
-    compile("com.marklogic:mlcp-util:0.2.0")
+    compile("com.marklogic:mlcp-util:0.3.0")
+    compile("com.marklogic:mlcp:8.0-5")
 
     testCompile("junit:junit")
     testCompile("org.springframework.boot:spring-boot-starter-test:${springBootVersion}")
@@ -58,6 +59,7 @@ dependencies {
 configurations {
     all*.exclude group: 'xml-apis'
     all*.exclude group: 'xerces'
+    all*.exclude group: 'org.slf4j', module: 'slf4j-log4j12'
 }
 
 task cleanUI(type: Delete) {

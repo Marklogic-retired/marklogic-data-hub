@@ -2,7 +2,6 @@ package com.marklogic.quickstart.web;
 
 import com.marklogic.quickstart.model.SearchPathModel;
 import com.marklogic.quickstart.util.FileUtil;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -28,7 +27,7 @@ public class UtilController extends BaseController {
 		List<SearchPathModel> paths = new ArrayList<SearchPathModel>();
 		String currentPath;
 
-		if (StringUtils.isEmpty(path)) {
+		if (path == null || path.length() == 0) {
 		    currentPath = "/";
 			File[] roots = File.listRoots();
 			for (int i = 0; i < roots.length; i++) {

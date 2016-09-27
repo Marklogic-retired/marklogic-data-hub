@@ -46,7 +46,7 @@ public class FlowConfig extends LoggingObject {
 
     @Bean
     public StepExecutionDao stepExecutionDao() throws Exception {
-        MarkLogicStepExecutionDao stepExecutionDao = new MarkLogicStepExecutionDao(databaseClientProvider.getDatabaseClient());
+        MarkLogicStepExecutionDao stepExecutionDao = new MarkLogicStepExecutionDao(databaseClientProvider.getDatabaseClient(), jobExecutionDao());
         stepExecutionDao.setJobExecutionDao(jobExecutionDao());
         stepExecutionDao.setIncrementer(new UriIncrementer());
         return stepExecutionDao;

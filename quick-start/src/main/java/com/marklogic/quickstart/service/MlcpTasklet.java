@@ -2,6 +2,7 @@ package com.marklogic.quickstart.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.marklogic.contentpump.ContentPump;
 import com.marklogic.contentpump.bean.MlcpBean;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.JobStatusListener;
@@ -61,8 +62,7 @@ public class MlcpTasklet implements Tasklet {
         PrintStream ps = new PrintStream(sos);
         System.setOut(ps);
 
-
-        bean.run();
+        ContentPump.runCommand(bean.buildArgs());
 
         chunkContext
             .getStepContext()
