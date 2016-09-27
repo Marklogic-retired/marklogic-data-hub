@@ -1,18 +1,21 @@
-import { Directive, TemplateRef, ViewContainerRef, Inject } from '@angular/core';
+/* tslint:disable */
+import {
+  Directive, Input, TemplateRef, ViewContainerRef
+} from '@angular/core';
 
 export interface KeyAttribute {
   [key: string]: any;
 }
 
 @Directive({
-  selector: '[ngTransclude]',
-  properties: ['ngTransclude']
+  selector: '[ngTransclude]'
 })
 export class NgTranscludeDirective {
   public viewRef: ViewContainerRef;
 
   private _ngTransclude: TemplateRef<any>;
 
+  @Input()
   private set ngTransclude(templateRef: TemplateRef<any>) {
     this._ngTransclude = templateRef;
     if (templateRef) {
@@ -24,7 +27,8 @@ export class NgTranscludeDirective {
     return this._ngTransclude;
   }
 
-  public constructor(@Inject(ViewContainerRef) _viewRef: ViewContainerRef) {
+  public constructor(private _viewRef: ViewContainerRef) {
     this.viewRef = _viewRef;
   }
 }
+/* tslint:enable */

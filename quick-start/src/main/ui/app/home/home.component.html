@@ -1,0 +1,120 @@
+<div gm-grid>
+  <div gm-row class="flex-100">
+    <div gm-col class="flex-0 entities-bar">
+      <span class="mdl-layout-title">
+        <i class="fa fa-bug" *ngIf="hasErrors()"></i>
+        Entities
+        <div class="mdl-layout-spacer"></div>
+        <mdl-button mdl-button-type="icon" id="new-entity" (click)="showNewEntity($event)">
+          <i class="fa fa-plus"></i>
+        </mdl-button>
+      </span>
+
+      <ul class="entities mdl-list">
+        <li
+          class="entity mdl-list__item"
+          [ngClass]="{ 'active' : isActiveEntity(entity) }"
+          *ngFor="let entity of entities">
+          <div class="mdl-list__item-primary-content"
+            [ngClass]="{ 'active' : !isCollapsed(entity) }"
+            (click)="toggleEntity(entity)">
+            <i class="fa fa-bug" *ngIf="entityHasError(entity.entityName)"></i>
+            <i class="fa fa-industry"></i> {{ entity.entityName }}
+            <div class="mdl-layout-spacer"></div>
+            <i class="fa fa-caret-left" [ngClass]="{ 'collapsed' : isCollapsed(entity) }"></i>
+          </div>
+          <div class="flow-container" [ngClass]="{ 'collapsed' : isCollapsed(entity) }">
+            <div class="padder">
+              <div class="flow-subheader">
+                Input Flows
+                <div class="mdl-layout-spacer"></div>
+                <mdl-button mdl-button-type="icon" id="new-input-flow" aria-label="New Input Flow" (click)="newInputFlow($event, entity)">
+                  <i class="fa fa-plus"></i>
+                </mdl-button>
+              </div>
+              <ul class="flows mdl-list">
+                <li
+                  class="flow mdl-list__item"
+                  [ngClass]="{'active': isActiveFlow(flow)}"
+                  *ngFor="let flow of entity.inputFlows"
+                  (click)="setFlow(entity, flow, 'Input')">
+                  <span class="mdl-list__item-primary-content">
+                    <i class="mdi mdi-import"></i>
+                    {{ flow.flowName }}
+                    <span class="mdl-layout-spacer"></span>
+                    <i class="fa fa-bug" *ngIf="flowHasError(entity.entityName, flow.flowName)"></i>
+                  </span>
+                </li>
+              </ul>
+              <div class="flow-subheader">
+                Harmonize Flows
+                <div class="mdl-layout-spacer"></div>
+                <mdl-button mdl-button-type="icon" id="new-harmonize-flow" aria-label="New Harmonize Flow" (click)="newHarmonizeFlow($event, entity)">
+                  <i class="fa fa-plus"></i>
+                </mdl-button>
+              </div>
+              <ul class="flows mdl-list">
+                <li
+                  class="flow mdl-list__item"
+                  [ngClass]="{'active': isActiveFlow(flow)}"
+                  *ngFor="let flow of entity.harmonizeFlows"
+                  (click)="setFlow(entity, flow, 'Harmonize')">
+                  <span class="mdl-list__item-primary-content">
+                    <i class="mdi mdi-looks"></i>
+                    {{ flow.flowName }}
+                    <span class="mdl-layout-spacer"></span>
+                    <i class="fa fa-bug" *ngIf="flowHasError(entity.entityName, flow.flowName)"></i>
+                  </span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </li>
+      </ul>
+      <div class="footer" layout="column" layout-align="center center">
+        <p>Last Deployed: {{getLastDeployed() | amTimeAgo}}</p>
+        <mdl-button
+          mdl-button-type="raised" mdl-colored="primary" mdl-ripple
+          (click)="redeployModules()"
+          tooltip="This will clear our your modules database and reload the modules located in the plugins directory. You shouldn't need to do this since modules are automatically deployed."
+          tooltipPlacement="top"
+          >
+          Redeploy <i class="fa fa-refresh"></i>
+        </mdl-button>
+      </div>
+    </div>
+    <gm-divider></gm-divider>
+    <div gm-col class="flex-100">
+      <div class="page-content">
+        <app-mlcp></app-mlcp>
+        <app-harmonize-flow-options></app-harmonize-flow-options>
+        <div class="current-flow" *ngIf="flow && !mlcp.isVisible() && !harmonize.isVisible()">
+          <h2>{{flow.flowName}} {{flowType}} flow <i class="fa fa-bug" *ngIf="flowHasError(entity.entityName, flow.flowName)"></i></h2>
+          <h3>
+            <mdl-button mdl-button-type="raised" mdl-colored="primary" mdl-ripple (click)="runFlow($event, flow, flowType)">
+              Run Flow <i class="fa fa-play-circle-o"></i>
+            </mdl-button>
+          </h3>
+          <h3>Plugins</h3>
+          <ul class="plugin-list">
+            <li *ngFor="let plugin of flow.plugins" [ngClass]="{'error': pluginHasError(flow, plugin.pluginType) }">
+              <h4>
+                <i class="fa fa-bug" *ngIf="pluginHasError(flow, plugin.pluginType)"></i>
+                <i class="fa fa-folder-open-o"></i>
+                {{plugin.pluginType}}
+                </h4>
+              <ul>
+                <li *ngFor="let file of plugin.files">
+                  <i class="fa fa-file-code-o"></i> {{file}}
+                  <pre *ngIf="pluginHasError(flow, plugin.pluginType)" class="error-msg">{{getErrorMessage(flow, plugin.pluginType)}}</pre>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  <app-new-entity></app-new-entity>
+  <app-new-flow></app-new-flow>
+</div>

@@ -4,8 +4,8 @@
   <meta charset="utf-8"/>
   <meta http-equiv="x-ua-compatible" content="ie=edge"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <link rel='shortcut icon' href='assets/icon/favicon.ico' type='image/x-icon' />
-  <title><%= APP_TITLE %></title>
+  <link rel='shortcut icon' href='favicon.ico' type='image/x-icon' />
+  <title>Data Hub QuickStart</title>
   <meta name="description" content=""/>
 
   <!-- base url -->
@@ -20,16 +20,12 @@
     transition: none !important;
   }
   </style>
-
-  <!-- inject:css -->
-  <!-- endinject -->
 </head>
-
 <body>
 
-  <app>
+  <app-root>
     <style>
-    app {
+    app-root {
       background-color: #e9eef4;
       position: absolute;
       top: 0;
@@ -47,45 +43,12 @@
     }
     </style>
     Quick Start Loading...
-  </app>
+  </app-root>
 
   <script th:inline="javascript">
-  /*<![CDATA[*/
-    window.BASE_URL = [[@{/}]].replace(/^(.*)\/$/, '$1');
-  /*]]>*/
+    var baseUrl = /*[[@{/}]]*/ '';
+    window.BASE_URL = baseUrl.replace(/^(.*)\/$/, '$1');
   </script>
-
-  <script>
-  // Fixes undefined module function in SystemJS bundle
-  function module() {}
-  </script>
-
-  <!-- shims:js -->
-  <!-- endinject -->
-
-  <% if (ENV === 'dev') { %>
-  <script>
-    System.config(<%=
-      JSON.stringify(SYSTEM_CONFIG, null, 2)
-    %>)
-  </script>
-  <% } %>
-
-  <!-- libs:js -->
-  <!-- endinject -->
-
-  <!-- inject:js -->
-  <!-- endinject -->
-
-  <% if (ENV === 'dev') { %>
-  <script>
-  System.import('<%= BOOTSTRAP_MODULE %>')
-    .catch(function (e) {
-      console.error(e,
-        'Report this error at https://github.com/mgechev/angular2-seed/issues');
-    });
-  </script>
-  <% } %>
 
 </body>
 </html>

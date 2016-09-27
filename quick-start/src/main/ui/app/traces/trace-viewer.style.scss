@@ -1,5 +1,5 @@
-@import "variables";
-@import "material";
+@import '../../styles/variables';
+@import '../../styles/material';
 
 $gutter-color: unquote("rgb(#{$palette-datahub-A100})");
 $active-border-color: unquote("rgb(#{$palette-datahub-900})");
@@ -24,10 +24,6 @@ $green-color: unquote("rgb(#{$palette-datahub-green})");
   flex-direction: column;
   align-items: center;
   justify-content: center;
-
-  .md-ripple-container {
-    border-radius: 10%;
-  }
 }
 
 .mdi-arrow-right {
@@ -48,6 +44,11 @@ $green-color: unquote("rgb(#{$palette-datahub-green})");
   }
 }
 
+.mdl-button--primary.mdl-button--primary.mdl-button--raised.error {
+  background-color: $red-color;
+  border: 1px solid red;
+}
+
 .plugin.active {
   font-weight: bold;
   box-shadow: 0 0 8px rgba(0, 0, 0, 0.28), 0 8px 16px rgba(0, 0, 0, 0.46);
@@ -56,26 +57,17 @@ $green-color: unquote("rgb(#{$palette-datahub-green})");
 
 .plugin-nav {
   margin-bottom: 10px;
-
-  md-content {
-    text-align: center;
-    padding: 1em;
-  }
+  color: #666;
+  font-size: 16px;
 }
 
-md-subheader {
+.subheader {
   display: block;
   padding: 10px 10px 10px 16px;
   cursor: pointer;
   background-color: $subheader-bg-color;
   color: white;
   border-bottom: 1px solid $gutter-color;
-}
-
-.plugin-io {
-  md-toolbar.md-primary {
-    background: $bg-color;
-  }
 }
 
 codemirror {
@@ -130,4 +122,31 @@ codemirror {
 
 .half-width {
   max-width: 48%;
+}
+
+.summary, .plugins {
+  flex: none;
+}
+
+.summary {
+  color: #666;
+  color: 18px;
+}
+
+.selected-plugin-header {
+  background-color: rgb(42, 67, 86);
+  color: white;
+  padding: 10px;
+  text-align: center;
+}
+
+.mdl-layout__header-row {
+  padding: 0 10px;
+}
+
+.info {
+  text-align: center;
+  margin-top: 40px;
+  font-size: 18px;
+  color: #666;
 }

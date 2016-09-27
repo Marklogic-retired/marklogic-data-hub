@@ -24,7 +24,6 @@ export class JobListenerService {
   public totalPercentComplete(): number {
     const total = this.runningJobCount();
     let pc = 0;
-    let status: FlowStatus;
     this.runningJobs.forEach((value, key) => {
       pc += value.percentComplete;
     });

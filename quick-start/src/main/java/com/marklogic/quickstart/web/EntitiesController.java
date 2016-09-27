@@ -26,7 +26,7 @@ import java.math.BigInteger;
 import java.util.Collection;
 
 @Controller
-@RequestMapping("/projects/{projectId}/{environment}")
+@RequestMapping("/api/projects/{projectId}/{environment}")
 class EntitiesController extends BaseController {
 
     @Autowired
@@ -108,9 +108,12 @@ class EntitiesController extends BaseController {
             @PathVariable String entityName,
             @PathVariable FlowType flowType,
             @PathVariable String flowName,
-            @RequestParam(required=false, defaultValue="100") Integer batchSize) {
+            @RequestBody JsonNode json) {
 
         requireAuth();
+
+        int batchSize = json.get("batchSize").asInt();
+        int threadCount = json.get("threadCount").asInt();
 
         ResponseEntity<JobExecution> resp = null;
 
@@ -121,11 +124,7 @@ class EntitiesController extends BaseController {
             resp = new ResponseEntity<>(HttpStatus.CONFLICT);
         }
         else {
-            if (batchSize == null) {
-                batchSize = 100;
-            }
-
-            JobExecution execution = flowManagerService.runFlow(flow, batchSize, new JobStatusListener() {
+            JobExecution execution = flowManagerService.runFlow(flow, batchSize, threadCount, new JobStatusListener() {
                 @Override
                 public void onStatusChange(long jobId, int percentComplete, String message) {
                     template.convertAndSend("/topic/flow-status", new JobStatusMessage(Long.toString(jobId), percentComplete, message, flowType.toString()));

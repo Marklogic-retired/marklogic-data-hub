@@ -23,22 +23,25 @@ declare function mlcpFlow:transform(
   let $uri := map:get($content, "uri")
   return
     perf:log('mlcp-flow-transform(' || $uri || ')', function() {
-      let $paramNodes := xdmp:unquote(map:get($context, 'transform_param'))/node()/*
-      let $paramMap := map:new()
-      let $_ := $paramNodes ! map:put($paramMap, fn:local-name(.), ./string())
+      let $params := map:new((
+        for $pair in map:get($context, 'transform_param') ! fn:tokenize(., ",")
+        let $parts := fn:tokenize($pair, "=")
+        return
+          map:entry($parts[1], $parts[2])
+      ))
 
       let $flow := flow:get-flow(
-        map:get($paramMap, 'entity-name'),
-        map:get($paramMap, 'flow-name'),
-        map:get($paramMap, 'flow-type'))
+        map:get($params, 'entity'),
+        map:get($params, 'flow'),
+        map:get($params, 'flowType'))
 
       let $_ :=
         if ($flow) then ()
         else
-          fn:error(xs:QName("MISSING_FLOW"), "The specified flow " || map:get($paramMap, "flow-name") || " is missing.")
+          fn:error(xs:QName("MISSING_FLOW"), "The specified flow " || map:get($params, "flow") || " is missing.")
 
       let $envelope := try {
-        flow:run-plugins($flow, $uri, map:get($content, "value"), $paramMap)
+        flow:run-plugins($flow, $uri, map:get($content, "value"), $params)
       }
       catch($ex) {
         xdmp:log(xdmp:describe($ex, (), ())),

@@ -1,22 +1,20 @@
-import { provideRouter, Routes } from '@angular/router';
-import { Home } from './home/index';
-import { Login } from './login/index';
-import { Jobs } from './jobs/index';
-import { Traces, TraceViewer } from './traces/index';
-import { Settings } from './settings/index';
-import { NoContent } from './no-content/index';
+import { Routes } from '@angular/router';
+import { HomeComponent } from './home';
+import { LoginComponent } from './login';
+import { JobsComponent } from './jobs';
+import { TracesComponent, TraceViewerComponent } from './traces';
+import { SettingsComponent } from './settings';
+import { NoContentComponent } from './no-content';
 import { AuthGuard } from './auth/auth-guard.service';
 
-export const routes: Routes = [
-  { path: '', component: Home, canActivate: [AuthGuard] },
-  { path: 'home', component: Home, canActivate: [AuthGuard] },
-  { path: 'jobs', component: Jobs, canActivate: [AuthGuard] },
-  { path: 'traces', component: Traces, canActivate: [AuthGuard] },
-  { path: 'traces/:id', component: TraceViewer, canActivate: [AuthGuard] },
-  { path: 'login', component: Login },
-  { path: 'settings', component: Settings, canActivate: [AuthGuard] },
+export const ROUTES: Routes = [
+  { path: '', component: HomeComponent, canActivate: [AuthGuard] },
+  { path: 'home', component: HomeComponent, canActivate: [AuthGuard] },
+  { path: 'jobs', component: JobsComponent, canActivate: [AuthGuard] },
+  { path: 'traces', component: TracesComponent, canActivate: [AuthGuard] },
+  { path: 'traces/:id', component: TraceViewerComponent, canActivate: [AuthGuard] },
+  { path: 'login', component: LoginComponent },
+  { path: 'settings', component: SettingsComponent, canActivate: [AuthGuard] },
   // make sure you match the component type string to the require in asyncRoutes
-  { path: '**',    component: NoContent },
+  { path: '**',    component: NoContentComponent },
 ];
-
-export const APP_ROUTE_PROVIDER = provideRouter(routes);

@@ -33,26 +33,41 @@ declare variable $FORMAT-JSON := "json";
 
 declare %private variable $current-trace-settings := map:map();
 
-declare %private variable $current-trace := map:new((
-  map:entry("traceId", xdmp:random()),
-  map:entry("created", fn:current-dateTime())
-));
+declare %private variable $current-trace := trace:new-trace();
+
+declare function trace:new-trace()
+{
+  map:new((
+    map:entry("traceId", xdmp:random()),
+    map:entry("created", fn:current-dateTime())
+  ))
+};
 
 declare function trace:enable-tracing($enabled as xs:boolean)
 {
-  xdmp:document-insert(
-    "/com.marklogic.hub/__tracing_enabled__.xml",
-    element trace:is-tracing-enabled { if ($enabled) then 1 else 0 })
+  xdmp:eval('
+    declare namespace trace = "http://marklogic.com/data-hub/trace";
+    declare variable $enabled external;
+    xdmp:document-insert(
+      "/com.marklogic.hub/settings/__tracing_enabled__.xml",
+      element trace:is-tracing-enabled { if ($enabled) then 1 else 0 })
+  ',
+  map:new((map:entry("enabled", $enabled))),
+  map:new(map:entry("database", xdmp:modules-database())))
 };
 
 declare function trace:enabled() as xs:boolean
 {
-  let $value := cts:element-values(xs:QName("trace:is-tracing-enabled"), (), ("type=unsignedInt","limit=1"))
-  return
-    if ($value) then
-      $value eq 1
-    else
-      fn:false()
+  xdmp:eval('
+    declare namespace trace = "http://marklogic.com/data-hub/trace";
+    fn:exists(
+      cts:search(
+        fn:doc("/com.marklogic.hub/settings/__tracing_enabled__.xml"),
+        cts:element-value-query(xs:QName("trace:is-tracing-enabled"), "1", ("exact")),
+        ("unfiltered", "score-zero", "unchecked", "unfaceted")
+      )
+    )
+  ',(), map:new(map:entry("database", xdmp:modules-database())))
 };
 
 declare function trace:has-errors() as xs:boolean
@@ -67,7 +82,7 @@ declare function trace:init-trace($format as xs:string)
 
 declare function trace:write-trace()
 {
-  if (trace:enabled() or trace:has-errors()) then
+  if (trace:enabled() or trace:has-errors()) then (
     let $format := map:get($current-trace-settings, "data-format")
     let $trace :=
       if ($format eq $FORMAT-JSON) then
@@ -135,7 +150,9 @@ declare function trace:write-trace()
       map:new((
         map:entry("database", xdmp:database($config:TRACING-DATABASE)),
         map:entry("transactionMode", "update-auto-commit")
-      )))
+      ))),
+    xdmp:set($current-trace, trace:new-trace())
+  )
   else ()
 };
 

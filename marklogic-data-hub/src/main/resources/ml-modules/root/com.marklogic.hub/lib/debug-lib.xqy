@@ -19,11 +19,18 @@ module namespace debug = "http://marklogic.com/data-hub/debug";
 
 declare option xdmp:mapping "false";
 
-declare function debug:enable($enable as xs:boolean)
+declare function debug:enable($enabled as xs:boolean)
 {
-  xdmp:document-insert(
-    "/com.marklogic.hub/__debug_enabled__.xml",
-    element debug:is-debugging-enabled { if ($enable) then 1 else 0 })
+  xdmp:eval('
+    declare namespace debug = "http://marklogic.com/data-hub/debug";
+    declare variable $enabled external;
+
+    xdmp:document-insert(
+      "/com.marklogic.hub/settings/__debug_enabled__.xml",
+      element debug:is-debugging-enabled { if ($enabled) then 1 else 0 })
+  ',
+  map:new((map:entry("enabled", $enabled))),
+  map:new(map:entry("database", xdmp:modules-database())))
 };
 
 (:~
@@ -33,13 +40,16 @@ declare function debug:enable($enable as xs:boolean)
  :)
 declare function debug:on() as xs:boolean
 {
-  let $value := cts:element-values(xs:QName("debug:is-debugging-enabled"), (), ("type=unsignedInt","limit=1"))
-  return
-    if ($value) then
-      $value eq 1
-    else
-      fn:false()
-
+  xdmp:eval('
+    declare namespace debug = "http://marklogic.com/data-hub/debug";
+    fn:exists(
+      cts:search(
+        fn:doc("/com.marklogic.hub/settings/__debug_enabled__.xml"),
+        cts:element-value-query(xs:QName("debug:is-debugging-enabled"), "1", ("exact")),
+        ("unfiltered", "score-zero", "unchecked", "unfaceted")
+      )
+    )
+  ',(), map:new(map:entry("database", xdmp:modules-database())))
 };
 
 (:~
@@ -70,8 +80,9 @@ declare function debug:dump-env($name as xs:string?)
     if ($request-path = '/MarkLogic/rest-api/endpoints/resource-service-query.xqy') then
       let $params := fn:string-join(
         for $f in xdmp:get-request-field-names()[fn:starts-with(., "rs:")]
+        let $value := xdmp:get-request-field($f)
         return
-          $f || "=" || xdmp:get-request-field($f),
+          $f || "=" || fn:string-join($value, ", "),
       "&amp;")
       return
         "/v1/resources/" || xdmp:get-request-field("name") || "?" || $params
@@ -98,9 +109,9 @@ declare function debug:dump-env($name as xs:string?)
         "    " || $h || " => " || xdmp:get-request-header($h),
       "",
       "  [Request Params]",
-      for $p in xdmp:get-request-field-names()
+      for $p in xdmp:get-request-field-names()[fn:not(fn:starts-with(., "rs:"))]
       return
-        "    " || $p || " => " || xdmp:get-request-field($p),
+        "    " || $p || " => " || fn:string-join(xdmp:get-request-field($p), ", "),
       let $body := xdmp:get-request-body()
       return
         if (fn:exists($body)) then

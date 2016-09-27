@@ -2,14 +2,14 @@ export class Job {
   uid: string;
   jobId: string;
   jobName: string;
-  jobType: string;
+  flowType: string;
   startTime: string;
   endTime: string;
   lastUpdated: string;
   status: string;
 
-  entityName: string;
-  flowName: string;
+  entity: string;
+  flow: string;
   jobOutput: string;
   mlcpOptions: string;
 }

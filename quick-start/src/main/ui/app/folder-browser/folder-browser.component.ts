@@ -4,11 +4,11 @@ import { Http, Response } from '@angular/http';
 import { MdlTextFieldComponent } from 'angular2-mdl';
 
 @Component({
-  selector: 'folder-browser',
+  selector: 'app-folder-browser',
   templateUrl: './folder-browser.tpl.html',
-  styleUrls: ['./folder-browser.styles.css'],
+  styleUrls: ['./folder-browser.styles.scss'],
 })
-export class FolderBrowser implements OnInit, OnChanges {
+export class FolderBrowserComponent implements OnInit, OnChanges {
   @Input() startPath: string = '.';
   @Output() folderChosen = new EventEmitter();
 

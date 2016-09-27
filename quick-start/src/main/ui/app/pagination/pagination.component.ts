@@ -1,14 +1,11 @@
 import { Component, Input, OnChanges, OnInit, Output, EventEmitter } from '@angular/core';
 
-import * as _ from 'lodash';
-
 @Component({
-  selector: 'pagination',
+  selector: 'app-pagination',
   templateUrl: './pagination.tpl.html',
-  directives: [],
-  styleUrls: ['./pagination.style.css'],
+  styleUrls: ['./pagination.style.scss'],
 })
-export class Pagination implements OnInit, OnChanges {
+export class PaginationComponent implements OnInit, OnChanges {
   @Input() start: number;
   @Input() pageLength: number;
   @Input() total: number;
@@ -18,7 +15,7 @@ export class Pagination implements OnInit, OnChanges {
 
   pages: Array<any>;
 
-  @Output() pageChanged = new EventEmitter();
+  @Output() pageChanged: EventEmitter<number> = new EventEmitter<number>();
 
   constructor() {
   }

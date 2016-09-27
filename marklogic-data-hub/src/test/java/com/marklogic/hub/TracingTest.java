@@ -58,7 +58,7 @@ public class TracingTest extends HubTestBase {
         Flow flow = fm.getFlow("trace-entity", "tracemeXML");
 
         JobFinishedListener listener = new JobFinishedListener();
-        fm.runFlow(flow, 10, listener);
+        fm.runFlow(flow, 10, 1, listener);
         listener.waitForFinish();
 
         assertEquals(5, getFinalDocCount());
@@ -77,7 +77,7 @@ public class TracingTest extends HubTestBase {
         Flow flow = fm.getFlow("trace-entity", "tracemeJSON");
 
         JobFinishedListener listener = new JobFinishedListener();
-        fm.runFlow(flow, 10, listener);
+        fm.runFlow(flow, 10, 1, listener);
         listener.waitForFinish();
 
         assertEquals(5, getFinalDocCount());
@@ -99,7 +99,7 @@ public class TracingTest extends HubTestBase {
         Flow flow = fm.getFlow("trace-entity", "tracemeXML");
 
         JobFinishedListener listener = new JobFinishedListener();
-        fm.runFlow(flow, 10, listener);
+        fm.runFlow(flow, 10, 1, listener);
         listener.waitForFinish();
 
         assertEquals(5, getFinalDocCount());
@@ -121,7 +121,7 @@ public class TracingTest extends HubTestBase {
         Flow flow = fm.getFlow("trace-entity", "tracemeJSON");
 
         JobFinishedListener listener = new JobFinishedListener();
-        fm.runFlow(flow, 10, listener);
+        fm.runFlow(flow, 10, 1, listener);
         listener.waitForFinish();
 
         assertEquals(5, getFinalDocCount());
@@ -141,7 +141,7 @@ public class TracingTest extends HubTestBase {
         Flow flow = fm.getFlow("trace-entity", "tracemeXMLError");
 
         JobFinishedListener listener = new JobFinishedListener();
-        fm.runFlow(flow, 10, listener);
+        fm.runFlow(flow, 10, 1, listener);
         listener.waitForFinish();
 
         assertEquals(0, getFinalDocCount());
@@ -160,7 +160,7 @@ public class TracingTest extends HubTestBase {
         Flow flow = fm.getFlow("trace-entity", "tracemeXMLWriterError");
 
         JobFinishedListener listener = new JobFinishedListener();
-        fm.runFlow(flow, 10, listener);
+        fm.runFlow(flow, 10, 1, listener);
         listener.waitForFinish();
 
         assertEquals(0, getFinalDocCount());
@@ -179,7 +179,7 @@ public class TracingTest extends HubTestBase {
         Flow flow = fm.getFlow("trace-entity", "tracemeJSONError");
 
         JobFinishedListener listener = new JobFinishedListener();
-        fm.runFlow(flow, 10, listener);
+        fm.runFlow(flow, 10, 1, listener);
         listener.waitForFinish();
 
         assertEquals(0, getFinalDocCount());
@@ -199,7 +199,7 @@ public class TracingTest extends HubTestBase {
         Flow flow = fm.getFlow("trace-entity", "tracemeJSONWriterError");
 
         JobFinishedListener listener = new JobFinishedListener();
-        fm.runFlow(flow, 10, listener);
+        fm.runFlow(flow, 10, 1, listener);
         listener.waitForFinish();
 
         assertEquals(0, getFinalDocCount());

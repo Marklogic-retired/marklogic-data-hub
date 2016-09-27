@@ -1,9 +1,7 @@
-import { bootstrap } from '@angular/platform-browser-dynamic';
-import { LocationStrategy, HashLocationStrategy } from '@angular/common';
-import { provide } from '@angular/core';
 import {
   Http, Request, RequestOptionsArgs, Response,
-  RequestOptions, ConnectionBackend, Headers, XHRBackend
+  RequestOptions, ConnectionBackend, Headers,
+  URLSearchParams, XHRBackend
 } from '@angular/http';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
@@ -24,6 +22,17 @@ class HttpInterceptor extends Http {
   }
 
   get(url: string, options?: RequestOptionsArgs): Observable<Response> {
+    /* cache busting for IE */
+    if (!options) {
+      options = {};
+    }
+    options.search = options.search || new URLSearchParams();
+    if (options.search instanceof URLSearchParams) {
+      options.search.set('_ts', (new Date()).getTime().toString());
+    } else {
+      options.search += `&_ts=${(new Date()).getTime()}`;
+    }
+    /* end cache busting for IE */
     return this.intercept(super.get(url, options));
   }
 
@@ -64,13 +73,13 @@ class HttpInterceptor extends Http {
   }
 }
 
-export const HTTP_PROVIDER =
-  provide(Http, {
-    useFactory: (
-      xhrBackend: XHRBackend,
-      requestOptions: RequestOptions,
-      router: Router,
-      auth: AuthService
-    ) => new HttpInterceptor(xhrBackend, requestOptions, router, auth),
-    deps: [XHRBackend, RequestOptions, Router, AuthService]
-  });
+export const HTTP_PROVIDER = {
+  provide: Http,
+  useFactory: (
+    xhrBackend: XHRBackend,
+    requestOptions: RequestOptions,
+    router: Router,
+    auth: AuthService
+  ) => new HttpInterceptor(xhrBackend, requestOptions, router, auth),
+  deps: [XHRBackend, RequestOptions, Router, AuthService]
+ };

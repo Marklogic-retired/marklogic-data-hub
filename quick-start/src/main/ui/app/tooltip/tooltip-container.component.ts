@@ -1,13 +1,13 @@
+/* tslint:disable */
 import {
-  Component, ChangeDetectorRef, ElementRef, Inject, AfterViewInit, TemplateRef
+  AfterViewInit, ChangeDetectorRef, Component, ElementRef, Inject, TemplateRef
 } from '@angular/core';
-import { NgClass, NgStyle } from '@angular/common';
+
 import { positionService } from './position';
 import { TooltipOptions } from './tooltip-options.class';
 
 @Component({
   selector: 'tooltip-container',
-  directives: [NgClass, NgStyle],
   // changeDetection: ChangeDetectionStrategy.OnPush,
   template: `<div class="tooltip" role="tooltip"
      [ngStyle]="{top: top, left: left, display: display}"
@@ -30,37 +30,35 @@ import { TooltipOptions } from './tooltip-options.class';
     </div>`
 })
 export class TooltipContainerComponent implements AfterViewInit {
-  /* tslint:disable */
-  private classMap: any;
-  private top: string = '-1000px';
-  private left: string = '-1000px';
-  private display: string = 'block';
-  private content: string;
-  private htmlContent: string | TemplateRef<any>;
-  private placement: string;
-  private popupClass: string;
-  private animation: boolean;
-  private isOpen: boolean;
-  private appendToBody: boolean = true;
-  private hostEl: ElementRef;
-  private context: any;
-  /* tslint:enable */
+  private classMap:any;
+  private top:string = '-1000px';
+  private left:string = '-1000px';
+  private display:string = 'block';
+  private content:string;
+  private htmlContent:string | TemplateRef<any>;
+  private placement:string;
+  private popupClass:string;
+  private animation:boolean;
+  private isOpen:boolean;
+  private appendToBody:boolean = true;
+  private hostEl:ElementRef;
+  private context:any;
 
-  private element: ElementRef;
-  private cdr: ChangeDetectorRef;
+  private element:ElementRef;
+  private cdr:ChangeDetectorRef;
 
-  public constructor(element: ElementRef,
-                     cdr: ChangeDetectorRef,
-                     @Inject(TooltipOptions) options: TooltipOptions) {
+  public constructor(element:ElementRef,
+                     cdr:ChangeDetectorRef,
+                     @Inject(TooltipOptions) options:TooltipOptions) {
     this.element = element;
     this.cdr = cdr;
     Object.assign(this, options);
-    this.classMap = { 'in': false, 'fade': false };
+    this.classMap = {'in': false, 'fade': false};
     this.classMap[options.placement] = true;
     this.classMap['tooltip-' + options.placement] = true;
   }
 
-  public ngAfterViewInit(): void {
+  public ngAfterViewInit():void {
     let p = positionService
       .positionElements(
         this.hostEl.nativeElement,
@@ -80,7 +78,8 @@ export class TooltipContainerComponent implements AfterViewInit {
     this.cdr.detectChanges();
   }
 
-  public get isTemplate(): boolean {
+  public get isTemplate():boolean {
     return this.htmlContent instanceof TemplateRef;
   }
 }
+/* tslint:enable */

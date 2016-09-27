@@ -77,8 +77,13 @@ declare %rapi:transaction-mode("update") function post(
 
   perf:log('/v1/resources/flow:post', function() {
     let $flow as element(hub:flow) := $input/hub:flow
-    let $identifier := map:get($params, "identifier")
-    let $_ := flow:run-flow($flow, $identifier, map:map())
+    let $options := map:new((
+      map:entry("entity", $flow/hub:entity/fn:data()),
+      map:entry("flow", $flow/hub:name/fn:data()),
+      map:entry("flowType", $flow/hub:type/fn:data())
+    ))
+    for $identifier in map:get($params, "identifier")
+    let $_ := flow:run-flow($flow, $identifier, $options)
     return
       document { () }
   })

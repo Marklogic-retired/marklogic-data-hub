@@ -1,20 +1,7 @@
-@import 'flex';
-@import 'variables';
-@import 'dialog';
-@import 'tooltip';
-
-$font-path: 'assets/fonts';
-
-$mdi-font-path: $font-path;
-@import 'mdi/scss/materialdesignicons';
-
-app {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-}
+@import '../styles/flex';
+@import '../styles/variables';
+@import '../styles/dialog';
+@import '../styles/tooltip';
 
 div.main {
   position: absolute;
@@ -27,9 +14,6 @@ div.main {
 .mdi {
   font-size: 24px;
 }
-
-$fa-font-path: $font-path;
-@import 'font-awesome/scss/font-awesome';
 
 html, body {
   height: 100%;

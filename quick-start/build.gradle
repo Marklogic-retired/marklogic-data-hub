@@ -1,6 +1,6 @@
 buildscript {
     ext {
-        springBootVersion = '1.4.0.RELEASE'
+        springBootVersion = '1.4.1.RELEASE'
     }
     repositories {
         jcenter()
@@ -24,7 +24,7 @@ apply plugin: 'war'
 
 war {
     baseName = 'quick-start'
-    version = '1.0.0-rc.4'
+    version = '1.0.0-rc.5'
 }
 
 repositories {
@@ -49,15 +49,25 @@ dependencies {
     compile("org.springframework.boot:spring-boot-devtools:${springBootVersion}")
 
     // Needed for the Upload feature using mlcp
-    compile("com.marklogic:mlcp-util:0.2.0")
+    compile("com.marklogic:mlcp-util:0.3.0")
+    compile("com.marklogic:mlcp:8.0-5")
 
     testCompile("junit:junit")
     testCompile("org.springframework.boot:spring-boot-starter-test:${springBootVersion}")
 }
 
+configurations {
+    all*.exclude group: 'org.slf4j', module: 'slf4j-log4j12'
+}
+
+task cleanUI(type: Delete) {
+  delete 'src/main/resources/static', 'src/main/resources/templates'
+}
+
 task npmInstallUI(type:Exec) {
     workingDir '.'
     commandLine 'npm', 'install'
+    dependsOn tasks.cleanUI
 }
 
 task buildUI(type:Exec) {
@@ -66,13 +76,21 @@ task buildUI(type:Exec) {
     dependsOn tasks.npmInstallUI
 }
 
-task watchUI(type:Exec) {
-    workingDir '.'
-    commandLine 'npm', 'run', 'watch'
-    dependsOn tasks.npmInstallUI
+task copyUIAssets(type: Copy) {
+    from 'dist'
+    into 'src/main/resources/static'
+    exclude '*.html'
+    dependsOn tasks.buildUI
 }
 
-processResources.dependsOn buildUI
+task copyIndexHtml(type: Copy) {
+    from 'dist'
+    into 'src/main/resources/templates'
+    include '*.html'
+    dependsOn tasks.copyUIAssets
+}
+
+processResources.dependsOn copyIndexHtml
 
 bootRun {
     addResources = true

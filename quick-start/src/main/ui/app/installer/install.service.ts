@@ -1,6 +1,5 @@
-import { Inject, Injectable, EventEmitter } from '@angular/core';
-import { Http, Response } from '@angular/http';
-import { Observable } from 'rxjs/Observable';
+import { Injectable, EventEmitter } from '@angular/core';
+import { Http } from '@angular/http';
 import { Message } from 'stompjs/lib/stomp.min';
 import { STOMPService } from '../stomp/stomp.service';
 
@@ -8,7 +7,6 @@ import { STOMPService } from '../stomp/stomp.service';
 export class InstallService {
 
   messageEmitter: EventEmitter<any> = new EventEmitter<any>();
-  private messages: Observable<Message>;
 
   constructor(
     private http: Http,
@@ -21,7 +19,7 @@ export class InstallService {
     this.stomp.subscribe('/topic/install-status').then((msgId: string) => {
       unsubscribeId = msgId;
     });
-    this.http.put(`/projects/${projectId}/${environment}/install`, '').subscribe(() => {
+    this.http.put(`/api/projects/${projectId}/${environment}/install`, '').subscribe(() => {
       this.stomp.unsubscribe(unsubscribeId);
     });
   }
@@ -31,7 +29,7 @@ export class InstallService {
     this.stomp.subscribe('/topic/uninstall-status').then((msgId: string) => {
       unsubscribeId = msgId;
     });
-    this.http.delete(`/projects/${projectId}/${environment}/uninstall`).subscribe(() => {
+    this.http.delete(`/api/projects/${projectId}/${environment}/uninstall`).subscribe(() => {
       this.stomp.unsubscribe(unsubscribeId);
     });
   }

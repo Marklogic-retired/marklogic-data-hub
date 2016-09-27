@@ -1,24 +1,17 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { TimeAgoPipe } from 'angular2-moment';
 import { TraceService } from './trace.service';
 import { Trace } from './trace.model';
-import { SearchResponse } from '../search/index';
-import { Pagination } from '../pagination/index';
-
-import * as moment from 'moment';
+import { SearchResponse } from '../search';
 
 import * as _ from 'lodash';
 
 @Component({
-  selector: 'traces',
+  selector: 'app-traces',
   templateUrl: './traces.tpl.html',
-  directives: [Pagination],
-  pipes: [TimeAgoPipe],
-  providers: [TraceService],
-  styleUrls: ['./traces.style.css'],
+  styleUrls: ['./traces.style.scss']
 })
-export class Traces {
+export class TracesComponent {
 
   searchText: string = '';
   currentPage: number = 1;
@@ -35,6 +28,24 @@ export class Traces {
     this.getTraces();
   }
 
+  pageChanged(page: number) {
+    this.currentPage = page;
+    this.getTraces();
+  }
+
+  getIconClass(trace: Trace) {
+    if (trace.flowType === 'harmonize') {
+      return 'mdi-looks';
+    } else if (trace.flowType === 'input') {
+      return 'mdi-import';
+    }
+    return '';
+  }
+
+  showTrace(traceId: string) {
+    this.router.navigate(['/traces', traceId]);
+  }
+
   private getTraces(): void {
     this.loadingTraces = true;
     this.traceService.getTraces(
@@ -49,23 +60,5 @@ export class Traces {
     () => {
       this.loadingTraces = false;
     });
-  }
-
-  private pageChanged(page: number) {
-    this.currentPage = page;
-    this.getTraces();
-  }
-
-  private getIconClass(trace: Trace) {
-    if (trace.flowType === 'harmonize') {
-      return 'mdi-looks';
-    } else if (trace.flowType === 'input') {
-      return 'mdi-import';
-    }
-    return '';
-  }
-
-  private showTrace(traceId: string) {
-    this.router.navigate(['/traces', traceId]);
   }
 }

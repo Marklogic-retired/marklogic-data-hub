@@ -30,8 +30,10 @@ public class DataHubInstallTest extends HubTestBase {
         dataHub.initProject();
         dataHub.install(new StatusListener() {
             @Override
-            public void onStatusChange(int percentComplete, String message) {
-            }
+            public void onStatusChange(int percentComplete, String message) {}
+
+            @Override
+            public void onError() {}
         });
     }
 
@@ -40,8 +42,10 @@ public class DataHubInstallTest extends HubTestBase {
         dataHub = new DataHub(getHubConfig(projectPath.toString()));
         dataHub.uninstall(new StatusListener() {
             @Override
-            public void onStatusChange(int percentComplete, String message) {
-            }
+            public void onStatusChange(int percentComplete, String message) {}
+
+            @Override
+            public void onError() {}
         });
         FileUtils.deleteDirectory(projectPath);
     }

@@ -1,4 +1,4 @@
-@import "variables";
+@import '../../styles/variables';
 
 table {
   width: 60%;
@@ -6,11 +6,13 @@ table {
 
 .trace-search {
   width: 100%;
+  flex: none; // IE fix
 }
 
 .search-box {
   width: 60%;
   margin-bottom: 1rem;
+  flex: none; // IE fix
 }
 
 pagination {

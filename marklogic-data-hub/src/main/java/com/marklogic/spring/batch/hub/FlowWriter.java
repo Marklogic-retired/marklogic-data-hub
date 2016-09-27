@@ -2,6 +2,8 @@ package com.marklogic.spring.batch.hub;
 
 import java.util.List;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.batch.item.ItemWriter;
 
 import com.marklogic.client.DatabaseClient;
@@ -18,36 +20,28 @@ public class FlowWriter extends ResourceManager  implements ItemWriter<String> {
 
     private DatabaseClient client;
     private Flow flow;
+    StringHandle handle;
+    RequestParameters params = new RequestParameters();
 
     public FlowWriter(DatabaseClient client, Flow flow) {
         super();
         this.flow = flow;
         this.client = client;
         this.client.init(NAME, this);
+        handle = new StringHandle(flow.serialize(true));
+        handle.setFormat(Format.XML);
     }
 
     @Override
     public void write(List<? extends String> items) {
 
-        Transaction transaction = null;
         try {
-            transaction = client.openTransaction();
-            for (String id: items) {
-                RequestParameters params = new RequestParameters();
-                params.add("identifier", id);
-
-                StringHandle handle = new StringHandle(flow.serialize(true));
-                handle.setFormat(Format.XML);
-                this.getServices().post(params, handle, transaction);
-            }
-            transaction.commit();
+            params.put("identifier", items.toArray(new String[items.size()]));
+            this.getServices().post(params, handle);
         }
         catch(Exception e) {
-          if (transaction != null) {
-              transaction.rollback();
-          }
             e.printStackTrace();
-          throw e;
-      }
+            throw e;
+        }
     }
 }

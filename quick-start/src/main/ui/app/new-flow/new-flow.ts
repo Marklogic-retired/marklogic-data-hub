@@ -1,19 +1,17 @@
-import { Component, Input, Inject, EventEmitter, OnInit, ViewChild,
-trigger, state, style, transition, animate } from '@angular/core';
+import { Component, EventEmitter, ViewChild } from '@angular/core';
 
-import { SelectList } from '../select-list/select-list.component';
+import { SelectListComponent } from '../select-list/select-list.component';
 
 import * as _ from 'lodash';
 
 @Component({
-  selector: 'new-flow',
+  selector: 'app-new-flow',
   templateUrl: './new-flow.html',
-  styleUrls: ['./new-flow.css'],
-  directives: [SelectList]
+  styleUrls: ['./new-flow.scss']
 })
-export class NewFlow {
-  @ViewChild('pluginFormatList') pluginFormatList: SelectList;
-  @ViewChild('dataFormatList') dataFormatList: SelectList;
+export class NewFlowComponent {
+  @ViewChild('pluginFormatList') pluginFormatList: SelectListComponent;
+  @ViewChild('dataFormatList') dataFormatList: SelectListComponent;
 
   finishedEvent: EventEmitter<any>;
   _isVisible: boolean = false;
@@ -55,14 +53,14 @@ export class NewFlow {
     this._isVisible = false;
   }
 
-  private create() {
+  create() {
     if (this.flow.flowName && this.flow.flowName.length > 0) {
       this.hide();
       this.finishedEvent.emit(this.flow);
     }
   }
 
-  private cancel() {
+  cancel() {
     this.hide();
     this.finishedEvent.error(false);
   }

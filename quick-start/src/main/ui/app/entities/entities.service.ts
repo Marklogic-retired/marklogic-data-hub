@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { Http, Response } from '@angular/http';
-import { Observable } from 'rxjs/Observable';
 import { ProjectService } from '../projects/projects.service';
 
 import { Entity } from './entity.model';
@@ -8,16 +7,10 @@ import { Flow } from './flow.model';
 
 @Injectable()
 export class EntitiesService {
-  private projectId: string;
-  private environment: string;
-
   constructor(
     private http: Http,
     private projectService: ProjectService
-  ) {
-    this.projectId = projectService.projectId;
-    this.environment = projectService.environment;
-  }
+  ) {}
 
   getEntities() {
     return this.get(this.url('/entities/'));
@@ -51,9 +44,9 @@ export class EntitiesService {
     return this.post(url, mlcpOptions).subscribe(() => {});
   }
 
-  runHarmonizeFlow(flow: Flow) {
+  runHarmonizeFlow(flow: Flow, batchSize: number, threadCount: number) {
     const url = this.url(`/entities/${flow.entityName}/flows/HARMONIZE/${flow.flowName}/run`);
-    return this.post(url, '').subscribe(() => {});
+    return this.post(url, { batchSize: batchSize, threadCount: threadCount }).subscribe(() => {});
   }
 
   public extractData = (res: Response) => {
@@ -69,6 +62,6 @@ export class EntitiesService {
   }
 
   private url(u: string): string {
-    return `/projects/${this.projectId}/${this.environment}${u}`;
+    return `/api/projects/${this.projectService.projectId}/${this.projectService.environment}${u}`;
   }
 }

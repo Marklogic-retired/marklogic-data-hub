@@ -1,14 +1,14 @@
 <div [ngClass]="{'visible' : _isVisible }" class="content">
-  <div *ngIf="flow" class="padded">
+  <div *ngIf="flow">
     <h3>Run Input Flow - {{flow.entityName}} : {{flow.flowName}}</h3>
     <div>
       <div class="group-container" flex layout="column">
         <h3 (click)="toggleSection('inputFiles')"><i class="fa fa-caret-right" [ngClass]="getSectionClass('inputFiles')"></i> Input Files</h3>
         <div class="group-section slideDown" flex layout="column" [ngClass]="getSectionClass('inputFiles')">
-          <folder-browser
+          <app-folder-browser
             [startPath]="inputFilePath"
             (folderChosen)="folderClicked($event)">
-          </folder-browser>
+          </app-folder-browser>
         </div>
       </div>
 
@@ -17,25 +17,24 @@
         <div class="group-section slideDown" [ngClass]="getSectionClass(group.category)">
           <p class="hint"><strong>Hint:</strong> Hover over the labels to view the description</p>
           <div class="setting" *ngFor="let setting of group.settings">
-            <md-slide-toggle
+            <mdl-switch
               class="primary-color"
               [tooltip]="setting.description"
-              tooltipPlacement="innerRight"
-              name="{{setting.field}}"
+              tooltipPlacement="right"
               *ngIf="setting.type === 'boolean'"
-              [checked]="setting.value"
-              (change)="updateSetting(setting, $event.checked)">
+              [ngModel]="setting.value"
+              (change)="updateSetting(setting, $event)">
               {{setting.label}}
-            </md-slide-toggle>
-            <md-input [type]="setting.type"
+            </mdl-switch>
+            <mdl-textfield floating-label type="text"
               [tooltip]="setting.description"
               tooltipPlacement="innerRight"
-              [placeholder]="setting.label"
+              [label]="setting.label"
               name="{{setting.field}}" *ngIf="isText(setting.type)"
               [ngModel]="setting.value"
-              (change)="updateSetting(setting, $event.target.value)"
-              [disabled]="setting.readOnly"></md-input>
-            <custom-select
+              (input)="updateSetting(setting, $event.target.value)"
+              [disabled]="setting.readOnly"></mdl-textfield>
+            <app-custom-select
               [id]="setting.field"
               [labelText]="setting.label"
               [items]="setting.options"
@@ -44,7 +43,7 @@
               *ngIf="setting.type === 'type'"
               [tooltip]="setting.description"
               label="label"
-              value="value"></custom-select>
+              value="value"></app-custom-select>
           </div>
         </div>
       </div>
@@ -54,7 +53,7 @@
         </span>
         <button
           class="mdl-button mdl-js-button mdl-button--icon"
-          [ngIIclipboard]="mlcpcmd"
+          [appClipboard]="mlcpcmd"
           (cbOnSuccess)="cmdCopied()">
           <i class="fa fa-copy" aria-hidden="true">
           </i>

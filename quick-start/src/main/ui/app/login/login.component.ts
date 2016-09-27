@@ -1,29 +1,22 @@
-import { Component, Input, Renderer } from '@angular/core';
+import { Component, Renderer, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
 import * as _ from 'lodash';
 
 import { AuthService } from '../auth/auth.service';
 import { ProjectService } from '../projects/projects.service';
-import { InstallService } from '../installer/index';
-import { ConfirmService } from '../confirm/index';
-import { FolderBrowser } from '../folder-browser/folder-browser.component';
-import { SelectList } from '../select-list/select-list.component';
+import { InstallService } from '../installer';
 import { LoginInfo } from './login-info.model';
 import { HubSettings } from '../environment/hub-settings.model';
 
 @Component({
-  selector: 'login',
+  selector: 'app-login',
   templateUrl: './login.template.html',
-  directives: [
-    FolderBrowser,
-    SelectList
-  ],
   providers: [],
-  styleUrls: ['./login.style.css']
+  styleUrls: ['./login.style.scss']
 })
 
-export class Login {
+export class LoginComponent implements OnInit {
   defaultSettings: HubSettings;
   initSettings: HubSettings = new HubSettings();
   showInitAdvanced: boolean = false;
@@ -76,11 +69,11 @@ export class Login {
     private auth: AuthService,
     private projectService: ProjectService,
     private installService: InstallService,
-    private confirm: ConfirmService,
     private router: Router,
-    private renderer: Renderer) {
+    private renderer: Renderer) {}
 
-    projectService.getProjects().subscribe(resp => {
+  ngOnInit() {
+    this.projectService.getProjects().subscribe(resp => {
       this.projects = resp.projects;
 
       if (this.projects.length > 0) {
@@ -162,20 +155,12 @@ export class Login {
 
   removeProject($event: any) {
     const project = $event.item;
-    const event = $event.event;
-    this.confirm.showConfirm({
-      title: 'Remove Project?',
-      message: 'Remove the project from the list of projects? Does not destroy anything on disk.',
-      okText: 'Remove',
-      cancelText: 'Cancel'
-    }, event).then(() => {
-      this.projectService.removeProject(project).subscribe(() => {
-        _.remove(this.projects, p => { return p.id === project.id; });
-        if (this.projects.length === 0) {
-          this.showFolderBrowser = true;
-        }
-      });
-    }).catch(() => {});
+    this.projectService.removeProject(project).subscribe(() => {
+      _.remove(this.projects, p => { return p.id === project.id; });
+      if (this.projects.length === 0) {
+        this.showFolderBrowser = true;
+      }
+    });
   }
 
   gotProject = (project: any) => {
@@ -194,14 +179,7 @@ export class Login {
   }
 
   restoreInitDefaults($evt: MouseEvent) {
-    this.confirm.showConfirm({
-      title: 'Are you sure?',
-      message: 'Really restore the default settings?',
-      okText: 'Restore',
-      cancelText: 'Cancel'
-    }, $evt).then(() => {
-      this.initSettings = _.clone(this.defaultSettings);
-    }).catch(() => {});
+    this.initSettings = _.clone(this.defaultSettings);
   }
 
   gotEnvironment(environment: string) {
@@ -212,16 +190,16 @@ export class Login {
     this.gotoTab('Login');
     setTimeout(() => {
       this.renderer.invokeElementMethod(
-        this.renderer.selectRootElement('input#username-input'), 'focus');
+        this.renderer.selectRootElement('input#username'), 'focus');
     }, 500);
   }
 
   loginNext() {
     this.gotoTab('InstalledCheck');
-
     this.projectService.getProjectEnvironment(
       this.currentProject.id,
-      this.currentEnvironmentString).subscribe(env => {
+      this.currentEnvironmentString
+    ).subscribe((env: any) => {
       this.currentEnvironment = env;
 
       if (this.currentEnvironment.installed) {
@@ -264,13 +242,12 @@ export class Login {
       },
       error => {
         this.loginError = true;
-        console.log('login failed!');
         this.auth.setAuthenticated(false);
         this.loggingIn = false;
       });
   }
 
-  private hubNameChanged() {
+  hubNameChanged() {
     const name = this.initSettings.name;
     this.initSettings.stagingHttpName = name + '-STAGING';
     this.initSettings.stagingDbName = name + '-STAGING';

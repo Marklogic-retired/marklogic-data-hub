@@ -70,7 +70,7 @@ public class EndToEndTestSjsXml extends HubTestBase {
         stagingDocMgr.write("/input.xml", new DOMHandle(getXmlFromResource("e2e-test/staged.xml")));
 
         JobFinishedListener harmonizeFlowListener = new JobFinishedListener();
-        fm.runFlow(harmonizeFlow, 10, harmonizeFlowListener);
+        fm.runFlow(harmonizeFlow, 10, 1, harmonizeFlowListener);
         harmonizeFlowListener.waitForFinish();
         assertXMLEqual(getXmlFromResource("e2e-test/final.xml"), finalDocMgr.read("/input.xml").next().getContent(new DOMHandle()).get());
     }

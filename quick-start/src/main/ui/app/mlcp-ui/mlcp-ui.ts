@@ -1,32 +1,26 @@
-import { Component, Input, ViewContainerRef, trigger,
-   state, style, transition, animate, EventEmitter } from '@angular/core';
+import { Component, HostBinding, ViewContainerRef, EventEmitter } from '@angular/core';
 
 import { MdlSnackbarService } from 'angular2-mdl';
 
 import * as _ from 'lodash';
 
-import { ClipboardDirective } from 'angular2-clipboard';
-
 import { EntitiesService } from '../entities/entities.service';
-import { FolderBrowser } from '../folder-browser/folder-browser.component';
-import { SelectList } from '../select-list/select-list.component';
-import { Select } from '../select/select.component';
-import { TooltipDirective } from '../tooltip/tooltip.directive';
 import { Flow } from '../entities/flow.model';
-import { EnvironmentService } from '../environment/index';
+import { EnvironmentService } from '../environment';
 
 interface MlcpOptions {
   [key: string]: any;
 }
 
 @Component({
-  selector: 'mlcp',
+  selector: 'app-mlcp',
   templateUrl: './mlcp-ui.html',
   providers: [],
-  directives: [ClipboardDirective, FolderBrowser, SelectList, Select, TooltipDirective],
-  styleUrls: ['./mlcp-ui.css']
+  styleUrls: ['./mlcp-ui.scss']
 })
-export class MlcpUi {
+export class MlcpUiComponent {
+  @HostBinding('style.display') display: string = 'none';
+
   inputFilePath: string = '.';
   mlcp = <MlcpOptions>{};
 
@@ -51,6 +45,9 @@ export class MlcpUi {
       collapsed: true
     },
     'Delimited Text Options': {
+      collapsed: true
+    },
+    'Delimited Json Options': {
       collapsed: true
     },
     'Aggregate XML Options': {
@@ -85,6 +82,7 @@ export class MlcpUi {
       this.startX = $event.clientX;
       this.startY = $event.clientY;
     }
+    this.display = 'block';
     this._isVisible = true;
     return this.finishedEvent;
   }
@@ -154,14 +152,14 @@ export class MlcpUi {
             label: 'Clean Target Database Directory?',
             field: 'output_cleandir',
             type: 'boolean',
-            description: 'A comma separated list of (role,capability) pairs to apply to loaded documents.\nDefault: The default permissions associated with the user inserting the document.\n\nExample: -output_permissions role1,read,role2,update',
+            description: 'Whether or not to delete all content in the output database directory prior to loading.',
             value: false
           },
           {
             label: 'Output URI Prefix',
             field: 'output_uri_prefix',
             type: 'string',
-            description: 'URI prefix to the id specified by -output_idname. Used to construct output document URIs.',
+            description: 'Specify a prefix to prepend to the default URI. Used to construct output document URIs. For details, see Controlling Database URIs During Ingestion.',
           },
           {
             label: 'Output URI Replace',
@@ -174,13 +172,13 @@ export class MlcpUi {
             label: 'Output URI Suffix',
             field: 'output_uri_suffix',
             type: 'string',
-            description: 'URI suffix to the id specified by -output_idname. Used to construct output document URIs.',
+            description: 'Specify a suffix to append to the default URI Used to construct output document URIs. For details, see Controlling Database URIs During Ingestion.',
           },
           {
             label: 'Document Type',
             field: 'document_type',
             type: 'type',
-            description: 'The type of document to create when -input_file_type is documents or sequencefile. Accepted values: mixed (documents only), xml, json, text, binary.\nDefault: mixed for documents, xml for sequencefile.',
+            description: 'The type of document to create when -input_file_type is documents, sequencefile or delimited_text. Accepted values: mixed (documents only), xml, json, text, binary. Default: mixed for documents, xml for sequencefile, and xml for delimited_text.',
             options: [
               {
                 label: '',
@@ -219,7 +217,6 @@ export class MlcpUi {
             field: 'input_compressed',
             type: 'boolean',
             description: 'Whether or not the source data is compressed.\nDefault: false.',
-            placeholder: 'whether or not the source data is compressed',
           },
           {
             label: 'Input Compression Codec',
@@ -250,28 +247,24 @@ export class MlcpUi {
             field: 'namespace',
             type: 'string',
             description: 'The default namespace for all XML documents created during loading.',
-            placeholder: 'default namespace for all XML documents created during loading',
           },
           {
             label: 'XML Repair Level',
             field: 'xml_repair_level',
             type: 'string',
             description: 'The degree of repair to attempt on XML documents in order to create well-formed XML. Accepted values: default,full, none.\nDefault: default, which depends on the configured MarkLogic Server default XQuery version: In XQuery 1.0 and 1.0-ml the default is none. In XQuery 0.9-ml the default is full.',
-            placeholder: 'default, full, or none',
           },
           {
             label: 'Thread Count',
             field: 'thread_count',
             type: 'number',
             description: 'The number of threads to spawn for concurrent loading. The total number of threads spawned by the process can be larger than this number, but this option caps the number of concurrent sessions with MarkLogic Server. Only available in local mode.\nDefault: 4.',
-            placeholder: 'default is 4',
           },
           {
             label: 'Batch Size',
             field: 'batch_size',
             type: 'number',
             description: 'The number of documents to process in a single request to MarkLogic Server. This option is ignored when you use -transform_module; a transform always sets the batch size to 1.\nDefault: 100.',
-            placeholder: 'default is 100; set to 1 when transform is used',
           },
         ],
         collapsed: true,
@@ -284,36 +277,31 @@ export class MlcpUi {
             label: 'Generate URI?',
             field: 'generate_uri',
             type: 'boolean',
-            description: 'When importing content with -input_file_type delimited_text, whether or not MarkLogic Server should automatically generate document URIs.\nDefault: false.',
-            placeholder: 'default is false for delimited_text, true for delimited_json',
+            description: 'Whether or not MarkLogic Server should automatically generate document URIs.\nDefault: false.',
           },
           {
             label: 'Split Input?',
             field: 'split_input',
             type: 'boolean',
             description: 'Whether or not to divide input data into logical chunks to support more concurrency. Only supported when -input_file_type is one of the following: delimited_text.\nDefault: false for local mode, true for distributed mode. For details, see Improving Throughput with -split_input.',
-            placeholder: 'whether or not to divide input data into logical chunks to support more concurrency.',
           },
           {
             label: 'Delimiter',
             field: 'delimiter',
             type: 'character',
             description: 'When importing content with -input_file_type delimited_text, the delimiting character.\nDefault: comma (,).',
-            placeholder: 'default is comma',
           },
           {
             label: 'URI ID',
-            field: 'delimited_uri_id',
+            field: 'uri_id',
             type: 'string',
-            description: 'When importing content -input_file_type delimited_text, the column name that contributes to the id portion of the URI for inserted documents.\nDefault: The first column.',
-            placeholder: 'default is first column',
+            description: 'The column name that contributes to the id portion of the URI for inserted documents. Default: The first column.',
           },
           {
             label: 'Delimited Root Name',
             field: 'delimited_root_name',
             type: 'string',
             description: 'When importing content with -input_file_type delimited_text, the localname of the document root element.\nDefault: root.',
-            placeholder: 'default is root',
           },
           {
             label: 'Data Type',
@@ -323,6 +311,25 @@ export class MlcpUi {
           },
         ],
         collapsed: true,
+      },
+      {
+        category: 'Delimited Json Options',
+        caption: 'If the selected file ends in .csv, .xls, or .xlsx, the server will assume that the input file type is \'delimited_text\'.',
+        settings: [
+          {
+            label: 'Generate URI?',
+            field: 'generate_uri',
+            type: 'boolean',
+            description: 'Whether or not MarkLogic Server should automatically generate document URIs.\nDefault: false.',
+          },
+          {
+            label: 'URI ID',
+            field: 'uri_id',
+            type: 'string',
+            description: 'The element, attribute, or property name within the document to use as the document URI. Default: None; the URI is based on the file name, as described in Default Document URI Construction.',
+          }
+        ],
+        collapsed: true
       },
       {
         category: 'Aggregate XML Options',
@@ -341,11 +348,10 @@ export class MlcpUi {
           },
           {
             label: 'URI ID',
-            field: 'aggregate_uri_id',
+            field: 'uri_id',
             type: 'string',
-            description: 'When splitting an aggregate input file into multiple documents, the element or attribute name within the document root to use as the document URI.\nDefault: In local mode, hashcode-seqnum, where the hashcode is derived from the split number; in distribute mode, taskid-seqnum.',
-            placeholder: 'name of the element from which to derive the document URI',
-          },
+            description: 'The element, attribute, or property name within the document to use as the document URI. Default: None; the URI is based on the file name, as described in Default Document URI Construction.',
+          }
         ],
         collapsed: true,
       },
@@ -373,7 +379,7 @@ export class MlcpUi {
             field: 'transform_param',
             type: 'string',
             description: 'Optional extra data to pass through to a custom transformation function. Ignored if -transform_module is not specified.\nDefault: no namespace. For details, see Transforming Content During Ingestion.',
-            value: '<params><entity-name>' + entityName + '</entity-name><flow-name>' + flowName + '</flow-name><flow-type>input</flow-type></params>',
+            value: `entity=${entityName},flow=${flowName},flowType=input`,
             readOnly: true,
           },
         ],
@@ -396,6 +402,8 @@ export class MlcpUi {
   isGroupVisible(category: string): boolean {
     const inputFileType = this.groups[0].settings[0].value;
     if (category === 'Delimited Text Options' && inputFileType !== 'delimited_text') {
+      return false;
+    } else if (category === 'Delimited Json Options' && inputFileType !== 'delimited_json') {
       return false;
     } else if (category === 'Aggregate XML Options' && inputFileType !== 'aggregates') {
       return false;
@@ -452,20 +460,20 @@ export class MlcpUi {
     let options: Array<any> = [];
 
     this.mlcp = {};
-    this.addMlcpOption(options, 'import', null, false);
-    this.addMlcpOption(options, 'mode', 'local', false);
+    this.addMlcpOption(options, 'import', null, false, false);
+    this.addMlcpOption(options, 'mode', 'local', false, true);
 
     let host = this.envService.settings.host;
     let port = this.envService.settings.stagingPort;
     let username = this.envService.settings.username;
 
 
-    this.addMlcpOption(options, 'host', host, false);
-    this.addMlcpOption(options, 'port', port, false);
-    this.addMlcpOption(options, 'username', username, false);
-    this.addMlcpOption(options, 'password', '*****', false);
+    this.addMlcpOption(options, 'host', host, false, true);
+    this.addMlcpOption(options, 'port', port, false, true);
+    this.addMlcpOption(options, 'username', username, false, true);
+    this.addMlcpOption(options, 'password', '*****', false, true);
 
-    this.addMlcpOption(options, 'input_file_path', this.inputFilePath, true);
+    this.addMlcpOption(options, 'input_file_path', this.inputFilePath, true, true);
 
     _.each(this.groups, (group) => {
       if (this.isGroupVisible(group.category)) {
@@ -476,7 +484,7 @@ export class MlcpUi {
             if (setting.type !== 'boolean') {
               value = '"' + setting.value + '"';
             }
-            this.addMlcpOption(options, key, value, true);
+            this.addMlcpOption(options, key, value, true, true);
           }
         });
       }
@@ -484,8 +492,13 @@ export class MlcpUi {
     return options;
   }
 
-  addMlcpOption(options: any, key: string, value: any, isOtherOption: boolean): void {
-    options.push('-' + key);
+  addMlcpOption(options: any, key: string, value: any, isOtherOption: boolean, appendDash: boolean): void {
+    if (appendDash) {
+      options.push('-' + key);
+    } else {
+      options.push(key);
+    }
+
     if (value) {
       options.push(value);
       if (isOtherOption) {
@@ -500,7 +513,7 @@ export class MlcpUi {
   }
 
   updateMlcpCommand(): string {
-    let mlcpCommand: string = 'mlcp';
+    let mlcpCommand = 'mlcp';
     mlcpCommand += (navigator.appVersion.indexOf('Win') !== -1) ? '.bat' : '.sh';
     mlcpCommand += ' ' + this.buildMlcpOptions().join(' ');
 
@@ -534,19 +547,20 @@ export class MlcpUi {
   }
 
   hide(): void {
+    this.display = 'none';
     this._isVisible = false;
   }
 
-  public isVisible(): boolean {
+  isVisible(): boolean {
     return this._isVisible;
   }
 
-  public cancel(): void {
+  cancel(): void {
     this.hide();
     this.finishedEvent.error(false);
   }
 
-  private saveOptions(): void {
+  saveOptions(): void {
     this.entitiesService.saveInputFlowOptions(this.flow, this.mlcp).subscribe(() => {
       this.snackbar.showSnackbar({
         message: 'MLCP options saved.'
@@ -554,7 +568,7 @@ export class MlcpUi {
     });
   }
 
-  private runImport(): void {
+  runImport(): void {
     this.hide();
     this.finishedEvent.emit(this.mlcp);
   }

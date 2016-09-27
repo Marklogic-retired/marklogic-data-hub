@@ -27,10 +27,13 @@ public class TraceManager extends LoggingObject {
     private static final String SEARCH_API_NS = "http://marklogic.com/appservices/search";
 
     private DatabaseClient databaseClient;
+    private QueryManager queryMgr;
+    private GenericDocumentManager docMgr;
 
     public TraceManager(DatabaseClient client) {
-
         this.databaseClient = client;
+        this.queryMgr = databaseClient.newQueryManager();
+        this.docMgr = databaseClient.newDocumentManager();
     }
 
     private XMLStreamWriter makeSerializer(OutputStream out) {
@@ -86,7 +89,6 @@ public class TraceManager extends LoggingObject {
     }
 
     public StringHandle getTraces(String query, long start, long count) {
-        QueryManager queryMgr = databaseClient.newQueryManager();
         queryMgr.setPageLength(count);
 
         StructuredQueryBuilder sb = queryMgr.newStructuredQueryBuilder(SEARCH_OPTIONS_NAME);
@@ -110,7 +112,6 @@ public class TraceManager extends LoggingObject {
     }
 
     public JsonNode getTrace(String traceId) {
-        GenericDocumentManager docMgr = databaseClient.newDocumentManager();
         return docMgr.readAs("/" + traceId, JsonNode.class, new ServerTransform("trace-json"));
     }
 }

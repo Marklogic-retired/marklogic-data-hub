@@ -146,13 +146,14 @@ public class FlowManager extends ResourceManager {
         return ctx;
     }
 
-    private JobParameters buildJobParameters(Flow flow, int batchSize) {
+    private JobParameters buildJobParameters(Flow flow, int batchSize, int threadCount) {
         JobParametersBuilder jpb = new JobParametersBuilder();
-        jpb.addLong("chunk", Integer.toUnsignedLong(batchSize));
+        jpb.addLong("batchSize", Integer.toUnsignedLong(batchSize));
+        jpb.addLong("threadCount", Integer.toUnsignedLong(threadCount));
         jpb.addString("uid", UUID.randomUUID().toString());
-        jpb.addString("jobType", flow.getType().toString());
-        jpb.addString("entityName", flow.getEntityName());
-        jpb.addString("flowName", flow.getName());
+        jpb.addString("flowType", flow.getType().toString());
+        jpb.addString("entity", flow.getEntityName());
+        jpb.addString("flow", flow.getName());
         return jpb.toJobParameters();
     }
 
@@ -163,12 +164,12 @@ public class FlowManager extends ResourceManager {
      * @param statusListener - the callback to receive job status updates
      * @return a JobExecution instance
      */
-    public JobExecution runFlow(Flow flow, int batchSize, JobStatusListener statusListener) {
+    public JobExecution runFlow(Flow flow, int batchSize, int threadCount, JobStatusListener statusListener) {
         JobExecution result = null;
         try {
             ConfigurableApplicationContext ctx = buildApplicationContext(flow, statusListener);
 
-            JobParameters params = buildJobParameters(flow, batchSize);
+            JobParameters params = buildJobParameters(flow, batchSize, threadCount);
             JobLauncher launcher = ctx.getBean(JobLauncher.class);
             Job job = ctx.getBean(Job.class);
             result = launcher.run(job, params);

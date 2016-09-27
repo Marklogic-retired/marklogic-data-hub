@@ -34,7 +34,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Controller
-@RequestMapping(value = "/projects")
+@RequestMapping(value = "/api/projects")
 public class ProjectsController extends BaseController implements FileSystemEventListener, ValidateListener, DeployUserModulesListener {
 
     @Autowired
@@ -174,6 +174,9 @@ public class ProjectsController extends BaseController implements FileSystemEven
             public void onStatusChange(int percentComplete, String message) {
                 template.convertAndSend("/topic/install-status", new StatusMessage(percentComplete, message));
             }
+
+            @Override
+            public void onError() {}
         });
 
         envConfig.setInitialized(installed);
@@ -206,6 +209,9 @@ public class ProjectsController extends BaseController implements FileSystemEven
             public void onStatusChange(int percentComplete, String message) {
                 template.convertAndSend("/topic/uninstall-status", new StatusMessage(percentComplete, message));
             }
+
+            @Override
+            public void onError() {}
         });
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -242,7 +248,7 @@ public class ProjectsController extends BaseController implements FileSystemEven
 
     @RequestMapping(value = "/{projectId}/{environment}/validate-user-modules", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<?> validateUserModules(@PathVariable int projectId,
+    public String validateUserModules(@PathVariable int projectId,
                                                 @PathVariable String environment) throws IOException {
 
         requireAuth();
@@ -250,10 +256,10 @@ public class ProjectsController extends BaseController implements FileSystemEven
         // make sure the project exists
         pm.getProject(projectId);
 
-        // install the use modules
+        // start the module validation
         dataHubService.validateUserModules(envConfig.getMlSettings(), this);
 
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return "{}";
     }
 
     @RequestMapping(value = "/{projectId}/{environment}/uninstall-user-modules", method = RequestMethod.DELETE)

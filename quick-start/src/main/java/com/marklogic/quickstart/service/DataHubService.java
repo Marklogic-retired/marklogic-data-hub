@@ -9,11 +9,12 @@ import com.marklogic.hub.util.PerformanceLogger;
 import com.marklogic.quickstart.exception.DataHubException;
 import com.marklogic.quickstart.listeners.DeployUserModulesListener;
 import com.marklogic.quickstart.listeners.ValidateListener;
-import org.apache.commons.lang.exception.ExceptionUtils;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -30,9 +31,16 @@ public class DataHubService extends LoggingObject {
             dataHub.install(listener);
             return true;
         } catch(Throwable e) {
-            listener.onStatusChange(100, ExceptionUtils.getStackTrace(e));
+            listener.onStatusChange(100, getStackTrace(e));
         }
         return false;
+    }
+
+    private String getStackTrace(final Throwable throwable) {
+        final StringWriter sw = new StringWriter();
+        final PrintWriter pw = new PrintWriter(sw, true);
+        throwable.printStackTrace(pw);
+        return sw.getBuffer().toString();
     }
 
     @Async

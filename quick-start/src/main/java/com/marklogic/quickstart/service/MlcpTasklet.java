@@ -2,6 +2,7 @@ package com.marklogic.quickstart.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.marklogic.contentpump.ContentPump;
 import com.marklogic.contentpump.bean.MlcpBean;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.JobStatusListener;
@@ -22,6 +23,7 @@ public class MlcpTasklet implements Tasklet {
     private JsonNode mlcpOptions;
     private JobStatusListener statusListener;
     private ArrayList<String> mlcpOutput = new ArrayList<>();
+    private boolean hasError = false;
 
     public MlcpTasklet(HubConfig hubConfig, JsonNode mlcpOptions, JobStatusListener statusListener) {
         this.hubConfig = hubConfig;
@@ -51,12 +53,16 @@ public class MlcpTasklet implements Tasklet {
                 mlcpOutput.add(message);
                 statusListener.onStatusChange(jobId, percentComplete, message);
             }
+
+            @Override
+            public void onError() {
+                hasError = true;
+            }
         }, sysout);
         PrintStream ps = new PrintStream(sos);
         System.setOut(ps);
 
-
-        bean.run();
+        ContentPump.runCommand(bean.buildArgs());
 
         chunkContext
             .getStepContext()
@@ -68,6 +74,10 @@ public class MlcpTasklet implements Tasklet {
         System.setOut(sysout);
         statusListener.onStatusChange(jobId, 100, "");
 
+        RepeatStatus status = RepeatStatus.FINISHED;
+        if (hasError) {
+            throw new Exception("Error in Mlcp Execution");
+        }
         return RepeatStatus.FINISHED;
     }
 }

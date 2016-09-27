@@ -2,24 +2,30 @@
   <h1>Data Hub Settings</h1>
 
   <div class="debug-status">
-    <md-slide-toggle
-      tooltip="Enables or Disables Debug Logging for Hub HTTP Requests to MarkLogic."
-      class="primary-color" [checked]="debugEnabled()" (change)="toggleDebug($event.checked)">Debugging</md-slide-toggle>
+    <mdl-switch
+      mdl-tooltip="Enables or Disables Debug Logging for Hub HTTP Requests to MarkLogic."
+      class="primary-color" [ngModel]="debugEnabled()" (change)="toggleDebug($event)">Debugging</mdl-switch>
   </div>
 
   <div class="trace-status">
-    <md-slide-toggle
-      tooltip="Enables or Disable Trace Logging for Flows"
-      class="primary-color" [checked]="traceEnabled()" (change)="toggleTrace($event.checked)">Tracing</md-slide-toggle>
+    <mdl-switch
+      mdl-tooltip="Enables or Disable Trace Logging for Flows"
+      class="primary-color" [ngModel]="traceEnabled()" (change)="toggleTrace($event)">Tracing</mdl-switch>
   </div>
 
   <div>
-    <mdl-button mdl-button-type="raised" mdl-colored mdl-ripple (click)="uninstall($event)">Uninstall Hub</mdl-button>
+    <button mdl-button mdl-button-type="raised"
+      mdl-colored mdl-ripple
+      appConfirm title="Uninstall?"
+      appendToBody="true"
+      message="Uninstall the hub from MarkLogic?"
+      [disabled]="isUninstalling"
+      (confirm)="uninstall()">Uninstall Hub</button>
   </div>
 
   <section flex layout-padding layout="column" class="uninstall-status" *ngIf="uninstallStatus">
     <h3>Uninstall Status</h3>
-    <md-progress-bar mode="determinate" [value]="percentComplete"></md-progress-bar>
+    <mdl-progress mode="determinate" [progress]="percentComplete"></mdl-progress>
     <div flex>
       <pre>{{uninstallStatus}}</pre>
     </div>

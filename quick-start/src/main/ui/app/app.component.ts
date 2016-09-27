@@ -3,15 +3,17 @@ import { Component, ViewEncapsulation,
 
 import { Router } from '@angular/router';
 
-import { AuthService } from './auth/index';
+import { AuthService } from './auth';
 
-import { ConfirmService } from './confirm/index';
+import { EnvironmentService } from './environment';
 
-import { EnvironmentService } from './environment/index';
+import { JobService } from './jobs/jobs.service';
 
 import { ProjectService } from './projects/projects.service';
 
 import { STOMPService } from './stomp/stomp.service';
+
+import { TraceService } from './traces/trace.service';
 
 interface CustomWindow {
   BASE_URL: string;
@@ -23,31 +25,31 @@ declare var window: CustomWindow;
  * Top Level Component
  */
 @Component({
-  selector: 'app',
+  selector: 'app-root',
   encapsulation: ViewEncapsulation.None,
   styleUrls: [
-    './app.style.css'
+    './app.style.scss'
   ],
   template: `
-    <hub-header *ngIf="canShowHeader()"></hub-header>
+    <app-header *ngIf="canShowHeader()"></app-header>
     <div class="main" [ngStyle]="{'top': headerOffset() }">
       <router-outlet></router-outlet>
     </div>
   `
 })
-export class App implements OnInit {
+export class AppComponent implements OnInit {
   authenticated: boolean = false;
 
   constructor(
     private auth: AuthService,
     private envService: EnvironmentService,
+    private jobService: JobService,
     private stomp: STOMPService,
     private projectService: ProjectService,
-    private confirm: ConfirmService,
+    private traceService: TraceService,
     private vcRef: ViewContainerRef,
     private router: Router) {
 
-    confirm.setDefaultViewContainerRef(vcRef);
     // get the auth state and listen for changes
     this.authenticated = auth.isAuthenticated();
     auth.authenticated.subscribe((authenticated: boolean) => {

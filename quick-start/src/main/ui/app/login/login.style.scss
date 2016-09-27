@@ -1,4 +1,4 @@
-@import 'variables';
+@import '../../styles/variables';
 
 $ml-blue: unquote("rgb(#{$palette-datahub-500})");
 
@@ -11,6 +11,9 @@ $subtle-background: unquote("rgb(#{$palette-datahub-400})");
 $bg-color: unquote("rgb(#{$palette-datahub-A100})");
 
 $install-border: unquote("rgb(#{$palette-datahub-800})");
+
+$label-color: unquote("rgb(#{$palette-datahub-900})");
+
 /deep/ md-list {
   padding-top: 0px;
 }
@@ -33,8 +36,9 @@ a {
   }
 }
 
-h1, h3, :host /deep/ button[md-button] {
+h1, h3, :host /deep/ button[mdl-button] {
   color: white;
+  max-width: 100%;
 }
 
 h3 {
@@ -67,21 +71,30 @@ h3 {
 .install-status {
   overflow: auto;
   height: 500px;
+  width: 90%;
   border: 1px solid $install-border;
   background-color: $bg-color;
+}
 
-  // pre {
-  //   color: greenyellow;
-  // }
+.left-pane {
+  max-width: 65%;
+  width: 65%;
 }
 
 .tab-group {
-  min-width: 500px;
-  max-width: 500px;
-  width: 500px;
+  max-width: 35%;
+  width: 35%;
+
+  h1, h3 {
+    text-align: center;
+  }
 }
 
 #ProjectDirTab {
+
+  app-select-list {
+    width: 100%;
+  }
 
   .project-browser {
     p {
@@ -123,24 +136,14 @@ $openDuration: 0.5s;
 }
 
 .fa-caret-right.collapsed {
-  transform: rotate(0deg);
-  -webkit-transform: rotate(0deg);
+  transform: rotate(180deg);
+  -webkit-transform: rotate(180deg);
 }
 
 .tab-content {
   background-color: $subtle-background;
   padding: 2rem;
   box-shadow: 0px 8px 10px -5px rgba(0, 0, 0, 0.2), 0px 16px 24px 2px rgba(0, 0, 0, 0.14), 0px 6px 30px 5px rgba(0, 0, 0, 0.12);
-
-  /deep/ input,
-  /deep/ label,
-  /deep/ label.md-input-placeholder {
-    color: white;
-  }
-
-  /deep/ div.md-input-underline {
-    border-top: 1px solid rgba(255,255,255,0.25);
-  }
 
   .scroller {
     max-height: 350px;
@@ -194,6 +197,10 @@ $openDuration: 0.5s;
 
   .install-progress {
     color: white;
+
+    mdl-progress {
+      margin-bottom: 20px;
+    }
   }
 }
 
@@ -246,5 +253,45 @@ form {
 }
 
 .help-text {
+  max-width: 100%;
   font-size: 12px;
+}
+
+#InitIfNeededTab, #LoginTab {
+  /deep/ .mdl-textfield--floating-label.is-focused .mdl-textfield__label,
+  /deep/ .mdl-textfield--floating-label.is-dirty .mdl-textfield__label,
+  /deep/ .mdl-textfield--floating-label.has-placeholder .mdl-textfield__label,
+  /deep/ .mdl-textfield--floating-label.is-invalid .mdl-textfield__label {
+    color: white;
+  }
+
+  /deep/ .mdl-textfield__label:after {
+    background-color: white;
+  }
+
+  /deep/ .mdl-textfield__input,
+  /deep/ .mdl-textfield.is-invalid .mdl-textfield__input,
+  /deep/ .mdl-textfield.is-invalid .mdl-textfield__input,
+  /deep/ .mdl-textfield.is-invalid .mdl-textfield__label:after,
+  /deep/ .mdl-textfield__label:after {
+    color: white;
+    border-bottom: 1px solid rgba(255,255,255, 0.12);
+  }
+
+  /deep/ .mdl-textfield.is-invalid .mdl-textfield__label:after {
+    background-color: initial;
+  }
+
+  /deep/ .mdl-spinner--single-color .mdl-spinner__layer {
+    border-color: white;
+  }
+}
+
+.center-text {
+  text-align: center;
+}
+
+.odh-icon {
+  width: 50%;
+  max-width: 200px;
 }

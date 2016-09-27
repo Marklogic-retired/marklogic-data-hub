@@ -1,8 +1,6 @@
 package com.marklogic.quickstart.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.google.common.base.Charsets;
-import com.google.common.io.Files;
 import com.marklogic.client.helper.LoggingObject;
 import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.JobStatusListener;
@@ -25,16 +23,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Service;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -48,8 +45,13 @@ public class FlowManagerService extends LoggingObject{
     @Autowired
     private EnvironmentConfig envConfig;
 
+    private FlowManager fm = null;
+
     public FlowManager getFlowManager() {
-        return new FlowManager(envConfig.getMlSettings());
+        if (fm == null) {
+            fm = new FlowManager(envConfig.getMlSettings());
+        }
+        return fm;
     }
 
     public List<FlowModel> getFlows(String projectDir, String entityName, FlowType flowType) {
@@ -90,10 +92,10 @@ public class FlowManagerService extends LoggingObject{
         return flowManager.getFlow(entityName, flowName, flowType);
     }
 
-    public JobExecution runFlow(Flow flow, int batchSize, JobStatusListener statusListener) {
+    public JobExecution runFlow(Flow flow, int batchSize, int threadCount, JobStatusListener statusListener) {
 
         FlowManager flowManager = getFlowManager();
-        return flowManager.runFlow(flow, batchSize, statusListener);
+        return flowManager.runFlow(flow, batchSize, threadCount, statusListener);
     }
 
     private Path getMlcpOptionsFilePath(Path destFolder, String entityName, String flowName) {
@@ -118,7 +120,8 @@ public class FlowManagerService extends LoggingObject{
         Path filePath = getMlcpOptionsFilePath(destFolder, entityName, flowName);
         File file = filePath.toFile();
         if(file.exists()) {
-            return Files.toString(file, Charsets.UTF_8);
+            byte[] encoded = Files.readAllBytes(filePath);
+            return new String(encoded, StandardCharsets.UTF_8);
         }
         return "{ \"input_file_path\": \"" + envConfig.getProjectDir().replace("\\", "\\\\") + "\" }";
     }
@@ -134,7 +137,7 @@ public class FlowManagerService extends LoggingObject{
         return ctx;
     }
 
-    private JobParameters buildJobParameters(JsonNode json) throws ParserConfigurationException, IOException, SAXException {
+    private JobParameters buildJobParameters(JsonNode json) throws ParserConfigurationException, IOException {
         JobParametersBuilder jpb = new JobParametersBuilder();
         jpb.addString("mlcpOptions", json.toString());
         jpb.addString("uid", UUID.randomUUID().toString());
@@ -142,35 +145,12 @@ public class FlowManagerService extends LoggingObject{
         // convert the transform params into job params to be stored in ML for later reference
         JsonNode tp = json.get("transform_param");
         if (tp != null) {
-            String transformParams = tp.textValue();
-            transformParams = transformParams.replace("\"", "");
-            logger.info("transformParams: " + transformParams);
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            ByteArrayInputStream bis = new ByteArrayInputStream(transformParams.getBytes(StandardCharsets.UTF_8));
-            Document doc = builder.parse(bis);
-            bis.close();
+            String transformParams = tp.textValue().replace("\"", "");
+            String[] pairs = transformParams.split(",");
 
-            NodeList nodes = doc.getElementsByTagName("params");
-            if (nodes.getLength() == 1) {
-                Node params = nodes.item(0);
-                NodeList childNodes = params.getChildNodes();
-                for (int i = 0; i < childNodes.getLength(); i++) {
-                    Node child = childNodes.item(i);
-                    if (child.getNodeType() == Node.ELEMENT_NODE) {
-                        String name = child.getNodeName();
-                        switch (name) {
-                            case "entity-name":
-                                jpb.addString("entityName", child.getTextContent());
-                                break;
-                            case "flow-name":
-                                jpb.addString("flowName", child.getTextContent());
-                                break;
-                            case "flow-type":
-                                jpb.addString("flowType", child.getTextContent());
-                        }
-                    }
-                }
+            for (String pair : pairs) {
+                String[] tokens = pair.split("=");
+                jpb.addString(tokens[0], tokens[1]);
             }
         }
         return jpb.toJobParameters();

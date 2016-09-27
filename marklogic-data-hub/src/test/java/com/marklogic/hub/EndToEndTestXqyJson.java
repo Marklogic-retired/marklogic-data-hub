@@ -65,7 +65,7 @@ public class EndToEndTestXqyJson extends HubTestBase {
         stagingDocMgr.write("/input.json", new JacksonHandle(getJsonFromResource("e2e-test/staged.json")));
 
         JobFinishedListener harmonizeFlowListener = new JobFinishedListener();
-        fm.runFlow(harmonizeFlow, 10, harmonizeFlowListener);
+        fm.runFlow(harmonizeFlow, 10, 1, harmonizeFlowListener);
         harmonizeFlowListener.waitForFinish();
         String expected = getResource("e2e-test/final.json");
         String actual = finalDocMgr.read("/input.json").next().getContent(new StringHandle()).get();
@@ -82,7 +82,7 @@ public class EndToEndTestXqyJson extends HubTestBase {
         stagingDocMgr.write("/input.json", new JacksonHandle(getJsonFromResource("e2e-test/staged.json")));
 
         JobFinishedListener harmonizeFlowListener = new JobFinishedListener();
-        fm.runFlow(harmonizeFlow, 10, harmonizeFlowListener);
+        fm.runFlow(harmonizeFlow, 10, 1, harmonizeFlowListener);
         harmonizeFlowListener.waitForFinish();
         String expected = getResource("e2e-test/final.json");
         String actual = finalDocMgr.read("/input.json").next().getContent(new StringHandle()).get();
