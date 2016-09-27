@@ -1,7 +1,37 @@
 # Change Log
 
-## [v1.0.0-rc.4](https://github.com/marklogic/marklogic-data-hub/tree/v1.0.0-rc.4)
+## [v1.0.0-rc.5](https://github.com/marklogic/marklogic-data-hub/tree/v1.0.0-rc.5)
 
+[Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v1.0.0-rc.4...v1.0.0-rc.5)
+
+**Implemented enhancements:**
+
+- Allow plugins to know then name of the entity [\#271](https://github.com/marklogic/marklogic-data-hub/issues/271)
+- Mark mlcp jobs with errors as failed? [\#268](https://github.com/marklogic/marklogic-data-hub/issues/268)
+
+**Fixed bugs:**
+
+- Tooltip comment for mlcp option wrong [\#270](https://github.com/marklogic/marklogic-data-hub/issues/270)
+- TimeAgo [\#267](https://github.com/marklogic/marklogic-data-hub/issues/267)
+
+**Closed issues:**
+
+- chore: update java dependencies [\#287](https://github.com/marklogic/marklogic-data-hub/issues/287)
+- Github pages link error [\#285](https://github.com/marklogic/marklogic-data-hub/issues/285)
+- Module watch fails when you switch projects [\#284](https://github.com/marklogic/marklogic-data-hub/issues/284)
+- chore: fix appveyor build [\#282](https://github.com/marklogic/marklogic-data-hub/issues/282)
+- Lots of cache warnings [\#281](https://github.com/marklogic/marklogic-data-hub/issues/281)
+- Trace settings gets wiped out when content database is cleared [\#280](https://github.com/marklogic/marklogic-data-hub/issues/280)
+- Better distinguish between Entities and Flows [\#275](https://github.com/marklogic/marklogic-data-hub/issues/275)
+- Exception in Quick Start [\#274](https://github.com/marklogic/marklogic-data-hub/issues/274)
+- Setting up on Mac causes an issue with .war file [\#273](https://github.com/marklogic/marklogic-data-hub/issues/273)
+- rc4 - input flow UI jacked up on chrome/windows [\#272](https://github.com/marklogic/marklogic-data-hub/issues/272)
+- MLCP command is using deprecated command line flags [\#265](https://github.com/marklogic/marklogic-data-hub/issues/265)
+- QuickStart App: Status indicator on installation screen is out of view when text is enlarged [\#262](https://github.com/marklogic/marklogic-data-hub/issues/262)
+- Run Flow buttons inconsistent b/c Harmonize runs immediately [\#257](https://github.com/marklogic/marklogic-data-hub/issues/257)
+- QuickStart App data not loaded to correct collection [\#250](https://github.com/marklogic/marklogic-data-hub/issues/250)
+
+## [v1.0.0-rc.4](https://github.com/marklogic/marklogic-data-hub/tree/v1.0.0-rc.4) (2016-09-02)
 [Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v1.0.0-rc.3...v1.0.0-rc.4)
 
 **Implemented enhancements:**
@@ -12,6 +42,7 @@
 
 - MLCP Command for CSV files is generated incorrectly  [\#261](https://github.com/marklogic/marklogic-data-hub/issues/261)
 - update examples now that rc.2 is out [\#247](https://github.com/marklogic/marklogic-data-hub/issues/247)
+- UI rework based on new screen designs [\#70](https://github.com/marklogic/marklogic-data-hub/issues/70)
 
 ## [v1.0.0-rc.3](https://github.com/marklogic/marklogic-data-hub/tree/v1.0.0-rc.3) (2016-08-25)
 [Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v1.0.0-rc.2...v1.0.0-rc.3)
@@ -63,7 +94,6 @@
 - Performance tracing [\#193](https://github.com/marklogic/marklogic-data-hub/issues/193)
 - Refactor the Spring Boot API [\#145](https://github.com/marklogic/marklogic-data-hub/issues/145)
 - Support index configuration as a part of pushbutton deploy.  [\#10](https://github.com/marklogic/marklogic-data-hub/issues/10)
-- UI rework based on new screen designs [\#70](https://github.com/marklogic/marklogic-data-hub/issues/70)
 
 ## [v1.0.0-beta.6](https://github.com/marklogic/marklogic-data-hub/tree/v1.0.0-beta.6) (2016-06-20)
 [Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v1.0.0-beta.5...v1.0.0-beta.6)
