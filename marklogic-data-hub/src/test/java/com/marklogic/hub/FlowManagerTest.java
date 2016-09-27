@@ -224,7 +224,7 @@ public class FlowManagerTest extends HubTestBase {
         JobFinishedListener listener = new JobFinishedListener();
         FlowManager fm = new FlowManager(getHubConfig());
         SimpleFlow flow1 = (SimpleFlow)fm.getFlow("test", "my-test-flow1");
-        fm.runFlow(flow1, 10, listener);
+        fm.runFlow(flow1, 10, 1, listener);
         listener.waitForFinish();
         assertEquals(2, getStagingDocCount());
         assertEquals(2, getFinalDocCount());
@@ -242,7 +242,7 @@ public class FlowManagerTest extends HubTestBase {
         JobFinishedListener listener = new JobFinishedListener();
         FlowManager fm = new FlowManager(getHubConfig());
         SimpleFlow flow1 = (SimpleFlow)fm.getFlow("test", "my-test-flow-with-header");
-        fm.runFlow(flow1, 10, listener);
+        fm.runFlow(flow1, 10, 1, listener);
         listener.waitForFinish();
         assertEquals(2, getStagingDocCount());
         assertEquals(2, getFinalDocCount());
@@ -265,7 +265,7 @@ public class FlowManagerTest extends HubTestBase {
         assertEquals(0, getFinalDocCount());
         FlowManager fm = new FlowManager(getHubConfig());
         SimpleFlow flow1 = (SimpleFlow)fm.getFlow("test", "my-test-flow-with-all");
-        fm.runFlow(flow1, 10, listener);
+        fm.runFlow(flow1, 10, 1, listener);
         listener.waitForFinish();
         assertEquals(2, getStagingDocCount());
         assertEquals(2, getFinalDocCount());

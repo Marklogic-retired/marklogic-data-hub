@@ -80,8 +80,9 @@ declare function debug:dump-env($name as xs:string?)
     if ($request-path = '/MarkLogic/rest-api/endpoints/resource-service-query.xqy') then
       let $params := fn:string-join(
         for $f in xdmp:get-request-field-names()[fn:starts-with(., "rs:")]
+        let $value := xdmp:get-request-field($f)
         return
-          $f || "=" || xdmp:get-request-field($f),
+          $f || "=" || fn:string-join($value, ", "),
       "&amp;")
       return
         "/v1/resources/" || xdmp:get-request-field("name") || "?" || $params
@@ -108,9 +109,9 @@ declare function debug:dump-env($name as xs:string?)
         "    " || $h || " => " || xdmp:get-request-header($h),
       "",
       "  [Request Params]",
-      for $p in xdmp:get-request-field-names()
+      for $p in xdmp:get-request-field-names()[fn:not(fn:starts-with(., "rs:"))]
       return
-        "    " || $p || " => " || xdmp:get-request-field($p),
+        "    " || $p || " => " || fn:string-join(xdmp:get-request-field($p), ", "),
       let $body := xdmp:get-request-body()
       return
         if (fn:exists($body)) then

@@ -87,7 +87,8 @@
     <div gm-col class="flex-100">
       <div class="page-content">
         <app-mlcp></app-mlcp>
-        <div class="current-flow" *ngIf="flow && !mlcp.isVisible()">
+        <app-harmonize-flow-options></app-harmonize-flow-options>
+        <div class="current-flow" *ngIf="flow && !mlcp.isVisible() && !harmonize.isVisible()">
           <h2>{{flow.flowName}} {{flowType}} flow <i class="fa fa-bug" *ngIf="flowHasError(entity.entityName, flow.flowName)"></i></h2>
           <h3>
             <mdl-button mdl-button-type="raised" mdl-colored="primary" mdl-ripple (click)="runFlow($event, flow, flowType)">

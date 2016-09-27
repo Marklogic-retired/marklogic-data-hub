@@ -10,6 +10,7 @@ import { MdlSnackbarService } from 'angular2-mdl';
 import { MdDialog, MdDialogConfig, MdDialogRef } from '../dialog/dialog';
 
 import { MlcpUiComponent } from '../mlcp-ui';
+import { HarmonizeFlowOptionsComponent } from '../harmonize-flow-options/harmonize-flow-options.component';
 import { NewEntityComponent } from '../new-entity/new-entity';
 import { NewFlowComponent } from '../new-flow/new-flow';
 
@@ -24,6 +25,7 @@ import * as _ from 'lodash';
 })
 export class HomeComponent {
   @ViewChild(MlcpUiComponent) mlcp: MlcpUiComponent;
+  @ViewChild(HarmonizeFlowOptionsComponent) harmonize: HarmonizeFlowOptionsComponent;
   @ViewChild(NewEntityComponent) newEntity: NewEntityComponent;
   @ViewChild(NewFlowComponent) newFlow: NewFlowComponent;
 
@@ -117,6 +119,8 @@ export class HomeComponent {
   setFlow(entity: Entity, flow: Flow, flowType: string): void {
     if (this.mlcp.isVisible()) {
       this.mlcp.cancel();
+    } else if (this.harmonize.isVisible()) {
+      this.harmonize.cancel();
     }
     this.entity = entity;
     this.flow = flow;
@@ -186,11 +190,13 @@ export class HomeComponent {
   }
 
   runHarmonizeFlow(ev: Event, flow: Flow): void {
-    this.entitiesService.runHarmonizeFlow(flow);
-    this.snackbar.showSnackbar({
-      message: flow.entityName + ': ' + flow.flowName + ' starting...',
+    this.harmonize.show(flow).subscribe((options: any) => {
+      this.entitiesService.runHarmonizeFlow(flow, options.batchSize, options.threadCount);
+      this.snackbar.showSnackbar({
+        message: flow.entityName + ': ' + flow.flowName + ' starting...',
+      });
+      ev.stopPropagation();
     });
-    ev.stopPropagation();
   }
 
   redeployModules() {

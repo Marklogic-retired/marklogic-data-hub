@@ -11,8 +11,10 @@ import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.support.PassThroughItemProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.task.SimpleAsyncTaskExecutor;
 
 import java.util.List;
 
@@ -48,7 +50,7 @@ public class RunHarmonizeFlowConfig extends AbstractMarkLogicBatchConfig {
 
     @Bean
     @JobScope
-    protected Step step1() {
+    protected Step step1(@Value("#{jobParameters['batchSize']}") int batchSize, @Value("#{jobParameters['threadCount']}") int threadCount) {
 
         Collector c = flow.getCollector();
         if (c instanceof ServerCollector) {
@@ -56,9 +58,11 @@ public class RunHarmonizeFlowConfig extends AbstractMarkLogicBatchConfig {
         }
 
         ItemProcessor<String, String> ip = new PassThroughItemProcessor<>();
+        SimpleAsyncTaskExecutor taskExecutor = new SimpleAsyncTaskExecutor();
+        taskExecutor.setConcurrencyLimit(threadCount);
 
         return stepBuilderFactory.get("step1")
-            .<String, String>chunk(getChunkSize())
+            .<String, String>chunk(batchSize)
             .reader(new CollectorReader(c))
             .processor(ip)
             .listener(new ItemWriteListener<String>() {
@@ -101,6 +105,7 @@ public class RunHarmonizeFlowConfig extends AbstractMarkLogicBatchConfig {
 
                 }
             })
+            .taskExecutor(taskExecutor)
             .build();
     }
 }
