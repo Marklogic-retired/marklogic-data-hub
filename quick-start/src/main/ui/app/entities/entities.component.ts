@@ -19,11 +19,11 @@ import { DeployService } from '../deploy/deploy.service';
 import * as _ from 'lodash';
 
 @Component({
-  selector: 'app-home',
-  templateUrl: './home.component.html',
-  styleUrls: ['./home.component.scss'],
+  selector: 'app-entities',
+  templateUrl: './entities.component.html',
+  styleUrls: ['./entities.component.scss'],
 })
-export class HomeComponent {
+export class EntitiesComponent {
   @ViewChild(MlcpUiComponent) mlcp: MlcpUiComponent;
   @ViewChild(HarmonizeFlowOptionsComponent) harmonize: HarmonizeFlowOptionsComponent;
   @ViewChild(NewEntityComponent) newEntity: NewEntityComponent;
@@ -214,7 +214,7 @@ export class HomeComponent {
   <h3 class="bug-title"><i class="fa fa-bug"></i>This flow has a bug!</h3>
   <p>You must fix it before you can run it.</p>
   <mdl-button mdl-button-type="raised" mdl-colored="primary" mdl-ripple (click)="dialogRef.close()">OK</mdl-button>`,
-  styleUrls: ['./home.component.scss']
+  styleUrls: ['./entities.component.scss']
 })
 export class HasBugsDialogComponent {
   constructor(public dialogRef: MdDialogRef<HasBugsDialogComponent>) { }

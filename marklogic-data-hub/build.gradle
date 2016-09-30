@@ -142,11 +142,14 @@ bintray {
 ext {
     // mlAppConfig is an instance of com.marklogic.appdeployer.AppConfig
     mlAppConfig {
+
+        moduleTokensPropertiesSources = new ArrayList<>()
+
         // override some default values with our values
         modulesDatabaseName = mlModulesDbName
         triggersDatabaseName = mlTriggersDbName
         schemasDatabaseName = mlSchemasDbName
-        restPort = Integer.parseInt(mlStagingPort)
+        restPort = Integer.parseInt(mlJobPort)
 
         // Configure custom tokens for our json files
         customTokens.put("%%mlStagingAppserverName%%", mlStagingAppserverName)

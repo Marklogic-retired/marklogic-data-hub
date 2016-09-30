@@ -125,6 +125,11 @@ public class DataHubService extends LoggingObject {
         return "{\"deployed\":true, \"lastModified\":\"" + df.format(lastModified) + "\"}";
     }
 
+    public void clearContent(HubConfig config, String database) {
+        DataHub dataHub = new DataHub(config);
+        dataHub.clearContent(database);
+    }
+
     private void installUserModules(HubConfig config, DataHub dataHub, boolean forceLoad, DeployUserModulesListener deployListener) {
         dataHub.installUserModules(forceLoad);
         deployListener.onDeploy(getLastDeployed(config));

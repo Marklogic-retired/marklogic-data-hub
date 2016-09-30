@@ -148,7 +148,7 @@ declare function trace:write-trace()
         map:entry("trace", $trace)
       )),
       map:new((
-        map:entry("database", xdmp:database($config:TRACING-DATABASE)),
+        map:entry("database", xdmp:database($config:TRACE-DATABASE)),
         map:entry("transactionMode", "update-auto-commit")
       ))),
     xdmp:set($current-trace, trace:new-trace())

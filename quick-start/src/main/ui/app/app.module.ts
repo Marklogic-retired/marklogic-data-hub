@@ -7,7 +7,7 @@ import { RouterModule } from '@angular/router';
 import { ConfirmModule } from './confirm';
 
 import { AppComponent } from './app.component';
-import { HomeComponent } from './home';
+import { EntitiesComponent } from './entities';
 import { LoginComponent } from './login';
 import { SettingsComponent } from './settings';
 
@@ -43,13 +43,15 @@ import { STOMPService } from './stomp/stomp.service';
 import { ClipboardDirective } from './clipboard/clipboard.directive';
 import { TraceService } from './traces/trace.service';
 import { HarmonizeFlowOptionsComponent } from './harmonize-flow-options/harmonize-flow-options.component';
+import { DashboardComponent } from './dashboard/dashboard.component';
+import { TitlecasePipe } from './titlecase.pipe';
 
 @NgModule({
   declarations: [
     AppComponent,
     FolderBrowserComponent,
     HeaderComponent,
-    HomeComponent,
+    EntitiesComponent,
     JobsComponent,
     LoginComponent,
     MlcpUiComponent,
@@ -63,7 +65,9 @@ import { HarmonizeFlowOptionsComponent } from './harmonize-flow-options/harmoniz
     TraceViewerComponent,
     NoContentComponent,
     ClipboardDirective,
-    HarmonizeFlowOptionsComponent
+    HarmonizeFlowOptionsComponent,
+    DashboardComponent,
+    TitlecasePipe
   ],
   imports: [
     BrowserModule,

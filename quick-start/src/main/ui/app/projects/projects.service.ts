@@ -61,6 +61,18 @@ export class ProjectService {
     return this.http.delete(`/api/projects/${this.projectId}/${this.environment}/logout`);
   }
 
+  getStatus() {
+    return this.get(`/api/projects/${this.projectId}/${this.environment}/stats`);
+  }
+
+  clearDatabase(database) {
+    return this.http.post(`/api/projects/${this.projectId}/${this.environment}/clear/${database}`, '');
+  }
+
+  clearAllDatabases() {
+    return this.http.post(`/api/projects/${this.projectId}/${this.environment}/clear-all`, '');
+  }
+
   private extractData(res: Response) {
     return res.json();
   }

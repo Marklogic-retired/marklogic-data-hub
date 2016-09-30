@@ -74,7 +74,8 @@ public class DataHub extends LoggingObject {
 
     private ManageConfig config;
     private ManageClient client;
-
+    private DatabaseManager databaseManager;
+    private ServerManager serverManager;
     private HubConfig hubConfig;
 
     private AdminManager adminManager;
@@ -95,6 +96,8 @@ public class DataHub extends LoggingObject {
         this.hubConfig = hubConfig;
         config = new ManageConfig(hubConfig.host, 8002, hubConfig.username, hubConfig.password);
         client = new ManageClient(config);
+        databaseManager = new DatabaseManager(client);
+        serverManager = new ServerManager(client);
 
         AdminConfig adminConfig = new AdminConfig();
         adminConfig.setHost(hubConfig.host);
@@ -112,17 +115,14 @@ public class DataHub extends LoggingObject {
      * @return true if installed, false otherwise
      */
     public boolean isInstalled() {
-        ServerManager sm = new ServerManager(client);
-        DatabaseManager dm = new DatabaseManager(client);
-
-        ResourcesFragment srf = sm.getAsXml();
+        ResourcesFragment srf = serverManager.getAsXml();
         boolean stagingAppServerExists = srf.resourceExists(hubConfig.stagingHttpName);
         boolean finalAppServerExists = srf.resourceExists(hubConfig.finalHttpName);
         boolean traceAppServerExists = srf.resourceExists(hubConfig.traceHttpName);
         boolean jobAppServerExists = srf.resourceExists(hubConfig.jobHttpName);
         boolean appserversOk = (stagingAppServerExists && finalAppServerExists && traceAppServerExists && jobAppServerExists);
 
-        ResourcesFragment drf = dm.getAsXml();
+        ResourcesFragment drf = databaseManager.getAsXml();
         boolean stagingDbExists = drf.resourceExists(hubConfig.stagingDbName);
         boolean finalDbExists = drf.resourceExists(hubConfig.finalDbName);
         boolean traceDbExists = drf.resourceExists(hubConfig.traceDbName);
@@ -139,14 +139,14 @@ public class DataHub extends LoggingObject {
         boolean jobIndexesOn = false;
 
         if (stagingDbExists) {
-            Fragment f = dm.getPropertiesAsXml(hubConfig.stagingDbName);
+            Fragment f = databaseManager.getPropertiesAsXml(hubConfig.stagingDbName);
             stagingIndexesOn = Boolean.parseBoolean(f.getElementValue("//m:triple-index"));
             stagingIndexesOn = stagingIndexesOn && Boolean.parseBoolean(f.getElementValue("//m:collection-lexicon"));
             stagingForestsExist = (f.getElements("//m:forest").size() == hubConfig.stagingForestsPerHost);
         }
 
         if (finalDbExists) {
-            Fragment f = dm.getPropertiesAsXml(hubConfig.finalDbName);
+            Fragment f = databaseManager.getPropertiesAsXml(hubConfig.finalDbName);
             finalIndexesOn = Boolean.parseBoolean(f.getElementValue("//m:triple-index"));
             finalIndexesOn = finalIndexesOn && Boolean.parseBoolean(f.getElementValue("//m:collection-lexicon"));
             finalForestsExist = (f.getElements("//m:forest").size() == hubConfig.finalForestsPerHost);
@@ -154,13 +154,13 @@ public class DataHub extends LoggingObject {
 
         if (traceDbExists) {
             traceIndexesOn = true;
-            Fragment f = dm.getPropertiesAsXml(hubConfig.traceDbName);
+            Fragment f = databaseManager.getPropertiesAsXml(hubConfig.traceDbName);
             traceForestsExist = (f.getElements("//m:forest").size() == hubConfig.traceForestsPerHost);
         }
 
         if (jobDbExists) {
             jobIndexesOn = true;
-            Fragment f = dm.getPropertiesAsXml(hubConfig.jobDbName);
+            Fragment f = databaseManager.getPropertiesAsXml(hubConfig.jobDbName);
             jobForestsExist = (f.getElements("//m:forest").size() == hubConfig.jobForestsPerHost);
         }
 
@@ -299,6 +299,14 @@ public class DataHub extends LoggingObject {
         catch(FailedRequestException e) {
             logger.error("Failed to clear user modules");
         }
+    }
+
+    /**
+     * Clears out the content in the given database
+     * @param database - the database name to clear
+     */
+    public void clearContent(String database) {
+        databaseManager.clearDatabase(database);
     }
 
     private EvalResultIterator runInDatabase(String query, String databaseName) {
