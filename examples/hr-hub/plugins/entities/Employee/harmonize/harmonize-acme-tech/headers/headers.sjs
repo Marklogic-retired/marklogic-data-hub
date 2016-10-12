@@ -17,6 +17,7 @@ function createHeaders(id, content, options) {
     var date = xs.date(xdmp.parseDateTime('[M01]/[D01]/[Y0001]', history.effectiveDate));
     if (date.gt(latest)) {
       salary = history.salary;
+      latest = date;
     }
   }
 
