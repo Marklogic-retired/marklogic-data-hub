@@ -1,3 +1,5 @@
+<p style="font-style: italic; font-size:12px;">The MarkLogic Data Hub Framework is free and open source under the <a href="https://github.com/marklogic/marklogic-data-hub/blob/master/LICENSE">Apache 2 License</a> and is supported by the community of developers who build and contribute to it. Please note that Data Hub Framework is not a supported MarkLogic product.</p>
+
 OS | Status
 --- | --- | ---
 Linux/Mac | [![Build Status](https://travis-ci.org/marklogic/marklogic-data-hub.svg?branch=master)](https://travis-ci.org/marklogic/marklogic-data-hub)
