@@ -90,7 +90,9 @@ task copyIndexHtml(type: Copy) {
     dependsOn tasks.copyUIAssets
 }
 
-processResources.dependsOn copyIndexHtml
+if (!gradle.startParameter.taskNames.contains('bootrun')) {
+  processResources.dependsOn copyIndexHtml
+}
 
 bootRun {
     addResources = true

@@ -11,6 +11,7 @@ buildscript {
 plugins {
     id 'net.saliman.properties' version '1.4.5'
     id "groovy"
+    id "java-gradle-plugin"
     id "maven-publish"
     id "eclipse"
     id "idea"
@@ -24,13 +25,30 @@ targetCompatibility = 1.8
 
 repositories {
     jcenter()
+    mavenCentral()
     maven { url 'http://developer.marklogic.com/maven2' }
 }
 
 dependencies {
     compile gradleApi()
-    compile 'com.marklogic:marklogic-data-hub:+'
+    compile project(":marklogic-data-hub")
     compile 'com.marklogic:marklogic-xcc:8.0.5'
+    compile 'com.marklogic:ml-gradle:2.3.4'
+
+    testCompile localGroovy()
+    testCompile gradleTestKit()
+    testCompile('org.spockframework:spock-core:1.1-groovy-2.4-rc-2') {
+        exclude module: 'groovy-all'
+    }
+}
+
+gradlePlugin {
+    plugins {
+        simplePlugin {
+            id = "com.marklogic.ml-data-hub"
+            implementationClass = "com.marklogic.gradle.DataHubPlugin"
+        }
+    }
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {

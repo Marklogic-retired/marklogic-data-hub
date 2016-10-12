@@ -1,24 +1,22 @@
 package com.marklogic.gradle.task
 
-import com.marklogic.hub.Scaffolding;
-import com.marklogic.hub.PluginFormat;
-import com.marklogic.hub.flow.FlowType;
-import com.marklogic.client.io.Format;
+import com.marklogic.client.io.Format
+import com.marklogic.gradle.exception.EntityNameRequiredException
+import com.marklogic.gradle.exception.FlowNameRequiredException
+import com.marklogic.hub.PluginFormat
+import com.marklogic.hub.Scaffolding
+import com.marklogic.hub.flow.FlowType
 
-import org.gradle.api.tasks.TaskAction
-
-class CreateFlowTask extends HubTask {
+abstract class CreateFlowTask extends HubTask {
 
     void createFlow(FlowType flowType) {
         def entityName = project.hasProperty("entityName") ? project.property("entityName") : null
         if (entityName == null) {
-            println "entityName property is required."
-            return
+            throw new EntityNameRequiredException()
         }
         def flowName = project.hasProperty("flowName") ? project.property("flowName") : null
         if (flowName == null) {
-            println "flowName property is required."
-            return
+            throw new FlowNameRequiredException()
         }
 
         def pluginFormat = project.hasProperty("pluginFormat") ?

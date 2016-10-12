@@ -21,7 +21,6 @@ import com.marklogic.appdeployer.command.security.*
 import com.marklogic.appdeployer.command.tasks.DeployScheduledTasksCommand
 import com.marklogic.appdeployer.command.triggers.DeployTriggersCommand
 import com.marklogic.appdeployer.command.viewschemas.DeployViewSchemasCommand
-import com.marklogic.gradle.ProjectPropertySource
 import com.marklogic.gradle.task.*
 import com.marklogic.hub.DataHub
 import com.marklogic.hub.DefaultHubConfigFactory
@@ -37,7 +36,10 @@ class DataHubPlugin implements Plugin<Project> {
 
     org.slf4j.Logger logger = LoggerFactory.getLogger(getClass())
 
+    @Override
     void apply(Project project) {
+        project.plugins.apply(MarkLogicPlugin.class)
+
         logger.info("\nInitializing data-hub-gradle")
 
         initializeProjectExtensions(project)

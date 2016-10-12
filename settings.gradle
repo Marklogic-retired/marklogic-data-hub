@@ -7,4 +7,5 @@ include 'services:webservice'
 
 rootProject.name = 'marklogic-data-hub'
 include ':marklogic-data-hub'
+include ':ml-data-hub-plugin'
 include ':quick-start'
