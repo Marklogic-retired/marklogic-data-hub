@@ -15,9 +15,9 @@
  */
 package com.marklogic.hub.collector;
 
-import java.util.List;
-
 import com.marklogic.hub.plugin.PluginType;
+
+import java.util.Vector;
 
 public class QueryCollector extends ServerCollector {
 
@@ -28,7 +28,7 @@ public class QueryCollector extends ServerCollector {
     }
 
     @Override
-    public List<String> run() {
+    public Vector<String> run() {
         return null;
     }
 

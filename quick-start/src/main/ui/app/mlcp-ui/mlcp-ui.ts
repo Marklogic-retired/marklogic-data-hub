@@ -481,7 +481,7 @@ export class MlcpUiComponent {
           if (setting.value) {
             const key = setting.field;
             let value = setting.value;
-            if (setting.type !== 'boolean') {
+            if (setting.type !== 'boolean' && setting.type !== 'number') {
               value = '"' + setting.value + '"';
             }
             this.addMlcpOption(options, key, value, true, true);

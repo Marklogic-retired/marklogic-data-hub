@@ -15,12 +15,6 @@
  */
 package com.marklogic.hub.collector;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.extensions.ResourceManager;
 import com.marklogic.client.extensions.ResourceServices.ServiceResult;
@@ -28,6 +22,10 @@ import com.marklogic.client.extensions.ResourceServices.ServiceResultIterator;
 import com.marklogic.client.io.JacksonDatabindHandle;
 import com.marklogic.client.util.RequestParameters;
 import com.marklogic.hub.plugin.PluginType;
+
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+import java.util.Vector;
 
 public class ServerCollector extends AbstractCollector {
 
@@ -61,12 +59,12 @@ public class ServerCollector extends AbstractCollector {
     }
 
     @Override
-    public List<String> run() {
+    public Vector<String> run() {
         CollectorModule cm = new CollectorModule(client);
         return cm.run(getModule());
     }
 
-    static class CollectorModule  extends ResourceManager {
+    static class CollectorModule extends ResourceManager {
         static final public String NAME = "collector";
 
         public CollectorModule(DatabaseClient client) {
@@ -74,11 +72,11 @@ public class ServerCollector extends AbstractCollector {
             client.init(NAME, this);
         }
 
-        public List<String> run(String moduleUri) {
+        public Vector<String> run(String moduleUri) {
             RequestParameters params = new RequestParameters();
             params.add("module-uri", moduleUri);
 
-            ServiceResultIterator resultItr = null;
+            ServiceResultIterator resultItr;
 
             resultItr = this.getServices().get(params);
 
@@ -87,7 +85,7 @@ public class ServerCollector extends AbstractCollector {
             }
 
             ServiceResult res = resultItr.next();
-            JacksonDatabindHandle<ArrayList<String>> handle = new JacksonDatabindHandle<ArrayList<String>>(new ArrayList<String>());
+            JacksonDatabindHandle<Vector<String>> handle = new JacksonDatabindHandle<>(new Vector<String>());
             handle.getMapper().disableDefaultTyping();
             return res.getContent(handle).get();
         }
