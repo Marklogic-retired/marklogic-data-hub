@@ -38,7 +38,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-public class FlowManagerService extends LoggingObject{
+public class FlowManagerService extends LoggingObject {
 
     private static final String PROJECT_TMP_FOLDER = ".tmp";
     @Autowired

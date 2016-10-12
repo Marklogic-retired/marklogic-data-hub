@@ -1,22 +1,17 @@
 package com.marklogic.spring.batch.hub;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.marklogic.hub.collector.Collector;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.item.ItemStreamException;
-import org.springframework.batch.item.ItemStreamReader;
+import org.springframework.batch.item.support.SynchronizedItemStreamReader;
 
-import com.marklogic.client.helper.LoggingObject;
-import com.marklogic.hub.collector.Collector;
+import java.util.Vector;
 
-public class CollectorReader extends LoggingObject implements ItemStreamReader<String> {
+public class CollectorReader extends SynchronizedItemStreamReader<String> {
 
     private Collector collector;
 
-    private List<String> results;
-
-    private int index = 0;
+    private Vector<String> results;
 
     public CollectorReader(Collector collector) {
         this.collector = collector;
@@ -28,7 +23,7 @@ public class CollectorReader extends LoggingObject implements ItemStreamReader<S
             this.results = collector.run();
         }
         else {
-            this.results = new ArrayList<>();
+            this.results = new Vector<>();
         }
 
         executionContext.putInt("totalItems", this.results.size());
@@ -38,9 +33,11 @@ public class CollectorReader extends LoggingObject implements ItemStreamReader<S
     public String read() {
         String result = null;
 
-        if (results.size() > this.index) {
-            result = this.results.get(this.index);
-            index++;
+        try {
+            result = this.results.remove(0);
+        }
+        catch(ArrayIndexOutOfBoundsException e) {
+
         }
 
         return result;

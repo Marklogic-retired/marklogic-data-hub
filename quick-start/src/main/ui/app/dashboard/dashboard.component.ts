@@ -24,9 +24,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   constructor(private projectService: ProjectService) {}
 
   getStatus() {
-    if (this.statsInterval) {
-      clearInterval(this.statsInterval);
-    }
+    this.ngOnDestroy();
 
     this.projectService.getStatus().subscribe((stats) => {
       this.stats = stats;
@@ -46,6 +44,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     if (this.statsInterval) {
       clearInterval(this.statsInterval);
+      delete this.statsInterval;
     }
   }
 

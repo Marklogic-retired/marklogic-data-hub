@@ -15,16 +15,15 @@
  */
 package com.marklogic.hub.collector;
 
-import java.util.List;
+import com.marklogic.hub.plugin.PluginType;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
-
-import com.marklogic.hub.plugin.PluginType;
+import java.util.Vector;
 
 public interface Collector {
 
     PluginType getType();
-    List<String> run();
+    Vector<String> run();
     void serialize(XMLStreamWriter serializer) throws XMLStreamException;
 }

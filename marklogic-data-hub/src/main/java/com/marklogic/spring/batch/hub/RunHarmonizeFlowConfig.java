@@ -33,7 +33,10 @@ public class RunHarmonizeFlowConfig extends AbstractMarkLogicBatchConfig {
 
     @Bean
     public Job job(@Qualifier("step1") Step step1) {
-        return jobBuilderFactory.get("Harmonize").start(step1).listener(new JobExecutionListener() {
+        return jobBuilderFactory.get("Harmonize")
+            .start(step1)
+            .preventRestart()
+            .listener(new JobExecutionListener() {
             @Override
             public void beforeJob(JobExecution jobExecution) {
                 jobId = jobExecution.getJobId();
