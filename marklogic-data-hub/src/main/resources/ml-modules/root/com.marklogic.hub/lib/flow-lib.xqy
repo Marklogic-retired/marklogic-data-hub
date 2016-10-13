@@ -516,6 +516,8 @@ declare function flow:run-flow(
   $content as item()?,
   $options as map:map) as empty-sequence()
 {
+  (: assert that we are in query mode :)
+  let $_ts as xs:unsignedLong := xdmp:request-timestamp()
   let $envelope := flow:run-plugins($flow, $identifier, $content, $options)
   let $_ :=
     for $writer in $flow/hub:writer
@@ -760,9 +762,20 @@ declare function flow:run-writer(
   let $before := xdmp:elapsed-time()
   let $resp :=
     try {
-      xdmp:invoke-function(function() {
+      xdmp:eval('
+        declare variable $func external;
+        declare variable $identifier external;
+        declare variable $envelope external;
+        declare variable $options external;
+
         $func($identifier, $envelope, $options)
-      },
+      ',
+      map:new((
+        map:entry("func", $func),
+        map:entry("identifier", $identifier),
+        map:entry("envelope", $envelope),
+        map:entry("options", $options)
+      )),
       map:new((
         map:entry("isolation", "different-transaction"),
         map:entry("database", xdmp:database($config:FINAL-DATABASE)),

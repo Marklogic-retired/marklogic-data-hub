@@ -71,7 +71,7 @@ declare function get(
  :
  : The flow xml is provided in the request body
  :)
-declare %rapi:transaction-mode("update") function post(
+declare function post(
   $context as map:map,
   $params  as map:map,
   $input   as document-node()*
