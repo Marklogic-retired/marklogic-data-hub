@@ -5,6 +5,7 @@ $light: unquote("rgb(#{$palette-datahub-A100})");
 
 .section-header {
   width: 100%;
+  flex: none;
 }
 
 .section-title {
@@ -17,6 +18,7 @@ $light: unquote("rgb(#{$palette-datahub-A100})");
 
 .databases {
   background-color: $light;
+  flex: none;
 }
 
 .info-card {

@@ -138,6 +138,7 @@ $header-height: 48px;
 }
 
 .mdl-list__item .mdl-list__item-primary-content {
+  overflow: hidden;
   i {
     margin-right: 10px;
   }
