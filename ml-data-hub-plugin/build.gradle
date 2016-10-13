@@ -42,15 +42,6 @@ dependencies {
     }
 }
 
-gradlePlugin {
-    plugins {
-        simplePlugin {
-            id = "com.marklogic.ml-data-hub"
-            implementationClass = "com.marklogic.gradle.DataHubPlugin"
-        }
-    }
-}
-
 task sourcesJar(type: Jar, dependsOn: classes) {
     classifier 'sources'
     from sourceSets.main.allJava
