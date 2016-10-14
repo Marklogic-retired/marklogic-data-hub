@@ -46,6 +46,7 @@ public class RunHarmonizeFlowConfig extends AbstractMarkLogicBatchConfig {
             public void afterJob(JobExecution jobExecution) {
                 if (statusListener != null) {
                     statusListener.onStatusChange(jobId, 100, "");
+                    statusListener.onJobFinished();
                 }
             }
         }).build();

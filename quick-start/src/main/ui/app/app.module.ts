@@ -23,6 +23,7 @@ import { FolderBrowserComponent } from './folder-browser/folder-browser.componen
 import { HeaderComponent } from './header/header.component';
 import { JobsComponent } from './jobs';
 import { MlcpUiComponent } from './mlcp-ui';
+import { MlErrorComponent } from './ml-error';
 import { NewEntityComponent } from './new-entity/new-entity';
 import { NewFlowComponent } from './new-flow/new-flow';
 import { NoContentComponent } from './no-content';
@@ -55,6 +56,7 @@ import { TitlecasePipe } from './titlecase.pipe';
     JobsComponent,
     LoginComponent,
     MlcpUiComponent,
+    MlErrorComponent,
     NewEntityComponent,
     NewFlowComponent,
     PaginationComponent,

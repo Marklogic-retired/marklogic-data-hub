@@ -60,12 +60,11 @@
     <div>
       <div class="subheader" (click)="outputCollapsed = !outputCollapsed" *ngIf="currentPlugin.output">Output <i class="fa" [ngClass]="outputCollapsed ? 'fa-caret-left' : 'fa-caret-down'"></i></div>
       <codemirror *ngIf="!outputCollapsed && currentPlugin.output" [ngModel]="formatData(currentPlugin.output)" [config]="codeMirrorConfig"></codemirror>
-      <div (click)="errorCollapsed = !errorCollapsed" *ngIf="currentPlugin.error">Error <i class="fa" [ngClass]="errorCollapsed ? 'fa-caret-left' : 'fa-caret-down'"></i></div>
-      <codemirror *ngIf="!errorCollapsed && currentPlugin.error" [ngModel]="formatData(currentPlugin.error)" [config]="codeMirrorConfig"></codemirror>
+      <div class="subheader error-sub" (click)="errorCollapsed = !errorCollapsed" *ngIf="currentPlugin.error">Error <i class="fa" [ngClass]="errorCollapsed ? 'fa-caret-left' : 'fa-caret-down'"></i></div>
+      <app-ml-error *ngIf="!errorCollapsed && currentPlugin.error" [error]="currentPlugin.error"></app-ml-error>
       <div class="info" *ngIf="currentPluginType === 'writer'">
         The Data Hub Framework can't capture output from a writer plugin.
       </div>
     </div>
   </div>
 </div>
-

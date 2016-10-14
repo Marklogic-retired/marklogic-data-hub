@@ -220,17 +220,30 @@ declare function flow:get-flow(
   $flow-name as xs:string,
   $flow-type as xs:string?) as element(hub:flow)?
 {
-  let $uris :=
-    hul:run-in-modules(function() {
-      let $type :=
-        if ($flow-type) then $flow-type
-        else "*"
-      return
-        cts:uri-match($ENTITIES-DIR || $entity-name || "/" || $type || "/" || $flow-name || "/*")
-    })
-  where fn:count($uris) > 0
+  let $cache-name := fn:string-join(("flow:", $entity-name, $flow-name, $flow-type), "-")
   return
-    flow:get-flow($entity-name, $flow-name, $flow-type, $uris)
+    hul:from-field-cache($cache-name, function() {
+      let $uris :=
+        hul:run-in-modules(function() {
+          let $type :=
+            if ($flow-type) then $flow-type
+            else "*"
+          return
+            cts:uri-match($ENTITIES-DIR || $entity-name || "/" || $type || "/" || $flow-name || "/*")
+        })
+      where fn:count($uris) > 0
+      return
+        flow:get-flow($entity-name, $flow-name, $flow-type, $uris)
+    },
+    xs:dayTimeDuration("PT10M"))
+};
+
+declare function flow:invalidate-flow-caches()
+{
+  for $name in xdmp:get-server-field-names()
+  where fn:starts-with($name, "flow:")
+  return
+    xdmp:set-server-field($name, ())
 };
 
 (:~
@@ -591,67 +604,65 @@ declare function flow:run-plugin(
           "create-" || $destination
       let $func := xdmp:function(fn:QName($ns, $func-name), $module-uri)
       let $trace-input :=
-        if (trace:enabled()) then
-          if ($data-format = 'application/xml') then
-            switch($destination)
-              case "content" return
-                if ($flow-type = "input") then
-                  let $kind := try {
-                    xdmp:node-kind($content)
-                  }
-                  catch($ex) {}
-                  return
-                    if ($kind eq "binary") then
-                      element rawContent { "binary document" }
-                    else
-                      element rawContent { $content }
-                else
-                  ()
-              case "headers" return
-                element content { $content }
-              case "triples" return
-              (
-                element content { $content },
-                element headers { $headers }
-              )
-              default return ()
-          else
-            let $o := json:object()
-            let $_ :=
-              let $content :=
-                (
-                  if ($content instance of document-node()) then
-                    $content/node()
+        if ($data-format = 'application/xml') then
+          switch($destination)
+            case "content" return
+              if ($flow-type = "input") then
+                let $kind := try {
+                  xdmp:node-kind($content)
+                }
+                catch($ex) {}
+                return
+                  if ($kind eq "binary") then
+                    element rawContent { "binary document" }
                   else
-                    $content,
-                  null-node{}
-                )[1]
-              return
-                switch($destination)
-                  case "content" return
-                    if ($flow-type = "input") then
-                      let $kind := try {
-                        xdmp:node-kind($content)
-                      }
-                      catch($ex) {}
-                      return
-                        if ($kind eq "binary") then
-                          map:put($o, "rawContent", "binary document")
-                        else
-                          map:put($o, "rawContent", $content)
-                    else
-                      ()
-                  case "headers" return
-                    map:put($o, "content", $content)
-                  case "triples" return
-                  (
-                    map:put($o, "content", $content),
-                    map:put($o, "headers", ($headers, null-node{})[1])
-                  )
-                  default return ()
+                    element rawContent { $content }
+              else
+                ()
+            case "headers" return
+              element content { $content }
+            case "triples" return
+            (
+              element content { $content },
+              element headers { $headers }
+            )
+            default return ()
+        else
+          let $o := json:object()
+          let $_ :=
+            let $content :=
+              (
+                if ($content instance of document-node()) then
+                  $content/node()
+                else
+                  $content,
+                null-node{}
+              )[1]
             return
-             $o
-        else ()
+              switch($destination)
+                case "content" return
+                  if ($flow-type = "input") then
+                    let $kind := try {
+                      xdmp:node-kind($content)
+                    }
+                    catch($ex) {}
+                    return
+                      if ($kind eq "binary") then
+                        map:put($o, "rawContent", "binary document")
+                      else
+                        map:put($o, "rawContent", $content)
+                  else
+                    ()
+                case "headers" return
+                  map:put($o, "content", $content)
+                case "triples" return
+                (
+                  map:put($o, "content", $content),
+                  map:put($o, "headers", ($headers, null-node{})[1])
+                )
+                default return ()
+          return
+           $o
       let $before := xdmp:elapsed-time()
       let $resp :=
         try {
@@ -720,20 +731,18 @@ declare function flow:run-plugin(
             else
               $resp
       let $_ :=
-        if (trace:enabled()) then
-          trace:plugin-trace(
-            $identifier,
-            $module-uri,
-            $destination,
-            $flow-type,
-            $trace-input,
-            if ($data-format = 'application/xml') then
-              $resp
-            else
-              ($resp, null-node{})[1],
-            $duration
-          )
-        else ()
+        trace:plugin-trace(
+          $identifier,
+          $module-uri,
+          $destination,
+          $flow-type,
+          $trace-input,
+          if ($data-format = 'application/xml') then
+            $resp
+          else
+            ($resp, null-node{})[1],
+          $duration
+        )
       return
         $resp
 };
@@ -853,6 +862,7 @@ declare function flow:validate-entities()
   let $_ :=
     for $entity in flow:get-entities()/hub:entity
     for $flow in $entity/hub:flows/hub:flow
+    let $_ := xdmp:log(("flow!", $flow))
     let $data-format := $flow/hub:data-format
     (: validate collector :)
     let $_ :=
@@ -888,7 +898,7 @@ declare function flow:validate-entities()
       }
     (: validate plugins :)
     let $_ :=
-      for $plugin in $flow/hub:plugins/hub:plugin
+      for $plugin in $flow/hub:plugins/hub:plugin[fn:exists(@module)]
       let $destination := $plugin/@dest
       let $module-uri := $plugin/@module
       let $filename as xs:string := hul:get-file-from-uri($module-uri)

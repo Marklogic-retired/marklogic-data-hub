@@ -22,6 +22,7 @@ import com.marklogic.client.modulesloader.impl.DefaultModulesLoader;
 import com.marklogic.client.modulesloader.impl.PropertiesModuleManager;
 import com.marklogic.client.modulesloader.impl.XccAssetLoader;
 import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.flow.FlowCacheInvalidator;
 import com.marklogic.hub.util.HubFileFilter;
 
 public class LoadUserModulesCommand extends AbstractCommand {
@@ -97,6 +98,10 @@ public class LoadUserModulesCommand extends AbstractCommand {
                         }
                     }
                 });
+
+                // invalidate the server's flow cache
+                FlowCacheInvalidator invalidator = new FlowCacheInvalidator(stagingClient);
+                invalidator.invalidateCache();
             }
         }
         catch (IOException e) {

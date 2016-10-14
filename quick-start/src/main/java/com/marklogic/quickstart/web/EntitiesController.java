@@ -129,6 +129,8 @@ class EntitiesController extends BaseController {
                 public void onStatusChange(long jobId, int percentComplete, String message) {
                     template.convertAndSend("/topic/flow-status", new JobStatusMessage(Long.toString(jobId), percentComplete, message, flowType.toString()));
                 }
+                @Override
+                public void onJobFinished() {}
             });
             resp = new ResponseEntity<>(execution, HttpStatus.OK);
         }
@@ -182,6 +184,8 @@ class EntitiesController extends BaseController {
             public void onStatusChange(long jobId, int percentComplete, String message) {
                 template.convertAndSend("/topic/flow-status", new JobStatusMessage(Long.toString(jobId), percentComplete, message, flowType.toString()));
             }
+            @Override
+            public void onJobFinished() {}
         });
     }
 

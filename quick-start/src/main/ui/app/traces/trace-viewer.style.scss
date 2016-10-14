@@ -68,6 +68,10 @@ $green-color: unquote("rgb(#{$palette-datahub-green})");
   background-color: $subheader-bg-color;
   color: white;
   border-bottom: 1px solid $gutter-color;
+
+  &.error-sub {
+    background-color: $red-color;
+  }
 }
 
 codemirror {

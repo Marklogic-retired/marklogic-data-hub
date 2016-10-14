@@ -92,3 +92,13 @@ declare function post(
       document { () }
   })
 };
+
+declare function delete(
+  $context as map:map,
+  $params  as map:map
+  ) as document-node()?
+{
+  let $_ := flow:invalidate-flow-caches()
+  return
+    document { () }
+};
