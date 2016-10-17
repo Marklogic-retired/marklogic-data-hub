@@ -71,8 +71,9 @@ declare function hul:set-field-cache($name, $value, $duration as xs:dayTimeDurat
 {
   (
     if (fn:exists($duration)) then (
-      xdmp:set-server-field($name, $value),
-      xdmp:set-server-field($name || "-refresh-date", fn:current-dateTime() + $duration)
+      let $_ := xdmp:set-server-field($name || "-refresh-date", fn:current-dateTime() + $duration)
+      return
+        xdmp:set-server-field($name, $value)
     )
     else
       xdmp:set-server-field($name, $value)
