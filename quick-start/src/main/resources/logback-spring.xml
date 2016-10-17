@@ -14,6 +14,7 @@
   <logger name="com.marklogic.spring.batch.core.repository.dao.MarkLogicStepExecutionDao" level="WARN"/>
   <logger name="com.marklogic.spring.batch.core.repository.dao.MarkLogicJobExecutionDao" level="WARN"/>
   <logger name="com.marklogic.client.impl.DocumentManagerImpl" level="WARN"/>
+  <logger name="com.marklogic.client.impl.DatabaseClientImpl" level="WARN"/>
   <logger name="com.marklogic" level="INFO"/>
   <logger name="com.marklogic.appdeployer" level="INFO"/>
   <logger name="com.marklogic.hub" level="INFO"/>

@@ -17,6 +17,9 @@ xquery version "1.0-ml";
 
 module namespace debug = "http://marklogic.com/data-hub/debug";
 
+import module namespace hul = "http://marklogic.com/data-hub/hub-utils-lib"
+  at "/com.marklogic.hub/lib/hub-utils-lib.xqy";
+
 declare option xdmp:mapping "false";
 
 declare function debug:enable($enabled as xs:boolean)
@@ -28,9 +31,11 @@ declare function debug:enable($enabled as xs:boolean)
     xdmp:document-insert(
       "/com.marklogic.hub/settings/__debug_enabled__.xml",
       element debug:is-debugging-enabled { if ($enabled) then 1 else 0 })
-  ',
-  map:new((map:entry("enabled", $enabled))),
-  map:new(map:entry("database", xdmp:modules-database())))
+    ',
+    map:new((map:entry("enabled", $enabled))),
+    map:new(map:entry("database", xdmp:modules-database()))
+  ),
+  hul:invalidate-field-cache("debugging-enabled")
 };
 
 (:~
@@ -40,16 +45,19 @@ declare function debug:enable($enabled as xs:boolean)
  :)
 declare function debug:on() as xs:boolean
 {
-  xdmp:eval('
-    declare namespace debug = "http://marklogic.com/data-hub/debug";
-    fn:exists(
-      cts:search(
-        fn:doc("/com.marklogic.hub/settings/__debug_enabled__.xml"),
-        cts:element-value-query(xs:QName("debug:is-debugging-enabled"), "1", ("exact")),
-        ("unfiltered", "score-zero", "unchecked", "unfaceted")
+  hul:from-field-cache("debugging-enabled", function() {
+    xdmp:eval('
+      declare namespace debug = "http://marklogic.com/data-hub/debug";
+      fn:exists(
+        cts:search(
+          fn:doc("/com.marklogic.hub/settings/__debug_enabled__.xml"),
+          cts:element-value-query(xs:QName("debug:is-debugging-enabled"), "1", ("exact")),
+          ("unfiltered", "score-zero", "unchecked", "unfaceted")
+        )
       )
-    )
-  ',(), map:new(map:entry("database", xdmp:modules-database())))
+    ',(), map:new(map:entry("database", xdmp:modules-database())))
+  },
+  xs:dayTimeDuration("PT1M"))
 };
 
 (:~

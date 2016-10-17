@@ -1,7 +1,7 @@
 package com.marklogic.gradle.task
 
-import org.gradle.api.tasks.TaskAction
 import com.marklogic.hub.commands.LoadUserModulesCommand
+import org.gradle.api.tasks.TaskAction
 
 /**
  * Runs an infinite loop, and each second, it loads any new/modified modules. Often useful to run with the Gradle "-i" flag

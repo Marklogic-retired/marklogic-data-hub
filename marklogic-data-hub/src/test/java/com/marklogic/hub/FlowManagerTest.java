@@ -15,29 +15,6 @@
  */
 package com.marklogic.hub;
 
-import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual;
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
-
-import java.io.IOException;
-import java.util.List;
-
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.stream.XMLStreamException;
-
-import org.custommonkey.xmlunit.XMLUnit;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.springframework.batch.core.JobExecution;
-import org.springframework.batch.core.JobExecutionListener;
-import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
-
 import com.marklogic.client.io.DOMHandle;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.Format;
@@ -46,12 +23,24 @@ import com.marklogic.hub.collector.ServerCollector;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.FlowType;
 import com.marklogic.hub.flow.SimpleFlow;
-import com.marklogic.hub.plugin.ContentPlugin;
-import com.marklogic.hub.plugin.HeadersPlugin;
-import com.marklogic.hub.plugin.PluginType;
-import com.marklogic.hub.plugin.ServerPlugin;
-import com.marklogic.hub.plugin.TriplesPlugin;
+import com.marklogic.hub.plugin.*;
 import com.marklogic.hub.writer.DefaultWriter;
+import org.custommonkey.xmlunit.XMLUnit;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.stream.XMLStreamException;
+import java.io.IOException;
+import java.util.List;
+
+import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.junit.Assert.*;
 
 public class FlowManagerTest extends HubTestBase {
 

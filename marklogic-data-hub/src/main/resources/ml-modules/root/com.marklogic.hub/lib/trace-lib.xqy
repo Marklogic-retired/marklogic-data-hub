@@ -20,6 +20,12 @@ module namespace trace = "http://marklogic.com/data-hub/trace";
 import module namespace config = "http://marklogic.com/data-hub/config"
   at "/com.marklogic.hub/lib/config.xqy";
 
+import module namespace err = "http://marklogic.com/data-hub/err"
+  at "/com.marklogic.hub/lib/error-lib.xqy";
+
+import module namespace hul = "http://marklogic.com/data-hub/hub-utils-lib"
+  at "/com.marklogic.hub/lib/hub-utils-lib.xqy";
+
 import module namespace json="http://marklogic.com/xdmp/json"
   at "/MarkLogic/json/json.xqy";
 
@@ -51,23 +57,28 @@ declare function trace:enable-tracing($enabled as xs:boolean)
     xdmp:document-insert(
       "/com.marklogic.hub/settings/__tracing_enabled__.xml",
       element trace:is-tracing-enabled { if ($enabled) then 1 else 0 })
-  ',
-  map:new((map:entry("enabled", $enabled))),
-  map:new(map:entry("database", xdmp:modules-database())))
+    ',
+    map:new((map:entry("enabled", $enabled))),
+    map:new(map:entry("database", xdmp:modules-database()))
+  ),
+  hul:invalidate-field-cache("tracing-enabled")
 };
 
 declare function trace:enabled() as xs:boolean
 {
-  xdmp:eval('
-    declare namespace trace = "http://marklogic.com/data-hub/trace";
-    fn:exists(
-      cts:search(
-        fn:doc("/com.marklogic.hub/settings/__tracing_enabled__.xml"),
-        cts:element-value-query(xs:QName("trace:is-tracing-enabled"), "1", ("exact")),
-        ("unfiltered", "score-zero", "unchecked", "unfaceted")
+  hul:from-field-cache("tracing-enabled", function() {
+    xdmp:eval('
+      declare namespace trace = "http://marklogic.com/data-hub/trace";
+      fn:exists(
+        cts:search(
+          fn:doc("/com.marklogic.hub/settings/__tracing_enabled__.xml"),
+          cts:element-value-query(xs:QName("trace:is-tracing-enabled"), "1", ("exact")),
+          ("unfiltered", "score-zero", "unchecked", "unfaceted")
+        )
       )
-    )
-  ',(), map:new(map:entry("database", xdmp:modules-database())))
+    ',(), map:new(map:entry("database", xdmp:modules-database())))
+  },
+  xs:dayTimeDuration("PT1M"))
 };
 
 declare function trace:has-errors() as xs:boolean
@@ -148,7 +159,7 @@ declare function trace:write-trace()
         map:entry("trace", $trace)
       )),
       map:new((
-        map:entry("database", xdmp:database($config:TRACING-DATABASE)),
+        map:entry("database", xdmp:database($config:TRACE-DATABASE)),
         map:entry("transactionMode", "update-auto-commit")
       ))),
     xdmp:set($current-trace, trace:new-trace())
@@ -313,7 +324,7 @@ declare function trace:_walk_json($nodes as node()* ,$o)
       case element(output) return
         map:put($o, fn:local-name($n), xdmp:quote($n/node(), $quote-options))
       case element(error) return
-        map:put($o, fn:local-name($n), xdmp:quote($n/node(), $quote-options))
+        map:put($o, fn:local-name($n), $n/error:error/err:error-to-json(.))
       case element(duration) return
         map:put($o, "duration", fn:seconds-from-duration(xs:dayTimeDuration($n)))
       case element(hasError) return

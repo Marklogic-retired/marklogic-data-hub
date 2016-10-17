@@ -11,12 +11,12 @@
     <dispatch>/trace-ui/index.html</dispatch>
   </match-path>
 
-  <match-path matches="^/(app|vendor).*\.(js|css)(\.map)?$">
+  <match-path matches="^/.*\.(js|css|ttf|eot|woff|woff2|svg)$">
     <add-query-param name="uri">$0</add-query-param>
     <dispatch>/com.marklogic.hub/endpoints/trace-ui.xqy</dispatch>
   </match-path>
 
-  <match-path matches="^/resources/.+$">
+  <match-path matches="^/assets/.+$">
     <add-query-param name="uri">$0</add-query-param>
     <dispatch>/com.marklogic.hub/endpoints/trace-ui.xqy</dispatch>
   </match-path>

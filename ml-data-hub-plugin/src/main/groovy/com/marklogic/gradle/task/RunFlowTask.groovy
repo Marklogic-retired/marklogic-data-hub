@@ -1,40 +1,77 @@
 package com.marklogic.gradle.task
 
+import com.marklogic.gradle.exception.EntityNameRequiredException
+import com.marklogic.gradle.exception.FlowNameRequiredException
+import com.marklogic.gradle.exception.FlowNotFoundException
+import com.marklogic.gradle.exception.HubNotInstalledException
+import com.marklogic.hub.FlowManager
+import com.marklogic.hub.JobStatusListener
+import com.marklogic.hub.flow.Flow
+import com.marklogic.hub.flow.FlowType
+import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
 
 class RunFlowTask extends HubTask {
+    @Input
+    public String entityName
+
+    @Input
+    public String flowName
+
+    @Input
+    public FlowType flowType
+
+    @Input
+    public int batchSize
+
+    @Input
+    public int threadCount
 
     @TaskAction
     void runFlow() {
-        def entityName = project.hasProperty("entityName") ? project.property("entityName") : null
         if (entityName == null) {
-            println "entityName property is required."
-            return
+            entityName = project.hasProperty("entityName") ? project.property("entityName") : null
         }
-        def flowName = project.hasProperty("flowName") ? project.property("flowName") : null
+        if (entityName == null) {
+            throw new EntityNameRequiredException()
+        }
         if (flowName == null) {
-            println "flowName property is required."
-            return
+            flowName = project.hasProperty("flowName") ? project.property("flowName") : null
         }
-        def flowType = project.hasProperty("flowType") ?
-            FlowType.getFlowType(project.property("flowType")) : null
-
-        def batchSize = project.hasProperty("batchSize") ?
-            Integer.parseInt(project.property("batchSize")) : 100
+        if (flowName == null) {
+            throw new FlowNameRequiredException()
+        }
+        if (flowType == null) {
+            flowType = project.hasProperty("flowType") ?
+                FlowType.getFlowType(project.property("flowType")) : FlowType.HARMONIZE
+        }
+        if (batchSize == null) {
+            batchSize = project.hasProperty("batchSize") ?
+                Integer.parseInt(project.property("batchSize")) : 100
+        }
+        if (threadCount == null) {
+            threadCount = project.hasProperty("threadCount") ?
+                Integer.parseInt(project.property("threadCount")) : 4
+        }
 
         if (!getDataHub().isInstalled()) {
-            println("Data Hub is not installed.")
-            return
+            throw new HubNotInstalledException()
         }
 
-        def fm = getFlowManager()
-        def flow = fm.getFlow(entityName, flowName, flowType)
-        if (flow) {
-            println("Running Flow: [" + entityName + ":" + flowName + "] with batch size: " + batchSize)
-            fm.runFlow(flow, batchSize)
+
+        FlowManager fm = getFlowManager()
+        Flow flow = fm.getFlow(entityName, flowName, flowType)
+        if (flow == null) {
+            throw new FlowNotFoundException(entityName, flowName);
         }
-        else {
-            println("Flow Not Found: [" + entityName + ":" + flowName + "]")
-        }
+
+        println("Running Flow: [" + entityName + ":" + flowName + "] with batch size: " + batchSize)
+        fm.runFlow(flow, batchSize, threadCount, new JobStatusListener() {
+            @Override
+            public void onStatusChange(long jobId, int percentComplete, String message) {}
+
+            @Override
+            public void onJobFinished() {}
+        })
     }
 }

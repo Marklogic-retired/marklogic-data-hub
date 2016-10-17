@@ -7,7 +7,7 @@ import { RouterModule } from '@angular/router';
 import { ConfirmModule } from './confirm';
 
 import { AppComponent } from './app.component';
-import { HomeComponent } from './home';
+import { EntitiesComponent } from './entities';
 import { LoginComponent } from './login';
 import { SettingsComponent } from './settings';
 
@@ -23,6 +23,7 @@ import { FolderBrowserComponent } from './folder-browser/folder-browser.componen
 import { HeaderComponent } from './header/header.component';
 import { JobsComponent } from './jobs';
 import { MlcpUiComponent } from './mlcp-ui';
+import { MlErrorComponent } from './ml-error';
 import { NewEntityComponent } from './new-entity/new-entity';
 import { NewFlowComponent } from './new-flow/new-flow';
 import { NoContentComponent } from './no-content';
@@ -43,16 +44,19 @@ import { STOMPService } from './stomp/stomp.service';
 import { ClipboardDirective } from './clipboard/clipboard.directive';
 import { TraceService } from './traces/trace.service';
 import { HarmonizeFlowOptionsComponent } from './harmonize-flow-options/harmonize-flow-options.component';
+import { DashboardComponent } from './dashboard/dashboard.component';
+import { TitlecasePipe } from './titlecase.pipe';
 
 @NgModule({
   declarations: [
     AppComponent,
     FolderBrowserComponent,
     HeaderComponent,
-    HomeComponent,
+    EntitiesComponent,
     JobsComponent,
     LoginComponent,
     MlcpUiComponent,
+    MlErrorComponent,
     NewEntityComponent,
     NewFlowComponent,
     PaginationComponent,
@@ -63,7 +67,9 @@ import { HarmonizeFlowOptionsComponent } from './harmonize-flow-options/harmoniz
     TraceViewerComponent,
     NoContentComponent,
     ClipboardDirective,
-    HarmonizeFlowOptionsComponent
+    HarmonizeFlowOptionsComponent,
+    DashboardComponent,
+    TitlecasePipe
   ],
   imports: [
     BrowserModule,

@@ -23,10 +23,13 @@ import module namespace admin = "http://marklogic.com/xdmp/admin"
 import module namespace cvt = "http://marklogic.com/cpf/convert"
       at "/MarkLogic/conversion/convert.xqy";
 
+declare namespace mt = "http://marklogic.com/xdmp/mimetypes";
+
 declare namespace hub = "http://marklogic.com/data-hub";
 
 declare option xdmp:mapping "false";
 
+declare variable $_cache := map:map();
 (:~
  : determine if a module exists or not
  :
@@ -48,6 +51,60 @@ declare function hul:run-in-modules($func as function() as item()*)
     </options>)
 };
 
+declare function hul:from-map-cache($name, $func)
+{
+  if (map:contains($_cache, $name)) then
+    map:get($_cache, $name)
+  else
+    let $value := $func()
+    let $_ := map:put($_cache, $name, $value)
+    return
+      $value
+};
+
+declare function hul:from-field-cache($name, $func)
+{
+  hul:from-field-cache($name, $func, ())
+};
+
+declare function hul:set-field-cache($name, $value, $duration as xs:dayTimeDuration?)
+{
+  (
+    if (fn:exists($duration)) then (
+      let $_ := xdmp:set-server-field($name || "-refresh-date", fn:current-dateTime() + $duration)
+      return
+        xdmp:set-server-field($name, $value)
+    )
+    else
+      xdmp:set-server-field($name, $value)
+  )[1]
+};
+
+declare function hul:invalidate-field-cache($name)
+{
+  xdmp:set-server-field($name, ()),
+  xdmp:set-server-field($name || "-refresh-date", ())
+};
+
+declare function hul:from-field-cache($name, $func, $duration as xs:dayTimeDuration?)
+{
+  let $existing := xdmp:get-server-field($name)
+  let $refresh-date := xdmp:get-server-field($name || "-refresh-date")
+  return
+    if (fn:exists($existing)) then
+      if (fn:exists($refresh-date) and ($refresh-date < fn:current-dateTime())) then (
+        xdmp:log("invalidating cache: " || $name),
+        hul:set-field-cache($name, $func(), $duration)
+      )
+      else
+        $existing[1]
+    else
+      if (fn:exists($duration)) then
+        hul:set-field-cache($name, $func(), $duration)
+      else
+        hul:set-field-cache($name, $func(), $duration)
+};
+
 (:~
  : returns a list of file extensions for executable modules
  :
@@ -55,34 +112,42 @@ declare function hul:run-in-modules($func as function() as item()*)
  :)
 declare function hul:get-exe-extensions() as xs:string+
 {
-  let $config := admin:get-configuration()
-  let $names := ("application/vnd.marklogic-xdmp", "application/vnd.marklogic-javascript", "application/xslt+xml")
-  return
-    admin:mimetypes-get($config)[*:name = $names]/*:extensions/fn:tokenize(fn:string(.), " ")
+  hul:from-field-cache("exe-extensions", function() {
+    let $config := admin:get-configuration()
+    let $names := ("application/vnd.marklogic-xdmp", "application/vnd.marklogic-javascript", "application/xslt+xml")
+    return
+      admin:mimetypes-get($config)[mt:name = $names]/*:extensions/fn:tokenize(fn:string(.), " ")
+  })
 };
 
 declare function hul:get-xqy-extensions() as xs:string*
 {
-  let $config := admin:get-configuration()
-  let $names := "application/vnd.marklogic-xdmp"
-  return
-    admin:mimetypes-get($config)[*:name = $names]/*:extensions/fn:tokenize(fn:string(.), " ")
+  hul:from-field-cache("xqy-extensions", function() {
+    let $config := admin:get-configuration()
+    let $names := "application/vnd.marklogic-xdmp"
+    return
+      admin:mimetypes-get($config)[mt:name = $names]/*:extensions/fn:tokenize(fn:string(.), " ")
+  })
 };
 
 declare function hul:get-sjs-extensions() as xs:string*
 {
-  let $config := admin:get-configuration()
-  let $names := "application/vnd.marklogic-javascript"
-  return
-    admin:mimetypes-get($config)[*:name = $names]/*:extensions/fn:tokenize(fn:string(.), " ")
+  hul:from-field-cache("sjs-extensions", function() {
+    let $config := admin:get-configuration()
+    let $names := "application/vnd.marklogic-javascript"
+    return
+      admin:mimetypes-get($config)[mt:name = $names]/*:extensions/fn:tokenize(fn:string(.), " ")
+  })
 };
 
 declare function hul:get-xslt-extensions() as xs:string*
 {
-  let $config := admin:get-configuration()
-  let $names := "application/xslt+xml"
-  return
-    admin:mimetypes-get($config)[*:name = $names]/*:extensions/fn:tokenize(fn:string(.), " ")
+  hul:from-field-cache("xslt-extensions", function() {
+    let $config := admin:get-configuration()
+    let $names := "application/xslt+xml"
+    return
+      admin:mimetypes-get($config)[mt:name = $names]/*:extensions/fn:tokenize(fn:string(.), " ")
+  })
 };
 
 declare function hul:get-file-from-uri($uri)

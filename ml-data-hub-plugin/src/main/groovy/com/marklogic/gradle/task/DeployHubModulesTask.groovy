@@ -1,7 +1,7 @@
 package com.marklogic.gradle.task
 
-import org.gradle.api.tasks.TaskAction
 import com.marklogic.hub.commands.LoadHubModulesCommand
+import org.gradle.api.tasks.TaskAction
 
 class DeployHubModulesTask extends HubTask {
 

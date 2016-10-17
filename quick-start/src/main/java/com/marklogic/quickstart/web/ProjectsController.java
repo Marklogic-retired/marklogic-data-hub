@@ -3,6 +3,7 @@ package com.marklogic.quickstart.web;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.HubStats;
 import com.marklogic.hub.StatusListener;
 import com.marklogic.hub.Tracing;
 import com.marklogic.quickstart.exception.NotAuthorizedException;
@@ -274,6 +275,55 @@ public class ProjectsController extends BaseController implements FileSystemEven
 
         // uninstall the hub
         dataHubService.uninstallUserModules(envConfig.getMlSettings());
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/{projectId}/{environment}/stats", method = RequestMethod.GET)
+    @ResponseBody
+    public String getProjectStats(@PathVariable int projectId,
+                                             @PathVariable String environment) {
+
+        requireAuth();
+
+        // make sure the project exists
+        pm.getProject(projectId);
+
+        HubStats hs = new HubStats(envConfig.getStagingClient());
+        return hs.getStats();
+    }
+
+    @RequestMapping(value = "/{projectId}/{environment}/clear/{database}", method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseEntity<?> clearDatabase(@PathVariable int projectId,
+                                @PathVariable String environment,
+                                @PathVariable String database) {
+
+        requireAuth();
+
+        // make sure the project exists
+        pm.getProject(projectId);
+
+        dataHubService.clearContent(envConfig.getMlSettings(), database);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/{projectId}/{environment}/clear-all", method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseEntity<?> clearDatabase(@PathVariable int projectId,
+                                           @PathVariable String environment) {
+
+        requireAuth();
+
+        // make sure the project exists
+        pm.getProject(projectId);
+
+        HubConfig config = envConfig.getMlSettings();
+        String[] databases = { config.stagingDbName, config.finalDbName, config.jobDbName, config.traceDbName };
+        for (String database: databases) {
+            dataHubService.clearContent(envConfig.getMlSettings(), database);
+        }
 
         return new ResponseEntity<>(HttpStatus.OK);
     }

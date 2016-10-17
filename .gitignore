@@ -20,3 +20,4 @@ assetInstallTime.properties
 flow.properties
 node_modules/
 .tmp/
+*.sublime-*

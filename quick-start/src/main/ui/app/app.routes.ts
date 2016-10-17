@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
-import { HomeComponent } from './home';
+import { DashboardComponent } from './dashboard';
+import { EntitiesComponent } from './entities';
 import { LoginComponent } from './login';
 import { JobsComponent } from './jobs';
 import { TracesComponent, TraceViewerComponent } from './traces';
@@ -8,8 +9,9 @@ import { NoContentComponent } from './no-content';
 import { AuthGuard } from './auth/auth-guard.service';
 
 export const ROUTES: Routes = [
-  { path: '', component: HomeComponent, canActivate: [AuthGuard] },
-  { path: 'home', component: HomeComponent, canActivate: [AuthGuard] },
+  { path: '', component: DashboardComponent, canActivate: [AuthGuard] },
+  { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
+  { path: 'entities', component: EntitiesComponent, canActivate: [AuthGuard] },
   { path: 'jobs', component: JobsComponent, canActivate: [AuthGuard] },
   { path: 'traces', component: TracesComponent, canActivate: [AuthGuard] },
   { path: 'traces/:id', component: TraceViewerComponent, canActivate: [AuthGuard] },

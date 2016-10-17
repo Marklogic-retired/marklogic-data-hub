@@ -53,7 +53,11 @@ declare function get(
       let $flow-type := map:get($params, "flow-type")
       let $resp :=
         if ($flow-name) then
-          flow:get-flow($entity-name, $flow-name, $flow-type)
+          let $flow := flow:get-flow($entity-name, $flow-name, $flow-type)
+          return
+            if (fn:exists($flow)) then $flow
+            else
+              fn:error((),"RESTAPI-SRVEXERR", (404, "Not Found", "The requested flow was not found"))
         else
           flow:get-flows($entity-name)
       return
@@ -67,7 +71,7 @@ declare function get(
  :
  : The flow xml is provided in the request body
  :)
-declare %rapi:transaction-mode("update") function post(
+declare function post(
   $context as map:map,
   $params  as map:map,
   $input   as document-node()*
@@ -87,4 +91,14 @@ declare %rapi:transaction-mode("update") function post(
     return
       document { () }
   })
+};
+
+declare function delete(
+  $context as map:map,
+  $params  as map:map
+  ) as document-node()?
+{
+  let $_ := flow:invalidate-flow-caches()
+  return
+    document { () }
 };

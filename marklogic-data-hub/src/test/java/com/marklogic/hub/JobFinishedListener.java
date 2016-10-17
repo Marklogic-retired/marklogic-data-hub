@@ -18,7 +18,10 @@ public class JobFinishedListener implements JobStatusListener {
     }
 
     @Override
-    public void onStatusChange(long jobId, int percentComplete, String message) {
-        isFinished = (percentComplete == 100);
+    public void onStatusChange(long jobId, int percentComplete, String message) {}
+
+    @Override
+    public void onJobFinished() {
+        this.isFinished = true;
     }
 }

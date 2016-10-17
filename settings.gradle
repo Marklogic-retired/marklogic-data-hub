@@ -1,10 +1,4 @@
-/*
-// To declare projects as part of a multi-project build use the 'include' method
-include 'shared'
-include 'api'
-include 'services:webservice'
-*/
-
 rootProject.name = 'marklogic-data-hub'
 include ':marklogic-data-hub'
+include ':ml-data-hub-plugin'
 include ':quick-start'

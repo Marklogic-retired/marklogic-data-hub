@@ -35,7 +35,8 @@ public class MlcpOutputStreamInterceptor extends OutputStream {
 
         byte[] buf = Arrays.copyOfRange(b, off, off + len - 1);
         String status = new String(buf);
-        if (status.contains("ERROR")) {
+        // don't log an error if the winutils binary is missing
+        if (status.contains("ERROR") && !status.contains("winutils binary")) {
             listener.onError();
         }
 

@@ -27,6 +27,7 @@ import com.marklogic.client.eval.EvalResult;
 import com.marklogic.client.eval.EvalResultIterator;
 import com.marklogic.client.eval.ServerEvaluationCall;
 import com.marklogic.client.io.*;
+import com.marklogic.hub.flow.FlowCacheInvalidator;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -45,7 +46,7 @@ import java.io.InputStream;
 import java.util.Properties;
 
 public class HubTestBase {
-    static final private Logger logger = LoggerFactory.getLogger(HubTestBase.class);
+    static final protected Logger logger = LoggerFactory.getLogger(HubTestBase.class);
 
     public static final String PROJECT_PATH = "ye-olde-project";
     public static String host;
@@ -274,6 +275,9 @@ public class HubTestBase {
         }
 
         modMgr.write(path, handle);
+
+        FlowCacheInvalidator invalidator = new FlowCacheInvalidator(stagingClient);
+        invalidator.invalidateCache();
     }
 
     protected static EvalResultIterator runInModules(String query) {

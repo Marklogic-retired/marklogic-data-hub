@@ -21,7 +21,6 @@ public class FlowWriter extends ResourceManager  implements ItemWriter<String> {
     private DatabaseClient client;
     private Flow flow;
     StringHandle handle;
-    RequestParameters params = new RequestParameters();
 
     public FlowWriter(DatabaseClient client, Flow flow) {
         super();
@@ -36,6 +35,7 @@ public class FlowWriter extends ResourceManager  implements ItemWriter<String> {
     public void write(List<? extends String> items) {
 
         try {
+            RequestParameters params = new RequestParameters();
             params.put("identifier", items.toArray(new String[items.size()]));
             this.getServices().post(params, handle);
         }
