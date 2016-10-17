@@ -1,11 +1,10 @@
 plugins {
-    id 'net.saliman.properties' version '1.4.4'
+    id 'net.saliman.properties' version '1.4.6'
     id 'java'
-    id 'eclipse'
-    id 'idea'
     id 'maven-publish'
-    id 'com.jfrog.bintray' version '1.6'
+    id 'com.jfrog.bintray' version '1.7.2'
     id 'com.marklogic.ml-gradle' version '2.3.4'
+    id 'com.moowork.node' version '0.13'
 }
 
 repositories {
@@ -35,6 +34,22 @@ dependencies {
     testCompile 'org.easymock:easymock:3.4'
 }
 
+node {
+  // Version of node to use.
+  version = '6.8.1'
+
+  // Version of npm to use.
+  npmVersion = '3.10.8'
+
+  download = true
+
+  // Set the work directory for unpacking node
+  workDir = file("${project.buildDir}/nodejs")
+
+  // Set the work directory where node_modules should be located
+  nodeModulesDir = file("${project.projectDir}/src/trace-ui")
+}
+
 task javadocJar(type: Jar, dependsOn: javadoc) {
     classifier = 'javadoc'
     from javadoc.destinationDir
@@ -45,24 +60,29 @@ task sourcesJar(type: Jar, dependsOn: classes) {
     from sourceSets.main.allSource
 }
 
-task npmInstallTraceUI(type:Exec) {
-    workingDir './src/trace-ui'
-    commandLine 'npm', 'install'
+task cleanUI(type: Delete) {
+  delete 'src/main/resources/ml-modules/root/trace-ui'
 }
 
-task buildTraceUI(type:Exec) {
-    workingDir './src/trace-ui'
-    commandLine 'npm', 'run', 'build'
-    dependsOn tasks.npmInstallTraceUI
+task npmInstallUI(type: NpmTask) {
+    args = ['install']
+    dependsOn tasks.cleanUI
 }
 
-task watchTraceUI(type:Exec) {
-    workingDir './src/trace-ui'
-    commandLine 'npm', 'start'
-    dependsOn tasks.npmInstallTraceUI
+task buildUI(type: NpmTask) {
+    args = ['run', 'build.prod']
+    dependsOn tasks.npmInstallUI
 }
 
-build.dependsOn buildTraceUI
+task copyUIAssets(type: Copy) {
+    from 'src/trace-ui/dist'
+    into 'src/main/resources/ml-modules/root/trace-ui'
+    dependsOn tasks.buildUI
+}
+
+if (!gradle.startParameter.taskNames.contains('bootrun')) {
+  processResources.dependsOn copyUIAssets
+}
 
 javadoc {
    options.overview = 'src/main/resources/overview.html'
@@ -131,7 +151,6 @@ bintray {
         repo = 'maven'
         name = project.name
         desc = pomCustomizations.textdescription.text()
-        // userOrg = user
         licenses = ['Apache-2.0']
         websiteUrl = pomCustomizations.url
         vcsUrl = pomCustomizations.scm.url

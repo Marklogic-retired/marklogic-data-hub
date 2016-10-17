@@ -4,17 +4,15 @@ buildscript {
         maven { url 'http://developer.marklogic.com/maven2' }
     }
     dependencies {
-        classpath "com.gradle.publish:plugin-publish-plugin:0.9.5"
+        classpath "com.gradle.publish:plugin-publish-plugin:0.9.6"
     }
 }
 
 plugins {
-    id 'net.saliman.properties' version '1.4.5'
+    id 'net.saliman.properties' version '1.4.6'
     id "groovy"
     id "java-gradle-plugin"
     id "maven-publish"
-    id "eclipse"
-    id "idea"
     id "com.jfrog.bintray" version "1.7.1"
 }
 
@@ -65,7 +63,6 @@ bintray {
         repo = 'maven'
         name = 'ml-data-hub'
         desc = 'A gradle plugin for Data Hub tasks'
-        // userOrg = user
         licenses = ['Apache-2.0']
         websiteUrl = 'https://github.com/marklogic/marklogic-data-hub'
         issueTrackerUrl = 'https://github.com/marklogic/marklogic-data-hub/issues'

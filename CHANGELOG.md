@@ -1,7 +1,30 @@
 # Change Log
 
-## [v1.0.0-rc.5](https://github.com/marklogic/marklogic-data-hub/tree/v1.0.0-rc.5)
+## [v1.0.0-rc.6](https://github.com/marklogic/marklogic-data-hub/tree/v1.0.0-rc.6)
 
+[Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v1.0.0-rc.5...v1.0.0-rc.6)
+
+**Fixed bugs:**
+
+- Deadlock when evaling from writer [\#231](https://github.com/marklogic/marklogic-data-hub/issues/231)
+
+**Closed issues:**
+
+- Update Trace UI in Trace server [\#302](https://github.com/marklogic/marklogic-data-hub/issues/302)
+- Trace enhancement: Not logging enough for error trace [\#301](https://github.com/marklogic/marklogic-data-hub/issues/301)
+- ArrayIndexOutOfBoundsException [\#298](https://github.com/marklogic/marklogic-data-hub/issues/298)
+- Getting Started Tutorial - Sample code for Acme Tech header plugin does not update 'latest' variable [\#297](https://github.com/marklogic/marklogic-data-hub/issues/297)
+- Not all data is processed in harmonize flow when thread count is greater than 1 [\#296](https://github.com/marklogic/marklogic-data-hub/issues/296)
+- New Mlcp Error grabbing has false positives on windows [\#295](https://github.com/marklogic/marklogic-data-hub/issues/295)
+- Clarify that ML DHF is FOSS and not supported MarkLogic product [\#294](https://github.com/marklogic/marklogic-data-hub/issues/294)
+- custom thread count throws parsing error [\#292](https://github.com/marklogic/marklogic-data-hub/issues/292)
+- RC5: the ingest steps in quick start gives a exception and is not runned [\#291](https://github.com/marklogic/marklogic-data-hub/issues/291)
+- fix gradle tasks for run flow [\#290](https://github.com/marklogic/marklogic-data-hub/issues/290)
+- When exception is thrown, not all flow traces are persisted. [\#278](https://github.com/marklogic/marklogic-data-hub/issues/278)
+- Add ability to clear the Staging or Final database [\#198](https://github.com/marklogic/marklogic-data-hub/issues/198)
+- mlcp\_transform needs profiling [\#162](https://github.com/marklogic/marklogic-data-hub/issues/162)
+
+## [v1.0.0-rc.5](https://github.com/marklogic/marklogic-data-hub/tree/v1.0.0-rc.5) (2016-09-27)
 [Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v1.0.0-rc.4...v1.0.0-rc.5)
 
 **Implemented enhancements:**
