@@ -161,6 +161,7 @@ public class FlowManager extends ResourceManager {
      * Runs a given flow
      * @param flow - the flow to run
      * @param batchSize - the size to use for batching transactions
+     * @param threadCount - the number of threads to use
      * @param statusListener - the callback to receive job status updates
      * @return a JobExecution instance
      */

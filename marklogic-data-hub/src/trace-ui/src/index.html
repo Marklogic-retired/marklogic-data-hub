@@ -1,20 +1,48 @@
 <!DOCTYPE html>
-<html{% if(o.htmlWebpackPlugin.files.manifest) { %} manifest="{%= o.htmlWebpackPlugin.files.manifest %}"{% } %}>
+<html lang="">
 <head>
-    <base href="/">
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Data Hub Trace</title>
-    <meta name="description" content="">
-    <meta name="viewport" content="width=device-width">
-    {% if (o.htmlWebpackPlugin.files.favicon) { %}
-    <link rel="shortcut icon" href="{%=o.htmlWebpackPlugin.files.favicon%}">{% } %}
-    {% for (var css in o.htmlWebpackPlugin.files.css) { %}
-    <link href="{%=o.htmlWebpackPlugin.files.css[css] %}" rel="stylesheet">{% } %}
+  <meta charset="utf-8"/>
+  <meta http-equiv="x-ua-compatible" content="ie=edge"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <link rel='shortcut icon' href='favicon.ico' type='image/x-icon' />
+  <title>Data Hub Trace Viewer</title>
+  <meta name="description" content=""/>
+
+  <!-- base url -->
+  <base href="/"/>
+
+  <style>
+  .notransition * {
+    -webkit-transition: none !important;
+    -moz-transition: none !important;
+    -o-transition: none !important;
+    -ms-transition: none !important;
+    transition: none !important;
+  }
+  </style>
 </head>
 <body>
-    <app></app>
-    {% for (var chunk in o.htmlWebpackPlugin.files.chunks) { %}
-    <script src="{%=o.htmlWebpackPlugin.files.chunks[chunk].entry %}"></script>{% } %}
+
+  <app-root>
+    <style>
+    app-root {
+      background-color: #e9eef4;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      text-align: center;
+      display: flex;
+      flex: 1 1;
+      vertical-align: middle;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 60px;
+    }
+    </style>
+    Trace Viewer Loading...
+  </app-root>
 </body>
 </html>

@@ -1,0 +1,47 @@
+import { Injectable } from '@angular/core';
+import { Http, Response } from '@angular/http';
+import 'rxjs/add/operator/map';
+
+@Injectable()
+export class TraceService {
+  constructor(private http: Http) {}
+
+  getTraces(query: string, page: number, pageLength: number) {
+    let start: number = (page - 1) * pageLength + 1;
+    const url = `/v1/search?options=traces&format=json&transform=trace-search&start=${start}&pageLength=${pageLength}`;
+    let queries = [];
+    if (query && query !== '') {
+      queries.push({
+        'term-query' : [ { 'text' : query} ]
+      });
+    }
+    const body = {
+      search: {
+        query: {
+          'and-query' : queries
+        },
+        'operator-state': {
+          'operator-name': 'sort',
+          'state-name': 'date-desc'
+        }
+      }
+    };
+    return this.post(url, body);
+  }
+
+  getTrace(traceId: string) {
+    return this.get(`/v1/documents?transform=trace-json&uri=/${traceId}`);
+  }
+
+  private extractData = (res: Response) => {
+    return res.json();
+  }
+
+  private get(url: string) {
+    return this.http.get(url).map(this.extractData);
+  }
+
+  private post(url: string, body) {
+    return this.http.post(url, body).map(this.extractData);
+  }
+}
