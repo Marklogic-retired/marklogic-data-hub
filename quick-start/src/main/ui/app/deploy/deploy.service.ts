@@ -50,7 +50,7 @@ export class DeployService {
       this.errors = status.errors;
     } else if (message.headers.destination === '/topic/deploy-status') {
       let status: any = JSON.parse(message.body);
-      this._lastDeployed = (resp.deployed) ? moment(resp.lastModified) : null;
+      this._lastDeployed = (status.deployed) ? moment(status.lastModified) : null;
       this.onDeploy.emit(status);
     }
   }
