@@ -122,7 +122,7 @@ public class DataHubService extends LoggingObject {
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
         df.setTimeZone(tz);
 
-        return "{\"deployed\":true, \"lastModified\":\"" + df.format(lastModified) + "\"}";
+        return "{\"deployed\":" + tsFile.exists() + ", \"lastModified\":\"" + df.format(lastModified) + "\"}";
     }
 
     public void clearContent(HubConfig config, String database) {

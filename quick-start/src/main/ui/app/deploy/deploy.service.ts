@@ -40,7 +40,7 @@ export class DeployService {
   private updateLastDeployed() {
     const url = `/api/projects/${this.projectService.projectId}/${this.projectService.environment}/last-deployed`;
     this.http.get(url).map((res: Response) => { return res.json(); }).subscribe((resp: any) => {
-      this._lastDeployed = moment(resp.lastModified);
+      this._lastDeployed = (resp.deployed) ? moment(resp.lastModified) : null;
     });
   }
 
