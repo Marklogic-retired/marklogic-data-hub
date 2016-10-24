@@ -1,7 +1,7 @@
 package com.marklogic.gradle.task
 
 import com.marklogic.gradle.exception.EntityNameRequiredException
-import com.marklogic.hub.Scaffolding
+import com.marklogic.hub.scaffold.Scaffolding
 import org.gradle.api.tasks.TaskAction
 
 class CreateEntityTask extends HubTask {

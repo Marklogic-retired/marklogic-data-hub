@@ -1,25 +1,26 @@
-package com.marklogic.hub;
+package com.marklogic.quickstart.service;
 
+import com.marklogic.hub.HubTestBase;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.IOException;
 
-public class TraceManagerTest extends HubTestBase {
+public class TraceServiceTest extends HubTestBase {
     @BeforeClass
     public static void setup() throws IOException {
-        installHub();
+        HubTestBase.installHub();
     }
 
     @AfterClass
     public static void teardown() throws IOException {
-        uninstallHub();
+        HubTestBase.uninstallHub();
     }
 
     @Test
     public void getTraces() throws Exception {
-        TraceManager tm = new TraceManager(traceClient);
+        TraceService tm = new TraceService(HubTestBase.traceClient);
         tm.getTraces(null, 1, 10);
     }
 

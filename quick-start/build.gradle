@@ -55,6 +55,7 @@ dependencies {
 
     testCompile("junit:junit")
     testCompile("org.springframework.boot:spring-boot-starter-test:${springBootVersion}")
+    testCompile project (path: ':marklogic-data-hub', configuration: 'testArchives')
 }
 
 configurations {

@@ -16,7 +16,7 @@ public class Debugging extends ResourceManager {
     }
 
     /**
-     * Enables tracing
+     * Enables debugging
      */
     public void enable() {
         RequestParameters params = new RequestParameters();
@@ -25,7 +25,7 @@ public class Debugging extends ResourceManager {
     }
 
     /**
-     * Disables tracing
+     * Disables debugging
      */
     public void disable() {
         RequestParameters params = new RequestParameters();
@@ -34,7 +34,7 @@ public class Debugging extends ResourceManager {
     }
 
     /**
-     * Determines if the hub has tracing enabled or not
+     * Determines if the hub has debugging enabled or not
      *
      * @return - true if enabled, false otherwise
      */

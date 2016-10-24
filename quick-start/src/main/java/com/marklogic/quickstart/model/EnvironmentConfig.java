@@ -92,6 +92,9 @@ public class EnvironmentConfig {
         if (loginInfo != null) {
             mlSettings.username = loginInfo.username;
             mlSettings.password = loginInfo.password;
+
+            mlSettings.adminUsername = loginInfo.username;
+            mlSettings.adminPassword = loginInfo.password;
         }
 
         dataHub = new DataHub(mlSettings);

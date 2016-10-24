@@ -161,21 +161,37 @@ public class DefaultHubConfigFactory extends PropertySourceFactory {
             c.schemasDbName = prop;
         }
 
+        prop = getProperty("mlManageUsername");
+        if (prop != null) {
+            logger.info("Manage username: " + prop);
+            c.username = prop;
+        } else if (mlUsername != null) {
+            logger.info("Manage username: " + mlUsername);
+            c.username = mlUsername;
+        }
+
+        prop = getProperty("mlManagePassword");
+        if (prop != null) {
+            c.password = prop;
+        } else if (mlPassword != null) {
+            c.password = mlPassword;
+        }
+
         prop = getProperty("mlAdminUsername");
         if (prop != null) {
             logger.info("REST admin username: " + prop);
-            c.username = prop;
+            c.adminUsername = prop;
         } else if (mlUsername != null) {
             logger.info("REST admin username: " + mlUsername);
-            c.username = mlUsername;
+            c.adminUsername = mlUsername;
         }
 
         prop = getProperty("mlAdminPassword");
         if (prop != null) {
-            c.password = prop;
+            c.adminPassword = prop;
         }
         else if (mlPassword != null) {
-            c.password = mlPassword;
+            c.adminPassword = mlPassword;
         }
 
         prop = getProperty("hubModulesPath");

@@ -28,25 +28,13 @@ public class DataHubInstallTest extends HubTestBase {
         XMLUnit.setIgnoreWhitespace(true);
         dataHub = new DataHub(getHubConfig(projectPath.toString()));
         dataHub.initProject();
-        dataHub.install(new StatusListener() {
-            @Override
-            public void onStatusChange(int percentComplete, String message) {}
-
-            @Override
-            public void onError() {}
-        });
+        dataHub.install();
     }
 
     @AfterClass
     public static void teardown() throws IOException {
         dataHub = new DataHub(getHubConfig(projectPath.toString()));
-        dataHub.uninstall(new StatusListener() {
-            @Override
-            public void onStatusChange(int percentComplete, String message) {}
-
-            @Override
-            public void onError() {}
-        });
+        dataHub.uninstall();
         FileUtils.deleteDirectory(projectPath);
     }
 

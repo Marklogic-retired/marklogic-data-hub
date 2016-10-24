@@ -1,4 +1,4 @@
-package com.marklogic.hub;
+package com.marklogic.quickstart.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.client.DatabaseClient;
@@ -7,7 +7,6 @@ import com.marklogic.client.document.GenericDocumentManager;
 import com.marklogic.client.document.ServerTransform;
 import com.marklogic.client.helper.LoggingObject;
 import com.marklogic.client.io.Format;
-import com.marklogic.client.io.SearchHandle;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.query.QueryManager;
 import com.marklogic.client.query.RawCombinedQueryDefinition;
@@ -21,7 +20,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 
-public class TraceManager extends LoggingObject {
+public class TraceService extends LoggingObject {
 
     private static final String SEARCH_OPTIONS_NAME = "traces";
     private static final String SEARCH_API_NS = "http://marklogic.com/appservices/search";
@@ -30,7 +29,7 @@ public class TraceManager extends LoggingObject {
     private QueryManager queryMgr;
     private GenericDocumentManager docMgr;
 
-    public TraceManager(DatabaseClient client) {
+    public TraceService(DatabaseClient client) {
         this.databaseClient = client;
         this.queryMgr = databaseClient.newQueryManager();
         this.docMgr = databaseClient.newDocumentManager();

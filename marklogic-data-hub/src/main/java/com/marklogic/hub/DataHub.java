@@ -51,9 +51,12 @@ import com.marklogic.client.extensions.ResourceServices.ServiceResultIterator;
 import com.marklogic.client.helper.LoggingObject;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.client.util.RequestParameters;
-import com.marklogic.hub.commands.DeployHubDatabasesCommand;
-import com.marklogic.hub.commands.LoadHubModulesCommand;
-import com.marklogic.hub.commands.LoadUserModulesCommand;
+import com.marklogic.hub.deploy.commands.DeployHubDatabasesCommand;
+import com.marklogic.hub.deploy.commands.LoadHubModulesCommand;
+import com.marklogic.hub.deploy.commands.LoadUserModulesCommand;
+import com.marklogic.hub.deploy.HubAppDeployer;
+import com.marklogic.hub.deploy.util.HubDeployStatusListener;
+import com.marklogic.hub.error.ServerValidationException;
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.ManageConfig;
 import com.marklogic.mgmt.admin.AdminConfig;
@@ -94,19 +97,24 @@ public class DataHub extends LoggingObject {
 
     private void init(HubConfig hubConfig) {
         this.hubConfig = hubConfig;
-        config = new ManageConfig(hubConfig.host, 8002, hubConfig.username, hubConfig.password);
-        client = new ManageClient(config);
-        databaseManager = new DatabaseManager(client);
-        serverManager = new ServerManager(client);
+        if (hubConfig.username != null && hubConfig.password != null) {
+            config = new ManageConfig(hubConfig.host, 8002, hubConfig.username, hubConfig.password);
+            client = new ManageClient(config);
+            databaseManager = new DatabaseManager(client);
+            serverManager = new ServerManager(client);
 
-        AdminConfig adminConfig = new AdminConfig();
-        adminConfig.setHost(hubConfig.host);
-        adminConfig.setUsername(hubConfig.username);
-        adminConfig.setPassword(hubConfig.password);
-        adminManager = new AdminManager(adminConfig);
+            AdminConfig adminConfig = new AdminConfig();
+            adminConfig.setHost(hubConfig.host);
+            adminConfig.setUsername(hubConfig.adminUsername);
+            adminConfig.setPassword(hubConfig.adminPassword);
+            adminManager = new AdminManager(adminConfig);
+        }
+        else {
+            logger.info("Missing username and/or password.");
+        }
     }
 
-    public void setAdminManager(AdminManager manager) {
+    void setAdminManager(AdminManager manager) {
         this.adminManager = manager;
     }
 
@@ -203,6 +211,10 @@ public class DataHub extends LoggingObject {
         return config;
     }
 
+    /**
+     * Updates the given AppConfig with values from this DataHub
+     * @param config - the AppConfig instance to update
+     */
     public void updateAppConfig(AppConfig config) {
         config.setHost(hubConfig.host);
         config.setRestPort(hubConfig.stagingPort);
@@ -253,6 +265,10 @@ public class DataHub extends LoggingObject {
         customTokens.put("%%mlModulesDbName%%", hubConfig.modulesDbName);
         customTokens.put("%%mlTriggersDbName%%", hubConfig.triggersDbName);
         customTokens.put("%%mlSchemasDbName%%", hubConfig.schemasDbName);
+
+        customTokens.put("%%mlHubUserName%%", hubConfig.hubUserName);
+        customTokens.put("%%mlHubUserPassword%%", hubConfig.hubUserPassword);
+        customTokens.put("%%mlHubUserRole%%", hubConfig.hubUserRole);
     }
 
     public void initProject() {
@@ -434,9 +450,16 @@ public class DataHub extends LoggingObject {
 
     /**
      * Installs the data hub configuration and server-side modules into MarkLogic
+     */
+    public void install() {
+        install(null);
+    }
+
+    /**
+     * Installs the data hub configuration and server-side modules into MarkLogic
      * @param listener - the callback method to receive status updates
      */
-    public void install(StatusListener listener) {
+    public void install(HubDeployStatusListener listener) {
         initProject();
 
         logger.info("Installing the Data Hub into MarkLogic");
@@ -449,9 +472,16 @@ public class DataHub extends LoggingObject {
 
     /**
      * Uninstalls the data hub configuration and server-side modules from MarkLogic
+     */
+    public void uninstall() {
+        uninstall(null);
+    }
+
+    /**
+     * Uninstalls the data hub configuration and server-side modules from MarkLogic
      * @param listener - the callback method to receive status updates
      */
-    public void uninstall(StatusListener listener) {
+    public void uninstall(HubDeployStatusListener listener) {
         logger.debug("Uninstalling the Data Hub from MarkLogic");
 
         AppConfig config = getAppConfig();

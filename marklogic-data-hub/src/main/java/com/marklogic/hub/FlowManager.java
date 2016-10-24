@@ -23,6 +23,7 @@ import com.marklogic.client.extensions.ResourceServices.ServiceResultIterator;
 import com.marklogic.client.io.DOMHandle;
 import com.marklogic.client.util.RequestParameters;
 import com.marklogic.hub.flow.Flow;
+import com.marklogic.hub.flow.FlowComplexity;
 import com.marklogic.hub.flow.FlowType;
 import com.marklogic.hub.flow.SimpleFlow;
 import com.marklogic.spring.batch.hub.FlowConfig;
@@ -51,21 +52,10 @@ public class FlowManager extends ResourceManager {
     private DatabaseClient client;
     private HubConfig hubConfig;
 
-    private DatabaseClient getClient() {
-        DatabaseClientFactory.Authentication authMethod = DatabaseClientFactory.Authentication
-            .valueOf(hubConfig.authMethod.toUpperCase());
-
-        return DatabaseClientFactory.newClient(
-            hubConfig.host,
-            hubConfig.stagingPort,
-            hubConfig.username,
-            hubConfig.password, authMethod);
-    }
-
     public FlowManager(HubConfig hubConfig) {
         super();
         this.hubConfig = hubConfig;
-        this.client = getClient();
+        this.client = hubConfig.newStagingClient();
         this.client.init(NAME, this);
     }
 

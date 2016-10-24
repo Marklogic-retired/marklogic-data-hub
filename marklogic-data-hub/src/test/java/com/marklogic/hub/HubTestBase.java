@@ -27,6 +27,7 @@ import com.marklogic.client.eval.EvalResult;
 import com.marklogic.client.eval.EvalResultIterator;
 import com.marklogic.client.eval.ServerEvaluationCall;
 import com.marklogic.client.io.*;
+import com.marklogic.hub.deploy.util.HubDeployStatusListener;
 import com.marklogic.hub.flow.FlowCacheInvalidator;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -164,24 +165,11 @@ public class HubTestBase {
     }
 
     protected static void installHub() throws IOException {
-        new DataHub(getHubConfig()).install(new StatusListener() {
-            @Override
-            public void onStatusChange(int percentComplete, String message) {
-            }
-
-            @Override
-            public void onError() {}
-        });
+        new DataHub(getHubConfig()).install();
     }
 
     protected static void uninstallHub() throws IOException {
-        new DataHub(getHubConfig()).uninstall(new StatusListener() {
-            @Override
-            public void onStatusChange(int percentComplete, String message) {}
-
-            @Override
-            public void onError() {}
-        });
+        new DataHub(getHubConfig()).uninstall();
         FileUtils.deleteDirectory(new File(PROJECT_PATH));
     }
 
@@ -318,4 +306,28 @@ public class HubTestBase {
 
         eval.xquery(installer).eval();
     }
+
+    protected static String genModel(String modelName) {
+        return "{\n" +
+            "  \"info\": {\n" +
+            "    \"title\": \"" + modelName + "\",\n" +
+            "    \"version\": \"0.0.1\",\n" +
+            "    \"baseUri\": \"\",\n" +
+            "    \"description\":\"\"\n" +
+            "  },\n" +
+            "  \"definitions\": {\n" +
+            "    \"" + modelName + "\": {\n" +
+            "      \"properties\": {\n" +
+            "        \"id\": {\n" +
+            "          \"datatype\": \"iri\",\n" +
+            "          \"description\":\"A unique identifier.\"\n" +
+            "        }\n" +
+            "      },\n" +
+            "      \"primaryKey\": \"id\",\n" +
+            "      \"required\": []\n" +
+            "    }\n" +
+            "  }\n" +
+            "}";
+    }
+
 }

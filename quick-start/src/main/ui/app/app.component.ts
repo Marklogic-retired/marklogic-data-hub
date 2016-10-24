@@ -28,14 +28,9 @@ declare var window: CustomWindow;
   selector: 'app-root',
   encapsulation: ViewEncapsulation.None,
   styleUrls: [
-    './app.style.scss'
+    './app.component.scss'
   ],
-  template: `
-    <app-header *ngIf="canShowHeader()"></app-header>
-    <div class="main" [ngStyle]="{'top': headerOffset() }">
-      <router-outlet></router-outlet>
-    </div>
-  `
+  templateUrl: 'app.component.html'
 })
 export class AppComponent implements OnInit {
   authenticated: boolean = false;

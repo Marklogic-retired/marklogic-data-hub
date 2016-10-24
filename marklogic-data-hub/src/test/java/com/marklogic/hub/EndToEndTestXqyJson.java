@@ -5,6 +5,8 @@ import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.FlowType;
+import com.marklogic.hub.plugin.PluginFormat;
+import com.marklogic.hub.scaffold.Scaffolding;
 import org.apache.commons.io.FileUtils;
 import org.json.JSONException;
 import org.junit.AfterClass;

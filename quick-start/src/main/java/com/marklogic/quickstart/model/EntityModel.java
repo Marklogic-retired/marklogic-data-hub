@@ -2,13 +2,14 @@ package com.marklogic.quickstart.model;
 
 import java.util.List;
 
-import com.marklogic.hub.PluginFormat;
+import com.marklogic.hub.plugin.PluginFormat;
 
 public class EntityModel {
 
     public String entityName;
     public List<FlowModel> inputFlows;
     public List<FlowModel> harmonizeFlows;
+    public String model;
 
     public PluginFormat pluginFormat;
 

@@ -43,7 +43,6 @@ import org.xml.sax.SAXException;
 
 import com.marklogic.client.MarkLogicIOException;
 import com.marklogic.client.io.Format;
-import com.marklogic.hub.FlowComplexity;
 import com.marklogic.hub.collector.Collector;
 import com.marklogic.hub.collector.QueryCollector;
 import com.marklogic.hub.collector.ServerCollector;

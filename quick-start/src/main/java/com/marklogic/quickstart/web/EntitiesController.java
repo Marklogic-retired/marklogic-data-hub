@@ -1,7 +1,7 @@
 package com.marklogic.quickstart.web;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.marklogic.hub.JobManager;
+import com.marklogic.quickstart.service.JobManager;
 import com.marklogic.hub.JobStatusListener;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.FlowType;

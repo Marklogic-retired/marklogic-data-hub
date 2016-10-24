@@ -1,4 +1,4 @@
-package com.marklogic.hub;
+package com.marklogic.quickstart.service;
 
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.document.DocumentPage;
@@ -10,6 +10,7 @@ import com.marklogic.client.io.SearchHandle;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.query.QueryManager;
 import com.marklogic.client.query.RawStructuredQueryDefinition;
+import com.marklogic.hub.HubConfig;
 import com.marklogic.spring.batch.core.MarkLogicJobInstance;
 import com.marklogic.spring.batch.hub.MarkLogicJobRepoConfig;
 import org.springframework.batch.core.explore.JobExplorer;

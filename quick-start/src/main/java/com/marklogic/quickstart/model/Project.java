@@ -1,13 +1,12 @@
 package com.marklogic.quickstart.model;
 
+import com.marklogic.hub.DataHub;
+import com.marklogic.hub.HubConfig;
+import org.apache.commons.io.filefilter.WildcardFileFilter;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.apache.commons.io.filefilter.WildcardFileFilter;
-
-import com.marklogic.hub.HubConfig;
-import com.marklogic.hub.HubProject;
 
 public class Project {
 
@@ -53,8 +52,8 @@ public class Project {
 
     public void initialize(HubConfig config) {
         config.projectDir = this.path;
-        HubProject hp = new HubProject(config);
-        hp.init();
+        DataHub hub = new DataHub(config);
+        hub.initProject();
         this.initialized = isInitialized();
     }
 }

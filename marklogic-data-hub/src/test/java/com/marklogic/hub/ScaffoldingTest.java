@@ -12,6 +12,9 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import com.marklogic.hub.error.ScaffoldingValidationException;
+import com.marklogic.hub.plugin.PluginFormat;
+import com.marklogic.hub.scaffold.Scaffolding;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.custommonkey.xmlunit.XMLUnit;

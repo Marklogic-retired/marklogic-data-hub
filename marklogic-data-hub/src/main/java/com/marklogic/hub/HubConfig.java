@@ -16,6 +16,8 @@
 package com.marklogic.hub;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.DatabaseClientFactory;
 import com.marklogic.client.helper.LoggingObject;
 
 import java.io.File;
@@ -23,6 +25,9 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Properties;
 
+/**
+ * A class for passing around the Data Hub's Configuration
+ */
 public class HubConfig extends LoggingObject {
 
     public static final String DEFAULT_HOST = "localhost";
@@ -35,13 +40,16 @@ public class HubConfig extends LoggingObject {
     public static final String DEFAULT_TRIGGERS_DB_NAME = "data-hub-TRIGGERS";
     public static final String DEFAULT_SCHEMAS_DB_NAME = "data-hub-SCHEMAS";
 
+    public static final String DEFAULT_HUB_USER_ROLE = "data-hub-user";
+    public static final String DEFAULT_HUB_USER_NAME = "data-hub-user";
+
     public static final Integer DEFAULT_STAGING_PORT = 8010;
     public static final Integer DEFAULT_FINAL_PORT = 8011;
     public static final Integer DEFAULT_TRACE_PORT = 8012;
     public static final Integer DEFAULT_JOB_PORT = 8013;
 
     public static final String DEFAULT_APP_NAME = "data-hub";
-    public static final String DEFAULT_MODULES_PATH = "src/data-hub";
+    public static final String DEFAULT_PROJECT_DIR = ".";
 
     public static final String DEFAULT_AUTH_METHOD = "digest";
 
@@ -54,6 +62,10 @@ public class HubConfig extends LoggingObject {
     public String username;
     @JsonIgnore
     public String password;
+
+    public String adminUsername;
+    @JsonIgnore
+    public String adminPassword;
 
     public String host = DEFAULT_HOST;
 
@@ -81,12 +93,16 @@ public class HubConfig extends LoggingObject {
     public String triggersDbName = DEFAULT_TRIGGERS_DB_NAME;
     public String schemasDbName = DEFAULT_SCHEMAS_DB_NAME;
 
+    public String hubUserName = DEFAULT_HUB_USER_NAME;
+    public String hubUserPassword = DEFAULT_HUB_USER_NAME;
+    public String hubUserRole = DEFAULT_HUB_USER_ROLE;
+
     public String authMethod = DEFAULT_AUTH_METHOD;
 
     public String projectDir;
 
     public HubConfig() {
-        this(DEFAULT_MODULES_PATH);
+        this(DEFAULT_PROJECT_DIR);
     }
 
     public HubConfig(String projectDir) {
@@ -116,7 +132,7 @@ public class HubConfig extends LoggingObject {
         return environmentProperties;
     }
 
-    public void loadConfigurationFromProperties(Properties environmentProperties) {
+    private void loadConfigurationFromProperties(Properties environmentProperties) {
         name = getEnvPropString(environmentProperties, "mlAppName", name);
 
         host = getEnvPropString(environmentProperties, "mlHost", host);
@@ -151,6 +167,58 @@ public class HubConfig extends LoggingObject {
         password = getEnvPropString(environmentProperties, "mlAdminPassword", password);
     }
 
+    /**
+     * Creates a new DatabaseClient for accessing the Staging database
+     * @return - a DatabaseClient
+     */
+    public DatabaseClient newStagingClient() {
+        return DatabaseClientFactory.newClient(
+            host,
+            stagingPort,
+            username,
+            password,
+            DatabaseClientFactory.Authentication.valueOf(authMethod.toUpperCase()));
+    }
+
+    /**
+     * Creates a new DatabaseClient for accessing the Final database
+     * @return - a DatabaseClient
+     */
+    public DatabaseClient newFinalClient() {
+        return DatabaseClientFactory.newClient(
+            host,
+            finalPort,
+            username,
+            password,
+            DatabaseClientFactory.Authentication.valueOf(authMethod.toUpperCase()));
+    }
+
+    /**
+     * Creates a new DatabaseClient for accessing the Job database
+     * @return - a DatabaseClient
+     */
+    public DatabaseClient newJobDbClient() {
+        return DatabaseClientFactory.newClient(
+            host,
+            jobPort,
+            username,
+            password,
+            DatabaseClientFactory.Authentication.valueOf(authMethod.toUpperCase()));
+    }
+
+    /**
+     * Creates a new DatabaseClient for accessing the Trace database
+     * @return - a DatabaseClient
+     */
+    public DatabaseClient newTraceDbClient() {
+        return DatabaseClientFactory.newClient(
+            host,
+            tracePort,
+            username,
+            password,
+            DatabaseClientFactory.Authentication.valueOf(authMethod.toUpperCase()));
+    }
+
     private String getEnvPropString(Properties environmentProperties, String key, String fallback) {
         String value = environmentProperties.getProperty(key);
         if (value == null) {
@@ -172,7 +240,7 @@ public class HubConfig extends LoggingObject {
     }
 
     private void loadConfigurationFromFile(Properties configProperties, String fileName) {
-        InputStream is = null;
+        InputStream is;
         try {
             File file = new File(this.projectDir, fileName);
             if(file.exists()) {
@@ -182,7 +250,7 @@ public class HubConfig extends LoggingObject {
             }
         }
         catch ( Exception e ) {
-            is = null;
+            e.printStackTrace();
         }
     }
 

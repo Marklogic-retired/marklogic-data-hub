@@ -1,5 +1,8 @@
 package com.marklogic.hub;
 
+import com.marklogic.client.helper.LoggingObject;
+import org.apache.commons.io.IOUtils;
+
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,13 +12,10 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.io.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-public class HubProject {
-
-    static final private Logger LOGGER = LoggerFactory.getLogger(HubProject.class);
+/**
+ * Class for creating a hub Project
+ */
+class HubProject extends LoggingObject {
 
     private String projectDirStr;
     private Path projectDir;
@@ -58,11 +58,19 @@ public class HubProject {
         customTokens.put("%%mlModulesDbName%%", hubConfig.modulesDbName);
         customTokens.put("%%mlTriggersDbName%%", hubConfig.triggersDbName);
         customTokens.put("%%mlSchemasDbName%%", hubConfig.schemasDbName);
+
+        customTokens.put("%%mlHubUserName%%", hubConfig.hubUserName);
+        customTokens.put("%%mlHubUserPassword%%", hubConfig.hubUserPassword);
+        customTokens.put("%%mlHubUserRole%%", hubConfig.hubUserRole);
     }
 
+    /**
+     * Initializes a directory as a hub project directory.
+     * This means putting certain files and folders in place.
+     */
     public void init() {
         try {
-            LOGGER.error("PLUGINS DIR: " + pluginsDir.toString());
+            logger.error("PLUGINS DIR: " + pluginsDir.toString());
             this.pluginsDir.toFile().mkdirs();
 
             Path serversDir = configDir.resolve("servers");
@@ -82,6 +90,17 @@ public class HubProject {
             writeResourceFile("ml-config/databases/schemas-database.json", databasesDir.resolve("schemas-database.json"));
             writeResourceFile("ml-config/databases/triggers-database.json", databasesDir.resolve("triggers-database.json"));
 
+            Path securityDir = configDir.resolve("security");
+            Path rolesDir = securityDir.resolve("roles");
+            Path usersDir = securityDir.resolve("users");
+
+            rolesDir.toFile().mkdirs();
+            usersDir.toFile().mkdirs();
+
+            writeResourceFileWithReplace("ml-config/security/roles/data-hub-user.json", rolesDir.resolve("data-hub-user.json"));
+            writeResourceFileWithReplace("ml-config/security/users/data-hub-user.json", usersDir.resolve("data-hub-user.json"));
+
+
             writeResourceFile("scaffolding/build_gradle", projectDir.resolve("build.gradle"));
             writeResourceFileWithReplace("scaffolding/gradle_properties", projectDir.resolve("gradle.properties"));
             writeResourceFile("scaffolding/gradle-local_properties", projectDir.resolve("gradle-local.properties"));
@@ -93,7 +112,7 @@ public class HubProject {
 
     private void writeResourceFile(String srcFile, Path dstFile) throws IOException {
         if (!dstFile.toFile().exists()) {
-            LOGGER.info("Getting file: " + srcFile);
+            logger.info("Getting file: " + srcFile);
             InputStream inputStream = HubProject.class.getClassLoader().getResourceAsStream(srcFile);
             Files.copy(inputStream, dstFile);
         }
@@ -101,7 +120,7 @@ public class HubProject {
 
     private void writeResourceFileWithReplace(String srcFile, Path dstFile) throws IOException {
         if (!dstFile.toFile().exists()) {
-            LOGGER.info("Getting file with Replace: " + srcFile);
+            logger.info("Getting file with Replace: " + srcFile);
             InputStream inputStream = HubProject.class.getClassLoader().getResourceAsStream(srcFile);
 
             String fileContents = IOUtils.toString(inputStream);
