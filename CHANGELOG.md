@@ -1,7 +1,24 @@
 # Change Log
 
-## [v1.0.0-rc.6](https://github.com/marklogic/marklogic-data-hub/tree/v1.0.0-rc.6)
+## [v1.0.0](https://github.com/marklogic/marklogic-data-hub/tree/v1.0.0)
 
+[Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v1.0.0-rc.6...v1.0.0)
+
+**Fixed bugs:**
+
+- DeployViewSchemasCommand is failing installs [\#312](https://github.com/marklogic/marklogic-data-hub/issues/312)
+- File change watcher fires multiple times on Windows [\#308](https://github.com/marklogic/marklogic-data-hub/issues/308)
+- Clean Target database directory ? is confusing not working [\#305](https://github.com/marklogic/marklogic-data-hub/issues/305)
+
+**Closed issues:**
+
+- Gradle Daemon causing working directory issues [\#314](https://github.com/marklogic/marklogic-data-hub/issues/314)
+- marklogic spring batch requires additional date sort operator [\#311](https://github.com/marklogic/marklogic-data-hub/issues/311)
+- Handling tab-delimited files  [\#310](https://github.com/marklogic/marklogic-data-hub/issues/310)
+- Add issue template to the repo [\#309](https://github.com/marklogic/marklogic-data-hub/issues/309)
+- Last deployed time sometimes says 47 years ago [\#303](https://github.com/marklogic/marklogic-data-hub/issues/303)
+
+## [v1.0.0-rc.6](https://github.com/marklogic/marklogic-data-hub/tree/v1.0.0-rc.6) (2016-10-17)
 [Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v1.0.0-rc.5...v1.0.0-rc.6)
 
 **Fixed bugs:**
