@@ -1,4 +1,4 @@
-package com.marklogic.hub.commands;
+package com.marklogic.hub.deploy.commands;
 
 import java.io.File;
 import java.util.*;

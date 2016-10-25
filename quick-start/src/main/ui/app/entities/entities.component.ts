@@ -54,7 +54,11 @@ export class EntitiesComponent {
   }
 
   getLastDeployed() {
-    return this.deployService.getLastDeployed();
+    const lastDeployed = this.deployService.getLastDeployed();
+    if (lastDeployed) {
+      return lastDeployed.fromNow();
+    }
+    return 'Not Yet Deployed';
   }
 
   getErrors() {

@@ -1,4 +1,4 @@
-package com.marklogic.hub;
+package com.marklogic.hub.flow;
 
 public enum FlowComplexity {
     SIMPLE("simple"), ADVANCED("advanced");

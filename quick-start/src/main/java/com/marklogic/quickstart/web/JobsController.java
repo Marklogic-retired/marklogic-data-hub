@@ -3,7 +3,7 @@ package com.marklogic.quickstart.web;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.marklogic.hub.JobManager;
+import com.marklogic.quickstart.service.JobManager;
 import com.marklogic.quickstart.model.EnvironmentConfig;
 import com.marklogic.quickstart.util.JobSerializer;
 import com.marklogic.spring.batch.core.MarkLogicJobInstance;

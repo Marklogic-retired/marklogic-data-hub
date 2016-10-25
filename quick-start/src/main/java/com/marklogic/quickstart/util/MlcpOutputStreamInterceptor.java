@@ -1,6 +1,6 @@
 package com.marklogic.quickstart.util;
 
-import com.marklogic.hub.StatusListener;
+import com.marklogic.quickstart.listeners.StatusListener;
 
 import java.io.OutputStream;
 import java.io.PrintStream;

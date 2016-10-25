@@ -5,7 +5,12 @@ import org.gradle.testkit.runner.UnexpectedBuildFailure
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
 class InitProjectTaskTest extends BaseTest {
-    def "enable tracing with hub installed"() {
+
+    def setupSpec() {
+        makeProperties = false;
+    }
+
+    def "init a hub project"() {
 
         when: "we begin"
             File entityDir = new File(testProjectDir.root, "plugins")
@@ -15,7 +20,13 @@ class InitProjectTaskTest extends BaseTest {
             mlConfigDir.isDirectory() == false
 
         when:
-        def result = runTask('hubInit')
+        def result
+        try {
+            result = runTask('hubInit')
+        }
+        catch (Exception e) {
+            e.printStackTrace()
+        }
 
         then:
             notThrown(UnexpectedBuildFailure)

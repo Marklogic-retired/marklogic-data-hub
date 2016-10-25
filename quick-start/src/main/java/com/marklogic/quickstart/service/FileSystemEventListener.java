@@ -9,5 +9,5 @@ import java.nio.file.WatchEvent;
 @Component
 public interface FileSystemEventListener {
 
-    void onWatchEvent(HubConfig hubConfig, Path path, WatchEvent<Path> event);
+    void onWatchEvent(HubConfig hubConfig, Path path);
 }

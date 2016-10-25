@@ -16,7 +16,6 @@
 package com.marklogic.hub.flow;
 
 import com.marklogic.client.io.Format;
-import com.marklogic.hub.FlowComplexity;
 import com.marklogic.hub.plugin.Plugin;
 import com.marklogic.hub.plugin.ServerPlugin;
 import org.w3c.dom.Element;

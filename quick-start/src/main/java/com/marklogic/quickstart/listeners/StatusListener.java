@@ -1,4 +1,4 @@
-package com.marklogic.hub;
+package com.marklogic.quickstart.listeners;
 
 public interface StatusListener {
 

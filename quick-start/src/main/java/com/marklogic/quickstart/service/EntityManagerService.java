@@ -1,9 +1,11 @@
 package com.marklogic.quickstart.service;
 
-import com.marklogic.hub.Scaffolding;
+import com.marklogic.client.DatabaseClient;
+import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.flow.FlowType;
 import com.marklogic.quickstart.exception.NotFoundException;
 import com.marklogic.quickstart.model.EntityModel;
+import com.marklogic.quickstart.model.EnvironmentConfig;
 import com.marklogic.quickstart.model.FlowModel;
 import com.marklogic.quickstart.util.FileUtil;
 import org.slf4j.Logger;
@@ -26,6 +28,9 @@ public class EntityManagerService {
 
     @Autowired
     private FlowManagerService flowManagerService;
+
+    @Autowired
+    private EnvironmentConfig envConfig;
 
     public List<EntityModel> getEntities(String projectDir) {
         List<EntityModel> entities = new ArrayList<EntityModel>();

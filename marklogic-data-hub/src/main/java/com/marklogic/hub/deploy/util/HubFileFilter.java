@@ -1,4 +1,4 @@
-package com.marklogic.hub.util;
+package com.marklogic.hub.deploy.util;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -12,6 +12,7 @@ public class HubFileFilter implements FileFilter {
     public boolean accept(File f) {
         boolean result = f != null &&
             !f.getName().startsWith(".") &&
+            !f.getName().endsWith("entity.json") &&
             !f.toString().matches(".*[/\\\\]REST[/\\\\].*") &&
 
             // ignore vim files ending in ~

@@ -1,18 +1,14 @@
 package com.marklogic.spring.batch.hub;
 
-import java.util.List;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.batch.item.ItemWriter;
-
 import com.marklogic.client.DatabaseClient;
-import com.marklogic.client.Transaction;
 import com.marklogic.client.extensions.ResourceManager;
 import com.marklogic.client.io.Format;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.util.RequestParameters;
 import com.marklogic.hub.flow.Flow;
+import org.springframework.batch.item.ItemWriter;
+
+import java.util.List;
 
 public class FlowWriter extends ResourceManager  implements ItemWriter<String> {
 

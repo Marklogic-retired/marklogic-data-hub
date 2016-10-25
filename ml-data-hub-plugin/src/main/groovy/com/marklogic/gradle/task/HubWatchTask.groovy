@@ -1,6 +1,6 @@
 package com.marklogic.gradle.task
 
-import com.marklogic.hub.commands.LoadUserModulesCommand
+import com.marklogic.hub.deploy.commands.LoadUserModulesCommand
 import org.gradle.api.tasks.TaskAction
 
 /**

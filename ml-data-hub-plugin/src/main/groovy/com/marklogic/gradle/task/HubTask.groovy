@@ -30,14 +30,7 @@ abstract class HubTask extends DefaultTask {
     }
 
     DatabaseClient getStagingClient() {
-        HubConfig hc = getHubConfig()
-        Authentication authMethod = Authentication.valueOf(hc.authMethod.toUpperCase())
-        return DatabaseClientFactory.newClient(
-                hc.host,
-                hc.stagingPort,
-                hc.username,
-                hc.password,
-                authMethod);
+        return getHubConfig().newStagingClient()
     }
 
     CommandContext getCommandContext() {

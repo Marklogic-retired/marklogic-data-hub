@@ -1,4 +1,26 @@
-package com.marklogic.hub.commands;
+package com.marklogic.hub.deploy.commands;
+
+import com.marklogic.appdeployer.AppConfig;
+import com.marklogic.appdeployer.command.AbstractCommand;
+import com.marklogic.appdeployer.command.CommandContext;
+import com.marklogic.appdeployer.command.SortOrderConstants;
+import com.marklogic.client.admin.ResourceExtensionsManager.MethodParameters;
+import com.marklogic.client.modulesloader.ExtensionMetadataAndParams;
+import com.marklogic.client.modulesloader.impl.DefaultModulesLoader;
+import com.marklogic.client.modulesloader.impl.PropertiesModuleManager;
+import com.marklogic.client.modulesloader.impl.XccAssetLoader;
+import com.marklogic.client.modulesloader.xcc.CommaDelimitedPermissionsParser;
+import com.marklogic.client.modulesloader.xcc.DefaultDocumentFormatGetter;
+import com.marklogic.client.modulesloader.xcc.DocumentFormatGetter;
+import com.marklogic.client.modulesloader.xcc.PermissionsParser;
+import com.marklogic.hub.DataHub;
+import com.marklogic.hub.HubConfig;
+import com.marklogic.xcc.*;
+import com.marklogic.xcc.exceptions.RequestException;
+import org.apache.commons.io.IOUtils;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.core.io.support.ResourcePatternResolver;
 
 import java.io.File;
 import java.io.IOException;
@@ -9,40 +31,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import com.marklogic.client.DatabaseClient;
-import com.marklogic.client.DatabaseClientFactory;
-import com.marklogic.client.modulesloader.impl.PropertiesModuleManager;
-import com.marklogic.hub.DataHub;
-import com.marklogic.hub.HubConfig;
-import org.apache.commons.io.IOUtils;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
-import org.springframework.core.io.support.ResourcePatternResolver;
-
-import com.marklogic.appdeployer.AppConfig;
-import com.marklogic.appdeployer.command.AbstractCommand;
-import com.marklogic.appdeployer.command.CommandContext;
-import com.marklogic.appdeployer.command.SortOrderConstants;
-import com.marklogic.client.admin.ResourceExtensionsManager.MethodParameters;
-import com.marklogic.client.modulesloader.ExtensionMetadataAndParams;
-import com.marklogic.client.modulesloader.impl.DefaultModulesLoader;
-import com.marklogic.client.modulesloader.impl.XccAssetLoader;
-import com.marklogic.client.modulesloader.xcc.CommaDelimitedPermissionsParser;
-import com.marklogic.client.modulesloader.xcc.DefaultDocumentFormatGetter;
-import com.marklogic.client.modulesloader.xcc.DocumentFormatGetter;
-import com.marklogic.client.modulesloader.xcc.PermissionsParser;
-import com.marklogic.xcc.Content;
-import com.marklogic.xcc.ContentCreateOptions;
-import com.marklogic.xcc.ContentFactory;
-import com.marklogic.xcc.ContentSource;
-import com.marklogic.xcc.ContentSourceFactory;
-import com.marklogic.xcc.SecurityOptions;
-import com.marklogic.xcc.Session;
-import com.marklogic.xcc.exceptions.RequestException;
-
 public class LoadHubModulesCommand extends AbstractCommand {
     private Integer port = 8000;
-    private SecurityOptions securityOptions;
+    private SecurityOptions securityOptions = null;
     private Session activeSession;
 
     private DefaultModulesLoader modulesLoader;
@@ -51,7 +42,6 @@ public class LoadHubModulesCommand extends AbstractCommand {
     private PermissionsParser permissionsParser = new CommaDelimitedPermissionsParser();
 
     private String permissions = "rest-admin,read,rest-admin,update,rest-extension-user,execute";
-    private String[] collections;
 
     private JarExtensionMetadataProvider extensionMetadataProvider;
 
@@ -72,14 +62,11 @@ public class LoadHubModulesCommand extends AbstractCommand {
         return list;
     }
 
-    protected Content prepContent(String uri, InputStream inputStream, AppConfig config) throws IOException {
+    private Content prepContent(String uri, InputStream inputStream, AppConfig config) throws IOException {
         ContentCreateOptions options = new ContentCreateOptions();
         options.setFormat(documentFormatGetter.getDocumentFormat(new File(uri)));
         options.setPermissions(permissionsParser.parsePermissions(this.permissions));
         options.setCollections(new String[]{"hub-core-module"});
-        if (this.collections != null) {
-            options.setCollections(collections);
-        }
 
         if (logger.isInfoEnabled()) {
             logger.info(format("Inserting module with URI: %s", uri));
@@ -93,11 +80,10 @@ public class LoadHubModulesCommand extends AbstractCommand {
             }
         }
 
-        Content content = ContentFactory.newContent(uri, fileContents, options);
-        return content;
+        return ContentFactory.newContent(uri, fileContents, options);
     }
 
-    protected void initializeActiveSession(CommandContext context) {
+    private void initializeActiveSession(CommandContext context) {
         AppConfig config = context.getAppConfig();
         XccAssetLoader xccAssetLoader = context.getAppConfig().newXccAssetLoader();
 
@@ -112,18 +98,6 @@ public class LoadHubModulesCommand extends AbstractCommand {
         activeSession = cs.newSession();
     }
 
-    private DatabaseClient jobDbClient() {
-        DatabaseClientFactory.Authentication authMethod = DatabaseClientFactory.Authentication
-            .valueOf(hubConfig.authMethod.toUpperCase());
-        return DatabaseClientFactory.newClient(hubConfig.host, hubConfig.jobPort, hubConfig.jobDbName, hubConfig.username, hubConfig.password, authMethod);
-    }
-
-    private DatabaseClient traceDbClient() {
-        DatabaseClientFactory.Authentication authMethod = DatabaseClientFactory.Authentication
-            .valueOf(hubConfig.authMethod.toUpperCase());
-        return DatabaseClientFactory.newClient(hubConfig.host, hubConfig.tracePort, hubConfig.traceDbName, hubConfig.username, hubConfig.password, authMethod);
-    }
-
     @Override
     public void execute(CommandContext context) {
         initializeActiveSession(context);
@@ -132,11 +106,11 @@ public class LoadHubModulesCommand extends AbstractCommand {
             String rootPath = "/ml-modules/root";
 
             AppConfig appConfig = context.getAppConfig();
-            ArrayList<String> classpaths = new ArrayList<String>();
+            ArrayList<String> classpaths = new ArrayList<>();
             classpaths.add("/com.marklogic.hub/**/*.x??");
             classpaths.add("/trace-ui/**/*.*");
 
-            ArrayList<Content> content = new ArrayList<Content>();
+            ArrayList<Content> content = new ArrayList<>();
             for (String classpath : classpaths) {
                 List<Resource> resources = findResources("classpath*:" + rootPath, classpath);
                 for (Resource r : resources) {
@@ -196,7 +170,7 @@ public class LoadHubModulesCommand extends AbstractCommand {
 
             logger.info("Loading Trace Rest Options");
             // switch to job db to do this:
-            this.modulesLoader.setDatabaseClient(traceDbClient());
+            this.modulesLoader.setDatabaseClient(hubConfig.newTraceDbClient());
             startTime = System.nanoTime();
             resources = findResources("classpath*:/ml-modules/options", "/**/traces.xml");
             for (Resource r : resources) {
@@ -208,7 +182,7 @@ public class LoadHubModulesCommand extends AbstractCommand {
 
             logger.info("Loading Job Rest Options");
             // switch to job db to do this:
-            this.modulesLoader.setDatabaseClient(jobDbClient());
+            this.modulesLoader.setDatabaseClient(hubConfig.newJobDbClient());
             startTime = System.nanoTime();
             resources = findResources("classpath*:/ml-modules/options", "/**/spring-batch.xml");
             for (Resource r : resources) {

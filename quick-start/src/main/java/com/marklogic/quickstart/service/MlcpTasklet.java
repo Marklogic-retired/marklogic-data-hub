@@ -6,7 +6,7 @@ import com.marklogic.contentpump.ContentPump;
 import com.marklogic.contentpump.bean.MlcpBean;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.JobStatusListener;
-import com.marklogic.hub.StatusListener;
+import com.marklogic.quickstart.listeners.StatusListener;
 import com.marklogic.quickstart.util.MlcpOutputStreamInterceptor;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;

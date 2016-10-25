@@ -40,7 +40,7 @@ export class DeployService {
   private updateLastDeployed() {
     const url = `/api/projects/${this.projectService.projectId}/${this.projectService.environment}/last-deployed`;
     this.http.get(url).map((res: Response) => { return res.json(); }).subscribe((resp: any) => {
-      this._lastDeployed = moment(resp.lastModified);
+      this._lastDeployed = (resp.deployed) ? moment(resp.lastModified) : null;
     });
   }
 
@@ -50,7 +50,7 @@ export class DeployService {
       this.errors = status.errors;
     } else if (message.headers.destination === '/topic/deploy-status') {
       let status: any = JSON.parse(message.body);
-      this._lastDeployed = moment(status.lastModified);
+      this._lastDeployed = (status.deployed) ? moment(status.lastModified) : null;
       this.onDeploy.emit(status);
     }
   }
