@@ -442,7 +442,9 @@ public class DataHub extends LoggingObject {
 
         // SQL Views
         List<Command> viewCommands = new ArrayList<>();
-        viewCommands.add(new DeployViewSchemasCommand());
+        DeployViewSchemasCommand deployViewSchemasCommand = new DeployViewSchemasCommand();
+        deployViewSchemasCommand.setDatabaseIdOrName(hubConfig.finalDbName);
+        viewCommands.add(deployViewSchemasCommand);
         commands.addAll(viewCommands);
 
         return commands;
