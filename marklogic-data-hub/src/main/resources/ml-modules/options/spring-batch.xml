@@ -66,6 +66,11 @@
     </range>
   </values>
   <operator name="sort">
+    <state name="date">
+      <sort-order direction="descending" type="xs:dateTime">
+        <element ns="http://marklogic.com/spring-batch" name="createDateTime"/>
+      </sort-order>
+    </state>
     <state name="date-desc">
       <sort-order direction="descending" type="xs:dateTime">
         <element ns="http://marklogic.com/spring-batch" name="createDateTime"/>
