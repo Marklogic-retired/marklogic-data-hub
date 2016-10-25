@@ -10,6 +10,7 @@
 mlHost=%%mlHost%%
 mlAppName=%%mlAppName%%
 
+# Your MarkLogic Username and Password
 mlUsername=
 mlPassword=
 
