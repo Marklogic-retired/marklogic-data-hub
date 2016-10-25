@@ -17,6 +17,7 @@ package com.marklogic.hub;
 
 import com.marklogic.mgmt.util.PropertySource;
 import com.marklogic.mgmt.util.PropertySourceFactory;
+import org.gradle.api.Project;
 
 public class DefaultHubConfigFactory extends PropertySourceFactory {
 
@@ -24,8 +25,11 @@ public class DefaultHubConfigFactory extends PropertySourceFactory {
         super();
     };
 
-    public DefaultHubConfigFactory(PropertySource propertySource) {
+    private Project project;
+
+    public DefaultHubConfigFactory(Project project, PropertySource propertySource) {
         super(propertySource);
+        this.project = project;
     }
 
     public HubConfig newHubConfig() {
@@ -181,6 +185,9 @@ public class DefaultHubConfigFactory extends PropertySourceFactory {
         if (prop != null) {
             logger.info("REST admin username: " + prop);
             c.adminUsername = prop;
+            if (mlUsername == null) {
+                c.username = prop;
+            }
         } else if (mlUsername != null) {
             logger.info("REST admin username: " + mlUsername);
             c.adminUsername = mlUsername;
@@ -189,17 +196,20 @@ public class DefaultHubConfigFactory extends PropertySourceFactory {
         prop = getProperty("mlAdminPassword");
         if (prop != null) {
             c.adminPassword = prop;
+            if (mlPassword == null) {
+                c.username = prop;
+            }
         }
         else if (mlPassword != null) {
             c.adminPassword = mlPassword;
         }
 
-        prop = getProperty("hubModulesPath");
+        prop = getProperty("hubProjectDir");
         if (prop != null) {
             c.projectDir = prop;
         }
         else {
-            c.projectDir = ".";
+            c.projectDir = project.getProjectDir().getAbsolutePath();
         }
         logger.info("Hub Project Dir: " + c.projectDir);
 

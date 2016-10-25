@@ -85,8 +85,6 @@ class BaseTest extends Specification {
             mlModulesDbName=data-hub-MODULES
             mlTriggersDbName=data-hub-TRIGGERS
             mlSchemasDbName=data-hub-SCHEMAS
-
-            hubModulesPath = ${testProjectDir.root}
         """
     }
 

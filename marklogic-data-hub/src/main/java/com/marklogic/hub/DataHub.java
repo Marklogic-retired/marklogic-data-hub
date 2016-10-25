@@ -87,14 +87,6 @@ public class DataHub extends LoggingObject {
         init(hubConfig);
     }
 
-    public DataHub(String host, String username, String password) {
-        hubConfig = new HubConfig();
-        hubConfig.host = host;
-        hubConfig.username = username;
-        hubConfig.password = password;
-        init(hubConfig);
-    }
-
     private void init(HubConfig hubConfig) {
         this.hubConfig = hubConfig;
         if (hubConfig.username != null && hubConfig.password != null) {
