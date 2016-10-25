@@ -149,13 +149,6 @@ export class MlcpUiComponent {
             value: 'rest-reader,read,rest-writer,update',
           },
           {
-            label: 'Clean Target Database Directory?',
-            field: 'output_cleandir',
-            type: 'boolean',
-            description: 'Whether or not to delete all content in the output database directory prior to loading.',
-            value: false
-          },
-          {
             label: 'Output URI Prefix',
             field: 'output_uri_prefix',
             type: 'string',
