@@ -161,6 +161,8 @@ public class HubTestBase {
         hubConfig.jobPort = jobPort;
         hubConfig.username = user;
         hubConfig.password = password;
+        hubConfig.adminUsername = user;
+        hubConfig.adminPassword = password;
         return hubConfig;
     }
 

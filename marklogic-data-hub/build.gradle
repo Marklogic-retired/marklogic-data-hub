@@ -5,7 +5,6 @@ plugins {
     id 'com.jfrog.bintray' version '1.7.2'
     id 'com.marklogic.ml-gradle' version '2.3.4'
     id 'com.moowork.node' version '0.13'
-    id 'com.github.hauner.jarTest' version '1.0'
 }
 
 repositories {

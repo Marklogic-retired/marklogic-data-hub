@@ -100,7 +100,6 @@ class HubProject extends LoggingObject {
             writeResourceFileWithReplace("ml-config/security/roles/data-hub-user.json", rolesDir.resolve("data-hub-user.json"));
             writeResourceFileWithReplace("ml-config/security/users/data-hub-user.json", usersDir.resolve("data-hub-user.json"));
 
-
             writeResourceFile("scaffolding/build_gradle", projectDir.resolve("build.gradle"));
             writeResourceFileWithReplace("scaffolding/gradle_properties", projectDir.resolve("gradle.properties"));
             writeResourceFile("scaffolding/gradle-local_properties", projectDir.resolve("gradle-local.properties"));

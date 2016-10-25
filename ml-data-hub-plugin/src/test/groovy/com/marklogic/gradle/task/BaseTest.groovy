@@ -49,8 +49,6 @@ class BaseTest extends Specification {
             plugins {
                 id 'com.marklogic.ml-data-hub'
             }
-
-            workingDir = ${testProjectDir.root}
         """
     }
 
@@ -94,9 +92,6 @@ class BaseTest extends Specification {
 
     def setup() {
         createBuildFile()
-
-        if (makeProperties) {
-            createFullPropertiesFile()
-        }
+        createFullPropertiesFile()
     }
 }
