@@ -3,8 +3,8 @@ package com.marklogic.quickstart.service;
 import com.marklogic.client.helper.LoggingObject;
 import com.marklogic.hub.DataHub;
 import com.marklogic.hub.HubConfig;
-import com.marklogic.hub.StatusListener;
-import com.marklogic.hub.commands.LoadUserModulesCommand;
+import com.marklogic.hub.deploy.commands.LoadUserModulesCommand;
+import com.marklogic.hub.deploy.util.HubDeployStatusListener;
 import com.marklogic.hub.util.PerformanceLogger;
 import com.marklogic.quickstart.exception.DataHubException;
 import com.marklogic.quickstart.listeners.DeployUserModulesListener;
@@ -24,7 +24,7 @@ import java.util.TimeZone;
 @Service
 public class DataHubService extends LoggingObject {
 
-    public boolean install(HubConfig config, StatusListener listener) throws DataHubException {
+    public boolean install(HubConfig config, HubDeployStatusListener listener) throws DataHubException {
         logger.info("Installing Data Hub");
         DataHub dataHub = new DataHub(config);
         try {
@@ -105,7 +105,7 @@ public class DataHubService extends LoggingObject {
 //    }
 
 
-    public void uninstall(HubConfig config, StatusListener listener) throws DataHubException {
+    public void uninstall(HubConfig config, HubDeployStatusListener listener) throws DataHubException {
         DataHub dataHub = new DataHub(config);
         try {
             dataHub.uninstall(listener);
@@ -115,14 +115,14 @@ public class DataHubService extends LoggingObject {
     }
 
     public String getLastDeployed(HubConfig config) {
-        File tsFile = Paths.get(config.projectDir, ".tmp", LoadUserModulesCommand.TIMESTAMP_FILE).toFile();
+        File tsFile = Paths.get(config.projectDir, ".tmp", LoadUserModulesCommand.USER_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES).toFile();
         Date lastModified = new Date(tsFile.lastModified());
 
         TimeZone tz = TimeZone.getTimeZone("UTC");
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
         df.setTimeZone(tz);
 
-        return "{\"deployed\":true, \"lastModified\":\"" + df.format(lastModified) + "\"}";
+        return "{\"deployed\":" + tsFile.exists() + ", \"lastModified\":\"" + df.format(lastModified) + "\"}";
     }
 
     public void clearContent(HubConfig config, String database) {

@@ -2,12 +2,7 @@ package com.marklogic.quickstart.web;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.marklogic.client.io.SearchHandle;
-import com.marklogic.hub.TraceManager;
-import com.marklogic.hub.trace.Trace;
-import com.marklogic.quickstart.util.SearchHandleSerializer;
+import com.marklogic.quickstart.service.TraceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Scope;
@@ -20,19 +15,19 @@ import org.springframework.web.bind.annotation.*;
 public class TracesController extends BaseController {
 
     @Autowired
-    TraceManager traceManager;
+    TraceService traceService;
 
     @Bean
     @Scope(proxyMode= ScopedProxyMode.TARGET_CLASS, value="session")
-    TraceManager traceManager() {
-        return new TraceManager(envConfig.getTraceClient());
+    TraceService traceManager() {
+        return new TraceService(envConfig.getTraceClient());
     }
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     @ResponseBody
     public String getTraces(@RequestParam(required = false) String query, @RequestParam long start, @RequestParam long count) throws JsonProcessingException {
         requireAuth();
-        return traceManager.getTraces(query, start, count).get();
+        return traceService.getTraces(query, start, count).get();
     }
 
     @RequestMapping(value = "/{traceId}", method = RequestMethod.GET)
@@ -40,6 +35,6 @@ public class TracesController extends BaseController {
     public JsonNode getTrace(@PathVariable String traceId) {
         requireAuth();
 
-        return traceManager.getTrace(traceId);
+        return traceService.getTrace(traceId);
     }
 }

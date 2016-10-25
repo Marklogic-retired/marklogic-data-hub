@@ -1,10 +1,11 @@
-package com.marklogic.hub;
+package com.marklogic.hub.scaffold;
 
 import java.io.File;
 import java.nio.file.Paths;
 import java.util.regex.Pattern;
 
 import com.marklogic.hub.flow.FlowType;
+import com.marklogic.hub.plugin.PluginFormat;
 
 public class ScaffoldingValidator {
 

@@ -1,4 +1,4 @@
-package com.marklogic.hub;
+package com.marklogic.quickstart.service;
 
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.extensions.ResourceManager;
@@ -7,12 +7,12 @@ import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.util.RequestParameters;
 import com.sun.jersey.api.client.ClientHandlerException;
 
-public class HubStats extends ResourceManager{
+public class HubStatsService extends ResourceManager{
     private static final String NAME = "hubstats";
 
     private RequestParameters params = new RequestParameters();
 
-    public HubStats(DatabaseClient client) {
+    public HubStatsService(DatabaseClient client) {
         super();
         client.init(NAME, this);
     }

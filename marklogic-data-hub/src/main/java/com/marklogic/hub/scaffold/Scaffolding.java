@@ -13,31 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.marklogic.hub;
+package com.marklogic.hub.scaffold;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import com.marklogic.client.helper.LoggingObject;
+import com.marklogic.client.io.Format;
+import com.marklogic.hub.error.ScaffoldingValidationException;
+import com.marklogic.hub.flow.FlowType;
+import com.marklogic.hub.flow.SimpleFlow;
+import com.marklogic.hub.plugin.PluginFormat;
+
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.marklogic.client.io.Format;
-import com.marklogic.hub.flow.FlowType;
-import com.marklogic.hub.flow.SimpleFlow;
-
-public class Scaffolding {
-
-    static final private Logger LOGGER = LoggerFactory.getLogger(Scaffolding.class);
+public class Scaffolding extends LoggingObject {
 
     private String projectDir;
     private Path pluginsDir;
@@ -65,7 +55,7 @@ public class Scaffolding {
     }
 
     public void createFlow(String entityName, String flowName,
-            FlowType flowType, PluginFormat pluginFormat, Format dataFormat)
+                           FlowType flowType, PluginFormat pluginFormat, Format dataFormat)
             throws IOException {
         Path flowDir = getFlowDir(entityName, flowName, flowType);
 
@@ -106,7 +96,7 @@ public class Scaffolding {
     }
 
     private void writeFile(String srcFile, Path dstFile) throws IOException {
-        LOGGER.info("writing: " + srcFile + " => " + dstFile.toString());
+        logger.info("writing: " + srcFile + " => " + dstFile.toString());
         if (!dstFile.toFile().exists()) {
             InputStream inputStream = Scaffolding.class.getClassLoader()
                     .getResourceAsStream(srcFile);
@@ -116,7 +106,7 @@ public class Scaffolding {
 
     public void createRestExtension(String entityName, String extensionName,
             FlowType flowType, PluginFormat pluginFormat) throws IOException, ScaffoldingValidationException {
-        LOGGER.info(extensionName);
+        logger.info(extensionName);
 
         if(!validator.isUniqueRestServiceExtension(extensionName)) {
             throw new ScaffoldingValidationException("A rest service extension with the same name as " + extensionName + " already exists.");
@@ -130,7 +120,7 @@ public class Scaffolding {
 
     public void createRestTransform(String entityName, String transformName,
             FlowType flowType, PluginFormat pluginFormat) throws IOException, ScaffoldingValidationException {
-        LOGGER.info(transformName);
+        logger.info(transformName);
         if(!validator.isUniqueRestTransform(transformName)) {
             throw new ScaffoldingValidationException("A rest transform with the same name as " + transformName + " already exists.");
         }
@@ -143,8 +133,8 @@ public class Scaffolding {
 
     private void writeToFile(String fileContent, File dstFile)
             throws IOException {
-        LOGGER.info(fileContent);
-        LOGGER.info(dstFile.getAbsolutePath());
+        logger.info(fileContent);
+        logger.info(dstFile.getAbsolutePath());
         FileWriter fw = new FileWriter(dstFile);
         BufferedWriter bw = new BufferedWriter(fw);
         bw.write(fileContent);
@@ -213,7 +203,7 @@ public class Scaffolding {
                 output.append("\n");
             }
         } catch (IOException e) {
-            LOGGER.error(e.getMessage(), e);
+            logger.error(e.getMessage(), e);
             throw e;
         } finally {
             if(inputStream != null) {

@@ -2,9 +2,10 @@ package com.marklogic.quickstart.web;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.marklogic.client.DatabaseClient;
 import com.marklogic.hub.HubConfig;
-import com.marklogic.hub.HubStats;
-import com.marklogic.hub.StatusListener;
+import com.marklogic.hub.deploy.util.HubDeployStatusListener;
+import com.marklogic.quickstart.service.HubStatsService;
 import com.marklogic.hub.Tracing;
 import com.marklogic.quickstart.exception.NotAuthorizedException;
 import com.marklogic.quickstart.listeners.DeployUserModulesListener;
@@ -170,7 +171,7 @@ public class ProjectsController extends BaseController implements FileSystemEven
         final EnvironmentConfig cachedConfig = envConfig;
 
         // install the hub
-        boolean installed = dataHubService.install(envConfig.getMlSettings(), new StatusListener() {
+        boolean installed = dataHubService.install(envConfig.getMlSettings(), new HubDeployStatusListener() {
             @Override
             public void onStatusChange(int percentComplete, String message) {
                 template.convertAndSend("/topic/install-status", new StatusMessage(percentComplete, message));
@@ -205,7 +206,7 @@ public class ProjectsController extends BaseController implements FileSystemEven
         pm.getProject(projectId);
 
         // uninstall the hub
-        dataHubService.uninstall(envConfig.getMlSettings(), new StatusListener() {
+        dataHubService.uninstall(envConfig.getMlSettings(), new HubDeployStatusListener() {
             @Override
             public void onStatusChange(int percentComplete, String message) {
                 template.convertAndSend("/topic/uninstall-status", new StatusMessage(percentComplete, message));
@@ -289,7 +290,7 @@ public class ProjectsController extends BaseController implements FileSystemEven
         // make sure the project exists
         pm.getProject(projectId);
 
-        HubStats hs = new HubStats(envConfig.getStagingClient());
+        HubStatsService hs = new HubStatsService(envConfig.getStagingClient());
         return hs.getStats();
     }
 
@@ -346,7 +347,7 @@ public class ProjectsController extends BaseController implements FileSystemEven
     }
 
     @Override
-    public void onWatchEvent(HubConfig hubConfig, Path path, WatchEvent<Path> event) {
+    public void onWatchEvent(HubConfig hubConfig, Path path) {
         installUserModules(hubConfig, false);
     }
 

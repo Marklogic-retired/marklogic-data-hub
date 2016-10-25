@@ -15,6 +15,7 @@
  */
 package com.marklogic.hub;
 
+import com.marklogic.hub.error.ServerValidationException;
 import com.marklogic.mgmt.admin.AdminManager;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.easymock.EasyMockRule;

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.marklogic.client.io.Format;
-import com.marklogic.hub.PluginFormat;
+import com.marklogic.hub.plugin.PluginFormat;
 
 public class FlowModel {
 

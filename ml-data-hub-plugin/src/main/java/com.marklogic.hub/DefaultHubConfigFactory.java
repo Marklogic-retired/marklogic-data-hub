@@ -17,6 +17,7 @@ package com.marklogic.hub;
 
 import com.marklogic.mgmt.util.PropertySource;
 import com.marklogic.mgmt.util.PropertySourceFactory;
+import org.gradle.api.Project;
 
 public class DefaultHubConfigFactory extends PropertySourceFactory {
 
@@ -24,8 +25,11 @@ public class DefaultHubConfigFactory extends PropertySourceFactory {
         super();
     };
 
-    public DefaultHubConfigFactory(PropertySource propertySource) {
+    private Project project;
+
+    public DefaultHubConfigFactory(Project project, PropertySource propertySource) {
         super(propertySource);
+        this.project = project;
     }
 
     public HubConfig newHubConfig() {
@@ -161,29 +165,51 @@ public class DefaultHubConfigFactory extends PropertySourceFactory {
             c.schemasDbName = prop;
         }
 
+        prop = getProperty("mlManageUsername");
+        if (prop != null) {
+            logger.info("Manage username: " + prop);
+            c.username = prop;
+        } else if (mlUsername != null) {
+            logger.info("Manage username: " + mlUsername);
+            c.username = mlUsername;
+        }
+
+        prop = getProperty("mlManagePassword");
+        if (prop != null) {
+            c.password = prop;
+        } else if (mlPassword != null) {
+            c.password = mlPassword;
+        }
+
         prop = getProperty("mlAdminUsername");
         if (prop != null) {
             logger.info("REST admin username: " + prop);
-            c.username = prop;
+            c.adminUsername = prop;
+            if (mlUsername == null) {
+                c.username = prop;
+            }
         } else if (mlUsername != null) {
             logger.info("REST admin username: " + mlUsername);
-            c.username = mlUsername;
+            c.adminUsername = mlUsername;
         }
 
         prop = getProperty("mlAdminPassword");
         if (prop != null) {
-            c.password = prop;
+            c.adminPassword = prop;
+            if (mlPassword == null) {
+                c.username = prop;
+            }
         }
         else if (mlPassword != null) {
-            c.password = mlPassword;
+            c.adminPassword = mlPassword;
         }
 
-        prop = getProperty("hubModulesPath");
+        prop = getProperty("hubProjectDir");
         if (prop != null) {
             c.projectDir = prop;
         }
         else {
-            c.projectDir = ".";
+            c.projectDir = project.getProjectDir().getAbsolutePath();
         }
         logger.info("Hub Project Dir: " + c.projectDir);
 

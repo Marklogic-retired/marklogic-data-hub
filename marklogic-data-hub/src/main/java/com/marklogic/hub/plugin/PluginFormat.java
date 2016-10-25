@@ -1,4 +1,4 @@
-package com.marklogic.hub;
+package com.marklogic.hub.plugin;
 
 public enum PluginFormat {
     JAVASCRIPT("sjs"), XQUERY("xqy");

@@ -22,13 +22,13 @@ import java.util.*;
 public class FileSystemWatcherService extends LoggingObject implements DisposableBean {
 
     @Autowired
-    EnvironmentConfig envConfig;
+    private EnvironmentConfig envConfig;
 
     private WatchService watcher;
     private Thread watcherThread;
     private Map<WatchKey,Path> keys = new HashMap<>();
 
-    private List<FileSystemEventListener> listeners = Collections.synchronizedList(new ArrayList<>());
+    private final List<FileSystemEventListener> listeners = Collections.synchronizedList(new ArrayList<>());
 
     @PostConstruct
     protected synchronized void onPostConstruct() throws Exception {
@@ -64,12 +64,12 @@ public class FileSystemWatcherService extends LoggingObject implements Disposabl
         listeners.remove(listener);
     }
 
-    protected void notifyListeners(HubConfig hubConfig, Path path, WatchEvent<Path> event) {
+    private void notifyListeners(HubConfig hubConfig, Path path) {
         // notify global listeners
         synchronized (listeners) {
             for (FileSystemEventListener listener : listeners) {
                 try {
-                    listener.onWatchEvent(hubConfig, path, event);
+                    listener.onWatchEvent(hubConfig, path);
                 }
                 catch (Exception e) {
                     logger.error("Exception occured on listener", e);
@@ -143,17 +143,51 @@ public class FileSystemWatcherService extends LoggingObject implements Disposabl
         watcher.close();
     }
 
-    @SuppressWarnings("unchecked")
-    static <T> WatchEvent<T> cast(WatchEvent<?> event) {
-        return (WatchEvent<T>)event;
-    }
-
     private class DirectoryWatcherThread extends Thread {
 
         private HubConfig hubConfig;
-        public DirectoryWatcherThread(String name, HubConfig hubConfig) {
+        private final int DELAY = 500;
+
+        // Use a SET to prevent duplicates from being added when multiple events on the
+        // same file arrive in quick succession.
+        HashSet<Path> filesToReload = new HashSet<>();
+        Timer processDelayTimer = null;
+
+        DirectoryWatcherThread(String name, HubConfig hubConfig) {
             super(name);
             this.hubConfig = hubConfig;
+        }
+
+        private synchronized void addFileToProcess(Path path) {
+            boolean alreadyAdded = !filesToReload.add(path);
+            logger.info("Queuing file for processing: "
+                + path.toString() + (alreadyAdded?"(already queued)":""));
+            if (processDelayTimer != null) {
+                processDelayTimer.cancel();
+            }
+            processDelayTimer = new Timer();
+            processDelayTimer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    processFiles();
+                }
+            }, DELAY);
+        }
+
+        private synchronized void processFiles() {
+            // Iterate over the set of file to be processed
+            for (Iterator<Path> it = filesToReload.iterator(); it.hasNext();) {
+                Path path = it.next();
+
+                // Sometimes you just have to do what you have to do...
+                logger.info("Processing file: " + path.toString());
+
+                // notify listeners
+                notifyListeners(hubConfig, path);
+
+                // Remove this file from the set.
+                it.remove();
+            }
         }
 
         @Override
@@ -180,15 +214,14 @@ public class FileSystemWatcherService extends LoggingObject implements Disposabl
                     }
 
                     // Context for directory entry event is the file name of entry
-                    WatchEvent<Path> ev = cast(event);
+                    @SuppressWarnings("unchecked")
+                    WatchEvent<Path> ev = (WatchEvent<Path>)event;
                     Path context = ev.context();
                     Path child = dir.resolve(context);
 
                     // print out event
                     logger.info("Event received: {} for: {}", event.kind().name(), child);
-
-                    // notify listeners
-                    notifyListeners(hubConfig, dir, ev);
+                    addFileToProcess(child);
 
                     // if directory is created, then register it and its sub-directories
                     // we are always listening recursively

@@ -7,6 +7,8 @@ import java.io.IOException;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import com.marklogic.hub.plugin.PluginFormat;
+import com.marklogic.hub.scaffold.Scaffolding;
 import org.apache.commons.io.FileUtils;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.AfterClass;

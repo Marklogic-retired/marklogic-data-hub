@@ -25,9 +25,9 @@ import com.marklogic.gradle.task.*
 import com.marklogic.hub.DataHub
 import com.marklogic.hub.DefaultHubConfigFactory
 import com.marklogic.hub.HubConfig
-import com.marklogic.hub.commands.DeployHubDatabasesCommand
-import com.marklogic.hub.commands.LoadHubModulesCommand
-import com.marklogic.hub.commands.LoadUserModulesCommand
+import com.marklogic.hub.deploy.commands.DeployHubDatabasesCommand
+import com.marklogic.hub.deploy.commands.LoadHubModulesCommand
+import com.marklogic.hub.deploy.commands.LoadUserModulesCommand
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.slf4j.LoggerFactory
@@ -67,7 +67,7 @@ class DataHubPlugin implements Plugin<Project> {
     }
 
     void initializeProjectExtensions(Project project) {
-        HubConfig hubConfig = new DefaultHubConfigFactory(new ProjectPropertySource(project)).newHubConfig()
+        HubConfig hubConfig = new DefaultHubConfigFactory(project, new ProjectPropertySource(project)).newHubConfig()
         project.extensions.add("hubConfig", hubConfig)
 
         DataHub hub = new DataHub(hubConfig)

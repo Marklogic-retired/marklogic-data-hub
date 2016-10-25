@@ -3,8 +3,8 @@ package com.marklogic.gradle.task
 import com.marklogic.client.io.Format
 import com.marklogic.gradle.exception.EntityNameRequiredException
 import com.marklogic.gradle.exception.FlowNameRequiredException
-import com.marklogic.hub.PluginFormat
-import com.marklogic.hub.Scaffolding
+import com.marklogic.hub.plugin.PluginFormat
+import com.marklogic.hub.scaffold.Scaffolding
 import com.marklogic.hub.flow.FlowType
 
 abstract class CreateFlowTask extends HubTask {

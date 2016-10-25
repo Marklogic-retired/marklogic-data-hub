@@ -1,6 +1,6 @@
 {
   "project": {
-    "version": "1.0.0-beta.14",
+    "version": "1.0.0-beta.17",
     "name": "quick-start"
   },
   "apps": [
@@ -17,7 +17,8 @@
       "styles": [
         "../../../node_modules/mdi/css/materialdesignicons.css",
         "../../../node_modules/font-awesome/css/font-awesome.css",
-        "../../../node_modules/codemirror/lib/codemirror.css"
+        "../../../node_modules/codemirror/lib/codemirror.css",
+        "styles.scss"
       ],
       "scripts": [],
       "environments": {

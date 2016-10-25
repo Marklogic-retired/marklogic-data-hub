@@ -13,6 +13,8 @@ import spock.lang.Specification
 
 class BaseTest extends Specification {
 
+    public static boolean makeProperties = true;
+
     final Logger log = LoggerFactory.getLogger(getClass())
     @Rule final TemporaryFolder testProjectDir = new TemporaryFolder()
     File buildFile
@@ -41,14 +43,16 @@ class BaseTest extends Specification {
         return DatabaseClientFactory.newClient(hubConfig.host, hubConfig.stagingPort, HubConfig.DEFAULT_MODULES_DB_NAME, "admin", "admin", authMethod)
     }
 
-    def setup() {
+    void createBuildFile() {
         buildFile = testProjectDir.newFile('build.gradle')
         buildFile << """
             plugins {
                 id 'com.marklogic.ml-data-hub'
             }
         """
+    }
 
+    void createFullPropertiesFile() {
         propertiesFile = testProjectDir.newFile('gradle.properties')
         propertiesFile << """
             mlHost=localhost
@@ -81,8 +85,11 @@ class BaseTest extends Specification {
             mlModulesDbName=data-hub-MODULES
             mlTriggersDbName=data-hub-TRIGGERS
             mlSchemasDbName=data-hub-SCHEMAS
-
-            hubModulesPath=${testProjectDir.root}
         """
+    }
+
+    def setup() {
+        createBuildFile()
+        createFullPropertiesFile()
     }
 }
