@@ -65,8 +65,12 @@ import com.marklogic.mgmt.appservers.ServerManager;
 import com.marklogic.mgmt.databases.DatabaseManager;
 import com.marklogic.rest.util.Fragment;
 import com.marklogic.rest.util.ResourcesFragment;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.web.client.ResourceAccessException;
 
+import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -291,21 +295,38 @@ public class DataHub extends LoggingObject {
      * Removes user's modules from the modules db
      */
     public void clearUserModules() {
+        ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver(DataHub.class.getClassLoader());
         try {
-            runInDatabase(
+            ArrayList<String> options = new ArrayList<>();
+            for (Resource r : resolver.getResources("classpath*:/ml-modules/options/*.xml")) {
+                options.add(r.getFilename().replace(".xml", ""));
+            }
+
+            ArrayList<String> services = new ArrayList<>();
+            for (Resource r : resolver.getResources("classpath*:/ml-modules/services/*.xqy")) {
+                services.add(r.getFilename().replaceAll("\\.(xqy|sjs)", ""));
+            }
+
+
+            ArrayList<String> transforms = new ArrayList<>();
+            for (Resource r : resolver.getResources("classpath*:/ml-modules/transforms/*")) {
+                transforms.add(r.getFilename().replaceAll("\\.(xqy|sjs)", ""));
+            }
+
+            String query =
                 "cts:uris((),(),cts:not-query(cts:collection-query('hub-core-module')))[\n" +
                     "  fn:not(\n" +
-                    "    fn:ends-with(., \"options/spring-batch.xml\") or\n" +
-                    "    fn:ends-with(., \"options/traces.xml\") or\n" +
-                    "    fn:matches(., \"/marklogic.rest.resource/(collector|debug|entity|flow|tracing|validate|writer)/assets/(metadata\\.xml|resource\\.(xqy|sjs))\") or\n" +
-                    "    fn:matches(., \"/marklogic.rest.transform/(get-content|run-flow|trace-json|trace-search)/assets/(metadata\\.xml|transform\\.(xqy|sjs))\")\n" +
+                    "    fn:matches(., \"^.+options/(" + String.join("|", options) + ").xml$\") or\n" +
+                    "    fn:matches(., \"/marklogic.rest.resource/(" + String.join("|", services) + ")/assets/(metadata\\.xml|resource\\.(xqy|sjs))\") or\n" +
+                    "    fn:matches(., \"/marklogic.rest.transform/(" + String.join("|", transforms) + ")/assets/(metadata\\.xml|transform\\.(xqy|sjs))\")\n" +
                     "  )\n" +
-                    "] ! xdmp:document-delete(.)\n",
-                hubConfig.modulesDbName
-            );
+                    "] ! xdmp:document-delete(.)\n";
+            runInDatabase(query, hubConfig.modulesDbName);
         }
         catch(FailedRequestException e) {
             logger.error("Failed to clear user modules");
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
