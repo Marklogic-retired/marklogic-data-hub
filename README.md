@@ -13,4 +13,69 @@ This project allows you to deploy a skeleton Data Hub into MarkLogic. With some 
 
 # Getting Started
 
+###TL;DR
+
 Head over to our [Getting Started Tutorial](https://marklogic.github.io/marklogic-data-hub/) to get up and running with the Data Hub.
+
+Or watch the [MarkLogic University - Data Hub Framework On Demand Video Courses](http://mlu.marklogic.com/ondemand/index.xqy?q=Series%3A%22Operational%20Data%20Hubs%22)
+
+###The Easiest Way
+
+To use the Data Hub Framework you should download the quickstart.war file from the [releases page](https://github.com/marklogic/marklogic-data-hub/releases).
+
+Then Run the war like so:
+
+```bash
+java -jar quickstart.war
+```
+
+###Using the Hub in your existing Java project
+
+Alternatively you can include the jar file as a build dependency in your Java project. Make sure you reference the latest version.
+
+**Gradle**
+
+```groovy
+compile('com.marklogic:marklogic-data-hub:1.0.0')
+```
+
+**Maven**
+
+```xml
+<dependency>
+  <groupId>com.marklogic</groupId>
+  <artifactId>marklogic-data-hub</artifactId>
+  <version>1.0.0</version>
+  <type>pom</type>
+</dependency>
+```
+
+**Ivy**
+
+```xml
+<dependency org='com.marklogic' name='marklogic-data-hub' rev='1.0.0'>
+  <artifact name='$AID' ext='pom'></artifact>
+</dependency>
+```
+
+### Command Line Ninjas
+
+If you prefer to use gradle for all of your hub interactions then you can include the ml-data-hub gradle plugin in your build.gradle file:
+
+```groovy
+plugins {
+    id 'com.marklogic.ml-data-hub' version '1.0.0'
+}
+```
+
+Now you have full access to the Data Hub tasks. To see all available tasks run:
+
+```bash
+gradle tasks
+```
+
+# Building From Source
+
+Feeling intrepid? Want to contrubute to the Data Hub Framework? Perhaps you just want to poke the code?
+
+Look at our [CONTRIBUTING.md](https://github.com/marklogic/marklogic-data-hub/blob/master/CONTRIBUTING.md#building-the-framework-from-source) file for details on building from source.
