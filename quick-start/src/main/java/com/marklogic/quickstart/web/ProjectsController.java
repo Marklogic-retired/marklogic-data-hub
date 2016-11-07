@@ -130,7 +130,7 @@ public class ProjectsController extends BaseController implements FileSystemEven
             session.setAttribute("currentProjectId", projectId);
             session.setAttribute("currentEnvironment", environment);
 
-            if (envConfig.isInstalled()) {
+            if (envConfig.getInstallInfo().isInstalled()) {
                 installUserModules(envConfig.getMlSettings(), false);
                 startProjectWatcher();
             }

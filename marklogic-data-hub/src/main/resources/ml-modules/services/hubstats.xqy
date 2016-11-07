@@ -38,10 +38,7 @@ declare function service:get-db-count($db)
 };
 
 (:~
- : Entry point for java to get flow(s).
- :
- : if the "flow-name" param is given then return a flow. Otherwise
- : return all flows.
+ : Entry point for java to get hub stats
  :
  :)
 declare function get(

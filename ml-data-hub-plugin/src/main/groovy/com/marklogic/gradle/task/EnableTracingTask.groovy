@@ -7,7 +7,7 @@ class EnableTracingTask extends HubTask {
 
     @TaskAction
     void enableTracing() {
-        if (!getDataHub().isInstalled()) {
+        if (!isHubInstalled()) {
             throw new HubNotInstalledException()
         }
         getTracing().enable()

@@ -1,5 +1,5 @@
 import { Injectable, EventEmitter } from '@angular/core';
-import { Http } from '@angular/http';
+import { Http, Response } from '@angular/http';
 import { Message } from 'stompjs/lib/stomp.min';
 import { STOMPService } from '../stomp/stomp.service';
 
@@ -19,9 +19,11 @@ export class InstallService {
     this.stomp.subscribe('/topic/install-status').then((msgId: string) => {
       unsubscribeId = msgId;
     });
-    this.http.put(`/api/projects/${projectId}/${environment}/install`, '').subscribe(() => {
+    let resp = this.http.put(`/api/projects/${projectId}/${environment}/install`, '').share();
+    resp.subscribe(() => {
       this.stomp.unsubscribe(unsubscribeId);
     });
+    return resp.map(this.extractData);
   }
 
   uninstall(projectId: string, environment: string) {
@@ -29,9 +31,15 @@ export class InstallService {
     this.stomp.subscribe('/topic/uninstall-status').then((msgId: string) => {
       unsubscribeId = msgId;
     });
-    this.http.delete(`/api/projects/${projectId}/${environment}/uninstall`).subscribe(() => {
+    let resp = this.http.delete(`/api/projects/${projectId}/${environment}/uninstall`).share();
+    resp.subscribe(() => {
       this.stomp.unsubscribe(unsubscribeId);
     });
+    return resp.map(this.extractData);
+  }
+
+  private extractData(res: Response) {
+    return res.json();
   }
 
   public onMessage = (message: Message) => {

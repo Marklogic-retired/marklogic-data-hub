@@ -7,7 +7,7 @@ class EnableDebuggingTask extends HubTask {
 
     @TaskAction
     void enableDebugging() {
-        if (!getDataHub().isInstalled()) {
+        if (!isHubInstalled()) {
             throw new HubNotInstalledException()
         }
 

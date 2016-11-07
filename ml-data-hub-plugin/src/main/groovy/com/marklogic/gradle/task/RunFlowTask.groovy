@@ -54,7 +54,7 @@ class RunFlowTask extends HubTask {
                 Integer.parseInt(project.property("threadCount")) : 4
         }
 
-        if (!getDataHub().isInstalled()) {
+        if (!isHubInstalled()) {
             throw new HubNotInstalledException()
         }
 

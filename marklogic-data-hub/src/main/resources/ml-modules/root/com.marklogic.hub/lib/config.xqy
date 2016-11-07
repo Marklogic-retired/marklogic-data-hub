@@ -9,3 +9,4 @@ declare variable $FINAL-DATABASE := "%%mlFinalDbName%%";
 declare variable $TRACE-DATABASE := "%%mlTraceDbName%%";
 declare variable $JOB-DATABASE := "%%mlJobDbName%%";
 declare variable $MODULES-DATABASE := "%%mlModulesDbName%%";
+declare variable $HUB-VERSION := "%%mlHubVersion%%";

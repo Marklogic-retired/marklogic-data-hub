@@ -205,28 +205,95 @@
 
       <div id="InstallerTab" class="tab-content" [hidden]="!tabs.Installer" *ngIf="currentEnvironment">
         <div layout="column" layout-align="center center">
-          <div class="shrinky" [ngClass]="(!installing && !currentEnvironment.installed) ? '' : 'collapsed'" layout="column" layout-align="center center">
-            <h3>Installation Needed</h3>
-            <p>In order to continue you must install the Data Hub Framework into
-            MarkLogic server.
-            </p>
-            <div>
-              <button type="button" id="installer-button" mdl-button mdl-button-type="raised" (click)="install()">Install</button>
+          <div [hidden]="uninstalling || installing || currentEnvironment.installInfo.installed" layout="column" layout-align="center center">
+            <div *ngIf="!currentEnvironment.installInfo.partiallyInstalled">
+              <h3>Installation Needed</h3>
+              <p>In order to continue you must install the Data Hub Framework into
+              MarkLogic server.
+              </p>
+              <div class="center-text">
+                <button type="button" id="installer-button" mdl-button mdl-button-type="raised" (click)="install()">Install</button>
+              </div>
+            </div>
+            <div class="partial-install" *ngIf="currentEnvironment.installInfo.partiallyInstalled">
+              <h3>You Have a Partially Installed Hub</h3>
+              <p>You must either re-install, uninstall, or fix the issues to continue</p>
+
+              <h4>Install Status</h4>
+              <table>
+                <tbody>
+                  <tr>
+                    <td>Staging AppServer Installed:</td><td><i class="fa" [ngClass]="getInstalledIcon(currentEnvironment.installInfo.stagingAppServerExists)"></i></td>
+                  </tr>
+                  <tr>
+                    <td>Final AppServer Installed:</td><td><i class="fa" [ngClass]="getInstalledIcon(currentEnvironment.installInfo.finalAppServerExists)"></i></td>
+                  </tr>
+                  <tr>
+                    <td>Trace AppServer Installed:</td><td><i class="fa" [ngClass]="getInstalledIcon(currentEnvironment.installInfo.traceAppServerExists)"></i></td>
+                  </tr>
+                  <tr>
+                    <td>Job AppServer Installed:</td><td><i class="fa" [ngClass]="getInstalledIcon(currentEnvironment.installInfo.jobAppServerExists)"></i></td>
+                  </tr>
+                  <tr>
+                    <td>Staging Database Installed:</td><td><i class="fa" [ngClass]="getInstalledIcon(currentEnvironment.installInfo.stagingDbExists)"></i></td>
+                  </tr>
+                  <tr>
+                    <td>Final Database Installed:</td><td><i class="fa" [ngClass]="getInstalledIcon(currentEnvironment.installInfo.finalDbExists)"></i></td>
+                  </tr>
+                  <tr>
+                    <td>Trace Database Installed:</td><td><i class="fa" [ngClass]="getInstalledIcon(currentEnvironment.installInfo.traceDbExists)"></i></td>
+                  </tr>
+                  <tr>
+                    <td>Job Database Installed:</td><td><i class="fa" [ngClass]="getInstalledIcon(currentEnvironment.installInfo.jobDbExists)"></i></td>
+                  </tr>
+                  <tr>
+                    <td>Staging Triple Index Installed:</td><td><i class="fa" [ngClass]="getInstalledIcon(currentEnvironment.installInfo.stagingTripleIndexOn)"></i></td>
+                  </tr>
+                  <tr>
+                    <td>Staging Collection Lexicon Installed:</td><td><i class="fa" [ngClass]="getInstalledIcon(currentEnvironment.installInfo.stagingCollectionLexiconOn)"></i></td>
+                  </tr>
+                  <tr>
+                    <td>Final Triple Index Installed:</td><td><i class="fa" [ngClass]="getInstalledIcon(currentEnvironment.installInfo.finalTripleIndexOn)"></i></td>
+                  </tr>
+                  <tr>
+                    <td>Final Collection Lexicon Installed:</td><td><i class="fa" [ngClass]="getInstalledIcon(currentEnvironment.installInfo.finalCollectionLexiconOn)"></i></td>
+                  </tr>
+                  <tr>
+                    <td>Staging Forests Installed:</td><td><i class="fa" [ngClass]="getInstalledIcon(currentEnvironment.installInfo.stagingForestsExist)"></i></td>
+                  </tr>
+                  <tr>
+                    <td>Final Forests Installed:</td><td><i class="fa" [ngClass]="getInstalledIcon(currentEnvironment.installInfo.finalForestsExist)"></i></td>
+                  </tr>
+                  <tr>
+                    <td>Trace Forests Installed:</td><td><i class="fa" [ngClass]="getInstalledIcon(currentEnvironment.installInfo.traceForestsExist)"></i></td>
+                  </tr>
+                  <tr>
+                    <td>Job Forests Installed:</td><td><i class="fa" [ngClass]="getInstalledIcon(currentEnvironment.installInfo.jobForestsExist)"></i></td>
+                  </tr>
+                </tbody>
+              </table>
+              <div class="action-button center-text">
+                <button type="button" id="installer-button" mdl-button mdl-button-type="raised" (click)="install()">Install</button>
+              </div>
+              <div class="action-button center-text">
+                <button type="button" id="uninstaller-button" mdl-button mdl-button-type="raised" (click)="unInstall()">UnInstall</button>
+              </div>
             </div>
           </div>
-          <div class="install-progress shrinky" [ngClass]="installing ? '' : 'collapsed'" layout="column" layout-align="center center">
+          <div class="install-progress shrinky" [ngClass]="(installing || uninstalling) ? '' : 'collapsed'" layout="column" layout-align="center center">
             <mdl-progress [progress]="percentComplete"></mdl-progress>
-            <div>Installing...</div>
+            <div *ngIf="installing">Installing...</div>
+            <div *ngIf="uninstalling">Uninstalling...</div>
             <div>{{percentComplete}}% complete</div>
           </div>
-          <div class="shrinky" [ngClass]="currentEnvironment.installed ? '' : 'collapsed'" layout="column" layout-align="center center">
+          <div class="shrinky" [ngClass]="currentEnvironment.installInfo.installed ? '' : 'collapsed'" layout="column" layout-align="center center">
             <i class="fa fa-thumbs-up"></i>
             <p>Installation into MarkLogic is complete!</p>
           </div>
 
           <div layout="row" layout-align="end center" class="init-buttons">
             <button type="button" mdl-button (click)="back()">&lt; Back</button>
-            <button id="finished-button" type="button" mdl-button mdl-button-type="raised" [disabled]="!currentEnvironment.installed" (click)="installNext()">Finished</button>
+            <button id="finished-button" type="button" mdl-button mdl-button-type="raised" [disabled]="!currentEnvironment.installInfo.installed" (click)="installNext()">Finished</button>
           </div>
         </div>
       </div>

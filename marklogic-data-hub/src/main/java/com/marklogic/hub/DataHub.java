@@ -50,11 +50,12 @@ import com.marklogic.client.extensions.ResourceServices.ServiceResult;
 import com.marklogic.client.extensions.ResourceServices.ServiceResultIterator;
 import com.marklogic.client.helper.LoggingObject;
 import com.marklogic.client.io.JacksonHandle;
+import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.util.RequestParameters;
+import com.marklogic.hub.deploy.HubAppDeployer;
 import com.marklogic.hub.deploy.commands.DeployHubDatabasesCommand;
 import com.marklogic.hub.deploy.commands.LoadHubModulesCommand;
 import com.marklogic.hub.deploy.commands.LoadUserModulesCommand;
-import com.marklogic.hub.deploy.HubAppDeployer;
 import com.marklogic.hub.deploy.util.HubDeployStatusListener;
 import com.marklogic.hub.error.ServerValidationException;
 import com.marklogic.mgmt.ManageClient;
@@ -65,13 +66,15 @@ import com.marklogic.mgmt.appservers.ServerManager;
 import com.marklogic.mgmt.databases.DatabaseManager;
 import com.marklogic.rest.util.Fragment;
 import com.marklogic.rest.util.ResourcesFragment;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.web.client.ResourceAccessException;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class DataHub extends LoggingObject {
 
@@ -114,63 +117,49 @@ public class DataHub extends LoggingObject {
      * Determines if the data hub is installed in MarkLogic
      * @return true if installed, false otherwise
      */
-    public boolean isInstalled() {
+    public InstallInfo isInstalled() {
+
+        InstallInfo installInfo = new InstallInfo();
+
         ResourcesFragment srf = serverManager.getAsXml();
-        boolean stagingAppServerExists = srf.resourceExists(hubConfig.stagingHttpName);
-        boolean finalAppServerExists = srf.resourceExists(hubConfig.finalHttpName);
-        boolean traceAppServerExists = srf.resourceExists(hubConfig.traceHttpName);
-        boolean jobAppServerExists = srf.resourceExists(hubConfig.jobHttpName);
-        boolean appserversOk = (stagingAppServerExists && finalAppServerExists && traceAppServerExists && jobAppServerExists);
+        installInfo.stagingAppServerExists = srf.resourceExists(hubConfig.stagingHttpName);
+        installInfo.finalAppServerExists = srf.resourceExists(hubConfig.finalHttpName);
+        installInfo.traceAppServerExists = srf.resourceExists(hubConfig.traceHttpName);
+        installInfo.jobAppServerExists = srf.resourceExists(hubConfig.jobHttpName);
 
         ResourcesFragment drf = databaseManager.getAsXml();
-        boolean stagingDbExists = drf.resourceExists(hubConfig.stagingDbName);
-        boolean finalDbExists = drf.resourceExists(hubConfig.finalDbName);
-        boolean traceDbExists = drf.resourceExists(hubConfig.traceDbName);
-        boolean jobDbExists = drf.resourceExists(hubConfig.jobDbName);
+        installInfo.stagingDbExists = drf.resourceExists(hubConfig.stagingDbName);
+        installInfo.finalDbExists = drf.resourceExists(hubConfig.finalDbName);
+        installInfo.traceDbExists = drf.resourceExists(hubConfig.traceDbName);
+        installInfo.jobDbExists = drf.resourceExists(hubConfig.jobDbName);
 
-        boolean stagingForestsExist = false;
-        boolean finalForestsExist = false;
-        boolean traceForestsExist = false;
-        boolean jobForestsExist = false;
-
-        boolean stagingIndexesOn = false;
-        boolean finalIndexesOn = false;
-        boolean traceIndexesOn = false;
-        boolean jobIndexesOn = false;
-
-        if (stagingDbExists) {
+        if (installInfo.stagingDbExists) {
             Fragment f = databaseManager.getPropertiesAsXml(hubConfig.stagingDbName);
-            stagingIndexesOn = Boolean.parseBoolean(f.getElementValue("//m:triple-index"));
-            stagingIndexesOn = stagingIndexesOn && Boolean.parseBoolean(f.getElementValue("//m:collection-lexicon"));
-            stagingForestsExist = (f.getElements("//m:forest").size() == hubConfig.stagingForestsPerHost);
+            installInfo.stagingTripleIndexOn = Boolean.parseBoolean(f.getElementValue("//m:triple-index"));
+            installInfo.stagingCollectionLexiconOn = Boolean.parseBoolean(f.getElementValue("//m:collection-lexicon"));
+            installInfo.stagingForestsExist = (f.getElements("//m:forest").size() > 0);
         }
 
-        if (finalDbExists) {
+        if (installInfo.finalDbExists) {
             Fragment f = databaseManager.getPropertiesAsXml(hubConfig.finalDbName);
-            finalIndexesOn = Boolean.parseBoolean(f.getElementValue("//m:triple-index"));
-            finalIndexesOn = finalIndexesOn && Boolean.parseBoolean(f.getElementValue("//m:collection-lexicon"));
-            finalForestsExist = (f.getElements("//m:forest").size() == hubConfig.finalForestsPerHost);
+            installInfo.finalTripleIndexOn = Boolean.parseBoolean(f.getElementValue("//m:triple-index"));
+            installInfo.finalCollectionLexiconOn = Boolean.parseBoolean(f.getElementValue("//m:collection-lexicon"));
+            installInfo.finalForestsExist = (f.getElements("//m:forest").size() > 0);
         }
 
-        if (traceDbExists) {
-            traceIndexesOn = true;
+        if (installInfo.traceDbExists) {
             Fragment f = databaseManager.getPropertiesAsXml(hubConfig.traceDbName);
-            traceForestsExist = (f.getElements("//m:forest").size() == hubConfig.traceForestsPerHost);
+            installInfo.traceForestsExist = (f.getElements("//m:forest").size() > 0);
         }
 
-        if (jobDbExists) {
-            jobIndexesOn = true;
+        if (installInfo.jobDbExists) {
             Fragment f = databaseManager.getPropertiesAsXml(hubConfig.jobDbName);
-            jobForestsExist = (f.getElements("//m:forest").size() == hubConfig.jobForestsPerHost);
+            installInfo.jobForestsExist = (f.getElements("//m:forest").size() > 0);
         }
 
-        boolean dbsOk = (stagingDbExists && stagingIndexesOn &&
-                finalDbExists && finalIndexesOn &&
-                traceDbExists && traceIndexesOn &&
-                jobDbExists && jobIndexesOn);
-        boolean forestsOk = (stagingForestsExist && finalForestsExist && traceForestsExist && jobForestsExist);
+        logger.info(installInfo.toString());
 
-        return (appserversOk && dbsOk && forestsOk);
+        return installInfo;
     }
 
     /**
@@ -261,6 +250,22 @@ public class DataHub extends LoggingObject {
         customTokens.put("%%mlHubUserName%%", hubConfig.hubUserName);
         customTokens.put("%%mlHubUserPassword%%", hubConfig.hubUserPassword);
         customTokens.put("%%mlHubUserRole%%", hubConfig.hubUserRole);
+
+        try {
+            String version = getJarVersion();
+            customTokens.put("%%mlHubVersion%%", version);
+        }
+        catch(IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    String getJarVersion() throws IOException {
+        Properties properties = new Properties();
+        InputStream inputStream = getClass().getClassLoader().getResourceAsStream("version.properties");
+        properties.load(inputStream);
+        String version = (String)properties.get("version");
+        return version;
     }
 
     public void initProject() {
@@ -291,21 +296,38 @@ public class DataHub extends LoggingObject {
      * Removes user's modules from the modules db
      */
     public void clearUserModules() {
+        ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver(DataHub.class.getClassLoader());
         try {
-            runInDatabase(
+            ArrayList<String> options = new ArrayList<>();
+            for (Resource r : resolver.getResources("classpath*:/ml-modules/options/*.xml")) {
+                options.add(r.getFilename().replace(".xml", ""));
+            }
+
+            ArrayList<String> services = new ArrayList<>();
+            for (Resource r : resolver.getResources("classpath*:/ml-modules/services/*.xqy")) {
+                services.add(r.getFilename().replaceAll("\\.(xqy|sjs)", ""));
+            }
+
+
+            ArrayList<String> transforms = new ArrayList<>();
+            for (Resource r : resolver.getResources("classpath*:/ml-modules/transforms/*")) {
+                transforms.add(r.getFilename().replaceAll("\\.(xqy|sjs)", ""));
+            }
+
+            String query =
                 "cts:uris((),(),cts:not-query(cts:collection-query('hub-core-module')))[\n" +
                     "  fn:not(\n" +
-                    "    fn:ends-with(., \"options/spring-batch.xml\") or\n" +
-                    "    fn:ends-with(., \"options/traces.xml\") or\n" +
-                    "    fn:matches(., \"/marklogic.rest.resource/(collector|debug|entity|flow|tracing|validate|writer)/assets/(metadata\\.xml|resource\\.(xqy|sjs))\") or\n" +
-                    "    fn:matches(., \"/marklogic.rest.transform/(get-content|run-flow|trace-json|trace-search)/assets/(metadata\\.xml|transform\\.(xqy|sjs))\")\n" +
+                    "    fn:matches(., \"^.+options/(" + String.join("|", options) + ").xml$\") or\n" +
+                    "    fn:matches(., \"/marklogic.rest.resource/(" + String.join("|", services) + ")/assets/(metadata\\.xml|resource\\.(xqy|sjs))\") or\n" +
+                    "    fn:matches(., \"/marklogic.rest.transform/(" + String.join("|", transforms) + ")/assets/(metadata\\.xml|transform\\.(xqy|sjs))\")\n" +
                     "  )\n" +
-                    "] ! xdmp:document-delete(.)\n",
-                hubConfig.modulesDbName
-            );
+                    "] ! xdmp:document-delete(.)\n";
+            runInDatabase(query, hubConfig.modulesDbName);
         }
         catch(FailedRequestException e) {
             logger.error("Failed to clear user modules");
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -484,6 +506,20 @@ public class DataHub extends LoggingObject {
         deployer.undeploy(config);
     }
 
+    /**
+     * Gets the hub version for the installed server side modules
+     * @return - the version of the installed modules
+     */
+    public String getHubVersion() {
+        try {
+            DatabaseClient client = getDatabaseClient(hubConfig.stagingPort);
+            HubVersion hv = new HubVersion(client);
+            return hv.getVersion();
+        }
+        catch(Exception e) {}
+        return "1.0.0";
+    }
+
     class EntitiesValidator extends ResourceManager {
         private static final String NAME = "validate";
 
@@ -500,6 +536,26 @@ public class DataHub extends LoggingObject {
             }
             ServiceResult res = resultItr.next();
             JacksonHandle handle = new JacksonHandle();
+            return res.getContent(handle).get();
+        }
+    }
+
+    class HubVersion extends ResourceManager {
+        private static final String NAME = "hubversion";
+
+        public HubVersion(DatabaseClient client) {
+            super();
+            client.init(NAME, this);
+        }
+
+        public String getVersion() {
+            RequestParameters params = new RequestParameters();
+            ServiceResultIterator resultItr = this.getServices().get(params);
+            if (resultItr == null || ! resultItr.hasNext()) {
+                return null;
+            }
+            ServiceResult res = resultItr.next();
+            StringHandle handle = new StringHandle();
             return res.getContent(handle).get();
         }
     }
