@@ -37,7 +37,7 @@ import module namespace trace = "http://marklogic.com/data-hub/trace"
 
 declare namespace hub = "http://marklogic.com/data-hub";
 
-declare namespace envelope = "http://marklogic.com/data-hub/envelope";
+declare namespace es = "http://marklogic.com/entity-services";
 
 declare option xdmp:mapping "false";
 
@@ -72,10 +72,10 @@ declare variable $TYPE-XQUERY := "xquery";
 declare variable $TYPE-JAVASCRIPT := "javascript";
 
 declare variable $TYPE-XSLT := "xslt";
-
 declare variable $TYPE-XML := "xml";
-
 declare variable $TYPE-JSON := "json";
+declare variable $XML := "application/xml";
+declare variable $JSON := "application/json";
 
 declare %private function flow:get-module-ns(
   $type as xs:string) as xs:string?
@@ -499,7 +499,7 @@ declare function flow:run-plugins(
   let $flow-type := $flow/hub:type
   let $flow-complexity := $flow/hub:complexity
   let $_ := trace:init-trace(
-    if ($data-format = 'application/xml') then "xml"
+    if ($data-format = $XML) then "xml"
     else "json")
   let $_ :=
     for $plugin in $flow/hub:plugins/hub:plugin
@@ -549,22 +549,156 @@ declare function flow:run-flow(
  :)
 declare function flow:make-envelope($map as map:map, $data-format as xs:string)
 {
-  if ($data-format eq "application/json") then
+  if ($data-format eq $JSON) then
     let $headers := fn:head((map:get($map, "headers"), json:array()))
     let $triples := fn:head((map:get($map, "triples"), json:array()))
     let $content := fn:head((map:get($map, "content"), json:object()))
+    let $envelope :=
+      let $o := json:object()
+      let $_ := (
+        map:put($o, "headers", $headers),
+        map:put($o, "triples", $triples),
+        map:put($o, "instance",
+          if ($content instance of map:map) then
+            flow:instance-to-canonical-json($content)
+          else
+            $content
+        ),
+        map:put($o, "attachments",
+          let $content := map:get($map, "content")
+          return
+            if ($content instance of map:map) then
+              map:get($content, "$attachments")
+            else
+              ()
+        )
+      )
+      return
+        $o
+    let $wrapper := json:object()
+    let $_ := map:put($wrapper, "envelope", $envelope)
     return
-      xdmp:to-json(map:new((
-        map:entry("headers", $headers),
-        map:entry("triples", $triples),
-        map:entry("content", $content)
-      )))/node()
+      xdmp:to-json($wrapper)
   else
-    <envelope xmlns="http://marklogic.com/data-hub/envelope">
-      <headers>{map:get($map, "headers")}</headers>
-      <triples>{map:get($map, "triples")}</triples>
-      <content>{map:get($map, "content")}</content>
-    </envelope>
+    document {
+      <envelope xmlns="http://marklogic.com/entity-services">
+        <headers>{map:get($map, "headers")}</headers>
+        <triples>{map:get($map, "triples")}</triples>
+        <instance>
+        {
+          let $content := map:get($map, "content")
+          let $_ := xdmp:log(("content: [", $content, "]"))
+          return
+            if ($content instance of map:map) then
+              flow:instance-to-canonical-xml($content)
+            else
+              $content
+        }
+        </instance>
+        <attachments>
+        {
+          let $content := map:get($map, "content")
+          return
+            if ($content instance of map:map) then
+              map:get($content, "$attachments")
+            else
+              ()
+        }
+        </attachments>
+      </envelope>
+    }
+};
+
+declare function flow:instance-to-canonical-json(
+  $entity-instance as map:map) as json:object
+{
+  let $root-object := json:object()
+  let $o :=
+    if ( map:contains($entity-instance, "$ref") ) then
+      map:get($entity-instance, "$ref")
+    else
+      let $o := json:object()
+      let $_ := (
+        for $key in map:keys($entity-instance)
+        let $instance-property := map:get($entity-instance, $key)
+        where ($key castable as xs:NCName and $key ne "$type")
+        return
+          typeswitch ($instance-property)
+          (: This branch handles embedded objects.  You can choose to prune
+             an entity's representation of extend it with lookups here. :)
+          case json:object+ return
+            for $prop in $instance-property
+            return
+              map:put($o, $key, flow:instance-to-canonical-json($prop))
+          (: An array can also treated as multiple elements :)
+          case json:array return
+            for $val in json:array-values($instance-property)
+            return
+              if ($val instance of json:object) then
+                let $a := json:array()
+                let $_ := json:array-push($a, flow:instance-to-canonical-json($val))
+                return
+                map:put($o, $key, $a)
+              else
+                map:put($o, $key, $val)
+          (: A sequence of values should be simply treated as multiple elements :)
+          case item()+ return
+            for $val in $instance-property
+            return
+              map:put($o, $key, $val)
+          default return
+            map:put($o, $key, $instance-property)
+      )
+      return
+        $o
+  let $_ := map:put($root-object, map:get($entity-instance, "$type"), $o)
+  return
+    $root-object
+};
+
+declare function flow:instance-to-canonical-xml(
+  $entity-instance as map:map) as element()
+{
+  (: Construct an element that is named the same as the Entity Type :)
+  element { map:get($entity-instance, "$type") }  {
+    if ( map:contains($entity-instance, "$ref") ) then
+      map:get($entity-instance, "$ref")
+    else
+      for $key in map:keys($entity-instance)
+      let $instance-property := map:get($entity-instance, $key)
+      where ($key castable as xs:NCName and $key ne "$type")
+      return
+        typeswitch ($instance-property)
+        (: This branch handles embedded objects.  You can choose to prune
+           an entity's representation of extend it with lookups here. :)
+        case json:object+ return
+          for $prop in $instance-property
+          return
+            element { $key } {
+              flow:instance-to-canonical-xml($prop)
+            }
+        (: An array can also treated as multiple elements :)
+        case json:array return
+          for $val in json:array-values($instance-property)
+          return
+            if ($val instance of json:object) then
+              element { $key } {
+                attribute datatype { "array" },
+                flow:instance-to-canonical-xml($val)
+              }
+            else
+              element { $key } {
+                attribute datatype { "array" },
+                $val
+              }
+        (: A sequence of values should be simply treated as multiple elements :)
+        case item()+ return
+          for $val in $instance-property
+          return
+            element { $key } { $val }
+        default return
+          element { $key } { $instance-property }
+  }
 };
 
 (:~
@@ -590,161 +724,155 @@ declare function flow:run-plugin(
   $options as map:map)
 {
   let $module-uri as xs:string? := $plugin/@module
+  where fn:not(fn:empty($module-uri))
   return
-    if (fn:empty($module-uri)) then ()
-    else
-      let $destination as xs:string := $plugin/@dest
-      let $filename as xs:string := hul:get-file-from-uri($module-uri)
-      let $type := flow:get-type($filename)
-      let $ns := flow:get-module-ns($type)
-      let $func-name :=
-        if ($type eq $TYPE-JAVASCRIPT) then
-          "create" || functx:capitalize-first($destination)
-        else
-          "create-" || $destination
-      let $func := xdmp:function(fn:QName($ns, $func-name), $module-uri)
-      let $trace-input :=
-        if ($data-format = 'application/xml') then
-          switch($destination)
-            case "content" return
-              if ($flow-type = "input") then
-                let $kind := try {
-                  xdmp:node-kind($content)
-                }
-                catch($ex) {}
-                return
-                  if ($kind eq "binary") then
-                    element rawContent { "binary document" }
-                  else
-                    element rawContent { $content }
-              else
-                ()
-            case "headers" return
-              element content { $content }
-            case "triples" return
-            (
-              element content { $content },
-              element headers { $headers }
-            )
-            default return ()
-        else
-          let $o := json:object()
-          let $_ :=
-            let $content :=
-              (
-                if ($content instance of document-node()) then
-                  $content/node()
+    let $destination as xs:string := $plugin/@dest
+    let $filename as xs:string := hul:get-file-from-uri($module-uri)
+    let $type := flow:get-type($filename)
+    let $ns := flow:get-module-ns($type)
+    let $func-name :=
+      if ($type eq $TYPE-JAVASCRIPT) then
+        "create" || functx:capitalize-first($destination)
+      else
+        "create-" || $destination
+    let $func := xdmp:function(fn:QName($ns, $func-name), $module-uri)
+    let $trace-input :=
+      if ($data-format = $XML) then
+        switch($destination)
+          case "content" return
+            if ($flow-type = "input") then
+              let $kind := try {
+                xdmp:node-kind($content)
+              }
+              catch($ex) {}
+              return
+                if ($kind eq "binary") then
+                  element rawContent { "binary document" }
                 else
-                  $content,
-                null-node{}
-              )[1]
-            return
-              switch($destination)
-                case "content" return
-                  if ($flow-type = "input") then
-                    let $kind := try {
-                      xdmp:node-kind($content)
-                    }
-                    catch($ex) {}
-                    return
-                      if ($kind eq "binary") then
-                        map:put($o, "rawContent", "binary document")
-                      else
-                        map:put($o, "rawContent", $content)
-                  else
-                    ()
-                case "headers" return
-                  map:put($o, "content", $content)
-                case "triples" return
-                (
-                  map:put($o, "content", $content),
-                  map:put($o, "headers", ($headers, null-node{})[1])
-                )
-                default return ()
+                  element rawContent { $content }
+            else
+              ()
+          case "headers" return
+            element content { $content }
+          case "triples" return
+          (
+            element content { $content },
+            element headers { $headers }
+          )
+          default return ()
+      else
+        let $o := json:object()
+        let $_ :=
+          let $content :=
+            (
+              if ($content instance of document-node()) then
+                $content/node()
+              else
+                $content,
+              null-node{}
+            )[1]
           return
-           $o
-      let $before := xdmp:elapsed-time()
-      let $resp :=
-        try {
-          let $resp :=
-            if ($simple) then
-              switch ($destination)
-                case "content" return
-                  if ($flow-type = "input") then
-                    $func($identifier, $content, $options)
+            switch($destination)
+              case "content" return
+                if ($flow-type = "input") then
+                  if ($content instance of binary()) then
+                    map:put($o, "rawContent", "binary document")
                   else
-                    $func($identifier, $options)
-                case "headers" return
+                    map:put($o, "rawContent", $content)
+                else
+                  ()
+              case "headers" return
+                map:put($o, "content", $content)
+              case "triples" return
+              (
+                map:put($o, "content", $content),
+                map:put($o, "headers", ($headers, null-node{})[1])
+              )
+              default return ()
+        return
+         $o
+    let $before := xdmp:elapsed-time()
+    let $resp :=
+      try {
+        let $resp :=
+          if ($simple) then
+            switch ($destination)
+              case "content" return
+                if ($flow-type = "input") then
                   $func($identifier, $content, $options)
-                case "triples" return
-                  $func($identifier, $content, $headers, $options)
-                default return ()
-            else
-              $func($identifier, $content, $headers, $triples, $options)
-          return
-            if ($resp instance of binary()) then
-              fn:error(xs:QName("CANT_RETURN_BINARY"), "You can't put a binary inside of an envelope.")
-            else
-              $resp
-        }
-        catch($ex) {
-          xdmp:log(xdmp:describe($ex, (), ())),
-          trace:error-trace(
-            $identifier,
-            $module-uri,
-            $destination,
-            $flow-type,
-            $trace-input,
-            $ex,
-            xdmp:elapsed-time() - $before
-          ),
-          xdmp:rethrow()
-        }
-      let $duration := xdmp:elapsed-time() - $before
-      let $resp :=
-        typeswitch($resp)
-          case document-node() return
-            if (fn:count($resp/node()) > 1) then
-              fn:error("Too Many Nodes!. Return just 1 node")
-            else
-              $resp/node()
-          default return
+                else
+                  $func($identifier, $options)
+              case "headers" return
+                $func($identifier, $content, $options)
+              case "triples" return
+                $func($identifier, $content, $headers, $options)
+              default return ()
+          else
+            $func($identifier, $content, $headers, $triples, $options)
+        return
+          if ($resp instance of binary()) then
+            fn:error(xs:QName("CANT_RETURN_BINARY"), "You can't put a binary inside of an envelope.")
+          else
             $resp
-
-      let $resp :=
-        typeswitch($resp)
-          case object-node() | json:object return
-            if ($data-format = 'application/xml') then
-              json:transform-from-json($resp, json:config("custom"))
-            else
-              $resp
-          case json:array return
-            if ($data-format = 'application/xml') then
-              json:array-values($resp)
-            else
-              $resp
-          default return
-            if ($data-format = 'application/json' and
-                $type = $TYPE-XQUERY and
-                $destination = "triples") then
-              json:to-array($resp)
-            else
-              $resp
-      let $_ :=
-        trace:plugin-trace(
+      }
+      catch($ex) {
+        xdmp:log(xdmp:describe($ex, (), ())),
+        trace:error-trace(
           $identifier,
           $module-uri,
           $destination,
           $flow-type,
           $trace-input,
-          if ($data-format = 'application/xml') then
-            $resp
+          $ex,
+          xdmp:elapsed-time() - $before
+        ),
+        xdmp:rethrow()
+      }
+    let $duration := xdmp:elapsed-time() - $before
+    let $resp :=
+      typeswitch($resp)
+        case document-node() return
+          if (fn:count($resp/node()) > 1) then
+            fn:error("Too Many Nodes!. Return just 1 node")
           else
-            ($resp, null-node{})[1],
-          $duration
-        )
-      return
-        $resp
+            $resp/node()
+        default return
+          $resp
+
+    let $resp :=
+      typeswitch($resp)
+        case object-node() | json:object return
+          if ($data-format = $XML) then
+            json:transform-from-json($resp, json:config("custom"))
+          else
+            $resp
+        case json:array return
+          if ($data-format = $XML) then
+            json:array-values($resp)
+          else
+            $resp
+        default return
+          if ($data-format = 'application/json' and
+              $type = $TYPE-XQUERY and
+              $destination = "triples") then
+            json:to-array($resp)
+          else
+            $resp
+    let $_ :=
+      trace:plugin-trace(
+        $identifier,
+        $module-uri,
+        $destination,
+        $flow-type,
+        $trace-input,
+        if ($data-format = $XML) then
+          $resp
+        else
+          ($resp, null-node{})[1],
+        $duration
+      )
+    return
+      $resp
 };
 
 (:~
@@ -862,7 +990,6 @@ declare function flow:validate-entities()
   let $_ :=
     for $entity in flow:get-entities()/hub:entity
     for $flow in $entity/hub:flows/hub:flow
-    let $_ := xdmp:log(("flow!", $flow))
     let $data-format := $flow/hub:data-format
     (: validate collector :)
     let $_ :=

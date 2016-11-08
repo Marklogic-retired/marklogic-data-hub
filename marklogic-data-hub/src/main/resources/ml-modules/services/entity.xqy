@@ -20,6 +20,9 @@ module namespace service = "http://marklogic.com/rest-api/resource/entity";
 import module namespace debug = "http://marklogic.com/data-hub/debug"
   at "/com.marklogic.hub/lib/debug-lib.xqy";
 
+import module namespace es = "http://marklogic.com/entity-services"
+  at "/MarkLogic/entity-services/entity-services.xqy";
+
 import module namespace flow = "http://marklogic.com/data-hub/flow-lib"
   at "/com.marklogic.hub/lib/flow-lib.xqy";
 
@@ -31,6 +34,8 @@ declare namespace rapi = "http://marklogic.com/rest-api";
 declare namespace hub = "http://marklogic.com/data-hub";
 
 declare option xdmp:mapping "false";
+
+declare variable $ENTITY-MODEL-COLLECTION := "http://marklogic.com/entity-services/models";
 
 (:~
  : Entry point for java to get entity(s).
@@ -56,6 +61,34 @@ declare function get(
           flow:get-entities()
       return
        $resp
+    }
+  })
+};
+
+
+declare function put(
+  $context as map:map,
+  $params  as map:map,
+  $input   as document-node()*
+  ) as document-node()?
+{
+  debug:dump-env("PUT ENTITY"),
+
+  perf:log('/v1/resources/entity:put', function() {
+    document {
+      let $entity-def := $input/object-node()
+      let $name as xs:string := $entity-def/info/title
+      return
+        xdmp:document-insert(
+          "/entities/" || $name || ".entity.json",
+          $entity-def,
+          xdmp:default-permissions(),
+          $ENTITY-MODEL-COLLECTION
+        ),
+
+      let $model as map:map := $input/object-node()
+      return
+        es:database-properties-generate($model)
     }
   })
 };
