@@ -52,13 +52,13 @@ declare function mlcpFlow:transform(
         if (trace:enabled()) then
           trace:plugin-trace(
             $uri,
-            if ($envelope instance of element()) then ()
+            if ($envelope/node() instance of element()) then ()
             else
               null-node {},
             "writer",
             $flow/hub:type,
             $envelope,
-            if ($envelope instance of element()) then ()
+            if ($envelope/node() instance of element()) then ()
             else
               null-node {},
             xs:dayTimeDuration("PT0S")

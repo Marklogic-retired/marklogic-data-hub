@@ -547,7 +547,10 @@ declare function flow:run-flow(
  : @param $map - a map with all the stuff in it
  : @return - the newly constructed envelope
  :)
-declare function flow:make-envelope($map as map:map, $data-format as xs:string)
+declare function flow:make-envelope(
+  $map as map:map,
+  $data-format as xs:string)
+  as document-node()
 {
   if ($data-format eq $JSON) then
     let $headers := fn:head((map:get($map, "headers"), json:array()))
