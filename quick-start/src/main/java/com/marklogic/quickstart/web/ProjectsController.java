@@ -171,7 +171,7 @@ public class ProjectsController extends BaseController implements FileSystemEven
         final EnvironmentConfig cachedConfig = envConfig;
 
         // install the hub
-        boolean installed = dataHubService.install(envConfig.getMlSettings(), new HubDeployStatusListener() {
+        dataHubService.install(envConfig.getMlSettings(), new HubDeployStatusListener() {
             @Override
             public void onStatusChange(int percentComplete, String message) {
                 template.convertAndSend("/topic/install-status", new StatusMessage(percentComplete, message));
@@ -180,6 +180,9 @@ public class ProjectsController extends BaseController implements FileSystemEven
             @Override
             public void onError() {}
         });
+
+        envConfig.checkIfInstalled();
+        boolean installed = envConfig.getInstallInfo().isInstalled();
 
         envConfig.setInitialized(installed);
         if (installed) {
@@ -192,13 +195,13 @@ public class ProjectsController extends BaseController implements FileSystemEven
             startProjectWatcher();
         }
 
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(envConfig.toJson(), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{projectId}/{environment}/uninstall", method = RequestMethod.DELETE)
     @ResponseBody
     public ResponseEntity<?> unInstall(@PathVariable int projectId,
-            @PathVariable String environment) {
+            @PathVariable String environment) throws JsonProcessingException {
 
         requireAuth();
 
@@ -215,7 +218,10 @@ public class ProjectsController extends BaseController implements FileSystemEven
             @Override
             public void onError() {}
         });
-        return new ResponseEntity<>(HttpStatus.OK);
+        envConfig.checkIfInstalled();
+        boolean installed = envConfig.getInstallInfo().isInstalled();
+
+        return new ResponseEntity<>(envConfig.toJson(), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{projectId}/{environment}/last-deployed", method = RequestMethod.GET)
