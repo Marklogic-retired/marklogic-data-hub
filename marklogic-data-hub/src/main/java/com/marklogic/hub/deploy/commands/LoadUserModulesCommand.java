@@ -68,7 +68,7 @@ public class LoadUserModulesCommand extends AbstractCommand {
         modulesLoader.setModulesManager(getModulesManager());
         return modulesLoader;
     }
-    
+
     @Override
     public void execute(CommandContext context) {
         AppConfig config = context.getAppConfig();
@@ -115,7 +115,6 @@ public class LoadUserModulesCommand extends AbstractCommand {
                             Modules modules = entityDefModulesFinder.findModules(dir.toFile());
                             DocumentMetadataHandle meta = new DocumentMetadataHandle();
                             meta.getCollections().add("http://marklogic.com/entity-services/models");
-                            meta.setFormat(Format.JSON);
                             for (Resource r : modules.getAssets()) {
                                 StringHandle handle = new StringHandle(IOUtils.toString(r.getInputStream()));
                                 entityDocMgr.write("/entities/" + r.getFilename(), meta, handle);
