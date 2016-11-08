@@ -8,6 +8,7 @@ import com.marklogic.client.DatabaseClientFactory;
 import com.marklogic.client.DatabaseClientFactory.Authentication;
 import com.marklogic.hub.DataHub;
 import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.InstallInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
@@ -30,7 +31,7 @@ public class EnvironmentConfig {
     private String projectDir;
     private String environment;
 
-    private boolean installed = false;
+    private InstallInfo installInfo;
     private boolean isInitialized = false;
 
     private HubConfig mlSettings;
@@ -40,12 +41,8 @@ public class EnvironmentConfig {
 
     private Properties environmentProperties = new Properties();
 
-    public boolean isInstalled() {
-        return installed;
-    }
-
-    public void setInstalled(boolean installed) {
-        this.installed = installed;
+    public InstallInfo getInstallInfo() {
+        return installInfo;
     }
 
     public String getEnvironment() {
@@ -98,8 +95,13 @@ public class EnvironmentConfig {
         }
 
         dataHub = new DataHub(mlSettings);
-        installed = dataHub.isInstalled();
+        checkIfInstalled();
         isInitialized = true;
+    }
+
+    @JsonIgnore
+    public void checkIfInstalled() {
+        this.installInfo = dataHub.isInstalled();
     }
 
     @JsonIgnore

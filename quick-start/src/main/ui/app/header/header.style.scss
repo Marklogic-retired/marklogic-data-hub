@@ -57,3 +57,15 @@ mdl-progress.mdl-progress {
     margin-left: 5px;
   }
 }
+
+@media(max-width: 1024px) {
+  .mdl-layout__header {
+    display: flex;
+  }
+}
+
+@media(max-width: 850px) {
+  .mdl-layout-title {
+    display: none;
+  }
+}

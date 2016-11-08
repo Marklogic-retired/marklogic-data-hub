@@ -40,6 +40,7 @@ export class LoginComponent implements OnInit {
 
 
   installing: boolean = false;
+  uninstalling: boolean = false;
 
   environments = ['local', 'dev', 'qa', 'prod'];
 
@@ -97,18 +98,61 @@ export class LoginComponent implements OnInit {
     let emitter = this.installService.messageEmitter.subscribe((payload: any) => {
       this.percentComplete = payload.percentComplete;
       this.installationStatus += '\n' + payload.message;
-
-      if (this.percentComplete === 100) {
-        setTimeout(() => {
-          this.installing = false;
-        }, 1000);
-        this.currentEnvironment.installed = true;
-        emitter.unsubscribe();
-      }
     });
+
     this.installService.install(
       this.currentProject.id,
-      this.currentEnvironmentString);
+      this.currentEnvironmentString
+    ).subscribe((env) => {
+      this.currentEnvironment = env;
+      setTimeout(() => {
+        this.installing = false;
+        this.installationStatus = null;
+      }, 1000);
+      emitter.unsubscribe();
+
+      let installInfo = this.currentEnvironment.installInfo;
+      if (installInfo && installInfo.installed) {
+        // goto login tab
+        let redirect = this.auth.redirectUrl || '';
+        this.router.navigate([redirect]);
+      } else {
+        // go to install hub tab
+        this.gotoTab('Installer');
+      }
+    });
+  }
+
+  unInstall() {
+    this.uninstalling = true;
+
+    this.installationStatus = '';
+    let emitter = this.installService.messageEmitter.subscribe((payload: any) => {
+      this.percentComplete = payload.percentComplete;
+      this.installationStatus += '\n' + payload.message;
+    });
+
+    this.installService.uninstall(
+      this.currentProject.id,
+      this.currentEnvironmentString
+    ).subscribe((env) => {
+      this.currentEnvironment = env;
+      setTimeout(() => {
+        this.uninstalling = false;
+          this.installationStatus = null;
+      }, 1000);
+      emitter.unsubscribe();
+
+      let installInfo = this.currentEnvironment.installInfo;
+      if (installInfo && installInfo.installed) {
+        // goto login tab
+        let redirect = this.auth.redirectUrl || '';
+        this.router.navigate([redirect]);
+      } else {
+        // go to install hub tab
+        this.gotoTab('Installer');
+      }
+    });
   }
 
   installNext() {
@@ -202,7 +246,9 @@ export class LoginComponent implements OnInit {
     ).subscribe((env: any) => {
       this.currentEnvironment = env;
 
-      if (this.currentEnvironment.installed) {
+      let installInfo = this.currentEnvironment.installInfo;
+
+      if (installInfo && installInfo.installed) {
         // goto login tab
         let redirect = this.auth.redirectUrl || '';
         this.router.navigate([redirect]);
@@ -260,6 +306,10 @@ export class LoginComponent implements OnInit {
     this.initSettings.modulesDbName = name + '-MODULES';
     this.initSettings.triggersDbName = name + '-TRIGGERS';
     this.initSettings.schemasDbName = name + '-SCHEMAS';
+  }
+
+  getInstalledIcon(isTrue: boolean) {
+    return isTrue ? 'fa-check' : 'fa-close';
   }
 
   private disableTabs() {

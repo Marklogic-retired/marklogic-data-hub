@@ -296,3 +296,39 @@ form {
   width: 50%;
   max-width: 200px;
 }
+
+.partial-install {
+  color: white;
+
+  table {
+    width: 100%;
+    margin-bottom: 20px;
+    border-collapse: collapse;
+
+    tr:nth-child(even) {
+      background-color: rgba(255,255,255,0.05);
+    }
+  }
+
+  .action-button {
+    margin-bottom: 5px;
+  }
+
+
+  h4 {
+    text-align: center;
+  }
+
+  span {
+    text-align: right;
+    margin-right: 5px;
+  }
+
+  .fa-check {
+    color: green;
+  }
+
+  .fa-close {
+    color: red;
+  }
+}

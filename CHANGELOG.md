@@ -1,7 +1,23 @@
 # Change Log
 
-## [v1.0.0](https://github.com/marklogic/marklogic-data-hub/tree/v1.0.0)
+## [v1.0.1](https://github.com/marklogic/marklogic-data-hub/tree/v1.0.1)
 
+[Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v1.0.0...v1.0.1)
+
+**Fixed bugs:**
+
+- Responsive CSS is hiding the menu bar [\#321](https://github.com/marklogic/marklogic-data-hub/issues/321)
+- Redeploy button is wiping out hub modules [\#318](https://github.com/marklogic/marklogic-data-hub/issues/318)
+
+**Closed issues:**
+
+- Log out why isInstalled\(\) is failing [\#324](https://github.com/marklogic/marklogic-data-hub/issues/324)
+- Provide Build instructions for developers [\#323](https://github.com/marklogic/marklogic-data-hub/issues/323)
+- Add Link to the ML On Demand Courses [\#315](https://github.com/marklogic/marklogic-data-hub/issues/315)
+- upgrading RC5 to RC6 [\#306](https://github.com/marklogic/marklogic-data-hub/issues/306)
+- Allow users to clear out corrupt install [\#304](https://github.com/marklogic/marklogic-data-hub/issues/304)
+
+## [v1.0.0](https://github.com/marklogic/marklogic-data-hub/tree/v1.0.0) (2016-10-25)
 [Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v1.0.0-rc.6...v1.0.0)
 
 **Fixed bugs:**
