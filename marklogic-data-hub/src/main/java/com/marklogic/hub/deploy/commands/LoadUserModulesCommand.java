@@ -7,12 +7,20 @@ import com.marklogic.appdeployer.command.modules.AllButAssetsModulesFinder;
 import com.marklogic.appdeployer.command.modules.AssetModulesFinder;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
+import com.marklogic.client.document.JSONDocumentManager;
+import com.marklogic.client.io.DocumentMetadataHandle;
+import com.marklogic.client.io.Format;
+import com.marklogic.client.io.StringHandle;
+import com.marklogic.client.modulesloader.Modules;
 import com.marklogic.client.modulesloader.impl.DefaultModulesLoader;
 import com.marklogic.client.modulesloader.impl.PropertiesModuleManager;
 import com.marklogic.client.modulesloader.impl.XccAssetLoader;
 import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.deploy.util.EntityDefModulesFinder;
 import com.marklogic.hub.deploy.util.HubFileFilter;
 import com.marklogic.hub.flow.FlowCacheInvalidator;
+import org.apache.commons.io.IOUtils;
+import org.springframework.core.io.Resource;
 
 import java.io.File;
 import java.io.IOException;
@@ -52,15 +60,6 @@ public class LoadUserModulesCommand extends AbstractCommand {
         return pmm;
     }
 
-    private PropertiesModuleManager getContentManager() {
-        File timestampFile = Paths.get(hubConfig.projectDir, ".tmp", USER_CONTENT_DEPLOY_TIMESTAMPS_PROPERTIES).toFile();
-        PropertiesModuleManager pmm = new PropertiesModuleManager(timestampFile);
-        if (forceLoad) {
-            pmm.deletePropertiesFile();
-        }
-        return pmm;
-    }
-
     private DefaultModulesLoader getStagingModulesLoader(AppConfig config) {
         XccAssetLoader assetLoader = config.newXccAssetLoader();
         assetLoader.setFileFilter(new HubFileFilter());
@@ -69,7 +68,7 @@ public class LoadUserModulesCommand extends AbstractCommand {
         modulesLoader.setModulesManager(getModulesManager());
         return modulesLoader;
     }
-
+    
     @Override
     public void execute(CommandContext context) {
         AppConfig config = context.getAppConfig();
@@ -85,6 +84,8 @@ public class LoadUserModulesCommand extends AbstractCommand {
         // this will ignore REST folders under entities
         DefaultModulesLoader modulesLoader = getStagingModulesLoader(config);
         modulesLoader.loadModules(baseDir, new AssetModulesFinder(), stagingClient);
+
+        JSONDocumentManager entityDocMgr = stagingClient.newJSONDocumentManager();
 
         AllButAssetsModulesFinder allButAssetsModulesFinder = new AllButAssetsModulesFinder();
 
@@ -108,6 +109,18 @@ public class LoadUserModulesCommand extends AbstractCommand {
                                 modulesLoader.loadModules(currentDir, allButAssetsModulesFinder, finalClient);
                             }
                             return FileVisitResult.SKIP_SUBTREE;
+                        }
+                        else if (dirStr.matches(startPath.toAbsolutePath() + "[/\\\\][^/\\\\]+$")) {
+                            EntityDefModulesFinder entityDefModulesFinder = new EntityDefModulesFinder();
+                            Modules modules = entityDefModulesFinder.findModules(dir.toFile());
+                            DocumentMetadataHandle meta = new DocumentMetadataHandle();
+                            meta.getCollections().add("http://marklogic.com/entity-services/models");
+                            meta.setFormat(Format.JSON);
+                            for (Resource r : modules.getAssets()) {
+                                StringHandle handle = new StringHandle(IOUtils.toString(r.getInputStream()));
+                                entityDocMgr.write("/entities/" + r.getFilename(), meta, handle);
+                            }
+                            return FileVisitResult.CONTINUE;
                         }
                         else {
                             return FileVisitResult.CONTINUE;

@@ -844,6 +844,8 @@ declare function flow:run-plugin(
 
     let $resp :=
       typeswitch($resp)
+        case map:map return
+          $resp
         case object-node() | json:object return
           if ($data-format = $XML) then
             json:transform-from-json($resp, json:config("custom"))
