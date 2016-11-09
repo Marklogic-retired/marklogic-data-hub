@@ -40,11 +40,15 @@ public class DataHubInstallTest extends HubTestBase {
 
     @Test
     public void testInstallHubModules() throws IOException {
-        assertTrue(dataHub.isInstalled());
+        assertTrue(dataHub.isInstalled().isInstalled());
 
-        assertEquals(
-            getResource("data-hub-test/core-modules/config.xqy"),
-            getModulesFile("/com.marklogic.hub/lib/config.xqy"));
+        assertTrue(getModulesFile("/com.marklogic.hub/lib/config.xqy").startsWith(getResource("data-hub-test/core-modules/config.xqy")));
+    }
+
+    @Test
+    public void getHubModulesVersion() throws IOException {
+        String version = dataHub.getJarVersion();
+        assertEquals(version, dataHub.getHubVersion());
     }
 
     @Test

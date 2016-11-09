@@ -3,35 +3,70 @@
 MarkLogic Data Hub welcomes new contributors. This document will guide you
 through the process.
 
- - [Issues and Bugs](#issue)
- - [Feature Requests](#feature)
- - [Submission Guidelines](#submit)
+ - [Issues and Bugs](#found-an-issue)
+ - [Feature Requests](#want-a-feature)
+ - [Building from Source](#building-the-framework-from-source)
+ - [Submission Guidelines](#submission-guidelines)
  
-## <a name="issue"></a> Found an Issue?
+## Found an Issue?
 If you find a bug in the source code or a mistake in the documentation, you can help us by submitting an issue to our [GitHub Issue Tracker][issue tracker]. Even better you can submit a Pull Request
 with a fix for the issue you filed.
 
-## <a name="feature"></a> Want a Feature?
+## Want a Feature?
 You can request a new feature by submitting an issue to our [GitHub Issue Tracker][issue tracker].  If you
 would like to implement a new feature then first create a new issue and discuss it with one of our
 project maintainers.
 
-## <a name="submit"></a> Submission Guidelines
+## Building the Framework from Source
+Looking to build the code from source? Look no further.
+
+#### Prerequisites
+You need these to get started
+
+- Java 8 JDK
+- Gradle (the newer the better)
+- Node JS 6.5 or newer
+- Typings `npm -g install typings`
+- A decent IDE. IntelliJ is nice.
+
+#### Building from the command line
+**First, a warning.** _The DHF has a ton of tests and they take a very long time to run. Considering you might not want to invest 30 minutes to wait for tests these instructions will show you how to skip the tests._
+
+To build the entire DHF (marklogic-data-hub.jar, quickstart.war, and ml-data-hub-plugin for gradle) simply run this command:
+
+```bash
+cd /path/to/data-hub-project/
+gradle build -x test
+```
+
+#### Running the QuickStart UI from source
+Make sure you have the prerequisites installed.
+
+You will need to open two terminal windows.
+
+**Terminal window 1** - This runs the webapp.
+```bash
+cd /path/to/data-hub-project
+gradle bootrun
+```
+
+**Terminal window 2** - This runs the Quickstart UI
+```
+cd /path/to/data-hub-project/quick-start
+npm install
+npm start
+```
+
+Now open your browser to [http://localhost:4200](http://localhost:4200) to use the debug version of the Quickstart UI.
+
+## Submission Guidelines
 
 ### Submitting an Issue
 Before you submit your issue search the archive, maybe your question was already answered.
 
 If your issue appears to be a bug, and hasn't been reported, open a new issue.
 Help us to maximize the effort we can spend fixing issues and adding new
-features, by not reporting duplicate issues.  Providing the following information will increase the
-chances of your issue being dealt with quickly:
-
-* **Overview of the Issue** - if an error is being thrown a stack trace helps
-* **Motivation for or Use Case** - explain why this is a bug for you
-* **Version** - which version is it?
-* **Operating System** - Mac, windows? details help
-* **Suggest a Fix** - if you can't fix the bug yourself, perhaps you can point to what might be
-  causing the problem (line of code or commit)
+features, by not reporting duplicate issues. Please fill out the issue template so that your issue can be dealt with quickly.
 
 ### Submitting a Pull Request
 
@@ -55,10 +90,10 @@ your vision does not align with that of a project maintainer.
 #### Create a branch for your changes
 
 Okay, so you have decided to fix something. Create a feature branch
-and start hacking:
+and start hacking. **Note** that we use git flow and thus our most recent changes live on the develop branch.
 
 ```sh
-$ git checkout -b my-feature-branch -t origin/master
+$ git checkout -b my-feature-branch -t origin/develop
 ```
 
 #### Formatting code
@@ -108,7 +143,7 @@ Use `git rebase` (not `git merge`) to sync your work from time to time.
 
 ```sh
 $ git fetch upstream
-$ git rebase upstream/dev
+$ git rebase upstream/develop
 ```
 
 
@@ -152,10 +187,10 @@ from the main (upstream) repository:
     git push origin --delete my-feature-branch
     ```
 
-* Check out the dev branch:
+* Check out the develop branch:
 
     ```shell
-    git checkout dev -f
+    git checkout develop -f
     ```
 
 * Delete the local branch:
@@ -164,10 +199,10 @@ from the main (upstream) repository:
     git branch -D my-feature-branch
     ```
 
-* Update your dev with the latest upstream version:
+* Update your develop with the latest upstream version:
 
     ```shell
-    git pull --ff upstream dev
+    git pull --ff upstream develop
     ```
 
 [issue tracker]: https://github.com/marklogic/marklogic-data-hub/issues
