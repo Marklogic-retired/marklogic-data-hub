@@ -1,4 +1,4 @@
-<p style="font-style: italic; font-size:12px;">The MarkLogic Data Hub Framework is free and open source under the <a href="https://github.com/marklogic/marklogic-data-hub/blob/master/LICENSE">Apache 2 License</a> and is supported by the community of developers who build and contribute to it. Please note that Data Hub Framework is not a supported MarkLogic product.</p>
+<p style="font-style: italic; font-size:12px;">The MarkLogic Data Hub Framework is free and open source under the <a href="https://github.com/marklogic/marklogic-data-hub/blob/1.0-master/LICENSE">Apache 2 License</a> and is supported by the community of developers who build and contribute to it. Please note that Data Hub Framework is not a supported MarkLogic product.</p>
 
 OS | Status
 --- | --- | ---
@@ -78,4 +78,4 @@ gradle tasks
 
 Feeling intrepid? Want to contrubute to the Data Hub Framework? Perhaps you just want to poke the code?
 
-Look at our [CONTRIBUTING.md](https://github.com/marklogic/marklogic-data-hub/blob/master/CONTRIBUTING.md#building-the-framework-from-source) file for details on building from source.
+Look at our [CONTRIBUTING.md](https://github.com/marklogic/marklogic-data-hub/blob/1.0-master/CONTRIBUTING.md#building-the-framework-from-source) file for details on building from source.
