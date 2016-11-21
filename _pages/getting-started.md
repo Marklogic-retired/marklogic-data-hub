@@ -95,7 +95,7 @@ Click Finished
 
 ## 6 - Create Your First Entity
 
-Entities are the business objects that you will be working with in the hub. Start by defining a new Entity for Employees. Click the **New Entity** button. Now fill out the popup with your entity name. If you are using the example code we provide then make sure to name this "Employees".
+Entities are the business objects that you will be working with in the hub. Start by defining a new Employee Entity. Click the **New Entity** button. Now fill out the popup with your entity name. If you are using the example code we provide then make sure to name this "Employee".
 
 ![New Entity]({{site.baseurl}}/images/create-employee.png)
 
