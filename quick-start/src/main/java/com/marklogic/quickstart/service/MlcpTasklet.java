@@ -2,12 +2,13 @@ package com.marklogic.quickstart.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.marklogic.contentpump.ContentPump;
 import com.marklogic.contentpump.bean.MlcpBean;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.JobStatusListener;
 import com.marklogic.quickstart.util.StreamGobbler;
 import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
@@ -15,11 +16,15 @@ import org.springframework.batch.repeat.RepeatStatus;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.function.Consumer;
 
 class MlcpTasklet implements Tasklet {
+
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     private HubConfig hubConfig;
     private JsonNode mlcpOptions;
@@ -66,34 +71,53 @@ class MlcpTasklet implements Tasklet {
     }
 
     private void runMlcp(long jobId, MlcpBean bean) throws IOException, InterruptedException {
+        ClassLoader cl = ClassLoader.getSystemClassLoader();
+
+        URL[] urls = ((URLClassLoader)cl).getURLs();
+
         String javaHome = System.getProperty("java.home");
         String javaBin = javaHome +
             File.separator + "bin" +
             File.separator + "java";
         String classpath = System.getProperty("java.class.path");
-        String className = ContentPump.class.getCanonicalName();
 
-        File loggerFile = File.createTempFile("mlcp-", "-logger");
-        String loggerData = "log4j.rootLogger=INFO,console\n" +
-            "log4j.appender.console=org.apache.log4j.ConsoleAppender\n" +
-            "log4j.appender.console.target=System.err\n" +
-            "log4j.appender.console.layout=org.apache.log4j.PatternLayout\n" +
-            "log4j.appender.console.layout.ConversionPattern=%d{yy/MM/dd HH:mm:ss} %p %c{2}: %m%n\n" +
+        File loggerFile = File.createTempFile("mlcp-", "-logger.xml");
+        String loggerData = "<configuration>\n" +
             "\n" +
-            "# To suppress not native warn on Mac and Solaris\n" +
-            "log4j.logger.org.apache.hadoop.util.NativeCodeLoader=ERROR\n" +
+            "  <appender name=\"STDOUT\" class=\"ch.qos.logback.core.ConsoleAppender\">\n" +
+            "    <!-- encoders are assigned the type\n" +
+            "         ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->\n" +
+            "    <encoder>\n" +
+            "      <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>\n" +
+            "    </encoder>\n" +
+            "  </appender>\n" +
             "\n" +
-            "# To enable debug\n" +
-            "#log4j.logger.com.marklogic.mapreduce=DEBUG\n" +
-            "#log4j.logger.com.marklogic.contentpump=DEBUG\n";
+            "  <logger name=\"org.apache.http\" level=\"WARN\"/>\n" +
+            "\n" +
+            "  <logger name=\"com.marklogic.spring.batch.core.repository.dao.MarkLogicStepExecutionDao\" level=\"WARN\"/>\n" +
+            "  <logger name=\"com.marklogic.spring.batch.core.repository.dao.MarkLogicJobExecutionDao\" level=\"WARN\"/>\n" +
+            "  <logger name=\"com.marklogic.client.impl.DocumentManagerImpl\" level=\"WARN\"/>\n" +
+            "  <logger name=\"com.marklogic.client.impl.DatabaseClientImpl\" level=\"WARN\"/>\n" +
+            "  <logger name=\"com.marklogic\" level=\"INFO\"/>\n" +
+            "  <logger name=\"com.marklogic.appdeployer\" level=\"INFO\"/>\n" +
+            "  <logger name=\"com.marklogic.hub\" level=\"INFO\"/>\n" +
+            "  <logger name=\"com.marklogic.contentpump\" level=\"INFO\"/>\n" +
+            "  <logger name=\"org.apache.catalina.webresources.Cache\" level=\"ERROR\"/>\n" +
+            "  <logger name=\"org.apache.hadoop.util.Shell\" level=\"OFF\"/>\n" +
+            "  <logger name=\"org.apache.hadoop.util.NativeCodeLoader\" level=\"ERROR\"/>\n" +
+            "\n" +
+            "  <root level=\"WARN\">\n" +
+            "    <appender-ref ref=\"STDOUT\" />\n" +
+            "  </root>\n" +
+            "</configuration>\n";
         FileUtils.writeStringToFile(loggerFile, loggerData);
 
         ArrayList<String> args = new ArrayList<>();
         args.add(javaBin);
-        args.add("-Dlog4j.configurationFile=" + loggerFile.getAbsolutePath());
-        args.add("-cp");
+        args.add("-Dlogback.configurationFile=" + loggerFile.toURI());//logback);
+        args.add("-jar");
         args.add(classpath);
-        args.add(className);
+        args.add("mlcp");
         args.addAll(Arrays.asList(bean.buildArgs()));
 
         ProcessBuilder pb = new ProcessBuilder(args);
@@ -104,7 +128,7 @@ class MlcpTasklet implements Tasklet {
 
             @Override
             public void accept(String status) {
-
+                System.out.println(status);
                 // don't log an error if the winutils binary is missing
                 if (status.contains("ERROR") && !status.contains("winutils binary")) {
                     hasError = true;

@@ -24,7 +24,7 @@ Looking to build the code from source? Look no further.
 You need these to get started
 
 - Java 8 JDK
-- Gradle (the newer the better)
+- Gradle (3.1 or greater)
 - Node JS 6.5 or newer
 - Typings `npm -g install typings`
 - A decent IDE. IntelliJ is nice.
@@ -90,10 +90,10 @@ your vision does not align with that of a project maintainer.
 #### Create a branch for your changes
 
 Okay, so you have decided to fix something. Create a feature branch
-and start hacking. **Note** that we use git flow and thus our most recent changes live on the develop branch.
+and start hacking. **Note** that we use git flow and thus our most recent changes live on the 1.0-develop branch.
 
 ```sh
-$ git checkout -b my-feature-branch -t origin/develop
+$ git checkout -b my-feature-branch -t origin/1.0-develop
 ```
 
 #### Formatting code
@@ -143,7 +143,7 @@ Use `git rebase` (not `git merge`) to sync your work from time to time.
 
 ```sh
 $ git fetch upstream
-$ git rebase upstream/develop
+$ git rebase upstream/1.0-develop
 ```
 
 
@@ -187,10 +187,10 @@ from the main (upstream) repository:
     git push origin --delete my-feature-branch
     ```
 
-* Check out the develop branch:
+* Check out the 1.0-develop branch:
 
     ```shell
-    git checkout develop -f
+    git checkout 1.0-develop -f
     ```
 
 * Delete the local branch:
@@ -199,10 +199,10 @@ from the main (upstream) repository:
     git branch -D my-feature-branch
     ```
 
-* Update your develop with the latest upstream version:
+* Update your 1.0-develop with the latest upstream version:
 
     ```shell
-    git pull --ff upstream develop
+    git pull --ff upstream 1.0-develop
     ```
 
 [issue tracker]: https://github.com/marklogic/marklogic-data-hub/issues
