@@ -1,4 +1,4 @@
-<envelope xmlns="http://marklogic.com/data-hub/envelope">
+<envelope xmlns="http://marklogic.com/entity-services">
   <headers>
     <testing xmlns="">123</testing>
   </headers>
@@ -9,9 +9,10 @@
       <sem:object datatype="http://www.w3.org/2001/XMLSchema#string">awesome</sem:object>
     </sem:triple>
   </triples>
-  <content>
+  <instance>
     <employee xmlns="">
       <emp-id>2</emp-id>
     </employee>
-  </content>
+  </instance>
+  <attachments/>
 </envelope>

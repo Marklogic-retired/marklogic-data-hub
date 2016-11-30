@@ -4,10 +4,6 @@
       <span class="mdl-layout-title">
         <i class="fa fa-bug" *ngIf="hasErrors()"></i>
         Entities
-        <div class="mdl-layout-spacer"></div>
-        <mdl-button mdl-button-type="icon" id="new-entity" (click)="showNewEntity($event)">
-          <i class="fa fa-plus"></i>
-        </mdl-button>
       </span>
 
       <ul class="entities mdl-list">
@@ -18,8 +14,8 @@
           <div class="mdl-list__item-primary-content"
             [ngClass]="{ 'active' : !isCollapsed(entity) }"
             (click)="toggleEntity(entity)">
-            <i class="fa fa-bug" *ngIf="entityHasError(entity.entityName)"></i>
-            <i class="fa fa-industry"></i> {{ entity.entityName }}
+            <i class="fa fa-bug" *ngIf="entityHasError(entity.name)"></i>
+            <i class="fa fa-industry"></i> {{ entity.name }}
             <div class="mdl-layout-spacer"></div>
             <i class="fa fa-caret-left" [ngClass]="{ 'collapsed' : isCollapsed(entity) }"></i>
           </div>
@@ -42,7 +38,7 @@
                     <i class="mdi mdi-import"></i>
                     {{ flow.flowName }}
                     <span class="mdl-layout-spacer"></span>
-                    <i class="fa fa-bug" *ngIf="flowHasError(entity.entityName, flow.flowName)"></i>
+                    <i class="fa fa-bug" *ngIf="flowHasError(entity.name, flow.flowName)"></i>
                   </span>
                 </li>
               </ul>
@@ -63,7 +59,7 @@
                     <i class="mdi mdi-looks"></i>
                     {{ flow.flowName }}
                     <span class="mdl-layout-spacer"></span>
-                    <i class="fa fa-bug" *ngIf="flowHasError(entity.entityName, flow.flowName)"></i>
+                    <i class="fa fa-bug" *ngIf="flowHasError(entity.name, flow.flowName)"></i>
                   </span>
                 </li>
               </ul>
@@ -89,7 +85,7 @@
         <app-mlcp></app-mlcp>
         <app-harmonize-flow-options></app-harmonize-flow-options>
         <div class="current-flow" *ngIf="flow && !mlcp.isVisible() && !harmonize.isVisible()">
-          <h2>{{flow.flowName}} {{flowType}} flow <i class="fa fa-bug" *ngIf="flowHasError(entity.entityName, flow.flowName)"></i></h2>
+          <h2>{{flow.flowName}} {{flowType}} flow <i class="fa fa-bug" *ngIf="flowHasError(entity.name, flow.flowName)"></i></h2>
           <h3>
             <mdl-button mdl-button-type="raised" mdl-colored="primary" mdl-ripple (click)="runFlow($event, flow, flowType)">
               Run Flow <i class="fa fa-play-circle-o"></i>
@@ -115,6 +111,4 @@
       </div>
     </div>
   </div>
-  <app-new-entity></app-new-entity>
-  <app-new-flow></app-new-flow>
 </div>

@@ -16,11 +16,8 @@
   <div>
     <button mdl-button mdl-button-type="raised"
       mdl-colored mdl-ripple
-      appConfirm title="Uninstall?"
-      appendToBody="true"
-      message="Uninstall the hub from MarkLogic?"
       [disabled]="isUninstalling"
-      (confirm)="uninstall()">Uninstall Hub</button>
+      (click)="uninstall()">Uninstall Hub</button>
   </div>
 
   <section flex layout-padding layout="column" class="uninstall-status" *ngIf="uninstallStatus">

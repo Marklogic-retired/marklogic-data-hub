@@ -1,0 +1,52 @@
+:host {
+  display: block;
+  position: relative;
+}
+
+.grabber {
+  display: block;
+  width: 2px;
+  height: 2px;
+  line-height: 2px;
+  position: absolute;
+  z-index: 1;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  background: transparent;
+
+  &.top {
+    cursor: row-resize;
+    width: 100%;
+    top: 0;
+    left: 0;
+    margin-top: -14px;
+  }
+
+  &.right {
+    cursor: col-resize;
+    height: 100%;
+    right: 0;
+    top: 0;
+    margin-right: -6px;
+    width: 9px;
+  }
+
+  &.bottom {
+    cursor: row-resize;
+    width: 100%;
+    bottom: 0;
+    left: 0;
+    margin-bottom: -6px;
+    height: 9px;
+  }
+
+  &.left {
+    cursor: col-resize;
+    height: 100%;
+    left: 0;
+    top: 0;
+    margin-left: -14px;
+  }
+}

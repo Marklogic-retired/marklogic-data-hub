@@ -30,7 +30,7 @@ public class ScaffoldingValidatorTest extends HubTestBase {
 
    private static final String projectPath = "./test-project";
    private static final String TEST_ENTITY_NAME = "test-entity";
-   private Scaffolding scaffolding = new Scaffolding(projectPath);
+   private Scaffolding scaffolding = new Scaffolding(projectPath, stagingClient);
    private ScaffoldingValidator validator = new ScaffoldingValidator(projectPath);
 
    @BeforeClass

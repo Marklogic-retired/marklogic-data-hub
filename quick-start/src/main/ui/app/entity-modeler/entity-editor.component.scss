@@ -1,0 +1,74 @@
+@import '../../styles/colors';
+
+$bg-color: unquote("rgb(#{$palette-datahub-500})");
+
+:host {
+  display: block;
+  min-width: 639px;
+}
+
+.mdl-dialog__content {
+  h4 {
+    margin-top: 0px;
+  }
+}
+
+.mdl-textfield {
+  width: 100%;
+}
+
+table.properties {
+  border-collapse: collapse;
+  border: 1px solid #ccc;
+  width: 100%;
+
+  thead {
+    background-color: #ccc;
+  }
+
+  .col-toggler {
+    width: 16px;
+    min-width: 16px;
+  }
+
+  td.col-toggler {
+    i {
+      color: transparent;
+    }
+    i:hover {
+      color: rgba(0,0,0,0.25);
+    }
+
+    i.active {
+      color: black;
+      &:hover {
+        color: black;
+      }
+    }
+
+  }
+
+  .col-pk {
+
+  }
+  .col-rangeindex {
+
+  }
+  .col-wordlexicon {
+
+  }
+
+  td {
+    border-bottom: 1px solid #ccc;
+    padding: 2px;
+  }
+
+  input {
+    border: 1px solid #ddd;
+    padding: 2px;
+  }
+
+  select {
+    max-width: 150px;
+  }
+}

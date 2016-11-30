@@ -562,7 +562,7 @@ declare function flow:make-envelope(
         map:put($o, "headers", $headers),
         map:put($o, "triples", $triples),
         map:put($o, "instance",
-          if ($content instance of map:map) then
+          if ($content castable as map:map) then
             flow:instance-to-canonical-json($content)
           else
             $content
@@ -570,7 +570,7 @@ declare function flow:make-envelope(
         map:put($o, "attachments",
           let $content := map:get($map, "content")
           return
-            if ($content instance of map:map) then
+            if ($content castable as map:map) then
               map:get($content, "$attachments")
             else
               ()
@@ -590,9 +590,8 @@ declare function flow:make-envelope(
         <instance>
         {
           let $content := map:get($map, "content")
-          let $_ := xdmp:log(("content: [", $content, "]"))
           return
-            if ($content instance of map:map) then
+            if ($content castable as map:map) then
               flow:instance-to-canonical-xml($content)
             else
               $content
@@ -602,7 +601,7 @@ declare function flow:make-envelope(
         {
           let $content := map:get($map, "content")
           return
-            if ($content instance of map:map) then
+            if ($content castable as map:map) then
               map:get($content, "$attachments")
             else
               ()
@@ -844,10 +843,12 @@ declare function flow:run-plugin(
 
     let $resp :=
       typeswitch($resp)
-        case map:map return
-          $resp
         case object-node() | json:object return
-          if ($data-format = $XML) then
+          (: map:map lands here too :)
+          (: map:map is ES response type :)
+          if ($resp castable as map:map) then
+            $resp
+          else if ($data-format = $XML) then
             json:transform-from-json($resp, json:config("custom"))
           else
             $resp
@@ -938,6 +939,14 @@ declare function flow:run-writer(
       xdmp:rethrow()
     }
   let $duration := xdmp:elapsed-time() - $before
+  let $is-xml :=
+    let $e :=
+      if ($envelope instance of document-node()) then
+        $envelope/node()
+      else
+        $envelope
+    return
+      $e instance of element()
   let $_ :=
     trace:plugin-trace(
       $identifier,
@@ -945,7 +954,7 @@ declare function flow:run-writer(
       "writer",
       $flow-type,
       $envelope,
-      if ($envelope instance of element()) then ()
+      if ($is-xml) then ()
       else null-node {},
       $duration
     )

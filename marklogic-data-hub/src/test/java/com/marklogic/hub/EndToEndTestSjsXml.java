@@ -41,7 +41,7 @@ public class EndToEndTestSjsXml extends HubTestBase {
         enableDebugging();
         enableTracing();
 
-        Scaffolding scaffolding = new Scaffolding(projectDir.toString());
+        Scaffolding scaffolding = new Scaffolding(projectDir.toString(), stagingClient);
         scaffolding.createEntity(ENTITY);
         scaffolding.createFlow(ENTITY, "testinput", FlowType.INPUT,
                 PluginFormat.JAVASCRIPT, Format.XML);

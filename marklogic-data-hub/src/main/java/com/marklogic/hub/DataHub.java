@@ -174,9 +174,9 @@ public class DataHub extends LoggingObject {
                 alteredString += "0";
             }
             int major = Integer.parseInt(alteredString.substring(0, 1));
-            int ver = Integer.parseInt(alteredString.substring(0, 3));
-            boolean isNightly = versionString.matches("[^-]+-\\d{8}");
-            if (major < 8 || (!isNightly && ver < 804)) {
+//            int ver = Integer.parseInt(alteredString.substring(0, 3));
+//            boolean isNightly = versionString.matches("[^-]+-\\d{8}");
+            if (major < 9) {
                 throw new ServerValidationException("Invalid MarkLogic Server Version: " + versionString);
             }
 

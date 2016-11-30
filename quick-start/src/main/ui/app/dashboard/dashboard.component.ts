@@ -2,6 +2,8 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 
 import { ProjectService } from '../projects';
 
+import { MdlDialogService } from 'angular2-mdl';
+
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
@@ -21,7 +23,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   stats: any;
 
-  constructor(private projectService: ProjectService) {}
+  constructor(
+    private projectService: ProjectService,
+    private dialogService: MdlDialogService
+  ) {}
 
   getStatus() {
     this.ngOnDestroy();
@@ -53,16 +58,24 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   clearDatabase(db) {
-    const database = this.stats[db + 'Db'];
-    this.projectService.clearDatabase(database).subscribe(() => {
-      this.getStatus();
-    });
+    const message = `Do you really want to remove all files from your ${db} Database?`;
+    this.dialogService.confirm(message, 'Cancel', 'Clear!').subscribe(() => {
+      const database = this.stats[db + 'Db'];
+      this.projectService.clearDatabase(database).subscribe(() => {
+        this.getStatus();
+      });
+    },
+    () => {});
   }
 
   clearAllDatabases() {
-    this.projectService.clearAllDatabases().subscribe(() => {
-      this.getStatus();
-    });
+    const message = 'Do you really want to remove all files from all of your Data Hub Databases?';
+    this.dialogService.confirm(message, 'Cancel', 'Clear!').subscribe(() => {
+      this.projectService.clearAllDatabases().subscribe(() => {
+        this.getStatus();
+      });
+    },
+    () => {});
   }
 
 }

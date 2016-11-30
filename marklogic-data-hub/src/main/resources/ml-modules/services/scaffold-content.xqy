@@ -23,6 +23,9 @@ import module namespace debug = "http://marklogic.com/data-hub/debug"
 import module namespace functx = "http://www.functx.com"
   at "/MarkLogic/functx/functx-1.0-nodoc-2007-01.xqy";
 
+import module namespace hent = "http://marklogic.com/data-hub/hub-entities"
+  at "/com.marklogic.hub/lib/hub-entities.xqy";
+
 import module namespace perf = "http://marklogic.com/data-hub/perflog-lib"
   at "/com.marklogic.hub/lib/perflog-lib.xqy";
 
@@ -93,22 +96,29 @@ declare function service:casting-function-name-sjs(
 declare function service:generate-lets($model as map:map, $entity-type-name)
 {
   fn:string-join(
-    let $definitions := map:get($model, "definitions")
-    let $entity-type := map:get($definitions, $entity-type-name)
-    let $properties := map:get($entity-type, "properties")
-    let $required-properties := map:get($entity-type, "required") ! json:array-values(.)
-
+    let $definitions := $model=>map:get("definitions")
+    let $entity-type := $definitions=>map:get($entity-type-name)
+    let $properties := $entity-type=>map:get("properties")
+    let $required-properties := (
+      map:get($entity-type, "primaryKey"),
+      map:get($entity-type, "required") ! json:array-values(.)
+    )
     for $property-name in map:keys($properties)
-    let $is-required :=
-      $property-name = ( map:get($entity-type, "primaryKey"), $required-properties )
-
+    let $is-required := $property-name = $required-properties
     let $property := map:get($properties, $property-name)
     let $is-array := map:get($property, "datatype") eq "array"
+    let $property := $model=>map:get("definitions")
+        =>map:get($entity-type-name)
+        =>map:get("properties")
+        =>map:get($property-name)
     let $property-datatype := esi:resolve-datatype($model, $entity-type-name, $property-name)
-    let $casting-function-name := service:casting-function-name-xqy($property-datatype)
+    let $casting-function-name :=
+      if (map:contains($property, "datatype") and map:get($property, "datatype") ne "array") then
+        service:casting-function-name-xqy($property-datatype)
+      else ()
     let $wrap-if-array := function($str) {
       if ($is-array) then
-        "json:to-array(" || $str || ")"
+        "json:to-array(" || $str || "&#10;  )"
       else
         $str
     }
@@ -134,36 +144,43 @@ declare function service:generate-lets($model as map:map, $entity-type-name)
     let $extract-reference-fn :=
       fn:string-join((
         "",
-        "    let $o :=",
-        "      json:object()",
-        "        =>map:with('$type', '" || $ref-name || "'),",
-        "        =>map:with('$ref', " || $path-to-property || "/" || $ref-name || "/text())",
-        "    return",
-        "      $o"
+        "    plugin:make-reference-object('" || $ref-name || "', (: put your value here :) '')"
       ), "&#10;")
     let $value :=
-      if (empty($ref)) then
-        $casting-function-name || "(" || $path-to-property || ")"
+      if (empty($ref)) then "()"
       else if (contains($ref, "#/definitions")) then
-        let $extract-array :=
+        let $inner-var := "$" || fn:lower-case($ref-name) || "s"
+        return
           fn:string-join((
             "",
-            "for $node in " || (if ($is-required) then $path-to-property else "."),
+            "let " || $inner-var || " :=",
+            "  (: create a sequence of " || $ref-name || " instances from your data :)",
+            "  for $source in ()",
+            "  return",
+            "    plugin:extract-instance-" || $ref-name || "($source)",
             "return",
-            "  plugin:extract-instance-" || $ref-name || "($node)"
-          ), "&#10;    ")
-        return
-          (
-            if (fn:not($is-required)) then
-              $path-to-property || " ! "
-            else ()
-          ) || "json:to-array(" || $extract-array || "&#10;  )"
+            if ($is-required) then
+              "  json:to-array(" || $inner-var || ")"
+            else (
+              "  if (fn:exists(" || $inner-var || ")) then",
+              "    json:to-array(" || $inner-var || ")",
+              "  else ()"
+            )
+          ), "&#10;    ") || "&#10;"
       else
         $wrap-if-array($extract-reference-fn)
 
     return (
       $property-comment ! ("", .),
-      "let $" || service:kebob-case($property-name) || " := " || $value
+
+      let $name := fn:string-join((
+        service:kebob-case($property-name),
+        if ($casting-function-name) then
+          "as " || $casting-function-name || (if ($is-required) then "" else "?")
+        else ()
+      ), " ")
+      return
+        "let $" || $name || " := " || $value
     )
   , "&#10;  ")
 (: end code generation block :)
@@ -176,7 +193,8 @@ document {
 
 module namespace plugin = "http://marklogic.com/data-hub/plugins";
 
-declare namespace es = "http://marklogic.com/entity-services";
+import module namespace es = "http://marklogic.com/entity-services"
+  at "/Marklogic/entity-services/entity-services.xqy";
 
 declare option xdmp:mapping "false";
 
@@ -195,9 +213,9 @@ declare function plugin:create-content(
   let $doc := fn:doc($id)
   let $source :=
     if ($doc/es:envelope) then
-      $doc/es:envelope/es:content/node()
-    else if ($doc/content) then
-      $doc/content
+      $doc/es:envelope/es:instance/node()
+    else if ($doc/instance) then
+      $doc/instance
     else
       $doc
   return
@@ -205,7 +223,6 @@ declare function plugin:create-content(
       "plugin:extract-instance-" || $entity || "($source)"
 }
 }};
-
 {
   for $entity-type-name in map:keys(map:get($model, "definitions"))
   return
@@ -235,7 +252,39 @@ declare function plugin:extract-instance-{$entity-type-name}(
   }
 
   (: return the in-memory instance :)
-  return
+  (: using the XQuery 3.0 syntax... :)
+  let $model := json:object()
+  let $_ := (
+    {
+      if ($entity-type-name eq $entity) then
+        "map:put($model, '$attachments', $attachments),&#10;    "
+      else ()
+    }map:put($model, '$type', '{ $entity-type-name }'),
+    {
+    fn:string-join(
+      (: Begin code generation block :)
+      let $definitions := map:get($model, "definitions")
+      let $entity-type := map:get($definitions, $entity-type-name)
+      let $properties := map:get($entity-type, "properties")
+      let $required-properties := (
+        map:get($entity-type, "primaryKey"),
+        map:get($entity-type, "required") ! json:array-values(.)
+      )
+      for $property-name in map:keys($properties)
+      let $is-required := $property-name = $required-properties
+      return
+        if ($is-required) then
+          "map:put($model, '" || $property-name || "', $" || service:kebob-case($property-name) || ")"
+        else
+          "es:optional($model, '" || $property-name || "', $" || service:kebob-case($property-name) || ")"
+    , ",&#10;    ")
+    (: end code generation block :)
+    }
+  )
+
+  (: if you prefer the xquery 3.1 version with the => operator....
+   : https://www.w3.org/TR/xquery-31/#id-arrow-operator
+  let $model :=
     json:object()
   {
     if ($entity-type-name eq $entity) then
@@ -248,17 +297,38 @@ declare function plugin:extract-instance-{$entity-type-name}(
       let $definitions := map:get($model, "definitions")
       let $entity-type := map:get($definitions, $entity-type-name)
       let $properties := map:get($entity-type, "properties")
+      let $required-properties := (
+        map:get($entity-type, "primaryKey"),
+        json:array-values(map:get($entity-type, "required"))
+      )
       for $property-name in map:keys($properties)
+      let $is-required := $property-name = $required-properties
       return
-        "  =>map:with('" || $property-name || "', $" || service:kebob-case($property-name) || ")"
+        if ($is-required) then
+          "  =>map:with('" || $property-name || "', $" || service:kebob-case($property-name) || ")"
+        else
+          "  =>es:optional('" || $property-name || "', $" || service:kebob-case($property-name) || ")"
     , "&#10;    ")
     (: end code generation block :)
     }
-  )
+  :)
+  return
+    $model
 }};
-  </extract-instance>/text()
+</extract-instance>/text()
 }
-</module>/text()
+declare function plugin:make-reference-object(
+  $type as xs:string,
+  $ref as xs:string)
+{{
+  let $o := json:object()
+  let $_ := (
+    map:put($o, '$type', $type),
+    map:put($o, '$ref', $ref)
+  )
+  return
+    $o
+}};</module>/text()
 }
 };
 
@@ -269,11 +339,12 @@ declare function service:generate-vars($model as map:map, $entity-type-name)
     let $definitions := map:get($model, "definitions")
     let $entity-type := map:get($definitions, $entity-type-name)
     let $properties := map:get($entity-type, "properties")
-    let $required-properties := map:get($entity-type, "required") ! json:array-values(.)
-
+    let $required-properties := (
+      map:get($entity-type, "primaryKey"),
+      map:get($entity-type, "required") ! json:array-values(.)
+    )
     for $property-name in map:keys($properties)
-    let $is-required :=
-      $property-name = ( map:get($entity-type, "primaryKey"), $required-properties )
+    let $is-required := $property-name = $required-properties
 
     let $property := map:get($properties, $property-name)
     let $is-array := map:get($property, "datatype") eq "array"
@@ -304,13 +375,13 @@ declare function service:generate-vars($model as map:map, $entity-type-name)
         ))
       )
     let $ref-name := functx:substring-after-last($ref, "/")
-    let $extract-reference-fn :=
+(:    let $extract-reference-fn :=
       fn:string-join((
         " {",
         "    '$type': '" || $ref-name || "',",
         "    '$ref': " || service:get-property($path-to-property, $ref-name),
         "  }"
-      ), "&#10;")
+      ), "&#10;"):)
     let $value :=
       if (empty($ref)) then
         $casting-function-name || "(" ||
@@ -327,7 +398,11 @@ declare function service:generate-vars($model as map:map, $entity-type-name)
           "null;",
           "if (" || $path-to-property || ") {",
           "  " || $property-name || " = " || $path-to-property || ".map(function(item) {",
+          "    // either return an instance of a " || $ref-name,
           "    return " || service:camel-case("extractInstance-" || $ref-name) || "(item." || $ref-name || ");",
+          "",
+          "    // or a reference to a " || $ref-name,
+          "    // return makeReferenceObject('" || $ref-name || "', item);",
           "  });",
           "}"
         ), "&#10;  ")
@@ -337,20 +412,18 @@ declare function service:generate-vars($model as map:map, $entity-type-name)
             " null;",
             "  if (" || service:get-property($path-to-property, $ref-name) || ") {",
             "    " || service:camel-case($property-name) || " = " || service:get-property($path-to-property, $ref-name) || ".map(function(item) {",
-            "      return {",
-            "        '$type': '" || $ref-name || "',",
-            "        '$ref': item",
-            "      };",
+            "      return makeReferenceObject('" || $ref-name || "', item);",
             "    });",
             "  }"
           ), "&#10;")
         else
-          fn:string-join((
+          " makeReferenceObject('" || $ref-name || "', " || service:get-property($path-to-property, $ref-name) || ")"
+(:          fn:string-join((
             " {",
             "    '$type': '" || $ref-name || "',",
             "    '$ref': " || service:get-property($path-to-property, $ref-name),
             "  }"
-          ), "&#10;")
+          ), "&#10;"):)
 
     return (
       $property-comment ! ("", .),
@@ -438,6 +511,14 @@ function {service:camel-case("extractInstance-" || $entity-type-name)}(source) {
 }};
   </extract-instance>/text()
 }
+
+function makeReferenceObject(type, ref) {{
+  return {{
+    '$type': type,
+    '$ref': ref
+  }};
+}}
+
 module.exports = {{
   createContent: createContent
 }};
@@ -446,10 +527,9 @@ module.exports = {{
 }
 };
 
-declare function post(
+declare function get(
   $context as map:map,
-  $params  as map:map,
-  $input   as document-node()*
+  $params  as map:map
   ) as document-node()*
 {
   debug:dump-env(),
@@ -458,17 +538,14 @@ declare function post(
     let $entity as xs:string := map:get($params, "entity")
     let $plugin-format as xs:string := map:get($params, "pluginFormat")
     let $_ := xdmp:log(("plugin-format:", $plugin-format))
-    let $model as map:map := $input/node()
+    let $model as map:map? := hent:get-model($entity)
     return
-      if (map:contains(map:get($model, "definitions"), $entity)) then
+      if (fn:exists($model)) then
         if ($plugin-format eq "xqy") then
           service:generate-xqy($entity, $model)
         else
           service:generate-sjs($entity, $model)
       else
-        fn:error(
-          xs:QName("ENITY-NAME-MISMATCH"),
-          "The entity name does not match any defined enity in the model."
-        )
+        fn:error((),"RESTAPI-SRVEXERR", (404, "Not Found", "The requested entity was not found"))
   })
 };

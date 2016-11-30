@@ -14,8 +14,7 @@
       "../../../node_modules/@types"
     ],
     "types": [
-      "hammerjs",
-      "d3"
+      "hammerjs"
     ]
   }
 }

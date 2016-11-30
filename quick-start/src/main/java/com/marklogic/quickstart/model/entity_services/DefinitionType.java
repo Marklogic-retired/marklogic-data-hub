@@ -1,0 +1,152 @@
+package com.marklogic.quickstart.model.entity_services;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
+import java.util.*;
+
+public class DefinitionType extends JsonPojo {
+    protected String name;
+    protected String description;
+    protected String primaryKey;
+    protected List<String> required;
+    protected List<String> rangeIndex;
+    protected List<String> wordLexicon;
+    protected List<PropertyType> properties;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getPrimaryKey() {
+        return primaryKey;
+    }
+
+    public void setPrimaryKey(String primaryKey) {
+        this.primaryKey = primaryKey;
+    }
+
+    public List<String> getRequired() {
+        return required;
+    }
+
+    public void setRequired(List<String> required) {
+        this.required = required;
+    }
+
+    public List<String> getRangeIndex() {
+        return rangeIndex;
+    }
+
+    public void setRangeIndex(List<String> rangeIndex) {
+        this.rangeIndex = rangeIndex;
+    }
+
+    public List<String> getWordLexicon() {
+        return wordLexicon;
+    }
+
+    public void setWordLexicon(List<String> wordLexicon) {
+        this.wordLexicon = wordLexicon;
+    }
+
+    public List<PropertyType> getProperties() {
+        return properties;
+    }
+
+    public void setProperties(List<PropertyType> properties) {
+        this.properties = properties;
+    }
+
+    public static DefinitionType fromJson(String name, JsonNode defs) {
+        DefinitionType definitionType = new DefinitionType();
+        definitionType.setName(name);
+        JsonNode node = defs.get(name);
+
+        definitionType.setDescription(getValue(node, "description"));
+        definitionType.setPrimaryKey(getValue(node, "primaryKey"));
+
+        ArrayList<String> required = new ArrayList<>();
+        JsonNode requiredNodes = node.get("required");
+        if (requiredNodes != null) {
+            for (final JsonNode n : requiredNodes) {
+                required.add(n.asText());
+            }
+        }
+        definitionType.setRequired(required);
+
+        ArrayList<String> rangeIndexes = new ArrayList<>();
+        JsonNode rangeIndexNodes = node.get("rangeIndex");
+        if (rangeIndexNodes != null) {
+            for (final JsonNode n : rangeIndexNodes) {
+                rangeIndexes.add(n.asText());
+            }
+        }
+        definitionType.setRangeIndex(rangeIndexes);
+
+        ArrayList<String> wordLexicons = new ArrayList<>();
+        JsonNode wordLexiconNodes = node.get("wordLexicon");
+        if (wordLexiconNodes != null) {
+            for (final JsonNode n : wordLexiconNodes) {
+                wordLexicons.add(n.asText());
+            }
+        }
+        definitionType.setWordLexicon(wordLexicons);
+
+        ArrayList<PropertyType> properties = new ArrayList<>();
+        JsonNode propertiesNode = node.get("properties");
+        if (propertiesNode != null) {
+            Iterator<String> fieldItr = propertiesNode.fieldNames();
+            while(fieldItr.hasNext()) {
+                String key = fieldItr.next();
+                JsonNode propertyNode = propertiesNode.get(key);
+                if (propertyNode != null) {
+                    properties.add(PropertyType.fromJson(key, propertyNode));
+                }
+            }
+        }
+        definitionType.setProperties(properties);
+
+        return definitionType;
+    }
+
+    public JsonNode toJson() {
+        ObjectNode node = JsonNodeFactory.instance.objectNode();
+        writeStringIf(node, "description", description);
+        writeStringIf(node, "primaryKey", primaryKey);
+
+        ArrayNode requiredArray = JsonNodeFactory.instance.arrayNode();
+        required.forEach(requiredArray::add);
+        node.set("required", requiredArray);
+
+        ArrayNode rangeIndexArray = JsonNodeFactory.instance.arrayNode();
+        rangeIndex.forEach(rangeIndexArray ::add);
+        node.set("rangeIndex", rangeIndexArray);
+
+        ArrayNode wordLexiconArray = JsonNodeFactory.instance.arrayNode();
+        wordLexicon.forEach(wordLexiconArray::add);
+        node.set("wordLexicon", wordLexiconArray);
+
+        ObjectNode propertiesObj = JsonNodeFactory.instance.objectNode();
+
+        for (PropertyType prop : properties) {
+            propertiesObj.set(prop.getName(), prop.toJson());
+        }
+        node.set("properties", propertiesObj);
+        return node;
+    }
+}

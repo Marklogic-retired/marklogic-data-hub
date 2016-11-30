@@ -71,28 +71,28 @@ public class DataHubTest extends HubTestBase {
         dh.validateServer();
     }
 
-    @Test
+    @Test(expected = ServerValidationException.class)
     public void testValidateServer804() throws ServerValidationException {
         expect(am.getServerVersion()).andReturn("8.0-4");
         replay(am);
         dh.validateServer();
     }
 
-    @Test
+    @Test(expected = ServerValidationException.class)
     public void testValidateServerBeyond804() throws ServerValidationException {
         expect(am.getServerVersion()).andReturn("8.0-5");
         replay(am);
         dh.validateServer();
     }
 
-    @Test
+    @Test(expected = ServerValidationException.class)
     public void testValidateServerBeyond804WithDot() throws ServerValidationException {
         expect(am.getServerVersion()).andReturn("8.0-5.2");
         replay(am);
         dh.validateServer();
     }
 
-    @Test
+    @Test(expected = ServerValidationException.class)
     public void testValidateServe8nightly() throws ServerValidationException {
         expect(am.getServerVersion()).andReturn("8.0-20160719");
         replay(am);

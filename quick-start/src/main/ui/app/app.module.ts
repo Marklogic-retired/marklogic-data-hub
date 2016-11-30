@@ -4,17 +4,22 @@ import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { RouterModule } from '@angular/router';
 
-import { ConfirmModule } from './confirm';
-
 import { AppComponent } from './app.component';
-import { EntitiesComponent } from './entities';
+import { FlowsComponent } from './flows';
+import {
+  ChooseCollationComponent,
+  EntityBoxComponent,
+  EntityModelerComponent,
+  EntityEditorComponent,
+  ExternalDefDialogComponent
+} from './entity-modeler';
 import { LoginComponent } from './login';
 import { SettingsComponent } from './settings';
 
 import { MdlModule } from 'angular2-mdl';
+import { MdlSelectModule } from '@angular2-mdl-ext/select';
 import { CodemirrorModule } from 'ng2-codemirror';
 import { MomentModule } from 'angular2-moment';
-import { MdDialogModule } from './dialog';
 import { GridManiaModule } from './grid';
 
 import { ROUTES } from './app.routes';
@@ -24,10 +29,10 @@ import { HeaderComponent } from './header/header.component';
 import { JobsComponent } from './jobs';
 import { MlcpUiComponent } from './mlcp-ui';
 import { MlErrorComponent } from './ml-error';
-import { NewEntityComponent } from './new-entity/new-entity';
 import { NewFlowComponent } from './new-flow/new-flow';
 import { NoContentComponent } from './no-content';
 import { PaginationComponent } from './pagination';
+import { ResizableComponent } from './resizable/resizable.component';
 import { SelectComponent } from './select/select.component';
 import { SelectListComponent } from './select-list/select-list.component';
 import { TooltipModule } from './tooltip';
@@ -46,20 +51,26 @@ import { TraceService } from './traces/trace.service';
 import { HarmonizeFlowOptionsComponent } from './harmonize-flow-options/harmonize-flow-options.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { TitlecasePipe } from './titlecase.pipe';
+import { InlineEditComponent } from './inline-edit/inline-edit.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     FolderBrowserComponent,
     HeaderComponent,
-    EntitiesComponent,
+    FlowsComponent,
+    ChooseCollationComponent,
+    EntityBoxComponent,
+    EntityEditorComponent,
+    EntityModelerComponent,
+    ExternalDefDialogComponent,
     JobsComponent,
     LoginComponent,
     MlcpUiComponent,
     MlErrorComponent,
-    NewEntityComponent,
     NewFlowComponent,
     PaginationComponent,
+    ResizableComponent,
     SelectComponent,
     SelectListComponent,
     SettingsComponent,
@@ -69,19 +80,25 @@ import { TitlecasePipe } from './titlecase.pipe';
     ClipboardDirective,
     HarmonizeFlowOptionsComponent,
     DashboardComponent,
-    TitlecasePipe
+    TitlecasePipe,
+    InlineEditComponent
+  ],
+  entryComponents: [
+    ChooseCollationComponent,
+    ExternalDefDialogComponent,
+    EntityEditorComponent,
+    NewFlowComponent
   ],
   imports: [
     BrowserModule,
     FormsModule,
     HttpModule,
     MdlModule,
-    ConfirmModule,
+    MdlSelectModule,
     CodemirrorModule,
     TooltipModule,
     MomentModule,
     GridManiaModule,
-    MdDialogModule.forRoot(),
     RouterModule.forRoot(ROUTES, { useHash: true })
   ],
   providers: [

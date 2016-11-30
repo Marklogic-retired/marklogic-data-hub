@@ -6,7 +6,7 @@
       Scaffold for Content plugins
     </div>
   </description>
-  <method name="POST">
+  <method name="GET">
     <param name="entity" type="xs:string"/>
     <param name="pluginFormat" type="xs:string"/>
   </method>

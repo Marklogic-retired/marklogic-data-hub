@@ -1,0 +1,10 @@
+<div class="readonly" *ngIf="!editing" (dblclick)="startEditing()">{{value}}</div>
+<div *ngIf="editing">
+  <input type="text" placeholder="{{key}}" [(ngModel)]="value">
+<!--   <button (click)="save()">
+    <i class="fa fa-check"></i>
+  </button>
+  <button (click)="cancelEditing()">
+    <i class="fa fa-close"></i>
+  </button> -->
+</div>

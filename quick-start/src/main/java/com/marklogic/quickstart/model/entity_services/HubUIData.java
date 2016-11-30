@@ -1,0 +1,111 @@
+package com.marklogic.quickstart.model.entity_services;
+
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.sun.javafx.geom.Point2D;
+
+import java.util.*;
+
+public class HubUIData extends JsonPojo {
+    protected int x;
+    protected int y;
+    protected int width;
+    protected int height;
+    protected Map<String, List<Point2D>> vertices = new HashMap<>();
+
+    public int getX() {
+        return x;
+    }
+
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public void setY(int y) {
+        this.y = y;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public void setWidth(int width) {
+        this.width = width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public void setHeight(int height) {
+        this.height = height;
+    }
+
+    public Map<String, List<Point2D>> getVertices() {
+        return vertices;
+    }
+
+    public void setVertices(Map<String, List<Point2D>> vertices) {
+        this.vertices = vertices;
+    }
+
+    public static HubUIData fromJson(JsonNode node) {
+        HubUIData hubUIData = new HubUIData();
+        if (node != null) {
+            hubUIData.x = getIntValue(node, "x");
+            hubUIData.y = getIntValue(node, "y");
+            hubUIData.width = getIntValue(node, "width");
+            hubUIData.height = getIntValue(node, "height");
+
+            JsonNode verticesNode = node.get("vertices");
+            if (verticesNode != null) {
+                Iterator<String> fieldItr = verticesNode.fieldNames();
+                while (fieldItr.hasNext()) {
+                    String key = fieldItr.next();
+                    JsonNode vertexList = verticesNode.get(key);
+                    if (vertexList != null) {
+                        ArrayList<Point2D> points = new ArrayList<>();
+
+                        vertexList.forEach((JsonNode vertex) -> {
+                            points.add(new Point2D(vertex.get("x").asInt(), vertex.get("y").asInt()));
+                        });
+                        hubUIData.vertices.put(key, points);
+                    }
+                }
+            }
+        }
+        return hubUIData;
+    }
+
+    public JsonNode toJson() {
+        ObjectNode node = JsonNodeFactory.instance.objectNode();
+        writeNumberIf(node, "x", x);
+        writeNumberIf(node, "y", y);
+        writeNumberIf(node, "width", width);
+        writeNumberIf(node, "height", height);
+
+        ObjectNode verticesNode = JsonNodeFactory.instance.objectNode();
+        vertices.forEach((String key, List<Point2D> points) -> {
+            ArrayNode arrayOfPointsNode = JsonNodeFactory.instance.arrayNode();
+            points.forEach((Point2D point) -> {
+                ObjectNode p = JsonNodeFactory.instance.objectNode();
+                p.put("x", point.x);
+                p.put("y", point.y);
+                arrayOfPointsNode.add(p);
+            });
+
+            if (arrayOfPointsNode.size() > 0) {
+                verticesNode.set(key, arrayOfPointsNode);
+            }
+        });
+        node.set("vertices", verticesNode);
+        return node;
+    }
+}
