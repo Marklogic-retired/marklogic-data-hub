@@ -2,14 +2,18 @@
 
 OS | Status
 --- | --- | ---
-Linux/Mac | [![Build Status](https://travis-ci.org/marklogic/marklogic-data-hub.svg?branch=master)](https://travis-ci.org/marklogic/marklogic-data-hub)
+Linux/Mac | [![Build Status](https://travis-ci.org/marklogic/marklogic-data-hub.svg?branch=2.0-develop)](https://travis-ci.org/marklogic/marklogic-data-hub)
 Windows | [![Windows Build status](https://ci.appveyor.com/api/projects/status/kgj0k5na59uhkvbv?svg=true)](https://ci.appveyor.com/project/paxtonhare/marklogic-data-hub)
 
 # MarkLogic Data Hub
 
+## WARNING!!!! This is the the 2.0 branch of The MarkLogic Data Hub Framework. The 2.0 version is only compatible with MarkLogic 9.0 which is currently in Early Access and not generally available.
+
 Go from nothing to Enterprise Data Hub in a matter of minutes.  
 
 This project allows you to deploy a skeleton Data Hub into MarkLogic. With some basic configuration you will be running an Enterprise Data Hub in no time.
+
+
 
 # Getting Started
 
@@ -36,7 +40,7 @@ Alternatively you can include the jar file as a build dependency in your Java pr
 **Gradle**
 
 ```groovy
-compile('com.marklogic:marklogic-data-hub:1.0.1')
+compile('com.marklogic:marklogic-data-hub:2.0.0-alpha.1')
 ```
 
 **Maven**
@@ -45,7 +49,7 @@ compile('com.marklogic:marklogic-data-hub:1.0.1')
 <dependency>
   <groupId>com.marklogic</groupId>
   <artifactId>marklogic-data-hub</artifactId>
-  <version>1.0.1</version>
+  <version>2.0.0-alpha.1</version>
   <type>pom</type>
 </dependency>
 ```
@@ -53,7 +57,7 @@ compile('com.marklogic:marklogic-data-hub:1.0.1')
 **Ivy**
 
 ```xml
-<dependency org='com.marklogic' name='marklogic-data-hub' rev='1.0.1'>
+<dependency org='com.marklogic' name='marklogic-data-hub' rev='2.0.0-alpha.1'>
   <artifact name='$AID' ext='pom'></artifact>
 </dependency>
 ```
@@ -64,7 +68,7 @@ If you prefer to use gradle for all of your hub interactions then you can includ
 
 ```groovy
 plugins {
-    id 'com.marklogic.ml-data-hub' version '1.0.1'
+    id 'com.marklogic.ml-data-hub' version '2.0.0-alpha.1'
 }
 ```
 
