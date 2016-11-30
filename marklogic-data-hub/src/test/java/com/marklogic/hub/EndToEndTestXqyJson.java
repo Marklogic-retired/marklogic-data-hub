@@ -37,7 +37,7 @@ public class EndToEndTestXqyJson extends HubTestBase {
         enableDebugging();
         enableTracing();
 
-        Scaffolding scaffolding = new Scaffolding(projectDir.toString());
+        Scaffolding scaffolding = new Scaffolding(projectDir.toString(), stagingClient);
         scaffolding.createEntity(ENTITY);
         scaffolding.createFlow(ENTITY, "testinput", FlowType.INPUT,
             PluginFormat.XQUERY, Format.JSON);

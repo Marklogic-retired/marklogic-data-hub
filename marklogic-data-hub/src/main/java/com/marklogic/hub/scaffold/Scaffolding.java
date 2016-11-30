@@ -15,17 +15,25 @@
  */
 package com.marklogic.hub.scaffold;
 
-import com.marklogic.client.helper.LoggingObject;
-import com.marklogic.client.io.Format;
-import com.marklogic.hub.error.ScaffoldingValidationException;
-import com.marklogic.hub.flow.FlowType;
-import com.marklogic.hub.flow.SimpleFlow;
-import com.marklogic.hub.plugin.PluginFormat;
-
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+
+import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.extensions.ResourceManager;
+import com.marklogic.client.extensions.ResourceServices;
+import com.marklogic.client.helper.LoggingObject;
+import com.marklogic.client.io.StringHandle;
+import com.marklogic.client.util.RequestParameters;
+import com.marklogic.hub.error.ScaffoldingValidationException;
+import com.marklogic.hub.plugin.PluginFormat;
+import com.sun.jersey.api.client.ClientHandlerException;
+
+import com.marklogic.client.io.Format;
+import com.marklogic.hub.flow.FlowType;
+import com.marklogic.hub.flow.SimpleFlow;
 
 public class Scaffolding extends LoggingObject {
 
@@ -33,11 +41,13 @@ public class Scaffolding extends LoggingObject {
     private Path pluginsDir;
     private Path entitiesDir;
     private ScaffoldingValidator validator;
+    private DatabaseClient databaseClient;
 
-    public Scaffolding(String projectDir) {
+    public Scaffolding(String projectDir, DatabaseClient databaseClient) {
         this.projectDir = projectDir;
         this.pluginsDir = Paths.get(this.projectDir, "plugins");
         this.entitiesDir = this.pluginsDir.resolve("entities");
+        this.databaseClient = databaseClient;
         validator = new ScaffoldingValidator(projectDir);
     }
 
@@ -55,7 +65,14 @@ public class Scaffolding extends LoggingObject {
     }
 
     public void createFlow(String entityName, String flowName,
-                           FlowType flowType, PluginFormat pluginFormat, Format dataFormat)
+                           FlowType flowType, PluginFormat pluginFormat,
+                           Format dataFormat) throws IOException {
+        createFlow(entityName, flowName, flowType, pluginFormat, dataFormat, false);
+    }
+
+    public void createFlow(String entityName, String flowName,
+                           FlowType flowType, PluginFormat pluginFormat,
+                           Format dataFormat, boolean useEsModel)
             throws IOException {
         Path flowDir = getFlowDir(entityName, flowName, flowType);
 
@@ -73,8 +90,17 @@ public class Scaffolding extends LoggingObject {
 
         Path contentDir = flowDir.resolve("content");
         contentDir.toFile().mkdirs();
-        writeFile("scaffolding/" + flowType + "/" + pluginFormat + "/content." + pluginFormat,
+
+
+        if (useEsModel) {
+            ContentPlugin cp = new ContentPlugin(databaseClient);
+            String content = cp.getContents(entityName, pluginFormat);
+            writeBuffer(content, contentDir.resolve("content." + pluginFormat));
+        }
+        else {
+            writeFile("scaffolding/" + flowType + "/" + pluginFormat + "/content." + pluginFormat,
                 contentDir.resolve("content." + pluginFormat));
+        }
 
         Path headerDir = flowDir.resolve("headers");
         headerDir.toFile().mkdirs();
@@ -100,6 +126,14 @@ public class Scaffolding extends LoggingObject {
         if (!dstFile.toFile().exists()) {
             InputStream inputStream = Scaffolding.class.getClassLoader()
                     .getResourceAsStream(srcFile);
+            Files.copy(inputStream, dstFile);
+        }
+    }
+
+    private void writeBuffer(String buffer, Path dstFile) throws IOException {
+        logger.info("writing: " + dstFile.toString());
+        if (!dstFile.toFile().exists()) {
+            InputStream inputStream = new ByteArrayInputStream(buffer.getBytes(StandardCharsets.UTF_8));
             Files.copy(inputStream, dstFile);
         }
     }
@@ -224,4 +258,33 @@ public class Scaffolding extends LoggingObject {
         }
         return absolutePath.toString();
     }
+
+    public class ContentPlugin extends ResourceManager {
+        private static final String NAME = "scaffold-content";
+
+        private RequestParameters params = new RequestParameters();
+
+        public ContentPlugin(DatabaseClient client) {
+            super();
+            client.init(NAME, this);
+        }
+
+        public String getContents(String entityName, PluginFormat pluginFormat) throws IOException {
+            try {
+                params.add("entity", entityName);
+                params.add("pluginFormat", pluginFormat.toString());
+                ResourceServices.ServiceResultIterator resultItr = this.getServices().get(params);
+                if (resultItr == null || ! resultItr.hasNext()) {
+                    throw new IOException("Unable to get Content Plugin scaffold");
+                }
+                ResourceServices.ServiceResult res = resultItr.next();
+                return res.getContent(new StringHandle()).get();
+            }
+            catch(ClientHandlerException e) {
+            }
+            return "{}";
+        }
+
+    }
+
 }

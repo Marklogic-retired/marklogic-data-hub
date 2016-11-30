@@ -85,7 +85,7 @@ public class LoadUserModulesCommand extends AbstractCommand {
         DefaultModulesLoader modulesLoader = getStagingModulesLoader(config);
         modulesLoader.loadModules(baseDir, new AssetModulesFinder(), stagingClient);
 
-        JSONDocumentManager entityDocMgr = stagingClient.newJSONDocumentManager();
+        JSONDocumentManager entityDocMgr = finalClient.newJSONDocumentManager();
 
         AllButAssetsModulesFinder allButAssetsModulesFinder = new AllButAssetsModulesFinder();
 

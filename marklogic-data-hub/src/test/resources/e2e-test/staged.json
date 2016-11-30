@@ -1,7 +1,10 @@
 {
-  "headers": [],
-  "triples": [],
-  "content": {
-    "testing": 123
+  "envelope": {
+    "headers": [],
+    "triples": [],
+    "instance": {
+      "testing": 123
+    },
+    "attachments": []
   }
 }

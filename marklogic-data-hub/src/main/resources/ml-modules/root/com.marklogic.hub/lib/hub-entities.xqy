@@ -9,6 +9,25 @@ declare variable $ENTITY-MODEL-COLLECTION := "http://marklogic.com/entity-servic
 
 declare option xdmp:mapping "false";
 
+declare function hent:get-model($entity-name as xs:string)
+{
+  let $model := fn:collection($ENTITY-MODEL-COLLECTION)[info/title = $entity-name]
+  where fn:exists($model)
+  return
+    let $model-map as map:map? := $model
+    let $refs := $model//*[fn:local-name(.) = '$ref'][fn:starts-with(., "#/definitions")] ! fn:replace(., "#/definitions/", "")
+    let $_ :=
+      let $definitions := $model-map=>map:get("definitions")
+      for $ref in $refs
+      let $other-model as map:map? := hent:get-model($ref)
+      let $other-defs := $other-model=>map:get("definitions")
+      for $key in map:keys($other-defs)
+      return
+        $definitions=>map:put($key, $other-defs=>map:get($key))
+    return
+      $model-map
+};
+
 declare function hent:dump-indexes()
 {
   let $uber-model := map:map()

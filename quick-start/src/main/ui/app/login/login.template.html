@@ -119,10 +119,7 @@
                 <button
                   type="button"
                   mdl-button
-                  appConfirm title="Are you sure?"
-                  appendToBody="true"
-                  message="Really restore the default settings?"
-                  (confirm)="restoreInitDefaults($event)">Restore Defaults</button>
+                  (click)="restoreInitDefaults($event)">Restore Defaults</button>
                 <button type="submit" mdl-button mdl-button-type="raised">Initialize</button>
               </div>
             </form>

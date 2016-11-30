@@ -1,5 +1,7 @@
 import { Component, Input, Output, EventEmitter, OnInit, OnChanges } from '@angular/core';
 
+import { MdlDialogService } from 'angular2-mdl';
+
 import * as _ from 'lodash';
 
 @Component({
@@ -25,7 +27,7 @@ export class SelectListComponent implements OnInit, OnChanges {
   @Output() removedItem = new EventEmitter();
 
   currentItem: any = null;
-  constructor() {}
+  constructor(private dialogService: MdlDialogService) {}
 
   ngOnInit() {
     this.selectInitial();
@@ -64,13 +66,17 @@ export class SelectListComponent implements OnInit, OnChanges {
   }
 
   removeItem(item: any, event: Event): void {
-    this.removedItem.emit({
-      item: item,
-      event: event
-    });
-    if (event) {
-      event.stopPropagation();
-    }
+    const message = 'Remove the project from the list of projects? Does not destroy anything on disk.';
+    this.dialogService.confirm(message, 'Cancel', 'Remove').subscribe(() => {
+      this.removedItem.emit({
+        item: item,
+        event: event
+      });
+      if (event) {
+        event.stopPropagation();
+      }
+    },
+    () => {});
   }
 
   getItemText(item: any) {

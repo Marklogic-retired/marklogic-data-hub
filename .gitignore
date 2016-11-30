@@ -21,3 +21,4 @@ flow.properties
 node_modules/
 .tmp/
 *.sublime-*
+.vscode/

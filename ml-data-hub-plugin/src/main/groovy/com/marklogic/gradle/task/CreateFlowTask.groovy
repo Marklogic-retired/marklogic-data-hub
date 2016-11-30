@@ -43,7 +43,7 @@ abstract class CreateFlowTask extends HubTask {
         }
 
         def projectDir = getHubConfig().projectDir
-        Scaffolding scaffolding = new Scaffolding(projectDir)
+        Scaffolding scaffolding = new Scaffolding(projectDir, getFinalClient())
         println "Creating an " + pluginFormat + " " + flowType + " flow named " + flowName + " for entity " + entityName
         scaffolding.createFlow(entityName, flowName, flowType, pluginFormat, dataFormat)
     }

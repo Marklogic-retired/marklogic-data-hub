@@ -2,7 +2,7 @@ xquery version "1.0-ml";
 
 module namespace plugin = "http://marklogic.com/data-hub/plugins";
 
-declare namespace envelope = "http://marklogic.com/data-hub/envelope";
+declare namespace es = "http://marklogic.com/entity-services";
 
 declare option xdmp:mapping "false";
 
@@ -20,10 +20,10 @@ declare function plugin:create-content(
 {
   let $doc := fn:doc($id)
   return
-    if ($doc/envelope:envelope) then
-      $doc/envelope:envelope/envelope:content/node()
-    else if ($doc/content) then
-      $doc/content
+    if ($doc/es:envelope) then
+      $doc/es:envelope/es:instance/node()
+    else if ($doc/envelope/instance) then
+      $doc/envelope/instance
     else
       $doc
 };

@@ -1,4 +1,4 @@
-import { Component, ViewChild, ViewContainerRef } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 
 import { Entity } from '../entities/entity.model';
 import { Flow } from '../entities/flow.model';
@@ -7,11 +7,10 @@ import { EntitiesService } from '../entities/entities.service';
 
 import { MdlSnackbarService } from 'angular2-mdl';
 
-import { MdDialog, MdDialogConfig, MdDialogRef } from '../dialog/dialog';
+import { MdlDialogService, MdlDialogReference } from 'angular2-mdl';
 
 import { MlcpUiComponent } from '../mlcp-ui';
 import { HarmonizeFlowOptionsComponent } from '../harmonize-flow-options/harmonize-flow-options.component';
-import { NewEntityComponent } from '../new-entity/new-entity';
 import { NewFlowComponent } from '../new-flow/new-flow';
 
 import { DeployService } from '../deploy/deploy.service';
@@ -19,33 +18,25 @@ import { DeployService } from '../deploy/deploy.service';
 import * as _ from 'lodash';
 
 @Component({
-  selector: 'app-entities',
-  templateUrl: './entities.component.html',
-  styleUrls: ['./entities.component.scss'],
+  selector: 'app-flows',
+  templateUrl: './flows.component.html',
+  styleUrls: ['./flows.component.scss'],
 })
-export class EntitiesComponent {
+export class FlowsComponent {
   @ViewChild(MlcpUiComponent) mlcp: MlcpUiComponent;
   @ViewChild(HarmonizeFlowOptionsComponent) harmonize: HarmonizeFlowOptionsComponent;
-  @ViewChild(NewEntityComponent) newEntity: NewEntityComponent;
-  @ViewChild(NewFlowComponent) newFlow: NewFlowComponent;
 
   entities: Array<Entity>;
   entity: Entity;
   flow: Flow;
   flowType: string;
-  config: MdDialogConfig = new MdDialogConfig();
 
   constructor(
     private entitiesService: EntitiesService,
     private deployService: DeployService,
     private snackbar: MdlSnackbarService,
-    private dialog: MdDialog,
-    private vcRef: ViewContainerRef
+    private dialogService: MdlDialogService
   ) {
-    let vref: any = vcRef;
-    snackbar.setDefaultViewContainerRef(vref);
-    this.config.viewContainerRef = this.vcRef;
-
     deployService.onDeploy.subscribe(() => {
       this.getEntities();
     });
@@ -97,7 +88,7 @@ export class EntitiesComponent {
   }
 
   isCollapsed(entity: Entity): boolean {
-    let collapsed: string = localStorage.getItem(entity.entityName + '-collapsed');
+    let collapsed: string = localStorage.getItem(entity.name + '-collapsed');
     if (collapsed === null) {
       collapsed = 'true';
     }
@@ -105,13 +96,14 @@ export class EntitiesComponent {
   }
 
   setCollapsed(entity: Entity, collapsed: boolean): void {
-    localStorage.setItem(entity.entityName + '-collapsed', collapsed.toString());
+    localStorage.setItem(entity.name + '-collapsed', collapsed.toString());
   }
 
   getEntities(): void {
-    this.entitiesService.getEntities().subscribe(entities => {
+    this.entitiesService.entitiesChange.subscribe(entities => {
       this.entities = entities;
     });
+    this.entitiesService.getEntities();
   }
 
   toggleEntity(entity: Entity): void {
@@ -139,15 +131,6 @@ export class EntitiesComponent {
     return this.entity === entity;
   }
 
-  showNewEntity(ev: Event): void {
-    this.newEntity.show().subscribe((newEntity: Entity) => {
-      this.entitiesService.createEntity(newEntity).subscribe((entity: Entity) => {
-        this.entities.splice(_.sortedIndexBy(this.entities, entity, 'entityName'), 0, entity);
-        this.toggleEntity(entity);
-      });
-    });
-  }
-
   newInputFlow(ev: Event, entity: Entity): void {
     this.showNewFlow(ev, entity, 'INPUT');
   }
@@ -157,20 +140,34 @@ export class EntitiesComponent {
   }
 
   showNewFlow(ev: Event, entity: Entity, flowType: string): void {
-    this.newFlow.show(flowType).subscribe((newFlow: Flow) => {
-      this.entitiesService.createFlow(entity, flowType, newFlow).subscribe((flow: Flow) => {
-        if (flowType === 'INPUT') {
-          entity.inputFlows.push(flow);
-        } else if (flowType === 'HARMONIZE') {
-          entity.harmonizeFlows.push(flow);
-        }
-      });
+    let actions = {
+      save: (newFlow: Flow) => {
+        this.entitiesService.createFlow(entity, flowType, newFlow).subscribe((flow: Flow) => {
+          if (flowType === 'INPUT') {
+            entity.inputFlows.push(flow);
+          } else if (flowType === 'HARMONIZE') {
+            entity.harmonizeFlows.push(flow);
+          }
+        });
+      }
+    };
+    this.dialogService.showCustomDialog({
+      component: NewFlowComponent,
+      providers: [
+        { provide: 'flowType', useValue: flowType },
+        { provide: 'actions', useValue: actions }
+      ],
+      isModal: true
     });
   }
 
   runFlow(ev: MouseEvent, flow: Flow, flowType: string) {
     if (this.flowHasError(flow.entityName, flow.flowName)) {
-      this.dialog.open(HasBugsDialogComponent, this.config).afterClosed().subscribe(() => {});
+      this.dialogService.showCustomDialog({
+        component: HasBugsDialogComponent,
+        providers: [],
+        isModal: true
+      });
     } else {
       const lower = flowType.toLowerCase();
       if (lower === 'input') {
@@ -217,10 +214,10 @@ export class EntitiesComponent {
   template: `
   <h3 class="bug-title"><i class="fa fa-bug"></i>This flow has a bug!</h3>
   <p>You must fix it before you can run it.</p>
-  <mdl-button mdl-button-type="raised" mdl-colored="primary" mdl-ripple (click)="dialogRef.close()">OK</mdl-button>`,
-  styleUrls: ['./entities.component.scss']
+  <mdl-button mdl-button-type="raised" mdl-colored="primary" mdl-ripple (click)="dialog.hide()">OK</mdl-button>`,
+  styleUrls: ['./flows.component.scss']
 })
 export class HasBugsDialogComponent {
-  constructor(public dialogRef: MdDialogRef<HasBugsDialogComponent>) { }
+  constructor(private dialog: MdlDialogReference) { }
 }
 /* tslint:enable:max-line-length */

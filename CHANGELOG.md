@@ -1,7 +1,28 @@
 # Change Log
 
-## [v1.0.1](https://github.com/marklogic/marklogic-data-hub/tree/v1.0.1)
+## [v2.0.1-alpha.1](https://github.com/marklogic/marklogic-data-hub/tree/v2.0.1-alpha.1)
 
+[Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v1.0.2...v2.0.1-alpha.1)
+
+**Implemented enhancements:**
+
+- Visual entity type model editor [\#286](https://github.com/marklogic/marklogic-data-hub/issues/286)
+
+## [v1.0.2](https://github.com/marklogic/marklogic-data-hub/tree/v1.0.2) (2016-11-22)
+[Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v1.0.1...v1.0.2)
+
+**Fixed bugs:**
+
+- mlcp load from QuickStart GUI not loading data [\#331](https://github.com/marklogic/marklogic-data-hub/issues/331)
+
+**Closed issues:**
+
+- Possible typo on wiki page [\#333](https://github.com/marklogic/marklogic-data-hub/issues/333)
+- Tutorial instruction - create entity "Employees" instead of "Employee" [\#330](https://github.com/marklogic/marklogic-data-hub/issues/330)
+- mlcp job is not getting run + console log button not showing [\#329](https://github.com/marklogic/marklogic-data-hub/issues/329)
+- Error Extension hubstats does not exist. [\#328](https://github.com/marklogic/marklogic-data-hub/issues/328)
+
+## [v1.0.1](https://github.com/marklogic/marklogic-data-hub/tree/v1.0.1) (2016-11-08)
 [Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v1.0.0...v1.0.1)
 
 **Fixed bugs:**

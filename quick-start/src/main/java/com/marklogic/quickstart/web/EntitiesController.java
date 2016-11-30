@@ -1,12 +1,12 @@
 package com.marklogic.quickstart.web;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.marklogic.quickstart.model.entity_services.EntityModel;
 import com.marklogic.quickstart.service.JobManager;
 import com.marklogic.hub.JobStatusListener;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.FlowType;
 import com.marklogic.quickstart.exception.NotFoundException;
-import com.marklogic.quickstart.model.EntityModel;
 import com.marklogic.quickstart.model.FlowModel;
 import com.marklogic.quickstart.model.JobStatusMessage;
 import com.marklogic.quickstart.model.Project;
@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.util.Collection;
+import java.util.List;
 
 @Controller
 @RequestMapping("/api/projects/{projectId}/{environment}")
@@ -54,32 +55,81 @@ class EntitiesController extends BaseController {
             throw new NotFoundException();
         }
 
-        return entityManagerService.getEntities(envConfig.getProjectDir());
+        return entityManagerService.getEntities();
     }
 
     @RequestMapping(value = "/entities/", method = RequestMethod.POST)
     @ResponseBody
-    public EntityModel createEntity(@PathVariable int projectId,
-                                    @PathVariable String environment,
-            @RequestBody EntityModel newEntity) throws ClassNotFoundException, IOException {
+    public ResponseEntity<?> saveEntities(@PathVariable int projectId,
+                                       @PathVariable String environment,
+                                       @RequestBody List<EntityModel> entities) throws ClassNotFoundException, IOException {
 
         requireAuth();
 
-        Project project = projectManagerService.getProject(projectId);
-        return entityManagerService.createEntity(envConfig.getProjectDir(), newEntity);
+        // ensure project exists
+        projectManagerService.getProject(projectId);
+        for (EntityModel entity : entities) {
+            entityManagerService.saveEntity(entity);
+        }
+        entityManagerService.saveAllUiData(entities);
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @RequestMapping(value = "/entities/ui/", method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseEntity<?> saveEntitiesUiState(@PathVariable int projectId,
+                                          @PathVariable String environment,
+                                          @RequestBody List<EntityModel> entities) throws ClassNotFoundException, IOException {
+
+        requireAuth();
+
+        // ensure project exists
+        projectManagerService.getProject(projectId);
+        entityManagerService.saveAllUiData(entities);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @RequestMapping(value = "/entities/{entityName}", method = RequestMethod.PUT)
+    @ResponseBody
+    public EntityModel saveEntity(@PathVariable int projectId,
+                                       @PathVariable String environment,
+                                       @RequestBody EntityModel entity) throws ClassNotFoundException, IOException {
+
+        requireAuth();
+
+        // ensure project exists
+        projectManagerService.getProject(projectId);
+        entityManagerService.saveEntityUiData(entity);
+        return entityManagerService.saveEntity(entity);
     }
 
     @RequestMapping(value = "/entities/{entityName}", method = RequestMethod.GET)
     @ResponseBody
     public EntityModel getEntity(@PathVariable int projectId,
-                                 @PathVariable String environment,
-                                 @PathVariable String entityName) throws ClassNotFoundException, IOException {
+                                    @PathVariable String environment,
+                                    @PathVariable String entityName) throws ClassNotFoundException, IOException {
         requireAuth();
 
         // ensure project exists
         projectManagerService.getProject(projectId);
 
-        return entityManagerService.getEntity(envConfig.getProjectDir(), entityName);
+        return entityManagerService.getEntity(entityName);
+    }
+
+    @RequestMapping(value = "/entities/{entityName}", method = RequestMethod.DELETE)
+    @ResponseBody
+    public ResponseEntity<?> deleteEntity(@PathVariable int projectId,
+                                    @PathVariable String environment,
+                                    @PathVariable String entityName) throws ClassNotFoundException, IOException {
+        requireAuth();
+
+        // ensure project exists
+        projectManagerService.getProject(projectId);
+
+        entityManagerService.deleteEntity(entityName);
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
 
@@ -93,11 +143,10 @@ class EntitiesController extends BaseController {
             @RequestBody FlowModel newFlow) throws ClassNotFoundException, IOException {
         requireAuth();
 
-        Project project = projectManagerService.getProject(projectId);
+        // ensure project exists
+        projectManagerService.getProject(projectId);
 
-        EntityModel entity = entityManagerService.getEntity(envConfig.getProjectDir(), entityName);
-
-        return entityManagerService.createFlow(envConfig.getProjectDir(), entity, flowType, newFlow);
+        return entityManagerService.createFlow(envConfig.getProjectDir(), entityName, flowType, newFlow);
     }
 
     @RequestMapping(value = "/entities/{entityName}/flows/{flowType}/{flowName}/run", method = RequestMethod.POST)
@@ -117,7 +166,8 @@ class EntitiesController extends BaseController {
 
         ResponseEntity<JobExecution> resp = null;
 
-        Project project = projectManagerService.getProject(projectId);
+        // ensure project exists
+        projectManagerService.getProject(projectId);
 
         Flow flow = flowManagerService.getServerFlow(entityName, flowName, flowType);
         if (flow == null) {
@@ -150,8 +200,7 @@ class EntitiesController extends BaseController {
 
         requireAuth();
 
-        ResponseEntity<BigInteger> resp = null;
-
+        // ensure project exists
         projectManagerService.getProject(projectId);
 
         flowManagerService.saveOrUpdateFlowMlcpOptionsToFile(entityName,
@@ -174,7 +223,8 @@ class EntitiesController extends BaseController {
 
         ResponseEntity<BigInteger> resp = null;
 
-        Project project = projectManagerService.getProject(projectId);
+        // ensure project exists
+        projectManagerService.getProject(projectId);
 
         flowManagerService.saveOrUpdateFlowMlcpOptionsToFile(entityName,
                 flowName, json.toString());
@@ -200,7 +250,8 @@ class EntitiesController extends BaseController {
 
         requireAuth();
 
-        Project project = projectManagerService.getProject(projectId);
+        // ensure project exists
+        projectManagerService.getProject(projectId);
 
         JobManager jm = new JobManager(envConfig.getMlSettings(), envConfig.getJobClient());
         jm.cancelJob(Long.parseLong(jobId));

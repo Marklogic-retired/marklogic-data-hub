@@ -1,9 +1,10 @@
-<envelope xmlns="http://marklogic.com/data-hub/envelope">
+<envelope xmlns="http://marklogic.com/entity-services">
   <headers></headers>
   <triples></triples>
-  <content>
+  <instance>
     <employee xmlns="http://company.com/ns/employee">
       <id>2</id>
     </employee>
-  </content>
+  </instance>
+  <attachments/>
 </envelope>

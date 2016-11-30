@@ -1,6 +1,6 @@
-import { Component, EventEmitter, ViewChild } from '@angular/core';
+import { Component, HostListener, Inject } from '@angular/core';
 
-import { SelectListComponent } from '../select-list/select-list.component';
+import { MdlDialogReference } from 'angular2-mdl';
 
 import * as _ from 'lodash';
 
@@ -10,58 +10,61 @@ import * as _ from 'lodash';
   styleUrls: ['./new-flow.scss']
 })
 export class NewFlowComponent {
-  @ViewChild('pluginFormatList') pluginFormatList: SelectListComponent;
-  @ViewChild('dataFormatList') dataFormatList: SelectListComponent;
-
-  finishedEvent: EventEmitter<any>;
-  _isVisible: boolean = false;
-
   flowType: string;
+  actions: any;
 
+  scaffoldOptions = [
+    { label: 'Create Structure from Entity Definition', value: true },
+    { label: 'Blank Template', value: false }
+  ];
   pluginFormats = [
     { label: 'Javascript', value: 'JAVASCRIPT' },
-    { label: 'XQuery', value: 'XQUERY' },
+    { label: 'XQuery', value: 'XQUERY' }
   ];
   dataFormats = [
     { label: 'JSON', value: 'JSON' },
-    { label: 'XML', value: 'XML' },
+    { label: 'XML', value: 'XML' }
   ];
 
   emptyFlow = {
     flowName: <string>null,
     pluginFormat: 'JAVASCRIPT',
-    dataFormat: 'JSON'
+    dataFormat: 'JSON',
+    useEsModel: true
   };
 
   flow = _.clone(this.emptyFlow);
 
   dataFormat: any;
 
-  constructor() {}
-
-  show(flowType: string) {
-    this.pluginFormatList.selectInitial();
-    this.dataFormatList.selectInitial();
+  constructor(
+    private dialog: MdlDialogReference,
+    @Inject('flowType') flowType: string,
+    @Inject('actions') actions: any
+  ) {
     this.flowType = _.capitalize(flowType);
-    this.flow = _.clone(this.emptyFlow);
-    this.finishedEvent = new EventEmitter<boolean>(true);
-    this._isVisible = true;
-    return this.finishedEvent;
+    this.actions = actions;
   }
 
   hide() {
-    this._isVisible = false;
+    this.dialog.hide();
+  }
+
+  @HostListener('keydown.esc')
+  public onEsc(): void {
+    this.cancel();
   }
 
   create() {
     if (this.flow.flowName && this.flow.flowName.length > 0) {
       this.hide();
-      this.finishedEvent.emit(this.flow);
+      if (this.actions && this.actions.save) {
+        this.actions.save(this.flow);
+      }
     }
   }
 
   cancel() {
     this.hide();
-    this.finishedEvent.error(false);
   }
 }

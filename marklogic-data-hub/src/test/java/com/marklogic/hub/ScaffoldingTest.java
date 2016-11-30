@@ -45,7 +45,7 @@ public class ScaffoldingTest extends HubTestBase {
 
     @Test
     public void createEntity() throws FileNotFoundException {
-        Scaffolding scaffolding = new Scaffolding(projectDir.toString());
+        Scaffolding scaffolding = new Scaffolding(projectDir.toString(), stagingClient);
         scaffolding.createEntity("my-fun-test");
         assertTrue(projectDir.exists());
 
@@ -82,7 +82,7 @@ public class ScaffoldingTest extends HubTestBase {
     }
 
     private void createInputFlow(PluginFormat pluginFormat, Format dataFormat) throws IOException, SAXException {
-        Scaffolding scaffolding = new Scaffolding(projectDir.toString());
+        Scaffolding scaffolding = new Scaffolding(projectDir.toString(), stagingClient);
         scaffolding.createEntity("my-fun-test");
         assertTrue(projectDir.exists());
 
@@ -122,7 +122,7 @@ public class ScaffoldingTest extends HubTestBase {
     }
 
     private void createHarmonizeFlow(PluginFormat pluginFormat, Format dataFormat) throws IOException, SAXException {
-        Scaffolding scaffolding = new Scaffolding(projectDir.toString());
+        Scaffolding scaffolding = new Scaffolding(projectDir.toString(), stagingClient);
         scaffolding.createEntity("my-fun-test");
         assertTrue(projectDir.exists());
 
@@ -169,7 +169,7 @@ public class ScaffoldingTest extends HubTestBase {
         String extensionName = "myExtension";
         FlowType flowType = FlowType.HARMONIZE;
         PluginFormat pluginFormat = PluginFormat.XQUERY;
-        Scaffolding scaffolding = new Scaffolding(projectDir.toString());
+        Scaffolding scaffolding = new Scaffolding(projectDir.toString(), stagingClient);
         try {
             scaffolding.createRestExtension(entityName, extensionName, flowType, pluginFormat);
         } catch (ScaffoldingValidationException e) {
@@ -193,7 +193,7 @@ public class ScaffoldingTest extends HubTestBase {
         String extensionName = "myExtension";
         FlowType flowType = FlowType.INPUT;
         PluginFormat pluginFormat = PluginFormat.JAVASCRIPT;
-        Scaffolding scaffolding = new Scaffolding(projectDir.toString());
+        Scaffolding scaffolding = new Scaffolding(projectDir.toString(), stagingClient);
         try {
             scaffolding.createRestExtension(entityName, extensionName, flowType, pluginFormat);
         } catch (ScaffoldingValidationException e) {
@@ -217,7 +217,7 @@ public class ScaffoldingTest extends HubTestBase {
         String transformName = "myTransform";
         FlowType flowType = FlowType.HARMONIZE;
         PluginFormat pluginFormat = PluginFormat.XQUERY;
-        Scaffolding scaffolding = new Scaffolding(projectDir.toString());
+        Scaffolding scaffolding = new Scaffolding(projectDir.toString(), stagingClient);
         try {
             scaffolding.createRestTransform(entityName, transformName, flowType, pluginFormat);
         } catch (ScaffoldingValidationException e) {
@@ -237,7 +237,7 @@ public class ScaffoldingTest extends HubTestBase {
         String transformName = "myTransform";
         FlowType flowType = FlowType.HARMONIZE;
         PluginFormat pluginFormat = PluginFormat.JAVASCRIPT;
-        Scaffolding scaffolding = new Scaffolding(projectDir.toString());
+        Scaffolding scaffolding = new Scaffolding(projectDir.toString(), stagingClient);
         try {
             scaffolding.createRestTransform(entityName, transformName, flowType, pluginFormat);
         } catch (ScaffoldingValidationException e) {
