@@ -26,6 +26,24 @@ $selected-color: unquote("rgb(#{$palette-datahub-500})");
   .tools-toggler {
     vertical-align: top;
     display: inline;
+
+    @keyframes changescale {
+      from {
+        transform: rotate(0deg);
+      }
+
+      to {
+        transform: rotate(10deg);
+      }
+    }
+
+    &.none {
+      animation-duration: 0.3s;
+      animation-name: changescale;
+      animation-iteration-count: infinite;
+      animation-direction: alternate;
+      animation-timing-function: linear;
+    }
   }
 
   .tools {
@@ -41,6 +59,12 @@ $selected-color: unquote("rgb(#{$palette-datahub-500})");
   bottom: 0;
   left: 0;
   right: 0;
+
+  .none {
+    text-align: center;
+    margin-top: 20%;
+    font-size: 26px;
+  }
 }
 
 svg {

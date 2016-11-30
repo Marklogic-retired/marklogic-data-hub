@@ -3,7 +3,7 @@ plugins {
     id 'eclipse'
     id 'idea'
     id 'net.saliman.properties' version '1.4.6'
-    id 'com.marklogic.ml-data-hub' version '1.0.1'
+    id 'com.marklogic.ml-data-hub' version '2.0.0-alpha.1'
 }
 
 repositories {
@@ -12,6 +12,6 @@ repositories {
 }
 
 dependencies {
-    compile 'com.marklogic:marklogic-data-hub:1.0.1'
+    compile 'com.marklogic:marklogic-data-hub:2.0.0-alpha.1'
     compile 'com.marklogic:marklogic-xcc:8.0.5'
 }

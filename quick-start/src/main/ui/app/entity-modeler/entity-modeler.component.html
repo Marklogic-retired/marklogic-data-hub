@@ -1,5 +1,5 @@
 <div class="tools-container">
-  <button class="tools-toggler" mdl-button mdl-button-type="mini-fab" mdl-colored="primary" mdl-ripple (click)="toolsVisible = !toolsVisible">
+  <button class="tools-toggler" [ngClass]="{'none' : (!entities || entities.length === 0)}" mdl-button mdl-button-type="mini-fab" mdl-colored="primary" mdl-ripple (click)="toolsVisible = !toolsVisible">
     <i class="fa fa-wrench"></i>
   </button>
   <div class="tools" *ngIf="toolsVisible">
@@ -13,6 +13,9 @@
   </div>
 </div>
 <div class="entities">
+  <div class="none" *ngIf="!entities || entities.length === 0">
+    You don't have any entities yet. Click the Wrench Icon to get started.
+  </div>
   <svg #svgRoot *ngIf="entities">
     <g class="nodes" [attr.transform]="mainTransform">
       <g #entityDef *ngFor="let entity of entities"
