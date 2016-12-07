@@ -14,6 +14,8 @@ import { MdlDialogService } from 'angular2-mdl';
 
 import { Point, Line, Rect } from './math-helper';
 
+import * as _ from 'lodash';
+
 @Component({
   selector: 'app-entity-modeler',
   templateUrl: './entity-modeler.component.html',
