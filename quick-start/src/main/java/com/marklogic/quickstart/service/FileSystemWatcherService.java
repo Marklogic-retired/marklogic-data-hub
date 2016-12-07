@@ -64,12 +64,12 @@ public class FileSystemWatcherService extends LoggingObject implements Disposabl
         listeners.remove(listener);
     }
 
-    private void notifyListeners(HubConfig hubConfig, Path path) {
+    private void notifyListeners(HubConfig hubConfig) {
         // notify global listeners
         synchronized (listeners) {
             for (FileSystemEventListener listener : listeners) {
                 try {
-                    listener.onWatchEvent(hubConfig, path);
+                    listener.onWatchEvent(hubConfig);
                 }
                 catch (Exception e) {
                     logger.error("Exception occured on listener", e);
@@ -146,11 +146,8 @@ public class FileSystemWatcherService extends LoggingObject implements Disposabl
     private class DirectoryWatcherThread extends Thread {
 
         private HubConfig hubConfig;
-        private final int DELAY = 500;
+        private final int DELAY = 1000;
 
-        // Use a SET to prevent duplicates from being added when multiple events on the
-        // same file arrive in quick succession.
-        HashSet<Path> filesToReload = new HashSet<>();
         Timer processDelayTimer = null;
 
         DirectoryWatcherThread(String name, HubConfig hubConfig) {
@@ -158,10 +155,7 @@ public class FileSystemWatcherService extends LoggingObject implements Disposabl
             this.hubConfig = hubConfig;
         }
 
-        private synchronized void addFileToProcess(Path path) {
-            boolean alreadyAdded = !filesToReload.add(path);
-            logger.info("Queuing file for processing: "
-                + path.toString() + (alreadyAdded?"(already queued)":""));
+        private synchronized void queueReload() {
             if (processDelayTimer != null) {
                 processDelayTimer.cancel();
             }
@@ -169,25 +163,9 @@ public class FileSystemWatcherService extends LoggingObject implements Disposabl
             processDelayTimer.schedule(new TimerTask() {
                 @Override
                 public void run() {
-                    processFiles();
+                    notifyListeners(hubConfig);
                 }
             }, DELAY);
-        }
-
-        private synchronized void processFiles() {
-            // Iterate over the set of file to be processed
-            for (Iterator<Path> it = filesToReload.iterator(); it.hasNext();) {
-                Path path = it.next();
-
-                // Sometimes you just have to do what you have to do...
-                logger.info("Processing file: " + path.toString());
-
-                // notify listeners
-                notifyListeners(hubConfig, path);
-
-                // Remove this file from the set.
-                it.remove();
-            }
         }
 
         @Override
@@ -220,8 +198,8 @@ public class FileSystemWatcherService extends LoggingObject implements Disposabl
                     Path child = dir.resolve(context);
 
                     // print out event
-                    logger.info("Event received: {} for: {}", event.kind().name(), child);
-                    addFileToProcess(child);
+                    logger.debug("Event received: {} for: {}", event.kind().name(), child);
+                    queueReload();
 
                     // if directory is created, then register it and its sub-directories
                     // we are always listening recursively

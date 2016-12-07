@@ -98,7 +98,11 @@ declare function delete(
   $params  as map:map
   ) as document-node()?
 {
-  let $_ := flow:invalidate-flow-caches()
-  return
-    document { () }
+  debug:dump-env("INVALIDATE FLOW CACHES"),
+
+  perf:log('/v1/resources/flow:delete', function() {
+    let $_ := flow:invalidate-flow-caches()
+    return
+      document { () }
+  })
 };

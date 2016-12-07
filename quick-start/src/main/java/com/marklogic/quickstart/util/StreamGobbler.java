@@ -16,7 +16,6 @@ public class StreamGobbler extends Thread {
 
     @Override
     public void run() {
-        System.out.println("gobbler running");
         new BufferedReader(new InputStreamReader(inputStream)).lines().forEach(consumeInputLine);
     }
 }
