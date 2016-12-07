@@ -10,6 +10,8 @@ import { ExternalDefDialogComponent } from './externaldef-dialog.component';
 
 import { Cardinality, Entity, PropertyType } from '../entities';
 
+import * as _ from 'lodash';
+
 @Component({
   selector: 'app-entity-editor',
   templateUrl: './entity-editor.component.html',
