@@ -352,8 +352,13 @@ public class ProjectsController extends BaseController implements FileSystemEven
         template.convertAndSend("/topic/validate-status", validation);
     }
 
+    /**
+     * Called when the filesystem watcher detects a file change. We then install the user modules
+     * @param hubConfig - must pass the hub config because this runs in a separate thread and doesn't
+     *                  have access to the current spring boot context
+     */
     @Override
-    public void onWatchEvent(HubConfig hubConfig, Path path) {
+    public void onWatchEvent(HubConfig hubConfig) {
         installUserModules(hubConfig, false);
     }
 
