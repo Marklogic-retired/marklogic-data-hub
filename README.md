@@ -82,4 +82,4 @@ gradle tasks
 
 Feeling intrepid? Want to contrubute to the Data Hub Framework? Perhaps you just want to poke the code?
 
-Look at our [CONTRIBUTING.md](https://github.com/marklogic/marklogic-data-hub/blob/master/CONTRIBUTING.md#building-the-framework-from-source) file for details on building from source.
+Look at our [CONTRIBUTING.md](https://github.com/marklogic/marklogic-data-hub/blob/2.0-master/CONTRIBUTING.md#building-the-framework-from-source) file for details on building from source.
