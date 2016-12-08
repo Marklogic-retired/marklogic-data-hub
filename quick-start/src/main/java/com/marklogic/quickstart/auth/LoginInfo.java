@@ -13,13 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.marklogic.quickstart.service;
+package com.marklogic.quickstart.auth;
 
-import org.apache.http.concurrent.BasicFuture;
-
-public interface CancellableTask {
-
-    void run(BasicFuture<?> resultFuture);
-
-    void cancel(BasicFuture<?> resultFuture);
+public class LoginInfo {
+    public String username;
+    public String password;
+    public int projectId;
+    public String environment;
 }

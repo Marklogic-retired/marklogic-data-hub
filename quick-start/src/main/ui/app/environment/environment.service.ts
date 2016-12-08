@@ -11,10 +11,7 @@ export class EnvironmentService {
   constructor(private http: Http) {}
 
   public getEnvironment(): Observable<boolean> {
-    const projectId = localStorage.getItem('_projectId_');
-    const environment = localStorage.getItem('_environment_');
-
-    const uri = `/api/projects/${projectId}/${environment}`;
+    const uri = `/api/current-project/`;
     return this.http.get(uri).map((res: Response) => {
       const json = res.json();
       this.settings = json['mlSettings'];

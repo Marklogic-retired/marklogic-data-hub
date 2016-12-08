@@ -39,6 +39,7 @@ dependencies {
     compile("org.springframework.boot:spring-boot-starter:${springBootVersion}")
     compile("org.springframework.boot:spring-boot-starter-web:${springBootVersion}")
     compile("org.springframework.boot:spring-boot-starter-websocket:${springBootVersion}")
+    compile("org.springframework.boot:spring-boot-starter-security:${springBootVersion}")
     compile("org.springframework.boot:spring-boot-starter-thymeleaf:${springBootVersion}")
     compile("org.aspectj:aspectjweaver:1.8.9")
     compile("org.springframework:spring-messaging")
@@ -51,6 +52,7 @@ dependencies {
     // Needed for the Upload feature using mlcp
     compile("com.marklogic:mlcp-util:0.3.0")
     compile("com.marklogic:mlcp:8.0-5")
+    compile("com.marklogic:marklogic-spring-web:1.0")
 
     testCompile("junit:junit")
     testCompile("org.springframework.boot:spring-boot-starter-test:${springBootVersion}")

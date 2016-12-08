@@ -6,13 +6,8 @@ import { HubSettings } from '../environment/hub-settings.model';
 export class ProjectService {
 
   authenticated = false;
-  projectId: string;
-  environment: string;
 
-  constructor(private http: Http) {
-    this.projectId = localStorage.getItem('_projectId_');
-    this.environment = localStorage.getItem('_environment_');
-  }
+  constructor(private http: Http) {}
 
   getProjects() {
     return this.get('/api/projects/');
@@ -34,8 +29,8 @@ export class ProjectService {
     return this.get(`/api/projects/${projectId}/defaults`);
   }
 
-  getProjectEnvironment(projectId: string, environment: string) {
-    return this.get(`/api/projects/${projectId}/${environment}`);
+  getProjectEnvironment() {
+    return this.get(`/api/current-project/`);
   }
 
   initProject(projectId: string, settings: HubSettings) {
@@ -43,34 +38,30 @@ export class ProjectService {
   }
 
   login(projectId: string, environment: string, loginInfo: any) {
-    let resp = this.http.post(`/api/projects/${projectId}/${environment}/login`, loginInfo).share();
+    let resp = this.http.post(`/api/login`, loginInfo).share();
     resp.subscribe(() => {
-      this.projectId = projectId;
-      this.environment = environment;
-      localStorage.setItem('_projectId_', this.projectId);
-      localStorage.setItem('_environment_', this.environment);
+      this.authenticated = true;
     },
     () => {
-      this.projectId = null;
-      this.environment = null;
+      this.authenticated = false;
     });
     return resp;
   }
 
   logout() {
-    return this.http.delete(`/api/projects/${this.projectId}/${this.environment}/logout`);
+    return this.http.post(`/api/logout`, null);
   }
 
   getStatus() {
-    return this.get(`/api/projects/${this.projectId}/${this.environment}/stats`);
+    return this.get(`/api/current-project/stats`);
   }
 
   clearDatabase(database) {
-    return this.http.post(`/api/projects/${this.projectId}/${this.environment}/clear/${database}`, '');
+    return this.http.post(`/api/current-project/clear/${database}`, '');
   }
 
   clearAllDatabases() {
-    return this.http.post(`/api/projects/${this.projectId}/${this.environment}/clear-all`, '');
+    return this.http.post(`/api/current-project/clear-all`, '');
   }
 
   private extractData(res: Response) {

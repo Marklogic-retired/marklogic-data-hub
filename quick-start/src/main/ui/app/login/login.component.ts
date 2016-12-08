@@ -100,10 +100,7 @@ export class LoginComponent implements OnInit {
       this.installationStatus += '\n' + payload.message;
     });
 
-    this.installService.install(
-      this.currentProject.id,
-      this.currentEnvironmentString
-    ).subscribe((env) => {
+    this.installService.install().subscribe((env) => {
       this.currentEnvironment = env;
       setTimeout(() => {
         this.installing = false;
@@ -132,10 +129,7 @@ export class LoginComponent implements OnInit {
       this.installationStatus += '\n' + payload.message;
     });
 
-    this.installService.uninstall(
-      this.currentProject.id,
-      this.currentEnvironmentString
-    ).subscribe((env) => {
+    this.installService.uninstall().subscribe((env) => {
       this.currentEnvironment = env;
       setTimeout(() => {
         this.uninstalling = false;
@@ -209,6 +203,7 @@ export class LoginComponent implements OnInit {
 
   gotProject = (project: any) => {
     this.currentProject = project;
+    this.loginInfo.projectId = project.id;
     if (project.initialized) {
       // go straight to the environment choose
       this.gotoTab('Environment');
@@ -227,6 +222,7 @@ export class LoginComponent implements OnInit {
   }
 
   gotEnvironment(environment: string) {
+    this.loginInfo.environment = environment;
     this.currentEnvironmentString = environment;
   }
 
@@ -240,10 +236,7 @@ export class LoginComponent implements OnInit {
 
   loginNext() {
     this.gotoTab('InstalledCheck');
-    this.projectService.getProjectEnvironment(
-      this.currentProject.id,
-      this.currentEnvironmentString
-    ).subscribe((env: any) => {
+    this.projectService.getProjectEnvironment().subscribe((env: any) => {
       this.currentEnvironment = env;
 
       let installInfo = this.currentEnvironment.installInfo;
@@ -265,6 +258,7 @@ export class LoginComponent implements OnInit {
       this.initSettings
     ).subscribe((project: any) => {
       this.currentProject = project;
+      this.loginInfo.projectId = project.id;
       this.gotoTab('PostInit');
     });
   }

@@ -1,3 +1,18 @@
+/*
+ * Copyright 2012-2016 MarkLogic Corporation
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.marklogic.quickstart.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -7,6 +22,7 @@ import com.marklogic.hub.JobStatusListener;
 import com.marklogic.hub.flow.AbstractFlow;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.FlowType;
+import com.marklogic.quickstart.auth.ConnectionAuthenticationToken;
 import com.marklogic.quickstart.model.EnvironmentConfig;
 import com.marklogic.quickstart.model.FlowModel;
 import com.marklogic.quickstart.model.PluginModel;
@@ -22,6 +38,7 @@ import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -42,14 +59,16 @@ public class FlowManagerService extends LoggingObject {
 
     private static final String PROJECT_TMP_FOLDER = ".tmp";
 
-    @Autowired
-    private EnvironmentConfig envConfig;
+    private EnvironmentConfig envConfig() {
+        ConnectionAuthenticationToken authenticationToken = (ConnectionAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+        return authenticationToken.getEnvironmentConfig();
+    }
 
     private FlowManager fm = null;
 
     public FlowManager getFlowManager() {
         if (fm == null) {
-            fm = new FlowManager(envConfig.getMlSettings());
+            fm = new FlowManager(envConfig().getMlSettings());
         }
         return fm;
     }
@@ -103,7 +122,7 @@ public class FlowManagerService extends LoggingObject {
     }
 
     public void saveOrUpdateFlowMlcpOptionsToFile(String entityName, String flowName, String mlcpOptionsFileContent) throws IOException {
-        Path destFolder = Paths.get(envConfig.getProjectDir(), PROJECT_TMP_FOLDER);
+        Path destFolder = Paths.get(envConfig().getProjectDir(), PROJECT_TMP_FOLDER);
         File destFolderFile = destFolder.toFile();
         if (!destFolderFile.exists()) {
             FileUtils.forceMkdir(destFolderFile);
@@ -116,14 +135,14 @@ public class FlowManagerService extends LoggingObject {
     }
 
     public String getFlowMlcpOptionsFromFile(String entityName, String flowName) throws IOException {
-        Path destFolder = Paths.get(envConfig.getProjectDir(), PROJECT_TMP_FOLDER);
+        Path destFolder = Paths.get(envConfig().getProjectDir(), PROJECT_TMP_FOLDER);
         Path filePath = getMlcpOptionsFilePath(destFolder, entityName, flowName);
         File file = filePath.toFile();
         if(file.exists()) {
             byte[] encoded = Files.readAllBytes(filePath);
             return new String(encoded, StandardCharsets.UTF_8);
         }
-        return "{ \"input_file_path\": \"" + envConfig.getProjectDir().replace("\\", "\\\\") + "\" }";
+        return "{ \"input_file_path\": \"" + envConfig().getProjectDir().replace("\\", "\\\\") + "\" }";
     }
 
     protected ConfigurableApplicationContext buildApplicationContext(JobStatusListener statusListener) throws Exception {
@@ -131,7 +150,7 @@ public class FlowManagerService extends LoggingObject {
         ctx.register(StagingConfig.class);
         ctx.register(FlowConfig.class);
         ctx.register(RunInputFlowConfig.class);
-        ctx.getBeanFactory().registerSingleton("hubConfig", envConfig.getMlSettings());
+        ctx.getBeanFactory().registerSingleton("hubConfig", envConfig().getMlSettings());
         ctx.getBeanFactory().registerSingleton("statusListener", statusListener);
         ctx.refresh();
         return ctx;
