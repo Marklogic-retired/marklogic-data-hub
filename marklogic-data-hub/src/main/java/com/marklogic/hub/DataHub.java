@@ -367,6 +367,22 @@ public class DataHub extends LoggingObject {
         deployer.deploy(config);
     }
 
+    /**
+     * Install the Data Hub Framework's internal modules into MarkLogic
+     */
+    public void installHubModules() {
+        logger.debug("Installing Data Hub Framework modules into MarkLogic");
+
+        List<Command> commands = new ArrayList<>();
+        LoadHubModulesCommand lhmc = new LoadHubModulesCommand(hubConfig);
+        commands.add(lhmc);
+
+        AppConfig config = getAppConfig();
+        SimpleAppDeployer deployer = new SimpleAppDeployer(client, adminManager);
+        deployer.setCommands(commands);
+        deployer.deploy(config);
+    }
+
     public JsonNode validateUserModules() {
         logger.debug("validating user modules");
 

@@ -9,6 +9,8 @@ import { InstallService } from '../installer';
 import { LoginInfo } from './login-info.model';
 import { HubSettings } from '../environment/hub-settings.model';
 
+import * as SemVer from 'semver';
+
 @Component({
   selector: 'app-login',
   templateUrl: './login.template.html',
@@ -20,6 +22,10 @@ export class LoginComponent implements OnInit {
   defaultSettings: HubSettings;
   initSettings: HubSettings = new HubSettings();
   showInitAdvanced: boolean = false;
+
+  hubVersions: any;
+  hubUpdating: boolean = false;
+  hubUpdateFailed: boolean = false;
 
   currentTab: string = 'ProjectDir';
 
@@ -36,6 +42,7 @@ export class LoginComponent implements OnInit {
     Login: false,
     InstalledCheck: false,
     Installer: false,
+    RequiresUpdate: false
   };
 
 
@@ -242,9 +249,16 @@ export class LoginComponent implements OnInit {
       let installInfo = this.currentEnvironment.installInfo;
 
       if (installInfo && installInfo.installed) {
-        // goto login tab
-        let redirect = this.auth.redirectUrl || '';
-        this.router.navigate([redirect]);
+        this.projectService.getHubVersions().subscribe(versions => {
+          this.hubVersions = versions;
+          if (SemVer.gt(versions.quickstartVersion, versions.installedVersion)) {
+            this.gotoTab('RequiresUpdate');
+          } else {
+            // goto login tab
+            let redirect = this.auth.redirectUrl || '';
+            this.router.navigate([redirect]);
+          }
+        });
       } else {
         // go to install hub tab
         this.gotoTab('Installer');
@@ -260,6 +274,18 @@ export class LoginComponent implements OnInit {
       this.currentProject = project;
       this.loginInfo.projectId = project.id;
       this.gotoTab('PostInit');
+    });
+  }
+
+  updateProject() {
+    this.hubUpdating = true;
+    this.projectService.updateProject().subscribe(() => {
+      this.hubUpdating = false;
+      this.loginNext();
+    },
+    () => {
+      this.hubUpdating = false;
+      this.hubUpdateFailed = true;
     });
   }
 

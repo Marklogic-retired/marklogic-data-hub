@@ -203,6 +203,38 @@
         </section>
       </div>
 
+      <div id="RequiresUpdateUpdateTab" class="tab-content" [hidden]="!tabs.RequiresUpdate">
+        <section layout="row" layout-align="center center">
+          <section flex layout="column" layout-align="center center" *ngIf="hubUpdating">
+            <h3>Updating Your Project...</h3>
+            <div class="center-text">
+              <mdl-spinner single-color active></mdl-spinner>
+            </div>
+          </section>
+          <section flex layout="column" layout-align="center center" *ngIf="!hubUpdateFailed && !hubUpdating">
+            <h3 *ngIf="hubVersions">Congratulations on updating to version {{hubVersions.quickstartVersion}}.</h3>
+            <p>
+              In order to continue we need to update a few things.
+            </p>
+            <button mdl-button mdl-button-type="raised" mdl-colored="primary" mdl-ripple (click)="updateProject()">Update It</button>
+
+            <div class="manual">
+              <p>Curious about what that button does? Prefer to do it yourself?</p>
+              <p>We have a wiki page that describes the changes necessary. You can poke the button for an automatic update or you can do it yourself.</p>
+              <a target="_blank" href="https://github.com/marklogic/marklogic-data-hub/wiki/Updating-to-a-New-Hub-Version">How to update a Hub Project</a>
+            </div>
+          </section>
+          <section flex layout="column" layout-align="center center" *ngIf="hubUpdateFailed && !hubUpdating">
+            <h3>Automatic Hub Update Failed!</h3>
+            <p *ngIf="hubVersions" class="error">
+              Sorry. We failed to update you to version <span class="version">{{hubVersions.quickstartVersion}}</span>.
+            </p>
+            <p>Go read the wiki page that describes the changes necessary and try them manually.</p>
+            <a target="_blank" href="https://github.com/marklogic/marklogic-data-hub/wiki/Updating-to-a-New-Hub-Version">How to update a Hub Project</a>
+          </section>
+        </section>
+      </div>
+
       <div id="InstallerTab" class="tab-content" [hidden]="!tabs.Installer" *ngIf="currentEnvironment">
         <div layout="column" layout-align="center center">
           <div [hidden]="uninstalling || installing || currentEnvironment.installInfo.installed" layout="column" layout-align="center center">

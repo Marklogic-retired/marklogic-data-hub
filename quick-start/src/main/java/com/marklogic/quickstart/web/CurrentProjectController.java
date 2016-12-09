@@ -185,6 +185,20 @@ public class CurrentProjectController extends EnvironmentAware implements FileSy
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @RequestMapping(value = "/hub-versions", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_VALUE})
+    @ResponseBody
+    public String getHubVersions() throws IOException {
+        return dataHubService.getHubVersions(envConfig().getMlSettings());
+    }
+
+    @RequestMapping(value = "/update-hub", method = RequestMethod.POST)
+    public ResponseEntity<?> updateHub() {
+        if (dataHubService.updateHub(envConfig().getMlSettings())) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
+
 
     private void startProjectWatcher() throws IOException {
         String pluginDir = Paths.get(envConfig().getProjectDir(), "plugins").toString();

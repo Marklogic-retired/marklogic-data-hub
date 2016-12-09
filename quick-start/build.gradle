@@ -106,6 +106,12 @@ task copyIndexHtml(type: Copy) {
     dependsOn tasks.copyUIAssets
 }
 
+processResources {
+    filesMatching("**/quickstart-version.properties") {
+        expand(project: project)
+    }
+}
+
 if (!gradle.startParameter.taskNames.contains('bootrun')) {
   processResources.dependsOn copyIndexHtml
 }
