@@ -3,20 +3,31 @@ import { Http, Response } from '@angular/http';
 
 @Injectable()
 export class JobService {
-  start: number = 1;
-  count: number = 10;
-
   constructor(private http: Http) {}
 
-  getJobs() {
-    return this.get(`/api/jobs/?start=${this.start}&count=${this.count}`);
+  getJobs(query: string, activeFacets: any, page: number, pageLength: number) {
+    let start: number = (page - 1) * pageLength + 1;
+
+    let data = {
+      query: query,
+      start: start,
+      count: pageLength,
+    };
+
+    for (let key of Object.keys(activeFacets)) {
+      for (let value of activeFacets[key].values) {
+        data[key] = value;
+      }
+    }
+
+    return this.post(`/api/jobs`, data);
   }
 
   private extractData = (res: Response) => {
     return res.json();
   }
 
-  private get(url: string) {
-    return this.http.get(url).map(this.extractData);
+  private post(url: string, data: any) {
+    return this.http.post(url, data).map(this.extractData);
   }
 }

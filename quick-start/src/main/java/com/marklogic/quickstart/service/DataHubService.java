@@ -160,23 +160,8 @@ public class DataHubService extends LoggingObject {
     }
 
     public boolean updateHub(HubConfig config) {
-        boolean result = false;
-        File buildGradle = Paths.get(config.projectDir, "build.gradle").toFile();
-        try {
-            String quickstartVersion = getQuickStartVersion();
-            String text = new String(FileCopyUtils.copyToByteArray(buildGradle));
-            text = Pattern.compile("^(\\s*)id\\s+['\"]com.marklogic.ml-data-hub['\"]\\s+version.+$", Pattern.MULTILINE).matcher(text).replaceAll("$1id 'com.marklogic.ml-data-hub' version '" + quickstartVersion + "'");
-            text = Pattern.compile("^(\\s*)compile.+marklogic-data-hub.+$", Pattern.MULTILINE).matcher(text).replaceAll("$1compile 'com.marklogic:marklogic-data-hub:" + quickstartVersion + "'");
-            FileUtils.writeStringToFile(buildGradle, text);
-
-            DataHub dataHub = new DataHub(config);
-            dataHub.installHubModules();
-
-            result = true;
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return result;
+        DataHub dataHub = new DataHub(config);
+        return dataHub.updateHub();
     }
 
     public void clearContent(HubConfig config, String database) {

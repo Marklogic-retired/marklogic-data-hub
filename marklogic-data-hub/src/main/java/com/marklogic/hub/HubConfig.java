@@ -23,12 +23,18 @@ import com.marklogic.client.helper.LoggingObject;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Properties;
 
 /**
  * A class for passing around the Data Hub's Configuration
  */
 public class HubConfig extends LoggingObject {
+
+    public static final String OLD_HUB_CONFIG_DIR = "marklogic-config";
+    public static final String HUB_CONFIG_DIR = "hub-internal-config";
+    public static final String USER_CONFIG_DIR = "user-config";
 
     public static final String DEFAULT_HOST = "localhost";
 
@@ -252,6 +258,34 @@ public class HubConfig extends LoggingObject {
         catch ( Exception e ) {
             e.printStackTrace();
         }
+    }
+
+    public Path getHubConfigDir() {
+        return Paths.get(this.projectDir, HUB_CONFIG_DIR);
+    }
+
+    public Path getHubDatabaseDir() {
+        return Paths.get(this.projectDir, HUB_CONFIG_DIR, "databases");
+    }
+
+    public Path getHubServersDir() {
+        return Paths.get(this.projectDir, HUB_CONFIG_DIR, "servers");
+    }
+
+    public Path getHubSecurityDir() {
+        return Paths.get(this.projectDir, HUB_CONFIG_DIR, "security");
+    }
+
+    public Path getUserConfigDir() {
+        return Paths.get(this.projectDir, USER_CONFIG_DIR);
+    }
+
+    public Path getUserDatabaseDir() {
+        return Paths.get(this.projectDir, USER_CONFIG_DIR, "databases");
+    }
+
+    public Path getUserServersDir() {
+        return Paths.get(this.projectDir, USER_CONFIG_DIR, "servers");
     }
 
 }

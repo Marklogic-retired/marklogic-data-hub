@@ -25,11 +25,9 @@ public class EnvironmentAware extends LoggingObject {
     private EnvironmentConfig _envConfig = null;
 
     protected EnvironmentConfig envConfig() {
-        if (_envConfig == null) {
-            ConnectionAuthenticationToken authenticationToken = (ConnectionAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
-            if (authenticationToken != null) {
-                _envConfig = authenticationToken.getEnvironmentConfig();
-            }
+        ConnectionAuthenticationToken authenticationToken = (ConnectionAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+        if (authenticationToken != null) {
+            _envConfig = authenticationToken.getEnvironmentConfig();
         }
         return _envConfig;
     }

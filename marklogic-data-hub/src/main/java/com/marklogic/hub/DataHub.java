@@ -16,6 +16,7 @@
 package com.marklogic.hub;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.appdeployer.ConfigDir;
 import com.marklogic.appdeployer.command.Command;
@@ -26,8 +27,6 @@ import com.marklogic.appdeployer.command.appservers.DeployOtherServersCommand;
 import com.marklogic.appdeployer.command.cpf.DeployCpfConfigsCommand;
 import com.marklogic.appdeployer.command.cpf.DeployDomainsCommand;
 import com.marklogic.appdeployer.command.cpf.DeployPipelinesCommand;
-import com.marklogic.appdeployer.command.databases.DeploySchemasDatabaseCommand;
-import com.marklogic.appdeployer.command.databases.DeployTriggersDatabaseCommand;
 import com.marklogic.appdeployer.command.flexrep.DeployConfigsCommand;
 import com.marklogic.appdeployer.command.flexrep.DeployFlexrepCommand;
 import com.marklogic.appdeployer.command.flexrep.DeployTargetsCommand;
@@ -53,11 +52,10 @@ import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.util.RequestParameters;
 import com.marklogic.hub.deploy.HubAppDeployer;
-import com.marklogic.hub.deploy.commands.DeployHubDatabasesCommand;
-import com.marklogic.hub.deploy.commands.LoadHubModulesCommand;
-import com.marklogic.hub.deploy.commands.LoadUserModulesCommand;
+import com.marklogic.hub.deploy.commands.*;
 import com.marklogic.hub.deploy.util.HubDeployStatusListener;
 import com.marklogic.hub.error.ServerValidationException;
+import com.marklogic.hub.util.JsonXor;
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.ManageConfig;
 import com.marklogic.mgmt.admin.AdminConfig;
@@ -66,19 +64,23 @@ import com.marklogic.mgmt.appservers.ServerManager;
 import com.marklogic.mgmt.databases.DatabaseManager;
 import com.marklogic.rest.util.Fragment;
 import com.marklogic.rest.util.ResourcesFragment;
+import org.apache.commons.io.FileUtils;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.client.ResourceAccessException;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Paths;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
+import java.util.regex.Pattern;
 
 public class DataHub extends LoggingObject {
 
-    private ManageConfig config;
     private ManageClient client;
     private DatabaseManager databaseManager;
     private ServerManager serverManager;
@@ -93,7 +95,7 @@ public class DataHub extends LoggingObject {
     private void init(HubConfig hubConfig) {
         this.hubConfig = hubConfig;
         if (hubConfig.username != null && hubConfig.password != null) {
-            config = new ManageConfig(hubConfig.host, 8002, hubConfig.username, hubConfig.password);
+            ManageConfig config = new ManageConfig(hubConfig.host, 8002, hubConfig.username, hubConfig.password);
             client = new ManageClient(config);
             databaseManager = new DatabaseManager(client);
             serverManager = new ServerManager(client);
@@ -211,35 +213,35 @@ public class DataHub extends LoggingObject {
         config.setReplaceTokensInModules(true);
         config.setUseRoxyTokenPrefix(false);
 
-        HashMap<String, Integer> forestCounts = new HashMap<String, Integer>();
+        HashMap<String, Integer> forestCounts = new HashMap<>();
         forestCounts.put(hubConfig.stagingDbName, hubConfig.stagingForestsPerHost);
         forestCounts.put(hubConfig.finalDbName, hubConfig.finalForestsPerHost);
         forestCounts.put(hubConfig.traceDbName, hubConfig.traceForestsPerHost);
         forestCounts.put(hubConfig.modulesDbName, 1);
         config.setForestCounts(forestCounts);
 
-        ConfigDir configDir = new ConfigDir(Paths.get(hubConfig.projectDir, "marklogic-config").toFile());
+        ConfigDir configDir = new ConfigDir(hubConfig.getUserConfigDir().toFile());
         config.setConfigDir(configDir);
 
         Map<String, String> customTokens = config.getCustomTokens();
 
         customTokens.put("%%mlStagingAppserverName%%", hubConfig.stagingHttpName);
-        customTokens.put("%%mlStagingPort%%", hubConfig.stagingPort.toString());
+        customTokens.put("\"%%mlStagingPort%%\"", hubConfig.stagingPort.toString());
         customTokens.put("%%mlStagingDbName%%", hubConfig.stagingDbName);
         customTokens.put("%%mlStagingForestsPerHost%%", hubConfig.stagingForestsPerHost.toString());
 
         customTokens.put("%%mlFinalAppserverName%%", hubConfig.finalHttpName);
-        customTokens.put("%%mlFinalPort%%", hubConfig.finalPort.toString());
+        customTokens.put("\"%%mlFinalPort%%\"", hubConfig.finalPort.toString());
         customTokens.put("%%mlFinalDbName%%", hubConfig.finalDbName);
         customTokens.put("%%mlFinalForestsPerHost%%", hubConfig.finalForestsPerHost.toString());
 
         customTokens.put("%%mlTraceAppserverName%%", hubConfig.traceHttpName);
-        customTokens.put("%%mlTracePort%%", hubConfig.tracePort.toString());
+        customTokens.put("\"%%mlTracePort%%\"", hubConfig.tracePort.toString());
         customTokens.put("%%mlTraceDbName%%", hubConfig.traceDbName);
         customTokens.put("%%mlTraceForestsPerHost%%", hubConfig.traceForestsPerHost.toString());
 
         customTokens.put("%%mlJobAppserverName%%", hubConfig.jobHttpName);
-        customTokens.put("%%mlJobPort%%", hubConfig.jobPort.toString());
+        customTokens.put("\"%%mlJobPort%%\"", hubConfig.jobPort.toString());
         customTokens.put("%%mlJobDbName%%", hubConfig.jobDbName);
         customTokens.put("%%mlJobForestsPerHost%%", hubConfig.jobForestsPerHost.toString());
 
@@ -264,8 +266,7 @@ public class DataHub extends LoggingObject {
         Properties properties = new Properties();
         InputStream inputStream = getClass().getClassLoader().getResourceAsStream("version.properties");
         properties.load(inputStream);
-        String version = (String)properties.get("version");
-        return version;
+        return (String)properties.get("version");
     }
 
     public void initProject() {
@@ -388,12 +389,10 @@ public class DataHub extends LoggingObject {
 
         DatabaseClient client = getDatabaseClient(hubConfig.stagingPort);
         EntitiesValidator ev = new EntitiesValidator(client);
-        JsonNode jsonNode = ev.validate();
-
-        return jsonNode;
+        return ev.validate();
     }
 
-    private List<Command> getCommands(AppConfig config) {
+    private List<Command> getCommands() {
         List<Command> commands = new ArrayList<>();
 
         // Security
@@ -410,9 +409,18 @@ public class DataHub extends LoggingObject {
 
         // Databases
         List<Command> dbCommands = new ArrayList<>();
-        dbCommands.add(new DeployHubDatabasesCommand());
-        dbCommands.add(new DeployTriggersDatabaseCommand());
-        dbCommands.add(new DeploySchemasDatabaseCommand());
+
+        // deploy hub databases (staging, final, job, trace)
+        dbCommands.add(new DeployHubDatabasesCommand(hubConfig));
+
+        // deploy user databases in user-config dir
+        dbCommands.add(new DeployHubOtherDatabasesCommand(hubConfig));
+
+        // depoloy triggers database
+        dbCommands.add(new DeployHubTriggersDatabaseCommand(hubConfig));
+
+        // depoloy schemas database
+        dbCommands.add(new DeployHubSchemasDatabaseCommand(hubConfig));
         commands.addAll(dbCommands);
 
         // Schemas
@@ -420,7 +428,13 @@ public class DataHub extends LoggingObject {
         commands.add(lsc);
 
         // App servers
-        commands.add(new DeployOtherServersCommand());
+        // deploy hub app servers (staging, final, job, trace)
+        commands.add(new DeployHubServersCommand(hubConfig));
+
+        // deploy user app servers in user-config
+        DeployOtherServersCommand otherServersCommand = new DeployOtherServersCommand();
+        otherServersCommand.setFilenamesToIgnore("staging-server.json", "final-server.json", "job-server.json", "trace-server.json");
+        commands.add(otherServersCommand);
 
         // Modules
         commands.add(new LoadHubModulesCommand(hubConfig));
@@ -498,7 +512,7 @@ public class DataHub extends LoggingObject {
 
         AppConfig config = getAppConfig();
         HubAppDeployer deployer = new HubAppDeployer(client, adminManager, listener);
-        deployer.setCommands(getCommands(config));
+        deployer.setCommands(getCommands());
         deployer.deploy(config);
     }
 
@@ -518,8 +532,80 @@ public class DataHub extends LoggingObject {
 
         AppConfig config = getAppConfig();
         HubAppDeployer deployer = new HubAppDeployer(client, adminManager, listener);
-        deployer.setCommands(getCommands(config));
+        deployer.setCommands(getCommands());
         deployer.undeploy(config);
+    }
+
+    public boolean updateHub() {
+        boolean result = false;
+        File buildGradle = Paths.get(this.hubConfig.projectDir, "build.gradle").toFile();
+        try {
+            // step 1: update build.gradle
+            String text = new String(FileCopyUtils.copyToByteArray(buildGradle));
+            String version = getJarVersion();
+            text = Pattern.compile("^(\\s*)id\\s+['\"]com.marklogic.ml-data-hub['\"]\\s+version.+$", Pattern.MULTILINE).matcher(text).replaceAll("$1id 'com.marklogic.ml-data-hub' version '" + version + "'");
+            text = Pattern.compile("^(\\s*)compile.+marklogic-data-hub.+$", Pattern.MULTILINE).matcher(text).replaceAll("$1compile 'com.marklogic:marklogic-data-hub:" + version + "'");
+            FileUtils.writeStringToFile(buildGradle, text);
+
+            // step 2: create the internal-hub-config dir and the gradle files
+            HubProject hp = new HubProject(hubConfig);
+            hp.init();
+
+            // step 3: rename marklogic-config to user-config (if marklogic-config exists)
+            File markLogicConfig = Paths.get(this.hubConfig.projectDir, HubConfig.OLD_HUB_CONFIG_DIR).toFile();
+            Path userConfigDir = this.hubConfig.getUserConfigDir();
+            if (markLogicConfig.exists() && markLogicConfig.isDirectory()) {
+                FileUtils.forceDelete(userConfigDir.toFile());
+                FileUtils.moveDirectory(markLogicConfig, userConfigDir.toFile());
+
+                // fix unquoted ports in old configs
+                Files.walkFileTree(this.hubConfig.getUserServersDir(), new SimpleFileVisitor<Path>() {
+                        @Override
+                        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                            if (file.getFileName().toString().endsWith(".json")) {
+                                String fileContents = FileUtils.readFileToString(file.toFile());
+                                for (String findMe : new String[]{"%%mlStagingPort%%", "%%mlFinalPort%%", "%%mlTracePort%%", "%%mlJobPort%%"}) {
+                                    fileContents = Pattern.compile("(\"port\"\\s*:\\s*)" + findMe).matcher(fileContents).replaceAll("$1\"" + findMe + "\"");
+                                }
+                                FileUtils.writeStringToFile(file.toFile(), fileContents);
+                            }
+                            return FileVisitResult.CONTINUE;
+                        }
+                });
+
+                // step 3.5: tease out user's config file changes
+                Files.walkFileTree(userConfigDir, new SimpleFileVisitor<Path>() {
+                    @Override
+                    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                        if (file.getFileName().toString().endsWith(".json")) {
+                            File hubFile = new File(file.toString().replace(HubConfig.USER_CONFIG_DIR, HubConfig.HUB_CONFIG_DIR));
+                            if (hubFile.exists()) {
+                                JsonNode xored = JsonXor.xor(hubFile, file.toFile());
+                                if (xored.size() > 0) {
+                                    ObjectMapper objectMapper = new ObjectMapper();
+                                    objectMapper.writerWithDefaultPrettyPrinter().writeValue(file.toFile(), xored);
+                                }
+                                else {
+                                    FileUtils.forceDelete(file.toFile());
+                                }
+                            }
+                        }
+                        return FileVisitResult.CONTINUE;
+                    }
+
+                });
+
+            }
+
+            // step 4: install hub modules into MarkLogic
+            install();
+
+            result = true;
+        }
+        catch(IOException e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 
     /**
@@ -539,12 +625,12 @@ public class DataHub extends LoggingObject {
     class EntitiesValidator extends ResourceManager {
         private static final String NAME = "validate";
 
-        public EntitiesValidator(DatabaseClient client) {
+        EntitiesValidator(DatabaseClient client) {
             super();
             client.init(NAME, this);
         }
 
-        public JsonNode validate() {
+        JsonNode validate() {
             RequestParameters params = new RequestParameters();
             ServiceResultIterator resultItr = this.getServices().get(params);
             if (resultItr == null || ! resultItr.hasNext()) {
@@ -559,12 +645,12 @@ public class DataHub extends LoggingObject {
     class HubVersion extends ResourceManager {
         private static final String NAME = "hubversion";
 
-        public HubVersion(DatabaseClient client) {
+        HubVersion(DatabaseClient client) {
             super();
             client.init(NAME, this);
         }
 
-        public String getVersion() {
+        String getVersion() {
             RequestParameters params = new RequestParameters();
             ServiceResultIterator resultItr = this.getServices().get(params);
             if (resultItr == null || ! resultItr.hasNext()) {

@@ -16,25 +16,24 @@
 package com.marklogic.quickstart.service;
 
 import com.marklogic.client.DatabaseClient;
-import com.marklogic.client.document.DocumentPage;
-import com.marklogic.client.document.DocumentRecord;
+import com.marklogic.client.document.ServerTransform;
 import com.marklogic.client.document.XMLDocumentManager;
 import com.marklogic.client.helper.LoggingObject;
-import com.marklogic.client.io.JAXBHandle;
-import com.marklogic.client.io.SearchHandle;
+import com.marklogic.client.io.Format;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.query.QueryManager;
-import com.marklogic.client.query.RawStructuredQueryDefinition;
+import com.marklogic.client.query.RawCombinedQueryDefinition;
+import com.marklogic.client.query.StructuredQueryBuilder;
+import com.marklogic.client.query.StructuredQueryDefinition;
 import com.marklogic.hub.HubConfig;
-import com.marklogic.spring.batch.core.MarkLogicJobInstance;
+import com.marklogic.hub.util.PerformanceLogger;
+import com.marklogic.quickstart.model.JobQuery;
+import com.marklogic.quickstart.util.QueryHelper;
 import com.marklogic.spring.batch.hub.MarkLogicJobRepoConfig;
 import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
 import java.util.ArrayList;
-import java.util.List;
 
 public class JobManager extends LoggingObject {
 
@@ -62,47 +61,52 @@ public class JobManager extends LoggingObject {
         return ctx.getBean(JobExplorer.class);
     }
 
-    public List<MarkLogicJobInstance> getJobInstances(long start, long count) {
-        List<MarkLogicJobInstance> jobInstances = new ArrayList<>();
+    private StructuredQueryDefinition addRangeConstraint(StructuredQueryBuilder sb, String name, String value) {
+        StructuredQueryDefinition sqd = null;
+        if (value != null && !value.isEmpty()) {
+            sqd = sb.rangeConstraint(name, StructuredQueryBuilder.Operator.EQ, value);
+        }
+        return sqd;
+    }
+
+    public StringHandle getJobs(JobQuery jobQuery) {
+        long startTime = PerformanceLogger.monitorTimeInsideMethod();
+        queryMgr.setPageLength(jobQuery.count);
+
+        StructuredQueryBuilder sb = queryMgr.newStructuredQueryBuilder(SEARCH_OPTIONS_NAME);
+
+        ArrayList<StructuredQueryDefinition> queries = new ArrayList<>();
+        if (jobQuery.query != null && !jobQuery.query.equals("")) {
+            queries.add(sb.term(jobQuery.query));
+        }
+
+        StructuredQueryDefinition def = addRangeConstraint(sb, "status", jobQuery.status);
+        if (def != null) {
+            queries.add(def);
+        }
+
+
+        def = addRangeConstraint(sb, "status", jobQuery.status);
+        if (def != null) {
+            queries.add(def);
+        }
+
+
+        StructuredQueryBuilder.AndQuery sqd = sb.and(queries.toArray(new StructuredQueryDefinition[0]));
 
         String sort = "date-desc";
-        StringHandle rawHandle = new StringHandle(
-            "<search xmlns=\"http://marklogic.com/appservices/search\">\n" +
-            "  <query>\n" +
-            "    <collection-query>\n" +
-            "      <uri>" + COLLECTION_JOB_INSTANCE + "</uri>\n" +
-            "    </collection-query>\n" +
-            "    <operator-state>\n" +
-            "      <operator-name>sort</operator-name>\n" +
-            "      <state-name>" + sort + "</state-name>\n" +
-            "    </operator-state>\n" +
-            "  </query>  \n" +
-            "</search>");
-        RawStructuredQueryDefinition querydef = queryMgr.newRawStructuredQueryDefinition(rawHandle, SEARCH_OPTIONS_NAME);
-        mgr.setPageLength(count);
+        String searchXml = QueryHelper.serializeQuery(sb, sqd, sort);
 
-        DocumentPage page = mgr.search(querydef, start, new SearchHandle());
-        while(page.hasNext()) {
-            DocumentRecord record = page.next();
-            JAXBHandle<MarkLogicJobInstance> jaxbHandle = new JAXBHandle<>(jaxbContext());
-            record.getContent(jaxbHandle);
-            MarkLogicJobInstance mji = jaxbHandle.get();
-            jobInstances.add(mji);
-        }
-        return jobInstances;
+        RawCombinedQueryDefinition querydef = queryMgr.newRawCombinedQueryDefinition(new StringHandle(searchXml), SEARCH_OPTIONS_NAME);
+        querydef.setResponseTransform(new ServerTransform("job-search"));
+        StringHandle sh = new StringHandle();
+        sh.setFormat(Format.JSON);
+        StringHandle results = queryMgr.search(querydef, sh, jobQuery.start);
+        PerformanceLogger.logTimeInsideMethod(startTime, "JobManager.getJobs()");
+        return results;
     }
 
     public void cancelJob(long jobId) {
         explorer().getJobExecution(jobId).stop();
-    }
-
-    private JAXBContext jaxbContext() {
-        JAXBContext jaxbContext;
-        try {
-            jaxbContext = JAXBContext.newInstance(MarkLogicJobInstance.class);
-        } catch (JAXBException ex) {
-            throw new RuntimeException(ex);
-        }
-        return jaxbContext;
     }
 }

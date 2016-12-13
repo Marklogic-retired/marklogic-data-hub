@@ -328,6 +328,14 @@ export class LoginComponent implements OnInit {
     this.initSettings.schemasDbName = name + '-SCHEMAS';
   }
 
+  hubUpdateUrl() {
+    if (this.hubVersions && this.hubVersions.quickstartVersion) {
+      const versionString = this.hubVersions.quickstartVersion.replace(/\./g, '');
+      return `https://github.com/marklogic/marklogic-data-hub/wiki/Updating-to-a-New-Hub-Version#${versionString}`;
+    }
+    return '';
+  }
+
   getInstalledIcon(isTrue: boolean) {
     return isTrue ? 'fa-check' : 'fa-close';
   }

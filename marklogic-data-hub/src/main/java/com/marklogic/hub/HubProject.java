@@ -19,7 +19,6 @@ class HubProject extends LoggingObject {
 
     private String projectDirStr;
     private Path projectDir;
-    private Path configDir;
     private Path pluginsDir;
     private HubConfig hubConfig;
 
@@ -29,7 +28,6 @@ class HubProject extends LoggingObject {
         this.hubConfig = config;
         this.projectDirStr = config.projectDir;
         this.projectDir = Paths.get(this.projectDirStr);
-        this.configDir = Paths.get(this.projectDirStr, "marklogic-config");
         this.pluginsDir = Paths.get(this.projectDirStr, "plugins");
 
         customTokens.put("%%mlHost%%", hubConfig.host);
@@ -73,14 +71,14 @@ class HubProject extends LoggingObject {
             logger.error("PLUGINS DIR: " + pluginsDir.toString());
             this.pluginsDir.toFile().mkdirs();
 
-            Path serversDir = configDir.resolve("servers");
+            Path serversDir = hubConfig.getHubServersDir();
             serversDir.toFile().mkdirs();
             writeResourceFile("ml-config/servers/staging-server.json", serversDir.resolve("staging-server.json"));
             writeResourceFile("ml-config/servers/final-server.json", serversDir.resolve("final-server.json"));
             writeResourceFile("ml-config/servers/trace-server.json", serversDir.resolve("trace-server.json"));
             writeResourceFile("ml-config/servers/job-server.json", serversDir.resolve("job-server.json"));
 
-            Path databasesDir = configDir.resolve("databases");
+            Path databasesDir = hubConfig.getHubDatabaseDir();
             databasesDir.toFile().mkdirs();
             writeResourceFile("ml-config/databases/staging-database.json", databasesDir.resolve("staging-database.json"));
             writeResourceFile("ml-config/databases/final-database.json", databasesDir.resolve("final-database.json"));
@@ -90,7 +88,7 @@ class HubProject extends LoggingObject {
             writeResourceFile("ml-config/databases/schemas-database.json", databasesDir.resolve("schemas-database.json"));
             writeResourceFile("ml-config/databases/triggers-database.json", databasesDir.resolve("triggers-database.json"));
 
-            Path securityDir = configDir.resolve("security");
+            Path securityDir = hubConfig.getHubSecurityDir();
             Path rolesDir = securityDir.resolve("roles");
             Path usersDir = securityDir.resolve("users");
 
@@ -99,6 +97,9 @@ class HubProject extends LoggingObject {
 
             writeResourceFileWithReplace("ml-config/security/roles/data-hub-user.json", rolesDir.resolve("data-hub-user.json"));
             writeResourceFileWithReplace("ml-config/security/users/data-hub-user.json", usersDir.resolve("data-hub-user.json"));
+
+            hubConfig.getUserServersDir().toFile().mkdirs();
+            hubConfig.getUserDatabaseDir().toFile().mkdirs();
 
             writeResourceFile("scaffolding/build_gradle", projectDir.resolve("build.gradle"));
             writeResourceFileWithReplace("scaffolding/gradle_properties", projectDir.resolve("gradle.properties"));
