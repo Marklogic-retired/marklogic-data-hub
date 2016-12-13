@@ -262,7 +262,7 @@ public class DataHub extends LoggingObject {
         }
     }
 
-    String getJarVersion() throws IOException {
+    public String getJarVersion() throws IOException {
         Properties properties = new Properties();
         InputStream inputStream = getClass().getClassLoader().getResourceAsStream("version.properties");
         properties.load(inputStream);

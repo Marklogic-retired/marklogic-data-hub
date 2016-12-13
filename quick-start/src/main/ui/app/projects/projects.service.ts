@@ -56,10 +56,6 @@ export class ProjectService {
     return this.get(`/api/current-project/stats`);
   }
 
-  getHubVersions() {
-    return this.get('/api/current-project/hub-versions');
-  }
-
   clearDatabase(database) {
     return this.http.post(`/api/current-project/clear/${database}`, '');
   }

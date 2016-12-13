@@ -212,7 +212,7 @@
             </div>
           </section>
           <section flex layout="column" layout-align="center center" *ngIf="!hubUpdateFailed && !hubUpdating">
-            <h3 *ngIf="hubVersions">Congratulations on updating to version {{hubVersions.quickstartVersion}}.</h3>
+            <h3 *ngIf="currentEnvironment">Congratulations on updating to version {{currentEnvironment.runningVersion}}.</h3>
             <p>
               In order to continue we need to update a few things.
             </p>
@@ -226,8 +226,8 @@
           </section>
           <section flex layout="column" layout-align="center center" *ngIf="hubUpdateFailed && !hubUpdating">
             <h3>Automatic Hub Update Failed!</h3>
-            <p *ngIf="hubVersions" class="error">
-              Sorry. We failed to update you to version <span class="version">{{hubVersions.quickstartVersion}}</span>.
+            <p *ngIf="currentEnvironment" class="error">
+              Sorry. We failed to update you to version <span class="version">{{currentEnvironment.runningVersion}}</span>.
             </p>
             <p>Go read the wiki page that describes the changes necessary and try them manually.</p>
             <a target="_blank" [href]="hubUpdateUrl()">How to update a Hub Project</a>

@@ -249,16 +249,13 @@ export class LoginComponent implements OnInit {
       let installInfo = this.currentEnvironment.installInfo;
 
       if (installInfo && installInfo.installed) {
-        this.projectService.getHubVersions().subscribe(versions => {
-          this.hubVersions = versions;
-          if (SemVer.gt(versions.quickstartVersion, versions.installedVersion)) {
-            this.gotoTab('RequiresUpdate');
-          } else {
-            // goto login tab
-            let redirect = this.auth.redirectUrl || '';
-            this.router.navigate([redirect]);
-          }
-        });
+        if (SemVer.gt(this.currentEnvironment.runningVersion, this.currentEnvironment.installedVersion)) {
+          this.gotoTab('RequiresUpdate');
+        } else {
+          // goto login tab
+          let redirect = this.auth.redirectUrl || '';
+          this.router.navigate([redirect]);
+        }
       } else {
         // go to install hub tab
         this.gotoTab('Installer');
@@ -329,8 +326,8 @@ export class LoginComponent implements OnInit {
   }
 
   hubUpdateUrl() {
-    if (this.hubVersions && this.hubVersions.quickstartVersion) {
-      const versionString = this.hubVersions.quickstartVersion.replace(/\./g, '');
+    if (this.currentEnvironment && this.currentEnvironment.runningVersion) {
+      const versionString = this.currentEnvironment.runningVersion.replace(/\./g, '');
       return `https://github.com/marklogic/marklogic-data-hub/wiki/Updating-to-a-New-Hub-Version#${versionString}`;
     }
     return '';

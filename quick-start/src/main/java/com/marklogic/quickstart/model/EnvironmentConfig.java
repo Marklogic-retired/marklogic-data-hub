@@ -26,6 +26,8 @@ import com.marklogic.hub.DataHub;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.InstallInfo;
 
+import java.io.IOException;
+
 public class EnvironmentConfig extends LoggingObject {
 
     private String projectDir;
@@ -36,8 +38,11 @@ public class EnvironmentConfig extends LoggingObject {
 
     private HubConfig mlSettings;
 
-
     private DataHub dataHub;
+
+    private String installedVersion;
+
+    private String runningVersion;
 
     public InstallInfo getInstallInfo() {
         return installInfo;
@@ -100,8 +105,10 @@ public class EnvironmentConfig extends LoggingObject {
     }
 
     @JsonIgnore
-    public void checkIfInstalled() {
+    public void checkIfInstalled() throws IOException {
         this.installInfo = dataHub.isInstalled();
+        this.installedVersion = dataHub.getHubVersion();
+        this.runningVersion = this.dataHub.getJarVersion();
     }
 
     private DatabaseClient _stagingClient = null;
@@ -168,6 +175,14 @@ public class EnvironmentConfig extends LoggingObject {
                 mlSettings.password, authMethod);
         }
         return _jobClient;
+    }
+
+    public String getInstalledVersion() {
+        return installedVersion;
+    }
+
+    public String getRunningVersion() {
+        return runningVersion;
     }
 
     public String toJson() throws JsonProcessingException {

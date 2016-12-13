@@ -107,7 +107,7 @@ public class CurrentProjectController extends EnvironmentAware implements FileSy
 
     @RequestMapping(value = "/uninstall", method = RequestMethod.DELETE, produces = {MediaType.APPLICATION_JSON_VALUE})
     @ResponseBody
-    public ResponseEntity<?> unInstall() throws JsonProcessingException {
+    public ResponseEntity<?> unInstall() throws IOException {
 
         // uninstall the hub
         dataHubService.uninstall(envConfig().getMlSettings(), new HubDeployStatusListener() {
@@ -183,12 +183,6 @@ public class CurrentProjectController extends EnvironmentAware implements FileSy
         }
 
         return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    @RequestMapping(value = "/hub-versions", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_VALUE})
-    @ResponseBody
-    public String getHubVersions() throws IOException {
-        return dataHubService.getHubVersions(envConfig().getMlSettings());
     }
 
     @RequestMapping(value = "/update-hub", method = RequestMethod.POST)

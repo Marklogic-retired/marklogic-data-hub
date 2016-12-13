@@ -24,10 +24,8 @@ import com.marklogic.hub.util.PerformanceLogger;
 import com.marklogic.quickstart.exception.DataHubException;
 import com.marklogic.quickstart.listeners.DeployUserModulesListener;
 import com.marklogic.quickstart.listeners.ValidateListener;
-import org.apache.commons.io.FileUtils;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.util.FileCopyUtils;
 
 import java.io.*;
 import java.nio.file.Paths;
@@ -36,7 +34,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Properties;
 import java.util.TimeZone;
-import java.util.regex.Pattern;
 
 @Service
 public class DataHubService extends LoggingObject {
@@ -149,14 +146,6 @@ public class DataHubService extends LoggingObject {
         InputStream inputStream = getClass().getClassLoader().getResourceAsStream("quickstart-version.properties");
         properties.load(inputStream);
         return (String)properties.get("version");
-    }
-
-    public String getHubVersions(HubConfig config) throws IOException {
-        String quickstartVersion = getQuickStartVersion();
-
-        DataHub dataHub = new DataHub(config);
-        String versions = "{\"installedVersion\":\"" + dataHub.getHubVersion() + "\", \"quickstartVersion\":\"" + quickstartVersion + "\"}";
-        return versions;
     }
 
     public boolean updateHub(HubConfig config) {
