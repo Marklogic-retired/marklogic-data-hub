@@ -86,11 +86,20 @@ public class JobManager extends LoggingObject {
         }
 
 
-        def = addRangeConstraint(sb, "status", jobQuery.status);
+        def = addRangeConstraint(sb, "entityName", jobQuery.entityName);
         if (def != null) {
             queries.add(def);
         }
 
+        def = addRangeConstraint(sb, "flowName", jobQuery.flowName);
+        if (def != null) {
+            queries.add(def);
+        }
+
+        def = addRangeConstraint(sb, "flowType", jobQuery.flowType);
+        if (def != null) {
+            queries.add(def);
+        }
 
         StructuredQueryBuilder.AndQuery sqd = sb.and(queries.toArray(new StructuredQueryDefinition[0]));
 

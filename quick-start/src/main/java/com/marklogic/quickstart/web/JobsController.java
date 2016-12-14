@@ -15,23 +15,20 @@
  */
 package com.marklogic.quickstart.web;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.marklogic.quickstart.EnvironmentAware;
-import com.marklogic.quickstart.service.JobManager;
-import com.marklogic.quickstart.util.JobSerializer;
-import com.marklogic.spring.batch.core.MarkLogicJobInstance;
 import com.marklogic.hub.util.PerformanceLogger;
-import com.marklogic.quickstart.model.EnvironmentConfig;
+import com.marklogic.quickstart.EnvironmentAware;
 import com.marklogic.quickstart.model.JobQuery;
+import com.marklogic.quickstart.service.JobManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping(value="/api/jobs")
