@@ -116,31 +116,18 @@ public class EnvironmentConfig extends LoggingObject {
     @JsonIgnore
     public DatabaseClient getStagingClient() {
         if (_stagingClient == null) {
-            Authentication authMethod = Authentication
-                .valueOf(mlSettings.authMethod.toUpperCase());
-
-            _stagingClient = DatabaseClientFactory.newClient(
-                mlSettings.host,
-                mlSettings.stagingPort,
-                mlSettings.username,
-                mlSettings.password, authMethod);
+            _stagingClient = mlSettings.newStagingClient();
         }
         return _stagingClient;
     }
 
 
     private DatabaseClient _finalClient = null;
+
     @JsonIgnore
     public DatabaseClient getFinalClient() {
         if (_finalClient == null) {
-            Authentication authMethod = Authentication
-                .valueOf(mlSettings.authMethod.toUpperCase());
-
-            _finalClient = DatabaseClientFactory.newClient(
-                mlSettings.host,
-                mlSettings.finalPort,
-                mlSettings.username,
-                mlSettings.password, authMethod);
+            _finalClient = mlSettings.newFinalClient();
         }
         return _finalClient;
     }
@@ -149,14 +136,7 @@ public class EnvironmentConfig extends LoggingObject {
     @JsonIgnore
     public DatabaseClient getTraceClient() {
         if (_traceClient == null) {
-            Authentication authMethod = Authentication
-                .valueOf(mlSettings.authMethod.toUpperCase());
-
-            _traceClient = DatabaseClientFactory.newClient(
-                mlSettings.host,
-                mlSettings.tracePort,
-                mlSettings.username,
-                mlSettings.password, authMethod);
+            _traceClient = mlSettings.newTraceDbClient();
         }
         return _traceClient ;
     }
@@ -165,14 +145,7 @@ public class EnvironmentConfig extends LoggingObject {
     @JsonIgnore
     public DatabaseClient getJobClient() {
         if (_jobClient == null) {
-            Authentication authMethod = Authentication
-                .valueOf(mlSettings.authMethod.toUpperCase());
-
-            _jobClient = DatabaseClientFactory.newClient(
-                mlSettings.host,
-                mlSettings.jobPort,
-                mlSettings.username,
-                mlSettings.password, authMethod);
+            _jobClient = mlSettings.newJobDbClient();
         }
         return _jobClient;
     }

@@ -351,3 +351,19 @@ form {
     font-size: 80%;
   }
 }
+
+.auth {
+  color: white;
+
+  /deep/ .mdl-radio__outer-circle {
+    border: 2px solid white;
+  }
+
+  /deep/ .mdl-radio.is-checked .mdl-radio__outer-circle {
+    border: 2px solid #ccc;
+  }
+
+  /deep/ .mdl-radio__inner-circle {
+    background: white;
+  }
+}

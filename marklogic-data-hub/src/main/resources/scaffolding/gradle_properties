@@ -37,21 +37,25 @@ mlStagingAppserverName=%%mlStagingAppserverName%%
 mlStagingPort=%%mlStagingPort%%
 mlStagingDbName=%%mlStagingDbName%%
 mlStagingForestsPerHost=%%mlStagingForestsPerHost%%
+mlStagingAuth=%%mlStagingAuth%%
 
 mlFinalAppserverName=%%mlFinalAppserverName%%
 mlFinalPort=%%mlFinalPort%%
 mlFinalDbName=%%mlFinalDbName%%
 mlFinalForestsPerHost=%%mlFinalForestsPerHost%%
+mlFinalAuth=%%mlFinalAuth%%
 
 mlTraceAppserverName=%%mlTraceAppserverName%%
 mlTracePort=%%mlTracePort%%
 mlTraceDbName=%%mlTraceDbName%%
 mlTraceForestsPerHost=%%mlTraceForestsPerHost%%
+mlTraceAuth=%%mlTraceAuth%%
 
 mlJobAppserverName=%%mlJobAppserverName%%
 mlJobPort=%%mlJobPort%%
 mlJobDbName=%%mlJobDbName%%
 mlJobForestsPerHost=%%mlJobForestsPerHost%%
+mlJobAuth=%%mlJobAuth%%
 
 mlModulesDbName=%%mlModulesDbName%%
 mlTriggersDbName=%%mlTriggersDbName%%

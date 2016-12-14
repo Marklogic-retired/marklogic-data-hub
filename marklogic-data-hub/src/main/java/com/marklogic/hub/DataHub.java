@@ -392,7 +392,7 @@ public class DataHub extends LoggingObject {
         return ev.validate();
     }
 
-    private List<Command> getCommands() {
+    public List<Command> getCommands() {
         List<Command> commands = new ArrayList<>();
 
         // Security

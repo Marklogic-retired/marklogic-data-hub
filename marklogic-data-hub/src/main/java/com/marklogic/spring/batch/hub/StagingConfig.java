@@ -23,8 +23,7 @@ public class StagingConfig extends LoggingObject {
         return new SimpleAsyncTaskExecutor();
     }
 
-    @Bean
-    public DatabaseClientProvider databaseClientProvider() {
+    private DatabaseClientConfig getConfig() {
         DatabaseClientConfig config = new DatabaseClientConfig(
             hubConfig.host,
             hubConfig.stagingPort,
@@ -33,24 +32,22 @@ public class StagingConfig extends LoggingObject {
         );
 
         config.setDatabase(hubConfig.stagingDbName);
-        config.setAuthentication(DatabaseClientFactory.Authentication.valueOfUncased(hubConfig.authMethod.toLowerCase()));
+        config.setAuthentication(DatabaseClientFactory.Authentication.valueOfUncased(hubConfig.stagingAuthMethod.toLowerCase()));
 
+        return config;
+    }
+
+
+    @Bean
+    public DatabaseClientProvider databaseClientProvider() {
+        DatabaseClientConfig config = getConfig();
         logger.info("Connecting to MarkLogic via: " + config);
         return new BatchDatabaseClientProvider(config);
     }
 
     @Bean
     public DatabaseClientProvider jobRepositoryDatabaseClientProvider() {
-        DatabaseClientConfig config = new DatabaseClientConfig(
-            hubConfig.host,
-            hubConfig.jobPort,
-            hubConfig.username,
-            hubConfig.password
-        );
-
-        config.setDatabase(hubConfig.jobDbName);
-        config.setAuthentication(DatabaseClientFactory.Authentication.valueOfUncased(hubConfig.authMethod.toLowerCase()));
-
+        DatabaseClientConfig config = getConfig();
         logger.info("Connecting to MarkLogic JobRepository via: " + config);
         return new BatchDatabaseClientProvider(config);
     }

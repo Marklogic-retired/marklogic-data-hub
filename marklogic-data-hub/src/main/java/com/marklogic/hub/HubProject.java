@@ -37,21 +37,25 @@ class HubProject extends LoggingObject {
         customTokens.put("%%mlStagingPort%%", hubConfig.stagingPort.toString());
         customTokens.put("%%mlStagingDbName%%", hubConfig.stagingDbName);
         customTokens.put("%%mlStagingForestsPerHost%%", hubConfig.stagingForestsPerHost.toString());
+        customTokens.put("%%mlStagingAuth%%", hubConfig.stagingAuthMethod);
 
         customTokens.put("%%mlFinalAppserverName%%", hubConfig.finalHttpName);
         customTokens.put("%%mlFinalPort%%", hubConfig.finalPort.toString());
         customTokens.put("%%mlFinalDbName%%", hubConfig.finalDbName);
         customTokens.put("%%mlFinalForestsPerHost%%", hubConfig.finalForestsPerHost.toString());
+        customTokens.put("%%mlFinalAuth%%", hubConfig.finalAuthMethod);
 
         customTokens.put("%%mlTraceAppserverName%%", hubConfig.traceHttpName);
         customTokens.put("%%mlTracePort%%", hubConfig.tracePort.toString());
         customTokens.put("%%mlTraceDbName%%", hubConfig.traceDbName);
         customTokens.put("%%mlTraceForestsPerHost%%", hubConfig.traceForestsPerHost.toString());
+        customTokens.put("%%mlTraceAuth%%", hubConfig.traceAuthMethod);
 
         customTokens.put("%%mlJobAppserverName%%", hubConfig.jobHttpName);
         customTokens.put("%%mlJobPort%%", hubConfig.jobPort.toString());
         customTokens.put("%%mlJobDbName%%", hubConfig.jobDbName);
         customTokens.put("%%mlJobForestsPerHost%%", hubConfig.jobForestsPerHost.toString());
+        customTokens.put("%%mlJobAuth%%", hubConfig.jobAuthMethod);
 
         customTokens.put("%%mlModulesDbName%%", hubConfig.modulesDbName);
         customTokens.put("%%mlTriggersDbName%%", hubConfig.triggersDbName);

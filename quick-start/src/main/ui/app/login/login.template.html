@@ -79,6 +79,11 @@
                     <mdl-textfield floating-label label="Staging Appserver Port" type="number" name="stagingPort" [(ngModel)]="initSettings.stagingPort" required="required"></mdl-textfield>
                     <mdl-textfield floating-label label="Staging Database Name" type="text" name="stagingDbName" [(ngModel)]="initSettings.stagingDbName" required="required"></mdl-textfield>
                     <mdl-textfield floating-label label="Staging Forests Per Host" type="number" name="stagingForestsPerHost" [(ngModel)]="initSettings.stagingForestsPerHost" required="required"></mdl-textfield>
+                    <div class="auth">
+                      <div><label>Authentication Method</label></div>
+                      <mdl-radio name="stagingAuthMethod" [(ngModel)]="initSettings.stagingAuthMethod" value="digest">digest</mdl-radio>
+                      <mdl-radio name="stagingAuthMethod" [(ngModel)]="initSettings.stagingAuthMethod" value="basic">basic</mdl-radio>
+                    </div>
                   </section>
                   <h3 class="md-primary">Final</h3>
                   <section class="sub-section" layout="column">
@@ -86,6 +91,11 @@
                     <mdl-textfield floating-label label="Final Appserver Port" type="number" name="finalPort" [(ngModel)]="initSettings.finalPort" required="required"></mdl-textfield>
                     <mdl-textfield floating-label label="Final Database Name" type="text" name="finalDbName" [(ngModel)]="initSettings.finalDbName" required="required"></mdl-textfield>
                     <mdl-textfield floating-label label="Final Forests Per Host" type="number" name="finalForestsPerHost" [(ngModel)]="initSettings.finalForestsPerHost" required="required"></mdl-textfield>
+                    <div class="auth">
+                      <div><label>Authentication Method</label></div>
+                      <mdl-radio name="finalAuthMethod" [(ngModel)]="initSettings.finalAuthMethod" value="digest">digest</mdl-radio>
+                      <mdl-radio name="finalAuthMethod" [(ngModel)]="initSettings.finalAuthMethod" value="basic">basic</mdl-radio>
+                    </div>
                   </section>
                   <h3 class="md-primary">Trace</h3>
                   <section class="sub-section" layout="column">
@@ -93,6 +103,11 @@
                     <mdl-textfield floating-label label="Trace Appserver Port" type="number" name="tracePort" [(ngModel)]="initSettings.tracePort" required="required"></mdl-textfield>
                     <mdl-textfield floating-label label="Trace Database Name" type="text" name="traceDbName" [(ngModel)]="initSettings.traceDbName" required="required"></mdl-textfield>
                     <mdl-textfield floating-label label="Trace Forests Per Host" type="number" name="traceForestsPerHost" [(ngModel)]="initSettings.traceForestsPerHost" required="required"></mdl-textfield>
+                    <div class="auth">
+                      <div><label>Authentication Method</label></div>
+                      <mdl-radio name="traceAuthMethod" [(ngModel)]="initSettings.traceAuthMethod" value="digest">digest</mdl-radio>
+                      <mdl-radio name="traceAuthMethod" [(ngModel)]="initSettings.traceAuthMethod" value="basic">basic</mdl-radio>
+                    </div>
                   </section>
                   <h3 class="md-primary">Job</h3>
                   <section class="sub-section" layout="column">
@@ -100,17 +115,17 @@
                     <mdl-textfield floating-label label="Job Appserver Port" type="number" name="jobPort" [(ngModel)]="initSettings.jobPort" required="required"></mdl-textfield>
                     <mdl-textfield floating-label label="Job Database Name" type="text" name="jobDbName" [(ngModel)]="initSettings.jobDbName" required="required"></mdl-textfield>
                     <mdl-textfield floating-label label="Job Forests Per Host" type="number" name="jobForestsPerHost" [(ngModel)]="initSettings.jobForestsPerHost" required="required"></mdl-textfield>
+                    <div class="auth">
+                      <div><label>Authentication Method</label></div>
+                      <mdl-radio name="jobAuthMethod" [(ngModel)]="initSettings.jobAuthMethod" value="digest">digest</mdl-radio>
+                      <mdl-radio name="jobAuthMethod" [(ngModel)]="initSettings.jobAuthMethod" value="basic">basic</mdl-radio>
+                    </div>
                   </section>
                   <h3 class="md-primary">Other</h3>
                   <section class="sub-section" layout="column">
                     <mdl-textfield floating-label label="Modules Database Name" type="text" name="modulesDbName" [(ngModel)]="initSettings.modulesDbName" required="required"></mdl-textfield>
                     <mdl-textfield floating-label label="Triggers Database Port" type="text" name="triggersDbName" [(ngModel)]="initSettings.triggersDbName" required="required"></mdl-textfield>
                     <mdl-textfield floating-label label="Schemas Database Name" type="text" name="schemasDbName" [(ngModel)]="initSettings.schemasDbName" required="required"></mdl-textfield>
-                    <div>
-                      <div><label>Authentication Method</label></div>
-                      <mdl-radio name="authMethod" [(ngModel)]="initSettings.authMethod" value="digest">digest</mdl-radio>
-                      <mdl-radio name="authMethod" [(ngModel)]="initSettings.authMethod" value="basic">basic</mdl-radio>
-                    </div>
                   </section>
                 </div>
               </div>
