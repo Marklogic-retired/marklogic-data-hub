@@ -515,7 +515,23 @@ export class MlcpUiComponent {
   }
 
   outputUriReplaceValue() {
-    return `${this.inputFilePath.replace(/\\/g, '\\\\')},''`;
+    if (!this.groups) {
+      return null;
+    }
+
+    let generalGroup = _.find(this.groups, (group: any) => {
+      return group.category === 'General Options';
+    });
+
+    if (!generalGroup) {
+      return null;
+    }
+
+    let outputUriReplace = _.find(generalGroup.settings, (setting: any) => {
+      return setting.field === 'output_uri_replace';
+    });
+
+    return (outputUriReplace && outputUriReplace.value) ? outputUriReplace.value : `${this.inputFilePath.replace(/\\/g, '\\\\')},''`;
   }
 
   folderClicked(folder: string): void {
