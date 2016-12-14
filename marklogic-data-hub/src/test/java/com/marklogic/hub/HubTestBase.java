@@ -127,10 +127,38 @@ public class HubTestBase {
         jobPort = Integer.parseInt(properties.getProperty("mlJobPort"));
         user = properties.getProperty("mlUsername");
         password = properties.getProperty("mlPassword");
-        stagingAuthMethod = Authentication.valueOf(properties.getProperty("mlStagingAuth").toUpperCase());
-        finalAuthMethod = Authentication.valueOf(properties.getProperty("mlFinalAuth").toUpperCase());
-        traceAuthMethod = Authentication.valueOf(properties.getProperty("mlTraceAuth").toUpperCase());
-        jobAuthMethod = Authentication.valueOf(properties.getProperty("mlJobAuth").toUpperCase());
+
+        String auth = properties.getProperty("mlStagingAuth");
+        if (auth != null) {
+            stagingAuthMethod = Authentication.valueOf(auth.toUpperCase());
+        }
+        else {
+            stagingAuthMethod = Authentication.DIGEST;
+        }
+
+        auth = properties.getProperty("mlFinalAuth");
+        if (auth != null) {
+            finalAuthMethod = Authentication.valueOf(auth.toUpperCase());
+        }
+        else {
+            finalAuthMethod = Authentication.DIGEST;
+        }
+
+        auth = properties.getProperty("mlTraceAuth");
+        if (auth != null) {
+            traceAuthMethod = Authentication.valueOf(auth.toUpperCase());
+        }
+        else {
+            traceAuthMethod = Authentication.DIGEST;
+        }
+
+        auth = properties.getProperty("mlJobAuth");
+        if (auth != null) {
+            jobAuthMethod = Authentication.valueOf(auth.toUpperCase());
+        }
+        else {
+            jobAuthMethod = Authentication.DIGEST;
+        }
 
         stagingClient = DatabaseClientFactory.newClient(host, stagingPort, user, password, stagingAuthMethod);
         stagingModulesClient  = DatabaseClientFactory.newClient(host, stagingPort, HubConfig.DEFAULT_MODULES_DB_NAME, user, password, stagingAuthMethod);
