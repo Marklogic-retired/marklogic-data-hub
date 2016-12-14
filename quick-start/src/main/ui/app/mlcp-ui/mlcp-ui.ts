@@ -158,8 +158,7 @@ export class MlcpUiComponent {
             label: 'Output URI Replace',
             field: 'output_uri_replace',
             type: 'string',
-            description: 'A comma separated list of (regex,string) pairs that define string replacements to apply to the URIs of documents added to the database. The replacement strings must be enclosed in single quotes. For example, -output_uri_replace "regex1,\'string1\',regext2,\'string2\'"',
-            value: this.outputUriReplaceValue()
+            description: 'A comma separated list of (regex,string) pairs that define string replacements to apply to the URIs of documents added to the database. The replacement strings must be enclosed in single quotes. For example, -output_uri_replace "regex1,\'string1\',regext2,\'string2\'"'
           },
           {
             label: 'Output URI Suffix',
@@ -515,23 +514,7 @@ export class MlcpUiComponent {
   }
 
   outputUriReplaceValue() {
-    if (!this.groups) {
-      return null;
-    }
-
-    let generalGroup = _.find(this.groups, (group: any) => {
-      return group.category === 'General Options';
-    });
-
-    if (!generalGroup) {
-      return null;
-    }
-
-    let outputUriReplace = _.find(generalGroup.settings, (setting: any) => {
-      return setting.field === 'output_uri_replace';
-    });
-
-    return (outputUriReplace && outputUriReplace.value) ? outputUriReplace.value : `${this.inputFilePath.replace(/\\/g, '\\\\')},''`;
+    return `${this.inputFilePath.replace(/\\/g, '\\\\')},''`;
   }
 
   folderClicked(folder: string): void {
