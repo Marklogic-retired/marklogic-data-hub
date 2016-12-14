@@ -179,7 +179,7 @@
                 <div class="center-text" [hidden]="!loggingIn">
                   <mdl-spinner single-color active></mdl-spinner>
                 </div>
-                <div class="error" *ngIf="loginError">Invalid username or password</div>
+                <div class="error" *ngIf="loginError">{{loginError}}</div>
                 <mdl-textfield label="MarkLogic User Name" id="username" name="username" type="text" [(ngModel)]="loginInfo.username" required="required" floating-label></mdl-textfield>
                 <mdl-textfield label="MarkLogic Password" name="password" type="password" [(ngModel)]="loginInfo.password" required="required" floating-label></mdl-textfield>
                 <div layout="row" layout-align="end center" class="init-buttons">

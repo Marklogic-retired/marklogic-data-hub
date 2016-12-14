@@ -31,7 +31,7 @@ export class LoginComponent implements OnInit {
 
   visitedTabs: Array<string> = [];
 
-  loginError: boolean = false;
+  loginError: string = null;
   loggingIn: boolean = false;
 
   tabs: any = {
@@ -291,7 +291,7 @@ export class LoginComponent implements OnInit {
   }
 
   login() {
-    this.loginError = false;
+    this.loginError = null;
     this.loggingIn = true;
     this.projectService.login(
       this.currentProject.id,
@@ -300,11 +300,11 @@ export class LoginComponent implements OnInit {
     ).subscribe(() => {
         this.auth.setAuthenticated(true);
         this.loginNext();
-        this.loginError = false;
+        this.loginError = null;
         this.loggingIn = false;
       },
       error => {
-        this.loginError = true;
+        this.loginError = error.json().message;
         this.auth.setAuthenticated(false);
         this.loggingIn = false;
       });

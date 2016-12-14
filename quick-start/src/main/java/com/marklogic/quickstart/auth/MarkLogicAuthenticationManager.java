@@ -29,6 +29,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.ResourceAccessException;
 
 import java.net.URI;
 
@@ -81,10 +82,14 @@ public class MarkLogicAuthenticationManager implements AuthenticationProvider, A
          */
         restConfig.setHost(hostname);
         RestClient client = new RestClient(restConfig, new SimpleCredentialsProvider(username, password));
-        URI uri = client.buildUri(pathToAuthenticateAgainst, "");
+        URI uri = client.buildUri(pathToAuthenticateAgainst, null);
         try {
             client.getRestOperations().getForEntity(uri, String.class);
-        } catch (HttpClientErrorException ex) {
+        }
+        catch(ResourceAccessException ex) {
+            throw new RuntimeException("Cannot connect to MarkLogic at " + hostname + ". Are you sure MarkLogic is running?");
+        }
+        catch(HttpClientErrorException ex) {
             if (HttpStatus.NOT_FOUND.equals(ex.getStatusCode())) {
                 // Authenticated, but the path wasn't found - that's okay, we just needed to verify authentication
             } else if (HttpStatus.UNAUTHORIZED.equals(ex.getStatusCode())) {
