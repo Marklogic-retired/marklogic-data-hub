@@ -15,7 +15,7 @@ install:
 script:
   - nvm use $NODE_VERSION
   - if [[ $TRAVIS_SECURE_ENV_VARS == true ]]; then
-      travis_wait 60 ./gradlew test
+      travis_wait 60 ./gradlew test;
     else
-      ./gradlew jshint
+      ./gradlew jshint;
     fi
