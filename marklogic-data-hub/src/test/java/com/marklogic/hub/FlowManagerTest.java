@@ -72,7 +72,6 @@ public class FlowManagerTest extends HubTestBase {
 
     @AfterClass
     public static void teardown() throws IOException {
-        uninstallHub();
     }
 
     @After

@@ -29,7 +29,6 @@ public class TracingTest extends HubTestBase {
 
     @AfterClass
     public static void teardown() throws IOException {
-        uninstallHub();
     }
 
     @Before
