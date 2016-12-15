@@ -21,10 +21,13 @@ import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.deploy.commands.LoadUserModulesCommand;
 import com.marklogic.hub.deploy.util.HubDeployStatusListener;
 import com.marklogic.hub.util.PerformanceLogger;
+import com.marklogic.quickstart.auth.ConnectionAuthenticationToken;
 import com.marklogic.quickstart.exception.DataHubException;
 import com.marklogic.quickstart.listeners.DeployUserModulesListener;
 import com.marklogic.quickstart.listeners.ValidateListener;
+import com.marklogic.quickstart.model.EnvironmentConfig;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
@@ -148,9 +151,18 @@ public class DataHubService extends LoggingObject {
         return (String)properties.get("version");
     }
 
-    public boolean updateHub(HubConfig config) {
+    public boolean updateHub(HubConfig config) throws IOException {
         DataHub dataHub = new DataHub(config);
-        return dataHub.updateHub();
+        boolean result = dataHub.updateHub();
+        if (result) {
+            ConnectionAuthenticationToken authenticationToken = (ConnectionAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+            if (authenticationToken != null) {
+                EnvironmentConfig environmentConfig = authenticationToken.getEnvironmentConfig();
+                environmentConfig.checkIfInstalled();
+            }
+        }
+        return result;
+
     }
 
     public void clearContent(HubConfig config, String database) {

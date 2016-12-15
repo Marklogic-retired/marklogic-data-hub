@@ -186,7 +186,7 @@ public class CurrentProjectController extends EnvironmentAware implements FileSy
     }
 
     @RequestMapping(value = "/update-hub", method = RequestMethod.POST)
-    public ResponseEntity<?> updateHub() {
+    public ResponseEntity<?> updateHub() throws IOException {
         if (dataHubService.updateHub(envConfig().getMlSettings())) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
