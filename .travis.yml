@@ -14,4 +14,8 @@ install:
   - ./shared/dev-tasks/install-dependencies.sh
 script:
   - nvm use $NODE_VERSION
-  - travis_wait 60 '[ "${TRAVIS_SECURE_ENV_VARS}" = "true" ] && ./gradlew test || ./gradlew jshint'
+  - if [[ $TRAVIS_SECURE_ENV_VARS == true ]]; then
+      travis_wait 60 ./gradlew test
+    else
+      ./gradlew jshint
+    fi
