@@ -562,7 +562,7 @@ declare function flow:make-envelope(
         map:put($o, "headers", $headers),
         map:put($o, "triples", $triples),
         map:put($o, "instance",
-          if ($content castable as map:map) then
+          if ($content instance of map:map and map:keys($content) = "$type") then
             flow:instance-to-canonical-json($content)
           else
             $content
@@ -570,7 +570,7 @@ declare function flow:make-envelope(
         map:put($o, "attachments",
           let $content := map:get($map, "content")
           return
-            if ($content castable as map:map) then
+            if ($content instance of map:map and map:keys($content) = "$attachments") then
               map:get($content, "$attachments")
             else
               ()
@@ -591,7 +591,7 @@ declare function flow:make-envelope(
         {
           let $content := map:get($map, "content")
           return
-            if ($content castable as map:map) then
+            if ($content instance of map:map and map:keys($content) = "$type") then
               flow:instance-to-canonical-xml($content)
             else
               $content
@@ -601,7 +601,7 @@ declare function flow:make-envelope(
         {
           let $content := map:get($map, "content")
           return
-            if ($content castable as map:map) then
+            if ($content instance of map:map and map:keys($content) = "$attachments") then
               map:get($content, "$attachments")
             else
               ()
@@ -844,12 +844,11 @@ declare function flow:run-plugin(
     let $resp :=
       typeswitch($resp)
         case object-node() | json:object return
-          (: map:map lands here too :)
-          (: map:map is ES response type :)
-          if ($resp castable as map:map) then
+          (: object with $type key is ES response type :)
+          if ($resp instance of map:map and map:keys($resp) = "$type") then
             $resp
           else if ($data-format = $XML) then
-            json:transform-from-json($resp, json:config("custom"))
+            json:transform-from-json($resp)
           else
             $resp
         case json:array return

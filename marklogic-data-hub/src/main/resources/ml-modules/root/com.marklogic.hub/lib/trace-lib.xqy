@@ -231,7 +231,12 @@ declare function trace:error-trace(
   let $plugin-map := map:new((
     map:entry("pluginModuleUri", $module-uri),
     map:entry("input", $input),
-    map:entry("error", $error),
+    map:entry("error",
+      if (map:get($current-trace-settings, "data-format") eq $FORMAT-JSON) then
+        $error/err:error-to-json(.)
+      else
+        $error
+    ),
     map:entry("duration", $duration)
   ))
   let $_ := map:put($current-trace, $plugin-type || "Plugin", $plugin-map)
@@ -295,6 +300,8 @@ declare function trace:_walk_json($nodes as node()* ,$o)
                 $n
             return
               map:put($o, $name, $unquoted)
+          else if ($name = "error") then
+            map:put($o, $name, $n)
           else
             let $_ := trace:_walk_json($n/node(), $oo)
             return

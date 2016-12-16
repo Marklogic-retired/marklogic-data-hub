@@ -458,8 +458,8 @@ function createContent(id, options) {{
     source = root.xpath('/*:envelope/*:instance/node()');
   }}
   // for json we need to return the instance
-  else if (root &amp;&amp; root.instance) {{
-    source = root.instance;
+  else if (root &amp;&amp; root.envelope &amp;&amp; root.envelope.instance) {{
+    source = root.envelope.instance;
   }}
   // for everything else
   else {{

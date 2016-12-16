@@ -15,7 +15,7 @@ function createContent(id, options) {
     return root.xpath('/*:envelope/*:instance/node()');
   }
   // for json we need to return the instance
-  else if (root && root.envelope.instance) {
+  else if (root && root.envelope && root.envelope.instance) {
     return root.envelope.instance;
   }
   // for everything else
