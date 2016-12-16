@@ -57,7 +57,7 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit() {
-    if (!(this.projectService.projectId && this.projectService.environment)) {
+    if (!this.projectService.authenticated) {
       this.router.navigate(['login']);
     }
   }

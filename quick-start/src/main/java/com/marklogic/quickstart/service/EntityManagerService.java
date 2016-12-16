@@ -1,3 +1,18 @@
+/*
+ * Copyright 2012-2016 MarkLogic Corporation
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.marklogic.quickstart.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -7,6 +22,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.helper.LoggingObject;
 import com.marklogic.hub.flow.FlowType;
 import com.marklogic.hub.scaffold.Scaffolding;
+import com.marklogic.quickstart.auth.ConnectionAuthenticationToken;
 import com.marklogic.quickstart.model.EnvironmentConfig;
 import com.marklogic.quickstart.model.FlowModel;
 import com.marklogic.quickstart.model.entity_services.EntityModel;
@@ -14,6 +30,7 @@ import com.marklogic.quickstart.model.entity_services.HubUIData;
 import com.marklogic.quickstart.util.FileUtil;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -34,15 +51,17 @@ public class EntityManagerService extends LoggingObject {
     @Autowired
     private FlowManagerService flowManagerService;
 
-    @Autowired
-    private EnvironmentConfig envConfig;
+    private EnvironmentConfig envConfig() {
+        ConnectionAuthenticationToken authenticationToken = (ConnectionAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+        return authenticationToken.getEnvironmentConfig();
+    }
 
     public List<EntityModel> getEntities() throws IOException {
-        String projectDir = envConfig.getProjectDir();
+        String projectDir = envConfig().getProjectDir();
 
         Map<String, HubUIData> hubUiData = getUiData();
         List<EntityModel> entities = new ArrayList<>();
-        Path entitiesPath = Paths.get(envConfig.getProjectDir(), PLUGINS_DIR, ENTITIES_DIR);
+        Path entitiesPath = Paths.get(envConfig().getProjectDir(), PLUGINS_DIR, ENTITIES_DIR);
         List<String> entityNames = FileUtil.listDirectFolders(entitiesPath.toFile());
         ObjectMapper objectMapper = new ObjectMapper();
         for (String entityName : entityNames) {
@@ -73,7 +92,7 @@ public class EntityManagerService extends LoggingObject {
         String filename = entity.getFilename();
         if (filename == null) {
             String title = entity.getInfo().getTitle();
-            Path dir = Paths.get(envConfig.getProjectDir(), PLUGINS_DIR, ENTITIES_DIR, title);
+            Path dir = Paths.get(envConfig().getProjectDir(), PLUGINS_DIR, ENTITIES_DIR, title);
             if (!dir.toFile().exists()) {
                 dir.toFile().mkdirs();
             }
@@ -86,7 +105,7 @@ public class EntityManagerService extends LoggingObject {
     }
 
     public void deleteEntity(String entity) throws IOException {
-        Path dir = Paths.get(envConfig.getProjectDir(), PLUGINS_DIR, ENTITIES_DIR, entity);
+        Path dir = Paths.get(envConfig().getProjectDir(), PLUGINS_DIR, ENTITIES_DIR, entity);
         if (dir.toFile().exists()) {
             FileUtils.deleteDirectory(dir.toFile());
         }
@@ -102,7 +121,7 @@ public class EntityManagerService extends LoggingObject {
             uiData = JsonNodeFactory.instance.objectNode();
         }
 
-        Path dir = Paths.get(envConfig.getProjectDir(), HUB_CONFIG_DIR);
+        Path dir = Paths.get(envConfig().getProjectDir(), HUB_CONFIG_DIR);
         if (!dir.toFile().exists()) {
             dir.toFile().mkdirs();
         }
@@ -129,7 +148,7 @@ public class EntityManagerService extends LoggingObject {
             uiData = JsonNodeFactory.instance.objectNode();
         }
 
-        Path dir = Paths.get(envConfig.getProjectDir(), HUB_CONFIG_DIR);
+        Path dir = Paths.get(envConfig().getProjectDir(), HUB_CONFIG_DIR);
         if (!dir.toFile().exists()) {
             dir.toFile().mkdirs();
         }
@@ -175,7 +194,7 @@ public class EntityManagerService extends LoggingObject {
     }
 
     public FlowModel createFlow(String projectDir, String entityName, FlowType flowType, FlowModel newFlow) throws IOException {
-        Scaffolding scaffolding = new Scaffolding(projectDir, envConfig.getFinalClient());
+        Scaffolding scaffolding = new Scaffolding(projectDir, envConfig().getFinalClient());
         newFlow.entityName =entityName;
         scaffolding.createFlow(entityName, newFlow.flowName, flowType, newFlow.pluginFormat, newFlow.dataFormat, newFlow.useEsModel);
         return getFlow(entityName, flowType, newFlow.flowName);
@@ -183,7 +202,7 @@ public class EntityManagerService extends LoggingObject {
 
     private JsonNode getUiRawData() {
         JsonNode json = null;
-        Path dir = Paths.get(envConfig.getProjectDir(), HUB_CONFIG_DIR);
+        Path dir = Paths.get(envConfig().getProjectDir(), HUB_CONFIG_DIR);
         File file = Paths.get(dir.toString(), UI_LAYOUT_FILE).toFile();
         if (file.exists()) {
             try {

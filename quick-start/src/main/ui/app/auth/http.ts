@@ -61,7 +61,7 @@ class HttpInterceptor extends Http {
 
   intercept(observable: Observable<Response>): Observable<Response> {
     return observable.catch((err, source) => {
-      if (err.status  === 401 && !_.endsWith(err.url, '/login')) {
+      if (err.status  === 401 && !_.endsWith(err.url, '/login') && !_.endsWith(this._router.routerState.snapshot.url, '/login')) {
           this.auth.redirectUrl = this._router.routerState.snapshot.url;
           this._router.navigate(['login']);
           return Observable.empty();

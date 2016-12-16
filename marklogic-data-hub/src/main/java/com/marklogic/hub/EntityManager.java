@@ -60,7 +60,7 @@ public class EntityManager extends ResourceManager {
 
         ArrayList<Entity> entities = null;
         if (children.getLength() > 0) {
-            entities = new ArrayList<Entity>();
+            entities = new ArrayList<>();
         }
 
         Node node;

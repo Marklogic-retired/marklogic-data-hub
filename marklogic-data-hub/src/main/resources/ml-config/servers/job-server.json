@@ -3,7 +3,7 @@
   "server-type": "http",
   "root": "/",
   "group-name": "%%GROUP%%",
-  "port": %%mlJobPort%%,
+  "port": "%%mlJobPort%%",
   "modules-database": "%%mlModulesDbName%%",
   "content-database": "%%mlJobDbName%%",
   "authentication": "digest",

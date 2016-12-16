@@ -1,3 +1,18 @@
+/*
+ * Copyright 2012-2016 MarkLogic Corporation
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.marklogic.hub.deploy.commands;
 
 import java.io.File;
@@ -12,6 +27,7 @@ import com.marklogic.appdeployer.command.databases.DeployDatabaseCommand;
 import com.marklogic.appdeployer.command.databases.DeployDatabaseCommandComparator;
 import com.marklogic.appdeployer.command.databases.DeploySchemasDatabaseCommand;
 import com.marklogic.appdeployer.command.databases.DeployTriggersDatabaseCommand;
+import com.marklogic.hub.HubConfig;
 
 /**
  * This commands handles deploying/undeploying every database file except the "default" ones of content-database.json,
@@ -28,7 +44,10 @@ import com.marklogic.appdeployer.command.databases.DeployTriggersDatabaseCommand
  */
 public class DeployHubDatabasesCommand extends AbstractUndoableCommand {
 
-    public DeployHubDatabasesCommand() {
+    private HubConfig hubConfig;
+
+    public DeployHubDatabasesCommand(HubConfig config) {
+        this.hubConfig = config;
         setExecuteSortOrder(SortOrderConstants.DEPLOY_OTHER_DATABASES);
         setUndoSortOrder(SortOrderConstants.DELETE_OTHER_DATABASES);
     }
@@ -62,7 +81,7 @@ public class DeployHubDatabasesCommand extends AbstractUndoableCommand {
     protected List<DeployDatabaseCommand> buildDatabaseCommands(CommandContext context) {
         List<DeployDatabaseCommand> dbCommands = new ArrayList<>();
 
-        ConfigDir configDir = context.getAppConfig().getConfigDir();
+        ConfigDir configDir = new ConfigDir(hubConfig.getHubConfigDir().toFile());
         File dir = configDir.getDatabasesDir();
         if (dir != null && dir.exists()) {
             Set<String> ignore = new HashSet<>();
@@ -79,9 +98,7 @@ public class DeployHubDatabasesCommand extends AbstractUndoableCommand {
                 if (logger.isDebugEnabled()) {
                     logger.debug("Will process other database in file: " + f.getName());
                 }
-                DeployDatabaseCommand c = new DeployDatabaseCommand();
-                c.setDatabaseFilename(f.getName());
-                c.setForestFilename(f.getName().replace("-database", "-forest"));
+                DeployHubDatabaseCommand c = new DeployHubDatabaseCommand(hubConfig, f.getName());
                 dbCommands.add(c);
             }
         }

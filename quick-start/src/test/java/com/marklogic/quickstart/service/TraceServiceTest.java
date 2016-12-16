@@ -22,7 +22,6 @@ public class TraceServiceTest {
 
     @AfterClass
     public static void teardown() throws IOException {
-        uninstallHub();
     }
 
     @Test

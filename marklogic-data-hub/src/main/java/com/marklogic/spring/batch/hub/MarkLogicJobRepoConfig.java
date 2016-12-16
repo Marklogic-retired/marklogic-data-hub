@@ -10,8 +10,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class MarkLogicJobRepoConfig extends FlowConfig {
 
-    @Bean
-    public DatabaseClientProvider databaseClientProvider() {
+    private DatabaseClientConfig getConfig() {
         DatabaseClientConfig config = new DatabaseClientConfig(
             hubConfig.host,
             hubConfig.jobPort,
@@ -20,24 +19,21 @@ public class MarkLogicJobRepoConfig extends FlowConfig {
         );
 
         config.setDatabase(hubConfig.jobDbName);
-        config.setAuthentication(DatabaseClientFactory.Authentication.valueOfUncased(hubConfig.authMethod.toLowerCase()));
+        config.setAuthentication(DatabaseClientFactory.Authentication.valueOfUncased(hubConfig.jobAuthMethod.toLowerCase()));
 
+        return config;
+    }
+
+    @Bean
+    public DatabaseClientProvider databaseClientProvider() {
+        DatabaseClientConfig config = getConfig();
         logger.info("Connecting to MarkLogic via: " + config);
         return new BatchDatabaseClientProvider(config);
     }
 
     @Bean
     public DatabaseClientProvider jobRepositoryDatabaseClientProvider() {
-        DatabaseClientConfig config = new DatabaseClientConfig(
-            hubConfig.host,
-            hubConfig.jobPort,
-            hubConfig.username,
-            hubConfig.password
-        );
-
-        config.setDatabase(hubConfig.jobDbName);
-        config.setAuthentication(DatabaseClientFactory.Authentication.valueOfUncased(hubConfig.authMethod.toLowerCase()));
-
+        DatabaseClientConfig config = getConfig();
         logger.info("Connecting to MarkLogic JobRepository via: " + config);
         return new BatchDatabaseClientProvider(config);
     }

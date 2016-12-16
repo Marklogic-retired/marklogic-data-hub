@@ -1,3 +1,18 @@
+/*
+ * Copyright 2012-2016 MarkLogic Corporation
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.marklogic.quickstart.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -16,22 +31,19 @@ import org.springframework.batch.repeat.RepeatStatus;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.function.Consumer;
 
 class MlcpTasklet implements Tasklet {
 
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     private HubConfig hubConfig;
     private JsonNode mlcpOptions;
     private JobStatusListener statusListener;
     private ArrayList<String> mlcpOutput = new ArrayList<>();
     private boolean hasError = false;
-    private StreamGobbler gobbler;
 
     MlcpTasklet(HubConfig hubConfig, JsonNode mlcpOptions, JobStatusListener statusListener) {
         this.hubConfig = hubConfig;
@@ -71,10 +83,6 @@ class MlcpTasklet implements Tasklet {
     }
 
     private void runMlcp(long jobId, MlcpBean bean) throws IOException, InterruptedException {
-        ClassLoader cl = ClassLoader.getSystemClassLoader();
-
-        URL[] urls = ((URLClassLoader)cl).getURLs();
-
         String javaHome = System.getProperty("java.home");
         String javaBin = javaHome +
             File.separator + "bin" +
@@ -114,16 +122,25 @@ class MlcpTasklet implements Tasklet {
 
         ArrayList<String> args = new ArrayList<>();
         args.add(javaBin);
-        args.add("-Dlogback.configurationFile=" + loggerFile.toURI());//logback);
-        args.add("-jar");
-        args.add(classpath);
+        args.add("-Dlogback.configurationFile=" + loggerFile.toURI());
+
+        if (classpath.endsWith(".war")) {
+            args.add("-jar");
+            args.add(classpath);
+        }
+        else {
+            args.add("-cp");
+            args.add(classpath);
+            args.add("com.marklogic.quickstart.Application");
+        }
         args.add("mlcp");
         args.addAll(Arrays.asList(bean.buildArgs()));
 
+        logger.debug(String.join(" ", args));
         ProcessBuilder pb = new ProcessBuilder(args);
         Process process = pb.start();
 
-        gobbler = new StreamGobbler(process.getInputStream(), new Consumer<String>() {
+        StreamGobbler gobbler = new StreamGobbler(process.getInputStream(), new Consumer<String>() {
             private int currentPc = 0;
 
             @Override
@@ -141,8 +158,8 @@ class MlcpTasklet implements Tasklet {
                     if (pc > currentPc && pc != 100) {
                         currentPc = pc;
                     }
+                } catch (NumberFormatException e) {
                 }
-                catch (NumberFormatException e) {}
 
                 mlcpOutput.add(status);
                 statusListener.onStatusChange(jobId, currentPc, status);

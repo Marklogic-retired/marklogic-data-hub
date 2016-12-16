@@ -193,6 +193,7 @@ export class EntityModelerComponent implements AfterViewChecked {
         if (!src) {
           src = fromCenter;
         }
+        connection.start = src;
 
         let previousPoint: Point = (vertexCount > 0) ? connection.vertices[vertexCount - 1] : fromCenter;
         let endLine: Line = new Line(previousPoint, toCenter);
@@ -200,6 +201,7 @@ export class EntityModelerComponent implements AfterViewChecked {
         if (!dst) {
           dst = toCenter;
         }
+        connection.end = dst;
 
         connection.d = `M ${src.x} ${src.y} ${innerVertices} ${dst.x} ${dst.y}`;
         let angle = endLine.angle;
@@ -292,16 +294,18 @@ export class EntityModelerComponent implements AfterViewChecked {
       previous = connection.vertices[idx - 1];
     }
 
-    if (!p.isOnLine(new Line(previous, connection.vertices[idx]))) {
-      let next;
-      if (idx === (connection.vertices.length - 1)) {
-        next = connection.to.pos;
-      } else {
-        next = connection.vertices[idx + 1];
-      }
+    if (connection.vertices.length > 0) {
+      if (!p.isOnLine(new Line(previous, connection.vertices[idx]))) {
+        let next;
+        if (idx === (connection.vertices.length - 1)) {
+          next = connection.end;
+        } else {
+          next = connection.vertices[idx + 1];
+        }
 
-      if (p.isOnLine(new Line(connection.vertices[idx], next))) {
-        idx++;
+        if (p.isOnLine(new Line(connection.vertices[idx], next))) {
+          idx++;
+        }
       }
     }
 

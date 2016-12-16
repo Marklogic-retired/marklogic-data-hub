@@ -29,6 +29,9 @@ import com.marklogic.client.eval.ServerEvaluationCall;
 import com.marklogic.client.io.*;
 import com.marklogic.hub.deploy.util.HubDeployStatusListener;
 import com.marklogic.hub.flow.FlowCacheInvalidator;
+import com.marklogic.mgmt.ManageClient;
+import com.marklogic.mgmt.ManageConfig;
+import com.marklogic.mgmt.databases.DatabaseManager;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -57,7 +60,10 @@ public class HubTestBase {
     public static int jobPort;
     public static String user;
     public static String password;
-    public static Authentication authMethod;
+    public static Authentication stagingAuthMethod;
+    public static Authentication finalAuthMethod;
+    public static Authentication traceAuthMethod;
+    public static Authentication jobAuthMethod;
     public static DatabaseClient stagingClient = null;
     public static DatabaseClient stagingModulesClient = null;
     public static DatabaseClient finalClient = null;
@@ -124,16 +130,47 @@ public class HubTestBase {
         jobPort = Integer.parseInt(properties.getProperty("mlJobPort"));
         user = properties.getProperty("mlUsername");
         password = properties.getProperty("mlPassword");
-        authMethod = Authentication.valueOf(properties.getProperty("auth").toUpperCase());
 
-        stagingClient = DatabaseClientFactory.newClient(host, stagingPort, user, password, authMethod);
-        stagingModulesClient  = DatabaseClientFactory.newClient(host, stagingPort, HubConfig.DEFAULT_MODULES_DB_NAME, user, password, authMethod);
-        finalClient = DatabaseClientFactory.newClient(host, finalPort, user, password, authMethod);
-        finalModulesClient  = DatabaseClientFactory.newClient(host, stagingPort, HubConfig.DEFAULT_MODULES_DB_NAME, user, password, authMethod);
-        traceClient = DatabaseClientFactory.newClient(host, tracePort, user, password, authMethod);
-        traceModulesClient  = DatabaseClientFactory.newClient(host, stagingPort, HubConfig.DEFAULT_MODULES_DB_NAME, user, password, authMethod);
-        jobClient = DatabaseClientFactory.newClient(host, jobPort, user, password, authMethod);
-        jobModulesClient  = DatabaseClientFactory.newClient(host, stagingPort, HubConfig.DEFAULT_MODULES_DB_NAME, user, password, authMethod);
+        String auth = properties.getProperty("mlStagingAuth");
+        if (auth != null) {
+            stagingAuthMethod = Authentication.valueOf(auth.toUpperCase());
+        }
+        else {
+            stagingAuthMethod = Authentication.DIGEST;
+        }
+
+        auth = properties.getProperty("mlFinalAuth");
+        if (auth != null) {
+            finalAuthMethod = Authentication.valueOf(auth.toUpperCase());
+        }
+        else {
+            finalAuthMethod = Authentication.DIGEST;
+        }
+
+        auth = properties.getProperty("mlTraceAuth");
+        if (auth != null) {
+            traceAuthMethod = Authentication.valueOf(auth.toUpperCase());
+        }
+        else {
+            traceAuthMethod = Authentication.DIGEST;
+        }
+
+        auth = properties.getProperty("mlJobAuth");
+        if (auth != null) {
+            jobAuthMethod = Authentication.valueOf(auth.toUpperCase());
+        }
+        else {
+            jobAuthMethod = Authentication.DIGEST;
+        }
+
+        stagingClient = DatabaseClientFactory.newClient(host, stagingPort, user, password, stagingAuthMethod);
+        stagingModulesClient  = DatabaseClientFactory.newClient(host, stagingPort, HubConfig.DEFAULT_MODULES_DB_NAME, user, password, stagingAuthMethod);
+        finalClient = DatabaseClientFactory.newClient(host, finalPort, user, password, finalAuthMethod);
+        finalModulesClient  = DatabaseClientFactory.newClient(host, stagingPort, HubConfig.DEFAULT_MODULES_DB_NAME, user, password, finalAuthMethod);
+        traceClient = DatabaseClientFactory.newClient(host, tracePort, user, password, traceAuthMethod);
+        traceModulesClient  = DatabaseClientFactory.newClient(host, stagingPort, HubConfig.DEFAULT_MODULES_DB_NAME, user, password, traceAuthMethod);
+        jobClient = DatabaseClientFactory.newClient(host, jobPort, user, password, jobAuthMethod);
+        jobModulesClient  = DatabaseClientFactory.newClient(host, stagingPort, HubConfig.DEFAULT_MODULES_DB_NAME, user, password, jobAuthMethod);
     }
 
     public HubTestBase() {
@@ -235,6 +272,14 @@ public class HubTestBase {
 
     protected static void installStagingDoc(String uri, String doc) {
         stagingDocMgr.write(uri, new StringHandle(doc));
+    }
+
+    protected static void clearDb(String dbName) {
+        HubConfig hubConfig = getHubConfig();
+        ManageConfig config = new ManageConfig(hubConfig.host, 8002, hubConfig.username, hubConfig.password);
+        ManageClient client = new ManageClient(config);
+        DatabaseManager databaseManager = new DatabaseManager(client);
+        databaseManager.clearDatabase(dbName);
     }
 
     protected static void installStagingDoc(String uri, DocumentMetadataHandle meta, String doc) {

@@ -156,8 +156,7 @@ export class MlcpUiComponent {
             label: 'Output URI Replace',
             field: 'output_uri_replace',
             type: 'string',
-            description: 'A comma separated list of (regex,string) pairs that define string replacements to apply to the URIs of documents added to the database. The replacement strings must be enclosed in single quotes. For example, -output_uri_replace "regex1,\'string1\',regext2,\'string2\'"',
-            value: this.outputUriReplaceValue()
+            description: 'A comma separated list of (regex,string) pairs that define string replacements to apply to the URIs of documents added to the database. The replacement strings must be enclosed in single quotes. For example, -output_uri_replace "regex1,\'string1\',regext2,\'string2\'"'
           },
           {
             label: 'Output URI Suffix',

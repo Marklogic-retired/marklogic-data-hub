@@ -3,9 +3,8 @@ package com.marklogic.quickstart.web;
 import com.marklogic.hub.DataHub;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.flow.FlowType;
-import com.marklogic.quickstart.Application;
+import com.marklogic.quickstart.auth.ConnectionAuthenticationToken;
 import com.marklogic.quickstart.model.EnvironmentConfig;
-import com.marklogic.quickstart.model.LoginInfo;
 import com.marklogic.quickstart.model.Project;
 import com.marklogic.quickstart.service.ProjectManagerService;
 import org.apache.commons.io.FileUtils;
@@ -15,8 +14,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpSession;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
@@ -31,29 +29,28 @@ import static org.junit.Assert.assertEquals;
 public class EntitiesControllerTest {
 
     private static final String PROJECT_PATH = "ye-old-project";
-    @Autowired
-    MockHttpServletRequest request;
 
     @Autowired
-    MockHttpSession session;
+    private ProjectManagerService projectManagerService;
 
     @Autowired
-    EnvironmentConfig envConfig;
-
-    @Autowired
-    ProjectManagerService projectManagerService;
-
-    @Autowired
-    EntitiesController ec;
+    private EntitiesController ec;
 
     private Project project;
 
+    private EnvironmentConfig envConfig;
+
+    private void setEnvConfig(EnvironmentConfig envConfig) {
+
+        ConnectionAuthenticationToken authenticationToken = new ConnectionAuthenticationToken("admin", "admin", "localhost", 1, "local");
+        authenticationToken.setEnvironmentConfig(envConfig);
+        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+    }
+
     @Before
     public void setUp() throws IOException {
-        LoginInfo loginInfo = new LoginInfo();
-        loginInfo.username = "admin";
-        loginInfo.password = "admin";
-        envConfig.init(PROJECT_PATH, "local", loginInfo);
+        envConfig = new EnvironmentConfig(PROJECT_PATH, "local", "admin", "admin");
+        setEnvConfig(envConfig);
         DataHub dh = new DataHub(envConfig.getMlSettings());
         dh.initProject();
         project = projectManagerService.addProject(PROJECT_PATH);
@@ -70,7 +67,7 @@ public class EntitiesControllerTest {
         envConfig.setInitialized(true);
         envConfig.setProjectDir(path);
         envConfig.setMlSettings(new HubConfig(path));
-        String s = ec.getInputFlowOptions(project.id, "local", "test-entity", FlowType.INPUT, "flow-name");
+        String s = ec.getInputFlowOptions("test-entity", FlowType.INPUT, "flow-name");
         assertEquals("{ \"input_file_path\": \"/some/project/path\" }", s);
     }
 
@@ -81,7 +78,7 @@ public class EntitiesControllerTest {
         envConfig.setInitialized(true);
         envConfig.setProjectDir(path);
         envConfig.setMlSettings(new HubConfig(path));
-        String s = ec.getInputFlowOptions(project.id, "local", "test-entity", FlowType.INPUT, "flow-name");
+        String s = ec.getInputFlowOptions("test-entity", FlowType.INPUT, "flow-name");
         assertEquals("{ \"input_file_path\": \"C:\\\\some\\\\crazy\\\\path\\\\to\\\\project\" }", s);
     }
 

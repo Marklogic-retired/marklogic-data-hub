@@ -1,16 +1,27 @@
+/*
+ * Copyright 2012-2016 MarkLogic Corporation
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.marklogic.quickstart.service;
 
-import com.marklogic.client.helper.LoggingObject;
 import com.marklogic.hub.HubConfig;
+import com.marklogic.quickstart.EnvironmentAware;
 import com.marklogic.quickstart.model.EnvironmentConfig;
 import com.sun.nio.file.SensitivityWatchEventModifier;
 import org.springframework.beans.factory.DisposableBean;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
-import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.WatchEvent.Kind;
@@ -18,32 +29,28 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
 
 @Service
-@Scope(proxyMode=ScopedProxyMode.TARGET_CLASS, value="session")
-public class FileSystemWatcherService extends LoggingObject implements DisposableBean {
+public class FileSystemWatcherService extends EnvironmentAware implements DisposableBean {
 
-    @Autowired
-    private EnvironmentConfig envConfig;
-
-    private WatchService watcher;
+    private WatchService _watcher = null;
+    // needs to have class scope so that it doesn't go away
     private Thread watcherThread;
     private Map<WatchKey,Path> keys = new HashMap<>();
 
     private final List<FileSystemEventListener> listeners = Collections.synchronizedList(new ArrayList<>());
 
-    @PostConstruct
-    protected synchronized void onPostConstruct() throws Exception {
-        watcher = FileSystems.getDefault().newWatchService();
+    private WatchService watcher() throws IOException {
+        if (_watcher == null) {
 
-        watcherThread = new DirectoryWatcherThread("directory-watcher-thread", envConfig.getMlSettings());
-        watcherThread.start();
+            EnvironmentConfig envConfig = envConfig();
+            if (envConfig != null) {
+                _watcher = FileSystems.getDefault().newWatchService();
+                watcherThread = new DirectoryWatcherThread("directory-watcher-thread", envConfig.getMlSettings());
+                watcherThread.start();
+            }
+        }
+        return _watcher;
     }
 
-    /**
-     * Recursively listen for file system events in the specified path name.
-     *
-     * @param pathName
-     * @throws IOException
-     */
     public synchronized void unwatch(String pathName) throws IOException {
         unregisterAll(Paths.get(pathName));
     }
@@ -82,7 +89,7 @@ public class FileSystemWatcherService extends LoggingObject implements Disposabl
      * Register the given directory with the WatchService
      */
     private void register(Path dir) throws IOException {
-        WatchKey key = dir.register(watcher, new WatchEvent.Kind[]{StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_DELETE, StandardWatchEventKinds.ENTRY_MODIFY}, SensitivityWatchEventModifier.HIGH);
+        WatchKey key = dir.register(watcher(), new WatchEvent.Kind[]{StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_DELETE, StandardWatchEventKinds.ENTRY_MODIFY}, SensitivityWatchEventModifier.HIGH);
         if (logger.isInfoEnabled()) {
             Path prev = keys.get(key);
             if (prev == null) {
@@ -140,7 +147,7 @@ public class FileSystemWatcherService extends LoggingObject implements Disposabl
 
     @Override
     public synchronized void destroy() throws Exception {
-        watcher.close();
+        watcher().close();
     }
 
     private class DirectoryWatcherThread extends Thread {
@@ -174,8 +181,8 @@ public class FileSystemWatcherService extends LoggingObject implements Disposabl
                 // wait for key to be signaled
                 WatchKey key;
                 try {
-                    key = watcher.take();
-                } catch (InterruptedException | ClosedWatchServiceException e ) {
+                    key = watcher().take();
+                } catch (IOException | InterruptedException | ClosedWatchServiceException e ) {
                     return;
                 }
 

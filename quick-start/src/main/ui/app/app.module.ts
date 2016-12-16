@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { RouterModule } from '@angular/router';
-
+import { TRUNCATE_PIPES } from 'ng2-truncate';
 import { AppComponent } from './app.component';
 import { FlowsComponent } from './flows';
 import {
@@ -52,6 +52,8 @@ import { HarmonizeFlowOptionsComponent } from './harmonize-flow-options/harmoniz
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { TitlecasePipe } from './titlecase.pipe';
 import { InlineEditComponent } from './inline-edit/inline-edit.component';
+import { FacetsComponent } from './facets/facets.component';
+import { ObjectToArrayPipe } from './object-to-array.pipe';
 
 @NgModule({
   declarations: [
@@ -80,8 +82,11 @@ import { InlineEditComponent } from './inline-edit/inline-edit.component';
     ClipboardDirective,
     HarmonizeFlowOptionsComponent,
     DashboardComponent,
+    InlineEditComponent,
+    FacetsComponent,
     TitlecasePipe,
-    InlineEditComponent
+    TRUNCATE_PIPES,
+    ObjectToArrayPipe
   ],
   entryComponents: [
     ChooseCollationComponent,
