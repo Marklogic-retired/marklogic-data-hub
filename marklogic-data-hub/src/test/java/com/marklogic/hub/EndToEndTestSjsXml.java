@@ -59,7 +59,6 @@ public class EndToEndTestSjsXml extends HubTestBase {
 
     @AfterClass
     public static void teardown() throws IOException {
-        uninstallHub();
         FileUtils.deleteDirectory(projectDir.toFile());
     }
 

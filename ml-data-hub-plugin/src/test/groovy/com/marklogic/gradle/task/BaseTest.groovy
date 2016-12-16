@@ -1,7 +1,6 @@
 package com.marklogic.gradle.task
 
 import com.marklogic.client.DatabaseClient
-import com.marklogic.client.DatabaseClientFactory
 import com.marklogic.hub.HubConfig
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
@@ -26,7 +25,8 @@ class BaseTest extends Specification {
             .withProjectDir(testProjectDir.root)
             .withArguments(task)
             .withDebug(true)
-            .withPluginClasspath().build()
+            .withPluginClasspath()
+            .build()
     }
 
     BuildResult runFailTask(String... task) {
@@ -39,8 +39,11 @@ class BaseTest extends Specification {
 
     DatabaseClient stagingClient() {
         HubConfig hubConfig = new HubConfig()
-        def authMethod = DatabaseClientFactory.Authentication.valueOf(hubConfig.authMethod.toUpperCase());
-        return DatabaseClientFactory.newClient(hubConfig.host, hubConfig.stagingPort, HubConfig.DEFAULT_MODULES_DB_NAME, "admin", "admin", authMethod)
+        hubConfig.username = "admin";
+        hubConfig.password = "admin";
+        hubConfig.adminUsername = "admin";
+        hubConfig.adminPassword = "admin";
+        return hubConfig.newStagingClient()
     }
 
     void createBuildFile() {
@@ -60,27 +63,38 @@ class BaseTest extends Specification {
 
             mlUsername=admin
             mlPassword=admin
-            auth=digest
+            
+            mlManageUsername=admin
+            mlManagePassword=admin
+
+            mlAdminUsername=admin
+            mlAdminPassword=admin
+
 
             mlStagingAppserverName=data-hub-STAGING
             mlStagingPort=8010
             mlStagingDbName=data-hub-STAGING
             mlStagingForestsPerHost=4
+            mlStagingAuth=digest
+
 
             mlFinalAppserverName=data-hub-FINAL
             mlFinalPort=8011
             mlFinalDbName=data-hub-FINAL
             mlFinalForestsPerHost=4
+            mlFinalAuth=digest
 
             mlTraceAppserverName=data-hub-TRACING
             mlTracePort=8012
             mlTraceDbName=data-hub-TRACING
             mlTraceForestsPerHost=1
+            mlTraceAuth=digest
 
             mlJobAppserverName=data-hub-JOB
             mlJobPort=8013
             mlJobDbName=data-hub-JOB
             mlJobForestsPerHost=1
+            mlJobAuth=digest
 
             mlModulesDbName=data-hub-MODULES
             mlTriggersDbName=data-hub-TRIGGERS

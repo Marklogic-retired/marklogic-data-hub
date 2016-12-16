@@ -1,5 +1,6 @@
 package com.marklogic.gradle.task
 
+import com.marklogic.hub.HubConfig
 import org.gradle.testkit.runner.UnexpectedBuildFailure
 
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
@@ -14,10 +15,12 @@ class InitProjectTaskTest extends BaseTest {
 
         when: "we begin"
             File entityDir = new File(testProjectDir.root, "plugins")
-            File mlConfigDir = new File(testProjectDir.root, "marklogic-config")
+            File hubConfigDir = new File(testProjectDir.root, HubConfig.HUB_CONFIG_DIR)
+            File userConfigDir = new File(testProjectDir.root, HubConfig.USER_CONFIG_DIR)
         then:
             entityDir.isDirectory() == false
-            mlConfigDir.isDirectory() == false
+            hubConfigDir.isDirectory() == false
+            userConfigDir.isDirectory() == false
 
         when:
         def result
@@ -32,7 +35,8 @@ class InitProjectTaskTest extends BaseTest {
             notThrown(UnexpectedBuildFailure)
             result.task(":hubInit").outcome == SUCCESS
             entityDir.isDirectory() == true
-            mlConfigDir.isDirectory() == true
+            hubConfigDir.isDirectory() == true
+            userConfigDir.isDirectory() == true
 
     }
 }

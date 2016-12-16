@@ -36,7 +36,7 @@ a {
   }
 }
 
-h1, h3, :host /deep/ button[mdl-button] {
+h1, h3, h4, :host /deep/ button[mdl-button], a[mdl-button] {
   color: white;
   max-width: 100%;
 }
@@ -157,6 +157,10 @@ $openDuration: 0.5s;
 
   p {
     color: white;
+
+    &.error {
+      color: red;
+    }
   }
 }
 
@@ -330,5 +334,36 @@ form {
 
   .fa-close {
     color: red;
+  }
+
+}
+.version {
+  font-weight: bold;
+  font-size: 120%;
+  font-style: oblique;
+}
+
+.manual {
+  margin-top: 40px;
+  text-align: center;
+  width: 100%;
+  p {
+    font-size: 80%;
+  }
+}
+
+.auth {
+  color: white;
+
+  /deep/ .mdl-radio__outer-circle {
+    border: 2px solid white;
+  }
+
+  /deep/ .mdl-radio.is-checked .mdl-radio__outer-circle {
+    border: 2px solid #ccc;
+  }
+
+  /deep/ .mdl-radio__inner-circle {
+    background: white;
   }
 }

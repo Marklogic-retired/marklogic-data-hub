@@ -23,13 +23,28 @@
     </value>
   </constraint>
   <constraint name="status">
-    <value>
-      <element name="status" ns="http://marklogic.com/spring-batch" />
-    </value>
+    <range type="xs:string">
+        <element ns="http://marklogic.com/spring-batch" name="status" />
+    </range>
   </constraint>
   <constraint name="jobExecutionId">
     <range type="xs:unsignedLong" facet="false">
         <path-index xmlns:msb="http://marklogic.com/spring-batch">/msb:mlJobInstance/msb:jobExecutions/msb:jobExecution/msb:id</path-index>
+    </range>
+  </constraint>
+  <constraint name="entityName">
+    <range type="xs:string" collation="http://marklogic.com/collation/">
+        <path-index xmlns:msb="http://marklogic.com/spring-batch">/msb:mlJobInstance/msb:jobExecutions/msb:jobExecution/msb:jobParameters/msb:jobParameter[@key='entity']</path-index>
+    </range>
+  </constraint>
+  <constraint name="flowName">
+    <range type="xs:string" collation="http://marklogic.com/collation/">
+        <path-index xmlns:msb="http://marklogic.com/spring-batch">/msb:mlJobInstance/msb:jobExecutions/msb:jobExecution/msb:jobParameters/msb:jobParameter[@key='flow']</path-index>
+    </range>
+  </constraint>
+  <constraint name="flowType">
+    <range type="xs:string" collation="http://marklogic.com/collation/">
+        <path-index xmlns:msb="http://marklogic.com/spring-batch">/msb:mlJobInstance/msb:jobExecutions/msb:jobExecution/msb:jobParameters/msb:jobParameter[@key='flowType']</path-index>
     </range>
   </constraint>
   <constraint name="endDateTime">
@@ -41,12 +56,12 @@
     <collection prefix="http://marklogic.com/spring-batch/" facet="false" />
   </constraint>
   <constraint name="jobExecution-createDateTime">
-    <range>
+    <range facet="false">
       <element ns="http://marklogic.com/spring-batch" name="createDateTime"/>
     </range>
   </constraint>
   <constraint name="jobInstance-createDateTime">
-    <range>
+    <range facet="false">
       <element ns="http://marklogic.com/spring-batch" name="createDateTime"/>
     </range>
   </constraint>

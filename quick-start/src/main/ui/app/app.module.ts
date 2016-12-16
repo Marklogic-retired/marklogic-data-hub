@@ -4,6 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { RouterModule } from '@angular/router';
 
+import { TRUNCATE_PIPES } from 'ng2-truncate';
+
 import { ConfirmModule } from './confirm';
 
 import { AppComponent } from './app.component';
@@ -46,6 +48,8 @@ import { TraceService } from './traces/trace.service';
 import { HarmonizeFlowOptionsComponent } from './harmonize-flow-options/harmonize-flow-options.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { TitlecasePipe } from './titlecase.pipe';
+import { FacetsComponent } from './facets/facets.component';
+import { ObjectToArrayPipe } from './object-to-array.pipe';
 
 @NgModule({
   declarations: [
@@ -69,7 +73,10 @@ import { TitlecasePipe } from './titlecase.pipe';
     ClipboardDirective,
     HarmonizeFlowOptionsComponent,
     DashboardComponent,
-    TitlecasePipe
+    TitlecasePipe,
+    FacetsComponent,
+    TRUNCATE_PIPES,
+    ObjectToArrayPipe
   ],
   imports: [
     BrowserModule,

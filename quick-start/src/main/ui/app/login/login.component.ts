@@ -9,6 +9,8 @@ import { InstallService } from '../installer';
 import { LoginInfo } from './login-info.model';
 import { HubSettings } from '../environment/hub-settings.model';
 
+import * as SemVer from 'semver';
+
 @Component({
   selector: 'app-login',
   templateUrl: './login.template.html',
@@ -21,11 +23,15 @@ export class LoginComponent implements OnInit {
   initSettings: HubSettings = new HubSettings();
   showInitAdvanced: boolean = false;
 
+  hubVersions: any;
+  hubUpdating: boolean = false;
+  hubUpdateFailed: boolean = false;
+
   currentTab: string = 'ProjectDir';
 
   visitedTabs: Array<string> = [];
 
-  loginError: boolean = false;
+  loginError: string = null;
   loggingIn: boolean = false;
 
   tabs: any = {
@@ -36,6 +42,7 @@ export class LoginComponent implements OnInit {
     Login: false,
     InstalledCheck: false,
     Installer: false,
+    RequiresUpdate: false
   };
 
 
@@ -100,10 +107,7 @@ export class LoginComponent implements OnInit {
       this.installationStatus += '\n' + payload.message;
     });
 
-    this.installService.install(
-      this.currentProject.id,
-      this.currentEnvironmentString
-    ).subscribe((env) => {
+    this.installService.install().subscribe((env) => {
       this.currentEnvironment = env;
       setTimeout(() => {
         this.installing = false;
@@ -132,10 +136,7 @@ export class LoginComponent implements OnInit {
       this.installationStatus += '\n' + payload.message;
     });
 
-    this.installService.uninstall(
-      this.currentProject.id,
-      this.currentEnvironmentString
-    ).subscribe((env) => {
+    this.installService.uninstall().subscribe((env) => {
       this.currentEnvironment = env;
       setTimeout(() => {
         this.uninstalling = false;
@@ -209,6 +210,7 @@ export class LoginComponent implements OnInit {
 
   gotProject = (project: any) => {
     this.currentProject = project;
+    this.loginInfo.projectId = project.id;
     if (project.initialized) {
       // go straight to the environment choose
       this.gotoTab('Environment');
@@ -227,6 +229,7 @@ export class LoginComponent implements OnInit {
   }
 
   gotEnvironment(environment: string) {
+    this.loginInfo.environment = environment;
     this.currentEnvironmentString = environment;
   }
 
@@ -240,18 +243,19 @@ export class LoginComponent implements OnInit {
 
   loginNext() {
     this.gotoTab('InstalledCheck');
-    this.projectService.getProjectEnvironment(
-      this.currentProject.id,
-      this.currentEnvironmentString
-    ).subscribe((env: any) => {
+    this.projectService.getProjectEnvironment().subscribe((env: any) => {
       this.currentEnvironment = env;
 
       let installInfo = this.currentEnvironment.installInfo;
 
       if (installInfo && installInfo.installed) {
-        // goto login tab
-        let redirect = this.auth.redirectUrl || '';
-        this.router.navigate([redirect]);
+        if (SemVer.gt(this.currentEnvironment.runningVersion, this.currentEnvironment.installedVersion)) {
+          this.gotoTab('RequiresUpdate');
+        } else {
+          // goto login tab
+          let redirect = this.auth.redirectUrl || '';
+          this.router.navigate([redirect]);
+        }
       } else {
         // go to install hub tab
         this.gotoTab('Installer');
@@ -265,7 +269,20 @@ export class LoginComponent implements OnInit {
       this.initSettings
     ).subscribe((project: any) => {
       this.currentProject = project;
+      this.loginInfo.projectId = project.id;
       this.gotoTab('PostInit');
+    });
+  }
+
+  updateProject() {
+    this.hubUpdating = true;
+    this.projectService.updateProject().subscribe(() => {
+      this.hubUpdating = false;
+      this.loginNext();
+    },
+    () => {
+      this.hubUpdating = false;
+      this.hubUpdateFailed = true;
     });
   }
 
@@ -274,7 +291,7 @@ export class LoginComponent implements OnInit {
   }
 
   login() {
-    this.loginError = false;
+    this.loginError = null;
     this.loggingIn = true;
     this.projectService.login(
       this.currentProject.id,
@@ -283,11 +300,11 @@ export class LoginComponent implements OnInit {
     ).subscribe(() => {
         this.auth.setAuthenticated(true);
         this.loginNext();
-        this.loginError = false;
+        this.loginError = null;
         this.loggingIn = false;
       },
       error => {
-        this.loginError = true;
+        this.loginError = error.json().message;
         this.auth.setAuthenticated(false);
         this.loggingIn = false;
       });
@@ -306,6 +323,14 @@ export class LoginComponent implements OnInit {
     this.initSettings.modulesDbName = name + '-MODULES';
     this.initSettings.triggersDbName = name + '-TRIGGERS';
     this.initSettings.schemasDbName = name + '-SCHEMAS';
+  }
+
+  hubUpdateUrl() {
+    if (this.currentEnvironment && this.currentEnvironment.runningVersion) {
+      const versionString = this.currentEnvironment.runningVersion.replace(/\./g, '');
+      return `https://github.com/marklogic/marklogic-data-hub/wiki/Updating-to-a-New-Hub-Version#${versionString}`;
+    }
+    return '';
   }
 
   getInstalledIcon(isTrue: boolean) {

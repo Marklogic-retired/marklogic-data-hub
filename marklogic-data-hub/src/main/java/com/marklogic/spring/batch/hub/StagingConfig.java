@@ -23,8 +23,7 @@ public class StagingConfig extends LoggingObject {
         return new SimpleAsyncTaskExecutor();
     }
 
-    @Bean
-    public DatabaseClientProvider databaseClientProvider() {
+    private DatabaseClientConfig getStagingConfig() {
         DatabaseClientConfig config = new DatabaseClientConfig(
             hubConfig.host,
             hubConfig.stagingPort,
@@ -33,14 +32,12 @@ public class StagingConfig extends LoggingObject {
         );
 
         config.setDatabase(hubConfig.stagingDbName);
-        config.setAuthentication(DatabaseClientFactory.Authentication.valueOfUncased(hubConfig.authMethod.toLowerCase()));
+        config.setAuthentication(DatabaseClientFactory.Authentication.valueOfUncased(hubConfig.stagingAuthMethod.toLowerCase()));
 
-        logger.info("Connecting to MarkLogic via: " + config);
-        return new BatchDatabaseClientProvider(config);
+        return config;
     }
 
-    @Bean
-    public DatabaseClientProvider jobRepositoryDatabaseClientProvider() {
+    private DatabaseClientConfig getJobConfig() {
         DatabaseClientConfig config = new DatabaseClientConfig(
             hubConfig.host,
             hubConfig.jobPort,
@@ -49,8 +46,22 @@ public class StagingConfig extends LoggingObject {
         );
 
         config.setDatabase(hubConfig.jobDbName);
-        config.setAuthentication(DatabaseClientFactory.Authentication.valueOfUncased(hubConfig.authMethod.toLowerCase()));
+        config.setAuthentication(DatabaseClientFactory.Authentication.valueOfUncased(hubConfig.jobAuthMethod.toLowerCase()));
 
+        return config;
+    }
+
+
+    @Bean
+    public DatabaseClientProvider databaseClientProvider() {
+        DatabaseClientConfig config = getStagingConfig();
+        logger.info("Connecting to MarkLogic via: " + config);
+        return new BatchDatabaseClientProvider(config);
+    }
+
+    @Bean
+    public DatabaseClientProvider jobRepositoryDatabaseClientProvider() {
+        DatabaseClientConfig config = getJobConfig();
         logger.info("Connecting to MarkLogic JobRepository via: " + config);
         return new BatchDatabaseClientProvider(config);
     }

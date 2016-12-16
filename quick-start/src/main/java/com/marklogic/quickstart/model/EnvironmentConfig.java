@@ -1,3 +1,18 @@
+/*
+ * Copyright 2012-2016 MarkLogic Corporation
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.marklogic.quickstart.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -6,27 +21,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
 import com.marklogic.client.DatabaseClientFactory.Authentication;
+import com.marklogic.client.helper.LoggingObject;
 import com.marklogic.hub.DataHub;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.InstallInfo;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Scope;
-import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.stereotype.Component;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.util.Properties;
+import java.io.IOException;
 
-@Component
-@Scope(proxyMode=ScopedProxyMode.TARGET_CLASS, value="session")
-public class EnvironmentConfig {
-
-    private static final Logger LOGGER = LoggerFactory
-            .getLogger(EnvironmentConfig.class);
-    private static final String GRADLE_PROPERTIES_FILENAME = "gradle.properties";
+public class EnvironmentConfig extends LoggingObject {
 
     private String projectDir;
     private String environment;
@@ -36,10 +38,11 @@ public class EnvironmentConfig {
 
     private HubConfig mlSettings;
 
-
     private DataHub dataHub;
 
-    private Properties environmentProperties = new Properties();
+    private String installedVersion;
+
+    private String runningVersion;
 
     public InstallInfo getInstallInfo() {
         return installInfo;
@@ -77,83 +80,82 @@ public class EnvironmentConfig {
         this.mlSettings = mlSettings;
     }
 
-    public void init(String projectDir, String environment) {
-        init(projectDir, environment, null);
-    }
-
-    public void init(String projectDir, String environment, LoginInfo loginInfo) {
+    public EnvironmentConfig(String projectDir, String environment, String username, String password) {
         this.projectDir = projectDir;
         this.environment = environment;
 
         mlSettings = HubConfig.hubFromEnvironment(this.projectDir, environment);
-        if (loginInfo != null) {
-            mlSettings.username = loginInfo.username;
-            mlSettings.password = loginInfo.password;
+        if (username != null) {
+            mlSettings.username = username;
+            mlSettings.password = password;
 
-            mlSettings.adminUsername = loginInfo.username;
-            mlSettings.adminPassword = loginInfo.password;
+            mlSettings.adminUsername = username;
+            mlSettings.adminPassword = password;
         }
 
         dataHub = new DataHub(mlSettings);
-        checkIfInstalled();
+
+        // warm the caches
+        getStagingClient();
+        getFinalClient();
+        getJobClient();
+        getTraceClient();
+
         isInitialized = true;
     }
 
     @JsonIgnore
-    public void checkIfInstalled() {
+    public void checkIfInstalled() throws IOException {
         this.installInfo = dataHub.isInstalled();
+        this.installedVersion = dataHub.getHubVersion();
+        this.runningVersion = this.dataHub.getJarVersion();
     }
+
+    private DatabaseClient _stagingClient = null;
 
     @JsonIgnore
     public DatabaseClient getStagingClient() {
-        Authentication authMethod = Authentication
-                .valueOf(mlSettings.authMethod.toUpperCase());
-
-        DatabaseClient client = DatabaseClientFactory.newClient(
-                mlSettings.host,
-                mlSettings.stagingPort,
-                mlSettings.username,
-                mlSettings.password, authMethod);
-        return client;
+        if (_stagingClient == null) {
+            _stagingClient = mlSettings.newStagingClient();
+        }
+        return _stagingClient;
     }
+
+
+    private DatabaseClient _finalClient = null;
 
     @JsonIgnore
     public DatabaseClient getFinalClient() {
-        Authentication authMethod = Authentication
-                .valueOf(mlSettings.authMethod.toUpperCase());
-
-        DatabaseClient client = DatabaseClientFactory.newClient(
-                mlSettings.host,
-                mlSettings.finalPort,
-                mlSettings.username,
-                mlSettings.password, authMethod);
-        return client;
+        if (_finalClient == null) {
+            _finalClient = mlSettings.newFinalClient();
+        }
+        return _finalClient;
     }
 
+    private DatabaseClient _traceClient = null;
     @JsonIgnore
     public DatabaseClient getTraceClient() {
-        Authentication authMethod = Authentication
-            .valueOf(mlSettings.authMethod.toUpperCase());
-
-        DatabaseClient client = DatabaseClientFactory.newClient(
-            mlSettings.host,
-            mlSettings.tracePort,
-            mlSettings.username,
-            mlSettings.password, authMethod);
-        return client;
+        if (_traceClient == null) {
+            _traceClient = mlSettings.newTraceDbClient();
+        }
+        return _traceClient ;
     }
 
+    private DatabaseClient _jobClient = null;
     @JsonIgnore
     public DatabaseClient getJobClient() {
-        Authentication authMethod = Authentication
-            .valueOf(mlSettings.authMethod.toUpperCase());
+        if (_jobClient == null) {
+            _jobClient = mlSettings.newJobDbClient();
+        }
+        return _jobClient;
+    }
 
-        DatabaseClient client = DatabaseClientFactory.newClient(
-            mlSettings.host,
-            mlSettings.jobPort,
-            mlSettings.username,
-            mlSettings.password, authMethod);
-        return client;
+    public String getInstalledVersion() {
+        return installedVersion;
+    }
+
+    public String getRunningVersion() {
+        return runningVersion;
     }
 
     public String toJson() throws JsonProcessingException {

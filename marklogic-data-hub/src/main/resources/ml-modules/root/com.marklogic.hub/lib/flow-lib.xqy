@@ -862,7 +862,6 @@ declare function flow:validate-entities()
   let $_ :=
     for $entity in flow:get-entities()/hub:entity
     for $flow in $entity/hub:flows/hub:flow
-    let $_ := xdmp:log(("flow!", $flow))
     let $data-format := $flow/hub:data-format
     (: validate collector :)
     let $_ :=

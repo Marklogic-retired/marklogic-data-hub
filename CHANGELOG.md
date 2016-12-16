@@ -1,7 +1,29 @@
 # Change Log
 
-## [v1.0.2](https://github.com/marklogic/marklogic-data-hub/tree/v1.0.2)
+## [v1.1.0](https://github.com/marklogic/marklogic-data-hub/tree/v1.1.0)
 
+[Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v1.0.2...v1.1.0)
+
+**Implemented enhancements:**
+
+- Detect when running upgraded hub [\#322](https://github.com/marklogic/marklogic-data-hub/issues/322)
+
+**Fixed bugs:**
+
+- if MarkLogic is not started, login reports "invalid username or password" [\#343](https://github.com/marklogic/marklogic-data-hub/issues/343)
+- Need gradle variables for Auth method for final, staging, etc [\#340](https://github.com/marklogic/marklogic-data-hub/issues/340)
+- Pagination not implemented on jobs page [\#320](https://github.com/marklogic/marklogic-data-hub/issues/320)
+
+**Closed issues:**
+
+- Directory slashes when typing in paths [\#341](https://github.com/marklogic/marklogic-data-hub/issues/341)
+- Scaffolding generation failed [\#338](https://github.com/marklogic/marklogic-data-hub/issues/338)
+- Investigating slow performance in loading modules on Windows [\#336](https://github.com/marklogic/marklogic-data-hub/issues/336)
+- Input Flow - Output URI replace configuration doesn't stick on windows [\#335](https://github.com/marklogic/marklogic-data-hub/issues/335)
+- Keep user database settings separate from hub database settings [\#325](https://github.com/marklogic/marklogic-data-hub/issues/325)
+- Create a non-admin user for doing hub stuff [\#200](https://github.com/marklogic/marklogic-data-hub/issues/200)
+
+## [v1.0.2](https://github.com/marklogic/marklogic-data-hub/tree/v1.0.2) (2016-11-22)
 [Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v1.0.1...v1.0.2)
 
 **Fixed bugs:**

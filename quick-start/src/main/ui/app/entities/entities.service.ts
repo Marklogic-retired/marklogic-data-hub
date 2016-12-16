@@ -62,6 +62,6 @@ export class EntitiesService {
   }
 
   private url(u: string): string {
-    return `/api/projects/${this.projectService.projectId}/${this.projectService.environment}${u}`;
+    return `/api/current-project${u}`;
   }
 }

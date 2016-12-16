@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnChanges } from '@angular/core';
 import { Job } from './job.model';
 import { JobService } from './jobs.service';
 import { JobListenerService } from './job-listener.service';
+import { SearchResponse } from '../search';
 
 import * as moment from 'moment';
 
@@ -12,9 +13,14 @@ import * as _ from 'lodash';
   templateUrl: './jobs.tpl.html',
   styleUrls: ['./jobs.style.scss'],
 })
-export class JobsComponent {
+export class JobsComponent implements OnChanges {
 
+  searchText: string = null;
+  activeFacets: any = {};
+  currentPage: number = 1;
+  pageLength: number = 10;
   loadingJobs: boolean = false;
+  searchResponse: SearchResponse;
   jobs: Array<Job>;
   showJobOutput: Job;
   runningFlows: Map<number, string> = new Map<number, string>();
@@ -24,6 +30,17 @@ export class JobsComponent {
 
     this.jobListener.jobStarted.subscribe(this.jobStarted);
     this.jobListener.jobFinished.subscribe(this.jobFinished);
+  }
+
+  ngOnChanges(changes: any) {
+    console.log('ngOnChanges: ' + JSON.stringify(changes));
+    if (changes.activeFacets && changes.activeFacets.currentValue) {
+      console.log(this.activeFacets);
+    }
+  }
+  pageChanged(page: number) {
+    this.currentPage = page;
+    this.getJobs();
   }
 
   private jobStarted = () => {
@@ -42,8 +59,16 @@ export class JobsComponent {
 
   private getJobs(): void {
     this.loadingJobs = true;
-    this.jobService.getJobs().subscribe(jobs => {
-      this.jobs = jobs;
+    this.jobService.getJobs(
+      this.searchText,
+      this.activeFacets,
+      this.currentPage,
+      this.pageLength
+    ).subscribe(response => {
+      this.searchResponse = response;
+      this.jobs = _.map(response.results, (result: any) => {
+        return result.content;
+      });
     },
     () => {},
     () => {
@@ -84,5 +109,13 @@ export class JobsComponent {
       return 'mdi-import';
     }
     return '';
+  }
+
+  updateFacets() {
+    this.getJobs();
+  }
+
+  render(o) {
+    return JSON.stringify(o);
   }
 }

@@ -3,7 +3,7 @@
   "server-type": "http",
   "root": "/",
   "group-name": "%%GROUP%%",
-  "port": %%mlTracePort%%,
+  "port": "%%mlTracePort%%",
   "modules-database": "%%mlModulesDbName%%",
   "content-database": "%%mlTraceDbName%%",
   "authentication": "digest",

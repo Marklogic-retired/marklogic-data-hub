@@ -54,7 +54,6 @@ public class EndToEndTestXqyXml extends HubTestBase {
 
     @AfterClass
     public static void teardown() throws IOException {
-        uninstallHub();
         FileUtils.deleteDirectory(projectDir);
     }
 

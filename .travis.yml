@@ -1,11 +1,21 @@
 language: java
 jdk:
   - oraclejdk8
+env:
+ - NODE_VERSION=6.1
 sudo: true
 before_install:
   - echo 'America/Los_Angeles' | sudo tee /etc/timezone
   - sudo dpkg-reconfigure --frontend noninteractive tzdata
 install:
+  - nvm install $NODE_VERSION
+  - nvm use $NODE_VERSION
+  - npm install -g typings
   - ./shared/dev-tasks/install-dependencies.sh
 script:
-  - '[ "${TRAVIS_SECURE_ENV_VARS}" = "false" ] && ./gradlew test || ./gradlew jshint'
+  - nvm use $NODE_VERSION
+  - if [[ $TRAVIS_SECURE_ENV_VARS == true ]]; then
+      ./gradlew check;
+    else
+      ./gradlew jshint;
+    fi

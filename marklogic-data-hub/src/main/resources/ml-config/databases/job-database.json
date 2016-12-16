@@ -49,6 +49,14 @@
       "collation": "",
       "range-value-positions": false,
       "invalid-values": "reject"
+    },
+    {
+      "scalar-type": "string",
+      "namespace-uri": "http://marklogic.com/spring-batch",
+      "localname": "status",
+      "collation": "http://marklogic.com/collation/",
+      "range-value-positions": false,
+      "invalid-values": "reject"
     }
   ],
   "path-namespace": [
@@ -62,6 +70,27 @@
       "scalar-type": "unsignedLong",
       "collation": "",
       "path-expression": "/msb:mlJobInstance/msb:jobExecutions/msb:jobExecution/msb:id",
+      "range-value-positions": false,
+      "invalid-values": "reject"
+    },
+    {
+      "scalar-type": "string",
+      "collation": "http://marklogic.com/collation/",
+      "path-expression": "/msb:mlJobInstance/msb:jobExecutions/msb:jobExecution/msb:jobParameters/msb:jobParameter[@key='entity']",
+      "range-value-positions": false,
+      "invalid-values": "reject"
+    },
+    {
+      "scalar-type": "string",
+      "collation": "http://marklogic.com/collation/",
+      "path-expression": "/msb:mlJobInstance/msb:jobExecutions/msb:jobExecution/msb:jobParameters/msb:jobParameter[@key='flow']",
+      "range-value-positions": false,
+      "invalid-values": "reject"
+    },
+    {
+      "scalar-type": "string",
+      "collation": "http://marklogic.com/collation/",
+      "path-expression": "/msb:mlJobInstance/msb:jobExecutions/msb:jobExecution/msb:jobParameters/msb:jobParameter[@key='flowType']",
       "range-value-positions": false,
       "invalid-values": "reject"
     }

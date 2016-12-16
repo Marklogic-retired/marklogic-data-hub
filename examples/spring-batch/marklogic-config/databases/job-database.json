@@ -49,6 +49,14 @@
       "collation": "",
       "range-value-positions": false,
       "invalid-values": "reject"
+    },
+    {
+      "scalar-type": "string",
+      "namespace-uri": "http://marklogic.com/spring-batch",
+      "localname": "status",
+      "collation": "http://marklogic.com/collation/",
+      "range-value-positions": false,
+      "invalid-values": "reject"
     }
   ],
   "path-namespace": [
