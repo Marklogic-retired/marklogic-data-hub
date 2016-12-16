@@ -16,7 +16,8 @@ public class HubProjectTest extends HubTestBase {
     private static File projectPath = new File("ye-olde-project");
 
     @BeforeClass
-    public static void setup() {
+    public static void setup() throws IOException {
+        FileUtils.deleteDirectory(projectPath);
     }
 
     @AfterClass

@@ -29,6 +29,9 @@ import com.marklogic.client.eval.ServerEvaluationCall;
 import com.marklogic.client.io.*;
 import com.marklogic.hub.deploy.util.HubDeployStatusListener;
 import com.marklogic.hub.flow.FlowCacheInvalidator;
+import com.marklogic.mgmt.ManageClient;
+import com.marklogic.mgmt.ManageConfig;
+import com.marklogic.mgmt.databases.DatabaseManager;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -269,6 +272,14 @@ public class HubTestBase {
 
     protected static void installStagingDoc(String uri, String doc) {
         stagingDocMgr.write(uri, new StringHandle(doc));
+    }
+
+    protected static void clearDb(String dbName) {
+        HubConfig hubConfig = getHubConfig();
+        ManageConfig config = new ManageConfig(hubConfig.host, 8002, hubConfig.username, hubConfig.password);
+        ManageClient client = new ManageClient(config);
+        DatabaseManager databaseManager = new DatabaseManager(client);
+        databaseManager.clearDatabase(dbName);
     }
 
     protected static void installStagingDoc(String uri, DocumentMetadataHandle meta, String doc) {

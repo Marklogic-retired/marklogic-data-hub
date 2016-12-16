@@ -39,6 +39,10 @@ class BaseTest extends Specification {
 
     DatabaseClient stagingClient() {
         HubConfig hubConfig = new HubConfig()
+        hubConfig.username = "admin";
+        hubConfig.password = "admin";
+        hubConfig.adminUsername = "admin";
+        hubConfig.adminPassword = "admin";
         return hubConfig.newStagingClient()
     }
 
@@ -59,6 +63,9 @@ class BaseTest extends Specification {
 
             mlUsername=admin
             mlPassword=admin
+            
+            mlManageUsername=admin
+            mlManagePassword=admin
 
             mlAdminUsername=admin
             mlAdminPassword=admin
