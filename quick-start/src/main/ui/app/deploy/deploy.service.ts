@@ -28,17 +28,17 @@ export class DeployService {
   }
 
   public validateUserModules() {
-    const url = `/api/projects/${this.projectService.projectId}/${this.projectService.environment}/validate-user-modules`;
+    const url = `/api/current-project/validate-user-modules`;
     this.http.post(url, '').subscribe(() => {});
   }
 
   public redeployUserModules() {
-    const url = `/api/projects/${this.projectService.projectId}/${this.projectService.environment}/reinstall-user-modules`;
+    const url = `/api/current-project/reinstall-user-modules`;
     return this.http.post(url, '');
   }
 
   private updateLastDeployed() {
-    const url = `/api/projects/${this.projectService.projectId}/${this.projectService.environment}/last-deployed`;
+    const url = `/api/current-project/last-deployed`;
     this.http.get(url).map((res: Response) => { return res.json(); }).subscribe((resp: any) => {
       this._lastDeployed = (resp.deployed) ? moment(resp.lastModified) : null;
     });

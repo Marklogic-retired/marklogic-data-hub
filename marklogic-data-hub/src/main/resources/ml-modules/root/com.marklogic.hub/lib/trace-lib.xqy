@@ -86,10 +86,31 @@ declare function trace:has-errors() as xs:boolean
   (map:get($current-trace-settings, "_has_errors"), fn:false())[1] eq fn:true()
 };
 
+declare function trace:set-job-id($job-id as xs:string)
+{
+  map:put($current-trace-settings, "job-id", $job-id)
+};
+
 declare function trace:init-trace($format as xs:string)
 {
   map:put($current-trace-settings, "data-format", $format)
 };
+
+declare function trace:reset-error-count()
+{
+  map:put($current-trace-settings, "error-count", 0)
+};
+
+declare function trace:increment-error-count()
+{
+  map:put($current-trace-settings, "error-count", (map:get($current-trace-settings, "error-count") + 1))
+};
+
+declare function trace:get-error-count()
+{
+  map:get($current-trace-settings, "error-count")
+};
+
 
 declare function trace:write-trace()
 {
@@ -99,6 +120,7 @@ declare function trace:write-trace()
       if ($format eq $FORMAT-JSON) then
         xdmp:to-json((
           map:new((
+            map:entry("jobId", map:get($current-trace-settings, "job-id")),
             map:entry("format", map:get($current-trace, "format")),
             map:entry("traceId", map:get($current-trace, "traceId")),
             map:entry("created", map:get($current-trace, "created")),
@@ -121,6 +143,7 @@ declare function trace:write-trace()
         ))
       else
         element trace {
+          element jobId { map:get($current-trace-settings, "job-id") },
           element format { map:get($current-trace, "format") },
           element traceId { map:get($current-trace, "traceId") },
           element created { map:get($current-trace, "created") },
@@ -211,6 +234,7 @@ declare function trace:error-trace(
   $error as element(error:error),
   $duration as xs:dayTimeDuration)
 {
+  let $_ := trace:increment-error-count()
   let $format :=
     let $o :=
       if ($input instance of document-node()) then
@@ -231,7 +255,12 @@ declare function trace:error-trace(
   let $plugin-map := map:new((
     map:entry("pluginModuleUri", $module-uri),
     map:entry("input", $input),
-    map:entry("error", $error),
+    map:entry("error",
+      if (map:get($current-trace-settings, "data-format") eq $FORMAT-JSON) then
+        $error/err:error-to-json(.)
+      else
+        $error
+    ),
     map:entry("duration", $duration)
   ))
   let $_ := map:put($current-trace, $plugin-type || "Plugin", $plugin-map)
@@ -295,6 +324,8 @@ declare function trace:_walk_json($nodes as node()* ,$o)
                 $n
             return
               map:put($o, $name, $unquoted)
+          else if ($name = "error") then
+            map:put($o, $name, $n)
           else
             let $_ := trace:_walk_json($n/node(), $oo)
             return
@@ -361,6 +392,7 @@ declare function trace:trace-to-json-slim($trace)
   let $o := json:object()
   let $_ := (
     map:put($o, "traceId", $trace/traceId/string()),
+    map:put($o, "jobId", $trace/jobId/string()),
     map:put($o, "created", $trace/created/string()),
     map:put($o, "hasError", $trace/hasError/xs:boolean(.)),
     map:put($o, "identifier", $trace/identifier/string()),

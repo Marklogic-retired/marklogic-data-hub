@@ -28,6 +28,30 @@
     {
       "scalar-type": "string",
       "namespace-uri": "",
+      "localname": "hasError",
+      "collation": "http://marklogic.com/collation/codepoint",
+      "range-value-positions": false,
+      "invalid-values": "reject"
+    },
+    {
+      "scalar-type": "string",
+      "namespace-uri": "",
+      "localname": "flowType",
+      "collation": "http://marklogic.com/collation/codepoint",
+      "range-value-positions": false,
+      "invalid-values": "reject"
+    },
+    {
+      "scalar-type": "string",
+      "namespace-uri": "",
+      "localname": "jobId",
+      "collation": "http://marklogic.com/collation/codepoint",
+      "range-value-positions": false,
+      "invalid-values": "reject"
+    },
+    {
+      "scalar-type": "string",
+      "namespace-uri": "",
       "localname": "traceId",
       "collation": "http://marklogic.com/collation/codepoint",
       "range-value-positions": false,
@@ -38,14 +62,6 @@
       "namespace-uri": "",
       "localname": "identifier",
       "collation": "http://marklogic.com/collation/codepoint",
-      "range-value-positions": false,
-      "invalid-values": "reject"
-    },
-    {
-      "scalar-type": "unsignedInt",
-      "namespace-uri": "http://marklogic.com/data-hub/debug",
-      "localname": "is-debugging-enabled",
-      "collation": "",
       "range-value-positions": false,
       "invalid-values": "reject"
     },

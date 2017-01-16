@@ -16,47 +16,49 @@
 package com.marklogic.hub;
 
 import com.marklogic.client.DatabaseClient;
-import com.marklogic.client.DatabaseClientFactory;
+import com.marklogic.client.datamovement.DataMovementManager;
+import com.marklogic.client.datamovement.JobTicket;
+import com.marklogic.client.datamovement.QueryBatcher;
 import com.marklogic.client.extensions.ResourceManager;
 import com.marklogic.client.extensions.ResourceServices.ServiceResult;
 import com.marklogic.client.extensions.ResourceServices.ServiceResultIterator;
 import com.marklogic.client.io.DOMHandle;
 import com.marklogic.client.util.RequestParameters;
-import com.marklogic.hub.flow.Flow;
-import com.marklogic.hub.flow.FlowComplexity;
-import com.marklogic.hub.flow.FlowType;
-import com.marklogic.hub.flow.SimpleFlow;
-import com.marklogic.spring.batch.hub.FlowConfig;
-import com.marklogic.spring.batch.hub.RunHarmonizeFlowConfig;
-import com.marklogic.spring.batch.hub.StagingConfig;
-import org.springframework.batch.core.Job;
-import org.springframework.batch.core.JobExecution;
-import org.springframework.batch.core.JobParameters;
-import org.springframework.batch.core.JobParametersBuilder;
-import org.springframework.batch.core.launch.JobLauncher;
-import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import com.marklogic.hub.collector.Collector;
+import com.marklogic.hub.collector.ServerCollector;
+import com.marklogic.hub.flow.*;
+import com.marklogic.hub.job.Job;
+import com.marklogic.hub.job.JobManager;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class FlowManager extends ResourceManager {
     private static final String HUB_NS = "http://marklogic.com/data-hub";
     private static final String NAME = "flow";
 
-    private DatabaseClient client;
+    private DatabaseClient stagingClient;
+    private DatabaseClient finalClient;
+    private DatabaseClient jobClient;
     private HubConfig hubConfig;
+    private JobManager jobManager;
+
+    private DataMovementManager dataMovementManager;
 
     public FlowManager(HubConfig hubConfig) {
         super();
         this.hubConfig = hubConfig;
-        this.client = hubConfig.newStagingClient();
-        this.client.init(NAME, this);
+        this.stagingClient = hubConfig.newStagingClient();
+        this.finalClient = hubConfig.newFinalClient();
+        this.jobClient = hubConfig.newJobDbClient();
+        this.jobManager = new JobManager(this.jobClient);
+        this.dataMovementManager = this.stagingClient.newDataMovementManager();
+        this.stagingClient.init(NAME, this);
     }
 
     /**
@@ -103,8 +105,7 @@ public class FlowManager extends ResourceManager {
      * @return the flow
      */
     public Flow getFlow(String entityName, String flowName) {
-        Flow flow = getFlow(entityName, flowName, null);
-        return flow;
+        return getFlow(entityName, flowName, null);
     }
 
     public Flow getFlow(String entityName, String flowName, FlowType flowType) {
@@ -124,27 +125,8 @@ public class FlowManager extends ResourceManager {
         return flowFromXml(parent.getDocumentElement());
     }
 
-    private ConfigurableApplicationContext buildApplicationContext(Flow flow, JobStatusListener statusListener) {
-        AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
-        ctx.register(StagingConfig.class);
-        ctx.register(FlowConfig.class);
-        ctx.register(RunHarmonizeFlowConfig.class);
-        ctx.getBeanFactory().registerSingleton("hubConfig", hubConfig);
-        ctx.getBeanFactory().registerSingleton("flow", flow);
-        ctx.getBeanFactory().registerSingleton("statusListener", statusListener);
-        ctx.refresh();
-        return ctx;
-    }
-
-    private JobParameters buildJobParameters(Flow flow, int batchSize, int threadCount) {
-        JobParametersBuilder jpb = new JobParametersBuilder();
-        jpb.addLong("batchSize", Integer.toUnsignedLong(batchSize));
-        jpb.addLong("threadCount", Integer.toUnsignedLong(threadCount));
-        jpb.addString("uid", UUID.randomUUID().toString());
-        jpb.addString("flowType", flow.getType().toString());
-        jpb.addString("entity", flow.getEntityName());
-        jpb.addString("flow", flow.getName());
-        return jpb.toJobParameters();
+    public JobTicket runFlow(Flow flow, int batchSize, int threadCount, JobStatusListener statusListener) {
+        return runFlow(flow, batchSize, threadCount, HubDatabase.STAGING, HubDatabase.FINAL, null, statusListener);
     }
 
     /**
@@ -155,20 +137,83 @@ public class FlowManager extends ResourceManager {
      * @param statusListener - the callback to receive job status updates
      * @return a JobExecution instance
      */
-    public JobExecution runFlow(Flow flow, int batchSize, int threadCount, JobStatusListener statusListener) {
-        JobExecution result = null;
-        try {
-            ConfigurableApplicationContext ctx = buildApplicationContext(flow, statusListener);
+    public JobTicket runFlow(Flow flow, int batchSize, int threadCount, HubDatabase srcDb, HubDatabase destDb, Map<String, Object> options, JobStatusListener statusListener) {
 
-            JobParameters params = buildJobParameters(flow, batchSize, threadCount);
-            JobLauncher launcher = ctx.getBean(JobLauncher.class);
-            Job job = ctx.getBean(Job.class);
-            result = launcher.run(job, params);
-        } catch (Exception e) {
-            e.printStackTrace();
+        Collector c = flow.getCollector();
+        if (c instanceof ServerCollector) {
+            ((ServerCollector)c).setClient(stagingClient);
         }
 
-        return result;
+        AtomicLong successfulEvents = new AtomicLong(0);
+        AtomicLong failedEvents = new AtomicLong(0);
+        AtomicLong successfulBatches = new AtomicLong(0);
+        AtomicLong failedBatches = new AtomicLong(0);
+
+        Vector<String> uris = c.run(options);
+
+        DatabaseClient srcClient;
+        if (srcDb.equals(HubDatabase.STAGING)) {
+            srcClient = this.stagingClient;
+        }
+        else {
+            srcClient = this.finalClient;
+        }
+        String targetDatabase;
+        if (destDb.equals(HubDatabase.STAGING)) {
+            targetDatabase = hubConfig.stagingDbName;
+        }
+        else {
+            targetDatabase = hubConfig.finalDbName;
+        }
+
+        FlowRunner flowRunner = new FlowRunner(srcClient, targetDatabase, flow);
+        AtomicInteger count = new AtomicInteger(0);
+        ArrayList<String> errorMessages = new ArrayList<>();
+        QueryBatcher queryBatcher = dataMovementManager.newQueryBatcher(uris.iterator())
+            .withBatchSize(batchSize)
+            .withThreadCount(threadCount)
+            .onUrisReady(batch -> {
+                try {
+                    RunFlowResponse response = flowRunner.run(batch.getJobTicket().getJobId(), batch.getItems(), options);
+                    failedEvents.addAndGet(response.errorCount);
+                    successfulEvents.addAndGet(response.totalCount - response.errorCount);
+                    successfulBatches.addAndGet(1);
+                    count.addAndGet(1);
+                }
+                catch(Exception e) {
+                    errorMessages.add(e.toString());
+                }
+            })
+            .onQueryFailure(failure -> {
+               failedBatches.addAndGet(1);
+               failedEvents.addAndGet(batchSize);
+            });
+        JobTicket jobTicket = dataMovementManager.startJob(queryBatcher);
+        jobManager.saveJob(Job.withFlow(flow)
+            .withJobId(jobTicket.getJobId())
+        );
+
+        new Thread(() -> {
+            queryBatcher.awaitCompletion();
+
+            if (statusListener != null) {
+                statusListener.onJobFinished();
+            }
+            dataMovementManager.stopJob(queryBatcher);
+
+            // store the thing in MarkLogic
+            Job job = Job.withFlow(flow)
+                .withJobId(jobTicket.getJobId())
+                .setCounts(successfulEvents.get(), failedEvents.get(), successfulBatches.get(), failedBatches.get())
+                .withEndTime(new Date());
+
+            if (errorMessages.size() > 0) {
+                job.withJobOutput(String.join("\n", errorMessages));
+            }
+            jobManager.saveJob(job);
+        }).start();
+
+        return jobTicket;
     }
 
     /**
@@ -185,7 +230,7 @@ public class FlowManager extends ResourceManager {
             complexity = elements.item(0).getTextContent();
         }
 
-        if (complexity.equals(FlowComplexity.SIMPLE.toString())) {
+        if (complexity != null && complexity.equals(FlowComplexity.SIMPLE.toString())) {
             f = new SimpleFlow(doc);
         }
 

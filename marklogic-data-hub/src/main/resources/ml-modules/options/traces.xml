@@ -5,19 +5,24 @@
     </cts:collection-query>
   </additional-query>
   <constraint name="flowType">
-    <value>
+    <range type="xs:string" collation="http://marklogic.com/collation/codepoint">
       <element name="flowType" ns="" />
-    </value>
+    </range>
   </constraint>
-  <constraint name="flowFormat">
-    <value>
-      <element name="format" ns="" />
-    </value>
+  <constraint name="jobId">
+    <range type="xs:string" collation="http://marklogic.com/collation/codepoint" facet="false">
+      <element name="jobId" ns="" />
+    </range>
   </constraint>
   <constraint name="identifier">
-    <value>
+    <range type="xs:string" collation="http://marklogic.com/collation/codepoint" facet="false">
       <element name="identifier" ns="" />
-    </value>
+    </range>
+  </constraint>
+  <constraint name="hasError">
+    <range type="xs:string" collation="http://marklogic.com/collation/codepoint">
+      <element name="hasError" ns="" />
+    </range>
   </constraint>
   <operator name="sort">
     <state name="date-desc">

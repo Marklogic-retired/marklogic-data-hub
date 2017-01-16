@@ -1,112 +1,93 @@
+/*
+ * Copyright 2012-2016 MarkLogic Corporation
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.marklogic.quickstart.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.client.DatabaseClient;
-import com.marklogic.client.MarkLogicIOException;
 import com.marklogic.client.document.GenericDocumentManager;
 import com.marklogic.client.document.ServerTransform;
-import com.marklogic.client.helper.LoggingObject;
 import com.marklogic.client.io.Format;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.query.QueryManager;
 import com.marklogic.client.query.RawCombinedQueryDefinition;
 import com.marklogic.client.query.StructuredQueryBuilder;
 import com.marklogic.client.query.StructuredQueryDefinition;
+import com.marklogic.hub.util.PerformanceLogger;
+import com.marklogic.quickstart.model.TraceQuery;
+import com.marklogic.quickstart.util.QueryHelper;
 
-import javax.xml.XMLConstants;
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamWriter;
-import java.io.ByteArrayOutputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 
-public class TraceService extends LoggingObject {
+public class TraceService extends SearchableService {
 
     private static final String SEARCH_OPTIONS_NAME = "traces";
-    private static final String SEARCH_API_NS = "http://marklogic.com/appservices/search";
 
-    private DatabaseClient databaseClient;
     private QueryManager queryMgr;
     private GenericDocumentManager docMgr;
 
     public TraceService(DatabaseClient client) {
-        this.databaseClient = client;
+        DatabaseClient databaseClient = client;
         this.queryMgr = databaseClient.newQueryManager();
         this.docMgr = databaseClient.newDocumentManager();
     }
 
-    private XMLStreamWriter makeSerializer(OutputStream out) {
-        XMLOutputFactory factory = XMLOutputFactory.newInstance();
-        factory.setProperty(XMLOutputFactory.IS_REPAIRING_NAMESPACES, true);
 
-        try {
-            XMLStreamWriter serializer = factory.createXMLStreamWriter(out, "UTF-8");
-
-            serializer.setDefaultNamespace(SEARCH_API_NS);
-            serializer.setPrefix("xs",  XMLConstants.W3C_XML_SCHEMA_NS_URI);
-
-            return serializer;
-        } catch (Exception e) {
-            throw new MarkLogicIOException(e);
-        }
-    }
-
-    private String serializeQuery(StructuredQueryBuilder sb, StructuredQueryBuilder.AndQuery query, String sortOrder) {
-        String result;
-        try {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            XMLStreamWriter serializer = makeSerializer(baos);
-
-            serializer.writeStartElement(SEARCH_API_NS, "search");
-            serializer.writeStartElement(SEARCH_API_NS, "query");
-
-
-            for (String prefix : sb.getNamespaces().getAllPrefixes()) {
-                serializer.writeNamespace(prefix, sb.getNamespaces().getNamespaceURI(prefix));
-            }
-
-            query.innerSerialize(serializer);
-
-            serializer.writeStartElement("operator-state");
-            serializer.writeStartElement("operator-name");
-            serializer.writeCharacters("sort");
-            serializer.writeEndElement();
-
-            serializer.writeStartElement("state-name");
-            serializer.writeCharacters(sortOrder);
-            serializer.writeEndElement();
-
-            serializer.writeEndElement();
-
-            serializer.writeEndElement();
-            serializer.writeEndElement();
-            result = baos.toString("UTF-8");
-        } catch (Exception e) {
-            throw new MarkLogicIOException(e);
-        }
-        return result;
-    }
-
-    public StringHandle getTraces(String query, long start, long count) {
-        queryMgr.setPageLength(count);
+    public StringHandle getTraces(TraceQuery traceQuery) {
+        long startTime = PerformanceLogger.monitorTimeInsideMethod();
+        queryMgr.setPageLength(traceQuery.count);
 
         StructuredQueryBuilder sb = queryMgr.newStructuredQueryBuilder(SEARCH_OPTIONS_NAME);
 
         ArrayList<StructuredQueryDefinition> queries = new ArrayList<>();
-        if (query != null && !query.equals("")) {
-            queries.add(sb.term(query));
+        if (traceQuery.query != null && !traceQuery.query.equals("")) {
+            queries.add(sb.term(traceQuery.query));
+        }
+
+        StructuredQueryDefinition def = addRangeConstraint(sb, "identifier", traceQuery.identifier);
+        if (def != null) {
+            queries.add(def);
+        }
+
+        def = addRangeConstraint(sb, "jobId", traceQuery.jobId);
+        if (def != null) {
+            queries.add(def);
+        }
+
+        def = addRangeConstraint(sb, "hasError", Boolean.toString(traceQuery.hasError));
+        if (def != null) {
+            queries.add(def);
+        }
+
+        def = addRangeConstraint(sb, "flowType", traceQuery.flowType);
+        if (def != null) {
+            queries.add(def);
         }
 
         StructuredQueryBuilder.AndQuery sqd = sb.and(queries.toArray(new StructuredQueryDefinition[0]));
 
         String sort = "date-desc";
-        String searchXml = serializeQuery(sb, sqd, sort);
+        String searchXml = QueryHelper.serializeQuery(sb, sqd, sort);
 
+        logger.info(searchXml);
         RawCombinedQueryDefinition querydef = queryMgr.newRawCombinedQueryDefinition(new StringHandle(searchXml), SEARCH_OPTIONS_NAME);
         querydef.setResponseTransform(new ServerTransform("trace-search"));
         StringHandle sh = new StringHandle();
         sh.setFormat(Format.JSON);
-        StringHandle results = queryMgr.search(querydef, sh, start);
+        StringHandle results = queryMgr.search(querydef, sh, traceQuery.start);
+        PerformanceLogger.logTimeInsideMethod(startTime, "TraceService.getTraces()");
         return results;
     }
 

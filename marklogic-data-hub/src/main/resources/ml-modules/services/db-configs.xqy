@@ -39,16 +39,17 @@ declare option xdmp:mapping "false";
  : return all entities.
  :
  :)
-declare function get(
+declare function post(
   $context as map:map,
-  $params  as map:map
+  $params  as map:map,
+  $input   as document-node()*
   ) as document-node()*
 {
   debug:dump-env("GET ENTITY(s)"),
 
   perf:log('/v1/resources/entity:get', function() {
     document {
-      hent:dump-indexes()
+      hent:dump-indexes($input)
     }
   })
 };

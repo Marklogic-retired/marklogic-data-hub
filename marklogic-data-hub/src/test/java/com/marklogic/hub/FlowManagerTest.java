@@ -48,6 +48,10 @@ public class FlowManagerTest extends HubTestBase {
     public static void setup() throws IOException {
         XMLUnit.setIgnoreWhitespace(true);
 
+        clearDb(HubConfig.DEFAULT_STAGING_NAME);
+        clearDb(HubConfig.DEFAULT_FINAL_NAME);
+        clearDb(HubConfig.DEFAULT_MODULES_DB_NAME);
+
         installHub();
 
         DocumentMetadataHandle meta = new DocumentMetadataHandle();
@@ -72,7 +76,6 @@ public class FlowManagerTest extends HubTestBase {
 
     @AfterClass
     public static void teardown() throws IOException {
-        uninstallHub();
     }
 
     @After

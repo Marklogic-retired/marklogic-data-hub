@@ -446,8 +446,7 @@ declare function flow:run-collector(
         (),
         $ex,
         xdmp:elapsed-time() - $before
-      ),
-      xdmp:rethrow()
+      )
     }
   let $_ :=
     trace:plugin-trace(
@@ -474,11 +473,13 @@ declare function flow:run-collector(
  : @return - nothing
  :)
 declare function flow:run-flow(
+  $job-id as xs:string,
   $flow as element(hub:flow),
   $identifier as xs:string,
+  $target-database as xs:unsignedLong,
   $options as map:map) as empty-sequence()
 {
-  flow:run-flow($flow, $identifier, (), $options)
+  flow:run-flow($job-id, $flow, $identifier, (), $target-database, $options)
 };
 
 declare function flow:run-plugins(
@@ -524,18 +525,21 @@ declare function flow:run-plugins(
 };
 
 declare function flow:run-flow(
+  $job-id as xs:string,
   $flow as element(hub:flow),
   $identifier as xs:string,
   $content as item()?,
+  $target-database as xs:unsignedLong,
   $options as map:map) as empty-sequence()
 {
   (: assert that we are in query mode :)
   let $_ts as xs:unsignedLong := xdmp:request-timestamp()
+  let $_ := trace:set-job-id($job-id)
   let $envelope := flow:run-plugins($flow, $identifier, $content, $options)
   let $_ :=
     for $writer in $flow/hub:writer
     return
-      flow:run-writer($writer, $identifier, $envelope, $flow/hub:type, $options)
+      flow:run-writer($writer, $identifier, $envelope, $flow/hub:type, $target-database, $options)
   let $_ := trace:write-trace()
   return
     ()
@@ -562,7 +566,7 @@ declare function flow:make-envelope(
         map:put($o, "headers", $headers),
         map:put($o, "triples", $triples),
         map:put($o, "instance",
-          if ($content castable as map:map) then
+          if ($content instance of map:map and map:keys($content) = "$type") then
             flow:instance-to-canonical-json($content)
           else
             $content
@@ -570,7 +574,7 @@ declare function flow:make-envelope(
         map:put($o, "attachments",
           let $content := map:get($map, "content")
           return
-            if ($content castable as map:map) then
+            if ($content instance of map:map and map:keys($content) = "$attachments") then
               map:get($content, "$attachments")
             else
               ()
@@ -591,7 +595,7 @@ declare function flow:make-envelope(
         {
           let $content := map:get($map, "content")
           return
-            if ($content castable as map:map) then
+            if ($content instance of map:map and map:keys($content) = "$type") then
               flow:instance-to-canonical-xml($content)
             else
               $content
@@ -601,7 +605,7 @@ declare function flow:make-envelope(
         {
           let $content := map:get($map, "content")
           return
-            if ($content castable as map:map) then
+            if ($content instance of map:map and map:keys($content) = "$attachments") then
               map:get($content, "$attachments")
             else
               ()
@@ -827,8 +831,7 @@ declare function flow:run-plugin(
           $trace-input,
           $ex,
           xdmp:elapsed-time() - $before
-        ),
-        xdmp:rethrow()
+        )
       }
     let $duration := xdmp:elapsed-time() - $before
     let $resp :=
@@ -844,9 +847,8 @@ declare function flow:run-plugin(
     let $resp :=
       typeswitch($resp)
         case object-node() | json:object return
-          (: map:map lands here too :)
-          (: map:map is ES response type :)
-          if ($resp castable as map:map) then
+          (: object with $type key is ES response type :)
+          if ($resp instance of map:map and map:keys($resp) = "$type") then
             $resp
           else if ($data-format = $XML) then
             json:transform-from-json($resp, json:config("custom"))
@@ -895,6 +897,7 @@ declare function flow:run-writer(
   $identifier as xs:string,
   $envelope as item(),
   $flow-type as xs:string,
+  $target-database as xs:unsignedLong,
   $options as map:map)
 {
   let $module-uri as xs:string := $writer/@module
@@ -921,7 +924,7 @@ declare function flow:run-writer(
       )),
       map:new((
         map:entry("isolation", "different-transaction"),
-        map:entry("database", xdmp:database($config:FINAL-DATABASE)),
+        map:entry("database", $target-database),
         map:entry("transactionMode", "update-auto-commit")
       )))
     }
@@ -935,8 +938,7 @@ declare function flow:run-writer(
         $envelope,
         $ex,
         xdmp:elapsed-time() - $before
-      ),
-      xdmp:rethrow()
+      )
     }
   let $duration := xdmp:elapsed-time() - $before
   let $is-xml :=

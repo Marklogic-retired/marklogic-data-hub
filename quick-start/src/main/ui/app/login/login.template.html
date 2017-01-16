@@ -43,6 +43,7 @@
               [ngClass]="{'collapsed': !showFolderBrowser}"
               class="shrink-me shrinky"
               start-path='.'
+              absoluteOnly="true"
               (folderChosen)="folderClicked($event)">
             </app-folder-browser>
           </div>
@@ -79,6 +80,11 @@
                     <mdl-textfield floating-label label="Staging Appserver Port" type="number" name="stagingPort" [(ngModel)]="initSettings.stagingPort" required="required"></mdl-textfield>
                     <mdl-textfield floating-label label="Staging Database Name" type="text" name="stagingDbName" [(ngModel)]="initSettings.stagingDbName" required="required"></mdl-textfield>
                     <mdl-textfield floating-label label="Staging Forests Per Host" type="number" name="stagingForestsPerHost" [(ngModel)]="initSettings.stagingForestsPerHost" required="required"></mdl-textfield>
+                    <div class="auth">
+                      <div><label>Authentication Method</label></div>
+                      <mdl-radio name="stagingAuthMethod" [(ngModel)]="initSettings.stagingAuthMethod" value="digest">digest</mdl-radio>
+                      <mdl-radio name="stagingAuthMethod" [(ngModel)]="initSettings.stagingAuthMethod" value="basic">basic</mdl-radio>
+                    </div>
                   </section>
                   <h3 class="md-primary">Final</h3>
                   <section class="sub-section" layout="column">
@@ -86,6 +92,11 @@
                     <mdl-textfield floating-label label="Final Appserver Port" type="number" name="finalPort" [(ngModel)]="initSettings.finalPort" required="required"></mdl-textfield>
                     <mdl-textfield floating-label label="Final Database Name" type="text" name="finalDbName" [(ngModel)]="initSettings.finalDbName" required="required"></mdl-textfield>
                     <mdl-textfield floating-label label="Final Forests Per Host" type="number" name="finalForestsPerHost" [(ngModel)]="initSettings.finalForestsPerHost" required="required"></mdl-textfield>
+                    <div class="auth">
+                      <div><label>Authentication Method</label></div>
+                      <mdl-radio name="finalAuthMethod" [(ngModel)]="initSettings.finalAuthMethod" value="digest">digest</mdl-radio>
+                      <mdl-radio name="finalAuthMethod" [(ngModel)]="initSettings.finalAuthMethod" value="basic">basic</mdl-radio>
+                    </div>
                   </section>
                   <h3 class="md-primary">Trace</h3>
                   <section class="sub-section" layout="column">
@@ -93,6 +104,11 @@
                     <mdl-textfield floating-label label="Trace Appserver Port" type="number" name="tracePort" [(ngModel)]="initSettings.tracePort" required="required"></mdl-textfield>
                     <mdl-textfield floating-label label="Trace Database Name" type="text" name="traceDbName" [(ngModel)]="initSettings.traceDbName" required="required"></mdl-textfield>
                     <mdl-textfield floating-label label="Trace Forests Per Host" type="number" name="traceForestsPerHost" [(ngModel)]="initSettings.traceForestsPerHost" required="required"></mdl-textfield>
+                    <div class="auth">
+                      <div><label>Authentication Method</label></div>
+                      <mdl-radio name="traceAuthMethod" [(ngModel)]="initSettings.traceAuthMethod" value="digest">digest</mdl-radio>
+                      <mdl-radio name="traceAuthMethod" [(ngModel)]="initSettings.traceAuthMethod" value="basic">basic</mdl-radio>
+                    </div>
                   </section>
                   <h3 class="md-primary">Job</h3>
                   <section class="sub-section" layout="column">
@@ -100,17 +116,17 @@
                     <mdl-textfield floating-label label="Job Appserver Port" type="number" name="jobPort" [(ngModel)]="initSettings.jobPort" required="required"></mdl-textfield>
                     <mdl-textfield floating-label label="Job Database Name" type="text" name="jobDbName" [(ngModel)]="initSettings.jobDbName" required="required"></mdl-textfield>
                     <mdl-textfield floating-label label="Job Forests Per Host" type="number" name="jobForestsPerHost" [(ngModel)]="initSettings.jobForestsPerHost" required="required"></mdl-textfield>
+                    <div class="auth">
+                      <div><label>Authentication Method</label></div>
+                      <mdl-radio name="jobAuthMethod" [(ngModel)]="initSettings.jobAuthMethod" value="digest">digest</mdl-radio>
+                      <mdl-radio name="jobAuthMethod" [(ngModel)]="initSettings.jobAuthMethod" value="basic">basic</mdl-radio>
+                    </div>
                   </section>
                   <h3 class="md-primary">Other</h3>
                   <section class="sub-section" layout="column">
                     <mdl-textfield floating-label label="Modules Database Name" type="text" name="modulesDbName" [(ngModel)]="initSettings.modulesDbName" required="required"></mdl-textfield>
                     <mdl-textfield floating-label label="Triggers Database Port" type="text" name="triggersDbName" [(ngModel)]="initSettings.triggersDbName" required="required"></mdl-textfield>
                     <mdl-textfield floating-label label="Schemas Database Name" type="text" name="schemasDbName" [(ngModel)]="initSettings.schemasDbName" required="required"></mdl-textfield>
-                    <div>
-                      <div><label>Authentication Method</label></div>
-                      <mdl-radio name="authMethod" [(ngModel)]="initSettings.authMethod" value="digest">digest</mdl-radio>
-                      <mdl-radio name="authMethod" [(ngModel)]="initSettings.authMethod" value="basic">basic</mdl-radio>
-                    </div>
                   </section>
                 </div>
               </div>
@@ -176,7 +192,7 @@
                 <div class="center-text" [hidden]="!loggingIn">
                   <mdl-spinner single-color active></mdl-spinner>
                 </div>
-                <div class="error" *ngIf="loginError">Invalid username or password</div>
+                <div class="error" *ngIf="loginError">{{loginError}}</div>
                 <mdl-textfield label="MarkLogic User Name" id="username" name="username" type="text" [(ngModel)]="loginInfo.username" required="required" floating-label></mdl-textfield>
                 <mdl-textfield label="MarkLogic Password" name="password" type="password" [(ngModel)]="loginInfo.password" required="required" floating-label></mdl-textfield>
                 <div layout="row" layout-align="end center" class="init-buttons">
@@ -196,6 +212,38 @@
             <div class="center-text">
               <mdl-spinner single-color active></mdl-spinner>
             </div>
+          </section>
+        </section>
+      </div>
+
+      <div id="RequiresUpdateUpdateTab" class="tab-content" [hidden]="!tabs.RequiresUpdate">
+        <section layout="row" layout-align="center center">
+          <section flex layout="column" layout-align="center center" *ngIf="hubUpdating">
+            <h3>Updating Your Project...</h3>
+            <div class="center-text">
+              <mdl-spinner single-color active></mdl-spinner>
+            </div>
+          </section>
+          <section flex layout="column" layout-align="center center" *ngIf="!hubUpdateFailed && !hubUpdating">
+            <h3 *ngIf="currentEnvironment">Congratulations on updating to version {{currentEnvironment.runningVersion}}.</h3>
+            <p>
+              In order to continue we need to update a few things.
+            </p>
+            <button mdl-button mdl-button-type="raised" mdl-colored="primary" mdl-ripple (click)="updateProject()">Update It</button>
+
+            <div class="manual">
+              <p>Curious about what that button does? Prefer to do it yourself?</p>
+              <p>We have a wiki page that describes the changes necessary. You can poke the button for an automatic update or you can do it yourself.</p>
+              <a target="_blank" [href]="hubUpdateUrl()">How to update a Hub Project</a>
+            </div>
+          </section>
+          <section flex layout="column" layout-align="center center" *ngIf="hubUpdateFailed && !hubUpdating">
+            <h3>Automatic Hub Update Failed!</h3>
+            <p *ngIf="currentEnvironment" class="error">
+              Sorry. We failed to update you to version <span class="version">{{currentEnvironment.runningVersion}}</span>.
+            </p>
+            <p>Go read the wiki page that describes the changes necessary and try them manually.</p>
+            <a target="_blank" [href]="hubUpdateUrl()">How to update a Hub Project</a>
           </section>
         </section>
       </div>

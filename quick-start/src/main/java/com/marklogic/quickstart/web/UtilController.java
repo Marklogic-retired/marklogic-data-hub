@@ -1,5 +1,21 @@
+/*
+ * Copyright 2012-2016 MarkLogic Corporation
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.marklogic.quickstart.web;
 
+import com.marklogic.quickstart.EnvironmentAware;
 import com.marklogic.quickstart.model.SearchPathModel;
 import com.marklogic.quickstart.util.FileUtil;
 import org.springframework.stereotype.Controller;
@@ -18,24 +34,29 @@ import java.util.Map;
 
 @Controller
 @RequestMapping("/api/utils")
-public class UtilController extends BaseController {
+public class UtilController extends EnvironmentAware {
 
 	@RequestMapping(value = "/searchPath", method = RequestMethod.GET)
 	@ResponseBody
-	public Map<String, Object> searchPath(@RequestParam String path) {
+	public Map<String, Object> searchPath(@RequestParam String path, @RequestParam boolean absolute) {
 		logger.debug("Search Path:" + path);
-		List<SearchPathModel> paths = new ArrayList<SearchPathModel>();
+		List<SearchPathModel> paths = new ArrayList<>();
 		String currentPath;
 
 		if (path == null || path.length() == 0) {
 		    currentPath = "/";
 			File[] roots = File.listRoots();
-			for (int i = 0; i < roots.length; i++) {
-				paths.add(new SearchPathModel(roots[i].getAbsolutePath(), roots[i].getAbsolutePath()));
-			}
+            for (File root : roots) {
+                paths.add(new SearchPathModel(root.getAbsolutePath(), root.getAbsolutePath()));
+            }
 		}
 		else {
-		    currentPath = Paths.get(path).toAbsolutePath().normalize().toString();
+		    if (absolute) {
+                currentPath = Paths.get(path).toAbsolutePath().normalize().toString();
+            }
+            else {
+                currentPath = path;
+            }
 			if (!path.equals("/")) {
 				path = path + java.io.File.separator;
 				Path parent = Paths.get(path).toAbsolutePath().normalize().getParent();
@@ -51,7 +72,7 @@ public class UtilController extends BaseController {
 			}
 		}
 
-		Map<String, Object> result = new HashMap<String, Object>();
+		Map<String, Object> result = new HashMap<>();
 		result.put("currentPath", currentPath);
 		result.put("folders", paths);
 		return result;

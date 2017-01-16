@@ -1,8 +1,49 @@
 # Change Log
 
-## [v2.0.1-alpha.1](https://github.com/marklogic/marklogic-data-hub/tree/v2.0.1-alpha.1)
+## [Unreleased](https://github.com/marklogic/marklogic-data-hub/tree/v2.0.0-alpha.2)
 
-[Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v1.0.2...v2.0.1-alpha.1)
+[Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v1.1.0...v2.0.0-alpha.2)
+
+**Implemented enhancements:**
+
+- Allow exernal data to be passed in to a flow's options-map [\#334](https://github.com/marklogic/marklogic-data-hub/issues/334)
+- Integrate with Entity Services [\#283](https://github.com/marklogic/marklogic-data-hub/issues/283)
+- show traces for a given flow [\#277](https://github.com/marklogic/marklogic-data-hub/issues/277)
+
+**Fixed bugs:**
+
+- Returning json:object\(\) isn't invoking ES serialization in flow [\#345](https://github.com/marklogic/marklogic-data-hub/issues/345)
+
+**Closed issues:**
+
+- "No message available" when following Quick Start [\#352](https://github.com/marklogic/marklogic-data-hub/issues/352)
+- Add job-id to harmonized documents [\#351](https://github.com/marklogic/marklogic-data-hub/issues/351)
+- Entity modeling rendering incorrectly [\#347](https://github.com/marklogic/marklogic-data-hub/issues/347)
+
+## [v1.1.0](https://github.com/marklogic/marklogic-data-hub/tree/v1.1.0) (2016-12-16)
+[Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v2.0.0-alpha.1...v1.1.0)
+
+**Implemented enhancements:**
+
+- Detect when running upgraded hub [\#322](https://github.com/marklogic/marklogic-data-hub/issues/322)
+
+**Fixed bugs:**
+
+- if MarkLogic is not started, login reports "invalid username or password" [\#343](https://github.com/marklogic/marklogic-data-hub/issues/343)
+- Need gradle variables for Auth method for final, staging, etc [\#340](https://github.com/marklogic/marklogic-data-hub/issues/340)
+- Pagination not implemented on jobs page [\#320](https://github.com/marklogic/marklogic-data-hub/issues/320)
+
+**Closed issues:**
+
+- Directory slashes when typing in paths [\#341](https://github.com/marklogic/marklogic-data-hub/issues/341)
+- Scaffolding generation failed [\#338](https://github.com/marklogic/marklogic-data-hub/issues/338)
+- Investigating slow performance in loading modules on Windows [\#336](https://github.com/marklogic/marklogic-data-hub/issues/336)
+- Input Flow - Output URI replace configuration doesn't stick on windows [\#335](https://github.com/marklogic/marklogic-data-hub/issues/335)
+- Keep user database settings separate from hub database settings [\#325](https://github.com/marklogic/marklogic-data-hub/issues/325)
+- Create a non-admin user for doing hub stuff [\#200](https://github.com/marklogic/marklogic-data-hub/issues/200)
+
+## [v2.0.0-alpha.1](https://github.com/marklogic/marklogic-data-hub/tree/v2.0.0-alpha.1) (2016-11-30)
+[Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v1.0.2...v2.0.0-alpha.1)
 
 **Implemented enhancements:**
 

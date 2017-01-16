@@ -24,28 +24,41 @@ export class Point {
   }
 
   isOnLine(line: Line) {
-    if (!this.colinear(line.src, line.dst, this)) {
-      return false;
+    const SELECTION_FUZZINESS = 3;
+    let leftPoint: Point;
+    let rightPoint: Point;
+
+    // Normalize start/end to left right to make the offset calc simpler.
+    if (line.src.x <= line.dst.x) {
+      leftPoint = line.src;
+      rightPoint = line.dst;
+    } else {
+      leftPoint = line.dst;
+      rightPoint = line.src;
     }
 
-    // Check x is between
-    // Check coincident case
-    if (line.src.x !== line.dst.x && !this.between(line.src.x, this.x, line.dst.x)) {
-      return false;
-    }
+    // If point is out of bounds, no need to do further checks.
+    if (this.x + SELECTION_FUZZINESS < leftPoint.x || rightPoint.x < this.x - SELECTION_FUZZINESS)
+        return false;
+    else if (this.y + SELECTION_FUZZINESS < Math.min(leftPoint.y, rightPoint.y) || Math.max(leftPoint.y, rightPoint.y) < this.y - SELECTION_FUZZINESS)
+        return false;
 
-    // Check y is between
-    return this.between(line.src.y, this.y, line.dst.y);
-  }
+    let deltaX = rightPoint.x - leftPoint.x;
+    let deltaY = rightPoint.y - leftPoint.y;
 
-  private colinear(p1: Point, p2: Point, p3: Point) {
-    let left = Math.sqrt(Math.abs((p2.x - p1.x) * (p3.y - p1.y)));
-    let right = Math.sqrt(Math.abs((p3.x - p1.x) * (p2.y - p1.y)));
-    return Math.abs(left - right) <= 5;
-  }
+    // If the line is straight, the earlier boundary check is enough to determine that the point is on the line.
+    // Also prevents division by zero exceptions.
+    if (deltaX == 0 || deltaY == 0)
+        return true;
 
-  private between(a: number, b: number, c: number) {
-    return (a <= b && b <= c) || (c <= b && b <= a);
+    let slope        = deltaY / deltaX;
+    let offset       = leftPoint.y - leftPoint.x * slope;
+    let calculatedY  = this.x * slope + offset;
+
+    // Check calculated Y matches the points Y coord with some easing.
+    let lineContains: boolean = this.y - SELECTION_FUZZINESS <= calculatedY && calculatedY <= this.y + SELECTION_FUZZINESS;
+
+    return lineContains;
   }
 
   distance(p: Point): number {

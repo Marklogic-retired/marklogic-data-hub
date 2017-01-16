@@ -131,7 +131,9 @@ export class Entity {
       'filename': null,
       'hubUi': {
         x: 100,
-        y: 100
+        y: 100,
+        width: 350,
+        height: 100
       },
       'info': {
         'baseUri': null,

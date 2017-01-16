@@ -10,9 +10,13 @@ import { Connection, Entity, PropertyType } from '../entities';
 
 import { EntitiesService } from '../entities/entities.service';
 
+import { InstallService } from '../installer';
+
 import { MdlDialogService } from 'angular2-mdl';
 
 import { Point, Line, Rect } from './math-helper';
+
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-entity-modeler',
@@ -42,7 +46,7 @@ export class EntityModelerComponent implements AfterViewChecked {
 
   set viewScale(s: number) {
     this._viewScale = _.round((s * 0.01), 2);
-    this._inverseScale = 1 / this._viewScale;
+    this._inverseScale = 1 / (this._viewScale * (window.outerWidth / window.innerWidth));
     this.entities.forEach((entity: Entity) => {
       entity.scale = this._inverseScale;
     });
@@ -50,6 +54,11 @@ export class EntityModelerComponent implements AfterViewChecked {
 
   get mainTransform(): string {
     return `scale(${this._viewScale})`;
+  }
+
+  getTransform(entity: Entity) {
+    entity.scale = 1 / (this._viewScale * window.outerWidth / window.innerWidth);
+    return entity.transform;
   }
 
   @HostListener('mouseup', ['$event']) onMouseup(event: MouseEvent) {
@@ -62,18 +71,18 @@ export class EntityModelerComponent implements AfterViewChecked {
 
   @HostListener('mousemove', ['$event']) onMousemove(event: MouseEvent) {
     if (this.draggingBox && this.draggingEntity && this.draggingEntity.dragging) {
-
       let boxWidth = this.draggingBox.clientWidth;
       let boxHeight = this.draggingBox.clientHeight;
 
-      let svgWidth = this.svgRoot.nativeElement.clientWidth;
-      let svgHeight = this.svgRoot.nativeElement.clientHeight;
+      let r = this.svgRoot.nativeElement.getBoundingClientRect();
+      let svgWidth = r.width;
+      let svgHeight = r.height;
 
       let rightBounds: number = svgWidth - boxWidth;
       let bottomBounds: number = svgHeight - boxHeight;
 
-      let x = this.draggingEntity.x + (event.x - this.draggingEntity.lastX);
-      let y = this.draggingEntity.y + (event.y - this.draggingEntity.lastY);
+      let x = this.draggingEntity.x + (event.clientX - this.draggingEntity.lastX);
+      let y = this.draggingEntity.y + (event.clientY - this.draggingEntity.lastY);
       x = Math.max(x, 0);
       y = Math.max(y, 0);
 
@@ -83,8 +92,8 @@ export class EntityModelerComponent implements AfterViewChecked {
       this.draggingEntity.x =  x;
       this.draggingEntity.y = y;
 
-      this.draggingEntity.lastX = event.x;
-      this.draggingEntity.lastY = event.y;
+      this.draggingEntity.lastX = event.clientX;
+      this.draggingEntity.lastY = event.clientY;
 
     } else if (this.draggingVertex) {
       let p = this.pointToSvg(event.clientX, event.clientY);
@@ -100,7 +109,8 @@ export class EntityModelerComponent implements AfterViewChecked {
 
   constructor(
     private dialogService: MdlDialogService,
-    private entitiesService: EntitiesService) {
+    private entitiesService: EntitiesService,
+    private installService: InstallService) {
     this.getEntities();
   }
 
@@ -159,6 +169,7 @@ export class EntityModelerComponent implements AfterViewChecked {
   }
 
   updateConnections() {
+    this._inverseScale = 1 / (this._viewScale * (window.outerWidth / window.innerWidth));
     this.connections.forEach((connection: Connection) => {
       if (this.svgRoot) {
         const from = connection.from;
@@ -191,6 +202,7 @@ export class EntityModelerComponent implements AfterViewChecked {
         if (!src) {
           src = fromCenter;
         }
+        connection.start = src;
 
         let previousPoint: Point = (vertexCount > 0) ? connection.vertices[vertexCount - 1] : fromCenter;
         let endLine: Line = new Line(previousPoint, toCenter);
@@ -198,6 +210,7 @@ export class EntityModelerComponent implements AfterViewChecked {
         if (!dst) {
           dst = toCenter;
         }
+        connection.end = dst;
 
         connection.d = `M ${src.x} ${src.y} ${innerVertices} ${dst.x} ${dst.y}`;
         let angle = endLine.angle;
@@ -228,8 +241,8 @@ export class EntityModelerComponent implements AfterViewChecked {
     this.selectedEntity = entity;
     this.draggingBox = event.target as HTMLElement;
     entity.dragging = true;
-    entity.lastX = event.x;
-    entity.lastY = event.y;
+    entity.lastX = event.clientX;
+    entity.lastY = event.clientY;
   }
 
   private saveUiState() {
@@ -250,12 +263,18 @@ export class EntityModelerComponent implements AfterViewChecked {
   vertexDrag(vertex: Point, $event: MouseEvent) {
     this.draggingVertex = vertex;
     $event.preventDefault();
-    console.log('start drag vertex');
   }
 
   startEditing(entity: Entity) {
     this.entitiesService.editEntity(entity).subscribe(() => {
-      this.entitiesService.saveEntity(entity);
+      this.entitiesService.saveEntity(entity).subscribe(() => {
+        let result = this.dialogService.confirm(`Saved. Update Indexes in MarkLogic?`, 'No', 'Yes');
+        result.subscribe(() => {
+          this.installService.updateIndexes().subscribe(() => {
+            this.dialogService.alert(`Indexes updated`);
+          });
+        }, () => {});
+      });
     },
     // cancel... do nothing
     () => {});
@@ -290,16 +309,18 @@ export class EntityModelerComponent implements AfterViewChecked {
       previous = connection.vertices[idx - 1];
     }
 
-    if (!p.isOnLine(new Line(previous, connection.vertices[idx]))) {
-      let next;
-      if (idx === (connection.vertices.length - 1)) {
-        next = connection.to.pos;
-      } else {
-        next = connection.vertices[idx + 1];
-      }
+    if (connection.vertices.length > 0) {
+      if (!p.isOnLine(new Line(previous, connection.vertices[idx]))) {
+        let next;
+        if (idx === (connection.vertices.length - 1)) {
+          next = connection.end;
+        } else {
+          next = connection.vertices[idx + 1];
+        }
 
-      if (p.isOnLine(new Line(connection.vertices[idx], next))) {
-        idx++;
+        if (p.isOnLine(new Line(connection.vertices[idx], next))) {
+          idx++;
+        }
       }
     }
 

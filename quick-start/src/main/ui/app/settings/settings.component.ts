@@ -62,7 +62,7 @@ export class SettingsComponent {
           }, 1000);
         }
       });
-      this.install.uninstall(this.projectService.projectId, this.projectService.environment);
+      this.install.uninstall();
     },
     // cancel.. do nothing
     () => {});

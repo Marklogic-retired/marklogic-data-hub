@@ -20,6 +20,9 @@ public class TracingTest extends HubTestBase {
 
         enableDebugging();
 
+        clearDb(HubConfig.DEFAULT_STAGING_NAME);
+        clearDb(HubConfig.DEFAULT_FINAL_NAME);
+
         URL url = DataHubInstallTest.class.getClassLoader().getResource("tracing-test");
         String path = Paths.get(url.toURI()).toFile().getAbsolutePath();
 
@@ -36,6 +39,8 @@ public class TracingTest extends HubTestBase {
     public void beforeEach() {
         runInDatabase("cts:uris() ! xdmp:document-delete(.)", HubConfig.DEFAULT_FINAL_NAME);
         runInDatabase("cts:uris() ! xdmp:document-delete(.)", HubConfig.DEFAULT_TRACE_NAME);
+        clearDb(HubConfig.DEFAULT_JOB_NAME);
+        clearDb(HubConfig.DEFAULT_TRACE_NAME);
         new Tracing(stagingClient).disable();
     }
 
@@ -43,6 +48,8 @@ public class TracingTest extends HubTestBase {
     public void afterEach() {
         runInDatabase("cts:uris() ! xdmp:document-delete(.)", HubConfig.DEFAULT_FINAL_NAME);
         runInDatabase("cts:uris() ! xdmp:document-delete(.)", HubConfig.DEFAULT_TRACE_NAME);
+        clearDb(HubConfig.DEFAULT_JOB_NAME);
+        clearDb(HubConfig.DEFAULT_TRACE_NAME);
         new Tracing(stagingClient).disable();
     }
 
@@ -144,8 +151,8 @@ public class TracingTest extends HubTestBase {
         fm.runFlow(flow, 10, 1, listener);
         listener.waitForFinish();
 
-        assertEquals(0, getFinalDocCount());
-        assertEquals(1, getTracingDocCount());
+        assertEquals(5, getFinalDocCount());
+        assertEquals(10, getTracingDocCount());
     }
 
     @Test
@@ -164,7 +171,7 @@ public class TracingTest extends HubTestBase {
         listener.waitForFinish();
 
         assertEquals(0, getFinalDocCount());
-        assertEquals(1, getTracingDocCount());
+        assertEquals(10, getTracingDocCount());
     }
 
     @Test
@@ -182,8 +189,8 @@ public class TracingTest extends HubTestBase {
         fm.runFlow(flow, 10, 1, listener);
         listener.waitForFinish();
 
-        assertEquals(0, getFinalDocCount());
-        assertEquals(1, getTracingDocCount());
+        assertEquals(5, getFinalDocCount());
+        assertEquals(10, getTracingDocCount());
     }
 
 
@@ -203,6 +210,6 @@ public class TracingTest extends HubTestBase {
         listener.waitForFinish();
 
         assertEquals(0, getFinalDocCount());
-        assertEquals(1, getTracingDocCount());
+        assertEquals(10, getTracingDocCount());
     }
 }

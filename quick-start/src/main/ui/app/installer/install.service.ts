@@ -14,24 +14,28 @@ export class InstallService {
     this.stomp.messages.subscribe(this.onMessage);
   }
 
-  install(projectId: string, environment: string) {
+  install() {
     let unsubscribeId: string;
     this.stomp.subscribe('/topic/install-status').then((msgId: string) => {
       unsubscribeId = msgId;
     });
-    let resp = this.http.put(`/api/projects/${projectId}/${environment}/install`, '').share();
+    let resp = this.http.put(`/api/current-project/install`, '').share();
     resp.subscribe(() => {
       this.stomp.unsubscribe(unsubscribeId);
     });
     return resp.map(this.extractData);
   }
 
-  uninstall(projectId: string, environment: string) {
+  updateIndexes() {
+    return this.http.get(`/api/current-project/update-indexes`);
+  }
+
+  uninstall() {
     let unsubscribeId: string;
     this.stomp.subscribe('/topic/uninstall-status').then((msgId: string) => {
       unsubscribeId = msgId;
     });
-    let resp = this.http.delete(`/api/projects/${projectId}/${environment}/uninstall`).share();
+    let resp = this.http.delete(`/api/current-project/uninstall`).share();
     resp.subscribe(() => {
       this.stomp.unsubscribe(unsubscribeId);
     });

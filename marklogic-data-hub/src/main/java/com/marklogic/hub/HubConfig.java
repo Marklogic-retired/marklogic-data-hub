@@ -23,12 +23,19 @@ import com.marklogic.client.helper.LoggingObject;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Properties;
 
 /**
  * A class for passing around the Data Hub's Configuration
  */
 public class HubConfig extends LoggingObject {
+
+    public static final String OLD_HUB_CONFIG_DIR = "marklogic-config";
+    public static final String HUB_CONFIG_DIR = "hub-internal-config";
+    public static final String USER_CONFIG_DIR = "user-config";
+    public static final String SEARCH_OPTIONS_FILE = "all-search-options.xml";
 
     public static final String DEFAULT_HOST = "localhost";
 
@@ -73,21 +80,25 @@ public class HubConfig extends LoggingObject {
     public String stagingHttpName = DEFAULT_STAGING_NAME;
     public Integer stagingForestsPerHost = DEFAULT_FORESTS_PER_HOST;
     public Integer stagingPort = DEFAULT_STAGING_PORT;
+    public String stagingAuthMethod = DEFAULT_AUTH_METHOD;
 
     public String finalDbName = DEFAULT_FINAL_NAME;
     public String finalHttpName = DEFAULT_FINAL_NAME;
     public Integer finalForestsPerHost = DEFAULT_FORESTS_PER_HOST;
     public Integer finalPort = DEFAULT_FINAL_PORT;
+    public String finalAuthMethod = DEFAULT_AUTH_METHOD;
 
     public String traceDbName = DEFAULT_TRACE_NAME;
     public String traceHttpName = DEFAULT_TRACE_NAME;
     public Integer traceForestsPerHost = 1;
     public Integer tracePort = DEFAULT_TRACE_PORT;
+    public String traceAuthMethod = DEFAULT_AUTH_METHOD;
 
     public String jobDbName = DEFAULT_JOB_NAME;
     public String jobHttpName = DEFAULT_JOB_NAME;
     public Integer jobForestsPerHost = 1;
     public Integer jobPort = DEFAULT_JOB_PORT;
+    public String jobAuthMethod = DEFAULT_AUTH_METHOD;
 
     public String modulesDbName = DEFAULT_MODULES_DB_NAME;
     public String triggersDbName = DEFAULT_TRIGGERS_DB_NAME;
@@ -96,8 +107,6 @@ public class HubConfig extends LoggingObject {
     public String hubUserName = DEFAULT_HUB_USER_NAME;
     public String hubUserPassword = DEFAULT_HUB_USER_NAME;
     public String hubUserRole = DEFAULT_HUB_USER_ROLE;
-
-    public String authMethod = DEFAULT_AUTH_METHOD;
 
     public String projectDir;
 
@@ -132,39 +141,50 @@ public class HubConfig extends LoggingObject {
         return environmentProperties;
     }
 
-    private void loadConfigurationFromProperties(Properties environmentProperties) {
-        name = getEnvPropString(environmentProperties, "mlAppName", name);
-
+    public void loadConfigurationFromProperties(Properties environmentProperties) {
+        name = getEnvPropString(environmentProperties,"mlAppName", name);
         host = getEnvPropString(environmentProperties, "mlHost", host);
-
         stagingDbName = getEnvPropString(environmentProperties, "mlStagingDbName", stagingDbName);
         stagingHttpName = getEnvPropString(environmentProperties, "mlStagingAppserverName", stagingHttpName);
         stagingForestsPerHost = getEnvPropInteger(environmentProperties, "mlStagingForestsPerHost", stagingForestsPerHost);
         stagingPort = getEnvPropInteger(environmentProperties, "mlStagingPort", stagingPort);
-
+        stagingAuthMethod = getEnvPropString(environmentProperties, "mlStagingAuth", stagingAuthMethod);
         finalDbName = getEnvPropString(environmentProperties, "mlFinalDbName", finalDbName);
         finalHttpName = getEnvPropString(environmentProperties, "mlFinalAppserverName", finalHttpName);
         finalForestsPerHost = getEnvPropInteger(environmentProperties, "mlFinalForestsPerHost", finalForestsPerHost);
         finalPort = getEnvPropInteger(environmentProperties, "mlFinalPort", finalPort);
-
+        finalAuthMethod = getEnvPropString(environmentProperties, "mlFinalAuth", finalAuthMethod);
         traceDbName = getEnvPropString(environmentProperties, "mlTraceDbName", traceDbName);
         traceHttpName = getEnvPropString(environmentProperties, "mlTraceAppserverName", traceHttpName);
         traceForestsPerHost = getEnvPropInteger(environmentProperties, "mlTraceForestsPerHost", traceForestsPerHost);
         tracePort = getEnvPropInteger(environmentProperties, "mlTracePort", tracePort);
-
+        traceAuthMethod = getEnvPropString(environmentProperties, "mlTraceAuth", traceAuthMethod);
         jobDbName = getEnvPropString(environmentProperties, "mlJobDbName", jobDbName);
         jobHttpName = getEnvPropString(environmentProperties, "mlJobAppserverName", jobHttpName);
         jobForestsPerHost = getEnvPropInteger(environmentProperties, "mlJobForestsPerHost", jobForestsPerHost);
         jobPort = getEnvPropInteger(environmentProperties, "mlJobPort", jobPort);
-
+        jobAuthMethod = getEnvPropString(environmentProperties, "mlJobAuth", jobAuthMethod);
         modulesDbName = getEnvPropString(environmentProperties, "mlModulesDbName", modulesDbName);
         triggersDbName = getEnvPropString(environmentProperties, "mlTriggersDbName", triggersDbName);
         schemasDbName = getEnvPropString(environmentProperties, "mlSchemasDbName", schemasDbName);
+        adminUsername = getEnvPropString(environmentProperties, "mlAdminUsername", adminUsername);
+        adminPassword = getEnvPropString(environmentProperties, "mlAdminPassword", adminPassword);
 
-        authMethod = getEnvPropString(environmentProperties, "mlAuth", authMethod);
+        username = getEnvPropString(environmentProperties, "mlManageUsername", username);
+        username = getEnvPropString(environmentProperties, "mlUsername", username);
+        if (username == null) {
+            username = adminUsername;
+        }
 
-        username = getEnvPropString(environmentProperties, "mlAdminUsername", username);
-        password = getEnvPropString(environmentProperties, "mlAdminPassword", password);
+        password = getEnvPropString(environmentProperties, "mlManagePassword", password);
+        password = getEnvPropString(environmentProperties, "mlPassword", password);
+        if (password == null) {
+            password = adminPassword;
+        }
+
+        projectDir = getEnvPropString(environmentProperties, "hubProjectDir", projectDir);
+
+        logger.info("Hub Project Dir: " + projectDir);
     }
 
     /**
@@ -177,7 +197,7 @@ public class HubConfig extends LoggingObject {
             stagingPort,
             username,
             password,
-            DatabaseClientFactory.Authentication.valueOf(authMethod.toUpperCase()));
+            DatabaseClientFactory.Authentication.valueOf(stagingAuthMethod.toUpperCase()));
     }
 
     /**
@@ -190,7 +210,7 @@ public class HubConfig extends LoggingObject {
             finalPort,
             username,
             password,
-            DatabaseClientFactory.Authentication.valueOf(authMethod.toUpperCase()));
+            DatabaseClientFactory.Authentication.valueOf(finalAuthMethod.toUpperCase()));
     }
 
     /**
@@ -203,7 +223,7 @@ public class HubConfig extends LoggingObject {
             jobPort,
             username,
             password,
-            DatabaseClientFactory.Authentication.valueOf(authMethod.toUpperCase()));
+            DatabaseClientFactory.Authentication.valueOf(jobAuthMethod.toUpperCase()));
     }
 
     /**
@@ -216,7 +236,7 @@ public class HubConfig extends LoggingObject {
             tracePort,
             username,
             password,
-            DatabaseClientFactory.Authentication.valueOf(authMethod.toUpperCase()));
+            DatabaseClientFactory.Authentication.valueOf(stagingAuthMethod.toUpperCase()));
     }
 
     private String getEnvPropString(Properties environmentProperties, String key, String fallback) {
@@ -252,6 +272,34 @@ public class HubConfig extends LoggingObject {
         catch ( Exception e ) {
             e.printStackTrace();
         }
+    }
+
+    public Path getHubConfigDir() {
+        return Paths.get(this.projectDir, HUB_CONFIG_DIR);
+    }
+
+    public Path getHubDatabaseDir() {
+        return Paths.get(this.projectDir, HUB_CONFIG_DIR, "databases");
+    }
+
+    public Path getHubServersDir() {
+        return Paths.get(this.projectDir, HUB_CONFIG_DIR, "servers");
+    }
+
+    public Path getHubSecurityDir() {
+        return Paths.get(this.projectDir, HUB_CONFIG_DIR, "security");
+    }
+
+    public Path getUserConfigDir() {
+        return Paths.get(this.projectDir, USER_CONFIG_DIR);
+    }
+
+    public Path getUserDatabaseDir() {
+        return Paths.get(this.projectDir, USER_CONFIG_DIR, "databases");
+    }
+
+    public Path getUserServersDir() {
+        return Paths.get(this.projectDir, USER_CONFIG_DIR, "servers");
     }
 
 }

@@ -11,7 +11,9 @@ export class Connection {
   arrowTransform: string;
   label: string;
   labelTransform: string;
+  start: Point;
   vertices: Array<Point> = [];
+  end: Point;
 
   constructor(config: any) {
     this.from = config.from;

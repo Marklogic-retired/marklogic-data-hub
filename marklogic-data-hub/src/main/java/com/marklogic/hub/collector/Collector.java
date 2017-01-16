@@ -19,11 +19,12 @@ import com.marklogic.hub.plugin.PluginType;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
+import java.util.Map;
 import java.util.Vector;
 
 public interface Collector {
 
     PluginType getType();
-    Vector<String> run();
+    Vector<String> run(Map<String, Object> options);
     void serialize(XMLStreamWriter serializer) throws XMLStreamException;
 }

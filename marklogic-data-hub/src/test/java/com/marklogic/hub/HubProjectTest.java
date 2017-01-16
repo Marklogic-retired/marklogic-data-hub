@@ -16,7 +16,8 @@ public class HubProjectTest extends HubTestBase {
     private static File projectPath = new File("ye-olde-project");
 
     @BeforeClass
-    public static void setup() {
+    public static void setup() throws IOException {
+        FileUtils.deleteDirectory(projectPath);
     }
 
     @AfterClass
@@ -46,16 +47,16 @@ public class HubProjectTest extends HubTestBase {
         HubProject hp = new HubProject(config);
         hp.init();
 
-        assertTrue(new File(projectPath, "marklogic-config/servers/staging-server.json").exists());
-        assertTrue(new File(projectPath, "marklogic-config/servers/final-server.json").exists());
-        assertTrue(new File(projectPath, "marklogic-config/servers/trace-server.json").exists());
+        assertTrue(new File(projectPath, "hub-internal-config/servers/staging-server.json").exists());
+        assertTrue(new File(projectPath, "hub-internal-config/servers/final-server.json").exists());
+        assertTrue(new File(projectPath, "hub-internal-config/servers/trace-server.json").exists());
 
-        assertTrue(new File(projectPath, "marklogic-config/databases/staging-database.json").exists());
-        assertTrue(new File(projectPath, "marklogic-config/databases/final-database.json").exists());
-        assertTrue(new File(projectPath, "marklogic-config/databases/trace-database.json").exists());
-        assertTrue(new File(projectPath, "marklogic-config/databases/modules-database.json").exists());
-        assertTrue(new File(projectPath, "marklogic-config/databases/schemas-database.json").exists());
-        assertTrue(new File(projectPath, "marklogic-config/databases/triggers-database.json").exists());
+        assertTrue(new File(projectPath, "hub-internal-config/databases/staging-database.json").exists());
+        assertTrue(new File(projectPath, "hub-internal-config/databases/final-database.json").exists());
+        assertTrue(new File(projectPath, "hub-internal-config/databases/trace-database.json").exists());
+        assertTrue(new File(projectPath, "hub-internal-config/databases/modules-database.json").exists());
+        assertTrue(new File(projectPath, "hub-internal-config/databases/schemas-database.json").exists());
+        assertTrue(new File(projectPath, "hub-internal-config/databases/triggers-database.json").exists());
 
         File buildGradle = new File(projectPath, "build.gradle");
         assertTrue(buildGradle.exists());

@@ -3,7 +3,7 @@
   "server-type": "http",
   "root": "/",
   "group-name": "%%GROUP%%",
-  "port": %%mlFinalPort%%,
+  "port": "%%mlFinalPort%%",
   "modules-database": "%%mlModulesDbName%%",
   "content-database": "%%mlFinalDbName%%",
   "authentication": "digest",

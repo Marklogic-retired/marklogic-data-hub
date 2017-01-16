@@ -6,5 +6,5 @@
       Entry point to retrieve index settings for a database
     </div>
   </description>
-  <method name="GET"/>
+  <method name="POST"/>
 </metadata>

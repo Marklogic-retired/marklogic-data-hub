@@ -3,7 +3,7 @@
   "server-type": "http",
   "root": "/",
   "group-name": "%%GROUP%%",
-  "port": %%mlStagingPort%%,
+  "port": "%%mlStagingPort%%",
   "modules-database": "%%mlModulesDbName%%",
   "content-database": "%%mlStagingDbName%%",
   "authentication": "digest",

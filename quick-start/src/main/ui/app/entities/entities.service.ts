@@ -66,6 +66,7 @@ export class EntitiesService {
       this.entitiesChange.emit(this.entities);
       this.extractTypes();
     });
+    return resp;
   }
 
   editEntity(entity: Entity) {
@@ -90,7 +91,6 @@ export class EntitiesService {
       isModal: true
     });
     editDialog.subscribe( (dialogReference: MdlDialogReference) => {
-       console.log('dialog visible', dialogReference);
     });
     return result.asObservable();
   }
@@ -136,24 +136,24 @@ export class EntitiesService {
   }
 
   getInputFlowOptions(flow: Flow) {
-    const url = this.url(`/entities/${flow.entityName}/flows/INPUT/${flow.flowName}/run/input`);
+    const url = this.url(`/entities/${flow.entityName}/flows/input/${flow.flowName}/run`);
     return this.get(url);
   }
 
   saveInputFlowOptions(flow: Flow, mlcpOptions: any) {
     const url = this.url(
-      `/entities/${flow.entityName}/flows/INPUT/${flow.flowName}/save-input-options`);
+      `/entities/${flow.entityName}/flows/input/${flow.flowName}/save-input-options`);
     return this.http.post(url, mlcpOptions);
   }
 
   runInputFlow(flow: Flow, mlcpOptions: any) {
-    const url = this.url(`/entities/${flow.entityName}/flows/INPUT/${flow.flowName}/run/input`);
-    return this.post(url, mlcpOptions).subscribe(() => {});
+    const url = this.url(`/entities/${flow.entityName}/flows/input/${flow.flowName}/run`);
+    return this.http.post(url, mlcpOptions).subscribe(() => {});
   }
 
   runHarmonizeFlow(flow: Flow, batchSize: number, threadCount: number) {
-    const url = this.url(`/entities/${flow.entityName}/flows/HARMONIZE/${flow.flowName}/run`);
-    return this.post(url, { batchSize: batchSize, threadCount: threadCount }).subscribe(() => {});
+    const url = this.url(`/entities/${flow.entityName}/flows/harmonize/${flow.flowName}/run`);
+    return this.http.post(url, { batchSize: batchSize, threadCount: threadCount }).subscribe(() => {});
   }
 
   private extractTypes() {
@@ -240,6 +240,6 @@ export class EntitiesService {
   // }
 
   private url(u: string): string {
-    return `/api/projects/${this.projectService.projectId}/${this.projectService.environment}${u}`;
+    return `/api/current-project${u}`;
   }
 }

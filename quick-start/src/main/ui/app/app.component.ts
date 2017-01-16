@@ -30,7 +30,7 @@ declare var window: CustomWindow;
   styleUrls: [
     './app.component.scss'
   ],
-  templateUrl: 'app.component.html'
+  templateUrl: './app.component.html'
 })
 export class AppComponent implements OnInit {
   authenticated: boolean = false;
@@ -57,7 +57,7 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit() {
-    if (!(this.projectService.projectId && this.projectService.environment)) {
+    if (!this.projectService.authenticated) {
       this.router.navigate(['login']);
     }
   }

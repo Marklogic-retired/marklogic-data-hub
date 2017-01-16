@@ -124,6 +124,13 @@ $red-color: unquote("rgb(#{$palette-datahub-red})");
       }
     }
 
+    tr.no-props {
+      text-align: center;
+      td {
+        padding-top: 20px;
+      }
+    }
+
     tr.primary {
       background-color: rgba(255,255,255,0.5);
     }
