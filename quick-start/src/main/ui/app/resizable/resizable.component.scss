@@ -33,6 +33,22 @@
     width: 9px;
   }
 
+  &.bottomRight {
+    cursor: se-resize;
+    height: 20px;
+    right: 0;
+    bottom: 0;
+    margin-right: 0;
+    width: 20px;
+    border-bottom: 2px solid #ccc;
+    border-right: 2px solid #ccc;
+
+    &:hover {
+      border-bottom: 2px solid #333;
+      border-right: 2px solid #333;
+    }
+  }
+
   &.bottom {
     cursor: row-resize;
     width: 100%;

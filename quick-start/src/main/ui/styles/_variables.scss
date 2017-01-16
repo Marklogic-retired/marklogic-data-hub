@@ -5,7 +5,7 @@ $color-primary-contrast: $color-dark-contrast !default;
 // Our accent is dark, so use $color-dark-contrast for overlaid text.
 $color-accent-contrast: $color-dark-contrast !default;
 
-$entity-model-min-width: '350px';
+$entity-model-min-width: 350px;
 
 mdl-button {
   i.fa {
@@ -29,7 +29,7 @@ mdl-button {
   box-sizing: border-box;
 }
 
-@import '../../../../node_modules/material-design-lite/src/material-design-lite';
+@import '../../../../node_modules/angular2-mdl/scss/material-design-lite';
 
 @import '../../../../node_modules/~@angular2-mdl-ext/popover/popover';
 @import '../../../../node_modules/~@angular2-mdl-ext/select/select';

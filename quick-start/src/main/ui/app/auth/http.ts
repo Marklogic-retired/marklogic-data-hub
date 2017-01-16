@@ -1,19 +1,17 @@
 import {
   Http, Request, RequestOptionsArgs, Response,
-  RequestOptions, ConnectionBackend, Headers,
-  URLSearchParams, XHRBackend
+  RequestOptions, ConnectionBackend, Headers, XHRBackend
 } from '@angular/http';
 import { Router } from '@angular/router';
-import { Observable } from 'rxjs/Observable';
-import { AuthService } from './auth.service';
+import { Observable } from 'rxjs/Rx';
+
 import * as _ from 'lodash';
 
 class HttpInterceptor extends Http {
   constructor(
     backend: ConnectionBackend,
     defaultOptions: RequestOptions,
-    private _router: Router,
-    private auth: AuthService) {
+    private _router: Router) {
     super(backend, defaultOptions);
   }
 
@@ -22,17 +20,6 @@ class HttpInterceptor extends Http {
   }
 
   get(url: string, options?: RequestOptionsArgs): Observable<Response> {
-    /* cache busting for IE */
-    if (!options) {
-      options = {};
-    }
-    options.search = options.search || new URLSearchParams();
-    if (options.search instanceof URLSearchParams) {
-      options.search.set('_ts', (new Date()).getTime().toString());
-    } else {
-      options.search += `&_ts=${(new Date()).getTime()}`;
-    }
-    /* end cache busting for IE */
     return this.intercept(super.get(url, options));
   }
 
@@ -55,16 +42,17 @@ class HttpInterceptor extends Http {
     if (options.headers == null) {
       options.headers = new Headers();
     }
-    options.headers.append('Content-Type', 'application/json');
+    if (!options.headers.has('Content-Type')) {
+      options.headers.append('Content-Type', 'application/json');
+    }
     return options;
   }
 
   intercept(observable: Observable<Response>): Observable<Response> {
     return observable.catch((err, source) => {
-      if (err.status  === 401 && !_.endsWith(err.url, '/login') && !_.endsWith(this._router.routerState.snapshot.url, '/login')) {
-          this.auth.redirectUrl = this._router.routerState.snapshot.url;
+      if (err.status  === 401 && !_.endsWith(err.url, '/login')) {
           this._router.navigate(['login']);
-          return Observable.empty();
+          return Observable.empty(null);
         } else {
           return Observable.throw(err);
       }
@@ -73,13 +61,16 @@ class HttpInterceptor extends Http {
   }
 }
 
-export const HTTP_PROVIDER = {
-  provide: Http,
-  useFactory: (
+export function interceptorFactory(
     xhrBackend: XHRBackend,
     requestOptions: RequestOptions,
-    router: Router,
-    auth: AuthService
-  ) => new HttpInterceptor(xhrBackend, requestOptions, router, auth),
-  deps: [XHRBackend, RequestOptions, Router, AuthService]
+    router: Router
+  ) {
+  return new HttpInterceptor(xhrBackend, requestOptions, router);
+}
+
+export const HTTP_PROVIDER = {
+  provide: Http,
+  useFactory: interceptorFactory,
+  deps: [XHRBackend, RequestOptions, Router]
  };

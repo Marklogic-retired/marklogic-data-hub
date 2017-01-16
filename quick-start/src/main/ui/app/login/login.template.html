@@ -43,6 +43,7 @@
               [ngClass]="{'collapsed': !showFolderBrowser}"
               class="shrink-me shrinky"
               start-path='.'
+              absoluteOnly="true"
               (folderChosen)="folderClicked($event)">
             </app-folder-browser>
           </div>

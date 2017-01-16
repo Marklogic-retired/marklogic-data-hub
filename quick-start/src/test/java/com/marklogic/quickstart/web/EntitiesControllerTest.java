@@ -67,7 +67,7 @@ public class EntitiesControllerTest {
         envConfig.setInitialized(true);
         envConfig.setProjectDir(path);
         envConfig.setMlSettings(new HubConfig(path));
-        String s = ec.getInputFlowOptions("test-entity", FlowType.INPUT, "flow-name");
+        String s = ec.getInputFlowOptions("test-entity", "flow-name");
         assertEquals("{ \"input_file_path\": \"/some/project/path\" }", s);
     }
 
@@ -78,7 +78,7 @@ public class EntitiesControllerTest {
         envConfig.setInitialized(true);
         envConfig.setProjectDir(path);
         envConfig.setMlSettings(new HubConfig(path));
-        String s = ec.getInputFlowOptions("test-entity", FlowType.INPUT, "flow-name");
+        String s = ec.getInputFlowOptions("test-entity", "flow-name");
         assertEquals("{ \"input_file_path\": \"C:\\\\some\\\\crazy\\\\path\\\\to\\\\project\" }", s);
     }
 

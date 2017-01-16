@@ -16,19 +16,16 @@
 package com.marklogic.quickstart.web;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.marklogic.quickstart.EnvironmentAware;
-import com.marklogic.quickstart.model.entity_services.EntityModel;
-import com.marklogic.quickstart.service.JobManager;
 import com.marklogic.hub.JobStatusListener;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.FlowType;
-import com.marklogic.quickstart.exception.NotFoundException;
+import com.marklogic.quickstart.EnvironmentAware;
 import com.marklogic.quickstart.model.FlowModel;
 import com.marklogic.quickstart.model.JobStatusMessage;
+import com.marklogic.quickstart.model.entity_services.EntityModel;
 import com.marklogic.quickstart.service.EntityManagerService;
 import com.marklogic.quickstart.service.FlowManagerService;
-import com.marklogic.quickstart.service.JobManager;
-import org.springframework.batch.core.JobExecution;
+import com.marklogic.quickstart.service.JobService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -65,7 +62,9 @@ class EntitiesController extends EnvironmentAware {
         for (EntityModel entity : entities) {
             entityManagerService.saveEntity(entity);
         }
+        entityManagerService.saveSearchOptions();
         entityManagerService.saveAllUiData(entities);
+        entityManagerService.saveDbIndexes();
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
@@ -81,7 +80,10 @@ class EntitiesController extends EnvironmentAware {
     @ResponseBody
     public EntityModel saveEntity(@RequestBody EntityModel entity) throws ClassNotFoundException, IOException {
         entityManagerService.saveEntityUiData(entity);
-        return entityManagerService.saveEntity(entity);
+        EntityModel m = entityManagerService.saveEntity(entity);
+        entityManagerService.saveSearchOptions();
+        entityManagerService.saveDbIndexes();
+        return m;
     }
 
     @RequestMapping(value = "/entities/{entityName}", method = RequestMethod.GET)
@@ -107,43 +109,41 @@ class EntitiesController extends EnvironmentAware {
         return entityManagerService.createFlow(envConfig().getProjectDir(), entityName, flowType, newFlow);
     }
 
-    @RequestMapping(value = "/entities/{entityName}/flows/{flowType}/{flowName}/run", method = RequestMethod.POST)
+    @RequestMapping(value = "/entities/{entityName}/flows/harmonize/{flowName}/run", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<JobExecution> runFlow(
+    public ResponseEntity<?> runHarmonizeFlow(
             @PathVariable String entityName,
-            @PathVariable FlowType flowType,
             @PathVariable String flowName,
             @RequestBody JsonNode json) {
 
         int batchSize = json.get("batchSize").asInt();
         int threadCount = json.get("threadCount").asInt();
 
-        ResponseEntity<JobExecution> resp;
+        ResponseEntity<?> resp;
 
-        Flow flow = flowManagerService.getServerFlow(entityName, flowName, flowType);
+        Flow flow = flowManagerService.getServerFlow(entityName, flowName, FlowType.HARMONIZE);
         if (flow == null) {
             resp = new ResponseEntity<>(HttpStatus.CONFLICT);
         }
         else {
-            JobExecution execution = flowManagerService.runFlow(flow, batchSize, threadCount, new JobStatusListener() {
+            flowManagerService.runFlow(flow, batchSize, threadCount, new JobStatusListener() {
                 @Override
-                public void onStatusChange(long jobId, int percentComplete, String message) {
-                    template.convertAndSend("/topic/flow-status", new JobStatusMessage(Long.toString(jobId), percentComplete, message, flowType.toString()));
+                public void onStatusChange(String jobId, int percentComplete, String message) {
+                    template.convertAndSend("/topic/flow-status", new JobStatusMessage(jobId, percentComplete, message, FlowType.HARMONIZE.toString()));
                 }
                 @Override
                 public void onJobFinished() {}
             });
-            resp = new ResponseEntity<>(execution, HttpStatus.OK);
+            resp = new ResponseEntity<>(HttpStatus.OK);
         }
 
         return resp;
     }
 
-    @RequestMapping(value = "/entities/{entityName}/flows/{flowType}/{flowName}/save-input-options", method = RequestMethod.POST)
+    @RequestMapping(value = "/entities/{entityName}/flows/input/{flowName}/save-input-options", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<?> saveInputFlowOptions(
         @PathVariable String entityName,
-        @PathVariable FlowType flowType,
         @PathVariable String flowName,
         @RequestBody JsonNode json) throws IOException {
 
@@ -153,48 +153,57 @@ class EntitiesController extends EnvironmentAware {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @RequestMapping(value = "/entities/{entityName}/flows/{flowType}/{flowName}/run/input", method = RequestMethod.POST)
-    @ResponseBody
-    public JobExecution runInputFlow(
+    @RequestMapping(value = "/entities/{entityName}/flows/input/{flowName}/run", method = RequestMethod.POST)
+    public ResponseEntity<?> runInputFlow(
             @PathVariable String entityName,
-            @PathVariable FlowType flowType,
             @PathVariable String flowName,
             @RequestBody JsonNode json) throws IOException {
 
-        flowManagerService.saveOrUpdateFlowMlcpOptionsToFile(entityName,
+        ResponseEntity<?> resp;
+
+        Flow flow = flowManagerService.getServerFlow(entityName, flowName, FlowType.INPUT);
+        if (flow == null) {
+            resp = new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        else {
+            flowManagerService.saveOrUpdateFlowMlcpOptionsToFile(entityName,
                 flowName, json.toString());
 
-        return flowManagerService.runMlcp(json, new JobStatusListener() {
-            @Override
-            public void onStatusChange(long jobId, int percentComplete, String message) {
-                template.convertAndSend("/topic/flow-status", new JobStatusMessage(Long.toString(jobId), percentComplete, message, flowType.toString()));
-            }
-            @Override
-            public void onJobFinished() {}
-        });
+            flowManagerService.runMlcp(flow, json, new JobStatusListener() {
+                @Override
+                public void onStatusChange(String jobId, int percentComplete, String message) {
+                    template.convertAndSend("/topic/flow-status", new JobStatusMessage(jobId, percentComplete, message, FlowType.INPUT.toString()));
+                }
+
+                @Override
+                public void onJobFinished() {
+                }
+            });
+            resp = new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+
+        return resp;
     }
 
-    @RequestMapping(value = "/entities/{entityName}/flows/{flowType}/{flowName}/cancel/{jobId}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/entities/{entityName}/flows/{flowName}/cancel/{jobId}", method = RequestMethod.DELETE)
     public ResponseEntity<?> cancelFlow(
             @PathVariable String entityName,
-            @PathVariable FlowType flowType,
             @PathVariable String flowName,
             @PathVariable String jobId) throws IOException {
-        JobManager jm = new JobManager(envConfig().getMlSettings(), envConfig().getJobClient());
+        JobService jm = new JobService(envConfig().getJobClient());
         jm.cancelJob(Long.parseLong(jobId));
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @RequestMapping(
-        value = "/entities/{entityName}/flows/{flowType}/{flowName}/run/input",
+        value = "/entities/{entityName}/flows/input/{flowName}/run",
         method = RequestMethod.GET,
         produces="application/json"
     )
     @ResponseBody
     public String getInputFlowOptions(
             @PathVariable String entityName,
-            @PathVariable FlowType flowType,
             @PathVariable String flowName) throws IOException {
         return flowManagerService.getFlowMlcpOptionsFromFile(entityName, flowName);
     }

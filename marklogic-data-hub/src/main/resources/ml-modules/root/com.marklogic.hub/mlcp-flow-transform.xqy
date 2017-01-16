@@ -40,6 +40,7 @@ declare function mlcpFlow:transform(
         else
           fn:error(xs:QName("MISSING_FLOW"), "The specified flow " || map:get($params, "flow") || " is missing.")
 
+      let $_ := trace:set-job-id(map:get($params, "jobId"))
       let $envelope := try {
         flow:run-plugins($flow, $uri, map:get($content, "value"), $params)
       }

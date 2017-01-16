@@ -184,7 +184,7 @@ public class LoadHubModulesCommand extends AbstractCommand {
             // switch to job db to do this:
             this.modulesLoader.setDatabaseClient(hubConfig.newJobDbClient());
             startTime = System.nanoTime();
-            resources = findResources("classpath*:/ml-modules/options", "/**/spring-batch.xml");
+            resources = findResources("classpath*:/ml-modules/options", "/**/jobs.xml");
             for (Resource r : resources) {
                 this.modulesLoader.installQueryOptions(r);
             }

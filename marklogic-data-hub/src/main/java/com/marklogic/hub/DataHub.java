@@ -516,6 +516,15 @@ public class DataHub extends LoggingObject {
         deployer.deploy(config);
     }
 
+    public void updateIndexes() {
+        AppConfig config = getAppConfig();
+        HubAppDeployer deployer = new HubAppDeployer(client, adminManager, null);
+        List<Command> commands = new ArrayList<>();
+        commands.add(new DeployHubDatabasesCommand(hubConfig));
+        deployer.setCommands(commands);
+        deployer.deploy(config);
+    }
+
     /**
      * Uninstalls the data hub configuration and server-side modules from MarkLogic
      */

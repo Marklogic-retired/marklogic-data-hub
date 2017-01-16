@@ -1,4 +1,4 @@
-<div class="facet-list">
+<div class="facet-list" *ngIf="facets">
   <div class="chiclets" *ngIf="activeFacets">
     <div *ngFor="let facet of (activeFacets | objectToArray)">
       <button

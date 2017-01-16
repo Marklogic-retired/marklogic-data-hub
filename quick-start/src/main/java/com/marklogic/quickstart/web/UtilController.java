@@ -38,7 +38,7 @@ public class UtilController extends EnvironmentAware {
 
 	@RequestMapping(value = "/searchPath", method = RequestMethod.GET)
 	@ResponseBody
-	public Map<String, Object> searchPath(@RequestParam String path) {
+	public Map<String, Object> searchPath(@RequestParam String path, @RequestParam boolean absolute) {
 		logger.debug("Search Path:" + path);
 		List<SearchPathModel> paths = new ArrayList<>();
 		String currentPath;
@@ -51,7 +51,12 @@ public class UtilController extends EnvironmentAware {
             }
 		}
 		else {
-		    currentPath = path;
+		    if (absolute) {
+                currentPath = Paths.get(path).toAbsolutePath().normalize().toString();
+            }
+            else {
+                currentPath = path;
+            }
 			if (!path.equals("/")) {
 				path = path + java.io.File.separator;
 				Path parent = Paths.get(path).toAbsolutePath().normalize().getParent();

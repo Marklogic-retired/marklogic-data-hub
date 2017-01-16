@@ -54,6 +54,14 @@ public class DataHubService extends LoggingObject {
         return false;
     }
 
+    public void updateIndexes(HubConfig config) {
+        DataHub dataHub = new DataHub(config);
+        try {
+            dataHub.updateIndexes();
+        } catch(Throwable e) {
+            e.printStackTrace();
+        }
+    }
     private String getStackTrace(final Throwable throwable) {
         final StringWriter sw = new StringWriter();
         final PrintWriter pw = new PrintWriter(sw, true);

@@ -20,6 +20,7 @@ declare function runFlow:transform(
   ) as document-node()
 {
   perf:log('/transforms/run-flow:transform', function() {
+    let $job-id := map:get($params, "job-id")
     let $entity-name := map:get($params, 'entity')
     let $flow-name := map:get($params, 'flow')
     let $flow-type := "input"
@@ -32,6 +33,7 @@ declare function runFlow:transform(
       else
         fn:error(xs:QName("MISSING_FLOW"), "The specified flow " || $entity-name || ":" || $flow-name || " is missing.")
 
+    let $_ := trace:set-job-id($job-id)
     let $envelope := flow:run-plugins($flow, $uri, $content, $params)
     let $_ :=
       if (trace:enabled()) then

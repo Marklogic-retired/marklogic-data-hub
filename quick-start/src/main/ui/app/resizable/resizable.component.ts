@@ -12,7 +12,8 @@ export class ResizableComponent implements OnInit {
   @Input() directions: Array<String>;
 
   private direction: String;
-  private start: number;
+  private startX: number;
+  private startY: number;
   @HostBinding('style.width.px') width: number;
   @HostBinding('style.height.px') height: number;
   @Output() sizeChange: EventEmitter<any> = new EventEmitter();
@@ -22,16 +23,20 @@ export class ResizableComponent implements OnInit {
 
   onMousemove = (event: MouseEvent) => {
     if (this.direction) {
-      let offset = this.isHorizontalResize(this.direction) ? this.start - this.getClientX(event) : this.start - this.getClientY(event);
+      let offsetX = this.startX - this.getClientX(event);
+      let offsetY = this.startY - this.getClientY(event);
       switch (this.direction) {
         case 'bottom':
-          this.height = this.startHeight - offset;
+          this.height = this.startHeight - offsetY;
           break;
         case 'left':
-          this.width = this.startWidth + offset;
+          this.width = this.startWidth + offsetX;
           break;
         case 'right':
-          this.width = this.startWidth - offset;
+          this.width = this.startWidth - offsetX;
+        case 'bottomRight':
+          this.width = this.startWidth - offsetX;
+          this.height = this.startHeight - offsetY;
           break;
       }
       this.sizeChange.emit({width: this.width, height: this.height});
@@ -41,7 +46,8 @@ export class ResizableComponent implements OnInit {
   onMouseup = (event: MouseEvent) => {
     if (this.direction) {
       this.direction = null;
-      this.start = 0;
+      this.startX = 0;
+      this.startY = 0;
     }
 
     window.removeEventListener('mousemove', this.onMousemove);
@@ -55,7 +61,8 @@ export class ResizableComponent implements OnInit {
 
   onResizeStart(event: MouseEvent, direction: String) {
     this.direction = direction;
-    this.start = this.isHorizontalResize(this.direction) ? this.getClientX(event) : this.getClientY(event);
+    this.startX = this.getClientX(event);
+    this.startY = this.getClientY(event);
     this.startWidth = this.element.nativeElement.clientWidth;
     this.startHeight = this.element.nativeElement.clientHeight;
 
@@ -77,18 +84,18 @@ export class ResizableComponent implements OnInit {
     return direction === 'left' || direction === 'right';
   }
 
-  private getClientX(event: MouseEvent | TouchEvent) {
-    if (event instanceof TouchEvent) {
-      return (<TouchEvent>event).touches[0].clientX;
-    }
+  private getClientX(event: MouseEvent) {
+    // if (event instanceof TouchEvent) {
+    //   return (<TouchEvent>event).touches[0].clientX;
+    // }
 
     return (<MouseEvent>event).clientX;
   }
 
-  private getClientY(event: MouseEvent | TouchEvent) {
-    if (event instanceof TouchEvent) {
-      return (<TouchEvent>event).touches[0].clientY;
-    }
+  private getClientY(event: MouseEvent) {
+    // if (event instanceof TouchEvent) {
+    //   return (<TouchEvent>event).touches[0].clientY;
+    // }
 
     return (<MouseEvent>event).clientY;
   }

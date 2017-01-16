@@ -20,22 +20,22 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.contentpump.bean.MlcpBean;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.JobStatusListener;
+import com.marklogic.hub.flow.Flow;
+import com.marklogic.hub.job.Job;
+import com.marklogic.hub.job.JobManager;
 import com.marklogic.quickstart.util.StreamGobbler;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.batch.core.StepContribution;
-import org.springframework.batch.core.scope.context.ChunkContext;
-import org.springframework.batch.core.step.tasklet.Tasklet;
-import org.springframework.batch.repeat.RepeatStatus;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.UUID;
 import java.util.function.Consumer;
 
-class MlcpTasklet implements Tasklet {
+class MlcpRunner extends Thread {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -43,46 +43,51 @@ class MlcpTasklet implements Tasklet {
     private JsonNode mlcpOptions;
     private JobStatusListener statusListener;
     private ArrayList<String> mlcpOutput = new ArrayList<>();
-    private boolean hasError = false;
+    private String jobId = UUID.randomUUID().toString();
+    private JobManager jobManager;
+    private Flow flow;
 
-    MlcpTasklet(HubConfig hubConfig, JsonNode mlcpOptions, JobStatusListener statusListener) {
+    MlcpRunner(HubConfig hubConfig, Flow flow, JsonNode mlcpOptions, JobStatusListener statusListener) {
+        super();
+
         this.hubConfig = hubConfig;
         this.mlcpOptions = mlcpOptions;
         this.statusListener = statusListener;
+        this.jobManager = new JobManager(this.hubConfig.newJobDbClient());
+        this.flow = flow;
     }
 
-    public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext ) throws Exception {
+    @Override
+    public void run() {
+        try {
+            MlcpBean bean = new ObjectMapper().readerFor(MlcpBean.class).readValue(mlcpOptions);
+            bean.setHost(hubConfig.host);
+            bean.setPort(hubConfig.stagingPort);
 
-        long jobId = chunkContext.getStepContext().getStepExecution().getJobExecution().getJobId();
-        MlcpBean bean = new ObjectMapper().readerFor(MlcpBean.class).readValue(mlcpOptions);
-        bean.setHost(hubConfig.host);
-        bean.setPort(hubConfig.stagingPort);
+            // Assume that the HTTP credentials will work for mlcp
+            bean.setUsername(hubConfig.username);
+            bean.setPassword(hubConfig.password);
 
-        // Assume that the HTTP credentials will work for mlcp
-        bean.setUsername(hubConfig.username);
-        bean.setPassword(hubConfig.password);
+            File file = new File(mlcpOptions.get("input_file_path").asText());
+            String canonicalPath = file.getCanonicalPath();
+            bean.setInput_file_path(canonicalPath);
 
-        File file = new File(mlcpOptions.get("input_file_path").asText());
-        String canonicalPath = file.getCanonicalPath();
-        bean.setInput_file_path(canonicalPath);
+            bean.setTransform_param("\"" + bean.getTransform_param().replaceAll("\"", "") + ",jobId=" + jobId + "\"");
 
-        runMlcp(jobId, bean);
+            runMlcp(bean);
 
-        chunkContext
-            .getStepContext()
-            .getStepExecution()
-            .getJobExecution()
-            .getExecutionContext().put("jobOutput", String.join("\n", mlcpOutput));
+            statusListener.onStatusChange(jobId, 100, "");
 
-        statusListener.onStatusChange(jobId, 100, "");
-
-        if (hasError) {
-            throw new Exception("Error in Mlcp Execution");
+            jobManager.saveJob(Job.withFlow(flow)
+                .withJobId(jobId)
+                .withJobOutput(String.join("\n", mlcpOutput))
+            );
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
-        return RepeatStatus.FINISHED;
     }
 
-    private void runMlcp(long jobId, MlcpBean bean) throws IOException, InterruptedException {
+    private void runMlcp(MlcpBean bean) throws IOException, InterruptedException {
         String javaHome = System.getProperty("java.home");
         String javaBin = javaHome +
             File.separator + "bin" +
@@ -136,7 +141,7 @@ class MlcpTasklet implements Tasklet {
         args.add("mlcp");
         args.addAll(Arrays.asList(bean.buildArgs()));
 
-        logger.debug(String.join(" ", args));
+        logger.error(String.join(" ", args));
         ProcessBuilder pb = new ProcessBuilder(args);
         Process process = pb.start();
 
@@ -146,10 +151,10 @@ class MlcpTasklet implements Tasklet {
             @Override
             public void accept(String status) {
                 System.out.println(status);
-                // don't log an error if the winutils binary is missing
-                if (status.contains("ERROR") && !status.contains("winutils binary")) {
-                    hasError = true;
-                }
+//                // don't log an error if the winutils binary is missing
+//                if (status.contains("ERROR") && !status.contains("winutils binary")) {
+//                    hasError = true;
+//                }
 
                 try {
                     int pc = Integer.parseInt(status.replaceFirst(".*completed (\\d+)%", "$1"));
@@ -159,6 +164,7 @@ class MlcpTasklet implements Tasklet {
                         currentPc = pc;
                     }
                 } catch (NumberFormatException e) {
+                    e.printStackTrace();
                 }
 
                 mlcpOutput.add(status);

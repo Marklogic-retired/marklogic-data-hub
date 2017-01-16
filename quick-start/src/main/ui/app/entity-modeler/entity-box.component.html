@@ -1,4 +1,4 @@
-<div
+<div xmlns="http://www.w3.org/1999/xhtml"
   class="entity-def-box" [ngClass]="{'has-flows' : entity.hasFlows}">
   <div class="title" (mousedown)="handleStartDrag($event)">
     <span>{{entity.info.title}}</span>
@@ -30,7 +30,7 @@
     </div>
   </div>
   <app-resizable
-    [directions]="['right', 'bottom']" (sizeChange)="onSizeChange($event)">
+    [directions]="['bottomRight']" (sizeChange)="onSizeChange($event)">
     <div class="scroller">
       <table #properties class="properties">
         <thead>
@@ -44,6 +44,10 @@
           </tr>
         </thead>
         <tbody>
+          <tr class="no-props" *ngIf="!entity.definition.properties || entity.definition.properties.length === 0">
+            <td colspan="6">No properties defined.</td>
+          </tr>
+
           <tr id="{{entity.name}}-{{property.name}}"
             [ngClass]="{ 'primary' : isPrimaryKey(property.name) }"
             *ngFor="let property of entity.definition.properties" class="property">

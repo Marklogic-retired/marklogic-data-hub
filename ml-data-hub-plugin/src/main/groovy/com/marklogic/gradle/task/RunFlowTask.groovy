@@ -68,7 +68,7 @@ class RunFlowTask extends HubTask {
         println("Running Flow: [" + entityName + ":" + flowName + "] with batch size: " + batchSize)
         fm.runFlow(flow, batchSize, threadCount, new JobStatusListener() {
             @Override
-            public void onStatusChange(long jobId, int percentComplete, String message) {}
+            public void onStatusChange(String jobId, int percentComplete, String message) {}
 
             @Override
             public void onJobFinished() {}

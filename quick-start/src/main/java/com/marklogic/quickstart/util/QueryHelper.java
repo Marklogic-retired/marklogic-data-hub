@@ -1,7 +1,24 @@
+/*
+ * Copyright 2012-2016 MarkLogic Corporation
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.marklogic.quickstart.util;
 
 import com.marklogic.client.MarkLogicIOException;
 import com.marklogic.client.query.StructuredQueryBuilder;
+import com.sun.xml.internal.ws.util.DOMUtil;
+import org.w3c.dom.Element;
 
 import javax.xml.XMLConstants;
 import javax.xml.stream.XMLOutputFactory;
@@ -31,12 +48,21 @@ public class QueryHelper {
 
 
     public static String serializeQuery(StructuredQueryBuilder sb, StructuredQueryBuilder.AndQuery query, String sortOrder) {
+        return serializeQuery(sb, query, sortOrder, null);
+    }
+
+    public static String serializeQuery(StructuredQueryBuilder sb, StructuredQueryBuilder.AndQuery query, String sortOrder, Element options) {
         String result;
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             XMLStreamWriter serializer = makeSerializer(baos);
 
             serializer.writeStartElement(SEARCH_API_NS, "search");
+
+            if (options != null) {
+                DOMUtil.serializeNode(options, serializer);
+            }
+
             serializer.writeStartElement(SEARCH_API_NS, "query");
 
 

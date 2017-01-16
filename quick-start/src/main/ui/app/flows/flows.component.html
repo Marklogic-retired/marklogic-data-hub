@@ -33,7 +33,7 @@
                   class="flow mdl-list__item"
                   [ngClass]="{'active': isActiveFlow(flow)}"
                   *ngFor="let flow of entity.inputFlows"
-                  (click)="setFlow(entity, flow, 'Input')">
+                  (click)="setFlow($event, entity, flow, 'Input')">
                   <span class="mdl-list__item-primary-content">
                     <i class="mdi mdi-import"></i>
                     {{ flow.flowName }}
@@ -54,7 +54,7 @@
                   class="flow mdl-list__item"
                   [ngClass]="{'active': isActiveFlow(flow)}"
                   *ngFor="let flow of entity.harmonizeFlows"
-                  (click)="setFlow(entity, flow, 'Harmonize')">
+                  (click)="setFlow($event, entity, flow, 'Harmonize')">
                   <span class="mdl-list__item-primary-content">
                     <i class="mdi mdi-looks"></i>
                     {{ flow.flowName }}
@@ -84,7 +84,7 @@
       <div class="page-content">
         <app-mlcp></app-mlcp>
         <app-harmonize-flow-options></app-harmonize-flow-options>
-        <div class="current-flow" *ngIf="flow && !mlcp.isVisible() && !harmonize.isVisible()">
+<!--         <div class="current-flow" *ngIf="flow && !mlcp.isVisible() && !harmonize.isVisible()">
           <h2>{{flow.flowName}} {{flowType}} flow <i class="fa fa-bug" *ngIf="flowHasError(entity.name, flow.flowName)"></i></h2>
           <h3>
             <mdl-button mdl-button-type="raised" mdl-colored="primary" mdl-ripple (click)="runFlow($event, flow, flowType)">
@@ -107,7 +107,7 @@
               </ul>
             </li>
           </ul>
-        </div>
+        </div> -->
       </div>
     </div>
   </div>

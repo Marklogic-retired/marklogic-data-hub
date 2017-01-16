@@ -1,0 +1,14 @@
+<envelope xmlns="http://marklogic.com/entity-services">
+  <headers></headers>
+  <triples></triples>
+  <instance>
+    <result xmlns="">
+      <name>Bob Smith</name>
+      <age>55</age>
+      <entity>e2eentity</entity>
+      <flow>testharmonize</flow>
+      <flowType>harmonize</flowType>
+    </result>
+  </instance>
+  <attachments></attachments>
+</envelope>

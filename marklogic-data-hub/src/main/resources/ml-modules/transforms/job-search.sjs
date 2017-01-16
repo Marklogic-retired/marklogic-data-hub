@@ -1,4 +1,3 @@
-var job = require("/com.marklogic.hub/lib/job-lib.xqy");
 var perf = require("/com.marklogic.hub/lib/perflog-lib.xqy");
 var debug = require("/com.marklogic.hub/lib/debug-lib.xqy");
 
@@ -11,7 +10,7 @@ function transform(context, params, content) {
     for (var i = 0; i < response.results.length; i++) {
       var result = response.results[i];
       var doc = cts.doc(result.uri).root;
-      result.content = job.jobToJsonSlim(doc);
+      result.content = doc;
       response.pageLength = response['page-length'];
     }
 

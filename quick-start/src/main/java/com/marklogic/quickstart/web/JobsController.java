@@ -18,7 +18,7 @@ package com.marklogic.quickstart.web;
 import com.marklogic.hub.util.PerformanceLogger;
 import com.marklogic.quickstart.EnvironmentAware;
 import com.marklogic.quickstart.model.JobQuery;
-import com.marklogic.quickstart.service.JobManager;
+import com.marklogic.quickstart.service.JobService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Scope;
@@ -35,20 +35,20 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class JobsController extends EnvironmentAware {
 
     @Autowired
-    JobManager jobManager;
+    JobService jobService;
 
     @Bean
     @Scope(proxyMode= ScopedProxyMode.TARGET_CLASS, value="session")
-    JobManager jobManager() {
+    JobService jobManager() {
         long startTime = PerformanceLogger.monitorTimeInsideMethod();
-        JobManager jobManager = new JobManager(envConfig().getMlSettings(), envConfig().getJobClient());
-        PerformanceLogger.logTimeInsideMethod(startTime, "JobsController.jobManager()");
-        return jobManager;
+        JobService jobService = new JobService(envConfig().getJobClient());
+        PerformanceLogger.logTimeInsideMethod(startTime, "JobsController.jobService()");
+        return jobService;
     }
 
     @RequestMapping(method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_VALUE})
     @ResponseBody
     public String getJobInstances(@RequestBody JobQuery jobQuery) {
-        return jobManager.getJobs(jobQuery).get();
+        return jobService.getJobs(jobQuery).get();
     }
 }

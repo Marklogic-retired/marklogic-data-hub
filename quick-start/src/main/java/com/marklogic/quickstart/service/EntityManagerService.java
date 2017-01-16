@@ -19,7 +19,14 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.extensions.ResourceManager;
+import com.marklogic.client.extensions.ResourceServices;
 import com.marklogic.client.helper.LoggingObject;
+import com.marklogic.client.io.JacksonHandle;
+import com.marklogic.client.io.StringHandle;
+import com.marklogic.client.util.RequestParameters;
+import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.flow.FlowType;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.quickstart.auth.ConnectionAuthenticationToken;
@@ -28,6 +35,7 @@ import com.marklogic.quickstart.model.FlowModel;
 import com.marklogic.quickstart.model.entity_services.EntityModel;
 import com.marklogic.quickstart.model.entity_services.HubUIData;
 import com.marklogic.quickstart.util.FileUtil;
+import com.sun.jersey.api.client.ClientHandlerException;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -45,7 +53,6 @@ public class EntityManagerService extends LoggingObject {
     private static final String UI_LAYOUT_FILE = "entities.layout.json";
     private static final String PLUGINS_DIR = "plugins";
     private static final String ENTITIES_DIR = "entities";
-    private static final String HUB_CONFIG_DIR = "hub-config";
     private static final String ENTITY_FILE_EXTENSION = ".entity.json";
 
     @Autowired
@@ -111,6 +118,56 @@ public class EntityManagerService extends LoggingObject {
         }
     }
 
+    public List<JsonNode> getRawEntities() throws IOException {
+        List<JsonNode> entities = new ArrayList<>();
+        Path entitiesPath = Paths.get(envConfig().getProjectDir(), PLUGINS_DIR, ENTITIES_DIR);
+        List<String> entityNames = FileUtil.listDirectFolders(entitiesPath.toFile());
+        ObjectMapper objectMapper = new ObjectMapper();
+        for (String entityName : entityNames) {
+            File[] entityDefs = entitiesPath.resolve(entityName).toFile().listFiles((dir, name) -> name.endsWith(ENTITY_FILE_EXTENSION));
+            for (File entityDef : entityDefs) {
+                entities.add(objectMapper.readTree(entityDef));
+            }
+        }
+        return entities;
+    }
+
+    public void saveSearchOptions() {
+        SearchOptionsGenerator generator = new SearchOptionsGenerator(envConfig().getStagingClient());
+        try {
+            String options = generator.generateOptions(getRawEntities());
+            Path dir = Paths.get(envConfig().getProjectDir(), HubConfig.USER_CONFIG_DIR);
+            if (!dir.toFile().exists()) {
+                dir.toFile().mkdirs();
+            }
+            File file = Paths.get(dir.toString(), HubConfig.SEARCH_OPTIONS_FILE).toFile();
+            FileUtils.writeStringToFile(file, options);
+        }
+        catch(IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void saveDbIndexes() {
+        DbIndexGenerator generator = new DbIndexGenerator(envConfig().getFinalClient());
+        try {
+            String indexes = generator.getIndexes(getRawEntities());
+
+            Path dir = envConfig().getMlSettings().getUserDatabaseDir();
+            if (!dir.toFile().exists()) {
+                dir.toFile().mkdirs();
+            }
+            File file = dir.resolve("final-database.json").toFile();
+            FileUtils.writeStringToFile(file, indexes);
+
+            file = dir.resolve("staging-database.json").toFile();
+            FileUtils.writeStringToFile(file, indexes);
+        }
+        catch(IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void saveAllUiData(List<EntityModel> entities) throws IOException {
         ObjectNode uiData;
         JsonNode json = getUiRawData();
@@ -121,7 +178,7 @@ public class EntityManagerService extends LoggingObject {
             uiData = JsonNodeFactory.instance.objectNode();
         }
 
-        Path dir = Paths.get(envConfig().getProjectDir(), HUB_CONFIG_DIR);
+        Path dir = Paths.get(envConfig().getProjectDir(), HubConfig.USER_CONFIG_DIR);
         if (!dir.toFile().exists()) {
             dir.toFile().mkdirs();
         }
@@ -148,7 +205,7 @@ public class EntityManagerService extends LoggingObject {
             uiData = JsonNodeFactory.instance.objectNode();
         }
 
-        Path dir = Paths.get(envConfig().getProjectDir(), HUB_CONFIG_DIR);
+        Path dir = Paths.get(envConfig().getProjectDir(), HubConfig.USER_CONFIG_DIR);
         if (!dir.toFile().exists()) {
             dir.toFile().mkdirs();
         }
@@ -202,14 +259,16 @@ public class EntityManagerService extends LoggingObject {
 
     private JsonNode getUiRawData() {
         JsonNode json = null;
-        Path dir = Paths.get(envConfig().getProjectDir(), HUB_CONFIG_DIR);
+        Path dir = Paths.get(envConfig().getProjectDir(), HubConfig.USER_CONFIG_DIR);
         File file = Paths.get(dir.toString(), UI_LAYOUT_FILE).toFile();
         if (file.exists()) {
             try {
                 ObjectMapper objectMapper = new ObjectMapper();
                 json = objectMapper.readTree(file);
             }
-            catch(IOException e) {}
+            catch(IOException e) {
+                e.printStackTrace();
+            }
         }
         return json;
     }
@@ -233,4 +292,59 @@ public class EntityManagerService extends LoggingObject {
         return uiDataList;
     }
 
+    public class SearchOptionsGenerator extends ResourceManager {
+        private static final String NAME = "search-options-generator";
+
+        private RequestParameters params = new RequestParameters();
+
+        SearchOptionsGenerator(DatabaseClient client) {
+            super();
+            client.init(NAME, this);
+        }
+
+        String generateOptions(List<JsonNode> entities) throws IOException {
+            try {
+                ObjectMapper objectMapper = new ObjectMapper();
+                JsonNode node = objectMapper.valueToTree(entities);
+                ResourceServices.ServiceResultIterator resultItr = this.getServices().post(params, new JacksonHandle(node));
+                if (resultItr == null || ! resultItr.hasNext()) {
+                    throw new IOException("Unable to generate search options");
+                }
+                ResourceServices.ServiceResult res = resultItr.next();
+                return res.getContent(new StringHandle()).get();
+            }
+            catch(ClientHandlerException e) {
+                e.printStackTrace();
+            }
+            return "{}";
+        }
+    }
+
+    public class DbIndexGenerator extends ResourceManager {
+        private static final String NAME = "db-configs";
+
+        private RequestParameters params = new RequestParameters();
+
+        DbIndexGenerator(DatabaseClient client) {
+            super();
+            client.init(NAME, this);
+        }
+
+        public String getIndexes(List<JsonNode> entities) throws IOException {
+            try {
+                ObjectMapper objectMapper = new ObjectMapper();
+                JsonNode node = objectMapper.valueToTree(entities);
+                ResourceServices.ServiceResultIterator resultItr = this.getServices().post(params, new JacksonHandle(node));
+                if (resultItr == null || ! resultItr.hasNext()) {
+                    throw new IOException("Unable to generate search options");
+                }
+                ResourceServices.ServiceResult res = resultItr.next();
+                return res.getContent(new StringHandle()).get();
+            }
+            catch(ClientHandlerException e) {
+                e.printStackTrace();
+            }
+            return "{}";
+        }
+    }
 }

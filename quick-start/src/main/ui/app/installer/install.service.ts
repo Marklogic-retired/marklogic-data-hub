@@ -26,6 +26,10 @@ export class InstallService {
     return resp.map(this.extractData);
   }
 
+  updateIndexes() {
+    return this.http.get(`/api/current-project/update-indexes`);
+  }
+
   uninstall() {
     let unsubscribeId: string;
     this.stomp.subscribe('/topic/uninstall-status').then((msgId: string) => {

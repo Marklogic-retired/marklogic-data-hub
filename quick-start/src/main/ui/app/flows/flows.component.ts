@@ -112,7 +112,7 @@ export class FlowsComponent {
     this.setCollapsed(entity, !collapsed);
   }
 
-  setFlow(entity: Entity, flow: Flow, flowType: string): void {
+  setFlow(ev: MouseEvent, entity: Entity, flow: Flow, flowType: string): void {
     if (this.mlcp.isVisible()) {
       this.mlcp.cancel();
     } else if (this.harmonize.isVisible()) {
@@ -121,6 +121,7 @@ export class FlowsComponent {
     this.entity = entity;
     this.flow = flow;
     this.flowType = flowType;
+    this.runFlow(ev, flow, flowType);
   }
 
   isActiveFlow(flow: Flow): boolean {

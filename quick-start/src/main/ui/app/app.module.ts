@@ -3,7 +3,8 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { RouterModule } from '@angular/router';
-import { TRUNCATE_PIPES } from 'ng2-truncate';
+import { TruncateCharactersPipe } from 'ng2-truncate/dist/truncate-characters.pipe'
+import { TruncateWordsPipe } from 'ng2-truncate/dist/truncate-words.pipe'
 import { AppComponent } from './app.component';
 import { FlowsComponent } from './flows';
 import {
@@ -18,7 +19,7 @@ import { SettingsComponent } from './settings';
 
 import { MdlModule } from 'angular2-mdl';
 import { MdlSelectModule } from '@angular2-mdl-ext/select';
-import { CodemirrorModule } from 'ng2-codemirror';
+import { CodemirrorComponent } from 'ng2-codemirror';
 import { MomentModule } from 'angular2-moment';
 import { GridManiaModule } from './grid';
 
@@ -26,7 +27,7 @@ import { ROUTES } from './app.routes';
 import { AUTH_PROVIDERS } from './auth';
 import { FolderBrowserComponent } from './folder-browser/folder-browser.component';
 import { HeaderComponent } from './header/header.component';
-import { JobsComponent } from './jobs';
+import { JobsComponent, JobOutputComponent } from './jobs';
 import { MlcpUiComponent } from './mlcp-ui';
 import { MlErrorComponent } from './ml-error';
 import { NewFlowComponent } from './new-flow/new-flow';
@@ -37,6 +38,7 @@ import { SelectComponent } from './select/select.component';
 import { SelectListComponent } from './select-list/select-list.component';
 import { TooltipModule } from './tooltip';
 import { TracesComponent, TraceViewerComponent } from './traces';
+import { SearchComponent, SearchViewerComponent } from './search';
 
 import { DeployService } from './deploy/deploy.service';
 import { EntitiesService } from './entities/entities.service';
@@ -48,6 +50,7 @@ import { SettingsService } from './settings/settings.service';
 import { STOMPService } from './stomp/stomp.service';
 import { ClipboardDirective } from './clipboard/clipboard.directive';
 import { TraceService } from './traces/trace.service';
+import { SearchService } from './search/search.service';
 import { HarmonizeFlowOptionsComponent } from './harmonize-flow-options/harmonize-flow-options.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { TitlecasePipe } from './titlecase.pipe';
@@ -67,6 +70,7 @@ import { ObjectToArrayPipe } from './object-to-array.pipe';
     EntityModelerComponent,
     ExternalDefDialogComponent,
     JobsComponent,
+    JobOutputComponent,
     LoginComponent,
     MlcpUiComponent,
     MlErrorComponent,
@@ -78,6 +82,8 @@ import { ObjectToArrayPipe } from './object-to-array.pipe';
     SettingsComponent,
     TracesComponent,
     TraceViewerComponent,
+    SearchComponent,
+    SearchViewerComponent,
     NoContentComponent,
     ClipboardDirective,
     HarmonizeFlowOptionsComponent,
@@ -85,14 +91,17 @@ import { ObjectToArrayPipe } from './object-to-array.pipe';
     InlineEditComponent,
     FacetsComponent,
     TitlecasePipe,
-    TRUNCATE_PIPES,
-    ObjectToArrayPipe
+    TruncateCharactersPipe,
+    TruncateWordsPipe,
+    ObjectToArrayPipe,
+    CodemirrorComponent
   ],
   entryComponents: [
     ChooseCollationComponent,
     ExternalDefDialogComponent,
     EntityEditorComponent,
-    NewFlowComponent
+    NewFlowComponent,
+    JobOutputComponent
   ],
   imports: [
     BrowserModule,
@@ -100,7 +109,6 @@ import { ObjectToArrayPipe } from './object-to-array.pipe';
     HttpModule,
     MdlModule,
     MdlSelectModule,
-    CodemirrorModule,
     TooltipModule,
     MomentModule,
     GridManiaModule,
@@ -116,7 +124,8 @@ import { ObjectToArrayPipe } from './object-to-array.pipe';
     ProjectService,
     SettingsService,
     STOMPService,
-    TraceService
+    TraceService,
+    SearchService
   ],
   bootstrap: [
     AppComponent

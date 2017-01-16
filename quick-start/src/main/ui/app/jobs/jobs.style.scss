@@ -63,4 +63,12 @@ input[type="search"] {
       }
     }
   }
+
+  tbody {
+    tr {
+      td {
+        max-width: 400px;
+      }
+    }
+  }
 }

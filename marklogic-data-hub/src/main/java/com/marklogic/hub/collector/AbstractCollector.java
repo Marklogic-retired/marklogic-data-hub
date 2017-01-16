@@ -19,6 +19,7 @@ import com.marklogic.hub.plugin.PluginType;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
+import java.util.Map;
 import java.util.Vector;
 
 public abstract class AbstractCollector implements Collector {
@@ -35,7 +36,7 @@ public abstract class AbstractCollector implements Collector {
     }
 
     @Override
-    public abstract Vector<String> run();
+    public abstract Vector<String> run(Map<String, Object> options);
 
     @Override
     public abstract void serialize(XMLStreamWriter serializer) throws XMLStreamException;
