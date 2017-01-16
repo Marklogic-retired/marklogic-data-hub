@@ -1,8 +1,27 @@
 # Change Log
 
-## [v1.1.0](https://github.com/marklogic/marklogic-data-hub/tree/v1.1.0)
+## [Unreleased](https://github.com/marklogic/marklogic-data-hub/tree/v2.0.0-alpha.2)
 
-[Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v1.0.2...v1.1.0)
+[Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v1.1.0...v2.0.0-alpha.2)
+
+**Implemented enhancements:**
+
+- Allow exernal data to be passed in to a flow's options-map [\#334](https://github.com/marklogic/marklogic-data-hub/issues/334)
+- Integrate with Entity Services [\#283](https://github.com/marklogic/marklogic-data-hub/issues/283)
+- show traces for a given flow [\#277](https://github.com/marklogic/marklogic-data-hub/issues/277)
+
+**Fixed bugs:**
+
+- Returning json:object\(\) isn't invoking ES serialization in flow [\#345](https://github.com/marklogic/marklogic-data-hub/issues/345)
+
+**Closed issues:**
+
+- "No message available" when following Quick Start [\#352](https://github.com/marklogic/marklogic-data-hub/issues/352)
+- Add job-id to harmonized documents [\#351](https://github.com/marklogic/marklogic-data-hub/issues/351)
+- Entity modeling rendering incorrectly [\#347](https://github.com/marklogic/marklogic-data-hub/issues/347)
+
+## [v1.1.0](https://github.com/marklogic/marklogic-data-hub/tree/v1.1.0) (2016-12-16)
+[Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v2.0.0-alpha.1...v1.1.0)
 
 **Implemented enhancements:**
 
@@ -23,9 +42,8 @@
 - Keep user database settings separate from hub database settings [\#325](https://github.com/marklogic/marklogic-data-hub/issues/325)
 - Create a non-admin user for doing hub stuff [\#200](https://github.com/marklogic/marklogic-data-hub/issues/200)
 
-## [v2.0.1-alpha.1](https://github.com/marklogic/marklogic-data-hub/tree/v2.0.1-alpha.1)
-
-[Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v1.0.2...v2.0.1-alpha.1)
+## [v2.0.0-alpha.1](https://github.com/marklogic/marklogic-data-hub/tree/v2.0.0-alpha.1) (2016-11-30)
+[Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v1.0.2...v2.0.0-alpha.1)
 
 **Implemented enhancements:**
 
