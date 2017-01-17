@@ -10,7 +10,7 @@
     "start": "ng serve -pc proxy.config.json --host 0.0.0.0",
     "clean.dist": "npm run rimraf -- dist",
     "build.prod": "npm run clean.dist && ng build -prod",
-    "lint": "tslint \"src/main/ui/**/*.ts\"",
+    "lint": "tslint \"src/main/ui/**/*.ts\" --project src/tsconfig.json --type-check && tslint \"e2e/**/*.ts\" --project e2e/tsconfig.json --type-check",
     "test": "ng test",
     "pree2e": "webdriver-manager update --standalone false --gecko false",
     "e2e": "protractor"
@@ -57,7 +57,7 @@
     "@types/lodash": "^4.14.34",
     "@types/node": "^6.0.42",
     "@types/semver": "^5.3.30",
-    "angular-cli": "1.0.0-beta.24",
+    "angular-cli": "1.0.0-beta.25.5",
     "codelyzer": "~2.0.0-beta.1",
     "jasmine-core": "2.5.2",
     "jasmine-spec-reporter": "2.5.0",
@@ -66,11 +66,11 @@
     "karma-cli": "^1.0.1",
     "karma-jasmine": "^1.0.2",
     "karma-remap-istanbul": "^0.2.1",
-    "npm": "3.10.8",
+    "npm": "4.0.5",
     "protractor": "~4.0.13",
     "rimraf": "^2.5.4",
     "ts-node": "1.2.1",
-    "tslint": "^4.0.2",
+    "tslint": "^4.3.0",
     "typescript": "~2.0.3"
   }
 }

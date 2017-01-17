@@ -45,6 +45,8 @@ dependencies {
     compile("org.springframework:spring-messaging")
     compile project(":marklogic-data-hub")
     compile("org.apache.commons:commons-csv:1.4")
+    compile group: 'com.sun.xml.ws', name: 'jaxws-rt', version: '2.1.3'
+
 
     // Optional Boot library - see https://docs.spring.io/spring-boot/docs/current/reference/html/using-boot-devtools.html
     compile("org.springframework.boot:spring-boot-devtools:${springBootVersion}")
@@ -64,10 +66,10 @@ configurations {
 
 node {
   // Version of node to use.
-  version = '6.8.1'
+  version = '7.4.0'
 
   // Version of npm to use.
-  npmVersion = '3.10.8'
+  npmVersion = '4.0.5'
 
   download = true
 

@@ -17,7 +17,7 @@ package com.marklogic.quickstart.util;
 
 import com.marklogic.client.MarkLogicIOException;
 import com.marklogic.client.query.StructuredQueryBuilder;
-import com.sun.xml.internal.ws.util.DOMUtil;
+import com.sun.xml.ws.util.DOMUtil;
 import org.w3c.dom.Element;
 
 import javax.xml.XMLConstants;
