@@ -62,7 +62,6 @@ public class FileSystemWatcherService extends EnvironmentAware implements Dispos
 
     public synchronized void watch(String pathName) throws IOException {
         registerAll(Paths.get(pathName));
-        throw new IOException("TEST");
     }
 
     public void addListener(FileSystemEventListener listener) {
