@@ -18,8 +18,10 @@ package com.marklogic.quickstart.service;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.quickstart.EnvironmentAware;
 import com.marklogic.quickstart.model.EnvironmentConfig;
+import com.marklogic.quickstart.util.WebsocketLogger;
 import com.sun.nio.file.SensitivityWatchEventModifier;
 import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -30,6 +32,9 @@ import java.util.*;
 
 @Service
 public class FileSystemWatcherService extends EnvironmentAware implements DisposableBean {
+
+    @Autowired
+    private WebsocketLogger wslogger;
 
     private WatchService _watcher = null;
     // needs to have class scope so that it doesn't go away
@@ -57,6 +62,7 @@ public class FileSystemWatcherService extends EnvironmentAware implements Dispos
 
     public synchronized void watch(String pathName) throws IOException {
         registerAll(Paths.get(pathName));
+        throw new IOException("TEST");
     }
 
     public void addListener(FileSystemEventListener listener) {
@@ -80,6 +86,7 @@ public class FileSystemWatcherService extends EnvironmentAware implements Dispos
                 }
                 catch (Exception e) {
                     logger.error("Exception occured on listener", e);
+                    wslogger.log("Exception occured on listener: " + e);
                 }
             }
         }
@@ -217,6 +224,7 @@ public class FileSystemWatcherService extends EnvironmentAware implements Dispos
                             }
                         } catch (IOException x) {
                             logger.error("Cannot watch newly created directory: " + child.getFileName().toAbsolutePath(), x);
+                            wslogger.log("Exception occured on listener: " + x);
                         }
                     }
                 }
