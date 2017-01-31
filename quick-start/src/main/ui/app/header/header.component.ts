@@ -4,11 +4,14 @@ import { Router } from '@angular/router';
 import { AuthService } from '../auth/auth.service';
 import { ProjectService } from '../projects/projects.service';
 import { JobListenerService } from '../jobs/job-listener.service';
+import { LogListenerService } from '../log/log-listener.service';
 
 @Component({
   selector: 'app-header',
   templateUrl: './header.tpl.html',
-  providers: [],
+  providers: [
+    LogListenerService
+  ],
   styleUrls: ['./header.style.scss'],
 })
 export class HeaderComponent {
@@ -19,8 +22,11 @@ export class HeaderComponent {
     private projectService: ProjectService,
     private auth: AuthService,
     private jobListener: JobListenerService,
+    private logListener: LogListenerService,
     private router: Router
-  ) {}
+
+  ) {
+  }
 
   gotoJobs() {
     this.router.navigate(['jobs']);
@@ -41,6 +47,14 @@ export class HeaderComponent {
     }
 
     return '';
+  }
+
+  getLog(): string {
+    return this.logListener.lastMessage();
+  }
+
+  clearLog() {
+    this.logListener.add('');
   }
 
   logout() {

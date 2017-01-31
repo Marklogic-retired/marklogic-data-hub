@@ -9,6 +9,8 @@
       <mdl-progress mode="determinate" [progress]="getPercentComplete()"></mdl-progress>
       <span class="percent">{{getPercentComplete()}}%</span>
     </div>
+    <div class="error" *ngIf="getLog()" (click)="clearLog()">{{getLog()}}</div>
+
     <div class="mdl-layout-spacer"></div>
     <nav class="mdl-navigation mdl-layout--large-screen-only">
       <a class="mdl-navigation__link" [ngClass]="{'active': isActive('/')}" [routerLink]="['']"><i class="fa fa-dashboard"></i> Dashboard</a>
