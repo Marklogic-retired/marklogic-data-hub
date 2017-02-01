@@ -31,6 +31,8 @@ import com.marklogic.quickstart.service.FileSystemEventListener;
 import com.marklogic.quickstart.service.FileSystemWatcherService;
 import com.marklogic.quickstart.service.HubStatsService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -54,6 +56,7 @@ import java.nio.file.Paths;
 
 @Controller
 @RequestMapping(value = "/api/current-project")
+@Scope(proxyMode= ScopedProxyMode.TARGET_CLASS, value="session")
 public class CurrentProjectController extends EnvironmentAware implements FileSystemEventListener, ValidateListener, DeployUserModulesListener, AuthenticationSuccessHandler, LogoutSuccessHandler {
 
     @Autowired
@@ -120,7 +123,7 @@ public class CurrentProjectController extends EnvironmentAware implements FileSy
             public void onError() {}
         });
         envConfig().checkIfInstalled();
-        boolean installed = envConfig().getInstallInfo().isInstalled();
+        envConfig().getInstallInfo().isInstalled();
 
         return new ResponseEntity<>(envConfig().toJson(), HttpStatus.OK);
     }

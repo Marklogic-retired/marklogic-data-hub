@@ -17,6 +17,7 @@ package com.marklogic.hub.collector;
 
 import com.marklogic.hub.plugin.PluginType;
 
+import java.util.Map;
 import java.util.Vector;
 
 public class QueryCollector extends ServerCollector {
@@ -28,7 +29,7 @@ public class QueryCollector extends ServerCollector {
     }
 
     @Override
-    public Vector<String> run() {
+    public Vector<String> run(Map<String, Object> options) {
         return null;
     }
 

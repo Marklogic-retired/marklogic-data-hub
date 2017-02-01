@@ -72,10 +72,10 @@ declare variable $TYPE-XQUERY := "xquery";
 declare variable $TYPE-JAVASCRIPT := "javascript";
 
 declare variable $TYPE-XSLT := "xslt";
-
 declare variable $TYPE-XML := "xml";
-
 declare variable $TYPE-JSON := "json";
+declare variable $XML := "application/xml";
+declare variable $JSON := "application/json";
 
 declare %private function flow:get-module-ns(
   $type as xs:string) as xs:string?
@@ -446,8 +446,7 @@ declare function flow:run-collector(
         (),
         $ex,
         xdmp:elapsed-time() - $before
-      ),
-      xdmp:rethrow()
+      )
     }
   let $_ :=
     trace:plugin-trace(
@@ -474,11 +473,13 @@ declare function flow:run-collector(
  : @return - nothing
  :)
 declare function flow:run-flow(
+  $job-id as xs:string,
   $flow as element(hub:flow),
   $identifier as xs:string,
+  $target-database as xs:unsignedLong,
   $options as map:map) as empty-sequence()
 {
-  flow:run-flow($flow, $identifier, (), $options)
+  flow:run-flow($job-id, $flow, $identifier, (), $target-database, $options)
 };
 
 declare function flow:run-plugins(
@@ -499,7 +500,7 @@ declare function flow:run-plugins(
   let $flow-type := $flow/hub:type
   let $flow-complexity := $flow/hub:complexity
   let $_ := trace:init-trace(
-    if ($data-format = 'application/xml') then "xml"
+    if ($data-format = $XML) then "xml"
     else "json")
   let $_ :=
     for $plugin in $flow/hub:plugins/hub:plugin
@@ -524,18 +525,21 @@ declare function flow:run-plugins(
 };
 
 declare function flow:run-flow(
+  $job-id as xs:string,
   $flow as element(hub:flow),
   $identifier as xs:string,
   $content as item()?,
+  $target-database as xs:unsignedLong,
   $options as map:map) as empty-sequence()
 {
   (: assert that we are in query mode :)
   let $_ts as xs:unsignedLong := xdmp:request-timestamp()
+  let $_ := trace:set-job-id($job-id)
   let $envelope := flow:run-plugins($flow, $identifier, $content, $options)
   let $_ :=
     for $writer in $flow/hub:writer
     return
-      flow:run-writer($writer, $identifier, $envelope, $flow/hub:type, $options)
+      flow:run-writer($writer, $identifier, $envelope, $flow/hub:type, $target-database, $options)
   let $_ := trace:write-trace()
   return
     ()
@@ -547,9 +551,11 @@ declare function flow:run-flow(
  : @param $map - a map with all the stuff in it
  : @return - the newly constructed envelope
  :)
-declare function flow:make-envelope($map as map:map, $data-format as xs:string)
+declare function flow:make-envelope(
+  $map as map:map,
+  $data-format as xs:string)
 {
-  if ($data-format eq "application/json") then
+  if ($data-format eq $JSON) then
     let $headers := fn:head((map:get($map, "headers"), json:array()))
     let $triples := fn:head((map:get($map, "triples"), json:array()))
     let $content := fn:head((map:get($map, "content"), json:object()))
@@ -590,9 +596,8 @@ declare function flow:run-plugin(
   $options as map:map)
 {
   let $module-uri as xs:string? := $plugin/@module
+  where fn:not(fn:empty($module-uri))
   return
-    if (fn:empty($module-uri)) then ()
-    else
       let $destination as xs:string := $plugin/@dest
       let $filename as xs:string := hul:get-file-from-uri($module-uri)
       let $type := flow:get-type($filename)
@@ -604,7 +609,7 @@ declare function flow:run-plugin(
           "create-" || $destination
       let $func := xdmp:function(fn:QName($ns, $func-name), $module-uri)
       let $trace-input :=
-        if ($data-format = 'application/xml') then
+      if ($data-format = $XML) then
           switch($destination)
             case "content" return
               if ($flow-type = "input") then
@@ -642,12 +647,7 @@ declare function flow:run-plugin(
               switch($destination)
                 case "content" return
                   if ($flow-type = "input") then
-                    let $kind := try {
-                      xdmp:node-kind($content)
-                    }
-                    catch($ex) {}
-                    return
-                      if ($kind eq "binary") then
+                  if ($content instance of binary()) then
                         map:put($o, "rawContent", "binary document")
                       else
                         map:put($o, "rawContent", $content)
@@ -697,8 +697,7 @@ declare function flow:run-plugin(
             $trace-input,
             $ex,
             xdmp:elapsed-time() - $before
-          ),
-          xdmp:rethrow()
+        )
         }
       let $duration := xdmp:elapsed-time() - $before
       let $resp :=
@@ -714,12 +713,12 @@ declare function flow:run-plugin(
       let $resp :=
         typeswitch($resp)
           case object-node() | json:object return
-            if ($data-format = 'application/xml') then
+            if ($data-format = $XML) then
               json:transform-from-json($resp, json:config("custom"))
             else
               $resp
           case json:array return
-            if ($data-format = 'application/xml') then
+          if ($data-format = $XML) then
               json:array-values($resp)
             else
               $resp
@@ -737,7 +736,7 @@ declare function flow:run-plugin(
           $destination,
           $flow-type,
           $trace-input,
-          if ($data-format = 'application/xml') then
+        if ($data-format = $XML) then
             $resp
           else
             ($resp, null-node{})[1],
@@ -761,6 +760,7 @@ declare function flow:run-writer(
   $identifier as xs:string,
   $envelope as item(),
   $flow-type as xs:string,
+  $target-database as xs:unsignedLong,
   $options as map:map)
 {
   let $module-uri as xs:string := $writer/@module
@@ -787,7 +787,7 @@ declare function flow:run-writer(
       )),
       map:new((
         map:entry("isolation", "different-transaction"),
-        map:entry("database", xdmp:database($config:FINAL-DATABASE)),
+        map:entry("database", $target-database),
         map:entry("transactionMode", "update-auto-commit")
       )))
     }
@@ -801,10 +801,17 @@ declare function flow:run-writer(
         $envelope,
         $ex,
         xdmp:elapsed-time() - $before
-      ),
-      xdmp:rethrow()
+      )
     }
   let $duration := xdmp:elapsed-time() - $before
+  let $is-xml :=
+    let $e :=
+      if ($envelope instance of document-node()) then
+        $envelope/node()
+      else
+        $envelope
+    return
+      $e instance of element()
   let $_ :=
     trace:plugin-trace(
       $identifier,
@@ -812,7 +819,7 @@ declare function flow:run-writer(
       "writer",
       $flow-type,
       $envelope,
-      if ($envelope instance of element()) then ()
+      if ($is-xml) then ()
       else null-node {},
       $duration
     )

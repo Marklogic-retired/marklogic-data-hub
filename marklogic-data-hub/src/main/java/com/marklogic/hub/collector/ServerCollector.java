@@ -15,6 +15,7 @@
  */
 package com.marklogic.hub.collector;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.extensions.ResourceManager;
 import com.marklogic.client.extensions.ResourceServices.ServiceResult;
@@ -25,6 +26,7 @@ import com.marklogic.hub.plugin.PluginType;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
+import java.util.Map;
 import java.util.Vector;
 
 public class ServerCollector extends AbstractCollector {
@@ -59,9 +61,9 @@ public class ServerCollector extends AbstractCollector {
     }
 
     @Override
-    public Vector<String> run() {
+    public Vector<String> run(Map<String, Object> options) {
         CollectorModule cm = new CollectorModule(client);
-        return cm.run(getModule());
+        return cm.run(getModule(), options);
     }
 
     static class CollectorModule extends ResourceManager {
@@ -72,9 +74,15 @@ public class ServerCollector extends AbstractCollector {
             client.init(NAME, this);
         }
 
-        public Vector<String> run(String moduleUri) {
+        public Vector<String> run(String moduleUri, Map<String, Object> options) {
+            try {
             RequestParameters params = new RequestParameters();
             params.add("module-uri", moduleUri);
+
+                if (options != null) {
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    params.put("options", objectMapper.writeValueAsString(options));
+                }
 
             ServiceResultIterator resultItr;
 
@@ -89,5 +97,10 @@ public class ServerCollector extends AbstractCollector {
             handle.getMapper().disableDefaultTyping();
             return res.getContent(handle).get();
         }
+            catch(Exception e) {
+                e.printStackTrace();
+                throw new RuntimeException(e);
+    }
+}
     }
 }

@@ -37,7 +37,7 @@
                   class="flow mdl-list__item"
                   [ngClass]="{'active': isActiveFlow(flow)}"
                   *ngFor="let flow of entity.inputFlows"
-                  (click)="setFlow(entity, flow, 'Input')">
+                  (click)="setFlow($event, entity, flow, 'Input')">
                   <span class="mdl-list__item-primary-content">
                     <i class="mdi mdi-import"></i>
                     {{ flow.flowName }}
@@ -58,7 +58,7 @@
                   class="flow mdl-list__item"
                   [ngClass]="{'active': isActiveFlow(flow)}"
                   *ngFor="let flow of entity.harmonizeFlows"
-                  (click)="setFlow(entity, flow, 'Harmonize')">
+                  (click)="setFlow($event, entity, flow, 'Harmonize')">
                   <span class="mdl-list__item-primary-content">
                     <i class="mdi mdi-looks"></i>
                     {{ flow.flowName }}
@@ -88,33 +88,7 @@
       <div class="page-content">
         <app-mlcp></app-mlcp>
         <app-harmonize-flow-options></app-harmonize-flow-options>
-        <div class="current-flow" *ngIf="flow && !mlcp.isVisible() && !harmonize.isVisible()">
-          <h2>{{flow.flowName}} {{flowType}} flow <i class="fa fa-bug" *ngIf="flowHasError(entity.entityName, flow.flowName)"></i></h2>
-          <h3>
-            <mdl-button mdl-button-type="raised" mdl-colored="primary" mdl-ripple (click)="runFlow($event, flow, flowType)">
-              Run Flow <i class="fa fa-play-circle-o"></i>
-            </mdl-button>
-          </h3>
-          <h3>Plugins</h3>
-          <ul class="plugin-list">
-            <li *ngFor="let plugin of flow.plugins" [ngClass]="{'error': pluginHasError(flow, plugin.pluginType) }">
-              <h4>
-                <i class="fa fa-bug" *ngIf="pluginHasError(flow, plugin.pluginType)"></i>
-                <i class="fa fa-folder-open-o"></i>
-                {{plugin.pluginType}}
-                </h4>
-              <ul>
-                <li *ngFor="let file of plugin.files">
-                  <i class="fa fa-file-code-o"></i> {{file}}
-                  <pre *ngIf="pluginHasError(flow, plugin.pluginType)" class="error-msg">{{getErrorMessage(flow, plugin.pluginType)}}</pre>
-                </li>
-              </ul>
-            </li>
-          </ul>
-        </div>
       </div>
     </div>
   </div>
-  <app-new-entity></app-new-entity>
-  <app-new-flow></app-new-flow>
 </div>

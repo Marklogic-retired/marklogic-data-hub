@@ -23,6 +23,7 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -71,6 +72,7 @@ public abstract class AbstractFlow implements Flow {
     private boolean envelopeEnabled = true;
     protected ArrayList<Plugin> plugins = new ArrayList<Plugin>();
     private Writer writer;
+    private Map<String, Object> userOptions;
 
     public AbstractFlow() {}
 
@@ -379,4 +381,9 @@ public abstract class AbstractFlow implements Flow {
     public List<Plugin> getPlugins() {
         return plugins;
     }
+
+    public void setOptions(Map<String, Object> options) {
+        userOptions = options;
+    }
+    public Map<String, Object> getOptions() { return userOptions; }
 }

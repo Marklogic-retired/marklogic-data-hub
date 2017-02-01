@@ -27,7 +27,7 @@ public class FlowModel {
     public String flowName;
     public PluginFormat pluginFormat;
     public Format dataFormat;
-    public List<PluginModel> plugins = new ArrayList<PluginModel>();
+    public List<PluginModel> plugins = new ArrayList<>();
 
     public FlowModel() {}
 

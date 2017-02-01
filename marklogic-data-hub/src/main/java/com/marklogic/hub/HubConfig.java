@@ -35,6 +35,7 @@ public class HubConfig extends LoggingObject {
     public static final String OLD_HUB_CONFIG_DIR = "marklogic-config";
     public static final String HUB_CONFIG_DIR = "hub-internal-config";
     public static final String USER_CONFIG_DIR = "user-config";
+    public static final String SEARCH_OPTIONS_FILE = "all-search-options.xml";
 
     public static final String DEFAULT_HOST = "localhost";
 
@@ -171,8 +172,12 @@ public class HubConfig extends LoggingObject {
 
         username = getEnvPropString(environmentProperties, "mlManageUsername", username);
         username = getEnvPropString(environmentProperties, "mlUsername", username);
-        if (username == null) {
+        if (username == null && adminUsername != null) {
             username = adminUsername;
+        }
+
+        if (adminUsername == null && username != null) {
+            adminUsername = username;
         }
 
         password = getEnvPropString(environmentProperties, "mlManagePassword", password);

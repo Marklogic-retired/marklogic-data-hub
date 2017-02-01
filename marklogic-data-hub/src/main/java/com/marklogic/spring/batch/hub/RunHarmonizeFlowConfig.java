@@ -17,6 +17,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 
 import java.util.List;
+import java.util.Map;
 
 @Configuration
 public class RunHarmonizeFlowConfig extends AbstractMarkLogicBatchConfig {
@@ -54,7 +55,10 @@ public class RunHarmonizeFlowConfig extends AbstractMarkLogicBatchConfig {
 
     @Bean
     @JobScope
-    protected Step step1(@Value("#{jobParameters['batchSize']}") int batchSize, @Value("#{jobParameters['threadCount']}") int threadCount) {
+    protected Step step1(
+        @Value("#{jobParameters['batchSize']}") int batchSize,
+        @Value("#{jobParameters['threadCount']}") int threadCount,
+        @Value("#{jobParameters['targetDatabase']}") String targetDatabase) {
 
         Collector c = flow.getCollector();
         if (c instanceof ServerCollector) {
@@ -67,7 +71,7 @@ public class RunHarmonizeFlowConfig extends AbstractMarkLogicBatchConfig {
 
         return stepBuilderFactory.get("step1")
             .<String, String>chunk(batchSize)
-            .reader(new CollectorReader(c))
+            .reader(new CollectorReader(c, flow.getOptions()))
             .processor(ip)
             .listener(new ItemWriteListener<String>() {
                 @Override
@@ -92,7 +96,7 @@ public class RunHarmonizeFlowConfig extends AbstractMarkLogicBatchConfig {
 
                 }
             })
-            .writer(new FlowWriter(getDatabaseClient(), flow))
+            .writer(new FlowWriter(getDatabaseClient(), jobId, targetDatabase, flow, flow.getOptions()))
             .listener(new ChunkListener() {
                 @Override
                 public void beforeChunk(ChunkContext context) {

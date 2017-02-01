@@ -64,8 +64,6 @@ export class MlcpUiComponent {
     private entitiesService: EntitiesService,
     private envService: EnvironmentService
   ) {
-    let vref: any = vcRef;
-    snackbar.setDefaultViewContainerRef(vref);
   }
 
   show(mlcpOptions: any, flow: Flow, $event: MouseEvent): EventEmitter<boolean> {

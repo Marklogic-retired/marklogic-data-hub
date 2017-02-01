@@ -6,6 +6,8 @@ import { InstallService } from '../installer';
 
 import { ProjectService } from '../projects';
 
+import { MdlDialogService } from 'angular2-mdl';
+
 @Component({
   selector: 'app-settings',
   templateUrl: './settings.tpl.html',
@@ -21,6 +23,7 @@ export class SettingsComponent {
     private settings: SettingsService,
     private install: InstallService,
     private projectService: ProjectService,
+    private dialogService: MdlDialogService,
     private router: Router
   ) {}
 
@@ -45,6 +48,7 @@ export class SettingsComponent {
   }
 
   uninstall(): void {
+    this.dialogService.confirm('Uninstall the hub from MarkLogic?', 'Cancel', 'Uninstall').subscribe(() => {
     this.uninstallStatus = '';
     this.isUninstalling = true;
     let emitter = this.install.messageEmitter.subscribe((payload: any) => {
@@ -59,5 +63,8 @@ export class SettingsComponent {
       }
     });
     this.install.uninstall();
+    },
+    // cancel.. do nothing
+    () => {});
   }
 }

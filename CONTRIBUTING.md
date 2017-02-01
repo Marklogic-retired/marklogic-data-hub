@@ -39,6 +39,28 @@ cd /path/to/data-hub-project/
 gradle build -x test
 ```
 
+#### Running your local hub instead of the cloud hosted one
+```bash
+cd /path/to/data-hub-project/
+gradle publishToMavenLocal
+cd /path/to/data-hub-project/ml-data-hub-plugin
+gradle publishToMavenLocal
+```
+
+Then in your build.gradle file you will need to use the local version:
+```groovy
+buildscript {
+  repositories {
+    mavenLocal() 
+    jcenter()
+  } 
+  dependencies {
+    classpath "com.marklogic:ml-data-hub-plugin:(the version number you chose)"
+  }
+}
+apply plugin: "com.marklogic.ml-data-hub-plugin"
+```
+
 #### Running the QuickStart UI from source
 Make sure you have the prerequisites installed.
 

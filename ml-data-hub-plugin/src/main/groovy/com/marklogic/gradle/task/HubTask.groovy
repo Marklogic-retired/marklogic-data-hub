@@ -31,6 +31,10 @@ abstract class HubTask extends DefaultTask {
         return getHubConfig().newStagingClient()
     }
 
+    DatabaseClient getFinalClient() {
+        return getHubConfig().newFinalClient()
+    }
+
     CommandContext getCommandContext() {
         getProject().property("mlCommandContext")
     }

@@ -8,6 +8,7 @@ import { ProjectService } from '../projects/projects.service';
 import { InstallService } from '../installer';
 import { LoginInfo } from './login-info.model';
 import { HubSettings } from '../environment/hub-settings.model';
+import { MdlDialogService } from 'angular2-mdl';
 
 import * as SemVer from 'semver';
 
@@ -77,6 +78,7 @@ export class LoginComponent implements OnInit {
     private auth: AuthService,
     private projectService: ProjectService,
     private installService: InstallService,
+    private dialogService: MdlDialogService,
     private router: Router,
     private renderer: Renderer) {}
 
@@ -225,7 +227,10 @@ export class LoginComponent implements OnInit {
   }
 
   restoreInitDefaults($evt: MouseEvent) {
+    this.dialogService.confirm('Really restore the default settings?', 'Cancel', 'Restore').subscribe(() => {
     this.initSettings = _.clone(this.defaultSettings);
+    },
+    () => {});
   }
 
   gotEnvironment(environment: string) {

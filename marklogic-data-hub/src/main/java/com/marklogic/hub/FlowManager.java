@@ -41,22 +41,25 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class FlowManager extends ResourceManager {
     private static final String HUB_NS = "http://marklogic.com/data-hub";
     private static final String NAME = "flow";
 
-    private DatabaseClient client;
+    private DatabaseClient stagingClient;
+    private DatabaseClient finalClient;
+    private DatabaseClient jobClient;
     private HubConfig hubConfig;
+    private Map<String, Object> userOptions;
 
     public FlowManager(HubConfig hubConfig) {
         super();
         this.hubConfig = hubConfig;
-        this.client = hubConfig.newStagingClient();
-        this.client.init(NAME, this);
+        this.stagingClient = hubConfig.newStagingClient();
+        this.finalClient = hubConfig.newFinalClient();
+        this.jobClient = hubConfig.newJobDbClient();
+        this.stagingClient.init(NAME, this);
     }
 
     /**
@@ -103,8 +106,7 @@ public class FlowManager extends ResourceManager {
      * @return the flow
      */
     public Flow getFlow(String entityName, String flowName) {
-        Flow flow = getFlow(entityName, flowName, null);
-        return flow;
+        return getFlow(entityName, flowName, null);
     }
 
     public Flow getFlow(String entityName, String flowName, FlowType flowType) {
@@ -124,19 +126,23 @@ public class FlowManager extends ResourceManager {
         return flowFromXml(parent.getDocumentElement());
     }
 
-    private ConfigurableApplicationContext buildApplicationContext(Flow flow, JobStatusListener statusListener) {
+    private ConfigurableApplicationContext buildApplicationContext(Flow flow, DatabaseClient srcClient, Map<String, Object> options, JobStatusListener statusListener) {
+        if (options == null) {
+            options = new HashMap<>();
+        }
         AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
         ctx.register(StagingConfig.class);
         ctx.register(FlowConfig.class);
         ctx.register(RunHarmonizeFlowConfig.class);
         ctx.getBeanFactory().registerSingleton("hubConfig", hubConfig);
         ctx.getBeanFactory().registerSingleton("flow", flow);
+        ctx.getBeanFactory().registerSingleton("srcClient", srcClient);
         ctx.getBeanFactory().registerSingleton("statusListener", statusListener);
         ctx.refresh();
         return ctx;
     }
 
-    private JobParameters buildJobParameters(Flow flow, int batchSize, int threadCount) {
+    private JobParameters buildJobParameters(Flow flow, int batchSize, int threadCount, String targetDatabase) {
         JobParametersBuilder jpb = new JobParametersBuilder();
         jpb.addLong("batchSize", Integer.toUnsignedLong(batchSize));
         jpb.addLong("threadCount", Integer.toUnsignedLong(threadCount));
@@ -144,7 +150,12 @@ public class FlowManager extends ResourceManager {
         jpb.addString("flowType", flow.getType().toString());
         jpb.addString("entity", flow.getEntityName());
         jpb.addString("flow", flow.getName());
+        jpb.addString("targetDatabase", targetDatabase);
         return jpb.toJobParameters();
+    }
+
+    public JobExecution runFlow(Flow flow, int batchSize, int threadCount, JobStatusListener statusListener) {
+        return runFlow(flow, batchSize, threadCount, HubDatabase.STAGING, HubDatabase.FINAL, null, statusListener);
     }
 
     /**
@@ -155,12 +166,31 @@ public class FlowManager extends ResourceManager {
      * @param statusListener - the callback to receive job status updates
      * @return a JobExecution instance
      */
-    public JobExecution runFlow(Flow flow, int batchSize, int threadCount, JobStatusListener statusListener) {
+    public JobExecution runFlow(Flow flow, int batchSize, int threadCount, HubDatabase srcDb, HubDatabase destDb, Map<String, Object> options, JobStatusListener statusListener) {
         JobExecution result = null;
+        if (options == null) {
+            options = new HashMap<>();
+        }
+        flow.setOptions(options);
         try {
-            ConfigurableApplicationContext ctx = buildApplicationContext(flow, statusListener);
+            DatabaseClient srcClient;
+            if (srcDb.equals(HubDatabase.STAGING)) {
+                srcClient = this.stagingClient;
+            }
+            else {
+                srcClient = this.finalClient;
+            }
+            String targetDatabase;
+            if (destDb.equals(HubDatabase.STAGING)) {
+                targetDatabase = hubConfig.stagingDbName;
+            }
+            else {
+                targetDatabase = hubConfig.finalDbName;
+            }
 
-            JobParameters params = buildJobParameters(flow, batchSize, threadCount);
+            ConfigurableApplicationContext ctx = buildApplicationContext(flow, srcClient, userOptions, statusListener);
+
+            JobParameters params = buildJobParameters(flow, batchSize, threadCount, targetDatabase);
             JobLauncher launcher = ctx.getBean(JobLauncher.class);
             Job job = ctx.getBean(Job.class);
             result = launcher.run(job, params);
@@ -185,7 +215,7 @@ public class FlowManager extends ResourceManager {
             complexity = elements.item(0).getTextContent();
         }
 
-        if (complexity.equals(FlowComplexity.SIMPLE.toString())) {
+        if (complexity != null && complexity.equals(FlowComplexity.SIMPLE.toString())) {
             f = new SimpleFlow(doc);
         }
 

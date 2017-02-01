@@ -66,7 +66,7 @@ public class FlowManagerService extends LoggingObject {
 
     private FlowManager fm = null;
 
-    public FlowManager getFlowManager() {
+    private FlowManager getFlowManager() {
         if (fm == null) {
             fm = new FlowManager(envConfig().getMlSettings());
         }
@@ -74,7 +74,7 @@ public class FlowManagerService extends LoggingObject {
     }
 
     public List<FlowModel> getFlows(String projectDir, String entityName, FlowType flowType) {
-        List<FlowModel> flows = new ArrayList<FlowModel>();
+        List<FlowModel> flows = new ArrayList<>();
 
         Path entityPath = Paths.get(projectDir, "plugins", "entities", entityName);
 

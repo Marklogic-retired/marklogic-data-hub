@@ -18,6 +18,7 @@ package com.marklogic.quickstart.web;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.quickstart.EnvironmentAware;
+import com.marklogic.quickstart.model.TraceQuery;
 import com.marklogic.quickstart.service.TraceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -39,10 +40,10 @@ public class TracesController extends EnvironmentAware {
         return new TraceService(envConfig().getTraceClient());
     }
 
-    @RequestMapping(value = "/", method = RequestMethod.GET)
+    @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
-    public String getTraces(@RequestParam(required = false) String query, @RequestParam long start, @RequestParam long count) throws JsonProcessingException {
-        return traceService.getTraces(query, start, count).get();
+    public String getTraces(@RequestBody TraceQuery traceQuery) throws JsonProcessingException {
+        return traceService.getTraces(traceQuery).get();
     }
 
     @RequestMapping(value = "/{traceId}", method = RequestMethod.GET)

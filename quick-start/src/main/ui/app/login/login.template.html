@@ -43,6 +43,7 @@
               [ngClass]="{'collapsed': !showFolderBrowser}"
               class="shrink-me shrinky"
               start-path='.'
+              absoluteOnly="true"
               (folderChosen)="folderClicked($event)">
             </app-folder-browser>
           </div>
@@ -134,10 +135,7 @@
                 <button
                   type="button"
                   mdl-button
-                  appConfirm title="Are you sure?"
-                  appendToBody="true"
-                  message="Really restore the default settings?"
-                  (confirm)="restoreInitDefaults($event)">Restore Defaults</button>
+                  (click)="restoreInitDefaults($event)">Restore Defaults</button>
                 <button type="submit" mdl-button mdl-button-type="raised">Initialize</button>
               </div>
             </form>

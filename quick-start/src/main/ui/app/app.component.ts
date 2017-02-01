@@ -30,7 +30,7 @@ declare var window: CustomWindow;
   styleUrls: [
     './app.component.scss'
   ],
-  templateUrl: 'app.component.html'
+  templateUrl: './app.component.html'
 })
 export class AppComponent implements OnInit {
   authenticated: boolean = false;

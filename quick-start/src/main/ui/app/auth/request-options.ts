@@ -7,7 +7,11 @@ interface CustomWindow {
 declare var window: CustomWindow;
 
 @Injectable()
-class HubRequestOptions extends RequestOptions {
+export class HubRequestOptions extends RequestOptions {
+
+  constructor(options?: any) {
+    super(options);
+  }
 
   merge(options?: RequestOptionsArgs): RequestOptions {
     let result = new HubRequestOptions(super.merge(options));

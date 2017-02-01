@@ -39,7 +39,7 @@ public class ProjectsController {
     @ResponseBody
     public Map<String, Object> getProjects() throws ClassNotFoundException, IOException {
         Map<String, Object> resp = new HashMap<>();
-        resp.put("projects", pm.projects.values());
+        resp.put("projects", pm.getProjects().values());
         int lastProjectId = pm.getLastProject();
         if (lastProjectId >= 0) {
             resp.put("lastProject", lastProjectId);
