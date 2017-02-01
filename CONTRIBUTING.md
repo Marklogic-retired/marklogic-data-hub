@@ -163,6 +163,10 @@ Make sure that all tests pass. Please, do not submit patches that fail.
 $ git push origin my-feature-branch
 ```
 
+#### Agree to the contributor License
+
+Before we can merge your changes, you need to sign a [Contributor License Agreement](http://developer.marklogic.com/products/cla). You only need to do this once.
+
 #### Submit the pull request
 
 Go to https://github.com/username/marklogic-data-hub and select your feature branch. Click
