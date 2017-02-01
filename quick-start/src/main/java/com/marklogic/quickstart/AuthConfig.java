@@ -97,6 +97,8 @@ public class AuthConfig extends WebSecurityConfigurerAdapter {
         authFilter.setAuthenticationSuccessHandler(currentProjectController);
         authFilter.setAuthenticationFailureHandler(new SimpleUrlAuthenticationFailureHandler());
         http
+            .headers().frameOptions().disable()
+            .and()
             .addFilterBefore(authFilter, UsernamePasswordAuthenticationFilter.class)
             .csrf().disable()
             .exceptionHandling()
@@ -130,7 +132,6 @@ public class AuthConfig extends WebSecurityConfigurerAdapter {
             "/*.svg",
             "/*.woff2",
             "/*.eot",
-            "/*.css",
             "/index.html",
             "/login",
             "/home",
