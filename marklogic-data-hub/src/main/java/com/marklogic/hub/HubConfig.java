@@ -172,8 +172,12 @@ public class HubConfig extends LoggingObject {
 
         username = getEnvPropString(environmentProperties, "mlManageUsername", username);
         username = getEnvPropString(environmentProperties, "mlUsername", username);
-        if (username == null) {
+        if (username == null && adminUsername != null) {
             username = adminUsername;
+        }
+
+        if (adminUsername == null && username != null) {
+            adminUsername = username;
         }
 
         password = getEnvPropString(environmentProperties, "mlManagePassword", password);
