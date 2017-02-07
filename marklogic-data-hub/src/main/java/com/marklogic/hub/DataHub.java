@@ -47,7 +47,6 @@ import com.marklogic.client.eval.ServerEvaluationCall;
 import com.marklogic.client.extensions.ResourceManager;
 import com.marklogic.client.extensions.ResourceServices.ServiceResult;
 import com.marklogic.client.extensions.ResourceServices.ServiceResultIterator;
-import com.marklogic.client.helper.LoggingObject;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.util.RequestParameters;
@@ -65,6 +64,8 @@ import com.marklogic.mgmt.databases.DatabaseManager;
 import com.marklogic.rest.util.Fragment;
 import com.marklogic.rest.util.ResourcesFragment;
 import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
@@ -79,7 +80,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
 import java.util.regex.Pattern;
 
-public class DataHub extends LoggingObject {
+public class DataHub {
 
     private ManageClient client;
     private DatabaseManager databaseManager;
@@ -87,6 +88,9 @@ public class DataHub extends LoggingObject {
     private HubConfig hubConfig;
 
     private AdminManager adminManager;
+
+    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+
 
     public DataHub(HubConfig hubConfig) {
         init(hubConfig);

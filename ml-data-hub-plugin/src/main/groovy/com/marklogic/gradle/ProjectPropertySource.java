@@ -1,9 +1,10 @@
 package com.marklogic.gradle;
 
-import com.marklogic.client.helper.LoggingObject;
 import com.marklogic.client.modulesloader.tokenreplacer.PropertiesSource;
 import com.marklogic.mgmt.util.PropertySource;
 import org.gradle.api.Project;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 import java.util.Properties;
@@ -11,9 +12,11 @@ import java.util.Properties;
 /**
  * TODO Would be nice to combine PropertySource and PropertiesSource, if possible.
  */
-public class ProjectPropertySource extends LoggingObject implements PropertySource, PropertiesSource {
+public class ProjectPropertySource implements PropertySource, PropertiesSource {
 
     private Project project;
+
+    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     public ProjectPropertySource(Project project) {
         this.project = project;

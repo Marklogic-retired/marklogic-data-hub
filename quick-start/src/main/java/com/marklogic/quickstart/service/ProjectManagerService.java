@@ -15,7 +15,6 @@
  */
 package com.marklogic.quickstart.service;
 
-import com.marklogic.client.helper.LoggingObject;
 import com.marklogic.quickstart.exception.BadRequestException;
 import com.marklogic.quickstart.exception.NotFoundException;
 import com.marklogic.quickstart.model.Project;
@@ -28,7 +27,7 @@ import java.util.Map;
 import java.util.prefs.Preferences;
 
 @Service
-public class ProjectManagerService extends LoggingObject {
+public class ProjectManagerService {
 
     private Preferences prefs = Preferences.userNodeForPackage(ProjectManagerService.class);
     private int maxId = 0;

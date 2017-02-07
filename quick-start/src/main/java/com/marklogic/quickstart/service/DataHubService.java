@@ -15,7 +15,6 @@
  */
 package com.marklogic.quickstart.service;
 
-import com.marklogic.client.helper.LoggingObject;
 import com.marklogic.hub.DataHub;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.deploy.commands.LoadUserModulesCommand;
@@ -26,6 +25,8 @@ import com.marklogic.quickstart.exception.DataHubException;
 import com.marklogic.quickstart.listeners.DeployUserModulesListener;
 import com.marklogic.quickstart.listeners.ValidateListener;
 import com.marklogic.quickstart.model.EnvironmentConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -39,7 +40,9 @@ import java.util.Properties;
 import java.util.TimeZone;
 
 @Service
-public class DataHubService extends LoggingObject {
+public class DataHubService {
+
+    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     public boolean install(HubConfig config, HubDeployStatusListener listener) throws DataHubException {
         logger.info("Installing Data Hub");

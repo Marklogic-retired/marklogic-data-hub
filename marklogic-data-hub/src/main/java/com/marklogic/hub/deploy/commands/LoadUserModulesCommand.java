@@ -84,6 +84,7 @@ public class LoadUserModulesCommand extends AbstractCommand {
         // load any user files under plugins/* int the modules database.
         // this will ignore REST folders under entities
         DefaultModulesLoader modulesLoader = getStagingModulesLoader(config);
+        modulesLoader.setShutdownTaskExecutorAfterLoadingModules(false);
         modulesLoader.loadModules(baseDir, new AssetModulesFinder(), stagingClient);
 
         AllButAssetsModulesFinder allButAssetsModulesFinder = new AllButAssetsModulesFinder();

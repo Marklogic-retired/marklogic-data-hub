@@ -15,11 +15,14 @@
  */
 package com.marklogic.quickstart.service;
 
-import com.marklogic.client.helper.LoggingObject;
 import com.marklogic.client.query.StructuredQueryBuilder;
 import com.marklogic.client.query.StructuredQueryDefinition;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-class SearchableService extends LoggingObject {
+class SearchableService {
+
+    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     StructuredQueryDefinition addRangeConstraint(StructuredQueryBuilder sb, String name, String value) {
         StructuredQueryDefinition sqd = null;
