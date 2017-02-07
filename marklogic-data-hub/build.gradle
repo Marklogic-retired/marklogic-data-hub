@@ -20,8 +20,8 @@ targetCompatibility = 1.8
 
 dependencies {
     compile 'com.marklogic:marklogic-client-api:4.0.0-EA4'
-    compile 'com.marklogic:ml-javaclient-util:2.10.0'
-    compile 'com.marklogic:ml-app-deployer:2.4.0'
+    compile 'com.marklogic:ml-javaclient-util:2.12.1'
+    compile 'com.marklogic:ml-app-deployer:2.5.0'
     compile 'commons-io:commons-io:2.4'
     testCompile 'junit:junit:4.12'
     testCompile 'xmlunit:xmlunit:1.3'

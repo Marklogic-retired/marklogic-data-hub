@@ -18,9 +18,12 @@ import com.marklogic.hub.HubConfig;
 import com.marklogic.xcc.*;
 import com.marklogic.xcc.exceptions.RequestException;
 import org.apache.commons.io.IOUtils;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
+import org.springframework.scheduling.concurrent.ExecutorConfigurationSupport;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import java.io.File;
 import java.io.IOException;
@@ -37,6 +40,7 @@ public class LoadHubModulesCommand extends AbstractCommand {
     private Session activeSession;
 
     private DefaultModulesLoader modulesLoader;
+    private ThreadPoolTaskExecutor threadPoolTaskExecutor;
     private ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver(DataHub.class.getClassLoader());
     private DocumentFormatGetter documentFormatGetter = new DefaultDocumentFormatGetter();
     private PermissionsParser permissionsParser = new CommaDelimitedPermissionsParser();
@@ -88,11 +92,22 @@ public class LoadHubModulesCommand extends AbstractCommand {
         XccAssetLoader xccAssetLoader = context.getAppConfig().newXccAssetLoader();
 
         this.modulesLoader = new DefaultModulesLoader(xccAssetLoader);
+        this.threadPoolTaskExecutor = new ThreadPoolTaskExecutor();
+        this.threadPoolTaskExecutor.setCorePoolSize(16);
+
+        // 10 minutes should be plenty of time to wait for REST API modules to be loaded
+        this.threadPoolTaskExecutor.setAwaitTerminationSeconds(60 * 10);
+        this.threadPoolTaskExecutor.setWaitForTasksToCompleteOnShutdown(true);
+
+        this.threadPoolTaskExecutor.afterPropertiesSet();
+        this.modulesLoader.setTaskExecutor(this.threadPoolTaskExecutor);
+
         File timestampFile = Paths.get(hubConfig.projectDir, ".tmp", "hub-modules-deploy-timestamps.properties").toFile();
         PropertiesModuleManager propsManager = new PropertiesModuleManager(timestampFile);
         propsManager.deletePropertiesFile();
         this.modulesLoader.setModulesManager(propsManager);
         this.modulesLoader.setDatabaseClient(config.newDatabaseClient());
+        this.modulesLoader.setShutdownTaskExecutorAfterLoadingModules(false);
         ContentSource cs = ContentSourceFactory.newContentSource(config.getHost(), port, config.getRestAdminUsername(), config.getRestAdminPassword(), config.getModulesDatabaseName(),
                 securityOptions);
         activeSession = cs.newSession();
@@ -192,10 +207,23 @@ public class LoadHubModulesCommand extends AbstractCommand {
             duration = (endTime - startTime);
             logger.info("Job Rest Options took: " + (duration / 1000000000) + " seconds");
 
+            waitForTaskExecutorToFinish();
             logger.info("Finished Loading Modules");
         }
         catch (IOException | RequestException e) {
             e.printStackTrace();
+        }
+    }
+
+    protected void waitForTaskExecutorToFinish() {
+        if (this.threadPoolTaskExecutor instanceof ExecutorConfigurationSupport) {
+            this.threadPoolTaskExecutor.shutdown();
+        } else if (this.threadPoolTaskExecutor instanceof DisposableBean) {
+            try {
+                this.threadPoolTaskExecutor.destroy();
+            } catch (Exception ex) {
+                logger.warn("Unexpected exception while calling destroy() on taskExecutor: " + ex.getMessage(), ex);
+            }
         }
     }
 }

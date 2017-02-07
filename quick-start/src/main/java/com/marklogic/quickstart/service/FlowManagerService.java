@@ -16,7 +16,6 @@
 package com.marklogic.quickstart.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.marklogic.client.helper.LoggingObject;
 import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.JobStatusListener;
 import com.marklogic.hub.flow.AbstractFlow;
@@ -43,7 +42,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class FlowManagerService extends LoggingObject {
+public class FlowManagerService {
 
     private static final String PROJECT_TMP_FOLDER = ".tmp";
 

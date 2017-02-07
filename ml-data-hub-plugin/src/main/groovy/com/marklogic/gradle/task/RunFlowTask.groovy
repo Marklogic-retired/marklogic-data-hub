@@ -22,10 +22,10 @@ class RunFlowTask extends HubTask {
     public FlowType flowType
 
     @Input
-    public int batchSize
+    public Integer batchSize
 
     @Input
-    public int threadCount
+    public Integer threadCount
 
     @TaskAction
     void runFlow() {

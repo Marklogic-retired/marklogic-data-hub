@@ -1,7 +1,8 @@
 package com.marklogic.hub;
 
-import com.marklogic.client.helper.LoggingObject;
 import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -15,7 +16,7 @@ import java.util.Map;
 /**
  * Class for creating a hub Project
  */
-class HubProject extends LoggingObject {
+class HubProject {
 
     private String projectDirStr;
     private Path projectDir;
@@ -23,6 +24,8 @@ class HubProject extends LoggingObject {
     private HubConfig hubConfig;
 
     private Map<String, String> customTokens = new HashMap<>();
+
+    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     public HubProject(HubConfig config) {
         this.hubConfig = config;

@@ -1,10 +1,11 @@
 package com.marklogic.hub.deploy.commands;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
+import com.marklogic.client.admin.ExtensionMetadata;
+import com.marklogic.client.admin.ExtensionMetadata.ScriptLanguage;
+import com.marklogic.client.admin.MethodType;
+import com.marklogic.client.admin.ResourceExtensionsManager.MethodParameters;
+import com.marklogic.client.helper.FilenameUtil;
+import com.marklogic.client.modulesloader.ExtensionMetadataAndParams;
 import org.jdom2.Element;
 import org.jdom2.input.SAXBuilder;
 import org.jdom2.output.XMLOutputter;
@@ -12,15 +13,12 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
 
-import com.marklogic.client.admin.ExtensionMetadata;
-import com.marklogic.client.admin.ExtensionMetadata.ScriptLanguage;
-import com.marklogic.client.admin.MethodType;
-import com.marklogic.client.admin.ResourceExtensionsManager.MethodParameters;
-import com.marklogic.client.helper.FilenameUtil;
-import com.marklogic.client.helper.LoggingObject;
-import com.marklogic.client.modulesloader.ExtensionMetadataAndParams;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
-public class JarExtensionMetadataProvider extends LoggingObject {
+public class JarExtensionMetadataProvider {
 
     private ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
 

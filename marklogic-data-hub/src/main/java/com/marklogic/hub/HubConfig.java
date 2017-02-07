@@ -18,7 +18,8 @@ package com.marklogic.hub;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
-import com.marklogic.client.helper.LoggingObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -30,7 +31,7 @@ import java.util.Properties;
 /**
  * A class for passing around the Data Hub's Configuration
  */
-public class HubConfig extends LoggingObject {
+public class HubConfig {
 
     public static final String OLD_HUB_CONFIG_DIR = "marklogic-config";
     public static final String HUB_CONFIG_DIR = "hub-internal-config";
@@ -109,6 +110,9 @@ public class HubConfig extends LoggingObject {
     public String hubUserRole = DEFAULT_HUB_USER_ROLE;
 
     public String projectDir;
+
+    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+
 
     public HubConfig() {
         this(DEFAULT_PROJECT_DIR);

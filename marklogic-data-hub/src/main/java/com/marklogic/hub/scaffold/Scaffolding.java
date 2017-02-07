@@ -15,33 +15,34 @@
  */
 package com.marklogic.hub.scaffold;
 
+import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.extensions.ResourceManager;
+import com.marklogic.client.extensions.ResourceServices;
+import com.marklogic.client.io.Format;
+import com.marklogic.client.io.StringHandle;
+import com.marklogic.client.util.RequestParameters;
+import com.marklogic.hub.error.ScaffoldingValidationException;
+import com.marklogic.hub.flow.FlowType;
+import com.marklogic.hub.flow.SimpleFlow;
+import com.marklogic.hub.plugin.PluginFormat;
+import com.sun.jersey.api.client.ClientHandlerException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import com.marklogic.client.DatabaseClient;
-import com.marklogic.client.extensions.ResourceManager;
-import com.marklogic.client.extensions.ResourceServices;
-import com.marklogic.client.helper.LoggingObject;
-import com.marklogic.client.io.StringHandle;
-import com.marklogic.client.util.RequestParameters;
-import com.marklogic.hub.error.ScaffoldingValidationException;
-import com.marklogic.hub.plugin.PluginFormat;
-import com.sun.jersey.api.client.ClientHandlerException;
-
-import com.marklogic.client.io.Format;
-import com.marklogic.hub.flow.FlowType;
-import com.marklogic.hub.flow.SimpleFlow;
-
-public class Scaffolding extends LoggingObject {
+public class Scaffolding {
 
     private String projectDir;
     private Path pluginsDir;
     private Path entitiesDir;
     private ScaffoldingValidator validator;
     private DatabaseClient databaseClient;
+    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     public Scaffolding(String projectDir, DatabaseClient databaseClient) {
         this.projectDir = projectDir;
