@@ -119,49 +119,53 @@ declare function trace:write-trace()
     let $trace :=
       if ($format eq $FORMAT-JSON) then
         xdmp:to-json((
-          map:new((
-            map:entry("jobId", map:get($current-trace-settings, "job-id")),
-            map:entry("format", map:get($current-trace, "format")),
-            map:entry("traceId", map:get($current-trace, "traceId")),
-            map:entry("created", map:get($current-trace, "created")),
-            map:entry("identifier", map:get($current-trace, "identifier")),
-            map:entry("flowType", map:get($current-trace, "flowType")),
-            map:entry("hasError", trace:has-errors()),
+          map:entry("trace",
+            map:new((
+              map:entry("jobId", map:get($current-trace-settings, "job-id")),
+              map:entry("format", map:get($current-trace, "format")),
+              map:entry("traceId", map:get($current-trace, "traceId")),
+              map:entry("created", map:get($current-trace, "created")),
+              map:entry("identifier", map:get($current-trace, "identifier")),
+              map:entry("flowType", map:get($current-trace, "flowType")),
+              map:entry("hasError", trace:has-errors()),
+              for $key in ("collectorPlugin", "contentPlugin", "headersPlugin", "triplesPlugin", "writerPlugin")
+              let $m := map:get($current-trace, $key)
+              return
+                if (fn:exists($m)) then
+                  map:entry($key, map:new((
+                    map:entry("pluginModuleUri", map:get($m, "pluginModuleUri")),
+                    map:entry("input", map:get($m, "input")),
+                    map:entry("output", map:get($m, "output")),
+                    map:entry("error", map:get($m, "error")),
+                    map:entry("duration", map:get($m, "duration"))
+                  )))
+                else ()
+            ))
+          )
+        ))
+      else
+        document {
+          element trace {
+            element jobId { map:get($current-trace-settings, "job-id") },
+            element format { map:get($current-trace, "format") },
+            element traceId { map:get($current-trace, "traceId") },
+            element created { map:get($current-trace, "created") },
+            element identifier { map:get($current-trace, "identifier") },
+            element flowType { map:get($current-trace, "flowType") },
+            element hasError { trace:has-errors() },
             for $key in ("collectorPlugin", "contentPlugin", "headersPlugin", "triplesPlugin", "writerPlugin")
             let $m := map:get($current-trace, $key)
             return
               if (fn:exists($m)) then
-                map:entry($key, map:new((
-                  map:entry("pluginModuleUri", map:get($m, "pluginModuleUri")),
-                  map:entry("input", map:get($m, "input")),
-                  map:entry("output", map:get($m, "output")),
-                  map:entry("error", map:get($m, "error")),
-                  map:entry("duration", map:get($m, "duration"))
-                )))
+                element { $key } {
+                  element pluginModuleUri { map:get($m, "pluginModuleUri") },
+                  element input { map:get($m, "input") },
+                  element output { map:get($m, "output") },
+                  element error { map:get($m, "error") },
+                  element duration { map:get($m, "duration") }
+                }
               else ()
-          ))
-        ))
-      else
-        element trace {
-          element jobId { map:get($current-trace-settings, "job-id") },
-          element format { map:get($current-trace, "format") },
-          element traceId { map:get($current-trace, "traceId") },
-          element created { map:get($current-trace, "created") },
-          element identifier { map:get($current-trace, "identifier") },
-          element flowType { map:get($current-trace, "flowType") },
-          element hasError { trace:has-errors() },
-          for $key in ("collectorPlugin", "contentPlugin", "headersPlugin", "triplesPlugin", "writerPlugin")
-          let $m := map:get($current-trace, $key)
-          return
-            if (fn:exists($m)) then
-              element { $key } {
-                element pluginModuleUri { map:get($m, "pluginModuleUri") },
-                element input { map:get($m, "input") },
-                element output { map:get($m, "output") },
-                element error { map:get($m, "error") },
-                element duration { map:get($m, "duration") }
-              }
-            else ()
+          }
         }
     return
       xdmp:eval('
@@ -172,10 +176,10 @@ declare function trace:write-trace()
         declare variable $trace external;
 
         xdmp:document-insert(
-          "/" || $trace/traceId,
+          "/" || $trace/*:trace/*:traceId,
           $trace,
           xdmp:default-permissions(),
-          ("trace", $trace/*:type)
+          ("trace", $trace/*:trace/*:type)
         )
       ',
       map:new((
@@ -391,13 +395,13 @@ declare function trace:trace-to-json-slim($trace)
 {
   let $o := json:object()
   let $_ := (
-    map:put($o, "traceId", $trace/traceId/string()),
-    map:put($o, "jobId", $trace/jobId/string()),
-    map:put($o, "created", $trace/created/string()),
-    map:put($o, "hasError", $trace/hasError/xs:boolean(.)),
-    map:put($o, "identifier", $trace/identifier/string()),
-    map:put($o, "flowType", $trace/flowType/string()),
-    map:put($o, "format", $trace/format/string())
+    map:put($o, "traceId", $trace/trace/traceId/string()),
+    map:put($o, "jobId", $trace/trace/jobId/string()),
+    map:put($o, "created", $trace/trace/created/string()),
+    map:put($o, "hasError", $trace/trace/hasError/xs:boolean(.)),
+    map:put($o, "identifier", $trace/trace/identifier/string()),
+    map:put($o, "flowType", $trace/trace/flowType/string()),
+    map:put($o, "format", $trace/trace/format/string())
   )
   return
     $o

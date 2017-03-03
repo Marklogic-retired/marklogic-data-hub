@@ -18,6 +18,20 @@ import { DeployService } from '../deploy/deploy.service';
 
 import * as _ from 'lodash';
 
+/* tslint:disable:max-line-length */
+@Component({
+  selector: 'app-has-bugs-dialog',
+  template: `
+  <h3 class="bug-title"><i class="fa fa-bug"></i>This flow has a bug!</h3>
+  <p>You must fix it before you can run it.</p>
+  <mdl-button mdl-button-type="raised" mdl-colored="primary" mdl-ripple (click)="dialog.hide()">OK</mdl-button>`,
+  styleUrls: ['./entities.component.scss']
+})
+export class HasBugsDialogComponent {
+  constructor(private dialog: MdlDialogReference) { }
+}
+/* tslint:enable:max-line-length */
+
 @Component({
   selector: 'app-entities',
   templateUrl: './entities.component.html',
@@ -142,7 +156,7 @@ export class EntitiesComponent {
       }
     };
     this.dialogService.showCustomDialog({
-      component: NewFlowComponent,
+      component: NewEntityComponent,
       providers: [
         { provide: 'actions', useValue: actions }
       ],
@@ -232,17 +246,3 @@ export class EntitiesComponent {
     });
   }
 }
-
-/* tslint:disable:max-line-length */
-@Component({
-  selector: 'app-has-bugs-dialog',
-  template: `
-  <h3 class="bug-title"><i class="fa fa-bug"></i>This flow has a bug!</h3>
-  <p>You must fix it before you can run it.</p>
-  <mdl-button mdl-button-type="raised" mdl-colored="primary" mdl-ripple (click)="dialog.hide()">OK</mdl-button>`,
-  styleUrls: ['./entities.component.scss']
-})
-export class HasBugsDialogComponent {
-  constructor(private dialog: MdlDialogReference) { }
-}
-/* tslint:enable:max-line-length */

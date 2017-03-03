@@ -6,33 +6,33 @@
   </additional-query>
   <constraint name="flowType">
     <range type="xs:string" collation="http://marklogic.com/collation/codepoint">
-      <element name="flowType" ns="" />
+      <path-index>/trace/flowType</path-index>
     </range>
   </constraint>
   <constraint name="jobId">
     <range type="xs:string" collation="http://marklogic.com/collation/codepoint" facet="false">
-      <element name="jobId" ns="" />
+      <path-index>/trace/jobId</path-index>
     </range>
   </constraint>
   <constraint name="identifier">
     <range type="xs:string" collation="http://marklogic.com/collation/codepoint" facet="false">
-      <element name="identifier" ns="" />
+      <path-index>/trace/identifier</path-index>
     </range>
   </constraint>
   <constraint name="hasError">
     <range type="xs:string" collation="http://marklogic.com/collation/codepoint">
-      <element name="hasError" ns="" />
+      <path-index>/trace/hasError</path-index>
     </range>
   </constraint>
   <operator name="sort">
     <state name="date-desc">
       <sort-order direction="descending" type="xs:dateTime">
-        <element ns="" name="created"/>
+        <path-index>/trace/created</path-index>
       </sort-order>
     </state>
     <state name="date-asc">
       <sort-order direction="ascending" type="xs:dateTime">
-        <element ns="" name="created"/>
+        <path-index>/trace/created</path-index>
       </sort-order>
     </state>
   </operator>

@@ -6,18 +6,19 @@ import { RouterModule } from '@angular/router';
 import { TruncateCharactersPipe } from 'ng2-truncate/dist/truncate-characters.pipe'
 import { TruncateWordsPipe } from 'ng2-truncate/dist/truncate-words.pipe'
 import { AppComponent } from './app.component';
-import { EntitiesComponent } from './entities';
+import { EntitiesComponent, HasBugsDialogComponent } from './entities';
 import { LoginComponent } from './login';
 import { SettingsComponent } from './settings';
 
 import { MdlModule } from 'angular2-mdl';
+import { MdlPopoverModule } from '@angular2-mdl-ext/popover';
 import { MdlSelectModule } from '@angular2-mdl-ext/select';
-import { CodemirrorComponent } from 'ng2-codemirror';
 import { MomentModule } from 'angular2-moment';
 import { GridManiaModule } from './grid';
 
 import { ROUTES } from './app.routes';
 import { AUTH_PROVIDERS } from './auth';
+import { CodemirrorComponent } from './codemirror';
 import { FolderBrowserComponent } from './folder-browser/folder-browser.component';
 import { HeaderComponent } from './header/header.component';
 import { JobsComponent, JobOutputComponent } from './jobs';
@@ -53,9 +54,11 @@ import { ObjectToArrayPipe } from './object-to-array.pipe';
 @NgModule({
   declarations: [
     AppComponent,
+    CodemirrorComponent,
     FolderBrowserComponent,
     HeaderComponent,
     EntitiesComponent,
+    HasBugsDialogComponent,
     JobsComponent,
     JobOutputComponent,
     LoginComponent,
@@ -79,8 +82,7 @@ import { ObjectToArrayPipe } from './object-to-array.pipe';
     TitlecasePipe,
     TruncateCharactersPipe,
     TruncateWordsPipe,
-    ObjectToArrayPipe,
-    CodemirrorComponent
+    ObjectToArrayPipe
   ],
   entryComponents: [
     NewEntityComponent,
@@ -92,6 +94,7 @@ import { ObjectToArrayPipe } from './object-to-array.pipe';
     FormsModule,
     HttpModule,
     MdlModule,
+    MdlPopoverModule,
     MdlSelectModule,
     TooltipModule,
     MomentModule,

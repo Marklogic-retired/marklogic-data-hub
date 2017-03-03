@@ -39,7 +39,7 @@
           <tbody>
             <tr *ngFor="let job of jobs" [ngClass]="{'error' : job.status === 'FAILED' }">
               <td><i class="mdi" [ngClass]="getIconClass(job.jobName)"></i> {{job.jobName}}</td>
-              <td>{{job.jobId}}</td>
+              <td>{{job.jobId}} <i (click)="showTraces(job.jobId)" class="fa fa-flash"></i></td>
               <td>{{job.entity}}</td>
               <td>{{job.flow}}</td>
               <td>{{job.status}}</td>

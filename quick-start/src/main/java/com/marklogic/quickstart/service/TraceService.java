@@ -66,9 +66,11 @@ public class TraceService extends SearchableService {
             queries.add(def);
         }
 
-        def = addRangeConstraint(sb, "hasError", Boolean.toString(traceQuery.hasError));
-        if (def != null) {
-            queries.add(def);
+        if (traceQuery.hasError != null) {
+            def = addRangeConstraint(sb, "hasError", Boolean.toString(traceQuery.hasError));
+            if (def != null) {
+                queries.add(def);
+            }
         }
 
         def = addRangeConstraint(sb, "flowType", traceQuery.flowType);

@@ -13,7 +13,7 @@ import * as _ from 'lodash';
 export class SearchComponent implements OnDestroy, OnInit {
 
   private sub: any;
-  databases = ['STAGING', 'FINAL'];
+  databases: Array<string> = ['STAGING', 'FINAL'];
   currentDatabase: string = 'STAGING';
   searchText: string = null;
   activeFacets: any = {};
@@ -113,5 +113,9 @@ export class SearchComponent implements OnDestroy, OnInit {
 
   updateFacets() {
     this.doSearch();
+  }
+
+  setDatabase(database) {
+    this.currentDatabase = database;
   }
 }

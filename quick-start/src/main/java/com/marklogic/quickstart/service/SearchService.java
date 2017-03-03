@@ -17,6 +17,7 @@ package com.marklogic.quickstart.service;
 
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.document.GenericDocumentManager;
+import com.marklogic.client.document.ServerTransform;
 import com.marklogic.client.io.Format;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.query.QueryManager;
@@ -136,6 +137,6 @@ public class SearchService extends SearchableService {
         else {
             docMgr = finalDocMgr;
         }
-        return "{\"doc\": " + JSONObject.quote(docMgr.readAs(docUri, String.class)) + "}";
+        return docMgr.readAs(docUri, String.class, new ServerTransform("prettify"));
     }
 }

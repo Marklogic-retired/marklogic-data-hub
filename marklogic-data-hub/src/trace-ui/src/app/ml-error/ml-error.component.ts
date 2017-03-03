@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 
-import { MlError, MlErrorStack } from './ml-error.ts';
+import { MlError, MlErrorStack } from './ml-error';
 import * as _ from 'lodash';
 
 @Component({

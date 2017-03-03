@@ -19,9 +19,9 @@ public class TraceQuery {
     public String query;
     public String jobId;
     public String identifier;
-    public boolean hasError;
+    public Boolean hasError;
     public String flowType;
     public String sort;
-    public long start;
-    public long count;
+    public Long start;
+    public Long count;
 }

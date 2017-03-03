@@ -44,10 +44,10 @@
         <span class="mdl-layout-title">Input</span>
       </div>
     </div>
-    <div>
+    <div class="layout-body">
       <template ngFor let-input="$implicit" [ngForOf]="getKeys(currentPlugin.input)" let-i="index">
         <div class="subheader" (click)="collapsed[i] = !collapsed[i]">{{input}} <i class="fa" [ngClass]="collapsed[i] ? 'fa-caret-left' : 'fa-caret-down'"></i></div>
-        <codemirror *ngIf="!collapsed[i] && currentPlugin.input[input]" [ngModel]="formatData(currentPlugin.input[input])" [config]="codeMirrorConfig"></codemirror>
+        <app-codemirror *ngIf="!collapsed[i] && currentPlugin.input[input]" [ngModel]="formatData(currentPlugin.input[input])" [config]="codeMirrorConfig"></app-codemirror>
       </template>
     </div>
   </div>
@@ -57,9 +57,9 @@
         <span class="mdl-layout-title">Output</span>
       </div>
     </div>
-    <div>
+    <div class="layout-body">
       <div class="subheader" (click)="outputCollapsed = !outputCollapsed" *ngIf="currentPlugin.output">Output <i class="fa" [ngClass]="outputCollapsed ? 'fa-caret-left' : 'fa-caret-down'"></i></div>
-      <codemirror *ngIf="!outputCollapsed && currentPlugin.output" [ngModel]="formatData(currentPlugin.output)" [config]="codeMirrorConfig"></codemirror>
+      <app-codemirror *ngIf="!outputCollapsed && currentPlugin.output" [ngModel]="formatData(currentPlugin.output)" [config]="codeMirrorConfig"></app-codemirror>
       <div class="subheader error-sub" (click)="errorCollapsed = !errorCollapsed" *ngIf="currentPlugin.error">Error <i class="fa" [ngClass]="errorCollapsed ? 'fa-caret-left' : 'fa-caret-down'"></i></div>
       <app-ml-error *ngIf="!errorCollapsed && currentPlugin.error" [error]="currentPlugin.error"></app-ml-error>
       <div class="info" *ngIf="currentPluginType === 'writer'">

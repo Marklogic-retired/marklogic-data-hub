@@ -16,7 +16,7 @@ export class TraceService {
     for (let key of Object.keys(activeFacets)) {
       for (let value of activeFacets[key].values) {
         data[key] = value;
-  }
+      }
     }
 
     return this.post(`/api/traces`, data);

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Http, Response } from '@angular/http';
+import { Http, Response, ResponseType } from '@angular/http';
 
 @Injectable()
 export class SearchService {
@@ -28,7 +28,10 @@ export class SearchService {
   }
 
   private extractData = (res: Response) => {
-    return res.json();
+    if (res.headers.get('content-type').startsWith('application/json')) {
+      return res.json();
+    }
+    return res.text();
   }
 
   private get(url: string) {

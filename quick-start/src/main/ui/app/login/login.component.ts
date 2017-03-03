@@ -219,7 +219,7 @@ export class LoginComponent implements OnInit {
     } else {
       this.projectService.getProjectDefaults(this.currentProject.id).subscribe(defaults => {
         this.defaultSettings = defaults;
-        this.initSettings = _.clone(defaults);
+        _.merge(this.initSettings, _.clone(defaults));
         // go to the init project tab
         this.gotoTab('InitIfNeeded');
       });

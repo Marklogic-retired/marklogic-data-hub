@@ -11,12 +11,6 @@
         <div class="modal-body">
           <div class="md-dialog-content" flex layout="column">
             <mdl-textfield name="flowType" type="text" required label="{{flowType}} Flow Name" autofocus [(ngModel)]="flow.flowName" floating-label></mdl-textfield>
-          <label>Code Generation</label>
-          <app-select-list
-            [items]="scaffoldOptions"
-            [initialSelectedItem]="scaffoldOptions[0]"
-            label="label" identifier="value"
-            (selectedItem)="flow.useEsModel = $event"></app-select-list>
             <label>Plugin Type</label>
             <app-select-list
               [items]="pluginFormats"

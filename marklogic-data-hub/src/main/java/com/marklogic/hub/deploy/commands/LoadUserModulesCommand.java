@@ -6,7 +6,6 @@ import com.marklogic.appdeployer.command.CommandContext;
 import com.marklogic.appdeployer.command.modules.AllButAssetsModulesFinder;
 import com.marklogic.appdeployer.command.modules.AssetModulesFinder;
 import com.marklogic.client.DatabaseClient;
-import com.marklogic.client.DatabaseClientFactory;
 import com.marklogic.client.modulesloader.impl.DefaultModulesLoader;
 import com.marklogic.client.modulesloader.impl.PropertiesModuleManager;
 import com.marklogic.client.modulesloader.impl.XccAssetLoader;
@@ -35,12 +34,6 @@ public class LoadUserModulesCommand extends AbstractCommand {
 
     public LoadUserModulesCommand(HubConfig hubConfig) {
         this.hubConfig = hubConfig;
-    }
-
-    private DatabaseClient getDatabaseClient(AppConfig config, int port) {
-
-        return DatabaseClientFactory.newClient(hubConfig.host, port, hubConfig.username, hubConfig.password,
-                config.getRestAuthentication(), config.getRestSslContext(), config.getRestSslHostnameVerifier());
     }
 
     private PropertiesModuleManager getModulesManager() {
@@ -74,8 +67,8 @@ public class LoadUserModulesCommand extends AbstractCommand {
     public void execute(CommandContext context) {
         AppConfig config = context.getAppConfig();
 
-        DatabaseClient stagingClient = getDatabaseClient(config, hubConfig.stagingPort);
-        DatabaseClient finalClient = getDatabaseClient(config, hubConfig.finalPort);
+        DatabaseClient stagingClient = hubConfig.newStagingClient();
+        DatabaseClient finalClient = hubConfig.newFinalClient();
 
         Path userModulesPath = Paths.get(hubConfig.projectDir, "plugins");
         File baseDir = userModulesPath.normalize().toAbsolutePath().toFile();

@@ -1,39 +1,51 @@
 {
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
   "project": {
-    "version": "1.0.0-beta.14",
-    "name": "quick-start"
+    "version": "1.0.0-beta.32.3",
+    "name": "trace-ui"
   },
   "apps": [
     {
       "root": "src",
       "outDir": "dist",
-      "assets": "assets",
+      "assets": [
+        "assets"
+      ],
       "index": "index.html",
       "main": "main.ts",
+      "polyfills": "polyfills.ts",
       "test": "test.ts",
       "tsconfig": "tsconfig.json",
       "prefix": "app",
-      "mobile": false,
       "styles": [
         "../node_modules/mdi/css/materialdesignicons.css",
         "../node_modules/font-awesome/css/font-awesome.css",
-        "../node_modules/codemirror/lib/codemirror.css"
+        "../node_modules/codemirror/lib/codemirror.css",
+		"styles.scss"
       ],
       "scripts": [],
+      "environmentSource": "environments/environment.ts",
       "environments": {
-        "source": "environments/environment.ts",
         "dev": "environments/environment.ts",
         "prod": "environments/environment.prod.ts"
       }
     }
   ],
-  "addons": [],
-  "packages": [],
   "e2e": {
     "protractor": {
       "config": "./protractor.conf.js"
     }
   },
+  "lint": [
+    {
+      "files": "src/main/ui/**/*.ts",
+      "project": "src/main/ui/tsconfig.json"
+    },
+    {
+      "files": "e2e/**/*.ts",
+      "project": "e2e/tsconfig.json"
+    }
+  ],
   "test": {
     "karma": {
       "config": "./karma.conf.js"
@@ -41,6 +53,6 @@
   },
   "defaults": {
     "styleExt": "scss",
-    "prefixInterfaces": false
+    "component": {}
   }
 }

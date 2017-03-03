@@ -55,10 +55,10 @@ buildscript {
     jcenter()
   } 
   dependencies {
-    classpath "com.marklogic:ml-data-hub-plugin:(the version number you chose)"
+    classpath "com.marklogic:ml-data-hub:(the version number you chose)"
   }
 }
-apply plugin: "com.marklogic.ml-data-hub-plugin"
+apply plugin: "com.marklogic.ml-data-hub"
 ```
 
 #### Running the QuickStart UI from source

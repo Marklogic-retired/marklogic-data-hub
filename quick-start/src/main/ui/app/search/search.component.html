@@ -1,5 +1,10 @@
 <div layout-padding layout="column" layout-align="center center">
   <div class="database-chooser">
+    <app-custom-select
+      labelText="Database"
+      [items]="databases"
+      [initialSelectedItem]="currentDatabase"
+      (selectedItem)="setDatabase($event)"></app-custom-select>
   </div>
   <div class="search-box" flex layout-align="center center" layout="row">
     <form (submit)="doSearch()" flex layout-align="center center" layout="row">

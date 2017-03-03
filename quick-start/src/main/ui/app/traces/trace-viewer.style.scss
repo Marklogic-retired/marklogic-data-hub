@@ -8,6 +8,25 @@ $subheader-bg-color: unquote("rgb(#{$palette-datahub-300})");
 $red-color: unquote("rgb(#{$palette-datahub-red})");
 $green-color: unquote("rgb(#{$palette-datahub-green})");
 
+app-trace-viewer {
+  display: flex;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  flex-direction: column;
+}
+
+/deep/ [layout] {
+  flex: auto;
+}
+
+.layout-body {
+  position: relative;
+  flex: 1;
+}
+
 .gray {
   background-color: #f5f5f5;
 }
@@ -74,7 +93,7 @@ $green-color: unquote("rgb(#{$palette-datahub-green})");
   }
 }
 
-codemirror {
+app-codemirror {
   max-width: 100%;
   border-bottom: 1px solid #ccc;
 

@@ -59,13 +59,14 @@ class MlcpTasklet implements Tasklet {
         bean.setPort(hubConfig.stagingPort);
 
         // Assume that the HTTP credentials will work for mlcp
-        bean.setUsername(hubConfig.username);
-        bean.setPassword(hubConfig.password);
+        bean.setUsername(hubConfig.getUsername());
+        bean.setPassword(hubConfig.getPassword());
 
         File file = new File(mlcpOptions.get("input_file_path").asText());
         String canonicalPath = file.getCanonicalPath();
         bean.setInput_file_path(canonicalPath);
 
+        bean.setTransform_param("\"" + bean.getTransform_param().replaceAll("\"", "") + ",jobId=" + jobId + "\"");
         runMlcp(jobId, bean);
 
         chunkContext

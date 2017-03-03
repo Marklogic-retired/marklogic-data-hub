@@ -83,11 +83,8 @@ public class EnvironmentConfig {
 
         mlSettings = HubConfig.hubFromEnvironment(this.projectDir, environment);
         if (username != null) {
-            mlSettings.username = username;
-            mlSettings.password = password;
-
-            mlSettings.adminUsername = username;
-            mlSettings.adminPassword = password;
+            mlSettings.setUsername(username);
+            mlSettings.setPassword(password);
         }
 
         dataHub = new DataHub(mlSettings);
@@ -105,7 +102,7 @@ public class EnvironmentConfig {
     public void checkIfInstalled() throws IOException {
         this.installInfo = dataHub.isInstalled();
         this.installedVersion = dataHub.getHubVersion();
-        this.runningVersion = this.dataHub.getJarVersion();
+        this.runningVersion = this.mlSettings.getJarVersion();
     }
 
     private DatabaseClient _stagingClient = null;

@@ -66,7 +66,9 @@ export class TracesComponent implements OnDestroy, OnInit {
   }
 
   showTrace(traceId: string) {
-    this.router.navigate(['/traces', traceId]);
+    if (traceId) {
+      this.router.navigate(['/traces', traceId]);
+    }
   }
 
   private doSearch(): void {
