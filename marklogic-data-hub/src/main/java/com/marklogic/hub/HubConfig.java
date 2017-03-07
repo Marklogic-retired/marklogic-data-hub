@@ -135,8 +135,7 @@ public class HubConfig {
      */
     public static HubConfig hubFromEnvironment(String projectDir, String environment) {
         HubConfig config = new HubConfig(projectDir);
-        config.environmentProperties = config.getProperties(environment);
-        config.loadConfigurationFromProperties(config.environmentProperties);
+        config.loadConfigurationFromProperties(config.getProperties(environment));
         return config;
     }
 
@@ -151,6 +150,8 @@ public class HubConfig {
     }
 
     public void loadConfigurationFromProperties(Properties environmentProperties) {
+        this.environmentProperties = environmentProperties;
+
         host = getEnvPropString(environmentProperties, "mlHost", host);
 
         stagingDbName = getEnvPropString(environmentProperties, "mlStagingDbName", stagingDbName);
