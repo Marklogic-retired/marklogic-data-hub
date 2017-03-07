@@ -2,7 +2,7 @@ language: java
 jdk:
   - oraclejdk8
 env:
- - NODE_VERSION=6.1
+ - NODE_VERSION=6.9
 sudo: true
 before_install:
   - echo 'America/Los_Angeles' | sudo tee /etc/timezone
