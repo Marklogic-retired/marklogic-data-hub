@@ -33,6 +33,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -114,6 +115,8 @@ public class HubConfig {
 
     public String projectDir;
 
+    private Properties environmentProperties;
+
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     public HubConfig() {
@@ -132,8 +135,8 @@ public class HubConfig {
      */
     public static HubConfig hubFromEnvironment(String projectDir, String environment) {
         HubConfig config = new HubConfig(projectDir);
-        Properties environmentProperties = config.getProperties(environment);
-        config.loadConfigurationFromProperties(environmentProperties);
+        config.environmentProperties = config.getProperties(environment);
+        config.loadConfigurationFromProperties(config.environmentProperties);
         return config;
     }
 
@@ -181,11 +184,11 @@ public class HubConfig {
         adminUsername = getEnvPropString(environmentProperties, "mlAdminUsername", adminUsername);
         adminPassword = getEnvPropString(environmentProperties, "mlAdminPassword", adminPassword);
 
-        manageUsername = getEnvPropString(environmentProperties, "mlManageUsername", username);
-        managePassword = getEnvPropString(environmentProperties, "mlManagePassword", password);
+        manageUsername = getEnvPropString(environmentProperties, "mlManageUsername", manageUsername);
+        managePassword = getEnvPropString(environmentProperties, "mlManagePassword", managePassword);
 
-        restAdminUsername = getEnvPropString(environmentProperties, "mlRestAdminUsername", username);
-        restAdminPassword = getEnvPropString(environmentProperties, "mlRestAdminPassword", username);
+        restAdminUsername = getEnvPropString(environmentProperties, "mlRestAdminUsername", restAdminUsername);
+        restAdminPassword = getEnvPropString(environmentProperties, "mlRestAdminPassword", restAdminPassword);
 
         username = getEnvPropString(environmentProperties, "mlUsername", username);
         password = getEnvPropString(environmentProperties, "mlPassword", password);
@@ -520,6 +523,15 @@ public class HubConfig {
         customTokens.put("%%mlModulesDbName%%", modulesDbName);
         customTokens.put("%%mlTriggersDbName%%", triggersDbName);
         customTokens.put("%%mlSchemasDbName%%", schemasDbName);
+
+        Enumeration keyEnum = environmentProperties.propertyNames();
+        while (keyEnum.hasMoreElements()) {
+            String key = (String)keyEnum.nextElement();
+            if (key.matches("^ml[A-Z].+") && !customTokens.containsKey(key)) {
+                customTokens.put("%%" + key + "%%", (String)environmentProperties.get(key));
+            }
+        }
+
 
         try {
             String version = getJarVersion();
