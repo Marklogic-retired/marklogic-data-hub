@@ -355,6 +355,7 @@ public class DataHub {
 
         // Modules
         commands.add(new LoadHubModulesCommand(hubConfig));
+        commands.add(new LoadUserModulesCommand(hubConfig));
 
         // Alerting
         List<Command> alertCommands = new ArrayList<>();
