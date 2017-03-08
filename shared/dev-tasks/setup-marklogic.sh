@@ -1,5 +1,13 @@
 #!/bin/bash
 
+USER="admin"
+PASS="admin"
+AUTH_MODE="anyauth"
+AUTH_CURL="curl --${AUTH_MODE} --user ${USER}:${PASS}"
+SEC_REALM="public"
+N_RETRY=10
+RETRY_INTERVAL=5
+
 #######################################################
 # taken from https://github.com/grtjn/mlvagrant/blob/master/opt/vagrant/setup-ml-master.sh
 #
@@ -37,9 +45,9 @@ sleep 30
 
 TIMESTAMP=`curl -X POST \
      -H "Content-type: application/x-www-form-urlencoded" \
-     --data "admin-username=admin" \
-     --data "admin-password=admin" \
-     --data "realm=public" \
+     --data "admin-username=${USER}" \
+     --data "admin-password=${PASSWORD}" \
+     --data "realm=${SEC_REALM}" \
      "http://localhost:8001/admin/v1/instance-admin" \
      | grep "last-startup" \
      | sed 's%^.*<last-startup.*>\(.*\)</last-startup>.*$%\1%'`
