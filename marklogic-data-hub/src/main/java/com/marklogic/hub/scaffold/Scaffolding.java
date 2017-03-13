@@ -135,8 +135,6 @@ public class Scaffolding {
 
     private void writeToFile(String fileContent, File dstFile)
             throws IOException {
-        logger.info(fileContent);
-        logger.info(dstFile.getAbsolutePath());
         FileWriter fw = new FileWriter(dstFile);
         BufferedWriter bw = new BufferedWriter(fw);
         bw.write(fileContent);

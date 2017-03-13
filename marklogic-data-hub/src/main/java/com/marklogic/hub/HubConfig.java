@@ -152,51 +152,56 @@ public class HubConfig {
     public void loadConfigurationFromProperties(Properties environmentProperties) {
         this.environmentProperties = environmentProperties;
 
-        host = getEnvPropString(environmentProperties, "mlHost", host);
+        if (this.environmentProperties != null) {
+            host = getEnvPropString(environmentProperties, "mlHost", host);
 
-        stagingDbName = getEnvPropString(environmentProperties, "mlStagingDbName", stagingDbName);
-        stagingHttpName = getEnvPropString(environmentProperties, "mlStagingAppserverName", stagingHttpName);
-        stagingForestsPerHost = getEnvPropInteger(environmentProperties, "mlStagingForestsPerHost", stagingForestsPerHost);
-        stagingPort = getEnvPropInteger(environmentProperties, "mlStagingPort", stagingPort);
-        stagingAuthMethod = getEnvPropString(environmentProperties, "mlStagingAuth", stagingAuthMethod);
+            stagingDbName = getEnvPropString(environmentProperties, "mlStagingDbName", stagingDbName);
+            stagingHttpName = getEnvPropString(environmentProperties, "mlStagingAppserverName", stagingHttpName);
+            stagingForestsPerHost = getEnvPropInteger(environmentProperties, "mlStagingForestsPerHost", stagingForestsPerHost);
+            stagingPort = getEnvPropInteger(environmentProperties, "mlStagingPort", stagingPort);
+            stagingAuthMethod = getEnvPropString(environmentProperties, "mlStagingAuth", stagingAuthMethod);
 
-        finalDbName = getEnvPropString(environmentProperties, "mlFinalDbName", finalDbName);
-        finalHttpName = getEnvPropString(environmentProperties, "mlFinalAppserverName", finalHttpName);
-        finalForestsPerHost = getEnvPropInteger(environmentProperties, "mlFinalForestsPerHost", finalForestsPerHost);
-        finalPort = getEnvPropInteger(environmentProperties, "mlFinalPort", finalPort);
-        finalAuthMethod = getEnvPropString(environmentProperties, "mlFinalAuth", finalAuthMethod);
+            finalDbName = getEnvPropString(environmentProperties, "mlFinalDbName", finalDbName);
+            finalHttpName = getEnvPropString(environmentProperties, "mlFinalAppserverName", finalHttpName);
+            finalForestsPerHost = getEnvPropInteger(environmentProperties, "mlFinalForestsPerHost", finalForestsPerHost);
+            finalPort = getEnvPropInteger(environmentProperties, "mlFinalPort", finalPort);
+            finalAuthMethod = getEnvPropString(environmentProperties, "mlFinalAuth", finalAuthMethod);
 
-        traceDbName = getEnvPropString(environmentProperties, "mlTraceDbName", traceDbName);
-        traceHttpName = getEnvPropString(environmentProperties, "mlTraceAppserverName", traceHttpName);
-        traceForestsPerHost = getEnvPropInteger(environmentProperties, "mlTraceForestsPerHost", traceForestsPerHost);
-        tracePort = getEnvPropInteger(environmentProperties, "mlTracePort", tracePort);
-        traceAuthMethod = getEnvPropString(environmentProperties, "mlTraceAuth", traceAuthMethod);
+            traceDbName = getEnvPropString(environmentProperties, "mlTraceDbName", traceDbName);
+            traceHttpName = getEnvPropString(environmentProperties, "mlTraceAppserverName", traceHttpName);
+            traceForestsPerHost = getEnvPropInteger(environmentProperties, "mlTraceForestsPerHost", traceForestsPerHost);
+            tracePort = getEnvPropInteger(environmentProperties, "mlTracePort", tracePort);
+            traceAuthMethod = getEnvPropString(environmentProperties, "mlTraceAuth", traceAuthMethod);
 
-        jobDbName = getEnvPropString(environmentProperties, "mlJobDbName", jobDbName);
-        jobHttpName = getEnvPropString(environmentProperties, "mlJobAppserverName", jobHttpName);
-        jobForestsPerHost = getEnvPropInteger(environmentProperties, "mlJobForestsPerHost", jobForestsPerHost);
-        jobPort = getEnvPropInteger(environmentProperties, "mlJobPort", jobPort);
-        jobAuthMethod = getEnvPropString(environmentProperties, "mlJobAuth", jobAuthMethod);
+            jobDbName = getEnvPropString(environmentProperties, "mlJobDbName", jobDbName);
+            jobHttpName = getEnvPropString(environmentProperties, "mlJobAppserverName", jobHttpName);
+            jobForestsPerHost = getEnvPropInteger(environmentProperties, "mlJobForestsPerHost", jobForestsPerHost);
+            jobPort = getEnvPropInteger(environmentProperties, "mlJobPort", jobPort);
+            jobAuthMethod = getEnvPropString(environmentProperties, "mlJobAuth", jobAuthMethod);
 
-        modulesDbName = getEnvPropString(environmentProperties, "mlModulesDbName", modulesDbName);
-        triggersDbName = getEnvPropString(environmentProperties, "mlTriggersDbName", triggersDbName);
-        schemasDbName = getEnvPropString(environmentProperties, "mlSchemasDbName", schemasDbName);
+            modulesDbName = getEnvPropString(environmentProperties, "mlModulesDbName", modulesDbName);
+            triggersDbName = getEnvPropString(environmentProperties, "mlTriggersDbName", triggersDbName);
+            schemasDbName = getEnvPropString(environmentProperties, "mlSchemasDbName", schemasDbName);
 
-        adminUsername = getEnvPropString(environmentProperties, "mlAdminUsername", adminUsername);
-        adminPassword = getEnvPropString(environmentProperties, "mlAdminPassword", adminPassword);
+            adminUsername = getEnvPropString(environmentProperties, "mlAdminUsername", adminUsername);
+            adminPassword = getEnvPropString(environmentProperties, "mlAdminPassword", adminPassword);
 
-        manageUsername = getEnvPropString(environmentProperties, "mlManageUsername", manageUsername);
-        managePassword = getEnvPropString(environmentProperties, "mlManagePassword", managePassword);
+            manageUsername = getEnvPropString(environmentProperties, "mlManageUsername", manageUsername);
+            managePassword = getEnvPropString(environmentProperties, "mlManagePassword", managePassword);
 
-        restAdminUsername = getEnvPropString(environmentProperties, "mlRestAdminUsername", restAdminUsername);
-        restAdminPassword = getEnvPropString(environmentProperties, "mlRestAdminPassword", restAdminPassword);
+            restAdminUsername = getEnvPropString(environmentProperties, "mlRestAdminUsername", restAdminUsername);
+            restAdminPassword = getEnvPropString(environmentProperties, "mlRestAdminPassword", restAdminPassword);
 
-        username = getEnvPropString(environmentProperties, "mlUsername", username);
-        password = getEnvPropString(environmentProperties, "mlPassword", password);
+            username = getEnvPropString(environmentProperties, "mlUsername", username);
+            password = getEnvPropString(environmentProperties, "mlPassword", password);
 
-        projectDir = getEnvPropString(environmentProperties, "hubProjectDir", projectDir);
+            projectDir = getEnvPropString(environmentProperties, "hubProjectDir", projectDir);
 
-        logger.info("Hub Project Dir: " + projectDir);
+            logger.info("Hub Project Dir: " + projectDir);
+        }
+        else {
+            logger.error("Missing environmentProperties");
+        }
     }
 
     public ManageClient newManageClient() {
@@ -525,11 +530,13 @@ public class HubConfig {
         customTokens.put("%%mlTriggersDbName%%", triggersDbName);
         customTokens.put("%%mlSchemasDbName%%", schemasDbName);
 
-        Enumeration keyEnum = environmentProperties.propertyNames();
-        while (keyEnum.hasMoreElements()) {
-            String key = (String)keyEnum.nextElement();
-            if (key.matches("^ml[A-Z].+") && !customTokens.containsKey(key)) {
-                customTokens.put("%%" + key + "%%", (String)environmentProperties.get(key));
+        if (environmentProperties != null) {
+            Enumeration keyEnum = environmentProperties.propertyNames();
+            while (keyEnum.hasMoreElements()) {
+                String key = (String) keyEnum.nextElement();
+                if (key.matches("^ml[A-Z].+") && !customTokens.containsKey(key)) {
+                    customTokens.put("%%" + key + "%%", (String) environmentProperties.get(key));
+                }
             }
         }
 

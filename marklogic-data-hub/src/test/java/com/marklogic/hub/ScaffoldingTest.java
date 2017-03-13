@@ -29,9 +29,9 @@ import com.marklogic.hub.flow.FlowType;
 
 public class ScaffoldingTest extends HubTestBase {
 
-    private String projectPath = "./test-ye-project";
-    private File projectDir = new File(projectPath);
-    private File pluginDir = new File(projectPath, "plugins");
+    Path projectPath = Paths.get("./test-ye-project").toAbsolutePath();
+    private File projectDir = projectPath.toFile();
+    private File pluginDir = projectPath.resolve("plugins").toFile();
 
     @BeforeClass
     public static void setup() {
@@ -175,7 +175,7 @@ public class ScaffoldingTest extends HubTestBase {
         } catch (ScaffoldingValidationException e) {
             Assert.fail(e.getMessage());
         }
-        Path restDir = Paths.get(pluginDir.toString(), "entities", entityName, flowType.name(), "REST").toAbsolutePath().normalize();
+        Path restDir = Paths.get(pluginDir.toString(), "entities", entityName, flowType.toString(), "REST").toAbsolutePath().normalize();
         assertTrue(restDir.toFile().exists());
         Path restServicesDir = restDir.resolve("services");
         assertTrue(restServicesDir.toFile().exists());
@@ -199,7 +199,7 @@ public class ScaffoldingTest extends HubTestBase {
         } catch (ScaffoldingValidationException e) {
             Assert.fail(e.getMessage());
         }
-        Path restDir = Paths.get(pluginDir.toString(), "entities", entityName, flowType.name(), "REST").toAbsolutePath().normalize();
+        Path restDir = Paths.get(pluginDir.toString(), "entities", entityName, flowType.toString(), "REST").toAbsolutePath().normalize();
         assertTrue(restDir.toFile().exists());
         Path restServicesDir = restDir.resolve("services");
         assertTrue(restServicesDir.toFile().exists());
@@ -223,7 +223,7 @@ public class ScaffoldingTest extends HubTestBase {
         } catch (ScaffoldingValidationException e) {
             Assert.fail(e.getMessage());
         }
-        Path restDir = Paths.get(pluginDir.toString(), "entities", entityName, flowType.name(), "REST").toAbsolutePath().normalize();
+        Path restDir = Paths.get(pluginDir.toString(), "entities", entityName, flowType.toString(), "REST").toAbsolutePath().normalize();
         assertTrue(restDir.toFile().exists());
         Path restTransformDir = restDir.resolve("transforms");
         assertTrue(restTransformDir.toFile().exists());
@@ -243,7 +243,7 @@ public class ScaffoldingTest extends HubTestBase {
         } catch (ScaffoldingValidationException e) {
             Assert.fail(e.getMessage());
         }
-        Path restDir = Paths.get(pluginDir.toString(), "entities", entityName, flowType.name(), "REST").toAbsolutePath().normalize();
+        Path restDir = Paths.get(pluginDir.toString(), "entities", entityName, flowType.toString(), "REST").toAbsolutePath().normalize();
         assertTrue(restDir.toFile().exists());
         Path restTransformDir = restDir.resolve("transforms");
         assertTrue(restTransformDir.toFile().exists());

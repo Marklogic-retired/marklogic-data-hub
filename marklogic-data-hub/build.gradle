@@ -36,12 +36,12 @@ dependencies {
 
 node {
   // Version of node to use.
-  // version = '6.8.1'
+  version = '7.5.0'
 
   // Version of npm to use.
-  // npmVersion = '3.10.8'
+  npmVersion = '4.1.2'
 
-  // download = true
+  download = true
 
   // Set the work directory for unpacking node
   workDir = file("${project.buildDir}/nodejs")
