@@ -5,7 +5,7 @@
 
 OS | Status
 --- | --- | ---
-Linux/Mac | [![Build Status](https://travis-ci.org/marklogic/marklogic-data-hub.svg?branch=1.0-master)](https://travis-ci.org/marklogic/marklogic-data-hub)
+Linux/Mac | [![Build Status](https://travis-ci.org/marklogic/marklogic-data-hub.svg?branch=1.0-develop)](https://travis-ci.org/marklogic/marklogic-data-hub)
 Windows | [![Windows Build status](https://ci.appveyor.com/api/projects/status/kgj0k5na59uhkvbv?svg=true)](https://ci.appveyor.com/project/paxtonhare/marklogic-data-hub)
 
 # MarkLogic Data Hub
