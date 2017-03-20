@@ -3,6 +3,7 @@ package com.marklogic.hub.deploy.commands;
 import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.appdeployer.command.AbstractCommand;
 import com.marklogic.appdeployer.command.CommandContext;
+import com.marklogic.appdeployer.command.SortOrderConstants;
 import com.marklogic.appdeployer.command.modules.AllButAssetsModulesFinder;
 import com.marklogic.appdeployer.command.modules.AssetModulesFinder;
 import com.marklogic.client.DatabaseClient;
@@ -33,6 +34,7 @@ public class LoadUserModulesCommand extends AbstractCommand {
     private boolean forceLoad = false;
 
     public LoadUserModulesCommand(HubConfig hubConfig) {
+        setExecuteSortOrder(SortOrderConstants.LOAD_MODULES + 1);
         this.hubConfig = hubConfig;
     }
 

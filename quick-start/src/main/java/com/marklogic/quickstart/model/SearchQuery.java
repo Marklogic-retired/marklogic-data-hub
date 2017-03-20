@@ -23,7 +23,6 @@ import java.util.Map;
 public class SearchQuery {
     public String query;
     public String sort;
-    public boolean entitiesOnly;
     public long start;
     public long count;
     public HubDatabase database;

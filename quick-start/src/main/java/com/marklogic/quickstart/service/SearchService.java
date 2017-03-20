@@ -29,15 +29,11 @@ import com.marklogic.hub.HubDatabase;
 import com.marklogic.hub.util.PerformanceLogger;
 import com.marklogic.quickstart.model.SearchQuery;
 import com.marklogic.quickstart.util.QueryHelper;
-import org.codehaus.jettison.json.JSONObject;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import java.io.ByteArrayInputStream;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -60,30 +56,20 @@ public class SearchService extends SearchableService {
         this.finalDocMgr = finalClient.newDocumentManager();
     }
 
-    private Element getOptions(boolean entitiesOnly) {
+    private Element getOptions() {
         try {
             Path dir = Paths.get(hubConfig.projectDir, HubConfig.USER_CONFIG_DIR, HubConfig.SEARCH_OPTIONS_FILE);
             if (dir.toFile().exists()) {
                 DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
                 DocumentBuilder db = dbf.newDocumentBuilder();
                 Document doc = db.parse(dir.toFile());
-                Element root = doc.getDocumentElement();
-
-                if (entitiesOnly) {
-                    String additionalQuery = "<additional-query xmlns=\"http://marklogic.com/appservices/search\">\n" +
-                        "      <cts:element-query xmlns:cts=\"http://marklogic.com/cts\">\n" +
-                        "      <cts:element xmlns:es=\"http://marklogic.com/entity-services\">es:instance</cts:element>\n" +
-                        "      <cts:true-query/>\n" +
-                        "      </cts:element-query>\n" +
-                        "    </additional-query>";
-                    Node n = doc.importNode(db.parse(new ByteArrayInputStream(additionalQuery.getBytes(StandardCharsets.UTF_8))).getDocumentElement(), true);
-                    root.appendChild(n);
-                }
+                return doc.getDocumentElement();
             }
         }
         catch (Exception e) {
             throw new RuntimeException(e);
         }
+
         return null;
     }
 
@@ -118,7 +104,7 @@ public class SearchService extends SearchableService {
 
         StructuredQueryBuilder.AndQuery sqd = sb.and(queries.toArray(new StructuredQueryDefinition[0]));
 
-        String searchXml = QueryHelper.serializeQuery(sb, sqd, searchQuery.sort, getOptions(searchQuery.entitiesOnly));
+        String searchXml = QueryHelper.serializeQuery(sb, sqd, searchQuery.sort, getOptions());
         logger.info(searchXml);
         RawCombinedQueryDefinition querydef = queryMgr.newRawCombinedQueryDefinitionAs(Format.XML, searchXml);
 

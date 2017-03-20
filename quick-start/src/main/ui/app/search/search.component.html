@@ -15,7 +15,7 @@
   <div *ngIf="!loadingTraces" layout="column" flex layout-align="center center" class="full-width">
     <app-pagination [start]="searchResponse.start"
           [total]="searchResponse.total"
-          [pageLength]="searchResponse.pageLength"
+          [pageLength]="searchResponse['page-length']"
           (pageChanged)="pageChanged($event)"></app-pagination>
     <div *ngIf="!loadingTraces && (!searchResponse || searchResponse.total === 0)">No Data</div>
     <div class="mdl-grid results">
