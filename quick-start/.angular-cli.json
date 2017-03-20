@@ -1,0 +1,59 @@
+{
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "project": {
+    "version": "1.0.0-beta.32.3",
+    "name": "data-hub-quickstart"
+  },
+  "apps": [
+    {
+      "root": "src/main/ui",
+      "outDir": "dist",
+      "assets": [
+        "assets"
+      ],
+      "index": "index.html",
+      "main": "main.ts",
+      "polyfills": "polyfills.ts",
+      "test": "test.ts",
+      "tsconfig": "tsconfig.json",
+      "prefix": "app",
+      "styles": [
+        "../../../node_modules/mdi/css/materialdesignicons.css",
+        "../../../node_modules/material-design-icons-iconfont/dist/material-design-icons.css",
+        "../../../node_modules/font-awesome/css/font-awesome.css",
+        "../../../node_modules/codemirror/lib/codemirror.css",
+        "styles.scss"
+      ],
+      "scripts": [],
+      "environmentSource": "environments/environment.ts",
+      "environments": {
+        "dev": "environments/environment.ts",
+        "prod": "environments/environment.prod.ts"
+      }
+    }
+  ],
+  "e2e": {
+    "protractor": {
+      "config": "./protractor.conf.js"
+    }
+  },
+  "lint": [
+    {
+      "files": "src/main/ui/**/*.ts",
+      "project": "src/main/ui/tsconfig.json"
+    },
+    {
+      "files": "e2e/**/*.ts",
+      "project": "e2e/tsconfig.json"
+    }
+  ],
+  "test": {
+    "karma": {
+      "config": "./karma.conf.js"
+    }
+  },
+  "defaults": {
+    "styleExt": "scss",
+    "component": {}
+    }
+  }

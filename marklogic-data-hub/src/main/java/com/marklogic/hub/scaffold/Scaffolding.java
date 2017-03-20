@@ -15,24 +15,26 @@
  */
 package com.marklogic.hub.scaffold;
 
-import com.marklogic.client.helper.LoggingObject;
 import com.marklogic.client.io.Format;
 import com.marklogic.hub.error.ScaffoldingValidationException;
 import com.marklogic.hub.flow.FlowType;
 import com.marklogic.hub.flow.SimpleFlow;
 import com.marklogic.hub.plugin.PluginFormat;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class Scaffolding extends LoggingObject {
+public class Scaffolding {
 
     private String projectDir;
     private Path pluginsDir;
     private Path entitiesDir;
     private ScaffoldingValidator validator;
+    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     public Scaffolding(String projectDir) {
         this.projectDir = projectDir;
@@ -133,8 +135,6 @@ public class Scaffolding extends LoggingObject {
 
     private void writeToFile(String fileContent, File dstFile)
             throws IOException {
-        logger.info(fileContent);
-        logger.info(dstFile.getAbsolutePath());
         FileWriter fw = new FileWriter(dstFile);
         BufferedWriter bw = new BufferedWriter(fw);
         bw.write(fileContent);

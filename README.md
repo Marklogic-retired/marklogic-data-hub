@@ -1,4 +1,7 @@
-<p style="font-style: italic; font-size:12px;">The MarkLogic Data Hub Framework is free and open source under the <a href="https://github.com/marklogic/marklogic-data-hub/blob/1.0-master/LICENSE">Apache 2 License</a> and is supported by the community of developers who build and contribute to it. Please note that Data Hub Framework is not a supported MarkLogic product.</p>
+<p style="font-style: italic; font-size:12px;">The MarkLogic Data Hub Framework is a data integration framework and tool-set to quickly and efficiently integrate data from many sources into a single MarkLogic database, and expose that data.</p>
+
+<p style="font-style: italic; font-size:12px;">The Data Hub Framework is free and open source under the <a href="https://github.com/marklogic/marklogic-data-hub/blob/1.0-master/LICENSE">Apache 2 License</a> and is supported by the community of developers who build and contribute to it. Please note that this open source project and its code and functionality is not representative of MarkLogic Server and is not supported by MarkLogic.
+</p>
 
 OS | Status
 --- | --- | ---
@@ -44,7 +47,7 @@ Alternatively you can include the jar file as a build dependency in your Java pr
 **Gradle**
 
 ```groovy
-compile('com.marklogic:marklogic-data-hub:1.1.0')
+compile('com.marklogic:marklogic-data-hub:1.1.1')
 ```
 
 **Maven**
@@ -53,7 +56,7 @@ compile('com.marklogic:marklogic-data-hub:1.1.0')
 <dependency>
   <groupId>com.marklogic</groupId>
   <artifactId>marklogic-data-hub</artifactId>
-  <version>1.1.0</version>
+  <version>1.1.1</version>
   <type>pom</type>
 </dependency>
 ```
@@ -61,7 +64,7 @@ compile('com.marklogic:marklogic-data-hub:1.1.0')
 **Ivy**
 
 ```xml
-<dependency org='com.marklogic' name='marklogic-data-hub' rev='1.1.0'>
+<dependency org='com.marklogic' name='marklogic-data-hub' rev='1.1.1'>
   <artifact name='$AID' ext='pom'></artifact>
 </dependency>
 ```
@@ -72,14 +75,14 @@ If you prefer to use gradle for all of your hub interactions then you can includ
 
 ```groovy
 plugins {
-    id 'com.marklogic.ml-data-hub' version '1.1.0'
+    id 'com.marklogic.ml-data-hub' version '1.1.1'
 }
 ```
 
 Now you have full access to the Data Hub tasks. To see all available tasks run:
 
 ```bash
-gradle tasks
+./gradlew tasks
 ```
 
 # Building From Source

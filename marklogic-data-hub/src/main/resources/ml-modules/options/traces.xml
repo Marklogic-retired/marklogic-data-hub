@@ -5,29 +5,34 @@
     </cts:collection-query>
   </additional-query>
   <constraint name="flowType">
-    <value>
-      <element name="flowType" ns="" />
-    </value>
+    <range type="xs:string" collation="http://marklogic.com/collation/codepoint">
+      <path-index>/trace/flowType</path-index>
+    </range>
   </constraint>
-  <constraint name="flowFormat">
-    <value>
-      <element name="format" ns="" />
-    </value>
+  <constraint name="jobId">
+    <range type="xs:string" collation="http://marklogic.com/collation/codepoint" facet="false">
+      <path-index>/trace/jobId</path-index>
+    </range>
   </constraint>
   <constraint name="identifier">
-    <value>
-      <element name="identifier" ns="" />
-    </value>
+    <range type="xs:string" collation="http://marklogic.com/collation/codepoint" facet="false">
+      <path-index>/trace/identifier</path-index>
+    </range>
+  </constraint>
+  <constraint name="hasError">
+    <range type="xs:string" collation="http://marklogic.com/collation/codepoint">
+      <path-index>/trace/hasError</path-index>
+    </range>
   </constraint>
   <operator name="sort">
     <state name="date-desc">
       <sort-order direction="descending" type="xs:dateTime">
-        <element ns="" name="created"/>
+        <path-index>/trace/created</path-index>
       </sort-order>
     </state>
     <state name="date-asc">
       <sort-order direction="ascending" type="xs:dateTime">
-        <element ns="" name="created"/>
+        <path-index>/trace/created</path-index>
       </sort-order>
     </state>
   </operator>

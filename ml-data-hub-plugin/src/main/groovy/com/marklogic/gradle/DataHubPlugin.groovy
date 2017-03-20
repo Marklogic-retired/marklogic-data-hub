@@ -1,5 +1,6 @@
 package com.marklogic.gradle
 
+import com.marklogic.appdeployer.impl.SimpleAppDeployer
 import com.marklogic.gradle.task.*
 import com.marklogic.hub.DataHub
 import com.marklogic.hub.DefaultHubConfigFactory
@@ -17,6 +18,16 @@ class DataHubPlugin implements Plugin<Project> {
 
     @Override
     void apply(Project project) {
+        if (Double.parseDouble(project.gradle.gradleVersion) < 3.1) {
+            logger.error("\n\n" +
+                "********************************\n" +
+                "Hold the phone!\n\n" +
+                "You need Gradle 3.1 or greater.\n" +
+                "********************************" +
+                "\n\n")
+            return
+        }
+
         project.plugins.apply(MarkLogicPlugin.class)
 
         logger.info("\nInitializing data-hub-gradle")
@@ -30,6 +41,7 @@ class DataHubPlugin implements Plugin<Project> {
         project.task("hubEnableTracing", group: deployGroup, type: EnableTracingTask)
         project.task("hubDisableTracing", group: deployGroup, type: DisableTracingTask)
         project.task("hubInstallModules", type: DeployHubModulesTask)
+        project.task("hubInfo", type: HubInfoTask)
 
         String scaffoldGroup = "MarkLogic Data Hub Scaffolding"
         project.task("hubInit", group: scaffoldGroup, type: InitProjectTask)
@@ -47,16 +59,15 @@ class DataHubPlugin implements Plugin<Project> {
 
     void initializeProjectExtensions(Project project) {
         HubConfig hubConfig = new DefaultHubConfigFactory(project, new ProjectPropertySource(project)).newHubConfig()
+        hubConfig.updateAppConfig(project.mlAppConfig)
         project.extensions.add("hubConfig", hubConfig)
 
         dataHub = new DataHub(hubConfig)
         project.extensions.add("dataHub", dataHub)
-
-        dataHub.updateAppConfig(project.mlAppConfig)
     }
 
     void configureAppDeployer(Project project) {
-        def mlAppDeployer = project.extensions.getByName("mlAppDeployer")
+        SimpleAppDeployer mlAppDeployer = project.extensions.getByName("mlAppDeployer")
         if (mlAppDeployer == null) {
             throw new RuntimeException("You must apply the ml-gradle plugin before the ml-datahub plugin.")
         }

@@ -17,6 +17,9 @@ xquery version "1.0-ml";
 
 module namespace service = "http://marklogic.com/rest-api/resource/flow";
 
+import module namespace config = "http://marklogic.com/data-hub/config"
+  at "/com.marklogic.hub/lib/config.xqy";
+
 import module namespace debug = "http://marklogic.com/data-hub/debug"
   at "/com.marklogic.hub/lib/debug-lib.xqy";
 
@@ -25,6 +28,9 @@ import module namespace flow = "http://marklogic.com/data-hub/flow-lib"
 
 import module namespace perf = "http://marklogic.com/data-hub/perflog-lib"
   at "/com.marklogic.hub/lib/perflog-lib.xqy";
+
+import module namespace trace = "http://marklogic.com/data-hub/trace"
+  at "/com.marklogic.hub/lib/trace-lib.xqy";
 
 declare namespace rapi = "http://marklogic.com/rest-api";
 
@@ -81,15 +87,34 @@ declare function post(
 
   perf:log('/v1/resources/flow:post', function() {
     let $flow as element(hub:flow) := $input/hub:flow
-    let $options := map:new((
-      map:entry("entity", $flow/hub:entity/fn:data()),
-      map:entry("flow", $flow/hub:name/fn:data()),
-      map:entry("flowType", $flow/hub:type/fn:data())
-    ))
-    for $identifier in map:get($params, "identifier")
-    let $_ := flow:run-flow($flow, $identifier, $options)
+    let $options as map:map := (map:get($params, "options") ! xdmp:unquote(.)/object-node(), map:map())[1]
+    let $_ := (
+      map:put($options, "entity", $flow/hub:entity/fn:data()),
+      map:put($options, "flow", $flow/hub:name/fn:data()),
+      map:put($options, "flowType", $flow/hub:type/fn:data())
+    )
+    let $_ := trace:reset-error-count()
+    let $job-id := map:get($params, "job-id")
+    let $target-database :=
+      if (fn:exists(map:get($params, "target-database"))) then
+        xdmp:database(map:get($params, "target-database"))
+      else
+        xdmp:database($config:FINAL-DATABASE)
+    let $identifiers := map:get($params, "identifier")
+    let $_ :=
+      for $identifier in $identifiers
+      let $_ := flow:run-flow($job-id, $flow, $identifier, $target-database, $options)
     return
-      document { () }
+        ()
+    let $resp :=
+      document {
+        object-node {
+          "totalCount": fn:count($identifiers),
+          "errorCount": trace:get-error-count()
+        }
+      }
+    return
+      $resp
   })
 };
 

@@ -1,6 +1,6 @@
 export class HubSettings {
   host: string = null;
-  name: string = null;
+  name: string = 'data-hub';
 
   stagingDbName: string = null;
   stagingHttpName: string = null;

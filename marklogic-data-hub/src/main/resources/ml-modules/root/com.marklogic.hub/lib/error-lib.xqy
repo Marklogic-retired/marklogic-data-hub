@@ -23,7 +23,7 @@ declare function err:error-to-json($error as element(error:error))
   let $_ :=
     for $e in $error/*[fn:not(self::error:stack or self::error:data)]
     return
-      map:put($o, err:to-camel(fn:local-name($e)), fn:data($e))
+      map:put($o, err:to-camel(fn:local-name($e)), fn:string($e))
   let $_ :=
     let $data := json:array()
     let $_ :=
@@ -40,7 +40,7 @@ declare function err:error-to-json($error as element(error:error))
       let $_ :=
         for $e in $frame/*[fn:not(self::error:variables)]
         return
-          map:put($f, err:to-camel(fn:local-name($e)), fn:data($e))
+          map:put($f, err:to-camel(fn:local-name($e)), fn:string($e))
       let $_ :=
         let $variables := json:object()
         let $_ :=

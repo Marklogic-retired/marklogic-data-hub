@@ -19,39 +19,63 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.document.GenericDocumentManager;
 import com.marklogic.client.document.ServerTransform;
-import com.marklogic.client.helper.LoggingObject;
 import com.marklogic.client.io.Format;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.query.QueryManager;
 import com.marklogic.client.query.RawCombinedQueryDefinition;
 import com.marklogic.client.query.StructuredQueryBuilder;
 import com.marklogic.client.query.StructuredQueryDefinition;
+import com.marklogic.hub.util.PerformanceLogger;
+import com.marklogic.quickstart.model.TraceQuery;
 import com.marklogic.quickstart.util.QueryHelper;
 
 import java.util.ArrayList;
 
-public class TraceService extends LoggingObject {
+public class TraceService extends SearchableService {
 
     private static final String SEARCH_OPTIONS_NAME = "traces";
 
-    private DatabaseClient databaseClient;
     private QueryManager queryMgr;
     private GenericDocumentManager docMgr;
 
     public TraceService(DatabaseClient client) {
-        this.databaseClient = client;
+        DatabaseClient databaseClient = client;
         this.queryMgr = databaseClient.newQueryManager();
         this.docMgr = databaseClient.newDocumentManager();
     }
 
-    public StringHandle getTraces(String query, long start, long count) {
-        queryMgr.setPageLength(count);
+
+    public StringHandle getTraces(TraceQuery traceQuery) {
+        long startTime = PerformanceLogger.monitorTimeInsideMethod();
+        queryMgr.setPageLength(traceQuery.count);
 
         StructuredQueryBuilder sb = queryMgr.newStructuredQueryBuilder(SEARCH_OPTIONS_NAME);
 
         ArrayList<StructuredQueryDefinition> queries = new ArrayList<>();
-        if (query != null && !query.equals("")) {
-            queries.add(sb.term(query));
+        if (traceQuery.query != null && !traceQuery.query.equals("")) {
+            queries.add(sb.term(traceQuery.query));
+        }
+
+        StructuredQueryDefinition def = addRangeConstraint(sb, "identifier", traceQuery.identifier);
+        if (def != null) {
+            queries.add(def);
+        }
+
+        def = addRangeConstraint(sb, "jobId", traceQuery.jobId);
+        if (def != null) {
+            queries.add(def);
+        }
+
+        if (traceQuery.hasError != null) {
+            def = addRangeConstraint(sb, "hasError", Boolean.toString(traceQuery.hasError));
+            if (def != null) {
+                queries.add(def);
+            }
+        }
+
+        def = addRangeConstraint(sb, "flowType", traceQuery.flowType);
+        if (def != null) {
+            queries.add(def);
         }
 
         StructuredQueryBuilder.AndQuery sqd = sb.and(queries.toArray(new StructuredQueryDefinition[0]));
@@ -59,11 +83,13 @@ public class TraceService extends LoggingObject {
         String sort = "date-desc";
         String searchXml = QueryHelper.serializeQuery(sb, sqd, sort);
 
+        logger.info(searchXml);
         RawCombinedQueryDefinition querydef = queryMgr.newRawCombinedQueryDefinition(new StringHandle(searchXml), SEARCH_OPTIONS_NAME);
         querydef.setResponseTransform(new ServerTransform("trace-search"));
         StringHandle sh = new StringHandle();
         sh.setFormat(Format.JSON);
-        StringHandle results = queryMgr.search(querydef, sh, start);
+        StringHandle results = queryMgr.search(querydef, sh, traceQuery.start);
+        PerformanceLogger.logTimeInsideMethod(startTime, "TraceService.getTraces()");
         return results;
     }
 

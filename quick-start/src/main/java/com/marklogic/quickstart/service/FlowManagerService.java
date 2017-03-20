@@ -16,7 +16,6 @@
 package com.marklogic.quickstart.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.marklogic.client.helper.LoggingObject;
 import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.JobStatusListener;
 import com.marklogic.hub.flow.AbstractFlow;
@@ -55,7 +54,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-public class FlowManagerService extends LoggingObject {
+public class FlowManagerService {
 
     private static final String PROJECT_TMP_FOLDER = ".tmp";
 
@@ -66,7 +65,7 @@ public class FlowManagerService extends LoggingObject {
 
     private FlowManager fm = null;
 
-    public FlowManager getFlowManager() {
+    private FlowManager getFlowManager() {
         if (fm == null) {
             fm = new FlowManager(envConfig().getMlSettings());
         }
@@ -74,7 +73,7 @@ public class FlowManagerService extends LoggingObject {
     }
 
     public List<FlowModel> getFlows(String projectDir, String entityName, FlowType flowType) {
-        List<FlowModel> flows = new ArrayList<FlowModel>();
+        List<FlowModel> flows = new ArrayList<>();
 
         Path entityPath = Paths.get(projectDir, "plugins", "entities", entityName);
 

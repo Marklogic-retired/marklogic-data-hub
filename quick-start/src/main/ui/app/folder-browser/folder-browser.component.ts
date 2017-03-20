@@ -11,6 +11,7 @@ import { MdlTextFieldComponent } from 'angular2-mdl';
 export class FolderBrowserComponent implements OnInit, OnChanges {
   @Input() startPath: string = '.';
   @Output() folderChosen = new EventEmitter();
+  @Input() absoluteOnly: boolean = false;
 
   @ViewChild(MdlTextFieldComponent) inputPath: MdlTextFieldComponent;
 
@@ -41,7 +42,7 @@ export class FolderBrowserComponent implements OnInit, OnChanges {
   getFolders(path: string): void {
     if (path) {
       this.isLoading = true;
-      this.http.get('/api/utils/searchPath?path=' + encodeURIComponent(path))
+      this.http.get(`/api/utils/searchPath?path=${encodeURIComponent(path)}&absolute=${this.absoluteOnly}`)
       .map(this.extractData)
       .subscribe(resp => {
         this.folders = resp.folders;

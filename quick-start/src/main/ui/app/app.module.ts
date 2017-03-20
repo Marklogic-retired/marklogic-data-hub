@@ -3,27 +3,25 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { RouterModule } from '@angular/router';
-
-import { TRUNCATE_PIPES } from 'ng2-truncate';
-
-import { ConfirmModule } from './confirm';
-
+import { TruncateCharactersPipe } from 'ng2-truncate/dist/truncate-characters.pipe'
+import { TruncateWordsPipe } from 'ng2-truncate/dist/truncate-words.pipe'
 import { AppComponent } from './app.component';
-import { EntitiesComponent } from './entities';
+import { EntitiesComponent, HasBugsDialogComponent } from './entities';
 import { LoginComponent } from './login';
 import { SettingsComponent } from './settings';
 
 import { MdlModule } from 'angular2-mdl';
-import { CodemirrorModule } from 'ng2-codemirror';
+import { MdlPopoverModule } from '@angular2-mdl-ext/popover';
+import { MdlSelectModule } from '@angular2-mdl-ext/select';
 import { MomentModule } from 'angular2-moment';
-import { MdDialogModule } from './dialog';
 import { GridManiaModule } from './grid';
 
 import { ROUTES } from './app.routes';
 import { AUTH_PROVIDERS } from './auth';
+import { CodemirrorComponent } from './codemirror';
 import { FolderBrowserComponent } from './folder-browser/folder-browser.component';
 import { HeaderComponent } from './header/header.component';
-import { JobsComponent } from './jobs';
+import { JobsComponent, JobOutputComponent } from './jobs';
 import { MlcpUiComponent } from './mlcp-ui';
 import { MlErrorComponent } from './ml-error';
 import { NewEntityComponent } from './new-entity/new-entity';
@@ -34,6 +32,7 @@ import { SelectComponent } from './select/select.component';
 import { SelectListComponent } from './select-list/select-list.component';
 import { TooltipModule } from './tooltip';
 import { TracesComponent, TraceViewerComponent } from './traces';
+import { SearchComponent, SearchViewerComponent } from './search';
 
 import { DeployService } from './deploy/deploy.service';
 import { EntitiesService } from './entities/entities.service';
@@ -45,6 +44,7 @@ import { SettingsService } from './settings/settings.service';
 import { STOMPService } from './stomp/stomp.service';
 import { ClipboardDirective } from './clipboard/clipboard.directive';
 import { TraceService } from './traces/trace.service';
+import { SearchService } from './search/search.service';
 import { HarmonizeFlowOptionsComponent } from './harmonize-flow-options/harmonize-flow-options.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { TitlecasePipe } from './titlecase.pipe';
@@ -54,10 +54,13 @@ import { ObjectToArrayPipe } from './object-to-array.pipe';
 @NgModule({
   declarations: [
     AppComponent,
+    CodemirrorComponent,
     FolderBrowserComponent,
     HeaderComponent,
     EntitiesComponent,
+    HasBugsDialogComponent,
     JobsComponent,
+    JobOutputComponent,
     LoginComponent,
     MlcpUiComponent,
     MlErrorComponent,
@@ -69,26 +72,33 @@ import { ObjectToArrayPipe } from './object-to-array.pipe';
     SettingsComponent,
     TracesComponent,
     TraceViewerComponent,
+    SearchComponent,
+    SearchViewerComponent,
     NoContentComponent,
     ClipboardDirective,
     HarmonizeFlowOptionsComponent,
     DashboardComponent,
-    TitlecasePipe,
     FacetsComponent,
-    TRUNCATE_PIPES,
+    TitlecasePipe,
+    TruncateCharactersPipe,
+    TruncateWordsPipe,
     ObjectToArrayPipe
+  ],
+  entryComponents: [
+    NewEntityComponent,
+    NewFlowComponent,
+    JobOutputComponent
   ],
   imports: [
     BrowserModule,
     FormsModule,
     HttpModule,
     MdlModule,
-    ConfirmModule,
-    CodemirrorModule,
+    MdlPopoverModule,
+    MdlSelectModule,
     TooltipModule,
     MomentModule,
     GridManiaModule,
-    MdDialogModule.forRoot(),
     RouterModule.forRoot(ROUTES, { useHash: true })
   ],
   providers: [
@@ -101,7 +111,8 @@ import { ObjectToArrayPipe } from './object-to-array.pipe';
     ProjectService,
     SettingsService,
     STOMPService,
-    TraceService
+    TraceService,
+    SearchService
   ],
   bootstrap: [
     AppComponent

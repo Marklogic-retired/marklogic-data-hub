@@ -5,6 +5,7 @@ import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.item.ItemStreamException;
 import org.springframework.batch.item.support.SynchronizedItemStreamReader;
 
+import java.util.Map;
 import java.util.Vector;
 
 public class CollectorReader extends SynchronizedItemStreamReader<String> {
@@ -13,14 +14,17 @@ public class CollectorReader extends SynchronizedItemStreamReader<String> {
 
     private Vector<String> results;
 
-    public CollectorReader(Collector collector) {
+    private Map<String, Object> options;
+
+    public CollectorReader(Collector collector, Map<String, Object> options) {
         this.collector = collector;
+        this.options = options;
     }
 
     @Override
     public void open(ExecutionContext executionContext) {
         if (collector != null) {
-            this.results = collector.run();
+            this.results = collector.run(options);
         }
         else {
             this.results = new Vector<>();

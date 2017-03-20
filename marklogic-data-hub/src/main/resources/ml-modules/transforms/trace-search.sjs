@@ -5,7 +5,7 @@ function transform(context, params, content) {
 
   for (var i = 0; i < response.results.length; i++) {
     var result = response.results[i];
-    var doc = cts.doc(result.uri).root;
+    var doc = cts.doc(result.uri);
     result.content = trace.traceToJsonSlim(doc);
     response.pageLength = response['page-length'];
   }

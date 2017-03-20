@@ -2,7 +2,7 @@
   <h1>Jobs</h1>
 
   <div class="search-box" flex layout-align="center center" layout="row">
-    <form (submit)="getJobs()" flex layout-align="center center" layout="row">
+    <form (submit)="doSearch()" flex layout-align="center center" layout="row">
       <input type="search" name="searchText" [(ngModel)]="searchText" placeholder="Enter you search query here...">
       <button type="submit" mdl-colored="primary" mdl-button mdl-button-type="raised">Search</button>
     </form>
@@ -39,7 +39,7 @@
           <tbody>
             <tr *ngFor="let job of jobs" [ngClass]="{'error' : job.status === 'FAILED' }">
               <td><i class="mdi" [ngClass]="getIconClass(job.jobName)"></i> {{job.jobName}}</td>
-              <td>{{job.jobId}}</td>
+              <td>{{job.jobId}} <i (click)="showTraces(job.jobId)" class="fa fa-flash"></i></td>
               <td>{{job.entity}}</td>
               <td>{{job.flow}}</td>
               <td>{{job.status}}</td>
@@ -63,21 +63,4 @@
       <mdl-spinner single-color active></mdl-spinner>
     </div>
   </div>
-
-  <div *ngIf="showJobOutput" class="visible dialog-container">
-    <div class="mdl-dialog job-status-dialog">
-      <div class="mdl-dialog__title">
-        <div>Job Output for {{showJobOutput.jobId}}</div>
-        <div class="mdl-layout-spacer"></div>
-        <mdl-button mdl-button-type="icon" (click)="cancelConsole()">
-          <i class="fa fa-close"></i>
-        </mdl-button>
       </div>
-      <div class="mdl-dialog__content">
-        <pre>{{getJobOutput(showJobOutput)}}</pre>
-      </div>
-    </div>
-    <div class="modal-backdrop"></div>
-  </div>
-
-</div>

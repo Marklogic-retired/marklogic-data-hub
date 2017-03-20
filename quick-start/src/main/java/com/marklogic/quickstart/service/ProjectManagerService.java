@@ -15,7 +15,6 @@
  */
 package com.marklogic.quickstart.service;
 
-import com.marklogic.client.helper.LoggingObject;
 import com.marklogic.quickstart.exception.BadRequestException;
 import com.marklogic.quickstart.exception.NotFoundException;
 import com.marklogic.quickstart.model.Project;
@@ -28,17 +27,26 @@ import java.util.Map;
 import java.util.prefs.Preferences;
 
 @Service
-public class ProjectManagerService extends LoggingObject {
+public class ProjectManagerService {
 
-    public Map<Integer, ProjectInfo> projects = new HashMap<>();
     private Preferences prefs = Preferences.userNodeForPackage(ProjectManagerService.class);
     private int maxId = 0;
 
-    @SuppressWarnings("unchecked")
-    public ProjectManagerService() throws ClassNotFoundException, IOException {
+    public ProjectManagerService() {}
+
+    public Map<Integer, ProjectInfo> getProjects() {
+        Map<Integer, ProjectInfo> projects;
         byte[] bytes = prefs.getByteArray("projects", null);
         if (bytes != null) {
+            try {
             projects = (HashMap<Integer, ProjectInfo>) bytes2Object(bytes);
+        }
+            catch(Exception e) {
+                projects = new HashMap<>();
+            }
+        }
+        else {
+            projects = new HashMap<>();
         }
 
         for (int id : projects.keySet()) {
@@ -46,6 +54,7 @@ public class ProjectManagerService extends LoggingObject {
                 maxId = id;
             }
         }
+        return projects;
     }
 
     public Project addProject(String path) throws IOException {
@@ -55,6 +64,8 @@ public class ProjectManagerService extends LoggingObject {
         if (!f.exists()) {
             throw new BadRequestException();
         }
+
+        Map<Integer, ProjectInfo> projects = getProjects();
 
         // check for dupes
         for (Map.Entry<Integer, ProjectInfo>entry : projects.entrySet()) {
@@ -66,11 +77,12 @@ public class ProjectManagerService extends LoggingObject {
         int id = ++maxId;
         ProjectInfo pi = new ProjectInfo(id, path);
         projects.put(pi.id, pi);
-        this.save();
+        this.save(projects);
         return getProject(pi.id);
     }
 
     public Project getProject(int id) {
+        Map<Integer, ProjectInfo> projects = getProjects();
         Project project;
         ProjectInfo pi = projects.get(id);
         if (pi != null) {
@@ -84,7 +96,6 @@ public class ProjectManagerService extends LoggingObject {
 
     public void setLastProject(int id) throws IOException {
         prefs.putInt("lastProject", id);
-        this.save();
     }
 
     public int getLastProject() {
@@ -92,11 +103,12 @@ public class ProjectManagerService extends LoggingObject {
     }
 
     public void removeProject(int id) throws IOException {
+        Map<Integer, ProjectInfo> projects = getProjects();
         projects.remove(id);
-        save();
+        save(projects);
     }
 
-    private void save() throws IOException {
+    private void save(Map<Integer, ProjectInfo> projects) throws IOException {
         prefs.putByteArray("projects", object2Bytes(projects));
     }
 

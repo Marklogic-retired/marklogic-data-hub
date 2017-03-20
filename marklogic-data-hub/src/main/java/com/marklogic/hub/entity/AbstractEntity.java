@@ -15,15 +15,14 @@
  */
 package com.marklogic.hub.entity;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.marklogic.hub.FlowManager;
+import com.marklogic.hub.flow.Flow;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.marklogic.hub.FlowManager;
-import com.marklogic.hub.flow.Flow;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Abstract Base class for entities
@@ -69,7 +68,6 @@ public abstract class AbstractEntity implements Entity {
      */
     @Override
     public String getName() {
-        // TODO Auto-generated method stub
         return name;
     }
 
@@ -78,7 +76,6 @@ public abstract class AbstractEntity implements Entity {
      */
     @Override
     public String serialize() {
-        // TODO Auto-generated method stub
         return null;
     }
 

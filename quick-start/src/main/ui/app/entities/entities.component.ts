@@ -7,7 +7,7 @@ import { EntitiesService } from '../entities/entities.service';
 
 import { MdlSnackbarService } from 'angular2-mdl';
 
-import { MdDialog, MdDialogConfig, MdDialogRef } from '../dialog/dialog';
+import { MdlDialogService, MdlDialogReference } from 'angular2-mdl';
 
 import { MlcpUiComponent } from '../mlcp-ui';
 import { HarmonizeFlowOptionsComponent } from '../harmonize-flow-options/harmonize-flow-options.component';
@@ -18,6 +18,20 @@ import { DeployService } from '../deploy/deploy.service';
 
 import * as _ from 'lodash';
 
+/* tslint:disable:max-line-length */
+@Component({
+  selector: 'app-has-bugs-dialog',
+  template: `
+  <h3 class="bug-title"><i class="fa fa-bug"></i>This flow has a bug!</h3>
+  <p>You must fix it before you can run it.</p>
+  <mdl-button mdl-button-type="raised" mdl-colored="primary" mdl-ripple (click)="dialog.hide()">OK</mdl-button>`,
+  styleUrls: ['./entities.component.scss']
+})
+export class HasBugsDialogComponent {
+  constructor(private dialog: MdlDialogReference) { }
+}
+/* tslint:enable:max-line-length */
+
 @Component({
   selector: 'app-entities',
   templateUrl: './entities.component.html',
@@ -26,26 +40,18 @@ import * as _ from 'lodash';
 export class EntitiesComponent {
   @ViewChild(MlcpUiComponent) mlcp: MlcpUiComponent;
   @ViewChild(HarmonizeFlowOptionsComponent) harmonize: HarmonizeFlowOptionsComponent;
-  @ViewChild(NewEntityComponent) newEntity: NewEntityComponent;
-  @ViewChild(NewFlowComponent) newFlow: NewFlowComponent;
 
   entities: Array<Entity>;
   entity: Entity;
   flow: Flow;
   flowType: string;
-  config: MdDialogConfig = new MdDialogConfig();
 
   constructor(
     private entitiesService: EntitiesService,
     private deployService: DeployService,
     private snackbar: MdlSnackbarService,
-    private dialog: MdDialog,
-    private vcRef: ViewContainerRef
+    private dialogService: MdlDialogService
   ) {
-    let vref: any = vcRef;
-    snackbar.setDefaultViewContainerRef(vref);
-    this.config.viewContainerRef = this.vcRef;
-
     deployService.onDeploy.subscribe(() => {
       this.getEntities();
     });
@@ -120,7 +126,7 @@ export class EntitiesComponent {
     this.setCollapsed(entity, !collapsed);
   }
 
-  setFlow(entity: Entity, flow: Flow, flowType: string): void {
+  setFlow(ev: MouseEvent, entity: Entity, flow: Flow, flowType: string): void {
     if (this.mlcp.isVisible()) {
       this.mlcp.cancel();
     } else if (this.harmonize.isVisible()) {
@@ -129,6 +135,7 @@ export class EntitiesComponent {
     this.entity = entity;
     this.flow = flow;
     this.flowType = flowType;
+    this.runFlow(ev, flow, flowType);
   }
 
   isActiveFlow(flow: Flow): boolean {
@@ -140,12 +147,27 @@ export class EntitiesComponent {
   }
 
   showNewEntity(ev: Event): void {
-    this.newEntity.show().subscribe((newEntity: Entity) => {
+    let actions = {
+      save: (newEntity: Entity) => {
       this.entitiesService.createEntity(newEntity).subscribe((entity: Entity) => {
         this.entities.splice(_.sortedIndexBy(this.entities, entity, 'entityName'), 0, entity);
         this.toggleEntity(entity);
       });
+      }
+    };
+    this.dialogService.showCustomDialog({
+      component: NewEntityComponent,
+      providers: [
+        { provide: 'actions', useValue: actions }
+      ],
+      isModal: true
     });
+    // this.newEntity.show().subscribe((newEntity: Entity) => {
+    //   this.entitiesService.createEntity(newEntity).subscribe((entity: Entity) => {
+    //     this.entities.splice(_.sortedIndexBy(this.entities, entity, 'entityName'), 0, entity);
+    //     this.toggleEntity(entity);
+    //   });
+    // });
   }
 
   newInputFlow(ev: Event, entity: Entity): void {
@@ -157,7 +179,8 @@ export class EntitiesComponent {
   }
 
   showNewFlow(ev: Event, entity: Entity, flowType: string): void {
-    this.newFlow.show(flowType).subscribe((newFlow: Flow) => {
+    let actions = {
+      save: (newFlow: Flow) => {
       this.entitiesService.createFlow(entity, flowType, newFlow).subscribe((flow: Flow) => {
         if (flowType === 'INPUT') {
           entity.inputFlows.push(flow);
@@ -165,12 +188,25 @@ export class EntitiesComponent {
           entity.harmonizeFlows.push(flow);
         }
       });
+      }
+    };
+    this.dialogService.showCustomDialog({
+      component: NewFlowComponent,
+      providers: [
+        { provide: 'flowType', useValue: flowType },
+        { provide: 'actions', useValue: actions }
+      ],
+      isModal: true
     });
   }
 
   runFlow(ev: MouseEvent, flow: Flow, flowType: string) {
     if (this.flowHasError(flow.entityName, flow.flowName)) {
-      this.dialog.open(HasBugsDialogComponent, this.config).afterClosed().subscribe(() => {});
+      this.dialogService.showCustomDialog({
+        component: HasBugsDialogComponent,
+        providers: [],
+        isModal: true
+      });
     } else {
       const lower = flowType.toLowerCase();
       if (lower === 'input') {
@@ -210,17 +246,3 @@ export class EntitiesComponent {
     });
   }
 }
-
-/* tslint:disable:max-line-length */
-@Component({
-  selector: 'app-has-bugs-dialog',
-  template: `
-  <h3 class="bug-title"><i class="fa fa-bug"></i>This flow has a bug!</h3>
-  <p>You must fix it before you can run it.</p>
-  <mdl-button mdl-button-type="raised" mdl-colored="primary" mdl-ripple (click)="dialogRef.close()">OK</mdl-button>`,
-  styleUrls: ['./entities.component.scss']
-})
-export class HasBugsDialogComponent {
-  constructor(public dialogRef: MdDialogRef<HasBugsDialogComponent>) { }
-}
-/* tslint:enable:max-line-length */

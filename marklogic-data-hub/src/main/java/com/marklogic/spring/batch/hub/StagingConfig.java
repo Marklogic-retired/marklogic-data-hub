@@ -1,6 +1,5 @@
 package com.marklogic.spring.batch.hub;
 
-import com.marklogic.client.DatabaseClientFactory;
 import com.marklogic.client.helper.DatabaseClientConfig;
 import com.marklogic.client.helper.DatabaseClientProvider;
 import com.marklogic.client.helper.LoggingObject;
@@ -23,45 +22,16 @@ public class StagingConfig extends LoggingObject {
         return new SimpleAsyncTaskExecutor();
     }
 
-    private DatabaseClientConfig getStagingConfig() {
-        DatabaseClientConfig config = new DatabaseClientConfig(
-            hubConfig.host,
-            hubConfig.stagingPort,
-            hubConfig.username,
-            hubConfig.password
-        );
-
-        config.setDatabase(hubConfig.stagingDbName);
-        config.setAuthentication(DatabaseClientFactory.Authentication.valueOfUncased(hubConfig.stagingAuthMethod.toLowerCase()));
-
-        return config;
-    }
-
-    private DatabaseClientConfig getJobConfig() {
-        DatabaseClientConfig config = new DatabaseClientConfig(
-            hubConfig.host,
-            hubConfig.jobPort,
-            hubConfig.username,
-            hubConfig.password
-        );
-
-        config.setDatabase(hubConfig.jobDbName);
-        config.setAuthentication(DatabaseClientFactory.Authentication.valueOfUncased(hubConfig.jobAuthMethod.toLowerCase()));
-
-        return config;
-    }
-
-
     @Bean
     public DatabaseClientProvider databaseClientProvider() {
-        DatabaseClientConfig config = getStagingConfig();
+        DatabaseClientConfig config = hubConfig.getStagingDbClientConfig();
         logger.info("Connecting to MarkLogic via: " + config);
         return new BatchDatabaseClientProvider(config);
     }
 
     @Bean
     public DatabaseClientProvider jobRepositoryDatabaseClientProvider() {
-        DatabaseClientConfig config = getJobConfig();
+        DatabaseClientConfig config = hubConfig.getJobDbClientConfig();
         logger.info("Connecting to MarkLogic JobRepository via: " + config);
         return new BatchDatabaseClientProvider(config);
     }

@@ -54,8 +54,12 @@ declare function post(
   perf:log('/v1/resources/collector:post', function() {
     (:let $options := $input/node():)
     let $module-uri as xs:string := map:get($params, "module-uri")
+    let $options as map:map := (
+      map:get($params, "options") ! xdmp:unquote(.)/object-node(),
+      map:map()
+    )[1]
     return
-      service:build-response(flow:run-collector($module-uri, map:map()))
+      service:build-response(flow:run-collector($module-uri, $options))
   })
 };
 
@@ -68,7 +72,11 @@ declare function get(
 
   perf:log('/v1/resources/collector:get', function() {
     let $module-uri as xs:string := map:get($params, "module-uri")
+    let $options as map:map := (
+      map:get($params, "options") ! xdmp:unquote(.)/object-node(),
+      map:map()
+    )[1]
     return
-      service:build-response(flow:run-collector($module-uri, map:map()))
+      service:build-response(flow:run-collector($module-uri, $options))
   })
 };

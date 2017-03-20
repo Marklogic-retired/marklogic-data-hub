@@ -48,5 +48,9 @@ $highlight-color: unquote("rgb(#{$palette-datahub-A100})");
     &:hover {
       background-color: transparent;
     }
+
+    span {
+      overflow: scroll;
+    }
   }
 }

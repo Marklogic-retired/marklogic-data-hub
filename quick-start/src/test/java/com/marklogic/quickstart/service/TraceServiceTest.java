@@ -4,6 +4,7 @@ import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
 import com.marklogic.hub.DataHub;
 import com.marklogic.hub.HubConfig;
+import com.marklogic.quickstart.model.TraceQuery;
 import org.apache.commons.io.FileUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -28,7 +29,10 @@ public class TraceServiceTest {
     public void getTraces() throws Exception {
         DatabaseClient traceClient = DatabaseClientFactory.newClient("localhost", 8012, "admin", "admin", DatabaseClientFactory.Authentication.DIGEST);
         TraceService tm = new TraceService(traceClient);
-        tm.getTraces(null, 1, 10);
+        TraceQuery traceQuery = new TraceQuery();
+        traceQuery.start = new Long(1);
+        traceQuery.count = new Long(10);
+        tm.getTraces(traceQuery);
     }
 
     protected static void installHub() throws IOException {
@@ -51,10 +55,8 @@ public class TraceServiceTest {
         hubConfig.finalPort = 8011;
         hubConfig.tracePort = 8012;
         hubConfig.jobPort = 8013;
-        hubConfig.username = "admin";
-        hubConfig.password = "admin";
-        hubConfig.adminUsername = "admin";
-        hubConfig.adminPassword = "admin";
+        hubConfig.setUsername("admin");
+        hubConfig.setPassword("admin");
         return hubConfig;
     }
 

@@ -36,7 +36,29 @@ To build the entire DHF (marklogic-data-hub.jar, quickstart.war, and ml-data-hub
 
 ```bash
 cd /path/to/data-hub-project/
-gradle build -x test
+./gradlew build -x test
+```
+
+#### Running your local hub instead of the cloud hosted one
+```bash
+cd /path/to/data-hub-project/
+./gradlew publishToMavenLocal
+cd /path/to/data-hub-project/ml-data-hub-plugin
+./gradlew publishToMavenLocal
+```
+
+Then in your build.gradle file you will need to use the local version:
+```groovy
+buildscript {
+  repositories {
+    mavenLocal() 
+    jcenter()
+  } 
+  dependencies {
+    classpath "com.marklogic:ml-data-hub:(the version number you chose)"
+  }
+}
+apply plugin: "com.marklogic.ml-data-hub"
 ```
 
 #### Running the QuickStart UI from source
@@ -47,7 +69,7 @@ You will need to open two terminal windows.
 **Terminal window 1** - This runs the webapp.
 ```bash
 cd /path/to/data-hub-project
-gradle bootrun
+./gradlew bootrun
 ```
 
 **Terminal window 2** - This runs the Quickstart UI
@@ -152,7 +174,7 @@ $ git rebase upstream/1.0-develop
 Make sure the JUnit tests pass.
 
 ```sh
-$ gradle test
+$ ./gradlew test
 ```
 
 Make sure that all tests pass. Please, do not submit patches that fail.
@@ -162,6 +184,10 @@ Make sure that all tests pass. Please, do not submit patches that fail.
 ```sh
 $ git push origin my-feature-branch
 ```
+
+#### Agree to the contributor License
+
+Before we can merge your changes, you need to sign a [Contributor License Agreement](http://developer.marklogic.com/products/cla). You only need to do this once.
 
 #### Submit the pull request
 

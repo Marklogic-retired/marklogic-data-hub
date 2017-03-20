@@ -23,7 +23,7 @@ export class SelectComponent implements OnInit, OnChanges {
 
   currentItem: any = null;
 
-  @ViewChild(MdlButtonComponent) private buttonChild: MdlButtonComponent;
+  @ViewChild('toggleButton') private buttonChild: MdlButtonComponent;
   @ViewChild(MdlMenuComponent) private menuChild: MdlMenuComponent;
 
   constructor() {}

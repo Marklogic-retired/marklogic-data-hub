@@ -1,4 +1,6 @@
-import { Component, EventEmitter } from '@angular/core';
+import { Component, HostListener, Inject } from '@angular/core';
+
+import { MdlDialogReference } from 'angular2-mdl';
 
 import * as _ from 'lodash';
 
@@ -8,8 +10,7 @@ import * as _ from 'lodash';
   styleUrls: ['./new-entity.scss']
 })
 export class NewEntityComponent {
-  finishedEvent: EventEmitter<any>;
-  _isVisible: boolean = false;
+  actions: any;
 
   pluginFormats = [
     { label: 'Javascript', value: 'JAVASCRIPT' },
@@ -27,17 +28,16 @@ export class NewEntityComponent {
 
   entity: any = _.clone(this.DEFAULTENTITY);
 
-  constructor() {}
-
-  show() {
+  constructor(
+    private dialog: MdlDialogReference,
+    @Inject('actions') actions: any
+  ) {
     this.entity = _.clone(this.DEFAULTENTITY);
-    this.finishedEvent = new EventEmitter<boolean>(true);
-    this._isVisible = true;
-    return this.finishedEvent;
+    this.actions = actions;
   }
 
   hide() {
-    this._isVisible = false;
+    this.dialog.hide();
   }
 
   newInputFlow() {
@@ -51,12 +51,13 @@ export class NewEntityComponent {
   create() {
     if (this.entity.entityName && this.entity.entityName.length > 0) {
       this.hide();
-      this.finishedEvent.emit(this.entity);
+      if (this.actions && this.actions.save) {
+        this.actions.save(this.entity);
+      }
     }
   }
 
   cancel() {
     this.hide();
-    this.finishedEvent.error(false);
   }
 }

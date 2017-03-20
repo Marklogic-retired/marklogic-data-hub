@@ -130,6 +130,7 @@ public class AuthConfig extends WebSecurityConfigurerAdapter {
             "/*.svg",
             "/*.woff2",
             "/*.eot",
+            "/*.css",
             "/index.html",
             "/login",
             "/home",

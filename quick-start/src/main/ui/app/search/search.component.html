@@ -1,0 +1,70 @@
+<div layout-padding layout="column" layout-align="center center">
+  <div class="database-chooser">
+    <app-custom-select
+      labelText="Database"
+      [items]="databases"
+      [initialSelectedItem]="currentDatabase"
+      (selectedItem)="setDatabase($event)"></app-custom-select>
+  </div>
+  <div class="search-box" flex layout-align="center center" layout="row">
+    <form (submit)="doSearch()" flex layout-align="center center" layout="row">
+      <input type="search" name="searchText" [(ngModel)]="searchText" placeholder="Enter you search query here...">
+      <button type="submit" mdl-colored="primary" mdl-button mdl-button-type="raised">Search</button>
+    </form>
+  </div>
+  <div *ngIf="!loadingTraces" layout="column" flex layout-align="center center" class="full-width">
+    <app-pagination [start]="searchResponse.start"
+          [total]="searchResponse.total"
+          [pageLength]="searchResponse['page-length']"
+          (pageChanged)="pageChanged($event)"></app-pagination>
+    <div *ngIf="!loadingTraces && (!searchResponse || searchResponse.total === 0)">No Data</div>
+    <div class="mdl-grid results">
+      <div class="mdl-cell mdl-cell--2-col">
+        <app-facets
+          [facets]="searchResponse.facets"
+          [(activeFacets)]="activeFacets"
+          (activeFacetsChange)="updateFacets($event)"></app-facets>
+      </div>
+      <div class="mdl-cell mdl-cell--10-col">
+        <div *ngIf="searchResponse && searchResponse.total > 0">
+          <div *ngFor="let result of searchResponse.results" class="result">
+            <h4 class="link">
+              <a (click)="showDoc(currentDatabase, result.uri)">{{ result.label || result.uri }}</a>
+            </h4>
+            <div class="matches">
+              <div class="match" *ngFor="let match of result.matches">
+                <em *ngFor="let text of match['match-text']">
+                  <span ngClass="{ highlight: text.highlight !== undefined }">
+                    <span *ngIf="text.highlight !== undefined">{{ text.highlight }}</span>
+                    <span *ngIf="text.highlight === undefined">{{ text }}</span>
+                  </span>
+                </em>
+              </div>
+            </div>
+          </div>
+        </div>
+<!--         <table left-align
+          class="mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp"
+          *ngIf="searchResponse && searchResponse.total > 0">
+          <thead>
+            <tr>
+              <th class="mdl-data-table__cell--non-numeric">Uri</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let result of searchResponse.results" (click)="showDoc(result.uri)">
+              <td>{{result.uri}}</td>
+            </tr>
+          </tbody>
+        </table> -->
+      </div>
+    </div>
+  </div>
+  <div *ngIf="loadingTraces" flex layout="column" layout-align="center center">
+    <h3>Searching...</h3>
+    <div class="center-text">
+      <mdl-spinner single-color active></mdl-spinner>
+    </div>
+  </div>
+
+</div>
