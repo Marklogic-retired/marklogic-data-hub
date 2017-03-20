@@ -1,7 +1,33 @@
 # Change Log
 
-## [v1.1.0](https://github.com/marklogic/marklogic-data-hub/tree/v1.1.0)
+## [v1.1.1](https://github.com/marklogic/marklogic-data-hub/tree/v1.1.1)
 
+[Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v1.1.0...v1.1.1)
+
+**Implemented enhancements:**
+
+- customize session name to avoid conflicts [\#369](https://github.com/marklogic/marklogic-data-hub/issues/369)
+- Change Java Client API dependency to stable build [\#358](https://github.com/marklogic/marklogic-data-hub/issues/358)
+- Update Hub to use latest ml-gradle [\#355](https://github.com/marklogic/marklogic-data-hub/issues/355)
+
+**Closed issues:**
+
+- Entities and custom modules fail to deploy - v1.1.0 [\#377](https://github.com/marklogic/marklogic-data-hub/issues/377)
+- See if we can bail if the gradle version is too low [\#376](https://github.com/marklogic/marklogic-data-hub/issues/376)
+- Unable to login marklogic using hub frame work received  "500 Internal Server Error"  [\#374](https://github.com/marklogic/marklogic-data-hub/issues/374)
+- gradle plugin gets confused about users [\#371](https://github.com/marklogic/marklogic-data-hub/issues/371)
+- can't put binary inside envelope [\#366](https://github.com/marklogic/marklogic-data-hub/issues/366)
+- MLCP can't find /etc/hadooop [\#365](https://github.com/marklogic/marklogic-data-hub/issues/365)
+- Add CLA requirement to CONTRIBUTING [\#361](https://github.com/marklogic/marklogic-data-hub/issues/361)
+- Bug: QuickStart Login screen: Long paths aren't completely visible in Chrome [\#354](https://github.com/marklogic/marklogic-data-hub/issues/354)
+
+**Merged pull requests:**
+
+- Adds CLA requirement \(\#361\) [\#363](https://github.com/marklogic/marklogic-data-hub/pull/363) ([jmakeig](https://github.com/jmakeig))
+- Adds CLA requirement \(\#361\) [\#362](https://github.com/marklogic/marklogic-data-hub/pull/362) ([jmakeig](https://github.com/jmakeig))
+- Updates Java Client API dependency to stable build [\#359](https://github.com/marklogic/marklogic-data-hub/pull/359) ([jmakeig](https://github.com/jmakeig))
+
+## [v1.1.0](https://github.com/marklogic/marklogic-data-hub/tree/v1.1.0) (2016-12-16)
 [Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v1.0.2...v1.1.0)
 
 **Implemented enhancements:**
