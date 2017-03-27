@@ -43,6 +43,7 @@ export class NewFlowComponent {
     @Inject('actions') actions: any
   ) {
     this.flowType = _.capitalize(flowType);
+    this.flow = _.clone(this.emptyFlow);
     this.actions = actions;
   }
 

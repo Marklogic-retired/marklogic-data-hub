@@ -58,6 +58,7 @@ public class EntityManagerTest extends HubTestBase {
 
     @AfterClass
     public static void teardown() throws IOException {
+        uninstallHub();
     }
 
     @Test

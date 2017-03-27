@@ -3,13 +3,12 @@ package com.marklogic.hub.deploy.commands;
 import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.appdeployer.command.AbstractCommand;
 import com.marklogic.appdeployer.command.CommandContext;
+import com.marklogic.appdeployer.command.SortOrderConstants;
 import com.marklogic.appdeployer.command.modules.AllButAssetsModulesFinder;
 import com.marklogic.appdeployer.command.modules.AssetModulesFinder;
 import com.marklogic.client.DatabaseClient;
-import com.marklogic.client.DatabaseClientFactory;
 import com.marklogic.client.document.JSONDocumentManager;
 import com.marklogic.client.io.DocumentMetadataHandle;
-import com.marklogic.client.io.Format;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.modulesloader.Modules;
 import com.marklogic.client.modulesloader.impl.DefaultModulesLoader;
@@ -42,17 +41,21 @@ public class LoadUserModulesCommand extends AbstractCommand {
     private boolean forceLoad = false;
 
     public LoadUserModulesCommand(HubConfig hubConfig) {
+        setExecuteSortOrder(SortOrderConstants.LOAD_MODULES + 1);
         this.hubConfig = hubConfig;
-    }
-
-    private DatabaseClient getDatabaseClient(AppConfig config, int port) {
-
-        return DatabaseClientFactory.newClient(hubConfig.host, port, hubConfig.username, hubConfig.password,
-                config.getRestAuthentication(), config.getRestSslContext(), config.getRestSslHostnameVerifier());
     }
 
     private PropertiesModuleManager getModulesManager() {
         File timestampFile = Paths.get(hubConfig.projectDir, ".tmp", USER_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES).toFile();
+        PropertiesModuleManager pmm = new PropertiesModuleManager(timestampFile);
+        if (forceLoad) {
+            pmm.deletePropertiesFile();
+        }
+        return pmm;
+    }
+
+    private PropertiesModuleManager getContentManager() {
+        File timestampFile = Paths.get(hubConfig.projectDir, ".tmp", USER_CONTENT_DEPLOY_TIMESTAMPS_PROPERTIES).toFile();
         PropertiesModuleManager pmm = new PropertiesModuleManager(timestampFile);
         if (forceLoad) {
             pmm.deletePropertiesFile();
@@ -73,8 +76,8 @@ public class LoadUserModulesCommand extends AbstractCommand {
     public void execute(CommandContext context) {
         AppConfig config = context.getAppConfig();
 
-        DatabaseClient stagingClient = getDatabaseClient(config, hubConfig.stagingPort);
-        DatabaseClient finalClient = getDatabaseClient(config, hubConfig.finalPort);
+        DatabaseClient stagingClient = hubConfig.newStagingClient();
+        DatabaseClient finalClient = hubConfig.newFinalClient();
 
         Path userModulesPath = Paths.get(hubConfig.projectDir, "plugins");
         File baseDir = userModulesPath.normalize().toAbsolutePath().toFile();

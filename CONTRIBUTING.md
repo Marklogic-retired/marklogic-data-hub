@@ -36,7 +36,7 @@ To build the entire DHF (marklogic-data-hub.jar, quickstart.war, and ml-data-hub
 
 ```bash
 cd /path/to/data-hub-project/
-gradle build -x test
+./gradlew build -x test
 ```
 
 #### Making Changes to the Hub Gradle Plugin
@@ -47,9 +47,9 @@ Still here? Seems you really want to modify the Gradle Plugin. Here's how to tel
 
 ```bash
 cd /path/to/data-hub-project/
-gradle publishToMavenLocal
+./gradlew publishToMavenLocal
 cd /path/to/data-hub-project/ml-data-hub-plugin
-gradle publishToMavenLocal
+./gradlew publishToMavenLocal
 ```
 
 Then in your build.gradle file you will need to use the local version:
@@ -60,10 +60,10 @@ buildscript {
     jcenter()
   } 
   dependencies {
-    classpath "com.marklogic:ml-data-hub-plugin:(the version number you chose)"
+    classpath "com.marklogic:ml-data-hub:(the version number you chose)"
   }
 }
-apply plugin: "com.marklogic.ml-data-hub-plugin"
+apply plugin: "com.marklogic.ml-data-hub"
 ```
 
 #### Running the QuickStart UI from source
@@ -74,7 +74,7 @@ You will need to open two terminal windows.
 **Terminal window 1** - This runs the webapp.
 ```bash
 cd /path/to/data-hub-project
-gradle bootrun
+./gradlew bootrun
 ```
 
 **Terminal window 2** - This runs the Quickstart UI
@@ -179,7 +179,7 @@ $ git rebase upstream/2.0-develop
 Make sure the JUnit tests pass.
 
 ```sh
-$ gradle test
+$ ./gradlew test
 ```
 
 Make sure that all tests pass. Please, do not submit patches that fail.

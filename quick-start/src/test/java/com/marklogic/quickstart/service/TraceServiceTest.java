@@ -30,8 +30,8 @@ public class TraceServiceTest {
         DatabaseClient traceClient = DatabaseClientFactory.newClient("localhost", 8012, "admin", "admin", DatabaseClientFactory.Authentication.DIGEST);
         TraceService tm = new TraceService(traceClient);
         TraceQuery traceQuery = new TraceQuery();
-        traceQuery.start = 1;
-        traceQuery.count = 10;
+        traceQuery.start = new Long(1);
+        traceQuery.count = new Long(10);
         tm.getTraces(traceQuery);
     }
 
@@ -55,10 +55,8 @@ public class TraceServiceTest {
         hubConfig.finalPort = 8011;
         hubConfig.tracePort = 8012;
         hubConfig.jobPort = 8013;
-        hubConfig.username = "admin";
-        hubConfig.password = "admin";
-        hubConfig.adminUsername = "admin";
-        hubConfig.adminPassword = "admin";
+        hubConfig.setUsername("admin");
+        hubConfig.setPassword("admin");
         return hubConfig;
     }
 

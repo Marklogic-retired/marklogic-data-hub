@@ -1,0 +1,8 @@
+version: '2'
+services:
+  marklogic:
+    build:
+      context: ./
+      dockerfile: .travis/Dockerfile-ml
+    ports:
+      - "8000-8020"

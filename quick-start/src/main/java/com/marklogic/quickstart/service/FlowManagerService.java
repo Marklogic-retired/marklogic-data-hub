@@ -18,9 +18,7 @@ package com.marklogic.quickstart.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.JobStatusListener;
-import com.marklogic.hub.flow.AbstractFlow;
-import com.marklogic.hub.flow.Flow;
-import com.marklogic.hub.flow.FlowType;
+import com.marklogic.hub.flow.*;
 import com.marklogic.quickstart.auth.ConnectionAuthenticationToken;
 import com.marklogic.quickstart.model.EnvironmentConfig;
 import com.marklogic.quickstart.model.FlowModel;
@@ -98,9 +96,14 @@ public class FlowManagerService {
         return flowManager.getFlow(entityName, flowName, flowType);
     }
 
-    public void runFlow(Flow flow, int batchSize, int threadCount, JobStatusListener statusListener) {
+    public void runFlow(Flow flow, int batchSize, int threadCount, FlowStatusListener statusListener) {
         FlowManager flowManager = getFlowManager();
-        flowManager.runFlow(flow, batchSize, threadCount, statusListener);
+        FlowRunner flowRunner = flowManager.newFlowRunner()
+            .withFlow(flow)
+            .withBatchSize(batchSize)
+            .withThreadCount(threadCount)
+            .onStatusChanged(statusListener);
+        flowRunner.run();
     }
 
     private Path getMlcpOptionsFilePath(Path destFolder, String entityName, String flowName) {

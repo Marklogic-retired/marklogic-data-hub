@@ -94,8 +94,7 @@ declare function hent:search-options-generate(
       let $range-definition :=
         <search:range type="xs:{ $datatype }" facet="true">
           { $collation }
-          <search:path-index
-            xmlns:es="http://marklogic.com/entity-services">//es:instance/{$entity-type-name}/{$property-name}</search:path-index>
+          <search:path-index>/*:envelope/*:instance/{$entity-type-name}/{$property-name}</search:path-index>
         </search:range>
       let $constraint-template :=
         <search:constraint name="{ $property-name } ">
@@ -106,12 +105,18 @@ declare function hent:search-options-generate(
       return
         json:array-push($all-constraints, hent:wrap-duplicates($seen-keys, $property-name, $constraint-template))
     let $_ :=
-      if (json:array-size($tuples-range-definitions) gt 0)
+      if (json:array-size($tuples-range-definitions) gt 1)
       then
         json:array-push($all-tuples-definitions,
           <search:tuples name="{ $entity-type-name }">
             {json:array-values($tuples-range-definitions)}
           </search:tuples>)
+      else if (json:array-size($tuples-range-definitions) eq 1)
+      then
+        json:array-push($all-tuples-definitions,
+          <search:values name="{ $entity-type-name }">
+            {json:array-values($tuples-range-definitions)}
+          </search:values>)
       else ()
     let $_word-constraints :=
       for $property-name in json:array-values(map:get($entity-type, "wordLexicon"))
@@ -150,7 +155,7 @@ declare function hent:search-options-generate(
     <search-option>unfiltered</search-option>,
     comment { "Modify document extraction to change results returned" },
     <extract-document-data selected="include">
-      <extract-path xmlns:es="http://marklogic.com/entity-services">//es:instance/({ $types-expr })</extract-path>
+      <extract-path>/*:envelope/*:instance/({ $types-expr })</extract-path>
     </extract-document-data>,
 
 (:    comment { "Change or remove this additional-query to broaden search beyond entity instance documents" },
@@ -160,7 +165,9 @@ declare function hent:search-options-generate(
       <cts:true-query/>
       </cts:element-query>
     </additional-query>,:)
-    <return-facets>true</return-facets>
+    <return-facets>true</return-facets>,
+    comment { "To return snippets, comment out or remove this option" },
+    <transform-results apply="empty-snippet" />
     }
   </options>
 };
@@ -219,7 +226,7 @@ declare function hent:database-properties-generate(
       let $_ := map:put($ri-map, "collation", $collation)
       let $invalid-values := "reject"
       let $_ := map:put($ri-map, "invalid-values", $invalid-values)
-      let $_ := map:put($ri-map, "path-expression", "//es:instance/" || $entity-type-name || "/" || $range-index-property)
+      let $_ := map:put($ri-map, "path-expression", "/*:envelope/*:instance/" || $entity-type-name || "/" || $range-index-property)
       let $_ := map:put($ri-map, "range-value-positions", false())
       let $_ := map:put($ri-map, "scalar-type", $datatype)
       return json:array-push($range-path-indexes, $ri-map)

@@ -219,7 +219,7 @@ export class LoginComponent implements OnInit {
     } else {
       this.projectService.getProjectDefaults(this.currentProject.id).subscribe(defaults => {
         this.defaultSettings = defaults;
-        this.initSettings = _.clone(defaults);
+        _.merge(this.initSettings, _.clone(defaults));
         // go to the init project tab
         this.gotoTab('InitIfNeeded');
       });
@@ -254,7 +254,8 @@ export class LoginComponent implements OnInit {
       let installInfo = this.currentEnvironment.installInfo;
 
       if (installInfo && installInfo.installed) {
-        if (SemVer.gt(this.currentEnvironment.runningVersion, this.currentEnvironment.installedVersion)) {
+        if (this.currentEnvironment.runningVersion !== '0.1.2' &&
+            SemVer.gt(this.currentEnvironment.runningVersion, this.currentEnvironment.installedVersion)) {
           this.gotoTab('RequiresUpdate');
         } else {
           // goto login tab

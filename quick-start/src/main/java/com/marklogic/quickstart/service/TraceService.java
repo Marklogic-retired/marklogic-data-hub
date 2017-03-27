@@ -27,7 +27,6 @@ import com.marklogic.client.query.StructuredQueryBuilder;
 import com.marklogic.client.query.StructuredQueryDefinition;
 import com.marklogic.hub.util.PerformanceLogger;
 import com.marklogic.quickstart.model.TraceQuery;
-import com.marklogic.quickstart.util.QueryHelper;
 
 import java.util.ArrayList;
 
@@ -66,9 +65,11 @@ public class TraceService extends SearchableService {
             queries.add(def);
         }
 
-        def = addRangeConstraint(sb, "hasError", Boolean.toString(traceQuery.hasError));
-        if (def != null) {
-            queries.add(def);
+        if (traceQuery.hasError != null) {
+            def = addRangeConstraint(sb, "hasError", Boolean.toString(traceQuery.hasError));
+            if (def != null) {
+                queries.add(def);
+            }
         }
 
         def = addRangeConstraint(sb, "flowType", traceQuery.flowType);
@@ -76,10 +77,9 @@ public class TraceService extends SearchableService {
             queries.add(def);
         }
 
-        StructuredQueryBuilder.AndQuery sqd = sb.and(queries.toArray(new StructuredQueryDefinition[0]));
+        StructuredQueryDefinition sqd = sb.and(queries.toArray(new StructuredQueryDefinition[0]));
 
-        String sort = "date-desc";
-        String searchXml = QueryHelper.serializeQuery(sb, sqd, sort);
+        String searchXml = sqd.serialize();
 
         logger.info(searchXml);
         RawCombinedQueryDefinition querydef = queryMgr.newRawCombinedQueryDefinition(new StringHandle(searchXml), SEARCH_OPTIONS_NAME);

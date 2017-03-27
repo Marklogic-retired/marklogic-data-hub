@@ -77,12 +77,17 @@ public class FlowRunnerTest extends HubTestBase {
         FlowManager fm = new FlowManager(getHubConfig());
         Flow harmonizeFlow = fm.getFlow(ENTITY, "testharmonize",
             FlowType.HARMONIZE);
-        JobFinishedListener harmonizeFlowListener = new JobFinishedListener();
         HashMap<String, Object> options = new HashMap<>();
         options.put("name", "Bob Smith");
         options.put("age", 55);
-        fm.runFlow(harmonizeFlow, 10, 1, HubDatabase.STAGING, HubDatabase.FINAL, options, harmonizeFlowListener);
-        harmonizeFlowListener.waitForFinish();
+        FlowRunner flowRunner = fm.newFlowRunner()
+            .withFlow(harmonizeFlow)
+            .withBatchSize(10)
+            .withThreadCount(1)
+            .withOptions(options);
+        flowRunner.run();
+        flowRunner.awaitCompletion();
+
         assertXMLEqual(getXmlFromResource("flow-runner-test/with-options-output.xml"), finalDocMgr.read("1.xml").next().getContent(new DOMHandle()).get());
     }
 }

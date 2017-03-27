@@ -34,6 +34,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.UUID;
 import java.util.function.Consumer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 class MlcpRunner extends Thread {
 
@@ -65,8 +67,8 @@ class MlcpRunner extends Thread {
             bean.setPort(hubConfig.stagingPort);
 
             // Assume that the HTTP credentials will work for mlcp
-            bean.setUsername(hubConfig.username);
-            bean.setPassword(hubConfig.password);
+            bean.setUsername(hubConfig.getUsername());
+            bean.setPassword(hubConfig.getPassword());
 
             File file = new File(mlcpOptions.get("input_file_path").asText());
             String canonicalPath = file.getCanonicalPath();
@@ -145,6 +147,8 @@ class MlcpRunner extends Thread {
         ProcessBuilder pb = new ProcessBuilder(args);
         Process process = pb.start();
 
+        final Pattern pattern = Pattern.compile("^.+completed (\\d+)%$");
+
         StreamGobbler gobbler = new StreamGobbler(process.getInputStream(), new Consumer<String>() {
             private int currentPc = 0;
 
@@ -156,15 +160,14 @@ class MlcpRunner extends Thread {
 //                    hasError = true;
 //                }
 
-                try {
-                    int pc = Integer.parseInt(status.replaceFirst(".*completed (\\d+)%", "$1"));
+                Matcher m = pattern.matcher(status);
+                if (m.matches()) {
+                    int pc = Integer.parseInt(m.group(1));
 
                     // don't send 100% because more stuff happens after 100% is reported here
                     if (pc > currentPc && pc != 100) {
                         currentPc = pc;
                     }
-                } catch (NumberFormatException e) {
-                    e.printStackTrace();
                 }
 
                 mlcpOutput.add(status);

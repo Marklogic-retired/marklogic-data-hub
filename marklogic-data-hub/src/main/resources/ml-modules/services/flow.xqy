@@ -93,7 +93,6 @@ declare function post(
       map:put($options, "flow", $flow/hub:name/fn:data()),
       map:put($options, "flowType", $flow/hub:type/fn:data())
     )
-    let $_ := trace:reset-error-count()
     let $job-id := map:get($params, "job-id")
     let $target-database :=
       if (fn:exists(map:get($params, "target-database"))) then
@@ -103,14 +102,18 @@ declare function post(
     let $identifiers := map:get($params, "identifier")
     let $_ :=
       for $identifier in $identifiers
-      let $_ := flow:run-flow($job-id, $flow, $identifier, $target-database, $options)
       return
-        ()
+        try {
+          flow:run-flow($job-id, $flow, $identifier, $target-database, $options)
+        }
+        catch($ex) { () }
     let $resp :=
       document {
         object-node {
           "totalCount": fn:count($identifiers),
-          "errorCount": trace:get-error-count()
+          "errorCount": trace:get-error-count(),
+          "completedItems": trace:get-completed-items(),
+          "failedItems": trace:get-failed-items()
         }
       }
     return

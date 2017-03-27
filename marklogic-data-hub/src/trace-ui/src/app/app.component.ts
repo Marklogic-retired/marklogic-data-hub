@@ -8,14 +8,9 @@ import { Component, ViewEncapsulation, OnInit } from '@angular/core';
   selector: 'app-root',
   encapsulation: ViewEncapsulation.None,
   styleUrls: [
-    './app.style.scss'
+    './app.component.scss'
   ],
-  template: `
-    <app-header></app-header>
-    <div class="main">
-      <router-outlet></router-outlet>
-    </div>
-  `
+  templateUrl: './app.component.html'
 })
 export class AppComponent implements OnInit {
   authenticated: boolean = false;

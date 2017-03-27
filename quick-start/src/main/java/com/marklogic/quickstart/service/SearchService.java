@@ -17,6 +17,7 @@ package com.marklogic.quickstart.service;
 
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.document.GenericDocumentManager;
+import com.marklogic.client.document.ServerTransform;
 import com.marklogic.client.io.Format;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.query.QueryManager;
@@ -64,20 +65,28 @@ public class SearchService extends SearchableService {
             Path dir = Paths.get(hubConfig.projectDir, HubConfig.USER_CONFIG_DIR, HubConfig.SEARCH_OPTIONS_FILE);
             if (dir.toFile().exists()) {
                 DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+                dbf.setNamespaceAware(true);
                 DocumentBuilder db = dbf.newDocumentBuilder();
                 Document doc = db.parse(dir.toFile());
                 Element root = doc.getDocumentElement();
 
                 if (entitiesOnly) {
                     String additionalQuery = "<additional-query xmlns=\"http://marklogic.com/appservices/search\">\n" +
-                        "      <cts:element-query xmlns:cts=\"http://marklogic.com/cts\">\n" +
+                        "  <cts:or-query xmlns:cts=\"http://marklogic.com/cts\">\n" +
+                        "    <cts:element-query xmlns:cts=\"http://marklogic.com/cts\">\n" +
                         "      <cts:element xmlns:es=\"http://marklogic.com/entity-services\">es:instance</cts:element>\n" +
                         "      <cts:true-query/>\n" +
-                        "      </cts:element-query>\n" +
-                        "    </additional-query>";
+                        "    </cts:element-query>\n" +
+                        "    <cts:json-property-scope-query xmlns:cts=\"http://marklogic.com/cts\">\n" +
+                        "      <cts:property xmlns:es=\"http://marklogic.com/entity-services\">es:instance</cts:element>\n" +
+                        "      <cts:true-query/>\n" +
+                        "    </cts:json-property-scope-query>\n" +
+                        "  </cts:or-query>\n" +
+                        "</additional-query>";
                     Node n = doc.importNode(db.parse(new ByteArrayInputStream(additionalQuery.getBytes(StandardCharsets.UTF_8))).getDocumentElement(), true);
                     root.appendChild(n);
                 }
+                return root;
             }
         }
         catch (Exception e) {
@@ -112,7 +121,7 @@ public class SearchService extends SearchableService {
             }));
         }
 
-        StructuredQueryBuilder.AndQuery sqd = sb.and(queries.toArray(new StructuredQueryDefinition[0]));
+        StructuredQueryDefinition sqd = sb.and(queries.toArray(new StructuredQueryDefinition[0]));
         sqd.setCriteria(searchQuery.query);
 
         String searchXml = QueryHelper.serializeQuery(sb, sqd, searchQuery.sort, getOptions(searchQuery.entitiesOnly));
@@ -134,6 +143,6 @@ public class SearchService extends SearchableService {
         else {
             docMgr = finalDocMgr;
         }
-        return "{\"doc\": " + JSONObject.quote(docMgr.readAs(docUri, String.class)) + "}";
+        return docMgr.readAs(docUri, String.class, new ServerTransform("prettify"));
     }
 }

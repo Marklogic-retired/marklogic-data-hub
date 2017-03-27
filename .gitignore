@@ -5,8 +5,9 @@
 .idea/
 .gradletasknamecache
 npm-debug.log
-*/bin/
+marklogic-data-hub/bin/
 marklogic-data-hub/src/main/resources/ml-modules/root/trace-ui
+quick-start/bin/
 build/
 releases/
 .classpath

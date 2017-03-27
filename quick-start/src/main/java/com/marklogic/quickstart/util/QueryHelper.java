@@ -17,6 +17,7 @@ package com.marklogic.quickstart.util;
 
 import com.marklogic.client.MarkLogicIOException;
 import com.marklogic.client.query.StructuredQueryBuilder;
+import com.marklogic.client.query.StructuredQueryDefinition;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -52,11 +53,11 @@ public class QueryHelper {
     }
 
 
-    public static String serializeQuery(StructuredQueryBuilder sb, StructuredQueryBuilder.AndQuery query, String sortOrder) {
+    public static String serializeQuery(StructuredQueryBuilder sb, StructuredQueryDefinition query, String sortOrder) {
         return serializeQuery(sb, query, sortOrder, null);
     }
 
-    public static String serializeQuery(StructuredQueryBuilder sb, StructuredQueryBuilder.AndQuery query, String sortOrder, Element options) {
+    public static String serializeQuery(StructuredQueryBuilder sb, StructuredQueryDefinition query, String sortOrder, Element options) {
         String result;
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -75,7 +76,7 @@ public class QueryHelper {
                 serializer.writeNamespace(prefix, sb.getNamespaces().getNamespaceURI(prefix));
             }
 
-            query.innerSerialize(serializer);
+//            query.innerSerialize(serializer);
 
             serializer.writeStartElement("operator-state");
             serializer.writeStartElement("operator-name");
@@ -134,7 +135,7 @@ public class QueryHelper {
         // See if nodePrefix:nodeNS is declared in writer's NamespaceContext before writing start element
         // Writing start element puts nodeNS in NamespaceContext even though namespace declaration not written
         boolean prefixDecl = isPrefixDeclared(writer, nodeNS, nodePrefix);
-        writer.writeStartElement(nodePrefix, node.getLocalName(), nodeNS);
+        writer.writeStartElement(nodePrefix, node.getNodeName(), nodeNS);
 
         if (node.hasAttributes()) {
             NamedNodeMap attrs = node.getAttributes();

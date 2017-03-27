@@ -24,51 +24,47 @@
       "collation": "",
       "range-value-positions": false,
       "invalid-values": "reject"
-    },
+    }
+  ],
+  "range-path-index": [
     {
       "scalar-type": "string",
-      "namespace-uri": "",
-      "localname": "hasError",
+      "path-expression": "/trace/hasError",
       "collation": "http://marklogic.com/collation/codepoint",
       "range-value-positions": false,
       "invalid-values": "reject"
     },
     {
       "scalar-type": "string",
-      "namespace-uri": "",
-      "localname": "flowType",
+      "path-expression": "/trace/flowType",
       "collation": "http://marklogic.com/collation/codepoint",
       "range-value-positions": false,
       "invalid-values": "reject"
     },
     {
       "scalar-type": "string",
-      "namespace-uri": "",
-      "localname": "jobId",
+      "path-expression": "/trace/jobId",
       "collation": "http://marklogic.com/collation/codepoint",
       "range-value-positions": false,
       "invalid-values": "reject"
     },
     {
       "scalar-type": "string",
-      "namespace-uri": "",
-      "localname": "traceId",
+      "path-expression": "/trace/traceId",
       "collation": "http://marklogic.com/collation/codepoint",
       "range-value-positions": false,
       "invalid-values": "reject"
     },
     {
       "scalar-type": "string",
-      "namespace-uri": "",
-      "localname": "identifier",
+      "path-expression": "/trace/identifier",
       "collation": "http://marklogic.com/collation/codepoint",
       "range-value-positions": false,
       "invalid-values": "reject"
     },
     {
       "scalar-type": "dateTime",
-      "namespace-uri": "",
-      "localname": "created",
+      "path-expression": "/trace/created",
       "collation": "",
       "range-value-positions": false,
       "invalid-values": "reject"

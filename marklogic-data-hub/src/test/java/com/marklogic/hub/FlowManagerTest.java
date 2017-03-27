@@ -21,6 +21,7 @@ import com.marklogic.client.io.Format;
 import com.marklogic.hub.collector.QueryCollector;
 import com.marklogic.hub.collector.ServerCollector;
 import com.marklogic.hub.flow.Flow;
+import com.marklogic.hub.flow.FlowRunner;
 import com.marklogic.hub.flow.FlowType;
 import com.marklogic.hub.flow.SimpleFlow;
 import com.marklogic.hub.plugin.*;
@@ -48,11 +49,10 @@ public class FlowManagerTest extends HubTestBase {
     public static void setup() throws IOException {
         XMLUnit.setIgnoreWhitespace(true);
 
+        installHub();
+
         clearDb(HubConfig.DEFAULT_STAGING_NAME);
         clearDb(HubConfig.DEFAULT_FINAL_NAME);
-        clearDb(HubConfig.DEFAULT_MODULES_DB_NAME);
-
-        installHub();
 
         DocumentMetadataHandle meta = new DocumentMetadataHandle();
         meta.getCollections().add("tester");
@@ -76,6 +76,7 @@ public class FlowManagerTest extends HubTestBase {
 
     @AfterClass
     public static void teardown() throws IOException {
+        uninstallHub();
     }
 
     @After
@@ -213,11 +214,14 @@ public class FlowManagerTest extends HubTestBase {
         installModule("/entities/test/harmonize/my-test-flow1/my-test-flow1.xml", "flow-manager-test/my-test-flow1/my-test-flow1.xml");
         assertEquals(2, getStagingDocCount());
         assertEquals(0, getFinalDocCount());
-        JobFinishedListener listener = new JobFinishedListener();
         FlowManager fm = new FlowManager(getHubConfig());
         SimpleFlow flow1 = (SimpleFlow)fm.getFlow("test", "my-test-flow1");
-        fm.runFlow(flow1, 10, 1, listener);
-        listener.waitForFinish();
+        FlowRunner flowRunner = fm.newFlowRunner()
+            .withFlow(flow1)
+            .withBatchSize(10)
+            .withThreadCount(1);
+        flowRunner.run();
+        flowRunner.awaitCompletion();
         assertEquals(2, getStagingDocCount());
         assertEquals(2, getFinalDocCount());
         assertXMLEqual(getXmlFromResource("flow-manager-test/harmonized/harmonized1.xml"), finalDocMgr.read("/employee1.xml").next().getContent(new DOMHandle()).get() );
@@ -231,11 +235,14 @@ public class FlowManagerTest extends HubTestBase {
 
         assertEquals(2, getStagingDocCount());
         assertEquals(0, getFinalDocCount());
-        JobFinishedListener listener = new JobFinishedListener();
         FlowManager fm = new FlowManager(getHubConfig());
         SimpleFlow flow1 = (SimpleFlow)fm.getFlow("test", "my-test-flow-with-header");
-        fm.runFlow(flow1, 10, 1, listener);
-        listener.waitForFinish();
+        FlowRunner flowRunner = fm.newFlowRunner()
+            .withFlow(flow1)
+            .withBatchSize(10)
+            .withThreadCount(1);
+        flowRunner.run();
+        flowRunner.awaitCompletion();
         assertEquals(2, getStagingDocCount());
         assertEquals(2, getFinalDocCount());
         assertXMLEqual(getXmlFromResource("flow-manager-test/harmonized-with-header/harmonized1.xml"), finalDocMgr.read("/employee1.xml").next().getContent(new DOMHandle()).get() );
@@ -252,13 +259,16 @@ public class FlowManagerTest extends HubTestBase {
         installModule("/entities/test/harmonize/my-test-flow-with-all/content/content.xqy", "flow-manager-test/my-test-flow-with-all/content/content.xqy");
         installModule("/entities/test/harmonize/my-test-flow-with-all/triples/triples.xqy", "flow-manager-test/my-test-flow-with-all/triples/triples.xqy");
 
-        JobFinishedListener listener = new JobFinishedListener();
         assertEquals(2, getStagingDocCount());
         assertEquals(0, getFinalDocCount());
         FlowManager fm = new FlowManager(getHubConfig());
         SimpleFlow flow1 = (SimpleFlow)fm.getFlow("test", "my-test-flow-with-all");
-        fm.runFlow(flow1, 10, 1, listener);
-        listener.waitForFinish();
+        FlowRunner flowRunner = fm.newFlowRunner()
+            .withFlow(flow1)
+            .withBatchSize(10)
+            .withThreadCount(1);
+        flowRunner.run();
+        flowRunner.awaitCompletion();
         assertEquals(2, getStagingDocCount());
         assertEquals(2, getFinalDocCount());
         assertXMLEqual(getXmlFromResource("flow-manager-test/harmonized-with-all/harmonized1.xml"), finalDocMgr.read("/employee1.xml").next().getContent(new DOMHandle()).get() );

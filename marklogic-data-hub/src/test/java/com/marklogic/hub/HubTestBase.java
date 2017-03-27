@@ -22,15 +22,14 @@ import com.marklogic.client.DatabaseClientFactory;
 import com.marklogic.client.DatabaseClientFactory.Authentication;
 import com.marklogic.client.FailedRequestException;
 import com.marklogic.client.document.GenericDocumentManager;
+import com.marklogic.client.document.JSONDocumentManager;
 import com.marklogic.client.document.XMLDocumentManager;
 import com.marklogic.client.eval.EvalResult;
 import com.marklogic.client.eval.EvalResultIterator;
 import com.marklogic.client.eval.ServerEvaluationCall;
 import com.marklogic.client.io.*;
-import com.marklogic.hub.deploy.util.HubDeployStatusListener;
 import com.marklogic.hub.flow.FlowCacheInvalidator;
 import com.marklogic.mgmt.ManageClient;
-import com.marklogic.mgmt.ManageConfig;
 import com.marklogic.mgmt.databases.DatabaseManager;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -76,6 +75,7 @@ public class HubTestBase {
     private static boolean initialized = false;
     public static XMLDocumentManager stagingDocMgr = getStagingMgr();
     public static XMLDocumentManager finalDocMgr = getFinalMgr();
+    public static JSONDocumentManager jobDocMgr = getJobMgr();
     public static GenericDocumentManager modMgr = getModMgr();
 
     public static Properties getProperties() {
@@ -101,6 +101,13 @@ public class HubTestBase {
             init();
         }
         return finalClient.newXMLDocumentManager();
+    }
+
+    private static JSONDocumentManager getJobMgr() {
+        if (!initialized) {
+            init();
+        }
+        return jobClient.newJSONDocumentManager();
     }
 
     private static void init() {
@@ -196,10 +203,8 @@ public class HubTestBase {
         hubConfig.finalPort = finalPort;
         hubConfig.tracePort = tracePort;
         hubConfig.jobPort = jobPort;
-        hubConfig.username = user;
-        hubConfig.password = password;
-        hubConfig.adminUsername = user;
-        hubConfig.adminPassword = password;
+        hubConfig.setUsername(user);
+        hubConfig.setPassword(password);
         return hubConfig;
     }
 
@@ -275,9 +280,7 @@ public class HubTestBase {
     }
 
     protected static void clearDb(String dbName) {
-        HubConfig hubConfig = getHubConfig();
-        ManageConfig config = new ManageConfig(hubConfig.host, 8002, hubConfig.username, hubConfig.password);
-        ManageClient client = new ManageClient(config);
+        ManageClient client = getHubConfig().newManageClient();
         DatabaseManager databaseManager = new DatabaseManager(client);
         databaseManager.clearDatabase(dbName);
     }

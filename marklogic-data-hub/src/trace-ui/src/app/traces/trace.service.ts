@@ -6,7 +6,7 @@ import 'rxjs/add/operator/map';
 export class TraceService {
   constructor(private http: Http) {}
 
-  getTraces(query: string, page: number, pageLength: number) {
+  getTraces(query: string, activeFacets: any, page: number, pageLength: number) {
     let start: number = (page - 1) * pageLength + 1;
     const url = `/v1/search?options=traces&format=json&transform=trace-search&start=${start}&pageLength=${pageLength}`;
     let queries = [];
@@ -15,6 +15,19 @@ export class TraceService {
         'term-query' : [ { 'text' : query} ]
       });
     }
+
+    for (let key of Object.keys(activeFacets)) {
+      for (let value of activeFacets[key].values) {
+        queries.push({
+          'range-constraint-query': {
+            'constraint-name': key,
+            value: value,
+            'range-operator': 'EQ'
+          }
+        });
+      }
+    }
+
     const body = {
       search: {
         query: {

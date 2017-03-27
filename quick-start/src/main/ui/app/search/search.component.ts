@@ -13,7 +13,7 @@ import * as _ from 'lodash';
 export class SearchComponent implements OnDestroy, OnInit {
 
   private sub: any;
-  databases = ['STAGING', 'FINAL'];
+  databases: Array<string> = ['STAGING', 'FINAL'];
   currentDatabase: string = 'STAGING';
   entitiesOnly: boolean = false;
   searchText: string = null;
@@ -22,7 +22,6 @@ export class SearchComponent implements OnDestroy, OnInit {
   pageLength: number = 10;
   loadingTraces: boolean = false;
   searchResponse: SearchResponse;
-  // traces: Array<Trace>;
   runningFlows: Map<number, string> = new Map<number, string>();
   facetNames: Array<string> = ['entityName', 'status', 'flowName', 'flowType', 'jobId'];
 
@@ -118,5 +117,9 @@ export class SearchComponent implements OnDestroy, OnInit {
 
   updateFacets() {
     this.doSearch();
+  }
+
+  setDatabase(database) {
+    this.currentDatabase = database;
   }
 }
