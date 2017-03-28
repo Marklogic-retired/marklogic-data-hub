@@ -39,8 +39,8 @@ public class ProjectManagerService {
         byte[] bytes = prefs.getByteArray("projects", null);
         if (bytes != null) {
             try {
-            projects = (HashMap<Integer, ProjectInfo>) bytes2Object(bytes);
-        }
+                projects = (HashMap<Integer, ProjectInfo>) bytes2Object(bytes);
+            }
             catch(Exception e) {
                 projects = new HashMap<>();
             }

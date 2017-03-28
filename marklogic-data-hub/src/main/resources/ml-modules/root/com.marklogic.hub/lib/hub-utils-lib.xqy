@@ -150,7 +150,7 @@ declare function hul:get-xslt-extensions() as xs:string*
   })
 };
 
-declare function hul:get-file-from-uri($uri)
+declare function hul:get-file-from-uri($uri) as xs:string
 {
   cvt:basename($uri)
 };

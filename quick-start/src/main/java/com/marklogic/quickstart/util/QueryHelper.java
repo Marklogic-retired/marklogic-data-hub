@@ -134,7 +134,7 @@ public class QueryHelper {
         // See if nodePrefix:nodeNS is declared in writer's NamespaceContext before writing start element
         // Writing start element puts nodeNS in NamespaceContext even though namespace declaration not written
         boolean prefixDecl = isPrefixDeclared(writer, nodeNS, nodePrefix);
-        writer.writeStartElement(nodePrefix, node.getLocalName(), nodeNS);
+        writer.writeStartElement(nodePrefix, node.getNodeName(), nodeNS);
 
         if (node.hasAttributes()) {
             NamedNodeMap attrs = node.getAttributes();
@@ -178,6 +178,8 @@ public class QueryHelper {
                 if (!attrNS.equals(XMLConstants.XMLNS_ATTRIBUTE_NS_URI)) {
                     String localName = attr.getLocalName();
                     if (localName == null) {
+                        // TODO: this is really a bug in the caller for not creating proper DOM tree.
+                        // will remove this workaround after plugfest
                         localName = attr.getNodeName();
                     }
                     boolean attrPrefixDecl = isPrefixDeclared(writer, attrNS, attrPrefix);

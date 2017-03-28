@@ -28,7 +28,6 @@ public class HubJobRunner extends com.marklogic.spring.batch.Main {
         else if (options.has(Options.LIST)) {
             StringBuilder sb = new StringBuilder();
             listConfigs(options, sb);
-            System.out.println(sb.toString());
         }
         else {
             ConfigurableApplicationContext ctx = buildApplicationContext(options);

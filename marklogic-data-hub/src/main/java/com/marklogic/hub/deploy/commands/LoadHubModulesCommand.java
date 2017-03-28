@@ -223,7 +223,7 @@ public class LoadHubModulesCommand extends AbstractCommand {
                 this.threadPoolTaskExecutor.destroy();
             } catch (Exception ex) {
                 logger.warn("Unexpected exception while calling destroy() on taskExecutor: " + ex.getMessage(), ex);
-}
+            }
         }
     }
 }

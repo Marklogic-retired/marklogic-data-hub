@@ -70,7 +70,7 @@ public abstract class AbstractFlow implements Flow {
     private FlowComplexity flowComplexity;
     private Collector collector;
     private boolean envelopeEnabled = true;
-    protected ArrayList<Plugin> plugins = new ArrayList<Plugin>();
+    protected ArrayList<Plugin> plugins = new ArrayList<>();
     private Writer writer;
     private Map<String, Object> userOptions;
 

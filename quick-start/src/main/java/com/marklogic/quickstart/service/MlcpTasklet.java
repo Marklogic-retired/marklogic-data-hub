@@ -19,7 +19,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.contentpump.bean.MlcpBean;
 import com.marklogic.hub.HubConfig;
-import com.marklogic.hub.JobStatusListener;
+import com.marklogic.hub.flow.FlowStatusListener;
 import com.marklogic.quickstart.util.StreamGobbler;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
@@ -41,11 +41,11 @@ class MlcpTasklet implements Tasklet {
 
     private HubConfig hubConfig;
     private JsonNode mlcpOptions;
-    private JobStatusListener statusListener;
+    private FlowStatusListener statusListener;
     private ArrayList<String> mlcpOutput = new ArrayList<>();
     private boolean hasError = false;
 
-    MlcpTasklet(HubConfig hubConfig, JsonNode mlcpOptions, JobStatusListener statusListener) {
+    MlcpTasklet(HubConfig hubConfig, JsonNode mlcpOptions, FlowStatusListener statusListener) {
         this.hubConfig = hubConfig;
         this.mlcpOptions = mlcpOptions;
         this.statusListener = statusListener;
@@ -146,7 +146,6 @@ class MlcpTasklet implements Tasklet {
 
             @Override
             public void accept(String status) {
-                System.out.println(status);
                 // don't log an error if the winutils binary is missing
                 if (status.contains("ERROR") && !status.contains("winutils binary")) {
                     hasError = true;

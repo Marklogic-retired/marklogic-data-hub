@@ -61,6 +61,7 @@ public class SearchService extends SearchableService {
             Path dir = Paths.get(hubConfig.projectDir, HubConfig.USER_CONFIG_DIR, HubConfig.SEARCH_OPTIONS_FILE);
             if (dir.toFile().exists()) {
                 DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+                dbf.setNamespaceAware(true);
                 DocumentBuilder db = dbf.newDocumentBuilder();
                 Document doc = db.parse(dir.toFile());
                 return doc.getDocumentElement();
@@ -69,7 +70,6 @@ public class SearchService extends SearchableService {
         catch (Exception e) {
             throw new RuntimeException(e);
         }
-
         return null;
     }
 

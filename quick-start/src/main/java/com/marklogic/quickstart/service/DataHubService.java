@@ -151,7 +151,13 @@ public class DataHubService {
         Properties properties = new Properties();
         InputStream inputStream = getClass().getClassLoader().getResourceAsStream("quickstart-version.properties");
         properties.load(inputStream);
-        return (String)properties.get("version");
+        String version = (String)properties.get("version");
+
+        // this lets debug builds work from an IDE
+        if (version.equals("${project.version}")) {
+            version = "0.1.2";
+        }
+        return version;
     }
 
     private int versionCompare(String v1, String v2) {

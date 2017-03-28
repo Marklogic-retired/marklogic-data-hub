@@ -49,20 +49,20 @@ export class SettingsComponent {
 
   uninstall(): void {
     this.dialogService.confirm('Uninstall the hub from MarkLogic?', 'Cancel', 'Uninstall').subscribe(() => {
-    this.uninstallStatus = '';
-    this.isUninstalling = true;
-    let emitter = this.install.messageEmitter.subscribe((payload: any) => {
-      this.percentComplete = payload.percentComplete;
-      this.uninstallStatus += '\n' + payload.message;
+      this.uninstallStatus = '';
+      this.isUninstalling = true;
+      let emitter = this.install.messageEmitter.subscribe((payload: any) => {
+        this.percentComplete = payload.percentComplete;
+        this.uninstallStatus += '\n' + payload.message;
 
-      if (this.percentComplete === 100) {
-        emitter.unsubscribe();
-        setTimeout(() => {
-          this.router.navigate(['login']);
-        }, 1000);
-      }
-    });
-    this.install.uninstall();
+        if (this.percentComplete === 100) {
+          emitter.unsubscribe();
+          setTimeout(() => {
+            this.router.navigate(['login']);
+          }, 1000);
+        }
+      });
+      this.install.uninstall();
     },
     // cancel.. do nothing
     () => {});

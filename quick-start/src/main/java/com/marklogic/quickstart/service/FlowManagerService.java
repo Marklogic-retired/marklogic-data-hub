@@ -17,10 +17,7 @@ package com.marklogic.quickstart.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.hub.FlowManager;
-import com.marklogic.hub.JobStatusListener;
-import com.marklogic.hub.flow.AbstractFlow;
-import com.marklogic.hub.flow.Flow;
-import com.marklogic.hub.flow.FlowType;
+import com.marklogic.hub.flow.*;
 import com.marklogic.quickstart.auth.ConnectionAuthenticationToken;
 import com.marklogic.quickstart.model.EnvironmentConfig;
 import com.marklogic.quickstart.model.FlowModel;
@@ -34,7 +31,6 @@ import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.launch.JobLauncher;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -110,10 +106,15 @@ public class FlowManagerService {
         return flowManager.getFlow(entityName, flowName, flowType);
     }
 
-    public JobExecution runFlow(Flow flow, int batchSize, int threadCount, JobStatusListener statusListener) {
+    public JobExecution runFlow(Flow flow, int batchSize, int threadCount, FlowStatusListener statusListener) {
 
         FlowManager flowManager = getFlowManager();
-        return flowManager.runFlow(flow, batchSize, threadCount, statusListener);
+        FlowRunner flowRunner = flowManager.newFlowRunner()
+            .withFlow(flow)
+            .withBatchSize(batchSize)
+            .withThreadCount(threadCount)
+            .onStatusChanged(statusListener);
+        return flowRunner.run();
     }
 
     private Path getMlcpOptionsFilePath(Path destFolder, String entityName, String flowName) {
@@ -144,7 +145,7 @@ public class FlowManagerService {
         return "{ \"input_file_path\": \"" + envConfig().getProjectDir().replace("\\", "\\\\") + "\" }";
     }
 
-    protected ConfigurableApplicationContext buildApplicationContext(JobStatusListener statusListener) throws Exception {
+    protected ConfigurableApplicationContext buildApplicationContext(FlowStatusListener statusListener) throws Exception {
         AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
         ctx.register(StagingConfig.class);
         ctx.register(FlowConfig.class);
@@ -174,7 +175,7 @@ public class FlowManagerService {
         return jpb.toJobParameters();
     }
 
-    public JobExecution runMlcp(JsonNode json, JobStatusListener statusListener) {
+    public JobExecution runMlcp(JsonNode json, FlowStatusListener statusListener) {
         JobExecution result = null;
         try {
             ConfigurableApplicationContext ctx = buildApplicationContext(statusListener);

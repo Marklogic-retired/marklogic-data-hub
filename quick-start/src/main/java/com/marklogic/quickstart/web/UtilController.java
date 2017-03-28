@@ -55,7 +55,7 @@ public class UtilController extends EnvironmentAware {
                 currentPath = Paths.get(path).toAbsolutePath().normalize().toString();
             }
             else {
-		    currentPath = path;
+                currentPath = path;
             }
 			if (!path.equals("/")) {
 				path = path + java.io.File.separator;

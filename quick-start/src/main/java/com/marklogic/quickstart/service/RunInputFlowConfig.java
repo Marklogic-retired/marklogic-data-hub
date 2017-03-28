@@ -19,7 +19,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.client.helper.DatabaseClientProvider;
 import com.marklogic.hub.HubConfig;
-import com.marklogic.hub.JobStatusListener;
+import com.marklogic.hub.flow.FlowStatusListener;
 import com.marklogic.spring.batch.hub.AbstractMarkLogicBatchConfig;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -39,7 +39,7 @@ public class RunInputFlowConfig extends AbstractMarkLogicBatchConfig {
     private HubConfig hubConfig;
 
     @Autowired
-    JobStatusListener statusListener;
+    FlowStatusListener statusListener;
 
     @Bean
     public Job job(@Qualifier("step1") Step step1) {

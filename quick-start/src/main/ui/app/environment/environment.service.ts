@@ -17,6 +17,10 @@ export class EnvironmentService {
     return this.http.get(uri).map((res: Response) => {
       const json = res.json();
       this.settings = json.mlSettings;
+      if (json.runningVersion === '0.1.2') {
+        return true;
+      }
+
       let result: boolean = !SemVer.gt(json.runningVersion, json.installedVersion);
       if (!result) {
         this.router.navigate(['/login']);

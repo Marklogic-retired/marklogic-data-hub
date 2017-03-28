@@ -16,8 +16,8 @@
 package com.marklogic.quickstart.web;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.marklogic.hub.JobStatusListener;
 import com.marklogic.hub.flow.Flow;
+import com.marklogic.hub.flow.FlowStatusListener;
 import com.marklogic.hub.flow.FlowType;
 import com.marklogic.quickstart.EnvironmentAware;
 import com.marklogic.quickstart.model.EntityModel;
@@ -95,13 +95,11 @@ class EntitiesController extends EnvironmentAware {
             resp = new ResponseEntity<>(HttpStatus.CONFLICT);
         }
         else {
-            JobExecution execution = flowManagerService.runFlow(flow, batchSize, threadCount, new JobStatusListener() {
+            JobExecution execution = flowManagerService.runFlow(flow, batchSize, threadCount, new FlowStatusListener() {
                 @Override
                 public void onStatusChange(long jobId, int percentComplete, String message) {
                     template.convertAndSend("/topic/flow-status", new JobStatusMessage(Long.toString(jobId), percentComplete, message, FlowType.HARMONIZE.toString()));
                 }
-                @Override
-                public void onJobFinished() {}
             });
             resp = new ResponseEntity<>(execution, HttpStatus.OK);
         }
@@ -131,13 +129,8 @@ class EntitiesController extends EnvironmentAware {
         flowManagerService.saveOrUpdateFlowMlcpOptionsToFile(entityName,
                 flowName, json.toString());
 
-        return flowManagerService.runMlcp(json, new JobStatusListener() {
-            @Override
-            public void onStatusChange(long jobId, int percentComplete, String message) {
-                template.convertAndSend("/topic/flow-status", new JobStatusMessage(Long.toString(jobId), percentComplete, message, FlowType.INPUT.toString()));
-            }
-            @Override
-            public void onJobFinished() {}
+        return flowManagerService.runMlcp(json, (jobId, percentComplete, message) -> {
+            template.convertAndSend("/topic/flow-status", new JobStatusMessage(Long.toString(jobId), percentComplete, message, FlowType.INPUT.toString()));
         });
     }
 

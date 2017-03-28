@@ -39,7 +39,12 @@ cd /path/to/data-hub-project/
 ./gradlew build -x test
 ```
 
-#### Running your local hub instead of the cloud hosted one
+#### Making Changes to the Hub Gradle Plugin
+
+This is for when you are making changes to the ml-data-hub-plugin. This is a gradle plugin that enables Hub Capabilities. Most likely you won't find yourself doing this. You can safely ignore this section.
+
+Still here? Seems you really want to modify the Gradle Plugin. Here's how to tell Gradle to use your local copy instead of the one living up on the Cloud.
+
 ```bash
 cd /path/to/data-hub-project/
 ./gradlew publishToMavenLocal

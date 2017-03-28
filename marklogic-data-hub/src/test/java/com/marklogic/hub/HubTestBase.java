@@ -22,6 +22,7 @@ import com.marklogic.client.DatabaseClientFactory;
 import com.marklogic.client.DatabaseClientFactory.Authentication;
 import com.marklogic.client.FailedRequestException;
 import com.marklogic.client.document.GenericDocumentManager;
+import com.marklogic.client.document.JSONDocumentManager;
 import com.marklogic.client.document.XMLDocumentManager;
 import com.marklogic.client.eval.EvalResult;
 import com.marklogic.client.eval.EvalResultIterator;
@@ -38,13 +39,17 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
+import javax.xml.namespace.NamespaceContext;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathFactory;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Iterator;
 import java.util.Properties;
 
 public class HubTestBase {
@@ -74,10 +79,39 @@ public class HubTestBase {
     private static boolean initialized = false;
     public static XMLDocumentManager stagingDocMgr = getStagingMgr();
     public static XMLDocumentManager finalDocMgr = getFinalMgr();
+    public static JSONDocumentManager jobDocMgr = getJobMgr();
     public static GenericDocumentManager modMgr = getModMgr();
+    public static XPath xpath = getXpath();
 
     public static Properties getProperties() {
         return properties;
+    }
+
+    private static XPath getXpath() {
+        XPath xpath = XPathFactory.newInstance().newXPath();
+        xpath.setNamespaceContext(new NamespaceContext() {
+            @Override
+            public String getNamespaceURI(String prefix) {
+                if (prefix.equals("msb")) {
+                    return "http://marklogic.com/spring-batch";
+                }
+                return null;
+            }
+
+            @Override
+            public String getPrefix(String namespaceURI) {
+                if (namespaceURI.equals("http://marklogic.com/spring-batch")) {
+                    return "msb";
+                }
+                return null;
+            }
+
+            @Override
+            public Iterator getPrefixes(String namespaceURI) {
+                return null;
+            }
+        });
+        return xpath;
     }
 
     private static XMLDocumentManager getStagingMgr() {
@@ -99,6 +133,13 @@ public class HubTestBase {
             init();
         }
         return finalClient.newXMLDocumentManager();
+    }
+
+    private static JSONDocumentManager getJobMgr() {
+        if (!initialized) {
+            init();
+        }
+        return jobClient.newJSONDocumentManager();
     }
 
     private static void init() {
@@ -328,7 +369,6 @@ public class HubTestBase {
         }
         catch(FailedRequestException e) {
             logger.error("Failed run code: " + query, e);
-            System.out.println(installer);
             e.printStackTrace();
             throw e;
         }

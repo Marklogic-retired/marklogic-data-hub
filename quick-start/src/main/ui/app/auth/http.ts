@@ -43,7 +43,7 @@ class HttpInterceptor extends Http {
       options.headers = new Headers();
     }
     if (!options.headers.has('Content-Type')) {
-    options.headers.append('Content-Type', 'application/json');
+      options.headers.append('Content-Type', 'application/json');
     }
     return options;
   }

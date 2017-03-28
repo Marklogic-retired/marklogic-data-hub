@@ -60,10 +60,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
   clearDatabase(db) {
     const message = `Do you really want to remove all files from your ${db} Database?`;
     this.dialogService.confirm(message, 'Cancel', 'Clear!').subscribe(() => {
-    const database = this.stats[db + 'Db'];
-    this.projectService.clearDatabase(database).subscribe(() => {
-      this.getStatus();
-    });
+      const database = this.stats[db + 'Db'];
+      this.projectService.clearDatabase(database).subscribe(() => {
+        this.getStatus();
+      });
     },
     () => {});
   }
@@ -71,9 +71,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
   clearAllDatabases() {
     const message = 'Do you really want to remove all files from all of your Data Hub Databases?';
     this.dialogService.confirm(message, 'Cancel', 'Clear!').subscribe(() => {
-    this.projectService.clearAllDatabases().subscribe(() => {
-      this.getStatus();
-    });
+      this.projectService.clearAllDatabases().subscribe(() => {
+        this.getStatus();
+      });
     },
     () => {});
   }
