@@ -72,7 +72,7 @@ app-trace-viewer {
 }
 
 .plugin-io {
-  flex: 1;
+  flex: auto;
 }
 
 .plugin-nav {
@@ -146,7 +146,7 @@ app-codemirror {
 }
 
 .half-width {
-  max-width: 48%;
+  max-width: 50%;
 }
 
 .summary, .plugins {

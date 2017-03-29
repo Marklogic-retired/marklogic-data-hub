@@ -4,7 +4,7 @@ import {
   Inject,
 } from '@angular/core';
 
-import { MdlDialogService, MdlDialogReference } from 'angular2-mdl';
+import { MdlDialogService, MdlDialogReference } from '@angular-mdl/core';
 import { ChooseCollationComponent } from './choose-collation.component';
 import { ExternalDefDialogComponent } from './externaldef-dialog.component';
 

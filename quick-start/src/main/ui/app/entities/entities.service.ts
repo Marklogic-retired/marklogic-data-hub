@@ -7,7 +7,7 @@ import { Entity } from './entity.model';
 import { Flow } from './flow.model';
 import { PropertyType } from './property.model';
 
-import { MdlDialogService, MdlDialogReference } from 'angular2-mdl';
+import { MdlDialogService, MdlDialogReference } from '@angular-mdl/core';
 
 import { EntityEditorComponent } from '../entity-modeler/entity-editor.component';
 

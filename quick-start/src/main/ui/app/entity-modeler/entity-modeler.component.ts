@@ -12,7 +12,7 @@ import { EntitiesService } from '../entities/entities.service';
 
 import { InstallService } from '../installer';
 
-import { MdlDialogService } from 'angular2-mdl';
+import { MdlDialogService } from '@angular-mdl/core';
 
 import { Point, Line, Rect } from './math-helper';
 
@@ -28,7 +28,7 @@ export class EntityModelerComponent implements AfterViewChecked {
   @ViewChild('svgRoot') svgRoot: ElementRef;
   private svgRect: Rect;
 
-  private entities: Array<Entity>;
+  public entities: Array<Entity>;
   private connections: Array<Connection> = [];
   private entityMap: Map<string, Entity> = new Map<string, Entity>();
   private draggingEntity: Entity;

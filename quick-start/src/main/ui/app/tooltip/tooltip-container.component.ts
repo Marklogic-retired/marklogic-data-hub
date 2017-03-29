@@ -19,9 +19,9 @@ import { TooltipOptions } from './tooltip-options.class';
       </div>
       <div class="tooltip-inner"
            *ngIf="htmlContent && isTemplate">
-        <template [ngTemplateOutlet]="htmlContent"
+        <ng-template [ngTemplateOutlet]="htmlContent"
                   [ngOutletContext]="{model: context}">
-        </template>
+        </ng-template>
       </div>
       <div class="tooltip-inner"
            *ngIf="content">
@@ -30,12 +30,12 @@ import { TooltipOptions } from './tooltip-options.class';
     </div>`
 })
 export class TooltipContainerComponent implements AfterViewInit {
-  private classMap:any;
-  private top:string = '-1000px';
-  private left:string = '-1000px';
-  private display:string = 'block';
-  private content:string;
-  private htmlContent:string | TemplateRef<any>;
+  public classMap:any;
+  public top:string = '-1000px';
+  public left:string = '-1000px';
+  public display:string = 'block';
+  public content:string;
+  public htmlContent:string | TemplateRef<any>;
   private placement:string;
   private popupClass:string;
   private animation:boolean;

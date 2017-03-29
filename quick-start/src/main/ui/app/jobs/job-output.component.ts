@@ -2,7 +2,7 @@ import { Component, HostListener, Inject } from '@angular/core';
 
 import { Job } from './job.model';
 
-import { MdlDialogReference } from 'angular2-mdl';
+import { MdlDialogReference } from '@angular-mdl/core';
 
 import { JobListenerService } from './job-listener.service';
 

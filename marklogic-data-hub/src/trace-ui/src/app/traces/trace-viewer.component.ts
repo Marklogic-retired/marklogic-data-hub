@@ -29,11 +29,11 @@ export class TraceViewerComponent implements OnInit, OnDestroy {
   };
 
   private sub: any;
-  private trace: Trace;
+  public trace: Trace;
   private plugins: Array<string>;
 
   private currentPluginType: string;
-  private currentPlugin: Plugin;
+  public currentPlugin: Plugin;
 
   constructor(
     private route: ActivatedRoute,

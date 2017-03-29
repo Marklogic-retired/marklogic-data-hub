@@ -3,8 +3,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { RouterModule } from '@angular/router';
-import { TruncateCharactersPipe } from 'ng2-truncate/dist/truncate-characters.pipe'
-import { TruncateWordsPipe } from 'ng2-truncate/dist/truncate-words.pipe'
+import { TruncateCharactersPipe } from './truncate';
 import { AppComponent } from './app.component';
 import { HasBugsDialogComponent, FlowsComponent } from './flows';
 import {
@@ -17,9 +16,9 @@ import {
 import { LoginComponent } from './login';
 import { SettingsComponent } from './settings';
 
-import { MdlModule } from 'angular2-mdl';
-import { MdlPopoverModule } from '@angular2-mdl-ext/popover';
-import { MdlSelectModule } from '@angular2-mdl-ext/select';
+import { MdlModule } from '@angular-mdl/core';
+import { MdlPopoverModule } from '@angular-mdl/popover';
+import { MdlSelectModule } from '@angular-mdl/select';
 import { MomentModule } from 'angular2-moment';
 import { GridManiaModule } from './grid';
 
@@ -95,7 +94,6 @@ import { ObjectToArrayPipe } from './object-to-array.pipe';
     FacetsComponent,
     TitlecasePipe,
     TruncateCharactersPipe,
-    TruncateWordsPipe,
     ObjectToArrayPipe
   ],
   entryComponents: [
@@ -134,4 +132,4 @@ import { ObjectToArrayPipe } from './object-to-array.pipe';
     AppComponent
   ],
 })
-export class AppModule {}
+export class AppModule { }

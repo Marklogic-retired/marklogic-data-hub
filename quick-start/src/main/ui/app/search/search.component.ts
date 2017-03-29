@@ -68,7 +68,7 @@ export class SearchComponent implements OnDestroy, OnInit {
     });
   }
 
-  private doSearch(): void {
+  doSearch(): void {
     this.currentPage = 1;
     this.runQuery();
   }

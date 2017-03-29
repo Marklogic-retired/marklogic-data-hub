@@ -71,7 +71,7 @@ export class TracesComponent implements OnDestroy, OnInit {
     }
   }
 
-  private doSearch(): void {
+  public doSearch(): void {
     this.currentPage = 1;
     this.runQuery();
   }
