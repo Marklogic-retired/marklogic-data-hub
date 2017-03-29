@@ -16,8 +16,8 @@
 package com.marklogic.quickstart.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.marklogic.client.datamovement.JobTicket;
 import com.marklogic.hub.FlowManager;
-import com.marklogic.hub.JobStatusListener;
 import com.marklogic.hub.flow.*;
 import com.marklogic.quickstart.auth.ConnectionAuthenticationToken;
 import com.marklogic.quickstart.model.EnvironmentConfig;
@@ -96,14 +96,15 @@ public class FlowManagerService {
         return flowManager.getFlow(entityName, flowName, flowType);
     }
 
-    public void runFlow(Flow flow, int batchSize, int threadCount, FlowStatusListener statusListener) {
+    public JobTicket runFlow(Flow flow, int batchSize, int threadCount, FlowStatusListener statusListener) {
+
         FlowManager flowManager = getFlowManager();
         FlowRunner flowRunner = flowManager.newFlowRunner()
             .withFlow(flow)
             .withBatchSize(batchSize)
             .withThreadCount(threadCount)
             .onStatusChanged(statusListener);
-        flowRunner.run();
+        return flowRunner.run();
     }
 
     private Path getMlcpOptionsFilePath(Path destFolder, String entityName, String flowName) {
@@ -134,7 +135,7 @@ public class FlowManagerService {
         return "{ \"input_file_path\": \"" + envConfig().getProjectDir().replace("\\", "\\\\") + "\" }";
     }
 
-    public void runMlcp(Flow flow, JsonNode json, JobStatusListener statusListener) {
+    public void runMlcp(Flow flow, JsonNode json, FlowStatusListener statusListener) {
         MlcpRunner runner = new MlcpRunner(envConfig().getMlSettings(), flow, json, statusListener);
         runner.run();
     }

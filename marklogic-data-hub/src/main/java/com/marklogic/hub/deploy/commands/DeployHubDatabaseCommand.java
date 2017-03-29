@@ -39,43 +39,19 @@ import java.util.Map;
 public class DeployHubDatabaseCommand extends DeployDatabaseCommand {
 
     private HubConfig hubConfig;
-    /**
-     * Optional XML/JSON filename for the database
-     */
+
     private String databaseFilename;
 
-    /**
-     * Provide an easy way of creating a database based on a name without a file being provided. If this is false and
-     * databaseFilename is null, then no database will be deployed.
-     */
     private boolean createDatabaseWithoutFile = false;
 
-    /**
-     * The name of the database to be deployed; only needs to be set if the database payload is automatically generated
-     * instead of being loaded from a file.
-     */
     private String databaseName;
 
-    /**
-     * Optional name of the file in the forests directory that will be used to create each forest. If not provided, a
-     * "vanilla" forest is created on each host with a name based on the databaseName attribute.
-     */
     private String forestFilename;
 
-    /**
-     * Number of forests to create per host for this database.
-     */
     private int forestsPerHost = 1;
 
-    /**
-     * Passed on to DeployForestsCommand.
-     */
     private boolean createForestsOnEachHost = true;
 
-    /**
-     * Applied when the database is deleted - see
-     * http://docs.marklogic.com/REST/DELETE/manage/v2/databases/[id-or-name].
-     */
     private String forestDelete = "data";
 
     private int undoSortOrder;
@@ -118,24 +94,11 @@ public class DeployHubDatabaseCommand extends DeployDatabaseCommand {
         }
     }
 
-    /**
-     * Builds the XML or JSON payload for this command, based on the given CommandContext.
-     *
-     * @param context
-     * @return
-     */
     public String buildPayload(CommandContext context) {
         String payload = getPayload(context);
         return payload != null ? tokenReplacer.replaceTokens(payload, context.getAppConfig(), false) : null;
     }
 
-    /**
-     * Get the payload based on the given CommandContext. Only loads the payload, does not replace any tokens in it.
-     * Call buildPayload to construct a payload with all tokens replaced.
-     *
-     * @param context
-     * @return
-     */
     protected String getPayload(CommandContext context) {
         JsonNode node = mergeDatabaseFiles(context.getAppConfig());
         if (node == null) {
@@ -162,15 +125,6 @@ public class DeployHubDatabaseCommand extends DeployDatabaseCommand {
         return JsonNodeUtil.mergeJsonFiles(files);
     }
 
-    /**
-     * Allows for how an instance of DeployForestsCommand is built to be overridden by a subclass.
-     *
-     * @param dbPayload
-     *            Needed so we can look up forest counts based on the database name
-     * @param receipt
-     * @param context
-     * @return
-     */
     protected DeployForestsCommand buildDeployForestsCommand(String dbPayload, SaveReceipt receipt,
                                                              CommandContext context) {
         DeployForestsCommand c = new DeployForestsCommand();
@@ -182,14 +136,6 @@ public class DeployHubDatabaseCommand extends DeployDatabaseCommand {
         return c;
     }
 
-    /**
-     * Checks the forestCounts map in AppConfig to see if the client has specified a number of forests per host for this
-     * database.
-     *
-     * @param dbPayload
-     * @param context
-     * @return
-     */
     protected int determineForestCountPerHost(String dbPayload, CommandContext context) {
         int forestCount = forestsPerHost;
         if (dbPayload != null) {

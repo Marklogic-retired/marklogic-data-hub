@@ -265,7 +265,9 @@ public class CurrentProjectController extends EnvironmentAware implements FileSy
 
     @Override
     public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-        String pluginDir = Paths.get(envConfig().getProjectDir(), "plugins").toString();
+        ConnectionAuthenticationToken authenticationToken = (ConnectionAuthenticationToken)authentication;
+        EnvironmentConfig envConfig = authenticationToken.getEnvironmentConfig();
+        String pluginDir = Paths.get(envConfig.getProjectDir(), "plugins").toString();
         watcherService.removeListener(this);
         watcherService.unwatch(pluginDir);
     }

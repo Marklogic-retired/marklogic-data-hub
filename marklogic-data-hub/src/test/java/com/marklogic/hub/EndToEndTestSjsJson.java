@@ -23,11 +23,14 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Vector;
 import java.util.concurrent.TimeUnit;
 
 public class EndToEndTestSjsJson extends HubTestBase {
     private static final String ENTITY = "e2eentity";
     private static Path projectDir = Paths.get(".", "ye-olde-project");
+    private static final int TEST_SIZE = 1000;
+    private static final int BATCH_SIZE = 2;
 
     @BeforeClass
     public static void setup() throws IOException {
@@ -81,9 +84,7 @@ public class EndToEndTestSjsJson extends HubTestBase {
             .withThreadCount(4);
 
         JacksonHandle handle = new JacksonHandle(getJsonFromResource("e2e-test/staged.json"));
-        int testSize = 10000;
-        int batchSize = 2;
-        for (int i = 0; i < testSize; i++) {
+        for (int i = 0; i < TEST_SIZE; i++) {
             writeBatcher.add("/input-" + i + ".json", handle);
         }
         dataMovementManager.startJob(writeBatcher);
@@ -91,25 +92,25 @@ public class EndToEndTestSjsJson extends HubTestBase {
 
         flowRunner
             .withFlow(harmonizeFlow)
-            .withBatchSize(batchSize)
+            .withBatchSize(BATCH_SIZE)
             .withThreadCount(4);
 
         JobTicket jobTicket = flowRunner.run();
 
         flowRunner.awaitCompletion();
 
-        Assert.assertEquals(testSize, getFinalDocCount());
+        Assert.assertEquals(TEST_SIZE, getFinalDocCount());
         String expected = getResource("e2e-test/final.json");
-        for (int i = 0; i < testSize; i++) {
+        for (int i = 0; i < TEST_SIZE; i++) {
             String actual = finalDocMgr.read("/input-" + i + ".json").next().getContent(new StringHandle()).get();
             JSONAssert.assertEquals(expected, actual, false);
         }
 
         JsonNode node = jobDocMgr.read("/jobs/" + jobTicket.getJobId() + ".json").next().getContent(new JacksonHandle()).get();
         Assert.assertEquals(jobTicket.getJobId(), node.get("jobId").asText());
-        Assert.assertEquals(testSize, node.get("successfulEvents").asInt());
+        Assert.assertEquals(TEST_SIZE, node.get("successfulEvents").asInt());
         Assert.assertEquals(0, node.get("failedEvents").asInt());
-        Assert.assertEquals(testSize / batchSize, node.get("successfulBatches").asInt());
+        Assert.assertEquals(TEST_SIZE / BATCH_SIZE, node.get("successfulBatches").asInt());
         Assert.assertEquals(0, node.get("failedBatches").asInt());
         Assert.assertEquals("FINISHED", node.get("status").asText());
     }
@@ -129,30 +130,40 @@ public class EndToEndTestSjsJson extends HubTestBase {
             .withThreadCount(4);
 
         JacksonHandle handle = new JacksonHandle(getJsonFromResource("e2e-test/staged.json"));
-        int testSize = 1000;
-        int batchSize = 2;
-        for (int i = 0; i < testSize; i++) {
+        for (int i = 0; i < TEST_SIZE; i++) {
             writeBatcher.add("/input-" + i + ".json", handle);
         }
         dataMovementManager.startJob(writeBatcher);
         writeBatcher.flushAndWait();
         writeBatcher.awaitCompletion();
 
+        Vector<String> completed = new Vector<>();
+        Vector<String> failed = new Vector<>();
+
         flowRunner
             .withFlow(harmonizeFlow)
-            .withBatchSize(batchSize)
-            .withThreadCount(4);
+            .withBatchSize(BATCH_SIZE)
+            .withThreadCount(4)
+            .onItemComplete((String jobId, String itemId) -> {
+                logger.info(itemId);
+                completed.add(itemId);
+            })
+            .onItemFailed((String jobId, String itemId) -> {
+                failed.add(itemId);
+            });
 
         JobTicket jobTicket = flowRunner.run();
 
         flowRunner.awaitCompletion();
 
-        Assert.assertEquals(testSize - 1, getFinalDocCount());
+        Assert.assertEquals(TEST_SIZE - 1, getFinalDocCount());
+        Assert.assertEquals(TEST_SIZE - 1, completed.size());
+        Assert.assertEquals(1, failed.size());
         JsonNode node = jobDocMgr.read("/jobs/" + jobTicket.getJobId() + ".json").next().getContent(new JacksonHandle()).get();
         Assert.assertEquals(jobTicket.getJobId(), node.get("jobId").asText());
-        Assert.assertEquals(testSize - 1, node.get("successfulEvents").asInt());
+        Assert.assertEquals(TEST_SIZE - 1, node.get("successfulEvents").asInt());
         Assert.assertEquals(1, node.get("failedEvents").asInt());
-        Assert.assertEquals(testSize / batchSize, node.get("successfulBatches").asInt());
+        Assert.assertEquals(TEST_SIZE / BATCH_SIZE, node.get("successfulBatches").asInt());
         Assert.assertEquals(0, node.get("failedBatches").asInt());
         Assert.assertEquals("FINISHED_WITH_ERRORS", node.get("status").asText());
     }
@@ -170,8 +181,7 @@ public class EndToEndTestSjsJson extends HubTestBase {
             .withThreadCount(4);
 
         JacksonHandle handle = new JacksonHandle(getJsonFromResource("e2e-test/staged.json"));
-        int testSize = 10000;
-        for (int i = 0; i < testSize; i++) {
+        for (int i = 0; i < TEST_SIZE; i++) {
             writeBatcher.add("/input-" + i + ".json", handle);
         }
         dataMovementManager.startJob(writeBatcher);
@@ -179,7 +189,7 @@ public class EndToEndTestSjsJson extends HubTestBase {
 
         flowRunner
             .withFlow(harmonizeFlow)
-            .withBatchSize(2)
+            .withBatchSize(BATCH_SIZE)
             .withThreadCount(4);
 
         flowRunner.run();
@@ -190,6 +200,6 @@ public class EndToEndTestSjsJson extends HubTestBase {
 
         }
 
-        Assert.assertNotEquals(testSize, getFinalDocCount());
+        Assert.assertNotEquals(TEST_SIZE, getFinalDocCount());
     }
 }

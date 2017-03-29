@@ -147,13 +147,15 @@ declare function trace:get-failed-items()
 
 declare function trace:write-trace()
 {
-  if (fn:not(trace:has-errors())) then
-    let $identifier := map:get($current-trace, "identifier")
-    where $identifier instance of xs:string
-    return
-      trace:add-completed-item($identifier)
-  else (),
+  let $identifier := map:get($current-trace, "identifier")
+  where $identifier instance of xs:string
+  return
+    trace:add-completed-item($identifier),
+  trace:write-error-trace()
+};
 
+declare function trace:write-error-trace()
+{
   if (trace:enabled() or trace:has-errors()) then (
     let $format := map:get($current-trace-settings, "data-format")
     let $trace :=
@@ -309,7 +311,7 @@ declare function trace:error-trace(
     map:entry("duration", $duration)
   ))
   let $_ := map:put($current-trace, $plugin-type || "Plugin", $plugin-map)
-  let $_ := trace:write-trace()
+  let $_ := trace:write-error-trace()
   return ()
 };
 

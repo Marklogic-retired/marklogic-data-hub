@@ -19,8 +19,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.contentpump.bean.MlcpBean;
 import com.marklogic.hub.HubConfig;
-import com.marklogic.hub.JobStatusListener;
 import com.marklogic.hub.flow.Flow;
+import com.marklogic.hub.flow.FlowStatusListener;
 import com.marklogic.hub.job.Job;
 import com.marklogic.hub.job.JobManager;
 import com.marklogic.quickstart.util.StreamGobbler;
@@ -43,13 +43,13 @@ class MlcpRunner extends Thread {
 
     private HubConfig hubConfig;
     private JsonNode mlcpOptions;
-    private JobStatusListener statusListener;
+    private FlowStatusListener statusListener;
     private ArrayList<String> mlcpOutput = new ArrayList<>();
     private String jobId = UUID.randomUUID().toString();
     private JobManager jobManager;
     private Flow flow;
 
-    MlcpRunner(HubConfig hubConfig, Flow flow, JsonNode mlcpOptions, JobStatusListener statusListener) {
+    MlcpRunner(HubConfig hubConfig, Flow flow, JsonNode mlcpOptions, FlowStatusListener statusListener) {
         super();
 
         this.hubConfig = hubConfig;

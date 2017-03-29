@@ -337,7 +337,6 @@ public class HubTestBase {
         }
         catch(FailedRequestException e) {
             logger.error("Failed run code: " + query, e);
-            System.out.println(installer);
             e.printStackTrace();
             throw e;
         }

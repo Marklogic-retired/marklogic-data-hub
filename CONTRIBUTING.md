@@ -54,6 +54,9 @@ cd /path/to/data-hub-project/ml-data-hub-plugin
 
 Then in your build.gradle file you will need to use the local version:
 ```groovy
+
+// this goes at the top above the plugins section
+
 buildscript {
   repositories {
     mavenLocal() 
@@ -63,6 +66,15 @@ buildscript {
     classpath "com.marklogic:ml-data-hub:(the version number you chose)"
   }
 }
+
+plugins {
+   ...
+
+   // comment out this line. It pulls the version from the cloud
+   // id 'com.marklogic.ml-data-hub' version '2.0.0-alpha.2'
+}
+
+// this tells gradle to apply the plugin you included above in the buildscript section
 apply plugin: "com.marklogic.ml-data-hub"
 ```
 

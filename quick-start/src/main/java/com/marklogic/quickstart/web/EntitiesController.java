@@ -16,7 +16,6 @@
 package com.marklogic.quickstart.web;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.marklogic.hub.JobStatusListener;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.FlowStatusListener;
 import com.marklogic.hub.flow.FlowType;
@@ -127,11 +126,8 @@ class EntitiesController extends EnvironmentAware {
             resp = new ResponseEntity<>(HttpStatus.CONFLICT);
         }
         else {
-            flowManagerService.runFlow(flow, batchSize, threadCount, new FlowStatusListener() {
-                @Override
-                public void onStatusChange(String jobId, int percentComplete, String message) {
-                    template.convertAndSend("/topic/flow-status", new JobStatusMessage(jobId, percentComplete, message, FlowType.HARMONIZE.toString()));
-                }
+            flowManagerService.runFlow(flow, batchSize, threadCount, (jobId, percentComplete, message) -> {
+                template.convertAndSend("/topic/flow-status", new JobStatusMessage(jobId, percentComplete, message, FlowType.HARMONIZE.toString()));
             });
             resp = new ResponseEntity<>(HttpStatus.OK);
         }
@@ -168,12 +164,7 @@ class EntitiesController extends EnvironmentAware {
             flowManagerService.saveOrUpdateFlowMlcpOptionsToFile(entityName,
                 flowName, json.toString());
 
-            flowManagerService.runMlcp(flow, json, new JobStatusListener() {
-                @Override
-                public void onStatusChange(String jobId, int percentComplete, String message) {
-                    template.convertAndSend("/topic/flow-status", new JobStatusMessage(jobId, percentComplete, message, FlowType.INPUT.toString()));
-                }
-            });
+            flowManagerService.runMlcp(flow, json, (jobId, percentComplete, message) -> template.convertAndSend("/topic/flow-status", new JobStatusMessage(jobId, percentComplete, message, FlowType.INPUT.toString())));
             resp = new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
 
