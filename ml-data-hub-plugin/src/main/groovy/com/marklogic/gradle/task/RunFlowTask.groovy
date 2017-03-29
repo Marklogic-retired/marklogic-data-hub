@@ -71,10 +71,6 @@ class RunFlowTask extends HubTask {
             .withFlow(flow)
             .withBatchSize(batchSize)
             .withThreadCount(threadCount)
-            .onStatusChanged(new FlowStatusListener() {
-                @Override
-                void onStatusChange(long jobId, int percentComplete, String message) {}
-            })
         flowRunner.run()
         flowRunner.awaitCompletion()
     }
