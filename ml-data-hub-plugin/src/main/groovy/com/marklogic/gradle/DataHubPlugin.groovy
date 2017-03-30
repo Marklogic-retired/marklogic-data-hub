@@ -18,7 +18,7 @@ class DataHubPlugin implements Plugin<Project> {
 
     @Override
     void apply(Project project) {
-        if (Double.parseDouble(project.gradle.gradleVersion) < 3.1) {
+        if (DataHub.versionCompare(project.gradle.gradleVersion, "3.1") == -1) {
             logger.error("\n\n" +
                 "********************************\n" +
                 "Hold the phone!\n\n" +
