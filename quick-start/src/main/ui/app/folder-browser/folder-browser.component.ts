@@ -1,7 +1,7 @@
 import { Component, Input, Output, OnInit,
   OnChanges, ViewChild, EventEmitter } from '@angular/core';
 import { Http, Response } from '@angular/http';
-import { MdlTextFieldComponent } from 'angular2-mdl';
+import { MdlTextFieldComponent } from '@angular-mdl/core';
 
 @Component({
   selector: 'app-folder-browser',

@@ -5,7 +5,7 @@ import { Job } from './job.model';
 import { JobService } from './jobs.service';
 import { JobListenerService } from './job-listener.service';
 import { SearchResponse } from '../search';
-import { MdlDialogService, MdlDialogReference } from 'angular2-mdl';
+import { MdlDialogService, MdlDialogReference } from '@angular-mdl/core';
 
 import * as moment from 'moment';
 
@@ -84,7 +84,7 @@ export class JobsComponent implements OnChanges, OnDestroy, OnInit {
     return this.jobListener.jobHasOutput(job.jobId);
   }
 
-  private doSearch(): void {
+  public doSearch(): void {
     this.currentPage = 1;
     this.runQuery();
   }

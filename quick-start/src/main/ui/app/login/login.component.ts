@@ -8,7 +8,7 @@ import { ProjectService } from '../projects/projects.service';
 import { InstallService } from '../installer';
 import { LoginInfo } from './login-info.model';
 import { HubSettings } from '../environment/hub-settings.model';
-import { MdlDialogService } from 'angular2-mdl';
+import { MdlDialogService } from '@angular-mdl/core';
 
 import * as SemVer from 'semver';
 

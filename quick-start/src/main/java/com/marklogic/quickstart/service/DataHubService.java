@@ -160,31 +160,10 @@ public class DataHubService {
         return version;
     }
 
-    private int versionCompare(String v1, String v2) {
-        if(v1 == null || v2 == null) {
-            return 1;
-        }
-        String[] v1Parts = v1.split("\\.");
-        String[] v2Parts = v2.split("\\.");
-        int length = Math.max(v1Parts.length, v2Parts.length);
-        for(int i = 0; i < length; i++) {
-            int v1Part = i < v1Parts.length ? Integer.parseInt(v1Parts[i]) : 0;
-            int v2Part = i < v2Parts.length ? Integer.parseInt(v2Parts[i]) : 0;
-
-            if(v1Part < v2Part) {
-                return -1;
-            }
-
-            if(v1Part > v2Part) {
-                return 1;
-            }
-        }
-        return 0;
-    }
     public boolean updateHub(HubConfig config) throws IOException {
         DataHub dataHub = new DataHub(config);
         boolean result = false;
-        int compare = versionCompare(dataHub.getHubVersion(), "1.1.0");
+        int compare = DataHub.versionCompare(dataHub.getHubVersion(), "1.1.0");
         if (compare == -1) {
             result = dataHub.updateHubFromPre110();
         } else if (compare == 0) {

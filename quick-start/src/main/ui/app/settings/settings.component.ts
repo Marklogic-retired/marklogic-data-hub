@@ -6,7 +6,7 @@ import { InstallService } from '../installer';
 
 import { ProjectService } from '../projects';
 
-import { MdlDialogService } from 'angular2-mdl';
+import { MdlDialogService } from '@angular-mdl/core';
 
 @Component({
   selector: 'app-settings',
