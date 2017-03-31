@@ -13,7 +13,7 @@ import {PopoverConfirmOptions} from './confirmOptions.provider';
 })
 export class ConfirmPopoverComponent implements AfterViewInit {
 
-  constructor(private options: PopoverConfirmOptions) {}
+  constructor(public options: PopoverConfirmOptions) {}
 
   ngAfterViewInit(): void {
     this.options.onAfterViewInit();

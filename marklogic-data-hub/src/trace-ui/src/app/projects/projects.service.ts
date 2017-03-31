@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Http, Response } from '@angular/http';
 import { HubSettings } from '../environment/hub-settings.model';
+import 'rxjs/add/operator/share';
 
 @Injectable()
 export class ProjectService {

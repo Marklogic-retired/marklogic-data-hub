@@ -43,7 +43,7 @@ export class TracesComponent {
           };
         }
       }
-    this.getTraces();
+      this.getTraces();
     });
   }
 
@@ -66,10 +66,12 @@ export class TracesComponent {
   }
 
   showTrace(traceId: string) {
-    this.router.navigate(['/traces', traceId]);
+    if (traceId) {
+      this.router.navigate(['/traces', traceId]);
+    }
   }
 
-  private doSearch(): void {
+  public doSearch(): void {
     this.currentPage = 1;
     this.runQuery();
   }
@@ -114,5 +116,5 @@ export class TracesComponent {
 
   updateFacets() {
     this.doSearch();
-}
+  }
 }

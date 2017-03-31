@@ -1,4 +1,4 @@
-<template #defaultTemplate let-options="options">
+<ng-template #defaultTemplate let-options="options">
   <div class="dialog-container active">
     <div class="mdl-dialog confirm-dialog active">
       <div class="mdl-dialog__title" [innerHTML]="options.title"></div>
@@ -13,8 +13,8 @@
     </div>
     <div class="modal-backdrop"></div>
   </div>
-</template>
-<template
+</ng-template>
+<ng-template
   [ngTemplateOutlet]="options.customTemplate || defaultTemplate"
   [ngOutletContext]="{options: options}">
-</template>
+</ng-template>

@@ -1,4 +1,4 @@
-<section layout-padding flex class="plugin-nav" layout="row" layout-align="center center" *ngIf="trace">
+<section class="plugin-nav" layout="row" layout-align="center center" *ngIf="trace">
   <div md-whiteframe-2dp class="center-frame" layout-padding layout="column" layout-align="center center">
     <div layout="column" flex layout-align="center center" class="summary">
       <div>Trace {{trace.traceId}}</div>
@@ -11,7 +11,7 @@
         class="start mdl-button mdl-js-button mdl-button--fab mdl-button--colored">
       </button>
       <i class="mdi mdi-arrow-right"></i>
-      <template ngFor let-plugin="$implicit" [ngForOf]="plugins" let-i="index">
+      <ng-template ngFor let-plugin="$implicit" [ngForOf]="plugins" let-i="index">
         <mdl-button mdl-button-type="raised" mdl-colored="primary"
           (click)="setCurrent(plugin)"
           class="plugin"
@@ -20,7 +20,7 @@
           <div class="plugin-duration">{{trace[plugin + 'Plugin'].duration}}<span class="unit">s</span></div>
         </mdl-button>
         <i class="mdi mdi-arrow-right"></i>
-      </template>
+      </ng-template>
       <button
         disabled="true"
         class="end mdl-button mdl-js-button mdl-button--fab mdl-button--colored">
@@ -29,7 +29,7 @@
   </div>
 </section>
 
-<section class="plugin-nav" layout="row" layout-align="center center" *ngIf="currentPlugin">
+<section class="plugin-nav" *ngIf="currentPlugin">
   <div [hidden]="!currentPluginType" flex layout="column" layout-align="center center">
     <div class="subheader">{{currentPluginType}} Plugin</div>
     <div>Module URI: {{currentPlugin.pluginModuleUri}}</div>
@@ -45,10 +45,10 @@
       </div>
     </div>
     <div class="layout-body">
-      <template ngFor let-input="$implicit" [ngForOf]="getKeys(currentPlugin.input)" let-i="index">
+      <ng-template ngFor let-input="$implicit" [ngForOf]="getKeys(currentPlugin.input)" let-i="index">
         <div class="subheader" (click)="collapsed[i] = !collapsed[i]">{{input}} <i class="fa" [ngClass]="collapsed[i] ? 'fa-caret-left' : 'fa-caret-down'"></i></div>
         <app-codemirror *ngIf="!collapsed[i] && currentPlugin.input[input]" [ngModel]="formatData(currentPlugin.input[input])" [config]="codeMirrorConfig"></app-codemirror>
-      </template>
+      </ng-template>
     </div>
   </div>
   <div md-whiteframe-z1 flex layout="column" class="half-width">
