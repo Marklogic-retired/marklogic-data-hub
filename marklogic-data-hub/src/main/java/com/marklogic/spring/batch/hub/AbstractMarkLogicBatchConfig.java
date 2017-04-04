@@ -4,7 +4,7 @@ import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.helper.DatabaseClientProvider;
 import com.marklogic.client.helper.LoggingObject;
 import com.marklogic.spring.batch.Options;
-import com.marklogic.spring.batch.config.support.JobRepositoryConfigurer;
+import com.marklogic.spring.batch.config.MarkLogicBatchConfigurer;
 import org.springframework.batch.core.configuration.annotation.BatchConfigurer;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
@@ -53,7 +53,7 @@ public abstract class AbstractMarkLogicBatchConfig extends LoggingObject impleme
 
     @Bean
     public BatchConfigurer jobRepositoryConfigurer() {
-        return new JobRepositoryConfigurer();
+        return new HubBatchConfigurer();
     }
 
     @Override

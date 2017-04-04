@@ -5,16 +5,12 @@ import com.marklogic.client.helper.LoggingObject;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.spring.batch.core.repository.dao.MarkLogicExecutionContextDao;
 import com.marklogic.spring.batch.core.repository.dao.MarkLogicJobExecutionDao;
-import com.marklogic.spring.batch.core.repository.dao.MarkLogicJobInstanceDao;
 import com.marklogic.spring.batch.core.repository.dao.MarkLogicStepExecutionDao;
 import com.marklogic.spring.batch.jdbc.support.incrementer.UriIncrementer;
 import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.explore.support.SimpleJobExplorer;
 import org.springframework.batch.core.repository.JobRepository;
-import org.springframework.batch.core.repository.dao.ExecutionContextDao;
-import org.springframework.batch.core.repository.dao.JobExecutionDao;
-import org.springframework.batch.core.repository.dao.JobInstanceDao;
-import org.springframework.batch.core.repository.dao.StepExecutionDao;
+import org.springframework.batch.core.repository.dao.*;
 import org.springframework.batch.core.repository.support.SimpleJobRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -32,9 +28,7 @@ public class FlowConfig extends LoggingObject {
 
     @Bean
     public JobInstanceDao jobInstanceDao() throws Exception {
-        MarkLogicJobInstanceDao jobInstanceDao = new MarkLogicJobInstanceDao(databaseClientProvider.getDatabaseClient());
-        jobInstanceDao.setIncrementer(new UriIncrementer());
-        return jobInstanceDao;
+        return new MapJobInstanceDao();
     }
 
     @Bean

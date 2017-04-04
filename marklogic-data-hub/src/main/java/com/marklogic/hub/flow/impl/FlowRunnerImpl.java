@@ -10,6 +10,7 @@ import com.marklogic.client.util.RequestParameters;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubDatabase;
 import com.marklogic.hub.flow.*;
+import com.marklogic.hub.job.JobManager;
 import com.marklogic.spring.batch.hub.FlowConfig;
 import com.marklogic.spring.batch.hub.RunHarmonizeFlowConfig;
 import com.marklogic.spring.batch.hub.StagingConfig;
@@ -23,6 +24,7 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class FlowRunnerImpl implements FlowRunner {
 
@@ -39,9 +41,13 @@ public class FlowRunnerImpl implements FlowRunner {
     private List<FlowItemFailureListener> flowItemFailureListeners = new ArrayList<>();
     private List<FlowStatusListener> flowStatusListeners = new ArrayList<>();
     private List<FlowFinishedListener> flowFinishedListeners = new ArrayList<>();
+    private List<BatchCompleteListener> batchCompleteListeners = new ArrayList<>();
 
     private HubConfig hubConfig;
     private Thread runningThread = null;
+    private boolean isFinished = false;
+    private JobExecution result = null;
+
 
     public FlowRunnerImpl(HubConfig hubConfig) {
         this.hubConfig = hubConfig;
@@ -118,15 +124,21 @@ public class FlowRunnerImpl implements FlowRunner {
     @Override
     public void awaitCompletion(long timeout, TimeUnit unit) throws InterruptedException {
         runningThread.join(unit.convert(timeout, TimeUnit.MILLISECONDS));
+        result.stop();
     }
 
     @Override
     public JobExecution run() {
-        JobExecution result = null;
+        result = null;
         if (options == null) {
             options = new HashMap<>();
         }
         flow.setOptions(options);
+        AtomicLong successfulEvents = new AtomicLong(0);
+        AtomicLong failedEvents = new AtomicLong(0);
+        AtomicLong successfulBatches = new AtomicLong(0);
+        AtomicLong failedBatches = new AtomicLong(0);
+        JobManager jobManager = new JobManager(hubConfig.newJobDbClient());
         try {
             DatabaseClient srcClient;
             if (sourceDatabase.equals(HubDatabase.STAGING)) {
@@ -146,6 +158,37 @@ public class FlowRunnerImpl implements FlowRunner {
 
             ConfigurableApplicationContext ctx = buildApplicationContext(flow, srcClient);
 
+            flowItemCompleteListeners.add((jobId, itemId) -> {
+                successfulEvents.addAndGet(1);
+            });
+
+            flowItemFailureListeners.add((jobId, itemId) -> {
+                failedEvents.addAndGet(1);
+            });
+
+            flowFinishedListeners.add(() -> {
+                // store the thing in MarkLogic
+                com.marklogic.hub.job.Job job = com.marklogic.hub.job.Job.withFlow(flow)
+
+                    .withJobId(Long.toString(result.getJobId()))
+                    .setCounts(successfulEvents.get(), failedEvents.get(), successfulBatches.get(), failedBatches.get())
+                    .withEndTime(new Date());
+                jobManager.saveJob(job);
+                isFinished = true;
+            });
+
+            batchCompleteListeners.add(new BatchCompleteListener() {
+                @Override
+                public void onBatchFailed() {
+                    failedBatches.addAndGet(1);
+                }
+
+                @Override
+                public void onBatchSucceeded() {
+                    successfulBatches.addAndGet(1);
+                }
+            });
+
             JobParameters params = buildJobParameters(flow, batchSize, threadCount, targetDatabase);
             JobLauncher launcher = ctx.getBean(JobLauncher.class);
             Job job = ctx.getBean(Job.class);
@@ -154,27 +197,20 @@ public class FlowRunnerImpl implements FlowRunner {
             e.printStackTrace();
         }
 
-        runningThread = new Thread(new Runnable() {
-            private boolean isFinished = false;
-
-            @Override
-            public void run() {
-                flowFinishedListeners.add(() -> {
-                    isFinished = true;
-                });
-
-                while(true) {
-                    if (isFinished) {
-                        break;
-                    }
-                    Thread.yield();
+        runningThread = new Thread(() -> {
+            while(true) {
+                if (isFinished) {
+                    break;
                 }
-
+                Thread.yield();
             }
-
         });
 
         runningThread.start();
+
+        jobManager.saveJob(com.marklogic.hub.job.Job.withFlow(flow)
+            .withJobId(Long.toString(result.getJobId()))
+        );
 
         return result;
     }
@@ -197,6 +233,7 @@ public class FlowRunnerImpl implements FlowRunner {
         });
 
         ctx.getBeanFactory().registerSingleton("finishedListener", (FlowFinishedListener) () -> {
+            System.out.println("FIRING finished listeners");
             flowFinishedListeners.forEach((FlowFinishedListener listener) -> {
                 listener.onFlowFinished();
             });
@@ -212,6 +249,22 @@ public class FlowRunnerImpl implements FlowRunner {
             flowItemFailureListeners.forEach((FlowItemFailureListener listener) -> {
                 listener.processFailure(jobId, itemId);
             });
+        });
+
+        ctx.getBeanFactory().registerSingleton("batchCompleteListener", new BatchCompleteListener() {
+            @Override
+            public void onBatchFailed() {
+                batchCompleteListeners.forEach((BatchCompleteListener listener) -> {
+                    listener.onBatchFailed();
+                });
+            }
+
+            @Override
+            public void onBatchSucceeded() {
+                batchCompleteListeners.forEach((BatchCompleteListener listener) -> {
+                    listener.onBatchSucceeded();
+                });
+            }
         });
         ctx.refresh();
         return ctx;

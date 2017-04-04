@@ -95,11 +95,8 @@ class EntitiesController extends EnvironmentAware {
             resp = new ResponseEntity<>(HttpStatus.CONFLICT);
         }
         else {
-            JobExecution execution = flowManagerService.runFlow(flow, batchSize, threadCount, new FlowStatusListener() {
-                @Override
-                public void onStatusChange(long jobId, int percentComplete, String message) {
-                    template.convertAndSend("/topic/flow-status", new JobStatusMessage(Long.toString(jobId), percentComplete, message, FlowType.HARMONIZE.toString()));
-                }
+            JobExecution execution = flowManagerService.runFlow(flow, batchSize, threadCount, (jobId, percentComplete, message) -> {
+                template.convertAndSend("/topic/flow-status", new JobStatusMessage(jobId, percentComplete, message, FlowType.HARMONIZE.toString()));
             });
             resp = new ResponseEntity<>(execution, HttpStatus.OK);
         }
@@ -130,7 +127,7 @@ class EntitiesController extends EnvironmentAware {
                 flowName, json.toString());
 
         return flowManagerService.runMlcp(json, (jobId, percentComplete, message) -> {
-            template.convertAndSend("/topic/flow-status", new JobStatusMessage(Long.toString(jobId), percentComplete, message, FlowType.INPUT.toString()));
+            template.convertAndSend("/topic/flow-status", new JobStatusMessage(jobId, percentComplete, message, FlowType.INPUT.toString()));
         });
     }
 

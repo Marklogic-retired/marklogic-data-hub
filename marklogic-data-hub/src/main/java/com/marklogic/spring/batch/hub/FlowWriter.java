@@ -22,7 +22,7 @@ public class FlowWriter extends ResourceManager implements ItemWriter<String> {
     static final public String NAME = "flow";
 
     private String targetDatabase;
-    private Long jobId;
+    private String jobId;
     private StringHandle handle;
     private Map<String, Object> options;
     private Map<Long, ChunkContext> chunkContexts = Collections.synchronizedMap(new HashMap<Long, ChunkContext>());
@@ -33,7 +33,7 @@ public class FlowWriter extends ResourceManager implements ItemWriter<String> {
         this.chunkContexts.put(Thread.currentThread().getId(), chunkContext);
     }
 
-    FlowWriter(DatabaseClient client, long jobId, String targetDatabase, Flow flow, Map<String, Object> options) {
+    FlowWriter(DatabaseClient client, String jobId, String targetDatabase, Flow flow, Map<String, Object> options) {
         super();
         client.init(NAME, this);
         this.targetDatabase = targetDatabase;

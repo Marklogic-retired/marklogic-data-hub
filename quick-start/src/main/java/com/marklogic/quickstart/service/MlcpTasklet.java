@@ -53,7 +53,7 @@ class MlcpTasklet implements Tasklet {
 
     public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext ) throws Exception {
 
-        long jobId = chunkContext.getStepContext().getStepExecution().getJobExecution().getJobId();
+        String jobId = chunkContext.getStepContext().getStepExecution().getJobExecution().getJobId().toString();
         MlcpBean bean = new ObjectMapper().readerFor(MlcpBean.class).readValue(mlcpOptions);
         bean.setHost(hubConfig.host);
         bean.setPort(hubConfig.stagingPort);
@@ -83,7 +83,7 @@ class MlcpTasklet implements Tasklet {
         return RepeatStatus.FINISHED;
     }
 
-    private void runMlcp(long jobId, MlcpBean bean) throws IOException, InterruptedException {
+    private void runMlcp(String jobId, MlcpBean bean) throws IOException, InterruptedException {
         String javaHome = System.getProperty("java.home");
         String javaBin = javaHome +
             File.separator + "bin" +

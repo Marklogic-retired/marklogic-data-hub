@@ -1,6 +1,7 @@
 package com.marklogic.gradle.task
 
 import com.marklogic.client.DatabaseClient
+import com.marklogic.hub.DataHub
 import com.marklogic.hub.HubConfig
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
@@ -47,10 +48,11 @@ class BaseTest extends Specification {
     }
 
     void createBuildFile() {
+        String version = new HubConfig(testProjectDir.toString()) .getJarVersion()
         buildFile = testProjectDir.newFile('build.gradle')
         buildFile << """
             plugins {
-                id 'com.marklogic.ml-data-hub'
+                id 'com.marklogic.ml-data-hub' version '${version}'
             }
         """
     }

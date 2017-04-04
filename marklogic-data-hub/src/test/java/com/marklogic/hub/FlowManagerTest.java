@@ -37,6 +37,7 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 
 import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual;
@@ -51,8 +52,7 @@ public class FlowManagerTest extends HubTestBase {
 
         installHub();
 
-        clearDb(HubConfig.DEFAULT_STAGING_NAME);
-        clearDb(HubConfig.DEFAULT_FINAL_NAME);
+        clearDatabases(new String[]{HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME});
 
         DocumentMetadataHandle meta = new DocumentMetadataHandle();
         meta.getCollections().add("tester");
@@ -66,12 +66,15 @@ public class FlowManagerTest extends HubTestBase {
                 + "xdmp:directory-create(\"/entities/test/harmonize/my-test-flow2/headers/\"),"
                 + "xdmp:directory-create(\"/entities/test/harmonize/my-test-flow2/triples/\"),"
                 + "xdmp:directory-create(\"/entities/test/harmonize/my-test-flow2/content/\")");
-        installModule(
-                "/entities/test/harmonize/my-test-flow1/collector/collector.xqy",
-                "flow-manager-test/my-test-flow1/collector/collector.xqy");
-        installModule(
-                "/entities/test/harmonize/my-test-flow2/collector/collector.xqy",
-                "flow-manager-test/my-test-flow1/collector/collector.xqy");
+
+        HashMap<String, String> modules = new HashMap<>();
+        modules.put(
+            "/entities/test/harmonize/my-test-flow1/collector/collector.xqy",
+            "flow-manager-test/my-test-flow1/collector/collector.xqy");
+        modules.put(
+            "/entities/test/harmonize/my-test-flow2/collector/collector.xqy",
+            "flow-manager-test/my-test-flow1/collector/collector.xqy");
+        installModules(modules);
     }
 
     @AfterClass
@@ -229,8 +232,10 @@ public class FlowManagerTest extends HubTestBase {
 
     @Test
     public void testRunFlowWithHeader() throws SAXException, IOException, ParserConfigurationException, XMLStreamException {
-        installModule("/entities/test/harmonize/my-test-flow-with-header/collector/collector.xqy", "flow-manager-test/my-test-flow-with-header/collector/collector.xqy");
-        installModule("/entities/test/harmonize/my-test-flow-with-header/headers/headers.xqy", "flow-manager-test/my-test-flow-with-header/headers/headers.xqy");
+        HashMap<String, String> modules = new HashMap<>();
+        modules.put("/entities/test/harmonize/my-test-flow-with-header/collector/collector.xqy", "flow-manager-test/my-test-flow-with-header/collector/collector.xqy");
+        modules.put("/entities/test/harmonize/my-test-flow-with-header/headers/headers.xqy", "flow-manager-test/my-test-flow-with-header/headers/headers.xqy");
+        installModules(modules);
 
         assertEquals(2, getStagingDocCount());
         assertEquals(0, getFinalDocCount());
@@ -252,11 +257,13 @@ public class FlowManagerTest extends HubTestBase {
 
     @Test
     public void testRunFlowWithAll() throws SAXException, IOException, ParserConfigurationException, XMLStreamException {
-        installModule("/entities/test/harmonize/my-test-flow-with-all/my-test-flow-with-all.xml", "flow-manager-test/my-test-flow-with-all/my-test-flow-with-all.xml");
-        installModule("/entities/test/harmonize/my-test-flow-with-all/collector/collector.xqy", "flow-manager-test/my-test-flow-with-all/collector/collector.xqy");
-        installModule("/entities/test/harmonize/my-test-flow-with-all/headers/headers.xqy", "flow-manager-test/my-test-flow-with-all/headers/headers.xqy");
-        installModule("/entities/test/harmonize/my-test-flow-with-all/content/content.xqy", "flow-manager-test/my-test-flow-with-all/content/content.xqy");
-        installModule("/entities/test/harmonize/my-test-flow-with-all/triples/triples.xqy", "flow-manager-test/my-test-flow-with-all/triples/triples.xqy");
+        HashMap<String, String> modules = new HashMap<>();
+        modules.put("/entities/test/harmonize/my-test-flow-with-all/my-test-flow-with-all.xml", "flow-manager-test/my-test-flow-with-all/my-test-flow-with-all.xml");
+        modules.put("/entities/test/harmonize/my-test-flow-with-all/collector/collector.xqy", "flow-manager-test/my-test-flow-with-all/collector/collector.xqy");
+        modules.put("/entities/test/harmonize/my-test-flow-with-all/headers/headers.xqy", "flow-manager-test/my-test-flow-with-all/headers/headers.xqy");
+        modules.put("/entities/test/harmonize/my-test-flow-with-all/content/content.xqy", "flow-manager-test/my-test-flow-with-all/content/content.xqy");
+        modules.put("/entities/test/harmonize/my-test-flow-with-all/triples/triples.xqy", "flow-manager-test/my-test-flow-with-all/triples/triples.xqy");
+        installModules(modules);
 
         assertEquals(2, getStagingDocCount());
         assertEquals(0, getFinalDocCount());

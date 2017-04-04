@@ -37,9 +37,12 @@ public class RunHarmonizeFlowConfig extends AbstractMarkLogicBatchConfig {
     @Autowired(required = false)
     FlowItemFailureListener flowItemFailureListener;
 
+    @Autowired(required = false)
+    BatchCompleteListener batchCompleteListener;
+
     private int totalItems = 0;
     private int completedItems = 0;
-    private long jobId;
+    private String jobId;
 
     @Bean
     public Job job(@Qualifier("step1") Step step1) {
@@ -49,7 +52,7 @@ public class RunHarmonizeFlowConfig extends AbstractMarkLogicBatchConfig {
             .listener(new JobExecutionListener() {
             @Override
             public void beforeJob(JobExecution jobExecution) {
-                jobId = jobExecution.getJobId();
+                jobId = jobExecution.getJobId().toString();
             }
 
             @Override
@@ -135,6 +138,15 @@ public class RunHarmonizeFlowConfig extends AbstractMarkLogicBatchConfig {
                             response.failedItems.forEach((String item) -> {
                                 flowItemFailureListener.processFailure(jobId, item);
                             });
+                        }
+
+                        if (batchCompleteListener != null) {
+                            if (response.completedItems.size() > 0) {
+                                batchCompleteListener.onBatchSucceeded();
+                            }
+                            else {
+                                batchCompleteListener.onBatchFailed();
+                            }
                         }
                     } catch (IOException e) {
                         e.printStackTrace();

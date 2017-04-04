@@ -1,6 +1,7 @@
 package com.marklogic.hub;
 
-import com.marklogic.client.io.DOMHandle;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.marklogic.client.document.DocumentWriteSet;
 import com.marklogic.client.io.Format;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.client.io.StringHandle;
@@ -14,23 +15,23 @@ import org.json.JSONException;
 import org.junit.*;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.batch.core.JobExecution;
-import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPathExpressionException;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.Vector;
 import java.util.concurrent.TimeUnit;
 
 public class EndToEndTestSjsJson extends HubTestBase {
     private static final String ENTITY = "e2eentity";
     private static Path projectDir = Paths.get(".", "ye-olde-project");
-    private static final int TEST_SIZE = 1000;
+    private static final int TEST_SIZE = 500;
     private static final int BATCH_SIZE = 10;
+    private static FlowManager flowManager;
 
     @BeforeClass
     public static void setup() throws IOException {
@@ -41,9 +42,6 @@ public class EndToEndTestSjsJson extends HubTestBase {
 
         installHub();
 
-        enableDebugging();
-        enableTracing();
-
         Scaffolding scaffolding = new Scaffolding(projectDir.toString());
         scaffolding.createEntity(ENTITY);
         scaffolding.createFlow(ENTITY, "testinput", FlowType.INPUT,
@@ -51,22 +49,19 @@ public class EndToEndTestSjsJson extends HubTestBase {
         scaffolding.createFlow(ENTITY, "testharmonize", FlowType.HARMONIZE,
             PluginFormat.JAVASCRIPT, Format.JSON);
 
-        DataHub dh = new DataHub(getHubConfig());
-        dh.clearUserModules();
-        dh.installUserModules();
+        getDataHub().clearUserModules();
+        getDataHub().installUserModules();
+        flowManager = new FlowManager(getHubConfig());
     }
 
     @Before
     public void beforeEach() {
-        DataHub dh = new DataHub(getHubConfig());
+        clearDatabases(new String[]{HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME, HubConfig.DEFAULT_TRACE_NAME});
 
-        dh.clearContent(HubConfig.DEFAULT_STAGING_NAME);
-        dh.clearContent(HubConfig.DEFAULT_FINAL_NAME);
-        dh.clearContent(HubConfig.DEFAULT_JOB_NAME);
-        dh.clearContent(HubConfig.DEFAULT_TRACE_NAME);
-
-        installModule("/entities/" + ENTITY + "/harmonize/testharmonize/headers/headers.sjs", "e2e-test/sjs-flow/headers/headers.sjs");
-        installModule("/entities/" + ENTITY + "/harmonize/testharmonize/triples/triples.sjs", "e2e-test/sjs-flow/triples/triples.sjs");
+        HashMap<String, String> modules = new HashMap<>();
+        modules.put("/entities/" + ENTITY + "/harmonize/testharmonize/headers/headers.sjs", "e2e-test/sjs-flow/headers/headers.sjs");
+        modules.put("/entities/" + ENTITY + "/harmonize/testharmonize/triples/triples.sjs", "e2e-test/sjs-flow/triples/triples.sjs");
+        installModules(modules);
     }
 
     @AfterClass
@@ -76,15 +71,16 @@ public class EndToEndTestSjsJson extends HubTestBase {
 
     @Test
     public void runFlows() throws IOException, ParserConfigurationException, SAXException, JSONException {
-        FlowManager fm = new FlowManager(getHubConfig());
-        FlowRunner flowRunner = fm.newFlowRunner();
-        Flow harmonizeFlow = fm.getFlow(ENTITY, "testharmonize",
+        FlowRunner flowRunner = flowManager.newFlowRunner();
+        Flow harmonizeFlow = flowManager.getFlow(ENTITY, "testharmonize",
             FlowType.HARMONIZE);
 
         JacksonHandle handle = new JacksonHandle(getJsonFromResource("e2e-test/staged.json"));
+        DocumentWriteSet documentWriteSet = stagingDocMgr.newWriteSet();
         for (int i = 0; i < TEST_SIZE; i++) {
-            stagingDocMgr.write("/input-" + i + ".json", handle);
+            documentWriteSet.add("/input-" + i + ".json", handle);
         }
+        stagingDocMgr.write(documentWriteSet);
 
         flowRunner
             .withFlow(harmonizeFlow)
@@ -102,39 +98,42 @@ public class EndToEndTestSjsJson extends HubTestBase {
             JSONAssert.assertEquals(expected, actual, false);
         }
 
-        Document doc = jobDocMgr.read("/projects.spring.io/spring-batch/" + jobExecution.getJobId() + ".xml").next().getContent(new DOMHandle()).get();
-
-        try {
-            Assert.assertEquals(jobExecution.getJobId().toString(), xpath.evaluate("//msb:jobInstance/msb:id", doc.getDocumentElement()));
-        } catch (XPathExpressionException e) {
-            Assert.fail();
-        }
+        JsonNode node = jobDocMgr.read("/jobs/" + jobExecution.getJobId() + ".json").next().getContent(new JacksonHandle()).get();
+        Assert.assertEquals(Long.toString(jobExecution.getJobId()), node.get("jobId").asText());
+        Assert.assertEquals(TEST_SIZE, node.get("successfulEvents").asInt());
+        Assert.assertEquals(0, node.get("failedEvents").asInt());
+        Assert.assertEquals(TEST_SIZE / BATCH_SIZE, node.get("successfulBatches").asInt());
+        Assert.assertEquals(0, node.get("failedBatches").asInt());
+        Assert.assertEquals("FINISHED", node.get("status").asText());
     }
 
     @Test
     public void runFlowsWithFailures() throws IOException, ParserConfigurationException, SAXException, JSONException {
         installModule("/entities/" + ENTITY + "/harmonize/testharmonize/headers/headers.sjs", "e2e-test/sjs-flow/headers/headers-with-error.sjs");
 
-        FlowManager fm = new FlowManager(getHubConfig());
-        FlowRunner flowRunner = fm.newFlowRunner();
-        Flow harmonizeFlow = fm.getFlow(ENTITY, "testharmonize",
+        FlowRunner flowRunner = flowManager.newFlowRunner();
+        Flow harmonizeFlow = flowManager.getFlow(ENTITY, "testharmonize",
             FlowType.HARMONIZE);
 
         JacksonHandle handle = new JacksonHandle(getJsonFromResource("e2e-test/staged.json"));
+
+        DocumentWriteSet documentWriteSet = stagingDocMgr.newWriteSet();
         for (int i = 0; i < TEST_SIZE; i++) {
-            stagingDocMgr.write("/input-" + i + ".json", handle);
+            documentWriteSet.add("/input-" + i + ".json", handle);
         }
+        stagingDocMgr.write(documentWriteSet);
 
         Vector<String> completed = new Vector<>();
         Vector<String> failed = new Vector<>();
+
         flowRunner
             .withFlow(harmonizeFlow)
             .withBatchSize(BATCH_SIZE)
             .withThreadCount(4)
-            .onItemComplete((long jobId, String itemId) -> {
+            .onItemComplete((String jobId, String itemId) -> {
                 completed.add(itemId);
             })
-            .onItemFailed((long jobId, String itemId) -> {
+            .onItemFailed((String jobId, String itemId) -> {
                 failed.add(itemId);
             });
 
@@ -146,27 +145,29 @@ public class EndToEndTestSjsJson extends HubTestBase {
         Assert.assertEquals(TEST_SIZE - 1, getFinalDocCount());
         Assert.assertEquals(TEST_SIZE - 1, completed.size());
         Assert.assertEquals(1, failed.size());
+        JsonNode node = jobDocMgr.read("/jobs/" + jobExecution.getJobId() + ".json").next().getContent(new JacksonHandle()).get();
+        Assert.assertEquals(Long.toString(jobExecution.getJobId()), node.get("jobId").asText());
+        Assert.assertEquals(TEST_SIZE - 1, node.get("successfulEvents").asInt());
+        Assert.assertEquals(1, node.get("failedEvents").asInt());
+        Assert.assertEquals(TEST_SIZE / BATCH_SIZE, node.get("successfulBatches").asInt());
+        Assert.assertEquals(0, node.get("failedBatches").asInt());
+        Assert.assertEquals("FINISHED_WITH_ERRORS", node.get("status").asText());
 
-        Document doc = jobDocMgr.read("/projects.spring.io/spring-batch/" + jobExecution.getJobId() + ".xml").next().getContent(new DOMHandle()).get();
-
-        try {
-            Assert.assertEquals(jobExecution.getJobId().toString(), xpath.evaluate("//msb:jobInstance/msb:id", doc.getDocumentElement()));
-        } catch (XPathExpressionException e) {
-            Assert.fail();
-        }
     }
 
     @Test
     public void runFlowsDontWait() throws IOException, ParserConfigurationException, SAXException, JSONException {
-        FlowManager fm = new FlowManager(getHubConfig());
-        FlowRunner flowRunner = fm.newFlowRunner();
-        Flow harmonizeFlow = fm.getFlow(ENTITY, "testharmonize",
+        FlowRunner flowRunner = flowManager.newFlowRunner();
+        Flow harmonizeFlow = flowManager.getFlow(ENTITY, "testharmonize",
             FlowType.HARMONIZE);
 
         JacksonHandle handle = new JacksonHandle(getJsonFromResource("e2e-test/staged.json"));
+
+        DocumentWriteSet documentWriteSet = stagingDocMgr.newWriteSet();
         for (int i = 0; i < TEST_SIZE; i++) {
-            stagingDocMgr.write("/input-" + i + ".json", handle);
+            documentWriteSet.add("/input-" + i + ".json", handle);
         }
+        stagingDocMgr.write(documentWriteSet);
 
         flowRunner
             .withFlow(harmonizeFlow)
