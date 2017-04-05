@@ -45,8 +45,6 @@ public class EndToEndTestXqyXml extends HubTestBase {
 
         installHub();
 
-        enableDebugging();
-
         Scaffolding scaffolding = new Scaffolding(projectDir.toString());
         scaffolding.createEntity(ENTITY);
         scaffolding.createFlow(ENTITY, "testinput", FlowType.INPUT,

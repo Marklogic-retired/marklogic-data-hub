@@ -221,6 +221,12 @@ public class HubTestBase {
             getDataHub().install();
             isInstalled = true;
         }
+        else {
+            File projectDir = new File(PROJECT_PATH);
+            if (!projectDir.isDirectory() || !projectDir.exists()) {
+                getDataHub().initProject();
+            }
+        }
     }
 
     protected static void uninstallHub() throws IOException {
