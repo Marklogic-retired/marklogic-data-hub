@@ -21,8 +21,7 @@ public class TracingTest extends HubTestBase {
 
         enableDebugging();
 
-        clearDb(HubConfig.DEFAULT_STAGING_NAME);
-        clearDb(HubConfig.DEFAULT_FINAL_NAME);
+        clearDatabases(new String[]{HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME});
 
         URL url = TracingTest.class.getClassLoader().getResource("tracing-test");
         String path = Paths.get(url.toURI()).toFile().getAbsolutePath();

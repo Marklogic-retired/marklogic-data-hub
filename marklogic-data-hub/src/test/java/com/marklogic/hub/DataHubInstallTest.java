@@ -1,6 +1,5 @@
 package com.marklogic.hub;
 
-import org.apache.commons.io.FileUtils;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -8,7 +7,6 @@ import org.junit.Test;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
-import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -20,13 +18,11 @@ import static org.junit.Assert.assertTrue;
 
 public class DataHubInstallTest extends HubTestBase {
 
-    private static File projectPath = new File("ye-olde-project");
-
     private static DataHub dataHub;
     @BeforeClass
     public static void setup() throws IOException {
         XMLUnit.setIgnoreWhitespace(true);
-        dataHub = new DataHub(getHubConfig(projectPath.toString()));
+        dataHub = new DataHub(getHubConfig());
 
         InstallInfo installInfo = dataHub.isInstalled();
         if (installInfo.isInstalled()) {
@@ -38,9 +34,7 @@ public class DataHubInstallTest extends HubTestBase {
 
     @AfterClass
     public static void teardown() throws IOException {
-        dataHub = new DataHub(getHubConfig(projectPath.toString()));
-        dataHub.uninstall();
-        FileUtils.deleteDirectory(projectPath);
+        uninstallHub();
     }
 
     @Test

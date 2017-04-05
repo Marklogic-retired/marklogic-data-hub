@@ -47,10 +47,11 @@ class BaseTest extends Specification {
     }
 
     void createBuildFile() {
+        String version = new HubConfig(testProjectDir.toString()) .getJarVersion()
         buildFile = testProjectDir.newFile('build.gradle')
         buildFile << """
             plugins {
-                id 'com.marklogic.ml-data-hub'
+                id 'com.marklogic.ml-data-hub' version '${version}'
             }
         """
     }

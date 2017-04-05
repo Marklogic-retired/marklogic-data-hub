@@ -3,17 +3,15 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { RouterModule } from '@angular/router';
-import { TruncateCharactersPipe } from 'ng2-truncate/dist/truncate-characters.pipe'
-import { TruncateWordsPipe } from 'ng2-truncate/dist/truncate-words.pipe'
+import { TruncateCharactersPipe } from './truncate'
 
 import { ConfirmModule } from './confirm';
 
 import { AppComponent } from './app.component';
 
-import { MdlModule } from 'angular2-mdl';
+import { MdlModule } from '@angular-mdl/core';
 import { CodemirrorComponent } from './codemirror';
 import { MomentModule } from 'angular2-moment';
-import { MdDialogModule } from './dialog';
 
 import { ROUTES } from './app.routes';
 import { HeaderComponent } from './header/header.component';
@@ -41,7 +39,6 @@ import { ObjectToArrayPipe } from './object-to-array.pipe';
     TitlecasePipe,
     FacetsComponent,
     TruncateCharactersPipe,
-    TruncateWordsPipe,
     ObjectToArrayPipe
   ],
   imports: [
@@ -52,7 +49,6 @@ import { ObjectToArrayPipe } from './object-to-array.pipe';
     ConfirmModule,
     TooltipModule,
     MomentModule,
-    MdDialogModule.forRoot(),
     RouterModule.forRoot(ROUTES, { useHash: true })
   ],
   providers: [
@@ -62,4 +58,4 @@ import { ObjectToArrayPipe } from './object-to-array.pipe';
     AppComponent
   ],
 })
-export class AppModule {}
+export class AppModule { }

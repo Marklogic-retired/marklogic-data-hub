@@ -25,6 +25,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.Vector;
 import java.util.concurrent.TimeUnit;
 
@@ -35,6 +36,7 @@ public class EndToEndTestSjsXml extends HubTestBase {
     private static Path projectDir = Paths.get(".", "ye-olde-project");
     private static final int TEST_SIZE = 1000;
     private static final int BATCH_SIZE = 2;
+    private static FlowManager flowManager;
 
     @BeforeClass
     public static void setup() throws IOException {
@@ -54,22 +56,19 @@ public class EndToEndTestSjsXml extends HubTestBase {
         scaffolding.createFlow(ENTITY, "testharmonize", FlowType.HARMONIZE,
                 PluginFormat.JAVASCRIPT, Format.XML);
 
-        DataHub dh = new DataHub(getHubConfig());
-        dh.clearUserModules();
-        dh.installUserModules();
+        getDataHub().clearUserModules();
+        getDataHub().installUserModules();
+        flowManager = new FlowManager(getHubConfig());
     }
 
     @Before
     public void beforeEach() {
-        DataHub dh = new DataHub(getHubConfig());
+        clearDatabases(new String[]{HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME, HubConfig.DEFAULT_TRACE_NAME});
 
-        dh.clearContent(HubConfig.DEFAULT_STAGING_NAME);
-        dh.clearContent(HubConfig.DEFAULT_FINAL_NAME);
-        dh.clearContent(HubConfig.DEFAULT_JOB_NAME);
-        dh.clearContent(HubConfig.DEFAULT_TRACE_NAME);
-
-        installModule("/entities/" + ENTITY + "/harmonize/testharmonize/headers/headers.sjs", "e2e-test/sjs-flow/headers/headers.sjs");
-        installModule("/entities/" + ENTITY + "/harmonize/testharmonize/triples/triples.sjs", "e2e-test/sjs-flow/triples/triples.sjs");
+        HashMap<String, String> modules = new HashMap<>();
+        modules.put("/entities/" + ENTITY + "/harmonize/testharmonize/headers/headers.sjs", "e2e-test/sjs-flow/headers/headers.sjs");
+        modules.put("/entities/" + ENTITY + "/harmonize/testharmonize/triples/triples.sjs", "e2e-test/sjs-flow/triples/triples.sjs");
+        installModules(modules);
     }
 
     @AfterClass
@@ -79,9 +78,8 @@ public class EndToEndTestSjsXml extends HubTestBase {
 
     @Test
     public void runFlows() throws IOException, ParserConfigurationException, SAXException {
-        FlowManager fm = new FlowManager(getHubConfig());
-        FlowRunner flowRunner = fm.newFlowRunner();
-        Flow harmonizeFlow = fm.getFlow(ENTITY, "testharmonize",
+        FlowRunner flowRunner = flowManager.newFlowRunner();
+        Flow harmonizeFlow = flowManager.getFlow(ENTITY, "testharmonize",
             FlowType.HARMONIZE);
 
         DataMovementManager dataMovementManager = stagingClient.newDataMovementManager();
@@ -125,9 +123,8 @@ public class EndToEndTestSjsXml extends HubTestBase {
     public void runFlowsWithFailures() throws IOException, ParserConfigurationException, SAXException, JSONException {
         installModule("/entities/" + ENTITY + "/harmonize/testharmonize/headers/headers.sjs", "e2e-test/sjs-flow/headers/headers-with-error.sjs");
 
-        FlowManager fm = new FlowManager(getHubConfig());
-        FlowRunner flowRunner = fm.newFlowRunner();
-        Flow harmonizeFlow = fm.getFlow(ENTITY, "testharmonize",
+        FlowRunner flowRunner = flowManager.newFlowRunner();
+        Flow harmonizeFlow = flowManager.getFlow(ENTITY, "testharmonize",
             FlowType.HARMONIZE);
 
         DataMovementManager dataMovementManager = stagingClient.newDataMovementManager();
@@ -151,7 +148,6 @@ public class EndToEndTestSjsXml extends HubTestBase {
             .withBatchSize(BATCH_SIZE)
             .withThreadCount(4)
             .onItemComplete((String jobId, String itemId) -> {
-                logger.info(itemId);
                 completed.add(itemId);
             })
             .onItemFailed((String jobId, String itemId) -> {
@@ -176,9 +172,8 @@ public class EndToEndTestSjsXml extends HubTestBase {
 
     @Test
     public void runFlowsDontWait() throws IOException, ParserConfigurationException, SAXException, JSONException {
-        FlowManager fm = new FlowManager(getHubConfig());
-        FlowRunner flowRunner = fm.newFlowRunner();
-        Flow harmonizeFlow = fm.getFlow(ENTITY, "testharmonize",
+        FlowRunner flowRunner = flowManager.newFlowRunner();
+        Flow harmonizeFlow = flowManager.getFlow(ENTITY, "testharmonize",
             FlowType.HARMONIZE);
 
         DataMovementManager dataMovementManager = stagingClient.newDataMovementManager();

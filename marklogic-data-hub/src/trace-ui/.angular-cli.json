@@ -9,13 +9,15 @@
       "root": "src",
       "outDir": "dist",
       "assets": [
-        "assets"
+        "assets",
+        "favicon.ico"
       ],
       "index": "index.html",
       "main": "main.ts",
       "polyfills": "polyfills.ts",
       "test": "test.ts",
-      "tsconfig": "tsconfig.json",
+      "tsconfig": "tsconfig.app.json",
+      "testTsconfig": "tsconfig.spec.json",
       "prefix": "app",
       "styles": [
         "../node_modules/mdi/css/materialdesignicons.css",
@@ -38,12 +40,13 @@
   },
   "lint": [
     {
-      "files": "src/main/ui/**/*.ts",
-      "project": "src/main/ui/tsconfig.json"
+      "project": "src/main/ui/tsconfig.app.json"
     },
     {
-      "files": "e2e/**/*.ts",
-      "project": "e2e/tsconfig.json"
+      "project": "src/main/ui/tsconfig.spec.json"
+    },
+    {
+      "project": "e2e/tsconfig.e2e.json"
     }
   ],
   "test": {

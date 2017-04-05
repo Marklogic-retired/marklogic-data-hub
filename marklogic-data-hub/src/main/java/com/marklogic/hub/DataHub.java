@@ -596,7 +596,6 @@ public class DataHub {
         return 0;
     }
 
-
     class EntitiesValidator extends ResourceManager {
         private static final String NAME = "validate";
 
