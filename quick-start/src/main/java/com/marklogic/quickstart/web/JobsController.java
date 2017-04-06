@@ -15,7 +15,6 @@
  */
 package com.marklogic.quickstart.web;
 
-import com.marklogic.hub.util.PerformanceLogger;
 import com.marklogic.quickstart.EnvironmentAware;
 import com.marklogic.quickstart.model.JobQuery;
 import com.marklogic.quickstart.service.JobService;
@@ -40,10 +39,7 @@ public class JobsController extends EnvironmentAware {
     @Bean
     @Scope(proxyMode= ScopedProxyMode.TARGET_CLASS, value="session")
     JobService jobManager() {
-        long startTime = PerformanceLogger.monitorTimeInsideMethod();
-        JobService jobService = new JobService(envConfig().getJobClient());
-        PerformanceLogger.logTimeInsideMethod(startTime, "JobsController.jobService()");
-        return jobService;
+        return new JobService(envConfig().getJobClient());
     }
 
     @RequestMapping(method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_VALUE})

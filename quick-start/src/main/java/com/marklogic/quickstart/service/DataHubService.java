@@ -164,9 +164,9 @@ public class DataHubService {
         DataHub dataHub = new DataHub(config);
         boolean result = false;
         int compare = DataHub.versionCompare(dataHub.getHubVersion(), "1.1.0");
-        if (compare == -1) {
+        if (compare < 0) {
             result = dataHub.updateHubFromPre110();
-        } else if (compare == 0) {
+        } else if (compare >= 0) {
             result = dataHub.updateHubFrom110();
         }
         if (result) {

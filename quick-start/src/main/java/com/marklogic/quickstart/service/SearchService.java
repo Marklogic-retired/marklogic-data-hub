@@ -26,7 +26,6 @@ import com.marklogic.client.query.StructuredQueryBuilder;
 import com.marklogic.client.query.StructuredQueryDefinition;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubDatabase;
-import com.marklogic.hub.util.PerformanceLogger;
 import com.marklogic.quickstart.model.SearchQuery;
 import com.marklogic.quickstart.util.QueryHelper;
 import org.w3c.dom.Document;
@@ -74,8 +73,6 @@ public class SearchService extends SearchableService {
     }
 
     public StringHandle search(SearchQuery searchQuery) {
-
-        long startTime = PerformanceLogger.monitorTimeInsideMethod();
         QueryManager queryMgr;
         if (searchQuery.database.equals(HubDatabase.STAGING)) {
             queryMgr = stagingQueryMgr;
@@ -110,9 +107,7 @@ public class SearchService extends SearchableService {
 
         StringHandle sh = new StringHandle();
         sh.setFormat(Format.JSON);
-        StringHandle results = queryMgr.search(querydef, sh, searchQuery.start);
-        PerformanceLogger.logTimeInsideMethod(startTime, "SearchService.search()");
-        return results;
+        return queryMgr.search(querydef, sh, searchQuery.start);
     }
 
     public String getDoc(HubDatabase database, String docUri) {
