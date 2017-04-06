@@ -54,7 +54,7 @@ class DataHubPlugin implements Plugin<Project> {
         String flowGroup = "MarkLogic Data Hub Flow Management"
         project.task("hubRunFlow", group: flowGroup, type: RunFlowTask)
 
-        logger.info("Finished initializing ml-gradle\n")
+        logger.info("Finished initializing ml-data-hub\n")
     }
 
     void initializeProjectExtensions(Project project) {
@@ -72,6 +72,6 @@ class DataHubPlugin implements Plugin<Project> {
             throw new RuntimeException("You must apply the ml-gradle plugin before the ml-datahub plugin.")
         }
 
-        mlAppDeployer.setCommands(dataHub.getCommands())
+        mlAppDeployer.setCommands(dataHub.getCommandList())
     }
 }

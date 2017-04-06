@@ -19,24 +19,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.appdeployer.command.Command;
-import com.marklogic.appdeployer.command.alert.DeployAlertActionsCommand;
-import com.marklogic.appdeployer.command.alert.DeployAlertConfigsCommand;
-import com.marklogic.appdeployer.command.alert.DeployAlertRulesCommand;
+import com.marklogic.appdeployer.command.CommandMapBuilder;
 import com.marklogic.appdeployer.command.appservers.DeployOtherServersCommand;
-import com.marklogic.appdeployer.command.cpf.DeployCpfConfigsCommand;
-import com.marklogic.appdeployer.command.cpf.DeployDomainsCommand;
-import com.marklogic.appdeployer.command.cpf.DeployPipelinesCommand;
-import com.marklogic.appdeployer.command.flexrep.DeployConfigsCommand;
-import com.marklogic.appdeployer.command.flexrep.DeployFlexrepCommand;
-import com.marklogic.appdeployer.command.flexrep.DeployTargetsCommand;
-import com.marklogic.appdeployer.command.forests.ConfigureForestReplicasCommand;
-import com.marklogic.appdeployer.command.groups.DeployGroupsCommand;
-import com.marklogic.appdeployer.command.mimetypes.DeployMimetypesCommand;
-import com.marklogic.appdeployer.command.schemas.LoadSchemasCommand;
-import com.marklogic.appdeployer.command.security.*;
-import com.marklogic.appdeployer.command.tasks.DeployScheduledTasksCommand;
-import com.marklogic.appdeployer.command.triggers.DeployTriggersCommand;
-import com.marklogic.appdeployer.command.viewschemas.DeployViewSchemasCommand;
 import com.marklogic.appdeployer.impl.SimpleAppDeployer;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.FailedRequestException;
@@ -74,6 +58,7 @@ import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 public class DataHub {
@@ -309,107 +294,40 @@ public class DataHub {
         return ev.validate();
     }
 
-    public List<Command> getCommands() {
+    public List<Command> getCommandList() {
+        Map<String, List<Command>> commandMap = getCommands();
         List<Command> commands = new ArrayList<>();
+        for (String name : commandMap.keySet()) {
+            commands.addAll(commandMap.get(name));
+        }
+        return commands;
+    }
+    public Map<String, List<Command>> getCommands() {
+        Map<String, List<Command>> commandMap = new CommandMapBuilder().buildCommandMap();
 
-        // Security
-        List<Command> securityCommands = new ArrayList<>();
-        securityCommands.add(new DeployRolesCommand());
-        securityCommands.add(new DeployUsersCommand());
-        securityCommands.add(new DeployAmpsCommand());
-        securityCommands.add(new DeployCertificateTemplatesCommand());
-        securityCommands.add(new DeployCertificateAuthoritiesCommand());
-        securityCommands.add(new DeployExternalSecurityCommand());
-        securityCommands.add(new DeployPrivilegesCommand());
-        securityCommands.add(new DeployProtectedCollectionsCommand());
-        commands.addAll(securityCommands);
-
-        // Databases
         List<Command> dbCommands = new ArrayList<>();
-
-        // deploy hub databases (staging, final, job, trace)
         dbCommands.add(new DeployHubDatabasesCommand(hubConfig));
-
-        // deploy user databases in user-config dir
         dbCommands.add(new DeployHubOtherDatabasesCommand(hubConfig));
-
-        // depoloy triggers database
         dbCommands.add(new DeployHubTriggersDatabaseCommand(hubConfig));
-
-        // depoloy schemas database
         dbCommands.add(new DeployHubSchemasDatabaseCommand(hubConfig));
-        commands.addAll(dbCommands);
+        commandMap.put("mlDatabaseCommands", dbCommands);
 
-        // Schemas
-        LoadSchemasCommand lsc = new LoadSchemasCommand();
-        commands.add(lsc);
+        // don't deploy rest api servers
+        commandMap.remove("mlRestApiCommands");
 
-        // App servers
-        // deploy hub app servers (staging, final, job, trace)
-        commands.add(new DeployHubServersCommand(hubConfig));
-
-        // deploy user app servers in user-config
+        List<Command> serverCommands = new ArrayList<>();
+        serverCommands.add(new DeployHubServersCommand(hubConfig));
         DeployOtherServersCommand otherServersCommand = new DeployOtherServersCommand();
         otherServersCommand.setFilenamesToIgnore("staging-server.json", "final-server.json", "job-server.json", "trace-server.json");
-        commands.add(otherServersCommand);
+        serverCommands.add(otherServersCommand);
+        commandMap.put("mlServerCommands", serverCommands);
 
-        // Modules
-        commands.add(new LoadHubModulesCommand(hubConfig));
-        commands.add(new LoadUserModulesCommand(hubConfig));
+        List<Command> moduleCommands = new ArrayList<>();
+        moduleCommands.add(new LoadHubModulesCommand(hubConfig));
+        moduleCommands.add(new LoadUserModulesCommand(hubConfig));
+        commandMap.put("mlModuleCommands", moduleCommands);
 
-        // Alerting
-        List<Command> alertCommands = new ArrayList<>();
-        alertCommands.add(new DeployAlertConfigsCommand());
-        alertCommands.add(new DeployAlertActionsCommand());
-        alertCommands.add(new DeployAlertRulesCommand());
-        commands.addAll(alertCommands);
-
-        // CPF
-        List<Command> cpfCommands = new ArrayList<>();
-        cpfCommands.add(new DeployCpfConfigsCommand());
-        cpfCommands.add(new DeployDomainsCommand());
-        cpfCommands.add(new DeployPipelinesCommand());
-        commands.addAll(cpfCommands);
-
-        // Flexrep
-        List<Command> flexrepCommands = new ArrayList<>();
-        flexrepCommands.add(new DeployConfigsCommand());
-        flexrepCommands.add(new DeployTargetsCommand());
-        flexrepCommands.add(new DeployFlexrepCommand());
-        commands.addAll(flexrepCommands);
-
-        // Groups
-        List<Command> groupCommands = new ArrayList<>();
-        groupCommands.add(new DeployGroupsCommand());
-        commands.addAll(groupCommands);
-
-        List<Command> mimetypeCommands = new ArrayList<>();
-        mimetypeCommands.add(new DeployMimetypesCommand());
-        commands.addAll(mimetypeCommands);
-
-        // Forest replicas
-        List<Command> replicaCommands = new ArrayList<>();
-        replicaCommands.add(new ConfigureForestReplicasCommand());
-        commands.addAll(replicaCommands);
-
-        // Tasks
-        List<Command> taskCommands = new ArrayList<>();
-        taskCommands.add(new DeployScheduledTasksCommand());
-        commands.addAll(taskCommands);
-
-        // Triggers
-        List<Command> triggerCommands = new ArrayList<>();
-        triggerCommands.add(new DeployTriggersCommand());
-        commands.addAll(triggerCommands);
-
-        // SQL Views
-        List<Command> viewCommands = new ArrayList<>();
-        DeployViewSchemasCommand deployViewSchemasCommand = new DeployViewSchemasCommand();
-        deployViewSchemasCommand.setDatabaseIdOrName(hubConfig.finalDbName);
-        viewCommands.add(deployViewSchemasCommand);
-        commands.addAll(viewCommands);
-
-        return commands;
+        return commandMap;
     }
 
     /**
@@ -430,7 +348,7 @@ public class DataHub {
 
         AppConfig config = hubConfig.getAppConfig();
         HubAppDeployer deployer = new HubAppDeployer(getManageClient(), getAdminManager(), listener);
-        deployer.setCommands(getCommands());
+        deployer.setCommands(getCommandList());
         deployer.deploy(config);
     }
 
@@ -450,7 +368,7 @@ public class DataHub {
 
         AppConfig config = hubConfig.getAppConfig();
         HubAppDeployer deployer = new HubAppDeployer(getManageClient(), getAdminManager(), listener);
-        deployer.setCommands(getCommands());
+        deployer.setCommands(getCommandList());
         deployer.undeploy(config);
     }
 
