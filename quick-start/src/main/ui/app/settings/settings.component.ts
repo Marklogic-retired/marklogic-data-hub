@@ -10,8 +10,8 @@ import { MdlDialogService } from '@angular-mdl/core';
 
 @Component({
   selector: 'app-settings',
-  templateUrl: './settings.tpl.html',
-  styleUrls: ['./settings.style.scss'],
+  templateUrl: './settings.component.html',
+  styleUrls: ['./settings.component.scss'],
 })
 export class SettingsComponent {
 

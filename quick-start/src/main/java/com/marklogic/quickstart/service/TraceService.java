@@ -81,7 +81,6 @@ public class TraceService extends SearchableService {
         String sort = "date-desc";
         String searchXml = QueryHelper.serializeQuery(sb, sqd, sort);
 
-        logger.info(searchXml);
         RawCombinedQueryDefinition querydef = queryMgr.newRawCombinedQueryDefinition(new StringHandle(searchXml), SEARCH_OPTIONS_NAME);
         querydef.setResponseTransform(new ServerTransform("trace-search"));
         StringHandle sh = new StringHandle();

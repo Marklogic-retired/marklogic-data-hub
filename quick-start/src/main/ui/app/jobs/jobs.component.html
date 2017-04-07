@@ -38,10 +38,10 @@
           </thead>
           <tbody>
             <tr *ngFor="let job of jobs" [ngClass]="{'error' : job.status === 'FAILED' }">
-              <td><i class="mdi" [ngClass]="getIconClass(job.jobName)"></i> {{job.jobName}}</td>
+              <td><i class="mdi" [ngClass]="getIconClass(job.flowType)"></i> {{job.flowType}}</td>
               <td>{{job.jobId}} <i (click)="showTraces(job.jobId)" class="fa fa-flash"></i></td>
-              <td>{{job.entity}}</td>
-              <td>{{job.flow}}</td>
+              <td>{{job.entityName}}</td>
+              <td>{{job.flowName}}</td>
               <td>{{job.status}}</td>
               <td>{{job.startTime | amTimeAgo}}</td>
               <td><span *ngIf="job.endTime">{{getDuration(job)}} seconds</span></td>
@@ -63,4 +63,4 @@
       <mdl-spinner single-color active></mdl-spinner>
     </div>
   </div>
-      </div>
+</div>

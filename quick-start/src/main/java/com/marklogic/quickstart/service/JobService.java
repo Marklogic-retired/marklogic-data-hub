@@ -30,7 +30,7 @@ import java.util.ArrayList;
 
 public class JobService extends SearchableService {
 
-    private static final String SEARCH_OPTIONS_NAME = "spring-batch";
+    private static final String SEARCH_OPTIONS_NAME = "jobs";
 
     private QueryManager queryMgr;
 
@@ -74,7 +74,6 @@ public class JobService extends SearchableService {
         String sort = "date-desc";
         String searchXml = QueryHelper.serializeQuery(sb, sqd, sort);
 
-        logger.info(searchXml);
         RawCombinedQueryDefinition querydef = queryMgr.newRawCombinedQueryDefinition(new StringHandle(searchXml), SEARCH_OPTIONS_NAME);
         querydef.setResponseTransform(new ServerTransform("job-search"));
         StringHandle sh = new StringHandle();

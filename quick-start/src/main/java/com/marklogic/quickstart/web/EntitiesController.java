@@ -80,7 +80,7 @@ class EntitiesController extends EnvironmentAware {
 
     @RequestMapping(value = "/entities/{entityName}/flows/harmonize/{flowName}/run", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<JobExecution> runFlow(
+    public ResponseEntity<?> runHarmonizeFlow(
             @PathVariable String entityName,
             @PathVariable String flowName,
             @RequestBody JsonNode json) {
@@ -88,17 +88,17 @@ class EntitiesController extends EnvironmentAware {
         int batchSize = json.get("batchSize").asInt();
         int threadCount = json.get("threadCount").asInt();
 
-        ResponseEntity<JobExecution> resp;
+        ResponseEntity<?> resp;
 
         Flow flow = flowManagerService.getServerFlow(entityName, flowName, FlowType.HARMONIZE);
         if (flow == null) {
             resp = new ResponseEntity<>(HttpStatus.CONFLICT);
         }
         else {
-            JobExecution execution = flowManagerService.runFlow(flow, batchSize, threadCount, (jobId, percentComplete, message) -> {
+            flowManagerService.runFlow(flow, batchSize, threadCount, (jobId, percentComplete, message) -> {
                 template.convertAndSend("/topic/flow-status", new JobStatusMessage(jobId, percentComplete, message, FlowType.HARMONIZE.toString()));
             });
-            resp = new ResponseEntity<>(execution, HttpStatus.OK);
+            resp = new ResponseEntity<>(HttpStatus.OK);
         }
 
         return resp;
@@ -118,17 +118,26 @@ class EntitiesController extends EnvironmentAware {
     }
 
     @RequestMapping(value = "/entities/{entityName}/flows/input/{flowName}/run", method = RequestMethod.POST)
-    @ResponseBody
-    public JobExecution runInputFlow(
+    public ResponseEntity<?> runInputFlow(
             @PathVariable String entityName,
             @PathVariable String flowName,
             @RequestBody JsonNode json) throws IOException {
-        flowManagerService.saveOrUpdateFlowMlcpOptionsToFile(entityName,
+
+        ResponseEntity<?> resp;
+
+        Flow flow = flowManagerService.getServerFlow(entityName, flowName, FlowType.INPUT);
+        if (flow == null) {
+            resp = new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        else {
+            flowManagerService.saveOrUpdateFlowMlcpOptionsToFile(entityName,
                 flowName, json.toString());
 
-        return flowManagerService.runMlcp(json, (jobId, percentComplete, message) -> {
-            template.convertAndSend("/topic/flow-status", new JobStatusMessage(jobId, percentComplete, message, FlowType.INPUT.toString()));
-        });
+            flowManagerService.runMlcp(flow, json, (jobId, percentComplete, message) -> template.convertAndSend("/topic/flow-status", new JobStatusMessage(jobId, percentComplete, message, FlowType.INPUT.toString())));
+            resp = new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+
+        return resp;
     }
 
     @RequestMapping(value = "/entities/{entityName}/flows/{flowName}/cancel/{jobId}", method = RequestMethod.DELETE)

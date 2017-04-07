@@ -21,6 +21,7 @@ import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.appdeployer.command.Command;
 import com.marklogic.appdeployer.command.CommandMapBuilder;
 import com.marklogic.appdeployer.command.appservers.DeployOtherServersCommand;
+import com.marklogic.appdeployer.command.mimetypes.DeployMimetypesCommand;
 import com.marklogic.appdeployer.impl.SimpleAppDeployer;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.FailedRequestException;
@@ -326,6 +327,9 @@ public class DataHub {
         moduleCommands.add(new LoadHubModulesCommand(hubConfig));
         moduleCommands.add(new LoadUserModulesCommand(hubConfig));
         commandMap.put("mlModuleCommands", moduleCommands);
+
+        List<Command> mimetypeCommands = commandMap.get("mlMimetypeCommands");
+        mimetypeCommands.add(0, new DeployHubMimetypesCommand(hubConfig));
 
         return commandMap;
     }

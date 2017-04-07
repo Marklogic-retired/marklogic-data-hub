@@ -102,7 +102,6 @@ public class SearchService extends SearchableService {
         StructuredQueryBuilder.AndQuery sqd = sb.and(queries.toArray(new StructuredQueryDefinition[0]));
 
         String searchXml = QueryHelper.serializeQuery(sb, sqd, searchQuery.sort, getOptions());
-        logger.info(searchXml);
         RawCombinedQueryDefinition querydef = queryMgr.newRawCombinedQueryDefinitionAs(Format.XML, searchXml);
 
         StringHandle sh = new StringHandle();

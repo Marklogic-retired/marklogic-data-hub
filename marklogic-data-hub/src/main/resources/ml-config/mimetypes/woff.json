@@ -1,0 +1,7 @@
+{
+  "name": "application/font-woff",
+  "extension": [
+    "woff"
+  ],
+  "format": "binary"
+}

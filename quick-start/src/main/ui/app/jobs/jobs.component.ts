@@ -13,8 +13,8 @@ import * as _ from 'lodash';
 
 @Component({
   selector: 'app-jobs',
-  templateUrl: './jobs.tpl.html',
-  styleUrls: ['./jobs.style.scss'],
+  templateUrl: './jobs.component.html',
+  styleUrls: ['./jobs.component.scss'],
 })
 export class JobsComponent implements OnChanges, OnDestroy, OnInit {
 
@@ -103,9 +103,14 @@ export class JobsComponent implements OnChanges, OnDestroy, OnInit {
       }
     });
 
-    this.router.navigate(['/jobs'], {
+    let result: Promise<boolean> = this.router.navigate(['/jobs'], {
       queryParams: params
     });
+    result.then((value: boolean) => {
+      if (value !== true) {
+        this.getJobs();
+      }
+    })
   }
 
   private getJobs(): void {

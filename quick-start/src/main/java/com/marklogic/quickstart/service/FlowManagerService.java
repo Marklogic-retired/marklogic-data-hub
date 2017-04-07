@@ -145,47 +145,8 @@ public class FlowManagerService {
         return "{ \"input_file_path\": \"" + envConfig().getProjectDir().replace("\\", "\\\\") + "\" }";
     }
 
-    protected ConfigurableApplicationContext buildApplicationContext(FlowStatusListener statusListener) throws Exception {
-        AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
-        ctx.register(StagingConfig.class);
-        ctx.register(FlowConfig.class);
-        ctx.register(RunInputFlowConfig.class);
-        ctx.getBeanFactory().registerSingleton("hubConfig", envConfig().getMlSettings());
-        ctx.getBeanFactory().registerSingleton("statusListener", statusListener);
-        ctx.refresh();
-        return ctx;
-    }
-
-    private JobParameters buildJobParameters(JsonNode json) throws ParserConfigurationException, IOException {
-        JobParametersBuilder jpb = new JobParametersBuilder();
-        jpb.addString("mlcpOptions", json.toString());
-        jpb.addString("uid", UUID.randomUUID().toString());
-
-        // convert the transform params into job params to be stored in ML for later reference
-        JsonNode tp = json.get("transform_param");
-        if (tp != null) {
-            String transformParams = tp.textValue().replace("\"", "");
-            String[] pairs = transformParams.split(",");
-
-            for (String pair : pairs) {
-                String[] tokens = pair.split("=");
-                jpb.addString(tokens[0], tokens[1]);
-            }
-        }
-        return jpb.toJobParameters();
-    }
-
-    public JobExecution runMlcp(JsonNode json, FlowStatusListener statusListener) {
-        JobExecution result = null;
-        try {
-            ConfigurableApplicationContext ctx = buildApplicationContext(statusListener);
-            JobParameters params = buildJobParameters(json);
-            JobLauncher launcher = ctx.getBean(JobLauncher.class);
-            Job job = ctx.getBean(Job.class);
-            result = launcher.run(job, params);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return result;
+    public void runMlcp(Flow flow, JsonNode json, FlowStatusListener statusListener) {
+        MlcpRunner runner = new MlcpRunner(envConfig().getMlSettings(), flow, json, statusListener);
+        runner.run();
     }
 }
