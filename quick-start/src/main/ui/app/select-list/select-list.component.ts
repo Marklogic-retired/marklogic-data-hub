@@ -6,8 +6,8 @@ import * as _ from 'lodash';
 
 @Component({
   selector: 'app-select-list',
-  templateUrl: './select-list.tpl.html',
-  styleUrls: ['./select-list.styles.scss'],
+  templateUrl: './select-list.component.html',
+  styleUrls: ['./select-list.component.scss'],
 })
 
 /**

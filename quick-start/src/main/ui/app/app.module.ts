@@ -30,7 +30,7 @@ import { HeaderComponent } from './header/header.component';
 import { JobsComponent, JobOutputComponent } from './jobs';
 import { MlcpUiComponent } from './mlcp-ui';
 import { MlErrorComponent } from './ml-error';
-import { NewFlowComponent } from './new-flow/new-flow';
+import { NewFlowComponent } from './new-flow/new-flow.component';
 import { NoContentComponent } from './no-content';
 import { PaginationComponent } from './pagination';
 import { ResizableComponent } from './resizable/resizable.component';

@@ -14,9 +14,8 @@ interface MlcpOptions {
 
 @Component({
   selector: 'app-mlcp',
-  templateUrl: './mlcp-ui.html',
-  providers: [],
-  styleUrls: ['./mlcp-ui.scss']
+  templateUrl: './mlcp-ui.component.html',
+  styleUrls: ['./mlcp-ui.component.scss']
 })
 export class MlcpUiComponent {
   @HostBinding('style.display') display: string = 'none';

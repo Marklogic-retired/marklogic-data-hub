@@ -6,7 +6,7 @@ import * as _ from 'lodash';
 @Component({
   selector: 'app-ml-error',
   templateUrl: './ml-error.component.html',
-  styleUrls: ['./ml-error.style.scss'],
+  styleUrls: ['./ml-error.component.scss'],
 })
 export class MlErrorComponent implements OnInit {
   @Input() error: MlError;

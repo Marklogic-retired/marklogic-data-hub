@@ -32,7 +32,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -48,6 +50,8 @@ class MlcpRunner extends Thread {
     private String jobId = UUID.randomUUID().toString();
     private JobManager jobManager;
     private Flow flow;
+    private AtomicLong successfulEvents = new AtomicLong(0);
+    private AtomicLong failedEvents = new AtomicLong(0);
 
     MlcpRunner(HubConfig hubConfig, Flow flow, JsonNode mlcpOptions, FlowStatusListener statusListener) {
         super();
@@ -66,6 +70,10 @@ class MlcpRunner extends Thread {
             bean.setHost(hubConfig.host);
             bean.setPort(hubConfig.stagingPort);
 
+            Job job = Job.withFlow(flow)
+                .withJobId(jobId);
+            jobManager.saveJob(job);
+
             // Assume that the HTTP credentials will work for mlcp
             bean.setUsername(hubConfig.getUsername());
             bean.setPassword(hubConfig.getPassword());
@@ -80,10 +88,11 @@ class MlcpRunner extends Thread {
 
             statusListener.onStatusChange(jobId, 100, "");
 
-            jobManager.saveJob(Job.withFlow(flow)
-                .withJobId(jobId)
-                .withJobOutput(String.join("\n", mlcpOutput))
-            );
+            // store the thing in MarkLogic
+            job.withJobOutput(String.join("\n", mlcpOutput))
+                .setCounts(successfulEvents.get(), failedEvents.get(), 0, 0)
+                .withEndTime(new Date());
+            jobManager.saveJob(job);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -143,24 +152,19 @@ class MlcpRunner extends Thread {
         args.add("mlcp");
         args.addAll(Arrays.asList(bean.buildArgs()));
 
-        logger.error(String.join(" ", args));
+        logger.debug(String.join(" ", args));
         ProcessBuilder pb = new ProcessBuilder(args);
         Process process = pb.start();
 
-        final Pattern pattern = Pattern.compile("^.+completed (\\d+)%$");
-
         StreamGobbler gobbler = new StreamGobbler(process.getInputStream(), new Consumer<String>() {
             private int currentPc = 0;
+            private final Pattern completedPattern = Pattern.compile("^.+completed (\\d+)%$");
+            private final Pattern successfulEventsPattern = Pattern.compile("^.+OUTPUT_RECORDS_COMMITTED:\\s+(\\d+).*$");
+            private final Pattern failedEventsPattern = Pattern.compile("^.+OUTPUT_RECORDS_FAILED\\s+(\\d+).*$");
 
             @Override
             public void accept(String status) {
-                System.out.println(status);
-//                // don't log an error if the winutils binary is missing
-//                if (status.contains("ERROR") && !status.contains("winutils binary")) {
-//                    hasError = true;
-//                }
-
-                Matcher m = pattern.matcher(status);
+                Matcher m = completedPattern.matcher(status);
                 if (m.matches()) {
                     int pc = Integer.parseInt(m.group(1));
 
@@ -168,6 +172,16 @@ class MlcpRunner extends Thread {
                     if (pc > currentPc && pc != 100) {
                         currentPc = pc;
                     }
+                }
+
+                m = successfulEventsPattern.matcher(status);
+                if (m.matches()) {
+                    successfulEvents.addAndGet(Long.parseLong(m.group(1)));
+                }
+
+                m = failedEventsPattern.matcher(status);
+                if (m.matches()) {
+                    failedEvents.addAndGet(Long.parseLong(m.group(1)));
                 }
 
                 mlcpOutput.add(status);

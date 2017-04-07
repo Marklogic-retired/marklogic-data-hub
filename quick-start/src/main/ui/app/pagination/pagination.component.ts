@@ -2,8 +2,8 @@ import { Component, Input, OnChanges, OnInit, Output, EventEmitter } from '@angu
 
 @Component({
   selector: 'app-pagination',
-  templateUrl: './pagination.tpl.html',
-  styleUrls: ['./pagination.style.scss'],
+  templateUrl: './pagination.component.html',
+  styleUrls: ['./pagination.component.scss'],
 })
 export class PaginationComponent implements OnInit, OnChanges {
   @Input() start: number;

@@ -1,7 +1,6 @@
 {
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
   "project": {
-    "version": "1.0.0-beta.32.3",
     "name": "trace-ui"
   },
   "apps": [
@@ -40,10 +39,10 @@
   },
   "lint": [
     {
-      "project": "src/main/ui/tsconfig.app.json"
+      "project": "src/tsconfig.app.json"
     },
     {
-      "project": "src/main/ui/tsconfig.spec.json"
+      "project": "src/tsconfig.spec.json"
     },
     {
       "project": "e2e/tsconfig.e2e.json"

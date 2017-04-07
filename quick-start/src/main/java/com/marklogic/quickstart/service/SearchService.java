@@ -26,7 +26,6 @@ import com.marklogic.client.query.StructuredQueryBuilder;
 import com.marklogic.client.query.StructuredQueryDefinition;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubDatabase;
-import com.marklogic.hub.util.PerformanceLogger;
 import com.marklogic.quickstart.model.SearchQuery;
 import com.marklogic.quickstart.util.QueryHelper;
 import org.codehaus.jettison.json.JSONObject;
@@ -96,8 +95,6 @@ public class SearchService extends SearchableService {
     }
 
     public StringHandle search(SearchQuery searchQuery) {
-
-        long startTime = PerformanceLogger.monitorTimeInsideMethod();
         QueryManager queryMgr;
         if (searchQuery.database.equals(HubDatabase.STAGING)) {
             queryMgr = stagingQueryMgr;
@@ -125,14 +122,11 @@ public class SearchService extends SearchableService {
         sqd.setCriteria(searchQuery.query);
 
         String searchXml = QueryHelper.serializeQuery(sb, sqd, searchQuery.sort, getOptions(searchQuery.entitiesOnly));
-        logger.info(searchXml);
         RawCombinedQueryDefinition querydef = queryMgr.newRawCombinedQueryDefinitionAs(Format.XML, searchXml);
 
         StringHandle sh = new StringHandle();
         sh.setFormat(Format.JSON);
-        StringHandle results = queryMgr.search(querydef, sh, searchQuery.start);
-        PerformanceLogger.logTimeInsideMethod(startTime, "SearchService.search()");
-        return results;
+        return queryMgr.search(querydef, sh, searchQuery.start);
     }
 
     public String getDoc(HubDatabase database, String docUri) {

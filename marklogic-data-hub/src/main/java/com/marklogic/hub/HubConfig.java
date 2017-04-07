@@ -360,6 +360,10 @@ public class HubConfig {
         return Paths.get(this.projectDir, USER_CONFIG_DIR, "servers");
     }
 
+    public Path getHubMimetypesDir() {
+        return Paths.get(this.projectDir, HUB_CONFIG_DIR, "mimetypes");
+    }
+
     public void setUsername(String username) {
         this.username = username;
     }

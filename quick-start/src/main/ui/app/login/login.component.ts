@@ -14,9 +14,8 @@ import * as SemVer from 'semver';
 
 @Component({
   selector: 'app-login',
-  templateUrl: './login.template.html',
-  providers: [],
-  styleUrls: ['./login.style.scss']
+  templateUrl: './login.component.html',
+  styleUrls: ['./login.component.scss']
 })
 
 export class LoginComponent implements OnInit {

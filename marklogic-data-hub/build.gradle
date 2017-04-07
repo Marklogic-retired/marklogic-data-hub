@@ -3,7 +3,7 @@ plugins {
     id 'java'
     id 'maven-publish'
     id 'com.jfrog.bintray' version '1.7.2'
-    id 'com.marklogic.ml-gradle' version '2.5.0'
+    id 'com.marklogic.ml-gradle' version '2.6.0'
     id 'com.moowork.node' version '1.1.1'
 }
 
@@ -20,8 +20,8 @@ targetCompatibility = 1.8
 
 dependencies {
     compile 'com.marklogic:marklogic-client-api:4.0-SNAPSHOT'
-    compile 'com.marklogic:ml-javaclient-util:2.12.1'
-    compile 'com.marklogic:ml-app-deployer:2.5.0'
+    compile 'com.marklogic:ml-javaclient-util:2.13.0'
+    compile 'com.marklogic:ml-app-deployer:2.6.0'
     compile 'commons-io:commons-io:2.4'
     testCompile 'junit:junit:4.12'
     testCompile 'xmlunit:xmlunit:1.3'

@@ -5,8 +5,6 @@ import { HttpModule } from '@angular/http';
 import { RouterModule } from '@angular/router';
 import { TruncateCharactersPipe } from './truncate'
 
-import { ConfirmModule } from './confirm';
-
 import { AppComponent } from './app.component';
 
 import { MdlModule } from '@angular-mdl/core';
@@ -46,7 +44,6 @@ import { ObjectToArrayPipe } from './object-to-array.pipe';
     FormsModule,
     HttpModule,
     MdlModule,
-    ConfirmModule,
     TooltipModule,
     MomentModule,
     RouterModule.forRoot(ROUTES, { useHash: true })

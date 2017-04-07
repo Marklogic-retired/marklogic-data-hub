@@ -2,6 +2,10 @@
 
 $bg-color: unquote("rgb(#{$palette-datahub-500})");
 
+.job-output-dialog {
+  height: 500px;
+}
+
 .job-status-dialog {
   min-width: 500px;
   width: 70%;

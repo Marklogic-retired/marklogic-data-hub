@@ -11,7 +11,7 @@ import { MdlDialogService, MdlDialogReference } from '@angular-mdl/core';
 
 import { MlcpUiComponent } from '../mlcp-ui';
 import { HarmonizeFlowOptionsComponent } from '../harmonize-flow-options/harmonize-flow-options.component';
-import { NewFlowComponent } from '../new-flow/new-flow';
+import { NewFlowComponent } from '../new-flow/new-flow.component';
 
 import { DeployService } from '../deploy/deploy.service';
 
