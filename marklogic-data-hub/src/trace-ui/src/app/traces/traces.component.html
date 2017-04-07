@@ -28,15 +28,16 @@
             <tr>
               <th class="mdl-data-table__cell--non-numeric">Type</th>
               <th class="mdl-data-table__cell--non-numeric">Identifier</th>
+              <th class="mdl-data-table__cell--non-numeric">Job ID</th>
               <th class="mdl-data-table__cell--non-numeric">Created</th>
             </tr>
           </thead>
           <tbody>
             <tr *ngFor="let trace of traces" (click)="showTrace(trace.traceId)" [ngClass]="{'error' : trace.hasError }">
-              <td colspan="4" *ngIf="!trace.identifier && !trace.collectorPlugin" style="text-align: center">This trace has an invalid format</td>
-              <td *ngIf="trace.identifier"><i class="mdi" [ngClass]="getIconClass(trace)"></i> {{trace.flowType}}</td>
-              <td *ngIf="trace.identifier" class="mdl-data-table__cell--non-numeric">{{trace.identifier | truncate:25}}</td>
-              <td *ngIf="trace.identifier">{{trace.created | amTimeAgo}}</td>
+              <td><i class="mdi" [ngClass]="getIconClass(trace)"></i> {{trace.flowType}}</td>
+              <td class="mdl-data-table__cell--non-numeric">{{trace.identifier | truncate:25}}</td>
+              <td class="mdl-data-table__cell--non-numeric">{{trace.jobId}}</td>
+              <td>{{trace.created | amTimeAgo}}</td>
             </tr>
           </tbody>
         </table>

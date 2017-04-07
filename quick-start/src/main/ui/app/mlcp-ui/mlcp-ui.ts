@@ -15,7 +15,6 @@ interface MlcpOptions {
 @Component({
   selector: 'app-mlcp',
   templateUrl: './mlcp-ui.html',
-  providers: [],
   styleUrls: ['./mlcp-ui.scss']
 })
 export class MlcpUiComponent {
