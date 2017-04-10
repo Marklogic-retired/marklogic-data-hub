@@ -62,11 +62,6 @@ public class EntityManagerTest extends HubTestBase {
         installModules(modules);
     }
 
-    @AfterClass
-    public static void teardown() throws IOException {
-        uninstallHub();
-    }
-
     @Test
     public void testGetEntities() {
         EntityManager fm = new EntityManager(stagingClient);
