@@ -12,7 +12,6 @@ import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
 class InstalledTests extends BaseTest {
     def setupSpec() {
-
         runTask('hubInit')
         runTask('mlUndeploy')
         runTask('mlDeploy')

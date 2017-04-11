@@ -6,6 +6,11 @@ import static org.gradle.testkit.runner.TaskOutcome.FAILED
 
 class NotInstalledTests extends BaseTest {
 
+    def setupSpec() {
+        runTask('hubInit')
+        runTask('mlUndeploy')
+    }
+
     def "enable debugging hub not installed"() {
         when:
         def result = runFailTask('hubEnableDebugging')
