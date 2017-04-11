@@ -42,7 +42,6 @@ public class FlowRunnerImpl implements FlowRunner {
     private boolean isFinished = false;
     private JobExecution result = null;
 
-
     public FlowRunnerImpl(HubConfig hubConfig) {
         this.hubConfig = hubConfig;
     }

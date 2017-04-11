@@ -99,14 +99,12 @@ public class EndToEndTestSjsJson extends HubTestBase {
         }
 
         JsonNode node = jobDocMgr.read("/jobs/" + jobExecution.getJobId() + ".json").next().getContent(new JacksonHandle()).get();
-        String nodeStr = node.toString();
-        logger.info(nodeStr);
-        Assert.assertEquals(nodeStr, Long.toString(jobExecution.getJobId()), node.get("jobId").asText());
-        Assert.assertEquals(nodeStr, TEST_SIZE, node.get("successfulEvents").asInt());
-        Assert.assertEquals(nodeStr, 0, node.get("failedEvents").asInt());
-        Assert.assertEquals(nodeStr, TEST_SIZE / BATCH_SIZE, node.get("successfulBatches").asInt());
-        Assert.assertEquals(nodeStr, 0, node.get("failedBatches").asInt());
-        Assert.assertEquals(nodeStr, "FINISHED", node.get("status").asText());
+        Assert.assertEquals(Long.toString(jobExecution.getJobId()), node.get("jobId").asText());
+        Assert.assertEquals(TEST_SIZE, node.get("successfulEvents").asInt());
+        Assert.assertEquals(0, node.get("failedEvents").asInt());
+        Assert.assertEquals(TEST_SIZE / BATCH_SIZE, node.get("successfulBatches").asInt());
+        Assert.assertEquals(0, node.get("failedBatches").asInt());
+        Assert.assertEquals("FINISHED", node.get("status").asText());
     }
 
     @Test
@@ -138,7 +136,6 @@ public class EndToEndTestSjsJson extends HubTestBase {
             .onItemFailed((String jobId, String itemId) -> {
                 failed.add(itemId);
             });
-
 
         JobExecution jobExecution = flowRunner.run();
 

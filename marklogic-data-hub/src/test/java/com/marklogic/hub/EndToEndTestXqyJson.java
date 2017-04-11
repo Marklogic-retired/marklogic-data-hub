@@ -166,12 +166,12 @@ public class EndToEndTestXqyJson extends HubTestBase {
 
         Vector<String> completed = new Vector<>();
         Vector<String> failed = new Vector<>();
+
         flowRunner
             .withFlow(harmonizeFlow)
             .withBatchSize(BATCH_SIZE)
             .withThreadCount(4)
             .onItemComplete((String jobId, String itemId) -> {
-                logger.info(itemId);
                 completed.add(itemId);
             })
             .onItemFailed((String jobId, String itemId) -> {
