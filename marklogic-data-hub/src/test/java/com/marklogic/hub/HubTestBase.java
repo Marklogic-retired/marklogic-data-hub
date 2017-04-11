@@ -130,7 +130,7 @@ public class HubTestBase {
             properties.putAll(p);
         }
         catch (IOException e) {
-            System.err.println("gradle-local.roperties file not loaded.");
+            System.err.println("gradle-local.properties file not loaded.");
         }
 
         host = properties.getProperty("mlHost");

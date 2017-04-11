@@ -14,6 +14,7 @@ class InstalledTests extends BaseTest {
     def setupSpec() {
 
         runTask('hubInit')
+        runTask('mlUndeploy')
         runTask('mlDeploy')
     }
 

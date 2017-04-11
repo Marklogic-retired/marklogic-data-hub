@@ -91,9 +91,9 @@ class BaseTest extends Specification {
             mlTraceForestsPerHost=1
             mlTraceAuth=digest
 
-            mlJobAppserverName=data-hub-JOB
+            mlJobAppserverName=data-hub-JOBS
             mlJobPort=8013
-            mlJobDbName=data-hub-JOB
+            mlJobDbName=data-hub-JOBS
             mlJobForestsPerHost=1
             mlJobAuth=digest
 
