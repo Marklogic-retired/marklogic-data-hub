@@ -18,7 +18,6 @@ import static org.junit.Assert.assertTrue;
 
 public class DataHubInstallTest extends HubTestBase {
 
-    private static DataHub dataHub;
     @BeforeClass
     public static void setup() throws IOException {
         XMLUnit.setIgnoreWhitespace(true);
@@ -32,7 +31,7 @@ public class DataHubInstallTest extends HubTestBase {
 
     @Test
     public void testInstallHubModules() throws IOException {
-        assertTrue(dataHub.isInstalled().isInstalled());
+        assertTrue(getDataHub().isInstalled().isInstalled());
 
         assertTrue(getModulesFile("/com.marklogic.hub/lib/config.xqy").startsWith(getResource("data-hub-test/core-modules/config.xqy")));
     }
@@ -40,7 +39,7 @@ public class DataHubInstallTest extends HubTestBase {
     @Test
     public void getHubModulesVersion() throws IOException {
         String version = getHubConfig().getJarVersion();
-        assertEquals(version, dataHub.getHubVersion());
+        assertEquals(version, getDataHub().getHubVersion());
     }
 
     @Test
@@ -48,8 +47,7 @@ public class DataHubInstallTest extends HubTestBase {
         URL url = DataHubInstallTest.class.getClassLoader().getResource("data-hub-test");
         String path = Paths.get(url.toURI()).toFile().getAbsolutePath();
 
-        dataHub = new DataHub(getHubConfig(path));
-        dataHub.installUserModules(true);
+        getDataHub().installUserModules(true);
 
         assertEquals(
                 getResource("data-hub-test/plugins/entities/test-entity/harmonize/final/collector/collector.xqy"),
