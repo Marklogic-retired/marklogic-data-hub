@@ -47,7 +47,8 @@ public class DataHubInstallTest extends HubTestBase {
         URL url = DataHubInstallTest.class.getClassLoader().getResource("data-hub-test");
         String path = Paths.get(url.toURI()).toFile().getAbsolutePath();
 
-        getDataHub().installUserModules(true);
+        DataHub dataHub = new DataHub(getHubConfig(path));
+        dataHub.installUserModules(true);
 
         assertEquals(
                 getResource("data-hub-test/plugins/entities/test-entity/harmonize/final/collector/collector.xqy"),
