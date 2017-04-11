@@ -4,3 +4,5 @@ services:
     image: paxtonhare/marklogic-datahub-1x
     ports:
       - "8000-8020"
+    volumes:
+      - .:/marklogic-data-hub
