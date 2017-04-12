@@ -66,12 +66,7 @@ public class DeployHubServersCommand extends AbstractResourceCommand {
         final String payload = getPayload(f, context);
         try {
             if (isRestartAfterDelete()) {
-                context.getAdminManager().invokeActionRequiringRestart(new ActionRequiringRestart() {
-                    @Override
-                    public boolean execute() {
-                        return mgr.delete(payload).isDeleted();
-                    }
-                });
+                context.getAdminManager().invokeActionRequiringRestart(() -> mgr.delete(payload).isDeleted());
             } else {
                 mgr.delete(payload);
             }

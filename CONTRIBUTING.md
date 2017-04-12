@@ -39,7 +39,12 @@ cd /path/to/data-hub-project/
 ./gradlew build -x test
 ```
 
-#### Running your local hub instead of the cloud hosted one
+#### Making Changes to the Hub Gradle Plugin
+
+This is for when you are making changes to the ml-data-hub-plugin. This is a gradle plugin that enables Hub Capabilities. Most likely you won't find yourself doing this. You can safely ignore this section.
+
+Still here? Seems you really want to modify the Gradle Plugin. Here's how to tell Gradle to use your local copy instead of the one living up on the Cloud.
+
 ```bash
 cd /path/to/data-hub-project/
 ./gradlew publishToMavenLocal
@@ -49,6 +54,9 @@ cd /path/to/data-hub-project/ml-data-hub-plugin
 
 Then in your build.gradle file you will need to use the local version:
 ```groovy
+
+// this goes at the top above the plugins section
+
 buildscript {
   repositories {
     mavenLocal() 
@@ -58,6 +66,15 @@ buildscript {
     classpath "com.marklogic:ml-data-hub:(the version number you chose)"
   }
 }
+
+plugins {
+   ...
+
+   // comment out this line. It pulls the version from the cloud
+   // id 'com.marklogic.ml-data-hub' version '1.1.2'
+}
+
+// this tells gradle to apply the plugin you included above in the buildscript section
 apply plugin: "com.marklogic.ml-data-hub"
 ```
 

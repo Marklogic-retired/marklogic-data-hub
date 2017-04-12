@@ -23,7 +23,6 @@ import com.marklogic.client.query.QueryManager;
 import com.marklogic.client.query.RawCombinedQueryDefinition;
 import com.marklogic.client.query.StructuredQueryBuilder;
 import com.marklogic.client.query.StructuredQueryDefinition;
-import com.marklogic.hub.util.PerformanceLogger;
 import com.marklogic.quickstart.model.JobQuery;
 import com.marklogic.quickstart.util.QueryHelper;
 
@@ -31,7 +30,7 @@ import java.util.ArrayList;
 
 public class JobService extends SearchableService {
 
-    private static final String SEARCH_OPTIONS_NAME = "spring-batch";
+    private static final String SEARCH_OPTIONS_NAME = "jobs";
 
     private QueryManager queryMgr;
 
@@ -40,7 +39,6 @@ public class JobService extends SearchableService {
     }
 
     public StringHandle getJobs(JobQuery jobQuery) {
-        long startTime = PerformanceLogger.monitorTimeInsideMethod();
         queryMgr.setPageLength(jobQuery.count);
 
         StructuredQueryBuilder sb = queryMgr.newStructuredQueryBuilder(SEARCH_OPTIONS_NAME);
@@ -76,14 +74,11 @@ public class JobService extends SearchableService {
         String sort = "date-desc";
         String searchXml = QueryHelper.serializeQuery(sb, sqd, sort);
 
-        logger.info(searchXml);
         RawCombinedQueryDefinition querydef = queryMgr.newRawCombinedQueryDefinition(new StringHandle(searchXml), SEARCH_OPTIONS_NAME);
         querydef.setResponseTransform(new ServerTransform("job-search"));
         StringHandle sh = new StringHandle();
         sh.setFormat(Format.JSON);
-        StringHandle results = queryMgr.search(querydef, sh, jobQuery.start);
-        PerformanceLogger.logTimeInsideMethod(startTime, "JobService.getJobs()");
-        return results;
+        return queryMgr.search(querydef, sh, jobQuery.start);
     }
 
     public void cancelJob(long jobId) {

@@ -2,95 +2,66 @@
   "database-name": "%%mlJobDbName%%",
   "range-element-index": [
     {
-      "scalar-type": "dateTime",
-      "namespace-uri": "http://marklogic.com/xdmp/dls",
-      "localname": "created",
-      "collation": "",
+      "scalar-type": "string",
+      "namespace-uri": "",
+      "localname": "jobId",
+      "collation": "http://marklogic.com/collation/codepoint",
       "range-value-positions": false,
       "invalid-values": "reject"
-    },
-    {
-      "scalar-type": "dateTime",
-      "namespace-uri": "http://marklogic.com/xdmp/dls",
-      "localname": "replaced",
-      "collation": "",
-      "range-value-positions": false,
-      "invalid-values": "reject"
-    },
-    {
-      "scalar-type": "unsignedLong",
-      "namespace-uri": "http://marklogic.com/xdmp/dls",
-      "localname": "version-id",
-      "collation": "",
-      "range-value-positions": false,
-      "invalid-values": "reject"
-    },
-    {
-      "scalar-type": "unsignedLong",
-      "namespace-uri": "http://marklogic.com/spring-batch",
-      "localname": "id",
-      "collation": "",
-      "range-value-positions": false,
-      "invalid-values": "reject"
-
     },
     {
       "scalar-type": "string",
-      "namespace-uri": "http://marklogic.com/spring-batch",
+      "namespace-uri": "",
       "localname": "jobName",
-      "collation": "http://marklogic.com/collation/",
+      "collation": "http://marklogic.com/collation/codepoint",
       "range-value-positions": false,
       "invalid-values": "reject"
     },
     {
       "scalar-type": "dateTime",
-      "namespace-uri": "http://marklogic.com/spring-batch",
-      "localname": "createDateTime",
+      "namespace-uri": "",
+      "localname": "startTime",
+      "collation": "",
+      "range-value-positions": false,
+      "invalid-values": "reject"
+    },
+    {
+      "scalar-type": "dateTime",
+      "namespace-uri": "",
+      "localname": "endTime",
       "collation": "",
       "range-value-positions": false,
       "invalid-values": "reject"
     },
     {
       "scalar-type": "string",
-      "namespace-uri": "http://marklogic.com/spring-batch",
+      "namespace-uri": "",
       "localname": "status",
-      "collation": "http://marklogic.com/collation/",
-      "range-value-positions": false,
-      "invalid-values": "reject"
-    }
-  ],
-  "path-namespace": [
-    {
-      "prefix": "msb",
-      "namespace-uri": "http://marklogic.com/spring-batch"
-    }
-  ],
-  "range-path-index": [
-    {
-      "scalar-type": "unsignedLong",
-      "collation": "",
-      "path-expression": "/msb:mlJobInstance/msb:jobExecutions/msb:jobExecution/msb:id",
+      "collation": "http://marklogic.com/collation/codepoint",
       "range-value-positions": false,
       "invalid-values": "reject"
     },
     {
       "scalar-type": "string",
-      "collation": "http://marklogic.com/collation/",
-      "path-expression": "/msb:mlJobInstance/msb:jobExecutions/msb:jobExecution/msb:jobParameters/msb:jobParameter[@key='entity']",
+      "namespace-uri": "",
+      "localname": "entityName",
+      "collation": "http://marklogic.com/collation/codepoint",
       "range-value-positions": false,
       "invalid-values": "reject"
     },
     {
       "scalar-type": "string",
-      "collation": "http://marklogic.com/collation/",
-      "path-expression": "/msb:mlJobInstance/msb:jobExecutions/msb:jobExecution/msb:jobParameters/msb:jobParameter[@key='flow']",
+      "namespace-uri": "",
+      "localname": "flowName",
+      "collation": "http://marklogic.com/collation/codepoint",
       "range-value-positions": false,
       "invalid-values": "reject"
     },
     {
       "scalar-type": "string",
-      "collation": "http://marklogic.com/collation/",
-      "path-expression": "/msb:mlJobInstance/msb:jobExecutions/msb:jobExecution/msb:jobParameters/msb:jobParameter[@key='flowType']",
+      "namespace-uri": "",
+      "localname": "flowType",
+      "collation": "http://marklogic.com/collation/codepoint",
       "range-value-positions": false,
       "invalid-values": "reject"
     }
@@ -99,6 +70,5 @@
   "triggers-database": "%%TRIGGERS_DATABASE%%",
   "triple-index": true,
   "collection-lexicon": true,
-  "uri-lexicon": true,
-  "maintain-last-modified": true
+  "uri-lexicon": true
 }

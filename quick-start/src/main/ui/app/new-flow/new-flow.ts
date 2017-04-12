@@ -1,6 +1,6 @@
 import { Component, HostListener, Inject } from '@angular/core';
 
-import { MdlDialogReference } from 'angular2-mdl';
+import { MdlDialogReference } from '@angular-mdl/core';
 
 import * as _ from 'lodash';
 

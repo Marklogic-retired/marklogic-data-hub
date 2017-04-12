@@ -36,5 +36,5 @@ export class TraceService {
 
   private post(url: string, data: any) {
     return this.http.post(url, data).map(this.extractData);
-}
+  }
 }

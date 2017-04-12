@@ -76,15 +76,19 @@ public class LoadHubModulesCommand extends AbstractCommand {
             logger.info(format("Inserting module with URI: %s", uri));
         }
 
-        String fileContents = IOUtils.toString(inputStream);
-        Map<String, String> customTokens = config.getCustomTokens();
-        if (customTokens != null) {
-            for (String key : customTokens.keySet()) {
-                fileContents = fileContents.replace(key, customTokens.get(key));
+        if (uri.endsWith(".xqy")) {
+            String fileContents = IOUtils.toString(inputStream);
+            Map<String, String> customTokens = config.getCustomTokens();
+            if (customTokens != null) {
+                for (String key : customTokens.keySet()) {
+                    fileContents = fileContents.replace(key, customTokens.get(key));
+                }
             }
+
+            return ContentFactory.newContent(uri, fileContents, options);
         }
 
-        return ContentFactory.newContent(uri, fileContents, options);
+        return ContentFactory.newContent(uri, inputStream, options);
     }
 
     private void initializeActiveSession(CommandContext context) {
@@ -199,7 +203,7 @@ public class LoadHubModulesCommand extends AbstractCommand {
             // switch to job db to do this:
             this.modulesLoader.setDatabaseClient(hubConfig.newJobDbClient());
             startTime = System.nanoTime();
-            resources = findResources("classpath*:/ml-modules/options", "/**/spring-batch.xml");
+            resources = findResources("classpath*:/ml-modules/options", "/**/jobs.xml");
             for (Resource r : resources) {
                 this.modulesLoader.installQueryOptions(r);
             }
@@ -223,7 +227,7 @@ public class LoadHubModulesCommand extends AbstractCommand {
                 this.threadPoolTaskExecutor.destroy();
             } catch (Exception ex) {
                 logger.warn("Unexpected exception while calling destroy() on taskExecutor: " + ex.getMessage(), ex);
-}
+            }
         }
     }
 }

@@ -17,30 +17,17 @@ package com.marklogic.quickstart.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.hub.FlowManager;
-import com.marklogic.hub.JobStatusListener;
-import com.marklogic.hub.flow.AbstractFlow;
-import com.marklogic.hub.flow.Flow;
-import com.marklogic.hub.flow.FlowType;
+import com.marklogic.hub.flow.*;
 import com.marklogic.quickstart.auth.ConnectionAuthenticationToken;
 import com.marklogic.quickstart.model.EnvironmentConfig;
 import com.marklogic.quickstart.model.FlowModel;
 import com.marklogic.quickstart.model.PluginModel;
 import com.marklogic.quickstart.util.FileUtil;
-import com.marklogic.spring.batch.hub.FlowConfig;
-import com.marklogic.spring.batch.hub.StagingConfig;
 import org.apache.commons.io.FileUtils;
-import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
-import org.springframework.batch.core.JobParameters;
-import org.springframework.batch.core.JobParametersBuilder;
-import org.springframework.batch.core.launch.JobLauncher;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import javax.xml.parsers.ParserConfigurationException;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -51,7 +38,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 public class FlowManagerService {
@@ -110,10 +96,15 @@ public class FlowManagerService {
         return flowManager.getFlow(entityName, flowName, flowType);
     }
 
-    public JobExecution runFlow(Flow flow, int batchSize, int threadCount, JobStatusListener statusListener) {
+    public JobExecution runFlow(Flow flow, int batchSize, int threadCount, FlowStatusListener statusListener) {
 
         FlowManager flowManager = getFlowManager();
-        return flowManager.runFlow(flow, batchSize, threadCount, statusListener);
+        FlowRunner flowRunner = flowManager.newFlowRunner()
+            .withFlow(flow)
+            .withBatchSize(batchSize)
+            .withThreadCount(threadCount)
+            .onStatusChanged(statusListener);
+        return flowRunner.run();
     }
 
     private Path getMlcpOptionsFilePath(Path destFolder, String entityName, String flowName) {
@@ -144,47 +135,8 @@ public class FlowManagerService {
         return "{ \"input_file_path\": \"" + envConfig().getProjectDir().replace("\\", "\\\\") + "\" }";
     }
 
-    protected ConfigurableApplicationContext buildApplicationContext(JobStatusListener statusListener) throws Exception {
-        AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
-        ctx.register(StagingConfig.class);
-        ctx.register(FlowConfig.class);
-        ctx.register(RunInputFlowConfig.class);
-        ctx.getBeanFactory().registerSingleton("hubConfig", envConfig().getMlSettings());
-        ctx.getBeanFactory().registerSingleton("statusListener", statusListener);
-        ctx.refresh();
-        return ctx;
-    }
-
-    private JobParameters buildJobParameters(JsonNode json) throws ParserConfigurationException, IOException {
-        JobParametersBuilder jpb = new JobParametersBuilder();
-        jpb.addString("mlcpOptions", json.toString());
-        jpb.addString("uid", UUID.randomUUID().toString());
-
-        // convert the transform params into job params to be stored in ML for later reference
-        JsonNode tp = json.get("transform_param");
-        if (tp != null) {
-            String transformParams = tp.textValue().replace("\"", "");
-            String[] pairs = transformParams.split(",");
-
-            for (String pair : pairs) {
-                String[] tokens = pair.split("=");
-                jpb.addString(tokens[0], tokens[1]);
-            }
-        }
-        return jpb.toJobParameters();
-    }
-
-    public JobExecution runMlcp(JsonNode json, JobStatusListener statusListener) {
-        JobExecution result = null;
-        try {
-            ConfigurableApplicationContext ctx = buildApplicationContext(statusListener);
-            JobParameters params = buildJobParameters(json);
-            JobLauncher launcher = ctx.getBean(JobLauncher.class);
-            Job job = ctx.getBean(Job.class);
-            result = launcher.run(job, params);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return result;
+    public void runMlcp(Flow flow, JsonNode json, FlowStatusListener statusListener) {
+        MlcpRunner runner = new MlcpRunner(envConfig().getMlSettings(), flow, json, statusListener);
+        runner.run();
     }
 }

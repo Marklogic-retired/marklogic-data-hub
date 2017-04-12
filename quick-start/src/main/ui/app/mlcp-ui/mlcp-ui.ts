@@ -1,6 +1,6 @@
 import { Component, HostBinding, ViewContainerRef, EventEmitter } from '@angular/core';
 
-import { MdlSnackbarService } from 'angular2-mdl';
+import { MdlSnackbarService } from '@angular-mdl/core';
 
 import * as _ from 'lodash';
 
@@ -15,7 +15,6 @@ interface MlcpOptions {
 @Component({
   selector: 'app-mlcp',
   templateUrl: './mlcp-ui.html',
-  providers: [],
   styleUrls: ['./mlcp-ui.scss']
 })
 export class MlcpUiComponent {

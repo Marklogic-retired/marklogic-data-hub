@@ -18,7 +18,7 @@ class DataHubPlugin implements Plugin<Project> {
 
     @Override
     void apply(Project project) {
-        if (Double.parseDouble(project.gradle.gradleVersion) < 3.1) {
+        if (DataHub.versionCompare(project.gradle.gradleVersion, "3.1") == -1) {
             logger.error("\n\n" +
                 "********************************\n" +
                 "Hold the phone!\n\n" +
@@ -51,10 +51,11 @@ class DataHubPlugin implements Plugin<Project> {
 
         project.tasks.replace("mlLoadModules", DeployUserModulesTask)
         project.tasks.replace("mlWatch", HubWatchTask)
+        project.tasks.replace("mlDeleteModuleTimestampsFile", DeleteHubModuleTimestampsFileTask)
         String flowGroup = "MarkLogic Data Hub Flow Management"
         project.task("hubRunFlow", group: flowGroup, type: RunFlowTask)
 
-        logger.info("Finished initializing ml-gradle\n")
+        logger.info("Finished initializing ml-data-hub\n")
     }
 
     void initializeProjectExtensions(Project project) {
@@ -72,6 +73,6 @@ class DataHubPlugin implements Plugin<Project> {
             throw new RuntimeException("You must apply the ml-gradle plugin before the ml-datahub plugin.")
         }
 
-        mlAppDeployer.setCommands(dataHub.getCommands())
+        mlAppDeployer.setCommands(dataHub.getCommandList())
     }
 }

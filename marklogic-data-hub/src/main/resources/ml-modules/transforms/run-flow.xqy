@@ -39,13 +39,13 @@ declare function runFlow:transform(
       if (trace:enabled()) then
         trace:plugin-trace(
           $uri,
-          if ($envelope instance of element()) then ()
+          if ($flow/hub:data-format eq $flow:XML) then ()
           else
             null-node {},
           "writer",
           $flow/hub:type,
           $envelope,
-          if ($envelope instance of element()) then ()
+          if ($flow/hub:data-format eq $flow:XML) then ()
           else
             null-node {},
           xs:dayTimeDuration("PT0S")

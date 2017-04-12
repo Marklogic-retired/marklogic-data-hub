@@ -1,7 +1,7 @@
 import { Component, Input, EventEmitter,
   OnInit, OnChanges, Output, ViewChild } from '@angular/core';
 
-import { MdlMenuComponent, MdlButtonComponent } from 'angular2-mdl';
+import { MdlMenuComponent, MdlButtonComponent } from '@angular-mdl/core';
 
 import * as _ from 'lodash';
 

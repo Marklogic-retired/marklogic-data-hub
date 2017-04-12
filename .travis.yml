@@ -7,5 +7,4 @@ before_install:
  - ./.travis/download.sh
 
 script:
-  - docker-compose build
   - docker-compose run marklogic

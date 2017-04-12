@@ -360,6 +360,10 @@ public class HubConfig {
         return Paths.get(this.projectDir, USER_CONFIG_DIR, "servers");
     }
 
+    public Path getHubMimetypesDir() {
+        return Paths.get(this.projectDir, HUB_CONFIG_DIR, "mimetypes");
+    }
+
     public void setUsername(String username) {
         this.username = username;
     }
@@ -554,7 +558,13 @@ public class HubConfig {
         Properties properties = new Properties();
         InputStream inputStream = getClass().getClassLoader().getResourceAsStream("version.properties");
         properties.load(inputStream);
-        return (String)properties.get("version");
+        String version = (String)properties.get("version");
+
+        // this lets debug builds work from an IDE
+        if (version.equals("${project.version}")) {
+            version = "0.1.2";
+        }
+        return version;
     }
 
 

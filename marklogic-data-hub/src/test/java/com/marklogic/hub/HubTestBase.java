@@ -21,7 +21,9 @@ import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
 import com.marklogic.client.DatabaseClientFactory.Authentication;
 import com.marklogic.client.FailedRequestException;
+import com.marklogic.client.document.DocumentWriteSet;
 import com.marklogic.client.document.GenericDocumentManager;
+import com.marklogic.client.document.JSONDocumentManager;
 import com.marklogic.client.document.XMLDocumentManager;
 import com.marklogic.client.eval.EvalResult;
 import com.marklogic.client.eval.EvalResultIterator;
@@ -45,6 +47,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 public class HubTestBase {
@@ -70,15 +75,15 @@ public class HubTestBase {
     public static DatabaseClient traceModulesClient = null;
     public static DatabaseClient jobClient = null;
     public static DatabaseClient jobModulesClient = null;
+    private static FlowCacheInvalidator invalidator = null;
     private static Properties properties = new Properties();
     private static boolean initialized = false;
     public static XMLDocumentManager stagingDocMgr = getStagingMgr();
     public static XMLDocumentManager finalDocMgr = getFinalMgr();
+    public static JSONDocumentManager jobDocMgr = getJobMgr();
     public static GenericDocumentManager modMgr = getModMgr();
 
-    public static Properties getProperties() {
-        return properties;
-    }
+    private static boolean isInstalled = false;
 
     private static XMLDocumentManager getStagingMgr() {
         if (!initialized) {
@@ -101,6 +106,13 @@ public class HubTestBase {
         return finalClient.newXMLDocumentManager();
     }
 
+    private static JSONDocumentManager getJobMgr() {
+        if (!initialized) {
+            init();
+        }
+        return jobClient.newJSONDocumentManager();
+    }
+
     private static void init() {
         try {
             Properties p = new Properties();
@@ -118,7 +130,7 @@ public class HubTestBase {
             properties.putAll(p);
         }
         catch (IOException e) {
-            System.err.println("gradle-local.roperties file not loaded.");
+            System.err.println("gradle-local.properties file not loaded.");
         }
 
         host = properties.getProperty("mlHost");
@@ -169,6 +181,7 @@ public class HubTestBase {
         traceModulesClient  = DatabaseClientFactory.newClient(host, stagingPort, HubConfig.DEFAULT_MODULES_DB_NAME, user, password, traceAuthMethod);
         jobClient = DatabaseClientFactory.newClient(host, jobPort, user, password, jobAuthMethod);
         jobModulesClient  = DatabaseClientFactory.newClient(host, stagingPort, HubConfig.DEFAULT_MODULES_DB_NAME, user, password, jobAuthMethod);
+        invalidator = new FlowCacheInvalidator(stagingClient);
     }
 
     public HubTestBase() {
@@ -187,6 +200,10 @@ public class HubTestBase {
         return getHubConfig(PROJECT_PATH);
     }
 
+    protected static DataHub getDataHub() {
+        return new DataHub(getHubConfig());
+    }
+
     protected static HubConfig getHubConfig(String projectDir) {
         HubConfig hubConfig = new HubConfig(projectDir);
         hubConfig.host = host;
@@ -200,12 +217,21 @@ public class HubTestBase {
     }
 
     protected static void installHub() throws IOException {
-        new DataHub(getHubConfig()).install();
+        File projectDir = new File(PROJECT_PATH);
+        if (!projectDir.isDirectory() || !projectDir.exists()) {
+            getDataHub().initProject();
+        }
+
+        if (!isInstalled) {
+            getDataHub().install();
+            isInstalled = true;
+        }
     }
 
     protected static void uninstallHub() throws IOException {
-        new DataHub(getHubConfig()).uninstall();
+        getDataHub().uninstall();
         FileUtils.deleteDirectory(new File(PROJECT_PATH));
+        isInstalled = false;
     }
 
     protected static String getResource(String resourceName) throws IOException {
@@ -276,6 +302,25 @@ public class HubTestBase {
         databaseManager.clearDatabase(dbName);
     }
 
+    public static void clearDatabases(String... databases) {
+        List<Thread> threads = new ArrayList<>();
+        ManageClient client = getHubConfig().newManageClient();
+        DatabaseManager databaseManager = new DatabaseManager(client);
+        for (String database: databases) {
+            Thread thread = new Thread(() -> databaseManager.clearDatabase(database));
+            threads.add(thread);
+            thread.start();
+        }
+        threads.forEach((Thread thread) -> {
+            try {
+                thread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+
     protected static void installStagingDoc(String uri, DocumentMetadataHandle meta, String doc) {
         stagingDocMgr.write(uri, meta, new StringHandle(doc));
     }
@@ -286,6 +331,29 @@ public class HubTestBase {
 
     protected static void installFinalDoc(String uri, DocumentMetadataHandle meta, String doc) {
         finalDocMgr.write(uri, meta, new StringHandle(doc));
+    }
+
+    protected static void installModules(Map<String, String> modules) {
+
+        DocumentWriteSet writeSet = modMgr.newWriteSet();
+        modules.forEach((String path, String localPath) -> {
+            InputStreamHandle handle = new InputStreamHandle(HubTestBase.class.getClassLoader().getResourceAsStream(localPath));
+            String ext = FilenameUtils.getExtension(path);
+            switch(ext) {
+                case "xml":
+                    handle.setFormat(Format.XML);
+                    break;
+                case "json":
+                    handle.setFormat(Format.JSON);
+                    break;
+                default:
+                    handle.setFormat(Format.TEXT);
+            }
+            writeSet.add(path, handle);
+        });
+        modMgr.write(writeSet);
+
+        invalidator.invalidateCache();
     }
 
     protected static void installModule(String path, String localPath) {
@@ -328,7 +396,6 @@ public class HubTestBase {
         }
         catch(FailedRequestException e) {
             logger.error("Failed run code: " + query, e);
-            System.out.println(installer);
             e.printStackTrace();
             throw e;
         }

@@ -52,7 +52,7 @@ public class SearchController extends EnvironmentAware {
 
     @RequestMapping(value = "/doc", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<String> getTrace(@RequestParam HubDatabase database, @RequestParam String docUri) {
+    public ResponseEntity<String> getDoc(@RequestParam HubDatabase database, @RequestParam String docUri) {
         HttpHeaders headers = new HttpHeaders();
         String body = searchService.getDoc(database, docUri);
         if (body.startsWith("<")) {

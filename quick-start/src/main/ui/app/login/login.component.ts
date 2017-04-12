@@ -8,15 +8,14 @@ import { ProjectService } from '../projects/projects.service';
 import { InstallService } from '../installer';
 import { LoginInfo } from './login-info.model';
 import { HubSettings } from '../environment/hub-settings.model';
-import { MdlDialogService } from 'angular2-mdl';
+import { MdlDialogService } from '@angular-mdl/core';
 
 import * as SemVer from 'semver';
 
 @Component({
   selector: 'app-login',
-  templateUrl: './login.template.html',
-  providers: [],
-  styleUrls: ['./login.style.scss']
+  templateUrl: './login.component.html',
+  styleUrls: ['./login.component.scss']
 })
 
 export class LoginComponent implements OnInit {
@@ -228,7 +227,7 @@ export class LoginComponent implements OnInit {
 
   restoreInitDefaults($evt: MouseEvent) {
     this.dialogService.confirm('Really restore the default settings?', 'Cancel', 'Restore').subscribe(() => {
-    this.initSettings = _.clone(this.defaultSettings);
+      this.initSettings = _.clone(this.defaultSettings);
     },
     () => {});
   }
@@ -254,7 +253,8 @@ export class LoginComponent implements OnInit {
       let installInfo = this.currentEnvironment.installInfo;
 
       if (installInfo && installInfo.installed) {
-        if (SemVer.gt(this.currentEnvironment.runningVersion, this.currentEnvironment.installedVersion)) {
+        if (this.currentEnvironment.runningVersion !== '0.1.2' &&
+            SemVer.gt(this.currentEnvironment.runningVersion, this.currentEnvironment.installedVersion)) {
           this.gotoTab('RequiresUpdate');
         } else {
           // goto login tab

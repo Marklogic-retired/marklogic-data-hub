@@ -5,9 +5,7 @@ import { Flow } from '../entities/flow.model';
 
 import { EntitiesService } from '../entities/entities.service';
 
-import { MdlSnackbarService } from 'angular2-mdl';
-
-import { MdlDialogService, MdlDialogReference } from 'angular2-mdl';
+import { MdlDialogService, MdlDialogReference, MdlSnackbarService } from '@angular-mdl/core';
 
 import { MlcpUiComponent } from '../mlcp-ui';
 import { HarmonizeFlowOptionsComponent } from '../harmonize-flow-options/harmonize-flow-options.component';
@@ -28,7 +26,7 @@ import * as _ from 'lodash';
   styleUrls: ['./entities.component.scss']
 })
 export class HasBugsDialogComponent {
-  constructor(private dialog: MdlDialogReference) { }
+  constructor(public dialog: MdlDialogReference) { }
 }
 /* tslint:enable:max-line-length */
 

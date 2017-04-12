@@ -76,31 +76,31 @@ public class ServerCollector extends AbstractCollector {
 
         public Vector<String> run(String moduleUri, Map<String, Object> options) {
             try {
-            RequestParameters params = new RequestParameters();
-            params.add("module-uri", moduleUri);
+                RequestParameters params = new RequestParameters();
+                params.add("module-uri", moduleUri);
 
                 if (options != null) {
                     ObjectMapper objectMapper = new ObjectMapper();
                     params.put("options", objectMapper.writeValueAsString(options));
                 }
 
-            ServiceResultIterator resultItr;
+                ServiceResultIterator resultItr;
 
-            resultItr = this.getServices().get(params);
+                resultItr = this.getServices().get(params);
 
-            if (resultItr == null || ! resultItr.hasNext()) {
-                return null;
+                if (resultItr == null || !resultItr.hasNext()) {
+                    return null;
+                }
+
+                ServiceResult res = resultItr.next();
+                JacksonDatabindHandle<Vector<String>> handle = new JacksonDatabindHandle<>(new Vector<String>());
+                handle.getMapper().disableDefaultTyping();
+                return res.getContent(handle).get();
             }
-
-            ServiceResult res = resultItr.next();
-            JacksonDatabindHandle<Vector<String>> handle = new JacksonDatabindHandle<>(new Vector<String>());
-            handle.getMapper().disableDefaultTyping();
-            return res.getContent(handle).get();
-        }
             catch(Exception e) {
                 e.printStackTrace();
                 throw new RuntimeException(e);
-    }
-}
+            }
+        }
     }
 }

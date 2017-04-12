@@ -24,7 +24,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 
-import java.util.List;
+import java.util.*;
 
 @Import({ StagingConfig.class, FlowConfig.class })
 public class LoadAndRunFlow extends AbstractMarkLogicBatchConfig implements EnvironmentAware {
@@ -63,8 +63,9 @@ public class LoadAndRunFlow extends AbstractMarkLogicBatchConfig implements Envi
                     batch.add(uri, item.getMetadata(), item.getContent());
                 }
                 ServerTransform runFlow = new ServerTransform("run-flow");
-                runFlow.addParameter("entity-name", entityName);
-                runFlow.addParameter("flow-name", flowName);
+                runFlow.addParameter("job-id", UUID.randomUUID().toString());
+                runFlow.addParameter("entity", entityName);
+                runFlow.addParameter("flow", flowName);
                 docMgr.write(batch, runFlow);
             }
         };

@@ -3,7 +3,7 @@ plugins {
     id 'java'
     id 'maven-publish'
     id 'com.jfrog.bintray' version '1.7.2'
-    id 'com.marklogic.ml-gradle' version '2.5.0'
+    id 'com.marklogic.ml-gradle' version '2.6.0'
     id 'com.moowork.node' version '1.1.1'
 }
 
@@ -21,9 +21,9 @@ targetCompatibility = 1.8
 dependencies {
     compile 'org.springframework.batch:spring-batch-core:3.0.6.RELEASE'
     compile 'org.springframework:spring-jdbc:4.2.6.RELEASE'
-    compile 'com.marklogic:java-client-api:3.0.5'
-    compile 'com.marklogic:ml-javaclient-util:2.12.1'
-    compile 'com.marklogic:ml-app-deployer:2.5.0'
+    compile 'com.marklogic:java-client-api:3.0.7'
+    compile 'com.marklogic:ml-javaclient-util:2.13.0'
+    compile 'com.marklogic:ml-app-deployer:2.6.0'
     compile 'com.marklogic:marklogic-spring-batch-core:0.7.0'
     compile 'commons-io:commons-io:2.4'
     testCompile 'org.springframework.batch:spring-batch-test:3.0.6.RELEASE'
@@ -86,7 +86,13 @@ processResources {
     }
 }
 
-if (!gradle.startParameter.taskNames.contains('bootrun')) {
+if (!(
+    gradle.startParameter.taskNames*.toLowerCase().contains("bootrun") ||
+    gradle.startParameter.taskNames*.toLowerCase().contains("test") ||
+    gradle.startParameter.taskNames*.toLowerCase().contains("publishplugins") ||
+    gradle.startParameter.taskNames*.toLowerCase().contains("bintrayUpload")
+    )
+   ) {
   processResources.dependsOn copyUIAssets
 }
 

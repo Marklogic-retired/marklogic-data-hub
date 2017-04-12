@@ -15,12 +15,4 @@ public class MarkLogicJobRepoConfig extends FlowConfig {
         logger.info("Connecting to MarkLogic via: " + config);
         return new BatchDatabaseClientProvider(config);
     }
-
-    @Bean
-    public DatabaseClientProvider jobRepositoryDatabaseClientProvider() {
-        DatabaseClientConfig config = hubConfig.getJobDbClientConfig();
-        logger.info("Connecting to MarkLogic JobRepository via: " + config);
-        return new BatchDatabaseClientProvider(config);
-    }
-
 }

@@ -1,9 +1,9 @@
 package com.marklogic.spring.batch.hub;
 
-import com.marklogic.hub.JobStatusListener;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.hub.collector.Collector;
 import com.marklogic.hub.collector.ServerCollector;
-import com.marklogic.hub.flow.Flow;
+import com.marklogic.hub.flow.*;
 import org.springframework.batch.core.*;
 import org.springframework.batch.core.configuration.annotation.JobScope;
 import org.springframework.batch.core.scope.context.ChunkContext;
@@ -16,8 +16,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 
+import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 @Configuration
 public class RunHarmonizeFlowConfig extends AbstractMarkLogicBatchConfig {
@@ -26,11 +26,25 @@ public class RunHarmonizeFlowConfig extends AbstractMarkLogicBatchConfig {
     private Flow flow;
 
     @Autowired(required = false)
-    JobStatusListener statusListener;
+    FlowStatusListener statusListener;
+
+    @Autowired(required = false)
+    FlowFinishedListener finishedListener;
+
+    @Autowired(required = false)
+    FlowItemCompleteListener flowItemCompleteListener;
+
+    @Autowired(required = false)
+    FlowItemFailureListener flowItemFailureListener;
+
+    @Autowired(required = false)
+    BatchCompleteListener batchCompleteListener;
+
+    @Autowired(required = false)
+    String jobId;
 
     private int totalItems = 0;
     private int completedItems = 0;
-    private long jobId;
 
     @Bean
     public Job job(@Qualifier("step1") Step step1) {
@@ -39,15 +53,16 @@ public class RunHarmonizeFlowConfig extends AbstractMarkLogicBatchConfig {
             .preventRestart()
             .listener(new JobExecutionListener() {
             @Override
-            public void beforeJob(JobExecution jobExecution) {
-                jobId = jobExecution.getJobId();
-            }
+            public void beforeJob(JobExecution jobExecution) {}
 
             @Override
             public void afterJob(JobExecution jobExecution) {
                 if (statusListener != null) {
                     statusListener.onStatusChange(jobId, 100, "");
-                    statusListener.onJobFinished();
+                }
+
+                if (finishedListener != null) {
+                    finishedListener.onFlowFinished();
                 }
             }
         }).build();
@@ -68,6 +83,7 @@ public class RunHarmonizeFlowConfig extends AbstractMarkLogicBatchConfig {
         ItemProcessor<String, String> ip = new PassThroughItemProcessor<>();
         SimpleAsyncTaskExecutor taskExecutor = new SimpleAsyncTaskExecutor();
         taskExecutor.setConcurrencyLimit(threadCount);
+
 
         return stepBuilderFactory.get("step1")
             .<String, String>chunk(batchSize)
@@ -105,6 +121,36 @@ public class RunHarmonizeFlowConfig extends AbstractMarkLogicBatchConfig {
 
                 @Override
                 public void afterChunk(ChunkContext context) {
+                    String flowResponse = (String)context.getAttribute("flowResponse");
+                    if (flowResponse == null) {
+                        return;
+                    }
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    try {
+                        RunFlowResponse response = objectMapper.readValue(flowResponse, RunFlowResponse.class);
+                        if (flowItemCompleteListener != null) {
+                            response.completedItems.forEach((String item) -> {
+                                flowItemCompleteListener.processCompletion(jobId, item);
+                            });
+                        }
+
+                        if (flowItemFailureListener != null) {
+                            response.failedItems.forEach((String item) -> {
+                                flowItemFailureListener.processFailure(jobId, item);
+                            });
+                        }
+
+                        if (batchCompleteListener != null) {
+                            if (response.completedItems.size() > 0) {
+                                batchCompleteListener.onBatchSucceeded();
+                            }
+                            else {
+                                batchCompleteListener.onBatchFailed();
+                            }
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
 
                 }
 

@@ -26,7 +26,6 @@ import com.marklogic.client.query.StructuredQueryBuilder;
 import com.marklogic.client.query.StructuredQueryDefinition;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubDatabase;
-import com.marklogic.hub.util.PerformanceLogger;
 import com.marklogic.quickstart.model.SearchQuery;
 import com.marklogic.quickstart.util.QueryHelper;
 import org.w3c.dom.Document;
@@ -61,6 +60,7 @@ public class SearchService extends SearchableService {
             Path dir = Paths.get(hubConfig.projectDir, HubConfig.USER_CONFIG_DIR, HubConfig.SEARCH_OPTIONS_FILE);
             if (dir.toFile().exists()) {
                 DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+                dbf.setNamespaceAware(true);
                 DocumentBuilder db = dbf.newDocumentBuilder();
                 Document doc = db.parse(dir.toFile());
                 return doc.getDocumentElement();
@@ -69,13 +69,10 @@ public class SearchService extends SearchableService {
         catch (Exception e) {
             throw new RuntimeException(e);
         }
-
         return null;
     }
 
     public StringHandle search(SearchQuery searchQuery) {
-
-        long startTime = PerformanceLogger.monitorTimeInsideMethod();
         QueryManager queryMgr;
         if (searchQuery.database.equals(HubDatabase.STAGING)) {
             queryMgr = stagingQueryMgr;
@@ -105,14 +102,11 @@ public class SearchService extends SearchableService {
         StructuredQueryBuilder.AndQuery sqd = sb.and(queries.toArray(new StructuredQueryDefinition[0]));
 
         String searchXml = QueryHelper.serializeQuery(sb, sqd, searchQuery.sort, getOptions());
-        logger.info(searchXml);
         RawCombinedQueryDefinition querydef = queryMgr.newRawCombinedQueryDefinitionAs(Format.XML, searchXml);
 
         StringHandle sh = new StringHandle();
         sh.setFormat(Format.JSON);
-        StringHandle results = queryMgr.search(querydef, sh, searchQuery.start);
-        PerformanceLogger.logTimeInsideMethod(startTime, "SearchService.search()");
-        return results;
+        return queryMgr.search(querydef, sh, searchQuery.start);
     }
 
     public String getDoc(HubDatabase database, String docUri) {

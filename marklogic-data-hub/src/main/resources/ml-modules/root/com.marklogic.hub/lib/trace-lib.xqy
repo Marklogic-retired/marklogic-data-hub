@@ -96,23 +96,65 @@ declare function trace:init-trace($format as xs:string)
   map:put($current-trace-settings, "data-format", $format)
 };
 
-declare function trace:reset-error-count()
+(:declare function trace:reset-counts()
 {
-  map:put($current-trace-settings, "error-count", 0)
-};
+  map:put($current-trace-settings, "error-count", 0),
+  map:put($current-trace-settings, "completed-items", json:array()),
+  map:put($current-trace-settings, "failed-items", json:array())
+};:)
 
 declare function trace:increment-error-count()
 {
-  map:put($current-trace-settings, "error-count", (map:get($current-trace-settings, "error-count") + 1))
+  map:put($current-trace-settings, "error-count", trace:get-error-count() + 1)
 };
 
 declare function trace:get-error-count()
 {
-  map:get($current-trace-settings, "error-count")
+  (map:get($current-trace-settings, "error-count"), 0)[1]
 };
 
+declare function trace:add-failed-item($item as xs:string)
+{
+  json:array-push(trace:get-failed-items(), $item)
+};
+
+declare function trace:add-completed-item($item as xs:string)
+{
+  json:array-push(trace:get-completed-items(), $item)
+};
+
+declare function trace:get-completed-items()
+{
+  if (map:contains($current-trace-settings, "completed-items")) then
+    map:get($current-trace-settings, "completed-items")
+  else
+    let $value := json:array()
+    let $_ := map:put($current-trace-settings, "completed-items", $value)
+    return
+      $value
+};
+
+declare function trace:get-failed-items()
+{
+  if (map:contains($current-trace-settings, "failed-items")) then
+    map:get($current-trace-settings, "failed-items")
+  else
+    let $value := json:array()
+    let $_ := map:put($current-trace-settings, "failed-items", $value)
+    return
+      $value
+};
 
 declare function trace:write-trace()
+{
+  let $identifier := map:get($current-trace, "identifier")
+  where $identifier instance of xs:string
+  return
+    trace:add-completed-item($identifier),
+  trace:write-error-trace()
+};
+
+declare function trace:write-error-trace()
 {
   if (trace:enabled() or trace:has-errors()) then (
     let $format := map:get($current-trace-settings, "data-format")
@@ -133,7 +175,7 @@ declare function trace:write-trace()
               return
                 if (fn:exists($m)) then
                   map:entry($key, map:new((
-                    map:entry("pluginModuleUri", map:get($m, "pluginModuleUri")),
+                    map:get($m, "pluginModuleUri") ! map:entry("pluginModuleUri", .),
                     map:entry("input", map:get($m, "input")),
                     map:entry("output", map:get($m, "output")),
                     map:entry("error", map:get($m, "error")),
@@ -158,7 +200,7 @@ declare function trace:write-trace()
             return
               if (fn:exists($m)) then
                 element { $key } {
-                  element pluginModuleUri { map:get($m, "pluginModuleUri") },
+                  map:get($m, "pluginModuleUri") ! element pluginModuleUri { . },
                   element input { map:get($m, "input") },
                   element output { map:get($m, "output") },
                   element error { map:get($m, "error") },
@@ -220,7 +262,7 @@ declare function trace:plugin-trace(
   map:put($current-trace, "identifier", $identifier),
   map:put($current-trace, "flowType", $flowType),
   let $plugin-map := map:new((
-    map:entry("pluginModuleUri", $module-uri),
+    $module-uri ! map:entry("pluginModuleUri", .),
     map:entry("input", $input),
     map:entry("output", $output),
     map:entry("duration", $duration)
@@ -239,6 +281,7 @@ declare function trace:error-trace(
   $duration as xs:dayTimeDuration)
 {
   let $_ := trace:increment-error-count()
+  let $_ := trace:add-failed-item($identifier)
   let $format :=
     let $o :=
       if ($input instance of document-node()) then
@@ -257,7 +300,7 @@ declare function trace:error-trace(
   map:put($current-trace, "flowType", $flowType),
   map:put($current-trace-settings, "_has_errors", fn:true()),
   let $plugin-map := map:new((
-    map:entry("pluginModuleUri", $module-uri),
+    $module-uri ! map:entry("pluginModuleUri", .),
     map:entry("input", $input),
     map:entry("error",
       if (map:get($current-trace-settings, "data-format") eq $FORMAT-JSON) then
@@ -268,7 +311,7 @@ declare function trace:error-trace(
     map:entry("duration", $duration)
   ))
   let $_ := map:put($current-trace, $plugin-type || "Plugin", $plugin-map)
-  let $_ := trace:write-trace()
+  let $_ := trace:write-error-trace()
   return ()
 };
 

@@ -7,9 +7,8 @@ import { JobListenerService } from '../jobs/job-listener.service';
 
 @Component({
   selector: 'app-header',
-  templateUrl: './header.tpl.html',
-  providers: [],
-  styleUrls: ['./header.style.scss'],
+  templateUrl: './header.component.html',
+  styleUrls: ['./header.component.scss'],
 })
 export class HeaderComponent {
 

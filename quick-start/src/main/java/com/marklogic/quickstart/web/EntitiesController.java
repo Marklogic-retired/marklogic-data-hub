@@ -16,7 +16,6 @@
 package com.marklogic.quickstart.web;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.marklogic.hub.JobStatusListener;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.FlowType;
 import com.marklogic.quickstart.EnvironmentAware;
@@ -26,7 +25,6 @@ import com.marklogic.quickstart.model.JobStatusMessage;
 import com.marklogic.quickstart.service.EntityManagerService;
 import com.marklogic.quickstart.service.FlowManagerService;
 import com.marklogic.quickstart.service.JobService;
-import org.springframework.batch.core.JobExecution;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -80,7 +78,7 @@ class EntitiesController extends EnvironmentAware {
 
     @RequestMapping(value = "/entities/{entityName}/flows/harmonize/{flowName}/run", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<JobExecution> runFlow(
+    public ResponseEntity<?> runHarmonizeFlow(
             @PathVariable String entityName,
             @PathVariable String flowName,
             @RequestBody JsonNode json) {
@@ -88,22 +86,17 @@ class EntitiesController extends EnvironmentAware {
         int batchSize = json.get("batchSize").asInt();
         int threadCount = json.get("threadCount").asInt();
 
-        ResponseEntity<JobExecution> resp;
+        ResponseEntity<?> resp;
 
         Flow flow = flowManagerService.getServerFlow(entityName, flowName, FlowType.HARMONIZE);
         if (flow == null) {
             resp = new ResponseEntity<>(HttpStatus.CONFLICT);
         }
         else {
-            JobExecution execution = flowManagerService.runFlow(flow, batchSize, threadCount, new JobStatusListener() {
-                @Override
-                public void onStatusChange(long jobId, int percentComplete, String message) {
-                    template.convertAndSend("/topic/flow-status", new JobStatusMessage(Long.toString(jobId), percentComplete, message, FlowType.HARMONIZE.toString()));
-                }
-                @Override
-                public void onJobFinished() {}
+            flowManagerService.runFlow(flow, batchSize, threadCount, (jobId, percentComplete, message) -> {
+                template.convertAndSend("/topic/flow-status", new JobStatusMessage(jobId, percentComplete, message, FlowType.HARMONIZE.toString()));
             });
-            resp = new ResponseEntity<>(execution, HttpStatus.OK);
+            resp = new ResponseEntity<>(HttpStatus.OK);
         }
 
         return resp;
@@ -123,22 +116,26 @@ class EntitiesController extends EnvironmentAware {
     }
 
     @RequestMapping(value = "/entities/{entityName}/flows/input/{flowName}/run", method = RequestMethod.POST)
-    @ResponseBody
-    public JobExecution runInputFlow(
+    public ResponseEntity<?> runInputFlow(
             @PathVariable String entityName,
             @PathVariable String flowName,
             @RequestBody JsonNode json) throws IOException {
-        flowManagerService.saveOrUpdateFlowMlcpOptionsToFile(entityName,
+
+        ResponseEntity<?> resp;
+
+        Flow flow = flowManagerService.getServerFlow(entityName, flowName, FlowType.INPUT);
+        if (flow == null) {
+            resp = new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        else {
+            flowManagerService.saveOrUpdateFlowMlcpOptionsToFile(entityName,
                 flowName, json.toString());
 
-        return flowManagerService.runMlcp(json, new JobStatusListener() {
-            @Override
-            public void onStatusChange(long jobId, int percentComplete, String message) {
-                template.convertAndSend("/topic/flow-status", new JobStatusMessage(Long.toString(jobId), percentComplete, message, FlowType.INPUT.toString()));
-            }
-            @Override
-            public void onJobFinished() {}
-        });
+            flowManagerService.runMlcp(flow, json, (jobId, percentComplete, message) -> template.convertAndSend("/topic/flow-status", new JobStatusMessage(jobId, percentComplete, message, FlowType.INPUT.toString())));
+            resp = new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+
+        return resp;
     }
 
     @RequestMapping(value = "/entities/{entityName}/flows/{flowName}/cancel/{jobId}", method = RequestMethod.DELETE)

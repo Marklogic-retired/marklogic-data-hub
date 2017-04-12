@@ -25,7 +25,7 @@
       </div>
     </div>
   </div> -->
-  <template ngFor let-facet [ngForOf]="(facets | objectToArray)">
+  <ng-template ngFor let-facet [ngForOf]="(facets | objectToArray)">
     <div class="facet" *ngIf="isVisible(facet)" mdl-shadow="4">
       <div class="facet-name">{{ facet.__key }}</div>
       <div *ngFor="let value of facet.facetValues" class="facet-value" (click)="toggle(facet.__key, value.name)">
@@ -40,5 +40,5 @@
         <a href (click)="showMore({facet: facet, facetName: facet.__key})">see more ...</a>
       </div>
     </div>
-  </template>
+  </ng-template>
 </div>

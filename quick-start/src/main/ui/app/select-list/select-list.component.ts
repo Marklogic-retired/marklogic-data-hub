@@ -1,13 +1,13 @@
 import { Component, Input, Output, EventEmitter, OnInit, OnChanges } from '@angular/core';
 
-import { MdlDialogService } from 'angular2-mdl';
+import { MdlDialogService } from '@angular-mdl/core';
 
 import * as _ from 'lodash';
 
 @Component({
   selector: 'app-select-list',
-  templateUrl: './select-list.tpl.html',
-  styleUrls: ['./select-list.styles.scss'],
+  templateUrl: './select-list.component.html',
+  styleUrls: ['./select-list.component.scss'],
 })
 
 /**
@@ -68,13 +68,13 @@ export class SelectListComponent implements OnInit, OnChanges {
   removeItem(item: any, event: Event): void {
     const message = 'Remove the project from the list of projects? Does not destroy anything on disk.';
     this.dialogService.confirm(message, 'Cancel', 'Remove').subscribe(() => {
-    this.removedItem.emit({
-      item: item,
-      event: event
-    });
-    if (event) {
-      event.stopPropagation();
-    }
+      this.removedItem.emit({
+        item: item,
+        event: event
+      });
+      if (event) {
+        event.stopPropagation();
+      }
     },
     () => {});
   }

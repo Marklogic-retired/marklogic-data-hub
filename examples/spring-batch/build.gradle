@@ -1,10 +1,16 @@
+buildscript {
+  repositories {
+    maven {url 'http://developer.marklogic.com/maven2/'}
+  }
+}
+
 plugins {
     id 'java'
     id 'eclipse'
     id 'idea'
     id 'application'
     id 'net.saliman.properties' version '1.4.6'
-    id 'com.marklogic.ml-data-hub' version '1.1.1'
+    id 'com.marklogic.ml-data-hub' version '1.1.2'
 }
 
 repositories {
@@ -13,9 +19,9 @@ repositories {
 }
 
 dependencies {
-    compile 'com.marklogic:marklogic-data-hub:1.1.1'
+    compile 'com.marklogic:marklogic-data-hub:1.1.2'
     compile 'com.marklogic:marklogic-spring-batch-core:0.6.0'
-    compile 'com.marklogic:ml-javaclient-util:2.12.1'
+    compile 'com.marklogic:ml-javaclient-util:2.13.0'
     testCompile 'com.marklogic:marklogic-spring-batch-test:0.6.0'
 }
 

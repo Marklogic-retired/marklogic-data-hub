@@ -15,7 +15,6 @@ plugins {
     id 'java'
     id 'eclipse'
     id 'idea'
-    id 'com.eriwen.gradle.js' version '1.12.1'
     id 'com.moowork.node' version '1.1.1'
 }
 
@@ -51,7 +50,7 @@ dependencies {
 
     // Needed for the Upload feature using mlcp
     compile("com.marklogic:mlcp-util:0.3.0")
-    compile("com.marklogic:mlcp:8.0-5")
+    compile("com.marklogic:mlcp:8.0.6.3")
     compile("com.marklogic:marklogic-spring-web:1.0")
 
     testCompile("junit:junit")
@@ -112,7 +111,13 @@ processResources {
     }
 }
 
-if (!gradle.startParameter.taskNames.contains('bootrun')) {
+if (!(
+    gradle.startParameter.taskNames*.toLowerCase().contains("bootrun") ||
+    gradle.startParameter.taskNames*.toLowerCase().contains("test") ||
+    gradle.startParameter.taskNames*.toLowerCase().contains("publishplugins") ||
+    gradle.startParameter.taskNames*.toLowerCase().contains("bintrayUpload")
+    )
+   ) {
   processResources.dependsOn copyIndexHtml
 }
 

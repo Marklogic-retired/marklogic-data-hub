@@ -25,7 +25,6 @@ import com.marklogic.client.query.QueryManager;
 import com.marklogic.client.query.RawCombinedQueryDefinition;
 import com.marklogic.client.query.StructuredQueryBuilder;
 import com.marklogic.client.query.StructuredQueryDefinition;
-import com.marklogic.hub.util.PerformanceLogger;
 import com.marklogic.quickstart.model.TraceQuery;
 import com.marklogic.quickstart.util.QueryHelper;
 
@@ -46,7 +45,6 @@ public class TraceService extends SearchableService {
 
 
     public StringHandle getTraces(TraceQuery traceQuery) {
-        long startTime = PerformanceLogger.monitorTimeInsideMethod();
         queryMgr.setPageLength(traceQuery.count);
 
         StructuredQueryBuilder sb = queryMgr.newStructuredQueryBuilder(SEARCH_OPTIONS_NAME);
@@ -83,14 +81,11 @@ public class TraceService extends SearchableService {
         String sort = "date-desc";
         String searchXml = QueryHelper.serializeQuery(sb, sqd, sort);
 
-        logger.info(searchXml);
         RawCombinedQueryDefinition querydef = queryMgr.newRawCombinedQueryDefinition(new StringHandle(searchXml), SEARCH_OPTIONS_NAME);
         querydef.setResponseTransform(new ServerTransform("trace-search"));
         StringHandle sh = new StringHandle();
         sh.setFormat(Format.JSON);
-        StringHandle results = queryMgr.search(querydef, sh, traceQuery.start);
-        PerformanceLogger.logTimeInsideMethod(startTime, "TraceService.getTraces()");
-        return results;
+        return queryMgr.search(querydef, sh, traceQuery.start);
     }
 
     public JsonNode getTrace(String traceId) {

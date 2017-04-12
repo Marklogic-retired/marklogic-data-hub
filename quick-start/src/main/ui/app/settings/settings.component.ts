@@ -6,12 +6,12 @@ import { InstallService } from '../installer';
 
 import { ProjectService } from '../projects';
 
-import { MdlDialogService } from 'angular2-mdl';
+import { MdlDialogService } from '@angular-mdl/core';
 
 @Component({
   selector: 'app-settings',
-  templateUrl: './settings.tpl.html',
-  styleUrls: ['./settings.style.scss'],
+  templateUrl: './settings.component.html',
+  styleUrls: ['./settings.component.scss'],
 })
 export class SettingsComponent {
 
@@ -49,20 +49,20 @@ export class SettingsComponent {
 
   uninstall(): void {
     this.dialogService.confirm('Uninstall the hub from MarkLogic?', 'Cancel', 'Uninstall').subscribe(() => {
-    this.uninstallStatus = '';
-    this.isUninstalling = true;
-    let emitter = this.install.messageEmitter.subscribe((payload: any) => {
-      this.percentComplete = payload.percentComplete;
-      this.uninstallStatus += '\n' + payload.message;
+      this.uninstallStatus = '';
+      this.isUninstalling = true;
+      let emitter = this.install.messageEmitter.subscribe((payload: any) => {
+        this.percentComplete = payload.percentComplete;
+        this.uninstallStatus += '\n' + payload.message;
 
-      if (this.percentComplete === 100) {
-        emitter.unsubscribe();
-        setTimeout(() => {
-          this.router.navigate(['login']);
-        }, 1000);
-      }
-    });
-    this.install.uninstall();
+        if (this.percentComplete === 100) {
+          emitter.unsubscribe();
+          setTimeout(() => {
+            this.router.navigate(['login']);
+          }, 1000);
+        }
+      });
+      this.install.uninstall();
     },
     // cancel.. do nothing
     () => {});

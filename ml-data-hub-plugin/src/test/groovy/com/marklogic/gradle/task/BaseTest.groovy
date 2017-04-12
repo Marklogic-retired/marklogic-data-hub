@@ -14,12 +14,12 @@ class BaseTest extends Specification {
 
     public static boolean makeProperties = true;
 
-    final Logger log = LoggerFactory.getLogger(getClass())
-    @Rule final TemporaryFolder testProjectDir = new TemporaryFolder()
-    File buildFile
-    File propertiesFile
+    static final Logger log = LoggerFactory.getLogger(getClass())
+    static final TemporaryFolder testProjectDir = new TemporaryFolder()
+    static File buildFile
+    static File propertiesFile
 
-    BuildResult runTask(String... task) {
+    static BuildResult runTask(String... task) {
         log.info("DEBUG: running task " + task)
         return GradleRunner.create()
             .withProjectDir(testProjectDir.root)
@@ -46,16 +46,17 @@ class BaseTest extends Specification {
         return hubConfig.newStagingClient()
     }
 
-    void createBuildFile() {
+    static void createBuildFile() {
+        String version = new HubConfig(testProjectDir.toString()) .getJarVersion()
         buildFile = testProjectDir.newFile('build.gradle')
         buildFile << """
             plugins {
-                id 'com.marklogic.ml-data-hub'
+                id 'com.marklogic.ml-data-hub' version '${version}'
             }
         """
     }
 
-    void createFullPropertiesFile() {
+    static void createFullPropertiesFile() {
         propertiesFile = testProjectDir.newFile('gradle.properties')
         propertiesFile << """
             mlHost=localhost
@@ -90,9 +91,9 @@ class BaseTest extends Specification {
             mlTraceForestsPerHost=1
             mlTraceAuth=digest
 
-            mlJobAppserverName=data-hub-JOB
+            mlJobAppserverName=data-hub-JOBS
             mlJobPort=8013
-            mlJobDbName=data-hub-JOB
+            mlJobDbName=data-hub-JOBS
             mlJobForestsPerHost=1
             mlJobAuth=digest
 
@@ -102,7 +103,8 @@ class BaseTest extends Specification {
         """
     }
 
-    def setup() {
+    def setupSpec() {
+        testProjectDir.create()
         createBuildFile()
         createFullPropertiesFile()
     }
