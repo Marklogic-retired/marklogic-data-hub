@@ -122,6 +122,8 @@ public class FlowRunnerImpl implements FlowRunner {
 
     @Override
     public JobExecution run() {
+        String jobId = UUID.randomUUID().toString();
+
         result = null;
         if (options == null) {
             options = new HashMap<>();
@@ -132,7 +134,10 @@ public class FlowRunnerImpl implements FlowRunner {
         AtomicLong successfulBatches = new AtomicLong(0);
         AtomicLong failedBatches = new AtomicLong(0);
         JobManager jobManager = new JobManager(hubConfig.newJobDbClient());
+        com.marklogic.hub.job.Job runningJob = com.marklogic.hub.job.Job.withFlow(flow)
+            .withJobId(jobId);
         try {
+
             DatabaseClient srcClient;
             if (sourceDatabase.equals(HubDatabase.STAGING)) {
                 srcClient = hubConfig.newStagingClient();
@@ -149,24 +154,22 @@ public class FlowRunnerImpl implements FlowRunner {
                 targetDatabase = hubConfig.finalDbName;
             }
 
-            ConfigurableApplicationContext ctx = buildApplicationContext(flow, srcClient);
+            ConfigurableApplicationContext ctx = buildApplicationContext(flow, jobId, srcClient);
 
-            flowItemCompleteListeners.add((jobId, itemId) -> {
+            flowItemCompleteListeners.add((id, itemId) -> {
                 successfulEvents.addAndGet(1);
             });
 
-            flowItemFailureListeners.add((jobId, itemId) -> {
+            flowItemFailureListeners.add((id, itemId) -> {
                 failedEvents.addAndGet(1);
             });
 
             flowFinishedListeners.add(() -> {
                 // store the thing in MarkLogic
-                com.marklogic.hub.job.Job job = com.marklogic.hub.job.Job.withFlow(flow)
-
-                    .withJobId(Long.toString(result.getJobId()))
+                runningJob
                     .setCounts(successfulEvents.get(), failedEvents.get(), successfulBatches.get(), failedBatches.get())
                     .withEndTime(new Date());
-                jobManager.saveJob(job);
+                jobManager.saveJob(runningJob);
                 isFinished = true;
             });
 
@@ -201,14 +204,12 @@ public class FlowRunnerImpl implements FlowRunner {
 
         runningThread.start();
 
-        jobManager.saveJob(com.marklogic.hub.job.Job.withFlow(flow)
-            .withJobId(Long.toString(result.getJobId()))
-        );
+        jobManager.saveJob(runningJob);
 
         return result;
     }
 
-    private ConfigurableApplicationContext buildApplicationContext(Flow flow, DatabaseClient srcClient) {
+    private ConfigurableApplicationContext buildApplicationContext(Flow flow, String customJobId, DatabaseClient srcClient) {
         if (options == null) {
             options = new HashMap<>();
         }
@@ -219,6 +220,7 @@ public class FlowRunnerImpl implements FlowRunner {
         ctx.getBeanFactory().registerSingleton("hubConfig", hubConfig);
         ctx.getBeanFactory().registerSingleton("flow", flow);
         ctx.getBeanFactory().registerSingleton("srcClient", srcClient);
+        ctx.getBeanFactory().registerSingleton("customJobId", customJobId);
         ctx.getBeanFactory().registerSingleton("statusListener", (FlowStatusListener) (jobId, percentComplete, message) -> {
             flowStatusListeners.forEach((FlowStatusListener listener) -> {
                 listener.onStatusChange(jobId, percentComplete, message);

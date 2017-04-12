@@ -1,7 +1,19 @@
 # Change Log
 
-## [v1.1.1](https://github.com/marklogic/marklogic-data-hub/tree/v1.1.1)
+## [v1.1.2](https://github.com/marklogic/marklogic-data-hub/tree/v1.1.2)
 
+[Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v1.1.1...v1.1.2)
+
+**Fixed bugs:**
+
+- null pointer exception on logout [\#383](https://github.com/marklogic/marklogic-data-hub/issues/383)
+
+**Closed issues:**
+
+- gradle version check fails on multiple dots [\#384](https://github.com/marklogic/marklogic-data-hub/issues/384)
+- QuickStart Template Compile Error 2.0-alpha.2 [\#380](https://github.com/marklogic/marklogic-data-hub/issues/380)
+
+## [v1.1.1](https://github.com/marklogic/marklogic-data-hub/tree/v1.1.1) (2017-03-20)
 [Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v1.1.0...v1.1.1)
 
 **Implemented enhancements:**

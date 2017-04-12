@@ -40,9 +40,11 @@ public class RunHarmonizeFlowConfig extends AbstractMarkLogicBatchConfig {
     @Autowired(required = false)
     BatchCompleteListener batchCompleteListener;
 
+    @Autowired(required = false)
+    String jobId;
+
     private int totalItems = 0;
     private int completedItems = 0;
-    private String jobId;
 
     @Bean
     public Job job(@Qualifier("step1") Step step1) {
@@ -51,9 +53,7 @@ public class RunHarmonizeFlowConfig extends AbstractMarkLogicBatchConfig {
             .preventRestart()
             .listener(new JobExecutionListener() {
             @Override
-            public void beforeJob(JobExecution jobExecution) {
-                jobId = jobExecution.getJobId().toString();
-            }
+            public void beforeJob(JobExecution jobExecution) {}
 
             @Override
             public void afterJob(JobExecution jobExecution) {
