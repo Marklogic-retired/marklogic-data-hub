@@ -48,7 +48,7 @@ Alternatively you can include the jar file as a build dependency in your Java pr
 **Gradle**
 
 ```groovy
-compile('com.marklogic:marklogic-data-hub:2.0.0-alpha.2')
+compile('com.marklogic:marklogic-data-hub:2.0.0-alpha.3')
 ```
 
 **Maven**
@@ -57,7 +57,7 @@ compile('com.marklogic:marklogic-data-hub:2.0.0-alpha.2')
 <dependency>
   <groupId>com.marklogic</groupId>
   <artifactId>marklogic-data-hub</artifactId>
-  <version>2.0.0-alpha.2</version>
+  <version>2.0.0-alpha.3</version>
   <type>pom</type>
 </dependency>
 ```
@@ -65,7 +65,7 @@ compile('com.marklogic:marklogic-data-hub:2.0.0-alpha.2')
 **Ivy**
 
 ```xml
-<dependency org='com.marklogic' name='marklogic-data-hub' rev='2.0.0-alpha.2'>
+<dependency org='com.marklogic' name='marklogic-data-hub' rev='2.0.0-alpha.3'>
   <artifact name='$AID' ext='pom'></artifact>
 </dependency>
 ```
@@ -76,7 +76,7 @@ If you prefer to use gradle for all of your hub interactions then you can includ
 
 ```groovy
 plugins {
-    id 'com.marklogic.ml-data-hub' version '2.0.0-alpha.2'
+    id 'com.marklogic.ml-data-hub' version '2.0.0-alpha.3'
 }
 ```
 
