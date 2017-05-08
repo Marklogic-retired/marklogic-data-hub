@@ -1,6 +1,7 @@
 package com.marklogic.hub;
 
 import com.marklogic.hub.flow.Flow;
+import com.marklogic.hub.flow.FlowRunner;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.*;
 
@@ -20,20 +21,14 @@ public class TracingTest extends HubTestBase {
 
         enableDebugging();
 
-        clearDb(HubConfig.DEFAULT_STAGING_NAME);
-        clearDb(HubConfig.DEFAULT_FINAL_NAME);
+        clearDatabases(new String[]{HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME});
 
-        URL url = DataHubInstallTest.class.getClassLoader().getResource("tracing-test");
+        URL url = TracingTest.class.getClassLoader().getResource("tracing-test");
         String path = Paths.get(url.toURI()).toFile().getAbsolutePath();
 
         DataHub dataHub = new DataHub(getHubConfig(path));
         dataHub.installUserModules(true);
      }
-
-    @AfterClass
-    public static void teardown() throws IOException {
-        uninstallHub();
-    }
 
     @Before
     public void beforeEach() {
@@ -64,9 +59,12 @@ public class TracingTest extends HubTestBase {
         FlowManager fm = new FlowManager(getHubConfig());
         Flow flow = fm.getFlow("trace-entity", "tracemeXML");
 
-        JobFinishedListener listener = new JobFinishedListener();
-        fm.runFlow(flow, 10, 1, listener);
-        listener.waitForFinish();
+        FlowRunner flowRunner = fm.newFlowRunner()
+            .withFlow(flow)
+            .withBatchSize(10)
+            .withThreadCount(1);
+        flowRunner.run();
+        flowRunner.awaitCompletion();
 
         assertEquals(5, getFinalDocCount());
         assertEquals(0, getTracingDocCount());
@@ -83,9 +81,12 @@ public class TracingTest extends HubTestBase {
         FlowManager fm = new FlowManager(getHubConfig());
         Flow flow = fm.getFlow("trace-entity", "tracemeJSON");
 
-        JobFinishedListener listener = new JobFinishedListener();
-        fm.runFlow(flow, 10, 1, listener);
-        listener.waitForFinish();
+        FlowRunner flowRunner = fm.newFlowRunner()
+            .withFlow(flow)
+            .withBatchSize(10)
+            .withThreadCount(1);
+        flowRunner.run();
+        flowRunner.awaitCompletion();
 
         assertEquals(5, getFinalDocCount());
         assertEquals(0, getTracingDocCount());
@@ -105,9 +106,12 @@ public class TracingTest extends HubTestBase {
         FlowManager fm = new FlowManager(getHubConfig());
         Flow flow = fm.getFlow("trace-entity", "tracemeXML");
 
-        JobFinishedListener listener = new JobFinishedListener();
-        fm.runFlow(flow, 10, 1, listener);
-        listener.waitForFinish();
+        FlowRunner flowRunner = fm.newFlowRunner()
+            .withFlow(flow)
+            .withBatchSize(10)
+            .withThreadCount(1);
+        flowRunner.run();
+        flowRunner.awaitCompletion();
 
         assertEquals(5, getFinalDocCount());
         assertEquals(6, getTracingDocCount());
@@ -127,9 +131,12 @@ public class TracingTest extends HubTestBase {
         FlowManager fm = new FlowManager(getHubConfig());
         Flow flow = fm.getFlow("trace-entity", "tracemeJSON");
 
-        JobFinishedListener listener = new JobFinishedListener();
-        fm.runFlow(flow, 10, 1, listener);
-        listener.waitForFinish();
+        FlowRunner flowRunner = fm.newFlowRunner()
+            .withFlow(flow)
+            .withBatchSize(10)
+            .withThreadCount(1);
+        flowRunner.run();
+        flowRunner.awaitCompletion();
 
         assertEquals(5, getFinalDocCount());
         assertEquals(6, getTracingDocCount());
@@ -147,12 +154,15 @@ public class TracingTest extends HubTestBase {
         FlowManager fm = new FlowManager(getHubConfig());
         Flow flow = fm.getFlow("trace-entity", "tracemeXMLError");
 
-        JobFinishedListener listener = new JobFinishedListener();
-        fm.runFlow(flow, 10, 1, listener);
-        listener.waitForFinish();
+        FlowRunner flowRunner = fm.newFlowRunner()
+            .withFlow(flow)
+            .withBatchSize(10)
+            .withThreadCount(1);
+        flowRunner.run();
+        flowRunner.awaitCompletion();
 
-        assertEquals(5, getFinalDocCount());
-        assertEquals(10, getTracingDocCount());
+        assertEquals(0, getFinalDocCount());
+        assertEquals(5, getTracingDocCount());
     }
 
     @Test
@@ -166,12 +176,15 @@ public class TracingTest extends HubTestBase {
         FlowManager fm = new FlowManager(getHubConfig());
         Flow flow = fm.getFlow("trace-entity", "tracemeXMLWriterError");
 
-        JobFinishedListener listener = new JobFinishedListener();
-        fm.runFlow(flow, 10, 1, listener);
-        listener.waitForFinish();
+        FlowRunner flowRunner = fm.newFlowRunner()
+            .withFlow(flow)
+            .withBatchSize(10)
+            .withThreadCount(1);
+        flowRunner.run();
+        flowRunner.awaitCompletion();
 
         assertEquals(0, getFinalDocCount());
-        assertEquals(10, getTracingDocCount());
+        assertEquals(5, getTracingDocCount());
     }
 
     @Test
@@ -185,12 +198,15 @@ public class TracingTest extends HubTestBase {
         FlowManager fm = new FlowManager(getHubConfig());
         Flow flow = fm.getFlow("trace-entity", "tracemeJSONError");
 
-        JobFinishedListener listener = new JobFinishedListener();
-        fm.runFlow(flow, 10, 1, listener);
-        listener.waitForFinish();
+        FlowRunner flowRunner = fm.newFlowRunner()
+            .withFlow(flow)
+            .withBatchSize(10)
+            .withThreadCount(1);
+        flowRunner.run();
+        flowRunner.awaitCompletion();
 
-        assertEquals(5, getFinalDocCount());
-        assertEquals(10, getTracingDocCount());
+        assertEquals(0, getFinalDocCount());
+        assertEquals(5, getTracingDocCount());
     }
 
 
@@ -205,11 +221,14 @@ public class TracingTest extends HubTestBase {
         FlowManager fm = new FlowManager(getHubConfig());
         Flow flow = fm.getFlow("trace-entity", "tracemeJSONWriterError");
 
-        JobFinishedListener listener = new JobFinishedListener();
-        fm.runFlow(flow, 10, 1, listener);
-        listener.waitForFinish();
+        FlowRunner flowRunner = fm.newFlowRunner()
+            .withFlow(flow)
+            .withBatchSize(10)
+            .withThreadCount(1);
+        flowRunner.run();
+        flowRunner.awaitCompletion();
 
         assertEquals(0, getFinalDocCount());
-        assertEquals(10, getTracingDocCount());
+        assertEquals(5, getTracingDocCount());
     }
 }

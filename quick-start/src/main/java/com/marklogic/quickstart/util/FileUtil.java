@@ -15,13 +15,11 @@
  */
 package com.marklogic.quickstart.util;
 
-import com.marklogic.client.helper.LoggingObject;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FileUtil extends LoggingObject {
+public class FileUtil {
 
     public static List<String> listDirectFolders(File rootDirectory) {
         List<String> folders = new ArrayList<>();

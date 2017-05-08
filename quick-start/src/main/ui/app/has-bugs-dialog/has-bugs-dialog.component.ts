@@ -1,0 +1,21 @@
+import {
+  Component,
+  Inject
+} from '@angular/core';
+
+import { MdlDialogReference } from '@angular-mdl/core';
+
+@Component({
+  selector: 'app-has-bugs-dialog',
+  templateUrl: './has-bugs-dialog.component.html',
+  styleUrls: ['./has-bugs-dialog.component.scss']
+})
+export class HasBugsDialogComponent {
+  errors: string;
+
+  constructor(
+    public dialog: MdlDialogReference,
+    @Inject('errors') errors: any) {
+    this.errors = errors.content.msg;
+  }
+}

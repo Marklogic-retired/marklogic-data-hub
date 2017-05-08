@@ -21,6 +21,7 @@ import com.marklogic.client.io.Format;
 import com.marklogic.hub.collector.QueryCollector;
 import com.marklogic.hub.collector.ServerCollector;
 import com.marklogic.hub.flow.Flow;
+import com.marklogic.hub.flow.FlowRunner;
 import com.marklogic.hub.flow.FlowType;
 import com.marklogic.hub.flow.SimpleFlow;
 import com.marklogic.hub.plugin.*;
@@ -36,6 +37,7 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 
 import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual;
@@ -48,11 +50,9 @@ public class FlowManagerTest extends HubTestBase {
     public static void setup() throws IOException {
         XMLUnit.setIgnoreWhitespace(true);
 
-        clearDb(HubConfig.DEFAULT_STAGING_NAME);
-        clearDb(HubConfig.DEFAULT_FINAL_NAME);
-        clearDb(HubConfig.DEFAULT_MODULES_DB_NAME);
-
         installHub();
+
+        clearDatabases(new String[]{HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME});
 
         DocumentMetadataHandle meta = new DocumentMetadataHandle();
         meta.getCollections().add("tester");
@@ -66,16 +66,15 @@ public class FlowManagerTest extends HubTestBase {
                 + "xdmp:directory-create(\"/entities/test/harmonize/my-test-flow2/headers/\"),"
                 + "xdmp:directory-create(\"/entities/test/harmonize/my-test-flow2/triples/\"),"
                 + "xdmp:directory-create(\"/entities/test/harmonize/my-test-flow2/content/\")");
-        installModule(
-                "/entities/test/harmonize/my-test-flow1/collector/collector.xqy",
-                "flow-manager-test/my-test-flow1/collector/collector.xqy");
-        installModule(
-                "/entities/test/harmonize/my-test-flow2/collector/collector.xqy",
-                "flow-manager-test/my-test-flow1/collector/collector.xqy");
-    }
 
-    @AfterClass
-    public static void teardown() throws IOException {
+        HashMap<String, String> modules = new HashMap<>();
+        modules.put(
+            "/entities/test/harmonize/my-test-flow1/collector/collector.xqy",
+            "flow-manager-test/my-test-flow1/collector/collector.xqy");
+        modules.put(
+            "/entities/test/harmonize/my-test-flow2/collector/collector.xqy",
+            "flow-manager-test/my-test-flow1/collector/collector.xqy");
+        installModules(modules);
     }
 
     @After
@@ -134,7 +133,6 @@ public class FlowManagerTest extends HubTestBase {
         flow.setTriplesPlugin(new TriplesPlugin());
         String expected = getResource("flow-manager-test/simple-flow.xml");
         String actual = flow.serialize(true);
-        System.out.println(actual);
         assertXMLEqual(expected, actual);
     }
 
@@ -213,11 +211,14 @@ public class FlowManagerTest extends HubTestBase {
         installModule("/entities/test/harmonize/my-test-flow1/my-test-flow1.xml", "flow-manager-test/my-test-flow1/my-test-flow1.xml");
         assertEquals(2, getStagingDocCount());
         assertEquals(0, getFinalDocCount());
-        JobFinishedListener listener = new JobFinishedListener();
         FlowManager fm = new FlowManager(getHubConfig());
         SimpleFlow flow1 = (SimpleFlow)fm.getFlow("test", "my-test-flow1");
-        fm.runFlow(flow1, 10, 1, listener);
-        listener.waitForFinish();
+        FlowRunner flowRunner = fm.newFlowRunner()
+            .withFlow(flow1)
+            .withBatchSize(10)
+            .withThreadCount(1);
+        flowRunner.run();
+        flowRunner.awaitCompletion();
         assertEquals(2, getStagingDocCount());
         assertEquals(2, getFinalDocCount());
         assertXMLEqual(getXmlFromResource("flow-manager-test/harmonized/harmonized1.xml"), finalDocMgr.read("/employee1.xml").next().getContent(new DOMHandle()).get() );
@@ -226,16 +227,21 @@ public class FlowManagerTest extends HubTestBase {
 
     @Test
     public void testRunFlowWithHeader() throws SAXException, IOException, ParserConfigurationException, XMLStreamException {
-        installModule("/entities/test/harmonize/my-test-flow-with-header/collector/collector.xqy", "flow-manager-test/my-test-flow-with-header/collector/collector.xqy");
-        installModule("/entities/test/harmonize/my-test-flow-with-header/headers/headers.xqy", "flow-manager-test/my-test-flow-with-header/headers/headers.xqy");
+        HashMap<String, String> modules = new HashMap<>();
+        modules.put("/entities/test/harmonize/my-test-flow-with-header/collector/collector.xqy", "flow-manager-test/my-test-flow-with-header/collector/collector.xqy");
+        modules.put("/entities/test/harmonize/my-test-flow-with-header/headers/headers.xqy", "flow-manager-test/my-test-flow-with-header/headers/headers.xqy");
+        installModules(modules);
 
         assertEquals(2, getStagingDocCount());
         assertEquals(0, getFinalDocCount());
-        JobFinishedListener listener = new JobFinishedListener();
         FlowManager fm = new FlowManager(getHubConfig());
         SimpleFlow flow1 = (SimpleFlow)fm.getFlow("test", "my-test-flow-with-header");
-        fm.runFlow(flow1, 10, 1, listener);
-        listener.waitForFinish();
+        FlowRunner flowRunner = fm.newFlowRunner()
+            .withFlow(flow1)
+            .withBatchSize(10)
+            .withThreadCount(1);
+        flowRunner.run();
+        flowRunner.awaitCompletion();
         assertEquals(2, getStagingDocCount());
         assertEquals(2, getFinalDocCount());
         assertXMLEqual(getXmlFromResource("flow-manager-test/harmonized-with-header/harmonized1.xml"), finalDocMgr.read("/employee1.xml").next().getContent(new DOMHandle()).get() );
@@ -246,19 +252,24 @@ public class FlowManagerTest extends HubTestBase {
 
     @Test
     public void testRunFlowWithAll() throws SAXException, IOException, ParserConfigurationException, XMLStreamException {
-        installModule("/entities/test/harmonize/my-test-flow-with-all/my-test-flow-with-all.xml", "flow-manager-test/my-test-flow-with-all/my-test-flow-with-all.xml");
-        installModule("/entities/test/harmonize/my-test-flow-with-all/collector/collector.xqy", "flow-manager-test/my-test-flow-with-all/collector/collector.xqy");
-        installModule("/entities/test/harmonize/my-test-flow-with-all/headers/headers.xqy", "flow-manager-test/my-test-flow-with-all/headers/headers.xqy");
-        installModule("/entities/test/harmonize/my-test-flow-with-all/content/content.xqy", "flow-manager-test/my-test-flow-with-all/content/content.xqy");
-        installModule("/entities/test/harmonize/my-test-flow-with-all/triples/triples.xqy", "flow-manager-test/my-test-flow-with-all/triples/triples.xqy");
+        HashMap<String, String> modules = new HashMap<>();
+        modules.put("/entities/test/harmonize/my-test-flow-with-all/my-test-flow-with-all.xml", "flow-manager-test/my-test-flow-with-all/my-test-flow-with-all.xml");
+        modules.put("/entities/test/harmonize/my-test-flow-with-all/collector/collector.xqy", "flow-manager-test/my-test-flow-with-all/collector/collector.xqy");
+        modules.put("/entities/test/harmonize/my-test-flow-with-all/headers/headers.xqy", "flow-manager-test/my-test-flow-with-all/headers/headers.xqy");
+        modules.put("/entities/test/harmonize/my-test-flow-with-all/content/content.xqy", "flow-manager-test/my-test-flow-with-all/content/content.xqy");
+        modules.put("/entities/test/harmonize/my-test-flow-with-all/triples/triples.xqy", "flow-manager-test/my-test-flow-with-all/triples/triples.xqy");
+        installModules(modules);
 
-        JobFinishedListener listener = new JobFinishedListener();
         assertEquals(2, getStagingDocCount());
         assertEquals(0, getFinalDocCount());
         FlowManager fm = new FlowManager(getHubConfig());
         SimpleFlow flow1 = (SimpleFlow)fm.getFlow("test", "my-test-flow-with-all");
-        fm.runFlow(flow1, 10, 1, listener);
-        listener.waitForFinish();
+        FlowRunner flowRunner = fm.newFlowRunner()
+            .withFlow(flow1)
+            .withBatchSize(10)
+            .withThreadCount(1);
+        flowRunner.run();
+        flowRunner.awaitCompletion();
         assertEquals(2, getStagingDocCount());
         assertEquals(2, getFinalDocCount());
         assertXMLEqual(getXmlFromResource("flow-manager-test/harmonized-with-all/harmonized1.xml"), finalDocMgr.read("/employee1.xml").next().getContent(new DOMHandle()).get() );

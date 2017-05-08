@@ -23,6 +23,7 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -69,7 +70,7 @@ public abstract class AbstractFlow implements Flow {
     private FlowComplexity flowComplexity;
     private Collector collector;
     private boolean envelopeEnabled = true;
-    protected ArrayList<Plugin> plugins = new ArrayList<Plugin>();
+    protected ArrayList<Plugin> plugins = new ArrayList<>();
     private Writer writer;
 
     public AbstractFlow() {}
@@ -99,16 +100,12 @@ public abstract class AbstractFlow implements Flow {
             is.close();
             entity = new SimpleFlow(doc.getDocumentElement());
         } catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         } catch (ParserConfigurationException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         } catch (SAXException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         return entity;

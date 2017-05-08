@@ -20,6 +20,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 
 import org.custommonkey.xmlunit.XMLUnit;
@@ -42,22 +43,23 @@ public class EntityManagerTest extends HubTestBase {
     public static void setup() throws IOException {
         XMLUnit.setIgnoreWhitespace(true);
 
-        clearDb(HubConfig.DEFAULT_STAGING_NAME);
-        clearDb(HubConfig.DEFAULT_FINAL_NAME);
-        clearDb(HubConfig.DEFAULT_MODULES_DB_NAME);
+        clearDatabases(new String[]{HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME});
 
         installHub();
+
+        DataHub dataHub = getDataHub();
+        dataHub.clearUserModules();
+        dataHub.installUserModules(true);
 
         DocumentMetadataHandle meta = new DocumentMetadataHandle();
         meta.getCollections().add("tester");
         installStagingDoc("/incoming/employee1.xml", meta, getResource("flow-manager-test/input/employee1.xml"));
         installStagingDoc("/incoming/employee2.xml", meta, getResource("flow-manager-test/input/employee2.xml"));
-        installModule("/entities/test/harmonize/my-test-flow1/collector/collector.xqy", "flow-manager-test/my-test-flow1/collector/collector.xqy");
-        installModule("/entities/test/harmonize/my-test-flow2/collector/collector.xqy", "flow-manager-test/my-test-flow1/collector/collector.xqy");
-    }
 
-    @AfterClass
-    public static void teardown() throws IOException {
+        HashMap<String, String> modules = new HashMap<>();
+        modules.put("/entities/test/harmonize/my-test-flow1/collector/collector.xqy", "flow-manager-test/my-test-flow1/collector/collector.xqy");
+        modules.put("/entities/test/harmonize/my-test-flow2/collector/collector.xqy", "flow-manager-test/my-test-flow1/collector/collector.xqy");
+        installModules(modules);
     }
 
     @Test

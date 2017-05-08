@@ -15,14 +15,17 @@
  */
 package com.marklogic.quickstart;
 
-import com.marklogic.client.helper.LoggingObject;
 import com.marklogic.quickstart.auth.ConnectionAuthenticationToken;
 import com.marklogic.quickstart.model.EnvironmentConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-public class EnvironmentAware extends LoggingObject {
+public class EnvironmentAware {
 
     private EnvironmentConfig _envConfig = null;
+
+    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     protected EnvironmentConfig envConfig() {
         ConnectionAuthenticationToken authenticationToken = (ConnectionAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();

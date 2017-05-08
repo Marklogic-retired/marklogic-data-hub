@@ -24,7 +24,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -47,9 +50,16 @@ public class SearchController extends EnvironmentAware {
         return searchService.search(searchQuery).get();
     }
 
-    @RequestMapping(value = "/doc", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_VALUE})
+    @RequestMapping(value = "/doc", method = RequestMethod.GET)
     @ResponseBody
-    public String getTrace(@RequestParam HubDatabase database, @RequestParam String docUri) {
-        return searchService.getDoc(database, docUri);
+    public ResponseEntity<String> getDoc(@RequestParam HubDatabase database, @RequestParam String docUri) {
+        HttpHeaders headers = new HttpHeaders();
+        String body = searchService.getDoc(database, docUri);
+        if (body.startsWith("<")) {
+            headers.setContentType(MediaType.APPLICATION_XML);
+        } else {
+            headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+        }
+        return new ResponseEntity<>(body, headers, HttpStatus.OK);
     }
 }

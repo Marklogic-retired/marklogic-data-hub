@@ -5,8 +5,9 @@ import com.marklogic.gradle.exception.FlowNameRequiredException
 import com.marklogic.gradle.exception.FlowNotFoundException
 import com.marklogic.gradle.exception.HubNotInstalledException
 import com.marklogic.hub.FlowManager
-import com.marklogic.hub.JobStatusListener
 import com.marklogic.hub.flow.Flow
+import com.marklogic.hub.flow.FlowRunner
+import com.marklogic.hub.flow.FlowStatusListener
 import com.marklogic.hub.flow.FlowType
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
@@ -22,10 +23,10 @@ class RunFlowTask extends HubTask {
     public FlowType flowType
 
     @Input
-    public int batchSize
+    public Integer batchSize
 
     @Input
-    public int threadCount
+    public Integer threadCount
 
     @TaskAction
     void runFlow() {
@@ -66,12 +67,11 @@ class RunFlowTask extends HubTask {
         }
 
         println("Running Flow: [" + entityName + ":" + flowName + "] with batch size: " + batchSize)
-        fm.runFlow(flow, batchSize, threadCount, new JobStatusListener() {
-            @Override
-            public void onStatusChange(String jobId, int percentComplete, String message) {}
-
-            @Override
-            public void onJobFinished() {}
-        })
+        FlowRunner flowRunner = fm.newFlowRunner()
+            .withFlow(flow)
+            .withBatchSize(batchSize)
+            .withThreadCount(threadCount)
+        flowRunner.run()
+        flowRunner.awaitCompletion()
     }
 }

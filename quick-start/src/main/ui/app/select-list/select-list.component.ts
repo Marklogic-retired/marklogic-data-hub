@@ -1,13 +1,13 @@
 import { Component, Input, Output, EventEmitter, OnInit, OnChanges } from '@angular/core';
 
-import { MdlDialogService } from 'angular2-mdl';
+import { MdlDialogService } from '@angular-mdl/core';
 
 import * as _ from 'lodash';
 
 @Component({
   selector: 'app-select-list',
-  templateUrl: './select-list.tpl.html',
-  styleUrls: ['./select-list.styles.scss'],
+  templateUrl: './select-list.component.html',
+  styleUrls: ['./select-list.component.scss'],
 })
 
 /**

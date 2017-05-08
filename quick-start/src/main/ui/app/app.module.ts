@@ -3,10 +3,10 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { RouterModule } from '@angular/router';
-import { TruncateCharactersPipe } from 'ng2-truncate/dist/truncate-characters.pipe'
-import { TruncateWordsPipe } from 'ng2-truncate/dist/truncate-words.pipe'
+import { TruncateCharactersPipe } from './truncate';
 import { AppComponent } from './app.component';
 import { FlowsComponent } from './flows';
+import { HasBugsDialogComponent } from './has-bugs-dialog';
 import {
   ChooseCollationComponent,
   EntityBoxComponent,
@@ -17,20 +17,21 @@ import {
 import { LoginComponent } from './login';
 import { SettingsComponent } from './settings';
 
-import { MdlModule } from 'angular2-mdl';
-import { MdlSelectModule } from '@angular2-mdl-ext/select';
-import { CodemirrorComponent } from 'ng2-codemirror';
+import { MdlModule } from '@angular-mdl/core';
+import { MdlPopoverModule } from '@angular-mdl/popover';
+import { MdlSelectModule } from '@angular-mdl/select';
 import { MomentModule } from 'angular2-moment';
 import { GridManiaModule } from './grid';
 
 import { ROUTES } from './app.routes';
 import { AUTH_PROVIDERS } from './auth';
+import { CodemirrorComponent } from './codemirror';
 import { FolderBrowserComponent } from './folder-browser/folder-browser.component';
 import { HeaderComponent } from './header/header.component';
 import { JobsComponent, JobOutputComponent } from './jobs';
 import { MlcpUiComponent } from './mlcp-ui';
 import { MlErrorComponent } from './ml-error';
-import { NewFlowComponent } from './new-flow/new-flow';
+import { NewFlowComponent } from './new-flow/new-flow.component';
 import { NoContentComponent } from './no-content';
 import { PaginationComponent } from './pagination';
 import { ResizableComponent } from './resizable/resizable.component';
@@ -61,8 +62,10 @@ import { ObjectToArrayPipe } from './object-to-array.pipe';
 @NgModule({
   declarations: [
     AppComponent,
+    CodemirrorComponent,
     FolderBrowserComponent,
     HeaderComponent,
+    HasBugsDialogComponent,
     FlowsComponent,
     ChooseCollationComponent,
     EntityBoxComponent,
@@ -92,11 +95,10 @@ import { ObjectToArrayPipe } from './object-to-array.pipe';
     FacetsComponent,
     TitlecasePipe,
     TruncateCharactersPipe,
-    TruncateWordsPipe,
-    ObjectToArrayPipe,
-    CodemirrorComponent
+    ObjectToArrayPipe
   ],
   entryComponents: [
+    HasBugsDialogComponent,
     ChooseCollationComponent,
     ExternalDefDialogComponent,
     EntityEditorComponent,
@@ -108,6 +110,7 @@ import { ObjectToArrayPipe } from './object-to-array.pipe';
     FormsModule,
     HttpModule,
     MdlModule,
+    MdlPopoverModule,
     MdlSelectModule,
     TooltipModule,
     MomentModule,
@@ -131,4 +134,4 @@ import { ObjectToArrayPipe } from './object-to-array.pipe';
     AppComponent
   ],
 })
-export class AppModule {}
+export class AppModule { }

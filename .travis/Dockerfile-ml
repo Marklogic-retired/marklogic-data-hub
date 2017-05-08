@@ -1,0 +1,35 @@
+FROM centos:centos7
+
+ENV LANG C.UTF-8
+
+RUN yum -y install glibc.i686 \
+    gdb.x86_64 redhat-lsb.x86_64 vim \
+    bzip2 \
+    unzip \
+    xz-utils \
+    java-1.8.0-openjdk-devel 2>&1 > /dev/null
+
+# Install MarkLogic
+COPY ./MarkLogic.rpm /tmp/MarkLogic.rpm
+
+RUN yum -y install /tmp/MarkLogic.rpm 2>&1 > /dev/null
+
+# Expose MarkLogic Server ports - add additional ones for your REST, etc
+# endpoints
+EXPOSE 7997-8020
+
+# init
+COPY .travis/startml.sh /tmp/startml.sh
+RUN chmod 755 /tmp/startml.sh
+COPY .travis/setup.sh /tmp/setup.sh
+RUN chmod 755 /tmp/setup.sh
+RUN /tmp/setup.sh
+
+VOLUME /marklogic-data-hub
+ADD ./ /marklogic-data-hub
+WORKDIR /marklogic-data-hub
+
+RUN ./gradlew tasks 2>&1 > /dev/null
+
+# Define default command (which avoids immediate shutdown)
+CMD /tmp/startml.sh && ./gradlew test

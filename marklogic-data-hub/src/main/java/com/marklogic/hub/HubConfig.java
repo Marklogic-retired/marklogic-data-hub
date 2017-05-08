@@ -15,27 +15,39 @@
  */
 package com.marklogic.hub;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.marklogic.appdeployer.AppConfig;
+import com.marklogic.appdeployer.ConfigDir;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
-import com.marklogic.client.helper.LoggingObject;
+import com.marklogic.client.helper.DatabaseClientConfig;
+import com.marklogic.mgmt.ManageClient;
+import com.marklogic.mgmt.ManageConfig;
+import com.marklogic.mgmt.admin.AdminConfig;
+import com.marklogic.mgmt.admin.AdminManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 /**
  * A class for passing around the Data Hub's Configuration
  */
-public class HubConfig extends LoggingObject {
+public class HubConfig {
 
     public static final String OLD_HUB_CONFIG_DIR = "marklogic-config";
     public static final String HUB_CONFIG_DIR = "hub-internal-config";
     public static final String USER_CONFIG_DIR = "user-config";
-    public static final String SEARCH_OPTIONS_FILE = "all-search-options.xml";
+    public static final String ENTITY_CONFIG_DIR = "entity-config";
+    public static final String ENTITY_SEARCH_OPTIONS_FILE = "entity-options.xml";
 
     public static final String DEFAULT_HOST = "localhost";
 
@@ -47,15 +59,11 @@ public class HubConfig extends LoggingObject {
     public static final String DEFAULT_TRIGGERS_DB_NAME = "data-hub-TRIGGERS";
     public static final String DEFAULT_SCHEMAS_DB_NAME = "data-hub-SCHEMAS";
 
-    public static final String DEFAULT_HUB_USER_ROLE = "data-hub-user";
-    public static final String DEFAULT_HUB_USER_NAME = "data-hub-user";
-
     public static final Integer DEFAULT_STAGING_PORT = 8010;
     public static final Integer DEFAULT_FINAL_PORT = 8011;
     public static final Integer DEFAULT_TRACE_PORT = 8012;
     public static final Integer DEFAULT_JOB_PORT = 8013;
 
-    public static final String DEFAULT_APP_NAME = "data-hub";
     public static final String DEFAULT_PROJECT_DIR = ".";
 
     public static final String DEFAULT_AUTH_METHOD = "digest";
@@ -64,15 +72,17 @@ public class HubConfig extends LoggingObject {
 
     private static final String GRADLE_PROPERTIES_FILENAME = "gradle.properties";
 
-    public String name = DEFAULT_APP_NAME;
+    private String username;
+    private String password;
 
-    public String username;
-    @JsonIgnore
-    public String password;
+    private String adminUsername;
+    private String adminPassword;
 
-    public String adminUsername;
-    @JsonIgnore
-    public String adminPassword;
+    private String manageUsername;
+    private String managePassword;
+
+    private String restAdminUsername;
+    private String restAdminPassword;
 
     public String host = DEFAULT_HOST;
 
@@ -104,11 +114,11 @@ public class HubConfig extends LoggingObject {
     public String triggersDbName = DEFAULT_TRIGGERS_DB_NAME;
     public String schemasDbName = DEFAULT_SCHEMAS_DB_NAME;
 
-    public String hubUserName = DEFAULT_HUB_USER_NAME;
-    public String hubUserPassword = DEFAULT_HUB_USER_NAME;
-    public String hubUserRole = DEFAULT_HUB_USER_ROLE;
-
     public String projectDir;
+
+    private Properties environmentProperties;
+
+    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     public HubConfig() {
         this(DEFAULT_PROJECT_DIR);
@@ -126,8 +136,7 @@ public class HubConfig extends LoggingObject {
      */
     public static HubConfig hubFromEnvironment(String projectDir, String environment) {
         HubConfig config = new HubConfig(projectDir);
-        Properties environmentProperties = config.getProperties(environment);
-        config.loadConfigurationFromProperties(environmentProperties);
+        config.loadConfigurationFromProperties(config.getProperties(environment));
         return config;
     }
 
@@ -142,49 +151,71 @@ public class HubConfig extends LoggingObject {
     }
 
     public void loadConfigurationFromProperties(Properties environmentProperties) {
-        name = getEnvPropString(environmentProperties,"mlAppName", name);
-        host = getEnvPropString(environmentProperties, "mlHost", host);
-        stagingDbName = getEnvPropString(environmentProperties, "mlStagingDbName", stagingDbName);
-        stagingHttpName = getEnvPropString(environmentProperties, "mlStagingAppserverName", stagingHttpName);
-        stagingForestsPerHost = getEnvPropInteger(environmentProperties, "mlStagingForestsPerHost", stagingForestsPerHost);
-        stagingPort = getEnvPropInteger(environmentProperties, "mlStagingPort", stagingPort);
-        stagingAuthMethod = getEnvPropString(environmentProperties, "mlStagingAuth", stagingAuthMethod);
-        finalDbName = getEnvPropString(environmentProperties, "mlFinalDbName", finalDbName);
-        finalHttpName = getEnvPropString(environmentProperties, "mlFinalAppserverName", finalHttpName);
-        finalForestsPerHost = getEnvPropInteger(environmentProperties, "mlFinalForestsPerHost", finalForestsPerHost);
-        finalPort = getEnvPropInteger(environmentProperties, "mlFinalPort", finalPort);
-        finalAuthMethod = getEnvPropString(environmentProperties, "mlFinalAuth", finalAuthMethod);
-        traceDbName = getEnvPropString(environmentProperties, "mlTraceDbName", traceDbName);
-        traceHttpName = getEnvPropString(environmentProperties, "mlTraceAppserverName", traceHttpName);
-        traceForestsPerHost = getEnvPropInteger(environmentProperties, "mlTraceForestsPerHost", traceForestsPerHost);
-        tracePort = getEnvPropInteger(environmentProperties, "mlTracePort", tracePort);
-        traceAuthMethod = getEnvPropString(environmentProperties, "mlTraceAuth", traceAuthMethod);
-        jobDbName = getEnvPropString(environmentProperties, "mlJobDbName", jobDbName);
-        jobHttpName = getEnvPropString(environmentProperties, "mlJobAppserverName", jobHttpName);
-        jobForestsPerHost = getEnvPropInteger(environmentProperties, "mlJobForestsPerHost", jobForestsPerHost);
-        jobPort = getEnvPropInteger(environmentProperties, "mlJobPort", jobPort);
-        jobAuthMethod = getEnvPropString(environmentProperties, "mlJobAuth", jobAuthMethod);
-        modulesDbName = getEnvPropString(environmentProperties, "mlModulesDbName", modulesDbName);
-        triggersDbName = getEnvPropString(environmentProperties, "mlTriggersDbName", triggersDbName);
-        schemasDbName = getEnvPropString(environmentProperties, "mlSchemasDbName", schemasDbName);
-        adminUsername = getEnvPropString(environmentProperties, "mlAdminUsername", adminUsername);
-        adminPassword = getEnvPropString(environmentProperties, "mlAdminPassword", adminPassword);
+        this.environmentProperties = environmentProperties;
 
-        username = getEnvPropString(environmentProperties, "mlManageUsername", username);
-        username = getEnvPropString(environmentProperties, "mlUsername", username);
-        if (username == null) {
-            username = adminUsername;
+        if (this.environmentProperties != null) {
+            host = getEnvPropString(environmentProperties, "mlHost", host);
+
+            stagingDbName = getEnvPropString(environmentProperties, "mlStagingDbName", stagingDbName);
+            stagingHttpName = getEnvPropString(environmentProperties, "mlStagingAppserverName", stagingHttpName);
+            stagingForestsPerHost = getEnvPropInteger(environmentProperties, "mlStagingForestsPerHost", stagingForestsPerHost);
+            stagingPort = getEnvPropInteger(environmentProperties, "mlStagingPort", stagingPort);
+            stagingAuthMethod = getEnvPropString(environmentProperties, "mlStagingAuth", stagingAuthMethod);
+
+            finalDbName = getEnvPropString(environmentProperties, "mlFinalDbName", finalDbName);
+            finalHttpName = getEnvPropString(environmentProperties, "mlFinalAppserverName", finalHttpName);
+            finalForestsPerHost = getEnvPropInteger(environmentProperties, "mlFinalForestsPerHost", finalForestsPerHost);
+            finalPort = getEnvPropInteger(environmentProperties, "mlFinalPort", finalPort);
+            finalAuthMethod = getEnvPropString(environmentProperties, "mlFinalAuth", finalAuthMethod);
+
+            traceDbName = getEnvPropString(environmentProperties, "mlTraceDbName", traceDbName);
+            traceHttpName = getEnvPropString(environmentProperties, "mlTraceAppserverName", traceHttpName);
+            traceForestsPerHost = getEnvPropInteger(environmentProperties, "mlTraceForestsPerHost", traceForestsPerHost);
+            tracePort = getEnvPropInteger(environmentProperties, "mlTracePort", tracePort);
+            traceAuthMethod = getEnvPropString(environmentProperties, "mlTraceAuth", traceAuthMethod);
+
+            jobDbName = getEnvPropString(environmentProperties, "mlJobDbName", jobDbName);
+            jobHttpName = getEnvPropString(environmentProperties, "mlJobAppserverName", jobHttpName);
+            jobForestsPerHost = getEnvPropInteger(environmentProperties, "mlJobForestsPerHost", jobForestsPerHost);
+            jobPort = getEnvPropInteger(environmentProperties, "mlJobPort", jobPort);
+            jobAuthMethod = getEnvPropString(environmentProperties, "mlJobAuth", jobAuthMethod);
+
+            modulesDbName = getEnvPropString(environmentProperties, "mlModulesDbName", modulesDbName);
+            triggersDbName = getEnvPropString(environmentProperties, "mlTriggersDbName", triggersDbName);
+            schemasDbName = getEnvPropString(environmentProperties, "mlSchemasDbName", schemasDbName);
+
+            adminUsername = getEnvPropString(environmentProperties, "mlAdminUsername", adminUsername);
+            adminPassword = getEnvPropString(environmentProperties, "mlAdminPassword", adminPassword);
+
+            manageUsername = getEnvPropString(environmentProperties, "mlManageUsername", manageUsername);
+            managePassword = getEnvPropString(environmentProperties, "mlManagePassword", managePassword);
+
+            restAdminUsername = getEnvPropString(environmentProperties, "mlRestAdminUsername", restAdminUsername);
+            restAdminPassword = getEnvPropString(environmentProperties, "mlRestAdminPassword", restAdminPassword);
+
+            username = getEnvPropString(environmentProperties, "mlUsername", username);
+            password = getEnvPropString(environmentProperties, "mlPassword", password);
+
+            projectDir = getEnvPropString(environmentProperties, "hubProjectDir", projectDir);
+
+            logger.info("Hub Project Dir: " + projectDir);
         }
-
-        password = getEnvPropString(environmentProperties, "mlManagePassword", password);
-        password = getEnvPropString(environmentProperties, "mlPassword", password);
-        if (password == null) {
-            password = adminPassword;
+        else {
+            logger.error("Missing environmentProperties");
         }
+    }
 
-        projectDir = getEnvPropString(environmentProperties, "hubProjectDir", projectDir);
+    public ManageClient newManageClient() {
+        ManageConfig config = new ManageConfig(host, 8002, username, password);
+        return new ManageClient(config);
+    }
 
-        logger.info("Hub Project Dir: " + projectDir);
+    public AdminManager newAdminManager() {
+        AdminConfig adminConfig = new AdminConfig();
+        adminConfig.setHost(host);
+        adminConfig.setUsername(getAdminUsername());
+        adminConfig.setPassword(getAdminPassword());
+        return new AdminManager(adminConfig);
     }
 
     /**
@@ -198,6 +229,20 @@ public class HubConfig extends LoggingObject {
             username,
             password,
             DatabaseClientFactory.Authentication.valueOf(stagingAuthMethod.toUpperCase()));
+    }
+
+    public DatabaseClientConfig getStagingDbClientConfig() {
+        DatabaseClientConfig config = new DatabaseClientConfig(
+            host,
+            stagingPort,
+            username,
+            password
+        );
+
+        config.setDatabase(stagingDbName);
+        config.setAuthentication(DatabaseClientFactory.Authentication.valueOfUncased(stagingAuthMethod.toLowerCase()));
+
+        return config;
     }
 
     /**
@@ -224,6 +269,20 @@ public class HubConfig extends LoggingObject {
             username,
             password,
             DatabaseClientFactory.Authentication.valueOf(jobAuthMethod.toUpperCase()));
+    }
+
+    public DatabaseClientConfig getJobDbClientConfig() {
+        DatabaseClientConfig config = new DatabaseClientConfig(
+            host,
+            jobPort,
+            username,
+            password
+        );
+
+        config.setDatabase(jobDbName);
+        config.setAuthentication(DatabaseClientFactory.Authentication.valueOfUncased(jobAuthMethod.toLowerCase()));
+
+        return config;
     }
 
     /**
@@ -298,8 +357,275 @@ public class HubConfig extends LoggingObject {
         return Paths.get(this.projectDir, USER_CONFIG_DIR, "databases");
     }
 
+    public Path getEntityDatabaseDir() {
+        return Paths.get(this.projectDir, ENTITY_CONFIG_DIR, "databases");
+    }
+
+
     public Path getUserServersDir() {
         return Paths.get(this.projectDir, USER_CONFIG_DIR, "servers");
+    }
+
+    public Path getHubMimetypesDir() {
+        return Paths.get(this.projectDir, HUB_CONFIG_DIR, "mimetypes");
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getUsername() {
+        if (this.username == null) {
+            logger.error("MISSING PROPERTY mlUsername");
+        }
+
+        return this.username;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getPassword() {
+        if (this.password == null) {
+            logger.error("MISSING PROPERTY mlPassword");
+        }
+        return this.password;
+    }
+
+    private String getAdminUsername() {
+        String username = null;
+        if (this.adminUsername != null) {
+            username = this.adminUsername;
+        }
+        else if (this.username != null) {
+            username = this.username;
+        }
+        else {
+            logger.error("MISSING PROPERTY mlAdminUsername or mlUsername");
+        }
+
+        return username;
+    }
+
+    private String getAdminPassword() {
+        String password = null;
+        if (this.adminPassword != null) {
+            password = this.adminPassword;
+        }
+        else if (this.password != null) {
+            password = this.password;
+        }
+        else {
+            logger.error("MISSING PROPERTY mlAdminPassword or mlPassword");
+        }
+
+        return password;
+    }
+
+    private String getRestAdminUsername() {
+        String username = null;
+        if (this.restAdminUsername != null) {
+            username = this.restAdminUsername;
+        }
+        else if (this.username != null) {
+            username = this.username;
+        }
+        else {
+            logger.error("MISSING PROPERTY mlRestAdminUsername or mlUsername");
+        }
+
+        return username;
+    }
+
+    private String getRestAdminPassword() {
+        String password = null;
+        if (this.restAdminPassword != null) {
+            password = this.restAdminPassword;
+        }
+        else if (this.password != null) {
+            password = this.password;
+        }
+        else {
+            logger.error("MISSING PROPERTY mlRestAdminPassword or mlPassword");
+        }
+
+        return password;
+    }
+
+    private String getManageUsername() {
+        String username = null;
+        if (this.manageUsername != null) {
+            username = this.manageUsername;
+        }
+        else if (this.username != null) {
+            username = this.username;
+        }
+        else {
+            logger.error("MISSING PROPERTY mlManageUsername or mlUsername");
+        }
+
+        return username;
+    }
+
+    private String getManagePassword() {
+        String password = null;
+        if (this.managePassword != null) {
+            password = this.managePassword;
+        }
+        else if (this.password != null) {
+            password = this.password;
+        }
+        else {
+            logger.error("MISSING PROPERTY mlManagePassword or mlPassword");
+        }
+
+        return password;
+    }
+
+    public AppConfig getAppConfig() {
+        AppConfig config = new AppConfig();
+
+        updateAppConfig(config);
+        return config;
+    }
+
+    public void updateAppConfig(AppConfig config) {
+        config.setHost(host);
+        config.setRestPort(stagingPort);
+        config.setRestAdminUsername(getRestAdminUsername());
+        config.setRestAdminPassword(getRestAdminPassword());
+        config.setModulesDatabaseName(modulesDbName);
+
+        config.setTriggersDatabaseName(triggersDbName);
+        config.setSchemasDatabaseName(schemasDbName);
+        config.setModulesDatabaseName(modulesDbName);
+
+        config.setReplaceTokensInModules(true);
+        config.setUseRoxyTokenPrefix(false);
+
+        HashMap<String, Integer> forestCounts = new HashMap<>();
+        forestCounts.put(stagingDbName, stagingForestsPerHost);
+        forestCounts.put(finalDbName, finalForestsPerHost);
+        forestCounts.put(traceDbName, traceForestsPerHost);
+        forestCounts.put(modulesDbName, 1);
+        config.setForestCounts(forestCounts);
+
+        ConfigDir configDir = new ConfigDir(getUserConfigDir().toFile());
+        config.setConfigDir(configDir);
+
+        config.setSchemasPath(getUserConfigDir().resolve("schemas").toString());
+
+        Map<String, String> customTokens = config.getCustomTokens();
+
+        customTokens.put("%%mlStagingAppserverName%%", stagingHttpName);
+        customTokens.put("\"%%mlStagingPort%%\"", stagingPort.toString());
+        customTokens.put("%%mlStagingDbName%%", stagingDbName);
+        customTokens.put("%%mlStagingForestsPerHost%%", stagingForestsPerHost.toString());
+
+        customTokens.put("%%mlFinalAppserverName%%", finalHttpName);
+        customTokens.put("\"%%mlFinalPort%%\"", finalPort.toString());
+        customTokens.put("%%mlFinalDbName%%", finalDbName);
+        customTokens.put("%%mlFinalForestsPerHost%%", finalForestsPerHost.toString());
+
+        customTokens.put("%%mlTraceAppserverName%%", traceHttpName);
+        customTokens.put("\"%%mlTracePort%%\"", tracePort.toString());
+        customTokens.put("%%mlTraceDbName%%", traceDbName);
+        customTokens.put("%%mlTraceForestsPerHost%%", traceForestsPerHost.toString());
+
+        customTokens.put("%%mlJobAppserverName%%", jobHttpName);
+        customTokens.put("\"%%mlJobPort%%\"", jobPort.toString());
+        customTokens.put("%%mlJobDbName%%", jobDbName);
+        customTokens.put("%%mlJobForestsPerHost%%", jobForestsPerHost.toString());
+
+        customTokens.put("%%mlModulesDbName%%", modulesDbName);
+        customTokens.put("%%mlTriggersDbName%%", triggersDbName);
+        customTokens.put("%%mlSchemasDbName%%", schemasDbName);
+
+        if (environmentProperties != null) {
+            Enumeration keyEnum = environmentProperties.propertyNames();
+            while (keyEnum.hasMoreElements()) {
+                String key = (String) keyEnum.nextElement();
+                if (key.matches("^ml[A-Z].+") && !customTokens.containsKey(key)) {
+                    customTokens.put("%%" + key + "%%", (String) environmentProperties.get(key));
+                }
+            }
+        }
+
+
+        try {
+            String version = getJarVersion();
+            customTokens.put("%%mlHubVersion%%", version);
+        }
+        catch(IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public String getJarVersion() throws IOException {
+        Properties properties = new Properties();
+        InputStream inputStream = getClass().getClassLoader().getResourceAsStream("version.properties");
+        properties.load(inputStream);
+        String version = (String)properties.get("version");
+
+        // this lets debug builds work from an IDE
+        if (version.equals("${project.version}")) {
+            version = "0.1.2";
+        }
+        return version;
+    }
+
+
+    public String toString() {
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("Data Hub Config:\n")
+            .append("\n")
+            .append("username: " + getUsername() + "\n")
+            .append("password: " + getPassword() + "\n")
+            .append("\n")
+            .append("manageUsername: " + getManageUsername() + "\n")
+            .append("managePassword: " + getManagePassword() + "\n")
+            .append("\n")
+            .append("restAdminUsername: " + getRestAdminUsername() + "\n")
+            .append("restAdminPassword: " + getRestAdminPassword() + "\n")
+            .append("\n")
+            .append("adminUsername: " + getAdminUsername() + "\n")
+            .append("adminPassword: " + getAdminPassword() + "\n")
+            .append("\n")
+            .append("host: " + host + "\n")
+            .append("\n")
+            .append("stagingDbName: " + stagingDbName + "\n")
+            .append("stagingHttpName: " + stagingHttpName + "\n")
+            .append("stagingForestsPerHost: " + stagingForestsPerHost + "\n")
+            .append("stagingPort: " + stagingPort + "\n")
+            .append("stagingAuthMethod: " + stagingAuthMethod + "\n")
+            .append("\n")
+            .append("finalDbName: " + finalDbName + "\n")
+            .append("finalHttpName: " + finalHttpName + "\n")
+            .append("finalForestsPerHost: " + finalForestsPerHost + "\n")
+            .append("finalPort: " + finalPort + "\n")
+            .append("finalAuthMethod: " + finalAuthMethod + "\n")
+            .append("\n")
+            .append("traceDbName: " + traceDbName + "\n")
+            .append("traceHttpName: " + traceHttpName + "\n")
+            .append("traceForestsPerHost: " + traceForestsPerHost + "\n")
+            .append("tracePort: " + tracePort + "\n")
+            .append("traceAuthMethod: " + traceAuthMethod + "\n")
+            .append("\n")
+            .append("jobDbName: " + jobDbName + "\n")
+            .append("jobHttpName: " + jobHttpName + "\n")
+            .append("jobForestsPerHost: " + jobForestsPerHost + "\n")
+            .append("jobPort: " + jobPort + "\n")
+            .append("jobAuthMethod: " + jobAuthMethod + "\n")
+            .append("\n")
+            .append("modulesDbName: " + modulesDbName + "\n")
+            .append("triggersDbName: " + triggersDbName + "\n")
+            .append("schemasDbName: " + schemasDbName + "\n")
+            .append("\n")
+            .append("projectDir: " + projectDir + "\n")
+            .append("\n");
+        return sb.toString();
     }
 
 }

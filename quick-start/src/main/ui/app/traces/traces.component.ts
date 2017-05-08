@@ -8,8 +8,8 @@ import * as _ from 'lodash';
 
 @Component({
   selector: 'app-traces',
-  templateUrl: './traces.tpl.html',
-  styleUrls: ['./traces.style.scss']
+  templateUrl: './traces.component.html',
+  styleUrls: ['./traces.component.scss']
 })
 export class TracesComponent implements OnDestroy, OnInit {
 
@@ -66,10 +66,12 @@ export class TracesComponent implements OnDestroy, OnInit {
   }
 
   showTrace(traceId: string) {
-    this.router.navigate(['/traces', traceId]);
+    if (traceId) {
+      this.router.navigate(['/traces', traceId]);
+    }
   }
 
-  private doSearch(): void {
+  public doSearch(): void {
     this.currentPage = 1;
     this.runQuery();
   }

@@ -15,7 +15,6 @@
  */
 package com.marklogic.quickstart.service;
 
-import com.marklogic.client.helper.LoggingObject;
 import com.marklogic.hub.DataHub;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.deploy.commands.LoadUserModulesCommand;
@@ -26,6 +25,8 @@ import com.marklogic.quickstart.exception.DataHubException;
 import com.marklogic.quickstart.listeners.DeployUserModulesListener;
 import com.marklogic.quickstart.listeners.ValidateListener;
 import com.marklogic.quickstart.model.EnvironmentConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -39,7 +40,9 @@ import java.util.Properties;
 import java.util.TimeZone;
 
 @Service
-public class DataHubService extends LoggingObject {
+public class DataHubService {
+
+    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     public boolean install(HubConfig config, HubDeployStatusListener listener) throws DataHubException {
         logger.info("Installing Data Hub");
@@ -156,12 +159,24 @@ public class DataHubService extends LoggingObject {
         Properties properties = new Properties();
         InputStream inputStream = getClass().getClassLoader().getResourceAsStream("quickstart-version.properties");
         properties.load(inputStream);
-        return (String)properties.get("version");
+        String version = (String)properties.get("version");
+
+        // this lets debug builds work from an IDE
+        if (version.equals("${project.version}")) {
+            version = "0.1.2";
+        }
+        return version;
     }
 
     public boolean updateHub(HubConfig config) throws IOException {
         DataHub dataHub = new DataHub(config);
-        boolean result = dataHub.updateHub();
+        boolean result = false;
+        int compare = DataHub.versionCompare(dataHub.getHubVersion(), "1.1.0");
+        if (compare == -1) {
+            result = dataHub.updateHubFromPre110();
+        } else if (compare == 0) {
+            result = dataHub.updateHubFrom110();
+        }
         if (result) {
             ConnectionAuthenticationToken authenticationToken = (ConnectionAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
             if (authenticationToken != null) {

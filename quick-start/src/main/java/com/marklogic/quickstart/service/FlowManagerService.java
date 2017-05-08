@@ -16,12 +16,9 @@
 package com.marklogic.quickstart.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.marklogic.client.helper.LoggingObject;
+import com.marklogic.client.datamovement.JobTicket;
 import com.marklogic.hub.FlowManager;
-import com.marklogic.hub.JobStatusListener;
-import com.marklogic.hub.flow.AbstractFlow;
-import com.marklogic.hub.flow.Flow;
-import com.marklogic.hub.flow.FlowType;
+import com.marklogic.hub.flow.*;
 import com.marklogic.quickstart.auth.ConnectionAuthenticationToken;
 import com.marklogic.quickstart.model.EnvironmentConfig;
 import com.marklogic.quickstart.model.FlowModel;
@@ -43,7 +40,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class FlowManagerService extends LoggingObject {
+public class FlowManagerService {
 
     private static final String PROJECT_TMP_FOLDER = ".tmp";
 
@@ -99,9 +96,15 @@ public class FlowManagerService extends LoggingObject {
         return flowManager.getFlow(entityName, flowName, flowType);
     }
 
-    public void runFlow(Flow flow, int batchSize, int threadCount, JobStatusListener statusListener) {
+    public JobTicket runFlow(Flow flow, int batchSize, int threadCount, FlowStatusListener statusListener) {
+
         FlowManager flowManager = getFlowManager();
-        flowManager.runFlow(flow, batchSize, threadCount, statusListener);
+        FlowRunner flowRunner = flowManager.newFlowRunner()
+            .withFlow(flow)
+            .withBatchSize(batchSize)
+            .withThreadCount(threadCount)
+            .onStatusChanged(statusListener);
+        return flowRunner.run();
     }
 
     private Path getMlcpOptionsFilePath(Path destFolder, String entityName, String flowName) {
@@ -132,7 +135,7 @@ public class FlowManagerService extends LoggingObject {
         return "{ \"input_file_path\": \"" + envConfig().getProjectDir().replace("\\", "\\\\") + "\" }";
     }
 
-    public void runMlcp(Flow flow, JsonNode json, JobStatusListener statusListener) {
+    public void runMlcp(Flow flow, JsonNode json, FlowStatusListener statusListener) {
         MlcpRunner runner = new MlcpRunner(envConfig().getMlSettings(), flow, json, statusListener);
         runner.run();
     }

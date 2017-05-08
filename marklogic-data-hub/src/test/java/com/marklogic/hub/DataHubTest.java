@@ -38,7 +38,7 @@ public class DataHubTest extends HubTestBase {
     private AdminManager am;
 
     @TestSubject
-    private DataHub dh = new DataHub(getHubConfig());
+    private DataHub dh = getDataHub();
 
     @BeforeClass
     public static void setup() {

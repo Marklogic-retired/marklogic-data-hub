@@ -4,7 +4,7 @@ plugins {
     id 'idea'
     id 'application'
     id 'net.saliman.properties' version '1.4.6'
-    id 'com.marklogic.ml-data-hub' version '2.0.0-alpha.1'
+    id 'com.marklogic.ml-data-hub' version '2.0.0-alpha.3'
 }
 
 repositories {
@@ -13,9 +13,9 @@ repositories {
 }
 
 dependencies {
-    compile 'com.marklogic:marklogic-data-hub:2.0.0-alpha.1'
+    compile 'com.marklogic:marklogic-data-hub:2.0.0-alpha.3'
     compile 'com.marklogic:marklogic-spring-batch-core:0.6.0'
-    compile 'com.marklogic:ml-javaclient-util:2.9.1'
+    compile 'com.marklogic:ml-javaclient-util:4.0.alpha2'
     testCompile 'com.marklogic:marklogic-spring-batch-test:0.6.0'
 }
 

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Http, Response } from '@angular/http';
+import { Http, Response, ResponseType } from '@angular/http';
 
 @Injectable()
 export class SearchService {
@@ -15,11 +15,17 @@ export class SearchService {
       count: pageLength,
     };
 
+    let facets = {};
     for (let key of Object.keys(activeFacets)) {
+      if (activeFacets[key].values) {
+        facets[key] = []
+      }
       for (let value of activeFacets[key].values) {
-        data[key] = value;
+        facets[key].push(value);
       }
     }
+
+    data['facets'] = facets;
 
     return this.post(`/api/search`, data);
   }
@@ -29,7 +35,10 @@ export class SearchService {
   }
 
   private extractData = (res: Response) => {
-    return res.json();
+    if (res.headers.get('content-type').startsWith('application/json')) {
+      return res.json();
+    }
+    return res.text();
   }
 
   private get(url: string) {

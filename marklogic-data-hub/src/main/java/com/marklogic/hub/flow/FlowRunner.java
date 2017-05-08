@@ -1,63 +1,40 @@
 package com.marklogic.hub.flow;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.marklogic.client.DatabaseClient;
-import com.marklogic.client.extensions.ResourceManager;
-import com.marklogic.client.extensions.ResourceServices;
-import com.marklogic.client.io.Format;
-import com.marklogic.client.io.StringHandle;
-import com.marklogic.client.util.RequestParameters;
+import com.marklogic.client.datamovement.JobTicket;
+import com.marklogic.hub.HubDatabase;
 
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
-public class FlowRunner extends ResourceManager {
+public interface FlowRunner {
 
-    static final public String NAME = "flow";
+    FlowRunner withFlow(Flow flow);
+    FlowRunner withBatchSize(int batchSize);
+    FlowRunner withThreadCount(int threadCount);
+    FlowRunner withSourceDatabase(HubDatabase sourceDatabase);
+    FlowRunner withDestinationDatabase(HubDatabase destinationDatabase);
+    FlowRunner withOptions(Map<String, Object> options);
 
-    private DatabaseClient srcClient;
-    private String targetDatabase;
-    private Flow flow;
-    StringHandle handle;
+    FlowRunner onItemComplete(FlowItemCompleteListener listener);
+    FlowRunner onItemFailed(FlowItemFailureListener listener);
 
-    public FlowRunner(DatabaseClient srcClient, String targetDatabase, Flow flow) {
-        super();
-        this.flow = flow;
-        this.srcClient = srcClient;
-        this.targetDatabase = targetDatabase;
-        this.srcClient.init(NAME, this);
-        handle = new StringHandle(flow.serialize(true));
-        handle.setFormat(Format.XML);
-    }
+    FlowRunner onStatusChanged(FlowStatusListener listener);
+    FlowRunner onFinished(FlowFinishedListener listener);
 
-    public RunFlowResponse run(String jobId, String[] items) {
-        return run(jobId, items, null);
-    }
+    /**
+     * Blocks until the job is complete.
+     */
+    void awaitCompletion();
 
-    public RunFlowResponse run(String jobId, String[] items, Map<String, Object> options) {
-        RunFlowResponse resp;
-        try {
-            RequestParameters params = new RequestParameters();
-            params.put("job-id", jobId);
-            params.put("identifier", items);
-            params.put("target-database", targetDatabase);
-            if (options != null) {
-                ObjectMapper objectMapper = new ObjectMapper();
-                params.put("options", objectMapper.writeValueAsString(options));
-            }
-            ResourceServices.ServiceResultIterator resultItr = this.getServices().post(params, handle);
-            if (resultItr == null || ! resultItr.hasNext()) {
-                resp = new RunFlowResponse();
-            }
-            ResourceServices.ServiceResult res = resultItr.next();
-            StringHandle handle = new StringHandle();
-            ObjectMapper objectMapper = new ObjectMapper();
-            resp = objectMapper.readValue(res.getContent(handle).get(), RunFlowResponse.class);
+    /**
+     * Blocks until the job is complete.
+     *
+     * @param timeout the maximum time to wait
+     * @param unit the time unit of the timeout argument
+     *
+     * @throws InterruptedException if interrupted while waiting
+     */
+    void awaitCompletion(long timeout, TimeUnit unit) throws InterruptedException;
 
-        }
-        catch(Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
-        }
-        return resp;
-    }
+    JobTicket run();
 }

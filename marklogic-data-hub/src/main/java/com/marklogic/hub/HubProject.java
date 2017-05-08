@@ -1,7 +1,8 @@
 package com.marklogic.hub;
 
-import com.marklogic.client.helper.LoggingObject;
 import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -9,13 +10,14 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  * Class for creating a hub Project
  */
-class HubProject extends LoggingObject {
+class HubProject {
 
     private String projectDirStr;
     private Path projectDir;
@@ -24,6 +26,8 @@ class HubProject extends LoggingObject {
 
     private Map<String, String> customTokens = new HashMap<>();
 
+    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+
     public HubProject(HubConfig config) {
         this.hubConfig = config;
         this.projectDirStr = config.projectDir;
@@ -31,8 +35,6 @@ class HubProject extends LoggingObject {
         this.pluginsDir = Paths.get(this.projectDirStr, "plugins");
 
         customTokens.put("%%mlHost%%", hubConfig.host);
-        customTokens.put("%%mlAppName%%", hubConfig.name);
-        customTokens.put("%%mlAdminUsername%%", hubConfig.username);
         customTokens.put("%%mlStagingAppserverName%%", hubConfig.stagingHttpName);
         customTokens.put("%%mlStagingPort%%", hubConfig.stagingPort.toString());
         customTokens.put("%%mlStagingDbName%%", hubConfig.stagingDbName);
@@ -60,10 +62,6 @@ class HubProject extends LoggingObject {
         customTokens.put("%%mlModulesDbName%%", hubConfig.modulesDbName);
         customTokens.put("%%mlTriggersDbName%%", hubConfig.triggersDbName);
         customTokens.put("%%mlSchemasDbName%%", hubConfig.schemasDbName);
-
-        customTokens.put("%%mlHubUserName%%", hubConfig.hubUserName);
-        customTokens.put("%%mlHubUserPassword%%", hubConfig.hubUserPassword);
-        customTokens.put("%%mlHubUserRole%%", hubConfig.hubUserRole);
     }
 
     /**
@@ -77,20 +75,20 @@ class HubProject extends LoggingObject {
 
             Path serversDir = hubConfig.getHubServersDir();
             serversDir.toFile().mkdirs();
-            writeResourceFile("ml-config/servers/staging-server.json", serversDir.resolve("staging-server.json"));
-            writeResourceFile("ml-config/servers/final-server.json", serversDir.resolve("final-server.json"));
-            writeResourceFile("ml-config/servers/trace-server.json", serversDir.resolve("trace-server.json"));
-            writeResourceFile("ml-config/servers/job-server.json", serversDir.resolve("job-server.json"));
+            writeResourceFile("ml-config/servers/staging-server.json", serversDir.resolve("staging-server.json"), true);
+            writeResourceFile("ml-config/servers/final-server.json", serversDir.resolve("final-server.json"), true);
+            writeResourceFile("ml-config/servers/trace-server.json", serversDir.resolve("trace-server.json"), true);
+            writeResourceFile("ml-config/servers/job-server.json", serversDir.resolve("job-server.json"), true);
 
             Path databasesDir = hubConfig.getHubDatabaseDir();
             databasesDir.toFile().mkdirs();
-            writeResourceFile("ml-config/databases/staging-database.json", databasesDir.resolve("staging-database.json"));
-            writeResourceFile("ml-config/databases/final-database.json", databasesDir.resolve("final-database.json"));
-            writeResourceFile("ml-config/databases/trace-database.json", databasesDir.resolve("trace-database.json"));
-            writeResourceFile("ml-config/databases/job-database.json", databasesDir.resolve("job-database.json"));
-            writeResourceFile("ml-config/databases/modules-database.json", databasesDir.resolve("modules-database.json"));
-            writeResourceFile("ml-config/databases/schemas-database.json", databasesDir.resolve("schemas-database.json"));
-            writeResourceFile("ml-config/databases/triggers-database.json", databasesDir.resolve("triggers-database.json"));
+            writeResourceFile("ml-config/databases/staging-database.json", databasesDir.resolve("staging-database.json"), true);
+            writeResourceFile("ml-config/databases/final-database.json", databasesDir.resolve("final-database.json"), true);
+            writeResourceFile("ml-config/databases/trace-database.json", databasesDir.resolve("trace-database.json"), true);
+            writeResourceFile("ml-config/databases/job-database.json", databasesDir.resolve("job-database.json"), true);
+            writeResourceFile("ml-config/databases/modules-database.json", databasesDir.resolve("modules-database.json"), true);
+            writeResourceFile("ml-config/databases/schemas-database.json", databasesDir.resolve("schemas-database.json"), true);
+            writeResourceFile("ml-config/databases/triggers-database.json", databasesDir.resolve("triggers-database.json"), true);
 
             Path securityDir = hubConfig.getHubSecurityDir();
             Path rolesDir = securityDir.resolve("roles");
@@ -99,8 +97,13 @@ class HubProject extends LoggingObject {
             rolesDir.toFile().mkdirs();
             usersDir.toFile().mkdirs();
 
-            writeResourceFileWithReplace("ml-config/security/roles/data-hub-user.json", rolesDir.resolve("data-hub-user.json"));
-            writeResourceFileWithReplace("ml-config/security/users/data-hub-user.json", usersDir.resolve("data-hub-user.json"));
+            writeResourceFileWithReplace("ml-config/security/roles/data-hub-user.json", rolesDir.resolve("data-hub-user.json"), true);
+            writeResourceFileWithReplace("ml-config/security/users/data-hub-user.json", usersDir.resolve("data-hub-user.json"), true);
+
+            Path mimetypesDir = hubConfig.getHubMimetypesDir();
+            mimetypesDir.toFile().mkdirs();
+            writeResourceFile("ml-config/mimetypes/woff.json", mimetypesDir.resolve("woff.json"), true);
+            writeResourceFile("ml-config/mimetypes/woff2.json", mimetypesDir.resolve("woff2.json"), true);
 
             hubConfig.getUserServersDir().toFile().mkdirs();
             hubConfig.getUserDatabaseDir().toFile().mkdirs();
@@ -115,15 +118,23 @@ class HubProject extends LoggingObject {
     }
 
     private void writeResourceFile(String srcFile, Path dstFile) throws IOException {
-        if (!dstFile.toFile().exists()) {
+        writeResourceFile(srcFile, dstFile, false);
+    }
+
+    private void writeResourceFile(String srcFile, Path dstFile, boolean overwrite) throws IOException {
+        if (overwrite || !dstFile.toFile().exists()) {
             logger.info("Getting file: " + srcFile);
             InputStream inputStream = HubProject.class.getClassLoader().getResourceAsStream(srcFile);
-            Files.copy(inputStream, dstFile);
+            Files.copy(inputStream, dstFile, StandardCopyOption.REPLACE_EXISTING);
         }
     }
 
     private void writeResourceFileWithReplace(String srcFile, Path dstFile) throws IOException {
-        if (!dstFile.toFile().exists()) {
+        writeResourceFileWithReplace(srcFile, dstFile, false);
+    }
+
+    private void writeResourceFileWithReplace(String srcFile, Path dstFile, boolean overwrite) throws IOException {
+        if (overwrite || !dstFile.toFile().exists()) {
             logger.info("Getting file with Replace: " + srcFile);
             InputStream inputStream = HubProject.class.getClassLoader().getResourceAsStream(srcFile);
 

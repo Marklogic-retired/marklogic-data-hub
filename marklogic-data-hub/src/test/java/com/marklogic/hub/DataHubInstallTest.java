@@ -1,6 +1,5 @@
 package com.marklogic.hub;
 
-import org.apache.commons.io.FileUtils;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -8,7 +7,6 @@ import org.junit.Test;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
-import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -20,40 +18,28 @@ import static org.junit.Assert.assertTrue;
 
 public class DataHubInstallTest extends HubTestBase {
 
-    private static File projectPath = new File("ye-olde-project");
-
-    private static DataHub dataHub;
     @BeforeClass
     public static void setup() throws IOException {
         XMLUnit.setIgnoreWhitespace(true);
-        dataHub = new DataHub(getHubConfig(projectPath.toString()));
 
-        InstallInfo installInfo = dataHub.isInstalled();
+        InstallInfo installInfo = getDataHub().isInstalled();
         if (installInfo.isInstalled()) {
-            dataHub.uninstall();
+            uninstallHub();
         }
-        dataHub.initProject();
-        dataHub.install();
-    }
-
-    @AfterClass
-    public static void teardown() throws IOException {
-        dataHub = new DataHub(getHubConfig(projectPath.toString()));
-        dataHub.uninstall();
-        FileUtils.deleteDirectory(projectPath);
+        installHub();
     }
 
     @Test
     public void testInstallHubModules() throws IOException {
-        assertTrue(dataHub.isInstalled().isInstalled());
+        assertTrue(getDataHub().isInstalled().isInstalled());
 
         assertTrue(getModulesFile("/com.marklogic.hub/lib/config.xqy").startsWith(getResource("data-hub-test/core-modules/config.xqy")));
     }
 
     @Test
     public void getHubModulesVersion() throws IOException {
-        String version = dataHub.getJarVersion();
-        assertEquals(version, dataHub.getHubVersion());
+        String version = getHubConfig().getJarVersion();
+        assertEquals(version, getDataHub().getHubVersion());
     }
 
     @Test
@@ -61,7 +47,7 @@ public class DataHubInstallTest extends HubTestBase {
         URL url = DataHubInstallTest.class.getClassLoader().getResource("data-hub-test");
         String path = Paths.get(url.toURI()).toFile().getAbsolutePath();
 
-        dataHub = new DataHub(getHubConfig(path));
+        DataHub dataHub = new DataHub(getHubConfig(path));
         dataHub.installUserModules(true);
 
         assertEquals(

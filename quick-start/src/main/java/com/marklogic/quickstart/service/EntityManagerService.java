@@ -19,12 +19,15 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.extensions.ResourceManager;
 import com.marklogic.client.extensions.ResourceServices;
-import com.marklogic.client.helper.LoggingObject;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.client.io.StringHandle;
+import com.marklogic.client.modulesloader.impl.DefaultModulesLoader;
+import com.marklogic.client.modulesloader.impl.PropertiesModuleManager;
+import com.marklogic.client.modulesloader.impl.XccAssetLoader;
 import com.marklogic.client.util.RequestParameters;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.flow.FlowType;
@@ -38,6 +41,7 @@ import com.marklogic.quickstart.util.FileUtil;
 import com.sun.jersey.api.client.ClientHandlerException;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -48,7 +52,7 @@ import java.nio.file.Paths;
 import java.util.*;
 
 @Service
-public class EntityManagerService extends LoggingObject {
+public class EntityManagerService {
 
     private static final String UI_LAYOUT_FILE = "entities.layout.json";
     private static final String PLUGINS_DIR = "plugins";
@@ -133,15 +137,40 @@ public class EntityManagerService extends LoggingObject {
     }
 
     public void saveSearchOptions() {
+
+        HubConfig hubConfig = envConfig().getMlSettings();
+        AppConfig config = hubConfig.getAppConfig();
+        XccAssetLoader xccAssetLoader = config.newXccAssetLoader();
+
+        DefaultModulesLoader modulesLoader = new DefaultModulesLoader(xccAssetLoader);
+        ThreadPoolTaskExecutor threadPoolTaskExecutor = new ThreadPoolTaskExecutor();
+        threadPoolTaskExecutor.setCorePoolSize(16);
+
+        // 10 minutes should be plenty of time to wait for REST API modules to be loaded
+        threadPoolTaskExecutor.setAwaitTerminationSeconds(60 * 10);
+        threadPoolTaskExecutor.setWaitForTasksToCompleteOnShutdown(true);
+
+        threadPoolTaskExecutor.afterPropertiesSet();
+        modulesLoader.setTaskExecutor(threadPoolTaskExecutor);
+
+        File timestampFile = Paths.get(hubConfig.projectDir, ".tmp", "hub-modules-deploy-timestamps.properties").toFile();
+        PropertiesModuleManager propsManager = new PropertiesModuleManager(timestampFile);
+        propsManager.deletePropertiesFile();
+        modulesLoader.setModulesManager(propsManager);
+        modulesLoader.setDatabaseClient(hubConfig.newFinalClient());
+        modulesLoader.setShutdownTaskExecutorAfterLoadingModules(false);
+
         SearchOptionsGenerator generator = new SearchOptionsGenerator(envConfig().getStagingClient());
         try {
             String options = generator.generateOptions(getRawEntities());
-            Path dir = Paths.get(envConfig().getProjectDir(), HubConfig.USER_CONFIG_DIR);
+            Path dir = Paths.get(envConfig().getProjectDir(), HubConfig.ENTITY_CONFIG_DIR);
             if (!dir.toFile().exists()) {
                 dir.toFile().mkdirs();
             }
-            File file = Paths.get(dir.toString(), HubConfig.SEARCH_OPTIONS_FILE).toFile();
+
+            File file = Paths.get(dir.toString(), HubConfig.ENTITY_SEARCH_OPTIONS_FILE).toFile();
             FileUtils.writeStringToFile(file, options);
+            modulesLoader.installQueryOptions(file);
         }
         catch(IOException e) {
             e.printStackTrace();
@@ -153,7 +182,7 @@ public class EntityManagerService extends LoggingObject {
         try {
             String indexes = generator.getIndexes(getRawEntities());
 
-            Path dir = envConfig().getMlSettings().getUserDatabaseDir();
+            Path dir = envConfig().getMlSettings().getEntityDatabaseDir();
             if (!dir.toFile().exists()) {
                 dir.toFile().mkdirs();
             }

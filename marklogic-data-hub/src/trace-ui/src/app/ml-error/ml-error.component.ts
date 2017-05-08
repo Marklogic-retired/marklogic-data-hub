@@ -1,12 +1,12 @@
 import { Component, Input, OnInit } from '@angular/core';
 
-import { MlError, MlErrorStack } from './ml-error.ts';
+import { MlError, MlErrorStack } from './ml-error';
 import * as _ from 'lodash';
 
 @Component({
   selector: 'app-ml-error',
   templateUrl: './ml-error.component.html',
-  styleUrls: ['./ml-error.style.scss'],
+  styleUrls: ['./ml-error.component.scss'],
 })
 export class MlErrorComponent implements OnInit {
   @Input() error: MlError;

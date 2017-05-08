@@ -9,11 +9,8 @@ import * as _ from 'lodash';
 @Component({
   selector: 'app-trace-viewer',
   encapsulation: ViewEncapsulation.None,
-  templateUrl: './trace-viewer.tpl.html',
-  providers: [TraceService],
-  styleUrls: [
-    './trace-viewer.style.scss'
-  ],
+  templateUrl: './trace-viewer.component.html',
+  styleUrls: ['./trace-viewer.component.scss'],
 })
 export class TraceViewerComponent implements OnInit, OnDestroy {
 
@@ -29,11 +26,11 @@ export class TraceViewerComponent implements OnInit, OnDestroy {
   };
 
   private sub: any;
-  private trace: Trace;
+  public trace: Trace;
   private plugins: Array<string>;
 
   private currentPluginType: string;
-  private currentPlugin: Plugin;
+  public currentPlugin: Plugin;
 
   constructor(
     private route: ActivatedRoute,

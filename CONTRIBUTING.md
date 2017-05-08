@@ -24,7 +24,7 @@ Looking to build the code from source? Look no further.
 You need these to get started
 
 - Java 8 JDK
-- Gradle (the newer the better)
+- Gradle (3.1 or greater)
 - Node JS 6.5 or newer
 - Typings `npm -g install typings`
 - A decent IDE. IntelliJ is nice.
@@ -36,29 +36,46 @@ To build the entire DHF (marklogic-data-hub.jar, quickstart.war, and ml-data-hub
 
 ```bash
 cd /path/to/data-hub-project/
-gradle build -x test
+./gradlew build -x test
 ```
 
-#### Running your local hub instead of the cloud hosted one
+#### Making Changes to the Hub Gradle Plugin
+
+This is for when you are making changes to the ml-data-hub-plugin. This is a gradle plugin that enables Hub Capabilities. Most likely you won't find yourself doing this. You can safely ignore this section.
+
+Still here? Seems you really want to modify the Gradle Plugin. Here's how to tell Gradle to use your local copy instead of the one living up on the Cloud.
+
 ```bash
 cd /path/to/data-hub-project/
-gradle publishToMavenLocal
+./gradlew publishToMavenLocal
 cd /path/to/data-hub-project/ml-data-hub-plugin
-gradle publishToMavenLocal
+./gradlew publishToMavenLocal
 ```
 
 Then in your build.gradle file you will need to use the local version:
 ```groovy
+
+// this goes at the top above the plugins section
+
 buildscript {
   repositories {
     mavenLocal() 
     jcenter()
   } 
   dependencies {
-    classpath "com.marklogic:ml-data-hub-plugin:(the version number you chose)"
+    classpath "com.marklogic:ml-data-hub:(the version number you chose)"
   }
 }
-apply plugin: "com.marklogic.ml-data-hub-plugin"
+
+plugins {
+   ...
+
+   // comment out this line. It pulls the version from the cloud
+   // id 'com.marklogic.ml-data-hub' version '2.0.0-alpha.3'
+}
+
+// this tells gradle to apply the plugin you included above in the buildscript section
+apply plugin: "com.marklogic.ml-data-hub"
 ```
 
 #### Running the QuickStart UI from source
@@ -69,7 +86,7 @@ You will need to open two terminal windows.
 **Terminal window 1** - This runs the webapp.
 ```bash
 cd /path/to/data-hub-project
-gradle bootrun
+./gradlew bootrun
 ```
 
 **Terminal window 2** - This runs the Quickstart UI
@@ -112,10 +129,10 @@ your vision does not align with that of a project maintainer.
 #### Create a branch for your changes
 
 Okay, so you have decided to fix something. Create a feature branch
-and start hacking. **Note** that we use git flow and thus our most recent changes live on the develop branch.
+and start hacking. **Note** that we use git flow and thus our most recent changes live on the 2.0-develop branch.
 
 ```sh
-$ git checkout -b my-feature-branch -t origin/develop
+$ git checkout -b my-feature-branch -t origin/2.0-develop
 ```
 
 #### Formatting code
@@ -165,7 +182,7 @@ Use `git rebase` (not `git merge`) to sync your work from time to time.
 
 ```sh
 $ git fetch upstream
-$ git rebase upstream/develop
+$ git rebase upstream/2.0-develop
 ```
 
 
@@ -174,7 +191,7 @@ $ git rebase upstream/develop
 Make sure the JUnit tests pass.
 
 ```sh
-$ gradle test
+$ ./gradlew test
 ```
 
 Make sure that all tests pass. Please, do not submit patches that fail.
@@ -184,6 +201,10 @@ Make sure that all tests pass. Please, do not submit patches that fail.
 ```sh
 $ git push origin my-feature-branch
 ```
+
+#### Agree to the contributor License
+
+Before we can merge your changes, you need to sign a [Contributor License Agreement](http://developer.marklogic.com/products/cla). You only need to do this once.
 
 #### Submit the pull request
 
@@ -209,10 +230,10 @@ from the main (upstream) repository:
     git push origin --delete my-feature-branch
     ```
 
-* Check out the develop branch:
+* Check out the 2.0-develop branch:
 
     ```shell
-    git checkout develop -f
+    git checkout 2.0-develop -f
     ```
 
 * Delete the local branch:
@@ -221,10 +242,10 @@ from the main (upstream) repository:
     git branch -D my-feature-branch
     ```
 
-* Update your develop with the latest upstream version:
+* Update your 2.0-develop with the latest upstream version:
 
     ```shell
-    git pull --ff upstream develop
+    git pull --ff upstream 2.0-develop
     ```
 
 [issue tracker]: https://github.com/marklogic/marklogic-data-hub/issues

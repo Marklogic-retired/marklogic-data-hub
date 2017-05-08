@@ -19,16 +19,13 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.client.DatabaseClient;
-import com.marklogic.client.DatabaseClientFactory;
-import com.marklogic.client.DatabaseClientFactory.Authentication;
-import com.marklogic.client.helper.LoggingObject;
 import com.marklogic.hub.DataHub;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.InstallInfo;
 
 import java.io.IOException;
 
-public class EnvironmentConfig extends LoggingObject {
+public class EnvironmentConfig {
 
     private String projectDir;
     private String environment;
@@ -86,11 +83,8 @@ public class EnvironmentConfig extends LoggingObject {
 
         mlSettings = HubConfig.hubFromEnvironment(this.projectDir, environment);
         if (username != null) {
-            mlSettings.username = username;
-            mlSettings.password = password;
-
-            mlSettings.adminUsername = username;
-            mlSettings.adminPassword = password;
+            mlSettings.setUsername(username);
+            mlSettings.setPassword(password);
         }
 
         dataHub = new DataHub(mlSettings);
@@ -108,7 +102,7 @@ public class EnvironmentConfig extends LoggingObject {
     public void checkIfInstalled() throws IOException {
         this.installInfo = dataHub.isInstalled();
         this.installedVersion = dataHub.getHubVersion();
-        this.runningVersion = this.dataHub.getJarVersion();
+        this.runningVersion = this.mlSettings.getJarVersion();
     }
 
     private DatabaseClient _stagingClient = null;

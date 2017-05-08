@@ -13,7 +13,7 @@ import java.util.Properties;
 
 public class HubProjectTest extends HubTestBase {
 
-    private static File projectPath = new File("ye-olde-project");
+    private static File projectPath = new File(PROJECT_PATH);
 
     @BeforeClass
     public static void setup() throws IOException {
@@ -27,8 +27,7 @@ public class HubProjectTest extends HubTestBase {
 
     @Test
     public void testInit() throws IOException {
-        HubConfig config = getHubConfig(projectPath.toString());
-        config.name = "my-crazy-test";
+        HubConfig config = getHubConfig();
         config.stagingHttpName = "my-crazy-test-staging";
         config.stagingDbName = "my-crazy-test-staging";
         config.stagingForestsPerHost = 100;
@@ -69,7 +68,6 @@ public class HubProjectTest extends HubTestBase {
         propsStream.close();
 
         assertEquals(config.host, props.getProperty("mlHost"));
-        assertEquals(config.name, props.getProperty("mlAppName"));
 
         assertEquals(config.stagingHttpName, props.getProperty("mlStagingAppserverName"));
         assertEquals(config.stagingPort.toString(), props.getProperty("mlStagingPort"));

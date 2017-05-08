@@ -1,36 +1,38 @@
 <div xmlns="http://www.w3.org/1999/xhtml"
   class="entity-def-box" [ngClass]="{'has-flows' : entity.hasFlows}">
-  <div class="title" (mousedown)="handleStartDrag($event)">
-    <span>{{entity.info.title}}</span>
-    <span class="version">v{{entity.info.version}}</span>
-    <span class="edit-area">
-      <span *ngIf="entity.inputFlowCount > 0">
-        <i class="mdi mdi-import"></i>
-        {{entity.inputFlowCount}}
-      </span>
-      <span *ngIf="entity.harmonizeFlowCount > 0">
-        <i class="mdi mdi-looks"></i>
-        {{entity.harmonizeFlowCount}}
-      </span>
-
-      <span class="edit-start" (click)="startEditing()">
-        <i class="fa fa-pencil"></i>
-      </span>
-      <span (click)="deleteEntity()">
-        <i class="fa fa-remove"></i>
-      </span>
-    </span>
-  </div>
-  <div class="meta">
-    <div class="description">
-      <div>{{entity.info.description || 'No description yet'}}</div>
-    </div>
-    <div class="baseuri">
-      <div>{{entity.info.baseUri || 'No Base URI yet'}}</div>
-    </div>
-  </div>
   <app-resizable
+    [minWidth]="350"
+    [minHeight]="75"
     [directions]="['bottomRight']" (sizeChange)="onSizeChange($event)">
+    <div class="title" (mousedown)="handleStartDrag($event)">
+      <span>{{entity.info.title}}</span>
+      <span class="version">v{{entity.info.version}}</span>
+      <span class="edit-area">
+        <span *ngIf="entity.inputFlowCount > 0">
+          <i class="mdi mdi-import"></i>
+          {{entity.inputFlowCount}}
+        </span>
+        <span *ngIf="entity.harmonizeFlowCount > 0">
+          <i class="mdi mdi-looks"></i>
+          {{entity.harmonizeFlowCount}}
+        </span>
+
+        <span class="edit-start" (click)="startEditing()">
+          <i class="fa fa-pencil"></i>
+        </span>
+        <span (click)="deleteEntity()">
+          <i class="fa fa-remove"></i>
+        </span>
+      </span>
+    </div>
+    <div class="meta">
+      <div class="description">
+        <div>{{entity.info.description || 'No description yet'}}</div>
+      </div>
+      <div class="baseuri">
+        <div>{{entity.info.baseUri || 'No Base URI yet'}}</div>
+      </div>
+    </div>
     <div class="scroller">
       <table #properties class="properties">
         <thead>
