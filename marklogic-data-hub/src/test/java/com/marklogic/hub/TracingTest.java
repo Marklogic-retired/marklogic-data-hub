@@ -30,11 +30,6 @@ public class TracingTest extends HubTestBase {
         dataHub.installUserModules(true);
      }
 
-    @AfterClass
-    public static void teardown() throws IOException {
-        uninstallHub();
-    }
-
     @Before
     public void beforeEach() {
         runInDatabase("cts:uris() ! xdmp:document-delete(.)", HubConfig.DEFAULT_FINAL_NAME);

@@ -21,20 +21,19 @@ import com.marklogic.client.document.ServerTransform;
 import com.marklogic.client.io.Format;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.query.QueryManager;
-import com.marklogic.client.query.RawCombinedQueryDefinition;
 import com.marklogic.client.query.StructuredQueryBuilder;
 import com.marklogic.client.query.StructuredQueryDefinition;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubDatabase;
 import com.marklogic.quickstart.model.SearchQuery;
-import com.marklogic.quickstart.util.QueryHelper;
-import org.codehaus.jettison.json.JSONObject;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
+import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.SAXParser;
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
@@ -61,7 +60,7 @@ public class SearchService extends SearchableService {
 
     private Element getOptions(boolean entitiesOnly) {
         try {
-            Path dir = Paths.get(hubConfig.projectDir, HubConfig.USER_CONFIG_DIR, HubConfig.SEARCH_OPTIONS_FILE);
+            Path dir = Paths.get(hubConfig.projectDir, HubConfig.ENTITY_CONFIG_DIR, HubConfig.ENTITY_SEARCH_OPTIONS_FILE);
             if (dir.toFile().exists()) {
                 DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
                 dbf.setNamespaceAware(true);
@@ -70,19 +69,20 @@ public class SearchService extends SearchableService {
                 Element root = doc.getDocumentElement();
 
                 if (entitiesOnly) {
-                    String additionalQuery = "<additional-query xmlns=\"http://marklogic.com/appservices/search\">\n" +
+                    String additionalQuery = "<search:additional-query xmlns:search=\"http://marklogic.com/appservices/search\">\n" +
                         "  <cts:or-query xmlns:cts=\"http://marklogic.com/cts\">\n" +
-                        "    <cts:element-query xmlns:cts=\"http://marklogic.com/cts\">\n" +
+                        "    <cts:element-query>\n" +
                         "      <cts:element xmlns:es=\"http://marklogic.com/entity-services\">es:instance</cts:element>\n" +
                         "      <cts:true-query/>\n" +
                         "    </cts:element-query>\n" +
-                        "    <cts:json-property-scope-query xmlns:cts=\"http://marklogic.com/cts\">\n" +
-                        "      <cts:property xmlns:es=\"http://marklogic.com/entity-services\">es:instance</cts:element>\n" +
+                        "    <cts:json-property-scope-query>\n" +
+                        "      <cts:property>instance</cts:property>\n" +
                         "      <cts:true-query/>\n" +
                         "    </cts:json-property-scope-query>\n" +
                         "  </cts:or-query>\n" +
-                        "</additional-query>";
-                    Node n = doc.importNode(db.parse(new ByteArrayInputStream(additionalQuery.getBytes(StandardCharsets.UTF_8))).getDocumentElement(), true);
+                        "</search:additional-query>";
+                    Element e = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new ByteArrayInputStream(additionalQuery.getBytes(StandardCharsets.UTF_8))).getDocumentElement();
+                    Node n = doc.importNode(e, true);
                     root.appendChild(n);
                 }
                 return root;
@@ -105,13 +105,35 @@ public class SearchService extends SearchableService {
 
         queryMgr.setPageLength(searchQuery.count);
 
-        StructuredQueryBuilder sb = queryMgr.newStructuredQueryBuilder();
+        StructuredQueryBuilder sb;
 
         ArrayList<StructuredQueryDefinition> queries = new ArrayList<>();
 
+        if (searchQuery.entitiesOnly) {
+            sb = queryMgr.newStructuredQueryBuilder("entity-options");
+            queries.add(
+                sb.or(
+                    sb.containerQuery(sb.element(new QName("http://marklogic.com/entity-services", "instance")), sb.and(null)),
+                    sb.containerQuery(sb.jsonProperty("instance"), sb.and(null))
+                )
+            );
+        }
+        else {
+            sb = queryMgr.newStructuredQueryBuilder("default");
+        }
+
+
         if (searchQuery.facets != null) {
             searchQuery.facets.entrySet().forEach(entry -> entry.getValue().forEach(value -> {
-                StructuredQueryDefinition def = addRangeConstraint(sb, entry.getKey(), value);
+                StructuredQueryDefinition def;
+
+                if (entry.getKey().equals("Collection")) {
+                    def = sb.collectionConstraint(entry.getKey(), value);
+                }
+                else {
+                    def = addRangeConstraint(sb, entry.getKey(), value);
+                }
+
                 if (def != null) {
                     queries.add(def);
                 }
@@ -121,12 +143,9 @@ public class SearchService extends SearchableService {
         StructuredQueryDefinition sqd = sb.and(queries.toArray(new StructuredQueryDefinition[0]));
         sqd.setCriteria(searchQuery.query);
 
-        String searchXml = QueryHelper.serializeQuery(sb, sqd, searchQuery.sort, getOptions(searchQuery.entitiesOnly));
-        RawCombinedQueryDefinition querydef = queryMgr.newRawCombinedQueryDefinitionAs(Format.XML, searchXml);
-
         StringHandle sh = new StringHandle();
         sh.setFormat(Format.JSON);
-        return queryMgr.search(querydef, sh, searchQuery.start);
+        return queryMgr.search(sqd, sh, searchQuery.start);
     }
 
     public String getDoc(HubDatabase database, String docUri) {

@@ -26,10 +26,7 @@ import com.marklogic.quickstart.listeners.DeployUserModulesListener;
 import com.marklogic.quickstart.listeners.ValidateListener;
 import com.marklogic.quickstart.model.EnvironmentConfig;
 import com.marklogic.quickstart.model.StatusMessage;
-import com.marklogic.quickstart.service.DataHubService;
-import com.marklogic.quickstart.service.FileSystemEventListener;
-import com.marklogic.quickstart.service.FileSystemWatcherService;
-import com.marklogic.quickstart.service.HubStatsService;
+import com.marklogic.quickstart.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
@@ -61,6 +58,9 @@ public class CurrentProjectController extends EnvironmentAware implements FileSy
 
     @Autowired
     private DataHubService dataHubService;
+
+    @Autowired
+    EntityManagerService entityManagerService;
 
     @Autowired
     private FileSystemWatcherService watcherService;
@@ -149,6 +149,7 @@ public class CurrentProjectController extends EnvironmentAware implements FileSy
     public ResponseEntity<?> reinstallUserModules() throws IOException {
         // reinstall the user modules
         dataHubService.reinstallUserModules(envConfig().getMlSettings(), this, this);
+        entityManagerService.saveSearchOptions();
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
@@ -216,6 +217,7 @@ public class CurrentProjectController extends EnvironmentAware implements FileSy
 
     private void installUserModules(HubConfig hubConfig, boolean force) {
         dataHubService.installUserModules(hubConfig, force, this, this);
+        entityManagerService.saveSearchOptions();
     }
 
     @Override

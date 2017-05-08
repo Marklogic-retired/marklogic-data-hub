@@ -46,7 +46,8 @@ public class HubConfig {
     public static final String OLD_HUB_CONFIG_DIR = "marklogic-config";
     public static final String HUB_CONFIG_DIR = "hub-internal-config";
     public static final String USER_CONFIG_DIR = "user-config";
-    public static final String SEARCH_OPTIONS_FILE = "all-search-options.xml";
+    public static final String ENTITY_CONFIG_DIR = "entity-config";
+    public static final String ENTITY_SEARCH_OPTIONS_FILE = "entity-options.xml";
 
     public static final String DEFAULT_HOST = "localhost";
 
@@ -356,6 +357,11 @@ public class HubConfig {
         return Paths.get(this.projectDir, USER_CONFIG_DIR, "databases");
     }
 
+    public Path getEntityDatabaseDir() {
+        return Paths.get(this.projectDir, ENTITY_CONFIG_DIR, "databases");
+    }
+
+
     public Path getUserServersDir() {
         return Paths.get(this.projectDir, USER_CONFIG_DIR, "servers");
     }
@@ -507,6 +513,8 @@ public class HubConfig {
 
         ConfigDir configDir = new ConfigDir(getUserConfigDir().toFile());
         config.setConfigDir(configDir);
+
+        config.setSchemasPath(getUserConfigDir().resolve("schemas").toString());
 
         Map<String, String> customTokens = config.getCustomTokens();
 

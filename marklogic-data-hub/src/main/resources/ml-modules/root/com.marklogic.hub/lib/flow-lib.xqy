@@ -642,15 +642,16 @@ declare function flow:instance-to-canonical-json(
               map:put($o, $key, flow:instance-to-canonical-json($prop))
           (: An array can also treated as multiple elements :)
           case json:array return
-            for $val in json:array-values($instance-property)
+            let $a := json:array()
+            let $_ :=
+              for $val in json:array-values($instance-property)
+              return
+                if ($val instance of json:object) then
+                  json:array-push($a, flow:instance-to-canonical-json($val))
+                else
+                  json:array-push($a, $val)
             return
-              if ($val instance of json:object) then
-                let $a := json:array()
-                let $_ := json:array-push($a, flow:instance-to-canonical-json($val))
-                return
-                map:put($o, $key, $a)
-              else
-                map:put($o, $key, $val)
+              map:put($o, $key, $a)
           (: A sequence of values should be simply treated as multiple elements :)
           case item()+ return
             for $val in $instance-property

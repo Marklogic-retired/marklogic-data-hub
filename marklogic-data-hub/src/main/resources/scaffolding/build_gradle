@@ -1,3 +1,9 @@
+buildscript {
+  repositories {
+    maven {url 'http://developer.marklogic.com/maven2/'}
+  }
+}
+
 plugins {
     id 'java'
     id 'eclipse'
@@ -13,5 +19,5 @@ repositories {
 
 dependencies {
     compile 'com.marklogic:marklogic-data-hub:2.0.0-alpha.1'
-    compile 'com.marklogic:marklogic-xcc:8.0.6'
+    compile 'com.marklogic:marklogic-xcc:9.0.1'
 }

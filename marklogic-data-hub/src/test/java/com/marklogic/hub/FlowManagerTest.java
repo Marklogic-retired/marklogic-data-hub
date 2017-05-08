@@ -77,11 +77,6 @@ public class FlowManagerTest extends HubTestBase {
         installModules(modules);
     }
 
-    @AfterClass
-    public static void teardown() throws IOException {
-        uninstallHub();
-    }
-
     @After
     public void afterEach() {
         finalDocMgr.delete("/employee1.xml");

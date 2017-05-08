@@ -72,11 +72,6 @@ svg {
   height: 100%;
 }
 
-foreignObject {
-  min-width: $entity-model-min-width;
-  width: $entity-model-min-width;
-}
-
 .foreign {
   position: fixed;
   transform-origin: 0 0 0;

@@ -15,11 +15,17 @@ export class SearchService {
       count: pageLength,
     };
 
+    let facets = {};
     for (let key of Object.keys(activeFacets)) {
+      if (activeFacets[key].values) {
+        facets[key] = []
+      }
       for (let value of activeFacets[key].values) {
-        data[key] = value;
+        facets[key].push(value);
       }
     }
+
+    data['facets'] = facets;
 
     return this.post(`/api/search`, data);
   }

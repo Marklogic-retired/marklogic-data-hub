@@ -10,7 +10,8 @@ import {ElementRef, EventEmitter, HostBinding, Input, Component, OnInit, Output}
 })
 export class ResizableComponent implements OnInit {
   @Input() directions: Array<String>;
-
+  @Input() minWidth: number = 0;
+  @Input() minHeight: number = 0;
   private direction: String;
   private startX: number;
   private startY: number;
@@ -39,7 +40,15 @@ export class ResizableComponent implements OnInit {
           this.height = this.startHeight - offsetY;
           break;
       }
-      this.sizeChange.emit({width: this.width, height: this.height});
+      if (this.width < this.minWidth) {
+        this.width = this.minWidth;
+      }
+
+      if (this.height < this.minHeight) {
+        this.height = this.minHeight;
+      }
+
+      this.sizeChange.emit({ width: this.width, height: this.height });
     }
   }
 

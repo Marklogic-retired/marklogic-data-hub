@@ -13,6 +13,8 @@ import { MlcpUiComponent } from '../mlcp-ui';
 import { HarmonizeFlowOptionsComponent } from '../harmonize-flow-options/harmonize-flow-options.component';
 import { NewFlowComponent } from '../new-flow/new-flow.component';
 
+import { HasBugsDialogComponent } from '../has-bugs-dialog';
+
 import { DeployService } from '../deploy/deploy.service';
 
 import * as _ from 'lodash';
@@ -166,7 +168,9 @@ export class FlowsComponent {
     if (this.flowHasError(flow.entityName, flow.flowName)) {
       this.dialogService.showCustomDialog({
         component: HasBugsDialogComponent,
-        providers: [],
+        providers: [
+          { provide: 'errors', useValue: this.getErrors()[flow.entityName][flow.flowName] }
+        ],
         isModal: true
       });
     } else {
@@ -208,17 +212,3 @@ export class FlowsComponent {
     });
   }
 }
-
-/* tslint:disable:max-line-length */
-@Component({
-  selector: 'app-has-bugs-dialog',
-  template: `
-  <h3 class="bug-title"><i class="fa fa-bug"></i>This flow has a bug!</h3>
-  <p>You must fix it before you can run it.</p>
-  <mdl-button mdl-button-type="raised" mdl-colored="primary" mdl-ripple (click)="dialog.hide()">OK</mdl-button>`,
-  styleUrls: ['./flows.component.scss']
-})
-export class HasBugsDialogComponent {
-  constructor(public dialog: MdlDialogReference) { }
-}
-/* tslint:enable:max-line-length */

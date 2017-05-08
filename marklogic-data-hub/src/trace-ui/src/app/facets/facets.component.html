@@ -27,7 +27,7 @@
   </div> -->
   <ng-template ngFor let-facet [ngForOf]="(facets | objectToArray)">
     <div class="facet" *ngIf="isVisible(facet)" mdl-shadow="4">
-      <div class="facet-name">{{ facet.__key }}</div>
+      <div class="facet-name">{{ facet.__key }}<i class="fa fa-angle-down"></i></div>
       <div *ngFor="let value of facet.facetValues" class="facet-value" (click)="toggle(facet.__key, value.name)">
        <!-- | filter:{selected: '!'+true}:false"> -->
         <i class="fa fa-plus-circle facet-add-pos"></i>

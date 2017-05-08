@@ -113,12 +113,19 @@ public class DeployHubDatabaseCommand extends DeployDatabaseCommand {
         List<File> files = new ArrayList<>();
         File databaseDir = hubConfig.getHubDatabaseDir().toFile();
         File userDatabaseDir = hubConfig.getUserDatabaseDir().toFile();
+        File entityDatabaseDir = hubConfig.getEntityDatabaseDir().toFile();
         files.add(new File(databaseDir, this.databaseFilename));
 
-        File otherDatabaseFile = new File(userDatabaseDir, this.databaseFilename);
-        if (otherDatabaseFile != null && otherDatabaseFile.exists()) {
-            files.add(otherDatabaseFile);
+        File userDatabaseFile = new File(userDatabaseDir, this.databaseFilename);
+        if (userDatabaseFile != null && userDatabaseFile.exists()) {
+            files.add(userDatabaseFile);
         }
+
+        File entityDatabaseFile = new File(entityDatabaseDir, this.databaseFilename);
+        if (entityDatabaseFile != null && entityDatabaseFile.exists()) {
+            files.add(entityDatabaseFile);
+        }
+
         if (logger.isInfoEnabled()) {
             logger.info("Merging JSON files at locations: " + files);
         }

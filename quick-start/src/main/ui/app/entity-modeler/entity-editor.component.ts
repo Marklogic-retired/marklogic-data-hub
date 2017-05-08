@@ -170,9 +170,28 @@ export class EntityEditorComponent {
   deleteSelectedProperties() {
     let result = this.dialogService.confirm('Really delete the selected properties?', 'No', 'Yes');
     result.subscribe(() => {
+      this.entity.definition.properties.forEach((value: PropertyType) => {
+        if (this.entity.definition.primaryKey === value.name) {
+          this.entity.definition.primaryKey = null;
+        }
+
+        _.remove(this.entity.definition.rangeIndex, (index: string) => {
+          return (index === value.name);
+        });
+
+        _.remove(this.entity.definition.required, (index: string) => {
+          return (index === value.name);
+        });
+
+        _.remove(this.entity.definition.wordLexicon, (index: string) => {
+          return (index === value.name);
+        });
+      });
+
       _.remove(this.entity.definition.properties, (prop: PropertyType) => {
         return prop.selected;
       });
+
     }, () => {});
   }
 

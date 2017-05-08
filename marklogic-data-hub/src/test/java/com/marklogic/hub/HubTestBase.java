@@ -130,7 +130,7 @@ public class HubTestBase {
             properties.putAll(p);
         }
         catch (IOException e) {
-            System.err.println("gradle-local.roperties file not loaded.");
+            System.err.println("gradle-local.properties file not loaded.");
         }
 
         host = properties.getProperty("mlHost");
@@ -217,15 +217,14 @@ public class HubTestBase {
     }
 
     protected static void installHub() throws IOException {
+        File projectDir = new File(PROJECT_PATH);
+        if (!projectDir.isDirectory() || !projectDir.exists()) {
+            getDataHub().initProject();
+        }
+
         if (!isInstalled) {
             getDataHub().install();
             isInstalled = true;
-        }
-        else {
-            File projectDir = new File(PROJECT_PATH);
-            if (!projectDir.isDirectory() || !projectDir.exists()) {
-                getDataHub().initProject();
-            }
         }
     }
 

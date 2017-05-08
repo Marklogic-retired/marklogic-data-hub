@@ -23,7 +23,6 @@ export class SearchComponent implements OnDestroy, OnInit {
   loadingTraces: boolean = false;
   searchResponse: SearchResponse;
   runningFlows: Map<number, string> = new Map<number, string>();
-  facetNames: Array<string> = ['entityName', 'status', 'flowName', 'flowType', 'jobId'];
 
   constructor(
     private searchService: SearchService,
@@ -37,10 +36,10 @@ export class SearchComponent implements OnDestroy, OnInit {
       this.currentPage = params['p'] ? parseInt(params['p']) : this.currentPage;
       this.pageLength = params['pl'] || this.pageLength;
       this.currentDatabase = params['d'] || this.currentDatabase;
-      this.entitiesOnly = params['e'] || this.entitiesOnly;
+      this.entitiesOnly = params['e'] === 'true' || this.entitiesOnly;
 
-      for (let facet of this.facetNames) {
-        if (params[facet]) {
+      for (let facet of Object.keys(params)) {
+        if (!_.includes(['q', 'p', 'pl', 'd', 'e'], facet) && params[facet]) {
           this.activeFacets[facet] = {
             values: [params[facet]]
           };
@@ -91,6 +90,10 @@ export class SearchComponent implements OnDestroy, OnInit {
 
     this.router.navigate(['/browse'], {
       queryParams: params
+    }).then((result: boolean) => {
+      if (result !== true) {
+        this.getResults();
+      }
     });
   }
 

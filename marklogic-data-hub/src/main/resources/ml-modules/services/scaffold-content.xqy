@@ -397,13 +397,11 @@ declare function service:generate-vars($model as map:map, $entity-type-name)
         fn:string-join((
           "null;",
           "if (" || $path-to-property || ") {",
-          "  " || $property-name || " = " || $path-to-property || ".map(function(item) {",
-          "    // either return an instance of a " || $ref-name,
-          "    return " || service:camel-case("extractInstance-" || $ref-name) || "(item." || $ref-name || ");",
+          "  // either return an instance of a " || $ref-name,
+          "  " || service:camel-case($property-name) || " = " || service:camel-case("extractInstance-" || $ref-name) || "(item." || $ref-name || ");",
           "",
-          "    // or a reference to a " || $ref-name,
-          "    // return makeReferenceObject('" || $ref-name || "', item);",
-          "  });",
+          "  // or a reference to a " || $ref-name,
+          "  // " || service:camel-case($property-name) || " = makeReferenceObject('" || $ref-name || "', item);",
           "}"
         ), "&#10;  ")
       else
@@ -466,7 +464,7 @@ function createContent(id, options) {{
     source = doc;
   }}
 
-  return {service:camel-case("extractInstance-" || $entity) || "(source." || $entity || ")"};
+  return {service:camel-case("extractInstance-" || $entity) || "(source)"};
 }}
 {
   for $entity-type-name in map:keys(map:get($model, "definitions"))

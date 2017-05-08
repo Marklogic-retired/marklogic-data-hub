@@ -123,6 +123,9 @@ export class EntityModelerComponent implements AfterViewChecked {
 
   mouseUp = () => {
     if (this.draggingEntity || this.draggingBox || this.draggingVertex) {
+      if (this.draggingEntity) {
+        this.draggingEntity.dragging = false;
+      }
       this.saveUiState();
     }
     setTimeout(() => {
@@ -236,7 +239,15 @@ export class EntityModelerComponent implements AfterViewChecked {
     return `translate(${x}, 72) scale(${this._viewScale})`;
   }
 
+  moveEntityToTop(entity: Entity) {
+    let idx = _.findIndex(this.entities, entity);
+    if (idx >= 0) {
+      this.entities.push(this.entities.splice(idx, 1)[0]);
+    }
+  }
+
   handleStartDrag(entity: Entity, event: MouseEvent) {
+    this.moveEntityToTop(entity);
     this.draggingEntity = entity;
     this.selectedEntity = entity;
     this.draggingBox = event.target as HTMLElement;
@@ -345,6 +356,12 @@ export class EntityModelerComponent implements AfterViewChecked {
     // cancel... do nothing
     () => {
       console.log('cancel');
+    });
+  }
+
+  updateIndexes() {
+    this.installService.updateIndexes().subscribe(() => {
+      this.dialogService.alert(`Indexes updated`);
     });
   }
 }

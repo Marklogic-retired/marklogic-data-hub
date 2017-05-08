@@ -154,6 +154,8 @@ public class FlowRunnerImpl implements FlowRunner {
 
         DataMovementManager dataMovementManager = srcClient.newDataMovementManager();
 
+        double batchCount = Math.ceil(uris.size() / batchSize);
+
         QueryBatcher queryBatcher = dataMovementManager.newQueryBatcher(uris.iterator())
             .withBatchSize(batchSize)
             .withThreadCount(threadCount)
@@ -164,6 +166,13 @@ public class FlowRunnerImpl implements FlowRunner {
                     failedEvents.addAndGet(response.errorCount);
                     successfulEvents.addAndGet(response.totalCount - response.errorCount);
                     successfulBatches.addAndGet(1);
+
+                    int percentComplete = (int) (((double)successfulBatches.get() / batchCount) * 100.0);
+
+                    flowStatusListeners.forEach((FlowStatusListener listener) -> {
+                        listener.onStatusChange(jobId, percentComplete, "");
+                    });
+
                     count.addAndGet(1);
                     if (flowItemCompleteListeners.size() > 0) {
                         response.completedItems.forEach((String item) -> {
@@ -198,6 +207,10 @@ public class FlowRunnerImpl implements FlowRunner {
 
         runningThread = new Thread(() -> {
             queryBatcher.awaitCompletion();
+
+            flowStatusListeners.forEach((FlowStatusListener listener) -> {
+                listener.onStatusChange(jobTicket.getJobId(), 100, "");
+            });
 
             flowFinishedListeners.forEach((FlowFinishedListener::onFlowFinished));
 
@@ -259,10 +272,12 @@ public class FlowRunnerImpl implements FlowRunner {
                 if (resultItr == null || ! resultItr.hasNext()) {
                     resp = new RunFlowResponse();
                 }
-                ResourceServices.ServiceResult res = resultItr.next();
-                StringHandle handle = new StringHandle();
-                ObjectMapper objectMapper = new ObjectMapper();
-                resp = objectMapper.readValue(res.getContent(handle).get(), RunFlowResponse.class);
+                else {
+                    ResourceServices.ServiceResult res = resultItr.next();
+                    StringHandle handle = new StringHandle();
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    resp = objectMapper.readValue(res.getContent(handle).get(), RunFlowResponse.class);
+                }
 
             }
             catch(Exception e) {

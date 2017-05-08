@@ -93,7 +93,7 @@ public class LoadHubModulesCommand extends AbstractCommand {
 
     private void initializeActiveSession(CommandContext context) {
         AppConfig config = context.getAppConfig();
-        XccAssetLoader xccAssetLoader = context.getAppConfig().newXccAssetLoader();
+        XccAssetLoader xccAssetLoader = config.newXccAssetLoader();
 
         this.modulesLoader = new DefaultModulesLoader(xccAssetLoader);
         this.threadPoolTaskExecutor = new ThreadPoolTaskExecutor();
@@ -210,6 +210,30 @@ public class LoadHubModulesCommand extends AbstractCommand {
             endTime = System.nanoTime();
             duration = (endTime - startTime);
             logger.info("Job Rest Options took: " + (duration / 1000000000) + " seconds");
+
+            logger.info("Loading Default Search Options to Staging");
+            // switch to job db to do this:
+            this.modulesLoader.setDatabaseClient(hubConfig.newStagingClient());
+            startTime = System.nanoTime();
+            resources = findResources("classpath*:/ml-modules/options", "/**/default.xml");
+            for (Resource r : resources) {
+                this.modulesLoader.installQueryOptions(r);
+            }
+            endTime = System.nanoTime();
+            duration = (endTime - startTime);
+            logger.info("Default Search Options took: " + (duration / 1000000000) + " seconds");
+
+            logger.info("Loading Default Search Options to Final");
+            // switch to job db to do this:
+            this.modulesLoader.setDatabaseClient(hubConfig.newFinalClient());
+            startTime = System.nanoTime();
+            resources = findResources("classpath*:/ml-modules/options", "/**/default.xml");
+            for (Resource r : resources) {
+                this.modulesLoader.installQueryOptions(r);
+            }
+            endTime = System.nanoTime();
+            duration = (endTime - startTime);
+            logger.info("Default Search Options took: " + (duration / 1000000000) + " seconds");
 
             waitForTaskExecutorToFinish();
             logger.info("Finished Loading Modules");

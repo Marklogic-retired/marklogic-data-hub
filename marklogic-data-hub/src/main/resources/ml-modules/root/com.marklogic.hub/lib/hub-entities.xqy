@@ -70,18 +70,8 @@ declare function hent:search-options-generate(
     let $primary-key-name := map:get($entity-type, "primaryKey")
     let $properties := map:get($entity-type, "properties")
     let $tuples-range-definitions := json:array()
-    let $_pk-constraint :=
-      if (exists($primary-key-name))
-      then
-      json:array-push($all-constraints, hent:wrap-duplicates($seen-keys, $primary-key-name,
-        <search:constraint name="{ $primary-key-name } ">
-          <search:value>
-            <search:element ns="" name="{ $primary-key-name }"/>
-          </search:value>
-        </search:constraint>))
-      else ()
     let $_range-constraints :=
-      for $property-name in json:array-values(map:get($entity-type, "rangeIndex"))
+      for $property-name in map:get($entity-type, "rangeIndex") ! json:array-values(.)
       let $specified-datatype := esi:resolve-datatype($model,$entity-type-name,$property-name)
       let $property := map:get($properties, $property-name)
       let $datatype := esi:indexable-datatype($specified-datatype)
@@ -95,6 +85,9 @@ declare function hent:search-options-generate(
         <search:range type="xs:{ $datatype }" facet="true">
           { $collation }
           <search:path-index>/*:envelope/*:instance/{$entity-type-name}/{$property-name}</search:path-index>
+          <search:facet-option>limit=10</search:facet-option>
+          <search:facet-option>frequency-order</search:facet-option>
+          <search:facet-option>descending</search:facet-option>
         </search:range>
       let $constraint-template :=
         <search:constraint name="{ $property-name } ">
@@ -137,6 +130,9 @@ declare function hent:search-options-generate(
     </search:constraint>
   return
   <options xmlns="http://marklogic.com/appservices/search">
+    <constraint name="Collection">
+      <collection/>
+    </constraint>
     {
     $type-constraint,
     json:array-values($all-constraints),

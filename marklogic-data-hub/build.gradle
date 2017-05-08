@@ -19,8 +19,8 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 dependencies {
-    compile 'com.marklogic:marklogic-client-api:4.0-SNAPSHOT'
-    compile 'com.marklogic:ml-javaclient-util:2.13.0'
+    compile 'com.marklogic:marklogic-client-api:4.0.1'
+    compile 'com.marklogic:ml-javaclient-util:4.0.alpha2'
     compile 'com.marklogic:ml-app-deployer:2.6.0'
     compile 'commons-io:commons-io:2.4'
     testCompile 'junit:junit:4.12'
@@ -84,6 +84,7 @@ processResources {
 
 if (!(
     gradle.startParameter.taskNames*.toLowerCase().contains("bootrun") ||
+    gradle.startParameter.taskNames*.toLowerCase().contains("test") ||
     gradle.startParameter.taskNames*.toLowerCase().contains("publishplugins") ||
     gradle.startParameter.taskNames*.toLowerCase().contains("bintrayUpload")
     )

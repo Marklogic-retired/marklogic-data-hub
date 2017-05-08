@@ -5,7 +5,8 @@ import { HttpModule } from '@angular/http';
 import { RouterModule } from '@angular/router';
 import { TruncateCharactersPipe } from './truncate';
 import { AppComponent } from './app.component';
-import { HasBugsDialogComponent, FlowsComponent } from './flows';
+import { FlowsComponent } from './flows';
+import { HasBugsDialogComponent } from './has-bugs-dialog';
 import {
   ChooseCollationComponent,
   EntityBoxComponent,
@@ -97,6 +98,7 @@ import { ObjectToArrayPipe } from './object-to-array.pipe';
     ObjectToArrayPipe
   ],
   entryComponents: [
+    HasBugsDialogComponent,
     ChooseCollationComponent,
     ExternalDefDialogComponent,
     EntityEditorComponent,
