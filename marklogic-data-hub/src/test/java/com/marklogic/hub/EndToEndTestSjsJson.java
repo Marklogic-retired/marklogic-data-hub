@@ -30,7 +30,7 @@ import java.util.concurrent.TimeUnit;
 public class EndToEndTestSjsJson extends HubTestBase {
     private static final String ENTITY = "e2eentity";
     private static Path projectDir = Paths.get(".", "ye-olde-project");
-    private static final int TEST_SIZE = 500;
+    private static final int TEST_SIZE = 1000;
     private static final int BATCH_SIZE = 10;
     private static FlowManager flowManager;
 

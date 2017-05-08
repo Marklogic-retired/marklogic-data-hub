@@ -16,7 +16,7 @@ RUN yum -y install /tmp/MarkLogic.rpm 2>&1 > /dev/null
 
 # Expose MarkLogic Server ports - add additional ones for your REST, etc
 # endpoints
-EXPOSE 7997-8002
+EXPOSE 7997-8020
 
 # init
 COPY .travis/startml.sh /tmp/startml.sh
