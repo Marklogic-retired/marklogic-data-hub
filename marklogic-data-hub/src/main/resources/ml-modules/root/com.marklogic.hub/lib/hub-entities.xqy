@@ -207,6 +207,7 @@ declare function hent:database-properties-generate(
   let $entity-type-names := map:keys($definitions)
   let $range-path-indexes := json:array()
   let $word-lexicons := json:array()
+  let $range-element-indexes := json:array()
   let $_ :=
     for $entity-type-name in $entity-type-names
     let $entity-type := map:get($definitions, $entity-type-name)
@@ -236,6 +237,22 @@ declare function hent:database-properties-generate(
       let $_ := map:put($wl-map, "localname", $word-lexicon-property)
       let $_ := map:put($wl-map, "namespace-uri", "")
       return json:array-push($word-lexicons, $wl-map)
+      ,
+      let $primary-key-property := map:get($entity-type, "primaryKey")
+      where $primary-key-property
+      return
+        let $pk-map := json:object()
+        let $property := map:get($properties, $primary-key-property)
+        let $specified-datatype := esi:resolve-datatype($model, $entity-type-name, $primary-key-property)
+        let $datatype := esi:indexable-datatype($specified-datatype)
+        let $collation := head( (map:get($property, "collation"), "http://marklogic.com/collation/en") )
+        let $_ := map:put($pk-map, "collation", $collation)
+        let $_ := map:put($pk-map, "localname", $primary-key-property)
+        let $_ := map:put($pk-map, "namespace-uri", "")
+        let $_ := map:put($pk-map, "range-value-positions", fn:false())
+        let $_ := map:put($pk-map, "scalar-type", $datatype)
+        let $_ := map:put($pk-map, "invalid-values", "reject")
+        return json:array-push($range-element-indexes, $pk-map)
     )
   let $path-namespaces := json:array()
   let $pn := json:object()
@@ -246,5 +263,6 @@ declare function hent:database-properties-generate(
   let $_ := map:put($database-properties, "path-namespace", $path-namespaces)
   let $_ := map:put($database-properties, "element-word-lexicon", $word-lexicons)
   let $_ := map:put($database-properties, "range-path-index", $range-path-indexes)
+  let $_ := map:put($database-properties, "range-element-index", $range-element-indexes)
   return xdmp:to-json($database-properties)
 };

@@ -26,6 +26,8 @@ export class NewFlowComponent {
     { label: 'XML', value: 'XML' }
   ];
 
+  startingScaffoldOption: any = null;
+
   emptyFlow = {
     flowName: <string>null,
     pluginFormat: 'JAVASCRIPT',
@@ -45,6 +47,12 @@ export class NewFlowComponent {
     this.flowType = _.capitalize(flowType);
     this.flow = _.clone(this.emptyFlow);
     this.actions = actions;
+
+    if (flowType === 'INPUT') {
+      this.startingScaffoldOption = this.scaffoldOptions[1];
+    } else {
+      this.startingScaffoldOption = this.scaffoldOptions[0];
+    }
   }
 
   hide() {

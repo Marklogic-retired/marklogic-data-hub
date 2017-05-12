@@ -59,11 +59,18 @@ input[type="search"] {
 }
 
 .mdl-data-table {
+  width: 100%;
+
   thead {
     tr {
       background: $bg-color;
       th {
+        padding: 12px 8px 12px 8px;
         color: white;
+
+        &:last-of-type {
+          padding-right: 0px;
+        }
       }
     }
   }
@@ -71,7 +78,12 @@ input[type="search"] {
   tbody {
     tr {
       td {
+        padding: 12px 8px 12px 8px;
         max-width: 400px;
+
+        &:last-of-type {
+          padding-right: 0px;
+        }
       }
     }
   }

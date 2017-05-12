@@ -14,7 +14,7 @@
           <label>Code Generation</label>
           <app-select-list
             [items]="scaffoldOptions"
-            [initialSelectedItem]="scaffoldOptions[0]"
+            [initialSelectedItem]="startingScaffoldOption"
             label="label" identifier="value"
             (selectedItem)="flow.useEsModel = $event"></app-select-list>
           <label>Plugin Type</label>
