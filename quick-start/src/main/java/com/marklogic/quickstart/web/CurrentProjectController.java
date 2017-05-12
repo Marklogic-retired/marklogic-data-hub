@@ -149,7 +149,7 @@ public class CurrentProjectController extends EnvironmentAware implements FileSy
     public ResponseEntity<?> reinstallUserModules() throws IOException {
         // reinstall the user modules
         dataHubService.reinstallUserModules(envConfig().getMlSettings(), this, this);
-        entityManagerService.saveSearchOptions();
+        entityManagerService.saveSearchOptions(envConfig());
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
@@ -217,7 +217,7 @@ public class CurrentProjectController extends EnvironmentAware implements FileSy
 
     private void installUserModules(HubConfig hubConfig, boolean force) {
         dataHubService.installUserModules(hubConfig, force, this, this);
-        entityManagerService.saveSearchOptions();
+        entityManagerService.saveSearchOptions(envConfig());
     }
 
     @Override

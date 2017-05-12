@@ -122,9 +122,9 @@ public class EntityManagerService {
         }
     }
 
-    public List<JsonNode> getRawEntities() throws IOException {
+    public List<JsonNode> getRawEntities(EnvironmentConfig environmentConfig) throws IOException {
         List<JsonNode> entities = new ArrayList<>();
-        Path entitiesPath = Paths.get(envConfig().getProjectDir(), PLUGINS_DIR, ENTITIES_DIR);
+        Path entitiesPath = Paths.get(environmentConfig.getProjectDir(), PLUGINS_DIR, ENTITIES_DIR);
         List<String> entityNames = FileUtil.listDirectFolders(entitiesPath.toFile());
         ObjectMapper objectMapper = new ObjectMapper();
         for (String entityName : entityNames) {
@@ -136,9 +136,9 @@ public class EntityManagerService {
         return entities;
     }
 
-    public void saveSearchOptions() {
+    public void saveSearchOptions(EnvironmentConfig environmentConfig) {
 
-        HubConfig hubConfig = envConfig().getMlSettings();
+        HubConfig hubConfig = environmentConfig.getMlSettings();
         AppConfig config = hubConfig.getAppConfig();
         XccAssetLoader xccAssetLoader = config.newXccAssetLoader();
 
@@ -160,10 +160,10 @@ public class EntityManagerService {
         modulesLoader.setDatabaseClient(hubConfig.newFinalClient());
         modulesLoader.setShutdownTaskExecutorAfterLoadingModules(false);
 
-        SearchOptionsGenerator generator = new SearchOptionsGenerator(envConfig().getStagingClient());
+        SearchOptionsGenerator generator = new SearchOptionsGenerator(environmentConfig.getStagingClient());
         try {
-            String options = generator.generateOptions(getRawEntities());
-            Path dir = Paths.get(envConfig().getProjectDir(), HubConfig.ENTITY_CONFIG_DIR);
+            String options = generator.generateOptions(getRawEntities(environmentConfig));
+            Path dir = Paths.get(environmentConfig.getProjectDir(), HubConfig.ENTITY_CONFIG_DIR);
             if (!dir.toFile().exists()) {
                 dir.toFile().mkdirs();
             }
@@ -177,12 +177,12 @@ public class EntityManagerService {
         }
     }
 
-    public void saveDbIndexes() {
-        DbIndexGenerator generator = new DbIndexGenerator(envConfig().getFinalClient());
+    public void saveDbIndexes(EnvironmentConfig environmentConfig) {
+        DbIndexGenerator generator = new DbIndexGenerator(environmentConfig.getFinalClient());
         try {
-            String indexes = generator.getIndexes(getRawEntities());
+            String indexes = generator.getIndexes(getRawEntities(environmentConfig));
 
-            Path dir = envConfig().getMlSettings().getEntityDatabaseDir();
+            Path dir = environmentConfig.getMlSettings().getEntityDatabaseDir();
             if (!dir.toFile().exists()) {
                 dir.toFile().mkdirs();
             }

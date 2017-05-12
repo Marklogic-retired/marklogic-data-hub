@@ -12,7 +12,7 @@ import { EntitiesService } from '../entities/entities.service';
 
 import { InstallService } from '../installer';
 
-import { MdlDialogService } from '@angular-mdl/core';
+import { MdlDialogService, MdlSnackbarService } from '@angular-mdl/core';
 
 import { Point, Line, Rect } from './math-helper';
 
@@ -109,6 +109,7 @@ export class EntityModelerComponent implements AfterViewChecked {
 
   constructor(
     private dialogService: MdlDialogService,
+    private snackbar: MdlSnackbarService,
     private entitiesService: EntitiesService,
     private installService: InstallService) {
     this.getEntities();
@@ -282,7 +283,9 @@ export class EntityModelerComponent implements AfterViewChecked {
         let result = this.dialogService.confirm(`Saved. Update Indexes in MarkLogic?`, 'No', 'Yes');
         result.subscribe(() => {
           this.installService.updateIndexes().subscribe(() => {
-            this.dialogService.alert(`Indexes updated`);
+            this.snackbar.showSnackbar({
+              message: 'Indexes updated.',
+            });
           });
         }, () => {});
       });
@@ -359,9 +362,4 @@ export class EntityModelerComponent implements AfterViewChecked {
     });
   }
 
-  updateIndexes() {
-    this.installService.updateIndexes().subscribe(() => {
-      this.dialogService.alert(`Indexes updated`);
-    });
-  }
 }

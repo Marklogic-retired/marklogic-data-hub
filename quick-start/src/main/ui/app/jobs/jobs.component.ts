@@ -71,12 +71,12 @@ export class JobsComponent implements OnChanges, OnDestroy, OnInit {
   }
 
   private jobStarted = () => {
-    this.runQuery();
+    this.getJobs();
   };
 
   private jobFinished = () => {
     setTimeout(() => {
-      this.runQuery();
+      this.getJobs();
     }, 2000);
   };
 

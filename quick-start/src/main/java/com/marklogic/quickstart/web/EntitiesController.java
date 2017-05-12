@@ -62,9 +62,9 @@ class EntitiesController extends EnvironmentAware {
         for (EntityModel entity : entities) {
             entityManagerService.saveEntity(entity);
         }
-        entityManagerService.saveSearchOptions();
+        entityManagerService.saveSearchOptions(envConfig());
         entityManagerService.saveAllUiData(entities);
-        entityManagerService.saveDbIndexes();
+        entityManagerService.saveDbIndexes(envConfig());
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
@@ -81,8 +81,8 @@ class EntitiesController extends EnvironmentAware {
     public EntityModel saveEntity(@RequestBody EntityModel entity) throws ClassNotFoundException, IOException {
         entityManagerService.saveEntityUiData(entity);
         EntityModel m = entityManagerService.saveEntity(entity);
-        entityManagerService.saveSearchOptions();
-        entityManagerService.saveDbIndexes();
+        entityManagerService.saveSearchOptions(envConfig());
+        entityManagerService.saveDbIndexes(envConfig());
         return m;
     }
 
