@@ -13,10 +13,13 @@
   </div>
 </div>
 <div class="entities">
-  <div class="none" *ngIf="!entities || entities.length === 0">
+  <div class="none" *ngIf="!entitiesLoaded">
+    Loading entities...
+  </div>
+  <div class="none" *ngIf="entitiesLoaded && entities.length === 0">
     You don't have any entities yet. Click the Wrench Icon to get started.
   </div>
-  <svg #svgRoot *ngIf="entities" xmlns="http://www.w3.org/2000/svg">
+  <svg #svgRoot *ngIf="entitiesLoaded && entities" xmlns="http://www.w3.org/2000/svg">
     <g class="nodes" [attr.transform]="mainTransform">
       <g #entityDef *ngFor="let entity of entities"
         class="entity-def"
