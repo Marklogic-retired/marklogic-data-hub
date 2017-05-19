@@ -29,7 +29,7 @@ export class EntityModelerComponent implements AfterViewChecked {
   private svgRect: Rect;
 
   public entities: Array<Entity>;
-  private entitiesLoaded: boolean = false;
+  public entitiesLoaded: boolean = false;
   private connections: Array<Connection> = [];
   private entityMap: Map<string, Entity> = new Map<string, Entity>();
   private draggingEntity: Entity;
