@@ -145,7 +145,7 @@ public class DataHubService {
     }
 
     public String getLastDeployed(HubConfig config) {
-        File tsFile = Paths.get(config.projectDir, ".tmp", LoadUserModulesCommand.USER_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES).toFile();
+        File tsFile = config.getModulesDeployTimestampFile();
         Date lastModified = new Date(tsFile.lastModified());
 
         TimeZone tz = TimeZone.getTimeZone("UTC");
@@ -153,19 +153,6 @@ public class DataHubService {
         df.setTimeZone(tz);
 
         return "{\"deployed\":" + tsFile.exists() + ", \"lastModified\":\"" + df.format(lastModified) + "\"}";
-    }
-
-    private String getQuickStartVersion() throws IOException {
-        Properties properties = new Properties();
-        InputStream inputStream = getClass().getClassLoader().getResourceAsStream("quickstart-version.properties");
-        properties.load(inputStream);
-        String version = (String)properties.get("version");
-
-        // this lets debug builds work from an IDE
-        if (version.equals("${project.version}")) {
-            version = "0.1.2";
-        }
-        return version;
     }
 
     public boolean updateHub(HubConfig config) throws IOException {

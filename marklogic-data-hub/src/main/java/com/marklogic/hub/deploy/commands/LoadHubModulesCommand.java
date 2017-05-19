@@ -35,7 +35,6 @@ import java.util.List;
 import java.util.Map;
 
 public class LoadHubModulesCommand extends AbstractCommand {
-    private Integer port = 8000;
     private SecurityOptions securityOptions = null;
     private Session activeSession;
 
@@ -112,7 +111,7 @@ public class LoadHubModulesCommand extends AbstractCommand {
         this.modulesLoader.setModulesManager(propsManager);
         this.modulesLoader.setDatabaseClient(config.newDatabaseClient());
         this.modulesLoader.setShutdownTaskExecutorAfterLoadingModules(false);
-        ContentSource cs = ContentSourceFactory.newContentSource(config.getHost(), port, config.getRestAdminUsername(), config.getRestAdminPassword(), config.getModulesDatabaseName(),
+        ContentSource cs = ContentSourceFactory.newContentSource(config.getHost(), hubConfig.appServicesPort, config.getRestAdminUsername(), config.getRestAdminPassword(), config.getModulesDatabaseName(),
                 securityOptions);
         activeSession = cs.newSession();
     }

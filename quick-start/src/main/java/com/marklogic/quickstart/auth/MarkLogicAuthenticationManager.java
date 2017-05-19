@@ -81,6 +81,7 @@ public class MarkLogicAuthenticationManager implements AuthenticationProvider, A
          * authenticating users over and over.
          */
         restConfig.setHost(hostname);
+        restConfig.setRestPort(token.getEnvironmentConfig().getMlSettings().appServicesPort);
         RestClient client = new RestClient(restConfig, new SimpleCredentialsProvider(username, password));
         URI uri = client.buildUri(pathToAuthenticateAgainst, null);
         try {

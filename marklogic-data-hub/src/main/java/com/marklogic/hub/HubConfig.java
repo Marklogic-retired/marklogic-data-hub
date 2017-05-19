@@ -43,6 +43,9 @@ import java.util.Properties;
  */
 public class HubConfig {
 
+    public static final String USER_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES = "user-modules-deploy-timestamps.properties";
+    public static final String USER_CONTENT_DEPLOY_TIMESTAMPS_PROPERTIES = "user-content-deploy-timestamps.properties";
+
     public static final String OLD_HUB_CONFIG_DIR = "marklogic-config";
     public static final String HUB_CONFIG_DIR = "hub-internal-config";
     public static final String USER_CONFIG_DIR = "user-config";
@@ -63,6 +66,10 @@ public class HubConfig {
     public static final Integer DEFAULT_FINAL_PORT = 8011;
     public static final Integer DEFAULT_TRACE_PORT = 8012;
     public static final Integer DEFAULT_JOB_PORT = 8013;
+
+    public static final Integer DEFAULT_APP_SERVICES_PORT = 8000;
+    public static final Integer DEFAULT_ADMIN_PORT = 8001;
+    public static final Integer DEFAULT_MANAGE_PORT = 8002;
 
     public static final String DEFAULT_PROJECT_DIR = ".";
 
@@ -114,6 +121,10 @@ public class HubConfig {
     public String triggersDbName = DEFAULT_TRIGGERS_DB_NAME;
     public String schemasDbName = DEFAULT_SCHEMAS_DB_NAME;
 
+    public Integer appServicesPort = DEFAULT_APP_SERVICES_PORT;
+    public Integer adminPort = DEFAULT_ADMIN_PORT;
+    public Integer managePort = DEFAULT_MANAGE_PORT;
+
     public String projectDir;
 
     private Properties environmentProperties;
@@ -150,11 +161,23 @@ public class HubConfig {
         return environmentProperties;
     }
 
+    public File getModulesDeployTimestampFile() {
+        return Paths.get(projectDir, ".tmp", USER_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES).toFile();
+    }
+
+    public File getContentDeployTimestampFile() {
+        return Paths.get(projectDir, ".tmp", USER_CONTENT_DEPLOY_TIMESTAMPS_PROPERTIES).toFile();
+    }
+
     public void loadConfigurationFromProperties(Properties environmentProperties) {
         this.environmentProperties = environmentProperties;
 
         if (this.environmentProperties != null) {
             host = getEnvPropString(environmentProperties, "mlHost", host);
+
+            appServicesPort = getEnvPropInteger(environmentProperties, "mlAppServicesPort", appServicesPort);
+            adminPort = getEnvPropInteger(environmentProperties, "mlAdminPort", adminPort);
+            managePort = getEnvPropInteger(environmentProperties, "mlManagePort", managePort);
 
             stagingDbName = getEnvPropString(environmentProperties, "mlStagingDbName", stagingDbName);
             stagingHttpName = getEnvPropString(environmentProperties, "mlStagingAppserverName", stagingHttpName);
@@ -206,13 +229,14 @@ public class HubConfig {
     }
 
     public ManageClient newManageClient() {
-        ManageConfig config = new ManageConfig(host, 8002, username, password);
+        ManageConfig config = new ManageConfig(host, managePort, getManageUsername(), getManagePassword());
         return new ManageClient(config);
     }
 
     public AdminManager newAdminManager() {
         AdminConfig adminConfig = new AdminConfig();
         adminConfig.setHost(host);
+        adminConfig.setPort(adminPort);
         adminConfig.setUsername(getAdminUsername());
         adminConfig.setPassword(getAdminPassword());
         return new AdminManager(adminConfig);
@@ -493,6 +517,7 @@ public class HubConfig {
     public void updateAppConfig(AppConfig config) {
         config.setHost(host);
         config.setRestPort(stagingPort);
+        config.setAppServicesPort(appServicesPort);
         config.setRestAdminUsername(getRestAdminUsername());
         config.setRestAdminPassword(getRestAdminPassword());
         config.setModulesDatabaseName(modulesDbName);
