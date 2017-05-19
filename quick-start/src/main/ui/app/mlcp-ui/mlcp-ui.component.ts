@@ -71,7 +71,7 @@ export class MlcpUiComponent {
     this.flow = flow;
 
     this.inputFilePath = mlcpOptions.input_file_path || '.';
-    this.groups = this.getGroups(flow.entityName, flow.flowName, mlcpOptions);
+    this.groups = this.getGroups(flow.entityName, flow.flowName, flow.dataFormat, mlcpOptions);
 
     this.updateMlcpCommand();
 
@@ -85,7 +85,7 @@ export class MlcpUiComponent {
   }
 
   /* tslint:disable:max-line-length */
-  getGroups(entityName: string, flowName: string, previousOptions: any) {
+  getGroups(entityName: string, flowName: string, dataFormat: string, previousOptions: any) {
     const groups = [
       {
         category: 'General Options',
@@ -194,6 +194,7 @@ export class MlcpUiComponent {
                 value: 'binary',
               },
             ],
+            value: dataFormat.toLowerCase(),
           },
           {
             label: 'Input File Pattern',
