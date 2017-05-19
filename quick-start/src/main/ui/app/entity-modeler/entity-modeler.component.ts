@@ -29,6 +29,7 @@ export class EntityModelerComponent implements AfterViewChecked {
   private svgRect: Rect;
 
   public entities: Array<Entity>;
+  private entitiesLoaded: boolean = false;
   private connections: Array<Connection> = [];
   private entityMap: Map<string, Entity> = new Map<string, Entity>();
   private draggingEntity: Entity;
@@ -139,6 +140,7 @@ export class EntityModelerComponent implements AfterViewChecked {
 
   getEntities(): void {
     this.entitiesService.entitiesChange.subscribe(entities => {
+      this.entitiesLoaded = true;
       this.entities = entities;
       this.entities.forEach((entity: Entity) => {
         this.entityMap.set(entity.name, entity);
