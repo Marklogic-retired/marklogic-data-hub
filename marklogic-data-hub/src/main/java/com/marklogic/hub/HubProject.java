@@ -62,6 +62,9 @@ class HubProject {
         customTokens.put("%%mlModulesDbName%%", hubConfig.modulesDbName);
         customTokens.put("%%mlTriggersDbName%%", hubConfig.triggersDbName);
         customTokens.put("%%mlSchemasDbName%%", hubConfig.schemasDbName);
+
+        customTokens.put("%%mlHubUserRole%%", hubConfig.hubRoleName);
+        customTokens.put("%%mlHubUserName%%", hubConfig.hubUserName);
     }
 
     /**

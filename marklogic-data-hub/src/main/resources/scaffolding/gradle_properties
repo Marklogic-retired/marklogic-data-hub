@@ -20,6 +20,13 @@ mlPassword=
 # mlManageUsername=
 # mlManagePassword=
 
+# If specified, these values can override where the DHF thinks
+# MarkLogic default ports are at. You would only use this if you
+# have changed the ports on which MarkLogic listens
+#
+# mlAppServicesPort=8000
+# mlAdminPort=8001
+# mlManagePort=8002
 
 # If specified, the admin username/password combo is used with the ML Management REST API for creating users and roles. This
 # user must have the manage-admin or admin role. A good practice is to use your admin account here to create app-specific
@@ -59,3 +66,7 @@ mlJobAuth=%%mlJobAuth%%
 mlModulesDbName=%%mlModulesDbName%%
 mlTriggersDbName=%%mlTriggersDbName%%
 mlSchemasDbName=%%mlSchemasDbName%%
+
+# The name of the Role to create for Hub Access
+mlHubUserRole=%%mlHubUserRole%%
+mlHubUserName=%%mlHubUserName%%

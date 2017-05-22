@@ -122,7 +122,6 @@ public class SearchService extends SearchableService {
             sb = queryMgr.newStructuredQueryBuilder("default");
         }
 
-
         if (searchQuery.facets != null) {
             searchQuery.facets.entrySet().forEach(entry -> entry.getValue().forEach(value -> {
                 StructuredQueryDefinition def;

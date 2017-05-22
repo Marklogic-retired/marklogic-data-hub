@@ -234,6 +234,10 @@ public class HubTestBase {
         isInstalled = false;
     }
 
+    protected static File getResourceFile(String resourceName) {
+        return new File(HubTestBase.class.getClassLoader().getResource(resourceName).getFile());
+    }
+
     protected static String getResource(String resourceName) throws IOException {
         try {
             InputStream inputStream = HubTestBase.class.getClassLoader().getResourceAsStream(resourceName);
@@ -270,20 +274,34 @@ public class HubTestBase {
     }
 
     protected static int getStagingDocCount() {
-        return getDocCount(HubConfig.DEFAULT_STAGING_NAME);
+        return getStagingDocCount(null);
+    }
+
+    protected static int getStagingDocCount(String collection) {
+        return getDocCount(HubConfig.DEFAULT_STAGING_NAME, collection);
     }
 
     protected static int getFinalDocCount() {
-        return getDocCount(HubConfig.DEFAULT_FINAL_NAME);
+        return getFinalDocCount(null);
+    }
+    protected static int getFinalDocCount(String collection) {
+        return getDocCount(HubConfig.DEFAULT_FINAL_NAME, collection);
     }
 
     protected static int getTracingDocCount() {
-        return getDocCount(HubConfig.DEFAULT_TRACE_NAME);
+        return getTracingDocCount(null);
+    }
+    protected static int getTracingDocCount(String collection) {
+        return getDocCount(HubConfig.DEFAULT_TRACE_NAME, collection);
     }
 
-    protected static int getDocCount(String database) {
+    protected static int getDocCount(String database, String collection) {
         int count = 0;
-        EvalResultIterator resultItr = runInDatabase("xdmp:estimate(fn:doc())", database);
+        String collectionName = "";
+        if (collection != null) {
+            collectionName = "'" + collection + "'";
+        }
+        EvalResultIterator resultItr = runInDatabase("xdmp:estimate(fn:collection(" + collectionName + "))", database);
         if (resultItr == null || ! resultItr.hasNext()) {
             return count;
         }

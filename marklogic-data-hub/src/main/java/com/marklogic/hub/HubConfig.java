@@ -62,6 +62,9 @@ public class HubConfig {
     public static final String DEFAULT_TRIGGERS_DB_NAME = "data-hub-TRIGGERS";
     public static final String DEFAULT_SCHEMAS_DB_NAME = "data-hub-SCHEMAS";
 
+    public static final String DEFAULT_ROLE_NAME = "data-hub-ROLE";
+    public static final String DEFAULT_USER_NAME = "data-hub-user";
+
     public static final Integer DEFAULT_STAGING_PORT = 8010;
     public static final Integer DEFAULT_FINAL_PORT = 8011;
     public static final Integer DEFAULT_TRACE_PORT = 8012;
@@ -124,6 +127,9 @@ public class HubConfig {
     public Integer appServicesPort = DEFAULT_APP_SERVICES_PORT;
     public Integer adminPort = DEFAULT_ADMIN_PORT;
     public Integer managePort = DEFAULT_MANAGE_PORT;
+
+    public String hubRoleName = DEFAULT_ROLE_NAME;
+    public String hubUserName = DEFAULT_USER_NAME;
 
     public String projectDir;
 
@@ -206,6 +212,9 @@ public class HubConfig {
             modulesDbName = getEnvPropString(environmentProperties, "mlModulesDbName", modulesDbName);
             triggersDbName = getEnvPropString(environmentProperties, "mlTriggersDbName", triggersDbName);
             schemasDbName = getEnvPropString(environmentProperties, "mlSchemasDbName", schemasDbName);
+
+            hubRoleName = getEnvPropString(environmentProperties, "mlHubUserRole", hubRoleName);
+            hubUserName = getEnvPropString(environmentProperties, "mlHubUserName", hubUserName);
 
             adminUsername = getEnvPropString(environmentProperties, "mlAdminUsername", adminUsername);
             adminPassword = getEnvPropString(environmentProperties, "mlAdminPassword", adminPassword);
@@ -371,6 +380,10 @@ public class HubConfig {
 
     public Path getHubSecurityDir() {
         return Paths.get(this.projectDir, HUB_CONFIG_DIR, "security");
+    }
+
+    public Path getUserSecurityDir() {
+        return Paths.get(this.projectDir, USER_CONFIG_DIR, "security");
     }
 
     public Path getUserConfigDir() {
@@ -566,6 +579,9 @@ public class HubConfig {
         customTokens.put("%%mlModulesDbName%%", modulesDbName);
         customTokens.put("%%mlTriggersDbName%%", triggersDbName);
         customTokens.put("%%mlSchemasDbName%%", schemasDbName);
+
+        customTokens.put("%%mlHubUserRole%%", hubRoleName);
+        customTokens.put("%%mlHubUserName%%", hubUserName);
 
         if (environmentProperties != null) {
             Enumeration keyEnum = environmentProperties.propertyNames();
