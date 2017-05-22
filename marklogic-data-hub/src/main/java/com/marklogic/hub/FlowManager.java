@@ -16,6 +16,7 @@
 package com.marklogic.hub;
 
 import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.datamovement.DataMovementManager;
 import com.marklogic.client.extensions.ResourceManager;
 import com.marklogic.client.extensions.ResourceServices.ServiceResult;
 import com.marklogic.client.extensions.ResourceServices.ServiceResultIterator;
@@ -23,6 +24,7 @@ import com.marklogic.client.io.DOMHandle;
 import com.marklogic.client.util.RequestParameters;
 import com.marklogic.hub.flow.*;
 import com.marklogic.hub.flow.impl.FlowRunnerImpl;
+import com.marklogic.hub.job.JobManager;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -30,7 +32,6 @@ import org.w3c.dom.NodeList;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class FlowManager extends ResourceManager {
     private static final String HUB_NS = "http://marklogic.com/data-hub";
@@ -40,7 +41,9 @@ public class FlowManager extends ResourceManager {
     private DatabaseClient finalClient;
     private DatabaseClient jobClient;
     private HubConfig hubConfig;
-    private Map<String, Object> userOptions;
+    private JobManager jobManager;
+
+    private DataMovementManager dataMovementManager;
 
     public FlowManager(HubConfig hubConfig) {
         super();
@@ -48,6 +51,8 @@ public class FlowManager extends ResourceManager {
         this.stagingClient = hubConfig.newStagingClient();
         this.finalClient = hubConfig.newFinalClient();
         this.jobClient = hubConfig.newJobDbClient();
+        this.jobManager = new JobManager(this.jobClient);
+        this.dataMovementManager = this.stagingClient.newDataMovementManager();
         this.stagingClient.init(NAME, this);
     }
 

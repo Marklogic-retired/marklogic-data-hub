@@ -6,8 +6,8 @@ import * as _ from 'lodash';
 
 @Component({
   selector: 'app-new-flow',
-  templateUrl: './new-flow.html',
-  styleUrls: ['./new-flow.scss']
+  templateUrl: './new-flow.component.html',
+  styleUrls: ['./new-flow.component.scss']
 })
 export class NewFlowComponent {
   flowType: string;

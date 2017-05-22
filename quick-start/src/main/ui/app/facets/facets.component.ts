@@ -44,6 +44,21 @@ export class FacetsComponent implements OnInit {
     }
   }
 
+  getCollapsedIcon(name: string) {
+    if (this.isToggleCollapsed(name)) {
+      return 'fa-angle-left';
+    }
+    return 'fa-angle-down';
+  }
+
+  isToggleCollapsed(name: string) {
+    return localStorage.getItem('facet-collapsed-' + name) === 'true';
+  }
+
+  toggleCollapsed(name: string) {
+    localStorage.setItem('facet-collapsed-' + name, (!this.isToggleCollapsed(name)).toString());
+  }
+
   selectFacet(name: string, value: any) {
     let facet = this.activeFacets[name] || { values: [] };
     facet.values.push(value);

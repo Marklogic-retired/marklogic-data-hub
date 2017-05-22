@@ -1,7 +1,7 @@
 package com.marklogic.hub.flow;
 
+import com.marklogic.client.datamovement.JobTicket;
 import com.marklogic.hub.HubDatabase;
-import org.springframework.batch.core.JobExecution;
 
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -36,5 +36,5 @@ public interface FlowRunner {
      */
     void awaitCompletion(long timeout, TimeUnit unit) throws InterruptedException;
 
-    JobExecution run();
+    JobTicket run();
 }

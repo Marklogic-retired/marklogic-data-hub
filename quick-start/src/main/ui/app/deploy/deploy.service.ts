@@ -12,14 +12,19 @@ export class DeployService {
 
   private _lastDeployed: any;
 
+  private validateSubscribed: EventEmitter<boolean> = new EventEmitter<boolean>();
+
   constructor(
     private http: Http,
     private stomp: STOMPService,
     private projectService: ProjectService
   ) {
     this.stomp.messages.subscribe(this.onWebsockMessage);
-    this.stomp.subscribe('/topic/deploy-status');
-    this.stomp.subscribe('/topic/validate-status');
+    this.stomp.subscribe('/topic/deploy-status').then(() => {
+      this.stomp.subscribe('/topic/validate-status').then(() => {
+        this.validateSubscribed.emit(true);
+      });
+    });
     this.updateLastDeployed();
   }
 
@@ -28,8 +33,10 @@ export class DeployService {
   }
 
   public validateUserModules() {
-    const url = `/api/current-project/validate-user-modules`;
-    this.http.post(url, '').subscribe(() => {});
+    this.validateSubscribed.subscribe(() => {
+      const url = `/api/current-project/validate-user-modules`;
+      this.http.post(url, '').subscribe(() => {});
+    });
   }
 
   public redeployUserModules() {

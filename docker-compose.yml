@@ -1,7 +1,7 @@
 version: '2'
 services:
   marklogic:
-    image: paxtonhare/marklogic-datahub-1x
+    image: marklogiccommunity/marklogic-datahub-1x
     ports:
       - "8000-8020"
     volumes:

@@ -23,10 +23,6 @@ public class LoadUserModulesCommand extends AbstractCommand {
 
     private HubConfig hubConfig;
 
-    public static final String USER_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES = "user-modules-deploy-timestamps.properties";
-
-    public static final String USER_CONTENT_DEPLOY_TIMESTAMPS_PROPERTIES = "user-content-deploy-timestamps.properties";
-
     public void setForceLoad(boolean forceLoad) {
         this.forceLoad = forceLoad;
     }
@@ -39,16 +35,7 @@ public class LoadUserModulesCommand extends AbstractCommand {
     }
 
     private PropertiesModuleManager getModulesManager() {
-        File timestampFile = Paths.get(hubConfig.projectDir, ".tmp", USER_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES).toFile();
-        PropertiesModuleManager pmm = new PropertiesModuleManager(timestampFile);
-        if (forceLoad) {
-            pmm.deletePropertiesFile();
-        }
-        return pmm;
-    }
-
-    private PropertiesModuleManager getContentManager() {
-        File timestampFile = Paths.get(hubConfig.projectDir, ".tmp", USER_CONTENT_DEPLOY_TIMESTAMPS_PROPERTIES).toFile();
+        File timestampFile = hubConfig.getModulesDeployTimestampFile();
         PropertiesModuleManager pmm = new PropertiesModuleManager(timestampFile);
         if (forceLoad) {
             pmm.deletePropertiesFile();

@@ -1,23 +1,24 @@
 package com.marklogic.hub.flow.impl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.datamovement.*;
+import com.marklogic.client.extensions.ResourceManager;
+import com.marklogic.client.extensions.ResourceServices;
+import com.marklogic.client.io.Format;
+import com.marklogic.client.io.StringHandle;
+import com.marklogic.client.util.RequestParameters;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubDatabase;
+import com.marklogic.hub.collector.Collector;
+import com.marklogic.hub.collector.ServerCollector;
 import com.marklogic.hub.flow.*;
+import com.marklogic.hub.job.Job;
 import com.marklogic.hub.job.JobManager;
-import com.marklogic.spring.batch.hub.FlowConfig;
-import com.marklogic.spring.batch.hub.RunHarmonizeFlowConfig;
-import com.marklogic.spring.batch.hub.StagingConfig;
-import org.springframework.batch.core.Job;
-import org.springframework.batch.core.JobExecution;
-import org.springframework.batch.core.JobParameters;
-import org.springframework.batch.core.JobParametersBuilder;
-import org.springframework.batch.core.launch.JobLauncher;
-import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class FlowRunnerImpl implements FlowRunner {
@@ -35,12 +36,9 @@ public class FlowRunnerImpl implements FlowRunner {
     private List<FlowItemFailureListener> flowItemFailureListeners = new ArrayList<>();
     private List<FlowStatusListener> flowStatusListeners = new ArrayList<>();
     private List<FlowFinishedListener> flowFinishedListeners = new ArrayList<>();
-    private List<BatchCompleteListener> batchCompleteListeners = new ArrayList<>();
 
     private HubConfig hubConfig;
     private Thread runningThread = null;
-    private boolean isFinished = false;
-    private JobExecution result = null;
 
     public FlowRunnerImpl(HubConfig hubConfig) {
         this.hubConfig = hubConfig;
@@ -117,163 +115,182 @@ public class FlowRunnerImpl implements FlowRunner {
     @Override
     public void awaitCompletion(long timeout, TimeUnit unit) throws InterruptedException {
         runningThread.join(unit.convert(timeout, TimeUnit.MILLISECONDS));
-        result.stop();
     }
 
     @Override
-    public JobExecution run() {
-        String jobId = UUID.randomUUID().toString();
-
-        result = null;
-        if (options == null) {
-            options = new HashMap<>();
+    public JobTicket run() {
+        DatabaseClient srcClient;
+        if (sourceDatabase.equals(HubDatabase.STAGING)) {
+            srcClient = hubConfig.newStagingClient();
         }
-        flow.setOptions(options);
+        else {
+            srcClient = hubConfig.newFinalClient();
+        }
+
+        String targetDatabase;
+        if (destinationDatabase.equals(HubDatabase.STAGING)) {
+            targetDatabase = hubConfig.stagingDbName;
+        }
+        else {
+            targetDatabase = hubConfig.finalDbName;
+        }
+
+
+        Collector c = flow.getCollector();
+        if (c instanceof ServerCollector) {
+            ((ServerCollector)c).setClient(srcClient);
+        }
+
         AtomicLong successfulEvents = new AtomicLong(0);
         AtomicLong failedEvents = new AtomicLong(0);
         AtomicLong successfulBatches = new AtomicLong(0);
         AtomicLong failedBatches = new AtomicLong(0);
-        JobManager jobManager = new JobManager(hubConfig.newJobDbClient());
-        com.marklogic.hub.job.Job runningJob = com.marklogic.hub.job.Job.withFlow(flow)
-            .withJobId(jobId);
-        try {
 
-            DatabaseClient srcClient;
-            if (sourceDatabase.equals(HubDatabase.STAGING)) {
-                srcClient = hubConfig.newStagingClient();
-            }
-            else {
-                srcClient = hubConfig.newFinalClient();
-            }
-
-            String targetDatabase;
-            if (destinationDatabase.equals(HubDatabase.STAGING)) {
-                targetDatabase = hubConfig.stagingDbName;
-            }
-            else {
-                targetDatabase = hubConfig.finalDbName;
-            }
-
-            ConfigurableApplicationContext ctx = buildApplicationContext(flow, jobId, srcClient);
-
-            flowItemCompleteListeners.add((id, itemId) -> {
-                successfulEvents.addAndGet(1);
-            });
-
-            flowItemFailureListeners.add((id, itemId) -> {
-                failedEvents.addAndGet(1);
-            });
-
-            flowFinishedListeners.add(() -> {
-                // store the thing in MarkLogic
-                runningJob
-                    .setCounts(successfulEvents.get(), failedEvents.get(), successfulBatches.get(), failedBatches.get())
-                    .withEndTime(new Date());
-                jobManager.saveJob(runningJob);
-                isFinished = true;
-            });
-
-            batchCompleteListeners.add(new BatchCompleteListener() {
-                @Override
-                public void onBatchFailed() {
-                    failedBatches.addAndGet(1);
-                }
-
-                @Override
-                public void onBatchSucceeded() {
-                    successfulBatches.addAndGet(1);
-                }
-            });
-
-            JobParameters params = buildJobParameters(flow, batchSize, threadCount, targetDatabase);
-            JobLauncher launcher = ctx.getBean(JobLauncher.class);
-            Job job = ctx.getBean(Job.class);
-            result = launcher.run(job, params);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        runningThread = new Thread(() -> {
-            while(true) {
-                if (isFinished) {
-                    break;
-                }
-                Thread.yield();
-            }
-        });
-
-        runningThread.start();
-
-        jobManager.saveJob(runningJob);
-
-        return result;
-    }
-
-    private ConfigurableApplicationContext buildApplicationContext(Flow flow, String customJobId, DatabaseClient srcClient) {
         if (options == null) {
             options = new HashMap<>();
         }
-        AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
-        ctx.register(StagingConfig.class);
-        ctx.register(FlowConfig.class);
-        ctx.register(RunHarmonizeFlowConfig.class);
-        ctx.getBeanFactory().registerSingleton("hubConfig", hubConfig);
-        ctx.getBeanFactory().registerSingleton("flow", flow);
-        ctx.getBeanFactory().registerSingleton("srcClient", srcClient);
-        ctx.getBeanFactory().registerSingleton("customJobId", customJobId);
-        ctx.getBeanFactory().registerSingleton("statusListener", (FlowStatusListener) (jobId, percentComplete, message) -> {
+        options.put("entity", this.flow.getEntityName());
+        options.put("flow", this.flow.getName());
+        options.put("flowType", this.flow.getType().toString());
+        Vector<String> uris = c.run(options);
+
+        FlowResource flowRunner = new FlowResource(srcClient, targetDatabase, flow);
+        AtomicInteger count = new AtomicInteger(0);
+        ArrayList<String> errorMessages = new ArrayList<>();
+
+        DataMovementManager dataMovementManager = srcClient.newDataMovementManager();
+
+        double batchCount = Math.ceil(uris.size() / batchSize);
+
+        QueryBatcher queryBatcher = dataMovementManager.newQueryBatcher(uris.iterator())
+            .withBatchSize(batchSize)
+            .withThreadCount(threadCount)
+            .onUrisReady((QueryBatch batch) -> {
+                try {
+                    String jobId = batch.getJobTicket().getJobId();
+                    RunFlowResponse response = flowRunner.run(jobId, batch.getItems(), options);
+                    failedEvents.addAndGet(response.errorCount);
+                    successfulEvents.addAndGet(response.totalCount - response.errorCount);
+                    successfulBatches.addAndGet(1);
+
+                    int percentComplete = (int) (((double)successfulBatches.get() / batchCount) * 100.0);
+
+                    flowStatusListeners.forEach((FlowStatusListener listener) -> {
+                        listener.onStatusChange(jobId, percentComplete, "");
+                    });
+
+                    count.addAndGet(1);
+                    if (flowItemCompleteListeners.size() > 0) {
+                        response.completedItems.forEach((String item) -> {
+                            flowItemCompleteListeners.forEach((FlowItemCompleteListener listener) -> {
+                                listener.processCompletion(jobId, item);
+                            });
+                        });
+                    }
+
+                    if (flowItemFailureListeners.size() > 0) {
+                        response.failedItems.forEach((String item) -> {
+                            flowItemFailureListeners.forEach((FlowItemFailureListener listener) -> {
+                                listener.processFailure(jobId, item);
+                            });
+                        });
+                    }
+                }
+                catch(Exception e) {
+                    errorMessages.add(e.toString());
+                }
+            })
+            .onQueryFailure((QueryBatchException failure) -> {
+                failedBatches.addAndGet(1);
+                failedEvents.addAndGet(batchSize);
+            });
+
+        JobTicket jobTicket = dataMovementManager.startJob(queryBatcher);
+        JobManager jobManager = new JobManager(hubConfig.newJobDbClient());
+        jobManager.saveJob(Job.withFlow(flow)
+            .withJobId(jobTicket.getJobId())
+        );
+
+        runningThread = new Thread(() -> {
+            queryBatcher.awaitCompletion();
+
             flowStatusListeners.forEach((FlowStatusListener listener) -> {
-                listener.onStatusChange(jobId, percentComplete, message);
+                listener.onStatusChange(jobTicket.getJobId(), 100, "");
             });
-        });
 
-        ctx.getBeanFactory().registerSingleton("finishedListener", (FlowFinishedListener) () -> {
-            System.out.println("FIRING finished listeners");
-            flowFinishedListeners.forEach((FlowFinishedListener listener) -> {
-                listener.onFlowFinished();
-            });
-        });
+            flowFinishedListeners.forEach((FlowFinishedListener::onFlowFinished));
 
-        ctx.getBeanFactory().registerSingleton("flowItemCompleteListener", (FlowItemCompleteListener) (jobId, itemId) -> {
-            flowItemCompleteListeners.forEach((FlowItemCompleteListener listener) -> {
-                listener.processCompletion(jobId, itemId);
-            });
-        });
+            dataMovementManager.stopJob(queryBatcher);
 
-        ctx.getBeanFactory().registerSingleton("flowItemFailureListener", (FlowItemFailureListener) (jobId, itemId) -> {
-            flowItemFailureListeners.forEach((FlowItemFailureListener listener) -> {
-                listener.processFailure(jobId, itemId);
-            });
-        });
+            // store the thing in MarkLogic
+            Job job = Job.withFlow(flow)
+                .withJobId(jobTicket.getJobId())
+                .setCounts(successfulEvents.get(), failedEvents.get(), successfulBatches.get(), failedBatches.get())
+                .withEndTime(new Date());
 
-        ctx.getBeanFactory().registerSingleton("batchCompleteListener", new BatchCompleteListener() {
-            @Override
-            public void onBatchFailed() {
-                batchCompleteListeners.forEach((BatchCompleteListener listener) -> {
-                    listener.onBatchFailed();
-                });
+            if (errorMessages.size() > 0) {
+                job.withJobOutput(String.join("\n", errorMessages));
             }
-
-            @Override
-            public void onBatchSucceeded() {
-                batchCompleteListeners.forEach((BatchCompleteListener listener) -> {
-                    listener.onBatchSucceeded();
-                });
-            }
+            jobManager.saveJob(job);
         });
-        ctx.refresh();
-        return ctx;
+        runningThread.start();
+
+        return jobTicket;
+
+
     }
 
-    private JobParameters buildJobParameters(Flow flow, int batchSize, int threadCount, String targetDatabase) {
-        JobParametersBuilder jpb = new JobParametersBuilder();
-        jpb.addLong("batchSize", Integer.toUnsignedLong(batchSize));
-        jpb.addLong("threadCount", Integer.toUnsignedLong(threadCount));
-        jpb.addString("uid", UUID.randomUUID().toString());
-        jpb.addString("flowType", flow.getType().toString());
-        jpb.addString("entity", flow.getEntityName());
-        jpb.addString("flow", flow.getName());
-        jpb.addString("targetDatabase", targetDatabase);
-        return jpb.toJobParameters();
+    class FlowResource extends ResourceManager {
+
+        static final public String NAME = "flow";
+
+        private DatabaseClient srcClient;
+        private String targetDatabase;
+        private Flow flow;
+        StringHandle handle;
+
+        public FlowResource(DatabaseClient srcClient, String targetDatabase, Flow flow) {
+            super();
+            this.flow = flow;
+            this.srcClient = srcClient;
+            this.targetDatabase = targetDatabase;
+            this.srcClient.init(NAME, this);
+            handle = new StringHandle(flow.serialize(true));
+            handle.setFormat(Format.XML);
+        }
+
+        public RunFlowResponse run(String jobId, String[] items) {
+            return run(jobId, items, null);
+        }
+
+        public RunFlowResponse run(String jobId, String[] items, Map<String, Object> options) {
+            RunFlowResponse resp;
+            try {
+                RequestParameters params = new RequestParameters();
+                params.put("job-id", jobId);
+                params.put("identifier", items);
+                params.put("target-database", targetDatabase);
+                if (options != null) {
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    params.put("options", objectMapper.writeValueAsString(options));
+                }
+                ResourceServices.ServiceResultIterator resultItr = this.getServices().post(params, handle);
+                if (resultItr == null || ! resultItr.hasNext()) {
+                    resp = new RunFlowResponse();
+                }
+                else {
+                    ResourceServices.ServiceResult res = resultItr.next();
+                    StringHandle handle = new StringHandle();
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    resp = objectMapper.readValue(res.getContent(handle).get(), RunFlowResponse.class);
+                }
+
+            }
+            catch(Exception e) {
+                e.printStackTrace();
+                throw new RuntimeException(e);
+            }
+            return resp;
+        }
     }
 }

@@ -1,1 +1,1 @@
-export * from './mlcp-ui';
+export * from './mlcp-ui.component';

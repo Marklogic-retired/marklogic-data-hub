@@ -16,6 +16,7 @@
 package com.marklogic.quickstart.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.marklogic.client.datamovement.JobTicket;
 import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.flow.*;
 import com.marklogic.quickstart.auth.ConnectionAuthenticationToken;
@@ -24,7 +25,6 @@ import com.marklogic.quickstart.model.FlowModel;
 import com.marklogic.quickstart.model.PluginModel;
 import com.marklogic.quickstart.util.FileUtil;
 import org.apache.commons.io.FileUtils;
-import org.springframework.batch.core.JobExecution;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -96,7 +96,7 @@ public class FlowManagerService {
         return flowManager.getFlow(entityName, flowName, flowType);
     }
 
-    public JobExecution runFlow(Flow flow, int batchSize, int threadCount, FlowStatusListener statusListener) {
+    public JobTicket runFlow(Flow flow, int batchSize, int threadCount, FlowStatusListener statusListener) {
 
         FlowManager flowManager = getFlowManager();
         FlowRunner flowRunner = flowManager.newFlowRunner()

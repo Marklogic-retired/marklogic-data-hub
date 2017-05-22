@@ -19,5 +19,5 @@ repositories {
 
 dependencies {
     compile 'com.marklogic:marklogic-data-hub:1.1.2'
-    compile 'com.marklogic:marklogic-xcc:8.0.6'
+    compile 'com.marklogic:marklogic-xcc:9.0.1'
 }

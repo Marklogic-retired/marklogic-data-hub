@@ -16,7 +16,6 @@
 package com.marklogic.hub.flow;
 
 import java.util.List;
-import java.util.Map;
 
 import com.marklogic.client.io.Format;
 import com.marklogic.hub.collector.Collector;
@@ -40,7 +39,4 @@ public interface Flow {
 
     void setWriter(Writer writer);
     Writer getWriter();
-
-    void setOptions(Map<String, Object> options);
-    Map<String, Object> getOptions();
 }

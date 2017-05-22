@@ -15,8 +15,10 @@ import { MdlDialogService } from '@angular-mdl/core';
 })
 export class SettingsComponent {
 
+  installStatus: string;
   uninstallStatus: string;
   percentComplete: number;
+  isInstalling: boolean = false;
   isUninstalling: boolean = false;
 
   constructor(
@@ -45,6 +47,28 @@ export class SettingsComponent {
     if (checked !== this.settings.traceEnabled) {
       this.settings.toggleTracing();
     }
+  }
+
+  redeploy(): void {
+    this.dialogService.confirm('Redeploy the hub config to MarkLogic?', 'Cancel', 'Redeploy').subscribe(() => {
+      this.isInstalling = true;
+
+      this.installStatus = '';
+      let emitter = this.install.messageEmitter.subscribe((payload: any) => {
+        this.percentComplete = payload.percentComplete;
+        this.installStatus += '\n' + payload.message;
+      });
+
+      this.install.install().subscribe((env) => {
+        setTimeout(() => {
+          this.isInstalling = false;
+          this.installStatus = null;
+        }, 1000);
+        emitter.unsubscribe();
+      });
+    },
+    // cancel.. do nothing
+    () => {});
   }
 
   uninstall(): void {

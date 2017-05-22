@@ -21,7 +21,7 @@ repositories {
 dependencies {
     compile 'com.marklogic:marklogic-data-hub:1.1.2'
     compile 'com.marklogic:marklogic-spring-batch-core:0.6.0'
-    compile 'com.marklogic:ml-javaclient-util:2.13.0'
+    compile 'com.marklogic:ml-javaclient-util:2.14.0'
     testCompile 'com.marklogic:marklogic-spring-batch-test:0.6.0'
 }
 

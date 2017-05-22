@@ -1,0 +1,5 @@
+<options xmlns="http://marklogic.com/appservices/search">
+  <constraint name="Collection">
+    <collection/>
+  </constraint>
+</options>
