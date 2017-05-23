@@ -21,6 +21,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
+import com.marklogic.hub.HubConfig;
 
 import java.util.*;
 
@@ -41,13 +42,16 @@ public class LoadAndRunFlow implements EnvironmentAware {
     public Step step(
             StepBuilderFactory stepBuilderFactory,
             DatabaseClientProvider databaseClientProvider,
+            @Value("#{jobParameters['project_dir']}") String projectDir,
             @Value("#{jobParameters['input_file_path']}") String inputFilePath,
             @Value("#{jobParameters['input_file_pattern']}") String inputFilePattern,
             @Value("#{jobParameters['entity_name']}") String entityName,
             @Value("#{jobParameters['flow_name']}") String flowName,
             @Value("#{jobParameters['output_collections']}") String[] collections) {
 
-        GenericDocumentManager docMgr = databaseClientProvider.getDatabaseClient().newDocumentManager();
+        HubConfig hubConfig = HubConfig.hubFromEnvironment(projectDir, "local");
+
+        GenericDocumentManager docMgr = hubConfig.newStagingClient().newDocumentManager();
 
         ItemProcessor<Resource, DocumentWriteOperation> processor = new ResourceToDocumentWriteOperationItemProcessor();
         ItemWriter<DocumentWriteOperation> writer = new ItemWriter<DocumentWriteOperation>() {

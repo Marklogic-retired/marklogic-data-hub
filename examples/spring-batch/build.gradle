@@ -1,13 +1,12 @@
 plugins {
     id 'java'
-    id 'eclipse'
-    id 'idea'
     id 'application'
     id 'net.saliman.properties' version '1.4.6'
     id 'com.marklogic.ml-data-hub' version '1.1.2'
 }
 
 repositories {
+    mavenLocal()
     jcenter()
     maven {url 'http://developer.marklogic.com/maven2/'}
 }
@@ -21,10 +20,19 @@ dependencies {
     runtime "com.marklogic:marklogic-spring-batch-core:0.7.2"
 }
 
-distributions {
-    main {
-        baseName = 'baseJob'
-    }
-}
-
 mainClassName = "com.marklogic.spring.batch.Main"
+
+task importMonsters(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = "com.marklogic.spring.batch.Main"
+    args = [
+            "--config", "example.LoadAndRunFlow",
+            "--project_dir", ".",
+            "--env", "local",
+            "--input_file_path", "./input",
+            "--input_file_pattern", ".*\\.xml",
+            "--entity_name", "Monster",
+            "--flow_name", "ingest-monster",
+            "--chunk", "100"
+    ]
+}
