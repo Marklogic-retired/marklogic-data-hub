@@ -512,7 +512,7 @@ export class MlcpUiComponent {
   }
 
   outputUriReplaceValue() {
-    return `${this.inputFilePath.replace(/\\/g, '\\\\')},''`;
+    return `${this.inputFilePath.replace(/\\/g, '/').replace(/^([A-Za-z]):/, '/$1:')},''`;
   }
 
   folderClicked(folder: string): void {
