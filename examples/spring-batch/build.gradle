@@ -1,9 +1,3 @@
-buildscript {
-  repositories {
-    maven {url 'http://developer.marklogic.com/maven2/'}
-  }
-}
-
 plugins {
     id 'java'
     id 'eclipse'
@@ -20,9 +14,11 @@ repositories {
 
 dependencies {
     compile 'com.marklogic:marklogic-data-hub:1.1.2'
-    compile 'com.marklogic:marklogic-spring-batch-core:0.6.0'
-    compile 'com.marklogic:ml-javaclient-util:2.14.0'
-    testCompile 'com.marklogic:marklogic-spring-batch-test:0.6.0'
+    compile "com.marklogic:marklogic-spring-batch-core:0.7.4"
+    compile 'com.marklogic:ml-javaclient-util:4.0.alpha4'
+
+    testCompile "com.marklogic:marklogic-spring-batch-test:0.7.4"
+    runtime "com.marklogic:marklogic-spring-batch-core:0.7.2"
 }
 
 distributions {
@@ -31,4 +27,4 @@ distributions {
     }
 }
 
-mainClassName = "com.marklogic.spring.batch.hub.HubJobRunner"
+mainClassName = "com.marklogic.spring.batch.Main"

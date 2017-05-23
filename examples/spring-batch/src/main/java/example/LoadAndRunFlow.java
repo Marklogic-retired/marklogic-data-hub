@@ -5,18 +5,16 @@ import com.marklogic.client.document.DocumentWriteSet;
 import com.marklogic.client.document.GenericDocumentManager;
 import com.marklogic.client.document.ServerTransform;
 import com.marklogic.client.helper.DatabaseClientProvider;
-import com.marklogic.hub.HubConfig;
-import com.marklogic.spring.batch.hub.AbstractMarkLogicBatchConfig;
-import com.marklogic.spring.batch.hub.FlowConfig;
-import com.marklogic.spring.batch.hub.StagingConfig;
 import com.marklogic.spring.batch.item.processor.ResourceToDocumentWriteOperationItemProcessor;
 import com.marklogic.spring.batch.item.reader.EnhancedResourcesItemReader;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
+import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
+import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.JobScope;
+import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemWriter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.Bean;
@@ -26,30 +24,28 @@ import org.springframework.core.io.Resource;
 
 import java.util.*;
 
-@Import({ StagingConfig.class, FlowConfig.class })
-public class LoadAndRunFlow extends AbstractMarkLogicBatchConfig implements EnvironmentAware {
+@EnableBatchProcessing
+public class LoadAndRunFlow implements EnvironmentAware {
 
     private Environment env;
 
     private final String JOB_NAME = "yourJob";
 
     @Bean
-    public Job job(Step step) {
+    public Job job(JobBuilderFactory jobBuilderFactory, Step step) {
         return jobBuilderFactory.get(JOB_NAME).start(step).build();
     }
-
-    // This provider gives us the connection info for talking to MarkLogic
-    @Autowired
-    private DatabaseClientProvider databaseClientProvider;
 
     @Bean
     @JobScope
     public Step step(
-        @Value("#{jobParameters['input_file_path']}") String inputFilePath,
-        @Value("#{jobParameters['input_file_pattern']}") String inputFilePattern,
-        @Value("#{jobParameters['entity_name']}") String entityName,
-        @Value("#{jobParameters['flow_name']}") String flowName) {
-
+            StepBuilderFactory stepBuilderFactory,
+            DatabaseClientProvider databaseClientProvider,
+            @Value("#{jobParameters['input_file_path']}") String inputFilePath,
+            @Value("#{jobParameters['input_file_pattern']}") String inputFilePattern,
+            @Value("#{jobParameters['entity_name']}") String entityName,
+            @Value("#{jobParameters['flow_name']}") String flowName,
+            @Value("#{jobParameters['output_collections']}") String[] collections) {
 
         GenericDocumentManager docMgr = databaseClientProvider.getDatabaseClient().newDocumentManager();
 
@@ -71,7 +67,7 @@ public class LoadAndRunFlow extends AbstractMarkLogicBatchConfig implements Envi
         };
 
         return stepBuilderFactory.get("step1")
-            .<Resource, DocumentWriteOperation>chunk(getChunkSize())
+            .<Resource, DocumentWriteOperation>chunk(10)
             .reader(new EnhancedResourcesItemReader(inputFilePath, inputFilePattern))
             .processor(processor)
             .writer(writer)

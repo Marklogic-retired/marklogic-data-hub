@@ -115,9 +115,9 @@ public class DeployHubDatabaseCommand extends DeployDatabaseCommand {
         File userDatabaseDir = hubConfig.getUserDatabaseDir().toFile();
         files.add(new File(databaseDir, this.databaseFilename));
 
-        File otherDatabaseFile = new File(userDatabaseDir, this.databaseFilename);
-        if (otherDatabaseFile != null && otherDatabaseFile.exists()) {
-            files.add(otherDatabaseFile);
+        File userDatabaseFile = new File(userDatabaseDir, this.databaseFilename);
+        if (userDatabaseFile != null && userDatabaseFile.exists()) {
+            files.add(userDatabaseFile);
         }
         if (logger.isInfoEnabled()) {
             logger.info("Merging JSON files at locations: " + files);
