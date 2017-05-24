@@ -64,8 +64,17 @@ mlJobForestsPerHost=%%mlJobForestsPerHost%%
 mlJobAuth=%%mlJobAuth%%
 
 mlModulesDbName=%%mlModulesDbName%%
+mlModulesForestsPerHost=%%mlModulesForestsPerHost%%
+
 mlTriggersDbName=%%mlTriggersDbName%%
+mlTriggersForestsPerHost=%%mlTriggersForestsPerHost%%
+
 mlSchemasDbName=%%mlSchemasDbName%%
+mlSchemasForestsPerHost=%%mlSchemasForestsPerHost%%
+
+# You can override this to specify an alternate folder for your
+# custom forest info. Defaults to user-config/forests/
+# mlCustomForestPath=%%mlCustomForestPath%%
 
 # The name of the Role to create for Hub Access
 mlHubUserRole=%%mlHubUserRole%%

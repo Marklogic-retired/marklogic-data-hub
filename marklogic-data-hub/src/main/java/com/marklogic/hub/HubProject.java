@@ -24,7 +24,7 @@ class HubProject {
     private Path pluginsDir;
     private HubConfig hubConfig;
 
-    private Map<String, String> customTokens = new HashMap<>();
+    private Map<String, String> customTokens;
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -33,38 +33,7 @@ class HubProject {
         this.projectDirStr = config.projectDir;
         this.projectDir = Paths.get(this.projectDirStr);
         this.pluginsDir = Paths.get(this.projectDirStr, "plugins");
-
-        customTokens.put("%%mlHost%%", hubConfig.host);
-        customTokens.put("%%mlStagingAppserverName%%", hubConfig.stagingHttpName);
-        customTokens.put("%%mlStagingPort%%", hubConfig.stagingPort.toString());
-        customTokens.put("%%mlStagingDbName%%", hubConfig.stagingDbName);
-        customTokens.put("%%mlStagingForestsPerHost%%", hubConfig.stagingForestsPerHost.toString());
-        customTokens.put("%%mlStagingAuth%%", hubConfig.stagingAuthMethod);
-
-        customTokens.put("%%mlFinalAppserverName%%", hubConfig.finalHttpName);
-        customTokens.put("%%mlFinalPort%%", hubConfig.finalPort.toString());
-        customTokens.put("%%mlFinalDbName%%", hubConfig.finalDbName);
-        customTokens.put("%%mlFinalForestsPerHost%%", hubConfig.finalForestsPerHost.toString());
-        customTokens.put("%%mlFinalAuth%%", hubConfig.finalAuthMethod);
-
-        customTokens.put("%%mlTraceAppserverName%%", hubConfig.traceHttpName);
-        customTokens.put("%%mlTracePort%%", hubConfig.tracePort.toString());
-        customTokens.put("%%mlTraceDbName%%", hubConfig.traceDbName);
-        customTokens.put("%%mlTraceForestsPerHost%%", hubConfig.traceForestsPerHost.toString());
-        customTokens.put("%%mlTraceAuth%%", hubConfig.traceAuthMethod);
-
-        customTokens.put("%%mlJobAppserverName%%", hubConfig.jobHttpName);
-        customTokens.put("%%mlJobPort%%", hubConfig.jobPort.toString());
-        customTokens.put("%%mlJobDbName%%", hubConfig.jobDbName);
-        customTokens.put("%%mlJobForestsPerHost%%", hubConfig.jobForestsPerHost.toString());
-        customTokens.put("%%mlJobAuth%%", hubConfig.jobAuthMethod);
-
-        customTokens.put("%%mlModulesDbName%%", hubConfig.modulesDbName);
-        customTokens.put("%%mlTriggersDbName%%", hubConfig.triggersDbName);
-        customTokens.put("%%mlSchemasDbName%%", hubConfig.schemasDbName);
-
-        customTokens.put("%%mlHubUserRole%%", hubConfig.hubRoleName);
-        customTokens.put("%%mlHubUserName%%", hubConfig.hubUserName);
+        customTokens = hubConfig.getCustomTokens(new HashMap<>());
     }
 
     /**
@@ -110,6 +79,15 @@ class HubProject {
 
             hubConfig.getUserServersDir().toFile().mkdirs();
             hubConfig.getUserDatabaseDir().toFile().mkdirs();
+
+            writeResourceFile("scaffolding/gradlew", projectDir.resolve("gradlew"));
+            writeResourceFile("scaffolding/gradlew.bat", projectDir.resolve("gradlew.bat"));
+
+            Path gradleWrapperDir = projectDir.resolve("gradle").resolve("wrapper");
+            gradleWrapperDir.toFile().mkdirs();
+
+            writeResourceFile("scaffolding/gradle/wrapper/gradle-wrapper.jar", gradleWrapperDir.resolve("gradle-wrapper.jar"));
+            writeResourceFile("scaffolding/gradle/wrapper/gradle-wrapper.properties", gradleWrapperDir.resolve("gradle-wrapper.properties"));
 
             writeResourceFile("scaffolding/build_gradle", projectDir.resolve("build.gradle"));
             writeResourceFileWithReplace("scaffolding/gradle_properties", projectDir.resolve("gradle.properties"));

@@ -26,18 +26,8 @@ import com.marklogic.client.query.StructuredQueryDefinition;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubDatabase;
 import com.marklogic.quickstart.model.SearchQuery;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 
 import javax.xml.namespace.QName;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.SAXParser;
-import java.io.ByteArrayInputStream;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 
 public class SearchService extends SearchableService {
@@ -56,42 +46,6 @@ public class SearchService extends SearchableService {
         this.stagingDocMgr = stagingClient.newDocumentManager();
         this.finalQueryMgr = finalClient.newQueryManager();
         this.finalDocMgr = finalClient.newDocumentManager();
-    }
-
-    private Element getOptions(boolean entitiesOnly) {
-        try {
-            Path dir = Paths.get(hubConfig.projectDir, HubConfig.ENTITY_CONFIG_DIR, HubConfig.ENTITY_SEARCH_OPTIONS_FILE);
-            if (dir.toFile().exists()) {
-                DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-                dbf.setNamespaceAware(true);
-                DocumentBuilder db = dbf.newDocumentBuilder();
-                Document doc = db.parse(dir.toFile());
-                Element root = doc.getDocumentElement();
-
-                if (entitiesOnly) {
-                    String additionalQuery = "<search:additional-query xmlns:search=\"http://marklogic.com/appservices/search\">\n" +
-                        "  <cts:or-query xmlns:cts=\"http://marklogic.com/cts\">\n" +
-                        "    <cts:element-query>\n" +
-                        "      <cts:element xmlns:es=\"http://marklogic.com/entity-services\">es:instance</cts:element>\n" +
-                        "      <cts:true-query/>\n" +
-                        "    </cts:element-query>\n" +
-                        "    <cts:json-property-scope-query>\n" +
-                        "      <cts:property>instance</cts:property>\n" +
-                        "      <cts:true-query/>\n" +
-                        "    </cts:json-property-scope-query>\n" +
-                        "  </cts:or-query>\n" +
-                        "</search:additional-query>";
-                    Element e = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new ByteArrayInputStream(additionalQuery.getBytes(StandardCharsets.UTF_8))).getDocumentElement();
-                    Node n = doc.importNode(e, true);
-                    root.appendChild(n);
-                }
-                return root;
-            }
-        }
-        catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        return null;
     }
 
     public StringHandle search(SearchQuery searchQuery) {
