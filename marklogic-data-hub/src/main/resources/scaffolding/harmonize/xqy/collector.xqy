@@ -14,6 +14,7 @@ declare option xdmp:mapping "false";
 declare function plugin:collect(
   $options as map:map) as xs:string*
 {
-  cts:uris((), (), cts:true-query())
+  (: by default we return the URIs in the same collection as the Flow name :)
+  cts:uris((), (), cts:collection-query(map:get($options, "flow")))
 };
 
