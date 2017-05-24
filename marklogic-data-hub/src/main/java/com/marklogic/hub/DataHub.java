@@ -482,6 +482,8 @@ public class DataHub {
             text = Pattern.compile("^(\\s*)compile.+marklogic-data-hub.+$", Pattern.MULTILINE).matcher(text).replaceAll("$1compile 'com.marklogic:marklogic-data-hub:" + version + "'");
             FileUtils.writeStringToFile(buildGradle, text);
 
+            hubConfig.getHubSecurityDir().resolve("roles").resolve("data-hub-user.json").toFile().delete();
+
             // step 3: install hub modules into MarkLogic
             install();
 

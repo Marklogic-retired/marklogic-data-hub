@@ -69,8 +69,8 @@ class HubProject {
             rolesDir.toFile().mkdirs();
             usersDir.toFile().mkdirs();
 
-            writeResourceFileWithReplace("ml-config/security/roles/data-hub-user.json", rolesDir.resolve("data-hub-user.json"), true);
-            writeResourceFileWithReplace("ml-config/security/users/data-hub-user.json", usersDir.resolve("data-hub-user.json"), true);
+            writeResourceFile("ml-config/security/roles/data-hub-role.json", rolesDir.resolve("data-hub-role.json"), true);
+            writeResourceFile("ml-config/security/users/data-hub-user.json", usersDir.resolve("data-hub-user.json"), true);
 
             Path mimetypesDir = hubConfig.getHubMimetypesDir();
             mimetypesDir.toFile().mkdirs();
