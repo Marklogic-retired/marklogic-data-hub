@@ -1,6 +1,7 @@
 package com.marklogic.hub;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -9,6 +10,7 @@ import static org.junit.Assert.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 
 public class HubProjectTest extends HubTestBase {
@@ -43,6 +45,14 @@ public class HubProjectTest extends HubTestBase {
         config.traceForestsPerHost = 100;
         config.tracePort = 3333;
 
+        config.modulesForestsPerHost = 3;
+        config.triggersForestsPerHost = 4;
+
+        config.schemasForestsPerHost = 5;
+
+        config.hubRoleName = "myrole";
+        config.hubUserName = "myuser";
+
         HubProject hp = new HubProject(config);
         hp.init();
 
@@ -64,10 +74,35 @@ public class HubProjectTest extends HubTestBase {
         assertTrue(gradleProperties.exists());
         Properties props = new Properties();
         FileInputStream propsStream = new FileInputStream(gradleProperties);
-        props.load(propsStream);
+        String fileContents = IOUtils.toString(propsStream);
+        fileContents = fileContents.replace("mlUsername=", "mlUsername=twituser");
+        fileContents = fileContents.replace("mlPassword=", "mlPassword=twitpassword");
+        fileContents = fileContents.replace("# mlManageUsername=", "mlManageUsername=manage-user");
+        fileContents = fileContents.replace("# mlManagePassword=", "mlManagePassword=manage-password");
+        fileContents = fileContents.replace("# mlAdminUsername=", "mlAdminUsername=admin-user");
+        fileContents = fileContents.replace("# mlAdminPassword=", "mlAdminPassword=admin-password");
+        fileContents = fileContents.replace("# mlAppServicesPort=8000", "mlAppServicesPort=9000");
+        fileContents = fileContents.replace("# mlAdminPort=8001", "mlAdminPort=9001");
+        fileContents = fileContents.replace("# mlManagePort=8002", "mlManagePort=9002");
+        InputStream updatedStream = IOUtils.toInputStream(fileContents);
+
+        props.load(updatedStream);
         propsStream.close();
 
         assertEquals(config.host, props.getProperty("mlHost"));
+
+        assertEquals("twituser", props.getProperty("mlUsername"));
+        assertEquals("twitpassword", props.getProperty("mlPassword"));
+
+        assertEquals("manage-user", props.getProperty("mlManageUsername"));
+        assertEquals("manage-password", props.getProperty("mlManagePassword"));
+
+        assertEquals("admin-user", props.getProperty("mlAdminUsername"));
+        assertEquals("admin-password", props.getProperty("mlAdminPassword"));
+
+        assertEquals("9000", props.getProperty("mlAppServicesPort"));
+        assertEquals("9001", props.getProperty("mlAdminPort"));
+        assertEquals("9002", props.getProperty("mlManagePort"));
 
         assertEquals(config.stagingHttpName, props.getProperty("mlStagingAppserverName"));
         assertEquals(config.stagingPort.toString(), props.getProperty("mlStagingPort"));
@@ -90,8 +125,16 @@ public class HubProjectTest extends HubTestBase {
         assertEquals(config.jobForestsPerHost.toString(), props.getProperty("mlJobForestsPerHost"));
 
         assertEquals(config.modulesDbName, props.getProperty("mlModulesDbName"));
+        assertEquals(config.modulesForestsPerHost.toString(), props.getProperty("mlModulesForestsPerHost"));
+
         assertEquals(config.triggersDbName, props.getProperty("mlTriggersDbName"));
+        assertEquals(config.triggersForestsPerHost.toString(), props.getProperty("mlTriggersForestsPerHost"));
+
         assertEquals(config.schemasDbName, props.getProperty("mlSchemasDbName"));
+        assertEquals(config.schemasForestsPerHost.toString(), props.getProperty("mlSchemasForestsPerHost"));
+
+        assertEquals(config.hubRoleName, props.getProperty("mlHubUserRole"));
+        assertEquals(config.hubUserName, props.getProperty("mlHubUserName"));
 
         File gradleLocalProperties = new File(projectPath, "gradle-local.properties");
         assertTrue(gradleLocalProperties.exists());

@@ -20,14 +20,6 @@ mlPassword=
 # mlManageUsername=
 # mlManagePassword=
 
-# If specified, these values can override where the DHF thinks
-# MarkLogic default ports are at. You would only use this if you
-# have changed the ports on which MarkLogic listens
-#
-# mlAppServicesPort=8000
-# mlAdminPort=8001
-# mlManagePort=8002
-
 # If specified, the admin username/password combo is used with the ML Management REST API for creating users and roles. This
 # user must have the manage-admin or admin role. A good practice is to use your admin account here to create app-specific
 # users and roles, which can then be used as mlManageUsername/mlManagePassword and mlUsername/mlPassword.
@@ -39,26 +31,34 @@ mlPassword=
 # mlAdminUsername=
 # mlAdminPassword=
 
+# If specified, these values can override where the DHF thinks
+# MarkLogic default ports are at. You would only use this if you
+# have changed the ports on which MarkLogic listens
+#
+# mlAppServicesPort=8000
+# mlAdminPort=8001
+# mlManagePort=8002
+
 mlStagingAppserverName=%%mlStagingAppserverName%%
-mlStagingPort=%%mlStagingPort%%
+mlStagingPort="%%mlStagingPort%%"
 mlStagingDbName=%%mlStagingDbName%%
 mlStagingForestsPerHost=%%mlStagingForestsPerHost%%
 mlStagingAuth=%%mlStagingAuth%%
 
 mlFinalAppserverName=%%mlFinalAppserverName%%
-mlFinalPort=%%mlFinalPort%%
+mlFinalPort="%%mlFinalPort%%"
 mlFinalDbName=%%mlFinalDbName%%
 mlFinalForestsPerHost=%%mlFinalForestsPerHost%%
 mlFinalAuth=%%mlFinalAuth%%
 
 mlTraceAppserverName=%%mlTraceAppserverName%%
-mlTracePort=%%mlTracePort%%
+mlTracePort="%%mlTracePort%%"
 mlTraceDbName=%%mlTraceDbName%%
 mlTraceForestsPerHost=%%mlTraceForestsPerHost%%
 mlTraceAuth=%%mlTraceAuth%%
 
 mlJobAppserverName=%%mlJobAppserverName%%
-mlJobPort=%%mlJobPort%%
+mlJobPort="%%mlJobPort%%"
 mlJobDbName=%%mlJobDbName%%
 mlJobForestsPerHost=%%mlJobForestsPerHost%%
 mlJobAuth=%%mlJobAuth%%

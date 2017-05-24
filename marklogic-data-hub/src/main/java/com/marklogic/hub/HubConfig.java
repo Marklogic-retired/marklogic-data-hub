@@ -544,6 +544,7 @@ public class HubConfig {
     }
 
     public Map<String, String> getCustomTokens(Map<String, String> customTokens) {
+        customTokens.put("%%mlHost%%", host);
         customTokens.put("%%mlStagingAppserverName%%", stagingHttpName);
         customTokens.put("\"%%mlStagingPort%%\"", stagingPort.toString());
         customTokens.put("%%mlStagingDbName%%", stagingDbName);
