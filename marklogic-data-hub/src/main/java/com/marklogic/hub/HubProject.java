@@ -111,6 +111,15 @@ class HubProject {
             hubConfig.getUserServersDir().toFile().mkdirs();
             hubConfig.getUserDatabaseDir().toFile().mkdirs();
 
+            writeResourceFile("scaffolding/gradlew", projectDir.resolve("gradlew"));
+            writeResourceFile("scaffolding/gradlew.bat", projectDir.resolve("gradlew.bat"));
+
+            Path gradleWrapperDir = projectDir.resolve("gradle").resolve("wrapper");
+            gradleWrapperDir.toFile().mkdirs();
+
+            writeResourceFile("scaffolding/gradle/wrapper/gradle-wrapper.jar", gradleWrapperDir.resolve("gradle-wrapper.jar"));
+            writeResourceFile("scaffolding/gradle/wrapper/gradle-wrapper.properties", gradleWrapperDir.resolve("gradle-wrapper.properties"));
+
             writeResourceFile("scaffolding/build_gradle", projectDir.resolve("build.gradle"));
             writeResourceFileWithReplace("scaffolding/gradle_properties", projectDir.resolve("gradle.properties"));
             writeResourceFile("scaffolding/gradle-local_properties", projectDir.resolve("gradle-local.properties"));

@@ -13,6 +13,8 @@ import { NewEntityComponent } from '../new-entity/new-entity';
 import { NewFlowComponent } from '../new-flow/new-flow.component';
 import { HasBugsDialogComponent } from '../has-bugs-dialog';
 
+import { JobListenerService } from '../jobs/job-listener.service';
+
 import { DeployService } from '../deploy/deploy.service';
 
 import * as _ from 'lodash';
@@ -35,14 +37,24 @@ export class EntitiesComponent {
     private entitiesService: EntitiesService,
     private deployService: DeployService,
     private snackbar: MdlSnackbarService,
-    private dialogService: MdlDialogService
+    private dialogService: MdlDialogService,
+    private jobListener: JobListenerService
   ) {
     deployService.onDeploy.subscribe(() => {
       this.getEntities();
     });
     this.getEntities();
     this.deployService.validateUserModules();
+    this.jobListener.jobFinished.subscribe(this.jobFinished);
   }
+
+  private jobFinished = (jobId) => {
+    setTimeout(() => {
+      this.snackbar.showSnackbar({
+        message: `Job ${jobId} Finished.`,
+      });
+    }, 0);
+  };
 
   getLastDeployed() {
     const lastDeployed = this.deployService.getLastDeployed();
