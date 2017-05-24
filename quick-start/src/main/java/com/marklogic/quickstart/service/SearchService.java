@@ -26,13 +26,7 @@ import com.marklogic.client.query.StructuredQueryDefinition;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubDatabase;
 import com.marklogic.quickstart.model.SearchQuery;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 
 public class SearchService extends SearchableService {
@@ -51,23 +45,6 @@ public class SearchService extends SearchableService {
         this.stagingDocMgr = stagingClient.newDocumentManager();
         this.finalQueryMgr = finalClient.newQueryManager();
         this.finalDocMgr = finalClient.newDocumentManager();
-    }
-
-    private Element getOptions() {
-        try {
-            Path dir = Paths.get(hubConfig.projectDir, HubConfig.USER_CONFIG_DIR, HubConfig.SEARCH_OPTIONS_FILE);
-            if (dir.toFile().exists()) {
-                DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-                dbf.setNamespaceAware(true);
-                DocumentBuilder db = dbf.newDocumentBuilder();
-                Document doc = db.parse(dir.toFile());
-                return doc.getDocumentElement();
-            }
-        }
-        catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        return null;
     }
 
     public StringHandle search(SearchQuery searchQuery) {
