@@ -62,7 +62,7 @@ public class HubConfig {
     public static final String DEFAULT_TRIGGERS_DB_NAME = "data-hub-TRIGGERS";
     public static final String DEFAULT_SCHEMAS_DB_NAME = "data-hub-SCHEMAS";
 
-    public static final String DEFAULT_ROLE_NAME = "data-hub-ROLE";
+    public static final String DEFAULT_ROLE_NAME = "data-hub-role";
     public static final String DEFAULT_USER_NAME = "data-hub-user";
 
     public static final Integer DEFAULT_STAGING_PORT = 8010;
@@ -549,21 +549,25 @@ public class HubConfig {
         customTokens.put("\"%%mlStagingPort%%\"", stagingPort.toString());
         customTokens.put("%%mlStagingDbName%%", stagingDbName);
         customTokens.put("%%mlStagingForestsPerHost%%", stagingForestsPerHost.toString());
+        customTokens.put("%%mlStagingAuth%%", stagingAuthMethod);
 
         customTokens.put("%%mlFinalAppserverName%%", finalHttpName);
         customTokens.put("\"%%mlFinalPort%%\"", finalPort.toString());
         customTokens.put("%%mlFinalDbName%%", finalDbName);
         customTokens.put("%%mlFinalForestsPerHost%%", finalForestsPerHost.toString());
+        customTokens.put("%%mlFinalAuth%%", finalAuthMethod);
 
         customTokens.put("%%mlTraceAppserverName%%", traceHttpName);
         customTokens.put("\"%%mlTracePort%%\"", tracePort.toString());
         customTokens.put("%%mlTraceDbName%%", traceDbName);
         customTokens.put("%%mlTraceForestsPerHost%%", traceForestsPerHost.toString());
+        customTokens.put("%%mlTraceAuth%%", traceAuthMethod);
 
         customTokens.put("%%mlJobAppserverName%%", jobHttpName);
         customTokens.put("\"%%mlJobPort%%\"", jobPort.toString());
         customTokens.put("%%mlJobDbName%%", jobDbName);
         customTokens.put("%%mlJobForestsPerHost%%", jobForestsPerHost.toString());
+        customTokens.put("%%mlJobAuth%%", jobAuthMethod);
 
         customTokens.put("%%mlModulesDbName%%", modulesDbName);
         customTokens.put("%%mlModulesForestsPerHost%%", modulesForestsPerHost.toString());
