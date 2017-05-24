@@ -200,18 +200,29 @@ export class STOMPService {
     }
   }
 
-  /** Subscribe to server message queues */
   public subscribe(endpoint: string): Promise<string> {
+    return this.subscribeInternal(endpoint, null);
+  }
 
-    let promise = new Promise(
-      (resolve, reject) => this.resolveSubQueue = resolve
-    );
+  /** Subscribe to server message queues */
+  subscribeInternal(endpoint: string, resolveFunc: { (...args: any[]): void }): Promise<string> {
+
+    // let resolveFunc: { (...args: any[]): void };
+    let promise = null;
+    if (!resolveFunc) {
+      promise = new Promise(
+        (resolve, reject) => resolveFunc = resolve
+      );
+    }
     if (this.state.getValue() === STOMPState.TRYING) {
-      this._subscribeQueue.push(endpoint);
+      this._subscribeQueue.push({
+        endpoint: endpoint,
+        resolveFunc: resolveFunc
+      });
     } else {
       let resp = this.client.subscribe(
         endpoint, this.onMessage, <any>{ ack: 'auto' });
-      this.resolveSubQueue(resp.id);
+      resolveFunc(resp.id);// this.resolveSubQueue(resp.id);
     }
 
     return promise;
@@ -222,8 +233,8 @@ export class STOMPService {
   }
 
   private subscribeQueue() {
-    for (let endpoint of this._subscribeQueue) {
-      this.subscribe(endpoint);
+    for (let item of this._subscribeQueue) {
+      this.subscribeInternal(item.endpoint, item.resolveFunc);
     }
     this._subscribeQueue = [];
   }

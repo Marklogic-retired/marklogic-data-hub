@@ -43,21 +43,6 @@ public class ScaffoldingValidator {
        return false;
    }
 
-   public boolean checkIfFolderExists(File rootDirectory, String absoluteFilePathFilter) {
-       File[] list = rootDirectory.listFiles();
-       if (list != null) {
-           for (File file : list) {
-               if (file.isDirectory()) {
-                   if(Pattern.matches(absoluteFilePathFilter,file.getAbsolutePath())) {
-                       return true;
-                   }
-                   checkIfFileExists(file, absoluteFilePathFilter);
-               }
-           }
-       }
-       return false;
-   }
-
    public boolean isUniqueRestTransform(String name) {
        String entityNameFilter = "[a-zA-Z0-9_.-]+";
        String flowTypeFilter = "(" + FlowType.INPUT + "|" + FlowType.HARMONIZE + ")";

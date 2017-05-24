@@ -21,6 +21,9 @@ import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.appdeployer.command.Command;
 import com.marklogic.appdeployer.command.CommandMapBuilder;
 import com.marklogic.appdeployer.command.appservers.DeployOtherServersCommand;
+import com.marklogic.appdeployer.command.forests.DeployCustomForestsCommand;
+import com.marklogic.appdeployer.command.security.DeployRolesCommand;
+import com.marklogic.appdeployer.command.security.DeployUsersCommand;
 import com.marklogic.appdeployer.impl.SimpleAppDeployer;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.FailedRequestException;
@@ -305,6 +308,10 @@ public class DataHub {
     public Map<String, List<Command>> getCommands() {
         Map<String, List<Command>> commandMap = new CommandMapBuilder().buildCommandMap();
 
+        List<Command> securityCommands = commandMap.get("mlSecurityCommands");
+        securityCommands.set(0, new DeployHubRolesCommand(hubConfig));
+        securityCommands.set(1, new DeployHubUsersCommand(hubConfig));
+
         List<Command> dbCommands = new ArrayList<>();
         dbCommands.add(new DeployHubDatabasesCommand(hubConfig));
         dbCommands.add(new DeployHubOtherDatabasesCommand(hubConfig));
@@ -330,6 +337,10 @@ public class DataHub {
         List<Command> mimetypeCommands = commandMap.get("mlMimetypeCommands");
         mimetypeCommands.add(0, new DeployHubMimetypesCommand(hubConfig));
 
+        List<Command> forestCommands = commandMap.get("mlForestCommands");
+        DeployCustomForestsCommand deployCustomForestsCommand = (DeployCustomForestsCommand)forestCommands.get(0);
+        deployCustomForestsCommand.setCustomForestsPath(hubConfig.customForestPath);
+
         return commandMap;
     }
 
@@ -352,6 +363,15 @@ public class DataHub {
         AppConfig config = hubConfig.getAppConfig();
         HubAppDeployer deployer = new HubAppDeployer(getManageClient(), getAdminManager(), listener);
         deployer.setCommands(getCommandList());
+        deployer.deploy(config);
+    }
+
+    public void updateIndexes() {
+        AppConfig config = hubConfig.getAppConfig();
+        HubAppDeployer deployer = new HubAppDeployer(getManageClient(), getAdminManager(), null);
+        List<Command> commands = new ArrayList<>();
+        commands.add(new DeployHubDatabasesCommand(hubConfig));
+        deployer.setCommands(commands);
         deployer.deploy(config);
     }
 
@@ -461,6 +481,8 @@ public class DataHub {
             text = Pattern.compile("^(\\s*)id\\s+['\"]com.marklogic.ml-data-hub['\"]\\s+version.+$", Pattern.MULTILINE).matcher(text).replaceAll("$1id 'com.marklogic.ml-data-hub' version '" + version + "'");
             text = Pattern.compile("^(\\s*)compile.+marklogic-data-hub.+$", Pattern.MULTILINE).matcher(text).replaceAll("$1compile 'com.marklogic:marklogic-data-hub:" + version + "'");
             FileUtils.writeStringToFile(buildGradle, text);
+
+            hubConfig.getHubSecurityDir().resolve("roles").resolve("data-hub-user.json").toFile().delete();
 
             // step 3: install hub modules into MarkLogic
             install();

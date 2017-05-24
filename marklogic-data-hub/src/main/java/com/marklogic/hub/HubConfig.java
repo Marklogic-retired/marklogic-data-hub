@@ -43,10 +43,12 @@ import java.util.Properties;
  */
 public class HubConfig {
 
+    public static final String USER_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES = "user-modules-deploy-timestamps.properties";
+    public static final String USER_CONTENT_DEPLOY_TIMESTAMPS_PROPERTIES = "user-content-deploy-timestamps.properties";
+
     public static final String OLD_HUB_CONFIG_DIR = "marklogic-config";
     public static final String HUB_CONFIG_DIR = "hub-internal-config";
     public static final String USER_CONFIG_DIR = "user-config";
-    public static final String SEARCH_OPTIONS_FILE = "all-search-options.xml";
 
     public static final String DEFAULT_HOST = "localhost";
 
@@ -58,16 +60,25 @@ public class HubConfig {
     public static final String DEFAULT_TRIGGERS_DB_NAME = "data-hub-TRIGGERS";
     public static final String DEFAULT_SCHEMAS_DB_NAME = "data-hub-SCHEMAS";
 
+    public static final String DEFAULT_ROLE_NAME = "data-hub-role";
+    public static final String DEFAULT_USER_NAME = "data-hub-user";
+
     public static final Integer DEFAULT_STAGING_PORT = 8010;
     public static final Integer DEFAULT_FINAL_PORT = 8011;
     public static final Integer DEFAULT_TRACE_PORT = 8012;
     public static final Integer DEFAULT_JOB_PORT = 8013;
+
+    public static final Integer DEFAULT_APP_SERVICES_PORT = 8000;
+    public static final Integer DEFAULT_ADMIN_PORT = 8001;
+    public static final Integer DEFAULT_MANAGE_PORT = 8002;
 
     public static final String DEFAULT_PROJECT_DIR = ".";
 
     public static final String DEFAULT_AUTH_METHOD = "digest";
 
     public static final Integer DEFAULT_FORESTS_PER_HOST = 4;
+
+    public static final String DEFAULT_CUSTOM_FOREST_PATH = "forests";
 
     private static final String GRADLE_PROPERTIES_FILENAME = "gradle.properties";
 
@@ -110,8 +121,22 @@ public class HubConfig {
     public String jobAuthMethod = DEFAULT_AUTH_METHOD;
 
     public String modulesDbName = DEFAULT_MODULES_DB_NAME;
+    public Integer modulesForestsPerHost = 1;
+
     public String triggersDbName = DEFAULT_TRIGGERS_DB_NAME;
+    public Integer triggersForestsPerHost = 1;
+
     public String schemasDbName = DEFAULT_SCHEMAS_DB_NAME;
+    public Integer schemasForestsPerHost = 1;
+
+    public Integer appServicesPort = DEFAULT_APP_SERVICES_PORT;
+    public Integer adminPort = DEFAULT_ADMIN_PORT;
+    public Integer managePort = DEFAULT_MANAGE_PORT;
+
+    public String hubRoleName = DEFAULT_ROLE_NAME;
+    public String hubUserName = DEFAULT_USER_NAME;
+
+    public String customForestPath = DEFAULT_CUSTOM_FOREST_PATH;
 
     public String projectDir;
 
@@ -149,11 +174,23 @@ public class HubConfig {
         return environmentProperties;
     }
 
+    public File getModulesDeployTimestampFile() {
+        return Paths.get(projectDir, ".tmp", USER_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES).toFile();
+    }
+
+    public File getContentDeployTimestampFile() {
+        return Paths.get(projectDir, ".tmp", USER_CONTENT_DEPLOY_TIMESTAMPS_PROPERTIES).toFile();
+    }
+
     public void loadConfigurationFromProperties(Properties environmentProperties) {
         this.environmentProperties = environmentProperties;
 
         if (this.environmentProperties != null) {
             host = getEnvPropString(environmentProperties, "mlHost", host);
+
+            appServicesPort = getEnvPropInteger(environmentProperties, "mlAppServicesPort", appServicesPort);
+            adminPort = getEnvPropInteger(environmentProperties, "mlAdminPort", adminPort);
+            managePort = getEnvPropInteger(environmentProperties, "mlManagePort", managePort);
 
             stagingDbName = getEnvPropString(environmentProperties, "mlStagingDbName", stagingDbName);
             stagingHttpName = getEnvPropString(environmentProperties, "mlStagingAppserverName", stagingHttpName);
@@ -179,9 +216,19 @@ public class HubConfig {
             jobPort = getEnvPropInteger(environmentProperties, "mlJobPort", jobPort);
             jobAuthMethod = getEnvPropString(environmentProperties, "mlJobAuth", jobAuthMethod);
 
+            customForestPath = getEnvPropString(environmentProperties, "mlCustomForestPath", customForestPath);
+
             modulesDbName = getEnvPropString(environmentProperties, "mlModulesDbName", modulesDbName);
+            modulesForestsPerHost = getEnvPropInteger(environmentProperties, "mlModulesForestsPerHost", modulesForestsPerHost);
+
             triggersDbName = getEnvPropString(environmentProperties, "mlTriggersDbName", triggersDbName);
+            triggersForestsPerHost = getEnvPropInteger(environmentProperties, "mlTriggersForestsPerHost", triggersForestsPerHost);
+
             schemasDbName = getEnvPropString(environmentProperties, "mlSchemasDbName", schemasDbName);
+            schemasForestsPerHost = getEnvPropInteger(environmentProperties, "mlSchemasForestsPerHost", schemasForestsPerHost);
+
+            hubRoleName = getEnvPropString(environmentProperties, "mlHubUserRole", hubRoleName);
+            hubUserName = getEnvPropString(environmentProperties, "mlHubUserName", hubUserName);
 
             adminUsername = getEnvPropString(environmentProperties, "mlAdminUsername", adminUsername);
             adminPassword = getEnvPropString(environmentProperties, "mlAdminPassword", adminPassword);
@@ -205,13 +252,14 @@ public class HubConfig {
     }
 
     public ManageClient newManageClient() {
-        ManageConfig config = new ManageConfig(host, 8002, username, password);
+        ManageConfig config = new ManageConfig(host, managePort, getManageUsername(), getManagePassword());
         return new ManageClient(config);
     }
 
     public AdminManager newAdminManager() {
         AdminConfig adminConfig = new AdminConfig();
         adminConfig.setHost(host);
+        adminConfig.setPort(adminPort);
         adminConfig.setUsername(getAdminUsername());
         adminConfig.setPassword(getAdminPassword());
         return new AdminManager(adminConfig);
@@ -346,6 +394,10 @@ public class HubConfig {
 
     public Path getHubSecurityDir() {
         return Paths.get(this.projectDir, HUB_CONFIG_DIR, "security");
+    }
+
+    public Path getUserSecurityDir() {
+        return Paths.get(this.projectDir, USER_CONFIG_DIR, "security");
     }
 
     public Path getUserConfigDir() {
@@ -484,9 +536,63 @@ public class HubConfig {
         return config;
     }
 
+    public Map<String, String> getCustomTokens(Map<String, String> customTokens) {
+        customTokens.put("%%mlHost%%", host);
+        customTokens.put("%%mlStagingAppserverName%%", stagingHttpName);
+        customTokens.put("\"%%mlStagingPort%%\"", stagingPort.toString());
+        customTokens.put("%%mlStagingDbName%%", stagingDbName);
+        customTokens.put("%%mlStagingForestsPerHost%%", stagingForestsPerHost.toString());
+        customTokens.put("%%mlStagingAuth%%", stagingAuthMethod);
+
+        customTokens.put("%%mlFinalAppserverName%%", finalHttpName);
+        customTokens.put("\"%%mlFinalPort%%\"", finalPort.toString());
+        customTokens.put("%%mlFinalDbName%%", finalDbName);
+        customTokens.put("%%mlFinalForestsPerHost%%", finalForestsPerHost.toString());
+        customTokens.put("%%mlFinalAuth%%", finalAuthMethod);
+
+        customTokens.put("%%mlTraceAppserverName%%", traceHttpName);
+        customTokens.put("\"%%mlTracePort%%\"", tracePort.toString());
+        customTokens.put("%%mlTraceDbName%%", traceDbName);
+        customTokens.put("%%mlTraceForestsPerHost%%", traceForestsPerHost.toString());
+        customTokens.put("%%mlTraceAuth%%", traceAuthMethod);
+
+        customTokens.put("%%mlJobAppserverName%%", jobHttpName);
+        customTokens.put("\"%%mlJobPort%%\"", jobPort.toString());
+        customTokens.put("%%mlJobDbName%%", jobDbName);
+        customTokens.put("%%mlJobForestsPerHost%%", jobForestsPerHost.toString());
+        customTokens.put("%%mlJobAuth%%", jobAuthMethod);
+
+        customTokens.put("%%mlModulesDbName%%", modulesDbName);
+        customTokens.put("%%mlModulesForestsPerHost%%", modulesForestsPerHost.toString());
+
+        customTokens.put("%%mlTriggersDbName%%", triggersDbName);
+        customTokens.put("%%mlTriggersForestsPerHost%%", triggersForestsPerHost.toString());
+
+        customTokens.put("%%mlSchemasDbName%%", schemasDbName);
+        customTokens.put("%%mlSchemasForestsPerHost%%", schemasForestsPerHost.toString());
+
+        customTokens.put("%%mlHubUserRole%%", hubRoleName);
+        customTokens.put("%%mlHubUserName%%", hubUserName);
+
+        customTokens.put("%%mlCustomForestPath%%", customForestPath);
+
+        if (environmentProperties != null) {
+            Enumeration keyEnum = environmentProperties.propertyNames();
+            while (keyEnum.hasMoreElements()) {
+                String key = (String) keyEnum.nextElement();
+                if (key.matches("^ml[A-Z].+") && !customTokens.containsKey(key)) {
+                    customTokens.put("%%" + key + "%%", (String) environmentProperties.get(key));
+                }
+            }
+        }
+
+        return customTokens;
+    }
+
     public void updateAppConfig(AppConfig config) {
         config.setHost(host);
         config.setRestPort(stagingPort);
+        config.setAppServicesPort(appServicesPort);
         config.setRestAdminUsername(getRestAdminUsername());
         config.setRestAdminPassword(getRestAdminPassword());
         config.setModulesDatabaseName(modulesDbName);
@@ -502,37 +608,18 @@ public class HubConfig {
         forestCounts.put(stagingDbName, stagingForestsPerHost);
         forestCounts.put(finalDbName, finalForestsPerHost);
         forestCounts.put(traceDbName, traceForestsPerHost);
-        forestCounts.put(modulesDbName, 1);
+        forestCounts.put(jobDbName, jobForestsPerHost);
+        forestCounts.put(modulesDbName, modulesForestsPerHost);
+        forestCounts.put(triggersDbName, triggersForestsPerHost);
+        forestCounts.put(schemasDbName, schemasForestsPerHost);
         config.setForestCounts(forestCounts);
 
         ConfigDir configDir = new ConfigDir(getUserConfigDir().toFile());
         config.setConfigDir(configDir);
 
-        Map<String, String> customTokens = config.getCustomTokens();
+        config.setSchemasPath(getUserConfigDir().resolve("schemas").toString());
 
-        customTokens.put("%%mlStagingAppserverName%%", stagingHttpName);
-        customTokens.put("\"%%mlStagingPort%%\"", stagingPort.toString());
-        customTokens.put("%%mlStagingDbName%%", stagingDbName);
-        customTokens.put("%%mlStagingForestsPerHost%%", stagingForestsPerHost.toString());
-
-        customTokens.put("%%mlFinalAppserverName%%", finalHttpName);
-        customTokens.put("\"%%mlFinalPort%%\"", finalPort.toString());
-        customTokens.put("%%mlFinalDbName%%", finalDbName);
-        customTokens.put("%%mlFinalForestsPerHost%%", finalForestsPerHost.toString());
-
-        customTokens.put("%%mlTraceAppserverName%%", traceHttpName);
-        customTokens.put("\"%%mlTracePort%%\"", tracePort.toString());
-        customTokens.put("%%mlTraceDbName%%", traceDbName);
-        customTokens.put("%%mlTraceForestsPerHost%%", traceForestsPerHost.toString());
-
-        customTokens.put("%%mlJobAppserverName%%", jobHttpName);
-        customTokens.put("\"%%mlJobPort%%\"", jobPort.toString());
-        customTokens.put("%%mlJobDbName%%", jobDbName);
-        customTokens.put("%%mlJobForestsPerHost%%", jobForestsPerHost.toString());
-
-        customTokens.put("%%mlModulesDbName%%", modulesDbName);
-        customTokens.put("%%mlTriggersDbName%%", triggersDbName);
-        customTokens.put("%%mlSchemasDbName%%", schemasDbName);
+        Map<String, String> customTokens = getCustomTokens(config.getCustomTokens());
 
         if (environmentProperties != null) {
             Enumeration keyEnum = environmentProperties.propertyNames();
@@ -612,8 +699,13 @@ public class HubConfig {
             .append("jobAuthMethod: " + jobAuthMethod + "\n")
             .append("\n")
             .append("modulesDbName: " + modulesDbName + "\n")
+            .append("modulesForestsPerHost: " + modulesForestsPerHost + "\n")
+            .append("\n")
             .append("triggersDbName: " + triggersDbName + "\n")
+            .append("triggersForestsPerHost: " + triggersForestsPerHost + "\n")
+            .append("\n")
             .append("schemasDbName: " + schemasDbName + "\n")
+            .append("schemasForestsPerHost: " + schemasForestsPerHost + "\n")
             .append("\n")
             .append("projectDir: " + projectDir + "\n")
             .append("\n");

@@ -80,7 +80,10 @@ public class DeployHubDatabaseCommand extends DeployDatabaseCommand {
         if (payload != null) {
             DatabaseManager dbMgr = new DatabaseManager(context.getManageClient());
             SaveReceipt receipt = dbMgr.save(payload);
-            buildDeployForestsCommand(payload, receipt, context).execute(context);
+            int forestCount = determineForestCountPerHost(payload, context);
+            if (forestCount > 0) {
+                buildDeployForestsCommand(payload, receipt, context).execute(context);
+            }
         }
     }
 
@@ -115,9 +118,9 @@ public class DeployHubDatabaseCommand extends DeployDatabaseCommand {
         File userDatabaseDir = hubConfig.getUserDatabaseDir().toFile();
         files.add(new File(databaseDir, this.databaseFilename));
 
-        File otherDatabaseFile = new File(userDatabaseDir, this.databaseFilename);
-        if (otherDatabaseFile != null && otherDatabaseFile.exists()) {
-            files.add(otherDatabaseFile);
+        File userDatabaseFile = new File(userDatabaseDir, this.databaseFilename);
+        if (userDatabaseFile != null && userDatabaseFile.exists()) {
+            files.add(userDatabaseFile);
         }
         if (logger.isInfoEnabled()) {
             logger.info("Merging JSON files at locations: " + files);

@@ -7,8 +7,8 @@ import * as _ from 'lodash';
 
 @Component({
   selector: 'app-custom-select',
-  templateUrl: './select.html',
-  styleUrls: ['./select.scss'],
+  templateUrl: './select.component.html',
+  styleUrls: ['./select.component.scss'],
 })
 export class SelectComponent implements OnInit, OnChanges {
   @Input() id: any;

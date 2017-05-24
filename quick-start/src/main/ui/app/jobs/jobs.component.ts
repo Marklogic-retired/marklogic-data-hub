@@ -71,12 +71,12 @@ export class JobsComponent implements OnChanges, OnDestroy, OnInit {
   }
 
   private jobStarted = () => {
-    this.runQuery();
+    this.getJobs();
   };
 
   private jobFinished = () => {
     setTimeout(() => {
-      this.runQuery();
+      this.getJobs();
     }, 2000);
   };
 
@@ -103,14 +103,13 @@ export class JobsComponent implements OnChanges, OnDestroy, OnInit {
       }
     });
 
-    let result: Promise<boolean> = this.router.navigate(['/jobs'], {
+    this.router.navigate(['/jobs'], {
       queryParams: params
-    });
-    result.then((value: boolean) => {
+    }).then((value: boolean) => {
       if (value !== true) {
         this.getJobs();
       }
-    })
+    });
   }
 
   private getJobs(): void {

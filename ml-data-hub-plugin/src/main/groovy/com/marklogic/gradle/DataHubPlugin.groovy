@@ -40,7 +40,7 @@ class DataHubPlugin implements Plugin<Project> {
         project.task("hubDisableDebugging", group: deployGroup, type: DisableDebuggingTask)
         project.task("hubEnableTracing", group: deployGroup, type: EnableTracingTask)
         project.task("hubDisableTracing", group: deployGroup, type: DisableTracingTask)
-        project.task("hubInstallModules", type: DeployHubModulesTask)
+        project.task("hubInstallModules", type: DeployHubModulesTask).mustRunAfter(["mlClearModulesDatabase"])
         project.task("hubInfo", type: HubInfoTask)
 
         String scaffoldGroup = "MarkLogic Data Hub Scaffolding"
@@ -52,6 +52,8 @@ class DataHubPlugin implements Plugin<Project> {
         project.tasks.replace("mlLoadModules", DeployUserModulesTask)
         project.tasks.replace("mlWatch", HubWatchTask)
         project.tasks.replace("mlDeleteModuleTimestampsFile", DeleteHubModuleTimestampsFileTask)
+        project.tasks.mlReloadModules.setDependsOn(["mlClearModulesDatabase", "hubInstallModules", "mlLoadModules"])
+
         String flowGroup = "MarkLogic Data Hub Flow Management"
         project.task("hubRunFlow", group: flowGroup, type: RunFlowTask)
 

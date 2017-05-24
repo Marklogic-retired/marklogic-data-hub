@@ -34,12 +34,13 @@
               <th class="mdl-data-table__cell--non-numeric">Created</th>
               <th class="mdl-data-table__cell--non-numeric">Duration</th>
               <th class="mdl-data-table__cell--non-numeric">Output</th>
+              <th class="mdl-data-table__cell--non-numeric"></th>
             </tr>
           </thead>
           <tbody>
             <tr *ngFor="let job of jobs" [ngClass]="{'error' : job.status === 'FAILED' }">
               <td><i class="mdi" [ngClass]="getIconClass(job.flowType)"></i> {{job.flowType}}</td>
-              <td>{{job.jobId}} <i (click)="showTraces(job.jobId)" class="fa fa-flash"></i></td>
+              <td>{{job.jobId}}</td>
               <td>{{job.entityName}}</td>
               <td>{{job.flowName}}</td>
               <td>{{job.status}}</td>
@@ -50,6 +51,14 @@
                   *ngIf="job.jobOutput || hasLiveOutput(job)"
                   mdl-button-type="raised" mdl-colored="primary" mdl-ripple
                   (click)="showConsole(job)"><i class="fa fa-terminal"></i></mdl-button>
+              </td>
+              <td>
+                <mdl-button
+                  mdl-tooltip="Show the Traces for this job."
+                  mdl-button-type="icon" mdl-colored="primary" mdl-ripple
+                  (click)="showTraces(job.jobId)">
+                  <i (click)="showTraces(job.jobId)" class="fa fa-flash"></i>
+                </mdl-button>
               </td>
             </tr>
           </tbody>

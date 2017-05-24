@@ -16,8 +16,15 @@
   <div>
     <button mdl-button mdl-button-type="raised"
       mdl-colored mdl-ripple
-      [disabled]="isUninstalling"
+      [disabled]="isUninstalling || isInstalling"
       (click)="uninstall()">Uninstall Hub</button>
+  </div>
+
+  <div>
+    <button mdl-button mdl-button-type="raised"
+      mdl-colored mdl-ripple
+      [disabled]="isUninstalling || isInstalling"
+      (click)="redeploy()">Redeploy Hub</button>
   </div>
 
   <section flex layout-padding layout="column" class="uninstall-status" *ngIf="uninstallStatus">
@@ -25,6 +32,13 @@
     <mdl-progress mode="determinate" [progress]="percentComplete"></mdl-progress>
     <div flex>
       <pre>{{uninstallStatus}}</pre>
+    </div>
+  </section>
+  <section flex layout-padding layout="column" class="uninstall-status" *ngIf="installStatus">
+    <h3>Redeploy Status</h3>
+    <mdl-progress mode="determinate" [progress]="percentComplete"></mdl-progress>
+    <div flex>
+      <pre>{{installStatus}}</pre>
     </div>
   </section>
 </div>

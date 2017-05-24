@@ -21,20 +21,12 @@ import com.marklogic.client.document.ServerTransform;
 import com.marklogic.client.io.Format;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.query.QueryManager;
-import com.marklogic.client.query.RawCombinedQueryDefinition;
 import com.marklogic.client.query.StructuredQueryBuilder;
 import com.marklogic.client.query.StructuredQueryDefinition;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubDatabase;
 import com.marklogic.quickstart.model.SearchQuery;
-import com.marklogic.quickstart.util.QueryHelper;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 
 public class SearchService extends SearchableService {
@@ -55,23 +47,6 @@ public class SearchService extends SearchableService {
         this.finalDocMgr = finalClient.newDocumentManager();
     }
 
-    private Element getOptions() {
-        try {
-            Path dir = Paths.get(hubConfig.projectDir, HubConfig.USER_CONFIG_DIR, HubConfig.SEARCH_OPTIONS_FILE);
-            if (dir.toFile().exists()) {
-                DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-                dbf.setNamespaceAware(true);
-                DocumentBuilder db = dbf.newDocumentBuilder();
-                Document doc = db.parse(dir.toFile());
-                return doc.getDocumentElement();
-            }
-        }
-        catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        return null;
-    }
-
     public StringHandle search(SearchQuery searchQuery) {
         QueryManager queryMgr;
         if (searchQuery.database.equals(HubDatabase.STAGING)) {
@@ -83,7 +58,7 @@ public class SearchService extends SearchableService {
 
         queryMgr.setPageLength(searchQuery.count);
 
-        StructuredQueryBuilder sb = queryMgr.newStructuredQueryBuilder();
+        StructuredQueryBuilder sb = queryMgr.newStructuredQueryBuilder("default");
 
         ArrayList<StructuredQueryDefinition> queries = new ArrayList<>();
         if (searchQuery.query != null && searchQuery.query.length() > 0) {
@@ -92,21 +67,27 @@ public class SearchService extends SearchableService {
 
         if (searchQuery.facets != null) {
             searchQuery.facets.entrySet().forEach(entry -> entry.getValue().forEach(value -> {
-                StructuredQueryDefinition def = addRangeConstraint(sb, entry.getKey(), value);
+                StructuredQueryDefinition def;
+
+                if (entry.getKey().equals("Collection")) {
+                    def = sb.collectionConstraint(entry.getKey(), value);
+                }
+                else {
+                    def = addRangeConstraint(sb, entry.getKey(), value);
+                }
+
                 if (def != null) {
                     queries.add(def);
                 }
             }));
         }
 
-        StructuredQueryBuilder.AndQuery sqd = sb.and(queries.toArray(new StructuredQueryDefinition[0]));
-
-        String searchXml = QueryHelper.serializeQuery(sb, sqd, searchQuery.sort, getOptions());
-        RawCombinedQueryDefinition querydef = queryMgr.newRawCombinedQueryDefinitionAs(Format.XML, searchXml);
+        StructuredQueryDefinition sqd = sb.and(queries.toArray(new StructuredQueryDefinition[0]));
+        sqd.setCriteria(searchQuery.query);
 
         StringHandle sh = new StringHandle();
         sh.setFormat(Format.JSON);
-        return queryMgr.search(querydef, sh, searchQuery.start);
+        return queryMgr.search(sqd, sh, searchQuery.start);
     }
 
     public String getDoc(HubDatabase database, String docUri) {

@@ -72,7 +72,6 @@ public abstract class AbstractFlow implements Flow {
     private boolean envelopeEnabled = true;
     protected ArrayList<Plugin> plugins = new ArrayList<>();
     private Writer writer;
-    private Map<String, Object> userOptions;
 
     public AbstractFlow() {}
 
@@ -377,9 +376,4 @@ public abstract class AbstractFlow implements Flow {
     public List<Plugin> getPlugins() {
         return plugins;
     }
-
-    public void setOptions(Map<String, Object> options) {
-        userOptions = options;
-    }
-    public Map<String, Object> getOptions() { return userOptions; }
 }

@@ -5,7 +5,8 @@ import { HttpModule } from '@angular/http';
 import { RouterModule } from '@angular/router';
 import { TruncateCharactersPipe } from './truncate';
 import { AppComponent } from './app.component';
-import { EntitiesComponent, HasBugsDialogComponent } from './entities';
+import { EntitiesComponent } from './entities';
+import { HasBugsDialogComponent } from './has-bugs-dialog';
 import { LoginComponent } from './login';
 import { SettingsComponent } from './settings';
 
@@ -24,7 +25,7 @@ import { JobsComponent, JobOutputComponent } from './jobs';
 import { MlcpUiComponent } from './mlcp-ui';
 import { MlErrorComponent } from './ml-error';
 import { NewEntityComponent } from './new-entity/new-entity';
-import { NewFlowComponent } from './new-flow/new-flow';
+import { NewFlowComponent } from './new-flow/new-flow.component';
 import { NoContentComponent } from './no-content';
 import { PaginationComponent } from './pagination';
 import { SelectComponent } from './select/select.component';
@@ -83,6 +84,7 @@ import { ObjectToArrayPipe } from './object-to-array.pipe';
     ObjectToArrayPipe
   ],
   entryComponents: [
+    HasBugsDialogComponent,
     NewEntityComponent,
     NewFlowComponent,
     JobOutputComponent

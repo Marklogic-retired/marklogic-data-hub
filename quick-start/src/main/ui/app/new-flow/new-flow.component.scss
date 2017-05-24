@@ -1,0 +1,18 @@
+.new-flow-dialog {
+  min-width: 500px;
+  width: 500px;
+
+  label {
+    margin: 5px 0;
+  }
+
+  /deep/ .select-list {
+    .mdl-list__item {
+      padding: 8px;
+    }
+  }
+
+  mdl-textfield {
+    width: 100%;
+  }
+}
