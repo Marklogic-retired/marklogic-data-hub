@@ -75,7 +75,7 @@ class RunFlowTask extends HubTask {
 
         Map<String, Object> options = new HashMap<>()
         project.ext.properties.each { key, value ->
-            if (key.toString().startsWith("dfh.")) {
+            if (key.toString().startsWith("dhf.")) {
                 options.put(key, value)
             }
         }
