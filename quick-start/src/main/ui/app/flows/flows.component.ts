@@ -290,7 +290,7 @@ export class FlowsComponent implements OnInit, OnDestroy {
   }
 
   isActivePlugin(flow: Flow, plugin: Plugin): boolean {
-    return this.flow.flowName === flow.flowName &&
+    return this.flow && this.flow.flowName === flow.flowName &&
       this.flowPlugin &&
       this.flowPlugin.pluginType === plugin.pluginType;
   }

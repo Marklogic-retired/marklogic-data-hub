@@ -50,7 +50,7 @@ declare function service:comment-sjs($comment-text as xs:string*)
 
 declare function service:kebob-case($str as xs:string)
 {
-  fn:lower-case(fn:replace($str, "([A-Z])", "-$1"))
+  fn:lower-case(fn:replace(fn:replace($str, "([A-Z])", "-$1"), "^-", ""))
 };
 
 declare function service:camel-case($str as xs:string)
