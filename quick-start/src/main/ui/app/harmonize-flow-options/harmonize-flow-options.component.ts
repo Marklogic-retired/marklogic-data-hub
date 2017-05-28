@@ -43,7 +43,6 @@ export class HarmonizeFlowOptionsComponent implements OnInit {
   }
 
   cancel(): void {
-    this.hide();
     this.finishedEvent.error(false);
   }
 

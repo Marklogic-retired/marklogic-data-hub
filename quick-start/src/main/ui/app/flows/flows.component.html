@@ -39,7 +39,7 @@
                         <i class="mdi" [ngClass]="{'mdi-import': type === 'Input', 'mdi-looks' : type === 'Harmonize'}"></i>
                         {{ flow.flowName }}
                         <span class="mdl-layout-spacer"></span>
-                        <i class="fa fa-trash" (click)="deleteFlow(flow, type.toUpperCase())"></i>
+                        <i class="fa fa-trash" (click)="deleteFlow($event, flow, type.toUpperCase())"></i>
                         <i class="fa fa-bug" *ngIf="flowHasError(entity.name, flow.flowName)"></i>
                       </span>
                     </div>
