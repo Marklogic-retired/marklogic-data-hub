@@ -99,7 +99,7 @@ $red-color: unquote("rgb(#{$palette-datahub-red})");
   }
 
   .scroller {
-    overflow: scroll;
+    overflow: auto;
     display: block;
     position: absolute;
     top: 74px;

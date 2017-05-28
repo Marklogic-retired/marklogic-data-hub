@@ -27,9 +27,6 @@ export class MlcpUiComponent {
 
   finishedEvent: EventEmitter<any>;
 
-  startX: number = 0;
-  startY: number = 0;
-
   _isVisible: boolean = false;
 
   groups: Array<any>;
@@ -65,7 +62,7 @@ export class MlcpUiComponent {
   ) {
   }
 
-  show(mlcpOptions: any, flow: Flow, $event: MouseEvent): EventEmitter<boolean> {
+  show(mlcpOptions: any, flow: Flow): EventEmitter<boolean> {
     this.finishedEvent = new EventEmitter<boolean>(true);
 
     this.flow = flow;
@@ -75,10 +72,6 @@ export class MlcpUiComponent {
 
     this.updateMlcpCommand();
 
-    if ($event && $event.clientX >= 0 && $event.clientY >= 0) {
-      this.startX = $event.clientX;
-      this.startY = $event.clientY;
-    }
     this.display = 'block';
     this._isVisible = true;
     return this.finishedEvent;
@@ -546,7 +539,6 @@ export class MlcpUiComponent {
   }
 
   cancel(): void {
-    this.hide();
     this.finishedEvent.error(false);
   }
 

@@ -21,48 +21,47 @@
           </div>
           <div class="flow-container" [ngClass]="{ 'collapsed' : isCollapsed(entity) }">
             <div class="padder">
-              <div class="flow-subheader">
-                Input Flows
-                <div class="mdl-layout-spacer"></div>
-                <mdl-button mdl-button-type="icon" id="new-input-flow" aria-label="New Input Flow" (click)="newInputFlow($event, entity)">
-                  <i class="fa fa-plus"></i>
-                </mdl-button>
-              </div>
-              <ul class="flows mdl-list">
-                <li
-                  class="flow mdl-list__item"
-                  [ngClass]="{'active': isActiveFlow(flow)}"
-                  *ngFor="let flow of entity.inputFlows"
-                  (click)="setFlow($event, entity, flow, 'Input')">
-                  <span class="mdl-list__item-primary-content">
-                    <i class="mdi mdi-import"></i>
-                    {{ flow.flowName }}
-                    <span class="mdl-layout-spacer"></span>
-                    <i class="fa fa-bug" *ngIf="flowHasError(entity.name, flow.flowName)"></i>
-                  </span>
-                </li>
-              </ul>
-              <div class="flow-subheader">
-                Harmonize Flows
-                <div class="mdl-layout-spacer"></div>
-                <mdl-button mdl-button-type="icon" id="new-harmonize-flow" aria-label="New Harmonize Flow" (click)="newHarmonizeFlow($event, entity)">
-                  <i class="fa fa-plus"></i>
-                </mdl-button>
-              </div>
-              <ul class="flows mdl-list">
-                <li
-                  class="flow mdl-list__item"
-                  [ngClass]="{'active': isActiveFlow(flow)}"
-                  *ngFor="let flow of entity.harmonizeFlows"
-                  (click)="setFlow($event, entity, flow, 'Harmonize')">
-                  <span class="mdl-list__item-primary-content">
-                    <i class="mdi mdi-looks"></i>
-                    {{ flow.flowName }}
-                    <span class="mdl-layout-spacer"></span>
-                    <i class="fa fa-bug" *ngIf="flowHasError(entity.name, flow.flowName)"></i>
-                  </span>
-                </li>
-              </ul>
+              <ng-template ngFor let-type [ngForOf]="flowTypes">
+                <div class="flow-subheader">
+                  {{type}} Flows
+                  <div class="mdl-layout-spacer"></div>
+                  <mdl-button mdl-button-type="icon" id="new-flow" (click)="showNewFlow(entity, type.toUpperCase())">
+                    <i class="fa fa-plus"></i>
+                  </mdl-button>
+                </div>
+                <ul class="flows mdl-list">
+                  <li
+                    class="flow mdl-list__item"
+                    [ngClass]="{'active': isActiveFlow(flow)}"
+                    *ngFor="let flow of getFlows(entity, type)">
+                    <div (click)="setFlow(flow, type.toUpperCase())">
+                      <span class="mdl-list__item-primary-content">
+                        <i class="mdi" [ngClass]="{'mdi-import': type === 'Input', 'mdi-looks' : type === 'Harmonize'}"></i>
+                        {{ flow.flowName }}
+                        <span class="mdl-layout-spacer"></span>
+                        <i class="fa fa-trash" (click)="deleteFlow(flow, type.toUpperCase())"></i>
+                        <i class="fa fa-bug" *ngIf="flowHasError(entity.name, flow.flowName)"></i>
+                      </span>
+                    </div>
+                    <div>
+                      <ul>
+                        <li
+                          *ngFor="let plugin of flow.plugins"
+                          (click)="editPlugin(entity, flow, type.toUpperCase(), plugin)">
+                          <span>
+                            <i class="fa fa-arrow-right" aria-hidden="true" *ngIf="isActivePlugin(flow, plugin)"></i>
+                            <i class="fa fa-code" aria-hidden="true"></i>
+                            <span class="mdl-layout-spacer"></span>
+                            {{ plugin.pluginType }}
+                            <i class="fa fa-bug" *ngIf="pluginHasError(flow, plugin.pluginType)"></i>
+                            <i class="fa fa-asterisk" title="Unsaved Changes" *ngIf="plugin.$dirty"></i>
+                          </span>
+                        </li>
+                      </ul>
+                    </div>
+                  </li>
+                </ul>
+              </ng-template>
             </div>
           </div>
         </li>
@@ -82,32 +81,36 @@
     <gm-divider></gm-divider>
     <div gm-col class="flex-100">
       <div class="page-content">
-        <app-mlcp></app-mlcp>
-        <app-harmonize-flow-options></app-harmonize-flow-options>
-<!--         <div class="current-flow" *ngIf="flow && !mlcp.isVisible() && !harmonize.isVisible()">
-          <h2>{{flow.flowName}} {{flowType}} flow <i class="fa fa-bug" *ngIf="flowHasError(entity.name, flow.flowName)"></i></h2>
-          <h3>
-            <mdl-button mdl-button-type="raised" mdl-colored="primary" mdl-ripple (click)="runFlow($event, flow, flowType)">
-              Run Flow <i class="fa fa-play-circle-o"></i>
-            </mdl-button>
-          </h3>
-          <h3>Plugins</h3>
-          <ul class="plugin-list">
-            <li *ngFor="let plugin of flow.plugins" [ngClass]="{'error': pluginHasError(flow, plugin.pluginType) }">
-              <h4>
-                <i class="fa fa-bug" *ngIf="pluginHasError(flow, plugin.pluginType)"></i>
-                <i class="fa fa-folder-open-o"></i>
-                {{plugin.pluginType}}
-                </h4>
-              <ul>
-                <li *ngFor="let file of plugin.files">
-                  <i class="fa fa-file-code-o"></i> {{file}}
-                  <pre *ngIf="pluginHasError(flow, plugin.pluginType)" class="error-msg">{{getErrorMessage(flow, plugin.pluginType)}}</pre>
-                </li>
-              </ul>
-            </li>
-          </ul>
-        </div> -->
+        <div [style.display]="view === 'flowPlugin'?'none':'inherit'">
+          <app-mlcp></app-mlcp>
+          <app-harmonize-flow-options></app-harmonize-flow-options>
+        </div>
+        <div class="flow-plugin" *ngIf="view === 'flowPlugin' && flowPlugin">
+          <ng-template ngFor let-plugin [ngForOf]="(flowPlugin.files | objectToArray)">
+            <div class="toolbar">
+              <i class="fa fa-bug" *ngIf="pluginHasError(flow, flowPlugin.pluginType)"></i>
+              <span class="plugin-path">{{flowPlugin.pluginPath}}/{{plugin.__key}}</span>
+              <span *ngIf="isSaving">Saving <i class="fa fa-spinner fa-pulse"></i></span>
+              <div class="pull-right save-button">
+                <mdl-button
+                  mdl-button-type="raised" mdl-colored="primary" mdl-ripple
+                  [disabled]="!flowPlugin.$dirty || isSaving"
+                  (click)="savePlugin()"
+                  tooltip="This will save the plugin code."
+                  tooltipPlacement="bottom">
+                  Save <i class="fa fa-floppy-o"></i>
+                </mdl-button>
+              </div>
+            </div>
+            <div class="plugin-codemirror">
+              <app-codemirror [ngModel]="plugin.value"
+                (ngModelChange)="syncPluginText(plugin.__key, $event)"
+                (saveEvent)="savePlugin()"
+                [config]="codeMirrorConfig"
+                [error]="getPluginErrors(flow, flowPlugin.pluginType)"></app-codemirror>
+            </div>
+          </ng-template>
+        </div>
       </div>
     </div>
   </div>

@@ -29,16 +29,20 @@ import com.marklogic.client.modulesloader.impl.DefaultModulesLoader;
 import com.marklogic.client.modulesloader.impl.PropertiesModuleManager;
 import com.marklogic.client.modulesloader.impl.XccAssetLoader;
 import com.marklogic.client.util.RequestParameters;
+import com.marklogic.hub.DataHub;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.flow.FlowType;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.quickstart.auth.ConnectionAuthenticationToken;
+import com.marklogic.quickstart.listeners.ValidateListener;
 import com.marklogic.quickstart.model.EnvironmentConfig;
 import com.marklogic.quickstart.model.FlowModel;
+import com.marklogic.quickstart.model.PluginModel;
 import com.marklogic.quickstart.model.entity_services.EntityModel;
 import com.marklogic.quickstart.model.entity_services.HubUIData;
 import com.marklogic.quickstart.util.FileUtil;
 import com.sun.jersey.api.client.ClientHandlerException;
+import org.apache.avro.data.Json;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -47,9 +51,13 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.*;
+import java.util.regex.Pattern;
 
 @Service
 public class EntityManagerService {
@@ -281,11 +289,54 @@ public class EntityManagerService {
 
     public FlowModel createFlow(String projectDir, String entityName, FlowType flowType, FlowModel newFlow) throws IOException {
         Scaffolding scaffolding = new Scaffolding(projectDir, envConfig().getFinalClient());
-        newFlow.entityName =entityName;
+        newFlow.entityName = entityName;
         scaffolding.createFlow(entityName, newFlow.flowName, flowType, newFlow.pluginFormat, newFlow.dataFormat, newFlow.useEsModel);
         return getFlow(entityName, flowType, newFlow.flowName);
     }
 
+    public void deleteFlow(String projectDir, String entityName, String flowName, FlowType flowType) throws IOException {
+        Scaffolding scaffolding = new Scaffolding(projectDir, envConfig().getFinalClient());
+        Path flowDir = scaffolding.getFlowDir(entityName, flowName, flowType);
+        FileUtils.deleteDirectory(flowDir.toFile());
+    }
+
+    public JsonNode validatePlugin(
+        HubConfig config,
+        String entityName,
+        String flowName,
+        PluginModel plugin
+    ) throws IOException {
+        JsonNode result = null;
+        for (String pluginFile: plugin.files.keySet()) {
+            String type;
+            if (plugin.pluginType.endsWith("sjs")) {
+                type = "javascript";
+            }
+            else {
+                type = "xquery";
+            }
+            result = (new DataHub(config)).validateUserModule(entityName, flowName, pluginFile.replaceAll("\\.(sjs|xqy)", ""), type, plugin.files.get(pluginFile));
+        }
+        return result;
+    }
+
+    public void saveFlowPlugin(
+        String projectDir,
+        String entityName,
+        FlowType flowType,
+        String flowName,
+        PluginModel plugin
+    ) throws IOException {
+        Scaffolding scaffolding = new Scaffolding(projectDir, envConfig().getFinalClient());
+        Path flowDir = scaffolding.getFlowDir(entityName, flowName, flowType);
+        Path pluginDir = flowDir.resolve(plugin.pluginType);
+        for (String pluginFile: plugin.files.keySet()) {
+            String pluginContent = plugin.files.get(pluginFile);
+            String[] filePathParts = pluginFile.split(Pattern.quote(File.separator));
+            String fileName = filePathParts[filePathParts.length - 1];
+            Files.write(pluginDir.resolve(fileName), pluginContent.getBytes(StandardCharsets.UTF_8), StandardOpenOption.TRUNCATE_EXISTING);
+        }
+    }
     private JsonNode getUiRawData() {
         JsonNode json = null;
         Path dir = Paths.get(envConfig().getProjectDir(), HubConfig.USER_CONFIG_DIR);

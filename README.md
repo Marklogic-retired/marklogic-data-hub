@@ -11,9 +11,9 @@ _The Data Hub Framework is free and open source under the [Apache 2 License](htt
 
 ## WARNING!!!! This is the the 2.0 branch of The MarkLogic Data Hub Framework. The 2.0 version is only compatible with MarkLogic 9.0 which is currently in Early Access and not generally available.
 
-Go from nothing to Enterprise Data Hub in a matter of minutes.  
+Go from nothing to Operational Data Hub in a matter of minutes.  
 
-This project allows you to deploy a skeleton Data Hub into MarkLogic. With some basic configuration you will be running an Enterprise Data Hub in no time.
+This project allows you to deploy a skeleton Data Hub into MarkLogic. With some basic configuration you will be running an Operational Data Hub in no time.
 
 # Getting Started
 

@@ -121,6 +121,11 @@ public class DataHubService {
         validateUserModules(dataHub, validateListener);
     }
 
+    public void validateUserModule(HubConfig config, ValidateListener validateListener) {
+        DataHub dataHub = new DataHub(config);
+        validateListener.onValidate(dataHub.validateUserModules());
+    }
+
 //    public boolean isServerAcceptable() throws DataHubException {
 //        DataHub dataHub = getDataHub();
 //        try {
