@@ -5,6 +5,7 @@ import { Subject } from 'rxjs/Subject';
 
 import { Entity } from './entity.model';
 import { Flow } from './flow.model';
+import { Plugin } from './plugin.model';
 import { PropertyType } from './property.model';
 
 import { MdlDialogService, MdlDialogReference } from '@angular-mdl/core';
@@ -120,6 +121,26 @@ export class EntitiesService {
     return this.entities;
   }
 
+  deleteFlow(flow: Flow, flowType: string) {
+    let resp = this.http.delete(this.url(`/entities/${flow.entityName}/flows/${flow.flowName}/${flowType}`)).share();
+    resp.subscribe(() => {
+      this.entities.forEach((entity: Entity) => {
+        if (entity.name === flow.entityName) {
+          if (flowType === 'INPUT') {
+            _.remove(entity.inputFlows, (f) => {
+              return f === flow;
+            });
+          } else {
+            _.remove(entity.harmonizeFlows, (f) => {
+              return f === flow;
+            });
+          }
+        }
+      });
+    });
+    return resp;
+  }
+
   saveEntities(entities: Array<Entity>) {
     return this.http.post(this.url('/entities/'), entities).subscribe(() => {
       this.entitiesChange.emit(this.entities);
@@ -133,6 +154,20 @@ export class EntitiesService {
 
   createFlow(entity: Entity, flowType: string, flow: Flow) {
     return this.post(this.url(`/entities/${entity.info.title}/flows/${flowType}`), flow);
+  }
+
+  savePlugin(entity: Entity, flowType: string, flow: Flow, plugin: Plugin) {
+    return this.post(
+        this.url(`/entities/${entity.info.title}/flows/${flowType}/${flow.flowName}/plugin/save`),
+        _.omit(plugin, ['cm'])
+      );
+  }
+
+  validatePlugin(entity: Entity, flowType: string, flow: Flow, plugin: Plugin) {
+    return this.post(
+        this.url(`/entities/${entity.info.title}/flows/${flowType}/${flow.flowName}/plugin/validate`),
+        plugin
+      );
   }
 
   getInputFlowOptions(flow: Flow) {
@@ -234,10 +269,6 @@ export class EntitiesService {
   private post(url: string, data: any) {
     return this.http.post(url, data).map(this.extractData);
   }
-
-  // private put(url: string, data: any) {
-  //   return this.http.put(url, data).map(this.extractData);
-  // }
 
   private url(u: string): string {
     return `/api/current-project${u}`;

@@ -1,7 +1,108 @@
 # Change Log
 
-## [Unreleased](https://github.com/marklogic/marklogic-data-hub/tree/v2.0.0-alpha.2)
+## [Unreleased](https://github.com/marklogic/marklogic-data-hub/tree/v2.0.0-beta.2)
 
+[Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v1.1.3...v2.0.0-beta.2)
+
+**Implemented enhancements:**
+
+- Add a code editor [\#418](https://github.com/marklogic/marklogic-data-hub/issues/418)
+
+**Fixed bugs:**
+
+- Entity properties starting with a capital generate templates with a preceding dash in var names [\#350](https://github.com/marklogic/marklogic-data-hub/issues/350)
+
+## [v1.1.3](https://github.com/marklogic/marklogic-data-hub/tree/v1.1.3) (2017-05-24)
+[Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v2.0.0-alpha.4...v1.1.3)
+
+**Implemented enhancements:**
+
+- Expose the ability to pass custom properties via gradle [\#416](https://github.com/marklogic/marklogic-data-hub/issues/416)
+- Add gradle wrapper to scaffolded project [\#415](https://github.com/marklogic/marklogic-data-hub/issues/415)
+- Entity view: show "Loading entities..." rather than "You don't have any entities yet" [\#411](https://github.com/marklogic/marklogic-data-hub/issues/411)
+- Better default document format for input flow [\#410](https://github.com/marklogic/marklogic-data-hub/issues/410)
+- Add button to sync indexes [\#393](https://github.com/marklogic/marklogic-data-hub/issues/393)
+- ugly scrollbars appear on project list in quickstart [\#385](https://github.com/marklogic/marklogic-data-hub/issues/385)
+- Handle Batch Flow Errors [\#379](https://github.com/marklogic/marklogic-data-hub/issues/379)
+- Default the harmonize collector to only get items in a standard input collection [\#344](https://github.com/marklogic/marklogic-data-hub/issues/344)
+- Add ability to specify source/target database for a Harmonize flow [\#319](https://github.com/marklogic/marklogic-data-hub/issues/319)
+
+**Fixed bugs:**
+
+- MLCP options: Output URI Replace is not working as expected [\#414](https://github.com/marklogic/marklogic-data-hub/issues/414)
+- Can't do load on Windows [\#407](https://github.com/marklogic/marklogic-data-hub/issues/407)
+- Illegal/unsupported escape sequence in Windows 10 when creating entities [\#406](https://github.com/marklogic/marklogic-data-hub/issues/406)
+- Better feedback for client-side validation failures [\#398](https://github.com/marklogic/marklogic-data-hub/issues/398)
+- XQuery bug detected but not shown on QuickStart GUI [\#395](https://github.com/marklogic/marklogic-data-hub/issues/395)
+- Save Options in Input Flow doesn't save changes to 'Output URI Replace' [\#390](https://github.com/marklogic/marklogic-data-hub/issues/390)
+- Default forests are created/attached even with custom forest JSON definitions [\#389](https://github.com/marklogic/marklogic-data-hub/issues/389)
+- mlReloadModules may not work [\#386](https://github.com/marklogic/marklogic-data-hub/issues/386)
+- Can't run harmonize on 2.0.0-alpha.2 [\#382](https://github.com/marklogic/marklogic-data-hub/issues/382)
+- Compile issue [\#381](https://github.com/marklogic/marklogic-data-hub/issues/381)
+- When one item fails in a harmonize batch run, other items in the chunk do not get processed [\#279](https://github.com/marklogic/marklogic-data-hub/issues/279)
+
+**Closed issues:**
+
+- Need to update my forest location while setting up the datahub framework; [\#356](https://github.com/marklogic/marklogic-data-hub/issues/356)
+- Harmonization flow not hitting staging port defined in gradle.properties [\#342](https://github.com/marklogic/marklogic-data-hub/issues/342)
+- gradle commands for flow creation [\#339](https://github.com/marklogic/marklogic-data-hub/issues/339)
+- gradle hubInit failing [\#307](https://github.com/marklogic/marklogic-data-hub/issues/307)
+- QuickStart App data loaded to incorrect directory? [\#251](https://github.com/marklogic/marklogic-data-hub/issues/251)
+- Allow Ingest to feed directly to conform w/o storing data [\#186](https://github.com/marklogic/marklogic-data-hub/issues/186)
+- DataHub::isInstalled\(\) is not sufficient [\#165](https://github.com/marklogic/marklogic-data-hub/issues/165)
+- Auto Generate Indexes based on entity defs [\#105](https://github.com/marklogic/marklogic-data-hub/issues/105)
+- Allow Exploration on the staged, raw data [\#2](https://github.com/marklogic/marklogic-data-hub/issues/2)
+
+**Merged pull requests:**
+
+- display a "Loading" message while retrieving entities [\#412](https://github.com/marklogic/marklogic-data-hub/pull/412) ([dmcassel](https://github.com/dmcassel))
+- disabled frame options in quickstart so it can be run inside an iframe [\#364](https://github.com/marklogic/marklogic-data-hub/pull/364) ([ryan321](https://github.com/ryan321))
+
+## [v2.0.0-alpha.4](https://github.com/marklogic/marklogic-data-hub/tree/v2.0.0-alpha.4) (2017-05-12)
+[Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v2.0.0-alpha.3...v2.0.0-alpha.4)
+
+## [v2.0.0-alpha.3](https://github.com/marklogic/marklogic-data-hub/tree/v2.0.0-alpha.3) (2017-05-08)
+[Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v1.1.2...v2.0.0-alpha.3)
+
+## [v1.1.2](https://github.com/marklogic/marklogic-data-hub/tree/v1.1.2) (2017-04-12)
+[Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v1.1.1...v1.1.2)
+
+**Fixed bugs:**
+
+- null pointer exception on logout [\#383](https://github.com/marklogic/marklogic-data-hub/issues/383)
+
+**Closed issues:**
+
+- gradle version check fails on multiple dots [\#384](https://github.com/marklogic/marklogic-data-hub/issues/384)
+- QuickStart Template Compile Error 2.0-alpha.2 [\#380](https://github.com/marklogic/marklogic-data-hub/issues/380)
+
+## [v1.1.1](https://github.com/marklogic/marklogic-data-hub/tree/v1.1.1) (2017-03-20)
+[Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v2.0.0-alpha.2...v1.1.1)
+
+**Implemented enhancements:**
+
+- customize session name to avoid conflicts [\#369](https://github.com/marklogic/marklogic-data-hub/issues/369)
+- Change Java Client API dependency to stable build [\#358](https://github.com/marklogic/marklogic-data-hub/issues/358)
+- Update Hub to use latest ml-gradle [\#355](https://github.com/marklogic/marklogic-data-hub/issues/355)
+
+**Closed issues:**
+
+- Entities and custom modules fail to deploy - v1.1.0 [\#377](https://github.com/marklogic/marklogic-data-hub/issues/377)
+- See if we can bail if the gradle version is too low [\#376](https://github.com/marklogic/marklogic-data-hub/issues/376)
+- Unable to login marklogic using hub frame work received  "500 Internal Server Error"  [\#374](https://github.com/marklogic/marklogic-data-hub/issues/374)
+- gradle plugin gets confused about users [\#371](https://github.com/marklogic/marklogic-data-hub/issues/371)
+- can't put binary inside envelope [\#366](https://github.com/marklogic/marklogic-data-hub/issues/366)
+- MLCP can't find /etc/hadooop [\#365](https://github.com/marklogic/marklogic-data-hub/issues/365)
+- Add CLA requirement to CONTRIBUTING [\#361](https://github.com/marklogic/marklogic-data-hub/issues/361)
+- Bug: QuickStart Login screen: Long paths aren't completely visible in Chrome [\#354](https://github.com/marklogic/marklogic-data-hub/issues/354)
+
+**Merged pull requests:**
+
+- Adds CLA requirement \(\#361\) [\#363](https://github.com/marklogic/marklogic-data-hub/pull/363) ([jmakeig](https://github.com/jmakeig))
+- Adds CLA requirement \(\#361\) [\#362](https://github.com/marklogic/marklogic-data-hub/pull/362) ([jmakeig](https://github.com/jmakeig))
+- Updates Java Client API dependency to stable build [\#359](https://github.com/marklogic/marklogic-data-hub/pull/359) ([jmakeig](https://github.com/jmakeig))
+
+## [v2.0.0-alpha.2](https://github.com/marklogic/marklogic-data-hub/tree/v2.0.0-alpha.2) (2017-01-16)
 [Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v1.1.0...v2.0.0-alpha.2)
 
 **Implemented enhancements:**

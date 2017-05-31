@@ -1,12 +1,24 @@
+import { CodemirrorComponent } from '../codemirror';
+
 export class Plugin {
+  $dirty: boolean;
+  hasShown: boolean = false;
   pluginType: string;
-  files: Array<string>;
+  pluginPath: string;
+  files: Object;
+  codemirrorConfig: any;
+  cm: CodemirrorComponent;
+  history: any = {
+    done: [],
+    undone: []
+  }
 
   constructor() {}
 
   fromJSON(json) {
     this.pluginType = json.pluginType;
-    this.files = [].concat(json.files);
+    this.pluginPath = json.pluginPath;
+    this.files = json.files;
     return this;
   }
 }

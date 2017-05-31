@@ -80,7 +80,10 @@ public class DeployHubDatabaseCommand extends DeployDatabaseCommand {
         if (payload != null) {
             DatabaseManager dbMgr = new DatabaseManager(context.getManageClient());
             SaveReceipt receipt = dbMgr.save(payload);
-            buildDeployForestsCommand(payload, receipt, context).execute(context);
+            int forestCount = determineForestCountPerHost(payload, context);
+            if (forestCount > 0) {
+                buildDeployForestsCommand(payload, receipt, context).execute(context);
+            }
         }
     }
 

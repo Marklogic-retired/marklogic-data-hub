@@ -6,17 +6,10 @@
     margin: 5px 0;
   }
 
-  select-list {
-    border: 1px solid #ccc;
-    margin-bottom: 10px;
-
-    md-list {
-      padding: 0px;
+  /deep/ .select-list {
+    .mdl-list__item {
+      padding: 8px;
     }
-  }
-
-  .md-dialog-content {
-    padding-bottom: 0px;
   }
 
   mdl-textfield {

@@ -22,10 +22,13 @@ import com.marklogic.hub.flow.FlowType;
 import com.marklogic.quickstart.EnvironmentAware;
 import com.marklogic.quickstart.model.FlowModel;
 import com.marklogic.quickstart.model.JobStatusMessage;
+import com.marklogic.quickstart.model.PluginModel;
 import com.marklogic.quickstart.model.entity_services.EntityModel;
+import com.marklogic.quickstart.service.DataHubService;
 import com.marklogic.quickstart.service.EntityManagerService;
 import com.marklogic.quickstart.service.FlowManagerService;
 import com.marklogic.quickstart.service.JobService;
+import org.apache.avro.data.Json;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,6 +45,9 @@ import java.util.List;
 class EntitiesController extends EnvironmentAware {
     @Autowired
     private EntityManagerService entityManagerService;
+
+    @Autowired
+    private DataHubService dataHubService;
 
     @Autowired
     private FlowManagerService flowManagerService;
@@ -109,6 +115,16 @@ class EntitiesController extends EnvironmentAware {
         return entityManagerService.createFlow(envConfig().getProjectDir(), entityName, flowType, newFlow);
     }
 
+    @RequestMapping(value = "/entities/{entityName}/flows/{flowName}/{flowType}", method = RequestMethod.DELETE)
+    @ResponseBody
+    public ResponseEntity<?> deleteFlow(
+        @PathVariable String entityName,
+        @PathVariable String flowName,
+        @PathVariable FlowType flowType) throws ClassNotFoundException, IOException {
+        entityManagerService.deleteFlow(envConfig().getProjectDir(), entityName, flowName, flowType);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
     @RequestMapping(value = "/entities/{entityName}/flows/harmonize/{flowName}/run", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<?> runHarmonizeFlow(
@@ -134,6 +150,35 @@ class EntitiesController extends EnvironmentAware {
 
         return resp;
     }
+
+    @RequestMapping(
+        value = "/entities/{entityName}/flows/{flowType}/{flowName}/plugin/save",
+        method = RequestMethod.POST
+    )
+    @ResponseBody
+    public String saveFlowPlugin(
+        @PathVariable String entityName,
+        @PathVariable FlowType flowType,
+        @PathVariable String flowName,
+        @RequestBody PluginModel plugin) throws IOException {
+        entityManagerService.saveFlowPlugin(envConfig().getProjectDir(), entityName, flowType, flowName, plugin);
+        return "{ \"success\": true }";
+    }
+
+    @RequestMapping(
+        value = "/entities/{entityName}/flows/{flowType}/{flowName}/plugin/validate",
+        method = RequestMethod.POST
+    )
+    @ResponseBody
+    public JsonNode validateFlowPlugin(
+        @PathVariable String entityName,
+        @PathVariable FlowType flowType,
+        @PathVariable String flowName,
+        @RequestBody PluginModel plugin) throws IOException {
+        return entityManagerService.validatePlugin(envConfig().getMlSettings(), entityName, flowName, plugin);
+    }
+
+
 
     @RequestMapping(value = "/entities/{entityName}/flows/input/{flowName}/save-input-options", method = RequestMethod.POST)
     @ResponseBody

@@ -7,6 +7,7 @@ export class Flow {
   dataFormat: string;
   useEsModel: boolean = true;
   plugins: Array<Plugin>;
+  tabIndex = 0;
 
   constructor() {}
 

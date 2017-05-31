@@ -94,18 +94,10 @@ export class ResizableComponent implements OnInit {
   }
 
   private getClientX(event: MouseEvent) {
-    // if (event instanceof TouchEvent) {
-    //   return (<TouchEvent>event).touches[0].clientX;
-    // }
-
     return (<MouseEvent>event).clientX;
   }
 
   private getClientY(event: MouseEvent) {
-    // if (event instanceof TouchEvent) {
-    //   return (<TouchEvent>event).touches[0].clientY;
-    // }
-
     return (<MouseEvent>event).clientY;
   }
 

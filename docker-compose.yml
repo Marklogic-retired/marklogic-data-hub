@@ -1,8 +1,8 @@
 version: '2'
 services:
   marklogic:
-    build:
-      context: ./
-      dockerfile: .travis/Dockerfile-ml
+    image: marklogiccommunity/marklogic-datahub-2x
     ports:
       - "8000-8020"
+    volumes:
+      - .:/marklogic-data-hub

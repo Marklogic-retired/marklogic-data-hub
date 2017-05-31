@@ -21,6 +21,7 @@ import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.appdeployer.command.Command;
 import com.marklogic.appdeployer.command.CommandMapBuilder;
 import com.marklogic.appdeployer.command.appservers.DeployOtherServersCommand;
+import com.marklogic.appdeployer.command.forests.DeployCustomForestsCommand;
 import com.marklogic.appdeployer.impl.SimpleAppDeployer;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.FailedRequestException;
@@ -29,6 +30,7 @@ import com.marklogic.client.eval.ServerEvaluationCall;
 import com.marklogic.client.extensions.ResourceManager;
 import com.marklogic.client.extensions.ResourceServices.ServiceResult;
 import com.marklogic.client.extensions.ResourceServices.ServiceResultIterator;
+import com.marklogic.client.io.Format;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.util.RequestParameters;
@@ -291,7 +293,14 @@ public class DataHub {
         logger.debug("validating user modules");
 
         EntitiesValidator ev = new EntitiesValidator(hubConfig.newStagingClient());
-        return ev.validate();
+        return ev.validateAll();
+    }
+
+    public JsonNode validateUserModule(String entity, String flow, String plugin, String type, String content) {
+        logger.debug("validating user module");
+
+        EntitiesValidator ev = new EntitiesValidator(hubConfig.newStagingClient());
+        return ev.validate(entity, flow, plugin, type, content);
     }
 
     public List<Command> getCommandList() {
@@ -304,6 +313,10 @@ public class DataHub {
     }
     public Map<String, List<Command>> getCommands() {
         Map<String, List<Command>> commandMap = new CommandMapBuilder().buildCommandMap();
+
+        List<Command> securityCommands = commandMap.get("mlSecurityCommands");
+        securityCommands.set(0, new DeployHubRolesCommand(hubConfig));
+        securityCommands.set(1, new DeployHubUsersCommand(hubConfig));
 
         List<Command> dbCommands = new ArrayList<>();
         dbCommands.add(new DeployHubDatabasesCommand(hubConfig));
@@ -329,6 +342,10 @@ public class DataHub {
 
         List<Command> mimetypeCommands = commandMap.get("mlMimetypeCommands");
         mimetypeCommands.add(0, new DeployHubMimetypesCommand(hubConfig));
+
+        List<Command> forestCommands = commandMap.get("mlForestCommands");
+        DeployCustomForestsCommand deployCustomForestsCommand = (DeployCustomForestsCommand)forestCommands.get(0);
+        deployCustomForestsCommand.setCustomForestsPath(hubConfig.customForestPath);
 
         return commandMap;
     }
@@ -471,6 +488,8 @@ public class DataHub {
             text = Pattern.compile("^(\\s*)compile.+marklogic-data-hub.+$", Pattern.MULTILINE).matcher(text).replaceAll("$1compile 'com.marklogic:marklogic-data-hub:" + version + "'");
             FileUtils.writeStringToFile(buildGradle, text);
 
+            hubConfig.getHubSecurityDir().resolve("roles").resolve("data-hub-user.json").toFile().delete();
+
             // step 3: install hub modules into MarkLogic
             install();
 
@@ -525,8 +544,24 @@ public class DataHub {
             client.init(NAME, this);
         }
 
-        JsonNode validate() {
+        JsonNode validateAll() {
             ServiceResultIterator resultItr = this.getServices().get(new RequestParameters());
+            if (resultItr == null || ! resultItr.hasNext()) {
+                return null;
+            }
+            ServiceResult res = resultItr.next();
+            return res.getContent(new JacksonHandle()).get();
+        }
+
+        JsonNode validate(String entity, String flow, String plugin, String type, String content) {
+            RequestParameters params = new RequestParameters();
+            params.add("entity", entity);
+            params.add("flow", flow);
+            params.add("plugin", plugin);
+            params.add("type", type);
+            StringHandle handle = new StringHandle(content);
+            handle.setFormat(Format.TEXT);
+            ServiceResultIterator resultItr = this.getServices().post(params, handle );
             if (resultItr == null || ! resultItr.hasNext()) {
                 return null;
             }

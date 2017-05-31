@@ -114,6 +114,7 @@ processResources {
 
 if (!(
     gradle.startParameter.taskNames*.toLowerCase().contains("bootrun") ||
+    gradle.startParameter.taskNames*.toLowerCase().contains("test") ||
     gradle.startParameter.taskNames*.toLowerCase().contains("publishplugins") ||
     gradle.startParameter.taskNames*.toLowerCase().contains("bintrayUpload")
     )

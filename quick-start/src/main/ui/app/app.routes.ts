@@ -15,6 +15,7 @@ export const ROUTES: Routes = [
   { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
   { path: 'entities', component: EntityModelerComponent, canActivate: [AuthGuard] },
   { path: 'flows', component: FlowsComponent, canActivate: [AuthGuard] },
+  { path: 'flows/:entityName/:flowName/:flowType', component: FlowsComponent, canActivate: [AuthGuard] },
   { path: 'jobs', component: JobsComponent, canActivate: [AuthGuard] },
   { path: 'traces', component: TracesComponent, canActivate: [AuthGuard] },
   { path: 'traces/:id', component: TraceViewerComponent, canActivate: [AuthGuard] },

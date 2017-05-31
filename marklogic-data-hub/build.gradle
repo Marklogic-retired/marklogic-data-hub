@@ -20,7 +20,7 @@ targetCompatibility = 1.8
 
 dependencies {
     compile 'com.marklogic:marklogic-client-api:4.0.1'
-    compile 'com.marklogic:ml-javaclient-util:4.0.alpha2'
+    compile 'com.marklogic:ml-javaclient-util:4.0.alpha4'
     compile 'com.marklogic:ml-app-deployer:2.6.0'
     compile 'commons-io:commons-io:2.4'
     testCompile 'junit:junit:4.12'
@@ -99,7 +99,7 @@ javadoc {
 Node pomCustomizations = new NodeBuilder(). project {
     name 'marklogic-data-hub'
     packaging 'jar'
-    textdescription 'Library for Creating an Enterprise Data Hub on MarkLogic'
+    textdescription 'Library for Creating an Operational Data Hub on MarkLogic'
     url 'https://github.com/marklogic/marklogic-data-hub'
 
     scm {

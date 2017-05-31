@@ -32,19 +32,13 @@ public class TracingTest extends HubTestBase {
 
     @Before
     public void beforeEach() {
-        runInDatabase("cts:uris() ! xdmp:document-delete(.)", HubConfig.DEFAULT_FINAL_NAME);
-        runInDatabase("cts:uris() ! xdmp:document-delete(.)", HubConfig.DEFAULT_TRACE_NAME);
-        clearDb(HubConfig.DEFAULT_JOB_NAME);
-        clearDb(HubConfig.DEFAULT_TRACE_NAME);
+        clearDatabases(new String[]{HubConfig.DEFAULT_JOB_NAME, HubConfig.DEFAULT_TRACE_NAME, HubConfig.DEFAULT_FINAL_NAME});
         new Tracing(stagingClient).disable();
     }
 
-    @After
-    public void afterEach() {
-        runInDatabase("cts:uris() ! xdmp:document-delete(.)", HubConfig.DEFAULT_FINAL_NAME);
-        runInDatabase("cts:uris() ! xdmp:document-delete(.)", HubConfig.DEFAULT_TRACE_NAME);
-        clearDb(HubConfig.DEFAULT_JOB_NAME);
-        clearDb(HubConfig.DEFAULT_TRACE_NAME);
+    @AfterClass
+    public static void teardown() {
+        clearDatabases(new String[]{HubConfig.DEFAULT_JOB_NAME, HubConfig.DEFAULT_TRACE_NAME, HubConfig.DEFAULT_FINAL_NAME});
         new Tracing(stagingClient).disable();
     }
 

@@ -26,6 +26,10 @@ import module namespace flow = "http://marklogic.com/data-hub/flow-lib"
 import module namespace perf = "http://marklogic.com/data-hub/perflog-lib"
   at "/com.marklogic.hub/lib/perflog-lib.xqy";
 
+declare namespace hub = "http://marklogic.com/data-hub";
+
+declare namespace rapi = "http://marklogic.com/rest-api";
+
 declare option xdmp:mapping "false";
 
 (:~
@@ -46,5 +50,73 @@ declare function get(
     document {
       xdmp:to-json(flow:validate-entities())
     }
+  })
+};
+
+declare %rapi:transaction-mode("update") function post(
+  $context as map:map,
+  $params  as map:map,
+  $input   as document-node()*
+  ) as document-node()*
+{
+  debug:dump-env(),
+
+  perf:log('/v1/resources/validate:post', function() {
+    let $entity-name := map:get($params, "entity")
+    let $flow-name := map:get($params, "flow")
+    let $plugin-name := map:get($params, "plugin")
+    let $type := map:get($params, "type")
+    let $ns := flow:get-module-ns($type)
+    let $extension :=
+      if ($type eq $flow:TYPE-XQUERY) then ".xqy"
+      else ".sjs"
+    let $module-uri := "/_validate-hub-module/" || $entity-name || "/" || $flow-name || "/" || $plugin-name || $extension
+    let $_ := try {
+      xdmp:eval('declare variable $module-uri external; declare variable $content external; xdmp:document-insert($module-uri, $content)',
+        map:new((
+          map:entry("module-uri", $module-uri),
+          map:entry("content", $input)
+        )),
+        map:new(map:entry("database", xdmp:modules-database()))
+      )
+    }
+    catch($ex) {
+      xdmp:log("FAILED DURING INSERT"),
+      $ex
+    }
+    let $errors := json:object()
+    let $_ :=
+      try {
+        if ($type eq $flow:TYPE-XQUERY) then
+          xdmp:eval(
+            'import module namespace x = "' || $ns || '" at "' || $module-uri || '"; ' ||
+            '()',
+            map:new((
+              map:entry("staticCheck", fn:true()),
+              map:entry("ignoreAmps", fn:true())
+            ))
+          )
+        else
+          xdmp:javascript-eval(
+            'var x = require("' || $module-uri || '");',
+            map:new(map:entry("staticCheck", fn:true()))
+          )
+      }
+      catch($ex) {
+        flow:make-error-json(
+          $errors,
+          $entity-name,
+          $flow-name,
+          $plugin-name,
+          $ex)
+      }
+    return
+      document {
+        xdmp:to-json(
+          map:new(
+            map:entry("errors", $errors)
+          )
+        )
+      }
   })
 };

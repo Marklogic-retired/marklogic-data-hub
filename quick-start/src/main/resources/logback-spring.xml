@@ -1,4 +1,5 @@
 <configuration>
+  <include resource="org/springframework/boot/logging/logback/base.xml"/>
 
   <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
     <!-- encoders are assigned the type
@@ -20,10 +21,11 @@
   <logger name="com.marklogic.hub" level="INFO"/>
   <logger name="com.marklogic.contentpump" level="INFO"/>
   <logger name="com.marklogic.mapreduce" level="INFO"/>
-  <logger name="org.apache.catalina.webresources.Cache" level="SEVERE"/>
-  <logger name="org.apache.hadoop.util.NativeCodeLoader" level="SEVERE"/>
+  <logger name="org.apache.catalina.webresources.Cache" level="ERROR"/>
+  <logger name="org.apache.hadoop.util.NativeCodeLoader" level="ERROR"/>
+  <logger name="java.util.prefs" level="OFF"/>
 
-  <root level="WARN">
+  <root>
     <appender-ref ref="STDOUT" />
   </root>
 </configuration>

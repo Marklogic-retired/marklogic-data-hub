@@ -7,12 +7,12 @@ import com.marklogic.gradle.exception.HubNotInstalledException
 import com.marklogic.hub.FlowManager
 import com.marklogic.hub.flow.Flow
 import com.marklogic.hub.flow.FlowRunner
-import com.marklogic.hub.flow.FlowStatusListener
 import com.marklogic.hub.flow.FlowType
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
 
 class RunFlowTask extends HubTask {
+
     @Input
     public String entityName
 
@@ -27,6 +27,9 @@ class RunFlowTask extends HubTask {
 
     @Input
     public Integer threadCount
+
+    @Input
+    public Boolean showOptions
 
     @TaskAction
     void runFlow() {
@@ -54,6 +57,10 @@ class RunFlowTask extends HubTask {
             threadCount = project.hasProperty("threadCount") ?
                 Integer.parseInt(project.property("threadCount")) : 4
         }
+        if (showOptions == null) {
+            showOptions = project.hasProperty("showOptions") ?
+                Boolean.parseBoolean(project.property("showOptions")) : false
+        }
 
         if (!isHubInstalled()) {
             throw new HubNotInstalledException()
@@ -66,9 +73,24 @@ class RunFlowTask extends HubTask {
             throw new FlowNotFoundException(entityName, flowName);
         }
 
+        Map<String, Object> options = new HashMap<>()
+        project.ext.properties.each { key, value ->
+            if (key.toString().startsWith("dhf.")) {
+                options.put(key, value)
+            }
+        }
         println("Running Flow: [" + entityName + ":" + flowName + "] with batch size: " + batchSize)
+
+        if (showOptions) {
+            println("   and options:")
+            options.each { key, value ->
+                println("      " + key + " = " + value)
+            }
+        }
+
         FlowRunner flowRunner = fm.newFlowRunner()
             .withFlow(flow)
+            .withOptions(options)
             .withBatchSize(batchSize)
             .withThreadCount(threadCount)
         flowRunner.run()

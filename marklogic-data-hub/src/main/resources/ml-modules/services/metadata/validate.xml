@@ -8,4 +8,10 @@
   </description>
   <method name="GET">
   </method>
+  <method name="POST">
+    <param name="entity" type="xs:string"/>
+    <param name="flow" type="xs:string"/>
+    <param name="plugin" type="xs:string"/>
+    <param name="type" type="xs:string"/>
+  </method>
 </metadata>

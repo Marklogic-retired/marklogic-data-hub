@@ -146,6 +146,12 @@ public class FlowRunnerImpl implements FlowRunner {
         AtomicLong successfulBatches = new AtomicLong(0);
         AtomicLong failedBatches = new AtomicLong(0);
 
+        if (options == null) {
+            options = new HashMap<>();
+        }
+        options.put("entity", this.flow.getEntityName());
+        options.put("flow", this.flow.getName());
+        options.put("flowType", this.flow.getType().toString());
         Vector<String> uris = c.run(options);
 
         FlowResource flowRunner = new FlowResource(srcClient, targetDatabase, flow);
