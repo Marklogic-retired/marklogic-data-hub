@@ -1,4 +1,11 @@
-import { Component, EventEmitter, HostBinding, OnInit } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  HostBinding,
+  Input,
+  OnInit,
+  Output
+} from '@angular/core';
 import { Flow } from '../entities/flow.model';
 
 @Component({
@@ -8,11 +15,9 @@ import { Flow } from '../entities/flow.model';
 })
 export class HarmonizeFlowOptionsComponent implements OnInit {
 
-  @HostBinding('style.display') display: string = 'none';
+  @Input() flow: Flow;
 
-  flow: Flow;
-
-  finishedEvent: EventEmitter<any>;
+  @Output() onRun: EventEmitter<any> = new EventEmitter();;
 
   _isVisible: boolean = false;
 
@@ -25,29 +30,7 @@ export class HarmonizeFlowOptionsComponent implements OnInit {
 
   ngOnInit() {}
 
-  show(flow: Flow): EventEmitter<boolean> {
-    this.finishedEvent = new EventEmitter<boolean>(true);
-    this.flow = flow;
-    this.display = 'block';
-    this._isVisible = true;
-    return this.finishedEvent;
-  }
-
-  hide(): void {
-    this.display = 'none';
-    this._isVisible = false;
-  }
-
-  isVisible(): boolean {
-    return this._isVisible;
-  }
-
-  cancel(): void {
-    this.finishedEvent.error(false);
-  }
-
   runHarmonize(): void {
-    this.hide();
-    this.finishedEvent.emit(this.settings);
+    this.onRun.emit(this.settings);
   }
 }

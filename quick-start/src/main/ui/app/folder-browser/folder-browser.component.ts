@@ -22,7 +22,7 @@ export class FolderBrowserComponent implements OnInit, OnChanges {
   constructor(private http: Http) {}
 
   ngOnInit() {
-    this.getFolders(this.startPath, false);
+    this.getFolders(this.startPath);
     this.inputPath.registerOnChange((value: string) => {
       if (this.currentPath !== value) {
         this.currentPath = value;
@@ -32,17 +32,17 @@ export class FolderBrowserComponent implements OnInit, OnChanges {
 
   ngOnChanges(changes: any) {
     if (changes.startPath) {
-      this.getFolders(changes.startPath.currentValue, false);
+      this.getFolders(changes.startPath.currentValue);
     }
   }
 
   onFolderChange(event: KeyboardEvent) {
     if (event.keyCode === 13) {
-      this.getFolders(this.currentPath, true);
+      this.getFolders(this.currentPath);
     }
   }
 
-  getFolders(path: string, emit: boolean): void {
+  getFolders(path: string): void {
     if (path) {
       this.isLoading = true;
       this.http.get(`/api/utils/searchPath?path=${encodeURIComponent(path)}&absolute=${this.absoluteOnly}`)
@@ -50,9 +50,7 @@ export class FolderBrowserComponent implements OnInit, OnChanges {
       .subscribe(resp => {
         this.folders = resp.folders;
         this.currentPath = resp.currentPath;
-        if (emit) {
-          this.folderChosen.emit(this.currentPath);
-        }
+        this.folderChosen.emit(this.currentPath);
       },
       error => {
         console.log(error);
@@ -64,7 +62,7 @@ export class FolderBrowserComponent implements OnInit, OnChanges {
   }
 
   entryClicked(entry: any): void {
-    this.getFolders(entry.path, true);
+    this.getFolders(entry.path);
   }
 
   private extractData(res: Response) {

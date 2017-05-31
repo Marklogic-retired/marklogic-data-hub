@@ -108,9 +108,6 @@ export class SearchComponent implements OnDestroy, OnInit {
       this.pageLength
     ).subscribe(response => {
       this.searchResponse = response;
-      // this.traces = _.map(response.results, (result: any) => {
-      //   return result.content;
-      // });
     },
     () => {},
     () => {

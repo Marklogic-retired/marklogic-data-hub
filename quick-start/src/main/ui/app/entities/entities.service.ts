@@ -159,7 +159,7 @@ export class EntitiesService {
   savePlugin(entity: Entity, flowType: string, flow: Flow, plugin: Plugin) {
     return this.post(
         this.url(`/entities/${entity.info.title}/flows/${flowType}/${flow.flowName}/plugin/save`),
-        plugin
+        _.omit(plugin, ['cm'])
       );
   }
 
@@ -269,10 +269,6 @@ export class EntitiesService {
   private post(url: string, data: any) {
     return this.http.post(url, data).map(this.extractData);
   }
-
-  // private put(url: string, data: any) {
-  //   return this.http.put(url, data).map(this.extractData);
-  // }
 
   private url(u: string): string {
     return `/api/current-project${u}`;

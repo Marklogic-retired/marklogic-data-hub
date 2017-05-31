@@ -356,3 +356,15 @@ li.flow.mdl-list__item div ul li {
 .save-button {
   margin-right: 10px;
 }
+
+/deep/ .mdl-tabs,
+/deep/ .mdl-tabs__panel,
+/deep/ mdl-tab-panel-content {
+  height: 100%;
+}
+
+/deep/ mdl-tab-panel-title {
+  .fa {
+    margin-right: 5px;
+  }
+}

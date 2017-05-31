@@ -67,8 +67,8 @@ public class SearchService extends SearchableService {
             sb = queryMgr.newStructuredQueryBuilder("entity-options");
             queries.add(
                 sb.or(
-                    sb.containerQuery(sb.element(new QName("http://marklogic.com/entity-services", "instance")), sb.and(null)),
-                    sb.containerQuery(sb.jsonProperty("instance"), sb.and(null))
+                    sb.containerQuery(sb.element(new QName("http://marklogic.com/entity-services", "instance")), sb.and()),
+                    sb.containerQuery(sb.jsonProperty("instance"), sb.and())
                 )
             );
         }

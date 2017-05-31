@@ -50,6 +50,10 @@ export class HeaderComponent {
   }
 
   isActive(url: string): boolean {
-    return this.router.url === url;
+    if (url === '/') {
+      return this.router.url === url;
+    }
+
+    return this.router.url.startsWith(url);
   }
 }

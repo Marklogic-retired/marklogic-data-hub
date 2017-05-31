@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { Component, EventEmitter, OnInit, OnDestroy, QueryList, ViewChildren } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { Entity } from '../entities/entity.model';
@@ -21,6 +21,8 @@ import { HasBugsDialogComponent } from '../has-bugs-dialog';
 
 import { DeployService } from '../deploy/deploy.service';
 
+import { CodemirrorComponent } from '../codemirror';
+
 import * as _ from 'lodash';
 
 @Component({
@@ -29,31 +31,32 @@ import * as _ from 'lodash';
   styleUrls: ['./flows.component.scss'],
 })
 export class FlowsComponent implements OnInit, OnDestroy {
-  @ViewChild(MlcpUiComponent) mlcp: MlcpUiComponent;
-  @ViewChild(HarmonizeFlowOptionsComponent) harmonize: HarmonizeFlowOptionsComponent;
+  @ViewChildren(CodemirrorComponent) codemirrors: QueryList<CodemirrorComponent>;
 
   flowTypes: Array<string> = ['Input', 'Harmonize'];
   entities: Array<Entity>;
   entity: Entity;
   flow: Flow;
-  flowPlugin: Plugin;
   flowType: string;
   view: string;
   isSaving = false;
+  mlcpOptions: any;
   entitiesReady: EventEmitter<boolean> = new EventEmitter();
 
   private paramListener: any;
 
-  codeMirrorConfig = {
-    lineNumbers: true,
-    indentWithTabs: false,
-    indentUnit: 2,
-    tabSize: 2,
-    lineWrapping: true,
-    readOnly: false,
-    gutters: ['CodeMirror-linenumbers', 'buglines'],
-    mode: 'application/xquery'
-  };
+  baseCodemirrorConfig(mode: string) {
+    return {
+      lineNumbers: true,
+      indentWithTabs: false,
+      indentUnit: 2,
+      tabSize: 2,
+      lineWrapping: true,
+      readOnly: false,
+      gutters: ['CodeMirror-linenumbers', 'buglines'],
+      mode: mode
+    };
+  }
 
   constructor(
     private entitiesService: EntitiesService,
@@ -98,24 +101,7 @@ export class FlowsComponent implements OnInit, OnDestroy {
           return;
         }
 
-        if (params.action === 'edit') {
-          if (!params.plugin) {
-            return;
-          }
-
-          let plugin = _.find(flow.plugins, (p: Plugin) => {
-            return p.pluginType === params.plugin;
-          });
-
-          if (!plugin) {
-            return;
-          }
-
-          this.setFlowPlugin(entity, flow, params.flowType, plugin);
-        }
-        else {
-          this._setFlow(entity, flow, params.flowType);
-        }
+        this._setFlow(entity, flow, params.flowType);
       }
     });
   }
@@ -231,55 +217,38 @@ export class FlowsComponent implements OnInit, OnDestroy {
   }
 
   setFlow(flow: Flow, flowType: string): void {
-    this.router.navigate(['/flows/run', flow.entityName, flow.flowName, flowType])
+    this.router.navigate(['/flows', flow.entityName, flow.flowName, flowType])
   }
 
   _setFlow(entity: Entity, flow: Flow, flowType: string) {
-    if (this.mlcp && this.mlcp.isVisible()) {
-      this.mlcp.cancel();
-    } else if (this.harmonize && this.harmonize.isVisible()) {
-      this.harmonize.cancel();
-    }
     this.view = 'flow';
     this.entity = entity;
+    flow.plugins.forEach((plugin: Plugin) => {
+      let mode = (_.endsWith(Object.keys(plugin.files)[0], 'js'))? 'text/javascript' : 'application/xquery';
+      plugin.codemirrorConfig = this.baseCodemirrorConfig(mode);
+    });
     this.flow = flow;
     this.flowType = flowType;
-    this.flowPlugin = null;
     this.runFlow(flow, flowType);
   }
 
-  editPlugin(entity: Entity, flow: Flow, flowType: string, flowPlugin: Plugin) {
-    this.router.navigate(['/flows/edit', flow.entityName, flow.flowName, flowType, flowPlugin.pluginType]);
-  }
-
-  setFlowPlugin(entity: Entity, flow: Flow, flowType: string, flowPlugin: Plugin): void {
-    this.view = 'flowPlugin';
-    this.entity = entity;
-    this.flow = flow;
-    this.flowType = flowType;
-    this.flowPlugin = flowPlugin;
-    this.codeMirrorConfig.mode = (_.endsWith(Object.keys(flowPlugin.files)[0], 'js'))? 'text/javascript' : 'application/xquery';
-  }
-
-  syncPluginText(fileName: string, fileContents: string): void {
-    if (this.flowPlugin) {
-      if (this.flowPlugin.files[fileName] !== fileContents) {
-        this.flowPlugin.files[fileName] = fileContents;
-        this.flowPlugin.$dirty = true;
-      }
+  syncPluginText(plugin: Plugin, fileName: string, fileContents: string): void {
+    if (plugin.files[fileName] !== fileContents) {
+      plugin.files[fileName] = fileContents;
     }
   }
 
-  savePlugin(): void {
-    if (this.flowPlugin.$dirty) {
+  savePlugin(plugin: Plugin): void {
+    if (plugin.$dirty) {
       this.isSaving = true;
       this.entitiesService
-        .savePlugin(this.entity, this.flowType, this.flow, this.flowPlugin)
+        .savePlugin(this.entity, this.flowType, this.flow, plugin)
         .subscribe(() => {
-          if (this.flowPlugin) {
+          if (plugin) {
             this.isSaving = false;
-            this.flowPlugin.$dirty = false;
-            let filename = _.keys(this.flowPlugin.files)[0];
+            plugin.$dirty = false;
+
+            let filename = _.keys(plugin.files)[0];
             this.snackbar.showSnackbar({
               message: `${filename} saved.`,
             });
@@ -294,12 +263,6 @@ export class FlowsComponent implements OnInit, OnDestroy {
 
   isActiveEntity(entity: Entity): boolean {
     return this.entity === entity;
-  }
-
-  isActivePlugin(flow: Flow, plugin: Plugin): boolean {
-    return this.flow && this.flow.flowName === flow.flowName &&
-      this.flowPlugin &&
-      this.flowPlugin.pluginType === plugin.pluginType;
   }
 
   showNewFlow(entity: Entity, flowType: string): void {
@@ -343,48 +306,56 @@ export class FlowsComponent implements OnInit, OnDestroy {
     } else {
       const lower = flowType.toLowerCase();
       if (lower === 'input') {
-        this.runInputFlow(flow);
-      } else if (lower === 'harmonize') {
-        this.runHarmonizeFlow(flow);
+        this.entitiesService.getInputFlowOptions(flow).subscribe(mlcpOptions => {
+          this.mlcpOptions = mlcpOptions;
+        });
       }
     }
   }
 
-  runInputFlow(flow: Flow): void {
-    this.entitiesService.getInputFlowOptions(flow).subscribe(mlcpOptions => {
-      this.mlcp.show(mlcpOptions, flow).subscribe((options: any) => {
-        this.entitiesService.runInputFlow(flow, options);
-        this.snackbar.showSnackbar({
-          message: flow.entityName + ': ' + flow.flowName + ' starting...',
-        });
-      },
-      () => {
-        this.router.navigate(['/flows']);
-      });
+  runInputFlow(flow: Flow, options: any): void {
+    this.entitiesService.runInputFlow(flow, options);
+    this.snackbar.showSnackbar({
+      message: flow.entityName + ': ' + flow.flowName + ' starting...',
     });
   }
 
-  runHarmonizeFlow(flow: Flow): void {
-    this.harmonize.show(flow).subscribe((options: any) => {
-      this.entitiesService.runHarmonizeFlow(flow, options.batchSize, options.threadCount);
-      this.snackbar.showSnackbar({
-        message: flow.entityName + ': ' + flow.flowName + ' starting...',
-      });
-    },
-    () => {
-      this.router.navigate(['/flows']);
+  runHarmonizeFlow(flow: Flow, options: any): void {
+    this.entitiesService.runHarmonizeFlow(flow, options.batchSize, options.threadCount);
+    this.snackbar.showSnackbar({
+      message: flow.entityName + ': ' + flow.flowName + ' starting...',
     });
   }
 
   redeployModules() {
     this.deployService.redeployUserModules().subscribe(() => {
-      if (this.flowPlugin) {
-        this.isSaving = false;
-        this.flowPlugin.$dirty = false;
-      }
+      this.isSaving = false;
+      _.each(this.flow.plugins, (plugin) => {
+        plugin.$dirty = false;
+      });
     });
     this.snackbar.showSnackbar({
       message: 'Redeploying Modules...',
     });
+  }
+
+  tabChanged(event) {
+    if (this.flow) {
+      this.flow.tabIndex = event.index;
+      let plugin: Plugin = this.flow.plugins[event.index - 1];
+      if (plugin && !plugin.hasShown) {
+        plugin.$dirty = false;
+        plugin.hasShown = true;
+      }
+      setTimeout(() => {
+        let mode = (_.endsWith(Object.keys(plugin.files)[0], 'js'))? 'text/javascript' : 'application/xquery';
+        plugin.codemirrorConfig.mode = mode;
+        this.codemirrors.toArray()[event.index - 1].refresh();
+      }, 250);
+    }
+  }
+
+  setCM(plugin, $event) {
+    plugin.cm = $event;
   }
 }
