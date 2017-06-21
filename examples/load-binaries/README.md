@@ -2,7 +2,7 @@
 This example shows how to load binary documents with the Hub Framework.
 
 # TLDR; How do I run it?
-1. Download the latest quick-start jar from the [releases page](https://github.com/marklogic/marklogic-data-hub/releases) into this folder.
+1. Download the latest quick-start jar from the [releases page](https://github.com/marklogic-community/marklogic-data-hub/releases) into this folder.
 
 1. Run the quick-start jar `java -jar quick-start.jar`
 

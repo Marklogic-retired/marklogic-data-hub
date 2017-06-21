@@ -111,13 +111,13 @@ features, by not reporting duplicate issues. Please fill out the issue template 
 
 #### Fork marklogic-data-hub
 
-Fork the project [on GitHub](https://github.com/marklogic/marklogic-data-hub/fork) and clone
+Fork the project [on GitHub](https://github.com/marklogic-community/marklogic-data-hub/fork) and clone
 your copy.
 
 ```sh
 $ git clone git@github.com:username/marklogic-data-hub.git
 $ cd marklogic-data-hub
-$ git remote add upstream git://github.com/marklogic/marklogic-data-hub.git
+$ git remote add upstream git://github.com/marklogic-community/marklogic-data-hub.git
 ```
 
 We ask that you open an issue in the [issue tracker][] and get agreement from
@@ -248,5 +248,5 @@ from the main (upstream) repository:
     git pull --ff upstream 1.0-develop
     ```
 
-[issue tracker]: https://github.com/marklogic/marklogic-data-hub/issues
+[issue tracker]: https://github.com/marklogic-community/marklogic-data-hub/issues
 [.editorconfig]: http://editorconfig.org/

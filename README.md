@@ -1,10 +1,10 @@
 _The MarkLogic Data Hub Framework is a data integration framework and tool-set to quickly and efficiently integrate data from many sources into a single MarkLogic database, and expose that data._
 
-_The Data Hub Framework is free and open source under the [Apache 2 License](https://github.com/marklogic/marklogic-data-hub/blob/1.0-master/LICENSE) and is supported by the community of developers who build and contribute to it. Please note that this open source project and its code and functionality is not representative of MarkLogic Server and is not supported by MarkLogic._
+_The Data Hub Framework is free and open source under the [Apache 2 License](https://github.com/marklogic-community/marklogic-data-hub/blob/1.0-master/LICENSE) and is supported by the community of developers who build and contribute to it. Please note that this open source project and its code and functionality is not representative of MarkLogic Server and is not supported by MarkLogic._
 
 | OS | Status |
 | --- | --- |
-| Linux/Mac | [![Build Status](https://travis-ci.org/marklogic/marklogic-data-hub.svg?branch=1.0-master)](https://travis-ci.org/marklogic/marklogic-data-hub) |
+| Linux/Mac | [![Build Status](https://travis-ci.org/marklogic-community/marklogic-data-hub.svg?branch=1.0-master)](https://travis-ci.org/marklogic-community/marklogic-data-hub) |
 | Windows | [![Windows Build status](https://ci.appveyor.com/api/projects/status/kgj0k5na59uhkvbv?svg=true)](https://ci.appveyor.com/project/paxtonhare/marklogic-data-hub) |
 
 # MarkLogic Data Hub
@@ -31,7 +31,7 @@ Or watch the [MarkLogic University - Data Hub Framework On Demand Video Courses]
 
 ### The Easiest Way
 
-To use the Data Hub Framework you should download the quickstart.war file from the [releases page](https://github.com/marklogic/marklogic-data-hub/releases).
+To use the Data Hub Framework you should download the quickstart.war file from the [releases page](https://github.com/marklogic-community/marklogic-data-hub/releases).
 
 Then Run the war like so:
 
@@ -88,4 +88,4 @@ Now you have full access to the Data Hub tasks. To see all available tasks run:
 
 Feeling intrepid? Want to contrubute to the Data Hub Framework? Perhaps you just want to poke the code?
 
-Look at our [CONTRIBUTING.md](https://github.com/marklogic/marklogic-data-hub/blob/1.0-master/CONTRIBUTING.md#building-the-framework-from-source) file for details on building from source.
+Look at our [CONTRIBUTING.md](https://github.com/marklogic-community/marklogic-data-hub/blob/1.0-master/CONTRIBUTING.md#building-the-framework-from-source) file for details on building from source.
