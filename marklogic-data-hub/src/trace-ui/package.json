@@ -2,7 +2,7 @@
   "name": "trace-ui",
   "version": "2.0.0-beta.1",
   "license": "APACHE",
-  "homepage": "https://github.com/marklogic/marklogic-data-hub",
+  "homepage": "https://github.com/marklogic-community/marklogic-data-hub",
   "scripts": {
     "rimraf": "rimraf",
     "ng": "ng",
