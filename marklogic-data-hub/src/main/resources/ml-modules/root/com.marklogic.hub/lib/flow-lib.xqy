@@ -423,9 +423,11 @@ declare function flow:get-entities() as element(hub:entities)
  : @return - a sequence of strings
  :)
 declare function flow:run-collector(
+  $job-id as xs:string,
   $module-uri as xs:string,
   $options as map:map) as item()*
 {
+  let $_ := trace:set-job-id($job-id)
   let $filename as xs:string := hul:get-file-from-uri($module-uri)
   let $type := flow:get-type($filename)
   let $ns := flow:get-module-ns($type)
@@ -437,7 +439,7 @@ declare function flow:run-collector(
       $func($options)
     }
     catch($ex) {
-      xdmp:log(xdmp:describe($ex, (), ())),
+      debug:log(xdmp:describe($ex, (), ())),
       trace:error-trace(
         (),
         $module-uri,
@@ -469,7 +471,7 @@ declare function flow:run-collector(
  : Runs a given flow
  :
  : @param $flow - xml describing the flow
- : @param $idenifier - the identifier to send to the flow steps (URI in corb lingo)
+ : @param $identifier - the identifier to send to the flow steps (URI in corb lingo)
  : @param $options - a map of options passed in by the client
  : @return - nothing
  :)
@@ -663,7 +665,7 @@ declare function flow:call-plugin-function(
  : Run a given plugin
  :
  : @param $plugin - xml describing the plugin to run
- : @param $idenifier - the identifier to send to the flow steps (URI in corb lingo)
+ : @param $identifier - the identifier to send to the flow steps (URI in corb lingo)
  : @param $content - the output of the content plugin
  : @param $headers - the output of the headers plugin
  : @param $triples - the output of the triples plugin
@@ -698,7 +700,7 @@ declare function flow:run-plugin(
         $simple, $options)
     }
     catch($ex) {
-      xdmp:log(xdmp:describe($ex, (), ())),
+      debug:log(xdmp:describe($ex, (), ())),
       trace:error-trace(
         $identifier,
         $module-uri,
@@ -767,7 +769,7 @@ declare function flow:run-plugin(
  : Run a given writer
  :
  : @param $writer - xml describing the writer to run
- : @param $idenifier - the identifier to send to the flow steps (URI in corb lingo)
+ : @param $identifier - the identifier to send to the flow steps (URI in corb lingo)
  : @param $envelope - the envelope
  : @param $options - a map of options passed in by the client
  : @return - the output of the writer. It varies.
@@ -810,7 +812,7 @@ declare function flow:run-writer(
       )))
     }
     catch($ex) {
-      xdmp:log(xdmp:describe($ex, (), ())),
+      debug:log(xdmp:describe($ex, (), ())),
       trace:error-trace(
         $identifier,
         $module-uri,
@@ -845,7 +847,6 @@ declare function flow:make-error-json(
   $plugin as xs:string,
   $ex
 ) {
-  xdmp:log($ex),
   let $eo :=
     if (map:contains($errors, $entity)) then
       map:get($errors, $entity)
