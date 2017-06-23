@@ -36,7 +36,7 @@ public abstract class AbstractCollector implements Collector {
     }
 
     @Override
-    public abstract Vector<String> run(Map<String, Object> options);
+    public abstract DiskQueue<String> run(String jobId, int threadCount, Map<String, Object> options);
 
     @Override
     public abstract void serialize(XMLStreamWriter serializer) throws XMLStreamException;

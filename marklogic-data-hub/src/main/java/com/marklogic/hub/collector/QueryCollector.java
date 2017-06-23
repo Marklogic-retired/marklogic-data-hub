@@ -29,7 +29,7 @@ public class QueryCollector extends ServerCollector {
     }
 
     @Override
-    public Vector<String> run(Map<String, Object> options) {
+    public DiskQueue<String> run(String jobId, int threadCount, Map<String, Object> options) {
         return null;
     }
 

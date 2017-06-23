@@ -17,27 +17,33 @@ package com.marklogic.hub.collector;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.client.DatabaseClient;
-import com.marklogic.client.extensions.ResourceManager;
-import com.marklogic.client.extensions.ResourceServices.ServiceResult;
-import com.marklogic.client.extensions.ResourceServices.ServiceResultIterator;
-import com.marklogic.client.io.JacksonDatabindHandle;
-import com.marklogic.client.util.RequestParameters;
+import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.HubDatabase;
 import com.marklogic.hub.plugin.PluginType;
+import com.marklogic.xcc.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import java.util.Map;
-import java.util.Vector;
 
 public class ServerCollector extends AbstractCollector {
 
+    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
     private DatabaseClient client = null;
+    private HubConfig hubConfig = null;
+    private HubDatabase sourceDb = null;
+
     private String module;
 
     public ServerCollector(PluginType type, String module) {
         super(type);
         this.module = module;
     }
+
+    public void setHubConfig(HubConfig config) { this.hubConfig = config; }
+    public void setHubDatabase(HubDatabase sourceDb) { this.sourceDb = sourceDb; }
 
     public DatabaseClient getClient() {
         return this.client;
@@ -61,46 +67,38 @@ public class ServerCollector extends AbstractCollector {
     }
 
     @Override
-    public Vector<String> run(Map<String, Object> options) {
-        CollectorModule cm = new CollectorModule(client);
-        return cm.run(getModule(), options);
-    }
-
-    static class CollectorModule extends ResourceManager {
-        static final public String NAME = "collector";
-
-        public CollectorModule(DatabaseClient client) {
-            super();
-            client.init(NAME, this);
+    public DiskQueue<String> run(String jobId, int threadCount, Map<String, Object> options) {
+        int port = hubConfig.stagingPort;
+        String dbName = hubConfig.stagingDbName;
+        if (sourceDb.equals(HubDatabase.FINAL)) {
+            port = hubConfig.finalPort;
+            dbName  = hubConfig.finalDbName;
         }
 
-        public Vector<String> run(String moduleUri, Map<String, Object> options) {
-            try {
-                RequestParameters params = new RequestParameters();
-                params.add("module-uri", moduleUri);
-
-                if (options != null) {
-                    ObjectMapper objectMapper = new ObjectMapper();
-                    params.put("options", objectMapper.writeValueAsString(options));
-                }
-
-                ServiceResultIterator resultItr;
-
-                resultItr = this.getServices().get(params);
-
-                if (resultItr == null || !resultItr.hasNext()) {
-                    return null;
-                }
-
-                ServiceResult res = resultItr.next();
-                JacksonDatabindHandle<Vector<String>> handle = new JacksonDatabindHandle<>(new Vector<String>());
-                handle.getMapper().disableDefaultTyping();
-                return res.getContent(handle).get();
+        try {
+            ContentSource cs = ContentSourceFactory.newContentSource(hubConfig.host, port, hubConfig.getUsername(), hubConfig.getPassword(), dbName);
+            Session activeSession = cs.newSession();
+            RequestOptions requestOptions = new RequestOptions();
+            requestOptions.setCacheResult(false);
+            ModuleInvoke moduleInvoke = activeSession.newModuleInvoke("/com.marklogic.hub/endpoints/collector.xqy", requestOptions);
+            moduleInvoke.setNewStringVariable("job-id", jobId);
+            moduleInvoke.setNewStringVariable("module-uri", getModule());
+            if (options != null) {
+                ObjectMapper objectMapper = new ObjectMapper();
+                moduleInvoke.setNewStringVariable("options", objectMapper.writeValueAsString(options));
             }
-            catch(Exception e) {
-                e.printStackTrace();
-                throw new RuntimeException(e);
+
+            DiskQueue<String> results = new DiskQueue<>(5000);
+            ResultSequence res = activeSession.submitRequest(moduleInvoke);
+            int count = Integer.parseInt(res.next().getItem().asString());
+            while (res != null && res.hasNext()) {
+                results.add(res.next().asString());
             }
+            return results;
+        }
+        catch(Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 }

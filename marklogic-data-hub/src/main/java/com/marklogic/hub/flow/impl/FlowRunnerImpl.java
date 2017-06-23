@@ -3,6 +3,8 @@ package com.marklogic.hub.flow.impl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.datamovement.*;
+import com.marklogic.client.datamovement.impl.JobTicketImpl;
+import com.marklogic.client.datamovement.impl.QueryBatcherImpl;
 import com.marklogic.client.extensions.ResourceManager;
 import com.marklogic.client.extensions.ResourceServices;
 import com.marklogic.client.io.Format;
@@ -11,10 +13,12 @@ import com.marklogic.client.util.RequestParameters;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubDatabase;
 import com.marklogic.hub.collector.Collector;
+import com.marklogic.hub.collector.DiskQueue;
 import com.marklogic.hub.collector.ServerCollector;
 import com.marklogic.hub.flow.*;
 import com.marklogic.hub.job.Job;
 import com.marklogic.hub.job.JobManager;
+import com.marklogic.hub.job.JobStatus;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -31,6 +35,7 @@ public class FlowRunnerImpl implements FlowRunner {
     private HubDatabase sourceDatabase = HubDatabase.STAGING;
     private HubDatabase destinationDatabase = HubDatabase.FINAL;
     private Map<String, Object> options;
+    private int previousPercentComplete;
 
     private List<FlowItemCompleteListener> flowItemCompleteListeners = new ArrayList<>();
     private List<FlowItemFailureListener> flowItemFailureListeners = new ArrayList<>();
@@ -117,8 +122,7 @@ public class FlowRunnerImpl implements FlowRunner {
         runningThread.join(unit.convert(timeout, TimeUnit.MILLISECONDS));
     }
 
-    @Override
-    public JobTicket run() {
+    private DatabaseClient getSourceClient() {
         DatabaseClient srcClient;
         if (sourceDatabase.equals(HubDatabase.STAGING)) {
             srcClient = hubConfig.newStagingClient();
@@ -126,18 +130,24 @@ public class FlowRunnerImpl implements FlowRunner {
         else {
             srcClient = hubConfig.newFinalClient();
         }
+        return srcClient;
+    }
 
-        String targetDatabase;
-        if (destinationDatabase.equals(HubDatabase.STAGING)) {
-            targetDatabase = hubConfig.stagingDbName;
-        }
-        else {
-            targetDatabase = hubConfig.finalDbName;
-        }
+    @Override
+    public JobTicket run() {
+        String jobId = UUID.randomUUID().toString();
+        JobManager jobManager = new JobManager(hubConfig.newJobDbClient());
 
+        Job job = Job.withFlow(flow)
+            .withJobId(jobId);
+        jobManager.saveJob(job);
+
+        DatabaseClient srcClient = getSourceClient();
 
         Collector c = flow.getCollector();
         if (c instanceof ServerCollector) {
+            ((ServerCollector)c).setHubConfig(hubConfig);
+            ((ServerCollector)c).setHubDatabase(sourceDatabase);
             ((ServerCollector)c).setClient(srcClient);
         }
 
@@ -152,22 +162,30 @@ public class FlowRunnerImpl implements FlowRunner {
         options.put("entity", this.flow.getEntityName());
         options.put("flow", this.flow.getName());
         options.put("flowType", this.flow.getType().toString());
-        Vector<String> uris = c.run(options);
 
-        FlowResource flowRunner = new FlowResource(srcClient, targetDatabase, flow);
-        AtomicInteger count = new AtomicInteger(0);
+        flowStatusListeners.forEach((FlowStatusListener listener) -> {
+            listener.onStatusChange(jobId, 0, "running collector");
+        });
+
+        jobManager.saveJob(job.withStatus(JobStatus.RUNNING_COLLECTOR));
+        DiskQueue<String> uris = c.run(jobId, threadCount, options);
+
+        flowStatusListeners.forEach((FlowStatusListener listener) -> {
+            listener.onStatusChange(jobId, 0, "starting harmonization");
+        });
+
         ArrayList<String> errorMessages = new ArrayList<>();
 
         DataMovementManager dataMovementManager = srcClient.newDataMovementManager();
 
-        double batchCount = Math.ceil(uris.size() / batchSize);
+        double batchCount = Math.ceil((double)uris.size() / (double)batchSize);
 
         QueryBatcher queryBatcher = dataMovementManager.newQueryBatcher(uris.iterator())
             .withBatchSize(batchSize)
             .withThreadCount(threadCount)
             .onUrisReady((QueryBatch batch) -> {
                 try {
-                    String jobId = batch.getJobTicket().getJobId();
+                    FlowResource flowRunner = new FlowResource(batch.getClient(), batch.getClient().getDatabase(), flow);
                     RunFlowResponse response = flowRunner.run(jobId, batch.getItems(), options);
                     failedEvents.addAndGet(response.errorCount);
                     successfulEvents.addAndGet(response.totalCount - response.errorCount);
@@ -175,11 +193,13 @@ public class FlowRunnerImpl implements FlowRunner {
 
                     int percentComplete = (int) (((double)successfulBatches.get() / batchCount) * 100.0);
 
-                    flowStatusListeners.forEach((FlowStatusListener listener) -> {
-                        listener.onStatusChange(jobId, percentComplete, "");
-                    });
+                    if (percentComplete != previousPercentComplete && (percentComplete % 5 == 0)) {
+                        previousPercentComplete = percentComplete;
+                        flowStatusListeners.forEach((FlowStatusListener listener) -> {
+                            listener.onStatusChange(jobId, percentComplete, "");
+                        });
+                    }
 
-                    count.addAndGet(1);
                     if (flowItemCompleteListeners.size() > 0) {
                         response.completedItems.forEach((String item) -> {
                             flowItemCompleteListeners.forEach((FlowItemCompleteListener listener) -> {
@@ -206,26 +226,36 @@ public class FlowRunnerImpl implements FlowRunner {
             });
 
         JobTicket jobTicket = dataMovementManager.startJob(queryBatcher);
-        JobManager jobManager = new JobManager(hubConfig.newJobDbClient());
-        jobManager.saveJob(Job.withFlow(flow)
-            .withJobId(jobTicket.getJobId())
-        );
+        jobManager.saveJob(job.withStatus(JobStatus.RUNNING_HARMONIZE));
 
         runningThread = new Thread(() -> {
             queryBatcher.awaitCompletion();
 
             flowStatusListeners.forEach((FlowStatusListener listener) -> {
-                listener.onStatusChange(jobTicket.getJobId(), 100, "");
+                listener.onStatusChange(jobId, 100, "");
             });
 
             flowFinishedListeners.forEach((FlowFinishedListener::onFlowFinished));
 
             dataMovementManager.stopJob(queryBatcher);
 
+            JobStatus status;
+            if (failedEvents.get() + successfulEvents.get() != uris.size()) {
+                status = JobStatus.CANCELED;
+            }
+            else if (failedEvents.get() > 0 && successfulEvents.get() > 0) {
+                status = JobStatus.FINISHED_WITH_ERRORS;
+            }
+            else if (failedEvents.get() == 0 && successfulEvents.get() > 0) {
+                status = JobStatus.FINISHED;
+            }
+            else {
+                status = JobStatus.FAILED;
+            }
+
             // store the thing in MarkLogic
-            Job job = Job.withFlow(flow)
-                .withJobId(jobTicket.getJobId())
-                .setCounts(successfulEvents.get(), failedEvents.get(), successfulBatches.get(), failedBatches.get())
+            job.setCounts(successfulEvents.get(), failedEvents.get(), successfulBatches.get(), failedBatches.get())
+                .withStatus(status)
                 .withEndTime(new Date());
 
             if (errorMessages.size() > 0) {
@@ -235,9 +265,8 @@ public class FlowRunnerImpl implements FlowRunner {
         });
         runningThread.start();
 
-        return jobTicket;
-
-
+        // hack until https://github.com/marklogic/java-client-api/issues/752 is fixed
+        return new JobTicketImpl(jobId, JobTicket.JobType.QUERY_BATCHER).withQueryBatcher((QueryBatcherImpl)queryBatcher);
     }
 
     class FlowResource extends ResourceManager {

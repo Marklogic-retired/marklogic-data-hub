@@ -9,9 +9,9 @@ public enum HubDatabase {
         this.type = type;
     }
 
-    public static HubDatabase getHubDatabase(String status) {
+    public static HubDatabase getHubDatabase(String database) {
         for (HubDatabase hubDatabase : HubDatabase.values()) {
-            if (hubDatabase.toString().equals(status)) {
+            if (hubDatabase.toString().equals(database)) {
                 return hubDatabase;
             }
         }

@@ -14,6 +14,7 @@ public class Job {
     private Date startTime;
     private Date endTime;
     private String jobOutput;
+    private JobStatus status = JobStatus.STARTED;
 
     private long successfulEvents = 0;
     private long failedEvents = 0;
@@ -47,8 +48,18 @@ public class Job {
         return this;
     }
 
+    public Job withStartTime(Date startTime) {
+        this.startTime = startTime;
+        return this;
+    }
+
     public Job withEndTime(Date endTime) {
         this.endTime = endTime;
+        return this;
+    }
+
+    public Job withStatus(JobStatus status) {
+        this.status = status;
         return this;
     }
 
@@ -90,16 +101,6 @@ public class Job {
     }
 
     public JobStatus getStatus() {
-        JobStatus status = JobStatus.STARTED;
-        if (failedEvents > 0 && successfulEvents > 0 && endTime != null) {
-            status = JobStatus.FINISHED_WITH_ERRORS;
-        }
-        else if (failedEvents == 0 && successfulEvents > 0 && endTime != null) {
-            status = JobStatus.FINISHED;
-        }
-        else if (endTime != null) {
-            status = JobStatus.FAILED;
-        }
         return status;
     }
 
