@@ -83,18 +83,13 @@ class HubProject {
             hubConfig.getUserServersDir().toFile().mkdirs();
             hubConfig.getUserDatabaseDir().toFile().mkdirs();
 
-            Set<PosixFilePermission> perms = new HashSet<>();
-            perms.add(PosixFilePermission.OWNER_READ);
-            perms.add(PosixFilePermission.OWNER_WRITE);
-            perms.add(PosixFilePermission.OWNER_EXECUTE);
-
             Path gradlew = projectDir.resolve("gradlew");
             writeResourceFile("scaffolding/gradlew", gradlew);
-            Files.setPosixFilePermissions(projectDir.resolve("gradlew"), perms);
+            makeExecutable(gradlew);
 
             Path gradlewbat = projectDir.resolve("gradlew.bat");
             writeResourceFile("scaffolding/gradlew.bat", gradlewbat);
-            Files.setPosixFilePermissions(projectDir.resolve("gradlew"), perms);
+            makeExecutable(gradlewbat);
 
             Path gradleWrapperDir = projectDir.resolve("gradle").resolve("wrapper");
             gradleWrapperDir.toFile().mkdirs();
@@ -108,6 +103,19 @@ class HubProject {
         }
         catch(IOException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    private void makeExecutable(Path file) {
+        Set<PosixFilePermission> perms = new HashSet<>();
+        perms.add(PosixFilePermission.OWNER_READ);
+        perms.add(PosixFilePermission.OWNER_WRITE);
+        perms.add(PosixFilePermission.OWNER_EXECUTE);
+
+        try {
+            Files.setPosixFilePermissions(file, perms);
+        } catch (IOException e) {
+
         }
     }
 
