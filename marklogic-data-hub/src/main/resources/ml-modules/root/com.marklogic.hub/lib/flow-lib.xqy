@@ -482,6 +482,7 @@ declare function flow:run-flow(
   $target-database as xs:unsignedLong,
   $options as map:map) as empty-sequence()
 {
+  map:set-javascript-by-ref($options, fn:true()),
   flow:run-flow($job-id, $flow, $identifier, (), $target-database, $options)
 };
 
