@@ -17,7 +17,7 @@ export class EnvironmentService {
     return this.http.get(uri).map((res: Response) => {
       const json = res.json();
       this.settings = json.mlSettings;
-      if (json.runningVersion === '0.1.2') {
+      if (json.runningVersion === '0.1.2' || json.runningVersion === '%%mlHubVersion%%' || json.installedVersion === '%%mlHubVersion%%') {
         return true;
       }
 
@@ -26,6 +26,8 @@ export class EnvironmentService {
         this.router.navigate(['/login']);
       }
       return result;
+    }, () => {
+      return false;
     });
   }
 }

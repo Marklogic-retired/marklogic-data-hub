@@ -13,6 +13,7 @@ export const ROUTES: Routes = [
   { path: '', component: DashboardComponent, canActivate: [AuthGuard] },
   { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
   { path: 'entities', component: EntitiesComponent, canActivate: [AuthGuard] },
+  { path: 'entities/:entityName/:flowName/:flowType', component: EntitiesComponent, canActivate: [AuthGuard] },
   { path: 'jobs', component: JobsComponent, canActivate: [AuthGuard] },
   { path: 'traces', component: TracesComponent, canActivate: [AuthGuard] },
   { path: 'traces/:id', component: TraceViewerComponent, canActivate: [AuthGuard] },

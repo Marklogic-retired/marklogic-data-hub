@@ -6,6 +6,7 @@ $layout-title-color: unquote("rgb(#{$palette-datahub-100})");
 $button-color: unquote("rgb(#{$palette-datahub-500})");
 $mlcp-border: unquote("rgb(#{$palette-datahub-800})");
 $error: unquote("rgb(#{$palette-datahub-red})");
+$lighterror: unquote("rgb(#{$palette-datahub-lightred})");
 $list-bg-color: #f1f1ff;
 $heightDuration: 0.5s;
 $fadeDuration: 1s;
@@ -58,7 +59,7 @@ $header-height: 48px;
   right: 0px;
   bottom: 0px;
   overflow: auto;
-  padding: 24px;
+  padding: 8px;
 }
 
 .entities {
@@ -99,11 +100,12 @@ $header-height: 48px;
 
 }
 
-.flow {
+/*.flow {
   &:hover {
     background-color: $hover-color;
   }
-}
+}*/
+
 .flow-subheader {
   font-weight: bold;
   margin: 0px;
@@ -189,7 +191,17 @@ $header-height: 48px;
   }
 }
 
-.fa-bug {
+.fa-arrow-right {
+  margin-left: -16px;
+}
+
+.fa-asterisk {
+  font-size: 8px;
+  top: -2px;
+  position: relative;
+}
+
+/deep/ .fa-bug {
   color: $error;
   -webkit-animation: dancing-bug 1s linear infinite alternate; /* Safari 4+ */
   -moz-animation:    dancing-bug 1s linear infinite alternate; /* Fx 5+ */
@@ -202,6 +214,19 @@ $header-height: 48px;
   100% { transform: rotate(45deg); }
 }
 
+.flow-plugin {
+  position: relative;
+  height: 100%;
+}
+
+.plugin-codemirror {
+  position: absolute;
+  top: 48px;
+  left: 0px;
+  right: 0px;
+  bottom: 10px;
+  overflow: auto;
+}
 .plugin-list li {
 
   ul {
@@ -243,5 +268,103 @@ pre.error-msg {
 
   p {
     margin: 5px 0;
+  }
+}
+
+.toolbar {
+  background-color: $layout-title-color;
+  height: 48px;
+  line-height: 48px;
+
+  .fa-bug {
+    margin-left: 10px;
+  }
+
+  .plugin-path {
+    margin-left: 10px;
+    margin-right: 10px;
+  }
+
+  div {
+    display: inline-block;
+  }
+}
+
+li.flow.mdl-list__item {
+  flex-wrap: wrap;
+}
+
+li.flow.mdl-list__item div {
+  width: 100%;
+}
+
+li.flow.mdl-list__item div ul {
+  list-style: none;
+}
+
+li.flow.mdl-list__item div ul li {
+  padding: 0 3px;
+  cursor: pointer;
+  &:hover {
+    background-color: $hover-color;
+  }
+}
+
+/deep/ .error-line {
+  background-color: $lighterror;
+}
+
+/deep/ .error-tooltip {
+  border: 1px solid $error;
+  border-radius: 3px;
+  color: #444;
+  padding: 2px 5px;
+  font-size: 90%;
+  font-family: monospace;
+  background-color: white;
+  white-space: pre-wrap;
+
+  max-width: 40em;
+  position: absolute;
+  z-index: 10;
+  -webkit-box-shadow: 2px 3px 5px rgba(0,0,0,.2);
+  -moz-box-shadow: 2px 3px 5px rgba(0,0,0,.2);
+  box-shadow: 2px 3px 5px rgba(0,0,0,.2);
+
+  transition: opacity 1s;
+  -moz-transition: opacity 1s;
+  -webkit-transition: opacity 1s;
+  -o-transition: opacity 1s;
+  -ms-transition: opacity 1s;
+}
+
+/deep/ .buglines {
+  width: 1.5em;
+}
+
+.active-plugin {
+  font-weight: bold;
+}
+
+.fa-trash {
+  color: #999;
+  &:hover {
+    color: $error;
+  }
+}
+
+.save-button {
+  margin-right: 10px;
+}
+
+/deep/ .mdl-tabs,
+/deep/ .mdl-tabs__panel,
+/deep/ mdl-tab-panel-content {
+  height: 100%;
+}
+
+/deep/ mdl-tab-panel-title {
+  .fa {
+    margin-right: 5px;
   }
 }

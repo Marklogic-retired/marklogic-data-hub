@@ -1,7 +1,5 @@
-
-
 /*
-  * * Copyright (c) 2004-2016 MarkLogic Corporation
+  * * Copyright (c) 2004-2017 MarkLogic Corporation
   * *
   * * Licensed under the Apache License, Version 2.0 (the "License");
   * * you may not use this file except in compliance with the License.

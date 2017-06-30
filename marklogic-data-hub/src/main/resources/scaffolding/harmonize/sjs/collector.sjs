@@ -6,8 +6,8 @@
  * @return - an array of ids or uris
  */
 function collect(options) {
-  // by default we return the URIs in the same collection as the Flow name
-  return cts.uris(null, null, cts.collectionQuery(options.flow));
+  // by default we return the URIs in the same collection as the Entity name
+  return cts.uris(null, null, cts.collectionQuery(options.entity));
 }
 
 module.exports = {

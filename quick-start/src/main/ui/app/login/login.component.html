@@ -197,7 +197,7 @@
                 <mdl-textfield label="MarkLogic Password" name="password" type="password" [(ngModel)]="loginInfo.password" required="required" floating-label></mdl-textfield>
                 <div layout="row" layout-align="end center" class="init-buttons">
                   <button mdl-button type="button" (click)="back()">&lt; Back</button>
-                  <button mdl-button mdl-button-type="raised" type="submit" [disabled]="loggingIn">Login</button>
+                  <button mdl-button mdl-button-type="raised" type="submit" [disabled]="loggingIn || !loginInfo.username">Login</button>
                 </div>
               </div>
             </form>

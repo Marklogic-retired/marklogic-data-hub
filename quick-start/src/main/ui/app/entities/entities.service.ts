@@ -4,6 +4,9 @@ import { ProjectService } from '../projects/projects.service';
 
 import { Entity } from './entity.model';
 import { Flow } from './flow.model';
+import { Plugin } from './plugin.model';
+
+import * as _ from 'lodash';
 
 @Injectable()
 export class EntitiesService {
@@ -24,8 +27,30 @@ export class EntitiesService {
     return this.post(this.url('/entities/'), entity);
   }
 
+  deleteEntity(entityToDelete: Entity) {
+    return this.http.delete(this.url(`/entities/${entityToDelete.entityName}`));
+  }
+
+  deleteFlow(flow: Flow, flowType: string) {
+    return this.http.delete(this.url(`/entities/${flow.entityName}/flows/${flow.flowName}/${flowType}`));
+  }
+
   createFlow(entity: Entity, flowType: string, flow: Flow) {
     return this.post(this.url(`/entities/${entity.entityName}/flows/${flowType}`), flow);
+  }
+
+  savePlugin(entity: Entity, flowType: string, flow: Flow, plugin: Plugin) {
+    return this.post(
+        this.url(`/entities/${entity.entityName}/flows/${flowType}/${flow.flowName}/plugin/save`),
+        _.omit(plugin, ['cm'])
+      );
+  }
+
+  validatePlugin(entity: Entity, flowType: string, flow: Flow, plugin: Plugin) {
+    return this.post(
+        this.url(`/entities/${entity.entityName}/flows/${flowType}/${flow.flowName}/plugin/validate`),
+        plugin
+      );
   }
 
   getInputFlowOptions(flow: Flow) {

@@ -1,4 +1,4 @@
-<div [ngClass]="{'visible' : _isVisible }" class="content">
+<div class="content">
   <div *ngIf="flow">
     <h3>Run Input Flow - {{flow.entityName}} : {{flow.flowName}}</h3>
     <div>
@@ -6,7 +6,7 @@
         <h3 (click)="toggleSection('inputFiles')"><i class="fa fa-caret-right" [ngClass]="getSectionClass('inputFiles')"></i> Input Files</h3>
         <div class="group-section slideDown" flex layout="column" [ngClass]="getSectionClass('inputFiles')">
           <app-folder-browser
-            [startPath]="inputFilePath"
+            [startPath]="startPath"
             (folderChosen)="folderClicked($event)">
           </app-folder-browser>
         </div>
@@ -70,7 +70,6 @@
     <div class="mdl-dialog__actions">
       <mdl-button mdl-button-type="raised" mdl-colored="primary" mdl-ripple (click)="runImport()">Run Import</mdl-button>
       <mdl-button mdl-button-type="raised" mdl-colored mdl-ripple (click)="saveOptions()">Save Options</mdl-button>
-      <mdl-button mdl-button-type="raised" mdl-ripple (click)="cancel()">Cancel</mdl-button>
     </div>
   </div>
 </div>

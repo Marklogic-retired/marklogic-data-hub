@@ -5,32 +5,16 @@
         mdl-colored="primary" mdl-button mdl-button-type="raised"
         *ngFor="let value of facet.values"
         (click)="toggle(facet.__key, value)">
-       <!-- | filter:{negated:false}"> -->
         <span title="{{ value.value }}">{{ facet.__key }}: {{ value | truncate:truncateLength }}</span>
         <span class="fa fa-remove"></span>
       </button>
-<!--       <div class="btn btn-warning chiclet negated" *ngFor="let value of facet.values">
-       | filter:{negated:true}">
-        <span title="{{ value.value }}">{{ facet.__key }}: {{ value.value | truncate:truncateLength }}</span>
-        <span class="glyphicon glyphicon-remove-circle icon-white" (click)="toggle(facet.__key, value.value)"></span>
-      </div> -->
     </div>
   </div>
-  <!-- <ml-chiclets ng-if="shouldNegate" active-facets="activeFacets" toggle="toggle({facet:facet, value:value})" truncate="{{ truncateLength }}"></ml-chiclets> -->
-<!--   <div class="chiclets" ng-if="!shouldNegate">
-    <div ng-repeat="(index, facet) of facets | object2Array | filter:{selected: true}">
-      <div class="btn btn-primary" ng-repeat="value of facet.facetValues | filter:{selected: true}">
-        <span title="{{ value.name }}">{{ facet.__key }}: {{ value.name | truncate:truncateLength }}</span>
-        <span class="glyphicon glyphicon-remove-circle icon-white" ng-click="toggle({facet: facet.__key, value: value.name})"></span>
-      </div>
-    </div>
-  </div> -->
   <ng-template ngFor let-facet [ngForOf]="(facets | objectToArray)">
     <div class="facet" *ngIf="isVisible(facet)" mdl-shadow="4">
       <div (click)="toggleCollapsed(facet.__key)" class="facet-name">{{ facet.__key }}<i class="fa" [ngClass]="getCollapsedIcon(facet.__key)"></i></div>
       <ng-template [ngIf]="!isToggleCollapsed(facet.__key)">
         <div *ngFor="let value of facet.facetValues" class="facet-value" (click)="toggle(facet.__key, value.name)">
-         <!-- | filter:{selected: '!'+true}:false"> -->
           <i class="fa fa-plus-circle facet-add-pos"></i>
           <span *ngIf="!!value.name" title="{{ value.name }}">{{ value.name | truncate : truncateLength }}</span>
           <em *ngIf="!value.name">blank</em>

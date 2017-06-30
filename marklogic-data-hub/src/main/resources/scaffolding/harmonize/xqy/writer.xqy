@@ -18,5 +18,5 @@ declare function plugin:write(
   $envelope as node(),
   $options as map:map) as empty-sequence()
 {
-  xdmp:document-insert($id, $envelope)
+  xdmp:document-insert($id, $envelope, xdmp:default-permissions(), map:get($options, "entity"))
 };

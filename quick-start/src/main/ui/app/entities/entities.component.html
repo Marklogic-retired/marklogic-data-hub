@@ -25,48 +25,31 @@
           </div>
           <div class="flow-container" [ngClass]="{ 'collapsed' : isCollapsed(entity) }">
             <div class="padder">
-              <div class="flow-subheader">
-                Input Flows
-                <div class="mdl-layout-spacer"></div>
-                <mdl-button mdl-button-type="icon" id="new-input-flow" aria-label="New Input Flow" (click)="newInputFlow($event, entity)">
-                  <i class="fa fa-plus"></i>
-                </mdl-button>
-              </div>
-              <ul class="flows mdl-list">
-                <li
-                  class="flow mdl-list__item"
-                  [ngClass]="{'active': isActiveFlow(flow)}"
-                  *ngFor="let flow of entity.inputFlows"
-                  (click)="setFlow($event, entity, flow, 'Input')">
-                  <span class="mdl-list__item-primary-content">
-                    <i class="mdi mdi-import"></i>
-                    {{ flow.flowName }}
-                    <span class="mdl-layout-spacer"></span>
-                    <i class="fa fa-bug" *ngIf="flowHasError(entity.entityName, flow.flowName)"></i>
-                  </span>
-                </li>
-              </ul>
-              <div class="flow-subheader">
-                Harmonize Flows
-                <div class="mdl-layout-spacer"></div>
-                <mdl-button mdl-button-type="icon" id="new-harmonize-flow" aria-label="New Harmonize Flow" (click)="newHarmonizeFlow($event, entity)">
-                  <i class="fa fa-plus"></i>
-                </mdl-button>
-              </div>
-              <ul class="flows mdl-list">
-                <li
-                  class="flow mdl-list__item"
-                  [ngClass]="{'active': isActiveFlow(flow)}"
-                  *ngFor="let flow of entity.harmonizeFlows"
-                  (click)="setFlow($event, entity, flow, 'Harmonize')">
-                  <span class="mdl-list__item-primary-content">
-                    <i class="mdi mdi-looks"></i>
-                    {{ flow.flowName }}
-                    <span class="mdl-layout-spacer"></span>
-                    <i class="fa fa-bug" *ngIf="flowHasError(entity.entityName, flow.flowName)"></i>
-                  </span>
-                </li>
-              </ul>
+              <ng-template ngFor let-type [ngForOf]="flowTypes">
+                <div class="flow-subheader">
+                  {{type}} Flows
+                  <div class="mdl-layout-spacer"></div>
+                  <mdl-button mdl-button-type="icon" id="new-flow" (click)="showNewFlow(entity, type.toUpperCase())">
+                    <i class="fa fa-plus"></i>
+                  </mdl-button>
+                </div>
+                <ul class="flows mdl-list">
+                  <li
+                    class="flow mdl-list__item"
+                    [ngClass]="{'active': isActiveFlow(flow)}"
+                    *ngFor="let flow of getFlows(entity, type)">
+                    <div (click)="setFlow(flow, type.toUpperCase())">
+                      <span class="mdl-list__item-primary-content">
+                        <i class="mdi" [ngClass]="{'mdi-import': type === 'Input', 'mdi-looks' : type === 'Harmonize'}"></i>
+                        {{ flow.flowName }}
+                        <span class="mdl-layout-spacer"></span>
+                        <i class="fa fa-trash" (click)="deleteFlow($event, flow, type.toUpperCase())"></i>
+                        <i class="fa fa-bug" *ngIf="flowHasError(entity.name, flow.flowName)"></i>
+                      </span>
+                    </div>
+                  </li>
+                </ul>
+              </ng-template>
             </div>
           </div>
         </li>
@@ -86,8 +69,66 @@
     <gm-divider></gm-divider>
     <div gm-col class="flex-100">
       <div class="page-content">
-        <app-mlcp></app-mlcp>
-        <app-harmonize-flow-options></app-harmonize-flow-options>
+        <mdl-tabs
+          mdl-ripple
+          [mdl-tab-active-index]="flow.tabIndex"
+          (mdl-tab-active-changed)="tabChanged($event)"
+          *ngIf="flow">
+          <mdl-tab-panel>
+            <mdl-tab-panel-title>
+              <i class="fa fa-info" aria-hidden="true"></i><span>Flow Info</span>
+            </mdl-tab-panel-title>
+            <mdl-tab-panel-content>
+              <app-mlcp
+                *ngIf="flowType === 'INPUT'"
+                [flow]="flow"
+                [mlcpOptions]="mlcpOptions"
+                (onRun)="runInputFlow(flow, $event)"></app-mlcp>
+              <app-harmonize-flow-options
+                [flow]="flow"
+                (onRun)="runHarmonizeFlow(flow, $event)"
+                *ngIf="flowType === 'HARMONIZE'"></app-harmonize-flow-options>
+            </mdl-tab-panel-content>
+          </mdl-tab-panel>
+          <mdl-tab-panel *ngFor="let plugin of flow.plugins">
+            <mdl-tab-panel-title>
+              <i class="fa fa-code" aria-hidden="true"></i>
+              <span>{{ plugin.pluginType }}</span>
+              <i class="fa fa-asterisk" title="Unsaved Changes" *ngIf="plugin.$dirty && plugin.hasShown"></i>
+            </mdl-tab-panel-title>
+            <mdl-tab-panel-content>
+              <div class="flow-plugin">
+                <ng-template ngFor let-file [ngForOf]="(plugin.files | objectToArray)">
+                  <div class="toolbar">
+                    <i class="fa fa-bug" *ngIf="pluginHasError(flow, plugin.pluginType)"></i>
+                    <span class="plugin-path">{{plugin.pluginPath}}/{{file.__key}}</span>
+                    <span *ngIf="isSaving">Saving <i class="fa fa-spinner fa-pulse"></i></span>
+                    <div class="pull-right save-button">
+                      <mdl-button
+                        mdl-button-type="raised" mdl-colored="primary" mdl-ripple
+                        [disabled]="!plugin.$dirty || isSaving"
+                        (click)="savePlugin(plugin)"
+                        tooltip="This will save the plugin code."
+                        tooltipPlacement="bottom">
+                        Save <i class="fa fa-floppy-o"></i>
+                      </mdl-button>
+                    </div>
+                  </div>
+                  <div class="plugin-codemirror">
+                    <app-codemirror [ngModel]="file.value"
+                      (ngModelChange)="syncPluginText(plugin, file.__key, $event)"
+                      (saveEvent)="savePlugin(plugin)"
+                      [(dirty)]="plugin.$dirty"
+                      (cmChange)="setCM(plugin, $event)"
+                      [(history)]="plugin.history"
+                      [config]="plugin.codemirrorConfig"
+                      [error]="getPluginErrors(flow, plugin.pluginType)"></app-codemirror>
+                  </div>
+                </ng-template>
+              </div>
+            </mdl-tab-panel-content>
+          </mdl-tab-panel>
+        </mdl-tabs>
       </div>
     </div>
   </div>
