@@ -11,8 +11,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.nio.file.attribute.PosixFilePermission;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Class for creating a hub Project
@@ -80,8 +83,18 @@ class HubProject {
             hubConfig.getUserServersDir().toFile().mkdirs();
             hubConfig.getUserDatabaseDir().toFile().mkdirs();
 
-            writeResourceFile("scaffolding/gradlew", projectDir.resolve("gradlew"));
-            writeResourceFile("scaffolding/gradlew.bat", projectDir.resolve("gradlew.bat"));
+            Set<PosixFilePermission> perms = new HashSet<>();
+            perms.add(PosixFilePermission.OWNER_READ);
+            perms.add(PosixFilePermission.OWNER_WRITE);
+            perms.add(PosixFilePermission.OWNER_EXECUTE);
+
+            Path gradlew = projectDir.resolve("gradlew");
+            writeResourceFile("scaffolding/gradlew", gradlew);
+            Files.setPosixFilePermissions(projectDir.resolve("gradlew"), perms);
+
+            Path gradlewbat = projectDir.resolve("gradlew.bat");
+            writeResourceFile("scaffolding/gradlew.bat", gradlewbat);
+            Files.setPosixFilePermissions(projectDir.resolve("gradlew"), perms);
 
             Path gradleWrapperDir = projectDir.resolve("gradle").resolve("wrapper");
             gradleWrapperDir.toFile().mkdirs();
