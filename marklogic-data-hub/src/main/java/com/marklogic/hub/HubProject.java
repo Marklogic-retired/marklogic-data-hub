@@ -114,7 +114,7 @@ class HubProject {
 
         try {
             Files.setPosixFilePermissions(file, perms);
-        } catch (IOException e) {
+        } catch (Exception e) {
 
         }
     }
