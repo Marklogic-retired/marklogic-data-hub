@@ -77,7 +77,7 @@ declare variable $TYPE-JSON := "json";
 declare variable $XML := "application/xml";
 declare variable $JSON := "application/json";
 
-declare function flow:get-module-ns(
+declare %private function flow:get-module-ns(
   $type as xs:string) as xs:string?
 {
   if ($type eq $TYPE-JAVASCRIPT) then ()
@@ -423,9 +423,11 @@ declare function flow:get-entities() as element(hub:entities)
  : @return - a sequence of strings
  :)
 declare function flow:run-collector(
+  $job-id as xs:string,
   $module-uri as xs:string,
   $options as map:map) as item()*
 {
+  let $_ := trace:set-job-id($job-id)
   let $filename as xs:string := hul:get-file-from-uri($module-uri)
   let $type := flow:get-type($filename)
   let $ns := flow:get-module-ns($type)
@@ -437,7 +439,7 @@ declare function flow:run-collector(
       $func($options)
     }
     catch($ex) {
-      xdmp:log(xdmp:describe($ex, (), ())),
+      debug:log(xdmp:describe($ex, (), ())),
       trace:error-trace(
         (),
         $module-uri,
@@ -469,7 +471,7 @@ declare function flow:run-collector(
  : Runs a given flow
  :
  : @param $flow - xml describing the flow
- : @param $idenifier - the identifier to send to the flow steps (URI in corb lingo)
+ : @param $identifier - the identifier to send to the flow steps (URI in corb lingo)
  : @param $options - a map of options passed in by the client
  : @return - nothing
  :)
@@ -798,7 +800,7 @@ declare function flow:call-plugin-function(
  : Run a given plugin
  :
  : @param $plugin - xml describing the plugin to run
- : @param $idenifier - the identifier to send to the flow steps (URI in corb lingo)
+ : @param $identifier - the identifier to send to the flow steps (URI in corb lingo)
  : @param $content - the output of the content plugin
  : @param $headers - the output of the headers plugin
  : @param $triples - the output of the triples plugin
@@ -833,7 +835,7 @@ declare function flow:run-plugin(
         $simple, $options)
     }
     catch($ex) {
-      xdmp:log(xdmp:describe($ex, (), ())),
+      debug:log(xdmp:describe($ex, (), ())),
       trace:error-trace(
         $identifier,
         $module-uri,
@@ -902,7 +904,7 @@ declare function flow:run-plugin(
  : Run a given writer
  :
  : @param $writer - xml describing the writer to run
- : @param $idenifier - the identifier to send to the flow steps (URI in corb lingo)
+ : @param $identifier - the identifier to send to the flow steps (URI in corb lingo)
  : @param $envelope - the envelope
  : @param $options - a map of options passed in by the client
  : @return - the output of the writer. It varies.
@@ -945,7 +947,7 @@ declare function flow:run-writer(
       )))
     }
     catch($ex) {
-      xdmp:log(xdmp:describe($ex, (), ())),
+      debug:log(xdmp:describe($ex, (), ())),
       trace:error-trace(
         $identifier,
         $module-uri,
@@ -1016,12 +1018,76 @@ declare function flow:validate-entities()
     for $flow in $entity/hub:flows/hub:flow
     let $data-format := $flow/hub:data-format
     (: validate collector :)
-    let $_ := flow:validate-collector($entity, $flow, $flow/hub:collector, $errors)
+    let $_ :=
+      try {
+        let $collector := $flow/hub:collector
+        return
+          if ($collector) then
+            let $module-uri := $collector/@module
+            let $filename as xs:string := hul:get-file-from-uri($module-uri)
+            let $type := flow:get-type($filename)
+            let $ns := flow:get-module-ns($type)
+            return
+              if ($type eq $flow:TYPE-XQUERY) then
+                xdmp:eval(
+                  'import module namespace x = "' || $ns || '" at "' || $module-uri || '"; ' ||
+                  '()',
+                  map:new(map:entry("staticCheck", fn:true()))
+                )
+              else
+                xdmp:javascript-eval(
+                  'var x = require("' || $module-uri || '");',
+                  map:new(map:entry("staticCheck", fn:true()))
+                )
+          else ()
+      }
+      catch($ex) {
+        flow:make-error-json(
+          $errors,
+          $entity/hub:name,
+          $flow/hub:name,
+          "collector",
+          $ex)
+      }
     (: validate plugins :)
     let $_ :=
       for $plugin in $flow/hub:plugins/hub:plugin[fn:exists(@module)]
+      let $destination := $plugin/@dest
+      let $module-uri := $plugin/@module
+      let $filename as xs:string := hul:get-file-from-uri($module-uri)
+      let $type := flow:get-type($filename)
+      let $ns := flow:get-module-ns($type)
       return
-        flow:validate-plugin($entity, $flow, $plugin, $errors)
+        (:
+         : Note that we are static checking the files.
+         : This is because there is no reasonable way to actually
+         : call the plugins and pass in data that will work for all plugins.
+         :
+         : The disadvantage to static checking is that we will not catch typos
+         : like ctsdoc <- (missing period) because Javascript is dynamically
+         : typed. Static checking will only catch syntax errors in sjs.
+         :)
+        try {
+          if ($type eq $flow:TYPE-XQUERY) then
+            xdmp:eval(
+              'import module namespace x = "' || $ns || '" at "' || $module-uri || '"; ' ||
+              '()',
+              map:new(map:entry("staticCheck", fn:true()))
+            )
+          else
+            xdmp:javascript-eval(
+              'var x = require("' || $module-uri || '");',
+              map:new(map:entry("staticCheck", fn:true()))
+            )
+        }
+        catch($ex) {
+          flow:make-error-json(
+            $errors,
+            $entity/hub:name,
+            $flow/hub:name,
+            $destination,
+            $ex)
+        }
     return
       ()
   return
@@ -1029,83 +1095,6 @@ declare function flow:validate-entities()
       map:entry("errors", $errors)
     )
 };
-
-declare function flow:validate-collector($entity, $flow, $collector, $errors)
-{
-  (: validate collector :)
-  try {
-    if ($collector) then
-      let $module-uri := $collector/@module
-      let $filename as xs:string := hul:get-file-from-uri($module-uri)
-      let $type := flow:get-type($filename)
-      let $ns := flow:get-module-ns($type)
-      return
-        if ($type eq $flow:TYPE-XQUERY) then
-          xdmp:eval(
-            'import module namespace x = "' || $ns || '" at "' || $module-uri || '"; ' ||
-            '()',
-            map:new(map:entry("staticCheck", fn:true()))
-          )
-        else
-          xdmp:javascript-eval(
-            'var x = require("' || $module-uri || '");',
-            map:new(map:entry("staticCheck", fn:true()))
-          )
-    else ()
-  }
-  catch($ex) {
-    flow:make-error-json(
-      $errors,
-      $entity/hub:name,
-      $flow/hub:name,
-      "collector",
-      $ex)
-  }
-};
-
-declare function flow:validate-plugin($entity, $flow, $plugin, $errors)
-{
-  let $_ :=
-    let $destination := $plugin/@dest
-    let $module-uri := $plugin/@module
-    let $filename as xs:string := hul:get-file-from-uri($module-uri)
-    let $type := flow:get-type($filename)
-    let $ns := flow:get-module-ns($type)
-    return
-      (:
-       : Note that we are static checking the files.
-       : This is because there is no reasonable way to actually
-       : call the plugins and pass in data that will work for all plugins.
-       :
-       : The disadvantage to static checking is that we will not catch typos
-       : like ctsdoc <- (missing period) because Javascript is dynamically
-       : typed. Static checking will only catch syntax errors in sjs.
-       :)
-      try {
-        if ($type eq $flow:TYPE-XQUERY) then
-          xdmp:eval(
-            'import module namespace x = "' || $ns || '" at "' || $module-uri || '"; ' ||
-            '()',
-            map:new(map:entry("staticCheck", fn:true()))
-          )
-        else
-          xdmp:javascript-eval(
-            'var x = require("' || $module-uri || '");',
-            map:new(map:entry("staticCheck", fn:true()))
-          )
-      }
-      catch($ex) {
-        flow:make-error-json(
-          $errors,
-          $entity/hub:name,
-          $flow/hub:name,
-          $destination,
-          $ex)
-      }
-  return
-    ()
-};
-
 
 (: Returns the plugin function to be called :)
 declare %private function flow:get-function($plugin as element(hub:plugin))

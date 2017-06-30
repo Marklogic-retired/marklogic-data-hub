@@ -61,6 +61,9 @@ export class CodemirrorComponent implements AfterViewInit, OnInit, OnChanges {
     return this._history;
   }
   set history(val) {
+    if (!val) {
+      return;
+    }
     this._history = val;
 
     if (this.instance) {
@@ -134,7 +137,7 @@ export class CodemirrorComponent implements AfterViewInit, OnInit, OnChanges {
       }
       this.instance.clearGutter('buglines');
 
-      if (this.error) {
+      if (this.error && this.error.line) {
         const line = this.error.line - 1;
         const endChar = this.instance.getDoc().getLine(line).length;
         this.currentError = this.instance.getDoc().markText({line: line, ch: 0}, {line: line, ch: endChar}, {className: 'error-line'});
@@ -262,7 +265,7 @@ export class CodemirrorComponent implements AfterViewInit, OnInit, OnChanges {
     this.instance.on('keydown', this.onKeyDown);
 
     let doc = this.instance.getDoc();
-    if (doc.history !== this._history) {
+    if (this._history && doc.history !== this._history) {
       if (this._history.generation) {
         doc.history = this._history;
       } else {

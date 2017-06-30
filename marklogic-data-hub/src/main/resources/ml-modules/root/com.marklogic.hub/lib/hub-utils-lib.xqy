@@ -92,10 +92,8 @@ declare function hul:from-field-cache($name, $func, $duration as xs:dayTimeDurat
   let $refresh-date := xdmp:get-server-field($name || "-refresh-date")
   return
     if (fn:exists($existing)) then
-      if (fn:exists($refresh-date) and ($refresh-date < fn:current-dateTime())) then (
-        xdmp:log("invalidating cache: " || $name),
+      if (fn:exists($refresh-date) and ($refresh-date < fn:current-dateTime())) then
         hul:set-field-cache($name, $func(), $duration)
-      )
       else
         $existing[1]
     else

@@ -149,7 +149,7 @@
           <h3>Project Initialized <i class="fa fa-thumbs-up"></i></h3>
           <p>Project files have been created in</p>
           <p class="project-path">{{currentProject.path}}</p>
-          <p>Read more about the project structure on the <a target="_blank" href="https://github.com/marklogic/marklogic-data-hub/wiki/Project-Directory-Structure">github wiki</a>.</p>
+          <p>Read more about the project structure on the <a target="_blank" href="https://github.com/marklogic-community/marklogic-data-hub/wiki/Project-Directory-Structure">github wiki</a>.</p>
         </section>
         <div layout="row" layout-align="end center" class="init-buttons">
           <button type="button" mdl-button (click)="back()">&lt; Back</button>
@@ -166,7 +166,7 @@
             <p class="help-text">Each Hub Project can be deployed to multiple environments. Environments are
             determined by the presence of a gradle-env.properties file in your hub project
             directory. By default the Quick Start only creates a local environment file.
-            Read more <a target="_blank" href="https://github.com/marklogic/marklogic-data-hub/wiki/Data-Hub-QuickStart-Project-Environments">on the Data Hub Framework Wiki</a>.
+            Read more <a target="_blank" href="https://github.com/marklogic-community/marklogic-data-hub/wiki/Data-Hub-QuickStart-Project-Environments">on the Data Hub Framework Wiki</a>.
             </p>
             <app-select-list
               [items]="currentProject.environments"
@@ -197,7 +197,7 @@
                 <mdl-textfield label="MarkLogic Password" name="password" type="password" [(ngModel)]="loginInfo.password" required="required" floating-label></mdl-textfield>
                 <div layout="row" layout-align="end center" class="init-buttons">
                   <button mdl-button type="button" (click)="back()">&lt; Back</button>
-                  <button mdl-button mdl-button-type="raised" type="submit" [disabled]="loggingIn">Login</button>
+                  <button mdl-button mdl-button-type="raised" type="submit" [disabled]="loggingIn || !loginInfo.username">Login</button>
                 </div>
               </div>
             </form>
