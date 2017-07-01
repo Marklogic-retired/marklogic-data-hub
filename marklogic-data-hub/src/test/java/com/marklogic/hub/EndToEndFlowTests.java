@@ -179,7 +179,7 @@ public class EndToEndFlowTests extends HubTestBase {
 
     @AfterClass
     public static void teardown() throws IOException {
-//        uninstallHub();
+        uninstallHub();
     }
 
     @Test

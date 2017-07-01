@@ -77,7 +77,7 @@ declare variable $TYPE-JSON := "json";
 declare variable $XML := "application/xml";
 declare variable $JSON := "application/json";
 
-declare %private function flow:get-module-ns(
+declare function flow:get-module-ns(
   $type as xs:string) as xs:string?
 {
   if ($type eq $TYPE-JAVASCRIPT) then ()
