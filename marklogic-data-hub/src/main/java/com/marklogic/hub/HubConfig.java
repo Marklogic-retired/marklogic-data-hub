@@ -138,6 +138,8 @@ public class HubConfig {
 
     public String customForestPath = DEFAULT_CUSTOM_FOREST_PATH;
 
+    public String modulePermissions = "rest-admin,read,rest-admin,update,rest-extension-user,execute";
+
     public String projectDir;
 
     private Properties environmentProperties;
@@ -220,6 +222,7 @@ public class HubConfig {
 
             modulesDbName = getEnvPropString(environmentProperties, "mlModulesDbName", modulesDbName);
             modulesForestsPerHost = getEnvPropInteger(environmentProperties, "mlModulesForestsPerHost", modulesForestsPerHost);
+            modulePermissions = getEnvPropString(environmentProperties, "mlModulePermissions", modulePermissions);
 
             triggersDbName = getEnvPropString(environmentProperties, "mlTriggersDbName", triggersDbName);
             triggersForestsPerHost = getEnvPropInteger(environmentProperties, "mlTriggersForestsPerHost", triggersForestsPerHost);
@@ -407,7 +410,7 @@ public class HubConfig {
     public Path getUserDatabaseDir() {
         return Paths.get(this.projectDir, USER_CONFIG_DIR, "databases");
     }
-
+    
     public Path getUserServersDir() {
         return Paths.get(this.projectDir, USER_CONFIG_DIR, "servers");
     }
@@ -603,6 +606,7 @@ public class HubConfig {
 
         config.setReplaceTokensInModules(true);
         config.setUseRoxyTokenPrefix(false);
+        config.setModulePermissions(modulePermissions);
 
         HashMap<String, Integer> forestCounts = new HashMap<>();
         forestCounts.put(stagingDbName, stagingForestsPerHost);

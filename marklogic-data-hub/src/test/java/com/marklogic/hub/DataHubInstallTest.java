@@ -1,5 +1,7 @@
 package com.marklogic.hub;
 
+import com.marklogic.client.eval.EvalResult;
+import com.marklogic.client.eval.EvalResultIterator;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -26,7 +28,7 @@ public class DataHubInstallTest extends HubTestBase {
         if (installInfo.isInstalled()) {
             uninstallHub();
         }
-        installHub();
+        installHub("\nmlModulePermissions=rest-admin,read,rest-admin,update");
     }
 
     @Test
@@ -48,11 +50,24 @@ public class DataHubInstallTest extends HubTestBase {
         String path = Paths.get(url.toURI()).toFile().getAbsolutePath();
 
         DataHub dataHub = new DataHub(getHubConfig(path));
+
         dataHub.installUserModules(true);
 
         assertEquals(
                 getResource("data-hub-test/plugins/entities/test-entity/harmonize/final/collector/collector.xqy"),
                 getModulesFile("/entities/test-entity/harmonize/final/collector/collector.xqy"));
+
+        EvalResultIterator resultItr = runInModules(
+            "xquery version \"1.0-ml\";\n" +
+                "import module namespace sec=\"http://marklogic.com/xdmp/security\" at \n" +
+                "    \"/MarkLogic/security.xqy\";\n" +
+                "let $perms := xdmp:document-get-permissions('/entities/test-entity/harmonize/final/collector/collector.xqy')\n" +
+                "return\n" +
+                "  fn:string-join(xdmp:invoke-function(function() {\n" +
+                "    sec:get-role-names($perms/sec:role-id) ! fn:string()\n" +
+                "  }, map:entry(\"database\", xdmp:security-database())), \",\")");
+        EvalResult res = resultItr.next();
+        assertEquals("rest-admin", res.getString());
         assertEquals(
                 getResource("data-hub-test/plugins/entities/test-entity/harmonize/final/content/content.xqy"),
                 getModulesFile("/entities/test-entity/harmonize/final/content/content.xqy"));
