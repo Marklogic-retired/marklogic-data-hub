@@ -277,7 +277,7 @@ public class Scaffolding {
                     throw new IOException("Unable to get Content Plugin scaffold");
                 }
                 ResourceServices.ServiceResult res = resultItr.next();
-                return res.getContent(new StringHandle()).get();
+                return res.getContent(new StringHandle()).get().replaceAll("\n", "\r\n");
             }
             catch(ClientHandlerException e) {
             }
