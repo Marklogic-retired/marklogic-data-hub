@@ -155,9 +155,9 @@ declare function service:generate-lets($model as map:map, $entity-type-name)
             "",
             "let " || $inner-var || " :=",
             "  (: create a sequence of " || $ref-name || " instances from your data :)",
-            "  for $source in ()",
+            "  for $sub-entity in ()",
             "  return",
-            "    plugin:extract-instance-" || $ref-name || "($source)",
+            "    plugin:extract-instance-" || $ref-name || "($sub-entity)",
             "return",
             if ($is-required) then
               "  json:to-array(" || $inner-var || ")"
