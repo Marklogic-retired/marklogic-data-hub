@@ -394,16 +394,28 @@ declare function service:generate-vars($model as map:map, $entity-type-name)
         ) ||
         ")"
       else if (contains($ref, "#/definitions")) then
-        fn:string-join((
-          "null;",
-          "if (" || $path-to-property || ") {",
-          "  // either return an instance of a " || $ref-name,
-          "  " || service:camel-case($property-name) || " = " || service:camel-case("extractInstance-" || $ref-name) || "(item." || $ref-name || ");",
-          "",
-          "  // or a reference to a " || $ref-name,
-          "  // " || service:camel-case($property-name) || " = makeReferenceObject('" || $ref-name || "', item);",
-          "}"
-        ), "&#10;  ")
+        if ($is-array) then
+          fn:string-join((
+            "[];",
+            "if (" || $path-to-property || ") {",
+            "  // either return an instance of a " || $ref-name,
+            "  " || service:camel-case($property-name) || ".push(" || service:camel-case("extractInstance-" || $ref-name) || "(item." || $ref-name || "));",
+            "",
+            "  // or a reference to a " || $ref-name,
+            "  // " || service:camel-case($property-name) || ".push(makeReferenceObject('" || $ref-name || "', item));",
+            "}"
+          ), "&#10;  ")
+        else
+          fn:string-join((
+            "null;",
+            "if (" || $path-to-property || ") {",
+            "  // either return an instance of a " || $ref-name,
+            "  " || service:camel-case($property-name) || " = " || service:camel-case("extractInstance-" || $ref-name) || "(item." || $ref-name || ");",
+            "",
+            "  // or a reference to a " || $ref-name,
+            "  // " || service:camel-case($property-name) || " = makeReferenceObject('" || $ref-name || "', item);",
+            "}"
+          ), "&#10;  ")
       else
         if ($is-array) then
           fn:string-join((
