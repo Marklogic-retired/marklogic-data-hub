@@ -7,6 +7,7 @@
  */
 function collect(options) {
   xdmp.log(['options', options]);
+  options.collectorTest = 'collector';
   return cts.uris(null, null, cts.collectionQuery(options.flow));
 }
 

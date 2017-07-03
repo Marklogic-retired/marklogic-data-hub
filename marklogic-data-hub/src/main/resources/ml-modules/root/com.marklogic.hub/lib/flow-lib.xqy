@@ -77,7 +77,7 @@ declare variable $TYPE-JSON := "json";
 declare variable $XML := "application/xml";
 declare variable $JSON := "application/json";
 
-declare %private function flow:get-module-ns(
+declare function flow:get-module-ns(
   $type as xs:string) as xs:string?
 {
   if ($type eq $TYPE-JAVASCRIPT) then ()
@@ -482,6 +482,7 @@ declare function flow:run-flow(
   $target-database as xs:unsignedLong,
   $options as map:map) as empty-sequence()
 {
+  map:set-javascript-by-ref($options, fn:true()),
   flow:run-flow($job-id, $flow, $identifier, (), $target-database, $options)
 };
 

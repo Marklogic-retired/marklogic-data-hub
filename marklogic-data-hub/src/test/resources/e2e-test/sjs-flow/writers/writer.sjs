@@ -8,6 +8,12 @@
  * @return - nothing
  */
 function write(id, envelope, options) {
+  xdmp.documentInsert("/options-test.json", {
+    collector: options.collectorTest,
+    content: options.contentTest,
+    headers: options.headersTest,
+    triples: options.triplesTest
+  });
   xdmp.documentInsert(id, envelope, xdmp.defaultPermissions(), options.flow);
 }
 

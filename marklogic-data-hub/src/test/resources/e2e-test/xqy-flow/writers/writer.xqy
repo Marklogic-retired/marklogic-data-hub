@@ -18,5 +18,12 @@ declare function plugin:write(
   $envelope as node(),
   $options as map:map) as empty-sequence()
 {
+  xdmp:document-insert("/options-test.xml",
+    <doc>
+      <collector>{map:get($options, "collectorTest")}</collector>
+      <content>{map:get($options, "contentTest")}</content>
+      <headers>{map:get($options, "headersTest")}</headers>
+      <triples>{map:get($options, "triplesTest")}</triples>
+    </doc>),
   xdmp:document-insert($id, $envelope, xdmp:default-permissions(), map:get($options, "flow"))
 };
