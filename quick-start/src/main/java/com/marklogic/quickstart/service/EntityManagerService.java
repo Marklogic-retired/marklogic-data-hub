@@ -50,6 +50,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -70,6 +72,9 @@ public class EntityManagerService {
     @Autowired
     private FlowManagerService flowManagerService;
 
+    @Autowired
+    private FileSystemWatcherService watcherService;
+
     private EnvironmentConfig envConfig() {
         ConnectionAuthenticationToken authenticationToken = (ConnectionAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
         return authenticationToken.getEnvironmentConfig();
@@ -86,7 +91,9 @@ public class EntityManagerService {
         for (String entityName : entityNames) {
             File[] entityDefs = entitiesPath.resolve(entityName).toFile().listFiles((dir, name) -> name.endsWith(ENTITY_FILE_EXTENSION));
             for (File entityDef : entityDefs) {
-                JsonNode node = objectMapper.readTree(entityDef);
+                FileInputStream fileInputStream = new FileInputStream(entityDef);
+                JsonNode node = objectMapper.readTree(fileInputStream);
+                fileInputStream.close();
                 EntityModel entityModel = EntityModel.fromJson(entityDef.getAbsolutePath(), node);
                 if (entityModel != null) {
                     HubUIData data = hubUiData.get(entityModel.getInfo().getTitle());
@@ -118,7 +125,8 @@ public class EntityManagerService {
             filename = Paths.get(dir.toString(), title + ENTITY_FILE_EXTENSION).toString();
         }
 
-        objectMapper.writerWithDefaultPrettyPrinter().writeValue(new File(filename), node);
+        String json = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(node);
+        FileUtils.writeStringToFile(new File(filename), json);
 
         return entity;
     }
@@ -126,6 +134,7 @@ public class EntityManagerService {
     public void deleteEntity(String entity) throws IOException {
         Path dir = Paths.get(envConfig().getProjectDir(), PLUGINS_DIR, ENTITIES_DIR, entity);
         if (dir.toFile().exists()) {
+            watcherService.unwatch(dir.getParent().toString());
             FileUtils.deleteDirectory(dir.toFile());
         }
     }
@@ -138,7 +147,9 @@ public class EntityManagerService {
         for (String entityName : entityNames) {
             File[] entityDefs = entitiesPath.resolve(entityName).toFile().listFiles((dir, name) -> name.endsWith(ENTITY_FILE_EXTENSION));
             for (File entityDef : entityDefs) {
-                entities.add(objectMapper.readTree(entityDef));
+                FileInputStream fileInputStream = new FileInputStream(entityDef);
+                entities.add(objectMapper.readTree(fileInputStream));
+                fileInputStream.close();
             }
         }
         return entities;
@@ -170,15 +181,18 @@ public class EntityManagerService {
 
         SearchOptionsGenerator generator = new SearchOptionsGenerator(environmentConfig.getStagingClient());
         try {
-            String options = generator.generateOptions(getRawEntities(environmentConfig));
-            Path dir = Paths.get(environmentConfig.getProjectDir(), HubConfig.ENTITY_CONFIG_DIR);
-            if (!dir.toFile().exists()) {
-                dir.toFile().mkdirs();
-            }
+            List<JsonNode> entities = getRawEntities(environmentConfig);
+            if (entities.size() > 0) {
+                String options = generator.generateOptions(entities);
+                Path dir = Paths.get(environmentConfig.getProjectDir(), HubConfig.ENTITY_CONFIG_DIR);
+                if (!dir.toFile().exists()) {
+                    dir.toFile().mkdirs();
+                }
 
-            File file = Paths.get(dir.toString(), HubConfig.ENTITY_SEARCH_OPTIONS_FILE).toFile();
-            FileUtils.writeStringToFile(file, options);
-            modulesLoader.installQueryOptions(file);
+                File file = Paths.get(dir.toString(), HubConfig.ENTITY_SEARCH_OPTIONS_FILE).toFile();
+                FileUtils.writeStringToFile(file, options);
+                modulesLoader.installQueryOptions(file);
+            }
         }
         catch(IOException e) {
             e.printStackTrace();
@@ -228,7 +242,10 @@ public class EntityManagerService {
         });
 
         ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.writerWithDefaultPrettyPrinter().writeValue(file, uiData);
+        FileOutputStream fileOutputStream = new FileOutputStream(file);
+        objectMapper.writerWithDefaultPrettyPrinter().writeValue(fileOutputStream, uiData);
+        fileOutputStream.flush();
+        fileOutputStream.close();
     }
 
     public void saveEntityUiData(EntityModel entity) throws IOException {
@@ -252,7 +269,10 @@ public class EntityManagerService {
         uiData.set(entity.getInfo().getTitle(), node);
 
         ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.writerWithDefaultPrettyPrinter().writeValue(file, uiData);
+        FileOutputStream fileOutputStream = new FileOutputStream(file);
+        objectMapper.writerWithDefaultPrettyPrinter().writeValue(fileOutputStream, uiData);
+        fileOutputStream.flush();
+        fileOutputStream.close();
     }
 
     public EntityModel getEntity(String entityName) throws IOException {

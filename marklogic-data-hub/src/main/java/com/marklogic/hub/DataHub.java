@@ -55,6 +55,7 @@ import org.springframework.util.FileCopyUtils;
 import org.springframework.web.client.ResourceAccessException;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
@@ -448,7 +449,10 @@ public class DataHub {
                                 JsonNode xored = JsonXor.xor(hubFile, file.toFile());
                                 if (xored.size() > 0) {
                                     ObjectMapper objectMapper = new ObjectMapper();
-                                    objectMapper.writerWithDefaultPrettyPrinter().writeValue(file.toFile(), xored);
+                                    FileOutputStream fileOutputStream = new FileOutputStream(file.toFile());
+                                    objectMapper.writerWithDefaultPrettyPrinter().writeValue(fileOutputStream, xored);
+                                    fileOutputStream.flush();
+                                    fileOutputStream.close();
                                 }
                                 else {
                                     FileUtils.forceDelete(file.toFile());
