@@ -143,6 +143,6 @@ public class FlowManagerService {
 
     public void runMlcp(Flow flow, JsonNode json, FlowStatusListener statusListener) {
         MlcpRunner runner = new MlcpRunner(envConfig().getMlSettings(), flow, json, statusListener);
-        runner.run();
+        runner.start();
     }
 }
