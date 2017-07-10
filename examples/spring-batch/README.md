@@ -7,10 +7,10 @@ Learning [Spring Batch](http://docs.spring.io/spring-batch/reference/html/spring
 Now you want to use Spring Batch to load a bunch of data into MarkLogic. Maybe that data is coming from a message queue. Maybe it's a bunch of files in a folder. It can be anything really. 
 
 ## What's the Big Idea?
-The idea is pretty simple. You read the data, do a little processing (maybe), and then write it into MarkLogic. But to properly integrate with the Data Hub Framework you will want to run your data through an [input flow](https://github.com/marklogic/marklogic-data-hub/wiki/The-MarkLogic-Data-Hub-Overview#ingest).
+The idea is pretty simple. You read the data, do a little processing (maybe), and then write it into MarkLogic. But to properly integrate with the Data Hub Framework you will want to run your data through an [input flow](https://github.com/marklogic-community/marklogic-data-hub/wiki/The-MarkLogic-Data-Hub-Overview#ingest).
 
 ## How does it work?
-This example includes a sample Spring Boot Configuration [LoadAndRunFlow.java](https://github.com/marklogic/marklogic-data-hub/blob/develop/examples/spring-batch/src/main/java/example/LoadAndRunFlow.java) that configures a job to ingest some xml files and run a flow.
+This example includes a sample Spring Boot Configuration [LoadAndRunFlow.java](https://github.com/marklogic-community/marklogic-data-hub/blob/develop/examples/spring-batch/src/main/java/example/LoadAndRunFlow.java) that configures a job to ingest some xml files and run a flow.
 
 This example depends on a runtime class **com.marklogic.spring.batch.hub.HubJobRunner** that is responsible for reading command line parameters and connects to the Data Hub by reading your gradle project files.
 
@@ -62,6 +62,6 @@ Then drop in your custom Java Config class in src/main/java/.....
 
 Next you simply Compile your code with `gradle installDist`.
 
-Then you can run take a look at the [run.sh script](https://github.com/marklogic/marklogic-data-hub/blob/develop/examples/spring-batch/run.sh) to see how to run your custom config.
+Then you can run take a look at the [run.sh script](https://github.com/marklogic-community/marklogic-data-hub/blob/develop/examples/spring-batch/run.sh) to see how to run your custom config.
 
-Note that this is not the only way to run it. It's merely the easiest. Java Ninjas can directly call the main() function of the [HubJobRunner class](https://github.com/marklogic/marklogic-data-hub/blob/develop/marklogic-data-hub/src/main/java/com/marklogic/spring/batch/hub/HubJobRunner.java). Or you can make your own class to start up Spring Batch by reading the HubJobRunner code and doing something similar.
+Note that this is not the only way to run it. It's merely the easiest. Java Ninjas can directly call the main() function of the [HubJobRunner class](https://github.com/marklogic-community/marklogic-data-hub/blob/develop/marklogic-data-hub/src/main/java/com/marklogic/spring/batch/hub/HubJobRunner.java). Or you can make your own class to start up Spring Batch by reading the HubJobRunner code and doing something similar.
