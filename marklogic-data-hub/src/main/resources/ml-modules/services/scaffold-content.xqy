@@ -194,7 +194,7 @@ document {
 module namespace plugin = "http://marklogic.com/data-hub/plugins";
 
 import module namespace es = "http://marklogic.com/entity-services"
-  at "/Marklogic/entity-services/entity-services.xqy";
+  at "/MarkLogic/entity-services/entity-services.xqy";
 
 declare option xdmp:mapping "false";
 
