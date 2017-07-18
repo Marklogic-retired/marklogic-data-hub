@@ -337,7 +337,9 @@ export class EntitiesComponent implements OnInit, OnDestroy {
   }
 
   runHarmonizeFlow(flow: Flow, options: any): void {
-    this.entitiesService.runHarmonizeFlow(flow, options.batchSize, options.threadCount);
+    //Pass collectionName
+    //this.entitiesService.runHarmonizeFlow(flow, options.batchSize, options.threadCount);
+    this.entitiesService.runHarmonizeFlow(flow, options.batchSize, options.threadCount, options.collectionName);
     this.snackbar.showSnackbar({
       message: flow.entityName + ': ' + flow.flowName + ' starting...',
     });

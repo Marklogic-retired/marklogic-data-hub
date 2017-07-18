@@ -103,6 +103,9 @@ class EntitiesController extends EnvironmentAware {
 
         int batchSize = json.get("batchSize").asInt();
         int threadCount = json.get("threadCount").asInt();
+	
+	//Get Collection Name from request body
+	String collectionName = (json.get("collectionName")==null)?"":json.get("collectionName").asText();
 
         ResponseEntity<?> resp;
 
@@ -111,7 +114,9 @@ class EntitiesController extends EnvironmentAware {
             resp = new ResponseEntity<>(HttpStatus.CONFLICT);
         }
         else {
-            flowManagerService.runFlow(flow, batchSize, threadCount, (jobId, percentComplete, message) -> {
+            // Pass collectionName to harmonize flow
+	    // flowManagerService.runFlow(flow, batchSize, threadCount, (jobId, percentComplete, message) -> {
+	       flowManagerService.runFlow(flow, batchSize, threadCount, collectionName, (jobId, percentComplete, message) -> {
                 template.convertAndSend("/topic/flow-status", new JobStatusMessage(jobId, percentComplete, message, FlowType.HARMONIZE.toString()));
             });
             resp = new ResponseEntity<>(HttpStatus.OK);

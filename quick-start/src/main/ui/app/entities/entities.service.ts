@@ -69,9 +69,13 @@ export class EntitiesService {
     return this.http.post(url, mlcpOptions).subscribe(() => {});
   }
 
-  runHarmonizeFlow(flow: Flow, batchSize: number, threadCount: number) {
+  //Add collectionName to input params
+  //runHarmonizeFlow(flow: Flow, batchSize: number, threadCount: number) {
+  runHarmonizeFlow(flow: Flow, batchSize: number, threadCount: number, collectionName: string) {
     const url = this.url(`/entities/${flow.entityName}/flows/harmonize/${flow.flowName}/run`);
-    return this.http.post(url, { batchSize: batchSize, threadCount: threadCount }).subscribe(() => {});
+    //Pass collectionName
+    //return this.http.post(url, { batchSize: batchSize, threadCount: threadCount }).subscribe(() => {});
+    return this.http.post(url, { batchSize: batchSize, threadCount: threadCount, collectionName: collectionName }).subscribe(() => {});
   }
 
   public extractData = (res: Response) => {

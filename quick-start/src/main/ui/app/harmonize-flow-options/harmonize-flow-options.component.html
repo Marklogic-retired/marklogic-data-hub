@@ -18,6 +18,14 @@
           name="threadCount"
           [(ngModel)]="settings.threadCount"></mdl-textfield>
       </div>
+      <!-- Collection Name Option -->
+      <div class="setting">
+        <mdl-textfield floating-label type="text"
+          label="Collection Name"
+          name="collectionName"
+          [(ngModel)]="settings.collectionName"></mdl-textfield>
+      </div>
+      <!-- Collection Name Option -->
     </div>
     <div class="mdl-dialog__actions">
       <mdl-button mdl-button-type="raised" mdl-colored="primary" mdl-ripple (click)="runHarmonize()">Run Harmonize</mdl-button>

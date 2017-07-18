@@ -38,6 +38,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.HashMap;
 
 @Service
 public class FlowManagerService {
@@ -102,13 +103,20 @@ public class FlowManagerService {
         return flowManager.getFlow(entityName, flowName, flowType);
     }
 
-    public JobTicket runFlow(Flow flow, int batchSize, int threadCount, FlowStatusListener statusListener) {
+    //public JobTicket runFlow(Flow flow, int batchSize, int threadCount, FlowStatusListener statusListener) {
+      public JobTicket runFlow(Flow flow, int batchSize, int threadCount, String collectionName, FlowStatusListener statusListener) {
 
         FlowManager flowManager = getFlowManager();
+        
+        //Create Options HashMap
+        HashMap<String, Object> opts = new HashMap<String,Object>();
+        opts.put("collectionName",collectionName);
+
         FlowRunner flowRunner = flowManager.newFlowRunner()
             .withFlow(flow)
             .withBatchSize(batchSize)
             .withThreadCount(threadCount)
+	    .withOptions(opts)
             .onStatusChanged(statusListener);
         return flowRunner.run();
     }

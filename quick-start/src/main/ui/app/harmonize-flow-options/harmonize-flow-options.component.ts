@@ -23,7 +23,8 @@ export class HarmonizeFlowOptionsComponent implements OnInit {
 
   settings: any = {
     batchSize: 100,
-    threadCount: 4
+    threadCount: 4,
+    collectionName: ''
   };
 
   constructor() {}
