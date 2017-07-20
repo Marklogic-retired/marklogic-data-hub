@@ -260,6 +260,7 @@ declare function plugin:extract-instance-{$entity-type-name}(
         "map:put($model, '$attachments', $attachments),&#10;    "
       else ()
     }map:put($model, '$type', '{ $entity-type-name }'),
+    map:put($model, '$version', '{ map:get($model, "info") => map:get("version") }'),
     {
     fn:string-join(
       (: Begin code generation block :)
@@ -291,6 +292,7 @@ declare function plugin:extract-instance-{$entity-type-name}(
       "    =>map:with('$attachments', $attachments)&#10;  "
     else ()
   }    =>map:with('$type', '{ $entity-type-name }')
+      =>map:with('$version', '{ map:get($model, "info") => map:get("version") }')
     {
     fn:string-join(
       (: Begin code generation block :)
@@ -505,6 +507,7 @@ function {service:camel-case("extractInstance-" || $entity-type-name)}(source) {
       else
         ()
     }'$type': '{ $entity-type-name }',
+    '$version': '{ map:get($model, "info") => map:get("version") }',
     {
     fn:string-join(
       (: Begin code generation block :)

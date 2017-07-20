@@ -574,7 +574,12 @@ declare function flow:make-envelope(
         map:put($o, "triples", $triples),
         map:put($o, "instance",
           if ($content instance of map:map and map:keys($content) = "$type") then
-            flow:instance-to-canonical-json($content)
+            let $info := json:object()
+              => map:with("title", map:get($content, "$type"))
+              => map:with("version", map:get($content, "$version"))
+            return
+              flow:instance-to-canonical-json($content)
+                => map:with("info", $info)
           else
             $content
         ),
@@ -602,8 +607,13 @@ declare function flow:make-envelope(
         {
           let $content := map:get($map, "content")
           return
-            if ($content instance of map:map and map:keys($content) = "$type") then
+            if ($content instance of map:map and map:keys($content) = "$type") then (
+              <info>
+                <title>{map:get($content, "$type")}</title>
+                <version>{map:get($content, "$version")}</version>
+              </info>,
               flow:instance-to-canonical-xml($content)
+            )
             else
               $content
         }
