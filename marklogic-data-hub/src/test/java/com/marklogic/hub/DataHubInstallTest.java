@@ -28,7 +28,7 @@ public class DataHubInstallTest extends HubTestBase {
         if (installInfo.isInstalled()) {
             uninstallHub();
         }
-        installHub("\nmlModulePermissions=rest-admin,read,rest-admin,update");
+        installHub();
     }
 
     @Test
@@ -63,11 +63,16 @@ public class DataHubInstallTest extends HubTestBase {
                 "    \"/MarkLogic/security.xqy\";\n" +
                 "let $perms := xdmp:document-get-permissions('/entities/test-entity/harmonize/final/collector/collector.xqy')\n" +
                 "return\n" +
-                "  fn:string-join(xdmp:invoke-function(function() {\n" +
-                "    sec:get-role-names($perms/sec:role-id) ! fn:string()\n" +
-                "  }, map:entry(\"database\", xdmp:security-database())), \",\")");
+                "  fn:string-join(" +
+                "    for $x in xdmp:invoke-function(function() {\n" +
+                "      sec:get-role-names($perms/sec:role-id) ! fn:string()\n" +
+                "    }," +
+                "    map:entry(\"database\", xdmp:security-database())" +
+                "    )" +
+                "    order by $x ascending" +
+                "    return $x, \",\")");
         EvalResult res = resultItr.next();
-        assertEquals("rest-admin", res.getString());
+        assertEquals("data-hub-role,rest-admin", res.getString());
         assertEquals(
                 getResource("data-hub-test/plugins/entities/test-entity/harmonize/final/content/content.xqy"),
                 getModulesFile("/entities/test-entity/harmonize/final/content/content.xqy"));
