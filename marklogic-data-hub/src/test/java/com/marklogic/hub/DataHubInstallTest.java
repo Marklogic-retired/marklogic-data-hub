@@ -28,7 +28,8 @@ public class DataHubInstallTest extends HubTestBase {
         if (installInfo.isInstalled()) {
             uninstallHub();
         }
-        installHub("\nmlModulePermissions=rest-admin,read,rest-admin,update");
+        installHub();
+
     }
 
     @Test
@@ -67,7 +68,7 @@ public class DataHubInstallTest extends HubTestBase {
                 "    sec:get-role-names($perms/sec:role-id) ! fn:string()\n" +
                 "  }, map:entry(\"database\", xdmp:security-database())), \",\")");
         EvalResult res = resultItr.next();
-        assertEquals("rest-admin", res.getString());
+        assertEquals("data-hub-role,rest-admin", res.getString());
         assertEquals(
                 getResource("data-hub-test/plugins/entities/test-entity/harmonize/final/content/content.xqy"),
                 getModulesFile("/entities/test-entity/harmonize/final/content/content.xqy"));
