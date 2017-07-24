@@ -25,6 +25,6 @@ import java.util.Vector;
 public interface Collector {
 
     PluginType getType();
-    Vector<String> run(Map<String, Object> options);
+    DiskQueue<String> run(String jobId, int threadCount, Map<String, Object> options);
     void serialize(XMLStreamWriter serializer) throws XMLStreamException;
 }

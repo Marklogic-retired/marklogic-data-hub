@@ -14,6 +14,8 @@ declare option xdmp:mapping "false";
 declare function plugin:collect(
   $options as map:map) as xs:string*
 {
-  cts:uris((), (), cts:collection-query(map:get($options, "flow")))
+  let $_ := map:put($options, "collectortTest", "collector")
+  return
+    cts:uris((), (), cts:collection-query(map:get($options, "flow")))
 };
 

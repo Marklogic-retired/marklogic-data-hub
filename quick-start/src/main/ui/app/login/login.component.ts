@@ -254,6 +254,8 @@ export class LoginComponent implements OnInit {
 
       if (installInfo && installInfo.installed) {
         if (this.currentEnvironment.runningVersion !== '0.1.2' &&
+            this.currentEnvironment.runningVersion !== '%%mlHubVersion%%' &&
+            this.currentEnvironment.installedVersion !== '%%mlHubVersion%%' &&
             SemVer.gt(this.currentEnvironment.runningVersion, this.currentEnvironment.installedVersion)) {
           this.gotoTab('RequiresUpdate');
         } else {
@@ -333,7 +335,7 @@ export class LoginComponent implements OnInit {
   hubUpdateUrl() {
     if (this.currentEnvironment && this.currentEnvironment.runningVersion) {
       const versionString = this.currentEnvironment.runningVersion.replace(/\./g, '');
-      return `https://github.com/marklogic/marklogic-data-hub/wiki/Updating-to-a-New-Hub-Version#${versionString}`;
+      return `https://github.com/marklogic-community/marklogic-data-hub/wiki/Updating-to-a-New-Hub-Version#${versionString}`;
     }
     return '';
   }

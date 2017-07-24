@@ -90,14 +90,13 @@ public abstract class AbstractFlow implements Flow {
 
     public static AbstractFlow loadFromFile(File file) {
         AbstractFlow entity = null;
+        FileInputStream is = null;
         try {
-            FileInputStream is = new FileInputStream(file);
+            is = new FileInputStream(file);
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             factory.setNamespaceAware(true);
-            DocumentBuilder builder = null;
-            builder = factory.newDocumentBuilder();
+            DocumentBuilder builder = factory.newDocumentBuilder();
             Document doc = builder.parse(is);
-            is.close();
             entity = new SimpleFlow(doc.getDocumentElement());
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -107,6 +106,15 @@ public abstract class AbstractFlow implements Flow {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
+        }
+        finally {
+            if (is != null) {
+                try {
+                    is.close();
+                }
+                catch(IOException e) {}
+            }
+
         }
         return entity;
     }

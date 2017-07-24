@@ -8,6 +8,7 @@
  * @return - an object of headers
  */
 function createHeaders(id, content, options) {
+  options.headersTest = 'headers';
   return {
     "a": 1,
     "b": 2

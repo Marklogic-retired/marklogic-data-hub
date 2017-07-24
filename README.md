@@ -1,15 +1,18 @@
 _The MarkLogic Data Hub Framework is a data integration framework and tool-set to quickly and efficiently integrate data from many sources into a single MarkLogic database, and expose that data._
 
-_The Data Hub Framework is free and open source under the [Apache 2 License](https://github.com/marklogic/marklogic-data-hub/blob/1.0-master/LICENSE) and is supported by the community of developers who build and contribute to it. Please note that this open source project and its code and functionality is not representative of MarkLogic Server and is not supported by MarkLogic._
+_The Data Hub Framework is free and open source under the [Apache 2 License](https://github.com/marklogic-community/marklogic-data-hub/blob/1.0-master/LICENSE) and is supported by the community of developers who build and contribute to it. Please note that this open source project and its code and functionality is not representative of MarkLogic Server and is not supported by MarkLogic._
 
 | OS | Status |
 | --- | --- |
-| Linux/Mac | [![Build Status](https://travis-ci.org/marklogic/marklogic-data-hub.svg?branch=2.0-develop)](https://travis-ci.org/marklogic/marklogic-data-hub) |
-| Windows | [![Windows Build status](https://ci.appveyor.com/api/projects/status/kgj0k5na59uhkvbv?svg=true)](https://ci.appveyor.com/project/paxtonhare/marklogic-data-hub) |
+| Linux/Mac | [![Build Status](https://travis-ci.org/marklogic-community/marklogic-data-hub.svg?branch=2.0-develop)](https://travis-ci.org/marklogic-community/marklogic-data-hub) |
+| Windows | [![Windows Build status](https://ci.appveyor.com/api/projects/status/kgj0k5na59uhkvbv/branch/2.0-develop?svg=true)](https://ci.appveyor.com/project/paxtonhare/marklogic-data-hub) |
+
+### Warning
+_This is the the 2.0 branch of The MarkLogic Data Hub Framework. The 2.0 version is only compatible with MarkLogic 9.0._
+
+_If you are looking for the 1.0 branch ( MarkLogic 8 compatible ) go [here](https://github.com/marklogic-community/marklogic-data-hub/tree/1.0-develop)._
 
 # MarkLogic Data Hub
-
-## WARNING!!!! This is the the 2.0 branch of The MarkLogic Data Hub Framework. The 2.0 version is only compatible with MarkLogic 9.0 which is currently in Early Access and not generally available.
 
 Go from nothing to Operational Data Hub in a matter of minutes.  
 
@@ -33,7 +36,7 @@ Or watch the [MarkLogic University - Data Hub Framework On Demand Video Courses]
 
 ### The Easiest Way
 
-To use the Data Hub Framework you should download the quickstart.war file from the [releases page](https://github.com/marklogic/marklogic-data-hub/releases).
+To use the Data Hub Framework you should download the quickstart.war file from the [releases page](https://github.com/marklogic-community/marklogic-data-hub/releases).
 
 Then Run the war like so:
 
@@ -48,7 +51,7 @@ Alternatively you can include the jar file as a build dependency in your Java pr
 **Gradle**
 
 ```groovy
-compile('com.marklogic:marklogic-data-hub:2.0.0-beta.1')
+compile('com.marklogic:marklogic-data-hub:2.0.0-rc.1')
 ```
 
 **Maven**
@@ -57,7 +60,7 @@ compile('com.marklogic:marklogic-data-hub:2.0.0-beta.1')
 <dependency>
   <groupId>com.marklogic</groupId>
   <artifactId>marklogic-data-hub</artifactId>
-  <version>2.0.0-beta.1</version>
+  <version>2.0.0-rc.1</version>
   <type>pom</type>
 </dependency>
 ```
@@ -65,7 +68,7 @@ compile('com.marklogic:marklogic-data-hub:2.0.0-beta.1')
 **Ivy**
 
 ```xml
-<dependency org='com.marklogic' name='marklogic-data-hub' rev='2.0.0-beta.1'>
+<dependency org='com.marklogic' name='marklogic-data-hub' rev='2.0.0-rc.1'>
   <artifact name='$AID' ext='pom'></artifact>
 </dependency>
 ```
@@ -76,7 +79,7 @@ If you prefer to use gradle for all of your hub interactions then you can includ
 
 ```groovy
 plugins {
-    id 'com.marklogic.ml-data-hub' version '2.0.0-beta.1'
+    id 'com.marklogic.ml-data-hub' version '2.0.0-rc.1'
 }
 ```
 
@@ -90,4 +93,4 @@ Now you have full access to the Data Hub tasks. To see all available tasks run:
 
 Feeling intrepid? Want to contrubute to the Data Hub Framework? Perhaps you just want to poke the code?
 
-Look at our [CONTRIBUTING.md](https://github.com/marklogic/marklogic-data-hub/blob/2.0-master/CONTRIBUTING.md#building-the-framework-from-source) file for details on building from source.
+Look at our [CONTRIBUTING.md](https://github.com/marklogic-community/marklogic-data-hub/blob/2.0-master/CONTRIBUTING.md#building-the-framework-from-source) file for details on building from source.

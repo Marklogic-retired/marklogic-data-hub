@@ -17,6 +17,7 @@ package com.marklogic.hub;
 
 import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.appdeployer.ConfigDir;
+import com.marklogic.appdeployer.DefaultAppConfigFactory;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
 import com.marklogic.client.helper.DatabaseClientConfig;
@@ -24,6 +25,7 @@ import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.ManageConfig;
 import com.marklogic.mgmt.admin.AdminConfig;
 import com.marklogic.mgmt.admin.AdminManager;
+import com.marklogic.mgmt.util.PropertySource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -140,9 +142,13 @@ public class HubConfig {
 
     public String customForestPath = DEFAULT_CUSTOM_FOREST_PATH;
 
+    public String modulePermissions = "rest-admin,read,rest-admin,update,rest-extension-user,execute";
+
     public String projectDir;
 
     private Properties environmentProperties;
+
+    private String environment;
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -162,6 +168,7 @@ public class HubConfig {
      */
     public static HubConfig hubFromEnvironment(String projectDir, String environment) {
         HubConfig config = new HubConfig(projectDir);
+        config.environment = environment;
         config.loadConfigurationFromProperties(config.getProperties(environment));
         return config;
     }
@@ -222,6 +229,7 @@ public class HubConfig {
 
             modulesDbName = getEnvPropString(environmentProperties, "mlModulesDbName", modulesDbName);
             modulesForestsPerHost = getEnvPropInteger(environmentProperties, "mlModulesForestsPerHost", modulesForestsPerHost);
+            modulePermissions = getEnvPropString(environmentProperties, "mlModulePermissions", modulePermissions);
 
             triggersDbName = getEnvPropString(environmentProperties, "mlTriggersDbName", triggersDbName);
             triggersForestsPerHost = getEnvPropInteger(environmentProperties, "mlTriggersForestsPerHost", triggersForestsPerHost);
@@ -537,8 +545,8 @@ public class HubConfig {
     }
 
     public AppConfig getAppConfig() {
-        AppConfig config = new AppConfig();
-
+        Properties properties = getProperties(this.environment);
+        AppConfig config = new DefaultAppConfigFactory(name -> properties.getProperty(name)).newAppConfig();
         updateAppConfig(config);
         return config;
     }
@@ -610,6 +618,7 @@ public class HubConfig {
 
         config.setReplaceTokensInModules(true);
         config.setUseRoxyTokenPrefix(false);
+        config.setModulePermissions(modulePermissions);
 
         HashMap<String, Integer> forestCounts = new HashMap<>();
         forestCounts.put(stagingDbName, stagingForestsPerHost);

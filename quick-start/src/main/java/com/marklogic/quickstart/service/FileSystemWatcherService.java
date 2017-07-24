@@ -108,7 +108,8 @@ public class FileSystemWatcherService extends EnvironmentAware implements Dispos
         while(it.hasNext()) {
             Map.Entry<WatchKey, Path> entry = it.next();
             WatchKey key = entry.getKey();
-            if (key.equals(dir)) {
+            Path watchPath = entry.getValue();
+            if (watchPath.equals(dir)) {
                 logger.info("unregister: {}", dir);
                 key.cancel();
                 it.remove();

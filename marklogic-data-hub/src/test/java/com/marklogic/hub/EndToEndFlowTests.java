@@ -95,66 +95,79 @@ public class EndToEndFlowTests extends HubTestBase {
         Path harmonizeDir = projectDir.resolve("plugins/entities/" + ENTITY + "/harmonize");
         FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/collector/collector.sjs"), harmonizeDir.resolve("sjs-json/collector/collector.sjs").toFile());
         FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/headers/headers.sjs"), harmonizeDir.resolve("sjs-json/headers/headers.sjs").toFile());
+        FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/content/content.sjs"), harmonizeDir.resolve("sjs-json/content/content.sjs").toFile());
         FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/triples/triples.sjs"), harmonizeDir.resolve("sjs-json/triples/triples.sjs").toFile());
         FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/writers/writer.sjs"), harmonizeDir.resolve("sjs-json/writer/writer.sjs").toFile());
 
         FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/collector/collector.sjs"), harmonizeDir.resolve("sjs-json-no-wait/collector/collector.sjs").toFile());
         FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/headers/headers.sjs"), harmonizeDir.resolve("sjs-json-no-wait/headers/headers.sjs").toFile());
+        FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/content/content.sjs"), harmonizeDir.resolve("sjs-json-no-wait/content/content.sjs").toFile());
         FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/triples/triples.sjs"), harmonizeDir.resolve("sjs-json-no-wait/triples/triples.sjs").toFile());
         FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/writers/writer.sjs"), harmonizeDir.resolve("sjs-json-no-wait/writer/writer.sjs").toFile());
 
         FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/collector/collector.sjs"), harmonizeDir.resolve("sjs-json-errors/collector/collector.sjs").toFile());
         FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/headers/headers-with-error.sjs"), harmonizeDir.resolve("sjs-json-errors/headers/headers.sjs").toFile());
+        FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/content/content.sjs"), harmonizeDir.resolve("sjs-json-errors/content/content.sjs").toFile());
         FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/triples/triples.sjs"), harmonizeDir.resolve("sjs-json-errors/triples/triples.sjs").toFile());
         FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/writers/writer.sjs"), harmonizeDir.resolve("sjs-json-errors/writer/writer.sjs").toFile());
 
         FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/collector/collector.sjs"), harmonizeDir.resolve("sjs-xml/collector/collector.sjs").toFile());
         FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/headers/headers.sjs"), harmonizeDir.resolve("sjs-xml/headers/headers.sjs").toFile());
+        FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/content/content.sjs"), harmonizeDir.resolve("sjs-xml/content/content.sjs").toFile());
         FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/triples/triples.sjs"), harmonizeDir.resolve("sjs-xml/triples/triples.sjs").toFile());
         FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/writers/writer.sjs"), harmonizeDir.resolve("sjs-xml/writer/writer.sjs").toFile());
 
         FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/collector/collector.sjs"), harmonizeDir.resolve("sjs-xml-no-wait/collector/collector.sjs").toFile());
         FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/headers/headers.sjs"), harmonizeDir.resolve("sjs-xml-no-wait/headers/headers.sjs").toFile());
+        FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/content/content.sjs"), harmonizeDir.resolve("sjs-xml-no-wait/content/content.sjs").toFile());
         FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/triples/triples.sjs"), harmonizeDir.resolve("sjs-xml-no-wait/triples/triples.sjs").toFile());
         FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/writers/writer.sjs"), harmonizeDir.resolve("sjs-xml-no-wait/writer/writer.sjs").toFile());
 
         FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/collector/collector.sjs"), harmonizeDir.resolve("sjs-xml-errors/collector/collector.sjs").toFile());
         FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/headers/headers-with-error.sjs"), harmonizeDir.resolve("sjs-xml-errors/headers/headers.sjs").toFile());
+        FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/content/content.sjs"), harmonizeDir.resolve("sjs-xml-errors/content/content.sjs").toFile());
         FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/triples/triples.sjs"), harmonizeDir.resolve("sjs-xml-errors/triples/triples.sjs").toFile());
         FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/writers/writer.sjs"), harmonizeDir.resolve("sjs-xml-errors/writer/writer.sjs").toFile());
 
         FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/collector/collector.xqy"), harmonizeDir.resolve("xqy-json/collector/collector.xqy").toFile());
         FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/headers/headers-json.xqy"), harmonizeDir.resolve("xqy-json/headers/headers.xqy").toFile());
+        FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/content/content.xqy"), harmonizeDir.resolve("xqy-json/content/content.xqy").toFile());
         FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/triples/triples.xqy"), harmonizeDir.resolve("xqy-json/triples/triples.xqy").toFile());
         FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/writers/writer.xqy"), harmonizeDir.resolve("xqy-json/writer/writer.xqy").toFile());
 
         FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/collector/collector.xqy"), harmonizeDir.resolve("xqy-json-no-wait/collector/collector.xqy").toFile());
         FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/headers/headers-json.xqy"), harmonizeDir.resolve("xqy-json-no-wait/headers/headers.xqy").toFile());
+        FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/content/content.xqy"), harmonizeDir.resolve("xqy-json-no-wait/content/content.xqy").toFile());
         FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/triples/triples.xqy"), harmonizeDir.resolve("xqy-json-no-wait/triples/triples.xqy").toFile());
         FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/writers/writer.xqy"), harmonizeDir.resolve("xqy-json-no-wait/writer/writer.xqy").toFile());
 
         FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/collector/collector.xqy"), harmonizeDir.resolve("xqy-json-errors/collector/collector.xqy").toFile());
         FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/headers/headers-json-with-error.xqy"), harmonizeDir.resolve("xqy-json-errors/headers/headers.xqy").toFile());
+        FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/content/content.xqy"), harmonizeDir.resolve("xqy-json-errors/content/content.xqy").toFile());
         FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/triples/triples.xqy"), harmonizeDir.resolve("xqy-json-errors/triples/triples.xqy").toFile());
         FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/writers/writer.xqy"), harmonizeDir.resolve("xqy-json-errors/writer/writer.xqy").toFile());
 
         FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/collector/collector.xqy"), harmonizeDir.resolve("xqy-json-triples-array/collector/collector.xqy").toFile());
         FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/headers/headers-json.xqy"), harmonizeDir.resolve("xqy-json-triples-array/headers/headers.xqy").toFile());
+        FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/content/content.xqy"), harmonizeDir.resolve("xqy-json-triples-array/content/content.xqy").toFile());
         FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/triples/triples-json-array.xqy"), harmonizeDir.resolve("xqy-json-triples-array/triples/triples.xqy").toFile());
         FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/writers/writer.xqy"), harmonizeDir.resolve("xqy-json-triples-array/writer/writer.xqy").toFile());
 
         FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/collector/collector.xqy"), harmonizeDir.resolve("xqy-xml/collector/collector.xqy").toFile());
         FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/headers/headers-xml.xqy"), harmonizeDir.resolve("xqy-xml/headers/headers.xqy").toFile());
+        FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/content/content.xqy"), harmonizeDir.resolve("xqy-xml/content/content.xqy").toFile());
         FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/triples/triples.xqy"), harmonizeDir.resolve("xqy-xml/triples/triples.xqy").toFile());
         FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/writers/writer.xqy"), harmonizeDir.resolve("xqy-xml/writer/writer.xqy").toFile());
 
         FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/collector/collector.xqy"), harmonizeDir.resolve("xqy-xml-no-wait/collector/collector.xqy").toFile());
         FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/headers/headers-xml.xqy"), harmonizeDir.resolve("xqy-xml-no-wait/headers/headers.xqy").toFile());
+        FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/content/content.xqy"), harmonizeDir.resolve("xqy-xml-no-wait/content/content.xqy").toFile());
         FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/triples/triples.xqy"), harmonizeDir.resolve("xqy-xml-no-wait/triples/triples.xqy").toFile());
         FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/writers/writer.xqy"), harmonizeDir.resolve("xqy-xml-no-wait/writer/writer.xqy").toFile());
 
         FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/collector/collector.xqy"), harmonizeDir.resolve("xqy-xml-errors/collector/collector.xqy").toFile());
         FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/headers/headers-json-with-error.xqy"), harmonizeDir.resolve("xqy-xml-errors/headers/headers.xqy").toFile());
+        FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/content/content.xqy"), harmonizeDir.resolve("xqy-xml-errors/content/content.xqy").toFile());
         FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/triples/triples.xqy"), harmonizeDir.resolve("xqy-xml-errors/triples/triples.xqy").toFile());
         FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/writers/writer.xqy"), harmonizeDir.resolve("xqy-xml-errors/writer/writer.xqy").toFile());
 
@@ -343,6 +356,10 @@ public class EndToEndFlowTests extends HubTestBase {
         Assert.assertEquals(TEST_SIZE / BATCH_SIZE, node.get("successfulBatches").asInt());
         Assert.assertEquals(0, node.get("failedBatches").asInt());
         Assert.assertEquals("FINISHED", node.get("status").asText());
+
+        String optionsExpected = getResource("e2e-test/options-test.json");
+        String optionsActual = finalDocMgr.read("/options-test.json").next().getContent(new StringHandle()).get();
+        JSONAssert.assertEquals(optionsExpected, optionsActual, false);
     }
 
     @Test
@@ -474,6 +491,10 @@ public class EndToEndFlowTests extends HubTestBase {
         Assert.assertEquals(TEST_SIZE / BATCH_SIZE, node.get("successfulBatches").asInt());
         Assert.assertEquals(0, node.get("failedBatches").asInt());
         Assert.assertEquals("FINISHED", node.get("status").asText());
+
+        Document optionsActual = finalDocMgr.read("/options-test.xml").next().getContent(new DOMHandle()).get();
+        Document optionsExpected = getXmlFromResource("e2e-test/options-test.xml");
+        assertXMLEqual(optionsExpected, optionsActual);
     }
 
     @Test

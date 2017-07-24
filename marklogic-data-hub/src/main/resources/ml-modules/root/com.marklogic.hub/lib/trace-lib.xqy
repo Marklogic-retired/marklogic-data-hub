@@ -56,7 +56,9 @@ declare function trace:enable-tracing($enabled as xs:boolean)
     declare variable $enabled external;
     xdmp:document-insert(
       "/com.marklogic.hub/settings/__tracing_enabled__.xml",
-      element trace:is-tracing-enabled { if ($enabled) then 1 else 0 })
+      element trace:is-tracing-enabled { if ($enabled) then 1 else 0 },
+      xdmp:default-permissions(),
+      "hub-core-module")
     ',
     map:new((map:entry("enabled", $enabled))),
     map:new(map:entry("database", xdmp:modules-database()))

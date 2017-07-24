@@ -30,8 +30,8 @@ repositories {
 dependencies {
     compile gradleApi()
     compile project(":marklogic-data-hub")
-    compile 'com.marklogic:marklogic-xcc:9.0.1'
-    compile 'com.marklogic:ml-gradle:2.7.2'
+    compile 'com.marklogic:marklogic-xcc:9.0.2'
+    compile 'com.marklogic:ml-gradle:2.8.0'
 
     testCompile localGroovy()
     testCompile gradleTestKit()
@@ -64,8 +64,8 @@ bintray {
         name = 'ml-data-hub'
         desc = 'A gradle plugin for Data Hub tasks'
         licenses = ['Apache-2.0']
-        websiteUrl = 'https://github.com/marklogic/marklogic-data-hub'
-        issueTrackerUrl = 'https://github.com/marklogic/marklogic-data-hub/issues'
+        websiteUrl = 'https://github.com/marklogic-community/marklogic-data-hub'
+        issueTrackerUrl = 'https://github.com/marklogic-community/marklogic-data-hub/issues'
     }
 }
 

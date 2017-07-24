@@ -1,5 +1,0 @@
-FROM openjdk:8
-VOLUME /code
-ADD ./ /code
-WORKDIR /code
-ENTRYPOINT [ "sh", "-c", "./gradlew check" ]

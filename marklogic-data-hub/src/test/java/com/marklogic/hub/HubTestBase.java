@@ -47,6 +47,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -205,7 +207,7 @@ public class HubTestBase {
     }
 
     protected static HubConfig getHubConfig(String projectDir) {
-        HubConfig hubConfig = new HubConfig(projectDir);
+        HubConfig hubConfig = HubConfig.hubFromEnvironment(projectDir, "local");
         hubConfig.host = host;
         hubConfig.stagingPort = stagingPort;
         hubConfig.finalPort = finalPort;
@@ -217,9 +219,19 @@ public class HubTestBase {
     }
 
     protected static void installHub() throws IOException {
+        installHub(null);
+    }
+
+    protected static void installHub(String properties) throws IOException {
         File projectDir = new File(PROJECT_PATH);
         if (!projectDir.isDirectory() || !projectDir.exists()) {
             getDataHub().initProject();
+        }
+        if (properties != null) {
+            Path gradle_properties = projectDir.toPath().resolve("gradle.properties");
+            String fileContents = FileUtils.readFileToString(gradle_properties.toFile());
+            fileContents += properties;
+            FileUtils.writeStringToFile(gradle_properties.toFile(), fileContents);
         }
 
         if (!isInstalled) {
@@ -400,17 +412,26 @@ public class HubTestBase {
     }
 
     protected static EvalResultIterator runInDatabase(String query, String databaseName) {
-        ServerEvaluationCall eval = stagingClient.newServerEval();
-        String installer =
-            "xdmp:invoke-function(function() {" +
-            query +
-            "}," +
-            "<options xmlns=\"xdmp:eval\">" +
-            "  <database>{xdmp:database(\"" + databaseName + "\")}</database>" +
-            "  <transaction-mode>update-auto-commit</transaction-mode>" +
-            "</options>)";
+        ServerEvaluationCall eval;
+        switch(databaseName) {
+            case HubConfig.DEFAULT_STAGING_NAME:
+                eval = stagingClient.newServerEval();
+                break;
+            case HubConfig.DEFAULT_FINAL_NAME:
+                eval = finalClient.newServerEval();
+                break;
+            case HubConfig.DEFAULT_MODULES_DB_NAME:
+                eval = stagingModulesClient.newServerEval();
+                break;
+            case HubConfig.DEFAULT_TRACE_NAME:
+                eval = traceClient.newServerEval();
+                break;
+            default:
+                eval = stagingClient.newServerEval();
+                break;
+        }
         try {
-            return eval.xquery(installer).eval();
+            return eval.xquery(query).eval();
         }
         catch(FailedRequestException e) {
             logger.error("Failed run code: " + query, e);

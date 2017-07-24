@@ -49,7 +49,7 @@ dependencies {
 
     // Needed for the Upload feature using mlcp
     compile("com.marklogic:mlcp-util:0.3.0")
-    compile("com.marklogic:mlcp:9.0.1") {
+    compile("com.marklogic:mlcp:9.0.2") {
       exclude group: 'org.apache.avro', module: 'avro-tools'
     }
     compile("com.marklogic:marklogic-spring-web:1.0")
