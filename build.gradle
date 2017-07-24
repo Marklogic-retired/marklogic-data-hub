@@ -1,3 +1,11 @@
+allprojects {
+    task resolveAllDependencies {
+        doLast {
+            configurations.all { it.resolve() }
+        }
+    }
+}
+
 subprojects {
     apply plugin: 'java'
 

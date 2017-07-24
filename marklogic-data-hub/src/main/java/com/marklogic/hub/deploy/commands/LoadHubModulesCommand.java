@@ -94,7 +94,7 @@ public class LoadHubModulesCommand extends AbstractCommand {
 
         this.modulesLoader = new DefaultModulesLoader(xccAssetLoader);
         this.threadPoolTaskExecutor = new ThreadPoolTaskExecutor();
-        this.threadPoolTaskExecutor.setCorePoolSize(16);
+        this.threadPoolTaskExecutor.setCorePoolSize(2);
 
         // 10 minutes should be plenty of time to wait for REST API modules to be loaded
         this.threadPoolTaskExecutor.setAwaitTerminationSeconds(60 * 10);

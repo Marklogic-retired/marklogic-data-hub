@@ -6,21 +6,17 @@ import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import spock.lang.Specification
 
 class BaseTest extends Specification {
 
     public static boolean makeProperties = true;
 
-    static final Logger log = LoggerFactory.getLogger(getClass())
     static final TemporaryFolder testProjectDir = new TemporaryFolder()
     static File buildFile
     static File propertiesFile
 
     static BuildResult runTask(String... task) {
-        log.info("DEBUG: running task " + task)
         return GradleRunner.create()
             .withProjectDir(testProjectDir.root)
             .withArguments(task)
@@ -64,7 +60,7 @@ class BaseTest extends Specification {
 
             mlUsername=admin
             mlPassword=admin
-            
+
             mlManageUsername=admin
             mlManagePassword=admin
 

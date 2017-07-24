@@ -29,7 +29,6 @@ public class DataHubInstallTest extends HubTestBase {
             uninstallHub();
         }
         installHub();
-
     }
 
     @Test
@@ -64,9 +63,14 @@ public class DataHubInstallTest extends HubTestBase {
                 "    \"/MarkLogic/security.xqy\";\n" +
                 "let $perms := xdmp:document-get-permissions('/entities/test-entity/harmonize/final/collector/collector.xqy')\n" +
                 "return\n" +
-                "  fn:string-join(xdmp:invoke-function(function() {\n" +
-                "    sec:get-role-names($perms/sec:role-id) ! fn:string()\n" +
-                "  }, map:entry(\"database\", xdmp:security-database())), \",\")");
+                "  fn:string-join(" +
+                "    for $x in xdmp:invoke-function(function() {\n" +
+                "      sec:get-role-names($perms/sec:role-id) ! fn:string()\n" +
+                "    }," +
+                "    map:entry(\"database\", xdmp:security-database())" +
+                "    )" +
+                "    order by $x ascending" +
+                "    return $x, \",\")");
         EvalResult res = resultItr.next();
         assertEquals("data-hub-role,rest-admin", res.getString());
         assertEquals(

@@ -9,6 +9,7 @@ marklogic-data-hub/bin/
 marklogic-data-hub/src/main/resources/ml-modules/root/trace-ui
 quick-start/bin/
 build/
+out/
 releases/
 .classpath
 .project
