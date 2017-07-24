@@ -1,8 +1,51 @@
 # Change Log
 
-## [Unreleased](https://github.com/marklogic-community/marklogic-data-hub/tree/v2.0.0-beta.2)
+## [v2.0.0-rc.1](https://github.com/marklogic-community/marklogic-data-hub/tree/v2.0.0-rc.1) (2017-07-24)
+[Full Changelog](https://github.com/marklogic-community/marklogic-data-hub/compare/v2.0.0-beta.1...v2.0.0-rc.1)
 
-[Full Changelog](https://github.com/marklogic-community/marklogic-data-hub/compare/v1.1.3...v2.0.0-beta.2)
+**Implemented enhancements:**
+
+- Cannot specify default permissions for data-hub-modules db [\#434](https://github.com/marklogic-community/marklogic-data-hub/issues/434)
+
+**Fixed bugs:**
+
+- MlcpRunner is being started improperly [\#452](https://github.com/marklogic-community/marklogic-data-hub/issues/452)
+- Code deploy fails when An entity is deleted [\#451](https://github.com/marklogic-community/marklogic-data-hub/issues/451)
+- error during data hub workshop [\#437](https://github.com/marklogic-community/marklogic-data-hub/issues/437)
+- when scaffolding code for an array, have it be empty list \[\] rather than null [\#432](https://github.com/marklogic-community/marklogic-data-hub/issues/432)
+- gradlew is generated without execute permission [\#428](https://github.com/marklogic-community/marklogic-data-hub/issues/428)
+- RunFlowTask using dyslexic string for hub key [\#419](https://github.com/marklogic-community/marklogic-data-hub/issues/419)
+
+**Closed issues:**
+
+- Upgrade quick-start to mlcp 9.0.2 [\#465](https://github.com/marklogic-community/marklogic-data-hub/issues/465)
+- QuickStart app doesn't work on Internet Explorer 11 [\#463](https://github.com/marklogic-community/marklogic-data-hub/issues/463)
+- Redeploy modules removes trace and debugging settings [\#460](https://github.com/marklogic-community/marklogic-data-hub/issues/460)
+- Quickstart Application not working on Internet Explorer [\#456](https://github.com/marklogic-community/marklogic-data-hub/issues/456)
+- Envelope instance created does not include "info" [\#455](https://github.com/marklogic-community/marklogic-data-hub/issues/455)
+- Error when creating a harmonize flow based on entity definition [\#454](https://github.com/marklogic-community/marklogic-data-hub/issues/454)
+- tutorial link is 404: https://marklogic.github.io/marklogic-data-hub/ [\#449](https://github.com/marklogic-community/marklogic-data-hub/issues/449)
+- Changes to $options not persisting if set in headers or triples in Harmonization flow [\#448](https://github.com/marklogic-community/marklogic-data-hub/issues/448)
+- Input flow job \(load-acme-tech\) failing on 2.0.0-beta.1 [\#446](https://github.com/marklogic-community/marklogic-data-hub/issues/446)
+- Fix AppVeyor CI [\#445](https://github.com/marklogic-community/marklogic-data-hub/issues/445)
+- consider using windows compatible line breaks [\#444](https://github.com/marklogic-community/marklogic-data-hub/issues/444)
+- RFE: support setting log level [\#442](https://github.com/marklogic-community/marklogic-data-hub/issues/442)
+- Setting replica forest data path [\#441](https://github.com/marklogic-community/marklogic-data-hub/issues/441)
+- Replica forests not created from quick-start [\#439](https://github.com/marklogic-community/marklogic-data-hub/issues/439)
+- Error in documentation for the REST transform [\#433](https://github.com/marklogic-community/marklogic-data-hub/issues/433)
+- Harmonization hits maximum document size in collector output [\#427](https://github.com/marklogic-community/marklogic-data-hub/issues/427)
+- Create a checklist for making DHF releases [\#424](https://github.com/marklogic-community/marklogic-data-hub/issues/424)
+- Expose the ability to set the writer plugin's target database in gradle [\#423](https://github.com/marklogic-community/marklogic-data-hub/issues/423)
+- Document all gradle hub tasks [\#402](https://github.com/marklogic-community/marklogic-data-hub/issues/402)
+- Document query-only mode for plugins [\#368](https://github.com/marklogic-community/marklogic-data-hub/issues/368)
+- Generated code template from Entity for nested item hides vars \(v2/Entities\) [\#353](https://github.com/marklogic-community/marklogic-data-hub/issues/353)
+- Control what runs in update mode to minimize locking [\#300](https://github.com/marklogic-community/marklogic-data-hub/issues/300)
+- Library Modules not being autodeployed [\#299](https://github.com/marklogic-community/marklogic-data-hub/issues/299)
+- Uninstall doesn't always finish on the UI [\#266](https://github.com/marklogic-community/marklogic-data-hub/issues/266)
+- Consider name and description for data hub framework and tooling [\#175](https://github.com/marklogic-community/marklogic-data-hub/issues/175)
+
+## [v2.0.0-beta.1](https://github.com/marklogic-community/marklogic-data-hub/tree/v2.0.0-beta.1) (2017-05-31)
+[Full Changelog](https://github.com/marklogic-community/marklogic-data-hub/compare/v1.1.3...v2.0.0-beta.1)
 
 **Implemented enhancements:**
 
