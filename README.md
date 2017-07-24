@@ -4,13 +4,13 @@ _The Data Hub Framework is free and open source under the [Apache 2 License](htt
 
 | OS | Status |
 | --- | --- |
-| Linux/Mac | [![Build Status](https://travis-ci.org/marklogic-community/marklogic-data-hub.svg?branch=2.0-develop)](https://travis-ci.org/marklogic-community/marklogic-data-hub) |
-| Windows | [![Windows Build status](https://ci.appveyor.com/api/projects/status/kgj0k5na59uhkvbv/branch/2.0-develop?svg=true)](https://ci.appveyor.com/project/paxtonhare/marklogic-data-hub) |
+| Linux/Mac | [![Build Status](https://travis-ci.org/marklogic-community/marklogic-data-hub.svg?branch=2.0-master)](https://travis-ci.org/marklogic-community/marklogic-data-hub) |
+| Windows | [![Windows Build status](https://ci.appveyor.com/api/projects/status/kgj0k5na59uhkvbv/branch/2.0-master?svg=true)](https://ci.appveyor.com/project/paxtonhare/marklogic-data-hub) |
 
 ### Warning
 _This is the the 2.0 branch of The MarkLogic Data Hub Framework. The 2.0 version is only compatible with MarkLogic 9.0._
 
-_If you are looking for the 1.0 branch ( MarkLogic 8 compatible ) go [here](https://github.com/marklogic-community/marklogic-data-hub/tree/1.0-develop)._
+_If you are looking for the 1.0 branch ( MarkLogic 8 compatible ) go [here](https://github.com/marklogic-community/marklogic-data-hub/tree/1.0-master)._
 
 # MarkLogic Data Hub
 
