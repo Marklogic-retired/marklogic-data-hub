@@ -29,6 +29,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -93,6 +95,20 @@ class MlcpRunner extends Thread {
                 .setCounts(successfulEvents.get(), failedEvents.get(), 0, 0)
                 .withEndTime(new Date());
             jobManager.saveJob(job);
+
+	    //Create MLCP .done file
+            try
+            {
+                String sDoneFilename = mlcpOptions.get("output_collections").asText();
+                sDoneFilename = sDoneFilename.substring(sDoneFilename.lastIndexOf(',') + 1).replaceAll("\"","");
+                if(!sDoneFilename.equals(""))
+                {
+                    sDoneFilename = mlcpOptions.get("input_file_path").asText() + File.separator + sDoneFilename + ".done";
+                    Files.write(Paths.get(sDoneFilename),(""+System.currentTimeMillis()).getBytes());
+                }
+            }
+            catch(Exception e){logger.debug(e.getMessage());}
+
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
