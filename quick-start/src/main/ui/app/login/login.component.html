@@ -251,7 +251,7 @@
       <div id="InstallerTab" class="tab-content" [hidden]="!tabs.Installer" *ngIf="currentEnvironment">
         <div layout="column" layout-align="center center">
           <div [hidden]="uninstalling || installing || currentEnvironment.installInfo.installed" layout="column" layout-align="center center">
-            <div *ngIf="!currentEnvironment.installInfo.partiallyInstalled">
+            <div style="width: 100%" *ngIf="!currentEnvironment.installInfo.partiallyInstalled">
               <h3>Installation Needed</h3>
               <p>In order to continue you must install the Data Hub Framework into
               MarkLogic server.

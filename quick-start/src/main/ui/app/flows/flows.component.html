@@ -90,6 +90,7 @@
             <mdl-tab-panel-title>
               <i class="fa fa-code" aria-hidden="true"></i>
               <span>{{ plugin.pluginType }}</span>
+              <i class="fa fa-bug" *ngIf="pluginHasError(flow, plugin.pluginType)"></i>
               <i class="fa fa-asterisk" title="Unsaved Changes" *ngIf="plugin.$dirty && plugin.hasShown"></i>
             </mdl-tab-panel-title>
             <mdl-tab-panel-content>
