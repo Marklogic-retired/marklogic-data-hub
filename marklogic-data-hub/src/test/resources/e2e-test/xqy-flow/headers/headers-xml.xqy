@@ -20,6 +20,8 @@ declare function plugin:create-headers(
   $content as node()?,
   $options as map:map) as node()*
 {
+  let $_ := map:put($options, "headersTest", "headers")
+  return
   (
     <a>1</a>,
     <b>2</b>

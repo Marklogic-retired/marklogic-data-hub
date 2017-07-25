@@ -1,4 +1,12 @@
-import { Component, HostBinding, ViewContainerRef, EventEmitter } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  HostBinding,
+  Input,
+  OnChanges,
+  Output,
+  ViewContainerRef
+} from '@angular/core';
 
 import { MdlSnackbarService } from '@angular-mdl/core';
 
@@ -17,18 +25,16 @@ interface MlcpOptions {
   templateUrl: './mlcp-ui.component.html',
   styleUrls: ['./mlcp-ui.component.scss']
 })
-export class MlcpUiComponent {
-  @HostBinding('style.display') display: string = 'none';
-
-  inputFilePath: string = '.';
+export class MlcpUiComponent implements OnChanges {
+  startPath: string = '.';
+  inputFilePath: string;
   mlcp = <MlcpOptions>{};
 
-  flow: Flow;
+  @Input() flow: Flow;
+  @Input() mlcpOptions: any;
+  @Output() onRun: EventEmitter<MlcpOptions> = new EventEmitter();
 
   finishedEvent: EventEmitter<any>;
-
-  startX: number = 0;
-  startY: number = 0;
 
   _isVisible: boolean = false;
 
@@ -65,21 +71,22 @@ export class MlcpUiComponent {
   ) {
   }
 
-  show(mlcpOptions: any, flow: Flow, $event: MouseEvent): EventEmitter<boolean> {
+  ngOnChanges(changes: any) {
+    if (changes.mlcpOptions && changes.mlcpOptions.currentValue) {
+      this.show(changes.mlcpOptions.currentValue, this.flow);
+    }
+  }
+
+  show(mlcpOptions: any, flow: Flow): EventEmitter<boolean> {
     this.finishedEvent = new EventEmitter<boolean>(true);
 
     this.flow = flow;
 
-    this.inputFilePath = mlcpOptions.input_file_path || '.';
+    this.inputFilePath = this.startPath = mlcpOptions.input_file_path || '.';
     this.groups = this.getGroups(flow.entityName, flow.flowName, flow.dataFormat, mlcpOptions);
 
     this.updateMlcpCommand();
 
-    if ($event && $event.clientX >= 0 && $event.clientY >= 0) {
-      this.startX = $event.clientX;
-      this.startY = $event.clientY;
-    }
-    this.display = 'block';
     this._isVisible = true;
     return this.finishedEvent;
   }
@@ -516,18 +523,21 @@ export class MlcpUiComponent {
   }
 
   folderClicked(folder: string): void {
-    this.inputFilePath = folder;
+    if (!this.inputFilePath) {
+      this.inputFilePath = folder;
+    } else if (this.inputFilePath !== folder) {
+      this.inputFilePath = folder;
+      // update the outputUriReplace options
+      let generalGroup = _.find(this.groups, (group: any) => {
+        return group.category === 'General Options';
+      });
+      let outputUriReplace = _.find(generalGroup.settings, (setting: any) => {
+        return setting.field === 'output_uri_replace';
+      });
+      outputUriReplace.value = this.outputUriReplaceValue();
 
-    // update the outputUriReplace options
-    let generalGroup = _.find(this.groups, (group: any) => {
-      return group.category === 'General Options';
-    });
-    let outputUriReplace = _.find(generalGroup.settings, (setting: any) => {
-      return setting.field === 'output_uri_replace';
-    });
-    outputUriReplace.value = this.outputUriReplaceValue();
-
-    this.updateMlcpCommand();
+      this.updateMlcpCommand();
+    }
   }
 
   cmdCopied(): void {
@@ -537,17 +547,11 @@ export class MlcpUiComponent {
   }
 
   hide(): void {
-    this.display = 'none';
     this._isVisible = false;
   }
 
   isVisible(): boolean {
     return this._isVisible;
-  }
-
-  cancel(): void {
-    this.hide();
-    this.finishedEvent.error(false);
   }
 
   saveOptions(): void {
@@ -559,7 +563,6 @@ export class MlcpUiComponent {
   }
 
   runImport(): void {
-    this.hide();
-    this.finishedEvent.emit(this.mlcp);
+    this.onRun.emit(this.mlcp);
   }
 }

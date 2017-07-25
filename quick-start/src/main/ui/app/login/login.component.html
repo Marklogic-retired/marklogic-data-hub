@@ -197,7 +197,7 @@
                 <mdl-textfield label="MarkLogic Password" name="password" type="password" [(ngModel)]="loginInfo.password" required="required" floating-label></mdl-textfield>
                 <div layout="row" layout-align="end center" class="init-buttons">
                   <button mdl-button type="button" (click)="back()">&lt; Back</button>
-                  <button mdl-button mdl-button-type="raised" type="submit" [disabled]="loggingIn">Login</button>
+                  <button mdl-button mdl-button-type="raised" type="submit" [disabled]="loggingIn || !loginInfo.username">Login</button>
                 </div>
               </div>
             </form>
@@ -251,7 +251,7 @@
       <div id="InstallerTab" class="tab-content" [hidden]="!tabs.Installer" *ngIf="currentEnvironment">
         <div layout="column" layout-align="center center">
           <div [hidden]="uninstalling || installing || currentEnvironment.installInfo.installed" layout="column" layout-align="center center">
-            <div *ngIf="!currentEnvironment.installInfo.partiallyInstalled">
+            <div style="width: 100%" *ngIf="!currentEnvironment.installInfo.partiallyInstalled">
               <h3>Installation Needed</h3>
               <p>In order to continue you must install the Data Hub Framework into
               MarkLogic server.

@@ -22,6 +22,8 @@ declare function plugin:create-triples(
   $headers as node()*,
   $options as map:map) as sem:triple*
 {
+  let $_ := map:put($options, "triplesTest", "triples")
+  return
   (
     sem:triple("a", "b", "c"),
     sem:triple("x", "y", "z")

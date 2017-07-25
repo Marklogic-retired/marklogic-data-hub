@@ -15,24 +15,16 @@ public class ApplicationRunListener implements SpringApplicationRunListener {
     public ApplicationRunListener(SpringApplication application, String[] args) { }
 
     @Override
-    public void starting() {
-        System.out.println("Starting up the QuickStart UI...");
-    }
+    public void starting() {}
 
     @Override
-    public void environmentPrepared(ConfigurableEnvironment environment) {
-
-    }
+    public void environmentPrepared(ConfigurableEnvironment environment) {}
 
     @Override
-    public void contextPrepared(ConfigurableApplicationContext context) {
-
-    }
+    public void contextPrepared(ConfigurableApplicationContext context) {}
 
     @Override
-    public void contextLoaded(ConfigurableApplicationContext context) {
-
-    }
+    public void contextLoaded(ConfigurableApplicationContext context) {}
 
     @Override
     public void finished(ConfigurableApplicationContext context, Throwable exception) {

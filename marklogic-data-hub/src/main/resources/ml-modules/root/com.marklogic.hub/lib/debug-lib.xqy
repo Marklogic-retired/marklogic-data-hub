@@ -30,7 +30,9 @@ declare function debug:enable($enabled as xs:boolean)
 
     xdmp:document-insert(
       "/com.marklogic.hub/settings/__debug_enabled__.xml",
-      element debug:is-debugging-enabled { if ($enabled) then 1 else 0 })
+      element debug:is-debugging-enabled { if ($enabled) then 1 else 0 },
+      xdmp:default-permissions(),
+      "hub-core-module")
     ',
     map:new((map:entry("enabled", $enabled))),
     map:new(map:entry("database", xdmp:modules-database()))

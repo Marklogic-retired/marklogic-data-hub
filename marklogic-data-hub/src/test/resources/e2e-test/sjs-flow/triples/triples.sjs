@@ -9,6 +9,7 @@
  * @return - an array of triples
  */
 function createTriples(id, content, headers, options) {
+  options.triplesTest = 'triples';
   return [
     sem.triple("a", "b", "c"),
     sem.triple("x", "y", "z"),

@@ -108,7 +108,8 @@ public class FileSystemWatcherService extends EnvironmentAware implements Dispos
         while(it.hasNext()) {
             Map.Entry<WatchKey, Path> entry = it.next();
             WatchKey key = entry.getKey();
-            if (key.equals(dir)) {
+            Path watchPath = entry.getValue();
+            if (watchPath.equals(dir)) {
                 logger.info("unregister: {}", dir);
                 key.cancel();
                 it.remove();
@@ -194,24 +195,25 @@ public class FileSystemWatcherService extends EnvironmentAware implements Dispos
 
                 for (WatchEvent<?> event: key.pollEvents()) {
                     Kind<?> kind = event.kind();
-                    if (kind == StandardWatchEventKinds.OVERFLOW) {
-                        continue;
-                    }
+//                    if (kind == StandardWatchEventKinds.OVERFLOW) {
+//                        continue;
+//                    }
 
-                    // Context for directory entry event is the file name of entry
-                    @SuppressWarnings("unchecked")
-                    WatchEvent<Path> ev = (WatchEvent<Path>)event;
-                    Path context = ev.context();
-                    Path child = dir.resolve(context);
-
-                    // print out event
-                    logger.debug("Event received: {} for: {}", event.kind().name(), child);
                     queueReload();
 
                     // if directory is created, then register it and its sub-directories
                     // we are always listening recursively
                     if (kind == StandardWatchEventKinds.ENTRY_CREATE) {
+                        // Context for directory entry event is the file name of entry
+                        @SuppressWarnings("unchecked")
+                        WatchEvent<Path> ev = (WatchEvent<Path>)event;
+                        Path context = ev.context();
+                        Path child = dir.resolve(context);
+
                         try {
+                            // print out event
+                            logger.debug("Event received: {} for: {}", event.kind().name(), child);
+
                             if (Files.isDirectory(child, LinkOption.NOFOLLOW_LINKS)) {
                                 registerAll(child);
                             }

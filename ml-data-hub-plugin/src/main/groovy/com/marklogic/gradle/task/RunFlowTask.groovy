@@ -5,6 +5,7 @@ import com.marklogic.gradle.exception.FlowNameRequiredException
 import com.marklogic.gradle.exception.FlowNotFoundException
 import com.marklogic.gradle.exception.HubNotInstalledException
 import com.marklogic.hub.FlowManager
+import com.marklogic.hub.HubDatabase
 import com.marklogic.hub.flow.Flow
 import com.marklogic.hub.flow.FlowRunner
 import com.marklogic.hub.flow.FlowType
@@ -27,6 +28,12 @@ class RunFlowTask extends HubTask {
 
     @Input
     public Integer threadCount
+
+    @Input
+    public HubDatabase sourceDB
+
+    @Input
+    public HubDatabase destDB
 
     @Input
     public Boolean showOptions
@@ -57,6 +64,14 @@ class RunFlowTask extends HubTask {
             threadCount = project.hasProperty("threadCount") ?
                 Integer.parseInt(project.property("threadCount")) : 4
         }
+        if (sourceDB == null) {
+            sourceDB = project.hasProperty("sourceDB") ?
+                HubDatabase.getHubDatabase(project.property("sourceDB")) : HubDatabase.STAGING
+        }
+        if (destDB == null) {
+            destDB = project.hasProperty("destDB") ?
+                HubDatabase.getHubDatabase(project.property("destDB")) : HubDatabase.FINAL
+        }
         if (showOptions == null) {
             showOptions = project.hasProperty("showOptions") ?
                 Boolean.parseBoolean(project.property("showOptions")) : false
@@ -66,7 +81,6 @@ class RunFlowTask extends HubTask {
             throw new HubNotInstalledException()
         }
 
-
         FlowManager fm = getFlowManager()
         Flow flow = fm.getFlow(entityName, flowName, flowType)
         if (flow == null) {
@@ -75,16 +89,20 @@ class RunFlowTask extends HubTask {
 
         Map<String, Object> options = new HashMap<>()
         project.ext.properties.each { key, value ->
-            if (key.toString().startsWith("dfh.")) {
+            if (key.toString().startsWith("dhf.")) {
                 options.put(key, value)
             }
         }
-        println("Running Flow: [" + entityName + ":" + flowName + "] with batch size: " + batchSize)
+        println("Running Flow: [" + entityName + ":" + flowName + "]" +
+            "\n\twith batch size: " + batchSize +
+            "\n\twith thread count: " + threadCount +
+            "\n\twith Source DB: " + sourceDB.toString() +
+            "\n\twith Destination DB: " + destDB.toString())
 
         if (showOptions) {
-            println("   and options:")
+            println("\tand options:")
             options.each { key, value ->
-                println("      " + key + " = " + value)
+                println("\t\t" + key + " = " + value)
             }
         }
 
@@ -93,6 +111,8 @@ class RunFlowTask extends HubTask {
             .withOptions(options)
             .withBatchSize(batchSize)
             .withThreadCount(threadCount)
+            .withSourceDatabase(sourceDB)
+            .withDestinationDatabase(destDB)
         flowRunner.run()
         flowRunner.awaitCompletion()
     }

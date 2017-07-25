@@ -8,7 +8,7 @@
  * @return - nothing
  */
 function write(id, envelope, options) {
-  xdmp.documentInsert(id, envelope);
+  xdmp.documentInsert(id, envelope, xdmp.defaultPermissions(), options.entity);
 }
 
 module.exports = {

@@ -14,7 +14,7 @@ class InstalledTests extends BaseTest {
     def setupSpec() {
         runTask('hubInit')
         runTask('mlUndeploy')
-        runTask('mlDeploy')
+        println(runTask('mlDeploy', '-i').getOutput())
     }
 
     def cleanupSpec() {

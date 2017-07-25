@@ -3,10 +3,12 @@ package com.marklogic.hub.job;
 
 public enum JobStatus {
     STARTED("started"),
-    RUNNING("running"),
+    RUNNING_COLLECTOR("running-collector"),
+    RUNNING_HARMONIZE("running-harmonize"),
     FINISHED("finished"),
     FINISHED_WITH_ERRORS("finished-with-errors"),
-    FAILED("failed");
+    FAILED("failed"),
+    CANCELED("canceled");
 
     private String type;
     JobStatus(String type) {

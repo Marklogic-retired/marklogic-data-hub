@@ -46,7 +46,7 @@ public class LoadUserModulesCommand extends AbstractCommand {
     private DefaultModulesLoader getStagingModulesLoader(AppConfig config) {
         XccAssetLoader assetLoader = config.newXccAssetLoader();
         assetLoader.setFileFilter(new HubFileFilter());
-
+        assetLoader.setPermissions(config.getModulePermissions());
         DefaultModulesLoader modulesLoader = new DefaultModulesLoader(assetLoader);
         modulesLoader.setModulesManager(getModulesManager());
         return modulesLoader;

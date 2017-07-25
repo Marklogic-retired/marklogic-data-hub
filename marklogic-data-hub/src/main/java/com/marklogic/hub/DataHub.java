@@ -22,8 +22,6 @@ import com.marklogic.appdeployer.command.Command;
 import com.marklogic.appdeployer.command.CommandMapBuilder;
 import com.marklogic.appdeployer.command.appservers.DeployOtherServersCommand;
 import com.marklogic.appdeployer.command.forests.DeployCustomForestsCommand;
-import com.marklogic.appdeployer.command.security.DeployRolesCommand;
-import com.marklogic.appdeployer.command.security.DeployUsersCommand;
 import com.marklogic.appdeployer.impl.SimpleAppDeployer;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.FailedRequestException;
@@ -32,6 +30,7 @@ import com.marklogic.client.eval.ServerEvaluationCall;
 import com.marklogic.client.extensions.ResourceManager;
 import com.marklogic.client.extensions.ResourceServices.ServiceResult;
 import com.marklogic.client.extensions.ResourceServices.ServiceResultIterator;
+import com.marklogic.client.io.Format;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.util.RequestParameters;
@@ -56,6 +55,7 @@ import org.springframework.util.FileCopyUtils;
 import org.springframework.web.client.ResourceAccessException;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
@@ -294,7 +294,14 @@ public class DataHub {
         logger.debug("validating user modules");
 
         EntitiesValidator ev = new EntitiesValidator(hubConfig.newStagingClient());
-        return ev.validate();
+        return ev.validateAll();
+    }
+
+    public JsonNode validateUserModule(String entity, String flow, String plugin, String type, String content) {
+        logger.debug("validating user module");
+
+        EntitiesValidator ev = new EntitiesValidator(hubConfig.newStagingClient());
+        return ev.validate(entity, flow, plugin, type, content);
     }
 
     public List<Command> getCommandList() {
@@ -442,7 +449,10 @@ public class DataHub {
                                 JsonNode xored = JsonXor.xor(hubFile, file.toFile());
                                 if (xored.size() > 0) {
                                     ObjectMapper objectMapper = new ObjectMapper();
-                                    objectMapper.writerWithDefaultPrettyPrinter().writeValue(file.toFile(), xored);
+                                    FileOutputStream fileOutputStream = new FileOutputStream(file.toFile());
+                                    objectMapper.writerWithDefaultPrettyPrinter().writeValue(fileOutputStream, xored);
+                                    fileOutputStream.flush();
+                                    fileOutputStream.close();
                                 }
                                 else {
                                     FileUtils.forceDelete(file.toFile());
@@ -538,8 +548,24 @@ public class DataHub {
             client.init(NAME, this);
         }
 
-        JsonNode validate() {
+        JsonNode validateAll() {
             ServiceResultIterator resultItr = this.getServices().get(new RequestParameters());
+            if (resultItr == null || ! resultItr.hasNext()) {
+                return null;
+            }
+            ServiceResult res = resultItr.next();
+            return res.getContent(new JacksonHandle()).get();
+        }
+
+        JsonNode validate(String entity, String flow, String plugin, String type, String content) {
+            RequestParameters params = new RequestParameters();
+            params.add("entity", entity);
+            params.add("flow", flow);
+            params.add("plugin", plugin);
+            params.add("type", type);
+            StringHandle handle = new StringHandle(content);
+            handle.setFormat(Format.TEXT);
+            ServiceResultIterator resultItr = this.getServices().post(params, handle );
             if (resultItr == null || ! resultItr.hasNext()) {
                 return null;
             }

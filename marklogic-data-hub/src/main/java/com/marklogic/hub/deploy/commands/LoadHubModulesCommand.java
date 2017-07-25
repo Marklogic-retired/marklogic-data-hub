@@ -44,8 +44,6 @@ public class LoadHubModulesCommand extends AbstractCommand {
     private DocumentFormatGetter documentFormatGetter = new DefaultDocumentFormatGetter();
     private PermissionsParser permissionsParser = new CommaDelimitedPermissionsParser();
 
-    private String permissions = "rest-admin,read,rest-admin,update,rest-extension-user,execute";
-
     private JarExtensionMetadataProvider extensionMetadataProvider;
 
     private HubConfig hubConfig;
@@ -68,7 +66,7 @@ public class LoadHubModulesCommand extends AbstractCommand {
     private Content prepContent(String uri, InputStream inputStream, AppConfig config) throws IOException {
         ContentCreateOptions options = new ContentCreateOptions();
         options.setFormat(documentFormatGetter.getDocumentFormat(new File(uri)));
-        options.setPermissions(permissionsParser.parsePermissions(this.permissions));
+        options.setPermissions(permissionsParser.parsePermissions(config.getModulePermissions()));
         options.setCollections(new String[]{"hub-core-module"});
 
         if (logger.isInfoEnabled()) {
@@ -96,7 +94,7 @@ public class LoadHubModulesCommand extends AbstractCommand {
 
         this.modulesLoader = new DefaultModulesLoader(xccAssetLoader);
         this.threadPoolTaskExecutor = new ThreadPoolTaskExecutor();
-        this.threadPoolTaskExecutor.setCorePoolSize(16);
+        this.threadPoolTaskExecutor.setCorePoolSize(2);
 
         // 10 minutes should be plenty of time to wait for REST API modules to be loaded
         this.threadPoolTaskExecutor.setAwaitTerminationSeconds(60 * 10);

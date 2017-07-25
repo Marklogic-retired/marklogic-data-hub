@@ -1,4 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 
 import { ProjectService } from '../projects';
 
@@ -25,8 +26,16 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   constructor(
     private projectService: ProjectService,
-    private dialogService: MdlDialogService
-  ) {}
+    private dialogService: MdlDialogService,
+    private router: Router
+  ) {
+    this.router.events.subscribe((val:any) => {
+      // see also
+      if (val.url !== '/' && this.statsInterval) {
+        this.stopStats();
+      }
+    });
+  }
 
   getStatus() {
     this.ngOnDestroy();
@@ -47,6 +56,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    this.stopStats();
+  }
+
+  stopStats() {
     if (this.statsInterval) {
       clearInterval(this.statsInterval);
       delete this.statsInterval;

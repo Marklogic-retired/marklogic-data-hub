@@ -80,9 +80,15 @@ public class FlowManagerService {
                 List<String> pluginFiles = FileUtil.listDirectFiles(pluginPath.toString());
                 PluginModel pm = new PluginModel();
                 pm.pluginType = pluginName;
+                pm.pluginPath = pluginPath.toString();
                 for (String pluginFile : pluginFiles) {
-                    pm.files.add(pluginFile);
+                    try {
+                        pm.files.put( pluginFile, new String(Files.readAllBytes(Paths.get(pluginPath.toString() + File.separator + pluginFile))));
+                    } catch (IOException e) {
+                        pm.files.put(pluginFile, null);
+                    }
                 }
+
                 flow.plugins.add(pm);
             }
             flows.add(flow);
@@ -137,6 +143,6 @@ public class FlowManagerService {
 
     public void runMlcp(Flow flow, JsonNode json, FlowStatusListener statusListener) {
         MlcpRunner runner = new MlcpRunner(envConfig().getMlSettings(), flow, json, statusListener);
-        runner.run();
+        runner.start();
     }
 }

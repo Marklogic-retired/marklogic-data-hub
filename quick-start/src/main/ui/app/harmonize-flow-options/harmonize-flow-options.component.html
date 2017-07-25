@@ -1,28 +1,26 @@
-<div [ngClass]="{'visible' : _isVisible }" class="content">
-  <div *ngIf="flow">
-    <h3>Run Harmonize Flow - {{flow.entityName}} : {{flow.flowName}}</h3>
-    <div>
-      <div class="group-container">
-        <h3>Concurrency Options</h3>
-        <div class="group-section slideDown" flex layout="column">
-          <div class="setting">
-            <mdl-textfield floating-label type="number"
-              label="Batch Size"
-              name="batchSize"
-              [(ngModel)]="settings.batchSize"></mdl-textfield>
-          </div>
-          <div class="setting">
-            <mdl-textfield floating-label type="number"
-              label="Thread Count"
-              name="threadCount"
-              [(ngModel)]="settings.threadCount"></mdl-textfield>
-          </div>
-        </div>
+<ng-template [ngIf]="flow">
+  <h3>
+    <i class="mdi mdi-looks"></i>
+    {{flow.entityName}} : {{flow.flowName}}
+  </h3>
+  <div class="run-options">
+    <h3>Run Flow</h3>
+    <div class="group-section slideDown" flex layout="column">
+      <div class="setting">
+        <mdl-textfield floating-label type="number"
+          label="Batch Size"
+          name="batchSize"
+          [(ngModel)]="settings.batchSize"></mdl-textfield>
+      </div>
+      <div class="setting">
+        <mdl-textfield floating-label type="number"
+          label="Thread Count"
+          name="threadCount"
+          [(ngModel)]="settings.threadCount"></mdl-textfield>
       </div>
     </div>
-    <div class="mdl-dialog__actions">
+    <div>
       <mdl-button mdl-button-type="raised" mdl-colored="primary" mdl-ripple (click)="runHarmonize()">Run Harmonize</mdl-button>
-      <mdl-button mdl-button-type="raised" mdl-ripple (click)="cancel()">Cancel</mdl-button>
     </div>
   </div>
-</div>
+</ng-template>

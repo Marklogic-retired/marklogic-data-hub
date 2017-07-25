@@ -56,7 +56,9 @@ declare function trace:enable-tracing($enabled as xs:boolean)
     declare variable $enabled external;
     xdmp:document-insert(
       "/com.marklogic.hub/settings/__tracing_enabled__.xml",
-      element trace:is-tracing-enabled { if ($enabled) then 1 else 0 })
+      element trace:is-tracing-enabled { if ($enabled) then 1 else 0 },
+      xdmp:default-permissions(),
+      "hub-core-module")
     ',
     map:new((map:entry("enabled", $enabled))),
     map:new(map:entry("database", xdmp:modules-database()))
@@ -281,7 +283,7 @@ declare function trace:error-trace(
   $duration as xs:dayTimeDuration)
 {
   let $_ := trace:increment-error-count()
-  let $_ := trace:add-failed-item($identifier)
+  let $_ := $identifier ! trace:add-failed-item(.)
   let $format :=
     let $o :=
       if ($input instance of document-node()) then

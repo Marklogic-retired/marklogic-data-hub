@@ -5,7 +5,7 @@ _The Data Hub Framework is free and open source under the [Apache 2 License](htt
 | OS | Status |
 | --- | --- |
 | Linux/Mac | [![Build Status](https://travis-ci.org/marklogic-community/marklogic-data-hub.svg?branch=1.0-master)](https://travis-ci.org/marklogic-community/marklogic-data-hub) |
-| Windows | [![Windows Build status](https://ci.appveyor.com/api/projects/status/kgj0k5na59uhkvbv?svg=true)](https://ci.appveyor.com/project/paxtonhare/marklogic-data-hub) |
+| Windows | [![Windows Build status](https://ci.appveyor.com/api/projects/status/kgj0k5na59uhkvbv/branch/1.0-master?svg=true)](https://ci.appveyor.com/project/paxtonhare/marklogic-data-hub) |
 
 # MarkLogic Data Hub
 
@@ -46,7 +46,7 @@ Alternatively you can include the jar file as a build dependency in your Java pr
 **Gradle**
 
 ```groovy
-compile('com.marklogic:marklogic-data-hub:1.1.3')
+compile('com.marklogic:marklogic-data-hub:1.1.4')
 ```
 
 **Maven**
@@ -55,7 +55,7 @@ compile('com.marklogic:marklogic-data-hub:1.1.3')
 <dependency>
   <groupId>com.marklogic</groupId>
   <artifactId>marklogic-data-hub</artifactId>
-  <version>1.1.3</version>
+  <version>1.1.4</version>
   <type>pom</type>
 </dependency>
 ```
@@ -63,7 +63,7 @@ compile('com.marklogic:marklogic-data-hub:1.1.3')
 **Ivy**
 
 ```xml
-<dependency org='com.marklogic' name='marklogic-data-hub' rev='1.1.3'>
+<dependency org='com.marklogic' name='marklogic-data-hub' rev='1.1.4'>
   <artifact name='$AID' ext='pom'></artifact>
 </dependency>
 ```
@@ -74,7 +74,7 @@ If you prefer to use gradle for all of your hub interactions then you can includ
 
 ```groovy
 plugins {
-    id 'com.marklogic.ml-data-hub' version '1.1.3'
+    id 'com.marklogic.ml-data-hub' version '1.1.4'
 }
 ```
 
