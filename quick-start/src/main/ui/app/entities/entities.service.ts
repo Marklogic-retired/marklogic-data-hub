@@ -41,16 +41,16 @@ export class EntitiesService {
 
   savePlugin(entity: Entity, flowType: string, flow: Flow, plugin: Plugin) {
     return this.post(
-        this.url(`/entities/${entity.entityName}/flows/${flowType}/${flow.flowName}/plugin/save`),
-        _.omit(plugin, ['cm'])
-      );
+      this.url(`/entities/${entity.entityName}/flows/${flowType}/${flow.flowName}/plugin/save`),
+      _.omit(plugin, ['cm', 'codemirrorConfig', 'history'])
+    );
   }
 
   validatePlugin(entity: Entity, flowType: string, flow: Flow, plugin: Plugin) {
     return this.post(
-        this.url(`/entities/${entity.entityName}/flows/${flowType}/${flow.flowName}/plugin/validate`),
-        plugin
-      );
+      this.url(`/entities/${entity.entityName}/flows/${flowType}/${flow.flowName}/plugin/validate`),
+      plugin
+    );
   }
 
   getInputFlowOptions(flow: Flow) {
