@@ -1,0 +1,29 @@
+{
+  "info" : {
+    "title" : "Order",
+    "version" : "0.0.1"
+  },
+  "definitions" : {
+    "Order" : {
+      "primaryKey" : "id",
+      "required" : [ ],
+      "rangeIndex" : [ ],
+      "wordLexicon" : [ ],
+      "properties" : {
+        "id" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "price" : {
+          "datatype" : "decimal"
+        },
+        "products" : {
+          "datatype" : "array",
+          "items" : {
+            "$ref" : "#/definitions/Product"
+          }
+        }
+      }
+    }
+  }
+}
