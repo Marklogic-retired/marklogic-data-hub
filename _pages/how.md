@@ -5,11 +5,11 @@ lead_text: ''
 permalink: /how/
 ---
 
-<p style="font-style: italic; font-size:12px;">The MarkLogic Data Hub Framework is free and open source under the <a href="https://github.com/marklogic/marklogic-data-hub/blob/1.0-master/LICENSE">Apache 2 License</a> and is supported by the community of developers who build and contribute to it. Please note that Data Hub Framework is not a supported MarkLogic product.</p>
+<p style="font-style: italic; font-size:12px;">The MarkLogic Data Hub Framework is free and open source under the <a href="https://github.com/marklogic-community/marklogic-data-hub/blob/1.0-master/LICENSE">Apache 2 License</a> and is supported by the community of developers who build and contribute to it. Please note that Data Hub Framework is not a supported MarkLogic product.</p>
 
 The MarkLogic Data Hub Framework is organized into Entities, Flow, and Plugins.
 
-![Hub Internals](//raw.githubusercontent.com/marklogic/marklogic-data-hub/design/images/hub-internals-gray.png)
+![Hub Internals](//raw.githubusercontent.com/marklogic-community/marklogic-data-hub/design/images/hub-internals-gray.png)
 
 ## Envelope Pattern
 The MarkLogic Data Hub Framework uses the Envelope data pattern to encapsulate data. Simply put, the envelope pattern wraps your data in either XML or JSON like so:

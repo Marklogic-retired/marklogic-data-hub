@@ -2,4 +2,4 @@ main:
     - { url: '/marklogic-data-hub/', text: 'Getting Started' }
     - { url: '/marklogic-data-hub/what', text: 'What?' }
     - { url: '/marklogic-data-hub/how', text: 'How?' }
-    - { url: 'https://github.com/marklogic/marklogic-data-hub', text: 'Fork on GitHub' }
+    - { url: 'https://github.com/marklogic-community/marklogic-data-hub', text: 'Fork on GitHub' }

@@ -1,31 +1,36 @@
 ---
 layout: inner
-title: Getting Started Tutorial
+title: Getting Started Tutorial 1.x
 lead_text: ''
-permalink: /
+permalink: /getting-started-1x
 ---
 
-<p style="font-style: italic; font-size:12px;">The MarkLogic Data Hub Framework is free and open source under the <a href="https://github.com/marklogic/marklogic-data-hub/blob/1.0-master/LICENSE">Apache 2 License</a> and is supported by the community of developers who build and contribute to it. Please note that Data Hub Framework is not a supported MarkLogic product.</p>
+<p style="font-style: italic; font-size:12px;">The MarkLogic Data Hub Framework is free and open source under the <a href="https://github.com/marklogic-community/marklogic-data-hub/blob/1.0-master/LICENSE">Apache 2 License</a> and is supported by the community of developers who build and contribute to it. Please note that Data Hub Framework is not a supported MarkLogic product.</p>
+
+__This tutorial is for version 1.x of the Data Hub Framework which was designed to work with MarkLogic 8. If you need to take advantage of MarkLogic 9 features, go to the [2.x Getting Started Tutorial](/marklogic-data-hub/)__
+
+__Be advised that this tutorial was created some time ago and has not yet been updated to reflect the most recent UI screens.__
 
 ## Building an HR Hub
 This tutorial will walk you through setting up a very simple hub for HR data. Your company Global Corp has provided you with CSV dumps of 3 tables. Additionally you are receiving JSON data files from a recently acquired company Acme Tech. You are responsible for loading data from both systems into your data hub to make them accessible to internal systems.
 
 ### In a Hurry?
-The finished version of this tutorial is available for you to download and play with. [Finished HR Hub Example](https://github.com/marklogic/marklogic-data-hub/tree/1.0-master/examples/hr-hub){:target="_blank"}
+The finished version of this tutorial is available for you to download and play with. [Finished HR Hub Example](https://github.com/marklogic-community/marklogic-data-hub/tree/1.0-master/examples/hr-hub){:target="_blank"}
 
 ### QuickStart
-This tutorial uses quickStart, a simple User Interface that you can run locally to start working with the Data Hub quickly. With QuickStart you will have a working hub in a matter of minutes. No need to worry about deployment strategies or configuration details. Simply run the war and point it at your MarkLogic installation.
+This tutorial uses QuickStart, a simple User Interface that you can run locally to start working with the Data Hub quickly. With QuickStart you will have a working hub in a matter of minutes. No need to worry about deployment strategies or configuration details. Simply run the war and point it at your MarkLogic installation.
 
 ## Prerequisites
 
 Before you can run the hub you will need to have some some software installed.
 
-- [Java 8](http://www.oracle.com/technetwork/java/javase/downloads/index.html)
-- [MarkLogic 8.02+](http://developer.marklogic.com/products)
+- [Oracle's Java 8](http://www.oracle.com/technetwork/java/javase/downloads/index.html)
+- [MarkLogic 8.02+](http://developer.marklogic.com/products/marklogic-server/8.0)
+- A Modern Browser. Chrome or FireFox work best. Use IE at your own risk.
 
 ## 1 - Download and Install MarkLogic
 
-Follow the instructions [here](https://docs.marklogic.com/guide/installation){:target="_blank"} for installing MarkLogic.
+Follow the [official instructions](https://docs.marklogic.com/guide/installation){:target="_blank"} for installing MarkLogic.
 
 <iframe width="420" height="315" src="https://www.youtube.com/embed/WaRi9HMtz5Q" frameborder="0" allowfullscreen></iframe>
 
@@ -39,7 +44,7 @@ cd data-hub
 ~~~
 {: .language-bash}
 
-- Download the quick-start-*.war from the [releases page](https://github.com/marklogic/marklogic-data-hub/releases/latest){:target="_blank"} and place it in the folder you just created.
+- Download the quick-start-*.war from the [releases page](https://github.com/marklogic-community/marklogic-data-hub/releases/latest){:target="_blank"} and place it in the folder you just created.
 
 ## 3 - Download the Sample Data
 
@@ -54,7 +59,7 @@ mkdir input
 
 Your directory should look like this:
 
-![Directory Tree]({{site.baseurl}}/images/dir-tree.png)
+![Directory Tree]({{site.baseurl}}/images/1x/dir-tree.png)
 
 ## 4 - Run the QuickStart
 
@@ -68,36 +73,43 @@ java -jar quick-start-*.war
 - Open the QuickStart Application in your browser:
   [http://localhost:8080](http://localhost:8080){:target="_blank"}
 
+*If you need to run on a different port then add the --server.port option*
+
+~~~
+java -jar quick-start-*.war --server.port=9000
+~~~
+{: .language-bash}
+
 ## 5 - Login to the Hub
 
 After opening the QuickStart Application you must step through a wizard to properly configure the Hub.
 
 Browse to the directory where your hub where live.
-![Hub Directory]({{site.baseurl}}/images/hub-wizard-1.png)
+![Hub Directory]({{site.baseurl}}/images/1x/hub-wizard-1.png)
 
 Initialize your Data Hub Project Directory.
-![Hub Directory]({{site.baseurl}}/images/hub-wizard-2.png)
+![Hub Directory]({{site.baseurl}}/images/1x/hub-wizard-2.png)
 
 Click Next.
-![Hub Directory]({{site.baseurl}}/images/hub-wizard-3.png)
+![Hub Directory]({{site.baseurl}}/images/1x/hub-wizard-3.png)
 
 Choose the Local Environment.
-![Hub Directory]({{site.baseurl}}/images/hub-wizard-4.png)
+![Hub Directory]({{site.baseurl}}/images/1x/hub-wizard-4.png)
 
 Login to the Hub with your MarkLogic credentials
-![Hub Directory]({{site.baseurl}}/images/hub-wizard-5.png)
+![Hub Directory]({{site.baseurl}}/images/1x/hub-wizard-5.png)
 
 Install the Hub into MarkLogic
-![Hub Directory]({{site.baseurl}}/images/hub-wizard-6.png)
+![Hub Directory]({{site.baseurl}}/images/1x/hub-wizard-6.png)
 
 Click Finished
-![Hub Directory]({{site.baseurl}}/images/hub-wizard-7.png)
+![Hub Directory]({{site.baseurl}}/images/1x/hub-wizard-7.png)
 
 ## 6 - Create Your First Entity
 
 Entities are the business objects that you will be working with in the hub. Start by defining a new Employee Entity. Click the **New Entity** button. Now fill out the popup with your entity name. If you are using the example code we provide then make sure to name this "Employee".
 
-![New Entity]({{site.baseurl}}/images/create-employee.png)
+![New Entity]({{site.baseurl}}/images/1x/create-employee.png)
 
 You have just created an Entity.
 
@@ -112,21 +124,21 @@ clicking the Employee Entity to expand it. Now click the **+** button next to th
 
 Name the flow **"load-acme-tech"** and leave the default values for Plugin Type and Data Format.
 
-![New Acme Tech Flows]({{site.baseurl}}/images/create-acme-tech-1.png)
+![New Acme Tech Flows]({{site.baseurl}}/images/1x/create-acme-tech-1.png)
 
 Now click the **+** button next to the Harmonize Flows then fill out the form. Name the flow **"harmonize-acme-tech"** and leave the default values for Plugin Type and Data Format.
 
-![New Acme Tech Flows]({{site.baseurl}}/images/create-acme-tech-2.png)
+![New Acme Tech Flows]({{site.baseurl}}/images/1x/create-acme-tech-2.png)
 
 __** It's important to keep the names the same if you plan on using our code examples. The code examples are performing collection queries tied to the names of these flows.__
 
 Next you will want to create an Input and Harmonize flow for Global Corp. Start by clicking the **+** button next to Input Flows. Then fill out the form. Name the flow **"load-global-corp"** and leave the default values for Plugin Type and Data Format.
 
-![New Acme Tech Flows]({{site.baseurl}}/images/create-global-corp-1.png)
+![New Acme Tech Flows]({{site.baseurl}}/images/1x/create-global-corp-1.png)
 
 Now click the **+** button next to the Harmonize Flows then fill out the form. Name the flow **"harmonize-global-corp"** and leave the default values for Plugin Type and Data Format.
 
-![New Acme Tech Flows]({{site.baseurl}}/images/create-global-corp-2.png)
+![New Acme Tech Flows]({{site.baseurl}}/images/1x/create-global-corp-2.png)
 
 The Quick Start application automatically deploys your flows to the server for you any time you make a change. You can manually force a redeploy by pressing the Redeploy Button at the bottom left of the screen.
 
@@ -136,18 +148,18 @@ Now that your entity is created you want to ingest some data. QuickStart uses th
 
 1. Click on the **load-acme-tech** input flow to highlight it.
 1. Now click on the "Run Flow" button in the right pane. You will see a screen that allows you to configure your MLCP run.
-![Click Acme Tech]({{site.baseurl}}/images/load-acme-tech-1.png)
+![Click Acme Tech]({{site.baseurl}}/images/1x/load-acme-tech-1.png)
 
 1. Point the browser box to the input/AcmeTech directory.
-![Browse to Input Folder]({{site.baseurl}}/images/load-acme-tech-2.png)
+![Browse to Input Folder]({{site.baseurl}}/images/1x/load-acme-tech-2.png)
 1. Expand the **General Options** section.
 1. Make sure the **Documents** Data Format is selected.
-![Choose Documents]({{site.baseurl}}/images/load-acme-tech-3.png)
+![Choose Documents]({{site.baseurl}}/images/1x/load-acme-tech-3.png)
 1. Now scroll down and press the "Run Import" button.
-![Run Acme Tech]({{site.baseurl}}/images/load-acme-tech-4.png)
+![Run Acme Tech]({{site.baseurl}}/images/1x/load-acme-tech-4.png)
 
 QuickStart will kick off a [MarkLogic Content Pump](https://docs.marklogic.com/guide/mlcp) job to ingest the Json documents. You can monitor the progress of the job by navigating to the Jobs tab and clicking on the "Show Console Output" button next to the Job.
-![View Acme Tech Job Output]({{site.baseurl}}/images/view-acme-tech-job-output.png)
+![View Acme Tech Job Output]({{site.baseurl}}/images/1x/view-acme-tech-job-output.png)
 
 ## 9 - Ingest Global Corp Data
 
@@ -155,23 +167,23 @@ Now you need to load the data for Global Corp.
 
 1. Click on the **load-global-corp** input flow to highlight it.
 1. Now click on the "Run Flow" button in the right pane. You will see a screen that allows you to configure your MLCP run.
-![Click Global Corp]({{site.baseurl}}/images/load-global-corp-1.png)
+![Click Global Corp]({{site.baseurl}}/images/1x/load-global-corp-1.png)
 1. Point the browser box to the input/GlobalCorp directory.
-![Browse to Input Folder]({{site.baseurl}}/images/load-global-corp-2.png)
+![Browse to Input Folder]({{site.baseurl}}/images/1x/load-global-corp-2.png)
 1. Expand the General Options section.
 1. Choose the **Delimited Text** Data Format.
-![Choose Delimited Text]({{site.baseurl}}/images/load-global-corp-3.png)
+![Choose Delimited Text]({{site.baseurl}}/images/1x/load-global-corp-3.png)
 1. Change **Document Type** to **json**.
-![Choose Json]({{site.baseurl}}/images/load-global-corp-4.png)
+![Choose Json]({{site.baseurl}}/images/1x/load-global-corp-4.png)
 1. Expand the **Delimited Text Options** section.
 1. Check the **Generate URI?** option.
-![Click Generate URI]({{site.baseurl}}/images/load-global-corp-5.png)
+![Click Generate URI]({{site.baseurl}}/images/1x/load-global-corp-5.png)
 1. Now scroll down and press the "Run Import" button.
-![Click Global Corp]({{site.baseurl}}/images/load-global-corp-6.png)
+![Click Global Corp]({{site.baseurl}}/images/1x/load-global-corp-6.png)
 
 QuickStart will kick off a [MarkLogic Content Pump](https://docs.marklogic.com/guide/mlcp) job to ingest the Json documents. You can monitor the progress of the job by navigating to the Jobs tab and clicking on the "Show Console Output" button next to the Job.
 
-![Monitor Job Progress]({{site.baseurl}}/images/load-global-corp-7.png)
+![Monitor Job Progress]({{site.baseurl}}/images/1x/load-global-corp-7.png)
 
 ## 10 - Prep for Harmonize
 
@@ -193,13 +205,13 @@ For Acme Tech we want to return a list of URIs. Since the Acme Tech data came to
 
 Use your favorite text editor to open the data-hub/plugins/entities/Employee/harmonize/harmonize-acme-tech/collector/collector.sjs file. Replace its contents with this:
 
-<div class="embed-git" href="//raw.githubusercontent.com/marklogic/marklogic-data-hub/1.0-master/examples/hr-hub/plugins/entities/Employee/harmonize/harmonize-acme-tech/collector/collector.sjs"></div>
+<div class="embed-git" href="//raw.githubusercontent.com/marklogic-community/marklogic-data-hub/1.0-master/examples/hr-hub/plugins/entities/Employee/harmonize/harmonize-acme-tech/collector/collector.sjs"></div>
 
 ### Acme Tech header plugin
 
 Use your favorite text editor to open the data-hub/plugins/entities/Employee/harmonize/harmonize-acme-tech/headers/headers.sjs file. Replace its contents with this:
 
-<div class="embed-git" href="//raw.githubusercontent.com/marklogic/marklogic-data-hub/1.0-master/examples/hr-hub/plugins/entities/Employee/harmonize/harmonize-acme-tech/headers/headers.sjs"></div>
+<div class="embed-git" href="//raw.githubusercontent.com/marklogic-community/marklogic-data-hub/1.0-master/examples/hr-hub/plugins/entities/Employee/harmonize/harmonize-acme-tech/headers/headers.sjs"></div>
 
 ### Global Corp Collector
 
@@ -207,29 +219,29 @@ The collector is a plugin that provides a list of items to the Harmonize flow to
 
 Use your favorite text editor to open the data-hub/plugins/entities/Employee/harmonize/harmonize-global-corp/collector/collector.sjs file. Replace its contents with this:
 
-<div class="embed-git" href="//raw.githubusercontent.com/marklogic/marklogic-data-hub/1.0-master/examples/hr-hub/plugins/entities/Employee/harmonize/harmonize-global-corp/collector/collector.sjs"></div>
+<div class="embed-git" href="//raw.githubusercontent.com/marklogic-community/marklogic-data-hub/1.0-master/examples/hr-hub/plugins/entities/Employee/harmonize/harmonize-global-corp/collector/collector.sjs"></div>
 
 ### Global Corp Content Plugin
 
 For Global corp we are going to use the harmonize step to recreate employee records for every employee ID that is in our staging area. Recall that for the collector we are returning employee IDs instead of URIs. Open up your favorite text editor to the data-hub/plugins/entities/Employee/harmonize/harmonize-global-corp/content/content.sjs file. Replace its contents with this:
 
-<div class="embed-git" href="//raw.githubusercontent.com/marklogic/marklogic-data-hub/1.0-master/examples/hr-hub/plugins/entities/Employee/harmonize/harmonize-global-corp/content/content.sjs"></div>
+<div class="embed-git" href="//raw.githubusercontent.com/marklogic-community/marklogic-data-hub/1.0-master/examples/hr-hub/plugins/entities/Employee/harmonize/harmonize-global-corp/content/content.sjs"></div>
 
 ### Global Corp Header Plugin
 
 Use your favorite text editor to open the data-hub/plugins/entities/Employee/harmonize/harmonize-global-corp/headers/headers.sjs file. Replace its contents with this:
 
-<div class="embed-git" href="//raw.githubusercontent.com/marklogic/marklogic-data-hub/1.0-master/examples/hr-hub/plugins/entities/Employee/harmonize/harmonize-global-corp/headers/headers.sjs"></div>
+<div class="embed-git" href="//raw.githubusercontent.com/marklogic-community/marklogic-data-hub/1.0-master/examples/hr-hub/plugins/entities/Employee/harmonize/harmonize-global-corp/headers/headers.sjs"></div>
 
 ## 11 - Harmonize the data
 
 You ingested your data. You created plugins that will extract common fields into the headers. You edited the collectors to only operate on certain data. Now you are ready to harmonize. Simply press the **Run** button next to both harmonize flows.
 
 Running Acme Tech
-![Run Harmonize Flow]({{site.baseurl}}/images/run-acme-tech.png)
+![Run Harmonize Flow]({{site.baseurl}}/images/1x/run-acme-tech.png)
 
 Running Global Corp
-![Run Harmonize Flow]({{site.baseurl}}/images/run-global-corp.png)
+![Run Harmonize Flow]({{site.baseurl}}/images/1x/run-global-corp.png)
 
 As with the Input Flows you can see the job status in the Jobs tab.
 
@@ -242,7 +254,7 @@ Open the [Staging Search Endpoint](http://localhost:8010/v1/search?format=json){
 Open the [Final Search Endpoint](http://localhost:8011/v1/search?format=json){:target="_blank"} against your local instance.
 
 *Picture here is the Final Search endpoint.*
-![Rest Search]({{site.baseurl}}/images/rest-screenshot.png)
+![Rest Search]({{site.baseurl}}/images/1x/rest-screenshot.png)
 
 ## 13 - Wrapping Up
 
