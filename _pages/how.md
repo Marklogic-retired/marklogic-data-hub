@@ -9,7 +9,7 @@ permalink: /how/
 
 The MarkLogic Data Hub Framework is organized into Entities, Flow, and Plugins.
 
-![Hub Internals](//raw.githubusercontent.com/marklogic-community/marklogic-data-hub/design/images/hub-internals-gray.png)
+![Hub Internals](//raw.githubusercontent.com/marklogic-community/marklogic-data-hub/design/images/hub-internals-gray.png){: .center-image }
 
 ## Envelope Pattern
 The MarkLogic Data Hub Framework uses the Envelope data pattern to encapsulate data. Simply put, the envelope pattern wraps your data in either XML or JSON like so:
@@ -146,4 +146,4 @@ Harmonize Flows require two additional plugins:
 - **Collector plugin.** The collector plugin returns a list of strings that will be batch processed by the harmonize flow. These strings can be anything from document URIs in the database to IDs. Collectors are only used for Harmonize Flows. Harmonize Flows run as batches and need a list of things to operate on. Input Flows run per document and do not need Collectors.
 - **Writer plugin.** The writer plugin is responsible for saving the final envelope to disk. \*The writer plugin is not present for the Input flow because the caller is responsible for writing. Typically the caller is [MarkLogic Content Pump](https://docs.marklogic.com/guide/mlcp){:target="_blank"} or the [MarkLogic REST API](https://docs.marklogic.com/REST/client){:target="_blank"}
 
-![Harmonize Flow Overview]({{site.baseurl}}/images/2x/harmonize-flow-diagram.png)
+![Harmonize Flow Overview]({{site.baseurl}}/images/2x/harmonize-flow-diagram.png){: .center-image }

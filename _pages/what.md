@@ -6,7 +6,7 @@ permalink: /what/
 
 <p style="font-style: italic; font-size:12px;">The MarkLogic Data Hub Framework is free and open source under the <a href="https://github.com/marklogic-community/marklogic-data-hub/blob/1.0-master/LICENSE">Apache 2 License</a> and is supported by the community of developers who build and contribute to it. Please note that Data Hub Framework is not a supported MarkLogic product.</p>
 
-![What is it](//raw.githubusercontent.com/marklogic-community/marklogic-data-hub/design/images/what-is-marklogic-data-hub-gray.png)
+![What is it](//raw.githubusercontent.com/marklogic-community/marklogic-data-hub/design/images/hub-architecture.png){: .center-image }
 
 <div class="section" markdown="1">
 
