@@ -5,14 +5,16 @@ lead_text: ''
 permalink: getting-started-2x/create-order-entity
 ---
 
+Just like we did for the Product data, we will model an empty Order then load the raw data.
+
 <i class="fa fa-hand-pointer-o"></i> Click on the Entities tab in the top navigation bar.
 
 ![Click Entities]({{site.baseurl}}/images/2x/click-entities-2.png)
 
-1. <i class="fa fa-hand-pointer-o"></i> Click the **dancing wrench icon**.
-1. <i class="fa fa-hand-pointer-o"></i> Click the **New Entity** button.
+1. <i class="fa fa-hand-pointer-o"></i> Click the **dancing wrench icon** <span class="circle-button"><i class="fa fa-wrench"></i></span>.
+1. <i class="fa fa-hand-pointer-o"></i> Click the **New Entity**{:.blue-button} button.
 1. Type **Order** into the Title field.
-1. <i class="fa fa-hand-pointer-o"></i> Click **SAVE**.
+1. <i class="fa fa-hand-pointer-o"></i> Click **SAVE**{:.blue-button}.
 
 ![New Entity]({{site.baseurl}}/images/2x/create-order-entity.png)
 

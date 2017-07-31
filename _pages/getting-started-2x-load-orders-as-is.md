@@ -23,7 +23,7 @@ To Recap, you should have set the following options:
 - General Options -> Input File Type -> Delimited Text
 - Delimited Text Options -> Generate URI? -> ON
 
-Finally, <i class="fa fa-hand-pointer-o"></i> click the **RUN IMPORT** button to start the data load.
+Finally, <i class="fa fa-hand-pointer-o"></i> click the **RUN IMPORT**{:.blue-button} button to start the data load.
 
 ![Run Import]({{site.baseurl}}/images/2x/load-orders-run.png)
 

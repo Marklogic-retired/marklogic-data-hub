@@ -15,7 +15,7 @@ Now that we have modeled the Order entity we can use the Data Hub Framework's co
 
 1. <i class="fa fa-hand-pointer-o"></i> Click on the **+** icon next to **Harmonize Flows**
 1. Type **Harmonize Orders** into the **Harmonize Flow Name** field
-1. <i class="fa fa-hand-pointer-o"></i> Click the **CREATE** button
+1. <i class="fa fa-hand-pointer-o"></i> Click the **CREATE**{:.blue-button} button
 
 Note that this time we used the default option of **Create Structure from Entity Definition**. This means that the Data Hub Framework will create boilerplate code based on our Enity model. The code will pre-populate the fields we need to add.
 
@@ -26,9 +26,9 @@ Note that this time we used the default option of **Create Structure from Entity
 
 ![Harmonize Flow Overview]({{site.baseurl}}/images/2x/go-to-order-collector.png)
 
-![Click Collector Tab]({{site.baseurl}}/images/2x/click-collector1.png)
-
 <hr>
+
+### Collector Plugin
 
 Because each Order can consist of multiple rows which are then turned into multiple documents in MarkLogic, we cannot do a 1:1 mapping like we did for Products. This means we cannot simply return a list of URIs. Instead we need to return a unique list of all of the values from the relation **id** column.
 
@@ -40,16 +40,18 @@ This code is simply returning all unique values in the **id** field. The one tri
 
 By default jsearch will paginate results. The slice is telling it to return all results from 0 to **a really big number**.
 
+The final collector.sjs code:  
 <div class="embed-git lang-js" href="//raw.githubusercontent.com/marklogic-community/marklogic-data-hub/2.0-develop/examples/online-store/plugins/entities/Order/harmonize/Harmonize Orders/collector/collector.sjs"></div>
 
 1. Make the code change.
-1. <i class="fa fa-hand-pointer-o"></i> Click on **SAVE** button.
+1. <i class="fa fa-hand-pointer-o"></i> Click on **SAVE**{:.blue-button} button.
 1. <i class="fa fa-hand-pointer-o"></i> Click on the **Content** tab.
 
 ![Click Content Tab]({{site.baseurl}}/images/2x/save-order-collector.png)
 
 <hr>
 
+### Content Plugin
 For the Order entity the id is the id from the original relational system. Instead of a 1:1 mapping of source documents, we must find all source documents that match the given id.
 
 After we get all of the matching documents we must then build up an array of the Products while also summing the total price.
@@ -65,7 +67,7 @@ You can also see how we iterate over the orders to sum up the price and add poin
 <div class="embed-git lang-js" href="//raw.githubusercontent.com/marklogic-community/marklogic-data-hub/2.0-develop/examples/online-store/plugins/entities/Order/harmonize/Harmonize Orders/content/content.sjs"></div>
 
 1. Change the code.
-1. <i class="fa fa-hand-pointer-o"></i> Click *SAVE**.
+1. <i class="fa fa-hand-pointer-o"></i> Click **SAVE**{:.blue-button}.
 
 ![Edit and Save Content]({{site.baseurl}}/images/2x/save-order-content.png)
 
@@ -73,7 +75,7 @@ You can also see how we iterate over the orders to sum up the price and add poin
 
 ![Click Flow Info]({{site.baseurl}}/images/2x/click-flow-info2.png)
 
-Let's Run the flow. <i class="fa fa-hand-pointer-o"></i> Click the **RUN HARMONIZE** button to start the flow.
+Let's Run the flow. <i class="fa fa-hand-pointer-o"></i> Click the **RUN HARMONIZE**{:.blue-button} button to start the flow.
 
 ![Run Order Harmonize]({{site.baseurl}}/images/2x/run-order-harmonize.png)
 
@@ -90,7 +92,7 @@ You may also want to explore your Harmonized Data.
 
 1. <i class="fa fa-hand-pointer-o"></i> Click on the **Browse** tab.
 1. Change Database to **FINAL**.
-1. Press Search.
+1. <i class="fa fa-hand-pointer-o"></i> Click the **Search**{:.blue-button} button.
 1. Click on the Order Facet to filter the results.
 
 You should see harmonized documents in the search results.

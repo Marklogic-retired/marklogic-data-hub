@@ -24,7 +24,7 @@ This tutorial uses QuickStart, a simple User Interface that you can run locally 
 
 Before you can run the hub you will need to have some some software installed.
 
-- [Oracle's Java 8](http://www.oracle.com/technetwork/java/javase/downloads/index.html)
+- [Oracle's Java 8](http://www.oracle.com/technetwork/java/javase/downloads/index.html) _(We have not tested with OpenJDK)_
 - [MarkLogic 8.02+](http://developer.marklogic.com/products/marklogic-server/8.0)
 - A Modern Browser. Chrome or FireFox work best. Use IE at your own risk.
 

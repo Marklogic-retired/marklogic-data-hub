@@ -14,7 +14,7 @@ Let's create an input flow for Orders so that we can load data as-is.
 1. <i class="fa fa-hand-pointer-o"></i> Click the disclosure arrow next to **Order** to show the Input and Harmonize Flows.
 1. <i class="fa fa-hand-pointer-o"></i> Click on the **+** icon next to **Input Flows**.
 1. Type **Load Orders** into the **Input Flow Name** field.
-1. <i class="fa fa-hand-pointer-o"></i> Click on the **CREATE** button.
+1. <i class="fa fa-hand-pointer-o"></i> Click on the **CREATE**{:.blue-button} button.
 
 ![New Load Order Flows]({{site.baseurl}}/images/2x/create-load-order-flow.png)
 
