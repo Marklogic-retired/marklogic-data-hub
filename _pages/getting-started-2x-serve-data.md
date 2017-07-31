@@ -19,4 +19,4 @@ Open the [Final Search Endpoint](http://localhost:8011/v1/search?format=json){:t
 
 ## Up Next
 
-[Wrapping Up](/marklogic-data-hub/gettings-started-2x/wrapping-up)
+[Wrapping Up](/marklogic-data-hub/getting-started-2x/wrapping-up)

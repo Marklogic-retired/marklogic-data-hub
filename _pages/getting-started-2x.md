@@ -60,4 +60,4 @@ Before you can run the hub you will need to have some some software installed.
    1. [Modeling the Order Entity](/marklogic-data-hub/getting-started-2x/modeling-order-entity)
    1. [Harmonizing the Order Data](/marklogic-data-hub/getting-started-2x/harmonizing-order-data)
 1. [Serve the Data Out of MarkLogic](/marklogic-data-hub/getting-started-2x/serve-data)
-1. [Wrapping Up](/marklogic-data-hub/gettings-started-2x/wrapping-up)
+1. [Wrapping Up](/marklogic-data-hub/getting-started-2x/wrapping-up)
