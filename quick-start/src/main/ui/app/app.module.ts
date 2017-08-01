@@ -59,6 +59,8 @@ import { InlineEditComponent } from './inline-edit/inline-edit.component';
 import { FacetsComponent } from './facets/facets.component';
 import { ObjectToArrayPipe } from './object-to-array.pipe';
 
+import { Ng2DeviceDetectorModule } from 'ng2-device-detector';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -115,7 +117,8 @@ import { ObjectToArrayPipe } from './object-to-array.pipe';
     TooltipModule,
     MomentModule,
     GridManiaModule,
-    RouterModule.forRoot(ROUTES, { useHash: true })
+    RouterModule.forRoot(ROUTES, { useHash: true }),
+    Ng2DeviceDetectorModule.forRoot()
   ],
   providers: [
     AUTH_PROVIDERS,
