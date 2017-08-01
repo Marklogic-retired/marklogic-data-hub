@@ -142,7 +142,7 @@ public class HubConfig {
 
     public String customForestPath = DEFAULT_CUSTOM_FOREST_PATH;
 
-    public String modulePermissions = "rest-admin,read,rest-admin,update,rest-extension-user,execute";
+    public String modulePermissions = "rest-extension-user,read,rest-extension-user,execute,rest-admin,read,rest-admin,update";
 
     public String projectDir;
 
