@@ -9,7 +9,7 @@ function collect(options) {
 	const jsearch = require('/MarkLogic/jsearch.sjs');
   return jsearch
     .values('id')
-    .where(cts.collectionQuery('Order'))
+    .where(cts.collectionQuery(options.entity))
     .slice(0, Number.MAX_SAFE_INTEGER)
     .result();
 }
