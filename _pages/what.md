@@ -24,7 +24,7 @@ First thing is first. Load all of your data into MarkLogic... every last bit. Up
 ### Harmonize
 Now that the data is loaded into the Staging area you will want to harmonize it. This can be as simple as keeping the data as-is or as involved as you want to make it. Some common actions that can be performed as part of the harmonize step are:
 
-- Normalize dates and other fields
+- Standardize dates and other fields
 - Enrich data with additional information
 - Extract important data into indexes for faster searching
 - Leverage semantic triples to enrich your data

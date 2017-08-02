@@ -25,18 +25,18 @@ The story is:
 1. Load Product data As-Is
 1. Harmonize Product data
 1. Load Order data As-Is
-1. Harmonize Product data
+1. Harmonize Order data
 1. Serve the data to downstream clients
 
 ### In a Hurry?
 The finished version of this tutorial is available for you to download and play with. [Finished Online Shopping Hub Example](https://github.com/marklogic-community/marklogic-data-hub/tree/2.0-develop/examples/online-store){:target="_blank"}
 
 ### QuickStart
-This tutorial uses QuickStart, a simple User Interface that you can run locally to start working with the Data Hub Framework quickly. With QuickStart you will have a working hub in a matter of minutes. No need to worry about deployment strategies or configuration details. Simply run the QuickStart war (java web archive) and point it at your MarkLogic installation. _Quickstart is a devops tool. It is meant to be run on your developement machine to aid you in quickly deploying your hub._
+This tutorial uses QuickStart, a simple User Interface that you can run locally to start working with the Data Hub Framework quickly. With QuickStart you will have a working hub in a matter of minutes. No need to worry about deployment strategies or configuration details. Simply run the QuickStart war (java web archive) and point it at your MarkLogic installation. _Quickstart is a devops tool. It is meant to be run on your development machine to aid you in quickly deploying your hub._
 
 ## Prerequisites
 
-Before you can run the hub you will need to have some some software installed.
+Before you can run the hub, you will need to have some some software installed.
 
 - [Oracle's Java 8](http://www.oracle.com/technetwork/java/javase/downloads/index.html) _(We have not tested with OpenJDK)_{:.smaller}
 - [MarkLogic 9](https://developer.marklogic.com/products) _(Installed and initialized)_{:.smaller}
