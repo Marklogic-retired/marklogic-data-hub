@@ -1,5 +1,6 @@
 package com.marklogic.hub.job;
 
+import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.document.DocumentWriteOperation;
 import com.marklogic.client.helper.DatabaseClientProvider;
 import com.marklogic.spring.batch.columnmap.ColumnMapSerializer;
@@ -7,6 +8,7 @@ import com.marklogic.spring.batch.columnmap.DefaultStaxColumnMapSerializer;
 import com.marklogic.spring.batch.columnmap.XmlStringColumnMapSerializer;
 import com.marklogic.spring.batch.item.processor.ColumnMapProcessor;
 import com.marklogic.spring.batch.item.reader.AllTablesItemReader;
+import com.marklogic.spring.batch.item.writer.DataHubItemWriter;
 import com.marklogic.spring.batch.item.writer.MarkLogicItemWriter;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -40,7 +42,9 @@ public class SqlDbToHubJobConfig {
         StepBuilderFactory stepBuilderFactory,
         DataSource dataSource,
         DatabaseClientProvider databaseClientProvider,
-        @Value("#{jobParameters['output_collections']}") String[] collections) {
+        @Value("#{jobParameters['entity']}") String entity,
+        @Value("#{jobParameters['flow']}") String flow,
+        @Value("#{jobParameters['job_id']}") String jobId) {
 
         AllTablesItemReader reader = new AllTablesItemReader(dataSource);
 
@@ -48,7 +52,14 @@ public class SqlDbToHubJobConfig {
         ColumnMapSerializer serializer = new XmlStringColumnMapSerializer();
         ItemProcessor processor = new AllTablesColumnMapProcessor(serializer);
 
-        ItemWriter<DocumentWriteOperation> writer = new MarkLogicItemWriter(databaseClientProvider.getDatabaseClient());
+        // Uncomment to push data directly into MarkLogic without going through DataHub
+        //ItemWriter<DocumentWriteOperation> writer = new MarkLogicItemWriter(databaseClientProvider.getDatabaseClient());
+
+        ItemWriter writer = new DataHubItemWriter(databaseClientProvider.getDatabaseClient(),
+            entity,
+            DataHubItemWriter.FlowType.INPUT,
+            flow,
+            jobId);
 
         return stepBuilderFactory.get("step1")
             .<Map<String, Object>, DocumentWriteOperation>chunk(10)
