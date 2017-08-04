@@ -18,15 +18,17 @@ dependencies {
 
     testCompile "com.h2database:h2:1.4.193"
     testCompile "com.marklogic:marklogic-spring-batch-test:1.0.1"
+
+    runtime "com.h2database:h2:1.4.193"
 }
 
-mainClassName = "com.marklogic.spring.batch.Main"
+mainClassName = "com.marklogic.spring.batch.core.launch.support.CommandLineJobRunner"
 
 task importMonsters(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
-    main = "com.marklogic.spring.batch.Main"
+    main = "com.marklogic.spring.batch.core.launch.support.CommandLineJobRunner"
     args = [
-            "--config", "example.LoadAndRunFlow",
+            "--jobPath", "com",
             "--project_dir", ".",
             "--env", "local",
             "--input_file_path", "./input",
@@ -34,5 +36,25 @@ task importMonsters(type: JavaExec) {
             "--entity_name", "Monster",
             "--flow_name", "ingest-monster",
             "--chunk", "100"
+    ]
+}
+
+// This task is for running the examples
+task runH2DataManager(type: JavaExec) {
+    classpath = configurations.runtime
+    main = "org.h2.tools.Console"
+    args = [
+        "-url", "jdbc:h2:file:./input/sample",
+        "-user", "sa"
+    ]
+}
+
+task loadH2Data(type: JavaExec) {
+    classpath = configurations.runtime
+    main = "org.h2.tools.RunScript"
+    args = [
+        "-url", "jdbc:h2:file:./input/sample",
+        "-user", "sa",
+        "-script", "./src/test/resources/db/sampledata.sql"
     ]
 }
