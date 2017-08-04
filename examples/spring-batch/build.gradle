@@ -1,6 +1,7 @@
 plugins {
     id 'java'
     id 'application'
+    id 'idea'
     id 'net.saliman.properties' version '1.4.6'
     id 'com.marklogic.ml-data-hub' version '2.0.0-rc.1'
 }
@@ -13,11 +14,10 @@ repositories {
 
 dependencies {
     compile 'com.marklogic:marklogic-data-hub:2.0.0-rc.1'
-    compile "com.marklogic:marklogic-spring-batch-core:0.7.4"
-    compile 'com.marklogic:ml-javaclient-util:4.0.alpha4'
+    compile "com.marklogic:marklogic-spring-batch-core:1.0.1"
 
-    testCompile "com.marklogic:marklogic-spring-batch-test:0.7.4"
-    runtime "com.marklogic:marklogic-spring-batch-core:0.7.2"
+    testCompile "com.h2database:h2:1.4.193"
+    testCompile "com.marklogic:marklogic-spring-batch-test:1.0.1"
 }
 
 mainClassName = "com.marklogic.spring.batch.Main"
