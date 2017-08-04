@@ -29,6 +29,9 @@ public class SqlDbToHubJobTest extends AbstractJobRunnerTest {
         JobParametersBuilder jpb = new JobParametersBuilder();
         jpb.addString("allTables", "true");
         jpb.addString("date", new Date().toString(), true);
+        jpb.addString("entity", "Monster");
+        jpb.addString("flow", "ingest-monster");
+        jpb.addString("job_id", "1234");
         try {
             JobExecution execution = jobLauncherTestUtils.launchJob(jpb.toJobParameters());
             assertEquals(BatchStatus.COMPLETED, execution.getStatus());
