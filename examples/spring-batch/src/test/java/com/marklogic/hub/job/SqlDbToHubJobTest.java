@@ -1,6 +1,6 @@
 package com.marklogic.hub.job;
 
-import com.marklogic.hub.job.h2.H2DatabaseConfiguration;
+import com.marklogic.sample.h2.H2DatabaseConfiguration;
 import com.marklogic.spring.batch.test.AbstractJobRunnerTest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,10 +14,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.Date;
 
-@ContextConfiguration(
-    classes = {SqlDbToHubJobConfig.class}
-   // initializers = {H2MockingApplicationContextInitializer.class}
-)
+@ContextConfiguration(classes = {SqlDbToHubJobConfig.class, H2DatabaseConfiguration.class})
 @RunWith(SpringJUnit4ClassRunner.class)
 public class SqlDbToHubJobTest extends AbstractJobRunnerTest {
 

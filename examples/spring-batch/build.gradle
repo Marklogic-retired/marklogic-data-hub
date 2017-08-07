@@ -31,7 +31,7 @@ task ingestInvoices(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = "com.marklogic.spring.batch.core.launch.support.CommandLineJobRunner"
     args = [
-            "--job_path", "com.marklogic.hub.job.SqlDbToHubJobConfig",
+            "--job_path", "com.marklogic.hub.job.MigrateInvoicesConfiguration",
             "--job_id", "job",
             "--entity", "Invoice",
             "--flow", "ingest-invoice-db"

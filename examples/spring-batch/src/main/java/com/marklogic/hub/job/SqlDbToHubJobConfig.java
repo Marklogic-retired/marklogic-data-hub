@@ -23,9 +23,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @EnableBatchProcessing
-@Import(value = {
-    com.marklogic.spring.batch.config.MarkLogicBatchConfiguration.class,
-    com.marklogic.hub.job.h2.H2DatabaseConfiguration.class})
+@Import(value = {com.marklogic.spring.batch.config.MarkLogicBatchConfiguration.class})
 public class SqlDbToHubJobConfig {
 
     private final String JOB_NAME = "sqlDbToHubJob";
