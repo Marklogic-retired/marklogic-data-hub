@@ -1,4 +1,4 @@
-package com.marklogic.sample.h2;
+package com.marklogic.hub.job.h2;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
