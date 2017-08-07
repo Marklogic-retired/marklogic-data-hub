@@ -4,13 +4,13 @@ This example demonstrates how to run a custom Spring Batch job against the Data 
 
 Learning [Spring Batch](http://docs.spring.io/spring-batch/reference/html/spring-batch-intro.html) is beyond the scope of this README. But let's pretend you know enough to be dangerous.
 
-Now you want to use Spring Batch to load a bunch from a relational database into MarkLogic. 
+This example loads data from the [Invoice Database](./invoices-sql-diagram.jpg) to use Spring Batch to load from a relational database into MarkLogic. 
 
 ## What's the Big Idea?
 The idea is pretty simple. You read the data into a tabular format using a SQL query (SELECT * FROM TABLE), transform the row into an XML document, and then write it into MarkLogic. But to properly integrate with the Data Hub Framework you need to run your data through an [input flow](https://github.com/marklogic-community/marklogic-data-hub/wiki/The-MarkLogic-Data-Hub-Overview#ingest).  The MarkLogic Spring Batch project provides an interface called the DataHubItemWriter that runs the appropriate input flow.  
 
 ## How does it work?
-This example includes a sample Spring Boot Configuration [SqlDbToHubJobConfig.java](https://github.com/marklogic-community/marklogic-data-hub/blob/develop/examples/spring-batch/src/main/java/com/marklogic/hub/job/SqlDbToHubJobConfig.java) that configures a job.
+This example includes a sample Spring Batch Configuration [SqlDbToHubJobConfig.java](https://github.com/marklogic-community/marklogic-data-hub/blob/develop/examples/spring-batch/src/main/java/com/marklogic/hub/job/SqlDbToHubJobConfig.java) that configures a job.  To execute the job, we are utilizing the CommandLineJobRunner from the MarkLogic Spring Batch project.  
 
 This example depends on a properties file called job.properties.  This project provides a sample job.properties file but you may need to change the host or port numbers for your environment.  
 
