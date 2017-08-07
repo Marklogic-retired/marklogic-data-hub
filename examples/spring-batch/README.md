@@ -16,6 +16,9 @@ This example depends on a properties file called job.properties.  This project p
 
 ## How do I Run this Example?
 
+First [deploy the MarkLogic Job Repository](https://github.com/marklogic-community/marklogic-spring-batch/wiki/MarkLogicJobRepository).  When the Spring Batch application starts it needs to persist the job into MarkLogic.  
+Once your datahub is up and running and your job.properties file is configured based on the earlier step, then just execute the job with the following gradle command. 
+
 `gradle ingestInvoices`
 
 This reads invoice, customer, item, and customer data from a relational database called H2.  The data can be viewed in H2 by calling the following command.
