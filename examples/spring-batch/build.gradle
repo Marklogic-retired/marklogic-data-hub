@@ -1,6 +1,7 @@
 plugins {
     id 'java'
     id 'application'
+    id 'idea'
     id 'net.saliman.properties' version '1.4.6'
     id 'com.marklogic.ml-data-hub' version '2.0.0-rc.1'
 }
@@ -13,26 +14,48 @@ repositories {
 
 dependencies {
     compile 'com.marklogic:marklogic-data-hub:2.0.0-rc.1'
-    compile "com.marklogic:marklogic-spring-batch-core:0.7.4"
-    compile 'com.marklogic:ml-javaclient-util:4.0.alpha4'
+    compile "com.marklogic:marklogic-spring-batch-core:1.0.1"
 
-    testCompile "com.marklogic:marklogic-spring-batch-test:0.7.4"
-    runtime "com.marklogic:marklogic-spring-batch-core:0.7.2"
+    testCompile "com.h2database:h2:1.4.193"
+    testCompile "com.marklogic:marklogic-spring-batch-test:1.0.1"
+
+    runtime "com.h2database:h2:1.4.193"
+    runtime "ch.qos.logback:logback-classic:1.1.8"
+    runtime "org.slf4j:jcl-over-slf4j:1.7.22"
+    runtime "org.slf4j:slf4j-api:1.7.22"
 }
 
-mainClassName = "com.marklogic.spring.batch.Main"
+mainClassName = "com.marklogic.spring.batch.core.launch.support.CommandLineJobRunner"
 
-task importMonsters(type: JavaExec) {
+task ingestInvoices(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
-    main = "com.marklogic.spring.batch.Main"
+    main = "com.marklogic.spring.batch.core.launch.support.CommandLineJobRunner"
     args = [
-            "--config", "example.LoadAndRunFlow",
-            "--project_dir", ".",
-            "--env", "local",
-            "--input_file_path", "./input",
-            "--input_file_pattern", ".*\\.xml",
-            "--entity_name", "Monster",
-            "--flow_name", "ingest-monster",
-            "--chunk", "100"
+            "--job_path", "com.marklogic.hub.job.MigrateInvoicesConfiguration",
+            "--job_id", "job",
+            "--entity", "Invoice",
+            "--flow", "ingest-invoice-db"
     ]
 }
+
+// This task is for running the examples
+task runH2DataManager(type: JavaExec) {
+    classpath = configurations.runtime
+    main = "org.h2.tools.Console"
+    args = [
+        "-url", "jdbc:h2:file:./input/sample",
+        "-user", "sa"
+    ]
+}
+
+task loadH2Data(type: JavaExec) {
+    classpath = configurations.runtime
+    main = "org.h2.tools.RunScript"
+    args = [
+        "-url", "jdbc:h2:file:./input/sample",
+        "-user", "sa",
+        "-script", "./src/test/resources/db/sampledata.sql"
+    ]
+}
+
+ingestInvoices.dependsOn loadH2Data
