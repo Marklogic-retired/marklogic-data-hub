@@ -11,9 +11,7 @@ import com.marklogic.client.document.JSONDocumentManager;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.modulesloader.Modules;
-import com.marklogic.client.modulesloader.impl.DefaultModulesLoader;
-import com.marklogic.client.modulesloader.impl.PropertiesModuleManager;
-import com.marklogic.client.modulesloader.impl.XccAssetLoader;
+import com.marklogic.client.modulesloader.impl.*;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.deploy.util.EntityDefModulesFinder;
 import com.marklogic.hub.deploy.util.HubFileFilter;
@@ -30,6 +28,7 @@ import java.util.regex.Pattern;
 public class LoadUserModulesCommand extends AbstractCommand {
 
     private HubConfig hubConfig;
+    private DocumentPermissionsParser documentPermissionsParser = new DefaultDocumentPermissionsParser();
 
     public void setForceLoad(boolean forceLoad) {
         this.forceLoad = forceLoad;
@@ -107,6 +106,7 @@ public class LoadUserModulesCommand extends AbstractCommand {
                             Modules modules = entityDefModulesFinder.findModules(dir.toFile());
                             DocumentMetadataHandle meta = new DocumentMetadataHandle();
                             meta.getCollections().add("http://marklogic.com/entity-services/models");
+                            documentPermissionsParser.parsePermissions(hubConfig.modulePermissions, meta.getPermissions());
                             for (Resource r : modules.getAssets()) {
                                 StringHandle handle = new StringHandle(IOUtils.toString(r.getInputStream()));
                                 entityDocMgr.write("/entities/" + r.getFilename(), meta, handle);
