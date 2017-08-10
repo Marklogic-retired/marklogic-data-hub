@@ -21,8 +21,16 @@ This example depends on a properties file called job.properties. This project pr
 1. Deploy the Data Hub Framework `./gradlew mlDeploy`
 1. Deploy Hub Framework Modules `./gradlew mlDeployModules`
 1. Modify job.properties to point to your staging database and the job repo
-1. Execute the job with the following gradle command. `./gradlew ingestInvoices`  This reads invoice, customer, item, and customer data from a relational database called H2. 
-1. The data can be viewed in H2 by calling the following command: `./gradlew runH2`
+1. Execute the job with the following gradle command. `./gradlew ingestInvoices`  This reads invoice, customer, item, and customer data from a relational database called H2 and ingests it into MarkLogic. During ingest the data is passed through the Invoice:ingest-invoice-db input flow.
+
+### Optional
+If you want to view the SQL data in H2 then you can run the following command:
+
+```
+./gradlew runH2
+```
+
+This command should launch your web browser. If the IP address in the address bar is not loading, replace it with localhost.
 
 ## How do I add this to my existing Data Hub Project?
 

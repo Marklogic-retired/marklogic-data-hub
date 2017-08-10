@@ -39,6 +39,7 @@ public class SqlDbToHubJobConfig {
         StepBuilderFactory stepBuilderFactory,
         DataSource dataSource,
         DatabaseClientProvider databaseClientProvider,
+        @Value("#{jobParameters['hubJobId']}") String jobId,
         @Value("#{jobParameters['entity']}") String entity,
         @Value("#{jobParameters['flow']}") String flow) {
 
@@ -55,7 +56,7 @@ public class SqlDbToHubJobConfig {
             entity,
             DataHubItemWriter.FlowType.INPUT,
             flow,
-            UUID.randomUUID().toString());
+            jobId);
 
         return stepBuilderFactory.get("step1")
             .<Map<String, Object>, DocumentWriteOperation>chunk(10)

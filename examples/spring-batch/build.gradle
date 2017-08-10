@@ -34,7 +34,8 @@ task ingestInvoices(type: JavaExec) {
             "--job_path", "com.marklogic.hub.job.MigrateInvoicesConfiguration",
             "--job_id", "job",
             "--entity", "Invoice",
-            "--flow", "ingest-invoice-db"
+            "--flow", "ingest-invoice-db",
+            "--hubJobId", UUID.randomUUID().toString()
     ]
 }
 
