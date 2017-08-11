@@ -1,0 +1,9 @@
+<envelope xmlns="http://marklogic.com/data-hub/envelope">
+  <headers></headers>
+  <triples></triples>
+  <content>
+    <employee xmlns="http://company.com/ns/employee">
+      <id>2</id>
+    </employee>
+  </content>
+</envelope>

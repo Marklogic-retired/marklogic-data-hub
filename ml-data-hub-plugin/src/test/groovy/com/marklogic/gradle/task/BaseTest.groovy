@@ -1,12 +1,34 @@
 package com.marklogic.gradle.task
 
 import com.marklogic.client.DatabaseClient
+import com.marklogic.client.DatabaseClientFactory
+import com.marklogic.client.FailedRequestException
+import com.marklogic.client.document.DocumentManager
+import com.marklogic.client.eval.EvalResult
+import com.marklogic.client.eval.EvalResultIterator
+import com.marklogic.client.eval.ServerEvaluationCall
+import com.marklogic.client.io.DocumentMetadataHandle
+import com.marklogic.client.io.Format
+import com.marklogic.client.io.InputStreamHandle
+import com.marklogic.client.io.StringHandle
 import com.marklogic.hub.HubConfig
+import com.marklogic.hub.flow.FlowCacheInvalidator
+import com.marklogic.mgmt.ManageClient
+import com.marklogic.mgmt.databases.DatabaseManager
+import org.apache.commons.io.FilenameUtils
+import org.apache.commons.io.IOUtils
+import org.custommonkey.xmlunit.XMLUnit
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
+import org.w3c.dom.Document
+import org.xml.sax.SAXException
 import spock.lang.Specification
+
+import javax.xml.parsers.DocumentBuilder
+import javax.xml.parsers.DocumentBuilderFactory
+import javax.xml.parsers.ParserConfigurationException
 
 class BaseTest extends Specification {
 
@@ -33,13 +55,137 @@ class BaseTest extends Specification {
             .withPluginClasspath().buildAndFail()
     }
 
-    DatabaseClient stagingClient() {
+    static HubConfig hubConfig() {
         HubConfig hubConfig = new HubConfig()
-        hubConfig.username = "admin";
-        hubConfig.password = "admin";
-        hubConfig.adminUsername = "admin";
-        hubConfig.adminPassword = "admin";
-        return hubConfig.newStagingClient()
+        hubConfig.username = "admin"
+        hubConfig.password = "admin"
+        hubConfig.adminUsername = "admin"
+        hubConfig.adminPassword = "admin"
+        return hubConfig
+    }
+    static DatabaseClient stagingClient() {
+
+        return hubConfig().newStagingClient()
+    }
+
+    static DatabaseClient finalClient() {
+        return hubConfig().newFinalClient()
+    }
+
+    void installStagingDoc(String uri, DocumentMetadataHandle meta, String doc) {
+        stagingClient().newDocumentManager().write(uri, meta, new StringHandle(doc))
+    }
+
+
+    void installFinalDoc(String uri, DocumentMetadataHandle meta, String doc) {
+        finalClient().newDocumentManager().write(uri, meta, new StringHandle(doc))
+    }
+
+    static void installModule(String path, String localPath) {
+
+        InputStreamHandle handle = new InputStreamHandle(new File("src/test/resources/" + localPath).newInputStream())
+        String ext = FilenameUtils.getExtension(path)
+        switch(ext) {
+            case "xml":
+                handle.setFormat(Format.XML)
+                break
+            case "json":
+                handle.setFormat(Format.JSON)
+                break
+            default:
+                handle.setFormat(Format.TEXT)
+        }
+
+        HubConfig hubConfig = hubConfig()
+        DocumentManager modMgr = DatabaseClientFactory.newClient(hubConfig.host, hubConfig.stagingPort, HubConfig.DEFAULT_MODULES_DB_NAME, "admin", "admin", DatabaseClientFactory.Authentication.DIGEST).newDocumentManager()
+        modMgr.write(path, handle);
+
+        new FlowCacheInvalidator(stagingClient()).invalidateCache()
+    }
+
+
+    void clearDatabases(String... databases) {
+        List<Thread> threads = new ArrayList<>()
+        ManageClient client = hubConfig().newManageClient()
+        DatabaseManager databaseManager = new DatabaseManager(client)
+        for (String database: databases) {
+            Thread thread = new Thread({ -> databaseManager.clearDatabase(database) })
+            threads.add(thread)
+            thread.start()
+        }
+        threads.forEach({thread ->
+            try {
+                thread.join()
+            } catch (InterruptedException e) {
+                e.printStackTrace()
+            }
+        })
+    }
+
+    protected Document getXmlFromResource(String resourceName) throws IOException, ParserConfigurationException, SAXException {
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance()
+        factory.setIgnoringElementContentWhitespace(true)
+        factory.setNamespaceAware(true)
+        DocumentBuilder builder = factory.newDocumentBuilder()
+        return builder.parse(new File("src/test/resources/" + resourceName).getAbsoluteFile())
+    }
+
+    static int getStagingDocCount() {
+        return getStagingDocCount(null)
+    }
+
+    static int getStagingDocCount(String collection) {
+        return getDocCount(HubConfig.DEFAULT_STAGING_NAME, collection)
+    }
+
+    static int getFinalDocCount() {
+        return getFinalDocCount(null)
+    }
+    static int getFinalDocCount(String collection) {
+        return getDocCount(HubConfig.DEFAULT_FINAL_NAME, collection)
+    }
+
+    static int getDocCount(String database, String collection) {
+        int count = 0
+        String collectionName = ""
+        if (collection != null) {
+            collectionName = "'" + collection + "'"
+        }
+        EvalResultIterator resultItr = runInDatabase("xdmp:estimate(fn:collection(" + collectionName + "))", database)
+        if (resultItr == null || ! resultItr.hasNext()) {
+            return count
+        }
+        EvalResult res = resultItr.next()
+        count = Math.toIntExact((long) res.getNumber())
+        return count
+    }
+
+    static EvalResultIterator runInDatabase(String query, String databaseName) {
+        ServerEvaluationCall eval
+        switch(databaseName) {
+            case HubConfig.DEFAULT_STAGING_NAME:
+                eval = stagingClient().newServerEval()
+                break
+            case HubConfig.DEFAULT_FINAL_NAME:
+                eval = finalClient().newServerEval()
+                break
+//            case HubConfig.DEFAULT_MODULES_DB_NAME:
+//                eval = stagingModulesClient.newServerEval()
+//                break
+//            case HubConfig.DEFAULT_TRACE_NAME:
+//                eval = traceClient.newServerEval()
+//                break
+//            default:
+//                eval = stagingClient.newServerEval()
+//                break
+        }
+        try {
+            return eval.xquery(query).eval()
+        }
+        catch(FailedRequestException e) {
+            e.printStackTrace()
+            throw e
+        }
     }
 
     static void createBuildFile() {
@@ -100,6 +246,7 @@ class BaseTest extends Specification {
     }
 
     def setupSpec() {
+        XMLUnit.setIgnoreWhitespace(true)
         testProjectDir.create()
         createBuildFile()
         createFullPropertiesFile()
