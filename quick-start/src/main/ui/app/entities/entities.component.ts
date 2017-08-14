@@ -22,6 +22,8 @@ import { DeployService } from '../deploy/deploy.service';
 
 import { CodemirrorComponent } from '../codemirror';
 
+import { Ng2DeviceService } from 'ng2-device-detector';
+
 import * as _ from 'lodash';
 
 @Component({
@@ -41,6 +43,7 @@ export class EntitiesComponent implements OnInit, OnDestroy {
   isSaving = false;
   mlcpOptions: any;
   entitiesReady: EventEmitter<boolean> = new EventEmitter();
+  deviceInfo = null;
 
   private paramListener: any;
 
@@ -64,8 +67,10 @@ export class EntitiesComponent implements OnInit, OnDestroy {
     private dialogService: MdlDialogService,
     private jobListener: JobListenerService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private deviceService: Ng2DeviceService
   ) {
+    this.deviceInfo = this.deviceService.getDeviceInfo();
     deployService.onDeploy.subscribe(() => {
       this.getEntities();
     });

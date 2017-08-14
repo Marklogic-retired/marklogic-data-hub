@@ -52,12 +52,12 @@ public class FlowManagerTest extends HubTestBase {
 
         installHub();
 
-        clearDatabases(new String[]{HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME});
+        clearDatabases(new String[]{HubConfig.DEFAULT_MODULES_DB_NAME, HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME});
 
-        DocumentMetadataHandle meta = new DocumentMetadataHandle();
-        meta.getCollections().add("tester");
-        installStagingDoc("/employee1.xml", meta, getResource("flow-manager-test/input/employee1.xml"));
-        installStagingDoc("/employee2.xml", meta, getResource("flow-manager-test/input/employee2.xml"));
+        getDataHub().installHubModules();
+
+        enableDebugging();
+
         runInModules("xdmp:directory-create(\"/entities/test/harmonize/my-test-flow1/collector/\"),"
                 + "xdmp:directory-create(\"/entities/test/harmonize/my-test-flow1/headers/\"),"
                 + "xdmp:directory-create(\"/entities/test/harmonize/my-test-flow1/triples/\"),"
@@ -77,10 +77,20 @@ public class FlowManagerTest extends HubTestBase {
         installModules(modules);
     }
 
-    @After
-    public void afterEach() {
-        finalDocMgr.delete("/employee1.xml");
-        finalDocMgr.delete("/employee2.xml");
+    private static void addStagingDocs() throws IOException {
+        clearDatabases(new String[]{HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME});
+        DocumentMetadataHandle meta = new DocumentMetadataHandle();
+        meta.getCollections().add("tester");
+        installStagingDoc("/employee1.xml", meta, getResource("flow-manager-test/input/employee1.xml"));
+        installStagingDoc("/employee2.xml", meta, getResource("flow-manager-test/input/employee2.xml"));
+    }
+
+    private static void addFinalDocs() throws IOException {
+        clearDatabases(new String[]{HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME});
+        DocumentMetadataHandle meta = new DocumentMetadataHandle();
+        meta.getCollections().add("tester");
+        installFinalDoc("/employee1.xml", meta, getResource("flow-manager-test/input/employee1.xml"));
+        installFinalDoc("/employee2.xml", meta, getResource("flow-manager-test/input/employee2.xml"));
     }
 
     @Test
@@ -208,6 +218,7 @@ public class FlowManagerTest extends HubTestBase {
 
     @Test
     public void testRunFlow() throws SAXException, IOException, ParserConfigurationException, XMLStreamException {
+        addStagingDocs();
         installModule("/entities/test/harmonize/my-test-flow1/my-test-flow1.xml", "flow-manager-test/my-test-flow1/my-test-flow1.xml");
         assertEquals(2, getStagingDocCount());
         assertEquals(0, getFinalDocCount());
@@ -226,7 +237,31 @@ public class FlowManagerTest extends HubTestBase {
     }
 
     @Test
+    public void testRunFlowWithBackwards() throws SAXException, IOException, ParserConfigurationException, XMLStreamException {
+        addFinalDocs();
+
+        installModule("/entities/test/harmonize/my-test-flow1/my-test-flow1.xml", "flow-manager-test/my-test-flow1/my-test-flow1.xml");
+        assertEquals(0, getStagingDocCount());
+        assertEquals(2, getFinalDocCount());
+        FlowManager fm = new FlowManager(getHubConfig());
+        SimpleFlow flow1 = (SimpleFlow)fm.getFlow("test", "my-test-flow1");
+        FlowRunner flowRunner = fm.newFlowRunner()
+            .withFlow(flow1)
+            .withBatchSize(10)
+            .withThreadCount(1)
+            .withSourceClient(getHubConfig().newFinalClient())
+            .withDestinationDatabase(HubConfig.DEFAULT_STAGING_NAME);
+        flowRunner.run();
+        flowRunner.awaitCompletion();
+        assertEquals(2, getStagingDocCount());
+        assertEquals(2, getFinalDocCount());
+        assertXMLEqual(getXmlFromResource("flow-manager-test/harmonized/harmonized1.xml"), stagingDocMgr.read("/employee1.xml").next().getContent(new DOMHandle()).get() );
+        assertXMLEqual(getXmlFromResource("flow-manager-test/harmonized/harmonized2.xml"), stagingDocMgr.read("/employee2.xml").next().getContent(new DOMHandle()).get());
+    }
+
+    @Test
     public void testRunFlowWithHeader() throws SAXException, IOException, ParserConfigurationException, XMLStreamException {
+        addStagingDocs();
         HashMap<String, String> modules = new HashMap<>();
         modules.put("/entities/test/harmonize/my-test-flow-with-header/collector/collector.xqy", "flow-manager-test/my-test-flow-with-header/collector/collector.xqy");
         modules.put("/entities/test/harmonize/my-test-flow-with-header/headers/headers.xqy", "flow-manager-test/my-test-flow-with-header/headers/headers.xqy");
@@ -252,6 +287,7 @@ public class FlowManagerTest extends HubTestBase {
 
     @Test
     public void testRunFlowWithAll() throws SAXException, IOException, ParserConfigurationException, XMLStreamException {
+        addStagingDocs();
         HashMap<String, String> modules = new HashMap<>();
         modules.put("/entities/test/harmonize/my-test-flow-with-all/my-test-flow-with-all.xml", "flow-manager-test/my-test-flow-with-all/my-test-flow-with-all.xml");
         modules.put("/entities/test/harmonize/my-test-flow-with-all/collector/collector.xqy", "flow-manager-test/my-test-flow-with-all/collector/collector.xqy");

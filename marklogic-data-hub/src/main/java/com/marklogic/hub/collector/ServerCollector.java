@@ -18,7 +18,6 @@ package com.marklogic.hub.collector;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.hub.HubConfig;
-import com.marklogic.hub.HubDatabase;
 import com.marklogic.hub.plugin.PluginType;
 import com.marklogic.xcc.*;
 import org.slf4j.Logger;
@@ -33,7 +32,6 @@ public class ServerCollector extends AbstractCollector {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
     private DatabaseClient client = null;
     private HubConfig hubConfig = null;
-    private HubDatabase sourceDb = null;
 
     private String module;
 
@@ -43,7 +41,6 @@ public class ServerCollector extends AbstractCollector {
     }
 
     public void setHubConfig(HubConfig config) { this.hubConfig = config; }
-    public void setHubDatabase(HubDatabase sourceDb) { this.sourceDb = sourceDb; }
 
     public DatabaseClient getClient() {
         return this.client;
@@ -68,15 +65,8 @@ public class ServerCollector extends AbstractCollector {
 
     @Override
     public DiskQueue<String> run(String jobId, int threadCount, Map<String, Object> options) {
-        int port = hubConfig.stagingPort;
-        String dbName = hubConfig.stagingDbName;
-        if (sourceDb.equals(HubDatabase.FINAL)) {
-            port = hubConfig.finalPort;
-            dbName  = hubConfig.finalDbName;
-        }
-
         try {
-            ContentSource cs = ContentSourceFactory.newContentSource(hubConfig.host, port, hubConfig.getUsername(), hubConfig.getPassword(), dbName);
+            ContentSource cs = ContentSourceFactory.newContentSource(client.getHost(), client.getPort(), hubConfig.getUsername(), hubConfig.getPassword(), client.getDatabase());
             Session activeSession = cs.newSession();
             RequestOptions requestOptions = new RequestOptions();
             requestOptions.setCacheResult(false);

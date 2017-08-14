@@ -36,7 +36,7 @@
             <tr *ngFor="let trace of traces" (click)="showTrace(trace.traceId)" [ngClass]="{'error' : trace.hasError }">
               <td colspan="4" *ngIf="!trace.identifier && !trace.collectorPlugin" style="text-align: center">This trace has an invalid format</td>
               <td *ngIf="trace.identifier"><i class="mdi" [ngClass]="getIconClass(trace)"></i> {{trace.flowType}}</td>
-              <td *ngIf="trace.identifier" class="mdl-data-table__cell--non-numeric">{{trace.identifier | truncate:25}}</td>
+              <td *ngIf="trace.identifier" class="mdl-data-table__cell--non-numeric">{{trace.identifier}}</td>
               <td *ngIf="trace.identifier" class="mdl-data-table__cell--non-numeric">{{trace.jobId}}</td>
               <td *ngIf="trace.identifier">{{trace.created | amTimeAgo}}</td>
             </tr>

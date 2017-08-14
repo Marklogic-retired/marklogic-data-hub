@@ -32,8 +32,8 @@ public class FlowRunnerImpl implements FlowRunner {
     private Flow flow;
     private int batchSize = DEFAULT_BATCH_SIZE;
     private int threadCount = DEFAULT_THREAD_COUNT;
-    private HubDatabase sourceDatabase = HubDatabase.STAGING;
-    private HubDatabase destinationDatabase = HubDatabase.FINAL;
+    private DatabaseClient sourceClient;
+    private String destinationDatabase;
     private Map<String, Object> options;
     private int previousPercentComplete;
 
@@ -47,6 +47,8 @@ public class FlowRunnerImpl implements FlowRunner {
 
     public FlowRunnerImpl(HubConfig hubConfig) {
         this.hubConfig = hubConfig;
+        this.sourceClient = hubConfig.newStagingClient();
+        this.destinationDatabase = hubConfig.finalDbName;
     }
 
     @Override
@@ -68,13 +70,13 @@ public class FlowRunnerImpl implements FlowRunner {
     }
 
     @Override
-    public FlowRunner withSourceDatabase(HubDatabase sourceDatabase) {
-        this.sourceDatabase = sourceDatabase;
+    public FlowRunner withSourceClient(DatabaseClient sourceClient) {
+        this.sourceClient = sourceClient;
         return this;
     }
 
     @Override
-    public FlowRunner withDestinationDatabase(HubDatabase destinationDatabase) {
+    public FlowRunner withDestinationDatabase(String destinationDatabase) {
         this.destinationDatabase = destinationDatabase;
         return this;
     }
@@ -122,17 +124,6 @@ public class FlowRunnerImpl implements FlowRunner {
         runningThread.join(unit.convert(timeout, TimeUnit.MILLISECONDS));
     }
 
-    private DatabaseClient getSourceClient() {
-        DatabaseClient srcClient;
-        if (sourceDatabase.equals(HubDatabase.STAGING)) {
-            srcClient = hubConfig.newStagingClient();
-        }
-        else {
-            srcClient = hubConfig.newFinalClient();
-        }
-        return srcClient;
-    }
-
     @Override
     public JobTicket run() {
         String jobId = UUID.randomUUID().toString();
@@ -142,13 +133,10 @@ public class FlowRunnerImpl implements FlowRunner {
             .withJobId(jobId);
         jobManager.saveJob(job);
 
-        DatabaseClient srcClient = getSourceClient();
-
         Collector c = flow.getCollector();
         if (c instanceof ServerCollector) {
             ((ServerCollector)c).setHubConfig(hubConfig);
-            ((ServerCollector)c).setHubDatabase(sourceDatabase);
-            ((ServerCollector)c).setClient(srcClient);
+            ((ServerCollector)c).setClient(sourceClient);
         }
 
         AtomicLong successfulEvents = new AtomicLong(0);
@@ -176,7 +164,7 @@ public class FlowRunnerImpl implements FlowRunner {
 
         ArrayList<String> errorMessages = new ArrayList<>();
 
-        DataMovementManager dataMovementManager = srcClient.newDataMovementManager();
+        DataMovementManager dataMovementManager = sourceClient.newDataMovementManager();
 
         double batchCount = Math.ceil((double)uris.size() / (double)batchSize);
 
@@ -185,7 +173,7 @@ public class FlowRunnerImpl implements FlowRunner {
             .withThreadCount(threadCount)
             .onUrisReady((QueryBatch batch) -> {
                 try {
-                    FlowResource flowRunner = new FlowResource(batch.getClient(), batch.getClient().getDatabase(), flow);
+                    FlowResource flowRunner = new FlowResource(batch.getClient(), destinationDatabase, flow);
                     RunFlowResponse response = flowRunner.run(jobId, batch.getItems(), options);
                     failedEvents.addAndGet(response.errorCount);
                     successfulEvents.addAndGet(response.totalCount - response.errorCount);

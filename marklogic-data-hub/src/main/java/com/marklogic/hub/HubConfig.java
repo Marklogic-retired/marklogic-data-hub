@@ -140,7 +140,7 @@ public class HubConfig {
 
     public String customForestPath = DEFAULT_CUSTOM_FOREST_PATH;
 
-    public String modulePermissions = "rest-admin,read,rest-admin,update,rest-extension-user,execute";
+    public String modulePermissions = "rest-extension-user,read,rest-extension-user,execute,rest-admin,read,rest-admin,update";
 
     public String projectDir;
 
@@ -281,6 +281,7 @@ public class HubConfig {
         return DatabaseClientFactory.newClient(
             host,
             stagingPort,
+            stagingDbName,
             username,
             password,
             DatabaseClientFactory.Authentication.valueOf(stagingAuthMethod.toUpperCase()));
@@ -308,6 +309,7 @@ public class HubConfig {
         return DatabaseClientFactory.newClient(
             host,
             finalPort,
+            finalDbName,
             username,
             password,
             DatabaseClientFactory.Authentication.valueOf(finalAuthMethod.toUpperCase()));
@@ -321,6 +323,7 @@ public class HubConfig {
         return DatabaseClientFactory.newClient(
             host,
             jobPort,
+            jobDbName,
             username,
             password,
             DatabaseClientFactory.Authentication.valueOf(jobAuthMethod.toUpperCase()));
@@ -348,6 +351,7 @@ public class HubConfig {
         return DatabaseClientFactory.newClient(
             host,
             tracePort,
+            traceDbName,
             username,
             password,
             DatabaseClientFactory.Authentication.valueOf(stagingAuthMethod.toUpperCase()));

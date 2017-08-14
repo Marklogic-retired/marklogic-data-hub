@@ -23,10 +23,10 @@ import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.FlowStatusListener;
 import com.marklogic.hub.job.Job;
 import com.marklogic.hub.job.JobManager;
-import com.marklogic.quickstart.util.StreamGobbler;
+import com.marklogic.hub.job.JobStatus;
+import com.marklogic.hub.util.MlcpConsumer;
+import com.marklogic.hub.util.ProcessRunner;
 import org.apache.commons.io.FileUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,44 +35,40 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.function.Consumer;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-class MlcpRunner extends Thread {
+class MlcpRunner extends ProcessRunner {
 
-    private final Logger logger = LoggerFactory.getLogger(getClass());
-
-    private HubConfig hubConfig;
-    private JsonNode mlcpOptions;
-    private FlowStatusListener statusListener;
-    private ArrayList<String> mlcpOutput = new ArrayList<>();
-    private String jobId = UUID.randomUUID().toString();
     private JobManager jobManager;
     private Flow flow;
+    private JsonNode mlcpOptions;
+    private String jobId = UUID.randomUUID().toString();
     private AtomicLong successfulEvents = new AtomicLong(0);
     private AtomicLong failedEvents = new AtomicLong(0);
+    FlowStatusListener flowStatusListener;
 
     MlcpRunner(HubConfig hubConfig, Flow flow, JsonNode mlcpOptions, FlowStatusListener statusListener) {
         super();
 
-        this.hubConfig = hubConfig;
-        this.mlcpOptions = mlcpOptions;
-        this.statusListener = statusListener;
-        this.jobManager = new JobManager(this.hubConfig.newJobDbClient());
+        this.withHubconfig(hubConfig);
+
+        this.jobManager = new JobManager(hubConfig.newJobDbClient());
+        this.flowStatusListener = statusListener;
         this.flow = flow;
+        this.mlcpOptions = mlcpOptions;
     }
 
     @Override
     public void run() {
+        HubConfig hubConfig = getHubConfig();
+
+        Job job = Job.withFlow(flow)
+            .withJobId(jobId);
+        jobManager.saveJob(job);
+
         try {
             MlcpBean bean = new ObjectMapper().readerFor(MlcpBean.class).readValue(mlcpOptions);
             bean.setHost(hubConfig.host);
             bean.setPort(hubConfig.stagingPort);
-
-            Job job = Job.withFlow(flow)
-                .withJobId(jobId);
-            jobManager.saveJob(job);
 
             // Assume that the HTTP credentials will work for mlcp
             bean.setUsername(hubConfig.getUsername());
@@ -81,32 +77,42 @@ class MlcpRunner extends Thread {
             File file = new File(mlcpOptions.get("input_file_path").asText());
             String canonicalPath = file.getCanonicalPath();
             bean.setInput_file_path(canonicalPath);
-
             bean.setTransform_param("\"" + bean.getTransform_param().replaceAll("\"", "") + ",jobId=" + jobId + "\"");
 
-            runMlcp(bean);
+            buildCommand(bean);
 
-            statusListener.onStatusChange(jobId, 100, "");
+            super.run();
+
+            flowStatusListener.onStatusChange(jobId, 100, "");
+
+        } catch (Exception e) {
+            job.withStatus(JobStatus.FAILED)
+                .withEndTime(new Date());
+            jobManager.saveJob(job);
+            throw new RuntimeException(e);
+        } finally {
+            JobStatus status;
+            if (failedEvents.get() > 0 && successfulEvents.get() > 0) {
+                status = JobStatus.FINISHED_WITH_ERRORS;
+            }
+            else if (failedEvents.get() == 0 && successfulEvents.get() > 0) {
+                status = JobStatus.FINISHED;
+            }
+            else {
+                status = JobStatus.FAILED;
+            }
 
             // store the thing in MarkLogic
-            job.withJobOutput(String.join("\n", mlcpOutput))
+            job.withJobOutput(getProcessOutput())
+                .withStatus(status)
                 .setCounts(successfulEvents.get(), failedEvents.get(), 0, 0)
                 .withEndTime(new Date());
             jobManager.saveJob(job);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
         }
     }
 
-    private void runMlcp(MlcpBean bean) throws IOException, InterruptedException {
-        String javaHome = System.getProperty("java.home");
-        String javaBin = javaHome +
-            File.separator + "bin" +
-            File.separator + "java";
-        String classpath = System.getProperty("java.class.path");
-
-        File loggerFile = File.createTempFile("mlcp-", "-logger.xml");
-        String loggerData = "<configuration>\n" +
+    private String buildLoggerconfig() {
+        return "<configuration>\n" +
             "\n" +
             "  <appender name=\"STDOUT\" class=\"ch.qos.logback.core.ConsoleAppender\">\n" +
             "    <!-- encoders are assigned the type\n" +
@@ -134,7 +140,17 @@ class MlcpRunner extends Thread {
             "    <appender-ref ref=\"STDOUT\" />\n" +
             "  </root>\n" +
             "</configuration>\n";
-        FileUtils.writeStringToFile(loggerFile, loggerData);
+    }
+
+    private void buildCommand(MlcpBean bean) throws IOException, InterruptedException {
+        String javaHome = System.getProperty("java.home");
+        String javaBin = javaHome +
+            File.separator + "bin" +
+            File.separator + "java";
+        String classpath = System.getProperty("java.class.path");
+
+        File loggerFile = File.createTempFile("mlcp-", "-logger.xml");
+        FileUtils.writeStringToFile(loggerFile, buildLoggerconfig());
 
         ArrayList<String> args = new ArrayList<>();
         args.add(javaBin);
@@ -152,44 +168,9 @@ class MlcpRunner extends Thread {
         args.add("mlcp");
         args.addAll(Arrays.asList(bean.buildArgs()));
 
-        logger.debug(String.join(" ", args));
-        ProcessBuilder pb = new ProcessBuilder(args);
-        Process process = pb.start();
+        this.withArgs(args);
 
-        StreamGobbler gobbler = new StreamGobbler(process.getInputStream(), new Consumer<String>() {
-            private int currentPc = 0;
-            private final Pattern completedPattern = Pattern.compile("^.+completed (\\d+)%$");
-            private final Pattern successfulEventsPattern = Pattern.compile("^.+OUTPUT_RECORDS_COMMITTED:\\s+(\\d+).*$");
-            private final Pattern failedEventsPattern = Pattern.compile("^.+OUTPUT_RECORDS_FAILED\\s+(\\d+).*$");
-
-            @Override
-            public void accept(String status) {
-                Matcher m = completedPattern.matcher(status);
-                if (m.matches()) {
-                    int pc = Integer.parseInt(m.group(1));
-
-                    // don't send 100% because more stuff happens after 100% is reported here
-                    if (pc > currentPc && pc != 100) {
-                        currentPc = pc;
-                    }
-                }
-
-                m = successfulEventsPattern.matcher(status);
-                if (m.matches()) {
-                    successfulEvents.addAndGet(Long.parseLong(m.group(1)));
-                }
-
-                m = failedEventsPattern.matcher(status);
-                if (m.matches()) {
-                    failedEvents.addAndGet(Long.parseLong(m.group(1)));
-                }
-
-                mlcpOutput.add(status);
-                statusListener.onStatusChange(jobId, currentPc, status);
-            }
-        });
-        gobbler.start();
-        process.waitFor();
-        gobbler.join();
+        this.withStreamConsumer(new MlcpConsumer(successfulEvents,
+            failedEvents, flowStatusListener, jobId));
     }
 }

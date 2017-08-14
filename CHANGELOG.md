@@ -1,16 +1,43 @@
 # Change Log
 
-## [v1.1.4](https://github.com/marklogic-community/marklogic-data-hub/tree/v1.1.4)
+## [v1.1.5](https://github.com/marklogic-community/marklogic-data-hub/tree/v1.1.5)
 
-[Full Changelog](https://github.com/marklogic-community/marklogic-data-hub/compare/v2.0.0-rc.1...v1.1.4)
+[Full Changelog](https://github.com/marklogic-community/marklogic-data-hub/compare/v1.1.4...v1.1.5)
+
+**Implemented enhancements:**
+
+- Update Quickstart Ready message [\#478](https://github.com/marklogic-community/marklogic-data-hub/issues/478)
+- Example: Migrating a RDBMS to Data Hub using Spring Batch [\#473](https://github.com/marklogic-community/marklogic-data-hub/issues/473)
 
 **Fixed bugs:**
 
+- Providing different source/dest DB for the hubRunFlow does not work [\#488](https://github.com/marklogic-community/marklogic-data-hub/issues/488)
+- Path to code has wrong slash on Windows [\#467](https://github.com/marklogic-community/marklogic-data-hub/issues/467)
+- Job status stuck on STARTED for Input Flows [\#466](https://github.com/marklogic-community/marklogic-data-hub/issues/466)
 - File not saving properly from quickstart to fix a bug [\#430](https://github.com/marklogic-community/marklogic-data-hub/issues/430)
+- Error on initial run of QuickStart GUI [\#394](https://github.com/marklogic-community/marklogic-data-hub/issues/394)
+- Error saving entity - collation not legal [\#337](https://github.com/marklogic-community/marklogic-data-hub/issues/337)
 
 **Closed issues:**
 
+- collection name is hard coded in online store example [\#474](https://github.com/marklogic-community/marklogic-data-hub/issues/474)
+- add \(rest-extension-user,read\) to XML documents in modules-db [\#470](https://github.com/marklogic-community/marklogic-data-hub/issues/470)
+- column-width, or tooltip with full "Identifier" in traces table [\#469](https://github.com/marklogic-community/marklogic-data-hub/issues/469)
+- Initializing DHF Project against existing DB is dropping indexes [\#468](https://github.com/marklogic-community/marklogic-data-hub/issues/468)
 - Saving the changes in a flow code never finishes \*sometimes\* [\#462](https://github.com/marklogic-community/marklogic-data-hub/issues/462)
+- Sometimes a trace for a failed Harmonize job is not available/not existing [\#461](https://github.com/marklogic-community/marklogic-data-hub/issues/461)
+- Unable to ingest image \(.png\) documents using DHF Quick-Start application [\#420](https://github.com/marklogic-community/marklogic-data-hub/issues/420)
+- Load files into the data hub schemas database [\#288](https://github.com/marklogic-community/marklogic-data-hub/issues/288)
+- Ability to override uri for input flows [\#182](https://github.com/marklogic-community/marklogic-data-hub/issues/182)
+- Create concept of a domain [\#82](https://github.com/marklogic-community/marklogic-data-hub/issues/82)
+
+**Merged pull requests:**
+
+- Feature/473 msb example [\#480](https://github.com/marklogic-community/marklogic-data-hub/pull/480) ([sastafford](https://github.com/sastafford))
+- Some typos and suggestions [\#475](https://github.com/marklogic-community/marklogic-data-hub/pull/475) ([patrickmcelwee](https://github.com/patrickmcelwee))
+
+## [v1.1.4](https://github.com/marklogic-community/marklogic-data-hub/tree/v1.1.4) (2017-07-25)
+[Full Changelog](https://github.com/marklogic-community/marklogic-data-hub/compare/v2.0.0-rc.1...v1.1.4)
 
 ## [v2.0.0-rc.1](https://github.com/marklogic-community/marklogic-data-hub/tree/v2.0.0-rc.1) (2017-07-24)
 [Full Changelog](https://github.com/marklogic-community/marklogic-data-hub/compare/v2.0.0-beta.1...v2.0.0-rc.1)
