@@ -12,6 +12,12 @@
     <param name="flow-type" />
   </method>
   <method name="POST">
-    <param name="identifier" />
+    <param name="entity-name" />
+    <param name="flow-name" />
+    <param name="flow-type" />
+    <param name="identifiers" />
+    <param name="options" />
+    <param name="job-id" />
+    <param name="target-database" />
   </method>
 </metadata>

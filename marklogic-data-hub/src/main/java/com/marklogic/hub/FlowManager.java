@@ -22,7 +22,10 @@ import com.marklogic.client.extensions.ResourceServices.ServiceResult;
 import com.marklogic.client.extensions.ResourceServices.ServiceResultIterator;
 import com.marklogic.client.io.DOMHandle;
 import com.marklogic.client.util.RequestParameters;
-import com.marklogic.hub.flow.*;
+import com.marklogic.hub.flow.Flow;
+import com.marklogic.hub.flow.FlowRunner;
+import com.marklogic.hub.flow.FlowType;
+import com.marklogic.hub.flow.impl.FlowImpl;
 import com.marklogic.hub.flow.impl.FlowRunnerImpl;
 import com.marklogic.hub.job.JobManager;
 import org.w3c.dom.Document;
@@ -130,18 +133,6 @@ public class FlowManager extends ResourceManager {
      * @return a Flow instance
      */
     public static Flow flowFromXml(Element doc) {
-        Flow f = null;
-
-        String complexity = null;
-        NodeList elements = doc.getElementsByTagNameNS(HUB_NS, "complexity");
-        if (elements.getLength() == 1) {
-            complexity = elements.item(0).getTextContent();
-        }
-
-        if (complexity != null && complexity.equals(FlowComplexity.SIMPLE.toString())) {
-            f = new SimpleFlow(doc);
-        }
-
-        return f;
+        return FlowImpl.fromXml(doc);
     }
 }

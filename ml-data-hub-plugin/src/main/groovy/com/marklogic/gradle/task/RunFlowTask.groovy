@@ -1,5 +1,6 @@
 package com.marklogic.gradle.task
 
+import com.marklogic.client.DatabaseClient
 import com.marklogic.gradle.exception.EntityNameRequiredException
 import com.marklogic.gradle.exception.FlowNameRequiredException
 import com.marklogic.gradle.exception.FlowNotFoundException
@@ -30,10 +31,10 @@ class RunFlowTask extends HubTask {
     public Integer threadCount
 
     @Input
-    public HubDatabase sourceDB
+    public String sourceDB
 
     @Input
-    public HubDatabase destDB
+    public String destDB
 
     @Input
     public Boolean showOptions
@@ -64,13 +65,20 @@ class RunFlowTask extends HubTask {
             threadCount = project.hasProperty("threadCount") ?
                 Integer.parseInt(project.property("threadCount")) : 4
         }
+
+        DatabaseClient sourceClient = null
         if (sourceDB == null) {
-            sourceDB = project.hasProperty("sourceDB") ?
-                HubDatabase.getHubDatabase(project.property("sourceDB")) : HubDatabase.STAGING
+            if (project.hasProperty("sourceDB")) {
+                sourceClient = hubConfig.newStagingClient()
+                sourceClient.database = project.property("sourceDB")
+            }
+            else {
+                sourceClient = hubConfig.newStagingClient()
+            }
         }
         if (destDB == null) {
             destDB = project.hasProperty("destDB") ?
-                HubDatabase.getHubDatabase(project.property("destDB")) : HubDatabase.FINAL
+                project.property("destDB") : hubConfig.finalDbName
         }
         if (showOptions == null) {
             showOptions = project.hasProperty("showOptions") ?
@@ -96,7 +104,7 @@ class RunFlowTask extends HubTask {
         println("Running Flow: [" + entityName + ":" + flowName + "]" +
             "\n\twith batch size: " + batchSize +
             "\n\twith thread count: " + threadCount +
-            "\n\twith Source DB: " + sourceDB.toString() +
+            "\n\twith Source DB: " + sourceClient.database +
             "\n\twith Destination DB: " + destDB.toString())
 
         if (showOptions) {
@@ -111,7 +119,7 @@ class RunFlowTask extends HubTask {
             .withOptions(options)
             .withBatchSize(batchSize)
             .withThreadCount(threadCount)
-            .withSourceDatabase(sourceDB)
+            .withSourceClient(sourceClient)
             .withDestinationDatabase(destDB)
         flowRunner.run()
         flowRunner.awaitCompletion()

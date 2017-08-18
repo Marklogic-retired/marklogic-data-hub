@@ -17,18 +17,11 @@ package com.marklogic.hub;
 
 import com.marklogic.client.io.DOMHandle;
 import com.marklogic.client.io.DocumentMetadataHandle;
-import com.marklogic.client.io.Format;
-import com.marklogic.hub.collector.QueryCollector;
-import com.marklogic.hub.collector.ServerCollector;
-import com.marklogic.hub.flow.Flow;
-import com.marklogic.hub.flow.FlowRunner;
-import com.marklogic.hub.flow.FlowType;
-import com.marklogic.hub.flow.SimpleFlow;
-import com.marklogic.hub.plugin.*;
-import com.marklogic.hub.writer.DefaultWriter;
+import com.marklogic.hub.collector.Collector;
+import com.marklogic.hub.flow.*;
+import com.marklogic.hub.main.MainPlugin;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.w3c.dom.Document;
@@ -51,135 +44,152 @@ public class FlowManagerTest extends HubTestBase {
         XMLUnit.setIgnoreWhitespace(true);
 
         installHub();
+        enableDebugging();
 
-        clearDatabases(new String[]{HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME});
+        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME);
 
         DocumentMetadataHandle meta = new DocumentMetadataHandle();
         meta.getCollections().add("tester");
-        installStagingDoc("/employee1.xml", meta, getResource("flow-manager-test/input/employee1.xml"));
-        installStagingDoc("/employee2.xml", meta, getResource("flow-manager-test/input/employee2.xml"));
-        runInModules("xdmp:directory-create(\"/entities/test/harmonize/my-test-flow1/collector/\"),"
-                + "xdmp:directory-create(\"/entities/test/harmonize/my-test-flow1/headers/\"),"
-                + "xdmp:directory-create(\"/entities/test/harmonize/my-test-flow1/triples/\"),"
-                + "xdmp:directory-create(\"/entities/test/harmonize/my-test-flow1/content/\"),"
-                + "xdmp:directory-create(\"/entities/test/harmonize/my-test-flow2/collector/\"),"
-                + "xdmp:directory-create(\"/entities/test/harmonize/my-test-flow2/headers/\"),"
-                + "xdmp:directory-create(\"/entities/test/harmonize/my-test-flow2/triples/\"),"
-                + "xdmp:directory-create(\"/entities/test/harmonize/my-test-flow2/content/\")");
+        installStagingDoc("/employee1.xml", meta, "flow-manager-test/input/employee1.xml");
+        installStagingDoc("/employee2.xml", meta, "flow-manager-test/input/employee2.xml");
 
+        installModules();
+    }
+
+    private static void installModules() {
         HashMap<String, String> modules = new HashMap<>();
         modules.put(
-            "/entities/test/harmonize/my-test-flow1/collector/collector.xqy",
-            "flow-manager-test/my-test-flow1/collector/collector.xqy");
+            "/entities/test/harmonize/my-test-flow1/collector.xqy",
+            "flow-manager-test/my-test-flow1/collector.xqy");
         modules.put(
-            "/entities/test/harmonize/my-test-flow2/collector/collector.xqy",
-            "flow-manager-test/my-test-flow1/collector/collector.xqy");
+            "/entities/test/harmonize/my-test-flow1/main.xqy",
+            "flow-manager-test/my-test-flow1/main.xqy");
+        modules.put(
+            "/entities/test/harmonize/my-test-flow1/content.xqy",
+            "flow-manager-test/my-test-flow1/content.xqy");
+        modules.put(
+            "/entities/test/harmonize/my-test-flow1/headers.xqy",
+            "flow-manager-test/my-test-flow1/headers.xqy");
+        modules.put(
+            "/entities/test/harmonize/my-test-flow1/triples.xqy",
+            "flow-manager-test/my-test-flow1/triples.xqy");
+        modules.put(
+            "/entities/test/harmonize/my-test-flow1/writer.xqy",
+            "flow-manager-test/my-test-flow1/writer.xqy");
+        modules.put(
+            "/entities/test/harmonize/my-test-flow1/my-test-flow1.xml",
+            "flow-manager-test/my-test-flow1/my-test-flow1.xml");
+        modules.put(
+            "/entities/test/harmonize/my-test-flow2/collector.xqy",
+            "flow-manager-test/my-test-flow1/collector.xqy");
+        modules.put(
+            "/entities/test/harmonize/my-test-flow2/main.xqy",
+            "flow-manager-test/my-test-flow1/main.xqy");
+        modules.put(
+            "/entities/test/harmonize/my-test-flow2/content.xqy",
+            "flow-manager-test/my-test-flow1/content.xqy");
+        modules.put(
+            "/entities/test/harmonize/my-test-flow2/headers.xqy",
+            "flow-manager-test/my-test-flow1/headers.xqy");
+        modules.put(
+            "/entities/test/harmonize/my-test-flow2/triples.xqy",
+            "flow-manager-test/my-test-flow1/triples.xqy");
+        modules.put(
+            "/entities/test/harmonize/my-test-flow2/writer.xqy",
+            "flow-manager-test/my-test-flow1/writer.xqy");
+        modules.put(
+            "/entities/test/harmonize/my-test-flow2/my-test-flow2.xml",
+            "flow-manager-test/my-test-flow1/my-test-flow2.xml");
         installModules(modules);
     }
 
-    @After
-    public void afterEach() {
-        finalDocMgr.delete("/employee1.xml");
-        finalDocMgr.delete("/employee2.xml");
+    private static void addStagingDocs() throws IOException {
+        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME);
+        DocumentMetadataHandle meta = new DocumentMetadataHandle();
+        meta.getCollections().add("tester");
+        installStagingDoc("/employee1.xml", meta, "flow-manager-test/input/employee1.xml");
+        installStagingDoc("/employee2.xml", meta, "flow-manager-test/input/employee2.xml");
+    }
+
+    private static void addFinalDocs() throws IOException {
+        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME);
+        DocumentMetadataHandle meta = new DocumentMetadataHandle();
+        meta.getCollections().add("tester");
+        installFinalDoc("/employee1.xml", meta, getResource("flow-manager-test/input/employee1.xml"));
+        installFinalDoc("/employee2.xml", meta, getResource("flow-manager-test/input/employee2.xml"));
     }
 
     @Test
-    public void testSimpleFlowFromXml() throws IOException, ParserConfigurationException, SAXException {
+    public void testFlowFromXml() throws IOException, ParserConfigurationException, SAXException {
         Document d = getXmlFromResource("flow-manager-test/simple-flow.xml");
 
-        SimpleFlow flow = (SimpleFlow)FlowManager.flowFromXml(d.getDocumentElement());
-        assertThat(flow, instanceOf(SimpleFlow.class));
+        Flow flow = FlowManager.flowFromXml(d.getDocumentElement());
+        assertThat(flow, instanceOf(Flow.class));
         assertEquals(flow.getName(), "my-test-flow");
-        assertNotNull(flow.getCollector());
-
-        assertNotNull(flow.getContentPlugin());
-        assertNotNull(flow.getHeaderPlugin());
-        assertNotNull(flow.getTriplesPlugin());
+        assertEquals(flow.getCollector().getCodeFormat(), CodeFormat.XQUERY);
+        assertEquals(flow.getCollector().getModule(), "/entities/test/harmonize/my-test-flow/collector.xqy");
+        assertEquals(flow.getMain().getCodeFormat(), CodeFormat.XQUERY);
+        assertEquals(flow.getMain().getModule(), "/entities/test/harmonize/my-test-flow/main.xqy");
     }
 
     @Test
-    public void testEmptyFlow() throws IOException {
-        runInModules("xdmp:directory-create(\"/entities/test/harmonize/empty-flow/\")");
-        installModule("/entities/test/harmonize/empty-flow/empty-flow.xml", "flow-manager-test/my-test-flow1/my-test-flow1.xml");
-        installModule("/entities/test/harmonize/empty-flow/collector/collector.xqy", "flow-manager-test/my-test-flow1/collector/collector.xqy");
-
-        FlowManager fm = new FlowManager(getHubConfig());
-        SimpleFlow flow1 = (SimpleFlow)fm.getFlow("test", "empty-flow");
-        assertEquals("empty-flow", flow1.getName());
-
-        ServerCollector c = (ServerCollector)flow1.getCollector();
-        assertEquals(PluginType.XQUERY, c.getType());
-        assertEquals("/entities/test/harmonize/empty-flow/collector/collector.xqy", c.getModule());
-
-        ServerPlugin t = (ServerPlugin)flow1.getContentPlugin();
-        assertEquals(PluginType.XQUERY, t.getType());
-        assertEquals("/com.marklogic.hub/plugins/raw.xqy", t.getModule());
-
-        assertNull(flow1.getHeaderPlugin());
-        assertNull(flow1.getTriplesPlugin());
-
-        DefaultWriter w = (DefaultWriter)flow1.getWriter();
-        assertNotNull(w);
-
-        runInModules("xdmp:directory-delete(\"/entities/test/harmonize/empty-flow/\")");
-    }
-
-    @Test
-    public void testSimpleFlowToXml() throws IOException, ParserConfigurationException, SAXException {
-        SimpleFlow flow = new SimpleFlow("test", "my-test-flow", FlowType.HARMONIZE, Format.XML);
-        flow.setCollector(new QueryCollector());
-        flow.setContentPlugin(new ContentPlugin());
-        flow.setHeaderPlugin(new HeadersPlugin());
-        flow.setTriplesPlugin(new TriplesPlugin());
+    public void testFlowToXml() throws IOException, ParserConfigurationException, SAXException {
+        Flow flow = FlowBuilder.newFlow()
+            .withEntityName("test")
+            .withName("my-test-flow")
+            .withType(FlowType.HARMONIZE)
+            .withDataFormat(DataFormat.XML)
+            .withCodeFormat(CodeFormat.XQUERY)
+            .build();
         String expected = getResource("flow-manager-test/simple-flow.xml");
-        String actual = flow.serialize(true);
+        String actual = flow.serialize();
         assertXMLEqual(expected, actual);
     }
 
     @Test
     public void testGetFlows() {
+        clearDatabases(HubConfig.DEFAULT_MODULES_DB_NAME);
+
+        getDataHub().installHubModules();
+
         installModule("/entities/test/harmonize/my-test-flow1/my-test-flow1.xml", "flow-manager-test/my-test-flow1/my-test-flow1.xml");
+        installModule("/entities/test/harmonize/my-test-flow2/my-test-flow2.xml", "flow-manager-test/my-test-flow1/my-test-flow2.xml");
 
         FlowManager fm = new FlowManager(getHubConfig());
         List<Flow> flows = fm.getFlows("test");
         assertEquals(2, flows.size());
 
         // flow 1
-        SimpleFlow flow1 = (SimpleFlow)flows.get(0);
+        Flow flow1 = flows.get(0);
         assertEquals("my-test-flow1", flow1.getName());
-        assertEquals(Format.XML, flow1.getDataFormat());
+        assertEquals(CodeFormat.XQUERY, flow1.getCodeFormat());
+        assertEquals(DataFormat.XML, flow1.getDataFormat());
         assertEquals("test", flow1.getEntityName());
         assertEquals(FlowType.HARMONIZE, flow1.getType());
 
-        ServerCollector c = (ServerCollector)flow1.getCollector();
-        assertEquals(PluginType.XQUERY, c.getType());
-        assertEquals("/entities/test/harmonize/my-test-flow1/collector/collector.xqy", c.getModule());
+        Collector c = flow1.getCollector();
+        assertEquals(CodeFormat.XQUERY, c.getCodeFormat());
+        assertEquals("/entities/test/harmonize/my-test-flow1/collector.xqy", c.getModule());
 
-        ServerPlugin t = (ServerPlugin)flow1.getContentPlugin();
-        assertEquals(PluginType.XQUERY, t.getType());
-        assertEquals("/com.marklogic.hub/plugins/raw.xqy", t.getModule());
-        assertNull(flow1.getHeaderPlugin());
-        assertNull(flow1.getTriplesPlugin());
-
-        DefaultWriter w = (DefaultWriter)flow1.getWriter();
-        assertNotNull(w);
+        MainPlugin main = flow1.getMain();
+        assertEquals(CodeFormat.XQUERY, main.getCodeFormat());
+        assertEquals("/entities/test/harmonize/my-test-flow1/main.xqy", main.getModule());
 
         // flow 2
-        SimpleFlow flow2 = (SimpleFlow)flows.get(1);
+        Flow flow2 = flows.get(1);
         assertEquals("my-test-flow2", flow2.getName());
+        assertEquals(CodeFormat.XQUERY, flow2.getCodeFormat());
+        assertEquals(DataFormat.XML, flow2.getDataFormat());
+        assertEquals("test", flow2.getEntityName());
+        assertEquals(FlowType.HARMONIZE, flow2.getType());
 
-        c = (ServerCollector)flow1.getCollector();
-        assertEquals(PluginType.XQUERY, c.getType());
-        assertEquals("/entities/test/harmonize/my-test-flow1/collector/collector.xqy", c.getModule());
+        c = flow2.getCollector();
+        assertEquals(CodeFormat.XQUERY, c.getCodeFormat());
+        assertEquals("/entities/test/harmonize/my-test-flow1/collector.xqy", c.getModule());
 
-        t = (ServerPlugin)flow2.getContentPlugin();
-        assertEquals(PluginType.XQUERY, t.getType());
-        assertEquals("/com.marklogic.hub/plugins/raw.xqy", t.getModule());
-        assertNull(flow2.getHeaderPlugin());
-
-        w = (DefaultWriter)flow2.getWriter();
-        assertNotNull(w);
-
+        main = flow2.getMain();
+        assertEquals(CodeFormat.XQUERY, main.getCodeFormat());
+        assertEquals("/entities/test/harmonize/my-test-flow1/main.xqy", main.getModule());
     }
 
     @Test
@@ -187,32 +197,30 @@ public class FlowManagerTest extends HubTestBase {
         installModule("/entities/test/harmonize/my-test-flow1/my-test-flow1.xml", "flow-manager-test/my-test-flow1/my-test-flow1-json.xml");
 
         FlowManager fm = new FlowManager(getHubConfig());
-        SimpleFlow flow1 = (SimpleFlow)fm.getFlow("test", "my-test-flow1");
-
+        Flow flow1 = fm.getFlow("test", "my-test-flow1");
         assertEquals("my-test-flow1", flow1.getName());
-        assertEquals(Format.JSON, flow1.getDataFormat());
+        assertEquals(CodeFormat.JAVASCRIPT, flow1.getCodeFormat());
+        assertEquals(DataFormat.JSON, flow1.getDataFormat());
+        assertEquals("test", flow1.getEntityName());
+        assertEquals(FlowType.HARMONIZE, flow1.getType());
 
-        ServerCollector c = (ServerCollector)flow1.getCollector();
-        assertEquals(PluginType.XQUERY, c.getType());
-        assertEquals("/entities/test/harmonize/my-test-flow1/collector/collector.xqy", c.getModule());
+        Collector c = flow1.getCollector();
+        assertEquals(CodeFormat.JAVASCRIPT, c.getCodeFormat());
+        assertEquals("/entities/test/harmonize/my-test-flow1/collector.sjs", c.getModule());
 
-        ServerPlugin t = (ServerPlugin)flow1.getContentPlugin();
-        assertEquals(PluginType.XQUERY, t.getType());
-        assertEquals("/com.marklogic.hub/plugins/raw.xqy", t.getModule());
-        assertNull(flow1.getHeaderPlugin());
-        assertNull(flow1.getTriplesPlugin());
-
-        DefaultWriter w = (DefaultWriter)flow1.getWriter();
-        assertNotNull(w);
+        MainPlugin main = flow1.getMain();
+        assertEquals(CodeFormat.JAVASCRIPT, main.getCodeFormat());
+        assertEquals("/entities/test/harmonize/my-test-flow1/main.sjs", main.getModule());
     }
 
     @Test
     public void testRunFlow() throws SAXException, IOException, ParserConfigurationException, XMLStreamException {
-        installModule("/entities/test/harmonize/my-test-flow1/my-test-flow1.xml", "flow-manager-test/my-test-flow1/my-test-flow1.xml");
+        addStagingDocs();
+        installModules();
         assertEquals(2, getStagingDocCount());
         assertEquals(0, getFinalDocCount());
         FlowManager fm = new FlowManager(getHubConfig());
-        SimpleFlow flow1 = (SimpleFlow)fm.getFlow("test", "my-test-flow1");
+        Flow flow1 = fm.getFlow("test", "my-test-flow1");
         FlowRunner flowRunner = fm.newFlowRunner()
             .withFlow(flow1)
             .withBatchSize(10)
@@ -226,16 +234,44 @@ public class FlowManagerTest extends HubTestBase {
     }
 
     @Test
+    public void testRunFlowWithBackwards() throws SAXException, IOException, ParserConfigurationException, XMLStreamException {
+        addFinalDocs();
+        installModules();
+        assertEquals(0, getStagingDocCount());
+        assertEquals(2, getFinalDocCount());
+        FlowManager fm = new FlowManager(getHubConfig());
+        Flow flow1 = fm.getFlow("test", "my-test-flow1");
+        FlowRunner flowRunner = fm.newFlowRunner()
+            .withFlow(flow1)
+            .withBatchSize(10)
+            .withThreadCount(1)
+            .withSourceClient(getHubConfig().newFinalClient())
+            .withDestinationDatabase(HubConfig.DEFAULT_STAGING_NAME);
+        flowRunner.run();
+        flowRunner.awaitCompletion();
+        assertEquals(2, getStagingDocCount());
+        assertEquals(2, getFinalDocCount());
+        assertXMLEqual(getXmlFromResource("flow-manager-test/harmonized/harmonized1.xml"), stagingDocMgr.read("/employee1.xml").next().getContent(new DOMHandle()).get() );
+        assertXMLEqual(getXmlFromResource("flow-manager-test/harmonized/harmonized2.xml"), stagingDocMgr.read("/employee2.xml").next().getContent(new DOMHandle()).get());
+    }
+
+    @Test
     public void testRunFlowWithHeader() throws SAXException, IOException, ParserConfigurationException, XMLStreamException {
+        addStagingDocs();
         HashMap<String, String> modules = new HashMap<>();
-        modules.put("/entities/test/harmonize/my-test-flow-with-header/collector/collector.xqy", "flow-manager-test/my-test-flow-with-header/collector/collector.xqy");
-        modules.put("/entities/test/harmonize/my-test-flow-with-header/headers/headers.xqy", "flow-manager-test/my-test-flow-with-header/headers/headers.xqy");
+        modules.put("/entities/test/harmonize/my-test-flow-with-header/flow.xml", "flow-manager-test/my-test-flow-with-header/flow.xml");
+        modules.put("/entities/test/harmonize/my-test-flow-with-header/collector.xqy", "flow-manager-test/my-test-flow-with-header/collector.xqy");
+        modules.put("/entities/test/harmonize/my-test-flow-with-header/content.xqy", "flow-manager-test/my-test-flow-with-header/content.xqy");
+        modules.put("/entities/test/harmonize/my-test-flow-with-header/headers.xqy", "flow-manager-test/my-test-flow-with-header/headers.xqy");
+        modules.put("/entities/test/harmonize/my-test-flow-with-header/triples.xqy", "flow-manager-test/my-test-flow-with-header/triples.xqy");
+        modules.put("/entities/test/harmonize/my-test-flow-with-header/writer.xqy", "flow-manager-test/my-test-flow-with-header/writer.xqy");
+        modules.put("/entities/test/harmonize/my-test-flow-with-header/main.xqy", "flow-manager-test/my-test-flow-with-header/main.xqy");
         installModules(modules);
 
         assertEquals(2, getStagingDocCount());
         assertEquals(0, getFinalDocCount());
         FlowManager fm = new FlowManager(getHubConfig());
-        SimpleFlow flow1 = (SimpleFlow)fm.getFlow("test", "my-test-flow-with-header");
+        Flow flow1 = fm.getFlow("test", "my-test-flow-with-header");
         FlowRunner flowRunner = fm.newFlowRunner()
             .withFlow(flow1)
             .withBatchSize(10)
@@ -252,18 +288,21 @@ public class FlowManagerTest extends HubTestBase {
 
     @Test
     public void testRunFlowWithAll() throws SAXException, IOException, ParserConfigurationException, XMLStreamException {
+        addStagingDocs();
         HashMap<String, String> modules = new HashMap<>();
         modules.put("/entities/test/harmonize/my-test-flow-with-all/my-test-flow-with-all.xml", "flow-manager-test/my-test-flow-with-all/my-test-flow-with-all.xml");
-        modules.put("/entities/test/harmonize/my-test-flow-with-all/collector/collector.xqy", "flow-manager-test/my-test-flow-with-all/collector/collector.xqy");
-        modules.put("/entities/test/harmonize/my-test-flow-with-all/headers/headers.xqy", "flow-manager-test/my-test-flow-with-all/headers/headers.xqy");
-        modules.put("/entities/test/harmonize/my-test-flow-with-all/content/content.xqy", "flow-manager-test/my-test-flow-with-all/content/content.xqy");
-        modules.put("/entities/test/harmonize/my-test-flow-with-all/triples/triples.xqy", "flow-manager-test/my-test-flow-with-all/triples/triples.xqy");
+        modules.put("/entities/test/harmonize/my-test-flow-with-all/collector.xqy", "flow-manager-test/my-test-flow-with-all/collector.xqy");
+        modules.put("/entities/test/harmonize/my-test-flow-with-all/headers.xqy", "flow-manager-test/my-test-flow-with-all/headers.xqy");
+        modules.put("/entities/test/harmonize/my-test-flow-with-all/content.xqy", "flow-manager-test/my-test-flow-with-all/content.xqy");
+        modules.put("/entities/test/harmonize/my-test-flow-with-all/triples.xqy", "flow-manager-test/my-test-flow-with-all/triples.xqy");
+        modules.put("/entities/test/harmonize/my-test-flow-with-all/writer.xqy", "flow-manager-test/my-test-flow-with-all/writer.xqy");
+        modules.put("/entities/test/harmonize/my-test-flow-with-all/main.xqy", "flow-manager-test/my-test-flow-with-all/main.xqy");
         installModules(modules);
 
         assertEquals(2, getStagingDocCount());
         assertEquals(0, getFinalDocCount());
         FlowManager fm = new FlowManager(getHubConfig());
-        SimpleFlow flow1 = (SimpleFlow)fm.getFlow("test", "my-test-flow-with-all");
+        Flow flow1 = fm.getFlow("test", "my-test-flow-with-all");
         FlowRunner flowRunner = fm.newFlowRunner()
             .withFlow(flow1)
             .withBatchSize(10)

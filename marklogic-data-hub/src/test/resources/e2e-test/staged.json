@@ -1,10 +1,10 @@
 {
   "envelope": {
-    "headers": [],
+    "headers": {},
     "triples": [],
     "instance": {
       "testing": 123
     },
-    "attachments": []
+    "attachments": null
   }
 }

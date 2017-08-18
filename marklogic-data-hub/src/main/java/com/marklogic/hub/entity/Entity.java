@@ -15,9 +15,9 @@
  */
 package com.marklogic.hub.entity;
 
-import java.util.List;
-
 import com.marklogic.hub.flow.Flow;
+
+import java.util.List;
 
 /**
  * A entity object. The data hub groups data by entities.

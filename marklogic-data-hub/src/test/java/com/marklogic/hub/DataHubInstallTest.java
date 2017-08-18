@@ -3,7 +3,6 @@ package com.marklogic.hub;
 import com.marklogic.client.eval.EvalResult;
 import com.marklogic.client.eval.EvalResultIterator;
 import org.custommonkey.xmlunit.XMLUnit;
-import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.xml.sax.SAXException;
@@ -54,14 +53,14 @@ public class DataHubInstallTest extends HubTestBase {
         dataHub.installUserModules(true);
 
         assertEquals(
-                getResource("data-hub-test/plugins/entities/test-entity/harmonize/final/collector/collector.xqy"),
-                getModulesFile("/entities/test-entity/harmonize/final/collector/collector.xqy"));
+                getResource("data-hub-test/plugins/entities/test-entity/harmonize/final/collector.xqy"),
+                getModulesFile("/entities/test-entity/harmonize/final/collector.xqy"));
 
         EvalResultIterator resultItr = runInModules(
             "xquery version \"1.0-ml\";\n" +
                 "import module namespace sec=\"http://marklogic.com/xdmp/security\" at \n" +
                 "    \"/MarkLogic/security.xqy\";\n" +
-                "let $perms := xdmp:document-get-permissions('/entities/test-entity/harmonize/final/collector/collector.xqy')\n" +
+                "let $perms := xdmp:document-get-permissions('/entities/test-entity/harmonize/final/collector.xqy')\n" +
                 "return\n" +
                 "  fn:string-join(" +
                 "    for $x in xdmp:invoke-function(function() {\n" +
@@ -74,14 +73,20 @@ public class DataHubInstallTest extends HubTestBase {
         EvalResult res = resultItr.next();
         assertEquals("data-hub-role,rest-admin", res.getString());
         assertEquals(
-                getResource("data-hub-test/plugins/entities/test-entity/harmonize/final/content/content.xqy"),
-                getModulesFile("/entities/test-entity/harmonize/final/content/content.xqy"));
+                getResource("data-hub-test/plugins/entities/test-entity/harmonize/final/content.xqy"),
+                getModulesFile("/entities/test-entity/harmonize/final/content.xqy"));
         assertEquals(
-                getResource("data-hub-test/plugins/entities/test-entity/harmonize/final/headers/headers.xqy"),
-                getModulesFile("/entities/test-entity/harmonize/final/headers/headers.xqy"));
+                getResource("data-hub-test/plugins/entities/test-entity/harmonize/final/headers.xqy"),
+                getModulesFile("/entities/test-entity/harmonize/final/headers.xqy"));
         assertEquals(
-                getResource("data-hub-test/plugins/entities/test-entity/harmonize/final/triples/triples.xqy"),
-                getModulesFile("/entities/test-entity/harmonize/final/triples/triples.xqy"));
+                getResource("data-hub-test/plugins/entities/test-entity/harmonize/final/triples.xqy"),
+                getModulesFile("/entities/test-entity/harmonize/final/triples.xqy"));
+        assertEquals(
+            getResource("data-hub-test/plugins/entities/test-entity/harmonize/final/writer.xqy"),
+            getModulesFile("/entities/test-entity/harmonize/final/writer.xqy"));
+        assertEquals(
+            getResource("data-hub-test/plugins/entities/test-entity/harmonize/final/main.xqy"),
+            getModulesFile("/entities/test-entity/harmonize/final/main.xqy"));
 
         assertXMLEqual(
                 getXmlFromResource("data-hub-test/plugins/entities/test-entity/harmonize/final/final.xml"),
@@ -89,14 +94,20 @@ public class DataHubInstallTest extends HubTestBase {
 
 
         assertEquals(
-                getResource("data-hub-test/plugins/entities/test-entity/input/hl7/content/content.xqy"),
-                getModulesFile("/entities/test-entity/input/hl7/content/content.xqy"));
+                getResource("data-hub-test/plugins/entities/test-entity/input/hl7/content.xqy"),
+                getModulesFile("/entities/test-entity/input/hl7/content.xqy"));
         assertEquals(
-                getResource("data-hub-test/plugins/entities/test-entity/input/hl7/headers/headers.xqy"),
-                getModulesFile("/entities/test-entity/input/hl7/headers/headers.xqy"));
+                getResource("data-hub-test/plugins/entities/test-entity/input/hl7/headers.xqy"),
+                getModulesFile("/entities/test-entity/input/hl7/headers.xqy"));
         assertEquals(
-                getResource("data-hub-test/plugins/entities/test-entity/input/hl7/triples/triples.xqy"),
-                getModulesFile("/entities/test-entity/input/hl7/triples/triples.xqy"));
+                getResource("data-hub-test/plugins/entities/test-entity/input/hl7/triples.xqy"),
+                getModulesFile("/entities/test-entity/input/hl7/triples.xqy"));
+        assertEquals(
+            getResource("data-hub-test/plugins/entities/test-entity/input/hl7/writer.xqy"),
+            getModulesFile("/entities/test-entity/input/hl7/writer.xqy"));
+        assertEquals(
+            getResource("data-hub-test/plugins/entities/test-entity/input/hl7/main.xqy"),
+            getModulesFile("/entities/test-entity/input/hl7/main.xqy"));
         assertXMLEqual(
                 getXmlFromResource("data-hub-test/plugins/entities/test-entity/input/hl7/hl7.xml"),
                 getModulesDocument("/entities/test-entity/input/hl7/hl7.xml"));

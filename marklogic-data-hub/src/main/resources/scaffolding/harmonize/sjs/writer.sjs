@@ -11,7 +11,4 @@ function write(id, envelope, options) {
   xdmp.documentInsert(id, envelope, xdmp.defaultPermissions(), options.entity);
 }
 
-module.exports = {
-  write: write
-};
-
+module.exports = write;

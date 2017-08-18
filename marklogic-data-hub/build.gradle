@@ -32,6 +32,10 @@ dependencies {
     testCompile 'org.hamcrest:hamcrest-junit:2.0.0.0'
     testCompile 'org.easymock:easymock:3.4'
     testCompile 'ch.qos.logback:logback-classic:1.1.11'
+    testCompile("com.marklogic:mlcp-util:0.3.0")
+    testCompile("com.marklogic:mlcp:9.0.2") {
+      exclude group: 'org.apache.avro', module: 'avro-tools'
+    }
 }
 
 node {

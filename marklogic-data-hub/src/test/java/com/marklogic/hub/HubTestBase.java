@@ -29,7 +29,6 @@ import com.marklogic.client.eval.EvalResult;
 import com.marklogic.client.eval.EvalResultIterator;
 import com.marklogic.client.eval.ServerEvaluationCall;
 import com.marklogic.client.io.*;
-import com.marklogic.hub.flow.FlowCacheInvalidator;
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.databases.DatabaseManager;
 import org.apache.commons.io.FileUtils;
@@ -37,6 +36,8 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.web.client.ResourceAccessException;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -47,8 +48,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -77,21 +78,21 @@ public class HubTestBase {
     public static DatabaseClient traceModulesClient = null;
     public static DatabaseClient jobClient = null;
     public static DatabaseClient jobModulesClient = null;
-    private static FlowCacheInvalidator invalidator = null;
     private static Properties properties = new Properties();
     private static boolean initialized = false;
-    public static XMLDocumentManager stagingDocMgr = getStagingMgr();
+    public static GenericDocumentManager stagingDocMgr = getStagingMgr();
     public static XMLDocumentManager finalDocMgr = getFinalMgr();
     public static JSONDocumentManager jobDocMgr = getJobMgr();
+    public static GenericDocumentManager traceDocMgr = getTraceMgr();
     public static GenericDocumentManager modMgr = getModMgr();
 
     private static boolean isInstalled = false;
 
-    private static XMLDocumentManager getStagingMgr() {
+    private static GenericDocumentManager getStagingMgr() {
         if (!initialized) {
             init();
         }
-        return stagingClient.newXMLDocumentManager();
+        return stagingClient.newDocumentManager();
     }
 
     private static GenericDocumentManager getModMgr() {
@@ -113,6 +114,13 @@ public class HubTestBase {
             init();
         }
         return jobClient.newJSONDocumentManager();
+    }
+
+    private static GenericDocumentManager getTraceMgr() {
+        if (!initialized) {
+            init();
+        }
+        return traceClient.newDocumentManager();
     }
 
     private static void init() {
@@ -183,7 +191,6 @@ public class HubTestBase {
         traceModulesClient  = DatabaseClientFactory.newClient(host, stagingPort, HubConfig.DEFAULT_MODULES_DB_NAME, user, password, traceAuthMethod);
         jobClient = DatabaseClientFactory.newClient(host, jobPort, user, password, jobAuthMethod);
         jobModulesClient  = DatabaseClientFactory.newClient(host, stagingPort, HubConfig.DEFAULT_MODULES_DB_NAME, user, password, jobAuthMethod);
-        invalidator = new FlowCacheInvalidator(stagingClient);
     }
 
     public HubTestBase() {
@@ -262,7 +269,8 @@ public class HubTestBase {
     }
 
     protected static String getModulesFile(String uri) {
-        return modMgr.read(uri).next().getContent(new StringHandle()).get();
+        String contents = modMgr.read(uri).next().getContent(new StringHandle()).get();
+        return contents.replaceFirst("(\\(:|//)\\s+cache\\sbuster:.+\\n", "");
     }
 
     protected static Document getModulesDocument(String uri) {
@@ -322,10 +330,6 @@ public class HubTestBase {
         return count;
     }
 
-    protected static void installStagingDoc(String uri, String doc) {
-        stagingDocMgr.write(uri, new StringHandle(doc));
-    }
-
     protected static void clearDb(String dbName) {
         ManageClient client = getHubConfig().newManageClient();
         DatabaseManager databaseManager = new DatabaseManager(client);
@@ -333,26 +337,27 @@ public class HubTestBase {
     }
 
     public static void clearDatabases(String... databases) {
-        List<Thread> threads = new ArrayList<>();
+
+        ThreadPoolTaskExecutor tpe = new ThreadPoolTaskExecutor();
+        tpe.setCorePoolSize(2);
+        tpe.setAwaitTerminationSeconds(60 * 10);
+        tpe.setWaitForTasksToCompleteOnShutdown(true);
+        tpe.afterPropertiesSet();
         ManageClient client = getHubConfig().newManageClient();
         DatabaseManager databaseManager = new DatabaseManager(client);
         for (String database: databases) {
-            Thread thread = new Thread(() -> databaseManager.clearDatabase(database));
-            threads.add(thread);
-            thread.start();
+            tpe.execute(() -> {
+                databaseManager.clearDatabase(database);
+            });
         }
-        threads.forEach((Thread thread) -> {
-            try {
-                thread.join();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        });
+        tpe.setWaitForTasksToCompleteOnShutdown(true);
+        tpe.shutdown();
     }
 
 
-    protected static void installStagingDoc(String uri, DocumentMetadataHandle meta, String doc) {
-        stagingDocMgr.write(uri, meta, new StringHandle(doc));
+    protected static void installStagingDoc(String uri, DocumentMetadataHandle meta, String resource) {
+        FileHandle handle = new FileHandle(getResourceFile(resource));
+        stagingDocMgr.write(uri, meta, handle);
     }
 
     protected static void installFinalDoc(String uri, String doc) {
@@ -382,8 +387,6 @@ public class HubTestBase {
             writeSet.add(path, handle);
         });
         modMgr.write(writeSet);
-
-        invalidator.invalidateCache();
     }
 
     protected static void installModule(String path, String localPath) {
@@ -402,9 +405,6 @@ public class HubTestBase {
         }
 
         modMgr.write(path, handle);
-
-        FlowCacheInvalidator invalidator = new FlowCacheInvalidator(stagingClient);
-        invalidator.invalidateCache();
     }
 
     protected static EvalResultIterator runInModules(String query) {

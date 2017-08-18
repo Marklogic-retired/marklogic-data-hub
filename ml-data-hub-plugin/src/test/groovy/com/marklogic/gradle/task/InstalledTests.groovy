@@ -1,20 +1,23 @@
 package com.marklogic.gradle.task
 
+import com.marklogic.client.io.DOMHandle
+import com.marklogic.client.io.DocumentMetadataHandle
 import com.marklogic.hub.Debugging
+import com.marklogic.hub.HubConfig
 import com.marklogic.hub.Tracing
 import org.apache.commons.io.FileUtils
 import org.gradle.testkit.runner.UnexpectedBuildFailure
 import org.gradle.testkit.runner.UnexpectedBuildSuccess
 
+import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual
 import static org.gradle.testkit.runner.TaskOutcome.FAILED
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
-
 
 class InstalledTests extends BaseTest {
     def setupSpec() {
         runTask('hubInit')
         runTask('mlUndeploy')
-        runTask('mlDeploy')
+        println(runTask('mlDeploy', '-i').getOutput())
     }
 
     def cleanupSpec() {
@@ -65,43 +68,8 @@ class InstalledTests extends BaseTest {
         t.isEnabled() == false
     }
 
-    def "test run flow works when hub is installed"() {
-        setup: "copy the plugins"
-        File tempPluginsDir = new File(testProjectDir.root, "plugins")
-        URL pluginsDir = this.class.getClassLoader().getResource("plugins");
-        FileUtils.copyDirectory(new File(pluginsDir.toURI()), tempPluginsDir)
-
-        and: "deploy user plugins"
-        runTask('mlLoadModules')
-
-        and: "append properties for task name and flow name"
-        propertiesFile << """
-                ext {
-                    entityName=my-entity
-                    flowName=my-flow
-                }
-            """
-
-        when: "hubRunFlow is Run"
-        def result = runTask('hubRunFlow', '-i')
-
-        then: "it should run w/o errors"
-        notThrown(UnexpectedBuildFailure)
-        result.output.contains('completed.')
-        result.task(":hubRunFlow").outcome == SUCCESS
-
-    }
-
     def "test run flow with invalid flow"() {
-        setup: "copy the plugins"
-        File tempPluginsDir = new File(testProjectDir.root, "plugins")
-        URL pluginsDir = this.class.getClassLoader().getResource("plugins");
-        FileUtils.copyDirectory(new File(pluginsDir.toURI()), tempPluginsDir)
-
-        and: "deploy user plugins"
-        runTask('mlLoadModules')
-
-        and: "append properties for task name and flow name"
+        setup: "append properties for task name and flow name"
         propertiesFile << """
                 ext {
                     entityName=my-entity
@@ -116,5 +84,60 @@ class InstalledTests extends BaseTest {
         notThrown(UnexpectedBuildSuccess)
         result.output.contains('The requested flow was not found')
         result.task(":hubRunFlow").outcome == FAILED
+    }
+
+    def "runHarmonizeFlow with default src and dest"() {
+        given:
+        println(runTask('hubCreateHarmonizeFlow', '-PentityName=my-new-entity', '-PflowName=my-new-harmonize-flow', '-PdataFormat=xml', '-PpluginFormat=xqy').getOutput())
+        println(runTask('mlReLoadModules'))
+
+        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME)
+        DocumentMetadataHandle meta = new DocumentMetadataHandle();
+        meta.getCollections().add("my-new-entity");
+        installStagingDoc("/employee1.xml", meta, new File("src/test/resources/run-flow-test/employee1.xml").text)
+        installStagingDoc("/employee2.xml", meta, new File("src/test/resources/run-flow-test/employee2.xml").text)
+        installModule("/entities/my-new-entity/harmonize/my-new-harmonize-flow/content/content.xqy", "run-flow-test/content.xqy")
+
+        when:
+        println(runTask('hubRunFlow', '-PentityName=my-new-entity', '-PflowName=my-new-harmonize-flow', '-PflowType=harmonize','-i').getOutput())
+
+        then:
+        notThrown(UnexpectedBuildFailure)
+        getStagingDocCount() == 2
+        getFinalDocCount() == 2
+        assertXMLEqual(getXmlFromResource("run-flow-test/harmonized1.xml"), finalClient().newDocumentManager().read("/employee1.xml").next().getContent(new DOMHandle()).get())
+        assertXMLEqual(getXmlFromResource("run-flow-test/harmonized2.xml"), finalClient().newDocumentManager().read("/employee2.xml").next().getContent(new DOMHandle()).get())
+    }
+
+    def "runHarmonizeFlow with swapped src and dest"() {
+        given:
+        println(runTask('hubCreateHarmonizeFlow', '-PentityName=my-new-entity', '-PflowName=my-new-harmonize-flow', '-PdataFormat=xml', '-PpluginFormat=xqy').getOutput())
+        println(runTask('mlReLoadModules'))
+
+        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME)
+        DocumentMetadataHandle meta = new DocumentMetadataHandle();
+        meta.getCollections().add("my-new-entity");
+        installFinalDoc("/employee1.xml", meta, new File("src/test/resources/run-flow-test/employee1.xml").text)
+        installFinalDoc("/employee2.xml", meta, new File("src/test/resources/run-flow-test/employee2.xml").text)
+        installModule("/entities/my-new-entity/harmonize/my-new-harmonize-flow/content/content.xqy", "run-flow-test/content.xqy")
+
+        when:
+        println(runTask(
+            'hubRunFlow',
+            '-PentityName=my-new-entity',
+            '-PflowName=my-new-harmonize-flow',
+            '-PflowType=harmonize',
+            '-PsourceDB=data-hub-FINAL',
+            '-PdestDB=data-hub-STAGING',
+            '-i'
+        ).getOutput())
+
+        then:
+        notThrown(UnexpectedBuildFailure)
+        getStagingDocCount() == 2
+        getFinalDocCount() == 2
+
+        assertXMLEqual(getXmlFromResource("run-flow-test/harmonized1.xml"), stagingClient().newDocumentManager().read("/employee1.xml").next().getContent(new DOMHandle()).get())
+        assertXMLEqual(getXmlFromResource("run-flow-test/harmonized2.xml"), stagingClient().newDocumentManager().read("/employee2.xml").next().getContent(new DOMHandle()).get())
     }
 }

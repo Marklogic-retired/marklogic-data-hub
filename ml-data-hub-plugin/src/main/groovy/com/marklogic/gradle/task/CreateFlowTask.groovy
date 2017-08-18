@@ -3,9 +3,10 @@ package com.marklogic.gradle.task
 import com.marklogic.client.io.Format
 import com.marklogic.gradle.exception.EntityNameRequiredException
 import com.marklogic.gradle.exception.FlowNameRequiredException
-import com.marklogic.hub.plugin.PluginFormat
-import com.marklogic.hub.scaffold.Scaffolding
+import com.marklogic.hub.flow.CodeFormat
+import com.marklogic.hub.flow.DataFormat
 import com.marklogic.hub.flow.FlowType
+import com.marklogic.hub.scaffold.Scaffolding
 
 abstract class CreateFlowTask extends HubTask {
 
@@ -20,7 +21,7 @@ abstract class CreateFlowTask extends HubTask {
         }
 
         def pluginFormat = project.hasProperty("pluginFormat") ?
-            PluginFormat.getPluginFormat(project.property("pluginFormat")) : PluginFormat.JAVASCRIPT
+            CodeFormat.getCodeFormat(project.property("pluginFormat")) : CodeFormat.JAVASCRIPT
 
         def dataFormatStr = project.hasProperty("dataFormat") ?
             project.property("dataFormat") : "json"
@@ -28,18 +29,14 @@ abstract class CreateFlowTask extends HubTask {
         def dataFormat = null
         switch(dataFormatStr) {
             case "json":
-                dataFormat = Format.JSON
+                dataFormat = DataFormat.JSON
             break
             case "xml":
-                dataFormat = Format.XML
+                dataFormat = DataFormat.XML
             break
             default:
-                dataFormat = Format.UNKNOWN
-            break
-        }
-        if (dataFormat.equals(Format.UNKNOWN)) {
-            println "invalid dataFormat: " + dataFormatStr
-            return
+                println "invalid dataFormat: " + dataFormatStr
+                return
         }
 
         def projectDir = getHubConfig().projectDir

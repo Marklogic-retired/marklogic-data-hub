@@ -18,13 +18,10 @@ package com.marklogic.hub.scaffold;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.extensions.ResourceManager;
 import com.marklogic.client.extensions.ResourceServices;
-import com.marklogic.client.io.Format;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.util.RequestParameters;
 import com.marklogic.hub.error.ScaffoldingValidationException;
-import com.marklogic.hub.flow.FlowType;
-import com.marklogic.hub.flow.SimpleFlow;
-import com.marklogic.hub.plugin.PluginFormat;
+import com.marklogic.hub.flow.*;
 import com.sun.jersey.api.client.ClientHandlerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,58 +63,57 @@ public class Scaffolding {
     }
 
     public void createFlow(String entityName, String flowName,
-                           FlowType flowType, PluginFormat pluginFormat,
-                           Format dataFormat) throws IOException {
-        createFlow(entityName, flowName, flowType, pluginFormat, dataFormat, false);
+                           FlowType flowType, CodeFormat codeFormat,
+                           DataFormat dataFormat) throws IOException {
+        createFlow(entityName, flowName, flowType, codeFormat, dataFormat, false);
     }
 
     public void createFlow(String entityName, String flowName,
-                           FlowType flowType, PluginFormat pluginFormat,
-                           Format dataFormat, boolean useEsModel)
+                           FlowType flowType, CodeFormat codeFormat,
+                           DataFormat dataFormat, boolean useEsModel)
             throws IOException {
         Path flowDir = getFlowDir(entityName, flowName, flowType);
+        flowDir.toFile().mkdirs();
 
         if (flowType.equals(FlowType.HARMONIZE)) {
-            Path collectorDir = flowDir.resolve("collector");
-            collectorDir.toFile().mkdirs();
-            writeFile("scaffolding/" + flowType + "/" + pluginFormat + "/collector." + pluginFormat,
-                    collectorDir.resolve("collector." + pluginFormat));
+            writeFile("scaffolding/" + flowType + "/" + codeFormat + "/collector." + codeFormat,
+                flowDir.resolve("collector." + codeFormat));
 
-            Path writerDir = flowDir.resolve("writer");
-            writerDir.toFile().mkdirs();
-            writeFile("scaffolding/" + flowType + "/" + pluginFormat + "/writer." + pluginFormat,
-                    writerDir.resolve("writer." + pluginFormat));
+            writeFile("scaffolding/" + flowType + "/" + codeFormat + "/writer." + codeFormat,
+                flowDir.resolve("writer." + codeFormat));
         }
-
-        Path contentDir = flowDir.resolve("content");
-        contentDir.toFile().mkdirs();
-
 
         if (useEsModel) {
             ContentPlugin cp = new ContentPlugin(databaseClient);
-            String content = cp.getContents(entityName, pluginFormat);
-            writeBuffer(content, contentDir.resolve("content." + pluginFormat));
+            String content = cp.getContents(entityName, codeFormat);
+            writeBuffer(content, flowDir.resolve("content." + codeFormat));
+
         }
         else {
-            writeFile("scaffolding/" + flowType + "/" + pluginFormat + "/content." + pluginFormat,
-                contentDir.resolve("content." + pluginFormat));
+            writeFile("scaffolding/" + flowType + "/" + codeFormat + "/content." + codeFormat,
+                flowDir.resolve("content." + codeFormat));
         }
 
-        Path headerDir = flowDir.resolve("headers");
-        headerDir.toFile().mkdirs();
-        writeFile("scaffolding/" + flowType + "/" + pluginFormat + "/headers." + pluginFormat,
-                headerDir.resolve("headers." + pluginFormat));
+        writeFile("scaffolding/" + flowType + "/" + codeFormat + "/headers." + codeFormat,
+            flowDir.resolve("headers." + codeFormat));
 
-        Path triplesDir = flowDir.resolve("triples");
-        triplesDir.toFile().mkdirs();
-        writeFile("scaffolding/" + flowType + "/" + pluginFormat + "/triples." + pluginFormat,
-                triplesDir.resolve("triples." + pluginFormat));
+        writeFile("scaffolding/" + flowType + "/" + codeFormat + "/triples." + codeFormat,
+            flowDir.resolve("triples." + codeFormat));
 
-        SimpleFlow flow = new SimpleFlow(entityName, flowName, flowType,
-                dataFormat);
+
+        writeFile("scaffolding/" + flowType + "/" + codeFormat + "/main." + codeFormat,
+            flowDir.resolve("main." + codeFormat));
+
+        Flow flow = FlowBuilder.newFlow()
+            .withEntityName(entityName)
+            .withName(flowName)
+            .withType(flowType)
+            .withCodeFormat(codeFormat)
+            .withDataFormat(dataFormat)
+            .build();
         Path flowFile = flowDir.resolve(flowName + ".xml");
         try(PrintWriter out = new PrintWriter(flowFile.toFile())) {
-            out.println(flow.serialize(false));
+            out.println(flow.serialize());
             out.close();
         }
     }
@@ -140,28 +136,28 @@ public class Scaffolding {
     }
 
     public void createRestExtension(String entityName, String extensionName,
-            FlowType flowType, PluginFormat pluginFormat) throws IOException, ScaffoldingValidationException {
+            FlowType flowType, CodeFormat codeFormat) throws IOException, ScaffoldingValidationException {
         logger.info(extensionName);
 
         if(!validator.isUniqueRestServiceExtension(extensionName)) {
             throw new ScaffoldingValidationException("A rest service extension with the same name as " + extensionName + " already exists.");
         }
         String scaffoldRestServicesPath = "scaffolding/rest/services/";
-        String fileContent = getFileContent(scaffoldRestServicesPath + pluginFormat + "/template." + pluginFormat, extensionName);
-        File dstFile = createEmptyRestExtensionFile(entityName, extensionName, flowType, pluginFormat);
+        String fileContent = getFileContent(scaffoldRestServicesPath + codeFormat + "/template." + codeFormat, extensionName);
+        File dstFile = createEmptyRestExtensionFile(entityName, extensionName, flowType, codeFormat);
         writeToFile(fileContent, dstFile);
         writeMetadataForFile(dstFile, scaffoldRestServicesPath + "metadata/template.xml", extensionName);
     }
 
     public void createRestTransform(String entityName, String transformName,
-            FlowType flowType, PluginFormat pluginFormat) throws IOException, ScaffoldingValidationException {
+            FlowType flowType, CodeFormat codeFormat) throws IOException, ScaffoldingValidationException {
         logger.info(transformName);
         if(!validator.isUniqueRestTransform(transformName)) {
             throw new ScaffoldingValidationException("A rest transform with the same name as " + transformName + " already exists.");
         }
         String scaffoldRestTransformsPath = "scaffolding/rest/transforms/";
-        String fileContent = getFileContent(scaffoldRestTransformsPath + pluginFormat + "/template." + pluginFormat, transformName);
-        File dstFile = createEmptyRestTransformFile(entityName, transformName, flowType, pluginFormat);
+        String fileContent = getFileContent(scaffoldRestTransformsPath + codeFormat + "/template." + codeFormat, transformName);
+        File dstFile = createEmptyRestTransformFile(entityName, transformName, flowType, codeFormat);
         writeToFile(fileContent, dstFile);
         writeMetadataForFile(dstFile, scaffoldRestTransformsPath + "metadata/template.xml", transformName);
     }
@@ -175,15 +171,15 @@ public class Scaffolding {
     }
 
     private File createEmptyRestExtensionFile(String entityName, String extensionName,
-            FlowType flowType, PluginFormat pluginFormat) throws IOException {
+            FlowType flowType, CodeFormat codeFormat) throws IOException {
         Path restDir = getRestDirectory(entityName, flowType);
-        return createEmptyFile(restDir, "services", extensionName + "." + pluginFormat);
+        return createEmptyFile(restDir, "services", extensionName + "." + codeFormat);
     }
 
     private File createEmptyRestTransformFile(String entityName, String transformName,
-            FlowType flowType, PluginFormat pluginFormat) throws IOException {
+            FlowType flowType, CodeFormat codeFormat) throws IOException {
         Path restDir = getRestDirectory(entityName, flowType);
-        return createEmptyFile(restDir, "transforms", transformName + "." + pluginFormat);
+        return createEmptyFile(restDir, "transforms", transformName + "." + codeFormat);
     }
 
     private File createEmptyFile(Path directory, String subDirectoryName, String fileName) throws IOException {
@@ -268,10 +264,10 @@ public class Scaffolding {
             client.init(NAME, this);
         }
 
-        public String getContents(String entityName, PluginFormat pluginFormat) throws IOException {
+        public String getContents(String entityName, CodeFormat codeFormat) throws IOException {
             try {
                 params.add("entity", entityName);
-                params.add("pluginFormat", pluginFormat.toString());
+                params.add("codeFormat", codeFormat.toString());
                 ResourceServices.ServiceResultIterator resultItr = this.getServices().get(params);
                 if (resultItr == null || ! resultItr.hasNext()) {
                     throw new IOException("Unable to get Content Plugin scaffold");

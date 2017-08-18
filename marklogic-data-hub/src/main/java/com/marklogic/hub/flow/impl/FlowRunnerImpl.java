@@ -1,3 +1,18 @@
+/*
+ * Copyright 2012-2016 MarkLogic Corporation
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.marklogic.hub.flow.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -7,14 +22,11 @@ import com.marklogic.client.datamovement.impl.JobTicketImpl;
 import com.marklogic.client.datamovement.impl.QueryBatcherImpl;
 import com.marklogic.client.extensions.ResourceManager;
 import com.marklogic.client.extensions.ResourceServices;
-import com.marklogic.client.io.Format;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.util.RequestParameters;
 import com.marklogic.hub.HubConfig;
-import com.marklogic.hub.HubDatabase;
 import com.marklogic.hub.collector.Collector;
 import com.marklogic.hub.collector.DiskQueue;
-import com.marklogic.hub.collector.ServerCollector;
 import com.marklogic.hub.flow.*;
 import com.marklogic.hub.job.Job;
 import com.marklogic.hub.job.JobManager;
@@ -22,7 +34,6 @@ import com.marklogic.hub.job.JobStatus;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class FlowRunnerImpl implements FlowRunner {
@@ -32,8 +43,8 @@ public class FlowRunnerImpl implements FlowRunner {
     private Flow flow;
     private int batchSize = DEFAULT_BATCH_SIZE;
     private int threadCount = DEFAULT_THREAD_COUNT;
-    private HubDatabase sourceDatabase = HubDatabase.STAGING;
-    private HubDatabase destinationDatabase = HubDatabase.FINAL;
+    private DatabaseClient sourceClient;
+    private String destinationDatabase;
     private Map<String, Object> options;
     private int previousPercentComplete;
 
@@ -47,6 +58,8 @@ public class FlowRunnerImpl implements FlowRunner {
 
     public FlowRunnerImpl(HubConfig hubConfig) {
         this.hubConfig = hubConfig;
+        this.sourceClient = hubConfig.newStagingClient();
+        this.destinationDatabase = hubConfig.finalDbName;
     }
 
     @Override
@@ -68,13 +81,13 @@ public class FlowRunnerImpl implements FlowRunner {
     }
 
     @Override
-    public FlowRunner withSourceDatabase(HubDatabase sourceDatabase) {
-        this.sourceDatabase = sourceDatabase;
+    public FlowRunner withSourceClient(DatabaseClient sourceClient) {
+        this.sourceClient = sourceClient;
         return this;
     }
 
     @Override
-    public FlowRunner withDestinationDatabase(HubDatabase destinationDatabase) {
+    public FlowRunner withDestinationDatabase(String destinationDatabase) {
         this.destinationDatabase = destinationDatabase;
         return this;
     }
@@ -122,17 +135,6 @@ public class FlowRunnerImpl implements FlowRunner {
         runningThread.join(unit.convert(timeout, TimeUnit.MILLISECONDS));
     }
 
-    private DatabaseClient getSourceClient() {
-        DatabaseClient srcClient;
-        if (sourceDatabase.equals(HubDatabase.STAGING)) {
-            srcClient = hubConfig.newStagingClient();
-        }
-        else {
-            srcClient = hubConfig.newFinalClient();
-        }
-        return srcClient;
-    }
-
     @Override
     public JobTicket run() {
         String jobId = UUID.randomUUID().toString();
@@ -142,14 +144,9 @@ public class FlowRunnerImpl implements FlowRunner {
             .withJobId(jobId);
         jobManager.saveJob(job);
 
-        DatabaseClient srcClient = getSourceClient();
-
         Collector c = flow.getCollector();
-        if (c instanceof ServerCollector) {
-            ((ServerCollector)c).setHubConfig(hubConfig);
-            ((ServerCollector)c).setHubDatabase(sourceDatabase);
-            ((ServerCollector)c).setClient(srcClient);
-        }
+        c.setHubConfig(hubConfig);
+        c.setClient(sourceClient);
 
         AtomicLong successfulEvents = new AtomicLong(0);
         AtomicLong failedEvents = new AtomicLong(0);
@@ -168,7 +165,7 @@ public class FlowRunnerImpl implements FlowRunner {
         });
 
         jobManager.saveJob(job.withStatus(JobStatus.RUNNING_COLLECTOR));
-        DiskQueue<String> uris = c.run(jobId, threadCount, options);
+        DiskQueue<String> uris = c.run(jobId, this.flow.getEntityName(), this.flow.getName(), threadCount, options);
 
         flowStatusListeners.forEach((FlowStatusListener listener) -> {
             listener.onStatusChange(jobId, 0, "starting harmonization");
@@ -176,7 +173,7 @@ public class FlowRunnerImpl implements FlowRunner {
 
         ArrayList<String> errorMessages = new ArrayList<>();
 
-        DataMovementManager dataMovementManager = srcClient.newDataMovementManager();
+        DataMovementManager dataMovementManager = sourceClient.newDataMovementManager();
 
         double batchCount = Math.ceil((double)uris.size() / (double)batchSize);
 
@@ -185,11 +182,18 @@ public class FlowRunnerImpl implements FlowRunner {
             .withThreadCount(threadCount)
             .onUrisReady((QueryBatch batch) -> {
                 try {
-                    FlowResource flowRunner = new FlowResource(batch.getClient(), batch.getClient().getDatabase(), flow);
+                    FlowResource flowRunner = new FlowResource(batch.getClient(), destinationDatabase, flow);
                     RunFlowResponse response = flowRunner.run(jobId, batch.getItems(), options);
                     failedEvents.addAndGet(response.errorCount);
                     successfulEvents.addAndGet(response.totalCount - response.errorCount);
-                    successfulBatches.addAndGet(1);
+
+                    if (response.errorCount < response.totalCount) {
+                        successfulBatches.addAndGet(1);
+                    }
+                    else {
+                        failedBatches.addAndGet(1);
+                    }
+
 
                     int percentComplete = (int) (((double)successfulBatches.get() / batchCount) * 100.0);
 
@@ -276,7 +280,6 @@ public class FlowRunnerImpl implements FlowRunner {
         private DatabaseClient srcClient;
         private String targetDatabase;
         private Flow flow;
-        StringHandle handle;
 
         public FlowResource(DatabaseClient srcClient, String targetDatabase, Flow flow) {
             super();
@@ -284,8 +287,6 @@ public class FlowRunnerImpl implements FlowRunner {
             this.srcClient = srcClient;
             this.targetDatabase = targetDatabase;
             this.srcClient.init(NAME, this);
-            handle = new StringHandle(flow.serialize(true));
-            handle.setFormat(Format.XML);
         }
 
         public RunFlowResponse run(String jobId, String[] items) {
@@ -296,14 +297,17 @@ public class FlowRunnerImpl implements FlowRunner {
             RunFlowResponse resp;
             try {
                 RequestParameters params = new RequestParameters();
+                params.add("entity-name", flow.getEntityName());
+                params.add("flow-name", flow.getName());
+                params.add("flow-type", flow.getType().toString());
                 params.put("job-id", jobId);
-                params.put("identifier", items);
+                params.put("identifiers", items);
                 params.put("target-database", targetDatabase);
                 if (options != null) {
                     ObjectMapper objectMapper = new ObjectMapper();
                     params.put("options", objectMapper.writeValueAsString(options));
                 }
-                ResourceServices.ServiceResultIterator resultItr = this.getServices().post(params, handle);
+                ResourceServices.ServiceResultIterator resultItr = this.getServices().post(params, new StringHandle("{}"));
                 if (resultItr == null || ! resultItr.hasNext()) {
                     resp = new RunFlowResponse();
                 }

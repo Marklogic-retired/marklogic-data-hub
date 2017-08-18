@@ -15,6 +15,9 @@
 :)
 xquery version "1.0-ml";
 
+import module namespace consts = "http://marklogic.com/data-hub/consts"
+  at "/com.marklogic.hub/lib/consts.xqy";
+
 import module namespace debug = "http://marklogic.com/data-hub/debug"
   at "/com.marklogic.hub/lib/debug-lib.xqy";
 
@@ -27,7 +30,8 @@ import module namespace perf = "http://marklogic.com/data-hub/perflog-lib"
 declare option xdmp:mapping "false";
 
 declare variable $job-id external;
-declare variable $module-uri external;
+declare variable $entity-name external;
+declare variable $flow-name external;
 declare variable $options external;
 
 debug:dump-env(),
@@ -37,7 +41,8 @@ perf:log('/v1/resources/collector:post', function() {
       $options ! xdmp:unquote(.)/object-node(),
       map:map()
     )[1]
-  let $resp := flow:run-collector($job-id, $module-uri, $options)
+  let $flow := flow:get-flow($entity-name, $flow-name, $consts:HARMONIZE_FLOW)
+  let $resp := flow:run-collector($flow, $job-id, $options)
   let $resp :=
     if ($resp instance of json:array) then
       json:array-values($resp)

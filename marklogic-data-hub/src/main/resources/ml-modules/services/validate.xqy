@@ -17,6 +17,9 @@ xquery version "1.0-ml";
 
 module namespace service = "http://marklogic.com/rest-api/resource/validate";
 
+import module namespace consts = "http://marklogic.com/data-hub/consts"
+  at "/com.marklogic.hub/lib/consts.xqy";
+
 import module namespace debug = "http://marklogic.com/data-hub/debug"
   at "/com.marklogic.hub/lib/debug-lib.xqy";
 
@@ -68,7 +71,7 @@ declare %rapi:transaction-mode("update") function post(
     let $type := map:get($params, "type")
     let $ns := flow:get-module-ns($type)
     let $extension :=
-      if ($type eq $flow:TYPE-XQUERY) then ".xqy"
+      if ($type eq $consts:XQUERY) then ".xqy"
       else ".sjs"
     let $module-uri := "/_validate-hub-module/" || $entity-name || "/" || $flow-name || "/" || $plugin-name || $extension
     let $_ := try {
@@ -81,13 +84,12 @@ declare %rapi:transaction-mode("update") function post(
       )
     }
     catch($ex) {
-      xdmp:log("FAILED DURING INSERT"),
       $ex
     }
     let $errors := json:object()
     let $_ :=
       try {
-        if ($type eq $flow:TYPE-XQUERY) then
+        if ($type eq $consts:XQUERY) then
           xdmp:eval(
             'import module namespace x = "' || $ns || '" at "' || $module-uri || '"; ' ||
             '()',

@@ -12,23 +12,26 @@ import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.modulesloader.Modules;
 import com.marklogic.client.modulesloader.impl.*;
+import com.marklogic.client.modulesloader.xcc.DefaultDocumentFormatGetter;
 import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.deploy.util.CacheBustingXccAssetLoader;
 import com.marklogic.hub.deploy.util.EntityDefModulesFinder;
 import com.marklogic.hub.deploy.util.HubFileFilter;
-import com.marklogic.hub.flow.FlowCacheInvalidator;
 import org.apache.commons.io.IOUtils;
 import org.springframework.core.io.Resource;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.regex.Pattern;
 
 public class LoadUserModulesCommand extends AbstractCommand {
 
     private HubConfig hubConfig;
     private DocumentPermissionsParser documentPermissionsParser = new DefaultDocumentPermissionsParser();
+    private ThreadPoolTaskExecutor threadPoolTaskExecutor;
 
     public void setForceLoad(boolean forceLoad) {
         this.forceLoad = forceLoad;
@@ -50,12 +53,58 @@ public class LoadUserModulesCommand extends AbstractCommand {
         return pmm;
     }
 
+    private CacheBustingXccAssetLoader getAssetLoader(AppConfig config) {
+        CacheBustingXccAssetLoader l = new CacheBustingXccAssetLoader();
+        l.setHost(config.getHost());
+        l.setUsername(config.getRestAdminUsername());
+        l.setPassword(config.getRestAdminPassword());
+        l.setDatabaseName(config.getModulesDatabaseName());
+        if (config.getAppServicesPort() != null) {
+            l.setPort(config.getAppServicesPort());
+        }
+
+        String permissions = config.getModulePermissions();
+        if (permissions != null) {
+            l.setPermissions(permissions);
+        }
+
+        String[] extensions = config.getAdditionalBinaryExtensions();
+        if (extensions != null) {
+            DefaultDocumentFormatGetter getter = new DefaultDocumentFormatGetter();
+            for (String ext : extensions) {
+                getter.getBinaryExtensions().add(ext);
+            }
+            l.setDocumentFormatGetter(getter);
+        }
+
+        FileFilter assetFileFilter = config.getAssetFileFilter();
+        if (assetFileFilter != null) {
+            l.setFileFilter(assetFileFilter);
+        }
+
+        l.setBulkLoad(config.isBulkLoadAssets());
+        return l;
+    }
+
     private DefaultModulesLoader getStagingModulesLoader(AppConfig config) {
-        XccAssetLoader assetLoader = config.newXccAssetLoader();
+        XccAssetLoader assetLoader = getAssetLoader(config);
         assetLoader.setFileFilter(new HubFileFilter());
         assetLoader.setPermissions(config.getModulePermissions());
+
+        this.threadPoolTaskExecutor = new ThreadPoolTaskExecutor();
+        this.threadPoolTaskExecutor.setCorePoolSize(16);
+
+        // 10 minutes should be plenty of time to wait for REST API modules to be loaded
+        this.threadPoolTaskExecutor.setAwaitTerminationSeconds(60 * 10);
+        this.threadPoolTaskExecutor.setWaitForTasksToCompleteOnShutdown(true);
+
+        this.threadPoolTaskExecutor.afterPropertiesSet();
+
         DefaultModulesLoader modulesLoader = new DefaultModulesLoader(assetLoader);
         modulesLoader.setModulesManager(getModulesManager());
+        modulesLoader.setTaskExecutor(this.threadPoolTaskExecutor);
+        modulesLoader.setShutdownTaskExecutorAfterLoadingModules(false);
+
         return modulesLoader;
     }
 
@@ -73,7 +122,6 @@ public class LoadUserModulesCommand extends AbstractCommand {
         // load any user files under plugins/* int the modules database.
         // this will ignore REST folders under entities
         DefaultModulesLoader modulesLoader = getStagingModulesLoader(config);
-        modulesLoader.setShutdownTaskExecutorAfterLoadingModules(false);
         modulesLoader.loadModules(baseDir, new AssetModulesFinder(), stagingClient);
 
         JSONDocumentManager entityDocMgr = finalClient.newJSONDocumentManager();
@@ -118,11 +166,8 @@ public class LoadUserModulesCommand extends AbstractCommand {
                         }
                     }
                 });
-
-                // invalidate the server's flow cache
-                FlowCacheInvalidator invalidator = new FlowCacheInvalidator(stagingClient);
-                invalidator.invalidateCache();
             }
+            threadPoolTaskExecutor.shutdown();
         } catch (IOException e) {
             e.printStackTrace();
             throw new RuntimeException(e);

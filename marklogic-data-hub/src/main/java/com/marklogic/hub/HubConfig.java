@@ -284,6 +284,7 @@ public class HubConfig {
         return DatabaseClientFactory.newClient(
             host,
             stagingPort,
+            stagingDbName,
             username,
             password,
             DatabaseClientFactory.Authentication.valueOf(stagingAuthMethod.toUpperCase()));
@@ -311,6 +312,7 @@ public class HubConfig {
         return DatabaseClientFactory.newClient(
             host,
             finalPort,
+            finalDbName,
             username,
             password,
             DatabaseClientFactory.Authentication.valueOf(finalAuthMethod.toUpperCase()));
@@ -324,6 +326,7 @@ public class HubConfig {
         return DatabaseClientFactory.newClient(
             host,
             jobPort,
+            jobDbName,
             username,
             password,
             DatabaseClientFactory.Authentication.valueOf(jobAuthMethod.toUpperCase()));
@@ -351,6 +354,7 @@ public class HubConfig {
         return DatabaseClientFactory.newClient(
             host,
             tracePort,
+            traceDbName,
             username,
             password,
             DatabaseClientFactory.Authentication.valueOf(stagingAuthMethod.toUpperCase()));
