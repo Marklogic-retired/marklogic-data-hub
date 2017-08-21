@@ -1,5 +1,3 @@
-package com.marklogic.hub.util;
-
 /*
  * Copyright 2012-2016 MarkLogic Corporation
  *
@@ -15,6 +13,7 @@ package com.marklogic.hub.util;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.marklogic.hub.util;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -22,17 +21,17 @@ import com.marklogic.contentpump.bean.MlcpBean;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.FlowStatusListener;
+import com.marklogic.hub.job.Job;
 import com.marklogic.hub.job.JobManager;
+import com.marklogic.hub.job.JobStatus;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
-public class MlcpTestRunner extends ProcessRunner {
+public class MlcpRunner extends ProcessRunner {
 
     private JobManager jobManager;
     private Flow flow;
@@ -41,8 +40,9 @@ public class MlcpTestRunner extends ProcessRunner {
     private AtomicLong successfulEvents = new AtomicLong(0);
     private AtomicLong failedEvents = new AtomicLong(0);
     FlowStatusListener flowStatusListener;
+    private String mainClass;
 
-    public MlcpTestRunner(HubConfig hubConfig, Flow flow, JsonNode mlcpOptions, FlowStatusListener statusListener) {
+    public MlcpRunner(String mainClass, HubConfig hubConfig, Flow flow, JsonNode mlcpOptions, FlowStatusListener statusListener) {
         super();
 
         this.withHubconfig(hubConfig);
@@ -51,11 +51,16 @@ public class MlcpTestRunner extends ProcessRunner {
         this.flowStatusListener = statusListener;
         this.flow = flow;
         this.mlcpOptions = mlcpOptions;
+        this.mainClass = mainClass;
     }
 
     @Override
     public void run() {
         HubConfig hubConfig = getHubConfig();
+
+        Job job = Job.withFlow(flow)
+            .withJobId(jobId);
+        jobManager.saveJob(job);
 
         try {
             MlcpBean bean = new ObjectMapper().readerFor(MlcpBean.class).readValue(mlcpOptions);
@@ -78,7 +83,28 @@ public class MlcpTestRunner extends ProcessRunner {
             flowStatusListener.onStatusChange(jobId, 100, "");
 
         } catch (Exception e) {
+            job.withStatus(JobStatus.FAILED)
+                .withEndTime(new Date());
+            jobManager.saveJob(job);
             throw new RuntimeException(e);
+        } finally {
+            JobStatus status;
+            if (failedEvents.get() > 0 && successfulEvents.get() > 0) {
+                status = JobStatus.FINISHED_WITH_ERRORS;
+            }
+            else if (failedEvents.get() == 0 && successfulEvents.get() > 0) {
+                status = JobStatus.FINISHED;
+            }
+            else {
+                status = JobStatus.FAILED;
+            }
+
+            // store the thing in MarkLogic
+            job.withJobOutput(getProcessOutput())
+                .withStatus(status)
+                .setCounts(successfulEvents.get(), failedEvents.get(), 0, 0)
+                .withEndTime(new Date());
+            jobManager.saveJob(job);
         }
     }
 
@@ -134,7 +160,7 @@ public class MlcpTestRunner extends ProcessRunner {
         else {
             args.add("-cp");
             args.add(classpath);
-            args.add("com.marklogic.hub.util.MlcpMain");
+            args.add(mainClass);
         }
 
         List<String> cmdArgs = new ArrayList<>();

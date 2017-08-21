@@ -23,6 +23,7 @@ import com.marklogic.hub.flow.FlowRunner;
 import com.marklogic.hub.flow.FlowStatusListener;
 import com.marklogic.hub.flow.FlowType;
 import com.marklogic.hub.flow.impl.FlowImpl;
+import com.marklogic.hub.util.MlcpRunner;
 import com.marklogic.quickstart.auth.ConnectionAuthenticationToken;
 import com.marklogic.quickstart.model.EnvironmentConfig;
 import com.marklogic.quickstart.model.FlowModel;
@@ -146,7 +147,7 @@ public class FlowManagerService {
     }
 
     public void runMlcp(Flow flow, JsonNode json, FlowStatusListener statusListener) {
-        MlcpRunner runner = new MlcpRunner(envConfig().getMlSettings(), flow, json, statusListener);
+        MlcpRunner runner = new MlcpRunner("com.marklogic.quickstart.util.MlcpMain", envConfig().getMlSettings(), flow, json, statusListener);
         runner.start();
     }
 }

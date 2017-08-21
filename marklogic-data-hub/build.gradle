@@ -23,6 +23,7 @@ dependencies {
     compile('com.marklogic:ml-javaclient-util:4.0.alpha4') {
       exclude group: 'com.marklogic', module: 'marklogic-xcc'
     }
+    compile("com.marklogic:mlcp-util:0.3.0")
     compile 'com.marklogic:ml-app-deployer:2.8.0'
     compile 'commons-io:commons-io:2.4'
     compile 'org.apache.commons:commons-text:1.1'

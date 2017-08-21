@@ -48,7 +48,6 @@ dependencies {
     compile("org.springframework.boot:spring-boot-devtools:${springBootVersion}")
 
     // Needed for the Upload feature using mlcp
-    compile("com.marklogic:mlcp-util:0.3.0")
     compile("com.marklogic:mlcp:9.0.2") {
       exclude group: 'org.apache.avro', module: 'avro-tools'
     }
@@ -56,7 +55,11 @@ dependencies {
 
     testCompile("junit:junit")
     testCompile("org.springframework.boot:spring-boot-starter-test:${springBootVersion}")
+    testCompile files(project(':marklogic-data-hub').sourceSets.test.output)
 }
+
+evaluationDependsOn(':marklogic-data-hub')
+compileTestJava.dependsOn tasks.getByPath(':marklogic-data-hub:testClasses')
 
 configurations {
     all*.exclude group: 'org.slf4j', module: 'slf4j-log4j12'

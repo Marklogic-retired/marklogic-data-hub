@@ -7,7 +7,7 @@ import com.marklogic.client.document.ServerTransform;
 import com.marklogic.client.io.*;
 import com.marklogic.hub.flow.*;
 import com.marklogic.hub.scaffold.Scaffolding;
-import com.marklogic.hub.util.MlcpTestRunner;
+import com.marklogic.hub.util.MlcpRunner;
 import org.apache.commons.io.FileUtils;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.json.JSONException;
@@ -485,9 +485,9 @@ public class EndToEndFlowTests extends HubTestBase {
         FlowStatusListener flowStatusListener = (jobId, percentComplete, message) -> {
             logger.error(message);
         };
-        MlcpTestRunner mlcpTestRunner = new MlcpTestRunner(getHubConfig(), flow, mlcpOptions, flowStatusListener);
-        mlcpTestRunner.start();
-        mlcpTestRunner.join();
+        MlcpRunner mlcpRunner = new MlcpRunner("com.marklogic.hub.util.MlcpMain", getHubConfig(), flow, mlcpOptions, flowStatusListener);
+        mlcpRunner.start();
+        mlcpRunner.join();
 
         Assert.assertEquals(1, getStagingDocCount());
         String expected = getResource("e2e-test/staged.json");
@@ -520,9 +520,9 @@ public class EndToEndFlowTests extends HubTestBase {
         FlowStatusListener flowStatusListener = (jobId, percentComplete, message) -> {
             logger.error(message);
         };
-        MlcpTestRunner mlcpTestRunner = new MlcpTestRunner(getHubConfig(), flow, mlcpOptions, flowStatusListener);
-        mlcpTestRunner.start();
-        mlcpTestRunner.join();
+        MlcpRunner mlcpRunner = new MlcpRunner("com.marklogic.hub.util.MlcpMain", getHubConfig(), flow, mlcpOptions, flowStatusListener);
+        mlcpRunner.start();
+        mlcpRunner.join();
 
         Assert.assertEquals(1, getStagingDocCount());
         Document expected = getXmlFromResource("e2e-test/staged.xml");
@@ -555,9 +555,9 @@ public class EndToEndFlowTests extends HubTestBase {
         FlowStatusListener flowStatusListener = (jobId, percentComplete, message) -> {
             logger.error(message);
         };
-        MlcpTestRunner mlcpTestRunner = new MlcpTestRunner(getHubConfig(), flow, mlcpOptions, flowStatusListener);
-        mlcpTestRunner.start();
-        mlcpTestRunner.join();
+        MlcpRunner mlcpRunner = new MlcpRunner("com.marklogic.hub.util.MlcpMain", getHubConfig(), flow, mlcpOptions, flowStatusListener);
+        mlcpRunner.start();
+        mlcpRunner.join();
 
         Assert.assertEquals(1, getStagingDocCount());
         String expected = getResource("e2e-test/staged.json");
@@ -590,9 +590,9 @@ public class EndToEndFlowTests extends HubTestBase {
         FlowStatusListener flowStatusListener = (jobId, percentComplete, message) -> {
             logger.error(message);
         };
-        MlcpTestRunner mlcpTestRunner = new MlcpTestRunner(getHubConfig(), flow, mlcpOptions, flowStatusListener);
-        mlcpTestRunner.start();
-        mlcpTestRunner.join();
+        MlcpRunner mlcpRunner = new MlcpRunner("com.marklogic.hub.util.MlcpMain", getHubConfig(), flow, mlcpOptions, flowStatusListener);
+        mlcpRunner.start();
+        mlcpRunner.join();
 
         Assert.assertEquals(1, getStagingDocCount());
         Document expected = getXmlFromResource("e2e-test/staged.xml");
