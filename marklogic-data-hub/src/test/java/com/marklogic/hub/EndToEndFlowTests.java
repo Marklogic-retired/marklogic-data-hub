@@ -261,6 +261,19 @@ public class EndToEndFlowTests extends HubTestBase {
         FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/main-with-error.xqy"), harmonizeDir.resolve("xqy-xml-failed-main/main.xqy").toFile());
 
 
+        harmonizeDir.resolve("legacy-sjs-json").resolve("collector").toFile().mkdirs();
+        harmonizeDir.resolve("legacy-sjs-json").resolve("content").toFile().mkdirs();
+        harmonizeDir.resolve("legacy-sjs-json").resolve("headers").toFile().mkdirs();
+        harmonizeDir.resolve("legacy-sjs-json").resolve("triples").toFile().mkdirs();
+        harmonizeDir.resolve("legacy-sjs-json").resolve("writer").toFile().mkdirs();
+        FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/collector.sjs"), harmonizeDir.resolve("legacy-sjs-json/collector/collector.sjs").toFile());
+        FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/headers.sjs"), harmonizeDir.resolve("legacy-sjs-json/headers/headers.sjs").toFile());
+        FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/content.sjs"), harmonizeDir.resolve("legacy-sjs-json/content/content.sjs").toFile());
+        FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/triples.sjs"), harmonizeDir.resolve("legacy-sjs-json/triples/triples.sjs").toFile());
+        FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/writer.sjs"), harmonizeDir.resolve("legacy-sjs-json/writer/writer.sjs").toFile());
+        FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/legacy-main.sjs"), harmonizeDir.resolve("legacy-sjs-json/main.sjs").toFile());
+        FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/legacy-sjs-json.xml"), harmonizeDir.resolve("legacy-sjs-json/legacy-sjs-json.xml").toFile());
+
         getDataHub().installUserModules();
 
         flowManager = new FlowManager(getHubConfig());
@@ -1146,5 +1159,41 @@ public class EndToEndFlowTests extends HubTestBase {
         assertTrue("Doc install not finished", installDocsFinished);
         assertFalse("Doc install failed: " + installDocError, installDocsFailed);
         assertEquals(TEST_SIZE, getStagingDocCount(collection));
+    }
+
+    @Test
+    public void legacySjsJson() throws IOException, ParserConfigurationException, SAXException, JSONException {
+        installJsonDocs("legacy-sjs-json");
+
+        Flow harmonizeFlow = flowManager.getFlow(ENTITY, "legacy-sjs-json",
+            FlowType.HARMONIZE);
+
+        FlowRunner flowRunner = flowManager.newFlowRunner()
+            .withFlow(harmonizeFlow)
+            .withBatchSize(BATCH_SIZE)
+            .withThreadCount(4);
+
+        JobTicket jobExecution = flowRunner.run();
+
+        flowRunner.awaitCompletion();
+
+        Assert.assertEquals(TEST_SIZE, getFinalDocCount("legacy-sjs-json"));
+        String expected = getResource("e2e-test/final.json");
+        for (int i = 0; i < TEST_SIZE; i++) {
+            String actual = finalDocMgr.read("/input-" + i + ".json").next().getContent(new StringHandle()).get();
+            JSONAssert.assertEquals(expected, actual, false);
+        }
+
+        JsonNode node = jobDocMgr.read("/jobs/" + jobExecution.getJobId() + ".json").next().getContent(new JacksonHandle()).get();
+        Assert.assertEquals(jobExecution.getJobId(), node.get("jobId").asText());
+        Assert.assertEquals(TEST_SIZE, node.get("successfulEvents").asInt());
+        Assert.assertEquals(0, node.get("failedEvents").asInt());
+        Assert.assertEquals(TEST_SIZE / BATCH_SIZE, node.get("successfulBatches").asInt());
+        Assert.assertEquals(0, node.get("failedBatches").asInt());
+        Assert.assertEquals("FINISHED", node.get("status").asText());
+
+        String optionsExpected = getResource("e2e-test/options-test.json");
+        String optionsActual = finalDocMgr.read("/options-test.json").next().getContent(new StringHandle()).get();
+        JSONAssert.assertEquals(optionsExpected, optionsActual, false);
     }
 }
