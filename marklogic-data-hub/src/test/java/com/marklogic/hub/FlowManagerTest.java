@@ -20,8 +20,10 @@ import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.hub.collector.Collector;
 import com.marklogic.hub.flow.*;
 import com.marklogic.hub.main.MainPlugin;
+import com.marklogic.hub.scaffold.Scaffolding;
+import org.apache.commons.io.FileUtils;
 import org.custommonkey.xmlunit.XMLUnit;
-import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.w3c.dom.Document;
@@ -30,6 +32,8 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 
@@ -54,6 +58,11 @@ public class FlowManagerTest extends HubTestBase {
         installStagingDoc("/employee2.xml", meta, "flow-manager-test/input/employee2.xml");
 
         installModules();
+    }
+
+    @AfterClass
+    public static void teardown() throws IOException {
+        uninstallHub();
     }
 
     private static void installModules() {
@@ -315,5 +324,27 @@ public class FlowManagerTest extends HubTestBase {
         assertXMLEqual(getXmlFromResource("flow-manager-test/harmonized-with-all/harmonized2.xml"), finalDocMgr.read("/employee2.xml").next().getContent(new DOMHandle()).get());
 
         runInModules("xdmp:directory-delete(\"/entities/test/harmonize/my-test-flow-with-all/\")");
+    }
+
+
+    @Test
+    public void testHasLegacyflows() throws IOException {
+        FlowManager fm = new FlowManager(getHubConfig());
+
+        Scaffolding scaffolding = new Scaffolding(getHubConfig().projectDir, stagingClient);
+        scaffolding.createEntity("new-entity");
+        scaffolding.createFlow("new-entity", "new-flow", FlowType.HARMONIZE, CodeFormat.XQUERY, DataFormat.XML);
+        assertEquals(0, fm.getLegacyFlows().size());
+
+        Path projectPath = Paths.get(PROJECT_PATH);
+        Path inputDir = projectPath.resolve("plugins/entities/my-fun-test/input");
+        Path harmonizeDir = projectPath.resolve("plugins/entities/my-fun-test/harmonize");
+        FileUtils.copyDirectory(getResourceFile("scaffolding-test/legacy-input-flow"), inputDir.resolve("legacy-input-flow").toFile());
+        FileUtils.copyDirectory(getResourceFile("scaffolding-test/legacy-harmonize-flow"), harmonizeDir.resolve("legacy-harmonize-flow").toFile());
+
+        List<String> legacyFlows = fm.getLegacyFlows();
+        assertEquals(2, legacyFlows.size());
+        assertEquals("my-fun-test => legacy-input-flow", legacyFlows.get(0));
+        assertEquals("my-fun-test => legacy-harmonize-flow", legacyFlows.get(1));
     }
 }

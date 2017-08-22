@@ -137,6 +137,7 @@ public class EndToEndFlowTests extends HubTestBase {
         scaffolding.createFlow(ENTITY, "scaffolded-sjs-xml", FlowType.HARMONIZE,
             CodeFormat.JAVASCRIPT, DataFormat.XML);
 
+        Path inputDir = projectDir.resolve("plugins/entities/" + ENTITY + "/input");
         Path harmonizeDir = projectDir.resolve("plugins/entities/" + ENTITY + "/harmonize");
         FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/collector.sjs"), harmonizeDir.resolve("sjs-json/collector.sjs").toFile());
         FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/headers.sjs"), harmonizeDir.resolve("sjs-json/headers.sjs").toFile());
@@ -144,9 +145,9 @@ public class EndToEndFlowTests extends HubTestBase {
         FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/triples.sjs"), harmonizeDir.resolve("sjs-json/triples.sjs").toFile());
         FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/writer.sjs"), harmonizeDir.resolve("sjs-json/writer.sjs").toFile());
 
-        FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/headers.sjs"), harmonizeDir.resolve("sjs-json-input-flow/headers.sjs").toFile());
-        FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/content-input.sjs"), harmonizeDir.resolve("sjs-json-input-flow/content.sjs").toFile());
-        FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/triples.sjs"), harmonizeDir.resolve("sjs-json-input-flow/triples.sjs").toFile());
+        FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/headers.sjs"), inputDir.resolve("sjs-json-input-flow/headers.sjs").toFile());
+        FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/content-input.sjs"), inputDir.resolve("sjs-json-input-flow/content.sjs").toFile());
+        FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/triples.sjs"), inputDir.resolve("sjs-json-input-flow/triples.sjs").toFile());
 
         FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/collector.sjs"), harmonizeDir.resolve("sjs-json-no-wait/collector.sjs").toFile());
         FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/headers.sjs"), harmonizeDir.resolve("sjs-json-no-wait/headers.sjs").toFile());
@@ -173,9 +174,9 @@ public class EndToEndFlowTests extends HubTestBase {
         FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/triples.sjs"), harmonizeDir.resolve("sjs-xml/triples.sjs").toFile());
         FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/writer.sjs"), harmonizeDir.resolve("sjs-xml/writer.sjs").toFile());
 
-        FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/headers.sjs"), harmonizeDir.resolve("sjs-xml-input-flow/headers.sjs").toFile());
-        FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/content-input.sjs"), harmonizeDir.resolve("sjs-xml-input-flow/content.sjs").toFile());
-        FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/triples.sjs"), harmonizeDir.resolve("sjs-xml-input-flow/triples.sjs").toFile());
+        FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/headers.sjs"), inputDir.resolve("sjs-xml-input-flow/headers.sjs").toFile());
+        FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/content-input.sjs"), inputDir.resolve("sjs-xml-input-flow/content.sjs").toFile());
+        FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/triples.sjs"), inputDir.resolve("sjs-xml-input-flow/triples.sjs").toFile());
 
         FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/collector.sjs"), harmonizeDir.resolve("sjs-xml-no-wait/collector.sjs").toFile());
         FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/headers.sjs"), harmonizeDir.resolve("sjs-xml-no-wait/headers.sjs").toFile());
@@ -202,9 +203,9 @@ public class EndToEndFlowTests extends HubTestBase {
         FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/triples.xqy"), harmonizeDir.resolve("xqy-json/triples.xqy").toFile());
         FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/writer.xqy"), harmonizeDir.resolve("xqy-json/writer.xqy").toFile());
 
-        FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/headers-json.xqy"), harmonizeDir.resolve("xqy-json-input-flow/headers.xqy").toFile());
-        FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/content-input.xqy"), harmonizeDir.resolve("xqy-json-input-flow/content.xqy").toFile());
-        FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/triples.xqy"), harmonizeDir.resolve("xqy-json-input-flow/triples.xqy").toFile());
+        FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/headers-json.xqy"), inputDir.resolve("xqy-json-input-flow/headers.xqy").toFile());
+        FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/content-input.xqy"), inputDir.resolve("xqy-json-input-flow/content.xqy").toFile());
+        FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/triples.xqy"), inputDir.resolve("xqy-json-input-flow/triples.xqy").toFile());
 
         FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/collector.xqy"), harmonizeDir.resolve("xqy-json-no-wait/collector.xqy").toFile());
         FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/headers-json.xqy"), harmonizeDir.resolve("xqy-json-no-wait/headers.xqy").toFile());
@@ -237,9 +238,9 @@ public class EndToEndFlowTests extends HubTestBase {
         FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/triples.xqy"), harmonizeDir.resolve("xqy-xml/triples.xqy").toFile());
         FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/writer.xqy"), harmonizeDir.resolve("xqy-xml/writer.xqy").toFile());
 
-        FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/headers-xml.xqy"), harmonizeDir.resolve("xqy-xml-input-flow/headers.xqy").toFile());
-        FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/content-input.xqy"), harmonizeDir.resolve("xqy-xml-input-flow/content.xqy").toFile());
-        FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/triples.xqy"), harmonizeDir.resolve("xqy-xml-input-flow/triples.xqy").toFile());
+        FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/headers-xml.xqy"), inputDir.resolve("xqy-xml-input-flow/headers.xqy").toFile());
+        FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/content-input.xqy"), inputDir.resolve("xqy-xml-input-flow/content.xqy").toFile());
+        FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/triples.xqy"), inputDir.resolve("xqy-xml-input-flow/triples.xqy").toFile());
 
         FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/collector.xqy"), harmonizeDir.resolve("xqy-xml-no-wait/collector.xqy").toFile());
         FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/headers-xml.xqy"), harmonizeDir.resolve("xqy-xml-no-wait/headers.xqy").toFile());
@@ -468,7 +469,7 @@ public class EndToEndFlowTests extends HubTestBase {
         stagingDocMgr.write("/test.json", handle, serverTransform);
 
         Assert.assertEquals(1, getStagingDocCount());
-        String expected = getResource("e2e-test/staged.json");
+        String expected = getResource("e2e-test/final.json");
 
         String actual = stagingDocMgr.read("/test.json").next().getContent(new StringHandle()).get();
         JSONAssert.assertEquals(expected, actual, false);
@@ -503,7 +504,7 @@ public class EndToEndFlowTests extends HubTestBase {
         mlcpRunner.join();
 
         Assert.assertEquals(1, getStagingDocCount());
-        String expected = getResource("e2e-test/staged.json");
+        String expected = getResource("e2e-test/final.json");
 
         String actual = stagingDocMgr.read("/input.json").next().getContent(new StringHandle()).get();
         JSONAssert.assertEquals(expected, actual, false);
@@ -538,7 +539,7 @@ public class EndToEndFlowTests extends HubTestBase {
         mlcpRunner.join();
 
         Assert.assertEquals(1, getStagingDocCount());
-        Document expected = getXmlFromResource("e2e-test/staged.xml");
+        Document expected = getXmlFromResource("e2e-test/final.xml");
 
         Document actual = stagingDocMgr.read("/input.xml").next().getContent(new DOMHandle()).get();
         assertXMLEqual(expected, actual);
@@ -573,7 +574,7 @@ public class EndToEndFlowTests extends HubTestBase {
         mlcpRunner.join();
 
         Assert.assertEquals(1, getStagingDocCount());
-        String expected = getResource("e2e-test/staged.json");
+        String expected = getResource("e2e-test/final.json");
 
         String actual = stagingDocMgr.read("/input.json").next().getContent(new StringHandle()).get();
         JSONAssert.assertEquals(expected, actual, false);
@@ -608,7 +609,7 @@ public class EndToEndFlowTests extends HubTestBase {
         mlcpRunner.join();
 
         Assert.assertEquals(1, getStagingDocCount());
-        Document expected = getXmlFromResource("e2e-test/staged.xml");
+        Document expected = getXmlFromResource("e2e-test/final.xml");
 
         Document actual = stagingDocMgr.read("/input.xml").next().getContent(new DOMHandle()).get();
         assertXMLEqual(expected, actual);

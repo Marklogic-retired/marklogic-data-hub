@@ -1,6 +1,5 @@
 package com.marklogic.gradle.task
 
-import com.marklogic.client.io.Format
 import com.marklogic.gradle.exception.EntityNameRequiredException
 import com.marklogic.gradle.exception.FlowNameRequiredException
 import com.marklogic.hub.flow.CodeFormat

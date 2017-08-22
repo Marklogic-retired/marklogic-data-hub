@@ -25,6 +25,7 @@ import org.springframework.mock.web.MockHttpSession;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -49,6 +50,7 @@ public class FlowManagerServiceTest extends HubTestBase {
 
     @BeforeClass
     public static void setup() throws IOException {
+        FileUtils.deleteDirectory(projectDir.toFile());
         installHub();
 
         Scaffolding scaffolding = new Scaffolding(projectDir.toString(), stagingClient);
@@ -65,22 +67,22 @@ public class FlowManagerServiceTest extends HubTestBase {
         scaffolding.createFlow(ENTITY, "xqy-xml-input-flow", FlowType.INPUT,
             CodeFormat.XQUERY, DataFormat.XML);
 
-        Path harmonizeDir = projectDir.resolve("plugins/entities/" + ENTITY + "/harmonize");
-        FileUtils.copyFile(getResourceFile("flow-manager/sjs-flow/headers.sjs"), harmonizeDir.resolve("sjs-json-input-flow/headers.sjs").toFile());
-        FileUtils.copyFile(getResourceFile("flow-manager/sjs-flow/content-input.sjs"), harmonizeDir.resolve("sjs-json-input-flow/content.sjs").toFile());
-        FileUtils.copyFile(getResourceFile("flow-manager/sjs-flow/triples.sjs"), harmonizeDir.resolve("sjs-json-input-flow/triples.sjs").toFile());
+        Path inputDir = projectDir.resolve("plugins/entities/" + ENTITY + "/input");
+        FileUtils.copyFile(getResourceFile("flow-manager/sjs-flow/headers.sjs"), inputDir.resolve("sjs-json-input-flow/headers.sjs").toFile());
+        FileUtils.copyFile(getResourceFile("flow-manager/sjs-flow/content-input.sjs"), inputDir.resolve("sjs-json-input-flow/content.sjs").toFile());
+        FileUtils.copyFile(getResourceFile("flow-manager/sjs-flow/triples.sjs"), inputDir.resolve("sjs-json-input-flow/triples.sjs").toFile());
 
-        FileUtils.copyFile(getResourceFile("flow-manager/sjs-flow/headers.sjs"), harmonizeDir.resolve("sjs-xml-input-flow/headers.sjs").toFile());
-        FileUtils.copyFile(getResourceFile("flow-manager/sjs-flow/content-input.sjs"), harmonizeDir.resolve("sjs-xml-input-flow/content.sjs").toFile());
-        FileUtils.copyFile(getResourceFile("flow-manager/sjs-flow/triples.sjs"), harmonizeDir.resolve("sjs-xml-input-flow/triples.sjs").toFile());
+        FileUtils.copyFile(getResourceFile("flow-manager/sjs-flow/headers.sjs"), inputDir.resolve("sjs-xml-input-flow/headers.sjs").toFile());
+        FileUtils.copyFile(getResourceFile("flow-manager/sjs-flow/content-input.sjs"), inputDir.resolve("sjs-xml-input-flow/content.sjs").toFile());
+        FileUtils.copyFile(getResourceFile("flow-manager/sjs-flow/triples.sjs"), inputDir.resolve("sjs-xml-input-flow/triples.sjs").toFile());
 
-        FileUtils.copyFile(getResourceFile("flow-manager/xqy-flow/headers-json.xqy"), harmonizeDir.resolve("xqy-json-input-flow/headers.xqy").toFile());
-        FileUtils.copyFile(getResourceFile("flow-manager/xqy-flow/content-input.xqy"), harmonizeDir.resolve("xqy-json-input-flow/content.xqy").toFile());
-        FileUtils.copyFile(getResourceFile("flow-manager/xqy-flow/triples.xqy"), harmonizeDir.resolve("xqy-json-input-flow/triples.xqy").toFile());
+        FileUtils.copyFile(getResourceFile("flow-manager/xqy-flow/headers-json.xqy"), inputDir.resolve("xqy-json-input-flow/headers.xqy").toFile());
+        FileUtils.copyFile(getResourceFile("flow-manager/xqy-flow/content-input.xqy"), inputDir.resolve("xqy-json-input-flow/content.xqy").toFile());
+        FileUtils.copyFile(getResourceFile("flow-manager/xqy-flow/triples.xqy"), inputDir.resolve("xqy-json-input-flow/triples.xqy").toFile());
 
-        FileUtils.copyFile(getResourceFile("flow-manager/xqy-flow/headers-xml.xqy"), harmonizeDir.resolve("xqy-xml-input-flow/headers.xqy").toFile());
-        FileUtils.copyFile(getResourceFile("flow-manager/xqy-flow/content-input.xqy"), harmonizeDir.resolve("xqy-xml-input-flow/content.xqy").toFile());
-        FileUtils.copyFile(getResourceFile("flow-manager/xqy-flow/triples.xqy"), harmonizeDir.resolve("xqy-xml-input-flow/triples.xqy").toFile());
+        FileUtils.copyFile(getResourceFile("flow-manager/xqy-flow/headers-xml.xqy"), inputDir.resolve("xqy-xml-input-flow/headers.xqy").toFile());
+        FileUtils.copyFile(getResourceFile("flow-manager/xqy-flow/content-input.xqy"), inputDir.resolve("xqy-xml-input-flow/content.xqy").toFile());
+        FileUtils.copyFile(getResourceFile("flow-manager/xqy-flow/triples.xqy"), inputDir.resolve("xqy-xml-input-flow/triples.xqy").toFile());
 
         getDataHub().installUserModules(true);
     }
@@ -145,7 +147,7 @@ public class FlowManagerServiceTest extends HubTestBase {
         mlcpRunner.join();
 
         Assert.assertEquals(1, getStagingDocCount());
-        String expected = getResource("flow-manager/staged.json");
+        String expected = getResource("flow-manager/final.json");
 
         String actual = stagingDocMgr.read("/input.json").next().getContent(new StringHandle()).get();
         JSONAssert.assertEquals(expected, actual, false);

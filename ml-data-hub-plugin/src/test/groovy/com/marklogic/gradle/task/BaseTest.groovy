@@ -55,7 +55,7 @@ class BaseTest extends Specification {
     }
 
     static HubConfig hubConfig() {
-        HubConfig hubConfig = new HubConfig()
+        HubConfig hubConfig = new HubConfig(testProjectDir.root.toString())
         hubConfig.username = "admin"
         hubConfig.password = "admin"
         hubConfig.adminUsername = "admin"

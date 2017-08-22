@@ -20,12 +20,20 @@ import com.marklogic.client.extensions.ResourceManager;
 import com.marklogic.client.extensions.ResourceServices;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.util.RequestParameters;
+import com.marklogic.hub.collector.impl.CollectorImpl;
 import com.marklogic.hub.error.ScaffoldingValidationException;
 import com.marklogic.hub.flow.*;
+import com.marklogic.hub.main.impl.MainPluginImpl;
 import com.sun.jersey.api.client.ClientHandlerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -116,6 +124,105 @@ public class Scaffolding {
             out.println(flow.serialize());
             out.close();
         }
+    }
+
+    private Document readLegacyFlowXml(File file) throws IOException, ParserConfigurationException, SAXException {
+        FileInputStream is = new FileInputStream(file);
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setNamespaceAware(true);
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        return builder.parse(is);
+    }
+
+    public int updateLegacyFlows(String entityName) throws IOException {
+        Path entityDir = entitiesDir.resolve(entityName);
+        Path inputDir = entityDir.resolve("input");
+        Path harmonizeDir = entityDir.resolve("harmonize");
+
+
+        int updatedCount = 0;
+        File[] inputFlows = inputDir.toFile().listFiles((pathname) -> pathname.isDirectory() && !pathname.getName().equals("REST"));
+        if (inputFlows != null) {
+            for (File inputFlow : inputFlows) {
+                if (updateLegacyFlow(entityName, inputFlow.getName(), FlowType.INPUT)) {
+                    updatedCount++;
+                }
+            }
+        }
+
+        File[] harmonizeFlows = harmonizeDir.toFile().listFiles((pathname) -> pathname.isDirectory() && !pathname.getName().equals("REST"));
+        if (harmonizeFlows != null) {
+            for (File harmonizeFlow : harmonizeFlows) {
+                if(updateLegacyFlow(entityName, harmonizeFlow.getName(), FlowType.HARMONIZE)) {
+                    updatedCount++;
+                }
+            }
+        }
+
+        return updatedCount;
+    }
+
+    public boolean updateLegacyFlow(String entityName, String flowName, FlowType flowType) throws IOException {
+        boolean updated = false;
+
+        Path flowDir = getFlowDir(entityName, flowName, flowType);
+        File[] mainFiles = flowDir.toFile().listFiles((dir, name) -> name.matches("main\\.(sjs|xqy)"));
+        if (mainFiles.length < 1) {
+            File[] files = flowDir.toFile().listFiles((dir, name) -> name.endsWith(".xml"));
+
+            for (File file : files) {
+                try {
+                    Document doc = readLegacyFlowXml(file);
+                    if (doc.getDocumentElement().getLocalName().equals("flow")) {
+                        DataFormat dataFormat = null;
+                        CodeFormat codeFormat = null;
+                        NodeList nodes = doc.getElementsByTagName("data-format");
+                        if (nodes.getLength() == 1) {
+                            String format = nodes.item(0).getTextContent();
+                            if (format.equals("application/json")) {
+                                dataFormat = DataFormat.JSON;
+                            } else if (format.equals("application/xml")) {
+                                dataFormat = DataFormat.JSON;
+                            } else {
+                                throw new RuntimeException("Invalid Data Format");
+                            }
+                        }
+
+                        if (flowDir.resolve("content").resolve("content.sjs").toFile().exists()) {
+                            codeFormat = CodeFormat.JAVASCRIPT;
+                        } else if (flowDir.resolve("content").resolve("content.xqy").toFile().exists()) {
+                            codeFormat = CodeFormat.XQUERY;
+                        } else {
+                            throw new RuntimeException("Invalid Code Format");
+                        }
+
+                        writeFile("scaffolding/" + flowType + "/" + codeFormat + "/main-legacy." + codeFormat,
+                            flowDir.resolve("main." + codeFormat));
+
+                        file.delete();
+
+                        Flow flow = FlowBuilder.newFlow()
+                            .withEntityName(entityName)
+                            .withName(flowName)
+                            .withType(flowType)
+                            .withCodeFormat(codeFormat)
+                            .withDataFormat(dataFormat)
+                            .withCollector(new CollectorImpl("/entities/" + entityName + "/" + flowType + "/" + flowName + "/collector/collector." + codeFormat, codeFormat))
+                            .withMain(new MainPluginImpl("/entities/" + entityName + "/" + flowType + "/" + flowName + "/main." + codeFormat, codeFormat))
+                            .build();
+                        Path flowFile = flowDir.resolve(flowName + ".xml");
+                        try (PrintWriter out = new PrintWriter(flowFile.toFile())) {
+                            out.println(flow.serialize());
+                            out.close();
+                        }
+                        updated = true;
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return updated;
     }
 
     private void writeFile(String srcFile, Path dstFile) throws IOException {

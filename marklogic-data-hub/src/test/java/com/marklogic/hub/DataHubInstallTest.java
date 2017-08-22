@@ -22,11 +22,7 @@ public class DataHubInstallTest extends HubTestBase {
     @BeforeClass
     public static void setup() throws IOException {
         XMLUnit.setIgnoreWhitespace(true);
-
-        InstallInfo installInfo = getDataHub().isInstalled();
-        if (installInfo.isInstalled()) {
-            uninstallHub();
-        }
+        uninstallHub();
         installHub();
     }
 

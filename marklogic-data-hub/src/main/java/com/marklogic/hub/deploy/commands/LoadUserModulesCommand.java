@@ -13,6 +13,7 @@ import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.modulesloader.Modules;
 import com.marklogic.client.modulesloader.impl.*;
 import com.marklogic.client.modulesloader.xcc.DefaultDocumentFormatGetter;
+import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.deploy.util.CacheBustingXccAssetLoader;
 import com.marklogic.hub.deploy.util.EntityDefModulesFinder;
@@ -26,6 +27,7 @@ import java.io.FileFilter;
 import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.List;
 
 public class LoadUserModulesCommand extends AbstractCommand {
 
@@ -110,6 +112,12 @@ public class LoadUserModulesCommand extends AbstractCommand {
 
     @Override
     public void execute(CommandContext context) {
+        FlowManager flowManager = new FlowManager(hubConfig);
+        List<String> legacyFlows = flowManager.getLegacyFlows();
+        if (legacyFlows.size() > 0) {
+            throw new RuntimeException("The following Flows are legacy flows:\n" + String.join("\n", legacyFlows) + "\nPlease update them with ./gradlew mlHubUpdate");
+        }
+
         AppConfig config = context.getAppConfig();
 
         DatabaseClient stagingClient = hubConfig.newStagingClient();

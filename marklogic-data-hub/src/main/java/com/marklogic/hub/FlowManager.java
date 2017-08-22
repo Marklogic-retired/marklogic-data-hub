@@ -33,6 +33,9 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -121,6 +124,44 @@ public class FlowManager extends ResourceManager {
         DOMHandle handle = new DOMHandle();
         Document parent = res.getContent(handle).get();
         return flowFromXml(parent.getDocumentElement());
+    }
+
+    public List<String> getLegacyFlows() {
+        List<String> oldFlows = new ArrayList<>();
+        Path entitiesDir = Paths.get(hubConfig.projectDir).resolve("plugins").resolve("entities");
+
+        File[] entityDirs = entitiesDir.toFile().listFiles(pathname -> pathname.isDirectory());
+        if (entityDirs != null) {
+            for (File entityDir : entityDirs) {
+                Path inputDir = entityDir.toPath().resolve("input");
+                Path harmonizeDir = entityDir.toPath().resolve("harmonize");
+
+
+                File[] inputFlows = inputDir.toFile().listFiles((pathname) -> pathname.isDirectory() && !pathname.getName().equals("REST"));
+                if (inputFlows != null) {
+                    for (File inputFlow : inputFlows) {
+                        File[] mainFiles = inputFlow.listFiles((dir, name) -> name.matches("main\\.(sjs|xqy)"));
+                        if (mainFiles.length < 1) {
+                            oldFlows.add(entityDir.getName() + " => " + inputFlow.getName());
+                            break;
+                        }
+                    }
+                }
+
+                File[] harmonizeFlows = harmonizeDir.toFile().listFiles((pathname) -> pathname.isDirectory() && !pathname.getName().equals("REST"));
+                if (harmonizeFlows != null) {
+                    for (File harmonizeFlow : harmonizeFlows) {
+                        File[] mainFiles = harmonizeFlow.listFiles((dir, name) -> name.matches("main\\.(sjs|xqy)"));
+                        if (mainFiles.length < 1) {
+                            oldFlows.add(entityDir.getName() + " => " + harmonizeFlow.getName());
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        return oldFlows;
     }
 
     public FlowRunner newFlowRunner() {

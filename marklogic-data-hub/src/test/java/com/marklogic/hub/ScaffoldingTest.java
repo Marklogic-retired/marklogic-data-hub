@@ -3,6 +3,7 @@ package com.marklogic.hub;
 import com.marklogic.hub.error.ScaffoldingValidationException;
 import com.marklogic.hub.flow.CodeFormat;
 import com.marklogic.hub.flow.DataFormat;
+import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.FlowType;
 import com.marklogic.hub.scaffold.Scaffolding;
 import org.apache.commons.io.FileUtils;
@@ -14,6 +15,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -258,5 +260,42 @@ public class ScaffoldingTest extends HubTestBase {
         assertTrue(restTransformDir.toFile().exists());
         Path restTransformFile = restTransformDir.resolve(transformName + "." + pluginCodeFormat);
         assertTrue(restTransformFile.toFile().exists());
+    }
+
+    @Test
+    public void updateLegacyFlows() throws IOException, SAXException, ParserConfigurationException {
+        Scaffolding scaffolding = new Scaffolding(projectDir.toString(), stagingClient);
+        assertEquals(0, scaffolding.updateLegacyFlows("my-fun-test"));
+
+        Path inputDir = projectPath.resolve("plugins/entities/my-fun-test/input");
+        Path harmonizeDir = projectPath.resolve("plugins/entities/my-fun-test/harmonize");
+        FileUtils.copyDirectory(getResourceFile("scaffolding-test/legacy-input-flow"), inputDir.resolve("legacy-input-flow").toFile());
+        FileUtils.copyDirectory(getResourceFile("scaffolding-test/legacy-harmonize-flow"), harmonizeDir.resolve("legacy-harmonize-flow").toFile());
+
+        assertEquals(2, scaffolding.updateLegacyFlows("my-fun-test"));
+
+        Flow flow = FlowManager.flowFromXml(getXmlFromInputStream(new FileInputStream(inputDir.resolve("legacy-input-flow").resolve("legacy-input-flow.xml").toFile())).getDocumentElement());
+        assertEquals(FlowType.INPUT, flow.getType());
+        assertEquals(CodeFormat.JAVASCRIPT, flow.getCodeFormat());
+        assertEquals(DataFormat.JSON, flow.getDataFormat());
+        assertEquals("legacy-input-flow", flow.getName());
+        assertEquals("my-fun-test", flow.getEntityName());
+        assertEquals(CodeFormat.JAVASCRIPT, flow.getCollector().getCodeFormat());
+        assertEquals("/entities/my-fun-test/input/legacy-input-flow/collector/collector.sjs", flow.getCollector().getModule());
+        assertEquals(CodeFormat.JAVASCRIPT, flow.getMain().getCodeFormat());
+        assertEquals("/entities/my-fun-test/input/legacy-input-flow/main.sjs", flow.getMain().getModule());
+
+        flow = FlowManager.flowFromXml(getXmlFromInputStream(new FileInputStream(harmonizeDir.resolve("legacy-harmonize-flow").resolve("legacy-harmonize-flow.xml").toFile())).getDocumentElement());
+        assertEquals(FlowType.HARMONIZE, flow.getType());
+        assertEquals(CodeFormat.JAVASCRIPT, flow.getCodeFormat());
+        assertEquals(DataFormat.JSON, flow.getDataFormat());
+        assertEquals("legacy-harmonize-flow", flow.getName());
+        assertEquals("my-fun-test", flow.getEntityName());
+        assertEquals(CodeFormat.JAVASCRIPT, flow.getCollector().getCodeFormat());
+        assertEquals("/entities/my-fun-test/harmonize/legacy-harmonize-flow/collector/collector.sjs", flow.getCollector().getModule());
+        assertEquals(CodeFormat.JAVASCRIPT, flow.getMain().getCodeFormat());
+        assertEquals("/entities/my-fun-test/harmonize/legacy-harmonize-flow/main.sjs", flow.getMain().getModule());
+
+        assertEquals(0, scaffolding.updateLegacyFlows("my-fun-test"));
     }
 }

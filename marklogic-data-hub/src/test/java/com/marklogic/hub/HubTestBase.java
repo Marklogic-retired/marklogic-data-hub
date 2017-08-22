@@ -279,6 +279,10 @@ public class HubTestBase {
 
     protected static Document getXmlFromResource(String resourceName) throws IOException, ParserConfigurationException, SAXException {
         InputStream inputStream = HubTestBase.class.getClassLoader().getResourceAsStream(resourceName);
+        return getXmlFromInputStream(inputStream);
+    }
+
+    protected static Document getXmlFromInputStream(InputStream inputStream) throws IOException, ParserConfigurationException, SAXException {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setIgnoringElementContentWhitespace(true);
         factory.setNamespaceAware(true);
