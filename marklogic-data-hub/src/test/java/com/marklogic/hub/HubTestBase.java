@@ -326,28 +326,10 @@ public class HubTestBase {
         stagingDocMgr.write(uri, new StringHandle(doc));
     }
 
-    protected static void clearDb(String dbName) {
-        ManageClient client = getHubConfig().newManageClient();
-        DatabaseManager databaseManager = new DatabaseManager(client);
-        databaseManager.clearDatabase(dbName);
-    }
-
     public static void clearDatabases(String... databases) {
-        List<Thread> threads = new ArrayList<>();
-        ManageClient client = getHubConfig().newManageClient();
-        DatabaseManager databaseManager = new DatabaseManager(client);
         for (String database: databases) {
-            Thread thread = new Thread(() -> databaseManager.clearDatabase(database));
-            threads.add(thread);
-            thread.start();
+            runInDatabase("cts:uris() ! xdmp:document-delete(.)", database);
         }
-        threads.forEach((Thread thread) -> {
-            try {
-                thread.join();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        });
     }
 
 
