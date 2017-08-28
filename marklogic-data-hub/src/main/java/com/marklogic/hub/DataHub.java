@@ -60,9 +60,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.regex.Pattern;
 
 public class DataHub {
@@ -171,19 +172,22 @@ public class DataHub {
     public void validateServer() throws ServerValidationException {
         try {
             String versionString = getAdminManager().getServerVersion();
-            String alteredString = versionString.replaceAll("[^\\d]+", "");
-            if (alteredString.length() < 3) {
-                alteredString += "0";
-            }
-            int major = Integer.parseInt(alteredString.substring(0, 1));
-//            int ver = Integer.parseInt(alteredString.substring(0, 3));
-//            boolean isNightly = versionString.matches("[^-]+-\\d{8}");
+            int major = Integer.parseInt(versionString.replaceAll("([^.]+)\\..*", "$1"));
             if (major < 9) {
                 throw new ServerValidationException("Invalid MarkLogic Server Version: " + versionString);
             }
+            boolean isNightly = versionString.matches("[^-]+-(\\d{4})(\\d{2})(\\d{2})");
+            if (isNightly) {
+                String dateString = versionString.replaceAll("[^-]+-(\\d{4})(\\d{2})(\\d{2})", "$1-$2-$3");
+                Date minDate = new GregorianCalendar(2017, 6, 1).getTime();
+                Date date = new SimpleDateFormat("y-M-d").parse(dateString);
+                if (date.before(minDate)) {
+                    throw new ServerValidationException("Invalid MarkLogic Server Version: " + versionString);
+                }
+            }
 
         }
-        catch(ResourceAccessException e) {
+        catch(Exception e) {
             throw new ServerValidationException(e.toString());
         }
     }
