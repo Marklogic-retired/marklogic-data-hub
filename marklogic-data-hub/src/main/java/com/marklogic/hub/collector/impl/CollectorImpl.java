@@ -82,7 +82,7 @@ public class CollectorImpl implements Collector {
 
             DiskQueue<String> results = new DiskQueue<>(5000);
             ResultSequence res = activeSession.submitRequest(moduleInvoke);
-            int count = Integer.parseInt(res.next().getItem().asString());
+            Integer.parseInt(res.next().getItem().asString());
             while (res != null && res.hasNext()) {
                 results.add(res.next().asString());
             }

@@ -32,6 +32,8 @@ import com.marklogic.hub.job.Job;
 import com.marklogic.hub.job.JobManager;
 import com.marklogic.hub.job.JobStatus;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
@@ -132,7 +134,9 @@ public class FlowRunnerImpl implements FlowRunner {
 
     @Override
     public void awaitCompletion(long timeout, TimeUnit unit) throws InterruptedException {
-        runningThread.join(unit.convert(timeout, TimeUnit.MILLISECONDS));
+        if (runningThread != null) {
+            runningThread.join(unit.convert(timeout, TimeUnit.MILLISECONDS));
+        }
     }
 
     @Override
@@ -165,7 +169,21 @@ public class FlowRunnerImpl implements FlowRunner {
         });
 
         jobManager.saveJob(job.withStatus(JobStatus.RUNNING_COLLECTOR));
-        DiskQueue<String> uris = c.run(jobId, this.flow.getEntityName(), this.flow.getName(), threadCount, options);
+        final DiskQueue<String> uris;
+        try {
+            uris = c.run(jobId, this.flow.getEntityName(), this.flow.getName(), threadCount, options);
+        }
+        catch(Exception e) {
+            job.setCounts(0, 0, 0, 0)
+                .withStatus(JobStatus.FAILED)
+                .withEndTime(new Date());
+
+            StringWriter errors = new StringWriter();
+            e.printStackTrace(new PrintWriter(errors));
+            job.withJobOutput(errors.toString());
+            jobManager.saveJob(job);
+            return new JobTicketImpl(jobId, JobTicket.JobType.QUERY_BATCHER);
+        }
 
         flowStatusListeners.forEach((FlowStatusListener listener) -> {
             listener.onStatusChange(jobId, 0, "starting harmonization");

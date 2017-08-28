@@ -241,7 +241,8 @@ declare %private function trace:write-error-trace()
                   element input { map:get($step, "input") },
                   element output { map:get($step, "output") },
                   element error { map:get($step, "error") },
-                  element duration { map:get($step, "duration") }
+                  element duration { map:get($step, "duration") },
+                  element options { map:get($step, "options") }
                 }
             }
           }
@@ -283,7 +284,8 @@ declare function trace:plugin-trace(
       map:put($new-step, "label", get-plugin-label()),
       trace:get-plugin-input() ! map:put($new-step, "input", .),
       map:put($new-step, "output", $output),
-      map:put($new-step, "duration", $duration)
+      map:put($new-step, "duration", $duration),
+      map:put($new-step, "options", json:object(document { rfc:get-options() }/node()))
     )
     let $trace-steps := (
       map:get($current-trace, "traceSteps"),
@@ -315,7 +317,8 @@ declare function trace:error-trace(
           else
             $error
         ),
-        map:entry("duration", $duration)
+        map:entry("duration", $duration),
+        map:entry("options", rfc:get-options())
       ))
     )
     let $_ := map:put($current-trace, "traceSteps", $trace-steps)

@@ -124,8 +124,8 @@ public class FlowManagerTest extends HubTestBase {
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME);
         DocumentMetadataHandle meta = new DocumentMetadataHandle();
         meta.getCollections().add("tester");
-        installFinalDoc("/employee1.xml", meta, getResource("flow-manager-test/input/employee1.xml"));
-        installFinalDoc("/employee2.xml", meta, getResource("flow-manager-test/input/employee2.xml"));
+        installFinalDoc("/employee1.xml", meta, "flow-manager-test/input/employee1.xml");
+        installFinalDoc("/employee2.xml", meta, "flow-manager-test/input/employee2.xml");
     }
 
     @Test

@@ -17,6 +17,7 @@ package com.marklogic.hub.util;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.marklogic.client.DatabaseClient;
 import com.marklogic.contentpump.bean.MlcpBean;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.flow.Flow;
@@ -41,8 +42,9 @@ public class MlcpRunner extends ProcessRunner {
     private AtomicLong failedEvents = new AtomicLong(0);
     FlowStatusListener flowStatusListener;
     private String mainClass;
+    private DatabaseClient databaseClient;
 
-    public MlcpRunner(String mainClass, HubConfig hubConfig, Flow flow, JsonNode mlcpOptions, FlowStatusListener statusListener) {
+    public MlcpRunner(String mainClass, HubConfig hubConfig, Flow flow, DatabaseClient databaseClient, JsonNode mlcpOptions, FlowStatusListener statusListener) {
         super();
 
         this.withHubconfig(hubConfig);
@@ -52,8 +54,14 @@ public class MlcpRunner extends ProcessRunner {
         this.flow = flow;
         this.mlcpOptions = mlcpOptions;
         this.mainClass = mainClass;
+        this.databaseClient = databaseClient;
     }
 
+    public String getJobId() {
+        return jobId;
+    }
+
+    // TODO: add destination database here
     @Override
     public void run() {
         HubConfig hubConfig = getHubConfig();
@@ -64,8 +72,8 @@ public class MlcpRunner extends ProcessRunner {
 
         try {
             MlcpBean bean = new ObjectMapper().readerFor(MlcpBean.class).readValue(mlcpOptions);
-            bean.setHost(hubConfig.host);
-            bean.setPort(hubConfig.stagingPort);
+            bean.setHost(databaseClient.getHost());
+            bean.setPort(databaseClient.getPort());
 
             // Assume that the HTTP credentials will work for mlcp
             bean.setUsername(hubConfig.getUsername());
@@ -80,7 +88,9 @@ public class MlcpRunner extends ProcessRunner {
 
             super.run();
 
-            flowStatusListener.onStatusChange(jobId, 100, "");
+            if (flowStatusListener != null) {
+                flowStatusListener.onStatusChange(jobId, 100, "");
+            }
 
         } catch (Exception e) {
             job.withStatus(JobStatus.FAILED)

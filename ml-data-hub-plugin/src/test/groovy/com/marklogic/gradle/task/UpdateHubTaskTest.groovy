@@ -21,7 +21,7 @@ class UpdateHubTaskTest extends BaseTest {
 
         then:
         notThrown(UnexpectedBuildSuccess)
-        result.output.contains('No updates needed')
+        result.output.contains('No Legacy Flows to Update')
         result.task(":hubUpdate").outcome == SUCCESS
     }
 
@@ -40,7 +40,7 @@ class UpdateHubTaskTest extends BaseTest {
 
         then:
         notThrown(UnexpectedBuildSuccess)
-        result.output.contains('Updated 2 legacy flows')
+        result.output.contains('Legacy Flows Updated:\n\tlegacy-test => legacy-input-flow\n\tlegacy-test => legacy-harmonize-flow')
         result.task(":hubUpdate").outcome == SUCCESS
     }
 }

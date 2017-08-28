@@ -68,27 +68,21 @@ public class ProcessRunner extends Thread {
     @Override
     public void run() {
         try {
-            runMlcp();
+            logger.debug(String.join(" ", args));
+            ProcessBuilder pb = new ProcessBuilder(args);
+            Process process = pb.start();
+
+            StreamGobbler gobbler = new StreamGobbler(process.getInputStream(), status -> {
+                synchronized (processOutput) {
+                    processOutput.add(status);
+                }
+                consumer.accept(status);
+            });
+            gobbler.start();
+            process.waitFor();
+            gobbler.join();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-    }
-
-    private void runMlcp() throws IOException, InterruptedException {
-
-        logger.debug(String.join(" ", args));
-        ProcessBuilder pb = new ProcessBuilder(args);
-        Process process = pb.start();
-
-        StreamGobbler gobbler = new StreamGobbler(process.getInputStream(), status -> {
-            synchronized (processOutput) {
-                processOutput.add(status);
-            }
-
-            consumer.accept(status);
-        });
-        gobbler.start();
-        process.waitFor();
-        gobbler.join();
     }
 }

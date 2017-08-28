@@ -5,6 +5,9 @@ module namespace mlcpFlow = "http://marklogic.com/data-hub/mlcp-flow-transform";
 import module namespace config = "http://marklogic.com/data-hub/config"
   at "/com.marklogic.hub/lib/config.xqy";
 
+import module namespace debug = "http://marklogic.com/data-hub/debug"
+  at "/com.marklogic.hub/lib/debug-lib.xqy";
+
 import module namespace flow = "http://marklogic.com/data-hub/flow-lib"
   at "/com.marklogic.hub/lib/flow-lib.xqy";
 
@@ -23,6 +26,8 @@ declare function mlcpFlow:transform(
   $context as map:map
 ) as map:map*
 {
+  debug:dump-env("mlcpFlow:transform"),
+
   let $uri := map:get($content, "uri")
   return
     perf:log('mlcp-flow-transform(' || $uri || ')', function() {
@@ -51,6 +56,7 @@ declare function mlcpFlow:transform(
       )[1]
       let $_ := flow:set-default-options($options, $flow)
 
+      (: this can throw, but we want MLCP to know about problems, so let it :)
       let $envelope := flow:run-flow(
         map:get($params, "jobId"), $flow, $uri, map:get($content, "value"), $options
       )

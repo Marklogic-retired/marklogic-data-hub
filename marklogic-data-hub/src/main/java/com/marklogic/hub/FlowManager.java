@@ -28,12 +28,15 @@ import com.marklogic.hub.flow.FlowType;
 import com.marklogic.hub.flow.impl.FlowImpl;
 import com.marklogic.hub.flow.impl.FlowRunnerImpl;
 import com.marklogic.hub.job.JobManager;
+import com.marklogic.hub.scaffold.Scaffolding;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import java.io.File;
+import java.io.FileFilter;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -143,7 +146,6 @@ public class FlowManager extends ResourceManager {
                         File[] mainFiles = inputFlow.listFiles((dir, name) -> name.matches("main\\.(sjs|xqy)"));
                         if (mainFiles.length < 1) {
                             oldFlows.add(entityDir.getName() + " => " + inputFlow.getName());
-                            break;
                         }
                     }
                 }
@@ -154,7 +156,6 @@ public class FlowManager extends ResourceManager {
                         File[] mainFiles = harmonizeFlow.listFiles((dir, name) -> name.matches("main\\.(sjs|xqy)"));
                         if (mainFiles.length < 1) {
                             oldFlows.add(entityDir.getName() + " => " + harmonizeFlow.getName());
-                            break;
                         }
                     }
                 }
@@ -162,6 +163,22 @@ public class FlowManager extends ResourceManager {
         }
 
         return oldFlows;
+    }
+
+    public List<String> updateLegacyFlows() throws IOException {
+
+        Scaffolding scaffolding = new Scaffolding(hubConfig.projectDir, hubConfig.newFinalClient());
+
+        List<String> updatedFlows = new ArrayList<>();
+        Path entitiesDir = Paths.get(hubConfig.projectDir).resolve("plugins").resolve("entities");
+        File[] entityDirs = entitiesDir.toFile().listFiles(pathname -> pathname.isDirectory());
+        if (entityDirs != null) {
+            for (File entityDir : entityDirs) {
+                updatedFlows.addAll(scaffolding.updateLegacyFlows(entityDir.getName()));
+            }
+        }
+
+        return updatedFlows;
     }
 
     public FlowRunner newFlowRunner() {

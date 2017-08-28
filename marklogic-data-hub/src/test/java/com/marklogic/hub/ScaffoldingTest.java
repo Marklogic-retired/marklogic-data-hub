@@ -265,14 +265,14 @@ public class ScaffoldingTest extends HubTestBase {
     @Test
     public void updateLegacyFlows() throws IOException, SAXException, ParserConfigurationException {
         Scaffolding scaffolding = new Scaffolding(projectDir.toString(), stagingClient);
-        assertEquals(0, scaffolding.updateLegacyFlows("my-fun-test"));
+        assertEquals(0, scaffolding.updateLegacyFlows("my-fun-test").size());
 
         Path inputDir = projectPath.resolve("plugins/entities/my-fun-test/input");
         Path harmonizeDir = projectPath.resolve("plugins/entities/my-fun-test/harmonize");
         FileUtils.copyDirectory(getResourceFile("scaffolding-test/legacy-input-flow"), inputDir.resolve("legacy-input-flow").toFile());
         FileUtils.copyDirectory(getResourceFile("scaffolding-test/legacy-harmonize-flow"), harmonizeDir.resolve("legacy-harmonize-flow").toFile());
 
-        assertEquals(2, scaffolding.updateLegacyFlows("my-fun-test"));
+        assertEquals(2, scaffolding.updateLegacyFlows("my-fun-test").size());
 
         Flow flow = FlowManager.flowFromXml(getXmlFromInputStream(new FileInputStream(inputDir.resolve("legacy-input-flow").resolve("legacy-input-flow.xml").toFile())).getDocumentElement());
         assertEquals(FlowType.INPUT, flow.getType());
@@ -296,6 +296,6 @@ public class ScaffoldingTest extends HubTestBase {
         assertEquals(CodeFormat.JAVASCRIPT, flow.getMain().getCodeFormat());
         assertEquals("/entities/my-fun-test/harmonize/legacy-harmonize-flow/main.sjs", flow.getMain().getModule());
 
-        assertEquals(0, scaffolding.updateLegacyFlows("my-fun-test"));
+        assertEquals(0, scaffolding.updateLegacyFlows("my-fun-test").size());
     }
 }

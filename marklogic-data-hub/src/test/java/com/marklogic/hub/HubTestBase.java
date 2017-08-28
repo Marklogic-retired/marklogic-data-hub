@@ -81,7 +81,7 @@ public class HubTestBase {
     private static Properties properties = new Properties();
     private static boolean initialized = false;
     public static GenericDocumentManager stagingDocMgr = getStagingMgr();
-    public static XMLDocumentManager finalDocMgr = getFinalMgr();
+    public static GenericDocumentManager finalDocMgr = getFinalMgr();
     public static JSONDocumentManager jobDocMgr = getJobMgr();
     public static GenericDocumentManager traceDocMgr = getTraceMgr();
     public static GenericDocumentManager modMgr = getModMgr();
@@ -102,11 +102,11 @@ public class HubTestBase {
         return stagingModulesClient.newDocumentManager();
     }
 
-    private static XMLDocumentManager getFinalMgr() {
+    private static GenericDocumentManager getFinalMgr() {
         if (!initialized) {
             init();
         }
-        return finalClient.newXMLDocumentManager();
+        return finalClient.newDocumentManager();
     }
 
     private static JSONDocumentManager getJobMgr() {
@@ -183,13 +183,13 @@ public class HubTestBase {
             jobAuthMethod = Authentication.DIGEST;
         }
 
-        stagingClient = DatabaseClientFactory.newClient(host, stagingPort, user, password, stagingAuthMethod);
+        stagingClient = DatabaseClientFactory.newClient(host, stagingPort, HubConfig.DEFAULT_STAGING_NAME, user, password, stagingAuthMethod);
         stagingModulesClient  = DatabaseClientFactory.newClient(host, stagingPort, HubConfig.DEFAULT_MODULES_DB_NAME, user, password, stagingAuthMethod);
-        finalClient = DatabaseClientFactory.newClient(host, finalPort, user, password, finalAuthMethod);
+        finalClient = DatabaseClientFactory.newClient(host, finalPort, HubConfig.DEFAULT_FINAL_NAME, user, password, finalAuthMethod);
         finalModulesClient  = DatabaseClientFactory.newClient(host, stagingPort, HubConfig.DEFAULT_MODULES_DB_NAME, user, password, finalAuthMethod);
-        traceClient = DatabaseClientFactory.newClient(host, tracePort, user, password, traceAuthMethod);
+        traceClient = DatabaseClientFactory.newClient(host, tracePort, HubConfig.DEFAULT_TRACE_NAME, user, password, traceAuthMethod);
         traceModulesClient  = DatabaseClientFactory.newClient(host, stagingPort, HubConfig.DEFAULT_MODULES_DB_NAME, user, password, traceAuthMethod);
-        jobClient = DatabaseClientFactory.newClient(host, jobPort, user, password, jobAuthMethod);
+        jobClient = DatabaseClientFactory.newClient(host, jobPort, HubConfig.DEFAULT_JOB_NAME, user, password, jobAuthMethod);
         jobModulesClient  = DatabaseClientFactory.newClient(host, stagingPort, HubConfig.DEFAULT_MODULES_DB_NAME, user, password, jobAuthMethod);
     }
 
@@ -319,6 +319,13 @@ public class HubTestBase {
         return getDocCount(HubConfig.DEFAULT_TRACE_NAME, collection);
     }
 
+    protected static int getJobDocCount() {
+        return getJobDocCount(null);
+    }
+    protected static int getJobDocCount(String collection) {
+        return getDocCount(HubConfig.DEFAULT_JOB_NAME, collection);
+    }
+
     protected static int getDocCount(String database, String collection) {
         int count = 0;
         String collectionName = "";
@@ -334,28 +341,20 @@ public class HubTestBase {
         return count;
     }
 
-    protected static void clearDb(String dbName) {
-        ManageClient client = getHubConfig().newManageClient();
-        DatabaseManager databaseManager = new DatabaseManager(client);
-        databaseManager.clearDatabase(dbName);
-    }
-
     public static void clearDatabases(String... databases) {
+        ServerEvaluationCall eval = stagingClient.newServerEval();
+        String installer =
+            "declare variable $databases external;\n" +
+            "for $database in fn:tokenize($databases, \",\")\n" +
+            "return\n" +
+            "  xdmp:invoke-function(function() {\n" +
+            "    cts:uris() ! xdmp:document-delete(.)\n" +
+            "  },\n" +
+            "  map:entry(\"database\", xdmp:database($database))\n" +
+            "  )";
 
-        ThreadPoolTaskExecutor tpe = new ThreadPoolTaskExecutor();
-        tpe.setCorePoolSize(2);
-        tpe.setAwaitTerminationSeconds(60 * 10);
-        tpe.setWaitForTasksToCompleteOnShutdown(true);
-        tpe.afterPropertiesSet();
-        ManageClient client = getHubConfig().newManageClient();
-        DatabaseManager databaseManager = new DatabaseManager(client);
-        for (String database: databases) {
-            tpe.execute(() -> {
-                databaseManager.clearDatabase(database);
-            });
-        }
-        tpe.setWaitForTasksToCompleteOnShutdown(true);
-        tpe.shutdown();
+        eval.addVariable("databases", String.join(",", databases));
+        eval.xquery(installer).eval();
     }
 
 
@@ -364,12 +363,9 @@ public class HubTestBase {
         stagingDocMgr.write(uri, meta, handle);
     }
 
-    protected static void installFinalDoc(String uri, String doc) {
-        finalDocMgr.write(uri, new StringHandle(doc));
-    }
-
-    protected static void installFinalDoc(String uri, DocumentMetadataHandle meta, String doc) {
-        finalDocMgr.write(uri, meta, new StringHandle(doc));
+    protected static void installFinalDoc(String uri, DocumentMetadataHandle meta, String resource) {
+        FileHandle handle = new FileHandle(getResourceFile(resource));
+        finalDocMgr.write(uri, meta, handle);
     }
 
     protected static void installModules(Map<String, String> modules) {
@@ -429,6 +425,9 @@ public class HubTestBase {
                 break;
             case HubConfig.DEFAULT_TRACE_NAME:
                 eval = traceClient.newServerEval();
+                break;
+            case HubConfig.DEFAULT_JOB_NAME:
+                eval = jobClient.newServerEval();
                 break;
             default:
                 eval = stagingClient.newServerEval();

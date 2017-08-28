@@ -29,7 +29,17 @@ function main(id, options) {
     return triplesPlugin.createTriples(id, content, headers, options);
   });
 
-  fn.error(xs.QName("BOOM"), "I BLEW UP");
+  if (options.mainGoBoom  === true && (id === '/input-2.json' || id === '/input-2.xml')) {
+    fn.error(xs.QName("MAIN-BOOM"), "I BLEW UP");
+  }
+
+  if (options.extraPlugin === true) {
+    const extraPlugin = require('./extra-plugin.sjs');
+    let extraContext = dhf.context('extraPlugin');
+    dhf.run(extraContext, function() {
+      return extraPlugin.doSomethingExtra(id, options);
+    });
+  }
 
   let envelope = dhf.makeEnvelope(content, headers, triples, options.dataFormat);
 

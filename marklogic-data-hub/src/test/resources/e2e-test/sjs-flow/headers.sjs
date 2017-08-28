@@ -8,6 +8,9 @@
  * @return - an object of headers
  */
 function createHeaders(id, content, options) {
+  if (options.headersGoBoom  === true && (id === '/input-2.json' || id === '/input-2.xml')) {
+    fn.error(xs.QName("HEADERS-BOOM"), "I BLEW UP");
+  }
   options.headersTest = 'headers';
   return {
     "a": 1,

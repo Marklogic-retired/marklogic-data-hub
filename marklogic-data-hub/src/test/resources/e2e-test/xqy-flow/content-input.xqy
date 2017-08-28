@@ -18,5 +18,10 @@ declare function plugin:create-content(
   $raw-content as node()?,
   $options as map:map) as node()?
 {
-  $raw-content
+  let $_ :=
+    if (map:get($options, "contentGoBoom") eq fn:true() and $id = ("/input-2.json", "/input-2.xml")) then
+      fn:error(xs:QName("CONTENT-BOOM"), "I BLEW UP")
+    else ()
+  return
+    $raw-content
 };

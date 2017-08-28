@@ -39,6 +39,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Scaffolding {
 
@@ -134,18 +136,18 @@ public class Scaffolding {
         return builder.parse(is);
     }
 
-    public int updateLegacyFlows(String entityName) throws IOException {
+    public List<String> updateLegacyFlows(String entityName) throws IOException {
         Path entityDir = entitiesDir.resolve(entityName);
         Path inputDir = entityDir.resolve("input");
         Path harmonizeDir = entityDir.resolve("harmonize");
 
 
-        int updatedCount = 0;
+        List<String> updatedFlows = new ArrayList<>();
         File[] inputFlows = inputDir.toFile().listFiles((pathname) -> pathname.isDirectory() && !pathname.getName().equals("REST"));
         if (inputFlows != null) {
             for (File inputFlow : inputFlows) {
                 if (updateLegacyFlow(entityName, inputFlow.getName(), FlowType.INPUT)) {
-                    updatedCount++;
+                    updatedFlows.add(entityName + " => " + inputFlow.getName());
                 }
             }
         }
@@ -154,12 +156,12 @@ public class Scaffolding {
         if (harmonizeFlows != null) {
             for (File harmonizeFlow : harmonizeFlows) {
                 if(updateLegacyFlow(entityName, harmonizeFlow.getName(), FlowType.HARMONIZE)) {
-                    updatedCount++;
+                    updatedFlows.add(entityName + " => " + harmonizeFlow.getName());
                 }
             }
         }
 
-        return updatedCount;
+        return updatedFlows;
     }
 
     public boolean updateLegacyFlow(String entityName, String flowName, FlowType flowType) throws IOException {
@@ -182,7 +184,7 @@ public class Scaffolding {
                             if (format.equals("application/json")) {
                                 dataFormat = DataFormat.JSON;
                             } else if (format.equals("application/xml")) {
-                                dataFormat = DataFormat.JSON;
+                                dataFormat = DataFormat.XML;
                             } else {
                                 throw new RuntimeException("Invalid Data Format");
                             }

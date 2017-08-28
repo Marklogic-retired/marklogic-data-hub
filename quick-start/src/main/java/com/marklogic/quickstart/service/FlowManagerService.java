@@ -18,6 +18,7 @@ package com.marklogic.quickstart.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.client.datamovement.JobTicket;
 import com.marklogic.hub.FlowManager;
+import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.FlowRunner;
 import com.marklogic.hub.flow.FlowStatusListener;
@@ -147,7 +148,8 @@ public class FlowManagerService {
     }
 
     public void runMlcp(Flow flow, JsonNode json, FlowStatusListener statusListener) {
-        MlcpRunner runner = new MlcpRunner("com.marklogic.quickstart.util.MlcpMain", envConfig().getMlSettings(), flow, json, statusListener);
+        HubConfig hubConfig = envConfig().getMlSettings();
+        MlcpRunner runner = new MlcpRunner("com.marklogic.quickstart.util.MlcpMain", hubConfig, flow, hubConfig.newStagingClient(), json, statusListener);
         runner.start();
     }
 }

@@ -31,9 +31,6 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.HashMap;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -44,10 +41,11 @@ public class EntityManagerTest extends HubTestBase {
     public static void setup() throws IOException {
         XMLUnit.setIgnoreWhitespace(true);
 
-        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME);
         FileUtils.deleteDirectory(new File(PROJECT_PATH));
 
         installHub();
+        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME);
+
 
         DataHub dataHub = getDataHub();
         dataHub.clearUserModules();

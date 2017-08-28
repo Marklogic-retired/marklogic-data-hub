@@ -5,9 +5,12 @@ import com.marklogic.client.io.DocumentMetadataHandle
 import com.marklogic.hub.Debugging
 import com.marklogic.hub.HubConfig
 import com.marklogic.hub.Tracing
+import com.marklogic.hub.error.LegacyFlowsException
 import org.apache.commons.io.FileUtils
 import org.gradle.testkit.runner.UnexpectedBuildFailure
 import org.gradle.testkit.runner.UnexpectedBuildSuccess
+
+import java.nio.file.Paths
 
 import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual
 import static org.gradle.testkit.runner.TaskOutcome.FAILED
@@ -139,5 +142,22 @@ class InstalledTests extends BaseTest {
 
         assertXMLEqual(getXmlFromResource("run-flow-test/harmonized1.xml"), stagingClient().newDocumentManager().read("/employee1.xml").next().getContent(new DOMHandle()).get())
         assertXMLEqual(getXmlFromResource("run-flow-test/harmonized2.xml"), stagingClient().newDocumentManager().read("/employee2.xml").next().getContent(new DOMHandle()).get())
+    }
+
+    def "install Legacy Modules should fail"() {
+        given:
+        def entityDir = Paths.get(hubConfig().projectDir).resolve("plugins").resolve("entities").resolve("legacy-test")
+        def inputDir = entityDir.resolve("input")
+        inputDir.toFile().mkdirs()
+        org.gradle.internal.impldep.org.apache.commons.io.FileUtils.copyDirectory(new File("src/test/resources/legacy-input-flow"), inputDir.resolve("legacy-input-flow").toFile())
+
+        when:
+        def result = runFailTask('mlLoadModules')
+
+        then:
+        notThrown(UnexpectedBuildSuccess)
+        result.output.contains('The following Flows are legacy flows:')
+        result.output.contains('legacy-test => legacy-input-flow')
+        result.task(":mlLoadModules").outcome == FAILED
     }
 }

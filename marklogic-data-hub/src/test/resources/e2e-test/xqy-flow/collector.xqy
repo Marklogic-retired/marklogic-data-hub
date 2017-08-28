@@ -14,8 +14,12 @@ declare option xdmp:mapping "false";
 declare function plugin:collect(
   $options as map:map) as xs:string*
 {
+  let $_ :=
+    if (map:get($options, "collectorGoBoom") eq fn:true()) then
+      fn:error(xs:QName("COLLECTOR-BOOM"), "I BLEW UP")
+    else ()
   let $_ := map:put($options, "collectortTest", "collector")
   return
-    cts:uris((), (), cts:collection-query(map:get($options, "flow")))
+    cts:uris((), (), cts:collection-query(map:get($options, "entity")))
 };
 

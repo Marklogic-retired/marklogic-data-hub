@@ -18,12 +18,19 @@ declare function plugin:write(
   $envelope as node(),
   $options as map:map) as empty-sequence()
 {
-  xdmp:document-insert("/options-test.xml",
-    <doc>
-      <collector>{map:get($options, "collectorTest")}</collector>
-      <content>{map:get($options, "contentTest")}</content>
-      <headers>{map:get($options, "headersTest")}</headers>
-      <triples>{map:get($options, "triplesTest")}</triples>
-    </doc>),
-  xdmp:document-insert($id, $envelope, xdmp:default-permissions(), map:get($options, "flow"))
+  let $_ :=
+    if (map:get($options, "writerGoBoom") eq fn:true() and $id = ("/input-2.json", "/input-2.xml")) then
+      fn:error(xs:QName("WRITER-BOOM"), "I BLEW UP")
+    else ()
+  return (
+    xdmp:document-insert("/options-test.xml",
+      <doc>
+        <collector>{map:get($options, "collectorTest")}</collector>
+        <content>{map:get($options, "contentTest")}</content>
+        <headers>{map:get($options, "headersTest")}</headers>
+        <triples>{map:get($options, "triplesTest")}</triples>
+        <extra>{map:get($options, "extraTest")}</extra>
+      </doc>),
+    xdmp:document-insert($id, $envelope, xdmp:default-permissions(), map:get($options, "flow"))
+  )
 };

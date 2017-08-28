@@ -2,7 +2,12 @@ package com.marklogic.hub;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.marklogic.client.datamovement.*;
+import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.FailedRequestException;
+import com.marklogic.client.datamovement.DataMovementManager;
+import com.marklogic.client.datamovement.JobTicket;
+import com.marklogic.client.datamovement.WriteBatcher;
+import com.marklogic.client.document.GenericDocumentManager;
 import com.marklogic.client.document.ServerTransform;
 import com.marklogic.client.io.*;
 import com.marklogic.hub.flow.*;
@@ -11,7 +16,12 @@ import com.marklogic.hub.util.MlcpRunner;
 import org.apache.commons.io.FileUtils;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.json.JSONException;
-import org.junit.*;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DynamicTest;
+import org.junit.jupiter.api.TestFactory;
+import org.junit.platform.runner.JUnitPlatform;
+import org.junit.runner.RunWith;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
@@ -21,29 +31,79 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.UUID;
-import java.util.Vector;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.assertTrue;
 import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual;
+import static org.junit.jupiter.api.Assertions.*;
 
+interface CreateFlowListener {
+    void onFlowCreated(CodeFormat codeFormat, DataFormat dataFormat, FlowType flowType, String srcDir, Path flowDir) throws IOException;
+}
+
+interface ComboListener {
+    void onCombo(CodeFormat codeFormat, DataFormat dataFormat, FlowType flowType) throws IOException, InterruptedException, ParserConfigurationException, SAXException, JSONException;
+}
+
+class Tuple<X, Y> {
+    public final X x;
+    public final Y y;
+    public Tuple(X x, Y y) {
+        this.x = x;
+        this.y = y;
+    }
+}
+
+class FinalCounts {
+    public int stagingCount;
+    public int finalCount;
+    public int tracingCount;
+    public int jobCount;
+    public int completedCount;
+    public int failedCount;
+    public int jobSuccessfulEvents;
+    public int jobFailedEvents;
+    public int jobSuccessfulBatches;
+    public int jobFailedBatches;
+    public String jobStatus;
+    public String optionsFile = "options-test";
+
+    public FinalCounts(
+        int stagingCount, int finalCount, int tracingCount, int jobCount, int completedCount, int failedCount,
+        int jobSuccessfulEvents, int jobFailedEvents, int jobSuccessfulBatches, int jobFailedBatches, String jobStatus)
+    {
+        this.stagingCount = stagingCount;
+        this.finalCount = finalCount;
+        this.tracingCount = tracingCount;
+        this.jobCount = jobCount;
+        this.completedCount = completedCount;
+        this.failedCount = failedCount;
+        this.jobSuccessfulEvents = jobSuccessfulEvents;
+        this.jobFailedEvents = jobFailedEvents;
+        this.jobSuccessfulBatches = jobSuccessfulBatches;
+        this.jobFailedBatches = jobFailedBatches;
+        this.jobStatus = jobStatus;
+    }
+}
+
+@RunWith(JUnitPlatform.class)
 public class EndToEndFlowTests extends HubTestBase {
     private static final String ENTITY = "e2eentity";
     private static Path projectDir = Paths.get(".", "ye-olde-project");
-    private static final int TEST_SIZE = 1000;
+    private static final int TEST_SIZE = 500;
     private static final int BATCH_SIZE = 10;
     private static FlowManager flowManager;
-    private static DataMovementManager dataMovementManager;
+    private static DataMovementManager stagingDataMovementManager;
+    private static DataMovementManager finalDataMovementManager;
 
     private boolean installDocsFinished = false;
     private boolean installDocsFailed = false;
     private String installDocError;
 
-    @BeforeClass
-    public static void setup() throws IOException {
+    private static Scaffolding scaffolding;
+
+    @BeforeAll
+    public static void setup() throws IOException, InterruptedException, ParserConfigurationException, SAXException, JSONException {
         XMLUnit.setIgnoreWhitespace(true);
 
         File projectDirFile = projectDir.toFile();
@@ -52,1149 +112,656 @@ public class EndToEndFlowTests extends HubTestBase {
         }
 
         installHub();
-
-        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_TRACE_NAME, HubConfig.DEFAULT_JOB_NAME);
-
-        enableDebugging();
-
         enableTracing();
 
-        Scaffolding scaffolding = new Scaffolding(projectDir.toString(), stagingClient);
+        scaffolding = new Scaffolding(projectDir.toString(), stagingClient);
         scaffolding.createEntity(ENTITY);
 
-        scaffolding.createFlow(ENTITY, "sjs-json", FlowType.HARMONIZE,
-            CodeFormat.JAVASCRIPT, DataFormat.JSON);
+        scaffoldFlows("scaffolded");
 
-        scaffolding.createFlow(ENTITY, "sjs-json-input-flow", FlowType.INPUT,
-            CodeFormat.JAVASCRIPT, DataFormat.JSON);
+        createFlows("with-error", (codeFormat, dataFormat, flowType, srcDir, flowDir) -> {
+            copyFile(srcDir + "main-" + flowType.toString() + "." + codeFormat.toString(), flowDir.resolve("main." + codeFormat.toString()));
+            copyFile(srcDir + "extra-plugin." + codeFormat.toString(), flowDir.resolve("extra-plugin." + codeFormat.toString()));
+        });
 
-        scaffolding.createFlow(ENTITY, "sjs-json-no-wait", FlowType.HARMONIZE,
-            CodeFormat.JAVASCRIPT, DataFormat.JSON);
+        createFlows("extra-plugin", (codeFormat, dataFormat, flowType, srcDir, flowDir) -> {
+            copyFile(srcDir + "main-" + flowType.toString() + "." + codeFormat.toString(), flowDir.resolve("main." + codeFormat.toString()));
+            copyFile(srcDir + "extra-plugin." + codeFormat.toString(), flowDir.resolve("extra-plugin." + codeFormat.toString()));
+        });
 
-        scaffolding.createFlow(ENTITY, "sjs-json-errors", FlowType.HARMONIZE,
-            CodeFormat.JAVASCRIPT, DataFormat.JSON);
+        allCombos((codeFormat, dataFormat, flowType) -> {
+            if (codeFormat.equals(CodeFormat.XQUERY)) {
+                createFlow("triples-array", codeFormat, dataFormat, flowType, (codeFormat1, dataFormat1, flowType1, srcDir, flowDir) -> {
+                    copyFile(srcDir + "triples-json-array.xqy", flowDir.resolve("triples.xqy"));
+                });
+            }
+        });
 
-        scaffolding.createFlow(ENTITY, "sjs-json-failed-main", FlowType.HARMONIZE,
-            CodeFormat.JAVASCRIPT, DataFormat.JSON);
+        allCombos((codeFormat, dataFormat, flowType) -> {
+            createLegacyFlow(codeFormat, dataFormat, flowType);
+        });
 
-        scaffolding.createFlow(ENTITY, "sjs-xml", FlowType.HARMONIZE,
-            CodeFormat.JAVASCRIPT, DataFormat.XML);
-
-        scaffolding.createFlow(ENTITY, "sjs-xml-input-flow", FlowType.INPUT,
-            CodeFormat.JAVASCRIPT, DataFormat.XML);
-
-        scaffolding.createFlow(ENTITY, "sjs-xml-no-wait", FlowType.HARMONIZE,
-            CodeFormat.JAVASCRIPT, DataFormat.XML);
-
-        scaffolding.createFlow(ENTITY, "sjs-xml-errors", FlowType.HARMONIZE,
-            CodeFormat.JAVASCRIPT, DataFormat.XML);
-
-        scaffolding.createFlow(ENTITY, "sjs-xml-failed-main", FlowType.HARMONIZE,
-            CodeFormat.JAVASCRIPT, DataFormat.XML);
-
-        scaffolding.createFlow(ENTITY, "xqy-json", FlowType.HARMONIZE,
-            CodeFormat.XQUERY, DataFormat.JSON);
-
-        scaffolding.createFlow(ENTITY, "xqy-json-input-flow", FlowType.INPUT,
-            CodeFormat.XQUERY, DataFormat.JSON);
-
-        scaffolding.createFlow(ENTITY, "xqy-json-no-wait", FlowType.HARMONIZE,
-            CodeFormat.XQUERY, DataFormat.JSON);
-
-        scaffolding.createFlow(ENTITY, "xqy-json-errors", FlowType.HARMONIZE,
-            CodeFormat.XQUERY, DataFormat.JSON);
-
-        scaffolding.createFlow(ENTITY, "xqy-json-failed-main", FlowType.HARMONIZE,
-            CodeFormat.XQUERY, DataFormat.JSON);
-
-        scaffolding.createFlow(ENTITY, "xqy-json-triples-array", FlowType.HARMONIZE,
-            CodeFormat.XQUERY, DataFormat.JSON);
-
-        scaffolding.createFlow(ENTITY, "xqy-xml", FlowType.HARMONIZE,
-            CodeFormat.XQUERY, DataFormat.XML);
-
-        scaffolding.createFlow(ENTITY, "xqy-xml-input-flow", FlowType.INPUT,
-            CodeFormat.XQUERY, DataFormat.XML);
-
-        scaffolding.createFlow(ENTITY, "xqy-xml-no-wait", FlowType.HARMONIZE,
-            CodeFormat.XQUERY, DataFormat.XML);
-
-        scaffolding.createFlow(ENTITY, "xqy-xml-errors", FlowType.HARMONIZE,
-            CodeFormat.XQUERY, DataFormat.XML);
-
-        scaffolding.createFlow(ENTITY, "xqy-xml-failed-main", FlowType.HARMONIZE,
-            CodeFormat.XQUERY, DataFormat.XML);
-
-        scaffolding.createFlow(ENTITY, "scaffolded-xqy-json", FlowType.HARMONIZE,
-            CodeFormat.XQUERY, DataFormat.JSON);
-
-        scaffolding.createFlow(ENTITY, "scaffolded-xqy-xml", FlowType.HARMONIZE,
-            CodeFormat.XQUERY, DataFormat.XML);
-
-        scaffolding.createFlow(ENTITY, "scaffolded-sjs-json", FlowType.HARMONIZE,
-            CodeFormat.JAVASCRIPT, DataFormat.JSON);
-
-        scaffolding.createFlow(ENTITY, "scaffolded-sjs-xml", FlowType.HARMONIZE,
-            CodeFormat.JAVASCRIPT, DataFormat.XML);
-
-        Path inputDir = projectDir.resolve("plugins/entities/" + ENTITY + "/input");
-        Path harmonizeDir = projectDir.resolve("plugins/entities/" + ENTITY + "/harmonize");
-        FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/collector.sjs"), harmonizeDir.resolve("sjs-json/collector.sjs").toFile());
-        FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/headers.sjs"), harmonizeDir.resolve("sjs-json/headers.sjs").toFile());
-        FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/content.sjs"), harmonizeDir.resolve("sjs-json/content.sjs").toFile());
-        FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/triples.sjs"), harmonizeDir.resolve("sjs-json/triples.sjs").toFile());
-        FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/writer.sjs"), harmonizeDir.resolve("sjs-json/writer.sjs").toFile());
-
-        FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/headers.sjs"), inputDir.resolve("sjs-json-input-flow/headers.sjs").toFile());
-        FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/content-input.sjs"), inputDir.resolve("sjs-json-input-flow/content.sjs").toFile());
-        FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/triples.sjs"), inputDir.resolve("sjs-json-input-flow/triples.sjs").toFile());
-
-        FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/collector.sjs"), harmonizeDir.resolve("sjs-json-no-wait/collector.sjs").toFile());
-        FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/headers.sjs"), harmonizeDir.resolve("sjs-json-no-wait/headers.sjs").toFile());
-        FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/content.sjs"), harmonizeDir.resolve("sjs-json-no-wait/content.sjs").toFile());
-        FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/triples.sjs"), harmonizeDir.resolve("sjs-json-no-wait/triples.sjs").toFile());
-        FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/writer.sjs"), harmonizeDir.resolve("sjs-json-no-wait/writer.sjs").toFile());
-
-        FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/collector.sjs"), harmonizeDir.resolve("sjs-json-errors/collector.sjs").toFile());
-        FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/headers-with-error.sjs"), harmonizeDir.resolve("sjs-json-errors/headers.sjs").toFile());
-        FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/content.sjs"), harmonizeDir.resolve("sjs-json-errors/content.sjs").toFile());
-        FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/triples.sjs"), harmonizeDir.resolve("sjs-json-errors/triples.sjs").toFile());
-        FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/writer.sjs"), harmonizeDir.resolve("sjs-json-errors/writer.sjs").toFile());
-
-        FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/collector.sjs"), harmonizeDir.resolve("sjs-json-failed-main/collector.sjs").toFile());
-        FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/headers.sjs"), harmonizeDir.resolve("sjs-json-failed-main/headers.sjs").toFile());
-        FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/content.sjs"), harmonizeDir.resolve("sjs-json-failed-main/content.sjs").toFile());
-        FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/triples.sjs"), harmonizeDir.resolve("sjs-json-failed-main/triples.sjs").toFile());
-        FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/writer.sjs"), harmonizeDir.resolve("sjs-json-failed-main/writer.sjs").toFile());
-        FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/main-with-error.sjs"), harmonizeDir.resolve("sjs-json-failed-main/main.sjs").toFile());
-
-        FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/collector.sjs"), harmonizeDir.resolve("sjs-xml/collector.sjs").toFile());
-        FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/headers.sjs"), harmonizeDir.resolve("sjs-xml/headers.sjs").toFile());
-        FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/content.sjs"), harmonizeDir.resolve("sjs-xml/content.sjs").toFile());
-        FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/triples.sjs"), harmonizeDir.resolve("sjs-xml/triples.sjs").toFile());
-        FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/writer.sjs"), harmonizeDir.resolve("sjs-xml/writer.sjs").toFile());
-
-        FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/headers.sjs"), inputDir.resolve("sjs-xml-input-flow/headers.sjs").toFile());
-        FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/content-input.sjs"), inputDir.resolve("sjs-xml-input-flow/content.sjs").toFile());
-        FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/triples.sjs"), inputDir.resolve("sjs-xml-input-flow/triples.sjs").toFile());
-
-        FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/collector.sjs"), harmonizeDir.resolve("sjs-xml-no-wait/collector.sjs").toFile());
-        FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/headers.sjs"), harmonizeDir.resolve("sjs-xml-no-wait/headers.sjs").toFile());
-        FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/content.sjs"), harmonizeDir.resolve("sjs-xml-no-wait/content.sjs").toFile());
-        FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/triples.sjs"), harmonizeDir.resolve("sjs-xml-no-wait/triples.sjs").toFile());
-        FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/writer.sjs"), harmonizeDir.resolve("sjs-xml-no-wait/writer.sjs").toFile());
-
-        FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/collector.sjs"), harmonizeDir.resolve("sjs-xml-errors/collector.sjs").toFile());
-        FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/headers-with-error.sjs"), harmonizeDir.resolve("sjs-xml-errors/headers.sjs").toFile());
-        FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/content.sjs"), harmonizeDir.resolve("sjs-xml-errors/content.sjs").toFile());
-        FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/triples.sjs"), harmonizeDir.resolve("sjs-xml-errors/triples.sjs").toFile());
-        FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/writer.sjs"), harmonizeDir.resolve("sjs-xml-errors/writer.sjs").toFile());
-
-        FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/collector.sjs"), harmonizeDir.resolve("sjs-xml-failed-main/collector.sjs").toFile());
-        FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/headers.sjs"), harmonizeDir.resolve("sjs-xml-failed-main/headers.sjs").toFile());
-        FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/content.sjs"), harmonizeDir.resolve("sjs-xml-failed-main/content.sjs").toFile());
-        FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/triples.sjs"), harmonizeDir.resolve("sjs-xml-failed-main/triples.sjs").toFile());
-        FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/writer.sjs"), harmonizeDir.resolve("sjs-xml-failed-main/writer.sjs").toFile());
-        FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/main-with-error.sjs"), harmonizeDir.resolve("sjs-xml-failed-main/main.sjs").toFile());
-
-        FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/collector.xqy"), harmonizeDir.resolve("xqy-json/collector.xqy").toFile());
-        FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/headers-json.xqy"), harmonizeDir.resolve("xqy-json/headers.xqy").toFile());
-        FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/content.xqy"), harmonizeDir.resolve("xqy-json/content.xqy").toFile());
-        FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/triples.xqy"), harmonizeDir.resolve("xqy-json/triples.xqy").toFile());
-        FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/writer.xqy"), harmonizeDir.resolve("xqy-json/writer.xqy").toFile());
-
-        FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/headers-json.xqy"), inputDir.resolve("xqy-json-input-flow/headers.xqy").toFile());
-        FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/content-input.xqy"), inputDir.resolve("xqy-json-input-flow/content.xqy").toFile());
-        FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/triples.xqy"), inputDir.resolve("xqy-json-input-flow/triples.xqy").toFile());
-
-        FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/collector.xqy"), harmonizeDir.resolve("xqy-json-no-wait/collector.xqy").toFile());
-        FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/headers-json.xqy"), harmonizeDir.resolve("xqy-json-no-wait/headers.xqy").toFile());
-        FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/content.xqy"), harmonizeDir.resolve("xqy-json-no-wait/content.xqy").toFile());
-        FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/triples.xqy"), harmonizeDir.resolve("xqy-json-no-wait/triples.xqy").toFile());
-        FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/writer.xqy"), harmonizeDir.resolve("xqy-json-no-wait/writer.xqy").toFile());
-
-        FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/collector.xqy"), harmonizeDir.resolve("xqy-json-errors/collector.xqy").toFile());
-        FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/headers-json-with-error.xqy"), harmonizeDir.resolve("xqy-json-errors/headers.xqy").toFile());
-        FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/content.xqy"), harmonizeDir.resolve("xqy-json-errors/content.xqy").toFile());
-        FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/triples.xqy"), harmonizeDir.resolve("xqy-json-errors/triples.xqy").toFile());
-        FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/writer.xqy"), harmonizeDir.resolve("xqy-json-errors/writer.xqy").toFile());
-
-        FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/collector.xqy"), harmonizeDir.resolve("xqy-json-failed-main/collector.xqy").toFile());
-        FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/headers-json.xqy"), harmonizeDir.resolve("xqy-json-failed-main/headers.xqy").toFile());
-        FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/content.xqy"), harmonizeDir.resolve("xqy-json-failed-main/content.xqy").toFile());
-        FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/triples.xqy"), harmonizeDir.resolve("xqy-json-failed-main/triples.xqy").toFile());
-        FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/writer.xqy"), harmonizeDir.resolve("xqy-json-failed-main/writer.xqy").toFile());
-        FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/main-with-error.xqy"), harmonizeDir.resolve("xqy-json-failed-main/main.xqy").toFile());
-
-        FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/collector.xqy"), harmonizeDir.resolve("xqy-json-triples-array/collector.xqy").toFile());
-        FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/headers-json.xqy"), harmonizeDir.resolve("xqy-json-triples-array/headers.xqy").toFile());
-        FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/content.xqy"), harmonizeDir.resolve("xqy-json-triples-array/content.xqy").toFile());
-        FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/triples-json-array.xqy"), harmonizeDir.resolve("xqy-json-triples-array/triples.xqy").toFile());
-        FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/writer.xqy"), harmonizeDir.resolve("xqy-json-triples-array/writer.xqy").toFile());
-
-        FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/collector.xqy"), harmonizeDir.resolve("xqy-xml/collector.xqy").toFile());
-        FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/headers-xml.xqy"), harmonizeDir.resolve("xqy-xml/headers.xqy").toFile());
-        FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/content.xqy"), harmonizeDir.resolve("xqy-xml/content.xqy").toFile());
-        FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/triples.xqy"), harmonizeDir.resolve("xqy-xml/triples.xqy").toFile());
-        FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/writer.xqy"), harmonizeDir.resolve("xqy-xml/writer.xqy").toFile());
-
-        FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/headers-xml.xqy"), inputDir.resolve("xqy-xml-input-flow/headers.xqy").toFile());
-        FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/content-input.xqy"), inputDir.resolve("xqy-xml-input-flow/content.xqy").toFile());
-        FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/triples.xqy"), inputDir.resolve("xqy-xml-input-flow/triples.xqy").toFile());
-
-        FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/collector.xqy"), harmonizeDir.resolve("xqy-xml-no-wait/collector.xqy").toFile());
-        FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/headers-xml.xqy"), harmonizeDir.resolve("xqy-xml-no-wait/headers.xqy").toFile());
-        FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/content.xqy"), harmonizeDir.resolve("xqy-xml-no-wait/content.xqy").toFile());
-        FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/triples.xqy"), harmonizeDir.resolve("xqy-xml-no-wait/triples.xqy").toFile());
-        FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/writer.xqy"), harmonizeDir.resolve("xqy-xml-no-wait/writer.xqy").toFile());
-
-        FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/collector.xqy"), harmonizeDir.resolve("xqy-xml-errors/collector.xqy").toFile());
-        FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/headers-xml-with-error.xqy"), harmonizeDir.resolve("xqy-xml-errors/headers.xqy").toFile());
-        FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/content.xqy"), harmonizeDir.resolve("xqy-xml-errors/content.xqy").toFile());
-        FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/triples.xqy"), harmonizeDir.resolve("xqy-xml-errors/triples.xqy").toFile());
-        FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/writer.xqy"), harmonizeDir.resolve("xqy-xml-errors/writer.xqy").toFile());
-
-        FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/collector.xqy"), harmonizeDir.resolve("xqy-xml-failed-main/collector.xqy").toFile());
-        FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/headers-xml.xqy"), harmonizeDir.resolve("xqy-xml-failed-main/headers.xqy").toFile());
-        FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/content.xqy"), harmonizeDir.resolve("xqy-xml-failed-main/content.xqy").toFile());
-        FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/triples.xqy"), harmonizeDir.resolve("xqy-xml-failed-main/triples.xqy").toFile());
-        FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/writer.xqy"), harmonizeDir.resolve("xqy-xml-failed-main/writer.xqy").toFile());
-        FileUtils.copyFile(getResourceFile("e2e-test/xqy-flow/main-with-error.xqy"), harmonizeDir.resolve("xqy-xml-failed-main/main.xqy").toFile());
-
-
-        harmonizeDir.resolve("legacy-sjs-json").resolve("collector").toFile().mkdirs();
-        harmonizeDir.resolve("legacy-sjs-json").resolve("content").toFile().mkdirs();
-        harmonizeDir.resolve("legacy-sjs-json").resolve("headers").toFile().mkdirs();
-        harmonizeDir.resolve("legacy-sjs-json").resolve("triples").toFile().mkdirs();
-        harmonizeDir.resolve("legacy-sjs-json").resolve("writer").toFile().mkdirs();
-        FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/collector.sjs"), harmonizeDir.resolve("legacy-sjs-json/collector/collector.sjs").toFile());
-        FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/headers.sjs"), harmonizeDir.resolve("legacy-sjs-json/headers/headers.sjs").toFile());
-        FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/content.sjs"), harmonizeDir.resolve("legacy-sjs-json/content/content.sjs").toFile());
-        FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/triples.sjs"), harmonizeDir.resolve("legacy-sjs-json/triples/triples.sjs").toFile());
-        FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/writer.sjs"), harmonizeDir.resolve("legacy-sjs-json/writer/writer.sjs").toFile());
-        FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/legacy-main.sjs"), harmonizeDir.resolve("legacy-sjs-json/main.sjs").toFile());
-        FileUtils.copyFile(getResourceFile("e2e-test/sjs-flow/legacy-sjs-json.xml"), harmonizeDir.resolve("legacy-sjs-json/legacy-sjs-json.xml").toFile());
+        flowManager = new FlowManager(getHubConfig());
+        List<String> legacyFlows = flowManager.getLegacyFlows();
+        assertEquals(8, legacyFlows.size(), String.join("\n", legacyFlows));
+        assertEquals(8, flowManager.updateLegacyFlows().size());
+        assertEquals(0, flowManager.getLegacyFlows().size());
 
         getDataHub().installUserModules();
 
-        flowManager = new FlowManager(getHubConfig());
-        dataMovementManager = stagingClient.newDataMovementManager();
+        stagingDataMovementManager = stagingClient.newDataMovementManager();
+        finalDataMovementManager = finalClient.newDataMovementManager();
     }
 
-    @After
-    public void hangout() throws InterruptedException {
-        Thread.sleep(500);
+    @AfterAll
+    public static void teardown() throws IOException {
+        uninstallHub();
     }
-//    @AfterClass
-//    public static void teardown() throws IOException {
-//        uninstallHub();
-//    }
 
-    @Test
-    public void sjsXml() throws IOException, ParserConfigurationException, SAXException {
-        installXmlDocs("sjs-xml");
+    @TestFactory
+    public List<DynamicTest> generateTests() throws InterruptedException, ParserConfigurationException, SAXException, JSONException, IOException {
+        List<DynamicTest> tests = new ArrayList<>();
+        allCombos((codeFormat, dataFormat, flowType) -> {
+            String prefix = "legacy";
+            String flowName = getFlowName(prefix, codeFormat, dataFormat, flowType);
+            if (flowType.equals(FlowType.INPUT)) {
+                tests.add(DynamicTest.dynamicTest(flowName + " MLCP", () -> {
+                    Map<String, Object> options = new HashMap<>();
+                    FinalCounts finalCounts = new FinalCounts(1, 0, 2, 1, 0, 0, 1, 0, 0, 0, "FINISHED");
+                    testInputFlowViaMlcp(prefix, "", stagingClient, codeFormat, dataFormat, options, finalCounts);
+                }));
+                tests.add(DynamicTest.dynamicTest(flowName + " MLCP", () -> {
+                    Map<String, Object> options = new HashMap<>();
+                    FinalCounts finalCounts = new FinalCounts(0, 1, 2, 1, 0, 0, 1, 0, 0, 0, "FINISHED");
+                    testInputFlowViaMlcp(prefix, "", finalClient, codeFormat, dataFormat, options, finalCounts);
+                }));
+                tests.add(DynamicTest.dynamicTest(flowName + " REST", () -> {
+                    Map<String, Object> options = new HashMap<>();
+                    FinalCounts finalCounts = new FinalCounts(1, 0, 2, 0, 0, 0, 0, 0, 0, 0, "FINISHED");
+                    testInputFlowViaREST(prefix, "", codeFormat, dataFormat, options, finalCounts);
+                }));
+            }
+            else {
+                Map<String, Object> options = new HashMap<>();
+                tests.add(DynamicTest.dynamicTest(flowName + " wait", () -> {
+                    FinalCounts finalCounts = new FinalCounts(TEST_SIZE, TEST_SIZE + 1, TEST_SIZE + 1, 1, TEST_SIZE, 0, TEST_SIZE, 0, TEST_SIZE/BATCH_SIZE, 0, "FINISHED");
+                    testHarmonizeFlow(prefix, codeFormat, dataFormat, options, stagingClient, HubConfig.DEFAULT_FINAL_NAME, finalCounts, true);
+                }));
+                tests.add(DynamicTest.dynamicTest(flowName + " wait Reverse Dbs", () -> {
+                    FinalCounts finalCounts = new FinalCounts(TEST_SIZE + 1, TEST_SIZE, TEST_SIZE + 1, 1, TEST_SIZE, 0, TEST_SIZE, 0, TEST_SIZE/BATCH_SIZE, 0, "FINISHED");
+                    testHarmonizeFlow(prefix, codeFormat, dataFormat, options, finalClient, HubConfig.DEFAULT_STAGING_NAME, finalCounts, true);
+                }));
+                tests.add(DynamicTest.dynamicTest(flowName + " no-wait", () -> {
+                    FinalCounts finalCounts = new FinalCounts(TEST_SIZE, TEST_SIZE + 1, TEST_SIZE + 1, 1, TEST_SIZE, 0, TEST_SIZE, 0, TEST_SIZE/BATCH_SIZE, 0, "FINISHED");
+                    testHarmonizeFlow(prefix, codeFormat, dataFormat, options, stagingClient, HubConfig.DEFAULT_FINAL_NAME, finalCounts, false);
+                }));
+            }
+        });
 
-        Flow harmonizeFlow = flowManager.getFlow(ENTITY, "sjs-xml",
-            FlowType.HARMONIZE);
-        FlowRunner flowRunner = flowManager.newFlowRunner()
-            .withFlow(harmonizeFlow)
-            .withBatchSize(BATCH_SIZE)
-            .withThreadCount(4);
+        allCombos((codeFormat, dataFormat, flowType) -> {
+            String prefix = "extra-plugin";
+            String flowName = getFlowName(prefix, codeFormat, dataFormat, flowType);
+            if (flowType.equals(FlowType.INPUT)) {
+                tests.add(DynamicTest.dynamicTest(flowName + " MLCP", () -> {
+                    Map<String, Object> options = new HashMap<>();
+                    options.put("extraPlugin", true);
+                    FinalCounts finalCounts = new FinalCounts(1, 0, 2, 1, 0, 0, 1, 0, 0, 0, "FINISHED");
+                    testInputFlowViaMlcp(prefix, "", stagingClient, codeFormat, dataFormat, options, finalCounts);
+                }));
+                tests.add(DynamicTest.dynamicTest(flowName + " REST", () -> {
+                    Map<String, Object> options = new HashMap<>();
+                    options.put("extraPlugin", true);
+                    FinalCounts finalCounts = new FinalCounts(1, 0, 2, 0, 0, 0, 0, 0, 0, 0, "FINISHED");
+                    testInputFlowViaREST(prefix, "", codeFormat, dataFormat, options, finalCounts);
+                }));
+            }
+            else {
+                tests.add(DynamicTest.dynamicTest(flowName + " wait", () -> {
+                    Map<String, Object> options = new HashMap<>();
+                    options.put("extraPlugin", true);
+                    FinalCounts finalCounts = new FinalCounts(TEST_SIZE, TEST_SIZE + 1, TEST_SIZE + 1, 1, TEST_SIZE, 0, TEST_SIZE, 0, TEST_SIZE/BATCH_SIZE, 0, "FINISHED");
+                    finalCounts.optionsFile = "options-extra";
+                    testHarmonizeFlow(prefix, codeFormat, dataFormat, options, stagingClient, HubConfig.DEFAULT_FINAL_NAME, finalCounts, true);
+                }));
 
+                tests.add(DynamicTest.dynamicTest(flowName + " extra error", () -> {
+                    Map<String, Object> options = new HashMap<>();
+                    options.put("extraPlugin", true);
+                    options.put("extraGoBoom", true);
+                    FinalCounts finalCounts = new FinalCounts(TEST_SIZE, TEST_SIZE, TEST_SIZE + 1, 1, TEST_SIZE - 1, 1, TEST_SIZE - 1, 1, TEST_SIZE/BATCH_SIZE, 0, "FINISHED_WITH_ERRORS");
+                    testHarmonizeFlowWithFailedMain(prefix, codeFormat, dataFormat, options, stagingClient, HubConfig.DEFAULT_FINAL_NAME, finalCounts);
+                }));
+            }
+        });
 
-        JobTicket jobExecution = flowRunner.run();
+        allCombos((codeFormat, dataFormat, flowType) -> {
+            String prefix = "scaffolded";
+            String flowName = getFlowName(prefix, codeFormat, dataFormat, flowType);
+            if (flowType.equals(FlowType.INPUT)) {
+                tests.add(DynamicTest.dynamicTest(flowName + " MLCP", () -> {
+                    Map<String, Object> options = new HashMap<>();
+                    FinalCounts finalCounts = new FinalCounts(1, 0, 2, 1, 0, 0, 1, 0, 0, 0, "FINISHED");
+                    testInputFlowViaMlcp(prefix, "", stagingClient, codeFormat, dataFormat, options, finalCounts);
+                }));
+                tests.add(DynamicTest.dynamicTest(flowName + " REST", () -> {
+                    Map<String, Object> options = new HashMap<>();
+                    FinalCounts finalCounts = new FinalCounts(1, 0, 2, 0, 0, 0, 0, 0, 0, 0, "FINISHED");
+                    testInputFlowViaREST(prefix, "", codeFormat, dataFormat, options, finalCounts);
+                }));
+            }
+            else {
+                Map<String, Object> options = new HashMap<>();
+                tests.add(DynamicTest.dynamicTest(flowName + " wait", () -> {
+                    testScaffoldedHarmonizeFlow(prefix, codeFormat, dataFormat, options, stagingClient, HubConfig.DEFAULT_FINAL_NAME, true);
+                }));
+                tests.add(DynamicTest.dynamicTest(flowName + " wait Reverse DBs", () -> {
+                    testScaffoldedHarmonizeFlow(prefix, codeFormat, dataFormat, options, finalClient, HubConfig.DEFAULT_STAGING_NAME, true);
+                }));
+                tests.add(DynamicTest.dynamicTest(flowName + " no-wait", () -> {
+                    testScaffoldedHarmonizeFlow(prefix, codeFormat, dataFormat, options, stagingClient, HubConfig.DEFAULT_FINAL_NAME, false);
+                }));
+            }
+        });
 
-        flowRunner.awaitCompletion();
+        allCombos((codeFormat, dataFormat, flowType) -> {
+            String prefix = "triples-array";
+            String flowName = getFlowName(prefix, codeFormat, dataFormat, flowType);
+            if (codeFormat.equals(CodeFormat.XQUERY)) {
+                if (flowType.equals(FlowType.INPUT)) {
+                    tests.add(DynamicTest.dynamicTest(flowName + " MLCP", () -> {
+                        Map<String, Object> options = new HashMap<>();
+                        FinalCounts finalCounts = new FinalCounts(1, 0, 2, 1, 0, 0, 1, 0, 0, 0, "FINISHED");
+                        testInputFlowViaMlcp(prefix, "", stagingClient, codeFormat, dataFormat, options, finalCounts);
+                    }));
 
-        Assert.assertEquals(TEST_SIZE, getFinalDocCount("sjs-xml"));
-        Document expected = getXmlFromResource("e2e-test/final.xml");
-        for (int i = 0; i < TEST_SIZE; i++) {
-            Document actual = finalDocMgr.read("/input-" + i + ".xml").next().getContent(new DOMHandle()).get();
-            assertXMLEqual(expected, actual);
+                    tests.add(DynamicTest.dynamicTest(flowName + " REST", () -> {
+                        Map<String, Object> options = new HashMap<>();
+                        FinalCounts finalCounts = new FinalCounts(1, 0, 2, 0, 0, 0, 1, 0, 0, 0, "FINISHED");
+                        testInputFlowViaREST(prefix, "", codeFormat, dataFormat, options, finalCounts);
+                    }));
+                } else {
+                    Map<String, Object> options = new HashMap<>();
+                    FinalCounts finalCounts = new FinalCounts(TEST_SIZE, TEST_SIZE + 1, TEST_SIZE + 1, 1, TEST_SIZE, 0, TEST_SIZE, 0, TEST_SIZE / BATCH_SIZE, 0, "FINISHED");
+                    tests.add(DynamicTest.dynamicTest(flowName, () -> {
+                        testHarmonizeFlow(prefix, codeFormat, dataFormat, options, stagingClient, HubConfig.DEFAULT_FINAL_NAME, finalCounts, true);
+                    }));
+                }
+            }
+        });
+
+        allCombos(((codeFormat, dataFormat, flowType) -> {
+            String prefix = "with-error";
+            String flowName = getFlowName(prefix, codeFormat, dataFormat, flowType);
+            if (flowType.equals(FlowType.INPUT)) {
+                for (String plugin : new String[] { "main", "content", "headers", "triples"}) {
+                    Map<String, Object> options = new HashMap<>();
+                    options.put(plugin + "GoBoom", true);
+                    tests.add(DynamicTest.dynamicTest(flowName + ": " + plugin + " error MLCP", () -> {
+                        FinalCounts finalCounts = new FinalCounts(0, 0, 1, 1, 0, 0, 0, 0, 0, 0, "FAILED");
+                        testInputFlowViaMlcp(prefix, "-2", stagingClient, codeFormat, dataFormat, options, finalCounts);
+                    }));
+
+                    tests.add(DynamicTest.dynamicTest(flowName + ": " + plugin + " error REST", () -> {
+                        FinalCounts finalCounts = new FinalCounts(0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "FAILED");
+                        testInputFlowViaREST(prefix, "-2", codeFormat, dataFormat, options, finalCounts);
+                    }));
+                }
+            }
+            else {
+                tests.add(DynamicTest.dynamicTest(flowName + ": collector error", () -> {
+                    Map<String, Object> options = new HashMap<>();
+                    options.put("collectorGoBoom", true);
+                    FinalCounts finalCounts = new FinalCounts(TEST_SIZE, 0, 1, 1, 0, 0, 0, 0, 0, 0, "FAILED");
+                    testHarmonizeFlowWithFailedMain(prefix, codeFormat, dataFormat, options, stagingClient, HubConfig.DEFAULT_FINAL_NAME, finalCounts);
+                }));
+
+                FinalCounts finalCounts = new FinalCounts(TEST_SIZE, TEST_SIZE, TEST_SIZE + 1, 1, TEST_SIZE - 1, 1, TEST_SIZE - 1, 1, TEST_SIZE/BATCH_SIZE, 0, "FINISHED_WITH_ERRORS");
+                for (String plugin : new String[] { "main", "content", "headers", "triples", "writer"}) {
+                    tests.add(DynamicTest.dynamicTest(flowName + ": " + plugin + " error", () -> {
+                        Map<String, Object> options = new HashMap<>();
+                        options.put(plugin + "GoBoom", true);
+                        testHarmonizeFlowWithFailedMain(prefix, codeFormat, dataFormat, options, stagingClient, HubConfig.DEFAULT_FINAL_NAME, finalCounts);
+                    }));
+                }
+            }
+        }));
+
+        return tests;
+    }
+
+    private static String getFlowName(String prefix, CodeFormat codeFormat, DataFormat dataFormat, FlowType flowType) {
+        return prefix + "-" + flowType.toString() + "-" + codeFormat.toString() + "-" + dataFormat.toString();
+    }
+
+    private static void createLegacyFlow(CodeFormat codeFormat, DataFormat dataFormat, FlowType flowType) throws IOException {
+
+        String flowName = getFlowName("legacy", codeFormat, dataFormat, flowType);
+        Path flowDir = projectDir.resolve("plugins").resolve("entities").resolve(ENTITY).resolve(flowType.toString()).resolve(flowName);
+
+        if (flowType.equals(FlowType.HARMONIZE)) {
+            flowDir.resolve("collector").toFile().mkdirs();
+            flowDir.resolve("writer").toFile().mkdirs();
+        }
+        flowDir.resolve("content").toFile().mkdirs();
+        flowDir.resolve("headers").toFile().mkdirs();
+        flowDir.resolve("triples").toFile().mkdirs();
+
+        String srcDir = "e2e-test/" + codeFormat.toString() + "-flow/";
+        if (flowType.equals(FlowType.HARMONIZE)) {
+            copyFile(srcDir + "collector." + codeFormat.toString(), flowDir.resolve("collector/collector." + codeFormat.toString()));
+            copyFile(srcDir + "writer." + codeFormat.toString(), flowDir.resolve("writer/writer." + codeFormat.toString()));
         }
 
-        JsonNode node = jobDocMgr.read("/jobs/" + jobExecution.getJobId() + ".json").next().getContent(new JacksonHandle()).get();
-        Assert.assertEquals(jobExecution.getJobId(), node.get("jobId").asText());
-        Assert.assertEquals(TEST_SIZE, node.get("successfulEvents").asInt());
-        Assert.assertEquals(0, node.get("failedEvents").asInt());
-        Assert.assertEquals(TEST_SIZE / BATCH_SIZE, node.get("successfulBatches").asInt());
-        Assert.assertEquals(0, node.get("failedBatches").asInt());
-        Assert.assertEquals("FINISHED", node.get("status").asText());
+        if (codeFormat.equals(CodeFormat.JAVASCRIPT)) {
+            copyFile(srcDir + "headers." + codeFormat.toString(), flowDir.resolve("headers/headers." + codeFormat.toString()));
+        }
+        else {
+            copyFile(srcDir + "headers-" + dataFormat.toString() + "." + codeFormat.toString(), flowDir.resolve("headers/headers." + codeFormat.toString()));
+        }
+        copyFile(srcDir + "content-" + flowType.toString() + "." + codeFormat.toString(), flowDir.resolve("content/content." + codeFormat.toString()));
+        copyFile(srcDir + "triples." + codeFormat.toString(), flowDir.resolve("triples/triples." + codeFormat.toString()));
+
+        copyFile("e2e-test/legacy-" + dataFormat.toString() + ".xml", flowDir.resolve("" + flowName + ".xml"));
     }
 
-    @Test
-    public void sjsXmlErrors() throws IOException, ParserConfigurationException, SAXException, JSONException {
-        installXmlDocs("sjs-xml-errors");
+    private static void scaffoldFlows(String prefix) throws IOException, InterruptedException, ParserConfigurationException, SAXException, JSONException {
+        allCombos(((codeFormat, dataFormat, flowType) -> {
+            scaffoldFlow(prefix, codeFormat, dataFormat, flowType);
+        }));
+    }
 
-        Vector<String> completed = new Vector<>();
-        Vector<String> failed = new Vector<>();
+    private static void scaffoldFlow(String prefix, CodeFormat codeFormat, DataFormat dataFormat, FlowType flowType) throws IOException {
+        String flowName = getFlowName(prefix, codeFormat, dataFormat, flowType);
+        scaffolding.createFlow(ENTITY, flowName, flowType, codeFormat, dataFormat);
+    }
 
-        Flow harmonizeFlow = flowManager.getFlow(ENTITY, "sjs-xml-errors",
-            FlowType.HARMONIZE);
+    private static void allCombos(ComboListener listener) throws IOException, InterruptedException, ParserConfigurationException, SAXException, JSONException {
+        CodeFormat[] codeFormats = new CodeFormat[] { CodeFormat.JAVASCRIPT, CodeFormat.XQUERY };
+        DataFormat[] dataFormats = new DataFormat[] { DataFormat.JSON, DataFormat.XML };
+        FlowType[] flowTypes = new FlowType[] { FlowType.INPUT, FlowType.HARMONIZE };
+        for (CodeFormat codeFormat : codeFormats) {
+            for (DataFormat dataFormat : dataFormats) {
+                for (FlowType flowType : flowTypes) {
+                    listener.onCombo(codeFormat, dataFormat, flowType);
+                }
+            }
+        }
+    }
 
-        FlowRunner flowRunner = flowManager.newFlowRunner()
-            .withFlow(harmonizeFlow)
-            .withBatchSize(BATCH_SIZE)
+    private static void createFlows(String prefix, CreateFlowListener listener) throws IOException, InterruptedException, ParserConfigurationException, SAXException, JSONException {
+        allCombos(((codeFormat, dataFormat, flowType) -> {
+            createFlow(prefix, codeFormat, dataFormat, flowType, listener);
+        }));
+    }
+
+    private static void createFlow(String prefix, CodeFormat codeFormat, DataFormat dataFormat, FlowType flowType, CreateFlowListener listener) throws IOException {
+        String flowName = getFlowName(prefix, codeFormat, dataFormat, flowType);
+        Path flowDir = projectDir.resolve("plugins").resolve("entities").resolve(ENTITY).resolve(flowType.toString()).resolve(flowName);
+
+        scaffolding.createFlow(ENTITY, flowName, flowType, codeFormat, dataFormat);
+
+        String srcDir = "e2e-test/" + codeFormat.toString() + "-flow/";
+        if (flowType.equals(FlowType.HARMONIZE)) {
+            copyFile(srcDir + "collector." + codeFormat.toString(), flowDir.resolve("collector." + codeFormat.toString()));
+            copyFile(srcDir + "writer." + codeFormat.toString(), flowDir.resolve("writer." + codeFormat.toString()));
+        }
+
+        if (codeFormat.equals(CodeFormat.JAVASCRIPT)) {
+            copyFile(srcDir + "headers." + codeFormat.toString(), flowDir.resolve("headers." + codeFormat.toString()));
+        }
+        else {
+            copyFile(srcDir + "headers-" + dataFormat.toString() + "." + codeFormat.toString(), flowDir.resolve("headers." + codeFormat.toString()));
+        }
+
+        copyFile(srcDir + "content-" + flowType.toString() + "." + codeFormat.toString(), flowDir.resolve("content." + codeFormat.toString()));
+        copyFile(srcDir + "triples." + codeFormat.toString(), flowDir.resolve("triples." + codeFormat.toString()));
+
+        if (listener != null) {
+            listener.onFlowCreated(codeFormat, dataFormat, flowType, srcDir, flowDir);
+        }
+    }
+
+    private static void copyFile(String srcDir, Path dstDir) throws IOException {
+        FileUtils.copyFile(getResourceFile(srcDir), dstDir.toFile());
+    }
+
+    private void installDocs(DataFormat dataFormat, String collection, DatabaseClient srcClient) throws IOException {
+        DataMovementManager mgr = stagingDataMovementManager;
+        if (srcClient.getDatabase().equals(HubConfig.DEFAULT_FINAL_NAME)) {
+            mgr = finalDataMovementManager;
+        }
+
+        WriteBatcher writeBatcher = mgr.newWriteBatcher()
+            .withBatchSize(100)
             .withThreadCount(4)
-            .onItemComplete((String jobId, String itemId) -> {
-                completed.add(itemId);
-            })
-            .onItemFailed((String jobId, String itemId) -> {
-                failed.add(itemId);
+            .onBatchSuccess(batch -> installDocsFinished = true)
+            .onBatchFailure((batch, failure) -> {
+                failure.printStackTrace();
+                installDocError = failure.getMessage();
+                installDocsFailed = true;
             });
 
-        JobTicket jobExecution = flowRunner.run();
+        installDocsFinished = false;
+        installDocsFailed = false;
+        mgr.startJob(writeBatcher);
 
-        flowRunner.awaitCompletion();
-
-        Assert.assertEquals(TEST_SIZE - 1, getFinalDocCount("sjs-xml-errors"));
-        Assert.assertEquals(TEST_SIZE - 1, completed.size());
-        Assert.assertEquals(1, failed.size());
-        JsonNode node = jobDocMgr.read("/jobs/" + jobExecution.getJobId() + ".json").next().getContent(new JacksonHandle()).get();
-        Assert.assertEquals(jobExecution.getJobId(), node.get("jobId").asText());
-        Assert.assertEquals(TEST_SIZE - 1, node.get("successfulEvents").asInt());
-        Assert.assertEquals(1, node.get("failedEvents").asInt());
-        Assert.assertEquals(TEST_SIZE / BATCH_SIZE, node.get("successfulBatches").asInt());
-        Assert.assertEquals(0, node.get("failedBatches").asInt());
-        Assert.assertEquals("FINISHED_WITH_ERRORS", node.get("status").asText());
-    }
-
-    @Test
-    public void sjsXmlFailedMain() throws IOException, ParserConfigurationException, SAXException, JSONException {
-        installXmlDocs("sjs-xml-failed-main");
-
-        Vector<String> completed = new Vector<>();
-        Vector<String> failed = new Vector<>();
-
-        Flow harmonizeFlow = flowManager.getFlow(ENTITY, "sjs-xml-failed-main",
-            FlowType.HARMONIZE);
-
-        FlowRunner flowRunner = flowManager.newFlowRunner()
-            .withFlow(harmonizeFlow)
-            .withBatchSize(BATCH_SIZE)
-            .withThreadCount(4)
-            .onItemComplete((String jobId, String itemId) -> {
-                completed.add(itemId);
-            })
-            .onItemFailed((String jobId, String itemId) -> {
-                failed.add(itemId);
-            });
-
-        JobTicket jobExecution = flowRunner.run();
-
-        flowRunner.awaitCompletion();
-
-        Assert.assertEquals(0, getFinalDocCount("sjs-xml-failed-main"));
-        Assert.assertEquals(0, completed.size());
-        Assert.assertEquals(TEST_SIZE, failed.size());
-        JsonNode node = jobDocMgr.read("/jobs/" + jobExecution.getJobId() + ".json").next().getContent(new JacksonHandle()).get();
-        Assert.assertEquals(jobExecution.getJobId(), node.get("jobId").asText());
-        Assert.assertEquals(0, node.get("successfulEvents").asInt());
-        Assert.assertEquals(TEST_SIZE, node.get("failedEvents").asInt());
-        Assert.assertEquals(0, node.get("successfulBatches").asInt());
-        Assert.assertEquals(TEST_SIZE / BATCH_SIZE, node.get("failedBatches").asInt());
-        Assert.assertEquals("FAILED", node.get("status").asText());
-    }
-
-    @Test
-    public void sjsXmlNoWait() throws IOException, ParserConfigurationException, SAXException, JSONException {
-        installXmlDocs("sjs-xml-no-wait");
-
-        Flow harmonizeFlow = flowManager.getFlow(ENTITY, "sjs-xml-no-wait",
-            FlowType.HARMONIZE);
-
-        FlowRunner flowRunner = flowManager.newFlowRunner()
-            .withFlow(harmonizeFlow)
-            .withBatchSize(BATCH_SIZE)
-            .withThreadCount(4);
-
-        flowRunner.run();
-
-        try {
-            flowRunner.awaitCompletion(2, TimeUnit.MILLISECONDS);
-        } catch(InterruptedException e) {
-
-        }
-
-        Assert.assertNotEquals(TEST_SIZE, getFinalDocCount("sjs-xml-no-wait"));
-        flowRunner.awaitCompletion();
-    }
-
-    @Test
-    public void sjsJson() throws IOException, ParserConfigurationException, SAXException, JSONException {
-        installJsonDocs("sjs-json");
-
-        Flow harmonizeFlow = flowManager.getFlow(ENTITY, "sjs-json",
-            FlowType.HARMONIZE);
-
-        FlowRunner flowRunner = flowManager.newFlowRunner()
-            .withFlow(harmonizeFlow)
-            .withBatchSize(BATCH_SIZE)
-            .withThreadCount(4);
-
-        JobTicket jobExecution = flowRunner.run();
-
-        flowRunner.awaitCompletion();
-
-        Assert.assertEquals(TEST_SIZE, getFinalDocCount("sjs-json"));
-        String expected = getResource("e2e-test/final.json");
+        DocumentMetadataHandle metadataHandle = new DocumentMetadataHandle();
+        metadataHandle.getCollections().add(collection);
+        StringHandle handle = new StringHandle(getResource("e2e-test/staged." + dataFormat.toString()));
+        String dataFormatString = dataFormat.toString();
         for (int i = 0; i < TEST_SIZE; i++) {
-            String actual = finalDocMgr.read("/input-" + i + ".json").next().getContent(new StringHandle()).get();
-            JSONAssert.assertEquals(expected, actual, false);
+            writeBatcher.add("/input-" + i + "." + dataFormatString, metadataHandle, handle);
         }
 
-        JsonNode node = jobDocMgr.read("/jobs/" + jobExecution.getJobId() + ".json").next().getContent(new JacksonHandle()).get();
-        Assert.assertEquals(jobExecution.getJobId(), node.get("jobId").asText());
-        Assert.assertEquals(TEST_SIZE, node.get("successfulEvents").asInt());
-        Assert.assertEquals(0, node.get("failedEvents").asInt());
-        Assert.assertEquals(TEST_SIZE / BATCH_SIZE, node.get("successfulBatches").asInt());
-        Assert.assertEquals(0, node.get("failedBatches").asInt());
-        Assert.assertEquals("FINISHED", node.get("status").asText());
+        writeBatcher.flushAndWait();
+        assertTrue(installDocsFinished, "Doc install not finished");
+        assertFalse(installDocsFailed, "Doc install failed: " + installDocError);
 
-        String optionsExpected = getResource("e2e-test/options-test.json");
-        String optionsActual = finalDocMgr.read("/options-test.json").next().getContent(new StringHandle()).get();
-        JSONAssert.assertEquals(optionsExpected, optionsActual, false);
+        if (srcClient.getDatabase().equals(HubConfig.DEFAULT_STAGING_NAME)) {
+            assertEquals(TEST_SIZE, getStagingDocCount(collection));
+            assertEquals(0, getFinalDocCount(collection));
+        }
+        else {
+            assertEquals(TEST_SIZE, getFinalDocCount(collection));
+            assertEquals(0, getStagingDocCount(collection));
+        }
     }
 
-    @Test
-    public void sjsJsonViaRestInsert() throws IOException, ParserConfigurationException, SAXException, JSONException {
+    private void testInputFlowViaMlcp(String prefix, String fileSuffix, DatabaseClient databaseClient, CodeFormat codeFormat, DataFormat dataFormat, Map<String, Object> options, FinalCounts finalCounts) throws IOException, ParserConfigurationException, SAXException, JSONException, InterruptedException {
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_TRACE_NAME, HubConfig.DEFAULT_JOB_NAME);
+
+        String flowName = getFlowName(prefix, codeFormat, dataFormat, FlowType.INPUT);
+
+        assertEquals(0, getStagingDocCount());
+        assertEquals(0, getFinalDocCount());
+        assertEquals(0, getTracingDocCount());
+        assertEquals(0, getJobDocCount());
+
+        Flow flow = flowManager.getFlow(ENTITY, flowName, FlowType.INPUT);
+        String inputPath = getResourceFile("e2e-test/input/input" + fileSuffix + "." + dataFormat.toString()).getAbsolutePath();
+        String basePath = getResourceFile("e2e-test/input").getAbsolutePath();
+        String optionString = new ObjectMapper().writeValueAsString(options).replace("\"", "\\\"\\\"");
+        JsonNode mlcpOptions = new ObjectMapper().readTree(
+            "{" +
+                "\"input_file_path\":\"" + inputPath + "\"," +
+                "\"input_file_type\":\"\\\"documents\\\"\"," +
+                "\"output_collections\":\"\\\"" + ENTITY + "\\\"\"," +
+                "\"output_permissions\":\"\\\"rest-reader,read,rest-writer,update\\\"\"," +
+                "\"output_uri_replace\":\"\\\"" + basePath + ",''\\\"\"," +
+                "\"document_type\":\"\\\"" + dataFormat.toString() + "\\\"\"," +
+                "\"transform_module\":\"\\\"/com.marklogic.hub/mlcp-flow-transform.xqy\\\"\"," +
+                "\"transform_namespace\":\"\\\"http://marklogic.com/data-hub/mlcp-flow-transform\\\"\"," +
+                "\"transform_param\":\"\\\"entity=" + ENTITY + ",flow=" + flowName + ",flowType=input,options=" + optionString + "\\\"\"" +
+                "}");
+        MlcpRunner mlcpRunner = new MlcpRunner("com.marklogic.hub.util.MlcpMain", getHubConfig(), flow, databaseClient, mlcpOptions, null);
+        mlcpRunner.start();
+        mlcpRunner.join();
+
+        assertEquals(finalCounts.stagingCount, getStagingDocCount());
+        assertEquals(finalCounts.finalCount, getFinalDocCount());
+        assertEquals(finalCounts.tracingCount, getTracingDocCount());
+        assertEquals(finalCounts.jobCount, getJobDocCount());
+
+        // inspect the job json
+        JsonNode node = jobDocMgr.read("/jobs/" + mlcpRunner.getJobId() + ".json").next().getContent(new JacksonHandle()).get();
+        assertEquals(mlcpRunner.getJobId(), node.get("jobId").asText());
+        assertEquals(finalCounts.jobSuccessfulEvents, node.get("successfulEvents").asInt());
+        assertEquals(finalCounts.jobFailedEvents, node.get("failedEvents").asInt());
+        assertEquals(finalCounts.jobSuccessfulBatches, node.get("successfulBatches").asInt());
+        assertEquals(finalCounts.jobFailedBatches, node.get("failedBatches").asInt());
+        assertEquals(finalCounts.jobStatus, node.get("status").asText());
+    }
+
+    private void testInputFlowViaREST(String prefix, String fileSuffix, CodeFormat codeFormat, DataFormat dataFormat, Map<String, Object> options, FinalCounts finalCounts) throws IOException, ParserConfigurationException, SAXException, JSONException, InterruptedException {
+        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_TRACE_NAME, HubConfig.DEFAULT_JOB_NAME);
+
+        String flowName = getFlowName(prefix, codeFormat, dataFormat, FlowType.INPUT);
+
+        assertEquals(0, getStagingDocCount());
+        assertEquals(0, getFinalDocCount());
+        assertEquals(0, getTracingDocCount());
+        assertEquals(0, getJobDocCount());
 
         ServerTransform serverTransform = new ServerTransform("run-flow");
         serverTransform.addParameter("job-id", UUID.randomUUID().toString());
         serverTransform.addParameter("entity", ENTITY);
-        serverTransform.addParameter("flow", "sjs-json-input-flow");
-        FileHandle handle = new FileHandle(getResourceFile("e2e-test/input/input.json"));
-        handle.setFormat(Format.JSON);
-        stagingDocMgr.write("/test.json", handle, serverTransform);
+        serverTransform.addParameter("flow", flowName);
+        String optionString = new ObjectMapper().writeValueAsString(options);
+        serverTransform.addParameter("options", optionString);
+        FileHandle handle = new FileHandle(getResourceFile("e2e-test/input/input." + dataFormat.toString()));
+        Format format = null;
+        switch (dataFormat) {
+            case XML:
+                format = Format.XML;
+                break;
 
-        Assert.assertEquals(1, getStagingDocCount());
-        String expected = getResource("e2e-test/final.json");
-
-        String actual = stagingDocMgr.read("/test.json").next().getContent(new StringHandle()).get();
-        JSONAssert.assertEquals(expected, actual, false);
-    }
-
-    @Test
-    public void sjsJsonViaMlcp() throws IOException, ParserConfigurationException, SAXException, JSONException, InterruptedException {
-        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_TRACE_NAME, HubConfig.DEFAULT_JOB_NAME);
-
-        String flowName = "sjs-json-input-flow";
-        Flow flow = flowManager.getFlow(ENTITY, flowName, FlowType.INPUT);
-        ObjectMapper objectMapper = new ObjectMapper();
-        String inputPath = getResourceFile("e2e-test/input/input.json").getAbsolutePath();
-        String basePath = getResourceFile("e2e-test/input").getAbsolutePath();
-        JsonNode mlcpOptions = objectMapper.readTree(
-            "{" +
-                "\"input_file_path\":\"" + inputPath + "\"," +
-                "\"input_file_type\":\"\\\"documents\\\"\"," +
-                "\"output_collections\":\"\\\"" + ENTITY + "\\\"\"," +
-                "\"output_permissions\":\"\\\"rest-reader,read,rest-writer,update\\\"\"," +
-                "\"output_uri_replace\":\"\\\"" + basePath + ",''\\\"\"," +
-                "\"document_type\":\"\\\"json\\\"\"," +
-                "\"transform_module\":\"\\\"/com.marklogic.hub/mlcp-flow-transform.xqy\\\"\"," +
-                "\"transform_namespace\":\"\\\"http://marklogic.com/data-hub/mlcp-flow-transform\\\"\"," +
-                "\"transform_param\":\"\\\"entity=" + ENTITY + ",flow=" + flowName + ",flowType=input\\\"\"" +
-            "}");
-        FlowStatusListener flowStatusListener = (jobId, percentComplete, message) -> {
-            logger.error(message);
-        };
-        MlcpRunner mlcpRunner = new MlcpRunner("com.marklogic.hub.util.MlcpMain", getHubConfig(), flow, mlcpOptions, flowStatusListener);
-        mlcpRunner.start();
-        mlcpRunner.join();
-
-        Assert.assertEquals(1, getStagingDocCount());
-        String expected = getResource("e2e-test/final.json");
-
-        String actual = stagingDocMgr.read("/input.json").next().getContent(new StringHandle()).get();
-        JSONAssert.assertEquals(expected, actual, false);
-    }
-
-    @Test
-    public void sjsXmlViaMlcp() throws IOException, ParserConfigurationException, SAXException, JSONException, InterruptedException {
-        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_TRACE_NAME, HubConfig.DEFAULT_JOB_NAME);
-
-        String flowName = "sjs-xml-input-flow";
-        Flow flow = flowManager.getFlow(ENTITY, flowName, FlowType.INPUT);
-        ObjectMapper objectMapper = new ObjectMapper();
-        String inputPath = getResourceFile("e2e-test/input/input.xml").getAbsolutePath();
-        String basePath = getResourceFile("e2e-test/input").getAbsolutePath();
-        JsonNode mlcpOptions = objectMapper.readTree(
-            "{" +
-                "\"input_file_path\":\"" + inputPath + "\"," +
-                "\"input_file_type\":\"\\\"documents\\\"\"," +
-                "\"output_collections\":\"\\\"" + ENTITY + "\\\"\"," +
-                "\"output_permissions\":\"\\\"rest-reader,read,rest-writer,update\\\"\"," +
-                "\"output_uri_replace\":\"\\\"" + basePath + ",''\\\"\"," +
-                "\"document_type\":\"\\\"xml\\\"\"," +
-                "\"transform_module\":\"\\\"/com.marklogic.hub/mlcp-flow-transform.xqy\\\"\"," +
-                "\"transform_namespace\":\"\\\"http://marklogic.com/data-hub/mlcp-flow-transform\\\"\"," +
-                "\"transform_param\":\"\\\"entity=" + ENTITY + ",flow=" + flowName + ",flowType=input\\\"\"" +
-                "}");
-        FlowStatusListener flowStatusListener = (jobId, percentComplete, message) -> {
-            logger.error(message);
-        };
-        MlcpRunner mlcpRunner = new MlcpRunner("com.marklogic.hub.util.MlcpMain", getHubConfig(), flow, mlcpOptions, flowStatusListener);
-        mlcpRunner.start();
-        mlcpRunner.join();
-
-        Assert.assertEquals(1, getStagingDocCount());
-        Document expected = getXmlFromResource("e2e-test/final.xml");
-
-        Document actual = stagingDocMgr.read("/input.xml").next().getContent(new DOMHandle()).get();
-        assertXMLEqual(expected, actual);
-    }
-
-    @Test
-    public void xqyJsonViaMlcp() throws IOException, ParserConfigurationException, SAXException, JSONException, InterruptedException {
-        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_TRACE_NAME, HubConfig.DEFAULT_JOB_NAME);
-
-        String flowName = "xqy-json-input-flow";
-        Flow flow = flowManager.getFlow(ENTITY, flowName, FlowType.INPUT);
-        ObjectMapper objectMapper = new ObjectMapper();
-        String inputPath = getResourceFile("e2e-test/input/input.json").getAbsolutePath();
-        String basePath = getResourceFile("e2e-test/input").getAbsolutePath();
-        JsonNode mlcpOptions = objectMapper.readTree(
-            "{" +
-                "\"input_file_path\":\"" + inputPath + "\"," +
-                "\"input_file_type\":\"\\\"documents\\\"\"," +
-                "\"output_collections\":\"\\\"" + ENTITY + "\\\"\"," +
-                "\"output_permissions\":\"\\\"rest-reader,read,rest-writer,update\\\"\"," +
-                "\"output_uri_replace\":\"\\\"" + basePath + ",''\\\"\"," +
-                "\"document_type\":\"\\\"json\\\"\"," +
-                "\"transform_module\":\"\\\"/com.marklogic.hub/mlcp-flow-transform.xqy\\\"\"," +
-                "\"transform_namespace\":\"\\\"http://marklogic.com/data-hub/mlcp-flow-transform\\\"\"," +
-                "\"transform_param\":\"\\\"entity=" + ENTITY + ",flow=" + flowName + ",flowType=input\\\"\"" +
-                "}");
-        FlowStatusListener flowStatusListener = (jobId, percentComplete, message) -> {
-            logger.error(message);
-        };
-        MlcpRunner mlcpRunner = new MlcpRunner("com.marklogic.hub.util.MlcpMain", getHubConfig(), flow, mlcpOptions, flowStatusListener);
-        mlcpRunner.start();
-        mlcpRunner.join();
-
-        Assert.assertEquals(1, getStagingDocCount());
-        String expected = getResource("e2e-test/final.json");
-
-        String actual = stagingDocMgr.read("/input.json").next().getContent(new StringHandle()).get();
-        JSONAssert.assertEquals(expected, actual, false);
-    }
-
-    @Test
-    public void xqyXmlViaMlcp() throws IOException, ParserConfigurationException, SAXException, JSONException, InterruptedException {
-        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_TRACE_NAME, HubConfig.DEFAULT_JOB_NAME);
-
-        String flowName = "xqy-xml-input-flow";
-        Flow flow = flowManager.getFlow(ENTITY, flowName, FlowType.INPUT);
-        ObjectMapper objectMapper = new ObjectMapper();
-        String inputPath = getResourceFile("e2e-test/input/input.xml").getAbsolutePath();
-        String basePath = getResourceFile("e2e-test/input").getAbsolutePath();
-        JsonNode mlcpOptions = objectMapper.readTree(
-            "{" +
-                "\"input_file_path\":\"" + inputPath + "\"," +
-                "\"input_file_type\":\"\\\"documents\\\"\"," +
-                "\"output_collections\":\"\\\"" + ENTITY + "\\\"\"," +
-                "\"output_permissions\":\"\\\"rest-reader,read,rest-writer,update\\\"\"," +
-                "\"output_uri_replace\":\"\\\"" + basePath + ",''\\\"\"," +
-                "\"document_type\":\"\\\"xml\\\"\"," +
-                "\"transform_module\":\"\\\"/com.marklogic.hub/mlcp-flow-transform.xqy\\\"\"," +
-                "\"transform_namespace\":\"\\\"http://marklogic.com/data-hub/mlcp-flow-transform\\\"\"," +
-                "\"transform_param\":\"\\\"entity=" + ENTITY + ",flow=" + flowName + ",flowType=input\\\"\"" +
-                "}");
-        FlowStatusListener flowStatusListener = (jobId, percentComplete, message) -> {
-            logger.error(message);
-        };
-        MlcpRunner mlcpRunner = new MlcpRunner("com.marklogic.hub.util.MlcpMain", getHubConfig(), flow, mlcpOptions, flowStatusListener);
-        mlcpRunner.start();
-        mlcpRunner.join();
-
-        Assert.assertEquals(1, getStagingDocCount());
-        Document expected = getXmlFromResource("e2e-test/final.xml");
-
-        Document actual = stagingDocMgr.read("/input.xml").next().getContent(new DOMHandle()).get();
-        assertXMLEqual(expected, actual);
-    }
-
-    @Test
-    public void sjsJsonErrors() throws IOException, ParserConfigurationException, SAXException, JSONException {
-        installJsonDocs("sjs-json-errors");
-
-        Vector<String> completed = new Vector<>();
-        Vector<String> failed = new Vector<>();
-
-        Flow harmonizeFlow = flowManager.getFlow(ENTITY, "sjs-json-errors",
-            FlowType.HARMONIZE);
-        FlowRunner flowRunner = flowManager.newFlowRunner()
-            .withFlow(harmonizeFlow)
-            .withBatchSize(BATCH_SIZE)
-            .withThreadCount(4)
-            .onItemComplete((String jobId, String itemId) -> {
-                completed.add(itemId);
-            })
-            .onItemFailed((String jobId, String itemId) -> {
-                failed.add(itemId);
-            });
-
-        JobTicket jobExecution = flowRunner.run();
-
-        flowRunner.awaitCompletion();
-
-        Assert.assertEquals(TEST_SIZE - 1, getFinalDocCount("sjs-json-errors"));
-        Assert.assertEquals(TEST_SIZE - 1, completed.size());
-        Assert.assertEquals(1, failed.size());
-        JsonNode node = jobDocMgr.read("/jobs/" + jobExecution.getJobId() + ".json").next().getContent(new JacksonHandle()).get();
-        Assert.assertEquals(jobExecution.getJobId(), node.get("jobId").asText());
-        Assert.assertEquals(TEST_SIZE - 1, node.get("successfulEvents").asInt());
-        Assert.assertEquals(1, node.get("failedEvents").asInt());
-        Assert.assertEquals(TEST_SIZE / BATCH_SIZE, node.get("successfulBatches").asInt());
-        Assert.assertEquals(0, node.get("failedBatches").asInt());
-        Assert.assertEquals("FINISHED_WITH_ERRORS", node.get("status").asText());
-
-    }
-
-    @Test
-    public void sjsJsonFailedMain() throws IOException, ParserConfigurationException, SAXException, JSONException {
-        installJsonDocs("sjs-json-failed-main");
-
-        Vector<String> completed = new Vector<>();
-        Vector<String> failed = new Vector<>();
-
-        Flow harmonizeFlow = flowManager.getFlow(ENTITY, "sjs-json-failed-main",
-            FlowType.HARMONIZE);
-
-        FlowRunner flowRunner = flowManager.newFlowRunner()
-            .withFlow(harmonizeFlow)
-            .withBatchSize(BATCH_SIZE)
-            .withThreadCount(4)
-            .onItemComplete((String jobId, String itemId) -> {
-                completed.add(itemId);
-            })
-            .onItemFailed((String jobId, String itemId) -> {
-                failed.add(itemId);
-            });
-
-        JobTicket jobExecution = flowRunner.run();
-
-        flowRunner.awaitCompletion();
-
-        Assert.assertEquals(0, getFinalDocCount("sjs-json-failed-main"));
-        Assert.assertEquals(0, completed.size());
-        Assert.assertEquals(TEST_SIZE, failed.size());
-        JsonNode node = jobDocMgr.read("/jobs/" + jobExecution.getJobId() + ".json").next().getContent(new JacksonHandle()).get();
-        Assert.assertEquals(jobExecution.getJobId(), node.get("jobId").asText());
-        Assert.assertEquals(0, node.get("successfulEvents").asInt());
-        Assert.assertEquals(TEST_SIZE, node.get("failedEvents").asInt());
-        Assert.assertEquals(0, node.get("successfulBatches").asInt());
-        Assert.assertEquals(TEST_SIZE / BATCH_SIZE, node.get("failedBatches").asInt());
-        Assert.assertEquals("FAILED", node.get("status").asText());
-    }
-
-
-    @Test
-    public void sjsJsonNoWait() throws IOException, ParserConfigurationException, SAXException, JSONException {
-        installJsonDocs("sjs-json-no-wait");
-
-        Flow harmonizeFlow = flowManager.getFlow(ENTITY, "sjs-json-no-wait",
-            FlowType.HARMONIZE);
-
-        FlowRunner flowRunner = flowManager.newFlowRunner()
-            .withFlow(harmonizeFlow)
-            .withBatchSize(BATCH_SIZE)
-            .withThreadCount(4);
-
-        flowRunner.run();
+            case JSON:
+                format = Format.JSON;
+                break;
+        }
+        handle.setFormat(format);
 
         try {
+            stagingDocMgr.write("/input" + fileSuffix + "." + dataFormat.toString(), handle, serverTransform);
+            if (finalCounts.stagingCount == 0) {
+                fail("Should have thrown an exception.");
+            }
+        }
+        catch(FailedRequestException e) {
+
+        }
+
+        assertEquals(finalCounts.stagingCount, getStagingDocCount());
+        assertEquals(finalCounts.finalCount, getFinalDocCount());
+        assertEquals(finalCounts.tracingCount, getTracingDocCount());
+        assertEquals(finalCounts.jobCount, getJobDocCount());
+
+        if (finalCounts.stagingCount == 1) {
+            String filename = "final";
+            if (prefix.equals("scaffolded")) {
+                filename = "staged";
+            }
+            if (dataFormat.equals(DataFormat.JSON)) {
+                String expected = getResource("e2e-test/" + filename + "." + dataFormat.toString());
+                String actual = stagingDocMgr.read("/input" + fileSuffix + "." + dataFormat.toString()).next().getContent(new StringHandle()).get();
+                JSONAssert.assertEquals(expected, actual, false);
+            } else {
+                Document expected = getXmlFromResource("e2e-test/" + filename + "." + dataFormat.toString());
+                Document actual = stagingDocMgr.read("/input" + fileSuffix + "." + dataFormat.toString()).next().getContent(new DOMHandle()).get();
+                assertXMLEqual(expected, actual);
+            }
+        }
+    }
+
+    private Tuple<FlowRunner, JobTicket> runHarmonizeFlow(
+        String flowName, DataFormat dataFormat,
+        Vector<String> completed, Vector<String> failed,
+        Map<String, Object> options,
+        DatabaseClient srcClient, String destDb,
+        boolean waitForCompletion) throws IOException, InterruptedException
+    {
+        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_TRACE_NAME, HubConfig.DEFAULT_JOB_NAME);
+
+        assertEquals(0, getStagingDocCount());
+        assertEquals(0, getFinalDocCount());
+        assertEquals(0, getTracingDocCount());
+        assertEquals(0, getJobDocCount());
+
+        installDocs(dataFormat, ENTITY, srcClient);
+
+        Flow harmonizeFlow = flowManager.getFlow(ENTITY, flowName, FlowType.HARMONIZE);
+
+        FlowRunner flowRunner = flowManager.newFlowRunner()
+            .withFlow(harmonizeFlow)
+            .withBatchSize(BATCH_SIZE)
+            .withThreadCount(4)
+            .withOptions(options)
+            .withSourceClient(srcClient)
+            .withDestinationDatabase(destDb)
+            .onItemComplete((String jobId, String itemId) -> {
+               completed.add(itemId);
+            })
+            .onItemFailed((String jobId, String itemId) -> {
+               failed.add(itemId);
+            });
+
+        JobTicket jobTicket = flowRunner.run();
+        if (waitForCompletion) {
+            flowRunner.awaitCompletion();
+        }
+        else {
             flowRunner.awaitCompletion(2, TimeUnit.MILLISECONDS);
-        } catch(InterruptedException e) {
-
         }
-
-        Assert.assertNotEquals(TEST_SIZE, getFinalDocCount("sjs-json-no-wait"));
-        flowRunner.awaitCompletion();
+        return new Tuple<>(flowRunner, jobTicket);
     }
 
-    @Test
-    public void xqyJson() throws IOException, ParserConfigurationException, SAXException, JSONException {
-        installJsonDocs("xqy-json");
-
-        Flow harmonizeFlow = flowManager.getFlow(ENTITY, "xqy-json",
-            FlowType.HARMONIZE);
-
-        FlowRunner flowRunner = flowManager.newFlowRunner()
-            .withFlow(harmonizeFlow)
-            .withBatchSize(BATCH_SIZE)
-            .withThreadCount(4);
-
-        JobTicket jobExecution = flowRunner.run();
-
-        flowRunner.awaitCompletion();
-
-        Assert.assertEquals(TEST_SIZE, getFinalDocCount("xqy-json"));
-        String expected = getResource("e2e-test/final.json");
-        for (int i = 0; i < TEST_SIZE; i++) {
-            String actual = finalDocMgr.read("/input-" + i + ".json").next().getContent(new StringHandle()).get();
-            JSONAssert.assertEquals(expected, actual, false);
-        }
-
-        JsonNode node = jobDocMgr.read("/jobs/" + jobExecution.getJobId() + ".json").next().getContent(new JacksonHandle()).get();
-        Assert.assertEquals(jobExecution.getJobId(), node.get("jobId").asText());
-        Assert.assertEquals(TEST_SIZE, node.get("successfulEvents").asInt());
-        Assert.assertEquals(0, node.get("failedEvents").asInt());
-        Assert.assertEquals(TEST_SIZE / BATCH_SIZE, node.get("successfulBatches").asInt());
-        Assert.assertEquals(0, node.get("failedBatches").asInt());
-        Assert.assertEquals("FINISHED", node.get("status").asText());
-
-        Document optionsActual = finalDocMgr.read("/options-test.xml").next().getContent(new DOMHandle()).get();
-        Document optionsExpected = getXmlFromResource("e2e-test/options-test.xml");
-        assertXMLEqual(optionsExpected, optionsActual);
-    }
-
-    @Test
-    public void xqyJsonTriplesArray() throws IOException, ParserConfigurationException, SAXException, JSONException {
-        installJsonDocs("xqy-json-triples-array");
-
-        Flow harmonizeFlow = flowManager.getFlow(ENTITY, "xqy-json-triples-array",
-            FlowType.HARMONIZE);
-        FlowRunner flowRunner = flowManager.newFlowRunner()
-            .withFlow(harmonizeFlow)
-            .withBatchSize(BATCH_SIZE)
-            .withThreadCount(4);
-
-        JobTicket jobExecution = flowRunner.run();
-
-        flowRunner.awaitCompletion();
-
-        Assert.assertEquals(TEST_SIZE, getFinalDocCount("xqy-json-triples-array"));
-        String expected = getResource("e2e-test/final.json");
-        for (int i = 0; i < TEST_SIZE; i++) {
-            String actual = finalDocMgr.read("/input-" + i + ".json").next().getContent(new StringHandle()).get();
-            JSONAssert.assertEquals(expected, actual, false);
-        }
-
-        JsonNode node = jobDocMgr.read("/jobs/" + jobExecution.getJobId() + ".json").next().getContent(new JacksonHandle()).get();
-        Assert.assertEquals(jobExecution.getJobId(), node.get("jobId").asText());
-        Assert.assertEquals(TEST_SIZE, node.get("successfulEvents").asInt());
-        Assert.assertEquals(0, node.get("failedEvents").asInt());
-        Assert.assertEquals(TEST_SIZE / BATCH_SIZE, node.get("successfulBatches").asInt());
-        Assert.assertEquals(0, node.get("failedBatches").asInt());
-        Assert.assertEquals("FINISHED", node.get("status").asText());
-    }
-
-    @Test
-    public void xqyJsonErrors() throws IOException, ParserConfigurationException, SAXException, JSONException {
-        installJsonDocs("xqy-json-errors");
+    private void testScaffoldedHarmonizeFlow(
+        String prefix, CodeFormat codeFormat, DataFormat dataFormat,
+        Map<String, Object> options, DatabaseClient srcClient, String destDb,
+        boolean waitForCompletion) throws IOException, ParserConfigurationException, SAXException, JSONException, InterruptedException
+    {
+        String flowName = getFlowName(prefix, codeFormat, dataFormat, FlowType.HARMONIZE);
 
         Vector<String> completed = new Vector<>();
         Vector<String> failed = new Vector<>();
 
-        Flow harmonizeFlow = flowManager.getFlow(ENTITY, "xqy-json-errors", FlowType.HARMONIZE);
-        FlowRunner flowRunner = flowManager.newFlowRunner()
-            .withFlow(harmonizeFlow)
-            .withBatchSize(BATCH_SIZE)
-            .withThreadCount(4)
-            .onItemComplete((String jobId, String itemId) -> {
-                completed.add(itemId);
-            })
-            .onItemFailed((String jobId, String itemId) -> {
-                failed.add(itemId);
-            });
+        Tuple<FlowRunner, JobTicket> tuple = runHarmonizeFlow(flowName, dataFormat, completed, failed, options, srcClient, destDb, waitForCompletion);
 
-        JobTicket jobExecution = flowRunner.run();
+        GenericDocumentManager mgr = finalDocMgr;
+        if (destDb.equals(HubConfig.DEFAULT_STAGING_NAME)) {
+            mgr = stagingDocMgr;
+        }
 
-        flowRunner.awaitCompletion();
+        if (waitForCompletion) {
+            assertEquals(TEST_SIZE, getStagingDocCount());
+            assertEquals(TEST_SIZE, getFinalDocCount());
+            assertEquals(TEST_SIZE + 1, getTracingDocCount());
+            assertEquals(1, getJobDocCount());
 
-        Assert.assertEquals(TEST_SIZE - 1, getFinalDocCount("xqy-json-errors"));
-        Assert.assertEquals(TEST_SIZE - 1, completed.size());
-        Assert.assertEquals(1, failed.size());
-        JsonNode node = jobDocMgr.read("/jobs/" + jobExecution.getJobId() + ".json").next().getContent(new JacksonHandle()).get();
-        Assert.assertEquals(jobExecution.getJobId(), node.get("jobId").asText());
-        Assert.assertEquals(TEST_SIZE - 1, node.get("successfulEvents").asInt());
-        Assert.assertEquals(1, node.get("failedEvents").asInt());
-        Assert.assertEquals(TEST_SIZE / BATCH_SIZE, node.get("successfulBatches").asInt());
-        Assert.assertEquals(0, node.get("failedBatches").asInt());
-        Assert.assertEquals("FINISHED_WITH_ERRORS", node.get("status").asText());
+            assertEquals(TEST_SIZE, completed.size());
+            assertEquals(0, failed.size());
+
+            if (dataFormat.equals(DataFormat.XML)) {
+                Document expected = getXmlFromResource("e2e-test/staged.xml");
+                for (int i = 0; i < TEST_SIZE; i+=10) {
+                    Document actual = mgr.read("/input-" + i + ".xml").next().getContent(new DOMHandle()).get();
+                    assertXMLEqual(expected, actual);
+                }
+            } else {
+                String expected = getResource("e2e-test/staged." + dataFormat.toString());
+                for (int i = 0; i < TEST_SIZE; i+=10) {
+                    String actual = mgr.read("/input-" + i + "." + dataFormat.toString()).next().getContent(new StringHandle()).get();
+                    JSONAssert.assertEquals(expected, actual, false);
+                }
+            }
+
+            // inspect the job json
+            JsonNode node = jobDocMgr.read("/jobs/" + tuple.y.getJobId() + ".json").next().getContent(new JacksonHandle()).get();
+            assertEquals(tuple.y.getJobId(), node.get("jobId").asText());
+            assertEquals(TEST_SIZE, node.get("successfulEvents").asInt());
+            assertEquals(0, node.get("failedEvents").asInt());
+            assertEquals(TEST_SIZE / BATCH_SIZE, node.get("successfulBatches").asInt());
+            assertEquals(0, node.get("failedBatches").asInt());
+            assertEquals("FINISHED", node.get("status").asText());
+        }
+        else {
+            assertNotEquals(TEST_SIZE, getFinalDocCount());
+            tuple.x.awaitCompletion();
+        }
     }
 
-    @Test
-    public void xqyXmlFailedMain() throws IOException, ParserConfigurationException, SAXException, JSONException {
-        installXmlDocs("xqy-xml-failed-main");
-
-        Flow harmonizeFlow = flowManager.getFlow(ENTITY, "xqy-xml-failed-main",
-            FlowType.HARMONIZE);
+    private void testHarmonizeFlow(
+        String prefix, CodeFormat codeFormat, DataFormat dataFormat,
+        Map<String, Object> options, DatabaseClient srcClient, String destDb,
+        FinalCounts finalCounts, boolean waitForCompletion) throws IOException, ParserConfigurationException, SAXException, JSONException, InterruptedException
+    {
+        String flowName = getFlowName(prefix, codeFormat, dataFormat, FlowType.HARMONIZE);
 
         Vector<String> completed = new Vector<>();
         Vector<String> failed = new Vector<>();
 
-        FlowRunner flowRunner = flowManager.newFlowRunner()
-            .withFlow(harmonizeFlow)
-            .withBatchSize(BATCH_SIZE)
-            .withThreadCount(4)
-            .onItemComplete((String jobId, String itemId) -> {
-                completed.add(itemId);
-            })
-            .onItemFailed((String jobId, String itemId) -> {
-                failed.add(itemId);
-            });
+        Tuple<FlowRunner, JobTicket> tuple = runHarmonizeFlow(flowName, dataFormat, completed, failed, options, srcClient, destDb, waitForCompletion);
 
-        JobTicket jobExecution = flowRunner.run();
+        if (waitForCompletion) {
+            assertEquals(finalCounts.stagingCount, getStagingDocCount());
+            assertEquals(finalCounts.finalCount, getFinalDocCount());
+            assertEquals(finalCounts.tracingCount, getTracingDocCount());
+            assertEquals(finalCounts.jobCount, getJobDocCount());
 
-        flowRunner.awaitCompletion();
+            assertEquals(finalCounts.completedCount, completed.size());
+            assertEquals(finalCounts.failedCount, failed.size());
 
-        Assert.assertEquals(0, getFinalDocCount("xqy-xml-failed-main"));
-        Assert.assertEquals(0, completed.size());
-        Assert.assertEquals(TEST_SIZE, failed.size());
-        JsonNode node = jobDocMgr.read("/jobs/" + jobExecution.getJobId() + ".json").next().getContent(new JacksonHandle()).get();
-        Assert.assertEquals(jobExecution.getJobId(), node.get("jobId").asText());
-        Assert.assertEquals(0, node.get("successfulEvents").asInt());
-        Assert.assertEquals(TEST_SIZE, node.get("failedEvents").asInt());
-        Assert.assertEquals(0, node.get("successfulBatches").asInt());
-        Assert.assertEquals(TEST_SIZE / BATCH_SIZE, node.get("failedBatches").asInt());
-        Assert.assertEquals("FAILED", node.get("status").asText());
-    }
+            GenericDocumentManager mgr = finalDocMgr;
+            if (destDb.equals(HubConfig.DEFAULT_STAGING_NAME)) {
+                mgr = stagingDocMgr;
+            }
 
-    @Test
-    public void xqyJsonNoWait() throws IOException, ParserConfigurationException, SAXException, JSONException {
-        installJsonDocs("xqy-json-no-wait");
+            if (dataFormat.equals(DataFormat.XML)) {
+                Document expected = getXmlFromResource("e2e-test/final.xml");
+                for (int i = 0; i < TEST_SIZE; i+=10) {
+                    Document actual = mgr.read("/input-" + i + ".xml").next().getContent(new DOMHandle()).get();
+                    assertXMLEqual(expected, actual);
+                }
+            } else {
+                String expected = getResource("e2e-test/final." + dataFormat.toString());
+                for (int i = 0; i < TEST_SIZE; i+=10) {
+                    String actual = mgr.read("/input-" + i + "." + dataFormat.toString()).next().getContent(new StringHandle()).get();
+                    JSONAssert.assertEquals(expected, actual, false);
+                }
+            }
 
-        Flow harmonizeFlow = flowManager.getFlow(ENTITY, "xqy-json-no-wait",
-            FlowType.HARMONIZE);
+            // inspect the job json
+            JsonNode node = jobDocMgr.read("/jobs/" + tuple.y.getJobId() + ".json").next().getContent(new JacksonHandle()).get();
+            assertEquals(tuple.y.getJobId(), node.get("jobId").asText());
+            assertEquals(finalCounts.jobSuccessfulEvents, node.get("successfulEvents").asInt());
+            assertEquals(finalCounts.jobFailedEvents, node.get("failedEvents").asInt());
+            assertEquals(finalCounts.jobSuccessfulBatches, node.get("successfulBatches").asInt());
+            assertEquals(finalCounts.jobFailedBatches, node.get("failedBatches").asInt());
+            assertEquals(finalCounts.jobStatus, node.get("status").asText());
 
-        FlowRunner flowRunner = flowManager.newFlowRunner()
-            .withFlow(harmonizeFlow)
-            .withBatchSize(BATCH_SIZE)
-            .withThreadCount(4);
-
-        flowRunner.run();
-
-        try {
-            flowRunner.awaitCompletion(2, TimeUnit.MILLISECONDS);
-        } catch(InterruptedException e) {
-
+            if (codeFormat.equals(CodeFormat.XQUERY)) {
+                Document optionsActual = mgr.read("/options-test.xml").next().getContent(new DOMHandle()).get();
+                Document optionsExpected = getXmlFromResource("e2e-test/" + finalCounts.optionsFile + ".xml");
+                assertXMLEqual(optionsExpected, optionsActual);
+            } else {
+                String optionsExpected = getResource("e2e-test/" + finalCounts.optionsFile + ".json");
+                String optionsActual = mgr.read("/options-test.json").next().getContent(new StringHandle()).get();
+                JSONAssert.assertEquals(optionsExpected, optionsActual, false);
+            }
         }
-
-        Assert.assertNotEquals(TEST_SIZE, getFinalDocCount("xqy-json-no-wait"));
-        flowRunner.awaitCompletion();
-    }
-
-    @Test
-    public void xqyXml() throws IOException, ParserConfigurationException, SAXException {
-        installXmlDocs("xqy-xml");
-
-        Flow harmonizeFlow = flowManager.getFlow(ENTITY, "xqy-xml",
-            FlowType.HARMONIZE);
-
-        FlowRunner flowRunner = flowManager.newFlowRunner()
-            .withFlow(harmonizeFlow)
-            .withBatchSize(BATCH_SIZE)
-            .withThreadCount(4);
-
-        JobTicket jobExecution = flowRunner.run();
-
-        flowRunner.awaitCompletion();
-
-        Assert.assertEquals(TEST_SIZE, getFinalDocCount("xqy-xml"));
-        Document expected = getXmlFromResource("e2e-test/final.xml");
-        for (int i = 0; i < TEST_SIZE; i++) {
-            Document actual = finalDocMgr.read("/input-" + i + ".xml").next().getContent(new DOMHandle()).get();
-            assertXMLEqual(expected, actual);
+        else {
+            assertNotEquals(TEST_SIZE, getFinalDocCount());
+            tuple.x.awaitCompletion();
         }
-
-        JsonNode node = jobDocMgr.read("/jobs/" + jobExecution.getJobId() + ".json").next().getContent(new JacksonHandle()).get();
-        Assert.assertEquals(jobExecution.getJobId(), node.get("jobId").asText());
-        Assert.assertEquals(TEST_SIZE, node.get("successfulEvents").asInt());
-        Assert.assertEquals(0, node.get("failedEvents").asInt());
-        Assert.assertEquals(TEST_SIZE / BATCH_SIZE, node.get("successfulBatches").asInt());
-        Assert.assertEquals(0, node.get("failedBatches").asInt());
-        Assert.assertEquals("FINISHED", node.get("status").asText());
     }
 
-    @Test
-    public void xqyXmlErrors() throws IOException, ParserConfigurationException, SAXException, JSONException {
-        installXmlDocs("xqy-xml-errors");
-
-        Flow harmonizeFlow = flowManager.getFlow(ENTITY, "xqy-xml-errors",
-            FlowType.HARMONIZE);
+    private void testHarmonizeFlowWithFailedMain(
+        String prefix, CodeFormat codeFormat, DataFormat dataFormat,
+        Map<String, Object> options, DatabaseClient srcClient, String destDb,
+        FinalCounts finalCounts) throws IOException, InterruptedException
+    {
+        String flowName = getFlowName(prefix, codeFormat, dataFormat, FlowType.HARMONIZE);
 
         Vector<String> completed = new Vector<>();
         Vector<String> failed = new Vector<>();
 
-        FlowRunner flowRunner = flowManager.newFlowRunner()
-            .withFlow(harmonizeFlow)
-            .withBatchSize(BATCH_SIZE)
-            .withThreadCount(4)
-            .onItemComplete((String jobId, String itemId) -> {
-                completed.add(itemId);
-            })
-            .onItemFailed((String jobId, String itemId) -> {
-                failed.add(itemId);
-            });
+        Tuple<FlowRunner, JobTicket> tuple = runHarmonizeFlow(flowName, dataFormat, completed, failed, options, srcClient, destDb, true);
 
+        assertEquals(finalCounts.stagingCount, getStagingDocCount());
+        assertEquals(finalCounts.finalCount, getFinalDocCount());
+        assertEquals(finalCounts.tracingCount, getTracingDocCount());
+        assertEquals(finalCounts.jobCount, getJobDocCount());
 
-        JobTicket jobExecution = flowRunner.run();
+        assertEquals(finalCounts.completedCount, completed.size());
+        assertEquals(finalCounts.failedCount, failed.size());
 
-        flowRunner.awaitCompletion();
-
-        Assert.assertEquals(TEST_SIZE - 1, getFinalDocCount("xqy-xml-errors"));
-        Assert.assertEquals(TEST_SIZE - 1, completed.size());
-        Assert.assertEquals(1, failed.size());
-        JsonNode node = jobDocMgr.read("/jobs/" + jobExecution.getJobId() + ".json").next().getContent(new JacksonHandle()).get();
-        Assert.assertEquals(jobExecution.getJobId(), node.get("jobId").asText());
-        Assert.assertEquals(TEST_SIZE - 1, node.get("successfulEvents").asInt());
-        Assert.assertEquals(1, node.get("failedEvents").asInt());
-        Assert.assertEquals(TEST_SIZE / BATCH_SIZE, node.get("successfulBatches").asInt());
-        Assert.assertEquals(0, node.get("failedBatches").asInt());
-        Assert.assertEquals("FINISHED_WITH_ERRORS", node.get("status").asText());
-    }
-
-    @Test
-    public void xqyXmlNoWait() throws IOException, ParserConfigurationException, SAXException, JSONException {
-        installXmlDocs("xqy-xml-no-wait");
-
-        Flow harmonizeFlow = flowManager.getFlow(ENTITY, "xqy-xml-no-wait",
-            FlowType.HARMONIZE);
-        FlowRunner flowRunner = flowManager.newFlowRunner()
-            .withFlow(harmonizeFlow)
-            .withBatchSize(BATCH_SIZE)
-            .withThreadCount(4);
-
-        flowRunner.run();
-
-        try {
-            flowRunner.awaitCompletion(2, TimeUnit.MILLISECONDS);
-        } catch(InterruptedException e) {
-
-        }
-
-        Assert.assertNotEquals(TEST_SIZE, getFinalDocCount("xqy-xml-no-wait"));
-        flowRunner.awaitCompletion();
-    }
-
-
-    @Test
-    public void scaffoldedXqyJson() throws IOException, ParserConfigurationException, SAXException, JSONException {
-        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_TRACE_NAME, HubConfig.DEFAULT_JOB_NAME);
-        installJsonDocs(ENTITY);
-
-        Flow harmonizeFlow = flowManager.getFlow(ENTITY, "scaffolded-xqy-json",
-            FlowType.HARMONIZE);
-        FlowRunner flowRunner = flowManager.newFlowRunner()
-            .withFlow(harmonizeFlow)
-            .withBatchSize(BATCH_SIZE)
-            .withThreadCount(4);
-
-        JobTicket jobExecution = flowRunner.run();
-
-        flowRunner.awaitCompletion();
-
-        Assert.assertEquals(TEST_SIZE, getFinalDocCount(ENTITY));
-        String expected = getResource("e2e-test/scaffolded/final.json");
-        for (int i = 0; i < TEST_SIZE; i++) {
-            String actual = finalDocMgr.read("/input-" + i + ".json").next().getContent(new StringHandle()).get();
-            JSONAssert.assertEquals(expected, actual, false);
-        }
-
-        JsonNode node = jobDocMgr.read("/jobs/" + jobExecution.getJobId() + ".json").next().getContent(new JacksonHandle()).get();
-        Assert.assertEquals(jobExecution.getJobId(), node.get("jobId").asText());
-        Assert.assertEquals(TEST_SIZE, node.get("successfulEvents").asInt());
-        Assert.assertEquals(0, node.get("failedEvents").asInt());
-        Assert.assertEquals(TEST_SIZE / BATCH_SIZE, node.get("successfulBatches").asInt());
-        Assert.assertEquals(0, node.get("failedBatches").asInt());
-        Assert.assertEquals("FINISHED", node.get("status").asText());
-    }
-
-    @Test
-    public void scaffoldedXqyXml() throws IOException, ParserConfigurationException, SAXException, JSONException {
-        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_TRACE_NAME, HubConfig.DEFAULT_JOB_NAME);
-        installXmlDocs(ENTITY);
-
-        Flow harmonizeFlow = flowManager.getFlow(ENTITY, "scaffolded-xqy-xml",
-            FlowType.HARMONIZE);
-        FlowRunner flowRunner = flowManager.newFlowRunner()
-            .withFlow(harmonizeFlow)
-            .withBatchSize(BATCH_SIZE)
-            .withThreadCount(4);
-
-        JobTicket jobExecution = flowRunner.run();
-
-        flowRunner.awaitCompletion();
-
-        Assert.assertEquals(TEST_SIZE, getFinalDocCount(ENTITY));
-        Document expected = getXmlFromResource("e2e-test/scaffolded/final.xml");
-        for (int i = 0; i < TEST_SIZE; i++) {
-            Document actual = finalDocMgr.read("/input-" + i + ".xml").next().getContent(new DOMHandle()).get();
-            assertXMLEqual(expected, actual);
-        }
-
-        JsonNode node = jobDocMgr.read("/jobs/" + jobExecution.getJobId() + ".json").next().getContent(new JacksonHandle()).get();
-        Assert.assertEquals(jobExecution.getJobId(), node.get("jobId").asText());
-        Assert.assertEquals(TEST_SIZE, node.get("successfulEvents").asInt());
-        Assert.assertEquals(0, node.get("failedEvents").asInt());
-        Assert.assertEquals(TEST_SIZE / BATCH_SIZE, node.get("successfulBatches").asInt());
-        Assert.assertEquals(0, node.get("failedBatches").asInt());
-        Assert.assertEquals("FINISHED", node.get("status").asText());
-    }
-
-    @Test
-    public void scaffoldedSjsJson() throws IOException, ParserConfigurationException, SAXException, JSONException {
-        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_TRACE_NAME, HubConfig.DEFAULT_JOB_NAME);
-        installJsonDocs(ENTITY);
-
-        Flow harmonizeFlow = flowManager.getFlow(ENTITY, "scaffolded-sjs-json",
-            FlowType.HARMONIZE);
-
-        FlowRunner flowRunner = flowManager.newFlowRunner()
-            .withFlow(harmonizeFlow)
-            .withBatchSize(BATCH_SIZE)
-            .withThreadCount(4);
-
-        JobTicket jobExecution = flowRunner.run();
-
-        flowRunner.awaitCompletion();
-
-        Assert.assertEquals(TEST_SIZE, getFinalDocCount(ENTITY));
-        String expected = getResource("e2e-test/scaffolded/final.json");
-        for (int i = 0; i < TEST_SIZE; i++) {
-            String actual = finalDocMgr.read("/input-" + i + ".json").next().getContent(new StringHandle()).get();
-            JSONAssert.assertEquals(expected, actual, false);
-        }
-
-        JsonNode node = jobDocMgr.read("/jobs/" + jobExecution.getJobId() + ".json").next().getContent(new JacksonHandle()).get();
-        Assert.assertEquals(jobExecution.getJobId(), node.get("jobId").asText());
-        Assert.assertEquals(TEST_SIZE, node.get("successfulEvents").asInt());
-        Assert.assertEquals(0, node.get("failedEvents").asInt());
-        Assert.assertEquals(TEST_SIZE / BATCH_SIZE, node.get("successfulBatches").asInt());
-        Assert.assertEquals(0, node.get("failedBatches").asInt());
-        Assert.assertEquals("FINISHED", node.get("status").asText());
-    }
-
-
-    @Test
-    public void scaffoldedSjsXml() throws IOException, ParserConfigurationException, SAXException, JSONException {
-        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_TRACE_NAME, HubConfig.DEFAULT_JOB_NAME);
-        installXmlDocs(ENTITY);
-
-        Flow harmonizeFlow = flowManager.getFlow(ENTITY, "scaffolded-sjs-xml",
-            FlowType.HARMONIZE);
-        FlowRunner flowRunner = flowManager.newFlowRunner()
-            .withFlow(harmonizeFlow)
-            .withBatchSize(BATCH_SIZE)
-            .withThreadCount(4);
-
-        JobTicket jobExecution = flowRunner.run();
-
-        flowRunner.awaitCompletion();
-
-        Assert.assertEquals(TEST_SIZE, getFinalDocCount(ENTITY));
-        Document expected = getXmlFromResource("e2e-test/scaffolded/final.xml");
-        for (int i = 0; i < TEST_SIZE; i++) {
-            Document actual = finalDocMgr.read("/input-" + i + ".xml").next().getContent(new DOMHandle()).get();
-            assertXMLEqual(expected, actual);
-        }
-
-        JsonNode node = jobDocMgr.read("/jobs/" + jobExecution.getJobId() + ".json").next().getContent(new JacksonHandle()).get();
-        Assert.assertEquals(jobExecution.getJobId(), node.get("jobId").asText());
-        Assert.assertEquals(TEST_SIZE, node.get("successfulEvents").asInt());
-        Assert.assertEquals(0, node.get("failedEvents").asInt());
-        Assert.assertEquals(TEST_SIZE / BATCH_SIZE, node.get("successfulBatches").asInt());
-        Assert.assertEquals(0, node.get("failedBatches").asInt());
-        Assert.assertEquals("FINISHED", node.get("status").asText());
-    }
-
-    private void installJsonDocs(String collection) throws IOException {
-        WriteBatcher writeBatcher = dataMovementManager.newWriteBatcher()
-            .withBatchSize(100)
-            .withThreadCount(4)
-            .onBatchSuccess(batch -> {
-                installDocsFinished = true;
-            })
-            .onBatchFailure((batch, failure) -> {
-                failure.printStackTrace();
-                installDocError = failure.getMessage();
-                installDocsFailed = true;
-            });
-
-        installDocsFinished = false;
-        installDocsFailed = false;
-        dataMovementManager.startJob(writeBatcher);
-
-        DocumentMetadataHandle metadataHandle = new DocumentMetadataHandle();
-        metadataHandle.getCollections().add(collection);
-        JacksonHandle handle = new JacksonHandle(getJsonFromResource("e2e-test/staged.json"));
-        for (int i = 0; i < TEST_SIZE; i++) {
-            writeBatcher.add("/input-" + i + ".json", metadataHandle, handle);
-        }
-
-        writeBatcher.flushAndWait();
-        assertTrue("Doc install not finished", installDocsFinished);
-        assertFalse("Doc install failed: " + installDocError, installDocsFailed);
-        assertEquals(TEST_SIZE, getStagingDocCount(collection));
-    }
-
-    private void installXmlDocs(String collection) throws IOException {
-
-        WriteBatcher writeBatcher = dataMovementManager.newWriteBatcher()
-            .withBatchSize(100)
-            .withThreadCount(4)
-            .onBatchSuccess(batch -> {
-                installDocsFinished = true;
-            })
-            .onBatchFailure((batch, failure) -> {
-                failure.printStackTrace();
-                installDocError = failure.getMessage();
-                installDocsFailed = true;
-            });
-
-        installDocsFinished = false;
-        installDocsFailed = false;
-        dataMovementManager.startJob(writeBatcher);
-
-        DocumentMetadataHandle metadataHandle = new DocumentMetadataHandle();
-        metadataHandle.getCollections().add(collection);
-        StringHandle handle = new StringHandle(getResource("e2e-test/staged.xml"));
-        for (int i = 0; i < TEST_SIZE; i++) {
-            writeBatcher.add("/input-" + i + ".xml", metadataHandle, handle);
-        }
-
-        writeBatcher.flushAndWait();
-        assertTrue("Doc install not finished", installDocsFinished);
-        assertFalse("Doc install failed: " + installDocError, installDocsFailed);
-        assertEquals(TEST_SIZE, getStagingDocCount(collection));
-    }
-
-    @Test
-    public void legacySjsJson() throws IOException, ParserConfigurationException, SAXException, JSONException {
-        installJsonDocs("legacy-sjs-json");
-
-        Flow harmonizeFlow = flowManager.getFlow(ENTITY, "legacy-sjs-json",
-            FlowType.HARMONIZE);
-
-        FlowRunner flowRunner = flowManager.newFlowRunner()
-            .withFlow(harmonizeFlow)
-            .withBatchSize(BATCH_SIZE)
-            .withThreadCount(4);
-
-        JobTicket jobExecution = flowRunner.run();
-
-        flowRunner.awaitCompletion();
-
-        Assert.assertEquals(TEST_SIZE, getFinalDocCount("legacy-sjs-json"));
-        String expected = getResource("e2e-test/final.json");
-        for (int i = 0; i < TEST_SIZE; i++) {
-            String actual = finalDocMgr.read("/input-" + i + ".json").next().getContent(new StringHandle()).get();
-            JSONAssert.assertEquals(expected, actual, false);
-        }
-
-        JsonNode node = jobDocMgr.read("/jobs/" + jobExecution.getJobId() + ".json").next().getContent(new JacksonHandle()).get();
-        Assert.assertEquals(jobExecution.getJobId(), node.get("jobId").asText());
-        Assert.assertEquals(TEST_SIZE, node.get("successfulEvents").asInt());
-        Assert.assertEquals(0, node.get("failedEvents").asInt());
-        Assert.assertEquals(TEST_SIZE / BATCH_SIZE, node.get("successfulBatches").asInt());
-        Assert.assertEquals(0, node.get("failedBatches").asInt());
-        Assert.assertEquals("FINISHED", node.get("status").asText());
-
-        String optionsExpected = getResource("e2e-test/options-test.json");
-        String optionsActual = finalDocMgr.read("/options-test.json").next().getContent(new StringHandle()).get();
-        JSONAssert.assertEquals(optionsExpected, optionsActual, false);
-    }
+        // inspect the job json
+        JsonNode node = jobDocMgr.read("/jobs/" + tuple.y.getJobId() + ".json").next().getContent(new JacksonHandle()).get();
+        assertEquals(tuple.y.getJobId(), node.get("jobId").asText());
+        assertEquals(finalCounts.jobSuccessfulEvents, node.get("successfulEvents").asInt());
+        assertEquals(finalCounts.jobFailedEvents, node.get("failedEvents").asInt());
+        assertEquals(finalCounts.jobSuccessfulBatches, node.get("successfulBatches").asInt());
+        assertEquals(finalCounts.jobFailedBatches, node.get("failedBatches").asInt());
+        assertEquals(finalCounts.jobStatus, node.get("status").asText());
+   }
 }

@@ -1,9 +1,0 @@
-<flow xmlns="http://marklogic.com/data-hub">
-  <name>legacy-sjs-json</name>
-  <entity>e2eentity</entity>
-  <type>harmonize</type>
-  <data-format>json</data-format>
-  <code-format>sjs</code-format>
-  <collector code-format="sjs" module="/entities/e2eentity/harmonize/legacy-sjs-json/collector/collector.sjs"></collector>
-  <main code-format="sjs" module="/entities/e2eentity/harmonize/legacy-sjs-json/main.sjs"></main>
-</flow>

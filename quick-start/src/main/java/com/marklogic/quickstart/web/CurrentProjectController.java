@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.Tracing;
 import com.marklogic.hub.deploy.util.HubDeployStatusListener;
+import com.marklogic.hub.error.CantUpgradeException;
 import com.marklogic.quickstart.EnvironmentAware;
 import com.marklogic.quickstart.auth.ConnectionAuthenticationToken;
 import com.marklogic.quickstart.listeners.DeployUserModulesListener;
@@ -199,7 +200,7 @@ public class CurrentProjectController extends EnvironmentAware implements FileSy
     }
 
     @RequestMapping(value = "/update-hub", method = RequestMethod.POST)
-    public ResponseEntity<?> updateHub() throws IOException {
+    public ResponseEntity<?> updateHub() throws IOException, CantUpgradeException {
         if (dataHubService.updateHub(envConfig().getMlSettings())) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }

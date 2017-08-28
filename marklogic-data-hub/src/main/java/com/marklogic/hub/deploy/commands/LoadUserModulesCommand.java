@@ -18,6 +18,7 @@ import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.deploy.util.CacheBustingXccAssetLoader;
 import com.marklogic.hub.deploy.util.EntityDefModulesFinder;
 import com.marklogic.hub.deploy.util.HubFileFilter;
+import com.marklogic.hub.error.LegacyFlowsException;
 import org.apache.commons.io.IOUtils;
 import org.springframework.core.io.Resource;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -115,7 +116,7 @@ public class LoadUserModulesCommand extends AbstractCommand {
         FlowManager flowManager = new FlowManager(hubConfig);
         List<String> legacyFlows = flowManager.getLegacyFlows();
         if (legacyFlows.size() > 0) {
-            throw new RuntimeException("The following Flows are legacy flows:\n" + String.join("\n", legacyFlows) + "\nPlease update them with ./gradlew mlHubUpdate");
+            throw new LegacyFlowsException(legacyFlows);
         }
 
         AppConfig config = context.getAppConfig();

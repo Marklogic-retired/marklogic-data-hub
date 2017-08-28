@@ -20,8 +20,14 @@ declare function plugin:create-triples(
   $headers as node()*,
   $options as map:map)
 {
-  json:to-array((
-    sem:triple("a", "b", "c"),
-    sem:triple("x", "y", "z")
-  ))
+  let $_ :=
+    if (map:get($options, "triplesGoBoom") eq fn:true() and $id = ("/input-2.xml")) then
+      fn:error(xs:QName("TRIPLES-BOOM"), "I BLEW UP")
+    else ()
+  let $_ := map:put($options, "triplesTest", "triples")
+  return
+    json:to-array((
+      sem:triple("a", "b", "c"),
+      sem:triple("x", "y", "z")
+    ))
 };

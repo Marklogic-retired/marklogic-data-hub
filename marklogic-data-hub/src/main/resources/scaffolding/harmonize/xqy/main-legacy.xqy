@@ -17,7 +17,7 @@ import module namespace headers = "http://marklogic.com/data-hub/plugins" at "he
 import module namespace triples = "http://marklogic.com/data-hub/plugins" at "triples/triples.xqy";
 
 (: include the writer module which persists your envelope into MarkLogic :)
-import module namespace writer = "http://marklogic.com/data-hub/plugins" at "writer/riter.xqy";
+import module namespace writer = "http://marklogic.com/data-hub/plugins" at "writer/writer.xqy";
 
 declare option xdmp:mapping "false";
 

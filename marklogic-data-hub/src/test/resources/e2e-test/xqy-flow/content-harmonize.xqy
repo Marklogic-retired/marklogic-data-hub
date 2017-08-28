@@ -18,6 +18,10 @@ declare function plugin:create-content(
   $id as xs:string,
   $options as map:map) as node()?
 {
+  let $_ :=
+    if (map:get($options, "contentGoBoom") eq fn:true() and $id = ("/input-2.json", "/input-2.xml")) then
+      fn:error(xs:QName("CONTENT-BOOM"), "I BLEW UP")
+    else ()
   let $_ := map:put($options, "contentTest", "content")
   let $doc := fn:doc($id)
   return

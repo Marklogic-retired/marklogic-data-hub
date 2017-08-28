@@ -109,13 +109,18 @@ declare function post(
       flow:set-default-options($options, $flow),
       map:put($options, "target-database", $target-database)
     )
-
     return
       if (fn:exists($flow)) then
         let $_ :=
           for $identifier in $identifiers
           return
-            flow:run-flow($job-id, $flow, $identifier, $target-database, $options)
+            try {
+              flow:run-flow($job-id, $flow, $identifier, $target-database, $options)
+            }
+            catch($ex) {
+              (: error is already logged in flow-lib:main() :)
+              ()
+            }
         let $resp :=
           document {
             object-node {

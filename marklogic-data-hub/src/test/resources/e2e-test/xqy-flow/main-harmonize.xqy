@@ -15,6 +15,7 @@ at "/com.marklogic.hub/dhf.xqy";
 import module namespace content = "http://marklogic.com/data-hub/plugins" at "content.xqy";
 import module namespace headers = "http://marklogic.com/data-hub/plugins" at "headers.xqy";
 import module namespace triples = "http://marklogic.com/data-hub/plugins" at "triples.xqy";
+import module namespace extra = "http://marklogic.com/data-hub/plugins" at "extra-plugin.xqy";
 
 (: include the writer module which persists your envelope into MarkLogic :)
 import module namespace writer = "http://marklogic.com/data-hub/plugins" at "writer.xqy";
@@ -47,7 +48,19 @@ declare function plugin:main(
     triples:create-triples($id, $content, $headers, $options)
   })
 
-  let $_ := fn:error(xs:QName("BOOM"), "I BLEW UP")
+  let $_ :=
+    if (map:get($options, "mainGoBoom") eq fn:true() and $id = ("/input-2.json", "/input-2.xml")) then
+      fn:error(xs:QName("MAIN-BOOM"), "I BLEW UP")
+    else ()
+
+  let $_ :=
+    if (map:get($options, "extraPlugin") eq fn:true()) then
+      let $extra-context := dhf:context("extraPlugin")
+      let $_ := dhf:run($extra-context, function() {
+        extra:do-something-extra($id, $options)
+      })
+      return ()
+    else ()
 
   let $envelope := dhf:make-envelope($content, $headers, $triples, map:get($options, "dataFormat"))
   return

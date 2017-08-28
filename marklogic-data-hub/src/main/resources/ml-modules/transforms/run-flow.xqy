@@ -5,6 +5,9 @@ module namespace runFlow = "http://marklogic.com/rest-api/transform/run-flow";
 import module namespace consts = "http://marklogic.com/data-hub/consts"
   at "/com.marklogic.hub/lib/consts.xqy";
 
+import module namespace debug = "http://marklogic.com/data-hub/debug"
+  at "/com.marklogic.hub/lib/debug-lib.xqy";
+
 import module namespace flow = "http://marklogic.com/data-hub/flow-lib"
   at "/com.marklogic.hub/lib/flow-lib.xqy";
 
@@ -24,6 +27,8 @@ declare %rapi:transaction-mode("query") function runFlow:transform(
   $content as document-node()
   ) as document-node()
 {
+  debug:dump-env("run-flow:transform"),
+
   perf:log('/transforms/run-flow:transform', function() {
     let $job-id := map:get($params, "job-id")
     let $entity-name := map:get($params, 'entity')
@@ -42,6 +47,7 @@ declare %rapi:transaction-mode("query") function runFlow:transform(
     )[1]
     let $_ := flow:set-default-options($options, $flow)
 
+    (: this can throw, but we want the REST API to know about problems, so let it :)
     let $envelope := flow:run-flow(
       $job-id, $flow, $uri, $content, $options
     )

@@ -255,8 +255,6 @@ declare function flow:run-flow(
   (: assert that we are in query mode :)
   let $_must_run_in_query_mode as xs:unsignedLong := xdmp:request-timestamp()
 
-  let $_ := map:set-javascript-by-ref($options, fn:true())
-
   (: configure the run context :)
   let $_ := (
     rfc:with-job-id($job-id),
@@ -549,11 +547,13 @@ declare function flow:run-main(
   let $func := flow:make-function($main/@code-format, "main", $module-uri)
   let $before := xdmp:elapsed-time()
   let $resp := try {
+    let $options := rfc:get-options()
+    let $_ := map:set-javascript-by-ref($options, fn:true())
     let $resp :=
       if (rfc:get-flow-type() eq $consts:HARMONIZE_FLOW) then
-        $func(rfc:get-id(), rfc:get-options())
+        $func(rfc:get-id(), $options)
       else
-        $func(rfc:get-id(), rfc:get-content(), rfc:get-options())
+        $func(rfc:get-id(), rfc:get-content(), $options)
     let $_ := trace:plugin-trace($resp, xdmp:elapsed-time() - $before)
     (: write the trace for the current identifier :)
     let $_ := trace:write-trace()
@@ -561,12 +561,23 @@ declare function flow:run-main(
       $resp
   }
   catch($ex) {
-    if ($ex/error:name eq "PLUGIN-ERROR") then ()
+    if ($ex/error:name eq "PLUGIN-ERROR") then
+      (: plugin errors are already handled :)
+      ()
     else (
+      (: this is an error in main.(sjs|xqy) :)
       debug:log(xdmp:describe($ex, (), ())),
+
+      (: log the trace event for main :)
       trace:set-plugin-label("main"),
       trace:error-trace($ex, xdmp:elapsed-time() - $before)
+    ),
+    (: for input flows we want to rethrow to force a failure :)
+    if (rfc:get-flow-type() eq $consts:INPUT_FLOW) then (
+      xdmp:log("rethrowing"),
+      xdmp:rethrow()
     )
+    else ()
   }
   return
     $resp
