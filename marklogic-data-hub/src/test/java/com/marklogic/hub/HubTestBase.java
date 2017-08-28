@@ -352,7 +352,6 @@ public class HubTestBase {
             "  },\n" +
             "  map:entry(\"database\", xdmp:database($database))\n" +
             "  )";
-
         eval.addVariable("databases", String.join(",", databases));
         eval.xquery(installer).eval();
     }

@@ -46,7 +46,6 @@ public class EntityManagerTest extends HubTestBase {
         installHub();
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME);
 
-
         DataHub dataHub = getDataHub();
         dataHub.clearUserModules();
         dataHub.installUserModules(true);

@@ -56,7 +56,6 @@ public class FlowManagerTest extends HubTestBase {
         meta.getCollections().add("tester");
         installStagingDoc("/employee1.xml", meta, "flow-manager-test/input/employee1.xml");
         installStagingDoc("/employee2.xml", meta, "flow-manager-test/input/employee2.xml");
-
         installModules();
     }
 

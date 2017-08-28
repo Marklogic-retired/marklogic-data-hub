@@ -9,9 +9,7 @@ import com.marklogic.hub.error.LegacyFlowsException
 import org.apache.commons.io.FileUtils
 import org.gradle.testkit.runner.UnexpectedBuildFailure
 import org.gradle.testkit.runner.UnexpectedBuildSuccess
-
 import java.nio.file.Paths
-
 import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual
 import static org.gradle.testkit.runner.TaskOutcome.FAILED
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
