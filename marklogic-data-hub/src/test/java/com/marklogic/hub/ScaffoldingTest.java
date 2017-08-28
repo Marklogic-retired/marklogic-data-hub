@@ -280,8 +280,7 @@ public class ScaffoldingTest extends HubTestBase {
         assertEquals(DataFormat.JSON, flow.getDataFormat());
         assertEquals("legacy-input-flow", flow.getName());
         assertEquals("my-fun-test", flow.getEntityName());
-        assertEquals(CodeFormat.JAVASCRIPT, flow.getCollector().getCodeFormat());
-        assertEquals("/entities/my-fun-test/input/legacy-input-flow/collector/collector.sjs", flow.getCollector().getModule());
+        assertEquals(null, flow.getCollector());
         assertEquals(CodeFormat.JAVASCRIPT, flow.getMain().getCodeFormat());
         assertEquals("/entities/my-fun-test/input/legacy-input-flow/main.sjs", flow.getMain().getModule());
 

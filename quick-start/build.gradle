@@ -109,6 +109,10 @@ task copyIndexHtml(type: Copy) {
     dependsOn tasks.copyUIAssets
 }
 
+task runUI(type: NpmTask) {
+    args = ['start']
+}
+
 processResources {
     filesMatching("**/quickstart-version.properties") {
         expand(project: project)

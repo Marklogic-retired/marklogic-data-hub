@@ -733,12 +733,15 @@ declare function flow:validate-entities()
             )
         }
         catch($ex) {
-          flow:make-error-json(
-            $errors,
-            $entity/hub:name,
-            $flow/hub:name,
-            "main",
-            $ex)
+          let $uri := ($ex/error:stack/error:frame)[1]/error:uri
+          let $plugin := hul:get-file-name(hul:get-file-from-uri($uri))
+          return
+            flow:make-error-json(
+              $errors,
+              $entity/hub:name,
+              $flow/hub:name,
+              $plugin,
+              $ex)
         }
     return
       ()

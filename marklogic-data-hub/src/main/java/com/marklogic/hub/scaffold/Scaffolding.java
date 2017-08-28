@@ -203,15 +203,19 @@ public class Scaffolding {
 
                         file.delete();
 
-                        Flow flow = FlowBuilder.newFlow()
+                        FlowBuilder flowBuilder = FlowBuilder.newFlow()
                             .withEntityName(entityName)
                             .withName(flowName)
                             .withType(flowType)
                             .withCodeFormat(codeFormat)
                             .withDataFormat(dataFormat)
-                            .withCollector(new CollectorImpl("/entities/" + entityName + "/" + flowType + "/" + flowName + "/collector/collector." + codeFormat, codeFormat))
-                            .withMain(new MainPluginImpl("/entities/" + entityName + "/" + flowType + "/" + flowName + "/main." + codeFormat, codeFormat))
-                            .build();
+                            .withMain(new MainPluginImpl("/entities/" + entityName + "/" + flowType + "/" + flowName + "/main." + codeFormat, codeFormat));
+
+                        if (flowType.equals(FlowType.HARMONIZE)) {
+                            flowBuilder.withCollector(new CollectorImpl("/entities/" + entityName + "/" + flowType + "/" + flowName + "/collector/collector." + codeFormat, codeFormat));
+                        }
+
+                        Flow flow = flowBuilder.build();
                         Path flowFile = flowDir.resolve(flowName + ".xml");
                         try (PrintWriter out = new PrintWriter(flowFile.toFile())) {
                             out.println(flow.serialize());

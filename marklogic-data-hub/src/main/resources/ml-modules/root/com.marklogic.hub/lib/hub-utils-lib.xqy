@@ -157,3 +157,8 @@ declare function hul:get-file-extension($filename as xs:string)
 {
   fn:replace($filename, ".*\.([^\.]+)$", "$1")
 };
+
+declare function hul:get-file-name($filename as xs:string)
+{
+  fn:replace($filename, "(.*)\.[^\.]+$", "$1")
+};

@@ -326,6 +326,170 @@ public class EndToEndFlowTests extends HubTestBase {
             }
         }));
 
+        allCombos(((codeFormat, dataFormat, flowType) -> {
+            String prefix = "validation-no-errors";
+            String flowName = getFlowName(prefix, codeFormat, dataFormat, flowType);
+            tests.add(DynamicTest.dynamicTest(flowName, () -> {
+                createFlow(prefix, codeFormat, dataFormat, flowType, null);
+                getDataHub().clearUserModules();
+                getDataHub().installUserModules(true);
+                JsonNode actual = getDataHub().validateUserModules();
+                String expected = "{\"errors\":{}}";
+                JSONAssert.assertEquals(expected, new ObjectMapper().writeValueAsString(actual), true);
+
+                Path flowDir = projectDir.resolve("plugins").resolve("entities").resolve(ENTITY).resolve(flowType.toString()).resolve(flowName);
+                FileUtils.deleteDirectory(flowDir.toFile());
+            }));
+        }));
+
+        allCombos(((codeFormat, dataFormat, flowType) -> {
+            String prefix = "validation-content-errors";
+            String flowName = getFlowName(prefix, codeFormat, dataFormat, flowType);
+            tests.add(DynamicTest.dynamicTest(flowName, () -> {
+                createFlow(prefix, codeFormat, dataFormat, flowType, (codeFormat1, dataFormat1, flowType1, srcDir, flowDir) -> {
+                    copyFile(srcDir + "content-syntax-error." + codeFormat.toString(), flowDir.resolve("content." + codeFormat.toString()));
+                });
+                getDataHub().clearUserModules();
+                getDataHub().installUserModules(true);
+                JsonNode actual = getDataHub().validateUserModules();
+                String expected;
+                if (codeFormat.equals(CodeFormat.JAVASCRIPT)) {
+                    expected = "{\"errors\":{\"e2eentity\":{\"" + flowName + "\":{\"content\":{\"msg\":\"JS-JAVASCRIPT: makldf=-00=--/8\\\\sthifalkj;; -- Error running JavaScript request: ReferenceError: Invalid left-hand side in assignment\",\"uri\":\"/entities/e2eentity/" + flowType.toString() + "/" + flowName + "/content.sjs\",\"line\":18,\"column\":7}}}}}";
+                }
+                else {
+                    expected = "{\"errors\":{\"e2eentity\":{\"" + flowName + "\":{\"content\":{\"msg\":\"XDMP-UNEXPECTED: (err:XPST0003) Unexpected token syntax error, unexpected Function_, expecting $end\",\"uri\":\"/entities/e2eentity/" + flowType.toString() + "/" + flowName + "/content.xqy\",\"line\":8,\"column\":0}}}}}";
+                }
+                JSONAssert.assertEquals(expected, new ObjectMapper().writeValueAsString(actual), true);
+
+                Path flowDir = projectDir.resolve("plugins").resolve("entities").resolve(ENTITY).resolve(flowType.toString()).resolve(flowName);
+                FileUtils.deleteDirectory(flowDir.toFile());
+            }));
+        }));
+
+        allCombos(((codeFormat, dataFormat, flowType) -> {
+            String prefix = "validation-headers-errors";
+            String flowName = getFlowName(prefix, codeFormat, dataFormat, flowType);
+            tests.add(DynamicTest.dynamicTest(flowName, () -> {
+                createFlow(prefix, codeFormat, dataFormat, flowType, (codeFormat1, dataFormat1, flowType1, srcDir, flowDir) -> {
+                    copyFile(srcDir + "headers-syntax-error." + codeFormat.toString(), flowDir.resolve("headers." + codeFormat.toString()));
+                });
+                getDataHub().clearUserModules();
+                getDataHub().installUserModules(true);
+                JsonNode actual = getDataHub().validateUserModules();
+                String expected;
+                if (codeFormat.equals(CodeFormat.JAVASCRIPT)) {
+                    expected = "{\"errors\":{\"e2eentity\":{\"" + flowName + "\":{\"headers\":{\"msg\":\"JS-JAVASCRIPT: makldf=-00=--/8\\\\sthifalkj;; -- Error running JavaScript request: ReferenceError: Invalid left-hand side in assignment\",\"uri\":\"/entities/e2eentity/" + flowType.toString() + "/" + flowName + "/headers.sjs\",\"line\":16,\"column\":9}}}}}";
+                }
+                else {
+                    expected = "{\"errors\":{\"e2eentity\":{\"" + flowName + "\":{\"headers\":{\"msg\":\"XDMP-UNEXPECTED: (err:XPST0003) Unexpected token syntax error, unexpected Function_, expecting $end\",\"uri\":\"/entities/e2eentity/" + flowType.toString() + "/" + flowName + "/headers.xqy\",\"line\":30,\"column\":0}}}}}";
+                }
+                JSONAssert.assertEquals(expected, new ObjectMapper().writeValueAsString(actual), true);
+
+                Path flowDir = projectDir.resolve("plugins").resolve("entities").resolve(ENTITY).resolve(flowType.toString()).resolve(flowName);
+                FileUtils.deleteDirectory(flowDir.toFile());
+            }));
+        }));
+
+        allCombos(((codeFormat, dataFormat, flowType) -> {
+            String prefix = "validation-triples-errors";
+            String flowName = getFlowName(prefix, codeFormat, dataFormat, flowType);
+            tests.add(DynamicTest.dynamicTest(flowName, () -> {
+                createFlow(prefix, codeFormat, dataFormat, flowType, (codeFormat1, dataFormat1, flowType1, srcDir, flowDir) -> {
+                    copyFile(srcDir + "triples-syntax-error." + codeFormat.toString(), flowDir.resolve("triples." + codeFormat.toString()));
+                });
+                getDataHub().clearUserModules();
+                getDataHub().installUserModules(true);
+                JsonNode actual = getDataHub().validateUserModules();
+                String expected;
+                if (codeFormat.equals(CodeFormat.JAVASCRIPT)) {
+                    expected = "{\"errors\":{\"e2eentity\":{\"" + flowName + "\":{\"triples\":{\"msg\":\"JS-JAVASCRIPT: makldf=-00=--/8\\\\sthifalkj;; -- Error running JavaScript request: ReferenceError: Invalid left-hand side in assignment\",\"uri\":\"/entities/e2eentity/" + flowType.toString() + "/" + flowName + "/triples.sjs\",\"line\":16,\"column\":9}}}}}";
+                }
+                else {
+                    expected = "{\"errors\":{\"e2eentity\":{\"" + flowName + "\":{\"triples\":{\"msg\":\"XDMP-UNEXPECTED: (err:XPST0003) Unexpected token syntax error, unexpected Function_, expecting $end\",\"uri\":\"/entities/e2eentity/" + flowType.toString() + "/" + flowName + "/triples.xqy\",\"line\":36,\"column\":0}}}}}";
+                }
+                JSONAssert.assertEquals(expected, new ObjectMapper().writeValueAsString(actual), true);
+
+                Path flowDir = projectDir.resolve("plugins").resolve("entities").resolve(ENTITY).resolve(flowType.toString()).resolve(flowName);
+                FileUtils.deleteDirectory(flowDir.toFile());
+            }));
+        }));
+
+        allCombos(((codeFormat, dataFormat, flowType) -> {
+            String prefix = "validation-main-errors";
+            String flowName = getFlowName(prefix, codeFormat, dataFormat, flowType);
+            tests.add(DynamicTest.dynamicTest(flowName, () -> {
+                createFlow(prefix, codeFormat, dataFormat, flowType, (codeFormat1, dataFormat1, flowType1, srcDir, flowDir) -> {
+                    copyFile(srcDir + "main-syntax-error." + codeFormat.toString(), flowDir.resolve("main." + codeFormat.toString()));
+                });
+                getDataHub().clearUserModules();
+                getDataHub().installUserModules(true);
+                JsonNode actual = getDataHub().validateUserModules();
+                String expected;
+                if (codeFormat.equals(CodeFormat.JAVASCRIPT)) {
+                    expected = "{\"errors\":{\"e2eentity\":{\"" + flowName + "\":{\"main\":{\"msg\":\"JS-JAVASCRIPT: makldf=-00=--/8\\\\sthifalkj;; -- Error running JavaScript request: ReferenceError: Invalid left-hand side in assignment\",\"uri\":\"/entities/e2eentity/" + flowType.toString() + "/" + flowName + "/main.sjs\",\"line\":45,\"column\":9}}}}}";
+                }
+                else {
+                    expected = "{\"errors\":{\"e2eentity\":{\"" + flowName + "\":{\"main\":{\"msg\":\"XDMP-UNEXPECTED: (err:XPST0003) Unexpected token syntax error, unexpected Function_, expecting $end\",\"uri\":\"/entities/e2eentity/" + flowType.toString() + "/" + flowName + "/main.xqy\",\"line\":69,\"column\":0}}}}}";
+                }
+                JSONAssert.assertEquals(expected, new ObjectMapper().writeValueAsString(actual), true);
+
+                Path flowDir = projectDir.resolve("plugins").resolve("entities").resolve(ENTITY).resolve(flowType.toString()).resolve(flowName);
+                FileUtils.deleteDirectory(flowDir.toFile());
+            }));
+        }));
+
+
+        allCombos(((codeFormat, dataFormat, flowType) -> {
+            if (flowType.equals(FlowType.HARMONIZE)) {
+                String prefix = "validation-collector-errors";
+                String flowName = getFlowName(prefix, codeFormat, dataFormat, flowType);
+                tests.add(DynamicTest.dynamicTest(flowName, () -> {
+                    createFlow(prefix, codeFormat, dataFormat, flowType, (codeFormat1, dataFormat1, flowType1, srcDir, flowDir) -> {
+                        copyFile(srcDir + "collector-syntax-error." + codeFormat.toString(), flowDir.resolve("collector." + codeFormat.toString()));
+                    });
+                    getDataHub().clearUserModules();
+                    getDataHub().installUserModules(true);
+                    JsonNode actual = getDataHub().validateUserModules();
+                    String expected;
+                    if (codeFormat.equals(CodeFormat.JAVASCRIPT)) {
+                        expected = "{\"errors\":{\"e2eentity\":{\"" + flowName + "\":{\"collector\":{\"msg\":\"JS-JAVASCRIPT: makldf=-00=--/8\\\\sthifalkj;; -- Error running JavaScript request: ReferenceError: Invalid left-hand side in assignment\",\"uri\":\"/entities/e2eentity/" + flowType.toString() + "/" + flowName + "/collector.sjs\",\"line\":13,\"column\":9}}}}}";
+                    } else {
+                        expected = "{\"errors\":{\"e2eentity\":{\"" + flowName + "\":{\"collector\":{\"msg\":\"XDMP-UNEXPECTED: (err:XPST0003) Unexpected token syntax error, unexpected Function_, expecting $end\",\"uri\":\"/entities/e2eentity/" + flowType.toString() + "/" + flowName + "/collector.xqy\",\"line\":27,\"column\":0}}}}}";
+                    }
+                    JSONAssert.assertEquals(expected, new ObjectMapper().writeValueAsString(actual), true);
+
+                    Path flowDir = projectDir.resolve("plugins").resolve("entities").resolve(ENTITY).resolve(flowType.toString()).resolve(flowName);
+                    FileUtils.deleteDirectory(flowDir.toFile());
+                }));
+            }
+        }));
+
+        allCombos(((codeFormat, dataFormat, flowType) -> {
+            if (flowType.equals(FlowType.HARMONIZE)) {
+                String prefix = "validation-writer-errors";
+                String flowName = getFlowName(prefix, codeFormat, dataFormat, flowType);
+                tests.add(DynamicTest.dynamicTest(flowName, () -> {
+                    createFlow(prefix, codeFormat, dataFormat, flowType, (codeFormat1, dataFormat1, flowType1, srcDir, flowDir) -> {
+                        copyFile(srcDir + "writer-syntax-error." + codeFormat.toString(), flowDir.resolve("writer." + codeFormat.toString()));
+                    });
+                    getDataHub().clearUserModules();
+                    getDataHub().installUserModules(true);
+                    JsonNode actual = getDataHub().validateUserModules();
+                    String expected;
+                    if (codeFormat.equals(CodeFormat.JAVASCRIPT)) {
+                        expected = "{\"errors\":{}}";
+//                        expected = "{\"errors\":{\"e2eentity\":{\"" + flowName + "\":{\"writer\":{\"msg\":\"JS-JAVASCRIPT: makldf=-00=--/8\\\\sthifalkj;; -- Error running JavaScript request: ReferenceError: Invalid left-hand side in assignment\",\"uri\":\"/entities/e2eentity/" + flowType.toString() + "/" + flowName + "/writer.sjs\",\"line\":15,\"column\":9}}}}}";
+                    } else {
+                        expected = "{\"errors\":{\"e2eentity\":{\"" + flowName + "\":{\"writer\":{\"msg\":\"XDMP-UNEXPECTED: (err:XPST0003) Unexpected token syntax error, unexpected Function_, expecting $end\",\"uri\":\"/entities/e2eentity/" + flowType.toString() + "/" + flowName + "/writer.xqy\",\"line\":39,\"column\":0}}}}}";
+                    }
+                    JSONAssert.assertEquals(expected, new ObjectMapper().writeValueAsString(actual), true);
+
+                    Path flowDir = projectDir.resolve("plugins").resolve("entities").resolve(ENTITY).resolve(flowType.toString()).resolve(flowName);
+                    FileUtils.deleteDirectory(flowDir.toFile());
+                }));
+            }
+        }));
+
         return tests;
     }
 
