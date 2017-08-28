@@ -17,8 +17,8 @@ xquery version "1.0-ml";
 
 module namespace flow = "http://marklogic.com/data-hub/flow-lib";
 
-import module namespace config = "http://marklogic.com/data-hub/config"
-  at "/com.marklogic.hub/lib/config.xqy";
+import module namespace consts = "http://marklogic.com/data-hub/consts"
+  at "/com.marklogic.hub/lib/consts.xqy";
 
 import module namespace debug = "http://marklogic.com/data-hub/debug"
   at "/com.marklogic.hub/lib/debug-lib.xqy";
@@ -32,179 +32,27 @@ import module namespace json="http://marklogic.com/xdmp/json"
 import module namespace functx = "http://www.functx.com"
   at "/MarkLogic/functx/functx-1.0-nodoc-2007-01.xqy";
 
+import module namespace rfc = "http://marklogic.com/data-hub/run-flow-context"
+  at "/com.marklogic.hub/lib/run-flow-context.xqy";
+
 import module namespace trace = "http://marklogic.com/data-hub/trace"
   at "/com.marklogic.hub/lib/trace-lib.xqy";
 
 declare namespace hub = "http://marklogic.com/data-hub";
 
-declare namespace es = "http://marklogic.com/entity-services";
-
 declare option xdmp:mapping "false";
-
-(: xml describing the default writer :)
-declare variable $DEFAULT-WRITER :=
-  element hub:writer {
-    attribute type { "xquery" },
-    attribute module { "/com.marklogic.hub/writers/default.xqy" }
-  };
-
-(: xml describing the default content plugin :)
-declare variable $DEFAULT-CONTENT-PLUGIN :=
-  element hub:plugin {
-    attribute dest { "content" },
-    attribute type { "xquery" },
-    attribute module { "/com.marklogic.hub/plugins/raw.xqy" }
-  };
-
-(: xml describing a no-op plugin. used when no plugin is given :)
-declare variable $NO-OP-PLUGIN :=
-  element hub:plugin {
-    attribute type { "null" }
-  };
 
 (: the directory where entities live :)
 declare variable $ENTITIES-DIR := "/entities/";
 
 declare variable $PLUGIN-NS := "http://marklogic.com/data-hub/plugins";
 
-declare variable $TYPE-XQUERY := "xquery";
-
-declare variable $TYPE-JAVASCRIPT := "javascript";
-
-declare variable $TYPE-XSLT := "xslt";
-declare variable $TYPE-XML := "xml";
-declare variable $TYPE-JSON := "json";
-declare variable $XML := "application/xml";
-declare variable $JSON := "application/json";
-
 declare function flow:get-module-ns(
   $type as xs:string) as xs:string?
 {
-  if ($type eq $TYPE-JAVASCRIPT) then ()
+  if ($type eq $consts:JAVASCRIPT) then ()
   else
     $PLUGIN-NS
-};
-
-(:
- : Determines the type of flow given a filename
- :
- : @param $filename - name of the module plugin file
- : @return - a type (xquery, xml, sjs, ...)
- :)
-declare %private function flow:get-type($filename) as xs:string?
-{
-  let $ext as xs:string := hul:get-file-extension($filename)
-  return
-    if ($ext = hul:get-xqy-extensions()) then
-      $TYPE-XQUERY
-    else if ($ext = hul:get-sjs-extensions()) then
-      $TYPE-JAVASCRIPT
-    else if ($ext = hul:get-xslt-extensions()) then
-      $TYPE-XSLT
-    else if ($ext = "xml") then
-      $TYPE-XML
-    else if ($ext = "json") then
-      $TYPE-JSON
-    else
-      fn:error(xs:QName("INVALID_PLUGIN"), $filename)
-};
-
-(:~
- : Returns xml describing a collector
- :)
-declare %private function flow:get-collector(
-  $flow-name as xs:string,
-  $uris as xs:string*) as element(hub:collector)
-{
-  let $uri := $uris[1]
-  let $filename as xs:string := hul:get-file-from-uri($uri)
-  let $type := flow:get-type($filename)
-  return
-    element hub:collector {
-      attribute type { $type },
-      attribute module { $uri }
-    }
-};
-
-(:~
- : Returns xml describing a plugin
- :)
-declare %private function flow:get-plugin(
-  $flow-name as xs:string,
-  $uris as xs:string*,
-  $destination as xs:string) as element(hub:plugin)*
-{
-  for $uri in $uris
-  let $filename as xs:string := hul:get-file-from-uri($uri)
-  let $type := flow:get-type($filename)
-  return
-    element hub:plugin {
-      attribute dest { $destination },
-      attribute type { $type },
-      attribute module { $uri }
-    }
-};
-
-(:~
- : Returns xml describing a content plugin
- :)
-declare %private function flow:get-content(
-  $flow-name as xs:string,
-  $uris as xs:string*)
-{
-  let $plugin := flow:get-plugin($flow-name, $uris, "content")
-  return
-    if ($plugin) then $plugin
-    else
-      $DEFAULT-CONTENT-PLUGIN
-};
-
-(:~
- : Returns xml describing a headers plugin
- :)
-declare %private function flow:get-headers(
-  $flow-name as xs:string,
-  $uris as xs:string*)
-{
-  let $plugin := flow:get-plugin($flow-name, $uris, "headers")
-  return
-    if ($plugin) then $plugin
-    else
-      $NO-OP-PLUGIN
-};
-
-(:~
- : Returns xml describing a triples plugin
- :)
-declare %private function flow:get-triples(
-  $flow-name as xs:string,
-  $uris as xs:string*)
-{
-  let $plugin := flow:get-plugin($flow-name, $uris, "triples")
-  return
-    if ($plugin) then $plugin
-    else
-      $NO-OP-PLUGIN
-};
-
-(:~
- : Returns xml describing a writer
- :)
-declare %private function flow:get-writer(
-  $flow-name as xs:string,
-  $uris as xs:string*)
-{
-  if ($uris) then
-    for $uri in $uris
-    let $filename as xs:string := hul:get-file-from-uri($uri)
-    let $type := flow:get-type($filename)
-    return
-      element hub:writer {
-        attribute type { $type },
-        attribute module { $uri }
-      }
-  else
-    $DEFAULT-WRITER
 };
 
 (:~
@@ -220,100 +68,17 @@ declare function flow:get-flow(
   $flow-name as xs:string,
   $flow-type as xs:string?) as element(hub:flow)?
 {
-  let $cache-name := fn:string-join(("flow:", $entity-name, $flow-name, $flow-type), "-")
-  return
-    hul:from-field-cache($cache-name, function() {
-      let $uris :=
-        hul:run-in-modules(function() {
-          let $type :=
-            if ($flow-type) then $flow-type
-            else "*"
-          return
-            cts:uri-match($ENTITIES-DIR || $entity-name || "/" || $type || "/" || $flow-name || "/*")
-        })
-      where fn:count($uris) > 0
-      return
-        flow:get-flow($entity-name, $flow-name, $flow-type, $uris)
-    },
-    xs:dayTimeDuration("PT10M"))
-};
-
-declare function flow:invalidate-flow-caches()
-{
-  for $name in xdmp:get-server-field-names()
-  where fn:starts-with($name, "flow:")
-  return
-    xdmp:set-server-field($name, ())
-};
-
-(:~
- : Returns a flow by name. This xml is dynamically constructed
- : by looking in the modules database.
- :
- : @param $entity-name - name of the entity that owns the flow
- : @param $flow-name - name of the flow to retrieve
- : @param $uris - uris used to build the entity xml
- : @return - xml describing the flow
- :)
-declare %private function flow:get-flow(
-  $entity-name as xs:string,
-  $flow-name as xs:string,
-  $flow-type as xs:string?,
-  $uris as xs:string*) as element(hub:flow)
-{
-  let $real-flow-type := fn:replace($uris[1], $ENTITIES-DIR || $entity-name || "/([^/]+)/" || $flow-name || ".*$", "$1")
-  let $map := map:map()
-  let $_ :=
-    let $type :=
-      if ($flow-type) then $flow-type
-      else "[^/]+"
-    let $regex := $ENTITIES-DIR || $entity-name || "/" || $type || "/" || $flow-name || "/([^/]+)/.*$"
-    for $dir in $uris
-    let $dir-name := fn:replace($dir, $regex, "$1")
-    let $child-uris := $uris[fn:matches(., $ENTITIES-DIR || $entity-name || "/" || $type || "/" || $flow-name || "/" || $dir-name || "/([^/]+)$")]
-    return
-      switch ($dir-name)
-        case "collector" return
-          map:put($map, "collector", flow:get-collector($flow-name, $child-uris))
-        case "content" return
-          map:put($map, "content", flow:get-content($flow-name, $child-uris))
-        case "headers" return
-          map:put($map, "headers", flow:get-headers($flow-name, $child-uris))
-        case "triples" return
-          map:put($map, "triples", flow:get-triples($flow-name, $child-uris))
-        case "writer" return
-          map:put($map, "writer", flow:get-writer($flow-name, $child-uris))
-        default return
-          ()
-  let $flow := hul:run-in-modules(function() {
-    let $uri := $ENTITIES-DIR || $entity-name || "/" || $real-flow-type || "/" || $flow-name || "/" || $flow-name || ".xml"
-    return
-      fn:doc($uri)/hub:flow
-  })
-  return
-    <flow xmlns="http://marklogic.com/data-hub">
-      <name>{$flow-name}</name>
-      <entity>{$entity-name}</entity>
-      <complexity>{ ($flow/hub:complexity/fn:data(), "simple")[1] }</complexity>
-      <data-format>{ $flow/hub:data-format/fn:data() }</data-format>
-      <type>{$real-flow-type}</type>
-      {map:get($map, "collector")}
-      <plugins>
-      {
-        if ($flow/hub:plugins/*) then
-          $flow/hub:plugins/*
+  hul:run-in-modules(function() {
+    /hub:flow[
+      hub:entity = $entity-name and
+      hub:name = $flow-name]
+      [
+        if (fn:exists($flow-type)) then
+          hub:type = $flow-type
         else
-        (
-          (map:get($map, "content"), $DEFAULT-CONTENT-PLUGIN)[1],
-          (map:get($map, "headers"), $NO-OP-PLUGIN)[1],
-          (map:get($map, "triples"), $NO-OP-PLUGIN)[1]
-        )
-      }
-      </plugins>
-      {
-        (map:get($map, "writer"), $DEFAULT-WRITER)[1]
-      }
-    </flow>
+          fn:true()
+      ]
+  })
 };
 
 (:~
@@ -325,30 +90,15 @@ declare %private function flow:get-flow(
 declare function flow:get-flows(
   $entity-name as xs:string) as element(hub:flows)
 {
-  let $uris := hul:run-in-modules(function() {
-    cts:uri-match($ENTITIES-DIR || "*")
-  })
-  let $flow-names :=
-    fn:distinct-values(
-      let $regex := $ENTITIES-DIR || $entity-name || "/(input|harmonize)/([^/]+)/.*$"
-      for $flow in $uris[fn:matches(., $regex)]
-      let $name := fn:replace($flow, $regex, "$2")
-      return
-        $name)
-  let $flows :=
-    for $flow-name in $flow-names
-    return
-      flow:get-flow($entity-name, $flow-name, (), $uris[fn:matches(., $ENTITIES-DIR || $entity-name || "/(input|harmonize)/" || $flow-name || "/.+")])
-  return
-    <flows xmlns="http://marklogic.com/data-hub">
-    {
-      $flows
-    }
-    </flows>
+  element hub:flows {
+    hul:run-in-modules(function() {
+      /hub:flow[hub:entity = $entity-name]
+    })
+  }
 };
 
 (:~
- : Returns a entity by name. This xml is dynamically constructed
+ : Returns an entity by name. This xml is dynamically constructed
  : by looking in the modules database.
  :
  : @param $entity-name - name of the entity to retrieve
@@ -423,16 +173,33 @@ declare function flow:get-entities() as element(hub:entities)
  : @return - a sequence of strings
  :)
 declare function flow:run-collector(
+  $flow as element(hub:flow),
   $job-id as xs:string,
-  $module-uri as xs:string,
   $options as map:map) as item()*
 {
-  let $_ := trace:set-job-id($job-id)
-  let $filename as xs:string := hul:get-file-from-uri($module-uri)
-  let $type := flow:get-type($filename)
-  let $ns := flow:get-module-ns($type)
-  let $func := xdmp:function(fn:QName($ns, "collect"), $module-uri)
-  let $_ := trace:init-trace("json")
+    (: sanity check on required info :)
+  if (fn:empty($flow/hub:collector/@module) or fn:empty($flow/hub:collector/@code-format)) then
+    fn:error(xs:QName("INVALID-PLUGIN"), "The plugin definition is invalid.")
+  else (),
+
+  (: assert that we are in query mode :)
+  let $_ts as xs:unsignedLong := xdmp:request-timestamp()
+
+  let $_ := trace:set-plugin-label("collector")
+
+  (: configure the run context :)
+  let $_ := (
+    rfc:with-job-id($job-id),
+    rfc:with-flow($flow),
+    rfc:with-module-uri($flow/hub:collector/@module),
+    rfc:with-options($options)
+  )
+
+  let $func := flow:make-function(
+    $flow/hub:collector/@code-format,
+    "collect",
+    $flow/hub:collector/@module
+  )
   let $before := xdmp:elapsed-time()
   let $resp :=
     try {
@@ -440,29 +207,14 @@ declare function flow:run-collector(
     }
     catch($ex) {
       debug:log(xdmp:describe($ex, (), ())),
-      trace:error-trace(
-        (),
-        $module-uri,
-        "collector",
-        "harmonize",
-        (),
-        $ex,
-        xdmp:elapsed-time() - $before
-      ),
+      trace:error-trace($ex, xdmp:elapsed-time() - $before),
       xdmp:rethrow()
     }
-  let $_ :=
-    trace:plugin-trace(
-      null-node {},
-      $module-uri,
-      "collector",
-      "harmonize",
-      null-node {},
-      if ($resp instance of json:array) then $resp
-      else json:to-array($resp),
-      xdmp:elapsed-time() - $before
-    )
-  let $_ := trace:write-trace()
+  (: log and write the trace :)
+  let $_ := (
+    trace:plugin-trace($resp, xdmp:elapsed-time() - $before),
+    trace:write-trace()
+  )
   return
     $resp
 };
@@ -479,77 +231,87 @@ declare function flow:run-flow(
   $job-id as xs:string,
   $flow as element(hub:flow),
   $identifier as xs:string,
-  $target-database as xs:unsignedLong,
-  $options as map:map) as empty-sequence()
+  $options as map:map)
 {
-  map:set-javascript-by-ref($options, fn:true()),
-  flow:run-flow($job-id, $flow, $identifier, (), $target-database, $options)
+  flow:run-flow($job-id, $flow, $identifier, (), $options)
 };
 
-declare function flow:run-plugins(
-  $flow as element(hub:flow),
-  $identifier as xs:string,
-  $content as item()?,
-  $options as map:map
-)
-{
-  let $content :=
-    map:new((
-      map:entry("identifier", $identifier),
-      if ($content) then
-        map:entry("content", $content)
-      else ()
-    ))
-  let $data-format := $flow/hub:data-format
-  let $flow-type := $flow/hub:type
-  let $flow-complexity := $flow/hub:complexity
-  let $_ := trace:init-trace(
-    if ($data-format = $XML) then "xml"
-    else "json")
-  let $_ :=
-    for $plugin in $flow/hub:plugins/hub:plugin
-    let $destination := $plugin/@dest
-    let $resp :=
-      flow:run-plugin(
-        $plugin,
-        $data-format,
-        $identifier,
-        map:get($content, "content"),
-        map:get($content, "headers"),
-        map:get($content, "triple"),
-        $flow-type,
-        $flow-complexity = "simple",
-        $options)
-    return
-      if (fn:empty($destination))
-      then ()
-      else map:put($content, $destination, $resp)
-  return
-    flow:make-envelope($content, $data-format)
-};
-
+(:~
+ : Runs a given flow
+ :
+ : @param $flow - xml describing the flow
+ : @param $identifier - the identifier to send to the flow steps (URI in corb lingo)
+ : @param $content - the content being loaded
+ : @param $options - a map of options passed in by the client
+ : @return - nothing
+ :)
 declare function flow:run-flow(
   $job-id as xs:string,
   $flow as element(hub:flow),
   $identifier as xs:string,
   $content as item()?,
-  $target-database as xs:unsignedLong,
-  $options as map:map) as empty-sequence()
+  $options as map:map)
 {
   (: assert that we are in query mode :)
-  let $_ts as xs:unsignedLong := xdmp:request-timestamp()
-  let $_ := trace:set-job-id($job-id)
-  let $envelope := flow:run-plugins($flow, $identifier, $content, $options)
-  let $_ :=
-    for $writer in $flow/hub:writer
-    return
-      flow:run-writer(
-        $writer, $identifier, $envelope,
-        $flow/hub:type, $flow/hub:data-format,
-        $target-database, $options)
-  let $_ := trace:write-trace()
+  let $_must_run_in_query_mode as xs:unsignedLong := xdmp:request-timestamp()
+
+  (: configure the run context :)
+  let $_ := (
+    rfc:with-job-id($job-id),
+    rfc:with-flow($flow),
+    rfc:with-id($identifier),
+    rfc:with-content($content),
+    rfc:with-options($options),
+    map:get($options, "target-database") ! rfc:with-target-database(.)
+  )
+
+  (: run the users main.(sjs|xqy) :)
   return
-    ()
+    flow:run-main($flow/hub:main)
+};
+
+declare function flow:clean-data($resp, $destination, $data-format)
+{
+  let $resp :=
+    typeswitch($resp)
+      case document-node() return
+        if (fn:count($resp/node()) > 1) then
+          fn:error(xs:QName("TOO_MANY_NODES"), "Too Many Nodes!. Return just 1 node")
+        else
+          $resp/node()
+      default return
+        $resp
+
+  (: clean up output :)
+  return
+    typeswitch($resp)
+      case object-node() | json:object return
+        (: object with $type key is ES response type :)
+        if ($resp instance of map:map and map:keys($resp) = "$type") then
+          $resp
+        else if ($data-format = $consts:XML) then
+          json:transform-from-json($resp, json:config("custom"))
+        else
+          $resp
+      case json:array return
+        if ($data-format = $consts:XML) then
+          json:array-values($resp)
+        else
+          $resp
+      case empty-sequence() return
+        if ($destination = "headers" and $data-format = $consts:JSON) then
+          json:object()
+        else if ($destination = "triples" and $data-format = $consts:JSON) then
+          json:array()
+        else
+          $resp
+      default return
+        if ($data-format = $consts:JSON and
+            rfc:get-code-format() = $consts:XQUERY and
+            $destination = "triples") then
+          json:to-array($resp)
+        else
+          $resp
 };
 
 (:~
@@ -558,55 +320,45 @@ declare function flow:run-flow(
  : @param $map - a map with all the stuff in it
  : @return - the newly constructed envelope
  :)
-declare function flow:make-envelope(
-  $map as map:map,
-  $data-format as xs:string)
+declare function flow:make-envelope($content, $headers, $triples, $data-format)
   as document-node()
 {
-  if ($data-format eq $JSON) then
-    let $headers := fn:head((map:get($map, "headers"), json:array()))
-    let $triples := fn:head((map:get($map, "triples"), json:array()))
-    let $content := fn:head((map:get($map, "content"), json:object()))
-    let $envelope :=
-      let $o := json:object()
-      let $_ := (
-        map:put($o, "headers", $headers),
-        map:put($o, "triples", $triples),
-        map:put($o, "instance",
-          if ($content instance of map:map and map:keys($content) = "$type") then
-            let $info := json:object()
-              => map:with("title", map:get($content, "$type"))
-              => map:with("version", map:get($content, "$version"))
-            return
+  let $content := flow:clean-data($content, "content", $data-format)
+  let $headers := flow:clean-data($headers, "headers", $data-format)
+  let $triples := flow:clean-data($triples, "triples", $data-format)
+  return
+    if ($data-format = $consts:JSON) then
+      let $envelope :=
+        let $o := json:object()
+        let $_ := (
+          map:put($o, "headers", $headers),
+          map:put($o, "triples", $triples),
+          map:put($o, "instance",
+            if ($content instance of map:map and map:keys($content) = "$type") then
               flow:instance-to-canonical-json($content)
-                => map:with("info", $info)
-          else
-            $content
-        ),
-        map:put($o, "attachments",
-          let $content := map:get($map, "content")
-          return
+            else
+              $content
+          ),
+          map:put($o, "attachments",
             if ($content instance of map:map and map:keys($content) = "$attachments") then
               map:get($content, "$attachments")
             else
               ()
+          )
         )
-      )
+        return
+          $o
+      let $wrapper := json:object()
+      let $_ := map:put($wrapper, "envelope", $envelope)
       return
-        $o
-    let $wrapper := json:object()
-    let $_ := map:put($wrapper, "envelope", $envelope)
-    return
-      xdmp:to-json($wrapper)
-  else
-    document {
-      <envelope xmlns="http://marklogic.com/entity-services">
-        <headers>{map:get($map, "headers")}</headers>
-        <triples>{map:get($map, "triples")}</triples>
-        <instance>
-        {
-          let $content := map:get($map, "content")
-          return
+        xdmp:to-json($wrapper)
+    else if ($data-format = $consts:XML) then
+      document {
+        <envelope xmlns="http://marklogic.com/entity-services">
+          <headers>{$headers}</headers>
+          <triples>{$triples}</triples>
+          <instance>
+          {
             if ($content instance of map:map and map:keys($content) = "$type") then (
               <info>
                 <title>{map:get($content, "$type")}</title>
@@ -616,20 +368,20 @@ declare function flow:make-envelope(
             )
             else
               $content
-        }
-        </instance>
-        <attachments>
-        {
-          let $content := map:get($map, "content")
-          return
+          }
+          </instance>
+          <attachments>
+          {
             if ($content instance of map:map and map:keys($content) = "$attachments") then
               map:get($content, "$attachments")
             else
               ()
-        }
-        </attachments>
-      </envelope>
-    }
+          }
+          </attachments>
+        </envelope>
+      }
+    else
+      fn:error(xs:QName("INVALID-DATA-FORMAT"), "Invalid data format: " || $data-format)
 };
 
 declare function flow:instance-to-canonical-json(
@@ -743,7 +495,7 @@ declare function flow:get-trace-input(
   let $_ :=
     switch($destination)
       case "content" return
-        if ($flow-type = "input") then
+        if ($flow-type = $consts:INPUT_FLOW) then
           if ($content instance of binary()) then
             map:put($o, "rawContent", "binary document")
           else
@@ -759,7 +511,7 @@ declare function flow:get-trace-input(
       )
       default return ()
   return
-    if ($data-format = $XML) then
+    if ($data-format = $consts:XML) then
       for $key in map:keys($o)
       return
         element { $key } {
@@ -772,141 +524,61 @@ declare function flow:get-trace-input(
       $o
 };
 
-(: Calls a plugin's function with the appropriate parameters :)
-declare function flow:call-plugin-function(
-  $plugin as element(hub:plugin),
-  $identifier as xs:string,
-  $content as item()?,
-  $headers as item()*,
-  $triples as sem:triple*,
-  $flow-type as xs:string,
-  $simple as xs:boolean,
-  $options as map:map)
+declare function flow:set-default-options(
+  $options as map:map,
+  $flow as element(hub:flow))
 {
-  let $destination as xs:string := $plugin/@dest
-  let $func := flow:get-function($plugin)
-  let $resp :=
-    if ($simple) then
-      switch ($destination)
-        case "content" return
-          if ($flow-type = "input") then
-            $func($identifier, $content, $options)
-          else
-            $func($identifier, $options)
-        case "headers" return
-          $func($identifier, $content, $options)
-        case "triples" return
-          $func($identifier, $content, $headers, $options)
-        default return ()
-    else
-      $func($identifier, $content, $headers, $triples, $options)
-  return
-    if ($resp instance of binary()) then
-      fn:error(xs:QName("CANT_RETURN_BINARY"), "You can't put a binary inside of an envelope.")
-    else
-      $resp
+  map:put($options, "entity", fn:string($flow/hub:entity)),
+  map:put($options, "flow", fn:string($flow/hub:name)),
+  map:put($options, "flowType", fn:string($flow/hub:type)),
+  map:put($options, "dataFormat", fn:string($flow/hub:data-format))
 };
 
-(:~
- : Run a given plugin
- :
- : @param $plugin - xml describing the plugin to run
- : @param $identifier - the identifier to send to the flow steps (URI in corb lingo)
- : @param $content - the output of the content plugin
- : @param $headers - the output of the headers plugin
- : @param $triples - the output of the triples plugin
- : @param $options - a map of options passed in by the client
- : @return - the output of the plugin. It varies.
- :)
-declare function flow:run-plugin(
-  $plugin as element(hub:plugin),
-  $data-format as xs:string,
-  $identifier as xs:string,
-  $content as item()?,
-  $headers as item()*,
-  $triples as sem:triple*,
-  $flow-type as xs:string,
-  $simple as xs:boolean,
-  $options as map:map)
+declare function flow:run-main(
+  $main as element(hub:main))
 {
-  (: blow up if there is no module uri :)
-  if (fn:empty($plugin/@module)) then
-    fn:error(xs:QName("MISSING-MODULE-URI"), "The given plugin xml is missing a @module uri")
+  (: sanity check on required info :)
+  if (fn:empty($main/@module) or fn:empty($main/@code-format)) then
+    fn:error(xs:QName("INVALID-PLUGIN"), "The plugin definition is invalid.")
   else (),
 
-  let $module-uri as xs:string? := $plugin/@module
-  let $destination as xs:string := $plugin/@dest
-  let $trace-input := flow:get-trace-input($plugin, $data-format, $content, $headers, $flow-type)
+  let $module-uri as xs:string? := $main/@module
+  let $_ := rfc:with-module-uri($module-uri)
+  let $func := flow:make-function($main/@code-format, "main", $module-uri)
   let $before := xdmp:elapsed-time()
-  let $resp :=
-    try {
-      flow:call-plugin-function(
-        $plugin, $identifier, $content,
-        $headers, $triples, $flow-type,
-        $simple, $options)
-    }
-    catch($ex) {
-      debug:log(xdmp:describe($ex, (), ())),
-      trace:error-trace(
-        $identifier,
-        $module-uri,
-        $destination,
-        $flow-type,
-        $trace-input,
-        $ex,
-        xdmp:elapsed-time() - $before
-      ),
-      xdmp:rethrow()
-    }
-  let $duration := xdmp:elapsed-time() - $before
-  let $resp :=
-    typeswitch($resp)
-      case document-node() return
-        if (fn:count($resp/node()) > 1) then
-          fn:error(xs:QName("TOO_MANY_NODES"), "Too Many Nodes!. Return just 1 node")
-        else
-          $resp/node()
-      default return
-        $resp
-
-  (: clean up output :)
-  let $resp :=
-    typeswitch($resp)
-      case object-node() | json:object return
-        (: object with $type key is ES response type :)
-        if ($resp instance of map:map and map:keys($resp) = "$type") then
-          $resp
-        else if ($data-format = $XML) then
-          json:transform-from-json($resp, json:config("custom"))
-        else
-          $resp
-      case json:array return
-        if ($data-format = $XML) then
-          json:array-values($resp)
-        else
-          $resp
-      default return
-        if ($data-format = $JSON and
-            flow:get-type(hul:get-file-from-uri($module-uri)) = $TYPE-XQUERY and
-            $destination = "triples") then
-          json:to-array($resp)
-        else
-          $resp
-
-  (: log the trace event :)
-  let $_ :=
-    trace:plugin-trace(
-      $identifier,
-      $module-uri,
-      $destination,
-      $flow-type,
-      $trace-input,
-      if ($data-format = $XML) then
-        $resp
+  let $resp := try {
+    let $options := rfc:get-options()
+    let $_ := map:set-javascript-by-ref($options, fn:true())
+    let $resp :=
+      if (rfc:get-flow-type() eq $consts:HARMONIZE_FLOW) then
+        $func(rfc:get-id(), $options)
       else
-        ($resp, null-node{})[1],
-      $duration
+        $func(rfc:get-id(), rfc:get-content(), $options)
+    let $_ := trace:plugin-trace($resp, xdmp:elapsed-time() - $before)
+    (: write the trace for the current identifier :)
+    let $_ := trace:write-trace()
+    return
+      $resp
+  }
+  catch($ex) {
+    if ($ex/error:name eq "PLUGIN-ERROR") then
+      (: plugin errors are already handled :)
+      ()
+    else (
+      (: this is an error in main.(sjs|xqy) :)
+      debug:log(xdmp:describe($ex, (), ())),
+
+      (: log the trace event for main :)
+      trace:set-plugin-label("main"),
+      trace:error-trace($ex, xdmp:elapsed-time() - $before)
+    ),
+    (: for input flows we want to rethrow to force a failure :)
+    if (rfc:get-flow-type() eq $consts:INPUT_FLOW) then (
+      xdmp:log("rethrowing"),
+      xdmp:rethrow()
     )
+    else ()
+  }
   return
     $resp
 };
@@ -921,19 +593,11 @@ declare function flow:run-plugin(
  : @return - the output of the writer. It varies.
  :)
 declare function flow:run-writer(
-  $writer as element(hub:writer),
+  $writer-function,
   $identifier as xs:string,
   $envelope as item(),
-  $flow-type as xs:string,
-  $data-format as xs:string,
-  $target-database as xs:unsignedLong,
   $options as map:map)
 {
-  let $module-uri as xs:string := $writer/@module
-  let $filename as xs:string := hul:get-file-from-uri($module-uri)
-  let $type := flow:get-type($filename)
-  let $ns := flow:get-module-ns($type)
-  let $func := xdmp:function(fn:QName($ns, "write"), $module-uri)
   let $before := xdmp:elapsed-time()
   let $resp :=
     try {
@@ -946,42 +610,24 @@ declare function flow:run-writer(
         $func($identifier, $envelope, $options)
       ',
       map:new((
-        map:entry("func", $func),
+        map:entry("func", $writer-function),
         map:entry("identifier", $identifier),
         map:entry("envelope", $envelope),
         map:entry("options", $options)
       )),
       map:new((
         map:entry("isolation", "different-transaction"),
-        map:entry("database", $target-database),
+        map:entry("database", rfc:get-target-database()),
         map:entry("transactionMode", "update-auto-commit")
       )))
     }
     catch($ex) {
       debug:log(xdmp:describe($ex, (), ())),
-      trace:error-trace(
-        $identifier,
-        $module-uri,
-        "writer",
-        $flow-type,
-        $envelope,
-        $ex,
-        xdmp:elapsed-time() - $before
-      ),
-      xdmp:rethrow()
+      trace:error-trace($ex, xdmp:elapsed-time() - $before),
+      fn:error(xs:QName("PLUGIN-ERROR"), "error in writer", $ex)
     }
   let $duration := xdmp:elapsed-time() - $before
-  let $_ :=
-    trace:plugin-trace(
-      $identifier,
-      $module-uri,
-      "writer",
-      $flow-type,
-      $envelope,
-      if ($data-format eq $flow:XML) then ()
-      else null-node {},
-      $duration
-    )
+  let $_ := trace:plugin-trace((), xdmp:elapsed-time() - $before)
   return
     $resp
 };
@@ -1035,11 +681,9 @@ declare function flow:validate-entities()
         return
           if ($collector) then
             let $module-uri := $collector/@module
-            let $filename as xs:string := hul:get-file-from-uri($module-uri)
-            let $type := flow:get-type($filename)
-            let $ns := flow:get-module-ns($type)
+            let $ns := flow:get-module-ns($collector/@code-format)
             return
-              if ($type eq $flow:TYPE-XQUERY) then
+              if ($collector/@code-format eq $consts:XQUERY) then
                 xdmp:eval(
                   'import module namespace x = "' || $ns || '" at "' || $module-uri || '"; ' ||
                   '()',
@@ -1062,12 +706,9 @@ declare function flow:validate-entities()
       }
     (: validate plugins :)
     let $_ :=
-      for $plugin in $flow/hub:plugins/hub:plugin[fn:exists(@module)]
-      let $destination := $plugin/@dest
-      let $module-uri := $plugin/@module
-      let $filename as xs:string := hul:get-file-from-uri($module-uri)
-      let $type := flow:get-type($filename)
-      let $ns := flow:get-module-ns($type)
+      for $main in $flow/hub:main
+      let $module-uri := $main/@module
+      let $ns := flow:get-module-ns($main/@code-format)
       return
         (:
          : Note that we are static checking the files.
@@ -1079,7 +720,7 @@ declare function flow:validate-entities()
          : typed. Static checking will only catch syntax errors in sjs.
          :)
         try {
-          if ($type eq $flow:TYPE-XQUERY) then
+          if ($main/@code-format eq $consts:XQUERY) then
             xdmp:eval(
               'import module namespace x = "' || $ns || '" at "' || $module-uri || '"; ' ||
               '()',
@@ -1092,12 +733,15 @@ declare function flow:validate-entities()
             )
         }
         catch($ex) {
-          flow:make-error-json(
-            $errors,
-            $entity/hub:name,
-            $flow/hub:name,
-            $destination,
-            $ex)
+          let $uri := ($ex/error:stack/error:frame)[1]/error:uri
+          let $plugin := hul:get-file-name(hul:get-file-from-uri($uri))
+          return
+            flow:make-error-json(
+              $errors,
+              $entity/hub:name,
+              $flow/hub:name,
+              $plugin,
+              $ex)
         }
     return
       ()
@@ -1107,22 +751,30 @@ declare function flow:validate-entities()
     )
 };
 
-(: Returns the plugin function to be called :)
-declare %private function flow:get-function($plugin as element(hub:plugin))
-  as xdmp:function
+declare function flow:safe-run($func)
 {
-  let $module-uri as xs:string := $plugin/@module
-  let $destination as xs:string := $plugin/@dest
-  let $filename as xs:string := hul:get-file-from-uri($module-uri)
-  let $type := flow:get-type($filename)
-  let $ns := flow:get-module-ns($type)
-  let $func-name :=
-    if ($type eq $TYPE-JAVASCRIPT) then
-      "create" || functx:capitalize-first($destination)
-    else
-      "create-" || $destination
+  let $before := xdmp:elapsed-time()
+  return
+    try {
+      let $resp := $func()
+      let $duration := xdmp:elapsed-time() - $before
+      let $_ := trace:plugin-trace($resp, $duration)
+      return
+        $resp
+    }
+    catch($ex) {
+      debug:log(xdmp:describe($ex, (), ())),
+      trace:error-trace($ex, xdmp:elapsed-time() - $before),
+      fn:error(xs:QName("PLUGIN-ERROR"), "error in a plugin", $ex)
+    }
+};
+
+declare %private function flow:make-function(
+  $code-format as xs:string?,
+  $func-name as xs:string,
+  $module-uri as xs:string)
+{
+  let $ns := flow:get-module-ns($code-format)
   return
     xdmp:function(fn:QName($ns, $func-name), $module-uri)
 };
-
-

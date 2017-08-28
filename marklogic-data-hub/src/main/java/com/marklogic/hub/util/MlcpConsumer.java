@@ -2,7 +2,6 @@ package com.marklogic.hub.util;
 
 import com.marklogic.hub.flow.FlowStatusListener;
 
-import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
 import java.util.regex.Matcher;
@@ -10,9 +9,9 @@ import java.util.regex.Pattern;
 
 public class MlcpConsumer implements Consumer<String> {
     private int currentPc = 0;
-    private final Pattern completedPattern = Pattern.compile("^.+completed (\\d+)%$");
-    private final Pattern successfulEventsPattern = Pattern.compile("^.+OUTPUT_RECORDS_COMMITTED:\\s+(\\d+).*$");
-    private final Pattern failedEventsPattern = Pattern.compile("^.+OUTPUT_RECORDS_FAILED\\s+(\\d+).*$");
+    private static final Pattern COMPLETED_PATTERN = Pattern.compile("^.+completed (\\d+)%$");
+    private static final Pattern SUCCESSFUL_EVENTS_PATTERN = Pattern.compile("^.+OUTPUT_RECORDS_COMMITTED:\\s+(\\d+).*$");
+    private static final Pattern FAILED_EVENTS_PATTERN = Pattern.compile("^.+OUTPUT_RECORDS_FAILED\\s+(\\d+).*$");
     private AtomicLong successfulEvents;
     private AtomicLong failedEvents;
     private FlowStatusListener statusListener;
@@ -29,7 +28,7 @@ public class MlcpConsumer implements Consumer<String> {
 
     @Override
     public void accept(String status) {
-        Matcher m = completedPattern.matcher(status);
+        Matcher m = COMPLETED_PATTERN.matcher(status);
         if (m.matches()) {
             int pc = Integer.parseInt(m.group(1));
 
@@ -39,16 +38,18 @@ public class MlcpConsumer implements Consumer<String> {
             }
         }
 
-        m = successfulEventsPattern.matcher(status);
+        m = SUCCESSFUL_EVENTS_PATTERN.matcher(status);
         if (m.matches()) {
             successfulEvents.addAndGet(Long.parseLong(m.group(1)));
         }
 
-        m = failedEventsPattern.matcher(status);
+        m = FAILED_EVENTS_PATTERN.matcher(status);
         if (m.matches()) {
             failedEvents.addAndGet(Long.parseLong(m.group(1)));
         }
 
-        statusListener.onStatusChange(jobId, currentPc, status);
+        if (statusListener != null) {
+            statusListener.onStatusChange(jobId, currentPc, status);
+        }
     }
 }

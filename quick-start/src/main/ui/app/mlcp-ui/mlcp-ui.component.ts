@@ -474,7 +474,7 @@ export class MlcpUiComponent implements OnChanges {
 
     _.each(this.groups, (group) => {
       if (this.isGroupVisible(group.category)) {
-        _.each(group.settings, (setting) => {
+        _.each(group.settings, (setting: any) => {
           if (setting.value) {
             const key = setting.field;
             let value = setting.value;

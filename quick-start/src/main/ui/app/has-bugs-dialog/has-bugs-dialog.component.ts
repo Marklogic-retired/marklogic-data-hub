@@ -11,11 +11,13 @@ import { MdlDialogReference } from '@angular-mdl/core';
   styleUrls: ['./has-bugs-dialog.component.scss']
 })
 export class HasBugsDialogComponent {
-  errors: string;
+  public errors: any;
 
   constructor(
     public dialog: MdlDialogReference,
-    @Inject('errors') errors: any) {
-    this.errors = errors.content.msg;
+    @Inject('errors') errors: any)
+  {
+      this.errors = errors;
+      console.log(this.errors);
   }
 }

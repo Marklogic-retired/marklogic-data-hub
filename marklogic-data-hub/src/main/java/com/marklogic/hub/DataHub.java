@@ -38,6 +38,7 @@ import com.marklogic.hub.deploy.HubAppDeployer;
 import com.marklogic.hub.deploy.commands.*;
 import com.marklogic.hub.deploy.util.HubDeployStatusListener;
 import com.marklogic.hub.error.ServerValidationException;
+import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.JsonXor;
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.admin.AdminManager;
@@ -400,109 +401,6 @@ public class DataHub {
         HubAppDeployer deployer = new HubAppDeployer(getManageClient(), getAdminManager(), listener);
         deployer.setCommands(getCommandList());
         deployer.undeploy(config);
-    }
-
-    public boolean updateHubFromPre110() {
-        boolean result = false;
-        File buildGradle = Paths.get(this.hubConfig.projectDir, "build.gradle").toFile();
-        try {
-            // step 1: update build.gradle
-            String text = new String(FileCopyUtils.copyToByteArray(buildGradle));
-            String version = hubConfig.getJarVersion();
-            text = Pattern.compile("^(\\s*)id\\s+['\"]com.marklogic.ml-data-hub['\"]\\s+version.+$", Pattern.MULTILINE).matcher(text).replaceAll("$1id 'com.marklogic.ml-data-hub' version '" + version + "'");
-            text = Pattern.compile("^(\\s*)compile.+marklogic-data-hub.+$", Pattern.MULTILINE).matcher(text).replaceAll("$1compile 'com.marklogic:marklogic-data-hub:" + version + "'");
-            FileUtils.writeStringToFile(buildGradle, text);
-
-            // step 2: create the internal-hub-config dir and the gradle files
-            HubProject hp = new HubProject(hubConfig);
-            hp.init();
-
-            // step 3: rename marklogic-config to user-config (if marklogic-config exists)
-            File markLogicConfig = Paths.get(this.hubConfig.projectDir, HubConfig.OLD_HUB_CONFIG_DIR).toFile();
-            Path userConfigDir = this.hubConfig.getUserConfigDir();
-            if (markLogicConfig.exists() && markLogicConfig.isDirectory()) {
-                FileUtils.forceDelete(userConfigDir.toFile());
-                FileUtils.moveDirectory(markLogicConfig, userConfigDir.toFile());
-
-                // fix unquoted ports in old configs
-                Files.walkFileTree(this.hubConfig.getUserServersDir(), new SimpleFileVisitor<Path>() {
-                        @Override
-                        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                            if (file.getFileName().toString().endsWith(".json")) {
-                                String fileContents = FileUtils.readFileToString(file.toFile());
-                                for (String findMe : new String[]{"%%mlStagingPort%%", "%%mlFinalPort%%", "%%mlTracePort%%", "%%mlJobPort%%"}) {
-                                    fileContents = Pattern.compile("(\"port\"\\s*:\\s*)" + findMe).matcher(fileContents).replaceAll("$1\"" + findMe + "\"");
-                                }
-                                FileUtils.writeStringToFile(file.toFile(), fileContents);
-                            }
-                            return FileVisitResult.CONTINUE;
-                        }
-                });
-
-                // step 3.5: tease out user's config file changes
-                Files.walkFileTree(userConfigDir, new SimpleFileVisitor<Path>() {
-                    @Override
-                    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                        if (file.getFileName().toString().endsWith(".json")) {
-                            File hubFile = new File(file.toString().replace(HubConfig.USER_CONFIG_DIR, HubConfig.HUB_CONFIG_DIR));
-                            if (hubFile.exists()) {
-                                JsonNode xored = JsonXor.xor(hubFile, file.toFile());
-                                if (xored.size() > 0) {
-                                    ObjectMapper objectMapper = new ObjectMapper();
-                                    FileOutputStream fileOutputStream = new FileOutputStream(file.toFile());
-                                    objectMapper.writerWithDefaultPrettyPrinter().writeValue(fileOutputStream, xored);
-                                    fileOutputStream.flush();
-                                    fileOutputStream.close();
-                                }
-                                else {
-                                    FileUtils.forceDelete(file.toFile());
-                                }
-                            }
-                        }
-                        return FileVisitResult.CONTINUE;
-                    }
-
-                });
-
-            }
-
-            // step 4: install hub modules into MarkLogic
-            install();
-
-            result = true;
-        }
-        catch(IOException e) {
-            e.printStackTrace();
-        }
-        return result;
-    }
-
-    public boolean updateHubFrom110() {
-        boolean result = false;
-        File buildGradle = Paths.get(this.hubConfig.projectDir, "build.gradle").toFile();
-        try {
-            // step 1: update the hub-internal-config files
-            HubProject hp = new HubProject(hubConfig);
-            hp.init();
-
-            // step 2: replace the hub version in build.gradle
-            String text = new String(FileCopyUtils.copyToByteArray(buildGradle));
-            String version = hubConfig.getJarVersion();
-            text = Pattern.compile("^(\\s*)id\\s+['\"]com.marklogic.ml-data-hub['\"]\\s+version.+$", Pattern.MULTILINE).matcher(text).replaceAll("$1id 'com.marklogic.ml-data-hub' version '" + version + "'");
-            text = Pattern.compile("^(\\s*)compile.+marklogic-data-hub.+$", Pattern.MULTILINE).matcher(text).replaceAll("$1compile 'com.marklogic:marklogic-data-hub:" + version + "'");
-            FileUtils.writeStringToFile(buildGradle, text);
-
-            hubConfig.getHubSecurityDir().resolve("roles").resolve("data-hub-user.json").toFile().delete();
-
-            // step 3: install hub modules into MarkLogic
-            install();
-
-            result = true;
-        }
-        catch(IOException e) {
-            e.printStackTrace();
-        }
-        return result;
     }
 
     /**

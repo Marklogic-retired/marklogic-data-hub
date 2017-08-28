@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <flow xmlns="http://marklogic.com/data-hub">
-  <complexity>simple</complexity>
-  <data-format>application/json</data-format>
-  <plugins>
-  </plugins>
+<name>my-test-flow1</name>
+<entity>test</entity>
+<type>harmonize</type>
+<data-format>json</data-format>
+<code-format>sjs</code-format>
+<collector code-format="sjs" module="/entities/test/harmonize/my-test-flow1/collector.sjs"></collector>
+<main code-format="sjs" module="/entities/test/harmonize/my-test-flow1/main.sjs"></main>
 </flow>

@@ -18,7 +18,13 @@ package com.marklogic.quickstart.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.client.datamovement.JobTicket;
 import com.marklogic.hub.FlowManager;
-import com.marklogic.hub.flow.*;
+import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.flow.Flow;
+import com.marklogic.hub.flow.FlowRunner;
+import com.marklogic.hub.flow.FlowStatusListener;
+import com.marklogic.hub.flow.FlowType;
+import com.marklogic.hub.flow.impl.FlowImpl;
+import com.marklogic.hub.util.MlcpRunner;
 import com.marklogic.quickstart.auth.ConnectionAuthenticationToken;
 import com.marklogic.quickstart.model.EnvironmentConfig;
 import com.marklogic.quickstart.model.FlowModel;
@@ -68,7 +74,7 @@ public class FlowManagerService {
         for (String flowName : flowNames) {
             if (flowName.equals("REST")) continue;
 
-            Flow f = AbstractFlow.loadFromFile(flowPath.resolve(flowName).resolve(flowName + ".xml").toFile());
+            Flow f = FlowImpl.loadFromFile(flowPath.resolve(flowName).resolve(flowName + ".xml").toFile());
             FlowModel flow = new FlowModel(entityName, flowName);
             if (f != null) {
                 flow.dataFormat = f.getDataFormat();
@@ -142,7 +148,8 @@ public class FlowManagerService {
     }
 
     public void runMlcp(Flow flow, JsonNode json, FlowStatusListener statusListener) {
-        MlcpRunner runner = new MlcpRunner(envConfig().getMlSettings(), flow, json, statusListener);
+        HubConfig hubConfig = envConfig().getMlSettings();
+        MlcpRunner runner = new MlcpRunner("com.marklogic.quickstart.util.MlcpMain", hubConfig, flow, hubConfig.newStagingClient(), json, statusListener);
         runner.start();
     }
 }

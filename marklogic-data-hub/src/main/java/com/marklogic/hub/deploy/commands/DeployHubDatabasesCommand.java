@@ -15,9 +15,6 @@
  */
 package com.marklogic.hub.deploy.commands;
 
-import java.io.File;
-import java.util.*;
-
 import com.marklogic.appdeployer.ConfigDir;
 import com.marklogic.appdeployer.command.AbstractUndoableCommand;
 import com.marklogic.appdeployer.command.CommandContext;
@@ -28,6 +25,9 @@ import com.marklogic.appdeployer.command.databases.DeployDatabaseCommandComparat
 import com.marklogic.appdeployer.command.databases.DeploySchemasDatabaseCommand;
 import com.marklogic.appdeployer.command.databases.DeployTriggersDatabaseCommand;
 import com.marklogic.hub.HubConfig;
+
+import java.io.File;
+import java.util.*;
 
 /**
  * This commands handles deploying/undeploying every database file except the "default" ones of content-database.json,

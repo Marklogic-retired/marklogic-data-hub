@@ -20,6 +20,9 @@ module namespace trace = "http://marklogic.com/data-hub/trace";
 import module namespace config = "http://marklogic.com/data-hub/config"
   at "/com.marklogic.hub/lib/config.xqy";
 
+import module namespace consts = "http://marklogic.com/data-hub/consts"
+  at "/com.marklogic.hub/lib/consts.xqy";
+
 import module namespace err = "http://marklogic.com/data-hub/err"
   at "/com.marklogic.hub/lib/error-lib.xqy";
 
@@ -29,16 +32,18 @@ import module namespace hul = "http://marklogic.com/data-hub/hub-utils-lib"
 import module namespace json="http://marklogic.com/xdmp/json"
   at "/MarkLogic/json/json.xqy";
 
+import module namespace rfc = "http://marklogic.com/data-hub/run-flow-context"
+  at "/com.marklogic.hub/lib/run-flow-context.xqy";
+
 import module namespace search = "http://marklogic.com/appservices/search"
   at "/MarkLogic/appservices/search/search.xqy";
 
 declare option xdmp:mapping "false";
 
-declare variable $FORMAT-XML := "xml";
-declare variable $FORMAT-JSON := "json";
-
+(: new trace-settings are initialized for each transaction :)
 declare %private variable $current-trace-settings := map:map();
 
+(: a new trace is initialized for each transaction :)
 declare %private variable $current-trace := trace:new-trace();
 
 declare function trace:new-trace()
@@ -88,24 +93,7 @@ declare function trace:has-errors() as xs:boolean
   (map:get($current-trace-settings, "_has_errors"), fn:false())[1] eq fn:true()
 };
 
-declare function trace:set-job-id($job-id as xs:string)
-{
-  map:put($current-trace-settings, "job-id", $job-id)
-};
-
-declare function trace:init-trace($format as xs:string)
-{
-  map:put($current-trace-settings, "data-format", $format)
-};
-
-(:declare function trace:reset-counts()
-{
-  map:put($current-trace-settings, "error-count", 0),
-  map:put($current-trace-settings, "completed-items", json:array()),
-  map:put($current-trace-settings, "failed-items", json:array())
-};:)
-
-declare function trace:increment-error-count()
+declare %private function trace:increment-error-count()
 {
   map:put($current-trace-settings, "error-count", trace:get-error-count() + 1)
 };
@@ -115,14 +103,68 @@ declare function trace:get-error-count()
   (map:get($current-trace-settings, "error-count"), 0)[1]
 };
 
-declare function trace:add-failed-item($item as xs:string)
+declare %private function trace:add-failed-item($item as xs:string)
 {
   json:array-push(trace:get-failed-items(), $item)
 };
 
-declare function trace:add-completed-item($item as xs:string)
+declare %private function trace:add-completed-item($item as xs:string)
 {
   json:array-push(trace:get-completed-items(), $item)
+};
+
+(:
+ : Sets the label of the currently running plugin
+ :
+ : @param $label - the label of the running plugin
+ :)
+declare function trace:set-plugin-label($label as xs:string)
+{
+  map:put($current-trace, "plugin-label", $label)
+};
+
+declare function trace:get-plugin-label()
+as xs:string
+{
+  map:get($current-trace, "plugin-label")
+};
+
+declare function trace:reset-plugin-input()
+{
+  map:put($current-trace, "plugin-input", json:object())
+};
+
+declare %private function trace:get-plugin-input()
+{
+  let $o := map:get($current-trace, "plugin-input")
+  where fn:exists($o)
+  return
+    if (rfc:is-json()) then $o
+    else
+      for $key in map:keys($o)
+      return
+        element { $key } {
+          let $value := map:get($o, $key)
+          return
+            if ($value instance of null-node()) then ()
+            else $value
+        }
+};
+
+(:
+ : Registers an input with the trace library
+ :
+ : @param $label - the label of the input being registered
+ : @param $input - the value of the input being registered
+ :)
+declare function trace:set-plugin-input(
+  $label as xs:string,
+  $input)
+{
+  let $existing := (map:get($current-trace, "plugin-input"), json:object())[1]
+  let $_ := map:put($existing, $label, $input)
+  return
+    map:put($current-trace, "plugin-input", $existing)
 };
 
 declare function trace:get-completed-items()
@@ -149,66 +191,60 @@ declare function trace:get-failed-items()
 
 declare function trace:write-trace()
 {
-  let $identifier := map:get($current-trace, "identifier")
+  let $identifier := rfc:get-id()
   where $identifier instance of xs:string
   return
     trace:add-completed-item($identifier),
   trace:write-error-trace()
 };
 
-declare function trace:write-error-trace()
+declare %private function trace:write-error-trace()
 {
   if (trace:enabled() or trace:has-errors()) then (
-    let $format := map:get($current-trace-settings, "data-format")
     let $trace :=
-      if ($format eq $FORMAT-JSON) then
+      if (rfc:is-json()) then
         xdmp:to-json((
           map:entry("trace",
             map:new((
-              map:entry("jobId", map:get($current-trace-settings, "job-id")),
-              map:entry("format", map:get($current-trace, "format")),
+              map:entry("jobId", rfc:get-job-id()),
+              map:entry("format", rfc:get-data-format()),
               map:entry("traceId", map:get($current-trace, "traceId")),
               map:entry("created", map:get($current-trace, "created")),
-              map:entry("identifier", map:get($current-trace, "identifier")),
-              map:entry("flowType", map:get($current-trace, "flowType")),
+              map:entry("identifier", rfc:get-id()),
+              map:entry("flowType", rfc:get-flow-type()),
               map:entry("hasError", trace:has-errors()),
-              for $key in ("collectorPlugin", "contentPlugin", "headersPlugin", "triplesPlugin", "writerPlugin")
-              let $m := map:get($current-trace, $key)
+              let $steps := json:array()
+              let $_ :=
+                for $step in map:get($current-trace, "traceSteps")
+                return
+                  json:array-push($steps, $step)
               return
-                if (fn:exists($m)) then
-                  map:entry($key, map:new((
-                    map:get($m, "pluginModuleUri") ! map:entry("pluginModuleUri", .),
-                    map:entry("input", map:get($m, "input")),
-                    map:entry("output", map:get($m, "output")),
-                    map:entry("error", map:get($m, "error")),
-                    map:entry("duration", map:get($m, "duration"))
-                  )))
-                else ()
+                map:entry("steps", $steps)
             ))
           )
         ))
       else
         document {
           element trace {
-            element jobId { map:get($current-trace-settings, "job-id") },
-            element format { map:get($current-trace, "format") },
+            element jobId { rfc:get-job-id() },
+            element format { rfc:get-data-format() },
             element traceId { map:get($current-trace, "traceId") },
             element created { map:get($current-trace, "created") },
-            element identifier { map:get($current-trace, "identifier") },
-            element flowType { map:get($current-trace, "flowType") },
+            element identifier { rfc:get-id() },
+            element flowType { rfc:get-flow-type() },
             element hasError { trace:has-errors() },
-            for $key in ("collectorPlugin", "contentPlugin", "headersPlugin", "triplesPlugin", "writerPlugin")
-            let $m := map:get($current-trace, $key)
-            return
-              if (fn:exists($m)) then
-                element { $key } {
-                  map:get($m, "pluginModuleUri") ! element pluginModuleUri { . },
-                  element input { map:get($m, "input") },
-                  element output { map:get($m, "output") },
-                  element error { map:get($m, "error") },
-                  element duration { map:get($m, "duration") }
+            element steps {
+              for $step in map:get($current-trace, "traceSteps")
+              return
+                element step {
+                  element label { map:get($step, "label") },
+                  element input { map:get($step, "input") },
+                  element output { map:get($step, "output") },
+                  element error { map:get($step, "error") },
+                  element duration { map:get($step, "duration") },
+                  element options { map:get($step, "options") }
                 }
-              else ()
+            }
           }
         }
     return
@@ -232,89 +268,63 @@ declare function trace:write-error-trace()
       map:new((
         map:entry("database", xdmp:database($config:TRACE-DATABASE)),
         map:entry("transactionMode", "update-auto-commit")
-      ))),
-    xdmp:set($current-trace, trace:new-trace())
+      )))
+  )
+  else (),
+  xdmp:set($current-trace, trace:new-trace())
+};
+
+declare function trace:plugin-trace(
+  $output,
+  $duration) as empty-sequence()
+{
+  if (trace:enabled()) then(
+    let $new-step := map:map()
+    let $_ := (
+      map:put($new-step, "label", get-plugin-label()),
+      trace:get-plugin-input() ! map:put($new-step, "input", .),
+      map:put($new-step, "output", $output),
+      map:put($new-step, "duration", $duration),
+      map:put($new-step, "options", json:object(document { rfc:get-options() }/node()))
+    )
+    let $trace-steps := (
+      map:get($current-trace, "traceSteps"),
+      $new-step
+    )
+    return
+      map:put($current-trace, "traceSteps", $trace-steps)
   )
   else ()
 };
 
-declare function trace:plugin-trace(
-  $identifier,
-  $module-uri,
-  $plugin-type as xs:string,
-  $flowType as xs:string,
-  $input,
-  $output,
-  $duration as xs:dayTimeDuration)
-{
-  let $format :=
-    let $o :=
-      if ($input instance of document-node()) then
-        $input/node()
-      else
-        $input
-    return
-      typeswitch($o)
-        case element() return "xml"
-        case object-node() return "json"
-        case array-node() return "json"
-        default return "xml"
-  return
-    map:put($current-trace, "format", $format),
-  map:put($current-trace, "identifier", $identifier),
-  map:put($current-trace, "flowType", $flowType),
-  let $plugin-map := map:new((
-    $module-uri ! map:entry("pluginModuleUri", .),
-    map:entry("input", $input),
-    map:entry("output", $output),
-    map:entry("duration", $duration)
-  ))
-  return
-    map:put($current-trace, $plugin-type || "Plugin", $plugin-map)
-};
-
 declare function trace:error-trace(
-  $identifier as xs:string?,
-  $module-uri as xs:string,
-  $plugin-type as xs:string,
-  $flowType as xs:string,
-  $input,
   $error as element(error:error),
   $duration as xs:dayTimeDuration)
 {
+  let $identifier := rfc:get-id()
   let $_ := trace:increment-error-count()
   let $_ := $identifier ! trace:add-failed-item(.)
-  let $format :=
-    let $o :=
-      if ($input instance of document-node()) then
-        $input/node()
-      else
-        $input
-    return
-      typeswitch($o)
-        case element() return "xml"
-        case object-node() return "json"
-        case array-node() return "json"
-        default return "xml"
-  return
-    map:put($current-trace, "format", $format),
-  map:put($current-trace, "identifier", $identifier),
-  map:put($current-trace, "flowType", $flowType),
-  map:put($current-trace-settings, "_has_errors", fn:true()),
-  let $plugin-map := map:new((
-    $module-uri ! map:entry("pluginModuleUri", .),
-    map:entry("input", $input),
-    map:entry("error",
-      if (map:get($current-trace-settings, "data-format") eq $FORMAT-JSON) then
-        $error/err:error-to-json(.)
-      else
-        $error
-    ),
-    map:entry("duration", $duration)
-  ))
-  let $_ := map:put($current-trace, $plugin-type || "Plugin", $plugin-map)
-  let $_ := trace:write-error-trace()
-  return ()
+  return (
+    map:put($current-trace-settings, "_has_errors", fn:true()),
+    let $trace-steps := (
+      map:get($current-trace, "traceSteps"),
+      map:new((
+        map:entry("label", get-plugin-label()),
+        map:entry("input", get-plugin-input()),
+        map:entry("error",
+          if (rfc:is-json()) then
+            $error/err:error-to-json(.)
+          else
+            $error
+        ),
+        map:entry("duration", $duration),
+        map:entry("options", rfc:get-options())
+      ))
+    )
+    let $_ := map:put($current-trace, "traceSteps", $trace-steps)
+    let $_ := trace:write-error-trace()
+    return ()
+  )
 };
 
 declare function trace:_walk_json($nodes as node()* ,$o)
@@ -332,7 +342,18 @@ declare function trace:_walk_json($nodes as node()* ,$o)
       case array-node() return
         let $name as xs:string := fn:string(fn:node-name($n))
         return
-          map:put($o, $name, xdmp:quote($n))
+          if ($name = "steps") then
+            let $a := json:array()
+            let $_ :=
+              for $value in $n/node()
+              let $oo := json:object()
+              let $_ := trace:_walk_json($value/node(), $oo)
+              return
+                json:array-push($a, $oo)
+            return
+              map:put($o, $name, $a)
+          else
+            map:put($o, $name, xdmp:quote($n))
       case object-node() return
         let $oo := map:new()
         let $name as xs:string := fn:string(fn:node-name($n))
@@ -398,7 +419,7 @@ declare function trace:_walk_json($nodes as node()* ,$o)
         let $_ :=
           for $x in $n/*
           return
-            map:put($oo, fn:local-name($x), xdmp:quote($x, $quote-options))
+            map:put($oo, fn:local-name($x), xdmp:quote($x/*, $quote-options))
         return
           map:put($o, "input", $oo)
       case element(output) return
@@ -409,6 +430,16 @@ declare function trace:_walk_json($nodes as node()* ,$o)
         map:put($o, "duration", fn:seconds-from-duration(xs:dayTimeDuration($n)))
       case element(hasError) return
         map:put($o, "hasError", xs:boolean($n))
+      case element(steps) return
+        let $a := json:array()
+        let $_ :=
+          for $step in $n/step
+          let $oo := json:object()
+          let $_ := trace:_walk_json($step/*, $oo)
+          return
+            json:array-push($a, $oo)
+        return
+          map:put($o, "steps", $a)
       case element() return
         if ($n/*) then
           let $oo := json:object()

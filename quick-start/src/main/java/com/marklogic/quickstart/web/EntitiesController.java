@@ -17,7 +17,6 @@ package com.marklogic.quickstart.web;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.hub.flow.Flow;
-import com.marklogic.hub.flow.FlowStatusListener;
 import com.marklogic.hub.flow.FlowType;
 import com.marklogic.quickstart.EnvironmentAware;
 import com.marklogic.quickstart.model.FlowModel;
@@ -28,7 +27,6 @@ import com.marklogic.quickstart.service.DataHubService;
 import com.marklogic.quickstart.service.EntityManagerService;
 import com.marklogic.quickstart.service.FlowManagerService;
 import com.marklogic.quickstart.service.JobService;
-import org.apache.avro.data.Json;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

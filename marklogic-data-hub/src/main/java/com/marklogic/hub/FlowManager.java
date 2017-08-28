@@ -22,14 +22,23 @@ import com.marklogic.client.extensions.ResourceServices.ServiceResult;
 import com.marklogic.client.extensions.ResourceServices.ServiceResultIterator;
 import com.marklogic.client.io.DOMHandle;
 import com.marklogic.client.util.RequestParameters;
-import com.marklogic.hub.flow.*;
+import com.marklogic.hub.flow.Flow;
+import com.marklogic.hub.flow.FlowRunner;
+import com.marklogic.hub.flow.FlowType;
+import com.marklogic.hub.flow.impl.FlowImpl;
 import com.marklogic.hub.flow.impl.FlowRunnerImpl;
 import com.marklogic.hub.job.JobManager;
+import com.marklogic.hub.scaffold.Scaffolding;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import java.io.File;
+import java.io.FileFilter;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -120,6 +129,58 @@ public class FlowManager extends ResourceManager {
         return flowFromXml(parent.getDocumentElement());
     }
 
+    public List<String> getLegacyFlows() {
+        List<String> oldFlows = new ArrayList<>();
+        Path entitiesDir = Paths.get(hubConfig.projectDir).resolve("plugins").resolve("entities");
+
+        File[] entityDirs = entitiesDir.toFile().listFiles(pathname -> pathname.isDirectory());
+        if (entityDirs != null) {
+            for (File entityDir : entityDirs) {
+                Path inputDir = entityDir.toPath().resolve("input");
+                Path harmonizeDir = entityDir.toPath().resolve("harmonize");
+
+
+                File[] inputFlows = inputDir.toFile().listFiles((pathname) -> pathname.isDirectory() && !pathname.getName().equals("REST"));
+                if (inputFlows != null) {
+                    for (File inputFlow : inputFlows) {
+                        File[] mainFiles = inputFlow.listFiles((dir, name) -> name.matches("main\\.(sjs|xqy)"));
+                        if (mainFiles.length < 1) {
+                            oldFlows.add(entityDir.getName() + " => " + inputFlow.getName());
+                        }
+                    }
+                }
+
+                File[] harmonizeFlows = harmonizeDir.toFile().listFiles((pathname) -> pathname.isDirectory() && !pathname.getName().equals("REST"));
+                if (harmonizeFlows != null) {
+                    for (File harmonizeFlow : harmonizeFlows) {
+                        File[] mainFiles = harmonizeFlow.listFiles((dir, name) -> name.matches("main\\.(sjs|xqy)"));
+                        if (mainFiles.length < 1) {
+                            oldFlows.add(entityDir.getName() + " => " + harmonizeFlow.getName());
+                        }
+                    }
+                }
+            }
+        }
+
+        return oldFlows;
+    }
+
+    public List<String> updateLegacyFlows() throws IOException {
+
+        Scaffolding scaffolding = new Scaffolding(hubConfig.projectDir, hubConfig.newFinalClient());
+
+        List<String> updatedFlows = new ArrayList<>();
+        Path entitiesDir = Paths.get(hubConfig.projectDir).resolve("plugins").resolve("entities");
+        File[] entityDirs = entitiesDir.toFile().listFiles(pathname -> pathname.isDirectory());
+        if (entityDirs != null) {
+            for (File entityDir : entityDirs) {
+                updatedFlows.addAll(scaffolding.updateLegacyFlows(entityDir.getName()));
+            }
+        }
+
+        return updatedFlows;
+    }
+
     public FlowRunner newFlowRunner() {
         return new FlowRunnerImpl(hubConfig);
     }
@@ -130,18 +191,6 @@ public class FlowManager extends ResourceManager {
      * @return a Flow instance
      */
     public static Flow flowFromXml(Element doc) {
-        Flow f = null;
-
-        String complexity = null;
-        NodeList elements = doc.getElementsByTagNameNS(HUB_NS, "complexity");
-        if (elements.getLength() == 1) {
-            complexity = elements.item(0).getTextContent();
-        }
-
-        if (complexity != null && complexity.equals(FlowComplexity.SIMPLE.toString())) {
-            f = new SimpleFlow(doc);
-        }
-
-        return f;
+        return FlowImpl.fromXml(doc);
     }
 }

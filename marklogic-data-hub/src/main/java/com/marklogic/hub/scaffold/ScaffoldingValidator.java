@@ -1,11 +1,11 @@
 package com.marklogic.hub.scaffold;
 
+import com.marklogic.hub.flow.CodeFormat;
+import com.marklogic.hub.flow.FlowType;
+
 import java.io.File;
 import java.nio.file.Paths;
 import java.util.regex.Pattern;
-
-import com.marklogic.hub.flow.FlowType;
-import com.marklogic.hub.plugin.PluginFormat;
 
 public class ScaffoldingValidator {
 
@@ -18,7 +18,7 @@ public class ScaffoldingValidator {
    public boolean isUniqueRestServiceExtension(String name) {
        String entityNameFilter = "[a-zA-Z0-9_.-]+";
        String flowTypeFilter = "(" + FlowType.INPUT + "|" + FlowType.HARMONIZE + ")";
-       String pluginFormatFilter = "(" + PluginFormat.XQUERY + "|" + PluginFormat.JAVASCRIPT + ")";
+       String pluginFormatFilter = "(" + CodeFormat.XQUERY + "|" + CodeFormat.JAVASCRIPT + ")";
        String absoluteFilePathFilter = Scaffolding.getAbsolutePath(pluginsDir.getAbsolutePath(), "entities", entityNameFilter, flowTypeFilter, "REST", "services", name + "." + pluginFormatFilter);
        return !checkIfFileExists(pluginsDir, absoluteFilePathFilter);
    }
@@ -46,7 +46,7 @@ public class ScaffoldingValidator {
    public boolean isUniqueRestTransform(String name) {
        String entityNameFilter = "[a-zA-Z0-9_.-]+";
        String flowTypeFilter = "(" + FlowType.INPUT + "|" + FlowType.HARMONIZE + ")";
-       String pluginFormatFilter = "(" + PluginFormat.XQUERY + "|" + PluginFormat.JAVASCRIPT + ")";
+       String pluginFormatFilter = "(" + CodeFormat.XQUERY + "|" + CodeFormat.JAVASCRIPT + ")";
        String absoluteFilePathFilter = Scaffolding.getAbsolutePath(pluginsDir.getAbsolutePath(), "entities", entityNameFilter, flowTypeFilter, "REST", "transforms", name + "." + pluginFormatFilter);
        return !checkIfFileExists(pluginsDir, absoluteFilePathFilter);
    }

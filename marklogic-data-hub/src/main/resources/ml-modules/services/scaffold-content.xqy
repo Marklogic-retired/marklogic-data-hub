@@ -550,7 +550,6 @@ declare function get(
   perf:log('/v1/resources/validate:get', function() {
     let $entity as xs:string := map:get($params, "entity")
     let $plugin-format as xs:string := map:get($params, "pluginFormat")
-    let $_ := xdmp:log(("plugin-format:", $plugin-format))
     let $model as map:map? := hent:get-model($entity)
     return
       if (fn:exists($model)) then
