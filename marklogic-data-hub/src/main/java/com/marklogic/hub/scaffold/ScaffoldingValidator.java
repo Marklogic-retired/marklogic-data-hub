@@ -19,7 +19,7 @@ public class ScaffoldingValidator {
        String entityNameFilter = "[a-zA-Z0-9_.-]+";
        String flowTypeFilter = "(" + FlowType.INPUT + "|" + FlowType.HARMONIZE + ")";
        String pluginFormatFilter = "(" + CodeFormat.XQUERY + "|" + CodeFormat.JAVASCRIPT + ")";
-       String absoluteFilePathFilter = Scaffolding.getAbsolutePath(pluginsDir.getAbsolutePath(), "entities", entityNameFilter, flowTypeFilter, "REST", "services", name + "." + pluginFormatFilter);
+       String absoluteFilePathFilter = Scaffolding.getAbsolutePath(Pattern.quote(pluginsDir.getAbsolutePath()), "entities", entityNameFilter, flowTypeFilter, "REST", "services", name + "." + pluginFormatFilter);
        return !checkIfFileExists(pluginsDir, absoluteFilePathFilter);
    }
 
@@ -32,9 +32,7 @@ public class ScaffoldingValidator {
                        return true;
                    }
                } else {
-                   absoluteFilePathFilter = absoluteFilePathFilter.replace("\\", "\\\\");
-
-                   if(Pattern.matches(absoluteFilePathFilter,file.getAbsolutePath())) {
+                   if(Pattern.matches(absoluteFilePathFilter, file.getAbsolutePath())) {
                        return true;
                    }
                }

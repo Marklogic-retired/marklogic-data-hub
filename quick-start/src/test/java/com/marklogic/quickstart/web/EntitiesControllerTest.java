@@ -1,5 +1,6 @@
 package com.marklogic.quickstart.web;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.hub.DataHub;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.quickstart.auth.ConnectionAuthenticationToken;
@@ -11,6 +12,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -19,8 +21,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 
 import java.io.File;
 import java.io.IOException;
-
-import static org.junit.Assert.assertEquals;
+import java.util.Map;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
@@ -66,8 +67,8 @@ public class EntitiesControllerTest {
         envConfig.setInitialized(true);
         envConfig.setProjectDir(path);
         envConfig.setMlSettings(new HubConfig(path));
-        String s = ec.getInputFlowOptions("test-entity", "flow-name");
-        assertEquals("{ \"input_file_path\": \"/some/project/path\" }", s);
+        Map<String, Object> options = ec.getInputFlowOptions("test-entity", "flow-name");
+        JSONAssert.assertEquals("{ \"input_file_path\": \"/some/project/path\" }", new ObjectMapper().writeValueAsString(options), true);
     }
 
     @Test
@@ -77,8 +78,8 @@ public class EntitiesControllerTest {
         envConfig.setInitialized(true);
         envConfig.setProjectDir(path);
         envConfig.setMlSettings(new HubConfig(path));
-        String s = ec.getInputFlowOptions("test-entity", "flow-name");
-        assertEquals("{ \"input_file_path\": \"C:\\\\some\\\\crazy\\\\path\\\\to\\\\project\" }", s);
+        Map<String, Object> options = ec.getInputFlowOptions("test-entity", "flow-name");
+        JSONAssert.assertEquals("{ \"input_file_path\": \"C:\\\\some\\\\crazy\\\\path\\\\to\\\\project\" }", new ObjectMapper().writeValueAsString(options), true);
     }
 
 }

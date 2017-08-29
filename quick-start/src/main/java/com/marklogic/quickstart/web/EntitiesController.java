@@ -37,6 +37,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/api/current-project")
@@ -231,7 +232,7 @@ class EntitiesController extends EnvironmentAware {
         produces="application/json"
     )
     @ResponseBody
-    public String getInputFlowOptions(
+    public Map<String, Object> getInputFlowOptions(
             @PathVariable String entityName,
             @PathVariable String flowName) throws IOException {
         return flowManagerService.getFlowMlcpOptionsFromFile(entityName, flowName);

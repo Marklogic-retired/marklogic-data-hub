@@ -16,6 +16,7 @@
 package com.marklogic.quickstart.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.client.datamovement.JobTicket;
 import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.HubConfig;
@@ -38,12 +39,13 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class FlowManagerService {
@@ -136,15 +138,17 @@ public class FlowManagerService {
         bw.close();
     }
 
-    public String getFlowMlcpOptionsFromFile(String entityName, String flowName) throws IOException {
+    public Map<String, Object> getFlowMlcpOptionsFromFile(String entityName, String flowName) throws IOException {
         Path destFolder = Paths.get(envConfig().getProjectDir(), PROJECT_TMP_FOLDER);
         Path filePath = getMlcpOptionsFilePath(destFolder, entityName, flowName);
         File file = filePath.toFile();
         if(file.exists()) {
-            byte[] encoded = Files.readAllBytes(filePath);
-            return new String(encoded, StandardCharsets.UTF_8);
+            return new ObjectMapper().readValue(file, Map.class);
         }
-        return "{ \"input_file_path\": \"" + envConfig().getProjectDir().replace("\\", "\\\\") + "\" }";
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("input_file_path", envConfig().getProjectDir());
+        return result;
     }
 
     public void runMlcp(Flow flow, JsonNode json, FlowStatusListener statusListener) {

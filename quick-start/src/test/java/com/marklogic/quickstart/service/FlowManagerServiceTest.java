@@ -29,6 +29,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 
@@ -100,8 +101,8 @@ public class FlowManagerServiceTest extends HubTestBase {
         envConfig.setMlSettings(new HubConfig(pdir));
         setEnvConfig(envConfig);
 
-        String options = fm.getFlowMlcpOptionsFromFile("test-entity", "test-flow");
-        assertEquals("{ \"input_file_path\": \"/some/crazy/path/to/project\" }", options);
+        Map<String, Object> options = fm.getFlowMlcpOptionsFromFile("test-entity", "test-flow");
+        JSONAssert.assertEquals("{ \"input_file_path\": \"/some/crazy/path/to/project\" }", new ObjectMapper().writeValueAsString(options), true);
     }
 
     @Test
@@ -111,8 +112,8 @@ public class FlowManagerServiceTest extends HubTestBase {
         envConfig.setMlSettings(new HubConfig(pdir));
         setEnvConfig(envConfig);
 
-        String options = fm.getFlowMlcpOptionsFromFile("test-entity", "test-flow");
-        assertEquals("{ \"input_file_path\": \"C:\\\\some\\\\crazy\\\\path\\\\to\\\\project\" }", options);
+        Map<String, Object> options = fm.getFlowMlcpOptionsFromFile("test-entity", "test-flow");
+        JSONAssert.assertEquals("{ \"input_file_path\": \"C:\\\\some\\\\crazy\\\\path\\\\to\\\\project\" }", new ObjectMapper().writeValueAsString(options), true);
     }
 
     @Test

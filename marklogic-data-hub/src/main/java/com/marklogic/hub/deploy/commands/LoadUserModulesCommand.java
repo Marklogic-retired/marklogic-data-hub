@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.List;
+import java.util.regex.Pattern;
 
 public class LoadUserModulesCommand extends AbstractCommand {
 
@@ -111,6 +112,21 @@ public class LoadUserModulesCommand extends AbstractCommand {
         return modulesLoader;
     }
 
+    boolean isInputRestDir(Path dir) {
+        return dir.endsWith("REST") && dir.toString().matches(".*[/\\\\]input[/\\\\].*");
+    }
+
+    boolean isHarmonizeRestDir(Path dir) {
+        return dir.endsWith("REST") && dir.toString().matches(".*[/\\\\]harmonize[/\\\\].*");
+    }
+
+    boolean isEntityDir(Path dir, Path startPath) {
+        String dirStr = dir.toString();
+        String startPathStr = Pattern.quote(startPath.toString());
+        String regex = startPathStr + "[/\\\\][^/\\\\]+$";
+        return dirStr.matches(regex);
+    }
+
     @Override
     public void execute(CommandContext context) {
         FlowManager flowManager = new FlowManager(hubConfig);
@@ -141,26 +157,21 @@ public class LoadUserModulesCommand extends AbstractCommand {
             if (startPath.toFile().exists()) {
                 Files.walkFileTree(startPath, new SimpleFileVisitor<Path>() {
                     @Override
-                    public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs)
-                        throws IOException {
+                    public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
                         File currentDir = dir.normalize().toAbsolutePath().toFile();
-                        String dirStr = dir.toString();
 
                         // for REST dirs we need to deploy all the REST stuff (transforms, options, services, etc)
-                        if (dir.endsWith("REST")) {
-                            // for input dir we put stuff in staging
-                            if (dirStr.matches(".*[/\\\\]input[/\\\\].*")) {
-                                modulesLoader.loadModules(currentDir, allButAssetsModulesFinder, stagingClient);
-                            }
-                            // for harmonize dir we put stuff in final
-                            else if (dirStr.matches(".*[/\\\\]harmonize[/\\\\].*")) {
-                                modulesLoader.loadModules(currentDir, allButAssetsModulesFinder, finalClient);
-                            }
+                        if (isInputRestDir(dir)) {
+                            modulesLoader.loadModules(currentDir, allButAssetsModulesFinder, stagingClient);
                             return FileVisitResult.SKIP_SUBTREE;
                         }
-                        else if (dirStr.matches(startPath.toAbsolutePath().toString().replace("\\", "\\\\") + "[/\\\\][^/\\\\]+$")) {
-                            EntityDefModulesFinder entityDefModulesFinder = new EntityDefModulesFinder();
-                            Modules modules = entityDefModulesFinder.findModules(dir.toFile());
+                        // for harmonize dir we put stuff in final
+                        else if (isHarmonizeRestDir(dir)) {
+                            modulesLoader.loadModules(currentDir, allButAssetsModulesFinder, finalClient);
+                            return FileVisitResult.SKIP_SUBTREE;
+                        }
+                        else if (isEntityDir(dir, startPath.toAbsolutePath())) {
+                            Modules modules = new EntityDefModulesFinder().findModules(dir.toFile());
                             DocumentMetadataHandle meta = new DocumentMetadataHandle();
                             meta.getCollections().add("http://marklogic.com/entity-services/models");
                             documentPermissionsParser.parsePermissions(hubConfig.modulePermissions, meta.getPermissions());
