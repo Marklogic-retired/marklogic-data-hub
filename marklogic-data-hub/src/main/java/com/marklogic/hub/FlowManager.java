@@ -22,12 +22,12 @@ import com.marklogic.client.extensions.ResourceServices.ServiceResult;
 import com.marklogic.client.extensions.ResourceServices.ServiceResultIterator;
 import com.marklogic.client.io.DOMHandle;
 import com.marklogic.client.util.RequestParameters;
-import com.marklogic.hub.flow.Flow;
-import com.marklogic.hub.flow.FlowRunner;
-import com.marklogic.hub.flow.FlowType;
+import com.marklogic.hub.collector.impl.CollectorImpl;
+import com.marklogic.hub.flow.*;
 import com.marklogic.hub.flow.impl.FlowImpl;
 import com.marklogic.hub.flow.impl.FlowRunnerImpl;
 import com.marklogic.hub.job.JobManager;
+import com.marklogic.hub.main.impl.MainPluginImpl;
 import com.marklogic.hub.scaffold.Scaffolding;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -35,12 +35,13 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import java.io.File;
-import java.io.FileFilter;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 public class FlowManager extends ResourceManager {
     private static final String HUB_NS = "http://marklogic.com/data-hub";
@@ -63,6 +64,81 @@ public class FlowManager extends ResourceManager {
         this.jobManager = new JobManager(this.jobClient);
         this.dataMovementManager = this.stagingClient.newDataMovementManager();
         this.stagingClient.init(NAME, this);
+    }
+
+
+    /**
+     * retrieves a list of all the flows on the local files systems
+     * @return a list of Flows
+     */
+    public List<Flow> getLocalFlows() {
+
+        List<Flow> flows = new ArrayList<>();
+        Path entitiesDir = Paths.get(hubConfig.projectDir).resolve("plugins").resolve("entities");
+
+        File[] entities = entitiesDir.toFile().listFiles((pathname -> pathname.isDirectory()));
+        if (entities != null) {
+            for (File entity : entities) {
+                String entityName = entity.getName();
+                Path entityDir = entity.toPath();
+                Path inputDir = entityDir.resolve("input");
+                Path harmonizeDir = entityDir.resolve("harmonize");
+
+
+                File[] inputFlows = inputDir.toFile().listFiles((pathname) -> pathname.isDirectory() && !pathname.getName().equals("REST"));
+                if (inputFlows != null) {
+                    for (File inputFlow : inputFlows) {
+                        Flow flow = getLocalFlow(entityName, inputFlow.toPath(), FlowType.INPUT);
+                        if (flow != null) {
+                            flows.add(flow);
+                        }
+                    }
+                }
+
+                File[] harmonizeFlows = harmonizeDir.toFile().listFiles((pathname) -> pathname.isDirectory() && !pathname.getName().equals("REST"));
+                if (harmonizeFlows != null) {
+                    for (File harmonizeFlow : harmonizeFlows) {
+                        Flow flow = getLocalFlow(entityName, harmonizeFlow.toPath(), FlowType.HARMONIZE);
+                        if (flow != null) {
+                            flows.add(flow);
+                        }
+
+                    }
+                }
+            }
+        }
+        return flows;
+    }
+
+    private Flow getLocalFlow(String entityName, Path flowDir, FlowType flowType) {
+        try {
+            String flowName = flowDir.getFileName().toString();
+            File propertiesFile = flowDir.resolve(flowName + ".properties").toFile();
+            if (propertiesFile.exists()) {
+                Properties properties = new Properties();
+                FileInputStream fis = new FileInputStream(propertiesFile);
+                properties.load(fis);
+                fis.close();
+
+                FlowBuilder flowBuilder = FlowBuilder.newFlow()
+                    .withEntityName(entityName)
+                    .withName(flowName)
+                    .withType(flowType)
+                    .withCodeFormat(CodeFormat.getCodeFormat((String) properties.get("codeFormat")))
+                    .withDataFormat(DataFormat.getDataFormat((String) properties.get("dataFormat")))
+                    .withMain(new MainPluginImpl((String) properties.get("mainModule"), CodeFormat.getCodeFormat((String) properties.get("mainCodeFormat"))));
+
+                if (flowType.equals(FlowType.HARMONIZE)) {
+                    flowBuilder.withCollector(new CollectorImpl((String) properties.get("collectorModule"), CodeFormat.getCodeFormat((String) properties.get("collectorCodeFormat"))));
+                }
+
+                return flowBuilder.build();
+            }
+        }
+        catch(Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     /**

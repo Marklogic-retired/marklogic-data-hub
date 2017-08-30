@@ -360,6 +360,19 @@ public class HubConfig {
             DatabaseClientFactory.Authentication.valueOf(stagingAuthMethod.toUpperCase()));
     }
 
+    /**
+     * Creates a new DatabaseClient for accessing the Hub Modules database
+     * @return - a DatabaseClient
+     */
+    public DatabaseClient newModulesDbClient() {
+        return DatabaseClientFactory.newClient(
+            host,
+            stagingPort,
+            modulesDbName,
+            username,
+            password,
+            DatabaseClientFactory.Authentication.valueOf(stagingAuthMethod.toUpperCase()));
+    }
     private String getEnvPropString(Properties environmentProperties, String key, String fallback) {
         String value = environmentProperties.getProperty(key);
         if (value == null) {

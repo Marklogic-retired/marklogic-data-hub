@@ -24,6 +24,7 @@ import com.marklogic.hub.flow.FlowType;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import java.util.Map;
+import java.util.Properties;
 
 public interface Collector {
 
@@ -38,4 +39,6 @@ public interface Collector {
 
     DiskQueue<String> run(String jobId, String entity, String flow, int threadCount, Map<String, Object> options);
     void serialize(XMLStreamWriter serializer) throws XMLStreamException;
+
+    void toProperties(Properties properties);
 }

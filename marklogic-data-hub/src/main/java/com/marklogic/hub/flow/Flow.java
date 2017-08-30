@@ -18,6 +18,8 @@ package com.marklogic.hub.flow;
 import com.marklogic.hub.collector.Collector;
 import com.marklogic.hub.main.MainPlugin;
 
+import java.util.Properties;
+
 public interface Flow {
     void setEntityName(String entityName);
     String getEntityName();
@@ -31,6 +33,10 @@ public interface Flow {
     CodeFormat getCodeFormat();
 
     String serialize();
+
+    Properties toProperties();
+
+    String getFlowDbPath();
 
     Collector getCollector();
     void setCollector(Collector collector);

@@ -20,6 +20,7 @@ import com.marklogic.hub.main.MainPlugin;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
+import java.util.Properties;
 
 public class MainPluginImpl implements MainPlugin {
 
@@ -57,5 +58,11 @@ public class MainPluginImpl implements MainPlugin {
         serializer.writeAttribute("code-format", codeFormat.toString());
         serializer.writeAttribute("module", this.module);
         serializer.writeEndElement();
+    }
+
+    @Override
+    public void toProperties(Properties properties) {
+        properties.setProperty("mainCodeFormat", codeFormat.toString());
+        properties.setProperty("mainModule", this.module);
     }
 }

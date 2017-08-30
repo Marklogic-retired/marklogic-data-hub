@@ -121,11 +121,10 @@ public class Scaffolding {
             .withCodeFormat(codeFormat)
             .withDataFormat(dataFormat)
             .build();
-        Path flowFile = flowDir.resolve(flowName + ".xml");
-        try(PrintWriter out = new PrintWriter(flowFile.toFile())) {
-            out.println(flow.serialize());
-            out.close();
-        }
+
+        FileWriter fw = new FileWriter(flowDir.resolve(flowName + ".properties").toFile());
+        flow.toProperties().store(fw, "");
+        fw.close();
     }
 
     private Document readLegacyFlowXml(File file) throws IOException, ParserConfigurationException, SAXException {
@@ -216,11 +215,9 @@ public class Scaffolding {
                         }
 
                         Flow flow = flowBuilder.build();
-                        Path flowFile = flowDir.resolve(flowName + ".xml");
-                        try (PrintWriter out = new PrintWriter(flowFile.toFile())) {
-                            out.println(flow.serialize());
-                            out.close();
-                        }
+                        FileWriter fw = new FileWriter(flowDir.resolve(flowName + ".properties").toFile());
+                        flow.toProperties().store(fw, "");
+                        fw.close();
                         updated = true;
                     }
                 } catch (Exception e) {

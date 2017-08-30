@@ -31,6 +31,7 @@ import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -152,6 +153,36 @@ public class FlowManagerTest extends HubTestBase {
         String expected = getResource("flow-manager-test/simple-flow.xml");
         String actual = flow.serialize();
         assertXMLEqual(expected, actual);
+    }
+
+    @Test
+    public void testGetLocalFlows() throws IOException {
+        Scaffolding scaffolding = new Scaffolding("del-me-dir", stagingClient);
+        scaffolding.createEntity("my-entity");
+
+        FlowManager fm = new FlowManager(getHubConfig("del-me-dir"));
+        assertEquals(0, fm.getLocalFlows().size());
+
+        CodeFormat[] codeFormats = new CodeFormat[] { CodeFormat.JAVASCRIPT, CodeFormat.XQUERY };
+        DataFormat[] dataFormats = new DataFormat[] { DataFormat.JSON, DataFormat.XML };
+        FlowType[] flowTypes = new FlowType[] { FlowType.INPUT, FlowType.HARMONIZE };
+        for (CodeFormat codeFormat : codeFormats) {
+            for (DataFormat dataFormat : dataFormats) {
+                for (FlowType flowType : flowTypes) {
+                    String flowName = flowType.toString() + "-" + codeFormat.toString() + "-" + dataFormat.toString();
+                    scaffolding.createFlow("my-entity", flowName, flowType, codeFormat, dataFormat);
+                }
+            }
+        }
+
+        List<Flow> flows = fm.getLocalFlows();
+        assertEquals(8, flows.size());
+
+        for (Flow flow : flows) {
+            assertEquals("my-entity", flow.getEntityName());
+        }
+
+        FileUtils.deleteDirectory(Paths.get("./del-me-dir").toFile());
     }
 
     @Test

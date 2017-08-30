@@ -37,6 +37,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import java.io.*;
+import java.util.Properties;
 
 public class FlowImpl implements Flow {
 
@@ -190,6 +191,22 @@ public class FlowImpl implements Flow {
         }
     }
 
+    @Override
+    public Properties toProperties() {
+        Properties flowProperties = new Properties();
+        flowProperties.setProperty("dataFormat", dataFormat.toString());
+        flowProperties.setProperty("codeFormat", codeFormat.toString());
+        if (this.collector != null) {
+            collector.toProperties(flowProperties);
+        }
+
+        if (this.main != null) {
+            main.toProperties(flowProperties);
+        }
+
+        return flowProperties;
+    }
+
     public static Flow loadFromFile(File file) {
         Flow flow = null;
         FileInputStream is = null;
@@ -265,6 +282,11 @@ public class FlowImpl implements Flow {
             }
         }
         return flowBuilder.build();
+    }
+
+    @Override
+    public String getFlowDbPath() {
+        return "/entities/" + getEntityName() + "/" + getType().toString() + "/" + getName() + "/" + getName() + ".xml";
     }
 
 }

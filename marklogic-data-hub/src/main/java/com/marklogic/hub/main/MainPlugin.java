@@ -19,9 +19,11 @@ import com.marklogic.hub.flow.CodeFormat;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
+import java.util.Properties;
 
 public interface MainPlugin {
     String getModule();
     CodeFormat getCodeFormat();
     void serialize(XMLStreamWriter serializer) throws XMLStreamException;
+    void toProperties(Properties properties);
 }

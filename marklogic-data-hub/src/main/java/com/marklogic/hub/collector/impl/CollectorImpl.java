@@ -12,6 +12,7 @@ import com.marklogic.xcc.*;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import java.util.Map;
+import java.util.Properties;
 
 public class CollectorImpl implements Collector {
     private DatabaseClient client = null;
@@ -62,6 +63,12 @@ public class CollectorImpl implements Collector {
         serializer.writeAttribute("code-format", codeFormat.toString());
         serializer.writeAttribute("module", this.module);
         serializer.writeEndElement();
+    }
+
+    @Override
+    public void toProperties(Properties properties) {
+        properties.setProperty("collectorCodeFormat", codeFormat.toString());
+        properties.setProperty("collectorModule", this.module);
     }
 
     @Override

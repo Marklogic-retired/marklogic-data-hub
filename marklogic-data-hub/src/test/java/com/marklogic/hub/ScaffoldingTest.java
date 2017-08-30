@@ -22,6 +22,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Properties;
 
 import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual;
 import static org.junit.Assert.*;
@@ -94,18 +95,19 @@ public class ScaffoldingTest extends HubTestBase {
         assertEquals(Paths.get(pluginDir.toString(), "entities", "my-fun-test", "input", "test-input"), flowDir);
         assertTrue(flowDir.toFile().exists());
 
-        Path flowDescriptor = flowDir.resolve("test-input.xml");
+        Path flowDescriptor = flowDir.resolve("test-input.properties");
         assertTrue(flowDescriptor.toFile().exists());
-        String flowXML = "<flow xmlns=\"http://marklogic.com/data-hub\">\n" +
-            "  <name>test-input</name>\n" +
-            "  <entity>my-fun-test</entity>\n" +
-            "  <type>input</type>\n" +
-            "  <data-format>" + dataFormat.toString() + "</data-format>\n" +
-            "  <code-format>" + codeFormat.toString() + "</code-format>\n" +
-            "  <main code-format=\"" + codeFormat.toString() + "\" module=\"/entities/my-fun-test/input/test-input/main." + codeFormat.toString() + "\"></main>\n" +
-            "</flow>";        FileInputStream fs = new FileInputStream(flowDescriptor.toFile());
-        assertXMLEqual(flowXML, IOUtils.toString(fs));
-        fs.close();
+
+        FileInputStream fis = new FileInputStream(flowDescriptor.toFile());
+        Properties properties = new Properties();
+        properties.load(fis);
+        fis.close();
+
+        assertEquals(4, properties.keySet().size());
+        assertEquals(dataFormat.toString(), properties.get("dataFormat"));
+        assertEquals(codeFormat.toString(), properties.get("codeFormat"));
+        assertEquals(codeFormat.toString(), properties.get("mainCodeFormat"));
+        assertEquals("/entities/my-fun-test/input/test-input/main." + codeFormat.toString(), properties.get("mainModule"));
 
         Path defaultCollector = flowDir.resolve("collector." + codeFormat.toString());
         assertFalse(defaultCollector.toFile().exists());
@@ -140,20 +142,21 @@ public class ScaffoldingTest extends HubTestBase {
         assertEquals(Paths.get(pluginDir.toString(), "entities", "my-fun-test", "harmonize", "test-harmonize"), flowDir);
         assertTrue(flowDir.toFile().exists());
 
-        Path flowDescriptor = flowDir.resolve("test-harmonize.xml");
+        Path flowDescriptor = flowDir.resolve("test-harmonize.properties");
         assertTrue(flowDescriptor.toFile().exists());
-        String flowXML = "<flow xmlns=\"http://marklogic.com/data-hub\">\n" +
-            "  <name>test-harmonize</name>\n" +
-            "  <entity>my-fun-test</entity>\n" +
-            "  <type>harmonize</type>\n" +
-            "  <data-format>" + dataFormat.toString() + "</data-format>\n" +
-            "  <code-format>" + codeFormat.toString() + "</code-format>\n" +
-            "  <collector code-format=\"" + codeFormat.toString() + "\" module=\"/entities/my-fun-test/harmonize/test-harmonize/collector." + codeFormat.toString() + "\"></collector>\n" +
-            "  <main code-format=\"" + codeFormat.toString() + "\" module=\"/entities/my-fun-test/harmonize/test-harmonize/main." + codeFormat.toString() + "\"></main>\n" +
-            "</flow>";
-        FileInputStream fs = new FileInputStream(flowDescriptor.toFile());
-        assertXMLEqual(flowXML, IOUtils.toString(fs));
-        fs.close();
+
+        FileInputStream fis = new FileInputStream(flowDescriptor.toFile());
+        Properties properties = new Properties();
+        properties.load(fis);
+        fis.close();
+
+        assertEquals(6, properties.keySet().size());
+        assertEquals(dataFormat.toString(), properties.get("dataFormat"));
+        assertEquals(codeFormat.toString(), properties.get("codeFormat"));
+        assertEquals(codeFormat.toString(), properties.get("collectorCodeFormat"));
+        assertEquals("/entities/my-fun-test/harmonize/test-harmonize/collector." + codeFormat.toString(), properties.get("collectorModule"));
+        assertEquals(codeFormat.toString(), properties.get("mainCodeFormat"));
+        assertEquals("/entities/my-fun-test/harmonize/test-harmonize/main." + codeFormat.toString(), properties.get("mainModule"));
 
         Path defaultCollector = flowDir.resolve("collector." + codeFormat.toString());
         assertTrue(defaultCollector.toFile().exists());
@@ -274,26 +277,29 @@ public class ScaffoldingTest extends HubTestBase {
 
         assertEquals(2, scaffolding.updateLegacyFlows("my-fun-test").size());
 
-        Flow flow = FlowManager.flowFromXml(getXmlFromInputStream(new FileInputStream(inputDir.resolve("legacy-input-flow").resolve("legacy-input-flow.xml").toFile())).getDocumentElement());
-        assertEquals(FlowType.INPUT, flow.getType());
-        assertEquals(CodeFormat.JAVASCRIPT, flow.getCodeFormat());
-        assertEquals(DataFormat.JSON, flow.getDataFormat());
-        assertEquals("legacy-input-flow", flow.getName());
-        assertEquals("my-fun-test", flow.getEntityName());
-        assertEquals(null, flow.getCollector());
-        assertEquals(CodeFormat.JAVASCRIPT, flow.getMain().getCodeFormat());
-        assertEquals("/entities/my-fun-test/input/legacy-input-flow/main.sjs", flow.getMain().getModule());
+        FileInputStream fis = new FileInputStream(inputDir.resolve("legacy-input-flow").resolve("legacy-input-flow.properties").toFile());
+        Properties properties = new Properties();
+        properties.load(fis);
+        fis.close();
 
-        flow = FlowManager.flowFromXml(getXmlFromInputStream(new FileInputStream(harmonizeDir.resolve("legacy-harmonize-flow").resolve("legacy-harmonize-flow.xml").toFile())).getDocumentElement());
-        assertEquals(FlowType.HARMONIZE, flow.getType());
-        assertEquals(CodeFormat.JAVASCRIPT, flow.getCodeFormat());
-        assertEquals(DataFormat.JSON, flow.getDataFormat());
-        assertEquals("legacy-harmonize-flow", flow.getName());
-        assertEquals("my-fun-test", flow.getEntityName());
-        assertEquals(CodeFormat.JAVASCRIPT, flow.getCollector().getCodeFormat());
-        assertEquals("/entities/my-fun-test/harmonize/legacy-harmonize-flow/collector/collector.sjs", flow.getCollector().getModule());
-        assertEquals(CodeFormat.JAVASCRIPT, flow.getMain().getCodeFormat());
-        assertEquals("/entities/my-fun-test/harmonize/legacy-harmonize-flow/main.sjs", flow.getMain().getModule());
+        assertEquals(4, properties.keySet().size());
+        assertEquals(CodeFormat.JAVASCRIPT.toString(), properties.get("codeFormat"));
+        assertEquals(DataFormat.JSON.toString(), properties.get("dataFormat"));
+        assertEquals(CodeFormat.JAVASCRIPT.toString(), properties.get("mainCodeFormat"));
+        assertEquals("/entities/my-fun-test/input/legacy-input-flow/main.sjs", properties.get("mainModule"));
+
+        fis = new FileInputStream(harmonizeDir.resolve("legacy-harmonize-flow").resolve("legacy-harmonize-flow.properties").toFile());
+        properties = new Properties();
+        properties.load(fis);
+        fis.close();
+
+        assertEquals(6, properties.keySet().size());
+        assertEquals(CodeFormat.JAVASCRIPT.toString(), properties.get("codeFormat"));
+        assertEquals(DataFormat.JSON.toString(), properties.get("dataFormat"));
+        assertEquals(CodeFormat.JAVASCRIPT.toString(), properties.get("collectorCodeFormat"));
+        assertEquals("/entities/my-fun-test/harmonize/legacy-harmonize-flow/collector/collector.sjs", properties.get("collectorModule"));
+        assertEquals(CodeFormat.JAVASCRIPT.toString(), properties.get("mainCodeFormat"));
+        assertEquals("/entities/my-fun-test/harmonize/legacy-harmonize-flow/main.sjs", properties.get("mainModule"));
 
         assertEquals(0, scaffolding.updateLegacyFlows("my-fun-test").size());
     }

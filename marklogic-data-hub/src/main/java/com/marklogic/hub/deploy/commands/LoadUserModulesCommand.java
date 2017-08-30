@@ -8,6 +8,7 @@ import com.marklogic.appdeployer.command.modules.AllButAssetsModulesFinder;
 import com.marklogic.appdeployer.command.modules.AssetModulesFinder;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.document.JSONDocumentManager;
+import com.marklogic.client.document.XMLDocumentManager;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.modulesloader.Modules;
@@ -19,16 +20,23 @@ import com.marklogic.hub.deploy.util.CacheBustingXccAssetLoader;
 import com.marklogic.hub.deploy.util.EntityDefModulesFinder;
 import com.marklogic.hub.deploy.util.HubFileFilter;
 import com.marklogic.hub.error.LegacyFlowsException;
+import com.marklogic.hub.flow.*;
+import com.marklogic.hub.flow.impl.FlowImpl;
 import org.apache.commons.io.IOUtils;
 import org.springframework.core.io.Resource;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
 import java.io.FileFilter;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 import java.util.regex.Pattern;
 
 public class LoadUserModulesCommand extends AbstractCommand {
@@ -155,6 +163,14 @@ public class LoadUserModulesCommand extends AbstractCommand {
 
         try {
             if (startPath.toFile().exists()) {
+
+                // load Flow Definitions
+                List<Flow> flows = flowManager.getLocalFlows();
+                XMLDocumentManager documentManager = hubConfig.newModulesDbClient().newXMLDocumentManager();
+                for (Flow flow : flows) {
+                    documentManager.write(flow.getFlowDbPath(), new StringHandle(flow.serialize()));
+                }
+
                 Files.walkFileTree(startPath, new SimpleFileVisitor<Path>() {
                     @Override
                     public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
