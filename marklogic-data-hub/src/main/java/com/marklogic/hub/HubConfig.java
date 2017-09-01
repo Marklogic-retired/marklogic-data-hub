@@ -46,10 +46,10 @@ import java.util.Properties;
  */
 public class HubConfig {
 
+    public static final String HUB_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES = "hub-modules-deploy-timestamps.properties";
     public static final String USER_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES = "user-modules-deploy-timestamps.properties";
     public static final String USER_CONTENT_DEPLOY_TIMESTAMPS_PROPERTIES = "user-content-deploy-timestamps.properties";
 
-    public static final String OLD_HUB_CONFIG_DIR = "marklogic-config";
     public static final String HUB_CONFIG_DIR = "hub-internal-config";
     public static final String USER_CONFIG_DIR = "user-config";
     public static final String ENTITY_CONFIG_DIR = "entity-config";
@@ -145,11 +145,13 @@ public class HubConfig {
 
     public String modulePermissions = "rest-reader,read,rest-writer,insert,rest-writer,update,rest-extension-user,execute";
 
-    public String projectDir;
+    private String projectDir;
 
     private Properties environmentProperties;
 
     private String environment;
+
+    private HubProject hubProject;
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -158,7 +160,16 @@ public class HubConfig {
     }
 
     public HubConfig(String projectDir) {
+        setProjectDir(projectDir);
+    }
+
+    public String getProjectDir() {
+        return this.projectDir;
+    }
+
+    public void setProjectDir(String projectDir) {
         this.projectDir = projectDir;
+        this.hubProject = new HubProject(projectDir);
     }
 
     /**
@@ -184,11 +195,19 @@ public class HubConfig {
         return environmentProperties;
     }
 
-    public File getModulesDeployTimestampFile() {
+    public HubProject getHubProject() {
+        return this.hubProject;
+    }
+
+    public File getHubModulesDeployTimestampFile() {
+        return Paths.get(projectDir, ".tmp", HUB_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES).toFile();
+    }
+
+    public File getUserModulesDeployTimestampFile() {
         return Paths.get(projectDir, ".tmp", USER_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES).toFile();
     }
 
-    public File getContentDeployTimestampFile() {
+    public File getUserContentDeployTimestampFile() {
         return Paths.get(projectDir, ".tmp", USER_CONTENT_DEPLOY_TIMESTAMPS_PROPERTIES).toFile();
     }
 
@@ -408,45 +427,51 @@ public class HubConfig {
         }
     }
 
+    public Path getHubPluginsDir() {
+        return hubProject.getHubPluginsDir();
+    }
+
+    public Path getHubEntitiesDir() { return hubProject.getHubEntitiesDir(); }
+
     public Path getHubConfigDir() {
-        return Paths.get(this.projectDir, HUB_CONFIG_DIR);
+        return hubProject.getHubConfigDir();
     }
 
     public Path getHubDatabaseDir() {
-        return Paths.get(this.projectDir, HUB_CONFIG_DIR, "databases");
+        return hubProject.getHubDatabaseDir();
     }
 
     public Path getHubServersDir() {
-        return Paths.get(this.projectDir, HUB_CONFIG_DIR, "servers");
+        return hubProject.getHubServersDir();
     }
 
     public Path getHubSecurityDir() {
-        return Paths.get(this.projectDir, HUB_CONFIG_DIR, "security");
+        return hubProject.getHubSecurityDir();
     }
 
     public Path getUserSecurityDir() {
-        return Paths.get(this.projectDir, USER_CONFIG_DIR, "security");
+        return hubProject.getUserSecurityDir();
     }
 
     public Path getUserConfigDir() {
-        return Paths.get(this.projectDir, USER_CONFIG_DIR);
+        return hubProject.getUserConfigDir();
     }
 
     public Path getUserDatabaseDir() {
-        return Paths.get(this.projectDir, USER_CONFIG_DIR, "databases");
+        return hubProject.getUserDatabaseDir();
     }
 
     public Path getEntityDatabaseDir() {
-        return Paths.get(this.projectDir, ENTITY_CONFIG_DIR, "databases");
+        return hubProject.getEntityDatabaseDir();
     }
 
 
     public Path getUserServersDir() {
-        return Paths.get(this.projectDir, USER_CONFIG_DIR, "servers");
+        return hubProject.getUserServersDir();
     }
 
     public Path getHubMimetypesDir() {
-        return Paths.get(this.projectDir, HUB_CONFIG_DIR, "mimetypes");
+        return hubProject.getHubMimetypesDir();
     }
 
     public void setUsername(String username) {
@@ -567,6 +592,10 @@ public class HubConfig {
         AppConfig config = new DefaultAppConfigFactory(name -> properties.getProperty(name)).newAppConfig();
         updateAppConfig(config);
         return config;
+    }
+
+    public Map<String, String> getCustomTokens() {
+        return getCustomTokens(new HashMap<>());
     }
 
     public Map<String, String> getCustomTokens(Map<String, String> customTokens) {

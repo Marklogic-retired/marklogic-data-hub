@@ -29,8 +29,8 @@ import module namespace hent = "http://marklogic.com/data-hub/hub-entities"
 import module namespace perf = "http://marklogic.com/data-hub/perflog-lib"
   at "/com.marklogic.hub/lib/perflog-lib.xqy";
 
-import module namespace esi = "http://marklogic.com/entity-services-impl"
-  at "/MarkLogic/entity-services/entity-services-impl.xqy";
+import module namespace es-wrapper = "http://marklogic.com/data-hub/es-wrapper"
+  at "/com.marklogic.hub/lib/entity-services-wrapper.xqy";
 
 declare namespace es = "http://marklogic.com/entity-services";
 
@@ -96,9 +96,9 @@ declare function service:casting-function-name-sjs(
 declare function service:generate-lets($model as map:map, $entity-type-name)
 {
   fn:string-join(
-    let $definitions := $model=>map:get("definitions")
-    let $entity-type := $definitions=>map:get($entity-type-name)
-    let $properties := $entity-type=>map:get("properties")
+    let $definitions := map:get($model, "definitions")
+    let $entity-type := map:get($definitions, $entity-type-name)
+    let $properties := map:get($entity-type, "properties")
     let $required-properties := (
       map:get($entity-type, "primaryKey"),
       map:get($entity-type, "required") ! json:array-values(.)
@@ -107,11 +107,8 @@ declare function service:generate-lets($model as map:map, $entity-type-name)
     let $is-required := $property-name = $required-properties
     let $property := map:get($properties, $property-name)
     let $is-array := map:get($property, "datatype") eq "array"
-    let $property := $model=>map:get("definitions")
-        =>map:get($entity-type-name)
-        =>map:get("properties")
-        =>map:get($property-name)
-    let $property-datatype := esi:resolve-datatype($model, $entity-type-name, $property-name)
+    let $property := map:get($properties, $property-name)
+    let $property-datatype := es-wrapper:resolve-datatype($model, $entity-type-name, $property-name)
     let $casting-function-name :=
       if (map:contains($property, "datatype") and map:get($property, "datatype") ne "array") then
         service:casting-function-name-xqy($property-datatype)
@@ -260,7 +257,7 @@ declare function plugin:extract-instance-{$entity-type-name}(
         "map:put($model, '$attachments', $attachments),&#10;    "
       else ()
     }map:put($model, '$type', '{ $entity-type-name }'),
-    map:put($model, '$version', '{ map:get($model, "info") => map:get("version") }'),
+    map:put($model, '$version', '{ map:get(map:get($model, "info"), "version") }'),
     {
     fn:string-join(
       (: Begin code generation block :)
@@ -292,7 +289,7 @@ declare function plugin:extract-instance-{$entity-type-name}(
       "    =>map:with('$attachments', $attachments)&#10;  "
     else ()
   }    =>map:with('$type', '{ $entity-type-name }')
-      =>map:with('$version', '{ map:get($model, "info") => map:get("version") }')
+      =>map:with('$version', '{ map:get(map:get($model, "info"), "version") }')
     {
     fn:string-join(
       (: Begin code generation block :)
@@ -350,7 +347,7 @@ declare function service:generate-vars($model as map:map, $entity-type-name)
 
     let $property := map:get($properties, $property-name)
     let $is-array := map:get($property, "datatype") eq "array"
-    let $property-datatype := esi:resolve-datatype($model, $entity-type-name, $property-name)
+    let $property-datatype := es-wrapper:resolve-datatype($model, $entity-type-name, $property-name)
     let $casting-function-name := service:casting-function-name-sjs($property-datatype)
     let $wrap-if-array := function($str) {
       if ($is-array) then
@@ -507,7 +504,7 @@ function {service:camel-case("extractInstance-" || $entity-type-name)}(source) {
       else
         ()
     }'$type': '{ $entity-type-name }',
-    '$version': '{ map:get($model, "info") => map:get("version") }',
+    '$version': '{ map:get(map:get($model, "info"), "version") }',
     {
     fn:string-join(
       (: Begin code generation block :)

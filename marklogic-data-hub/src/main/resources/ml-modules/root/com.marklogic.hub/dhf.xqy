@@ -25,6 +25,15 @@ import module namespace trace = "http://marklogic.com/data-hub/trace"
 
 declare option xdmp:mapping "false";
 
+(:
+ : Runs a given function as a plugin. This method provides
+ : tracing around your function. Tracing will catch uncaught
+ : exceptions and log them into the traces database.
+ :
+ : @param $context - the context for this plugin
+ : @param $func - the function to run
+ : @return - returns whatever your function returns
+ :)
 declare function dhf:run(
   $context as json:object,
   $func)
@@ -45,12 +54,43 @@ declare function dhf:run(
     flow:safe-run($func)
 };
 
+(:
+ : Creates a legacy envelope in the http://marklogic.com/data-hub/envelope namespace (if xml)
+ : This is for users who upgraded from 1.x and are have legacy envelopes already in production
+ :
+ : @param $content - the content section of the envelope
+ : @param $headers - the headers section of the envelope
+ : @param $triples - the triples section of the envelope
+ : @param $data-format - the format to use for making the envelope (xml|json)
+ :)
+declare function dhf:make-legacy-envelope($content, $headers, $triples, $data-format)
+  as document-node()
+{
+  flow:make-legacy-envelope($content, $headers, $triples, $data-format)
+};
+
+(:
+ : Creates an entity services envelope in the http://marklogic.com/entity-services namespace (if xml)
+ :
+ : @param $content - the content section of the envelope
+ : @param $headers - the headers section of the envelope
+ : @param $triples - the triples section of the envelope
+ : @param $data-format - the format to use for making the envelope (xml|json)
+ :)
 declare function dhf:make-envelope($content, $headers, $triples, $data-format)
   as document-node()
 {
   flow:make-envelope($content, $headers, $triples, $data-format)
 };
 
+(:
+ : Runs a writer plugin
+ :
+ : @param $writer-function - the writer function to run
+ : @param $id - the id for the current flow execution
+ : @param $envelope - the envelope to write
+ : @param $options - a map:map of options
+ :)
 declare function dhf:run-writer(
   $writer-function,
   $id as xs:string+,
@@ -62,6 +102,11 @@ declare function dhf:run-writer(
   flow:run-writer($writer-function, $id, $envelope, $options)
 };
 
+(:
+ : Creates a generic context for use in any plugin
+ :
+ : @param $label - the label to give this plugin for tracing
+ :)
 declare function dhf:context($label as xs:string) as json:object
 {
   let $context := json:object()
@@ -71,11 +116,17 @@ declare function dhf:context($label as xs:string) as json:object
     $context
 };
 
+(:
+ : Creates a context for a content plugin
+ :)
 declare function dhf:content-context() as json:object
 {
   dhf:context("content")
 };
 
+(:
+ : Creates a context for a headers plugin
+ :)
 declare function dhf:headers-context($content) as json:object
 {
   let $context := dhf:context("headers")
@@ -84,6 +135,9 @@ declare function dhf:headers-context($content) as json:object
     $context
 };
 
+(:
+ : Creates a context for a triples plugin
+ :)
 declare function dhf:triples-context($content, $headers) as json:object
 {
   let $context := dhf:context("triples")
@@ -93,7 +147,16 @@ declare function dhf:triples-context($content, $headers) as json:object
     $context
 };
 
-declare function dhf:set-trace-label(
+(:
+ : Sets the trace label for a given context
+ : Used internally. private.
+ :
+ : @param $context - the context
+ : @param $label - the label for the context
+ :
+ : @return - returns the passed in $context
+ :)
+declare %private function dhf:set-trace-label(
   $context as json:object,
   $label as xs:string) as json:object
 {
@@ -102,6 +165,17 @@ declare function dhf:set-trace-label(
     $context
 };
 
+(:
+ : Adds a trace input to the context
+ : You can add as many trace inputs as you like so long
+ : as each one has a unique label
+ :
+ : @param $context - the context
+ : @param $input-lael - the label for the input
+ : @param $input - the input to add to the context
+ :
+ : @return - returns the passed in $context
+ :)
 declare function dhf:add-trace-input(
   $context as json:object,
   $input-label as xs:string,

@@ -173,16 +173,7 @@ public class MlcpRunner extends ProcessRunner {
             args.add(mainClass);
         }
 
-        List<String> cmdArgs = new ArrayList<>();
-        for (String arg : bean.buildArgs()) {
-            cmdArgs.add(arg);
-        }
-        int idx = cmdArgs.indexOf("-transform_module");
-        if (idx >= 0) {
-            cmdArgs.add(idx + 2, getHubConfig().modulesDbName);
-            cmdArgs.add(idx + 2, "-modules");
-        }
-        args.addAll(cmdArgs);
+        args.addAll(Arrays.asList(bean.buildArgs()));
 
         this.withArgs(args);
 

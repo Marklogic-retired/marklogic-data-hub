@@ -1,6 +1,4 @@
 
-'use strict'
-
 /*
  * Create Content Plugin
  *
@@ -13,7 +11,7 @@ function createContent(id, options) {
   const jsearch = require('/MarkLogic/jsearch');
 
   // find every order document with id == the passed in id variable
-  let orders = jsearch
+  var orders = jsearch
     .collections('Order')
     .documents()
     .where(
@@ -22,18 +20,19 @@ function createContent(id, options) {
       })
     )
     .result('value')
-    .results.map(doc => {
+    .results.map(function(doc) {
       return doc.document.envelope.instance;
     });
 
   // the original source documents
-  let attachments = orders;
+  var attachments = orders;
 
   /* The following property is a local reference. */
-  let products = [];
-  let price = 0;
+  var products = [];
+  var price = 0;
 
-  for (let order of orders) {
+  for (var i = 0; i < orders.length; i++) {
+    var order = orders[i];
     if (order.sku) {
       // either return an instance of a Product
       // product = extractInstanceProduct(item.Product);

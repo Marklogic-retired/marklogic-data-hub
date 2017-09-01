@@ -266,16 +266,17 @@ public class ScaffoldingTest extends HubTestBase {
     }
 
     @Test
-    public void updateLegacyFlows() throws IOException, SAXException, ParserConfigurationException {
+    public void updateLegacyFlowsFrom1x() throws IOException, SAXException, ParserConfigurationException {
+        String fromVersion = "1.1.5";
         Scaffolding scaffolding = new Scaffolding(projectDir.toString(), stagingClient);
-        assertEquals(0, scaffolding.updateLegacyFlows("my-fun-test").size());
+        assertEquals(0, scaffolding.updateLegacyFlows(fromVersion, "my-fun-test").size());
 
         Path inputDir = projectPath.resolve("plugins/entities/my-fun-test/input");
         Path harmonizeDir = projectPath.resolve("plugins/entities/my-fun-test/harmonize");
         FileUtils.copyDirectory(getResourceFile("scaffolding-test/legacy-input-flow"), inputDir.resolve("legacy-input-flow").toFile());
         FileUtils.copyDirectory(getResourceFile("scaffolding-test/legacy-harmonize-flow"), harmonizeDir.resolve("legacy-harmonize-flow").toFile());
 
-        assertEquals(2, scaffolding.updateLegacyFlows("my-fun-test").size());
+        assertEquals(2, scaffolding.updateLegacyFlows(fromVersion, "my-fun-test").size());
 
         FileInputStream fis = new FileInputStream(inputDir.resolve("legacy-input-flow").resolve("legacy-input-flow.properties").toFile());
         Properties properties = new Properties();
@@ -287,6 +288,7 @@ public class ScaffoldingTest extends HubTestBase {
         assertEquals(DataFormat.JSON.toString(), properties.get("dataFormat"));
         assertEquals(CodeFormat.JAVASCRIPT.toString(), properties.get("mainCodeFormat"));
         assertEquals("/entities/my-fun-test/input/legacy-input-flow/main.sjs", properties.get("mainModule"));
+        assertEquals(getResource("scaffolding/input/sjs/main-legacy-1x.sjs"), IOUtils.toString(new FileInputStream(inputDir.resolve("legacy-input-flow").resolve("main.sjs").toFile())));
 
         fis = new FileInputStream(harmonizeDir.resolve("legacy-harmonize-flow").resolve("legacy-harmonize-flow.properties").toFile());
         properties = new Properties();
@@ -300,7 +302,50 @@ public class ScaffoldingTest extends HubTestBase {
         assertEquals("/entities/my-fun-test/harmonize/legacy-harmonize-flow/collector/collector.sjs", properties.get("collectorModule"));
         assertEquals(CodeFormat.JAVASCRIPT.toString(), properties.get("mainCodeFormat"));
         assertEquals("/entities/my-fun-test/harmonize/legacy-harmonize-flow/main.sjs", properties.get("mainModule"));
+        assertEquals(getResource("scaffolding/harmonize/sjs/main-legacy-1x.sjs"), IOUtils.toString(new FileInputStream(harmonizeDir.resolve("legacy-harmonize-flow").resolve("main.sjs").toFile())));
 
-        assertEquals(0, scaffolding.updateLegacyFlows("my-fun-test").size());
+        assertEquals(0, scaffolding.updateLegacyFlows(fromVersion, "my-fun-test").size());
+    }
+
+    @Test
+    public void updateLegacyFlowsFrom2x() throws IOException, SAXException, ParserConfigurationException {
+        String fromVersion = "2.0.0-rc.1";
+        Scaffolding scaffolding = new Scaffolding(projectDir.toString(), stagingClient);
+        assertEquals(0, scaffolding.updateLegacyFlows(fromVersion, "my-fun-test").size());
+
+        Path inputDir = projectPath.resolve("plugins/entities/my-fun-test/input");
+        Path harmonizeDir = projectPath.resolve("plugins/entities/my-fun-test/harmonize");
+        FileUtils.copyDirectory(getResourceFile("scaffolding-test/legacy-input-flow"), inputDir.resolve("legacy-input-flow").toFile());
+        FileUtils.copyDirectory(getResourceFile("scaffolding-test/legacy-harmonize-flow"), harmonizeDir.resolve("legacy-harmonize-flow").toFile());
+
+        assertEquals(2, scaffolding.updateLegacyFlows(fromVersion, "my-fun-test").size());
+
+        FileInputStream fis = new FileInputStream(inputDir.resolve("legacy-input-flow").resolve("legacy-input-flow.properties").toFile());
+        Properties properties = new Properties();
+        properties.load(fis);
+        fis.close();
+
+        assertEquals(4, properties.keySet().size());
+        assertEquals(CodeFormat.JAVASCRIPT.toString(), properties.get("codeFormat"));
+        assertEquals(DataFormat.JSON.toString(), properties.get("dataFormat"));
+        assertEquals(CodeFormat.JAVASCRIPT.toString(), properties.get("mainCodeFormat"));
+        assertEquals("/entities/my-fun-test/input/legacy-input-flow/main.sjs", properties.get("mainModule"));
+        assertEquals(getResource("scaffolding/input/sjs/main-legacy.sjs"), IOUtils.toString(new FileInputStream(inputDir.resolve("legacy-input-flow").resolve("main.sjs").toFile())));
+
+        fis = new FileInputStream(harmonizeDir.resolve("legacy-harmonize-flow").resolve("legacy-harmonize-flow.properties").toFile());
+        properties = new Properties();
+        properties.load(fis);
+        fis.close();
+
+        assertEquals(6, properties.keySet().size());
+        assertEquals(CodeFormat.JAVASCRIPT.toString(), properties.get("codeFormat"));
+        assertEquals(DataFormat.JSON.toString(), properties.get("dataFormat"));
+        assertEquals(CodeFormat.JAVASCRIPT.toString(), properties.get("collectorCodeFormat"));
+        assertEquals("/entities/my-fun-test/harmonize/legacy-harmonize-flow/collector/collector.sjs", properties.get("collectorModule"));
+        assertEquals(CodeFormat.JAVASCRIPT.toString(), properties.get("mainCodeFormat"));
+        assertEquals("/entities/my-fun-test/harmonize/legacy-harmonize-flow/main.sjs", properties.get("mainModule"));
+        assertEquals(getResource("scaffolding/harmonize/sjs/main-legacy.sjs"), IOUtils.toString(new FileInputStream(harmonizeDir.resolve("legacy-harmonize-flow").resolve("main.sjs").toFile())));
+
+        assertEquals(0, scaffolding.updateLegacyFlows(fromVersion, "my-fun-test").size());
     }
 }

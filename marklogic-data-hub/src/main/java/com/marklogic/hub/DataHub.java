@@ -195,8 +195,8 @@ public class DataHub {
     public void initProject() {
         logger.info("Initializing the Hub Project");
 
-        HubProject hp = new HubProject(hubConfig);
-        hp.init();
+        
+        hubConfig.getHubProject().init(hubConfig.getCustomTokens());
     }
 
     /**
@@ -417,7 +417,7 @@ public class DataHub {
             return hv.getVersion();
         }
         catch(Exception e) {}
-        return "1.0.0";
+        return "2.0.0";
     }
 
     public static int versionCompare(String v1, String v2) {

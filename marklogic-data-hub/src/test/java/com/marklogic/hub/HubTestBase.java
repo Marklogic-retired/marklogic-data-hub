@@ -347,13 +347,17 @@ public class HubTestBase {
             "declare variable $databases external;\n" +
             "for $database in fn:tokenize($databases, \",\")\n" +
             "return\n" +
-            "  xdmp:invoke-function(function() {\n" +
+            "  xdmp:eval('\n" +
             "    cts:uris() ! xdmp:document-delete(.)\n" +
-            "  },\n" +
+            "  ',\n" +
+            "  (),\n" +
             "  map:entry(\"database\", xdmp:database($database))\n" +
             "  )";
         eval.addVariable("databases", String.join(",", databases));
-        eval.xquery(installer).eval();
+        EvalResultIterator result = eval.xquery(installer).eval();
+        if (result.hasNext()) {
+            logger.error(result.next().getString());
+        }
     }
 
 

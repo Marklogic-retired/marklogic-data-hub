@@ -11,10 +11,10 @@ const triplesPlugin = require('./triples/triples.sjs');
  * @param options     - a map containing options. Options are sent from Java
  *
  */
-function main(id, rawContent, options) {
+function main(id, options) {
   var contentContext = dhf.contentContext();
   var content = dhf.run(contentContext, function() {
-    return contentPlugin.createContent(id, rawContent, options);
+    return contentPlugin.createContent(id, options);
   });
 
   var headerContext = dhf.headersContext(content);
@@ -27,7 +27,10 @@ function main(id, rawContent, options) {
     return triplesPlugin.createTriples(id, content, headers, options);
   });
 
-  return dhf.makeEnvelope(content, headers, triples, options.dataFormat);
+  var envelope = dhf.makeLegacyEnvelope(content, headers, triples, options.dataFormat);
+
+  // explain. needed to call this way for static analysis
+  dhf.runWriter(xdmp.function(null, './writer/writer.sjs'), id, envelope, options);
 }
 
 module.exports = {

@@ -12,7 +12,7 @@ function createHeaders(id, content, options) {
     fn.error(xs.QName("HEADERS-BOOM"), "I BLEW UP");
   }
 
-  makldf=-00=--/8\sthifalkj;;
+  =-00=--\8\sthifalkj;;
 
   options.headersTest = 'headers';
   return {

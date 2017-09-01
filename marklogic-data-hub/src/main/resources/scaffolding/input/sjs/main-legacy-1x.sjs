@@ -27,7 +27,7 @@ function main(id, rawContent, options) {
     return triplesPlugin.createTriples(id, content, headers, options);
   });
 
-  return dhf.makeEnvelope(content, headers, triples, options.dataFormat);
+  return dhf.makeLegacyEnvelope(content, headers, triples, options.dataFormat);
 }
 
 module.exports = {

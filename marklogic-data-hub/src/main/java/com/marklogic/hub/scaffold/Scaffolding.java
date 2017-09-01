@@ -135,7 +135,7 @@ public class Scaffolding {
         return builder.parse(is);
     }
 
-    public List<String> updateLegacyFlows(String entityName) throws IOException {
+    public List<String> updateLegacyFlows(String fromVersion, String entityName) throws IOException {
         Path entityDir = entitiesDir.resolve(entityName);
         Path inputDir = entityDir.resolve("input");
         Path harmonizeDir = entityDir.resolve("harmonize");
@@ -145,7 +145,7 @@ public class Scaffolding {
         File[] inputFlows = inputDir.toFile().listFiles((pathname) -> pathname.isDirectory() && !pathname.getName().equals("REST"));
         if (inputFlows != null) {
             for (File inputFlow : inputFlows) {
-                if (updateLegacyFlow(entityName, inputFlow.getName(), FlowType.INPUT)) {
+                if (updateLegacyFlow(fromVersion, entityName, inputFlow.getName(), FlowType.INPUT)) {
                     updatedFlows.add(entityName + " => " + inputFlow.getName());
                 }
             }
@@ -154,7 +154,7 @@ public class Scaffolding {
         File[] harmonizeFlows = harmonizeDir.toFile().listFiles((pathname) -> pathname.isDirectory() && !pathname.getName().equals("REST"));
         if (harmonizeFlows != null) {
             for (File harmonizeFlow : harmonizeFlows) {
-                if(updateLegacyFlow(entityName, harmonizeFlow.getName(), FlowType.HARMONIZE)) {
+                if(updateLegacyFlow(fromVersion, entityName, harmonizeFlow.getName(), FlowType.HARMONIZE)) {
                     updatedFlows.add(entityName + " => " + harmonizeFlow.getName());
                 }
             }
@@ -163,12 +163,12 @@ public class Scaffolding {
         return updatedFlows;
     }
 
-    public boolean updateLegacyFlow(String entityName, String flowName, FlowType flowType) throws IOException {
+    public boolean updateLegacyFlow(String fromVersion, String entityName, String flowName, FlowType flowType) throws IOException {
         boolean updated = false;
 
         Path flowDir = getFlowDir(entityName, flowName, flowType);
         File[] mainFiles = flowDir.toFile().listFiles((dir, name) -> name.matches("main\\.(sjs|xqy)"));
-        if (mainFiles.length < 1) {
+        if (mainFiles.length < 1 || !flowDir.resolve(flowName + ".properties").toFile().exists()) {
             File[] files = flowDir.toFile().listFiles((dir, name) -> name.endsWith(".xml"));
 
             for (File file : files) {
@@ -197,7 +197,11 @@ public class Scaffolding {
                             throw new RuntimeException("Invalid Code Format");
                         }
 
-                        writeFile("scaffolding/" + flowType + "/" + codeFormat + "/main-legacy." + codeFormat,
+                        String suffix = "";
+                        if (fromVersion.startsWith("1.")) {
+                            suffix = "-1x";
+                        }
+                        writeFile("scaffolding/" + flowType + "/" + codeFormat + "/main-legacy" + suffix + "." + codeFormat,
                             flowDir.resolve("main." + codeFormat));
 
                         file.delete();

@@ -26,7 +26,7 @@ declare function perf:log($what, $func)
     let $before := xdmp:elapsed-time()
     let $resp := $func()
     let $time := xdmp:elapsed-time() - $before
-    let $_ := debug:log("PERFORMANCE: " || $what || " took " || $time || " ms" )
+    let $_ := debug:log("PERFORMANCE: " || $what || " took " || $time )
     return
       $resp
   else

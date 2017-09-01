@@ -103,7 +103,7 @@ public class LoadHubModulesCommand extends AbstractCommand {
         this.threadPoolTaskExecutor.afterPropertiesSet();
         this.modulesLoader.setTaskExecutor(this.threadPoolTaskExecutor);
 
-        File timestampFile = Paths.get(hubConfig.projectDir, ".tmp", "hub-modules-deploy-timestamps.properties").toFile();
+        File timestampFile = hubConfig.getHubModulesDeployTimestampFile();
         PropertiesModuleManager propsManager = new PropertiesModuleManager(timestampFile);
         propsManager.deletePropertiesFile();
         this.modulesLoader.setModulesManager(propsManager);

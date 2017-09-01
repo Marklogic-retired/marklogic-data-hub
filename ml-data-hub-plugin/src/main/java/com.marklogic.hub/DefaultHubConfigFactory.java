@@ -36,8 +36,8 @@ public class DefaultHubConfigFactory extends PropertySourceFactory {
         HubConfig hubConfig = new HubConfig();
         hubConfig.loadConfigurationFromProperties(properties);
 
-        if (hubConfig.projectDir.equals(".")) {
-            hubConfig.projectDir = project.getProjectDir().getAbsolutePath();
+        if (hubConfig.getProjectDir().equals(".")) {
+            hubConfig.setProjectDir(project.getProjectDir().getAbsolutePath());
         }
         return hubConfig;
     }

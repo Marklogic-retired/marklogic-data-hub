@@ -361,7 +361,7 @@ public class FlowManagerTest extends HubTestBase {
     public void testHasLegacyflows() throws IOException {
         FlowManager fm = new FlowManager(getHubConfig());
 
-        Scaffolding scaffolding = new Scaffolding(getHubConfig().projectDir, stagingClient);
+        Scaffolding scaffolding = new Scaffolding(getHubConfig().getProjectDir(), stagingClient);
         scaffolding.createEntity("new-entity");
         scaffolding.createFlow("new-entity", "new-flow", FlowType.HARMONIZE, CodeFormat.XQUERY, DataFormat.XML);
         assertEquals(0, fm.getLegacyFlows().size());

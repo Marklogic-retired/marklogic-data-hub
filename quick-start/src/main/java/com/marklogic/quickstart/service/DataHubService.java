@@ -152,7 +152,7 @@ public class DataHubService {
     }
 
     public String getLastDeployed(HubConfig config) {
-        File tsFile = config.getModulesDeployTimestampFile();
+        File tsFile = config.getUserModulesDeployTimestampFile();
         Date lastModified = new Date(tsFile.lastModified());
 
         TimeZone tz = TimeZone.getTimeZone("UTC");

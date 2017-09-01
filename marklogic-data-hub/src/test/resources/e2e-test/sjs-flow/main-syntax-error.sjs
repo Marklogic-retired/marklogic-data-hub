@@ -1,5 +1,3 @@
-'use strict';
-
 const dhf = require('/com.marklogic.hub/dhf.xqy');
 
 const contentPlugin = require('./content.sjs');
@@ -14,18 +12,18 @@ const triplesPlugin = require('./triples.sjs');
  *
  */
 function main(id, rawContent, options) {
-  let contentContext = dhf.contentContext();
-  let content = dhf.run(contentContext, function() {
+  var contentContext = dhf.contentContext();
+  var content = dhf.run(contentContext, function() {
     return contentPlugin.createContent(id, rawContent, options);
   });
 
-  let headerContext = dhf.headersContext(content);
-  let headers = dhf.run(headerContext, function() {
+  var headerContext = dhf.headersContext(content);
+  var headers = dhf.run(headerContext, function() {
     return headersPlugin.createHeaders(id, content, options);
   });
 
-  let tripleContext = dhf.triplesContext(content, headers);
-  let triples = dhf.run(tripleContext, function() {
+  var tripleContext = dhf.triplesContext(content, headers);
+  var triples = dhf.run(tripleContext, function() {
     return triplesPlugin.createTriples(id, content, headers, options);
   });
 
@@ -35,13 +33,13 @@ function main(id, rawContent, options) {
 
   if (options.extraPlugin === true) {
     const extraPlugin = require('./extra-plugin.sjs');
-    let extraContext = dhf.context('extraPlugin');
+    var extraContext = dhf.context('extraPlugin');
     dhf.run(extraContext, function() {
       return extraPlugin.doSomethingExtra(id, options);
     });
   }
 
-  makldf=-00=--/8\sthifalkj;;
+  =-00=--\8\sthifalkj;;
 
   return dhf.makeEnvelope(content, headers, triples, options.dataFormat);
 }

@@ -7,6 +7,7 @@ import org.springframework.util.FileCopyUtils;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -23,6 +24,12 @@ public class DataHubUpgrader {
     }
 
     public boolean upgradeHub() throws CantUpgradeException {
+        return upgradeHub(null);
+    }
+
+    public boolean upgradeHub(List<String> updatedFlows) throws CantUpgradeException {
+        boolean isHubInstalled = dataHub.isInstalled().isInstalled();
+
         String currentVersion = dataHub.getHubVersion();
         int compare = DataHub.versionCompare(currentVersion, MIN_UPGRADE_VERSION);
         if (compare == -1) {
@@ -30,25 +37,33 @@ public class DataHubUpgrader {
         }
 
         boolean result = false;
-        File buildGradle = Paths.get(this.hubConfig.projectDir, "build.gradle").toFile();
+        boolean alreadyInitialized = hubConfig.getHubProject().isInitialized();
+        File buildGradle = Paths.get(hubConfig.getProjectDir(), "build.gradle").toFile();
         try {
             // update the hub-internal-config files
-            new HubProject(hubConfig).init();
+            hubConfig.getHubProject().init(hubConfig.getCustomTokens());
 
-            // replace the hub version in build.gradle
-            String text = FileUtils.readFileToString(buildGradle);
-            String version = hubConfig.getJarVersion();
-            text = Pattern.compile("^(\\s*)id\\s+['\"]com.marklogic.ml-data-hub['\"]\\s+version.+$", Pattern.MULTILINE).matcher(text).replaceAll("$1id 'com.marklogic.ml-data-hub' version '" + version + "'");
-            text = Pattern.compile("^(\\s*)compile.+marklogic-data-hub.+$", Pattern.MULTILINE).matcher(text).replaceAll("$1compile 'com.marklogic:marklogic-data-hub:" + version + "'");
-            FileUtils.writeStringToFile(buildGradle, text);
+            if (alreadyInitialized) {
+                // replace the hub version in build.gradle
+                String text = FileUtils.readFileToString(buildGradle);
+                String version = hubConfig.getJarVersion();
+                text = Pattern.compile("^(\\s*)id\\s+['\"]com.marklogic.ml-data-hub['\"]\\s+version.+$", Pattern.MULTILINE).matcher(text).replaceAll("$1id 'com.marklogic.ml-data-hub' version '" + version + "'");
+                text = Pattern.compile("^(\\s*)compile.+marklogic-data-hub.+$", Pattern.MULTILINE).matcher(text).replaceAll("$1compile 'com.marklogic:marklogic-data-hub:" + version + "'");
+                FileUtils.writeStringToFile(buildGradle, text);
 
-            hubConfig.getHubSecurityDir().resolve("roles").resolve("data-hub-user.json").toFile().delete();
+                hubConfig.getHubSecurityDir().resolve("roles").resolve("data-hub-user.json").toFile().delete();
+            }
 
             // update legacy flows to include main.(sjs|xqy)
-            List<String> updatedFlows = new FlowManager(hubConfig).updateLegacyFlows();
+            List<String> flows = new FlowManager(hubConfig).updateLegacyFlows(currentVersion);
+            if (updatedFlows != null) {
+                updatedFlows.addAll(flows);
+            }
 
-            // install hub modules into MarkLogic
-            dataHub.install();
+            if (isHubInstalled) {
+                // install hub modules into MarkLogic
+                dataHub.install();
+            }
 
             result = true;
         }

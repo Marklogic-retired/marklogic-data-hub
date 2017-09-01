@@ -74,7 +74,7 @@ public class FlowManager extends ResourceManager {
     public List<Flow> getLocalFlows() {
 
         List<Flow> flows = new ArrayList<>();
-        Path entitiesDir = Paths.get(hubConfig.projectDir).resolve("plugins").resolve("entities");
+        Path entitiesDir = hubConfig.getHubEntitiesDir();
 
         File[] entities = entitiesDir.toFile().listFiles((pathname -> pathname.isDirectory()));
         if (entities != null) {
@@ -207,7 +207,7 @@ public class FlowManager extends ResourceManager {
 
     public List<String> getLegacyFlows() {
         List<String> oldFlows = new ArrayList<>();
-        Path entitiesDir = Paths.get(hubConfig.projectDir).resolve("plugins").resolve("entities");
+        Path entitiesDir = hubConfig.getHubEntitiesDir();
 
         File[] entityDirs = entitiesDir.toFile().listFiles(pathname -> pathname.isDirectory());
         if (entityDirs != null) {
@@ -241,16 +241,15 @@ public class FlowManager extends ResourceManager {
         return oldFlows;
     }
 
-    public List<String> updateLegacyFlows() throws IOException {
+    public List<String> updateLegacyFlows(String fromVersion) throws IOException {
 
-        Scaffolding scaffolding = new Scaffolding(hubConfig.projectDir, hubConfig.newFinalClient());
+        Scaffolding scaffolding = new Scaffolding(hubConfig.getProjectDir(), hubConfig.newFinalClient());
 
         List<String> updatedFlows = new ArrayList<>();
-        Path entitiesDir = Paths.get(hubConfig.projectDir).resolve("plugins").resolve("entities");
-        File[] entityDirs = entitiesDir.toFile().listFiles(pathname -> pathname.isDirectory());
+        File[] entityDirs = hubConfig.getHubEntitiesDir().toFile().listFiles(pathname -> pathname.isDirectory());
         if (entityDirs != null) {
             for (File entityDir : entityDirs) {
-                updatedFlows.addAll(scaffolding.updateLegacyFlows(entityDir.getName()));
+                updatedFlows.addAll(scaffolding.updateLegacyFlows(fromVersion, entityDir.getName()));
             }
         }
 

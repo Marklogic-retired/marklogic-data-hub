@@ -384,6 +384,39 @@ declare function flow:make-envelope($content, $headers, $triples, $data-format)
       fn:error(xs:QName("INVALID-DATA-FORMAT"), "Invalid data format: " || $data-format)
 };
 
+declare function flow:make-legacy-envelope($content, $headers, $triples, $data-format)
+  as document-node()
+{
+  let $content := flow:clean-data($content, "content", $data-format)
+  let $headers := flow:clean-data($headers, "headers", $data-format)
+  let $triples := flow:clean-data($triples, "triples", $data-format)
+  return
+    if ($data-format = $consts:JSON) then
+      let $envelope :=
+        let $o := json:object()
+        let $_ := (
+          map:put($o, "headers", $headers),
+          map:put($o, "triples", $triples),
+          map:put($o, "content", $content)
+        )
+        return
+          $o
+      let $wrapper := json:object()
+      let $_ := map:put($wrapper, "envelope", $envelope)
+      return
+        xdmp:to-json($wrapper)
+    else if ($data-format = $consts:XML) then
+      document {
+        <envelope xmlns="http://marklogic.com/data-hub/envelope">
+          <headers>{$headers}</headers>
+          <triples>{$triples}</triples>
+          <content>{$content}</content>
+        </envelope>
+      }
+    else
+      fn:error(xs:QName("INVALID-DATA-FORMAT"), "Invalid data format: " || $data-format)
+};
+
 declare function flow:instance-to-canonical-json(
   $entity-instance as map:map) as json:object
 {
@@ -733,8 +766,14 @@ declare function flow:validate-entities()
             )
         }
         catch($ex) {
-          let $uri := ($ex/error:stack/error:frame)[1]/error:uri
-          let $plugin := hul:get-file-name(hul:get-file-from-uri($uri))
+          let $plugin :=
+            let $uri := ($ex/error:stack/error:frame)[1]/error:uri
+            let $name := hul:get-file-name(hul:get-file-from-uri($uri))
+            return
+              if ($name eq "[anonymous]") then
+                fn:replace($ex/error:expr, ".+/([^.]+)\.(sjs|xqy).*", "$1")
+              else
+                $name
           return
             flow:make-error-json(
               $errors,

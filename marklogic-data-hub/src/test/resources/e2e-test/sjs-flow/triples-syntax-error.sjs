@@ -12,7 +12,7 @@ function createTriples(id, content, headers, options) {
   if (options.triplesGoBoom  === true && (id === '/input-2.json' || id === '/input-2.xml')) {
     fn.error(xs.QName("TRIPLES-BOOM"), "I BLEW UP");
   }
-  makldf=-00=--/8\sthifalkj;;
+  =-00=--\8\sthifalkj;;
   options.triplesTest = 'triples';
   return [
     sem.triple("a", "b", "c"),

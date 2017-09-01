@@ -20,23 +20,20 @@ import com.marklogic.hub.deploy.util.CacheBustingXccAssetLoader;
 import com.marklogic.hub.deploy.util.EntityDefModulesFinder;
 import com.marklogic.hub.deploy.util.HubFileFilter;
 import com.marklogic.hub.error.LegacyFlowsException;
-import com.marklogic.hub.flow.*;
-import com.marklogic.hub.flow.impl.FlowImpl;
+import com.marklogic.hub.flow.Flow;
 import org.apache.commons.io.IOUtils;
 import org.springframework.core.io.Resource;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
 import java.io.FileFilter;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.file.*;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 import java.util.regex.Pattern;
 
 public class LoadUserModulesCommand extends AbstractCommand {
@@ -57,7 +54,7 @@ public class LoadUserModulesCommand extends AbstractCommand {
     }
 
     private PropertiesModuleManager getModulesManager() {
-        File timestampFile = hubConfig.getModulesDeployTimestampFile();
+        File timestampFile = hubConfig.getUserModulesDeployTimestampFile();
         PropertiesModuleManager pmm = new PropertiesModuleManager(timestampFile);
         if (forceLoad) {
             pmm.deletePropertiesFile();
@@ -148,7 +145,7 @@ public class LoadUserModulesCommand extends AbstractCommand {
         DatabaseClient stagingClient = hubConfig.newStagingClient();
         DatabaseClient finalClient = hubConfig.newFinalClient();
 
-        Path userModulesPath = Paths.get(hubConfig.projectDir, "plugins");
+        Path userModulesPath = hubConfig.getHubPluginsDir();
         File baseDir = userModulesPath.normalize().toAbsolutePath().toFile();
         Path startPath = userModulesPath.resolve("entities");
 

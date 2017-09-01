@@ -162,3 +162,8 @@ declare function hul:get-file-name($filename as xs:string)
 {
   fn:replace($filename, "(.*)\.[^\.]+$", "$1")
 };
+
+declare function hul:is-ml-8() as xs:boolean
+{
+  fn:starts-with(xdmp:version(), "8")
+};

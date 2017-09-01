@@ -9,7 +9,7 @@ function collect(options) {
   if (options.collectorGoBoom === true) {
     fn.error(xs.QName("COLLECTOR-BOOM"), "I BLEW UP");
   }
-  makldf=-00=--/8\sthifalkj;;
+  =-00=--\8\sthifalkj;;
 
   options.collectorTest = 'collector';
   return cts.uris(null, null, cts.collectionQuery(options.entity));

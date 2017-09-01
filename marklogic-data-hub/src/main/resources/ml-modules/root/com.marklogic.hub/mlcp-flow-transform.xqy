@@ -11,6 +11,9 @@ import module namespace debug = "http://marklogic.com/data-hub/debug"
 import module namespace flow = "http://marklogic.com/data-hub/flow-lib"
   at "/com.marklogic.hub/lib/flow-lib.xqy";
 
+import module namespace hul = "http://marklogic.com/data-hub/hub-utils-lib"
+  at "/com.marklogic.hub/lib/hub-utils-lib.xqy";
+
 import module namespace perf = "http://marklogic.com/data-hub/perflog-lib"
   at "/com.marklogic.hub/lib/perflog-lib.xqy";
 
@@ -57,20 +60,49 @@ declare function mlcpFlow:transform(
       let $_ := flow:set-default-options($options, $flow)
 
       (: this can throw, but we want MLCP to know about problems, so let it :)
-      let $envelope := flow:run-flow(
+      let $envelope := mlcpFlow:run-flow(
         map:get($params, "jobId"), $flow, $uri, map:get($content, "value"), $options
       )
-
       let $_ := map:put($content, "value", $envelope)
-      (: write trace for imaginary writer :)
-      let $_ := (
-        trace:set-plugin-label("rest builtin writer"),
-        trace:set-plugin-input("envelope", $envelope),
-        trace:plugin-trace((), xs:dayTimeDuration("PT0S"))
-      )
-
-      let $_ := trace:write-trace()
       return
         $content
     })
+};
+
+declare function mlcpFlow:run-flow(
+  $jobId, $flow, $uri, $content, $options)
+{
+  (: mlcp in runs in update mode :)
+  xdmp:eval('
+    import module namespace flow = "http://marklogic.com/data-hub/flow-lib"
+      at "/com.marklogic.hub/lib/flow-lib.xqy";
+
+    import module namespace trace = "http://marklogic.com/data-hub/trace"
+      at "/com.marklogic.hub/lib/trace-lib.xqy";
+
+    declare variable $jobId external;
+    declare variable $flow external;
+    declare variable $uri external;
+    declare variable $content external;
+    declare variable $options external;
+
+    let $envelope := flow:run-flow($jobId, $flow, $uri, $content, $options)
+
+    (: write trace for imaginary writer :)
+    let $_ := (
+      trace:set-plugin-label("rest builtin writer"),
+      trace:set-plugin-input("envelope", $envelope),
+      trace:plugin-trace((), xs:dayTimeDuration("PT0S"))
+    )
+    let $_ := trace:write-trace()
+    return
+      $envelope
+  ',
+  map:new((
+    map:entry("jobId", $jobId),
+    map:entry("flow", $flow),
+    map:entry("uri", $uri),
+    map:entry("content", $content),
+    map:entry("options", $options)
+  )))
 };
