@@ -194,8 +194,6 @@ public class DataHub {
 
     public void initProject() {
         logger.info("Initializing the Hub Project");
-
-        
         hubConfig.getHubProject().init(hubConfig.getCustomTokens());
     }
 
@@ -418,6 +416,18 @@ public class DataHub {
         }
         catch(Exception e) {}
         return "2.0.0";
+    }
+
+    public String getMarkLogicVersion() {
+        ServerEvaluationCall eval = hubConfig.newAppServicesClient().newServerEval();
+        String xqy = "xdmp:version()";
+        EvalResultIterator result = eval.xquery(xqy).eval();
+        if (result.hasNext()) {
+            return result.next().getString();
+        }
+        else {
+            throw new RuntimeException("Couldn't determine MarkLogic Version");
+        }
     }
 
     public static int versionCompare(String v1, String v2) {

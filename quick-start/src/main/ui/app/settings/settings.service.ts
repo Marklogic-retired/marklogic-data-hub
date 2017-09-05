@@ -64,6 +64,19 @@ export class SettingsService {
     });
   }
 
+  get mlcpPath(): string {
+    return localStorage.getItem('mlcpPath');
+  }
+
+  set mlcpPath(path: string) {
+    localStorage.setItem('mlcpPath', path);
+  }
+
+  validateMlcpPath(path: string) {
+    return this.http.get(`/api/utils/validatePath?path=${encodeURIComponent(path)}`)
+      .map(this.extractData);
+  }
+
   private extractData = (res: Response) => {
     return res.json();
   }

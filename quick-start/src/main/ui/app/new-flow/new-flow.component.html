@@ -24,10 +24,10 @@
             (selectedItem)="flow.useEsModel = $event"></app-select-list>
           <label>Plugin Type</label>
           <app-select-list
-            [items]="pluginFormats"
-            [initialSelectedItem]="pluginFormats[0]"
+            [items]="codeFormats"
+            [initialSelectedItem]="codeFormats[0]"
             label="label" identifier="value"
-            (selectedItem)="flow.pluginFormat = $event"></app-select-list>
+            (selectedItem)="flow.codeFormat = $event"></app-select-list>
           <label>Data Format</label>
           <app-select-list
             [items]="dataFormats"

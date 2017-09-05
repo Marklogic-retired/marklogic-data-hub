@@ -125,6 +125,17 @@ declare function dhf:content-context() as json:object
 };
 
 (:
+ : Creates a context for a content plugin
+ :)
+declare function dhf:content-context($raw-content) as json:object
+{
+  let $context := dhf:context("content")
+  let $_ := dhf:add-trace-input($context, "rawContent", $raw-content)
+  return
+    $context
+};
+
+(:
  : Creates a context for a headers plugin
  :)
 declare function dhf:headers-context($content) as json:object

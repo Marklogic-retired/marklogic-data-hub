@@ -15,13 +15,10 @@
  */
 package com.marklogic.quickstart.model;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class PluginModel {
     public String pluginType;
     public String pluginPath;
-    public Map<String, String> files = new HashMap<>();
+    public String fileContents;
 
     public PluginModel() {}
 }

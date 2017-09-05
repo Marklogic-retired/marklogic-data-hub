@@ -94,11 +94,18 @@ export class Entity {
 
   fromJSON(json) {
     this.filename = json.filename;
-    this.hubUi = new HubUIData().fromJSON(json.hubUi);
-    this.updateTransform();
+    if (json && json.hubUi) {
+      this.hubUi = new HubUIData().fromJSON(json.hubUi);
+      this.updateTransform();
+    }
 
-    this.info = new InfoType().fromJSON(json.info);
-    this.definition = new DefinitionType().fromJSON(json.definition);
+    if (json.info) {
+      this.info = new InfoType().fromJSON(json.info);
+    }
+
+    if (json.definition) {
+      this.definition = new DefinitionType().fromJSON(json.definition);
+    }
 
     this.inputFlows = [];
     if (json.inputFlows && _.isArray(json.inputFlows)) {

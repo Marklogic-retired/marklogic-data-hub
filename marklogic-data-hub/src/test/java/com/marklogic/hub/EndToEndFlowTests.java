@@ -769,7 +769,7 @@ public class EndToEndFlowTests extends HubTestBase {
                 "\"transform_namespace\":\"\\\"http://marklogic.com/data-hub/mlcp-flow-transform\\\"\"," +
                 "\"transform_param\":\"\\\"entity=" + ENTITY + ",flow=" + flowName + ",flowType=input,options=" + optionString + "\\\"\"" +
                 "}");
-        MlcpRunner mlcpRunner = new MlcpRunner("com.marklogic.hub.util.MlcpMain", getHubConfig(), flow, databaseClient, mlcpOptions, null);
+        MlcpRunner mlcpRunner = new MlcpRunner(null, "com.marklogic.hub.util.MlcpMain", getHubConfig(), flow, databaseClient, mlcpOptions, null);
         mlcpRunner.start();
         mlcpRunner.join();
         logger.error(mlcpRunner.getProcessOutput());

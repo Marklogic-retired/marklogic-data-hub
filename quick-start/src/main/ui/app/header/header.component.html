@@ -12,7 +12,7 @@
     <div class="mdl-layout-spacer"></div>
     <nav class="mdl-navigation mdl-layout--large-screen-only">
       <a class="mdl-navigation__link" [ngClass]="{'active': isActive('/')}" [routerLink]="['']"><i class="fa fa-dashboard"></i> Dashboard</a>
-      <a class="mdl-navigation__link" [ngClass]="{'active': isActive('/entities')}" [routerLink]="['entities']"><i class="fa fa-industry"></i> Entities</a>
+      <a class="mdl-navigation__link" *ngIf="getMarkLogicVersion().startsWith('9')" [ngClass]="{'active': isActive('/entities')}" [routerLink]="['entities']"><i class="fa fa-industry"></i> Entities</a>
       <a class="mdl-navigation__link" [ngClass]="{'active': isActive('/flows')}" [routerLink]="['flows']"><i class="mdi mdi-looks"></i> Flows</a>
       <a class="mdl-navigation__link" [ngClass]="{'active': isActive('/browse')}" [routerLink]="['browse']"><i class="mdi mdi-magnify"></i> Browse Data</a>
       <a class="mdl-navigation__link" [ngClass]="{'active': isActive('/jobs')}" [routerLink]="['jobs']"><i class="fa fa-tasks"></i> <span *ngIf="getRunningJobCount() !== 0" [mdl-badge]="getRunningJobCount()">Jobs</span><span *ngIf="getRunningJobCount() === 0">Jobs</span></a>

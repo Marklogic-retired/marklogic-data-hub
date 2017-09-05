@@ -17,7 +17,7 @@ export class NewFlowComponent {
     { label: 'Create Structure from Entity Definition', value: true },
     { label: 'Blank Template', value: false }
   ];
-  pluginFormats = [
+  codeFormats = [
     { label: 'Javascript', value: 'JAVASCRIPT' },
     { label: 'XQuery', value: 'XQUERY' }
   ];
@@ -30,7 +30,7 @@ export class NewFlowComponent {
 
   emptyFlow = {
     flowName: <string>null,
-    pluginFormat: 'JAVASCRIPT',
+    codeFormat: 'JAVASCRIPT',
     dataFormat: 'JSON',
     useEsModel: true
   };

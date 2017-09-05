@@ -32,6 +32,7 @@ import com.marklogic.quickstart.model.FlowModel;
 import com.marklogic.quickstart.model.PluginModel;
 import com.marklogic.quickstart.util.FileUtil;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -42,10 +43,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class FlowManagerService {
@@ -57,52 +56,49 @@ public class FlowManagerService {
         return authenticationToken.getEnvironmentConfig();
     }
 
-    private FlowManager fm = null;
-
     private FlowManager getFlowManager() {
-        if (fm == null) {
-            fm = new FlowManager(envConfig().getMlSettings());
-        }
-        return fm;
+        return new FlowManager(envConfig().getMlSettings());
     }
 
     public List<FlowModel> getFlows(String projectDir, String entityName, FlowType flowType) {
-        List<FlowModel> flows = new ArrayList<>();
-
         Path entityPath = Paths.get(projectDir, "plugins", "entities", entityName);
+        return getFlowManager().getLocalFlowsForEntity(entityName, flowType).stream().map(flow -> {
+            FlowModel flowModel = new FlowModel(entityName, flow.getName());
+            flowModel.codeFormat = flow.getCodeFormat();
+            flowModel.dataFormat = flow.getDataFormat();
 
-        Path flowPath = entityPath.resolve(flowType.toString());
-        List<String> flowNames = FileUtil.listDirectFolders(flowPath.toFile());
-        for (String flowName : flowNames) {
-            if (flowName.equals("REST")) continue;
-
-            Flow f = FlowImpl.loadFromFile(flowPath.resolve(flowName).resolve(flowName + ".xml").toFile());
-            FlowModel flow = new FlowModel(entityName, flowName);
-            if (f != null) {
-                flow.dataFormat = f.getDataFormat();
-            }
-            Path pluginsPath = flowPath.resolve(flowName);
-            List<String> pluginNames = FileUtil.listDirectFolders(pluginsPath.toFile());
+            Path flowPath = entityPath.resolve(flowType.toString()).resolve(flow.getName());
+            List<String> pluginNames = FileUtil.listDirectFolders(flowPath.toFile());
             for (String pluginName : pluginNames) {
-                Path pluginPath = pluginsPath.resolve(pluginName);
+                Path pluginPath = flowPath.resolve(pluginName);
                 List<String> pluginFiles = FileUtil.listDirectFiles(pluginPath.toString());
                 PluginModel pm = new PluginModel();
                 pm.pluginType = pluginName;
-                pm.pluginPath = pluginPath.toString();
                 for (String pluginFile : pluginFiles) {
+                    pm.pluginPath = pluginPath.resolve(pluginFile).toString();
                     try {
-                        pm.files.put( pluginFile, new String(Files.readAllBytes(Paths.get(pluginPath.toString() + File.separator + pluginFile))));
-                    } catch (IOException e) {
-                        pm.files.put(pluginFile, null);
-                    }
+                        pm.fileContents = new String(Files.readAllBytes(pluginPath.resolve(pluginFile)));
+                    } catch (IOException e) {}
                 }
 
-                flow.plugins.add(pm);
+                flowModel.plugins.add(pm);
             }
-            flows.add(flow);
-        }
 
-        return flows;
+            File[] pluginFiles = flowPath.toFile().listFiles(pathname -> pathname.isFile() && !pathname.getName().endsWith("properties"));
+            for (File pluginFile : pluginFiles) {
+                PluginModel pm = new PluginModel();
+                pm.pluginType = FilenameUtils.getBaseName(pluginFile.getName());
+                pm.pluginPath = pluginFile.getAbsolutePath();
+                try {
+                    pm.fileContents = new String(Files.readAllBytes(pluginFile.toPath()));
+                } catch (IOException e) {}
+                flowModel.plugins.add(pm);
+            }
+
+            flowModel.plugins.sort(Comparator.comparing(o -> o.pluginType));
+
+            return flowModel;
+        }).collect(Collectors.toList());
     }
 
     public Flow getServerFlow(String entityName, String flowName, FlowType flowType) {
@@ -152,8 +148,9 @@ public class FlowManagerService {
     }
 
     public void runMlcp(Flow flow, JsonNode json, FlowStatusListener statusListener) {
+        String mlcpPath = json.get("mlcpPath").textValue();
         HubConfig hubConfig = envConfig().getMlSettings();
-        MlcpRunner runner = new MlcpRunner("com.marklogic.quickstart.util.MlcpMain", hubConfig, flow, hubConfig.newStagingClient(), json, statusListener);
+        MlcpRunner runner = new MlcpRunner(mlcpPath, "com.marklogic.quickstart.util.MlcpMain", hubConfig, flow, hubConfig.newStagingClient(), json.get("mlcpOptions"), statusListener);
         runner.start();
     }
 }

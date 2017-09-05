@@ -3,7 +3,7 @@ import { Plugin } from './plugin.model';
 export class Flow {
   entityName: string;
   flowName: string;
-  pluginFormat: string;
+  codeFormat: string;
   dataFormat: string;
   useEsModel: boolean = true;
   plugins: Array<Plugin>;
@@ -14,7 +14,7 @@ export class Flow {
   fromJSON(json) {
     this.entityName = json.entityName;
     this.flowName = json.flowName;
-    this.pluginFormat = json.pluginFormat;
+    this.codeFormat = json.codeFormat;
     this.dataFormat = json.dataFormat;
     this.plugins = [];
     if (json.plugins) {

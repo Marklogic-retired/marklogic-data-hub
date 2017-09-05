@@ -20,6 +20,7 @@ export class SettingsComponent {
   percentComplete: number;
   isInstalling: boolean = false;
   isUninstalling: boolean = false;
+  isMlcpPathValid: boolean = false;
 
   constructor(
     private settings: SettingsService,
@@ -27,7 +28,26 @@ export class SettingsComponent {
     private projectService: ProjectService,
     private dialogService: MdlDialogService,
     private router: Router
-  ) {}
+  ) {
+    this.mlcpPath = settings.mlcpPath;
+  }
+
+  get mlcpPath() {
+    return this.settings.mlcpPath;
+  }
+
+  set mlcpPath(path: string) {
+    if (path && path.length > 0) {
+      this.settings.validateMlcpPath(path).subscribe((resp: any) => {
+        this.isMlcpPathValid = resp.valid;
+        if (resp.valid) {
+          this.settings.mlcpPath = path;
+        }
+      });
+    } else {
+      this.settings.mlcpPath = path;
+    }
+  }
 
   debugEnabled() {
     return this.settings.debugEnabled;

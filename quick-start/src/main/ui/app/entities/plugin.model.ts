@@ -5,7 +5,7 @@ export class Plugin {
   hasShown: boolean = false;
   pluginType: string;
   pluginPath: string;
-  files: Object;
+  fileContents: string;
   codemirrorConfig: any;
   cm: CodemirrorComponent;
   history: any = {
@@ -18,7 +18,7 @@ export class Plugin {
   fromJSON(json) {
     this.pluginType = json.pluginType;
     this.pluginPath = json.pluginPath;
-    this.files = json.files;
+    this.fileContents = json.fileContents;
     return this;
   }
 }

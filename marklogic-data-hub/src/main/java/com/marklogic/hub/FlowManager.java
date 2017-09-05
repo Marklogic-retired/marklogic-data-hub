@@ -72,38 +72,63 @@ public class FlowManager extends ResourceManager {
      * @return a list of Flows
      */
     public List<Flow> getLocalFlows() {
-
         List<Flow> flows = new ArrayList<>();
-        Path entitiesDir = hubConfig.getHubEntitiesDir();
 
+        Path entitiesDir = hubConfig.getHubEntitiesDir();
         File[] entities = entitiesDir.toFile().listFiles((pathname -> pathname.isDirectory()));
         if (entities != null) {
             for (File entity : entities) {
                 String entityName = entity.getName();
-                Path entityDir = entity.toPath();
-                Path inputDir = entityDir.resolve("input");
-                Path harmonizeDir = entityDir.resolve("harmonize");
+                flows.addAll(getLocalFlowsForEntity(entityName));
+            }
+        }
+        return flows;
+    }
 
+    public List<Flow> getLocalFlowsForEntity(String entityName) {
+        return getLocalFlowsForEntity(entityName, null);
+    }
 
-                File[] inputFlows = inputDir.toFile().listFiles((pathname) -> pathname.isDirectory() && !pathname.getName().equals("REST"));
-                if (inputFlows != null) {
-                    for (File inputFlow : inputFlows) {
-                        Flow flow = getLocalFlow(entityName, inputFlow.toPath(), FlowType.INPUT);
-                        if (flow != null) {
-                            flows.add(flow);
-                        }
+    public List<Flow> getLocalFlowsForEntity(String entityName, FlowType flowType) {
+
+        List<Flow> flows = new ArrayList<>();
+        Path entitiesDir = hubConfig.getHubEntitiesDir();
+        Path entityDir = entitiesDir.resolve(entityName);
+        Path inputDir = entityDir.resolve("input");
+        Path harmonizeDir = entityDir.resolve("harmonize");
+        boolean getInputFlows = false;
+        boolean getHarmonizeFlows = false;
+        if (flowType == null) {
+            getInputFlows = getHarmonizeFlows = true;
+        }
+        else if (flowType.equals(FlowType.INPUT)) {
+            getInputFlows = true;
+        }
+        else if (flowType.equals(FlowType.HARMONIZE)) {
+            getHarmonizeFlows = true;
+        }
+
+        if (getInputFlows) {
+            File[] inputFlows = inputDir.toFile().listFiles((pathname) -> pathname.isDirectory() && !pathname.getName().equals("REST"));
+            if (inputFlows != null) {
+                for (File inputFlow : inputFlows) {
+                    Flow flow = getLocalFlow(entityName, inputFlow.toPath(), FlowType.INPUT);
+                    if (flow != null) {
+                        flows.add(flow);
                     }
                 }
+            }
+        }
 
-                File[] harmonizeFlows = harmonizeDir.toFile().listFiles((pathname) -> pathname.isDirectory() && !pathname.getName().equals("REST"));
-                if (harmonizeFlows != null) {
-                    for (File harmonizeFlow : harmonizeFlows) {
-                        Flow flow = getLocalFlow(entityName, harmonizeFlow.toPath(), FlowType.HARMONIZE);
-                        if (flow != null) {
-                            flows.add(flow);
-                        }
-
+        if (getHarmonizeFlows) {
+            File[] harmonizeFlows = harmonizeDir.toFile().listFiles((pathname) -> pathname.isDirectory() && !pathname.getName().equals("REST"));
+            if (harmonizeFlows != null) {
+                for (File harmonizeFlow : harmonizeFlows) {
+                    Flow flow = getLocalFlow(entityName, harmonizeFlow.toPath(), FlowType.HARMONIZE);
+                    if (flow != null) {
+                        flows.add(flow);
                     }
+
                 }
             }
         }
@@ -220,7 +245,8 @@ public class FlowManager extends ResourceManager {
                 if (inputFlows != null) {
                     for (File inputFlow : inputFlows) {
                         File[] mainFiles = inputFlow.listFiles((dir, name) -> name.matches("main\\.(sjs|xqy)"));
-                        if (mainFiles.length < 1) {
+                        File[] flowFiles = inputFlow.listFiles((dir, name) -> name.matches(inputFlow.getName() + "\\.xml"));
+                        if (mainFiles.length < 1 && flowFiles.length == 1) {
                             oldFlows.add(entityDir.getName() + " => " + inputFlow.getName());
                         }
                     }
@@ -230,7 +256,8 @@ public class FlowManager extends ResourceManager {
                 if (harmonizeFlows != null) {
                     for (File harmonizeFlow : harmonizeFlows) {
                         File[] mainFiles = harmonizeFlow.listFiles((dir, name) -> name.matches("main\\.(sjs|xqy)"));
-                        if (mainFiles.length < 1) {
+                        File[] flowFiles = harmonizeFlow.listFiles((dir, name) -> name.matches(harmonizeFlow.getName() + "\\.xml"));
+                        if (mainFiles.length < 1 && flowFiles.length == 1) {
                             oldFlows.add(entityDir.getName() + " => " + harmonizeFlow.getName());
                         }
                     }

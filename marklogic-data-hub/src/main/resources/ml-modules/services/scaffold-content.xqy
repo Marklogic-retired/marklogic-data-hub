@@ -546,11 +546,11 @@ declare function get(
 
   perf:log('/v1/resources/validate:get', function() {
     let $entity as xs:string := map:get($params, "entity")
-    let $plugin-format as xs:string := map:get($params, "pluginFormat")
+    let $code-format as xs:string := map:get($params, "codeFormat")
     let $model as map:map? := hent:get-model($entity)
     return
       if (fn:exists($model)) then
-        if ($plugin-format eq "xqy") then
+        if ($code-format eq "xqy") then
           service:generate-xqy($entity, $model)
         else
           service:generate-sjs($entity, $model)

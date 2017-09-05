@@ -4,6 +4,12 @@
       <span class="mdl-layout-title">
         <i class="fa fa-bug" *ngIf="hasErrors()"></i>
         Entities
+        <ng-template [ngIf]="getMarkLogicVersion().startsWith('8')">
+          <div class="mdl-layout-spacer"></div>
+          <mdl-button mdl-button-type="icon" id="new-entity" (click)="showNewEntity($event)">
+            <i class="fa fa-plus"></i>
+          </mdl-button>
+        </ng-template>
       </span>
 
       <ul class="entities mdl-list">
@@ -95,33 +101,31 @@
             </mdl-tab-panel-title>
             <mdl-tab-panel-content>
               <div class="flow-plugin">
-                <ng-template ngFor let-file [ngForOf]="(plugin.files | objectToArray)">
-                  <div class="toolbar">
-                    <i class="fa fa-bug" *ngIf="pluginHasError(flow, plugin.pluginType)"></i>
-                    <span class="plugin-path">{{plugin.pluginPath}}{{deviceInfo.os === 'windows' ? '\\' : '/'}}{{file.__key}}</span>
-                    <span *ngIf="isSaving">Saving <i class="fa fa-spinner fa-pulse"></i></span>
-                    <div class="pull-right save-button">
-                      <mdl-button
-                        mdl-button-type="raised" mdl-colored="primary" mdl-ripple
-                        [disabled]="!plugin.$dirty || isSaving"
-                        (click)="savePlugin(plugin)"
-                        tooltip="This will save the plugin code."
-                        tooltipPlacement="bottom">
-                        Save <i class="fa fa-floppy-o"></i>
-                      </mdl-button>
-                    </div>
+                <div class="toolbar">
+                  <i class="fa fa-bug" *ngIf="pluginHasError(flow, plugin.pluginType)"></i>
+                  <span class="plugin-path">{{plugin.pluginPath}}</span>
+                  <span *ngIf="isSaving">Saving <i class="fa fa-spinner fa-pulse"></i></span>
+                  <div class="pull-right save-button">
+                    <mdl-button
+                      mdl-button-type="raised" mdl-colored="primary" mdl-ripple
+                      [disabled]="!plugin.$dirty || isSaving"
+                      (click)="savePlugin(plugin)"
+                      tooltip="This will save the plugin code."
+                      tooltipPlacement="bottom">
+                      Save <i class="fa fa-floppy-o"></i>
+                    </mdl-button>
                   </div>
-                  <div class="plugin-codemirror">
-                    <app-codemirror [ngModel]="file.value"
-                      (ngModelChange)="syncPluginText(plugin, file.__key, $event)"
-                      (saveEvent)="savePlugin(plugin)"
-                      [(dirty)]="plugin.$dirty"
-                      (cmChange)="setCM(plugin, $event)"
-                      [(history)]="plugin.history"
-                      [config]="plugin.codemirrorConfig"
-                      [error]="getPluginErrors(flow, plugin.pluginType)"></app-codemirror>
-                  </div>
-                </ng-template>
+                </div>
+                <div class="plugin-codemirror">
+                  <app-codemirror [ngModel]="plugin.fileContents"
+                    (ngModelChange)="syncPluginText(plugin, $event)"
+                    (saveEvent)="savePlugin(plugin)"
+                    [(dirty)]="plugin.$dirty"
+                    (cmChange)="setCM(plugin, $event)"
+                    [(history)]="plugin.history"
+                    [config]="plugin.codemirrorConfig"
+                    [error]="getPluginErrors(flow, plugin.pluginType)"></app-codemirror>
+                </div>
               </div>
             </mdl-tab-panel-content>
           </mdl-tab-panel>

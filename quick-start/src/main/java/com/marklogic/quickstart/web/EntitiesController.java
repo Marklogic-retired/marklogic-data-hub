@@ -54,6 +54,12 @@ class EntitiesController extends EnvironmentAware {
     @Autowired
     private SimpMessagingTemplate template;
 
+    @RequestMapping(value = "/entities/create", method = RequestMethod.POST)
+    @ResponseBody
+    public EntityModel createEntity(@RequestBody EntityModel newEntity) throws ClassNotFoundException, IOException {
+        return entityManagerService.createEntity(envConfig().getProjectDir(), newEntity);
+    }
+
     @RequestMapping(value = "/entities/", method = RequestMethod.GET)
     @ResponseBody
     public Collection<EntityModel> getEntities() throws ClassNotFoundException, IOException {
@@ -151,16 +157,13 @@ class EntitiesController extends EnvironmentAware {
     }
 
     @RequestMapping(
-        value = "/entities/{entityName}/flows/{flowType}/{flowName}/plugin/save",
+        value = "/plugin/save",
         method = RequestMethod.POST
     )
     @ResponseBody
     public String saveFlowPlugin(
-        @PathVariable String entityName,
-        @PathVariable FlowType flowType,
-        @PathVariable String flowName,
         @RequestBody PluginModel plugin) throws IOException {
-        entityManagerService.saveFlowPlugin(envConfig().getProjectDir(), entityName, flowType, flowName, plugin);
+        entityManagerService.saveFlowPlugin(plugin);
         return "{ \"success\": true }";
     }
 
@@ -205,8 +208,9 @@ class EntitiesController extends EnvironmentAware {
             resp = new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         else {
+            String mlcpOptions = json.get("mlcpOptions").toString();
             flowManagerService.saveOrUpdateFlowMlcpOptionsToFile(entityName,
-                flowName, json.toString());
+                flowName, mlcpOptions);
 
             flowManagerService.runMlcp(flow, json, (jobId, percentComplete, message) -> template.convertAndSend("/topic/flow-status", new JobStatusMessage(jobId, percentComplete, message, FlowType.INPUT.toString())));
             resp = new ResponseEntity<>(HttpStatus.NO_CONTENT);

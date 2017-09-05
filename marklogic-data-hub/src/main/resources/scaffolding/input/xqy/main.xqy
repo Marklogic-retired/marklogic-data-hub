@@ -30,7 +30,7 @@ declare function plugin:main(
   $raw-content as node()?,
   $options as map:map)
 {
-  let $content-context := dhf:content-context()
+  let $content-context := dhf:content-context($raw-content)
   let $content := dhf:run($content-context, function() {
     content:create-content($id, $raw-content, $options)
   })

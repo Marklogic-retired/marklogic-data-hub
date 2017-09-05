@@ -143,7 +143,7 @@ public class FlowManagerServiceTest extends HubTestBase {
         FlowStatusListener flowStatusListener = (jobId, percentComplete, message) -> {
             logger.error(message);
         };
-        MlcpRunner mlcpRunner = new MlcpRunner("com.marklogic.hub.util.MlcpMain", getHubConfig(), flow, stagingClient, mlcpOptions, flowStatusListener);
+        MlcpRunner mlcpRunner = new MlcpRunner(null, "com.marklogic.hub.util.MlcpMain", getHubConfig(), flow, stagingClient, mlcpOptions, flowStatusListener);
         mlcpRunner.start();
         mlcpRunner.join();
 

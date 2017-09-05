@@ -295,6 +295,15 @@ public class HubConfig {
         return new AdminManager(adminConfig);
     }
 
+    public DatabaseClient newAppServicesClient() {
+        return DatabaseClientFactory.newClient(
+            host,
+            appServicesPort,
+            username,
+            password,
+            DatabaseClientFactory.Authentication.valueOf(stagingAuthMethod.toUpperCase()));
+    }
+
     /**
      * Creates a new DatabaseClient for accessing the Staging database
      * @return - a DatabaseClient

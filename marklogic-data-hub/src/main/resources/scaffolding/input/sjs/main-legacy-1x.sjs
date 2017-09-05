@@ -12,7 +12,7 @@ const triplesPlugin = require('./triples/triples.sjs');
  *
  */
 function main(id, rawContent, options) {
-  var contentContext = dhf.contentContext();
+  var contentContext = dhf.contentContext(rawContent);
   var content = dhf.run(contentContext, function() {
     return contentPlugin.createContent(id, rawContent, options);
   });

@@ -41,10 +41,11 @@ public class MlcpRunner extends ProcessRunner {
     private AtomicLong successfulEvents = new AtomicLong(0);
     private AtomicLong failedEvents = new AtomicLong(0);
     FlowStatusListener flowStatusListener;
+    private String mlcpPath;
     private String mainClass;
     private DatabaseClient databaseClient;
 
-    public MlcpRunner(String mainClass, HubConfig hubConfig, Flow flow, DatabaseClient databaseClient, JsonNode mlcpOptions, FlowStatusListener statusListener) {
+    public MlcpRunner(String mlcpPath, String mainClass, HubConfig hubConfig, Flow flow, DatabaseClient databaseClient, JsonNode mlcpOptions, FlowStatusListener statusListener) {
         super();
 
         this.withHubconfig(hubConfig);
@@ -53,6 +54,7 @@ public class MlcpRunner extends ProcessRunner {
         this.flowStatusListener = statusListener;
         this.flow = flow;
         this.mlcpOptions = mlcpOptions;
+        this.mlcpPath = mlcpPath;
         this.mainClass = mainClass;
         this.databaseClient = databaseClient;
     }
@@ -150,27 +152,38 @@ public class MlcpRunner extends ProcessRunner {
     }
 
     private void buildCommand(MlcpBean bean) throws IOException, InterruptedException {
-        String javaHome = System.getProperty("java.home");
-        String javaBin = javaHome +
-            File.separator + "bin" +
-            File.separator + "java";
-        String classpath = System.getProperty("java.class.path");
-
-        File loggerFile = File.createTempFile("mlcp-", "-logger.xml");
-        FileUtils.writeStringToFile(loggerFile, buildLoggerconfig());
-
         ArrayList<String> args = new ArrayList<>();
-        args.add(javaBin);
-        args.add("-Dlogback.configurationFile=" + loggerFile.toURI());
-
-        if (classpath.endsWith(".war")) {
-            args.add("-jar");
-            args.add(classpath);
+        if (this.mlcpPath != null && this.mlcpPath.length() > 0) {
+            File mlcpFile = new File(this.mlcpPath);
+            if (!mlcpFile.exists()) {
+                throw new RuntimeException("MLCP does not exist at: " + mlcpPath);
+            }
+            else if (!mlcpFile.canExecute()) {
+                throw new RuntimeException("Cannot execute: " + mlcpPath);
+            }
+            args.add(this.mlcpPath);
         }
         else {
-            args.add("-cp");
-            args.add(classpath);
-            args.add(mainClass);
+            String javaHome = System.getProperty("java.home");
+            String javaBin = javaHome +
+                File.separator + "bin" +
+                File.separator + "java";
+            String classpath = System.getProperty("java.class.path");
+
+            File loggerFile = File.createTempFile("mlcp-", "-logger.xml");
+            FileUtils.writeStringToFile(loggerFile, buildLoggerconfig());
+
+            args.add(javaBin);
+            args.add("-Dlogback.configurationFile=" + loggerFile.toURI());
+            if (classpath.endsWith(".war")) {
+                args.add("-jar");
+                args.add(classpath);
+            }
+            else {
+                args.add("-cp");
+                args.add(classpath);
+                args.add(mainClass);
+            }
         }
 
         args.addAll(Arrays.asList(bean.buildArgs()));

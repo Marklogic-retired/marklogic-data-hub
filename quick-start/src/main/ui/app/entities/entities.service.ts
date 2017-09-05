@@ -2,6 +2,7 @@ import { Injectable, EventEmitter } from '@angular/core';
 import { Http, Response } from '@angular/http';
 import { ProjectService } from '../projects/projects.service';
 import { Subject } from 'rxjs/Subject';
+import { SettingsService } from '../settings/settings.service';
 
 import { Entity } from './entity.model';
 import { Flow } from './flow.model';
@@ -29,7 +30,8 @@ export class EntitiesService {
   constructor(
     private http: Http,
     private projectService: ProjectService,
-    private dialogService: MdlDialogService
+    private dialogService: MdlDialogService,
+    private settingsService: SettingsService
   ) {}
 
   getEntities() {
@@ -49,9 +51,9 @@ export class EntitiesService {
   //   return this.get(this.url(`/entities/${entityName}`));
   // }
 
-  // createEntity(entity: Entity) {
-  //   return this.post(this.url('/entities/'), entity);
-  // }
+  createEntity(entity: Entity) {
+    return this.post(this.url('/entities/create'), entity);
+  }
 
   saveEntity(entity: Entity) {
     let resp = this.http.put(this.url(`/entities/${entity.name}`), entity).map((res: Response) => {
@@ -158,7 +160,7 @@ export class EntitiesService {
 
   savePlugin(entity: Entity, flowType: string, flow: Flow, plugin: Plugin) {
     return this.post(
-      this.url(`/entities/${entity.info.title}/flows/${flowType}/${flow.flowName}/plugin/save`),
+      this.url(`/plugin/save`),
       _.omit(plugin, ['cm', 'codemirrorConfig', 'history'])
     );
   }
@@ -183,7 +185,11 @@ export class EntitiesService {
 
   runInputFlow(flow: Flow, mlcpOptions: any) {
     const url = this.url(`/entities/${flow.entityName}/flows/input/${flow.flowName}/run`);
-    return this.http.post(url, mlcpOptions).subscribe(() => {});
+    let options = {
+      mlcpPath: this.settingsService.mlcpPath,
+      mlcpOptions: mlcpOptions
+    };
+    return this.http.post(url, options).subscribe(() => {});
   }
 
   runHarmonizeFlow(flow: Flow, batchSize: number, threadCount: number) {
@@ -195,20 +201,24 @@ export class EntitiesService {
     this.entityRefDataTypes = [];
     this.externalRefDataTypes = [];
     this.entities.forEach((entity: Entity) => {
-      this.entityRefDataTypes.push({
-        label: entity.info.title,
-        value: '#/definitions/' + entity.info.title
-      });
+      if (entity.info && entity.info.title) {
+        this.entityRefDataTypes.push({
+          label: entity.info.title,
+          value: '#/definitions/' + entity.info.title
+        });
+      }
 
-      entity.definition.properties.forEach((property: PropertyType) => {
-        if (property.$ref && !property.$ref.startsWith('#/definitions/')) {
-          this.externalRefDataTypes.push(property.$ref);
-        } else if (property.datatype === 'array') {
-          if (property.items && property.items.$ref && !property.items.$ref.startsWith('#/definitions/')) {
-            this.externalRefDataTypes.push(property.items.$ref);
+      if (entity.definition && entity.definition.properties) {
+        entity.definition.properties.forEach((property: PropertyType) => {
+          if (property.$ref && !property.$ref.startsWith('#/definitions/')) {
+            this.externalRefDataTypes.push(property.$ref);
+          } else if (property.datatype === 'array') {
+            if (property.items && property.items.$ref && !property.items.$ref.startsWith('#/definitions/')) {
+              this.externalRefDataTypes.push(property.items.$ref);
+            }
           }
-        }
-      });
+        });
+      }
     });
   }
 

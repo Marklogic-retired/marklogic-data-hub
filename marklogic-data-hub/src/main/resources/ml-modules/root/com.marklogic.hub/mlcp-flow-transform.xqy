@@ -91,6 +91,7 @@ declare function mlcpFlow:run-flow(
     (: write trace for imaginary writer :)
     let $_ := (
       trace:set-plugin-label("rest builtin writer"),
+      trace:reset-plugin-input(),
       trace:set-plugin-input("envelope", $envelope),
       trace:plugin-trace((), xs:dayTimeDuration("PT0S"))
     )

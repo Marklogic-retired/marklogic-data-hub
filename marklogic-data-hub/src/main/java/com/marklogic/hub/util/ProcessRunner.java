@@ -70,6 +70,7 @@ public class ProcessRunner extends Thread {
         try {
             logger.debug(String.join(" ", args));
             ProcessBuilder pb = new ProcessBuilder(args);
+            pb.redirectErrorStream(true);
             Process process = pb.start();
 
             StreamGobbler gobbler = new StreamGobbler(process.getInputStream(), status -> {

@@ -13,9 +13,11 @@ import { MdlDialogService, MdlDialogReference } from '@angular-mdl/core';
 
 import { MlcpUiComponent } from '../mlcp-ui';
 import { HarmonizeFlowOptionsComponent } from '../harmonize-flow-options/harmonize-flow-options.component';
+import { NewEntityComponent } from '../new-entity/new-entity.component';
 import { NewFlowComponent } from '../new-flow/new-flow.component';
 
 import { JobListenerService } from '../jobs/job-listener.service';
+import { EnvironmentService } from '../environment';
 
 import { HasBugsDialogComponent } from '../has-bugs-dialog';
 
@@ -44,7 +46,6 @@ export class FlowsComponent implements OnInit, OnDestroy {
   isSaving = false;
   mlcpOptions: any;
   entitiesReady: EventEmitter<boolean> = new EventEmitter();
-  deviceInfo = null;
 
   private paramListener: any;
 
@@ -67,11 +68,10 @@ export class FlowsComponent implements OnInit, OnDestroy {
     private snackbar: MdlSnackbarService,
     private dialogService: MdlDialogService,
     private jobListener: JobListenerService,
+    private envService: EnvironmentService,
     private route: ActivatedRoute,
-    private router: Router,
-    private deviceService: Ng2DeviceService
+    private router: Router
   ) {
-    this.deviceInfo = this.deviceService.getDeviceInfo();
     this.entitiesService.entitiesChange.subscribe(entities => {
       this.entities = entities;
       if (!this.paramListener) {
@@ -229,7 +229,7 @@ export class FlowsComponent implements OnInit, OnDestroy {
     this.view = 'flow';
     this.entity = entity;
     flow.plugins.forEach((plugin: Plugin) => {
-      let mode = (_.endsWith(Object.keys(plugin.files)[0], 'js'))? 'text/javascript' : 'application/xquery';
+      let mode = plugin.pluginPath.endsWith('js') ? 'text/javascript' : 'application/xquery';
       plugin.codemirrorConfig = this.baseCodemirrorConfig(mode);
     });
     this.flow = flow;
@@ -237,9 +237,9 @@ export class FlowsComponent implements OnInit, OnDestroy {
     this.runFlow(flow, flowType);
   }
 
-  syncPluginText(plugin: Plugin, fileName: string, fileContents: string): void {
-    if (plugin.files[fileName] !== fileContents) {
-      plugin.files[fileName] = fileContents;
+  syncPluginText(plugin: Plugin, fileContents: string): void {
+    if (plugin.fileContents !== fileContents) {
+      plugin.fileContents = fileContents;
     }
   }
 
@@ -253,7 +253,7 @@ export class FlowsComponent implements OnInit, OnDestroy {
             this.isSaving = false;
             plugin.$dirty = false;
 
-            let filename = _.keys(plugin.files)[0];
+            const filename = plugin.pluginPath.replace(/^.+[\/\\]([^/\\]+)$/, '$1');
             this.snackbar.showSnackbar({
               message: `${filename} saved.`,
             });
@@ -263,11 +263,30 @@ export class FlowsComponent implements OnInit, OnDestroy {
   }
 
   isActiveFlow(flow: Flow): boolean {
-    return this.flow === flow;
+    return this.flow && this.flow.entityName === flow.entityName &&
+      this.flow.flowName === flow.flowName;
   }
 
   isActiveEntity(entity: Entity): boolean {
     return this.entity === entity;
+  }
+
+  showNewEntity(ev: Event): void {
+    let actions = {
+      save: (newEntity: Entity) => {
+      this.entitiesService.createEntity(newEntity).subscribe((entity: Entity) => {
+        this.entities.splice(_.sortedIndexBy(this.entities, entity, 'entityName'), 0, entity);
+        this.toggleEntity(entity);
+      });
+      }
+    };
+    this.dialogService.showCustomDialog({
+      component: NewEntityComponent,
+      providers: [
+        { provide: 'actions', useValue: actions }
+      ],
+      isModal: true
+    });
   }
 
   showNewFlow(entity: Entity, flowType: string): void {
@@ -335,9 +354,11 @@ export class FlowsComponent implements OnInit, OnDestroy {
   redeployModules() {
     this.deployService.redeployUserModules().subscribe(() => {
       this.isSaving = false;
-      _.each(this.flow.plugins, (plugin) => {
-        plugin.$dirty = false;
-      });
+      if (this.flow && this.flow.plugins) {
+        _.each(this.flow.plugins, (plugin) => {
+          plugin.$dirty = false;
+        });
+      }
     });
     this.snackbar.showSnackbar({
       message: 'Redeploying Modules...',
@@ -352,15 +373,21 @@ export class FlowsComponent implements OnInit, OnDestroy {
         plugin.$dirty = false;
         plugin.hasShown = true;
       }
-      setTimeout(() => {
-        let mode = (_.endsWith(Object.keys(plugin.files)[0], 'js'))? 'text/javascript' : 'application/xquery';
-        plugin.codemirrorConfig.mode = mode;
-        this.codemirrors.toArray()[event.index - 1].refresh();
-      }, 250);
+      if (plugin) {
+        setTimeout(() => {
+          let mode = plugin.pluginPath.endsWith('js') ? 'text/javascript' : 'application/xquery';
+          plugin.codemirrorConfig.mode = mode;
+          this.codemirrors.toArray()[event.index - 1].refresh();
+        }, 250);
+      }
     }
   }
 
   setCM(plugin, $event) {
     plugin.cm = $event;
+  }
+
+  getMarkLogicVersion(): string {
+    return this.envService.marklogicVersion;
   }
 }
