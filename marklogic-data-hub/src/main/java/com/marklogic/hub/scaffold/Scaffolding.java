@@ -95,7 +95,7 @@ public class Scaffolding {
 
         if (useEsModel) {
             ContentPlugin cp = new ContentPlugin(databaseClient);
-            String content = cp.getContents(entityName, codeFormat);
+            String content = cp.getContents(entityName, codeFormat, flowType);
             writeBuffer(content, flowDir.resolve("content." + codeFormat));
 
         }
@@ -378,10 +378,11 @@ public class Scaffolding {
             client.init(NAME, this);
         }
 
-        public String getContents(String entityName, CodeFormat codeFormat) throws IOException {
+        public String getContents(String entityName, CodeFormat codeFormat, FlowType flowType) throws IOException {
             try {
                 params.add("entity", entityName);
                 params.add("codeFormat", codeFormat.toString());
+                params.add("flowType", flowType.toString());
                 ResourceServices.ServiceResultIterator resultItr = this.getServices().get(params);
                 if (resultItr == null || ! resultItr.hasNext()) {
                     throw new IOException("Unable to get Content Plugin scaffold");

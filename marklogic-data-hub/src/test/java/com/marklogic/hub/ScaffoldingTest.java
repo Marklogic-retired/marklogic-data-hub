@@ -29,13 +29,18 @@ import static org.junit.Assert.*;
 
 public class ScaffoldingTest extends HubTestBase {
 
-    Path projectPath = Paths.get("./test-ye-project").toAbsolutePath();
-    private File projectDir = projectPath.toFile();
-    private File pluginDir = projectPath.resolve("plugins").toFile();
+    static Path projectPath = Paths.get(PROJECT_PATH).toAbsolutePath();
+    private static File projectDir = projectPath.toFile();
+    private static File pluginDir = projectPath.resolve("plugins").toFile();
 
     @BeforeClass
-    public static void setup() {
+    public static void setup() throws IOException {
         XMLUnit.setIgnoreWhitespace(true);
+
+        if (projectDir.exists()) {
+            FileUtils.deleteDirectory(projectDir);
+        }
+        installHub();
     }
 
     @After
@@ -45,6 +50,7 @@ public class ScaffoldingTest extends HubTestBase {
 
     @Test
     public void createEntity() throws FileNotFoundException {
+        assertFalse(projectDir.exists());
         Scaffolding scaffolding = new Scaffolding(projectDir.toString(), stagingClient);
         scaffolding.createEntity("my-fun-test");
         assertTrue(projectDir.exists());
@@ -63,39 +69,74 @@ public class ScaffoldingTest extends HubTestBase {
 
     @Test
     public void createXqyInputFlow() throws IOException, SAXException {
-        createInputFlow(CodeFormat.XQUERY, DataFormat.XML);
+        createInputFlow(CodeFormat.XQUERY, DataFormat.XML, false);
     }
 
     @Test
     public void createXqyHarmonizeFlow() throws IOException, SAXException {
-        createHarmonizeFlow(CodeFormat.XQUERY, DataFormat.XML);
+        createHarmonizeFlow(CodeFormat.XQUERY, DataFormat.XML, false);
     }
 
     @Test
     public void createSjsInputFlow() throws IOException, SAXException {
-        createInputFlow(CodeFormat.JAVASCRIPT, DataFormat.JSON);
+        createInputFlow(CodeFormat.JAVASCRIPT, DataFormat.JSON, false);
     }
 
     @Test
     public void createSjsHarmonizeFlow() throws IOException, SAXException {
-        createHarmonizeFlow(CodeFormat.JAVASCRIPT, DataFormat.JSON);
+        createHarmonizeFlow(CodeFormat.JAVASCRIPT, DataFormat.JSON, false);
     }
 
-    private void createInputFlow(CodeFormat codeFormat, DataFormat dataFormat) throws IOException, SAXException {
-        Scaffolding scaffolding = new Scaffolding(projectDir.toString(), stagingClient);
-        scaffolding.createEntity("my-fun-test");
+    @Test
+    public void createESXqyInputFlow() throws IOException, SAXException {
+        createInputFlow(CodeFormat.XQUERY, DataFormat.XML, true);
+    }
+
+    @Test
+    public void createESXqyHarmonizeFlow() throws IOException, SAXException {
+        createHarmonizeFlow(CodeFormat.XQUERY, DataFormat.XML, true);
+    }
+
+    @Test
+    public void createESSjsInputFlow() throws IOException, SAXException {
+        createInputFlow(CodeFormat.JAVASCRIPT, DataFormat.JSON, true);
+    }
+
+    @Test
+    public void createESSjsHarmonizeFlow() throws IOException, SAXException {
+        createHarmonizeFlow(CodeFormat.JAVASCRIPT, DataFormat.JSON, true);
+    }
+
+    private void createFlow(CodeFormat codeFormat, DataFormat dataFormat, FlowType flowType, boolean useEsModel) throws IOException, SAXException {
+        String entityName = "my-fun-test";
+        String flowName = "test-" + flowType.toString() + "-" + codeFormat.toString() + "-" + dataFormat.toString();
+
+        Scaffolding scaffolding = new Scaffolding(projectDir.toString(), finalClient);
+
+        Path entityDir = scaffolding.getEntityDir(entityName);
+        assertFalse(entityDir.toFile().exists());
+
+        Path employeeDir = scaffolding.getEntityDir("employee");
+        assertFalse(employeeDir.toFile().exists());
+
+        scaffolding.createEntity(entityName);
+        scaffolding.createEntity("employee");
         assertTrue(projectDir.exists());
-
-        Path entityDir = scaffolding.getEntityDir("my-fun-test");
         assertTrue(entityDir.toFile().exists());
-        assertEquals(Paths.get(pluginDir.toString(), "entities", "my-fun-test"), entityDir);
+        assertTrue(employeeDir.toFile().exists());
+        assertEquals(Paths.get(pluginDir.toString(), "entities", entityName), entityDir);
 
-        scaffolding.createFlow("my-fun-test", "test-input", FlowType.INPUT, codeFormat, dataFormat);
-        Path flowDir = scaffolding.getFlowDir("my-fun-test", "test-input", FlowType.INPUT);
-        assertEquals(Paths.get(pluginDir.toString(), "entities", "my-fun-test", "input", "test-input"), flowDir);
+        FileUtils.copyFile(getResourceFile("scaffolding-test/employee.entity.json"), employeeDir.resolve("employee.entity.json").toFile());
+        FileUtils.copyFile(getResourceFile("scaffolding-test/" + entityName + ".json"), entityDir.resolve(entityName + ".entity.json").toFile());
+
+        getDataHub().installUserModules(true);
+
+        scaffolding.createFlow(entityName, flowName, flowType, codeFormat, dataFormat, useEsModel);
+        Path flowDir = scaffolding.getFlowDir(entityName, flowName, flowType);
+        assertEquals(Paths.get(pluginDir.toString(), "entities", entityName, flowType.toString(), flowName), flowDir);
         assertTrue(flowDir.toFile().exists());
 
-        Path flowDescriptor = flowDir.resolve("test-input.properties");
+        Path flowDescriptor = flowDir.resolve(flowName + ".properties");
         assertTrue(flowDescriptor.toFile().exists());
 
         FileInputStream fis = new FileInputStream(flowDescriptor.toFile());
@@ -103,17 +144,31 @@ public class ScaffoldingTest extends HubTestBase {
         properties.load(fis);
         fis.close();
 
-        assertEquals(4, properties.keySet().size());
+        int expectedPropertiesCount = flowType.equals(FlowType.INPUT) ? 4 : 6;
+        assertEquals(expectedPropertiesCount, properties.keySet().size());
         assertEquals(dataFormat.toString(), properties.get("dataFormat"));
         assertEquals(codeFormat.toString(), properties.get("codeFormat"));
+        if (flowType.equals(FlowType.HARMONIZE)) {
+            assertEquals(codeFormat.toString(), properties.get("collectorCodeFormat"));
+            assertEquals("/entities/" + entityName + "/" + flowType.toString() + "/" + flowName + "/collector." + codeFormat.toString(), properties.get("collectorModule"));
+        }
         assertEquals(codeFormat.toString(), properties.get("mainCodeFormat"));
-        assertEquals("/entities/my-fun-test/input/test-input/main." + codeFormat.toString(), properties.get("mainModule"));
+        assertEquals("/entities/" + entityName + "/" + flowType.toString() + "/" + flowName + "/main." + codeFormat.toString(), properties.get("mainModule"));
 
         Path defaultCollector = flowDir.resolve("collector." + codeFormat.toString());
-        assertFalse(defaultCollector.toFile().exists());
+        if (flowType.equals(FlowType.INPUT)) {
+            assertFalse(defaultCollector.toFile().exists());
+        }
+        else {
+            assertTrue(defaultCollector.toFile().exists());
+        }
 
         Path defaultContent = flowDir.resolve("content." + codeFormat.toString());
         assertTrue(defaultContent.toFile().exists());
+
+        if (useEsModel) {
+            assertEquals(getResource("scaffolding-test/es-" + flowType.toString() + "-content." + codeFormat.toString()).replaceAll(" +$", "").replaceAll("\n", "\r\n"), FileUtils.readFileToString(defaultContent.toFile()).replaceAll(" +\r\n", "\r\n"));
+        }
 
         Path defaultHeaders = flowDir.resolve("headers." + codeFormat.toString());
         assertTrue(defaultHeaders.toFile().exists());
@@ -122,59 +177,23 @@ public class ScaffoldingTest extends HubTestBase {
         assertTrue(triplesContent.toFile().exists());
 
         Path writer = flowDir.resolve("writer." + codeFormat.toString());
-        assertFalse(writer.toFile().exists());
+        if (flowType.equals(FlowType.INPUT)) {
+            assertFalse(writer.toFile().exists());
+        }
+        else {
+            assertTrue(writer.toFile().exists());
+        }
 
         Path main = flowDir.resolve("main." + codeFormat.toString());
         assertTrue(main.toFile().exists());
     }
 
-    private void createHarmonizeFlow(CodeFormat codeFormat, DataFormat dataFormat) throws IOException, SAXException {
-        Scaffolding scaffolding = new Scaffolding(projectDir.toString(), stagingClient);
-        scaffolding.createEntity("my-fun-test");
-        assertTrue(projectDir.exists());
+    private void createInputFlow(CodeFormat codeFormat, DataFormat dataFormat, boolean useEsModel) throws IOException, SAXException {
+        createFlow(codeFormat, dataFormat, FlowType.INPUT, useEsModel);
+    }
 
-        Path entityDir = scaffolding.getEntityDir("my-fun-test");
-        assertTrue(entityDir.toFile().exists());
-        assertEquals(Paths.get(pluginDir.toString(), "entities", "my-fun-test"), entityDir);
-
-        scaffolding.createFlow("my-fun-test", "test-harmonize", FlowType.HARMONIZE, codeFormat, dataFormat);
-        Path flowDir = scaffolding.getFlowDir("my-fun-test", "test-harmonize", FlowType.HARMONIZE);
-        assertEquals(Paths.get(pluginDir.toString(), "entities", "my-fun-test", "harmonize", "test-harmonize"), flowDir);
-        assertTrue(flowDir.toFile().exists());
-
-        Path flowDescriptor = flowDir.resolve("test-harmonize.properties");
-        assertTrue(flowDescriptor.toFile().exists());
-
-        FileInputStream fis = new FileInputStream(flowDescriptor.toFile());
-        Properties properties = new Properties();
-        properties.load(fis);
-        fis.close();
-
-        assertEquals(6, properties.keySet().size());
-        assertEquals(dataFormat.toString(), properties.get("dataFormat"));
-        assertEquals(codeFormat.toString(), properties.get("codeFormat"));
-        assertEquals(codeFormat.toString(), properties.get("collectorCodeFormat"));
-        assertEquals("/entities/my-fun-test/harmonize/test-harmonize/collector." + codeFormat.toString(), properties.get("collectorModule"));
-        assertEquals(codeFormat.toString(), properties.get("mainCodeFormat"));
-        assertEquals("/entities/my-fun-test/harmonize/test-harmonize/main." + codeFormat.toString(), properties.get("mainModule"));
-
-        Path defaultCollector = flowDir.resolve("collector." + codeFormat.toString());
-        assertTrue(defaultCollector.toFile().exists());
-
-        Path defaultContent = flowDir.resolve("content." + codeFormat.toString());
-        assertTrue(defaultContent.toFile().exists());
-
-        Path defaultHeaders = flowDir.resolve("headers." + codeFormat.toString());
-        assertTrue(defaultHeaders.toFile().exists());
-
-        Path triplesContent = flowDir.resolve("triples." + codeFormat.toString());
-        assertTrue(triplesContent.toFile().exists());
-
-        Path writer = flowDir.resolve("writer." + codeFormat.toString());
-        assertTrue(writer.toFile().exists());
-
-        Path main = flowDir.resolve("main." + codeFormat.toString());
-        assertTrue(main.toFile().exists());
+    private void createHarmonizeFlow(CodeFormat codeFormat, DataFormat dataFormat, boolean useEsModel) throws IOException, SAXException {
+        createFlow(codeFormat, dataFormat, FlowType.HARMONIZE, useEsModel);
     }
 
     @Test

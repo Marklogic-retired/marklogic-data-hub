@@ -233,6 +233,7 @@ export class FlowsComponent implements OnInit, OnDestroy {
       plugin.codemirrorConfig = this.baseCodemirrorConfig(mode);
     });
     this.flow = flow;
+    this.flow.tabIndex = 0;
     this.flowType = flowType;
     this.runFlow(flow, flowType);
   }
@@ -293,9 +294,9 @@ export class FlowsComponent implements OnInit, OnDestroy {
     let actions = {
       save: (newFlow: Flow) => {
         this.entitiesService.createFlow(entity, flowType.toUpperCase(), newFlow).subscribe((flow: Flow) => {
-          if (flowType === 'Input') {
+          if (flowType.toUpperCase() === 'INPUT') {
             entity.inputFlows.push(flow);
-          } else if (flowType === 'Harmonize') {
+          } else if (flowType.toUpperCase() === 'HARMONIZE') {
             entity.harmonizeFlows.push(flow);
           }
         });

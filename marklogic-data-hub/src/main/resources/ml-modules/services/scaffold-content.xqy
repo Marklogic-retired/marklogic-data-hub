@@ -183,8 +183,12 @@ declare function service:generate-lets($model as map:map, $entity-type-name)
 (: end code generation block :)
 };
 
-declare function service:generate-xqy($entity as xs:string, $model as map:map)
+declare function service:generate-xqy($entity as xs:string, $flow-type as xs:string, $model as map:map)
 {
+  let $root-name :=
+    if ($flow-type eq "input") then "$raw-content"
+    else "$doc"
+  return
 document {
 <module>xquery version "1.0-ml";
 
@@ -205,16 +209,23 @@ declare option xdmp:mapping "false";
  :)
 declare function plugin:create-content(
   $id as xs:string,
-  $options as map:map) as map:map
+  {
+    if ($flow-type eq "input") then
+      "$raw-content as node()?,&#10;  "
+    else ()
+  }$options as map:map) as map:map
 {{
-  let $doc := fn:doc($id)
-  let $source :=
-    if ($doc/es:envelope) then
-      $doc/es:envelope/es:instance/node()
-    else if ($doc/instance) then
-      $doc/instance
+  {
+    if ($flow-type eq "harmonize") then
+      "let $doc := fn:doc($id)&#10;  "
+    else ()
+  }let $source :=
+    if ({$root-name}/es:envelope) then
+      {$root-name}/es:envelope/es:instance/node()
+    else if ({$root-name}/instance) then
+      {$root-name}/instance
     else
-      $doc
+      {$root-name}
   return
     {
       "plugin:extract-instance-" || $entity || "($source)"
@@ -257,26 +268,29 @@ declare function plugin:extract-instance-{$entity-type-name}(
         "map:put($model, '$attachments', $attachments),&#10;    "
       else ()
     }map:put($model, '$type', '{ $entity-type-name }'),
-    map:put($model, '$version', '{ map:get(map:get($model, "info"), "version") }'),
-    {
-    fn:string-join(
-      (: Begin code generation block :)
+    map:put($model, '$version', '{ map:get(map:get($model, "info"), "version") }'){
       let $definitions := map:get($model, "definitions")
       let $entity-type := map:get($definitions, $entity-type-name)
       let $properties := map:get($entity-type, "properties")
-      let $required-properties := (
-        map:get($entity-type, "primaryKey"),
-        map:get($entity-type, "required") ! json:array-values(.)
-      )
-      for $property-name in map:keys($properties)
-      let $is-required := $property-name = $required-properties
+      let $property-keys := map:keys($properties)
+      where fn:count($property-keys) > 0
       return
-        if ($is-required) then
-          "map:put($model, '" || $property-name || "', $" || service:kebob-case($property-name) || ")"
-        else
-          "es:optional($model, '" || $property-name || "', $" || service:kebob-case($property-name) || ")"
-    , ",&#10;    ")
-    (: end code generation block :)
+        ",&#10;    " ||
+        fn:string-join(
+          (: Begin code generation block :)
+          let $required-properties := (
+            map:get($entity-type, "primaryKey"),
+            map:get($entity-type, "required") ! json:array-values(.)
+          )
+          for $property-name in $property-keys
+          let $is-required := $property-name = $required-properties
+          return
+            if ($is-required) then
+              "map:put($model, '" || $property-name || "', $" || service:kebob-case($property-name) || ")"
+            else
+              "es:optional($model, '" || $property-name || "', $" || service:kebob-case($property-name) || ")"
+        , ",&#10;    ")
+        (: end code generation block :)
     }
   )
 
@@ -442,8 +456,12 @@ declare function service:generate-vars($model as map:map, $entity-type-name)
 (: end code generation block :)
 };
 
-declare function service:generate-sjs($entity as xs:string, $model as map:map)
+declare function service:generate-sjs($entity as xs:string, $flow-type as xs:string, $model as map:map)
 {
+  let $root-name :=
+    if ($flow-type eq "input") then "rawContent"
+    else "root"
+  return
 document {
 <module>
 'use strict'
@@ -456,23 +474,31 @@ document {
  *
  * @return - your content
  */
-function createContent(id, options) {{
-  let doc = cts.doc(id);
-  let root = doc.root.toObject();
+function createContent(id, {
+    if ($flow-type eq "input") then
+      "rawContent, "
+    else ()
+  }options) {{
+  {
+    if ($flow-type eq "harmonize") then
+      "let doc = cts.doc(id);
+  let " || $root-name || " = doc.root.toObject();"
+    else ()
+  }
 
   let source;
 
   // for xml we need to use xpath
-  if (root &amp;&amp; xdmp.nodeKind(root) === 'element') {{
-    source = root.xpath('/*:envelope/*:instance/node()');
+  if ({$root-name} &amp;&amp; xdmp.nodeKind({$root-name}) === 'element') {{
+    source = {$root-name}.xpath('/*:envelope/*:instance/node()');
   }}
   // for json we need to return the instance
-  else if (root &amp;&amp; root.envelope &amp;&amp; root.envelope.instance) {{
-    source = root.envelope.instance;
+  else if ({$root-name} &amp;&amp; {$root-name}.envelope &amp;&amp; {$root-name}.envelope.instance) {{
+    source = {$root-name}.envelope.instance;
   }}
   // for everything else
   else {{
-    source = doc;
+    source = {if ($flow-type eq "input") then $root-name else "doc"};
   }}
 
   return {service:camel-case("extractInstance-" || $entity) || "(source)"};
@@ -504,18 +530,21 @@ function {service:camel-case("extractInstance-" || $entity-type-name)}(source) {
       else
         ()
     }'$type': '{ $entity-type-name }',
-    '$version': '{ map:get(map:get($model, "info"), "version") }',
-    {
-    fn:string-join(
-      (: Begin code generation block :)
+    '$version': '{ map:get(map:get($model, "info"), "version") }'{
       let $definitions := map:get($model, "definitions")
       let $entity-type := map:get($definitions, $entity-type-name)
       let $properties := map:get($entity-type, "properties")
-      for $property-name in map:keys($properties)
+      let $properties-keys := map:keys($properties)
+      where fn:count($properties-keys) > 0
       return
-        "'" || $property-name || "': " || $property-name
-    , ",&#10;    ")
-    (: end code generation block :)
+        ",&#10;    " ||
+        fn:string-join(
+          (: Begin code generation block :)
+          for $property-name in $properties-keys
+          return
+            "'" || $property-name || "': " || $property-name
+        , ",&#10;    ")
+        (: end code generation block :)
     }
   }}
 }};
@@ -547,13 +576,14 @@ declare function get(
   perf:log('/v1/resources/validate:get', function() {
     let $entity as xs:string := map:get($params, "entity")
     let $code-format as xs:string := map:get($params, "codeFormat")
+    let $flow-type as xs:string := map:get($params, "flowType")
     let $model as map:map? := hent:get-model($entity)
     return
       if (fn:exists($model)) then
         if ($code-format eq "xqy") then
-          service:generate-xqy($entity, $model)
+          service:generate-xqy($entity, $flow-type, $model)
         else
-          service:generate-sjs($entity, $model)
+          service:generate-sjs($entity, $flow-type, $model)
       else
         fn:error((),"RESTAPI-SRVEXERR", (404, "Not Found", "The requested entity was not found"))
   })
