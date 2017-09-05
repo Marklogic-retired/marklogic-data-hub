@@ -489,7 +489,7 @@ public class HubConfig {
 
     public String getUsername() {
         if (this.username == null) {
-            logger.error("MISSING PROPERTY mlUsername");
+            logger.error("mlUsername is not set");
         }
 
         return this.username;
@@ -501,7 +501,7 @@ public class HubConfig {
 
     public String getPassword() {
         if (this.password == null) {
-            logger.error("MISSING PROPERTY mlPassword");
+            logger.error("mlPassword is not set");
         }
         return this.password;
     }
