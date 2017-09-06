@@ -56,7 +56,7 @@ declare function dhf:run(
 
 (:
  : Creates a legacy envelope in the http://marklogic.com/data-hub/envelope namespace (if xml)
- : This is for users who upgraded from 1.x and are have legacy envelopes already in production
+ : This is for users who upgraded from 1.x and have legacy envelopes already in production
  :
  : @param $content - the content section of the envelope
  : @param $headers - the headers section of the envelope
@@ -182,7 +182,7 @@ declare %private function dhf:set-trace-label(
  : as each one has a unique label
  :
  : @param $context - the context
- : @param $input-lael - the label for the input
+ : @param $input-label - the label for the input
  : @param $input - the input to add to the context
  :
  : @return - returns the passed in $context

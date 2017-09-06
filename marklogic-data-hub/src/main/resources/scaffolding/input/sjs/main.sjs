@@ -1,3 +1,6 @@
+// dhf.xqy exposes helper functions to make your life easier
+// See documentation at:
+// https://github.com/marklogic/marklogic-data-hub/wiki/dhf-lib
 const dhf = require('/com.marklogic.hub/dhf.xqy');
 
 const contentPlugin = require('./content.sjs');
@@ -8,6 +11,7 @@ const triplesPlugin = require('./triples.sjs');
  * Plugin Entry point
  *
  * @param id          - the identifier returned by the collector
+ * @param rawContent  - the raw content being loaded
  * @param options     - a map containing options. Options are sent from Java
  *
  */
