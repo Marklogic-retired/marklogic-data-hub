@@ -15,6 +15,7 @@
  */
 package com.marklogic.hub;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.appdeployer.ConfigDir;
 import com.marklogic.appdeployer.DefaultAppConfigFactory;
@@ -195,6 +196,7 @@ public class HubConfig {
         return environmentProperties;
     }
 
+    @JsonIgnore
     public HubProject getHubProject() {
         return this.hubProject;
     }
