@@ -58,20 +58,6 @@ public class CollectorImpl implements Collector {
     }
 
     @Override
-    public void serialize(XMLStreamWriter serializer) throws XMLStreamException {
-        serializer.writeStartElement("collector");
-        serializer.writeAttribute("code-format", codeFormat.toString());
-        serializer.writeAttribute("module", this.module);
-        serializer.writeEndElement();
-    }
-
-    @Override
-    public void toProperties(Properties properties) {
-        properties.setProperty("collectorCodeFormat", codeFormat.toString());
-        properties.setProperty("collectorModule", this.module);
-    }
-
-    @Override
     public DiskQueue<String> run(String jobId, String entity, String flow, int threadCount, Map<String, Object> options) {
         try {
             ContentSource cs = ContentSourceFactory.newContentSource(client.getHost(), client.getPort(), hubConfig.getUsername(), hubConfig.getPassword(), client.getDatabase());

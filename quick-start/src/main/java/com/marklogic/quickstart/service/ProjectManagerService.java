@@ -57,7 +57,7 @@ public class ProjectManagerService {
         return projects;
     }
 
-    public Project addProject(String path) throws IOException {
+    public Project addProject(String path) {
 
         // we have a problem if the path doesn't exist
         File f = new File(path);
@@ -102,14 +102,25 @@ public class ProjectManagerService {
         return prefs.getInt("lastProject", -1);
     }
 
-    public void removeProject(int id) throws IOException {
+    public void removeProject(int id) {
         Map<Integer, ProjectInfo> projects = getProjects();
         projects.remove(id);
         save(projects);
     }
 
-    private void save(Map<Integer, ProjectInfo> projects) throws IOException {
-        prefs.putByteArray("projects", object2Bytes(projects));
+    public void reset() {
+        prefs.remove("projects");
+        prefs.remove("lastProject");
+        maxId = 0;
+    }
+
+    private void save(Map<Integer, ProjectInfo> projects) {
+        try {
+            prefs.putByteArray("projects", object2Bytes(projects));
+        }
+        catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private byte[] object2Bytes( Object o ) throws IOException {

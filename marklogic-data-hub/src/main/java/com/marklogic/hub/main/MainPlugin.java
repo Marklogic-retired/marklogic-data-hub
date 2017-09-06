@@ -24,6 +24,4 @@ import java.util.Properties;
 public interface MainPlugin {
     String getModule();
     CodeFormat getCodeFormat();
-    void serialize(XMLStreamWriter serializer) throws XMLStreamException;
-    void toProperties(Properties properties);
 }

@@ -37,7 +37,7 @@ public class ProjectsController {
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     @ResponseBody
-    public Map<String, Object> getProjects() throws ClassNotFoundException, IOException {
+    public Map<String, Object> getProjects() {
         Map<String, Object> resp = new HashMap<>();
         resp.put("projects", pm.getProjects().values());
         int lastProjectId = pm.getLastProject();
@@ -49,7 +49,7 @@ public class ProjectsController {
 
     @RequestMapping(value = "/", method = RequestMethod.POST)
     @ResponseBody
-    public Project addProject(@RequestParam String path) throws ClassNotFoundException, IOException {
+    public Project addProject(@RequestParam String path) {
         return pm.addProject(path);
     }
 
@@ -61,7 +61,7 @@ public class ProjectsController {
 
     @RequestMapping(value = "/{projectId}", method = RequestMethod.DELETE)
     @ResponseBody
-    public ResponseEntity<?> removeProject(@PathVariable int projectId) throws IOException {
+    public ResponseEntity<?> removeProject(@PathVariable int projectId) {
         pm.removeProject(projectId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

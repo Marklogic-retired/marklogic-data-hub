@@ -17,6 +17,12 @@ plugins {
 }
 ```
 
+Next, Initialize your DHF app:
+
+```bash
+gradle hubInit
+```
+
 Then Bootstrap your DHF app:
 
 ```bash

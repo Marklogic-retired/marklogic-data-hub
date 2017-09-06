@@ -28,14 +28,10 @@ public class Project {
 
     public int id;
     public String path;
-    public List<String> environments;
-    public boolean initialized = false;
 
     public Project(int id, String path) {
         this.id = id;
         this.path = path;
-        this.initialized = isInitialized();
-        this.environments = getEnvironments();
     }
 
     public boolean isInitialized() {
@@ -57,6 +53,5 @@ public class Project {
         hubConfig.setProjectDir(this.path);
         DataHub hub = new DataHub(hubConfig);
         hub.initProject();
-        this.initialized = isInitialized();
     }
 }

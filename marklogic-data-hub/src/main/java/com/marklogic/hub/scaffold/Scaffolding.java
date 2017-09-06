@@ -212,10 +212,10 @@ public class Scaffolding {
                             .withType(flowType)
                             .withCodeFormat(codeFormat)
                             .withDataFormat(dataFormat)
-                            .withMain(new MainPluginImpl("/entities/" + entityName + "/" + flowType + "/" + flowName + "/main." + codeFormat, codeFormat));
+                            .withMain(new MainPluginImpl("main." + codeFormat, codeFormat));
 
                         if (flowType.equals(FlowType.HARMONIZE)) {
-                            flowBuilder.withCollector(new CollectorImpl("/entities/" + entityName + "/" + flowType + "/" + flowName + "/collector/collector." + codeFormat, codeFormat));
+                            flowBuilder.withCollector(new CollectorImpl("collector/collector." + codeFormat, codeFormat));
                         }
 
                         Flow flow = flowBuilder.build();

@@ -164,12 +164,19 @@ public class FlowImpl implements Flow {
             serializer.writeCharacters(this.codeFormat.toString());
             serializer.writeEndElement();
 
+            String flowDir = "/entities/" + getEntityName() + "/" + getType().toString() + "/" + getName() + "/";
             if (this.collector != null) {
-                this.collector.serialize(serializer);
+                serializer.writeStartElement("collector");
+                serializer.writeAttribute("code-format", collector.getCodeFormat().toString());
+                serializer.writeAttribute("module", flowDir + collector.getModule());
+                serializer.writeEndElement();
             }
 
             if (this.main != null) {
-                this.main.serialize(serializer);
+                serializer.writeStartElement("main");
+                serializer.writeAttribute("code-format", main.getCodeFormat().toString());
+                serializer.writeAttribute("module", flowDir + main.getModule());
+                serializer.writeEndElement();
             }
 
             serializer.writeEndElement();
@@ -197,11 +204,13 @@ public class FlowImpl implements Flow {
         flowProperties.setProperty("dataFormat", dataFormat.toString());
         flowProperties.setProperty("codeFormat", codeFormat.toString());
         if (this.collector != null) {
-            collector.toProperties(flowProperties);
+            flowProperties.setProperty("collectorCodeFormat", collector.getCodeFormat().toString());
+            flowProperties.setProperty("collectorModule", collector.getModule());
         }
 
         if (this.main != null) {
-            main.toProperties(flowProperties);
+            flowProperties.setProperty("mainCodeFormat", main.getCodeFormat().toString());
+            flowProperties.setProperty("mainModule", main.getModule());
         }
 
         return flowProperties;

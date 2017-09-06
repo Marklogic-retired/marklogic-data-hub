@@ -51,18 +51,4 @@ public class MainPluginImpl implements MainPlugin {
     public CodeFormat getCodeFormat() {
         return codeFormat;
     }
-
-    @Override
-    public void serialize(XMLStreamWriter serializer) throws XMLStreamException {
-        serializer.writeStartElement("main");
-        serializer.writeAttribute("code-format", codeFormat.toString());
-        serializer.writeAttribute("module", this.module);
-        serializer.writeEndElement();
-    }
-
-    @Override
-    public void toProperties(Properties properties) {
-        properties.setProperty("mainCodeFormat", codeFormat.toString());
-        properties.setProperty("mainModule", this.module);
-    }
 }

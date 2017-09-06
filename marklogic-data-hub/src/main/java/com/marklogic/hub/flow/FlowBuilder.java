@@ -71,12 +71,12 @@ public class FlowBuilder {
     public Flow build() {
 
         if (flow.getCollector() == null && flow.getType().equals(FlowType.HARMONIZE)) {
-            String collectorModule = "/entities/" + flow.getEntityName() + "/" + flow.getType().toString() + "/" + flow.getName() + "/collector." + flow.getCodeFormat().toString();
+            String collectorModule = "collector." + flow.getCodeFormat().toString();
             flow.setCollector(new CollectorImpl(collectorModule, flow.getCodeFormat()));
         }
 
         if (flow.getMain() == null) {
-            String mainModule = "/entities/" + flow.getEntityName() + "/" + flow.getType().toString() + "/" + flow.getName() + "/main." + flow.getCodeFormat().toString();
+            String mainModule =  "main." + flow.getCodeFormat().toString();
             flow.setMain(new MainPluginImpl(mainModule, flow.getCodeFormat()));
         }
         return flow;

@@ -38,7 +38,4 @@ public interface Collector {
     DatabaseClient getClient();
 
     DiskQueue<String> run(String jobId, String entity, String flow, int threadCount, Map<String, Object> options);
-    void serialize(XMLStreamWriter serializer) throws XMLStreamException;
-
-    void toProperties(Properties properties);
 }
