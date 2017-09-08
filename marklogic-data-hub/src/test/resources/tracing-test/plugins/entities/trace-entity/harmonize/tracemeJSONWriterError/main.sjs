@@ -1,3 +1,6 @@
+// dhf.xqy exposes helper functions to make your life easier
+// See documentation at:
+// https://github.com/marklogic/marklogic-data-hub/wiki/dhf-lib
 const dhf = require('/com.marklogic.hub/dhf.xqy');
 
 const contentPlugin = require('./content.sjs');

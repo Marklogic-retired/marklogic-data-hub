@@ -1,52 +1,82 @@
 package com.marklogic.hub.scaffold;
 
-import com.marklogic.hub.flow.CodeFormat;
-import com.marklogic.hub.flow.FlowType;
+import com.marklogic.appdeployer.command.modules.AllButAssetsModulesFinder;
+import org.springframework.core.io.Resource;
 
-import java.io.File;
-import java.nio.file.Paths;
-import java.util.regex.Pattern;
+import java.io.IOException;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.HashMap;
+import java.util.List;
 
-public class ScaffoldingValidator {
+public class ScaffoldingValidator extends SimpleFileVisitor<Path> {
 
-   private File pluginsDir;
+    private static String UNIQUE_KEY = "unique";
+   private Path pluginsDir;
 
    public ScaffoldingValidator(String projectDir) {
-       this.pluginsDir = Paths.get(projectDir, "plugins").toFile();
+       this.pluginsDir = Paths.get(projectDir, "plugins");
    }
 
    public boolean isUniqueRestServiceExtension(String name) {
-       String entityNameFilter = "[a-zA-Z0-9_.-]+";
-       String flowTypeFilter = "(" + FlowType.INPUT + "|" + FlowType.HARMONIZE + ")";
-       String pluginFormatFilter = "(" + CodeFormat.XQUERY + "|" + CodeFormat.JAVASCRIPT + ")";
-       String absoluteFilePathFilter = Scaffolding.getAbsolutePath(Pattern.quote(pluginsDir.getAbsolutePath()), "entities", entityNameFilter, flowTypeFilter, "REST", "services", name + "." + pluginFormatFilter);
-       return !checkIfFileExists(pluginsDir, absoluteFilePathFilter);
-   }
+       HashMap<String, Boolean> result = new HashMap<>();
+       result.put(UNIQUE_KEY, true);
+       try {
+           Files.walkFileTree(pluginsDir.resolve("entities"), new SimpleFileVisitor<Path>() {
+               @Override
+               public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+                   if (isRestDir(dir)) {
+                       AllButAssetsModulesFinder modulesFinder = new AllButAssetsModulesFinder();
+                       List<Resource> services = modulesFinder.findModules(dir.toFile()).getServices();
+                       for (int i = 0; i < services.size(); i++) {
+                           Resource resource = services.get(i);
+                           if (resource.getFilename().matches(name + "\\.(sjs|xqy)")) {
+                               result.put(UNIQUE_KEY, false);
+                               return FileVisitResult.TERMINATE;
+                           }
+                       }
+                       return FileVisitResult.SKIP_SUBTREE;
+                   }
 
-   private boolean checkIfFileExists(File rootDirectory, String absoluteFilePathFilter) {
-       File[] list = rootDirectory.listFiles();
-       if (list != null) {
-           for (File file : list) {
-               if (file.isDirectory()) {
-                   if(checkIfFileExists(file, absoluteFilePathFilter)) {
-                       return true;
-                   }
-               } else {
-                   if(Pattern.matches(absoluteFilePathFilter, file.getAbsolutePath())) {
-                       return true;
-                   }
+                   return FileVisitResult.CONTINUE;
                }
-           }
+           });
+       } catch (IOException e) {
+
        }
-       return false;
+       return result.get(UNIQUE_KEY);
    }
 
    public boolean isUniqueRestTransform(String name) {
-       String entityNameFilter = "[a-zA-Z0-9_.-]+";
-       String flowTypeFilter = "(" + FlowType.INPUT + "|" + FlowType.HARMONIZE + ")";
-       String pluginFormatFilter = "(" + CodeFormat.XQUERY + "|" + CodeFormat.JAVASCRIPT + ")";
-       String absoluteFilePathFilter = Scaffolding.getAbsolutePath(pluginsDir.getAbsolutePath(), "entities", entityNameFilter, flowTypeFilter, "REST", "transforms", name + "." + pluginFormatFilter);
-       return !checkIfFileExists(pluginsDir, absoluteFilePathFilter);
+       HashMap<String, Boolean> result = new HashMap<>();
+       result.put(UNIQUE_KEY, true);
+       try {
+           Files.walkFileTree(pluginsDir.resolve("entities"), new SimpleFileVisitor<Path>() {
+               @Override
+               public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+                   if (isRestDir(dir)) {
+                       AllButAssetsModulesFinder modulesFinder = new AllButAssetsModulesFinder();
+                       List<Resource> transforms = modulesFinder.findModules(dir.toFile()).getTransforms();
+                       for (int i = 0; i < transforms.size(); i++) {
+                           Resource resource = transforms.get(i);
+                           if (resource.getFilename().matches(name + "\\.(sjs|xqy)")) {
+                               result.put(UNIQUE_KEY, false);
+                               return FileVisitResult.TERMINATE;
+                           }
+                       }
+                       return FileVisitResult.SKIP_SUBTREE;
+                   }
+
+                   return FileVisitResult.CONTINUE;
+               }
+           });
+       } catch (IOException e) {
+
+       }
+       return result.get(UNIQUE_KEY);
    }
 
+   boolean isRestDir(Path dir) {
+       return dir.endsWith("REST");
+   }
 }

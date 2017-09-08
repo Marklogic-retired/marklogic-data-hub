@@ -91,9 +91,8 @@ cd /path/to/data-hub-project
 
 **Terminal window 2** - This runs the Quickstart UI
 ```
-cd /path/to/data-hub-project/quick-start
-npm install
-npm start
+cd /path/to/data-hub-project
+./gradlew runui
 ```
 
 Now open your browser to [http://localhost:4200](http://localhost:4200) to use the debug version of the Quickstart UI.

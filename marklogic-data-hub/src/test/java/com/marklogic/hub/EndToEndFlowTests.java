@@ -12,6 +12,7 @@ import com.marklogic.client.document.ServerTransform;
 import com.marklogic.client.io.*;
 import com.marklogic.hub.flow.*;
 import com.marklogic.hub.scaffold.Scaffolding;
+import com.marklogic.hub.util.FileUtil;
 import com.marklogic.hub.util.MlcpRunner;
 import com.marklogic.hub.util.PerformanceLogger;
 import org.apache.commons.io.FileUtils;
@@ -698,7 +699,7 @@ public class EndToEndFlowTests extends HubTestBase {
     }
 
     private static void copyFile(String srcDir, Path dstDir) throws IOException {
-        FileUtils.copyFile(getResourceFile(srcDir), dstDir.toFile());
+        FileUtil.copy(getResourceStream(srcDir), dstDir.toFile());
     }
 
     private void installDocs(DataFormat dataFormat, String collection, DatabaseClient srcClient) throws IOException {
@@ -759,11 +760,11 @@ public class EndToEndFlowTests extends HubTestBase {
         String optionString = new ObjectMapper().writeValueAsString(options).replace("\"", "\\\"\\\"");
         JsonNode mlcpOptions = new ObjectMapper().readTree(
             "{" +
-                "\"input_file_path\":\"" + inputPath + "\"," +
+                "\"input_file_path\":\"" + inputPath.replace("\\", "\\\\\\\\") + "\"," +
                 "\"input_file_type\":\"\\\"documents\\\"\"," +
                 "\"output_collections\":\"\\\"" + ENTITY + "\\\"\"," +
                 "\"output_permissions\":\"\\\"rest-reader,read,rest-writer,update\\\"\"," +
-                "\"output_uri_replace\":\"\\\"" + basePath + ",''\\\"\"," +
+                "\"output_uri_replace\":\"\\\"" + basePath.replace("\\", "/").replaceAll("^([A-Za-z]):", "/$1:") + ",''\\\"\"," +
                 "\"document_type\":\"\\\"" + dataFormat.toString() + "\\\"\"," +
                 "\"transform_module\":\"\\\"/com.marklogic.hub/mlcp-flow-transform.xqy\\\"\"," +
                 "\"transform_namespace\":\"\\\"http://marklogic.com/data-hub/mlcp-flow-transform\\\"\"," +

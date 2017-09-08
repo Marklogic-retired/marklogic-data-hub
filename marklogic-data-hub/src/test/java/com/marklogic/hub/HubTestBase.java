@@ -257,9 +257,13 @@ public class HubTestBase {
         return new File(HubTestBase.class.getClassLoader().getResource(resourceName).getFile());
     }
 
+    protected static InputStream getResourceStream(String resourceName) throws IOException {
+        return HubTestBase.class.getClassLoader().getResourceAsStream(resourceName);
+    }
+
     protected static String getResource(String resourceName) throws IOException {
         try {
-            InputStream inputStream = HubTestBase.class.getClassLoader().getResourceAsStream(resourceName);
+            InputStream inputStream = getResourceStream(resourceName);
             return IOUtils.toString(inputStream);
         }
         catch(IOException e) {

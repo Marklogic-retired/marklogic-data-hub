@@ -6,6 +6,7 @@ import com.marklogic.hub.flow.DataFormat;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.FlowType;
 import com.marklogic.hub.scaffold.Scaffolding;
+import com.marklogic.hub.util.FileUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.custommonkey.xmlunit.XMLUnit;
@@ -114,7 +115,7 @@ public class ScaffoldingTest extends HubTestBase {
         Scaffolding scaffolding = new Scaffolding(projectDir.toString(), finalClient);
 
         Path entityDir = scaffolding.getEntityDir(entityName);
-        assertFalse(entityDir.toFile().exists());
+        assertFalse(entityDir.toString() + " should exist but doesn't", entityDir.toFile().exists());
 
         Path employeeDir = scaffolding.getEntityDir("employee");
         assertFalse(employeeDir.toFile().exists());
@@ -126,8 +127,8 @@ public class ScaffoldingTest extends HubTestBase {
         assertTrue(employeeDir.toFile().exists());
         assertEquals(Paths.get(pluginDir.toString(), "entities", entityName), entityDir);
 
-        FileUtils.copyFile(getResourceFile("scaffolding-test/employee.entity.json"), employeeDir.resolve("employee.entity.json").toFile());
-        FileUtils.copyFile(getResourceFile("scaffolding-test/" + entityName + ".json"), entityDir.resolve(entityName + ".entity.json").toFile());
+        FileUtil.copy(getResourceStream("scaffolding-test/employee.entity.json"), employeeDir.resolve("employee.entity.json").toFile());
+        FileUtil.copy(getResourceStream("scaffolding-test/" + entityName + ".json"), entityDir.resolve(entityName + ".entity.json").toFile());
 
         getDataHub().installUserModules(true);
 
@@ -307,7 +308,10 @@ public class ScaffoldingTest extends HubTestBase {
         assertEquals(DataFormat.JSON.toString(), properties.get("dataFormat"));
         assertEquals(CodeFormat.JAVASCRIPT.toString(), properties.get("mainCodeFormat"));
         assertEquals("main.sjs", properties.get("mainModule"));
-        assertEquals(getResource("scaffolding/input/sjs/main-legacy-1x.sjs"), IOUtils.toString(new FileInputStream(inputDir.resolve("legacy-input-flow").resolve("main.sjs").toFile())));
+        FileInputStream inputStream = new FileInputStream(inputDir.resolve("legacy-input-flow").resolve("main.sjs").toFile());
+        String actual = IOUtils.toString(inputStream);
+        inputStream.close();
+        assertEquals(getResource("scaffolding/input/sjs/main-legacy-1x.sjs"), actual);
 
         fis = new FileInputStream(harmonizeDir.resolve("legacy-harmonize-flow").resolve("legacy-harmonize-flow.properties").toFile());
         properties = new Properties();
@@ -321,7 +325,11 @@ public class ScaffoldingTest extends HubTestBase {
         assertEquals("collector/collector.sjs", properties.get("collectorModule"));
         assertEquals(CodeFormat.JAVASCRIPT.toString(), properties.get("mainCodeFormat"));
         assertEquals("main.sjs", properties.get("mainModule"));
-        assertEquals(getResource("scaffolding/harmonize/sjs/main-legacy-1x.sjs"), IOUtils.toString(new FileInputStream(harmonizeDir.resolve("legacy-harmonize-flow").resolve("main.sjs").toFile())));
+        inputStream = new FileInputStream(harmonizeDir.resolve("legacy-harmonize-flow").resolve("main.sjs").toFile());
+        actual = IOUtils.toString(inputStream);
+        inputStream.close();
+        assertEquals(getResource("scaffolding/harmonize/sjs/main-legacy-1x.sjs"), actual);
+
 
         assertEquals(0, scaffolding.updateLegacyFlows(fromVersion, "my-fun-test").size());
     }
@@ -349,7 +357,10 @@ public class ScaffoldingTest extends HubTestBase {
         assertEquals(DataFormat.JSON.toString(), properties.get("dataFormat"));
         assertEquals(CodeFormat.JAVASCRIPT.toString(), properties.get("mainCodeFormat"));
         assertEquals("main.sjs", properties.get("mainModule"));
-        assertEquals(getResource("scaffolding/input/sjs/main-legacy.sjs"), IOUtils.toString(new FileInputStream(inputDir.resolve("legacy-input-flow").resolve("main.sjs").toFile())));
+        FileInputStream inputStream = new FileInputStream(inputDir.resolve("legacy-input-flow").resolve("main.sjs").toFile());
+        String actual = IOUtils.toString(inputStream);
+        inputStream.close();
+        assertEquals(getResource("scaffolding/input/sjs/main-legacy.sjs"), actual);
 
         fis = new FileInputStream(harmonizeDir.resolve("legacy-harmonize-flow").resolve("legacy-harmonize-flow.properties").toFile());
         properties = new Properties();
@@ -363,7 +374,10 @@ public class ScaffoldingTest extends HubTestBase {
         assertEquals("collector/collector.sjs", properties.get("collectorModule"));
         assertEquals(CodeFormat.JAVASCRIPT.toString(), properties.get("mainCodeFormat"));
         assertEquals("main.sjs", properties.get("mainModule"));
-        assertEquals(getResource("scaffolding/harmonize/sjs/main-legacy.sjs"), IOUtils.toString(new FileInputStream(harmonizeDir.resolve("legacy-harmonize-flow").resolve("main.sjs").toFile())));
+        inputStream = new FileInputStream(harmonizeDir.resolve("legacy-harmonize-flow").resolve("main.sjs").toFile());
+        actual = IOUtils.toString(inputStream);
+        inputStream.close();
+        assertEquals(getResource("scaffolding/harmonize/sjs/main-legacy.sjs"), actual);
 
         assertEquals(0, scaffolding.updateLegacyFlows(fromVersion, "my-fun-test").size());
     }

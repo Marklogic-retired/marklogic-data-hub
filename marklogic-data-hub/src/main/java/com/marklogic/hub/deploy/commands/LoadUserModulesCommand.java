@@ -28,6 +28,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -189,7 +190,9 @@ public class LoadUserModulesCommand extends AbstractCommand {
                             meta.getCollections().add("http://marklogic.com/entity-services/models");
                             documentPermissionsParser.parsePermissions(hubConfig.modulePermissions, meta.getPermissions());
                             for (Resource r : modules.getAssets()) {
-                                StringHandle handle = new StringHandle(IOUtils.toString(r.getInputStream()));
+                                InputStream inputStream = r.getInputStream();
+                                StringHandle handle = new StringHandle(IOUtils.toString(inputStream));
+                                inputStream.close();
                                 entityDocMgr.write("/entities/" + r.getFilename(), meta, handle);
                             }
                             return FileVisitResult.CONTINUE;

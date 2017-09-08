@@ -8,6 +8,7 @@ import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.flow.*;
 import com.marklogic.hub.scaffold.Scaffolding;
+import com.marklogic.hub.util.FileUtil;
 import com.marklogic.hub.util.MlcpRunner;
 import com.marklogic.quickstart.auth.ConnectionAuthenticationToken;
 import com.marklogic.quickstart.model.EnvironmentConfig;
@@ -69,21 +70,21 @@ public class FlowManagerServiceTest extends HubTestBase {
             CodeFormat.XQUERY, DataFormat.XML);
 
         Path inputDir = projectDir.resolve("plugins/entities/" + ENTITY + "/input");
-        FileUtils.copyFile(getResourceFile("flow-manager/sjs-flow/headers.sjs"), inputDir.resolve("sjs-json-input-flow/headers.sjs").toFile());
-        FileUtils.copyFile(getResourceFile("flow-manager/sjs-flow/content-input.sjs"), inputDir.resolve("sjs-json-input-flow/content.sjs").toFile());
-        FileUtils.copyFile(getResourceFile("flow-manager/sjs-flow/triples.sjs"), inputDir.resolve("sjs-json-input-flow/triples.sjs").toFile());
+        FileUtil.copy(getResourceStream("flow-manager/sjs-flow/headers.sjs"), inputDir.resolve("sjs-json-input-flow/headers.sjs").toFile());
+        FileUtil.copy(getResourceStream("flow-manager/sjs-flow/content-input.sjs"), inputDir.resolve("sjs-json-input-flow/content.sjs").toFile());
+        FileUtil.copy(getResourceStream("flow-manager/sjs-flow/triples.sjs"), inputDir.resolve("sjs-json-input-flow/triples.sjs").toFile());
 
-        FileUtils.copyFile(getResourceFile("flow-manager/sjs-flow/headers.sjs"), inputDir.resolve("sjs-xml-input-flow/headers.sjs").toFile());
-        FileUtils.copyFile(getResourceFile("flow-manager/sjs-flow/content-input.sjs"), inputDir.resolve("sjs-xml-input-flow/content.sjs").toFile());
-        FileUtils.copyFile(getResourceFile("flow-manager/sjs-flow/triples.sjs"), inputDir.resolve("sjs-xml-input-flow/triples.sjs").toFile());
+        FileUtil.copy(getResourceStream("flow-manager/sjs-flow/headers.sjs"), inputDir.resolve("sjs-xml-input-flow/headers.sjs").toFile());
+        FileUtil.copy(getResourceStream("flow-manager/sjs-flow/content-input.sjs"), inputDir.resolve("sjs-xml-input-flow/content.sjs").toFile());
+        FileUtil.copy(getResourceStream("flow-manager/sjs-flow/triples.sjs"), inputDir.resolve("sjs-xml-input-flow/triples.sjs").toFile());
 
-        FileUtils.copyFile(getResourceFile("flow-manager/xqy-flow/headers-json.xqy"), inputDir.resolve("xqy-json-input-flow/headers.xqy").toFile());
-        FileUtils.copyFile(getResourceFile("flow-manager/xqy-flow/content-input.xqy"), inputDir.resolve("xqy-json-input-flow/content.xqy").toFile());
-        FileUtils.copyFile(getResourceFile("flow-manager/xqy-flow/triples.xqy"), inputDir.resolve("xqy-json-input-flow/triples.xqy").toFile());
+        FileUtil.copy(getResourceStream("flow-manager/xqy-flow/headers-json.xqy"), inputDir.resolve("xqy-json-input-flow/headers.xqy").toFile());
+        FileUtil.copy(getResourceStream("flow-manager/xqy-flow/content-input.xqy"), inputDir.resolve("xqy-json-input-flow/content.xqy").toFile());
+        FileUtil.copy(getResourceStream("flow-manager/xqy-flow/triples.xqy"), inputDir.resolve("xqy-json-input-flow/triples.xqy").toFile());
 
-        FileUtils.copyFile(getResourceFile("flow-manager/xqy-flow/headers-xml.xqy"), inputDir.resolve("xqy-xml-input-flow/headers.xqy").toFile());
-        FileUtils.copyFile(getResourceFile("flow-manager/xqy-flow/content-input.xqy"), inputDir.resolve("xqy-xml-input-flow/content.xqy").toFile());
-        FileUtils.copyFile(getResourceFile("flow-manager/xqy-flow/triples.xqy"), inputDir.resolve("xqy-xml-input-flow/triples.xqy").toFile());
+        FileUtil.copy(getResourceStream("flow-manager/xqy-flow/headers-xml.xqy"), inputDir.resolve("xqy-xml-input-flow/headers.xqy").toFile());
+        FileUtil.copy(getResourceStream("flow-manager/xqy-flow/content-input.xqy"), inputDir.resolve("xqy-xml-input-flow/content.xqy").toFile());
+        FileUtil.copy(getResourceStream("flow-manager/xqy-flow/triples.xqy"), inputDir.resolve("xqy-xml-input-flow/triples.xqy").toFile());
 
         getDataHub().installUserModules(true);
     }
@@ -130,11 +131,11 @@ public class FlowManagerServiceTest extends HubTestBase {
         String basePath = getResourceFile("flow-manager").getAbsolutePath();
         JsonNode mlcpOptions = objectMapper.readTree(
             "{" +
-                "\"input_file_path\":\"" + inputPath + "\"," +
+                "\"input_file_path\":\"" + inputPath.replace("\\", "\\\\\\\\") + "\"," +
                 "\"input_file_type\":\"\\\"documents\\\"\"," +
                 "\"output_collections\":\"\\\"" + ENTITY + "\\\"\"," +
                 "\"output_permissions\":\"\\\"rest-reader,read,rest-writer,update\\\"\"," +
-                "\"output_uri_replace\":\"\\\"" + basePath + ",''\\\"\"," +
+                "\"output_uri_replace\":\"\\\"" + basePath.replace("\\", "/").replaceAll("^([A-Za-z]):", "/$1:") + ",''\\\"\"," +
                 "\"document_type\":\"\\\"json\\\"\"," +
                 "\"transform_module\":\"\\\"/com.marklogic.hub/mlcp-flow-transform.xqy\\\"\"," +
                 "\"transform_namespace\":\"\\\"http://marklogic.com/data-hub/mlcp-flow-transform\\\"\"," +

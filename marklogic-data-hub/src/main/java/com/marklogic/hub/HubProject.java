@@ -1,5 +1,6 @@
 package com.marklogic.hub;
 
+import com.marklogic.hub.util.FileUtil;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -209,7 +210,7 @@ public class HubProject {
         if (overwrite || !dstFile.toFile().exists()) {
             logger.info("Getting file: " + srcFile);
             InputStream inputStream = HubProject.class.getClassLoader().getResourceAsStream(srcFile);
-            Files.copy(inputStream, dstFile, StandardCopyOption.REPLACE_EXISTING);
+            FileUtil.copy(inputStream, dstFile.toFile());
         }
     }
 

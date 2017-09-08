@@ -5,6 +5,7 @@ import com.marklogic.hub.flow.CodeFormat;
 import com.marklogic.hub.flow.FlowType;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.scaffold.ScaffoldingValidator;
+import com.marklogic.hub.util.FileUtil;
 import org.apache.commons.io.FileUtils;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.*;
@@ -105,7 +106,7 @@ public class ScaffoldingValidatorTest extends HubTestBase {
            throws IOException {
        InputStream inputStream = Scaffolding.class.getClassLoader()
                .getResourceAsStream(srcFile);
-       Files.copy(inputStream, dstFile);
+       FileUtil.copy(inputStream, dstFile.toFile());
    }
 
    @Test

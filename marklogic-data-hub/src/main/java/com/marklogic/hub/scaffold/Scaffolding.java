@@ -24,7 +24,9 @@ import com.marklogic.hub.collector.impl.CollectorImpl;
 import com.marklogic.hub.error.ScaffoldingValidationException;
 import com.marklogic.hub.flow.*;
 import com.marklogic.hub.main.impl.MainPluginImpl;
+import com.marklogic.hub.util.FileUtil;
 import com.sun.jersey.api.client.ClientHandlerException;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -69,7 +71,6 @@ public class Scaffolding {
     public void createEntity(String entityName) throws FileNotFoundException {
         Path entityDir = entitiesDir.resolve(entityName);
         entityDir.toFile().mkdirs();
-
     }
 
     public void createFlow(String entityName, String flowName,
@@ -237,7 +238,7 @@ public class Scaffolding {
         if (!dstFile.toFile().exists()) {
             InputStream inputStream = Scaffolding.class.getClassLoader()
                     .getResourceAsStream(srcFile);
-            Files.copy(inputStream, dstFile);
+            FileUtil.copy(inputStream, dstFile.toFile());
         }
     }
 
@@ -245,7 +246,7 @@ public class Scaffolding {
         logger.info("writing: " + dstFile.toString());
         if (!dstFile.toFile().exists()) {
             InputStream inputStream = new ByteArrayInputStream(buffer.getBytes(StandardCharsets.UTF_8));
-            Files.copy(inputStream, dstFile);
+            FileUtil.copy(inputStream, dstFile.toFile());
         }
     }
 
