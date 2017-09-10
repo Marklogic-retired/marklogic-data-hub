@@ -178,6 +178,7 @@ public class MlcpRunner extends ProcessRunner {
             if (classpath.endsWith(".war")) {
                 args.add("-jar");
                 args.add(classpath);
+                args.add("mlcp");
             }
             else {
                 args.add("-cp");

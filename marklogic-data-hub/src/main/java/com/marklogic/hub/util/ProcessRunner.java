@@ -68,7 +68,7 @@ public class ProcessRunner extends Thread {
     @Override
     public void run() {
         try {
-            logger.debug(String.join(" ", args));
+            logger.error(String.join(" ", args));
             ProcessBuilder pb = new ProcessBuilder(args);
             pb.redirectErrorStream(true);
             Process process = pb.start();

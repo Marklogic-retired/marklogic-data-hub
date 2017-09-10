@@ -65,7 +65,7 @@ export class SettingsService {
   }
 
   get mlcpPath(): string {
-    return localStorage.getItem('mlcpPath');
+    return localStorage.getItem('mlcpPath') || '';
   }
 
   set mlcpPath(path: string) {

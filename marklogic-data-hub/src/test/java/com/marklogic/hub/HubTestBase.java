@@ -29,11 +29,15 @@ import com.marklogic.client.eval.EvalResult;
 import com.marklogic.client.eval.EvalResultIterator;
 import com.marklogic.client.eval.ServerEvaluationCall;
 import com.marklogic.client.io.*;
+import com.marklogic.hub.flow.CodeFormat;
+import com.marklogic.hub.flow.DataFormat;
+import com.marklogic.hub.flow.FlowType;
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.databases.DatabaseManager;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
+import org.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -485,6 +489,19 @@ public class HubTestBase {
             "    }\n" +
             "  }\n" +
             "}";
+    }
+
+    protected static void allCombos(ComboListener listener) throws IOException, InterruptedException, ParserConfigurationException, SAXException, JSONException {
+        CodeFormat[] codeFormats = new CodeFormat[] { CodeFormat.JAVASCRIPT, CodeFormat.XQUERY };
+        DataFormat[] dataFormats = new DataFormat[] { DataFormat.JSON, DataFormat.XML };
+        FlowType[] flowTypes = new FlowType[] { FlowType.INPUT, FlowType.HARMONIZE };
+        for (CodeFormat codeFormat : codeFormats) {
+            for (DataFormat dataFormat : dataFormats) {
+                for (FlowType flowType : flowTypes) {
+                    listener.onCombo(codeFormat, dataFormat, flowType);
+                }
+            }
+        }
     }
 
 }

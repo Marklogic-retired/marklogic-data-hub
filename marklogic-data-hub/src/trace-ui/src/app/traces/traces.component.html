@@ -33,7 +33,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let trace of traces" (click)="showTrace(trace.traceId)" [ngClass]="{'error' : trace.hasError }">
+            <tr *ngFor="let trace of traces" (click)="showTrace(trace)" [ngClass]="{'error' : trace.hasError }">
               <td><i class="mdi" [ngClass]="getIconClass(trace)"></i> {{trace.flowType}}</td>
               <td class="mdl-data-table__cell--non-numeric">{{trace.identifier | truncate:25}}</td>
               <td class="mdl-data-table__cell--non-numeric">{{trace.jobId}}</td>

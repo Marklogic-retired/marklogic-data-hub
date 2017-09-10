@@ -2,6 +2,8 @@ import { Component, HostListener, Inject } from '@angular/core';
 
 import { MdlDialogReference } from '@angular-mdl/core';
 
+import { EnvironmentService } from '../environment';
+
 import * as _ from 'lodash';
 
 @Component({
@@ -41,6 +43,7 @@ export class NewFlowComponent {
 
   constructor(
     private dialog: MdlDialogReference,
+    private envService: EnvironmentService,
     @Inject('flowType') flowType: string,
     @Inject('actions') actions: any
   ) {
@@ -48,10 +51,14 @@ export class NewFlowComponent {
     this.flow = _.clone(this.emptyFlow);
     this.actions = actions;
 
-    if (flowType === 'INPUT') {
-      this.startingScaffoldOption = this.scaffoldOptions[1];
+    if (this.getMarkLogicVersion().startsWith('8')) {
+      this.flow.useEsModel = false;
     } else {
-      this.startingScaffoldOption = this.scaffoldOptions[0];
+      if (flowType === 'INPUT') {
+        this.startingScaffoldOption = this.scaffoldOptions[1];
+      } else {
+        this.startingScaffoldOption = this.scaffoldOptions[0];
+      }
     }
   }
 
@@ -75,5 +82,9 @@ export class NewFlowComponent {
 
   cancel() {
     this.hide();
+  }
+
+  getMarkLogicVersion(): string {
+    return this.envService.marklogicVersion;
   }
 }

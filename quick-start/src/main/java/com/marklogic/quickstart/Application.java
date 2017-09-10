@@ -15,6 +15,8 @@
  */
 package com.marklogic.quickstart;
 
+import com.marklogic.contentpump.ContentPump;
+import org.apache.commons.lang.ArrayUtils;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -32,6 +34,12 @@ public class Application extends SpringBootServletInitializer {
     }
 
     public static void main(String[] args) throws Exception {
-        SpringApplication.run(Application.class, args);
+        if (args.length > 0 && args[0].equals("mlcp")) {
+            String[] newArgs = (String[]) ArrayUtils.subarray(args, 1, args.length);
+            ContentPump.main(newArgs);
+        }
+        else {
+            SpringApplication.run(Application.class, args);
+        }
     }
 }

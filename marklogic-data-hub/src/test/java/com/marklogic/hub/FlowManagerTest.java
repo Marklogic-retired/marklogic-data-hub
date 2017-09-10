@@ -23,6 +23,7 @@ import com.marklogic.hub.main.MainPlugin;
 import com.marklogic.hub.scaffold.Scaffolding;
 import org.apache.commons.io.FileUtils;
 import org.custommonkey.xmlunit.XMLUnit;
+import org.json.JSONException;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -31,7 +32,7 @@ import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
-import java.io.FileNotFoundException;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -48,6 +49,7 @@ public class FlowManagerTest extends HubTestBase {
     public static void setup() throws IOException {
         XMLUnit.setIgnoreWhitespace(true);
 
+        FileUtils.deleteDirectory(new File(PROJECT_PATH));
         installHub();
         enableDebugging();
 
@@ -358,7 +360,7 @@ public class FlowManagerTest extends HubTestBase {
 
 
     @Test
-    public void testHasLegacyflows() throws IOException {
+    public void testHasLegacyflows() throws IOException, InterruptedException, ParserConfigurationException, SAXException, JSONException {
         FlowManager fm = new FlowManager(getHubConfig());
 
         Scaffolding scaffolding = new Scaffolding(getHubConfig().getProjectDir(), stagingClient);
@@ -367,14 +369,21 @@ public class FlowManagerTest extends HubTestBase {
         assertEquals(0, fm.getLegacyFlows().size());
 
         Path projectPath = Paths.get(PROJECT_PATH);
-        Path inputDir = projectPath.resolve("plugins/entities/my-fun-test/input");
-        Path harmonizeDir = projectPath.resolve("plugins/entities/my-fun-test/harmonize");
-        FileUtils.copyDirectory(getResourceFile("scaffolding-test/legacy-input-flow"), inputDir.resolve("legacy-input-flow").toFile());
-        FileUtils.copyDirectory(getResourceFile("scaffolding-test/legacy-harmonize-flow"), harmonizeDir.resolve("legacy-harmonize-flow").toFile());
+        allCombos((codeFormat, dataFormat, flowType) -> {
+            Path dir = projectPath.resolve("plugins/entities/my-fun-test/" + flowType.toString());
+            String flowName = "legacy-" + codeFormat.toString() + "-" + dataFormat.toString() + "-" + flowType.toString() + "-flow";
+            FileUtils.copyDirectory(getResourceFile("scaffolding-test/" + flowName), dir.resolve(flowName).toFile());
+        });
 
         List<String> legacyFlows = fm.getLegacyFlows();
-        assertEquals(2, legacyFlows.size());
-        assertEquals("my-fun-test => legacy-input-flow", legacyFlows.get(0));
-        assertEquals("my-fun-test => legacy-harmonize-flow", legacyFlows.get(1));
+        assertEquals(8, legacyFlows.size());
+        assertEquals("my-fun-test => legacy-sjs-json-input-flow", legacyFlows.get(0));
+        assertEquals("my-fun-test => legacy-sjs-xml-input-flow", legacyFlows.get(1));
+        assertEquals("my-fun-test => legacy-xqy-json-input-flow", legacyFlows.get(2));
+        assertEquals("my-fun-test => legacy-xqy-xml-input-flow", legacyFlows.get(3));
+        assertEquals("my-fun-test => legacy-sjs-json-harmonize-flow", legacyFlows.get(4));
+        assertEquals("my-fun-test => legacy-sjs-xml-harmonize-flow", legacyFlows.get(5));
+        assertEquals("my-fun-test => legacy-xqy-json-harmonize-flow", legacyFlows.get(6));
+        assertEquals("my-fun-test => legacy-xqy-xml-harmonize-flow", legacyFlows.get(7));
     }
 }

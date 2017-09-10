@@ -26,6 +26,7 @@ import com.marklogic.hub.flow.*;
 import com.marklogic.hub.main.impl.MainPluginImpl;
 import com.marklogic.hub.util.FileUtil;
 import com.sun.jersey.api.client.ClientHandlerException;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +44,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 public class Scaffolding {
 
@@ -217,6 +219,10 @@ public class Scaffolding {
 
                         if (flowType.equals(FlowType.HARMONIZE)) {
                             flowBuilder.withCollector(new CollectorImpl("collector/collector." + codeFormat, codeFormat));
+
+                            if (codeFormat.equals(CodeFormat.JAVASCRIPT)) {
+                                updateLegacySjsWriter(flowDir);
+                            }
                         }
 
                         Flow flow = flowBuilder.build();
@@ -231,6 +237,22 @@ public class Scaffolding {
             }
         }
         return updated;
+    }
+
+    private void updateLegacySjsWriter(Path flowDir) {
+        Path writerFile = flowDir.resolve("writer").resolve("writer.sjs");
+        if (writerFile.toFile().exists()) {
+            try {
+                String contents = FileUtils.readFileToString(writerFile.toFile());
+                Pattern pattern = Pattern.compile("module.exports[^;]+;", Pattern.MULTILINE);
+                contents = pattern.matcher(contents).replaceAll("module.exports = write;");
+                FileOutputStream fileOutputStream = new FileOutputStream(writerFile.toFile());
+                IOUtils.write(contents, fileOutputStream);
+                fileOutputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private void writeFile(String srcFile, Path dstFile) throws IOException {

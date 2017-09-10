@@ -14,7 +14,6 @@ import com.marklogic.hub.flow.*;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.FileUtil;
 import com.marklogic.hub.util.MlcpRunner;
-import com.marklogic.hub.util.PerformanceLogger;
 import org.apache.commons.io.FileUtils;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.json.JSONException;
@@ -626,7 +625,7 @@ public class EndToEndFlowTests extends HubTestBase {
         String srcDir = "e2e-test/" + codeFormat.toString() + "-flow/";
         if (flowType.equals(FlowType.HARMONIZE)) {
             copyFile(srcDir + "collector." + codeFormat.toString(), flowDir.resolve("collector/collector." + codeFormat.toString()));
-            copyFile(srcDir + "writer." + codeFormat.toString(), flowDir.resolve("writer/writer." + codeFormat.toString()));
+            copyFile(srcDir + "writer-legacy." + codeFormat.toString(), flowDir.resolve("writer/writer." + codeFormat.toString()));
         }
 
         if (codeFormat.equals(CodeFormat.JAVASCRIPT)) {
@@ -650,19 +649,6 @@ public class EndToEndFlowTests extends HubTestBase {
     private static void scaffoldFlow(String prefix, CodeFormat codeFormat, DataFormat dataFormat, FlowType flowType) throws IOException {
         String flowName = getFlowName(prefix, codeFormat, dataFormat, flowType);
         scaffolding.createFlow(ENTITY, flowName, flowType, codeFormat, dataFormat);
-    }
-
-    private static void allCombos(ComboListener listener) throws IOException, InterruptedException, ParserConfigurationException, SAXException, JSONException {
-        CodeFormat[] codeFormats = new CodeFormat[] { CodeFormat.JAVASCRIPT, CodeFormat.XQUERY };
-        DataFormat[] dataFormats = new DataFormat[] { DataFormat.JSON, DataFormat.XML };
-        FlowType[] flowTypes = new FlowType[] { FlowType.INPUT, FlowType.HARMONIZE };
-        for (CodeFormat codeFormat : codeFormats) {
-            for (DataFormat dataFormat : dataFormats) {
-                for (FlowType flowType : flowTypes) {
-                    listener.onCombo(codeFormat, dataFormat, flowType);
-                }
-            }
-        }
     }
 
     private static void createFlows(String prefix, CreateFlowListener listener) throws IOException, InterruptedException, ParserConfigurationException, SAXException, JSONException {

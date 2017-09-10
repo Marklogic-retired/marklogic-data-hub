@@ -18,6 +18,7 @@ package com.marklogic.quickstart.web;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.InstallInfo;
 import com.marklogic.hub.Tracing;
 import com.marklogic.hub.deploy.util.HubDeployStatusListener;
 import com.marklogic.hub.error.CantUpgradeException;
@@ -202,6 +203,8 @@ public class CurrentProjectController extends EnvironmentAware implements FileSy
     @RequestMapping(value = "/update-hub", method = RequestMethod.POST)
     public ResponseEntity<?> updateHub() throws IOException, CantUpgradeException {
         if (dataHubService.updateHub(envConfig().getMlSettings())) {
+            installUserModules(envConfig().getMlSettings(), true);
+            startProjectWatcher();
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -247,11 +250,11 @@ public class CurrentProjectController extends EnvironmentAware implements FileSy
         EnvironmentConfig envConfig = authenticationToken.getEnvironmentConfig();
         envConfig.checkIfInstalled();
 
-        if (envConfig.getInstallInfo().isInstalled()) {
+        InstallInfo installInfo = envConfig.getInstallInfo();
+        if (installInfo.isInstalled() && envConfig.getRunningVersion().equals(envConfig.getInstalledVersion())) {
             installUserModules(envConfig.getMlSettings(), false);
             startProjectWatcher();
         }
-
 
         clearAuthenticationAttributes(request);
     }

@@ -38,7 +38,6 @@ $highlight-color: unquote("rgb(#{$palette-datahub-A100})");
 
   .fa-trash {
     color: red;
-    margin-left: 20px;
   }
 
   /deep/ .mdl-list__item {
@@ -47,6 +46,23 @@ $highlight-color: unquote("rgb(#{$palette-datahub-A100})");
 
     &:hover {
       background-color: transparent;
+    }
+  }
+
+  table {
+    width: 100%;
+    max-width: 100%;
+
+    td {
+      word-break: break-word;
+
+      &.check {
+        width: 30px;
+      }
+
+      &.icon {
+        width: 16px;
+      }
     }
   }
 }
