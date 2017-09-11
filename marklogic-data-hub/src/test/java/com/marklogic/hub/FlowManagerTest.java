@@ -377,13 +377,14 @@ public class FlowManagerTest extends HubTestBase {
 
         List<String> legacyFlows = fm.getLegacyFlows();
         assertEquals(8, legacyFlows.size());
-        assertEquals("my-fun-test => legacy-sjs-json-input-flow", legacyFlows.get(0));
-        assertEquals("my-fun-test => legacy-sjs-xml-input-flow", legacyFlows.get(1));
-        assertEquals("my-fun-test => legacy-xqy-json-input-flow", legacyFlows.get(2));
-        assertEquals("my-fun-test => legacy-xqy-xml-input-flow", legacyFlows.get(3));
-        assertEquals("my-fun-test => legacy-sjs-json-harmonize-flow", legacyFlows.get(4));
-        assertEquals("my-fun-test => legacy-sjs-xml-harmonize-flow", legacyFlows.get(5));
-        assertEquals("my-fun-test => legacy-xqy-json-harmonize-flow", legacyFlows.get(6));
-        assertEquals("my-fun-test => legacy-xqy-xml-harmonize-flow", legacyFlows.get(7));
+        legacyFlows.sort(String::compareToIgnoreCase);
+        assertEquals("my-fun-test => legacy-sjs-json-harmonize-flow", legacyFlows.get(0));
+        assertEquals("my-fun-test => legacy-sjs-json-input-flow", legacyFlows.get(1));
+        assertEquals("my-fun-test => legacy-sjs-xml-harmonize-flow", legacyFlows.get(2));
+        assertEquals("my-fun-test => legacy-sjs-xml-input-flow", legacyFlows.get(3));
+        assertEquals("my-fun-test => legacy-xqy-json-harmonize-flow", legacyFlows.get(4));
+        assertEquals("my-fun-test => legacy-xqy-json-input-flow", legacyFlows.get(5));
+        assertEquals("my-fun-test => legacy-xqy-xml-harmonize-flow", legacyFlows.get(6));
+        assertEquals("my-fun-test => legacy-xqy-xml-input-flow", legacyFlows.get(7));
     }
 }
