@@ -150,7 +150,7 @@ public class FlowManagerService {
     public void runMlcp(Flow flow, JsonNode json, FlowStatusListener statusListener) {
         String mlcpPath = json.get("mlcpPath").textValue();
         HubConfig hubConfig = envConfig().getMlSettings();
-        MlcpRunner runner = new MlcpRunner(mlcpPath, "com.marklogic.quickstart.Application", hubConfig, flow, hubConfig.newStagingClient(), json.get("mlcpOptions"), statusListener);
+        MlcpRunner runner = new MlcpRunner(mlcpPath, "com.marklogic.contentpump.ContentPump", hubConfig, flow, hubConfig.newStagingClient(), json.get("mlcpOptions"), statusListener);
         runner.start();
     }
 }
