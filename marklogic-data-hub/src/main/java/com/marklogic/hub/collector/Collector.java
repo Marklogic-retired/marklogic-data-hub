@@ -15,16 +15,27 @@
  */
 package com.marklogic.hub.collector;
 
-import com.marklogic.hub.plugin.PluginType;
+import com.marklogic.client.DatabaseClient;
+import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.HubDatabase;
+import com.marklogic.hub.flow.CodeFormat;
+import com.marklogic.hub.flow.FlowType;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import java.util.Map;
-import java.util.Vector;
+import java.util.Properties;
 
 public interface Collector {
 
-    PluginType getType();
-    DiskQueue<String> run(String jobId, int threadCount, Map<String, Object> options);
-    void serialize(XMLStreamWriter serializer) throws XMLStreamException;
+    CodeFormat getCodeFormat();
+    String getModule();
+
+    void setHubConfig(HubConfig config);
+    HubConfig getHubConfig();
+
+    void setClient(DatabaseClient client);
+    DatabaseClient getClient();
+
+    DiskQueue<String> run(String jobId, String entity, String flow, int threadCount, Map<String, Object> options);
 }

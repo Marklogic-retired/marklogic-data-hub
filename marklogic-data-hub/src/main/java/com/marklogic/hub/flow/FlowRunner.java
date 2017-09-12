@@ -1,5 +1,6 @@
 package com.marklogic.hub.flow;
 
+import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.datamovement.JobTicket;
 import com.marklogic.hub.HubDatabase;
 
@@ -11,8 +12,8 @@ public interface FlowRunner {
     FlowRunner withFlow(Flow flow);
     FlowRunner withBatchSize(int batchSize);
     FlowRunner withThreadCount(int threadCount);
-    FlowRunner withSourceDatabase(HubDatabase sourceDatabase);
-    FlowRunner withDestinationDatabase(HubDatabase destinationDatabase);
+    FlowRunner withSourceClient(DatabaseClient sourceClient);
+    FlowRunner withDestinationDatabase(String destinationDatabase);
     FlowRunner withOptions(Map<String, Object> options);
 
     FlowRunner onItemComplete(FlowItemCompleteListener listener);

@@ -29,14 +29,15 @@ export class TraceService {
     }
 
     const body = {
-      search: {
-        query: {
-          'and-query' : queries
-        },
-        'operator-state': {
-          'operator-name': 'sort',
-          'state-name': 'date-desc'
-        }
+      query: {
+        queries: [{
+            'and-query': queries
+        }, {
+          'operator-state': {
+            'operator-name': 'sort',
+            'state-name': 'date-desc'
+          }
+        }]
       }
     };
     return this.post(url, body);

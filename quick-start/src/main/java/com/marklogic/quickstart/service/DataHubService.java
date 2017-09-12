@@ -16,9 +16,10 @@
 package com.marklogic.quickstart.service;
 
 import com.marklogic.hub.DataHub;
+import com.marklogic.hub.DataHubUpgrader;
 import com.marklogic.hub.HubConfig;
-import com.marklogic.hub.deploy.commands.LoadUserModulesCommand;
 import com.marklogic.hub.deploy.util.HubDeployStatusListener;
+import com.marklogic.hub.error.CantUpgradeException;
 import com.marklogic.hub.util.PerformanceLogger;
 import com.marklogic.quickstart.auth.ConnectionAuthenticationToken;
 import com.marklogic.quickstart.exception.DataHubException;
@@ -31,12 +32,13 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.io.*;
-import java.nio.file.Paths;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Properties;
 import java.util.TimeZone;
 
 @Service
@@ -150,7 +152,7 @@ public class DataHubService {
     }
 
     public String getLastDeployed(HubConfig config) {
-        File tsFile = config.getModulesDeployTimestampFile();
+        File tsFile = config.getUserModulesDeployTimestampFile();
         Date lastModified = new Date(tsFile.lastModified());
 
         TimeZone tz = TimeZone.getTimeZone("UTC");
@@ -160,15 +162,8 @@ public class DataHubService {
         return "{\"deployed\":" + tsFile.exists() + ", \"lastModified\":\"" + df.format(lastModified) + "\"}";
     }
 
-    public boolean updateHub(HubConfig config) throws IOException {
-        DataHub dataHub = new DataHub(config);
-        boolean result = false;
-        int compare = DataHub.versionCompare(dataHub.getHubVersion(), "1.1.0");
-        if (compare == -1) {
-            result = dataHub.updateHubFromPre110();
-        } else if (compare == 0) {
-            result = dataHub.updateHubFrom110();
-        }
+    public boolean updateHub(HubConfig config) throws IOException, CantUpgradeException {
+        boolean result = new DataHubUpgrader(config).upgradeHub();
         if (result) {
             ConnectionAuthenticationToken authenticationToken = (ConnectionAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
             if (authenticationToken != null) {

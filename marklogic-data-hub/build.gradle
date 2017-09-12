@@ -18,19 +18,43 @@ group = 'com.marklogic'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
+ext.junit4Version        = '4.12'
+ext.junitVintageVersion  = '4.12.0-RC3'
+ext.junitPlatformVersion = '1.0.0-RC3'
+ext.junitJupiterVersion  = '5.0.0-RC3'
+
 dependencies {
     compile 'com.marklogic:marklogic-client-api:4.0.1'
     compile('com.marklogic:ml-javaclient-util:4.0.alpha4') {
       exclude group: 'com.marklogic', module: 'marklogic-xcc'
     }
+    compile("com.marklogic:mlcp-util:0.3.0")
     compile 'com.marklogic:ml-app-deployer:2.8.0'
     compile 'commons-io:commons-io:2.4'
-    testCompile 'junit:junit:4.12'
+    compile 'org.apache.commons:commons-text:1.1'
+
+    // JUnit Jupiter API and TestEngine implementation
+    testCompile "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}"
+    testRuntime "org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}"
+
+    testCompile "org.junit.platform:junit-platform-runner:${junitPlatformVersion}"
+
+    // If you also want to support JUnit 3 and JUnit 4 tests
+    testCompile "junit:junit:${junit4Version}"
+    testRuntime "org.junit.vintage:junit-vintage-engine:${junitVintageVersion}"
+
+    // Only needed to run tests in an (IntelliJ) IDE(A) that bundles an older version
+    testRuntime "org.junit.platform:junit-platform-launcher:${junitPlatformVersion}"
+
     testCompile 'xmlunit:xmlunit:1.3'
-    testCompile 'org.skyscreamer:jsonassert:1.3.0'
+    testCompile 'org.skyscreamer:jsonassert:1.5.0'
     testCompile 'org.hamcrest:hamcrest-junit:2.0.0.0'
     testCompile 'org.easymock:easymock:3.4'
     testCompile 'ch.qos.logback:logback-classic:1.1.11'
+    testCompile("com.marklogic:mlcp-util:0.3.0")
+    testCompile("com.marklogic:mlcp:9.0.2") {
+      exclude group: 'org.apache.avro', module: 'avro-tools'
+    }
 }
 
 node {
@@ -204,5 +228,7 @@ ext {
         customTokens.put("%%mlSchemasDbName%%", mlSchemasDbName)
 
         modulePaths = ["marklogic-data-hub/src/main/resources/ml-modules"]
+
+        mlModulePermissions = "rest-reader,read,rest-writer,insert,rest-writer,update,rest-extension-user,execute"
     }
 }

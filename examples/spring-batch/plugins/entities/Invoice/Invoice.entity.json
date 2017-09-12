@@ -1,0 +1,19 @@
+{
+  "info" : {
+    "title" : "Invoice",
+    "version" : "0.0.1"
+  },
+  "definitions" : {
+    "Invoice" : {
+      "required" : [ ],
+      "rangeIndex" : [ ],
+      "wordLexicon" : [ ],
+      "properties" : {
+        "id" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        }
+      }
+    }
+  }
+}

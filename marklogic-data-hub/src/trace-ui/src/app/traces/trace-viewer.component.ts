@@ -39,28 +39,12 @@ export class TraceViewerComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.sub = this.route.params.subscribe(params => {
-     let id = params['id'];
-     this.traceService.getTrace(id).subscribe(trace => {
-       this.trace = trace;
-
-        const plugins = [
-          'collector',
-          'content',
-          'headers',
-          'triples',
-          'writer',
-        ];
-        this.plugins = [];
-        for (let i = 0; i < plugins.length; i++) {
-          const pt = plugins[i] + 'Plugin';
-          if (this.trace[pt]) {
-            this.plugins.push(plugins[i]);
-          }
-        }
-
-        this.setCurrent(this.plugins[0]);
-     });
-   });
+      let id = params['id'];
+      this.traceService.getTrace(id).subscribe(trace => {
+        this.trace = trace;
+        this.setCurrent(this.trace.steps[0]);
+      });
+    });
   }
 
   ngOnDestroy() {
@@ -84,14 +68,14 @@ export class TraceViewerComponent implements OnInit, OnDestroy {
       classes.push('active');
     }
 
-    if (this.trace[plugin + 'Plugin'].error) {
+    if (plugin.error) {
       classes.push('error');
     }
     return classes.join(' ');
   }
 
-  private setCurrent(type: string) {
-    this.currentPluginType = type;
-    this.currentPlugin = this.trace[type + 'Plugin'];
+  private setCurrent(plugin: any) {
+    this.currentPluginType = plugin.label;
+    this.currentPlugin = plugin;
   }
 }

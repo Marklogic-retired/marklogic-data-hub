@@ -8,6 +8,7 @@
   </description>
   <method name="GET">
     <param name="entity" type="xs:string"/>
-    <param name="pluginFormat" type="xs:string"/>
+    <param name="codeFormat" type="xs:string"/>
+    <param name="flowType" type="xs:string"/>
   </method>
 </metadata>

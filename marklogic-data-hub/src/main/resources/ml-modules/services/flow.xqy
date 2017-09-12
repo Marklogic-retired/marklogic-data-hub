@@ -58,7 +58,7 @@ declare function get(
       let $flow-name := map:get($params, "flow-name")
       let $flow-type := map:get($params, "flow-type")
       let $resp :=
-        if ($flow-name) then
+        if (fn:exists($flow-name)) then
           let $flow := flow:get-flow($entity-name, $flow-name, $flow-type)
           return
             if (fn:exists($flow)) then $flow
@@ -86,51 +86,53 @@ declare function post(
   debug:dump-env("RUN FLOW"),
 
   perf:log('/v1/resources/flow:post', function() {
-    let $flow as element(hub:flow) := $input/hub:flow
-    let $options as map:map := (map:get($params, "options") ! xdmp:unquote(.)/object-node(), map:map())[1]
-    let $_ := (
-      map:put($options, "entity", $flow/hub:entity/fn:data()),
-      map:put($options, "flow", $flow/hub:name/fn:data()),
-      map:put($options, "flowType", $flow/hub:type/fn:data())
-    )
+    let $entity-name := map:get($params, "entity-name")
+    let $flow-name := map:get($params, "flow-name")
+    let $flow-type := map:get($params, "flow-type")
     let $job-id := map:get($params, "job-id")
+
+    (: determine the database to insert into :)
     let $target-database :=
       if (fn:exists(map:get($params, "target-database"))) then
         xdmp:database(map:get($params, "target-database"))
       else
         xdmp:database($config:FINAL-DATABASE)
-    let $identifiers := map:get($params, "identifier")
-    let $_ :=
-      for $identifier in $identifiers
-      return
-        try {
-          flow:run-flow($job-id, $flow, $identifier, $target-database, $options)
-        }
-        catch($ex) { () }
-    let $resp :=
-      document {
-        object-node {
-          "totalCount": fn:count($identifiers),
-          "errorCount": trace:get-error-count(),
-          "completedItems": trace:get-completed-items(),
-          "failedItems": trace:get-failed-items()
-        }
-      }
-    return
-      $resp
-  })
-};
+    let $identifiers := map:get($params, "identifiers")
+    let $flow as element(hub:flow) := flow:get-flow($entity-name, $flow-name, $flow-type)
 
-declare function delete(
-  $context as map:map,
-  $params  as map:map
-  ) as document-node()?
-{
-  debug:dump-env("INVALIDATE FLOW CACHES"),
-
-  perf:log('/v1/resources/flow:delete', function() {
-    let $_ := flow:invalidate-flow-caches()
+    (: add the default options from the flow :)
+    let $options as map:map := (
+      map:get($params, "options") ! xdmp:unquote(.)/object-node(),
+      map:map()
+    )[1]
+    let $_ := (
+      flow:set-default-options($options, $flow),
+      map:put($options, "target-database", $target-database)
+    )
     return
-      document { () }
+      if (fn:exists($flow)) then
+        let $_ :=
+          for $identifier in $identifiers
+          return
+            try {
+              flow:run-flow($job-id, $flow, $identifier, $target-database, $options)
+            }
+            catch($ex) {
+              (: error is already logged in flow-lib:main() :)
+              ()
+            }
+        let $resp :=
+          document {
+            object-node {
+              "totalCount": fn:count($identifiers),
+              "errorCount": trace:get-error-count(),
+              "completedItems": trace:get-completed-items(),
+              "failedItems": trace:get-failed-items()
+            }
+          }
+        return
+          $resp
+      else
+        fn:error((),"RESTAPI-SRVEXERR", (404, "Not Found", "The requested flow was not found"))
   })
 };

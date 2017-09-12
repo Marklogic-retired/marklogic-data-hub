@@ -31,6 +31,7 @@ import { HeaderComponent } from './header/header.component';
 import { JobsComponent, JobOutputComponent } from './jobs';
 import { MlcpUiComponent } from './mlcp-ui';
 import { MlErrorComponent } from './ml-error';
+import { NewEntityComponent } from './new-entity/new-entity.component';
 import { NewFlowComponent } from './new-flow/new-flow.component';
 import { NoContentComponent } from './no-content';
 import { PaginationComponent } from './pagination';
@@ -59,6 +60,8 @@ import { InlineEditComponent } from './inline-edit/inline-edit.component';
 import { FacetsComponent } from './facets/facets.component';
 import { ObjectToArrayPipe } from './object-to-array.pipe';
 
+import { Ng2DeviceDetectorModule } from 'ng2-device-detector';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -77,6 +80,7 @@ import { ObjectToArrayPipe } from './object-to-array.pipe';
     LoginComponent,
     MlcpUiComponent,
     MlErrorComponent,
+    NewEntityComponent,
     NewFlowComponent,
     PaginationComponent,
     ResizableComponent,
@@ -102,6 +106,7 @@ import { ObjectToArrayPipe } from './object-to-array.pipe';
     ChooseCollationComponent,
     ExternalDefDialogComponent,
     EntityEditorComponent,
+    NewEntityComponent,
     NewFlowComponent,
     JobOutputComponent
   ],
@@ -115,7 +120,8 @@ import { ObjectToArrayPipe } from './object-to-array.pipe';
     TooltipModule,
     MomentModule,
     GridManiaModule,
-    RouterModule.forRoot(ROUTES, { useHash: true })
+    RouterModule.forRoot(ROUTES, { useHash: true }),
+    Ng2DeviceDetectorModule.forRoot()
   ],
   providers: [
     AUTH_PROVIDERS,

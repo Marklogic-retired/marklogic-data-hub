@@ -15,10 +15,13 @@
  */
 package com.marklogic.hub.flow;
 
+import com.marklogic.client.eval.EvalResultIterator;
 import com.marklogic.client.io.DOMHandle;
-import com.marklogic.client.io.Format;
-import com.marklogic.hub.*;
-import com.marklogic.hub.plugin.PluginFormat;
+import com.marklogic.client.io.StringHandle;
+import com.marklogic.hub.DataHub;
+import com.marklogic.hub.FlowManager;
+import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.scaffold.Scaffolding;
 import org.apache.commons.io.FileUtils;
 import org.custommonkey.xmlunit.XMLUnit;
@@ -56,14 +59,14 @@ public class FlowRunnerTest extends HubTestBase {
         Scaffolding scaffolding = new Scaffolding(projectDir.toString(), stagingClient);
         scaffolding.createEntity(ENTITY);
         scaffolding.createFlow(ENTITY, "testharmonize", FlowType.HARMONIZE,
-            PluginFormat.XQUERY, Format.XML);
+            CodeFormat.XQUERY, DataFormat.XML);
 
         DataHub dh = new DataHub(getHubConfig());
         dh.clearUserModules();
         dh.installUserModules();
 
-        installModule("/entities/" + ENTITY + "/harmonize/testharmonize/collector/collector.xqy", "flow-runner-test/collector.xqy");
-        installModule("/entities/" + ENTITY + "/harmonize/testharmonize/content/content.xqy", "flow-runner-test/content-for-options.xqy");
+        installModule("/entities/" + ENTITY + "/harmonize/testharmonize/collector.xqy", "flow-runner-test/collector.xqy");
+        installModule("/entities/" + ENTITY + "/harmonize/testharmonize/content.xqy", "flow-runner-test/content-for-options.xqy");
     }
 
     @AfterClass
@@ -88,6 +91,25 @@ public class FlowRunnerTest extends HubTestBase {
         flowRunner.run();
         flowRunner.awaitCompletion();
 
-        assertXMLEqual(getXmlFromResource("flow-runner-test/with-options-output.xml"), finalDocMgr.read("1.xml").next().getContent(new DOMHandle()).get());
+        EvalResultIterator resultItr = runInDatabase("xdmp:database('" + HubConfig.DEFAULT_FINAL_NAME + "')", HubConfig.DEFAULT_FINAL_NAME);
+        String targetDB = resultItr.next().getString();
+        String expected = "<envelope xmlns=\"http://marklogic.com/entity-services\">\n" +
+            "  <headers></headers>\n" +
+            "  <triples></triples>\n" +
+            "  <instance>\n" +
+            "    <result xmlns=\"\">\n" +
+            "      <name>Bob Smith</name>\n" +
+            "      <age>55</age>\n" +
+            "      <entity>e2eentity</entity>\n" +
+            "      <flow>testharmonize</flow>\n" +
+            "      <flowType>harmonize</flowType>\n" +
+            "      <dataFormat>xml</dataFormat>\n" +
+            "      <target-database>" + targetDB + "</target-database>\n" +
+            "    </result>\n" +
+            "  </instance>\n" +
+            "  <attachments></attachments>\n" +
+            "</envelope>";
+
+        assertXMLEqual(expected, finalDocMgr.read("1.xml").next().getContent(new StringHandle()).get());
     }
 }

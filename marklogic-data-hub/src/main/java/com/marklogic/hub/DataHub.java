@@ -38,6 +38,7 @@ import com.marklogic.hub.deploy.HubAppDeployer;
 import com.marklogic.hub.deploy.commands.*;
 import com.marklogic.hub.deploy.util.HubDeployStatusListener;
 import com.marklogic.hub.error.ServerValidationException;
+import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.JsonXor;
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.admin.AdminManager;
@@ -59,9 +60,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.regex.Pattern;
 
 public class DataHub {
@@ -170,28 +172,29 @@ public class DataHub {
     public void validateServer() throws ServerValidationException {
         try {
             String versionString = getAdminManager().getServerVersion();
-            String alteredString = versionString.replaceAll("[^\\d]+", "");
-            if (alteredString.length() < 3) {
-                alteredString += "0";
-            }
-            int major = Integer.parseInt(alteredString.substring(0, 1));
-//            int ver = Integer.parseInt(alteredString.substring(0, 3));
-//            boolean isNightly = versionString.matches("[^-]+-\\d{8}");
+            int major = Integer.parseInt(versionString.replaceAll("([^.]+)\\..*", "$1"));
             if (major < 9) {
                 throw new ServerValidationException("Invalid MarkLogic Server Version: " + versionString);
             }
+            boolean isNightly = versionString.matches("[^-]+-(\\d{4})(\\d{2})(\\d{2})");
+            if (isNightly) {
+                String dateString = versionString.replaceAll("[^-]+-(\\d{4})(\\d{2})(\\d{2})", "$1-$2-$3");
+                Date minDate = new GregorianCalendar(2017, 6, 1).getTime();
+                Date date = new SimpleDateFormat("y-M-d").parse(dateString);
+                if (date.before(minDate)) {
+                    throw new ServerValidationException("Invalid MarkLogic Server Version: " + versionString);
+                }
+            }
 
         }
-        catch(ResourceAccessException e) {
+        catch(Exception e) {
             throw new ServerValidationException(e.toString());
         }
     }
 
     public void initProject() {
         logger.info("Initializing the Hub Project");
-
-        HubProject hp = new HubProject(hubConfig);
-        hp.init();
+        hubConfig.getHubProject().init(hubConfig.getCustomTokens());
     }
 
     /**
@@ -402,109 +405,6 @@ public class DataHub {
         deployer.undeploy(config);
     }
 
-    public boolean updateHubFromPre110() {
-        boolean result = false;
-        File buildGradle = Paths.get(this.hubConfig.projectDir, "build.gradle").toFile();
-        try {
-            // step 1: update build.gradle
-            String text = new String(FileCopyUtils.copyToByteArray(buildGradle));
-            String version = hubConfig.getJarVersion();
-            text = Pattern.compile("^(\\s*)id\\s+['\"]com.marklogic.ml-data-hub['\"]\\s+version.+$", Pattern.MULTILINE).matcher(text).replaceAll("$1id 'com.marklogic.ml-data-hub' version '" + version + "'");
-            text = Pattern.compile("^(\\s*)compile.+marklogic-data-hub.+$", Pattern.MULTILINE).matcher(text).replaceAll("$1compile 'com.marklogic:marklogic-data-hub:" + version + "'");
-            FileUtils.writeStringToFile(buildGradle, text);
-
-            // step 2: create the internal-hub-config dir and the gradle files
-            HubProject hp = new HubProject(hubConfig);
-            hp.init();
-
-            // step 3: rename marklogic-config to user-config (if marklogic-config exists)
-            File markLogicConfig = Paths.get(this.hubConfig.projectDir, HubConfig.OLD_HUB_CONFIG_DIR).toFile();
-            Path userConfigDir = this.hubConfig.getUserConfigDir();
-            if (markLogicConfig.exists() && markLogicConfig.isDirectory()) {
-                FileUtils.forceDelete(userConfigDir.toFile());
-                FileUtils.moveDirectory(markLogicConfig, userConfigDir.toFile());
-
-                // fix unquoted ports in old configs
-                Files.walkFileTree(this.hubConfig.getUserServersDir(), new SimpleFileVisitor<Path>() {
-                        @Override
-                        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                            if (file.getFileName().toString().endsWith(".json")) {
-                                String fileContents = FileUtils.readFileToString(file.toFile());
-                                for (String findMe : new String[]{"%%mlStagingPort%%", "%%mlFinalPort%%", "%%mlTracePort%%", "%%mlJobPort%%"}) {
-                                    fileContents = Pattern.compile("(\"port\"\\s*:\\s*)" + findMe).matcher(fileContents).replaceAll("$1\"" + findMe + "\"");
-                                }
-                                FileUtils.writeStringToFile(file.toFile(), fileContents);
-                            }
-                            return FileVisitResult.CONTINUE;
-                        }
-                });
-
-                // step 3.5: tease out user's config file changes
-                Files.walkFileTree(userConfigDir, new SimpleFileVisitor<Path>() {
-                    @Override
-                    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                        if (file.getFileName().toString().endsWith(".json")) {
-                            File hubFile = new File(file.toString().replace(HubConfig.USER_CONFIG_DIR, HubConfig.HUB_CONFIG_DIR));
-                            if (hubFile.exists()) {
-                                JsonNode xored = JsonXor.xor(hubFile, file.toFile());
-                                if (xored.size() > 0) {
-                                    ObjectMapper objectMapper = new ObjectMapper();
-                                    FileOutputStream fileOutputStream = new FileOutputStream(file.toFile());
-                                    objectMapper.writerWithDefaultPrettyPrinter().writeValue(fileOutputStream, xored);
-                                    fileOutputStream.flush();
-                                    fileOutputStream.close();
-                                }
-                                else {
-                                    FileUtils.forceDelete(file.toFile());
-                                }
-                            }
-                        }
-                        return FileVisitResult.CONTINUE;
-                    }
-
-                });
-
-            }
-
-            // step 4: install hub modules into MarkLogic
-            install();
-
-            result = true;
-        }
-        catch(IOException e) {
-            e.printStackTrace();
-        }
-        return result;
-    }
-
-    public boolean updateHubFrom110() {
-        boolean result = false;
-        File buildGradle = Paths.get(this.hubConfig.projectDir, "build.gradle").toFile();
-        try {
-            // step 1: update the hub-internal-config files
-            HubProject hp = new HubProject(hubConfig);
-            hp.init();
-
-            // step 2: replace the hub version in build.gradle
-            String text = new String(FileCopyUtils.copyToByteArray(buildGradle));
-            String version = hubConfig.getJarVersion();
-            text = Pattern.compile("^(\\s*)id\\s+['\"]com.marklogic.ml-data-hub['\"]\\s+version.+$", Pattern.MULTILINE).matcher(text).replaceAll("$1id 'com.marklogic.ml-data-hub' version '" + version + "'");
-            text = Pattern.compile("^(\\s*)compile.+marklogic-data-hub.+$", Pattern.MULTILINE).matcher(text).replaceAll("$1compile 'com.marklogic:marklogic-data-hub:" + version + "'");
-            FileUtils.writeStringToFile(buildGradle, text);
-
-            hubConfig.getHubSecurityDir().resolve("roles").resolve("data-hub-user.json").toFile().delete();
-
-            // step 3: install hub modules into MarkLogic
-            install();
-
-            result = true;
-        }
-        catch(IOException e) {
-            e.printStackTrace();
-        }
-        return result;
-    }
-
     /**
      * Gets the hub version for the installed server side modules
      * @return - the version of the installed modules
@@ -515,7 +415,19 @@ public class DataHub {
             return hv.getVersion();
         }
         catch(Exception e) {}
-        return "1.0.0";
+        return "2.0.0";
+    }
+
+    public String getMarkLogicVersion() {
+        ServerEvaluationCall eval = hubConfig.newAppServicesClient().newServerEval();
+        String xqy = "xdmp:version()";
+        EvalResultIterator result = eval.xquery(xqy).eval();
+        if (result.hasNext()) {
+            return result.next().getString();
+        }
+        else {
+            throw new RuntimeException("Couldn't determine MarkLogic Version");
+        }
     }
 
     public static int versionCompare(String v1, String v2) {

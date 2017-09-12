@@ -93,7 +93,7 @@ public class DataHubTest extends HubTestBase {
     }
 
     @Test(expected = ServerValidationException.class)
-    public void testValidateServe8nightly() throws ServerValidationException {
+    public void testValidateServer8nightly() throws ServerValidationException {
         expect(am.getServerVersion()).andReturn("8.0-20160719");
         replay(am);
         dh.validateServer();
@@ -101,6 +101,20 @@ public class DataHubTest extends HubTestBase {
 
     @Test
     public void testValidateServer9nightly() throws ServerValidationException {
+        expect(am.getServerVersion()).andReturn("9.0-20170701");
+        replay(am);
+        dh.validateServer();
+    }
+
+    @Test
+    public void testValidateServer9nightlyagain() throws ServerValidationException {
+        expect(am.getServerVersion()).andReturn("9.0-20170702");
+        replay(am);
+        dh.validateServer();
+    }
+
+    @Test(expected = ServerValidationException.class)
+    public void testInvalidServer9nightly() throws ServerValidationException {
         expect(am.getServerVersion()).andReturn("9.0-20160719");
         replay(am);
         dh.validateServer();
@@ -116,6 +130,20 @@ public class DataHubTest extends HubTestBase {
     @Test
     public void testValidateServerBeyond9() throws ServerValidationException {
         expect(am.getServerVersion()).andReturn("9.0-2");
+        replay(am);
+        dh.validateServer();
+    }
+
+    @Test
+    public void testValidateServerBeyond10() throws ServerValidationException {
+        expect(am.getServerVersion()).andReturn("10.0-1");
+        replay(am);
+        dh.validateServer();
+    }
+
+    @Test
+    public void testValidateServer10Nightly() throws ServerValidationException {
+        expect(am.getServerVersion()).andReturn("10.0-20170801");
         replay(am);
         dh.validateServer();
     }

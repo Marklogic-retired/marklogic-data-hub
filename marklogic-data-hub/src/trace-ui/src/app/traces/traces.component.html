@@ -35,7 +35,7 @@
           <tbody>
             <tr *ngFor="let trace of traces" (click)="showTrace(trace.traceId)" [ngClass]="{'error' : trace.hasError }">
               <td><i class="mdi" [ngClass]="getIconClass(trace)"></i> {{trace.flowType}}</td>
-              <td class="mdl-data-table__cell--non-numeric">{{trace.identifier | truncate:25}}</td>
+              <td class="mdl-data-table__cell--non-numeric">{{trace.identifier}}</td>
               <td class="mdl-data-table__cell--non-numeric">{{trace.jobId}}</td>
               <td>{{trace.created | amTimeAgo}}</td>
             </tr>

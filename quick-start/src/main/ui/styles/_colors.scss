@@ -18,6 +18,7 @@ $palette-datahub:
 "204, 82, 79"
 "42, 86, 53"
 "204, 150, 150"
+"225, 202, 150"
 ;
 
 $palette-datahub-50: nth($palette-datahub, 1);
@@ -37,7 +38,7 @@ $palette-datahub-A700: nth($palette-datahub, 14);
 $palette-datahub-red: nth($palette-datahub, 15);
 $palette-datahub-green: nth($palette-datahub, 16);
 $palette-datahub-lightred: nth($palette-datahub, 17);
-
+$palette-datahub-pale-yellow: nth($palette-datahub, 18);
 
 $trim-color-classes: true;
 

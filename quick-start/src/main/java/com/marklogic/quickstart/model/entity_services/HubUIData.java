@@ -5,8 +5,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.sun.javafx.geom.Point2D;
 
+import java.awt.geom.Point2D;
 import java.util.*;
 
 public class HubUIData extends JsonPojo {
@@ -14,7 +14,7 @@ public class HubUIData extends JsonPojo {
     protected int y;
     protected int width;
     protected int height;
-    protected Map<String, List<Point2D>> vertices = new HashMap<>();
+    protected Map<String, List<Point2D.Float>> vertices = new HashMap<>();
 
     public int getX() {
         return x;
@@ -48,11 +48,11 @@ public class HubUIData extends JsonPojo {
         this.height = height;
     }
 
-    public Map<String, List<Point2D>> getVertices() {
+    public Map<String, List<Point2D.Float>> getVertices() {
         return vertices;
     }
 
-    public void setVertices(Map<String, List<Point2D>> vertices) {
+    public void setVertices(Map<String, List<Point2D.Float>> vertices) {
         this.vertices = vertices;
     }
 
@@ -71,10 +71,10 @@ public class HubUIData extends JsonPojo {
                     String key = fieldItr.next();
                     JsonNode vertexList = verticesNode.get(key);
                     if (vertexList != null) {
-                        ArrayList<Point2D> points = new ArrayList<>();
+                        ArrayList<Point2D.Float> points = new ArrayList<>();
 
                         vertexList.forEach((JsonNode vertex) -> {
-                            points.add(new Point2D(vertex.get("x").asInt(), vertex.get("y").asInt()));
+                            points.add(new Point2D.Float(vertex.get("x").asInt(), vertex.get("y").asInt()));
                         });
                         hubUIData.vertices.put(key, points);
                     }
@@ -92,9 +92,9 @@ public class HubUIData extends JsonPojo {
         writeNumberIf(node, "height", height);
 
         ObjectNode verticesNode = JsonNodeFactory.instance.objectNode();
-        vertices.forEach((String key, List<Point2D> points) -> {
+        vertices.forEach((String key, List<Point2D.Float> points) -> {
             ArrayNode arrayOfPointsNode = JsonNodeFactory.instance.arrayNode();
-            points.forEach((Point2D point) -> {
+            points.forEach((Point2D.Float point) -> {
                 ObjectNode p = JsonNodeFactory.instance.objectNode();
                 p.put("x", point.x);
                 p.put("y", point.y);

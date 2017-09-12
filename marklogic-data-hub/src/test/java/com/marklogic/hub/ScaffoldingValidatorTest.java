@@ -1,7 +1,14 @@
 package com.marklogic.hub;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import com.marklogic.hub.error.ScaffoldingValidationException;
+import com.marklogic.hub.flow.CodeFormat;
+import com.marklogic.hub.flow.FlowType;
+import com.marklogic.hub.scaffold.Scaffolding;
+import com.marklogic.hub.scaffold.ScaffoldingValidator;
+import com.marklogic.hub.util.FileUtil;
+import org.apache.commons.io.FileUtils;
+import org.custommonkey.xmlunit.XMLUnit;
+import org.junit.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,19 +19,8 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.marklogic.hub.error.ScaffoldingValidationException;
-import com.marklogic.hub.plugin.PluginFormat;
-import com.marklogic.hub.scaffold.Scaffolding;
-import com.marklogic.hub.scaffold.ScaffoldingValidator;
-import org.apache.commons.io.FileUtils;
-import org.custommonkey.xmlunit.XMLUnit;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
-import com.marklogic.hub.flow.FlowType;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class ScaffoldingValidatorTest extends HubTestBase {
 
@@ -40,9 +36,8 @@ public class ScaffoldingValidatorTest extends HubTestBase {
 
    @Before
    public void setup() throws IOException {
-       PluginFormat pluginFormat = PluginFormat.XQUERY;
-       createPlugins(TEST_ENTITY_NAME, FlowType.INPUT, pluginFormat);
-       createPlugins(TEST_ENTITY_NAME, FlowType.HARMONIZE, pluginFormat);
+       createPlugins(TEST_ENTITY_NAME, FlowType.INPUT, CodeFormat.XQUERY);
+       createPlugins(TEST_ENTITY_NAME, FlowType.HARMONIZE, CodeFormat.XQUERY);
    }
 
    @After
@@ -50,7 +45,7 @@ public class ScaffoldingValidatorTest extends HubTestBase {
        FileUtils.deleteDirectory(new File(projectPath));
    }
 
-   private void createPlugins(String entityName, FlowType flowType, PluginFormat pluginFormat) throws IOException {
+   private void createPlugins(String entityName, FlowType flowType, CodeFormat codeFormat) throws IOException {
 
        String flowName = entityName + flowType + "-flow";
        String flowTypePath = Scaffolding.getAbsolutePath(projectPath, "entities", entityName, flowType.toString());
@@ -58,21 +53,21 @@ public class ScaffoldingValidatorTest extends HubTestBase {
 
        List<Plugin> plugins = new ArrayList<>();
        if (flowType.equals(FlowType.HARMONIZE)) {
-           plugins.add(createPluginObj(flowPath, "collector", flowType, pluginFormat));
+           plugins.add(createPluginObj(flowPath, "collector", flowType, codeFormat));
        }
-       plugins.add(createPluginObj(flowPath, "content", flowType, pluginFormat));
-       plugins.add(createPluginObj(flowPath, "headers", flowType, pluginFormat));
-       plugins.add(createPluginObj(flowPath, "triples", flowType, pluginFormat));
+       plugins.add(createPluginObj(flowPath, "content", flowType, codeFormat));
+       plugins.add(createPluginObj(flowPath, "headers", flowType, codeFormat));
+       plugins.add(createPluginObj(flowPath, "triples", flowType, codeFormat));
 
        for (Plugin plugin : plugins) {
            createFile(plugin.getParentDirectory(), plugin.getFilename(), plugin.getTemplateFilePath());
        }
    }
 
-   private Plugin createPluginObj(String flowPath, String pluginType, FlowType flowType, PluginFormat pluginFormat) {
+   private Plugin createPluginObj(String flowPath, String pluginType, FlowType flowType, CodeFormat codeFormat) {
        String parentDirectory = Scaffolding.getAbsolutePath(flowPath, pluginType);
-       String filename = pluginType + "." + pluginFormat;
-       String templateFilePath = "scaffolding/" + flowType + "/" + pluginFormat + "/" + pluginType + "." + pluginFormat;
+       String filename = pluginType + "." + codeFormat;
+       String templateFilePath = "scaffolding/" + flowType + "/" + codeFormat + "/" + pluginType + "." + codeFormat;
        return new Plugin(parentDirectory, filename, templateFilePath);
    }
 
@@ -111,7 +106,7 @@ public class ScaffoldingValidatorTest extends HubTestBase {
            throws IOException {
        InputStream inputStream = Scaffolding.class.getClassLoader()
                .getResourceAsStream(srcFile);
-       Files.copy(inputStream, dstFile);
+       FileUtil.copy(inputStream, dstFile.toFile());
    }
 
    @Test
@@ -120,7 +115,7 @@ public class ScaffoldingValidatorTest extends HubTestBase {
        boolean isUnique = validator.isUniqueRestServiceExtension(restServiceExtensionName);
        assertTrue("The rest service extension "+ restServiceExtensionName + " is not yet existing so it should be unique.", isUnique);
        try {
-           scaffolding.createRestExtension(TEST_ENTITY_NAME, restServiceExtensionName, FlowType.HARMONIZE, PluginFormat.XQUERY);
+           scaffolding.createRestExtension(TEST_ENTITY_NAME, restServiceExtensionName, FlowType.HARMONIZE, CodeFormat.XQUERY);
        } catch (ScaffoldingValidationException e) {
            Assert.fail(e.getMessage());
        }
@@ -134,7 +129,7 @@ public class ScaffoldingValidatorTest extends HubTestBase {
        boolean isUnique = validator.isUniqueRestTransform(restTransformName);
        assertTrue("The rest transform "+ restTransformName + " is not yet existing so it should be unique.", isUnique);
        try {
-           scaffolding.createRestTransform(TEST_ENTITY_NAME, restTransformName, FlowType.HARMONIZE, PluginFormat.XQUERY);
+           scaffolding.createRestTransform(TEST_ENTITY_NAME, restTransformName, FlowType.HARMONIZE, CodeFormat.XQUERY);
        } catch (ScaffoldingValidationException e) {
            Assert.fail(e.getMessage());
        }

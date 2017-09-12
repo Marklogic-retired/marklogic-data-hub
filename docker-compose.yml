@@ -4,7 +4,7 @@ services:
     image: marklogiccommunity/marklogic-datahub-2x
     build:
       context: .
-      dockerfile: ./.travis/Dockerfile-ml
+      dockerfile: ./.travis/Dockerfile
     ports:
       - "5005:5005"
       - "8000-8020:8000-8020"

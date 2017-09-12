@@ -24,7 +24,7 @@ Looking to build the code from source? Look no further.
 You need these to get started
 
 - Java 8 JDK
-- Gradle (3.1 or greater)
+- Gradle (3.4 or greater)
 - Node JS 6.5 or newer
 - Typings `npm -g install typings`
 - A decent IDE. IntelliJ is nice.
@@ -91,9 +91,8 @@ cd /path/to/data-hub-project
 
 **Terminal window 2** - This runs the Quickstart UI
 ```
-cd /path/to/data-hub-project/quick-start
-npm install
-npm start
+cd /path/to/data-hub-project
+./gradlew runui
 ```
 
 Now open your browser to [http://localhost:4200](http://localhost:4200) to use the debug version of the Quickstart UI.
@@ -129,10 +128,10 @@ your vision does not align with that of a project maintainer.
 #### Create a branch for your changes
 
 Okay, so you have decided to fix something. Create a feature branch
-and start hacking. **Note** that we use git flow and thus our most recent changes live on the 2.0-develop branch.
+and start hacking. **Note** that we use git flow and thus our most recent changes live on the develop branch.
 
 ```sh
-$ git checkout -b my-feature-branch -t origin/2.0-develop
+$ git checkout -b my-feature-branch -t origin/develop
 ```
 
 #### Formatting code
@@ -182,7 +181,7 @@ Use `git rebase` (not `git merge`) to sync your work from time to time.
 
 ```sh
 $ git fetch upstream
-$ git rebase upstream/2.0-develop
+$ git rebase upstream/develop
 ```
 
 
@@ -230,10 +229,10 @@ from the main (upstream) repository:
     git push origin --delete my-feature-branch
     ```
 
-* Check out the 2.0-develop branch:
+* Check out the develop branch:
 
     ```shell
-    git checkout 2.0-develop -f
+    git checkout develop -f
     ```
 
 * Delete the local branch:
@@ -242,10 +241,10 @@ from the main (upstream) repository:
     git branch -D my-feature-branch
     ```
 
-* Update your 2.0-develop with the latest upstream version:
+* Update your develop with the latest upstream version:
 
     ```shell
-    git pull --ff upstream 2.0-develop
+    git pull --ff upstream develop
     ```
 
 [issue tracker]: https://github.com/marklogic-community/marklogic-data-hub/issues

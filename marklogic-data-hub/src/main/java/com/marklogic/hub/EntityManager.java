@@ -15,14 +15,6 @@
  */
 package com.marklogic.hub;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.extensions.ResourceManager;
 import com.marklogic.client.extensions.ResourceServices.ServiceResult;
@@ -31,6 +23,13 @@ import com.marklogic.client.io.DOMHandle;
 import com.marklogic.client.util.RequestParameters;
 import com.marklogic.hub.entity.Entity;
 import com.marklogic.hub.entity.EntityImpl;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class EntityManager extends ResourceManager {
     static final public String NAME = "entity";
@@ -58,10 +57,7 @@ public class EntityManager extends ResourceManager {
         Document parent = res.getContent(handle).get();
         NodeList children = parent.getDocumentElement().getChildNodes();
 
-        ArrayList<Entity> entities = null;
-        if (children.getLength() > 0) {
-            entities = new ArrayList<>();
-        }
+        ArrayList<Entity> entities = new ArrayList<>();
 
         Node node;
         for (int i = 0; i < children.getLength(); i++) {

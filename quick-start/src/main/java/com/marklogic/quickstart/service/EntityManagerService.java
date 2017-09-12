@@ -34,15 +34,14 @@ import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.flow.FlowType;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.quickstart.auth.ConnectionAuthenticationToken;
-import com.marklogic.quickstart.listeners.ValidateListener;
 import com.marklogic.quickstart.model.EnvironmentConfig;
 import com.marklogic.quickstart.model.FlowModel;
 import com.marklogic.quickstart.model.PluginModel;
 import com.marklogic.quickstart.model.entity_services.EntityModel;
 import com.marklogic.quickstart.model.entity_services.HubUIData;
+import com.marklogic.quickstart.model.entity_services.InfoType;
 import com.marklogic.quickstart.util.FileUtil;
 import com.sun.jersey.api.client.ClientHandlerException;
-import org.apache.avro.data.Json;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -80,7 +79,28 @@ public class EntityManagerService {
         return authenticationToken.getEnvironmentConfig();
     }
 
+    public List<EntityModel> getLegacyEntities() throws IOException {
+        String projectDir = envConfig().getProjectDir();
+        List<EntityModel> entities = new ArrayList<>();
+        Path entitiesDir = envConfig().getMlSettings().getHubEntitiesDir();
+        List<String> entityNames = FileUtil.listDirectFolders(entitiesDir.toFile());
+        for (String entityName : entityNames) {
+            EntityModel entityModel = new EntityModel();
+            InfoType infoType = new InfoType();
+            infoType.setTitle(entityName);
+            entityModel.setInfo(infoType);
+            entityModel.inputFlows = flowManagerService.getFlows(projectDir, entityName, FlowType.INPUT);
+            entityModel.harmonizeFlows = flowManagerService.getFlows(projectDir, entityName, FlowType.HARMONIZE);
+            entities.add(entityModel);
+        }
+        return entities;
+    }
+
     public List<EntityModel> getEntities() throws IOException {
+        if (envConfig().getMarklogicVersion().startsWith("8")) {
+            return getLegacyEntities();
+        }
+
         String projectDir = envConfig().getProjectDir();
 
         Map<String, HubUIData> hubUiData = getUiData();
@@ -110,6 +130,25 @@ public class EntityManagerService {
         }
 
         return entities;
+    }
+
+    public EntityModel createEntity(String projectDir, EntityModel newEntity) throws IOException {
+        Scaffolding scaffolding = new Scaffolding(projectDir, envConfig().getFinalClient());
+        scaffolding.createEntity(newEntity.getName());
+
+        if (newEntity.inputFlows != null) {
+            for (FlowModel flow : newEntity.inputFlows) {
+                scaffolding.createFlow(newEntity.getName(), flow.flowName, FlowType.INPUT, flow.codeFormat, flow.dataFormat);
+            }
+        }
+
+        if (newEntity.harmonizeFlows != null) {
+            for (FlowModel flow : newEntity.harmonizeFlows) {
+                scaffolding.createFlow(newEntity.getName(), flow.flowName, FlowType.HARMONIZE, flow.codeFormat, flow.dataFormat);
+            }
+        }
+
+        return getEntity(newEntity.getName());
     }
 
     public EntityModel saveEntity(EntityModel entity) throws IOException {
@@ -172,7 +211,7 @@ public class EntityManagerService {
         threadPoolTaskExecutor.afterPropertiesSet();
         modulesLoader.setTaskExecutor(threadPoolTaskExecutor);
 
-        File timestampFile = Paths.get(hubConfig.projectDir, ".tmp", "hub-modules-deploy-timestamps.properties").toFile();
+        File timestampFile = hubConfig.getHubModulesDeployTimestampFile();
         PropertiesModuleManager propsManager = new PropertiesModuleManager(timestampFile);
         propsManager.deletePropertiesFile();
         modulesLoader.setModulesManager(propsManager);
@@ -310,7 +349,7 @@ public class EntityManagerService {
     public FlowModel createFlow(String projectDir, String entityName, FlowType flowType, FlowModel newFlow) throws IOException {
         Scaffolding scaffolding = new Scaffolding(projectDir, envConfig().getFinalClient());
         newFlow.entityName = entityName;
-        scaffolding.createFlow(entityName, newFlow.flowName, flowType, newFlow.pluginFormat, newFlow.dataFormat, newFlow.useEsModel);
+        scaffolding.createFlow(entityName, newFlow.flowName, flowType, newFlow.codeFormat, newFlow.dataFormat, newFlow.useEsModel);
         return getFlow(entityName, flowType, newFlow.flowName);
     }
 
@@ -327,35 +366,22 @@ public class EntityManagerService {
         PluginModel plugin
     ) throws IOException {
         JsonNode result = null;
-        for (String pluginFile: plugin.files.keySet()) {
-            String type;
-            if (plugin.pluginType.endsWith("sjs")) {
-                type = "javascript";
-            }
-            else {
-                type = "xquery";
-            }
-            result = (new DataHub(config)).validateUserModule(entityName, flowName, pluginFile.replaceAll("\\.(sjs|xqy)", ""), type, plugin.files.get(pluginFile));
+        String type;
+        if (plugin.pluginType.endsWith("sjs")) {
+            type = "javascript";
         }
-        return result;
+        else {
+            type = "xquery";
+        }
+        return (new DataHub(config)).validateUserModule(entityName, flowName, plugin.fileContents.replaceAll("\\.(sjs|xqy)", ""), type, plugin.fileContents);
     }
 
     public void saveFlowPlugin(
-        String projectDir,
-        String entityName,
-        FlowType flowType,
-        String flowName,
         PluginModel plugin
     ) throws IOException {
-        Scaffolding scaffolding = new Scaffolding(projectDir, envConfig().getFinalClient());
-        Path flowDir = scaffolding.getFlowDir(entityName, flowName, flowType);
-        Path pluginDir = flowDir.resolve(plugin.pluginType);
-        for (String pluginFile: plugin.files.keySet()) {
-            String pluginContent = plugin.files.get(pluginFile);
-            String[] filePathParts = pluginFile.split(Pattern.quote(File.separator));
-            String fileName = filePathParts[filePathParts.length - 1];
-            Files.write(pluginDir.resolve(fileName), pluginContent.getBytes(StandardCharsets.UTF_8), StandardOpenOption.TRUNCATE_EXISTING);
-        }
+        String pluginContent = plugin.fileContents;
+        Files.write(Paths.get(plugin.pluginPath), pluginContent.getBytes(StandardCharsets.UTF_8), StandardOpenOption.TRUNCATE_EXISTING);
+
     }
     private JsonNode getUiRawData() {
         JsonNode json = null;

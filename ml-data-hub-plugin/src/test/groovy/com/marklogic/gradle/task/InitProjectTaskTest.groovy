@@ -14,11 +14,11 @@ class InitProjectTaskTest extends BaseTest {
     def "init a hub project"() {
 
         when: "we begin"
-            File entityDir = new File(testProjectDir.root, "plugins")
+            File pluginsDir = new File(testProjectDir.root, "plugins")
             File hubConfigDir = new File(testProjectDir.root, HubConfig.HUB_CONFIG_DIR)
             File userConfigDir = new File(testProjectDir.root, HubConfig.USER_CONFIG_DIR)
         then:
-            entityDir.isDirectory() == false
+            pluginsDir.isDirectory() == false
             hubConfigDir.isDirectory() == false
             userConfigDir.isDirectory() == false
 
@@ -34,7 +34,7 @@ class InitProjectTaskTest extends BaseTest {
         then:
             notThrown(UnexpectedBuildFailure)
             result.task(":hubInit").outcome == SUCCESS
-            entityDir.isDirectory() == true
+            pluginsDir.isDirectory() == true
             hubConfigDir.isDirectory() == true
             userConfigDir.isDirectory() == true
 

@@ -41,6 +41,8 @@ public class EnvironmentConfig {
 
     private String runningVersion;
 
+    private String marklogicVersion;
+
     public InstallInfo getInstallInfo() {
         return installInfo;
     }
@@ -77,6 +79,10 @@ public class EnvironmentConfig {
         this.mlSettings = mlSettings;
     }
 
+    public String getMarklogicVersion() {
+        return marklogicVersion;
+    }
+
     public EnvironmentConfig(String projectDir, String environment, String username, String password) {
         this.projectDir = projectDir;
         this.environment = environment;
@@ -102,6 +108,7 @@ public class EnvironmentConfig {
     public void checkIfInstalled() throws IOException {
         this.installInfo = dataHub.isInstalled();
         this.installedVersion = dataHub.getHubVersion();
+        this.marklogicVersion = dataHub.getMarkLogicVersion();
         this.runningVersion = this.mlSettings.getJarVersion();
     }
 

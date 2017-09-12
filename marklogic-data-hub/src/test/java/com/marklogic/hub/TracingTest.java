@@ -1,9 +1,16 @@
 package com.marklogic.hub;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.marklogic.client.io.DOMHandle;
+import com.marklogic.client.io.JacksonHandle;
+import com.marklogic.client.query.RawStructuredQueryDefinition;
+import com.marklogic.client.query.StructuredQueryBuilder;
+import com.marklogic.client.query.StructuredQueryDefinition;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.FlowRunner;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.*;
+import org.w3c.dom.Document;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -21,7 +28,7 @@ public class TracingTest extends HubTestBase {
 
         enableDebugging();
 
-        clearDatabases(new String[]{HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME});
+        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME);
 
         URL url = TracingTest.class.getClassLoader().getResource("tracing-test");
         String path = Paths.get(url.toURI()).toFile().getAbsolutePath();
@@ -32,13 +39,13 @@ public class TracingTest extends HubTestBase {
 
     @Before
     public void beforeEach() {
-        clearDatabases(new String[]{HubConfig.DEFAULT_JOB_NAME, HubConfig.DEFAULT_TRACE_NAME, HubConfig.DEFAULT_FINAL_NAME});
+        clearDatabases(HubConfig.DEFAULT_JOB_NAME, HubConfig.DEFAULT_TRACE_NAME, HubConfig.DEFAULT_FINAL_NAME);
         new Tracing(stagingClient).disable();
     }
 
     @AfterClass
     public static void teardown() {
-        clearDatabases(new String[]{HubConfig.DEFAULT_JOB_NAME, HubConfig.DEFAULT_TRACE_NAME, HubConfig.DEFAULT_FINAL_NAME});
+        clearDatabases(HubConfig.DEFAULT_JOB_NAME, HubConfig.DEFAULT_TRACE_NAME, HubConfig.DEFAULT_FINAL_NAME);
         new Tracing(stagingClient).disable();
     }
 
@@ -157,6 +164,12 @@ public class TracingTest extends HubTestBase {
 
         assertEquals(0, getFinalDocCount());
         assertEquals(5, getTracingDocCount());
+
+        StructuredQueryBuilder sqb = traceClient.newQueryManager().newStructuredQueryBuilder();
+        RawStructuredQueryDefinition sqd = sqb.build(sqb.and());
+        Document node = traceDocMgr.search(sqd, 1).next().getContent(new DOMHandle()).get();
+        Assert.assertEquals(1, node.getElementsByTagName("step").getLength());
+        Assert.assertEquals("content", node.getElementsByTagName("label").item(0).getTextContent());
     }
 
     @Test
@@ -179,6 +192,12 @@ public class TracingTest extends HubTestBase {
 
         assertEquals(0, getFinalDocCount());
         assertEquals(5, getTracingDocCount());
+
+        StructuredQueryBuilder sqb = traceClient.newQueryManager().newStructuredQueryBuilder();
+        RawStructuredQueryDefinition sqd = sqb.build(sqb.and());
+        Document node = traceDocMgr.search(sqd, 1).next().getContent(new DOMHandle()).get();
+        Assert.assertEquals(1, node.getElementsByTagName("step").getLength());
+        Assert.assertEquals("writer", node.getElementsByTagName("label").item(0).getTextContent());
     }
 
     @Test
@@ -201,6 +220,13 @@ public class TracingTest extends HubTestBase {
 
         assertEquals(0, getFinalDocCount());
         assertEquals(5, getTracingDocCount());
+
+        StructuredQueryBuilder sqb = traceClient.newQueryManager().newStructuredQueryBuilder();
+        RawStructuredQueryDefinition sqd = sqb.build(sqb.and());
+        JsonNode node = traceDocMgr.search(sqd, 1).next().getContent(new JacksonHandle()).get();
+        System.out.println(node.asText());
+        Assert.assertEquals(1, node.get("trace").get("steps").size());
+        Assert.assertEquals("content", node.get("trace").get("steps").get(0).get("label").asText());
     }
 
 
@@ -224,5 +250,12 @@ public class TracingTest extends HubTestBase {
 
         assertEquals(0, getFinalDocCount());
         assertEquals(5, getTracingDocCount());
+
+        StructuredQueryBuilder sqb = traceClient.newQueryManager().newStructuredQueryBuilder();
+        RawStructuredQueryDefinition sqd = sqb.build(sqb.and());
+        JsonNode node = traceDocMgr.search(sqd, 1).next().getContent(new JacksonHandle()).get();
+        Assert.assertEquals(1, node.get("trace").get("steps").size());
+        Assert.assertEquals("writer", node.get("trace").get("steps").get(0).get("label").asText());
+
     }
 }

@@ -1,6 +1,7 @@
 @import '../../styles/variables';
 
 $bg-color: unquote("rgb(#{$palette-datahub-500})");
+$warning-color: unquote("rgb(#{$palette-datahub-pale-yellow})");
 
 .search-box {
   width: 60%;
@@ -33,6 +34,10 @@ input[type="search"] {
 
 .results {
   width: 90%;
+}
+
+.mdi-alert {
+  color: $warning-color;
 }
 
 .mdl-data-table {

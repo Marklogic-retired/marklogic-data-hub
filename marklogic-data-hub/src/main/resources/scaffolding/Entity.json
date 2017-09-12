@@ -1,0 +1,14 @@
+{
+  "info" : {
+    "title" : "placeholder",
+    "version" : "0.0.1"
+  },
+  "definitions" : {
+    "placeholder" : {
+      "required" : [ ],
+      "rangeIndex" : [ ],
+      "wordLexicon" : [ ],
+      "properties" : { }
+    }
+  }
+}

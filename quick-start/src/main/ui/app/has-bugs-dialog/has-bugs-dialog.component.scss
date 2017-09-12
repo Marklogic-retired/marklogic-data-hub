@@ -9,6 +9,9 @@ $error: unquote("rgb(#{$palette-datahub-red})");
   }
 }
 
+span.uri {
+  font-weight: bold;
+}
 
 pre {
   width: 90%;

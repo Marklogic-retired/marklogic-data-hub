@@ -15,6 +15,7 @@
  */
 package com.marklogic.hub;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.appdeployer.ConfigDir;
 import com.marklogic.appdeployer.DefaultAppConfigFactory;
@@ -25,7 +26,8 @@ import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.ManageConfig;
 import com.marklogic.mgmt.admin.AdminConfig;
 import com.marklogic.mgmt.admin.AdminManager;
-import com.marklogic.mgmt.util.PropertySource;
+import org.apache.commons.text.CharacterPredicate;
+import org.apache.commons.text.RandomStringGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,10 +47,10 @@ import java.util.Properties;
  */
 public class HubConfig {
 
+    public static final String HUB_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES = "hub-modules-deploy-timestamps.properties";
     public static final String USER_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES = "user-modules-deploy-timestamps.properties";
     public static final String USER_CONTENT_DEPLOY_TIMESTAMPS_PROPERTIES = "user-content-deploy-timestamps.properties";
 
-    public static final String OLD_HUB_CONFIG_DIR = "marklogic-config";
     public static final String HUB_CONFIG_DIR = "hub-internal-config";
     public static final String USER_CONFIG_DIR = "user-config";
     public static final String ENTITY_CONFIG_DIR = "entity-config";
@@ -142,13 +144,15 @@ public class HubConfig {
 
     public String customForestPath = DEFAULT_CUSTOM_FOREST_PATH;
 
-    public String modulePermissions = "rest-admin,read,rest-admin,update,rest-extension-user,execute";
+    public String modulePermissions = "rest-reader,read,rest-writer,insert,rest-writer,update,rest-extension-user,execute";
 
-    public String projectDir;
+    private String projectDir;
 
     private Properties environmentProperties;
 
     private String environment;
+
+    private HubProject hubProject;
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -157,7 +161,16 @@ public class HubConfig {
     }
 
     public HubConfig(String projectDir) {
+        setProjectDir(projectDir);
+    }
+
+    public String getProjectDir() {
+        return this.projectDir;
+    }
+
+    public void setProjectDir(String projectDir) {
         this.projectDir = projectDir;
+        this.hubProject = new HubProject(projectDir);
     }
 
     /**
@@ -183,11 +196,20 @@ public class HubConfig {
         return environmentProperties;
     }
 
-    public File getModulesDeployTimestampFile() {
+    @JsonIgnore
+    public HubProject getHubProject() {
+        return this.hubProject;
+    }
+
+    public File getHubModulesDeployTimestampFile() {
+        return Paths.get(projectDir, ".tmp", HUB_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES).toFile();
+    }
+
+    public File getUserModulesDeployTimestampFile() {
         return Paths.get(projectDir, ".tmp", USER_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES).toFile();
     }
 
-    public File getContentDeployTimestampFile() {
+    public File getUserContentDeployTimestampFile() {
         return Paths.get(projectDir, ".tmp", USER_CONTENT_DEPLOY_TIMESTAMPS_PROPERTIES).toFile();
     }
 
@@ -275,6 +297,15 @@ public class HubConfig {
         return new AdminManager(adminConfig);
     }
 
+    public DatabaseClient newAppServicesClient() {
+        return DatabaseClientFactory.newClient(
+            host,
+            appServicesPort,
+            username,
+            password,
+            DatabaseClientFactory.Authentication.valueOf(stagingAuthMethod.toUpperCase()));
+    }
+
     /**
      * Creates a new DatabaseClient for accessing the Staging database
      * @return - a DatabaseClient
@@ -283,6 +314,7 @@ public class HubConfig {
         return DatabaseClientFactory.newClient(
             host,
             stagingPort,
+            stagingDbName,
             username,
             password,
             DatabaseClientFactory.Authentication.valueOf(stagingAuthMethod.toUpperCase()));
@@ -310,6 +342,7 @@ public class HubConfig {
         return DatabaseClientFactory.newClient(
             host,
             finalPort,
+            finalDbName,
             username,
             password,
             DatabaseClientFactory.Authentication.valueOf(finalAuthMethod.toUpperCase()));
@@ -323,6 +356,7 @@ public class HubConfig {
         return DatabaseClientFactory.newClient(
             host,
             jobPort,
+            jobDbName,
             username,
             password,
             DatabaseClientFactory.Authentication.valueOf(jobAuthMethod.toUpperCase()));
@@ -350,11 +384,25 @@ public class HubConfig {
         return DatabaseClientFactory.newClient(
             host,
             tracePort,
+            traceDbName,
             username,
             password,
             DatabaseClientFactory.Authentication.valueOf(stagingAuthMethod.toUpperCase()));
     }
 
+    /**
+     * Creates a new DatabaseClient for accessing the Hub Modules database
+     * @return - a DatabaseClient
+     */
+    public DatabaseClient newModulesDbClient() {
+        return DatabaseClientFactory.newClient(
+            host,
+            stagingPort,
+            modulesDbName,
+            username,
+            password,
+            DatabaseClientFactory.Authentication.valueOf(stagingAuthMethod.toUpperCase()));
+    }
     private String getEnvPropString(Properties environmentProperties, String key, String fallback) {
         String value = environmentProperties.getProperty(key);
         if (value == null) {
@@ -390,45 +438,51 @@ public class HubConfig {
         }
     }
 
+    public Path getHubPluginsDir() {
+        return hubProject.getHubPluginsDir();
+    }
+
+    public Path getHubEntitiesDir() { return hubProject.getHubEntitiesDir(); }
+
     public Path getHubConfigDir() {
-        return Paths.get(this.projectDir, HUB_CONFIG_DIR);
+        return hubProject.getHubConfigDir();
     }
 
     public Path getHubDatabaseDir() {
-        return Paths.get(this.projectDir, HUB_CONFIG_DIR, "databases");
+        return hubProject.getHubDatabaseDir();
     }
 
     public Path getHubServersDir() {
-        return Paths.get(this.projectDir, HUB_CONFIG_DIR, "servers");
+        return hubProject.getHubServersDir();
     }
 
     public Path getHubSecurityDir() {
-        return Paths.get(this.projectDir, HUB_CONFIG_DIR, "security");
+        return hubProject.getHubSecurityDir();
     }
 
     public Path getUserSecurityDir() {
-        return Paths.get(this.projectDir, USER_CONFIG_DIR, "security");
+        return hubProject.getUserSecurityDir();
     }
 
     public Path getUserConfigDir() {
-        return Paths.get(this.projectDir, USER_CONFIG_DIR);
+        return hubProject.getUserConfigDir();
     }
 
     public Path getUserDatabaseDir() {
-        return Paths.get(this.projectDir, USER_CONFIG_DIR, "databases");
+        return hubProject.getUserDatabaseDir();
     }
 
     public Path getEntityDatabaseDir() {
-        return Paths.get(this.projectDir, ENTITY_CONFIG_DIR, "databases");
+        return hubProject.getEntityDatabaseDir();
     }
 
 
     public Path getUserServersDir() {
-        return Paths.get(this.projectDir, USER_CONFIG_DIR, "servers");
+        return hubProject.getUserServersDir();
     }
 
     public Path getHubMimetypesDir() {
-        return Paths.get(this.projectDir, HUB_CONFIG_DIR, "mimetypes");
+        return hubProject.getHubMimetypesDir();
     }
 
     public void setUsername(String username) {
@@ -437,7 +491,7 @@ public class HubConfig {
 
     public String getUsername() {
         if (this.username == null) {
-            logger.error("MISSING PROPERTY mlUsername");
+            logger.error("mlUsername is not set");
         }
 
         return this.username;
@@ -449,7 +503,7 @@ public class HubConfig {
 
     public String getPassword() {
         if (this.password == null) {
-            logger.error("MISSING PROPERTY mlPassword");
+            logger.error("mlPassword is not set");
         }
         return this.password;
     }
@@ -551,6 +605,10 @@ public class HubConfig {
         return config;
     }
 
+    public Map<String, String> getCustomTokens() {
+        return getCustomTokens(new HashMap<>());
+    }
+
     public Map<String, String> getCustomTokens(Map<String, String> customTokens) {
         customTokens.put("%%mlHost%%", host);
         customTokens.put("%%mlStagingAppserverName%%", stagingHttpName);
@@ -588,6 +646,10 @@ public class HubConfig {
 
         customTokens.put("%%mlHubUserRole%%", hubRoleName);
         customTokens.put("%%mlHubUserName%%", hubUserName);
+
+        // random password for hub user
+        RandomStringGenerator randomStringGenerator = new RandomStringGenerator.Builder().withinRange(33, 126).filteredBy((CharacterPredicate) codePoint -> (codePoint != 92 && codePoint != 34)).build();
+        customTokens.put("%%mlHubUserPassword%%", randomStringGenerator.generate(20));
 
         customTokens.put("%%mlCustomForestPath%%", customForestPath);
 

@@ -29,14 +29,19 @@ import com.marklogic.client.eval.EvalResult;
 import com.marklogic.client.eval.EvalResultIterator;
 import com.marklogic.client.eval.ServerEvaluationCall;
 import com.marklogic.client.io.*;
-import com.marklogic.hub.flow.FlowCacheInvalidator;
+import com.marklogic.hub.flow.CodeFormat;
+import com.marklogic.hub.flow.DataFormat;
+import com.marklogic.hub.flow.FlowType;
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.databases.DatabaseManager;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
+import org.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.web.client.ResourceAccessException;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -47,8 +52,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -77,21 +82,21 @@ public class HubTestBase {
     public static DatabaseClient traceModulesClient = null;
     public static DatabaseClient jobClient = null;
     public static DatabaseClient jobModulesClient = null;
-    private static FlowCacheInvalidator invalidator = null;
     private static Properties properties = new Properties();
     private static boolean initialized = false;
-    public static XMLDocumentManager stagingDocMgr = getStagingMgr();
-    public static XMLDocumentManager finalDocMgr = getFinalMgr();
+    public static GenericDocumentManager stagingDocMgr = getStagingMgr();
+    public static GenericDocumentManager finalDocMgr = getFinalMgr();
     public static JSONDocumentManager jobDocMgr = getJobMgr();
+    public static GenericDocumentManager traceDocMgr = getTraceMgr();
     public static GenericDocumentManager modMgr = getModMgr();
 
     private static boolean isInstalled = false;
 
-    private static XMLDocumentManager getStagingMgr() {
+    private static GenericDocumentManager getStagingMgr() {
         if (!initialized) {
             init();
         }
-        return stagingClient.newXMLDocumentManager();
+        return stagingClient.newDocumentManager();
     }
 
     private static GenericDocumentManager getModMgr() {
@@ -101,11 +106,11 @@ public class HubTestBase {
         return stagingModulesClient.newDocumentManager();
     }
 
-    private static XMLDocumentManager getFinalMgr() {
+    private static GenericDocumentManager getFinalMgr() {
         if (!initialized) {
             init();
         }
-        return finalClient.newXMLDocumentManager();
+        return finalClient.newDocumentManager();
     }
 
     private static JSONDocumentManager getJobMgr() {
@@ -113,6 +118,13 @@ public class HubTestBase {
             init();
         }
         return jobClient.newJSONDocumentManager();
+    }
+
+    private static GenericDocumentManager getTraceMgr() {
+        if (!initialized) {
+            init();
+        }
+        return traceClient.newDocumentManager();
     }
 
     private static void init() {
@@ -175,15 +187,14 @@ public class HubTestBase {
             jobAuthMethod = Authentication.DIGEST;
         }
 
-        stagingClient = DatabaseClientFactory.newClient(host, stagingPort, user, password, stagingAuthMethod);
+        stagingClient = DatabaseClientFactory.newClient(host, stagingPort, HubConfig.DEFAULT_STAGING_NAME, user, password, stagingAuthMethod);
         stagingModulesClient  = DatabaseClientFactory.newClient(host, stagingPort, HubConfig.DEFAULT_MODULES_DB_NAME, user, password, stagingAuthMethod);
-        finalClient = DatabaseClientFactory.newClient(host, finalPort, user, password, finalAuthMethod);
+        finalClient = DatabaseClientFactory.newClient(host, finalPort, HubConfig.DEFAULT_FINAL_NAME, user, password, finalAuthMethod);
         finalModulesClient  = DatabaseClientFactory.newClient(host, stagingPort, HubConfig.DEFAULT_MODULES_DB_NAME, user, password, finalAuthMethod);
-        traceClient = DatabaseClientFactory.newClient(host, tracePort, user, password, traceAuthMethod);
+        traceClient = DatabaseClientFactory.newClient(host, tracePort, HubConfig.DEFAULT_TRACE_NAME, user, password, traceAuthMethod);
         traceModulesClient  = DatabaseClientFactory.newClient(host, stagingPort, HubConfig.DEFAULT_MODULES_DB_NAME, user, password, traceAuthMethod);
-        jobClient = DatabaseClientFactory.newClient(host, jobPort, user, password, jobAuthMethod);
+        jobClient = DatabaseClientFactory.newClient(host, jobPort, HubConfig.DEFAULT_JOB_NAME, user, password, jobAuthMethod);
         jobModulesClient  = DatabaseClientFactory.newClient(host, stagingPort, HubConfig.DEFAULT_MODULES_DB_NAME, user, password, jobAuthMethod);
-        invalidator = new FlowCacheInvalidator(stagingClient);
     }
 
     public HubTestBase() {
@@ -250,9 +261,13 @@ public class HubTestBase {
         return new File(HubTestBase.class.getClassLoader().getResource(resourceName).getFile());
     }
 
+    protected static InputStream getResourceStream(String resourceName) throws IOException {
+        return HubTestBase.class.getClassLoader().getResourceAsStream(resourceName);
+    }
+
     protected static String getResource(String resourceName) throws IOException {
         try {
-            InputStream inputStream = HubTestBase.class.getClassLoader().getResourceAsStream(resourceName);
+            InputStream inputStream = getResourceStream(resourceName);
             return IOUtils.toString(inputStream);
         }
         catch(IOException e) {
@@ -262,7 +277,8 @@ public class HubTestBase {
     }
 
     protected static String getModulesFile(String uri) {
-        return modMgr.read(uri).next().getContent(new StringHandle()).get();
+        String contents = modMgr.read(uri).next().getContent(new StringHandle()).get();
+        return contents.replaceFirst("(\\(:|//)\\s+cache\\sbuster:.+\\n", "");
     }
 
     protected static Document getModulesDocument(String uri) {
@@ -271,6 +287,10 @@ public class HubTestBase {
 
     protected static Document getXmlFromResource(String resourceName) throws IOException, ParserConfigurationException, SAXException {
         InputStream inputStream = HubTestBase.class.getClassLoader().getResourceAsStream(resourceName);
+        return getXmlFromInputStream(inputStream);
+    }
+
+    protected static Document getXmlFromInputStream(InputStream inputStream) throws IOException, ParserConfigurationException, SAXException {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setIgnoringElementContentWhitespace(true);
         factory.setNamespaceAware(true);
@@ -307,6 +327,13 @@ public class HubTestBase {
         return getDocCount(HubConfig.DEFAULT_TRACE_NAME, collection);
     }
 
+    protected static int getJobDocCount() {
+        return getJobDocCount(null);
+    }
+    protected static int getJobDocCount(String collection) {
+        return getDocCount(HubConfig.DEFAULT_JOB_NAME, collection);
+    }
+
     protected static int getDocCount(String database, String collection) {
         int count = 0;
         String collectionName = "";
@@ -322,45 +349,34 @@ public class HubTestBase {
         return count;
     }
 
-    protected static void installStagingDoc(String uri, String doc) {
-        stagingDocMgr.write(uri, new StringHandle(doc));
-    }
-
-    protected static void clearDb(String dbName) {
-        ManageClient client = getHubConfig().newManageClient();
-        DatabaseManager databaseManager = new DatabaseManager(client);
-        databaseManager.clearDatabase(dbName);
-    }
-
     public static void clearDatabases(String... databases) {
-        List<Thread> threads = new ArrayList<>();
-        ManageClient client = getHubConfig().newManageClient();
-        DatabaseManager databaseManager = new DatabaseManager(client);
-        for (String database: databases) {
-            Thread thread = new Thread(() -> databaseManager.clearDatabase(database));
-            threads.add(thread);
-            thread.start();
+        ServerEvaluationCall eval = stagingClient.newServerEval();
+        String installer =
+            "declare variable $databases external;\n" +
+            "for $database in fn:tokenize($databases, \",\")\n" +
+            "return\n" +
+            "  xdmp:eval('\n" +
+            "    cts:uris() ! xdmp:document-delete(.)\n" +
+            "  ',\n" +
+            "  (),\n" +
+            "  map:entry(\"database\", xdmp:database($database))\n" +
+            "  )";
+        eval.addVariable("databases", String.join(",", databases));
+        EvalResultIterator result = eval.xquery(installer).eval();
+        if (result.hasNext()) {
+            logger.error(result.next().getString());
         }
-        threads.forEach((Thread thread) -> {
-            try {
-                thread.join();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        });
     }
 
 
-    protected static void installStagingDoc(String uri, DocumentMetadataHandle meta, String doc) {
-        stagingDocMgr.write(uri, meta, new StringHandle(doc));
+    protected static void installStagingDoc(String uri, DocumentMetadataHandle meta, String resource) {
+        FileHandle handle = new FileHandle(getResourceFile(resource));
+        stagingDocMgr.write(uri, meta, handle);
     }
 
-    protected static void installFinalDoc(String uri, String doc) {
-        finalDocMgr.write(uri, new StringHandle(doc));
-    }
-
-    protected static void installFinalDoc(String uri, DocumentMetadataHandle meta, String doc) {
-        finalDocMgr.write(uri, meta, new StringHandle(doc));
+    protected static void installFinalDoc(String uri, DocumentMetadataHandle meta, String resource) {
+        FileHandle handle = new FileHandle(getResourceFile(resource));
+        finalDocMgr.write(uri, meta, handle);
     }
 
     protected static void installModules(Map<String, String> modules) {
@@ -382,8 +398,6 @@ public class HubTestBase {
             writeSet.add(path, handle);
         });
         modMgr.write(writeSet);
-
-        invalidator.invalidateCache();
     }
 
     protected static void installModule(String path, String localPath) {
@@ -402,9 +416,6 @@ public class HubTestBase {
         }
 
         modMgr.write(path, handle);
-
-        FlowCacheInvalidator invalidator = new FlowCacheInvalidator(stagingClient);
-        invalidator.invalidateCache();
     }
 
     protected static EvalResultIterator runInModules(String query) {
@@ -425,6 +436,9 @@ public class HubTestBase {
                 break;
             case HubConfig.DEFAULT_TRACE_NAME:
                 eval = traceClient.newServerEval();
+                break;
+            case HubConfig.DEFAULT_JOB_NAME:
+                eval = jobClient.newServerEval();
                 break;
             default:
                 eval = stagingClient.newServerEval();
@@ -475,6 +489,19 @@ public class HubTestBase {
             "    }\n" +
             "  }\n" +
             "}";
+    }
+
+    protected static void allCombos(ComboListener listener) throws IOException, InterruptedException, ParserConfigurationException, SAXException, JSONException {
+        CodeFormat[] codeFormats = new CodeFormat[] { CodeFormat.JAVASCRIPT, CodeFormat.XQUERY };
+        DataFormat[] dataFormats = new DataFormat[] { DataFormat.JSON, DataFormat.XML };
+        FlowType[] flowTypes = new FlowType[] { FlowType.INPUT, FlowType.HARMONIZE };
+        for (CodeFormat codeFormat : codeFormats) {
+            for (DataFormat dataFormat : dataFormats) {
+                for (FlowType flowType : flowTypes) {
+                    listener.onCombo(codeFormat, dataFormat, flowType);
+                }
+            }
+        }
     }
 
 }

@@ -79,3 +79,4 @@ mlSchemasForestsPerHost=%%mlSchemasForestsPerHost%%
 # The name of the Role to create for Hub Access
 mlHubUserRole=%%mlHubUserRole%%
 mlHubUserName=%%mlHubUserName%%
+mlHubUserPassword=%%mlHubUserPassword%%

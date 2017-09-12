@@ -17,7 +17,6 @@ package com.marklogic.quickstart.web;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.hub.flow.Flow;
-import com.marklogic.hub.flow.FlowStatusListener;
 import com.marklogic.hub.flow.FlowType;
 import com.marklogic.quickstart.EnvironmentAware;
 import com.marklogic.quickstart.model.FlowModel;
@@ -28,7 +27,6 @@ import com.marklogic.quickstart.service.DataHubService;
 import com.marklogic.quickstart.service.EntityManagerService;
 import com.marklogic.quickstart.service.FlowManagerService;
 import com.marklogic.quickstart.service.JobService;
-import org.apache.avro.data.Json;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -39,6 +37,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/api/current-project")
@@ -54,6 +53,12 @@ class EntitiesController extends EnvironmentAware {
 
     @Autowired
     private SimpMessagingTemplate template;
+
+    @RequestMapping(value = "/entities/create", method = RequestMethod.POST)
+    @ResponseBody
+    public EntityModel createEntity(@RequestBody EntityModel newEntity) throws ClassNotFoundException, IOException {
+        return entityManagerService.createEntity(envConfig().getProjectDir(), newEntity);
+    }
 
     @RequestMapping(value = "/entities/", method = RequestMethod.GET)
     @ResponseBody
@@ -152,16 +157,13 @@ class EntitiesController extends EnvironmentAware {
     }
 
     @RequestMapping(
-        value = "/entities/{entityName}/flows/{flowType}/{flowName}/plugin/save",
+        value = "/plugin/save",
         method = RequestMethod.POST
     )
     @ResponseBody
     public String saveFlowPlugin(
-        @PathVariable String entityName,
-        @PathVariable FlowType flowType,
-        @PathVariable String flowName,
         @RequestBody PluginModel plugin) throws IOException {
-        entityManagerService.saveFlowPlugin(envConfig().getProjectDir(), entityName, flowType, flowName, plugin);
+        entityManagerService.saveFlowPlugin(plugin);
         return "{ \"success\": true }";
     }
 
@@ -206,8 +208,9 @@ class EntitiesController extends EnvironmentAware {
             resp = new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         else {
+            String mlcpOptions = json.get("mlcpOptions").toString();
             flowManagerService.saveOrUpdateFlowMlcpOptionsToFile(entityName,
-                flowName, json.toString());
+                flowName, mlcpOptions);
 
             flowManagerService.runMlcp(flow, json, (jobId, percentComplete, message) -> template.convertAndSend("/topic/flow-status", new JobStatusMessage(jobId, percentComplete, message, FlowType.INPUT.toString())));
             resp = new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -233,7 +236,7 @@ class EntitiesController extends EnvironmentAware {
         produces="application/json"
     )
     @ResponseBody
-    public String getInputFlowOptions(
+    public Map<String, Object> getInputFlowOptions(
             @PathVariable String entityName,
             @PathVariable String flowName) throws IOException {
         return flowManagerService.getFlowMlcpOptionsFromFile(entityName, flowName);
