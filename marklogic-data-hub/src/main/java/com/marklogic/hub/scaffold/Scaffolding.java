@@ -172,7 +172,7 @@ public class Scaffolding {
         Path entityDir = entitiesDir.resolve(entityName);
 
         File[] entityFiles = entityDir.toFile().listFiles((dir, name) -> name.matches("[^.]+\\.entity\\.json"));
-        if (entityFiles.length == 0) {
+        if (entityFiles != null && entityFiles.length == 0) {
             try {
                 String fileContents = getFileContent("scaffolding/Entity.json", entityName);
                 writeToFile(fileContents, entityDir.resolve(entityName + ".entity.json").toFile());
