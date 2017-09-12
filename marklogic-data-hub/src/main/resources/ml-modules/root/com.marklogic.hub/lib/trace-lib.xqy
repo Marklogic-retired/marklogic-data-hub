@@ -396,6 +396,8 @@ declare function trace:_walk_json($nodes as node()* ,$o)
               map:put($o, $name, $unquoted)
           else if ($name = "error") then
             map:put($o, $name, $n)
+          else if ($name = ("collectorPlugin", "contentPlugin", "headersPlugin", "triplesPlugin", "writerPlugin")) then
+            ()
           else
             let $_ := trace:_walk_json($n/node(), $oo)
             return
@@ -452,19 +454,48 @@ declare function trace:_walk_json($nodes as node()* ,$o)
         $n
 };
 
-declare function trace:trace-to-json($trace)
+declare function trace:trace-to-json-legacy($trace)
 {
   let $o := json:object()
-  let $walk-me :=
-    let $n := $trace/node()
+  let $_ :=
+    for $n in $trace/node()
+    let $name := fn:string(fn:node-name($n))
+    where fn:not($name = ("collectorPlugin", "contentPlugin", "headersPlugin", "triplesPlugin", "writerPlugin"))
     return
-      if ($n instance of object-node()) then
-        $n/node()
-      else
-        $n
-  let $_ := trace:_walk_json($walk-me, $o)
-  return
-    $o
+      map:put($o, $name, $n/data())
+  let $steps := json:array()
+  let $_build_steps :=
+    for $n in $trace/node()
+    let $name := fn:string(fn:node-name($n))
+    where $name = ("collectorPlugin", "contentPlugin", "headersPlugin", "triplesPlugin", "writerPlugin")
+    return
+      let $step := json:object()
+      let $_ := map:put($step, "label", fn:replace($name, "Plugin", ""))
+      let $_ :=
+        trace:_walk_json($n/node(), $step)
+      return
+        json:array-push($steps, $step)
+  let $_ := map:put($o, "steps", $steps)
+  return $o
+};
+
+
+declare function trace:trace-to-json($trace)
+{
+  if (fn:exists($trace/steps)) then
+    let $o := json:object()
+    let $walk-me :=
+      let $n := $trace/node()
+      return
+        if ($n instance of object-node()) then
+          $n/node()
+        else
+          $n
+    let $_ := trace:_walk_json($walk-me, $o)
+    return
+      $o
+  else
+    trace:trace-to-json-legacy($trace)
 };
 
 declare function trace:trace-to-json-slim($trace)

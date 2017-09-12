@@ -144,6 +144,8 @@ public class Scaffolding {
         Path harmonizeDir = entityDir.resolve("harmonize");
 
 
+        updateLegacyEntity(entityName);
+
         List<String> updatedFlows = new ArrayList<>();
         File[] inputFlows = inputDir.toFile().listFiles((pathname) -> pathname.isDirectory() && !pathname.getName().equals("REST"));
         if (inputFlows != null) {
@@ -164,6 +166,20 @@ public class Scaffolding {
         }
 
         return updatedFlows;
+    }
+
+    public void updateLegacyEntity(String entityName) {
+        Path entityDir = entitiesDir.resolve(entityName);
+
+        File[] entityFiles = entityDir.toFile().listFiles((dir, name) -> name.matches("[^.]+\\.entity\\.json"));
+        if (entityFiles.length == 0) {
+            try {
+                String fileContents = getFileContent("scaffolding/Entity.json", entityName);
+                writeToFile(fileContents, entityDir.resolve(entityName + ".entity.json").toFile());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public boolean updateLegacyFlow(String fromVersion, String entityName, String flowName, FlowType flowType) throws IOException {

@@ -3,7 +3,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { TraceService } from './trace.service';
 import { Trace } from './trace.model';
 import { SearchResponse } from '../search';
-import { MdlDialogService, MdlDialogReference } from '@angular-mdl/core';
 
 import * as _ from 'lodash';
 
@@ -28,8 +27,7 @@ export class TracesComponent implements OnDestroy, OnInit {
   constructor(
     private traceService: TraceService,
     private route: ActivatedRoute,
-    private router: Router,
-    private dialogService: MdlDialogService
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -67,11 +65,9 @@ export class TracesComponent implements OnDestroy, OnInit {
     return '';
   }
 
-  showTrace(trace: Trace) {
-    if (trace && trace.traceId && trace.steps) {
-      this.router.navigate(['/traces', trace.traceId]);
-    } else {
-      this.dialogService.alert('This is a legacy trace. It cannot displayed in this version of Quickstart.');
+  showTrace(traceId: string) {
+    if (traceId) {
+      this.router.navigate(['/traces', traceId]);
     }
   }
 
