@@ -2,11 +2,8 @@ xquery version "1.0-ml";
 
 module namespace hent = "http://marklogic.com/data-hub/hub-entities";
 
-import module namespace es = "http://marklogic.com/entity-services"
-  at "/MarkLogic/entity-services/entity-services.xqy";
-
-import module namespace esi = "http://marklogic.com/entity-services-impl"
-  at "/MarkLogic/entity-services/entity-services-impl.xqy";
+import module namespace es-wrapper = "http://marklogic.com/data-hub/es-wrapper"
+  at "/com.marklogic.hub/lib/entity-services-wrapper.xqy";
 
 import module namespace search = "http://marklogic.com/appservices/search"
   at "/MarkLogic/appservices/search/search.xqy";
@@ -23,13 +20,13 @@ declare function hent:get-model($entity-name as xs:string)
     let $model-map as map:map? := $model
     let $refs := $model//*[fn:local-name(.) = '$ref'][fn:starts-with(., "#/definitions")] ! fn:replace(., "#/definitions/", "")
     let $_ :=
-      let $definitions := $model-map=>map:get("definitions")
+      let $definitions := map:get($model-map, "definitions")
       for $ref in $refs
       let $other-model as map:map? := hent:get-model($ref)
-      let $other-defs := $other-model=>map:get("definitions")
+      let $other-defs := map:get($other-model, "definitions")
       for $key in map:keys($other-defs)
       return
-        $definitions=>map:put($key, $other-defs=>map:get($key))
+        map:put($definitions, $key, map:get($other-defs, $key))
     return
       $model-map
 };
@@ -60,21 +57,21 @@ declare function hent:search-options-generate(
   $model as map:map
 )
 {
-  let $entity-type-names := $model=>map:get("definitions")=>map:keys()
+  let $entity-type-names := map:keys(map:get($model, "definitions"))
   let $seen-keys := map:map()
   let $all-constraints := json:array()
   let $all-tuples-definitions := json:array()
   let $_ :=
     for $entity-type-name in $entity-type-names
-    let $entity-type := $model=>map:get("definitions")=>map:get($entity-type-name)
+    let $entity-type := map:get(map:get($model, "definitions"), $entity-type-name)
     let $primary-key-name := map:get($entity-type, "primaryKey")
     let $properties := map:get($entity-type, "properties")
     let $tuples-range-definitions := json:array()
     let $_range-constraints :=
       for $property-name in map:get($entity-type, "rangeIndex") ! json:array-values(.)
-      let $specified-datatype := esi:resolve-datatype($model,$entity-type-name,$property-name)
+      let $specified-datatype := es-wrapper:resolve-datatype($model,$entity-type-name,$property-name)
       let $property := map:get($properties, $property-name)
-      let $datatype := esi:indexable-datatype($specified-datatype)
+      let $datatype := es-wrapper:indexable-datatype($specified-datatype)
       let $collation := if ($datatype eq "string")
         then attribute
           collation {
@@ -217,8 +214,8 @@ declare function hent:database-properties-generate(
       for $range-index-property in $range-index-properties ! json:array-values(.)
       let $ri-map := json:object()
       let $property := map:get($properties, $range-index-property)
-      let $specified-datatype := esi:resolve-datatype($model, $entity-type-name, $range-index-property)
-      let $datatype := esi:indexable-datatype($specified-datatype)
+      let $specified-datatype := es-wrapper:resolve-datatype($model, $entity-type-name, $range-index-property)
+      let $datatype := es-wrapper:indexable-datatype($specified-datatype)
       let $collation := head( (map:get($property, "collation"), "http://marklogic.com/collation/en") )
       let $_ := map:put($ri-map, "collation", $collation)
       let $invalid-values := "reject"
@@ -243,8 +240,8 @@ declare function hent:database-properties-generate(
       return
         let $pk-map := json:object()
         let $property := map:get($properties, $primary-key-property)
-        let $specified-datatype := esi:resolve-datatype($model, $entity-type-name, $primary-key-property)
-        let $datatype := esi:indexable-datatype($specified-datatype)
+        let $specified-datatype := es-wrapper:resolve-datatype($model, $entity-type-name, $primary-key-property)
+        let $datatype := es-wrapper:indexable-datatype($specified-datatype)
         let $collation := head( (map:get($property, "collation"), "http://marklogic.com/collation/en") )
         let $_ := map:put($pk-map, "collation", $collation)
         let $_ := map:put($pk-map, "localname", $primary-key-property)

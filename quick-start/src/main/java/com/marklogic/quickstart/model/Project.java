@@ -17,6 +17,7 @@ package com.marklogic.quickstart.model;
 
 import com.marklogic.hub.DataHub;
 import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.HubProject;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 
 import java.io.File;
@@ -27,60 +28,18 @@ public class Project {
 
     public int id;
     public String path;
-    public List<String> environments;
-    public boolean initialized = false;
 
     public Project(int id, String path) {
         this.id = id;
         this.path = path;
-        this.initialized = isInitialized();
-        this.environments = getEnvironments();
     }
 
     public boolean isInitialized() {
-        File buildGradle = new File(this.path, "build.gradle");
-        File gradleProperties = new File(this.path, "gradle.properties");
-
-        File oldHubConfigDir = new File(this.path, HubConfig.OLD_HUB_CONFIG_DIR);
-        File oldDatabasesDir = new File(oldHubConfigDir, "databases");
-        File oldServersDir = new File(oldHubConfigDir, "servers");
-        File oldSecurityDir = new File(oldHubConfigDir, "security");
-
-        File hubConfigDir = new File(this.path, HubConfig.HUB_CONFIG_DIR);
-        File userConfigDir = new File(this.path, HubConfig.USER_CONFIG_DIR);
-        File databasesDir = new File(hubConfigDir, "databases");
-        File serversDir = new File(hubConfigDir, "servers");
-        File securityDir = new File(hubConfigDir, "security");
-
-        boolean oldConfigInitialized =
-            oldHubConfigDir.exists() &&
-            oldHubConfigDir.isDirectory() &&
-            oldDatabasesDir.exists() &&
-            oldDatabasesDir.isDirectory() &&
-            oldServersDir.exists() &&
-            oldServersDir.isDirectory() &&
-            oldSecurityDir.exists() &&
-            oldSecurityDir.isDirectory();
-
-        boolean newConfigInitialized =
-            hubConfigDir.exists() &&
-            hubConfigDir.isDirectory() &&
-            userConfigDir.exists() &&
-            userConfigDir.isDirectory() &&
-            databasesDir.exists() &&
-            databasesDir.isDirectory() &&
-            serversDir.exists() &&
-            serversDir.isDirectory() &&
-            securityDir.exists() &&
-            securityDir.isDirectory();
-
-        return buildGradle.exists() &&
-            gradleProperties.exists() &&
-            (oldConfigInitialized || newConfigInitialized);
+        return new HubProject(this.path).isInitialized();
     }
 
     public List<String> getEnvironments() {
-        ArrayList<String> environments = new ArrayList<String>();
+        ArrayList<String> environments = new ArrayList<>();
         File dir = new File(this.path);
         String[] files = dir.list(new WildcardFileFilter("gradle-*.properties"));
         for (String file : files) {
@@ -90,10 +49,9 @@ public class Project {
         return environments;
     }
 
-    public void initialize(HubConfig config) {
-        config.projectDir = this.path;
-        DataHub hub = new DataHub(config);
+    public void initialize(HubConfig hubConfig) {
+        hubConfig.setProjectDir(this.path);
+        DataHub hub = new DataHub(hubConfig);
         hub.initProject();
-        this.initialized = isInitialized();
     }
 }

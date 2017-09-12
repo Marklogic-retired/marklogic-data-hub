@@ -16,18 +16,20 @@
             label="{{flowType}} Flow Name (required)"
             #flowTypeInput="ngModel"
             [(ngModel)]="flow.flowName"></mdl-textfield>
-          <label>Code Generation</label>
-          <app-select-list
-            [items]="scaffoldOptions"
-            [initialSelectedItem]="startingScaffoldOption"
-            label="label" identifier="value"
-            (selectedItem)="flow.useEsModel = $event"></app-select-list>
+          <ng-template [ngIf]="getMarkLogicVersion().startsWith('9')">
+            <label>Code Generation</label>
+            <app-select-list
+              [items]="scaffoldOptions"
+              [initialSelectedItem]="startingScaffoldOption"
+              label="label" identifier="value"
+              (selectedItem)="flow.useEsModel = $event"></app-select-list>
+          </ng-template>
           <label>Plugin Type</label>
           <app-select-list
-            [items]="pluginFormats"
-            [initialSelectedItem]="pluginFormats[0]"
+            [items]="codeFormats"
+            [initialSelectedItem]="codeFormats[0]"
             label="label" identifier="value"
-            (selectedItem)="flow.pluginFormat = $event"></app-select-list>
+            (selectedItem)="flow.codeFormat = $event"></app-select-list>
           <label>Data Format</label>
           <app-select-list
             [items]="dataFormats"

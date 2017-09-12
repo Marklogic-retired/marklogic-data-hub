@@ -9,6 +9,7 @@ import * as SemVer from 'semver';
 export class EnvironmentService {
 
   public settings: HubSettings;
+  public marklogicVersion: string;
 
   constructor(private http: Http, private router: Router) {}
 
@@ -17,6 +18,7 @@ export class EnvironmentService {
     return this.http.get(uri).map((res: Response) => {
       const json = res.json();
       this.settings = json.mlSettings;
+      this.marklogicVersion = json.marklogicVersion;
       if (json.runningVersion === '0.1.2' || json.runningVersion === '%%mlHubVersion%%' || json.installedVersion === '%%mlHubVersion%%') {
         return true;
       }

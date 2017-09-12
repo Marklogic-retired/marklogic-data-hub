@@ -252,6 +252,12 @@ export class MlcpUiComponent implements OnChanges {
             description: 'The degree of repair to attempt on XML documents in order to create well-formed XML. Accepted values: default,full, none.\nDefault: default, which depends on the configured MarkLogic Server default XQuery version: In XQuery 1.0 and 1.0-ml the default is none. In XQuery 0.9-ml the default is full.',
           },
           {
+            label: 'Fastload',
+            field: 'fastload',
+            type: 'boolean',
+            description: 'The -fastload option can significantly speed up ingestion during import and copy operations, but it can also cause problems if not used properly. When you use -fastload mlcp attempts to cut out the middle step by applying the document assignment policy on the client. Do NOT use -fastload to re-insert documents if the forest topology or assignment policy has changed since the document was originally inserted. Do NOT use -fastload if the forest topology or assignment policy will change as -fastload is running.',
+          },
+          {
             label: 'Thread Count',
             field: 'thread_count',
             type: 'number',
@@ -474,7 +480,7 @@ export class MlcpUiComponent implements OnChanges {
 
     _.each(this.groups, (group) => {
       if (this.isGroupVisible(group.category)) {
-        _.each(group.settings, (setting) => {
+        _.each(group.settings, (setting: any) => {
           if (setting.value) {
             const key = setting.field;
             let value = setting.value;

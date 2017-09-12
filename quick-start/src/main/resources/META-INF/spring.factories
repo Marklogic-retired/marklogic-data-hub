@@ -1,1 +1,7 @@
-org.springframework.boot.SpringApplicationRunListener=com.marklogic.quickstart.ApplicationRunListener
+# Run Liseners
+org.springframework.boot.SpringApplicationRunListener=\
+com.marklogic.quickstart.ApplicationRunListener
+
+# Failure Analyzers
+org.springframework.boot.diagnostics.FailureAnalyzer=\
+com.marklogic.quickstart.PortInUseFailureAnalyzer

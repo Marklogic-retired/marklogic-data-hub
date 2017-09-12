@@ -15,28 +15,32 @@
  */
 package com.marklogic.hub.flow;
 
-import java.util.List;
-
-import com.marklogic.client.io.Format;
 import com.marklogic.hub.collector.Collector;
-import com.marklogic.hub.plugin.Plugin;
-import com.marklogic.hub.writer.Writer;
+import com.marklogic.hub.main.MainPlugin;
+
+import java.util.Properties;
 
 public interface Flow {
+    void setEntityName(String entityName);
     String getEntityName();
+    void setName(String name);
     String getName();
+    void setType(FlowType type);
     FlowType getType();
-    Format getDataFormat();
-    String serialize(boolean full);
+    void setDataFormat(DataFormat dataFormat);
+    DataFormat getDataFormat();
+    void setCodeFormat(CodeFormat codeFormat);
+    CodeFormat getCodeFormat();
+
+    String serialize();
+
+    Properties toProperties();
+
+    String getFlowDbPath();
 
     Collector getCollector();
     void setCollector(Collector collector);
 
-    void addPlugin(Plugin plugin);
-
-    // make this immutable
-    List<Plugin> getPlugins();
-
-    void setWriter(Writer writer);
-    Writer getWriter();
+    MainPlugin getMain();
+    void setMain(MainPlugin main);
 }

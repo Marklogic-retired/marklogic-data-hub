@@ -8,6 +8,8 @@
       <entity>e2eentity</entity>
       <flow>testharmonize</flow>
       <flowType>harmonize</flowType>
+      <dataFormat>xml</dataFormat>
+      <target-database>14208036223614809043</target-database>
     </result>
   </instance>
   <attachments></attachments>

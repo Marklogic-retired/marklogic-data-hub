@@ -8,8 +8,6 @@ import module namespace perf = "http://marklogic.com/data-hub/perflog-lib"
 import module namespace trace = "http://marklogic.com/data-hub/trace"
   at "/com.marklogic.hub/lib/trace-lib.xqy";
 
-declare namespace envelope = "http://marklogic.com/data-hub/envelope";
-
 declare function transform(
   $context as map:map,
   $params as map:map,

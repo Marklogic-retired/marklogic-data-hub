@@ -10,6 +10,42 @@ pre {
   flex: 1;
 }
 
+.fa-check {
+  color: green;
+}
+
+.fa-close {
+  color: red;
+}
+
+label {
+  font-weight: bold;
+}
+p {
+  color: #777;
+  margin: 0px;
+}
+
+.mdl-switch {
+  float: right;
+}
+
+button {
+  float: right;
+}
+
+.mdl-data-table tbody tr {
+  &:hover {
+    background-color: inherit;
+  }
+
+  cursor: inherit;
+}
+
+.mdl-textfield {
+  padding: 0px;
+  width: 100%;
+}
 
 .uninstall-status {
   h3 {

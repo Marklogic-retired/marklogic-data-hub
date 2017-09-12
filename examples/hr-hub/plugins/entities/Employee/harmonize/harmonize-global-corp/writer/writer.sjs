@@ -11,7 +11,4 @@ function write(id, envelope, options) {
   xdmp.documentInsert('/employees/' + id + '.json', envelope);
 }
 
-module.exports = {
-  write: write
-};
-
+module.exports = write;

@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { AuthService } from '../auth/auth.service';
 import { ProjectService } from '../projects/projects.service';
 import { JobListenerService } from '../jobs/job-listener.service';
+import { EnvironmentService } from '../environment';
 
 @Component({
   selector: 'app-header',
@@ -12,12 +13,11 @@ import { JobListenerService } from '../jobs/job-listener.service';
 })
 export class HeaderComponent {
 
-  currentEnv: any;
-
   constructor(
     private projectService: ProjectService,
     private auth: AuthService,
     private jobListener: JobListenerService,
+    private envService: EnvironmentService,
     private router: Router
   ) {}
 
@@ -33,13 +33,8 @@ export class HeaderComponent {
     return this.jobListener.totalPercentComplete();
   }
 
-  getTraceUrl(): string {
-    if (this.currentEnv) {
-      return '//' + this.currentEnv.mlSettings.host + ':' +
-        this.currentEnv.mlSettings.tracePort + '/';
-    }
-
-    return '';
+  getMarkLogicVersion(): string {
+    return this.envService.marklogicVersion;
   }
 
   logout() {

@@ -11,13 +11,13 @@
         class="start mdl-button mdl-js-button mdl-button--fab mdl-button--colored">
       </button>
       <i class="mdi mdi-arrow-right"></i>
-      <ng-template ngFor let-plugin="$implicit" [ngForOf]="plugins" let-i="index">
+      <ng-template ngFor let-plugin="$implicit" [ngForOf]="trace.steps" let-i="index">
         <mdl-button mdl-button-type="raised" mdl-colored="primary"
           (click)="setCurrent(plugin)"
           class="plugin"
           [ngClass]="getButtonClasses(plugin)">
-          <div class="plugin-name">{{plugin}}</div>
-          <div class="plugin-duration">{{trace[plugin + 'Plugin'].duration}}<span class="unit">s</span></div>
+          <div class="plugin-name">{{plugin.label}}</div>
+          <div class="plugin-duration">{{plugin.duration}}<span class="unit">s</span></div>
         </mdl-button>
         <i class="mdi mdi-arrow-right"></i>
       </ng-template>

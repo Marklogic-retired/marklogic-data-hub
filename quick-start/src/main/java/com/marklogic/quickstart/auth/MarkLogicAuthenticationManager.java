@@ -42,7 +42,7 @@ public class MarkLogicAuthenticationManager implements AuthenticationProvider, A
 
     private SimpleRestConfig restConfig;
 
-    private String pathToAuthenticateAgainst = "/";
+    private String pathToAuthenticateAgainst = "/v1/ping";
 
     /**
      * A RestConfig instance is needed so a request can be made to MarkLogic to see if the user can successfully

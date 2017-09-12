@@ -18,6 +18,7 @@ package com.marklogic.quickstart.web;
 import com.marklogic.quickstart.EnvironmentAware;
 import com.marklogic.quickstart.model.SearchPathModel;
 import com.marklogic.quickstart.util.FileUtil;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -77,4 +78,13 @@ public class UtilController extends EnvironmentAware {
 		result.put("folders", paths);
 		return result;
 	}
+
+	@RequestMapping(value = "/validatePath", method = RequestMethod.GET)
+    @ResponseBody
+    public Map<String, Boolean> validatePath(@RequestParam String path) {
+	    File pathToValidate = new File(path);
+        Map<String, Boolean> result = new HashMap<>();
+        result.put("valid", pathToValidate.exists() && pathToValidate.isFile() && pathToValidate.canExecute());
+        return result;
+    }
 }

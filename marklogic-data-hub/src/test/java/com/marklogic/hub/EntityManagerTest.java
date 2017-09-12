@@ -15,27 +15,25 @@
  */
 package com.marklogic.hub;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-
+import com.marklogic.client.io.DocumentMetadataHandle;
+import com.marklogic.hub.collector.Collector;
+import com.marklogic.hub.entity.Entity;
+import com.marklogic.hub.flow.CodeFormat;
+import com.marklogic.hub.flow.DataFormat;
+import com.marklogic.hub.flow.Flow;
+import com.marklogic.hub.flow.FlowType;
+import com.marklogic.hub.scaffold.Scaffolding;
+import org.apache.commons.io.FileUtils;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.marklogic.client.io.DocumentMetadataHandle;
-import com.marklogic.hub.collector.ServerCollector;
-import com.marklogic.hub.entity.Entity;
-import com.marklogic.hub.flow.Flow;
-import com.marklogic.hub.flow.SimpleFlow;
-import com.marklogic.hub.plugin.PluginType;
-import com.marklogic.hub.plugin.ServerPlugin;
-import com.marklogic.hub.writer.DefaultWriter;
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
 
 public class EntityManagerTest extends HubTestBase {
 
@@ -43,9 +41,10 @@ public class EntityManagerTest extends HubTestBase {
     public static void setup() throws IOException {
         XMLUnit.setIgnoreWhitespace(true);
 
-        clearDatabases(new String[]{HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME});
+        FileUtils.deleteDirectory(new File(PROJECT_PATH));
 
         installHub();
+        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME);
 
         DataHub dataHub = getDataHub();
         dataHub.clearUserModules();
@@ -53,106 +52,98 @@ public class EntityManagerTest extends HubTestBase {
 
         DocumentMetadataHandle meta = new DocumentMetadataHandle();
         meta.getCollections().add("tester");
-        installStagingDoc("/incoming/employee1.xml", meta, getResource("flow-manager-test/input/employee1.xml"));
-        installStagingDoc("/incoming/employee2.xml", meta, getResource("flow-manager-test/input/employee2.xml"));
+        installStagingDoc("/incoming/employee1.xml", meta, "flow-manager-test/input/employee1.xml");
+        installStagingDoc("/incoming/employee2.xml", meta, "flow-manager-test/input/employee2.xml");
 
-        HashMap<String, String> modules = new HashMap<>();
-        modules.put("/entities/test/harmonize/my-test-flow1/collector/collector.xqy", "flow-manager-test/my-test-flow1/collector/collector.xqy");
-        modules.put("/entities/test/harmonize/my-test-flow2/collector/collector.xqy", "flow-manager-test/my-test-flow1/collector/collector.xqy");
-        installModules(modules);
+        Scaffolding scaffolding = new Scaffolding(PROJECT_PATH, stagingClient);
+        scaffolding.createEntity("my-test-entity-1");
+        scaffolding.createFlow("my-test-entity-1", "flow1", FlowType.HARMONIZE,
+            CodeFormat.XQUERY, DataFormat.XML);
+
+        scaffolding.createEntity("my-test-entity-2");
+        scaffolding.createFlow("my-test-entity-2", "flow1", FlowType.HARMONIZE,
+            CodeFormat.JAVASCRIPT, DataFormat.JSON);
+        scaffolding.createFlow("my-test-entity-2", "flow2", FlowType.HARMONIZE,
+            CodeFormat.XQUERY, DataFormat.XML);
+
+        dataHub.installUserModules();
+    }
+
+    @AfterClass
+    public static void teardown() throws IOException {
+        FileUtils.deleteDirectory(new File(PROJECT_PATH));
     }
 
     @Test
     public void testGetEntities() {
         EntityManager fm = new EntityManager(stagingClient);
         List<Entity> entities = fm.getEntities();
-        assertEquals(1, entities.size());
+        assertEquals(2, entities.size());
 
         Entity entity = entities.get(0);
 
-        assertEquals("test", entity.getName());
+        assertEquals("my-test-entity-1", entity.getName());
 
         List<Flow> flows = entity.getFlows();
+        assertEquals(1, flows.size());
+
+        // flow 1
+        Flow flow1 = flows.get(0);
+        assertEquals("flow1", flow1.getName());
+
+        Collector c = flow1.getCollector();
+        assertEquals(CodeFormat.XQUERY, c.getCodeFormat());
+        assertEquals("/entities/my-test-entity-1/harmonize/flow1/collector.xqy", c.getModule());
+
+        // entity 2
+        entity = entities.get(1);
+        assertEquals("my-test-entity-2", entity.getName());
+
+        flows = entity.getFlows();
         assertEquals(2, flows.size());
 
         // flow 1
-        SimpleFlow flow1 = (SimpleFlow)flows.get(0);
-        assertEquals("my-test-flow1", flow1.getName());
+        flow1 = flows.get(0);
+        assertEquals("flow1", flow1.getName());
 
-        ServerCollector c = (ServerCollector)flow1.getCollector();
-        assertEquals(PluginType.XQUERY, c.getType());
-        assertEquals("/entities/test/harmonize/my-test-flow1/collector/collector.xqy", c.getModule());
-
-        ServerPlugin t = (ServerPlugin)flow1.getContentPlugin();
-        assertEquals(PluginType.XQUERY, t.getType());
-        assertEquals("/com.marklogic.hub/plugins/raw.xqy", t.getModule());
-        assertNull(flow1.getHeaderPlugin());
-        assertNull(flow1.getTriplesPlugin());
-
-        DefaultWriter w = (DefaultWriter)flow1.getWriter();
-        assertNotNull(w);
-
+        c = flow1.getCollector();
+        assertEquals(CodeFormat.JAVASCRIPT, c.getCodeFormat());
+        assertEquals("/entities/my-test-entity-2/harmonize/flow1/collector.sjs", c.getModule());
 
         // flow 2
-        SimpleFlow flow2 = (SimpleFlow)flows.get(1);
-        assertEquals("my-test-flow2", flow2.getName());
+        Flow flow2 = flows.get(1);
+        assertEquals("flow2", flow2.getName());
 
-        c = (ServerCollector)flow1.getCollector();
-        assertEquals(PluginType.XQUERY, c.getType());
-        assertEquals("/entities/test/harmonize/my-test-flow1/collector/collector.xqy", c.getModule());
-
-        t = (ServerPlugin)flow2.getContentPlugin();
-        assertEquals(PluginType.XQUERY, t.getType());
-        assertEquals("/com.marklogic.hub/plugins/raw.xqy", t.getModule());
-        assertNull(flow2.getHeaderPlugin());
-
-        w = (DefaultWriter)flow2.getWriter();
-        assertNotNull(w);
-
+        c = flow2.getCollector();
+        assertEquals(CodeFormat.XQUERY, c.getCodeFormat());
+        assertEquals("/entities/my-test-entity-2/harmonize/flow2/collector.xqy", c.getModule());
     }
 
     @Test
     public void testGetEntity() {
         EntityManager fm = new EntityManager(stagingClient);
-        Entity entity = fm.getEntity("test");
+        Entity entity = fm.getEntity("my-test-entity-2");
 
-        assertEquals("test", entity.getName());
+        assertEquals("my-test-entity-2", entity.getName());
 
         List<Flow> flows = entity.getFlows();
         assertEquals(2, flows.size());
 
         // flow 1
-        SimpleFlow flow1 = (SimpleFlow)flows.get(0);
-        assertEquals("my-test-flow1", flow1.getName());
+        Flow flow1 = flows.get(0);
+        assertEquals("flow1", flow1.getName());
 
-        ServerCollector c = (ServerCollector)flow1.getCollector();
-        assertEquals(PluginType.XQUERY, c.getType());
-        assertEquals("/entities/test/harmonize/my-test-flow1/collector/collector.xqy", c.getModule());
-
-        ServerPlugin t = (ServerPlugin)flow1.getContentPlugin();
-        assertEquals(PluginType.XQUERY, t.getType());
-        assertEquals("/com.marklogic.hub/plugins/raw.xqy", t.getModule());
-        assertNull(flow1.getHeaderPlugin());
-        assertNull(flow1.getTriplesPlugin());
-
-        DefaultWriter w = (DefaultWriter)flow1.getWriter();
-        assertNotNull(w);
+        Collector c = flow1.getCollector();
+        assertEquals(CodeFormat.JAVASCRIPT, c.getCodeFormat());
+        assertEquals("/entities/my-test-entity-2/harmonize/flow1/collector.sjs", c.getModule());
 
         // flow 2
-        SimpleFlow flow2 = (SimpleFlow)flows.get(1);
-        assertEquals("my-test-flow2", flow2.getName());
+        Flow flow2 = flows.get(1);
+        assertEquals("flow2", flow2.getName());
 
-        c = (ServerCollector)flow1.getCollector();
-        assertEquals(PluginType.XQUERY, c.getType());
-        assertEquals("/entities/test/harmonize/my-test-flow1/collector/collector.xqy", c.getModule());
-
-        t = (ServerPlugin)flow2.getContentPlugin();
-        assertEquals(PluginType.XQUERY, t.getType());
-        assertEquals("/com.marklogic.hub/plugins/raw.xqy", t.getModule());
-        assertNull(flow2.getHeaderPlugin());
-
-        w = (DefaultWriter)flow2.getWriter();
-        assertNotNull(w);
+        c = flow2.getCollector();
+        assertEquals(CodeFormat.XQUERY, c.getCodeFormat());
+        assertEquals("/entities/my-test-entity-2/harmonize/flow2/collector.xqy", c.getModule());
     }
 
 }
