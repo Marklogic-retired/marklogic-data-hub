@@ -30,7 +30,7 @@ You need these to get started
 
 ### TL;DR
 
-Head over to our [Getting Started Tutorial](https://marklogic.github.io/marklogic-data-hub/) to get up and running with the Data Hub.
+Head over to our [Getting Started Tutorial](https://marklogic-community.github.io/marklogic-data-hub) to get up and running with the Data Hub.
 
 Or watch the [MarkLogic University - Data Hub Framework On Demand Video Courses](http://mlu.marklogic.com/ondemand/index.xqy?q=Series%3A%22Operational%20Data%20Hubs%22)
 
