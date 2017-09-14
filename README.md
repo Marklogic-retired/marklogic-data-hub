@@ -7,8 +7,7 @@ _The Data Hub Framework is free and open source under the [Apache 2 License](htt
 | Linux/Mac | [![Build Status](https://travis-ci.org/marklogic-community/marklogic-data-hub.svg?branch=master)](https://travis-ci.org/marklogic-community/marklogic-data-hub) |
 | Windows | [![Windows Build status](https://ci.appveyor.com/api/projects/status/kgj0k5na59uhkvbv/branch/master?svg=true)](https://ci.appveyor.com/project/paxtonhare/marklogic-data-hub) |
 
-### Warning
-_This is the the 2.0 branch of The MarkLogic Data Hub Framework. The 2.0 version is only compatible with MarkLogic 9.0._
+_This is the official branch of The MarkLogic Data Hub Framework. It is compatible with MarkLogic 8 or 9._
 
 _If you are looking for the Legacy 1.0 branch ( MarkLogic 8 compatible only ) go [here](https://github.com/marklogic-community/marklogic-data-hub/tree/1.0-master)._
 
@@ -25,23 +24,23 @@ This project allows you to deploy a skeleton Data Hub into MarkLogic. With some 
 You need these to get started
 
 - Java 8 JDK
-- MarkLogic 9.0 or greater
+- MarkLogic 8.2 or greater, or 9.0 or greater
 - Gradle 3.4 or greater **(Optional)**
 
 ### TL;DR
 
-Head over to our [Getting Started Tutorial](https://marklogic.github.io/marklogic-data-hub/) to get up and running with the Data Hub.
+Head over to our [Getting Started Tutorial](https://marklogic-community.github.io/marklogic-data-hub/) to get up and running with the Data Hub.
 
 Or watch the [MarkLogic University - Data Hub Framework On Demand Video Courses](http://mlu.marklogic.com/ondemand/index.xqy?q=Series%3A%22Operational%20Data%20Hubs%22)
 
 ### The Easiest Way
 
-To use the Data Hub Framework you should download the quickstart.war file from the [releases page](https://github.com/marklogic-community/marklogic-data-hub/releases).
+To use the Data Hub Framework you should download the latest [quickstart.war](https://github.com/marklogic-community/marklogic-data-hub/releases/download/v2.0.0-rc.2/quick-start-2.0.0-rc.2.war).
 
 Then Run the war like so:
 
 ```bash
-java -jar quickstart.war
+java -jar quick-start-2.0.0-rc.2.war
 ```
 
 ### Using the Hub in your existing Java project
@@ -88,6 +87,8 @@ Now you have full access to the Data Hub tasks. To see all available tasks run:
 ```bash
 ./gradlew tasks
 ```
+
+There is a sample barebones project [here](https://github.com/marklogic-community/marklogic-data-hub/tree/master/examples/barebones)
 
 # Building From Source
 
