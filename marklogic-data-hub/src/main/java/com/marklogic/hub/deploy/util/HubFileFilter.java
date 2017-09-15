@@ -13,7 +13,7 @@ public class HubFileFilter implements FileFilter {
         boolean result = f != null &&
             !f.getName().startsWith(".") &&
             !f.getName().endsWith("entity.json") &&
-            !f.getName().equals(f.getParent() + ".properties") &&
+            !f.getName().equals(f.getParentFile().getName() + ".properties") &&
             !f.toString().matches(".*[/\\\\]REST[/\\\\].*") &&
 
             // ignore vim files ending in ~

@@ -7,9 +7,11 @@ import com.marklogic.appdeployer.command.SortOrderConstants;
 import com.marklogic.appdeployer.command.modules.AllButAssetsModulesFinder;
 import com.marklogic.appdeployer.command.modules.AssetModulesFinder;
 import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.document.DocumentWriteSet;
 import com.marklogic.client.document.JSONDocumentManager;
 import com.marklogic.client.document.XMLDocumentManager;
 import com.marklogic.client.io.DocumentMetadataHandle;
+import com.marklogic.client.io.Format;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.modulesloader.Modules;
 import com.marklogic.client.modulesloader.impl.*;
@@ -165,9 +167,14 @@ public class LoadUserModulesCommand extends AbstractCommand {
                 // load Flow Definitions
                 List<Flow> flows = flowManager.getLocalFlows();
                 XMLDocumentManager documentManager = hubConfig.newModulesDbClient().newXMLDocumentManager();
+                DocumentWriteSet documentWriteSet = documentManager.newWriteSet();
+
                 for (Flow flow : flows) {
-                    documentManager.write(flow.getFlowDbPath(), new StringHandle(flow.serialize()));
+                    StringHandle handle = new StringHandle(flow.serialize());
+                    handle.setFormat(Format.XML);
+                    documentWriteSet.add(flow.getFlowDbPath(), handle);
                 }
+                documentManager.write(documentWriteSet);
 
                 Files.walkFileTree(startPath, new SimpleFileVisitor<Path>() {
                     @Override
