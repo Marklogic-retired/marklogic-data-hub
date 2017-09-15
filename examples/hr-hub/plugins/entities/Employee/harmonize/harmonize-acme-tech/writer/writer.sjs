@@ -8,7 +8,7 @@
  * @return - nothing
  */
 function write(id, envelope, options) {
-  xdmp.documentInsert(id, envelope, [], ['json-employee']);
+  xdmp.documentInsert(id, envelope, xdmp.defaultPermissions(), options.flow);
 }
 
 module.exports = write;

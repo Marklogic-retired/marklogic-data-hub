@@ -14,9 +14,9 @@ function createContent(id, options) {
   for (var doc of cts.search(cts.jsonPropertyValueQuery('emp_id', id))) {
 
     // merge the keys and values from the found document into content
-    for (var key in doc.root.content) {
-      if (doc.root.content.hasOwnProperty(key)) {
-        content[key] = doc.root.content[key];
+    for (var key in doc.root.envelope.instance) {
+      if (doc.root.envelope.instance.hasOwnProperty(key)) {
+        content[key] = doc.root.envelope.instance[key];
       }
     }
   }

@@ -14,7 +14,7 @@ The data are separated into 2 folders under the input/ folder.
 ```
 
 # TLDR; How do I run it?
-Check out the [HR Hub Tutorial](https://marklogic-community.github.io/marklogic-data-hub/) on the Datahub Site.
+Check out the [HR Hub Tutorial](https://marklogic-community.github.io/marklogic-data-hub/getting-started-1x) on the Datahub Site.
 
 # Global Corp
 Global Corp has exported the Employee data from a relational database. They are provided to you as csv files, one for each table.
