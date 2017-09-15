@@ -587,7 +587,6 @@ declare function flow:run-main(
         $func(rfc:get-id(), $options)
       else
         $func(rfc:get-id(), rfc:get-content(), $options)
-    let $_ := trace:plugin-trace($resp, xdmp:elapsed-time() - $before)
     (: write the trace for the current identifier :)
     let $_ := trace:write-trace()
     return
