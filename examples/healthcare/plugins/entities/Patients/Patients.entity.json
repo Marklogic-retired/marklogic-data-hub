@@ -1,0 +1,14 @@
+{
+  "info" : {
+    "title" : "Patients",
+    "version" : "0.0.1"
+  },
+  "definitions" : {
+    "Patients" : {
+      "required" : [ ],
+      "rangeIndex" : [ ],
+      "wordLexicon" : [ ],
+      "properties" : { }
+    }
+  }
+}

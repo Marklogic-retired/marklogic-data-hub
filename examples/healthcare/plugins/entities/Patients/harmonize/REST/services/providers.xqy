@@ -17,7 +17,7 @@ xquery version "1.0-ml";
 
 module namespace service = "http://marklogic.com/rest-api/resource/providers";
 
-declare namespace envelope = "http://marklogic.com/data-hub/envelope";
+declare namespace es = "http://marklogic.com/entity-services";
 
 declare option xdmp:mapping "false";
 
@@ -32,6 +32,6 @@ declare function get(
   let $patient-id as xs:string := map:get($params, "patient-id")
   return
     document {
-      /envelope:envelope/envelope:headers[patient-ssn = $patient-id]/providers
+      /es:envelope/es:headers[patient-ssn = $patient-id]/providers
     }
 };

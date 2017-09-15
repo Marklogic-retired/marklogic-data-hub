@@ -2,7 +2,7 @@ xquery version "1.0-ml";
 
 module namespace plugin = "http://marklogic.com/data-hub/plugins";
 
-declare namespace envelope = "http://marklogic.com/data-hub/envelope";
+declare namespace es = "http://marklogic.com/entity-services";
 
 declare namespace hl7 = "urn:hl7-org:v3";
 
@@ -19,7 +19,7 @@ declare option xdmp:mapping "false";
  :)
 declare function plugin:create-headers(
   $id as xs:string,
-  $content as node()?,
+  $content as item()?,
   $options as map:map) as node()*
 {
   (
@@ -48,7 +48,7 @@ declare function plugin:create-headers(
     <providers>
     {
       for $npi as xs:string in $content//hl7:id[@root="2.16.840.1.113883.4.6"]/@extension
-      let $provider := fn:collection("nppes")/envelope:envelope/envelope:content/root[NPI = $npi]
+      let $provider := fn:collection("nppes")/es:envelope/es:content/root[NPI = $npi]
       return
         <provider>
           <npi>{$npi}</npi>
