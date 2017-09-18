@@ -174,7 +174,9 @@ public class LoadUserModulesCommand extends AbstractCommand {
                     handle.setFormat(Format.XML);
                     documentWriteSet.add(flow.getFlowDbPath(), handle);
                 }
-                documentManager.write(documentWriteSet);
+                if (documentWriteSet.size() > 0) {
+                    documentManager.write(documentWriteSet);
+                }
 
                 Files.walkFileTree(startPath, new SimpleFileVisitor<Path>() {
                     @Override
