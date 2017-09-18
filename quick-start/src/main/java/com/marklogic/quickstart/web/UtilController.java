@@ -39,42 +39,41 @@ public class UtilController extends EnvironmentAware {
 
 	@RequestMapping(value = "/searchPath", method = RequestMethod.GET)
 	@ResponseBody
-	public Map<String, Object> searchPath(@RequestParam String path, @RequestParam boolean absolute) {
+	public Map<String, Object> searchPath(@RequestParam String path) {
 		logger.debug("Search Path:" + path);
 		List<SearchPathModel> paths = new ArrayList<>();
-		String currentPath;
+		Path currentPath = Paths.get(".").toAbsolutePath().normalize();
+		Path relativePath;
 
 		if (path == null || path.length() == 0) {
-		    currentPath = "/";
-			File[] roots = File.listRoots();
-            for (File root : roots) {
-                paths.add(new SearchPathModel(root.getAbsolutePath(), root.getAbsolutePath()));
-            }
+            relativePath = Paths.get("/");
 		}
 		else {
-		    if (absolute) {
-                currentPath = Paths.get(path).toAbsolutePath().normalize().toString();
-            }
-            else {
-                currentPath = path;
-            }
-			if (!path.equals("/")) {
-				path = path + java.io.File.separator;
-				Path parent = Paths.get(path).toAbsolutePath().normalize().getParent();
-				if (parent != null) {
-				    paths.add(new SearchPathModel(parent.toString(), ".."));
-				}
-			}
+            relativePath = Paths.get(path).toAbsolutePath().normalize();
+        }
 
-			List<String> folders = FileUtil.listDirectFolders(new File(path));
-			for (String folder : folders) {
-				String absPath = Paths.get(path, folder).toAbsolutePath().normalize().toString();
-				paths.add(new SearchPathModel(absPath, folder));
-			}
-		}
+        Path parent = relativePath.getParent();
+        if (parent != null) {
+            String relativePathStr = currentPath.relativize(parent).toString();
+            String absolutePathStr = parent.toAbsolutePath().toString();
+            paths.add(new SearchPathModel("..", relativePathStr, absolutePathStr));
+        }
+
+        List<String> folders = FileUtil.listDirectFolders(relativePath.toFile());
+        for (String folder : folders) {
+            Path childPath = relativePath.resolve(folder);
+            String relativePathStr = currentPath.relativize(childPath).toString();
+            String absolutePathStr = childPath.toAbsolutePath().normalize().toString();
+            paths.add(new SearchPathModel(folder, relativePathStr, absolutePathStr));
+        }
 
 		Map<String, Object> result = new HashMap<>();
-		result.put("currentPath", currentPath);
+        String relativePathStr = currentPath.relativize(relativePath).toString();
+        if (relativePathStr.equals("")) {
+            relativePathStr = ".";
+        }
+		result.put("currentPath", relativePathStr);
+		result.put("currentAbsolutePath", relativePath.toString());
 		result.put("folders", paths);
 		return result;
 	}

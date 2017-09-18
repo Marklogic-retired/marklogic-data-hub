@@ -26,7 +26,7 @@ interface MlcpOptions {
   styleUrls: ['./mlcp-ui.component.scss']
 })
 export class MlcpUiComponent implements OnChanges {
-  startPath: string = '.';
+  startPath: string;
   inputFilePath: string;
   mlcp = <MlcpOptions>{};
 
@@ -528,11 +528,9 @@ export class MlcpUiComponent implements OnChanges {
     return `${this.inputFilePath.replace(/\\/g, '/').replace(/^([A-Za-z]):/, '/$1:')},''`;
   }
 
-  folderClicked(folder: string): void {
-    if (!this.inputFilePath) {
-      this.inputFilePath = folder;
-    } else if (this.inputFilePath !== folder) {
-      this.inputFilePath = folder;
+  folderClicked(folders: any): void {
+    if (this.inputFilePath !== folders.absolutePath) {
+      this.inputFilePath = folders.absolutePath;
       // update the outputUriReplace options
       let generalGroup = _.find(this.groups, (group: any) => {
         return group.category === 'General Options';

@@ -18,10 +18,12 @@ package com.marklogic.quickstart.model;
 public class SearchPathModel {
 
 	public String name;
-	public String path;
+	public String relativePath;
+	public String absolutePath;
 
-	public SearchPathModel(String path, String name) {
-		this.path = path;
+	public SearchPathModel(String name, String relativePath, String absolutePath) {
+		this.relativePath = relativePath;
+		this.absolutePath = absolutePath;
 		this.name = name;
 	}
 }

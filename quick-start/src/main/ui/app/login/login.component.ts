@@ -161,8 +161,8 @@ export class LoginComponent implements OnInit {
     this.router.navigate(['']);
   }
 
-  folderClicked(folder: string): void {
-    this.folder = folder;
+  folderClicked(folders: any): void {
+    this.folder = folders.absolutePath;
   }
 
   back() {
