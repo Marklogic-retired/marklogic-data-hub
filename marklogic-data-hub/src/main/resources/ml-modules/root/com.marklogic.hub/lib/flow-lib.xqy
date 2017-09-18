@@ -606,7 +606,6 @@ declare function flow:run-main(
     ),
     (: for input flows we want to rethrow to force a failure :)
     if (rfc:get-flow-type() eq $consts:INPUT_FLOW) then (
-      xdmp:log("rethrowing"),
       xdmp:rethrow()
     )
     else ()

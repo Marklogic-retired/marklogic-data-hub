@@ -186,17 +186,17 @@ public class EndToEndFlowTests extends HubTestBase {
             if (flowType.equals(FlowType.INPUT)) {
                 tests.add(DynamicTest.dynamicTest(flowName + " MLCP", () -> {
                     Map<String, Object> options = new HashMap<>();
-                    FinalCounts finalCounts = new FinalCounts(1, 0, 2, 1, 0, 0, 1, 0, 0, 0, "FINISHED");
+                    FinalCounts finalCounts = new FinalCounts(1, 0, 1, 1, 0, 0, 1, 0, 0, 0, "FINISHED");
                     testInputFlowViaMlcp(prefix, "", stagingClient, codeFormat, dataFormat, options, finalCounts);
                 }));
                 tests.add(DynamicTest.dynamicTest(flowName + " MLCP", () -> {
                     Map<String, Object> options = new HashMap<>();
-                    FinalCounts finalCounts = new FinalCounts(0, 1, 2, 1, 0, 0, 1, 0, 0, 0, "FINISHED");
+                    FinalCounts finalCounts = new FinalCounts(0, 1, 1, 1, 0, 0, 1, 0, 0, 0, "FINISHED");
                     testInputFlowViaMlcp(prefix, "", finalClient, codeFormat, dataFormat, options, finalCounts);
                 }));
                 tests.add(DynamicTest.dynamicTest(flowName + " REST", () -> {
                     Map<String, Object> options = new HashMap<>();
-                    FinalCounts finalCounts = new FinalCounts(1, 0, 2, 0, 0, 0, 0, 0, 0, 0, "FINISHED");
+                    FinalCounts finalCounts = new FinalCounts(1, 0, 1, 0, 0, 0, 0, 0, 0, 0, "FINISHED");
                     testInputFlowViaREST(prefix, "", codeFormat, dataFormat, options, finalCounts);
                 }));
             }
@@ -224,12 +224,12 @@ public class EndToEndFlowTests extends HubTestBase {
             if (flowType.equals(FlowType.INPUT)) {
                 tests.add(DynamicTest.dynamicTest(flowName + " MLCP", () -> {
                     Map<String, Object> options = new HashMap<>();
-                    FinalCounts finalCounts = new FinalCounts(1, 0, 2, 1, 0, 0, 1, 0, 0, 0, "FINISHED");
+                    FinalCounts finalCounts = new FinalCounts(1, 0, 1, 1, 0, 0, 1, 0, 0, 0, "FINISHED");
                     testInputFlowViaMlcp(prefix, "", stagingClient, codeFormat, dataFormat, options, finalCounts);
                 }));
                 tests.add(DynamicTest.dynamicTest(flowName + " REST", () -> {
                     Map<String, Object> options = new HashMap<>();
-                    FinalCounts finalCounts = new FinalCounts(1, 0, 2, 0, 0, 0, 0, 0, 0, 0, "FINISHED");
+                    FinalCounts finalCounts = new FinalCounts(1, 0, 1, 0, 0, 0, 0, 0, 0, 0, "FINISHED");
                     testInputFlowViaREST(prefix, "", codeFormat, dataFormat, options, finalCounts);
                 }));
             }
@@ -248,17 +248,17 @@ public class EndToEndFlowTests extends HubTestBase {
             if (flowType.equals(FlowType.INPUT)) {
                 tests.add(DynamicTest.dynamicTest(flowName + " MLCP", () -> {
                     Map<String, Object> options = new HashMap<>();
-                    FinalCounts finalCounts = new FinalCounts(1, 0, 2, 1, 0, 0, 1, 0, 0, 0, "FINISHED");
+                    FinalCounts finalCounts = new FinalCounts(1, 0, 1, 1, 0, 0, 1, 0, 0, 0, "FINISHED");
                     testInputFlowViaMlcp(prefix, "", stagingClient, codeFormat, dataFormat, options, finalCounts);
                 }));
                 tests.add(DynamicTest.dynamicTest(flowName + " MLCP", () -> {
                     Map<String, Object> options = new HashMap<>();
-                    FinalCounts finalCounts = new FinalCounts(0, 1, 2, 1, 0, 0, 1, 0, 0, 0, "FINISHED");
+                    FinalCounts finalCounts = new FinalCounts(0, 1, 1, 1, 0, 0, 1, 0, 0, 0, "FINISHED");
                     testInputFlowViaMlcp(prefix, "", finalClient, codeFormat, dataFormat, options, finalCounts);
                 }));
                 tests.add(DynamicTest.dynamicTest(flowName + " REST", () -> {
                     Map<String, Object> options = new HashMap<>();
-                    FinalCounts finalCounts = new FinalCounts(1, 0, 2, 0, 0, 0, 0, 0, 0, 0, "FINISHED");
+                    FinalCounts finalCounts = new FinalCounts(1, 0, 1, 0, 0, 0, 0, 0, 0, 0, "FINISHED");
                     testInputFlowViaREST(prefix, "", codeFormat, dataFormat, options, finalCounts);
                 }));
             }
@@ -286,13 +286,13 @@ public class EndToEndFlowTests extends HubTestBase {
                 tests.add(DynamicTest.dynamicTest(flowName + " MLCP", () -> {
                     Map<String, Object> options = new HashMap<>();
                     options.put("extraPlugin", true);
-                    FinalCounts finalCounts = new FinalCounts(1, 0, 2, 1, 0, 0, 1, 0, 0, 0, "FINISHED");
+                    FinalCounts finalCounts = new FinalCounts(1, 0, 1, 1, 0, 0, 1, 0, 0, 0, "FINISHED");
                     testInputFlowViaMlcp(prefix, "", stagingClient, codeFormat, dataFormat, options, finalCounts);
                 }));
                 tests.add(DynamicTest.dynamicTest(flowName + " REST", () -> {
                     Map<String, Object> options = new HashMap<>();
                     options.put("extraPlugin", true);
-                    FinalCounts finalCounts = new FinalCounts(1, 0, 2, 0, 0, 0, 0, 0, 0, 0, "FINISHED");
+                    FinalCounts finalCounts = new FinalCounts(1, 0, 1, 0, 0, 0, 0, 0, 0, 0, "FINISHED");
                     testInputFlowViaREST(prefix, "", codeFormat, dataFormat, options, finalCounts);
                 }));
             }
@@ -321,12 +321,12 @@ public class EndToEndFlowTests extends HubTestBase {
             if (flowType.equals(FlowType.INPUT)) {
                 tests.add(DynamicTest.dynamicTest(flowName + " MLCP", () -> {
                     Map<String, Object> options = new HashMap<>();
-                    FinalCounts finalCounts = new FinalCounts(1, 0, 2, 1, 0, 0, 1, 0, 0, 0, "FINISHED");
+                    FinalCounts finalCounts = new FinalCounts(1, 0, 1, 1, 0, 0, 1, 0, 0, 0, "FINISHED");
                     testInputFlowViaMlcp(prefix, "", stagingClient, codeFormat, dataFormat, options, finalCounts);
                 }));
                 tests.add(DynamicTest.dynamicTest(flowName + " REST", () -> {
                     Map<String, Object> options = new HashMap<>();
-                    FinalCounts finalCounts = new FinalCounts(1, 0, 2, 0, 0, 0, 0, 0, 0, 0, "FINISHED");
+                    FinalCounts finalCounts = new FinalCounts(1, 0, 1, 0, 0, 0, 0, 0, 0, 0, "FINISHED");
                     testInputFlowViaREST(prefix, "", codeFormat, dataFormat, options, finalCounts);
                 }));
             }
@@ -354,13 +354,13 @@ public class EndToEndFlowTests extends HubTestBase {
                 if (flowType.equals(FlowType.INPUT)) {
                     tests.add(DynamicTest.dynamicTest(flowName + " MLCP", () -> {
                         Map<String, Object> options = new HashMap<>();
-                        FinalCounts finalCounts = new FinalCounts(1, 0, 2, 1, 0, 0, 1, 0, 0, 0, "FINISHED");
+                        FinalCounts finalCounts = new FinalCounts(1, 0, 1, 1, 0, 0, 1, 0, 0, 0, "FINISHED");
                         testInputFlowViaMlcp(prefix, "", stagingClient, codeFormat, dataFormat, options, finalCounts);
                     }));
 
                     tests.add(DynamicTest.dynamicTest(flowName + " REST", () -> {
                         Map<String, Object> options = new HashMap<>();
-                        FinalCounts finalCounts = new FinalCounts(1, 0, 2, 0, 0, 0, 1, 0, 0, 0, "FINISHED");
+                        FinalCounts finalCounts = new FinalCounts(1, 0, 1, 0, 0, 0, 1, 0, 0, 0, "FINISHED");
                         testInputFlowViaREST(prefix, "", codeFormat, dataFormat, options, finalCounts);
                     }));
                 } else {
@@ -782,7 +782,7 @@ public class EndToEndFlowTests extends HubTestBase {
                 "\"document_type\":\"\\\"" + dataFormat.toString() + "\\\"\"," +
                 "\"transform_module\":\"\\\"/com.marklogic.hub/mlcp-flow-transform.xqy\\\"\"," +
                 "\"transform_namespace\":\"\\\"http://marklogic.com/data-hub/mlcp-flow-transform\\\"\"," +
-                "\"transform_param\":\"\\\"entity=" + ENTITY + ",flow=" + flowName + ",flowType=input,options=" + optionString + "\\\"\"" +
+                "\"transform_param\":\"\\\"entity-name=" + ENTITY + ",flow-name=" + flowName + ",options=" + optionString + "\\\"\"" +
                 "}");
         MlcpRunner mlcpRunner = new MlcpRunner(null, "com.marklogic.hub.util.MlcpMain", getHubConfig(), flow, databaseClient, mlcpOptions, null);
         mlcpRunner.start();
@@ -853,8 +853,8 @@ public class EndToEndFlowTests extends HubTestBase {
 
         ServerTransform serverTransform = new ServerTransform("run-flow");
         serverTransform.addParameter("job-id", UUID.randomUUID().toString());
-        serverTransform.addParameter("entity", ENTITY);
-        serverTransform.addParameter("flow", flowName);
+        serverTransform.addParameter("entity-name", ENTITY);
+        serverTransform.addParameter("flow-name", flowName);
         String optionString = new ObjectMapper().writeValueAsString(options);
         serverTransform.addParameter("options", optionString);
         FileHandle handle = new FileHandle(getResourceFile("e2e-test/input/input." + dataFormat.toString()));

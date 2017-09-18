@@ -139,7 +139,7 @@ public class FlowManagerServiceTest extends HubTestBase {
                 "\"document_type\":\"\\\"json\\\"\"," +
                 "\"transform_module\":\"\\\"/com.marklogic.hub/mlcp-flow-transform.xqy\\\"\"," +
                 "\"transform_namespace\":\"\\\"http://marklogic.com/data-hub/mlcp-flow-transform\\\"\"," +
-                "\"transform_param\":\"\\\"entity=" + ENTITY + ",flow=" + flowName + ",flowType=input\\\"\"" +
+                "\"transform_param\":\"\\\"entity-name=" + ENTITY + ",flow-name=" + flowName + "\\\"\"" +
                 "}");
         FlowStatusListener flowStatusListener = (jobId, percentComplete, message) -> {
             logger.error(message);

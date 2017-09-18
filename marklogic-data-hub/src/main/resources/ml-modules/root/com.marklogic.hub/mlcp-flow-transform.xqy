@@ -5,6 +5,9 @@ module namespace mlcpFlow = "http://marklogic.com/data-hub/mlcp-flow-transform";
 import module namespace config = "http://marklogic.com/data-hub/config"
   at "/com.marklogic.hub/lib/config.xqy";
 
+import module namespace consts = "http://marklogic.com/data-hub/consts"
+  at "/com.marklogic.hub/lib/consts.xqy";
+
 import module namespace debug = "http://marklogic.com/data-hub/debug"
   at "/com.marklogic.hub/lib/debug-lib.xqy";
 
@@ -42,9 +45,9 @@ declare function mlcpFlow:transform(
       ))
 
       let $flow := flow:get-flow(
-        map:get($params, 'entity'),
-        map:get($params, 'flow'),
-        map:get($params, 'flowType')
+        map:get($params, 'entity-name'),
+        map:get($params, 'flow-name'),
+        $consts:INPUT_FLOW
       )
 
       let $_ :=
@@ -61,7 +64,7 @@ declare function mlcpFlow:transform(
 
       (: this can throw, but we want MLCP to know about problems, so let it :)
       let $envelope := mlcpFlow:run-flow(
-        map:get($params, "jobId"), $flow, $uri, map:get($content, "value"), $options
+        map:get($params, "job-id"), $flow, $uri, map:get($content, "value"), $options
       )
       let $_ := map:put($content, "value", $envelope)
       return
@@ -86,18 +89,7 @@ declare function mlcpFlow:run-flow(
     declare variable $content external;
     declare variable $options external;
 
-    let $envelope := flow:run-flow($jobId, $flow, $uri, $content, $options)
-
-    (: write trace for imaginary writer :)
-    let $_ := (
-      trace:set-plugin-label("rest builtin writer"),
-      trace:reset-plugin-input(),
-      trace:set-plugin-input("envelope", $envelope),
-      trace:plugin-trace((), xs:dayTimeDuration("PT0S"))
-    )
-    let $_ := trace:write-trace()
-    return
-      $envelope
+    flow:run-flow($jobId, $flow, $uri, $content, $options)
   ',
   map:new((
     map:entry("jobId", $jobId),

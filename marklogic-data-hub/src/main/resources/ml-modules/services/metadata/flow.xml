@@ -14,7 +14,6 @@
   <method name="POST">
     <param name="entity-name" />
     <param name="flow-name" />
-    <param name="flow-type" />
     <param name="identifiers" />
     <param name="options" />
     <param name="job-id" />

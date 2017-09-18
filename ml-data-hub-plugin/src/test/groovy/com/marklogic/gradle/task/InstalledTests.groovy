@@ -100,7 +100,7 @@ class InstalledTests extends BaseTest {
         installModule("/entities/my-new-entity/harmonize/my-new-harmonize-flow/content/content.xqy", "run-flow-test/content.xqy")
 
         when:
-        println(runTask('hubRunFlow', '-PentityName=my-new-entity', '-PflowName=my-new-harmonize-flow', '-PflowType=harmonize','-i').getOutput())
+        println(runTask('hubRunFlow', '-PentityName=my-new-entity', '-PflowName=my-new-harmonize-flow', '-i').getOutput())
 
         then:
         notThrown(UnexpectedBuildFailure)
@@ -127,7 +127,6 @@ class InstalledTests extends BaseTest {
             'hubRunFlow',
             '-PentityName=my-new-entity',
             '-PflowName=my-new-harmonize-flow',
-            '-PflowType=harmonize',
             '-PsourceDB=data-hub-FINAL',
             '-PdestDB=data-hub-STAGING',
             '-i'

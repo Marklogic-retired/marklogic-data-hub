@@ -382,7 +382,7 @@ export class MlcpUiComponent implements OnChanges {
             field: 'transform_param',
             type: 'string',
             description: 'Optional extra data to pass through to a custom transformation function. Ignored if -transform_module is not specified.\nDefault: no namespace. For details, see Transforming Content During Ingestion.',
-            value: `entity=${entityName},flow=${flowName},flowType=input`,
+            value: `entity-name=${entityName},flow-name=${flowName}`,
             readOnly: true,
           },
         ],

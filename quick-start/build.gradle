@@ -125,6 +125,7 @@ task copyIndexHtml(type: Copy) {
 
 task runUI(type: NpmTask) {
     args = ['start']
+    dependsOn tasks.npmInstallUI
 }
 
 processResources {

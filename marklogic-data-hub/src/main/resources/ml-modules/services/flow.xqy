@@ -20,6 +20,9 @@ module namespace service = "http://marklogic.com/rest-api/resource/flow";
 import module namespace config = "http://marklogic.com/data-hub/config"
   at "/com.marklogic.hub/lib/config.xqy";
 
+import module namespace consts = "http://marklogic.com/data-hub/consts"
+  at "/com.marklogic.hub/lib/consts.xqy";
+
 import module namespace debug = "http://marklogic.com/data-hub/debug"
   at "/com.marklogic.hub/lib/debug-lib.xqy";
 
@@ -88,7 +91,7 @@ declare function post(
   perf:log('/v1/resources/flow:post', function() {
     let $entity-name := map:get($params, "entity-name")
     let $flow-name := map:get($params, "flow-name")
-    let $flow-type := map:get($params, "flow-type")
+    let $flow-type := $consts:HARMONIZE_FLOW
     let $job-id := map:get($params, "job-id")
 
     (: determine the database to insert into :)
@@ -115,7 +118,7 @@ declare function post(
           for $identifier in $identifiers
           return
             try {
-              flow:run-flow($job-id, $flow, $identifier, $target-database, $options)
+              flow:run-flow($job-id, $flow, $identifier, $options)
             }
             catch($ex) {
               (: error is already logged in flow-lib:main() :)

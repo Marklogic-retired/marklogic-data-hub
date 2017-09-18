@@ -22,9 +22,6 @@ class RunFlowTask extends HubTask {
     public String flowName
 
     @Input
-    public FlowType flowType
-
-    @Input
     public Integer batchSize
 
     @Input
@@ -52,10 +49,6 @@ class RunFlowTask extends HubTask {
         }
         if (flowName == null) {
             throw new FlowNameRequiredException()
-        }
-        if (flowType == null) {
-            flowType = project.hasProperty("flowType") ?
-                FlowType.getFlowType(project.property("flowType")) : FlowType.HARMONIZE
         }
         if (batchSize == null) {
             batchSize = project.hasProperty("batchSize") ?
@@ -90,7 +83,7 @@ class RunFlowTask extends HubTask {
         }
 
         FlowManager fm = getFlowManager()
-        Flow flow = fm.getFlow(entityName, flowName, flowType)
+        Flow flow = fm.getFlow(entityName, flowName, FlowType.HARMONIZE)
         if (flow == null) {
             throw new FlowNotFoundException(entityName, flowName);
         }

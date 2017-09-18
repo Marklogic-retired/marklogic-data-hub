@@ -39,7 +39,13 @@ function main(id, rawContent, options) {
     });
   }
 
-  return dhf.makeEnvelope(content, headers, triples, options.dataFormat);
+  var envelope = dhf.makeEnvelope(content, headers, triples, options.dataFormat);
+
+  // log the final envelope as a trace
+  // only fires if tracing is enabled
+  dhf.logTrace(dhf.writerContext(envelope));
+
+  return envelope;
 }
 
 module.exports = {

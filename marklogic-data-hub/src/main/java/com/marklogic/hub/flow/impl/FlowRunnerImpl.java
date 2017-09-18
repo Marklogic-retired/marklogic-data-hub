@@ -317,7 +317,6 @@ public class FlowRunnerImpl implements FlowRunner {
                 RequestParameters params = new RequestParameters();
                 params.add("entity-name", flow.getEntityName());
                 params.add("flow-name", flow.getName());
-                params.add("flow-type", flow.getType().toString());
                 params.put("job-id", jobId);
                 params.put("identifiers", items);
                 params.put("target-database", targetDatabase);
