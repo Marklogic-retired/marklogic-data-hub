@@ -34,18 +34,22 @@ declare function plugin:main(
   let $content := dhf:run($content-context, function() {
     content:create-content($id, $raw-content, $options)
   })
+  let $_ := xdmp:log(("content:", $content))
 
   let $header-context := dhf:headers-context($content)
   let $headers := dhf:run($header-context, function() {
     headers:create-headers($id, $content, $options)
   })
+  let $_ := xdmp:log(("header:", $headers))
 
   let $triple-context := dhf:triples-context($content, $headers)
   let $triples := dhf:run($triple-context, function() {
     plugin:create-triples($id, $content, $headers, $options)
   })
+  let $_ := xdmp:log(("triple:", $triples))
 
   let $envelope := dhf:make-envelope($content, $headers, $triples, map:get($options, "dataFormat"))
+  let $_ := xdmp:log(("envelope:", $envelope))
   return
     $envelope
 };
