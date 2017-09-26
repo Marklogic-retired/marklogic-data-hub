@@ -85,58 +85,64 @@ declare function debug:dump-env()
 
 declare function debug:dump-env($name as xs:string?)
 {
-  let $request-path := xdmp:get-request-path()
-  let $request-path :=
-    if ($request-path = '/MarkLogic/rest-api/endpoints/resource-service-query.xqy') then
-      let $params := fn:string-join(
-        for $f in xdmp:get-request-field-names()[fn:starts-with(., "rs:")]
-        let $value := xdmp:get-request-field($f)
+  if (debug:on()) then
+    let $request-path := xdmp:get-request-path()
+    let $request-path :=
+      if ($request-path = '/MarkLogic/rest-api/endpoints/resource-service-query.xqy') then
+        let $params := fn:string-join(
+          for $f in xdmp:get-request-field-names()[fn:starts-with(., "rs:")]
+          let $value := xdmp:get-request-field($f)
+          return
+            $f || "=" || fn:string-join($value, ", "),
+        "&amp;")
         return
-          $f || "=" || fn:string-join($value, ", "),
-      "&amp;")
-      return
-        "/v1/resources/" || xdmp:get-request-field("name") || "?" || $params
-    else
-      $request-path
-  return
-    debug:log((
-      "",
-      "",
-      "################################################################",
-      "REQUEST DETAILS:",
-      "",
-      if ($name) then
-        (
-          "  **" || $name || "**",
-          ""
-        )
-      else (),
-      "  [" || xdmp:get-request-method() || "]  " || $request-path,
-      "",
-      "  [Headers]",
-      for $h in xdmp:get-request-header-names()
-      return
-        "    " || $h || " => " || xdmp:get-request-header($h),
-      "",
-      "  [Request Params]",
-      for $p in xdmp:get-request-field-names()[fn:not(fn:starts-with(., "rs:"))]
-      return
-        "    " || $p || " => " || fn:string-join(xdmp:get-request-field($p), ", "),
-      let $body := xdmp:get-request-body()
-      return
-        if (fn:exists($body)) then
-        (
-          "",
-          "  [Body]",
-          "  " || xdmp:describe($body, (), ())
-        )
+          "/v1/resources/" || xdmp:get-request-field("name") || "?" || $params
+      else
+        $request-path
+    return
+      debug:log((
+        "",
+        "",
+        "################################################################",
+        "REQUEST DETAILS:",
+        "",
+        if ($name) then
+          (
+            "  **" || $name || "**",
+            ""
+          )
         else (),
-      "",
-      "################################################################",
-      "",
-      "",
-      ""
-    ))
+        "  [" || xdmp:get-request-method() || "]  " || $request-path,
+        "",
+        "  [Headers]",
+        for $h in xdmp:get-request-header-names()
+        return
+          "    " || $h || " => " || xdmp:get-request-header($h),
+        "",
+        "  [Request Params]",
+        for $p in xdmp:get-request-field-names()[fn:not(fn:starts-with(., "rs:"))]
+        return
+          "    " || $p || " => " || fn:string-join(xdmp:get-request-field($p), ", "),
+        let $body :=
+          try {
+            xdmp:get-request-body()
+          }
+          catch($ex) {()}
+        return
+          if (fn:exists($body)) then
+          (
+            "",
+            "  [Body]",
+            "  " || xdmp:describe($body, (), ())
+          )
+          else (),
+        "",
+        "################################################################",
+        "",
+        "",
+        ""
+      ))
+  else ()
 };
 
 declare function debug:dump-map($m as map:map)
