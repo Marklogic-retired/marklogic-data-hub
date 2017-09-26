@@ -24,7 +24,7 @@ import com.marklogic.appdeployer.command.forests.DeployForestsCommand;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.mgmt.PayloadParser;
 import com.marklogic.mgmt.SaveReceipt;
-import com.marklogic.mgmt.databases.DatabaseManager;
+import com.marklogic.mgmt.resource.databases.DatabaseManager;
 import com.marklogic.rest.util.JsonNodeUtil;
 
 import java.io.File;
@@ -99,7 +99,7 @@ public class DeployHubDatabaseCommand extends DeployDatabaseCommand {
 
     public String buildPayload(CommandContext context) {
         String payload = getPayload(context);
-        return payload != null ? tokenReplacer.replaceTokens(payload, context.getAppConfig(), false) : null;
+        return payload != null ? payloadTokenReplacer.replaceTokens(payload, context.getAppConfig(), false) : null;
     }
 
     protected String getPayload(CommandContext context) {
@@ -109,7 +109,7 @@ public class DeployHubDatabaseCommand extends DeployDatabaseCommand {
             return null;
         }
         String str = node.toString();
-        return str != null ? tokenReplacer.replaceTokens(str, context.getAppConfig(), false) : str;
+        return str != null ? payloadTokenReplacer.replaceTokens(str, context.getAppConfig(), false) : str;
     }
 
     protected JsonNode mergeDatabaseFiles(AppConfig appConfig) {

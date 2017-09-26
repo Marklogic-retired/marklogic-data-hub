@@ -138,7 +138,8 @@ if (!(
     gradle.startParameter.taskNames*.toLowerCase().contains("bootrun") ||
     gradle.startParameter.taskNames*.toLowerCase().contains("test") ||
     gradle.startParameter.taskNames*.toLowerCase().contains("publishplugins") ||
-    gradle.startParameter.taskNames*.toLowerCase().contains("bintrayUpload")
+    gradle.startParameter.taskNames*.toLowerCase().contains("bintrayUpload") ||
+    project.hasProperty('skipui')
     )
    ) {
   processResources.dependsOn copyIndexHtml

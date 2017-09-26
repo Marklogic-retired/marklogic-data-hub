@@ -18,11 +18,12 @@ class DataHubPlugin implements Plugin<Project> {
 
     @Override
     void apply(Project project) {
-        if (DataHub.versionCompare(project.gradle.gradleVersion, "3.1") == -1) {
+        if (DataHub.versionCompare(project.gradle.gradleVersion, "3.4") == -1) {
             logger.error("\n\n" +
                 "********************************\n" +
                 "Hold the phone!\n\n" +
-                "You need Gradle 3.1 or greater.\n" +
+                "You need Gradle 3.4 or greater.\n" +
+                "We provide gradle wrappers ./gradlew or gradlew.bat for your convenience.\n" +
                 "********************************" +
                 "\n\n")
             return

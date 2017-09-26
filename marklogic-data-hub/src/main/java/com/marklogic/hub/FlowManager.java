@@ -268,7 +268,7 @@ public class FlowManager extends ResourceManager {
         return oldFlows;
     }
 
-    public List<String> updateLegacyFlows(String fromVersion) throws IOException {
+    public List<String> updateLegacyFlows(String fromVersion) {
 
         Scaffolding scaffolding = new Scaffolding(hubConfig.getProjectDir(), hubConfig.newFinalClient());
 

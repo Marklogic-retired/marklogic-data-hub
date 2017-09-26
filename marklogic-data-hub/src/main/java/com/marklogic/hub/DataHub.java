@@ -38,33 +38,20 @@ import com.marklogic.hub.deploy.HubAppDeployer;
 import com.marklogic.hub.deploy.commands.*;
 import com.marklogic.hub.deploy.util.HubDeployStatusListener;
 import com.marklogic.hub.error.ServerValidationException;
-import com.marklogic.hub.scaffold.Scaffolding;
-import com.marklogic.hub.util.JsonXor;
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.admin.AdminManager;
-import com.marklogic.mgmt.appservers.ServerManager;
-import com.marklogic.mgmt.databases.DatabaseManager;
+import com.marklogic.mgmt.resource.appservers.ServerManager;
+import com.marklogic.mgmt.resource.databases.DatabaseManager;
 import com.marklogic.rest.util.Fragment;
 import com.marklogic.rest.util.ResourcesFragment;
-import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
-import org.springframework.util.FileCopyUtils;
-import org.springframework.web.client.ResourceAccessException;
-
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.file.*;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.regex.Pattern;
 
 public class DataHub {
 

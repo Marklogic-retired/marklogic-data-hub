@@ -21,9 +21,9 @@ import com.marklogic.appdeployer.command.CommandContext;
 import com.marklogic.appdeployer.command.ResourceFilenameFilter;
 import com.marklogic.appdeployer.command.SortOrderConstants;
 import com.marklogic.hub.HubConfig;
-import com.marklogic.mgmt.ResourceManager;
 import com.marklogic.mgmt.SaveReceipt;
-import com.marklogic.mgmt.appservers.ServerManager;
+import com.marklogic.mgmt.resource.ResourceManager;
+import com.marklogic.mgmt.resource.appservers.ServerManager;
 import com.marklogic.rest.util.JsonNodeUtil;
 
 import java.io.File;
@@ -83,7 +83,7 @@ public class DeployHubServersCommand extends AbstractResourceCommand {
             return null;
         }
         String str = node.toString();
-        return str != null ? tokenReplacer.replaceTokens(str, context.getAppConfig(), false) : str;
+        return str != null ? payloadTokenReplacer.replaceTokens(str, context.getAppConfig(), false) : str;
     }
 
     protected JsonNode mergeServerFiles(File f) {

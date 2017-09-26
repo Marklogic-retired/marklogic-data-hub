@@ -21,7 +21,7 @@ import com.marklogic.appdeployer.ConfigDir;
 import com.marklogic.appdeployer.DefaultAppConfigFactory;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
-import com.marklogic.client.helper.DatabaseClientConfig;
+import com.marklogic.client.ext.DatabaseClientConfig;
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.ManageConfig;
 import com.marklogic.mgmt.admin.AdminConfig;

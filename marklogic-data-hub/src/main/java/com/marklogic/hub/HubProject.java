@@ -128,65 +128,60 @@ public class HubProject {
      * This means putting certain files and folders in place.
      */
     public void init(Map<String, String> customTokens) {
-        try {
-            this.pluginsDir.toFile().mkdirs();
+        this.pluginsDir.toFile().mkdirs();
 
-            Path serversDir = getHubServersDir();
-            serversDir.toFile().mkdirs();
-            writeResourceFile("ml-config/servers/staging-server.json", serversDir.resolve("staging-server.json"), true);
-            writeResourceFile("ml-config/servers/final-server.json", serversDir.resolve("final-server.json"), true);
-            writeResourceFile("ml-config/servers/trace-server.json", serversDir.resolve("trace-server.json"), true);
-            writeResourceFile("ml-config/servers/job-server.json", serversDir.resolve("job-server.json"), true);
+        Path serversDir = getHubServersDir();
+        serversDir.toFile().mkdirs();
+        writeResourceFile("ml-config/servers/staging-server.json", serversDir.resolve("staging-server.json"), true);
+        writeResourceFile("ml-config/servers/final-server.json", serversDir.resolve("final-server.json"), true);
+        writeResourceFile("ml-config/servers/trace-server.json", serversDir.resolve("trace-server.json"), true);
+        writeResourceFile("ml-config/servers/job-server.json", serversDir.resolve("job-server.json"), true);
 
-            Path databasesDir = getHubDatabaseDir();
-            databasesDir.toFile().mkdirs();
-            writeResourceFile("ml-config/databases/staging-database.json", databasesDir.resolve("staging-database.json"), true);
-            writeResourceFile("ml-config/databases/final-database.json", databasesDir.resolve("final-database.json"), true);
-            writeResourceFile("ml-config/databases/trace-database.json", databasesDir.resolve("trace-database.json"), true);
-            writeResourceFile("ml-config/databases/job-database.json", databasesDir.resolve("job-database.json"), true);
-            writeResourceFile("ml-config/databases/modules-database.json", databasesDir.resolve("modules-database.json"), true);
-            writeResourceFile("ml-config/databases/schemas-database.json", databasesDir.resolve("schemas-database.json"), true);
-            writeResourceFile("ml-config/databases/triggers-database.json", databasesDir.resolve("triggers-database.json"), true);
+        Path databasesDir = getHubDatabaseDir();
+        databasesDir.toFile().mkdirs();
+        writeResourceFile("ml-config/databases/staging-database.json", databasesDir.resolve("staging-database.json"), true);
+        writeResourceFile("ml-config/databases/final-database.json", databasesDir.resolve("final-database.json"), true);
+        writeResourceFile("ml-config/databases/trace-database.json", databasesDir.resolve("trace-database.json"), true);
+        writeResourceFile("ml-config/databases/job-database.json", databasesDir.resolve("job-database.json"), true);
+        writeResourceFile("ml-config/databases/modules-database.json", databasesDir.resolve("modules-database.json"), true);
+        writeResourceFile("ml-config/databases/schemas-database.json", databasesDir.resolve("schemas-database.json"), true);
+        writeResourceFile("ml-config/databases/triggers-database.json", databasesDir.resolve("triggers-database.json"), true);
 
-            Path securityDir = getHubSecurityDir();
-            Path rolesDir = securityDir.resolve("roles");
-            Path usersDir = securityDir.resolve("users");
+        Path securityDir = getHubSecurityDir();
+        Path rolesDir = securityDir.resolve("roles");
+        Path usersDir = securityDir.resolve("users");
 
-            rolesDir.toFile().mkdirs();
-            usersDir.toFile().mkdirs();
+        rolesDir.toFile().mkdirs();
+        usersDir.toFile().mkdirs();
 
-            writeResourceFile("ml-config/security/roles/data-hub-role.json", rolesDir.resolve("data-hub-role.json"), true);
-            writeResourceFile("ml-config/security/users/data-hub-user.json", usersDir.resolve("data-hub-user.json"), true);
+        writeResourceFile("ml-config/security/roles/data-hub-role.json", rolesDir.resolve("data-hub-role.json"), true);
+        writeResourceFile("ml-config/security/users/data-hub-user.json", usersDir.resolve("data-hub-user.json"), true);
 
-            Path mimetypesDir = getHubMimetypesDir();
-            mimetypesDir.toFile().mkdirs();
-            writeResourceFile("ml-config/mimetypes/woff.json", mimetypesDir.resolve("woff.json"), true);
-            writeResourceFile("ml-config/mimetypes/woff2.json", mimetypesDir.resolve("woff2.json"), true);
+        Path mimetypesDir = getHubMimetypesDir();
+        mimetypesDir.toFile().mkdirs();
+        writeResourceFile("ml-config/mimetypes/woff.json", mimetypesDir.resolve("woff.json"), true);
+        writeResourceFile("ml-config/mimetypes/woff2.json", mimetypesDir.resolve("woff2.json"), true);
 
-            getUserServersDir().toFile().mkdirs();
-            getUserDatabaseDir().toFile().mkdirs();
+        getUserServersDir().toFile().mkdirs();
+        getUserDatabaseDir().toFile().mkdirs();
 
-            Path gradlew = projectDir.resolve("gradlew");
-            writeResourceFile("scaffolding/gradlew", gradlew);
-            makeExecutable(gradlew);
+        Path gradlew = projectDir.resolve("gradlew");
+        writeResourceFile("scaffolding/gradlew", gradlew);
+        makeExecutable(gradlew);
 
-            Path gradlewbat = projectDir.resolve("gradlew.bat");
-            writeResourceFile("scaffolding/gradlew.bat", gradlewbat);
-            makeExecutable(gradlewbat);
+        Path gradlewbat = projectDir.resolve("gradlew.bat");
+        writeResourceFile("scaffolding/gradlew.bat", gradlewbat);
+        makeExecutable(gradlewbat);
 
-            Path gradleWrapperDir = projectDir.resolve("gradle").resolve("wrapper");
-            gradleWrapperDir.toFile().mkdirs();
+        Path gradleWrapperDir = projectDir.resolve("gradle").resolve("wrapper");
+        gradleWrapperDir.toFile().mkdirs();
 
-            writeResourceFile("scaffolding/gradle/wrapper/gradle-wrapper.jar", gradleWrapperDir.resolve("gradle-wrapper.jar"));
-            writeResourceFile("scaffolding/gradle/wrapper/gradle-wrapper.properties", gradleWrapperDir.resolve("gradle-wrapper.properties"));
+        writeResourceFile("scaffolding/gradle/wrapper/gradle-wrapper.jar", gradleWrapperDir.resolve("gradle-wrapper.jar"));
+        writeResourceFile("scaffolding/gradle/wrapper/gradle-wrapper.properties", gradleWrapperDir.resolve("gradle-wrapper.properties"));
 
-            writeResourceFile("scaffolding/build_gradle", projectDir.resolve("build.gradle"));
-            writeResourceFileWithReplace(customTokens, "scaffolding/gradle_properties", projectDir.resolve("gradle.properties"));
-            writeResourceFile("scaffolding/gradle-local_properties", projectDir.resolve("gradle-local.properties"));
-        }
-        catch(IOException e) {
-            throw new RuntimeException(e);
-        }
+        writeResourceFile("scaffolding/build_gradle", projectDir.resolve("build.gradle"));
+        writeResourceFileWithReplace(customTokens, "scaffolding/gradle_properties", projectDir.resolve("gradle.properties"));
+        writeResourceFile("scaffolding/gradle-local_properties", projectDir.resolve("gradle-local.properties"));
     }
 
     private void makeExecutable(Path file) {
@@ -202,11 +197,11 @@ public class HubProject {
         }
     }
 
-    private void writeResourceFile(String srcFile, Path dstFile) throws IOException {
+    private void writeResourceFile(String srcFile, Path dstFile) {
         writeResourceFile(srcFile, dstFile, false);
     }
 
-    private void writeResourceFile(String srcFile, Path dstFile, boolean overwrite) throws IOException {
+    private void writeResourceFile(String srcFile, Path dstFile, boolean overwrite) {
         if (overwrite || !dstFile.toFile().exists()) {
             logger.info("Getting file: " + srcFile);
             InputStream inputStream = HubProject.class.getClassLoader().getResourceAsStream(srcFile);
@@ -214,26 +209,31 @@ public class HubProject {
         }
     }
 
-    private void writeResourceFileWithReplace(Map<String, String> customTokens, String srcFile, Path dstFile) throws IOException {
+    private void writeResourceFileWithReplace(Map<String, String> customTokens, String srcFile, Path dstFile) {
         writeResourceFileWithReplace(customTokens, srcFile, dstFile, false);
     }
 
-    private void writeResourceFileWithReplace(Map<String, String> customTokens, String srcFile, Path dstFile, boolean overwrite) throws IOException {
-        if (overwrite || !dstFile.toFile().exists()) {
-            logger.info("Getting file with Replace: " + srcFile);
-            InputStream inputStream = HubProject.class.getClassLoader().getResourceAsStream(srcFile);
+    private void writeResourceFileWithReplace(Map<String, String> customTokens, String srcFile, Path dstFile, boolean overwrite) {
+        try {
+            if (overwrite || !dstFile.toFile().exists()) {
+                logger.info("Getting file with Replace: " + srcFile);
+                InputStream inputStream = HubProject.class.getClassLoader().getResourceAsStream(srcFile);
 
-            String fileContents = IOUtils.toString(inputStream);
-            for (String key : customTokens.keySet()) {
+                String fileContents = IOUtils.toString(inputStream);
+                for (String key : customTokens.keySet()) {
 
-                String value = customTokens.get(key);
-                if (value != null) {
-                    fileContents = fileContents.replace(key, value);
+                    String value = customTokens.get(key);
+                    if (value != null) {
+                        fileContents = fileContents.replace(key, value);
+                    }
                 }
+                FileWriter writer = new FileWriter(dstFile.toFile());
+                writer.write(fileContents);
+                writer.close();
             }
-            FileWriter writer = new FileWriter(dstFile.toFile());
-            writer.write(fileContents);
-            writer.close();
+        }
+        catch(IOException e) {
+            throw new RuntimeException(e);
         }
     }
 }

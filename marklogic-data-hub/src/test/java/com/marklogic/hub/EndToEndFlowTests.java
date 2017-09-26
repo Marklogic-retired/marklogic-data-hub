@@ -1,5 +1,6 @@
 package com.marklogic.hub;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.client.DatabaseClient;
@@ -42,11 +43,11 @@ import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual;
 import static org.junit.jupiter.api.Assertions.*;
 
 interface CreateFlowListener {
-    void onFlowCreated(CodeFormat codeFormat, DataFormat dataFormat, FlowType flowType, String srcDir, Path flowDir) throws IOException;
+    void onFlowCreated(CodeFormat codeFormat, DataFormat dataFormat, FlowType flowType, String srcDir, Path flowDir);
 }
 
 interface ComboListener {
-    void onCombo(CodeFormat codeFormat, DataFormat dataFormat, FlowType flowType) throws IOException, InterruptedException, ParserConfigurationException, SAXException, JSONException;
+    void onCombo(CodeFormat codeFormat, DataFormat dataFormat, FlowType flowType);
 }
 
 class Tuple<X, Y> {
@@ -107,13 +108,10 @@ public class EndToEndFlowTests extends HubTestBase {
     private static Scaffolding scaffolding;
 
     @BeforeAll
-    public static void setup() throws IOException, InterruptedException, ParserConfigurationException, SAXException, JSONException {
+    public static void setup() {
         XMLUnit.setIgnoreWhitespace(true);
 
-        File projectDirFile = projectDir.toFile();
-        if (projectDirFile.isDirectory() && projectDirFile.exists()) {
-            FileUtils.deleteDirectory(projectDirFile);
-        }
+        deleteProjectDir();
 
         installHub();
         enableTracing();
@@ -171,12 +169,12 @@ public class EndToEndFlowTests extends HubTestBase {
     }
 
     @AfterAll
-    public static void teardown() throws IOException {
+    public static void teardown() {
         uninstallHub();
     }
 
     @TestFactory
-    public List<DynamicTest> generateTests() throws InterruptedException, ParserConfigurationException, SAXException, JSONException, IOException {
+    public List<DynamicTest> generateTests() {
         DataHub dataHub = getDataHub();
         List<DynamicTest> tests = new ArrayList<>();
 
@@ -427,7 +425,7 @@ public class EndToEndFlowTests extends HubTestBase {
                 JsonNode actual = dataHub.validateUserModules();
 
                 String expected = "{\"errors\":{}}";
-                JSONAssert.assertEquals(expected, new ObjectMapper().writeValueAsString(actual), true);
+                JSONAssert.assertEquals(expected, toJsonString(actual), true);
 
                 Path flowDir = entityDir.resolve(flowType.toString()).resolve(flowName);
                 FileUtils.deleteDirectory(flowDir.toFile());
@@ -452,7 +450,7 @@ public class EndToEndFlowTests extends HubTestBase {
                 if (codeFormat.equals(CodeFormat.JAVASCRIPT)) {
                     String expectedMl9 = "{\"errors\":{\"e2eentity\":{\"" + flowName + "\":{\"content\":{\"msg\":\"JS-JAVASCRIPT: =-00=--\\\\8\\\\sthifalkj;; -- Error running JavaScript request: SyntaxError: Unexpected token =\",\"uri\":\"/entities/e2eentity/" + flowType.toString() + "/" + flowName + "/content.sjs\",\"line\":18,\"column\":0}}}}}";
                     String expectedMl8 = "{\"errors\":{\"e2eentity\":{\"" + flowName + "\":{\"content\":{\"msg\":\"JS-JAVASCRIPT: const contentPlugin = require('./content.sjs'); -- Error running JavaScript request: JS-JAVASCRIPT: =-00=--\\\\8\\\\sthifalkj;; -- Error running JavaScript request: SyntaxError: Unexpected token =\",\"uri\":\"[anonymous]\",\"line\":4,\"column\":22}}}}}";
-                    String actualStr = new ObjectMapper().writeValueAsString(actual);
+                    String actualStr = toJsonString(actual);
                     JSONCompareResult result1 = JSONCompare.compareJSON(expectedMl9, actualStr, JSONCompareMode.STRICT);
                     JSONCompareResult result2 = JSONCompare.compareJSON(expectedMl8, actualStr, JSONCompareMode.STRICT);
                     if (result1.failed() && result2.failed()) {
@@ -461,7 +459,7 @@ public class EndToEndFlowTests extends HubTestBase {
                 }
                 else {
                     String expected = "{\"errors\":{\"e2eentity\":{\"" + flowName + "\":{\"content\":{\"msg\":\"XDMP-UNEXPECTED: (err:XPST0003) Unexpected token syntax error, unexpected Function_, expecting $end\",\"uri\":\"/entities/e2eentity/" + flowType.toString() + "/" + flowName + "/content.xqy\",\"line\":8,\"column\":0}}}}}";
-                    JSONAssert.assertEquals(expected, new ObjectMapper().writeValueAsString(actual), true);
+                    JSONAssert.assertEquals(expected, toJsonString(actual), true);
                 }
 
                 Path flowDir = entityDir.resolve(flowType.toString()).resolve(flowName);
@@ -486,7 +484,7 @@ public class EndToEndFlowTests extends HubTestBase {
                 if (codeFormat.equals(CodeFormat.JAVASCRIPT)) {
                     String expectedMl9 = "{\"errors\":{\"e2eentity\":{\"" + flowName + "\":{\"headers\":{\"msg\":\"JS-JAVASCRIPT: =-00=--\\\\8\\\\sthifalkj;; -- Error running JavaScript request: SyntaxError: Unexpected token =\",\"uri\":\"/entities/e2eentity/" + flowType.toString() + "/" + flowName + "/headers.sjs\",\"line\":16,\"column\":2}}}}}";
                     String expectedMl8 = "{\"errors\":{\"e2eentity\":{\"" + flowName + "\":{\"headers\":{\"msg\":\"JS-JAVASCRIPT: const headersPlugin = require('./headers.sjs'); -- Error running JavaScript request: JS-JAVASCRIPT: =-00=--\\\\8\\\\sthifalkj;; -- Error running JavaScript request: SyntaxError: Unexpected token =\",\"uri\":\"[anonymous]\",\"line\":5,\"column\":22}}}}}";
-                    String actualStr = new ObjectMapper().writeValueAsString(actual);
+                    String actualStr = toJsonString(actual);
                     JSONCompareResult result1 = JSONCompare.compareJSON(expectedMl9, actualStr, JSONCompareMode.STRICT);
                     JSONCompareResult result2 = JSONCompare.compareJSON(expectedMl8, actualStr, JSONCompareMode.STRICT);
                     if (result1.failed() && result2.failed()) {
@@ -495,7 +493,7 @@ public class EndToEndFlowTests extends HubTestBase {
                 }
                 else {
                     String expected = "{\"errors\":{\"e2eentity\":{\"" + flowName + "\":{\"headers\":{\"msg\":\"XDMP-UNEXPECTED: (err:XPST0003) Unexpected token syntax error, unexpected Function_, expecting $end\",\"uri\":\"/entities/e2eentity/" + flowType.toString() + "/" + flowName + "/headers.xqy\",\"line\":30,\"column\":0}}}}}";
-                    JSONAssert.assertEquals(expected, new ObjectMapper().writeValueAsString(actual), true);
+                    JSONAssert.assertEquals(expected, toJsonString(actual), true);
                 }
 
                 Path flowDir = entityDir.resolve(flowType.toString()).resolve(flowName);
@@ -520,7 +518,7 @@ public class EndToEndFlowTests extends HubTestBase {
                 if (codeFormat.equals(CodeFormat.JAVASCRIPT)) {
                     String expectedMl9 = "{\"errors\":{\"e2eentity\":{\"" + flowName + "\":{\"triples\":{\"msg\":\"JS-JAVASCRIPT: =-00=--\\\\8\\\\sthifalkj;; -- Error running JavaScript request: SyntaxError: Unexpected token =\",\"uri\":\"/entities/e2eentity/" + flowType.toString() + "/" + flowName + "/triples.sjs\",\"line\":16,\"column\":2}}}}}";
                     String expectedMl8 = "{\"errors\":{\"e2eentity\":{\"" + flowName + "\":{\"triples\":{\"msg\":\"JS-JAVASCRIPT: const triplesPlugin = require('./triples.sjs'); -- Error running JavaScript request: JS-JAVASCRIPT: =-00=--\\\\8\\\\sthifalkj;; -- Error running JavaScript request: SyntaxError: Unexpected token =\",\"uri\":\"[anonymous]\",\"line\":6,\"column\":22}}}}}";
-                    String actualStr = new ObjectMapper().writeValueAsString(actual);
+                    String actualStr = toJsonString(actual);
                     JSONCompareResult result1 = JSONCompare.compareJSON(expectedMl9, actualStr, JSONCompareMode.STRICT);
                     JSONCompareResult result2 = JSONCompare.compareJSON(expectedMl8, actualStr, JSONCompareMode.STRICT);
                     if (result1.failed() && result2.failed()) {
@@ -529,7 +527,7 @@ public class EndToEndFlowTests extends HubTestBase {
                 }
                 else {
                     String expected = "{\"errors\":{\"e2eentity\":{\"" + flowName + "\":{\"triples\":{\"msg\":\"XDMP-UNEXPECTED: (err:XPST0003) Unexpected token syntax error, unexpected Function_, expecting $end\",\"uri\":\"/entities/e2eentity/" + flowType.toString() + "/" + flowName + "/triples.xqy\",\"line\":36,\"column\":0}}}}}";
-                    JSONAssert.assertEquals(expected, new ObjectMapper().writeValueAsString(actual), true);
+                    JSONAssert.assertEquals(expected, toJsonString(actual), true);
                 }
 
                 Path flowDir = entityDir.resolve(flowType.toString()).resolve(flowName);
@@ -558,7 +556,7 @@ public class EndToEndFlowTests extends HubTestBase {
                 else {
                     expected = "{\"errors\":{\"e2eentity\":{\"" + flowName + "\":{\"main\":{\"msg\":\"XDMP-UNEXPECTED: (err:XPST0003) Unexpected token syntax error, unexpected Function_, expecting $end\",\"uri\":\"/entities/e2eentity/" + flowType.toString() + "/" + flowName + "/main.xqy\",\"line\":69,\"column\":0}}}}}";
                 }
-                JSONAssert.assertEquals(expected, new ObjectMapper().writeValueAsString(actual), true);
+                JSONAssert.assertEquals(expected, toJsonString(actual), true);
 
                 Path flowDir = entityDir.resolve(flowType.toString()).resolve(flowName);
                 FileUtils.deleteDirectory(flowDir.toFile());
@@ -584,7 +582,7 @@ public class EndToEndFlowTests extends HubTestBase {
                     if (codeFormat.equals(CodeFormat.JAVASCRIPT)) {
                         String expectedMl9 = "{\"errors\":{\"e2eentity\":{\"" + flowName + "\":{\"collector\":{\"msg\":\"JS-JAVASCRIPT: =-00=--\\\\8\\\\sthifalkj;; -- Error running JavaScript request: SyntaxError: Unexpected token =\",\"uri\":\"/entities/e2eentity/" + flowType.toString() + "/" + flowName + "/collector.sjs\",\"line\":13,\"column\":9}}}}}";
                         String expectedMl8 = "{\"errors\":{\"e2eentity\":{\"" + flowName + "\":{\"collector\":{\"msg\":\"JS-JAVASCRIPT: =-00=--\\\\8\\\\sthifalkj;; -- Error running JavaScript request: SyntaxError: Unexpected token =\",\"uri\":\"/entities/e2eentity/" + flowType.toString() + "/" + flowName + "/collector.sjs\",\"line\":13,\"column\":2}}}}}";
-                        String actualStr = new ObjectMapper().writeValueAsString(actual);
+                        String actualStr = toJsonString(actual);
                         JSONCompareResult result1 = JSONCompare.compareJSON(expectedMl9, actualStr, JSONCompareMode.STRICT);
                         JSONCompareResult result2 = JSONCompare.compareJSON(expectedMl8, actualStr, JSONCompareMode.STRICT);
                         if (result1.failed() && result2.failed()) {
@@ -592,7 +590,7 @@ public class EndToEndFlowTests extends HubTestBase {
                         }
                     } else {
                         String expected = "{\"errors\":{\"e2eentity\":{\"" + flowName + "\":{\"collector\":{\"msg\":\"XDMP-UNEXPECTED: (err:XPST0003) Unexpected token syntax error, unexpected Function_, expecting $end\",\"uri\":\"/entities/e2eentity/" + flowType.toString() + "/" + flowName + "/collector.xqy\",\"line\":27,\"column\":0}}}}}";
-                        JSONAssert.assertEquals(expected, new ObjectMapper().writeValueAsString(actual), true);
+                        JSONAssert.assertEquals(expected, toJsonString(actual), true);
                     }
 
                     Path flowDir = entityDir.resolve(flowType.toString()).resolve(flowName);
@@ -622,7 +620,7 @@ public class EndToEndFlowTests extends HubTestBase {
                     } else {
                         expected = "{\"errors\":{\"e2eentity\":{\"" + flowName + "\":{\"writer\":{\"msg\":\"XDMP-UNEXPECTED: (err:XPST0003) Unexpected token syntax error, unexpected Function_, expecting $end\",\"uri\":\"/entities/e2eentity/" + flowType.toString() + "/" + flowName + "/writer.xqy\",\"line\":39,\"column\":0}}}}}";
                     }
-                    JSONAssert.assertEquals(expected, new ObjectMapper().writeValueAsString(actual), true);
+                    JSONAssert.assertEquals(expected, toJsonString(actual), true);
 
                     Path flowDir = entityDir.resolve(flowType.toString()).resolve(flowName);
                     FileUtils.deleteDirectory(flowDir.toFile());
@@ -637,7 +635,7 @@ public class EndToEndFlowTests extends HubTestBase {
         return prefix + "-" + flowType.toString() + "-" + codeFormat.toString() + "-" + dataFormat.toString();
     }
 
-    private static void createLegacyFlow(String prefix, CodeFormat codeFormat, DataFormat dataFormat, FlowType flowType) throws IOException {
+    private static void createLegacyFlow(String prefix, CodeFormat codeFormat, DataFormat dataFormat, FlowType flowType) {
 
         String flowName = getFlowName(prefix, codeFormat, dataFormat, flowType);
         Path flowDir = projectDir.resolve("plugins").resolve("entities").resolve(ENTITY).resolve(flowType.toString()).resolve(flowName);
@@ -668,24 +666,24 @@ public class EndToEndFlowTests extends HubTestBase {
         copyFile("e2e-test/legacy-" + dataFormat.toString() + ".xml", flowDir.resolve("" + flowName + ".xml"));
     }
 
-    private static void scaffoldFlows(String prefix) throws IOException, InterruptedException, ParserConfigurationException, SAXException, JSONException {
+    private static void scaffoldFlows(String prefix) {
         allCombos(((codeFormat, dataFormat, flowType) -> {
             scaffoldFlow(prefix, codeFormat, dataFormat, flowType);
         }));
     }
 
-    private static void scaffoldFlow(String prefix, CodeFormat codeFormat, DataFormat dataFormat, FlowType flowType) throws IOException {
+    private static void scaffoldFlow(String prefix, CodeFormat codeFormat, DataFormat dataFormat, FlowType flowType) {
         String flowName = getFlowName(prefix, codeFormat, dataFormat, flowType);
         scaffolding.createFlow(ENTITY, flowName, flowType, codeFormat, dataFormat);
     }
 
-    private static void createFlows(String prefix, CreateFlowListener listener) throws IOException, InterruptedException, ParserConfigurationException, SAXException, JSONException {
+    private static void createFlows(String prefix, CreateFlowListener listener) {
         allCombos(((codeFormat, dataFormat, flowType) -> {
             createFlow(prefix, codeFormat, dataFormat, flowType, listener);
         }));
     }
 
-    private static void createFlow(String prefix, CodeFormat codeFormat, DataFormat dataFormat, FlowType flowType, CreateFlowListener listener) throws IOException {
+    private static void createFlow(String prefix, CodeFormat codeFormat, DataFormat dataFormat, FlowType flowType, CreateFlowListener listener) {
         String flowName = getFlowName(prefix, codeFormat, dataFormat, flowType);
         Path flowDir = projectDir.resolve("plugins").resolve("entities").resolve(ENTITY).resolve(flowType.toString()).resolve(flowName);
 
@@ -712,11 +710,11 @@ public class EndToEndFlowTests extends HubTestBase {
         }
     }
 
-    private static void copyFile(String srcDir, Path dstDir) throws IOException {
+    private static void copyFile(String srcDir, Path dstDir) {
         FileUtil.copy(getResourceStream(srcDir), dstDir.toFile());
     }
 
-    private void installDocs(DataFormat dataFormat, String collection, DatabaseClient srcClient) throws IOException {
+    private void installDocs(DataFormat dataFormat, String collection, DatabaseClient srcClient) {
         DataMovementManager mgr = stagingDataMovementManager;
         if (srcClient.getDatabase().equals(HubConfig.DEFAULT_FINAL_NAME)) {
             mgr = finalDataMovementManager;
@@ -758,7 +756,7 @@ public class EndToEndFlowTests extends HubTestBase {
         }
     }
 
-    private void testInputFlowViaMlcp(String prefix, String fileSuffix, DatabaseClient databaseClient, CodeFormat codeFormat, DataFormat dataFormat, Map<String, Object> options, FinalCounts finalCounts) throws IOException, ParserConfigurationException, SAXException, JSONException, InterruptedException {
+    private void testInputFlowViaMlcp(String prefix, String fileSuffix, DatabaseClient databaseClient, CodeFormat codeFormat, DataFormat dataFormat, Map<String, Object> options, FinalCounts finalCounts) {
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_TRACE_NAME, HubConfig.DEFAULT_JOB_NAME);
 
         String flowName = getFlowName(prefix, codeFormat, dataFormat, FlowType.INPUT);
@@ -771,22 +769,33 @@ public class EndToEndFlowTests extends HubTestBase {
         Flow flow = flowManager.getFlow(ENTITY, flowName, FlowType.INPUT);
         String inputPath = getResourceFile("e2e-test/input/input" + fileSuffix + "." + dataFormat.toString()).getAbsolutePath();
         String basePath = getResourceFile("e2e-test/input").getAbsolutePath();
-        String optionString = new ObjectMapper().writeValueAsString(options).replace("\"", "\\\"\\\"");
-        JsonNode mlcpOptions = new ObjectMapper().readTree(
-            "{" +
-                "\"input_file_path\":\"" + inputPath.replace("\\", "\\\\\\\\") + "\"," +
-                "\"input_file_type\":\"\\\"documents\\\"\"," +
-                "\"output_collections\":\"\\\"" + ENTITY + "\\\"\"," +
-                "\"output_permissions\":\"\\\"rest-reader,read,rest-writer,update\\\"\"," +
-                "\"output_uri_replace\":\"\\\"" + basePath.replace("\\", "/").replaceAll("^([A-Za-z]):", "/$1:") + ",''\\\"\"," +
-                "\"document_type\":\"\\\"" + dataFormat.toString() + "\\\"\"," +
-                "\"transform_module\":\"\\\"/com.marklogic.hub/mlcp-flow-transform.xqy\\\"\"," +
-                "\"transform_namespace\":\"\\\"http://marklogic.com/data-hub/mlcp-flow-transform\\\"\"," +
-                "\"transform_param\":\"\\\"entity-name=" + ENTITY + ",flow-name=" + flowName + ",options=" + optionString + "\\\"\"" +
-                "}");
-        MlcpRunner mlcpRunner = new MlcpRunner(null, "com.marklogic.hub.util.MlcpMain", getHubConfig(), flow, databaseClient, mlcpOptions, null);
+        String optionString;
+        JsonNode mlcpOptions;
+        try {
+            optionString = toJsonString(options).replace("\"", "\\\"\\\"");
+            mlcpOptions = new ObjectMapper().readTree(
+                "{" +
+                    "\"input_file_path\":\"" + inputPath.replace("\\", "\\\\\\\\") + "\"," +
+                    "\"input_file_type\":\"\\\"documents\\\"\"," +
+                    "\"output_collections\":\"\\\"" + ENTITY + "\\\"\"," +
+                    "\"output_permissions\":\"\\\"rest-reader,read,rest-writer,update\\\"\"," +
+                    "\"output_uri_replace\":\"\\\"" + basePath.replace("\\", "/").replaceAll("^([A-Za-z]):", "/$1:") + ",''\\\"\"," +
+                    "\"document_type\":\"\\\"" + dataFormat.toString() + "\\\"\"," +
+                    "\"transform_module\":\"\\\"/com.marklogic.hub/mlcp-flow-transform.xqy\\\"\"," +
+                    "\"transform_namespace\":\"\\\"http://marklogic.com/data-hub/mlcp-flow-transform\\\"\"," +
+                    "\"transform_param\":\"\\\"entity-name=" + ENTITY + ",flow-name=" + flowName + ",options=" + optionString + "\\\"\"" +
+                    "}");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+    MlcpRunner mlcpRunner = new MlcpRunner(null, "com.marklogic.hub.util.MlcpMain", getHubConfig(), flow, databaseClient, mlcpOptions, null);
         mlcpRunner.start();
-        mlcpRunner.join();
+        try {
+            mlcpRunner.join();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         logger.error(mlcpRunner.getProcessOutput());
 
         assertEquals(finalCounts.stagingCount, getStagingDocCount());
@@ -805,7 +814,7 @@ public class EndToEndFlowTests extends HubTestBase {
             if (dataFormat.equals(DataFormat.JSON)) {
                 String expected = getResource("e2e-test/" + filename + "." + dataFormat.toString());
                 String actual = stagingDocMgr.read("/input" + fileSuffix + "." + dataFormat.toString()).next().getContent(new StringHandle()).get();
-                JSONAssert.assertEquals(expected, actual, false);
+                assertJsonEqual(expected, actual, false);
             } else {
                 Document expected = getXmlFromResource("e2e-test/" + filename + "." + dataFormat.toString());
                 Document actual = stagingDocMgr.read("/input" + fileSuffix + "." + dataFormat.toString()).next().getContent(new DOMHandle()).get();
@@ -823,7 +832,7 @@ public class EndToEndFlowTests extends HubTestBase {
             if (dataFormat.equals(DataFormat.JSON)) {
                 String expected = getResource("e2e-test/" + filename + "." + dataFormat.toString());
                 String actual = finalDocMgr.read("/input" + fileSuffix + "." + dataFormat.toString()).next().getContent(new StringHandle()).get();
-                JSONAssert.assertEquals(expected, actual, false);
+                assertJsonEqual(expected, actual, false);
             } else {
                 Document expected = getXmlFromResource("e2e-test/" + filename + "." + dataFormat.toString());
                 Document actual = finalDocMgr.read("/input" + fileSuffix + "." + dataFormat.toString()).next().getContent(new DOMHandle()).get();
@@ -841,7 +850,7 @@ public class EndToEndFlowTests extends HubTestBase {
         assertEquals(finalCounts.jobStatus, node.get("status").asText());
     }
 
-    private void testInputFlowViaREST(String prefix, String fileSuffix, CodeFormat codeFormat, DataFormat dataFormat, Map<String, Object> options, FinalCounts finalCounts) throws IOException, ParserConfigurationException, SAXException, JSONException, InterruptedException {
+    private void testInputFlowViaREST(String prefix, String fileSuffix, CodeFormat codeFormat, DataFormat dataFormat, Map<String, Object> options, FinalCounts finalCounts) {
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_TRACE_NAME, HubConfig.DEFAULT_JOB_NAME);
 
         String flowName = getFlowName(prefix, codeFormat, dataFormat, FlowType.INPUT);
@@ -855,7 +864,7 @@ public class EndToEndFlowTests extends HubTestBase {
         serverTransform.addParameter("job-id", UUID.randomUUID().toString());
         serverTransform.addParameter("entity-name", ENTITY);
         serverTransform.addParameter("flow-name", flowName);
-        String optionString = new ObjectMapper().writeValueAsString(options);
+        String optionString = toJsonString(options);
         serverTransform.addParameter("options", optionString);
         FileHandle handle = new FileHandle(getResourceFile("e2e-test/input/input." + dataFormat.toString()));
         Format format = null;
@@ -896,7 +905,7 @@ public class EndToEndFlowTests extends HubTestBase {
             if (dataFormat.equals(DataFormat.JSON)) {
                 String expected = getResource("e2e-test/" + filename + "." + dataFormat.toString());
                 String actual = stagingDocMgr.read("/input" + fileSuffix + "." + dataFormat.toString()).next().getContent(new StringHandle()).get();
-                JSONAssert.assertEquals(expected, actual, false);
+                assertJsonEqual(expected, actual, false);
             } else {
                 Document expected = getXmlFromResource("e2e-test/" + filename + "." + dataFormat.toString());
                 Document actual = stagingDocMgr.read("/input" + fileSuffix + "." + dataFormat.toString()).next().getContent(new DOMHandle()).get();
@@ -910,7 +919,7 @@ public class EndToEndFlowTests extends HubTestBase {
         Vector<String> completed, Vector<String> failed,
         Map<String, Object> options,
         DatabaseClient srcClient, String destDb,
-        boolean waitForCompletion) throws IOException, InterruptedException
+        boolean waitForCompletion)
     {
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_TRACE_NAME, HubConfig.DEFAULT_JOB_NAME);
 
@@ -942,7 +951,11 @@ public class EndToEndFlowTests extends HubTestBase {
             flowRunner.awaitCompletion();
         }
         else {
-            flowRunner.awaitCompletion(2, TimeUnit.MILLISECONDS);
+            try {
+                flowRunner.awaitCompletion(2, TimeUnit.MILLISECONDS);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
         }
         return new Tuple<>(flowRunner, jobTicket);
     }
@@ -950,7 +963,7 @@ public class EndToEndFlowTests extends HubTestBase {
     private void testHarmonizeFlow(
         String prefix, CodeFormat codeFormat, DataFormat dataFormat,
         Map<String, Object> options, DatabaseClient srcClient, String destDb,
-        FinalCounts finalCounts, boolean waitForCompletion) throws IOException, ParserConfigurationException, SAXException, JSONException, InterruptedException
+        FinalCounts finalCounts, boolean waitForCompletion)
     {
         String flowName = getFlowName(prefix, codeFormat, dataFormat, FlowType.HARMONIZE);
 
@@ -990,7 +1003,7 @@ public class EndToEndFlowTests extends HubTestBase {
                 String expected = getResource("e2e-test/" + filename + "." + dataFormat.toString());
                 for (int i = 0; i < TEST_SIZE; i+=10) {
                     String actual = mgr.read("/input-" + i + "." + dataFormat.toString()).next().getContent(new StringHandle()).get();
-                    JSONAssert.assertEquals(expected, actual, false);
+                    assertJsonEqual(expected, actual, false);
                 }
             }
 
@@ -1011,7 +1024,7 @@ public class EndToEndFlowTests extends HubTestBase {
                 } else {
                     String optionsExpected = getResource("e2e-test/" + finalCounts.optionsFile + ".json");
                     String optionsActual = mgr.read("/options-test.json").next().getContent(new StringHandle()).get();
-                    JSONAssert.assertEquals(optionsExpected, optionsActual, false);
+                    assertJsonEqual(optionsExpected, optionsActual, false);
                 }
             }
         }
@@ -1024,7 +1037,7 @@ public class EndToEndFlowTests extends HubTestBase {
     private void testHarmonizeFlowWithFailedMain(
         String prefix, CodeFormat codeFormat, DataFormat dataFormat,
         Map<String, Object> options, DatabaseClient srcClient, String destDb,
-        FinalCounts finalCounts) throws IOException, InterruptedException
+        FinalCounts finalCounts)
     {
         String flowName = getFlowName(prefix, codeFormat, dataFormat, FlowType.HARMONIZE);
 

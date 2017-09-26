@@ -5,21 +5,24 @@ import com.marklogic.appdeployer.command.AbstractCommand;
 import com.marklogic.appdeployer.command.CommandContext;
 import com.marklogic.appdeployer.command.SortOrderConstants;
 import com.marklogic.appdeployer.command.modules.AllButAssetsModulesFinder;
-import com.marklogic.appdeployer.command.modules.AssetModulesFinder;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.document.DocumentWriteSet;
 import com.marklogic.client.document.JSONDocumentManager;
 import com.marklogic.client.document.XMLDocumentManager;
+import com.marklogic.client.ext.modulesloader.Modules;
+import com.marklogic.client.ext.modulesloader.impl.AssetFileLoader;
+import com.marklogic.client.ext.modulesloader.impl.DefaultModulesLoader;
+import com.marklogic.client.ext.modulesloader.impl.PropertiesModuleManager;
+import com.marklogic.client.ext.util.DefaultDocumentPermissionsParser;
+import com.marklogic.client.ext.util.DocumentPermissionsParser;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.Format;
 import com.marklogic.client.io.StringHandle;
-import com.marklogic.client.modulesloader.Modules;
-import com.marklogic.client.modulesloader.impl.*;
-import com.marklogic.client.modulesloader.xcc.DefaultDocumentFormatGetter;
+import com.marklogic.com.marklogic.client.ext.file.CacheBusterDocumentFileProcessor;
+import com.marklogic.com.marklogic.client.ext.modulesloader.impl.UserModulesFinder;
 import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.HubConfig;
-import com.marklogic.hub.deploy.util.CacheBustingXccAssetLoader;
-import com.marklogic.hub.deploy.util.EntityDefModulesFinder;
+import com.marklogic.com.marklogic.client.ext.modulesloader.impl.EntityDefModulesFinder;
 import com.marklogic.hub.deploy.util.HubFileFilter;
 import com.marklogic.hub.error.LegacyFlowsException;
 import com.marklogic.hub.flow.Flow;
@@ -28,7 +31,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.FileVisitResult;
@@ -65,42 +67,15 @@ public class LoadUserModulesCommand extends AbstractCommand {
         return pmm;
     }
 
-    private CacheBustingXccAssetLoader getAssetLoader(AppConfig config) {
-        CacheBustingXccAssetLoader l = new CacheBustingXccAssetLoader();
-        l.setHost(config.getHost());
-        l.setUsername(config.getRestAdminUsername());
-        l.setPassword(config.getRestAdminPassword());
-        l.setDatabaseName(config.getModulesDatabaseName());
-        if (config.getAppServicesPort() != null) {
-            l.setPort(config.getAppServicesPort());
-        }
-
-        String permissions = config.getModulePermissions();
-        if (permissions != null) {
-            l.setPermissions(permissions);
-        }
-
-        String[] extensions = config.getAdditionalBinaryExtensions();
-        if (extensions != null) {
-            DefaultDocumentFormatGetter getter = new DefaultDocumentFormatGetter();
-            for (String ext : extensions) {
-                getter.getBinaryExtensions().add(ext);
-            }
-            l.setDocumentFormatGetter(getter);
-        }
-
-        FileFilter assetFileFilter = config.getAssetFileFilter();
-        if (assetFileFilter != null) {
-            l.setFileFilter(assetFileFilter);
-        }
-
-        l.setBulkLoad(config.isBulkLoadAssets());
-        return l;
+    private AssetFileLoader getAssetLoader(AppConfig config) {
+        AssetFileLoader assetFileLoader = new AssetFileLoader(hubConfig.newModulesDbClient());
+        assetFileLoader.addDocumentFileProcessor(new CacheBusterDocumentFileProcessor());
+        return assetFileLoader;
     }
 
     private DefaultModulesLoader getStagingModulesLoader(AppConfig config) {
-        XccAssetLoader assetLoader = getAssetLoader(config);
-        assetLoader.setFileFilter(new HubFileFilter());
+        AssetFileLoader assetLoader = getAssetLoader(config);
+        assetLoader.addFileFilter(new HubFileFilter());
         assetLoader.setPermissions(config.getModulePermissions());
 
         this.threadPoolTaskExecutor = new ThreadPoolTaskExecutor();
@@ -149,13 +124,13 @@ public class LoadUserModulesCommand extends AbstractCommand {
         DatabaseClient finalClient = hubConfig.newFinalClient();
 
         Path userModulesPath = hubConfig.getHubPluginsDir();
-        File baseDir = userModulesPath.normalize().toAbsolutePath().toFile();
+        String baseDir = userModulesPath.normalize().toAbsolutePath().toString();
         Path startPath = userModulesPath.resolve("entities");
 
         // load any user files under plugins/* int the modules database.
         // this will ignore REST folders under entities
         DefaultModulesLoader modulesLoader = getStagingModulesLoader(config);
-        modulesLoader.loadModules(baseDir, new AssetModulesFinder(), stagingClient);
+        modulesLoader.loadModules(baseDir, new UserModulesFinder(), stagingClient);
 
         JSONDocumentManager entityDocMgr = finalClient.newJSONDocumentManager();
 
@@ -181,7 +156,7 @@ public class LoadUserModulesCommand extends AbstractCommand {
                 Files.walkFileTree(startPath, new SimpleFileVisitor<Path>() {
                     @Override
                     public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-                        File currentDir = dir.normalize().toAbsolutePath().toFile();
+                        String currentDir = dir.normalize().toAbsolutePath().toString();
 
                         // for REST dirs we need to deploy all the REST stuff (transforms, options, services, etc)
                         if (isInputRestDir(dir)) {
@@ -194,7 +169,7 @@ public class LoadUserModulesCommand extends AbstractCommand {
                             return FileVisitResult.SKIP_SUBTREE;
                         }
                         else if (isEntityDir(dir, startPath.toAbsolutePath())) {
-                            Modules modules = new EntityDefModulesFinder().findModules(dir.toFile());
+                            Modules modules = new EntityDefModulesFinder().findModules(dir.toString());
                             DocumentMetadataHandle meta = new DocumentMetadataHandle();
                             meta.getCollections().add("http://marklogic.com/entity-services/models");
                             documentPermissionsParser.parsePermissions(hubConfig.modulePermissions, meta.getPermissions());

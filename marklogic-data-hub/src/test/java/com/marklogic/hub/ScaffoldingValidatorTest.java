@@ -36,6 +36,7 @@ public class ScaffoldingValidatorTest extends HubTestBase {
 
    @Before
    public void setup() throws IOException {
+       FileUtils.deleteDirectory(new File(projectPath));
        createPlugins(TEST_ENTITY_NAME, FlowType.INPUT, CodeFormat.XQUERY);
        createPlugins(TEST_ENTITY_NAME, FlowType.HARMONIZE, CodeFormat.XQUERY);
    }

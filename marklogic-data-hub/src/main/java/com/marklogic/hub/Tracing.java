@@ -6,7 +6,6 @@ import com.marklogic.client.extensions.ResourceServices.ServiceResult;
 import com.marklogic.client.extensions.ResourceServices.ServiceResultIterator;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.util.RequestParameters;
-import com.sun.jersey.api.client.ClientHandlerException;
 
 public class Tracing extends ResourceManager {
     private static final String NAME = "tracing";
@@ -41,18 +40,13 @@ public class Tracing extends ResourceManager {
      */
     public boolean isEnabled() {
         RequestParameters params = new RequestParameters();
-        try {
-            ServiceResultIterator resultItr = this.getServices().get(params);
-            if (resultItr == null || ! resultItr.hasNext()) {
-                return false;
-            }
-            ServiceResult res = resultItr.next();
-            StringHandle handle = new StringHandle();
-            String enabled = res.getContent(handle).get();
-            return Boolean.parseBoolean(enabled);
-        }
-        catch(ClientHandlerException e) {
+        ServiceResultIterator resultItr = this.getServices().get(params);
+        if (resultItr == null || ! resultItr.hasNext()) {
             return false;
         }
+        ServiceResult res = resultItr.next();
+        StringHandle handle = new StringHandle();
+        String enabled = res.getContent(handle).get();
+        return Boolean.parseBoolean(enabled);
     }
 }

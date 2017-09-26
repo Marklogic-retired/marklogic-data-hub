@@ -20,7 +20,7 @@ import static org.junit.Assert.assertTrue;
 public class DataHubInstallTest extends HubTestBase {
 
     @BeforeClass
-    public static void setup() throws IOException {
+    public static void setup() {
         XMLUnit.setIgnoreWhitespace(true);
         uninstallHub();
         installHub();
@@ -31,6 +31,15 @@ public class DataHubInstallTest extends HubTestBase {
         assertTrue(getDataHub().isInstalled().isInstalled());
 
         assertTrue(getModulesFile("/com.marklogic.hub/lib/config.xqy").startsWith(getResource("data-hub-test/core-modules/config.xqy")));
+        int totalCount = getDocCount(HubConfig.DEFAULT_MODULES_DB_NAME, null);
+        int hubModulesCount = getDocCount(HubConfig.DEFAULT_MODULES_DB_NAME,"hub-core-module");
+        assertTrue(totalCount + "is not correct", 80 == totalCount || 61 == totalCount);
+        assertTrue(hubModulesCount + " is not correct", 40 == hubModulesCount || 21 == hubModulesCount);
+
+        assertTrue("trace options not installed", getModulesFile("/Default/data-hub-TRACING/rest-api/options/traces.xml").length() > 0);
+        assertTrue("trace options not installed", getModulesFile("/Default/data-hub-JOBS/rest-api/options/jobs.xml").length() > 0);
+        assertTrue("trace options not installed", getModulesFile("/Default/data-hub-STAGING/rest-api/options/default.xml").length() > 0);
+        assertTrue("trace options not installed", getModulesFile("/Default/data-hub-FINAL/rest-api/options/default.xml").length() > 0);
     }
 
     @Test
@@ -67,7 +76,7 @@ public class DataHubInstallTest extends HubTestBase {
                 "    order by $x ascending" +
                 "    return $x, \",\")");
         EvalResult res = resultItr.next();
-        assertEquals("data-hub-role,rest-admin", res.getString());
+        assertEquals("data-hub-role,rest-admin,rest-reader,rest-writer", res.getString());
         assertEquals(
                 getResource("data-hub-test/plugins/entities/test-entity/harmonize/final/content.xqy"),
                 getModulesFile("/entities/test-entity/harmonize/final/content.xqy"));
