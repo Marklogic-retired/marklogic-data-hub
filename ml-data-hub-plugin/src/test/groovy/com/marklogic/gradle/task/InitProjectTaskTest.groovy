@@ -8,7 +8,7 @@ import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 class InitProjectTaskTest extends BaseTest {
 
     def setupSpec() {
-        makeProperties = false;
+        createGradleFiles()
     }
 
     def "init a hub project"() {

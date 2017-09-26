@@ -7,6 +7,7 @@ import static org.gradle.testkit.runner.TaskOutcome.FAILED
 class NotInstalledTests extends BaseTest {
 
     def setupSpec() {
+        createGradleFiles()
         runTask('hubInit')
         runTask('mlUndeploy')
     }

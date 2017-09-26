@@ -29,8 +29,6 @@ import javax.xml.parsers.ParserConfigurationException
 
 class BaseTest extends Specification {
 
-    public static boolean makeProperties = true;
-
     static final TemporaryFolder testProjectDir = new TemporaryFolder()
     static File buildFile
     static File propertiesFile
@@ -239,10 +237,13 @@ class BaseTest extends Specification {
         """
     }
 
+    static void createGradleFiles() {
+        createBuildFile()
+        createFullPropertiesFile()
+    }
+
     def setupSpec() {
         XMLUnit.setIgnoreWhitespace(true)
         testProjectDir.create()
-        createBuildFile()
-        createFullPropertiesFile()
     }
 }

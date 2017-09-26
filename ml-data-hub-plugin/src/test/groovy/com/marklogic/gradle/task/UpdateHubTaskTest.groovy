@@ -1,6 +1,6 @@
 package com.marklogic.gradle.task
 
-import org.gradle.internal.impldep.org.apache.commons.io.FileUtils
+import org.apache.commons.io.FileUtils
 import org.gradle.testkit.runner.UnexpectedBuildSuccess
 
 import java.nio.file.Paths
@@ -10,6 +10,7 @@ import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 class UpdateHubTaskTest extends BaseTest {
 
     def setupSpec() {
+        createGradleFiles()
         runTask('hubInit')
     }
 

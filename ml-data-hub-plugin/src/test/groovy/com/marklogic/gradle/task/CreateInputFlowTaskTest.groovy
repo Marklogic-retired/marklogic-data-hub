@@ -9,6 +9,10 @@ import static org.gradle.testkit.runner.TaskOutcome.FAILED
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
 class CreateInputFlowTaskTest extends BaseTest {
+    def setupSpec() {
+        createGradleFiles()
+    }
+
     def "createInputFlow with no entityName"() {
         when:
         def result = runFailTask('hubCreateInputFlow')

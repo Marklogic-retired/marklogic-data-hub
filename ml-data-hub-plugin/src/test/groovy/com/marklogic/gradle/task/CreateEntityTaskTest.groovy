@@ -9,6 +9,10 @@ import static org.gradle.testkit.runner.TaskOutcome.FAILED
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
 class CreateEntityTaskTest extends BaseTest {
+    def setupSpec() {
+        createGradleFiles()
+    }
+
     def "create entity with no name"() {
         when:
         def result = runFailTask('hubCreateEntity')
