@@ -598,6 +598,7 @@ public class HubConfig {
         return password;
     }
 
+    @JsonIgnore
     public AppConfig getAppConfig() {
         Properties properties = getProperties(this.environment);
         AppConfig config = new DefaultAppConfigFactory(name -> properties.getProperty(name)).newAppConfig();

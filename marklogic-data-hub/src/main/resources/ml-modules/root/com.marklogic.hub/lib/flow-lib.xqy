@@ -604,11 +604,7 @@ declare function flow:run-main(
       trace:set-plugin-label("main"),
       trace:error-trace($ex, xdmp:elapsed-time() - $before)
     ),
-    (: for input flows we want to rethrow to force a failure :)
-    if (rfc:get-flow-type() eq $consts:INPUT_FLOW) then (
-      xdmp:rethrow()
-    )
-    else ()
+    xdmp:rethrow()
   }
   return
     $resp

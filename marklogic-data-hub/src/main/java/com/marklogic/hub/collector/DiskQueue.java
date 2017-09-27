@@ -42,7 +42,7 @@ import java.util.logging.Logger;
  * reads/writes were happening simultaneously, once anything had spilled to
  * disk.
  *
- * @param <E>
+ * @param <E> - A Serializable Class
  */
 public class DiskQueue<E extends Serializable> extends AbstractQueue<String> {
 

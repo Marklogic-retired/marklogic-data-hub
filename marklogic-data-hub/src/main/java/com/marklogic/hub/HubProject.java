@@ -126,6 +126,7 @@ public class HubProject {
     /**
      * Initializes a directory as a hub project directory.
      * This means putting certain files and folders in place.
+     * @param customTokens - some custom tokens to start with
      */
     public void init(Map<String, String> customTokens) {
         this.pluginsDir.toFile().mkdirs();

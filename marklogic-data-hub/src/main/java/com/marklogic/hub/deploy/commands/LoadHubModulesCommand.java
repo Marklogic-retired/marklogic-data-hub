@@ -45,12 +45,6 @@ public class LoadHubModulesCommand extends AbstractCommand {
             });
         }
 
-        if (appConfig.getModuleTokensPropertiesSources() != null) {
-            for (PropertiesSource ps : appConfig.getModuleTokensPropertiesSources()) {
-                r.addPropertiesSource(ps);
-            }
-        }
-
         return r;
     }
 

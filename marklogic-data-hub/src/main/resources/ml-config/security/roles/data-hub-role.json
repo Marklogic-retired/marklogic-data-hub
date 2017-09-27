@@ -43,6 +43,16 @@
       "kind": "execute"
     },
     {
+      "privilege-name": "xdbc:invoke",
+      "action": "http://marklogic.com/xdmp/privileges/xdbc-invoke",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "xdbc:invoke-in",
+      "action": "http://marklogic.com/xdmp/privileges/xdbc-invoke-in",
+      "kind": "execute"
+    },
+    {
       "privilege-name": "xdmp:document-load",
       "action": "http://marklogic.com/xdmp/privileges/xdmp-document-load",
       "kind": "execute"

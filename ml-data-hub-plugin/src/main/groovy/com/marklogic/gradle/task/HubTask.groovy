@@ -1,5 +1,7 @@
 package com.marklogic.gradle.task
 
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.marklogic.appdeployer.command.CommandContext
 import com.marklogic.client.DatabaseClient
 import com.marklogic.hub.*
@@ -42,5 +44,24 @@ abstract class HubTask extends DefaultTask {
     boolean isHubInstalled() {
         InstallInfo installInfo = getDataHub().isInstalled();
         return installInfo.isInstalled();
+    }
+
+    String prettyPrint(str) {
+        try {
+            def jsonObject
+
+            ObjectMapper mapper = new ObjectMapper()
+            if (str instanceof JsonNode) {
+                jsonObject = str
+            }
+            else {
+                jsonObject = mapper.readValue(str, Object.class)
+            }
+            return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonObject)
+        }
+        catch(Exception e) {
+            return str
+        }
+
     }
 }

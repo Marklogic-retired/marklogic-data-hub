@@ -3,7 +3,9 @@ package com.marklogic.hub.job;
 import com.marklogic.client.pojo.annotation.Id;
 import com.marklogic.hub.flow.Flow;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class Job {
     private String jobId;
@@ -13,7 +15,7 @@ public class Job {
     private String jobName;
     private Date startTime;
     private Date endTime;
-    private String jobOutput;
+    private List<String> jobOutput;
     private JobStatus status = JobStatus.STARTED;
 
     private long successfulEvents = 0;
@@ -43,8 +45,16 @@ public class Job {
         return this;
     }
 
-    public Job withJobOutput(String jobOutput) {
+    public Job withJobOutput(List<String> jobOutput) {
         this.jobOutput = jobOutput;
+        return this;
+    }
+
+    public Job withJobOutput(String jobOutput) {
+        if (this.jobOutput == null) {
+            this.jobOutput = new ArrayList<>();
+        }
+        this.jobOutput.add(jobOutput);
         return this;
     }
 
@@ -104,7 +114,7 @@ public class Job {
         return status;
     }
 
-    public String getJobOutput() {
+    public List<String> getJobOutput() {
         return jobOutput;
     }
 
