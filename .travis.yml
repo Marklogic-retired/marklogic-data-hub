@@ -14,4 +14,4 @@ before_install:
  - ./.travis/download.sh
 
 script:
-  - docker-compose run marklogic
+  - docker run marklogiccommunity/marklogic-datahub:${ML_VERSION}
