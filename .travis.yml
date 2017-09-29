@@ -1,3 +1,10 @@
+matrix:
+  include:
+    - env: ML_VERSION=8.0-7
+    - env: ML_VERSION=9.0-1.1
+    - env: ML_VERSION=9.0-2
+    - env: ML_VERSION=9.0-3
+
 dist: trusty
 sudo: required
 services:
@@ -7,4 +14,4 @@ before_install:
  - ./.travis/download.sh
 
 script:
-  - docker-compose run marklogic
+  - docker run marklogiccommunity/marklogic-datahub:${ML_VERSION}
