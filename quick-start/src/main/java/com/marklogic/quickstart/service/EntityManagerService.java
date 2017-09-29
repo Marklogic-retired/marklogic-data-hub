@@ -199,7 +199,12 @@ public class EntityManagerService {
 
         HubConfig hubConfig = environmentConfig.getMlSettings();
 
-        DefaultModulesLoader modulesLoader = new DefaultModulesLoader(new AssetFileLoader(hubConfig.newFinalClient()));
+        String timestampFile = hubConfig.getUserModulesDeployTimestampFile();
+        PropertiesModuleManager propsManager = new PropertiesModuleManager(timestampFile);
+        propsManager.deletePropertiesFile();
+
+        DefaultModulesLoader modulesLoader = new DefaultModulesLoader(new AssetFileLoader(hubConfig.newFinalClient(), propsManager));
+
         ThreadPoolTaskExecutor threadPoolTaskExecutor = new ThreadPoolTaskExecutor();
         threadPoolTaskExecutor.setCorePoolSize(16);
 
@@ -209,12 +214,7 @@ public class EntityManagerService {
 
         threadPoolTaskExecutor.afterPropertiesSet();
         modulesLoader.setTaskExecutor(threadPoolTaskExecutor);
-
-        File timestampFile = hubConfig.getHubModulesDeployTimestampFile();
-        PropertiesModuleManager propsManager = new PropertiesModuleManager(timestampFile);
-        propsManager.deletePropertiesFile();
         modulesLoader.setModulesManager(propsManager);
-        modulesLoader.setDatabaseClient(hubConfig.newFinalClient());
         modulesLoader.setShutdownTaskExecutorAfterLoadingModules(false);
 
         SearchOptionsGenerator generator = new SearchOptionsGenerator(environmentConfig.getStagingClient());
@@ -229,12 +229,19 @@ public class EntityManagerService {
 
                 File file = Paths.get(dir.toString(), HubConfig.ENTITY_SEARCH_OPTIONS_FILE).toFile();
                 FileUtils.writeStringToFile(file, options);
-                modulesLoader.installQueryOptions(new FileSystemResource(file));
+
+                for (DatabaseClient client : Arrays.asList(hubConfig.newStagingClient(), hubConfig.newFinalClient())) {
+                    modulesLoader.setDatabaseClient(client);
+                    modulesLoader.installQueryOptions(new FileSystemResource(file));
+                }
             }
         }
         catch(IOException e) {
             e.printStackTrace();
         }
+
+        // TODO: call modulesLoader.waitForTaskExecutorToFinish when 3.1 comes out
+        threadPoolTaskExecutor.shutdown();
     }
 
     public void saveDbIndexes(EnvironmentConfig environmentConfig) {

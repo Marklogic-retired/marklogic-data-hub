@@ -85,6 +85,20 @@ public class DataHubTest extends HubTestBase {
         dh.validateServer();
     }
 
+    @Test
+    public void testValidateServer807() throws ServerValidationException {
+        expect(am.getServerVersion()).andReturn("8.0-7");
+        replay(am);
+        dh.validateServer();
+    }
+
+    @Test
+    public void testValidateServer809() throws ServerValidationException {
+        expect(am.getServerVersion()).andReturn("8.0-9");
+        replay(am);
+        dh.validateServer();
+    }
+
     @Test(expected = ServerValidationException.class)
     public void testValidateServerBeyond804WithDot() throws ServerValidationException {
         expect(am.getServerVersion()).andReturn("8.0-5.2");
@@ -113,6 +127,27 @@ public class DataHubTest extends HubTestBase {
         dh.validateServer();
     }
 
+    @Test
+    public void testValidateServer8nightlyValid() throws ServerValidationException {
+        expect(am.getServerVersion()).andReturn("8.0-20170702");
+        replay(am);
+        dh.validateServer();
+    }
+
+    @Test
+    public void testValidateServer8nightlyValidEdge() throws ServerValidationException {
+        expect(am.getServerVersion()).andReturn("8.0-20170701");
+        replay(am);
+        dh.validateServer();
+    }
+
+    @Test(expected = ServerValidationException.class)
+    public void testValidateServer8nightlyInValid() throws ServerValidationException {
+        expect(am.getServerVersion()).andReturn("8.0-20170630");
+        replay(am);
+        dh.validateServer();
+    }
+
     @Test(expected = ServerValidationException.class)
     public void testInvalidServer9nightly() throws ServerValidationException {
         expect(am.getServerVersion()).andReturn("9.0-20160719");
@@ -120,9 +155,16 @@ public class DataHubTest extends HubTestBase {
         dh.validateServer();
     }
 
-    @Test
+    @Test(expected = ServerValidationException.class)
     public void testValidateServer9() throws ServerValidationException {
         expect(am.getServerVersion()).andReturn("9.0");
+        replay(am);
+        dh.validateServer();
+    }
+
+    @Test
+    public void testValidateServer9011() throws ServerValidationException {
+        expect(am.getServerVersion()).andReturn("9.0-1.1");
         replay(am);
         dh.validateServer();
     }

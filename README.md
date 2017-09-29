@@ -24,7 +24,7 @@ This project allows you to deploy a skeleton Data Hub into MarkLogic. With some 
 You need these to get started
 
 - Java 8 JDK
-- MarkLogic 8.2 or greater, or 9.0 or greater
+- MarkLogic 8.0-7 or greater, or 9.0-1.1 or greater
 - Gradle 3.4 or greater **(Optional)**
 
 ### TL;DR

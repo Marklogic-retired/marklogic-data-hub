@@ -66,6 +66,7 @@ public class FlowManagerService {
             FlowModel flowModel = new FlowModel(entityName, flow.getName());
             flowModel.codeFormat = flow.getCodeFormat();
             flowModel.dataFormat = flow.getDataFormat();
+            flowModel.flowType = flow.getType();
 
             Path flowPath = entityPath.resolve(flowType.toString()).resolve(flow.getName());
             List<String> pluginNames = FileUtil.listDirectFolders(flowPath.toFile());

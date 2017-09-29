@@ -276,7 +276,7 @@ export class FlowsComponent implements OnInit, OnDestroy {
     let actions = {
       save: (newEntity: Entity) => {
       this.entitiesService.createEntity(newEntity).subscribe((entity: Entity) => {
-        this.entities.splice(_.sortedIndexBy(this.entities, entity, 'entityName'), 0, entity);
+        this.entities.splice(_.sortedIndexBy(this.entities, entity, 'name'), 0, entity);
         this.toggleEntity(entity);
       });
       }
@@ -321,21 +321,24 @@ export class FlowsComponent implements OnInit, OnDestroy {
 
   runFlow(flow: Flow, flowType: string) {
     if (this.flowHasError(flow.entityName, flow.flowName)) {
-      this.dialogService.showCustomDialog({
-        component: HasBugsDialogComponent,
-        providers: [
-          { provide: 'errors', useValue: this.getErrors()[flow.entityName][flow.flowName] }
-        ],
-        isModal: true
-      });
-    } else {
-      const lower = flowType.toLowerCase();
-      if (lower === 'input') {
-        this.entitiesService.getInputFlowOptions(flow).subscribe(mlcpOptions => {
-          this.mlcpOptions = mlcpOptions;
-        });
-      }
+      this.showFlowErrorDialog(flow);
     }
+    const lower = flowType.toLowerCase();
+    if (lower === 'input') {
+      this.entitiesService.getInputFlowOptions(flow).subscribe(mlcpOptions => {
+        this.mlcpOptions = mlcpOptions;
+      });
+    }
+  }
+
+  showFlowErrorDialog(flow: Flow): void {
+    this.dialogService.showCustomDialog({
+      component: HasBugsDialogComponent,
+      providers: [
+        { provide: 'errors', useValue: this.getErrors()[flow.entityName][flow.flowName] }
+      ],
+      isModal: true
+    });
   }
 
   runInputFlow(flow: Flow, options: any): void {

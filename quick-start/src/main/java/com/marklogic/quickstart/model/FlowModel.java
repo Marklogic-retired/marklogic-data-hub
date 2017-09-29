@@ -17,6 +17,7 @@ package com.marklogic.quickstart.model;
 
 import com.marklogic.hub.flow.CodeFormat;
 import com.marklogic.hub.flow.DataFormat;
+import com.marklogic.hub.flow.FlowType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +26,7 @@ public class FlowModel {
 
     public String entityName;
     public String flowName;
+    public FlowType flowType;
     public CodeFormat codeFormat;
     public DataFormat dataFormat;
     public Boolean useEsModel;
@@ -45,6 +47,8 @@ public class FlowModel {
         sb.append(entityName);
         sb.append("flowName=");
         sb.append(flowName);
+        sb.append("flowType=");
+        sb.append(flowType.toString());
         sb.append("codeFormat=");
         sb.append(codeFormat.toString());
         sb.append("dataFomrat=");

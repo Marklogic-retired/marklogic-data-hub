@@ -52,7 +52,9 @@ export class EntitiesService {
   // }
 
   createEntity(entity: Entity) {
-    return this.post(this.url('/entities/create'), entity);
+    return this.http.post(this.url('/entities/create'), entity).map((res:Response) => {
+      return new Entity().fromJSON(res.json());
+    });
   }
 
   saveEntity(entity: Entity) {

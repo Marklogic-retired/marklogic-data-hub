@@ -50,7 +50,7 @@ public class LoadHubModulesCommand extends AbstractCommand {
 
     @Override
     public void execute(CommandContext context) {
-        File timestampFile = hubConfig.getHubModulesDeployTimestampFile();
+        String timestampFile = hubConfig.getHubModulesDeployTimestampFile();
         PropertiesModuleManager propsManager = new PropertiesModuleManager(timestampFile);
         propsManager.deletePropertiesFile();
 

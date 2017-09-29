@@ -32,7 +32,9 @@ export class MlcpUiComponent implements OnChanges {
 
   @Input() flow: Flow;
   @Input() mlcpOptions: any;
+  @Input() hasErrors: boolean;
   @Output() onRun: EventEmitter<MlcpOptions> = new EventEmitter();
+  @Output() onErrorRun: EventEmitter<any> = new EventEmitter();
 
   finishedEvent: EventEmitter<any>;
 
@@ -567,6 +569,10 @@ export class MlcpUiComponent implements OnChanges {
   }
 
   runImport(): void {
-    this.onRun.emit(this.mlcp);
+    if (this.hasErrors) {
+      this.onErrorRun.emit(null);
+    } else {
+      this.onRun.emit(this.mlcp);
+    }
   }
 }

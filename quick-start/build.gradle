@@ -53,7 +53,7 @@ dependencies {
     compile("org.springframework.boot:spring-boot-devtools:${springBootVersion}")
 
     // Needed for the Upload feature using mlcp
-    compile("com.marklogic:mlcp:9.0.2") {
+    compile("com.marklogic:mlcp:9.0.3") {
       exclude group: 'org.apache.avro', module: 'avro-tools'
     }
     compile("com.marklogic:marklogic-spring-web:1.0")

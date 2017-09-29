@@ -32,6 +32,7 @@ public class ScaffoldingTest extends HubTestBase {
     static Path projectPath = Paths.get(PROJECT_PATH).toAbsolutePath();
     private static File projectDir = projectPath.toFile();
     private static File pluginDir = projectPath.resolve("plugins").toFile();
+    private static boolean isMl9 = true;
 
     @BeforeClass
     public static void setup() throws IOException {
@@ -41,6 +42,8 @@ public class ScaffoldingTest extends HubTestBase {
             FileUtils.deleteDirectory(projectDir);
         }
         installHub();
+        isMl9 = getMlMajorVersion() == 9;
+
     }
 
     @After
@@ -89,22 +92,30 @@ public class ScaffoldingTest extends HubTestBase {
 
     @Test
     public void createESXqyInputFlow() throws IOException, SAXException {
-        createInputFlow(CodeFormat.XQUERY, DataFormat.XML, true);
+        if (isMl9) {
+            createInputFlow(CodeFormat.XQUERY, DataFormat.XML, true);
+        }
     }
 
     @Test
     public void createESXqyHarmonizeFlow() throws IOException, SAXException {
-        createHarmonizeFlow(CodeFormat.XQUERY, DataFormat.XML, true);
+        if (isMl9) {
+            createHarmonizeFlow(CodeFormat.XQUERY, DataFormat.XML, true);
+        }
     }
 
     @Test
     public void createESSjsInputFlow() throws IOException, SAXException {
-        createInputFlow(CodeFormat.JAVASCRIPT, DataFormat.JSON, true);
+        if (isMl9) {
+            createInputFlow(CodeFormat.JAVASCRIPT, DataFormat.JSON, true);
+        }
     }
 
     @Test
     public void createESSjsHarmonizeFlow() throws IOException, SAXException {
-        createHarmonizeFlow(CodeFormat.JAVASCRIPT, DataFormat.JSON, true);
+        if (isMl9) {
+            createHarmonizeFlow(CodeFormat.JAVASCRIPT, DataFormat.JSON, true);
+        }
     }
 
     private void createFlow(CodeFormat codeFormat, DataFormat dataFormat, FlowType flowType, boolean useEsModel) throws IOException, SAXException {

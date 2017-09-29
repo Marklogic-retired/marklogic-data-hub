@@ -56,10 +56,17 @@ public class LoadUserModulesCommand extends AbstractCommand {
     public LoadUserModulesCommand(HubConfig hubConfig) {
         setExecuteSortOrder(SortOrderConstants.LOAD_MODULES + 1);
         this.hubConfig = hubConfig;
+
+        this.threadPoolTaskExecutor = new ThreadPoolTaskExecutor();
+        this.threadPoolTaskExecutor.setCorePoolSize(16);
+        // 10 minutes should be plenty of time to wait for REST API modules to be loaded
+        this.threadPoolTaskExecutor.setAwaitTerminationSeconds(60 * 10);
+        this.threadPoolTaskExecutor.setWaitForTasksToCompleteOnShutdown(true);
+        this.threadPoolTaskExecutor.afterPropertiesSet();
     }
 
     private PropertiesModuleManager getModulesManager() {
-        File timestampFile = hubConfig.getUserModulesDeployTimestampFile();
+        String timestampFile = hubConfig.getUserModulesDeployTimestampFile();
         PropertiesModuleManager pmm = new PropertiesModuleManager(timestampFile);
         if (forceLoad) {
             pmm.deletePropertiesFile();
@@ -67,28 +74,20 @@ public class LoadUserModulesCommand extends AbstractCommand {
         return pmm;
     }
 
-    private AssetFileLoader getAssetLoader(AppConfig config) {
-        AssetFileLoader assetFileLoader = new AssetFileLoader(hubConfig.newModulesDbClient());
+    private AssetFileLoader getAssetFileLoader(AppConfig config, PropertiesModuleManager moduleManager) {
+        AssetFileLoader assetFileLoader = new AssetFileLoader(hubConfig.newModulesDbClient(), moduleManager);
         assetFileLoader.addDocumentFileProcessor(new CacheBusterDocumentFileProcessor());
+        assetFileLoader.addFileFilter(new HubFileFilter());
+        assetFileLoader.setPermissions(config.getModulePermissions());
         return assetFileLoader;
     }
 
     private DefaultModulesLoader getStagingModulesLoader(AppConfig config) {
-        AssetFileLoader assetLoader = getAssetLoader(config);
-        assetLoader.addFileFilter(new HubFileFilter());
-        assetLoader.setPermissions(config.getModulePermissions());
+        PropertiesModuleManager moduleManager = getModulesManager();
+        AssetFileLoader assetFileLoader = getAssetFileLoader(config, moduleManager);
 
-        this.threadPoolTaskExecutor = new ThreadPoolTaskExecutor();
-        this.threadPoolTaskExecutor.setCorePoolSize(16);
-
-        // 10 minutes should be plenty of time to wait for REST API modules to be loaded
-        this.threadPoolTaskExecutor.setAwaitTerminationSeconds(60 * 10);
-        this.threadPoolTaskExecutor.setWaitForTasksToCompleteOnShutdown(true);
-
-        this.threadPoolTaskExecutor.afterPropertiesSet();
-
-        DefaultModulesLoader modulesLoader = new DefaultModulesLoader(assetLoader);
-        modulesLoader.setModulesManager(getModulesManager());
+        DefaultModulesLoader modulesLoader = new DefaultModulesLoader(assetFileLoader);
+        modulesLoader.setModulesManager(moduleManager);
         modulesLoader.setTaskExecutor(this.threadPoolTaskExecutor);
         modulesLoader.setShutdownTaskExecutorAfterLoadingModules(false);
 

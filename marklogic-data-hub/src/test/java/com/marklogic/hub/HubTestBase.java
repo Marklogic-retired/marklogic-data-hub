@@ -367,6 +367,10 @@ public class HubTestBase {
         return count;
     }
 
+    protected static int getMlMajorVersion() {
+        return Integer.parseInt(getDataHub().getMarkLogicVersion().substring(0, 1));
+    }
+
     public static void clearDatabases(String... databases) {
         ServerEvaluationCall eval = stagingClient.newServerEval();
         String installer =

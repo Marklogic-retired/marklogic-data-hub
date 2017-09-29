@@ -24,6 +24,7 @@ import com.marklogic.client.datamovement.impl.JobTicketImpl;
 import com.marklogic.client.datamovement.impl.QueryBatcherImpl;
 import com.marklogic.client.extensions.ResourceManager;
 import com.marklogic.client.extensions.ResourceServices;
+import com.marklogic.client.io.Format;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.util.RequestParameters;
 import com.marklogic.hub.HubConfig;
@@ -341,7 +342,7 @@ public class FlowRunnerImpl implements FlowRunner {
                     ObjectMapper objectMapper = new ObjectMapper();
                     params.put("options", objectMapper.writeValueAsString(options));
                 }
-                ResourceServices.ServiceResultIterator resultItr = this.getServices().post(params, new StringHandle("{}"));
+                ResourceServices.ServiceResultIterator resultItr = this.getServices().post(params, new StringHandle("{}").withFormat(Format.JSON));
                 if (resultItr == null || ! resultItr.hasNext()) {
                     resp = new RunFlowResponse();
                 }

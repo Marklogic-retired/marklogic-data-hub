@@ -1,6 +1,5 @@
 package com.marklogic.hub;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.client.DatabaseClient;
@@ -17,7 +16,6 @@ import com.marklogic.hub.util.FileUtil;
 import com.marklogic.hub.util.MlcpRunner;
 import org.apache.commons.io.FileUtils;
 import org.custommonkey.xmlunit.XMLUnit;
-import org.json.JSONException;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DynamicTest;
@@ -29,10 +27,7 @@ import org.skyscreamer.jsonassert.JSONCompare;
 import org.skyscreamer.jsonassert.JSONCompareMode;
 import org.skyscreamer.jsonassert.JSONCompareResult;
 import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
 
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -106,6 +101,7 @@ public class EndToEndFlowTests extends HubTestBase {
     private String installDocError;
 
     private static Scaffolding scaffolding;
+    private static boolean isMl9 = true;
 
     @BeforeAll
     public static void setup() {
@@ -117,6 +113,7 @@ public class EndToEndFlowTests extends HubTestBase {
         enableTracing();
         enableDebugging();
 
+        isMl9 = getMlMajorVersion() == 9;
         scaffolding = new Scaffolding(projectDir.toString(), stagingClient);
         scaffolding.createEntity(ENTITY);
 
@@ -449,13 +446,10 @@ public class EndToEndFlowTests extends HubTestBase {
 
                 if (codeFormat.equals(CodeFormat.JAVASCRIPT)) {
                     String expectedMl9 = "{\"errors\":{\"e2eentity\":{\"" + flowName + "\":{\"content\":{\"msg\":\"JS-JAVASCRIPT: =-00=--\\\\8\\\\sthifalkj;; -- Error running JavaScript request: SyntaxError: Unexpected token =\",\"uri\":\"/entities/e2eentity/" + flowType.toString() + "/" + flowName + "/content.sjs\",\"line\":18,\"column\":0}}}}}";
-                    String expectedMl8 = "{\"errors\":{\"e2eentity\":{\"" + flowName + "\":{\"content\":{\"msg\":\"JS-JAVASCRIPT: const contentPlugin = require('./content.sjs'); -- Error running JavaScript request: JS-JAVASCRIPT: =-00=--\\\\8\\\\sthifalkj;; -- Error running JavaScript request: SyntaxError: Unexpected token =\",\"uri\":\"[anonymous]\",\"line\":4,\"column\":22}}}}}";
+                    String expectedMl8 = "{\"errors\":{\"e2eentity\":{\"" + flowName + "\":{\"content\":{\"msg\":\"JS-JAVASCRIPT: const contentPlugin = require('./content.sjs'); -- Error running JavaScript request: JS-JAVASCRIPT: =-00=--\\\\8\\\\sthifalkj;; -- Error running JavaScript request: SyntaxError: Unexpected token =\",\"uri\":\"[anonymous]\",\"line\":7,\"column\":22}}}}}";
+                    String expected = isMl9 ? expectedMl9 : expectedMl8;
                     String actualStr = toJsonString(actual);
-                    JSONCompareResult result1 = JSONCompare.compareJSON(expectedMl9, actualStr, JSONCompareMode.STRICT);
-                    JSONCompareResult result2 = JSONCompare.compareJSON(expectedMl8, actualStr, JSONCompareMode.STRICT);
-                    if (result1.failed() && result2.failed()) {
-                        throw new AssertionError(result1.getMessage());
-                    }
+                    assertJsonEqual(expected, actualStr, true);
                 }
                 else {
                     String expected = "{\"errors\":{\"e2eentity\":{\"" + flowName + "\":{\"content\":{\"msg\":\"XDMP-UNEXPECTED: (err:XPST0003) Unexpected token syntax error, unexpected Function_, expecting $end\",\"uri\":\"/entities/e2eentity/" + flowType.toString() + "/" + flowName + "/content.xqy\",\"line\":8,\"column\":0}}}}}";
@@ -483,13 +477,10 @@ public class EndToEndFlowTests extends HubTestBase {
                 JsonNode actual = dataHub.validateUserModules();
                 if (codeFormat.equals(CodeFormat.JAVASCRIPT)) {
                     String expectedMl9 = "{\"errors\":{\"e2eentity\":{\"" + flowName + "\":{\"headers\":{\"msg\":\"JS-JAVASCRIPT: =-00=--\\\\8\\\\sthifalkj;; -- Error running JavaScript request: SyntaxError: Unexpected token =\",\"uri\":\"/entities/e2eentity/" + flowType.toString() + "/" + flowName + "/headers.sjs\",\"line\":16,\"column\":2}}}}}";
-                    String expectedMl8 = "{\"errors\":{\"e2eentity\":{\"" + flowName + "\":{\"headers\":{\"msg\":\"JS-JAVASCRIPT: const headersPlugin = require('./headers.sjs'); -- Error running JavaScript request: JS-JAVASCRIPT: =-00=--\\\\8\\\\sthifalkj;; -- Error running JavaScript request: SyntaxError: Unexpected token =\",\"uri\":\"[anonymous]\",\"line\":5,\"column\":22}}}}}";
+                    String expectedMl8 = "{\"errors\":{\"e2eentity\":{\"" + flowName + "\":{\"headers\":{\"msg\":\"JS-JAVASCRIPT: const headersPlugin = require('./headers.sjs'); -- Error running JavaScript request: JS-JAVASCRIPT: =-00=--\\\\8\\\\sthifalkj;; -- Error running JavaScript request: SyntaxError: Unexpected token =\",\"uri\":\"[anonymous]\",\"line\":8,\"column\":22}}}}}";
+                    String expected = isMl9 ? expectedMl9 : expectedMl8;
                     String actualStr = toJsonString(actual);
-                    JSONCompareResult result1 = JSONCompare.compareJSON(expectedMl9, actualStr, JSONCompareMode.STRICT);
-                    JSONCompareResult result2 = JSONCompare.compareJSON(expectedMl8, actualStr, JSONCompareMode.STRICT);
-                    if (result1.failed() && result2.failed()) {
-                        throw new AssertionError(result2.getMessage());
-                    }
+                    assertJsonEqual(expected, actualStr, true);
                 }
                 else {
                     String expected = "{\"errors\":{\"e2eentity\":{\"" + flowName + "\":{\"headers\":{\"msg\":\"XDMP-UNEXPECTED: (err:XPST0003) Unexpected token syntax error, unexpected Function_, expecting $end\",\"uri\":\"/entities/e2eentity/" + flowType.toString() + "/" + flowName + "/headers.xqy\",\"line\":30,\"column\":0}}}}}";
@@ -517,13 +508,10 @@ public class EndToEndFlowTests extends HubTestBase {
                 JsonNode actual = dataHub.validateUserModules();
                 if (codeFormat.equals(CodeFormat.JAVASCRIPT)) {
                     String expectedMl9 = "{\"errors\":{\"e2eentity\":{\"" + flowName + "\":{\"triples\":{\"msg\":\"JS-JAVASCRIPT: =-00=--\\\\8\\\\sthifalkj;; -- Error running JavaScript request: SyntaxError: Unexpected token =\",\"uri\":\"/entities/e2eentity/" + flowType.toString() + "/" + flowName + "/triples.sjs\",\"line\":16,\"column\":2}}}}}";
-                    String expectedMl8 = "{\"errors\":{\"e2eentity\":{\"" + flowName + "\":{\"triples\":{\"msg\":\"JS-JAVASCRIPT: const triplesPlugin = require('./triples.sjs'); -- Error running JavaScript request: JS-JAVASCRIPT: =-00=--\\\\8\\\\sthifalkj;; -- Error running JavaScript request: SyntaxError: Unexpected token =\",\"uri\":\"[anonymous]\",\"line\":6,\"column\":22}}}}}";
+                    String expectedMl8 = "{\"errors\":{\"e2eentity\":{\"" + flowName + "\":{\"triples\":{\"msg\":\"JS-JAVASCRIPT: const triplesPlugin = require('./triples.sjs'); -- Error running JavaScript request: JS-JAVASCRIPT: =-00=--\\\\8\\\\sthifalkj;; -- Error running JavaScript request: SyntaxError: Unexpected token =\",\"uri\":\"[anonymous]\",\"line\":9,\"column\":22}}}}}";
+                    String expected = isMl9 ? expectedMl9 : expectedMl8;
                     String actualStr = toJsonString(actual);
-                    JSONCompareResult result1 = JSONCompare.compareJSON(expectedMl9, actualStr, JSONCompareMode.STRICT);
-                    JSONCompareResult result2 = JSONCompare.compareJSON(expectedMl8, actualStr, JSONCompareMode.STRICT);
-                    if (result1.failed() && result2.failed()) {
-                        throw new AssertionError(result2.getMessage());
-                    }
+                    assertJsonEqual(expected, actualStr, true);
                 }
                 else {
                     String expected = "{\"errors\":{\"e2eentity\":{\"" + flowName + "\":{\"triples\":{\"msg\":\"XDMP-UNEXPECTED: (err:XPST0003) Unexpected token syntax error, unexpected Function_, expecting $end\",\"uri\":\"/entities/e2eentity/" + flowType.toString() + "/" + flowName + "/triples.xqy\",\"line\":36,\"column\":0}}}}}";
@@ -580,14 +568,15 @@ public class EndToEndFlowTests extends HubTestBase {
                     dataHub.installUserModules(true);
                     JsonNode actual = dataHub.validateUserModules();
                     if (codeFormat.equals(CodeFormat.JAVASCRIPT)) {
-                        String expectedMl9 = "{\"errors\":{\"e2eentity\":{\"" + flowName + "\":{\"collector\":{\"msg\":\"JS-JAVASCRIPT: =-00=--\\\\8\\\\sthifalkj;; -- Error running JavaScript request: SyntaxError: Unexpected token =\",\"uri\":\"/entities/e2eentity/" + flowType.toString() + "/" + flowName + "/collector.sjs\",\"line\":13,\"column\":9}}}}}";
-                        String expectedMl8 = "{\"errors\":{\"e2eentity\":{\"" + flowName + "\":{\"collector\":{\"msg\":\"JS-JAVASCRIPT: =-00=--\\\\8\\\\sthifalkj;; -- Error running JavaScript request: SyntaxError: Unexpected token =\",\"uri\":\"/entities/e2eentity/" + flowType.toString() + "/" + flowName + "/collector.sjs\",\"line\":13,\"column\":2}}}}}";
+//                        String expectedMl9 = "{\"errors\":{\"e2eentity\":{\"" + flowName + "\":{\"collector\":{\"msg\":\"JS-JAVASCRIPT: =-00=--\\\\8\\\\sthifalkj;; -- Error running JavaScript request: SyntaxError: Unexpected token =\",\"uri\":\"/entities/e2eentity/" + flowType.toString() + "/" + flowName + "/collector.sjs\",\"line\":13,\"column\":9}}}}}";
+                        String expected = "{\"errors\":{\"e2eentity\":{\"" + flowName + "\":{\"collector\":{\"msg\":\"JS-JAVASCRIPT: =-00=--\\\\8\\\\sthifalkj;; -- Error running JavaScript request: SyntaxError: Unexpected token =\",\"uri\":\"/entities/e2eentity/" + flowType.toString() + "/" + flowName + "/collector.sjs\",\"line\":13,\"column\":2}}}}}";
+//                        String expected = isMl9 ? expectedMl9 : expectedMl8;
                         String actualStr = toJsonString(actual);
-                        JSONCompareResult result1 = JSONCompare.compareJSON(expectedMl9, actualStr, JSONCompareMode.STRICT);
-                        JSONCompareResult result2 = JSONCompare.compareJSON(expectedMl8, actualStr, JSONCompareMode.STRICT);
-                        if (result1.failed() && result2.failed()) {
-                            throw new AssertionError(result2.getMessage());
+                        JSONCompareResult result = JSONCompare.compareJSON(expected, actualStr, JSONCompareMode.STRICT);
+                        if (result.failed()) {
+                            throw new AssertionError(result.getMessage());
                         }
+
                     } else {
                         String expected = "{\"errors\":{\"e2eentity\":{\"" + flowName + "\":{\"collector\":{\"msg\":\"XDMP-UNEXPECTED: (err:XPST0003) Unexpected token syntax error, unexpected Function_, expecting $end\",\"uri\":\"/entities/e2eentity/" + flowType.toString() + "/" + flowName + "/collector.xqy\",\"line\":27,\"column\":0}}}}}";
                         JSONAssert.assertEquals(expected, toJsonString(actual), true);

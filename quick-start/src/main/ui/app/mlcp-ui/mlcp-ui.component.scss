@@ -1,5 +1,7 @@
 @import '../../styles/variables';
 
+$error: unquote("rgb(#{$palette-datahub-red})");
+
 $openDuration: 0.5s;
 $duration: 0.25s;
 $easingFunc: ease-in-out;
@@ -95,4 +97,9 @@ $easingFunc: ease-in-out;
 
 .mdl-textfield {
   width: 100%;
+}
+
+
+/deep/ mdl-button.mdl-button.mdl-button--raised.mdl-button--primary.error-button {
+  background-color: $error;
 }

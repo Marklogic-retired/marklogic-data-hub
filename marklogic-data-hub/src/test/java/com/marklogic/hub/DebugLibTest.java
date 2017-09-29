@@ -3,6 +3,7 @@ package com.marklogic.hub;
 import com.marklogic.client.datamovement.DataMovementManager;
 import com.marklogic.client.datamovement.WriteBatcher;
 import com.marklogic.client.document.ServerTransform;
+import com.marklogic.client.io.Format;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.hub.flow.CodeFormat;
 import com.marklogic.hub.flow.DataFormat;
@@ -71,8 +72,8 @@ public class DebugLibTest extends HubTestBase {
             });
         dataMovementManager.startJob(batcher);
 
-        batcher.add("/employee1.xml", new StringHandle(getResource("flow-manager-test/input/employee1.xml")));
-        batcher.add("/employee2.xml", new StringHandle(getResource("flow-manager-test/input/employee2.xml")));
+        batcher.add("/employee1.xml", new StringHandle(getResource("flow-manager-test/input/employee1.xml")).withFormat(Format.XML));
+        batcher.add("/employee2.xml", new StringHandle(getResource("flow-manager-test/input/employee2.xml")).withFormat(Format.XML));
         batcher.flushAndWait();
 
         assertFalse(errorMessage, runFlowFailed);

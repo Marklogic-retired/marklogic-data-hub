@@ -44,6 +44,7 @@ import com.marklogic.mgmt.resource.appservers.ServerManager;
 import com.marklogic.mgmt.resource.databases.DatabaseManager;
 import com.marklogic.rest.util.Fragment;
 import com.marklogic.rest.util.ResourcesFragment;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
@@ -160,10 +161,30 @@ public class DataHub {
         try {
             String versionString = getAdminManager().getServerVersion();
             int major = Integer.parseInt(versionString.replaceAll("([^.]+)\\..*", "$1"));
-            if (major < 9) {
+            if (major < 8) {
                 throw new ServerValidationException("Invalid MarkLogic Server Version: " + versionString);
             }
             boolean isNightly = versionString.matches("[^-]+-(\\d{4})(\\d{2})(\\d{2})");
+            if (major == 8) {
+                String alteredString = versionString.replaceAll("[^\\d]+", "");
+                if (alteredString.length() < 4) {
+                    alteredString = StringUtils.rightPad(alteredString, 4, "0");
+                }
+                int ver = Integer.parseInt(alteredString.substring(0, 4));
+                if (!isNightly && ver < 8070) {
+                    throw new ServerValidationException("Invalid MarkLogic Server Version: " + versionString);
+                }
+            }
+            if (major == 9) {
+                String alteredString = versionString.replaceAll("[^\\d]+", "");
+                if (alteredString.length() < 4) {
+                    alteredString = StringUtils.rightPad(alteredString, 4, "0");
+                }
+                int ver = Integer.parseInt(alteredString.substring(0, 4));
+                if (!isNightly && ver < 9011) {
+                    throw new ServerValidationException("Invalid MarkLogic Server Version: " + versionString);
+                }
+            }
             if (isNightly) {
                 String dateString = versionString.replaceAll("[^-]+-(\\d{4})(\\d{2})(\\d{2})", "$1-$2-$3");
                 Date minDate = new GregorianCalendar(2017, 6, 1).getTime();
@@ -199,6 +220,12 @@ public class DataHub {
         try {
             ArrayList<String> options = new ArrayList<>();
             for (Resource r : resolver.getResources("classpath*:/ml-modules/options/*.xml")) {
+                options.add(r.getFilename().replace(".xml", ""));
+            }
+            for (Resource r : resolver.getResources("classpath*:/ml-modules-traces/options/*.xml")) {
+                options.add(r.getFilename().replace(".xml", ""));
+            }
+            for (Resource r : resolver.getResources("classpath*:/ml-modules-jobs/options/*.xml")) {
                 options.add(r.getFilename().replace(".xml", ""));
             }
 

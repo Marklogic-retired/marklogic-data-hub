@@ -201,12 +201,12 @@ public class HubConfig {
         return this.hubProject;
     }
 
-    public File getHubModulesDeployTimestampFile() {
-        return Paths.get(projectDir, ".tmp", HUB_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES).toFile();
+    public String getHubModulesDeployTimestampFile() {
+        return Paths.get(projectDir, ".tmp", HUB_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES).toString();
     }
 
-    public File getUserModulesDeployTimestampFile() {
-        return Paths.get(projectDir, ".tmp", USER_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES).toFile();
+    public String getUserModulesDeployTimestampFile() {
+        return Paths.get(projectDir, ".tmp", USER_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES).toString();
     }
 
     public File getUserContentDeployTimestampFile() {
