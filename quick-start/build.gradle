@@ -23,6 +23,12 @@ apply plugin: 'war'
 
 war {
     baseName = 'quick-start'
+    version = "${version}"
+    manifest {
+        attributes("Implementation-Title": "QuickStart",
+                   "Implementation-Version": version)
+    }
+
 }
 
 repositories {
@@ -128,12 +134,6 @@ task runUI(type: NpmTask) {
     dependsOn tasks.npmInstallUI
 }
 
-processResources {
-    filesMatching("**/quickstart-version.properties") {
-        expand(project: project)
-    }
-}
-
 if (!(
     gradle.startParameter.taskNames*.toLowerCase().contains("bootrun") ||
     gradle.startParameter.taskNames*.toLowerCase().contains("test") ||
@@ -153,4 +153,5 @@ bootRun {
 springBoot {
     executable = true
     mainClass = "com.marklogic.quickstart.Application"
+    buildInfo()
 }

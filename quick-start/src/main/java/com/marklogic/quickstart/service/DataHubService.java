@@ -18,6 +18,7 @@ package com.marklogic.quickstart.service;
 import com.marklogic.hub.DataHub;
 import com.marklogic.hub.DataHubUpgrader;
 import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.PreInstallCheck;
 import com.marklogic.hub.deploy.util.HubDeployStatusListener;
 import com.marklogic.hub.error.CantUpgradeException;
 import com.marklogic.hub.util.PerformanceLogger;
@@ -115,6 +116,11 @@ public class DataHubService {
             throw new DataHubException(e.getMessage(), e);
         }
         PerformanceLogger.logTimeInsideMethod(startTime, "DataHubService.uninstallUserModules");
+    }
+
+    public PreInstallCheck preInstallCheck(HubConfig config) {
+        DataHub dataHub = new DataHub(config);
+        return dataHub.runPreInstallCheck();
     }
 
     @Async

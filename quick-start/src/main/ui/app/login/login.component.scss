@@ -14,6 +14,8 @@ $install-border: unquote("rgb(#{$palette-datahub-800})");
 
 $label-color: unquote("rgb(#{$palette-datahub-900})");
 
+$red-color: unquote("rgb(#{$palette-datahub-red})");
+
 /deep/ md-list {
   padding-top: 0px;
 }
@@ -163,7 +165,7 @@ $openDuration: 0.5s;
     color: white;
 
     &.error {
-      color: red;
+      color: $red-color;
     }
   }
 }
@@ -245,7 +247,7 @@ form {
 }
 
 .error {
-  color: red;
+  color: $red-color;
   text-align: center;
   padding: 10px;
   background-color: rgba(255,255,255,0.15);
@@ -337,7 +339,7 @@ form {
   }
 
   .fa-close {
-    color: red;
+    color: $red-color;
   }
 
 }
@@ -369,5 +371,35 @@ form {
 
   /deep/ .mdl-radio__inner-circle {
     background: white;
+  }
+}
+
+mdl-list.precheck-list {
+  background-color: white;
+
+  mdl-icon.material-icons.mdl-list__item-avatar {
+    background-color: $red-color;
+    margin-bottom: 50px;
+  }
+
+  .mdl-list__item--three-line,
+  .mdl-list__item-primary-content,
+  .mdl-list__item-text-body {
+    height: auto;
+    overflow: auto;
+  }
+
+  .mdl-list__item-text-body {
+    margin-top: 5px;
+
+    &.fix {
+      color: black;
+      border-top: 1px solid #aaa;
+      padding-top: 5px;
+    }
+  }
+
+  .solution {
+    color: $red-color;
   }
 }

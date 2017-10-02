@@ -13,13 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.marklogic.hub.error;
+package com.marklogic.hub;
 
-public class ServerValidationException extends RuntimeException {
+public class PreInstallCheck {
+    public boolean stagingPortInUse;
+    public String stagingPortInUseBy;
+    public boolean finalPortInUse;
+    public String finalPortInUseBy;
+    public boolean jobPortInUse;
+    public String jobPortInUseBy;
+    public boolean tracePortInUse;
+    public String tracePortInUseBy;
+    public boolean serverVersionOk;
+    public String serverVersion;
 
-    private static final long serialVersionUID = -958991214928671059L;
-
-    public ServerValidationException(String message) {
-        super(message);
+    public boolean isSafeToInstall() {
+        return !(stagingPortInUse ||
+            finalPortInUse ||
+            jobPortInUse ||
+            tracePortInUse) && serverVersionOk;
     }
 }

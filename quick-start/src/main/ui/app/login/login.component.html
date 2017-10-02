@@ -248,6 +248,46 @@
         </section>
       </div>
 
+      <div id="PreInstallCheck" class="tab-content" [hidden]="!tabs.PreInstallCheck">
+        <section layout="row" layout-align="center center">
+          <section flex layout="column" layout-align="center center" *ngIf="runningPreinstallCheck">
+            <h3>Runing Pre-install check...</h3>
+            <div class="center-text">
+              <mdl-spinner single-color active></mdl-spinner>
+            </div>
+          </section>
+          <section flex layout="column" layout-align="center center" *ngIf="preinstallCheck && !preinstallCheck.safeToInstall && !runningPreinstallCheck">
+            <h3>Pre-install check Failed!</h3>
+            <mdl-list class="precheck-list">
+              <mdl-list-item lines="3" *ngIf="!preinstallCheck.serverVersionOk">
+                <mdl-list-item-primary-content>
+                  <mdl-icon mdl-list-item-avatar>error</mdl-icon>
+                  <span>Incompatible MarkLogic Server Version</span>
+                  <mdl-list-item-text-body>The Data Hub Framework is not compatible with MarkLogic <strong>{{preinstallCheck.serverVersion}}</strong>.</mdl-list-item-text-body>
+                  <mdl-list-item-text-body class="fix">
+                    <strong class="solution">SOLUTION:</strong> Upgrade your MarkLogic installation to a compatible version.
+                  </mdl-list-item-text-body>
+                </mdl-list-item-primary-content>
+              </mdl-list-item>
+              <ng-template [ngIf]="preinstallCheck.serverVersionOk">
+                <ng-template ngFor let-server [ngForOf]="appServers">
+                  <mdl-list-item lines="3" *ngIf="preinstallCheck[server + 'PortInUseBy']">
+                    <mdl-list-item-primary-content>
+                      <mdl-icon mdl-list-item-avatar>error</mdl-icon>
+                      <span>{{server | titlecase}} Port Already In Use</span>
+                      <mdl-list-item-text-body>The {{server | titlecase}} port <strong>{{currentEnvironment.mlSettings[server + 'Port']}}</strong> is already in use by the App Server <strong>{{preinstallCheck[server + 'PortInUseBy']}}</strong>.</mdl-list-item-text-body>
+                      <mdl-list-item-text-body class="fix">
+                        <strong class="solution">SOLUTION:</strong> Change the <strong>ml{{server | titlecase}}Port</strong> property in <strong>gradle.properties</strong> to a free port.
+                      </mdl-list-item-text-body>
+                    </mdl-list-item-primary-content>
+                  </mdl-list-item>
+                </ng-template>
+              </ng-template>
+            </mdl-list>
+          </section>
+        </section>
+      </div>
+
       <div id="InstallerTab" class="tab-content" [hidden]="!tabs.Installer" *ngIf="currentEnvironment">
         <div layout="column" layout-align="center center">
           <div [hidden]="uninstalling || installing || currentEnvironment.installInfo.installed" layout="column" layout-align="center center">

@@ -52,6 +52,10 @@ export class ProjectService {
     return this.http.post(`/api/logout`, null);
   }
 
+  preinstallCheck() {
+    return this.get(`api/current-project/preinstall-check`);
+  }
+
   getStatus() {
     return this.get(`/api/current-project/stats`);
   }

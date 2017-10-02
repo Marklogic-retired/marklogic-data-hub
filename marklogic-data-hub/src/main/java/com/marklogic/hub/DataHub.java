@@ -104,6 +104,7 @@ public class DataHub {
         }
         return this._serverManager;
     }
+    void setServerManager(ServerManager manager) { this._serverManager = manager; }
     /**
      * Determines if the data hub is installed in MarkLogic
      * @return true if installed, false otherwise
@@ -155,14 +156,21 @@ public class DataHub {
 
     /**
      * Validates the MarkLogic server to ensure compatibility with the hub
+     * @return true if valid, false otherwise
      * @throws ServerValidationException if the server is not compatible
      */
-    public void validateServer() throws ServerValidationException {
+    public boolean isServerVersionValid() {
+        return isServerVersionValid(null);
+    }
+
+    public boolean isServerVersionValid(String versionString) {
         try {
-            String versionString = getAdminManager().getServerVersion();
+            if (versionString == null) {
+                versionString = getMarkLogicVersion();
+            }
             int major = Integer.parseInt(versionString.replaceAll("([^.]+)\\..*", "$1"));
             if (major < 8) {
-                throw new ServerValidationException("Invalid MarkLogic Server Version: " + versionString);
+                return false;
             }
             boolean isNightly = versionString.matches("[^-]+-(\\d{4})(\\d{2})(\\d{2})");
             if (major == 8) {
@@ -172,7 +180,7 @@ public class DataHub {
                 }
                 int ver = Integer.parseInt(alteredString.substring(0, 4));
                 if (!isNightly && ver < 8070) {
-                    throw new ServerValidationException("Invalid MarkLogic Server Version: " + versionString);
+                    return false;
                 }
             }
             if (major == 9) {
@@ -182,7 +190,7 @@ public class DataHub {
                 }
                 int ver = Integer.parseInt(alteredString.substring(0, 4));
                 if (!isNightly && ver < 9011) {
-                    throw new ServerValidationException("Invalid MarkLogic Server Version: " + versionString);
+                    return false;
                 }
             }
             if (isNightly) {
@@ -190,7 +198,7 @@ public class DataHub {
                 Date minDate = new GregorianCalendar(2017, 6, 1).getTime();
                 Date date = new SimpleDateFormat("y-M-d").parse(dateString);
                 if (date.before(minDate)) {
-                    throw new ServerValidationException("Invalid MarkLogic Server Version: " + versionString);
+                    return false;
                 }
             }
 
@@ -198,6 +206,7 @@ public class DataHub {
         catch(Exception e) {
             throw new ServerValidationException(e.toString());
         }
+        return true;
     }
 
     public void initProject() {
@@ -368,6 +377,52 @@ public class DataHub {
         return commandMap;
     }
 
+    public Map<Integer, String> getServerPortsInUse() {
+        Map<Integer, String> portsInUse = new HashMap<>();
+        ResourcesFragment srf = getServerManager().getAsXml();
+        srf.getListItemNameRefs().forEach(s -> {
+            Fragment fragment = getServerManager().getPropertiesAsXml(s);
+            int port = Integer.parseInt(fragment.getElementValue("//m:port"));
+            portsInUse.put(port, s);
+        });
+        return portsInUse;
+    }
+
+    public PreInstallCheck runPreInstallCheck() {
+        PreInstallCheck check = new PreInstallCheck();
+
+        Map<Integer, String> portsInUse = getServerPortsInUse();
+        Set<Integer> ports = portsInUse.keySet();
+
+        String serverName = portsInUse.get(hubConfig.stagingPort);
+        check.stagingPortInUse = ports.contains(hubConfig.stagingPort) && serverName != null && !serverName.equals(hubConfig.stagingHttpName);
+        if (check.stagingPortInUse) {
+            check.stagingPortInUseBy = serverName;
+        }
+
+        serverName = portsInUse.get(hubConfig.finalPort);
+        check.finalPortInUse = ports.contains(hubConfig.finalPort) && serverName != null && !serverName.equals(hubConfig.finalHttpName);
+        if (check.finalPortInUse) {
+            check.finalPortInUseBy = serverName;
+        }
+
+        serverName = portsInUse.get(hubConfig.jobPort);
+        check.jobPortInUse = ports.contains(hubConfig.jobPort) && serverName != null && !serverName.equals(hubConfig.jobHttpName);
+        if (check.jobPortInUse) {
+            check.jobPortInUseBy = serverName;
+        }
+
+        serverName = portsInUse.get(hubConfig.tracePort);
+        check.tracePortInUse = ports.contains(hubConfig.tracePort) && serverName != null && !serverName.equals(hubConfig.traceHttpName);
+        if (check.tracePortInUse) {
+            check.tracePortInUseBy = serverName;
+        }
+
+        check.serverVersion = getMarkLogicVersion();
+        check.serverVersionOk = isServerVersionValid(check.serverVersion);
+        return check;
+    }
+
     /**
      * Installs the data hub configuration and server-side modules into MarkLogic
      */
@@ -433,15 +488,7 @@ public class DataHub {
     }
 
     public String getMarkLogicVersion() {
-        ServerEvaluationCall eval = hubConfig.newAppServicesClient().newServerEval();
-        String xqy = "xdmp:version()";
-        EvalResultIterator result = eval.xquery(xqy).eval();
-        if (result.hasNext()) {
-            return result.next().getString();
-        }
-        else {
-            throw new RuntimeException("Couldn't determine MarkLogic Version");
-        }
+        return getAdminManager().getServerVersion();
     }
 
     public static int versionCompare(String v1, String v2) {
