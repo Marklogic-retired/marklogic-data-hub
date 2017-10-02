@@ -145,7 +145,7 @@ export class MlcpUiComponent implements OnChanges {
             field: 'output_collections',
             type: 'comma-list',
             description: 'A comma separated list of collection URIs. Loaded documents are added to these collections.',
-            value: entityName + ',' + flowName + ',input',
+            value: entityName.replace(new RegExp(' ', 'g'), '') + ',' + flowName.replace(new RegExp(' ', 'g'), '') + ',input',
           },
           {
             label: 'Output Permissions',
@@ -384,7 +384,7 @@ export class MlcpUiComponent implements OnChanges {
             field: 'transform_param',
             type: 'string',
             description: 'Optional extra data to pass through to a custom transformation function. Ignored if -transform_module is not specified.\nDefault: no namespace. For details, see Transforming Content During Ingestion.',
-            value: `entity-name=${entityName},flow-name=${flowName}`,
+            value: `entity-name=${encodeURIComponent(entityName)},flow-name=${encodeURIComponent(flowName)}`,
             readOnly: true,
           },
         ],
