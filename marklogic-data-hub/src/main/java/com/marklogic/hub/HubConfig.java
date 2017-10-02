@@ -21,7 +21,7 @@ import com.marklogic.appdeployer.ConfigDir;
 import com.marklogic.appdeployer.DefaultAppConfigFactory;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
-import com.marklogic.client.helper.DatabaseClientConfig;
+import com.marklogic.client.ext.DatabaseClientConfig;
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.ManageConfig;
 import com.marklogic.mgmt.admin.AdminConfig;
@@ -201,12 +201,12 @@ public class HubConfig {
         return this.hubProject;
     }
 
-    public File getHubModulesDeployTimestampFile() {
-        return Paths.get(projectDir, ".tmp", HUB_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES).toFile();
+    public String getHubModulesDeployTimestampFile() {
+        return Paths.get(projectDir, ".tmp", HUB_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES).toString();
     }
 
-    public File getUserModulesDeployTimestampFile() {
-        return Paths.get(projectDir, ".tmp", USER_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES).toFile();
+    public String getUserModulesDeployTimestampFile() {
+        return Paths.get(projectDir, ".tmp", USER_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES).toString();
     }
 
     public File getUserContentDeployTimestampFile() {
@@ -598,6 +598,7 @@ public class HubConfig {
         return password;
     }
 
+    @JsonIgnore
     public AppConfig getAppConfig() {
         Properties properties = getProperties(this.environment);
         AppConfig config = new DefaultAppConfigFactory(name -> properties.getProperty(name)).newAppConfig();

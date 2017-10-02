@@ -25,7 +25,6 @@ import com.marklogic.hub.error.ScaffoldingValidationException;
 import com.marklogic.hub.flow.*;
 import com.marklogic.hub.main.impl.MainPluginImpl;
 import com.marklogic.hub.util.FileUtil;
-import com.sun.jersey.api.client.ClientHandlerException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -39,7 +38,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -70,75 +68,83 @@ public class Scaffolding {
         return flowDir;
     }
 
-    public void createEntity(String entityName) throws FileNotFoundException {
+    public void createEntity(String entityName) {
         Path entityDir = entitiesDir.resolve(entityName);
         entityDir.toFile().mkdirs();
     }
 
     public void createFlow(String entityName, String flowName,
                            FlowType flowType, CodeFormat codeFormat,
-                           DataFormat dataFormat) throws IOException {
+                           DataFormat dataFormat) {
         createFlow(entityName, flowName, flowType, codeFormat, dataFormat, false);
     }
 
     public void createFlow(String entityName, String flowName,
                            FlowType flowType, CodeFormat codeFormat,
-                           DataFormat dataFormat, boolean useEsModel)
-            throws IOException {
-        Path flowDir = getFlowDir(entityName, flowName, flowType);
-        flowDir.toFile().mkdirs();
+                           DataFormat dataFormat, boolean useEsModel) {
+        try {
+            Path flowDir = getFlowDir(entityName, flowName, flowType);
+            flowDir.toFile().mkdirs();
 
-        if (flowType.equals(FlowType.HARMONIZE)) {
-            writeFile("scaffolding/" + flowType + "/" + codeFormat + "/collector." + codeFormat,
-                flowDir.resolve("collector." + codeFormat));
+            if (flowType.equals(FlowType.HARMONIZE)) {
+                writeFile("scaffolding/" + flowType + "/" + codeFormat + "/collector." + codeFormat,
+                    flowDir.resolve("collector." + codeFormat));
 
-            writeFile("scaffolding/" + flowType + "/" + codeFormat + "/writer." + codeFormat,
-                flowDir.resolve("writer." + codeFormat));
+                writeFile("scaffolding/" + flowType + "/" + codeFormat + "/writer." + codeFormat,
+                    flowDir.resolve("writer." + codeFormat));
+            }
+
+            if (useEsModel) {
+                ContentPlugin cp = new ContentPlugin(databaseClient);
+                String content = cp.getContents(entityName, codeFormat, flowType);
+                writeBuffer(content, flowDir.resolve("content." + codeFormat));
+
+            } else {
+                writeFile("scaffolding/" + flowType + "/" + codeFormat + "/content." + codeFormat,
+                    flowDir.resolve("content." + codeFormat));
+            }
+
+            writeFile("scaffolding/" + flowType + "/" + codeFormat + "/headers." + codeFormat,
+                flowDir.resolve("headers." + codeFormat));
+
+            writeFile("scaffolding/" + flowType + "/" + codeFormat + "/triples." + codeFormat,
+                flowDir.resolve("triples." + codeFormat));
+
+
+            writeFile("scaffolding/" + flowType + "/" + codeFormat + "/main." + codeFormat,
+                flowDir.resolve("main." + codeFormat));
+
+            Flow flow = FlowBuilder.newFlow()
+                .withEntityName(entityName)
+                .withName(flowName)
+                .withType(flowType)
+                .withCodeFormat(codeFormat)
+                .withDataFormat(dataFormat)
+                .build();
+
+            FileWriter fw = new FileWriter(flowDir.resolve(flowName + ".properties").toFile());
+            flow.toProperties().store(fw, "");
+            fw.close();
         }
-
-        if (useEsModel) {
-            ContentPlugin cp = new ContentPlugin(databaseClient);
-            String content = cp.getContents(entityName, codeFormat, flowType);
-            writeBuffer(content, flowDir.resolve("content." + codeFormat));
-
+        catch(IOException e) {
+            throw new RuntimeException(e);
         }
-        else {
-            writeFile("scaffolding/" + flowType + "/" + codeFormat + "/content." + codeFormat,
-                flowDir.resolve("content." + codeFormat));
-        }
-
-        writeFile("scaffolding/" + flowType + "/" + codeFormat + "/headers." + codeFormat,
-            flowDir.resolve("headers." + codeFormat));
-
-        writeFile("scaffolding/" + flowType + "/" + codeFormat + "/triples." + codeFormat,
-            flowDir.resolve("triples." + codeFormat));
-
-
-        writeFile("scaffolding/" + flowType + "/" + codeFormat + "/main." + codeFormat,
-            flowDir.resolve("main." + codeFormat));
-
-        Flow flow = FlowBuilder.newFlow()
-            .withEntityName(entityName)
-            .withName(flowName)
-            .withType(flowType)
-            .withCodeFormat(codeFormat)
-            .withDataFormat(dataFormat)
-            .build();
-
-        FileWriter fw = new FileWriter(flowDir.resolve(flowName + ".properties").toFile());
-        flow.toProperties().store(fw, "");
-        fw.close();
     }
 
-    private Document readLegacyFlowXml(File file) throws IOException, ParserConfigurationException, SAXException {
-        FileInputStream is = new FileInputStream(file);
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        factory.setNamespaceAware(true);
-        DocumentBuilder builder = factory.newDocumentBuilder();
-        return builder.parse(is);
+    private Document readLegacyFlowXml(File file) {
+        try {
+            FileInputStream is = new FileInputStream(file);
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            factory.setNamespaceAware(true);
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            return builder.parse(is);
+        }
+        catch(IOException | ParserConfigurationException | SAXException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    public List<String> updateLegacyFlows(String fromVersion, String entityName) throws IOException {
+    public List<String> updateLegacyFlows(String fromVersion, String entityName) {
         Path entityDir = entitiesDir.resolve(entityName);
         Path inputDir = entityDir.resolve("input");
         Path harmonizeDir = entityDir.resolve("harmonize");
@@ -173,16 +179,12 @@ public class Scaffolding {
 
         File[] entityFiles = entityDir.toFile().listFiles((dir, name) -> name.matches("[^.]+\\.entity\\.json"));
         if (entityFiles != null && entityFiles.length == 0) {
-            try {
-                String fileContents = getFileContent("scaffolding/Entity.json", entityName);
-                writeToFile(fileContents, entityDir.resolve(entityName + ".entity.json").toFile());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            String fileContents = getFileContent("scaffolding/Entity.json", entityName);
+            writeToFile(fileContents, entityDir.resolve(entityName + ".entity.json").toFile());
         }
     }
 
-    public boolean updateLegacyFlow(String fromVersion, String entityName, String flowName, FlowType flowType) throws IOException {
+    public boolean updateLegacyFlow(String fromVersion, String entityName, String flowName, FlowType flowType) {
         boolean updated = false;
 
         Path flowDir = getFlowDir(entityName, flowName, flowType);
@@ -191,7 +193,6 @@ public class Scaffolding {
             File[] files = flowDir.toFile().listFiles((dir, name) -> name.endsWith(".xml"));
 
             for (File file : files) {
-                try {
                     Document doc = readLegacyFlowXml(file);
                     if (doc.getDocumentElement().getLocalName().equals("flow")) {
                         DataFormat dataFormat = null;
@@ -242,14 +243,15 @@ public class Scaffolding {
                         }
 
                         Flow flow = flowBuilder.build();
-                        FileWriter fw = new FileWriter(flowDir.resolve(flowName + ".properties").toFile());
-                        flow.toProperties().store(fw, "");
-                        fw.close();
+                        try {
+                            FileWriter fw = new FileWriter(flowDir.resolve(flowName + ".properties").toFile());
+                            flow.toProperties().store(fw, "");
+                            fw.close();
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
                         updated = true;
                     }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
             }
         }
         return updated;
@@ -271,7 +273,7 @@ public class Scaffolding {
         }
     }
 
-    private void writeFile(String srcFile, Path dstFile) throws IOException {
+    private void writeFile(String srcFile, Path dstFile) {
         logger.info("writing: " + srcFile + " => " + dstFile.toString());
         if (!dstFile.toFile().exists()) {
             InputStream inputStream = Scaffolding.class.getClassLoader()
@@ -280,7 +282,7 @@ public class Scaffolding {
         }
     }
 
-    private void writeBuffer(String buffer, Path dstFile) throws IOException {
+    private void writeBuffer(String buffer, Path dstFile) {
         logger.info("writing: " + dstFile.toString());
         if (!dstFile.toFile().exists()) {
             InputStream inputStream = new ByteArrayInputStream(buffer.getBytes(StandardCharsets.UTF_8));
@@ -289,7 +291,7 @@ public class Scaffolding {
     }
 
     public void createRestExtension(String entityName, String extensionName,
-            FlowType flowType, CodeFormat codeFormat) throws IOException, ScaffoldingValidationException {
+            FlowType flowType, CodeFormat codeFormat) throws ScaffoldingValidationException {
         logger.info(extensionName);
 
         if(!validator.isUniqueRestServiceExtension(extensionName)) {
@@ -303,7 +305,7 @@ public class Scaffolding {
     }
 
     public void createRestTransform(String entityName, String transformName,
-            FlowType flowType, CodeFormat codeFormat) throws IOException, ScaffoldingValidationException {
+            FlowType flowType, CodeFormat codeFormat) throws ScaffoldingValidationException {
         logger.info(transformName);
         if(!validator.isUniqueRestTransform(transformName)) {
             throw new ScaffoldingValidationException("A rest transform with the same name as " + transformName + " already exists.");
@@ -315,34 +317,42 @@ public class Scaffolding {
         writeMetadataForFile(dstFile, scaffoldRestTransformsPath + "metadata/template.xml", transformName);
     }
 
-    private void writeToFile(String fileContent, File dstFile)
-            throws IOException {
-        FileWriter fw = new FileWriter(dstFile);
-        BufferedWriter bw = new BufferedWriter(fw);
-        bw.write(fileContent);
-        bw.close();
+    private void writeToFile(String fileContent, File dstFile) {
+        try {
+            FileWriter fw = new FileWriter(dstFile);
+            BufferedWriter bw = new BufferedWriter(fw);
+            bw.write(fileContent);
+            bw.close();
+        }
+        catch(IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private File createEmptyRestExtensionFile(String entityName, String extensionName,
-            FlowType flowType, CodeFormat codeFormat) throws IOException {
+            FlowType flowType, CodeFormat codeFormat) {
         Path restDir = getRestDirectory(entityName, flowType);
         return createEmptyFile(restDir, "services", extensionName + "." + codeFormat);
     }
 
     private File createEmptyRestTransformFile(String entityName, String transformName,
-            FlowType flowType, CodeFormat codeFormat) throws IOException {
+            FlowType flowType, CodeFormat codeFormat) {
         Path restDir = getRestDirectory(entityName, flowType);
         return createEmptyFile(restDir, "transforms", transformName + "." + codeFormat);
     }
 
-    private File createEmptyFile(Path directory, String subDirectoryName, String fileName) throws IOException {
+    private File createEmptyFile(Path directory, String subDirectoryName, String fileName) {
         Path fileDirectory = directory;
         if(subDirectoryName != null) {
             fileDirectory = directory.resolve(subDirectoryName);
         }
         fileDirectory.toFile().mkdirs();
         File file = fileDirectory.resolve(fileName).toFile();
-        file.createNewFile();
+        try {
+            file.createNewFile();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         return file;
     }
 
@@ -354,21 +364,25 @@ public class Scaffolding {
         return getFlowDir(entityName, "REST", flowType);
     }
 
-    private void writeMetadataForFile(File file, String metadataTemplatePath, String metadataName) throws IOException {
+    private void writeMetadataForFile(File file, String metadataTemplatePath, String metadataName) {
         String fileContent = getFileContent(metadataTemplatePath, metadataName);
         File metadataFile = createEmptyMetadataForFile(file, metadataName);
         writeToFile(fileContent, metadataFile);
     }
 
-    private File createEmptyMetadataForFile(File file, String metadataName) throws IOException {
+    private File createEmptyMetadataForFile(File file, String metadataName) {
         File metadataDir = new File(file.getParentFile(), "metadata");
         metadataDir.mkdir();
         File metadataFile = new File(metadataDir, metadataName + ".xml");
-        metadataFile.createNewFile();
+        try {
+            metadataFile.createNewFile();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         return metadataFile;
     }
 
-    private String getFileContent(String srcFile, String placeholder) throws IOException {
+    private String getFileContent(String srcFile, String placeholder) {
         StringBuilder output = new StringBuilder();
         InputStream inputStream = null;
         BufferedReader rdr = null;
@@ -384,16 +398,10 @@ public class Scaffolding {
                 output.append(bufferedLine);
                 output.append("\n");
             }
+            inputStream.close();
+            rdr.close();
         } catch (IOException e) {
-            logger.error(e.getMessage(), e);
-            throw e;
-        } finally {
-            if(inputStream != null) {
-                inputStream.close();
-            }
-            if(rdr != null) {
-                rdr.close();
-            }
+            throw new RuntimeException(e);
         }
         return output.toString();
     }
@@ -417,21 +425,16 @@ public class Scaffolding {
             client.init(NAME, this);
         }
 
-        public String getContents(String entityName, CodeFormat codeFormat, FlowType flowType) throws IOException {
-            try {
-                params.add("entity", entityName);
-                params.add("codeFormat", codeFormat.toString());
-                params.add("flowType", flowType.toString());
-                ResourceServices.ServiceResultIterator resultItr = this.getServices().get(params);
-                if (resultItr == null || ! resultItr.hasNext()) {
-                    throw new IOException("Unable to get Content Plugin scaffold");
-                }
-                ResourceServices.ServiceResult res = resultItr.next();
-                return res.getContent(new StringHandle()).get().replaceAll("\n", "\r\n");
+        public String getContents(String entityName, CodeFormat codeFormat, FlowType flowType) {
+            params.add("entity", entityName);
+            params.add("codeFormat", codeFormat.toString());
+            params.add("flowType", flowType.toString());
+            ResourceServices.ServiceResultIterator resultItr = this.getServices().get(params);
+            if (resultItr == null || ! resultItr.hasNext()) {
+                throw new RuntimeException("Unable to get Content Plugin scaffold");
             }
-            catch(ClientHandlerException e) {
-            }
-            return "{}";
+            ResourceServices.ServiceResult res = resultItr.next();
+            return res.getContent(new StringHandle()).get().replaceAll("\n", "\r\n");
         }
 
     }

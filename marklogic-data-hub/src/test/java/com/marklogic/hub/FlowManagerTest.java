@@ -49,7 +49,7 @@ public class FlowManagerTest extends HubTestBase {
     public static void setup() throws IOException {
         XMLUnit.setIgnoreWhitespace(true);
 
-        FileUtils.deleteDirectory(new File(PROJECT_PATH));
+        deleteProjectDir();
         installHub();
         enableDebugging();
 
@@ -63,7 +63,7 @@ public class FlowManagerTest extends HubTestBase {
     }
 
     @AfterClass
-    public static void teardown() throws IOException {
+    public static void teardown() {
         uninstallHub();
     }
 
@@ -114,7 +114,7 @@ public class FlowManagerTest extends HubTestBase {
         installModules(modules);
     }
 
-    private static void addStagingDocs() throws IOException {
+    private static void addStagingDocs() {
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME);
         DocumentMetadataHandle meta = new DocumentMetadataHandle();
         meta.getCollections().add("tester");
@@ -122,7 +122,7 @@ public class FlowManagerTest extends HubTestBase {
         installStagingDoc("/employee2.xml", meta, "flow-manager-test/input/employee2.xml");
     }
 
-    private static void addFinalDocs() throws IOException {
+    private static void addFinalDocs() {
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME);
         DocumentMetadataHandle meta = new DocumentMetadataHandle();
         meta.getCollections().add("tester");
@@ -131,7 +131,7 @@ public class FlowManagerTest extends HubTestBase {
     }
 
     @Test
-    public void testFlowFromXml() throws IOException, ParserConfigurationException, SAXException {
+    public void testFlowFromXml() {
         Document d = getXmlFromResource("flow-manager-test/simple-flow.xml");
 
         Flow flow = FlowManager.flowFromXml(d.getDocumentElement());
@@ -183,6 +183,33 @@ public class FlowManagerTest extends HubTestBase {
         for (Flow flow : flows) {
             assertEquals("my-entity", flow.getEntityName());
         }
+
+        FileUtils.deleteDirectory(Paths.get("./del-me-dir").toFile());
+    }
+
+    @Test
+    public void testGetFlowFromProperties() throws IOException {
+        Scaffolding scaffolding = new Scaffolding("del-me-dir", stagingClient);
+        scaffolding.createEntity("my-entity");
+
+        FlowManager fm = new FlowManager(getHubConfig("del-me-dir"));
+
+        allCombos((codeFormat, dataFormat, flowType) -> {
+            String flowName = flowType.toString() + "-" + codeFormat.toString() + "-" + dataFormat.toString();
+            scaffolding.createFlow("my-entity", flowName, flowType, codeFormat, dataFormat);
+        });
+
+
+        allCombos((codeFormat, dataFormat, flowType) -> {
+            String flowName = flowType.toString() + "-" + codeFormat.toString() + "-" + dataFormat.toString();
+            Path propertiesFile = Paths.get("del-me-dir", "plugins", "entities", "my-entity", flowType.toString(), flowName, flowName + ".properties");
+            Flow flow = fm.getFlowFromProperties(propertiesFile);
+            assertEquals(flowName, flow.getName());
+            assertEquals("my-entity", flow.getEntityName());
+            assertEquals(codeFormat, flow.getCodeFormat());
+            assertEquals(dataFormat, flow.getDataFormat());
+            assertEquals(flowType, flow.getType());
+        });
 
         FileUtils.deleteDirectory(Paths.get("./del-me-dir").toFile());
     }
@@ -372,7 +399,11 @@ public class FlowManagerTest extends HubTestBase {
         allCombos((codeFormat, dataFormat, flowType) -> {
             Path dir = projectPath.resolve("plugins/entities/my-fun-test/" + flowType.toString());
             String flowName = "legacy-" + codeFormat.toString() + "-" + dataFormat.toString() + "-" + flowType.toString() + "-flow";
-            FileUtils.copyDirectory(getResourceFile("scaffolding-test/" + flowName), dir.resolve(flowName).toFile());
+            try {
+                FileUtils.copyDirectory(getResourceFile("scaffolding-test/" + flowName), dir.resolve(flowName).toFile());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         });
 
         List<String> legacyFlows = fm.getLegacyFlows();

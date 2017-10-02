@@ -26,13 +26,15 @@ interface MlcpOptions {
   styleUrls: ['./mlcp-ui.component.scss']
 })
 export class MlcpUiComponent implements OnChanges {
-  startPath: string = '.';
+  startPath: string;
   inputFilePath: string;
   mlcp = <MlcpOptions>{};
 
   @Input() flow: Flow;
   @Input() mlcpOptions: any;
+  @Input() hasErrors: boolean;
   @Output() onRun: EventEmitter<MlcpOptions> = new EventEmitter();
+  @Output() onErrorRun: EventEmitter<any> = new EventEmitter();
 
   finishedEvent: EventEmitter<any>;
 
@@ -143,7 +145,7 @@ export class MlcpUiComponent implements OnChanges {
             field: 'output_collections',
             type: 'comma-list',
             description: 'A comma separated list of collection URIs. Loaded documents are added to these collections.',
-            value: entityName + ',' + flowName + ',input',
+            value: entityName.replace(new RegExp(' ', 'g'), '') + ',' + flowName.replace(new RegExp(' ', 'g'), '') + ',input',
           },
           {
             label: 'Output Permissions',
@@ -382,7 +384,7 @@ export class MlcpUiComponent implements OnChanges {
             field: 'transform_param',
             type: 'string',
             description: 'Optional extra data to pass through to a custom transformation function. Ignored if -transform_module is not specified.\nDefault: no namespace. For details, see Transforming Content During Ingestion.',
-            value: `entity=${entityName},flow=${flowName},flowType=input`,
+            value: `entity-name=${encodeURIComponent(entityName)},flow-name=${encodeURIComponent(flowName)}`,
             readOnly: true,
           },
         ],
@@ -528,11 +530,9 @@ export class MlcpUiComponent implements OnChanges {
     return `${this.inputFilePath.replace(/\\/g, '/').replace(/^([A-Za-z]):/, '/$1:')},''`;
   }
 
-  folderClicked(folder: string): void {
-    if (!this.inputFilePath) {
-      this.inputFilePath = folder;
-    } else if (this.inputFilePath !== folder) {
-      this.inputFilePath = folder;
+  folderClicked(folders: any): void {
+    if (this.inputFilePath !== folders.absolutePath) {
+      this.inputFilePath = folders.absolutePath;
       // update the outputUriReplace options
       let generalGroup = _.find(this.groups, (group: any) => {
         return group.category === 'General Options';
@@ -569,6 +569,10 @@ export class MlcpUiComponent implements OnChanges {
   }
 
   runImport(): void {
-    this.onRun.emit(this.mlcp);
+    if (this.hasErrors) {
+      this.onErrorRun.emit(null);
+    } else {
+      this.onRun.emit(this.mlcp);
+    }
   }
 }

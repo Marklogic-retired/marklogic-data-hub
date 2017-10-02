@@ -6,7 +6,7 @@ class DeleteHubModuleTimestampsFileTask extends HubTask {
 
     @TaskAction
     void deleteFile() {
-        File f = hubConfig.getUserModulesDeployTimestampFile();
+        File f = new File(hubConfig.getUserModulesDeployTimestampFile())
         if (f.exists()) {
             println "Deleting " + f.getAbsolutePath() + "\n"
             f.delete()

@@ -31,8 +31,8 @@ declare %rapi:transaction-mode("query") function runFlow:transform(
 
   perf:log('/transforms/run-flow:transform', function() {
     let $job-id := map:get($params, "job-id")
-    let $entity-name := map:get($params, 'entity')
-    let $flow-name := map:get($params, 'flow')
+    let $entity-name := map:get($params, 'entity-name')
+    let $flow-name := map:get($params, 'flow-name')
     let $uri := map:get($context, 'uri')
     let $flow := flow:get-flow($entity-name, $flow-name, $consts:INPUT_FLOW)
     let $_ :=
@@ -51,15 +51,6 @@ declare %rapi:transaction-mode("query") function runFlow:transform(
     let $envelope := flow:run-flow(
       $job-id, $flow, $uri, $content, $options
     )
-
-    (: write trace for imaginary writer :)
-    let $_ := (
-      trace:set-plugin-label("rest builtin writer"),
-      trace:set-plugin-input("envelope", $envelope),
-      trace:plugin-trace((), xs:dayTimeDuration("PT0S"))
-    )
-
-    let $_ := trace:write-trace()
     return
       document { $envelope }
   })

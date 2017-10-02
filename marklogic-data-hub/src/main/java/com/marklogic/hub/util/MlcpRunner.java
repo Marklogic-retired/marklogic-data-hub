@@ -84,7 +84,7 @@ public class MlcpRunner extends ProcessRunner {
             File file = new File(mlcpOptions.get("input_file_path").asText());
             String canonicalPath = file.getCanonicalPath();
             bean.setInput_file_path(canonicalPath);
-            bean.setTransform_param("\"" + bean.getTransform_param().replaceAll("\"", "") + ",jobId=" + jobId + "\"");
+            bean.setTransform_param("\"" + bean.getTransform_param().replaceAll("\"", "") + ",job-id=" + jobId + "\"");
 
             buildCommand(bean);
 

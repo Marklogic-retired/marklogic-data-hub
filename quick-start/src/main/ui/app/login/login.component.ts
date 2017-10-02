@@ -34,6 +34,13 @@ export class LoginComponent implements OnInit {
   loginError: string = null;
   loggingIn: boolean = false;
 
+  appServers: Array<string> = [
+    'staging',
+    'final',
+    'job',
+    'trace'
+  ];
+
   tabs: any = {
     ProjectDir: true,
     InitIfNeeded: false,
@@ -41,6 +48,7 @@ export class LoginComponent implements OnInit {
     Environment: false,
     Login: false,
     InstalledCheck: false,
+    PreInstallCheck: false,
     Installer: false,
     RequiresUpdate: false
   };
@@ -70,6 +78,9 @@ export class LoginComponent implements OnInit {
   currentEnvironment: any;
 
   currentEnvironmentString: string;
+
+  runningPreinstallCheck: boolean = false;
+  preinstallCheck: any;
 
   loginInfo: LoginInfo = new LoginInfo();
 
@@ -161,8 +172,8 @@ export class LoginComponent implements OnInit {
     this.router.navigate(['']);
   }
 
-  folderClicked(folder: string): void {
-    this.folder = folder;
+  folderClicked(folders: any): void {
+    this.folder = folders.absolutePath;
   }
 
   back() {
@@ -264,9 +275,26 @@ export class LoginComponent implements OnInit {
           this.router.navigate([redirect]);
         }
       } else {
-        // go to install hub tab
-        this.gotoTab('Installer');
+        this.doPreinstallCheck();
       }
+    });
+  }
+
+  doPreinstallCheck() {
+    this.gotoTab('PreInstallCheck');
+    this.runningPreinstallCheck = true;
+    this.projectService.preinstallCheck().subscribe((resp: any) => {
+      this.runningPreinstallCheck = false;
+      this.preinstallCheck = resp;
+      if (this.preinstallCheck.safeToInstall) {
+        this.gotoTab('Installer');
+      } else {
+        console.log('bad!');
+      }
+    },
+    () => {
+      this.runningPreinstallCheck = false;
+      this.preinstallCheck = null;
     });
   }
 

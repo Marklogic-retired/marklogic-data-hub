@@ -46,6 +46,11 @@ declare function plugin:main(
   })
 
   let $envelope := dhf:make-envelope($content, $headers, $triples, map:get($options, "dataFormat"))
+  (:
+   : log the final envelope as a trace
+   : only fires if tracing is enabled
+   :)
+  let $_ := dhf:log-trace(dhf:writer-context($envelope))
   return
     $envelope
 };

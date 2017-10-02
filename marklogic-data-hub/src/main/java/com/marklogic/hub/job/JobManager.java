@@ -25,7 +25,6 @@ import com.marklogic.client.document.DocumentWriteSet;
 import com.marklogic.client.document.JSONDocumentManager;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.JacksonDatabindHandle;
-import com.sun.jersey.api.client.ClientHandlerException;
 
 import java.text.SimpleDateFormat;
 import java.util.TimeZone;
@@ -71,11 +70,6 @@ public class JobManager {
         metadataHandle = metadataHandle.withCollections("job");
         DocumentWriteSet writeSet = docMgr.newWriteSet();
         writeSet.add("/jobs/" + job.getJobId() + ".json", metadataHandle, contentHandle);
-        try {
-            docMgr.write(writeSet, transaction);
-        } catch(ClientHandlerException e) {
-            throw new RuntimeException(e);
-        }
-
+        docMgr.write(writeSet, transaction);
     }
 }

@@ -15,6 +15,8 @@
  */
 package com.marklogic.hub.flow.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.datamovement.*;
@@ -22,6 +24,7 @@ import com.marklogic.client.datamovement.impl.JobTicketImpl;
 import com.marklogic.client.datamovement.impl.QueryBatcherImpl;
 import com.marklogic.client.extensions.ResourceManager;
 import com.marklogic.client.extensions.ResourceServices;
+import com.marklogic.client.io.Format;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.util.RequestParameters;
 import com.marklogic.hub.HubConfig;
@@ -37,6 +40,7 @@ import java.io.StringWriter;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
 
 public class FlowRunnerImpl implements FlowRunner {
 
@@ -189,7 +193,7 @@ public class FlowRunnerImpl implements FlowRunner {
             listener.onStatusChange(jobId, 0, "starting harmonization");
         });
 
-        ArrayList<String> errorMessages = new ArrayList<>();
+        Vector<String> errorMessages = new Vector<>();
 
         DataMovementManager dataMovementManager = sourceClient.newDataMovementManager();
 
@@ -204,6 +208,11 @@ public class FlowRunnerImpl implements FlowRunner {
                     RunFlowResponse response = flowRunner.run(jobId, batch.getItems(), options);
                     failedEvents.addAndGet(response.errorCount);
                     successfulEvents.addAndGet(response.totalCount - response.errorCount);
+                    if (response.errors != null) {
+                        ObjectMapper objectMapper = new ObjectMapper();
+
+                        errorMessages.addAll(response.errors.stream().map(jsonNode -> jsonToString(jsonNode)).collect(Collectors.toList()));
+                    }
 
                     if (response.errorCount < response.totalCount) {
                         successfulBatches.addAndGet(1);
@@ -281,7 +290,7 @@ public class FlowRunnerImpl implements FlowRunner {
                 .withEndTime(new Date());
 
             if (errorMessages.size() > 0) {
-                job.withJobOutput(String.join("\n", errorMessages));
+                job.withJobOutput(errorMessages);
             }
             jobManager.saveJob(job);
         });
@@ -289,6 +298,15 @@ public class FlowRunnerImpl implements FlowRunner {
 
         // hack until https://github.com/marklogic/java-client-api/issues/752 is fixed
         return new JobTicketImpl(jobId, JobTicket.JobType.QUERY_BATCHER).withQueryBatcher((QueryBatcherImpl)queryBatcher);
+    }
+
+    private String jsonToString(JsonNode node) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            return objectMapper.writeValueAsString(node);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     class FlowResource extends ResourceManager {
@@ -317,7 +335,6 @@ public class FlowRunnerImpl implements FlowRunner {
                 RequestParameters params = new RequestParameters();
                 params.add("entity-name", flow.getEntityName());
                 params.add("flow-name", flow.getName());
-                params.add("flow-type", flow.getType().toString());
                 params.put("job-id", jobId);
                 params.put("identifiers", items);
                 params.put("target-database", targetDatabase);
@@ -325,7 +342,7 @@ public class FlowRunnerImpl implements FlowRunner {
                     ObjectMapper objectMapper = new ObjectMapper();
                     params.put("options", objectMapper.writeValueAsString(options));
                 }
-                ResourceServices.ServiceResultIterator resultItr = this.getServices().post(params, new StringHandle("{}"));
+                ResourceServices.ServiceResultIterator resultItr = this.getServices().post(params, new StringHandle("{}").withFormat(Format.JSON));
                 if (resultItr == null || ! resultItr.hasNext()) {
                     resp = new RunFlowResponse();
                 }

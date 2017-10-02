@@ -18,11 +18,12 @@ class DataHubPlugin implements Plugin<Project> {
 
     @Override
     void apply(Project project) {
-        if (DataHub.versionCompare(project.gradle.gradleVersion, "3.1") == -1) {
+        if (DataHub.versionCompare(project.gradle.gradleVersion, "3.4") == -1) {
             logger.error("\n\n" +
                 "********************************\n" +
                 "Hold the phone!\n\n" +
-                "You need Gradle 3.1 or greater.\n" +
+                "You need Gradle 3.4 or greater.\n" +
+                "We provide gradle wrappers ./gradlew or gradlew.bat for your convenience.\n" +
                 "********************************" +
                 "\n\n")
             return
@@ -41,6 +42,7 @@ class DataHubPlugin implements Plugin<Project> {
         project.task("hubEnableTracing", group: deployGroup, type: EnableTracingTask)
         project.task("hubDisableTracing", group: deployGroup, type: DisableTracingTask)
         project.task("hubInstallModules", type: DeployHubModulesTask).mustRunAfter(["mlClearModulesDatabase"])
+        project.task("hubPreInstallCheck", type: PreinstallCheckTask)
         project.task("hubInfo", type: HubInfoTask)
         project.task("hubUpdate", group: deployGroup, type: UpdateHubTask)
 
@@ -53,6 +55,7 @@ class DataHubPlugin implements Plugin<Project> {
         project.tasks.replace("mlLoadModules", DeployUserModulesTask)
         project.tasks.replace("mlWatch", HubWatchTask)
         project.tasks.replace("mlDeleteModuleTimestampsFile", DeleteHubModuleTimestampsFileTask)
+        project.tasks.mlDeploy.getDependsOn().add("hubPreInstallCheck")
         project.tasks.mlReloadModules.setDependsOn(["mlClearModulesDatabase", "hubInstallModules", "mlLoadModules"])
 
         String flowGroup = "MarkLogic Data Hub Flow Management"

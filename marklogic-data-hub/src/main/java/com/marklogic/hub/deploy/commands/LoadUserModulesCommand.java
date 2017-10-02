@@ -5,19 +5,25 @@ import com.marklogic.appdeployer.command.AbstractCommand;
 import com.marklogic.appdeployer.command.CommandContext;
 import com.marklogic.appdeployer.command.SortOrderConstants;
 import com.marklogic.appdeployer.command.modules.AllButAssetsModulesFinder;
-import com.marklogic.appdeployer.command.modules.AssetModulesFinder;
 import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.document.DocumentWriteSet;
 import com.marklogic.client.document.JSONDocumentManager;
 import com.marklogic.client.document.XMLDocumentManager;
+import com.marklogic.client.ext.modulesloader.Modules;
+import com.marklogic.client.ext.modulesloader.ModulesManager;
+import com.marklogic.client.ext.modulesloader.impl.AssetFileLoader;
+import com.marklogic.client.ext.modulesloader.impl.DefaultModulesLoader;
+import com.marklogic.client.ext.modulesloader.impl.PropertiesModuleManager;
+import com.marklogic.client.ext.util.DefaultDocumentPermissionsParser;
+import com.marklogic.client.ext.util.DocumentPermissionsParser;
 import com.marklogic.client.io.DocumentMetadataHandle;
+import com.marklogic.client.io.Format;
 import com.marklogic.client.io.StringHandle;
-import com.marklogic.client.modulesloader.Modules;
-import com.marklogic.client.modulesloader.impl.*;
-import com.marklogic.client.modulesloader.xcc.DefaultDocumentFormatGetter;
+import com.marklogic.com.marklogic.client.ext.file.CacheBusterDocumentFileProcessor;
+import com.marklogic.com.marklogic.client.ext.modulesloader.impl.EntityDefModulesFinder;
+import com.marklogic.com.marklogic.client.ext.modulesloader.impl.UserModulesFinder;
 import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.HubConfig;
-import com.marklogic.hub.deploy.util.CacheBustingXccAssetLoader;
-import com.marklogic.hub.deploy.util.EntityDefModulesFinder;
 import com.marklogic.hub.deploy.util.HubFileFilter;
 import com.marklogic.hub.error.LegacyFlowsException;
 import com.marklogic.hub.flow.Flow;
@@ -25,8 +31,6 @@ import org.apache.commons.io.IOUtils;
 import org.springframework.core.io.Resource;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
-import java.io.File;
-import java.io.FileFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.FileVisitResult;
@@ -34,6 +38,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.Date;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -52,10 +57,17 @@ public class LoadUserModulesCommand extends AbstractCommand {
     public LoadUserModulesCommand(HubConfig hubConfig) {
         setExecuteSortOrder(SortOrderConstants.LOAD_MODULES + 1);
         this.hubConfig = hubConfig;
+
+        this.threadPoolTaskExecutor = new ThreadPoolTaskExecutor();
+        this.threadPoolTaskExecutor.setCorePoolSize(16);
+        // 10 minutes should be plenty of time to wait for REST API modules to be loaded
+        this.threadPoolTaskExecutor.setAwaitTerminationSeconds(60 * 10);
+        this.threadPoolTaskExecutor.setWaitForTasksToCompleteOnShutdown(true);
+        this.threadPoolTaskExecutor.afterPropertiesSet();
     }
 
     private PropertiesModuleManager getModulesManager() {
-        File timestampFile = hubConfig.getUserModulesDeployTimestampFile();
+        String timestampFile = hubConfig.getUserModulesDeployTimestampFile();
         PropertiesModuleManager pmm = new PropertiesModuleManager(timestampFile);
         if (forceLoad) {
             pmm.deletePropertiesFile();
@@ -63,55 +75,20 @@ public class LoadUserModulesCommand extends AbstractCommand {
         return pmm;
     }
 
-    private CacheBustingXccAssetLoader getAssetLoader(AppConfig config) {
-        CacheBustingXccAssetLoader l = new CacheBustingXccAssetLoader();
-        l.setHost(config.getHost());
-        l.setUsername(config.getRestAdminUsername());
-        l.setPassword(config.getRestAdminPassword());
-        l.setDatabaseName(config.getModulesDatabaseName());
-        if (config.getAppServicesPort() != null) {
-            l.setPort(config.getAppServicesPort());
-        }
-
-        String permissions = config.getModulePermissions();
-        if (permissions != null) {
-            l.setPermissions(permissions);
-        }
-
-        String[] extensions = config.getAdditionalBinaryExtensions();
-        if (extensions != null) {
-            DefaultDocumentFormatGetter getter = new DefaultDocumentFormatGetter();
-            for (String ext : extensions) {
-                getter.getBinaryExtensions().add(ext);
-            }
-            l.setDocumentFormatGetter(getter);
-        }
-
-        FileFilter assetFileFilter = config.getAssetFileFilter();
-        if (assetFileFilter != null) {
-            l.setFileFilter(assetFileFilter);
-        }
-
-        l.setBulkLoad(config.isBulkLoadAssets());
-        return l;
+    private AssetFileLoader getAssetFileLoader(AppConfig config, PropertiesModuleManager moduleManager) {
+        AssetFileLoader assetFileLoader = new AssetFileLoader(hubConfig.newModulesDbClient(), moduleManager);
+        assetFileLoader.addDocumentFileProcessor(new CacheBusterDocumentFileProcessor());
+        assetFileLoader.addFileFilter(new HubFileFilter());
+        assetFileLoader.setPermissions(config.getModulePermissions());
+        return assetFileLoader;
     }
 
     private DefaultModulesLoader getStagingModulesLoader(AppConfig config) {
-        XccAssetLoader assetLoader = getAssetLoader(config);
-        assetLoader.setFileFilter(new HubFileFilter());
-        assetLoader.setPermissions(config.getModulePermissions());
+        PropertiesModuleManager moduleManager = getModulesManager();
+        AssetFileLoader assetFileLoader = getAssetFileLoader(config, moduleManager);
 
-        this.threadPoolTaskExecutor = new ThreadPoolTaskExecutor();
-        this.threadPoolTaskExecutor.setCorePoolSize(16);
-
-        // 10 minutes should be plenty of time to wait for REST API modules to be loaded
-        this.threadPoolTaskExecutor.setAwaitTerminationSeconds(60 * 10);
-        this.threadPoolTaskExecutor.setWaitForTasksToCompleteOnShutdown(true);
-
-        this.threadPoolTaskExecutor.afterPropertiesSet();
-
-        DefaultModulesLoader modulesLoader = new DefaultModulesLoader(assetLoader);
-        modulesLoader.setModulesManager(getModulesManager());
+        DefaultModulesLoader modulesLoader = new DefaultModulesLoader(assetFileLoader);
+        modulesLoader.setModulesManager(moduleManager);
         modulesLoader.setTaskExecutor(this.threadPoolTaskExecutor);
         modulesLoader.setShutdownTaskExecutorAfterLoadingModules(false);
 
@@ -133,6 +110,14 @@ public class LoadUserModulesCommand extends AbstractCommand {
         return dirStr.matches(regex);
     }
 
+    boolean isFlowPropertiesFile(Path dir) {
+        Path parent = dir.getParent();
+        return dir.toFile().isFile() &&
+            dir.getFileName().toString().endsWith(".properties") &&
+            parent.toString().matches(".*[/\\\\](input|harmonize)[/\\\\][^/\\\\]+$") &&
+            dir.getFileName().toString().equals(parent.getFileName().toString() + ".properties");
+    }
+
     @Override
     public void execute(CommandContext context) {
         FlowManager flowManager = new FlowManager(hubConfig);
@@ -147,13 +132,13 @@ public class LoadUserModulesCommand extends AbstractCommand {
         DatabaseClient finalClient = hubConfig.newFinalClient();
 
         Path userModulesPath = hubConfig.getHubPluginsDir();
-        File baseDir = userModulesPath.normalize().toAbsolutePath().toFile();
+        String baseDir = userModulesPath.normalize().toAbsolutePath().toString();
         Path startPath = userModulesPath.resolve("entities");
 
         // load any user files under plugins/* int the modules database.
         // this will ignore REST folders under entities
         DefaultModulesLoader modulesLoader = getStagingModulesLoader(config);
-        modulesLoader.loadModules(baseDir, new AssetModulesFinder(), stagingClient);
+        modulesLoader.loadModules(baseDir, new UserModulesFinder(), stagingClient);
 
         JSONDocumentManager entityDocMgr = finalClient.newJSONDocumentManager();
 
@@ -165,14 +150,14 @@ public class LoadUserModulesCommand extends AbstractCommand {
                 // load Flow Definitions
                 List<Flow> flows = flowManager.getLocalFlows();
                 XMLDocumentManager documentManager = hubConfig.newModulesDbClient().newXMLDocumentManager();
-                for (Flow flow : flows) {
-                    documentManager.write(flow.getFlowDbPath(), new StringHandle(flow.serialize()));
-                }
+                DocumentWriteSet documentWriteSet = documentManager.newWriteSet();
+
+                ModulesManager modulesManager = modulesLoader.getModulesManager();
 
                 Files.walkFileTree(startPath, new SimpleFileVisitor<Path>() {
                     @Override
                     public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-                        File currentDir = dir.normalize().toAbsolutePath().toFile();
+                        String currentDir = dir.normalize().toAbsolutePath().toString();
 
                         // for REST dirs we need to deploy all the REST stuff (transforms, options, services, etc)
                         if (isInputRestDir(dir)) {
@@ -185,15 +170,18 @@ public class LoadUserModulesCommand extends AbstractCommand {
                             return FileVisitResult.SKIP_SUBTREE;
                         }
                         else if (isEntityDir(dir, startPath.toAbsolutePath())) {
-                            Modules modules = new EntityDefModulesFinder().findModules(dir.toFile());
+                            Modules modules = new EntityDefModulesFinder().findModules(dir.toString());
                             DocumentMetadataHandle meta = new DocumentMetadataHandle();
                             meta.getCollections().add("http://marklogic.com/entity-services/models");
                             documentPermissionsParser.parsePermissions(hubConfig.modulePermissions, meta.getPermissions());
                             for (Resource r : modules.getAssets()) {
-                                InputStream inputStream = r.getInputStream();
-                                StringHandle handle = new StringHandle(IOUtils.toString(inputStream));
-                                inputStream.close();
-                                entityDocMgr.write("/entities/" + r.getFilename(), meta, handle);
+                                if (modulesManager.hasFileBeenModifiedSinceLastLoaded(r.getFile())) {
+                                    InputStream inputStream = r.getInputStream();
+                                    StringHandle handle = new StringHandle(IOUtils.toString(inputStream));
+                                    inputStream.close();
+                                    entityDocMgr.write("/entities/" + r.getFilename(), meta, handle);
+                                    modulesManager.saveLastLoadedTimestamp(r.getFile(), new Date());
+                                }
                             }
                             return FileVisitResult.CONTINUE;
                         }
@@ -201,7 +189,25 @@ public class LoadUserModulesCommand extends AbstractCommand {
                             return FileVisitResult.CONTINUE;
                         }
                     }
+
+                    @Override
+                    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
+                        throws IOException
+                    {
+                        if (isFlowPropertiesFile(file) && modulesManager.hasFileBeenModifiedSinceLastLoaded(file.toFile())) {
+                            Flow flow = flowManager.getFlowFromProperties(file);
+                            StringHandle handle = new StringHandle(flow.serialize());
+                            handle.setFormat(Format.XML);
+                            documentWriteSet.add(flow.getFlowDbPath(), handle);
+                            modulesManager.saveLastLoadedTimestamp(file.toFile(), new Date());
+                        }
+                        return FileVisitResult.CONTINUE;
+                    }
                 });
+
+                if (documentWriteSet.size() > 0) {
+                    documentManager.write(documentWriteSet);
+                }
             }
             threadPoolTaskExecutor.shutdown();
         } catch (IOException e) {

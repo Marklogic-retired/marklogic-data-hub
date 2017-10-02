@@ -18,6 +18,7 @@ package com.marklogic.quickstart.service;
 import com.marklogic.hub.DataHub;
 import com.marklogic.hub.DataHubUpgrader;
 import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.PreInstallCheck;
 import com.marklogic.hub.deploy.util.HubDeployStatusListener;
 import com.marklogic.hub.error.CantUpgradeException;
 import com.marklogic.hub.util.PerformanceLogger;
@@ -117,6 +118,11 @@ public class DataHubService {
         PerformanceLogger.logTimeInsideMethod(startTime, "DataHubService.uninstallUserModules");
     }
 
+    public PreInstallCheck preInstallCheck(HubConfig config) {
+        DataHub dataHub = new DataHub(config);
+        return dataHub.runPreInstallCheck();
+    }
+
     @Async
     public void validateUserModules(HubConfig config, ValidateListener validateListener) {
         DataHub dataHub = new DataHub(config);
@@ -152,7 +158,7 @@ public class DataHubService {
     }
 
     public String getLastDeployed(HubConfig config) {
-        File tsFile = config.getUserModulesDeployTimestampFile();
+        File tsFile = new File(config.getUserModulesDeployTimestampFile());
         Date lastModified = new Date(tsFile.lastModified());
 
         TimeZone tz = TimeZone.getTimeZone("UTC");

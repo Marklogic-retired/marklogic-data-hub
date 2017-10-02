@@ -15,9 +15,9 @@ The sample data is located in the input/ folder.
 ```
 
 # TLDR; How do I run it?
-1. Download the latest quick-start jar from the [releases page](https://github.com/marklogic-community/marklogic-data-hub/releases) into this folder.
+1. Download the [latest quick-start war](https://github.com/marklogic-community/marklogic-data-hub/releases/download/v2.0.0/quick-start-2.0.0.war) into this folder.
 
-1. Run the quick-start jar `java -jar quick-start.jar`
+1. Run the quick-start jar `java -jar quick-start-2.0.0.war`
 
 1. Open your web browser to [http://localhost:8080](http://localhost:8080).
 
@@ -29,16 +29,51 @@ The sample data is located in the input/ folder.
 
 1. Install the Hub into MarkLogic (if necessary)
 
-1. Load hl7 data by pressing the **Load Data** button next to hl7. When prompted Set the Path to **input/hl7**. Set the collection to **hl7**. Set the Data Format to **Documents**. Now Press **Submit**.
+## Loading the HL7 data
 
-1. Load nppes data by pressing the **Load Data** button next to nppes. When prompted Set the Path to **input/nppes**. Set the collection to **nppes**. Set the Data Format to **Delimited Text**. Now Press **Submit**.
+1. Click on the **Flows** tab.
 
-1. At this point you have loaded the sample data. You can browse the data via [QConsole](http://localhost:8000/qconsole) or by searching the REST endpoint on the Staging Http Server [http://localhost:8010/v1/search](http://localhost:8010/v1/search). *Your port may be different if you changed it during setup*
+1. Click on Input Flows => hl7 on the left side.
 
-1. To run the harmonize flows simply press the **Run** button next to the final flow.
+1. On the right side you can configure the MLCP (MarkLogic Content Pump) options.
 
-1. Now you have harmonized the data into your final database. You can browse the data via [QConsole](http://localhost:8000/qconsole) or by searching the REST endpoint on the Final Http Server [http://localhost:8011/v1/search](http://localhost:8011/v1/search). *Your port may be different if you changed it during setup*
+1. Browse the Input Files to **input/hl7**.
 
+1. Set the Data Format to **Documents**.
+
+1. Now Click **RUN IMPORT**.
+
+## Loading the NPPES data
+
+1. Click on Input Flows => nppes on the left side.
+
+1. On the right side you can configure the MLCP (MarkLogic Content Pump) options.
+
+1. Browse the Input Files to **input/nppes**.
+
+1. Set the Data Format to **Delimited Text**.
+
+1. Now Click **RUN IMPORT**.
+
+## Browsing the Staging Data
+
+1. At this point you have loaded the sample data. You can browse the data by clicking on the Browse tab at the top menu.
+
+## Harmonizing Data
+
+1. Click on the **Flows** tab.
+
+1. Click on the **final** flow.
+
+1. To run the harmonize flows simply press the **Run** button on the info screen.
+
+## Browsing the Harmonized Data
+
+1. Now you have harmonized the data into your final database. You can browse the harmonized data by clicking on the Browse tab at the top menu.
+
+1. Next change the database to **FINAL**.
+
+1. Click Search.
 
 # Entities
 Entities represent the data you are modeling. For this example we provide the **Patients** entity. Inside this entity definition you will find all of the example flows.
@@ -52,10 +87,10 @@ Flows are sets of plugins that work together to create an envelope document.
 ## Input Flows
 
 ### hl7
-The hl7 Flow is intended to ingest C-CDA C32 Hl7 XML files. When running the hl7 flow simply point it at input/hl7. Set the collection to **hl7** and set the document type to **Document**.
+The hl7 Flow is intended to ingest C-CDA C32 Hl7 XML files. When running the hl7 flow simply point it at input/hl7. Set the document type to **Document**.
 
 ### nppes
-The nppes Flow is intended to ingest NPPES csv files. This flow will split each row of the NPPES file into a separate XML document in the staging database. When running the hl7 flow simply point it at input/nppes. Set the collection to **nppes** and set the document type to **Delimited Text**.
+The nppes Flow is intended to ingest NPPES csv files. This flow will split each row of the NPPES file into a separate XML document in the staging database. When running the hl7 flow simply point it at input/nppes. Set the document type to **Delimited Text**.
 
 ## Harmonize Flows
 

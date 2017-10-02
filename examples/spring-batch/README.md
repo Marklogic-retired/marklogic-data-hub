@@ -19,7 +19,7 @@ This example depends on a properties file called job.properties. This project pr
 1. [Deploy the MarkLogic Job Repository](https://github.com/marklogic-community/marklogic-spring-batch/wiki/MarkLogicJobRepository). When the Spring Batch application starts it needs to persist the job into MarkLogic.  
 1. Modify ./gradle.properties to meet your needs.
 1. Deploy the Data Hub Framework `./gradlew mlDeploy`
-1. Deploy Hub Framework Modules `./gradlew mlDeployModules`
+1. Deploy Hub Framework Modules `./gradlew mlLoadModules`
 1. Modify job.properties to point to your staging database and the job repo
 1. Execute the job with the following gradle command. `./gradlew ingestInvoices`  This reads invoice, customer, item, and customer data from a relational database called H2 and ingests it into MarkLogic. During ingest the data is passed through the Invoice:ingest-invoice-db input flow.
 

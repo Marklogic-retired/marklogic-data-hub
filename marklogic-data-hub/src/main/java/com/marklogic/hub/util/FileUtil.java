@@ -9,10 +9,15 @@ import java.io.InputStream;
 
 public class FileUtil {
 
-    public static void copy(InputStream source, File destination) throws IOException {
-        FileOutputStream fos = new FileOutputStream(destination);
-        IOUtils.copy(source, fos);
-        fos.flush();
-        fos.close();
+    public static void copy(InputStream source, File destination) {
+        try {
+            FileOutputStream fos = new FileOutputStream(destination);
+            IOUtils.copy(source, fos);
+            fos.flush();
+            fos.close();
+        }
+        catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

@@ -85,7 +85,9 @@
                 *ngIf="flowType === 'INPUT'"
                 [flow]="flow"
                 [mlcpOptions]="mlcpOptions"
-                (onRun)="runInputFlow(flow, $event)"></app-mlcp>
+                [hasErrors]="flowHasError(entity.name, flow.flowName)"
+                (onRun)="runInputFlow(flow, $event)"
+                (onErrorRun)="showFlowErrorDialog(flow)"></app-mlcp>
               <app-harmonize-flow-options
                 [flow]="flow"
                 (onRun)="runHarmonizeFlow(flow, $event)"

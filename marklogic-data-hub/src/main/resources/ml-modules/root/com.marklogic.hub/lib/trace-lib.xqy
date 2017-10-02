@@ -139,7 +139,18 @@ declare %private function trace:get-plugin-input()
   let $o := map:get($current-trace, "plugin-input")
   where fn:exists($o)
   return
-    if (rfc:is-json()) then $o
+    if (rfc:is-json()) then
+      let $oo := json:object()
+      let $_ :=
+        for $key in map:keys($o)
+        let $value := map:get($o, $key)
+        let $value :=
+          if ($value instance of null-node()) then ()
+          else if ($value instance of binary()) then "binary data"
+          else $value
+        return
+         map:put($oo, $key, $value)
+      return $oo
     else
       for $key in map:keys($o)
       return
@@ -147,6 +158,7 @@ declare %private function trace:get-plugin-input()
           let $value := map:get($o, $key)
           return
             if ($value instance of null-node()) then ()
+            else if ($value instance of binary()) then "binary data"
             else $value
         }
 };

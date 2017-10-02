@@ -19,6 +19,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.InstallInfo;
+import com.marklogic.hub.PreInstallCheck;
 import com.marklogic.hub.Tracing;
 import com.marklogic.hub.deploy.util.HubDeployStatusListener;
 import com.marklogic.hub.error.CantUpgradeException;
@@ -210,6 +211,11 @@ public class CurrentProjectController extends EnvironmentAware implements FileSy
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
+    @RequestMapping(value = "/preinstall-check", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_VALUE})
+    @ResponseBody
+    public PreInstallCheck preInstallCheck() {
+        return dataHubService.preInstallCheck(envConfig().getMlSettings());
+    }
 
     private void startProjectWatcher() throws IOException {
         String pluginDir = Paths.get(envConfig().getProjectDir(), "plugins").toString();

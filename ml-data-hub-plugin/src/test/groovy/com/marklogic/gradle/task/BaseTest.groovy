@@ -13,13 +13,11 @@ import com.marklogic.client.io.InputStreamHandle
 import com.marklogic.client.io.StringHandle
 import com.marklogic.hub.HubConfig
 import com.marklogic.mgmt.ManageClient
-import com.marklogic.mgmt.databases.DatabaseManager
+import com.marklogic.mgmt.resource.databases.DatabaseManager
 import org.apache.commons.io.FilenameUtils
-import org.apache.commons.io.IOUtils
 import org.custommonkey.xmlunit.XMLUnit
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
-import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import org.w3c.dom.Document
 import org.xml.sax.SAXException
@@ -30,8 +28,6 @@ import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.parsers.ParserConfigurationException
 
 class BaseTest extends Specification {
-
-    public static boolean makeProperties = true;
 
     static final TemporaryFolder testProjectDir = new TemporaryFolder()
     static File buildFile
@@ -186,11 +182,10 @@ class BaseTest extends Specification {
     }
 
     static void createBuildFile() {
-        String version = new HubConfig(testProjectDir.toString()) .getJarVersion()
         buildFile = testProjectDir.newFile('build.gradle')
         buildFile << """
             plugins {
-                id 'com.marklogic.ml-data-hub' version '${version}'
+                id 'com.marklogic.ml-data-hub'
             }
         """
     }
@@ -242,10 +237,13 @@ class BaseTest extends Specification {
         """
     }
 
+    static void createGradleFiles() {
+        createBuildFile()
+        createFullPropertiesFile()
+    }
+
     def setupSpec() {
         XMLUnit.setIgnoreWhitespace(true)
         testProjectDir.create()
-        createBuildFile()
-        createFullPropertiesFile()
     }
 }

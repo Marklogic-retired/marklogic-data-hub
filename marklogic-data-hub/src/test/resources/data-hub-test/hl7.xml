@@ -5,6 +5,5 @@
 <type>input</type>
 <data-format>xml</data-format>
 <code-format>xqy</code-format>
-<collector code-format="xqy" module="/entities/test-entity/harmonize/hl7/collector.xqy"></collector>
-<main code-format="xqy" module="/entities/test-entity/harmonize/hl7/main.xqy"></main>
+<main code-format="xqy" module="/entities/test-entity/input/hl7/main.xqy"></main>
 </flow>

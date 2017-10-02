@@ -23,6 +23,12 @@ apply plugin: 'war'
 
 war {
     baseName = 'quick-start'
+    version = "${version}"
+    manifest {
+        attributes("Implementation-Title": "QuickStart",
+                   "Implementation-Version": version)
+    }
+
 }
 
 repositories {
@@ -53,7 +59,7 @@ dependencies {
     compile("org.springframework.boot:spring-boot-devtools:${springBootVersion}")
 
     // Needed for the Upload feature using mlcp
-    compile("com.marklogic:mlcp:9.0.2") {
+    compile("com.marklogic:mlcp:9.0.3") {
       exclude group: 'org.apache.avro', module: 'avro-tools'
     }
     compile("com.marklogic:marklogic-spring-web:1.0")
@@ -125,19 +131,15 @@ task copyIndexHtml(type: Copy) {
 
 task runUI(type: NpmTask) {
     args = ['start']
-}
-
-processResources {
-    filesMatching("**/quickstart-version.properties") {
-        expand(project: project)
-    }
+    dependsOn tasks.npmInstallUI
 }
 
 if (!(
     gradle.startParameter.taskNames*.toLowerCase().contains("bootrun") ||
     gradle.startParameter.taskNames*.toLowerCase().contains("test") ||
     gradle.startParameter.taskNames*.toLowerCase().contains("publishplugins") ||
-    gradle.startParameter.taskNames*.toLowerCase().contains("bintrayUpload")
+    gradle.startParameter.taskNames*.toLowerCase().contains("bintrayUpload") ||
+    project.hasProperty('skipui')
     )
    ) {
   processResources.dependsOn copyIndexHtml
@@ -151,4 +153,5 @@ bootRun {
 springBoot {
     executable = true
     mainClass = "com.marklogic.quickstart.Application"
+    buildInfo()
 }

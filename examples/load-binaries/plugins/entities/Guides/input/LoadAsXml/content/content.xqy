@@ -2,8 +2,6 @@ xquery version "1.0-ml";
 
 module namespace plugin = "http://marklogic.com/data-hub/plugins";
 
-declare namespace envelope = "http://marklogic.com/data-hub/envelope";
-
 declare option xdmp:mapping "false";
 
 (:~
@@ -27,11 +25,25 @@ declare function plugin:create-content(
   let $_ := map:put($options, 'binary-uri', $binary-uri)
 
   (: save the incoming binary as a pdf :)
+  let $_ :=
+    xdmp:eval('
+    	declare variable $binary-uri external;
+      declare variable $raw-content external;
+      xdmp:document-insert($binary-uri, $raw-content)
+      ',
+      map:new((
+        map:entry("binary-uri", $binary-uri),
+        map:entry("raw-content", $raw-content)
+      )),
+      map:new((
+        map:entry("isolation", "different-transaction"),
+        map:entry("commit", "auto")
+      ))
+   )
   return
-    xdmp:document-insert($binary-uri, $raw-content),
-
-  (: extract the contents of the pdf and return them
+  (: 
+   : extract the contents of the pdf and return them
    : as the content for the envelope
    :)
-  xdmp:document-filter($raw-content)
+    xdmp:document-filter($raw-content)
 };

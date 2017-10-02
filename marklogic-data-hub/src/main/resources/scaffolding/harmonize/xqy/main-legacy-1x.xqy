@@ -49,6 +49,7 @@ declare function plugin:main(
 
   let $envelope := dhf:make-legacy-envelope($content, $headers, $triples, map:get($options, "dataFormat"))
   return
-  (: explain: needed to call this way for static analysis :)
+  (: writers must be invoked this way.
+     see: https://github.com/marklogic-community/marklogic-data-hub/wiki/dhf-lib#run-writer :)
     dhf:run-writer(xdmp:function(xs:QName("writer:write")), $id, $envelope, $options)
 };

@@ -38,33 +38,21 @@ import com.marklogic.hub.deploy.HubAppDeployer;
 import com.marklogic.hub.deploy.commands.*;
 import com.marklogic.hub.deploy.util.HubDeployStatusListener;
 import com.marklogic.hub.error.ServerValidationException;
-import com.marklogic.hub.scaffold.Scaffolding;
-import com.marklogic.hub.util.JsonXor;
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.admin.AdminManager;
-import com.marklogic.mgmt.appservers.ServerManager;
-import com.marklogic.mgmt.databases.DatabaseManager;
+import com.marklogic.mgmt.resource.appservers.ServerManager;
+import com.marklogic.mgmt.resource.databases.DatabaseManager;
 import com.marklogic.rest.util.Fragment;
 import com.marklogic.rest.util.ResourcesFragment;
-import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
-import org.springframework.util.FileCopyUtils;
-import org.springframework.web.client.ResourceAccessException;
-
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.file.*;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.regex.Pattern;
 
 public class DataHub {
 
@@ -116,6 +104,7 @@ public class DataHub {
         }
         return this._serverManager;
     }
+    void setServerManager(ServerManager manager) { this._serverManager = manager; }
     /**
      * Determines if the data hub is installed in MarkLogic
      * @return true if installed, false otherwise
@@ -167,22 +156,49 @@ public class DataHub {
 
     /**
      * Validates the MarkLogic server to ensure compatibility with the hub
+     * @return true if valid, false otherwise
      * @throws ServerValidationException if the server is not compatible
      */
-    public void validateServer() throws ServerValidationException {
+    public boolean isServerVersionValid() {
+        return isServerVersionValid(null);
+    }
+
+    public boolean isServerVersionValid(String versionString) {
         try {
-            String versionString = getAdminManager().getServerVersion();
+            if (versionString == null) {
+                versionString = getMarkLogicVersion();
+            }
             int major = Integer.parseInt(versionString.replaceAll("([^.]+)\\..*", "$1"));
-            if (major < 9) {
-                throw new ServerValidationException("Invalid MarkLogic Server Version: " + versionString);
+            if (major < 8) {
+                return false;
             }
             boolean isNightly = versionString.matches("[^-]+-(\\d{4})(\\d{2})(\\d{2})");
+            if (major == 8) {
+                String alteredString = versionString.replaceAll("[^\\d]+", "");
+                if (alteredString.length() < 4) {
+                    alteredString = StringUtils.rightPad(alteredString, 4, "0");
+                }
+                int ver = Integer.parseInt(alteredString.substring(0, 4));
+                if (!isNightly && ver < 8070) {
+                    return false;
+                }
+            }
+            if (major == 9) {
+                String alteredString = versionString.replaceAll("[^\\d]+", "");
+                if (alteredString.length() < 4) {
+                    alteredString = StringUtils.rightPad(alteredString, 4, "0");
+                }
+                int ver = Integer.parseInt(alteredString.substring(0, 4));
+                if (!isNightly && ver < 9011) {
+                    return false;
+                }
+            }
             if (isNightly) {
                 String dateString = versionString.replaceAll("[^-]+-(\\d{4})(\\d{2})(\\d{2})", "$1-$2-$3");
                 Date minDate = new GregorianCalendar(2017, 6, 1).getTime();
                 Date date = new SimpleDateFormat("y-M-d").parse(dateString);
                 if (date.before(minDate)) {
-                    throw new ServerValidationException("Invalid MarkLogic Server Version: " + versionString);
+                    return false;
                 }
             }
 
@@ -190,6 +206,7 @@ public class DataHub {
         catch(Exception e) {
             throw new ServerValidationException(e.toString());
         }
+        return true;
     }
 
     public void initProject() {
@@ -212,6 +229,12 @@ public class DataHub {
         try {
             ArrayList<String> options = new ArrayList<>();
             for (Resource r : resolver.getResources("classpath*:/ml-modules/options/*.xml")) {
+                options.add(r.getFilename().replace(".xml", ""));
+            }
+            for (Resource r : resolver.getResources("classpath*:/ml-modules-traces/options/*.xml")) {
+                options.add(r.getFilename().replace(".xml", ""));
+            }
+            for (Resource r : resolver.getResources("classpath*:/ml-modules-jobs/options/*.xml")) {
                 options.add(r.getFilename().replace(".xml", ""));
             }
 
@@ -354,6 +377,52 @@ public class DataHub {
         return commandMap;
     }
 
+    public Map<Integer, String> getServerPortsInUse() {
+        Map<Integer, String> portsInUse = new HashMap<>();
+        ResourcesFragment srf = getServerManager().getAsXml();
+        srf.getListItemNameRefs().forEach(s -> {
+            Fragment fragment = getServerManager().getPropertiesAsXml(s);
+            int port = Integer.parseInt(fragment.getElementValue("//m:port"));
+            portsInUse.put(port, s);
+        });
+        return portsInUse;
+    }
+
+    public PreInstallCheck runPreInstallCheck() {
+        PreInstallCheck check = new PreInstallCheck();
+
+        Map<Integer, String> portsInUse = getServerPortsInUse();
+        Set<Integer> ports = portsInUse.keySet();
+
+        String serverName = portsInUse.get(hubConfig.stagingPort);
+        check.stagingPortInUse = ports.contains(hubConfig.stagingPort) && serverName != null && !serverName.equals(hubConfig.stagingHttpName);
+        if (check.stagingPortInUse) {
+            check.stagingPortInUseBy = serverName;
+        }
+
+        serverName = portsInUse.get(hubConfig.finalPort);
+        check.finalPortInUse = ports.contains(hubConfig.finalPort) && serverName != null && !serverName.equals(hubConfig.finalHttpName);
+        if (check.finalPortInUse) {
+            check.finalPortInUseBy = serverName;
+        }
+
+        serverName = portsInUse.get(hubConfig.jobPort);
+        check.jobPortInUse = ports.contains(hubConfig.jobPort) && serverName != null && !serverName.equals(hubConfig.jobHttpName);
+        if (check.jobPortInUse) {
+            check.jobPortInUseBy = serverName;
+        }
+
+        serverName = portsInUse.get(hubConfig.tracePort);
+        check.tracePortInUse = ports.contains(hubConfig.tracePort) && serverName != null && !serverName.equals(hubConfig.traceHttpName);
+        if (check.tracePortInUse) {
+            check.tracePortInUseBy = serverName;
+        }
+
+        check.serverVersion = getMarkLogicVersion();
+        check.serverVersionOk = isServerVersionValid(check.serverVersion);
+        return check;
+    }
+
     /**
      * Installs the data hub configuration and server-side modules into MarkLogic
      */
@@ -419,15 +488,7 @@ public class DataHub {
     }
 
     public String getMarkLogicVersion() {
-        ServerEvaluationCall eval = hubConfig.newAppServicesClient().newServerEval();
-        String xqy = "xdmp:version()";
-        EvalResultIterator result = eval.xquery(xqy).eval();
-        if (result.hasNext()) {
-            return result.next().getString();
-        }
-        else {
-            throw new RuntimeException("Couldn't determine MarkLogic Version");
-        }
+        return getAdminManager().getServerVersion();
     }
 
     public static int versionCompare(String v1, String v2) {

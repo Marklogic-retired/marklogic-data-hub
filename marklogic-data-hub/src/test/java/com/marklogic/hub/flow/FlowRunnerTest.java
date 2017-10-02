@@ -70,8 +70,8 @@ public class FlowRunnerTest extends HubTestBase {
     }
 
     @AfterClass
-    public static void teardown() throws IOException {
-        FileUtils.deleteDirectory(projectDir.toFile());
+    public static void teardown() {
+        deleteProjectDir();
     }
 
     @Test

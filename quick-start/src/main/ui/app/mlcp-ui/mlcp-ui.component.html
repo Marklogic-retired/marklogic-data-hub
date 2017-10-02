@@ -68,7 +68,7 @@
       </div>
     </div>
     <div class="mdl-dialog__actions">
-      <mdl-button mdl-button-type="raised" mdl-colored="primary" mdl-ripple (click)="runImport()">Run Import</mdl-button>
+      <mdl-button mdl-button-type="raised" mdl-colored="primary" [ngClass]="{'error-button': hasErrors}" mdl-ripple (click)="runImport()">Run Import</mdl-button>
       <mdl-button mdl-button-type="raised" mdl-colored mdl-ripple (click)="saveOptions()">Save Options</mdl-button>
     </div>
   </div>

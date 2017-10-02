@@ -41,7 +41,7 @@ public class EntityManagerTest extends HubTestBase {
     public static void setup() throws IOException {
         XMLUnit.setIgnoreWhitespace(true);
 
-        FileUtils.deleteDirectory(new File(PROJECT_PATH));
+        deleteProjectDir();
 
         installHub();
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME);
@@ -71,7 +71,7 @@ public class EntityManagerTest extends HubTestBase {
 
     @AfterClass
     public static void teardown() throws IOException {
-        FileUtils.deleteDirectory(new File(PROJECT_PATH));
+        deleteProjectDir();
     }
 
     @Test

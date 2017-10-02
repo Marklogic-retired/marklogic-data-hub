@@ -15,6 +15,7 @@
  */
 package com.marklogic.hub;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.client.DatabaseClient;
@@ -24,7 +25,6 @@ import com.marklogic.client.FailedRequestException;
 import com.marklogic.client.document.DocumentWriteSet;
 import com.marklogic.client.document.GenericDocumentManager;
 import com.marklogic.client.document.JSONDocumentManager;
-import com.marklogic.client.document.XMLDocumentManager;
 import com.marklogic.client.eval.EvalResult;
 import com.marklogic.client.eval.EvalResultIterator;
 import com.marklogic.client.eval.ServerEvaluationCall;
@@ -32,16 +32,13 @@ import com.marklogic.client.io.*;
 import com.marklogic.hub.flow.CodeFormat;
 import com.marklogic.hub.flow.DataFormat;
 import com.marklogic.hub.flow.FlowType;
-import com.marklogic.mgmt.ManageClient;
-import com.marklogic.mgmt.databases.DatabaseManager;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.json.JSONException;
+import org.skyscreamer.jsonassert.JSONAssert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-import org.springframework.web.client.ResourceAccessException;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -52,10 +49,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -205,6 +199,10 @@ public class HubTestBase {
         new Debugging(stagingClient).enable();
     }
 
+    protected static void disableDebugging() {
+        new Debugging(stagingClient).disable();
+    }
+
     protected static void enableTracing() {
         new Tracing(stagingClient).enable();
     }
@@ -229,31 +227,44 @@ public class HubTestBase {
         return hubConfig;
     }
 
-    protected static void installHub() throws IOException {
+    protected static void installHub() {
         installHub(null);
     }
 
-    protected static void installHub(String properties) throws IOException {
-        File projectDir = new File(PROJECT_PATH);
-        if (!projectDir.isDirectory() || !projectDir.exists()) {
-            getDataHub().initProject();
-        }
-        if (properties != null) {
-            Path gradle_properties = projectDir.toPath().resolve("gradle.properties");
-            String fileContents = FileUtils.readFileToString(gradle_properties.toFile());
-            fileContents += properties;
-            FileUtils.writeStringToFile(gradle_properties.toFile(), fileContents);
-        }
+    protected static void installHub(String properties) {
+        try {
+            File projectDir = new File(PROJECT_PATH);
+            if (!projectDir.isDirectory() || !projectDir.exists()) {
+                getDataHub().initProject();
+            }
+            if (properties != null) {
+                Path gradle_properties = projectDir.toPath().resolve("gradle.properties");
+                String fileContents = FileUtils.readFileToString(gradle_properties.toFile());
+                fileContents += properties;
+                FileUtils.writeStringToFile(gradle_properties.toFile(), fileContents);
+            }
 
-        if (!isInstalled) {
-            getDataHub().install();
-            isInstalled = true;
+            if (!isInstalled) {
+                getDataHub().install();
+                isInstalled = true;
+            }
+        }
+        catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
-    protected static void uninstallHub() throws IOException {
+    protected static void deleteProjectDir() {
+        try {
+            FileUtils.deleteDirectory(new File(PROJECT_PATH));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    protected static void uninstallHub() {
         getDataHub().uninstall();
-        FileUtils.deleteDirectory(new File(PROJECT_PATH));
+        deleteProjectDir();
         isInstalled = false;
     }
 
@@ -261,18 +272,17 @@ public class HubTestBase {
         return new File(HubTestBase.class.getClassLoader().getResource(resourceName).getFile());
     }
 
-    protected static InputStream getResourceStream(String resourceName) throws IOException {
+    protected static InputStream getResourceStream(String resourceName) {
         return HubTestBase.class.getClassLoader().getResourceAsStream(resourceName);
     }
 
-    protected static String getResource(String resourceName) throws IOException {
+    protected static String getResource(String resourceName) {
         try {
             InputStream inputStream = getResourceStream(resourceName);
             return IOUtils.toString(inputStream);
         }
         catch(IOException e) {
-            e.printStackTrace();
-            throw e;
+            throw new RuntimeException(e);
         }
     }
 
@@ -285,24 +295,32 @@ public class HubTestBase {
         return modMgr.read(uri).next().getContent(new DOMHandle()).get();
     }
 
-    protected static Document getXmlFromResource(String resourceName) throws IOException, ParserConfigurationException, SAXException {
+    protected static Document getXmlFromResource(String resourceName) {
         InputStream inputStream = HubTestBase.class.getClassLoader().getResourceAsStream(resourceName);
         return getXmlFromInputStream(inputStream);
     }
 
-    protected static Document getXmlFromInputStream(InputStream inputStream) throws IOException, ParserConfigurationException, SAXException {
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        factory.setIgnoringElementContentWhitespace(true);
-        factory.setNamespaceAware(true);
-        DocumentBuilder builder = factory.newDocumentBuilder();
+    protected static Document getXmlFromInputStream(InputStream inputStream) {
+        try {
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            factory.setIgnoringElementContentWhitespace(true);
+            factory.setNamespaceAware(true);
+            DocumentBuilder builder = factory.newDocumentBuilder();
 
-        return builder.parse(inputStream);
+            return builder.parse(inputStream);
+        } catch (IOException | SAXException | ParserConfigurationException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    protected static JsonNode getJsonFromResource(String resourceName) throws IOException {
+    protected static JsonNode getJsonFromResource(String resourceName) {
         InputStream inputStream = HubTestBase.class.getClassLoader().getResourceAsStream(resourceName);
         ObjectMapper om = new ObjectMapper();
-        return om.readTree(inputStream);
+        try {
+            return om.readTree(inputStream);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     protected static int getStagingDocCount() {
@@ -347,6 +365,10 @@ public class HubTestBase {
         EvalResult res = resultItr.next();
         count = Math.toIntExact((long) res.getNumber());
         return count;
+    }
+
+    protected static int getMlMajorVersion() {
+        return Integer.parseInt(getDataHub().getMarkLogicVersion().substring(0, 1));
     }
 
     public static void clearDatabases(String... databases) {
@@ -491,7 +513,7 @@ public class HubTestBase {
             "}";
     }
 
-    protected static void allCombos(ComboListener listener) throws IOException, InterruptedException, ParserConfigurationException, SAXException, JSONException {
+    protected static void allCombos(ComboListener listener) {
         CodeFormat[] codeFormats = new CodeFormat[] { CodeFormat.JAVASCRIPT, CodeFormat.XQUERY };
         DataFormat[] dataFormats = new DataFormat[] { DataFormat.JSON, DataFormat.XML };
         FlowType[] flowTypes = new FlowType[] { FlowType.INPUT, FlowType.HARMONIZE };
@@ -504,4 +526,20 @@ public class HubTestBase {
         }
     }
 
+
+    public String toJsonString(Object value) {
+        try {
+            return new ObjectMapper().writeValueAsString(value);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    protected void assertJsonEqual(String expected, String actual, boolean strict) {
+        try {
+            JSONAssert.assertEquals(expected, actual, false);
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

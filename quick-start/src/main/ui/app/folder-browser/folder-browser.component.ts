@@ -31,7 +31,7 @@ export class FolderBrowserComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: any) {
-    if (changes.startPath) {
+    if (changes.startPath && changes.startPath.currentValue) {
       this.getFolders(changes.startPath.currentValue);
     }
   }
@@ -45,12 +45,15 @@ export class FolderBrowserComponent implements OnInit, OnChanges {
   getFolders(path: string): void {
     if (path) {
       this.isLoading = true;
-      this.http.get(`/api/utils/searchPath?path=${encodeURIComponent(path)}&absolute=${this.absoluteOnly}`)
+      this.http.get(`/api/utils/searchPath?path=${encodeURIComponent(path)}`)
       .map(this.extractData)
       .subscribe(resp => {
         this.folders = resp.folders;
-        this.currentPath = resp.currentPath;
-        this.folderChosen.emit(this.currentPath);
+        this.currentPath = this.absoluteOnly ? resp.currentAbsolutePath : resp.currentPath;
+        this.folderChosen.emit({
+          relativePath: resp.currentPath,
+          absolutePath: resp.currentAbsolutePath
+        });
       },
       error => {
         console.log(error);
@@ -62,7 +65,7 @@ export class FolderBrowserComponent implements OnInit, OnChanges {
   }
 
   entryClicked(entry: any): void {
-    this.getFolders(entry.path);
+    this.getFolders(entry.absolutePath);
   }
 
   private extractData(res: Response) {

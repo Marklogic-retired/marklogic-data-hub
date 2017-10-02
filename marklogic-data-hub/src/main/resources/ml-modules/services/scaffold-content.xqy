@@ -17,6 +17,9 @@ xquery version "1.0-ml";
 
 module namespace service = "http://marklogic.com/rest-api/resource/scaffold-content";
 
+import module namespace consts = "http://marklogic.com/data-hub/consts"
+  at "/com.marklogic.hub/lib/consts.xqy";
+
 import module namespace debug = "http://marklogic.com/data-hub/debug"
   at "/com.marklogic.hub/lib/debug-lib.xqy";
 
@@ -186,7 +189,7 @@ declare function service:generate-lets($model as map:map, $entity-type-name)
 declare function service:generate-xqy($entity as xs:string, $flow-type as xs:string, $model as map:map)
 {
   let $root-name :=
-    if ($flow-type eq "input") then "$raw-content"
+    if ($flow-type eq $consts:INPUT_FLOW) then "$raw-content"
     else "$doc"
   return
 document {
@@ -210,13 +213,13 @@ declare option xdmp:mapping "false";
 declare function plugin:create-content(
   $id as xs:string,
   {
-    if ($flow-type eq "input") then
+    if ($flow-type eq $consts:INPUT_FLOW) then
       "$raw-content as node()?,&#10;  "
     else ()
   }$options as map:map) as map:map
 {{
   {
-    if ($flow-type eq "harmonize") then
+    if ($flow-type eq $consts:HARMONIZE_FLOW) then
       "let $doc := fn:doc($id)&#10;  "
     else ()
   }let $source :=
@@ -459,7 +462,7 @@ declare function service:generate-vars($model as map:map, $entity-type-name)
 declare function service:generate-sjs($entity as xs:string, $flow-type as xs:string, $model as map:map)
 {
   let $root-name :=
-    if ($flow-type eq "input") then "rawContent"
+    if ($flow-type eq $consts:INPUT_FLOW) then "rawContent"
     else "root"
   return
 document {
@@ -475,12 +478,12 @@ document {
  * @return - your content
  */
 function createContent(id, {
-    if ($flow-type eq "input") then
+    if ($flow-type eq $consts:INPUT_FLOW) then
       "rawContent, "
     else ()
   }options) {{
   {
-    if ($flow-type eq "harmonize") then
+    if ($flow-type eq $consts:HARMONIZE_FLOW) then
       "let doc = cts.doc(id);
   let " || $root-name || " = doc.root.toObject();"
     else ()
@@ -498,7 +501,7 @@ function createContent(id, {
   }}
   // for everything else
   else {{
-    source = {if ($flow-type eq "input") then $root-name else "doc"};
+    source = {if ($flow-type eq $consts:INPUT_FLOW) then $root-name else "doc"};
   }}
 
   return {service:camel-case("extractInstance-" || $entity) || "(source)"};

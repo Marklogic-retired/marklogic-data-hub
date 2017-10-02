@@ -1,7 +1,11 @@
 allprojects {
     task resolveAllDependencies {
         doLast {
-            configurations.all { it.resolve() }
+            configurations.all {
+                if (it.isCanBeResolved()) {
+                    it.resolve()
+                }
+            }
         }
     }
 }

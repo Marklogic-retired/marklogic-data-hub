@@ -21,13 +21,13 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.ext.modulesloader.impl.AssetFileLoader;
+import com.marklogic.client.ext.modulesloader.impl.DefaultModulesLoader;
+import com.marklogic.client.ext.modulesloader.impl.PropertiesModuleManager;
 import com.marklogic.client.extensions.ResourceManager;
 import com.marklogic.client.extensions.ResourceServices;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.client.io.StringHandle;
-import com.marklogic.client.modulesloader.impl.DefaultModulesLoader;
-import com.marklogic.client.modulesloader.impl.PropertiesModuleManager;
-import com.marklogic.client.modulesloader.impl.XccAssetLoader;
 import com.marklogic.client.util.RequestParameters;
 import com.marklogic.hub.DataHub;
 import com.marklogic.hub.HubConfig;
@@ -44,6 +44,7 @@ import com.marklogic.quickstart.util.FileUtil;
 import com.sun.jersey.api.client.ClientHandlerException;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -197,10 +198,13 @@ public class EntityManagerService {
     public void saveSearchOptions(EnvironmentConfig environmentConfig) {
 
         HubConfig hubConfig = environmentConfig.getMlSettings();
-        AppConfig config = hubConfig.getAppConfig();
-        XccAssetLoader xccAssetLoader = config.newXccAssetLoader();
 
-        DefaultModulesLoader modulesLoader = new DefaultModulesLoader(xccAssetLoader);
+        String timestampFile = hubConfig.getUserModulesDeployTimestampFile();
+        PropertiesModuleManager propsManager = new PropertiesModuleManager(timestampFile);
+        propsManager.deletePropertiesFile();
+
+        DefaultModulesLoader modulesLoader = new DefaultModulesLoader(new AssetFileLoader(hubConfig.newFinalClient(), propsManager));
+
         ThreadPoolTaskExecutor threadPoolTaskExecutor = new ThreadPoolTaskExecutor();
         threadPoolTaskExecutor.setCorePoolSize(16);
 
@@ -210,12 +214,7 @@ public class EntityManagerService {
 
         threadPoolTaskExecutor.afterPropertiesSet();
         modulesLoader.setTaskExecutor(threadPoolTaskExecutor);
-
-        File timestampFile = hubConfig.getHubModulesDeployTimestampFile();
-        PropertiesModuleManager propsManager = new PropertiesModuleManager(timestampFile);
-        propsManager.deletePropertiesFile();
         modulesLoader.setModulesManager(propsManager);
-        modulesLoader.setDatabaseClient(hubConfig.newFinalClient());
         modulesLoader.setShutdownTaskExecutorAfterLoadingModules(false);
 
         SearchOptionsGenerator generator = new SearchOptionsGenerator(environmentConfig.getStagingClient());
@@ -230,12 +229,19 @@ public class EntityManagerService {
 
                 File file = Paths.get(dir.toString(), HubConfig.ENTITY_SEARCH_OPTIONS_FILE).toFile();
                 FileUtils.writeStringToFile(file, options);
-                modulesLoader.installQueryOptions(file);
+
+                for (DatabaseClient client : Arrays.asList(hubConfig.newStagingClient(), hubConfig.newFinalClient())) {
+                    modulesLoader.setDatabaseClient(client);
+                    modulesLoader.installQueryOptions(new FileSystemResource(file));
+                }
             }
         }
         catch(IOException e) {
             e.printStackTrace();
         }
+
+        // TODO: call modulesLoader.waitForTaskExecutorToFinish when 3.1 comes out
+        threadPoolTaskExecutor.shutdown();
     }
 
     public void saveDbIndexes(EnvironmentConfig environmentConfig) {

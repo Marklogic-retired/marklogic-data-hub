@@ -12,11 +12,11 @@ function createContent(id, options) {
 
   // for xml we need to use xpath
   if (root && xdmp.nodeKind(root) === 'element') {
-    return root.xpath('/*:envelope/*:content/node()');
+    return root.xpath('/*:envelope/*:instance/node()');
   }
-  // for json we need to return the content
-  else if (root && root.content) {
-    return root.content;
+  // for json we need to return the instance
+  else if (root && root.envelope && root.envelope.instance) {
+    return root.envelope.instance;
   }
   // for everything else
   else {

@@ -13,38 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.marklogic.quickstart.model;
+package com.marklogic.hub;
 
-public enum FlowType {
+public class PreInstallCheck {
+    public boolean stagingPortInUse;
+    public String stagingPortInUseBy;
+    public boolean finalPortInUse;
+    public String finalPortInUseBy;
+    public boolean jobPortInUse;
+    public String jobPortInUseBy;
+    public boolean tracePortInUse;
+    public String tracePortInUseBy;
+    public boolean serverVersionOk;
+    public String serverVersion;
 
- INPUT("input", "Input Flow"), HARMONIZE("harmonize", "Harmonize Flow");
-
- public String name;
- public String type;
-
- FlowType(String name, String type) {
-  this.name = name;
-  this.type = type;
- }
-
- public String getName() {
-  return name;
- }
-
- public String getType() {
-  return type;
- }
-
- public static FlowType getFlowType(String type) {
-  for (FlowType flowType : FlowType.values()) {
-   if (flowType.getName().equals(type)) {
-    return flowType;
-   }
-  }
-  return null;
- }
-
- public String toString() {
-     return name;
- }
+    public boolean isSafeToInstall() {
+        return !(stagingPortInUse ||
+            finalPortInUse ||
+            jobPortInUse ||
+            tracePortInUse) && serverVersionOk;
+    }
 }

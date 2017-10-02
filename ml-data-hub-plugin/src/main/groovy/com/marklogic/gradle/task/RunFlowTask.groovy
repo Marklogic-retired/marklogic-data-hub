@@ -1,17 +1,17 @@
 package com.marklogic.gradle.task
 
 import com.marklogic.client.DatabaseClient
+import com.marklogic.client.datamovement.JobTicket
+import com.marklogic.client.io.JacksonHandle
 import com.marklogic.gradle.exception.EntityNameRequiredException
 import com.marklogic.gradle.exception.FlowNameRequiredException
 import com.marklogic.gradle.exception.FlowNotFoundException
 import com.marklogic.gradle.exception.HubNotInstalledException
 import com.marklogic.hub.FlowManager
-import com.marklogic.hub.HubDatabase
-import com.marklogic.hub.flow.Flow
-import com.marklogic.hub.flow.FlowRunner
-import com.marklogic.hub.flow.FlowType
+import com.marklogic.hub.flow.*
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.TaskExecutionException
 
 class RunFlowTask extends HubTask {
 
@@ -20,9 +20,6 @@ class RunFlowTask extends HubTask {
 
     @Input
     public String flowName
-
-    @Input
-    public FlowType flowType
 
     @Input
     public Integer batchSize
@@ -39,6 +36,9 @@ class RunFlowTask extends HubTask {
     @Input
     public Boolean showOptions
 
+    @Input
+    public Boolean failHard
+
     @TaskAction
     void runFlow() {
         if (entityName == null) {
@@ -53,10 +53,6 @@ class RunFlowTask extends HubTask {
         if (flowName == null) {
             throw new FlowNameRequiredException()
         }
-        if (flowType == null) {
-            flowType = project.hasProperty("flowType") ?
-                FlowType.getFlowType(project.property("flowType")) : FlowType.HARMONIZE
-        }
         if (batchSize == null) {
             batchSize = project.hasProperty("batchSize") ?
                 Integer.parseInt(project.property("batchSize")) : 100
@@ -66,15 +62,15 @@ class RunFlowTask extends HubTask {
                 Integer.parseInt(project.property("threadCount")) : 4
         }
 
-        DatabaseClient sourceClient = null
-        if (sourceDB == null) {
-            if (project.hasProperty("sourceDB")) {
-                sourceClient = hubConfig.newStagingClient()
-                sourceClient.database = project.property("sourceDB")
-            }
-            else {
-                sourceClient = hubConfig.newStagingClient()
-            }
+        DatabaseClient sourceClient = hubConfig.newStagingClient()
+        if (sourceDB != null) {
+            sourceClient.database = sourceDB
+        }
+        else if (project.hasProperty("sourceDB")) {
+            sourceClient.database = project.property("sourceDB")
+        }
+        else {
+            sourceClient = hubConfig.newStagingClient()
         }
         if (destDB == null) {
             destDB = project.hasProperty("destDB") ?
@@ -84,13 +80,17 @@ class RunFlowTask extends HubTask {
             showOptions = project.hasProperty("showOptions") ?
                 Boolean.parseBoolean(project.property("showOptions")) : false
         }
+        if (failHard == null) {
+            failHard = project.hasProperty("failHard") ?
+                Boolean.parseBoolean(project.property("failHard")) : false
+        }
 
         if (!isHubInstalled()) {
             throw new HubNotInstalledException()
         }
 
         FlowManager fm = getFlowManager()
-        Flow flow = fm.getFlow(entityName, flowName, flowType)
+        Flow flow = fm.getFlow(entityName, flowName, FlowType.HARMONIZE)
         if (flow == null) {
             throw new FlowNotFoundException(entityName, flowName);
         }
@@ -114,6 +114,8 @@ class RunFlowTask extends HubTask {
             }
         }
 
+        Vector<String> completed = new Vector<>()
+        Vector<String> failed = new Vector<>()
         FlowRunner flowRunner = fm.newFlowRunner()
             .withFlow(flow)
             .withOptions(options)
@@ -121,7 +123,38 @@ class RunFlowTask extends HubTask {
             .withThreadCount(threadCount)
             .withSourceClient(sourceClient)
             .withDestinationDatabase(destDB)
-        flowRunner.run()
+            .onItemComplete(new FlowItemCompleteListener() {
+                @Override
+                void processCompletion(String jobId, String itemId) {
+                    completed.add(itemId)
+                }
+            })
+            .onItemFailed(new FlowItemFailureListener() {
+                @Override
+                void processFailure(String jobId, String itemId) {
+                    failed.add(itemId)
+                }
+            })
+        JobTicket jobTicket = flowRunner.run()
         flowRunner.awaitCompletion()
+
+        def jobDocMgr = getHubConfig().newJobDbClient().newDocumentManager()
+        def job = jobDocMgr.read("/jobs/" + jobTicket.getJobId() + ".json").next().getContent(new JacksonHandle()).get();
+        def jobOutput = job.get("jobOutput")
+        if (jobOutput != null && jobOutput.size() > 0) {
+            def output = prettyPrint(jobOutput.get(0).asText())
+            if (failHard) {
+                throw new TaskExecutionException(this, new Throwable(output))
+            }
+            else {
+                println("\n\nERROR Output:")
+                println(output)
+            }
+
+        }
+        else {
+            println("\n\nOutput:")
+            println(prettyPrint(job))
+        }
     }
 }

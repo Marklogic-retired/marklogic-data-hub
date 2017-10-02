@@ -6,7 +6,7 @@
   "port": "%%mlTracePort%%",
   "modules-database": "%%mlModulesDbName%%",
   "content-database": "%%mlTraceDbName%%",
-  "authentication": "digest",
+  "authentication": "%%mlTraceAuth%%",
   "default-error-format": "json",
   "error-handler": "/MarkLogic/rest-api/error-handler.xqy",
   "url-rewriter": "/com.marklogic.hub/tracing-rewriter.xml",

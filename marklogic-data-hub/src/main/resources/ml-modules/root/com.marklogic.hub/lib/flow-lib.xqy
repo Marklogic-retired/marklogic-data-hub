@@ -587,7 +587,6 @@ declare function flow:run-main(
         $func(rfc:get-id(), $options)
       else
         $func(rfc:get-id(), rfc:get-content(), $options)
-    let $_ := trace:plugin-trace($resp, xdmp:elapsed-time() - $before)
     (: write the trace for the current identifier :)
     let $_ := trace:write-trace()
     return
@@ -605,12 +604,7 @@ declare function flow:run-main(
       trace:set-plugin-label("main"),
       trace:error-trace($ex, xdmp:elapsed-time() - $before)
     ),
-    (: for input flows we want to rethrow to force a failure :)
-    if (rfc:get-flow-type() eq $consts:INPUT_FLOW) then (
-      xdmp:log("rethrowing"),
-      xdmp:rethrow()
-    )
-    else ()
+    xdmp:rethrow()
   }
   return
     $resp

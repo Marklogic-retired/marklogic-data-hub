@@ -6,7 +6,7 @@
   "port": "%%mlFinalPort%%",
   "modules-database": "%%mlModulesDbName%%",
   "content-database": "%%mlFinalDbName%%",
-  "authentication": "digest",
+  "authentication": "%%mlFinalAuth%%",
   "default-error-format": "json",
   "error-handler": "/MarkLogic/rest-api/error-handler.xqy",
   "url-rewriter": "/MarkLogic/rest-api/rewriter.xml",

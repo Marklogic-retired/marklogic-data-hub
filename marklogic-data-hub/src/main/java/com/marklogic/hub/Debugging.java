@@ -4,6 +4,7 @@ import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.extensions.ResourceManager;
 import com.marklogic.client.extensions.ResourceServices.ServiceResult;
 import com.marklogic.client.extensions.ResourceServices.ServiceResultIterator;
+import com.marklogic.client.io.Format;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.util.RequestParameters;
 
@@ -21,7 +22,7 @@ public class Debugging extends ResourceManager {
     public void enable() {
         RequestParameters params = new RequestParameters();
         params.add("enable", "true");
-        this.getServices().post(params, new StringHandle("{}"));
+        this.getServices().post(params, new StringHandle("{}").withFormat(Format.JSON));
     }
 
     /**
@@ -30,7 +31,7 @@ public class Debugging extends ResourceManager {
     public void disable() {
         RequestParameters params = new RequestParameters();
         params.add("enable", "false");
-        this.getServices().post(params, new StringHandle("{}"));
+        this.getServices().post(params, new StringHandle("{}").withFormat(Format.JSON));
     }
 
     /**

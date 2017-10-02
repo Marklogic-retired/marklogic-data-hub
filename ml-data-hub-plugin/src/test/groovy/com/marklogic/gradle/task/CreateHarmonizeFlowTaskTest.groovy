@@ -9,6 +9,10 @@ import static org.gradle.testkit.runner.TaskOutcome.FAILED
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
 class CreateHarmonizeFlowTaskTest extends BaseTest {
+    def setupSpec() {
+        createGradleFiles()
+    }
+
     def "createHarmonizeFlow with no entityName"() {
         when:
         def result = runFailTask('hubCreateHarmonizeFlow')

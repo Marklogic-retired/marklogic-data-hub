@@ -98,6 +98,7 @@ declare function dhf:run-writer(
   $options as map:map)
 {
   trace:set-plugin-label("writer"),
+  trace:reset-plugin-input(),
   trace:set-plugin-input("envelope", $envelope),
   flow:run-writer($writer-function, $id, $envelope, $options)
 };
@@ -159,6 +160,17 @@ declare function dhf:triples-context($content, $headers) as json:object
 };
 
 (:
+ : Creates a context for a writer plugin
+ :)
+declare function dhf:writer-context($envelope) as json:object
+{
+  let $context := dhf:context("writer")
+  let $_ := dhf:add-trace-input($context, "envelope", $envelope)
+  return
+    $context
+};
+
+(:
  : Sets the trace label for a given context
  : Used internally. private.
  :
@@ -197,4 +209,24 @@ declare function dhf:add-trace-input(
   let $_ := map:put($context, "inputs", $inputs)
   return
     $context
+};
+
+declare function dhf:log-trace(
+  $context as json:object)
+{
+  let $label := map:get($context, "label")
+  let $_ :=
+    if (fn:exists($label)) then
+      trace:set-plugin-label($label)
+    else
+      fn:error(xs:QName("CONTEXT_MISSING_LABEL"), "Your context object is missing a label")
+  let $_ := trace:reset-plugin-input()
+  let $_ :=
+    let $inputs := map:get($context, "inputs")
+    for $key in map:keys($inputs)
+    return
+      trace:set-plugin-input($key, map:get($inputs, $key))
+  let $_ := trace:plugin-trace((), "PT0S")
+  return
+    ()
 };
