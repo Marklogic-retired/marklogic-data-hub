@@ -1,5 +1,29 @@
 # Change Log
 
+## [Unreleased](https://github.com/marklogic-community/marklogic-data-hub/tree/HEAD)
+
+[Full Changelog](https://github.com/marklogic-community/marklogic-data-hub/compare/v2.0.0-rc.2...HEAD)
+
+**Fixed bugs:**
+
+- mlWatch is deploying Flow XMLs on every iteration [\#522](https://github.com/marklogic-community/marklogic-data-hub/issues/522)
+- Can't login to quickstart with data-hub-user [\#519](https://github.com/marklogic-community/marklogic-data-hub/issues/519)
+- Error when settings gradle properties from task definition [\#518](https://github.com/marklogic-community/marklogic-data-hub/issues/518)
+- Basic auth not working [\#517](https://github.com/marklogic-community/marklogic-data-hub/issues/517)
+- Debug of run-flow transform breaks multipart requests and can't be turned off [\#516](https://github.com/marklogic-community/marklogic-data-hub/issues/516)
+- Bug in deploying Flows to MarkLogic [\#512](https://github.com/marklogic-community/marklogic-data-hub/issues/512)
+- Writer trace is firing twice [\#510](https://github.com/marklogic-community/marklogic-data-hub/issues/510)
+- Error loading XSD schemas [\#509](https://github.com/marklogic-community/marklogic-data-hub/issues/509)
+
+**Closed issues:**
+
+- Can't run flows with spaces in the names from MLCP [\#523](https://github.com/marklogic-community/marklogic-data-hub/issues/523)
+- Better error handling on gradle hubRunFlow [\#514](https://github.com/marklogic-community/marklogic-data-hub/issues/514)
+- Move the Input Flow writer trace into main.\(sjs|xqy\) [\#513](https://github.com/marklogic-community/marklogic-data-hub/issues/513)
+- Links need updating [\#508](https://github.com/marklogic-community/marklogic-data-hub/issues/508)
+- Update to latest ml-gradle [\#505](https://github.com/marklogic-community/marklogic-data-hub/issues/505)
+- Input flow \(mlcp\) options aren't saved [\#481](https://github.com/marklogic-community/marklogic-data-hub/issues/481)
+
 ## [v2.0.0-rc.2](https://github.com/marklogic-community/marklogic-data-hub/tree/v2.0.0-rc.2) (2017-09-12)
 [Full Changelog](https://github.com/marklogic-community/marklogic-data-hub/compare/v1.1.5...v2.0.0-rc.2)
 
