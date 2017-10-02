@@ -34,9 +34,17 @@ ENV JAVA_HOME /usr/java/latest
 ENV PATH /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/MarkLogic/mlcmd/bin
 
 # Install MarkLogic
-COPY ./MarkLogic.rpm /tmp/MarkLogic.rpm
+COPY .travis/install-ml-8.sh /tmp/install-ml-8.sh
+COPY .travis/install-ml-9.sh /tmp/install-ml-9.sh
+COPY .travis/install-ml-10.sh /tmp/install-ml-10.sh
+COPY .travis/install-ml.sh /tmp/install-ml.sh
 
-RUN yum -y install /tmp/MarkLogic.rpm 2>&1 > /dev/null
+ARG MLBUILD_USER
+ARG MLBUILD_PASSWORD
+ARG ML_VERSION
+
+RUN chmod 755 /tmp/install-ml.sh
+RUN /tmp/install-ml.sh "$MLBUILD_USER" "$MLBUILD_PASSWORD" "$ML_VERSION"
 
 # Expose MarkLogic Server ports - add additional ones for your REST, etc
 # endpoints
