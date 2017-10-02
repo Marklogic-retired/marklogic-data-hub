@@ -36,12 +36,11 @@ import org.w3c.dom.NodeList;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.regex.Pattern;
 
 public class FlowManager extends ResourceManager {
     private static final String HUB_NS = "http://marklogic.com/data-hub";
@@ -133,6 +132,16 @@ public class FlowManager extends ResourceManager {
             }
         }
         return flows;
+    }
+
+    public Flow getFlowFromProperties(Path propertiesFile) {
+        String quotedSeparator = Pattern.quote(File.separator);
+        String flowTypeRegex = ".+" + quotedSeparator + "(input|harmonize)" + quotedSeparator + ".+";
+        FlowType flowType = propertiesFile.toString().replaceAll(flowTypeRegex, "$1").equals("input")
+                ? FlowType.INPUT : FlowType.HARMONIZE;
+
+        String entityName = propertiesFile.toString().replaceAll(".+" + quotedSeparator + "([^/\\\\]+)" + quotedSeparator + "(input|harmonize)" + quotedSeparator + ".+", "$1");
+        return getLocalFlow(entityName, propertiesFile.getParent(), flowType);
     }
 
     private Flow getLocalFlow(String entityName, Path flowDir, FlowType flowType) {

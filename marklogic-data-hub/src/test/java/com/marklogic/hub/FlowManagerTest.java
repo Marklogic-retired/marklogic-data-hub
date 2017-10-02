@@ -188,6 +188,33 @@ public class FlowManagerTest extends HubTestBase {
     }
 
     @Test
+    public void testGetFlowFromProperties() throws IOException {
+        Scaffolding scaffolding = new Scaffolding("del-me-dir", stagingClient);
+        scaffolding.createEntity("my-entity");
+
+        FlowManager fm = new FlowManager(getHubConfig("del-me-dir"));
+
+        allCombos((codeFormat, dataFormat, flowType) -> {
+            String flowName = flowType.toString() + "-" + codeFormat.toString() + "-" + dataFormat.toString();
+            scaffolding.createFlow("my-entity", flowName, flowType, codeFormat, dataFormat);
+        });
+
+
+        allCombos((codeFormat, dataFormat, flowType) -> {
+            String flowName = flowType.toString() + "-" + codeFormat.toString() + "-" + dataFormat.toString();
+            Path propertiesFile = Paths.get("del-me-dir", "plugins", "entities", "my-entity", flowType.toString(), flowName, flowName + ".properties");
+            Flow flow = fm.getFlowFromProperties(propertiesFile);
+            assertEquals(flowName, flow.getName());
+            assertEquals("my-entity", flow.getEntityName());
+            assertEquals(codeFormat, flow.getCodeFormat());
+            assertEquals(dataFormat, flow.getDataFormat());
+            assertEquals(flowType, flow.getType());
+        });
+
+        FileUtils.deleteDirectory(Paths.get("./del-me-dir").toFile());
+    }
+
+    @Test
     public void testGetFlows() {
         clearDatabases(HubConfig.DEFAULT_MODULES_DB_NAME);
 
