@@ -57,13 +57,6 @@ public class LoadUserModulesCommand extends AbstractCommand {
     public LoadUserModulesCommand(HubConfig hubConfig) {
         setExecuteSortOrder(SortOrderConstants.LOAD_MODULES + 1);
         this.hubConfig = hubConfig;
-
-        this.threadPoolTaskExecutor = new ThreadPoolTaskExecutor();
-        this.threadPoolTaskExecutor.setCorePoolSize(16);
-        // 10 minutes should be plenty of time to wait for REST API modules to be loaded
-        this.threadPoolTaskExecutor.setAwaitTerminationSeconds(60 * 10);
-        this.threadPoolTaskExecutor.setWaitForTasksToCompleteOnShutdown(true);
-        this.threadPoolTaskExecutor.afterPropertiesSet();
     }
 
     private PropertiesModuleManager getModulesManager() {
@@ -84,6 +77,13 @@ public class LoadUserModulesCommand extends AbstractCommand {
     }
 
     private DefaultModulesLoader getStagingModulesLoader(AppConfig config) {
+        this.threadPoolTaskExecutor = new ThreadPoolTaskExecutor();
+        this.threadPoolTaskExecutor.setCorePoolSize(16);
+        // 10 minutes should be plenty of time to wait for REST API modules to be loaded
+        this.threadPoolTaskExecutor.setAwaitTerminationSeconds(60 * 10);
+        this.threadPoolTaskExecutor.setWaitForTasksToCompleteOnShutdown(true);
+        this.threadPoolTaskExecutor.afterPropertiesSet();
+
         PropertiesModuleManager moduleManager = getModulesManager();
         AssetFileLoader assetFileLoader = getAssetFileLoader(config, moduleManager);
 
