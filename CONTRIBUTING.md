@@ -25,14 +25,14 @@ You need these to get started
 
 - Java 8 JDK
 - Gradle (3.4 or greater)
-- Node JS 6.5 or newer
-- Typings `npm -g install typings`
 - A decent IDE. IntelliJ is nice.
 
 #### Building from the command line
 **First, a warning.** _The DHF has a ton of tests and they take a very long time to run. Considering you might not want to invest 30 minutes to wait for tests these instructions will show you how to skip the tests._
 
-To build the entire DHF (marklogic-data-hub.jar, quickstart.war, and ml-data-hub-plugin for gradle) simply run this command:
+**Do you need to do this?** - only if you are wanting to build the entire DHF final products (marklogic-data-hub.jar, quickstart.war, and ml-data-hub-plugin for gradle)
+
+Simply run this command:
 
 ```bash
 cd /path/to/data-hub-project/
@@ -87,6 +87,12 @@ You will need to open two terminal windows.
 ```bash
 cd /path/to/data-hub-project
 ./gradlew bootrun
+```
+
+**BE AWARE** There will be a progress indicator that stops around 90%. This is normal. In gradle land, 100% means it finished running. This stays running indefinitely and thus shows 90%.
+
+```
+> Building 90% > :quick-start:bootRun
 ```
 
 **Terminal window 2** - This runs the Quickstart UI
