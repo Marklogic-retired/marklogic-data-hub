@@ -1,9 +1,9 @@
 <div layout-padding layout="column" layout-align="center center">
   <div class="database-chooser">
-    <mdl-select [(ngModel)]="currentDatabase">
+    <mdl-select [(ngModel)]="currentDatabase" (ngModelChange)="doSearch()">
       <mdl-option *ngFor="let database of databases" [value]="database">{{database}}</mdl-option>
     </mdl-select>
-    <mdl-checkbox [(ngModel)]="entitiesOnly">
+    <mdl-checkbox [(ngModel)]="entitiesOnly" (ngModelChange)="doSearch()">
       Entities Only
     </mdl-checkbox>
   </div>
