@@ -99,7 +99,7 @@ public class FlowManagerServiceTest extends HubTestBase {
     public void getFlowMlcpOptionsFromFileNix() throws Exception {
         String pdir = "/some/crazy/path/to/project";
         EnvironmentConfig envConfig = new EnvironmentConfig(pdir, "local", "admin", "admin");
-        envConfig.setMlSettings(new HubConfig(pdir));
+        envConfig.setMlSettings(HubConfig.hubFromEnvironment(pdir, null));
         setEnvConfig(envConfig);
 
         Map<String, Object> options = fm.getFlowMlcpOptionsFromFile("test-entity", "test-flow");
@@ -110,7 +110,7 @@ public class FlowManagerServiceTest extends HubTestBase {
     public void getFlowMlcpOptionsFromFileWin() throws Exception {
         String pdir = "C:\\some\\crazy\\path\\to\\project";
         EnvironmentConfig envConfig = new EnvironmentConfig(pdir, "local", "admin", "admin");
-        envConfig.setMlSettings(new HubConfig(pdir));
+        envConfig.setMlSettings(HubConfig.hubFromEnvironment(pdir, null));
         setEnvConfig(envConfig);
 
         Map<String, Object> options = fm.getFlowMlcpOptionsFromFile("test-entity", "test-flow");

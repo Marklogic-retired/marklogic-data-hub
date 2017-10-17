@@ -78,6 +78,6 @@ public class ProjectsController {
     @ResponseBody
     public HubConfig getDefaults(@PathVariable int projectId) {
         Project project = pm.getProject(projectId);
-        return new HubConfig(project.path);
+        return HubConfig.hubFromEnvironment(project.path, null);
     }
 }

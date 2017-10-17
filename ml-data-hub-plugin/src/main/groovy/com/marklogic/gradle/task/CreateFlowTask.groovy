@@ -25,7 +25,7 @@ abstract class CreateFlowTask extends HubTask {
         def dataFormatStr = project.hasProperty("dataFormat") ?
             project.property("dataFormat") : "json"
 
-        def dataFormat = null
+        def dataFormat
         switch(dataFormatStr) {
             case "json":
                 dataFormat = DataFormat.JSON

@@ -25,7 +25,7 @@ public class EntitiesControllerTest extends BaseTestController {
         String path = "/some/project/path";
         envConfig.setInitialized(true);
         envConfig.setProjectDir(path);
-        envConfig.setMlSettings(new HubConfig(path));
+        envConfig.setMlSettings(HubConfig.hubFromEnvironment(path, null));
         Map<String, Object> options = ec.getInputFlowOptions("test-entity", "flow-name");
         JSONAssert.assertEquals("{ \"input_file_path\": \"/some/project/path\" }", new ObjectMapper().writeValueAsString(options), true);
     }
@@ -36,7 +36,7 @@ public class EntitiesControllerTest extends BaseTestController {
 
         envConfig.setInitialized(true);
         envConfig.setProjectDir(path);
-        envConfig.setMlSettings(new HubConfig(path));
+        envConfig.setMlSettings(HubConfig.hubFromEnvironment(path, null));
         Map<String, Object> options = ec.getInputFlowOptions("test-entity", "flow-name");
         JSONAssert.assertEquals("{ \"input_file_path\": \"C:\\\\some\\\\crazy\\\\path\\\\to\\\\project\" }", new ObjectMapper().writeValueAsString(options), true);
     }

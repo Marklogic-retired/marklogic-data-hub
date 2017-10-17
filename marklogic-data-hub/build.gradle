@@ -25,8 +25,8 @@ ext.junitJupiterVersion  = '5.0.0-RC3'
 
 dependencies {
     compile 'com.marklogic:marklogic-client-api:4.0.2'
-    compile("com.marklogic:mlcp-util:0.3.0")
-    compile ('com.marklogic:ml-app-deployer:3.1-alpha3')
+    compile 'com.marklogic:mlcp-util:0.3.0'
+    compile 'com.marklogic:ml-app-deployer:3.1-alpha4'
     compile 'commons-io:commons-io:2.4'
     compile 'org.apache.commons:commons-text:1.1'
 
@@ -117,6 +117,8 @@ if (!(
    ) {
   processResources.dependsOn copyUIAssets
 }
+
+tasks.clean.dependsOn cleanUI
 
 javadoc {
    options.overview = 'src/main/resources/overview.html'

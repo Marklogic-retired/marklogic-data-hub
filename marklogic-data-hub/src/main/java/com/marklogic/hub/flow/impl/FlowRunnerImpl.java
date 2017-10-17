@@ -209,8 +209,6 @@ public class FlowRunnerImpl implements FlowRunner {
                     failedEvents.addAndGet(response.errorCount);
                     successfulEvents.addAndGet(response.totalCount - response.errorCount);
                     if (response.errors != null) {
-                        ObjectMapper objectMapper = new ObjectMapper();
-
                         errorMessages.addAll(response.errors.stream().map(jsonNode -> jsonToString(jsonNode)).collect(Collectors.toList()));
                     }
 
@@ -220,7 +218,6 @@ public class FlowRunnerImpl implements FlowRunner {
                     else {
                         failedBatches.addAndGet(1);
                     }
-
 
                     int percentComplete = (int) (((double)successfulBatches.get() / batchCount) * 100.0);
 

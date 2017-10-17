@@ -211,7 +211,7 @@ public class DataHub {
 
     public void initProject() {
         logger.info("Initializing the Hub Project");
-        hubConfig.getHubProject().init(hubConfig.getCustomTokens());
+        hubConfig.initHubProject();
     }
 
     /**

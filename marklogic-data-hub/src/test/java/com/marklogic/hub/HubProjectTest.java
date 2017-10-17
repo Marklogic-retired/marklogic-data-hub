@@ -56,7 +56,7 @@ public class HubProjectTest extends HubTestBase {
         config.hubRoleName = "myrole";
         config.hubUserName = "myuser";
 
-        config.getHubProject().init(config.getCustomTokens());
+        config.initHubProject();
 
         assertTrue(new File(projectPath, "hub-internal-config/servers/staging-server.json").exists());
         assertTrue(new File(projectPath, "hub-internal-config/servers/final-server.json").exists());
@@ -91,7 +91,7 @@ public class HubProjectTest extends HubTestBase {
         props.load(updatedStream);
         propsStream.close();
 
-        assertEquals(config.host, props.getProperty("mlHost"));
+        assertEquals(config.getAppConfig().getHost(), props.getProperty("mlHost"));
 
         assertEquals("twituser", props.getProperty("mlUsername"));
         assertEquals("twitpassword", props.getProperty("mlPassword"));

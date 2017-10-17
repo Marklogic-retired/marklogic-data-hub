@@ -41,7 +41,7 @@ public class DataHubUpgrader {
         File buildGradle = Paths.get(hubConfig.getProjectDir(), "build.gradle").toFile();
         try {
             // update the hub-internal-config files
-            hubConfig.getHubProject().init(hubConfig.getCustomTokens());
+            hubConfig.initHubProject();
 
             if (alreadyInitialized) {
                 // replace the hub version in build.gradle

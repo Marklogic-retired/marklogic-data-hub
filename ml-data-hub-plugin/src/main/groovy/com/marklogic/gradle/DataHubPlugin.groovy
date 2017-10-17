@@ -66,7 +66,7 @@ class DataHubPlugin implements Plugin<Project> {
 
     void initializeProjectExtensions(Project project) {
         HubConfig hubConfig = new DefaultHubConfigFactory(project, new ProjectPropertySource(project)).newHubConfig()
-        hubConfig.updateAppConfig(project.mlAppConfig)
+        hubConfig.setAppConfig(project.mlAppConfig)
         project.extensions.add("hubConfig", hubConfig)
 
         dataHub = new DataHub(hubConfig)

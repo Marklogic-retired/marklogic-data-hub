@@ -89,8 +89,8 @@ public class EnvironmentConfig {
 
         mlSettings = HubConfig.hubFromEnvironment(this.projectDir, environment);
         if (username != null) {
-            mlSettings.setUsername(username);
-            mlSettings.setPassword(password);
+            mlSettings.getAppConfig().setAppServicesUsername(username);
+            mlSettings.getAppConfig().setAppServicesPassword(password);
         }
 
         dataHub = new DataHub(mlSettings);
