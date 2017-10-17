@@ -1,14 +1,3 @@
-buildscript {
-  repositories {
-    mavenLocal()
-    jcenter()
-  }
-  dependencies {
-    classpath "com.marklogic:ml-data-hub:2.0.0"
-  }
-}
-
-
 plugins {
     // this plugin lets you create properties files
     // for multiple environments... like dev, qa, prod
@@ -18,10 +7,8 @@ plugins {
     // it includes ml-gradle. This plugin is what lets you
     // run DHF (Data Hub Framework) tasks from the
     // command line
-    // id 'com.marklogic.ml-data-hub' version '2.0.0'
+    id 'com.marklogic.ml-data-hub' version '2.0.0'
 }
-
-apply plugin: "com.marklogic.ml-data-hub"
 
 ext {
     // causes a temporary cert to be generated. This is necessary for MarkLogic
