@@ -233,6 +233,7 @@ public class EntityManagerService {
                 for (DatabaseClient client : Arrays.asList(hubConfig.newStagingClient(), hubConfig.newFinalClient())) {
                     modulesLoader.setDatabaseClient(client);
                     modulesLoader.installQueryOptions(new FileSystemResource(file));
+                    propsManager.deletePropertiesFile();
                 }
             }
         }
