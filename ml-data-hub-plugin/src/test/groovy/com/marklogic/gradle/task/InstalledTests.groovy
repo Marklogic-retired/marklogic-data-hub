@@ -33,7 +33,7 @@ class InstalledTests extends BaseTest {
         then:
         notThrown(UnexpectedBuildFailure)
         result.task(":hubEnableDebugging").outcome == SUCCESS
-        Debugging d = new Debugging(stagingClient())
+        Debugging d = new Debugging(hubConfig().newStagingClient())
         d.isEnabled() == true
     }
 
@@ -44,7 +44,7 @@ class InstalledTests extends BaseTest {
         then:
         notThrown(UnexpectedBuildFailure)
         result.task(":hubDisableDebugging").outcome == SUCCESS
-        Debugging d = new Debugging(stagingClient())
+        Debugging d = new Debugging(hubConfig().newStagingClient())
         d.isEnabled() == false
     }
 
@@ -55,7 +55,7 @@ class InstalledTests extends BaseTest {
         then:
         notThrown(UnexpectedBuildFailure)
         result.task(":hubEnableTracing").outcome == SUCCESS
-        Tracing t = new Tracing(stagingClient())
+        Tracing t = new Tracing(hubConfig().newStagingClient())
         t.isEnabled() == true
     }
 
@@ -66,7 +66,7 @@ class InstalledTests extends BaseTest {
         then:
         notThrown(UnexpectedBuildFailure)
         result.task(":hubDisableTracing").outcome == SUCCESS
-        Tracing t = new Tracing(stagingClient())
+        Tracing t = new Tracing(hubConfig().newStagingClient())
         t.isEnabled() == false
     }
 
@@ -107,8 +107,8 @@ class InstalledTests extends BaseTest {
         notThrown(UnexpectedBuildFailure)
         getStagingDocCount() == 2
         getFinalDocCount() == 2
-        assertXMLEqual(getXmlFromResource("run-flow-test/harmonized1.xml"), finalClient().newDocumentManager().read("/employee1.xml").next().getContent(new DOMHandle()).get())
-        assertXMLEqual(getXmlFromResource("run-flow-test/harmonized2.xml"), finalClient().newDocumentManager().read("/employee2.xml").next().getContent(new DOMHandle()).get())
+        assertXMLEqual(getXmlFromResource("run-flow-test/harmonized1.xml"), hubConfig().newFinalClient().newDocumentManager().read("/employee1.xml").next().getContent(new DOMHandle()).get())
+        assertXMLEqual(getXmlFromResource("run-flow-test/harmonized2.xml"), hubConfig().newFinalClient().newDocumentManager().read("/employee2.xml").next().getContent(new DOMHandle()).get())
     }
 
     def "runHarmonizeFlow with swapped src and dest"() {
@@ -138,8 +138,8 @@ class InstalledTests extends BaseTest {
         getStagingDocCount() == 2
         getFinalDocCount() == 2
 
-        assertXMLEqual(getXmlFromResource("run-flow-test/harmonized1.xml"), stagingClient().newDocumentManager().read("/employee1.xml").next().getContent(new DOMHandle()).get())
-        assertXMLEqual(getXmlFromResource("run-flow-test/harmonized2.xml"), stagingClient().newDocumentManager().read("/employee2.xml").next().getContent(new DOMHandle()).get())
+        assertXMLEqual(getXmlFromResource("run-flow-test/harmonized1.xml"), hubConfig().newStagingClient().newDocumentManager().read("/employee1.xml").next().getContent(new DOMHandle()).get())
+        assertXMLEqual(getXmlFromResource("run-flow-test/harmonized2.xml"), hubConfig().newStagingClient().newDocumentManager().read("/employee2.xml").next().getContent(new DOMHandle()).get())
     }
 
     def "install Legacy Modules should fail"() {

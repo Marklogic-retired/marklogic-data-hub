@@ -1,7 +1,5 @@
 package com.marklogic.gradle.task
 
-import com.marklogic.client.DatabaseClient
-import com.marklogic.client.DatabaseClientFactory
 import com.marklogic.client.FailedRequestException
 import com.marklogic.client.document.DocumentManager
 import com.marklogic.client.eval.EvalResult
@@ -57,12 +55,12 @@ class BaseTest extends Specification {
     }
 
     void installStagingDoc(String uri, DocumentMetadataHandle meta, String doc) {
-        stagingClient().newDocumentManager().write(uri, meta, new StringHandle(doc))
+        hubConfig().newStagingClient().newDocumentManager().write(uri, meta, new StringHandle(doc))
     }
 
 
     void installFinalDoc(String uri, DocumentMetadataHandle meta, String doc) {
-        finalClient().newDocumentManager().write(uri, meta, new StringHandle(doc))
+        hubConfig().newFinalClient().newDocumentManager().write(uri, meta, new StringHandle(doc))
     }
 
     static void installModule(String path, String localPath) {
