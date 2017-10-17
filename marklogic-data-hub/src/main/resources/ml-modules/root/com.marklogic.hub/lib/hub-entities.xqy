@@ -14,6 +14,11 @@ declare option xdmp:mapping "false";
 
 declare function hent:get-model($entity-name as xs:string)
 {
+  hent:get-model($entity-name, ())
+};
+
+declare function hent:get-model($entity-name as xs:string, $used-models as xs:string*)
+{
   let $model := fn:collection($ENTITY-MODEL-COLLECTION)[info/title = $entity-name]
   where fn:exists($model)
   return
@@ -21,8 +26,8 @@ declare function hent:get-model($entity-name as xs:string)
     let $refs := $model//*[fn:local-name(.) = '$ref'][fn:starts-with(., "#/definitions")] ! fn:replace(., "#/definitions/", "")
     let $_ :=
       let $definitions := map:get($model-map, "definitions")
-      for $ref in $refs
-      let $other-model as map:map? := hent:get-model($ref)
+      for $ref in $refs[fn:not(. = $used-models)]
+      let $other-model as map:map? := hent:get-model($ref, ($used-models, $entity-name))
       let $other-defs := map:get($other-model, "definitions")
       for $key in map:keys($other-defs)
       return
