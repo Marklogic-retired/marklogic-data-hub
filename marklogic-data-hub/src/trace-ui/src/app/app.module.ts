@@ -9,7 +9,6 @@ import { AppComponent } from './app.component';
 
 import { MdlModule } from '@angular-mdl/core';
 import { CodemirrorComponent } from './codemirror';
-import { MomentModule } from 'angular2-moment';
 
 import { ROUTES } from './app.routes';
 import { HeaderComponent } from './header/header.component';
@@ -23,6 +22,7 @@ import { TraceService } from './traces/trace.service';
 import { TitlecasePipe } from './titlecase.pipe';
 import { FacetsComponent } from './facets/facets.component';
 import { ObjectToArrayPipe } from './object-to-array.pipe';
+import { DatePipeModule } from './date-pipe/date-pipe.module';
 
 @NgModule({
   declarations: [
@@ -45,8 +45,8 @@ import { ObjectToArrayPipe } from './object-to-array.pipe';
     HttpModule,
     MdlModule,
     TooltipModule,
-    MomentModule,
-    RouterModule.forRoot(ROUTES, { useHash: true })
+    RouterModule.forRoot(ROUTES, { useHash: true }),
+    DatePipeModule
   ],
   providers: [
     TraceService

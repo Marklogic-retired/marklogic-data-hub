@@ -44,7 +44,7 @@
               <td>{{job.entityName}}</td>
               <td>{{job.flowName}}</td>
               <td>{{job.status}}</td>
-              <td>{{job.startTime | amTimeAgo}}</td>
+              <td>{{job.startTime | datePipe}}</td>
               <td><span *ngIf="job.endTime">{{getDuration(job)}} seconds</span></td>
               <td>
                 <mdl-button

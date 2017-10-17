@@ -6,8 +6,7 @@ import { JobService } from './jobs.service';
 import { JobListenerService } from './job-listener.service';
 import { SearchResponse } from '../search';
 import { MdlDialogService, MdlDialogReference } from '@angular-mdl/core';
-
-import * as moment from 'moment';
+import { differenceInSeconds } from 'date-fns';
 
 import * as _ from 'lodash';
 
@@ -132,7 +131,7 @@ export class JobsComponent implements OnChanges, OnDestroy, OnInit {
   }
 
   getDuration(job: Job): number {
-    return moment(job.endTime).diff(moment(job.startTime), 'seconds');
+    return differenceInSeconds(job.endTime, job.startTime);
   }
 
   showConsole(job: Job): void {

@@ -30,7 +30,7 @@ repositories {
 dependencies {
     compile gradleApi()
     compile project(':marklogic-data-hub')
-    compile ('com.marklogic:ml-gradle:3.1-alpha3') {
+    compile ('com.marklogic:ml-gradle:3.1-alpha4') {
         exclude group: 'com.marklogic', module: 'ml-app-deployer'
     }
     compile ('com.marklogic:ml-app-deployer:3.1-alpha4') {

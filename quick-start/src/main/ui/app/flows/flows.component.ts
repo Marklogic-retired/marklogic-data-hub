@@ -27,6 +27,8 @@ import { CodemirrorComponent } from '../codemirror';
 
 import { Ng2DeviceService } from 'ng2-device-detector';
 
+import { distanceInWords } from 'date-fns';
+
 import * as _ from 'lodash';
 
 @Component({
@@ -132,7 +134,7 @@ export class FlowsComponent implements OnInit, OnDestroy {
   getLastDeployed() {
     const lastDeployed = this.deployService.getLastDeployed();
     if (lastDeployed) {
-      return lastDeployed.fromNow();
+      return distanceInWords(lastDeployed, new Date()) + ' ago';
     }
     return 'Not Yet Deployed';
   }

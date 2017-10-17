@@ -3,7 +3,7 @@ import { Http, Response } from '@angular/http';
 import { Message } from 'stompjs/lib/stomp.min';
 import { STOMPService } from '../stomp/stomp.service';
 import { ProjectService } from '../projects/projects.service';
-import * as moment from 'moment';
+import { parse } from 'date-fns';
 
 @Injectable()
 export class DeployService {
@@ -47,7 +47,7 @@ export class DeployService {
   private updateLastDeployed() {
     const url = `/api/current-project/last-deployed`;
     this.http.get(url).map((res: Response) => { return res.json(); }).subscribe((resp: any) => {
-      this._lastDeployed = (resp.deployed) ? moment(resp.lastModified) : null;
+      this._lastDeployed = (resp.deployed) ? parse(resp.lastModified) : null;
     });
   }
 
@@ -57,7 +57,7 @@ export class DeployService {
       this.errors = status.errors;
     } else if (message.headers.destination === '/topic/deploy-status') {
       let status: any = JSON.parse(message.body);
-      this._lastDeployed = (status.deployed) ? moment(status.lastModified) : null;
+      this._lastDeployed = (status.deployed) ? parse(status.lastModified) : null;
       this.onDeploy.emit(status);
     }
   }
