@@ -53,7 +53,6 @@ mlPassword=
 # mlAppServicesPort=8000
 #
 # To use SSL on the AppServices appserver (port 8000 by default)
-# mlAppServicesScheme=https
 # mlAppServicesSimpleSsl=true
 
 

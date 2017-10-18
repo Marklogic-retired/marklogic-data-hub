@@ -62,16 +62,17 @@ task enableSSL(type: com.marklogic.gradle.task.MarkLogicTask) {
 // Disables SSL on the builtin servers
 task disableSSL(type: com.marklogic.gradle.task.MarkLogicTask) {
     doFirst {
+        // for ML9. comment out if using ml8
         def manageClient = getManageClient()
-
-        def gtcc = new com.marklogic.appdeployer.command.security.GenerateTemporaryCertificateCommand();
-        gtcc.setTemplateIdOrName("admin-cert");
-        gtcc.setCommonName("localhost");
-        gtcc.execute(new com.marklogic.appdeployer.command.CommandContext(getAppConfig(), manageClient, adminManager));
-
         manageClient.putJson("/manage/v2/servers/Admin/properties?group-id=Default", '{"ssl-certificate-template": ""}')
         manageClient.putJson("/manage/v2/servers/App-Services/properties?group-id=Default", '{"ssl-certificate-template": ""}')
         manageClient.putJson("/manage/v2/servers/Manage/properties?group-id=Default", '{"ssl-certificate-template": ""}')
+
+        // for ML8 do this instead
+        // def appConfig = getAppConfig()
+        // disableSSL(appConfig, "Admin")
+        // disableSSL(appConfig, "Manage")
+        // disableSSL(appConfig, "App-Services")
 
         def adminConfig = getProject().property("mlAdminConfig")
         adminConfig.setScheme("http")
@@ -84,11 +85,27 @@ task disableSSL(type: com.marklogic.gradle.task.MarkLogicTask) {
         manageConfig.setConfigureSimpleSsl(false)
         manageConfig.setAdminScheme("http")
         manageConfig.setAdminConfigureSimpleSsl(false)
-        manageClient = new com.marklogic.mgmt.ManageClient(manageConfig)
+        def mgClient = new com.marklogic.mgmt.ManageClient(manageConfig)
 
-        def certManager = new com.marklogic.mgmt.resource.security.CertificateTemplateManager(manageClient)
+        def certManager = new com.marklogic.mgmt.resource.security.CertificateTemplateManager(mgClient)
         certManager.delete(adminCert())
     }
+}
+
+// there is a bug in ML 8 that won't unset the ssl
+def disableSSL(appConfig, serverName) {
+    def eval = appConfig.newAppServicesDatabaseClient().newServerEval()
+    def xqy = """
+        import module namespace admin = "http://marklogic.com/xdmp/admin"
+          at "/MarkLogic/admin.xqy";
+        let \$config := admin:get-configuration()
+        let \$appServer := admin:appserver-get-id(\$config,
+            admin:group-get-id(\$config, "Default"), "${serverName}")
+        let \$config := admin:appserver-set-ssl-certificate-template(\$config, \$appServer, 0)
+        return
+          admin:save-configuration(\$config)
+    """
+    def result = eval.xquery(xqy).eval()
 }
 
 // Returns a certificate Request for use on the builtin appservers
