@@ -8,7 +8,7 @@ import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 class SslTest extends BaseTest {
     def setupSpec() {
         buildFile = testProjectDir.newFile('build.gradle')
-        buildFile << """
+        buildFile << '''
             plugins {
                 id 'com.marklogic.ml-data-hub'
             }
@@ -87,23 +87,19 @@ class SslTest extends BaseTest {
             // there is a bug in ML 8 that won't unset the ssl
             def disableSSL(appConfig, serverName) {
                 def eval = appConfig.newAppServicesDatabaseClient().newServerEval()
-                def xqy = \"""
-                    import module namespace admin = "http://marklogic.com/xdmp/admin"
-                    at "/MarkLogic/admin.xqy";
-                    let \$config: =
-                    admin:
-                    get - configuration()
-                    let \$appServer: = admin:appserver-get-id(\$config,
-                        admin:group-get-id(\$config, "Default"), "\${serverName}")
-                    let \$config: = admin:appserver-set-ssl-certificate-template(\$config, \$appServer, 0)
+                def xqy = """
+                    import module namespace admin = "http://marklogic.com/xdmp/admin" at "/MarkLogic/admin.xqy";
+                    let \\$config := admin:get-configuration()
+                    let \\$appServer := admin:appserver-get-id(\\$config, admin:group-get-id(\\$config, "Default"), "\${serverName}")
+                    let \\$config := admin:appserver-set-ssl-certificate-template(\\$config, \\$appServer, 0)
                     return
-                        admin:save-configuration(\$config)
-                    \"""
+                        admin:save-configuration(\\$config)
+                    """
                 def result = eval.xquery(xqy).eval()
             }
 
             def adminCert() {
-                return \"""
+                return """
                     <certificate-template-properties xmlns="http://marklogic.com/manage">
                     <template-name>admin-cert</template-name>
                   <template-description>System Cert</template-description>
@@ -116,10 +112,10 @@ class SslTest extends BaseTest {
                     </subject>
                   </req>
                     </certificate-template-properties>
-                \"""
+                """
             }
 
-        """
+        '''
 
         runTask("hubInit")
         copyResourceToFile("ssl-test/my-template.xml", new File(testProjectDir.root, "user-config/security/certificate-templates/my-template.xml"))
