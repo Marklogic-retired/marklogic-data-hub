@@ -158,8 +158,12 @@ public class HubConfig {
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    public HubConfig() {
+        setProjectDir(".");
+    }
+
     private HubConfig(String projectDir) {
-        setProjectDir(projectDir);
+        setProjectDir(new File(projectDir).getAbsolutePath());
     }
 
     public String getProjectDir() {
