@@ -118,7 +118,7 @@ public class HubConfigJsonTest {
             "  \"customForestPath\": \"forests\",\n" +
             "  \"modulePermissions\": \"rest-reader,read,rest-writer,insert,rest-writer,update,rest-extension-user,execute\",\n" +
             "  \"projectDir\": \"" + projectPath + "\",\n" +
-            "  \"jarVersion\": \"0.1.2\",\n" +
+            "  \"jarVersion\": \"" + HubConfig.hubFromEnvironment(PROJECT_PATH, null).getJarVersion() + "\",\n" +
             "  \"userModulesDeployTimestampFile\": \"" + projectPath + "/.tmp/user-modules-deploy-timestamps.properties\",\n" +
             "  \"hubEntitiesDir\": \"file://" + projectPath + "/plugins/entities\",\n" +
             "  \"entityDatabaseDir\": \"file://" + projectPath + "/entity-config/databases\",\n" +
