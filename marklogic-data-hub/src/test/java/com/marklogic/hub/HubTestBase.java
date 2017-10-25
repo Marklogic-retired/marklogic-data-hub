@@ -226,7 +226,7 @@ public class HubTestBase {
         return hubConfig;
     }
 
-    private static void createProjectDir() {
+    public static void createProjectDir() {
         try {
             File projectDir = new File(PROJECT_PATH);
             if (!projectDir.isDirectory() || !projectDir.exists()) {
@@ -287,8 +287,14 @@ public class HubTestBase {
     }
 
     protected static String getModulesFile(String uri) {
-        String contents = modMgr.read(uri).next().getContent(new StringHandle()).get();
-        return contents.replaceFirst("(\\(:|//)\\s+cache\\sbuster:.+\\n", "");
+        try {
+            String contents = modMgr.read(uri).next().getContent(new StringHandle()).get();
+            return contents.replaceFirst("(\\(:|//)\\s+cache\\sbuster:.+\\n", "");
+        }
+        catch(Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     protected static Document getModulesDocument(String uri) {

@@ -15,58 +15,46 @@
  */
 package com.marklogic.hub;
 
-import com.marklogic.client.io.DocumentMetadataHandle;
-import com.marklogic.hub.collector.Collector;
-import com.marklogic.hub.entity.Entity;
-import com.marklogic.hub.flow.CodeFormat;
-import com.marklogic.hub.flow.DataFormat;
-import com.marklogic.hub.flow.Flow;
-import com.marklogic.hub.flow.FlowType;
 import com.marklogic.hub.scaffold.Scaffolding;
+import com.marklogic.hub.util.FileUtil;
+import com.marklogic.hub.util.HubModuleManager;
 import org.apache.commons.io.FileUtils;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.springframework.core.io.Resource;
+import org.xml.sax.SAXException;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual;
+import static org.junit.Assert.*;
 
 public class EntityManagerTest extends HubTestBase {
+    static Path projectPath = Paths.get(PROJECT_PATH).toAbsolutePath();
+    private static File projectDir = projectPath.toFile();
 
     @BeforeClass
     public static void setup() throws IOException {
         XMLUnit.setIgnoreWhitespace(true);
 
         deleteProjectDir();
-
         installHub();
-        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME);
+    }
 
-        DataHub dataHub = getDataHub();
-        dataHub.clearUserModules();
-        dataHub.installUserModules(true);
-
-        DocumentMetadataHandle meta = new DocumentMetadataHandle();
-        meta.getCollections().add("tester");
-        installStagingDoc("/incoming/employee1.xml", meta, "flow-manager-test/input/employee1.xml");
-        installStagingDoc("/incoming/employee2.xml", meta, "flow-manager-test/input/employee2.xml");
-
-        Scaffolding scaffolding = new Scaffolding(PROJECT_PATH, stagingClient);
-        scaffolding.createEntity("my-test-entity-1");
-        scaffolding.createFlow("my-test-entity-1", "flow1", FlowType.HARMONIZE,
-            CodeFormat.XQUERY, DataFormat.XML);
-
-        scaffolding.createEntity("my-test-entity-2");
-        scaffolding.createFlow("my-test-entity-2", "flow1", FlowType.HARMONIZE,
-            CodeFormat.JAVASCRIPT, DataFormat.JSON);
-        scaffolding.createFlow("my-test-entity-2", "flow2", FlowType.HARMONIZE,
-            CodeFormat.XQUERY, DataFormat.XML);
-
-        dataHub.installUserModules();
+    @Before
+    public void clearDbs() {
+        deleteProjectDir();
+        createProjectDir();
+        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_MODULES_DB_NAME);
+        getDataHub().installHubModules();
+        getPropsMgr().deletePropertiesFile();
     }
 
     @AfterClass
@@ -74,76 +62,102 @@ public class EntityManagerTest extends HubTestBase {
         deleteProjectDir();
     }
 
-    @Test
-    public void testGetEntities() {
-        EntityManager fm = new EntityManager(stagingClient);
-        List<Entity> entities = fm.getEntities();
-        assertEquals(2, entities.size());
+    private void installEntity() {
+        Scaffolding scaffolding = new Scaffolding(projectDir.toString(), finalClient);
+        Path employeeDir = scaffolding.getEntityDir("employee");
+        employeeDir.toFile().mkdirs();
+        assertTrue(employeeDir.toFile().exists());
+        FileUtil.copy(getResourceStream("scaffolding-test/employee.entity.json"), employeeDir.resolve("employee.entity.json").toFile());
+    }
 
-        Entity entity = entities.get(0);
+//    private void removeEntity() throws IOException {
+//        Scaffolding scaffolding = new Scaffolding(projectDir.toString(), finalClient);
+//        Path employeeDir = scaffolding.getEntityDir("employee");
+//        FileUtils.deleteDirectory(employeeDir.toFile());
+//    }
 
-        assertEquals("my-test-entity-1", entity.getName());
-
-        List<Flow> flows = entity.getFlows();
-        assertEquals(1, flows.size());
-
-        // flow 1
-        Flow flow1 = flows.get(0);
-        assertEquals("flow1", flow1.getName());
-
-        Collector c = flow1.getCollector();
-        assertEquals(CodeFormat.XQUERY, c.getCodeFormat());
-        assertEquals("/entities/my-test-entity-1/harmonize/flow1/collector.xqy", c.getModule());
-
-        // entity 2
-        entity = entities.get(1);
-        assertEquals("my-test-entity-2", entity.getName());
-
-        flows = entity.getFlows();
-        assertEquals(2, flows.size());
-
-        // flow 1
-        flow1 = flows.get(0);
-        assertEquals("flow1", flow1.getName());
-
-        c = flow1.getCollector();
-        assertEquals(CodeFormat.JAVASCRIPT, c.getCodeFormat());
-        assertEquals("/entities/my-test-entity-2/harmonize/flow1/collector.sjs", c.getModule());
-
-        // flow 2
-        Flow flow2 = flows.get(1);
-        assertEquals("flow2", flow2.getName());
-
-        c = flow2.getCollector();
-        assertEquals(CodeFormat.XQUERY, c.getCodeFormat());
-        assertEquals("/entities/my-test-entity-2/harmonize/flow2/collector.xqy", c.getModule());
+    private HubModuleManager getPropsMgr() {
+        String timestampFile = getHubConfig().getUserModulesDeployTimestampFile();
+        HubModuleManager propertiesModuleManager = new HubModuleManager(timestampFile);
+        return propertiesModuleManager;
     }
 
     @Test
-    public void testGetEntity() {
-        EntityManager fm = new EntityManager(stagingClient);
-        Entity entity = fm.getEntity("my-test-entity-2");
+    public void testDeploySearchOptionsWithNoEntities() throws IOException, SAXException {
+        Path dir = Paths.get(getHubConfig().getProjectDir(), HubConfig.ENTITY_CONFIG_DIR);
 
-        assertEquals("my-test-entity-2", entity.getName());
+        assertNull(getModulesFile("/Default/" + HubConfig.DEFAULT_STAGING_NAME + "/rest-api/options/" + HubConfig.STAGING_ENTITY_SEARCH_OPTIONS_FILE));
+        assertNull(getModulesFile("/Default/" + HubConfig.DEFAULT_FINAL_NAME + "/rest-api/options/" + HubConfig.FINAL_ENTITY_SEARCH_OPTIONS_FILE));
+        Paths.get(dir.toString(), HubConfig.STAGING_ENTITY_SEARCH_OPTIONS_FILE).toFile().delete();
+        Paths.get(dir.toString(), HubConfig.FINAL_ENTITY_SEARCH_OPTIONS_FILE).toFile().delete();
+        assertFalse(Paths.get(dir.toString(), HubConfig.STAGING_ENTITY_SEARCH_OPTIONS_FILE).toFile().exists());
+        assertFalse(Paths.get(dir.toString(), HubConfig.FINAL_ENTITY_SEARCH_OPTIONS_FILE).toFile().exists());
+        assertEquals(0, getStagingDocCount());
+        assertEquals(0, getFinalDocCount());
 
-        List<Flow> flows = entity.getFlows();
-        assertEquals(2, flows.size());
+        EntityManager entityManager = new EntityManager(getHubConfig());
+        List<Resource> deployed = entityManager.deploySearchOptions();
 
-        // flow 1
-        Flow flow1 = flows.get(0);
-        assertEquals("flow1", flow1.getName());
+        assertEquals(0, deployed.size());
+        assertFalse(Paths.get(dir.toString(), HubConfig.STAGING_ENTITY_SEARCH_OPTIONS_FILE).toFile().exists());
+        assertFalse(Paths.get(dir.toString(), HubConfig.FINAL_ENTITY_SEARCH_OPTIONS_FILE).toFile().exists());
+        assertEquals(0, getStagingDocCount());
+        assertEquals(0, getFinalDocCount());
+        assertNull(getModulesFile("/Default/" + HubConfig.DEFAULT_STAGING_NAME + "/rest-api/options/" + HubConfig.STAGING_ENTITY_SEARCH_OPTIONS_FILE));
+        assertNull(getModulesFile("/Default/" + HubConfig.DEFAULT_FINAL_NAME + "/rest-api/options/" + HubConfig.FINAL_ENTITY_SEARCH_OPTIONS_FILE));
+    }
 
-        Collector c = flow1.getCollector();
-        assertEquals(CodeFormat.JAVASCRIPT, c.getCodeFormat());
-        assertEquals("/entities/my-test-entity-2/harmonize/flow1/collector.sjs", c.getModule());
+    @Test
+    public void testDeploySearchOptions() throws IOException, SAXException {
+        installEntity();
 
-        // flow 2
-        Flow flow2 = flows.get(1);
-        assertEquals("flow2", flow2.getName());
+        Path dir = Paths.get(getHubConfig().getProjectDir(), HubConfig.ENTITY_CONFIG_DIR);
 
-        c = flow2.getCollector();
-        assertEquals(CodeFormat.XQUERY, c.getCodeFormat());
-        assertEquals("/entities/my-test-entity-2/harmonize/flow2/collector.xqy", c.getModule());
+        assertNull(getModulesFile("/Default/" + HubConfig.DEFAULT_STAGING_NAME + "/rest-api/options/" + HubConfig.STAGING_ENTITY_SEARCH_OPTIONS_FILE));
+        assertNull(getModulesFile("/Default/" + HubConfig.DEFAULT_FINAL_NAME + "/rest-api/options/" + HubConfig.FINAL_ENTITY_SEARCH_OPTIONS_FILE));
+        assertFalse(Paths.get(dir.toString(), HubConfig.STAGING_ENTITY_SEARCH_OPTIONS_FILE).toFile().exists());
+        assertFalse(Paths.get(dir.toString(), HubConfig.FINAL_ENTITY_SEARCH_OPTIONS_FILE).toFile().exists());
+        assertEquals(0, getStagingDocCount());
+        assertEquals(0, getFinalDocCount());
+
+        EntityManager entityManager = new EntityManager(getHubConfig());
+        List<Resource> deployed = entityManager.deploySearchOptions();
+
+        assertEquals(2, deployed.size());
+        assertTrue(Paths.get(dir.toString(), HubConfig.STAGING_ENTITY_SEARCH_OPTIONS_FILE).toFile().exists());
+        assertTrue(Paths.get(dir.toString(), HubConfig.FINAL_ENTITY_SEARCH_OPTIONS_FILE).toFile().exists());
+        assertEquals(0, getStagingDocCount());
+        assertEquals(0, getFinalDocCount());
+        assertXMLEqual(getResource("entity-manager-test/options.xml"), getModulesFile("/Default/" + HubConfig.DEFAULT_STAGING_NAME + "/rest-api/options/" + HubConfig.STAGING_ENTITY_SEARCH_OPTIONS_FILE));
+        assertXMLEqual(getResource("entity-manager-test/options.xml"), getModulesFile("/Default/" + HubConfig.DEFAULT_FINAL_NAME + "/rest-api/options/" + HubConfig.FINAL_ENTITY_SEARCH_OPTIONS_FILE));
+
+        // shouldn't deploy a 2nd time because of modules properties files
+        deployed = entityManager.deploySearchOptions();
+        assertEquals(0, deployed.size());
+    }
+
+    @Test
+    public void testSaveDbIndexes() throws IOException {
+        installEntity();
+
+        Path dir = getHubConfig().getEntityDatabaseDir();
+
+        assertFalse(dir.resolve("final-database.json").toFile().exists());
+        assertFalse(dir.resolve("staging-database.json").toFile().exists());
+
+        EntityManager entityManager = new EntityManager(getHubConfig());
+        assertTrue(entityManager.saveDbIndexes());
+
+        assertTrue(dir.resolve("final-database.json").toFile().exists());
+        assertTrue(dir.resolve("staging-database.json").toFile().exists());
+
+        // shouldn't save them on round 2 because of timestamps
+        assertFalse(entityManager.saveDbIndexes());
+
+        getDataHub().installUserModules();
+
+        // shouldn't save them on round 3 because of timestamps
+        assertFalse(entityManager.saveDbIndexes());
     }
 
 }

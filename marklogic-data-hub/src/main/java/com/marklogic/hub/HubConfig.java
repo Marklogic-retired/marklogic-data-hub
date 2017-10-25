@@ -58,7 +58,8 @@ public class HubConfig {
     public static final String HUB_CONFIG_DIR = "hub-internal-config";
     public static final String USER_CONFIG_DIR = "user-config";
     public static final String ENTITY_CONFIG_DIR = "entity-config";
-    public static final String ENTITY_SEARCH_OPTIONS_FILE = "entity-options.xml";
+    public static final String STAGING_ENTITY_SEARCH_OPTIONS_FILE = "staging-entity-options.xml";
+    public static final String FINAL_ENTITY_SEARCH_OPTIONS_FILE = "final-entity-options.xml";
 
     public static final String DEFAULT_STAGING_NAME = "data-hub-STAGING";
     public static final String DEFAULT_FINAL_NAME = "data-hub-FINAL";

@@ -22,22 +22,24 @@ import com.marklogic.client.io.StringHandle;
 import com.marklogic.com.marklogic.client.ext.file.CacheBusterDocumentFileProcessor;
 import com.marklogic.com.marklogic.client.ext.modulesloader.impl.EntityDefModulesFinder;
 import com.marklogic.com.marklogic.client.ext.modulesloader.impl.UserModulesFinder;
+import com.marklogic.hub.EntityManager;
 import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.deploy.util.HubFileFilter;
 import com.marklogic.hub.error.LegacyFlowsException;
 import com.marklogic.hub.flow.Flow;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.SimpleFileVisitor;
+import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -144,11 +146,17 @@ public class LoadUserModulesCommand extends AbstractCommand {
 
         AllButAssetsModulesFinder allButAssetsModulesFinder = new AllButAssetsModulesFinder();
 
+        Path dir = Paths.get(hubConfig.getProjectDir(), HubConfig.ENTITY_CONFIG_DIR);
+        if (!dir.toFile().exists()) {
+            dir.toFile().mkdirs();
+        }
+
+        // deploy the auto-generated ES search options
+        EntityManager entityManager = new EntityManager(hubConfig);
+        entityManager.deploySearchOptions();
+
         try {
             if (startPath.toFile().exists()) {
-
-                // load Flow Definitions
-                List<Flow> flows = flowManager.getLocalFlows();
                 XMLDocumentManager documentManager = hubConfig.newModulesDbClient().newXMLDocumentManager();
                 DocumentWriteSet documentWriteSet = documentManager.newWriteSet();
 
