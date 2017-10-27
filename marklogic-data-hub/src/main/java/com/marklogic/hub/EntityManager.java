@@ -134,7 +134,6 @@ public class EntityManager extends LoggingObject {
             File finalFile = dir.resolve("final-database.json").toFile();
             File stagingFile = dir.resolve("staging-database.json").toFile();
 
-            logger.info("saveDbIndexes");
             long lastModified = Math.max(finalFile.lastModified(), stagingFile.lastModified());
             List<JsonNode> entities = getModifiedRawEntities(lastModified);
             if (entities.size() > 0) {

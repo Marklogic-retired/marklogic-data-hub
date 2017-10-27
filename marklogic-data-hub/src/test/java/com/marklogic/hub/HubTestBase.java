@@ -291,9 +291,7 @@ public class HubTestBase {
             String contents = modMgr.read(uri).next().getContent(new StringHandle()).get();
             return contents.replaceFirst("(\\(:|//)\\s+cache\\sbuster:.+\\n", "");
         }
-        catch(Exception e) {
-            e.printStackTrace();
-        }
+        catch(Exception e) {}
         return null;
     }
 
