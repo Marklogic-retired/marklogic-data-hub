@@ -188,7 +188,7 @@ export class LoginComponent implements OnInit {
     this.disableTabs();
     this.tabs[tabName] = true;
 
-    const skipUs = ['InstalledCheck', 'InitIfNeeded', 'PostInit'];
+    const skipUs = ['InstalledCheck', 'InitIfNeeded', 'PostInit', 'PreInstallCheck'];
     if (skipUs.indexOf(this.currentTab) < 0) {
       this.visitedTabs.push(this.currentTab);
     }
