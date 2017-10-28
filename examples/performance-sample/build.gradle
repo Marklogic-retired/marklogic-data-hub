@@ -261,3 +261,43 @@ task doAll() {
   dependsOn loadInputData
   dependsOn allHarmonizeFlows
 }
+
+import java.util.concurrent.TimeUnit
+class TimingsListener implements TaskExecutionListener, BuildListener {
+  private long startTime
+  private timings = []
+
+  @Override
+  void beforeExecute(Task task) {
+    startTime = System.nanoTime()
+  }
+
+  @Override
+  void afterExecute(Task task, TaskState taskState) {
+    timings.add([
+      TimeUnit.MILLISECONDS.convert(System.nanoTime() -
+         startTime, TimeUnit.NANOSECONDS),
+      task.path
+    ])
+  }
+
+  @Override
+  void buildFinished(BuildResult result) {
+    println "Task timings:"
+    for (timing in timings)
+      printf "%10.3fs  %s\n", (timing[0] / 1000), timing[1]
+  }
+
+  @Override
+  void buildStarted(Gradle gradle) {}
+  @Override
+  void projectsEvaluated(Gradle gradle) {}
+  @Override
+  void projectsLoaded(Gradle gradle) {}
+  @Override
+  void settingsEvaluated(Settings settings) {}
+}
+
+if (project.hasProperty('profile')) {
+  gradle.addListener new TimingsListener()
+}
