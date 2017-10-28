@@ -9,3 +9,36 @@ plugins {
     // command line
     id 'com.marklogic.ml-data-hub' version '2.0.0'
 }
+
+task createXmlEntity(type: com.marklogic.gradle.task.CreateEntityTask) {
+  doFirst { project.ext.entityName = "input-xml" }
+}
+
+task createJsonEntity(type: com.marklogic.gradle.task.CreateEntityTask) {
+  doFirst { project.ext.entityName = "input-json" }
+}
+
+task createInputXmlFlow(type: com.marklogic.gradle.task.CreateInputFlowTask) {
+  doFirst {
+    project.ext.entityName = "input-xml"
+    project.ext.flowName = "raw-input-xml"
+    project.ext.dataFormat = "xml"
+  }
+}
+
+task createInputJsonFlow(type: com.marklogic.gradle.task.CreateInputFlowTask) {
+  doFirst {
+    project.ext.entityName = "input-json"
+    project.ext.flowName = "raw-input-json"
+    project.ext.dataFormat = "json"
+  }
+}
+
+task createEntityInput() {
+  dependsOn createXmlEntity
+  dependsOn createJsonEntity
+  dependsOn createInputXmlFlow
+  dependsOn createInputJsonFlow
+  finalizedBy mlLoadModules
+  doLast { println "created XML and JSON entities and input flows" }
+}
