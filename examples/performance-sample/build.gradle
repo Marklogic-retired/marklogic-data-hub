@@ -35,6 +35,8 @@ task createJsonEntity(type: com.marklogic.gradle.task.CreateEntityTask) {
 }
 
 task createInputXmlFlow(type: com.marklogic.gradle.task.CreateInputFlowTask) {
+  mustRunAfter createXmlEntity
+
   doFirst {
     project.ext.entityName = "input-xml"
     project.ext.flowName = "raw-input-xml"
@@ -43,6 +45,8 @@ task createInputXmlFlow(type: com.marklogic.gradle.task.CreateInputFlowTask) {
 }
 
 task createInputJsonFlow(type: com.marklogic.gradle.task.CreateInputFlowTask) {
+  mustRunAfter createJsonEntity
+
   doFirst {
     project.ext.entityName = "input-json"
     project.ext.flowName = "raw-input-json"
@@ -51,10 +55,13 @@ task createInputJsonFlow(type: com.marklogic.gradle.task.CreateInputFlowTask) {
 }
 
 task createEntityInput() {
+  mustRunAfter mlDeploy
+
   dependsOn createXmlEntity
   dependsOn createJsonEntity
   dependsOn createInputXmlFlow
   dependsOn createInputJsonFlow
+
   finalizedBy mlLoadModules
   doLast { println "created XML and JSON entities and input flows" }
 }
@@ -109,6 +116,10 @@ task prepareMlcpLog() {
 }
 
 task loadJson(type: com.marklogic.gradle.task.MlcpTask) {
+  mustRunAfter createInputXmlFlow
+  mustRunAfter mlLoadModules
+  mustRunAfter getInputData
+
   classpath = configurations.mlcp
   command = "IMPORT"
   database = mlStagingDbName
@@ -126,6 +137,10 @@ task loadJson(type: com.marklogic.gradle.task.MlcpTask) {
 }
 
 task loadXml(type: com.marklogic.gradle.task.MlcpTask) {
+  mustRunAfter createInputJsonFlow
+  mustRunAfter mlLoadModules
+  mustRunAfter getInputData
+
   classpath = configurations.mlcp
   command = "IMPORT"
   database = mlStagingDbName
@@ -143,8 +158,106 @@ task loadXml(type: com.marklogic.gradle.task.MlcpTask) {
 }
 
 task loadInputData {
-  mustRunAfter createEntityInput
   dependsOn getInputData
   dependsOn loadJson
   dependsOn loadXml
+}
+
+task createHarmonizeXmlXqy(type: com.marklogic.gradle.task.CreateHarmonizeFlowTask) {
+  mustRunAfter createEntityInput
+
+  doFirst {
+    project.ext.entityName = "input-xml"
+    project.ext.flowName = "harmonize-xml-xqy"
+    project.ext.pluginFormat = "xqy"
+    project.ext.dataFormat = "xml"
+  }
+}
+
+task createHarmonizeXmlSjs(type: com.marklogic.gradle.task.CreateHarmonizeFlowTask) {
+  mustRunAfter createEntityInput
+
+  doFirst {
+    project.ext.entityName = "input-xml"
+    project.ext.flowName = "harmonize-xml-sjs"
+    project.ext.pluginFormat = "sjs"
+    project.ext.dataFormat = "xml"
+  }
+}
+
+task createHarmonizeJsonXqy(type: com.marklogic.gradle.task.CreateHarmonizeFlowTask) {
+  mustRunAfter createEntityInput
+
+  doFirst {
+    project.ext.entityName = "input-json"
+    project.ext.flowName = "harmonize-json-xqy"
+    project.ext.pluginFormat = "xqy"
+    project.ext.dataFormat = "json"
+  }
+}
+
+task createHarmonizeJsonSjs(type: com.marklogic.gradle.task.CreateHarmonizeFlowTask) {
+  mustRunAfter createEntityInput
+
+  doFirst {
+    project.ext.entityName = "input-json"
+    project.ext.flowName = "harmonize-json-sjs"
+    project.ext.pluginFormat = "sjs"
+    project.ext.dataFormat = "json"
+  }
+}
+
+task createHarmonizeFlows() {
+  dependsOn createHarmonizeXmlXqy
+  dependsOn createHarmonizeXmlSjs
+  dependsOn createHarmonizeJsonXqy
+  dependsOn createHarmonizeJsonSjs
+  finalizedBy mlLoadModules
+}
+
+task runHarmonizeXmlXqy(type: com.marklogic.gradle.task.RunFlowTask) {
+  mustRunAfter loadInputData
+  mustRunAfter createHarmonizeXmlXqy
+
+  entityName = "input-xml"
+  flowName = "harmonize-xml-xqy"
+}
+
+task runHarmonizeXmlSjs(type: com.marklogic.gradle.task.RunFlowTask) {
+  mustRunAfter loadInputData
+  mustRunAfter createHarmonizeXmlSjs
+
+  entityName = "input-xml"
+  flowName = "harmonize-xml-sjs"
+}
+
+task runHarmonizeJsonXqy(type: com.marklogic.gradle.task.RunFlowTask) {
+  mustRunAfter loadInputData
+  mustRunAfter createHarmonizeJsonXqy
+
+  entityName = "input-json"
+  flowName = "harmonize-json-xqy"
+}
+
+task runHarmonizeJsonSjs(type: com.marklogic.gradle.task.RunFlowTask) {
+  mustRunAfter loadInputData
+  mustRunAfter createHarmonizeJsonSjs
+
+  entityName = "input-json"
+  flowName = "harmonize-json-sjs"
+}
+
+task allHarmonizeFlows() {
+  dependsOn createHarmonizeFlows
+  dependsOn runHarmonizeXmlXqy
+  dependsOn runHarmonizeXmlSjs
+  dependsOn runHarmonizeJsonXqy
+  dependsOn runHarmonizeJsonSjs
+}
+
+task doAll() {
+  dependsOn mlDeploy
+  dependsOn createEntityInput
+  dependsOn loadInputData
+  dependsOn allHarmonizeFlows
 }
