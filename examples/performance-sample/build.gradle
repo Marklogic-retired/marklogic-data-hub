@@ -1,13 +1,29 @@
 plugins {
-    // this plugin lets you create properties files
-    // for multiple environments... like dev, qa, prod
     id 'net.saliman.properties' version '1.4.6'
-
-    // this is the data hub framework gradle plugin
-    // it includes ml-gradle. This plugin is what lets you
-    // run DHF (Data Hub Framework) tasks from the
-    // command line
     id 'com.marklogic.ml-data-hub' version '2.0.0'
+}
+
+repositories {
+  jcenter()
+  maven { url "https://developer.marklogic.com/maven2/" }
+
+  ivy {
+    url 'http://download.geonames.org/'
+    layout 'pattern', {
+      artifact '/[organisation]/dump/[module].[ext]'
+    }
+  }
+}
+
+configurations {
+  mlcp
+  data
+}
+
+dependencies {
+  mlcp "com.marklogic:mlcp:9.0.2"
+  mlcp files("lib")
+  data "export:cities5000:*@zip"
 }
 
 task createXmlEntity(type: com.marklogic.gradle.task.CreateEntityTask) {
@@ -41,4 +57,94 @@ task createEntityInput() {
   dependsOn createInputJsonFlow
   finalizedBy mlLoadModules
   doLast { println "created XML and JSON entities and input flows" }
+}
+
+task getInputData() {
+  def headers = [
+    "geonameid",
+    "name",
+    "asciiname",
+    "alternatenames",
+    "latitude",
+    "longitude",
+    "feature class",
+    "feature code",
+    "country code",
+    "cc2",
+    "admin1 code",
+    "admin2 code",
+    "admin3 code",
+    "admin4 code",
+    "population",
+    "elevation",
+    "dem",
+    "timezone",
+    "modification date"
+  ]
+
+  def zipPath = project.configurations.data.find {
+    it.name.startsWith("cities5000")
+  }
+
+  doFirst {
+    mkdir "./input/"
+  }
+  doLast {
+    def zipFile = zipTree(file(zipPath)).getFiles().first()
+    def combined = new File('./input/raw.txt')
+    combined.text = headers.join("\t") + "\n" + zipFile.text
+  }
+}
+
+task prepareMlcpLog() {
+  mkdir "./lib/"
+  def props = new File('./lib/log4j.properties')
+  props.text = [
+    "log4j.rootLogger=INFO, stdout",
+    "log4j.appender.stdout=org.apache.log4j.ConsoleAppender",
+    "log4j.appender.stdout.Target=System.out",
+    "log4j.appender.stdout.layout=org.apache.log4j.PatternLayout",
+    "log4j.appender.stdout.layout.ConversionPattern=%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%L - %m%n"
+  ].join("\n")
+}
+
+task loadJson(type: com.marklogic.gradle.task.MlcpTask) {
+  classpath = configurations.mlcp
+  command = "IMPORT"
+  database = mlStagingDbName
+  port = mlStagingPort.toInteger()
+  input_file_path = "./input/raw.txt"
+  delimiter = "\t"
+  input_file_type = "delimited_text"
+  document_type = "json"
+  output_uri_prefix = "/city/"
+  output_uri_suffix = ".json"
+  output_collections = "input-json"
+  transform_module = "/com.marklogic.hub/mlcp-flow-transform.xqy"
+  transform_namespace = "http://marklogic.com/data-hub/mlcp-flow-transform"
+  transform_param =  "entity-name=input-json,flow-name=raw-input-json"
+}
+
+task loadXml(type: com.marklogic.gradle.task.MlcpTask) {
+  classpath = configurations.mlcp
+  command = "IMPORT"
+  database = mlStagingDbName
+  port = mlStagingPort.toInteger()
+  input_file_path = "./input/raw.txt"
+  delimiter = "\t"
+  input_file_type = "delimited_text"
+  document_type = "xml"
+  output_uri_prefix = "/city/"
+  output_uri_suffix = ".xml"
+  output_collections = "input-xml"
+  transform_module = "/com.marklogic.hub/mlcp-flow-transform.xqy"
+  transform_namespace = "http://marklogic.com/data-hub/mlcp-flow-transform"
+  transform_param =  "entity-name=input-xml,flow-name=raw-input-xml"
+}
+
+task loadInputData {
+  mustRunAfter createEntityInput
+  dependsOn getInputData
+  dependsOn loadJson
+  dependsOn loadXml
 }
