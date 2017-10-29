@@ -120,10 +120,12 @@ task loadJson(type: com.marklogic.gradle.task.MlcpTask) {
   mustRunAfter mlLoadModules
   mustRunAfter getInputData
 
+  doFirst {
+    database = mlStagingDbName
+    port = mlStagingPort.toInteger()
+  }
   classpath = configurations.mlcp
   command = "IMPORT"
-  database = mlStagingDbName
-  port = mlStagingPort.toInteger()
   input_file_path = "./input/raw.txt"
   delimiter = "\t"
   input_file_type = "delimited_text"
@@ -141,10 +143,12 @@ task loadXml(type: com.marklogic.gradle.task.MlcpTask) {
   mustRunAfter mlLoadModules
   mustRunAfter getInputData
 
+  doFirst {
+    database = mlStagingDbName
+    port = mlStagingPort.toInteger()
+  }
   classpath = configurations.mlcp
   command = "IMPORT"
-  database = mlStagingDbName
-  port = mlStagingPort.toInteger()
   input_file_path = "./input/raw.txt"
   delimiter = "\t"
   input_file_type = "delimited_text"
