@@ -7,7 +7,7 @@
         <div class="group-section slideDown" flex layout="column" [ngClass]="getSectionClass('inputFiles')">
           <app-folder-browser
             [startPath]="startPath"
-            (folderChosen)="folderClicked($event)">
+            (folderChosen)="folderSelected($event)">
           </app-folder-browser>
         </div>
       </div>
