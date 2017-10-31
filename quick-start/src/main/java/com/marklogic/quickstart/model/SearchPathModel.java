@@ -22,8 +22,9 @@ public class SearchPathModel {
 	public String absolutePath;
 
 	public SearchPathModel(String name, String relativePath, String absolutePath) {
+        this.name = name;
 		this.relativePath = relativePath;
 		this.absolutePath = absolutePath;
-		this.name = name;
 	}
+
 }

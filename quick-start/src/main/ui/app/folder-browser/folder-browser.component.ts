@@ -66,12 +66,12 @@ export class FolderBrowserComponent implements OnInit, OnChanges {
     }
   }
 
-  folderSelected(entry: any): void {
+  entryClicked(entry: any): void {
     this.getFolders(entry.absolutePath);
   }
 
   fileSelected(selectedFile: any) {
-
+    // Todo: need to fire event that tells MLCP command line to use this one file
   }
 
   private extractData(res: Response) {

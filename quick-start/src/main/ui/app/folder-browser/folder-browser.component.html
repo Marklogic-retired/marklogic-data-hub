@@ -8,7 +8,7 @@
     </div>
     <ul class="foldertree">
       <li *ngFor="let folder of folders">
-        <div class="entry" (click)="folderSelected(folder)">
+        <div class="entry" (click)="entryClicked(folder)">
           <i class="fa fa-folder-o"></i>
           <p>{{folder.name}}</p>
         </div>
@@ -16,7 +16,7 @@
       <li *ngFor="let file of files">
         <div class="entry" (click)="fileSelected(file)">
           <i class="fa fa-file-o"></i>
-          <p>{{file}}</p>
+          <p>{{file.name}}</p>
         </div>
       </li>
     </ul>
