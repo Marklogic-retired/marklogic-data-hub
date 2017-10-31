@@ -11,6 +11,7 @@ import { MdlTextFieldComponent } from '@angular-mdl/core';
 export class FolderBrowserComponent implements OnInit, OnChanges {
   @Input() startPath: string = '.';
   @Output() folderChosen = new EventEmitter();
+  @Output() fileChosen = new EventEmitter();
   @Input() absoluteOnly: boolean = false;
 
   @ViewChild(MdlTextFieldComponent) inputPath: MdlTextFieldComponent;
@@ -70,8 +71,11 @@ export class FolderBrowserComponent implements OnInit, OnChanges {
     this.getFolders(entry.absolutePath);
   }
 
-  fileSelected(selectedFile: any) {
-    // Todo: need to fire event that tells MLCP command line to use this one file
+  fileClicked(selectedFile: any) {
+    this.fileChosen.emit( {
+      relativePath: selectedFile.currentPath,
+      absolutePath: selectedFile.absolutePath
+    })
   }
 
   private extractData(res: Response) {
