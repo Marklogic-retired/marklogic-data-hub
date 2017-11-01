@@ -36,7 +36,7 @@ dependencies {
     compile ('com.marklogic:ml-app-deployer:3.1-alpha4') {
         exclude group: 'com.marklogic', module: 'ml-javaclient-util'
     }
-    compile ('com.marklogic:ml-javaclient-util:3.1-alpha4')
+    compile ('com.marklogic:ml-javaclient-util:3.1-alpha6')
     testCompile localGroovy()
     testCompile gradleTestKit()
     testCompile 'xmlunit:xmlunit:1.3'
