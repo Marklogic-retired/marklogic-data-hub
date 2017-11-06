@@ -157,6 +157,8 @@ public class HubConfig {
     private DefaultAdminConfigFactory adminConfigFactory;
     private AppConfig appConfig;
 
+    private Properties propertyOverrides;
+
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     public HubConfig() {
@@ -189,6 +191,14 @@ public class HubConfig {
         return config;
     }
 
+    public static HubConfig hubFromEnvironmentWithOverrides(String projectDir, String environment, Properties properties) {
+        HubConfig config = new HubConfig(projectDir);
+        config.environment = environment;
+        config.propertyOverrides = properties;
+        config.loadConfigurationFromProperties(config.getProperties(environment));
+        return config;
+    }
+
     /**
      * Creates a hub config from a Project dir and Properties file
      * @param projectDir - the project directory
@@ -208,6 +218,12 @@ public class HubConfig {
         if (environment != null) {
             String envPropertiesFile = "gradle-" + environment + ".properties";
             loadConfigurationFromFile(environmentProperties, envPropertiesFile);
+        }
+
+        if (propertyOverrides != null) {
+            propertyOverrides.forEach((o, o2) -> {
+                environmentProperties.put(o, o2);
+            });
         }
 
         return environmentProperties;
