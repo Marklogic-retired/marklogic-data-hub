@@ -41,10 +41,6 @@ interface CreateFlowListener {
     void onFlowCreated(CodeFormat codeFormat, DataFormat dataFormat, FlowType flowType, String srcDir, Path flowDir);
 }
 
-interface ComboListener {
-    void onCombo(CodeFormat codeFormat, DataFormat dataFormat, FlowType flowType);
-}
-
 class Tuple<X, Y> {
     public final X x;
     public final Y y;

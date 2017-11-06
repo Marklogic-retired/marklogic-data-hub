@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Protractor HTML Reporter</title>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" >
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.8.1/css/lightbox.min.css" >
+    <style type="text/css">
+      .panel-heading {
+    padding: 0;
+}
+
+.panel-heading a {
+    padding: 10px 5px;
+    display: block;
+    position: relative;
+    text-decoration: none;
+}
+
+.panel-heading i.glyphicon-chevron-down {
+    display: none;
+}
+
+.panel-heading i.glyphicon-chevron-right {
+    display: inline-block;
+}
+
+.panel-heading.open i.glyphicon-chevron-down {
+    display: inline-block;
+}
+
+.panel-heading.open i.glyphicon-chevron-right {
+    display: none;
+}
+
+.info {
+    text-align: right;
+    padding-bottom: 10px;
+}
+
+.panel-title b {
+    padding-right: 10px;
+}
+
+.panel-heading .label-container {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+}
+
+.panel-heading .label-container label {
+    margin-left: 5px;
+    padding: 5px;
+}
+
+.navbar .label-container {
+    position: absolute;
+    right: 10px;
+    top: 14px;
+}
+
+.navbar {
+    margin-bottom: 10px;
+}
+
+.navbar .label {
+    font-size: 20px;
+}
+
+.navbar .project-name {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    margin-left: -700px;
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.chart {
+    padding-bottom: 15px;
+}
+
+div.chart div div svg rect {
+    fill: #f5f5f5;
+}
+
+table.arguments {
+    margin-left: 30px;
+}
+
+.screenshot {
+    padding: 2% 0 2% 0;
+}
+
+.scenarioTitle {
+    width: 80%
+}
+
+.description {
+    background-color: white;
+    border-color: white;
+    line-height: 1.6;
+    color: #6f6f6f;
+    font-weight: 400;
+    font-family: "Helvetica Neue", "Helvetica", Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    padding:  0.1em 0.5em 1.2em 1.5em
+}
+
+#scenario-description {
+    padding-bottom:  1em;
+    padding-left: 0.2em;
+}
+
+.scrollBar {
+    overflow-x: scroll;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+table, th, td {
+    border: 1px solid black;
+}
+
+th, td {
+    text-align: left;
+    padding: 8px;
+}
+
+th {
+    background-color: #f5f5f5;
+    color: black;
+}
+
+.info {
+    background-color: #fbfbfb;
+}
+
+.step-duration {
+    float: right;
+}
+
+.footer-div {
+    text-align: right;
+    vertical-align: middle;
+    height:3.5%;
+    width:100%;
+}
+
+.footer-container {
+    margin-right: 10px;
+    margin-top: 5px;
+    width:18%;
+    z-index: 10;
+    position: absolute;
+    right: 0;
+    bottom: 10px;
+    text-align: center;
+    background-color: transparent;
+}
+
+.footer-link {
+    font-size: 13px;
+    float: right;
+}
+
+.footer-link:hover {
+    color: darkgray;
+}
+
+    </style>
+    <meta charset="UTF-8">
+  </head>
+  <body>
+
+    <div class="navbar navbar-default navbar-static-top" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <div class="project-name visible-md visible-lg">Opsdirector-Test Execution Report</div>
+          <div class="label-container">
+            <span class="label label-success" title=TestCases>Passed: 11</span>
+            <span class="label label-danger" title=TestCases>Failed: 0</span>
+            <span class="label label-warning" title=TestCases>Skipped: 0</span>
+            <span class="label label-info">Time Elapsed: 0h 10min 36s</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+
+    <!--<div class="generated-on"><b>Platform:</b> </div>-->
+    <div class="info"><b>Browser:</b> chrome 62.0.3202.89</div>
+    <div class="info"><b>Generated on:</b> 11/6/2017, 4:23:54 PM</div>
+
+
+      <div class="row">
+        <div class="chart col-lg-6 col-md-6" id="piechart_testsuites"></div>
+        <div class="chart col-lg-6 col-md-6" id="piechart_testcases"></div>
+      </div>
+
+      
+<div class="row">
+  <div class="col-lg-11 col-md-6">
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+          <a data-toggle="collapse" href="#collapseSuite0">
+          
+            <span class="label label-success"><i class="glyphicon glyphicon-ok"></i></span>
+          
+          <font color="green"><b>TestSuite:</b>QuickStart</font>
+          <span class="label-container">
+            
+            
+            
+            
+          </span>
+        </a>
+      </h4>
+    </div>
+    <div id="collapseSuite0" class="panel-collapse collapse">
+            <div class="panel-body">
+              
+            </div>
+      </div>
+
+
+  </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-lg-11 col-md-6">
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+          <a data-toggle="collapse" href="#collapseSuite1">
+          
+            <span class="label label-success"><i class="glyphicon glyphicon-ok"></i></span>
+          
+          <font color="green"><b>TestSuite:</b>QuickStart.auth</font>
+          <span class="label-container">
+            
+            
+            
+            
+          </span>
+        </a>
+      </h4>
+    </div>
+    <div id="collapseSuite1" class="panel-collapse collapse">
+            <div class="panel-body">
+              
+            </div>
+      </div>
+
+
+  </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-lg-11 col-md-6">
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+          <a data-toggle="collapse" href="#collapseSuite2">
+          
+            <span class="label label-success"><i class="glyphicon glyphicon-ok"></i></span>
+          
+          <font color="green"><b>TestSuite:</b>QuickStart.auth.login</font>
+          <span class="label-container">
+            <span class="label label-success">11</span>
+            
+            
+            
+          </span>
+        </a>
+      </h4>
+    </div>
+    <div id="collapseSuite2" class="panel-collapse collapse">
+            <div class="panel-body">
+              
+                <div class="panel panel-default">
+                  <div class="panel-heading">
+                    <h4 class="panel-title">
+                      <a data-toggle="collapse" href="#collapseTestCase2_0">
+                        
+                          <span class="label label-success"><i class="glyphicon glyphicon-ok"></i></span>
+                        
+
+                        <font color="green"><b>TestCase:</b>Starts off with the right stuff</font>
+                        
+                        
+                        <span class="label-container">
+                          <span class="label label-success" title="Passed">Passed</span>
+                          
+                          
+                      </a>
+                    </h4>
+                  </div>
+
+                  <div id="collapseTestCase2_0" class="panel-collapse collapse">
+                    <div class="panel-body">
+                      <p class="scenario-container">
+                        
+                          <span class="label label-primary" title="Success"><i class="glyphicon glyphicon-time"></i></span>
+                          <font color="black">Time elapsed: 1 seconds</font>
+
+                          
+
+                          
+                      
+                      </p>
+                    </div>
+                  </div>
+
+                </div>
+              
+                <div class="panel panel-default">
+                  <div class="panel-heading">
+                    <h4 class="panel-title">
+                      <a data-toggle="collapse" href="#collapseTestCase2_1">
+                        
+                          <span class="label label-success"><i class="glyphicon glyphicon-ok"></i></span>
+                        
+
+                        <font color="green"><b>TestCase:</b>Has the correct current folder</font>
+                        
+                        
+                        <span class="label-container">
+                          <span class="label label-success" title="Passed">Passed</span>
+                          
+                          
+                      </a>
+                    </h4>
+                  </div>
+
+                  <div id="collapseTestCase2_1" class="panel-collapse collapse">
+                    <div class="panel-body">
+                      <p class="scenario-container">
+                        
+                          <span class="label label-primary" title="Success"><i class="glyphicon glyphicon-time"></i></span>
+                          <font color="black">Time elapsed: 1 seconds</font>
+
+                          
+
+                          
+                      
+                      </p>
+                    </div>
+                  </div>
+
+                </div>
+              
+                <div class="panel panel-default">
+                  <div class="panel-heading">
+                    <h4 class="panel-title">
+                      <a data-toggle="collapse" href="#collapseTestCase2_2">
+                        
+                          <span class="label label-success"><i class="glyphicon glyphicon-ok"></i></span>
+                        
+
+                        <font color="green"><b>TestCase:</b>Should open the examples folder</font>
+                        
+                        
+                        <span class="label-container">
+                          <span class="label label-success" title="Passed">Passed</span>
+                          
+                          
+                      </a>
+                    </h4>
+                  </div>
+
+                  <div id="collapseTestCase2_2" class="panel-collapse collapse">
+                    <div class="panel-body">
+                      <p class="scenario-container">
+                        
+                          <span class="label label-primary" title="Success"><i class="glyphicon glyphicon-time"></i></span>
+                          <font color="black">Time elapsed: 24 seconds</font>
+
+                          
+
+                          
+                      
+                      </p>
+                    </div>
+                  </div>
+
+                </div>
+              
+                <div class="panel panel-default">
+                  <div class="panel-heading">
+                    <h4 class="panel-title">
+                      <a data-toggle="collapse" href="#collapseTestCase2_3">
+                        
+                          <span class="label label-success"><i class="glyphicon glyphicon-ok"></i></span>
+                        
+
+                        <font color="green"><b>TestCase:</b>Should be on the init project page</font>
+                        
+                        
+                        <span class="label-container">
+                          <span class="label label-success" title="Passed">Passed</span>
+                          
+                          
+                      </a>
+                    </h4>
+                  </div>
+
+                  <div id="collapseTestCase2_3" class="panel-collapse collapse">
+                    <div class="panel-body">
+                      <p class="scenario-container">
+                        
+                          <span class="label label-primary" title="Success"><i class="glyphicon glyphicon-time"></i></span>
+                          <font color="black">Time elapsed: 7 seconds</font>
+
+                          
+
+                          
+                      
+                      </p>
+                    </div>
+                  </div>
+
+                </div>
+              
+                <div class="panel panel-default">
+                  <div class="panel-heading">
+                    <h4 class="panel-title">
+                      <a data-toggle="collapse" href="#collapseTestCase2_4">
+                        
+                          <span class="label label-success"><i class="glyphicon glyphicon-ok"></i></span>
+                        
+
+                        <font color="green"><b>TestCase:</b>Should be on the post init page</font>
+                        
+                        
+                        <span class="label-container">
+                          <span class="label label-success" title="Passed">Passed</span>
+                          
+                          
+                      </a>
+                    </h4>
+                  </div>
+
+                  <div id="collapseTestCase2_4" class="panel-collapse collapse">
+                    <div class="panel-body">
+                      <p class="scenario-container">
+                        
+                          <span class="label label-primary" title="Success"><i class="glyphicon glyphicon-time"></i></span>
+                          <font color="black">Time elapsed: 8 seconds</font>
+
+                          
+
+                          
+                      
+                      </p>
+                    </div>
+                  </div>
+
+                </div>
+              
+                <div class="panel panel-default">
+                  <div class="panel-heading">
+                    <h4 class="panel-title">
+                      <a data-toggle="collapse" href="#collapseTestCase2_5">
+                        
+                          <span class="label label-success"><i class="glyphicon glyphicon-ok"></i></span>
+                        
+
+                        <font color="green"><b>TestCase:</b>Should be on the environment tab</font>
+                        
+                        
+                        <span class="label-container">
+                          <span class="label label-success" title="Passed">Passed</span>
+                          
+                          
+                      </a>
+                    </h4>
+                  </div>
+
+                  <div id="collapseTestCase2_5" class="panel-collapse collapse">
+                    <div class="panel-body">
+                      <p class="scenario-container">
+                        
+                          <span class="label label-primary" title="Success"><i class="glyphicon glyphicon-time"></i></span>
+                          <font color="black">Time elapsed: 11 seconds</font>
+
+                          
+
+                          
+                      
+                      </p>
+                    </div>
+                  </div>
+
+                </div>
+              
+                <div class="panel panel-default">
+                  <div class="panel-heading">
+                    <h4 class="panel-title">
+                      <a data-toggle="collapse" href="#collapseTestCase2_6">
+                        
+                          <span class="label label-success"><i class="glyphicon glyphicon-ok"></i></span>
+                        
+
+                        <font color="green"><b>TestCase:</b>Should be on the login tab</font>
+                        
+                        
+                        <span class="label-container">
+                          <span class="label label-success" title="Passed">Passed</span>
+                          
+                          
+                      </a>
+                    </h4>
+                  </div>
+
+                  <div id="collapseTestCase2_6" class="panel-collapse collapse">
+                    <div class="panel-body">
+                      <p class="scenario-container">
+                        
+                          <span class="label label-primary" title="Success"><i class="glyphicon glyphicon-time"></i></span>
+                          <font color="black">Time elapsed: 9 seconds</font>
+
+                          
+
+                          
+                      
+                      </p>
+                    </div>
+                  </div>
+
+                </div>
+              
+                <div class="panel panel-default">
+                  <div class="panel-heading">
+                    <h4 class="panel-title">
+                      <a data-toggle="collapse" href="#collapseTestCase2_7">
+                        
+                          <span class="label label-success"><i class="glyphicon glyphicon-ok"></i></span>
+                        
+
+                        <font color="green"><b>TestCase:</b>Should be on the needs install tab</font>
+                        
+                        
+                        <span class="label-container">
+                          <span class="label label-success" title="Passed">Passed</span>
+                          
+                          
+                      </a>
+                    </h4>
+                  </div>
+
+                  <div id="collapseTestCase2_7" class="panel-collapse collapse">
+                    <div class="panel-body">
+                      <p class="scenario-container">
+                        
+                          <span class="label label-primary" title="Success"><i class="glyphicon glyphicon-time"></i></span>
+                          <font color="black">Time elapsed: 8 seconds</font>
+
+                          
+
+                          
+                      
+                      </p>
+                    </div>
+                  </div>
+
+                </div>
+              
+                <div class="panel panel-default">
+                  <div class="panel-heading">
+                    <h4 class="panel-title">
+                      <a data-toggle="collapse" href="#collapseTestCase2_8">
+                        
+                          <span class="label label-success"><i class="glyphicon glyphicon-ok"></i></span>
+                        
+
+                        <font color="green"><b>TestCase:</b>should install the hub into MarkLogic</font>
+                        
+                        
+                        <span class="label-container">
+                          <span class="label label-success" title="Passed">Passed</span>
+                          
+                          
+                      </a>
+                    </h4>
+                  </div>
+
+                  <div id="collapseTestCase2_8" class="panel-collapse collapse">
+                    <div class="panel-body">
+                      <p class="scenario-container">
+                        
+                          <span class="label label-primary" title="Success"><i class="glyphicon glyphicon-time"></i></span>
+                          <font color="black">Time elapsed: 1 seconds</font>
+
+                          
+
+                          
+                      
+                      </p>
+                    </div>
+                  </div>
+
+                </div>
+              
+                <div class="panel panel-default">
+                  <div class="panel-heading">
+                    <h4 class="panel-title">
+                      <a data-toggle="collapse" href="#collapseTestCase2_9">
+                        
+                          <span class="label label-success"><i class="glyphicon glyphicon-ok"></i></span>
+                        
+
+                        <font color="green"><b>TestCase:</b>should complete the install and go to the dashboard</font>
+                        
+                        
+                        <span class="label-container">
+                          <span class="label label-success" title="Passed">Passed</span>
+                          
+                          
+                      </a>
+                    </h4>
+                  </div>
+
+                  <div id="collapseTestCase2_9" class="panel-collapse collapse">
+                    <div class="panel-body">
+                      <p class="scenario-container">
+                        
+                          <span class="label label-primary" title="Success"><i class="glyphicon glyphicon-time"></i></span>
+                          <font color="black">Time elapsed: 121 seconds</font>
+
+                          
+
+                          
+                      
+                      </p>
+                    </div>
+                  </div>
+
+                </div>
+              
+                <div class="panel panel-default">
+                  <div class="panel-heading">
+                    <h4 class="panel-title">
+                      <a data-toggle="collapse" href="#collapseTestCase2_10">
+                        
+                          <span class="label label-success"><i class="glyphicon glyphicon-ok"></i></span>
+                        
+
+                        <font color="green"><b>TestCase:</b>should logout</font>
+                        
+                        
+                        <span class="label-container">
+                          <span class="label label-success" title="Passed">Passed</span>
+                          
+                          
+                      </a>
+                    </h4>
+                  </div>
+
+                  <div id="collapseTestCase2_10" class="panel-collapse collapse">
+                    <div class="panel-body">
+                      <p class="scenario-container">
+                        
+                          <span class="label label-primary" title="Success"><i class="glyphicon glyphicon-time"></i></span>
+                          <font color="black">Time elapsed: 2 seconds</font>
+
+                          
+
+                          
+                      
+                      </p>
+                    </div>
+                  </div>
+
+                </div>
+              
+            </div>
+      </div>
+
+
+  </div>
+  </div>
+</div>
+
+
+
+    </div>
+
+
+    <div class="navbar-fixed-bottom row-fluid footer-div ">
+      <div class="navbar-inner">
+        <div class="footer-container">
+          <a  target="_blank" href="https://www.npmjs.com/package/protractor-html-reporter">
+            <div class="text-muted footer-link">
+              generated by @protractor-html-reporter
+            </div>
+             </a>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script src="https://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.5.1/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.8.1/js/lightbox.min.js"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+      google.charts.load("current", {packages:["corechart"]});
+      google.charts.setOnLoadCallback(function() {drawChart({
+                                                              "title": "TestSuites",
+                                                              "passed": 3,
+                                                              "failed": 0,
+        })
+      });
+      google.charts.setOnLoadCallback(function() {drawChart({
+                                                              "title": "TestCases",
+                                                              "passed": 11,
+                                                              "skipped": 0,
+                                                              "errors": 0,
+                                                              "failed": 0
+        })
+      });
+
+    </script>
+    <script>
+      function drawChart(chartData) {
+  var data = google.visualization.arrayToDataTable([
+    ['Task', 'Project Results'],
+    ['Passed', chartData.passed],
+    ['Skipped', chartData.skipped],
+    ['Errors', chartData.errors],
+    ['Failed', chartData.failed]
+  ]);
+
+  var testsNumber = chartData.passed + chartData.failed + (chartData.skipped || 0) + (chartData.errors || 0);
+  var title;
+
+  if (testsNumber === 1) {
+    title = testsNumber + ' ' + chartData.title.slice(0, -1);
+  } else {
+    title = testsNumber + ' ' + chartData.title;
+  }
+
+  var options = {
+    width: '100%',
+    height: 270,
+    title: title,
+    is3D: true,
+    fontSize: '12',
+    colors: ['#5cb85c', '#f0ad4e', '#5bc0de', '#d9534f'],
+    pieStartAngle: 100,
+    backgroundColor: 'white',
+    titleTextStyle: {
+      fontSize: '13',
+      color: '#5e5e5e'
+    }
+  };
+
+  var chart = new google.visualization.PieChart(document.getElementById('piechart_' + chartData.title.toLowerCase()));
+  chart.draw(data, options);
+}
+
+    </script>
+
+  </body>
+</html>

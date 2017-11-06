@@ -79,7 +79,7 @@ export class SettingsComponent {
         this.installStatus += '\n' + payload.message;
       });
 
-      this.install.install().subscribe((env) => {
+      this.install.install((env) => {
         setTimeout(() => {
           this.isInstalling = false;
           this.installStatus = null;

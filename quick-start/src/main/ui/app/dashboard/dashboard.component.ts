@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, NgZone, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { ProjectService } from '../projects';
@@ -12,7 +12,7 @@ import { MdlDialogService } from '@angular-mdl/core';
 })
 export class DashboardComponent implements OnInit, OnDestroy {
 
-  statsInterval: number;
+  // statsInterval: any;
   rows: any = [0, 1];
 
   databases: any = [
@@ -25,16 +25,17 @@ export class DashboardComponent implements OnInit, OnDestroy {
   stats: any;
 
   constructor(
+    private ngZone: NgZone,
     private projectService: ProjectService,
     private dialogService: MdlDialogService,
     private router: Router
   ) {
-    this.router.events.subscribe((val:any) => {
-      // see also
-      if (val.url !== '/' && this.statsInterval) {
-        this.stopStats();
-      }
-    });
+    // this.router.events.subscribe((val:any) => {
+    //   // see also
+    //   if (val.url !== '/' && this.statsInterval) {
+    //     this.stopStats();
+    //   }
+    // });
   }
 
   getStatus() {
@@ -43,11 +44,15 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.projectService.getStatus().subscribe((stats) => {
       this.stats = stats;
 
-      this.statsInterval = setInterval(() => {
-        this.projectService.getStatus().subscribe((timerStats) => {
-          this.stats = timerStats;
-        });
-      }, 2000);
+      // this.ngZone.runOutsideAngular(() => {
+      //   this.statsInterval = setInterval(() => {
+          this.projectService.getStatus().subscribe((timerStats) => {
+            // this.ngZone.run(() => {
+              this.stats = timerStats;
+            // });
+          });
+        // }, 2000);
+      // });
     });
   }
 
@@ -56,15 +61,15 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.stopStats();
+    // this.stopStats();
   }
 
-  stopStats() {
-    if (this.statsInterval) {
-      clearInterval(this.statsInterval);
-      delete this.statsInterval;
-    }
-  }
+  // stopStats() {
+  //   if (this.statsInterval) {
+  //     clearInterval(this.statsInterval);
+  //     delete this.statsInterval;
+  //   }
+  // }
 
   getDbCount(db) {
     return this.stats[db + 'Count'];

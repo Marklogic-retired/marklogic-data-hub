@@ -66,6 +66,13 @@ public class ProjectsController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+    @RequestMapping(value = "/reset", method = RequestMethod.GET)
+    @ResponseBody
+    public ResponseEntity<?> resetProject() {
+        pm.reset();
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
     @RequestMapping(value = "/{projectId}/initialize", method = RequestMethod.POST)
     @ResponseBody
     public Project initializeProject(@PathVariable int projectId, @RequestBody HubConfig config) {

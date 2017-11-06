@@ -1,4 +1,4 @@
-import { Component, Renderer, OnInit } from '@angular/core';
+import { Component, Renderer, NgZone, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
 import * as _ from 'lodash';
@@ -90,6 +90,7 @@ export class LoginComponent implements OnInit {
     private installService: InstallService,
     private dialogService: MdlDialogService,
     private router: Router,
+    private ngZone: NgZone,
     private renderer: Renderer) {}
 
   ngOnInit() {
@@ -119,7 +120,7 @@ export class LoginComponent implements OnInit {
       this.installationStatus += '\n' + payload.message;
     });
 
-    this.installService.install().subscribe((env) => {
+    this.installService.install((env) => {
       this.currentEnvironment = env;
       setTimeout(() => {
         this.installing = false;
@@ -136,6 +137,7 @@ export class LoginComponent implements OnInit {
         // go to install hub tab
         this.gotoTab('Installer');
       }
+      // });
     });
   }
 

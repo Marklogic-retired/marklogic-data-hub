@@ -24,6 +24,7 @@ import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.InstallInfo;
 
 import java.io.IOException;
+import java.util.Properties;
 
 public class EnvironmentConfig {
 
@@ -87,12 +88,14 @@ public class EnvironmentConfig {
         this.projectDir = projectDir;
         this.environment = environment;
 
-        mlSettings = HubConfig.hubFromEnvironment(this.projectDir, environment);
+        Properties overrides = new Properties();
+        overrides.put("mlUsername", username);
+        overrides.put("mlPassword", password);
+        mlSettings = HubConfig.hubFromEnvironmentWithOverrides(this.projectDir, environment, overrides);
         if (username != null) {
             mlSettings.getAppConfig().setAppServicesUsername(username);
             mlSettings.getAppConfig().setAppServicesPassword(password);
         }
-
         dataHub = new DataHub(mlSettings);
 
         // warm the caches

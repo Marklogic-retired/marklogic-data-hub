@@ -41,9 +41,11 @@ cd /path/to/data-hub-project/
 
 #### Making Changes to the Hub Gradle Plugin
 
-This is for when you are making changes to the ml-data-hub-plugin. This is a gradle plugin that enables Hub Capabilities. Most likely you won't find yourself doing this. You can safely ignore this section.
+This is for when you really want to use a local copy of the Gradle Plugin in your Data Hub Framework Project. Perhaps you are testing out a change to the ml-data-hub Gradle plugin or you have a cutting edge development version. There are very few valid reasons for you to do this.
 
-Still here? Seems you really want to modify the Gradle Plugin. Here's how to tell Gradle to use your local copy instead of the one living up on the Cloud.
+Still here? Seems you really want to use a local copy of the Gradle Plugin in your Data Hub Framework Project. Here's how to tell Gradle to use your local copy instead of the one living up on the Cloud.
+
+First you must publish your Data Hub Plugin to the local maven repository.
 
 ```bash
 cd /path/to/data-hub-project/
@@ -52,7 +54,7 @@ cd /path/to/data-hub-project/ml-data-hub-plugin
 ./gradlew publishToMavenLocal
 ```
 
-Then in your build.gradle file you will need to use the local version:
+Then in your DHF project's build.gradle file you will need to use the local version:
 ```groovy
 
 // this goes at the top above the plugins section
@@ -77,6 +79,8 @@ plugins {
 // this tells gradle to apply the plugin you included above in the buildscript section
 apply plugin: "com.marklogic.ml-data-hub"
 ```
+
+**Note**: This change goes in a DHF project's build.gradle. Not the DHF source code's build.gradle.
 
 #### Running the QuickStart UI from source
 Make sure you have the prerequisites installed.
