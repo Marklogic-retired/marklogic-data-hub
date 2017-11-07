@@ -23,6 +23,11 @@ export class JobService {
     return this.post(`/api/jobs`, data);
   }
 
+  deleteJobs(jobIds: any[]) {
+    console.log("service: delete " + jobIds.length + " jobs");
+    // TODO: post list of jobs to delete
+  }
+
   private extractData = (res: Response) => {
     return res.json();
   }
