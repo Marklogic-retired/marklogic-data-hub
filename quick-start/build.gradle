@@ -150,7 +150,7 @@ task startRest {
 }
 
 task e2eLaunch(type: NpmTask) {
-    args = ['run', 'e2e-ng-cli']
+    args = ['run', 'e2e']
     dependsOn tasks.startRest
 }
 
