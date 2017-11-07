@@ -17,13 +17,13 @@ exports.config = {
   directConnect: true,
   baseUrl: 'http://localhost:4200/',
   framework: 'jasmine',
-  allScriptsTimeout: 200000,
+  allScriptsTimeout: 220000,
   getPageTimeout: 70000,
   jasmineNodeOpts: {
     showTiming: true,
     showColors: true,
     includeStackTrace: true,
-    defaultTimeoutInterval: 70000,
+    defaultTimeoutInterval: 220000,
     print: function() {}
   },
   onPrepare() {
@@ -51,6 +51,7 @@ exports.config = {
 
   //HTMLReport called once tests are finished
   onComplete: function() {
+    console.log('FINISHED: creating xml report');
     var browserName, browserVersion;
     var capsPromise = browser.getCapabilities();
 

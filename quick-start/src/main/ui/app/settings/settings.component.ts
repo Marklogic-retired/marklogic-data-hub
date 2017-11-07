@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, NgZone } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { SettingsService } from './settings.service';
@@ -27,7 +27,8 @@ export class SettingsComponent {
     private install: InstallService,
     private projectService: ProjectService,
     private dialogService: MdlDialogService,
-    private router: Router
+    private router: Router,
+    private ngZone: NgZone
   ) {
     this.mlcpPath = settings.mlcpPath;
   }
@@ -79,12 +80,12 @@ export class SettingsComponent {
         this.installStatus += '\n' + payload.message;
       });
 
-      this.install.install((env) => {
-        setTimeout(() => {
+      this.install.install().subscribe((env) => {
+        this.ngZone.run(() => {
           this.isInstalling = false;
           this.installStatus = null;
-        }, 1000);
-        emitter.unsubscribe();
+          emitter.unsubscribe();
+        });
       });
     },
     // cancel.. do nothing

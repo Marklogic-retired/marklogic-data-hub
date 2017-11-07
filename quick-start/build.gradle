@@ -1,3 +1,6 @@
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
+
 buildscript {
     ext {
         springBootVersion = '1.5.6.RELEASE'
@@ -15,7 +18,7 @@ plugins {
     id 'java'
     id 'eclipse'
     id 'idea'
-    id 'com.moowork.node' version '1.1.1'
+    id 'com.moowork.node' version '1.2.0'
     id 'org.springframework.boot' version '1.5.3.RELEASE'
 }
 
@@ -46,6 +49,7 @@ ext.junitJupiterVersion  = '5.0.0-RC3'
 
 dependencies {
     compile("org.springframework.boot:spring-boot-starter:${springBootVersion}")
+    compile("org.springframework.boot:spring-boot-starter-actuator:${springBootVersion}")
     compile("org.springframework.boot:spring-boot-starter-web:${springBootVersion}")
     compile("org.springframework.boot:spring-boot-starter-websocket:${springBootVersion}")
     compile("org.springframework.boot:spring-boot-starter-security:${springBootVersion}")
@@ -134,6 +138,39 @@ task runUI(type: NpmTask) {
     dependsOn tasks.npmInstallUI
 }
 
+task startRest {
+  doFirst {
+    def executorService = Executors.newSingleThreadExecutor()
+    executorService.submit({
+        tasks.findMainClass.execute()
+        pid = tasks.bootRun.execute()
+
+    } as Runnable)
+  }
+}
+
+task e2eLaunch(type: NpmTask) {
+    args = ['run', 'e2e-ng-cli']
+    dependsOn tasks.startRest
+}
+
+task e2eUI {
+    dependsOn tasks.e2eLaunch
+}
+
+task stopBootrun {
+    doLast {
+        println("STOPPING Spring Boot")
+        def connection = new URL("http://localhost:8080/shutdown").openConnection()
+        connection.setRequestMethod("POST")
+        connection.connect()
+        println 'Shutting down application...'
+        println connection.inputStream.text
+    }
+}
+
+e2eUI.finalizedBy stopBootrun
+
 if (!(
     gradle.startParameter.taskNames*.toLowerCase().contains("bootrun") ||
     gradle.startParameter.taskNames*.toLowerCase().contains("test") ||
@@ -145,6 +182,8 @@ if (!(
    ) {
   processResources.dependsOn copyIndexHtml
 }
+
+test.dependsOn e2eUI
 
 bootRun {
     addResources = true

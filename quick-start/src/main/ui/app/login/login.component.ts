@@ -94,7 +94,7 @@ export class LoginComponent implements OnInit {
     private renderer: Renderer) {}
 
   ngOnInit() {
-    this.projectService.getProjects().subscribe(resp => {
+    this.projectService.getProjects().subscribe((resp) => {
       this.projects = resp.projects;
 
       if (this.projects.length > 0) {
@@ -120,24 +120,23 @@ export class LoginComponent implements OnInit {
       this.installationStatus += '\n' + payload.message;
     });
 
-    this.installService.install((env) => {
-      this.currentEnvironment = env;
-      setTimeout(() => {
+    this.installService.install().subscribe((env) => {
+      this.ngZone.run(() => {
+        this.currentEnvironment = env;
         this.installing = false;
         this.installationStatus = null;
-      }, 1000);
-      emitter.unsubscribe();
+        emitter.unsubscribe();
 
-      let installInfo = this.currentEnvironment.installInfo;
-      if (installInfo && installInfo.installed) {
-        // goto login tab
-        let redirect = this.auth.redirectUrl || '';
-        this.router.navigate([redirect]);
-      } else {
-        // go to install hub tab
-        this.gotoTab('Installer');
-      }
-      // });
+        let installInfo = this.currentEnvironment.installInfo;
+        if (installInfo && installInfo.installed) {
+          // goto login tab
+          let redirect = this.auth.redirectUrl || '';
+          this.router.navigate([redirect]);
+        } else {
+          // go to install hub tab
+          this.gotoTab('Installer');
+        }
+      })
     });
   }
 

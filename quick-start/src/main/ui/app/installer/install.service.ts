@@ -15,19 +15,19 @@ export class InstallService {
     this.stomp.messages.subscribe(this.onMessage);
   }
 
-  install(callback) {
+  install() {
     let unsubscribeId: string;
     this.stomp.subscribe('/topic/install-status').then((msgId: string) => {
       unsubscribeId = msgId;
     });
     return this.ngZone.runOutsideAngular(() => {
       let resp = this.http.put(`/api/current-project/install`, '').share();
-      resp.subscribe((env) => {
+      resp.subscribe(() => {
         this.ngZone.run(() => {
           this.stomp.unsubscribe(unsubscribeId);
-          callback(env.json());
         });
       });
+      return resp.map(this.extractData);
     });
   }
 

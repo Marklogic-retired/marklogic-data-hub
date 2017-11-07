@@ -365,7 +365,7 @@
               </div>
             </div>
           </div>
-          <div id="install-progress" class="install-progress shrinky" [ngClass]="(installing || uninstalling) ? '' : 'collapsed'" layout="column" layout-align="center center">
+          <div id="install-progress" class="install-progress shrinky" *ngIf="(installing || uninstalling)" layout="column" layout-align="center center">
             <mdl-progress [progress]="percentComplete"></mdl-progress>
             <div id="installing-message" *ngIf="installing">Installing...</div>
             <div id="uninstalling-message" *ngIf="uninstalling">Uninstalling...</div>

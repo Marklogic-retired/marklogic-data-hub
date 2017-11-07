@@ -65,7 +65,7 @@ export class LoginPage extends AppPage {
   }
 
   get installProgress() {
-    return element(by.css('section.install-status pre'));
+    return element(by.css('.install-progress mdl-progress'));
   }
 
   get installComplete() {

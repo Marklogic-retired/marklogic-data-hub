@@ -107,6 +107,65 @@ cd /path/to/data-hub-project
 
 Now open your browser to [http://localhost:4200](http://localhost:4200) to use the debug version of the Quickstart UI.
 
+### Troubleshooting
+Did the `gradle runui` command fail for you? Here's a quick checklist to troubleshoot.
+
+#### Do you have Gradle 3.4 or newer?
+Using straight up gradle:
+```
+gradle -v
+```
+or if you are using the wrapper:
+```
+./gradlew -v
+```
+If your gradle wrapper is older than `3.4` then do this:
+```
+gradle wrapper --gradle-version 3.4
+```
+#### Are you on the develop branch?
+_hint: you should be_  
+Check like so:
+```bash
+git branch
+```
+
+To switch to the develop branch:
+```bash
+git checkout develop
+```
+
+#### Do you have the latest code?
+Better make sure...
+
+##### You clone from the github.com/marklogic-community/marklogic-data-hub repo
+
+```bash
+git pull origin develop
+```
+##### Your forked then cloned your fork
+Make sure you have the upstream set:
+```bash
+$ git remote add upstream git://github.com/marklogic-community/marklogic-data-hub.git
+```
+
+Then fetch the upstream:
+```bash
+git fetch upstream develop
+```
+
+Now merge it in:
+```bash
+git rebase upstream/develop
+```
+
+#### Try removing the `quick-start/node_modules` directory.  
+If you are seeing a bunch of javascript errors you might have a messed up node_modules directory. Try to remove it then run again.
+
+```bash
+rm -rf quick-start/node_modules
+```
+
 ## Submission Guidelines
 
 ### Submitting an Issue

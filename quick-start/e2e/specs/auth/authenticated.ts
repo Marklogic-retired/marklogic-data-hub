@@ -112,15 +112,13 @@ export default function() {
     });
 
     it ('should install the hub into MarkLogic', function() {
-      browser.wait(EC.presenceOf(loginPage.installProgress));
-      expect(loginPage.installProgress.isDisplayed()).toBe(true);
+      return browser.wait(EC.presenceOf(loginPage.installProgress));
     });
 
     it ('should complete the install and go to the dashboard', function() {
+      expect(loginPage.installProgress.isDisplayed()).toBe(true);
       dashboardPage.isLoadedWithtimeout(200000);
-      // browser.wait(EC.elementToBeClickable(element(this.locator())), 10000)
-      // browser.wait(EC.elementToBeClickable(element(dashboardPage.locator())), 15 * 60 * 1000);
-    }, 200000);
+    });
 
     it ('should logout', function() {
       dashboardPage.logout();

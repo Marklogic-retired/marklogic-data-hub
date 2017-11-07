@@ -1,7 +1,6 @@
 import { protractor, browser, element, by, By, $, $$, ExpectedConditions as EC, ElementFinder } from 'protractor'
 import {pages} from '../page-objects/page';
 import auth from './auth'
-// import setup from './setup'
 import CUSTOM_MATCHERS from '../matchers'
 import loginPage from '../page-objects/auth/login';
 const request = require('request').defaults({ strictSSL: false })
@@ -36,9 +35,5 @@ describe('QuickStart', function () {
     });
   });
 
-  afterAll(function (done) {
-  });
-
-  // setup();
   auth();
 });

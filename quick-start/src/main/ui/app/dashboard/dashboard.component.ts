@@ -10,7 +10,7 @@ import { MdlDialogService } from '@angular-mdl/core';
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
 })
-export class DashboardComponent implements OnInit, OnDestroy {
+export class DashboardComponent implements OnInit {
 
   // statsInterval: any;
   rows: any = [0, 1];
@@ -29,47 +29,17 @@ export class DashboardComponent implements OnInit, OnDestroy {
     private projectService: ProjectService,
     private dialogService: MdlDialogService,
     private router: Router
-  ) {
-    // this.router.events.subscribe((val:any) => {
-    //   // see also
-    //   if (val.url !== '/' && this.statsInterval) {
-    //     this.stopStats();
-    //   }
-    // });
-  }
+  ) {}
 
   getStatus() {
-    this.ngOnDestroy();
-
     this.projectService.getStatus().subscribe((stats) => {
       this.stats = stats;
-
-      // this.ngZone.runOutsideAngular(() => {
-      //   this.statsInterval = setInterval(() => {
-          this.projectService.getStatus().subscribe((timerStats) => {
-            // this.ngZone.run(() => {
-              this.stats = timerStats;
-            // });
-          });
-        // }, 2000);
-      // });
     });
   }
 
   ngOnInit() {
     this.getStatus();
   }
-
-  ngOnDestroy() {
-    // this.stopStats();
-  }
-
-  // stopStats() {
-  //   if (this.statsInterval) {
-  //     clearInterval(this.statsInterval);
-  //     delete this.statsInterval;
-  //   }
-  // }
 
   getDbCount(db) {
     return this.stats[db + 'Count'];
