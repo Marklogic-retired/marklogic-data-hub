@@ -25,6 +25,7 @@ export class JobsComponent implements OnChanges, OnDestroy, OnInit {
   loadingJobs: boolean = false;
   searchResponse: SearchResponse;
   jobs: Array<Job>;
+  jobsToDelete: any = [];
   runningFlows: Map<number, string> = new Map<number, string>();
   facetNames: Array<string> = ['entityName', 'status', 'flowName', 'flowType'];
 
@@ -178,6 +179,19 @@ export class JobsComponent implements OnChanges, OnDestroy, OnInit {
         jobId: jobId
       }
     });
+  }
+
+  toggleDeleteJob(jobId) {
+    let index = this.jobsToDelete.indexOf(jobId);
+    if (index > -1) {
+      this.jobsToDelete.splice(index, 1);
+    } else {
+      this.jobsToDelete.push(jobId);
+    }
+  }
+
+  deleteJobs() {
+    let jobs = this.jobsToDelete;
   }
 
   render(o) {
