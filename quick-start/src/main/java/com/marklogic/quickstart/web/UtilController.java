@@ -40,7 +40,8 @@ public class UtilController extends EnvironmentAware {
 	@ResponseBody
 	public Map<String, Object> searchPath(@RequestParam String path) {
 		logger.debug("Search Path:" + path);
-		List<SearchPathModel> paths = new ArrayList<>();
+		List<SearchPathModel> folders = new ArrayList<>();
+		List<SearchPathModel> files = new ArrayList<SearchPathModel>();
 		Path currentPath = Paths.get(".").toAbsolutePath().normalize();
 		Path relativePath;
 
@@ -55,16 +56,23 @@ public class UtilController extends EnvironmentAware {
         if (parent != null) {
             String relativePathStr = currentPath.relativize(parent).toString();
             String absolutePathStr = parent.toAbsolutePath().toString();
-            paths.add(new SearchPathModel("..", relativePathStr, absolutePathStr));
+            folders.add(new SearchPathModel("..", relativePathStr, absolutePathStr));
         }
 
-        List<String> folders = FileUtil.listDirectFolders(relativePath.toFile());
-        for (String folder : folders) {
+        for (String folder : FileUtil.listDirectFolders(relativePath)) {
             Path childPath = relativePath.resolve(folder);
             String relativePathStr = currentPath.relativize(childPath).toString();
             String absolutePathStr = childPath.toAbsolutePath().normalize().toString();
-            paths.add(new SearchPathModel(folder, relativePathStr, absolutePathStr));
+            folders.add(new SearchPathModel(folder, relativePathStr, absolutePathStr));
         }
+
+        for (String file : FileUtil.listDirectFiles(relativePath)) {
+            Path childPath = relativePath.resolve(file);
+            String relativePathStr = currentPath.relativize(childPath).toString();
+            String absolutePathStr = childPath.toAbsolutePath().normalize().toString();
+            files.add(new SearchPathModel(file, relativePathStr, absolutePathStr));
+        }
+
 
 		Map<String, Object> result = new HashMap<>();
         String relativePathStr = currentPath.relativize(relativePath).toString();
@@ -73,7 +81,8 @@ public class UtilController extends EnvironmentAware {
         }
 		result.put("currentPath", relativePathStr);
 		result.put("currentAbsolutePath", relativePath.toString());
-		result.put("folders", paths);
+		result.put("folders", folders);
+		result.put("files", files);
 		return result;
 	}
 

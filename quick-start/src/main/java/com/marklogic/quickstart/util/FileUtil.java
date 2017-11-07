@@ -18,6 +18,7 @@ package com.marklogic.quickstart.util;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.nio.file.Path;
 
 public class FileUtil {
 
@@ -33,10 +34,15 @@ public class FileUtil {
         }
         return folders;
     }
+    public static List<String> listDirectFolders(String rootDirectoryName) {
+        return listDirectFolders(new File(rootDirectoryName));
+    }
+    public static List<String> listDirectFolders(Path rootDirectoryPath) {
+        return listDirectFolders(rootDirectoryPath.toFile());
+    }
 
-    public static List<String> listDirectFiles(String path) {
+    public static List<String> listDirectFiles(File rootDirectory) {
         List<String> filenames = new ArrayList<>();
-        File rootDirectory = new File(path);
         if (rootDirectory.exists() && rootDirectory.isDirectory()) {
             File[] files = rootDirectory.listFiles();
             for (File file : files) {
@@ -47,4 +53,11 @@ public class FileUtil {
         }
         return filenames;
     }
+    public static List<String> listDirectFiles(String rootDirectoryName) {
+        return listDirectFiles(new File(rootDirectoryName));
+    }
+    public static List<String> listDirectFiles(Path rootDirectoryPath) {
+        return listDirectFiles(rootDirectoryPath.toFile());
+    }
+
 }

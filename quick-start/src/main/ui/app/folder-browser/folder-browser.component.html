@@ -13,6 +13,12 @@
           <p>{{folder.name}}</p>
         </div>
       </li>
+      <li *ngFor="let file of files">
+        <div class="entry" (click)="fileClicked(file)">
+          <i class="fa fa-file-o"></i>
+          <p>{{file.name}}</p>
+        </div>
+      </li>
     </ul>
   </div>
 </div>
