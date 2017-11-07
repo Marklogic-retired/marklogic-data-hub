@@ -191,7 +191,13 @@ export class JobsComponent implements OnChanges, OnDestroy, OnInit {
   }
 
   deleteJobs() {
-    this.jobService.deleteJobs(this.jobsToDelete);
+    this.jobService.deleteJobs(this.jobsToDelete)
+      .subscribe(response => {
+          this.getJobs();
+        },
+        () => {
+          this.dialogService.alert("Failed to delete jobs");
+        });
   }
 
   render(o) {
