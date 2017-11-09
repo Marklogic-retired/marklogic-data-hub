@@ -60,7 +60,7 @@ public class FlowManager extends ResourceManager {
         this.stagingClient = hubConfig.newStagingClient();
         this.finalClient = hubConfig.newFinalClient();
         this.jobClient = hubConfig.newJobDbClient();
-        this.jobManager = new JobManager(this.jobClient);
+        this.jobManager = new JobManager(this.jobClient, hubConfig.traceDbName);
         this.dataMovementManager = this.stagingClient.newDataMovementManager();
         this.stagingClient.init(NAME, this);
     }

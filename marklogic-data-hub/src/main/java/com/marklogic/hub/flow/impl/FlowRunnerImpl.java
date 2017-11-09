@@ -147,7 +147,7 @@ public class FlowRunnerImpl implements FlowRunner {
     @Override
     public JobTicket run() {
         String jobId = UUID.randomUUID().toString();
-        JobManager jobManager = new JobManager(hubConfig.newJobDbClient());
+        JobManager jobManager = new JobManager(hubConfig.newJobDbClient(), hubConfig.traceDbName);
 
         Job job = Job.withFlow(flow)
             .withJobId(jobId);
