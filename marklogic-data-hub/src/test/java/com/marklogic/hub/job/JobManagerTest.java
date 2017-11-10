@@ -148,4 +148,16 @@ public class JobManagerTest extends HubTestBase {
         assertEquals(4, actual.deletedTraces.size());
     }
 
+    @Test
+    public void deleteInvalidJob() {
+        JobManager manager = new JobManager(jobClient, getHubConfig().traceDbName);
+
+        JobDeleteResponse actual = manager.deleteJobs("InvalidId");
+
+        assertEquals(3, getJobDocCount());
+        assertEquals(6, getTracingDocCount());
+        assertEquals(0, actual.totalCount);
+        assertEquals(1, actual.errorCount);
+
+    }
 }
