@@ -19,16 +19,25 @@ module namespace service = "http://marklogic.com/rest-api/resource/delete-jobs";
 
 declare namespace rapi = "http://marklogic.com/rest-api";
 
+declare variable $SUCCESS-KEY := "success";
+declare variable $FAILED-KEY  := "failed";
+
 declare option xdmp:mapping "false";
 
-declare private function service:delete-jobs($job-ids as xs:string*) as xs:string*
+declare private function service:delete-jobs($job-ids as xs:string*) as map:map
 {
-  for $id in $job-ids
-  let $uri := cts:uris((), (), cts:json-property-value-query("jobId", $id))
-  return (
-    xdmp:document-delete($uri),
-    $id
-  )
+  let $results := map:map()
+  let $_ :=
+    for $id in $job-ids
+    let $uri := cts:uris((), (), cts:json-property-value-query("jobId", $id))
+    return
+      if (fn:doc-available($uri)) then (
+        xdmp:document-delete($uri),
+        map:put($results, $SUCCESS-KEY, (map:get($results, $SUCCESS-KEY), $id))
+      )
+      else
+        map:put($results, $FAILED-KEY, (map:get($results, $FAILED-KEY), $id))
+  return $results
 };
 
 (:
@@ -53,7 +62,7 @@ declare %rapi:transaction-mode("update") function service:post(
 {
   xdmp:log("delete-jobs: " || xdmp:quote($params)),
   let $job-ids := fn:tokenize(map:get($params, "jobIds"), ",")
-  let $deleted-jobs := service:delete-jobs($job-ids)
+  let $job-results := service:delete-jobs($job-ids)
   let $deleted-traces :=
     xdmp:invoke-function(
       function() {
@@ -66,9 +75,9 @@ declare %rapi:transaction-mode("update") function service:post(
   return
     document {
       object-node {
-        "totalCount": fn:count($job-ids),
-        "errorCount": 0,
-        "deletedJobs": json:to-array($deleted-jobs),
+        "totalCount": fn:count(map:get($job-results, $SUCCESS-KEY)),
+        "errorCount": fn:count(map:get($job-results, $FAILED-KEY)),
+        "deletedJobs": json:to-array(map:get($job-results, $SUCCESS-KEY)),
         "deletedTraces": json:to-array($deleted-traces),
         "failedJobs": json:array(),
         "failedTraces": json:array(),
