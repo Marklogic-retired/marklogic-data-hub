@@ -15,7 +15,9 @@
  */
 package com.marklogic.quickstart.web;
 
+import com.marklogic.hub.job.JobDeleteResponse;
 import com.marklogic.quickstart.EnvironmentAware;
+import com.marklogic.quickstart.model.EnvironmentConfig;
 import com.marklogic.quickstart.model.JobQuery;
 import com.marklogic.quickstart.service.JobService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +41,8 @@ public class JobsController extends EnvironmentAware {
     @Bean
     @Scope(proxyMode= ScopedProxyMode.TARGET_CLASS, value="session")
     JobService jobManager() {
-        return new JobService(envConfig().getJobClient());
+        EnvironmentConfig config = envConfig();
+        return new JobService(config.getJobClient(), config.getMlSettings().traceDbName);
     }
 
     @RequestMapping(method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_VALUE})
@@ -47,4 +50,11 @@ public class JobsController extends EnvironmentAware {
     public String getJobInstances(@RequestBody JobQuery jobQuery) {
         return jobService.getJobs(jobQuery).get();
     }
+
+    @RequestMapping(value = "/delete", method = RequestMethod.POST)
+    @ResponseBody
+    public JobDeleteResponse deleteJobs(@RequestBody String jobIds) {
+        return jobService.deleteJobs(jobIds);
+    }
+
 }

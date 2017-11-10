@@ -19,6 +19,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.FlowType;
 import com.marklogic.quickstart.EnvironmentAware;
+import com.marklogic.quickstart.model.EnvironmentConfig;
 import com.marklogic.quickstart.model.FlowModel;
 import com.marklogic.quickstart.model.JobStatusMessage;
 import com.marklogic.quickstart.model.PluginModel;
@@ -224,7 +225,8 @@ class EntitiesController extends EnvironmentAware {
             @PathVariable String entityName,
             @PathVariable String flowName,
             @PathVariable String jobId) throws IOException {
-        JobService jm = new JobService(envConfig().getJobClient());
+        EnvironmentConfig config = envConfig();
+        JobService jm = new JobService(config.getJobClient(), config.getMlSettings().traceDbName);
         jm.cancelJob(Long.parseLong(jobId));
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

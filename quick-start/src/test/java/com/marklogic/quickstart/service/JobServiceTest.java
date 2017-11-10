@@ -2,6 +2,7 @@ package com.marklogic.quickstart.service;
 
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
+import com.marklogic.client.io.StringHandle;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
 import com.marklogic.quickstart.model.JobQuery;
@@ -20,7 +21,7 @@ public class JobServiceTest extends HubTestBase {
     @Test
     public void getJobs() {
         DatabaseClient traceClient = DatabaseClientFactory.newClient("localhost", HubConfig.DEFAULT_JOB_PORT, "admin", "admin", DatabaseClientFactory.Authentication.DIGEST);
-        JobService jobService = new JobService(traceClient);
+        JobService jobService = new JobService(traceClient, HubConfig.DEFAULT_TRACE_NAME );
         JobQuery jobQuery = new JobQuery();
         jobQuery.start = new Long(1);
         jobQuery.count = new Long(10);
