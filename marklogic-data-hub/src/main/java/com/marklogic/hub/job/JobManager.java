@@ -35,7 +35,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.TimeZone;
 
-public class JobManager extends ResourceManager {
+public class JobManager {
 
     private JSONDocumentManager docMgr;
     private JobDeleteResource jobDeleteRunner = null;
@@ -62,9 +62,9 @@ public class JobManager extends ResourceManager {
         .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
         .setDateFormat(simpleDateFormat8601);
 
-    public JobManager(DatabaseClient jobClient, String tracingDBName) {
+    public JobManager(DatabaseClient jobClient) {
         this.docMgr = jobClient.newJSONDocumentManager();
-        this.jobDeleteRunner = new JobDeleteResource(jobClient, tracingDBName);
+        this.jobDeleteRunner = new JobDeleteResource(jobClient);
     }
 
     public void saveJob(Job job) {
@@ -89,13 +89,11 @@ public class JobManager extends ResourceManager {
         private static final String DELETE_SERVICE = "delete-jobs";
 
         private DatabaseClient srcClient;
-        private String tracingDBName;
 
-        public JobDeleteResource(DatabaseClient srcClient, String tracingDBName) {
+        public JobDeleteResource(DatabaseClient srcClient) {
             super();
             this.srcClient = srcClient;
             this.srcClient.init(DELETE_SERVICE, this);
-            this.tracingDBName = tracingDBName;
         }
 
         /**
@@ -108,7 +106,6 @@ public class JobManager extends ResourceManager {
             try {
                 RequestParameters params = new RequestParameters();
                 params.add("jobIds", jobIds);
-                params.add("tracingDB", this.tracingDBName);
 
                 ResourceServices services = this.getServices();
                 ResourceServices.ServiceResultIterator resultItr =

@@ -29,10 +29,7 @@ public class JobManagerTest extends HubTestBase {
     @BeforeClass
     public static void setupSuite() throws IOException {
         XMLUnit.setIgnoreWhitespace(true);
-        File projectDirFile = projectDir.toFile();
-        if (projectDirFile.isDirectory() && projectDirFile.exists()) {
-            FileUtils.deleteDirectory(projectDirFile);
-        }
+        deleteProjectDir();
 
         installHub();
         enableDebugging();
@@ -43,12 +40,15 @@ public class JobManagerTest extends HubTestBase {
         scaffolding.createFlow(ENTITY, "testharmonize", FlowType.HARMONIZE,
             CodeFormat.XQUERY, DataFormat.XML);
 
-        DataHub dh = new DataHub(getHubConfig());
+        DataHub dh = getDataHub();
         dh.clearUserModules();
         dh.installUserModules();
 
         installModule("/entities/" + ENTITY + "/harmonize/testharmonize/collector.xqy", "flow-runner-test/collector.xqy");
         installModule("/entities/" + ENTITY + "/harmonize/testharmonize/content.xqy", "flow-runner-test/content-for-options.xqy");
+
+        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME,
+            HubConfig.DEFAULT_TRACE_NAME);
 
     }
 
@@ -56,11 +56,7 @@ public class JobManagerTest extends HubTestBase {
     public static void teardownSuite() throws IOException {
         uninstallHub();
 
-        File projectDirFile = projectDir.toFile();
-        if (projectDirFile.isDirectory() && projectDirFile.exists()) {
-            FileUtils.deleteDirectory(projectDirFile);
-        }
-
+        deleteProjectDir();
     }
 
     @Before
@@ -106,7 +102,7 @@ public class JobManagerTest extends HubTestBase {
     public void deleteOneJob() {
         assertEquals(3, getJobDocCount());
         assertEquals(6, getTracingDocCount());
-        JobManager manager = new JobManager(jobClient, getHubConfig().traceDbName);
+        JobManager manager = new JobManager(jobClient);
         String jobs = jobIds.get(1);
 
         JobDeleteResponse actual = manager.deleteJobs(jobs);
@@ -130,7 +126,7 @@ public class JobManagerTest extends HubTestBase {
         assertEquals(3, getJobDocCount());
         assertEquals(6, getTracingDocCount());
         String jobs = jobIds.get(0) + "," + jobIds.get(2);
-        JobManager manager = new JobManager(jobClient, getHubConfig().traceDbName);
+        JobManager manager = new JobManager(jobClient);
 
         JobDeleteResponse actual = manager.deleteJobs(jobs);
 
@@ -150,7 +146,7 @@ public class JobManagerTest extends HubTestBase {
 
     @Test
     public void deleteInvalidJob() {
-        JobManager manager = new JobManager(jobClient, getHubConfig().traceDbName);
+        JobManager manager = new JobManager(jobClient);
 
         JobDeleteResponse actual = manager.deleteJobs("InvalidId");
 

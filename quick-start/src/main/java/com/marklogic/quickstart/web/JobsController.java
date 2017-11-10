@@ -41,8 +41,7 @@ public class JobsController extends EnvironmentAware {
     @Bean
     @Scope(proxyMode= ScopedProxyMode.TARGET_CLASS, value="session")
     JobService jobManager() {
-        EnvironmentConfig config = envConfig();
-        return new JobService(config.getJobClient(), config.getMlSettings().traceDbName);
+        return new JobService(envConfig().getJobClient());
     }
 
     @RequestMapping(method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_VALUE})
