@@ -1,6 +1,6 @@
 <div class="content">
   <div *ngIf="flow">
-    <h3>Run Input Flow - {{flow.entityName}} : {{flow.flowName}}</h3>
+    <h3 class="mlcp-flow-name">Run Input Flow - {{flow.entityName}} : {{flow.flowName}}</h3>
     <div>
       <div class="group-container" flex layout="column">
         <h3 (click)="toggleSection('inputFiles')"><i class="fa fa-caret-right" [ngClass]="getSectionClass('inputFiles')"></i> Input Files</h3>
@@ -8,7 +8,8 @@
           <app-folder-browser
             [startPath]="startPath"
             (folderChosen)="folderClicked($event)"
-            (fileChosen)="fileClicked($event)">
+            (fileChosen)="fileClicked($event)"
+            showFiles="true">
           </app-folder-browser>
         </div>
       </div>
@@ -19,6 +20,7 @@
           <p class="hint"><strong>Hint:</strong> Hover over the labels to view the description</p>
           <div class="setting" *ngFor="let setting of group.settings">
             <mdl-switch
+              [attr.id]="setting.field"
               class="primary-color"
               [tooltip]="setting.description"
               tooltipPlacement="right"
@@ -36,7 +38,7 @@
               (input)="updateSetting(setting, $event.target.value)"
               [disabled]="setting.readOnly"></mdl-textfield>
             <app-custom-select
-              [id]="setting.field"
+              [attr.id]="setting.field"
               [labelText]="setting.label"
               [items]="setting.options"
               [initialSelectedItem]="setting.value"

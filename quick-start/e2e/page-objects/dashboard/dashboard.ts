@@ -9,13 +9,16 @@ export class DashboardPage extends AppPage {
     return by.css('.dashboard');
   }
 
-  get menuButton() {
-    return element(by.css('#header-menu'));
+  get clearDatabases() {
+    return element(by.css('#clear-all-databases'));
   }
 
-  logout() {
-    this.menuButton.click();
-    element(by.css('#login-button')).click();
+  get zeroCounts() {
+    return element.all(by.cssContainingText('.column-body', '0'));
+  }
+
+  get clearButton() {
+    return element(by.buttonText('Clear!'));
   }
 }
 

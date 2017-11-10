@@ -13,6 +13,7 @@ export class FolderBrowserComponent implements OnInit, OnChanges {
   @Output() folderChosen = new EventEmitter();
   @Output() fileChosen = new EventEmitter();
   @Input() absoluteOnly: boolean = false;
+  @Input() showFiles: boolean = false;
 
   @ViewChild(MdlTextFieldComponent) inputPath: MdlTextFieldComponent;
 

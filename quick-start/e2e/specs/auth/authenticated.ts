@@ -3,9 +3,7 @@ import { pages } from '../../page-objects/page';
 import loginPage from '../../page-objects/auth/login';
 import dashboardPage from '../../page-objects/dashboard/dashboard';
 
-import path = require('path');
-
-export default function() {
+export default function(tmpDir) {
   describe('login', () => {
     beforeAll(() => {
       loginPage.isLoaded();
@@ -32,11 +30,13 @@ export default function() {
     });
 
     it ('Has the correct current folder', function() {
-      expect(loginPage.currentFolder).toEqual(process.cwd());
+      expect(loginPage.currentFolderValue).toEqual(process.cwd());
     });
 
-    it ('Should open the examples folder', function() {
-      loginPage.selectOnlineStore();
+    it ('Should select the temp folder', function() {
+      loginPage.setCurrentFolder(tmpDir);
+      // loginPage.selectOnlineStore();
+      console.log('clicking next!');
       loginPage.clickNext('ProjectDirTab');
       browser.wait(EC.elementToBeClickable(loginPage.initIfNeededTab));
     });

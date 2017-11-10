@@ -262,6 +262,19 @@ Make sure the JUnit tests pass.
 $ ./gradlew test
 ```
 
+If you want to run a single test:
+
+```sh
+$ ./gradlew -Dtest.single=TestName test
+```
+
+for best results don't include the final word Test. Example:
+Say you want to run FlowRunnerTest.
+
+```sh
+$ ./gradlew -Dtest.single=FlowRunner test
+```
+
 Make sure that all tests pass. Please, do not submit patches that fail.
 
 #### Push your changes

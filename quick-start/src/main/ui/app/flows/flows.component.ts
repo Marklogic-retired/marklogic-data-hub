@@ -127,6 +127,10 @@ export class FlowsComponent implements OnInit, OnDestroy {
     setTimeout(() => {
       this.snackbar.showSnackbar({
         message: `Job ${jobId} Finished.`,
+        action:{
+          handler: () => {},
+          text: 'OK'
+        }
       });
     }, 0);
   };
@@ -347,6 +351,7 @@ export class FlowsComponent implements OnInit, OnDestroy {
     this.entitiesService.runInputFlow(flow, options);
     this.snackbar.showSnackbar({
       message: flow.entityName + ': ' + flow.flowName + ' starting...',
+      timeout: 10000
     });
   }
 

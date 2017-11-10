@@ -1,7 +1,7 @@
 import runAuthenticated from './authenticated'
 
-export default function () {
+export default function (tmpDir) {
   describe('auth', function () {
-    runAuthenticated()
+    runAuthenticated(tmpDir)
   })
 }

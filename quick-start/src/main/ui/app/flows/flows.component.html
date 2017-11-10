@@ -1,5 +1,5 @@
 <div gm-grid>
-  <div gm-row class="flex-100">
+  <div gm-row class="flex-100 flows-page">
     <div gm-col class="flex-0 entities-bar">
       <span class="mdl-layout-title">
         <i class="fa fa-bug" *ngIf="hasErrors()"></i>
@@ -17,7 +17,7 @@
           class="entity mdl-list__item"
           [ngClass]="{ 'active' : isActiveEntity(entity) }"
           *ngFor="let entity of entities">
-          <div class="mdl-list__item-primary-content"
+          <div [attr.data-entity]="entity.name" class="mdl-list__item-primary-content"
             [ngClass]="{ 'active' : !isCollapsed(entity) }"
             (click)="toggleEntity(entity)">
             <i class="fa fa-bug" *ngIf="entityHasError(entity.name)"></i>
@@ -25,22 +25,23 @@
             <div class="mdl-layout-spacer"></div>
             <i class="fa fa-caret-left" [ngClass]="{ 'collapsed' : isCollapsed(entity) }"></i>
           </div>
-          <div class="flow-container" [ngClass]="{ 'collapsed' : isCollapsed(entity) }">
+          <div [attr.data-for-entity]="entity.name" class="flow-container" [ngClass]="{ 'collapsed' : isCollapsed(entity) }">
             <div class="padder">
               <ng-template ngFor let-type [ngForOf]="flowTypes">
                 <div class="flow-subheader">
                   {{type}} Flows
                   <div class="mdl-layout-spacer"></div>
-                  <mdl-button mdl-button-type="icon" id="new-flow" (click)="showNewFlow(entity, type.toUpperCase())">
+                  <mdl-button [attr.data-new-flow-button]="type.toUpperCase()" mdl-button-type="icon" id="new-flow" (click)="showNewFlow(entity, type.toUpperCase())">
                     <i class="fa fa-plus"></i>
                   </mdl-button>
                 </div>
                 <ul class="flows mdl-list">
                   <li
                     class="flow mdl-list__item"
+                    [attr.data-flow-list]="type.toUpperCase()"
                     [ngClass]="{'active': isActiveFlow(flow)}"
                     *ngFor="let flow of getFlows(entity, type)">
-                    <div (click)="setFlow(flow, type.toUpperCase())">
+                    <div (click)="setFlow(flow, type.toUpperCase())" [attr.data-flow-name]="flow.flowName">
                       <span class="mdl-list__item-primary-content">
                         <i class="mdi" [ngClass]="{'mdi-import': type === 'Input', 'mdi-looks' : type === 'Harmonize'}"></i>
                         {{ flow.flowName }}
@@ -57,8 +58,9 @@
         </li>
       </ul>
       <div class="footer" layout="column" layout-align="center center">
-        <p>Last Deployed: {{getLastDeployed()}}</p>
+        <p id="last-deployed-time">Last Deployed: {{getLastDeployed()}}</p>
         <mdl-button
+          id="redeploy-button"
           mdl-button-type="raised" mdl-colored="primary" mdl-ripple
           (click)="redeployModules()"
           tooltip="This will clear our your modules database and reload the modules located in the plugins directory. You shouldn't need to do this since modules are automatically deployed."

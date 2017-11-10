@@ -21,10 +21,10 @@
     </div>
     <h4>Properties</h4>
     <div class="toolbar">
-      <button mdl-button mdl-button-type="mini-fab" mdl-colored="primary" (click)="addProperty()">
+      <button id="add-property" mdl-button mdl-button-type="mini-fab" mdl-colored="primary" (click)="addProperty()">
         <mdl-icon>add</mdl-icon>
       </button>
-      <button [disabled]="selectedCount() === 0" mdl-button mdl-button-type="mini-fab" (click)="deleteSelectedProperties()">
+      <button id="delete-property" [disabled]="selectedCount() === 0" mdl-button mdl-button-type="mini-fab" (click)="deleteSelectedProperties()">
         <mdl-icon>delete</mdl-icon>
       </button>
     </div>

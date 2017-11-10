@@ -2,7 +2,6 @@ import { protractor , browser, element, by, By, $, $$, ExpectedConditions as EC}
 import { pages } from './page';
 import { Page } from './page';
 var request = require('request').defaults({ strictSSL: false });
-// var jp = require('jsonpath')
 
 export class AppPage extends Page {
 
@@ -20,6 +19,27 @@ export class AppPage extends Page {
     }, (err) => null)
   }
 
+  get entitiesTab() {
+    return element(by.css('#entities-tab'));
+  }
+
+  get jobsTab() {
+    return element(by.css('#jobs-tab'));
+  }
+
+  get flowsTab() {
+    return element(by.css('#flows-tab'));
+  }
+
+  get menuButton() {
+    return element(by.css('#header-menu'));
+  }
+
+  logout() {
+    this.menuButton.click();
+    element(by.css('#login-button')).click();
+  }
+
   //click on user link to get the logout button
   initiateLogout() {
     element(this.locator()).click()
@@ -28,45 +48,6 @@ export class AppPage extends Page {
   isMenuOptionDisplayed(link :string) {
     return element(by.css(`a.link-${link}`)).isDisplayed()
   }
-
-  // gotoMonitorPage() {
-  //   element(by.css('a.link-monitor')).click()
-  //   browser.wait(EC.visibilityOf(element(by.css('.view-system-alerts'))),10000)
-  // }
-
-  // gotoSupportEventLogsPage() {
-  //   browser.wait(EC.elementToBeClickable(element(by.css('a.link-support'))),10000)
-  //   element(by.css('a.link-support')).click()
-  //   browser.wait(EC.elementToBeClickable(element(by.xpath("//a[text()='Event Logs']"))),10000)
-  //   element(by.xpath("//a[text()='Event Logs']")).click()
-  // }
-
-  // gotoSupportSystemAlertsPage() {
-  //   browser.wait(EC.elementToBeClickable(element(by.css('a.link-support'))),10000)
-  //   element(by.css('a.link-support')).click()
-  //   browser.wait(EC.elementToBeClickable(element(by.xpath("//a[text()='System Alerts']"))),10000)
-  //   element(by.xpath("//a[text()='System Alerts']")).click()
-  // }
-
-  // gotoSupportTaskConsolePage() {
-  //   browser.wait(EC.elementToBeClickable(element(by.css('a.link-support'))),10000)
-  //   element(by.css('a.link-support')).click()
-  //   browser.wait(EC.elementToBeClickable(element(by.xpath("//a[text()='Task Console']"))),10000)
-  //   element(by.xpath("//a[text()='Task Console']")).click()
-  // }
-
-  // gotoManagePage() {
-  //   element(by.css('a.link-manage')).click()
-  // }
-
-  // gotoAnalyzePage() {
-  //   element(by.css('a.link-analyze')).click();
-  // }
-
-  // gotoConsoleSettingPage() {
-  //   browser.wait(EC.elementToBeClickable(element(by.css('a.link-console'))),10000)
-  //   element(by.css('a.link-console')).click()
-  // }
 
   async createUser(nodeName, username, password, description, role, done) {
     await this.userCreate(nodeName, username, password, description, role, done);

@@ -21,7 +21,17 @@ export class LoginPage extends AppPage {
   }
 
   get currentFolder() {
+    return element(by.css('.current-folder input'));
+  }
+
+  get currentFolderValue() {
     return element(by.css('.current-folder input')).getAttribute('value');
+  }
+
+  setCurrentFolder(path) {
+    this.currentFolder.clear();
+    this.currentFolder.sendKeys(path);
+    this.currentFolder.sendKeys(protractor.Key.ENTER);
   }
 
   get projectDirTab() {

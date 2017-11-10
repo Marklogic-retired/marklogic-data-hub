@@ -40,7 +40,7 @@
             </div>
 
             <app-folder-browser
-              [ngClass]="{'collapsed': !showFolderBrowser}"
+              *ngIf="showFolderBrowser"
               class="shrink-me shrinky"
               start-path='.'
               absoluteOnly="true"
