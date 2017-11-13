@@ -188,7 +188,7 @@ public class LoadUserModulesCommand extends AbstractCommand {
                                     InputStream inputStream = r.getInputStream();
                                     StringHandle handle = new StringHandle(IOUtils.toString(inputStream));
                                     inputStream.close();
-                                    entityDocMgr.write(URLEncoder.encode("/entities/" + r.getFilename(), "UTF-8"), meta, handle);
+                                    entityDocMgr.write("/entities/" + r.getFilename(), meta, handle);
                                     modulesManager.saveLastLoadedTimestamp(r.getFile(), new Date());
                                 }
                             }
