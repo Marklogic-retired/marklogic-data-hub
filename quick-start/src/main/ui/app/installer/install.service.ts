@@ -40,11 +40,15 @@ export class InstallService {
     this.stomp.subscribe('/topic/uninstall-status').then((msgId: string) => {
       unsubscribeId = msgId;
     });
-    let resp = this.http.delete(`/api/current-project/uninstall`).share();
-    resp.subscribe(() => {
-      this.stomp.unsubscribe(unsubscribeId);
+    return this.ngZone.runOutsideAngular(() => {
+      let resp = this.http.delete(`/api/current-project/uninstall`).share();
+      resp.subscribe(() => {
+        this.ngZone.run(() => {
+          this.stomp.unsubscribe(unsubscribeId);
+        });
+      });
+      return resp.map(this.extractData);
     });
-    return resp.map(this.extractData);
   }
 
   private extractData(res: Response) {

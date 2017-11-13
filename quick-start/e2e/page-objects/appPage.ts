@@ -31,6 +31,10 @@ export class AppPage extends Page {
     return element(by.css('#flows-tab'));
   }
 
+  get settingsTab() {
+    return element(by.css('#settings-tab'));
+  }
+
   get menuButton() {
     return element(by.css('#header-menu'));
   }

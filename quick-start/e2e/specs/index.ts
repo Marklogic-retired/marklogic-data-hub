@@ -3,6 +3,8 @@ import {pages} from '../page-objects/page';
 import auth from './auth'
 import create from './create';
 import runFlows from './run';
+import uninstall from './uninstall';
+
 import CUSTOM_MATCHERS from '../matchers'
 import loginPage from '../page-objects/auth/login';
 const request = require('request').defaults({ strictSSL: false })
@@ -54,4 +56,5 @@ describe('QuickStart', function () {
   auth(tmpobj.name);
   create();
   runFlows();
+  uninstall();
 });

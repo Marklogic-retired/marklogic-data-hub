@@ -12,7 +12,10 @@ exports.config = {
     auth: './e2e/specs/auth/auth.ts'
   },
   capabilities: {
-    'browserName': 'chrome'
+    'browserName': 'chrome',
+    chromeOptions: {
+      args: [ "--headless", "--disable-gpu", "--window-size=1280,900" ]
+    }
   },
   directConnect: true,
   baseUrl: 'http://localhost:4200/',

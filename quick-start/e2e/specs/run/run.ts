@@ -13,10 +13,12 @@ export default function() {
 
     it ('should redeploy modules', function() {
       flowPage.redeployButton.click();
-      // let message = 'Redeploying Modules...';
-      // browser.wait(EC.visibilityOf(flowPage.toast));
-      // expect(flowPage.toast.isDisplayed()).toBe(true);
-      browser.wait(EC.visibilityOf(element(by.cssContainingText('#last-deployed-time', 'Last Deployed: less than a minute ago'))));
+      browser.wait(element(by.css('#last-deployed-time')).getText().then((txt) => {
+        return (
+          txt === 'Last Deployed: less than a minute ago' ||
+          txt === 'Last Deployed: 1 minute ago'
+        );
+      }));
     });
 
     let flowCount = 1;
