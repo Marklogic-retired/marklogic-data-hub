@@ -90,7 +90,9 @@ input[type="search"] {
       }
       td.job-delete-checkbox {
         text-align: center;
-        vertical-align: middle;
+        .mdl-checkbox {
+          width: 24px;
+        }
       }
     }
   }

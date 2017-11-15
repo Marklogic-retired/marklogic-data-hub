@@ -66,8 +66,9 @@
                 </mdl-button>
               </td>
               <td class="job-delete-checkbox">
-                <input type="checkbox" id="list-checkbox-{{job.jobId}}" class="mdl-checkbox__input"
-                       ng-checked="jobsToDelete.indexOf(job.jobId) != -1" (click)="toggleDeleteJob(job.jobId)"/>
+                <mdl-checkbox
+                  ng-checked="jobsToDelete.indexOf(job.jobId) != -1"
+                  (click)="toggleDeleteJob(job.jobId)"></mdl-checkbox>
               </td>
             </tr>
           </tbody>
