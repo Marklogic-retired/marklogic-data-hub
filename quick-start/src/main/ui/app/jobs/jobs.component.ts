@@ -120,6 +120,7 @@ export class JobsComponent implements OnChanges, OnDestroy, OnInit {
       this.currentPage,
       this.pageLength
     ).subscribe(response => {
+      this.jobsToDelete.length = 0;
       this.searchResponse = response;
       this.jobs = _.map(response.results, (result: any) => {
         return result.content;
@@ -192,13 +193,17 @@ export class JobsComponent implements OnChanges, OnDestroy, OnInit {
 
   deleteJobs() {
     if (this.jobsToDelete.length > 0) {
-      this.jobService.deleteJobs(this.jobsToDelete)
-        .subscribe(response => {
-            this.getJobs();
-          },
-          () => {
-            this.dialogService.alert("Failed to delete jobs");
-          });
+      const message = 'Delete ' + this.jobsToDelete.length + ' jobs and their traces?';
+      this.dialogService.confirm(message, 'Cancel', 'Delete').subscribe(() => {
+        this.jobService.deleteJobs(this.jobsToDelete)
+          .subscribe(response => {
+              this.getJobs();
+            },
+            () => {
+              this.dialogService.alert("Failed to delete jobs");
+            });
+      },
+      () => {});
     }
   }
 
