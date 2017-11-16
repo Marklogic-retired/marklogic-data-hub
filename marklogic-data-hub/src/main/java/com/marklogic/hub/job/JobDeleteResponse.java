@@ -12,4 +12,16 @@ public class JobDeleteResponse {
     public List<String> failedJobs;
     public List<String> failedTraces;
     public List<JsonNode> errors;
+
+    public String toString()
+    {
+        return
+            "JobDeleteResponse:" +
+                "\n\ttotal jobs deleted: " + totalCount +
+                "\n\ttotal errors: " + errorCount +
+                "\n\tjobs deleted: " + deletedJobs +
+                "\n\ttotal traces deleted: " + deletedTraces.size() +
+                "\n\terrors: " + errors;
+    }
+
 }
