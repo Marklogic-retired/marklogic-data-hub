@@ -35,12 +35,12 @@ Or watch the [MarkLogic University - Data Hub Framework On Demand Video Courses]
 
 ### The Easiest Way
 
-To use the Data Hub Framework you should download the latest [quickstart.war](https://github.com/marklogic-community/marklogic-data-hub/releases/download/v2.0.0/quick-start-2.0.0.war).
+To use the Data Hub Framework you should download the latest [quickstart.war](https://github.com/marklogic-community/marklogic-data-hub/releases/download/v2.0.1/quick-start-2.0.1.war).
 
 Then Run the war like so:
 
 ```bash
-java -jar quick-start-2.0.0.war
+java -jar quick-start-2.0.1.war
 ```
 
 ### Using the Hub in your existing Java project
@@ -50,7 +50,7 @@ Alternatively you can include the jar file as a build dependency in your Java pr
 **Gradle**
 
 ```groovy
-compile('com.marklogic:marklogic-data-hub:2.0.0')
+compile('com.marklogic:marklogic-data-hub:2.0.1')
 ```
 
 **Maven**
@@ -59,7 +59,7 @@ compile('com.marklogic:marklogic-data-hub:2.0.0')
 <dependency>
   <groupId>com.marklogic</groupId>
   <artifactId>marklogic-data-hub</artifactId>
-  <version>2.0.0</version>
+  <version>2.0.1</version>
   <type>pom</type>
 </dependency>
 ```
@@ -67,7 +67,7 @@ compile('com.marklogic:marklogic-data-hub:2.0.0')
 **Ivy**
 
 ```xml
-<dependency org='com.marklogic' name='marklogic-data-hub' rev='2.0.0'>
+<dependency org='com.marklogic' name='marklogic-data-hub' rev='2.0.1'>
   <artifact name='$AID' ext='pom'></artifact>
 </dependency>
 ```
@@ -78,7 +78,7 @@ If you prefer to use gradle for all of your hub interactions then you can includ
 
 ```groovy
 plugins {
-    id 'com.marklogic.ml-data-hub' version '2.0.0'
+    id 'com.marklogic.ml-data-hub' version '2.0.1'
 }
 ```
 

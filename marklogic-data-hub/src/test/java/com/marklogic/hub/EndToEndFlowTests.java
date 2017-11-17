@@ -148,7 +148,7 @@ public class EndToEndFlowTests extends HubTestBase {
         flowManager = new FlowManager(getHubConfig());
         List<String> legacyFlows = flowManager.getLegacyFlows();
         assertEquals(8, legacyFlows.size(), String.join("\n", legacyFlows));
-        assertEquals(8, flowManager.updateLegacyFlows("2.0.0").size());
+        assertEquals(8, flowManager.updateLegacyFlows("2.0.1").size());
         assertEquals(0, flowManager.getLegacyFlows().size());
 
         allCombos((codeFormat, dataFormat, flowType) -> {

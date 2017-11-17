@@ -1,8 +1,37 @@
 # Change Log
 
-## [Unreleased](https://github.com/marklogic-community/marklogic-data-hub/tree/HEAD)
+## [v2.0.1](https://github.com/marklogic-community/marklogic-data-hub/tree/v2.0.1) (2017-11-17)
+[Full Changelog](https://github.com/marklogic-community/marklogic-data-hub/compare/v2.0.0...v2.0.1)
 
-[Full Changelog](https://github.com/marklogic-community/marklogic-data-hub/compare/v2.0.0-rc.2...HEAD)
+**Implemented enhancements:**
+
+- Update 2.x version checker to omit pre-release version [\#485](https://github.com/marklogic-community/marklogic-data-hub/issues/485)
+
+**Fixed bugs:**
+
+- Error running sample product-catalog example [\#560](https://github.com/marklogic-community/marklogic-data-hub/issues/560)
+- Entity definition partially written, everything hosed [\#435](https://github.com/marklogic-community/marklogic-data-hub/issues/435)
+
+**Closed issues:**
+
+- Getting MISSING\_FLOW error when invoking from DMSDK [\#552](https://github.com/marklogic-community/marklogic-data-hub/issues/552)
+- Add support for mlcp -input\_file\_pattern [\#550](https://github.com/marklogic-community/marklogic-data-hub/issues/550)
+- Browse Data: not obvious that I needed to click Search [\#530](https://github.com/marklogic-community/marklogic-data-hub/issues/530)
+- Add detailed documentation on traces [\#527](https://github.com/marklogic-community/marklogic-data-hub/issues/527)
+- incorrect scaffolding [\#525](https://github.com/marklogic-community/marklogic-data-hub/issues/525)
+- Issue upgrade from rc1 to rc2 [\#511](https://github.com/marklogic-community/marklogic-data-hub/issues/511)
+- Create Performance Sample [\#492](https://github.com/marklogic-community/marklogic-data-hub/issues/492)
+- MLCP fails if no "jobId" parameter specified even with trace off [\#426](https://github.com/marklogic-community/marklogic-data-hub/issues/426)
+- Test deploy against ssl enabled server [\#417](https://github.com/marklogic-community/marklogic-data-hub/issues/417)
+- Epic - error handling [\#289](https://github.com/marklogic-community/marklogic-data-hub/issues/289)
+
+**Merged pull requests:**
+
+- Issue413 [\#559](https://github.com/marklogic-community/marklogic-data-hub/pull/559) ([tcfenstermaker](https://github.com/tcfenstermaker))
+- adds performance sample [\#556](https://github.com/marklogic-community/marklogic-data-hub/pull/556) ([joemfb](https://github.com/joemfb))
+
+## [v2.0.0](https://github.com/marklogic-community/marklogic-data-hub/tree/v2.0.0) (2017-10-02)
+[Full Changelog](https://github.com/marklogic-community/marklogic-data-hub/compare/v2.0.0-rc.2...v2.0.0)
 
 **Fixed bugs:**
 
@@ -23,6 +52,7 @@
 - Links need updating [\#508](https://github.com/marklogic-community/marklogic-data-hub/issues/508)
 - Update to latest ml-gradle [\#505](https://github.com/marklogic-community/marklogic-data-hub/issues/505)
 - Input flow \(mlcp\) options aren't saved [\#481](https://github.com/marklogic-community/marklogic-data-hub/issues/481)
+- Prevent install if ports are in use [\#477](https://github.com/marklogic-community/marklogic-data-hub/issues/477)
 
 ## [v2.0.0-rc.2](https://github.com/marklogic-community/marklogic-data-hub/tree/v2.0.0-rc.2) (2017-09-12)
 [Full Changelog](https://github.com/marklogic-community/marklogic-data-hub/compare/v1.1.5...v2.0.0-rc.2)
@@ -617,7 +647,6 @@
 - 101 - Handle detection of REST directory [\#147](https://github.com/marklogic-community/marklogic-data-hub/pull/147) ([maeisabelle](https://github.com/maeisabelle))
 - \#104 make ui code more angular [\#144](https://github.com/marklogic-community/marklogic-data-hub/pull/144) ([divino](https://github.com/divino))
 - fixed \#140 - vet plugins not working correctly [\#141](https://github.com/marklogic-community/marklogic-data-hub/pull/141) ([paxtonhare](https://github.com/paxtonhare))
-- fixed \#137 - renamed patientrecords to Patients [\#139](https://github.com/marklogic-community/marklogic-data-hub/pull/139) ([paxtonhare](https://github.com/paxtonhare))
 - fixed \#135 - create conformance flow not working [\#136](https://github.com/marklogic-community/marklogic-data-hub/pull/136) ([paxtonhare](https://github.com/paxtonhare))
 - 102 - Scaffolding for Rest [\#134](https://github.com/marklogic-community/marklogic-data-hub/pull/134) ([maeisabelle](https://github.com/maeisabelle))
 - fixed \#91 - check plugins during install for errors [\#132](https://github.com/marklogic-community/marklogic-data-hub/pull/132) ([paxtonhare](https://github.com/paxtonhare))
@@ -640,6 +669,7 @@
 
 **Merged pull requests:**
 
+- fixed \#137 - renamed patientrecords to Patients [\#139](https://github.com/marklogic-community/marklogic-data-hub/pull/139) ([paxtonhare](https://github.com/paxtonhare))
 - prepping for alpha.3 release [\#125](https://github.com/marklogic-community/marklogic-data-hub/pull/125) ([paxtonhare](https://github.com/paxtonhare))
 - fixing namespace issues. opts. [\#124](https://github.com/marklogic-community/marklogic-data-hub/pull/124) ([paxtonhare](https://github.com/paxtonhare))
 - adding the hl7 healthcare example [\#123](https://github.com/marklogic-community/marklogic-data-hub/pull/123) ([paxtonhare](https://github.com/paxtonhare))
