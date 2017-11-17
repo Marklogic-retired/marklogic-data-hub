@@ -63,9 +63,8 @@ declare private function job:delete-jobs($job-ids as xs:string*) as map:map
 declare private function job:delete-traces($job-ids as xs:string*) as xs:string*
 {
   for $id in $job-ids
-  let $traces := /trace[jobId = $id]/traceId
-  for $trace in $traces
-  let $_ := xdmp:document-delete(fn:base-uri($trace))
+  for $trace in /trace[jobId = $id]/traceId
+  let $_ := xdmp:document-delete(xdmp:node-uri($trace))
   return $trace/fn:string()
 };
 
