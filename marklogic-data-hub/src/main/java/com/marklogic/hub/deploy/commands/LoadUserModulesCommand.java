@@ -28,19 +28,14 @@ import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.deploy.util.HubFileFilter;
 import com.marklogic.hub.error.LegacyFlowsException;
 import com.marklogic.hub.flow.Flow;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URLEncoder;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -188,7 +183,7 @@ public class LoadUserModulesCommand extends AbstractCommand {
                                     InputStream inputStream = r.getInputStream();
                                     StringHandle handle = new StringHandle(IOUtils.toString(inputStream));
                                     inputStream.close();
-                                    entityDocMgr.write(URLEncoder.encode("/entities/" + r.getFilename(), "UTF-8"), meta, handle);
+                                    entityDocMgr.write("/entities/" + r.getFilename(), meta, handle);
                                     modulesManager.saveLastLoadedTimestamp(r.getFile(), new Date());
                                 }
                             }
