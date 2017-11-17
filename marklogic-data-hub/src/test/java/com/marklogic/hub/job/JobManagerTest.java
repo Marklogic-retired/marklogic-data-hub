@@ -154,6 +154,29 @@ public class JobManagerTest extends HubTestBase {
         assertEquals(6, getTracingDocCount());
         assertEquals(0, actual.totalCount);
         assertEquals(1, actual.errorCount);
+    }
 
+    @Test
+    public void deleteEmptyStringJob() {
+        JobManager manager = new JobManager(jobClient);
+
+        JobDeleteResponse actual = manager.deleteJobs("");
+
+        assertEquals(3, getJobDocCount());
+        assertEquals(6, getTracingDocCount());
+        assertEquals(0, actual.totalCount);
+        assertEquals(0, actual.errorCount);
+    }
+
+    @Test
+    public void deleteNullJob() {
+        JobManager manager = new JobManager(jobClient);
+
+        JobDeleteResponse actual = manager.deleteJobs(null);
+
+        assertEquals(3, getJobDocCount());
+        assertEquals(6, getTracingDocCount());
+        assertEquals(0, actual.totalCount);
+        assertEquals(0, actual.errorCount);
     }
 }
