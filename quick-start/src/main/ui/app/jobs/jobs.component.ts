@@ -25,7 +25,7 @@ export class JobsComponent implements OnChanges, OnDestroy, OnInit {
   loadingJobs: boolean = false;
   searchResponse: SearchResponse;
   jobs: Array<Job>;
-  jobsToDelete: any = [];
+  jobsToDelete: string[] = [];
   runningFlows: Map<number, string> = new Map<number, string>();
   facetNames: Array<string> = ['entityName', 'status', 'flowName', 'flowType'];
 
