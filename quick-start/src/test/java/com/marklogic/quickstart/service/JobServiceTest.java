@@ -2,7 +2,6 @@ package com.marklogic.quickstart.service;
 
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
-import com.marklogic.client.io.StringHandle;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
 import com.marklogic.quickstart.model.JobQuery;

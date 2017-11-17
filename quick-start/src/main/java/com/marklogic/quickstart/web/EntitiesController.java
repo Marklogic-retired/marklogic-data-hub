@@ -19,7 +19,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.FlowType;
 import com.marklogic.quickstart.EnvironmentAware;
-import com.marklogic.quickstart.model.EnvironmentConfig;
 import com.marklogic.quickstart.model.FlowModel;
 import com.marklogic.quickstart.model.JobStatusMessage;
 import com.marklogic.quickstart.model.PluginModel;
