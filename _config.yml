@@ -15,7 +15,7 @@
 # in the templates via {{ site.myvariable }}.
 
 # Where things are
-repository: paxtonhare/dhf-test
+repository: marklogic-community/marklogic-data-hub
 source:      .
 destination: ./_site
 plugins_dir:     ./_plugins
@@ -57,7 +57,7 @@ excerpt_separator: "\n\n"
 detach:  false
 port:    4000
 host:    127.0.0.1
-baseurl: "/dhf-test" # does not include hostname
+baseurl: "/marklogic-data-hub" # does not include hostname
 
 # Outputting
 permalink:     /:title.html
