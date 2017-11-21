@@ -1,0 +1,20 @@
+{% assign counter = (counter || -1) %}
+{% assign counter = counter | plus: 1 %}
+<div class="code-tabs">
+  <ul class="nav nav-tabs" role="tablist">
+    <li role="presentation" class="active">
+      <a role="tab" aria-controls="javascript-{{counter}}" href="#javascript-{{counter}}">JavaScript</a>
+    </li>
+    <li role="presentation" class="">
+      <a role="tab" aria-controls="xquery-{{counter}}" href="#xquery-{{counter}}">XQuery</a>
+    </li>
+  </ul>
+  <div class="tab-content">
+    <div role="tabpanel" class="tab-pane active" id="javascript-{{counter}}">
+      {% highlight javascript %}{{include.javascript}}{% endhighlight %}
+    </div>
+    <div role="tabpanel" class="tab-pane" id="xquery-{{counter}}">
+      {% highlight xquery %}{{include.xquery}}{% endhighlight %}
+    </div>
+  </div>
+</div>

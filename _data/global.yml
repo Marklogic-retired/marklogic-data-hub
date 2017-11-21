@@ -1,0 +1,4 @@
+# Site Settings
+title: 'Data Hub Framework'
+description: 'A data hub framework for MarkLogic'
+odh_icon: '/images/odh.svg'

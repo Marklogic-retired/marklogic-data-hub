@@ -1,0 +1,24 @@
+<div class="bannered-image">
+  <picture>
+    <source srcset="{{site.baseurl}}/images/Solution-enterprise-data-hub-xs.jpg" media="(max-width: 400px)">
+    <source srcset="{{site.baseurl}}/images/Solution-enterprise-data-hub-sm.jpg" media="(max-width: 800px)">
+    <source srcset="{{site.baseurl}}/images/Solution-enterprise-data-hub-lg.jpg" media="(min-width: 801px)">
+    <img srcset="{{site.baseurl}}/images/Solution-enterprise-data-hub-lg.jpg" alt="Operational Data Hub" scale="0">
+  </picture>
+  <div class="banner banner-light banner-center text-center">
+    <div class="center-container">
+      <div class="centered-text">
+        <div class="col-sm-12 text-right text-center">
+          <img alt="dhf icon" src="{{site.data.global.odh_icon | relative_url}}" scale="0" class="icon-left">
+          <h3>
+          {% if page.title %}
+            {{ page.title }}
+          {% else %}
+            {{ site.data.global.title }}
+          {% endif %}
+          </h3>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

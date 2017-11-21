@@ -1,0 +1,247 @@
+require:
+  js: |
+    const dhf = require('/com.marklogic.hub/dhf.xqy');
+  xqy: |
+    import module namespace dhf = "http://marklogic.com/dhf" at "/com.marklogic.hub/dhf.xqy";
+run:
+  js: |
+    const dhf = require('/com.marklogic.hub/dhf.xqy');
+
+    var context = dhf.context('My Plugin');
+    var result = dhf.run(context, function() {
+      return 1;
+    });
+  xqy: |
+    import module namespace dhf = "http://marklogic.com/dhf"
+      at "/com.marklogic.hub/dhf.xqy";
+
+    let $context := dhf:context("My Plugin")
+    let $result := dhf:run($context, function() {
+      return 1
+    })
+    return
+      $result
+runwriter:
+  js: |
+    const dhf = require('/com.marklogic.hub/dhf.xqy');
+
+    // we are hand waving how the envelope gets constructed
+    var envelope = {};
+
+    /*
+     note how we refer to the path of the writer sjs module. For this to work
+     your sjs module must export the function properly.
+
+     function write(id, envelope, options) {
+     }
+     module.exports = write;
+    */
+
+    dhf.runWriter(xdmp.function(null, './writer.sjs'), id, envelope, options);
+  xqy: |
+    import module namespace dhf = "http://marklogic.com/dhf"
+      at "/com.marklogic.hub/dhf.xqy";
+
+    let $envelope := <envelope/>
+    return
+      (:
+      : writers must conform to this signature
+      :
+      : declare function plugin:write($id as xs:string, $envelope as node(), $options as map:map) as empty-sequence()
+      :)
+      dhf:run-writer(xdmp:function(xs:QName("writer:write")), $id, $envelope, $options)
+makeenvelope:
+  js: |
+    const dhf = require('/com.marklogic.hub/dhf.xqy');
+
+    var content = { a: 'a!' };
+    var headers = {
+      header1: 1,
+      header2: 2
+    };
+    var triples = [
+      sem.triple('subject1', 'predicate1', 'object1'),
+      sem.triple('subject2', 'predicate2', 'object2')
+    ];
+    var result = dhf.run(context, function() {
+      return 1;
+    });
+
+    var dataFormat = 'json' // can also be 'xml'
+    var envelope = dhf:makeEnvelope(content, headers, triples, dataFormat);
+  xqy: |
+    import module namespace dhf = "http://marklogic.com/dhf"
+      at "/com.marklogic.hub/dhf.xqy";
+
+    let $content := <a>a!</a>
+    let $headers := (<header1>1</header1>, <header1>2</header2>)
+    let $triples := (
+      sem:triple("subject1", "predicate1", "object1"),
+      sem:triple("subject2", "predicate2", "object2")
+    )
+    let $data-format := "xml" (: can also be "json" :)
+    let $envelope := dhf:make-envelope($content, $headers, $triples, $data-format)
+    return
+      $envelope
+makelegacyenvelope:
+  js: |
+    const dhf = require('/com.marklogic.hub/dhf.xqy');
+
+    var content = { a: 'a!' };
+    var headers = {
+      header1: 1,
+      header2: 2
+    };
+    var triples = [
+      sem.triple('subject1', 'predicate1', 'object1'),
+      sem.triple('subject2', 'predicate2', 'object2')
+    ];
+    var result = dhf.run(context, function() {
+      return 1;
+    });
+
+    var dataFormat = 'json' // can also be 'xml'
+    var envelope = dhf:makeLegacyEnvelope(content, headers, triples, dataFormat);
+  xqy: |
+    import module namespace dhf = "http://marklogic.com/dhf"
+      at "/com.marklogic.hub/dhf.xqy";
+
+    let $content := <a>a!</a>
+    let $headers := (<header1>1</header1>, <header1>2</header2>)
+    let $triples := (
+      sem:triple("subject1", "predicate1", "object1"),
+      sem:triple("subject2", "predicate2", "object2")
+    )
+    let $data-format := "xml" (: can also be "json" :)
+    let $envelope := dhf:make-legacy-envelope($content, $headers, $triples, $data-format)
+    return
+      $envelope
+context:
+  js: |
+    const dhf = require('/com.marklogic.hub/dhf.xqy');
+
+    var context = dhf.context('My Plugin');
+    var result = dhf.run(context, function() {
+      return 1;
+    });
+  xqy: |
+    import module namespace dhf = "http://marklogic.com/dhf"
+      at "/com.marklogic.hub/dhf.xqy";
+
+    let $context := dhf:context("My Plugin")
+    let $result := dhf:run($context, function() {
+      return 1
+    })
+    return
+      $result
+contentcontext:
+  js: |
+    const dhf = require('/com.marklogic.hub/dhf.xqy');
+
+    var context = dhf.contentContext();
+    var result = dhf.run(context, function() {
+      return 1;
+    });
+
+  xqy: |
+    import module namespace dhf = "http://marklogic.com/dhf"
+      at "/com.marklogic.hub/dhf.xqy";
+
+    let $context := dhf:content-context()
+    let $result := dhf:run($context, function() {
+      return 1
+    })
+    return
+      $result
+headercontext:
+  js: |
+    const dhf = require('/com.marklogic.hub/dhf.xqy');
+
+    var content = {};
+    var context = dhf.headersContext(content);
+    var result = dhf.run(context, function() {
+      return 1;
+    });
+  xqy: |
+    import module namespace dhf = "http://marklogic.com/dhf"
+      at "/com.marklogic.hub/dhf.xqy";
+
+    let $content := <content/>
+    let $context := dhf:headers-context($content)
+    let $result := dhf:run($context, function() {
+      return 1
+    })
+    return
+      $result
+triplescontext:
+  js: |
+    const dhf = require('/com.marklogic.hub/dhf.xqy');
+
+    var content = {};
+    var headers = {};
+    var context = dhf.triplesContext(content, headers);
+    var result = dhf.run(context, function() {
+      return 1;
+    });
+  xqy: |
+    import module namespace dhf = "http://marklogic.com/dhf"
+      at "/com.marklogic.hub/dhf.xqy";
+
+    let $content = <content/>
+    let $headers = ()
+    let $context := dhf:triples-context($content, $headers)
+    let $result := dhf:run($context, function() {
+      return 1
+    })
+    return
+      $result
+writercontext:
+  js: |
+    const dhf = require('/com.marklogic.hub/dhf.xqy');
+
+    var envelope = {};
+    dhf.logTrace(dhf.writerContext(envelope));
+  xqy: |
+    import module namespace dhf = "http://marklogic.com/dhf"
+      at "/com.marklogic.hub/dhf.xqy";
+
+    let $envelope := <envelope/>
+    let $_ := dhf:log-trace(dhf:writer-context($envelope))
+    return
+      $envelope
+addtraceinput:
+  js: |
+    const dhf = require('/com.marklogic.hub/dhf.xqy');
+
+    var expenseReport = {};
+    var context = dhf.context('My Plugin');
+    var context = dhf.addTraceInput(context, 'expense report', expenseReport);
+    var result = dhf.run(context, function() {
+      return 1;
+    });
+  xqy: |
+    import module namespace dhf = "http://marklogic.com/dhf"
+      at "/com.marklogic.hub/dhf.xqy";
+
+    let $expense-report := <expense-report/>
+    let $context := dhf:context("My Plugin")
+    let $context := dhf:add-trace-input($context, "expense report", $expense-report)
+    let $result := dhf:run($context, function() {
+      return 1
+    })
+    return
+      $result
+logtrace:
+  js: |
+    const dhf = require('/com.marklogic.hub/dhf.xqy');
+
+    var envelope = {};
+    dhf.logTrace(dhf.writerContext(envelope));
+  xqy: |
+    import module namespace dhf = "http://marklogic.com/dhf"
+      at "/com.marklogic.hub/dhf.xqy";
+
+    let $envelope := <envelope/>
+    let $_ := dhf:log-trace(dhf:writer-context($envelope))
+    return
+      $envelope

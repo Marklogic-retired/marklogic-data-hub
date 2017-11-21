@@ -1,0 +1,18 @@
+{% include header.html %}
+
+  {% include title-group.html %}
+
+  <article>
+    <div class="container">
+      <div class="row">
+        <div class="side-nav col-md-2 hide-small">
+          {% include sidenav.html %}
+        </div>
+        <div class="col-md-10">
+          {{ content }}
+        </div>
+      </div>
+    </div>
+  </article>
+
+{% include footer.html %}

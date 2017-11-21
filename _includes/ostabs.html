@@ -1,0 +1,20 @@
+{% assign counter = (counter || -1) %}
+{% assign counter = counter | plus: 1 %}
+<div class="code-tabs">
+  <ul class="nav nav-tabs" role="tablist">
+    <li role="presentation" class="active">
+      <a role="tab" aria-controls="linux-{{counter}}" href="#linux-{{counter}}">Unix Systems</a>
+    </li>
+    <li role="presentation" class="">
+      <a role="tab" aria-controls="windows-{{counter}}" href="#windows-{{counter}}">Windows</a>
+    </li>
+  </ul>
+  <div class="tab-content">
+    <div role="tabpanel" class="tab-pane active" id="linux-{{counter}}">
+      <pre class="cmdline">{{include.linux}}</pre>
+    </div>
+    <div role="tabpanel" class="tab-pane" id="windows-{{counter}}">
+      <pre class="cmdline">{{include.windows}}</pre>
+    </div>
+  </div>
+</div>

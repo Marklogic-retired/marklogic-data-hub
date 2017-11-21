@@ -1,0 +1,14 @@
+<ul class="list-group">
+  {% for item in include.items %}
+  <li {% if page.url == item.url %} class="list-group-item active" {% else %} class="list-group-item" {% endif %} >
+    {% if item.absurl %}
+    <a href="{{ item.absurl }}">{{ item.text }}</a>
+    {% else %}
+    <a href="{{ item.url | relative_url }}">{{ item.text }}</a>
+    {% endif %}
+    {% if item.childPages %}
+      {% include navlist.html items=item.childPages %}
+    {% endif %}
+  </li>
+  {% endfor %}
+</ul>

@@ -1,0 +1,143 @@
+# Welcome to Jekyll!
+#
+# This config file is meant for settings that affect your whole blog, values
+# which you are expected to set up once and rarely edit after that. If you find
+# yourself editing this file very often, consider using Jekyll's data files
+# feature for the data you need to update frequently.
+#
+# For technical reasons, this file is *NOT* reloaded automatically when you use
+# 'bundle exec jekyll serve'. If you change this file, please restart the server process.
+
+# Site settings
+# These are used to personalize your new site. If you look in the HTML files,
+# you will see them accessed via {{ site.title }}, {{ site.email }}, and so on.
+# You can create any custom variable you would like, and they will be accessible
+# in the templates via {{ site.myvariable }}.
+
+# Where things are
+repository: paxtonhare/dhf-test
+source:      .
+destination: ./_site
+plugins_dir:     ./_plugins
+layouts_dir:     ./_layouts
+data_dir: ./_data
+# collections: null
+
+# Handling Reading
+safe:         true
+include:      [".htaccess"]
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - README.md
+  - vendor
+  - Rakefile
+keep_files:   [".git", ".svn"]
+encoding:     "utf-8"
+markdown_ext: "markdown,mkdown,mkdn,mkd,md"
+
+# Filtering Content
+show_drafts: null
+limit_posts: 0
+future:      true
+unpublished: false
+
+# Plugins
+whitelist: []
+plugins:
+  - jekyll-assets
+  - jekyll-relative-links
+
+# Conversion
+markdown:    rouge
+lsi:         false
+excerpt_separator: "\n\n"
+
+# Serving
+detach:  false
+port:    4000
+host:    127.0.0.1
+baseurl: "/dhf-test" # does not include hostname
+
+# Outputting
+permalink:     /:title.html
+timezone:      null
+
+quiet:    false
+defaults: []
+
+# Markdown Processors
+rdiscount:
+  extensions: []
+
+redcarpet:
+  extensions: []
+
+# kramdown:
+#   auto_ids:       true
+#   footnote_nr:    1
+#   entity_output:  as_char
+#   toc_levels:     1..6
+#   smart_quotes:   lsquo,rsquo,ldquo,rdquo
+#   enable_coderay: false
+
+include: ['_pages']
+
+# jekyll-press:
+#   exclude: 'atom.xml' # Exclude files from processing - file name, glob pattern or array of file names and glob patterns
+#   js_options: {}      # js minifier options
+#   css_options: {}     # css minifier options
+#   html_options: {}    # html minifier options
+
+assets:
+  liquid: false
+  prefix: "/assets"
+  integrity: false
+  autowrite: true
+  digest: false
+  strict: false
+  caching:
+    enabled: false
+    # path: ".jekyll-cache/assets"
+    # type: file
+  precompile: []
+  cdn:
+    baseurl: false
+    prefix: false
+  plugins:
+    img:
+      optim: {}
+    compression:
+      js:
+        enabled: false
+        opts: {}
+      css:
+        enabled: true
+  sources:
+    - assets/css
+    - assets/fonts
+    - assets/images
+    - assets/javascript
+    - assets/image
+    - assets/img
+    - assets/js
+
+    - _assets/css
+    - _assets/fonts
+    - _assets/images
+    - _assets/javascript
+    - _assets/image
+    - _assets/img
+    - _assets/js
+
+    - css
+    - fonts
+    - images
+    - javascript
+    - image
+    - img
+    - js
+
+relative_links:
+  enabled:     true
+  collections: true

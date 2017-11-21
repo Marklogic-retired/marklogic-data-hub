@@ -1,0 +1,90 @@
+main:
+    - { url: '/', text: 'Getting Started' }
+    - {
+      url: '/understanding/',
+      text: 'Understanding DHF',
+      childPages: [
+        { url: '/understanding/concepts/', text: 'Concepts' },
+        { url: '/understanding/architecture/', text: 'Architecture' },
+        { url: '/understanding/how-it-works/', text: 'How It Works'},
+        { url: '/understanding/flowtracing/', text: 'Flow Tracing'},
+        { url: '/understanding/project-structure/', text: 'Project Structure'}
+      ]
+    }
+    - {
+      url: '/tutorial/',
+      text: 'Tutorial'
+      # childPages: [
+      #   { url: 'tutorial/install.md', text: 'Install the Data Hub Framework' },
+      #   { url: 'tutorial/create-product-entity.md', text: 'Create the Product Entity' },
+      #   { url: 'tutorial/create-product-input-flow.md', text: 'Create the Product Input Flow' },
+      #   { url: 'tutorial/load-products-as-is.md', text: 'Load the Product Data As-Is' },
+      #   { url: 'tutorial/browse-understand-product-data.md', text: 'Browse and Understand the Product Data' },
+      #   { url: 'tutorial/modeling-product-entity.md', text: 'Modeling the Product Entity' },
+      #   { url: 'tutorial/harmonizing-product-data.md', text: 'Harmonizing the Product Data' },
+      #   { url: 'tutorial/create-order-entity.md', text: 'Create the Order Entity' },
+      #   { url: 'tutorial/create-order-input-flow.md', text: 'Create the Order Input Flow' },
+      #   { url: 'tutorial/load-orders-as-is.md', text: 'Load the Orders As-Is' },
+      #   { url: 'tutorial/modeling-order-entity.md', text: 'Modeling the Order Entity' },
+      #   { url: 'tutorial/harmonizing-order-data.md', text: 'Harmonizing the Order Data' },
+      #   { url: 'tutorial/serve-data.md', text: 'Serve the Data Out of MarkLogic' },
+      #   { url: 'tutorial/wrapping-up.md', text: 'Wrapping Up' }
+      # ]
+    }
+    - {
+      url: '/using/',
+      text: 'Using the DHF',
+      childPages: [
+        {
+          url: '/project/',
+          text: 'Create a Project',
+          childPages: [
+            { url: '/project/quickstart/', text: 'QuickStart' },
+            { url: '/project/gradle/', text: 'Gradle Plugin' }
+          ]
+        },
+        {
+          url: '/ingest/',
+          text: 'Ingest',
+          childPages: [
+            { url: '/ingest/quickstart/', text: 'QuickStart' },
+            { url: '/ingest/mlcp/', text: 'MLCP' },
+            { url: '/ingest/marklogic-client-api/', text: 'MarkLogic Client API' },
+            { url: '/ingest/rest/', text: 'REST API' }
+          ]
+        },
+        # {
+        #   url: '/govern/',
+        #   text: 'Govern',
+        #   childPages: []
+        # },
+        {
+          url: '/harmonize/',
+          text: 'Harmonize',
+          childPages: [
+            { url: '/harmonize/quickstart/', text: 'Quickstart'},
+            { url: '/harmonize/gradle/', text: 'Gradle'},
+            { url: '/harmonize/java/', text: 'Java Library'},
+            { url: '/harmonize/rest/', text: 'REST'},
+          ]
+        },
+        {
+          url: '/serve/',
+          text: 'Serve',
+          childPages: [
+            { url: '/serve/rest/', text: 'REST'},
+            { url: '/serve/odbc/', text: 'ODBC'}
+          ]
+        }
+      ]
+    }
+    - {
+      url: '/docs/',
+      text: 'Docs',
+      childPages: [
+        { url: '/docs/gradle-tasks/', text: 'Gradle Tasks' },
+        { url: '/docs/server-side/', text: 'Server Side (xqy, sjs)' }
+      ]
+    }
+    - { url: '/faqs/', text: 'FAQs' }
+    - { absurl: 'https://github.com/marklogic-community/marklogic-data-hub', text: 'DHF on GitHub' }
