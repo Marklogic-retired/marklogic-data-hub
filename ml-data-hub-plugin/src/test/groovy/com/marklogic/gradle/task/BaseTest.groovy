@@ -84,21 +84,19 @@ class BaseTest extends Specification {
 
 
     void clearDatabases(String... databases) {
-        List<Thread> threads = new ArrayList<>()
-        ManageClient client = hubConfig().newManageClient()
-        DatabaseManager databaseManager = new DatabaseManager(client)
-        for (String database: databases) {
-            Thread thread = new Thread({ -> databaseManager.clearDatabase(database) })
-            threads.add(thread)
-            thread.start()
-        }
-        threads.forEach({thread ->
-            try {
-                thread.join()
-            } catch (InterruptedException e) {
-                e.printStackTrace()
-            }
-        })
+        ServerEvaluationCall eval = hubConfig().newStagingClient().newServerEval();
+        String installer = '''
+            declare variable $databases external;
+            for $database in fn:tokenize($databases, ",")
+             return
+               xdmp:eval(
+                 'cts:uris() ! xdmp:document-delete(.)',
+                 (),
+                 map:entry("database", xdmp:database($database))
+               )
+        '''
+        eval.addVariable("databases", String.join(",", databases));
+        EvalResultIterator result = eval.xquery(installer).eval();
     }
 
     protected Document getXmlFromResource(String resourceName) throws IOException, ParserConfigurationException, SAXException {
