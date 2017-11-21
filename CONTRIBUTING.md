@@ -80,6 +80,18 @@ plugins {
 apply plugin: "com.marklogic.ml-data-hub"
 ```
 
+To run the plugin's unit tests, cd to the ml-data-hub-plugin directory, then:
+
+Run all unit tests
+
+    ../gradlew test
+
+
+Run one unit test
+
+    ../gradlew -Dtest.single=CreateEntityTask test
+
+
 **Note**: This change goes in a DHF project's build.gradle. Not the DHF source code's build.gradle.
 
 #### Running the QuickStart UI from source
