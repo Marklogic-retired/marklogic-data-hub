@@ -23,7 +23,7 @@ In the directory where the project framework code lives, run these commands to e
 ## Enabling and Disabling via the Quickstart UI
 Navigate to the Settings screen in Quickstart. On that page, you will find a selector to enable and disable Flow Tracing.
 
-![Quickstart enable disable]({{site.baseurl}}/images/traces/FowTracingEnableDisableViaQuickStart.png)
+![Quickstart enable disable]({{site.baseurl}}/images/traces/FlowTracingEnableDisableViaQuickStart.png)
 
 # Flow Tracing Database
 All Flow Tracing events are stored to a separate database created when you initialized your project. By default, the database is called _your-project-name_-TRACING. An Application server is created that is associated with this database, which provides a UI you can use to view the trace events. The default port for this Application server is 8012.
