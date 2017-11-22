@@ -54,3 +54,8 @@ Navigate your browser to the port running the `TRACES` Application server, by de
 Selecting a single tracing event will display the detailed flow.
 
 ![Displaying single trace dedicated]({{site.baseurl}}/images/traces/DisplayingSingleTraceInDedicatedApp.png)
+
+# Cleaning up Traces
+You can delete traces by deleting the job that created them. To do so, go to the Jobs page, click on the Jobs you wish to delete, and click the delete button. After confirming, the selected jobs and the associated traces will be removed from the Jobs and Traces databases. 
+
+![Displaying deletion of a job]({{site.baseurl}}/images/traces/DeleteJobs.png)
