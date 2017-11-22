@@ -165,7 +165,7 @@ gradle hubCreateHarmonizeFlow \
 - **dataFormat**=json
 
 # MarkLogic Data Hub Flow Management tasks
-These tasks allow you to run flows.
+These tasks allow you to run and clean up after flows.
 
 ### hubRunFlow
 Run a harmonize flow
@@ -219,3 +219,15 @@ then you will get something like this in your options:
     "myOtherKey": "myOtherValue"
   }
 ```
+
+### hubDeleteJobs
+Delete job records and the traces that go with them. Does not affect the content of the staging or final databases.
+
+<pre class="cmdline">
+gradle hubDeleteJobs \
+  -PjobIds=list-of-ids
+</pre>
+
+#### Parameters
+##### Required
+- **jobIds** - a comma-separated list of job IDs to delete
