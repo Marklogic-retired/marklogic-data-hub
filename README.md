@@ -7,9 +7,10 @@ This project also has .ruby-version and .ruby-gem files if you are using [RVM](h
 
 # Setup
 
-### Ensure Bundler is installed
+### Ensure necessary tools are installed
 ```bash
 gem install bundler
+gem install jekyll
 ```
 
 ### Install the necessary Ruby gems
@@ -29,4 +30,3 @@ jekyll serve --incremental
 
 ### Updating the Live website
 There is a travis job that builds and deploys the website every time a push is made to the **dhf-website** branch.
-
