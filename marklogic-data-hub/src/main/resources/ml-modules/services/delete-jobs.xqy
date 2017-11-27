@@ -31,6 +31,9 @@ declare option xdmp:mapping "false";
  : REST API extension to delete jobs and associated traces.
  : Note: it shouldn't be necessary to use xdmp:invoke-function below, but a bug
  : in ML 8.0-7 (fixed in 8.0-7.1) messes up the transaction mode.
+ :
+ : Also, ML 9.0-1.1 is the only DHF-supported version that does not support the
+ : <update> option for xdmp:invoke-function. (<transaction-mode> has been deprecated.)
  :)
 declare %rapi:transaction-mode("update") function service:post(
     $context as map:map,
@@ -38,17 +41,25 @@ declare %rapi:transaction-mode("update") function service:post(
     $input   as document-node()*
 ) as document-node()?
 {
-  perf:log('/v1/resources/delete-jobs:post', function() {
-    xdmp:invoke-function(
-      function() {
-        let $job-ids := fn:tokenize(map:get($params, "jobIds"), ",")
-        return
-          job:delete-jobs-and-traces($job-ids)
-      },
-      <options xmlns="xdmp:eval">
-        <update>true</update>
-        <isolation>same-statement</isolation>
-      </options>
-    )
-  })
+  let $options :=
+    <options xmlns="xdmp:eval">
+      {
+        if (xdmp:version() = "9.0-1.1") then
+          <transaction-mode>update-auto-commit</transaction-mode>
+        else
+          <update>true</update>
+      }
+      <isolation>same-statement</isolation>
+    </options>
+  return
+    perf:log('/v1/resources/delete-jobs:post', function() {
+      xdmp:invoke-function(
+        function() {
+          let $job-ids := fn:tokenize(map:get($params, "jobIds"), ",")
+          return
+            job:delete-jobs-and-traces($job-ids)
+        },
+        $options
+      )
+    })
 };

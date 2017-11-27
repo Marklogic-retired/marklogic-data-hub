@@ -12,20 +12,30 @@ declare variable $FAILED-KEY  := "failed";
 
 (:
  : Given a list of job-ids, delete those jobs and any traces associated with them.
+ :
+ : ML 9.0-1.1 is the only DHF-supported version that does not support the <update> option
+ : for xdmp:invoke-function. (<transaction-mode> has been deprecated.)
  :)
 declare function job:delete-jobs-and-traces($job-ids as xs:string*)
 {
   let $job-results := job:delete-jobs($job-ids)
+  let $options :=
+    <options xmlns="xdmp:eval">
+      {
+        if (xdmp:version() = "9.0-1.1") then
+          <transaction-mode>update-auto-commit</transaction-mode>
+        else
+          <update>true</update>
+      }
+      <isolation>different-transaction</isolation>
+      <database>{xdmp:database($config:TRACE-DATABASE)}</database>
+    </options>
   let $deleted-traces :=
     xdmp:invoke-function(
       function() {
         job:delete-traces($job-ids)
       },
-      <options xmlns="xdmp:eval">
-        <update>true</update>
-        <isolation>different-transaction</isolation>
-        <database>{xdmp:database($config:TRACE-DATABASE)}</database>
-      </options>
+      $options
     )
   return
     document {
