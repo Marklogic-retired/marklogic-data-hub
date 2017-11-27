@@ -27,15 +27,28 @@ declare namespace rapi = "http://marklogic.com/rest-api";
 
 declare option xdmp:mapping "false";
 
+(:
+ : REST API extension to delete jobs and associated traces.
+ : Note: it shouldn't be necessary to use xdmp:invoke-function below, but a bug
+ : in ML 8.0-7 (fixed in 8.0-7.1) messes up the transaction mode.
+ :)
 declare %rapi:transaction-mode("update") function service:post(
     $context as map:map,
     $params  as map:map,
     $input   as document-node()*
-) as document-node()*
+) as document-node()?
 {
   perf:log('/v1/resources/delete-jobs:post', function() {
-    let $job-ids := fn:tokenize(map:get($params, "jobIds"), ",")
-    return
-      job:delete-jobs-and-traces($job-ids)
+    xdmp:invoke-function(
+      function() {
+        let $job-ids := fn:tokenize(map:get($params, "jobIds"), ",")
+        return
+          job:delete-jobs-and-traces($job-ids)
+      },
+      <options xmlns="xdmp:eval">
+        <update>true</update>
+        <isolation>same-statement</isolation>
+      </options>
+    )
   })
 };
