@@ -5,11 +5,11 @@ import com.marklogic.client.io.DocumentMetadataHandle
 import com.marklogic.hub.Debugging
 import com.marklogic.hub.HubConfig
 import com.marklogic.hub.Tracing
-import com.marklogic.hub.error.LegacyFlowsException
-import org.apache.commons.io.FileUtils
 import org.gradle.testkit.runner.UnexpectedBuildFailure
 import org.gradle.testkit.runner.UnexpectedBuildSuccess
+
 import java.nio.file.Paths
+
 import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual
 import static org.gradle.testkit.runner.TaskOutcome.FAILED
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
@@ -158,4 +158,32 @@ class InstalledTests extends BaseTest {
         result.output.contains('legacy-test => legacy-input-flow')
         result.task(":mlLoadModules").outcome == FAILED
     }
+
+    def "createHarmonizeFlow with useES flag"() {
+        given:
+        propertiesFile << """
+            ext {
+                entityName=Employee
+                flowName=my-new-harmonize-flow
+                useES=true
+            }
+        """
+
+        when:
+        runTask('hubUpdate')
+        runTask('hubCreateEntity')
+        copyResourceToFile("employee.entity.json", Paths.get(testProjectDir.root.toString(), "plugins", "entities", "Employee", "Employee.entity.json").toFile())
+        runTask('mlLoadModules')
+        def result = runTask('hubCreateHarmonizeFlow')
+
+        then:
+        notThrown(UnexpectedBuildFailure)
+        result.task(":hubCreateHarmonizeFlow").outcome == SUCCESS
+
+        File entityDir = Paths.get(testProjectDir.root.toString(), "plugins", "entities", "Employee", "harmonize", "my-new-harmonize-flow").toFile()
+        entityDir.isDirectory() == true
+        File contentPlugin = Paths.get(testProjectDir.root.toString(), "plugins", "entities", "Employee", "harmonize", "my-new-harmonize-flow", "content.sjs").toFile()
+        contentPlugin.text.contains("extractInstanceEmployee")
+    }
+
 }
