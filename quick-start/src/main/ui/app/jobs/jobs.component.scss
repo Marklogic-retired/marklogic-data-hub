@@ -72,6 +72,9 @@ input[type="search"] {
           padding-right: 0px;
         }
       }
+      th .delete-jobs {
+        color: white;
+      }
     }
   }
 
@@ -83,6 +86,12 @@ input[type="search"] {
 
         &:last-of-type {
           padding-right: 0px;
+        }
+      }
+      td.job-delete-checkbox {
+        text-align: center;
+        .mdl-checkbox {
+          width: 24px;
         }
       }
     }

@@ -23,15 +23,22 @@ import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.Transaction;
 import com.marklogic.client.document.DocumentWriteSet;
 import com.marklogic.client.document.JSONDocumentManager;
+import com.marklogic.client.extensions.ResourceManager;
+import com.marklogic.client.extensions.ResourceServices;
 import com.marklogic.client.io.DocumentMetadataHandle;
+import com.marklogic.client.io.Format;
 import com.marklogic.client.io.JacksonDatabindHandle;
+import com.marklogic.client.io.StringHandle;
+import com.marklogic.client.util.RequestParameters;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.TimeZone;
 
 public class JobManager {
 
     private JSONDocumentManager docMgr;
+    private JobDeleteResource jobDeleteRunner = null;
 
     private static final String ISO_8601_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX";
     private static SimpleDateFormat simpleDateFormat8601;
@@ -57,6 +64,7 @@ public class JobManager {
 
     public JobManager(DatabaseClient jobClient) {
         this.docMgr = jobClient.newJSONDocumentManager();
+        this.jobDeleteRunner = new JobDeleteResource(jobClient);
     }
 
     public void saveJob(Job job) {
@@ -72,4 +80,51 @@ public class JobManager {
         writeSet.add("/jobs/" + job.getJobId() + ".json", metadataHandle, contentHandle);
         docMgr.write(writeSet, transaction);
     }
+
+    public JobDeleteResponse deleteJobs(String jobIds) {
+        return this.jobDeleteRunner.deleteJobs(jobIds);
+    }
+
+    public class JobDeleteResource extends ResourceManager {
+        private static final String DELETE_SERVICE = "delete-jobs";
+
+        private DatabaseClient srcClient;
+
+        public JobDeleteResource(DatabaseClient srcClient) {
+            super();
+            this.srcClient = srcClient;
+            this.srcClient.init(DELETE_SERVICE, this);
+        }
+
+        /**
+         *
+         * @param jobIds comma-separated list of jobIds to delete.
+         * @return comma-separated list of jobIds that were successfully deleted
+         */
+        public JobDeleteResponse deleteJobs(String jobIds) {
+            JobDeleteResponse resp = null;
+            try {
+                RequestParameters params = new RequestParameters();
+                params.add("jobIds", jobIds);
+
+                ResourceServices services = this.getServices();
+                ResourceServices.ServiceResultIterator resultItr =
+                    services.post(params, new StringHandle("{}").withFormat(Format.JSON));
+                if (resultItr == null || ! resultItr.hasNext()) {
+                    resp = new JobDeleteResponse();
+                }
+                else {
+                    ResourceServices.ServiceResult res = resultItr.next();
+                    StringHandle handle = new StringHandle();
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    resp = objectMapper.readValue(res.getContent(handle).get(), JobDeleteResponse.class);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+                throw new RuntimeException(e);
+            }
+            return resp;
+        }
+    }
+
 }

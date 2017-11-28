@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.marklogic.appdeployer.command.CommandContext
 import com.marklogic.client.DatabaseClient
 import com.marklogic.hub.*
+import com.marklogic.hub.job.JobManager
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Internal
 
@@ -33,6 +34,11 @@ abstract class HubTask extends DefaultTask {
     @Internal
     FlowManager getFlowManager() {
         return new FlowManager(getHubConfig())
+    }
+
+    @Internal
+    JobManager getJobManager() {
+        return new JobManager(getHubConfig().newJobDbClient());
     }
 
     @Internal
