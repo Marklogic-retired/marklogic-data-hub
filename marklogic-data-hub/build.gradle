@@ -189,6 +189,7 @@ bintray {
     pkg {
         repo = 'maven'
         name = project.name
+        userOrg = 'marklogic-community'
         desc = pomCustomizations.textdescription.text()
         licenses = ['Apache-2.0']
         websiteUrl = pomCustomizations.url
