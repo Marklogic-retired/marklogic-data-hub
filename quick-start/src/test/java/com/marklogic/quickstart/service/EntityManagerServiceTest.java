@@ -9,6 +9,7 @@ import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.FileUtil;
 import com.marklogic.quickstart.auth.ConnectionAuthenticationToken;
 import com.marklogic.quickstart.model.EnvironmentConfig;
+import com.marklogic.quickstart.model.FlowModel;
 import com.marklogic.quickstart.model.entity_services.EntityModel;
 import org.apache.commons.io.FileUtils;
 import org.junit.*;
@@ -115,11 +116,45 @@ public class EntityManagerServiceTest extends HubTestBase {
     }
 
     @Test
-    public void getEntity() {
+    public void getEntity() throws IOException {
+        EntityModel entity = entityMgrService.getEntity(ENTITY);
+
+        Assert.assertEquals(ENTITY, entity.getName());
+        Assert.assertEquals(4, entity.getInputFlows().size());
+        Assert.assertEquals(0, entity.getHarmonizeFlows().size());
+    }
+
+    @Test public void getNoSuchEntity() throws IOException {
+        EntityModel entity = entityMgrService.getEntity("no-such-entity");
+
+        Assert.assertNull(entity);
     }
 
     @Test
-    public void getFlow() {
+    public void getFlow() throws IOException {
+        final String FLOW_NAME = "sjs-json-input-flow";
+        FlowModel flow = entityMgrService.getFlow(ENTITY, FlowType.INPUT, FLOW_NAME);
+        Assert.assertEquals(ENTITY, flow.entityName);
+        Assert.assertEquals(FLOW_NAME, flow.flowName);
+        Assert.assertEquals(FlowType.INPUT, flow.flowType);
+    }
+
+    @Test
+    public void getNoSuchFlow() throws IOException {
+        final String FLOW_NAME = "no-such-flow";
+        FlowModel flow = entityMgrService.getFlow(ENTITY, FlowType.INPUT, FLOW_NAME);
+        Assert.assertNull(flow);
+    }
+
+    /**
+     * Try getting a flow using the name of a valid flow, but requesting using the wrong type.
+     * @throws IOException
+     */
+    @Test
+    public void getFlowByWrongType() throws IOException {
+        final String FLOW_NAME = "sjs-json-input-flow";
+        FlowModel flow = entityMgrService.getFlow(ENTITY, FlowType.HARMONIZE, FLOW_NAME);
+        Assert.assertNull(flow);
     }
 
 }
