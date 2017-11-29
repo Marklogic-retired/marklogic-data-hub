@@ -33,12 +33,6 @@ public class EntityManagerServiceTest extends HubTestBase {
     private static Path projectDir = Paths.get(".", PROJECT_PATH);
 
     @Autowired
-    MockHttpServletRequest request;
-
-    @Autowired
-    MockHttpSession session;
-
-    @Autowired
     EntityManagerService entityMgrService;
 
     @BeforeClass
