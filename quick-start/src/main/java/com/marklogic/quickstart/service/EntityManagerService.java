@@ -68,7 +68,7 @@ public class EntityManagerService {
     private static final String UI_LAYOUT_FILE = "entities.layout.json";
     private static final String PLUGINS_DIR = "plugins";
     private static final String ENTITIES_DIR = "entities";
-    private static final String ENTITY_FILE_EXTENSION = ".entity.json";
+    public static final String ENTITY_FILE_EXTENSION = ".entity.json";
 
     @Autowired
     private FlowManagerService flowManagerService;
