@@ -1,5 +1,7 @@
 package com.marklogic.quickstart.service;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.flow.CodeFormat;
@@ -31,6 +33,7 @@ import java.util.List;
 public class EntityManagerServiceTest extends HubTestBase {
 
     private static String ENTITY = "test-entity";
+    private static String ENTITY2 = "test-entity2";
     private static Path projectDir = Paths.get(".", PROJECT_PATH);
 
     @Autowired
@@ -112,7 +115,23 @@ public class EntityManagerServiceTest extends HubTestBase {
     }
 
     @Test
-    public void saveEntity() {
+    public void saveEntity() throws IOException {
+        Path entityDir = projectDir.resolve("plugins/entities/" + ENTITY);
+        String entityFilename = ENTITY2 + EntityManagerService.ENTITY_FILE_EXTENSION;
+
+        JsonNode node = getJsonFromResource(entityFilename);
+
+        EntityModel entity = EntityModel.fromJson(entityFilename, node);
+        entity.setFilename(entityDir.resolve(entityFilename).toString());
+
+        entityMgrService.saveEntity(entity);
+
+        List<EntityModel> entities = entityMgrService.getEntities();
+
+        Assert.assertEquals(2, entities.size());
+        String[] expected = {ENTITY, ENTITY2};
+        String[] actual = { entities.get(0).getName(), entities.get(1).getName() };
+        Assert.assertArrayEquals(expected, actual);
     }
 
     @Test
@@ -157,4 +176,39 @@ public class EntityManagerServiceTest extends HubTestBase {
         Assert.assertNull(flow);
     }
 
+    /**
+     * Addresses https://github.com/marklogic-community/marklogic-data-hub/issues/558.
+     */
+    @Test
+    public void changeEntityName() throws IOException {
+        final String RENAMED_ENTITY = "renamed-entity";
+
+        // Get the original entity
+        EntityModel entity = entityMgrService.getEntity(ENTITY);
+
+        // Convert to String and change the title (the UI just changes the title property)
+        String strEntity = entity.toJson().toString();
+        strEntity = strEntity.replaceFirst("\"title\"\\s*:\\s*\"test-entity\"", "\"title\" : \"" + RENAMED_ENTITY + "\"");
+        strEntity = strEntity.replaceFirst("\"test-entity\"\\s*:", "\"" + RENAMED_ENTITY + "\" :");
+
+        // Convert back to JsonNode
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode renamed = mapper.readTree(strEntity);
+        EntityModel renamedEntity = EntityModel.fromJson(entity.getFilename(), renamed);
+
+        // Save the renamedEntity
+        entityMgrService.saveEntity(renamedEntity);
+
+        List<EntityModel> entities = entityMgrService.getEntities();
+        Assert.assertEquals(1, entities.size());
+
+        // TODO: try to load the flows, which will fail.
+        final String FLOW_NAME = "sjs-json-input-flow";
+        List<FlowModel> inputFlows = entities.get(0).getInputFlows();
+
+        Assert.assertEquals(RENAMED_ENTITY, inputFlows.get(0).entityName);
+        Assert.assertEquals(FLOW_NAME, inputFlows.get(0).flowName);
+        Assert.assertEquals(FlowType.INPUT, inputFlows.get(0).flowType);
+
+    }
 }

@@ -156,18 +156,41 @@ public class EntityManagerService {
     public EntityModel saveEntity(EntityModel entity) throws IOException {
         JsonNode node = entity.toJson();
         ObjectMapper objectMapper = new ObjectMapper();
-        String filename = entity.getFilename();
-        if (filename == null) {
-            String title = entity.getInfo().getTitle();
+        String fullpath = entity.getFilename();
+        String title = entity.getInfo().getTitle();
+
+        if (fullpath == null) {
             Path dir = Paths.get(envConfig().getProjectDir(), PLUGINS_DIR, ENTITIES_DIR, title);
             if (!dir.toFile().exists()) {
                 dir.toFile().mkdirs();
             }
-            filename = Paths.get(dir.toString(), title + ENTITY_FILE_EXTENSION).toString();
+            fullpath = Paths.get(dir.toString(), title + ENTITY_FILE_EXTENSION).toString();
+        }
+        else {
+            String filename = new File(fullpath).getName();
+            String entityFromFilename = filename.substring(0, filename.indexOf(ENTITY_FILE_EXTENSION));
+            if (!entityFromFilename.equals(entity.getName())) {
+                // The entity name was changed since the files were created. Update
+                // the path.
+
+                // Update the name of the entity definition file
+                File origFile = new File(fullpath);
+                File newFile = new File(origFile.getParent() + File.separator + title + ENTITY_FILE_EXTENSION);
+                origFile.renameTo(newFile);
+
+                // Update the directory name
+                File origDirectory = new File(origFile.getParent());
+                File newDirectory = new File(origDirectory.getParent() + File.separator + title);
+                origDirectory.renameTo(newDirectory);
+
+                fullpath = newDirectory.getAbsolutePath() + File.separator + title + ENTITY_FILE_EXTENSION;
+                entity.setFilename(fullpath);
+            }
         }
 
+
         String json = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(node);
-        FileUtils.writeStringToFile(new File(filename), json);
+        FileUtils.writeStringToFile(new File(fullpath), json);
 
         return entity;
     }
