@@ -202,7 +202,7 @@ public class EntityManagerServiceTest extends HubTestBase {
         List<EntityModel> entities = entityMgrService.getEntities();
         Assert.assertEquals(1, entities.size());
 
-        // TODO: try to load the flows, which will fail.
+        // Load the entity, then check the flows to make sure they know the right entity name
         final String FLOW_NAME = "sjs-json-input-flow";
         List<FlowModel> inputFlows = entities.get(0).getInputFlows();
 
