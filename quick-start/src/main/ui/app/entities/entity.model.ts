@@ -131,6 +131,7 @@ export class Entity {
         'name': null,
         'primaryKey': null,
         'properties': [],
+        'elementRangeIndex': [],
         'rangeIndex': [],
         'required': [],
         'wordLexicon': []

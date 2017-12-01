@@ -58,118 +58,6 @@ declare function hent:uber-model($models as object-node()*) as map:map
     $uber-model
 };
 
-declare function hent:search-options-generate(
-  $model as map:map
-)
-{
-  let $entity-type-names := map:keys(map:get($model, "definitions"))
-  let $seen-keys := map:map()
-  let $all-constraints := json:array()
-  let $all-tuples-definitions := json:array()
-  let $_ :=
-    for $entity-type-name in $entity-type-names
-    let $entity-type := map:get(map:get($model, "definitions"), $entity-type-name)
-    let $primary-key-name := map:get($entity-type, "primaryKey")
-    let $properties := map:get($entity-type, "properties")
-    let $tuples-range-definitions := json:array()
-    let $_range-constraints :=
-      for $property-name in map:get($entity-type, "rangeIndex") ! json:array-values(.)
-      let $specified-datatype := es-wrapper:resolve-datatype($model,$entity-type-name,$property-name)
-      let $property := map:get($properties, $property-name)
-      let $datatype := es-wrapper:indexable-datatype($specified-datatype)
-      let $collation := if ($datatype eq "string")
-        then attribute
-          collation {
-            head( (map:get($property, "collation"), "http://marklogic.com/collation/en") )
-          }
-        else ()
-      let $range-definition :=
-        <search:range type="xs:{ $datatype }" facet="true">
-          { $collation }
-          <search:path-index>/*:envelope/*:instance/{$entity-type-name}/{$property-name}</search:path-index>
-          <search:facet-option>limit=10</search:facet-option>
-          <search:facet-option>frequency-order</search:facet-option>
-          <search:facet-option>descending</search:facet-option>
-        </search:range>
-      let $constraint-template :=
-        <search:constraint name="{ $property-name } ">
-          {$range-definition}
-        </search:constraint>
-      (: the collecting array will be added once after accumulation :)
-      let $_ := json:array-push($tuples-range-definitions, $range-definition)
-      return
-        json:array-push($all-constraints, hent:wrap-duplicates($seen-keys, $property-name, $constraint-template))
-    let $_ :=
-      if (json:array-size($tuples-range-definitions) gt 1)
-      then
-        json:array-push($all-tuples-definitions,
-          <search:tuples name="{ $entity-type-name }">
-            {json:array-values($tuples-range-definitions)}
-          </search:tuples>)
-      else if (json:array-size($tuples-range-definitions) eq 1)
-      then
-        json:array-push($all-tuples-definitions,
-          <search:values name="{ $entity-type-name }">
-            {json:array-values($tuples-range-definitions)}
-          </search:values>)
-      else ()
-    let $_word-constraints :=
-      for $property-name in json:array-values(map:get($entity-type, "wordLexicon"))
-      return
-      json:array-push($all-constraints, hent:wrap-duplicates($seen-keys, $property-name,
-        <search:constraint name="{ $property-name } ">
-          <search:word>
-            <search:element ns="" name="{ $property-name }"/>
-          </search:word>
-        </search:constraint>))
-    return ()
-  let $types-expr := string-join( $entity-type-names, "|" )
-  let $type-constraint :=
-    <search:constraint name="entity-type">
-      <search:value>
-        <search:element ns="http://marklogic.com/entity-services" name="title"/>
-      </search:value>
-    </search:constraint>
-  return
-  <options xmlns="http://marklogic.com/appservices/search">
-    <constraint name="Collection">
-      <collection/>
-    </constraint>
-    {
-    $type-constraint,
-    json:array-values($all-constraints),
-    json:array-values($all-tuples-definitions),
-    comment {
-      "Uncomment to return no results for a blank search, rather than the default of all results&#10;",       xdmp:quote(
-    <term>
-      <empty apply="no-results"/>
-    </term>),
-      "&#10;"
-    },
-    <values name="uris">
-      <uri/>
-    </values>,
-    comment { "Change to 'filtered' to exclude false-positives in certain searches" },
-    <search-option>unfiltered</search-option>,
-    comment { "Modify document extraction to change results returned" },
-    <extract-document-data selected="include">
-      <extract-path>/*:envelope/*:instance/({ $types-expr })</extract-path>
-    </extract-document-data>,
-
-(:    comment { "Change or remove this additional-query to broaden search beyond entity instance documents" },
-    <additional-query>
-      <cts:element-query xmlns:cts="http://marklogic.com/cts">
-      <cts:element xmlns:es="http://marklogic.com/entity-services">es:instance</cts:element>
-      <cts:true-query/>
-      </cts:element-query>
-    </additional-query>,:)
-    <return-facets>true</return-facets>,
-    comment { "To return snippets, comment out or remove this option" },
-    <transform-results apply="empty-snippet" />
-    }
-  </options>
-};
-
 declare function hent:wrap-duplicates(
     $duplicate-map as map:map,
     $property-name as xs:string,
@@ -187,84 +75,39 @@ declare function hent:wrap-duplicates(
         $item)
 };
 
+declare %private function hent:fix-options($nodes as node()*)
+{
+  for $n in $nodes
+  return
+    typeswitch($n)
+      case element() return
+        element { fn:node-name($n) } { hent:fix-options(($n/@*, $n/node())) }
+      case text() return
+        fn:replace($n, "es:", "*:")
+      default return $n
+};
+
 declare function hent:dump-search-options($entities as json:array)
 {
   let $uber-model := hent:uber-model(json:array-values($entities) ! xdmp:to-json(.)/object-node())
   return
-    hent:search-options-generate($uber-model)
+    (: call fix-options because of https://github.com/marklogic/entity-services/issues/359 :)
+    hent:fix-options(es-wrapper:search-options-generate($uber-model))
 };
 
 declare function hent:dump-indexes($entities as json:array)
 {
   let $uber-model := hent:uber-model(json:array-values($entities) ! xdmp:to-json(.)/object-node())
-  return
-    hent:database-properties-generate($uber-model)
-};
-
-declare function hent:database-properties-generate(
-  $model as map:map
-) as document-node()
-{
-  let $definitions := map:get($model, "definitions")
-  let $entity-type-names := map:keys($definitions)
-  let $range-path-indexes := json:array()
-  let $word-lexicons := json:array()
-  let $range-element-indexes := json:array()
+  let $o := xdmp:from-json(es-wrapper:database-properties-generate($uber-model))
   let $_ :=
-    for $entity-type-name in $entity-type-names
-    let $entity-type := map:get($definitions, $entity-type-name)
-    let $properties := map:get($entity-type, "properties")
-    let $range-index-properties := map:get($entity-type, "rangeIndex")
-    return (
-      for $range-index-property in $range-index-properties ! json:array-values(.)
-      let $ri-map := json:object()
-      let $property := map:get($properties, $range-index-property)
-      let $specified-datatype := es-wrapper:resolve-datatype($model, $entity-type-name, $range-index-property)
-      let $datatype := es-wrapper:indexable-datatype($specified-datatype)
-      let $collation := head( (map:get($property, "collation"), "http://marklogic.com/collation/en") )
-      let $_ := map:put($ri-map, "collation", $collation)
-      let $invalid-values := "reject"
-      let $_ := map:put($ri-map, "invalid-values", $invalid-values)
-      let $_ := map:put($ri-map, "path-expression", "/*:envelope/*:instance/" || $entity-type-name || "/" || $range-index-property)
-      let $_ := map:put($ri-map, "range-value-positions", false())
-      let $_ := map:put($ri-map, "scalar-type", $datatype)
-      return json:array-push($range-path-indexes, $ri-map)
-      ,
-      let $word-lexicon-properties := map:get($entity-type, "wordLexicon")
-      for $word-lexicon-property in $word-lexicon-properties ! json:array-values(.)
-      let $wl-map := json:object()
-      let $property := map:get($properties, $word-lexicon-property)
-      let $collation := head( (map:get($property, "collation"), "http://marklogic.com/collation/en") )
-      let $_ := map:put($wl-map, "collation", $collation)
-      let $_ := map:put($wl-map, "localname", $word-lexicon-property)
-      let $_ := map:put($wl-map, "namespace-uri", "")
-      return json:array-push($word-lexicons, $wl-map)
-      ,
-      let $primary-key-property := map:get($entity-type, "primaryKey")
-      where $primary-key-property
-      return
-        let $pk-map := json:object()
-        let $property := map:get($properties, $primary-key-property)
-        let $specified-datatype := es-wrapper:resolve-datatype($model, $entity-type-name, $primary-key-property)
-        let $datatype := es-wrapper:indexable-datatype($specified-datatype)
-        let $collation := head( (map:get($property, "collation"), "http://marklogic.com/collation/en") )
-        let $_ := map:put($pk-map, "collation", $collation)
-        let $_ := map:put($pk-map, "localname", $primary-key-property)
-        let $_ := map:put($pk-map, "namespace-uri", "")
-        let $_ := map:put($pk-map, "range-value-positions", fn:false())
-        let $_ := map:put($pk-map, "scalar-type", $datatype)
-        let $_ := map:put($pk-map, "invalid-values", "reject")
-        return json:array-push($range-element-indexes, $pk-map)
-    )
-  let $path-namespaces := json:array()
-  let $pn := json:object()
-  let $_ := map:put($pn, "prefix", "es")
-  let $_ := map:put($pn, "namespace-uri", "http://marklogic.com/entity-services")
-  let $_ := json:array-push($path-namespaces, $pn)
-  let $database-properties := json:object()
-  let $_ := map:put($database-properties, "path-namespace", $path-namespaces)
-  let $_ := map:put($database-properties, "element-word-lexicon", $word-lexicons)
-  let $_ := map:put($database-properties, "range-path-index", $range-path-indexes)
-  let $_ := map:put($database-properties, "range-element-index", $range-element-indexes)
-  return xdmp:to-json($database-properties)
+    for $x in ("database-name", "schema-database", "triple-index", "collection-lexicon")
+    return
+      map:delete($o, $x)
+  let $_ :=
+    for $idx in json:array-values(map:get($o, "range-path-index"))
+    let $_ := xdmp:log(("idx:", $idx))
+    return
+      map:put($idx, "path-expression", fn:replace(map:get($idx, "path-expression"), "es:", "*:"))
+  return
+    xdmp:to-json($o)
 };

@@ -152,6 +152,10 @@ export class EntityEditorComponent {
   }
 
   isRangeIndex(key: string) {
+    return this.entity.definition.elementRangeIndex.indexOf(key) >= 0;
+  }
+
+  isPathRangeIndex(key: string) {
     return this.entity.definition.rangeIndex.indexOf(key) >= 0;
   }
 
@@ -174,6 +178,10 @@ export class EntityEditorComponent {
         if (this.entity.definition.primaryKey === value.name) {
           this.entity.definition.primaryKey = null;
         }
+
+        _.remove(this.entity.definition.elementRangeIndex, (index: string) => {
+          return (index === value.name);
+        });
 
         _.remove(this.entity.definition.rangeIndex, (index: string) => {
           return (index === value.name);
@@ -240,6 +248,15 @@ export class EntityEditorComponent {
   }
 
   toggleRangeIndex(property: PropertyType) {
+    let idx = this.entity.definition.elementRangeIndex.indexOf(property.name);
+    if (idx >= 0) {
+      this.entity.definition.elementRangeIndex.splice(idx, 1);
+    } else {
+      this.entity.definition.elementRangeIndex.push(property.name);
+    }
+  }
+
+  togglePathRangeIndex(property: PropertyType) {
     let idx = this.entity.definition.rangeIndex.indexOf(property.name);
     if (idx >= 0) {
       this.entity.definition.rangeIndex.splice(idx, 1);
@@ -249,6 +266,13 @@ export class EntityEditorComponent {
   }
 
   toggleRangeIndexSelection() {
+    if (this.selectedCount()) {
+      this.indexHeader = !this.indexHeader;
+      this.toggleArraySelection(this.indexHeader, 'elementRangeIndex');
+    }
+  }
+
+  togglePathRangeIndexSelection() {
     if (this.selectedCount()) {
       this.indexHeader = !this.indexHeader;
       this.toggleArraySelection(this.indexHeader, 'rangeIndex');

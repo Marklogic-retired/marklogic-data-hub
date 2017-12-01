@@ -9,24 +9,24 @@ import com.marklogic.hub.util.FileUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.custommonkey.xmlunit.XMLUnit;
-import org.json.JSONException;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.*;
+import org.junit.platform.runner.JUnitPlatform;
+import org.junit.runner.RunWith;
 import org.xml.sax.SAXException;
 
-import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
+@RunWith(JUnitPlatform.class)
 public class ScaffoldingTest extends HubTestBase {
 
     static Path projectPath = Paths.get(PROJECT_PATH).toAbsolutePath();
@@ -34,7 +34,7 @@ public class ScaffoldingTest extends HubTestBase {
     private static File pluginDir = projectPath.resolve("plugins").toFile();
     private static boolean isMl9 = true;
 
-    @BeforeClass
+    @BeforeAll
     public static void setup() throws IOException {
         XMLUnit.setIgnoreWhitespace(true);
 
@@ -46,7 +46,7 @@ public class ScaffoldingTest extends HubTestBase {
 
     }
 
-    @After
+    @AfterEach
     public void teardown() throws IOException {
         FileUtils.deleteDirectory(projectDir);
     }
@@ -70,62 +70,28 @@ public class ScaffoldingTest extends HubTestBase {
         assertFalse(flowDir.toFile().exists());
     }
 
-    @Test
-    public void createXqyInputFlow() throws IOException, SAXException {
-        createInputFlow(CodeFormat.XQUERY, DataFormat.XML, false);
+    @TestFactory
+    public List<DynamicTest> generateFlowTests() {
+        List<DynamicTest> tests = new ArrayList<>();
+        allCombos((codeFormat, dataFormat, flowType, useEs) -> {
+            String flowName = "test-" + flowType.toString() + "-" + codeFormat.toString() + "-" + dataFormat.toString();
+            tests.add(DynamicTest.dynamicTest(flowName, () -> {
+                FileUtils.deleteDirectory(projectDir);
+                createFlow(codeFormat, dataFormat, flowType, true);
+            }));
+        });
+
+        return tests;
     }
 
-    @Test
-    public void createXqyHarmonizeFlow() throws IOException, SAXException {
-        createHarmonizeFlow(CodeFormat.XQUERY, DataFormat.XML, false);
-    }
-
-    @Test
-    public void createSjsInputFlow() throws IOException, SAXException {
-        createInputFlow(CodeFormat.JAVASCRIPT, DataFormat.JSON, false);
-    }
-
-    @Test
-    public void createSjsHarmonizeFlow() throws IOException, SAXException {
-        createHarmonizeFlow(CodeFormat.JAVASCRIPT, DataFormat.JSON, false);
-    }
-
-    @Test
-    public void createESXqyInputFlow() throws IOException, SAXException {
-        if (isMl9) {
-            createInputFlow(CodeFormat.XQUERY, DataFormat.XML, true);
-        }
-    }
-
-    @Test
-    public void createESXqyHarmonizeFlow() throws IOException, SAXException {
-        if (isMl9) {
-            createHarmonizeFlow(CodeFormat.XQUERY, DataFormat.XML, true);
-        }
-    }
-
-    @Test
-    public void createESSjsInputFlow() throws IOException, SAXException {
-        if (isMl9) {
-            createInputFlow(CodeFormat.JAVASCRIPT, DataFormat.JSON, true);
-        }
-    }
-
-    @Test
-    public void createESSjsHarmonizeFlow() throws IOException, SAXException {
-        if (isMl9) {
-            createHarmonizeFlow(CodeFormat.JAVASCRIPT, DataFormat.JSON, true);
-        }
-    }
-
-    private void createFlow(CodeFormat codeFormat, DataFormat dataFormat, FlowType flowType, boolean useEsModel) throws IOException, SAXException {
+    private void createFlow(CodeFormat codeFormat, DataFormat dataFormat, FlowType flowType, boolean useEsModel) {
         String entityName = "my-fun-test";
         String flowName = "test-" + flowType.toString() + "-" + codeFormat.toString() + "-" + dataFormat.toString();
 
         Scaffolding scaffolding = new Scaffolding(projectDir.toString(), finalClient);
 
         Path entityDir = scaffolding.getEntityDir(entityName);
-        assertFalse(entityDir.toString() + " should exist but doesn't", entityDir.toFile().exists());
+        assertFalse(entityDir.toFile().exists(), entityDir.toString() + " should not exist but does");
 
         Path employeeDir = scaffolding.getEntityDir("employee");
         assertFalse(employeeDir.toFile().exists());
@@ -150,10 +116,14 @@ public class ScaffoldingTest extends HubTestBase {
         Path flowDescriptor = flowDir.resolve(flowName + ".properties");
         assertTrue(flowDescriptor.toFile().exists());
 
-        FileInputStream fis = new FileInputStream(flowDescriptor.toFile());
         Properties properties = new Properties();
-        properties.load(fis);
-        fis.close();
+        try {
+            FileInputStream fis = new FileInputStream(flowDescriptor.toFile());
+            properties.load(fis);
+            fis.close();
+        } catch(IOException e) {
+            throw new RuntimeException(e);
+        }
 
         int expectedPropertiesCount = flowType.equals(FlowType.INPUT) ? 4 : 6;
         assertEquals(expectedPropertiesCount, properties.keySet().size());
@@ -178,7 +148,12 @@ public class ScaffoldingTest extends HubTestBase {
         assertTrue(defaultContent.toFile().exists());
 
         if (useEsModel) {
-            assertEquals(getResource("scaffolding-test/es-" + flowType.toString() + "-content." + codeFormat.toString()).replaceAll(" +$", "").replaceAll("\n", "\r\n"), FileUtils.readFileToString(defaultContent.toFile()).replaceAll(" +\r\n", "\r\n"));
+            try {
+                assertEquals(getResource("scaffolding-test/es-" + flowType.toString() + "-content." + codeFormat.toString()).replaceAll(" +$", "").replaceAll("\n", "\r\n"), FileUtils.readFileToString(defaultContent.toFile()).replaceAll(" +\r\n", "\r\n"));
+            }
+            catch(IOException e) {
+                throw new RuntimeException(e);
+            }
         }
 
         Path defaultHeaders = flowDir.resolve("headers." + codeFormat.toString());
@@ -217,7 +192,7 @@ public class ScaffoldingTest extends HubTestBase {
         try {
             scaffolding.createRestExtension(entityName, extensionName, flowType, pluginCodeFormat);
         } catch (ScaffoldingValidationException e) {
-            Assert.fail(e.getMessage());
+            fail(e.getMessage());
         }
         Path restDir = Paths.get(pluginDir.toString(), "entities", entityName, flowType.toString(), "REST").toAbsolutePath().normalize();
         assertTrue(restDir.toFile().exists());
@@ -241,7 +216,7 @@ public class ScaffoldingTest extends HubTestBase {
         try {
             scaffolding.createRestExtension(entityName, extensionName, flowType, pluginCodeFormat);
         } catch (ScaffoldingValidationException e) {
-            Assert.fail(e.getMessage());
+            fail(e.getMessage());
         }
         Path restDir = Paths.get(pluginDir.toString(), "entities", entityName, flowType.toString(), "REST").toAbsolutePath().normalize();
         assertTrue(restDir.toFile().exists());
@@ -265,7 +240,7 @@ public class ScaffoldingTest extends HubTestBase {
         try {
             scaffolding.createRestTransform(entityName, transformName, flowType, pluginCodeFormat);
         } catch (ScaffoldingValidationException e) {
-            Assert.fail(e.getMessage());
+            fail(e.getMessage());
         }
         Path restDir = Paths.get(pluginDir.toString(), "entities", entityName, flowType.toString(), "REST").toAbsolutePath().normalize();
         assertTrue(restDir.toFile().exists());
@@ -285,7 +260,7 @@ public class ScaffoldingTest extends HubTestBase {
         try {
             scaffolding.createRestTransform(entityName, transformName, flowType, pluginCodeFormat);
         } catch (ScaffoldingValidationException e) {
-            Assert.fail(e.getMessage());
+            fail(e.getMessage());
         }
         Path restDir = Paths.get(pluginDir.toString(), "entities", entityName, flowType.toString(), "REST").toAbsolutePath().normalize();
         assertTrue(restDir.toFile().exists());
@@ -348,7 +323,7 @@ public class ScaffoldingTest extends HubTestBase {
 
     @Test
     public void updateLegacyFlowsFrom1x() {
-        allCombos(((codeFormat, dataFormat, flowType) -> {
+        allCombos(((codeFormat, dataFormat, flowType, useEs) -> {
             try {
                 FileUtils.deleteDirectory(projectDir);
                 updateLegacyFlow("1.1.5", "my-fun-test", codeFormat, dataFormat, flowType);
@@ -361,8 +336,10 @@ public class ScaffoldingTest extends HubTestBase {
 
     @Test
     public void updateLegacyFlowsFrom2x() {
-        allCombos(((codeFormat, dataFormat, flowType) -> {
-            updateLegacyFlow("2.0.1","my-fun-test", codeFormat, dataFormat, flowType);
+        allCombos(((codeFormat, dataFormat, flowType, useEs) -> {
+            if (!useEs) {
+                updateLegacyFlow("2.0.0-rc.1", "my-fun-test", codeFormat, dataFormat, flowType);
+            }
         }));
     }
 }

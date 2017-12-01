@@ -117,7 +117,9 @@ declare function plugin:extract-instance-Employee(
     $source as node()?
 ) as map:map
 {
+  let $id as xs:string := ()
   let $name as xs:string? := ()
+  let $salary as xs:decimal? := ()
 
   (: return the in-memory instance :)
   (: using the XQuery 3.0 syntax... :)
@@ -125,7 +127,9 @@ declare function plugin:extract-instance-Employee(
   let $_ := (
     map:put($model, '$type', 'Employee'),
     map:put($model, '$version', '0.0.1'),
-    es:optional($model, 'name', $name)
+    map:put($model, 'id', $id),
+    es:optional($model, 'name', $name),
+    es:optional($model, 'salary', $salary)
   )
 
   (: if you prefer the xquery 3.1 version with the => operator....
@@ -134,7 +138,9 @@ declare function plugin:extract-instance-Employee(
     json:object()
       =>map:with('$type', 'Employee')
       =>map:with('$version', '0.0.1')
+      =>map:with('id', $id)
       =>es:optional('name', $name)
+      =>es:optional('salary', $salary)
   :)
   return
     $model

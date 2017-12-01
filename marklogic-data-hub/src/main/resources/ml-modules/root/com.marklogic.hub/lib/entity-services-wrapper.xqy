@@ -19,6 +19,19 @@ module namespace es-wrapper = "http://marklogic.com/data-hub/es-wrapper";
 
 declare option xdmp:mapping "false";
 
+declare function es-wrapper:search-options-generate($model)
+{
+  xdmp:eval('
+    import module namespace es = "http://marklogic.com/entity-services"
+      at "/MarkLogic/entity-services/entity-services.xqy";
+
+    declare variable $model external;
+
+    es:search-options-generate($model)
+  ',
+  map:entry("model", $model))
+};
+
 declare function es-wrapper:database-properties-generate($model)
 {
   xdmp:eval('

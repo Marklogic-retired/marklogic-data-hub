@@ -38,7 +38,7 @@ import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual;
 import static org.junit.jupiter.api.Assertions.*;
 
 interface CreateFlowListener {
-    void onFlowCreated(CodeFormat codeFormat, DataFormat dataFormat, FlowType flowType, String srcDir, Path flowDir);
+    void onFlowCreated(CodeFormat codeFormat, DataFormat dataFormat, FlowType flowType, String srcDir, Path flowDir, boolean useEs);
 }
 
 class Tuple<X, Y> {
@@ -110,35 +110,41 @@ public class EndToEndFlowTests extends HubTestBase {
         enableDebugging();
 
         isMl9 = getMlMajorVersion() == 9;
-        scaffolding = new Scaffolding(projectDir.toString(), stagingClient);
+        scaffolding = new Scaffolding(projectDir.toString(), finalClient);
         scaffolding.createEntity(ENTITY);
 
         scaffoldFlows("scaffolded");
 
-        createFlows("with-error", (codeFormat, dataFormat, flowType, srcDir, flowDir) -> {
+        createFlows("with-error", (codeFormat, dataFormat, flowType, srcDir, flowDir, useES) -> {
+            copyFile(srcDir + "main-" + flowType.toString() + "." + codeFormat.toString(), flowDir.resolve("main." + codeFormat.toString()));
+            if (useES) {
+                copyFile(srcDir + "es-content-" + flowType.toString() + "-" + dataFormat.toString() + "." + codeFormat.toString(), flowDir.resolve("content." + codeFormat.toString()));
+                copyFile(srcDir + "es-headers" + "." + codeFormat.toString(), flowDir.resolve("headers." + codeFormat.toString()));
+                copyFile(srcDir + "es-triples" + "." + codeFormat.toString(), flowDir.resolve("triples." + codeFormat.toString()));
+                copyFile(srcDir + "es-writer" + "." + codeFormat.toString(), flowDir.resolve("writer." + codeFormat.toString()));
+            }
+            copyFile(srcDir + "extra-plugin." + codeFormat.toString(), flowDir.resolve("extra-plugin." + codeFormat.toString()));
+        });
+
+        createFlows("extra-plugin", (codeFormat, dataFormat, flowType, srcDir, flowDir, useES) -> {
             copyFile(srcDir + "main-" + flowType.toString() + "." + codeFormat.toString(), flowDir.resolve("main." + codeFormat.toString()));
             copyFile(srcDir + "extra-plugin." + codeFormat.toString(), flowDir.resolve("extra-plugin." + codeFormat.toString()));
         });
 
-        createFlows("extra-plugin", (codeFormat, dataFormat, flowType, srcDir, flowDir) -> {
-            copyFile(srcDir + "main-" + flowType.toString() + "." + codeFormat.toString(), flowDir.resolve("main." + codeFormat.toString()));
-            copyFile(srcDir + "extra-plugin." + codeFormat.toString(), flowDir.resolve("extra-plugin." + codeFormat.toString()));
-        });
-
-        allCombos((codeFormat, dataFormat, flowType) -> {
+        allCombos((codeFormat, dataFormat, flowType, useEs) -> {
             if (codeFormat.equals(CodeFormat.XQUERY)) {
-                createFlow("triples-array", codeFormat, dataFormat, flowType, (codeFormat1, dataFormat1, flowType1, srcDir, flowDir) -> {
+                createFlow("triples-array", codeFormat, dataFormat, flowType, useEs, (codeFormat1, dataFormat1, flowType1, srcDir, flowDir, useEs2) -> {
                     copyFile(srcDir + "triples-json-array.xqy", flowDir.resolve("triples.xqy"));
                 });
             }
         });
 
-        allCombos((codeFormat, dataFormat, flowType) -> {
-            createLegacyFlow("legacy", codeFormat, dataFormat, flowType);
+        allCombos((codeFormat, dataFormat, flowType, useEs) -> {
+            createFlow("has a space ", codeFormat, dataFormat, flowType, useEs, null);
         });
 
-        allCombos((codeFormat, dataFormat, flowType) -> {
-            createFlow("has a space ", codeFormat, dataFormat, flowType, null);
+        allCombos((codeFormat, dataFormat, flowType, useEs) -> {
+            createLegacyFlow("legacy", codeFormat, dataFormat, flowType, useEs);
         });
 
         flowManager = new FlowManager(getHubConfig());
@@ -147,15 +153,15 @@ public class EndToEndFlowTests extends HubTestBase {
         assertEquals(8, flowManager.updateLegacyFlows("2.0.1").size());
         assertEquals(0, flowManager.getLegacyFlows().size());
 
-        allCombos((codeFormat, dataFormat, flowType) -> {
-            createLegacyFlow("1x-legacy", codeFormat, dataFormat, flowType);
+        allCombos((codeFormat, dataFormat, flowType, useEs) -> {
+            createLegacyFlow("1x-legacy", codeFormat, dataFormat, flowType, useEs);
         });
 
         assertEquals(8, legacyFlows.size(), String.join("\n", legacyFlows));
         assertEquals(8, flowManager.updateLegacyFlows("1.1.5").size());
         assertEquals(0, flowManager.getLegacyFlows().size());
 
-        getDataHub().installUserModules();
+        getDataHub().installUserModules(true);
 
         stagingDataMovementManager = stagingClient.newDataMovementManager();
         finalDataMovementManager = finalClient.newDataMovementManager();
@@ -171,120 +177,126 @@ public class EndToEndFlowTests extends HubTestBase {
         DataHub dataHub = getDataHub();
         List<DynamicTest> tests = new ArrayList<>();
 
-        allCombos((codeFormat, dataFormat, flowType) -> {
+        allCombos((codeFormat, dataFormat, flowType, useEs) -> {
+            if (useEs) {
+                return;
+            }
             String prefix = "legacy";
-            String flowName = getFlowName(prefix, codeFormat, dataFormat, flowType);
+            String flowName = getFlowName(prefix, codeFormat, dataFormat, flowType, useEs);
             if (flowType.equals(FlowType.INPUT)) {
                 tests.add(DynamicTest.dynamicTest(flowName + " MLCP", () -> {
                     Map<String, Object> options = new HashMap<>();
                     FinalCounts finalCounts = new FinalCounts(1, 0, 1, 1, 0, 0, 1, 0, 0, 0, "FINISHED");
-                    testInputFlowViaMlcp(prefix, "", stagingClient, codeFormat, dataFormat, options, finalCounts);
+                    testInputFlowViaMlcp(prefix, useEs ? "-es" : "", stagingClient, codeFormat, dataFormat, useEs, options, finalCounts);
                 }));
                 tests.add(DynamicTest.dynamicTest(flowName + " MLCP", () -> {
                     Map<String, Object> options = new HashMap<>();
                     FinalCounts finalCounts = new FinalCounts(0, 1, 1, 1, 0, 0, 1, 0, 0, 0, "FINISHED");
-                    testInputFlowViaMlcp(prefix, "", finalClient, codeFormat, dataFormat, options, finalCounts);
+                    testInputFlowViaMlcp(prefix, useEs ? "-es" : "", finalClient, codeFormat, dataFormat, useEs, options, finalCounts);
                 }));
                 tests.add(DynamicTest.dynamicTest(flowName + " REST", () -> {
                     Map<String, Object> options = new HashMap<>();
                     FinalCounts finalCounts = new FinalCounts(1, 0, 1, 0, 0, 0, 0, 0, 0, 0, "FINISHED");
-                    testInputFlowViaREST(prefix, "", codeFormat, dataFormat, options, finalCounts);
+                    testInputFlowViaREST(prefix, useEs ? "-es" : "", codeFormat, dataFormat, useEs, options, finalCounts);
                 }));
             }
             else {
                 Map<String, Object> options = new HashMap<>();
                 tests.add(DynamicTest.dynamicTest(flowName + " wait", () -> {
                     FinalCounts finalCounts = new FinalCounts(TEST_SIZE, TEST_SIZE + 1, TEST_SIZE + 1, 1, TEST_SIZE, 0, TEST_SIZE, 0, TEST_SIZE/BATCH_SIZE, 0, "FINISHED");
-                    testHarmonizeFlow(prefix, codeFormat, dataFormat, options, stagingClient, HubConfig.DEFAULT_FINAL_NAME, finalCounts, true);
+                    testHarmonizeFlow(prefix, codeFormat, dataFormat, useEs, options, stagingClient, HubConfig.DEFAULT_FINAL_NAME, finalCounts, true);
                 }));
                 tests.add(DynamicTest.dynamicTest(flowName + " wait Reverse Dbs", () -> {
                     FinalCounts finalCounts = new FinalCounts(TEST_SIZE + 1, TEST_SIZE, TEST_SIZE + 1, 1, TEST_SIZE, 0, TEST_SIZE, 0, TEST_SIZE/BATCH_SIZE, 0, "FINISHED");
-                    testHarmonizeFlow(prefix, codeFormat, dataFormat, options, finalClient, HubConfig.DEFAULT_STAGING_NAME, finalCounts, true);
+                    testHarmonizeFlow(prefix, codeFormat, dataFormat, useEs, options, finalClient, HubConfig.DEFAULT_STAGING_NAME, finalCounts, true);
                 }));
                 tests.add(DynamicTest.dynamicTest(flowName + " no-wait", () -> {
                     FinalCounts finalCounts = new FinalCounts(TEST_SIZE, TEST_SIZE + 1, TEST_SIZE + 1, 1, TEST_SIZE, 0, TEST_SIZE, 0, TEST_SIZE/BATCH_SIZE, 0, "FINISHED");
-                    testHarmonizeFlow(prefix, codeFormat, dataFormat, options, stagingClient, HubConfig.DEFAULT_FINAL_NAME, finalCounts, false);
+                    testHarmonizeFlow(prefix, codeFormat, dataFormat, useEs, options, stagingClient, HubConfig.DEFAULT_FINAL_NAME, finalCounts, false);
                 }));
             }
         });
 
 
-        allCombos((codeFormat, dataFormat, flowType) -> {
+        allCombos((codeFormat, dataFormat, flowType, useEs) -> {
             String prefix = "has a space ";
-            String flowName = getFlowName(prefix, codeFormat, dataFormat, flowType);
+            String flowName = getFlowName(prefix, codeFormat, dataFormat, flowType, useEs);
             if (flowType.equals(FlowType.INPUT)) {
                 tests.add(DynamicTest.dynamicTest(flowName + " MLCP", () -> {
                     Map<String, Object> options = new HashMap<>();
                     FinalCounts finalCounts = new FinalCounts(1, 0, 1, 1, 0, 0, 1, 0, 0, 0, "FINISHED");
-                    testInputFlowViaMlcp(prefix, "", stagingClient, codeFormat, dataFormat, options, finalCounts);
+                    testInputFlowViaMlcp(prefix, useEs ? "-es" : "", stagingClient, codeFormat, dataFormat, useEs, options, finalCounts);
                 }));
                 tests.add(DynamicTest.dynamicTest(flowName + " REST", () -> {
                     Map<String, Object> options = new HashMap<>();
                     FinalCounts finalCounts = new FinalCounts(1, 0, 1, 0, 0, 0, 0, 0, 0, 0, "FINISHED");
-                    testInputFlowViaREST(prefix, "", codeFormat, dataFormat, options, finalCounts);
+                    testInputFlowViaREST(prefix, useEs ? "-es" : "", codeFormat, dataFormat, useEs, options, finalCounts);
                 }));
             }
             else {
                 Map<String, Object> options = new HashMap<>();
                 tests.add(DynamicTest.dynamicTest(flowName + " wait", () -> {
                     FinalCounts finalCounts = new FinalCounts(TEST_SIZE, TEST_SIZE + 1, TEST_SIZE + 1, 1, TEST_SIZE, 0, TEST_SIZE, 0, TEST_SIZE/BATCH_SIZE, 0, "FINISHED");
-                    testHarmonizeFlow(prefix, codeFormat, dataFormat, options, stagingClient, HubConfig.DEFAULT_FINAL_NAME, finalCounts, true);
+                    testHarmonizeFlow(prefix, codeFormat, dataFormat, useEs, options, stagingClient, HubConfig.DEFAULT_FINAL_NAME, finalCounts, true);
                 }));
             }
         });
 
-        allCombos((codeFormat, dataFormat, flowType) -> {
+        allCombos((codeFormat, dataFormat, flowType, useEs) -> {
+            if (useEs) {
+                return;
+            }
             String prefix = "1x-legacy";
-            String flowName = getFlowName(prefix, codeFormat, dataFormat, flowType);
+            String flowName = getFlowName(prefix, codeFormat, dataFormat, flowType, useEs);
             if (flowType.equals(FlowType.INPUT)) {
                 tests.add(DynamicTest.dynamicTest(flowName + " MLCP", () -> {
                     Map<String, Object> options = new HashMap<>();
                     FinalCounts finalCounts = new FinalCounts(1, 0, 1, 1, 0, 0, 1, 0, 0, 0, "FINISHED");
-                    testInputFlowViaMlcp(prefix, "", stagingClient, codeFormat, dataFormat, options, finalCounts);
+                    testInputFlowViaMlcp(prefix, useEs ? "-es" : "", stagingClient, codeFormat, dataFormat, useEs, options, finalCounts);
                 }));
                 tests.add(DynamicTest.dynamicTest(flowName + " MLCP", () -> {
                     Map<String, Object> options = new HashMap<>();
                     FinalCounts finalCounts = new FinalCounts(0, 1, 1, 1, 0, 0, 1, 0, 0, 0, "FINISHED");
-                    testInputFlowViaMlcp(prefix, "", finalClient, codeFormat, dataFormat, options, finalCounts);
+                    testInputFlowViaMlcp(prefix, useEs ? "-es" : "", finalClient, codeFormat, dataFormat, useEs, options, finalCounts);
                 }));
                 tests.add(DynamicTest.dynamicTest(flowName + " REST", () -> {
                     Map<String, Object> options = new HashMap<>();
                     FinalCounts finalCounts = new FinalCounts(1, 0, 1, 0, 0, 0, 0, 0, 0, 0, "FINISHED");
-                    testInputFlowViaREST(prefix, "", codeFormat, dataFormat, options, finalCounts);
+                    testInputFlowViaREST(prefix, useEs ? "-es" : "", codeFormat, dataFormat, useEs, options, finalCounts);
                 }));
             }
             else {
                 Map<String, Object> options = new HashMap<>();
                 tests.add(DynamicTest.dynamicTest(flowName + " wait", () -> {
                     FinalCounts finalCounts = new FinalCounts(TEST_SIZE, TEST_SIZE + 1, TEST_SIZE + 1, 1, TEST_SIZE, 0, TEST_SIZE, 0, TEST_SIZE/BATCH_SIZE, 0, "FINISHED");
-                    testHarmonizeFlow(prefix, codeFormat, dataFormat, options, stagingClient, HubConfig.DEFAULT_FINAL_NAME, finalCounts, true);
+                    testHarmonizeFlow(prefix, codeFormat, dataFormat, useEs, options, stagingClient, HubConfig.DEFAULT_FINAL_NAME, finalCounts, true);
                 }));
                 tests.add(DynamicTest.dynamicTest(flowName + " wait Reverse Dbs", () -> {
                     FinalCounts finalCounts = new FinalCounts(TEST_SIZE + 1, TEST_SIZE, TEST_SIZE + 1, 1, TEST_SIZE, 0, TEST_SIZE, 0, TEST_SIZE/BATCH_SIZE, 0, "FINISHED");
-                    testHarmonizeFlow(prefix, codeFormat, dataFormat, options, finalClient, HubConfig.DEFAULT_STAGING_NAME, finalCounts, true);
+                    testHarmonizeFlow(prefix, codeFormat, dataFormat, useEs, options, finalClient, HubConfig.DEFAULT_STAGING_NAME, finalCounts, true);
                 }));
                 tests.add(DynamicTest.dynamicTest(flowName + " no-wait", () -> {
                     FinalCounts finalCounts = new FinalCounts(TEST_SIZE, TEST_SIZE + 1, TEST_SIZE + 1, 1, TEST_SIZE, 0, TEST_SIZE, 0, TEST_SIZE/BATCH_SIZE, 0, "FINISHED");
-                    testHarmonizeFlow(prefix, codeFormat, dataFormat, options, stagingClient, HubConfig.DEFAULT_FINAL_NAME, finalCounts, false);
+                    testHarmonizeFlow(prefix, codeFormat, dataFormat, useEs, options, stagingClient, HubConfig.DEFAULT_FINAL_NAME, finalCounts, false);
                 }));
             }
         });
 
-        allCombos((codeFormat, dataFormat, flowType) -> {
+        allCombos((codeFormat, dataFormat, flowType, useEs) -> {
             String prefix = "extra-plugin";
-            String flowName = getFlowName(prefix, codeFormat, dataFormat, flowType);
+            String flowName = getFlowName(prefix, codeFormat, dataFormat, flowType, useEs);
             if (flowType.equals(FlowType.INPUT)) {
                 tests.add(DynamicTest.dynamicTest(flowName + " MLCP", () -> {
                     Map<String, Object> options = new HashMap<>();
                     options.put("extraPlugin", true);
                     FinalCounts finalCounts = new FinalCounts(1, 0, 1, 1, 0, 0, 1, 0, 0, 0, "FINISHED");
-                    testInputFlowViaMlcp(prefix, "", stagingClient, codeFormat, dataFormat, options, finalCounts);
+                    testInputFlowViaMlcp(prefix, useEs ? "-es" : "", stagingClient, codeFormat, dataFormat, useEs, options, finalCounts);
                 }));
                 tests.add(DynamicTest.dynamicTest(flowName + " REST", () -> {
                     Map<String, Object> options = new HashMap<>();
                     options.put("extraPlugin", true);
                     FinalCounts finalCounts = new FinalCounts(1, 0, 1, 0, 0, 0, 0, 0, 0, 0, "FINISHED");
-                    testInputFlowViaREST(prefix, "", codeFormat, dataFormat, options, finalCounts);
+                    testInputFlowViaREST(prefix, useEs ? "-es" : "", codeFormat, dataFormat, useEs, options, finalCounts);
                 }));
             }
             else {
@@ -293,7 +305,7 @@ public class EndToEndFlowTests extends HubTestBase {
                     options.put("extraPlugin", true);
                     FinalCounts finalCounts = new FinalCounts(TEST_SIZE, TEST_SIZE + 1, TEST_SIZE + 1, 1, TEST_SIZE, 0, TEST_SIZE, 0, TEST_SIZE/BATCH_SIZE, 0, "FINISHED");
                     finalCounts.optionsFile = "options-extra";
-                    testHarmonizeFlow(prefix, codeFormat, dataFormat, options, stagingClient, HubConfig.DEFAULT_FINAL_NAME, finalCounts, true);
+                    testHarmonizeFlow(prefix, codeFormat, dataFormat, useEs, options, stagingClient, HubConfig.DEFAULT_FINAL_NAME, finalCounts, true);
                 }));
 
                 tests.add(DynamicTest.dynamicTest(flowName + " extra error", () -> {
@@ -301,84 +313,86 @@ public class EndToEndFlowTests extends HubTestBase {
                     options.put("extraPlugin", true);
                     options.put("extraGoBoom", true);
                     FinalCounts finalCounts = new FinalCounts(TEST_SIZE, TEST_SIZE, TEST_SIZE + 1, 1, TEST_SIZE - 1, 1, TEST_SIZE - 1, 1, TEST_SIZE/BATCH_SIZE, 0, "FINISHED_WITH_ERRORS");
-                    testHarmonizeFlowWithFailedMain(prefix, codeFormat, dataFormat, options, stagingClient, HubConfig.DEFAULT_FINAL_NAME, finalCounts);
+                    testHarmonizeFlowWithFailedMain(prefix, codeFormat, dataFormat, useEs, options, stagingClient, HubConfig.DEFAULT_FINAL_NAME, finalCounts);
                 }));
             }
         });
 
-        allCombos((codeFormat, dataFormat, flowType) -> {
+        Path entityDir = projectDir.resolve("plugins").resolve("entities").resolve(ENTITY);
+
+        allCombos((codeFormat, dataFormat, flowType, useEs) -> {
             String prefix = "scaffolded";
-            String flowName = getFlowName(prefix, codeFormat, dataFormat, flowType);
-            if (flowType.equals(FlowType.INPUT)) {
+            String flowName = getFlowName(prefix, codeFormat, dataFormat, flowType, useEs);
+            if (flowType.equals(FlowType.INPUT) && useEs) {
                 tests.add(DynamicTest.dynamicTest(flowName + " MLCP", () -> {
                     Map<String, Object> options = new HashMap<>();
                     FinalCounts finalCounts = new FinalCounts(1, 0, 1, 1, 0, 0, 1, 0, 0, 0, "FINISHED");
-                    testInputFlowViaMlcp(prefix, "", stagingClient, codeFormat, dataFormat, options, finalCounts);
+                    testInputFlowViaMlcp(prefix, useEs ? "-es" : "", stagingClient, codeFormat, dataFormat, useEs, options, finalCounts);
                 }));
                 tests.add(DynamicTest.dynamicTest(flowName + " REST", () -> {
                     Map<String, Object> options = new HashMap<>();
                     FinalCounts finalCounts = new FinalCounts(1, 0, 1, 0, 0, 0, 0, 0, 0, 0, "FINISHED");
-                    testInputFlowViaREST(prefix, "", codeFormat, dataFormat, options, finalCounts);
+                    testInputFlowViaREST(prefix, useEs ? "-es" : "", codeFormat, dataFormat, useEs, options, finalCounts);
                 }));
             }
             else {
                 Map<String, Object> options = new HashMap<>();
                 tests.add(DynamicTest.dynamicTest(flowName + " wait", () -> {
                     FinalCounts finalCounts = new FinalCounts(TEST_SIZE, TEST_SIZE, TEST_SIZE + 1, 1, TEST_SIZE, 0, TEST_SIZE, 0, TEST_SIZE / BATCH_SIZE, 0, "FINISHED");
-                    testHarmonizeFlow(prefix, codeFormat, dataFormat, options, stagingClient, HubConfig.DEFAULT_FINAL_NAME, finalCounts, true);
+                    testHarmonizeFlow(prefix, codeFormat, dataFormat, useEs, options, stagingClient, HubConfig.DEFAULT_FINAL_NAME, finalCounts, true);
                 }));
                 tests.add(DynamicTest.dynamicTest(flowName + " wait Reverse DBs", () -> {
                     FinalCounts finalCounts = new FinalCounts(TEST_SIZE, TEST_SIZE, TEST_SIZE + 1, 1, TEST_SIZE, 0, TEST_SIZE, 0, TEST_SIZE / BATCH_SIZE, 0, "FINISHED");
-                    testHarmonizeFlow(prefix, codeFormat, dataFormat, options, stagingClient, HubConfig.DEFAULT_FINAL_NAME, finalCounts, true);
+                    testHarmonizeFlow(prefix, codeFormat, dataFormat, useEs, options, stagingClient, HubConfig.DEFAULT_FINAL_NAME, finalCounts, true);
                 }));
                 tests.add(DynamicTest.dynamicTest(flowName + " no-wait", () -> {
                     FinalCounts finalCounts = new FinalCounts(TEST_SIZE, TEST_SIZE, TEST_SIZE + 1, 1, TEST_SIZE, 0, TEST_SIZE, 0, TEST_SIZE / BATCH_SIZE, 0, "FINISHED");
-                    testHarmonizeFlow(prefix, codeFormat, dataFormat, options, stagingClient, HubConfig.DEFAULT_FINAL_NAME, finalCounts, true);
+                    testHarmonizeFlow(prefix, codeFormat, dataFormat, useEs, options, stagingClient, HubConfig.DEFAULT_FINAL_NAME, finalCounts, true);
                 }));
             }
         });
 
-        allCombos((codeFormat, dataFormat, flowType) -> {
+        allCombos((codeFormat, dataFormat, flowType, useEs) -> {
             String prefix = "triples-array";
-            String flowName = getFlowName(prefix, codeFormat, dataFormat, flowType);
+            String flowName = getFlowName(prefix, codeFormat, dataFormat, flowType, useEs);
             if (codeFormat.equals(CodeFormat.XQUERY)) {
                 if (flowType.equals(FlowType.INPUT)) {
                     tests.add(DynamicTest.dynamicTest(flowName + " MLCP", () -> {
                         Map<String, Object> options = new HashMap<>();
                         FinalCounts finalCounts = new FinalCounts(1, 0, 1, 1, 0, 0, 1, 0, 0, 0, "FINISHED");
-                        testInputFlowViaMlcp(prefix, "", stagingClient, codeFormat, dataFormat, options, finalCounts);
+                        testInputFlowViaMlcp(prefix, useEs ? "-es" : "", stagingClient, codeFormat, dataFormat, useEs, options, finalCounts);
                     }));
 
                     tests.add(DynamicTest.dynamicTest(flowName + " REST", () -> {
                         Map<String, Object> options = new HashMap<>();
                         FinalCounts finalCounts = new FinalCounts(1, 0, 1, 0, 0, 0, 1, 0, 0, 0, "FINISHED");
-                        testInputFlowViaREST(prefix, "", codeFormat, dataFormat, options, finalCounts);
+                        testInputFlowViaREST(prefix, useEs ? "-es" : "", codeFormat, dataFormat, useEs, options, finalCounts);
                     }));
                 } else {
                     Map<String, Object> options = new HashMap<>();
                     FinalCounts finalCounts = new FinalCounts(TEST_SIZE, TEST_SIZE + 1, TEST_SIZE + 1, 1, TEST_SIZE, 0, TEST_SIZE, 0, TEST_SIZE / BATCH_SIZE, 0, "FINISHED");
                     tests.add(DynamicTest.dynamicTest(flowName, () -> {
-                        testHarmonizeFlow(prefix, codeFormat, dataFormat, options, stagingClient, HubConfig.DEFAULT_FINAL_NAME, finalCounts, true);
+                        testHarmonizeFlow(prefix, codeFormat, dataFormat, useEs, options, stagingClient, HubConfig.DEFAULT_FINAL_NAME, finalCounts, true);
                     }));
                 }
             }
         });
 
-        allCombos(((codeFormat, dataFormat, flowType) -> {
+        allCombos(((codeFormat, dataFormat, flowType, useEs) -> {
             String prefix = "with-error";
-            String flowName = getFlowName(prefix, codeFormat, dataFormat, flowType);
+            String flowName = getFlowName(prefix, codeFormat, dataFormat, flowType, useEs);
             if (flowType.equals(FlowType.INPUT)) {
                 for (String plugin : new String[] { "main", "content", "headers", "triples"}) {
                     Map<String, Object> options = new HashMap<>();
                     options.put(plugin + "GoBoom", true);
                     tests.add(DynamicTest.dynamicTest(flowName + ": " + plugin + " error MLCP", () -> {
                         FinalCounts finalCounts = new FinalCounts(0, 0, 1, 1, 0, 0, 0, 0, 0, 0, "FAILED");
-                        testInputFlowViaMlcp(prefix, "-2", stagingClient, codeFormat, dataFormat, options, finalCounts);
+                        testInputFlowViaMlcp(prefix, "-2", stagingClient, codeFormat, dataFormat, useEs, options, finalCounts);
                     }));
 
                     tests.add(DynamicTest.dynamicTest(flowName + ": " + plugin + " error REST", () -> {
                         FinalCounts finalCounts = new FinalCounts(0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "FAILED");
-                        testInputFlowViaREST(prefix, "-2", codeFormat, dataFormat, options, finalCounts);
+                        testInputFlowViaREST(prefix, "-2", codeFormat, dataFormat, useEs, options, finalCounts);
                     }));
                 }
             }
@@ -387,7 +401,7 @@ public class EndToEndFlowTests extends HubTestBase {
                     Map<String, Object> options = new HashMap<>();
                     options.put("collectorGoBoom", true);
                     FinalCounts finalCounts = new FinalCounts(TEST_SIZE, 0, 1, 1, 0, 0, 0, 0, 0, 0, "FAILED");
-                    testHarmonizeFlowWithFailedMain(prefix, codeFormat, dataFormat, options, stagingClient, HubConfig.DEFAULT_FINAL_NAME, finalCounts);
+                    testHarmonizeFlowWithFailedMain(prefix, codeFormat, dataFormat, useEs, options, stagingClient, HubConfig.DEFAULT_FINAL_NAME, finalCounts);
                 }));
 
                 FinalCounts finalCounts = new FinalCounts(TEST_SIZE, TEST_SIZE, TEST_SIZE + 1, 1, TEST_SIZE - 1, 1, TEST_SIZE - 1, 1, TEST_SIZE/BATCH_SIZE, 0, "FINISHED_WITH_ERRORS");
@@ -395,23 +409,27 @@ public class EndToEndFlowTests extends HubTestBase {
                     tests.add(DynamicTest.dynamicTest(flowName + ": " + plugin + " error", () -> {
                         Map<String, Object> options = new HashMap<>();
                         options.put(plugin + "GoBoom", true);
-                        testHarmonizeFlowWithFailedMain(prefix, codeFormat, dataFormat, options, stagingClient, HubConfig.DEFAULT_FINAL_NAME, finalCounts);
+                        if (useEs) {
+                            finalCounts.finalCount = TEST_SIZE - 1;
+                        }
+                        else {
+                            finalCounts.finalCount = TEST_SIZE;
+                        }
+                        testHarmonizeFlowWithFailedMain(prefix, codeFormat, dataFormat, useEs, options, stagingClient, HubConfig.DEFAULT_FINAL_NAME, finalCounts);
                     }));
                 }
             }
         }));
 
-        Path entityDir = projectDir.resolve("plugins").resolve("entities").resolve(ENTITY);
-
-        allCombos(((codeFormat, dataFormat, flowType) -> {
+        allCombos(((codeFormat, dataFormat, flowType, useEs) -> {
             String prefix = "validation-no-errors";
-            String flowName = getFlowName(prefix, codeFormat, dataFormat, flowType);
+            String flowName = getFlowName(prefix, codeFormat, dataFormat, flowType, useEs);
             tests.add(DynamicTest.dynamicTest(flowName, () -> {
                 // clear out the previous flows from above
                 FileUtils.deleteDirectory(entityDir.resolve("input").toFile());
                 FileUtils.deleteDirectory(entityDir.resolve("harmonize").toFile());
 
-                createFlow(prefix, codeFormat, dataFormat, flowType, null);
+                createFlow(prefix, codeFormat, dataFormat, flowType, useEs, null);
                 dataHub.clearUserModules();
                 dataHub.installUserModules(true);
 
@@ -425,16 +443,16 @@ public class EndToEndFlowTests extends HubTestBase {
             }));
         }));
 
-        allCombos(((codeFormat, dataFormat, flowType) -> {
+        allCombos(((codeFormat, dataFormat, flowType, useEs) -> {
             String prefix = "validation-content-errors";
-            String flowName = getFlowName(prefix, codeFormat, dataFormat, flowType);
+            String flowName = getFlowName(prefix, codeFormat, dataFormat, flowType, useEs);
             tests.add(DynamicTest.dynamicTest(flowName, () -> {
                 // clear out the previous flows from above
                 FileUtils.deleteDirectory(entityDir.resolve("input").toFile());
                 FileUtils.deleteDirectory(entityDir.resolve("harmonize").toFile());
 
-                createFlow(prefix, codeFormat, dataFormat, flowType, (codeFormat1, dataFormat1, flowType1, srcDir, flowDir) -> {
-                    copyFile(srcDir + "content-syntax-error." + codeFormat.toString(), flowDir.resolve("content." + codeFormat.toString()));
+                createFlow(prefix, codeFormat, dataFormat, flowType, useEs, (codeFormat1, dataFormat1, flowType1, srcDir, flowDir, useEs1) -> {
+                    copyFile(srcDir + "content-syntax-error." + codeFormat1.toString(), flowDir.resolve("content." + codeFormat1.toString()));
                 });
                 dataHub.clearUserModules();
                 dataHub.installUserModules(true);
@@ -457,15 +475,15 @@ public class EndToEndFlowTests extends HubTestBase {
             }));
         }));
 
-        allCombos(((codeFormat, dataFormat, flowType) -> {
+        allCombos(((codeFormat, dataFormat, flowType, useEs) -> {
             String prefix = "validation-headers-errors";
-            String flowName = getFlowName(prefix, codeFormat, dataFormat, flowType);
+            String flowName = getFlowName(prefix, codeFormat, dataFormat, flowType, useEs);
             tests.add(DynamicTest.dynamicTest(flowName, () -> {
                 // clear out the previous flows from above
                 FileUtils.deleteDirectory(entityDir.resolve("input").toFile());
                 FileUtils.deleteDirectory(entityDir.resolve("harmonize").toFile());
 
-                createFlow(prefix, codeFormat, dataFormat, flowType, (codeFormat1, dataFormat1, flowType1, srcDir, flowDir) -> {
+                createFlow(prefix, codeFormat, dataFormat, flowType, useEs, (codeFormat1, dataFormat1, flowType1, srcDir, flowDir, useEs1) -> {
                     copyFile(srcDir + "headers-syntax-error." + codeFormat.toString(), flowDir.resolve("headers." + codeFormat.toString()));
                 });
                 dataHub.clearUserModules();
@@ -488,15 +506,15 @@ public class EndToEndFlowTests extends HubTestBase {
             }));
         }));
 
-        allCombos(((codeFormat, dataFormat, flowType) -> {
+        allCombos(((codeFormat, dataFormat, flowType, useEs) -> {
             String prefix = "validation-triples-errors";
-            String flowName = getFlowName(prefix, codeFormat, dataFormat, flowType);
+            String flowName = getFlowName(prefix, codeFormat, dataFormat, flowType, useEs);
             tests.add(DynamicTest.dynamicTest(flowName, () -> {
                 // clear out the previous flows from above
                 FileUtils.deleteDirectory(entityDir.resolve("input").toFile());
                 FileUtils.deleteDirectory(entityDir.resolve("harmonize").toFile());
 
-                createFlow(prefix, codeFormat, dataFormat, flowType, (codeFormat1, dataFormat1, flowType1, srcDir, flowDir) -> {
+                createFlow(prefix, codeFormat, dataFormat, flowType, useEs, (codeFormat1, dataFormat1, flowType1, srcDir, flowDir, useEs1) -> {
                     copyFile(srcDir + "triples-syntax-error." + codeFormat.toString(), flowDir.resolve("triples." + codeFormat.toString()));
                 });
                 dataHub.clearUserModules();
@@ -519,15 +537,15 @@ public class EndToEndFlowTests extends HubTestBase {
             }));
         }));
 
-        allCombos(((codeFormat, dataFormat, flowType) -> {
+        allCombos(((codeFormat, dataFormat, flowType, useEs) -> {
             String prefix = "validation-main-errors";
-            String flowName = getFlowName(prefix, codeFormat, dataFormat, flowType);
+            String flowName = getFlowName(prefix, codeFormat, dataFormat, flowType, useEs);
             tests.add(DynamicTest.dynamicTest(flowName, () -> {
                 // clear out the previous flows from above
                 FileUtils.deleteDirectory(entityDir.resolve("input").toFile());
                 FileUtils.deleteDirectory(entityDir.resolve("harmonize").toFile());
 
-                createFlow(prefix, codeFormat, dataFormat, flowType, (codeFormat1, dataFormat1, flowType1, srcDir, flowDir) -> {
+                createFlow(prefix, codeFormat, dataFormat, flowType, useEs, (codeFormat1, dataFormat1, flowType1, srcDir, flowDir, useEs1) -> {
                     copyFile(srcDir + "main-syntax-error." + codeFormat.toString(), flowDir.resolve("main." + codeFormat.toString()));
                 });
                 dataHub.clearUserModules();
@@ -548,16 +566,16 @@ public class EndToEndFlowTests extends HubTestBase {
         }));
 
 
-        allCombos(((codeFormat, dataFormat, flowType) -> {
+        allCombos(((codeFormat, dataFormat, flowType, useEs) -> {
             if (flowType.equals(FlowType.HARMONIZE)) {
                 String prefix = "validation-collector-errors";
-                String flowName = getFlowName(prefix, codeFormat, dataFormat, flowType);
+                String flowName = getFlowName(prefix, codeFormat, dataFormat, flowType, useEs);
                 tests.add(DynamicTest.dynamicTest(flowName, () -> {
                     // clear out the previous flows from above
                     FileUtils.deleteDirectory(entityDir.resolve("input").toFile());
                     FileUtils.deleteDirectory(entityDir.resolve("harmonize").toFile());
 
-                    createFlow(prefix, codeFormat, dataFormat, flowType, (codeFormat1, dataFormat1, flowType1, srcDir, flowDir) -> {
+                    createFlow(prefix, codeFormat, dataFormat, flowType, useEs, (codeFormat1, dataFormat1, flowType1, srcDir, flowDir, useEs1) -> {
                         copyFile(srcDir + "collector-syntax-error." + codeFormat.toString(), flowDir.resolve("collector." + codeFormat.toString()));
                     });
                     dataHub.clearUserModules();
@@ -584,16 +602,16 @@ public class EndToEndFlowTests extends HubTestBase {
             }
         }));
 
-        allCombos(((codeFormat, dataFormat, flowType) -> {
+        allCombos(((codeFormat, dataFormat, flowType, useEs) -> {
             if (flowType.equals(FlowType.HARMONIZE)) {
                 String prefix = "validation-writer-errors";
-                String flowName = getFlowName(prefix, codeFormat, dataFormat, flowType);
+                String flowName = getFlowName(prefix, codeFormat, dataFormat, flowType, useEs);
                 tests.add(DynamicTest.dynamicTest(flowName, () -> {
                     // clear out the previous flows from above
                     FileUtils.deleteDirectory(entityDir.resolve("input").toFile());
                     FileUtils.deleteDirectory(entityDir.resolve("harmonize").toFile());
 
-                    createFlow(prefix, codeFormat, dataFormat, flowType, (codeFormat1, dataFormat1, flowType1, srcDir, flowDir) -> {
+                    createFlow(prefix, codeFormat, dataFormat, flowType, useEs, (codeFormat1, dataFormat1, flowType1, srcDir, flowDir, useEs1) -> {
                         copyFile(srcDir + "writer-syntax-error." + codeFormat.toString(), flowDir.resolve("writer." + codeFormat.toString()));
                     });
                     dataHub.clearUserModules();
@@ -616,13 +634,16 @@ public class EndToEndFlowTests extends HubTestBase {
         return tests;
     }
 
-    private static String getFlowName(String prefix, CodeFormat codeFormat, DataFormat dataFormat, FlowType flowType) {
-        return prefix + "-" + flowType.toString() + "-" + codeFormat.toString() + "-" + dataFormat.toString();
+    private static String getFlowName(String prefix, CodeFormat codeFormat, DataFormat dataFormat, FlowType flowType, boolean useEs) {
+        return prefix + "-" + flowType.toString() + "-" + codeFormat.toString() + "-" + dataFormat.toString() + (useEs ? "-es" : "" );
     }
 
-    private static void createLegacyFlow(String prefix, CodeFormat codeFormat, DataFormat dataFormat, FlowType flowType) {
+    private static void createLegacyFlow(String prefix, CodeFormat codeFormat, DataFormat dataFormat, FlowType flowType, boolean useEs) {
 
-        String flowName = getFlowName(prefix, codeFormat, dataFormat, flowType);
+        if (useEs) {
+            return;
+        }
+        String flowName = getFlowName(prefix, codeFormat, dataFormat, flowType, useEs);
         Path flowDir = projectDir.resolve("plugins").resolve("entities").resolve(ENTITY).resolve(flowType.toString()).resolve(flowName);
 
         if (flowType.equals(FlowType.HARMONIZE)) {
@@ -652,27 +673,45 @@ public class EndToEndFlowTests extends HubTestBase {
     }
 
     private static void scaffoldFlows(String prefix) {
-        allCombos(((codeFormat, dataFormat, flowType) -> {
-            scaffoldFlow(prefix, codeFormat, dataFormat, flowType);
+        allCombos(((codeFormat, dataFormat, flowType, useEs) -> {
+            scaffoldFlow(prefix, codeFormat, dataFormat, flowType, useEs);
         }));
     }
 
-    private static void scaffoldFlow(String prefix, CodeFormat codeFormat, DataFormat dataFormat, FlowType flowType) {
-        String flowName = getFlowName(prefix, codeFormat, dataFormat, flowType);
-        scaffolding.createFlow(ENTITY, flowName, flowType, codeFormat, dataFormat);
+    private static void scaffoldFlow(String prefix, CodeFormat codeFormat, DataFormat dataFormat, FlowType flowType, boolean useEs) {
+        Path entityDir = projectDir.resolve("plugins").resolve("entities").resolve(ENTITY);
+        if (useEs) {
+            copyFile("e2e-test/" + ENTITY + ".entity.json", entityDir.resolve(ENTITY + ".entity.json"));
+            getDataHub().installUserModules(true);
+        }
+
+        String flowName = getFlowName(prefix, codeFormat, dataFormat, flowType, useEs);
+        scaffolding.createFlow(ENTITY, flowName, flowType, codeFormat, dataFormat, useEs);
+
+        if (useEs) {
+            String srcDir = "e2e-test/" + codeFormat.toString() + "-flow/";
+            Path flowDir = entityDir.resolve(flowType.toString()).resolve(flowName);
+            copyFile(srcDir + "es-content-" + flowType.toString() + "-" + dataFormat.toString() + "." + codeFormat.toString(), flowDir.resolve("content." + codeFormat.toString()));
+        }
     }
 
     private static void createFlows(String prefix, CreateFlowListener listener) {
-        allCombos(((codeFormat, dataFormat, flowType) -> {
-            createFlow(prefix, codeFormat, dataFormat, flowType, listener);
+        allCombos(((codeFormat, dataFormat, flowType, useEs) -> {
+            createFlow(prefix, codeFormat, dataFormat, flowType, useEs, listener);
         }));
     }
 
-    private static void createFlow(String prefix, CodeFormat codeFormat, DataFormat dataFormat, FlowType flowType, CreateFlowListener listener) {
-        String flowName = getFlowName(prefix, codeFormat, dataFormat, flowType);
-        Path flowDir = projectDir.resolve("plugins").resolve("entities").resolve(ENTITY).resolve(flowType.toString()).resolve(flowName);
+    private static void createFlow(String prefix, CodeFormat codeFormat, DataFormat dataFormat, FlowType flowType, boolean useEs, CreateFlowListener listener) {
+        String flowName = getFlowName(prefix, codeFormat, dataFormat, flowType, useEs);
+        Path entityDir = projectDir.resolve("plugins").resolve("entities").resolve(ENTITY);
+        Path flowDir = entityDir.resolve(flowType.toString()).resolve(flowName);
 
-        scaffolding.createFlow(ENTITY, flowName, flowType, codeFormat, dataFormat);
+        if (useEs) {
+            copyFile("e2e-test/" + ENTITY + ".entity.json", entityDir.resolve(ENTITY + ".entity.json"));
+            getDataHub().installUserModules(true);
+        }
+
+        scaffolding.createFlow(ENTITY, flowName, flowType, codeFormat, dataFormat, useEs);
 
         String srcDir = "e2e-test/" + codeFormat.toString() + "-flow/";
         if (flowType.equals(FlowType.HARMONIZE)) {
@@ -680,18 +719,22 @@ public class EndToEndFlowTests extends HubTestBase {
             copyFile(srcDir + "writer." + codeFormat.toString(), flowDir.resolve("writer." + codeFormat.toString()));
         }
 
-        if (codeFormat.equals(CodeFormat.JAVASCRIPT)) {
-            copyFile(srcDir + "headers." + codeFormat.toString(), flowDir.resolve("headers." + codeFormat.toString()));
+        if (useEs) {
+            copyFile(srcDir + "es-content-" + flowType.toString() + "-" + dataFormat.toString() + "." + codeFormat.toString(), flowDir.resolve("content." + codeFormat.toString()));
         }
         else {
-            copyFile(srcDir + "headers-" + dataFormat.toString() + "." + codeFormat.toString(), flowDir.resolve("headers." + codeFormat.toString()));
+            if (codeFormat.equals(CodeFormat.JAVASCRIPT)) {
+                copyFile(srcDir + "headers." + codeFormat.toString(), flowDir.resolve("headers." + codeFormat.toString()));
+            } else {
+                copyFile(srcDir + "headers-" + dataFormat.toString() + "." + codeFormat.toString(), flowDir.resolve("headers." + codeFormat.toString()));
+            }
+
+            copyFile(srcDir + "content-" + flowType.toString() + "." + codeFormat.toString(), flowDir.resolve("content." + codeFormat.toString()));
+            copyFile(srcDir + "triples." + codeFormat.toString(), flowDir.resolve("triples." + codeFormat.toString()));
         }
 
-        copyFile(srcDir + "content-" + flowType.toString() + "." + codeFormat.toString(), flowDir.resolve("content." + codeFormat.toString()));
-        copyFile(srcDir + "triples." + codeFormat.toString(), flowDir.resolve("triples." + codeFormat.toString()));
-
         if (listener != null) {
-            listener.onFlowCreated(codeFormat, dataFormat, flowType, srcDir, flowDir);
+            listener.onFlowCreated(codeFormat, dataFormat, flowType, srcDir, flowDir, useEs);
         }
     }
 
@@ -699,7 +742,7 @@ public class EndToEndFlowTests extends HubTestBase {
         FileUtil.copy(getResourceStream(srcDir), dstDir.toFile());
     }
 
-    private void installDocs(DataFormat dataFormat, String collection, DatabaseClient srcClient) {
+    private void installDocs(DataFormat dataFormat, String collection, DatabaseClient srcClient, boolean useEs) {
         DataMovementManager mgr = stagingDataMovementManager;
         if (srcClient.getDatabase().equals(HubConfig.DEFAULT_FINAL_NAME)) {
             mgr = finalDataMovementManager;
@@ -721,7 +764,11 @@ public class EndToEndFlowTests extends HubTestBase {
 
         DocumentMetadataHandle metadataHandle = new DocumentMetadataHandle();
         metadataHandle.getCollections().add(collection);
-        StringHandle handle = new StringHandle(getResource("e2e-test/staged." + dataFormat.toString()));
+        String filename = "staged";
+        if (useEs) {
+            filename = "input/input-es";
+        }
+        StringHandle handle = new StringHandle(getResource("e2e-test/" + filename + "." + dataFormat.toString()));
         String dataFormatString = dataFormat.toString();
         for (int i = 0; i < TEST_SIZE; i++) {
             writeBatcher.add("/input-" + i + "." + dataFormatString, metadataHandle, handle);
@@ -741,10 +788,10 @@ public class EndToEndFlowTests extends HubTestBase {
         }
     }
 
-    private void testInputFlowViaMlcp(String prefix, String fileSuffix, DatabaseClient databaseClient, CodeFormat codeFormat, DataFormat dataFormat, Map<String, Object> options, FinalCounts finalCounts) {
+    private void testInputFlowViaMlcp(String prefix, String fileSuffix, DatabaseClient databaseClient, CodeFormat codeFormat, DataFormat dataFormat, boolean useEs, Map<String, Object> options, FinalCounts finalCounts) {
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_TRACE_NAME, HubConfig.DEFAULT_JOB_NAME);
 
-        String flowName = getFlowName(prefix, codeFormat, dataFormat, FlowType.INPUT);
+        String flowName = getFlowName(prefix, codeFormat, dataFormat, FlowType.INPUT, useEs);
 
         assertEquals(0, getStagingDocCount());
         assertEquals(0, getFinalDocCount());
@@ -783,14 +830,25 @@ public class EndToEndFlowTests extends HubTestBase {
         }
         logger.error(mlcpRunner.getProcessOutput());
 
-        assertEquals(finalCounts.stagingCount, getStagingDocCount());
-        assertEquals(finalCounts.finalCount, getFinalDocCount());
-        assertEquals(finalCounts.tracingCount, getTracingDocCount());
-        assertEquals(finalCounts.jobCount, getJobDocCount());
+        int stagingCount = getStagingDocCount();
+        int finalCount = getFinalDocCount();
+        int tracingCount = getTracingDocCount();
+        int jobsCount = getJobDocCount();
+
+        assertEquals(finalCounts.stagingCount, stagingCount);
+        assertEquals(finalCounts.finalCount, finalCount);
+        assertEquals(finalCounts.tracingCount, tracingCount);
+        assertEquals(finalCounts.jobCount, jobsCount);
 
         if (databaseClient.getDatabase().equals(HubConfig.DEFAULT_STAGING_NAME) && finalCounts.stagingCount == 1) {
             String filename = "final";
-            if (prefix.equals("scaffolded")) {
+            if (useEs && prefix.equals("triples-array")) {
+                filename = "input/input-es-trips";
+            }
+            else if (useEs) {
+                filename = "es";
+            }
+            else if (prefix.equals("scaffolded")) {
                 filename = "staged";
             }
             else if (prefix.equals("1x-legacy")) {
@@ -799,7 +857,7 @@ public class EndToEndFlowTests extends HubTestBase {
             if (dataFormat.equals(DataFormat.JSON)) {
                 String expected = getResource("e2e-test/" + filename + "." + dataFormat.toString());
                 String actual = stagingDocMgr.read("/input" + fileSuffix + "." + dataFormat.toString()).next().getContent(new StringHandle()).get();
-                assertJsonEqual(expected, actual, false);
+                 assertJsonEqual(expected, actual, false);
             } else {
                 Document expected = getXmlFromResource("e2e-test/" + filename + "." + dataFormat.toString());
                 Document actual = stagingDocMgr.read("/input" + fileSuffix + "." + dataFormat.toString()).next().getContent(new DOMHandle()).get();
@@ -835,15 +893,20 @@ public class EndToEndFlowTests extends HubTestBase {
         assertEquals(finalCounts.jobStatus, node.get("status").asText());
     }
 
-    private void testInputFlowViaREST(String prefix, String fileSuffix, CodeFormat codeFormat, DataFormat dataFormat, Map<String, Object> options, FinalCounts finalCounts) {
+    private void testInputFlowViaREST(String prefix, String fileSuffix, CodeFormat codeFormat, DataFormat dataFormat, boolean useEs, Map<String, Object> options, FinalCounts finalCounts) {
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_TRACE_NAME, HubConfig.DEFAULT_JOB_NAME);
 
-        String flowName = getFlowName(prefix, codeFormat, dataFormat, FlowType.INPUT);
+        String flowName = getFlowName(prefix, codeFormat, dataFormat, FlowType.INPUT, useEs);
 
-        assertEquals(0, getStagingDocCount());
-        assertEquals(0, getFinalDocCount());
-        assertEquals(0, getTracingDocCount());
-        assertEquals(0, getJobDocCount());
+        int stagingCount = getStagingDocCount();
+        int finalCount = getFinalDocCount();
+        int tracingCount = getTracingDocCount();
+        int jobsCount = getJobDocCount();
+
+        assertEquals(0, stagingCount);
+        assertEquals(0, finalCount);
+        assertEquals(0, tracingCount);
+        assertEquals(0, jobsCount);
 
         ServerTransform serverTransform = new ServerTransform("run-flow");
         serverTransform.addParameter("job-id", UUID.randomUUID().toString());
@@ -851,7 +914,7 @@ public class EndToEndFlowTests extends HubTestBase {
         serverTransform.addParameter("flow-name", flowName);
         String optionString = toJsonString(options);
         serverTransform.addParameter("options", optionString);
-        FileHandle handle = new FileHandle(getResourceFile("e2e-test/input/input." + dataFormat.toString()));
+        FileHandle handle = new FileHandle(getResourceFile("e2e-test/input/input" + fileSuffix + "." + dataFormat.toString()));
         Format format = null;
         switch (dataFormat) {
             case XML:
@@ -874,14 +937,25 @@ public class EndToEndFlowTests extends HubTestBase {
 
         }
 
-        assertEquals(finalCounts.stagingCount, getStagingDocCount());
-        assertEquals(finalCounts.finalCount, getFinalDocCount());
-        assertEquals(finalCounts.tracingCount, getTracingDocCount());
-        assertEquals(finalCounts.jobCount, getJobDocCount());
+        stagingCount = getStagingDocCount();
+        finalCount = getFinalDocCount();
+        tracingCount = getTracingDocCount();
+        jobsCount = getJobDocCount();
+
+        assertEquals(finalCounts.stagingCount, stagingCount);
+        assertEquals(finalCounts.finalCount, finalCount);
+        assertEquals(finalCounts.tracingCount, tracingCount);
+        assertEquals(finalCounts.jobCount, jobsCount);
 
         if (finalCounts.stagingCount == 1) {
             String filename = "final";
-            if (prefix.equals("scaffolded")) {
+            if (useEs && prefix.equals("triples-array")) {
+                filename = "input/input-es-trips";
+            }
+            else if (useEs) {
+                filename = "es";
+            }
+            else if (prefix.equals("scaffolded")) {
                 filename = "staged";
             }
             else if (prefix.equals("1x-legacy")) {
@@ -904,7 +978,7 @@ public class EndToEndFlowTests extends HubTestBase {
         Vector<String> completed, Vector<String> failed,
         Map<String, Object> options,
         DatabaseClient srcClient, String destDb,
-        boolean waitForCompletion)
+        boolean useEs, boolean waitForCompletion)
     {
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_TRACE_NAME, HubConfig.DEFAULT_JOB_NAME);
 
@@ -913,7 +987,7 @@ public class EndToEndFlowTests extends HubTestBase {
         assertEquals(0, getTracingDocCount());
         assertEquals(0, getJobDocCount());
 
-        installDocs(dataFormat, ENTITY, srcClient);
+        installDocs(dataFormat, ENTITY, srcClient, useEs);
 
         Flow harmonizeFlow = flowManager.getFlow(ENTITY, flowName, FlowType.HARMONIZE);
 
@@ -946,22 +1020,27 @@ public class EndToEndFlowTests extends HubTestBase {
     }
 
     private void testHarmonizeFlow(
-        String prefix, CodeFormat codeFormat, DataFormat dataFormat,
+        String prefix, CodeFormat codeFormat, DataFormat dataFormat, boolean useEs,
         Map<String, Object> options, DatabaseClient srcClient, String destDb,
         FinalCounts finalCounts, boolean waitForCompletion)
     {
-        String flowName = getFlowName(prefix, codeFormat, dataFormat, FlowType.HARMONIZE);
+        String flowName = getFlowName(prefix, codeFormat, dataFormat, FlowType.HARMONIZE, useEs);
 
         Vector<String> completed = new Vector<>();
         Vector<String> failed = new Vector<>();
 
-        Tuple<FlowRunner, JobTicket> tuple = runHarmonizeFlow(flowName, dataFormat, completed, failed, options, srcClient, destDb, waitForCompletion);
+        Tuple<FlowRunner, JobTicket> tuple = runHarmonizeFlow(flowName, dataFormat, completed, failed, options, srcClient, destDb, useEs, waitForCompletion);
 
         if (waitForCompletion) {
-            assertEquals(finalCounts.stagingCount, getStagingDocCount());
-            assertEquals(finalCounts.finalCount, getFinalDocCount());
-            assertEquals(finalCounts.tracingCount, getTracingDocCount());
-            assertEquals(finalCounts.jobCount, getJobDocCount());
+            int stagingCount = getStagingDocCount();
+            int finalCount = getFinalDocCount();
+            int tracingCount = getTracingDocCount();
+            int jobsCount = getJobDocCount();
+
+            assertEquals(finalCounts.stagingCount, stagingCount);
+            assertEquals(finalCounts.finalCount, finalCount);
+            assertEquals(finalCounts.tracingCount, tracingCount);
+            assertEquals(finalCounts.jobCount, jobsCount);
 
             assertEquals(finalCounts.completedCount, completed.size());
             assertEquals(finalCounts.failedCount, failed.size());
@@ -972,7 +1051,14 @@ public class EndToEndFlowTests extends HubTestBase {
             }
 
             String filename = "final";
-            if (prefix.equals("scaffolded")) {
+            if (useEs && prefix.equals("triples-array")) {
+                filename = "input/input-es-trips";
+            }
+
+            else if (useEs == true && !prefix.equals("legacy")) {
+                filename = "es";
+            }
+            else if (prefix.equals("scaffolded")) {
                 filename = "staged";
             }
             else if (prefix.equals("1x-legacy")) {
@@ -1001,7 +1087,7 @@ public class EndToEndFlowTests extends HubTestBase {
             assertEquals(finalCounts.jobFailedBatches, node.get("failedBatches").asInt());
             assertEquals(finalCounts.jobStatus, node.get("status").asText());
 
-            if (!prefix.equals("scaffolded")) {
+            if (!prefix.equals("scaffolded") && !useEs) {
                 if (codeFormat.equals(CodeFormat.XQUERY)) {
                     Document optionsActual = mgr.read("/options-test.xml").next().getContent(new DOMHandle()).get();
                     Document optionsExpected = getXmlFromResource("e2e-test/" + finalCounts.optionsFile + ".xml");
@@ -1020,21 +1106,26 @@ public class EndToEndFlowTests extends HubTestBase {
     }
 
     private void testHarmonizeFlowWithFailedMain(
-        String prefix, CodeFormat codeFormat, DataFormat dataFormat,
+        String prefix, CodeFormat codeFormat, DataFormat dataFormat, boolean useEs,
         Map<String, Object> options, DatabaseClient srcClient, String destDb,
         FinalCounts finalCounts)
     {
-        String flowName = getFlowName(prefix, codeFormat, dataFormat, FlowType.HARMONIZE);
+        String flowName = getFlowName(prefix, codeFormat, dataFormat, FlowType.HARMONIZE, useEs);
 
         Vector<String> completed = new Vector<>();
         Vector<String> failed = new Vector<>();
 
-        Tuple<FlowRunner, JobTicket> tuple = runHarmonizeFlow(flowName, dataFormat, completed, failed, options, srcClient, destDb, true);
+        Tuple<FlowRunner, JobTicket> tuple = runHarmonizeFlow(flowName, dataFormat, completed, failed, options, srcClient, destDb, useEs, true);
 
-        assertEquals(finalCounts.stagingCount, getStagingDocCount());
-        assertEquals(finalCounts.finalCount, getFinalDocCount());
-        assertEquals(finalCounts.tracingCount, getTracingDocCount());
-        assertEquals(finalCounts.jobCount, getJobDocCount());
+        int stagingCount = getStagingDocCount();
+        int finalCount = getFinalDocCount();
+        int tracingCount = getTracingDocCount();
+        int jobsCount = getJobDocCount();
+
+        assertEquals(finalCounts.stagingCount, stagingCount);
+        assertEquals(finalCounts.finalCount, finalCount);
+        assertEquals(finalCounts.tracingCount, tracingCount);
+        assertEquals(finalCounts.jobCount, jobsCount);
 
         assertEquals(finalCounts.completedCount, completed.size());
         assertEquals(finalCounts.failedCount, failed.size());

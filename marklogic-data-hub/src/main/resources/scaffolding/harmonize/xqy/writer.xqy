@@ -15,7 +15,7 @@ declare option xdmp:mapping "false";
  :)
 declare function plugin:write(
   $id as xs:string,
-  $envelope as node(),
+  $envelope as item(),
   $options as map:map) as empty-sequence()
 {
   xdmp:document-insert($id, $envelope, xdmp:default-permissions(), map:get($options, "entity"))
