@@ -211,7 +211,7 @@ public class DataHub {
 
     public void initProject() {
         logger.info("Initializing the Hub Project");
-        hubConfig.getHubProject().init(hubConfig.getCustomTokens());
+        hubConfig.initHubProject();
     }
 
     /**
@@ -488,7 +488,17 @@ public class DataHub {
     }
 
     public String getMarkLogicVersion() {
-        return getAdminManager().getServerVersion();
+        // do it this way to avoid needing an admin user
+        // vs getAdminManager().getServerVersion() which needs admin :(
+        ServerEvaluationCall eval = hubConfig.newAppServicesClient().newServerEval();
+        String xqy = "xdmp:version()";
+        EvalResultIterator result = eval.xquery(xqy).eval();
+        if (result.hasNext()) {
+            return result.next().getString();
+        }
+        else {
+            throw new RuntimeException("Couldn't determine MarkLogic Version");
+        }
     }
 
     public static int versionCompare(String v1, String v2) {

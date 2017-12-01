@@ -15,7 +15,7 @@ declare option xdmp:mapping "false";
  :)
 declare function plugin:create-content(
   $id as xs:string,
-  $raw-content as node()?,
+  $raw-content as item()?,
   $options as map:map) as node()?
 {
   $raw-content

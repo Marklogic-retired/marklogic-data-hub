@@ -1,4 +1,4 @@
-<div layout-padding layout="column" layout-align="center center">
+<div class="jobs-page" layout-padding layout="column" layout-align="center center">
   <h1>Jobs</h1>
 
   <div class="search-box" flex layout-align="center center" layout="row">
@@ -35,6 +35,11 @@
               <th class="mdl-data-table__cell--non-numeric">Duration</th>
               <th class="mdl-data-table__cell--non-numeric">Output</th>
               <th class="mdl-data-table__cell--non-numeric"></th>
+              <th class="mdl-data-table__cell--non-numeric">
+                <mdl-button class="delete-jobs"
+                  mdl-tooltip="Delete selected jobs and associated traces"
+                  (click)="deleteJobs()"><i class="fa fa-trash-o"></i></mdl-button>
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -44,7 +49,7 @@
               <td>{{job.entityName}}</td>
               <td>{{job.flowName}}</td>
               <td>{{job.status}}</td>
-              <td>{{job.startTime | amTimeAgo}}</td>
+              <td>{{job.startTime | datePipe}}</td>
               <td><span *ngIf="job.endTime">{{getDuration(job)}} seconds</span></td>
               <td>
                 <mdl-button
@@ -59,6 +64,11 @@
                   (click)="showTraces(job.jobId)">
                   <i (click)="showTraces(job.jobId)" class="fa fa-flash"></i>
                 </mdl-button>
+              </td>
+              <td class="job-delete-checkbox">
+                <mdl-checkbox
+                  ng-checked="jobsToDelete.indexOf(job.jobId) != -1"
+                  (click)="toggleDeleteJob(job.jobId)"></mdl-checkbox>
               </td>
             </tr>
           </tbody>

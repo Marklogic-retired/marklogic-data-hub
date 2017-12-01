@@ -1,0 +1,15 @@
+{
+  "info" : {
+    "title" : "test-entity2",
+    "version" : "0.0.1"
+  },
+  "definitions" : {
+    "test-entity2" : {
+      "required" : [ ],
+      "rangeIndex" : [ ],
+      "wordLexicon" : [ ],
+      "properties" : {
+      }
+    }
+  }
+}

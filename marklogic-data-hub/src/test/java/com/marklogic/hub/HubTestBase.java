@@ -217,40 +217,39 @@ public class HubTestBase {
 
     protected static HubConfig getHubConfig(String projectDir) {
         HubConfig hubConfig = HubConfig.hubFromEnvironment(projectDir, "local");
-        hubConfig.host = host;
         hubConfig.stagingPort = stagingPort;
         hubConfig.finalPort = finalPort;
         hubConfig.tracePort = tracePort;
         hubConfig.jobPort = jobPort;
-        hubConfig.setUsername(user);
-        hubConfig.setPassword(password);
+        hubConfig.getAppConfig().setAppServicesUsername(user);
+        hubConfig.getAppConfig().setAppServicesPassword(password);
         return hubConfig;
     }
 
-    protected static void installHub() {
-        installHub(null);
-    }
-
-    protected static void installHub(String properties) {
+    public static void createProjectDir() {
         try {
             File projectDir = new File(PROJECT_PATH);
             if (!projectDir.isDirectory() || !projectDir.exists()) {
                 getDataHub().initProject();
             }
+            String properties = "mlUsername=admin\nmlPassword=admin";
             if (properties != null) {
                 Path gradle_properties = projectDir.toPath().resolve("gradle.properties");
                 String fileContents = FileUtils.readFileToString(gradle_properties.toFile());
                 fileContents += properties;
                 FileUtils.writeStringToFile(gradle_properties.toFile(), fileContents);
             }
-
-            if (!isInstalled) {
-                getDataHub().install();
-                isInstalled = true;
-            }
         }
         catch (IOException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    protected static void installHub() {
+        createProjectDir();
+        if (!isInstalled) {
+            getDataHub().install();
+            isInstalled = true;
         }
     }
 
@@ -263,6 +262,7 @@ public class HubTestBase {
     }
 
     protected static void uninstallHub() {
+        createProjectDir();
         getDataHub().uninstall();
         deleteProjectDir();
         isInstalled = false;
@@ -287,8 +287,12 @@ public class HubTestBase {
     }
 
     protected static String getModulesFile(String uri) {
-        String contents = modMgr.read(uri).next().getContent(new StringHandle()).get();
-        return contents.replaceFirst("(\\(:|//)\\s+cache\\sbuster:.+\\n", "");
+        try {
+            String contents = modMgr.read(uri).next().getContent(new StringHandle()).get();
+            return contents.replaceFirst("(\\(:|//)\\s+cache\\sbuster:.+\\n", "");
+        }
+        catch(Exception e) {}
+        return null;
     }
 
     protected static Document getModulesDocument(String uri) {

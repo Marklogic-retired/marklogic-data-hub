@@ -37,7 +37,7 @@
               <td><i class="mdi" [ngClass]="getIconClass(trace)"></i> {{trace.flowType}}</td>
               <td class="mdl-data-table__cell--non-numeric">{{trace.identifier}}</td>
               <td class="mdl-data-table__cell--non-numeric">{{trace.jobId}}</td>
-              <td>{{trace.created | amTimeAgo}}</td>
+              <td>{{trace.created | datePipe}}</td>
             </tr>
           </tbody>
         </table>

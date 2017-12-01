@@ -78,8 +78,8 @@ public class MlcpRunner extends ProcessRunner {
             bean.setPort(databaseClient.getPort());
 
             // Assume that the HTTP credentials will work for mlcp
-            bean.setUsername(hubConfig.getUsername());
-            bean.setPassword(hubConfig.getPassword());
+            bean.setUsername(hubConfig.getAppConfig().getAppServicesUsername());
+            bean.setPassword(hubConfig.getAppConfig().getAppServicesPassword());
 
             File file = new File(mlcpOptions.get("input_file_path").asText());
             String canonicalPath = file.getCanonicalPath();

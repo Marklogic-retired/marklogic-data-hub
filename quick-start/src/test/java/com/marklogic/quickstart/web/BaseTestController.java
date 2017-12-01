@@ -15,7 +15,7 @@ import java.io.IOException;
 
 public class BaseTestController {
 
-    private static final String PROJECT_PATH = "ye-old-project";
+    protected static final String PROJECT_PATH = "ye-old-project";
 
     protected EnvironmentConfig envConfig;
 

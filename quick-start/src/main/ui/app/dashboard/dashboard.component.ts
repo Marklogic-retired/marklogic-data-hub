@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, NgZone, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { ProjectService } from '../projects';
@@ -10,9 +10,9 @@ import { MdlDialogService } from '@angular-mdl/core';
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
 })
-export class DashboardComponent implements OnInit, OnDestroy {
+export class DashboardComponent implements OnInit {
 
-  statsInterval: number;
+  // statsInterval: any;
   rows: any = [0, 1];
 
   databases: any = [
@@ -25,45 +25,20 @@ export class DashboardComponent implements OnInit, OnDestroy {
   stats: any;
 
   constructor(
+    private ngZone: NgZone,
     private projectService: ProjectService,
     private dialogService: MdlDialogService,
     private router: Router
-  ) {
-    this.router.events.subscribe((val:any) => {
-      // see also
-      if (val.url !== '/' && this.statsInterval) {
-        this.stopStats();
-      }
-    });
-  }
+  ) {}
 
   getStatus() {
-    this.ngOnDestroy();
-
     this.projectService.getStatus().subscribe((stats) => {
       this.stats = stats;
-
-      this.statsInterval = setInterval(() => {
-        this.projectService.getStatus().subscribe((timerStats) => {
-          this.stats = timerStats;
-        });
-      }, 2000);
     });
   }
 
   ngOnInit() {
     this.getStatus();
-  }
-
-  ngOnDestroy() {
-    this.stopStats();
-  }
-
-  stopStats() {
-    if (this.statsInterval) {
-      clearInterval(this.statsInterval);
-      delete this.statsInterval;
-    }
   }
 
   getDbCount(db) {

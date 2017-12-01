@@ -140,7 +140,8 @@ public class AuthConfig extends WebSecurityConfigurerAdapter {
             "/jobs",
             "/traces/**",
             "/404",
-            "/assets/**"
+            "/assets/**",
+            "/shutdown"
         };
     }
 }

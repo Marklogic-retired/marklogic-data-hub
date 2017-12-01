@@ -1,7 +1,5 @@
 package com.marklogic.gradle.task
 
-import com.marklogic.client.DatabaseClient
-import com.marklogic.client.DatabaseClientFactory
 import com.marklogic.client.FailedRequestException
 import com.marklogic.client.document.DocumentManager
 import com.marklogic.client.eval.EvalResult
@@ -14,6 +12,7 @@ import com.marklogic.client.io.StringHandle
 import com.marklogic.hub.HubConfig
 import com.marklogic.mgmt.ManageClient
 import com.marklogic.mgmt.resource.databases.DatabaseManager
+import org.apache.commons.io.FileUtils
 import org.apache.commons.io.FilenameUtils
 import org.custommonkey.xmlunit.XMLUnit
 import org.gradle.testkit.runner.BuildResult
@@ -51,29 +50,17 @@ class BaseTest extends Specification {
     }
 
     static HubConfig hubConfig() {
-        HubConfig hubConfig = new HubConfig(testProjectDir.root.toString())
-        hubConfig.username = "admin"
-        hubConfig.password = "admin"
-        hubConfig.adminUsername = "admin"
-        hubConfig.adminPassword = "admin"
+        HubConfig hubConfig = HubConfig.hubFromEnvironment(testProjectDir.root.toString(), null)
         return hubConfig
-    }
-    static DatabaseClient stagingClient() {
-
-        return hubConfig().newStagingClient()
-    }
-
-    static DatabaseClient finalClient() {
-        return hubConfig().newFinalClient()
     }
 
     void installStagingDoc(String uri, DocumentMetadataHandle meta, String doc) {
-        stagingClient().newDocumentManager().write(uri, meta, new StringHandle(doc))
+        hubConfig().newStagingClient().newDocumentManager().write(uri, meta, new StringHandle(doc))
     }
 
 
     void installFinalDoc(String uri, DocumentMetadataHandle meta, String doc) {
-        finalClient().newDocumentManager().write(uri, meta, new StringHandle(doc))
+        hubConfig().newFinalClient().newDocumentManager().write(uri, meta, new StringHandle(doc))
     }
 
     static void installModule(String path, String localPath) {
@@ -91,28 +78,25 @@ class BaseTest extends Specification {
                 handle.setFormat(Format.TEXT)
         }
 
-        HubConfig hubConfig = hubConfig()
-        DocumentManager modMgr = DatabaseClientFactory.newClient(hubConfig.host, hubConfig.stagingPort, HubConfig.DEFAULT_MODULES_DB_NAME, "admin", "admin", DatabaseClientFactory.Authentication.DIGEST).newDocumentManager()
+        DocumentManager modMgr = hubConfig().newModulesDbClient().newDocumentManager()
         modMgr.write(path, handle);
     }
 
 
     void clearDatabases(String... databases) {
-        List<Thread> threads = new ArrayList<>()
-        ManageClient client = hubConfig().newManageClient()
-        DatabaseManager databaseManager = new DatabaseManager(client)
-        for (String database: databases) {
-            Thread thread = new Thread({ -> databaseManager.clearDatabase(database) })
-            threads.add(thread)
-            thread.start()
-        }
-        threads.forEach({thread ->
-            try {
-                thread.join()
-            } catch (InterruptedException e) {
-                e.printStackTrace()
-            }
-        })
+        ServerEvaluationCall eval = hubConfig().newStagingClient().newServerEval();
+        String installer = '''
+            declare variable $databases external;
+            for $database in fn:tokenize($databases, ",")
+             return
+               xdmp:eval(
+                 'cts:uris() ! xdmp:document-delete(.)',
+                 (),
+                 map:entry("database", xdmp:database($database))
+               )
+        '''
+        eval.addVariable("databases", String.join(",", databases));
+        EvalResultIterator result = eval.xquery(installer).eval();
     }
 
     protected Document getXmlFromResource(String resourceName) throws IOException, ParserConfigurationException, SAXException {
@@ -121,6 +105,11 @@ class BaseTest extends Specification {
         factory.setNamespaceAware(true)
         DocumentBuilder builder = factory.newDocumentBuilder()
         return builder.parse(new File("src/test/resources/" + resourceName).getAbsoluteFile())
+    }
+
+    static void copyResourceToFile(String resourceName, File dest) {
+        def file = new File("src/test/resources/" + resourceName)
+        FileUtils.copyFile(file, dest)
     }
 
     static int getStagingDocCount() {
@@ -136,6 +125,10 @@ class BaseTest extends Specification {
     }
     static int getFinalDocCount(String collection) {
         return getDocCount(HubConfig.DEFAULT_FINAL_NAME, collection)
+    }
+
+    static int getModulesDocCount() {
+        return getDocCount(HubConfig.DEFAULT_MODULES_DB_NAME, null)
     }
 
     static int getDocCount(String database, String collection) {
@@ -157,20 +150,19 @@ class BaseTest extends Specification {
         ServerEvaluationCall eval
         switch(databaseName) {
             case HubConfig.DEFAULT_STAGING_NAME:
-                eval = stagingClient().newServerEval()
+                eval = hubConfig().newStagingClient().newServerEval()
                 break
             case HubConfig.DEFAULT_FINAL_NAME:
-                eval = finalClient().newServerEval()
+                eval = hubConfig().newFinalClient().newServerEval()
                 break
-//            case HubConfig.DEFAULT_MODULES_DB_NAME:
-//                eval = stagingModulesClient.newServerEval()
-//                break
-//            case HubConfig.DEFAULT_TRACE_NAME:
-//                eval = traceClient.newServerEval()
-//                break
-//            default:
-//                eval = stagingClient.newServerEval()
-//                break
+            case HubConfig.DEFAULT_MODULES_DB_NAME:
+                eval = hubConfig().newModulesDbClient().newServerEval()
+                break
+            case HubConfig.DEFAULT_TRACE_NAME:
+                eval = hubConfig().newTraceDbClient().newServerEval()
+                break
+            case HubConfig.DEFAULT_JOB_NAME:
+                eval = hubConfig().newJobDbClient().newServerEval()
         }
         try {
             return eval.xquery(query).eval()

@@ -25,14 +25,14 @@ You need these to get started
 
 - Java 8 JDK
 - Gradle (3.4 or greater)
-- Node JS 6.5 or newer
-- Typings `npm -g install typings`
 - A decent IDE. IntelliJ is nice.
 
 #### Building from the command line
 **First, a warning.** _The DHF has a ton of tests and they take a very long time to run. Considering you might not want to invest 30 minutes to wait for tests these instructions will show you how to skip the tests._
 
-To build the entire DHF (marklogic-data-hub.jar, quickstart.war, and ml-data-hub-plugin for gradle) simply run this command:
+**Do you need to do this?** - only if you are wanting to build the entire DHF final products (marklogic-data-hub.jar, quickstart.war, and ml-data-hub-plugin for gradle)
+
+Simply run this command:
 
 ```bash
 cd /path/to/data-hub-project/
@@ -41,9 +41,11 @@ cd /path/to/data-hub-project/
 
 #### Making Changes to the Hub Gradle Plugin
 
-This is for when you are making changes to the ml-data-hub-plugin. This is a gradle plugin that enables Hub Capabilities. Most likely you won't find yourself doing this. You can safely ignore this section.
+This is for when you really want to use a local copy of the Gradle Plugin in your Data Hub Framework Project. Perhaps you are testing out a change to the ml-data-hub Gradle plugin or you have a cutting edge development version. There are very few valid reasons for you to do this.
 
-Still here? Seems you really want to modify the Gradle Plugin. Here's how to tell Gradle to use your local copy instead of the one living up on the Cloud.
+Still here? Seems you really want to use a local copy of the Gradle Plugin in your Data Hub Framework Project. Here's how to tell Gradle to use your local copy instead of the one living up on the Cloud.
+
+First you must publish your Data Hub Plugin to the local maven repository.
 
 ```bash
 cd /path/to/data-hub-project/
@@ -52,7 +54,7 @@ cd /path/to/data-hub-project/ml-data-hub-plugin
 ./gradlew publishToMavenLocal
 ```
 
-Then in your build.gradle file you will need to use the local version:
+Then in your DHF project's build.gradle file you will need to use the local version:
 ```groovy
 
 // this goes at the top above the plugins section
@@ -78,6 +80,20 @@ plugins {
 apply plugin: "com.marklogic.ml-data-hub"
 ```
 
+To run the plugin's unit tests, cd to the ml-data-hub-plugin directory, then:
+
+Run all unit tests
+
+    ../gradlew test
+
+
+Run one unit test
+
+    ../gradlew -Dtest.single=CreateEntityTask test
+
+
+**Note**: This change goes in a DHF project's build.gradle. Not the DHF source code's build.gradle.
+
 #### Running the QuickStart UI from source
 Make sure you have the prerequisites installed.
 
@@ -89,6 +105,12 @@ cd /path/to/data-hub-project
 ./gradlew bootrun
 ```
 
+**BE AWARE** There will be a progress indicator that stops around 90%. This is normal. In gradle land, 100% means it finished running. This stays running indefinitely and thus shows 90%.
+
+```
+> Building 90% > :quick-start:bootRun
+```
+
 **Terminal window 2** - This runs the Quickstart UI
 ```
 cd /path/to/data-hub-project
@@ -96,6 +118,65 @@ cd /path/to/data-hub-project
 ```
 
 Now open your browser to [http://localhost:4200](http://localhost:4200) to use the debug version of the Quickstart UI.
+
+### Troubleshooting
+Did the `gradle runui` command fail for you? Here's a quick checklist to troubleshoot.
+
+#### Do you have Gradle 3.4 or newer?
+Using straight up gradle:
+```
+gradle -v
+```
+or if you are using the wrapper:
+```
+./gradlew -v
+```
+If your gradle wrapper is older than `3.4` then do this:
+```
+gradle wrapper --gradle-version 3.4
+```
+#### Are you on the develop branch?
+_hint: you should be_  
+Check like so:
+```bash
+git branch
+```
+
+To switch to the develop branch:
+```bash
+git checkout develop
+```
+
+#### Do you have the latest code?
+Better make sure...
+
+##### You clone from the github.com/marklogic-community/marklogic-data-hub repo
+
+```bash
+git pull origin develop
+```
+##### Your forked then cloned your fork
+Make sure you have the upstream set:
+```bash
+$ git remote add upstream git://github.com/marklogic-community/marklogic-data-hub.git
+```
+
+Then fetch the upstream:
+```bash
+git fetch upstream develop
+```
+
+Now merge it in:
+```bash
+git rebase upstream/develop
+```
+
+#### Try removing the `quick-start/node_modules` directory.  
+If you are seeing a bunch of javascript errors you might have a messed up node_modules directory. Try to remove it then run again.
+
+```bash
+rm -rf quick-start/node_modules
+```
 
 ## Submission Guidelines
 
@@ -191,6 +272,19 @@ Make sure the JUnit tests pass.
 
 ```sh
 $ ./gradlew test
+```
+
+If you want to run a single test:
+
+```sh
+$ ./gradlew -Dtest.single=TestName test
+```
+
+for best results don't include the final word Test. Example:
+Say you want to run FlowRunnerTest.
+
+```sh
+$ ./gradlew -Dtest.single=FlowRunner test
 ```
 
 Make sure that all tests pass. Please, do not submit patches that fail.

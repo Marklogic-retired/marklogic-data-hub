@@ -20,7 +20,6 @@ import { SettingsComponent } from './settings';
 import { MdlModule } from '@angular-mdl/core';
 import { MdlPopoverModule } from '@angular-mdl/popover';
 import { MdlSelectModule } from '@angular-mdl/select';
-import { MomentModule } from 'angular2-moment';
 import { GridManiaModule } from './grid';
 
 import { ROUTES } from './app.routes';
@@ -59,8 +58,7 @@ import { TitlecasePipe } from './titlecase.pipe';
 import { InlineEditComponent } from './inline-edit/inline-edit.component';
 import { FacetsComponent } from './facets/facets.component';
 import { ObjectToArrayPipe } from './object-to-array.pipe';
-
-import { Ng2DeviceDetectorModule } from 'ng2-device-detector';
+import { DatePipeModule } from './date-pipe/date-pipe.module';
 
 @NgModule({
   declarations: [
@@ -118,10 +116,9 @@ import { Ng2DeviceDetectorModule } from 'ng2-device-detector';
     MdlPopoverModule,
     MdlSelectModule,
     TooltipModule,
-    MomentModule,
     GridManiaModule,
     RouterModule.forRoot(ROUTES, { useHash: true }),
-    Ng2DeviceDetectorModule.forRoot()
+    DatePipeModule
   ],
   providers: [
     AUTH_PROVIDERS,

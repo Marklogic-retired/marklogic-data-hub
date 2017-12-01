@@ -23,6 +23,8 @@ import com.marklogic.client.query.QueryManager;
 import com.marklogic.client.query.RawCombinedQueryDefinition;
 import com.marklogic.client.query.StructuredQueryBuilder;
 import com.marklogic.client.query.StructuredQueryDefinition;
+import com.marklogic.hub.job.JobDeleteResponse;
+import com.marklogic.hub.job.JobManager;
 import com.marklogic.quickstart.model.JobQuery;
 
 import java.util.ArrayList;
@@ -33,8 +35,12 @@ public class JobService extends SearchableService {
 
     private QueryManager queryMgr;
 
+    private JobManager jobMgr;
+
+
     public JobService(DatabaseClient client) {
         this.queryMgr = client.newQueryManager();
+        this.jobMgr = new JobManager(client);
     }
 
     public StringHandle getJobs(JobQuery jobQuery) {
@@ -77,6 +83,10 @@ public class JobService extends SearchableService {
         StringHandle sh = new StringHandle();
         sh.setFormat(Format.JSON);
         return queryMgr.search(querydef, sh, jobQuery.start);
+    }
+
+    public JobDeleteResponse deleteJobs(String jobIds) {
+        return this.jobMgr.deleteJobs(jobIds);
     }
 
     public void cancelJob(long jobId) {

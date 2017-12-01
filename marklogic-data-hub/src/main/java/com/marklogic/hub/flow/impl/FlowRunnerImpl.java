@@ -46,6 +46,7 @@ public class FlowRunnerImpl implements FlowRunner {
 
     private static final int DEFAULT_BATCH_SIZE = 100;
     private static final int DEFAULT_THREAD_COUNT = 4;
+    private static final int MAX_ERROR_MESSAGES = 10;
     private Flow flow;
     private int batchSize = DEFAULT_BATCH_SIZE;
     private int threadCount = DEFAULT_THREAD_COUNT;
@@ -209,9 +210,9 @@ public class FlowRunnerImpl implements FlowRunner {
                     failedEvents.addAndGet(response.errorCount);
                     successfulEvents.addAndGet(response.totalCount - response.errorCount);
                     if (response.errors != null) {
-                        ObjectMapper objectMapper = new ObjectMapper();
-
-                        errorMessages.addAll(response.errors.stream().map(jsonNode -> jsonToString(jsonNode)).collect(Collectors.toList()));
+                        if (errorMessages.size() < MAX_ERROR_MESSAGES) {
+                            errorMessages.addAll(response.errors.stream().map(jsonNode -> jsonToString(jsonNode)).collect(Collectors.toList()));
+                        }
                     }
 
                     if (response.errorCount < response.totalCount) {
@@ -220,7 +221,6 @@ public class FlowRunnerImpl implements FlowRunner {
                     else {
                         failedBatches.addAndGet(1);
                     }
-
 
                     int percentComplete = (int) (((double)successfulBatches.get() / batchCount) * 100.0);
 
@@ -248,7 +248,9 @@ public class FlowRunnerImpl implements FlowRunner {
                     }
                 }
                 catch(Exception e) {
-                    errorMessages.add(e.toString());
+                    if (errorMessages.size() < MAX_ERROR_MESSAGES) {
+                        errorMessages.add(e.toString());
+                    }
                 }
             })
             .onQueryFailure((QueryBatchException failure) -> {

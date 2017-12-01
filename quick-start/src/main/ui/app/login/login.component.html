@@ -40,7 +40,7 @@
             </div>
 
             <app-folder-browser
-              [ngClass]="{'collapsed': !showFolderBrowser}"
+              *ngIf="showFolderBrowser"
               class="shrink-me shrinky"
               start-path='.'
               absoluteOnly="true"
@@ -365,13 +365,13 @@
               </div>
             </div>
           </div>
-          <div class="install-progress shrinky" [ngClass]="(installing || uninstalling) ? '' : 'collapsed'" layout="column" layout-align="center center">
+          <div id="install-progress" class="install-progress shrinky" *ngIf="(installing || uninstalling)" layout="column" layout-align="center center">
             <mdl-progress [progress]="percentComplete"></mdl-progress>
-            <div *ngIf="installing">Installing...</div>
-            <div *ngIf="uninstalling">Uninstalling...</div>
+            <div id="installing-message" *ngIf="installing">Installing...</div>
+            <div id="uninstalling-message" *ngIf="uninstalling">Uninstalling...</div>
             <div>{{percentComplete}}% complete</div>
           </div>
-          <div class="shrinky" [ngClass]="currentEnvironment.installInfo.installed ? '' : 'collapsed'" layout="column" layout-align="center center">
+          <div class="install-complete shrinky" [ngClass]="currentEnvironment.installInfo.installed ? '' : 'collapsed'" layout="column" layout-align="center center">
             <i class="fa fa-thumbs-up"></i>
             <p>Installation into MarkLogic is complete!</p>
           </div>

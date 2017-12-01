@@ -3,7 +3,7 @@ plugins {
     id 'java'
     id 'maven-publish'
     id 'com.jfrog.bintray' version '1.7.2'
-    id 'com.marklogic.ml-gradle' version '3.1-alpha3'
+    id 'com.marklogic.ml-gradle' version '3.1-alpha4'
     id 'com.moowork.node' version '1.1.1'
 }
 
@@ -25,8 +25,11 @@ ext.junitJupiterVersion  = '5.0.0-RC3'
 
 dependencies {
     compile 'com.marklogic:marklogic-client-api:4.0.2'
-    compile("com.marklogic:mlcp-util:0.3.0")
-    compile ('com.marklogic:ml-app-deployer:3.1-alpha3')
+    compile 'com.marklogic:mlcp-util:0.3.0'
+    compile ('com.marklogic:ml-app-deployer:3.1-alpha4') {
+        exclude group: 'com.marklogic', module: 'ml-javaclient-util'
+    }
+    compile ('com.marklogic:ml-javaclient-util:3.1-alpha6')
     compile 'commons-io:commons-io:2.4'
     compile 'org.apache.commons:commons-text:1.1'
 
@@ -56,10 +59,10 @@ dependencies {
 
 node {
   // Version of node to use.
-  version = '7.5.0'
+  version = '8.4.0'
 
-  // Version of npm to use.
-  npmVersion = '4.1.2'
+  // // Version of npm to use.
+  npmVersion = '5.4.2'
 
   download = true
 
@@ -111,12 +114,14 @@ if (!(
     gradle.startParameter.taskNames*.toLowerCase().contains("test") ||
     gradle.startParameter.taskNames*.toLowerCase().contains("publishplugins") ||
     gradle.startParameter.taskNames*.toLowerCase().contains("publishtomavenlocal") ||
-    gradle.startParameter.taskNames*.toLowerCase().contains("bintrayUpload") ||
+    gradle.startParameter.taskNames*.toLowerCase().contains("bintrayupload") ||
     project.hasProperty('skipui')
     )
    ) {
   processResources.dependsOn copyUIAssets
 }
+
+tasks.clean.dependsOn cleanUI
 
 javadoc {
    options.overview = 'src/main/resources/overview.html'
@@ -184,6 +189,7 @@ bintray {
     pkg {
         repo = 'maven'
         name = project.name
+        userOrg = 'marklogic-community'
         desc = pomCustomizations.textdescription.text()
         licenses = ['Apache-2.0']
         websiteUrl = pomCustomizations.url

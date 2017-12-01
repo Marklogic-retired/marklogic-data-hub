@@ -5,11 +5,11 @@ import com.marklogic.client.io.DocumentMetadataHandle
 import com.marklogic.hub.Debugging
 import com.marklogic.hub.HubConfig
 import com.marklogic.hub.Tracing
-import com.marklogic.hub.error.LegacyFlowsException
-import org.apache.commons.io.FileUtils
 import org.gradle.testkit.runner.UnexpectedBuildFailure
 import org.gradle.testkit.runner.UnexpectedBuildSuccess
+
 import java.nio.file.Paths
+
 import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual
 import static org.gradle.testkit.runner.TaskOutcome.FAILED
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
@@ -33,7 +33,7 @@ class InstalledTests extends BaseTest {
         then:
         notThrown(UnexpectedBuildFailure)
         result.task(":hubEnableDebugging").outcome == SUCCESS
-        Debugging d = new Debugging(stagingClient())
+        Debugging d = new Debugging(hubConfig().newStagingClient())
         d.isEnabled() == true
     }
 
@@ -44,7 +44,7 @@ class InstalledTests extends BaseTest {
         then:
         notThrown(UnexpectedBuildFailure)
         result.task(":hubDisableDebugging").outcome == SUCCESS
-        Debugging d = new Debugging(stagingClient())
+        Debugging d = new Debugging(hubConfig().newStagingClient())
         d.isEnabled() == false
     }
 
@@ -55,7 +55,7 @@ class InstalledTests extends BaseTest {
         then:
         notThrown(UnexpectedBuildFailure)
         result.task(":hubEnableTracing").outcome == SUCCESS
-        Tracing t = new Tracing(stagingClient())
+        Tracing t = new Tracing(hubConfig().newStagingClient())
         t.isEnabled() == true
     }
 
@@ -66,7 +66,7 @@ class InstalledTests extends BaseTest {
         then:
         notThrown(UnexpectedBuildFailure)
         result.task(":hubDisableTracing").outcome == SUCCESS
-        Tracing t = new Tracing(stagingClient())
+        Tracing t = new Tracing(hubConfig().newStagingClient())
         t.isEnabled() == false
     }
 
@@ -94,10 +94,17 @@ class InstalledTests extends BaseTest {
         println(runTask('mlReLoadModules'))
 
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME)
+
+        assert (getStagingDocCount() == 0)
+        assert (getFinalDocCount() == 0)
+
         DocumentMetadataHandle meta = new DocumentMetadataHandle();
         meta.getCollections().add("my-new-entity");
         installStagingDoc("/employee1.xml", meta, new File("src/test/resources/run-flow-test/employee1.xml").text)
         installStagingDoc("/employee2.xml", meta, new File("src/test/resources/run-flow-test/employee2.xml").text)
+        assert (getStagingDocCount() == 2)
+        assert (getFinalDocCount() == 0)
+
         installModule("/entities/my-new-entity/harmonize/my-new-harmonize-flow/content/content.xqy", "run-flow-test/content.xqy")
 
         when:
@@ -107,8 +114,8 @@ class InstalledTests extends BaseTest {
         notThrown(UnexpectedBuildFailure)
         getStagingDocCount() == 2
         getFinalDocCount() == 2
-        assertXMLEqual(getXmlFromResource("run-flow-test/harmonized1.xml"), finalClient().newDocumentManager().read("/employee1.xml").next().getContent(new DOMHandle()).get())
-        assertXMLEqual(getXmlFromResource("run-flow-test/harmonized2.xml"), finalClient().newDocumentManager().read("/employee2.xml").next().getContent(new DOMHandle()).get())
+        assertXMLEqual(getXmlFromResource("run-flow-test/harmonized1.xml"), hubConfig().newFinalClient().newDocumentManager().read("/employee1.xml").next().getContent(new DOMHandle()).get())
+        assertXMLEqual(getXmlFromResource("run-flow-test/harmonized2.xml"), hubConfig().newFinalClient().newDocumentManager().read("/employee2.xml").next().getContent(new DOMHandle()).get())
     }
 
     def "runHarmonizeFlow with swapped src and dest"() {
@@ -117,10 +124,16 @@ class InstalledTests extends BaseTest {
         println(runTask('mlReLoadModules'))
 
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME)
+        assert (getStagingDocCount() == 0)
+        assert (getFinalDocCount() == 0)
+
         DocumentMetadataHandle meta = new DocumentMetadataHandle();
         meta.getCollections().add("my-new-entity");
         installFinalDoc("/employee1.xml", meta, new File("src/test/resources/run-flow-test/employee1.xml").text)
         installFinalDoc("/employee2.xml", meta, new File("src/test/resources/run-flow-test/employee2.xml").text)
+
+        assert (getStagingDocCount() == 0)
+        assert (getFinalDocCount() == 2)
         installModule("/entities/my-new-entity/harmonize/my-new-harmonize-flow/content/content.xqy", "run-flow-test/content.xqy")
 
         when:
@@ -138,8 +151,8 @@ class InstalledTests extends BaseTest {
         getStagingDocCount() == 2
         getFinalDocCount() == 2
 
-        assertXMLEqual(getXmlFromResource("run-flow-test/harmonized1.xml"), stagingClient().newDocumentManager().read("/employee1.xml").next().getContent(new DOMHandle()).get())
-        assertXMLEqual(getXmlFromResource("run-flow-test/harmonized2.xml"), stagingClient().newDocumentManager().read("/employee2.xml").next().getContent(new DOMHandle()).get())
+        assertXMLEqual(getXmlFromResource("run-flow-test/harmonized1.xml"), hubConfig().newStagingClient().newDocumentManager().read("/employee1.xml").next().getContent(new DOMHandle()).get())
+        assertXMLEqual(getXmlFromResource("run-flow-test/harmonized2.xml"), hubConfig().newStagingClient().newDocumentManager().read("/employee2.xml").next().getContent(new DOMHandle()).get())
     }
 
     def "install Legacy Modules should fail"() {
@@ -157,5 +170,32 @@ class InstalledTests extends BaseTest {
         result.output.contains('The following Flows are legacy flows:')
         result.output.contains('legacy-test => legacy-input-flow')
         result.task(":mlLoadModules").outcome == FAILED
+    }
+
+    def "createHarmonizeFlow with useES flag"() {
+        given:
+        propertiesFile << """
+            ext {
+                entityName=Employee
+                flowName=my-new-harmonize-flow
+                useES=true
+            }
+        """
+
+        when:
+        runTask('hubUpdate')
+        runTask('hubCreateEntity')
+        copyResourceToFile("employee.entity.json", Paths.get(testProjectDir.root.toString(), "plugins", "entities", "Employee", "Employee.entity.json").toFile())
+        runTask('mlLoadModules')
+        def result = runTask('hubCreateHarmonizeFlow')
+
+        then:
+        notThrown(UnexpectedBuildFailure)
+        result.task(":hubCreateHarmonizeFlow").outcome == SUCCESS
+
+        File entityDir = Paths.get(testProjectDir.root.toString(), "plugins", "entities", "Employee", "harmonize", "my-new-harmonize-flow").toFile()
+        entityDir.isDirectory() == true
+        File contentPlugin = Paths.get(testProjectDir.root.toString(), "plugins", "entities", "Employee", "harmonize", "my-new-harmonize-flow", "content.sjs").toFile()
+        contentPlugin.text.contains("extractInstanceEmployee")
     }
 }

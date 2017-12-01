@@ -60,13 +60,14 @@ class DataHubPlugin implements Plugin<Project> {
 
         String flowGroup = "MarkLogic Data Hub Flow Management"
         project.task("hubRunFlow", group: flowGroup, type: RunFlowTask)
+        project.task("hubDeleteJobs", group: flowGroup, type: DeleteJobsTask )
 
         logger.info("Finished initializing ml-data-hub\n")
     }
 
     void initializeProjectExtensions(Project project) {
         HubConfig hubConfig = new DefaultHubConfigFactory(project, new ProjectPropertySource(project)).newHubConfig()
-        hubConfig.updateAppConfig(project.mlAppConfig)
+        hubConfig.setAppConfig(project.mlAppConfig)
         project.extensions.add("hubConfig", hubConfig)
 
         dataHub = new DataHub(hubConfig)

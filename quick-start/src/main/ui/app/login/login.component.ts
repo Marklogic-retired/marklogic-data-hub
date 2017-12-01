@@ -1,4 +1,4 @@
-import { Component, Renderer, OnInit } from '@angular/core';
+import { Component, Renderer, NgZone, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
 import * as _ from 'lodash';
@@ -90,10 +90,11 @@ export class LoginComponent implements OnInit {
     private installService: InstallService,
     private dialogService: MdlDialogService,
     private router: Router,
+    private ngZone: NgZone,
     private renderer: Renderer) {}
 
   ngOnInit() {
-    this.projectService.getProjects().subscribe(resp => {
+    this.projectService.getProjects().subscribe((resp) => {
       this.projects = resp.projects;
 
       if (this.projects.length > 0) {
@@ -120,22 +121,22 @@ export class LoginComponent implements OnInit {
     });
 
     this.installService.install().subscribe((env) => {
-      this.currentEnvironment = env;
-      setTimeout(() => {
+      this.ngZone.run(() => {
+        this.currentEnvironment = env;
         this.installing = false;
         this.installationStatus = null;
-      }, 1000);
-      emitter.unsubscribe();
+        emitter.unsubscribe();
 
-      let installInfo = this.currentEnvironment.installInfo;
-      if (installInfo && installInfo.installed) {
-        // goto login tab
-        let redirect = this.auth.redirectUrl || '';
-        this.router.navigate([redirect]);
-      } else {
-        // go to install hub tab
-        this.gotoTab('Installer');
-      }
+        let installInfo = this.currentEnvironment.installInfo;
+        if (installInfo && installInfo.installed) {
+          // goto login tab
+          let redirect = this.auth.redirectUrl || '';
+          this.router.navigate([redirect]);
+        } else {
+          // go to install hub tab
+          this.gotoTab('Installer');
+        }
+      })
     });
   }
 
@@ -188,7 +189,7 @@ export class LoginComponent implements OnInit {
     this.disableTabs();
     this.tabs[tabName] = true;
 
-    const skipUs = ['InstalledCheck', 'InitIfNeeded', 'PostInit'];
+    const skipUs = ['InstalledCheck', 'InitIfNeeded', 'PostInit', 'PreInstallCheck'];
     if (skipUs.indexOf(this.currentTab) < 0) {
       this.visitedTabs.push(this.currentTab);
     }

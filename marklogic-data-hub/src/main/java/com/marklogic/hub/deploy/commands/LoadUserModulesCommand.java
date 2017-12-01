@@ -22,6 +22,7 @@ import com.marklogic.client.io.StringHandle;
 import com.marklogic.com.marklogic.client.ext.file.CacheBusterDocumentFileProcessor;
 import com.marklogic.com.marklogic.client.ext.modulesloader.impl.EntityDefModulesFinder;
 import com.marklogic.com.marklogic.client.ext.modulesloader.impl.UserModulesFinder;
+import com.marklogic.hub.EntityManager;
 import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.deploy.util.HubFileFilter;
@@ -33,10 +34,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.SimpleFileVisitor;
+import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Date;
 import java.util.List;
@@ -57,13 +55,6 @@ public class LoadUserModulesCommand extends AbstractCommand {
     public LoadUserModulesCommand(HubConfig hubConfig) {
         setExecuteSortOrder(SortOrderConstants.LOAD_MODULES + 1);
         this.hubConfig = hubConfig;
-
-        this.threadPoolTaskExecutor = new ThreadPoolTaskExecutor();
-        this.threadPoolTaskExecutor.setCorePoolSize(16);
-        // 10 minutes should be plenty of time to wait for REST API modules to be loaded
-        this.threadPoolTaskExecutor.setAwaitTerminationSeconds(60 * 10);
-        this.threadPoolTaskExecutor.setWaitForTasksToCompleteOnShutdown(true);
-        this.threadPoolTaskExecutor.afterPropertiesSet();
     }
 
     private PropertiesModuleManager getModulesManager() {
@@ -84,6 +75,13 @@ public class LoadUserModulesCommand extends AbstractCommand {
     }
 
     private DefaultModulesLoader getStagingModulesLoader(AppConfig config) {
+        this.threadPoolTaskExecutor = new ThreadPoolTaskExecutor();
+        this.threadPoolTaskExecutor.setCorePoolSize(16);
+        // 10 minutes should be plenty of time to wait for REST API modules to be loaded
+        this.threadPoolTaskExecutor.setAwaitTerminationSeconds(60 * 10);
+        this.threadPoolTaskExecutor.setWaitForTasksToCompleteOnShutdown(true);
+        this.threadPoolTaskExecutor.afterPropertiesSet();
+
         PropertiesModuleManager moduleManager = getModulesManager();
         AssetFileLoader assetFileLoader = getAssetFileLoader(config, moduleManager);
 
@@ -144,11 +142,17 @@ public class LoadUserModulesCommand extends AbstractCommand {
 
         AllButAssetsModulesFinder allButAssetsModulesFinder = new AllButAssetsModulesFinder();
 
+        Path dir = Paths.get(hubConfig.getProjectDir(), HubConfig.ENTITY_CONFIG_DIR);
+        if (!dir.toFile().exists()) {
+            dir.toFile().mkdirs();
+        }
+
+        // deploy the auto-generated ES search options
+        EntityManager entityManager = new EntityManager(hubConfig);
+        entityManager.deploySearchOptions();
+
         try {
             if (startPath.toFile().exists()) {
-
-                // load Flow Definitions
-                List<Flow> flows = flowManager.getLocalFlows();
                 XMLDocumentManager documentManager = hubConfig.newModulesDbClient().newXMLDocumentManager();
                 DocumentWriteSet documentWriteSet = documentManager.newWriteSet();
 

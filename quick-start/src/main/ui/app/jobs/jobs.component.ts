@@ -6,8 +6,7 @@ import { JobService } from './jobs.service';
 import { JobListenerService } from './job-listener.service';
 import { SearchResponse } from '../search';
 import { MdlDialogService, MdlDialogReference } from '@angular-mdl/core';
-
-import * as moment from 'moment';
+import { differenceInSeconds } from 'date-fns';
 
 import * as _ from 'lodash';
 
@@ -26,6 +25,7 @@ export class JobsComponent implements OnChanges, OnDestroy, OnInit {
   loadingJobs: boolean = false;
   searchResponse: SearchResponse;
   jobs: Array<Job>;
+  jobsToDelete: string[] = [];
   runningFlows: Map<number, string> = new Map<number, string>();
   facetNames: Array<string> = ['entityName', 'status', 'flowName', 'flowType'];
 
@@ -120,6 +120,7 @@ export class JobsComponent implements OnChanges, OnDestroy, OnInit {
       this.currentPage,
       this.pageLength
     ).subscribe(response => {
+      this.jobsToDelete.length = 0;
       this.searchResponse = response;
       this.jobs = _.map(response.results, (result: any) => {
         return result.content;
@@ -132,7 +133,7 @@ export class JobsComponent implements OnChanges, OnDestroy, OnInit {
   }
 
   getDuration(job: Job): number {
-    return moment(job.endTime).diff(moment(job.startTime), 'seconds');
+    return differenceInSeconds(job.endTime, job.startTime);
   }
 
   showConsole(job: Job): void {
@@ -179,6 +180,31 @@ export class JobsComponent implements OnChanges, OnDestroy, OnInit {
         jobId: jobId
       }
     });
+  }
+
+  toggleDeleteJob(jobId) {
+    let index = this.jobsToDelete.indexOf(jobId);
+    if (index > -1) {
+      this.jobsToDelete.splice(index, 1);
+    } else {
+      this.jobsToDelete.push(jobId);
+    }
+  }
+
+  deleteJobs() {
+    if (this.jobsToDelete.length > 0) {
+      const message = 'Delete ' + this.jobsToDelete.length + ' jobs and their traces?';
+      this.dialogService.confirm(message, 'Cancel', 'Delete').subscribe(() => {
+        this.jobService.deleteJobs(this.jobsToDelete)
+          .subscribe(response => {
+              this.getJobs();
+            },
+            () => {
+              this.dialogService.alert("Failed to delete jobs");
+            });
+      },
+      () => {});
+    }
   }
 
   render(o) {

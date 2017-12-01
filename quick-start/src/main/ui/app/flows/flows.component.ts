@@ -27,6 +27,8 @@ import { CodemirrorComponent } from '../codemirror';
 
 import { Ng2DeviceService } from 'ng2-device-detector';
 
+import { distanceInWords } from 'date-fns';
+
 import * as _ from 'lodash';
 
 @Component({
@@ -125,6 +127,10 @@ export class FlowsComponent implements OnInit, OnDestroy {
     setTimeout(() => {
       this.snackbar.showSnackbar({
         message: `Job ${jobId} Finished.`,
+        action:{
+          handler: () => {},
+          text: 'OK'
+        }
       });
     }, 0);
   };
@@ -132,7 +138,7 @@ export class FlowsComponent implements OnInit, OnDestroy {
   getLastDeployed() {
     const lastDeployed = this.deployService.getLastDeployed();
     if (lastDeployed) {
-      return lastDeployed.fromNow();
+      return distanceInWords(lastDeployed, new Date()) + ' ago';
     }
     return 'Not Yet Deployed';
   }
@@ -345,6 +351,7 @@ export class FlowsComponent implements OnInit, OnDestroy {
     this.entitiesService.runInputFlow(flow, options);
     this.snackbar.showSnackbar({
       message: flow.entityName + ': ' + flow.flowName + ' starting...',
+      timeout: 10000
     });
   }
 

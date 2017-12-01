@@ -1,6 +1,6 @@
 import { DataHubQuickstartPage } from './app.po';
 
-describe('data-hub-quickstart App', function() {
+describe('data-hub-quickstart App', () => {
   let page: DataHubQuickstartPage;
 
   beforeEach(() => {

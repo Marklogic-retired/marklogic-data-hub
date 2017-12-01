@@ -1,4 +1,4 @@
-import { Injectable, EventEmitter } from '@angular/core';
+import { Injectable, EventEmitter, NgZone } from '@angular/core';
 import { Http, Response } from '@angular/http';
 import { Message } from 'stompjs/lib/stomp.min';
 import { STOMPService } from '../stomp/stomp.service';
@@ -10,6 +10,7 @@ export class InstallService {
 
   constructor(
     private http: Http,
+    private ngZone: NgZone,
     private stomp: STOMPService) {
     this.stomp.messages.subscribe(this.onMessage);
   }
@@ -19,11 +20,15 @@ export class InstallService {
     this.stomp.subscribe('/topic/install-status').then((msgId: string) => {
       unsubscribeId = msgId;
     });
-    let resp = this.http.put(`/api/current-project/install`, '').share();
-    resp.subscribe(() => {
-      this.stomp.unsubscribe(unsubscribeId);
+    return this.ngZone.runOutsideAngular(() => {
+      let resp = this.http.put(`/api/current-project/install`, '').share();
+      resp.subscribe(() => {
+        this.ngZone.run(() => {
+          this.stomp.unsubscribe(unsubscribeId);
+        });
+      });
+      return resp.map(this.extractData);
     });
-    return resp.map(this.extractData);
   }
 
   updateIndexes() {
@@ -35,11 +40,15 @@ export class InstallService {
     this.stomp.subscribe('/topic/uninstall-status').then((msgId: string) => {
       unsubscribeId = msgId;
     });
-    let resp = this.http.delete(`/api/current-project/uninstall`).share();
-    resp.subscribe(() => {
-      this.stomp.unsubscribe(unsubscribeId);
+    return this.ngZone.runOutsideAngular(() => {
+      let resp = this.http.delete(`/api/current-project/uninstall`).share();
+      resp.subscribe(() => {
+        this.ngZone.run(() => {
+          this.stomp.unsubscribe(unsubscribeId);
+        });
+      });
+      return resp.map(this.extractData);
     });
-    return resp.map(this.extractData);
   }
 
   private extractData(res: Response) {

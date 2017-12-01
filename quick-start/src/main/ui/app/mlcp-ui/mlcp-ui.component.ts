@@ -546,6 +546,13 @@ export class MlcpUiComponent implements OnChanges {
     }
   }
 
+  fileClicked(file: any): void {
+    if (this.inputFilePath != file.absolutePath) {
+      this.inputFilePath = file.absolutePath;
+      this.updateMlcpCommand();
+    }
+  }
+
   cmdCopied(): void {
     this.snackbar.showSnackbar({
       message: 'MLCP command copied to the clipboard.',

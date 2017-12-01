@@ -11,13 +11,16 @@ import { MdlTextFieldComponent } from '@angular-mdl/core';
 export class FolderBrowserComponent implements OnInit, OnChanges {
   @Input() startPath: string = '.';
   @Output() folderChosen = new EventEmitter();
+  @Output() fileChosen = new EventEmitter();
   @Input() absoluteOnly: boolean = false;
+  @Input() showFiles: boolean = false;
 
   @ViewChild(MdlTextFieldComponent) inputPath: MdlTextFieldComponent;
 
   currentPath: string = null;
   isLoading: boolean = false;
   folders: any[] = null;
+  files: any[] = null;
 
   constructor(private http: Http) {}
 
@@ -49,6 +52,7 @@ export class FolderBrowserComponent implements OnInit, OnChanges {
       .map(this.extractData)
       .subscribe(resp => {
         this.folders = resp.folders;
+        this.files = resp.files;
         this.currentPath = this.absoluteOnly ? resp.currentAbsolutePath : resp.currentPath;
         this.folderChosen.emit({
           relativePath: resp.currentPath,
@@ -66,6 +70,13 @@ export class FolderBrowserComponent implements OnInit, OnChanges {
 
   entryClicked(entry: any): void {
     this.getFolders(entry.absolutePath);
+  }
+
+  fileClicked(selectedFile: any) {
+    this.fileChosen.emit( {
+      relativePath: selectedFile.currentPath,
+      absolutePath: selectedFile.absolutePath
+    })
   }
 
   private extractData(res: Response) {
