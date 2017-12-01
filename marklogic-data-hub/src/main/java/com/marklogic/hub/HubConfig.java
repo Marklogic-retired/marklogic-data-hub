@@ -353,9 +353,13 @@ public class HubConfig {
      * @return - a DatabaseClient
      */
     public DatabaseClient newStagingClient() {
+        return newStagingClient(stagingDbName);
+    }
+
+    public DatabaseClient newStagingClient(String databaseName) {
         AppConfig appConfig = getAppConfig();
         DatabaseClientConfig config = new DatabaseClientConfig(appConfig.getHost(), stagingPort, appConfig.getRestAdminUsername(), appConfig.getRestAdminPassword());
-        config.setDatabase(stagingDbName);
+        config.setDatabase(databaseName);
         config.setSecurityContextType(SecurityContextType.valueOf(stagingAuthMethod.toUpperCase()));
         config.setSslHostnameVerifier(stagingSslHostnameVerifier);
         config.setSslContext(stagingSslContext);
