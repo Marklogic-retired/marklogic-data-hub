@@ -4,6 +4,7 @@ export class DefinitionType {
   description: string;
   primaryKey: string;
   required: Array<string>;
+  elementRangeIndex: Array<string>;
   rangeIndex: Array<string>;
   wordLexicon: Array<string>;
   properties: Array<PropertyType>;
@@ -12,6 +13,7 @@ export class DefinitionType {
     this.description = json.description;
     this.primaryKey = json.primaryKey;
     this.required = json.required;
+    this.elementRangeIndex = json.elementRangeIndex;
     this.rangeIndex = json.rangeIndex;
     this.wordLexicon = json.wordLexicon;
     this.properties = new Array<PropertyType>();

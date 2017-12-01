@@ -38,7 +38,8 @@
         <thead>
           <tr>
             <th class="icons" title="Primary Key"><i class="fa fa-key"></i></th>
-            <th class="icons" title="Range Index"><i class="fa fa-bolt"></i></th>
+            <th class="icons" title="Element Range Index"><i class="fa fa-bolt"></i></th>
+            <th class="icons" title="Path Range Index"><i class="fa fa-code"></i></th>
             <th class="icons" title="Word Lexicon"><i class="fa fa-won"></i></th>
             <th class="icons" title="Required Field"><i class="fa fa-exclamation"></i></th>
             <th>Name</th>
@@ -58,6 +59,9 @@
             </td>
             <td class="icons">
               <i [hidden]="!isRangeIndex(property.name)" class="fa fa-bolt"></i>
+            </td>
+            <td class="icons">
+              <i [hidden]="!isPathRangeIndex(property.name)" class="fa fa-code"></i>
             </td>
             <td class="icons">
               <i [hidden]="!isWordLexicon(property.name)" class="fa fa-won"></i>

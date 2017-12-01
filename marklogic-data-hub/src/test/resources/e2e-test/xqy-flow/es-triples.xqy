@@ -24,10 +24,5 @@ declare function plugin:create-triples(
     if (map:get($options, "triplesGoBoom") eq fn:true() and $id = ("/input-2.json", "/input-2.xml")) then
       fn:error(xs:QName("TRIPLES-BOOM"), "I BLEW UP")
     else ()
-  let $_ := map:put($options, "triplesTest", "triples")
-  return
-  (
-    sem:triple("a", "b", "c"),
-    sem:triple("x", "y", "z")
-  )
+  return ()
 };

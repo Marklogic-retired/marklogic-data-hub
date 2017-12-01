@@ -18,13 +18,9 @@ declare function plugin:create-headers(
   $content as item()?,
   $options as map:map) as item()*
 {
-  let $_ := map:put($options, "headersTest", "headers")
-  return
-    if ($id = ("/input-2.xml")) then
-      fn:error(xs:QName("BOOM"), "I BLEW UP")
-    else
-      (
-        <a>1</a>,
-        <b>2</b>
-      )
+  let $_ :=
+    if (map:get($options, "headersGoBoom") eq fn:true() and $id = ("/input-2.json", "/input-2.xml")) then
+      fn:error(xs:QName("HEADERS-BOOM"), "I BLEW UP")
+    else ()
+  return ()
 };

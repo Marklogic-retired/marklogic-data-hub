@@ -89,13 +89,17 @@ function extractInstanceEmployee(source) {
   // the original source documents
   let attachments = source;
 
+  let id = xs.string(source.id);
   let name = xs.string(source.name);
+  let salary = xs.decimal(source.salary);
 
   // return the instance object
   return {
     '$type': 'Employee',
     '$version': '0.0.1',
-    'name': name
+    'id': id,
+    'name': name,
+    'salary': salary
   }
 };
 
