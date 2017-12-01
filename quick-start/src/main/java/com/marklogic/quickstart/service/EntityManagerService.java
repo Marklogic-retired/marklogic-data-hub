@@ -35,6 +35,8 @@ import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.flow.FlowType;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.quickstart.auth.ConnectionAuthenticationToken;
+import com.marklogic.quickstart.listeners.DeployUserModulesListener;
+import com.marklogic.quickstart.listeners.ValidateListener;
 import com.marklogic.quickstart.model.EnvironmentConfig;
 import com.marklogic.quickstart.model.FlowModel;
 import com.marklogic.quickstart.model.PluginModel;
@@ -63,7 +65,7 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 @Service
-public class EntityManagerService {
+public class EntityManagerService implements DeployUserModulesListener, ValidateListener {
 
     private static final String UI_LAYOUT_FILE = "entities.layout.json";
     private static final String PLUGINS_DIR = "plugins";
@@ -75,6 +77,9 @@ public class EntityManagerService {
 
     @Autowired
     private FileSystemWatcherService watcherService;
+
+    @Autowired
+    private DataHubService dataHubService;
 
     private EnvironmentConfig envConfig() {
         ConnectionAuthenticationToken authenticationToken = (ConnectionAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
@@ -176,15 +181,24 @@ public class EntityManagerService {
                 // Update the name of the entity definition file
                 File origFile = new File(fullpath);
                 File newFile = new File(origFile.getParent() + File.separator + title + ENTITY_FILE_EXTENSION);
-                origFile.renameTo(newFile);
+                if (!origFile.renameTo(newFile)) {
+                    throw new IOException("Unable to rename " + origFile.getAbsolutePath() + " to " +
+                        newFile.getAbsolutePath());
+                };
 
                 // Update the directory name
                 File origDirectory = new File(origFile.getParent());
                 File newDirectory = new File(origDirectory.getParent() + File.separator + title);
-                origDirectory.renameTo(newDirectory);
+                if (!origDirectory.renameTo(newDirectory)) {
+                    throw new IOException("Unable to rename " + origDirectory.getAbsolutePath() + " to " +
+                        newDirectory.getAbsolutePath());
+                }
 
                 fullpath = newDirectory.getAbsolutePath() + File.separator + title + ENTITY_FILE_EXTENSION;
                 entity.setFilename(fullpath);
+
+                // Redeploy the flows
+                dataHubService.reinstallUserModules(envConfig().getMlSettings(), this, this);
             }
         }
 
@@ -371,5 +385,15 @@ public class EntityManagerService {
         }
 
         return uiDataList;
+    }
+
+    @Override
+    public void onDeploy(String status) {
+        // No action needed
+    }
+
+    @Override
+    public void onValidate(JsonNode validation) {
+        // No action needed
     }
 }
