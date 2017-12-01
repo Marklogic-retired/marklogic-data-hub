@@ -65,7 +65,7 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 @Service
-public class EntityManagerService implements DeployUserModulesListener, ValidateListener {
+public class EntityManagerService {
 
     private static final String UI_LAYOUT_FILE = "entities.layout.json";
     private static final String PLUGINS_DIR = "plugins";
@@ -198,7 +198,7 @@ public class EntityManagerService implements DeployUserModulesListener, Validate
                 entity.setFilename(fullpath);
 
                 // Redeploy the flows
-                dataHubService.reinstallUserModules(envConfig().getMlSettings(), this, this);
+                dataHubService.reinstallUserModules(envConfig().getMlSettings(), null, null);
             }
         }
 
@@ -385,15 +385,5 @@ public class EntityManagerService implements DeployUserModulesListener, Validate
         }
 
         return uiDataList;
-    }
-
-    @Override
-    public void onDeploy(String status) {
-        // No action needed
-    }
-
-    @Override
-    public void onValidate(JsonNode validation) {
-        // No action needed
     }
 }
