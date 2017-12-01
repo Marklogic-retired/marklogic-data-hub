@@ -35,6 +35,8 @@ import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.flow.FlowType;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.quickstart.auth.ConnectionAuthenticationToken;
+import com.marklogic.quickstart.listeners.DeployUserModulesListener;
+import com.marklogic.quickstart.listeners.ValidateListener;
 import com.marklogic.quickstart.model.EnvironmentConfig;
 import com.marklogic.quickstart.model.FlowModel;
 import com.marklogic.quickstart.model.PluginModel;
@@ -68,13 +70,16 @@ public class EntityManagerService {
     private static final String UI_LAYOUT_FILE = "entities.layout.json";
     private static final String PLUGINS_DIR = "plugins";
     private static final String ENTITIES_DIR = "entities";
-    private static final String ENTITY_FILE_EXTENSION = ".entity.json";
+    public static final String ENTITY_FILE_EXTENSION = ".entity.json";
 
     @Autowired
     private FlowManagerService flowManagerService;
 
     @Autowired
     private FileSystemWatcherService watcherService;
+
+    @Autowired
+    private DataHubService dataHubService;
 
     private EnvironmentConfig envConfig() {
         ConnectionAuthenticationToken authenticationToken = (ConnectionAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
@@ -156,18 +161,50 @@ public class EntityManagerService {
     public EntityModel saveEntity(EntityModel entity) throws IOException {
         JsonNode node = entity.toJson();
         ObjectMapper objectMapper = new ObjectMapper();
-        String filename = entity.getFilename();
-        if (filename == null) {
-            String title = entity.getInfo().getTitle();
+        String fullpath = entity.getFilename();
+        String title = entity.getInfo().getTitle();
+
+        if (fullpath == null) {
             Path dir = Paths.get(envConfig().getProjectDir(), PLUGINS_DIR, ENTITIES_DIR, title);
             if (!dir.toFile().exists()) {
                 dir.toFile().mkdirs();
             }
-            filename = Paths.get(dir.toString(), title + ENTITY_FILE_EXTENSION).toString();
+            fullpath = Paths.get(dir.toString(), title + ENTITY_FILE_EXTENSION).toString();
+        }
+        else {
+            String filename = new File(fullpath).getName();
+            String entityFromFilename = filename.substring(0, filename.indexOf(ENTITY_FILE_EXTENSION));
+            if (!entityFromFilename.equals(entity.getName())) {
+                // The entity name was changed since the files were created. Update
+                // the path.
+
+                // Update the name of the entity definition file
+                File origFile = new File(fullpath);
+                File newFile = new File(origFile.getParent() + File.separator + title + ENTITY_FILE_EXTENSION);
+                if (!origFile.renameTo(newFile)) {
+                    throw new IOException("Unable to rename " + origFile.getAbsolutePath() + " to " +
+                        newFile.getAbsolutePath());
+                };
+
+                // Update the directory name
+                File origDirectory = new File(origFile.getParent());
+                File newDirectory = new File(origDirectory.getParent() + File.separator + title);
+                if (!origDirectory.renameTo(newDirectory)) {
+                    throw new IOException("Unable to rename " + origDirectory.getAbsolutePath() + " to " +
+                        newDirectory.getAbsolutePath());
+                }
+
+                fullpath = newDirectory.getAbsolutePath() + File.separator + title + ENTITY_FILE_EXTENSION;
+                entity.setFilename(fullpath);
+
+                // Redeploy the flows
+                dataHubService.reinstallUserModules(envConfig().getMlSettings(), null, null);
+            }
         }
 
+
         String json = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(node);
-        FileUtils.writeStringToFile(new File(filename), json);
+        FileUtils.writeStringToFile(new File(fullpath), json);
 
         return entity;
     }
