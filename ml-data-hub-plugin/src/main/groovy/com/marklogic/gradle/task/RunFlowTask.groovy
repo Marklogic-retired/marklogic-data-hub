@@ -62,12 +62,12 @@ class RunFlowTask extends HubTask {
                 Integer.parseInt(project.property("threadCount")) : 4
         }
 
-        DatabaseClient sourceClient = hubConfig.newStagingClient()
+        DatabaseClient sourceClient = null
         if (sourceDB != null) {
-            sourceClient.database = sourceDB
+            sourceClient = hubConfig.newStagingClient(project.property("sourceDB"))
         }
         else if (project.hasProperty("sourceDB")) {
-            sourceClient.database = project.property("sourceDB")
+            sourceClient = hubConfig.newStagingClient(project.property("sourceDB"))
         }
         else {
             sourceClient = hubConfig.newStagingClient()
