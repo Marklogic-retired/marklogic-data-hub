@@ -75,6 +75,10 @@ declare function hent:wrap-duplicates(
         $item)
 };
 
+(:
+  this method doctors the output from ES
+  because of https://github.com/marklogic/entity-services/issues/359
+:)
 declare %private function hent:fix-options($nodes as node()*)
 {
   for $n in $nodes
@@ -105,7 +109,6 @@ declare function hent:dump-indexes($entities as json:array)
       map:delete($o, $x)
   let $_ :=
     for $idx in json:array-values(map:get($o, "range-path-index"))
-    let $_ := xdmp:log(("idx:", $idx))
     return
       map:put($idx, "path-expression", fn:replace(map:get($idx, "path-expression"), "es:", "*:"))
   return

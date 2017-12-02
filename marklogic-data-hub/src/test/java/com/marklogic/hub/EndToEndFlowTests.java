@@ -178,6 +178,8 @@ public class EndToEndFlowTests extends HubTestBase {
         List<DynamicTest> tests = new ArrayList<>();
 
         allCombos((codeFormat, dataFormat, flowType, useEs) -> {
+            // we don't need to worry about legacy tests and ES
+            // so skip creating them if the flag is on
             if (useEs) {
                 return;
             }
@@ -243,6 +245,8 @@ public class EndToEndFlowTests extends HubTestBase {
         });
 
         allCombos((codeFormat, dataFormat, flowType, useEs) -> {
+            // we don't need to worry about legacy tests and ES
+            // so skip creating them if the flag is on
             if (useEs) {
                 return;
             }
@@ -323,7 +327,7 @@ public class EndToEndFlowTests extends HubTestBase {
         allCombos((codeFormat, dataFormat, flowType, useEs) -> {
             String prefix = "scaffolded";
             String flowName = getFlowName(prefix, codeFormat, dataFormat, flowType, useEs);
-            if (flowType.equals(FlowType.INPUT) && useEs) {
+            if (flowType.equals(FlowType.INPUT)) {
                 tests.add(DynamicTest.dynamicTest(flowName + " MLCP", () -> {
                     Map<String, Object> options = new HashMap<>();
                     FinalCounts finalCounts = new FinalCounts(1, 0, 1, 1, 0, 0, 1, 0, 0, 0, "FINISHED");
@@ -857,7 +861,7 @@ public class EndToEndFlowTests extends HubTestBase {
             if (dataFormat.equals(DataFormat.JSON)) {
                 String expected = getResource("e2e-test/" + filename + "." + dataFormat.toString());
                 String actual = stagingDocMgr.read("/input" + fileSuffix + "." + dataFormat.toString()).next().getContent(new StringHandle()).get();
-                 assertJsonEqual(expected, actual, false);
+                assertJsonEqual(expected, actual, false);
             } else {
                 Document expected = getXmlFromResource("e2e-test/" + filename + "." + dataFormat.toString());
                 Document actual = stagingDocMgr.read("/input" + fileSuffix + "." + dataFormat.toString()).next().getContent(new DOMHandle()).get();
