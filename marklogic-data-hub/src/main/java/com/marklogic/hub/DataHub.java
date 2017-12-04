@@ -484,7 +484,7 @@ public class DataHub {
             return hv.getVersion();
         }
         catch(Exception e) {}
-        return "2.0.1";
+        return "2.0.0"; // don't change this value
     }
 
     public String getMarkLogicVersion() {

@@ -362,7 +362,8 @@ public class ScaffoldingTest extends HubTestBase {
     @Test
     public void updateLegacyFlowsFrom2x() {
         allCombos(((codeFormat, dataFormat, flowType) -> {
-            updateLegacyFlow("2.0.1","my-fun-test", codeFormat, dataFormat, flowType);
+            // don't update this version
+            updateLegacyFlow("2.0.0-rc.1","my-fun-test", codeFormat, dataFormat, flowType);
         }));
     }
 }

@@ -1,21 +1,52 @@
 # Change Log
 
+## [v2.0.2](https://github.com/marklogic-community/marklogic-data-hub/tree/v2.0.2) (2017-12-01)
+[Full Changelog](https://github.com/marklogic-community/marklogic-data-hub/compare/v2.0.1...v2.0.2)
+
+**Implemented enhancements:**
+
+- Delete old jobs [\#534](https://github.com/marklogic-community/marklogic-data-hub/issues/534)
+
+**Fixed bugs:**
+
+- Main is executed in staging db even when setting -PsourceDB=Final  [\#565](https://github.com/marklogic-community/marklogic-data-hub/issues/565)
+- Blank harmonization page [\#558](https://github.com/marklogic-community/marklogic-data-hub/issues/558)
+
+**Merged pull requests:**
+
+- Feature/bug 558 [\#598](https://github.com/marklogic-community/marklogic-data-hub/pull/598) ([dmcassel](https://github.com/dmcassel))
+- fixed \#565 [\#596](https://github.com/marklogic-community/marklogic-data-hub/pull/596) ([paxtonhare](https://github.com/paxtonhare))
+- adding the userOrg property [\#586](https://github.com/marklogic-community/marklogic-data-hub/pull/586) ([dmcassel](https://github.com/dmcassel))
+- fixed \#547 [\#568](https://github.com/marklogic-community/marklogic-data-hub/pull/568) ([paxtonhare](https://github.com/paxtonhare))
+- Feature/delete old jobs [\#566](https://github.com/marklogic-community/marklogic-data-hub/pull/566) ([dmcassel](https://github.com/dmcassel))
+
 ## [v2.0.1](https://github.com/marklogic-community/marklogic-data-hub/tree/v2.0.1) (2017-11-20)
-[Full Changelog](https://github.com/marklogic-community/marklogic-data-hub/compare/v2.0.0...v2.0.1)
+[Full Changelog](https://github.com/marklogic-community/marklogic-data-hub/compare/2.0.1...v2.0.1)
+
+## [2.0.1](https://github.com/marklogic-community/marklogic-data-hub/tree/2.0.1) (2017-11-20)
+[Full Changelog](https://github.com/marklogic-community/marklogic-data-hub/compare/v2.0.0...2.0.1)
 
 **Implemented enhancements:**
 
 - Harmonize Writer could benefit from more context like $type [\#564](https://github.com/marklogic-community/marklogic-data-hub/issues/564)
+- Update hubCreateEntity task to use ES too [\#547](https://github.com/marklogic-community/marklogic-data-hub/issues/547)
 - Update 2.x version checker to omit pre-release version [\#485](https://github.com/marklogic-community/marklogic-data-hub/issues/485)
+- Browse Data: Reset search when changing databases [\#535](https://github.com/marklogic-community/marklogic-data-hub/issues/535)
 
 **Fixed bugs:**
 
 - Error running sample product-catalog example [\#560](https://github.com/marklogic-community/marklogic-data-hub/issues/560)
 - Entity definition partially written, everything hosed [\#435](https://github.com/marklogic-community/marklogic-data-hub/issues/435)
+- Harmonization code generation fails for a relationships where entities hold mutual references [\#544](https://github.com/marklogic-community/marklogic-data-hub/issues/544)
+- Out of memory when flow has too many errors [\#543](https://github.com/marklogic-community/marklogic-data-hub/issues/543)
+- admin role required for quick start login [\#542](https://github.com/marklogic-community/marklogic-data-hub/issues/542)
+- mlWatch broken for deploying REST extensions  [\#538](https://github.com/marklogic-community/marklogic-data-hub/issues/538)
+- Options not deployed for Final [\#529](https://github.com/marklogic-community/marklogic-data-hub/issues/529)
 
 **Closed issues:**
 
 - REST search options deployed to wrong location in modules db [\#567](https://github.com/marklogic-community/marklogic-data-hub/issues/567)
+- Add e2e tests for Quickstart [\#555](https://github.com/marklogic-community/marklogic-data-hub/issues/555)
 - Getting MISSING\_FLOW error when invoking from DMSDK [\#552](https://github.com/marklogic-community/marklogic-data-hub/issues/552)
 - Add support for mlcp -input\_file\_pattern [\#550](https://github.com/marklogic-community/marklogic-data-hub/issues/550)
 - Browse Data: not obvious that I needed to click Search [\#530](https://github.com/marklogic-community/marklogic-data-hub/issues/530)
@@ -26,6 +57,10 @@
 - MLCP fails if no "jobId" parameter specified even with trace off [\#426](https://github.com/marklogic-community/marklogic-data-hub/issues/426)
 - Test deploy against ssl enabled server [\#417](https://github.com/marklogic-community/marklogic-data-hub/issues/417)
 - Epic - error handling [\#289](https://github.com/marklogic-community/marklogic-data-hub/issues/289)
+- Add README.md at top of examples folder [\#549](https://github.com/marklogic-community/marklogic-data-hub/issues/549)
+- Quickstart build fails [\#541](https://github.com/marklogic-community/marklogic-data-hub/issues/541)
+- hubPreinstallCheck, AdminConfig ignores SSL setting [\#539](https://github.com/marklogic-community/marklogic-data-hub/issues/539)
+- Enhance command line to build entity indexes via entity JSON descriptors [\#526](https://github.com/marklogic-community/marklogic-data-hub/issues/526)
 
 **Merged pull requests:**
 
@@ -541,6 +576,7 @@
 
 **Merged pull requests:**
 
+- Fix mlcp windows issue 89 [\#215](https://github.com/marklogic-community/marklogic-data-hub/pull/215) ([paxtonhare](https://github.com/paxtonhare))
 - 192 - Removed automatic closing of notification [\#208](https://github.com/marklogic-community/marklogic-data-hub/pull/208) ([maeisabelle](https://github.com/maeisabelle))
 
 ## [v1.0.0-beta.3](https://github.com/marklogic-community/marklogic-data-hub/tree/v1.0.0-beta.3) (2016-04-15)
@@ -609,14 +645,13 @@
 
 **Merged pull requests:**
 
-- Fix mlcp windows issue 89 [\#215](https://github.com/marklogic-community/marklogic-data-hub/pull/215) ([paxtonhare](https://github.com/paxtonhare))
 - 130 - Remember the last input path per flow [\#172](https://github.com/marklogic-community/marklogic-data-hub/pull/172) ([maeisabelle](https://github.com/maeisabelle))
 - Cleanup - Fix Jshint errors [\#171](https://github.com/marklogic-community/marklogic-data-hub/pull/171) ([maeisabelle](https://github.com/maeisabelle))
 - set server.session.timeout=0 to make session last forever. [\#169](https://github.com/marklogic-community/marklogic-data-hub/pull/169) ([divino](https://github.com/divino))
 - Add hr hub [\#167](https://github.com/marklogic-community/marklogic-data-hub/pull/167) ([paxtonhare](https://github.com/paxtonhare))
 - 143 - Added validation for duplicate REST service extensions and transforms. [\#163](https://github.com/marklogic-community/marklogic-data-hub/pull/163) ([maeisabelle](https://github.com/maeisabelle))
+- fixed \#158 [\#161](https://github.com/marklogic-community/marklogic-data-hub/pull/161) ([paxtonhare](https://github.com/paxtonhare))
 - 75 - Swagger UI to browse the Hub APIs [\#160](https://github.com/marklogic-community/marklogic-data-hub/pull/160) ([maeisabelle](https://github.com/maeisabelle))
-- fixed \#146 - don't reset user prefs on logout [\#151](https://github.com/marklogic-community/marklogic-data-hub/pull/151) ([paxtonhare](https://github.com/paxtonhare))
 
 ## [v1.0.0-alpha.4](https://github.com/marklogic-community/marklogic-data-hub/tree/v1.0.0-alpha.4) (2016-03-25)
 [Full Changelog](https://github.com/marklogic-community/marklogic-data-hub/compare/v1.0.0-alpha.3...v1.0.0-alpha.4)
@@ -640,10 +675,10 @@
 
 **Merged pull requests:**
 
-- fixed \#158 [\#161](https://github.com/marklogic-community/marklogic-data-hub/pull/161) ([paxtonhare](https://github.com/paxtonhare))
 - fixed \#156 -cached in ie [\#157](https://github.com/marklogic-community/marklogic-data-hub/pull/157) ([paxtonhare](https://github.com/paxtonhare))
 - fixed \#154 - added sample tweets [\#155](https://github.com/marklogic-community/marklogic-data-hub/pull/155) ([paxtonhare](https://github.com/paxtonhare))
 - fixed \#152 - get\_content transform not working for json [\#153](https://github.com/marklogic-community/marklogic-data-hub/pull/153) ([paxtonhare](https://github.com/paxtonhare))
+- fixed \#146 - don't reset user prefs on logout [\#151](https://github.com/marklogic-community/marklogic-data-hub/pull/151) ([paxtonhare](https://github.com/paxtonhare))
 - fixed \#149 - load compressed archives [\#150](https://github.com/marklogic-community/marklogic-data-hub/pull/150) ([paxtonhare](https://github.com/paxtonhare))
 - 142 - Add default collections when loading data using flows [\#148](https://github.com/marklogic-community/marklogic-data-hub/pull/148) ([maeisabelle](https://github.com/maeisabelle))
 - 101 - Handle detection of REST directory [\#147](https://github.com/marklogic-community/marklogic-data-hub/pull/147) ([maeisabelle](https://github.com/maeisabelle))
@@ -686,7 +721,6 @@
 - 100 new flow and new entity button fix [\#110](https://github.com/marklogic-community/marklogic-data-hub/pull/110) ([gmarintes](https://github.com/gmarintes))
 - Updated "in-a-box" to "data-hub" and "data-hub-in-a-box" to "data-hub" [\#108](https://github.com/marklogic-community/marklogic-data-hub/pull/108) ([maeisabelle](https://github.com/maeisabelle))
 - 79 - Run-flow transform [\#107](https://github.com/marklogic-community/marklogic-data-hub/pull/107) ([maeisabelle](https://github.com/maeisabelle))
-- I stand corrected. There's a reason it's a war. [\#66](https://github.com/marklogic-community/marklogic-data-hub/pull/66) ([paxtonhare](https://github.com/paxtonhare))
 
 ## [v1.0.0-alpha.2](https://github.com/marklogic-community/marklogic-data-hub/tree/v1.0.0-alpha.2) (2016-03-09)
 [Full Changelog](https://github.com/marklogic-community/marklogic-data-hub/compare/v1.0.0-alpha.1...v1.0.0-alpha.2)
@@ -755,6 +789,7 @@
 - fixed \#56 - created a staging and final database [\#83](https://github.com/marklogic-community/marklogic-data-hub/pull/83) ([paxtonhare](https://github.com/paxtonhare))
 - Quick start cancel run flow [\#69](https://github.com/marklogic-community/marklogic-data-hub/pull/69) ([gmarintes](https://github.com/gmarintes))
 - Fix basic bugs [\#68](https://github.com/marklogic-community/marklogic-data-hub/pull/68) ([paxtonhare](https://github.com/paxtonhare))
+- I stand corrected. There's a reason it's a war. [\#66](https://github.com/marklogic-community/marklogic-data-hub/pull/66) ([paxtonhare](https://github.com/paxtonhare))
 - Fixed \#62 - added spring batch to run jobs [\#65](https://github.com/marklogic-community/marklogic-data-hub/pull/65) ([paxtonhare](https://github.com/paxtonhare))
 - Fixed \#52 - create jar instead of war [\#64](https://github.com/marklogic-community/marklogic-data-hub/pull/64) ([paxtonhare](https://github.com/paxtonhare))
 - 5 spec for plugins [\#63](https://github.com/marklogic-community/marklogic-data-hub/pull/63) ([paxtonhare](https://github.com/paxtonhare))
