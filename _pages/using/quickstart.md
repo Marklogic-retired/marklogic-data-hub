@@ -12,13 +12,13 @@ The Quickstart UI is distributed as a WAR (web archive) file. This file is a sta
 
 #### Where do I get it?
 The WAR file is available for download on the Github site.  
-[Download Now](https://github.com/marklogic-community/marklogic-data-hub/releases/download/v2.0.0/quick-start-2.0.0.war){:.blue-button}.
+[Download Now](https://github.com/marklogic-community/marklogic-data-hub/releases/download/v2.0.2/quick-start-2.0.2.war){:.blue-button}.
 
 #### How do I run it?
 You can run it by typing:
 
 <pre class="cmdline">
-java -jar quickstart-2.0.0.war
+java -jar quickstart-2.0.2.war
 </pre>
 
 #### Tell me more

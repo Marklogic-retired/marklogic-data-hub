@@ -13,7 +13,7 @@ Still here? The DHF Library is distributed via bintray so that you can include i
 **Gradle**
 
 ```groovy
-compile('com.marklogic:marklogic-data-hub:2.0.0')
+compile('com.marklogic:marklogic-data-hub:2.0.2')
 ```
 
 **Maven**
@@ -22,7 +22,7 @@ compile('com.marklogic:marklogic-data-hub:2.0.0')
 <dependency>
   <groupId>com.marklogic</groupId>
   <artifactId>marklogic-data-hub</artifactId>
-  <version>2.0.0</version>
+  <version>2.0.2</version>
   <type>pom</type>
 </dependency>
 ```
@@ -30,7 +30,7 @@ compile('com.marklogic:marklogic-data-hub:2.0.0')
 **Ivy**
 
 ```xml
-<dependency org='com.marklogic' name='marklogic-data-hub' rev='2.0.0'>
+<dependency org='com.marklogic' name='marklogic-data-hub' rev='2.0.2'>
   <artifact name='$AID' ext='pom'></artifact>
 </dependency>
 ```

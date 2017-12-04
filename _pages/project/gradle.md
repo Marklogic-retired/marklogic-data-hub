@@ -50,7 +50,7 @@ plugins {
 
     // This gradle plugin extends the ml-gradle plugin with
     // commands that make the Data Hub Framework do its magic
-    id 'com.marklogic.ml-data-hub' version '2.0.0'
+    id 'com.marklogic.ml-data-hub' version '2.0.2'
 }
 ```
 
