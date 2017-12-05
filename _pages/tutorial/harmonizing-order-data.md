@@ -32,7 +32,7 @@ Note that this time we used the default option of **Create Structure from Entity
 
 Because each Order can consist of multiple rows which are then turned into multiple documents in MarkLogic, we cannot do a 1:1 mapping like we did for Products. This means we cannot simply return a list of URIs. Instead we need to return a unique list of all of the values from the relation **id** column.
 
-We will use the [jsearch library](https://docs.marklogic.com/guide/search-dev/javascript) to run our query.
+We use the [jsearch library](https://docs.marklogic.com/guide/search-dev/javascript) to run our query.
 
 This code is simply returning all unique values in the **id** field. The one tricky bit is the `slice` call:
 
@@ -56,7 +56,7 @@ For the Order entity the id is the id from the original relational system. Inste
 
 After we get all of the matching documents we must then build up an array of the Products while also summing the total price.
 
-Once again we will use the [jsearch library](https://docs.marklogic.com/guide/search-dev/javascript) to run our query.
+Once again we use the [jsearch library](https://docs.marklogic.com/guide/search-dev/javascript) to run our query.
 
 Note how we query all Order documents containing the matching id. We use the `map` function to extract out the original content (stored in the instance part of the envelope). The `orders` variable will contain an array of original json objects.
 

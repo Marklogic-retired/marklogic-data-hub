@@ -5,7 +5,7 @@ lead_text: ''
 permalink: /tutorial/create-order-entity/
 ---
 
-Just like we did for the Product data, we will model an empty Order then load the raw data.
+Just like we did for the Product data, we model an empty Order then load the raw data.
 
 <i class="fa fa-hand-pointer-o"></i> Click on the Entities tab in the top navigation bar.
 

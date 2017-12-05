@@ -9,7 +9,7 @@ permalink: /tutorial/create-product-input-flow/
 
 > **Harmonize Flows** are responsible for batch harmonization of data from staging to final. Harmonization is the **main purpose** of using the Data Hub Framework.
 
-We will start by creating an input flow so that we can load data as-is. This gives us a change to explore our data a bit and hopefully better understand it.
+We start by creating an input flow so that we can load data as-is. This gives us a chance to explore our data a bit and hopefully better understand it.
 
 <i class="fa fa-hand-pointer-o"></i> Click on the **Flows** tab in the top navigation bar.
 

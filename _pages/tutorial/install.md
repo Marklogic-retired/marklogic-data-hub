@@ -13,14 +13,14 @@ permalink: /tutorial/install/
 
 ## 2 - Download the QuickStart War
 
-- Create a folder for this hub project and cd into it.
+- Create a folder for this hub project and open a command line window into it. You can create the folder however you like. Here's an example of creating it from the command line.
 
 <pre class="cmdline">
 mkdir data-hub
 cd data-hub
 </pre>
 
-- Download the latest Quick Start 2.x quick-start-2*.war from the [releases page](https://github.com/marklogic-community/marklogic-data-hub/releases){:target="_blank"} and place it in the folder you just created. **Be sure you are getting the latest 2.x version and not the 1.x version!**
+- Download the latest [Quick Start war](https://github.com/marklogic-community/marklogic-data-hub/releases/download/v{{ site.data.global.hub_version }}/quick-start-{{ site.data.global.hub_version }}.war) and place it in the folder you just created.
 
 ## 3 - Download the Sample Data
 
@@ -38,20 +38,29 @@ Your directory should look like this:
 
 ## 4 - Run the QuickStart
 
+The QuickStart application is a stand-alone Java Web Application. It runs its own internal web server and serves up the application on port 8080. You do have the option to change the port as noted below. QuickStart can be run on any computer as long as there is network connectivity to your MarkLogic instance. Quickstart will communicate with MarkLogic over http.
+
+Let's run the Quickstart:
+
 1. Open a terminal window in the data-hub directory
 1. Run the War
 
 <pre class="cmdline">
-java -jar quick-start-*.war
+java -jar quick-start-{{ site.data.global.hub_version }}.war
 </pre>
 
 *If you need to run on a different port then add the --server.port option*
 
 <pre class="cmdline">
-java -jar quick-start-*.war --server.port=9000
+java -jar quick-start-{{ site.data.global.hub_version }}.war --server.port=9000
 </pre>
 
 ![Start QuickStart]({{site.baseurl}}/images/2x/start-quickstart.png)
+
+If you are on Windows you may be presented with a Firewall Notice:
+![Firewall notice]({{site.baseurl}}/images/2x/firewall-notice.png)
+
+Click **Allow Access**
 
 - Open the QuickStart Application in your browser:
   [http://localhost:8080](http://localhost:8080){:target="_blank"}
