@@ -62,7 +62,7 @@ public class AuthConfig extends WebSecurityConfigurerAdapter {
     /**
      * We seem to need this defined as a bean; otherwise, aspects of the default Spring Boot security will still remain.
      *
-     * @return
+     * @return a new MarkLogicAuthenticationManager
      */
     @Bean
     public MarkLogicAuthenticationManager markLogicAuthenticationManager() {

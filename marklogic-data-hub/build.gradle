@@ -115,6 +115,7 @@ if (!(
     gradle.startParameter.taskNames*.toLowerCase().contains("publishplugins") ||
     gradle.startParameter.taskNames*.toLowerCase().contains("publishtomavenlocal") ||
     gradle.startParameter.taskNames*.toLowerCase().contains("bintrayupload") ||
+    gradle.startParameter.taskNames*.toLowerCase().contains("javadoc") ||
     project.hasProperty('skipui')
     )
    ) {
