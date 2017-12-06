@@ -84,7 +84,7 @@ main:
       childPages: [
         { url: '/docs/gradle-tasks/', text: 'Gradle Tasks' },
         { url: '/docs/server-side/', text: 'Server Side (xqy, sjs)' },
-        { url: '/Javadocs/', text: 'javadocs' }
+        { url: '/javadocs/', text: 'Javadocs' }
       ]
     }
     - { url: '/faqs/', text: 'FAQs' }
