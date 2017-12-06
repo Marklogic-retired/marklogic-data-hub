@@ -39,7 +39,7 @@ The sample data is located in the input/ folder.
 
 1. Browse the Input Files to **input/hl7**.
 
-1. Set the Data Format to **Documents**.
+1. Set the Input File Type to **Documents**.
 
 1. Now Click **RUN IMPORT**.
 
@@ -51,13 +51,13 @@ The sample data is located in the input/ folder.
 
 1. Browse the Input Files to **input/nppes**.
 
-1. Set the Data Format to **Delimited Text**.
+1. Set the Input File Type to **Delimited Text**.
 
 1. Now Click **RUN IMPORT**.
 
 ## Browsing the Staging Data
 
-1. At this point you have loaded the sample data. You can browse the data by clicking on the Browse tab at the top menu.
+1. At this point you have loaded the sample data. You can browse the data by clicking on the Browse Data tab at the top menu.
 
 ## Harmonizing Data
 
@@ -65,15 +65,13 @@ The sample data is located in the input/ folder.
 
 1. Click on the **final** flow.
 
-1. To run the harmonize flows simply press the **Run** button on the info screen.
+1. To run the harmonize flows simply press the **Run Harmonize** button on the info screen.
 
 ## Browsing the Harmonized Data
 
-1. Now you have harmonized the data into your final database. You can browse the harmonized data by clicking on the Browse tab at the top menu.
+1. Now you have harmonized the data into your final database. You can browse the harmonized data by clicking on the Browse Data tab at the top menu.
 
-1. Next change the database to **FINAL**.
-
-1. Click Search.
+1. Next change the database to **FINAL**. Quick Start will automatically run a search against the Final database.
 
 # Entities
 Entities represent the data you are modeling. For this example we provide the **Patients** entity. Inside this entity definition you will find all of the example flows.
@@ -87,14 +85,14 @@ Flows are sets of plugins that work together to create an envelope document.
 ## Input Flows
 
 ### hl7
-The hl7 Flow is intended to ingest C-CDA C32 Hl7 XML files. When running the hl7 flow simply point it at input/hl7. Set the document type to **Document**.
+The hl7 Flow is intended to ingest C-CDA C32 Hl7 XML files. When running the hl7 flow simply point it at input/hl7. Set the Input Document Type to **Document**.
 
 ### nppes
-The nppes Flow is intended to ingest NPPES csv files. This flow will split each row of the NPPES file into a separate XML document in the staging database. When running the hl7 flow simply point it at input/nppes. Set the document type to **Delimited Text**.
+The nppes Flow is intended to ingest NPPES csv files. This flow will split each row of the NPPES file into a separate XML document in the staging database. When running the hl7 flow simply point it at input/nppes. Set the Input Document Type to **Delimited Text**.
 
 ## Harmonize Flows
 
-There is only one harmonize flow provided. This final flow will create a harmonized XML document that contains the original C32 xml as the content of an envelope. It will also extract various data from th3 C32 into the header section for easier queryability.
+There is only one harmonize flow provided. This final flow will create a harmonized XML document that contains the original C32 xml as the content of an envelope. It will also extract various data from the C32 into the header section for easier queryability.
 
 ## Final REST services
 
