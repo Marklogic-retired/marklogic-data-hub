@@ -6,7 +6,11 @@ permalink: /understanding/flowtracing/
 ---
 
 # Flow Tracing Overview
-Flow Tracing produces a detailed view of the flows as they happened. All Flow Tracing events are recorded in the `TRACES` database and can be viewed with several UIs, described below. Flow Tracing can be enabled and disabled as needed. Any uncaught exception will always result in a Flow Tracing event, regardless of whether tracing is currently enabled.
+Flow Tracing produces a detailed view of the flows as they happened. For each plugin in a flow the inputs and outputs to that plugin are recorded into the `Traces` database. Flow Tracing is great for debugging your flows because you can see exactly what came in and went out of each step. You can use Flow Tracing to track down bugs in your flows as well as performance issues.
+
+Flow Tracing can be enabled and disabled as needed. We recommend you disable Flow Tracing in production as there is a performance penalty for writing the additional trace information. Any uncaught exception will always result in a Flow Tracing event, regardless of whether tracing is currently enabled.
+
+Flow Tracing can be viewed with several UIs, described below.
 
 # Controlling Flow Tracing Events
 A flag in the Modules database controls whether flow tracing is turned on. There are two ways to enable and disable Flow Tracing: using a gradle task, or via the Quickstart UI.
@@ -36,7 +40,7 @@ From the main Quickstart Dashboard, select Traces.
 
 ![Displaying traces Quickstart 1]({{site.baseurl}}/images/traces/DisplayingTracingInQuickstartScreen1.png)
 
-This will show a list of all events currently in the database.
+This will show a list of all events currently in the database. Note that you can search the text of the Trace events via the search bar. All text in the trace events is indexed and searchable.
 
 ![Displaying traces Quickstart 2]({{site.baseurl}}/images/traces/DisplayingTracingInQuickstartScreen2.png)
 
@@ -45,7 +49,7 @@ Selecting a single trace event will display the detailed flow.
 ![Displaying single trace Quickstart]({{site.baseurl}}/images/traces/DisplayingSingleTraceInQuickstart.png)
 
 ## Viewing with Flow Tracing Viewer
-You can also view Flow Tracing events with a Trace Viewer provided in the application server associated with the TRACING database (by default installed on port 8012).
+You can also view Flow Tracing events with a Trace Viewer provided in the application server associated with the TRACING database (by default installed on port 8012). This UI is installed into MarkLogic and you do not need a separate tool to view it.
 
 Navigate your browser to the port running the `TRACES` Application server, by default on port 8012. You will be presented with the dedicated Trace Viewer application.
 

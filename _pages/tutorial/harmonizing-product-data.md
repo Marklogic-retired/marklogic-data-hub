@@ -25,7 +25,9 @@ This time we want to use the default option of **Create Structure from Entity De
 
 ![Harmonize Flow Overview]({{site.baseurl}}/images/2x/harmonize-flow-overview.png)
 
-There are five plugins because harmonize flows typically run as batch jobs _(although not always)_{:.smaller}. The Data Hub Framework first invokes the collector inside of MarkLogic. The collector returns a list of strings. The Data Hub Framework then breaks those strings into parallel batches and sends each one to the (content, headers, triples, writer) plugins as a transaction.
+Harmonize flows were designed to be run as batch jobs. To support this batch running, the Data Hub Framework exposes a collector plugin whose purpose is to return a list of things to batch over. The Data Hub Framework then breaks the list of things into parallel batches of a configurable size and sends each and every single thing to the (content, headers, triples, writer) plugins as a transaction.
+
+If you are not interested in running Harmonization flows as batches we do provide ways for running them on-demand for single items.
 
 ![Harmonize Flow Overview]({{site.baseurl}}/images/2x/harmonize-flow-diagram.png)
 

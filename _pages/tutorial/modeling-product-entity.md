@@ -38,7 +38,7 @@ After clicking **Save** you will be prompted whether you want to Update Indexes 
 
 <i class="fa fa-hand-pointer-o"></i> Click **YES**.
 
-One of the benefits of modeling your data with Entity Services is that we can use the model to create database configuration options automatically. This means we can update the necessary index settings bases on how you model your data. For the Product entity, we made sku the primary key. The Data Hub Framework will create a range index on the sku element.
+One of the benefits of modeling your data with Entity Services is that you can use the model to create database configuration options automatically. This means you can update the necessary index settings bases on how you model your data. For the Product entity, you made sku the primary key. The Data Hub Framework will create a range index on the sku element.
 
 ![Update Indexes]({{site.baseurl}}/images/2x/update-indexes1.png)
 
