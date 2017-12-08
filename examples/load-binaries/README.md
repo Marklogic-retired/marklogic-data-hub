@@ -17,7 +17,7 @@ This example shows how to load binary documents with the Hub Framework.
 1. Install the Hub into MarkLogic (if necessary)
 
 ## Loading the Sample PDF
-1. Click on the **Entities** Tab at the top.
+1. Click on the **Flows** Tab at the top.
 1. Click on the Guides entity on the left.
 1. Click on the "LoadAsXml" or "LoadAsJson" input flow.
 1. Browse to the input folder.
