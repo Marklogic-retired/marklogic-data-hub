@@ -98,11 +98,12 @@ gradle mlLoadModules
 ```
 
 ### Scaffolding Commands
-You can use scaffolding commands to configure flows.
+You can use scaffolding commands to create entities and configure flows.
 
 ```bash
-gradle hubCreateInputFlow
-gradle hubCreateHarmonizeFlow
+gradle hubCreateEntity -PentityName=myNewEntity
+gradle hubCreateInputFlow -PentityName=myNewEntity -PflowName=myInputFlow
+gradle hubCreateHarmonizeFlow -PentityName=myNewEntity -PflowName=myHarmonizationFlow
 ```
 
 For a complete list of gradle tasks, check here: [https://github.com/marklogic-community/marklogic-data-hub/wiki/Gradle-Tasks](https://github.com/marklogic-community/marklogic-data-hub/wiki/Gradle-Tasks)
