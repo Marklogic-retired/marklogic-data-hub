@@ -19,6 +19,26 @@ module namespace es-wrapper = "http://marklogic.com/data-hub/es-wrapper";
 
 declare option xdmp:mapping "false";
 
+(:
+ : NOTE to reader: This entire module exists so that we can have 1
+ : codebase that works on ML9 and ML8. We are purposely wrapping ES
+ : calls in evals so that this code can be safely deployed on ML8
+ : w/o causing an error in the static type check phase.
+ : If we drop ML8 support this wrapper lib can go away
+ :)
+declare function es-wrapper:search-options-generate($model)
+{
+  xdmp:eval('
+    import module namespace es = "http://marklogic.com/entity-services"
+      at "/MarkLogic/entity-services/entity-services.xqy";
+
+    declare variable $model external;
+
+    es:search-options-generate($model)
+  ',
+  map:entry("model", $model))
+};
+
 declare function es-wrapper:database-properties-generate($model)
 {
   xdmp:eval('

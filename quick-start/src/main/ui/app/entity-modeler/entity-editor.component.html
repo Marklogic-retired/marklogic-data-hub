@@ -32,7 +32,8 @@
       <thead>
         <th><input type="checkbox" (change)="toggleSelection($event)"></th>
         <th class="col-toggler" title="Primary Key"><i class="fa fa-key"></i></th>
-        <th (click)="toggleRangeIndexSelection()" class="col-toggler" title="Range Index"><i class="fa fa-bolt"></i></th>
+        <th (click)="toggleRangeIndexSelection()" class="col-toggler" title="Element Range Index"><i class="fa fa-bolt"></i></th>
+        <th (click)="togglePathRangeIndexSelection()" class="col-toggler" title="Path Range Index"><i class="fa fa-code"></i></th>
         <th (click)="toggleWordLexiconSelection()"  class="col-toggler" title="Word Lexicon"><i class="fa fa-won"></i></th>
         <th (click)="toggleRequiredSelection()"  class="col-toggler" title="Required Field"><i class="fa fa-exclamation"></i></th>
         <th>Name</th>
@@ -45,6 +46,7 @@
           <td><input type="checkbox" [(ngModel)]="property.selected"></td>
           <td class="col-toggler" (click)="togglePrimaryKey(property)"><i [ngClass]="{'active': isPrimaryKey(property.name)}" class="fa fa-key"></i></td>
           <td class="col-toggler" (click)="toggleRangeIndex(property)"><i [ngClass]="{'active': isRangeIndex(property.name)}" class="fa fa-bolt"></i></td>
+          <td class="col-toggler" (click)="togglePathRangeIndex(property)"><i [ngClass]="{'active': isPathRangeIndex(property.name)}" class="fa fa-code"></i></td>
           <td class="col-toggler" (click)="toggleWordLexicon(property)"><i [ngClass]="{'active': isWordLexicon(property.name)}" class="fa fa-won"></i></td>
           <td class="col-toggler" (click)="toggleRequired(property)"><i [ngClass]="{'active': isRequired(property.name)}" class="fa fa-exclamation"></i></td>
 
