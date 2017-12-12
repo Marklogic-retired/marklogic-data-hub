@@ -3,7 +3,7 @@ plugins {
     id 'java'
     id 'maven-publish'
     id 'com.jfrog.bintray' version '1.7.2'
-    id 'com.marklogic.ml-gradle' version '3.1-alpha4'
+    id 'com.marklogic.ml-gradle' version '3.2.0'
     id 'com.moowork.node' version '1.1.1'
 }
 
@@ -230,8 +230,6 @@ ext {
         customTokens.put("%%mlModulesDbName%%", mlModulesDbName)
         customTokens.put("%%mlTriggersDbName%%", mlTriggersDbName)
         customTokens.put("%%mlSchemasDbName%%", mlSchemasDbName)
-
-        modulePaths = ["marklogic-data-hub/src/main/resources/ml-modules"]
 
         mlModulePermissions = "rest-reader,read,rest-writer,insert,rest-writer,update,rest-extension-user,execute"
     }
