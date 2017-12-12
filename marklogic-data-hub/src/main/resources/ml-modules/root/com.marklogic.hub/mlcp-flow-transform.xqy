@@ -56,7 +56,7 @@ declare function mlcpFlow:transform(
       let $_ :=
         if ($flow) then ()
         else
-          fn:error(xs:QName("MISSING_FLOW"), "The specified flow " || map:get($params, "flow") || " is missing.")
+          fn:error(xs:QName("MISSING_FLOW"), "The specified flow entity='" || $entity-name || "', " || "flow-name='" || $flow-name || "'' is missing.")
 
       (: configure the options :)
       let $options as map:map := (
@@ -78,7 +78,8 @@ declare function mlcpFlow:transform(
 declare function mlcpFlow:run-flow(
   $jobId, $flow, $uri, $content, $options)
 {
-  (: mlcp in runs in update mode :)
+  try{
+  (: mlcp in runs in update mode :) 
   xdmp:eval('
     import module namespace flow = "http://marklogic.com/data-hub/flow-lib"
       at "/com.marklogic.hub/lib/flow-lib.xqy";
@@ -101,4 +102,5 @@ declare function mlcpFlow:run-flow(
     map:entry("content", $content),
     map:entry("options", $options)
   )))
+  } catch ($e) {xdmp:log(xdmp:quote($e))}
 };
