@@ -44,6 +44,17 @@ task createInputXmlFlow(type: com.marklogic.gradle.task.CreateInputFlowTask) {
   }
 }
 
+task createInputXmlXqyFlow(type: com.marklogic.gradle.task.CreateInputFlowTask) {
+  mustRunAfter createXmlEntity
+
+  doFirst {
+    project.ext.entityName = "input-xml"
+    project.ext.flowName = "raw-input-xml-xqy"
+    project.ext.dataFormat = "xml"
+    project.ext.pluginFormat = "xqy"
+  }
+}
+
 task createInputJsonFlow(type: com.marklogic.gradle.task.CreateInputFlowTask) {
   mustRunAfter createJsonEntity
 
@@ -60,6 +71,7 @@ task createEntityInput() {
   dependsOn createXmlEntity
   dependsOn createJsonEntity
   dependsOn createInputXmlFlow
+  dependsOn createInputXmlXqyFlow
   dependsOn createInputJsonFlow
 
   finalizedBy mlLoadModules
@@ -136,10 +148,11 @@ task loadJson(type: com.marklogic.gradle.task.MlcpTask) {
   transform_module = "/com.marklogic.hub/mlcp-flow-transform.xqy"
   transform_namespace = "http://marklogic.com/data-hub/mlcp-flow-transform"
   transform_param =  "entity-name=input-json,flow-name=raw-input-json"
+  thread_count = 4
 }
 
 task loadXml(type: com.marklogic.gradle.task.MlcpTask) {
-  mustRunAfter createInputJsonFlow
+  mustRunAfter createInputXmlFlow
   mustRunAfter mlLoadModules
   mustRunAfter getInputData
 
@@ -159,12 +172,38 @@ task loadXml(type: com.marklogic.gradle.task.MlcpTask) {
   transform_module = "/com.marklogic.hub/mlcp-flow-transform.xqy"
   transform_namespace = "http://marklogic.com/data-hub/mlcp-flow-transform"
   transform_param =  "entity-name=input-xml,flow-name=raw-input-xml"
+  thread_count = 4
+}
+
+task loadXmlXqy(type: com.marklogic.gradle.task.MlcpTask) {
+  mustRunAfter createInputXmlXqyFlow
+  mustRunAfter mlLoadModules
+  mustRunAfter getInputData
+
+  doFirst {
+    database = mlStagingDbName
+    port = mlStagingPort.toInteger()
+  }
+  classpath = configurations.mlcp
+  command = "IMPORT"
+  input_file_path = "./input/raw.txt"
+  delimiter = "\t"
+  input_file_type = "delimited_text"
+  document_type = "xml"
+  output_uri_prefix = "/city/"
+  output_uri_suffix = ".xml"
+  output_collections = "input-xml-xqy"
+  transform_module = "/com.marklogic.hub/mlcp-flow-transform.xqy"
+  transform_namespace = "http://marklogic.com/data-hub/mlcp-flow-transform"
+  transform_param =  "entity-name=input-xml,flow-name=raw-input-xml-xqy"
+  thread_count = 4
 }
 
 task loadInputData {
   dependsOn getInputData
   dependsOn loadJson
   dependsOn loadXml
+  dependsOn loadXmlXqy
 }
 
 task createHarmonizeXmlXqy(type: com.marklogic.gradle.task.CreateHarmonizeFlowTask) {
