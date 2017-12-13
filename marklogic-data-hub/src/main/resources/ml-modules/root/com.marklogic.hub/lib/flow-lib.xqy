@@ -47,7 +47,7 @@ declare variable $ENTITIES-DIR := "/entities/";
 
 declare variable $PLUGIN-NS := "http://marklogic.com/data-hub/plugins";
 
-declare variable $PLUGIN-CACHE-KEY-PREFIX := "plugin-cache-";
+declare variable $FLOW-CACHE-KEY-PREFIX := "flow-cache-";
 
 declare function flow:get-module-ns(
   $type as xs:string) as xs:string?
@@ -71,7 +71,7 @@ declare function flow:get-flow(
   $flow-type as xs:string?) as element(hub:flow)?
 {
   let $duration := xs:dayTimeDuration("PT5S")
-  let $key := $PLUGIN-CACHE-KEY-PREFIX||$entity-name||$flow-name||$flow-type
+  let $key := $FLOW-CACHE-KEY-PREFIX||$entity-name||$flow-name||$flow-type
   let $flow :=  hul:from-field-cache-or-empty($key, $duration)
   return
     if ($flow) then
