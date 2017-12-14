@@ -9,7 +9,7 @@
  */
 function createContent(id, rawContent, options) {
   // name the binary uri with a pdf extension
-	var binaryUri = fn.replace(id, ".xml", ".pdf");
+	var binaryUri = fn.replace(id, ".json", ".pdf");
 
   // stash the binary uri in the options map for later
   options.binaryUri = binaryUri;
