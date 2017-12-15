@@ -21,8 +21,8 @@ describe('QuickStart', function () {
     jasmine.addMatchers(CUSTOM_MATCHERS)
 
     let yargs = require('yargs').argv
-    let width = typeof yargs.width === 'number' ? yargs.width : 1280
-    let height = typeof yargs.height === 'number' ? yargs.height : 900
+    let width = typeof yargs.width === 'number' ? yargs.width : 1920
+    let height = typeof yargs.height === 'number' ? yargs.height : 1080
 
     request({
       url: `http://localhost:8080/api/projects/reset`

@@ -180,7 +180,7 @@ export class EntityEditorComponent {
           if (this.entity.definition.primaryKey === value.name) {
             this.entity.definition.primaryKey = null;
           }
-          
+
           _.remove(this.entity.definition.elementRangeIndex, (index: string) => {
             return (index === value.name);
           });

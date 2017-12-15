@@ -23,6 +23,14 @@ abstract class Page {
     })
   }
 
+  //checks if an element has a class or not, useful throughout
+  //boolean output
+  hasClass(element, cls) {
+    return element.getAttribute('class').then(function (classes) {
+      return classes.split(' ').indexOf(cls) !== -1;
+    })
+  }
+
   //https://github.com/angular/protractor/issues/2019
   sendKeys(field, str) {
     if (pages.browserName === 'chrome' || pages.browserName === 'internet explorer') {
