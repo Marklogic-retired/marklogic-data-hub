@@ -96,7 +96,7 @@ export default function() {
     // after the general create script and before the general tear down scripts
 
     it('should create a new property', function(){
-      browser.actions().mouseMove(element(by.tagName('body')), {x:314, y:176}).click().perform();
+      browser.executeScript('window.document.getElementsByClassName("edit-start")[0].click()');
       browser.wait(EC.visibilityOf(entityPage.entityEditor));
       expect(entityPage.entityEditor.isPresent()).toBe(true);
       //tell the UI to add the visual row
@@ -138,7 +138,7 @@ export default function() {
 
     it('should remove a property', function(){
       //now time to delete, let's reopen the editor
-      browser.actions().mouseMove(element(by.tagName('body')), {x:314, y:176}).click().perform();
+      browser.executeScript('window.document.getElementsByClassName("edit-start")[0].click()');
       browser.wait(EC.visibilityOf(entityPage.entityEditor));
       expect(entityPage.entityEditor.isPresent()).toBe(true);
       //let's grab the count of the rows before we add so we can compare
@@ -160,7 +160,7 @@ export default function() {
 
     it('should retain settings on remaining property', function() {
       //now let's confirm we didn't lose any settings, reopen editor
-      browser.actions().mouseMove(element(by.tagName('body')), {x:314, y:176}).click().perform();
+      browser.executeScript('window.document.getElementsByClassName("edit-start")[0].click()');
       browser.wait(EC.visibilityOf(entityPage.entityEditor));
       expect(entityPage.entityEditor.isPresent()).toBe(true);
       //Do we still have 1 property left?
