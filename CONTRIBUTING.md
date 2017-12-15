@@ -289,6 +289,7 @@ $ ./gradlew -Dtest.single=FlowRunner test
 
 If you want to run just the Quick-Start UI End to End tests, you will need nodejs 8.9.1 or later installed:
 ```jshelllanguage
+gradlew bootrun
 cd quick-start
 npm install
 npm install -g protractor
