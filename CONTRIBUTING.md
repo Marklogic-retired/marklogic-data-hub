@@ -287,7 +287,22 @@ Say you want to run FlowRunnerTest.
 $ ./gradlew -Dtest.single=FlowRunner test
 ```
 
-Make sure that all tests pass. Please, do not submit patches that fail.
+If you want to run just the Quick-Start UI End to End tests, you will need nodejs 8.9.1 or later installed:
+```jshelllanguage
+gradlew bootrun
+cd quick-start
+npm install
+npm install -g protractor
+npm run webdriver-update
+npm run e2e 
+```
+*Note for e2e tests, the datahub must be running and so must a MarkLogic instance with appservers for 8010-8014 free.*
+
+For those that want to run the E2E tests from Intellij or another IDE to fullstack debug you can have add a run/debug
+task that runs the script "e2e". Make sure to add a 'before launch' task as folows: npm run "webdriver-update".
+
+
+**Make sure that all tests pass. Please, do not submit patches that fail.**
 
 #### Push your changes
 

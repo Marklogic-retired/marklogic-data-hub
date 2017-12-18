@@ -1,6 +1,10 @@
-import { protractor, browser, element, by, By, $, $$, ExpectedConditions as EC } from 'protractor'
+import {
+  protractor, browser, element, by, By, $, $$, ExpectedConditions as EC, ElementFinder,
+  ElementArrayFinder
+} from 'protractor'
 import { AppPage } from '../appPage';
 import { pages } from '../page';
+import {Element} from "@angular/compiler";
 
 export class EntityPage extends AppPage {
 
@@ -39,6 +43,118 @@ export class EntityPage extends AppPage {
 
   get deleteProperty() {
     return element(by.css('.toolbar #delete-property'));
+  }
+
+  get confirmDialog() {
+    return element(by.tagName('mdl-dialog-component'));
+  }
+
+  get confirmDialogYesButton(){
+    return element(by.buttonText('Yes'));
+  }
+
+  get confirmDialogNoButton(){
+    return element(by.buttonText('No'));
+  }
+
+  get getProperties() {
+    return element(by.css('.properties > tBody > tr'));
+  }
+
+  get lastProperty() {
+    return element.all(by.css('.properties > tBody > tr')).last();
+  }
+
+  getPropertyByPosition(position: number){
+    return element.all(by.css('.properties > tBody > tr:nth-child('+position+')'));
+  }
+
+  getPropertyColumn(property: ElementFinder, column: number){
+    return property.element(by.css('td:nth-child('+column+') > :first-child'));
+  }
+
+  getPropertyCheckBox(property: ElementFinder){
+    return property.element(by.css('td:nth-child(1) > input[type="checkbox"]'));
+  }
+
+  getPropertyPrimaryKey(property: ElementFinder){
+    return property.element(by.css('td:nth-child(2) > i'));
+  }
+
+  getPropertyRangeIndex(property: ElementFinder){
+    return property.element(by.css('td:nth-child(3) > i'));
+  }
+
+  getPropertyPathRange(property: ElementFinder){
+    return property.element(by.css('td:nth-child(4) > i'));
+  }
+
+  getPropertyWordLexicon(property: ElementFinder){
+    return property.element(by.css('td:nth-child(5) > i'));
+  }
+
+  getPropertyRequired(property: ElementFinder){
+    return property.element(by.css('td:nth-child(6) > i'));
+  }
+
+  getPropertyName(property: ElementFinder){
+    return property.element(by.css('td:nth-child(7) > input[type="text"]'));
+  }
+
+  getPropertyType(property: ElementFinder){
+    return property.element(by.css('td:nth-child(8) > select'));
+  }
+
+  getPropertyCardinality(property: ElementFinder){
+    return property.element(by.css('td:nth-child(9) > select'));
+  }
+
+  getPropertyDescription(property: ElementFinder){
+    return property.element(by.css('td:nth-child(10) > input[type="text"]'));
+  }
+
+  getPropertyCheckBoxColumn(property: ElementFinder){
+    return property.element(by.css('td:nth-child(1)'));
+  }
+
+  getPropertyPrimaryKeyColumn(property: ElementFinder){
+    return property.element(by.css('td:nth-child(2)'));
+  }
+
+  getPropertyRangeIndexColumn(property: ElementFinder){
+    return property.element(by.css('td:nth-child(3)'));
+  }
+
+  getPropertyPathRangeColumn(property: ElementFinder){
+    return property.element(by.css('td:nth-child(4)'));
+  }
+
+  getPropertyWordLexiconColumn(property: ElementFinder){
+    return property.element(by.css('td:nth-child(5)'));
+  }
+
+  getPropertyRequiredColumn(property: ElementFinder){
+    return property.element(by.css('td:nth-child(6)'));
+  }
+
+  getPropertyNameColumn(property: ElementFinder){
+    return property.element(by.css('td:nth-child(7)'));
+  }
+
+  getPropertyTypeColumn(property: ElementFinder){
+    return property.element(by.css('td:nth-child(8)'));
+  }
+
+  getPropertyCardinalityColumn(property: ElementFinder){
+    return property.element(by.css('td:nth-child(9)'));
+  }
+
+  getPropertyDescriptionColumn(property: ElementFinder){
+    return property.element(by.css('td:nth-child(10)'));
+  }
+
+  get editEntityButton(){
+    return element(by.css('.edit-start > i'));
   }
 
   get saveEntity() {
