@@ -6,12 +6,21 @@
   "definitions" : {
     "Employee" : {
       "required" : [ ],
-      "rangeIndex" : [ ],
+      "primaryKey": "id",
+      "rangeIndex" : [ "name" ],
+      "elementRangeIndex": ["decimal"],
       "wordLexicon" : [ ],
       "properties" : {
+        "id": {
+          "datatype": "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
         "name" : {
           "datatype" : "string",
           "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "salary": {
+          "datatype": "decimal"
         }
       }
     }

@@ -17,7 +17,7 @@ declare option xdmp:mapping "false";
  :)
 declare function plugin:create-headers(
   $id as xs:string,
-  $content as node()?,
+  $content as item()?,
   $options as map:map) as node()*
 {
   ()

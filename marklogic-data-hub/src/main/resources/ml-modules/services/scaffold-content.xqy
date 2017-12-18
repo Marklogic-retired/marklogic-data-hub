@@ -588,6 +588,6 @@ declare function get(
         else
           service:generate-sjs($entity, $flow-type, $model)
       else
-        fn:error((),"RESTAPI-SRVEXERR", (404, "Not Found", "The requested entity was not found"))
+        fn:error((),"RESTAPI-SRVEXERR", (404, "Not Found", "The requested entity: " || $entity || " was not found"))
   })
 };

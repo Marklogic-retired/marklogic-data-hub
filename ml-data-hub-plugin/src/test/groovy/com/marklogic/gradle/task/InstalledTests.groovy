@@ -94,10 +94,17 @@ class InstalledTests extends BaseTest {
         println(runTask('mlReLoadModules'))
 
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME)
+
+        assert (getStagingDocCount() == 0)
+        assert (getFinalDocCount() == 0)
+
         DocumentMetadataHandle meta = new DocumentMetadataHandle();
         meta.getCollections().add("my-new-entity");
         installStagingDoc("/employee1.xml", meta, new File("src/test/resources/run-flow-test/employee1.xml").text)
         installStagingDoc("/employee2.xml", meta, new File("src/test/resources/run-flow-test/employee2.xml").text)
+        assert (getStagingDocCount() == 2)
+        assert (getFinalDocCount() == 0)
+
         installModule("/entities/my-new-entity/harmonize/my-new-harmonize-flow/content/content.xqy", "run-flow-test/content.xqy")
 
         when:
@@ -117,10 +124,16 @@ class InstalledTests extends BaseTest {
         println(runTask('mlReLoadModules'))
 
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME)
+        assert (getStagingDocCount() == 0)
+        assert (getFinalDocCount() == 0)
+
         DocumentMetadataHandle meta = new DocumentMetadataHandle();
         meta.getCollections().add("my-new-entity");
         installFinalDoc("/employee1.xml", meta, new File("src/test/resources/run-flow-test/employee1.xml").text)
         installFinalDoc("/employee2.xml", meta, new File("src/test/resources/run-flow-test/employee2.xml").text)
+
+        assert (getStagingDocCount() == 0)
+        assert (getFinalDocCount() == 2)
         installModule("/entities/my-new-entity/harmonize/my-new-harmonize-flow/content/content.xqy", "run-flow-test/content.xqy")
 
         when:
@@ -185,5 +198,4 @@ class InstalledTests extends BaseTest {
         File contentPlugin = Paths.get(testProjectDir.root.toString(), "plugins", "entities", "Employee", "harmonize", "my-new-harmonize-flow", "content.sjs").toFile()
         contentPlugin.text.contains("extractInstanceEmployee")
     }
-
 }

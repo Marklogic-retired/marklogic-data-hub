@@ -194,13 +194,13 @@ public class FlowManagerTest extends HubTestBase {
 
         FlowManager fm = new FlowManager(getHubConfig("del-me-dir"));
 
-        allCombos((codeFormat, dataFormat, flowType) -> {
+        allCombos((codeFormat, dataFormat, flowType, useEs) -> {
             String flowName = flowType.toString() + "-" + codeFormat.toString() + "-" + dataFormat.toString();
             scaffolding.createFlow("my-entity", flowName, flowType, codeFormat, dataFormat);
         });
 
 
-        allCombos((codeFormat, dataFormat, flowType) -> {
+        allCombos((codeFormat, dataFormat, flowType, useEs) -> {
             String flowName = flowType.toString() + "-" + codeFormat.toString() + "-" + dataFormat.toString();
             Path propertiesFile = Paths.get("del-me-dir", "plugins", "entities", "my-entity", flowType.toString(), flowName, flowName + ".properties");
             Flow flow = fm.getFlowFromProperties(propertiesFile);
@@ -396,7 +396,7 @@ public class FlowManagerTest extends HubTestBase {
         assertEquals(0, fm.getLegacyFlows().size());
 
         Path projectPath = Paths.get(PROJECT_PATH);
-        allCombos((codeFormat, dataFormat, flowType) -> {
+        allCombos((codeFormat, dataFormat, flowType, useEs) -> {
             Path dir = projectPath.resolve("plugins/entities/my-fun-test/" + flowType.toString());
             String flowName = "legacy-" + codeFormat.toString() + "-" + dataFormat.toString() + "-" + flowType.toString() + "-flow";
             try {

@@ -103,8 +103,8 @@ public class HubModuleManager extends LoggingObject implements ModulesManager {
      * you get "c:". This of course will be a problem if you for some reason have modules with the same names but
      * differing in some cases, but I'm not sure why anyone would do that.
      *
-     * @param file
-     * @return
+     * @param file - the file to build a key for
+     * @return a key
      */
     protected String buildKey(File file) {
         return file.getAbsolutePath().toLowerCase();

@@ -3,7 +3,7 @@ plugins {
     id 'java'
     id 'maven-publish'
     id 'com.jfrog.bintray' version '1.7.2'
-    id 'com.marklogic.ml-gradle' version '3.1-alpha4'
+    id 'com.marklogic.ml-gradle' version '3.1.0'
     id 'com.moowork.node' version '1.1.1'
 }
 
@@ -26,10 +26,7 @@ ext.junitJupiterVersion  = '5.0.0-RC3'
 dependencies {
     compile 'com.marklogic:marklogic-client-api:4.0.2'
     compile 'com.marklogic:mlcp-util:0.3.0'
-    compile ('com.marklogic:ml-app-deployer:3.1-alpha4') {
-        exclude group: 'com.marklogic', module: 'ml-javaclient-util'
-    }
-    compile ('com.marklogic:ml-javaclient-util:3.1-alpha6')
+    compile 'com.marklogic:ml-app-deployer:3.1.0'
     compile 'commons-io:commons-io:2.4'
     compile 'org.apache.commons:commons-text:1.1'
 
@@ -115,6 +112,7 @@ if (!(
     gradle.startParameter.taskNames*.toLowerCase().contains("publishplugins") ||
     gradle.startParameter.taskNames*.toLowerCase().contains("publishtomavenlocal") ||
     gradle.startParameter.taskNames*.toLowerCase().contains("bintrayupload") ||
+    gradle.startParameter.taskNames*.toLowerCase().contains("javadoc") ||
     project.hasProperty('skipui')
     )
    ) {
@@ -187,7 +185,7 @@ bintray {
     key = project.hasProperty('bintrayApiKey') ? project.property('bintrayApiKey') : System.getenv('BINTRAY_API_KEY')
     publications = ['main']
     pkg {
-        repo = 'maven'
+        repo = 'Maven'
         name = project.name
         userOrg = 'marklogic-community'
         desc = pomCustomizations.textdescription.text()

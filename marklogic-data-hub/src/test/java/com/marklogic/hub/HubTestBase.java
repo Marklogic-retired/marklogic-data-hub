@@ -521,10 +521,13 @@ public class HubTestBase {
         CodeFormat[] codeFormats = new CodeFormat[] { CodeFormat.JAVASCRIPT, CodeFormat.XQUERY };
         DataFormat[] dataFormats = new DataFormat[] { DataFormat.JSON, DataFormat.XML };
         FlowType[] flowTypes = new FlowType[] { FlowType.INPUT, FlowType.HARMONIZE };
+        Boolean[] useEses = new Boolean[] { false, true };
         for (CodeFormat codeFormat : codeFormats) {
             for (DataFormat dataFormat : dataFormats) {
                 for (FlowType flowType : flowTypes) {
-                    listener.onCombo(codeFormat, dataFormat, flowType);
+                    for (Boolean useEs : useEses) {
+                        listener.onCombo(codeFormat, dataFormat, flowType, useEs);
+                    }
                 }
             }
         }

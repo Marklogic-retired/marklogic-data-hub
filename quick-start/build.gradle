@@ -151,7 +151,7 @@ task startRest {
 
 task e2eLaunch(type: NpmTask) {
     args = ['run', 'e2e']
-    dependsOn tasks.startRest
+    dependsOn buildUI, startRest
 }
 
 task e2eUI {
