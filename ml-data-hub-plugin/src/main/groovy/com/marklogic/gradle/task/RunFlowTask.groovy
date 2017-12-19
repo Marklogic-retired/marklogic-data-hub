@@ -63,8 +63,9 @@ class RunFlowTask extends HubTask {
         }
 
         DatabaseClient sourceClient = null
-        if (sourceDB != null) {
-            sourceClient = hubConfig.newStagingClient(project.property("sourceDB"))
+
+        if (sourceDB != null && !sourceDB.isAllWhitespace()) {
+            sourceClient = hubConfig.newStagingClient(sourceDB)
         }
         else if (project.hasProperty("sourceDB")) {
             sourceClient = hubConfig.newStagingClient(project.property("sourceDB"))
