@@ -21,7 +21,7 @@ configurations {
 }
 
 dependencies {
-  mlcp "com.marklogic:mlcp:9.0.2"
+  mlcp "com.marklogic:mlcp:9.0.3"
   mlcp files("lib")
   data "export:cities5000:*@zip"
 }
