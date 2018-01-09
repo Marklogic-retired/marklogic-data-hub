@@ -40,24 +40,6 @@ class CreateHarmonizeFlowTaskTest extends BaseTest {
         result.task(":hubCreateHarmonizeFlow").outcome == FAILED
     }
 
-    def "createHarmonizeFlow with bad sourceDB"() {
-        given:
-        propertiesFile << """
-            ext {
-                entityName=my-new-entity
-                sourceDB=12345678      
-            }
-        """
-
-        when:
-        def result = runFailTask('hubCreateHarmonizeFlow')
-
-        then:
-        notThrown(UnexpectedBuildSuccess)
-        result.output.contains('sourceDB must be a valid name')
-        result.task(":hubCreateHarmonizeFlow").outcome == FAILED
-    }
-
     def "createHarmonizeFlow with valid name"() {
         given:
         propertiesFile << """
