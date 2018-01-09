@@ -15,17 +15,17 @@
       <search:path-index>//*:instance/Employee/name</search:path-index>
     </search:range>
   </search:constraint>
-  <search:constraint name="decimal">
-    <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/en">
-      <search:element ns="" name="decimal"/>
+  <search:constraint name="salary">
+    <search:range type="xs:decimal" facet="true">
+      <search:element ns="" name="salary"/>
     </search:range>
   </search:constraint>
   <search:tuples name="Employee">
     <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
       <search:path-index>//*:instance/Employee/name</search:path-index>
     </search:range>
-    <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/en">
-      <search:element ns="" name="decimal"/>
+    <search:range type="xs:decimal" facet="true">
+      <search:element ns="" name="salary"/>
     </search:range>
   </search:tuples>
   <!--Uncomment to return no results for a blank search, rather than the default of all results
