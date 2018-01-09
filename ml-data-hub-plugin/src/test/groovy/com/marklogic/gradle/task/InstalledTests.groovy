@@ -227,11 +227,11 @@ class InstalledTests extends BaseTest {
                 sourceDB=12345678
             }
         """
-        def result = runFailTask('hubRunFlow', '-i')
+        def result = runTask('hubRunFlow', '-i')
 
         then:
-        notThrown(UnexpectedBuildSuccess)
+        notThrown(UnexpectedBuildFailure)
         result.getOutput().contains('XDMP-NOSUCHDB: No such database 12345678')
-        result.task(":hubRunFlow").outcome == FAILED
+        result.task(":hubRunFlow").outcome == SUCCESS
     }
 }
