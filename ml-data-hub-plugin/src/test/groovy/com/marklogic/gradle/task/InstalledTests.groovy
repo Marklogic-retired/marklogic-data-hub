@@ -18,12 +18,12 @@ class InstalledTests extends BaseTest {
     def setupSpec() {
         createGradleFiles()
         runTask('hubInit')
-        runTask('mlUndeploy')
+        runTask('mlUndeploy',  '-Pconfirm=true')
         println(runTask('mlDeploy', '-i').getOutput())
     }
 
     def cleanupSpec() {
-        runTask('mlUndeploy')
+        runTask('mlUndeploy', '-Pconfirm=true')
     }
 
     def "enable debugging with hub installed"() {
