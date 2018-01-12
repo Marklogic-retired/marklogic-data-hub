@@ -62,6 +62,9 @@ export class MlcpUiComponent implements OnChanges {
     },
     'Transform Options': {
       collapsed: true
+    },
+    'Flow Options': {
+      collapsed: true
     }
   };
 
@@ -384,8 +387,37 @@ export class MlcpUiComponent implements OnChanges {
             field: 'transform_param',
             type: 'string',
             description: 'Optional extra data to pass through to a custom transformation function. Ignored if -transform_module is not specified.\nDefault: no namespace. For details, see Transforming Content During Ingestion.',
-            value: `entity-name=${encodeURIComponent(entityName)},flow-name=${encodeURIComponent(flowName)}`,
+            value: ' ',
+            readOnly: false,
+          },
+        ],
+        collapsed: true,
+      },
+      {
+        category: 'Flow Options',
+        settings: [
+          {
+            label: 'Entity Name',
+            field: 'entity-name',
+            type: 'string',
+            description: 'The name of your entity being built.',
+            value: `${encodeURIComponent(entityName)}`,
             readOnly: true,
+          },
+          {
+            label: 'Flow Name',
+            field: 'entity-name',
+            type: 'string',
+            description: 'The name of your flow being built.',
+            value: `${encodeURIComponent(flowName)}`,
+            readOnly: true,
+          },
+          {
+            label: 'Job Id',
+            field: 'jobId',
+            type: 'string',
+            description: 'The unique ID of your Input Flow job. If not specified, one will be auto-generated for you.',
+            readOnly: false,
           },
         ],
         collapsed: true,
@@ -487,9 +519,15 @@ export class MlcpUiComponent implements OnChanges {
             const key = setting.field;
             let value = setting.value;
             if (setting.type !== 'boolean' && setting.type !== 'number') {
-              value = '"' + setting.value + '"';
+              if(group.category !== 'Flow Options')
+                value = '"' + setting.value + '"';
+              else
+                value = setting.value;
             }
-            this.addMlcpOption(options, key, value, true, true);
+            if(group.category !== 'Flow Options')
+              this.addMlcpOption(options, key, value, true, true);
+            else
+              this.appendFlowOption(options, key, value)
           }
         });
       }
@@ -510,6 +548,19 @@ export class MlcpUiComponent implements OnChanges {
         this.mlcp[key] = value;
       }
     }
+  }
+
+  appendFlowOption(options: any, key: string, value: string):
+  void {
+    let tp = options[options.length-1];
+    let n = tp.substring(0, tp.length-1);
+    if(n.length > 2)
+      n = n + ",";
+    else
+      n = '"';
+    n = n + key + "=" + value + '"';
+    options.pop();
+    options.push(n);
   }
 
   updateSetting(setting: any, value: any): void {
