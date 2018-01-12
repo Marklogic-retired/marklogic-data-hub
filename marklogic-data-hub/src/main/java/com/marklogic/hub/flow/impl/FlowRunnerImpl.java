@@ -30,7 +30,6 @@ import com.marklogic.client.util.RequestParameters;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.collector.Collector;
 import com.marklogic.hub.collector.DiskQueue;
-import com.marklogic.hub.error.HarmonizeFlowError;
 import com.marklogic.hub.flow.*;
 import com.marklogic.hub.job.Job;
 import com.marklogic.hub.job.JobManager;
