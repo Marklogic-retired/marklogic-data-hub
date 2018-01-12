@@ -2,7 +2,6 @@ package com.marklogic.hub.flow;
 
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.datamovement.JobTicket;
-import com.marklogic.hub.HubDatabase;
 
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -15,6 +14,7 @@ public interface FlowRunner {
     FlowRunner withSourceClient(DatabaseClient sourceClient);
     FlowRunner withDestinationDatabase(String destinationDatabase);
     FlowRunner withOptions(Map<String, Object> options);
+    FlowRunner withStopOnFailure(boolean stopOnFailure);
 
     FlowRunner onItemComplete(FlowItemCompleteListener listener);
     FlowRunner onItemFailed(FlowItemFailureListener listener);

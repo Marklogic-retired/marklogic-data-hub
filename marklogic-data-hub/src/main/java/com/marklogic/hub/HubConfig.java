@@ -79,6 +79,8 @@ public class HubConfig {
 
     public static final String DEFAULT_AUTH_METHOD = "digest";
 
+    public static final String DEFAULT_SCHEME = "http";
+
     public static final Integer DEFAULT_FORESTS_PER_HOST = 4;
 
     public static final String DEFAULT_CUSTOM_FOREST_PATH = "forests";
@@ -90,6 +92,8 @@ public class HubConfig {
     public Integer stagingForestsPerHost = DEFAULT_FORESTS_PER_HOST;
     public Integer stagingPort = DEFAULT_STAGING_PORT;
     public String stagingAuthMethod = DEFAULT_AUTH_METHOD;
+    public String stagingScheme = DEFAULT_SCHEME;
+    public boolean stagingSimpleSsl;
     private SSLContext stagingSslContext;
     private DatabaseClientFactory.SSLHostnameVerifier stagingSslHostnameVerifier;
     private String stagingCertFile;
@@ -101,6 +105,8 @@ public class HubConfig {
     public Integer finalForestsPerHost = DEFAULT_FORESTS_PER_HOST;
     public Integer finalPort = DEFAULT_FINAL_PORT;
     public String finalAuthMethod = DEFAULT_AUTH_METHOD;
+    public String finalScheme = DEFAULT_SCHEME;
+    public boolean finalSimpleSsl;
     private SSLContext finalSslContext;
     private DatabaseClientFactory.SSLHostnameVerifier finalSslHostnameVerifier;
     private String finalCertFile;
@@ -112,6 +118,8 @@ public class HubConfig {
     public Integer traceForestsPerHost = 1;
     public Integer tracePort = DEFAULT_TRACE_PORT;
     public String traceAuthMethod = DEFAULT_AUTH_METHOD;
+    public String traceScheme = DEFAULT_SCHEME;
+    public boolean traceSimpleSsl;
     private SSLContext traceSslContext;
     private DatabaseClientFactory.SSLHostnameVerifier traceSslHostnameVerifier;
     private String traceCertFile;
@@ -123,6 +131,8 @@ public class HubConfig {
     public Integer jobForestsPerHost = 1;
     public Integer jobPort = DEFAULT_JOB_PORT;
     public String jobAuthMethod = DEFAULT_AUTH_METHOD;
+    public String jobScheme = DEFAULT_SCHEME;
+    public boolean jobSimpleSsl;
     private SSLContext jobSslContext;
     private DatabaseClientFactory.SSLHostnameVerifier jobSslHostnameVerifier;
     private String jobCertFile;
@@ -263,7 +273,9 @@ public class HubConfig {
             stagingForestsPerHost = getEnvPropInteger(environmentProperties, "mlStagingForestsPerHost", stagingForestsPerHost);
             stagingPort = getEnvPropInteger(environmentProperties, "mlStagingPort", stagingPort);
             stagingAuthMethod = getEnvPropString(environmentProperties, "mlStagingAuth", stagingAuthMethod);
-            if (getEnvPropBoolean(environmentProperties, "mlStagingSimpleSsl", false)) {
+            stagingScheme = getEnvPropString(environmentProperties, "mlStagingScheme", stagingScheme);
+            stagingSimpleSsl = getEnvPropBoolean(environmentProperties, "mlStagingSimpleSsl", false);
+            if (stagingSimpleSsl) {
                 stagingSslContext = SimpleX509TrustManager.newSSLContext();
                 stagingSslHostnameVerifier = DatabaseClientFactory.SSLHostnameVerifier.ANY;
             }
@@ -277,7 +289,9 @@ public class HubConfig {
             finalForestsPerHost = getEnvPropInteger(environmentProperties, "mlFinalForestsPerHost", finalForestsPerHost);
             finalPort = getEnvPropInteger(environmentProperties, "mlFinalPort", finalPort);
             finalAuthMethod = getEnvPropString(environmentProperties, "mlFinalAuth", finalAuthMethod);
-            if (getEnvPropBoolean(environmentProperties, "mlFinalSimpleSsl", false)) {
+            finalScheme = getEnvPropString(environmentProperties, "mlFinalScheme", finalScheme);
+            finalSimpleSsl = getEnvPropBoolean(environmentProperties, "mlFinalSimpleSsl", false);
+            if (finalSimpleSsl) {
                 finalSslContext = SimpleX509TrustManager.newSSLContext();
                 finalSslHostnameVerifier = DatabaseClientFactory.SSLHostnameVerifier.ANY;
             }
@@ -290,7 +304,9 @@ public class HubConfig {
             traceForestsPerHost = getEnvPropInteger(environmentProperties, "mlTraceForestsPerHost", traceForestsPerHost);
             tracePort = getEnvPropInteger(environmentProperties, "mlTracePort", tracePort);
             traceAuthMethod = getEnvPropString(environmentProperties, "mlTraceAuth", traceAuthMethod);
-            if (getEnvPropBoolean(environmentProperties, "mlTraceSimpleSsl", false)) {
+            traceScheme = getEnvPropString(environmentProperties, "mlTraceScheme", traceScheme);
+            traceSimpleSsl = getEnvPropBoolean(environmentProperties, "mlTraceSimpleSsl", false);
+            if (traceSimpleSsl) {
                 traceSslContext = SimpleX509TrustManager.newSSLContext();
                 traceSslHostnameVerifier = DatabaseClientFactory.SSLHostnameVerifier.ANY;
             }
@@ -304,7 +320,9 @@ public class HubConfig {
             jobForestsPerHost = getEnvPropInteger(environmentProperties, "mlJobForestsPerHost", jobForestsPerHost);
             jobPort = getEnvPropInteger(environmentProperties, "mlJobPort", jobPort);
             jobAuthMethod = getEnvPropString(environmentProperties, "mlJobAuth", jobAuthMethod);
-            if (getEnvPropBoolean(environmentProperties, "mlJobSimpleSsl", false)) {
+            jobScheme = getEnvPropString(environmentProperties, "mlJobScheme", jobScheme);
+            jobSimpleSsl = getEnvPropBoolean(environmentProperties, "mlJobSimpleSsl", false);
+            if (jobSimpleSsl) {
                 jobSslContext = SimpleX509TrustManager.newSSLContext();
                 jobSslHostnameVerifier = DatabaseClientFactory.SSLHostnameVerifier.ANY;
             }

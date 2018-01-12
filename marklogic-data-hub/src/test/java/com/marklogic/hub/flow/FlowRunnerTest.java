@@ -16,7 +16,6 @@
 package com.marklogic.hub.flow;
 
 import com.marklogic.client.eval.EvalResultIterator;
-import com.marklogic.client.io.DOMHandle;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.hub.DataHub;
 import com.marklogic.hub.FlowManager;

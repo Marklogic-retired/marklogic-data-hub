@@ -54,6 +54,7 @@ public class FlowRunnerImpl implements FlowRunner {
     private String destinationDatabase;
     private Map<String, Object> options;
     private int previousPercentComplete;
+    private boolean stopOnFailure = false;
 
     private List<FlowItemCompleteListener> flowItemCompleteListeners = new ArrayList<>();
     private List<FlowItemFailureListener> flowItemFailureListeners = new ArrayList<>();
@@ -96,6 +97,12 @@ public class FlowRunnerImpl implements FlowRunner {
     @Override
     public FlowRunner withDestinationDatabase(String destinationDatabase) {
         this.destinationDatabase = destinationDatabase;
+        return this;
+    }
+
+    @Override
+    public FlowRunner withStopOnFailure(boolean stopOnFailure) {
+        this.stopOnFailure = stopOnFailure;
         return this;
     }
 
@@ -200,6 +207,8 @@ public class FlowRunnerImpl implements FlowRunner {
 
         double batchCount = Math.ceil((double)uris.size() / (double)batchSize);
 
+        HashMap<String, JobTicket> ticketWrapper = new HashMap<>();
+
         QueryBatcher queryBatcher = dataMovementManager.newQueryBatcher(uris.iterator())
             .withBatchSize(batchSize)
             .withThreadCount(threadCount)
@@ -246,6 +255,14 @@ public class FlowRunnerImpl implements FlowRunner {
                             });
                         });
                     }
+
+                    if (stopOnFailure && response.errorCount > 0) {
+                        JobTicket jobTicket = ticketWrapper.get("jobTicket");
+                        if (jobTicket != null) {
+                            dataMovementManager.stopJob(jobTicket);
+                        }
+                    }
+
                 }
                 catch(Exception e) {
                     if (errorMessages.size() < MAX_ERROR_MESSAGES) {
@@ -259,6 +276,7 @@ public class FlowRunnerImpl implements FlowRunner {
             });
 
         JobTicket jobTicket = dataMovementManager.startJob(queryBatcher);
+        ticketWrapper.put("jobTicket", jobTicket);
         jobManager.saveJob(job.withStatus(JobStatus.RUNNING_HARMONIZE));
 
         runningThread = new Thread(() -> {
@@ -273,7 +291,10 @@ public class FlowRunnerImpl implements FlowRunner {
             dataMovementManager.stopJob(queryBatcher);
 
             JobStatus status;
-            if (failedEvents.get() + successfulEvents.get() != uris.size()) {
+            if (failedEvents.get() > 0 && stopOnFailure) {
+                status = JobStatus.STOP_ON_ERROR;
+            }
+            else if (failedEvents.get() + successfulEvents.get() != uris.size()) {
                 status = JobStatus.CANCELED;
             }
             else if (failedEvents.get() > 0 && successfulEvents.get() > 0) {

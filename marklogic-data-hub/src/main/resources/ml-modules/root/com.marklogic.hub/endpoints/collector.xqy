@@ -29,25 +29,29 @@ import module namespace perf = "http://marklogic.com/data-hub/perflog-lib"
 
 declare option xdmp:mapping "false";
 
-declare variable $job-id external;
-declare variable $entity-name external;
-declare variable $flow-name external;
-declare variable $options external;
+declare variable $job-id := xdmp:get-request-field("job-id");
+declare variable $entity-name  := xdmp:get-request-field("entity-name");
+declare variable $flow-name  := xdmp:get-request-field("flow-name");
+declare variable $options  := xdmp:get-request-field("options", ());
+declare variable $database := xdmp:database(xdmp:get-request-field("database", ()));
 
 debug:dump-env(),
 
 perf:log('/v1/resources/collector:post', function() {
-  let $options as map:map := (
-      $options ! xdmp:unquote(.)/object-node(),
-      map:map()
-    )[1]
-  let $flow := flow:get-flow($entity-name, $flow-name, $consts:HARMONIZE_FLOW)
-  let $resp := flow:run-collector($flow, $job-id, $options)
-  let $resp :=
-    if ($resp instance of json:array) then
-      json:array-values($resp)
-    else
+  xdmp:invoke-function(function() {
+    let $options as map:map := (
+        $options ! xdmp:unquote(.)/object-node(),
+        map:map()
+      )[1]
+    let $flow := flow:get-flow($entity-name, $flow-name, $consts:HARMONIZE_FLOW)
+    let $resp := flow:run-collector($flow, $job-id, $options)
+    let $resp :=
+      if ($resp instance of json:array) then
+        json:array-values($resp)
+      else
+        $resp
+    return
       $resp
-  return
-    (fn:count($resp), $resp)
+  },
+  map:entry("database", $database))
 })
