@@ -9,7 +9,7 @@ class NotInstalledTests extends BaseTest {
     def setupSpec() {
         createGradleFiles()
         runTask('hubInit')
-        runTask('mlUndeploy')
+        runTask('mlUndeploy',  '-Pconfirm=true')
     }
 
     def "enable debugging hub not installed"() {

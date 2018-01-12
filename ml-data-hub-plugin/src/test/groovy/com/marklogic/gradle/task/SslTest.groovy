@@ -128,7 +128,7 @@ class SslTest extends BaseTest {
     }
 
     def cleanupSpec() {
-        runTask("mlUndeploy")
+        runTask("mlUndeploy", "-Pconfirm=true")
         runTask("disableSSL")
     }
 
