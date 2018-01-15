@@ -20,8 +20,8 @@ module namespace service = "http://marklogic.com/rest-api/resource/entity";
 import module namespace debug = "http://marklogic.com/data-hub/debug"
   at "/com.marklogic.hub/lib/debug-lib.xqy";
 
-import module namespace es-wrapper = "http://marklogic.com/data-hub/es-wrapper"
-  at "/com.marklogic.hub/lib/entity-services-wrapper.xqy";
+import module namespace es = "http://marklogic.com/entity-services"
+  at "/MarkLogic/entity-services/entity-services.xqy";
 
 import module namespace flow = "http://marklogic.com/data-hub/flow-lib"
   at "/com.marklogic.hub/lib/flow-lib.xqy";
@@ -88,7 +88,7 @@ declare function put(
 
       let $model as map:map := $input/object-node()
       return
-        es-wrapper:database-properties-generate($model)
+        es:database-properties-generate($model)
     }
   })
 };

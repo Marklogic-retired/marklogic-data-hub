@@ -2,11 +2,8 @@ xquery version "1.0-ml";
 
 module namespace hent = "http://marklogic.com/data-hub/hub-entities";
 
-import module namespace es-wrapper = "http://marklogic.com/data-hub/es-wrapper"
-  at "/com.marklogic.hub/lib/entity-services-wrapper.xqy";
-
-import module namespace search = "http://marklogic.com/appservices/search"
-  at "/MarkLogic/appservices/search/search.xqy";
+import module namespace es = "http://marklogic.com/entity-services"
+  at "/MarkLogic/entity-services/entity-services.xqy";
 
 declare variable $ENTITY-MODEL-COLLECTION := "http://marklogic.com/entity-services/models";
 
@@ -96,13 +93,13 @@ declare function hent:dump-search-options($entities as json:array)
   let $uber-model := hent:uber-model(json:array-values($entities) ! xdmp:to-json(.)/object-node())
   return
     (: call fix-options because of https://github.com/marklogic/entity-services/issues/359 :)
-    hent:fix-options(es-wrapper:search-options-generate($uber-model))
+    hent:fix-options(es:search-options-generate($uber-model))
 };
 
 declare function hent:dump-indexes($entities as json:array)
 {
   let $uber-model := hent:uber-model(json:array-values($entities) ! xdmp:to-json(.)/object-node())
-  let $o := xdmp:from-json(es-wrapper:database-properties-generate($uber-model))
+  let $o := xdmp:from-json(es:database-properties-generate($uber-model))
   let $_ :=
     for $x in ("database-name", "schema-database", "triple-index", "collection-lexicon")
     return
