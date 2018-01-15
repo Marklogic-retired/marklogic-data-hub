@@ -17,6 +17,7 @@ import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.FileUtil;
 import org.apache.commons.io.FileUtils;
 import org.custommonkey.xmlunit.XMLUnit;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -60,8 +61,9 @@ public class StreamCollectorTest extends HubTestBase {
 
         installHub();
 
-        enableDebugging();
-        enableTracing();
+        // disable tracing because trying to trace the 3 million ids to a doc will fail.
+        disableDebugging();
+        disableTracing();
 
         Scaffolding scaffolding = new Scaffolding(projectDir.toString(), stagingClient);
         scaffolding.createEntity(ENTITY);
@@ -109,6 +111,11 @@ public class StreamCollectorTest extends HubTestBase {
         writeBatcher.flushAndWait();
         assertTrue("Doc install not finished", installDocsFinished );
         assertFalse("Doc install failed: " + installDocError, installDocsFailed);
+    }
+
+    @AfterClass
+    public static void teardown() {
+        uninstallHub();
     }
 
     @Test

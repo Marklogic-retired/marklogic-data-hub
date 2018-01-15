@@ -207,6 +207,10 @@ public class HubTestBase {
         new Tracing(stagingClient).enable();
     }
 
+    protected static void disableTracing() {
+        new Tracing(stagingClient).disable();
+    }
+
     protected static HubConfig getHubConfig() {
         return getHubConfig(PROJECT_PATH);
     }
