@@ -32,8 +32,8 @@ import module namespace hent = "http://marklogic.com/data-hub/hub-entities"
 import module namespace perf = "http://marklogic.com/data-hub/perflog-lib"
   at "/com.marklogic.hub/lib/perflog-lib.xqy";
 
-import module namespace es-wrapper = "http://marklogic.com/data-hub/es-wrapper"
-  at "/com.marklogic.hub/lib/entity-services-wrapper.xqy";
+import module namespace esi = "http://marklogic.com/entity-services-impl"
+  at "/MarkLogic/entity-services/entity-services-impl.xqy";
 
 declare namespace es = "http://marklogic.com/entity-services";
 
@@ -111,7 +111,7 @@ declare function service:generate-lets($model as map:map, $entity-type-name)
     let $property := map:get($properties, $property-name)
     let $is-array := map:get($property, "datatype") eq "array"
     let $property := map:get($properties, $property-name)
-    let $property-datatype := es-wrapper:resolve-datatype($model, $entity-type-name, $property-name)
+    let $property-datatype := esi:resolve-datatype($model, $entity-type-name, $property-name)
     let $casting-function-name :=
       if (map:contains($property, "datatype") and map:get($property, "datatype") ne "array") then
         service:casting-function-name-xqy($property-datatype)
@@ -364,7 +364,7 @@ declare function service:generate-vars($model as map:map, $entity-type-name)
 
     let $property := map:get($properties, $property-name)
     let $is-array := map:get($property, "datatype") eq "array"
-    let $property-datatype := es-wrapper:resolve-datatype($model, $entity-type-name, $property-name)
+    let $property-datatype := esi:resolve-datatype($model, $entity-type-name, $property-name)
     let $casting-function-name := service:casting-function-name-sjs($property-datatype)
     let $wrap-if-array := function($str) {
       if ($is-array) then
