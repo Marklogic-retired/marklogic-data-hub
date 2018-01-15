@@ -231,7 +231,7 @@ class InstalledTests extends BaseTest {
 
         then:
         notThrown(UnexpectedBuildFailure)
-        result.getOutput().contains('XDMP-NOSUCHDB: No such database 12345678')
+        result.getOutput().contains('No such database 12345678')
         result.task(":hubRunFlow").outcome == SUCCESS
     }
 }
