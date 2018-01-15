@@ -149,7 +149,13 @@ public class ScaffoldingTest extends HubTestBase {
 
         if (useEsModel) {
             try {
-                assertEquals(getResource("scaffolding-test/es-" + flowType.toString() + "-content." + codeFormat.toString()).replaceAll(" +$", "").replaceAll("\r\n", "\r\n"), FileUtils.readFileToString(defaultContent.toFile()).replaceAll(" +\r\n", "\r\n"));
+                assertEquals(
+                    getResource("scaffolding-test/es-" + flowType.toString() + "-content." + codeFormat.toString())
+                        .replaceAll("\\s+", " ")
+                        .replaceAll("[\r\n]", ""),
+                    FileUtils.readFileToString(defaultContent.toFile())
+                        .replaceAll("\\s+", " ")
+                        .replaceAll("[\r\n]", ""));
             }
             catch(IOException e) {
                 throw new RuntimeException(e);
