@@ -72,12 +72,7 @@ public class EntitiesControllerTest extends BaseTestController {
             CodeFormat.JAVASCRIPT, DataFormat.JSON);
 
         Path harmonizeDir = projectDir.resolve("plugins/entities/" + ENTITY + "/harmonize");
-        FileUtil.copy(getResourceStream("flow-manager/sjs-harmonize-flow/collector.sjs"), harmonizeDir.resolve("sjs-json-harmonization-flow/collector.sjs").toFile());
-        FileUtil.copy(getResourceStream("flow-manager/sjs-harmonize-flow/content.sjs"), harmonizeDir.resolve("sjs-json-harmonization-flow/content.sjs").toFile());
         FileUtil.copy(getResourceStream("flow-manager/sjs-harmonize-flow/headers.sjs"), harmonizeDir.resolve("sjs-json-harmonization-flow/headers.sjs").toFile());
-        FileUtil.copy(getResourceStream("flow-manager/sjs-harmonize-flow/main.sjs"), harmonizeDir.resolve("sjs-json-harmonization-flow/main.sjs").toFile());
-        FileUtil.copy(getResourceStream("flow-manager/sjs-harmonize-flow/triples.sjs"), harmonizeDir.resolve("sjs-json-harmonization-flow/triples.sjs").toFile());
-        FileUtil.copy(getResourceStream("flow-manager/sjs-harmonize-flow/writer.sjs"), harmonizeDir.resolve("sjs-json-harmonization-flow/writer.sjs").toFile());
 
         getDataHub().installUserModules(true);
 
