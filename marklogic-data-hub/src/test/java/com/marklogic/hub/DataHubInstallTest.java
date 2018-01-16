@@ -35,8 +35,8 @@ public class DataHubInstallTest extends HubTestBase {
         assertTrue(getModulesFile("/com.marklogic.hub/lib/config.xqy").startsWith(getResource("data-hub-test/core-modules/config.xqy")));
         int totalCount = getDocCount(HubConfig.DEFAULT_MODULES_DB_NAME, null);
         int hubModulesCount = getDocCount(HubConfig.DEFAULT_MODULES_DB_NAME, "hub-core-module");
-        assertTrue(totalCount + " is not correct", 84 == totalCount || 64 == totalCount);
-        assertTrue(hubModulesCount + "  is not correct", 42 == hubModulesCount || 22 == hubModulesCount);
+        assertTrue(totalCount + " is not correct", 84 == totalCount || 63 == totalCount);
+        assertTrue(hubModulesCount + "  is not correct", 42 == hubModulesCount || 21 == hubModulesCount);
 
         assertTrue("trace options not installed", getModulesFile("/Default/data-hub-TRACING/rest-api/options/traces.xml").length() > 0);
         assertTrue("trace options not installed", getModulesFile("/Default/data-hub-JOBS/rest-api/options/jobs.xml").length() > 0);
@@ -59,12 +59,12 @@ public class DataHubInstallTest extends HubTestBase {
         DataHub dataHub = new DataHub(hubConfig);
 
         int totalCount = getDocCount(HubConfig.DEFAULT_MODULES_DB_NAME, null);
-        assertTrue(totalCount + " is not correct", 84 == totalCount || 64 == totalCount);
+        assertTrue(totalCount + " is not correct", 84 == totalCount || 63 == totalCount);
 
         dataHub.installUserModules(true);
 
         totalCount = getDocCount(HubConfig.DEFAULT_MODULES_DB_NAME, null);
-        assertTrue(totalCount + " is not correct", 84 == totalCount || 104 == totalCount);
+        assertTrue(totalCount + " is not correct", 83 == totalCount || 104 == totalCount);
 
         assertEquals(
             getResource("data-hub-test/plugins/entities/test-entity/harmonize/final/collector.xqy"),
@@ -186,17 +186,17 @@ public class DataHubInstallTest extends HubTestBase {
         dataHub.clearUserModules();
 
         int totalCount = getDocCount(HubConfig.DEFAULT_MODULES_DB_NAME, null);
-        assertTrue(totalCount + " is not correct", 84 == totalCount || 64 == totalCount);
+        assertTrue(totalCount + " is not correct", 84 == totalCount || 63 == totalCount);
 
         dataHub.installUserModules(true);
 
         totalCount = getDocCount(HubConfig.DEFAULT_MODULES_DB_NAME, null);
-        assertTrue(totalCount + " is not correct", 84 == totalCount || 104 == totalCount);
+        assertTrue(totalCount + " is not correct", 83 == totalCount || 104 == totalCount);
 
         dataHub.clearUserModules();
 
         totalCount = getDocCount(HubConfig.DEFAULT_MODULES_DB_NAME, null);
-        assertTrue(totalCount + " is not correct", 84 == totalCount || 64 == totalCount);
+        assertTrue(totalCount + " is not correct", 84 == totalCount || 63 == totalCount);
 
     }
 }
