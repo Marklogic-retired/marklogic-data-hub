@@ -119,9 +119,7 @@ declare function hul:from-field-cache($name, $func, $duration as xs:dayTimeDurat
          or exists($duration) and empty($refresh-date) 
         )
       then 
-        ( xdmp:log("field cache miss xx : "||$name), 
           hul:set-field-cache($name, $func(), $duration)
-        )
       else 
         $existing[1]
 };

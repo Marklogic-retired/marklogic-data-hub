@@ -93,23 +93,6 @@ declare function trace:enabled() as xs:boolean
         ',(), map:new(map:entry("database", xdmp:modules-database()))),
         xs:dayTimeDuration("PT1M")
       )
-
-
-(:
-  hul:from-field-cache("tracing-enabled", function() {
-    xdmp:eval('
-      declare namespace trace = "http://marklogic.com/data-hub/trace";
-      fn:exists(
-        cts:search(
-          fn:doc("/com.marklogic.hub/settings/__tracing_enabled__.xml"),
-          cts:element-value-query(xs:QName("trace:is-tracing-enabled"), "1", ("exact")),
-          ("unfiltered", "score-zero", "unchecked", "unfaceted")
-        )
-      )
-    ',(), map:new(map:entry("database", xdmp:modules-database())))
-  },
-  xs:dayTimeDuration("PT1M"))
-  :)
 };
 
 declare function trace:has-errors() as xs:boolean

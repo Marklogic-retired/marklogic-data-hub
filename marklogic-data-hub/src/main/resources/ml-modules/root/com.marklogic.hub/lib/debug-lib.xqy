@@ -67,22 +67,6 @@ declare function debug:on() as xs:boolean
         ',(), map:new(map:entry("database", xdmp:modules-database()))),
         ()
       )
-
-  (:    
-  hul:from-field-cache("debugging-enabled", function() {
-    xdmp:eval('
-      declare namespace debug = "http://marklogic.com/data-hub/debug";
-      fn:exists(
-        cts:search(
-          fn:doc("/com.marklogic.hub/settings/__debug_enabled__.xml"),
-          cts:element-value-query(xs:QName("debug:is-debugging-enabled"), "1", ("exact")),
-          ("unfiltered", "score-zero", "unchecked", "unfaceted")
-        )
-      )
-    ',(), map:new(map:entry("database", xdmp:modules-database())))
-  },
-  xs:dayTimeDuration("PT1M"))
-  :)
 };
 
 (:~
