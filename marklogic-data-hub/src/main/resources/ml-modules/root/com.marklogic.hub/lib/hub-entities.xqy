@@ -108,7 +108,7 @@ declare function hent:dump-indexes($entities as json:array)
     return
       map:delete($o, $x)
   let $_ :=
-    for $idx in json:array-values(map:get($o, "range-path-index"))
+    for $idx in map:get($o, "range-path-index") ! json:array-values(.)
     return
       map:put($idx, "path-expression", fn:replace(map:get($idx, "path-expression"), "es:", "*:"))
   return
