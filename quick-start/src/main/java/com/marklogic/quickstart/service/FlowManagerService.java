@@ -107,11 +107,12 @@ public class FlowManagerService {
         return flowManager.getFlow(entityName, flowName, flowType);
     }
 
-    public JobTicket runFlow(Flow flow, int batchSize, int threadCount, FlowStatusListener statusListener) {
+    public JobTicket runFlow(Flow flow, int batchSize, int threadCount, Map<String, Object> options, FlowStatusListener statusListener) {
 
         FlowManager flowManager = getFlowManager();
         FlowRunner flowRunner = flowManager.newFlowRunner()
             .withFlow(flow)
+            .withOptions(options)
             .withBatchSize(batchSize)
             .withThreadCount(threadCount)
             .onStatusChanged(statusListener);
