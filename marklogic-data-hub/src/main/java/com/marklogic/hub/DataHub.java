@@ -169,20 +169,10 @@ public class DataHub {
                 versionString = getMarkLogicVersion();
             }
             int major = Integer.parseInt(versionString.replaceAll("([^.]+)\\..*", "$1"));
-            if (major < 8) {
+            if (major < 9) {
                 return false;
             }
             boolean isNightly = versionString.matches("[^-]+-(\\d{4})(\\d{2})(\\d{2})");
-            if (major == 8) {
-                String alteredString = versionString.replaceAll("[^\\d]+", "");
-                if (alteredString.length() < 4) {
-                    alteredString = StringUtils.rightPad(alteredString, 4, "0");
-                }
-                int ver = Integer.parseInt(alteredString.substring(0, 4));
-                if (!isNightly && ver < 8070) {
-                    return false;
-                }
-            }
             if (major == 9) {
                 String alteredString = versionString.replaceAll("[^\\d]+", "");
                 if (alteredString.length() < 4) {
