@@ -35,13 +35,38 @@ export default function(tmpDir) {
 
     it ('Should select the temp folder', function() {
       loginPage.setCurrentFolder(tmpDir);
-      // loginPage.selectOnlineStore();
+      //loginPage.selectOnlineStore();
       console.log('clicking next!');
       loginPage.clickNext('ProjectDirTab');
       browser.wait(EC.elementToBeClickable(loginPage.initIfNeededTab));
     });
 
     it ('Should be on the init project page', function() {
+      expect(loginPage.dataHubNameLabel.isPresent()).toBe(true);
+      loginPage.setDataHubName('data-hub-ol');
+      expect(loginPage.marklogicHostLabel.isPresent()).toBe(true);
+      console.log('clicking advanced settings');
+      loginPage.clickAdvancedSettings();
+      //browser.driver.sleep(5000);
+      console.log('verify advanced settings');
+      expect(loginPage.stagingAppserverNameLabel.isPresent()).toBe(true);
+      expect(loginPage.stagingAppserverName.getAttribute('value')).toEqual('data-hub-ol-STAGING');
+      expect(loginPage.modulesDbName.getAttribute('value')).toEqual('data-hub-ol-MODULES');
+      browser.driver.sleep(5000);
+      loginPage.clickAdvancedSettings();
+      console.log('restore to default settings');
+      loginPage.clickRestoreDefaults();
+      //browser.driver.sleep(5000);
+      browser.wait(EC.elementToBeClickable(loginPage.restoreButton));
+      loginPage.clickRestore();
+      //browser.driver.sleep(5000);
+      loginPage.clickAdvancedSettings();
+      console.log('verify restored settings');
+      expect(loginPage.stagingAppserverNameLabel.isPresent()).toBe(true);
+      expect(loginPage.stagingAppserverName.getAttribute('value')).toEqual('data-hub-STAGING');
+      expect(loginPage.modulesDbName.getAttribute('value')).toEqual('data-hub-MODULES');
+      expect(loginPage.dataHubName.getAttribute('value')).toEqual('');
+      browser.driver.sleep(5000);
       expect(loginPage.projectDirTab.isDisplayed()).toBe(false);
       expect(loginPage.initIfNeededTab.isDisplayed()).toBe(true);
       expect(loginPage.postInitTab.isDisplayed()).toBe(false);
@@ -93,6 +118,17 @@ export default function(tmpDir) {
       expect(loginPage.requiresUpdateUpdateTab.isDisplayed()).toBe(false);
       expect(loginPage.preInstallCheckTab.isDisplayed()).toBe(false);
       expect(loginPage.installerTab.isPresent()).toBe(false);
+      //negative test on login
+      console.log('login negative test');
+      loginPage.loginAs('foo', 'foo');
+      expect(loginPage.loginInvalidCredentialsError.isDisplayed()).toBe(true);
+      //browser.driver.sleep(5000);
+      loginPage.loginAs('foo', '');
+      expect(loginPage.loginInvalidCredentialsError.isDisplayed()).toBe(true);
+      //browser.driver.sleep(5000);
+      loginPage.loginAs('', 'foo');
+      expect(loginPage.loginInvalidCredentialsError.isDisplayed()).toBe(true);
+      browser.driver.sleep(10000);
       loginPage.login();
     });
 
