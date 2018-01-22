@@ -276,11 +276,11 @@ public class FlowRunnerImpl implements FlowRunner {
             });
 
 
-        if (hubConfig.loadBalancerHost != null){
+        if (hubConfig.loadBalancerHosts != null && hubConfig.loadBalancerHosts.length > 0){
             tempQueryBatcher = tempQueryBatcher.withForestConfig(
                 new FilteredForestConfiguration(
                     dataMovementManager.readForestConfig()
-                ).withWhiteList(hubConfig.loadBalancerHost)
+                ).withWhiteList(hubConfig.loadBalancerHosts)
             );
         }
         QueryBatcher queryBatcher = tempQueryBatcher;

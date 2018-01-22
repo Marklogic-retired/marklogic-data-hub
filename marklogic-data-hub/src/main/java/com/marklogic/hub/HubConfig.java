@@ -151,7 +151,7 @@ public class HubConfig {
     public String hubRoleName = DEFAULT_ROLE_NAME;
     public String hubUserName = DEFAULT_USER_NAME;
 
-    public String loadBalancerHost;
+    public String[] loadBalancerHosts;
 
     public String customForestPath = DEFAULT_CUSTOM_FOREST_PATH;
 
@@ -347,7 +347,7 @@ public class HubConfig {
             hubRoleName = getEnvPropString(environmentProperties, "mlHubUserRole", hubRoleName);
             hubUserName = getEnvPropString(environmentProperties, "mlHubUserName", hubUserName);
 
-            loadBalancerHost = getEnvPropString(environmentProperties, "mlLoadBalancerHost", loadBalancerHost);
+            loadBalancerHosts = getEnvPropString(environmentProperties, "mlLoadBalancerHosts", "").split("\\s*,\\s*");
 
             projectDir = getEnvPropString(environmentProperties, "hubProjectDir", projectDir);
 

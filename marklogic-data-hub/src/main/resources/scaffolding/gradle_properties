@@ -108,7 +108,7 @@ mlHubUserName=%%mlHubUserName%%
 mlHubUserPassword=%%mlHubUserPassword%%
 
 # If you are working with a load balancer you can
-# specify the hostname of the load balancer here
+# specify the hostname(s) of the load balancer here separated by commas
 # see: https://docs.marklogic.com/guide/java/data-movement#id_26583
 # for more info about what's happening under the hood
-# mlLoadBalancerHost=your-load-balancer-hostname
+# mlLoadBalancerHosts=your-load-balancer-hostnames,separated,by-commas
