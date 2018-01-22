@@ -47,7 +47,6 @@ export default function(tmpDir) {
       expect(loginPage.marklogicHostLabel.isPresent()).toBe(true);
       console.log('clicking advanced settings');
       loginPage.clickAdvancedSettings();
-      //browser.driver.sleep(5000);
       console.log('verify advanced settings');
       expect(loginPage.stagingAppserverNameLabel.isPresent()).toBe(true);
       expect(loginPage.stagingAppserverName.getAttribute('value')).toEqual('data-hub-ol-STAGING');
@@ -56,10 +55,8 @@ export default function(tmpDir) {
       loginPage.clickAdvancedSettings();
       console.log('restore to default settings');
       loginPage.clickRestoreDefaults();
-      //browser.driver.sleep(5000);
       browser.wait(EC.elementToBeClickable(loginPage.restoreButton));
       loginPage.clickRestore();
-      //browser.driver.sleep(5000);
       loginPage.clickAdvancedSettings();
       console.log('verify restored settings');
       expect(loginPage.stagingAppserverNameLabel.isPresent()).toBe(true);
@@ -122,13 +119,10 @@ export default function(tmpDir) {
       console.log('login negative test');
       loginPage.loginAs('foo', 'foo');
       expect(loginPage.loginInvalidCredentialsError.isDisplayed()).toBe(true);
-      //browser.driver.sleep(5000);
       loginPage.loginAs('foo', '');
       expect(loginPage.loginInvalidCredentialsError.isDisplayed()).toBe(true);
-      //browser.driver.sleep(5000);
       loginPage.loginAs('', 'foo');
       expect(loginPage.loginInvalidCredentialsError.isDisplayed()).toBe(true);
-      browser.driver.sleep(10000);
       loginPage.login();
     });
 
