@@ -91,7 +91,7 @@ export class LoginPage extends AppPage {
   }
 
   get dataHubName() {
-    return element(by.css('#mdl-textfield-3'));
+    return element(by.css('mdl-textfield[label="DataHub Name"] input'));
   }
 
   setDataHubName(dataHubName) {
@@ -112,11 +112,11 @@ export class LoginPage extends AppPage {
   }
 
   get stagingAppserverName() {
-    return element(by.css('#mdl-textfield-5'));
+    return element(by.css('mdl-textfield[label="Staging Appserver Name"] input'));
   }
 
   get modulesDbName() {
-    return element(by.css('#mdl-textfield-21'));
+    return element(by.css('mdl-textfield[label="Modules Database Name"] input'));
   }
 
   clickRestoreDefaults() {
