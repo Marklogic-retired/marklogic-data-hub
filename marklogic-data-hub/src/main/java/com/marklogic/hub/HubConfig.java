@@ -347,7 +347,10 @@ public class HubConfig {
             hubRoleName = getEnvPropString(environmentProperties, "mlHubUserRole", hubRoleName);
             hubUserName = getEnvPropString(environmentProperties, "mlHubUserName", hubUserName);
 
-            loadBalancerHosts = getEnvPropString(environmentProperties, "mlLoadBalancerHosts", "").split("\\s*,\\s*");
+            String lbh = getEnvPropString(environmentProperties, "mlLoadBalancerHosts", null);
+            if (lbh != null && lbh.length() > 0) {
+                loadBalancerHosts = lbh.split(",");
+            }
 
             projectDir = getEnvPropString(environmentProperties, "hubProjectDir", projectDir);
 
