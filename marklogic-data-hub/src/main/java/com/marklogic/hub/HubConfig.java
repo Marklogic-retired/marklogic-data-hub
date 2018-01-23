@@ -151,6 +151,8 @@ public class HubConfig {
     public String hubRoleName = DEFAULT_ROLE_NAME;
     public String hubUserName = DEFAULT_USER_NAME;
 
+    public String[] loadBalancerHosts;
+
     public String customForestPath = DEFAULT_CUSTOM_FOREST_PATH;
 
     public String modulePermissions = "rest-reader,read,rest-writer,insert,rest-writer,update,rest-extension-user,execute";
@@ -344,6 +346,11 @@ public class HubConfig {
 
             hubRoleName = getEnvPropString(environmentProperties, "mlHubUserRole", hubRoleName);
             hubUserName = getEnvPropString(environmentProperties, "mlHubUserName", hubUserName);
+
+            String lbh = getEnvPropString(environmentProperties, "mlLoadBalancerHosts", null);
+            if (lbh != null && lbh.length() > 0) {
+                loadBalancerHosts = lbh.split(",");
+            }
 
             projectDir = getEnvPropString(environmentProperties, "hubProjectDir", projectDir);
 

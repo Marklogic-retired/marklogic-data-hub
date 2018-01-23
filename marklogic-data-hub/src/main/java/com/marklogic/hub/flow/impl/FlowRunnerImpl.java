@@ -209,7 +209,7 @@ public class FlowRunnerImpl implements FlowRunner {
 
         HashMap<String, JobTicket> ticketWrapper = new HashMap<>();
 
-        QueryBatcher queryBatcher = dataMovementManager.newQueryBatcher(uris.iterator())
+        QueryBatcher tempQueryBatcher = dataMovementManager.newQueryBatcher(uris.iterator())
             .withBatchSize(batchSize)
             .withThreadCount(threadCount)
             .onUrisReady((QueryBatch batch) -> {
@@ -274,6 +274,17 @@ public class FlowRunnerImpl implements FlowRunner {
                 failedBatches.addAndGet(1);
                 failedEvents.addAndGet(batchSize);
             });
+
+
+        if (hubConfig.loadBalancerHosts != null && hubConfig.loadBalancerHosts.length > 0){
+            tempQueryBatcher = tempQueryBatcher.withForestConfig(
+                new FilteredForestConfiguration(
+                    dataMovementManager.readForestConfig()
+                ).withWhiteList(hubConfig.loadBalancerHosts)
+            );
+        }
+        QueryBatcher queryBatcher = tempQueryBatcher;
+
 
         JobTicket jobTicket = dataMovementManager.startJob(queryBatcher);
         ticketWrapper.put("jobTicket", jobTicket);
