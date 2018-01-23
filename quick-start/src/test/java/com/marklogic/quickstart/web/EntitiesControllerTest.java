@@ -60,6 +60,47 @@ public class EntitiesControllerTest extends BaseTestController {
     }
 
     @Test
+    public void runHarmonizeNoOptions() throws IOException, InterruptedException {
+        // Set up (not needed for other tests)
+        baseSetUp();
+        installHub();
+
+        Path projectDir = Paths.get(".", PROJECT_PATH);
+        Scaffolding scaffolding = new Scaffolding(projectDir.toString(), stagingClient);
+
+        scaffolding.createFlow(ENTITY, "sjs-json-harmonization-flow", FlowType.HARMONIZE,
+            CodeFormat.JAVASCRIPT, DataFormat.JSON);
+
+        Path harmonizeDir = projectDir.resolve("plugins/entities/" + ENTITY + "/harmonize");
+        FileUtil.copy(getResourceStream("flow-manager/sjs-harmonize-flow/headers.sjs"), harmonizeDir.resolve("sjs-json-harmonization-flow/headers.sjs").toFile());
+
+        getDataHub().installUserModules(true);
+
+        DocumentMetadataHandle meta = new DocumentMetadataHandle();
+        meta.getCollections().add(ENTITY);
+        installStagingDoc("/staged.json", meta, "flow-manager/staged.json");
+
+        EnvironmentConfig envConfig = new EnvironmentConfig(PROJECT_PATH, "local", "admin", "admin");
+        envConfig.setMlSettings(HubConfig.hubFromEnvironment(PROJECT_PATH, null));
+        setEnvConfig(envConfig);
+
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode body = mapper.readTree("{\"batchSize\":1, \"threadCount\": 1}");
+
+        ResponseEntity<?> responseEntity = ec.runHarmonizeFlow(ENTITY, "sjs-json-harmonization-flow", body);
+
+        Assert.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        DocumentRecord doc = finalDocMgr.read("/staged.json").next();
+        JsonNode root = doc.getContent(new JacksonHandle()).get();
+        JsonNode env = root.path("envelope");
+        JsonNode headers = env.path("headers");
+        JsonNode optionNode = headers.path("test-option");
+        Assert.assertTrue(optionNode.isMissingNode());
+
+        uninstallHub();
+    }
+
+    @Test
     public void runHarmonizeFlowWithOptions() throws IOException, InterruptedException {
         // Set up (not needed for other tests)
         baseSetUp();

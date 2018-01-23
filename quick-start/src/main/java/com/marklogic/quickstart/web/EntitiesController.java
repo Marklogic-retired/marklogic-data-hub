@@ -138,13 +138,14 @@ class EntitiesController extends EnvironmentAware {
         int batchSize = json.get("batchSize").asInt();
         int threadCount = json.get("threadCount").asInt();
         Map<String, Object> options = new HashMap<>();
-        Iterator<Map.Entry<String, JsonNode>> optionIter = json.get("options").fields();
-        Map.Entry<String, JsonNode> current;
-
-        while (optionIter.hasNext())
-        {
-            current = optionIter.next();
-            options.put(current.getKey(), current.getValue());
+        //verify that we have options, if not, pass on an empty map
+        if(json.get("options") != null && json.get("options").size() > 0) {
+            Iterator<Map.Entry<String, JsonNode>> optionIter = json.get("options").fields();
+            Map.Entry<String, JsonNode> current;
+            while (optionIter.hasNext()) {
+                current = optionIter.next();
+                options.put(current.getKey(), current.getValue());
+            }
         }
 
         ResponseEntity<?> resp;
