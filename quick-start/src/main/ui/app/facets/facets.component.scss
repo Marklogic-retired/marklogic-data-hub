@@ -20,15 +20,22 @@ $bg-color: unquote("rgb(#{$palette-datahub-500})");
     .fa {
       float: right;
       font-weight: bold;
+      font-size: 11px;
     }
   }
 
   .facet-value {
-    padding: 10px;
+    padding: 2px;
+    padding-top: 10px;
     cursor: pointer;
 
     .fa {
       color: $bg-color;
+      font-size: 11px;
+    }
+
+    .facet-small-name {
+      font-size: .59vw;
     }
 
     .mdl-badge {
@@ -52,6 +59,10 @@ $bg-color: unquote("rgb(#{$palette-datahub-500})");
   button {
     font-size: 10px;
     margin-bottom: 5px;
+
+    .chiclet-name {
+        font-size: .54vw;
+    }
   }
 
   margin-bottom: 10px;
