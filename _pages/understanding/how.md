@@ -137,7 +137,9 @@ The MarkLogic Data Hub Framework is organized into **Entities**, **Flows**, and 
 ### Entities
 Entities are the high level business objects in your enterprise. They can be things like Employee, Product, Purchase Order, Department, etc.
 
-With the DHF you have a choice between using abstract entities or Entity Services. **TODO** - discuss differences between Entity Services and non-ES.
+With the DHF you have a choice between using abstract entities or Entity Services in MarkLogic 9, which we strongly recommend unless you have specific needs that Entity Services cannot address. Entity Services is an out-of-the-box API and a set of conventions you can use within MarkLogic to quickly stand up an application based on entity modeling. This means Entity Services handles the model definition and entity instance envelope documents for you via API calls - if you choose to use your own abstract entities, you will need to provide this framework yourself.
+
+More detailed information can be found in the [Introduction to Entity Services](https://docs.marklogic.com/guide/entity-services/intro) developer guide.
 
 ### Flows
 Flows are the means by which you harmonize your data. There are two types of Flows: **Input** and **Harmonize**. Flows belong to Entities. Think of a flow as a way of creating an envelope that represents an entity. Flows are made up of Plugins.
