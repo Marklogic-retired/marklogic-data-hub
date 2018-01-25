@@ -225,4 +225,26 @@ public class JobManagerTest extends HubTestBase {
         Files.delete(exportPath);
     }
 
+    @Test
+    public void exportAllJobs() throws IOException {
+        final String EXPORT_FILENAME = "testExport.zip";
+        Path exportPath = projectDir.resolve(EXPORT_FILENAME);
+        JobManager manager = new JobManager(jobClient, traceClient);
+
+        File zipFile = exportPath.toFile();
+        assertFalse(zipFile.exists());
+
+        manager.exportJobs(exportPath, null);
+
+        assertTrue(zipFile.exists());
+
+        ZipFile actual = new ZipFile(zipFile);
+        // There should be three job and six trace documents
+        assertEquals(9, actual.size());
+
+        actual.close();
+
+        Files.delete(exportPath);
+    }
+
 }

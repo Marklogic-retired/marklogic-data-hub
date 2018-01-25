@@ -34,8 +34,7 @@ import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.Format;
 import com.marklogic.client.io.JacksonDatabindHandle;
 import com.marklogic.client.io.StringHandle;
-import com.marklogic.client.query.StructuredQueryBuilder;
-import com.marklogic.client.query.StructuredQueryDefinition;
+import com.marklogic.client.query.*;
 import com.marklogic.client.util.RequestParameters;
 
 import javax.xml.namespace.QName;
@@ -99,21 +98,41 @@ public class JobManager {
         return this.jobDeleteRunner.deleteJobs(jobIds);
     }
 
+    /**
+     * Export Job documents and their associated Trace documents to a zip file.
+     *
+     * @param exportFilePath specifies where the zip file will be written
+     * @param jobIds a comma-separated list of jobIds; if null, all will be exported
+     */
     public void exportJobs(Path exportFilePath, String jobIds) {
         File zipFile = exportFilePath.toFile();
-        String[] jobsArray = jobIds.split(",");
+        WriteToZipConsumer zipConsumer = new WriteToZipConsumer(zipFile);
+
+        String[] jobsArray = jobIds != null ? jobsArray = jobIds.split(",") : null;
+
+        QueryManager qm = jobClient.newQueryManager();
+
+        // Build a query that will match everything
+        StringQueryDefinition emptyQuery = qm.newStringDefinition();
+        emptyQuery.setCriteria("");
 
         // Get the job(s) document(s)
-        StructuredQueryBuilder sqb = jobClient.newQueryManager().newStructuredQueryBuilder();
-        StructuredQueryDefinition query = sqb.value(sqb.jsonProperty("jobId"), jobsArray);
+        StructuredQueryBuilder sqb = qm.newStructuredQueryBuilder();
         DataMovementManager dmm = jobClient.newDataMovementManager();
-        QueryBatcher batcher = dmm.newQueryBatcher(query);
-        WriteToZipConsumer zipConsumer = new WriteToZipConsumer(zipFile);
+        QueryBatcher batcher = null;
+        StructuredQueryDefinition query = null;
+        if (jobsArray == null) {
+            batcher = dmm.newQueryBatcher(emptyQuery);
+        }
+        else {
+            batcher = dmm.newQueryBatcher(sqb.value(sqb.jsonProperty("jobId"), jobsArray));
+        }
         batcher.onUrisReady(new ExportListener().onDocumentReady(zipConsumer));
         dmm.startJob(batcher);
 
         batcher.awaitCompletion();
         dmm.stopJob(batcher);
+        dmm.release();
 
         // We create this new client instead of using traceClient because the DataMovementManger relies on an
         // internal-only endpoint, and tracing-rewriter.xml doesn't account for it. As such, we're using the
@@ -122,17 +141,19 @@ public class JobManager {
             traceClient.getDatabase(), jobClient.getSecurityContext());
 
         // Get the traces that go with the job(s)
-        sqb = client.newQueryManager().newStructuredQueryBuilder();
-        query = sqb.value(sqb.element(new QName("jobId")), jobsArray);
         dmm = client.newDataMovementManager();
-        batcher = dmm.newQueryBatcher(query);
-//        zipConsumer = new WriteToZipConsumer(zipFile);
+        if (jobsArray == null) {
+            batcher = dmm.newQueryBatcher(emptyQuery);
+        }
+        else {
+            batcher = dmm.newQueryBatcher(sqb.value(sqb.element(new QName("jobId")), jobsArray));
+        }
         batcher.onUrisReady(new ExportListener().onDocumentReady(zipConsumer));
         dmm.startJob(batcher);
 
         batcher.awaitCompletion();
         dmm.stopJob(batcher);
-
+        dmm.release();
 
         zipConsumer.close();
     }
