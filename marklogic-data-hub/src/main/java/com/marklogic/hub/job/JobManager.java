@@ -20,23 +20,35 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.DatabaseClientFactory;
 import com.marklogic.client.Transaction;
+import com.marklogic.client.datamovement.DataMovementManager;
+import com.marklogic.client.datamovement.ExportListener;
+import com.marklogic.client.datamovement.QueryBatcher;
 import com.marklogic.client.document.DocumentWriteSet;
 import com.marklogic.client.document.JSONDocumentManager;
+import com.marklogic.client.ext.datamovement.consumer.WriteToZipConsumer;
 import com.marklogic.client.extensions.ResourceManager;
 import com.marklogic.client.extensions.ResourceServices;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.Format;
 import com.marklogic.client.io.JacksonDatabindHandle;
 import com.marklogic.client.io.StringHandle;
+import com.marklogic.client.query.StructuredQueryBuilder;
+import com.marklogic.client.query.StructuredQueryDefinition;
 import com.marklogic.client.util.RequestParameters;
 
+import javax.xml.namespace.QName;
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.TimeZone;
 
 public class JobManager {
 
+    private DatabaseClient traceClient;
+    private DatabaseClient jobClient;
     private JSONDocumentManager docMgr;
     private JobDeleteResource jobDeleteRunner = null;
 
@@ -62,7 +74,9 @@ public class JobManager {
         .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
         .setDateFormat(simpleDateFormat8601);
 
-    public JobManager(DatabaseClient jobClient) {
+    public JobManager(DatabaseClient jobClient, DatabaseClient traceClient) {
+        this.jobClient = jobClient;
+        this.traceClient = traceClient;
         this.docMgr = jobClient.newJSONDocumentManager();
         this.jobDeleteRunner = new JobDeleteResource(jobClient);
     }
@@ -83,6 +97,44 @@ public class JobManager {
 
     public JobDeleteResponse deleteJobs(String jobIds) {
         return this.jobDeleteRunner.deleteJobs(jobIds);
+    }
+
+    public void exportJobs(Path exportFilePath, String jobIds) {
+        File zipFile = exportFilePath.toFile();
+        String[] jobsArray = jobIds.split(",");
+
+        // Get the job(s) document(s)
+        StructuredQueryBuilder sqb = jobClient.newQueryManager().newStructuredQueryBuilder();
+        StructuredQueryDefinition query = sqb.value(sqb.jsonProperty("jobId"), jobsArray);
+        DataMovementManager dmm = jobClient.newDataMovementManager();
+        QueryBatcher batcher = dmm.newQueryBatcher(query);
+        WriteToZipConsumer zipConsumer = new WriteToZipConsumer(zipFile);
+        batcher.onUrisReady(new ExportListener().onDocumentReady(zipConsumer));
+        dmm.startJob(batcher);
+
+        batcher.awaitCompletion();
+        dmm.stopJob(batcher);
+
+        // We create this new client instead of using traceClient because the DataMovementManger relies on an
+        // internal-only endpoint, and tracing-rewriter.xml doesn't account for it. As such, we're using the
+        // Jobs app server, but pointing to the Traces database.
+        DatabaseClient client = DatabaseClientFactory.newClient(jobClient.getHost(), jobClient.getPort(),
+            traceClient.getDatabase(), jobClient.getSecurityContext());
+
+        // Get the traces that go with the job(s)
+        sqb = client.newQueryManager().newStructuredQueryBuilder();
+        query = sqb.value(sqb.element(new QName("jobId")), jobsArray);
+        dmm = client.newDataMovementManager();
+        batcher = dmm.newQueryBatcher(query);
+//        zipConsumer = new WriteToZipConsumer(zipFile);
+        batcher.onUrisReady(new ExportListener().onDocumentReady(zipConsumer));
+        dmm.startJob(batcher);
+
+        batcher.awaitCompletion();
+        dmm.stopJob(batcher);
+
+
+        zipConsumer.close();
     }
 
     public class JobDeleteResource extends ResourceManager {

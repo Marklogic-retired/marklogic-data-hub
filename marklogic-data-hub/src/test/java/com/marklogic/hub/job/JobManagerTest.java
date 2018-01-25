@@ -1,23 +1,24 @@
 package com.marklogic.hub.job;
 
-import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.hub.DataHub;
 import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.flow.*;
 import com.marklogic.hub.scaffold.Scaffolding;
-import org.apache.commons.io.FileUtils;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.StringJoiner;
+import java.util.zip.ZipFile;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -102,7 +103,7 @@ public class JobManagerTest extends HubTestBase {
     public void deleteOneJob() {
         assertEquals(3, getJobDocCount());
         assertEquals(6, getTracingDocCount());
-        JobManager manager = new JobManager(jobClient);
+        JobManager manager = new JobManager(jobClient, traceClient);
         String jobs = jobIds.get(1);
 
         JobDeleteResponse actual = manager.deleteJobs(jobs);
@@ -126,7 +127,7 @@ public class JobManagerTest extends HubTestBase {
         assertEquals(3, getJobDocCount());
         assertEquals(6, getTracingDocCount());
         String jobs = jobIds.get(0) + "," + jobIds.get(2);
-        JobManager manager = new JobManager(jobClient);
+        JobManager manager = new JobManager(jobClient, traceClient);
 
         JobDeleteResponse actual = manager.deleteJobs(jobs);
 
@@ -146,7 +147,7 @@ public class JobManagerTest extends HubTestBase {
 
     @Test
     public void deleteInvalidJob() {
-        JobManager manager = new JobManager(jobClient);
+        JobManager manager = new JobManager(jobClient, traceClient);
 
         JobDeleteResponse actual = manager.deleteJobs("InvalidId");
 
@@ -158,7 +159,7 @@ public class JobManagerTest extends HubTestBase {
 
     @Test
     public void deleteEmptyStringJob() {
-        JobManager manager = new JobManager(jobClient);
+        JobManager manager = new JobManager(jobClient, traceClient);
 
         JobDeleteResponse actual = manager.deleteJobs("");
 
@@ -170,7 +171,7 @@ public class JobManagerTest extends HubTestBase {
 
     @Test
     public void deleteNullJob() {
-        JobManager manager = new JobManager(jobClient);
+        JobManager manager = new JobManager(jobClient, traceClient);
 
         JobDeleteResponse actual = manager.deleteJobs(null);
 
@@ -179,4 +180,49 @@ public class JobManagerTest extends HubTestBase {
         assertEquals(0, actual.totalCount);
         assertEquals(0, actual.errorCount);
     }
+
+    @Test
+    public void exportOneJob() throws IOException {
+        final String EXPORT_FILENAME = "testExport.zip";
+        Path exportPath = projectDir.resolve(EXPORT_FILENAME);
+        JobManager manager = new JobManager(jobClient, traceClient);
+
+        File zipFile = exportPath.toFile();
+        assertFalse(zipFile.exists());
+
+        manager.exportJobs(exportPath, jobIds.get(0));
+
+        assertTrue(zipFile.exists());
+
+        ZipFile actual = new ZipFile(zipFile);
+        // There should be one job and two trace documents
+        assertEquals(3, actual.size());
+
+        actual.close();
+
+        Files.delete(exportPath);
+    }
+
+    @Test
+    public void exportMultipleJobs() throws IOException {
+        final String EXPORT_FILENAME = "testExport.zip";
+        Path exportPath = projectDir.resolve(EXPORT_FILENAME);
+        JobManager manager = new JobManager(jobClient, traceClient);
+
+        File zipFile = exportPath.toFile();
+        assertFalse(zipFile.exists());
+
+        manager.exportJobs(exportPath, new StringJoiner(",").add(jobIds.get(0)).add(jobIds.get(1)).toString());
+
+        assertTrue(zipFile.exists());
+
+        ZipFile actual = new ZipFile(zipFile);
+        // There should be two job and four trace documents
+        assertEquals(6, actual.size());
+
+        actual.close();
+
+        Files.delete(exportPath);
+    }
+
 }
