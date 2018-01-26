@@ -525,7 +525,7 @@ export class MlcpUiComponent implements OnChanges {
             let value = setting.value;
             if (setting.type !== 'boolean' && setting.type !== 'number') {
               if(group.category !== 'Flow Options')
-                value = '"' + setting.value + '"';
+                value = setting.value.toString();
               else
                 value = setting.value;
             }
