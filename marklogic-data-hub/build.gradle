@@ -24,7 +24,7 @@ ext.junitPlatformVersion = '1.0.0-RC3'
 ext.junitJupiterVersion  = '5.0.0-RC3'
 
 dependencies {
-    compile 'com.marklogic:marklogic-client-api:4.0.2'
+    compile 'com.marklogic:marklogic-client-api:4.0.3.1'
     compile 'com.marklogic:mlcp-util:0.3.0'
     compile 'com.marklogic:ml-app-deployer:3.3.1'
     compile 'commons-io:commons-io:2.4'
@@ -56,7 +56,7 @@ dependencies {
 
 node {
   // Version of node to use.
-  version = '8.4.0'
+  version = '8.9.3'
 
   // // Version of npm to use.
   npmVersion = '5.4.2'
