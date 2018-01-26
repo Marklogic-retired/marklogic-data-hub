@@ -11,16 +11,20 @@ export class SelectKeyValuesComponent {
   @Input() valLabel: string = "Value";
   @Input() keyVals: any;
   @Output() onChange = new EventEmitter<any>();
+  @Output() onAdd = new EventEmitter<any>();
+  @Output() onRemove = new EventEmitter<any>();
 
   constructor() {
   }
 
-  add(): void {
+  add(index): void {
     this.keyVals.push({key:'',val:''});
+    this.onAdd.emit({index: index});
   }
 
   remove(index): void {
     this.keyVals.splice(index, 1);
+    this.onRemove.emit({index: index});
   }
 
 }
