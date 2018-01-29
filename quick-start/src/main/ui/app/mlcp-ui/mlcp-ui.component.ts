@@ -491,9 +491,6 @@ export class MlcpUiComponent implements OnChanges {
           if (setting.value) {
             const key = setting.field;
             let value = setting.value;
-            if (setting.type !== 'boolean' && setting.type !== 'number') {
-              value = '"' + setting.value + '"';
-            }
             this.addMlcpOption(options, key, value, true, true);
           }
         });
@@ -510,10 +507,13 @@ export class MlcpUiComponent implements OnChanges {
     }
 
     if (value) {
-      options.push(value);
       if (isOtherOption) {
         this.mlcp[key] = value;
       }
+      if (value.type !== 'boolean' && value.type !== 'number'){
+        value = '"'+value+'"';
+      }
+      options.push(value);
     }
   }
 
