@@ -62,7 +62,7 @@ public class FlowRunnerTest extends HubTestBase {
 
         DataHub dh = new DataHub(getHubConfig());
         dh.clearUserModules();
-        dh.installUserModules();
+        installUserModules(getHubConfig(), false);
 
         installModule("/entities/" + ENTITY + "/harmonize/testharmonize/collector.xqy", "flow-runner-test/collector.xqy");
         installModule("/entities/" + ENTITY + "/harmonize/testharmonize/content.xqy", "flow-runner-test/content-for-options.xqy");

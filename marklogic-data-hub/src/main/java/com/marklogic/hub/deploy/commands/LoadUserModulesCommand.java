@@ -177,7 +177,7 @@ public class LoadUserModulesCommand extends AbstractCommand {
                             Modules modules = new EntityDefModulesFinder().findModules(dir.toString());
                             DocumentMetadataHandle meta = new DocumentMetadataHandle();
                             meta.getCollections().add("http://marklogic.com/entity-services/models");
-                            documentPermissionsParser.parsePermissions(hubConfig.modulePermissions, meta.getPermissions());
+                            documentPermissionsParser.parsePermissions(hubConfig.getModulePermissions(), meta.getPermissions());
                             for (Resource r : modules.getAssets()) {
                                 if (forceLoad || modulesManager.hasFileBeenModifiedSinceLastLoaded(r.getFile())) {
                                     InputStream inputStream = r.getInputStream();

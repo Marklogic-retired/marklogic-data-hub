@@ -59,21 +59,21 @@ public class HubConfigTest extends HubTestBase {
     @Test
     public void testLoadBalancerProps() {
         deleteProp("mlLoadBalancerHosts");
-        assertNull(getHubConfig().loadBalancerHosts);
+        assertNull(getHubConfig().getLoadBalancerHosts());
 
         writeProp("mlLoadBalancerHosts", "");
-        assertNull(getHubConfig().loadBalancerHosts);
+        assertNull(getHubConfig().getLoadBalancerHosts());
 
         writeProp("mlLoadBalancerHosts", "host1,host2");
         HubConfig config = getHubConfig();
-        assertEquals(2, config.loadBalancerHosts.length);
-        assertEquals("host1", config.loadBalancerHosts[0]);
-        assertEquals("host2", config.loadBalancerHosts[1]);
+        assertEquals(2, config.getLoadBalancerHosts().length);
+        assertEquals("host1", config.getLoadBalancerHosts()[0]);
+        assertEquals("host2", config.getLoadBalancerHosts()[1]);
 
         writeProp("mlLoadBalancerHosts", "host1");
         config = getHubConfig();
-        assertEquals(1, config.loadBalancerHosts.length);
-        assertEquals("host1", config.loadBalancerHosts[0]);
+        assertEquals(1, config.getLoadBalancerHosts().length);
+        assertEquals("host1", config.getLoadBalancerHosts()[0]);
     }
 
 }

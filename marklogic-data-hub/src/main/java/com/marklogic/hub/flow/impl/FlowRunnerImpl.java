@@ -66,7 +66,7 @@ public class FlowRunnerImpl implements FlowRunner {
     public FlowRunnerImpl(HubConfig hubConfig) {
         this.hubConfig = hubConfig;
         this.sourceClient = hubConfig.newStagingClient();
-        this.destinationDatabase = hubConfig.finalDbName;
+        this.destinationDatabase = hubConfig.getFinalDbName();
     }
 
     @Override
@@ -276,11 +276,11 @@ public class FlowRunnerImpl implements FlowRunner {
             });
 
 
-        if (hubConfig.loadBalancerHosts != null && hubConfig.loadBalancerHosts.length > 0){
+        if (hubConfig.getLoadBalancerHosts() != null && hubConfig.getLoadBalancerHosts().length > 0){
             tempQueryBatcher = tempQueryBatcher.withForestConfig(
                 new FilteredForestConfiguration(
                     dataMovementManager.readForestConfig()
-                ).withWhiteList(hubConfig.loadBalancerHosts)
+                ).withWhiteList(hubConfig.getLoadBalancerHosts())
             );
         }
         QueryBatcher queryBatcher = tempQueryBatcher;
