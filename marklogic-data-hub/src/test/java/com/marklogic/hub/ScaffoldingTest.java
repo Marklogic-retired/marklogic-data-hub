@@ -106,7 +106,7 @@ public class ScaffoldingTest extends HubTestBase {
         FileUtil.copy(getResourceStream("scaffolding-test/employee.entity.json"), employeeDir.resolve("employee.entity.json").toFile());
         FileUtil.copy(getResourceStream("scaffolding-test/" + entityName + ".json"), entityDir.resolve(entityName + ".entity.json").toFile());
 
-        getDataHub().installUserModules(true);
+        installUserModules(getHubConfig(), true);
 
         scaffolding.createFlow(entityName, flowName, flowType, codeFormat, dataFormat, useEsModel);
         Path flowDir = scaffolding.getFlowDir(entityName, flowName, flowType);

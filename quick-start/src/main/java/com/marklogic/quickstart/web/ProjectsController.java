@@ -16,6 +16,7 @@
 package com.marklogic.quickstart.web;
 
 import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.HubConfigBuilder;
 import com.marklogic.quickstart.model.Project;
 import com.marklogic.quickstart.service.ProjectManagerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,6 +86,8 @@ public class ProjectsController {
     @ResponseBody
     public HubConfig getDefaults(@PathVariable int projectId) {
         Project project = pm.getProject(projectId);
-        return HubConfig.hubFromEnvironment(project.path, null);
+        return HubConfigBuilder.newHubConfigBuilder(project.path)
+            .withPropertiesFromEnvironment()
+            .build();
     }
 }
