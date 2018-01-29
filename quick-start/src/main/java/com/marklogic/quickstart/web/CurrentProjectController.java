@@ -224,7 +224,7 @@ public class CurrentProjectController extends EnvironmentAware implements FileSy
     }
 
     private void installUserModules(HubConfig hubConfig, boolean force) {
-        dataHubService.installUserModules(hubConfig, force, this, this);
+        dataHubService.installUserModulesAsync(hubConfig, force, this, this);
     }
 
     @Override

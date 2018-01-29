@@ -135,7 +135,10 @@ public class HubConfigImpl implements HubConfig {
     public HubConfigImpl(String projectDir) {
         setProjectDir(new File(projectDir).getAbsolutePath());
     }
+    public HubConfigImpl() {}
 
+
+    public String getHost() { return appConfig.getHost(); }
 
     public String getStagingDbName() {
         return stagingDbName;
@@ -537,6 +540,7 @@ public class HubConfigImpl implements HubConfig {
     }
 
 
+    @JsonIgnore
     public String[] getLoadBalancerHosts() {
         return loadBalancerHosts;
     }
@@ -544,6 +548,7 @@ public class HubConfigImpl implements HubConfig {
         this.loadBalancerHosts = loadBalancerHosts;
     }
 
+    @JsonIgnore
     public String getCustomForestPath() {
         return customForestPath;
     }
@@ -551,6 +556,7 @@ public class HubConfigImpl implements HubConfig {
         this.customForestPath = customForestPath;
     }
 
+    @JsonIgnore
     public String getModulePermissions() {
         return modulePermissions;
     }
@@ -576,14 +582,17 @@ public class HubConfigImpl implements HubConfig {
         this.hubProject.init(getCustomTokens());
     }
 
+    @JsonIgnore
     public String getHubModulesDeployTimestampFile() {
         return Paths.get(projectDir, ".tmp", HUB_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES).toString();
     }
 
+    @JsonIgnore
     public String getUserModulesDeployTimestampFile() {
         return Paths.get(projectDir, ".tmp", USER_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES).toString();
     }
 
+    @JsonIgnore
     public File getUserContentDeployTimestampFile() {
         return Paths.get(projectDir, ".tmp", USER_CONTENT_DEPLOY_TIMESTAMPS_PROPERTIES).toFile();
     }
@@ -683,12 +692,15 @@ public class HubConfigImpl implements HubConfig {
         }
     }
 
+    @JsonIgnore
     public ManageConfig getManageConfig() {
         return manageConfig;
     }
     public void setManageConfig(ManageConfig manageConfig) {
         this.manageConfig = manageConfig;
     }
+
+    @JsonIgnore
     public ManageClient getManageClient() {
         return manageClient;
     }
@@ -696,8 +708,11 @@ public class HubConfigImpl implements HubConfig {
         this.manageClient = manageClient;
     }
 
+    @JsonIgnore
     public AdminConfig getAdminConfig() { return adminConfig; }
     public void setAdminConfig(AdminConfig adminConfig) { this.adminConfig = adminConfig; }
+
+    @JsonIgnore
     public AdminManager getAdminManager() {
         return adminManager;
     }
@@ -796,48 +811,60 @@ public class HubConfigImpl implements HubConfig {
         return appConfig.getConfiguredDatabaseClientFactory().newDatabaseClient(config);
     }
 
+    @JsonIgnore
     public Path getHubPluginsDir() {
         return hubProject.getHubPluginsDir();
     }
 
+    @JsonIgnore
     public Path getHubEntitiesDir() { return hubProject.getHubEntitiesDir(); }
 
+    @JsonIgnore
     public Path getHubConfigDir() {
         return hubProject.getHubConfigDir();
     }
 
+    @JsonIgnore
     public Path getHubDatabaseDir() {
         return hubProject.getHubDatabaseDir();
     }
 
+    @JsonIgnore
     public Path getHubServersDir() {
         return hubProject.getHubServersDir();
     }
 
+    @JsonIgnore
     public Path getHubSecurityDir() {
         return hubProject.getHubSecurityDir();
     }
 
+    @JsonIgnore
     public Path getUserSecurityDir() {
         return hubProject.getUserSecurityDir();
     }
 
+    @JsonIgnore
     public Path getUserConfigDir() {
         return hubProject.getUserConfigDir();
     }
 
+    @JsonIgnore
     public Path getUserDatabaseDir() {
         return hubProject.getUserDatabaseDir();
     }
 
+    @JsonIgnore
     public Path getEntityDatabaseDir() {
         return hubProject.getEntityDatabaseDir();
     }
 
+    @JsonIgnore
     public Path getUserServersDir() {
         return hubProject.getUserServersDir();
     }
 
+    @JsonIgnore
     public Path getHubMimetypesDir() {
         return hubProject.getHubMimetypesDir();
     }
