@@ -3,6 +3,7 @@ package com.marklogic.hub;
 import com.marklogic.client.eval.EvalResult;
 import com.marklogic.client.eval.EvalResultIterator;
 import com.marklogic.client.ext.modulesloader.impl.PropertiesModuleManager;
+import com.marklogic.hub.util.Versions;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -49,7 +50,7 @@ public class DataHubInstallTest extends HubTestBase {
     @Test
     public void getHubModulesVersion() throws IOException {
         String version = getHubConfig().getJarVersion();
-        assertEquals(version, getDataHub().getHubVersion());
+        assertEquals(version, new Versions(stagingClient).getHubVersion());
     }
 
     @Test
@@ -58,12 +59,11 @@ public class DataHubInstallTest extends HubTestBase {
         String path = Paths.get(url.toURI()).toFile().getAbsolutePath();
 
         HubConfig hubConfig = getHubConfig(path);
-        DataHub dataHub = new DataHub(hubConfig);
 
         int totalCount = getDocCount(HubConfig.DEFAULT_MODULES_DB_NAME, null);
         assertTrue(totalCount + " is not correct", 83 == totalCount || 63 == totalCount);
 
-        dataHub.installUserModules(true);
+        installUserModules(hubConfig, true);
 
         totalCount = getDocCount(HubConfig.DEFAULT_MODULES_DB_NAME, null);
         assertTrue(totalCount + " is not correct", 83 == totalCount || 103 == totalCount);
@@ -190,7 +190,7 @@ public class DataHubInstallTest extends HubTestBase {
         int totalCount = getDocCount(HubConfig.DEFAULT_MODULES_DB_NAME, null);
         assertTrue(totalCount + " is not correct", 83 == totalCount || 63 == totalCount);
 
-        dataHub.installUserModules(true);
+        installUserModules(hubConfig, true);
 
         totalCount = getDocCount(HubConfig.DEFAULT_MODULES_DB_NAME, null);
         assertTrue(totalCount + " is not correct", 83 == totalCount || 103 == totalCount);

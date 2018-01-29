@@ -10,7 +10,7 @@ import javax.net.ssl.TrustManager
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
 
-class SslTest extends BaseTest {
+class TlsTest extends BaseTest {
     def setupSpec() {
         buildFile = testProjectDir.newFile('build.gradle')
         buildFile << '''
@@ -53,11 +53,11 @@ class SslTest extends BaseTest {
                     adminConfig.setConfigureSimpleSsl(true)
                     adminManager = new com.marklogic.mgmt.admin.AdminManager(adminConfig)
 
-                    manageClient.putJson("/manage/v2/servers/Admin/properties?group-id=Default", '{"ssl-certificate-template": "admin-cert","ssl-allow-sslv3": true, "ssl-allow-tls": true, "ssl-disable-sslv3": false, "ssl-disable-tlsv1": false, "ssl-disable-tlsv1-1": false, "ssl-disable-tlsv1-2": false}')
+                    manageClient.putJson("/manage/v2/servers/Admin/properties?group-id=Default", '{"ssl-certificate-template": "admin-cert","ssl-allow-sslv3": false, "ssl-allow-tls": true, "ssl-disable-sslv3": true, "ssl-disable-tlsv1": true, "ssl-disable-tlsv1-1": true, "ssl-disable-tlsv1-2": false}')
                     adminManager.waitForRestart()
-                    manageClient.putJson("/manage/v2/servers/App-Services/properties?group-id=Default", '{"ssl-certificate-template": "admin-cert","ssl-allow-sslv3": true, "ssl-allow-tls": true, "ssl-disable-sslv3": false, "ssl-disable-tlsv1": false, "ssl-disable-tlsv1-1": false, "ssl-disable-tlsv1-2": false}')
+                    manageClient.putJson("/manage/v2/servers/App-Services/properties?group-id=Default", '{"ssl-certificate-template": "admin-cert","ssl-allow-sslv3": false, "ssl-allow-tls": true, "ssl-disable-sslv3": true, "ssl-disable-tlsv1": true, "ssl-disable-tlsv1-1": true, "ssl-disable-tlsv1-2": false}')
                     adminManager.waitForRestart()
-                    manageClient.putJson("/manage/v2/servers/Manage/properties?group-id=Default", '{"ssl-certificate-template": "admin-cert","ssl-allow-sslv3": true, "ssl-allow-tls": true, "ssl-disable-sslv3": false, "ssl-disable-tlsv1": false, "ssl-disable-tlsv1-1": false, "ssl-disable-tlsv1-2": false}')
+                    manageClient.putJson("/manage/v2/servers/Manage/properties?group-id=Default", '{"ssl-certificate-template": "admin-cert","ssl-allow-sslv3": false, "ssl-allow-tls": true, "ssl-disable-sslv3": true, "ssl-disable-tlsv1": true, "ssl-disable-tlsv1-1": true, "ssl-disable-tlsv1-2": false}')
                     adminManager.waitForRestart()
                 }
             }
@@ -85,6 +85,20 @@ class SslTest extends BaseTest {
                 }
             }
 
+            // there is a bug in ML 8 that won't unset the ssl
+            def disableSSL(appConfig, serverName) {
+                def eval = appConfig.newAppServicesDatabaseClient().newServerEval()
+                def xqy = """
+                    import module namespace admin = "http://marklogic.com/xdmp/admin" at "/MarkLogic/admin.xqy";
+                    let \\$config := admin:get-configuration()
+                    let \\$appServer := admin:appserver-get-id(\\$config, admin:group-get-id(\\$config, "Default"), "\${serverName}")
+                    let \\$config := admin:appserver-set-ssl-certificate-template(\\$config, \\$appServer, 0)
+                    return
+                        admin:save-configuration(\\$config)
+                    """
+                def result = eval.xquery(xqy).eval()
+            }
+
             def adminCert() {
                 return """
                     <certificate-template-properties xmlns="http://marklogic.com/manage">
@@ -102,21 +116,70 @@ class SslTest extends BaseTest {
                 """
             }
 
+            import com.marklogic.client.ext.modulesloader.ssl.SimpleX509TrustManager
+            import com.marklogic.client.DatabaseClientFactory
+            import javax.net.ssl.SSLContext
+            import javax.net.ssl.TrustManager
+            import javax.net.ssl.X509TrustManager
+            import org.apache.http.conn.ssl.AllowAllHostnameVerifier
+
+            def newSslContext = SSLContext.getInstance("TLSv1.2")
+            newSslContext.init(null, [new SimpleX509TrustManager()] as TrustManager[], null)
+            def verifier = new AllowAllHostnameVerifier()
+
+            ext {
+                mlAppConfig {
+                    appServicesSslContext = newSslContext
+                    appServicesSslHostnameVerifier = DatabaseClientFactory.SSLHostnameVerifier.ANY 
+                    restSslContext = newSslContext
+                    restSslHostnameVerifier = DatabaseClientFactory.SSLHostnameVerifier.ANY
+                }
+
+                mlManageConfig {
+                    sslContext = newSslContext
+                    hostnameVerifier = verifier
+                }
+
+                mlAdminConfig {
+                    sslContext = newSslContext
+                    hostnameVerifier = verifier
+                }
+                
+                hubConfig {
+                    stagingSslContext = newSslContext
+                    stagingSslHostnameVerifier = DatabaseClientFactory.SSLHostnameVerifier.ANY
+                    
+                    finalSslContext = newSslContext
+                    finalSslHostnameVerifier = DatabaseClientFactory.SSLHostnameVerifier.ANY
+                    
+                    traceSslContext = newSslContext
+                    traceSslHostnameVerifier = DatabaseClientFactory.SSLHostnameVerifier.ANY
+                    
+                    jobSslContext = newSslContext
+                    jobSslHostnameVerifier = DatabaseClientFactory.SSLHostnameVerifier.ANY
+                }
+
+                mlManageClient.setManageConfig(mlManageConfig)
+                mlAdminManager.setAdminConfig(mlAdminConfig)
+                
+                hubConfig.setAppConfig(mlAppConfig, true)
+            }
         '''
 
-        runTask("hubInit")
-        copyResourceToFile("ssl-test/my-template.xml", new File(testProjectDir.root, "user-config/security/certificate-templates/my-template.xml"))
-        copyResourceToFile("ssl-test/ssl-server.json", new File(testProjectDir.root, "user-config/servers/final-server.json"))
-        copyResourceToFile("ssl-test/ssl-server.json", new File(testProjectDir.root, "user-config/servers/job-server.json"))
-        copyResourceToFile("ssl-test/ssl-server.json", new File(testProjectDir.root, "user-config/servers/staging-server.json"))
-        copyResourceToFile("ssl-test/ssl-server.json", new File(testProjectDir.root, "user-config/servers/trace-server.json"))
+        def result = runTask("hubInit")
+        copyResourceToFile("tls-test/my-template.xml", new File(testProjectDir.root, "user-config/security/certificate-templates/my-template.xml"))
+        copyResourceToFile("tls-test/ssl-server.json", new File(testProjectDir.root, "user-config/servers/final-server.json"))
+        copyResourceToFile("tls-test/ssl-server.json", new File(testProjectDir.root, "user-config/servers/job-server.json"))
+        copyResourceToFile("tls-test/ssl-server.json", new File(testProjectDir.root, "user-config/servers/staging-server.json"))
+        copyResourceToFile("tls-test/ssl-server.json", new File(testProjectDir.root, "user-config/servers/trace-server.json"))
         createProperties()
-        runTask("enableSSL")
+        result = runTask("enableSSL")
+        print(result.output)
     }
 
     def cleanupSpec() {
         runTask("mlUndeploy", "-Pconfirm=true")
-        runTask("disableSSL", "--stacktrace")
+        runTask("disableSSL")
     }
 
     void createProperties() {
@@ -166,21 +229,22 @@ class SslTest extends BaseTest {
 
         mlAdminScheme=https
         mlManageScheme=https
-        mlAdminSimpleSsl=true
-        mlManageSimpleSsl=true
-        mlAppServicesSimpleSsl=true
+        # mlAdminSimpleSsl=true
+        # mlManageSimpleSsl=true
+        # mlAppServicesSimpleSsl=true
 
-        mlStagingSimpleSsl=true
-        mlFinalSimpleSsl=true
-        mlTraceSimpleSsl=true
-        mlJobSimpleSsl=true
+        mlStagingSimpleSsl=false
+        mlFinalSimpleSsl=false
+        mlTraceSimpleSsl=false
+        mlJobSimpleSsl=false
+        
         """
     }
 
     def "bootstrap a project with ssl out the wazoo"() {
         when:
-        def result = runTask('mlDeploy')
-        def newSslContext = SSLContext.getInstance("SSLv3")
+        def result = runTask('mlDeploy', '-i')
+        def newSslContext = SSLContext.getInstance("TLSv1.2")
         newSslContext.init(null, [new SimpleX509TrustManager()] as TrustManager[], null)
         hubConfig().stagingSslContext = newSslContext
         hubConfig().stagingSslHostnameVerifier = DatabaseClientFactory.SSLHostnameVerifier.ANY

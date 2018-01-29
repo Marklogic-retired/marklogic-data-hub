@@ -10,7 +10,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
 import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
@@ -33,28 +32,28 @@ public class HubProjectTest extends HubTestBase {
     @Test
     public void testInit() throws IOException {
         HubConfig config = getHubConfig();
-        config.stagingHttpName = "my-crazy-test-staging";
-        config.stagingDbName = "my-crazy-test-staging";
-        config.stagingForestsPerHost = 100;
-        config.stagingPort = 1111;
+        config.setStagingHttpName("my-crazy-test-staging");
+        config.setStagingDbName("my-crazy-test-staging");
+        config.setStagingForestsPerHost(100);
+        config.setStagingPort(1111);
 
-        config.finalHttpName = "my-crazy-test-final";
-        config.finalDbName = "my-crazy-test-final";
-        config.finalForestsPerHost = 100;
-        config.finalPort = 2222;
+        config.setFinalHttpName("my-crazy-test-final");
+        config.setFinalDbName("my-crazy-test-final");
+        config.setFinalForestsPerHost(100);
+        config.setFinalPort(2222);
 
-        config.traceHttpName = "my-crazy-test-trace";
-        config.traceDbName = "my-crazy-test-trace";
-        config.traceForestsPerHost = 100;
-        config.tracePort = 3333;
+        config.setTraceHttpName("my-crazy-test-trace");
+        config.setTraceDbName("my-crazy-test-trace");
+        config.setTraceForestsPerHost(100);
+        config.setTracePort(3333);
 
-        config.modulesForestsPerHost = 3;
-        config.triggersForestsPerHost = 4;
+        config.setModulesForestsPerHost(3);
+        config.setTriggersForestsPerHost(4);
 
-        config.schemasForestsPerHost = 5;
+        config.setSchemasForestsPerHost(5);
 
-        config.hubRoleName = "myrole";
-        config.hubUserName = "myuser";
+        config.setHubRoleName("myrole");
+        config.setHubUserName("myuser");
 
         config.initHubProject();
 
@@ -106,37 +105,37 @@ public class HubProjectTest extends HubTestBase {
         assertEquals("9001", props.getProperty("mlAdminPort"));
         assertEquals("9002", props.getProperty("mlManagePort"));
 
-        assertEquals(config.stagingHttpName, props.getProperty("mlStagingAppserverName"));
-        assertEquals(config.stagingPort.toString(), props.getProperty("mlStagingPort"));
-        assertEquals(config.stagingDbName, props.getProperty("mlStagingDbName"));
-        assertEquals(config.stagingForestsPerHost.toString(), props.getProperty("mlStagingForestsPerHost"));
+        assertEquals(config.getStagingHttpName(), props.getProperty("mlStagingAppserverName"));
+        assertEquals(config.getStagingPort().toString(), props.getProperty("mlStagingPort"));
+        assertEquals(config.getStagingDbName(), props.getProperty("mlStagingDbName"));
+        assertEquals(config.getStagingForestsPerHost().toString(), props.getProperty("mlStagingForestsPerHost"));
 
-        assertEquals(config.finalHttpName, props.getProperty("mlFinalAppserverName"));
-        assertEquals(config.finalPort.toString(), props.getProperty("mlFinalPort"));
-        assertEquals(config.finalDbName, props.getProperty("mlFinalDbName"));
-        assertEquals(config.finalForestsPerHost.toString(), props.getProperty("mlFinalForestsPerHost"));
+        assertEquals(config.getFinalHttpName(), props.getProperty("mlFinalAppserverName"));
+        assertEquals(config.getFinalPort().toString(), props.getProperty("mlFinalPort"));
+        assertEquals(config.getFinalDbName(), props.getProperty("mlFinalDbName"));
+        assertEquals(config.getFinalForestsPerHost().toString(), props.getProperty("mlFinalForestsPerHost"));
 
-        assertEquals(config.traceHttpName, props.getProperty("mlTraceAppserverName"));
-        assertEquals(config.tracePort.toString(), props.getProperty("mlTracePort"));
-        assertEquals(config.traceDbName, props.getProperty("mlTraceDbName"));
-        assertEquals(config.traceForestsPerHost.toString(), props.getProperty("mlTraceForestsPerHost"));
+        assertEquals(config.getTraceHttpName(), props.getProperty("mlTraceAppserverName"));
+        assertEquals(config.getTracePort().toString(), props.getProperty("mlTracePort"));
+        assertEquals(config.getTraceDbName(), props.getProperty("mlTraceDbName"));
+        assertEquals(config.getTraceForestsPerHost().toString(), props.getProperty("mlTraceForestsPerHost"));
 
-        assertEquals(config.jobHttpName, props.getProperty("mlJobAppserverName"));
-        assertEquals(config.jobPort.toString(), props.getProperty("mlJobPort"));
-        assertEquals(config.jobDbName, props.getProperty("mlJobDbName"));
-        assertEquals(config.jobForestsPerHost.toString(), props.getProperty("mlJobForestsPerHost"));
+        assertEquals(config.getJobHttpName(), props.getProperty("mlJobAppserverName"));
+        assertEquals(config.getJobPort().toString(), props.getProperty("mlJobPort"));
+        assertEquals(config.getJobDbName(), props.getProperty("mlJobDbName"));
+        assertEquals(config.getJobForestsPerHost().toString(), props.getProperty("mlJobForestsPerHost"));
 
-        assertEquals(config.modulesDbName, props.getProperty("mlModulesDbName"));
-        assertEquals(config.modulesForestsPerHost.toString(), props.getProperty("mlModulesForestsPerHost"));
+        assertEquals(config.getModulesDbName(), props.getProperty("mlModulesDbName"));
+        assertEquals(config.getModulesForestsPerHost().toString(), props.getProperty("mlModulesForestsPerHost"));
 
-        assertEquals(config.triggersDbName, props.getProperty("mlTriggersDbName"));
-        assertEquals(config.triggersForestsPerHost.toString(), props.getProperty("mlTriggersForestsPerHost"));
+        assertEquals(config.getTriggersDbName(), props.getProperty("mlTriggersDbName"));
+        assertEquals(config.getTriggersForestsPerHost().toString(), props.getProperty("mlTriggersForestsPerHost"));
 
-        assertEquals(config.schemasDbName, props.getProperty("mlSchemasDbName"));
-        assertEquals(config.schemasForestsPerHost.toString(), props.getProperty("mlSchemasForestsPerHost"));
+        assertEquals(config.getSchemasDbName(), props.getProperty("mlSchemasDbName"));
+        assertEquals(config.getSchemasForestsPerHost().toString(), props.getProperty("mlSchemasForestsPerHost"));
 
-        assertEquals(config.hubRoleName, props.getProperty("mlHubUserRole"));
-        assertEquals(config.hubUserName, props.getProperty("mlHubUserName"));
+        assertEquals(config.getHubRoleName(), props.getProperty("mlHubUserRole"));
+        assertEquals(config.getHubUserName(), props.getProperty("mlHubUserName"));
 
         File gradleLocalProperties = new File(projectPath, "gradle-local.properties");
         assertTrue(gradleLocalProperties.exists());

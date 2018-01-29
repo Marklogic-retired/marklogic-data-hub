@@ -83,8 +83,6 @@ task disableSSL(type: com.marklogic.gradle.task.MarkLogicTask) {
         def manageConfig = getProject().property("mlManageConfig")
         manageConfig.setScheme("http")
         manageConfig.setConfigureSimpleSsl(false)
-        manageConfig.setAdminScheme("http")
-        manageConfig.setAdminConfigureSimpleSsl(false)
         def mgClient = new com.marklogic.mgmt.ManageClient(manageConfig)
 
         def certManager = new com.marklogic.mgmt.resource.security.CertificateTemplateManager(mgClient)

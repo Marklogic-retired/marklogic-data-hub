@@ -6,6 +6,7 @@ import com.marklogic.client.document.DocumentRecord;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.HubConfigBuilder;
 import com.marklogic.hub.flow.CodeFormat;
 import com.marklogic.hub.flow.DataFormat;
 import com.marklogic.hub.flow.FlowType;
@@ -43,7 +44,7 @@ public class EntitiesControllerTest extends BaseTestController {
         String path = "/some/project/path";
         envConfig.setInitialized(true);
         envConfig.setProjectDir(path);
-        envConfig.setMlSettings(HubConfig.hubFromEnvironment(path, null));
+        envConfig.setMlSettings(HubConfigBuilder.newHubConfigBuilder(path).withPropertiesFromEnvironment().build());
         Map<String, Object> options = ec.getInputFlowOptions("test-entity", "flow-name");
         JSONAssert.assertEquals("{ \"input_file_path\": \"/some/project/path\" }", new ObjectMapper().writeValueAsString(options), true);
     }
@@ -54,7 +55,7 @@ public class EntitiesControllerTest extends BaseTestController {
 
         envConfig.setInitialized(true);
         envConfig.setProjectDir(path);
-        envConfig.setMlSettings(HubConfig.hubFromEnvironment(path, null));
+        envConfig.setMlSettings(HubConfigBuilder.newHubConfigBuilder(path).withPropertiesFromEnvironment().build());
         Map<String, Object> options = ec.getInputFlowOptions("test-entity", "flow-name");
         JSONAssert.assertEquals("{ \"input_file_path\": \"C:\\\\some\\\\crazy\\\\path\\\\to\\\\project\" }", new ObjectMapper().writeValueAsString(options), true);
     }
@@ -74,14 +75,14 @@ public class EntitiesControllerTest extends BaseTestController {
         Path harmonizeDir = projectDir.resolve("plugins/entities/" + ENTITY + "/harmonize");
         FileUtil.copy(getResourceStream("flow-manager/sjs-harmonize-flow/headers.sjs"), harmonizeDir.resolve("sjs-json-harmonization-flow/headers.sjs").toFile());
 
-        getDataHub().installUserModules(true);
+        installUserModules(getHubConfig(), true);
 
         DocumentMetadataHandle meta = new DocumentMetadataHandle();
         meta.getCollections().add(ENTITY);
         installStagingDoc("/staged.json", meta, "flow-manager/staged.json");
 
         EnvironmentConfig envConfig = new EnvironmentConfig(PROJECT_PATH, "local", "admin", "admin");
-        envConfig.setMlSettings(HubConfig.hubFromEnvironment(PROJECT_PATH, null));
+        envConfig.setMlSettings(HubConfigBuilder.newHubConfigBuilder(PROJECT_PATH).withPropertiesFromEnvironment().build());
         setEnvConfig(envConfig);
 
         ObjectMapper mapper = new ObjectMapper();
@@ -115,14 +116,14 @@ public class EntitiesControllerTest extends BaseTestController {
         Path harmonizeDir = projectDir.resolve("plugins/entities/" + ENTITY + "/harmonize");
         FileUtil.copy(getResourceStream("flow-manager/sjs-harmonize-flow/headers.sjs"), harmonizeDir.resolve("sjs-json-harmonization-flow/headers.sjs").toFile());
 
-        getDataHub().installUserModules(true);
+        installUserModules(getHubConfig(), true);
 
         DocumentMetadataHandle meta = new DocumentMetadataHandle();
         meta.getCollections().add(ENTITY);
         installStagingDoc("/staged.json", meta, "flow-manager/staged.json");
 
         EnvironmentConfig envConfig = new EnvironmentConfig(PROJECT_PATH, "local", "admin", "admin");
-        envConfig.setMlSettings(HubConfig.hubFromEnvironment(PROJECT_PATH, null));
+        envConfig.setMlSettings(HubConfigBuilder.newHubConfigBuilder(PROJECT_PATH).withPropertiesFromEnvironment().build());
         setEnvConfig(envConfig);
 
         final String OPT_VALUE = "test-value";

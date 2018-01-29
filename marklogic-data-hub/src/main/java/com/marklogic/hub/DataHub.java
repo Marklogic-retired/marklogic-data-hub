@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2016 MarkLogic Corporation
+ * Copyright 2012-2018 MarkLogic Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,29 +15,18 @@
  */
 package com.marklogic.hub;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.appdeployer.command.Command;
 import com.marklogic.appdeployer.command.CommandMapBuilder;
 import com.marklogic.appdeployer.command.appservers.DeployOtherServersCommand;
 import com.marklogic.appdeployer.command.forests.DeployCustomForestsCommand;
-import com.marklogic.appdeployer.impl.SimpleAppDeployer;
-import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.FailedRequestException;
-import com.marklogic.client.eval.EvalResultIterator;
 import com.marklogic.client.eval.ServerEvaluationCall;
-import com.marklogic.client.extensions.ResourceManager;
-import com.marklogic.client.extensions.ResourceServices.ServiceResult;
-import com.marklogic.client.extensions.ResourceServices.ServiceResultIterator;
-import com.marklogic.client.io.Format;
-import com.marklogic.client.io.JacksonHandle;
-import com.marklogic.client.io.StringHandle;
-import com.marklogic.client.util.RequestParameters;
 import com.marklogic.hub.deploy.HubAppDeployer;
 import com.marklogic.hub.deploy.commands.*;
 import com.marklogic.hub.deploy.util.HubDeployStatusListener;
 import com.marklogic.hub.error.ServerValidationException;
+import com.marklogic.hub.util.Versions;
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.admin.AdminManager;
 import com.marklogic.mgmt.resource.appservers.ServerManager;
@@ -50,6 +39,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
+
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -67,23 +57,19 @@ public class DataHub {
 
 
     public DataHub(HubConfig hubConfig) {
-        init(hubConfig);
-    }
-
-    private void init(HubConfig hubConfig) {
         this.hubConfig = hubConfig;
     }
 
-    private ManageClient getManageClient() {
+    public ManageClient getManageClient() {
         if (this._manageClient == null) {
-            this._manageClient = hubConfig.newManageClient();
+            this._manageClient = hubConfig.getManageClient();
         }
         return this._manageClient;
     }
 
-    private AdminManager getAdminManager() {
+    public AdminManager getAdminManager() {
         if (this._adminManager == null) {
-            this._adminManager = hubConfig.newAdminManager();
+            this._adminManager = hubConfig.getAdminManager();
         }
         return this._adminManager;
     }
@@ -91,14 +77,14 @@ public class DataHub {
         this._adminManager = manager;
     }
 
-    private DatabaseManager getDatabaseManager() {
+    public DatabaseManager getDatabaseManager() {
         if (this._databaseManager == null) {
             this._databaseManager = new DatabaseManager(getManageClient());
         }
         return this._databaseManager;
     }
 
-    private ServerManager getServerManager() {
+    public ServerManager getServerManager() {
         if (this._serverManager == null) {
             this._serverManager = new ServerManager(getManageClient());
         }
@@ -114,38 +100,38 @@ public class DataHub {
         InstallInfo installInfo = new InstallInfo();
 
         ResourcesFragment srf = getServerManager().getAsXml();
-        installInfo.stagingAppServerExists = srf.resourceExists(hubConfig.stagingHttpName);
-        installInfo.finalAppServerExists = srf.resourceExists(hubConfig.finalHttpName);
-        installInfo.traceAppServerExists = srf.resourceExists(hubConfig.traceHttpName);
-        installInfo.jobAppServerExists = srf.resourceExists(hubConfig.jobHttpName);
+        installInfo.stagingAppServerExists = srf.resourceExists(hubConfig.getStagingHttpName());
+        installInfo.finalAppServerExists = srf.resourceExists(hubConfig.getFinalHttpName());
+        installInfo.traceAppServerExists = srf.resourceExists(hubConfig.getTraceHttpName());
+        installInfo.jobAppServerExists = srf.resourceExists(hubConfig.getJobHttpName());
 
         ResourcesFragment drf = getDatabaseManager().getAsXml();
-        installInfo.stagingDbExists = drf.resourceExists(hubConfig.stagingDbName);
-        installInfo.finalDbExists = drf.resourceExists(hubConfig.finalDbName);
-        installInfo.traceDbExists = drf.resourceExists(hubConfig.traceDbName);
-        installInfo.jobDbExists = drf.resourceExists(hubConfig.jobDbName);
+        installInfo.stagingDbExists = drf.resourceExists(hubConfig.getStagingDbName());
+        installInfo.finalDbExists = drf.resourceExists(hubConfig.getFinalDbName());
+        installInfo.traceDbExists = drf.resourceExists(hubConfig.getTraceDbName());
+        installInfo.jobDbExists = drf.resourceExists(hubConfig.getJobDbName());
 
         if (installInfo.stagingDbExists) {
-            Fragment f = getDatabaseManager().getPropertiesAsXml(hubConfig.stagingDbName);
+            Fragment f = getDatabaseManager().getPropertiesAsXml(hubConfig.getStagingDbName());
             installInfo.stagingTripleIndexOn = Boolean.parseBoolean(f.getElementValue("//m:triple-index"));
             installInfo.stagingCollectionLexiconOn = Boolean.parseBoolean(f.getElementValue("//m:collection-lexicon"));
             installInfo.stagingForestsExist = (f.getElements("//m:forest").size() > 0);
         }
 
         if (installInfo.finalDbExists) {
-            Fragment f = getDatabaseManager().getPropertiesAsXml(hubConfig.finalDbName);
+            Fragment f = getDatabaseManager().getPropertiesAsXml(hubConfig.getFinalDbName());
             installInfo.finalTripleIndexOn = Boolean.parseBoolean(f.getElementValue("//m:triple-index"));
             installInfo.finalCollectionLexiconOn = Boolean.parseBoolean(f.getElementValue("//m:collection-lexicon"));
             installInfo.finalForestsExist = (f.getElements("//m:forest").size() > 0);
         }
 
         if (installInfo.traceDbExists) {
-            Fragment f = getDatabaseManager().getPropertiesAsXml(hubConfig.traceDbName);
+            Fragment f = getDatabaseManager().getPropertiesAsXml(hubConfig.getTraceDbName());
             installInfo.traceForestsExist = (f.getElements("//m:forest").size() > 0);
         }
 
         if (installInfo.jobDbExists) {
-            Fragment f = getDatabaseManager().getPropertiesAsXml(hubConfig.jobDbName);
+            Fragment f = getDatabaseManager().getPropertiesAsXml(hubConfig.getJobDbName());
             installInfo.jobForestsExist = (f.getElements("//m:forest").size() > 0);
         }
 
@@ -156,17 +142,14 @@ public class DataHub {
 
     /**
      * Validates the MarkLogic server to ensure compatibility with the hub
+     * @param versionString - the version of the server to validate
      * @return true if valid, false otherwise
      * @throws ServerValidationException if the server is not compatible
      */
-    public boolean isServerVersionValid() {
-        return isServerVersionValid(null);
-    }
-
     public boolean isServerVersionValid(String versionString) {
         try {
             if (versionString == null) {
-                versionString = getMarkLogicVersion();
+                versionString = new Versions(hubConfig.newAppServicesClient()).getMarkLogicVersion();
             }
             int major = Integer.parseInt(versionString.replaceAll("([^.]+)\\..*", "$1"));
             if (major < 9) {
@@ -205,14 +188,8 @@ public class DataHub {
     }
 
     /**
-     * Installs User Provided modules into the Data Hub
-     */
-    public void installUserModules() {
-        installUserModules(false);
-    }
-
-    /**
      * Removes user's modules from the modules db
+     * TODO: this becomes much simpler when we move code into the server dir
      */
     public void clearUserModules() {
         ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver(DataHub.class.getClassLoader());
@@ -247,77 +224,13 @@ public class DataHub {
                     "    fn:matches(., \"/marklogic.rest.transform/(" + String.join("|", transforms) + ")/assets/(metadata\\.xml|transform\\.(xqy|sjs))\")\n" +
                     "  )\n" +
                     "] ! xdmp:document-delete(.)\n";
-            runInDatabase(query, hubConfig.modulesDbName);
+            runInDatabase(query, hubConfig.getModulesDbName());
         }
         catch(FailedRequestException e) {
             logger.error("Failed to clear user modules");
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    /**
-     * Clears out the content in the given database
-     * @param database - the database name to clear
-     */
-    public void clearContent(String database) {
-        getDatabaseManager().clearDatabase(database);
-    }
-
-    private EvalResultIterator runInDatabase(String query, String databaseName) {
-        ServerEvaluationCall eval = hubConfig.newStagingClient().newServerEval();
-        String xqy =
-            "xdmp:invoke-function(function() {" +
-                query +
-                "}," +
-                "<options xmlns=\"xdmp:eval\">" +
-                "  <database>{xdmp:database(\"" + databaseName + "\")}</database>" +
-                "  <transaction-mode>update-auto-commit</transaction-mode>" +
-                "</options>)";
-        return eval.xquery(xqy).eval();
-    }
-
-    public void installUserModules(boolean force) {
-        logger.debug("Installing user modules into MarkLogic");
-
-        List<Command> commands = new ArrayList<>();
-        LoadUserModulesCommand loadUserModulesCommand = new LoadUserModulesCommand(hubConfig);
-        loadUserModulesCommand.setForceLoad(force);
-        commands.add(loadUserModulesCommand);
-
-        runCommands(commands);
-    }
-
-    /**
-     * Install the Data Hub Framework's internal modules into MarkLogic
-     */
-    public void installHubModules() {
-        logger.debug("Installing Data Hub Framework modules into MarkLogic");
-
-        List<Command> commands = new ArrayList<>();
-        commands.add(new LoadHubModulesCommand(hubConfig));
-
-        runCommands(commands);
-    }
-
-    private void runCommands(List<Command> commands) {
-        SimpleAppDeployer deployer = new SimpleAppDeployer(getManageClient(), getAdminManager());
-        deployer.setCommands(commands);
-        deployer.deploy(hubConfig.getAppConfig());
-    }
-
-    public JsonNode validateUserModules() {
-        logger.debug("validating user modules");
-
-        EntitiesValidator ev = new EntitiesValidator(hubConfig.newStagingClient());
-        return ev.validateAll();
-    }
-
-    public JsonNode validateUserModule(String entity, String flow, String plugin, String type, String content) {
-        logger.debug("validating user module");
-
-        EntitiesValidator ev = new EntitiesValidator(hubConfig.newStagingClient());
-        return ev.validate(entity, flow, plugin, type, content);
     }
 
     public List<Command> getCommandList() {
@@ -328,87 +241,45 @@ public class DataHub {
         }
         return commands;
     }
-    public Map<String, List<Command>> getCommands() {
-        Map<String, List<Command>> commandMap = new CommandMapBuilder().buildCommandMap();
-
-        List<Command> securityCommands = commandMap.get("mlSecurityCommands");
-        securityCommands.set(0, new DeployHubRolesCommand(hubConfig));
-        securityCommands.set(1, new DeployHubUsersCommand(hubConfig));
-
-        List<Command> dbCommands = new ArrayList<>();
-        dbCommands.add(new DeployHubDatabasesCommand(hubConfig));
-        dbCommands.add(new DeployHubOtherDatabasesCommand(hubConfig));
-        dbCommands.add(new DeployHubTriggersDatabaseCommand(hubConfig));
-        dbCommands.add(new DeployHubSchemasDatabaseCommand(hubConfig));
-        commandMap.put("mlDatabaseCommands", dbCommands);
-
-        // don't deploy rest api servers
-        commandMap.remove("mlRestApiCommands");
-
-        List<Command> serverCommands = new ArrayList<>();
-        serverCommands.add(new DeployHubServersCommand(hubConfig));
-        DeployOtherServersCommand otherServersCommand = new DeployOtherServersCommand();
-        otherServersCommand.setFilenamesToIgnore("staging-server.json", "final-server.json", "job-server.json", "trace-server.json");
-        serverCommands.add(otherServersCommand);
-        commandMap.put("mlServerCommands", serverCommands);
-
-        List<Command> moduleCommands = new ArrayList<>();
-        moduleCommands.add(new LoadHubModulesCommand(hubConfig));
-        moduleCommands.add(new LoadUserModulesCommand(hubConfig));
-        commandMap.put("mlModuleCommands", moduleCommands);
-
-        List<Command> mimetypeCommands = commandMap.get("mlMimetypeCommands");
-        mimetypeCommands.add(0, new DeployHubMimetypesCommand(hubConfig));
-
-        List<Command> forestCommands = commandMap.get("mlForestCommands");
-        DeployCustomForestsCommand deployCustomForestsCommand = (DeployCustomForestsCommand)forestCommands.get(0);
-        deployCustomForestsCommand.setCustomForestsPath(hubConfig.customForestPath);
-
-        return commandMap;
-    }
-
-    public Map<Integer, String> getServerPortsInUse() {
-        Map<Integer, String> portsInUse = new HashMap<>();
-        ResourcesFragment srf = getServerManager().getAsXml();
-        srf.getListItemNameRefs().forEach(s -> {
-            Fragment fragment = getServerManager().getPropertiesAsXml(s);
-            int port = Integer.parseInt(fragment.getElementValue("//m:port"));
-            portsInUse.put(port, s);
-        });
-        return portsInUse;
-    }
 
     public PreInstallCheck runPreInstallCheck() {
+        return runPreInstallCheck(null);
+    }
+
+    public PreInstallCheck runPreInstallCheck(Versions versions) {
         PreInstallCheck check = new PreInstallCheck();
 
         Map<Integer, String> portsInUse = getServerPortsInUse();
         Set<Integer> ports = portsInUse.keySet();
 
-        String serverName = portsInUse.get(hubConfig.stagingPort);
-        check.stagingPortInUse = ports.contains(hubConfig.stagingPort) && serverName != null && !serverName.equals(hubConfig.stagingHttpName);
+        String serverName = portsInUse.get(hubConfig.getStagingPort());
+        check.stagingPortInUse = ports.contains(hubConfig.getStagingPort()) && serverName != null && !serverName.equals(hubConfig.getStagingHttpName());
         if (check.stagingPortInUse) {
             check.stagingPortInUseBy = serverName;
         }
 
-        serverName = portsInUse.get(hubConfig.finalPort);
-        check.finalPortInUse = ports.contains(hubConfig.finalPort) && serverName != null && !serverName.equals(hubConfig.finalHttpName);
+        serverName = portsInUse.get(hubConfig.getFinalPort());
+        check.finalPortInUse = ports.contains(hubConfig.getFinalPort()) && serverName != null && !serverName.equals(hubConfig.getFinalHttpName());
         if (check.finalPortInUse) {
             check.finalPortInUseBy = serverName;
         }
 
-        serverName = portsInUse.get(hubConfig.jobPort);
-        check.jobPortInUse = ports.contains(hubConfig.jobPort) && serverName != null && !serverName.equals(hubConfig.jobHttpName);
+        serverName = portsInUse.get(hubConfig.getJobPort());
+        check.jobPortInUse = ports.contains(hubConfig.getJobPort()) && serverName != null && !serverName.equals(hubConfig.getJobHttpName());
         if (check.jobPortInUse) {
             check.jobPortInUseBy = serverName;
         }
 
-        serverName = portsInUse.get(hubConfig.tracePort);
-        check.tracePortInUse = ports.contains(hubConfig.tracePort) && serverName != null && !serverName.equals(hubConfig.traceHttpName);
+        serverName = portsInUse.get(hubConfig.getTracePort());
+        check.tracePortInUse = ports.contains(hubConfig.getTracePort()) && serverName != null && !serverName.equals(hubConfig.getTraceHttpName());
         if (check.tracePortInUse) {
             check.tracePortInUseBy = serverName;
         }
 
-        check.serverVersion = getMarkLogicVersion();
+        if (versions == null) {
+            versions = new Versions(hubConfig.newAppServicesClient());
+        }
+        check.serverVersion = versions.getMarkLogicVersion();
         check.serverVersionOk = isServerVersionValid(check.serverVersion);
         return check;
     }
@@ -464,104 +335,66 @@ public class DataHub {
         deployer.undeploy(config);
     }
 
-    /**
-     * Gets the hub version for the installed server side modules
-     * @return - the version of the installed modules
-     */
-    public String getHubVersion() {
-        try {
-            HubVersion hv = new HubVersion(hubConfig.newStagingClient());
-            return hv.getVersion();
-        }
-        catch(Exception e) {}
-        return "2.0.0"; // don't change this value
+    private void runInDatabase(String query, String databaseName) {
+        ServerEvaluationCall eval = hubConfig.newStagingClient().newServerEval();
+        String xqy =
+            "xdmp:invoke-function(function() {" +
+                query +
+                "}," +
+                "<options xmlns=\"xdmp:eval\">" +
+                "  <database>{xdmp:database(\"" + databaseName + "\")}</database>" +
+                "  <transaction-mode>update-auto-commit</transaction-mode>" +
+                "</options>)";
+        eval.xquery(xqy).eval();
     }
 
-    public String getMarkLogicVersion() {
-        // do it this way to avoid needing an admin user
-        // vs getAdminManager().getServerVersion() which needs admin :(
-        ServerEvaluationCall eval = hubConfig.newAppServicesClient().newServerEval();
-        String xqy = "xdmp:version()";
-        EvalResultIterator result = eval.xquery(xqy).eval();
-        if (result.hasNext()) {
-            return result.next().getString();
-        }
-        else {
-            throw new RuntimeException("Couldn't determine MarkLogic Version");
-        }
+    private Map<String, List<Command>> getCommands() {
+        Map<String, List<Command>> commandMap = new CommandMapBuilder().buildCommandMap();
+
+        List<Command> securityCommands = commandMap.get("mlSecurityCommands");
+        securityCommands.set(0, new DeployHubRolesCommand(hubConfig));
+        securityCommands.set(1, new DeployHubUsersCommand(hubConfig));
+
+        List<Command> dbCommands = new ArrayList<>();
+        dbCommands.add(new DeployHubDatabasesCommand(hubConfig));
+        dbCommands.add(new DeployHubOtherDatabasesCommand(hubConfig));
+        dbCommands.add(new DeployHubTriggersDatabaseCommand(hubConfig));
+        dbCommands.add(new DeployHubSchemasDatabaseCommand(hubConfig));
+        commandMap.put("mlDatabaseCommands", dbCommands);
+
+        // don't deploy rest api servers
+        commandMap.remove("mlRestApiCommands");
+
+        List<Command> serverCommands = new ArrayList<>();
+        serverCommands.add(new DeployHubServersCommand(hubConfig));
+        DeployOtherServersCommand otherServersCommand = new DeployOtherServersCommand();
+        otherServersCommand.setFilenamesToIgnore("staging-server.json", "final-server.json", "job-server.json", "trace-server.json");
+        serverCommands.add(otherServersCommand);
+        commandMap.put("mlServerCommands", serverCommands);
+
+        List<Command> moduleCommands = new ArrayList<>();
+        moduleCommands.add(new LoadHubModulesCommand(hubConfig));
+        moduleCommands.add(new LoadUserModulesCommand(hubConfig));
+        commandMap.put("mlModuleCommands", moduleCommands);
+
+        List<Command> mimetypeCommands = commandMap.get("mlMimetypeCommands");
+        mimetypeCommands.add(0, new DeployHubMimetypesCommand(hubConfig));
+
+        List<Command> forestCommands = commandMap.get("mlForestCommands");
+        DeployCustomForestsCommand deployCustomForestsCommand = (DeployCustomForestsCommand)forestCommands.get(0);
+        deployCustomForestsCommand.setCustomForestsPath(hubConfig.getCustomForestPath());
+
+        return commandMap;
     }
 
-    public static int versionCompare(String v1, String v2) {
-        if(v1 == null || v2 == null) {
-            return 1;
-        }
-        String[] v1Parts = v1.split("\\.");
-        String[] v2Parts = v2.split("\\.");
-        int length = Math.max(v1Parts.length, v2Parts.length);
-        for(int i = 0; i < length; i++) {
-            int v1Part = i < v1Parts.length ? Integer.parseInt(v1Parts[i]) : 0;
-            int v2Part = i < v2Parts.length ? Integer.parseInt(v2Parts[i]) : 0;
-
-            if(v1Part < v2Part) {
-                return -1;
-            }
-
-            if(v1Part > v2Part) {
-                return 1;
-            }
-        }
-        return 0;
-    }
-
-    class EntitiesValidator extends ResourceManager {
-        private static final String NAME = "validate";
-
-        EntitiesValidator(DatabaseClient client) {
-            super();
-            client.init(NAME, this);
-        }
-
-        JsonNode validateAll() {
-            ServiceResultIterator resultItr = this.getServices().get(new RequestParameters());
-            if (resultItr == null || ! resultItr.hasNext()) {
-                return null;
-            }
-            ServiceResult res = resultItr.next();
-            return res.getContent(new JacksonHandle()).get();
-        }
-
-        JsonNode validate(String entity, String flow, String plugin, String type, String content) {
-            RequestParameters params = new RequestParameters();
-            params.add("entity", entity);
-            params.add("flow", flow);
-            params.add("plugin", plugin);
-            params.add("type", type);
-            StringHandle handle = new StringHandle(content);
-            handle.setFormat(Format.TEXT);
-            ServiceResultIterator resultItr = this.getServices().post(params, handle );
-            if (resultItr == null || ! resultItr.hasNext()) {
-                return null;
-            }
-            ServiceResult res = resultItr.next();
-            return res.getContent(new JacksonHandle()).get();
-        }
-    }
-
-    class HubVersion extends ResourceManager {
-        private static final String NAME = "hubversion";
-
-        HubVersion(DatabaseClient client) {
-            super();
-            client.init(NAME, this);
-        }
-
-        String getVersion() {
-            ServiceResultIterator resultItr = this.getServices().get(new RequestParameters());
-            if (resultItr == null || ! resultItr.hasNext()) {
-                return null;
-            }
-            ServiceResult res = resultItr.next();
-            return res.getContent(new StringHandle()).get();
-        }
+    private Map<Integer, String> getServerPortsInUse() {
+        Map<Integer, String> portsInUse = new HashMap<>();
+        ResourcesFragment srf = getServerManager().getAsXml();
+        srf.getListItemNameRefs().forEach(s -> {
+            Fragment fragment = getServerManager().getPropertiesAsXml(s);
+            int port = Integer.parseInt(fragment.getElementValue("//m:port"));
+            portsInUse.put(port, s);
+        });
+        return portsInUse;
     }
 }

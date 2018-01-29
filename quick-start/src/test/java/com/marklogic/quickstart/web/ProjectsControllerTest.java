@@ -1,5 +1,6 @@
 package com.marklogic.quickstart.web;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.quickstart.model.Project;
 import com.marklogic.quickstart.model.ProjectInfo;
@@ -99,7 +100,8 @@ public class ProjectsControllerTest extends BaseTestController {
         pc.addProject(projectPath);
         assertEquals(1, ((Collection<ProjectInfo>)pc.getProjects().get("projects")).size());
 
-        pc.initializeProject(1, envConfig.getMlSettings());
+        ObjectMapper objectMapper = new ObjectMapper();
+        pc.initializeProject(1, objectMapper.valueToTree(envConfig.getMlSettings()));
 
         assertTrue(pc.getProject(1).isInitialized());
     }
