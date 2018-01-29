@@ -106,7 +106,7 @@ public class ScaffoldingTest extends HubTestBase {
         FileUtil.copy(getResourceStream("scaffolding-test/employee.entity.json"), employeeDir.resolve("employee.entity.json").toFile());
         FileUtil.copy(getResourceStream("scaffolding-test/" + entityName + ".json"), entityDir.resolve(entityName + ".entity.json").toFile());
 
-        getDataHub().installUserModules(true);
+        installUserModules(getHubConfig(), true);
 
         scaffolding.createFlow(entityName, flowName, flowType, codeFormat, dataFormat, useEsModel);
         Path flowDir = scaffolding.getFlowDir(entityName, flowName, flowType);
@@ -149,7 +149,13 @@ public class ScaffoldingTest extends HubTestBase {
 
         if (useEsModel) {
             try {
-                assertEquals(getResource("scaffolding-test/es-" + flowType.toString() + "-content." + codeFormat.toString()).replaceAll(" +$", "").replaceAll("\r\n", "\r\n"), FileUtils.readFileToString(defaultContent.toFile()).replaceAll(" +\r\n", "\r\n"));
+                assertEquals(
+                    getResource("scaffolding-test/es-" + flowType.toString() + "-content." + codeFormat.toString())
+                        .replaceAll("\\s+", " ")
+                        .replaceAll("[\r\n]", ""),
+                    FileUtils.readFileToString(defaultContent.toFile())
+                        .replaceAll("\\s+", " ")
+                        .replaceAll("[\r\n]", ""));
             }
             catch(IOException e) {
                 throw new RuntimeException(e);

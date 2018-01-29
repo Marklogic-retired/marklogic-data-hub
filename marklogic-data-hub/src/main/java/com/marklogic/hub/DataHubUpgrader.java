@@ -1,13 +1,12 @@
 package com.marklogic.hub;
 
 import com.marklogic.hub.error.CantUpgradeException;
+import com.marklogic.hub.util.Versions;
 import org.apache.commons.io.FileUtils;
-import org.springframework.util.FileCopyUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -30,8 +29,8 @@ public class DataHubUpgrader {
     public boolean upgradeHub(List<String> updatedFlows) throws CantUpgradeException {
         boolean isHubInstalled = dataHub.isInstalled().isInstalled();
 
-        String currentVersion = dataHub.getHubVersion();
-        int compare = DataHub.versionCompare(currentVersion, MIN_UPGRADE_VERSION);
+        String currentVersion = new Versions(hubConfig.newStagingClient()).getHubVersion();
+        int compare = Versions.compare(currentVersion, MIN_UPGRADE_VERSION);
         if (compare == -1) {
             throw new CantUpgradeException(currentVersion, MIN_UPGRADE_VERSION);
         }

@@ -16,6 +16,7 @@ with a fix for the issue you filed.
 You can request a new feature by submitting an issue to our [GitHub Issue Tracker][issue tracker].  If you
 would like to implement a new feature then first create a new issue and discuss it with one of our
 project maintainers.
+#####Note: as of DHF 2.0.3, pull requests will only be accepted for MarkLogic 9. Only critical bug fixes will be accepted for MarkLogic 8 on the legacy 2.0.2 or earlier branches.
 
 ## Building the Framework from Source
 Looking to build the code from source? Look no further.
@@ -23,6 +24,7 @@ Looking to build the code from source? Look no further.
 #### Prerequisites
 You need these to get started
 
+- MarkLogic 9+
 - Java 8 JDK
 - Gradle (3.4 or greater)
 - A decent IDE. IntelliJ is nice.

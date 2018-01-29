@@ -32,7 +32,6 @@ import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -218,7 +217,7 @@ public class FlowManagerTest extends HubTestBase {
     public void testGetFlows() {
         clearDatabases(HubConfig.DEFAULT_MODULES_DB_NAME);
 
-        getDataHub().installHubModules();
+        installHubModules();
 
         installModule("/entities/test/harmonize/my-test-flow1/my-test-flow1.xml", "flow-manager-test/my-test-flow1/my-test-flow1.xml");
         installModule("/entities/test/harmonize/my-test-flow2/my-test-flow2.xml", "flow-manager-test/my-test-flow1/my-test-flow2.xml");

@@ -21,7 +21,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.datamovement.*;
 import com.marklogic.client.datamovement.impl.JobTicketImpl;
-import com.marklogic.client.datamovement.impl.QueryBatcherImpl;
 import com.marklogic.client.extensions.ResourceManager;
 import com.marklogic.client.extensions.ResourceServices;
 import com.marklogic.client.io.Format;
@@ -54,6 +53,7 @@ public class FlowRunnerImpl implements FlowRunner {
     private String destinationDatabase;
     private Map<String, Object> options;
     private int previousPercentComplete;
+    private boolean stopOnFailure = false;
 
     private List<FlowItemCompleteListener> flowItemCompleteListeners = new ArrayList<>();
     private List<FlowItemFailureListener> flowItemFailureListeners = new ArrayList<>();
@@ -66,7 +66,7 @@ public class FlowRunnerImpl implements FlowRunner {
     public FlowRunnerImpl(HubConfig hubConfig) {
         this.hubConfig = hubConfig;
         this.sourceClient = hubConfig.newStagingClient();
-        this.destinationDatabase = hubConfig.finalDbName;
+        this.destinationDatabase = hubConfig.getFinalDbName();
     }
 
     @Override
@@ -96,6 +96,12 @@ public class FlowRunnerImpl implements FlowRunner {
     @Override
     public FlowRunner withDestinationDatabase(String destinationDatabase) {
         this.destinationDatabase = destinationDatabase;
+        return this;
+    }
+
+    @Override
+    public FlowRunner withStopOnFailure(boolean stopOnFailure) {
+        this.stopOnFailure = stopOnFailure;
         return this;
     }
 
@@ -200,9 +206,12 @@ public class FlowRunnerImpl implements FlowRunner {
 
         double batchCount = Math.ceil((double)uris.size() / (double)batchSize);
 
-        QueryBatcher queryBatcher = dataMovementManager.newQueryBatcher(uris.iterator())
+        HashMap<String, JobTicket> ticketWrapper = new HashMap<>();
+
+        QueryBatcher tempQueryBatcher = dataMovementManager.newQueryBatcher(uris.iterator())
             .withBatchSize(batchSize)
             .withThreadCount(threadCount)
+            .withJobId(jobId)
             .onUrisReady((QueryBatch batch) -> {
                 try {
                     FlowResource flowRunner = new FlowResource(batch.getClient(), destinationDatabase, flow);
@@ -246,6 +255,14 @@ public class FlowRunnerImpl implements FlowRunner {
                             });
                         });
                     }
+
+                    if (stopOnFailure && response.errorCount > 0) {
+                        JobTicket jobTicket = ticketWrapper.get("jobTicket");
+                        if (jobTicket != null) {
+                            dataMovementManager.stopJob(jobTicket);
+                        }
+                    }
+
                 }
                 catch(Exception e) {
                     if (errorMessages.size() < MAX_ERROR_MESSAGES) {
@@ -258,7 +275,19 @@ public class FlowRunnerImpl implements FlowRunner {
                 failedEvents.addAndGet(batchSize);
             });
 
+
+        if (hubConfig.getLoadBalancerHosts() != null && hubConfig.getLoadBalancerHosts().length > 0){
+            tempQueryBatcher = tempQueryBatcher.withForestConfig(
+                new FilteredForestConfiguration(
+                    dataMovementManager.readForestConfig()
+                ).withWhiteList(hubConfig.getLoadBalancerHosts())
+            );
+        }
+        QueryBatcher queryBatcher = tempQueryBatcher;
+
+
         JobTicket jobTicket = dataMovementManager.startJob(queryBatcher);
+        ticketWrapper.put("jobTicket", jobTicket);
         jobManager.saveJob(job.withStatus(JobStatus.RUNNING_HARMONIZE));
 
         runningThread = new Thread(() -> {
@@ -273,7 +302,10 @@ public class FlowRunnerImpl implements FlowRunner {
             dataMovementManager.stopJob(queryBatcher);
 
             JobStatus status;
-            if (failedEvents.get() + successfulEvents.get() != uris.size()) {
+            if (failedEvents.get() > 0 && stopOnFailure) {
+                status = JobStatus.STOP_ON_ERROR;
+            }
+            else if (failedEvents.get() + successfulEvents.get() != uris.size()) {
                 status = JobStatus.CANCELED;
             }
             else if (failedEvents.get() > 0 && successfulEvents.get() > 0) {
@@ -298,8 +330,7 @@ public class FlowRunnerImpl implements FlowRunner {
         });
         runningThread.start();
 
-        // hack until https://github.com/marklogic/java-client-api/issues/752 is fixed
-        return new JobTicketImpl(jobId, JobTicket.JobType.QUERY_BATCHER).withQueryBatcher((QueryBatcherImpl)queryBatcher);
+        return jobTicket;
     }
 
     private String jsonToString(JsonNode node) {

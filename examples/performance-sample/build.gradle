@@ -23,7 +23,7 @@ configurations {
 dependencies {
   mlcp "com.marklogic:mlcp:9.0.3"
   mlcp files("lib")
-  data "export:cities5000:*@zip"
+  data "export:cities5000:x@zip"
 }
 
 task createXmlEntity(type: com.marklogic.gradle.task.CreateEntityTask) {

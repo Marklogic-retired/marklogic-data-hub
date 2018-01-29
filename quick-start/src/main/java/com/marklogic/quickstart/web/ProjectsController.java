@@ -15,11 +15,18 @@
  */
 package com.marklogic.quickstart.web;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.HubConfigBuilder;
+import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.quickstart.model.Project;
 import com.marklogic.quickstart.service.ProjectManagerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -75,16 +82,29 @@ public class ProjectsController {
 
     @RequestMapping(value = "/{projectId}/initialize", method = RequestMethod.POST)
     @ResponseBody
-    public Project initializeProject(@PathVariable int projectId, @RequestBody HubConfig config) {
+    public Project initializeProject(@PathVariable int projectId, @RequestBody JsonNode hubConfig) {
         Project project = pm.getProject(projectId);
-        project.initialize(config);
-        return project;
+        ObjectMapper om = new ObjectMapper();
+        om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        try {
+            HubConfig config = HubConfigBuilder.newHubConfigBuilder(project.path)
+                .build();
+            config = om.readerForUpdating(config).readValue(hubConfig);
+            project.initialize(config);
+            return project;
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
     }
 
     @RequestMapping(value = "/{projectId}/defaults", method = RequestMethod.GET)
     @ResponseBody
     public HubConfig getDefaults(@PathVariable int projectId) {
         Project project = pm.getProject(projectId);
-        return HubConfig.hubFromEnvironment(project.path, null);
+        return HubConfigBuilder.newHubConfigBuilder(project.path)
+            .withPropertiesFromEnvironment()
+            .build();
     }
 }

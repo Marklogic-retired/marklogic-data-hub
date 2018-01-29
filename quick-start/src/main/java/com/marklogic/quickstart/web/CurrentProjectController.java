@@ -191,7 +191,7 @@ public class CurrentProjectController extends EnvironmentAware implements FileSy
     @ResponseBody
     public ResponseEntity<?> clearDatabase() {
         HubConfig config = envConfig().getMlSettings();
-        String[] databases = { config.stagingDbName, config.finalDbName, config.jobDbName, config.traceDbName };
+        String[] databases = { config.getStagingDbName(), config.getFinalDbName(), config.getJobDbName(), config.getTraceDbName() };
         for (String database: databases) {
             dataHubService.clearContent(envConfig().getMlSettings(), database);
         }
@@ -224,7 +224,7 @@ public class CurrentProjectController extends EnvironmentAware implements FileSy
     }
 
     private void installUserModules(HubConfig hubConfig, boolean force) {
-        dataHubService.installUserModules(hubConfig, force, this, this);
+        dataHubService.installUserModulesAsync(hubConfig, force, this, this);
     }
 
     @Override

@@ -100,6 +100,13 @@ export class MlcpUiComponent implements OnChanges {
         category: 'General Options',
         settings: [
           {
+            label: 'Input File Path',
+            field: 'input_file_path',
+            type: 'string',
+            description: 'A regular expression describing the filesystem location(s) to use for input.',
+            value: `${this.inputFilePath}`
+          },
+          {
             label: 'Input File Type',
             field: 'input_file_type',
             type: 'type',
@@ -389,7 +396,7 @@ export class MlcpUiComponent implements OnChanges {
           },
         ],
         collapsed: true,
-      },
+      }
     ];
     _.each(previousOptions, (value, key) => {
       _.each(groups, (group) => {
@@ -405,7 +412,7 @@ export class MlcpUiComponent implements OnChanges {
   /* tslint:enable:max-line-length */
 
   isGroupVisible(category: string): boolean {
-    const inputFileType = this.groups[0].settings[0].value;
+    const inputFileType = this.groups[0].settings[1].value;
     if (category === 'Delimited Text Options' && inputFileType !== 'delimited_text') {
       return false;
     } else if (category === 'Delimited Json Options' && inputFileType !== 'delimited_json') {
@@ -478,8 +485,6 @@ export class MlcpUiComponent implements OnChanges {
     this.addMlcpOption(options, 'username', username, false, true);
     this.addMlcpOption(options, 'password', '*****', false, true);
 
-    this.addMlcpOption(options, 'input_file_path', this.inputFilePath, true, true);
-
     _.each(this.groups, (group) => {
       if (this.isGroupVisible(group.category)) {
         _.each(group.settings, (setting: any) => {
@@ -532,11 +537,17 @@ export class MlcpUiComponent implements OnChanges {
 
   folderClicked(folders: any): void {
     if (this.inputFilePath !== folders.absolutePath) {
-      this.inputFilePath = folders.absolutePath;
-      // update the outputUriReplace options
+      //Update Input File Path
       let generalGroup = _.find(this.groups, (group: any) => {
         return group.category === 'General Options';
       });
+      let inputFilePath = _.find(generalGroup.settings, (setting: any) => {
+        return setting.field === 'input_file_path';
+      });
+      inputFilePath.value = folders.absolutePath;
+      this.inputFilePath = inputFilePath.value;
+
+      // update the outputUriReplace options
       let outputUriReplace = _.find(generalGroup.settings, (setting: any) => {
         return setting.field === 'output_uri_replace';
       });

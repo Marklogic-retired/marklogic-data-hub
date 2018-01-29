@@ -2,6 +2,7 @@ package com.marklogic.quickstart.web;
 
 
 import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.HubConfigBuilder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,7 +77,7 @@ public class HubConfigJsonTest {
             "  \"userServersDir\": \"file://" + projectPath + "/user-config/servers\",\n" +
             "  \"hubMimetypesDir\": \"file://" + projectPath + "/hub-internal-config/mimetypes\"\n" +
             "}";
-        HubConfig expected = HubConfig.hubFromEnvironment(PROJECT_PATH, null);
+        HubConfig expected = HubConfigBuilder.newHubConfigBuilder(PROJECT_PATH).withPropertiesFromEnvironment().build();
 
 
         assertThat(this.json.parseObject(content).getHubPluginsDir())
@@ -86,6 +87,7 @@ public class HubConfigJsonTest {
     @Test
     public void testSerialize() throws IOException {
         String projectPath = new File(PROJECT_PATH).getAbsolutePath();
+        HubConfig hubConfig = HubConfigBuilder.newHubConfigBuilder(PROJECT_PATH).withPropertiesFromEnvironment().build();
         String expected = "{\n" +
             "  \"stagingDbName\": \"data-hub-STAGING\",\n" +
             "  \"stagingHttpName\": \"data-hub-STAGING\",\n" +
@@ -118,7 +120,7 @@ public class HubConfigJsonTest {
             "  \"customForestPath\": \"forests\",\n" +
             "  \"modulePermissions\": \"rest-reader,read,rest-writer,insert,rest-writer,update,rest-extension-user,execute\",\n" +
             "  \"projectDir\": \"" + projectPath + "\",\n" +
-            "  \"jarVersion\": \"" + HubConfig.hubFromEnvironment(PROJECT_PATH, null).getJarVersion() + "\",\n" +
+            "  \"jarVersion\": \"" + hubConfig.getJarVersion() + "\",\n" +
             "  \"userModulesDeployTimestampFile\": \"" + projectPath + "/.tmp/user-modules-deploy-timestamps.properties\",\n" +
             "  \"hubEntitiesDir\": \"file://" + projectPath + "/plugins/entities\",\n" +
             "  \"entityDatabaseDir\": \"file://" + projectPath + "/entity-config/databases\",\n" +
@@ -135,6 +137,6 @@ public class HubConfigJsonTest {
             "  \"userServersDir\": \"file://" + projectPath + "/user-config/servers\",\n" +
             "  \"hubMimetypesDir\": \"file://" + projectPath + "/hub-internal-config/mimetypes\"\n" +
             "}";
-        assertThat(json.write(HubConfig.hubFromEnvironment(PROJECT_PATH, null))).isEqualToJson(expected);
+        assertThat(json.write(hubConfig)).isEqualToJson(expected);
     }
 }
