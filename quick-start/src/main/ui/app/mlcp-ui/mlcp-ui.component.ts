@@ -394,7 +394,7 @@ export class MlcpUiComponent implements OnChanges {
             field: 'transform_param',
             type: 'string',
             description: 'Optional extra data to pass through to a custom transformation function. Ignored if -transform_module is not specified.\nDefault: no namespace. For details, see Transforming Content During Ingestion.',
-            value: ' ',
+            value: '',
             readOnly: false,
           },
         ],
@@ -413,7 +413,7 @@ export class MlcpUiComponent implements OnChanges {
           },
           {
             label: 'Flow Name',
-            field: 'entity-name',
+            field: 'flow-name',
             type: 'string',
             description: 'The name of your flow being built.',
             value: `${encodeURIComponent(flowName)}`,
@@ -444,7 +444,7 @@ export class MlcpUiComponent implements OnChanges {
   /* tslint:enable:max-line-length */
 
   isGroupVisible(category: string): boolean {
-    const inputFileType = this.groups[0].settings[0].value;
+    const inputFileType = this.groups[0].settings[1].value;
     if (category === 'Delimited Text Options' && inputFileType !== 'delimited_text') {
       return false;
     } else if (category === 'Delimited Json Options' && inputFileType !== 'delimited_json') {
@@ -500,7 +500,7 @@ export class MlcpUiComponent implements OnChanges {
     return section.collapsed ? 'collapsed' : '';
   }
 
-  buildMlcpOptions(): Array<any> {
+  buildMlcpOptions(commandLine: boolean=false): Array<any> {
     let options: Array<any> = [];
 
     this.mlcp = {};
@@ -519,22 +519,23 @@ export class MlcpUiComponent implements OnChanges {
 
     _.each(this.groups, (group) => {
       if (this.isGroupVisible(group.category)) {
-        _.each(group.settings, (setting: any) => {
-          if (setting.value) {
-            const key = setting.field;
-            let value = setting.value;
-            if (setting.type !== 'boolean' && setting.type !== 'number') {
-              if(group.category !== 'Flow Options')
-                value = '"' + setting.value + '"';
-              else
-                value = setting.value;
-            }
-            if(group.category !== 'Flow Options')
+        if (group.category === 'Flow Options') {
+          this.appendFlowOption(options, group);
+        } else {
+          _.each(group.settings, (setting: any) => {
+            if (setting.value) {
+              const key = setting.field;
+              let value = setting.value;
+              if (setting.type !== 'boolean' && setting.type !== 'number') {
+                if (key !== 'input_file_path' && commandLine)
+                  value = '"' + setting.value + '"';
+                else
+                  value = setting.value.toString();
+              }
               this.addMlcpOption(options, key, value, true, true);
-            else
-              this.appendFlowOption(options, key, value)
-          }
-        });
+            }
+          });
+        }
       }
     });
     return options;
@@ -555,17 +556,27 @@ export class MlcpUiComponent implements OnChanges {
     }
   }
 
-  appendFlowOption(options: any, key: string, value: string):
-  void {
-    let tp = options[options.length-1];
-    let n = tp.substring(0, tp.length-1);
-    if(n.length > 2)
-      n = n + ",";
-    else
-      n = '"';
-    n = n + key + "=" + value + '"';
-    options.pop();
-    options.push(n);
+  appendFlowOption(options: any, group: any): void {
+    let flowOptions = '"';
+    let idx = options.indexOf('-transform_param');
+    if( idx > -1){
+      flowOptions += options[idx+1].replace(/"/g, '').trim();
+    } else {
+      idx = options.length+1;
+      options[idx] = '-transform_param';
+      options[idx+1] = '';
+    }
+    _.each(group.settings, (setting: any) => {
+      if(setting.value) {
+        if(flowOptions.length > 1){
+          flowOptions += ',';
+        }
+        flowOptions += setting.field + '=' + setting.value;
+      }
+    });
+    flowOptions += '"';
+    options[idx+1] = flowOptions;
+    this.mlcp['transform_param'] = options[idx+1];
   }
 
   updateSetting(setting: any, value: any): void {
@@ -576,7 +587,7 @@ export class MlcpUiComponent implements OnChanges {
   updateMlcpCommand(): string {
     let mlcpCommand = 'mlcp';
     mlcpCommand += (navigator.appVersion.indexOf('Win') !== -1) ? '.bat' : '.sh';
-    mlcpCommand += ' ' + this.buildMlcpOptions().join(' ');
+    mlcpCommand += ' ' + this.buildMlcpOptions(true).join(' ');
 
     this.mlcpCommand = mlcpCommand;
     return mlcpCommand;
