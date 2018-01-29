@@ -412,7 +412,7 @@ export class MlcpUiComponent implements OnChanges {
   /* tslint:enable:max-line-length */
 
   isGroupVisible(category: string): boolean {
-    const inputFileType = this.groups[0].settings[0].value;
+    const inputFileType = this.groups[0].settings[1].value;
     if (category === 'Delimited Text Options' && inputFileType !== 'delimited_text') {
       return false;
     } else if (category === 'Delimited Json Options' && inputFileType !== 'delimited_json') {
@@ -516,7 +516,7 @@ export class MlcpUiComponent implements OnChanges {
       }
     }
   }
-  
+
   updateSetting(setting: any, value: any): void {
     setting.value = value;
     this.updateMlcpCommand();
