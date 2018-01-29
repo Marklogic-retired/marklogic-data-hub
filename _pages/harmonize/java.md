@@ -42,6 +42,7 @@ By running a Harmonize Flow from Java you get finer control over the process.
 ```java
     import com.marklogic.hub.flow.FlowRunner;
     import com.marklogic.hub.HubConfig;
+    import com.marklogic.hub.HubConfigBuilder;
     import com.marklogic.hub.FlowRunner;
     import com.marklogic.hub.Flow;
     import com.marklogic.hub.FlowType;
@@ -50,7 +51,9 @@ By running a Harmonize Flow from Java you get finer control over the process.
     public class MyApp {
         public static void main(String[] args) {
             // get a hub config
-            HubConfig dataHubConfig = HubConfig.hubFromEnvironment("/path/to/your/project", "local");
+            HubConfig dataHubConfig = HubConfigBuilder.newHubConfigBuilder("/path/to/your/project")
+                .withPropertiesFromEnvironment("local")
+                .build();
 
             // get a flow manager
             FlowManager flowManager = new FlowManager(dataHubConfig);

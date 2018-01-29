@@ -90,10 +90,13 @@ Now Run it:
 ```java
 import java.util.*;
 import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.HubConfigBuilder;
 import com.marklogic.hub.flow.*;
 
 // get a hub config
-HubConfig dataHubConfig = HubConfig.hubFromEnvironment("/path/to/your/project", "local");
+HubConfig dataHubConfig = HubConfigBuilder.newHubConfigBuilder("/path/to/your/project")
+    .withPropertiesFromEnvironment("local")
+    .build();
 
 // get a flow manager
 FlowManager flowManager = new FlowManager(dataHubConfig);
