@@ -53,7 +53,7 @@ public class EntityManagerTest extends HubTestBase {
         deleteProjectDir();
         createProjectDir();
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_MODULES_DB_NAME);
-        getDataHub().installHubModules();
+        installHubModules();
         getPropsMgr().deletePropertiesFile();
     }
 
@@ -137,7 +137,7 @@ public class EntityManagerTest extends HubTestBase {
     }
 
     @Test
-    public void testSaveDbIndexes() throws IOException {
+    public void testSaveDbIndexes() throws IOException, SAXException {
         installEntity();
 
         Path dir = getHubConfig().getEntityDatabaseDir();
@@ -151,10 +151,13 @@ public class EntityManagerTest extends HubTestBase {
         assertTrue(dir.resolve("final-database.json").toFile().exists());
         assertTrue(dir.resolve("staging-database.json").toFile().exists());
 
+        assertJsonEqual(getResource("entity-manager-test/db-config.json"), FileUtils.readFileToString(dir.resolve("final-database.json").toFile()), true);
+        assertJsonEqual(getResource("entity-manager-test/db-config.json"), FileUtils.readFileToString(dir.resolve("staging-database.json").toFile()), true);
+
         // shouldn't save them on round 2 because of timestamps
         assertFalse(entityManager.saveDbIndexes());
 
-        getDataHub().installUserModules();
+        installUserModules(getHubConfig(), false);
 
         // shouldn't save them on round 3 because of timestamps
         assertFalse(entityManager.saveDbIndexes());

@@ -260,7 +260,11 @@ declare function flow:run-flow(
     rfc:with-job-id($job-id),
     rfc:with-flow($flow),
     rfc:with-id($identifier),
-    rfc:with-content($content),
+    rfc:with-content(
+      if ($content instance of document-node()) then
+        $content/node()
+      else $content
+    ),
     rfc:with-options($options),
     map:get($options, "target-database") ! rfc:with-target-database(.)
   )
@@ -335,7 +339,16 @@ declare function flow:make-envelope($content, $headers, $triples, $data-format)
           map:put($o, "triples", $triples),
           map:put($o, "instance",
             if ($content instance of map:map and map:keys($content) = "$type") then
-              flow:instance-to-canonical-json($content)
+              let $json := flow:instance-to-canonical-json($content)
+              let $info :=
+                let $o :=json:object()
+                let $_ := (
+                  map:put($o, "title", map:get($content, "$type")),
+                  map:put($o, "version",  map:get($content, "$version"))
+                )
+                return $o
+              let $_ := map:put($json, "info", $info)
+              return $json
             else
               $content
           ),

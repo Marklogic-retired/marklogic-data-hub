@@ -16,7 +16,6 @@
 package com.marklogic.hub.flow;
 
 import com.marklogic.client.eval.EvalResultIterator;
-import com.marklogic.client.io.DOMHandle;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.hub.DataHub;
 import com.marklogic.hub.FlowManager;
@@ -63,7 +62,7 @@ public class FlowRunnerTest extends HubTestBase {
 
         DataHub dh = new DataHub(getHubConfig());
         dh.clearUserModules();
-        dh.installUserModules();
+        installUserModules(getHubConfig(), false);
 
         installModule("/entities/" + ENTITY + "/harmonize/testharmonize/collector.xqy", "flow-runner-test/collector.xqy");
         installModule("/entities/" + ENTITY + "/harmonize/testharmonize/content.xqy", "flow-runner-test/content-for-options.xqy");

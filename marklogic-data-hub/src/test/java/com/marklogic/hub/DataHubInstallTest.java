@@ -3,6 +3,7 @@ package com.marklogic.hub;
 import com.marklogic.client.eval.EvalResult;
 import com.marklogic.client.eval.EvalResultIterator;
 import com.marklogic.client.ext.modulesloader.impl.PropertiesModuleManager;
+import com.marklogic.hub.util.Versions;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -35,8 +36,10 @@ public class DataHubInstallTest extends HubTestBase {
         assertTrue(getModulesFile("/com.marklogic.hub/lib/config.xqy").startsWith(getResource("data-hub-test/core-modules/config.xqy")));
         int totalCount = getDocCount(HubConfig.DEFAULT_MODULES_DB_NAME, null);
         int hubModulesCount = getDocCount(HubConfig.DEFAULT_MODULES_DB_NAME, "hub-core-module");
-        assertTrue(totalCount + " is not correct", 84 == totalCount || 64 == totalCount);
-        assertTrue(hubModulesCount + "  is not correct", 42 == hubModulesCount || 22 == hubModulesCount);
+        //As a note, whenever you see the 83 || 63, it's due to the additional building of the javascript files bundling down that will then get
+        //deployed with the rest of the modules code. This means it'll be 20 higher than if the trace UI was never built
+        assertTrue(totalCount + " is not correct", 83 == totalCount || 63 == totalCount);
+        assertTrue(hubModulesCount + "  is not correct", 41 == hubModulesCount || 21 == hubModulesCount);
 
         assertTrue("trace options not installed", getModulesFile("/Default/data-hub-TRACING/rest-api/options/traces.xml").length() > 0);
         assertTrue("trace options not installed", getModulesFile("/Default/data-hub-JOBS/rest-api/options/jobs.xml").length() > 0);
@@ -47,7 +50,7 @@ public class DataHubInstallTest extends HubTestBase {
     @Test
     public void getHubModulesVersion() throws IOException {
         String version = getHubConfig().getJarVersion();
-        assertEquals(version, getDataHub().getHubVersion());
+        assertEquals(version, new Versions(getHubConfig()).getHubVersion());
     }
 
     @Test
@@ -56,15 +59,14 @@ public class DataHubInstallTest extends HubTestBase {
         String path = Paths.get(url.toURI()).toFile().getAbsolutePath();
 
         HubConfig hubConfig = getHubConfig(path);
-        DataHub dataHub = new DataHub(hubConfig);
 
         int totalCount = getDocCount(HubConfig.DEFAULT_MODULES_DB_NAME, null);
-        assertTrue(totalCount + " is not correct", 84 == totalCount || 64 == totalCount);
+        assertTrue(totalCount + " is not correct", 83 == totalCount || 63 == totalCount);
 
-        dataHub.installUserModules(true);
+        installUserModules(hubConfig, true);
 
         totalCount = getDocCount(HubConfig.DEFAULT_MODULES_DB_NAME, null);
-        assertTrue(totalCount + " is not correct", 84 == totalCount || 104 == totalCount);
+        assertTrue(totalCount + " is not correct", 83 == totalCount || 103 == totalCount);
 
         assertEquals(
             getResource("data-hub-test/plugins/entities/test-entity/harmonize/final/collector.xqy"),
@@ -186,17 +188,17 @@ public class DataHubInstallTest extends HubTestBase {
         dataHub.clearUserModules();
 
         int totalCount = getDocCount(HubConfig.DEFAULT_MODULES_DB_NAME, null);
-        assertTrue(totalCount + " is not correct", 84 == totalCount || 64 == totalCount);
+        assertTrue(totalCount + " is not correct", 83 == totalCount || 63 == totalCount);
 
-        dataHub.installUserModules(true);
+        installUserModules(hubConfig, true);
 
         totalCount = getDocCount(HubConfig.DEFAULT_MODULES_DB_NAME, null);
-        assertTrue(totalCount + " is not correct", 84 == totalCount || 104 == totalCount);
+        assertTrue(totalCount + " is not correct", 83 == totalCount || 103 == totalCount);
 
         dataHub.clearUserModules();
 
         totalCount = getDocCount(HubConfig.DEFAULT_MODULES_DB_NAME, null);
-        assertTrue(totalCount + " is not correct", 84 == totalCount || 64 == totalCount);
+        assertTrue(totalCount + " is not correct", 83 == totalCount || 63 == totalCount);
 
     }
 }

@@ -15,13 +15,18 @@
  */
 package com.marklogic.quickstart.service;
 
+import com.marklogic.appdeployer.command.Command;
+import com.marklogic.appdeployer.impl.SimpleAppDeployer;
 import com.marklogic.hub.DataHub;
 import com.marklogic.hub.DataHubUpgrader;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.PreInstallCheck;
+import com.marklogic.hub.deploy.commands.LoadUserModulesCommand;
 import com.marklogic.hub.deploy.util.HubDeployStatusListener;
 import com.marklogic.hub.error.CantUpgradeException;
 import com.marklogic.hub.util.PerformanceLogger;
+import com.marklogic.hub.validate.EntitiesValidator;
+import com.marklogic.mgmt.resource.databases.DatabaseManager;
 import com.marklogic.quickstart.auth.ConnectionAuthenticationToken;
 import com.marklogic.quickstart.exception.DataHubException;
 import com.marklogic.quickstart.listeners.DeployUserModulesListener;
@@ -39,7 +44,9 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.TimeZone;
 
 @Service
@@ -76,13 +83,16 @@ public class DataHubService {
     }
 
     @Async
+    public void installUserModulesAsync(HubConfig config, boolean forceLoad, DeployUserModulesListener deployListener, ValidateListener validateListener) {
+        installUserModules(config, forceLoad, deployListener, validateListener);
+    }
+
     public void installUserModules(HubConfig config, boolean forceLoad, DeployUserModulesListener deployListener, ValidateListener validateListener) {
         long startTime = PerformanceLogger.monitorTimeInsideMethod();
 
-        DataHub dataHub = new DataHub(config);
         try {
-            installUserModules(config, dataHub, forceLoad, deployListener);
-            validateUserModules(dataHub, validateListener);
+            installUserModules(config, forceLoad, deployListener);
+            validateUserModules(config, validateListener);
         } catch (Throwable e) {
             throw new DataHubException(e.getMessage(), e);
         }
@@ -96,8 +106,8 @@ public class DataHubService {
         DataHub dataHub = new DataHub(config);
         try {
             dataHub.clearUserModules();
-            installUserModules(config, dataHub, true, deployListener);
-            validateUserModules(dataHub, validateListener);
+            installUserModules(config, true, deployListener);
+            validateUserModules(config, validateListener);
         } catch(Throwable e) {
             throw new DataHubException(e.getMessage(), e);
         }
@@ -124,28 +134,11 @@ public class DataHubService {
     }
 
     @Async
-    public void validateUserModules(HubConfig config, ValidateListener validateListener) {
-        DataHub dataHub = new DataHub(config);
-        validateUserModules(dataHub, validateListener);
+    public void validateUserModules(HubConfig hubConfig, ValidateListener validateListener) {
+        EntitiesValidator ev = new EntitiesValidator(hubConfig.newStagingClient());
+        validateListener.onValidate(ev.validateAll());
+
     }
-
-    public void validateUserModule(HubConfig config, ValidateListener validateListener) {
-        DataHub dataHub = new DataHub(config);
-        validateListener.onValidate(dataHub.validateUserModules());
-    }
-
-//    public boolean isServerAcceptable() throws DataHubException {
-//        DataHub dataHub = getDataHub();
-//        try {
-//            dataHub.validateServer();
-//            return true;
-//        } catch(ServerValidationException exception) {
-//            return false;
-//        } catch(Throwable e) {
-//            throw new DataHubException(e.getMessage(), e);
-//        }
-//    }
-
 
     public void uninstall(HubConfig config, HubDeployStatusListener listener) throws DataHubException {
         DataHub dataHub = new DataHub(config);
@@ -183,15 +176,20 @@ public class DataHubService {
 
     public void clearContent(HubConfig config, String database) {
         DataHub dataHub = new DataHub(config);
-        dataHub.clearContent(database);
+        DatabaseManager mgr = new DatabaseManager(dataHub.getManageClient());
+        mgr.clearDatabase(database);
     }
 
-    private void installUserModules(HubConfig config, DataHub dataHub, boolean forceLoad, DeployUserModulesListener deployListener) {
-        dataHub.installUserModules(forceLoad);
-        deployListener.onDeploy(getLastDeployed(config));
-    }
+    private void installUserModules(HubConfig hubConfig, boolean forceLoad, DeployUserModulesListener deployListener) {
+        List<Command> commands = new ArrayList<>();
+        LoadUserModulesCommand loadUserModulesCommand = new LoadUserModulesCommand(hubConfig);
+        loadUserModulesCommand.setForceLoad(forceLoad);
+        commands.add(loadUserModulesCommand);
 
-    private void validateUserModules(DataHub dataHub, ValidateListener validateListener) {
-        validateListener.onValidate(dataHub.validateUserModules());
+        SimpleAppDeployer deployer = new SimpleAppDeployer(hubConfig.getManageClient(), hubConfig.getAdminManager());
+        deployer.setCommands(commands);
+        deployer.deploy(hubConfig.getAppConfig());
+
+        deployListener.onDeploy(getLastDeployed(hubConfig));
     }
 }

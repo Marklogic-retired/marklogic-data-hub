@@ -18,12 +18,12 @@ class InstalledTests extends BaseTest {
     def setupSpec() {
         createGradleFiles()
         runTask('hubInit')
-        runTask('mlUndeploy')
+        runTask('mlUndeploy',  '-Pconfirm=true')
         println(runTask('mlDeploy', '-i').getOutput())
     }
 
     def cleanupSpec() {
-        runTask('mlUndeploy')
+        runTask('mlUndeploy', '-Pconfirm=true')
     }
 
     def "enable debugging with hub installed"() {
@@ -197,5 +197,41 @@ class InstalledTests extends BaseTest {
         entityDir.isDirectory() == true
         File contentPlugin = Paths.get(testProjectDir.root.toString(), "plugins", "entities", "Employee", "harmonize", "my-new-harmonize-flow", "content.sjs").toFile()
         contentPlugin.text.contains("extractInstanceEmployee")
+    }
+
+    def "runHarmonizeFlow with bad sourceDB"() {
+        given:
+
+        println(runTask('hubCreateHarmonizeFlow', '-PentityName=my-new-entity', '-PflowName=my-new-harmonize-flow', '-PdataFormat=xml', '-PpluginFormat=xqy').getOutput())
+        println(runTask('mlReLoadModules'))
+
+        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME)
+        assert (getStagingDocCount() == 0)
+        assert (getFinalDocCount() == 0)
+
+        DocumentMetadataHandle meta = new DocumentMetadataHandle();
+        meta.getCollections().add("my-new-entity");
+        installStagingDoc("/employee1.xml", meta, new File("src/test/resources/run-flow-test/employee1.xml").text)
+        installStagingDoc("/employee2.xml", meta, new File("src/test/resources/run-flow-test/employee2.xml").text)
+
+        assert (getStagingDocCount() == 2)
+        assert (getFinalDocCount() == 0)
+        installModule("/entities/my-new-entity/harmonize/my-new-harmonize-flow/content/content.xqy", "run-flow-test/content.xqy")
+
+
+        when:
+        propertiesFile << """
+            ext {
+                entityName=my-new-entity
+                flowName=my-new-harmonize-flow
+                sourceDB=12345678
+            }
+        """
+        def result = runTask('hubRunFlow', '-i')
+
+        then:
+        notThrown(UnexpectedBuildFailure)
+        result.getOutput().contains('No such database 12345678')
+        result.task(":hubRunFlow").outcome == SUCCESS
     }
 }

@@ -10,6 +10,7 @@ import com.marklogic.client.io.Format
 import com.marklogic.client.io.InputStreamHandle
 import com.marklogic.client.io.StringHandle
 import com.marklogic.hub.HubConfig
+import com.marklogic.hub.HubConfigBuilder
 import com.marklogic.mgmt.ManageClient
 import com.marklogic.mgmt.resource.databases.DatabaseManager
 import org.apache.commons.io.FileUtils
@@ -32,6 +33,8 @@ class BaseTest extends Specification {
     static File buildFile
     static File propertiesFile
 
+    static HubConfig _hubConfig = null
+
     static BuildResult runTask(String... task) {
         return GradleRunner.create()
             .withProjectDir(testProjectDir.root)
@@ -50,8 +53,12 @@ class BaseTest extends Specification {
     }
 
     static HubConfig hubConfig() {
-        HubConfig hubConfig = HubConfig.hubFromEnvironment(testProjectDir.root.toString(), null)
-        return hubConfig
+        if (_hubConfig == null || !_hubConfig.projectDir.equals(testProjectDir.root.toString())) {
+            _hubConfig = HubConfigBuilder.newHubConfigBuilder(testProjectDir.root.toString())
+                .withPropertiesFromEnvironment()
+                .build()
+        }
+        return _hubConfig
     }
 
     void installStagingDoc(String uri, DocumentMetadataHandle meta, String doc) {

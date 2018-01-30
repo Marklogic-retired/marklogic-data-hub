@@ -8,6 +8,7 @@ public enum JobStatus {
     FINISHED("finished"),
     FINISHED_WITH_ERRORS("finished-with-errors"),
     FAILED("failed"),
+    STOP_ON_ERROR("stop-on-error"),
     CANCELED("canceled");
 
     private String type;

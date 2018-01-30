@@ -7,7 +7,7 @@
     "Order" : {
       "primaryKey" : "id",
       "required" : [ ],
-      "rangeIndex" : [ ],
+      "rangeIndex" : [ "id" ],
       "wordLexicon" : [ ],
       "properties" : {
         "id" : {

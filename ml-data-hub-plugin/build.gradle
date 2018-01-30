@@ -4,7 +4,7 @@ buildscript {
         maven { url 'http://developer.marklogic.com/maven2' }
     }
     dependencies {
-        classpath "com.gradle.publish:plugin-publish-plugin:0.9.7"
+        classpath "com.gradle.publish:plugin-publish-plugin:0.9.9"
     }
 }
 
@@ -30,13 +30,7 @@ repositories {
 dependencies {
     compile gradleApi()
     compile project(':marklogic-data-hub')
-    compile ('com.marklogic:ml-gradle:3.1-alpha4') {
-        exclude group: 'com.marklogic', module: 'ml-app-deployer'
-    }
-    compile ('com.marklogic:ml-app-deployer:3.1-alpha4') {
-        exclude group: 'com.marklogic', module: 'ml-javaclient-util'
-    }
-    compile ('com.marklogic:ml-javaclient-util:3.1-alpha6')
+    compile ('com.marklogic:ml-gradle:3.4.0')
     testCompile localGroovy()
     testCompile gradleTestKit()
     testCompile 'xmlunit:xmlunit:1.3'

@@ -56,6 +56,10 @@ export class EntityBoxComponent implements OnChanges, AfterViewInit {
   }
 
   isRangeIndex(key: string) {
+    return this.entity.definition.elementRangeIndex.indexOf(key) >= 0;
+  }
+
+  isPathRangeIndex(key: string) {
     return this.entity.definition.rangeIndex.indexOf(key) >= 0;
   }
 

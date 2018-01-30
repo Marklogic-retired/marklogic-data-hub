@@ -32,7 +32,6 @@ import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -194,13 +193,13 @@ public class FlowManagerTest extends HubTestBase {
 
         FlowManager fm = new FlowManager(getHubConfig("del-me-dir"));
 
-        allCombos((codeFormat, dataFormat, flowType) -> {
+        allCombos((codeFormat, dataFormat, flowType, useEs) -> {
             String flowName = flowType.toString() + "-" + codeFormat.toString() + "-" + dataFormat.toString();
             scaffolding.createFlow("my-entity", flowName, flowType, codeFormat, dataFormat);
         });
 
 
-        allCombos((codeFormat, dataFormat, flowType) -> {
+        allCombos((codeFormat, dataFormat, flowType, useEs) -> {
             String flowName = flowType.toString() + "-" + codeFormat.toString() + "-" + dataFormat.toString();
             Path propertiesFile = Paths.get("del-me-dir", "plugins", "entities", "my-entity", flowType.toString(), flowName, flowName + ".properties");
             Flow flow = fm.getFlowFromProperties(propertiesFile);
@@ -218,7 +217,7 @@ public class FlowManagerTest extends HubTestBase {
     public void testGetFlows() {
         clearDatabases(HubConfig.DEFAULT_MODULES_DB_NAME);
 
-        getDataHub().installHubModules();
+        installHubModules();
 
         installModule("/entities/test/harmonize/my-test-flow1/my-test-flow1.xml", "flow-manager-test/my-test-flow1/my-test-flow1.xml");
         installModule("/entities/test/harmonize/my-test-flow2/my-test-flow2.xml", "flow-manager-test/my-test-flow1/my-test-flow2.xml");
@@ -396,7 +395,7 @@ public class FlowManagerTest extends HubTestBase {
         assertEquals(0, fm.getLegacyFlows().size());
 
         Path projectPath = Paths.get(PROJECT_PATH);
-        allCombos((codeFormat, dataFormat, flowType) -> {
+        allCombos((codeFormat, dataFormat, flowType, useEs) -> {
             Path dir = projectPath.resolve("plugins/entities/my-fun-test/" + flowType.toString());
             String flowName = "legacy-" + codeFormat.toString() + "-" + dataFormat.toString() + "-" + flowType.toString() + "-flow";
             try {

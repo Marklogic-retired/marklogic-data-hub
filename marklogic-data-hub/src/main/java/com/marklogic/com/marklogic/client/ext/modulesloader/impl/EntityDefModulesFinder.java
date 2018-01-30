@@ -8,7 +8,7 @@ public class EntityDefModulesFinder extends BaseModulesFinder {
     @Override
     protected Modules findModulesWithResolvedBaseDir(String baseDir) {
         Modules modules = new Modules();
-        modules.setAssets(findResources(baseDir, "*.entity.json"));
+        modules.setAssets(findResources("Entity Def", baseDir, "*.entity.json"));
         return modules;
     }
 }

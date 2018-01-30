@@ -18,6 +18,8 @@ package com.marklogic.hub;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.marklogic.appdeployer.command.Command;
+import com.marklogic.appdeployer.impl.SimpleAppDeployer;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
 import com.marklogic.client.DatabaseClientFactory.Authentication;
@@ -29,9 +31,12 @@ import com.marklogic.client.eval.EvalResult;
 import com.marklogic.client.eval.EvalResultIterator;
 import com.marklogic.client.eval.ServerEvaluationCall;
 import com.marklogic.client.io.*;
+import com.marklogic.hub.deploy.commands.LoadHubModulesCommand;
+import com.marklogic.hub.deploy.commands.LoadUserModulesCommand;
 import com.marklogic.hub.flow.CodeFormat;
 import com.marklogic.hub.flow.DataFormat;
 import com.marklogic.hub.flow.FlowType;
+import com.marklogic.hub.util.Versions;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -50,6 +55,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -207,6 +214,10 @@ public class HubTestBase {
         new Tracing(stagingClient).enable();
     }
 
+    protected static void disableTracing() {
+        new Tracing(stagingClient).disable();
+    }
+
     protected static HubConfig getHubConfig() {
         return getHubConfig(PROJECT_PATH);
     }
@@ -216,11 +227,13 @@ public class HubTestBase {
     }
 
     protected static HubConfig getHubConfig(String projectDir) {
-        HubConfig hubConfig = HubConfig.hubFromEnvironment(projectDir, "local");
-        hubConfig.stagingPort = stagingPort;
-        hubConfig.finalPort = finalPort;
-        hubConfig.tracePort = tracePort;
-        hubConfig.jobPort = jobPort;
+        HubConfig hubConfig = HubConfigBuilder.newHubConfigBuilder(projectDir)
+            .withPropertiesFromEnvironment("local")
+            .build();
+        hubConfig.setStagingPort(stagingPort);
+        hubConfig.setFinalPort(finalPort);
+        hubConfig.setTracePort(tracePort);
+        hubConfig.setJobPort(jobPort);
         hubConfig.getAppConfig().setAppServicesUsername(user);
         hubConfig.getAppConfig().setAppServicesPassword(password);
         return hubConfig;
@@ -233,12 +246,10 @@ public class HubTestBase {
                 getDataHub().initProject();
             }
             String properties = "mlUsername=admin\nmlPassword=admin";
-            if (properties != null) {
-                Path gradle_properties = projectDir.toPath().resolve("gradle.properties");
-                String fileContents = FileUtils.readFileToString(gradle_properties.toFile());
-                fileContents += properties;
-                FileUtils.writeStringToFile(gradle_properties.toFile(), fileContents);
-            }
+            Path gradle_properties = projectDir.toPath().resolve("gradle.properties");
+            String fileContents = FileUtils.readFileToString(gradle_properties.toFile());
+            fileContents += properties;
+            FileUtils.writeStringToFile(gradle_properties.toFile(), fileContents);
         }
         catch (IOException e) {
             throw new RuntimeException(e);
@@ -372,7 +383,7 @@ public class HubTestBase {
     }
 
     protected static int getMlMajorVersion() {
-        return Integer.parseInt(getDataHub().getMarkLogicVersion().substring(0, 1));
+        return Integer.parseInt(new Versions(getHubConfig()).getMarkLogicVersion().substring(0, 1));
     }
 
     public static void clearDatabases(String... databases) {
@@ -521,10 +532,13 @@ public class HubTestBase {
         CodeFormat[] codeFormats = new CodeFormat[] { CodeFormat.JAVASCRIPT, CodeFormat.XQUERY };
         DataFormat[] dataFormats = new DataFormat[] { DataFormat.JSON, DataFormat.XML };
         FlowType[] flowTypes = new FlowType[] { FlowType.INPUT, FlowType.HARMONIZE };
+        Boolean[] useEses = new Boolean[] { false, true };
         for (CodeFormat codeFormat : codeFormats) {
             for (DataFormat dataFormat : dataFormats) {
                 for (FlowType flowType : flowTypes) {
-                    listener.onCombo(codeFormat, dataFormat, flowType);
+                    for (Boolean useEs : useEses) {
+                        listener.onCombo(codeFormat, dataFormat, flowType, useEs);
+                    }
                 }
             }
         }
@@ -546,4 +560,31 @@ public class HubTestBase {
             throw new RuntimeException(e);
         }
     }
+
+    protected void installHubModules() {
+        logger.debug("Installing Data Hub Framework modules into MarkLogic");
+
+        HubConfig hubConfig = getHubConfig();
+
+        List<Command> commands = new ArrayList<>();
+        commands.add(new LoadHubModulesCommand(hubConfig));
+
+        SimpleAppDeployer deployer = new SimpleAppDeployer(hubConfig.getManageClient(), hubConfig.getAdminManager());
+        deployer.setCommands(commands);
+        deployer.deploy(hubConfig.getAppConfig());
+    }
+
+    protected static void installUserModules(HubConfig hubConfig, boolean force) {
+        logger.debug("Installing user modules into MarkLogic");
+
+        List<Command> commands = new ArrayList<>();
+        LoadUserModulesCommand loadUserModulesCommand = new LoadUserModulesCommand(hubConfig);
+        loadUserModulesCommand.setForceLoad(force);
+        commands.add(loadUserModulesCommand);
+
+        SimpleAppDeployer deployer = new SimpleAppDeployer(hubConfig.getManageClient(), hubConfig.getAdminManager());
+        deployer.setCommands(commands);
+        deployer.deploy(hubConfig.getAppConfig());
+    }
+
 }

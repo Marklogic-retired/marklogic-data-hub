@@ -3,6 +3,7 @@ package com.marklogic.quickstart.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.HubConfigBuilder;
 import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.flow.CodeFormat;
 import com.marklogic.hub.flow.DataFormat;
@@ -44,7 +45,7 @@ public class EntityManagerServiceTest extends HubTestBase {
         FileUtils.deleteDirectory(projectDir.toFile());
 
         EnvironmentConfig envConfig = new EnvironmentConfig(projectDir.toString(), "local", "admin", "admin");
-        envConfig.setMlSettings(HubConfig.hubFromEnvironment(projectDir.toString(), null));
+        envConfig.setMlSettings(HubConfigBuilder.newHubConfigBuilder(projectDir.toString()).withPropertiesFromEnvironment().build());
         envConfig.checkIfInstalled();
         setEnvConfig(envConfig);
 
@@ -97,7 +98,7 @@ public class EntityManagerServiceTest extends HubTestBase {
         FileUtil.copy(getResourceStream("flow-manager/xqy-flow/content-input.xqy"), inputDir.resolve("xqy-xml-input-flow/content.xqy").toFile());
         FileUtil.copy(getResourceStream("flow-manager/xqy-flow/triples.xqy"), inputDir.resolve("xqy-xml-input-flow/triples.xqy").toFile());
 
-        getDataHub().installUserModules(true);
+        installUserModules(getHubConfig(), true);
     }
 
     @AfterClass

@@ -1,4 +1,3 @@
-import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 buildscript {
@@ -63,7 +62,7 @@ dependencies {
     compile("org.springframework.boot:spring-boot-devtools:${springBootVersion}")
 
     // Needed for the Upload feature using mlcp
-    compile("com.marklogic:mlcp:9.0.3") {
+    compile("com.marklogic:mlcp:9.0.4") {
       exclude group: 'org.apache.avro', module: 'avro-tools'
     }
     compile("com.marklogic:marklogic-spring-web:1.0")
@@ -91,7 +90,7 @@ configurations {
 
 node {
   // Version of node to use.
-  version = '8.4.0'
+  version = '8.9.3'
 
   // // Version of npm to use.
   npmVersion = '5.4.2'
