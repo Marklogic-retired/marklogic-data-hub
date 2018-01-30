@@ -13,8 +13,8 @@
         "salary": 1000
       },
       "info": {
-        "$title": "e2eentity",
-        "$version": "0.0.1"
+        "title": "e2eentity",
+        "version": "0.0.1"
       }
     },
     "triples": [
