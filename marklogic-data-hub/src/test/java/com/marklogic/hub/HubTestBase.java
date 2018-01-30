@@ -385,7 +385,7 @@ public class HubTestBase {
     }
 
     protected static int getMlMajorVersion() {
-        return Integer.parseInt(new Versions(stagingClient).getMarkLogicVersion().substring(0, 1));
+        return Integer.parseInt(new Versions(getHubConfig()).getMarkLogicVersion().substring(0, 1));
     }
 
     public static void clearDatabases(String... databases) {
