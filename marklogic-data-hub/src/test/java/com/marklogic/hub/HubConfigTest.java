@@ -34,22 +34,29 @@ public class HubConfigTest extends HubTestBase {
         try {
             File gradleProperties = new File(projectPath, "gradle.properties");
             Properties props = new Properties();
-            props.load(new FileInputStream(gradleProperties));
+            FileInputStream fis = new FileInputStream(gradleProperties);
+            props.load(fis);
+            fis.close();
             props.remove(key);
-            props.store(new FileOutputStream(gradleProperties), "");
+            FileOutputStream fos = new FileOutputStream(gradleProperties);
+            props.store(fos, "");
+            fos.close();
         }
         catch(IOException e) {
             throw new RuntimeException(e);
         }
     }
-
     private void writeProp(String key, String value) {
         try {
             File gradleProperties = new File(projectPath, "gradle.properties");
             Properties props = new Properties();
-            props.load(new FileInputStream(gradleProperties));
+            FileInputStream fis = new FileInputStream(gradleProperties);
+            props.load(fis);
+            fis.close();
             props.put(key, value);
-            props.store(new FileOutputStream(gradleProperties), "");
+            FileOutputStream fos = new FileOutputStream(gradleProperties);
+            props.store(fos, "");
+            fos.close();
         }
         catch(IOException e) {
             throw new RuntimeException(e);

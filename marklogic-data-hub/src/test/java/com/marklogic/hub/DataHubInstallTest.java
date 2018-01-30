@@ -50,7 +50,7 @@ public class DataHubInstallTest extends HubTestBase {
     @Test
     public void getHubModulesVersion() throws IOException {
         String version = getHubConfig().getJarVersion();
-        assertEquals(version, new Versions(stagingClient).getHubVersion());
+        assertEquals(version, new Versions(getHubConfig()).getHubVersion());
     }
 
     @Test
