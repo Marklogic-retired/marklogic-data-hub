@@ -149,7 +149,7 @@ public class DataHub {
     public boolean isServerVersionValid(String versionString) {
         try {
             if (versionString == null) {
-                versionString = new Versions(hubConfig.newAppServicesClient()).getMarkLogicVersion();
+                versionString = new Versions(hubConfig).getMarkLogicVersion();
             }
             int major = Integer.parseInt(versionString.replaceAll("([^.]+)\\..*", "$1"));
             if (major < 9) {
@@ -277,7 +277,7 @@ public class DataHub {
         }
 
         if (versions == null) {
-            versions = new Versions(hubConfig.newAppServicesClient());
+            versions = new Versions(hubConfig);
         }
         check.serverVersion = versions.getMarkLogicVersion();
         check.serverVersionOk = isServerVersionValid(check.serverVersion);

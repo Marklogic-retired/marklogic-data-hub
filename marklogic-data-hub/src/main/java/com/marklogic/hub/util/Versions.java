@@ -7,15 +7,19 @@ import com.marklogic.client.extensions.ResourceManager;
 import com.marklogic.client.extensions.ResourceServices;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.util.RequestParameters;
+import com.marklogic.hub.HubConfig;
 
 public class Versions extends ResourceManager {
     private static final String NAME = "hubversion";
 
-    DatabaseClient databaseClient;
-    public Versions(DatabaseClient client) {
+    DatabaseClient appServicesClient;
+    DatabaseClient stagingClient;
+
+    public Versions(HubConfig hubConfig) {
         super();
-        databaseClient = client;
-        databaseClient.init(NAME, this);
+        this.appServicesClient = hubConfig.newAppServicesClient();
+        this.stagingClient = hubConfig.newStagingClient();
+        this.stagingClient.init(NAME, this);
     }
 
     public String getHubVersion() {
@@ -37,7 +41,7 @@ public class Versions extends ResourceManager {
     public String getMarkLogicVersion() {
         // do it this way to avoid needing an admin user
         // vs getAdminManager().getServerVersion() which needs admin :(
-        ServerEvaluationCall eval = databaseClient.newServerEval();
+        ServerEvaluationCall eval = this.appServicesClient.newServerEval();
         String xqy = "xdmp:version()";
         EvalResultIterator result = eval.xquery(xqy).eval();
         if (result.hasNext()) {

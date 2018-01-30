@@ -115,20 +115,10 @@ public class EnvironmentConfig {
     @JsonIgnore
     public void checkIfInstalled() throws IOException {
         this.installInfo = dataHub.isInstalled();
-        Versions versions = new Versions(getAppServicesClient());
+        Versions versions = new Versions(mlSettings);
         this.installedVersion = versions.getHubVersion();
         this.marklogicVersion = versions.getMarkLogicVersion();
         this.runningVersion = this.mlSettings.getJarVersion();
-    }
-
-    private DatabaseClient _appServicesClient = null;
-
-    @JsonIgnore
-    public DatabaseClient getAppServicesClient() {
-        if (_appServicesClient == null) {
-            _appServicesClient = mlSettings.newAppServicesClient();
-        }
-        return _appServicesClient;
     }
 
     private DatabaseClient _stagingClient = null;

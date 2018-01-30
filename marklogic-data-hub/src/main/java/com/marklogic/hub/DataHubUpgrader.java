@@ -29,7 +29,7 @@ public class DataHubUpgrader {
     public boolean upgradeHub(List<String> updatedFlows) throws CantUpgradeException {
         boolean isHubInstalled = dataHub.isInstalled().isInstalled();
 
-        String currentVersion = new Versions(hubConfig.newStagingClient()).getHubVersion();
+        String currentVersion = new Versions(hubConfig).getHubVersion();
         int compare = Versions.compare(currentVersion, MIN_UPGRADE_VERSION);
         if (compare == -1) {
             throw new CantUpgradeException(currentVersion, MIN_UPGRADE_VERSION);
