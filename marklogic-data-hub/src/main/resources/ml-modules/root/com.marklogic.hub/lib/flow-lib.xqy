@@ -343,8 +343,8 @@ declare function flow:make-envelope($content, $headers, $triples, $data-format)
               let $info :=
                 let $o :=json:object()
                 let $_ := (
-                  map:put($o, "$title", map:get($content, "$type")),
-                  map:put($o, "$version",  map:get($content, "$version"))
+                  map:put($o, "title", map:get($content, "$type")),
+                  map:put($o, "version",  map:get($content, "$version"))
                 )
                 return $o
               let $_ := map:put($json, "info", $info)
