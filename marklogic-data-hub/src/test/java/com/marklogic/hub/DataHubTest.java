@@ -15,7 +15,6 @@
  */
 package com.marklogic.hub;
 
-import com.marklogic.client.DatabaseClient;
 import com.marklogic.hub.util.Versions;
 import com.marklogic.mgmt.resource.appservers.ServerManager;
 import com.marklogic.rest.util.Fragment;
@@ -65,8 +64,8 @@ public class DataHubTest extends HubTestBase {
 
         versions = EasyMock.createMockBuilder(Versions.class)
             .addMockedMethod("getMarkLogicVersion")
-            .withConstructor(DatabaseClient.class)
-            .withArgs(stagingClient)
+            .withConstructor(HubConfig.class)
+            .withArgs(getHubConfig())
             .createMock();
     }
 
