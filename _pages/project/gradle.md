@@ -14,7 +14,7 @@ In order to get started with the **ml-data-hub** Gradle plugin you will need to 
 ## Install Prerequisites
 You will need the following items to use the ml-data-hub Gradle plugin:
 1. [Gradle 3.4](https://gradle.org/) or newer (if you have an older version installed we can work around that)
-1. MarkLogic 8.0-7 or newer, or MarkLogic 9.0-1.1 or newer
+1. MarkLogic 9.0-1.1 or newer
 
 Before we continue, let's address the Gradle version. If you have version 3.4 or newer then you are golden. Check like so:
 
@@ -50,7 +50,7 @@ plugins {
 
     // This gradle plugin extends the ml-gradle plugin with
     // commands that make the Data Hub Framework do its magic
-    id 'com.marklogic.ml-data-hub' version '2.0.2'
+    id 'com.marklogic.ml-data-hub' version '2.0.3'
 }
 ```
 

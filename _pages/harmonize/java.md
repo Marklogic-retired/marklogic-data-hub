@@ -13,7 +13,7 @@ Still here? The DHF Library is distributed via bintray so that you can include i
 **Gradle**
 
 ```groovy
-compile('com.marklogic:marklogic-data-hub:2.0.2')
+compile('com.marklogic:marklogic-data-hub:2.0.3')
 ```
 
 **Maven**
@@ -22,7 +22,7 @@ compile('com.marklogic:marklogic-data-hub:2.0.2')
 <dependency>
   <groupId>com.marklogic</groupId>
   <artifactId>marklogic-data-hub</artifactId>
-  <version>2.0.2</version>
+  <version>2.0.3</version>
   <type>pom</type>
 </dependency>
 ```
@@ -30,7 +30,7 @@ compile('com.marklogic:marklogic-data-hub:2.0.2')
 **Ivy**
 
 ```xml
-<dependency org='com.marklogic' name='marklogic-data-hub' rev='2.0.2'>
+<dependency org='com.marklogic' name='marklogic-data-hub' rev='2.0.3'>
   <artifact name='$AID' ext='pom'></artifact>
 </dependency>
 ```
@@ -42,6 +42,7 @@ By running a Harmonize Flow from Java you get finer control over the process.
 ```java
     import com.marklogic.hub.flow.FlowRunner;
     import com.marklogic.hub.HubConfig;
+    import com.marklogic.hub.HubConfigBuilder;
     import com.marklogic.hub.FlowRunner;
     import com.marklogic.hub.Flow;
     import com.marklogic.hub.FlowType;
@@ -50,7 +51,9 @@ By running a Harmonize Flow from Java you get finer control over the process.
     public class MyApp {
         public static void main(String[] args) {
             // get a hub config
-            HubConfig dataHubConfig = HubConfig.hubFromEnvironment("/path/to/your/project", "local");
+            HubConfig dataHubConfig = HubConfigBuilder.newHubConfigBuilder("/path/to/your/project")
+                .withPropertiesFromEnvironment("local")
+                .build();
 
             // get a flow manager
             FlowManager flowManager = new FlowManager(dataHubConfig);
