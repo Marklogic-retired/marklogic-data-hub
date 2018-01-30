@@ -38,7 +38,7 @@ declare %rapi:transaction-mode("query") function runFlow:transform(
     let $_ :=
       if ($flow) then ()
       else
-        fn:error(xs:QName("MISSING_FLOW"), "The specified flow " || $entity-name || ":" || $flow-name || " is missing.")
+        fn:error((),"RESTAPI-SRVEXERR", ("404","MISSING_FLOW", "The specified flow " || $entity-name || ":" || $flow-name || " is missing."))
 
     (: configure the options :)
     let $options as map:map := (
