@@ -246,12 +246,10 @@ public class HubTestBase {
                 getDataHub().initProject();
             }
             String properties = "mlUsername=admin\nmlPassword=admin";
-            if (properties != null) {
-                Path gradle_properties = projectDir.toPath().resolve("gradle.properties");
-                String fileContents = FileUtils.readFileToString(gradle_properties.toFile());
-                fileContents += properties;
-                FileUtils.writeStringToFile(gradle_properties.toFile(), fileContents);
-            }
+            Path gradle_properties = projectDir.toPath().resolve("gradle.properties");
+            String fileContents = FileUtils.readFileToString(gradle_properties.toFile());
+            fileContents += properties;
+            FileUtils.writeStringToFile(gradle_properties.toFile(), fileContents);
         }
         catch (IOException e) {
             throw new RuntimeException(e);
