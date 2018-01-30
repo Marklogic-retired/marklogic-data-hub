@@ -7,7 +7,7 @@ Quick Start is a single-page web application that is deployed in an embedded Tom
 
 ## Build and deploy the web app via command line
 - run ```gradle build```
-- run ```java -jar build/libs/quick-start-0.1.0.war``` (or whatever the current version is in /build/libs/)
+- run ```java -jar quick-start-2.0.3.war``` (or whatever the [current version](https://github.com/marklogic-community/marklogic-data-hub/releases) is)
 
 
 ## To pass properties to the app, either do the following (in order of priority):

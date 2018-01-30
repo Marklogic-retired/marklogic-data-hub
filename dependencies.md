@@ -8,14 +8,14 @@
 - hamcrest-junit 2.0.0.0 -> https://github.com/hamcrest/hamcrest-junit
 - easymock 3.4 -> http://easymock.org/
 - logback classis 1.1.11 -> https://logback.qos.ch/
-- mlcp 9.0.3 -> https://github.com/marklogic/marklogic-contentpump
+- mlcp 9.0.4 -> https://github.com/marklogic/marklogic-contentpump
 - spock 1.1-groovy-2.4 -> http://spockframework.org/
 
 # DHF Runtime
-- ml-gradle 3.3.1 -> https://github.com/marklogic-community/ml-gradle
-- ml-app-deployer 3.3.1 -> https://github.com/marklogic-community/ml-app-deployer
+- ml-gradle 3.4 -> https://github.com/marklogic-community/ml-gradle
+- ml-app-deployer 3.4 -> https://github.com/marklogic-community/ml-app-deployer
 - ml-javaclient-util 3.3.1 -> https://github.com/marklogic-community/ml-javaclient-util
-- marklogic-client-api 4.0.3 -> https://github.com/marklogic/java-client-api
+- marklogic-client-api 4.0.3.1 -> https://github.com/marklogic/java-client-api
 - mlcp-util 0.2.0 -> https://github.com/marklogic-community/mlcp-util
 - apache commons io 2.4 -> https://commons.apache.org/proper/commons-io/
 - apache commons text 1.1 -> https://commons.apache.org/proper/commons-text/
