@@ -3,4 +3,5 @@ include ':marklogic-data-hub'
 include ':ml-data-hub-plugin'
 include ':quick-start'
 
+include ':examples:data-integration-tests'
 project(':ml-data-hub-plugin').name = 'ml-data-hub'

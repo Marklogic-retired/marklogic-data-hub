@@ -7,6 +7,7 @@ plugins {
     id 'com.moowork.node' version '1.1.1'
 }
 
+
 repositories {
     jcenter()
     maven { url 'http://repo.spring.io/milestone' }
@@ -52,6 +53,7 @@ dependencies {
     testCompile("com.marklogic:mlcp:9.0.3") {
       exclude group: 'org.apache.avro', module: 'avro-tools'
     }
+
 }
 
 node {
@@ -247,6 +249,8 @@ task collectorTest(type: Test, dependsOn: testClasses) {
     maxHeapSize = "256m"
 }
 
+
+
 test {
     // we exclude the StreamCollectorTest
     exclude '**/StreamCollector*'
@@ -254,3 +258,4 @@ test {
     // depend on the collectorTest task above
     dependsOn tasks.collectorTest
 }
+
