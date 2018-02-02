@@ -658,7 +658,8 @@ declare function flow:run-writer(
       map:new((
         map:entry("isolation", "different-transaction"),
         map:entry("database", rfc:get-target-database()),
-        map:entry("transactionMode", "update-auto-commit")
+        map:entry("transactionMode", "update-auto-commit"),
+        map:entry("ignoreAmps", fn:true())
       )))
     }
     catch($ex) {
@@ -727,12 +728,12 @@ declare function flow:validate-entities()
                 xdmp:eval(
                   'import module namespace x = "' || $ns || '" at "' || $module-uri || '"; ' ||
                   '()',
-                  map:new(map:entry("staticCheck", fn:true()))
+                  map:new((map:entry("staticCheck", fn:true())))
                 )
               else
                 xdmp:javascript-eval(
                   'var x = require("' || $module-uri || '");',
-                  map:new(map:entry("staticCheck", fn:true()))
+                  map:new((map:entry("staticCheck", fn:true())))
                 )
           else ()
       }
@@ -764,12 +765,12 @@ declare function flow:validate-entities()
             xdmp:eval(
               'import module namespace x = "' || $ns || '" at "' || $module-uri || '"; ' ||
               '()',
-              map:new(map:entry("staticCheck", fn:true()))
+              map:new((map:entry("staticCheck", fn:true())))
             )
           else
             xdmp:javascript-eval(
               'var x = require("' || $module-uri || '");',
-              map:new(map:entry("staticCheck", fn:true()))
+              map:new((map:entry("staticCheck", fn:true())))
             )
         }
         catch($ex) {
