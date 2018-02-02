@@ -236,6 +236,7 @@ public class HubTestBase {
         hubConfig.setJobPort(jobPort);
         hubConfig.getAppConfig().setAppServicesUsername(user);
         hubConfig.getAppConfig().setAppServicesPassword(password);
+        hubConfig.getAppConfig().setHost(host);
         return hubConfig;
     }
 
