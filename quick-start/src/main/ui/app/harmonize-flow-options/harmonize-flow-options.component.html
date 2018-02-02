@@ -10,15 +10,25 @@
         <mdl-textfield floating-label type="number"
           label="Batch Size"
           name="batchSize"
-          [(ngModel)]="settings.batchSize"></mdl-textfield>
+          [(ngModel)]="settings.batchSize"
+          (input)="saveSettings()"
+          ></mdl-textfield>
       </div>
       <div class="setting">
         <mdl-textfield floating-label type="number"
           label="Thread Count"
           name="threadCount"
-          [(ngModel)]="settings.threadCount"></mdl-textfield>
+          [(ngModel)]="settings.threadCount"
+          (input)="saveSettings()"
+          ></mdl-textfield>
       </div>
-    </div>
+      <app-select-key-values
+        [title]="keyValTitle"
+        [keyVals]="keyVals"
+        (onChange)="updateKayVals($event)"
+        (onRemove)="saveSettings()"
+      ></app-select-key-values>
+</div>
     <div>
       <mdl-button mdl-button-type="raised" mdl-colored="primary" mdl-ripple (click)="runHarmonize()">Run Harmonize</mdl-button>
     </div>

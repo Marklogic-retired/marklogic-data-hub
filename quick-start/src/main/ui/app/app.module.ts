@@ -60,6 +60,9 @@ import { FacetsComponent } from './facets/facets.component';
 import { ObjectToArrayPipe } from './object-to-array.pipe';
 import { DatePipeModule } from './date-pipe/date-pipe.module';
 
+import { SelectKeyValuesComponent } from './select-key-values/select-key-values.component';
+
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -97,7 +100,8 @@ import { DatePipeModule } from './date-pipe/date-pipe.module';
     FacetsComponent,
     TitlecasePipe,
     TruncateCharactersPipe,
-    ObjectToArrayPipe
+    ObjectToArrayPipe,
+    SelectKeyValuesComponent
   ],
   entryComponents: [
     HasBugsDialogComponent,
