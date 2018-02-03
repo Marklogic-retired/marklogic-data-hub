@@ -194,9 +194,9 @@ export class EntitiesService {
     return this.http.post(url, options).subscribe(() => {});
   }
 
-  runHarmonizeFlow(flow: Flow, batchSize: number, threadCount: number) {
+  runHarmonizeFlow(flow: Flow, batchSize: number, threadCount: number, options: any) {
     const url = this.url(`/entities/${flow.entityName}/flows/harmonize/${flow.flowName}/run`);
-    return this.http.post(url, { batchSize: batchSize, threadCount: threadCount }).subscribe(() => {});
+    return this.http.post(url, { batchSize: batchSize, threadCount: threadCount, options: options }).subscribe(() => {});
   }
 
   private extractTypes() {
