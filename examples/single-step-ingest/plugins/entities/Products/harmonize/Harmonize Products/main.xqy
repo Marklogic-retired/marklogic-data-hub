@@ -50,6 +50,6 @@ declare function plugin:main(
   let $envelope := dhf:make-envelope($content, $headers, $triples, map:get($options, "dataFormat"))
   return
     (: writers must be invoked this way.
-     see: https://github.com/marklogic-community/marklogic-data-hub/wiki/dhf-lib#run-writer :)
+     https://marklogic-community.github.io/marklogic-data-hub/docs/server-side/#run-writer :)
     dhf:run-writer(xdmp:function(xs:QName("writer:write")), $id, $envelope, $options)
 };
