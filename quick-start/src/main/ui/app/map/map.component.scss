@@ -1,0 +1,45 @@
+.map-container {
+  width: 1200px;
+  padding: 0;
+}
+
+#source, #harmonized {
+  position: relative;
+  float: left;
+  width: 600px;
+  margin: 0;
+}
+
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+.prop-container {
+  width: 300px;
+  font-size: 14px;
+  border: solid 1px #5b8db3;
+  margin: 10px 0;
+  padding: 0;
+}
+
+.prop-name, .prop-type, .is-primary {
+  display: inline-block;
+  padding: 5px 10px;
+}
+
+.prop-name {
+  width: 200px;
+  font-size: 14px;
+}
+
+.prop-type {
+  width: 60px;
+  font-size: 12px;
+  color: #666;
+}
+
+.is-primary {
+  width: 30px;
+}
