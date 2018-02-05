@@ -247,4 +247,22 @@ public class JobManagerTest extends HubTestBase {
         Files.delete(exportPath);
     }
 
+    @Test
+    public void exportNoJobs() throws IOException {
+        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME,
+            HubConfig.DEFAULT_TRACE_NAME);
+
+        // if the jobs database is empty, do not produce a zip file.
+        final String EXPORT_FILENAME = "testExport.zip";
+        Path exportPath = projectDir.resolve(EXPORT_FILENAME);
+        JobManager manager = new JobManager(jobClient, traceClient);
+
+        File zipFile = exportPath.toFile();
+        assertFalse(zipFile.exists());
+
+        manager.exportJobs(exportPath, null);
+
+        assertFalse(zipFile.exists());
+    }
+
 }

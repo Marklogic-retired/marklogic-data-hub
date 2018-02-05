@@ -22,9 +22,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
 import com.marklogic.client.Transaction;
-import com.marklogic.client.datamovement.DataMovementManager;
-import com.marklogic.client.datamovement.ExportListener;
-import com.marklogic.client.datamovement.QueryBatcher;
+import com.marklogic.client.datamovement.*;
 import com.marklogic.client.document.DocumentWriteSet;
 import com.marklogic.client.document.JSONDocumentManager;
 import com.marklogic.client.ext.datamovement.consumer.WriteToZipConsumer;
@@ -128,34 +126,45 @@ public class JobManager {
             batcher = dmm.newQueryBatcher(sqb.value(sqb.jsonProperty("jobId"), jobsArray));
         }
         batcher.onUrisReady(new ExportListener().onDocumentReady(zipConsumer));
-        dmm.startJob(batcher);
+        JobTicket jobTicket = dmm.startJob(batcher);
 
         batcher.awaitCompletion();
         dmm.stopJob(batcher);
         dmm.release();
 
-        // We create this new client instead of using traceClient because the DataMovementManger relies on an
-        // internal-only endpoint, and tracing-rewriter.xml doesn't account for it. As such, we're using the
-        // Jobs app server, but pointing to the Traces database.
-        DatabaseClient client = DatabaseClientFactory.newClient(jobClient.getHost(), jobClient.getPort(),
-            traceClient.getDatabase(), jobClient.getSecurityContext());
+        JobReport report = dmm.getJobReport(jobTicket);
+        long jobCount = report.getSuccessEventsCount();
 
-        // Get the traces that go with the job(s)
-        dmm = client.newDataMovementManager();
-        if (jobsArray == null) {
-            batcher = dmm.newQueryBatcher(emptyQuery);
+        if (jobCount > 0) {
+            // We create this new client instead of using traceClient because the DataMovementManger relies on an
+            // internal-only endpoint, and tracing-rewriter.xml doesn't account for it. As such, we're using the
+            // Jobs app server, but pointing to the Traces database.
+            DatabaseClient client = DatabaseClientFactory.newClient(jobClient.getHost(), jobClient.getPort(),
+                traceClient.getDatabase(), jobClient.getSecurityContext());
+
+            // Get the traces that go with the job(s)
+            dmm = client.newDataMovementManager();
+            if (jobsArray == null) {
+                batcher = dmm.newQueryBatcher(emptyQuery);
+            }
+            else {
+                batcher = dmm.newQueryBatcher(sqb.value(sqb.element(new QName("jobId")), jobsArray));
+            }
+            batcher.onUrisReady(new ExportListener().onDocumentReady(zipConsumer));
+            dmm.startJob(batcher);
+
+            batcher.awaitCompletion();
+            dmm.stopJob(batcher);
+            dmm.release();
+
+            zipConsumer.close();
         }
         else {
-            batcher = dmm.newQueryBatcher(sqb.value(sqb.element(new QName("jobId")), jobsArray));
+            // there were no jobs, so don't produce an empty zip file
+            zipConsumer.close();
+            zipFile.delete();
         }
-        batcher.onUrisReady(new ExportListener().onDocumentReady(zipConsumer));
-        dmm.startJob(batcher);
 
-        batcher.awaitCompletion();
-        dmm.stopJob(batcher);
-        dmm.release();
-
-        zipConsumer.close();
     }
 
     public class JobDeleteResource extends ResourceManager {
