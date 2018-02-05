@@ -31,7 +31,7 @@ class ExportJobsTask extends HubTask {
             println("Data Hub is not installed.")
             return
         }
-        def exportPath = getHubConfig().hubConfigDir.resolve(exportFilename)
+        def exportPath = getHubConfig().hubConfigDir.getParent().resolve(exportFilename)
         def jobExportResponse = jobManager.exportJobs(exportPath, jobIds)
         print jobExportResponse
     }
