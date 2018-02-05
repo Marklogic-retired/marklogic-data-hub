@@ -13,7 +13,6 @@ repositories {
     maven { url 'https://developer.marklogic.com/maven2/' }
 }
 
-
 group = 'com.marklogic'
 
 sourceCompatibility = 1.8
