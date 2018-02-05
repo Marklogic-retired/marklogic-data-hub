@@ -1,9 +1,7 @@
 package com.marklogic.hub.job;
 
-import com.marklogic.hub.DataHub;
-import com.marklogic.hub.FlowManager;
-import com.marklogic.hub.HubConfig;
-import com.marklogic.hub.HubTestBase;
+import com.marklogic.client.eval.EvalResultIterator;
+import com.marklogic.hub.*;
 import com.marklogic.hub.flow.*;
 import com.marklogic.hub.scaffold.Scaffolding;
 import org.custommonkey.xmlunit.XMLUnit;
@@ -11,6 +9,8 @@ import org.junit.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -265,4 +265,29 @@ public class JobManagerTest extends HubTestBase {
         assertFalse(zipFile.exists());
     }
 
+    @Test
+    public void importJobs() throws URISyntaxException, IOException {
+        URL url = JobManagerTest.class.getClassLoader().getResource("job-manager-test/jobexport.zip");
+
+        clearDatabases(HubConfig.DEFAULT_JOB_NAME, HubConfig.DEFAULT_TRACE_NAME);
+
+        assertEquals(0, getJobDocCount());
+        assertEquals(0, getTracingDocCount());
+
+        JobManager manager = new JobManager(jobClient, traceClient);
+        manager.importJobs(Paths.get(url.toURI()));
+
+        assertEquals(2, getJobDocCount());
+        assertEquals(13, getTracingDocCount());
+
+        // Check one of the (known) trace documents to make sure it was loaded as JSON
+        EvalResultIterator evalResults = runInDatabase("xdmp:type(fn:doc('/10259510608993980485'))", HubConfig.DEFAULT_TRACE_NAME);
+        if (evalResults.hasNext()) {
+            String type = evalResults.next().getString();
+            assertEquals("object", type);
+        }
+        else {
+            fail("Failed to get the type of a trace document");
+        }
+    }
 }

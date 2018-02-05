@@ -40,7 +40,12 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Scanner;
 import java.util.TimeZone;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 public class JobManager {
 
@@ -136,11 +141,7 @@ public class JobManager {
         long jobCount = report.getSuccessEventsCount();
 
         if (jobCount > 0) {
-            // We create this new client instead of using traceClient because the DataMovementManger relies on an
-            // internal-only endpoint, and tracing-rewriter.xml doesn't account for it. As such, we're using the
-            // Jobs app server, but pointing to the Traces database.
-            DatabaseClient client = DatabaseClientFactory.newClient(jobClient.getHost(), jobClient.getPort(),
-                traceClient.getDatabase(), jobClient.getSecurityContext());
+            DatabaseClient client = getTraceDatabaseClient();
 
             // Get the traces that go with the job(s)
             dmm = client.newDataMovementManager();
@@ -165,6 +166,86 @@ public class JobManager {
             zipFile.delete();
         }
 
+    }
+
+    /**
+     * We create this new client instead of using traceClient because the DataMovementManger relies on an
+     * internal-only endpoint, and tracing-rewriter.xml doesn't account for it. As such, we're using the
+     * Jobs app server, but pointing to the Traces database.
+     * @return
+     */
+    private DatabaseClient getTraceDatabaseClient() {
+        return DatabaseClientFactory.newClient(jobClient.getHost(), jobClient.getPort(),
+                    traceClient.getDatabase(), jobClient.getSecurityContext());
+    }
+
+    /**
+     * Import Job documents and their associated Trace documents from a zip file.
+     *
+     * @param importFilePath specifies where the zip file exists
+     */
+    public void importJobs(Path importFilePath) throws IOException {
+        ZipFile importZip = new ZipFile(importFilePath.toFile());
+        Enumeration<? extends ZipEntry> entries = importZip.entries();
+
+        DataMovementManager dmm = jobClient.newDataMovementManager();
+        WriteBatcher writer = dmm
+            .newWriteBatcher()
+            .withJobName("Load jobs")
+            .withBatchSize(50);
+        JobTicket ticket = dmm.startJob(writer);
+
+        // Add each Job entry to the writer; set aside the Trace entries.
+        ArrayList<ZipEntry> traceEntries = new ArrayList<ZipEntry>();
+        DocumentMetadataHandle jobMetadata = new DocumentMetadataHandle().withCollections("job");
+        while (entries.hasMoreElements()) {
+            ZipEntry entry = entries.nextElement();
+
+            if (entry.getName().startsWith("/jobs/")) {
+                // Delimiter = \A, which is the beginning of the input
+                Scanner s = new Scanner(importZip.getInputStream(entry)).useDelimiter("\\A");
+                String entryText = s.hasNext() ? s.next() : "";
+
+                writer.add(
+                    entry.getName(),
+                    jobMetadata,
+                    new StringHandle(entryText).withFormat(Format.JSON)
+                );
+            }
+            else {
+                traceEntries.add(entry);
+            }
+        }
+
+        writer.flushAndWait();
+        dmm.stopJob(ticket);
+        dmm.release();
+
+        if (traceEntries.size() > 0) {
+            DatabaseClient client = getTraceDatabaseClient();
+            dmm = client.newDataMovementManager();
+            writer = dmm
+                .newWriteBatcher()
+                .withJobName("Load traces");
+            ticket = dmm.startJob(writer);
+
+            DocumentMetadataHandle traceMetadata = new DocumentMetadataHandle().withCollections("trace");
+
+            for (ZipEntry entry: traceEntries) {
+                // Delimiter = \A, which is the beginning of the input
+                Scanner s = new Scanner(importZip.getInputStream(entry)).useDelimiter("\\A");
+                String entryText = s.hasNext() ? s.next() : "";
+
+                writer.add(
+                    entry.getName(),
+                    traceMetadata,
+                    new StringHandle(entryText).withFormat(Format.JSON)
+                );
+            }
+            writer.flushAndWait();
+            dmm.stopJob(ticket);
+            dmm.release();
+        }
     }
 
     public class JobDeleteResource extends ResourceManager {
