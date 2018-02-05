@@ -33,8 +33,7 @@ public class TracingTest extends HubTestBase {
         URL url = TracingTest.class.getClassLoader().getResource("tracing-test");
         String path = Paths.get(url.toURI()).toFile().getAbsolutePath();
 
-        DataHub dataHub = new DataHub(getHubConfig(path));
-        dataHub.installUserModules(true);
+        installUserModules(getHubConfig(path), true);
      }
 
     @Before

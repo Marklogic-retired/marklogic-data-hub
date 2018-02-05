@@ -86,6 +86,51 @@ export class LoginPage extends AppPage {
     return element(by.css('#finished-button'));
   }
 
+  get dataHubNameLabel() {  
+    return element(by.cssContainingText('#InitIfNeededTab', 'DataHub Name'));
+  }
+
+  get dataHubName() {
+    return element(by.css('mdl-textfield[label="DataHub Name"] input'));
+  }
+
+  setDataHubName(dataHubName) {
+    this.dataHubName.clear();
+    return this.dataHubName.sendKeys(dataHubName);
+  }
+
+  get marklogicHostLabel() {  
+    return element(by.name('host'));
+  }
+
+  clickAdvancedSettings() {
+    return element(by.buttonText('Advanced Settings')).click();
+  } 
+
+  get stagingAppserverNameLabel() {
+    return element(by.name('stagingHttpName'));
+  }
+
+  get stagingAppserverName() {
+    return element(by.css('mdl-textfield[label="Staging Appserver Name"] input'));
+  }
+
+  get modulesDbName() {
+    return element(by.css('mdl-textfield[label="Modules Database Name"] input'));
+  }
+
+  clickRestoreDefaults() {
+    return element(by.buttonText('Restore Defaults')).click();
+  }
+
+  get restoreButton() {
+    return element(by.buttonText('Restore'));
+  }
+
+  clickRestore() {
+    return element(by.buttonText('Restore')).click();
+  }
+
   selectOnlineStore() {
     element(by.cssContainingText('div.entry p', '..')).click();
     element(by.cssContainingText('div.entry p', 'examples')).click();
@@ -165,6 +210,11 @@ export class LoginPage extends AppPage {
   loginAs(username: string, password: string) {
     this.enterCredentials(username, password)
     return this.clickLogin()
+  }
+
+  //login invalid credential error message
+  get loginInvalidCredentialsError() {
+    return element(by.cssContainingText('#LoginTab', 'Authentication Failed: Invalid credentials'));
   }
 }
 

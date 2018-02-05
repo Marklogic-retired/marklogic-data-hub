@@ -217,7 +217,7 @@ public class FlowManagerTest extends HubTestBase {
     public void testGetFlows() {
         clearDatabases(HubConfig.DEFAULT_MODULES_DB_NAME);
 
-        getDataHub().installHubModules();
+        installHubModules();
 
         installModule("/entities/test/harmonize/my-test-flow1/my-test-flow1.xml", "flow-manager-test/my-test-flow1/my-test-flow1.xml");
         installModule("/entities/test/harmonize/my-test-flow2/my-test-flow2.xml", "flow-manager-test/my-test-flow1/my-test-flow2.xml");

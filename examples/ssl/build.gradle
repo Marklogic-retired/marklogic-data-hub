@@ -7,7 +7,7 @@ plugins {
     // it includes ml-gradle. This plugin is what lets you
     // run DHF (Data Hub Framework) tasks from the
     // command line
-    id 'com.marklogic.ml-data-hub' version '2.0.2'
+    id 'com.marklogic.ml-data-hub' version '2.0.3'
 }
 
 ext {
@@ -83,8 +83,6 @@ task disableSSL(type: com.marklogic.gradle.task.MarkLogicTask) {
         def manageConfig = getProject().property("mlManageConfig")
         manageConfig.setScheme("http")
         manageConfig.setConfigureSimpleSsl(false)
-        manageConfig.setAdminScheme("http")
-        manageConfig.setAdminConfigureSimpleSsl(false)
         def mgClient = new com.marklogic.mgmt.ManageClient(manageConfig)
 
         def certManager = new com.marklogic.mgmt.resource.security.CertificateTemplateManager(mgClient)

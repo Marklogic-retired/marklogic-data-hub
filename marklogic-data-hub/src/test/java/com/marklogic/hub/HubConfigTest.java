@@ -34,22 +34,29 @@ public class HubConfigTest extends HubTestBase {
         try {
             File gradleProperties = new File(projectPath, "gradle.properties");
             Properties props = new Properties();
-            props.load(new FileInputStream(gradleProperties));
+            FileInputStream fis = new FileInputStream(gradleProperties);
+            props.load(fis);
+            fis.close();
             props.remove(key);
-            props.store(new FileOutputStream(gradleProperties), "");
+            FileOutputStream fos = new FileOutputStream(gradleProperties);
+            props.store(fos, "");
+            fos.close();
         }
         catch(IOException e) {
             throw new RuntimeException(e);
         }
     }
-
     private void writeProp(String key, String value) {
         try {
             File gradleProperties = new File(projectPath, "gradle.properties");
             Properties props = new Properties();
-            props.load(new FileInputStream(gradleProperties));
+            FileInputStream fis = new FileInputStream(gradleProperties);
+            props.load(fis);
+            fis.close();
             props.put(key, value);
-            props.store(new FileOutputStream(gradleProperties), "");
+            FileOutputStream fos = new FileOutputStream(gradleProperties);
+            props.store(fos, "");
+            fos.close();
         }
         catch(IOException e) {
             throw new RuntimeException(e);
@@ -59,21 +66,21 @@ public class HubConfigTest extends HubTestBase {
     @Test
     public void testLoadBalancerProps() {
         deleteProp("mlLoadBalancerHosts");
-        assertNull(getHubConfig().loadBalancerHosts);
+        assertNull(getHubConfig().getLoadBalancerHosts());
 
         writeProp("mlLoadBalancerHosts", "");
-        assertNull(getHubConfig().loadBalancerHosts);
+        assertNull(getHubConfig().getLoadBalancerHosts());
 
         writeProp("mlLoadBalancerHosts", "host1,host2");
         HubConfig config = getHubConfig();
-        assertEquals(2, config.loadBalancerHosts.length);
-        assertEquals("host1", config.loadBalancerHosts[0]);
-        assertEquals("host2", config.loadBalancerHosts[1]);
+        assertEquals(2, config.getLoadBalancerHosts().length);
+        assertEquals("host1", config.getLoadBalancerHosts()[0]);
+        assertEquals("host2", config.getLoadBalancerHosts()[1]);
 
         writeProp("mlLoadBalancerHosts", "host1");
         config = getHubConfig();
-        assertEquals(1, config.loadBalancerHosts.length);
-        assertEquals("host1", config.loadBalancerHosts[0]);
+        assertEquals(1, config.getLoadBalancerHosts().length);
+        assertEquals("host1", config.getLoadBalancerHosts()[0]);
     }
 
 }

@@ -21,7 +21,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.hub.DataHub;
 import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.HubConfigBuilder;
 import com.marklogic.hub.InstallInfo;
+import com.marklogic.hub.util.Versions;
 
 import java.io.IOException;
 import java.util.Properties;
@@ -91,7 +93,10 @@ public class EnvironmentConfig {
         Properties overrides = new Properties();
         overrides.put("mlUsername", username);
         overrides.put("mlPassword", password);
-        mlSettings = HubConfig.hubFromEnvironmentWithOverrides(this.projectDir, environment, overrides);
+        mlSettings = HubConfigBuilder.newHubConfigBuilder(this.projectDir)
+            .withPropertiesFromEnvironment(environment)
+            .withProperties(overrides)
+            .build();
         if (username != null) {
             mlSettings.getAppConfig().setAppServicesUsername(username);
             mlSettings.getAppConfig().setAppServicesPassword(password);
@@ -110,8 +115,9 @@ public class EnvironmentConfig {
     @JsonIgnore
     public void checkIfInstalled() throws IOException {
         this.installInfo = dataHub.isInstalled();
-        this.installedVersion = dataHub.getHubVersion();
-        this.marklogicVersion = dataHub.getMarkLogicVersion();
+        Versions versions = new Versions(mlSettings);
+        this.installedVersion = versions.getHubVersion();
+        this.marklogicVersion = versions.getMarkLogicVersion();
         this.runningVersion = this.mlSettings.getJarVersion();
     }
 

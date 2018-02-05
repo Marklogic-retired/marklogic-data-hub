@@ -21,7 +21,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.datamovement.*;
 import com.marklogic.client.datamovement.impl.JobTicketImpl;
-import com.marklogic.client.datamovement.impl.QueryBatcherImpl;
 import com.marklogic.client.extensions.ResourceManager;
 import com.marklogic.client.extensions.ResourceServices;
 import com.marklogic.client.io.Format;
@@ -67,7 +66,7 @@ public class FlowRunnerImpl implements FlowRunner {
     public FlowRunnerImpl(HubConfig hubConfig) {
         this.hubConfig = hubConfig;
         this.sourceClient = hubConfig.newStagingClient();
-        this.destinationDatabase = hubConfig.finalDbName;
+        this.destinationDatabase = hubConfig.getFinalDbName();
     }
 
     @Override
@@ -212,6 +211,7 @@ public class FlowRunnerImpl implements FlowRunner {
         QueryBatcher tempQueryBatcher = dataMovementManager.newQueryBatcher(uris.iterator())
             .withBatchSize(batchSize)
             .withThreadCount(threadCount)
+            .withJobId(jobId)
             .onUrisReady((QueryBatch batch) -> {
                 try {
                     FlowResource flowRunner = new FlowResource(batch.getClient(), destinationDatabase, flow);
@@ -276,11 +276,11 @@ public class FlowRunnerImpl implements FlowRunner {
             });
 
 
-        if (hubConfig.loadBalancerHosts != null && hubConfig.loadBalancerHosts.length > 0){
+        if (hubConfig.getLoadBalancerHosts() != null && hubConfig.getLoadBalancerHosts().length > 0){
             tempQueryBatcher = tempQueryBatcher.withForestConfig(
                 new FilteredForestConfiguration(
                     dataMovementManager.readForestConfig()
-                ).withWhiteList(hubConfig.loadBalancerHosts)
+                ).withWhiteList(hubConfig.getLoadBalancerHosts())
             );
         }
         QueryBatcher queryBatcher = tempQueryBatcher;
@@ -330,8 +330,7 @@ public class FlowRunnerImpl implements FlowRunner {
         });
         runningThread.start();
 
-        // hack until https://github.com/marklogic/java-client-api/issues/752 is fixed
-        return new JobTicketImpl(jobId, JobTicket.JobType.QUERY_BATCHER).withQueryBatcher((QueryBatcherImpl)queryBatcher);
+        return jobTicket;
     }
 
     private String jsonToString(JsonNode node) {

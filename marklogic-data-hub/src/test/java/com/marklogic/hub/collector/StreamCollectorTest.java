@@ -72,7 +72,7 @@ public class StreamCollectorTest extends HubTestBase {
 
         DataHub dh = new DataHub(getHubConfig());
         dh.clearUserModules();
-        dh.installUserModules();
+        installUserModules(getHubConfig(), false);
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_TRACE_NAME, HubConfig.DEFAULT_JOB_NAME);
 
         installModule("/entities/" + ENTITY + "/harmonize/testharmonize/collector.xqy", "stream-collector-test/collector.xqy");

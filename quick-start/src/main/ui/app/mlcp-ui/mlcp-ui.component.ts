@@ -62,9 +62,6 @@ export class MlcpUiComponent implements OnChanges {
     },
     'Transform Options': {
       collapsed: true
-    },
-    'Flow Options': {
-      collapsed: true
     }
   };
 
@@ -394,41 +391,12 @@ export class MlcpUiComponent implements OnChanges {
             field: 'transform_param',
             type: 'string',
             description: 'Optional extra data to pass through to a custom transformation function. Ignored if -transform_module is not specified.\nDefault: no namespace. For details, see Transforming Content During Ingestion.',
-            value: ' ',
-            readOnly: false,
+            value: `entity-name=${encodeURIComponent(entityName)},flow-name=${encodeURIComponent(flowName)}`,
+            readOnly: true,
           },
         ],
         collapsed: true,
-      },
-      {
-        category: 'Flow Options',
-        settings: [
-          {
-            label: 'Entity Name',
-            field: 'entity-name',
-            type: 'string',
-            description: 'The name of your entity being built.',
-            value: `${encodeURIComponent(entityName)}`,
-            readOnly: true,
-          },
-          {
-            label: 'Flow Name',
-            field: 'entity-name',
-            type: 'string',
-            description: 'The name of your flow being built.',
-            value: `${encodeURIComponent(flowName)}`,
-            readOnly: true,
-          },
-          {
-            label: 'Job Id',
-            field: 'jobId',
-            type: 'string',
-            description: 'The unique ID of your Input Flow job. If not specified, one will be auto-generated for you.',
-            readOnly: false,
-          },
-        ],
-        collapsed: true,
-      },
+      }
     ];
     _.each(previousOptions, (value, key) => {
       _.each(groups, (group) => {
@@ -444,7 +412,7 @@ export class MlcpUiComponent implements OnChanges {
   /* tslint:enable:max-line-length */
 
   isGroupVisible(category: string): boolean {
-    const inputFileType = this.groups[0].settings[0].value;
+    const inputFileType = this.groups[0].settings[1].value;
     if (category === 'Delimited Text Options' && inputFileType !== 'delimited_text') {
       return false;
     } else if (category === 'Delimited Json Options' && inputFileType !== 'delimited_json') {
@@ -523,16 +491,7 @@ export class MlcpUiComponent implements OnChanges {
           if (setting.value) {
             const key = setting.field;
             let value = setting.value;
-            if (setting.type !== 'boolean' && setting.type !== 'number') {
-              if(group.category !== 'Flow Options')
-                value = '"' + setting.value + '"';
-              else
-                value = setting.value;
-            }
-            if(group.category !== 'Flow Options')
-              this.addMlcpOption(options, key, value, true, true);
-            else
-              this.appendFlowOption(options, key, value)
+            this.addMlcpOption(options, key, value, true, true);
           }
         });
       }
@@ -548,24 +507,14 @@ export class MlcpUiComponent implements OnChanges {
     }
 
     if (value) {
-      options.push(value);
       if (isOtherOption) {
         this.mlcp[key] = value;
       }
+      if (value.type !== 'boolean' && value.type !== 'number'){
+        value = '"'+value+'"';
+      }
+      options.push(value);
     }
-  }
-
-  appendFlowOption(options: any, key: string, value: string):
-  void {
-    let tp = options[options.length-1];
-    let n = tp.substring(0, tp.length-1);
-    if(n.length > 2)
-      n = n + ",";
-    else
-      n = '"';
-    n = n + key + "=" + value + '"';
-    options.pop();
-    options.push(n);
   }
 
   updateSetting(setting: any, value: any): void {

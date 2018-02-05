@@ -53,7 +53,7 @@ public class EntityManagerTest extends HubTestBase {
         deleteProjectDir();
         createProjectDir();
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_MODULES_DB_NAME);
-        getDataHub().installHubModules();
+        installHubModules();
         getPropsMgr().deletePropertiesFile();
     }
 
@@ -157,7 +157,7 @@ public class EntityManagerTest extends HubTestBase {
         // shouldn't save them on round 2 because of timestamps
         assertFalse(entityManager.saveDbIndexes());
 
-        getDataHub().installUserModules();
+        installUserModules(getHubConfig(), false);
 
         // shouldn't save them on round 3 because of timestamps
         assertFalse(entityManager.saveDbIndexes());

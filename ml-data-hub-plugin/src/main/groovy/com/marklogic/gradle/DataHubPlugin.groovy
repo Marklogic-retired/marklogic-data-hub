@@ -3,8 +3,8 @@ package com.marklogic.gradle
 import com.marklogic.appdeployer.impl.SimpleAppDeployer
 import com.marklogic.gradle.task.*
 import com.marklogic.hub.DataHub
-import com.marklogic.hub.DefaultHubConfigFactory
-import com.marklogic.hub.HubConfig
+import com.marklogic.hub.HubConfigBuilder
+import com.marklogic.hub.util.Versions
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.slf4j.Logger
@@ -18,7 +18,7 @@ class DataHubPlugin implements Plugin<Project> {
 
     @Override
     void apply(Project project) {
-        if (DataHub.versionCompare(project.gradle.gradleVersion, "3.4") == -1) {
+        if (Versions.compare(project.gradle.gradleVersion, "3.4") == -1) {
             logger.error("\n\n" +
                 "********************************\n" +
                 "Hold the phone!\n\n" +
@@ -69,8 +69,18 @@ class DataHubPlugin implements Plugin<Project> {
     }
 
     void initializeProjectExtensions(Project project) {
-        HubConfig hubConfig = new DefaultHubConfigFactory(project, new ProjectPropertySource(project)).newHubConfig()
-        hubConfig.setAppConfig(project.mlAppConfig)
+        def projectDir = project.getProjectDir().getAbsolutePath()
+        def properties = new ProjectPropertySource(project).getProperties()
+        def extensions = project.getExtensions()
+
+        def hubConfig = HubConfigBuilder.newHubConfigBuilder(projectDir)
+            .withProperties(properties)
+            .withAppConfig(extensions.getByName("mlAppConfig"))
+            .withAdminConfig(extensions.getByName("mlAdminConfig"))
+            .withAdminManager(extensions.getByName("mlAdminManager"))
+            .withManageConfig(extensions.getByName("mlManageConfig"))
+            .withManageClient(extensions.getByName("mlManageClient"))
+            .build()
         project.extensions.add("hubConfig", hubConfig)
 
         dataHub = new DataHub(hubConfig)
