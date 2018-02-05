@@ -48,6 +48,7 @@ declare function hul:run-in-modules($func as function() as item()*)
   xdmp:invoke-function($func,
     <options xmlns="xdmp:eval">
       <database>{xdmp:modules-database()}</database>
+      <ignore-amps>{fn:true()}</ignore-amps>
     </options>)
 };
 

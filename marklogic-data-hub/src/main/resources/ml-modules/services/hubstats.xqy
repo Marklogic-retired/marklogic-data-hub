@@ -33,8 +33,10 @@ declare function service:get-db-count($db)
   xdmp:invoke-function(function() {
     xdmp:estimate(fn:doc())
   },
-  map:entry("database", xdmp:database($db))
-  )
+  map:new((
+    map:entry("ignoreAmps", fn:true()),
+    map:entry("database", xdmp:database($db))
+  )))
 };
 
 (:~

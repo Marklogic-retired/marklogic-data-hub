@@ -561,7 +561,7 @@ public class HubTestBase {
         }
     }
 
-    protected void installHubModules() {
+    protected static void installHubModules() {
         logger.debug("Installing Data Hub Framework modules into MarkLogic");
 
         HubConfig hubConfig = getHubConfig();

@@ -49,6 +49,7 @@ declare %rapi:transaction-mode("update") function service:post(
         else
           <update>true</update>
       }
+      <ignore-amps>{fn:true()}</ignore-amps>
       <isolation>same-statement</isolation>
     </options>
   return

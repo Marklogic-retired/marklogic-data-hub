@@ -11,7 +11,7 @@ function write(id, envelope, options) {
   if (options.writerGoBoom  === true && (id === '/input-2.json' || id === '/input-2.xml')) {
     fn.error(xs.QName("WRITER-BOOM"), "I BLEW UP");
   }
-  xdmp.documentInsert("/options-test.json", {
+  xdmp.documentInsert("/options-test" + id.replace('/input', '').replace(/\.(json|xml)/, '') + '.json', {
     collector: options.collectorTest,
     content: options.contentTest,
     headers: options.headersTest,
