@@ -1,0 +1,25 @@
+<div layout-padding layout="column" layout-align="center center" class="map-page">
+
+  <div class="map-container">
+
+    <div id="source">
+      <h4>Source</h4>
+      <ul>
+        <li *ngFor="let key of srcKeys; let i = index;" class="prop-container" on-mouseover='overEvent(i, $event)'>
+          <span class="prop-name">{{key}}</span>
+        </li>
+      </ul>
+    </div>
+
+    <div id="harmonized">
+      <h4>Harmonized</h4>
+      <ul>
+        <li *ngFor="let key of harmKeys" class="prop-container">
+          <span class="prop-name">{{key}}</span><span class="prop-type">{{harm.definitions[harm.info.title].properties[key].datatype}}</span><span class="is-primary" *ngIf="key === harmPrimary"><i class="fa fa-key"></i></span>
+        </li>
+      </ul>
+    </div>
+
+  </div>
+
+</div>
