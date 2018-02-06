@@ -34,6 +34,28 @@ export class FlowPage extends AppPage {
     return element(by.cssContainingText('mdl-list-item td', 'Create Structure from Entity Definition'));
   }
 
+  addFlowOptionsButton() {
+    return element(by.css('.key-value-add > mdl-button'));
+  }
+  
+  removeFlowOptionsButton() {
+    return element(by.css('.key-value-remove > mdl-button'));
+  }
+  
+  getKeyFlowOptionsByPosition(position: number){
+    return element(by.css('app-select-key-values > div:nth-child(' + (position + 1) + ') > div:nth-child(1) > mdl-textfield > div > input'));
+  }
+
+  getValueFlowOptionsByPosition(position: number){
+    return element(by.css('app-select-key-values > div:nth-child(' + (position + 1) + ') > div:nth-child(2) > mdl-textfield > div > input'));
+  }
+
+  setKeyValueFlowOptionsByPosition(position: number, key: string, value: string) {
+    this.getKeyFlowOptionsByPosition(position).clear();
+    this.getKeyFlowOptionsByPosition(position).sendKeys(key);
+    this.getValueFlowOptionsByPosition(position).clear();
+    this.getValueFlowOptionsByPosition(position).sendKeys(value);
+  }
   get newFlowName() {
     return element(by.css('#flowTypeInput input'));
   }
