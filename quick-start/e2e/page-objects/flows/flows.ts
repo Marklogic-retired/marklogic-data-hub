@@ -38,8 +38,8 @@ export class FlowPage extends AppPage {
     return element(by.css('.key-value-add > mdl-button'));
   }
   
-  removeFlowOptionsButton() {
-    return element(by.css('.key-value-remove > mdl-button'));
+  removeFlowOptionsByPositionButton(position: number) {
+    return element(by.css('app-select-key-values > div:nth-child(' + (position + 1) + ') > .key-value-remove > mdl-button'));
   }
   
   getKeyFlowOptionsByPosition(position: number){
@@ -56,6 +56,11 @@ export class FlowPage extends AppPage {
     this.getValueFlowOptionsByPosition(position).clear();
     this.getValueFlowOptionsByPosition(position).sendKeys(value);
   }
+
+  getFlowOptionsCount() {
+    return element.all(by.css('app-select-key-values .key-value-remove')).count();
+  }
+
   get newFlowName() {
     return element(by.css('#flowTypeInput input'));
   }
