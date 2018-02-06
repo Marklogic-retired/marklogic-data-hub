@@ -111,7 +111,7 @@ public class JobManager {
         File zipFile = exportFilePath.toFile();
         WriteToZipConsumer zipConsumer = new WriteToZipConsumer(zipFile);
 
-        String[] jobsArray = jobIds != null ? jobsArray = jobIds.split(",") : null;
+        String[] jobsArray = jobIds != null ? jobIds.split(",") : null;
 
         QueryManager qm = jobClient.newQueryManager();
 
