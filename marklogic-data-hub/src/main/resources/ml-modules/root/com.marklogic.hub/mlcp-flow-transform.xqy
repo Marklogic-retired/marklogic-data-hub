@@ -100,5 +100,7 @@ declare function mlcpFlow:run-flow(
     map:entry("uri", $uri),
     map:entry("content", $content),
     map:entry("options", $options)
-  )))
+  )),
+    map:entry("ignoreAmps", fn:true())
+  )
 };
