@@ -316,7 +316,8 @@ declare %private function trace:write-error-trace(
         map:new((
           map:entry("ignoreAmps", fn:true()),
           map:entry("database", xdmp:database($config:TRACE-DATABASE)),
-          map:entry("transactionMode", "update-auto-commit")
+          map:entry("commit", "auto"),
+          map:entry("update", "true")
         )))
     )
     else ()

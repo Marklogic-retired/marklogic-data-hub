@@ -700,7 +700,8 @@ declare function flow:run-writers(
     map:entry("ignoreAmps", fn:true()),
     map:entry("isolation", "different-transaction"),
     map:entry("database", rfc:get-target-database()),
-    map:entry("transactionMode", "update-auto-commit")
+    map:entry("commit", "auto"),
+    map:entry("update", "true")
   )))
   return
     xdmp:set($trace:current-trace-settings, $updated-settings)
