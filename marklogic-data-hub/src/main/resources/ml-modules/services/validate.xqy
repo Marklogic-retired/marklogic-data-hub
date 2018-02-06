@@ -80,10 +80,7 @@ declare %rapi:transaction-mode("update") function post(
           map:entry("module-uri", $module-uri),
           map:entry("content", $input)
         )),
-        map:new((
-          map:entry("ignoreAmps", fn:true()),
-          map:entry("database", xdmp:modules-database())
-        ))
+        map:new((map:entry("database", xdmp:modules-database())))
       )
     }
     catch($ex) {
@@ -97,16 +94,13 @@ declare %rapi:transaction-mode("update") function post(
             'import module namespace x = "' || $ns || '" at "' || $module-uri || '"; ' ||
             '()',
             map:new((
-              map:entry("ignoreAmps", fn:true()),
-              map:entry("staticCheck", fn:true()),
-              map:entry("ignoreAmps", fn:true())
+              map:entry("staticCheck", fn:true())
             ))
           )
         else
           xdmp:javascript-eval(
             'var x = require("' || $module-uri || '");',
             map:new((
-              map:entry("ignoreAmps", fn:true()),
               map:entry("staticCheck", fn:true())
             ))
           )

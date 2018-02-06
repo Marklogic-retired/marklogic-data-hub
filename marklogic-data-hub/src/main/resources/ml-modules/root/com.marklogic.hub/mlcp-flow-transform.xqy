@@ -92,12 +92,7 @@ declare function mlcpFlow:run-flow(
     declare variable $content external;
     declare variable $options external;
 
-    flow:run-flow($jobId, $flow, $uri, $content, $options),
-
-    (: write the trace for the current identifier :)
-    let $item-context := map:get($flow:context-queue, $uri)
-    return
-      trace:write-trace($item-context)
+    flow:run-flow($jobId, $flow, $uri, $content, $options)
   ',
   map:new((
     map:entry("jobId", $jobId),
@@ -106,5 +101,6 @@ declare function mlcpFlow:run-flow(
     map:entry("content", $content),
     map:entry("options", $options)
   )),
-  map:entry("ignoreAmps", fn:true()))
+    map:entry("ignoreAmps", fn:true())
+  )
 };

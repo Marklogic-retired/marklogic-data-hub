@@ -35,10 +35,7 @@ declare function debug:enable($enabled as xs:boolean)
       "hub-core-module")
     ',
     map:new((map:entry("enabled", $enabled))),
-    map:new((
-      map:entry("ignoreAmps", fn:true()),
-      map:entry("database", xdmp:modules-database())
-    ))
+    map:new((map:entry("database", xdmp:modules-database()), map:entry("ignoreAmps", fn:true())))
   ),
   hul:invalidate-field-cache("debugging-enabled")
 };
@@ -60,10 +57,8 @@ declare function debug:on() as xs:boolean
           ("unfiltered", "score-zero", "unchecked", "unfaceted")
         )
       )
-    ',(),
-    map:new((
-      map:entry("database", xdmp:modules-database())
-    )))
+    ',(), map:new((map:entry("database", xdmp:modules-database()), map:entry("ignoreAmps", fn:true())))
+    )
   },
   xs:dayTimeDuration("PT1M"))
 };

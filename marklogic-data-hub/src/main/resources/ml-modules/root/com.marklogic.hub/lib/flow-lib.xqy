@@ -801,18 +801,12 @@ declare function flow:validate-entities()
                 xdmp:eval(
                   'import module namespace x = "' || $ns || '" at "' || $module-uri || '"; ' ||
                   '()',
-                  map:new((
-                    map:entry("ignoreAmps", fn:true()),
-                    map:entry("staticCheck", fn:true())
-                  ))
+                  map:new((map:entry("staticCheck", fn:true())))
                 )
               else
                 xdmp:javascript-eval(
                   'var x = require("' || $module-uri || '");',
-                  map:new((
-                    map:entry("ignoreAmps", fn:true()),
-                    map:entry("staticCheck", fn:true())
-                  ))
+                  map:new((map:entry("staticCheck", fn:true())))
                 )
           else ()
       }
@@ -844,18 +838,12 @@ declare function flow:validate-entities()
             xdmp:eval(
               'import module namespace x = "' || $ns || '" at "' || $module-uri || '"; ' ||
               '()',
-              map:new((
-                map:entry("ignoreAmps", fn:true()),
-                map:entry("staticCheck", fn:true())
-              ))
+           map:new((map:entry("staticCheck", fn:true())))
             )
           else
             xdmp:javascript-eval(
               'var x = require("' || $module-uri || '");',
-              map:new((
-                map:entry("ignoreAmps", fn:true()),
-                map:entry("staticCheck", fn:true())
-              ))
+              map:new((map:entry("staticCheck", fn:true())))
             )
         }
         catch($ex) {
