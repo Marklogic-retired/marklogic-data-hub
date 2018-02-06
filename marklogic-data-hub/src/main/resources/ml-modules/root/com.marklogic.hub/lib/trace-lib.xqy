@@ -43,9 +43,6 @@ declare option xdmp:mapping "false";
 (: new trace-settings are initialized for each transaction :)
 declare variable $current-trace-settings := map:map();
 
-(: a new trace is initialized for each transaction :)
-(:declare %private variable $current-trace := trace:new-trace();:)
-
 declare function trace:new-trace() as map:map
 {
   map:new((
