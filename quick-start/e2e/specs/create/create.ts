@@ -488,6 +488,9 @@ export default function() {
       flowPage.setKeyValueFlowOptionsByPosition(1, 'hello', 'world');
       flowPage.setKeyValueFlowOptionsByPosition(2, 'myNumber', '250.456');
       flowPage.setKeyValueFlowOptionsByPosition(3, 'myDate', '2017-03-07');
+    });
+
+    it ('should retain flow options when moving around', function() {
       //move to other tab and go back to flows tab
       console.log('going to the other tab and back');
       flowPage.entitiesTab.click();
@@ -495,12 +498,50 @@ export default function() {
       //verify the options are retained
       console.log('verify the flow options');
       flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE').click();
+      browser.sleep(3000);
       expect(flowPage.getKeyFlowOptionsByPosition(1).getAttribute('ng-reflect-model')).toEqual('hello');
       expect(flowPage.getValueFlowOptionsByPosition(1).getAttribute('ng-reflect-model')).toEqual('world');
       expect(flowPage.getKeyFlowOptionsByPosition(2).getAttribute('ng-reflect-model')).toEqual('myNumber');
       expect(flowPage.getValueFlowOptionsByPosition(2).getAttribute('ng-reflect-model')).toEqual('250.456');
       expect(flowPage.getKeyFlowOptionsByPosition(3).getAttribute('ng-reflect-model')).toEqual('myDate');
       expect(flowPage.getValueFlowOptionsByPosition(3).getAttribute('ng-reflect-model')).toEqual('2017-03-07');
+      //move to other harmonize flow and go back to the flow
+      console.log('going to the other flow and back');
+      flowPage.entityDisclosure('TestEntity').click();
+      flowPage.getFlow('TestEntity', 'sjs json HARMONIZE', 'HARMONIZE').click();
+      flowPage.entityDisclosure('Product').click();
+      flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE').click();
+      //verify the options are retained
+      console.log('verify the flow options');
+      expect(flowPage.getKeyFlowOptionsByPosition(1).getAttribute('ng-reflect-model')).toEqual('hello');
+      expect(flowPage.getValueFlowOptionsByPosition(1).getAttribute('ng-reflect-model')).toEqual('world');
+      expect(flowPage.getKeyFlowOptionsByPosition(2).getAttribute('ng-reflect-model')).toEqual('myNumber');
+      expect(flowPage.getValueFlowOptionsByPosition(2).getAttribute('ng-reflect-model')).toEqual('250.456');
+      expect(flowPage.getKeyFlowOptionsByPosition(3).getAttribute('ng-reflect-model')).toEqual('myDate');
+      expect(flowPage.getValueFlowOptionsByPosition(3).getAttribute('ng-reflect-model')).toEqual('2017-03-07');
+    });
+
+    it ('should remove the flow options', function() {
+      //add one option
+      console.log('add one option');
+      flowPage.addFlowOptionsButton().click();
+      flowPage.setKeyValueFlowOptionsByPosition(4, 'removeMe', 'gone');
+      flowPage.removeFlowOptionsByPositionButton(4).click();
+      //verify the removed option
+      console.log('verify the removed option');
+      flowPage.entitiesTab.click();
+      entityPage.flowsTab.click();
+      flowPage.entityDisclosure('Product').click();
+      flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE').click();
+      expect(flowPage.getKeyFlowOptionsByPosition(3).getAttribute('ng-reflect-model')).toEqual('myDate');
+      expect(flowPage.getValueFlowOptionsByPosition(3).getAttribute('ng-reflect-model')).toEqual('2017-03-07');
+      //verify the flow options count
+      console.log('verify the flow options count');
+      flowPage.getFlowOptionsCount().then(function(flowOptions){expect(flowOptions === 3)});
+    });
+
+    it ('should open the TestEntity disclosure', function() {
+      flowPage.entityDisclosure('TestEntity').click();
     });
   });
 }
