@@ -47,6 +47,9 @@ declare variable $ENTITIES-DIR := "/entities/";
 
 declare variable $PLUGIN-NS := "http://marklogic.com/data-hub/plugins";
 
+declare variable $context-queue := map:map();
+declare variable $writer-queue := map:map();
+
 declare function flow:get-module-ns(
   $type as xs:string) as xs:string?
 {
@@ -185,14 +188,17 @@ declare function flow:run-collector(
   (: assert that we are in query mode :)
   let $_ts as xs:unsignedLong := xdmp:request-timestamp()
 
+  let $item-context := rfc:new-item-context()
+    => rfc:with-options($options)
+    => rfc:with-trace(trace:new-trace())
+
   let $_ := trace:set-plugin-label("collector")
 
-  (: configure the run context :)
+  (: configure the global run context :)
   let $_ := (
     rfc:with-job-id($job-id),
     rfc:with-flow($flow),
-    rfc:with-module-uri($flow/hub:collector/@module),
-    rfc:with-options($options)
+    rfc:with-module-uri($flow/hub:collector/@module)
   )
 
   let $func := flow:make-function(
@@ -207,13 +213,13 @@ declare function flow:run-collector(
     }
     catch($ex) {
       debug:log(xdmp:describe($ex, (), ())),
-      trace:error-trace($ex, xdmp:elapsed-time() - $before),
+      trace:error-trace($item-context, $ex, xdmp:elapsed-time() - $before),
       xdmp:rethrow()
     }
   (: log and write the trace :)
   let $_ := (
-    trace:plugin-trace($resp, xdmp:elapsed-time() - $before),
-    trace:write-trace()
+    trace:plugin-trace($item-context, $resp, xdmp:elapsed-time() - $before),
+    trace:write-trace($item-context)
   )
   return
     $resp
@@ -255,23 +261,27 @@ declare function flow:run-flow(
   (: assert that we are in query mode :)
   let $_must_run_in_query_mode as xs:unsignedLong := xdmp:request-timestamp()
 
-  (: configure the run context :)
+  (: configure the global context :)
   let $_ := (
     rfc:with-job-id($job-id),
     rfc:with-flow($flow),
-    rfc:with-id($identifier),
-    rfc:with-content(
-      if ($content instance of document-node()) then
-        $content/node()
-      else $content
-    ),
-    rfc:with-options($options),
     map:get($options, "target-database") ! rfc:with-target-database(.)
   )
 
+  (: configure the item context :)
+  let $item-context := rfc:new-item-context()
+    => rfc:with-id($identifier)
+    => rfc:with-content(
+        if ($content instance of document-node()) then
+          $content/node()
+        else $content
+      )
+    => rfc:with-options($options)
+    => rfc:with-trace(trace:new-trace())
+
   (: run the users main.(sjs|xqy) :)
   return
-    flow:run-main($flow/hub:main)
+    flow:run-main($item-context, $flow/hub:main)
 };
 
 declare function flow:clean-data($resp, $destination, $data-format)
@@ -581,6 +591,7 @@ declare function flow:set-default-options(
 };
 
 declare function flow:run-main(
+  $item-context as map:map,
   $main as element(hub:main))
 {
   (: sanity check on required info :)
@@ -592,16 +603,15 @@ declare function flow:run-main(
   let $_ := rfc:with-module-uri($module-uri)
   let $func := flow:make-function($main/@code-format, "main", $module-uri)
   let $before := xdmp:elapsed-time()
+  let $_ := map:put($context-queue, rfc:get-id($item-context), $item-context)
   let $resp := try {
-    let $options := rfc:get-options()
+    let $options := rfc:get-options($item-context)
     let $_ := map:set-javascript-by-ref($options, fn:true())
     let $resp :=
       if (rfc:get-flow-type() eq $consts:HARMONIZE_FLOW) then
-        $func(rfc:get-id(), $options)
+        $func(rfc:get-id($item-context), $options)
       else
-        $func(rfc:get-id(), rfc:get-content(), $options)
-    (: write the trace for the current identifier :)
-    let $_ := trace:write-trace()
+        $func(rfc:get-id($item-context), rfc:get-content($item-context), $options)
     return
       $resp
   }
@@ -614,13 +624,87 @@ declare function flow:run-main(
       debug:log(xdmp:describe($ex, (), ())),
 
       (: log the trace event for main :)
-      trace:set-plugin-label("main"),
-      trace:error-trace($ex, xdmp:elapsed-time() - $before)
+      trace:set-plugin-label(rfc:get-trace($item-context), "main"),
+      trace:error-trace($item-context, $ex, xdmp:elapsed-time() - $before)
     ),
     xdmp:rethrow()
   }
   return
     $resp
+};
+
+declare function flow:queue-writer(
+  $writer-function,
+  $identifier as xs:string,
+  $envelope as item(),
+  $options as map:map)
+{
+  $writer-queue =>
+    map:with($identifier,
+      map:map()
+        => map:with("writer-function", $writer-function)
+        => map:with("envelope", $envelope)
+        => map:with("options", $options)
+    )
+};
+
+declare function flow:run-writers(
+  $identifiers as xs:string*)
+{
+  let $updated-settings := xdmp:eval('
+    import module namespace flow = "http://marklogic.com/data-hub/flow-lib"
+      at "/com.marklogic.hub/lib/flow-lib.xqy";
+
+    import module namespace rfc = "http://marklogic.com/data-hub/run-flow-context"
+      at "/com.marklogic.hub/lib/run-flow-context.xqy";
+
+    import module namespace trace = "http://marklogic.com/data-hub/trace"
+      at "/com.marklogic.hub/lib/trace-lib.xqy";
+
+    declare variable $identifiers external;
+    declare variable $context-queue external;
+    declare variable $writer-queue external;
+    declare variable $rfc-context external;
+    declare variable $current-trace-settings external;
+
+    declare option xdmp:mapping "false";
+
+    let $_ := xdmp:set($rfc:context, $rfc-context)
+    let $_ := xdmp:set($trace:current-trace-settings, $current-trace-settings)
+    let $_ :=
+      for $identifier in $identifiers
+      let $item-context := map:get($context-queue, $identifier)
+      let $writer-info := map:get($writer-queue, $identifier)
+      return (
+        if (fn:exists($writer-info)) then
+          flow:run-writer(
+            map:get($writer-info, "writer-function"),
+            $item-context,
+            $identifier,
+            map:get($writer-info, "envelope"),
+            map:get($writer-info, "options")
+          )
+        else ()
+      )
+    return
+      $trace:current-trace-settings
+  ',
+  map:new((
+    map:entry("identifiers", $identifiers),
+    map:entry("context-queue", $context-queue),
+    map:entry("writer-queue", $writer-queue),
+    map:entry("rfc-context", $rfc:context),
+    map:entry("current-trace-settings", $trace:current-trace-settings)
+  )),
+  map:new((
+    map:entry("ignoreAmps", fn:true()),
+    map:entry("isolation", "different-transaction"),
+    map:entry("database", rfc:get-target-database()),
+    map:entry("commit", "auto"),
+    map:entry("update", "true")
+  )))
+  return
+    xdmp:set($trace:current-trace-settings, $updated-settings)
 };
 
 (:~
@@ -634,40 +718,30 @@ declare function flow:run-main(
  :)
 declare function flow:run-writer(
   $writer-function,
+  $item-context as map:map,
   $identifier as xs:string,
   $envelope as item(),
   $options as map:map)
 {
   let $before := xdmp:elapsed-time()
+  let $trace := rfc:get-trace($item-context)
+  let $current-trace := rfc:get-trace($item-context)
+  let $_ := trace:set-plugin-label($current-trace, "writer")
+  let $_ := trace:reset-plugin-input($current-trace)
+  let $_ := trace:set-plugin-input($current-trace, "envelope", $envelope)
   let $resp :=
     try {
-      xdmp:eval('
-        declare variable $func external;
-        declare variable $identifier external;
-        declare variable $envelope external;
-        declare variable $options external;
+        $writer-function($identifier, $envelope, $options),
 
-        $func($identifier, $envelope, $options)
-      ',
-      map:new((
-        map:entry("func", $writer-function),
-        map:entry("identifier", $identifier),
-        map:entry("envelope", $envelope),
-        map:entry("options", $options)
-      )),
-      map:new((
-        map:entry("isolation", "different-transaction"),
-        map:entry("database", rfc:get-target-database()),
-        map:entry("transactionMode", "update-auto-commit")
-      )))
+        (: write the trace for the current identifier :)
+        trace:write-trace($item-context)
     }
     catch($ex) {
       debug:log(xdmp:describe($ex, (), ())),
-      trace:error-trace($ex, xdmp:elapsed-time() - $before),
-      fn:error(xs:QName("PLUGIN-ERROR"), "error in writer", $ex)
+      trace:error-trace($item-context, $ex, xdmp:elapsed-time() - $before)
     }
   let $duration := xdmp:elapsed-time() - $before
-  let $_ := trace:plugin-trace((), xdmp:elapsed-time() - $before)
+  let $_ := trace:plugin-trace($item-context, (), xdmp:elapsed-time() - $before)
   return
     $resp
 };
@@ -727,12 +801,12 @@ declare function flow:validate-entities()
                 xdmp:eval(
                   'import module namespace x = "' || $ns || '" at "' || $module-uri || '"; ' ||
                   '()',
-                  map:new(map:entry("staticCheck", fn:true()))
+                  map:new((map:entry("staticCheck", fn:true())))
                 )
               else
                 xdmp:javascript-eval(
                   'var x = require("' || $module-uri || '");',
-                  map:new(map:entry("staticCheck", fn:true()))
+                  map:new((map:entry("staticCheck", fn:true())))
                 )
           else ()
       }
@@ -764,12 +838,12 @@ declare function flow:validate-entities()
             xdmp:eval(
               'import module namespace x = "' || $ns || '" at "' || $module-uri || '"; ' ||
               '()',
-              map:new(map:entry("staticCheck", fn:true()))
+           map:new((map:entry("staticCheck", fn:true())))
             )
           else
             xdmp:javascript-eval(
               'var x = require("' || $module-uri || '");',
-              map:new(map:entry("staticCheck", fn:true()))
+              map:new((map:entry("staticCheck", fn:true())))
             )
         }
         catch($ex) {
@@ -804,13 +878,13 @@ declare function flow:safe-run($func)
     try {
       let $resp := $func()
       let $duration := xdmp:elapsed-time() - $before
-      let $_ := trace:plugin-trace($resp, $duration)
+      let $_ := trace:plugin-trace($rfc:item-context, $resp, $duration)
       return
         $resp
     }
     catch($ex) {
       debug:log(xdmp:describe($ex, (), ())),
-      trace:error-trace($ex, xdmp:elapsed-time() - $before),
+      trace:error-trace($rfc:item-context, $ex, xdmp:elapsed-time() - $before),
       fn:error(xs:QName("PLUGIN-ERROR"), "error in a plugin", $ex)
     }
 };

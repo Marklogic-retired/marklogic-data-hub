@@ -97,10 +97,7 @@ declare function dhf:run-writer(
   $envelope as item(),
   $options as map:map)
 {
-  trace:set-plugin-label("writer"),
-  trace:reset-plugin-input(),
-  trace:set-plugin-input("envelope", $envelope),
-  flow:run-writer($writer-function, $id, $envelope, $options)
+  flow:queue-writer($writer-function, $id, $envelope, $options)
 };
 
 (:

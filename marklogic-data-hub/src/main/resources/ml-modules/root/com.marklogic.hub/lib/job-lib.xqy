@@ -29,6 +29,7 @@ declare function job:delete-jobs-and-traces($job-ids as xs:string*)
       }
       <isolation>different-transaction</isolation>
       <database>{xdmp:database($config:TRACE-DATABASE)}</database>
+      <ignore-amps>{fn:true()}</ignore-amps>
     </options>
   let $deleted-traces :=
     xdmp:invoke-function(
