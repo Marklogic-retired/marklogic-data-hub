@@ -3,6 +3,7 @@ package com.marklogic.quickstart.web;
 
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubConfigBuilder;
+import com.marklogic.hub.impl.HubConfigImpl;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,10 @@ public class HubConfigJsonTest {
     protected static final String PROJECT_PATH = "ye-old-project";
 
     @Autowired
-    private JacksonTester<HubConfig> json;
+    private JacksonTester<HubConfig> jsonSerializer;
+
+    @Autowired
+    private JacksonTester<HubConfigImpl> jsonDeserializer;
 
     @Test
     public void testDeserialize() throws IOException {
@@ -60,28 +64,10 @@ public class HubConfigJsonTest {
             "  \"customForestPath\": \"forests\",\n" +
             "  \"modulePermissions\": \"rest-reader,read,rest-writer,insert,rest-writer,update,rest-extension-user,execute\",\n" +
             "  \"projectDir\": \"" + projectPath + "\",\n" +
-            "  \"jarVersion\": \"0.1.2\",\n" +
-            "  \"userModulesDeployTimestampFile\": \"" + projectPath + "/.tmp/user-modules-deploy-timestamps.properties\",\n" +
-            "  \"hubEntitiesDir\": \"file://" + projectPath + "/plugins/entities\",\n" +
-            "  \"entityDatabaseDir\": \"file://" + projectPath + "/entity-config/databases\",\n" +
-            "  \"hubModulesDeployTimestampFile\": \"" + projectPath + "/.tmp/hub-modules-deploy-timestamps.properties\",\n" +
-            "  \"userContentDeployTimestampFile\": \"" + projectPath + "/.tmp/user-content-deploy-timestamps.properties\",\n" +
-            "  \"hubPluginsDir\": \"file://" + projectPath + "/plugins\",\n" +
-            "  \"hubConfigDir\": \"file://" + projectPath + "/hub-internal-config\",\n" +
-            "  \"hubDatabaseDir\": \"file://" + projectPath + "/hub-internal-config/databases\",\n" +
-            "  \"hubServersDir\": \"file://" + projectPath + "/hub-internal-config/servers\",\n" +
-            "  \"hubSecurityDir\": \"file://" + projectPath + "/hub-internal-config/security\",\n" +
-            "  \"userSecurityDir\": \"file://" + projectPath + "/user-config/security\",\n" +
-            "  \"userConfigDir\": \"file://" + projectPath + "/user-config\",\n" +
-            "  \"userDatabaseDir\": \"file://" + projectPath + "/user-config/databases\",\n" +
-            "  \"userServersDir\": \"file://" + projectPath + "/user-config/servers\",\n" +
-            "  \"hubMimetypesDir\": \"file://" + projectPath + "/hub-internal-config/mimetypes\"\n" +
+            "  \"jarVersion\": \"0.1.2\"\n" +
             "}";
         HubConfig expected = HubConfigBuilder.newHubConfigBuilder(PROJECT_PATH).withPropertiesFromEnvironment().build();
-
-
-        assertThat(this.json.parseObject(content).getHubPluginsDir())
-            .isEqualTo(expected.getHubPluginsDir());
+        assertThat(this.jsonDeserializer.parseObject(content).getHubPluginsDir()).isEqualTo(expected.getHubPluginsDir());
     }
 
     @Test
@@ -120,23 +106,9 @@ public class HubConfigJsonTest {
             "  \"customForestPath\": \"forests\",\n" +
             "  \"modulePermissions\": \"rest-reader,read,rest-writer,insert,rest-writer,update,rest-extension-user,execute\",\n" +
             "  \"projectDir\": \"" + projectPath + "\",\n" +
-            "  \"jarVersion\": \"" + hubConfig.getJarVersion() + "\",\n" +
-            "  \"userModulesDeployTimestampFile\": \"" + projectPath + "/.tmp/user-modules-deploy-timestamps.properties\",\n" +
-            "  \"hubEntitiesDir\": \"file://" + projectPath + "/plugins/entities\",\n" +
-            "  \"entityDatabaseDir\": \"file://" + projectPath + "/entity-config/databases\",\n" +
-            "  \"hubModulesDeployTimestampFile\": \"" + projectPath + "/.tmp/hub-modules-deploy-timestamps.properties\",\n" +
-            "  \"userContentDeployTimestampFile\": \"" + projectPath + "/.tmp/user-content-deploy-timestamps.properties\",\n" +
-            "  \"hubPluginsDir\": \"file://" + projectPath + "/plugins\",\n" +
-            "  \"hubConfigDir\": \"file://" + projectPath + "/hub-internal-config\",\n" +
-            "  \"hubDatabaseDir\": \"file://" + projectPath + "/hub-internal-config/databases\",\n" +
-            "  \"hubServersDir\": \"file://" + projectPath + "/hub-internal-config/servers\",\n" +
-            "  \"hubSecurityDir\": \"file://" + projectPath + "/hub-internal-config/security\",\n" +
-            "  \"userSecurityDir\": \"file://" + projectPath + "/user-config/security\",\n" +
-            "  \"userConfigDir\": \"file://" + projectPath + "/user-config\",\n" +
-            "  \"userDatabaseDir\": \"file://" + projectPath + "/user-config/databases\",\n" +
-            "  \"userServersDir\": \"file://" + projectPath + "/user-config/servers\",\n" +
-            "  \"hubMimetypesDir\": \"file://" + projectPath + "/hub-internal-config/mimetypes\"\n" +
+            "  \"jarVersion\": \"" + hubConfig.getJarVersion() + "\"\n" +
             "}";
-        assertThat(json.write(hubConfig)).isEqualToJson(expected);
+        System.out.println(jsonSerializer.write(hubConfig).getJson());
+        assertThat(jsonSerializer.write(hubConfig)).isEqualToJson(expected);
     }
 }
