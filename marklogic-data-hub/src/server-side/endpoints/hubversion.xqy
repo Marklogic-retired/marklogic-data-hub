@@ -18,13 +18,13 @@ xquery version "1.0-ml";
 module namespace service = "http://marklogic.com/rest-api/resource/hubversion";
 
 import module namespace config = "http://marklogic.com/data-hub/config"
-  at "/com.marklogic.hub/lib/config.xqy";
+  at "/MarkLogic/data-hub-framework/impl/config.xqy";
 
 import module namespace debug = "http://marklogic.com/data-hub/debug"
-  at "/com.marklogic.hub/lib/debug-lib.xqy";
+  at "/MarkLogic/data-hub-framework/impl/debug-lib.xqy";
 
 import module namespace perf = "http://marklogic.com/data-hub/perflog-lib"
-  at "/com.marklogic.hub/lib/perflog-lib.xqy";
+  at "/MarkLogic/data-hub-framework/impl/perflog-lib.xqy";
 
 declare option xdmp:mapping "false";
 

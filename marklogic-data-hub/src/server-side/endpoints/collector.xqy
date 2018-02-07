@@ -16,13 +16,13 @@
 xquery version "1.0-ml";
 
 import module namespace consts = "http://marklogic.com/data-hub/consts"
-  at "/MarkLogic/data-hub-framework/lib/consts.xqy";
+  at "/MarkLogic/data-hub-framework/impl/consts.xqy";
 
 import module namespace debug = "http://marklogic.com/data-hub/debug"
-  at "/MarkLogic/data-hub-framework/lib/debug-lib.xqy";
+  at "/MarkLogic/data-hub-framework/impl/debug-lib.xqy";
 
 import module namespace flow = "http://marklogic.com/data-hub/flow-lib"
-  at "/MarkLogic/data-hub-framework/lib/flow-lib.xqy";
+  at "/MarkLogic/data-hub-framework/impl/flow-lib.xqy";
 
 import module namespace parameters = "http://marklogic.com/rest-api/endpoints/parameters"
   at "/MarkLogic/rest-api/endpoints/parameters.xqy";

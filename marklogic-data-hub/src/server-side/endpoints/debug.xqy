@@ -15,36 +15,20 @@
 :)
 xquery version "1.0-ml";
 
-module namespace service = "http://marklogic.com/rest-api/resource/debug";
+import module namespace parameters = "http://marklogic.com/rest-api/endpoints/parameters"
+    at "/MarkLogic/rest-api/endpoints/parameters.xqy";
 
 import module namespace debug = "http://marklogic.com/data-hub/debug"
-  at "/com.marklogic.hub/lib/debug-lib.xqy";
-
-declare namespace rapi = "http://marklogic.com/rest-api";
+  at "/MarkLogic/data-hub-framework/impl/debug-lib.xqy";
 
 declare option xdmp:mapping "false";
 
-declare function get(
-  $context as map:map,
-  $params  as map:map
-  ) as document-node()*
-{
-  debug:dump-env(),
+debug:dump-env(),
 
-  document { debug:on() }
-};
-
-declare %rapi:transaction-mode("update") function post(
-  $context as map:map,
-  $params  as map:map,
-  $input   as document-node()*
-  ) as document-node()*
-{
-  debug:dump-env(),
-
-  let $enable := map:get($params, "enable") = ("true", "yes")
-  let $_ := debug:enable($enable)
-  return
-    (),
-  document { () }
-};
+let $params  := map:new()
+    =>parameters:query-parameter("enable", false(), false(), ("true", "yes"))
+let $enable := map:get($params, "enable") = ("true", "yes")
+let $_ := debug:enable($enable)
+return
+  (),
+document { () }

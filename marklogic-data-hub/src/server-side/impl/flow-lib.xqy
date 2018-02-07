@@ -18,13 +18,13 @@ xquery version "1.0-ml";
 module namespace flow = "http://marklogic.com/data-hub/flow-lib";
 
 import module namespace consts = "http://marklogic.com/data-hub/consts"
-  at "/com.marklogic.hub/lib/consts.xqy";
+  at "/MarkLogic/data-hub-framework/impl/consts.xqy";
 
 import module namespace debug = "http://marklogic.com/data-hub/debug"
-  at "/com.marklogic.hub/lib/debug-lib.xqy";
+  at "/MarkLogic/data-hub-framework/impl/debug-lib.xqy";
 
 import module namespace hul = "http://marklogic.com/data-hub/hub-utils-lib"
-  at "/com.marklogic.hub/lib/hub-utils-lib.xqy";
+  at "/MarkLogic/data-hub-framework/impl/hub-utils-lib.xqy";
 
 import module namespace json="http://marklogic.com/xdmp/json"
   at "/MarkLogic/json/json.xqy";
@@ -33,10 +33,10 @@ import module namespace functx = "http://www.functx.com"
   at "/MarkLogic/functx/functx-1.0-nodoc-2007-01.xqy";
 
 import module namespace rfc = "http://marklogic.com/data-hub/run-flow-context"
-  at "/com.marklogic.hub/lib/run-flow-context.xqy";
+  at "/MarkLogic/data-hub-framework/impl/run-flow-context.xqy";
 
 import module namespace trace = "http://marklogic.com/data-hub/trace"
-  at "/com.marklogic.hub/lib/trace-lib.xqy";
+  at "/MarkLogic/data-hub-framework/impl/trace-lib.xqy";
 
 declare namespace hub = "http://marklogic.com/data-hub";
 
@@ -653,13 +653,13 @@ declare function flow:run-writers(
 {
   let $updated-settings := xdmp:eval('
     import module namespace flow = "http://marklogic.com/data-hub/flow-lib"
-      at "/com.marklogic.hub/lib/flow-lib.xqy";
+      at "/MarkLogic/data-hub-framework/impl/flow-lib.xqy";
 
     import module namespace rfc = "http://marklogic.com/data-hub/run-flow-context"
-      at "/com.marklogic.hub/lib/run-flow-context.xqy";
+      at "/MarkLogic/data-hub-framework/impl/run-flow-context.xqy";
 
     import module namespace trace = "http://marklogic.com/data-hub/trace"
-      at "/com.marklogic.hub/lib/trace-lib.xqy";
+      at "/MarkLogic/data-hub-framework/impl/trace-lib.xqy";
 
     declare variable $identifiers external;
     declare variable $context-queue external;

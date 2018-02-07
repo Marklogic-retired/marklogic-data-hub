@@ -3,10 +3,10 @@ xquery version "1.0-ml";
 module namespace rfc = "http://marklogic.com/data-hub/run-flow-context";
 
 import module namespace consts = "http://marklogic.com/data-hub/consts"
-  at "/com.marklogic.hub/lib/consts.xqy";
+  at "/MarkLogic/data-hub-framework/impl/consts.xqy";
 
 import module namespace hul = "http://marklogic.com/data-hub/hub-utils-lib"
-  at "/com.marklogic.hub/lib/hub-utils-lib.xqy";
+  at "/MarkLogic/data-hub-framework/impl/hub-utils-lib.xqy";
 
 declare namespace hub = "http://marklogic.com/data-hub";
 

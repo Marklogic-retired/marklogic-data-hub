@@ -3,7 +3,7 @@ xquery version "1.0-ml";
 module namespace transform = "http://marklogic.com/rest-api/transform/get-content";
 
 import module namespace perf = "http://marklogic.com/data-hub/perflog-lib"
-  at "/com.marklogic.hub/lib/perflog-lib.xqy";
+  at "/MarkLogic/data-hub-framework/impl/perflog-lib.xqy";
 
 declare namespace envelope = "http://marklogic.com/data-hub/envelope";
 

@@ -1,5 +1,5 @@
-var perf = require("/com.marklogic.hub/lib/perflog-lib.xqy");
-var debug = require("/com.marklogic.hub/lib/debug-lib.xqy");
+var perf = require("/MarkLogic/data-hub-framework/impl/perflog-lib.xqy");
+var debug = require("/MarkLogic/data-hub-framework/impl/debug-lib.xqy");
 
 function transform(context, params, content) {
   debug.dumpEnv();

@@ -3,10 +3,10 @@ xquery version "1.0-ml";
 module namespace transform = "http://marklogic.com/rest-api/transform/trace-json";
 
 import module namespace perf = "http://marklogic.com/data-hub/perflog-lib"
-  at "/com.marklogic.hub/lib/perflog-lib.xqy";
+  at "/MarkLogic/data-hub-framework/impl/perflog-lib.xqy";
 
 import module namespace trace = "http://marklogic.com/data-hub/trace"
-  at "/com.marklogic.hub/lib/trace-lib.xqy";
+  at "/MarkLogic/data-hub-framework/impl/trace-lib.xqy";
 
 declare function transform(
   $context as map:map,

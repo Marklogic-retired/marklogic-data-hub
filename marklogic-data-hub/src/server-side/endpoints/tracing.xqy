@@ -18,10 +18,10 @@ xquery version "1.0-ml";
 module namespace service = "http://marklogic.com/rest-api/resource/tracing";
 
 import module namespace debug = "http://marklogic.com/data-hub/debug"
-  at "/com.marklogic.hub/lib/debug-lib.xqy";
+  at "/MarkLogic/data-hub-framework/impl/debug-lib.xqy";
 
 import module namespace trace = "http://marklogic.com/data-hub/trace"
-  at "/com.marklogic.hub/lib/trace-lib.xqy";
+  at "/MarkLogic/data-hub-framework/impl/trace-lib.xqy";
 
 declare namespace rapi = "http://marklogic.com/rest-api";
 

@@ -18,7 +18,7 @@ xquery version "1.0-ml";
 module namespace perf = "http://marklogic.com/data-hub/perflog-lib";
 
 import module namespace debug = "http://marklogic.com/data-hub/debug"
-  at "/com.marklogic.hub/lib/debug-lib.xqy";
+  at "/MarkLogic/data-hub-framework/impl/debug-lib.xqy";
 
 declare function perf:log($what, $func)
 {

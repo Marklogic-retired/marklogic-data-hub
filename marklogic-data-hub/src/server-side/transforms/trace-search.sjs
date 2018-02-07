@@ -1,4 +1,4 @@
-var trace = require("/com.marklogic.hub/lib/trace-lib.xqy");
+var trace = require("/MarkLogic/data-hub-framework/impl/trace-lib.xqy");
 
 function transform(context, params, content) {
   var response = content.toObject();

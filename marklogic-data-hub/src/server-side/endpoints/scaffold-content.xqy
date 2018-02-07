@@ -18,19 +18,19 @@ xquery version "1.0-ml";
 module namespace service = "http://marklogic.com/rest-api/resource/scaffold-content";
 
 import module namespace consts = "http://marklogic.com/data-hub/consts"
-  at "/com.marklogic.hub/lib/consts.xqy";
+  at "/MarkLogic/data-hub-framework/impl/consts.xqy";
 
 import module namespace debug = "http://marklogic.com/data-hub/debug"
-  at "/com.marklogic.hub/lib/debug-lib.xqy";
+  at "/MarkLogic/data-hub-framework/impl/debug-lib.xqy";
 
 import module namespace functx = "http://www.functx.com"
   at "/MarkLogic/functx/functx-1.0-nodoc-2007-01.xqy";
 
 import module namespace hent = "http://marklogic.com/data-hub/hub-entities"
-  at "/com.marklogic.hub/lib/hub-entities.xqy";
+  at "/MarkLogic/data-hub-framework/impl/hub-entities.xqy";
 
 import module namespace perf = "http://marklogic.com/data-hub/perflog-lib"
-  at "/com.marklogic.hub/lib/perflog-lib.xqy";
+  at "/MarkLogic/data-hub-framework/impl/perflog-lib.xqy";
 
 import module namespace esi = "http://marklogic.com/entity-services-impl"
   at "/MarkLogic/entity-services/entity-services-impl.xqy";

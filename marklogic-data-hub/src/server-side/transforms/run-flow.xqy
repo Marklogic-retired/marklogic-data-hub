@@ -3,19 +3,19 @@ xquery version "1.0-ml";
 module namespace runFlow = "http://marklogic.com/rest-api/transform/run-flow";
 
 import module namespace consts = "http://marklogic.com/data-hub/consts"
-  at "/com.marklogic.hub/lib/consts.xqy";
+  at "/MarkLogic/data-hub-framework/impl/consts.xqy";
 
 import module namespace debug = "http://marklogic.com/data-hub/debug"
-  at "/com.marklogic.hub/lib/debug-lib.xqy";
+  at "/MarkLogic/data-hub-framework/impl/debug-lib.xqy";
 
 import module namespace flow = "http://marklogic.com/data-hub/flow-lib"
-  at "/com.marklogic.hub/lib/flow-lib.xqy";
+  at "/MarkLogic/data-hub-framework/impl/flow-lib.xqy";
 
 import module namespace trace = "http://marklogic.com/data-hub/trace"
-  at "/com.marklogic.hub/lib/trace-lib.xqy";
+  at "/MarkLogic/data-hub-framework/impl/trace-lib.xqy";
 
 import module namespace perf = "http://marklogic.com/data-hub/perflog-lib"
-  at "/com.marklogic.hub/lib/perflog-lib.xqy";
+  at "/MarkLogic/data-hub-framework/impl/perflog-lib.xqy";
 
 declare namespace hub = "http://marklogic.com/data-hub";
 

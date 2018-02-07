@@ -18,22 +18,22 @@ xquery version "1.0-ml";
 module namespace trace = "http://marklogic.com/data-hub/trace";
 
 import module namespace config = "http://marklogic.com/data-hub/config"
-  at "/com.marklogic.hub/lib/config.xqy";
+  at "/MarkLogic/data-hub-framework/impl/config.xqy";
 
 import module namespace consts = "http://marklogic.com/data-hub/consts"
-  at "/com.marklogic.hub/lib/consts.xqy";
+  at "/MarkLogic/data-hub-framework/impl/consts.xqy";
 
 import module namespace err = "http://marklogic.com/data-hub/err"
-  at "/com.marklogic.hub/lib/error-lib.xqy";
+  at "/MarkLogic/data-hub-framework/impl/error-lib.xqy";
 
 import module namespace hul = "http://marklogic.com/data-hub/hub-utils-lib"
-  at "/com.marklogic.hub/lib/hub-utils-lib.xqy";
+  at "/MarkLogic/data-hub-framework/impl/hub-utils-lib.xqy";
 
 import module namespace json="http://marklogic.com/xdmp/json"
   at "/MarkLogic/json/json.xqy";
 
 import module namespace rfc = "http://marklogic.com/data-hub/run-flow-context"
-  at "/com.marklogic.hub/lib/run-flow-context.xqy";
+  at "/MarkLogic/data-hub-framework/impl/run-flow-context.xqy";
 
 import module namespace search = "http://marklogic.com/appservices/search"
   at "/MarkLogic/appservices/search/search.xqy";

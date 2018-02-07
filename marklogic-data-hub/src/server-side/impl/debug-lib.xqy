@@ -18,7 +18,7 @@ xquery version "1.0-ml";
 module namespace debug = "http://marklogic.com/data-hub/debug";
 
 import module namespace hul = "http://marklogic.com/data-hub/hub-utils-lib"
-  at "/com.marklogic.hub/lib/hub-utils-lib.xqy";
+  at "/MarkLogic/data-hub-framework/impl/hub-utils-lib.xqy";
 
 declare option xdmp:mapping "false";
 

@@ -18,10 +18,10 @@ xquery version "1.0-ml";
 module namespace dhf = "http://marklogic.com/dhf";
 
 import module namespace flow = "http://marklogic.com/data-hub/flow-lib"
-  at "/com.marklogic.hub/lib/flow-lib.xqy";
+  at "/MarkLogic/data-hub-framework/impl/flow-lib.xqy";
 
 import module namespace trace = "http://marklogic.com/data-hub/trace"
-  at "/com.marklogic.hub/lib/trace-lib.xqy";
+  at "/MarkLogic/data-hub-framework/impl/trace-lib.xqy";
 
 declare option xdmp:mapping "false";
 

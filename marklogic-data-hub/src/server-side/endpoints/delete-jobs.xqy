@@ -18,10 +18,10 @@ xquery version "1.0-ml";
 module namespace service = "http://marklogic.com/rest-api/resource/delete-jobs";
 
 import module namespace job = "http://marklogic.com/data-hub/job-lib"
-  at "/com.marklogic.hub/lib/job-lib.xqy";
+  at "/MarkLogic/data-hub-framework/impl/job-lib.xqy";
 
 import module namespace perf = "http://marklogic.com/data-hub/perflog-lib"
-  at "/com.marklogic.hub/lib/perflog-lib.xqy";
+  at "/MarkLogic/data-hub-framework/impl/perflog-lib.xqy";
 
 declare namespace rapi = "http://marklogic.com/rest-api";
 

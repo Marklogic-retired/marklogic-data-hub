@@ -18,13 +18,13 @@ xquery version "1.0-ml";
 module namespace service = "http://marklogic.com/rest-api/resource/db-configs";
 
 import module namespace debug = "http://marklogic.com/data-hub/debug"
-  at "/com.marklogic.hub/lib/debug-lib.xqy";
+  at "/MarkLogic/data-hub-framework/impl/debug-lib.xqy";
 
 import module namespace hent = "http://marklogic.com/data-hub/hub-entities"
-  at "/com.marklogic.hub/lib/hub-entities.xqy";
+  at "/MarkLogic/data-hub-framework/impl/hub-entities.xqy";
 
 import module namespace perf = "http://marklogic.com/data-hub/perflog-lib"
-  at "/com.marklogic.hub/lib/perflog-lib.xqy";
+  at "/MarkLogic/data-hub-framework/impl/perflog-lib.xqy";
 
 declare namespace rapi = "http://marklogic.com/rest-api";
 
