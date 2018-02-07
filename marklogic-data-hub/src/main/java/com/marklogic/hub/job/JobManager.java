@@ -141,10 +141,9 @@ public class JobManager {
         long jobCount = report.getSuccessEventsCount();
 
         if (jobCount > 0) {
-            DatabaseClient client = getTraceDatabaseClient();
 
             // Get the traces that go with the job(s)
-            dmm = client.newDataMovementManager();
+            dmm = this.traceClient.newDataMovementManager();
             if (jobsArray == null) {
                 batcher = dmm.newQueryBatcher(emptyQuery);
             }
@@ -166,17 +165,6 @@ public class JobManager {
             zipFile.delete();
         }
 
-    }
-
-    /**
-     * We create this new client instead of using traceClient because the DataMovementManger relies on an
-     * internal-only endpoint, and tracing-rewriter.xml doesn't account for it. As such, we're using the
-     * Jobs app server, but pointing to the Traces database.
-     * @return
-     */
-    private DatabaseClient getTraceDatabaseClient() {
-        return DatabaseClientFactory.newClient(jobClient.getHost(), jobClient.getPort(),
-                    traceClient.getDatabase(), jobClient.getSecurityContext());
     }
 
     /**
@@ -222,8 +210,7 @@ public class JobManager {
         dmm.release();
 
         if (traceEntries.size() > 0) {
-            DatabaseClient client = getTraceDatabaseClient();
-            dmm = client.newDataMovementManager();
+            dmm = this.traceClient.newDataMovementManager();
             writer = dmm
                 .newWriteBatcher()
                 .withJobName("Load traces");
