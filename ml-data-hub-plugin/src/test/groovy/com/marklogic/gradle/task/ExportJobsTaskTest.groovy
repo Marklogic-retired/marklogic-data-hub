@@ -10,6 +10,8 @@ import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 class ExportJobsTaskTest extends BaseTest {
     private final int JOB_COUNT = 3
 
+    private final String FILENAME = 'testExportJobs.zip'
+
     def setupSpec() {
         createGradleFiles()
         runTask('hubInit')
@@ -43,6 +45,13 @@ class ExportJobsTaskTest extends BaseTest {
         runTask('mlUndeploy', '-Pconfirm=true')
     }
 
+    def cleanup() {
+        def exportFile = testProjectDir.newFile(FILENAME)
+        if (exportFile.exists()) {
+            exportFile.delete()
+        }
+    }
+
     def getJobIds() {
         EvalResultIterator resultItr = runInDatabase("cts:values(cts:element-reference(xs:QName(\"jobId\")))", HubConfig.DEFAULT_JOB_NAME)
         if (resultItr == null || ! resultItr.hasNext()) {
@@ -53,32 +62,30 @@ class ExportJobsTaskTest extends BaseTest {
 
     def "export one job"() {
         when:
-        def filename = 'testExportJobs.zip'
         EvalResultIterator resultItr = getJobIds()
         EvalResult res = resultItr.next()
         String jobId = res.getString()
 
-        def result = runTask('hubExportJobs', '-PjobIds=' + jobId, '-Pfilename=' + filename)
+        def result = runTask('hubExportJobs', '-PjobIds=' + jobId, '-Pfilename=' + FILENAME)
 
         then:
         result.output.contains(jobId)
-        result.output.contains(filename)
+        result.output.contains(FILENAME)
         result.task(":hubExportJobs").outcome == SUCCESS
-        def zipFile = testProjectDir.newFile(filename)
+        def zipFile = testProjectDir.getRoot().toPath().resolve(FILENAME).toFile()
         zipFile.exists()
         zipFile.delete()
     }
 
     def "export all jobs"() {
         when:
-        def filename = 'testExportJobs.zip'
-        def result = runTask('hubExportJobs', '-Pfilename=' + filename)
+        def result = runTask('hubExportJobs', '-Pfilename=' + FILENAME)
 
         then:
         result.output.contains("all jobs")
-        result.output.contains(filename)
+        result.output.contains(FILENAME)
         result.task(":hubExportJobs").outcome == SUCCESS
-        def zipFile = testProjectDir.newFile(filename)
+        def zipFile = testProjectDir.getRoot().toPath().resolve(FILENAME).toFile()
         zipFile.exists()
         zipFile.delete()
     }

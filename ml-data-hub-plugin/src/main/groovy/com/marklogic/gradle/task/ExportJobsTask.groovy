@@ -8,21 +8,21 @@ import java.nio.file.Path
 class ExportJobsTask extends HubTask {
     @Input
     public String jobIds
-    public String exportFilename
+    public String filename
 
     @TaskAction
     void exportJobs() {
-        if (exportFilename == null) {
-            exportFilename = project.hasProperty("filename") ? project.property("filename") : "jobexport.zip"
+        if (filename == null) {
+            filename = project.hasProperty("filename") ? project.property("filename") : "jobexport.zip"
         }
         if (jobIds == null) {
             jobIds = project.hasProperty("jobIds") ? project.property("jobIds") : null
         }
         if (jobIds == null) {
-            println("Exporting all jobs to " + exportFilename)
+            println("Exporting all jobs to " + filename)
         }
         else {
-            println("Exporting jobs: " + jobIds + " to " + exportFilename)
+            println("Exporting jobs: " + jobIds + " to " + filename)
         }
 
         def jobManager = getJobManager()
@@ -31,7 +31,7 @@ class ExportJobsTask extends HubTask {
             println("Data Hub is not installed.")
             return
         }
-        def exportPath = getHubConfig().hubConfigDir.getParent().resolve(exportFilename)
+        def exportPath = getHubConfig().hubConfigDir.getParent().resolve(filename)
         def jobExportResponse = jobManager.exportJobs(exportPath, jobIds)
         print jobExportResponse
     }
