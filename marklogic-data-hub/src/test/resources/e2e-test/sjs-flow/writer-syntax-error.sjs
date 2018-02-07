@@ -13,7 +13,7 @@ function write(id, envelope, options) {
   }
   =-00=--\8\sthifalkj;;
 
-  xdmp.documentInsert("/options-test.json", {
+  xdmp.documentInsert("/options-test" + id.replace('/input', '').replace(/\.(json|xml)/, '') + '.json', {
     collector: options.collectorTest,
     content: options.contentTest,
     headers: options.headersTest,
