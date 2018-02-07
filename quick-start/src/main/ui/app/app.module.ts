@@ -63,6 +63,7 @@ import { DatePipeModule } from './date-pipe/date-pipe.module';
 import { SelectKeyValuesComponent } from './select-key-values/select-key-values.component';
 import {JobExportDialogComponent} from "./jobs/job-export.component";
 
+import { MapComponent } from './map';
 
 @NgModule({
   declarations: [
@@ -103,7 +104,8 @@ import {JobExportDialogComponent} from "./jobs/job-export.component";
     TitlecasePipe,
     TruncateCharactersPipe,
     ObjectToArrayPipe,
-    SelectKeyValuesComponent
+    SelectKeyValuesComponent,
+    MapComponent
   ],
   entryComponents: [
     HasBugsDialogComponent,
