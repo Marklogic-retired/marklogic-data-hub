@@ -24,8 +24,18 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class JobManagerTest extends HubTestBase {
     private static final String ENTITY = "e2eentity";
+    private static final String HARMONIZE_FLOW_XML = "testharmonize-xml";
+    private static final String HARMONIZE_FLOW_JSON = "testharmonize-json";
     private static ArrayList<String> jobIds = new ArrayList<String>();
     private static Path projectDir = Paths.get(".", "ye-olde-project");
+
+    private FlowItemCompleteListener flowItemCompleteListener =
+        new FlowItemCompleteListener() {
+            @Override
+            public void processCompletion(String jobId, String itemId) {
+                recordJobId(jobId);
+            }
+        };
 
     @BeforeClass
     public static void setupSuite() throws IOException {
@@ -38,15 +48,19 @@ public class JobManagerTest extends HubTestBase {
 
         Scaffolding scaffolding = new Scaffolding(projectDir.toString(), stagingClient);
         scaffolding.createEntity(ENTITY);
-        scaffolding.createFlow(ENTITY, "testharmonize", FlowType.HARMONIZE,
-            CodeFormat.XQUERY, DataFormat.XML);
+        // Traces can be XML or JSON, depending on the DataFormat of the flow that created them. Get some of each
+        // to make sure export and import work correctly.
+        scaffolding.createFlow(ENTITY, HARMONIZE_FLOW_XML, FlowType.HARMONIZE, CodeFormat.XQUERY, DataFormat.XML);
+        scaffolding.createFlow(ENTITY, HARMONIZE_FLOW_JSON, FlowType.HARMONIZE, CodeFormat.JAVASCRIPT, DataFormat.JSON);
 
         DataHub dh = getDataHub();
         dh.clearUserModules();
         installUserModules(getHubConfig(), false);
 
-        installModule("/entities/" + ENTITY + "/harmonize/testharmonize/collector.xqy", "flow-runner-test/collector.xqy");
-        installModule("/entities/" + ENTITY + "/harmonize/testharmonize/content.xqy", "flow-runner-test/content-for-options.xqy");
+        installModule("/entities/" + ENTITY + "/harmonize/" + HARMONIZE_FLOW_XML + "/collector.xqy", "flow-runner-test/collector.xqy");
+        installModule("/entities/" + ENTITY + "/harmonize/" + HARMONIZE_FLOW_XML + "/content.xqy", "flow-runner-test/content-for-options.xqy");
+
+        installModule("/entities/" + ENTITY + "/harmonize/" + HARMONIZE_FLOW_JSON + "/collector.sjs", "flow-runner-test/collector.sjs");
 
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME,
             HubConfig.DEFAULT_TRACE_NAME);
@@ -65,8 +79,7 @@ public class JobManagerTest extends HubTestBase {
         // Run a flow a couple times to generate some job/trace data.
         jobIds.clear();
         FlowManager fm = new FlowManager(getHubConfig());
-        Flow harmonizeFlow = fm.getFlow(ENTITY, "testharmonize",
-            FlowType.HARMONIZE);
+        Flow harmonizeFlow = fm.getFlow(ENTITY, HARMONIZE_FLOW_XML, FlowType.HARMONIZE);
         HashMap<String, Object> options = new HashMap<>();
         options.put("name", "Bob Smith");
         options.put("age", 55);
@@ -75,18 +88,22 @@ public class JobManagerTest extends HubTestBase {
             .withBatchSize(10)
             .withThreadCount(1)
             .withOptions(options)
-            .onItemComplete(new FlowItemCompleteListener() {
-                @Override
-                public void processCompletion(String jobId, String itemId) {
-                    recordJobId(jobId);
-                }
-            });
+            .onItemComplete(flowItemCompleteListener);
 
         flowRunner.run();
         flowRunner.run();
         flowRunner.run();
         flowRunner.awaitCompletion();
 
+        harmonizeFlow = fm.getFlow(ENTITY, HARMONIZE_FLOW_JSON, FlowType.HARMONIZE);
+        flowRunner = fm.newFlowRunner()
+            .withFlow(harmonizeFlow)
+            .withBatchSize(10)
+            .withThreadCount(1)
+            .withOptions(options)
+            .onItemComplete(flowItemCompleteListener);
+        flowRunner.run();
+        flowRunner.awaitCompletion();
     }
 
     @After
@@ -101,15 +118,15 @@ public class JobManagerTest extends HubTestBase {
 
     @Test
     public void deleteOneJob() {
-        assertEquals(3, getJobDocCount());
-        assertEquals(6, getTracingDocCount());
+        assertEquals(4, getJobDocCount());
+        assertEquals(8, getTracingDocCount());
         JobManager manager = new JobManager(jobClient, traceClient);
         String jobs = jobIds.get(1);
 
         JobDeleteResponse actual = manager.deleteJobs(jobs);
 
-        assertEquals(2, getJobDocCount());
-        assertEquals(4, getTracingDocCount());
+        assertEquals(3, getJobDocCount());
+        assertEquals(6, getTracingDocCount());
         assertEquals(1, actual.totalCount);
         assertEquals(0, actual.errorCount);
 
@@ -124,15 +141,15 @@ public class JobManagerTest extends HubTestBase {
     @Test
     public void deleteMultipleJobs() {
         assertEquals(3, jobIds.size());
-        assertEquals(3, getJobDocCount());
-        assertEquals(6, getTracingDocCount());
+        assertEquals(4, getJobDocCount());
+        assertEquals(8, getTracingDocCount());
         String jobs = jobIds.get(0) + "," + jobIds.get(2);
         JobManager manager = new JobManager(jobClient, traceClient);
 
         JobDeleteResponse actual = manager.deleteJobs(jobs);
 
-        assertEquals(1, getJobDocCount());
-        assertEquals(2, getTracingDocCount());
+        assertEquals(2, getJobDocCount());
+        assertEquals(4, getTracingDocCount());
         assertEquals(2, actual.totalCount);
         assertEquals(0, actual.errorCount);
 
@@ -151,8 +168,8 @@ public class JobManagerTest extends HubTestBase {
 
         JobDeleteResponse actual = manager.deleteJobs("InvalidId");
 
-        assertEquals(3, getJobDocCount());
-        assertEquals(6, getTracingDocCount());
+        assertEquals(4, getJobDocCount());
+        assertEquals(8, getTracingDocCount());
         assertEquals(0, actual.totalCount);
         assertEquals(1, actual.errorCount);
     }
@@ -163,8 +180,8 @@ public class JobManagerTest extends HubTestBase {
 
         JobDeleteResponse actual = manager.deleteJobs("");
 
-        assertEquals(3, getJobDocCount());
-        assertEquals(6, getTracingDocCount());
+        assertEquals(4, getJobDocCount());
+        assertEquals(8, getTracingDocCount());
         assertEquals(0, actual.totalCount);
         assertEquals(0, actual.errorCount);
     }
@@ -175,8 +192,8 @@ public class JobManagerTest extends HubTestBase {
 
         JobDeleteResponse actual = manager.deleteJobs(null);
 
-        assertEquals(3, getJobDocCount());
-        assertEquals(6, getTracingDocCount());
+        assertEquals(4, getJobDocCount());
+        assertEquals(8, getTracingDocCount());
         assertEquals(0, actual.totalCount);
         assertEquals(0, actual.errorCount);
     }
@@ -239,8 +256,8 @@ public class JobManagerTest extends HubTestBase {
         assertTrue(zipFile.exists());
 
         ZipFile actual = new ZipFile(zipFile);
-        // There should be three job and six trace documents
-        assertEquals(9, actual.size());
+        // There should be four job and eight trace documents
+        assertEquals(12, actual.size());
 
         actual.close();
 
@@ -277,17 +294,27 @@ public class JobManagerTest extends HubTestBase {
         JobManager manager = new JobManager(jobClient, traceClient);
         manager.importJobs(Paths.get(url.toURI()));
 
-        assertEquals(2, getJobDocCount());
-        assertEquals(13, getTracingDocCount());
+        assertEquals(4, getJobDocCount());
+        assertEquals(8, getTracingDocCount());
 
-        // Check one of the (known) trace documents to make sure it was loaded as JSON
-        EvalResultIterator evalResults = runInDatabase("xdmp:type(fn:doc('/10259510608993980485'))", HubConfig.DEFAULT_TRACE_NAME);
+        // Check one of the (known) JSON trace documents to make sure it was loaded as JSON
+        EvalResultIterator evalResults = runInDatabase("xdmp:type(fn:doc('/5177365055356498236.json'))", HubConfig.DEFAULT_TRACE_NAME);
         if (evalResults.hasNext()) {
             String type = evalResults.next().getString();
             assertEquals("object", type);
         }
         else {
-            fail("Failed to get the type of a trace document");
+            fail("Trace document was not loaded as JSON");
+        }
+
+        // Check one of the (known) XML trace documents to make sure it was loaded as XML
+        evalResults = runInDatabase("xdmp:type(fn:doc('/1311179527065924494.xml'))", HubConfig.DEFAULT_TRACE_NAME);
+        if (evalResults.hasNext()) {
+            String type = evalResults.next().getString();
+            assertEquals("untypedAtomic", type);
+        }
+        else {
+            fail("Trace document was not loaded as XML");
         }
     }
 }

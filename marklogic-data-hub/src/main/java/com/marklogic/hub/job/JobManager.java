@@ -226,7 +226,8 @@ public class JobManager {
                 writer.add(
                     entry.getName(),
                     traceMetadata,
-                    new StringHandle(entryText).withFormat(Format.JSON)
+                    new StringHandle(entryText)
+                        .withFormat(entry.getName().endsWith(".json") ? Format.JSON : Format.XML)
                 );
             }
             writer.flushAndWait();

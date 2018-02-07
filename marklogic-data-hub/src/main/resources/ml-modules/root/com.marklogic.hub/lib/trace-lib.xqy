@@ -266,16 +266,18 @@ declare %private function trace:write-error-trace()
         declare option xdmp:mapping "false";
 
         declare variable $trace external;
+        declare variable $extension external;
 
         xdmp:document-insert(
-          "/" || $trace/*:trace/*:traceId,
+          "/" || $trace/*:trace/*:traceId || $extension,
           $trace,
           xdmp:default-permissions(),
           ("trace", $trace/*:trace/*:type)
         )
       ',
       map:new((
-        map:entry("trace", $trace)
+        map:entry("trace", $trace),
+        map:entry("extension", if (rfc:is-json()) then ".json" else ".xml")
       )),
       map:new((
         map:entry("database", xdmp:database($config:TRACE-DATABASE)),
