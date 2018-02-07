@@ -1,10 +1,40 @@
 import { Component } from '@angular/core';
 
+import { Entity } from '../entities';
+import { EntitiesService } from '../entities/entities.service';
+
+import * as _ from 'lodash';
+
 @Component({
   templateUrl: './map.component.html',
   styleUrls: ['./map.component.scss'],
 })
 export class MapComponent {
+
+  public entities: Array<Entity>;
+  public entitiesLoaded: boolean = false;
+  private entityProps: Array<string> = [];
+  private entityType: Array<string> = [];
+  private entityPrimaryKey: string = "";
+
+  getEntities(): void {
+    this.entitiesService.entitiesChange.subscribe(entities => {
+      let en;
+      let self = this;
+
+      this.entitiesLoaded = true;
+      this.entities = entities;
+      en = this.entities[0];
+
+      // load entity for use by UI
+      _.forEach(en.definition.properties, function(prop, key) {
+        self.entityProps.push(prop.name);
+        self.entityType.push(prop.datatype);
+      });
+      this.entityPrimaryKey = en.definition.primaryKey;
+    });
+    this.entitiesService.getEntities();
+  }
 
   src: any = {
     "Row_ID": "1",
@@ -31,43 +61,10 @@ export class MapComponent {
   };
   srcKeys = Object.keys(this.src);
 
-  harm: any = {
-    "info": {
-      "title": "OrderLine",
-      "version": "0.0.6",
-      "baseUri": "http://marklogic.com/sample-data/order",
-      "description" : "This OrderLine is a flat model for mapping superstore data."
-    },
-    "definitions": {
-      "OrderLine": {
-        "properties": {
-          "orderId": {
-            "datatype": "string"
-          },
-          "orderDate": {
-            "datatype": "date"
-          },
-          "lineItemId": {
-            "datatype":"integer"
-          },
-          "quantity": {
-            "datatype": "integer"
-          },
-          "productName": {
-            "datatype": "string"
-          }
-        },
-        "primaryKey":"lineItemId"
-      }
-    }
-  };
-  harmKeys = Object.keys(
-    this.harm.definitions[this.harm.info.title].properties
-  );
-  harmPrimary = this.harm.definitions[this.harm.info.title].primaryKey;
-
-  constructor() {}
-
+  constructor(
+    private entitiesService: EntitiesService) {
+    this.getEntities();
+  }
   overEvent(index, event) {
     console.log(index, event);
   }
