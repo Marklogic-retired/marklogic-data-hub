@@ -5,7 +5,7 @@
     <div id="source">
       <h4>Source</h4>
       <ul>
-        <li *ngFor="let key of srcKeys; let i = index;" class="prop-container" on-mouseover='overEvent(i, $event)'>
+        <li *ngFor="let key of sampleDocSrcKeys; let i = index;" class="prop-container" on-mouseover='overEvent(i, $event)'>
           <span class="prop-name">{{key}}</span>
         </li>
       </ul>
@@ -14,8 +14,8 @@
     <div id="harmonized">
       <h4>Harmonized</h4>
       <ul>
-        <li *ngFor="let name of entityProps; let i = index;" class="prop-container">
-          <span class="prop-name">{{ name }}</span><span class="prop-type">{{ entityType[i] }}</span><span class="is-primary" *ngIf="name === entityPrimaryKey"><i class="fa fa-key"></i></span>
+        <li *ngFor="let property of chosenEntity?.definition.properties; let i = index;" class="prop-container">
+          <span class="prop-name">{{ property.name }}</span><span class="prop-type">{{ property.datatype }}</span><span class="is-primary" *ngIf="property.name === entityPrimaryKey"><i class="fa fa-key"></i></span>
         </li>
       </ul>
     </div>
