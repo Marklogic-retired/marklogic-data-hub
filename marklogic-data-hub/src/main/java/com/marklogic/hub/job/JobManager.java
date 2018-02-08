@@ -237,7 +237,7 @@ public class JobManager {
     }
 
     public class JobDeleteResource extends ResourceManager {
-        private static final String DELETE_SERVICE = "delete-jobs";
+        private static final String DELETE_SERVICE = "ml:deleteJobs";
 
         private DatabaseClient srcClient;
 

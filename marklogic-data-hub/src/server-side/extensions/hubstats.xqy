@@ -15,10 +15,10 @@
 :)
 xquery version "1.0-ml";
 
-module namespace service = "http://marklogic.com/rest-api/resource/hubstats";
+module namespace service = "http://marklogic.com/rest-api/extensions/hubstats";
 
 import module namespace config = "http://marklogic.com/data-hub/config"
-  at "/MarkLogic/data-hub-framework/impl/config.xqy";
+  at "/com.marklogic.hub/config.xqy";
 
 import module namespace debug = "http://marklogic.com/data-hub/debug"
   at "/MarkLogic/data-hub-framework/impl/debug-lib.xqy";

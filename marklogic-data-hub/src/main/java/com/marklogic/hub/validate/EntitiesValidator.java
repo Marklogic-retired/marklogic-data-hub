@@ -10,7 +10,7 @@ import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.util.RequestParameters;
 
 public class EntitiesValidator extends ResourceManager {
-    private static final String NAME = "validate";
+    private static final String NAME = "ml:validate";
 
     public EntitiesValidator(DatabaseClient client) {
         super();

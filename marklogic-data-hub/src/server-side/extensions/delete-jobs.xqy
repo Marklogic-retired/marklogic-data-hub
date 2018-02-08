@@ -15,7 +15,7 @@
 :)
 xquery version "1.0-ml";
 
-module namespace service = "http://marklogic.com/rest-api/resource/delete-jobs";
+module namespace service = "http://marklogic.com/rest-api/extensions/delete-jobs";
 
 import module namespace job = "http://marklogic.com/data-hub/job-lib"
   at "/MarkLogic/data-hub-framework/impl/job-lib.xqy";

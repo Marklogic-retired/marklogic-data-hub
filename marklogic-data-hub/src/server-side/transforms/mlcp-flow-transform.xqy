@@ -3,7 +3,7 @@ xquery version "1.0-ml";
 module namespace mlcpFlow = "http://marklogic.com/data-hub/mlcp-flow-transform";
 
 import module namespace config = "http://marklogic.com/data-hub/config"
-  at "/MarkLogic/data-hub-framework/impl/config.xqy";
+  at "/com.marklogic.hub/config.xqy";
 
 import module namespace consts = "http://marklogic.com/data-hub/consts"
   at "/MarkLogic/data-hub-framework/impl/consts.xqy";

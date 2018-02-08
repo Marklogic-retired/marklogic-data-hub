@@ -15,29 +15,30 @@
 :)
 xquery version "1.0-ml";
 
-module namespace service = "http://marklogic.com/rest-api/resource/hubversion";
-
-import module namespace config = "http://marklogic.com/data-hub/config"
-  at "/MarkLogic/data-hub-framework/impl/config.xqy";
+module namespace service = "http://marklogic.com/rest-api/extensions/search-options-generator";
 
 import module namespace debug = "http://marklogic.com/data-hub/debug"
   at "/MarkLogic/data-hub-framework/impl/debug-lib.xqy";
+
+import module namespace hent = "http://marklogic.com/data-hub/hub-entities"
+  at "/MarkLogic/data-hub-framework/impl/hub-entities.xqy";
 
 import module namespace perf = "http://marklogic.com/data-hub/perflog-lib"
   at "/MarkLogic/data-hub-framework/impl/perflog-lib.xqy";
 
 declare option xdmp:mapping "false";
 
-declare function get(
+declare function post(
   $context as map:map,
-  $params  as map:map
+  $params  as map:map,
+  $input   as document-node()*
   ) as document-node()*
 {
   debug:dump-env(),
-  perf:log('/v1/resources/hubversion:get', function() {
-    xdmp:set-response-content-type("text/plain"),
+
+  perf:log('/v1/resources/validate:get', function() {
     document {
-      $config:HUB-VERSION
+      hent:dump-search-options($input)
     }
   })
 };

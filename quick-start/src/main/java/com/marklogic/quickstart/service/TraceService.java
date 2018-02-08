@@ -80,13 +80,13 @@ public class TraceService extends SearchableService {
         String searchXml = sqd.serialize();
 
         RawCombinedQueryDefinition querydef = queryMgr.newRawCombinedQueryDefinition(new StringHandle(searchXml), SEARCH_OPTIONS_NAME);
-        querydef.setResponseTransform(new ServerTransform("trace-search"));
+        querydef.setResponseTransform(new ServerTransform("ml:traceSearchResults"));
         StringHandle sh = new StringHandle();
         sh.setFormat(Format.JSON);
         return queryMgr.search(querydef, sh, traceQuery.start);
     }
 
     public JsonNode getTrace(String traceId) {
-        return docMgr.readAs("/" + traceId, JsonNode.class, new ServerTransform("trace-json"));
+        return docMgr.readAs("/" + traceId, JsonNode.class, new ServerTransform("ml:traceUISearchResults"));
     }
 }

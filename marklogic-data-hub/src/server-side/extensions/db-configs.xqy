@@ -15,16 +15,13 @@
 :)
 xquery version "1.0-ml";
 
-module namespace service = "http://marklogic.com/rest-api/resource/entity";
+module namespace service = "http://marklogic.com/rest-api/extensions/db-configs";
 
 import module namespace debug = "http://marklogic.com/data-hub/debug"
   at "/MarkLogic/data-hub-framework/impl/debug-lib.xqy";
 
-import module namespace es = "http://marklogic.com/entity-services"
-  at "/MarkLogic/entity-services/entity-services.xqy";
-
-import module namespace flow = "http://marklogic.com/data-hub/flow-lib"
-  at "/MarkLogic/data-hub-framework/impl/flow-lib.xqy";
+import module namespace hent = "http://marklogic.com/data-hub/hub-entities"
+  at "/MarkLogic/data-hub-framework/impl/hub-entities.xqy";
 
 import module namespace perf = "http://marklogic.com/data-hub/perflog-lib"
   at "/MarkLogic/data-hub-framework/impl/perflog-lib.xqy";
@@ -35,8 +32,6 @@ declare namespace hub = "http://marklogic.com/data-hub";
 
 declare option xdmp:mapping "false";
 
-declare variable $ENTITY-MODEL-COLLECTION := "http://marklogic.com/entity-services/models";
-
 (:~
  : Entry point for java to get entity(s).
  :
@@ -44,51 +39,17 @@ declare variable $ENTITY-MODEL-COLLECTION := "http://marklogic.com/entity-servic
  : return all entities.
  :
  :)
-declare function get(
+declare function post(
   $context as map:map,
-  $params  as map:map
+  $params  as map:map,
+  $input   as document-node()*
   ) as document-node()*
 {
   debug:dump-env("GET ENTITY(s)"),
 
   perf:log('/v1/resources/entity:get', function() {
     document {
-      let $entity-name := map:get($params, "entity-name")
-      let $resp :=
-        if ($entity-name) then
-          flow:get-entity($entity-name)
-        else
-          flow:get-entities()
-      return
-       $resp
-    }
-  })
-};
-
-
-declare function put(
-  $context as map:map,
-  $params  as map:map,
-  $input   as document-node()*
-  ) as document-node()?
-{
-  debug:dump-env("PUT ENTITY"),
-
-  perf:log('/v1/resources/entity:put', function() {
-    document {
-      let $entity-def := $input/object-node()
-      let $name as xs:string := $entity-def/info/title
-      return
-        xdmp:document-insert(
-          "/entities/" || $name || ".entity.json",
-          $entity-def,
-          xdmp:default-permissions(),
-          $ENTITY-MODEL-COLLECTION
-        ),
-
-      let $model as map:map := $input/object-node()
-      return
-        es:database-properties-generate($model)
+      hent:dump-indexes($input)
     }
   })
 };

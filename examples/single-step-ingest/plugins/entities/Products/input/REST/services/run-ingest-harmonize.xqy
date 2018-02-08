@@ -9,7 +9,7 @@ import module namespace flow = "http://marklogic.com/data-hub/flow-lib"
   at "/MarkLogic/data-hub-framework/impl/flow-lib.xqy";
 
 import module namespace config = "http://marklogic.com/data-hub/config"
-  at "/MarkLogic/data-hub-framework/impl/config.xqy";
+  at "/com.marklogic.hub/config.xqy";
 
 declare namespace hub = "http://marklogic.com/data-hub";
 declare namespace rapi = "http://marklogic.com/rest-api";

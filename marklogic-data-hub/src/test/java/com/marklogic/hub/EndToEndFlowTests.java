@@ -823,7 +823,7 @@ public class EndToEndFlowTests extends HubTestBase {
                     "\"output_permissions\":\"\\\"rest-reader,read,rest-writer,update\\\"\"," +
                     "\"output_uri_replace\":\"\\\"" + basePath.replace("\\", "/").replaceAll("^([A-Za-z]):", "/$1:") + ",''\\\"\"," +
                     "\"document_type\":\"\\\"" + dataFormat.toString() + "\\\"\"," +
-                    "\"transform_module\":\"\\\"/MarkLogic/data-hub-framework/imple/mlcp-flow-transform.xqy\\\"\"," +
+                    "\"transform_module\":\"\\\"/MarkLogic/data-hub-framework/transforms/mlcp-flow-transform.xqy\\\"\"," +
                     "\"transform_namespace\":\"\\\"http://marklogic.com/data-hub/mlcp-flow-transform\\\"\"," +
                     "\"transform_param\":\"\\\"entity-name=" + ENTITY + ",flow-name=" + flowName + ",options=" + optionString + "\\\"\"" +
                     "}");
@@ -918,7 +918,7 @@ public class EndToEndFlowTests extends HubTestBase {
         assertEquals(0, tracingCount);
         assertEquals(0, jobsCount);
 
-        ServerTransform serverTransform = new ServerTransform("run-flow");
+        ServerTransform serverTransform = new ServerTransform("ml:inputFlow");
         serverTransform.addParameter("job-id", UUID.randomUUID().toString());
         serverTransform.addParameter("entity-name", ENTITY);
         serverTransform.addParameter("flow-name", flowName);

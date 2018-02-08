@@ -27,6 +27,9 @@ import module namespace flow = "http://marklogic.com/data-hub/flow-lib"
 import module namespace parameters = "http://marklogic.com/rest-api/endpoints/parameters"
   at "/MarkLogic/rest-api/endpoints/parameters.xqy";
 
+import module namespace perf = "http://marklogic.com/data-hub/perflog-lib"
+  at "/MarkLogic/data-hub-framework/impl/perflog-lib.xqy";
+
 declare option xdmp:mapping "false";
 
 xdmp:security-assert("http://marklogic.com/xdmp/privileges/rest-reader", "execute"),

@@ -344,7 +344,7 @@ public class FlowRunnerImpl implements FlowRunner {
 
     class FlowResource extends ResourceManager {
 
-        static final public String NAME = "flow";
+        static final public String NAME = "ml:flow";
 
         private DatabaseClient srcClient;
         private String targetDatabase;

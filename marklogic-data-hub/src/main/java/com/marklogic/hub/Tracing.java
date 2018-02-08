@@ -9,7 +9,7 @@ import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.util.RequestParameters;
 
 public class Tracing extends ResourceManager {
-    private static final String NAME = "tracing";
+    private static final String NAME = "ml:tracing";
 
     public Tracing(DatabaseClient client) {
         super();

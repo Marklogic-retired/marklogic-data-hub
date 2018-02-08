@@ -15,20 +15,29 @@
 :)
 xquery version "1.0-ml";
 
-module namespace service = "http://marklogic.com/rest-api/resource/search-options-generator";
+module namespace service = "http://marklogic.com/rest-api/extensions/tracing";
 
 import module namespace debug = "http://marklogic.com/data-hub/debug"
   at "/MarkLogic/data-hub-framework/impl/debug-lib.xqy";
 
-import module namespace hent = "http://marklogic.com/data-hub/hub-entities"
-  at "/MarkLogic/data-hub-framework/impl/hub-entities.xqy";
+import module namespace trace = "http://marklogic.com/data-hub/trace"
+  at "/MarkLogic/data-hub-framework/impl/trace-lib.xqy";
 
-import module namespace perf = "http://marklogic.com/data-hub/perflog-lib"
-  at "/MarkLogic/data-hub-framework/impl/perflog-lib.xqy";
+declare namespace rapi = "http://marklogic.com/rest-api";
 
 declare option xdmp:mapping "false";
 
-declare function post(
+declare function get(
+  $context as map:map,
+  $params  as map:map
+  ) as document-node()*
+{
+  debug:dump-env(),
+
+  document { trace:enabled() }
+};
+
+declare %rapi:transaction-mode("update") function post(
   $context as map:map,
   $params  as map:map,
   $input   as document-node()*
@@ -36,9 +45,8 @@ declare function post(
 {
   debug:dump-env(),
 
-  perf:log('/v1/resources/validate:get', function() {
-    document {
-      hent:dump-search-options($input)
-    }
-  })
+  let $enable := map:get($params, "enable") = ("true", "yes")
+  let $_ := trace:enable-tracing($enable)
+  return
+    document { () }
 };

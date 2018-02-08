@@ -106,7 +106,7 @@ public class CollectorImpl implements Collector {
                 "http",
                 client.getHost(),
                 client.getPort(),
-                "/MarkLogic/data-hub-framework/endpoints/collector.xqy",
+                "/v1/internal/hubcollector",
                 URLEncoder.encode(jobId, "UTF-8"),
                 URLEncoder.encode(entity, "UTF-8"),
                 URLEncoder.encode(flow, "UTF-8"),

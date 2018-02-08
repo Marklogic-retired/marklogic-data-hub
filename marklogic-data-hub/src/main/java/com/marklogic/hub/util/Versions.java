@@ -10,7 +10,7 @@ import com.marklogic.client.util.RequestParameters;
 import com.marklogic.hub.HubConfig;
 
 public class Versions extends ResourceManager {
-    private static final String NAME = "hubversion";
+    private static final String NAME = "ml:hubversion";
 
     DatabaseClient appServicesClient;
     DatabaseClient stagingClient;

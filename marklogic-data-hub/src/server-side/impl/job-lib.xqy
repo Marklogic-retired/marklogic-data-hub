@@ -3,7 +3,7 @@ xquery version "1.0-ml";
 module namespace job = "http://marklogic.com/data-hub/job-lib";
 
 import module namespace config = "http://marklogic.com/data-hub/config"
-  at "/MarkLogic/data-hub-framework/impl/config.xqy";
+  at "/com.marklogic.hub/config.xqy";
 
 declare option xdmp:mapping "false";
 

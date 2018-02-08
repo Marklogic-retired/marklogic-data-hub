@@ -15,20 +15,29 @@
 :)
 xquery version "1.0-ml";
 
-import module namespace parameters = "http://marklogic.com/rest-api/endpoints/parameters"
-    at "/MarkLogic/rest-api/endpoints/parameters.xqy";
+module namespace service = "http://marklogic.com/rest-api/extensions/hubversion";
+
+import module namespace config = "http://marklogic.com/data-hub/config"
+  at "/com.marklogic.hub/config.xqy";
 
 import module namespace debug = "http://marklogic.com/data-hub/debug"
   at "/MarkLogic/data-hub-framework/impl/debug-lib.xqy";
 
+import module namespace perf = "http://marklogic.com/data-hub/perflog-lib"
+  at "/MarkLogic/data-hub-framework/impl/perflog-lib.xqy";
+
 declare option xdmp:mapping "false";
 
-debug:dump-env(),
-
-let $params  := map:new()
-    =>parameters:query-parameter("enable", false(), false(), ("true", "yes"))
-let $enable := map:get($params, "enable") = ("true", "yes")
-let $_ := debug:enable($enable)
-return
-  (),
-document { () }
+declare function get(
+  $context as map:map,
+  $params  as map:map
+  ) as document-node()*
+{
+  debug:dump-env(),
+  perf:log('/v1/resources/hubversion:get', function() {
+    xdmp:set-response-content-type("text/plain"),
+    document {
+      $config:HUB-VERSION
+    }
+  })
+};

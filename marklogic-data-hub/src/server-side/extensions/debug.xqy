@@ -15,13 +15,10 @@
 :)
 xquery version "1.0-ml";
 
-module namespace service = "http://marklogic.com/rest-api/resource/tracing";
+module namespace service = "http://marklogic.com/rest-api/extensions/debug";
 
 import module namespace debug = "http://marklogic.com/data-hub/debug"
   at "/MarkLogic/data-hub-framework/impl/debug-lib.xqy";
-
-import module namespace trace = "http://marklogic.com/data-hub/trace"
-  at "/MarkLogic/data-hub-framework/impl/trace-lib.xqy";
 
 declare namespace rapi = "http://marklogic.com/rest-api";
 
@@ -34,7 +31,7 @@ declare function get(
 {
   debug:dump-env(),
 
-  document { trace:enabled() }
+  document { debug:on() }
 };
 
 declare %rapi:transaction-mode("update") function post(
@@ -46,7 +43,8 @@ declare %rapi:transaction-mode("update") function post(
   debug:dump-env(),
 
   let $enable := map:get($params, "enable") = ("true", "yes")
-  let $_ := trace:enable-tracing($enable)
+  let $_ := debug:enable($enable)
   return
-    document { () }
+    (),
+  document { () }
 };
