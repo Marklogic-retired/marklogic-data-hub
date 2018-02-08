@@ -35,9 +35,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 @RequestMapping("/api/current-project")
@@ -139,6 +137,16 @@ class EntitiesController extends EnvironmentAware {
 
         int batchSize = json.get("batchSize").asInt();
         int threadCount = json.get("threadCount").asInt();
+        Map<String, Object> options = new HashMap<>();
+        //verify that we have options, if not, pass on an empty map
+        if(json.get("options") != null && json.get("options").size() > 0) {
+            Iterator<Map.Entry<String, JsonNode>> optionIter = json.get("options").fields();
+            Map.Entry<String, JsonNode> current;
+            while (optionIter.hasNext()) {
+                current = optionIter.next();
+                options.put(current.getKey(), current.getValue());
+            }
+        }
 
         ResponseEntity<?> resp;
 
@@ -147,7 +155,7 @@ class EntitiesController extends EnvironmentAware {
             resp = new ResponseEntity<>(HttpStatus.CONFLICT);
         }
         else {
-            flowManagerService.runFlow(flow, batchSize, threadCount, (jobId, percentComplete, message) -> {
+            flowManagerService.runFlow(flow, batchSize, threadCount, options, (jobId, percentComplete, message) -> {
                 template.convertAndSend("/topic/flow-status", new JobStatusMessage(jobId, percentComplete, message, FlowType.HARMONIZE.toString()));
             });
             resp = new ResponseEntity<>(HttpStatus.OK);
@@ -224,7 +232,7 @@ class EntitiesController extends EnvironmentAware {
             @PathVariable String entityName,
             @PathVariable String flowName,
             @PathVariable String jobId) throws IOException {
-        JobService jm = new JobService(envConfig().getJobClient());
+        JobService jm = new JobService(envConfig().getJobClient(), envConfig().getTraceClient());
         jm.cancelJob(Long.parseLong(jobId));
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

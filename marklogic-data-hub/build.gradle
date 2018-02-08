@@ -3,7 +3,7 @@ plugins {
     id 'java'
     id 'maven-publish'
     id 'com.jfrog.bintray' version '1.7.2'
-    id 'com.marklogic.ml-gradle' version '3.3.1'
+    id 'com.marklogic.ml-gradle' version '3.4.0'
     id 'com.moowork.node' version '1.1.1'
 }
 
@@ -24,12 +24,9 @@ ext.junitPlatformVersion = '1.0.0-RC3'
 ext.junitJupiterVersion  = '5.0.0-RC3'
 
 dependencies {
-    compile 'com.marklogic:marklogic-client-api:4.0.2'
+    compile 'com.marklogic:marklogic-client-api:4.0.3.1'
     compile 'com.marklogic:mlcp-util:0.3.0'
-    compile ('com.marklogic:ml-app-deployer:3.1-alpha4') {
-        exclude group: 'com.marklogic', module: 'ml-javaclient-util'
-    }
-    compile ('com.marklogic:ml-javaclient-util:3.1-alpha6')
+    compile 'com.marklogic:ml-app-deployer:3.4.0'
     compile 'commons-io:commons-io:2.4'
     compile 'org.apache.commons:commons-text:1.1'
 
@@ -59,7 +56,7 @@ dependencies {
 
 node {
   // Version of node to use.
-  version = '8.4.0'
+  version = '8.9.3'
 
   // // Version of npm to use.
   npmVersion = '5.4.2'
@@ -115,6 +112,7 @@ if (!(
     gradle.startParameter.taskNames*.toLowerCase().contains("publishplugins") ||
     gradle.startParameter.taskNames*.toLowerCase().contains("publishtomavenlocal") ||
     gradle.startParameter.taskNames*.toLowerCase().contains("bintrayupload") ||
+    gradle.startParameter.taskNames*.toLowerCase().contains("javadoc") ||
     project.hasProperty('skipui')
     )
    ) {
@@ -231,6 +229,28 @@ ext {
         customTokens.put("%%mlTriggersDbName%%", mlTriggersDbName)
         customTokens.put("%%mlSchemasDbName%%", mlSchemasDbName)
 
+        modulePaths = ["marklogic-data-hub/src/main/resources/ml-modules"]
+
         mlModulePermissions = "rest-reader,read,rest-writer,insert,rest-writer,update,rest-extension-user,execute"
     }
+}
+
+// for the StreamCollectorTest we need to constrain the memory
+// to a lower value so that the out of memory issue appears
+// the hack here is to run that single test in this task with
+// the appropriate memory constraints. This task is a dependency
+// of the regular test task and thus gets run right before all
+// of the other tests run.
+task collectorTest(type: Test, dependsOn: testClasses) {
+    include '**/StreamCollector*'
+    minHeapSize = "128m"
+    maxHeapSize = "256m"
+}
+
+test {
+    // we exclude the StreamCollectorTest
+    exclude '**/StreamCollector*'
+
+    // depend on the collectorTest task above
+    dependsOn tasks.collectorTest
 }

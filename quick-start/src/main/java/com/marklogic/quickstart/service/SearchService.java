@@ -50,11 +50,14 @@ public class SearchService extends SearchableService {
 
     public StringHandle search(SearchQuery searchQuery) {
         QueryManager queryMgr;
+        String dbPrefix;
         if (searchQuery.database.equals(HubDatabase.STAGING)) {
             queryMgr = stagingQueryMgr;
+            dbPrefix = "staging-";
         }
         else {
             queryMgr = finalQueryMgr;
+            dbPrefix = "final-";
         }
 
         queryMgr.setPageLength(searchQuery.count);
@@ -64,7 +67,7 @@ public class SearchService extends SearchableService {
         ArrayList<StructuredQueryDefinition> queries = new ArrayList<>();
 
         if (searchQuery.entitiesOnly) {
-            sb = queryMgr.newStructuredQueryBuilder("entity-options");
+            sb = queryMgr.newStructuredQueryBuilder(dbPrefix + "entity-options");
             queries.add(
                 sb.or(
                     sb.containerQuery(sb.element(new QName("http://marklogic.com/entity-services", "instance")), sb.and()),

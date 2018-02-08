@@ -1,6 +1,6 @@
 {
   "name": "data-hub-quickstart",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "license": "APACHE",
   "homepage": "https://github.com/marklogic-community/marklogic-data-hub",
   "scripts": {
@@ -11,13 +11,14 @@
     "build.prod": "npm run clean.dist && ng build -prod",
     "test": "ng test",
     "lint": "ng lint",
-    "e2e": "./node_modules/.bin/ng e2e --proxy-config proxy.config.json"
+    "e2e": "./node_modules/.bin/ng e2e --proxy-config proxy.config.json",
+    "webdriver-update": "webdriver-manager update"
   },
   "private": true,
   "dependencies": {
     "@angular-mdl/core": "^4.0.8",
-    "@angular-mdl/popover": "^0.8.0",
-    "@angular-mdl/select": "^0.11.2",
+    "@angular-mdl/popover": "^0.10.0",
+    "@angular-mdl/select": "^0.13.0",
     "@angular/animations": "^4.2.4",
     "@angular/common": "^4.2.4",
     "@angular/compiler": "^4.2.4",
@@ -45,7 +46,7 @@
     "zone.js": "^0.8.14"
   },
   "devDependencies": {
-    "@angular/cli": "1.4.5",
+    "@angular/cli": "^1.6.3",
     "@angular/compiler-cli": "^4.2.4",
     "@angular/language-service": "^4.2.4",
     "@types/jasmine": "~2.5.53",

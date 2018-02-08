@@ -34,6 +34,7 @@ import com.marklogic.hub.EntityManager;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.flow.FlowType;
 import com.marklogic.hub.scaffold.Scaffolding;
+import com.marklogic.hub.validate.EntitiesValidator;
 import com.marklogic.quickstart.auth.ConnectionAuthenticationToken;
 import com.marklogic.quickstart.listeners.DeployUserModulesListener;
 import com.marklogic.quickstart.listeners.ValidateListener;
@@ -342,7 +343,8 @@ public class EntityManagerService {
         else {
             type = "xquery";
         }
-        return (new DataHub(config)).validateUserModule(entityName, flowName, plugin.fileContents.replaceAll("\\.(sjs|xqy)", ""), type, plugin.fileContents);
+        EntitiesValidator validator = new EntitiesValidator(config.newStagingClient());
+        return validator.validate(entityName, flowName, plugin.fileContents.replaceAll("\\.(sjs|xqy)", ""), type, plugin.fileContents);
     }
 
     public void saveFlowPlugin(

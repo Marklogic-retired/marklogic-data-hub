@@ -15,8 +15,8 @@ declare option xdmp:mapping "false";
  :)
 declare function plugin:create-headers(
   $id as xs:string,
-  $content as node()?,
-  $options as map:map) as node()*
+  $content as item()?,
+  $options as map:map) as item()*
 {
   let $_ :=
     if (map:get($options, "headersGoBoom") eq fn:true() and $id = ("/input-2.json", "/input-2.xml")) then

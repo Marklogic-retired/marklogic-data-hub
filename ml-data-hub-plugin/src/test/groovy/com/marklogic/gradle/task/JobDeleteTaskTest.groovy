@@ -18,7 +18,7 @@ class JobDeleteTaskTest extends BaseTest {
     def setupSpec() {
         createGradleFiles()
         runTask('hubInit')
-        runTask('mlUndeploy')
+        runTask('mlUndeploy', '-Pconfirm=true')
         println(runTask('mlDeploy', '-i').getOutput())
 
         println(runTask('hubCreateHarmonizeFlow', '-PentityName=test-entity', '-PflowName=test-harmonize-flow', '-PdataFormat=xml', '-PpluginFormat=xqy').getOutput())
@@ -45,7 +45,7 @@ class JobDeleteTaskTest extends BaseTest {
     }
 
     def cleanupSpec() {
-        runTask('mlUndeploy')
+        runTask('mlUndeploy', '-Pconfirm=true')
     }
 
     def getJobIds() {

@@ -2,9 +2,9 @@
 This example shows how to load binary documents with the Hub Framework.
 
 # TLDR; How do I run it?
-1. Download the [latest quick-start war](https://github.com/marklogic-community/marklogic-data-hub/releases/download/v2.0.2/quick-start-2.0.2.war) into this folder.
+1. Download the [latest quick-start war](https://github.com/marklogic-community/marklogic-data-hub/releases/download/v2.0.3/quick-start-2.0.3.war) into this folder.
 
-1. Run the quick-start war `java -jar quick-start-2.0.2.war`
+1. Run the quick-start war `java -jar quick-start-2.0.3.war`
 
 1. Open your web browser to [http://localhost:8080](http://localhost:8080).
 
@@ -17,16 +17,17 @@ This example shows how to load binary documents with the Hub Framework.
 1. Install the Hub into MarkLogic (if necessary)
 
 ## Loading the Sample PDF
-1. Click on the **Entities** Tab at the top.
+1. Click on the **Flows** Tab at the top.
 1. Click on the Guides entity on the left.
 1. Click on the "LoadAsXml" or "LoadAsJson" input flow.
 1. Browse to the input folder.
 1. Expand the "General Options" section.
-1. Add ,\\.pdf,'.xml' to the end of "Output URI Replace". It should look something like:  
+1. Add ,\\.pdf,'.json' or ,\\.pdf,'.xml' to the end of "Output URI Replace", depending on which Input Flow you are 
+running. It should look something like:  
 ***nix**  
-`/Users/yourname/data-hub/examples/load-binaries/input,'',\\.pdf,'.xml'`  
+`/Users/yourname/data-hub/examples/load-binaries/input,'',\.pdf,'.xml'`  
 **windows**  
-`/c:/Users/yourname/data-hub/examples/load-binaries/input,'',\\.pdf,'.xml'`  
+`/c:/Users/yourname/data-hub/examples/load-binaries/input,'',\.pdf,'.xml'`  
 1. Change "Document Type" to "binary".
 1. Scroll down and press the "RUN IMPORT" button.
 

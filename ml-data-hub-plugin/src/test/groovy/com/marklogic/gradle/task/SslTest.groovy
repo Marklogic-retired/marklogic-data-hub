@@ -1,6 +1,11 @@
 package com.marklogic.gradle.task
 
+import com.marklogic.client.DatabaseClientFactory
+import com.marklogic.client.ext.modulesloader.ssl.SimpleX509TrustManager
 import org.gradle.testkit.runner.UnexpectedBuildFailure
+
+import javax.net.ssl.SSLContext
+import javax.net.ssl.TrustManager
 
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
@@ -27,8 +32,6 @@ class SslTest extends BaseTest {
                     def manageConfig = getProject().property("mlManageConfig")
                     manageConfig.setScheme("http")
                     manageConfig.setConfigureSimpleSsl(false)
-                    manageConfig.setAdminScheme("http")
-                    manageConfig.setAdminConfigureSimpleSsl(false)
 
                     def adminConfig = getProject().property("mlAdminConfig")
                     adminConfig.setScheme("http")
@@ -50,52 +53,36 @@ class SslTest extends BaseTest {
                     adminConfig.setConfigureSimpleSsl(true)
                     adminManager = new com.marklogic.mgmt.admin.AdminManager(adminConfig)
 
-                    manageClient.putJson("/manage/v2/servers/Admin/properties?group-id=Default", '{"ssl-certificate-template": "admin-cert"}')
+                    manageClient.putJson("/manage/v2/servers/Admin/properties?group-id=Default", '{"ssl-certificate-template": "admin-cert","ssl-allow-sslv3": true, "ssl-allow-tls": true, "ssl-disable-sslv3": false, "ssl-disable-tlsv1": false, "ssl-disable-tlsv1-1": false, "ssl-disable-tlsv1-2": false}')
                     adminManager.waitForRestart()
-                    manageClient.putJson("/manage/v2/servers/App-Services/properties?group-id=Default", '{"ssl-certificate-template": "admin-cert"}')
+                    manageClient.putJson("/manage/v2/servers/App-Services/properties?group-id=Default", '{"ssl-certificate-template": "admin-cert","ssl-allow-sslv3": true, "ssl-allow-tls": true, "ssl-disable-sslv3": false, "ssl-disable-tlsv1": false, "ssl-disable-tlsv1-1": false, "ssl-disable-tlsv1-2": false}')
                     adminManager.waitForRestart()
-                    manageClient.putJson("/manage/v2/servers/Manage/properties?group-id=Default", '{"ssl-certificate-template": "admin-cert"}')
+                    manageClient.putJson("/manage/v2/servers/Manage/properties?group-id=Default", '{"ssl-certificate-template": "admin-cert","ssl-allow-sslv3": true, "ssl-allow-tls": true, "ssl-disable-sslv3": false, "ssl-disable-tlsv1": false, "ssl-disable-tlsv1-1": false, "ssl-disable-tlsv1-2": false}')
                     adminManager.waitForRestart()
                 }
             }
 
             task disableSSL(type: com.marklogic.gradle.task.MarkLogicTask) {
                 doFirst {
-                    def appConfig = getAppConfig()
-                    disableSSL(appConfig, "Admin")
-                    disableSSL(appConfig, "Manage")
-                    disableSSL(appConfig, "App-Services")
-
+                    def manageClient = getManageClient()
+                    manageClient.putJson("/manage/v2/servers/Admin/properties?group-id=Default", '{"ssl-certificate-template": ""}')
+                    manageClient.putJson("/manage/v2/servers/App-Services/properties?group-id=Default", '{"ssl-certificate-template": ""}')
+                    manageClient.putJson("/manage/v2/servers/Manage/properties?group-id=Default", '{"ssl-certificate-template": ""}')
+                        
                     def adminConfig = getProject().property("mlAdminConfig")
                     adminConfig.setScheme("http")
                     adminConfig.setConfigureSimpleSsl(false)
                     def adminManager = new com.marklogic.mgmt.admin.AdminManager(adminConfig)
                     adminManager.waitForRestart()
-
+            
                     def manageConfig = getProject().property("mlManageConfig")
                     manageConfig.setScheme("http")
                     manageConfig.setConfigureSimpleSsl(false)
-                    manageConfig.setAdminScheme("http")
-                    manageConfig.setAdminConfigureSimpleSsl(false)
-                    def manageClient = new com.marklogic.mgmt.ManageClient(manageConfig)
-
-                    def certManager = new com.marklogic.mgmt.resource.security.CertificateTemplateManager(manageClient)
+                    def mgClient = new com.marklogic.mgmt.ManageClient(manageConfig)
+            
+                    def certManager = new com.marklogic.mgmt.resource.security.CertificateTemplateManager(mgClient)
                     certManager.delete(adminCert())
                 }
-            }
-
-            // there is a bug in ML 8 that won't unset the ssl
-            def disableSSL(appConfig, serverName) {
-                def eval = appConfig.newAppServicesDatabaseClient().newServerEval()
-                def xqy = """
-                    import module namespace admin = "http://marklogic.com/xdmp/admin" at "/MarkLogic/admin.xqy";
-                    let \\$config := admin:get-configuration()
-                    let \\$appServer := admin:appserver-get-id(\\$config, admin:group-get-id(\\$config, "Default"), "\${serverName}")
-                    let \\$config := admin:appserver-set-ssl-certificate-template(\\$config, \\$appServer, 0)
-                    return
-                        admin:save-configuration(\\$config)
-                    """
-                def result = eval.xquery(xqy).eval()
             }
 
             def adminCert() {
@@ -128,8 +115,8 @@ class SslTest extends BaseTest {
     }
 
     def cleanupSpec() {
-        runTask("mlUndeploy")
-        runTask("disableSSL")
+        runTask("mlUndeploy", "-Pconfirm=true")
+        runTask("disableSSL", "--stacktrace")
     }
 
     void createProperties() {
@@ -193,12 +180,16 @@ class SslTest extends BaseTest {
     def "bootstrap a project with ssl out the wazoo"() {
         when:
         def result = runTask('mlDeploy')
+        def newSslContext = SSLContext.getInstance("SSLv3")
+        newSslContext.init(null, [new SimpleX509TrustManager()] as TrustManager[], null)
+        hubConfig().stagingSslContext = newSslContext
+        hubConfig().stagingSslHostnameVerifier = DatabaseClientFactory.SSLHostnameVerifier.ANY
         print(result.output)
 
         then:
         notThrown(UnexpectedBuildFailure)
         def modCount = getModulesDocCount()
-        modCount == 84 || modCount == 64
+        modCount == 83 || modCount == 63
         result.task(":mlDeploy").outcome == SUCCESS
     }
 }

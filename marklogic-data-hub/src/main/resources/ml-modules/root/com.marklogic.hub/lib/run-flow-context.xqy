@@ -12,8 +12,10 @@ declare namespace hub = "http://marklogic.com/data-hub";
 
 declare option xdmp:mapping "false";
 
-(: the context for running a flow :)
+(: the transaction global context for running a flow :)
 declare variable $context := map:map();
+
+declare variable $item-context := map:map();
 
 declare function rfc:with-flow(
   $flow as element(hub:flow)
@@ -29,27 +31,6 @@ declare function rfc:with-job-id(
   $job-id as xs:string)
 {
   map:put($context, "job-id", $job-id),
-  $context
-};
-
-declare function rfc:with-id(
-  $identifier as xs:string) as map:map
-{
-  map:put($context, "identifier", $identifier),
-  $context
-};
-
-declare function rfc:with-content(
-  $content as item()?) as map:map
-{
-  map:put($context, "content", $content),
-  $context
-};
-
-declare function rfc:with-options(
-  $options as map:map) as map:map
-{
-  map:put($context, "options", $options),
   $context
 };
 
@@ -75,19 +56,42 @@ declare function rfc:with-module-uri(
   $context
 };
 
-declare function rfc:get-id() as xs:string?
+declare function rfc:new-item-context() as map:map
 {
-  map:get($context, "identifier")
+  xdmp:set($item-context, map:map()),
+  $item-context
 };
 
-declare function rfc:get-content() as item()?
+declare function rfc:with-id(
+  $ic as map:map,
+  $identifier as xs:string) as map:map
 {
-  map:get($context, "content")
+  map:put($ic, "identifier", $identifier),
+  $ic
 };
 
-declare function rfc:get-options() as map:map
+declare function rfc:with-content(
+  $ic as map:map,
+  $content as item()?) as map:map
 {
-  map:get($context, "options")
+  map:put($ic, "content", $content),
+  $ic
+};
+
+declare function rfc:with-options(
+  $ic as map:map,
+  $options as map:map) as map:map
+{
+  map:put($ic, "options", $options),
+  $ic
+};
+
+declare function rfc:with-trace(
+  $ic as map:map,
+  $trace as map:map) as map:map
+{
+  map:put($ic, "trace", $trace),
+  $ic
 };
 
 declare function rfc:get-flow() as element(hub:flow)
@@ -129,3 +133,28 @@ declare function rfc:get-job-id()
 {
   map:get($context, "job-id")
 };
+
+declare function rfc:get-id(
+  $ic as map:map) as xs:string?
+{
+  map:get($ic, "identifier")
+};
+
+declare function rfc:get-content(
+$ic as map:map) as item()?
+{
+  map:get($ic, "content")
+};
+
+declare function rfc:get-options(
+  $ic as map:map) as map:map
+{
+  map:get($ic, "options")
+};
+
+declare function rfc:get-trace(
+  $ic as map:map)
+{
+  map:get($ic, "trace")
+};
+

@@ -3,8 +3,8 @@ package com.marklogic.gradle
 import com.marklogic.appdeployer.impl.SimpleAppDeployer
 import com.marklogic.gradle.task.*
 import com.marklogic.hub.DataHub
-import com.marklogic.hub.DefaultHubConfigFactory
-import com.marklogic.hub.HubConfig
+import com.marklogic.hub.HubConfigBuilder
+import com.marklogic.hub.util.Versions
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.slf4j.Logger
@@ -18,7 +18,7 @@ class DataHubPlugin implements Plugin<Project> {
 
     @Override
     void apply(Project project) {
-        if (DataHub.versionCompare(project.gradle.gradleVersion, "3.4") == -1) {
+        if (Versions.compare(project.gradle.gradleVersion, "3.4") == -1) {
             logger.error("\n\n" +
                 "********************************\n" +
                 "Hold the phone!\n\n" +
@@ -51,6 +51,9 @@ class DataHubPlugin implements Plugin<Project> {
         project.task("hubCreateEntity", group: scaffoldGroup, type: CreateEntityTask)
         project.task("hubCreateHarmonizeFlow", group: scaffoldGroup, type: CreateHarmonizeFlowTask)
         project.task("hubCreateInputFlow", group: scaffoldGroup, type: CreateInputFlowTask)
+        project.task("hubGenerateTDETemplates", group: scaffoldGroup, type: GenerateTDETemplateFromEntityTask,
+            description: "Generates TDE Templates from the entity definition files. It is possible to only generate TDE templates" +
+                " for specific entities by setting the (comma separated) project property 'entityNames'. E.g. -PentityNames=Entity1,Entity2")
 
         project.tasks.replace("mlLoadModules", DeployUserModulesTask)
         project.tasks.replace("mlWatch", HubWatchTask)
@@ -61,13 +64,26 @@ class DataHubPlugin implements Plugin<Project> {
         String flowGroup = "MarkLogic Data Hub Flow Management"
         project.task("hubRunFlow", group: flowGroup, type: RunFlowTask)
         project.task("hubDeleteJobs", group: flowGroup, type: DeleteJobsTask )
+        project.task("hubExportJobs", group: flowGroup, type: ExportJobsTask )
+        // This task is undocumented, so don't let it appear in the list
+        project.task("hubImportJobs", group: null, type: ImportJobsTask )
 
         logger.info("Finished initializing ml-data-hub\n")
     }
 
     void initializeProjectExtensions(Project project) {
-        HubConfig hubConfig = new DefaultHubConfigFactory(project, new ProjectPropertySource(project)).newHubConfig()
-        hubConfig.setAppConfig(project.mlAppConfig)
+        def projectDir = project.getProjectDir().getAbsolutePath()
+        def properties = new ProjectPropertySource(project).getProperties()
+        def extensions = project.getExtensions()
+
+        def hubConfig = HubConfigBuilder.newHubConfigBuilder(projectDir)
+            .withProperties(properties)
+            .withAppConfig(extensions.getByName("mlAppConfig"))
+            .withAdminConfig(extensions.getByName("mlAdminConfig"))
+            .withAdminManager(extensions.getByName("mlAdminManager"))
+            .withManageConfig(extensions.getByName("mlManageConfig"))
+            .withManageClient(extensions.getByName("mlManageClient"))
+            .build()
         project.extensions.add("hubConfig", hubConfig)
 
         dataHub = new DataHub(hubConfig)

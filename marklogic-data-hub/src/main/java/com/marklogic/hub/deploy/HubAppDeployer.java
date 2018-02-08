@@ -29,7 +29,7 @@ public class HubAppDeployer extends SimpleAppDeployer {
 
     @Override
     public void deploy(AppConfig appConfig) {
-        logger.info(format("Deploying app %s with config dir of: %s\n", appConfig.getName(), appConfig.getConfigDir()
+        logger.info(format("Deploying app %s with config dir of: %s\n", appConfig.getName(), appConfig.getFirstConfigDir()
                 .getBaseDir().getAbsolutePath()));
 
         List<Command> commands = getCommands();
@@ -65,7 +65,7 @@ public class HubAppDeployer extends SimpleAppDeployer {
 
     @Override
     public void undeploy(AppConfig appConfig) {
-        logger.info(format("Undeploying app %s with config dir: %s\n", appConfig.getName(), appConfig.getConfigDir()
+        logger.info(format("Undeploying app %s with config dir: %s\n", appConfig.getName(), appConfig.getFirstConfigDir()
             .getBaseDir().getAbsolutePath()));
 
         List<Command> commands = getCommands();
