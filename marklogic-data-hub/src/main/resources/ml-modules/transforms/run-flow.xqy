@@ -51,6 +51,10 @@ declare %rapi:transaction-mode("query") function runFlow:transform(
     let $envelope := flow:run-flow(
       $job-id, $flow, $uri, $content, $options
     )
+
+    (: write the trace for the current identifier :)
+    let $item-context := map:get($flow:context-queue, $uri)
+    let $_ := trace:write-trace($item-context)
     return
       document { $envelope }
   })

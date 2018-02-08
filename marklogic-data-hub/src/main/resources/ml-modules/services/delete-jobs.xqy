@@ -49,7 +49,9 @@ declare %rapi:transaction-mode("update") function service:post(
         else
           <update>true</update>
       }
+      <ignore-amps>{fn:true()}</ignore-amps>
       <isolation>same-statement</isolation>
+      <ignore-amps>true</ignore-amps>
     </options>
   return
     perf:log('/v1/resources/delete-jobs:post', function() {
