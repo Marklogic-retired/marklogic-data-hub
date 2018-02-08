@@ -3,16 +3,19 @@
   <div class="map-container">
 
     <div id="source">
-      <h4>Source</h4>
+      <h4 class="item-type">Source Document</h4>
+      <p class="item-identifying-info">{{ sampleDoc?.uri }}</p>
       <ul>
         <li *ngFor="let key of sampleDocSrcKeys; let i = index;" class="prop-container" on-mouseover='overEvent(i, $event)'>
           <span class="prop-name">{{key}}</span>
+          <span class="prop-val" title="{{ sampleDocSrcValTypes[i] }}">{{ sampleDocSrcValTypes[i] === "string" ? '"' : '' }}{{ sampleDocSrcVals[i] | slice:0:docValMaxLen }}{{ sampleDocSrcVals[i].length > docValMaxLen ? '...' : '' }}{{ sampleDocSrcValTypes[i] === "string" ? '"' : '' }}</span>
         </li>
       </ul>
     </div>
 
     <div id="harmonized">
-      <h4>Harmonized</h4>
+      <h4 class="item-type">Harmonized Model</h4>
+      <p class="item-identifying-info">{{ chosenEntity?.info.title }}</p>
       <ul>
         <li *ngFor="let property of chosenEntity?.definition.properties; let i = index;" class="prop-container">
           <span class="prop-name">{{ property.name }}</span><span class="prop-type">{{ property.datatype }}</span><span class="is-primary" *ngIf="property.name === entityPrimaryKey"><i class="fa fa-key"></i></span>
