@@ -32,5 +32,22 @@ export default function() {
         });
       });
     });
+
+    //run harmonize flow
+    /*it ('should run Harmonize Products flow', function() {
+      flowPage.entityDisclosure('Product').click();
+      flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE').click();
+      browser.wait(EC.visibilityOf(flowPage.tabs));
+      browser.sleep(5000);
+      // *** this is not finding the span element ***
+      flowPage.tab('collector').click();
+      browser.sleep(5000);
+      flowPage.pluginTextArea().clear();
+      browser.sleep(5000);
+      flowPage.pluginTextArea().sendKeys(flowPage.contentScriptWithFlowOptions());
+      browser.sleep(5000);
+      flowPage.pluginSaveButton().click();
+      browser.sleep(5000);
+    });*/
   });
 }
