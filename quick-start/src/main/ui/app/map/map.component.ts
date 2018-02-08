@@ -13,10 +13,7 @@ export class MapComponent {
   // Harmonized Entity
   public entities: Array<Entity>;
   public chosenEntity: Entity;
-  public entitiesLoaded: boolean = false;
-  private entityProps: Array<string> = [];
-  private entityType: Array<string> = [];
-  private entityPrimaryKey: string = "";
+  private entityPrimaryKey: string = '';
 
   // Sample Doc
   private currentDatabase: string = 'STAGING';
@@ -28,26 +25,21 @@ export class MapComponent {
   private sampleDoc: any = null;
   private sampleDocSrc: any = null;
   private sampleDocSrcKeys: Array<string> = [];
-  
+  private sampleDocSrcVals: Array<string> = [];
+  private sampleDocSrcValTypes: Array<string> = [];
+  private docValMaxLen: number = 15;
+
   getEntities(): void {
     this.entitiesService.entitiesChange.subscribe(entities => {
-      let self = this;
-
-      this.entitiesLoaded = true;
       this.entities = entities;
       this.chosenEntity = this.entities[0]; // currently just taking the first entity defined. Will add choice via UI later
-
-      // load entity for use by UI
-      _.forEach(this.chosenEntity.definition.properties, function(prop, key) {
-        self.entityProps.push(prop.name);
-        self.entityType.push(prop.datatype);
-      });
       this.entityPrimaryKey = this.chosenEntity.definition.primaryKey;
     });
     this.entitiesService.getEntities();
   }
 
   getSampleDoc(): void {
+    let self = this;
     this.searchService.getResults(
       this.currentDatabase,
       this.entitiesOnly, 
@@ -60,7 +52,11 @@ export class MapComponent {
       // get contents of the document
       this.searchService.getDoc(this.currentDatabase, this.sampleDoc.uri).subscribe(doc => {
         this.sampleDocSrc = doc;
-        this.sampleDocSrcKeys = Object.keys(this.sampleDocSrc);
+        _.forEach(this.sampleDocSrc, function(val, key) {
+          self.sampleDocSrcKeys.push(key);
+          self.sampleDocSrcVals.push(String(val));
+          self.sampleDocSrcValTypes.push(typeof(val));
+        });      
       });
     },
     () => {},
@@ -73,6 +69,7 @@ export class MapComponent {
     this.getEntities();
     this.getSampleDoc(); 
   }
+
   overEvent(index, event) {
     console.log(index, event);
   }
