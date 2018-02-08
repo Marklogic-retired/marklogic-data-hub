@@ -27,6 +27,10 @@ export class JobService {
     return this.http.post('/api/jobs/delete', jobIds.join(","));
   }
 
+  exportJobs(jobIds: string[]) {
+    return this.http.post('/api/jobs/export', jobIds.join(","));
+  }
+
   private extractData = (res: Response) => {
     return res.json();
   }
