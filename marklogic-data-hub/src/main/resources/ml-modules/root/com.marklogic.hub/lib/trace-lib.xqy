@@ -70,15 +70,25 @@ declare function trace:enable-tracing($enabled as xs:boolean)
 
 declare function trace:enabled() as xs:boolean
 {
-  hul:from-field-cache("tracing-enabled", function() {
-    xdmp:eval('
-      declare namespace trace = "http://marklogic.com/data-hub/trace";
-      fn:exists(
-        cts:search(
-          fn:doc("/com.marklogic.hub/settings/__tracing_enabled__.xml"),
-          cts:element-value-query(xs:QName("trace:is-tracing-enabled"), "1", ("exact")),
-          ("unfiltered", "score-zero", "unchecked", "unfaceted")
-        )
+  let $key := "tracing-enabled"
+  let $flag :=  hul:from-field-cache-or-empty($key, ())
+  return
+    if (exists($flag)) then
+      $flag
+    else
+      hul:set-field-cache(
+        $key,
+        xdmp:eval('
+          declare namespace trace = "http://marklogic.com/data-hub/trace";
+          fn:exists(
+            cts:search(
+              fn:doc("/com.marklogic.hub/settings/__tracing_enabled__.xml"),
+              cts:element-value-query(xs:QName("trace:is-tracing-enabled"), "1", ("exact")),
+              ("unfiltered", "score-zero", "unchecked", "unfaceted")
+            )
+          ) 
+        ',(), map:new(map:entry("database", xdmp:modules-database()))),
+        xs:dayTimeDuration("PT1M")
       )
     ',(), map:new((map:entry("database", xdmp:modules-database()), map:entry("ignoreAmps", fn:true())))
     )

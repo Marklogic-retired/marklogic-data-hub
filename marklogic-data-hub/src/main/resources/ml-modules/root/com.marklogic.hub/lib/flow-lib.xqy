@@ -46,7 +46,7 @@ declare option xdmp:mapping "false";
 declare variable $ENTITIES-DIR := "/entities/";
 
 declare variable $PLUGIN-NS := "http://marklogic.com/data-hub/plugins";
-
+declare variable $FLOW-CACHE-KEY-PREFIX := "flow-cache-";
 declare variable $context-queue := map:map();
 declare variable $writer-queue := map:map();
 
@@ -66,12 +66,32 @@ declare function flow:get-module-ns(
  : @param $flow-name - name of the flow to retrieve
  : @return - xml describing the flow
  :)
-declare function flow:get-flow(
+declare function flow:get-flow( 
   $entity-name as xs:string,
   $flow-name as xs:string,
   $flow-type as xs:string?) as element(hub:flow)?
 {
-  hul:run-in-modules(function() {
+  let $duration := xs:dayTimeDuration("PT5S")
+  let $key := $FLOW-CACHE-KEY-PREFIX||$entity-name||$flow-name||$flow-type
+  let $flow :=  hul:from-field-cache-or-empty($key, $duration)
+  return
+    if ($flow) then
+      $flow
+    else
+      hul:set-field-cache(
+        $key,
+        flow:get-flow-nocache($entity-name, $flow-name, $flow-type),
+        $duration
+      )
+};
+
+declare function flow:get-flow-nocache(
+  $entity-name as xs:string,
+  $flow-name as xs:string,
+  $flow-type as xs:string?) as element(hub:flow)?
+{
+  
+  hul:run-in-modules(function() { 
     /hub:flow[
       hub:entity = $entity-name and
       hub:name = $flow-name]
@@ -81,8 +101,8 @@ declare function flow:get-flow(
         else
           fn:true()
       ]
-  })
-};
+  }) ! hul:deep-copy(.)
+}; 
 
 (:~
  : Returns the flows that belong to the given entity in the database
@@ -610,7 +630,7 @@ declare function flow:run-main(
     let $resp :=
       if (rfc:get-flow-type() eq $consts:HARMONIZE_FLOW) then
         $func(rfc:get-id($item-context), $options)
-      else
+      else 
         $func(rfc:get-id($item-context), rfc:get-content($item-context), $options)
     return
       $resp

@@ -47,15 +47,25 @@ declare function debug:enable($enabled as xs:boolean)
  :)
 declare function debug:on() as xs:boolean
 {
-  hul:from-field-cache("debugging-enabled", function() {
-    xdmp:eval('
-      declare namespace debug = "http://marklogic.com/data-hub/debug";
-      fn:exists(
-        cts:search(
-          fn:doc("/com.marklogic.hub/settings/__debug_enabled__.xml"),
-          cts:element-value-query(xs:QName("debug:is-debugging-enabled"), "1", ("exact")),
-          ("unfiltered", "score-zero", "unchecked", "unfaceted")
-        )
+  let $key := "debugging-enabled"
+  let $flag :=  hul:from-field-cache-or-empty($key, ())
+  return
+    if (exists($flag)) then
+      $flag
+    else
+      hul:set-field-cache(
+        $key,
+        xdmp:eval('
+          declare namespace debug = "http://marklogic.com/data-hub/debug";
+          fn:exists(
+            cts:search(
+              fn:doc("/com.marklogic.hub/settings/__debug_enabled__.xml"),
+              cts:element-value-query(xs:QName("debug:is-debugging-enabled"), "1", ("exact")),
+              ("unfiltered", "score-zero", "unchecked", "unfaceted")
+            )
+          )
+        ',(), map:new(map:entry("database", xdmp:modules-database()))),
+        ()
       )
     ',(), map:new((map:entry("database", xdmp:modules-database()), map:entry("ignoreAmps", fn:true())))
     )

@@ -436,6 +436,8 @@ public class HubTestBase {
             writeSet.add(path, handle);
         });
         modMgr.write(writeSet);
+        clearFlowCache();
+
     }
 
     protected static void installModule(String path, String localPath) {
@@ -454,6 +456,7 @@ public class HubTestBase {
         }
 
         modMgr.write(path, handle);
+        clearFlowCache();
     }
 
     protected static EvalResultIterator runInModules(String query) {
@@ -497,6 +500,22 @@ public class HubTestBase {
         String installer =
             "xdmp:invoke-function(function() {" +
             "  xdmp:document-delete(\"" + path + "\")" +
+            "}," +
+            "<options xmlns=\"xdmp:eval\">" +
+            "  <database>{xdmp:modules-database()}</database>" +
+            "  <transaction-mode>update-auto-commit</transaction-mode>" +
+            "</options>)";
+
+        eval.xquery(installer).eval();
+        clearFlowCache();
+    }
+
+    protected static void clearFlowCache() {
+        ServerEvaluationCall eval = stagingClient.newServerEval();
+        String installer =
+            "xdmp:invoke-function(function() {" +
+            "  for $f in xdmp:get-server-field-names()[starts-with(., 'flow-cache-')] " +
+            "  return xdmp:set-server-field($f, ())" +
             "}," +
             "<options xmlns=\"xdmp:eval\">" +
             "  <database>{xdmp:modules-database()}</database>" +
