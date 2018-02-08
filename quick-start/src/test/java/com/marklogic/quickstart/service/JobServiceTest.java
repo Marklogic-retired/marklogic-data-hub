@@ -20,7 +20,7 @@ public class JobServiceTest extends HubTestBase {
     @Test
     public void getJobs() {
         DatabaseClient traceClient = DatabaseClientFactory.newClient("localhost", HubConfig.DEFAULT_JOB_PORT, "admin", "admin", DatabaseClientFactory.Authentication.DIGEST);
-        JobService jobService = new JobService(traceClient);
+        JobService jobService = new JobService(jobClient, traceClient);
         JobQuery jobQuery = new JobQuery();
         jobQuery.start = new Long(1);
         jobQuery.count = new Long(10);
