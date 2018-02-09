@@ -11,6 +11,17 @@
     <dispatch>/trace-ui/index.html</dispatch>
   </match-path>
 
+        <!-- DHF -->
+        <match-path matches="^/(v1|LATEST)/internal/hubcollector/?$">
+            <match-method any-of="GET">
+                <match-query-param name="database">
+                    <set-database checked="true">$0</set-database>
+                </match-query-param>
+                <dispatch>/MarkLogic/data-hub-framework/endpoints/collector.xqy</dispatch>
+            </match-method>
+        </match-path>
+        <!-- DHF -->
+
   <match-path matches="^/.*\.(js|css|ttf|eot|woff|woff2|svg)$">
     <add-query-param name="uri">$0</add-query-param>
     <dispatch>/com.marklogic.hub/endpoints/trace-ui.xqy</dispatch>
