@@ -107,11 +107,12 @@ public class JobManager {
      * @param exportFilePath specifies where the zip file will be written
      * @param jobIds a comma-separated list of jobIds; if null, all will be exported
      */
-    public void exportJobs(Path exportFilePath, String jobIds) {
+    public JobExportResponse exportJobs(Path exportFilePath, String[] jobIds) {
+        JobExportResponse response = new JobExportResponse();
+        response.fullPath = exportFilePath.toAbsolutePath().toString();
+
         File zipFile = exportFilePath.toFile();
         WriteToZipConsumer zipConsumer = new WriteToZipConsumer(zipFile);
-
-        String[] jobsArray = jobIds != null ? jobIds.split(",") : null;
 
         QueryManager qm = jobClient.newQueryManager();
 
@@ -124,11 +125,11 @@ public class JobManager {
         DataMovementManager dmm = jobClient.newDataMovementManager();
         QueryBatcher batcher = null;
         StructuredQueryDefinition query = null;
-        if (jobsArray == null) {
+        if (jobIds == null) {
             batcher = dmm.newQueryBatcher(emptyQuery);
         }
         else {
-            batcher = dmm.newQueryBatcher(sqb.value(sqb.jsonProperty("jobId"), jobsArray));
+            batcher = dmm.newQueryBatcher(sqb.value(sqb.jsonProperty("jobId"), jobIds));
         }
         batcher.onUrisReady(new ExportListener().onDocumentReady(zipConsumer));
         JobTicket jobTicket = dmm.startJob(batcher);
@@ -139,23 +140,28 @@ public class JobManager {
 
         JobReport report = dmm.getJobReport(jobTicket);
         long jobCount = report.getSuccessEventsCount();
+        response.totalJobs = jobCount;
 
         if (jobCount > 0) {
 
             // Get the traces that go with the job(s)
             dmm = this.traceClient.newDataMovementManager();
-            if (jobsArray == null) {
+            if (jobIds == null) {
                 batcher = dmm.newQueryBatcher(emptyQuery);
             }
             else {
-                batcher = dmm.newQueryBatcher(sqb.value(sqb.element(new QName("jobId")), jobsArray));
+                batcher = dmm.newQueryBatcher(sqb.value(sqb.element(new QName("jobId")), jobIds));
             }
             batcher.onUrisReady(new ExportListener().onDocumentReady(zipConsumer));
-            dmm.startJob(batcher);
+            jobTicket = dmm.startJob(batcher);
 
             batcher.awaitCompletion();
             dmm.stopJob(batcher);
             dmm.release();
+
+            report = dmm.getJobReport(jobTicket);
+            long traceCount = report.getSuccessEventsCount();
+            response.totalTraces = traceCount;
 
             zipConsumer.close();
         }
@@ -165,6 +171,7 @@ public class JobManager {
             zipFile.delete();
         }
 
+        return response;
     }
 
     /**
