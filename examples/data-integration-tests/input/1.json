@@ -1,0 +1,24 @@
+{
+  "Row_ID": "1",
+  "Order_ID": "3",
+  "Order_Date": "10/13/10",
+  "Order_Priority": "Low",
+  "Order_Quantity": "6",
+  "Sales": "261.54",
+  "Discount": "0.04",
+  "Ship_Mode": "Regular Air",
+  "Profit": "-213.25",
+  "Unit_Price": "38.94",
+  "Shipping_Cost": "35",
+  "Customer_Name": "Muhammed MacIntyre",
+  "Province": "Nunavut",
+  "Region": "Nunavut",
+  "Customer_Segment": "Small Business",
+  "Product_Category": "Office Supplies",
+  "Product_Sub-Category": "Storage & Organization",
+  "Product_Name": "Eldon Base for stackable storage shelf, platinum",
+  "Product_Container": "Large Box",
+  "Product_Base_Margin": "0.8",
+  "Ship_Date": "10/20/10"
+}
+
