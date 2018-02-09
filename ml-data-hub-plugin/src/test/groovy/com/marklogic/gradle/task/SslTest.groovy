@@ -189,7 +189,7 @@ class SslTest extends BaseTest {
         then:
         notThrown(UnexpectedBuildFailure)
         def modCount = getModulesDocCount()
-        modCount == 25 || modCount == 5
+        modCount == MOD_COUNT_WITH_TRACE_MODULES || modCount == MOD_COUNT
         result.task(":mlDeploy").outcome == SUCCESS
     }
 }
