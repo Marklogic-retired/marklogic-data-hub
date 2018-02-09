@@ -112,6 +112,6 @@ public class SearchService extends SearchableService {
         else {
             docMgr = finalDocMgr;
         }
-        return docMgr.readAs(docUri, String.class, new ServerTransform("prettify"));
+        return docMgr.readAs(docUri, String.class, new ServerTransform("ml:prettifyXML"));
     }
 }

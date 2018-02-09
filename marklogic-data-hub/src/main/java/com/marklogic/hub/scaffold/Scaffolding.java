@@ -416,7 +416,7 @@ public class Scaffolding {
     }
 
     public class ContentPlugin extends ResourceManager {
-        private static final String NAME = "scaffold-content";
+        private static final String NAME = "ml:scaffoldContent";
 
         private RequestParameters params = new RequestParameters();
 

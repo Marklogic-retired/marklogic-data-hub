@@ -191,7 +191,7 @@ public class EntityManager extends LoggingObject {
     }
 
     private class SearchOptionsGenerator extends ResourceManager {
-        private static final String NAME = "search-options-generator";
+        private static final String NAME = "ml:searchOptionsGenerator";
 
         private RequestParameters params = new RequestParameters();
 
@@ -219,7 +219,7 @@ public class EntityManager extends LoggingObject {
     }
 
     private class DbIndexGenerator extends ResourceManager {
-        private static final String NAME = "db-configs";
+        private static final String NAME = "ml:dbConfigs";
 
         private RequestParameters params = new RequestParameters();
 

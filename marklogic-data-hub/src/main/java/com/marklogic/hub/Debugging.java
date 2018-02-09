@@ -9,7 +9,7 @@ import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.util.RequestParameters;
 
 public class Debugging extends ResourceManager {
-    private static final String NAME = "debug";
+    private static final String NAME = "ml:debug";
 
     public Debugging(DatabaseClient client) {
         super();

@@ -23,7 +23,7 @@ import com.marklogic.client.util.RequestParameters;
 import com.sun.jersey.api.client.ClientHandlerException;
 
 public class HubStatsService extends ResourceManager{
-    private static final String NAME = "hubstats";
+    private static final String NAME = "ml:hubstats";
 
     private RequestParameters params = new RequestParameters();
 

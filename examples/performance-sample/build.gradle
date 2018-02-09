@@ -133,7 +133,7 @@ task loadJson(type: com.marklogic.gradle.task.MlcpTask) {
   output_uri_prefix = "/city/"
   output_uri_suffix = ".json"
   output_collections = "input-json"
-  transform_module = "/com.marklogic.hub/mlcp-flow-transform.xqy"
+  transform_module = "/MarkLogic/data-hub-framework/transforms/mlcp-flow-transform.xqy"
   transform_namespace = "http://marklogic.com/data-hub/mlcp-flow-transform"
   transform_param =  "entity-name=input-json,flow-name=raw-input-json"
 }
@@ -156,7 +156,7 @@ task loadXml(type: com.marklogic.gradle.task.MlcpTask) {
   output_uri_prefix = "/city/"
   output_uri_suffix = ".xml"
   output_collections = "input-xml"
-  transform_module = "/com.marklogic.hub/mlcp-flow-transform.xqy"
+  transform_module = "/MarkLogic/data-hub-framework/transforms/mlcp-flow-transform.xqy"
   transform_namespace = "http://marklogic.com/data-hub/mlcp-flow-transform"
   transform_param =  "entity-name=input-xml,flow-name=raw-input-xml"
 }

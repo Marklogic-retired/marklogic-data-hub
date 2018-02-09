@@ -44,7 +44,7 @@ import java.util.regex.Pattern;
 
 public class FlowManager extends ResourceManager {
     private static final String HUB_NS = "http://marklogic.com/data-hub";
-    private static final String NAME = "flow";
+    private static final String NAME = "ml:flow";
 
     private DatabaseClient stagingClient;
     private DatabaseClient finalClient;

@@ -253,7 +253,7 @@ class TlsTest extends BaseTest {
         then:
         notThrown(UnexpectedBuildFailure)
         def modCount = getModulesDocCount()
-        modCount == 83 || modCount == 63
+        modCount == 25 || modCount == 5
         result.task(":mlDeploy").outcome == SUCCESS
     }
 }
