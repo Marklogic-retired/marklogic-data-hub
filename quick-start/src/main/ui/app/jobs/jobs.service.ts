@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Http, Response } from '@angular/http';
+import {Http, RequestOptions, Response, ResponseContentType} from '@angular/http';
 
 @Injectable()
 export class JobService {
@@ -28,14 +28,17 @@ export class JobService {
   }
 
   exportJobs(filename: string, jobIds: string[]) {
+    let options: RequestOptions = new RequestOptions();
+    options.responseType = ResponseContentType.Json;
     return this.http.post(
       '/api/jobs/export',
       JSON.stringify(
         {
           "filename": filename,
-          "jobIds": jobIds
+          "jobIds": jobIds.length ===0 ? null : jobIds
         }
-      )
+      ),
+      options
     );
   }
 

@@ -10,6 +10,7 @@ export class JobExportDialogComponent {
 
   jobIds: string[];
   filename: string;
+  question: string
 
   constructor(
     private dialog: MdlDialogReference,
@@ -20,14 +21,13 @@ export class JobExportDialogComponent {
 
     this.filename = "jobexport.zip";
     this.jobIds = jobIds;
-    // register a listener if you want to be informed if the dialog is closed.
-    this.dialog.onHide().subscribe( (user) => {
-      console.log('job export dialog hidden');
-      console.log('filename: ' + this.filename);
-      if (user) {
-        console.log('authenticated user', user);
-      }
-    });
+    if (jobIds.length === 0) {
+      this.question = "Export all jobs and their traces?";
+    } else if (this.jobIds.length === 1) {
+      this.question = "Export 1 job and its traces?";
+    } else {
+      this.question = "Export " + this.jobIds.length + " jobs and their traces?";
+    }
   }
 
   public export() {
@@ -36,11 +36,13 @@ export class JobExportDialogComponent {
     this.jobService.exportJobs(this.filename, this.jobIds)
       .subscribe(response => {
           // announce export
-          this.dialogService.alert("Exported " + response.totalJobs + " jobs");
+          let body = response['_body'];
+          this.dialogService.alert("Exported " + body.totalJobs +
+            (body.totalJobs === 1 ? " job" : " jobs") + " to " + body.fullPath);
         },
         () => {
           this.dialogService.alert("Unable to export jobs");
-        });;
+        });
     // call jobService.export() here.
     // when the job succeeds or fails, pop up an alert to let the user know
   }
