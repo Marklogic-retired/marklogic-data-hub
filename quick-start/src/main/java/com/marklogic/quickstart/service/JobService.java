@@ -24,9 +24,13 @@ import com.marklogic.client.query.RawCombinedQueryDefinition;
 import com.marklogic.client.query.StructuredQueryBuilder;
 import com.marklogic.client.query.StructuredQueryDefinition;
 import com.marklogic.hub.job.JobDeleteResponse;
+import com.marklogic.hub.job.JobExportResponse;
 import com.marklogic.hub.job.JobManager;
+import com.marklogic.quickstart.model.JobExport;
 import com.marklogic.quickstart.model.JobQuery;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 
 public class JobService extends SearchableService {
@@ -87,6 +91,11 @@ public class JobService extends SearchableService {
 
     public JobDeleteResponse deleteJobs(String jobIds) {
         return this.jobMgr.deleteJobs(jobIds);
+    }
+
+    public JobExportResponse exportJobs(JobExport jobExport) {
+        Path exportPath = Paths.get(jobExport.filename);
+        return this.jobMgr.exportJobs(exportPath, jobExport.jobIds);
     }
 
     public void cancelJob(long jobId) {

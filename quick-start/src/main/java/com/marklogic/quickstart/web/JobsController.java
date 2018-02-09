@@ -16,8 +16,9 @@
 package com.marklogic.quickstart.web;
 
 import com.marklogic.hub.job.JobDeleteResponse;
+import com.marklogic.hub.job.JobExportResponse;
 import com.marklogic.quickstart.EnvironmentAware;
-import com.marklogic.quickstart.model.EnvironmentConfig;
+import com.marklogic.quickstart.model.JobExport;
 import com.marklogic.quickstart.model.JobQuery;
 import com.marklogic.quickstart.service.JobService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +55,12 @@ public class JobsController extends EnvironmentAware {
     @ResponseBody
     public JobDeleteResponse deleteJobs(@RequestBody String jobIds) {
         return jobService.deleteJobs(jobIds);
+    }
+
+    @RequestMapping(value = "/export", method = RequestMethod.POST)
+    @ResponseBody
+    public JobExportResponse exportJobs(@RequestBody JobExport jobExport) {
+        return jobService.exportJobs(jobExport);
     }
 
 }

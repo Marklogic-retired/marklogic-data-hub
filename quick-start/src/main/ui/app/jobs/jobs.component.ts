@@ -9,6 +9,7 @@ import { MdlDialogService, MdlDialogReference } from '@angular-mdl/core';
 import { differenceInSeconds } from 'date-fns';
 
 import * as _ from 'lodash';
+import {JobExportDialogComponent} from "./job-export.component";
 
 @Component({
   selector: 'app-jobs',
@@ -208,19 +209,19 @@ export class JobsComponent implements OnChanges, OnDestroy, OnInit {
   }
 
   exportJobs() {
-    if (this.selectedJobs.length > 0) {
-      const message = 'Export ' + this.selectedJobs.length + ' jobs and their traces?';
-      this.dialogService.confirm(message, 'Cancel', 'Export').subscribe(() => {
-          this.jobService.exportJobs(this.selectedJobs)
-            .subscribe(response => {
-                this.getJobs();
-              },
-              () => {
-                this.dialogService.alert("Failed to delete jobs");
-              });
-        },
-        () => {});
-    }
+    let pDialog = this.dialogService.showCustomDialog({
+      component: JobExportDialogComponent,
+      providers: [{provide: 'jobIds', useValue: this.selectedJobs}],
+      isModal: true,
+      styles: {'width': '350px'},
+      clickOutsideToClose: true,
+      enterTransitionDuration: 400,
+      leaveTransitionDuration: 400
+    });
+    pDialog.subscribe( (dialogReference: MdlDialogReference) => {
+      console.log('dialog visible', dialogReference);
+    });
+    console.log('export to ');
   }
 
   render(o) {
