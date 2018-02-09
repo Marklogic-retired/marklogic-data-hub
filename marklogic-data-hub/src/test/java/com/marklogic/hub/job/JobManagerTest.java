@@ -33,15 +33,10 @@ public class JobManagerTest extends HubTestBase {
     private static Path projectDir = Paths.get(".", "ye-olde-project");
 
     private FlowItemCompleteListener flowItemCompleteListener =
-        new FlowItemCompleteListener() {
-            @Override
-            public void processCompletion(String jobId, String itemId) {
-                recordJobId(jobId);
-            }
-        };
+        (jobId, itemId) -> recordJobId(jobId);
 
     @BeforeAll
-    public static void setupSuite() throws IOException {
+    public static void setupSuite() {
         XMLUnit.setIgnoreWhitespace(true);
         deleteProjectDir();
 
@@ -71,7 +66,7 @@ public class JobManagerTest extends HubTestBase {
     }
 
     @AfterAll
-    public static void teardownSuite() throws IOException {
+    public static void teardownSuite() {
         uninstallHub();
 
         deleteProjectDir();
