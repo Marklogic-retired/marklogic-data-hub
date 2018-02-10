@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2016 MarkLogic Corporation
+ * Copyright 2012-2018 MarkLogic Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@ package com.marklogic.quickstart.web;
 
 import com.marklogic.hub.job.JobDeleteResponse;
 import com.marklogic.quickstart.EnvironmentAware;
-import com.marklogic.quickstart.model.EnvironmentConfig;
 import com.marklogic.quickstart.model.JobQuery;
 import com.marklogic.quickstart.service.JobService;
 import org.springframework.beans.factory.annotation.Autowired;
