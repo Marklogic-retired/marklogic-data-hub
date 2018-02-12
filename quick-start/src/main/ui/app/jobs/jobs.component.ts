@@ -218,10 +218,6 @@ export class JobsComponent implements OnChanges, OnDestroy, OnInit {
       enterTransitionDuration: 400,
       leaveTransitionDuration: 400
     });
-    pDialog.subscribe( (dialogReference: MdlDialogReference) => {
-      console.log('dialog visible', dialogReference);
-    });
-    console.log('export to ');
   }
 
   render(o) {

@@ -31,7 +31,6 @@ export class JobExportDialogComponent {
   }
 
   public export() {
-    console.log('export', this.dialog, this.filename);
     this.dialog.hide();
     this.jobService.exportJobs(this.filename, this.jobIds)
       .subscribe(response => {
@@ -43,8 +42,6 @@ export class JobExportDialogComponent {
         () => {
           this.dialogService.alert("Unable to export jobs");
         });
-    // call jobService.export() here.
-    // when the job succeeds or fails, pop up an alert to let the user know
   }
 
   @HostListener('keydown.esc')
