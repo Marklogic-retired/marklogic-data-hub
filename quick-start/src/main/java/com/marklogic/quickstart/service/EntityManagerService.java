@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2016 MarkLogic Corporation
+ * Copyright 2012-2018 MarkLogic Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,25 +19,12 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.marklogic.appdeployer.AppConfig;
-import com.marklogic.client.DatabaseClient;
-import com.marklogic.client.ext.modulesloader.impl.AssetFileLoader;
-import com.marklogic.client.ext.modulesloader.impl.DefaultModulesLoader;
-import com.marklogic.client.ext.modulesloader.impl.PropertiesModuleManager;
-import com.marklogic.client.extensions.ResourceManager;
-import com.marklogic.client.extensions.ResourceServices;
-import com.marklogic.client.io.JacksonHandle;
-import com.marklogic.client.io.StringHandle;
-import com.marklogic.client.util.RequestParameters;
-import com.marklogic.hub.DataHub;
 import com.marklogic.hub.EntityManager;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.flow.FlowType;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.validate.EntitiesValidator;
 import com.marklogic.quickstart.auth.ConnectionAuthenticationToken;
-import com.marklogic.quickstart.listeners.DeployUserModulesListener;
-import com.marklogic.quickstart.listeners.ValidateListener;
 import com.marklogic.quickstart.model.EnvironmentConfig;
 import com.marklogic.quickstart.model.FlowModel;
 import com.marklogic.quickstart.model.PluginModel;
@@ -45,11 +32,8 @@ import com.marklogic.quickstart.model.entity_services.EntityModel;
 import com.marklogic.quickstart.model.entity_services.HubUIData;
 import com.marklogic.quickstart.model.entity_services.InfoType;
 import com.marklogic.quickstart.util.FileUtil;
-import com.sun.jersey.api.client.ClientHandlerException;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -63,7 +47,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.*;
-import java.util.regex.Pattern;
 
 @Service
 public class EntityManagerService {
