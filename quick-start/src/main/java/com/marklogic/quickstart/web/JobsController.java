@@ -16,11 +16,12 @@
 package com.marklogic.quickstart.web;
 
 import com.marklogic.hub.job.JobDeleteResponse;
-import com.marklogic.hub.job.JobExportResponse;
 import com.marklogic.quickstart.EnvironmentAware;
+import com.marklogic.quickstart.exception.DataHubException;
 import com.marklogic.quickstart.model.JobExport;
 import com.marklogic.quickstart.model.JobQuery;
 import com.marklogic.quickstart.service.JobService;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Scope;
@@ -31,6 +32,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.io.*;
 
 @Controller
 @RequestMapping(value="/api/jobs")
@@ -59,8 +62,19 @@ public class JobsController extends EnvironmentAware {
 
     @RequestMapping(value = "/export", method = RequestMethod.POST)
     @ResponseBody
-    public JobExportResponse exportJobs(@RequestBody JobExport jobExport) {
-        return jobService.exportJobs(jobExport);
+    public byte[] exportJobs(@RequestBody JobExport jobExport) {
+        byte[] response = null;
+        try {
+            File zipFile = jobService.exportJobs(jobExport.jobIds);
+            InputStream is = new FileInputStream(zipFile);
+            response = IOUtils.toByteArray(is);
+        } catch (FileNotFoundException e) {
+            throw new DataHubException(e.getMessage(), e);
+        } catch (IOException e) {
+            throw new DataHubException(e.getMessage(), e);
+        }
+
+        return response;
     }
 
 }

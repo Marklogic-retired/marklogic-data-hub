@@ -9,8 +9,7 @@ import {JobService} from "./jobs.service";
 export class JobExportDialogComponent {
 
   jobIds: string[];
-  filename: string;
-  question: string
+  question: string;
 
   constructor(
     private dialog: MdlDialogReference,
@@ -19,25 +18,33 @@ export class JobExportDialogComponent {
     @Inject('jobIds') jobIds: string[]
   ) {
 
-    this.filename = "jobexport.zip";
     this.jobIds = jobIds;
+    this.question = "Export and download ";
     if (jobIds.length === 0) {
-      this.question = "Export all jobs and their traces?";
+      this.question += "all jobs and their traces?";
     } else if (this.jobIds.length === 1) {
-      this.question = "Export 1 job and its traces?";
+      this.question += "1 job and its traces?";
     } else {
-      this.question = "Export " + this.jobIds.length + " jobs and their traces?";
+      this.question += this.jobIds.length + " jobs and their traces?";
     }
   }
 
   public export() {
     this.dialog.hide();
-    this.jobService.exportJobs(this.filename, this.jobIds)
+    this.jobService.exportJobs(this.jobIds)
       .subscribe(response => {
-          // announce export
           let body = response['_body'];
-          this.dialogService.alert("Exported " + body.totalJobs +
-            (body.totalJobs === 1 ? " job" : " jobs") + " to " + body.fullPath);
+
+          // Create a download anchor tag and click it.
+          var blob = new Blob([body], {type: 'application/zip'});
+          let a = document.createElement("a");
+          a.style.display = "none";
+          document.body.appendChild(a);
+          let url = window.URL.createObjectURL(blob);
+          a.href = url;
+          a.download = 'jobexport.zip';
+          a.click();
+          window.URL.revokeObjectURL(url);
         },
         () => {
           this.dialogService.alert("Unable to export jobs");
