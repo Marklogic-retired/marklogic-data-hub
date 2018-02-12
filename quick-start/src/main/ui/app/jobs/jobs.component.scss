@@ -67,15 +67,21 @@ input[type="search"] {
       th {
         padding: 12px 8px 12px 8px;
         color: white;
-
-        &:last-of-type {
-          padding-right: 0px;
-        }
       }
       th .delete-jobs, th .export-jobs {
         color: white;
       }
 
+      th .export-jobs i {
+        position: relative;
+        top: 15px;
+        float: right;
+      }
+      th .delete-jobs i {
+        position: relative;
+        top: 15px;
+        float: left;
+      }
     }
   }
 
