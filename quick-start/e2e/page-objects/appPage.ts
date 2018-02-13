@@ -19,6 +19,10 @@ export class AppPage extends Page {
     }, (err) => null)
   }
 
+  get dashboardTab() {
+    return element(by.css('#database-tab'));
+  }
+
   get entitiesTab() {
     return element(by.css('#entities-tab'));
   }
