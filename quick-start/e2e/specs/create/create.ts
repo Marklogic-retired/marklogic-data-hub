@@ -269,6 +269,7 @@ export default function() {
       console.log('remove additional properties');
       browser.executeScript('window.document.getElementsByClassName("edit-start")[1].click()');
       browser.wait(EC.visibilityOf(entityPage.entityEditor));
+      browser.sleep(3000);
       expect(entityPage.entityEditor.isPresent()).toBe(true);
       let removeProp1 = entityPage.getPropertyByPosition(4);
       let removeProp2 = entityPage.getPropertyByPosition(5);
@@ -486,8 +487,8 @@ export default function() {
       //move to other harmonize flow and go back to the flow
       console.log('going to the other flow and back');
       flowPage.entityDisclosure('TestEntity').click();
-      flowPage.getFlow('TestEntity', 'sjs json HARMONIZE', 'HARMONIZE').click();
       browser.wait(EC.elementToBeClickable(flowPage.getFlow('TestEntity', 'sjs json HARMONIZE', 'HARMONIZE')));
+      flowPage.getFlow('TestEntity', 'sjs json HARMONIZE', 'HARMONIZE').click();
       flowPage.entityDisclosure('Product').click();
       browser.wait(EC.elementToBeClickable(flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE')));
       flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE').click();
@@ -520,10 +521,6 @@ export default function() {
       //verify the flow options count
       console.log('verify the flow options count');
       flowPage.getFlowOptionsCount().then(function(flowOptions){expect(flowOptions === 3)});
-    });
-
-    it ('should open the TestEntity disclosure', function() {
-      flowPage.entityDisclosure('TestEntity').click();
     });
   });
 }
