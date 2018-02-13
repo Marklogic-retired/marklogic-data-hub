@@ -61,6 +61,7 @@ import { ObjectToArrayPipe } from './object-to-array.pipe';
 import { DatePipeModule } from './date-pipe/date-pipe.module';
 
 import { SelectKeyValuesComponent } from './select-key-values/select-key-values.component';
+import {JobExportDialogComponent} from "./jobs/job-export.component";
 
 
 @NgModule({
@@ -77,6 +78,7 @@ import { SelectKeyValuesComponent } from './select-key-values/select-key-values.
     EntityModelerComponent,
     ExternalDefDialogComponent,
     JobsComponent,
+    JobExportDialogComponent,
     JobOutputComponent,
     LoginComponent,
     MlcpUiComponent,
@@ -110,7 +112,8 @@ import { SelectKeyValuesComponent } from './select-key-values/select-key-values.
     EntityEditorComponent,
     NewEntityComponent,
     NewFlowComponent,
-    JobOutputComponent
+    JobOutputComponent,
+    JobExportDialogComponent
   ],
   imports: [
     BrowserModule,

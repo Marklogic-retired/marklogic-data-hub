@@ -205,7 +205,8 @@ public class JobManagerTest extends HubTestBase {
         File zipFile = exportPath.toFile();
         assertFalse(zipFile.exists());
 
-        manager.exportJobs(exportPath, jobIds.get(0));
+        String[] jobs = { jobIds.get(0) };
+        manager.exportJobs(exportPath, jobs);
 
         assertTrue(zipFile.exists());
 
@@ -227,7 +228,8 @@ public class JobManagerTest extends HubTestBase {
         File zipFile = exportPath.toFile();
         assertFalse(zipFile.exists());
 
-        manager.exportJobs(exportPath, new StringJoiner(",").add(jobIds.get(0)).add(jobIds.get(1)).toString());
+        String[] jobs = { jobIds.get(0), jobIds.get(1) };
+        manager.exportJobs(exportPath, jobs);
 
         assertTrue(zipFile.exists());
 

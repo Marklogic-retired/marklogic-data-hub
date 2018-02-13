@@ -35,10 +35,13 @@
               <th class="mdl-data-table__cell--non-numeric">Duration</th>
               <th class="mdl-data-table__cell--non-numeric">Output</th>
               <th class="mdl-data-table__cell--non-numeric"></th>
-              <th class="mdl-data-table__cell--non-numeric">
-                <mdl-button class="delete-jobs"
-                  mdl-tooltip="Delete selected jobs and associated traces"
-                  (click)="deleteJobs()"><i class="fa fa-trash-o"></i></mdl-button>
+              <th class="mdl-data-table__cell--non-numeric job-actions">
+                <button mdl-button #btn1="mdlButton" (click)="m1.toggle($event, btn1)" mdl-ripple>Action
+                  <i class="material-icons">keyboard_arrow_down</i></button>
+                <mdl-menu #m1="mdlMenu" mdl-menu-position="bottom-left">
+                  <mdl-menu-item mdl-ripple (click)="exportJobs()">Export Jobs and Traces</mdl-menu-item>
+                  <mdl-menu-item mdl-ripple (click)="deleteJobs()">Delete Jobs and Traces</mdl-menu-item>
+                </mdl-menu>
               </th>
             </tr>
           </thead>

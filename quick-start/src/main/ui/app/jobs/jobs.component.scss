@@ -67,13 +67,12 @@ input[type="search"] {
       th {
         padding: 12px 8px 12px 8px;
         color: white;
-
-        &:last-of-type {
-          padding-right: 0px;
-        }
       }
-      th .delete-jobs {
-        color: white;
+
+      th.job-actions {
+        button {
+          color: white;
+        }
       }
     }
   }
