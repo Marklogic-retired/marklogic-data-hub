@@ -68,19 +68,11 @@ input[type="search"] {
         padding: 12px 8px 12px 8px;
         color: white;
       }
-      th .delete-jobs, th .export-jobs {
-        color: white;
-      }
 
-      th .export-jobs i {
-        position: relative;
-        top: 15px;
-        float: right;
-      }
-      th .delete-jobs i {
-        position: relative;
-        top: 15px;
-        float: left;
+      th.job-actions {
+        button {
+          color: white;
+        }
       }
     }
   }

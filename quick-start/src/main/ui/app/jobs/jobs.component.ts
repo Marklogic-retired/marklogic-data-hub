@@ -194,7 +194,9 @@ export class JobsComponent implements OnChanges, OnDestroy, OnInit {
 
   deleteJobs() {
     if (this.selectedJobs.length > 0) {
-      const message = 'Delete ' + this.selectedJobs.length + ' jobs and their traces?';
+      let message = 'Delete ' + this.selectedJobs.length +
+        (this.selectedJobs.length === 1 ? ' job and its traces?' : ' jobs and their traces?');
+
       this.dialogService.confirm(message, 'Cancel', 'Delete').subscribe(() => {
         this.jobService.deleteJobs(this.selectedJobs)
           .subscribe(response => {
