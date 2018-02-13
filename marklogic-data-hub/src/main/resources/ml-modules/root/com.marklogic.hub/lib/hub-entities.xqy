@@ -5,6 +5,8 @@ module namespace hent = "http://marklogic.com/data-hub/hub-entities";
 import module namespace es = "http://marklogic.com/entity-services"
   at "/MarkLogic/entity-services/entity-services.xqy";
 
+declare namespace search = "http://marklogic.com/appservices/search";
+
 declare variable $ENTITY-MODEL-COLLECTION := "http://marklogic.com/entity-services/models";
 
 declare option xdmp:mapping "false";
@@ -81,6 +83,15 @@ declare %private function hent:fix-options($nodes as node()*)
   for $n in $nodes
   return
     typeswitch($n)
+      case element(search:options) return
+        element { fn:node-name($n) } {
+          <search:constraint name="Collection">
+            <search:collection/>
+          </search:constraint>,
+          hent:fix-options(($n/@*, $n/node()))
+        }
+      case element(search:additional-query) return ()
+      case element(search:return-facets) return <search:return-facets>true</search:return-facets>
       case element() return
         element { fn:node-name($n) } { hent:fix-options(($n/@*, $n/node())) }
       case text() return
