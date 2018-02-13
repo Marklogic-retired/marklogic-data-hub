@@ -12,7 +12,7 @@ export class JobExportDialogComponent {
   question: string;
 
   constructor(
-    private dialog: MdlDialogReference,
+    public dialog: MdlDialogReference,
     private dialogService: MdlDialogService,
     private jobService: JobService,
     @Inject('jobIds') jobIds: string[]
