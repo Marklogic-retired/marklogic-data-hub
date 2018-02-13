@@ -9,7 +9,7 @@ module namespace plugin = "http://marklogic.com/data-hub/plugins";
  : https://github.com/marklogic/marklogic-data-hub/wiki/dhf-lib
  :)
 import module namespace dhf = "http://marklogic.com/dhf"
-  at "/com.marklogic.hub/dhf.xqy";
+  at "/MarkLogic/data-hub-framework/dhf.xqy";
 
 (: include modules to construct various parts of the envelope :)
 import module namespace content = "http://marklogic.com/data-hub/plugins" at "content.xqy";

@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2016 MarkLogic Corporation
+ * Copyright 2012-2018 MarkLogic Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -112,6 +112,6 @@ public class SearchService extends SearchableService {
         else {
             docMgr = finalDocMgr;
         }
-        return docMgr.readAs(docUri, String.class, new ServerTransform("prettify"));
+        return docMgr.readAs(docUri, String.class, new ServerTransform("ml:prettifyXML"));
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2016 MarkLogic Corporation
+ * Copyright 2012-2018 MarkLogic Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -153,7 +153,7 @@ public class FlowRunnerImpl implements FlowRunner {
     @Override
     public JobTicket run() {
         String jobId = UUID.randomUUID().toString();
-        JobManager jobManager = new JobManager(hubConfig.newJobDbClient());
+        JobManager jobManager = new JobManager(hubConfig.newJobDbClient(), hubConfig.newTraceDbClient());
 
         Job job = Job.withFlow(flow)
             .withJobId(jobId);
@@ -344,7 +344,7 @@ public class FlowRunnerImpl implements FlowRunner {
 
     class FlowResource extends ResourceManager {
 
-        static final public String NAME = "flow";
+        static final public String NAME = "ml:flow";
 
         private DatabaseClient srcClient;
         private String targetDatabase;
