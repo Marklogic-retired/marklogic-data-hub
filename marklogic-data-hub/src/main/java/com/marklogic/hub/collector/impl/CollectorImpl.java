@@ -103,7 +103,7 @@ public class CollectorImpl implements Collector {
             RestTemplate template = newRestTemplate(appConfig.getAppServicesUsername(), appConfig.getAppServicesPassword());
             String uriString = String.format(
                 "%s://%s:%d%s?job-id=%s&entity-name=%s&flow-name=%s&database=%s",
-                "http",
+                client.getSecurityContext().getSSLContext() != null ? "https" : "http",
                 client.getHost(),
                 client.getPort(),
                 "/com.marklogic.hub/endpoints/collector.xqy",
@@ -120,15 +120,16 @@ public class CollectorImpl implements Collector {
             URI uri = new URI(uriString);
             HttpHeaders headers = new HttpHeaders();
             headers.set("Accept", MediaType.TEXT_PLAIN_VALUE);
-            InputStream inputStream = template.exchange(uri, HttpMethod.GET, new HttpEntity<>(headers), Resource.class).getBody().getInputStream();
-
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-            String line;
-            while((line = bufferedReader.readLine()) != null) {
-                results.add(line);
+            Resource responseBody = template.exchange(uri, HttpMethod.GET, new HttpEntity<>(headers), Resource.class).getBody();
+            if(responseBody != null) {
+                InputStream inputStream = responseBody.getInputStream();
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+                String line;
+                while((line = bufferedReader.readLine()) != null) {
+                    results.add(line);
+                }
+                inputStream.close();
             }
-            inputStream.close();
-
             return results;
         }
         catch(Exception e) {
