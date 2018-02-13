@@ -3,13 +3,13 @@ xquery version "1.0-ml";
 module namespace runIngestHarmonize = "http://marklogic.com/rest-api/resource/run-ingest-harmonize";
 
 import module namespace consts = "http://marklogic.com/data-hub/consts"
-  at "/com.marklogic.hub/lib/consts.xqy";
+  at "/MarkLogic/data-hub-framework/impl/consts.xqy";
 
 import module namespace flow = "http://marklogic.com/data-hub/flow-lib"
-  at "/com.marklogic.hub/lib/flow-lib.xqy";
+  at "/MarkLogic/data-hub-framework/impl/flow-lib.xqy";
 
 import module namespace config = "http://marklogic.com/data-hub/config"
-  at "/com.marklogic.hub/lib/config.xqy";
+  at "/com.marklogic.hub/config.xqy";
 
 declare namespace hub = "http://marklogic.com/data-hub";
 declare namespace rapi = "http://marklogic.com/rest-api";
@@ -113,7 +113,7 @@ declare private function runIngestHarmonize:run-flow(
   (: The PUT command runs in update mode, so we need to eval in query mode :)
   xdmp:eval('
     import module namespace flow = "http://marklogic.com/data-hub/flow-lib"
-      at "/com.marklogic.hub/lib/flow-lib.xqy";
+      at "/MarkLogic/data-hub-framework/impl/flow-lib.xqy";
 
     declare variable $job-id external;
     declare variable $flow external;

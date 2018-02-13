@@ -1,11 +1,14 @@
 package com.marklogic.hub.job;
 
 import com.marklogic.client.eval.EvalResultIterator;
-import com.marklogic.hub.*;
+import com.marklogic.hub.DataHub;
+import com.marklogic.hub.FlowManager;
+import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.flow.*;
 import com.marklogic.hub.scaffold.Scaffolding;
 import org.custommonkey.xmlunit.XMLUnit;
-import org.junit.*;
+import org.junit.jupiter.api.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,15 +33,10 @@ public class JobManagerTest extends HubTestBase {
     private static Path projectDir = Paths.get(".", "ye-olde-project");
 
     private FlowItemCompleteListener flowItemCompleteListener =
-        new FlowItemCompleteListener() {
-            @Override
-            public void processCompletion(String jobId, String itemId) {
-                recordJobId(jobId);
-            }
-        };
+        (jobId, itemId) -> recordJobId(jobId);
 
-    @BeforeClass
-    public static void setupSuite() throws IOException {
+    @BeforeAll
+    public static void setupSuite() {
         XMLUnit.setIgnoreWhitespace(true);
         deleteProjectDir();
 
@@ -67,14 +65,14 @@ public class JobManagerTest extends HubTestBase {
 
     }
 
-    @AfterClass
-    public static void teardownSuite() throws IOException {
+    @AfterAll
+    public static void teardownSuite() {
         uninstallHub();
 
         deleteProjectDir();
     }
 
-    @Before
+    @BeforeEach
     public void setup() {
         // Run a flow a couple times to generate some job/trace data.
         jobIds.clear();
@@ -106,7 +104,7 @@ public class JobManagerTest extends HubTestBase {
         flowRunner.awaitCompletion();
     }
 
-    @After
+    @AfterEach
     public void teardown() {
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME,
             HubConfig.DEFAULT_TRACE_NAME);

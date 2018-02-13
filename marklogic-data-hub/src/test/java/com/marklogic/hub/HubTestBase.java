@@ -63,6 +63,14 @@ import java.util.Properties;
 public class HubTestBase {
     static final protected Logger logger = LoggerFactory.getLogger(HubTestBase.class);
 
+    //As a note, whenever you see the 25 || 5, it's due to the additional building of the javascript files bundling down that will then get
+    //deployed with the rest of the modules code. This means it'll be 20 higher than if the trace UI was never built
+    public static final int CORE_MODULE_COUNT_WITH_TRACE_MODULES = 21;
+    public static final int CORE_MODULE_COUNT = 1;
+    public static final int MODULE_COUNT = 25;
+    public static final int MODULE_COUNT_WITH_TRACE_MODULES = 5;
+    public static final int MODULE_COUNT_WITH_USER_MODULES = 25;
+    public static final int MODULE_COUNT_WITH_USER_MODULES_AND_TRACE_MODULES = 45;
     public static final String PROJECT_PATH = "ye-olde-project";
     public static String host;
     public static int stagingPort;

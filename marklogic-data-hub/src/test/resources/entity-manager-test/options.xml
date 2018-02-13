@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <search:options xmlns:search="http://marklogic.com/appservices/search">
+  <search:constraint name="Collection">
+    <search:collection/>
+  </search:constraint>
   <search:constraint name="entity-type">
     <search:value>
       <search:element ns="http://marklogic.com/entity-services" name="title"/>
@@ -43,14 +46,8 @@
     <search:extract-path>//*:instance/(Employee)</search:extract-path>
   </search:extract-document-data>
   <!--Change or remove this additional-query to broaden search beyond entity instance documents-->
-  <search:additional-query>
-    <cts:element-query xmlns:cts="http://marklogic.com/cts">
-      <cts:element>*:instance</cts:element>
-      <cts:true-query/>
-    </cts:element-query>
-  </search:additional-query>
   <!--To return facets, change this option to 'true' and edit constraints-->
-  <search:return-facets>false</search:return-facets>
+  <search:return-facets>true</search:return-facets>
   <!--To return snippets, comment out or remove this option-->
   <search:transform-results apply="empty-snippet"/>
 </search:options>

@@ -1,3 +1,18 @@
+/*
+ * Copyright 2012-2018 MarkLogic Corporation
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.marklogic.hub.collector.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -103,10 +118,10 @@ public class CollectorImpl implements Collector {
             RestTemplate template = newRestTemplate(appConfig.getAppServicesUsername(), appConfig.getAppServicesPassword());
             String uriString = String.format(
                 "%s://%s:%d%s?job-id=%s&entity-name=%s&flow-name=%s&database=%s",
-                "http",
+                client.getSecurityContext().getSSLContext() != null ? "https" : "http",
                 client.getHost(),
                 client.getPort(),
-                "/com.marklogic.hub/endpoints/collector.xqy",
+                "/v1/internal/hubcollector",
                 URLEncoder.encode(jobId, "UTF-8"),
                 URLEncoder.encode(entity, "UTF-8"),
                 URLEncoder.encode(flow, "UTF-8"),
@@ -120,14 +135,16 @@ public class CollectorImpl implements Collector {
             URI uri = new URI(uriString);
             HttpHeaders headers = new HttpHeaders();
             headers.set("Accept", MediaType.TEXT_PLAIN_VALUE);
-            InputStream inputStream = template.exchange(uri, HttpMethod.GET, new HttpEntity<>(headers), Resource.class).getBody().getInputStream();
-
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-            String line;
-            while((line = bufferedReader.readLine()) != null) {
-                results.add(line);
+            Resource responseBody = template.exchange(uri, HttpMethod.GET, new HttpEntity<>(headers), Resource.class).getBody();
+            if(responseBody != null) {
+                InputStream inputStream = responseBody.getInputStream();
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+                String line;
+                while((line = bufferedReader.readLine()) != null) {
+                    results.add(line);
+                }
+                inputStream.close();
             }
-            inputStream.close();
 
             return results;
         }
