@@ -16,6 +16,10 @@ export class JobsPage extends AppPage {
   get firstFinishedFlow() {
     return element(by.cssContainingText('td', 'FINISHED'));
   }
+
+  get finishedHarmonizedFlows() {
+    return element(by.cssContainingText('td', ' harmonize'));
+  }
 }
 
 var jobsPage = new JobsPage();
