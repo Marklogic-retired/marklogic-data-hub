@@ -75,18 +75,18 @@ class TlsTest extends BaseTest {
                     manageClient.putJson("/manage/v2/servers/Admin/properties?group-id=Default", '{"ssl-certificate-template": ""}')
                     manageClient.putJson("/manage/v2/servers/App-Services/properties?group-id=Default", '{"ssl-certificate-template": ""}')
                     manageClient.putJson("/manage/v2/servers/Manage/properties?group-id=Default", '{"ssl-certificate-template": ""}')
-                        
+
                     def adminConfig = getProject().property("mlAdminConfig")
                     adminConfig.setScheme("http")
                     adminConfig.setConfigureSimpleSsl(false)
                     def adminManager = new com.marklogic.mgmt.admin.AdminManager(adminConfig)
                     adminManager.waitForRestart()
-            
+
                     def manageConfig = getProject().property("mlManageConfig")
                     manageConfig.setScheme("http")
                     manageConfig.setConfigureSimpleSsl(false)
                     def mgClient = new com.marklogic.mgmt.ManageClient(manageConfig)
-            
+
                     def certManager = new com.marklogic.mgmt.resource.security.CertificateTemplateManager(mgClient)
                     certManager.delete(adminCert())
                 }
@@ -137,7 +137,7 @@ class TlsTest extends BaseTest {
             ext {
                 mlAppConfig {
                     appServicesSslContext = newSslContext
-                    appServicesSslHostnameVerifier = DatabaseClientFactory.SSLHostnameVerifier.ANY 
+                    appServicesSslHostnameVerifier = DatabaseClientFactory.SSLHostnameVerifier.ANY
                     restSslContext = newSslContext
                     restSslHostnameVerifier = DatabaseClientFactory.SSLHostnameVerifier.ANY
                 }
@@ -151,24 +151,24 @@ class TlsTest extends BaseTest {
                     sslContext = newSslContext
                     hostnameVerifier = verifier
                 }
-                
+
                 hubConfig {
                     stagingSslContext = newSslContext
                     stagingSslHostnameVerifier = DatabaseClientFactory.SSLHostnameVerifier.ANY
-                    
+
                     finalSslContext = newSslContext
                     finalSslHostnameVerifier = DatabaseClientFactory.SSLHostnameVerifier.ANY
-                    
+
                     traceSslContext = newSslContext
                     traceSslHostnameVerifier = DatabaseClientFactory.SSLHostnameVerifier.ANY
-                    
+
                     jobSslContext = newSslContext
                     jobSslHostnameVerifier = DatabaseClientFactory.SSLHostnameVerifier.ANY
                 }
 
                 mlManageClient.setManageConfig(mlManageConfig)
                 mlAdminManager.setAdminConfig(mlAdminConfig)
-                
+
                 hubConfig.setAppConfig(mlAppConfig, true)
             }
         '''
@@ -244,7 +244,7 @@ class TlsTest extends BaseTest {
         mlFinalSimpleSsl=false
         mlTraceSimpleSsl=false
         mlJobSimpleSsl=false
-        
+
         """
     }
 

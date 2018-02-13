@@ -73,18 +73,18 @@ class SslTest extends BaseTest {
                     manageClient.putJson("/manage/v2/servers/Admin/properties?group-id=Default", '{"ssl-certificate-template": ""}')
                     manageClient.putJson("/manage/v2/servers/App-Services/properties?group-id=Default", '{"ssl-certificate-template": ""}')
                     manageClient.putJson("/manage/v2/servers/Manage/properties?group-id=Default", '{"ssl-certificate-template": ""}')
-                        
+
                     def adminConfig = getProject().property("mlAdminConfig")
                     adminConfig.setScheme("http")
                     adminConfig.setConfigureSimpleSsl(false)
                     def adminManager = new com.marklogic.mgmt.admin.AdminManager(adminConfig)
                     adminManager.waitForRestart()
-            
+
                     def manageConfig = getProject().property("mlManageConfig")
                     manageConfig.setScheme("http")
                     manageConfig.setConfigureSimpleSsl(false)
                     def mgClient = new com.marklogic.mgmt.ManageClient(manageConfig)
-            
+
                     def certManager = new com.marklogic.mgmt.resource.security.CertificateTemplateManager(mgClient)
                     certManager.delete(adminCert())
                 }
