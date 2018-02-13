@@ -13,8 +13,12 @@ export class BrowsePage extends AppPage {
     return by.css('app-search > div');
   }
 
-  databaseSelect() {
-    return element(by.css('.database-chooser > mdl-select'));
+  databaseDropDown() {
+    return element(by.css(`.database-chooser > mdl-select >div > span.mdl-select__toggle.material-icons`));
+  }
+
+  selectDatabase(databaseName: string) {
+    return element(by.cssContainingText('div.mdl-list__item-primary-content', databaseName));
   }
   
   searchBox() {
@@ -29,8 +33,8 @@ export class BrowsePage extends AppPage {
     return element(by.css('app-pagination > .container'));
   }
 
-  resultsUri(resultName: string) {
-    return element(by.cssContainingText('div.mdl-grid.results .result .link a', resultName));
+  resultsUri() {
+    return element(by.css('.results .result a'));
   }
 
 }
