@@ -30,7 +30,7 @@ declare %rapi:transaction-mode("query") function runFlow:transform(
   debug:dump-env("run-flow:transform"),
 
   perf:log('/transforms/run-flow:transform', function() {
-    let $job-id := map:get($params, "job-id")
+    let $job-id := (map:get($params, "job-id"), sem:uuid-string())[1]
     let $entity-name := map:get($params, 'entity-name')
     let $flow-name := map:get($params, 'flow-name')
     let $uri := map:get($context, 'uri')
