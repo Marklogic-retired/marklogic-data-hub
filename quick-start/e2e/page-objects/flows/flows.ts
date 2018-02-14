@@ -260,10 +260,6 @@ export class FlowPage extends AppPage {
     browser.wait(EC.elementToBeClickable(this.mlcpSwitch('generate_uri')));
     this.mlcpSwitch('generate_uri').click();
 
-    // no progress bar before we start
-    // expect(element(by.css('.job-progress')).isPresent()).toBe(false);
-
-    //browser.wait(EC.elementToBeClickable(this.mlcpRunButton));
     this.mlcpRunButton.click();
 
     browser.wait(EC.elementToBeClickable(this.toastButton));
@@ -272,9 +268,6 @@ export class FlowPage extends AppPage {
     this.jobsTab.click();
 
     jobsPage.isLoaded();
-
-    //browser.wait(EC.presenceOf(jobsPage.firstFinishedFlow));
-    //expect(jobsPage.finishedFlows.count()).toBe(count);
 
     this.flowsTab.click();
 
