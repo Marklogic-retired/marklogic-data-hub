@@ -16,17 +16,23 @@
 package com.marklogic.quickstart.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.document.DocumentPage;
+import com.marklogic.client.document.DocumentRecord;
 import com.marklogic.client.document.GenericDocumentManager;
 import com.marklogic.client.document.ServerTransform;
 import com.marklogic.client.io.Format;
 import com.marklogic.client.io.StringHandle;
+import com.marklogic.client.io.marker.JSONReadHandle;
 import com.marklogic.client.query.QueryManager;
 import com.marklogic.client.query.RawCombinedQueryDefinition;
 import com.marklogic.client.query.StructuredQueryBuilder;
 import com.marklogic.client.query.StructuredQueryDefinition;
+import com.marklogic.quickstart.exception.DataHubException;
 import com.marklogic.quickstart.model.TraceQuery;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class TraceService extends SearchableService {
@@ -87,6 +93,23 @@ public class TraceService extends SearchableService {
     }
 
     public JsonNode getTrace(String traceId) {
-        return docMgr.readAs("/" + traceId, JsonNode.class, new ServerTransform("ml:traceUISearchResults"));
+        // Traces can be .json or .xml. Legacy traces may not have an extension. Figure out what we have.
+        DocumentPage docs = this.docMgr.read(
+            new ServerTransform("ml:traceUISearchResults"),
+            "/" + traceId, "/" + traceId + ".json", "/" + traceId + ".xml");
+
+        if (docs.size() < 1) {
+            throw new DataHubException("Could not find traceId " + traceId, null);
+        }
+
+        ObjectMapper mapper = new ObjectMapper();
+        StringHandle traceStr = docs.nextContent(new StringHandle());
+        JsonNode result = null;
+        try {
+            result = mapper.readTree(traceStr.toString());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 }
