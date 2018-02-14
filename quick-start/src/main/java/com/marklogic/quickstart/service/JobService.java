@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2016 MarkLogic Corporation
+ * Copyright 2012-2018 MarkLogic Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,9 +24,14 @@ import com.marklogic.client.query.RawCombinedQueryDefinition;
 import com.marklogic.client.query.StructuredQueryBuilder;
 import com.marklogic.client.query.StructuredQueryDefinition;
 import com.marklogic.hub.job.JobDeleteResponse;
+import com.marklogic.hub.job.JobExportResponse;
 import com.marklogic.hub.job.JobManager;
 import com.marklogic.quickstart.model.JobQuery;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 
 public class JobService extends SearchableService {
@@ -38,9 +43,9 @@ public class JobService extends SearchableService {
     private JobManager jobMgr;
 
 
-    public JobService(DatabaseClient client) {
-        this.queryMgr = client.newQueryManager();
-        this.jobMgr = new JobManager(client);
+    public JobService(DatabaseClient jobClient, DatabaseClient traceClient) {
+        this.queryMgr = jobClient.newQueryManager();
+        this.jobMgr = new JobManager(jobClient, traceClient);
     }
 
     public StringHandle getJobs(JobQuery jobQuery) {
@@ -79,7 +84,7 @@ public class JobService extends SearchableService {
         String searchXml = sqd.serialize();
 
         RawCombinedQueryDefinition querydef = queryMgr.newRawCombinedQueryDefinition(new StringHandle(searchXml), SEARCH_OPTIONS_NAME);
-        querydef.setResponseTransform(new ServerTransform("job-search"));
+        querydef.setResponseTransform(new ServerTransform("ml:jobSearchResults"));
         StringHandle sh = new StringHandle();
         sh.setFormat(Format.JSON);
         return queryMgr.search(querydef, sh, jobQuery.start);
@@ -87,6 +92,13 @@ public class JobService extends SearchableService {
 
     public JobDeleteResponse deleteJobs(String jobIds) {
         return this.jobMgr.deleteJobs(jobIds);
+    }
+
+    public File exportJobs(String[] jobIds) throws IOException {
+        Path exportPath = Files.createTempFile("jobexport", ".zip");
+        JobExportResponse jobExportResponse = this.jobMgr.exportJobs(exportPath, jobIds);
+        File zipfile = new File(jobExportResponse.fullPath);
+        return zipfile;
     }
 
     public void cancelJob(long jobId) {

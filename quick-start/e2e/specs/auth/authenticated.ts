@@ -51,7 +51,7 @@ export default function(tmpDir) {
       expect(loginPage.stagingAppserverNameLabel.isPresent()).toBe(true);
       expect(loginPage.stagingAppserverName.getAttribute('value')).toEqual('data-hub-ol-STAGING');
       expect(loginPage.modulesDbName.getAttribute('value')).toEqual('data-hub-ol-MODULES');
-      browser.driver.sleep(5000);
+      browser.driver.sleep(3000);
       loginPage.clickAdvancedSettings();
       console.log('restore to default settings');
       loginPage.clickRestoreDefaults();
@@ -63,7 +63,7 @@ export default function(tmpDir) {
       expect(loginPage.stagingAppserverName.getAttribute('value')).toEqual('data-hub-STAGING');
       expect(loginPage.modulesDbName.getAttribute('value')).toEqual('data-hub-MODULES');
       expect(loginPage.dataHubName.getAttribute('value')).toEqual('');
-      browser.driver.sleep(5000);
+      browser.driver.sleep(3000);
       expect(loginPage.projectDirTab.isDisplayed()).toBe(false);
       expect(loginPage.initIfNeededTab.isDisplayed()).toBe(true);
       expect(loginPage.postInitTab.isDisplayed()).toBe(false);

@@ -13,13 +13,13 @@
     <mdl-textfield floating-label type="string"
       label="{{keyLabel}}"
       [(ngModel)]="kv.key"
-      (input)="onChange.emit(keyVals);"></mdl-textfield>
+      (blur)="onChange.emit(keyVals);"></mdl-textfield>
   </div>
   <div class="key-value-input">
     <mdl-textfield floating-label type="string"
       label="{{valLabel}}"
       [(ngModel)]="kv.val"
-      (input)="onChange.emit(keyVals);"></mdl-textfield>
+      (blur)="onChange.emit(keyVals);"></mdl-textfield>
   </div>
   <div class="key-value-remove">
     <mdl-button mdl-button-type="icon" (click)="remove(i)">

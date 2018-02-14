@@ -55,7 +55,7 @@ public class DebugLibTest extends HubTestBase {
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME);
         Assert.assertEquals(0, getStagingDocCount());
 
-        ServerTransform runFlow = new ServerTransform("run-flow");
+        ServerTransform runFlow = new ServerTransform("ml:inputFlow");
         runFlow.addParameter("entity-name", entityName);
         runFlow.addParameter("flow-name", flowName);
         runFlow.addParameter("job-id", UUID.randomUUID().toString());

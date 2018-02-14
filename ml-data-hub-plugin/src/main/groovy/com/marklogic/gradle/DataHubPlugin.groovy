@@ -51,6 +51,9 @@ class DataHubPlugin implements Plugin<Project> {
         project.task("hubCreateEntity", group: scaffoldGroup, type: CreateEntityTask)
         project.task("hubCreateHarmonizeFlow", group: scaffoldGroup, type: CreateHarmonizeFlowTask)
         project.task("hubCreateInputFlow", group: scaffoldGroup, type: CreateInputFlowTask)
+        project.task("hubGenerateTDETemplates", group: scaffoldGroup, type: GenerateTDETemplateFromEntityTask,
+            description: "Generates TDE Templates from the entity definition files. It is possible to only generate TDE templates" +
+                " for specific entities by setting the (comma separated) project property 'entityNames'. E.g. -PentityNames=Entity1,Entity2")
 
         project.tasks.replace("mlLoadModules", DeployUserModulesTask)
         project.tasks.replace("mlWatch", HubWatchTask)
@@ -61,6 +64,9 @@ class DataHubPlugin implements Plugin<Project> {
         String flowGroup = "MarkLogic Data Hub Flow Management"
         project.task("hubRunFlow", group: flowGroup, type: RunFlowTask)
         project.task("hubDeleteJobs", group: flowGroup, type: DeleteJobsTask )
+        project.task("hubExportJobs", group: flowGroup, type: ExportJobsTask )
+        // This task is undocumented, so don't let it appear in the list
+        project.task("hubImportJobs", group: null, type: ImportJobsTask )
 
         logger.info("Finished initializing ml-data-hub\n")
     }
