@@ -242,46 +242,44 @@ public class DataHub {
         return commands;
     }
 
-    public PreInstallCheck runPreInstallCheck() {
-        return runPreInstallCheck(null);
+    public void runPreInstallCheck() {
+        runPreInstallCheck(null);
     }
 
-    public PreInstallCheck runPreInstallCheck(Versions versions) {
-        PreInstallCheck check = new PreInstallCheck();
+    public void runPreInstallCheck(Versions versions) {
 
         Map<Integer, String> portsInUse = getServerPortsInUse();
         Set<Integer> ports = portsInUse.keySet();
 
         String serverName = portsInUse.get(hubConfig.getStagingPort());
-        check.stagingPortInUse = ports.contains(hubConfig.getStagingPort()) && serverName != null && !serverName.equals(hubConfig.getStagingHttpName());
-        if (check.stagingPortInUse) {
-            check.stagingPortInUseBy = serverName;
+        stagingPortInUse = ports.contains(hubConfig.getStagingPort()) && serverName != null && !serverName.equals(hubConfig.getStagingHttpName());
+        if (stagingPortInUse) {
+            stagingPortInUseBy = serverName;
         }
 
         serverName = portsInUse.get(hubConfig.getFinalPort());
-        check.finalPortInUse = ports.contains(hubConfig.getFinalPort()) && serverName != null && !serverName.equals(hubConfig.getFinalHttpName());
-        if (check.finalPortInUse) {
-            check.finalPortInUseBy = serverName;
+        finalPortInUse = ports.contains(hubConfig.getFinalPort()) && serverName != null && !serverName.equals(hubConfig.getFinalHttpName());
+        if (finalPortInUse) {
+            finalPortInUseBy = serverName;
         }
 
         serverName = portsInUse.get(hubConfig.getJobPort());
-        check.jobPortInUse = ports.contains(hubConfig.getJobPort()) && serverName != null && !serverName.equals(hubConfig.getJobHttpName());
-        if (check.jobPortInUse) {
-            check.jobPortInUseBy = serverName;
+        jobPortInUse = ports.contains(hubConfig.getJobPort()) && serverName != null && !serverName.equals(hubConfig.getJobHttpName());
+        if (jobPortInUse) {
+            jobPortInUseBy = serverName;
         }
 
         serverName = portsInUse.get(hubConfig.getTracePort());
-        check.tracePortInUse = ports.contains(hubConfig.getTracePort()) && serverName != null && !serverName.equals(hubConfig.getTraceHttpName());
-        if (check.tracePortInUse) {
-            check.tracePortInUseBy = serverName;
+        tracePortInUse = ports.contains(hubConfig.getTracePort()) && serverName != null && !serverName.equals(hubConfig.getTraceHttpName());
+        if (tracePortInUse) {
+            tracePortInUseBy = serverName;
         }
 
         if (versions == null) {
             versions = new Versions(hubConfig);
         }
-        check.serverVersion = versions.getMarkLogicVersion();
-        check.serverVersionOk = isServerVersionValid(check.serverVersion);
-        return check;
+        serverVersion = versions.getMarkLogicVersion();
+        serverVersionOk = isServerVersionValid(serverVersion);
     }
 
     /**
@@ -396,5 +394,103 @@ public class DataHub {
             portsInUse.put(port, s);
         });
         return portsInUse;
+    }
+
+    private boolean stagingPortInUse;
+    private String stagingPortInUseBy;
+    private boolean finalPortInUse;
+    private String finalPortInUseBy;
+    private boolean jobPortInUse;
+    private String jobPortInUseBy;
+    private boolean tracePortInUse;
+    private String tracePortInUseBy;
+    private boolean serverVersionOk;
+    private String serverVersion;
+
+    public boolean isSafeToInstall() {
+            return !(isStagingPortInUse() ||
+                isFinalPortInUse() ||
+                isJobPortInUse() ||
+                isTracePortInUse()) && isServerVersionOk();
+    }
+
+    public boolean isStagingPortInUse() {
+        return stagingPortInUse;
+    }
+
+    public void setStagingPortInUse(boolean stagingPortInUse) {
+        this.stagingPortInUse = stagingPortInUse;
+    }
+
+    public String getStagingPortInUseBy() {
+        return stagingPortInUseBy;
+    }
+
+    public void setStagingPortInUseBy(String stagingPortInUseBy) {
+        this.stagingPortInUseBy = stagingPortInUseBy;
+    }
+
+    public boolean isFinalPortInUse() {
+        return finalPortInUse;
+    }
+
+    public void setFinalPortInUse(boolean finalPortInUse) {
+        this.finalPortInUse = finalPortInUse;
+    }
+
+    public String getFinalPortInUseBy() {
+        return finalPortInUseBy;
+    }
+
+    public void setFinalPortInUseBy(String finalPortInUseBy) {
+        this.finalPortInUseBy = finalPortInUseBy;
+    }
+
+    public boolean isJobPortInUse() {
+        return jobPortInUse;
+    }
+
+    public void setJobPortInUse(boolean jobPortInUse) {
+        this.jobPortInUse = jobPortInUse;
+    }
+
+    public String getJobPortInUseBy() {
+        return jobPortInUseBy;
+    }
+
+    public void setJobPortInUseBy(String jobPortInUseBy) {
+        this.jobPortInUseBy = jobPortInUseBy;
+    }
+
+    public boolean isTracePortInUse() {
+        return tracePortInUse;
+    }
+
+    public void setTracePortInUse(boolean tracePortInUse) {
+        this.tracePortInUse = tracePortInUse;
+    }
+
+    public String getTracePortInUseBy() {
+        return tracePortInUseBy;
+    }
+
+    public void setTracePortInUseBy(String tracePortInUseBy) {
+        this.tracePortInUseBy = tracePortInUseBy;
+    }
+
+    public boolean isServerVersionOk() {
+        return serverVersionOk;
+    }
+
+    public void setServerVersionOk(boolean serverVersionOk) {
+        this.serverVersionOk = serverVersionOk;
+    }
+
+    public String getServerVersion() {
+        return serverVersion;
+    }
+
+    public void setServerVersion(String serverVersion) {
+        this.serverVersion = serverVersion;
     }
 }
