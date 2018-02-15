@@ -45,7 +45,7 @@ public class JobService extends SearchableService {
 
     public JobService(DatabaseClient jobClient, DatabaseClient traceClient) {
         this.queryMgr = jobClient.newQueryManager();
-        this.jobMgr = new JobManager(jobClient, traceClient);
+        this.jobMgr = JobManager.create(jobClient, traceClient);
     }
 
     public StringHandle getJobs(JobQuery jobQuery) {
