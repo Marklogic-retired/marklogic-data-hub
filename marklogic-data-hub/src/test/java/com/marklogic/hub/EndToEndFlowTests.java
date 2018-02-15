@@ -172,7 +172,7 @@ public class EndToEndFlowTests extends HubTestBase {
     }
 
     private JsonNode validateUserModules() {
-        EntitiesValidator ev = new EntitiesValidator(getHubConfig().newStagingClient());
+        EntitiesValidator ev = EntitiesValidator.create(getHubConfig().newStagingClient());
         return ev.validateAll();
     }
 

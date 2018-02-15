@@ -135,7 +135,7 @@ public class DataHubService {
 
     @Async
     public void validateUserModules(HubConfig hubConfig, ValidateListener validateListener) {
-        EntitiesValidator ev = new EntitiesValidator(hubConfig.newStagingClient());
+        EntitiesValidator ev = EntitiesValidator.create(hubConfig.newStagingClient());
         validateListener.onValidate(ev.validateAll());
 
     }

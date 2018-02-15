@@ -326,7 +326,7 @@ public class EntityManagerService {
         else {
             type = "xquery";
         }
-        EntitiesValidator validator = new EntitiesValidator(config.newStagingClient());
+        EntitiesValidator validator = EntitiesValidator.create(config.newStagingClient());
         return validator.validate(entityName, flowName, plugin.fileContents.replaceAll("\\.(sjs|xqy)", ""), type, plugin.fileContents);
     }
 
