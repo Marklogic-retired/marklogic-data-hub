@@ -75,7 +75,7 @@ public class JobManagerTest extends HubTestBase {
     public void setup() {
         // Run a flow a couple times to generate some job/trace data.
         jobIds.clear();
-        FlowManager fm = new FlowManager(getHubConfig());
+        FlowManager fm = FlowManager.create(getHubConfig());
         Flow harmonizeFlow = fm.getFlow(ENTITY, HARMONIZE_FLOW_XML, FlowType.HARMONIZE);
         HashMap<String, Object> options = new HashMap<>();
         options.put("name", "Bob Smith");

@@ -133,7 +133,7 @@ public class LoadUserModulesCommand extends AbstractCommand {
 
     @Override
     public void execute(CommandContext context) {
-        FlowManager flowManager = new FlowManager(hubConfig);
+        FlowManager flowManager = FlowManager.create(hubConfig);
         List<String> legacyFlows = flowManager.getLegacyFlows();
         if (legacyFlows.size() > 0) {
             throw new LegacyFlowsException(legacyFlows);

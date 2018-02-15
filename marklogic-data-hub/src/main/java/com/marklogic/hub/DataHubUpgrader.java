@@ -69,7 +69,7 @@ public class DataHubUpgrader {
             }
 
             // update legacy flows to include main.(sjs|xqy)
-            List<String> flows = new FlowManager(hubConfig).updateLegacyFlows(currentVersion);
+            List<String> flows = FlowManager.create(hubConfig).updateLegacyFlows(currentVersion);
             if (updatedFlows != null) {
                 updatedFlows.addAll(flows);
             }

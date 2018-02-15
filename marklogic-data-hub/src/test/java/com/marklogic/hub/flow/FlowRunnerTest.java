@@ -76,7 +76,7 @@ public class FlowRunnerTest extends HubTestBase {
     @Test
     public void testPassOptions() throws IOException, ParserConfigurationException, SAXException {
 
-        FlowManager fm = new FlowManager(getHubConfig());
+        FlowManager fm = FlowManager.create(getHubConfig());
         Flow harmonizeFlow = fm.getFlow(ENTITY, "testharmonize",
             FlowType.HARMONIZE);
         HashMap<String, Object> options = new HashMap<>();

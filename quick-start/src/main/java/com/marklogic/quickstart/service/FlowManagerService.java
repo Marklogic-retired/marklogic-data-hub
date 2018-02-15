@@ -56,7 +56,7 @@ public class FlowManagerService {
     }
 
     private FlowManager getFlowManager() {
-        return new FlowManager(envConfig().getMlSettings());
+        return FlowManager.create(envConfig().getMlSettings());
     }
 
     public List<FlowModel> getFlows(String projectDir, String entityName, FlowType flowType) {

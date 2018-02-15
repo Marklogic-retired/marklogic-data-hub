@@ -135,7 +135,7 @@ public class FlowManagerServiceTest extends HubTestBase {
 
         String flowName = "sjs-json-input-flow";
 
-        FlowManager flowManager = new FlowManager(getHubConfig());
+        FlowManager flowManager = FlowManager.create(getHubConfig());
         Flow flow = flowManager.getFlow(ENTITY, flowName, FlowType.INPUT);
 
         ObjectMapper objectMapper = new ObjectMapper();
@@ -183,7 +183,7 @@ public class FlowManagerServiceTest extends HubTestBase {
         setEnvConfig(envConfig);
 
         String flowName = "sjs-json-harmonization-flow";
-        FlowManager flowManager = new FlowManager(getHubConfig());
+        FlowManager flowManager = FlowManager.create(getHubConfig());
         Flow flow = flowManager.getFlow(ENTITY, flowName, FlowType.HARMONIZE);
 
         HubConfig hubConfig = getHubConfig();
@@ -226,7 +226,7 @@ public class FlowManagerServiceTest extends HubTestBase {
         setEnvConfig(envConfig);
 
         String flowName = "sjs-json-harmonization-flow";
-        FlowManager flowManager = new FlowManager(getHubConfig());
+        FlowManager flowManager = FlowManager.create(getHubConfig());
         Flow flow = flowManager.getFlow(ENTITY, flowName, FlowType.HARMONIZE);
 
         HubConfig hubConfig = getHubConfig();

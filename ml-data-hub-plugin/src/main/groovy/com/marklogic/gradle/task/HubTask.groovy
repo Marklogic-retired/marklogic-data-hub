@@ -33,7 +33,7 @@ abstract class HubTask extends DefaultTask {
 
     @Internal
     FlowManager getFlowManager() {
-        return new FlowManager(getHubConfig())
+        return FlowManager.create(getHubConfig())
     }
 
     @Internal

@@ -61,7 +61,7 @@ public class EmptyCollectorTest extends HubTestBase {
     public void runCollector() {
         assertEquals(0, getStagingDocCount());
         assertEquals(0, getFinalDocCount());
-        FlowManager fm = new FlowManager(getHubConfig());
+        FlowManager fm = FlowManager.create(getHubConfig());
         Flow harmonizeFlow = fm.getFlow(ENTITY, "testharmonize",
             FlowType.HARMONIZE);
         HashMap<String, Object> options = new HashMap<>();
