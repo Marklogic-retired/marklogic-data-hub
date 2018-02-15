@@ -100,7 +100,7 @@ public class CurrentProjectController extends EnvironmentAware implements FileSy
         envConfig().setInitialized(installed);
         if (installed) {
             if (envConfig().getEnvironment().equals("local")) {
-                Tracing tracing = new Tracing(envConfig().getStagingClient());
+                Tracing tracing = Tracing.create(envConfig().getStagingClient());
                 tracing.enable();
             }
             logger.info("OnFinished: installing user modules");

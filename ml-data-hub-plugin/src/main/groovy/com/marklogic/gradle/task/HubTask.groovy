@@ -23,12 +23,12 @@ abstract class HubTask extends DefaultTask {
 
     @Internal
     Tracing getTracing() {
-        return new Tracing(getStagingClient())
+        return Tracing.create(getStagingClient())
     }
 
     @Internal
     Debugging getDebugging() {
-        return new Debugging(getStagingClient())
+        return Debugging.create(getStagingClient())
     }
 
     @Internal

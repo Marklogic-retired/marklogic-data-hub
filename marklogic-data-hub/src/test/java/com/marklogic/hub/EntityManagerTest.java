@@ -63,7 +63,7 @@ public class EntityManagerTest extends HubTestBase {
     }
 
     private void installEntity() {
-        Scaffolding scaffolding = new Scaffolding(projectDir.toString(), finalClient);
+        Scaffolding scaffolding = Scaffolding.create(projectDir.toString(), finalClient);
         Path employeeDir = scaffolding.getEntityDir("employee");
         employeeDir.toFile().mkdirs();
         assertTrue(employeeDir.toFile().exists());
@@ -71,7 +71,7 @@ public class EntityManagerTest extends HubTestBase {
     }
 
 //    private void removeEntity() throws IOException {
-//        Scaffolding scaffolding = new Scaffolding(projectDir.toString(), finalClient);
+//        Scaffolding scaffolding = Scaffolding.create(projectDir.toString(), finalClient);
 //        Path employeeDir = scaffolding.getEntityDir("employee");
 //        FileUtils.deleteDirectory(employeeDir.toFile());
 //    }

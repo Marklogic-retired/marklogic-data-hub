@@ -55,7 +55,7 @@ public class FlowRunnerTest extends HubTestBase {
         enableDebugging();
         enableTracing();
 
-        Scaffolding scaffolding = new Scaffolding(projectDir.toString(), stagingClient);
+        Scaffolding scaffolding = Scaffolding.create(projectDir.toString(), stagingClient);
         scaffolding.createEntity(ENTITY);
         scaffolding.createFlow(ENTITY, "testharmonize", FlowType.HARMONIZE,
             CodeFormat.XQUERY, DataFormat.XML);

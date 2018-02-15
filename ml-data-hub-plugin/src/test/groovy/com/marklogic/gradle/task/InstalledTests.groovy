@@ -2,11 +2,11 @@ package com.marklogic.gradle.task
 
 import com.marklogic.client.io.DOMHandle
 import com.marklogic.client.io.DocumentMetadataHandle
-import com.marklogic.hub.Debugging
 import com.marklogic.hub.HubConfig
-import com.marklogic.hub.Tracing
 import org.gradle.testkit.runner.UnexpectedBuildFailure
 import org.gradle.testkit.runner.UnexpectedBuildSuccess
+import com.marklogic.hub.Tracing;
+import com.marklogic.hub.Debugging;
 
 import java.nio.file.Paths
 
@@ -33,7 +33,7 @@ class InstalledTests extends BaseTest {
         then:
         notThrown(UnexpectedBuildFailure)
         result.task(":hubEnableDebugging").outcome == SUCCESS
-        Debugging d = new Debugging(hubConfig().newStagingClient())
+        Debugging d = Debugging.create(hubConfig().newStagingClient())
         d.isEnabled() == true
     }
 
@@ -44,7 +44,7 @@ class InstalledTests extends BaseTest {
         then:
         notThrown(UnexpectedBuildFailure)
         result.task(":hubDisableDebugging").outcome == SUCCESS
-        Debugging d = new Debugging(hubConfig().newStagingClient())
+        Debugging d = Debugging.create(hubConfig().newStagingClient())
         d.isEnabled() == false
     }
 
@@ -55,7 +55,7 @@ class InstalledTests extends BaseTest {
         then:
         notThrown(UnexpectedBuildFailure)
         result.task(":hubEnableTracing").outcome == SUCCESS
-        Tracing t = new Tracing(hubConfig().newStagingClient())
+        Tracing t = Tracing.create(hubConfig().newStagingClient())
         t.isEnabled() == true
     }
 
@@ -66,7 +66,7 @@ class InstalledTests extends BaseTest {
         then:
         notThrown(UnexpectedBuildFailure)
         result.task(":hubDisableTracing").outcome == SUCCESS
-        Tracing t = new Tracing(hubConfig().newStagingClient())
+        Tracing t = Tracing.create(hubConfig().newStagingClient())
         t.isEnabled() == false
     }
 

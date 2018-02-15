@@ -13,7 +13,6 @@ import org.junit.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -26,7 +25,7 @@ public class ScaffoldingValidatorTest extends HubTestBase {
 
    private static final String projectPath = "./test-project";
    private static final String TEST_ENTITY_NAME = "test-entity";
-   private Scaffolding scaffolding = new Scaffolding(projectPath, stagingClient);
+   private Scaffolding scaffolding = Scaffolding.create(projectPath, stagingClient);
    private ScaffoldingValidator validator = new ScaffoldingValidator(projectPath);
 
    @BeforeClass

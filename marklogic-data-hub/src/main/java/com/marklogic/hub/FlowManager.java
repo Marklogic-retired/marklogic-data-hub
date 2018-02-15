@@ -279,7 +279,7 @@ public class FlowManager extends ResourceManager {
 
     public List<String> updateLegacyFlows(String fromVersion) {
 
-        Scaffolding scaffolding = new Scaffolding(hubConfig.getProjectDir(), hubConfig.newFinalClient());
+        Scaffolding scaffolding = Scaffolding.create(hubConfig.getProjectDir(), hubConfig.newFinalClient());
 
         List<String> updatedFlows = new ArrayList<>();
         File[] entityDirs = hubConfig.getHubEntitiesDir().toFile().listFiles(pathname -> pathname.isDirectory());

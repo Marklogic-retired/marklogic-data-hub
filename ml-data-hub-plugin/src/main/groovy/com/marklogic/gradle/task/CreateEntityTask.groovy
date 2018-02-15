@@ -16,7 +16,7 @@ class CreateEntityTask extends HubTask {
         def projectDir = getHubConfig().projectDir
         println "entityName: " + entityName
         println "projectDir: " + projectDir.toString()
-        Scaffolding scaffolding = new Scaffolding(projectDir, getFinalClient())
+        Scaffolding scaffolding = Scaffolding.createImpl(projectDir, getFinalClient())
         scaffolding.createEntity(entityName)
     }
 }

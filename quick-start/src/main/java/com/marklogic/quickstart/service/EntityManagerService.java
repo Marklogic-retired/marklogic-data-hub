@@ -124,7 +124,7 @@ public class EntityManagerService {
     }
 
     public EntityModel createEntity(String projectDir, EntityModel newEntity) throws IOException {
-        Scaffolding scaffolding = new Scaffolding(projectDir, envConfig().getFinalClient());
+        Scaffolding scaffolding = Scaffolding.create(projectDir, envConfig().getFinalClient());
         scaffolding.createEntity(newEntity.getName());
 
         if (newEntity.inputFlows != null) {
@@ -300,14 +300,14 @@ public class EntityManagerService {
     }
 
     public FlowModel createFlow(String projectDir, String entityName, FlowType flowType, FlowModel newFlow) throws IOException {
-        Scaffolding scaffolding = new Scaffolding(projectDir, envConfig().getFinalClient());
+        Scaffolding scaffolding = Scaffolding.create(projectDir, envConfig().getFinalClient());
         newFlow.entityName = entityName;
         scaffolding.createFlow(entityName, newFlow.flowName, flowType, newFlow.codeFormat, newFlow.dataFormat, newFlow.useEsModel);
         return getFlow(entityName, flowType, newFlow.flowName);
     }
 
     public void deleteFlow(String projectDir, String entityName, String flowName, FlowType flowType) throws IOException {
-        Scaffolding scaffolding = new Scaffolding(projectDir, envConfig().getFinalClient());
+        Scaffolding scaffolding = Scaffolding.create(projectDir, envConfig().getFinalClient());
         Path flowDir = scaffolding.getFlowDir(entityName, flowName, flowType);
         FileUtils.deleteDirectory(flowDir.toFile());
     }

@@ -2,7 +2,6 @@ package com.marklogic.quickstart.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubConfigBuilder;
 import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.flow.CodeFormat;
@@ -19,8 +18,6 @@ import org.junit.*;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpSession;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -62,7 +59,7 @@ public class EntityManagerServiceTest extends HubTestBase {
     public void setUp() throws IOException {
         FileUtils.deleteDirectory(projectDir.toFile());
 
-        Scaffolding scaffolding = new Scaffolding(projectDir.toString(), stagingClient);
+        Scaffolding scaffolding = Scaffolding.create(projectDir.toString(), stagingClient);
         scaffolding.createEntity(ENTITY);
         scaffolding.createFlow(ENTITY, "sjs-json-input-flow", FlowType.INPUT,
             CodeFormat.JAVASCRIPT, DataFormat.JSON);

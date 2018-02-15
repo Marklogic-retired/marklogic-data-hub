@@ -35,14 +35,14 @@ public class SettingsController extends EnvironmentAware {
 
     private Tracing getTracing() {
         if (tracing == null) {
-            tracing = new Tracing(envConfig().getStagingClient());
+            tracing = Tracing.create(envConfig().getStagingClient());
         }
         return tracing;
     }
 
     private Debugging getDebugging() {
         if (debugging == null) {
-            debugging = new Debugging(envConfig().getStagingClient());
+            debugging = Debugging.create(envConfig().getStagingClient());
         }
         return debugging;
     }

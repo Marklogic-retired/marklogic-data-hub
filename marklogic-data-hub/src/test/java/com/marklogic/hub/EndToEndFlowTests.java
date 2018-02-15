@@ -109,7 +109,7 @@ public class EndToEndFlowTests extends HubTestBase {
         enableTracing();
         enableDebugging();
 
-        scaffolding = new Scaffolding(projectDir.toString(), finalClient);
+        scaffolding = Scaffolding.create(projectDir.toString(), finalClient);
         scaffolding.createEntity(ENTITY);
 
         scaffoldFlows("scaffolded");

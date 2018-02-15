@@ -58,7 +58,7 @@ public class FlowManagerServiceTest extends HubTestBase {
         FileUtils.deleteDirectory(projectDir.toFile());
         installHub();
 
-        Scaffolding scaffolding = new Scaffolding(projectDir.toString(), stagingClient);
+        Scaffolding scaffolding = Scaffolding.create(projectDir.toString(), stagingClient);
         scaffolding.createEntity(ENTITY);
         scaffolding.createFlow(ENTITY, "sjs-json-input-flow", FlowType.INPUT,
             CodeFormat.JAVASCRIPT, DataFormat.JSON);

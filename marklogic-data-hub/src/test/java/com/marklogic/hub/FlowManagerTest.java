@@ -158,7 +158,7 @@ public class FlowManagerTest extends HubTestBase {
 
     @Test
     public void testGetLocalFlows() throws IOException {
-        Scaffolding scaffolding = new Scaffolding("del-me-dir", stagingClient);
+        Scaffolding scaffolding = Scaffolding.create("del-me-dir", stagingClient);
         scaffolding.createEntity("my-entity");
 
         FlowManager fm = new FlowManager(getHubConfig("del-me-dir"));
@@ -188,7 +188,7 @@ public class FlowManagerTest extends HubTestBase {
 
     @Test
     public void testGetFlowFromProperties() throws IOException {
-        Scaffolding scaffolding = new Scaffolding("del-me-dir", stagingClient);
+        Scaffolding scaffolding = Scaffolding.create("del-me-dir", stagingClient);
         scaffolding.createEntity("my-entity");
 
         FlowManager fm = new FlowManager(getHubConfig("del-me-dir"));
@@ -389,7 +389,7 @@ public class FlowManagerTest extends HubTestBase {
     public void testHasLegacyflows() throws IOException, InterruptedException, ParserConfigurationException, SAXException, JSONException {
         FlowManager fm = new FlowManager(getHubConfig());
 
-        Scaffolding scaffolding = new Scaffolding(getHubConfig().getProjectDir(), stagingClient);
+        Scaffolding scaffolding = Scaffolding.create(getHubConfig().getProjectDir(), stagingClient);
         scaffolding.createEntity("new-entity");
         scaffolding.createFlow("new-entity", "new-flow", FlowType.HARMONIZE, CodeFormat.XQUERY, DataFormat.XML);
         assertEquals(0, fm.getLegacyFlows().size());

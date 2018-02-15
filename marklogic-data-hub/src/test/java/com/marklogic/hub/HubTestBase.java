@@ -211,19 +211,19 @@ public class HubTestBase {
     }
 
     protected static void enableDebugging() {
-        new Debugging(stagingClient).enable();
+        Debugging.create(stagingClient).enable();
     }
 
     protected static void disableDebugging() {
-        new Debugging(stagingClient).disable();
+        Debugging.create(stagingClient).disable();
     }
 
     protected static void enableTracing() {
-        new Tracing(stagingClient).enable();
+        Tracing.create(stagingClient).enable();
     }
 
     protected static void disableTracing() {
-        new Tracing(stagingClient).disable();
+        Tracing.create(stagingClient).disable();
     }
 
     protected static HubConfig getHubConfig() {

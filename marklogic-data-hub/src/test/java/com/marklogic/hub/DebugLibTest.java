@@ -29,7 +29,7 @@ public class DebugLibTest extends HubTestBase {
     public static void setup() {
         installHub();
 
-        Scaffolding scaffolding = new Scaffolding(PROJECT_PATH, stagingClient);
+        Scaffolding scaffolding = Scaffolding.create(PROJECT_PATH, stagingClient);
         scaffolding.createFlow(entityName, flowName, FlowType.INPUT, CodeFormat.XQUERY, DataFormat.XML);
 
         installUserModules(getHubConfig(), true);

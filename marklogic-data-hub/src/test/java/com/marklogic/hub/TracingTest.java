@@ -5,7 +5,6 @@ import com.marklogic.client.io.DOMHandle;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.client.query.RawStructuredQueryDefinition;
 import com.marklogic.client.query.StructuredQueryBuilder;
-import com.marklogic.client.query.StructuredQueryDefinition;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.FlowRunner;
 import org.custommonkey.xmlunit.XMLUnit;
@@ -39,13 +38,13 @@ public class TracingTest extends HubTestBase {
     @Before
     public void beforeEach() {
         clearDatabases(HubConfig.DEFAULT_JOB_NAME, HubConfig.DEFAULT_TRACE_NAME, HubConfig.DEFAULT_FINAL_NAME);
-        new Tracing(stagingClient).disable();
+        Tracing.create(stagingClient).disable();
     }
 
     @AfterClass
     public static void teardown() {
         clearDatabases(HubConfig.DEFAULT_JOB_NAME, HubConfig.DEFAULT_TRACE_NAME, HubConfig.DEFAULT_FINAL_NAME);
-        new Tracing(stagingClient).disable();
+        Tracing.create(stagingClient).disable();
     }
 
     @Test
@@ -53,7 +52,7 @@ public class TracingTest extends HubTestBase {
         assertEquals(0, getFinalDocCount());
         assertEquals(0, getTracingDocCount());
 
-        Tracing t = new Tracing(stagingClient);
+        Tracing t = Tracing.create(stagingClient);
         assertFalse(t.isEnabled());
 
         FlowManager fm = new FlowManager(getHubConfig());
@@ -75,7 +74,7 @@ public class TracingTest extends HubTestBase {
         assertEquals(0, getFinalDocCount());
         assertEquals(0, getTracingDocCount());
 
-        Tracing t = new Tracing(stagingClient);
+        Tracing t = Tracing.create(stagingClient);
         assertFalse(t.isEnabled());
 
         FlowManager fm = new FlowManager(getHubConfig());
@@ -97,7 +96,7 @@ public class TracingTest extends HubTestBase {
         assertEquals(0, getFinalDocCount());
         assertEquals(0, getTracingDocCount());
 
-        Tracing t = new Tracing(stagingClient);
+        Tracing t = Tracing.create(stagingClient);
         assertFalse(t.isEnabled());
 
         t.enable();
@@ -122,7 +121,7 @@ public class TracingTest extends HubTestBase {
         assertEquals(0, getFinalDocCount());
         assertEquals(0, getTracingDocCount());
 
-        Tracing t = new Tracing(stagingClient);
+        Tracing t = Tracing.create(stagingClient);
         assertFalse(t.isEnabled());
 
         t.enable();
@@ -148,7 +147,7 @@ public class TracingTest extends HubTestBase {
         assertEquals(0, getFinalDocCount());
         assertEquals(0, getTracingDocCount());
 
-        Tracing t = new Tracing(stagingClient);
+        Tracing t = Tracing.create(stagingClient);
         assertFalse(t.isEnabled());
 
         FlowManager fm = new FlowManager(getHubConfig());
@@ -176,7 +175,7 @@ public class TracingTest extends HubTestBase {
         assertEquals(0, getFinalDocCount());
         assertEquals(0, getTracingDocCount());
 
-        Tracing t = new Tracing(stagingClient);
+        Tracing t = Tracing.create(stagingClient);
         assertFalse(t.isEnabled());
 
         FlowManager fm = new FlowManager(getHubConfig());
@@ -204,7 +203,7 @@ public class TracingTest extends HubTestBase {
         assertEquals(0, getFinalDocCount());
         assertEquals(0, getTracingDocCount());
 
-        Tracing t = new Tracing(stagingClient);
+        Tracing t = Tracing.create(stagingClient);
         assertFalse(t.isEnabled());
 
         FlowManager fm = new FlowManager(getHubConfig());
@@ -234,7 +233,7 @@ public class TracingTest extends HubTestBase {
         assertEquals(0, getFinalDocCount());
         assertEquals(0, getTracingDocCount());
 
-        Tracing t = new Tracing(stagingClient);
+        Tracing t = Tracing.create(stagingClient);
         assertFalse(t.isEnabled());
 
         FlowManager fm = new FlowManager(getHubConfig());

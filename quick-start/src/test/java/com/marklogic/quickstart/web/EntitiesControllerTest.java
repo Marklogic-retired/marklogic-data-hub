@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.client.document.DocumentRecord;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.JacksonHandle;
-import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubConfigBuilder;
 import com.marklogic.hub.flow.CodeFormat;
 import com.marklogic.hub.flow.DataFormat;
@@ -67,7 +66,7 @@ public class EntitiesControllerTest extends BaseTestController {
         installHub();
 
         Path projectDir = Paths.get(".", PROJECT_PATH);
-        Scaffolding scaffolding = new Scaffolding(projectDir.toString(), stagingClient);
+        Scaffolding scaffolding = Scaffolding.create(projectDir.toString(), stagingClient);
 
         scaffolding.createFlow(ENTITY, "sjs-json-harmonization-flow", FlowType.HARMONIZE,
             CodeFormat.JAVASCRIPT, DataFormat.JSON);
@@ -108,7 +107,7 @@ public class EntitiesControllerTest extends BaseTestController {
         installHub();
 
         Path projectDir = Paths.get(".", PROJECT_PATH);
-        Scaffolding scaffolding = new Scaffolding(projectDir.toString(), stagingClient);
+        Scaffolding scaffolding = Scaffolding.create(projectDir.toString(), stagingClient);
 
         scaffolding.createFlow(ENTITY, "sjs-json-harmonization-flow", FlowType.HARMONIZE,
             CodeFormat.JAVASCRIPT, DataFormat.JSON);
