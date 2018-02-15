@@ -16,7 +16,7 @@
 package com.marklogic.quickstart.web;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.marklogic.hub.HubDatabase;
+import com.marklogic.hub.DataHub;
 import com.marklogic.quickstart.EnvironmentAware;
 import com.marklogic.quickstart.model.SearchQuery;
 import com.marklogic.quickstart.service.SearchService;
@@ -52,7 +52,7 @@ public class SearchController extends EnvironmentAware {
 
     @RequestMapping(value = "/doc", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<String> getDoc(@RequestParam HubDatabase database, @RequestParam String docUri) {
+    public ResponseEntity<String> getDoc(@RequestParam DataHub.HubDatabase database, @RequestParam String docUri) {
         HttpHeaders headers = new HttpHeaders();
         String body = searchService.getDoc(database, docUri);
         if (body.startsWith("<")) {

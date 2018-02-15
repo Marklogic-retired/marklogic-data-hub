@@ -15,7 +15,7 @@
  */
 package com.marklogic.quickstart.model;
 
-import com.marklogic.hub.HubDatabase;
+import com.marklogic.hub.DataHub;
 
 import java.util.List;
 import java.util.Map;
@@ -26,6 +26,6 @@ public class SearchQuery {
     public boolean entitiesOnly;
     public long start;
     public long count;
-    public HubDatabase database;
+    public DataHub.HubDatabase database;
     public Map<String, List<String>> facets;
 }

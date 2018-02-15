@@ -18,7 +18,6 @@ package com.marklogic.quickstart.service;
 import com.marklogic.appdeployer.command.Command;
 import com.marklogic.appdeployer.impl.SimpleAppDeployer;
 import com.marklogic.hub.DataHub;
-import com.marklogic.hub.DataHubUpgrader;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.deploy.commands.LoadUserModulesCommand;
 import com.marklogic.hub.deploy.util.HubDeployStatusListener;
@@ -161,7 +160,7 @@ public class DataHubService {
     }
 
     public boolean updateHub(HubConfig config) throws IOException, CantUpgradeException {
-        boolean result = new DataHubUpgrader(config).upgradeHub();
+        boolean result = new DataHub(config).upgradeHub();
         if (result) {
             ConnectionAuthenticationToken authenticationToken = (ConnectionAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
             if (authenticationToken != null) {

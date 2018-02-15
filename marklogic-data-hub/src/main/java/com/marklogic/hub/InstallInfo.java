@@ -16,70 +16,70 @@
 package com.marklogic.hub;
 
 public class InstallInfo {
-    public boolean stagingAppServerExists = false;
-    public boolean finalAppServerExists = false;
-    public boolean traceAppServerExists = false;
-    public boolean jobAppServerExists = false;
+    private boolean stagingAppServerExists = false;
+    private boolean finalAppServerExists = false;
+    private boolean traceAppServerExists = false;
+    private boolean jobAppServerExists = false;
 
-    public boolean stagingDbExists = false;
-    public boolean finalDbExists = false;
-    public boolean traceDbExists = false;
-    public boolean jobDbExists = false;
+    private boolean stagingDbExists = false;
+    private boolean finalDbExists = false;
+    private boolean traceDbExists = false;
+    private boolean jobDbExists = false;
 
-    public boolean stagingTripleIndexOn = false;
-    public boolean stagingCollectionLexiconOn = false;
-    public boolean finalTripleIndexOn = false;
-    public boolean finalCollectionLexiconOn = false;
+    private boolean stagingTripleIndexOn = false;
+    private boolean stagingCollectionLexiconOn = false;
+    private boolean finalTripleIndexOn = false;
+    private boolean finalCollectionLexiconOn = false;
 
-    public boolean stagingForestsExist = false;
-    public boolean finalForestsExist = false;
-    public boolean traceForestsExist = false;
-    public boolean jobForestsExist = false;
+    private boolean stagingForestsExist = false;
+    private boolean finalForestsExist = false;
+    private boolean traceForestsExist = false;
+    private boolean jobForestsExist = false;
 
     public boolean isPartiallyInstalled() {
         return (
-            stagingAppServerExists ||
-            finalAppServerExists ||
-            traceAppServerExists ||
-            jobAppServerExists ||
-            stagingDbExists ||
-            stagingTripleIndexOn ||
-            stagingCollectionLexiconOn ||
-            finalDbExists ||
-            finalTripleIndexOn ||
-            finalCollectionLexiconOn ||
-            traceDbExists ||
-            jobDbExists ||
-            stagingForestsExist ||
-            finalForestsExist ||
-            traceForestsExist ||
-            jobForestsExist
+            isStagingAppServerExists() ||
+                isFinalAppServerExists() ||
+                isTraceAppServerExists() ||
+                isJobAppServerExists() ||
+                isStagingDbExists() ||
+                isStagingTripleIndexOn() ||
+                isStagingCollectionLexiconOn() ||
+                isFinalDbExists() ||
+                isFinalTripleIndexOn() ||
+                isFinalCollectionLexiconOn() ||
+                isTraceDbExists() ||
+                isJobDbExists() ||
+                isStagingForestsExist() ||
+                isFinalForestsExist() ||
+                isTraceForestsExist() ||
+                isJobForestsExist()
         );
     }
 
     public boolean isInstalled() {
         boolean appserversOk = (
-            stagingAppServerExists &&
-            finalAppServerExists &&
-            traceAppServerExists &&
-            jobAppServerExists
+            isStagingAppServerExists() &&
+                isFinalAppServerExists() &&
+                isTraceAppServerExists() &&
+                isJobAppServerExists()
         );
 
         boolean dbsOk = (
-            stagingDbExists &&
-            stagingTripleIndexOn &&
-            stagingCollectionLexiconOn &&
-            finalDbExists &&
-            finalTripleIndexOn &&
-            finalCollectionLexiconOn &&
-            traceDbExists &&
-            jobDbExists
+            isStagingDbExists() &&
+                isStagingTripleIndexOn() &&
+                isStagingCollectionLexiconOn() &&
+                isFinalDbExists() &&
+                isFinalTripleIndexOn() &&
+                isFinalCollectionLexiconOn() &&
+                isTraceDbExists() &&
+                isJobDbExists()
         );
         boolean forestsOk = (
-            stagingForestsExist &&
-            finalForestsExist &&
-            traceForestsExist &&
-            jobForestsExist
+            isStagingForestsExist() &&
+                isFinalForestsExist() &&
+                isTraceForestsExist() &&
+                isJobForestsExist()
         );
 
         return (appserversOk && dbsOk && forestsOk);
@@ -89,27 +89,154 @@ public class InstallInfo {
         return "\n" +
         "Checking MarkLogic Installation:\n" +
         "\tAppServers:\n" +
-        "\t\tStaging: " + (stagingAppServerExists ? "exists" : "MISSING") + "\n" +
-        "\t\tFinal:   " + (finalAppServerExists? "exists" : "MISSING") + "\n" +
-        "\t\tTrace:   " + (traceAppServerExists? "exists" : "MISSING") + "\n" +
-        "\t\tJob:     " + (jobAppServerExists? "exists" : "MISSING") + "\n" +
+        "\t\tStaging: " + (isStagingAppServerExists() ? "exists" : "MISSING") + "\n" +
+        "\t\tFinal:   " + (isFinalAppServerExists() ? "exists" : "MISSING") + "\n" +
+        "\t\tTrace:   " + (isTraceAppServerExists() ? "exists" : "MISSING") + "\n" +
+        "\t\tJob:     " + (isJobAppServerExists() ? "exists" : "MISSING") + "\n" +
         "\tDatabases:\n" +
-        "\t\tStaging: " + (stagingDbExists ? "exists" : "MISSING") + "\n" +
-        "\t\tFinal:   " + (finalDbExists? "exists" : "MISSING") + "\n" +
-        "\t\tTrace:   " + (traceDbExists ? "exists" : "MISSING") + "\n" +
-        "\t\tJob:     " + (jobDbExists ? "exists" : "MISSING") + "\n" +
+        "\t\tStaging: " + (isStagingDbExists() ? "exists" : "MISSING") + "\n" +
+        "\t\tFinal:   " + (isFinalDbExists() ? "exists" : "MISSING") + "\n" +
+        "\t\tTrace:   " + (isTraceDbExists() ? "exists" : "MISSING") + "\n" +
+        "\t\tJob:     " + (isJobDbExists() ? "exists" : "MISSING") + "\n" +
         "\tDatabases Indexes:\n" +
-        "\t\tStaging Triples Index : " + (stagingTripleIndexOn ? "exists" : "MISSING") + "\n" +
-        "\t\tStaging Collection Lexicon : " + (stagingCollectionLexiconOn ? "exists" : "MISSING") + "\n" +
-        "\t\tFinal Triples Index : " + (finalTripleIndexOn ? "exists" : "MISSING") + "\n" +
-        "\t\tFinal Collection Lexicon : " + (finalCollectionLexiconOn ? "exists" : "MISSING") + "\n" +
+        "\t\tStaging Triples Index : " + (isStagingTripleIndexOn() ? "exists" : "MISSING") + "\n" +
+        "\t\tStaging Collection Lexicon : " + (isStagingCollectionLexiconOn() ? "exists" : "MISSING") + "\n" +
+        "\t\tFinal Triples Index : " + (isFinalTripleIndexOn() ? "exists" : "MISSING") + "\n" +
+        "\t\tFinal Collection Lexicon : " + (isFinalCollectionLexiconOn() ? "exists" : "MISSING") + "\n" +
         "\tForests\n" +
-        "\t\tStaging: " + (stagingForestsExist ? "exists" : "MISSING") + "\n" +
-        "\t\tFinal:   " + (finalForestsExist ? "exists" : "MISSING") + "\n" +
-        "\t\tTrace:   " + (traceForestsExist ? "exists" : "MISSING") + "\n" +
-        "\t\tJob:     " + (jobForestsExist ? "exists" : "MISSING") + "\n" +
+        "\t\tStaging: " + (isStagingForestsExist() ? "exists" : "MISSING") + "\n" +
+        "\t\tFinal:   " + (isFinalForestsExist() ? "exists" : "MISSING") + "\n" +
+        "\t\tTrace:   " + (isTraceForestsExist() ? "exists" : "MISSING") + "\n" +
+        "\t\tJob:     " + (isJobForestsExist() ? "exists" : "MISSING") + "\n" +
         "\n\n" +
         "OVERAL RESULT: " + (isInstalled() ? "INSTALLED" : "NOT INSTALLED") + "\n";
     }
 
+    public boolean isStagingAppServerExists() {
+        return stagingAppServerExists;
+    }
+
+    public void setStagingAppServerExists(boolean stagingAppServerExists) {
+        this.stagingAppServerExists = stagingAppServerExists;
+    }
+
+    public boolean isFinalAppServerExists() {
+        return finalAppServerExists;
+    }
+
+    public void setFinalAppServerExists(boolean finalAppServerExists) {
+        this.finalAppServerExists = finalAppServerExists;
+    }
+
+    public boolean isTraceAppServerExists() {
+        return traceAppServerExists;
+    }
+
+    public void setTraceAppServerExists(boolean traceAppServerExists) {
+        this.traceAppServerExists = traceAppServerExists;
+    }
+
+    public boolean isJobAppServerExists() {
+        return jobAppServerExists;
+    }
+
+    public void setJobAppServerExists(boolean jobAppServerExists) {
+        this.jobAppServerExists = jobAppServerExists;
+    }
+
+    public boolean isStagingDbExists() {
+        return stagingDbExists;
+    }
+
+    public void setStagingDbExists(boolean stagingDbExists) {
+        this.stagingDbExists = stagingDbExists;
+    }
+
+    public boolean isFinalDbExists() {
+        return finalDbExists;
+    }
+
+    public void setFinalDbExists(boolean finalDbExists) {
+        this.finalDbExists = finalDbExists;
+    }
+
+    public boolean isTraceDbExists() {
+        return traceDbExists;
+    }
+
+    public void setTraceDbExists(boolean traceDbExists) {
+        this.traceDbExists = traceDbExists;
+    }
+
+    public boolean isJobDbExists() {
+        return jobDbExists;
+    }
+
+    public void setJobDbExists(boolean jobDbExists) {
+        this.jobDbExists = jobDbExists;
+    }
+
+    public boolean isStagingTripleIndexOn() {
+        return stagingTripleIndexOn;
+    }
+
+    public void setStagingTripleIndexOn(boolean stagingTripleIndexOn) {
+        this.stagingTripleIndexOn = stagingTripleIndexOn;
+    }
+
+    public boolean isStagingCollectionLexiconOn() {
+        return stagingCollectionLexiconOn;
+    }
+
+    public void setStagingCollectionLexiconOn(boolean stagingCollectionLexiconOn) {
+        this.stagingCollectionLexiconOn = stagingCollectionLexiconOn;
+    }
+
+    public boolean isFinalTripleIndexOn() {
+        return finalTripleIndexOn;
+    }
+
+    public void setFinalTripleIndexOn(boolean finalTripleIndexOn) {
+        this.finalTripleIndexOn = finalTripleIndexOn;
+    }
+
+    public boolean isFinalCollectionLexiconOn() {
+        return finalCollectionLexiconOn;
+    }
+
+    public void setFinalCollectionLexiconOn(boolean finalCollectionLexiconOn) {
+        this.finalCollectionLexiconOn = finalCollectionLexiconOn;
+    }
+
+    public boolean isStagingForestsExist() {
+        return stagingForestsExist;
+    }
+
+    public void setStagingForestsExist(boolean stagingForestsExist) {
+        this.stagingForestsExist = stagingForestsExist;
+    }
+
+    public boolean isFinalForestsExist() {
+        return finalForestsExist;
+    }
+
+    public void setFinalForestsExist(boolean finalForestsExist) {
+        this.finalForestsExist = finalForestsExist;
+    }
+
+    public boolean isTraceForestsExist() {
+        return traceForestsExist;
+    }
+
+    public void setTraceForestsExist(boolean traceForestsExist) {
+        this.traceForestsExist = traceForestsExist;
+    }
+
+    public boolean isJobForestsExist() {
+        return jobForestsExist;
+    }
+
+    public void setJobForestsExist(boolean jobForestsExist) {
+        this.jobForestsExist = jobForestsExist;
+    }
 }

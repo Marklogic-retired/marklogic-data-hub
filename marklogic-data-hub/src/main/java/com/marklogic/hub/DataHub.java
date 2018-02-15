@@ -25,6 +25,7 @@ import com.marklogic.client.eval.ServerEvaluationCall;
 import com.marklogic.hub.deploy.HubAppDeployer;
 import com.marklogic.hub.deploy.commands.*;
 import com.marklogic.hub.deploy.util.HubDeployStatusListener;
+import com.marklogic.hub.error.CantUpgradeException;
 import com.marklogic.hub.error.ServerValidationException;
 import com.marklogic.hub.util.Versions;
 import com.marklogic.mgmt.ManageClient;
@@ -33,6 +34,7 @@ import com.marklogic.mgmt.resource.appservers.ServerManager;
 import com.marklogic.mgmt.resource.databases.DatabaseManager;
 import com.marklogic.rest.util.Fragment;
 import com.marklogic.rest.util.ResourcesFragment;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,9 +42,12 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.regex.Pattern;
 
 public class DataHub {
 
@@ -100,39 +105,39 @@ public class DataHub {
         InstallInfo installInfo = new InstallInfo();
 
         ResourcesFragment srf = getServerManager().getAsXml();
-        installInfo.stagingAppServerExists = srf.resourceExists(hubConfig.getStagingHttpName());
-        installInfo.finalAppServerExists = srf.resourceExists(hubConfig.getFinalHttpName());
-        installInfo.traceAppServerExists = srf.resourceExists(hubConfig.getTraceHttpName());
-        installInfo.jobAppServerExists = srf.resourceExists(hubConfig.getJobHttpName());
+        installInfo.setStagingAppServerExists(srf.resourceExists(hubConfig.getStagingHttpName()));
+        installInfo.setFinalAppServerExists(srf.resourceExists(hubConfig.getFinalHttpName()));
+        installInfo.setTraceAppServerExists(srf.resourceExists(hubConfig.getTraceHttpName()));
+        installInfo.setJobAppServerExists(srf.resourceExists(hubConfig.getJobHttpName()));
 
         ResourcesFragment drf = getDatabaseManager().getAsXml();
-        installInfo.stagingDbExists = drf.resourceExists(hubConfig.getStagingDbName());
-        installInfo.finalDbExists = drf.resourceExists(hubConfig.getFinalDbName());
-        installInfo.traceDbExists = drf.resourceExists(hubConfig.getTraceDbName());
-        installInfo.jobDbExists = drf.resourceExists(hubConfig.getJobDbName());
+        installInfo.setStagingDbExists(drf.resourceExists(hubConfig.getStagingDbName()));
+        installInfo.setFinalDbExists(drf.resourceExists(hubConfig.getFinalDbName()));
+        installInfo.setTraceDbExists(drf.resourceExists(hubConfig.getTraceDbName()));
+        installInfo.setJobDbExists(drf.resourceExists(hubConfig.getJobDbName()));
 
-        if (installInfo.stagingDbExists) {
+        if (installInfo.isStagingDbExists()) {
             Fragment f = getDatabaseManager().getPropertiesAsXml(hubConfig.getStagingDbName());
-            installInfo.stagingTripleIndexOn = Boolean.parseBoolean(f.getElementValue("//m:triple-index"));
-            installInfo.stagingCollectionLexiconOn = Boolean.parseBoolean(f.getElementValue("//m:collection-lexicon"));
-            installInfo.stagingForestsExist = (f.getElements("//m:forest").size() > 0);
+            installInfo.setStagingTripleIndexOn(Boolean.parseBoolean(f.getElementValue("//m:triple-index")));
+            installInfo.setStagingCollectionLexiconOn(Boolean.parseBoolean(f.getElementValue("//m:collection-lexicon")));
+            installInfo.setStagingForestsExist((f.getElements("//m:forest").size() > 0));
         }
 
-        if (installInfo.finalDbExists) {
+        if (installInfo.isFinalDbExists()) {
             Fragment f = getDatabaseManager().getPropertiesAsXml(hubConfig.getFinalDbName());
-            installInfo.finalTripleIndexOn = Boolean.parseBoolean(f.getElementValue("//m:triple-index"));
-            installInfo.finalCollectionLexiconOn = Boolean.parseBoolean(f.getElementValue("//m:collection-lexicon"));
-            installInfo.finalForestsExist = (f.getElements("//m:forest").size() > 0);
+            installInfo.setFinalTripleIndexOn(Boolean.parseBoolean(f.getElementValue("//m:triple-index")));
+            installInfo.setFinalCollectionLexiconOn(Boolean.parseBoolean(f.getElementValue("//m:collection-lexicon")));
+            installInfo.setFinalForestsExist((f.getElements("//m:forest").size() > 0));
         }
 
-        if (installInfo.traceDbExists) {
+        if (installInfo.isTraceDbExists()) {
             Fragment f = getDatabaseManager().getPropertiesAsXml(hubConfig.getTraceDbName());
-            installInfo.traceForestsExist = (f.getElements("//m:forest").size() > 0);
+            installInfo.setTraceForestsExist((f.getElements("//m:forest").size() > 0));
         }
 
-        if (installInfo.jobDbExists) {
+        if (installInfo.isJobDbExists()) {
             Fragment f = getDatabaseManager().getPropertiesAsXml(hubConfig.getJobDbName());
-            installInfo.jobForestsExist = (f.getElements("//m:forest").size() > 0);
+            installInfo.setJobForestsExist((f.getElements("//m:forest").size() > 0));
         }
 
         logger.info(installInfo.toString());
@@ -396,6 +401,8 @@ public class DataHub {
         return portsInUse;
     }
 
+
+    // Here is the former PreCheckInstall class stuff
     private boolean stagingPortInUse;
     private String stagingPortInUseBy;
     private boolean finalPortInUse;
@@ -492,5 +499,84 @@ public class DataHub {
 
     public void setServerVersion(String serverVersion) {
         this.serverVersion = serverVersion;
+    }
+
+    //HubDatabase stuff goes here
+
+    public enum HubDatabase {
+        STAGING("staging"),
+        FINAL("final");
+
+        private String type;
+
+        HubDatabase(String type) {
+            this.type = type;
+        }
+
+        public static HubDatabase getHubDatabase(String database) {
+            for (HubDatabase hubDatabase : HubDatabase.values()) {
+                if (hubDatabase.toString().equals(database)) {
+                    return hubDatabase;
+                }
+            }
+            return null;
+        }
+
+        public String toString() {
+            return this.type;
+        }
+    }
+
+    //DataHubUpgrader stuff
+    public static String MIN_UPGRADE_VERSION = "1.1.3";
+
+    public boolean upgradeHub() throws CantUpgradeException {
+        return upgradeHub(null);
+    }
+
+    public boolean upgradeHub(List<String> updatedFlows) throws CantUpgradeException {
+        boolean isHubInstalled = this.isInstalled().isInstalled();
+
+        String currentVersion = new Versions(hubConfig).getHubVersion();
+        int compare = Versions.compare(currentVersion, MIN_UPGRADE_VERSION);
+        if (compare == -1) {
+            throw new CantUpgradeException(currentVersion, MIN_UPGRADE_VERSION);
+        }
+
+        boolean result = false;
+        boolean alreadyInitialized = hubConfig.getHubProject().isInitialized();
+        File buildGradle = Paths.get(hubConfig.getProjectDir(), "build.gradle").toFile();
+        try {
+            // update the hub-internal-config files
+            hubConfig.initHubProject();
+
+            if (alreadyInitialized) {
+                // replace the hub version in build.gradle
+                String text = FileUtils.readFileToString(buildGradle);
+                String version = hubConfig.getJarVersion();
+                text = Pattern.compile("^(\\s*)id\\s+['\"]com.marklogic.ml-data-hub['\"]\\s+version.+$", Pattern.MULTILINE).matcher(text).replaceAll("$1id 'com.marklogic.ml-data-hub' version '" + version + "'");
+                text = Pattern.compile("^(\\s*)compile.+marklogic-data-hub.+$", Pattern.MULTILINE).matcher(text).replaceAll("$1compile 'com.marklogic:marklogic-data-hub:" + version + "'");
+                FileUtils.writeStringToFile(buildGradle, text);
+
+                hubConfig.getHubSecurityDir().resolve("roles").resolve("data-hub-user.json").toFile().delete();
+            }
+
+            // update legacy flows to include main.(sjs|xqy)
+            List<String> flows = FlowManager.create(hubConfig).updateLegacyFlows(currentVersion);
+            if (updatedFlows != null) {
+                updatedFlows.addAll(flows);
+            }
+
+            if (isHubInstalled) {
+                // install hub modules into MarkLogic
+                this.install();
+            }
+
+            result = true;
+        }
+        catch(IOException e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 }

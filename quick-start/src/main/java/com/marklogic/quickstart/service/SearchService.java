@@ -23,8 +23,8 @@ import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.query.QueryManager;
 import com.marklogic.client.query.StructuredQueryBuilder;
 import com.marklogic.client.query.StructuredQueryDefinition;
+import com.marklogic.hub.DataHub;
 import com.marklogic.hub.HubConfig;
-import com.marklogic.hub.HubDatabase;
 import com.marklogic.quickstart.model.SearchQuery;
 
 import javax.xml.namespace.QName;
@@ -51,7 +51,7 @@ public class SearchService extends SearchableService {
     public StringHandle search(SearchQuery searchQuery) {
         QueryManager queryMgr;
         String dbPrefix;
-        if (searchQuery.database.equals(HubDatabase.STAGING)) {
+        if (searchQuery.database.equals(DataHub.HubDatabase.STAGING)) {
             queryMgr = stagingQueryMgr;
             dbPrefix = "staging-";
         }
@@ -104,9 +104,9 @@ public class SearchService extends SearchableService {
         return queryMgr.search(sqd, sh, searchQuery.start);
     }
 
-    public String getDoc(HubDatabase database, String docUri) {
+    public String getDoc(DataHub.HubDatabase database, String docUri) {
         GenericDocumentManager docMgr;
-        if (database.equals(HubDatabase.STAGING)) {
+        if (database.equals(DataHub.HubDatabase.STAGING)) {
             docMgr = stagingDocMgr;
         }
         else {
