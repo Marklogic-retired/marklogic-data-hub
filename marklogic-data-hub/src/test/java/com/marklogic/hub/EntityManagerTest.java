@@ -108,7 +108,7 @@ public class EntityManagerTest extends HubTestBase {
         assertEquals(0, getStagingDocCount());
         assertEquals(0, getFinalDocCount());
 
-        EntityManager entityManager = new EntityManager(getHubConfig());
+        EntityManager entityManager = EntityManager.create(getHubConfig());
         List<Resource> deployed = entityManager.deploySearchOptions();
 
         assertEquals(0, deployed.size());
@@ -133,7 +133,7 @@ public class EntityManagerTest extends HubTestBase {
         assertEquals(0, getStagingDocCount());
         assertEquals(0, getFinalDocCount());
 
-        EntityManager entityManager = new EntityManager(getHubConfig());
+        EntityManager entityManager = EntityManager.create(getHubConfig());
         List<Resource> deployed = entityManager.deploySearchOptions();
 
         assertEquals(2, deployed.size());
@@ -168,7 +168,7 @@ public class EntityManagerTest extends HubTestBase {
         assertFalse(dir.resolve("final-database.json").toFile().exists());
         assertFalse(dir.resolve("staging-database.json").toFile().exists());
 
-        EntityManager entityManager = new EntityManager(getHubConfig());
+        EntityManager entityManager = EntityManager.create(getHubConfig());
         assertTrue(entityManager.saveDbIndexes());
 
         assertTrue(dir.resolve("final-database.json").toFile().exists());

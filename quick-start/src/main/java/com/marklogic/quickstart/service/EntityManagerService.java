@@ -202,12 +202,12 @@ public class EntityManagerService {
     }
 
     public void deploySearchOptions(EnvironmentConfig environmentConfig) {
-        EntityManager em = new EntityManager(environmentConfig.getMlSettings());
+        EntityManager em = EntityManager.create(environmentConfig.getMlSettings());
         em.deploySearchOptions();
     }
 
     public void saveDbIndexes(EnvironmentConfig environmentConfig) {
-        EntityManager em = new EntityManager(environmentConfig.getMlSettings());
+        EntityManager em = EntityManager.create(environmentConfig.getMlSettings());
         em.saveDbIndexes();
     }
 

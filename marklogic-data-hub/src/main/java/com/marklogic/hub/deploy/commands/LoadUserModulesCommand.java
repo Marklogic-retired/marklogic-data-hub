@@ -163,7 +163,7 @@ public class LoadUserModulesCommand extends AbstractCommand {
         }
 
         // deploy the auto-generated ES search options
-        EntityManager entityManager = new EntityManager(hubConfig);
+        EntityManager entityManager = EntityManager.create(hubConfig);
         entityManager.deploySearchOptions();
 
         try {
