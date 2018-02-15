@@ -1,0 +1,24 @@
+{
+  "info" : {
+    "title" : "Manager",
+    "version" : "0.0.1"
+  },
+  "definitions" : {
+    "Manager" : {
+      "required" : [ ],
+      "primaryKey": "id",
+      "rangeIndex" : [ "title" ],
+      "wordLexicon" : [ ],
+      "properties" : {
+        "id": {
+          "datatype": "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "title" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        }
+      }
+    }
+  }
+}
