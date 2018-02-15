@@ -30,7 +30,8 @@ public class HubConfigJsonTest {
 
     @Test
     public void testDeserialize() throws IOException {
-        String projectPath = new File(PROJECT_PATH).getAbsolutePath();
+        // need to escape the backslashes on Windows. On Linux, there won't be any, so the replace will have no effect
+        String projectPath = new File(PROJECT_PATH).getAbsolutePath().replace("\\", "\\\\");
         String content = "{\n" +
             "  \"host\": null,\n" +
             "  \"stagingDbName\": \"data-hub-STAGING\",\n" +
@@ -72,7 +73,8 @@ public class HubConfigJsonTest {
 
     @Test
     public void testSerialize() throws IOException {
-        String projectPath = new File(PROJECT_PATH).getAbsolutePath();
+        // need to escape the backslashes on Windows. On Linux, there won't be any, so the replace will have no effect
+        String projectPath = new File(PROJECT_PATH).getAbsolutePath().replace("\\", "\\\\");
         HubConfig hubConfig = HubConfigBuilder.newHubConfigBuilder(PROJECT_PATH).withPropertiesFromEnvironment().build();
         String expected = "{\n" +
             "  \"stagingDbName\": \"data-hub-STAGING\",\n" +

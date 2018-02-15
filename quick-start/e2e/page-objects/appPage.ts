@@ -19,6 +19,10 @@ export class AppPage extends Page {
     }, (err) => null)
   }
 
+  get dashboardTab() {
+    return element(by.css('#database-tab'));
+  }
+
   get entitiesTab() {
     return element(by.css('#entities-tab'));
   }
@@ -29,6 +33,10 @@ export class AppPage extends Page {
 
   get flowsTab() {
     return element(by.css('#flows-tab'));
+  }
+
+  get browseDataTab() {
+    return element(by.css('#browser-tab'));
   }
 
   get settingsTab() {

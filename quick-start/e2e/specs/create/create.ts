@@ -93,22 +93,20 @@ export default function() {
       browser.wait(EC.visibilityOf(entityPage.getEntityBox('Order')));
       expect(entityPage.getEntityBox('Order').isDisplayed()).toBe(true);
       console.log('click edit Order entity');
-      entityPage.clickEditEntity('Order');
-      browser.driver.sleep(3000);
+      browser.executeScript('window.document.getElementsByClassName("edit-start")[0].click()');
       browser.wait(EC.visibilityOf(entityPage.entityEditor));
       expect(entityPage.entityEditor.isPresent()).toBe(true);
       entityPage.saveEntity.click();
-      browser.driver.sleep(3000);
       browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
       expect(entityPage.confirmDialogYesButton.isPresent()).toBe(true);
       entityPage.confirmDialogYesButton.click();
-      browser.driver.sleep(3000);
+      browser.wait(EC.presenceOf(entityPage.toast));
+      browser.wait(EC.stalenessOf(entityPage.toast));
       entityPage.toolsButton.click();
-      browser.driver.sleep(3000);
     });
 
     it ('should create a new Product entity', function() {
-      //create Order entity
+      //create Product entity
       console.log('create Product entity');
       entityPage.toolsButton.click();
       entityPage.newEntityButton.click();
@@ -118,16 +116,15 @@ export default function() {
       browser.wait(EC.visibilityOf(entityPage.getEntityBox('Product')));
       expect(entityPage.getEntityBox('Product').isDisplayed()).toBe(true);
       console.log('click edit Product entity');
-      entityPage.clickEditEntity('Product');
-      browser.driver.sleep(3000);
+      browser.executeScript('window.document.getElementsByClassName("edit-start")[1].click()');
       browser.wait(EC.visibilityOf(entityPage.entityEditor));
       expect(entityPage.entityEditor.isPresent()).toBe(true);
       entityPage.saveEntity.click();
-      browser.driver.sleep(3000);
       browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
       expect(entityPage.confirmDialogYesButton.isPresent()).toBe(true);
       entityPage.confirmDialogYesButton.click();
-      browser.driver.sleep(3000);
+      browser.wait(EC.presenceOf(entityPage.toast));
+      browser.wait(EC.stalenessOf(entityPage.toast));
       entityPage.toolsButton.click();
     });
 
@@ -137,7 +134,6 @@ export default function() {
       console.log('edit Product entity');
       let lastProperty = entityPage.lastProperty;
       browser.executeScript('window.document.getElementsByClassName("edit-start")[1].click()');
-      browser.driver.sleep(3000);
       browser.wait(EC.visibilityOf(entityPage.entityEditor));
       expect(entityPage.entityEditor.isPresent()).toBe(true);
       // add sku property
@@ -155,13 +151,12 @@ export default function() {
       entityPage.getPropertyType(lastProperty).element(by.cssContainingText('option', 'decimal')).click();
       entityPage.getPropertyDescription(lastProperty).sendKeys('price description');
       entityPage.getPropertyRangeIndexColumn(lastProperty).click();
-      browser.driver.sleep(3000);
       entityPage.saveEntity.click();
       browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
       expect(entityPage.confirmDialogYesButton.isPresent()).toBe(true);
-      browser.driver.sleep(3000);
       entityPage.confirmDialogYesButton.click();
-      browser.driver.sleep(3000);
+      browser.wait(EC.presenceOf(entityPage.toast));
+      browser.wait(EC.stalenessOf(entityPage.toast));
     });
 
     it ('should add properties to Order entity', function() {
@@ -170,7 +165,6 @@ export default function() {
       console.log('edit Order entity');
       let lastProperty = entityPage.lastProperty;
       browser.executeScript('window.document.getElementsByClassName("edit-start")[0].click()');
-      browser.driver.sleep(3000);
       browser.wait(EC.visibilityOf(entityPage.entityEditor));
       // add id property
       console.log('add id property');
@@ -197,18 +191,16 @@ export default function() {
       entityPage.getPropertyDescription(lastProperty).sendKeys('products description');
       entityPage.getPropertyWordLexiconColumn(lastProperty).click();
       entityPage.saveEntity.click();
-      browser.driver.sleep(3000);
       browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
       expect(entityPage.confirmDialogYesButton.isPresent()).toBe(true);
-      browser.driver.sleep(3000);
       entityPage.confirmDialogYesButton.click();
-      browser.driver.sleep(3000);
+      browser.wait(EC.presenceOf(entityPage.toast));
+      browser.wait(EC.stalenessOf(entityPage.toast));
     });
 
     it ('should verify properties to Product entity', function() {
       console.log('verify properties to Product entity');
       browser.executeScript('window.document.getElementsByClassName("edit-start")[0].click()');
-      browser.driver.sleep(3000);
       browser.wait(EC.visibilityOf(entityPage.entityEditor));
       expect(entityPage.entityEditor.isPresent()).toBe(true);
       let skuProperty = entityPage.getPropertyByPosition(1);
@@ -221,15 +213,13 @@ export default function() {
       expect(entityPage.getPropertyType(priceProperty).getAttribute('ng-reflect-model')).toEqual('decimal');
       expect(entityPage.getPropertyDescription(priceProperty).getAttribute('value')).toEqual('price description');
       expect(entityPage.hasClass(entityPage.getPropertyRangeIndex(priceProperty), 'active')).toBe(true);
-      browser.driver.sleep(3000);
       entityPage.cancelEntity.click();
-      browser.driver.sleep(3000);
+      browser.wait(EC.invisibilityOf(entityPage.entityEditor));
     });
 
     it ('should verify properties to Order entity', function() {
       console.log('verify properties to Order entity');
       browser.executeScript('window.document.getElementsByClassName("edit-start")[0].click()');
-      browser.driver.sleep(3000);
       browser.wait(EC.visibilityOf(entityPage.entityEditor));
       expect(entityPage.entityEditor.isPresent()).toBe(true);
       let idProperty = entityPage.getPropertyByPosition(1);
@@ -249,16 +239,14 @@ export default function() {
       expect(entityPage.getPropertyCardinality(productsProperty).getAttribute('ng-reflect-model')).toEqual('ONE_TO_MANY');
       expect(entityPage.getPropertyDescription(productsProperty).getAttribute('value')).toEqual('products description');
       expect(entityPage.hasClass(entityPage.getPropertyWordLexicon(productsProperty), 'active')).toBe(true);
-      browser.driver.sleep(3000);
       entityPage.cancelEntity.click();
-      browser.driver.sleep(3000);
+      browser.wait(EC.invisibilityOf(entityPage.entityEditor));
     });
 
     it ('should remove some properties on Order entity', function() {
       console.log('verify remove properties on Order entity');
       let lastProperty = entityPage.lastProperty;
       browser.executeScript('window.document.getElementsByClassName("edit-start")[1].click()');
-      browser.driver.sleep(3000);
       browser.wait(EC.visibilityOf(entityPage.entityEditor));
       expect(entityPage.entityEditor.isPresent()).toBe(true);
       //add some additional properties
@@ -272,17 +260,16 @@ export default function() {
       entityPage.getPropertyType(lastProperty).element(by.cssContainingText('option', 'integer')).click();
       entityPage.getPropertyDescription(lastProperty).sendKeys('remove-prop2 description');
       entityPage.saveEntity.click();
-      browser.driver.sleep(3000);
       browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
       expect(entityPage.confirmDialogYesButton.isPresent()).toBe(true);
-      browser.driver.sleep(3000);
       entityPage.confirmDialogYesButton.click();
-      browser.driver.sleep(3000);
+      browser.wait(EC.presenceOf(entityPage.toast));
+      browser.wait(EC.stalenessOf(entityPage.toast));
       //remove the additional properties
       console.log('remove additional properties');
       browser.executeScript('window.document.getElementsByClassName("edit-start")[1].click()');
-      //browser.driver.sleep(3000);
       browser.wait(EC.visibilityOf(entityPage.entityEditor));
+      browser.sleep(3000);
       expect(entityPage.entityEditor.isPresent()).toBe(true);
       let removeProp1 = entityPage.getPropertyByPosition(4);
       let removeProp2 = entityPage.getPropertyByPosition(5);
@@ -292,23 +279,20 @@ export default function() {
       browser.wait(EC.visibilityOf(entityPage.confirmDialogYesButton));
       entityPage.confirmDialogYesButton.click();
       entityPage.saveEntity.click();
-      browser.driver.sleep(3000);
       browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
       expect(entityPage.confirmDialogYesButton.isPresent()).toBe(true);
-      browser.driver.sleep(3000);
       entityPage.confirmDialogYesButton.click();
-      browser.driver.sleep(3000);
+      browser.wait(EC.presenceOf(entityPage.toast));
+      browser.wait(EC.stalenessOf(entityPage.toast));
       //verify that the properties are removed
       console.log('verify properties are removed');
       browser.executeScript('window.document.getElementsByClassName("edit-start")[1].click()');
-      browser.driver.sleep(3000);
       browser.wait(EC.visibilityOf(entityPage.entityEditor));
       expect(entityPage.entityEditor.isPresent()).toBe(true);
       console.log('verify properties count');
       entityPage.getPropertiesCount().then(function(props){expect(props === 3)});
-      browser.driver.sleep(3000);
       entityPage.cancelEntity.click();
-      browser.driver.sleep(3000);
+      browser.wait(EC.invisibilityOf(entityPage.entityEditor));
     });
 
     it ('should remove a created entity', function() {
@@ -323,18 +307,13 @@ export default function() {
       entityPage.getPropertyType(lastProperty).element(by.cssContainingText('option', 'string')).click();
       entityPage.getPropertyDescription(lastProperty).sendKeys('remove-prop1 description');
       entityPage.saveEntity.click();
-      browser.driver.sleep(3000);
       browser.wait(EC.visibilityOf(entityPage.getEntityBox('removeEntity')));
       entityPage.toolsButton.click();
-      browser.driver.sleep(3000);
       //remove removeEntity entity
-      //element(by.css('svg > .nodes * #fo-removeEntity > .foreign > app-entity-box > .entity-def-box > app-resizable > .title > .edit-area > span:nth-of-type(2) > i')).click();
       entityPage.deleteEntityButton('removeEntity').click();
       browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
       expect(entityPage.confirmDialogYesButton.isPresent()).toBe(true);
-      browser.driver.sleep(3000);
       entityPage.confirmDialogYesButton.click();
-      browser.driver.sleep(3000);
       //count entities
       console.log('verify entity is deleted by count');
       entityPage.getEntitiesCount().then(function(entities){expect(entities === 2)});
@@ -480,7 +459,7 @@ export default function() {
       expect(flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE').isDisplayed()).toBe(true, 'Harmonize Products' + ' is not present');
       //add flow options
       flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE').click();
-      browser.sleep(3000);
+      browser.wait(EC.visibilityOf(flowPage.tabs));
       console.log('clicking + button to add options')
       flowPage.addFlowOptionsButton().click();
       flowPage.addFlowOptionsButton().click();
@@ -498,7 +477,7 @@ export default function() {
       //verify the options are retained
       console.log('verify the flow options');
       flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE').click();
-      browser.sleep(3000);
+      browser.wait(EC.visibilityOf(flowPage.tabs));
       expect(flowPage.getKeyFlowOptionsByPosition(1).getAttribute('ng-reflect-model')).toEqual('hello');
       expect(flowPage.getValueFlowOptionsByPosition(1).getAttribute('ng-reflect-model')).toEqual('world');
       expect(flowPage.getKeyFlowOptionsByPosition(2).getAttribute('ng-reflect-model')).toEqual('myNumber');
@@ -508,11 +487,14 @@ export default function() {
       //move to other harmonize flow and go back to the flow
       console.log('going to the other flow and back');
       flowPage.entityDisclosure('TestEntity').click();
+      browser.wait(EC.elementToBeClickable(flowPage.getFlow('TestEntity', 'sjs json HARMONIZE', 'HARMONIZE')));
       flowPage.getFlow('TestEntity', 'sjs json HARMONIZE', 'HARMONIZE').click();
       flowPage.entityDisclosure('Product').click();
+      browser.wait(EC.elementToBeClickable(flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE')));
       flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE').click();
       //verify the options are retained
       console.log('verify the flow options');
+      browser.wait(EC.visibilityOf(flowPage.tabs));
       expect(flowPage.getKeyFlowOptionsByPosition(1).getAttribute('ng-reflect-model')).toEqual('hello');
       expect(flowPage.getValueFlowOptionsByPosition(1).getAttribute('ng-reflect-model')).toEqual('world');
       expect(flowPage.getKeyFlowOptionsByPosition(2).getAttribute('ng-reflect-model')).toEqual('myNumber');
@@ -533,15 +515,12 @@ export default function() {
       entityPage.flowsTab.click();
       flowPage.entityDisclosure('Product').click();
       flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE').click();
+      browser.wait(EC.visibilityOf(flowPage.tabs));
       expect(flowPage.getKeyFlowOptionsByPosition(3).getAttribute('ng-reflect-model')).toEqual('myDate');
       expect(flowPage.getValueFlowOptionsByPosition(3).getAttribute('ng-reflect-model')).toEqual('2017-03-07');
       //verify the flow options count
       console.log('verify the flow options count');
       flowPage.getFlowOptionsCount().then(function(flowOptions){expect(flowOptions === 3)});
-    });
-
-    it ('should open the TestEntity disclosure', function() {
-      flowPage.entityDisclosure('TestEntity').click();
     });
   });
 }

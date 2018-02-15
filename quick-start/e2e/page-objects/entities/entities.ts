@@ -180,6 +180,10 @@ export class EntityPage extends AppPage {
   get cancelEntity() {
     return element(by.buttonText('Cancel'));
   }
+
+  get toast() {
+    return element(by.css('mdl-snackbar-component'));
+  }
 }
 
 var entityPage = new EntityPage();

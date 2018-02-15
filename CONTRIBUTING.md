@@ -32,9 +32,18 @@ You need these to get started
 #### Symlinking to MarkLogic
 The 3.0 release of DHF will ship its xqy and sjs code within MarkLogic. To properly develop against MarkLogic you need to symlink your source code into the /MarkLogic install dir.
 
+In Linux or Mac, run the following:
+
 ```bash
 ln -s /path/to/your/dhf/code/marklogic-data-hub/src/server-side \
   /path/to/MarkLogic/Modules/MarkLogic/data-hub-framework
+```
+
+In Windows, run a Command Prompt as Admin, then execute the following:
+
+```bash
+cd \path\to\MarkLogic\Modules\MarkLogic
+mklink /D data-hub-framework \path\to\your\dhf\code\marklogic-data-hub\src\server-side
 ```
 
 This is necessary if you want the latest/greatest xqy code from DHF in your MarkLogic dir.
@@ -85,7 +94,7 @@ plugins {
    ...
 
    // comment out this line. It pulls the version from the cloud
-   // id 'com.marklogic.ml-data-hub' version '2.0.3'
+   // id 'com.marklogic.ml-data-hub' version '2.0.4'
 }
 
 // this tells gradle to apply the plugin you included above in the buildscript section

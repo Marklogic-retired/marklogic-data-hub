@@ -95,7 +95,7 @@ declare function post(
     let $entity-name := map:get($params, "entity-name")
     let $flow-name := map:get($params, "flow-name")
     let $flow-type := $consts:HARMONIZE_FLOW
-    let $job-id := map:get($params, "job-id")
+    let $job-id := (map:get($params, "job-id"), sem:uuid-string())[1]
 
     (: determine the database to insert into :)
     let $target-database :=

@@ -7,7 +7,7 @@ import java.nio.file.Path
 
 class ExportJobsTask extends HubTask {
     @Input
-    public String jobIds
+    public String[] jobIds
     public String filename
 
     @TaskAction
@@ -16,7 +16,9 @@ class ExportJobsTask extends HubTask {
             filename = project.hasProperty("filename") ? project.property("filename") : "jobexport.zip"
         }
         if (jobIds == null) {
-            jobIds = project.hasProperty("jobIds") ? project.property("jobIds") : null
+            if (project.hasProperty("jobIds")) {
+                jobIds = project.property("jobIds").split(",")
+            }
         }
         if (jobIds == null) {
             println("Exporting all jobs to " + filename)
