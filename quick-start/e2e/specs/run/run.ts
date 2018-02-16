@@ -35,6 +35,13 @@ export default function() {
       flowPage.jobsTab.click();
       jobsPage.isLoaded();
       expect(jobsPage.finishedFlows.isPresent()).toBe(true);
+      //verify the output
+      jobsPage.jobOutputByPosition(1).click();
+      browser.wait(EC.visibilityOf(jobsPage.jobOutputTitle()));
+      expect(jobsPage.jobOutputTitle().isPresent()).toBe(true);
+      expect(jobsPage.jobOutputContent('OUTPUT_RECORDS: 450').isPresent()).toBe(true);
+      expect(jobsPage.jobOutputContent('OUTPUT_RECORDS_FAILED: 0').isPresent()).toBe(true);
+      jobsPage.jobOutputCloseButton().click();
       //verify on browse data page
       jobsPage.browseDataTab.click();
       browsePage.isLoaded();
