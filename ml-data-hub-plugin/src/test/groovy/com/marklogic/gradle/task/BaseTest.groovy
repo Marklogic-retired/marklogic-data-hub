@@ -11,8 +11,6 @@ import com.marklogic.client.io.InputStreamHandle
 import com.marklogic.client.io.StringHandle
 import com.marklogic.hub.HubConfig
 import com.marklogic.hub.HubConfigBuilder
-import com.marklogic.mgmt.ManageClient
-import com.marklogic.mgmt.resource.databases.DatabaseManager
 import org.apache.commons.io.FileUtils
 import org.apache.commons.io.FilenameUtils
 import org.custommonkey.xmlunit.XMLUnit
