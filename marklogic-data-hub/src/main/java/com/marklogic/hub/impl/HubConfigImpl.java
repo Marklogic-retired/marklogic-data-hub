@@ -570,7 +570,7 @@ public class HubConfigImpl implements HubConfig {
 
     public void setProjectDir(String projectDir) {
         this.projectDir = projectDir;
-        this.hubProject = new HubProject(projectDir);
+        this.hubProject = HubProject.create(projectDir);
     }
 
     @JsonIgnore

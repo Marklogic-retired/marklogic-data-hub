@@ -53,7 +53,7 @@ public class TraceServiceTest extends HubTestBase {
 
         enableTracing();
 
-        Scaffolding scaffolding = new Scaffolding(projectDir.toString(), stagingClient);
+        Scaffolding scaffolding = Scaffolding.create(projectDir.toString(), stagingClient);
         scaffolding.createEntity(ENTITY);
         scaffolding.createFlow(ENTITY, "sjs-json-harmonize-flow", FlowType.HARMONIZE,
             CodeFormat.JAVASCRIPT, DataFormat.JSON);

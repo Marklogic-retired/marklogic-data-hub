@@ -35,7 +35,7 @@ public class Project {
     }
 
     public boolean isInitialized() {
-        return new HubProject(this.path).isInitialized();
+        return HubProject.create(this.path).isInitialized();
     }
 
     public List<String> getEnvironments() {
