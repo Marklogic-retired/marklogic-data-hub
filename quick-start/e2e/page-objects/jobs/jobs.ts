@@ -124,6 +124,18 @@ export class JobsPage extends AppPage {
   deleteButton() {
     return element(by.buttonText('Delete'));
   }
+
+  jobOutputTitle() {
+    return element(by.css('app-job-output .mdl-dialog__title'));
+  }
+
+  jobOutputContent(logContent: string) {
+    return element(by.cssContainingText('app-job-output .mdl-dialog__content pre', logContent));
+  }
+
+  jobOutputCloseButton() {
+    return element(by.css('app-job-output mdl-button'));
+  }
 }
 
 var jobsPage = new JobsPage();
