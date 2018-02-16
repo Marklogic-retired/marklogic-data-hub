@@ -10,5 +10,5 @@ declare option xdmp:mapping "false";
 
 debug:dump-env(),
 hul:run-in-modules(function() {
-  fn:doc("/trace-ui" || xdmp:get-request-field("uri"))
+  xdmp:document-get("./Modules/MarkLogic/data-hub-framework/tracing/dist" || xdmp:get-request-field("uri"))
 })

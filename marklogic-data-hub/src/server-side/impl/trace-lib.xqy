@@ -582,7 +582,7 @@ declare function trace:find-traces(
       <return-facets>true</return-facets>
       <sort-order type="xs:dateTime"
           direction="descending">
-        <element ns="" name="created"/>
+        <path-index>/trace/created</path-index>
       </sort-order>
     </options>
   let $query := search:parse($q)
@@ -610,7 +610,7 @@ declare function trace:get-traces($page as xs:int, $page-length as xs:int)
   let $end := $start + $page-length - 1
   let $count := xdmp:estimate(/trace)
   let $traces :=
-    for $trace in cts:search(/trace, cts:true-query(), ("unfiltered", cts:index-order(cts:element-reference(xs:QName("created")), "descending")))[$start to $end]
+    for $trace in cts:search(/trace, cts:true-query(), ("unfiltered", cts:index-order(cts:path-reference("/trace/created"), "descending")))[$start to $end]
     return
       trace:trace-to-json($trace)
   return
@@ -628,8 +628,7 @@ declare function trace:get-trace($id as xs:string)
 {
   let $query :=
     cts:or-query((
-      cts:element-range-query(xs:QName("traceId"), "=", $id, ("collation=http://marklogic.com/collation/codepoint")),
-      cts:json-property-range-query("traceId", "=", $id, ("collation=http://marklogic.com/collation/codepoint"))
+      cts:path-range-query("/trace/traceId", "=", $id, ("collation=http://marklogic.com/collation/codepoint"))
     ))
   return
     trace:trace-to-json(cts:search(fn:doc(), $query)[1]/node())
@@ -642,12 +641,11 @@ declare function trace:get-traceIds($q as xs:string?)
       cts:element-value-query(xs:QName("identifier"), fn:lower-case($q) || "*", "wildcarded")
     else ()
   let $results :=
-    cts:element-value-co-occurrences(
-      xs:QName("traceId"),
-      xs:QName("identifier"),
+    cts:value-co-occurrences(
+      cts:path-reference("/trace/traceId"),
+      cts:path-reference("/trace/identifier"),
       (
-        "limit=10",
-        "collation=http://marklogic.com/collation/codepoint"
+        "limit=10"
       ),
       $query)
   let $results :=
