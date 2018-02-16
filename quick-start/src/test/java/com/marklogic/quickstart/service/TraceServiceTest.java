@@ -1,28 +1,115 @@
 package com.marklogic.quickstart.service;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
+import com.marklogic.client.io.StringHandle;
+import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.HubConfigBuilder;
 import com.marklogic.hub.HubTestBase;
+import com.marklogic.hub.flow.*;
+import com.marklogic.hub.scaffold.Scaffolding;
+import com.marklogic.quickstart.auth.ConnectionAuthenticationToken;
+import com.marklogic.quickstart.model.EnvironmentConfig;
 import com.marklogic.quickstart.model.TraceQuery;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.HashMap;
 
+@RunWith(SpringRunner.class)
+@SpringBootTest()
 public class TraceServiceTest extends HubTestBase {
+
+    private DatabaseClient traceClient;
+    private static Path projectDir = Paths.get(".", PROJECT_PATH);
+    private static String ENTITY = "test-entity";
+
+    @Autowired
+    FlowManagerService flowMgrService;
+
+    public TraceServiceTest() {
+        traceClient = DatabaseClientFactory.newClient("localhost", 8012, "admin", "admin", DatabaseClientFactory.Authentication.DIGEST);
+    }
+
     @BeforeClass
-    public static void setup() throws IOException {
+    public static void setupClass() throws IOException {
+
+        EnvironmentConfig envConfig = new EnvironmentConfig(projectDir.toString(), "local", "admin", "admin");
+        envConfig.setMlSettings(HubConfigBuilder.newHubConfigBuilder(projectDir.toString()).withPropertiesFromEnvironment().build());
+        envConfig.checkIfInstalled();
+        setEnvConfig(envConfig);
+
         deleteProjectDir();
         installHub();
+
+        enableTracing();
+
+        Scaffolding scaffolding = new Scaffolding(projectDir.toString(), stagingClient);
+        scaffolding.createEntity(ENTITY);
+        scaffolding.createFlow(ENTITY, "sjs-json-harmonize-flow", FlowType.HARMONIZE,
+            CodeFormat.JAVASCRIPT, DataFormat.JSON);
+
+        scaffolding.createFlow(ENTITY, "xqy-xml-harmonize-flow", FlowType.HARMONIZE,
+            CodeFormat.XQUERY, DataFormat.XML);
+
+        installUserModules(getHubConfig(), true);
+
+    }
+
+    @AfterClass
+    public static void teardown() {
+        uninstallHub();
+    }
+
+    @Before
+    public void setUp() throws IOException {
+        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_TRACE_NAME, HubConfig.DEFAULT_JOB_NAME);
+
+        final String FLOW_NAME = "sjs-json-harmonize-flow";
+        Flow flow = flowMgrService.getServerFlow(ENTITY, FLOW_NAME, FlowType.HARMONIZE);
+        flowMgrService.runFlow(flow, 1, 1, new HashMap<String, Object>(), (jobId, percentComplete, message) -> { });
+    }
+
+    private static void setEnvConfig(EnvironmentConfig envConfig) {
+        ConnectionAuthenticationToken authenticationToken = new ConnectionAuthenticationToken("admin", "admin", "localhost", 1, "local");
+        authenticationToken.setEnvironmentConfig(envConfig);
+        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
     }
 
     @Test
     public void getTraces() {
-        DatabaseClient traceClient = DatabaseClientFactory.newClient("localhost", 8012, "admin", "admin", DatabaseClientFactory.Authentication.DIGEST);
         TraceService tm = new TraceService(traceClient);
         TraceQuery traceQuery = new TraceQuery();
-        traceQuery.start = new Long(1);
-        traceQuery.count = new Long(10);
+        traceQuery.start = 1L;
+        traceQuery.count = 10L;
         tm.getTraces(traceQuery);
+    }
+
+    @Test
+    public void getTrace() throws IOException {
+        TraceService tm = new TraceService(traceClient);
+        TraceQuery traceQuery = new TraceQuery();
+        traceQuery.start = 1L;
+        traceQuery.count = 1L;
+        StringHandle traces = tm.getTraces(traceQuery);
+
+        String resultStr = traces.toString();
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode node = mapper.readTree(resultStr);
+        JsonNode results = node.findValue("results");
+        String traceId = results.get(0).findValue("content").findValue("traceId").asText();
+
+        JsonNode trace = tm.getTrace(traceId);
+        Assert.assertNotNull(trace);
+        Assert.assertEquals(traceId, trace.findValue("traceId").asText());
     }
 }

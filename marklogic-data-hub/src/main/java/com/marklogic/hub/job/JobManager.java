@@ -24,6 +24,8 @@ public interface JobManager {
      *
      * @param exportFilePath specifies where the zip file will be written
      * @param jobIds a comma-separated list of jobIds; if null, all will be exported
+     *
+     * @return a report of what was exported
      */
     JobExportResponse exportJobs(Path exportFilePath, String[] jobIds);
 
@@ -31,6 +33,7 @@ public interface JobManager {
      * Import Job documents and their associated Trace documents from a zip file.
      *
      * @param importFilePath specifies where the zip file exists
+     * @throws IOException if unable to open or read the target input file
      */
     void importJobs(Path importFilePath) throws IOException;
 }

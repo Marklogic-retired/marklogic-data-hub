@@ -5,15 +5,14 @@ import org.gradle.api.tasks.TaskAction
 
 class ImportJobsTask extends HubTask {
     @Input
-    public String jobIds
-    public String importFilename
+    public String filename
 
     @TaskAction
     void exportJobs() {
-        if (importFilename == null) {
-            importFilename = project.hasProperty("filename") ? project.property("filename") : "jobexport.zip"
+        if (filename == null) {
+            filename = project.hasProperty("filename") ? project.property("filename") : "jobexport.zip"
         }
-        println("Importing jobs from " + importFilename)
+        println("Importing jobs from " + filename)
 
         def jobManager = getJobManager()
         def dh = getDataHub()
@@ -21,9 +20,8 @@ class ImportJobsTask extends HubTask {
             println("Data Hub is not installed.")
             return
         }
-        def importPath = getHubConfig().hubConfigDir.resolve(importFilename)
-        def jobImportResponse = jobManager.importJobs(importPath)
-        print jobImportResponse
+        def importPath = getHubConfig().hubConfigDir.parent.resolve(filename)
+        jobManager.importJobs(importPath)
     }
 
 }
