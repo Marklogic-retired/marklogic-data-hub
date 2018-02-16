@@ -231,7 +231,7 @@ public class HubTestBase {
     }
 
     protected static DataHub getDataHub() {
-        return new DataHub(getHubConfig());
+        return DataHub.create(getHubConfig());
     }
 
     protected static HubConfig getHubConfig(String projectDir) {

@@ -70,7 +70,7 @@ public class StreamCollectorTest extends HubTestBase {
         scaffolding.createFlow(ENTITY, "testharmonize", FlowType.HARMONIZE,
             CodeFormat.XQUERY, DataFormat.XML);
 
-        DataHub dh = new DataHub(getHubConfig());
+        DataHub dh = DataHub.create(getHubConfig());
         dh.clearUserModules();
         installUserModules(getHubConfig(), false);
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_TRACE_NAME, HubConfig.DEFAULT_JOB_NAME);

@@ -34,7 +34,7 @@ public class BaseTestController extends HubTestBase {
     public void baseSetUp() throws IOException {
         envConfig = new EnvironmentConfig(PROJECT_PATH, "local", "admin", "admin");
         setEnvConfig(envConfig);
-        DataHub dh = new DataHub(envConfig.getMlSettings());
+        DataHub dh = DataHub.create(envConfig.getMlSettings());
         dh.initProject();
         projectManagerService.addProject(PROJECT_PATH);
     }

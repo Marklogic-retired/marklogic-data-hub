@@ -86,7 +86,7 @@ class DataHubPlugin implements Plugin<Project> {
             .build()
         project.extensions.add("hubConfig", hubConfig)
 
-        dataHub = new DataHub(hubConfig)
+        dataHub = DataHub.create(hubConfig)
         project.extensions.add("dataHub", dataHub)
     }
 

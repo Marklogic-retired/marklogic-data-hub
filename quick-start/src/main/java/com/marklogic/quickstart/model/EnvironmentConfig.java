@@ -101,7 +101,7 @@ public class EnvironmentConfig {
             mlSettings.getAppConfig().setAppServicesUsername(username);
             mlSettings.getAppConfig().setAppServicesPassword(password);
         }
-        dataHub = new DataHub(mlSettings);
+        dataHub = DataHub.create(mlSettings);
 
         // warm the caches
         getStagingClient();

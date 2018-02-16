@@ -54,7 +54,7 @@ public class DataHubService {
 
     public boolean install(HubConfig config, HubDeployStatusListener listener) throws DataHubException {
         logger.info("Installing Data Hub");
-        DataHub dataHub = new DataHub(config);
+        DataHub dataHub = DataHub.create(config);
         try {
             dataHub.install(listener);
             return true;
@@ -66,7 +66,7 @@ public class DataHubService {
     }
 
     public void updateIndexes(HubConfig config) {
-        DataHub dataHub = new DataHub(config);
+        DataHub dataHub = DataHub.create(config);
         try {
             dataHub.updateIndexes();
         } catch(Throwable e) {
@@ -101,7 +101,7 @@ public class DataHubService {
     public void reinstallUserModules(HubConfig config, DeployUserModulesListener deployListener, ValidateListener validateListener) {
         long startTime = PerformanceLogger.monitorTimeInsideMethod();
 
-        DataHub dataHub = new DataHub(config);
+        DataHub dataHub = DataHub.create(config);
         try {
             dataHub.clearUserModules();
             installUserModules(config, true, deployListener);
@@ -117,7 +117,7 @@ public class DataHubService {
     public void uninstallUserModules(HubConfig config) {
         long startTime = PerformanceLogger.monitorTimeInsideMethod();
 
-        DataHub dataHub = new DataHub(config);
+        DataHub dataHub = DataHub.create(config);
         try {
             dataHub.clearUserModules();
         } catch(Throwable e) {
@@ -127,7 +127,7 @@ public class DataHubService {
     }
 
     public void preInstallCheck(HubConfig config) {
-        DataHub dataHub = new DataHub(config);
+        DataHub dataHub = DataHub.create(config);
         dataHub.runPreInstallCheck();
     }
 
@@ -139,7 +139,7 @@ public class DataHubService {
     }
 
     public void uninstall(HubConfig config, HubDeployStatusListener listener) throws DataHubException {
-        DataHub dataHub = new DataHub(config);
+        DataHub dataHub = DataHub.create(config);
         try {
             dataHub.uninstall(listener);
         } catch(Throwable e) {
@@ -160,7 +160,7 @@ public class DataHubService {
     }
 
     public boolean updateHub(HubConfig config) throws IOException, CantUpgradeException {
-        boolean result = new DataHub(config).upgradeHub();
+        boolean result = DataHub.create(config).upgradeHub();
         if (result) {
             ConnectionAuthenticationToken authenticationToken = (ConnectionAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
             if (authenticationToken != null) {
@@ -173,7 +173,7 @@ public class DataHubService {
     }
 
     public void clearContent(HubConfig config, String database) {
-        DataHub dataHub = new DataHub(config);
+        DataHub dataHub = DataHub.create(config);
         DatabaseManager mgr = new DatabaseManager(dataHub.getManageClient());
         mgr.clearDatabase(database);
     }

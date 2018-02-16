@@ -60,7 +60,7 @@ public class FlowRunnerTest extends HubTestBase {
         scaffolding.createFlow(ENTITY, "testharmonize", FlowType.HARMONIZE,
             CodeFormat.XQUERY, DataFormat.XML);
 
-        DataHub dh = new DataHub(getHubConfig());
+        DataHub dh = DataHub.create(getHubConfig());
         dh.clearUserModules();
         installUserModules(getHubConfig(), false);
 

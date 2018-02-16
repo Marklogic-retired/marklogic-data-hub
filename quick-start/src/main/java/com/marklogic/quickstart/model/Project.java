@@ -51,7 +51,7 @@ public class Project {
 
     public void initialize(HubConfig hubConfig) {
         hubConfig.setProjectDir(this.path);
-        DataHub hub = new DataHub(hubConfig);
+        DataHub hub = DataHub.create(hubConfig);
         hub.initProject();
     }
 }
