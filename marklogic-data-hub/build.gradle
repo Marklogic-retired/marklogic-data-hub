@@ -96,7 +96,7 @@ task buildUI(type: NpmTask) {
 
 task copyUIAssets(type: Copy) {
     from 'src/trace-ui/dist'
-    into 'src/main/resources/ml-modules/root/trace-ui'
+    into 'src/server-side/tracing/dist'
     dependsOn tasks.buildUI
 }
 
