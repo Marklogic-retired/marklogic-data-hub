@@ -60,7 +60,7 @@ export default function() {
       //verfiy on dashboard page
       viewerPage.dashboardTab.click();
       dashboardPage.isLoaded();
-      expect(element(by.cssContainingText('div', '450')).isPresent()).toBe(true);
+      expect(dashboardPage.stagingCount().getText()).toEqual('450');
       dashboardPage.flowsTab.click();
       flowPage.isLoaded();
     });
@@ -144,6 +144,10 @@ export default function() {
           flowCount++;
         });
       });
+    });
+
+    it ('should go to jobs page', function() {
+      flowPage.jobsTab.click();
     });
   });
 }
