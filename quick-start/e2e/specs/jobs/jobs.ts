@@ -67,13 +67,15 @@ export default function() {
         jobsPage.exportActionMenuItem().click();
         browser.wait(EC.elementToBeClickable(jobsPage.exportButton()));
         jobsPage.exportButton().click();
-        browser.sleep(3000);
+        browser.sleep(5000);
       });
 
       it ('check and delete some jobs', function() {
         //reset the checkboxes by going to another tab
         jobsPage.flowsTab.click();
+        flowPage.isLoaded();
         flowPage.jobsTab.click();
+        jobsPage.isLoaded();
         jobsPage.jobCheckboxByPosition(1).click();
         jobsPage.jobCheckboxByPosition(2).click();
         jobsPage.actionDropDown().click();
