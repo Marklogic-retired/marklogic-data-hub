@@ -105,7 +105,7 @@ public class DataHubImpl implements DataHub {
      */
     @Override public InstallInfo isInstalled() {
 
-        InstallInfo installInfo = new InstallInfo();
+        InstallInfo installInfo = InstallInfo.create();
 
         ResourcesFragment srf = getServerManager().getAsXml();
         installInfo.setStagingAppServerExists(srf.resourceExists(hubConfig.getStagingHttpName()));
