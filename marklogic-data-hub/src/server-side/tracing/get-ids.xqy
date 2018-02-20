@@ -27,4 +27,4 @@ debug:dump-env(),
 
 let $q := xdmp:get-request-field("q")
 return
-  trace:get-trace-ids($q)
+  trace:get-traceIds($q)
