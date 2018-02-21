@@ -1,12 +1,7 @@
-import { protractor , browser, element, by, By, $, $$, ExpectedConditions as EC} from 'protractor';
-import { pages } from '../../page-objects/page';
-import loginPage from '../../page-objects/auth/login';
+import { browser, ExpectedConditions as EC} from 'protractor';
 import dashboardPage from '../../page-objects/dashboard/dashboard';
-import entityPage from '../../page-objects/entities/entities';
 import flowPage from '../../page-objects/flows/flows';
 import jobsPage from '../../page-objects/jobs/jobs';
-import browsePage from '../../page-objects/browse/browse';
-import viewerPage from '../../page-objects/viewer/viewer';
 
 export default function() {
     describe('Run Jobs', () => {
@@ -67,6 +62,7 @@ export default function() {
         jobsPage.exportActionMenuItem().click();
         browser.wait(EC.elementToBeClickable(jobsPage.exportButton()));
         jobsPage.exportButton().click();
+        browser.refresh();
       });
 
       it ('check and delete some jobs', function() {
@@ -94,6 +90,7 @@ export default function() {
 
       it ('should go to flows page', function() {
         jobsPage.flowsTab.click();
+        flowPage.isLoaded();
       });
     });
   }
