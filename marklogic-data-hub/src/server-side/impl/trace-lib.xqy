@@ -538,7 +538,9 @@ declare function trace:trace-to-json-legacy($trace)
 
 declare function trace:trace-to-json($trace)
 {
-  if (fn:exists($trace/steps)) then
+  if (fn:exists($trace/steps) or
+      xdmp:node-kind($trace) = "object" and
+      fn:exists($trace/trace/steps)) then
     let $o := json:object()
     let $walk-me :=
       let $n := $trace/node()
