@@ -44,7 +44,7 @@ export class TraceService {
   }
 
   getTrace(traceId: string) {
-    return this.get(`/v1/documents?transform=ml:traceUISearchResults&uri=/${traceId}`);
+    return this.get(`/hub/traces/${traceId}`);
   }
 
   private extractData = (res: Response) => {
