@@ -53,11 +53,11 @@ export default function() {
       browsePage.searchBox().sendKeys('442403950907');
       browsePage.searchButton().click();
       browser.wait(EC.elementToBeClickable(browsePage.resultsUri()));
-      expect(browsePage.resultsUri().getText()).toEqual('/private/board_games_accessories.csv-0-1');
+      expect(browsePage.resultsUri().getText()).toContain('/board_games_accessories.csv-0-1');
       //verify on viewer page
       browsePage.resultsUri().click();
       viewerPage.isLoaded();
-      expect(viewerPage.searchResultUri().getText()).toEqual('Uri: /private/board_games_accessories.csv-0-1');
+      expect(viewerPage.searchResultUri().getText()).toContain('/board_games_accessories.csv-0-1');
       expect(element(by.cssContainingText('.cm-variable', 'sku')).isPresent()).toBe(true);
       expect(element(by.cssContainingText('.cm-string', '442403950907')).isPresent()).toBe(true);
       expect(element(by.cssContainingText('.cm-variable', 'attachments')).isPresent()).toBe(true);
@@ -86,6 +86,7 @@ export default function() {
       browser.sleep(5000);
       browser.executeScript('window.document.getElementById("jobs-tab").click()');
       flowPage.flowsTab.click();
+      flowPage.isLoaded();
     });
 
     it ('should logout', function() {
@@ -102,7 +103,7 @@ export default function() {
     });
 
     it('should run Harmonize Products flow', function() {
-      dashboardPage.flowsTab.click()
+      flowPage.isLoaded();
       flowPage.entityDisclosure('Product').click();
       browser.wait(EC.elementToBeClickable(flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE')));
       flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE').click();
@@ -121,6 +122,7 @@ export default function() {
 
     it('should verify the harmonized data', function() {
       flowPage.browseDataTab.click();
+      browsePage.isLoaded();
       expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 10 of 450');
       browsePage.databaseDropDown().click();
       browsePage.selectDatabase('FINAL').click();
@@ -129,10 +131,10 @@ export default function() {
       browsePage.searchBox().sendKeys('442403950907');
       browsePage.searchButton().click();
       browser.wait(EC.elementToBeClickable(browsePage.resultsUri()));
-      expect(browsePage.resultsUri().getText()).toEqual('/private/board_games_accessories.csv-0-1');
+      expect(browsePage.resultsUri().getText()).toContain('/board_games_accessories.csv-0-1');
       browsePage.resultsUri().click();
       viewerPage.isLoaded();
-      expect(viewerPage.searchResultUri().getText()).toEqual('Uri: /private/board_games_accessories.csv-0-1');
+      expect(viewerPage.searchResultUri().getText()).toContain('/board_games_accessories.csv-0-1');
       expect(element(by.cssContainingText('.cm-variable', 'opt1')).isPresent()).toBe(true);
       expect(element(by.cssContainingText('.cm-string', 'world')).isPresent()).toBe(true);
       viewerPage.flowsTab.click();
@@ -140,6 +142,7 @@ export default function() {
 
     it ('should open the TestEntity disclosure', function() {
       flowPage.entityDisclosure('TestEntity').click();
+      browser.wait(EC.elementToBeClickable(flowPage.getFlow('TestEntity', 'sjs json INPUT', 'INPUT')));
     });
 
     let flowCount = 1;
@@ -156,6 +159,7 @@ export default function() {
 
     it ('should go to jobs page', function() {
       flowPage.jobsTab.click();
+      jobsPage.isLoaded();
     });
   });
 }
