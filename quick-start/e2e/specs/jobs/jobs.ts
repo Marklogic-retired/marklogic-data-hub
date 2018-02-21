@@ -67,7 +67,6 @@ export default function() {
         jobsPage.exportActionMenuItem().click();
         browser.wait(EC.elementToBeClickable(jobsPage.exportButton()));
         jobsPage.exportButton().click();
-        browser.sleep(5000);
       });
 
       it ('check and delete some jobs', function() {
