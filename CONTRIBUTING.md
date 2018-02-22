@@ -30,7 +30,11 @@ You need these to get started
 - A decent IDE. IntelliJ is nice.
 
 #### Symlinking to MarkLogic
-The 3.0 release of DHF will ship its xqy and sjs code within MarkLogic. To properly develop against MarkLogic you need to symlink your source code into the /MarkLogic install dir.
+The 3.0 release of DHF will ship its xqy and sjs code within MarkLogic.
+To run in development mode against MarkLogic you will need:
+`MarkLogic 9.0-2018-02-14 or greater`
+
+If you wish to make code changes to the xqy or sjs files within DHF you will need to symlink your source code into the /MarkLogic install dir so that MarkLogic serves up your files instead of the ones bundled in the nightly.
 
 In Linux or Mac, run the following:
 
@@ -45,8 +49,6 @@ In Windows, run a Command Prompt as Admin, then execute the following:
 cd \path\to\MarkLogic\Modules\MarkLogic
 mklink /D data-hub-framework \path\to\your\dhf\code\marklogic-data-hub\src\server-side
 ```
-
-This is necessary if you want the latest/greatest xqy code from DHF in your MarkLogic dir.
 
 #### Building from the command line
 **First, a warning.** _The DHF has a ton of tests and they take a very long time to run. Considering you might not want to invest 30 minutes to wait for tests these instructions will show you how to skip the tests._

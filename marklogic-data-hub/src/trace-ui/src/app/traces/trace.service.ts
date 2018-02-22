@@ -8,7 +8,7 @@ export class TraceService {
 
   getTraces(query: string, activeFacets: any, page: number, pageLength: number) {
     let start: number = (page - 1) * pageLength + 1;
-    const url = `/v1/search?options=traces&format=json&transform=trace-search&start=${start}&pageLength=${pageLength}`;
+    const url = `/v1/search?options=traces&format=json&transform=ml:traceSearchResults&start=${start}&pageLength=${pageLength}`;
     let queries = [];
     if (query && query !== '') {
       queries.push({
@@ -44,7 +44,7 @@ export class TraceService {
   }
 
   getTrace(traceId: string) {
-    return this.get(`/v1/documents?transform=trace-json&uri=/${traceId}`);
+    return this.get(`/hub/traces/${traceId}`);
   }
 
   private extractData = (res: Response) => {

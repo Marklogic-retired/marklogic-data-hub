@@ -86,15 +86,6 @@ public class EntityManager extends LoggingObject {
         HubModuleManager propsManager = getPropsMgr();
         DefaultModulesLoader modulesLoader = new DefaultModulesLoader(new AssetFileLoader(hubConfig.newFinalClient(), propsManager));
 
-        ThreadPoolTaskExecutor threadPoolTaskExecutor = new ThreadPoolTaskExecutor();
-        threadPoolTaskExecutor.setCorePoolSize(16);
-
-        // 10 minutes should be plenty of time to wait for REST API modules to be loaded
-        threadPoolTaskExecutor.setAwaitTerminationSeconds(60 * 10);
-        threadPoolTaskExecutor.setWaitForTasksToCompleteOnShutdown(true);
-
-        threadPoolTaskExecutor.afterPropertiesSet();
-        modulesLoader.setTaskExecutor(threadPoolTaskExecutor);
         modulesLoader.setModulesManager(propsManager);
         modulesLoader.setShutdownTaskExecutorAfterLoadingModules(false);
 
@@ -118,9 +109,8 @@ public class EntityManager extends LoggingObject {
                 loadedResources.add(r);
             }
         }
-
-        // TODO: fix this when PR #71 is merged https://github.com/marklogic-community/ml-javaclient-util/pull/71
-        threadPoolTaskExecutor.shutdown();
+        modulesLoader.setShutdownTaskExecutorAfterLoadingModules(true);
+        modulesLoader.waitForTaskExecutorToFinish();
 
         return loadedResources;
     }
@@ -162,6 +152,7 @@ public class EntityManager extends LoggingObject {
         propsManager.setMinimumFileTimestampToLoad(minimumFileTimestampToLoad);
 
         List<JsonNode> entities = new ArrayList<>();
+        List<JsonNode> tempEntities = new ArrayList<>();
         Path entitiesPath = hubConfig.getHubEntitiesDir();
         File[] entityFiles = entitiesPath.toFile().listFiles(pathname -> pathname.isDirectory() && !pathname.isHidden());
         List<String> entityNames;
@@ -172,15 +163,21 @@ public class EntityManager extends LoggingObject {
 
             ObjectMapper objectMapper = new ObjectMapper();
             try {
+                boolean hasOneChanged = false;
                 for (String entityName : entityNames) {
                     File[] entityDefs = entitiesPath.resolve(entityName).toFile().listFiles((dir, name) -> name.endsWith(ENTITY_FILE_EXTENSION));
                     for (File entityDef : entityDefs) {
                         if (propsManager.hasFileBeenModifiedSinceLastLoaded(entityDef)) {
-                            FileInputStream fileInputStream = new FileInputStream(entityDef);
-                            entities.add(objectMapper.readTree(fileInputStream));
-                            fileInputStream.close();
+                            hasOneChanged = true;
                         }
+                        FileInputStream fileInputStream = new FileInputStream(entityDef);
+                        tempEntities.add(objectMapper.readTree(fileInputStream));
+                        fileInputStream.close();
                     }
+                }
+                // all or nothing
+                if (hasOneChanged) {
+                    entities.addAll(tempEntities);
                 }
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -200,7 +197,7 @@ public class EntityManager extends LoggingObject {
             client.init(NAME, this);
         }
 
-        String generateOptions(List<JsonNode> entities) throws IOException {
+        String generateOptions(List<JsonNode> entities) {
             try {
                 ObjectMapper objectMapper = new ObjectMapper();
                 JsonNode node = objectMapper.valueToTree(entities);
@@ -228,13 +225,13 @@ public class EntityManager extends LoggingObject {
             client.init(NAME, this);
         }
 
-        public String getIndexes(List<JsonNode> entities) throws IOException {
+        public String getIndexes(List<JsonNode> entities) {
             try {
                 ObjectMapper objectMapper = new ObjectMapper();
                 JsonNode node = objectMapper.valueToTree(entities);
                 ResourceServices.ServiceResultIterator resultItr = this.getServices().post(params, new JacksonHandle(node));
                 if (resultItr == null || ! resultItr.hasNext()) {
-                    throw new IOException("Unable to generate search options");
+                    throw new IOException("Unable to generate database indexes");
                 }
                 ResourceServices.ServiceResult res = resultItr.next();
                 return res.getContent(new StringHandle()).get();
