@@ -3,6 +3,7 @@ import {pages} from '../page-objects/page';
 import auth from './auth'
 import create from './create';
 import runFlows from './run';
+import jobs from './jobs';
 import uninstall from './uninstall';
 
 import CUSTOM_MATCHERS from '../matchers'
@@ -56,5 +57,6 @@ describe('QuickStart', function () {
   auth(tmpobj.name);
   create();
   runFlows();
+  jobs();
   uninstall();
 });
