@@ -1,4 +1,4 @@
-import { protractor, browser, element, by, By, $, $$, ExpectedConditions as EC } from 'protractor'
+import { protractor, browser, element, by, By, $, $$, ExpectedConditions as EC, ElementFinder, ElementArrayFinder} from 'protractor'
 import { AppPage } from '../appPage';
 import { pages } from '../page';
 import jobsPage from '../jobs/jobs';
@@ -268,6 +268,9 @@ export class FlowPage extends AppPage {
     this.jobsTab.click();
 
     jobsPage.isLoaded();
+
+    let lastFinishedJob = jobsPage.lastFinishedJob;
+    expect(jobsPage.jobFlowName(lastFinishedJob).getText()).toEqual(flowName);
 
     this.flowsTab.click();
 
