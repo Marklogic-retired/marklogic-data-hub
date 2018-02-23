@@ -12,7 +12,7 @@
     <div class="mdl-layout-spacer"></div>
     <nav class="mdl-navigation mdl-layout--large-screen-only">
       <a id="database-tab" class="mdl-navigation__link" [ngClass]="{'active': isActive('/')}" [routerLink]="['']"><i class="fa fa-dashboard"></i> Dashboard</a>
-      <a id="entities-tab" class="mdl-navigation__link" *ngIf="getMarkLogicVersion().startsWith('9')" [ngClass]="{'active': isActive('/entities')}" [routerLink]="['entities']"><i class="fa fa-industry"></i> Entities</a>
+      <a id="entities-tab" class="mdl-navigation__link" [ngClass]="{'active': isActive('/entities')}" [routerLink]="['entities']"><i class="fa fa-industry"></i> Entities</a>
       <a id="map-tab" class="mdl-navigation__link" [ngClass]="{'active': isActive('/map')}" [routerLink]="['map']"><i class="fa fa-industry"></i> Map</a>
       <a id="flows-tab" class="mdl-navigation__link" [ngClass]="{'active': isActive('/flows')}" [routerLink]="['flows']"><i class="mdi mdi-looks"></i> Flows</a>
       <a id="browser-tab" class="mdl-navigation__link" [ngClass]="{'active': isActive('/browse')}" [routerLink]="['browse']"><i class="mdi mdi-magnify"></i> Browse Data</a>

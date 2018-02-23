@@ -10,13 +10,13 @@ import * as _ from 'lodash';
   styleUrls: ['./map.component.scss'],
 })
 export class MapComponent {
-  // Harmonized Entity
+  // Harmonized Model
   public entities: Array<Entity>;
   public chosenEntity: Entity;
   private entityPrimaryKey: string = '';
 
-  // Sample Doc
-  private currentDatabase: string = 'STAGING';
+  // Source Document
+  private currentDatabase: string = 'data-hub-STAGING';
   private entitiesOnly: boolean = false;
   private searchText: string = null;
   private activeFacets: any = {};
@@ -24,25 +24,44 @@ export class MapComponent {
   private pageLength: number = 1; // pulling single record
   private sampleDoc: any = null;
   private sampleDocSrc: any = null;
-  private sampleDocSrcKeys: Array<string> = [];
-  private sampleDocSrcVals: Array<string> = [];
-  private sampleDocSrcValTypes: Array<string> = [];
-  private docValMaxLen: number = 15;
+  private sampleDocSrcProps: Array<any> = [];
+  private valMaxLen: number = 15;
 
+  // Connections
+  private conns: Array<any> = [];
+
+  /**
+   * Get entities and choose one to serve as harmonized model.
+   */
   getEntities(): void {
+    let self = this;
     this.entitiesService.entitiesChange.subscribe(entities => {
       this.entities = entities;
       this.chosenEntity = this.entities[0]; // currently just taking the first entity defined. Will add choice via UI later
       this.entityPrimaryKey = this.chosenEntity.definition.primaryKey;
+
+      _.forEach(this.chosenEntity.definition.properties, function(prop) {
+          // Set up connections (all empty initially)
+          self.conns.push({
+            src: null,
+            harm: {name: prop.name, type: prop.datatype}
+          });
+      });
+
+      console.log(self.conns);
+
     });
     this.entitiesService.getEntities();
   }
 
+  /**
+   * Get sample documents and choose one to serve as source.
+   */
   getSampleDoc(): void {
     let self = this;
     this.searchService.getResults(
       this.currentDatabase,
-      this.entitiesOnly, 
+      this.entitiesOnly,
       this.searchText,
       this.activeFacets,
       this.currentPage,
@@ -53,25 +72,43 @@ export class MapComponent {
       this.searchService.getDoc(this.currentDatabase, this.sampleDoc.uri).subscribe(doc => {
         this.sampleDocSrc = doc;
         _.forEach(this.sampleDocSrc, function(val, key) {
-          self.sampleDocSrcKeys.push(key);
-          self.sampleDocSrcVals.push(String(val));
-          self.sampleDocSrcValTypes.push(typeof(val));
-        });      
+          let prop = {
+            key: key,
+            val: String(val),
+            type: typeof(val)
+          };
+          self.sampleDocSrcProps.push(prop);
+        });
+
+        console.log('sampleDocSrcProps', this.sampleDocSrcProps);
+
       });
     },
     () => {},
-    () => {});   
+    () => {});
   }
-  
+
   constructor(
     private searchService: SearchService,
     private entitiesService: EntitiesService) {
     this.getEntities();
-    this.getSampleDoc(); 
+    this.getSampleDoc();
   }
 
-  overEvent(index, event) {
-    console.log(index, event);
+  handleSelection(prop, proptype, index): void {
+    let conn = this.conns[index];
+    console.log('conns', this.conns);
+    console.log('conn', conn);
+    console.log('prop', prop);
+    if (prop === null) {
+      conn[proptype] = null;
+    } else {
+      conn[proptype] = {
+        key: prop.key,
+        type: prop.type,
+        val: prop.val
+      };
+    }
   }
 
 }
