@@ -7,6 +7,7 @@ import flowPage from '../../page-objects/flows/flows';
 import jobsPage from '../../page-objects/jobs/jobs';
 import browsePage from '../../page-objects/browse/browse';
 import viewerPage from '../../page-objects/viewer/viewer';
+import appPage from '../../page-objects/appPage';
 
 export default function() {
   describe('Run Flows', () => {
@@ -138,11 +139,11 @@ export default function() {
       expect(viewerPage.searchResultUri().getText()).toContain('/board_games_accessories.csv-0-1');
       expect(element(by.cssContainingText('.cm-variable', 'opt1')).isPresent()).toBe(true);
       expect(element(by.cssContainingText('.cm-string', 'world')).isPresent()).toBe(true);
-      viewerPage.flowsTab.click();
-      flowPage.isLoaded();
     });
 
     it ('should open the TestEntity disclosure', function() {
+      viewerPage.flowsTab.click();
+      flowPage.isLoaded();
       flowPage.entityDisclosure('TestEntity').click();
       browser.wait(EC.elementToBeClickable(flowPage.getFlow('TestEntity', 'sjs json INPUT', 'INPUT')));
     });
