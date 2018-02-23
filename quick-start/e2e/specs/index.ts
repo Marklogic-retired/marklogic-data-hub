@@ -22,8 +22,8 @@ describe('QuickStart', function () {
     jasmine.addMatchers(CUSTOM_MATCHERS)
 
     let yargs = require('yargs').argv
-    let width = typeof yargs.width === 'number' ? yargs.width : 1600
-    let height = typeof yargs.height === 'number' ? yargs.height : 1000
+    let width = typeof yargs.width === 'number' ? yargs.width : 1920
+    let height = typeof yargs.height === 'number' ? yargs.height : 1080
 
     request({
       url: `http://localhost:8080/api/projects/reset`
@@ -44,7 +44,8 @@ describe('QuickStart', function () {
       // our Jenkins machine runs with a pretty low resolution, and we also
       // have an app that's misbehaving in smaller windows, so this is a delicate
       // setting
-      .then(() => browser.driver.manage().window().setSize(width, height))
+      //.then(() => browser.driver.manage().window().setSize(width, height))
+      .then(() => browser.driver.manage().window().maximize())
       .then(() => done())
     });
   });
