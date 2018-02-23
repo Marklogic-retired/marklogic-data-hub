@@ -21,6 +21,7 @@ import { MdlModule } from '@angular-mdl/core';
 import { MdlPopoverModule } from '@angular-mdl/popover';
 import { MdlSelectModule } from '@angular-mdl/select';
 import { GridManiaModule } from './grid';
+import { BsDropdownModule } from 'ngx-bootstrap';
 
 import { ROUTES } from './app.routes';
 import { AUTH_PROVIDERS } from './auth';
@@ -127,7 +128,8 @@ import { MapComponent } from './map';
     TooltipModule,
     GridManiaModule,
     RouterModule.forRoot(ROUTES, { useHash: true }),
-    DatePipeModule
+    DatePipeModule,
+    BsDropdownModule.forRoot()
   ],
   providers: [
     AUTH_PROVIDERS,

@@ -1,5 +1,11 @@
+.map-container {
+  width: 650px;
+  padding: 0;
+}
+
 h4.item-type {
-  margin-bottom: 0px;
+  margin: 0;
+  padding: 20px 0 0 0;
 }
 
 p.item-identifying-info {
@@ -7,30 +13,43 @@ p.item-identifying-info {
   margin: 0 0 6px 2px;
 }
 
-.map-container {
-  width: 1200px;
-  padding: 0;
-}
-
 #source, #harmonized {
   position: relative;
   float: left;
-  width: 600px;
+  width: 325px;
   margin: 0;
-}
-
-ul {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
+  /* border: solid 1px red; */
 }
 
 .prop-container {
-  width: 300px;
+  width: 325px;
+  height: 45px;
   font-size: 14px;
-  border: solid 1px #5b8db3;
+  border: solid 2px #5b8db3;
   margin: 10px 0;
   padding: 0;
+  display: flex;
+  align-items: center; /* align vertical */
+  justify-content: center;
+}
+
+#harmonized .prop-container {
+  justify-content: left;
+  border-left: 0;
+}
+
+.prop-select {
+  background-color: transparent;
+  display: flex;
+  align-items: center; /* align vertical */
+  height: 32px;
+  text-align: left;
+  border: solid 1px #5b8db3;
+  padding: 0 10px;
+}
+
+.prop-select-content {
+  width: 280px;
 }
 
 .prop-name, .prop-type, .is-primary {
@@ -39,17 +58,58 @@ ul {
 }
 
 .prop-name {
-  width: 185px;
+  width: 205px;
   font-size: 14px;
+  cursor: default;
 }
 
 .prop-val {
-  width: 70px;
+  width: 110px;
   font-size: 12px;
   color: #666;
   white-space: nowrap;
+  cursor: default;
+}
+
+.prop-type {
+  width: 60px;
+  font-size: 12px;
+  color: #666;
+  white-space: nowrap;
+  cursor: default;
 }
 
 .is-primary {
   width: 30px;
+  cursor: default;
+}
+
+.prop-select-content .prop-name,
+.prop-select-content .prop-val,
+.prop-select-content .prop-type,
+.prop-select-content .is-primary {
+  padding: 0 5px;
+}
+
+.prop-select-content .prop-name {
+  width: 160px;
+}
+
+.prop-select-content .prop-type {
+  font-size: 12px;
+  color: #666;
+}
+
+.prop-select-content .is-primary {
+  padding-left: 10px;
+}
+
+.dropdown-menu .prop-type {
+  font-size: 12px;
+  color: #666;
+}
+
+.unselected {
+  color: #999;
+  font-style: italic;
 }

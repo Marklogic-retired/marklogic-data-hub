@@ -29,6 +29,8 @@ export class PropertyType {
   items: ItemType;
 
   selected: boolean = false;
+  connected: boolean = false;
+  hovering: boolean = false;
 
   fromJSON(json) {
     this.name = json.name;

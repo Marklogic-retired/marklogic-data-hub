@@ -3,26 +3,70 @@
   <div class="map-container">
 
     <div id="source">
-      <h4 class="item-type">Source Document</h4>
-      <p class="item-identifying-info">{{ sampleDoc?.uri }}</p>
-      <ul>
-        <li *ngFor="let key of sampleDocSrcKeys; let i = index;" class="prop-container" on-mouseover='overEvent(i, $event)'>
-          <span class="prop-name">{{key}}</span>
-          <span class="prop-val" title="{{ sampleDocSrcValTypes[i] }}">{{ sampleDocSrcValTypes[i] === "string" ? '"' : '' }}{{ sampleDocSrcVals[i] | slice:0:docValMaxLen }}{{ sampleDocSrcVals[i].length > docValMaxLen ? '...' : '' }}{{ sampleDocSrcValTypes[i] === "string" ? '"' : '' }}</span>
-        </li>
-      </ul>
-    </div>
+      <div id="src-heading" #srcheading>
+        <h4 class="item-type">Source Document</h4>
+        <p class="item-identifying-info">{{ sampleDoc?.uri }}</p>
+      </div>
+
+      <div *ngFor="let prop of chosenEntity?.definition.properties; let i = index;" class="prop-container">
+
+          <div class="btn-group" dropdown>
+            <button dropdownToggle type="button" class="btn dropdown-toggle prop-select">
+              <div *ngIf="conns[i]['src'] !== null">
+                <div class="prop-select-content">
+
+                  <!--<span class="prop-name">{{conns[i]['src'].key}}</span><span class="prop-type">{{conns[i]['src'].val}}</span>-->
+
+                  <span class="prop-name">{{conns[i]['src'].key}}</span>
+                  <span class="prop-val" title="{{type}}">{{ conns[i]['src'].type === "string" ? '"' : '' }}{{ conns[i]['src'].val | slice:0:valMaxLen }}{{ conns[i]['src'].val.length > valMaxLen ? '...' : '' }}{{ conns[i]['src'].type === "string" ? '"' : '' }}</span>
+
+                </div>
+              </div>
+              <div *ngIf="conns[i]['src'] === null">
+                <div class="prop-select-content unselected">Map to...</div>
+              </div>
+              <div class="prop-select-control"><span class="caret"></span></div>
+            </button>
+            <ul *dropdownMenu class="dropdown-menu" role="menu">
+              <li *ngFor="let prop of sampleDocSrcProps;"
+                  role="menuitem"
+                  on-click="handleSelection(prop, 'src', i)">
+                <a class="dropdown-item" href="javascript:void(0)">
+                  <!--<span class="prop-name">{{prop.key}}</span><span class="prop-val">{{prop.val}}</span>-->
+
+                  <span class="prop-name">{{prop.key}}</span>
+                  <span class="prop-val" title="{{type}}">{{ prop.type === "string" ? '"' : '' }}{{ prop.val | slice:0:valMaxLen }}{{ prop.val.length > valMaxLen ? '...' : '' }}{{ prop.type === "string" ? '"' : '' }}</span>
+
+                </a>
+              </li>
+              <li role="menuitem"
+                  on-click="handleSelection(null, 'src', i)">
+                <a class="dropdown-item" href="javascript:void(0)">
+                  <div class="prop-name unselected">none</div>
+                </a>
+              </li>
+            </ul>
+          </div><!-- button-group -->
+
+      </div><!-- ngFor -->
+
+    </div><!-- source -->
 
     <div id="harmonized">
-      <h4 class="item-type">Harmonized Model</h4>
-      <p class="item-identifying-info">{{ chosenEntity?.info.title }}</p>
-      <ul>
-        <li *ngFor="let property of chosenEntity?.definition.properties; let i = index;" class="prop-container">
-          <span class="prop-name">{{ property.name }}</span><span class="prop-type">{{ property.datatype }}</span><span class="is-primary" *ngIf="property.name === entityPrimaryKey"><i class="fa fa-key"></i></span>
-        </li>
-      </ul>
-    </div>
+      <div id="harm-heading">
+        <h4 class="item-type">Harmonized Model</h4>
+        <p class="item-identifying-info">{{ chosenEntity?.info.title }}</p>
+      </div>
 
-  </div>
+      <div *ngFor="let prop of chosenEntity?.definition.properties; let i = index;">
 
-</div>
+        <div class="prop-container" d>
+          <span class="prop-name">{{prop.name}}</span><span class="prop-type">{{prop.datatype}}</span><span class="is-primary" *ngIf="prop.name === entityPrimaryKey"><i class="fa fa-key"></i></span>
+        </div>
+
+      </div><!-- ngFor -->
+    </div><!-- harmonized -->
+
+  </div><!-- map-container -->
+
+</div><!-- layout-padding -->
