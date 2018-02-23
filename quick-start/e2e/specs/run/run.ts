@@ -138,6 +138,7 @@ export default function() {
       expect(element(by.cssContainingText('.cm-variable', 'opt1')).isPresent()).toBe(true);
       expect(element(by.cssContainingText('.cm-string', 'world')).isPresent()).toBe(true);
       viewerPage.flowsTab.click();
+      flowPage.isLoaded();
     });
 
     it ('should open the TestEntity disclosure', function() {
