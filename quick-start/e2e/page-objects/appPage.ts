@@ -49,6 +49,7 @@ export class AppPage extends Page {
 
   logout() {
     this.menuButton.click();
+    browser.wait(EC.elementToBeClickable(element(by.css('#login-button'))));
     element(by.css('#login-button')).click();
   }
 
