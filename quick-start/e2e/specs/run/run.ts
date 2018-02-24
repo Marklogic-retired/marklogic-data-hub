@@ -111,7 +111,8 @@ export default function() {
       browser.sleep(5000);
       //browser.wait(EC.elementToBeClickable(flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE')));
       flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE').click();
-      browser.wait(EC.elementToBeClickable(flowPage.runHarmonizeButton()));
+      browser.sleep(5000);
+      //browser.wait(EC.elementToBeClickable(flowPage.runHarmonizeButton()));
       flowPage.runHarmonizeButton().click();
       browser.wait(EC.elementToBeClickable(flowPage.toastButton));
       flowPage.toastButton.click();
