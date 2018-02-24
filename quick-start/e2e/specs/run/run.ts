@@ -108,11 +108,9 @@ export default function() {
     it('should run Harmonize Products flow', function() {
       flowPage.isLoaded();
       flowPage.entityDisclosure('Product').click();
-      browser.sleep(5000);
-      //browser.wait(EC.elementToBeClickable(flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE')));
+      browser.wait(EC.elementToBeClickable(flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE')));
       flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE').click();
-      browser.sleep(5000);
-      //browser.wait(EC.elementToBeClickable(flowPage.runHarmonizeButton()));
+      browser.wait(EC.elementToBeClickable(flowPage.runHarmonizeButton()));
       flowPage.runHarmonizeButton().click();
       browser.wait(EC.elementToBeClickable(flowPage.toastButton));
       flowPage.toastButton.click();
