@@ -15,6 +15,11 @@ export default function() {
       flowPage.isLoaded();
     });
 
+    beforeEach(() => {
+      appPage.flowsTab.click();
+      flowPage.isLoaded();
+    });
+
     it ('should redeploy modules', function() {
       flowPage.redeployButton.click();
       browser.wait(element(by.css('#last-deployed-time')).getText().then((txt) => {
@@ -90,12 +95,9 @@ export default function() {
       flowPage.isLoaded();
     });
 
-    it ('should logout', function() {
+    it ('should logout and login', function() {
       flowPage.logout();
       loginPage.isLoaded();
-    });
-
-    it('should login', function() {
       loginPage.clickNext('ProjectDirTab');
       browser.wait(EC.elementToBeClickable(loginPage.environmentTab));
       loginPage.clickNext('EnvironmentTab');
@@ -106,11 +108,8 @@ export default function() {
     it('should run Harmonize Products flow', function() {
       flowPage.isLoaded();
       flowPage.entityDisclosure('Product').click();
-      browser.sleep(5000);
-      //browser.wait(EC.elementToBeClickable(flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE')));
+      browser.wait(EC.elementToBeClickable(flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE')));
       flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE').click();
-      //browser.wait(EC.visibilityOf(flowPage.tabs));
-      //flowPage.getFlowTab('flowInfo').click();
       browser.wait(EC.elementToBeClickable(flowPage.runHarmonizeButton()));
       flowPage.runHarmonizeButton().click();
       browser.wait(EC.elementToBeClickable(flowPage.toastButton));
@@ -139,11 +138,11 @@ export default function() {
       expect(viewerPage.searchResultUri().getText()).toContain('/board_games_accessories.csv-0-1');
       expect(element(by.cssContainingText('.cm-variable', 'opt1')).isPresent()).toBe(true);
       expect(element(by.cssContainingText('.cm-string', 'world')).isPresent()).toBe(true);
+      viewerPage.flowsTab.click();
+      flowPage.isLoaded();
     });
 
     it ('should open the TestEntity disclosure', function() {
-      viewerPage.flowsTab.click();
-      flowPage.isLoaded();
       flowPage.entityDisclosure('TestEntity').click();
       browser.wait(EC.elementToBeClickable(flowPage.getFlow('TestEntity', 'sjs json INPUT', 'INPUT')));
     });
