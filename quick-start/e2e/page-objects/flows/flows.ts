@@ -199,7 +199,7 @@ export class FlowPage extends AppPage {
   }
 
   runHarmonizeButton() {
-    return element(by.css('div.flex-100 > div.page-content mdl-tabs > mdl-tab-panel.mdl-tabs__panel.is-active > mdl-tab-panel-content > app-harmonize-flow-options > div.run-options > div:nth-child(3) > mdl-button > span'));
+    return element(by.css('mdl-tabs > mdl-tab-panel.mdl-tabs__panel.is-active > mdl-tab-panel-content > app-harmonize-flow-options > div.run-options > div:nth-child(3) > mdl-button > span'));
   }
 
   get mlcpCommand() {
