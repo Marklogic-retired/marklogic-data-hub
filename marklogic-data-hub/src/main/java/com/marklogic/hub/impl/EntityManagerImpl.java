@@ -52,16 +52,16 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
         this.hubConfig = hubConfig;
     }
 
-    @Override public boolean saveSearchOptions() {
-        SearchOptionsGenerator generator = new SearchOptionsGenerator(hubConfig.newStagingClient());
+    @Override public boolean saveQueryOptions() {
+        QueryOptionsGenerator generator = new QueryOptionsGenerator(hubConfig.newStagingClient());
         try {
             Path dir = Paths.get(hubConfig.getProjectDir(), HubConfig.ENTITY_CONFIG_DIR);
             if (!dir.toFile().exists()) {
                 dir.toFile().mkdirs();
             }
 
-            File stagingFile = Paths.get(dir.toString(), HubConfig.STAGING_ENTITY_SEARCH_OPTIONS_FILE).toFile();
-            File finalFile = Paths.get(dir.toString(), HubConfig.FINAL_ENTITY_SEARCH_OPTIONS_FILE).toFile();
+            File stagingFile = Paths.get(dir.toString(), HubConfig.STAGING_ENTITY_QUERY_OPTIONS_FILE).toFile();
+            File finalFile = Paths.get(dir.toString(), HubConfig.FINAL_ENTITY_QUERY_OPTIONS_FILE).toFile();
 
             long lastModified = Math.max(stagingFile.lastModified(), finalFile.lastModified());
             List<JsonNode> entities = getModifiedRawEntities(lastModified);
@@ -78,9 +78,9 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
         return false;
     }
 
-    @Override public List<Resource> deploySearchOptions() {
+    @Override public List<Resource> deployQueryOptions() {
         // save them first
-        saveSearchOptions();
+        saveQueryOptions();
 
         HubModuleManager propsManager = getPropsMgr();
         DefaultModulesLoader modulesLoader = new DefaultModulesLoader(new AssetFileLoader(hubConfig.newFinalClient(), propsManager));
@@ -91,7 +91,7 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
         List<Resource> loadedResources = new ArrayList<>();
 
         Path dir = Paths.get(hubConfig.getProjectDir(), HubConfig.ENTITY_CONFIG_DIR);
-        File stagingFile = Paths.get(dir.toString(), HubConfig.STAGING_ENTITY_SEARCH_OPTIONS_FILE).toFile();
+        File stagingFile = Paths.get(dir.toString(), HubConfig.STAGING_ENTITY_QUERY_OPTIONS_FILE).toFile();
         if (stagingFile.exists()) {
             modulesLoader.setDatabaseClient(hubConfig.newStagingClient());
             Resource r = modulesLoader.installQueryOptions(new FileSystemResource(stagingFile));
@@ -100,7 +100,7 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
             }
         }
 
-        File finalFile = Paths.get(dir.toString(), HubConfig.FINAL_ENTITY_SEARCH_OPTIONS_FILE).toFile();
+        File finalFile = Paths.get(dir.toString(), HubConfig.FINAL_ENTITY_QUERY_OPTIONS_FILE).toFile();
         if (finalFile.exists()) {
             modulesLoader.setDatabaseClient(hubConfig.newFinalClient());
             Resource r = modulesLoader.installQueryOptions(new FileSystemResource(finalFile));
@@ -186,12 +186,12 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
         return entities;
     }
 
-    private class SearchOptionsGenerator extends ResourceManager {
+    private class QueryOptionsGenerator extends ResourceManager {
         private static final String NAME = "ml:searchOptionsGenerator";
 
         private RequestParameters params = new RequestParameters();
 
-        SearchOptionsGenerator(DatabaseClient client) {
+        QueryOptionsGenerator(DatabaseClient client) {
             super();
             client.init(NAME, this);
         }
@@ -202,7 +202,7 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
                 JsonNode node = objectMapper.valueToTree(entities);
                 ResourceServices.ServiceResultIterator resultItr = this.getServices().post(params, new JacksonHandle(node));
                 if (resultItr == null || ! resultItr.hasNext()) {
-                    throw new IOException("Unable to generate search options");
+                    throw new IOException("Unable to generate query options");
                 }
                 ResourceServices.ServiceResult res = resultItr.next();
                 return res.getContent(new StringHandle()).get();

@@ -11,9 +11,9 @@ public interface EntityManager {
        return new EntityManagerImpl(hubConfig);
     }
 
-    boolean saveSearchOptions();
+    boolean saveQueryOptions();
 
-    List<Resource> deploySearchOptions();
+    List<Resource> deployQueryOptions();
 
     boolean saveDbIndexes();
 }

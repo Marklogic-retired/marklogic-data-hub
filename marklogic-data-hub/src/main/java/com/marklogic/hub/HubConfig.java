@@ -41,8 +41,8 @@ public interface HubConfig {
     String HUB_CONFIG_DIR = "hub-internal-config";
     String USER_CONFIG_DIR = "user-config";
     String ENTITY_CONFIG_DIR = "entity-config";
-    String STAGING_ENTITY_SEARCH_OPTIONS_FILE = "staging-entity-options.xml";
-    String FINAL_ENTITY_SEARCH_OPTIONS_FILE = "final-entity-options.xml";
+    String STAGING_ENTITY_QUERY_OPTIONS_FILE = "staging-entity-options.xml";
+    String FINAL_ENTITY_QUERY_OPTIONS_FILE = "final-entity-options.xml";
 
     String DEFAULT_STAGING_NAME = "data-hub-STAGING";
     String DEFAULT_FINAL_NAME = "data-hub-FINAL";

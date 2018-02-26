@@ -203,7 +203,7 @@ public class EntityManagerService {
 
     public void deploySearchOptions(EnvironmentConfig environmentConfig) {
         EntityManager em = EntityManager.create(environmentConfig.getMlSettings());
-        em.deploySearchOptions();
+        em.deployQueryOptions();
     }
 
     public void saveDbIndexes(EnvironmentConfig environmentConfig) {

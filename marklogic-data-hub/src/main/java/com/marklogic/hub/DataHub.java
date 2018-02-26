@@ -44,6 +44,14 @@ public interface DataHub {
         }
     }
 
+    enum DatabaseKind {
+        STAGING,
+        FINAL,
+        JOB,
+        TRACE,
+        SCHEMA
+    }
+
     ManageClient getManageClient();
 
     AdminManager getAdminManager();

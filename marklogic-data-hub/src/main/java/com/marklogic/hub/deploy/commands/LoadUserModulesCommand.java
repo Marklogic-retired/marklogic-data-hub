@@ -164,7 +164,7 @@ public class LoadUserModulesCommand extends AbstractCommand {
 
         // deploy the auto-generated ES search options
         EntityManager entityManager = EntityManager.create(hubConfig);
-        entityManager.deploySearchOptions();
+        entityManager.deployQueryOptions();
 
         try {
             if (startPath.toFile().exists()) {
