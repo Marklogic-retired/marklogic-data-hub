@@ -118,8 +118,8 @@ export default function() {
       browser.wait(EC.visibilityOf(flowPage.runHarmonizeButton()));
       expect(flowPage.runHarmonizeButton().isPresent()).toBe(true);
       console.log('Found the button and Clicking Run Harmonize button');
-      //browser.actions().mouseMove(flowPage.runHarmonizeButton()).click().perform();
-      flowPage.runHarmonizeButton().click();
+      browser.actions().mouseMove(flowPage.runHarmonizeButton()).click().perform();
+      //flowPage.runHarmonizeButton().click();
       browser.wait(EC.elementToBeClickable(flowPage.toastButton));
       flowPage.toastButton.click();
       flowPage.jobsTab.click();
