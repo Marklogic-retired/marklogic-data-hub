@@ -81,9 +81,11 @@ export default function() {
     it ('should setup Harmonize Products flow', function() {
       let contentWithOptionsFilePath = 'e2e/qa-data/plugins/contentWithOptions.sjs';
       flowPage.entityDisclosure('Product').click();
-      browser.wait(EC.elementToBeClickable(flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE')));
+      browser.wait(EC.visibilityOf(flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE')));
+      expect(flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE').isPresent()).toBe(true);
       flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE').click();
-      browser.wait(EC.visibilityOf(flowPage.tabs));
+      browser.wait(EC.visibilityOf(flowPage.runHarmonizeButton()));
+      expect(flowPage.runHarmonizeButton().isPresent()).toBe(true);
       //change content.sjs to include flow options
       flowPage.getFlowTab('content').click();
       flowPage.pluginTextArea().click();
@@ -115,7 +117,8 @@ export default function() {
       flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE').click();
       browser.wait(EC.visibilityOf(flowPage.runHarmonizeButton()));
       expect(flowPage.runHarmonizeButton().isPresent()).toBe(true);
-      console.log('Clicking Run Harmonize button');
+      console.log('Found the button and Clicking Run Harmonize button');
+      //browser.actions().mouseMove(flowPage.runHarmonizeButton()).click().perform();
       flowPage.runHarmonizeButton().click();
       browser.wait(EC.elementToBeClickable(flowPage.toastButton));
       flowPage.toastButton.click();
