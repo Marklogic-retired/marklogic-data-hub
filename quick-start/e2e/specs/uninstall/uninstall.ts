@@ -5,10 +5,12 @@ import dashboardPage from '../../page-objects/dashboard/dashboard';
 import entityPage from '../../page-objects/entities/entities';
 import flowPage from '../../page-objects/flows/flows';
 import settingsPage from '../../page-objects/settings/settings';
+import appPage from '../../page-objects/appPage';
 
 export default function() {
   describe('Uninstall', () => {
     beforeAll(() => {
+      appPage.flowsTab.click();
       flowPage.isLoaded();
     });
 
