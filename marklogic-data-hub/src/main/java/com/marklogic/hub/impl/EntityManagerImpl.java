@@ -26,6 +26,7 @@ import com.marklogic.client.extensions.ResourceServices;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.util.RequestParameters;
+import com.marklogic.hub.DataHub;
 import com.marklogic.hub.EntityManager;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.util.HubModuleManager;
@@ -40,6 +41,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -78,7 +80,7 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
         return false;
     }
 
-    @Override public List<Resource> deployQueryOptions() {
+    @Override public HashMap<Enum, Boolean> deployQueryOptions() {
         // save them first
         saveQueryOptions();
 
@@ -88,7 +90,7 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
         modulesLoader.setModulesManager(propsManager);
         modulesLoader.setShutdownTaskExecutorAfterLoadingModules(false);
 
-        List<Resource> loadedResources = new ArrayList<>();
+        HashMap<Enum, Boolean> loadedResources = new HashMap<>();
 
         Path dir = Paths.get(hubConfig.getProjectDir(), HubConfig.ENTITY_CONFIG_DIR);
         File stagingFile = Paths.get(dir.toString(), HubConfig.STAGING_ENTITY_QUERY_OPTIONS_FILE).toFile();
@@ -96,7 +98,7 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
             modulesLoader.setDatabaseClient(hubConfig.newStagingClient());
             Resource r = modulesLoader.installQueryOptions(new FileSystemResource(stagingFile));
             if (r != null) {
-                loadedResources.add(r);
+                loadedResources.put(DataHub.DatabaseKind.STAGING, true);
             }
         }
 
@@ -105,7 +107,7 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
             modulesLoader.setDatabaseClient(hubConfig.newFinalClient());
             Resource r = modulesLoader.installQueryOptions(new FileSystemResource(finalFile));
             if (r != null) {
-                loadedResources.add(r);
+                loadedResources.put(DataHub.DatabaseKind.FINAL, true);
             }
         }
         modulesLoader.setShutdownTaskExecutorAfterLoadingModules(true);

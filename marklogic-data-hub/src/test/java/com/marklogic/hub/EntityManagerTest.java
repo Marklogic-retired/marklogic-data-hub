@@ -24,14 +24,13 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.springframework.core.io.Resource;
 import org.xml.sax.SAXException;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
+import java.util.HashMap;
 
 import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual;
 import static org.junit.Assert.*;
@@ -109,7 +108,7 @@ public class EntityManagerTest extends HubTestBase {
         assertEquals(0, getFinalDocCount());
 
         EntityManager entityManager = EntityManager.create(getHubConfig());
-        List<Resource> deployed = entityManager.deployQueryOptions();
+        HashMap<Enum, Boolean> deployed = entityManager.deployQueryOptions();
 
         assertEquals(0, deployed.size());
         assertFalse(Paths.get(dir.toString(), HubConfig.STAGING_ENTITY_QUERY_OPTIONS_FILE).toFile().exists());
@@ -134,7 +133,7 @@ public class EntityManagerTest extends HubTestBase {
         assertEquals(0, getFinalDocCount());
 
         EntityManager entityManager = EntityManager.create(getHubConfig());
-        List<Resource> deployed = entityManager.deployQueryOptions();
+        HashMap<Enum, Boolean> deployed = entityManager.deployQueryOptions();
 
         assertEquals(2, deployed.size());
         assertTrue(Paths.get(dir.toString(), HubConfig.STAGING_ENTITY_QUERY_OPTIONS_FILE).toFile().exists());

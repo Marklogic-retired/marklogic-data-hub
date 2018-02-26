@@ -1,9 +1,8 @@
 package com.marklogic.hub;
 
 import com.marklogic.hub.impl.EntityManagerImpl;
-import org.springframework.core.io.Resource;
 
-import java.util.List;
+import java.util.HashMap;
 
 public interface EntityManager {
 
@@ -13,7 +12,7 @@ public interface EntityManager {
 
     boolean saveQueryOptions();
 
-    List<Resource> deployQueryOptions();
+    HashMap<Enum, Boolean> deployQueryOptions();
 
     boolean saveDbIndexes();
 }
