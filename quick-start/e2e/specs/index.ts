@@ -57,7 +57,7 @@ describe('QuickStart', function () {
 
   auth(tmpobj.name);
   create();
-  runFlows();
+  runFlows(tmpobj.name);
   jobs();
   uninstall();
 });
