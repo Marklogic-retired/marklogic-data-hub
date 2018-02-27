@@ -22,10 +22,7 @@ import com.marklogic.appdeployer.command.appservers.DeployOtherServersCommand;
 import com.marklogic.appdeployer.command.forests.DeployCustomForestsCommand;
 import com.marklogic.client.FailedRequestException;
 import com.marklogic.client.eval.ServerEvaluationCall;
-import com.marklogic.hub.DataHub;
-import com.marklogic.hub.FlowManager;
-import com.marklogic.hub.HubConfig;
-import com.marklogic.hub.InstallInfo;
+import com.marklogic.hub.*;
 import com.marklogic.hub.deploy.HubAppDeployer;
 import com.marklogic.hub.deploy.commands.*;
 import com.marklogic.hub.deploy.util.HubDeployStatusListener;
@@ -114,39 +111,39 @@ public class DataHubImpl implements DataHub {
         InstallInfo installInfo = InstallInfo.create();
 
         ResourcesFragment srf = getServerManager().getAsXml();
-        installInfo.setStagingAppServerExists(srf.resourceExists(hubConfig.getStagingHttpName()));
-        installInfo.setFinalAppServerExists(srf.resourceExists(hubConfig.getFinalHttpName()));
-        installInfo.setTraceAppServerExists(srf.resourceExists(hubConfig.getTraceHttpName()));
-        installInfo.setJobAppServerExists(srf.resourceExists(hubConfig.getJobHttpName()));
+        installInfo.setAppServerExistent(DatabaseKind.STAGING, srf.resourceExists(hubConfig.getStagingHttpName()));
+        installInfo.setAppServerExistent(DatabaseKind.FINAL, srf.resourceExists(hubConfig.getFinalHttpName()));
+        installInfo.setAppServerExistent(DatabaseKind.TRACE, srf.resourceExists(hubConfig.getTraceHttpName()));
+        installInfo.setAppServerExistent(DatabaseKind.JOB, srf.resourceExists(hubConfig.getJobHttpName()));
 
         ResourcesFragment drf = getDatabaseManager().getAsXml();
-        installInfo.setStagingDbExists(drf.resourceExists(hubConfig.getStagingDbName()));
-        installInfo.setFinalDbExists(drf.resourceExists(hubConfig.getFinalDbName()));
-        installInfo.setTraceDbExists(drf.resourceExists(hubConfig.getTraceDbName()));
-        installInfo.setJobDbExists(drf.resourceExists(hubConfig.getJobDbName()));
+        installInfo.setDbExistent(DatabaseKind.STAGING, drf.resourceExists(hubConfig.getStagingDbName()));
+        installInfo.setDbExistent(DatabaseKind.FINAL, drf.resourceExists(hubConfig.getFinalDbName()));
+        installInfo.setDbExistent(DatabaseKind.TRACE, drf.resourceExists(hubConfig.getTraceDbName()));
+        installInfo.setDbExistent(DatabaseKind.JOB, drf.resourceExists(hubConfig.getJobDbName()));
 
-        if (installInfo.isStagingDbExists()) {
+        if (installInfo.isDbExistent(DatabaseKind.STAGING)) {
             Fragment f = getDatabaseManager().getPropertiesAsXml(hubConfig.getStagingDbName());
-            installInfo.setStagingTripleIndexOn(Boolean.parseBoolean(f.getElementValue("//m:triple-index")));
-            installInfo.setStagingCollectionLexiconOn(Boolean.parseBoolean(f.getElementValue("//m:collection-lexicon")));
-            installInfo.setStagingForestsExist((f.getElements("//m:forest").size() > 0));
+            installInfo.setTripleIndexOn(DatabaseKind.STAGING, Boolean.parseBoolean(f.getElementValue("//m:triple-index")));
+            installInfo.setCollectionLexiconOn(DatabaseKind.STAGING, Boolean.parseBoolean(f.getElementValue("//m:collection-lexicon")));
+            installInfo.setForestsExistent(DatabaseKind.STAGING, (f.getElements("//m:forest").size() > 0));
         }
 
-        if (installInfo.isFinalDbExists()) {
+        if (installInfo.isDbExistent(DatabaseKind.FINAL)) {
             Fragment f = getDatabaseManager().getPropertiesAsXml(hubConfig.getFinalDbName());
-            installInfo.setFinalTripleIndexOn(Boolean.parseBoolean(f.getElementValue("//m:triple-index")));
-            installInfo.setFinalCollectionLexiconOn(Boolean.parseBoolean(f.getElementValue("//m:collection-lexicon")));
-            installInfo.setFinalForestsExist((f.getElements("//m:forest").size() > 0));
+            installInfo.setTripleIndexOn(DatabaseKind.FINAL, Boolean.parseBoolean(f.getElementValue("//m:triple-index")));
+            installInfo.setCollectionLexiconOn(DatabaseKind.FINAL, Boolean.parseBoolean(f.getElementValue("//m:collection-lexicon")));
+            installInfo.setForestsExistent(DatabaseKind.FINAL, (f.getElements("//m:forest").size() > 0));
         }
 
-        if (installInfo.isTraceDbExists()) {
+        if (installInfo.isDbExistent(DatabaseKind.TRACE)) {
             Fragment f = getDatabaseManager().getPropertiesAsXml(hubConfig.getTraceDbName());
-            installInfo.setTraceForestsExist((f.getElements("//m:forest").size() > 0));
+            installInfo.setForestsExistent(DatabaseKind.TRACE, (f.getElements("//m:forest").size() > 0));
         }
 
-        if (installInfo.isJobDbExists()) {
+        if (installInfo.isDbExistent(DatabaseKind.JOB)) {
             Fragment f = getDatabaseManager().getPropertiesAsXml(hubConfig.getJobDbName());
-            installInfo.setJobForestsExist((f.getElements("//m:forest").size() > 0));
+            installInfo.setForestsExistent(DatabaseKind.JOB, (f.getElements("//m:forest").size() > 0));
         }
 
         logger.info(installInfo.toString());
