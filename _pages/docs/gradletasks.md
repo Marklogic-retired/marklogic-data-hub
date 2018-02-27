@@ -27,7 +27,7 @@ plugins {
     // specify the env on the command line with:
     // gradle -PenvironmentName=x ...
     id 'net.saliman.properties' version '1.4.6'
-    
+
     // this is the data hub framework gradle plugin
     // it includes ml-gradle. This plugin is what lets you
     // run DHF (Data Hub Framework) tasks from the
@@ -231,3 +231,16 @@ gradle hubDeleteJobs \
 #### Parameters
 ##### Required
 - **jobIds** - a comma-separated list of job IDs to delete
+
+### hubExportJobs
+Export job records and the traces that go with them. Does not affect the content of the staging or final databases.
+
+<pre class="cmdline">
+gradle hubExportJobs \
+  -PjobIds=list-of-ids -Pfilename=export.zip
+</pre>
+
+#### Parameters
+##### Required
+- **jobIds** - a comma-separated list of job IDs to delete
+- **filename** - name of the zip file to be generated, including extension
