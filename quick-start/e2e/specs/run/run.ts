@@ -41,7 +41,7 @@ export default function(tmpDir) {
       //verify on jobs page
       flowPage.jobsTab.click();
       jobsPage.isLoaded();
-      expect(jobsPage.finishedFlows.isPresent()).toBe(true);
+      expect(jobsPage.lastFinishedJob.isPresent()).toBe(true);
       //verify the output
       jobsPage.jobOutputByPosition(1).click();
       browser.wait(EC.visibilityOf(jobsPage.jobOutputTitle()));
@@ -79,26 +79,9 @@ export default function(tmpDir) {
       flowPage.isLoaded();
     });
 
-    /*it ('should setup Harmonize Products flow', function() {
-      let contentWithOptionsFilePath = 'e2e/qa-data/plugins/contentWithOptions.sjs';
-      flowPage.entityDisclosure('Product').click();
-      browser.wait(EC.visibilityOf(flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE')));
-      expect(flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE').isPresent()).toBe(true);
-      flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE').click();
-      browser.wait(EC.visibilityOf(flowPage.runHarmonizeButton()));
-      expect(flowPage.runHarmonizeButton().isPresent()).toBe(true);
-      //change content.sjs to include flow options
-      flowPage.getFlowTab('content').click();
-      flowPage.pluginTextArea().click();
-      browser.actions().sendKeys(flowPage.ctrlA(), protractor.Key.DELETE, flowPage.readFileContent(contentWithOptionsFilePath)).perform();
-      browser.actions().sendKeys(flowPage.ctrlS()).perform();
-      browser.sleep(5000);
-      browser.executeScript('window.document.getElementById("jobs-tab").click()');
-      flowPage.flowsTab.click();
-      flowPage.isLoaded();
-    });*/
-
     it ('should setup Harmonize Products flow', function() {
+      //copy customized content.sjs
+      console.log('copy customized content.sjs');
       let contentWithOptionsFilePath = 'e2e/qa-data/plugins/contentWithOptions.sjs';
       fs.copy(contentWithOptionsFilePath, tmpDir + '/plugins/entities/Product/harmonize/Harmonize\ Products/content.sjs');
     });
@@ -127,14 +110,13 @@ export default function(tmpDir) {
       flowPage.isLoaded();
       console.log('clicking Product entity');
       flowPage.entityDisclosure('Product').click();
-      console.log('Clicking Harmonize Products flow');
+      console.log('clicking Harmonize Products flow');
       browser.wait(EC.visibilityOf(flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE')));
       expect(flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE').isPresent()).toBe(true);
       flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE').click();
       browser.wait(EC.visibilityOf(flowPage.runHarmonizeButton()));
       expect(flowPage.runHarmonizeButton().isPresent()).toBe(true);
-      console.log('Found the button and Clicking Run Harmonize button');
-      //browser.executeScript('window.document.getElementsByClassName("edit-start")[1].click()');
+      console.log('found the button and clicking Run Harmonize button');
       flowPage.runHarmonizeButton().click();
       console.log('clicked the button');
       browser.wait(EC.elementToBeClickable(flowPage.toastButton));
