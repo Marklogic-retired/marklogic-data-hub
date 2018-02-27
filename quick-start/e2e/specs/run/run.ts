@@ -52,6 +52,7 @@ export default function(tmpDir) {
       //verify on browse data page
       jobsPage.browseDataTab.click();
       browsePage.isLoaded();
+      browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
       expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 10 of 450');
       browsePage.databaseDropDown().click();
       browsePage.selectDatabase('STAGING').click();
@@ -131,6 +132,7 @@ export default function(tmpDir) {
     it('should verify the harmonized data', function() {
       flowPage.browseDataTab.click();
       browsePage.isLoaded();
+      browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
       expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 10 of 450');
       browsePage.databaseDropDown().click();
       browsePage.selectDatabase('FINAL').click();
