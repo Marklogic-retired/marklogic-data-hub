@@ -60,6 +60,9 @@ Selecting a single tracing event will display the detailed flow.
 ![Displaying single trace dedicated]({{site.baseurl}}/images/traces/DisplayingSingleTraceInDedicatedApp.png)
 
 # Cleaning up Traces
-You can delete traces by deleting the job that created them. To do so, go to the Jobs page, click on the Jobs you wish to delete, and click the delete button. After confirming, the selected jobs and the associated traces will be removed from the Jobs and Traces databases. 
+You can delete traces by deleting the job that created them. To do so, go to the Jobs page, click the checkboxes for the Jobs you wish to delete, click `ACTION`, then select "Delete Jobs and Traces". After confirming, the selected jobs and the associated traces will be removed from the Jobs and Traces databases.
 
 ![Displaying deletion of a job]({{site.baseurl}}/images/traces/DeleteJobs.png)
+
+# Exporting TRACES
+You can export jobs and traces associated with those jobs. Go to the Jobs page, click the checkboxes for the Jobs you wish to export, click `ACTION`, then select "Export Jobs and Traces". After confirming, the selected jobs and their associated traces will be exported to a zip file, which your browser will download. This feature is generally used to help communicate with MarkLogic's Support team. 
