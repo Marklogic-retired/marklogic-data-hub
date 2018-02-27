@@ -14,20 +14,20 @@ exports.config = {
   capabilities: {
     'browserName': 'chrome',
     chromeOptions: {
-      args: ["--headless", "--disable-gpu", "--window-size=1920,1080" ]
+      args: ["--headless", "--disable-gpu", "--window-size=1920,1080"]
       //args: ["--window-size=1920,1080"]
     }
   },
   directConnect: true,
   baseUrl: 'http://localhost:4200/',
   framework: 'jasmine',
-  allScriptsTimeout: 220000,
+  allScriptsTimeout: 300000,
   getPageTimeout: 70000,
   jasmineNodeOpts: {
     showTiming: true,
     showColors: true,
     includeStackTrace: true,
-    defaultTimeoutInterval: 220000,
+    defaultTimeoutInterval: 300000,
     print: function() {}
   },
   onPrepare() {
