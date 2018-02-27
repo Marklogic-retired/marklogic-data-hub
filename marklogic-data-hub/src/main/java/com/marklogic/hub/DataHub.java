@@ -1,15 +1,10 @@
 package com.marklogic.hub;
 
-import com.marklogic.appdeployer.command.Command;
 import com.marklogic.hub.deploy.util.HubDeployStatusListener;
 import com.marklogic.hub.error.CantUpgradeException;
 import com.marklogic.hub.error.ServerValidationException;
 import com.marklogic.hub.impl.DataHubImpl;
 import com.marklogic.hub.util.Versions;
-import com.marklogic.mgmt.ManageClient;
-import com.marklogic.mgmt.admin.AdminManager;
-import com.marklogic.mgmt.resource.appservers.ServerManager;
-import com.marklogic.mgmt.resource.databases.DatabaseManager;
 
 import java.util.List;
 
@@ -44,23 +39,7 @@ public interface DataHub {
         }
     }
 
-    enum DatabaseKind {
-        STAGING,
-        FINAL,
-        JOB,
-        TRACE,
-        SCHEMA
-    }
-
-    ManageClient getManageClient();
-
-    AdminManager getAdminManager();
-
-    DatabaseManager getDatabaseManager();
-
-    ServerManager getServerManager();
-
-    void setServerManager(ServerManager manager);
+    void clearDatabase(String database);
 
     /**
      * Determines if the data hub is installed in MarkLogic
@@ -83,8 +62,6 @@ public interface DataHub {
      * TODO: this becomes much simpler when we move code into the server dir
      */
     void clearUserModules();
-
-    List<Command> getCommandList();
 
     void runPreInstallCheck();
 

@@ -26,7 +26,7 @@ import com.marklogic.client.extensions.ResourceServices;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.util.RequestParameters;
-import com.marklogic.hub.DataHub;
+import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.EntityManager;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.util.HubModuleManager;
@@ -98,7 +98,7 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
             modulesLoader.setDatabaseClient(hubConfig.newStagingClient());
             Resource r = modulesLoader.installQueryOptions(new FileSystemResource(stagingFile));
             if (r != null) {
-                loadedResources.put(DataHub.DatabaseKind.STAGING, true);
+                loadedResources.put(DatabaseKind.STAGING, true);
             }
         }
 
@@ -107,7 +107,7 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
             modulesLoader.setDatabaseClient(hubConfig.newFinalClient());
             Resource r = modulesLoader.installQueryOptions(new FileSystemResource(finalFile));
             if (r != null) {
-                loadedResources.put(DataHub.DatabaseKind.FINAL, true);
+                loadedResources.put(DatabaseKind.FINAL, true);
             }
         }
         modulesLoader.setShutdownTaskExecutorAfterLoadingModules(true);

@@ -36,6 +36,7 @@ import com.marklogic.hub.deploy.commands.LoadUserModulesCommand;
 import com.marklogic.hub.flow.CodeFormat;
 import com.marklogic.hub.flow.DataFormat;
 import com.marklogic.hub.flow.FlowType;
+import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.util.Versions;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -573,7 +574,7 @@ public class HubTestBase {
     protected static void installHubModules() {
         logger.debug("Installing Data Hub Framework modules into MarkLogic");
 
-        HubConfig hubConfig = getHubConfig();
+        HubConfigImpl hubConfig = (HubConfigImpl) getHubConfig();
 
         List<Command> commands = new ArrayList<>();
         commands.add(new LoadHubModulesCommand(hubConfig));
@@ -591,7 +592,7 @@ public class HubTestBase {
         loadUserModulesCommand.setForceLoad(force);
         commands.add(loadUserModulesCommand);
 
-        SimpleAppDeployer deployer = new SimpleAppDeployer(hubConfig.getManageClient(), hubConfig.getAdminManager());
+        SimpleAppDeployer deployer = new SimpleAppDeployer(((HubConfigImpl)hubConfig).getManageClient(), ((HubConfigImpl)hubConfig).getAdminManager());
         deployer.setCommands(commands);
         deployer.deploy(hubConfig.getAppConfig());
     }

@@ -45,7 +45,7 @@ public class DataHubTest extends HubTestBase {
     private ServerManager serverManager;
 
     @Mock
-    private DataHub dh;
+    private DataHubImpl dh;
 
     @Mock
     private Versions versions;

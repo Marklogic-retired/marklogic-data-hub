@@ -15,14 +15,9 @@
  */
 package com.marklogic.hub;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
-import com.marklogic.mgmt.ManageClient;
-import com.marklogic.mgmt.ManageConfig;
-import com.marklogic.mgmt.admin.AdminConfig;
-import com.marklogic.mgmt.admin.AdminManager;
 
 import javax.net.ssl.SSLContext;
 import java.io.File;
@@ -92,11 +87,9 @@ public interface HubConfig {
     boolean getStagingSimpleSsl();
     void setStagingSimpleSsl(boolean stagingSimpleSsl);
 
-    @JsonIgnore
     SSLContext getStagingSslContext();
     void setStagingSslContext(SSLContext stagingSslContext);
 
-    @JsonIgnore
     DatabaseClientFactory.SSLHostnameVerifier getStagingSslHostnameVerifier();
     void setStagingSslHostnameVerifier(DatabaseClientFactory.SSLHostnameVerifier stagingSslHostnameVerifier);
 
@@ -128,11 +121,9 @@ public interface HubConfig {
     String getFinalScheme();
     void setFinalScheme(String finalScheme);
 
-    @JsonIgnore
     boolean getFinalSimpleSsl();
     void setFinalSimpleSsl(boolean finalSimpleSsl);
 
-    @JsonIgnore
     SSLContext getFinalSslContext();
     void setFinalSslContext(SSLContext finalSslContext);
 
@@ -167,11 +158,10 @@ public interface HubConfig {
     String getTraceScheme();
     void setTraceScheme(String traceScheme);
 
-    @JsonIgnore
+
     boolean getTraceSimpleSsl();
     void setTraceSimpleSsl(boolean traceSimpleSsl);
 
-    @JsonIgnore
     SSLContext getTraceSslContext();
     void setTraceSslContext(SSLContext traceSslContext);
 
@@ -209,11 +199,10 @@ public interface HubConfig {
     boolean getJobSimpleSsl();
     void setJobSimpleSsl(boolean jobSimpleSsl);
 
-    @JsonIgnore
+
     SSLContext getJobSslContext();
     void setJobSslContext(SSLContext jobSslContext);
 
-    @JsonIgnore
     DatabaseClientFactory.SSLHostnameVerifier getJobSslHostnameVerifier();
     void setJobSslHostnameVerifier(DatabaseClientFactory.SSLHostnameVerifier jobSslHostnameVerifier);
 
@@ -267,31 +256,17 @@ public interface HubConfig {
     String getProjectDir();
     void setProjectDir(String projectDir);
 
-    @JsonIgnore
+
     HubProject getHubProject();
 
     void initHubProject();
 
-    @JsonIgnore
     String getHubModulesDeployTimestampFile();
-    @JsonIgnore
+
+
     String getUserModulesDeployTimestampFile();
-    @JsonIgnore
+
     File getUserContentDeployTimestampFile();
-
-    @JsonIgnore
-    ManageConfig getManageConfig();
-    void setManageConfig(ManageConfig manageConfig);
-    @JsonIgnore
-    ManageClient getManageClient();
-    void setManageClient(ManageClient manageClient);
-
-    @JsonIgnore
-    AdminConfig getAdminConfig();
-    void setAdminConfig(AdminConfig adminConfig);
-    @JsonIgnore
-    AdminManager getAdminManager();
-    void setAdminManager(AdminManager adminManager);
 
     DatabaseClient newAppServicesClient();
 
@@ -327,33 +302,26 @@ public interface HubConfig {
      */
     DatabaseClient newModulesDbClient();
 
-    @JsonIgnore
     Path getHubPluginsDir();
-    @JsonIgnore
     Path getHubEntitiesDir();
 
-    @JsonIgnore
     Path getHubConfigDir();
-    @JsonIgnore
     Path getHubDatabaseDir();
-    @JsonIgnore
     Path getHubServersDir();
-    @JsonIgnore
     Path getHubSecurityDir();
-    @JsonIgnore
+
     Path getUserSecurityDir();
-    @JsonIgnore
+
     Path getUserConfigDir();
-    @JsonIgnore
+
     Path getUserDatabaseDir();
-    @JsonIgnore
+
     Path getEntityDatabaseDir();
-    @JsonIgnore
+
     Path getUserServersDir();
-    @JsonIgnore
+
     Path getHubMimetypesDir();
 
-    @JsonIgnore
     AppConfig getAppConfig();
     void setAppConfig(AppConfig config);
 

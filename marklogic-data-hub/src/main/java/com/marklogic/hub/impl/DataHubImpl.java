@@ -68,16 +68,21 @@ public class DataHubImpl implements DataHub {
         this.hubConfig = hubConfig;
     }
 
-    @Override public ManageClient getManageClient() {
+    private ManageClient getManageClient() {
         if (this._manageClient == null) {
-            this._manageClient = hubConfig.getManageClient();
+            this._manageClient = getManageClient();
         }
         return this._manageClient;
     }
 
-    @Override public AdminManager getAdminManager() {
+    @Override public void clearDatabase(String database){
+        DatabaseManager mgr = new DatabaseManager(this.getManageClient());
+        mgr.clearDatabase(database);
+    }
+
+    private AdminManager getAdminManager() {
         if (this._adminManager == null) {
-            this._adminManager = hubConfig.getAdminManager();
+            this._adminManager = getAdminManager();
         }
         return this._adminManager;
     }
@@ -85,20 +90,21 @@ public class DataHubImpl implements DataHub {
         this._adminManager = manager;
     }
 
-    @Override public DatabaseManager getDatabaseManager() {
+    private DatabaseManager getDatabaseManager() {
         if (this._databaseManager == null) {
             this._databaseManager = new DatabaseManager(getManageClient());
         }
         return this._databaseManager;
     }
 
-    @Override public ServerManager getServerManager() {
+    private ServerManager getServerManager() {
         if (this._serverManager == null) {
             this._serverManager = new ServerManager(getManageClient());
         }
         return this._serverManager;
     }
-    @Override public void setServerManager(ServerManager manager) { this._serverManager = manager; }
+    public void setServerManager(ServerManager manager) { this._serverManager = manager; }
+
     /**
      * Determines if the data hub is installed in MarkLogic
      * @return true if installed, false otherwise
@@ -241,7 +247,7 @@ public class DataHubImpl implements DataHub {
         }
     }
 
-    @Override public List<Command> getCommandList() {
+    public List<Command> getCommandList() {
         Map<String, List<Command>> commandMap = getCommands();
         List<Command> commands = new ArrayList<>();
         for (String name : commandMap.keySet()) {

@@ -4,6 +4,7 @@ import com.marklogic.appdeployer.impl.SimpleAppDeployer
 import com.marklogic.gradle.task.*
 import com.marklogic.hub.DataHub
 import com.marklogic.hub.HubConfigBuilder
+import com.marklogic.hub.impl.DataHubImpl
 import com.marklogic.hub.util.Versions
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -96,6 +97,6 @@ class DataHubPlugin implements Plugin<Project> {
             throw new RuntimeException("You must apply the ml-gradle plugin before the ml-datahub plugin.")
         }
 
-        mlAppDeployer.setCommands(dataHub.getCommandList())
+        mlAppDeployer.setCommands(((DataHubImpl)dataHub).getCommandList())
     }
 }

@@ -22,9 +22,9 @@ import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.deploy.commands.LoadUserModulesCommand;
 import com.marklogic.hub.deploy.util.HubDeployStatusListener;
 import com.marklogic.hub.error.CantUpgradeException;
+import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.util.PerformanceLogger;
 import com.marklogic.hub.validate.EntitiesValidator;
-import com.marklogic.mgmt.resource.databases.DatabaseManager;
 import com.marklogic.quickstart.auth.ConnectionAuthenticationToken;
 import com.marklogic.quickstart.exception.DataHubException;
 import com.marklogic.quickstart.listeners.DeployUserModulesListener;
@@ -174,8 +174,7 @@ public class DataHubService {
 
     public void clearContent(HubConfig config, String database) {
         DataHub dataHub = DataHub.create(config);
-        DatabaseManager mgr = new DatabaseManager(dataHub.getManageClient());
-        mgr.clearDatabase(database);
+        dataHub.clearDatabase(database);
     }
 
     private void installUserModules(HubConfig hubConfig, boolean forceLoad, DeployUserModulesListener deployListener) {
@@ -184,7 +183,7 @@ public class DataHubService {
         loadUserModulesCommand.setForceLoad(forceLoad);
         commands.add(loadUserModulesCommand);
 
-        SimpleAppDeployer deployer = new SimpleAppDeployer(hubConfig.getManageClient(), hubConfig.getAdminManager());
+        SimpleAppDeployer deployer = new SimpleAppDeployer(((HubConfigImpl)hubConfig).getManageClient(), ((HubConfigImpl)hubConfig).getAdminManager());
         deployer.setCommands(commands);
         deployer.deploy(hubConfig.getAppConfig());
 
