@@ -1,5 +1,6 @@
 package com.marklogic.hub;
 
+import com.marklogic.hub.error.InvalidDBOperationError;
 import com.marklogic.hub.impl.InstallInfoImpl;
 
 public interface InstallInfo {
@@ -14,67 +15,24 @@ public interface InstallInfo {
 
     String toString();
 
-    boolean isStagingAppServerExists();
+    boolean isAppServerExistent(DatabaseKind kind);
 
-    void setStagingAppServerExists(boolean stagingAppServerExists);
+    void setAppServerExistent(DatabaseKind kind, boolean stagingAppServerExists);
 
-    boolean isFinalAppServerExists();
+    boolean isDbExistent(DatabaseKind kind);
 
-    void setFinalAppServerExists(boolean finalAppServerExists);
+    void setDbExistent(DatabaseKind kind, boolean stagingDbExists);
 
-    boolean isTraceAppServerExists();
+    boolean isTripleIndexOn(DatabaseKind kind);
 
-    void setTraceAppServerExists(boolean traceAppServerExists);
+    void setTripleIndexOn(DatabaseKind kind, boolean stagingTripleIndexOn);
 
-    boolean isJobAppServerExists();
+    boolean isCollectionLexiconOn(DatabaseKind kind);
 
-    void setJobAppServerExists(boolean jobAppServerExists);
+    void setCollectionLexiconOn(DatabaseKind kind, boolean stagingCollectionLexiconOn);
 
-    boolean isStagingDbExists();
+    boolean areForestsExistent(DatabaseKind kind);
 
-    void setStagingDbExists(boolean stagingDbExists);
+    void setForestsExistent(DatabaseKind kind, boolean stagingForestsExist);
 
-    boolean isFinalDbExists();
-
-    void setFinalDbExists(boolean finalDbExists);
-
-    boolean isTraceDbExists();
-
-    void setTraceDbExists(boolean traceDbExists);
-
-    boolean isJobDbExists();
-
-    void setJobDbExists(boolean jobDbExists);
-
-    boolean isStagingTripleIndexOn();
-
-    void setStagingTripleIndexOn(boolean stagingTripleIndexOn);
-
-    boolean isStagingCollectionLexiconOn();
-
-    void setStagingCollectionLexiconOn(boolean stagingCollectionLexiconOn);
-
-    boolean isFinalTripleIndexOn();
-
-    void setFinalTripleIndexOn(boolean finalTripleIndexOn);
-
-    boolean isFinalCollectionLexiconOn();
-
-    void setFinalCollectionLexiconOn(boolean finalCollectionLexiconOn);
-
-    boolean isStagingForestsExist();
-
-    void setStagingForestsExist(boolean stagingForestsExist);
-
-    boolean isFinalForestsExist();
-
-    void setFinalForestsExist(boolean finalForestsExist);
-
-    boolean isTraceForestsExist();
-
-    void setTraceForestsExist(boolean traceForestsExist);
-
-    boolean isJobForestsExist();
-
-    void setJobForestsExist(boolean jobForestsExist);
 }

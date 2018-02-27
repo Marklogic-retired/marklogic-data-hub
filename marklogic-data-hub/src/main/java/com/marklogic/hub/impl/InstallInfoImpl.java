@@ -15,7 +15,9 @@
  */
 package com.marklogic.hub.impl;
 
+import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.InstallInfo;
+import com.marklogic.hub.error.InvalidDBOperationError;
 
 public class InstallInfoImpl implements InstallInfo {
     private boolean stagingAppServerExists = false;
@@ -40,48 +42,48 @@ public class InstallInfoImpl implements InstallInfo {
 
     @Override public boolean isPartiallyInstalled() {
         return (
-            isStagingAppServerExists() ||
-                isFinalAppServerExists() ||
-                isTraceAppServerExists() ||
-                isJobAppServerExists() ||
-                isStagingDbExists() ||
-                isStagingTripleIndexOn() ||
-                isStagingCollectionLexiconOn() ||
-                isFinalDbExists() ||
-                isFinalTripleIndexOn() ||
-                isFinalCollectionLexiconOn() ||
-                isTraceDbExists() ||
-                isJobDbExists() ||
-                isStagingForestsExist() ||
-                isFinalForestsExist() ||
-                isTraceForestsExist() ||
-                isJobForestsExist()
+            isAppServerExistent(DatabaseKind.STAGING) ||
+                isAppServerExistent(DatabaseKind.FINAL) ||
+                isAppServerExistent(DatabaseKind.TRACE) ||
+                isAppServerExistent(DatabaseKind.JOB) ||
+                isDbExistent(DatabaseKind.STAGING) ||
+                isTripleIndexOn(DatabaseKind.STAGING) ||
+                isCollectionLexiconOn(DatabaseKind.STAGING) ||
+                isDbExistent(DatabaseKind.FINAL) ||
+                isTripleIndexOn(DatabaseKind.FINAL) ||
+                isCollectionLexiconOn(DatabaseKind.FINAL) ||
+                isDbExistent(DatabaseKind.TRACE) ||
+                isDbExistent(DatabaseKind.JOB) ||
+                areForestsExistent(DatabaseKind.STAGING) ||
+                areForestsExistent(DatabaseKind.FINAL) ||
+                areForestsExistent(DatabaseKind.TRACE) ||
+                areForestsExistent(DatabaseKind.JOB)
         );
     }
 
     @Override public boolean isInstalled() {
         boolean appserversOk = (
-            isStagingAppServerExists() &&
-                isFinalAppServerExists() &&
-                isTraceAppServerExists() &&
-                isJobAppServerExists()
+            isAppServerExistent(DatabaseKind.STAGING) &&
+                isAppServerExistent(DatabaseKind.FINAL) &&
+                isAppServerExistent(DatabaseKind.TRACE) &&
+                isAppServerExistent(DatabaseKind.JOB)
         );
 
         boolean dbsOk = (
-            isStagingDbExists() &&
-                isStagingTripleIndexOn() &&
-                isStagingCollectionLexiconOn() &&
-                isFinalDbExists() &&
-                isFinalTripleIndexOn() &&
-                isFinalCollectionLexiconOn() &&
-                isTraceDbExists() &&
-                isJobDbExists()
+            isDbExistent(DatabaseKind.STAGING) &&
+                isTripleIndexOn(DatabaseKind.STAGING) &&
+                isCollectionLexiconOn(DatabaseKind.STAGING) &&
+                isDbExistent(DatabaseKind.FINAL) &&
+                isTripleIndexOn(DatabaseKind.FINAL) &&
+                isCollectionLexiconOn(DatabaseKind.FINAL) &&
+                isDbExistent(DatabaseKind.TRACE) &&
+                isDbExistent(DatabaseKind.JOB)
         );
         boolean forestsOk = (
-            isStagingForestsExist() &&
-                isFinalForestsExist() &&
-                isTraceForestsExist() &&
-                isJobForestsExist()
+            areForestsExistent(DatabaseKind.STAGING) &&
+                areForestsExistent(DatabaseKind.FINAL) &&
+                areForestsExistent(DatabaseKind.TRACE) &&
+                areForestsExistent(DatabaseKind.JOB)
         );
 
         return (appserversOk && dbsOk && forestsOk);
@@ -89,156 +91,205 @@ public class InstallInfoImpl implements InstallInfo {
 
     @Override public String toString() {
         return "\n" +
-        "Checking MarkLogic Installation:\n" +
-        "\tAppServers:\n" +
-        "\t\tStaging: " + (isStagingAppServerExists() ? "exists" : "MISSING") + "\n" +
-        "\t\tFinal:   " + (isFinalAppServerExists() ? "exists" : "MISSING") + "\n" +
-        "\t\tTrace:   " + (isTraceAppServerExists() ? "exists" : "MISSING") + "\n" +
-        "\t\tJob:     " + (isJobAppServerExists() ? "exists" : "MISSING") + "\n" +
-        "\tDatabases:\n" +
-        "\t\tStaging: " + (isStagingDbExists() ? "exists" : "MISSING") + "\n" +
-        "\t\tFinal:   " + (isFinalDbExists() ? "exists" : "MISSING") + "\n" +
-        "\t\tTrace:   " + (isTraceDbExists() ? "exists" : "MISSING") + "\n" +
-        "\t\tJob:     " + (isJobDbExists() ? "exists" : "MISSING") + "\n" +
-        "\tDatabases Indexes:\n" +
-        "\t\tStaging Triples Index : " + (isStagingTripleIndexOn() ? "exists" : "MISSING") + "\n" +
-        "\t\tStaging Collection Lexicon : " + (isStagingCollectionLexiconOn() ? "exists" : "MISSING") + "\n" +
-        "\t\tFinal Triples Index : " + (isFinalTripleIndexOn() ? "exists" : "MISSING") + "\n" +
-        "\t\tFinal Collection Lexicon : " + (isFinalCollectionLexiconOn() ? "exists" : "MISSING") + "\n" +
-        "\tForests\n" +
-        "\t\tStaging: " + (isStagingForestsExist() ? "exists" : "MISSING") + "\n" +
-        "\t\tFinal:   " + (isFinalForestsExist() ? "exists" : "MISSING") + "\n" +
-        "\t\tTrace:   " + (isTraceForestsExist() ? "exists" : "MISSING") + "\n" +
-        "\t\tJob:     " + (isJobForestsExist() ? "exists" : "MISSING") + "\n" +
-        "\n\n" +
-        "OVERAL RESULT: " + (isInstalled() ? "INSTALLED" : "NOT INSTALLED") + "\n";
+            "Checking MarkLogic Installation:\n" +
+            "\tAppServers:\n" +
+            "\t\tStaging: " + (isAppServerExistent(DatabaseKind.STAGING) ? "exists" : "MISSING") + "\n" +
+            "\t\tFinal:   " + (isAppServerExistent(DatabaseKind.FINAL) ? "exists" : "MISSING") + "\n" +
+            "\t\tTrace:   " + (isAppServerExistent(DatabaseKind.TRACE) ? "exists" : "MISSING") + "\n" +
+            "\t\tJob:     " + (isAppServerExistent(DatabaseKind.JOB) ? "exists" : "MISSING") + "\n" +
+            "\tDatabases:\n" +
+            "\t\tStaging: " + (isDbExistent(DatabaseKind.STAGING) ? "exists" : "MISSING") + "\n" +
+            "\t\tFinal:   " + (isDbExistent(DatabaseKind.FINAL) ? "exists" : "MISSING") + "\n" +
+            "\t\tTrace:   " + (isDbExistent(DatabaseKind.TRACE) ? "exists" : "MISSING") + "\n" +
+            "\t\tJob:     " + (isDbExistent(DatabaseKind.JOB) ? "exists" : "MISSING") + "\n" +
+            "\tDatabases Indexes:\n" +
+            "\t\tStaging Triples Index : " + (isTripleIndexOn(DatabaseKind.STAGING) ? "exists" : "MISSING") + "\n" +
+            "\t\tStaging Collection Lexicon : " + (isCollectionLexiconOn(DatabaseKind.STAGING) ? "exists" : "MISSING") + "\n" +
+            "\t\tFinal Triples Index : " + (isTripleIndexOn(DatabaseKind.FINAL) ? "exists" : "MISSING") + "\n" +
+            "\t\tFinal Collection Lexicon : " + (isCollectionLexiconOn(DatabaseKind.FINAL) ? "exists" : "MISSING") + "\n" +
+            "\tForests\n" +
+            "\t\tStaging: " + (areForestsExistent(DatabaseKind.STAGING) ? "exists" : "MISSING") + "\n" +
+            "\t\tFinal:   " + (areForestsExistent(DatabaseKind.FINAL) ? "exists" : "MISSING") + "\n" +
+            "\t\tTrace:   " + (areForestsExistent(DatabaseKind.TRACE) ? "exists" : "MISSING") + "\n" +
+            "\t\tJob:     " + (areForestsExistent(DatabaseKind.JOB) ? "exists" : "MISSING") + "\n" +
+            "\n\n" +
+            "OVERAL RESULT: " + (isInstalled() ? "INSTALLED" : "NOT INSTALLED") + "\n";
     }
 
-    @Override public boolean isStagingAppServerExists() {
-        return stagingAppServerExists;
+    @Override public boolean isAppServerExistent(DatabaseKind kind) {
+        boolean exists = false;
+        switch (kind) {
+            case STAGING:
+                exists = stagingAppServerExists;
+                break;
+            case FINAL:
+                exists = finalAppServerExists;
+                break;
+            case JOB:
+                exists = jobAppServerExists;
+                break;
+            case TRACE:
+                exists = traceAppServerExists;
+                break;
+            default:
+                throw new InvalidDBOperationError(kind, "test appserver existence");
+        }
+        return exists;
     }
 
-    @Override public void setStagingAppServerExists(boolean stagingAppServerExists) {
-        this.stagingAppServerExists = stagingAppServerExists;
+    @Override public void setAppServerExistent(DatabaseKind kind, boolean exists) {
+        switch (kind) {
+            case STAGING:
+                this.stagingAppServerExists = exists;
+                break;
+            case FINAL:
+                this.finalAppServerExists = exists;
+                break;
+            case TRACE:
+                this.traceAppServerExists = exists;
+                break;
+            case JOB:
+                this.jobAppServerExists = exists;
+                break;
+            default:
+                throw new InvalidDBOperationError(kind, "set the triple index");
+        }
     }
 
-    @Override public boolean isFinalAppServerExists() {
-        return finalAppServerExists;
+    @Override public boolean isDbExistent(DatabaseKind kind) {
+        boolean exists = false;
+        switch (kind) {
+            case STAGING:
+                exists = stagingDbExists;
+                break;
+            case FINAL:
+                exists = finalDbExists;
+                break;
+            case JOB:
+                exists = jobDbExists;
+                break;
+            case TRACE:
+                exists = traceDbExists;
+                break;
+            default:
+                throw new InvalidDBOperationError(kind, "test database existence");
+        }
+        return exists;
     }
 
-    @Override public void setFinalAppServerExists(boolean finalAppServerExists) {
-        this.finalAppServerExists = finalAppServerExists;
+    @Override public void setDbExistent(DatabaseKind kind, boolean exists) {
+        switch (kind) {
+            case STAGING:
+                this.stagingDbExists = exists;
+                break;
+            case FINAL:
+                this.finalDbExists = exists;
+                break;
+            case TRACE:
+                this.traceDbExists = exists;
+                break;
+            case JOB:
+                this.jobDbExists = exists;
+                break;
+            default:
+                throw new InvalidDBOperationError(kind, "set the triple index");
+        }
     }
 
-    @Override public boolean isTraceAppServerExists() {
-        return traceAppServerExists;
+
+    @Override public boolean isTripleIndexOn(DatabaseKind kind) {
+        boolean on = false;
+        switch (kind) {
+            case STAGING:
+                on = stagingTripleIndexOn;
+                break;
+            case FINAL:
+                on = finalTripleIndexOn;
+                break;
+            default:
+                throw new InvalidDBOperationError(kind, "check the triple index");
+        }
+        return on;
     }
 
-    @Override public void setTraceAppServerExists(boolean traceAppServerExists) {
-        this.traceAppServerExists = traceAppServerExists;
+    @Override public void setTripleIndexOn(DatabaseKind kind, boolean tripleIndexOn) {
+        switch (kind) {
+            case STAGING:
+                this.stagingTripleIndexOn = tripleIndexOn;
+                break;
+            case FINAL:
+                this.finalTripleIndexOn = tripleIndexOn;
+                break;
+            default:
+                throw new InvalidDBOperationError(kind, "set the triple index");
+        }
     }
 
-    @Override public boolean isJobAppServerExists() {
-        return jobAppServerExists;
+    @Override public boolean isCollectionLexiconOn(DatabaseKind kind) {
+        boolean on = false;
+        switch (kind) {
+            case STAGING:
+                on = stagingCollectionLexiconOn;
+                break;
+            case FINAL:
+                on = finalCollectionLexiconOn;
+                break;
+            default:
+                throw new InvalidDBOperationError(kind, "check the collection lexicon");
+        }
+        return on;
     }
 
-    @Override public void setJobAppServerExists(boolean jobAppServerExists) {
-        this.jobAppServerExists = jobAppServerExists;
+    @Override public void setCollectionLexiconOn(DatabaseKind kind, boolean collectionLexiconOn) {
+        switch (kind) {
+            case STAGING:
+                this.stagingCollectionLexiconOn = collectionLexiconOn;
+                break;
+            case FINAL:
+                this.finalCollectionLexiconOn = collectionLexiconOn;
+                break;
+            default:
+                throw new InvalidDBOperationError(kind, "set the collection lexicon");
+        }
     }
 
-    @Override public boolean isStagingDbExists() {
-        return stagingDbExists;
+    @Override public boolean areForestsExistent(DatabaseKind kind) {
+        boolean exists = false;
+        switch (kind) {
+            case STAGING:
+                exists = stagingForestsExist;
+                break;
+            case FINAL:
+                exists = finalForestsExist;
+                break;
+            case TRACE:
+                exists = traceForestsExist;
+                break;
+            case JOB:
+                exists = jobForestsExist;
+                break;
+            default:
+                throw new InvalidDBOperationError(kind, "check forest existence");
+        }
+        return exists;
     }
 
-    @Override public void setStagingDbExists(boolean stagingDbExists) {
-        this.stagingDbExists = stagingDbExists;
-    }
-
-    @Override public boolean isFinalDbExists() {
-        return finalDbExists;
-    }
-
-    @Override public void setFinalDbExists(boolean finalDbExists) {
-        this.finalDbExists = finalDbExists;
-    }
-
-    @Override public boolean isTraceDbExists() {
-        return traceDbExists;
-    }
-
-    @Override public void setTraceDbExists(boolean traceDbExists) {
-        this.traceDbExists = traceDbExists;
-    }
-
-    @Override public boolean isJobDbExists() {
-        return jobDbExists;
-    }
-
-    @Override public void setJobDbExists(boolean jobDbExists) {
-        this.jobDbExists = jobDbExists;
-    }
-
-    @Override public boolean isStagingTripleIndexOn() {
-        return stagingTripleIndexOn;
-    }
-
-    @Override public void setStagingTripleIndexOn(boolean stagingTripleIndexOn) {
-        this.stagingTripleIndexOn = stagingTripleIndexOn;
-    }
-
-    @Override public boolean isStagingCollectionLexiconOn() {
-        return stagingCollectionLexiconOn;
-    }
-
-    @Override public void setStagingCollectionLexiconOn(boolean stagingCollectionLexiconOn) {
-        this.stagingCollectionLexiconOn = stagingCollectionLexiconOn;
-    }
-
-    @Override public boolean isFinalTripleIndexOn() {
-        return finalTripleIndexOn;
-    }
-
-    @Override public void setFinalTripleIndexOn(boolean finalTripleIndexOn) {
-        this.finalTripleIndexOn = finalTripleIndexOn;
-    }
-
-    @Override public boolean isFinalCollectionLexiconOn() {
-        return finalCollectionLexiconOn;
-    }
-
-    @Override public void setFinalCollectionLexiconOn(boolean finalCollectionLexiconOn) {
-        this.finalCollectionLexiconOn = finalCollectionLexiconOn;
-    }
-
-    @Override public boolean isStagingForestsExist() {
-        return stagingForestsExist;
-    }
-
-    @Override public void setStagingForestsExist(boolean stagingForestsExist) {
-        this.stagingForestsExist = stagingForestsExist;
-    }
-
-    @Override public boolean isFinalForestsExist() {
-        return finalForestsExist;
-    }
-
-    @Override public void setFinalForestsExist(boolean finalForestsExist) {
-        this.finalForestsExist = finalForestsExist;
-    }
-
-    @Override public boolean isTraceForestsExist() {
-        return traceForestsExist;
-    }
-
-    @Override public void setTraceForestsExist(boolean traceForestsExist) {
-        this.traceForestsExist = traceForestsExist;
-    }
-
-    @Override public boolean isJobForestsExist() {
-        return jobForestsExist;
-    }
-
-    @Override public void setJobForestsExist(boolean jobForestsExist) {
-        this.jobForestsExist = jobForestsExist;
+    @Override public void setForestsExistent(DatabaseKind kind, boolean forestsExistent) {
+        switch (kind) {
+            case STAGING:
+                this.stagingForestsExist = forestsExistent;
+                break;
+            case FINAL:
+                this.finalForestsExist = forestsExistent;
+                break;
+            case TRACE:
+                this.traceForestsExist = forestsExistent;
+                break;
+            case JOB:
+                this.jobForestsExist = forestsExistent;
+                break;
+            default:
+                throw new InvalidDBOperationError(kind, "set forest existence");
+        }
     }
 }
