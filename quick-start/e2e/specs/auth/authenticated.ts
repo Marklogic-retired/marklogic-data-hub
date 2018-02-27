@@ -147,7 +147,7 @@ export default function(tmpDir) {
 
     it ('should complete the install and go to the dashboard', function() {
       expect(loginPage.installProgress.isDisplayed()).toBe(true);
-      dashboardPage.isLoadedWithtimeout(200000);
+      dashboardPage.isLoadedWithtimeout(300000);
     });
 
     it ('should logout', function() {
