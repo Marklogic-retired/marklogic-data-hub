@@ -58,19 +58,19 @@ public class DataHubImpl implements DataHub {
     private ManageClient _manageClient;
     private DatabaseManager _databaseManager;
     private ServerManager _serverManager;
-    private HubConfig hubConfig;
+    private HubConfigImpl hubConfig;
 
     private AdminManager _adminManager;
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     public DataHubImpl(HubConfig hubConfig) {
-        this.hubConfig = hubConfig;
+        this.hubConfig = ((HubConfigImpl)hubConfig);
     }
 
     private ManageClient getManageClient() {
         if (this._manageClient == null) {
-            this._manageClient = getManageClient();
+            this._manageClient = this.hubConfig.getManageClient();
         }
         return this._manageClient;
     }
@@ -82,7 +82,7 @@ public class DataHubImpl implements DataHub {
 
     private AdminManager getAdminManager() {
         if (this._adminManager == null) {
-            this._adminManager = getAdminManager();
+            this._adminManager = this.hubConfig.getAdminManager();
         }
         return this._adminManager;
     }
