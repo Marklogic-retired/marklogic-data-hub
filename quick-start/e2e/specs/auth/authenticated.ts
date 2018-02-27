@@ -30,7 +30,7 @@ export default function(tmpDir) {
     });
 
     it ('Has the correct current folder', function() {
-      expect(loginPage.currentFolderValue).toEqual(process.cwd());
+      expect(loginPage.currentFolderValue).toContain('/quick-start');
     });
 
     it ('Should select the temp folder', function() {
