@@ -27,6 +27,7 @@ import com.marklogic.hub.deploy.HubAppDeployer;
 import com.marklogic.hub.deploy.commands.*;
 import com.marklogic.hub.deploy.util.HubDeployStatusListener;
 import com.marklogic.hub.error.CantUpgradeException;
+import com.marklogic.hub.error.InvalidDBOperationError;
 import com.marklogic.hub.error.ServerValidationException;
 import com.marklogic.hub.util.Versions;
 import com.marklogic.mgmt.ManageClient;
@@ -409,6 +410,8 @@ public class DataHubImpl implements DataHub {
 
 
     // Here is the former PreCheckInstall class stuff
+    // We should probably move this into a sub class OR its own class and interface, and create a super at the
+    // datahub level
     private boolean stagingPortInUse;
     private String stagingPortInUseBy;
     private boolean finalPortInUse;
@@ -421,74 +424,71 @@ public class DataHubImpl implements DataHub {
     private String serverVersion;
 
     @Override public boolean isSafeToInstall() {
-            return !(isStagingPortInUse() ||
-                isFinalPortInUse() ||
-                isJobPortInUse() ||
-                isTracePortInUse()) && isServerVersionOk();
+        return !(isPortInUse(DatabaseKind.FINAL) ||
+            isPortInUse(DatabaseKind.STAGING) ||
+            isPortInUse(DatabaseKind.JOB) ||
+            isPortInUse(DatabaseKind.TRACE)) && isServerVersionOk();
     }
 
-    @Override public boolean isStagingPortInUse() {
-        return stagingPortInUse;
+    @Override public boolean isPortInUse(DatabaseKind kind){
+        boolean inUse;
+        switch (kind) {
+            case STAGING:
+                inUse = stagingPortInUse;
+                break;
+            case FINAL:
+                inUse = finalPortInUse;
+                break;
+            case JOB:
+                inUse = jobPortInUse;
+                break;
+            case TRACE:
+                inUse = tracePortInUse;
+                break;
+            default:
+                throw new InvalidDBOperationError(kind, "check for port use");
+        }
+        return inUse;
     }
 
-    @Override public void setStagingPortInUse(boolean stagingPortInUse) {
-        this.stagingPortInUse = stagingPortInUse;
+    @Override public void setPortInUseBy(DatabaseKind kind, String usedBy){
+        switch (kind) {
+            case STAGING:
+                stagingPortInUseBy = usedBy;
+                break;
+            case FINAL:
+                finalPortInUseBy = usedBy;
+                break;
+            case JOB:
+                jobPortInUseBy = usedBy;
+                break;
+            case TRACE:
+                tracePortInUseBy = usedBy;
+                break;
+            default:
+                throw new InvalidDBOperationError(kind, "set if port in use");
+        }
     }
 
-    @Override public String getStagingPortInUseBy() {
-        return stagingPortInUseBy;
-    }
-
-    @Override public void setStagingPortInUseBy(String stagingPortInUseBy) {
-        this.stagingPortInUseBy = stagingPortInUseBy;
-    }
-
-    @Override public boolean isFinalPortInUse() {
-        return finalPortInUse;
-    }
-
-    @Override public void setFinalPortInUse(boolean finalPortInUse) {
-        this.finalPortInUse = finalPortInUse;
-    }
-
-    @Override public String getFinalPortInUseBy() {
-        return finalPortInUseBy;
-    }
-
-    @Override public void setFinalPortInUseBy(String finalPortInUseBy) {
-        this.finalPortInUseBy = finalPortInUseBy;
-    }
-
-    @Override public boolean isJobPortInUse() {
-        return jobPortInUse;
-    }
-
-    @Override public void setJobPortInUse(boolean jobPortInUse) {
-        this.jobPortInUse = jobPortInUse;
-    }
-
-    @Override public String getJobPortInUseBy() {
-        return jobPortInUseBy;
-    }
-
-    @Override public void setJobPortInUseBy(String jobPortInUseBy) {
-        this.jobPortInUseBy = jobPortInUseBy;
-    }
-
-    @Override public boolean isTracePortInUse() {
-        return tracePortInUse;
-    }
-
-    @Override public void setTracePortInUse(boolean tracePortInUse) {
-        this.tracePortInUse = tracePortInUse;
-    }
-
-    @Override public String getTracePortInUseBy() {
-        return tracePortInUseBy;
-    }
-
-    @Override public void setTracePortInUseBy(String tracePortInUseBy) {
-        this.tracePortInUseBy = tracePortInUseBy;
+   @Override public String getPortInUseBy(DatabaseKind kind){
+        String inUseBy;
+        switch (kind) {
+            case STAGING:
+                inUseBy = stagingPortInUseBy;
+                break;
+            case FINAL:
+                inUseBy = finalPortInUseBy;
+                break;
+            case JOB:
+                inUseBy = jobPortInUseBy;
+                break;
+            case TRACE:
+                inUseBy = tracePortInUseBy;
+                break;
+            default:
+                throw new InvalidDBOperationError(kind, "check if port is in use");
+        }
+        return inUseBy;
     }
 
     @Override public boolean isServerVersionOk() {

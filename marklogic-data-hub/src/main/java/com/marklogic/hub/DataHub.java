@@ -93,37 +93,11 @@ public interface DataHub {
 
     boolean isSafeToInstall();
 
-    boolean isStagingPortInUse();
+    boolean isPortInUse(DatabaseKind kind);
 
-    void setStagingPortInUse(boolean stagingPortInUse);
+    void setPortInUseBy(DatabaseKind kind, String usedBy);
 
-    String getStagingPortInUseBy();
-
-    void setStagingPortInUseBy(String stagingPortInUseBy);
-
-    boolean isFinalPortInUse();
-
-    void setFinalPortInUse(boolean finalPortInUse);
-
-    String getFinalPortInUseBy();
-
-    void setFinalPortInUseBy(String finalPortInUseBy);
-
-    boolean isJobPortInUse();
-
-    void setJobPortInUse(boolean jobPortInUse);
-
-    String getJobPortInUseBy();
-
-    void setJobPortInUseBy(String jobPortInUseBy);
-
-    boolean isTracePortInUse();
-
-    void setTracePortInUse(boolean tracePortInUse);
-
-    String getTracePortInUseBy();
-
-    void setTracePortInUseBy(String tracePortInUseBy);
+    String getPortInUseBy(DatabaseKind kind);
 
     boolean isServerVersionOk();
 
