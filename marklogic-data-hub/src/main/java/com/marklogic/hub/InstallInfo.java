@@ -1,6 +1,5 @@
 package com.marklogic.hub;
 
-import com.marklogic.hub.error.InvalidDBOperationError;
 import com.marklogic.hub.impl.InstallInfoImpl;
 
 public interface InstallInfo {
