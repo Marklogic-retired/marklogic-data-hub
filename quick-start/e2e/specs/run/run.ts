@@ -8,8 +8,9 @@ import jobsPage from '../../page-objects/jobs/jobs';
 import browsePage from '../../page-objects/browse/browse';
 import viewerPage from '../../page-objects/viewer/viewer';
 import appPage from '../../page-objects/appPage';
+const fs = require('fs-extra');
 
-export default function() {
+export default function(tmpDir) {
   describe('Run Flows', () => {
     beforeAll(() => {
       flowPage.isLoaded();
@@ -78,7 +79,7 @@ export default function() {
       flowPage.isLoaded();
     });
 
-    it ('should setup Harmonize Products flow', function() {
+    /*it ('should setup Harmonize Products flow', function() {
       let contentWithOptionsFilePath = 'e2e/qa-data/plugins/contentWithOptions.sjs';
       flowPage.entityDisclosure('Product').click();
       browser.wait(EC.visibilityOf(flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE')));
@@ -95,6 +96,21 @@ export default function() {
       browser.executeScript('window.document.getElementById("jobs-tab").click()');
       flowPage.flowsTab.click();
       flowPage.isLoaded();
+    });*/
+
+    it ('should setup Harmonize Products flow', function() {
+      let contentWithOptionsFilePath = 'e2e/qa-data/plugins/contentWithOptions.sjs';
+      fs.copy(contentWithOptionsFilePath, tmpDir + '/plugins/entities/Product/harmonize/Harmonize\ Products/content.sjs');
+    });
+
+    it ('should redeploy modules', function() {
+      flowPage.redeployButton.click();
+      browser.wait(element(by.css('#last-deployed-time')).getText().then((txt) => {
+        return (
+          txt === 'Last Deployed: less than a minute ago' ||
+          txt === 'Last Deployed: 1 minute ago'
+        );
+      }));
     });
 
     it ('should logout and login', function() {
@@ -118,8 +134,9 @@ export default function() {
       browser.wait(EC.visibilityOf(flowPage.runHarmonizeButton()));
       expect(flowPage.runHarmonizeButton().isPresent()).toBe(true);
       console.log('Found the button and Clicking Run Harmonize button');
-      browser.actions().mouseMove(flowPage.runHarmonizeButton()).click().perform();
-      //flowPage.runHarmonizeButton().click();
+      //browser.executeScript('window.document.getElementsByClassName("edit-start")[1].click()');
+      flowPage.runHarmonizeButton().click();
+      console.log('clicked the button');
       browser.wait(EC.elementToBeClickable(flowPage.toastButton));
       flowPage.toastButton.click();
       flowPage.jobsTab.click();
