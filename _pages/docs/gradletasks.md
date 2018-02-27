@@ -237,10 +237,13 @@ Export job records and the traces that go with them. Does not affect the content
 
 <pre class="cmdline">
 gradle hubExportJobs \
-  -PjobIds=list-of-ids -Pfilename=export.zip
+  -PjobIds=list-of-ids \
+  -Pfilename=export.zip
 </pre>
 
 #### Parameters
-##### Required
-- **jobIds** - a comma-separated list of job IDs to delete
+##### Optional
+- **jobIds** - a comma-separated list of job IDs to export. Any traces
+  associated with those jobs will be exported.
 - **filename** - name of the zip file to be generated, including extension
+  (default: "jobexport.zip")
