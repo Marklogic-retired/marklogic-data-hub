@@ -61,5 +61,5 @@ describe('QuickStart', function () {
   runFlows(tmpobj.name);
   jobs();
   runTraces();
-  uninstall();
+  uninstall(tmpobj.name);
 });
