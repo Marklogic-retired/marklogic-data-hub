@@ -17,7 +17,6 @@ export default function(tmpDir) {
     });
 
     beforeEach(() => {
-      appPage.flowsTab.click();
       flowPage.isLoaded();
     });
 
