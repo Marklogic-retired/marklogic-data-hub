@@ -31,6 +31,10 @@ export class AppPage extends Page {
     return element(by.css('#jobs-tab'));
   }
 
+  get tracesTab() {
+    return element(by.css('#traces-tab'));
+  }
+
   get flowsTab() {
     return element(by.css('#flows-tab'));
   }
