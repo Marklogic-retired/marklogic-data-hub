@@ -20,7 +20,6 @@ import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
 
 import javax.net.ssl.SSLContext;
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 
@@ -65,176 +64,30 @@ public interface HubConfig {
 
     String getHost();
 
-    // staging
-    String getStagingDbName();
-    void setStagingDbName(String stagingDbName);
 
-    String getStagingHttpName();
-    void setStagingHttpName(String stagingHttpName);
+    String getDbName(DatabaseKind kind);
 
-    Integer getStagingForestsPerHost();
-    void setStagingForestsPerHost(Integer stagingForestsPerHost);
+    void setDbName(DatabaseKind kind, String dbName);
 
-    Integer getStagingPort();
-    void setStagingPort(Integer stagingPort);
+    String getHttpName(DatabaseKind kind);
 
-    String getStagingAuthMethod();
-    void setStagingAuthMethod(String stagingAuthMethod);
+    void setHttpName(DatabaseKind kind, String httpName);
 
-    String getStagingScheme();
-    void setStagingScheme(String stagingScheme);
+    Integer getForestsPerHost(DatabaseKind kind);
 
-    boolean getStagingSimpleSsl();
-    void setStagingSimpleSsl(boolean stagingSimpleSsl);
+    void setForestsPerHost(DatabaseKind kind, Integer forestsPerHost);
 
-    SSLContext getStagingSslContext();
+    Integer getPort(DatabaseKind kind);
+
+    void setPort(DatabaseKind kind, Integer port);
+
     void setStagingSslContext(SSLContext stagingSslContext);
 
-    DatabaseClientFactory.SSLHostnameVerifier getStagingSslHostnameVerifier();
     void setStagingSslHostnameVerifier(DatabaseClientFactory.SSLHostnameVerifier stagingSslHostnameVerifier);
 
-    String getStagingCertFile();
-    void setStagingCertFile(String stagingCertFile);
-
-    String getStagingCertPassword();
-    void setStagingCertPassword(String stagingCertPassword);
-
-    String getStagingExternalName();
-    void setStagingExternalName(String stagingExternalName);
-
-    // final
-    String getFinalDbName();
-    void setFinalDbName(String finalDbName);
-
-    String getFinalHttpName();
-    void setFinalHttpName(String finalHttpName);
-
-    Integer getFinalForestsPerHost();
-    void setFinalForestsPerHost(Integer finalForestsPerHost);
-
-    Integer getFinalPort();
-    void setFinalPort(Integer finalPort);
-
-    String getFinalAuthMethod();
-    void setFinalAuthMethod(String finalAuthMethod);
-
-    String getFinalScheme();
-    void setFinalScheme(String finalScheme);
-
-    boolean getFinalSimpleSsl();
-    void setFinalSimpleSsl(boolean finalSimpleSsl);
-
-    SSLContext getFinalSslContext();
     void setFinalSslContext(SSLContext finalSslContext);
 
-    DatabaseClientFactory.SSLHostnameVerifier getFinalSslHostnameVerifier();
     void setFinalSslHostnameVerifier(DatabaseClientFactory.SSLHostnameVerifier finalSslHostnameVerifier);
-
-    String getFinalCertFile();
-    void setFinalCertFile(String finalCertFile);
-
-    String getFinalCertPassword();
-    void setFinalCertPassword(String finalCertPassword);
-
-    String getFinalExternalName();
-    void setFinalExternalName(String finalExternalName);
-
-    // traces
-    String getTraceDbName();
-    void setTraceDbName(String traceDbName);
-
-    String getTraceHttpName();
-    void setTraceHttpName(String traceHttpName);
-
-    Integer getTraceForestsPerHost();
-    void setTraceForestsPerHost(Integer traceForestsPerHost);
-
-    Integer getTracePort();
-    void setTracePort(Integer tracePort);
-
-    String getTraceAuthMethod();
-    void setTraceAuthMethod(String traceAuthMethod);
-
-    String getTraceScheme();
-    void setTraceScheme(String traceScheme);
-
-
-    boolean getTraceSimpleSsl();
-    void setTraceSimpleSsl(boolean traceSimpleSsl);
-
-    SSLContext getTraceSslContext();
-    void setTraceSslContext(SSLContext traceSslContext);
-
-    DatabaseClientFactory.SSLHostnameVerifier getTraceSslHostnameVerifier();
-    void setTraceSslHostnameVerifier(DatabaseClientFactory.SSLHostnameVerifier traceSslHostnameVerifier);
-
-    String getTraceCertFile();
-    void setTraceCertFile(String traceCertFile);
-
-    String getTraceCertPassword();
-    void setTraceCertPassword(String traceCertPassword);
-
-    String getTraceExternalName();
-    void setTraceExternalName(String traceExternalName);
-
-    // jobs
-    String getJobDbName();
-    void setJobDbName(String jobDbName);
-
-    String getJobHttpName();
-    void setJobHttpName(String jobHttpName);
-
-    Integer getJobForestsPerHost();
-    void setJobForestsPerHost(Integer jobForestsPerHost);
-
-    Integer getJobPort();
-    void setJobPort(Integer jobPort);
-
-    String getJobAuthMethod();
-    void setJobAuthMethod(String jobAuthMethod);
-
-    String getJobScheme();
-    void setJobScheme(String jobScheme);
-
-    boolean getJobSimpleSsl();
-    void setJobSimpleSsl(boolean jobSimpleSsl);
-
-
-    SSLContext getJobSslContext();
-    void setJobSslContext(SSLContext jobSslContext);
-
-    DatabaseClientFactory.SSLHostnameVerifier getJobSslHostnameVerifier();
-    void setJobSslHostnameVerifier(DatabaseClientFactory.SSLHostnameVerifier jobSslHostnameVerifier);
-
-    String getJobCertFile();
-    void setJobCertFile(String jobCertFile);
-
-    String getJobCertPassword();
-    void setJobCertPassword(String jobCertPassword);
-
-    String getJobExternalName();
-    void setJobExternalName(String jobExternalName);
-
-    String getModulesDbName();
-    void setModulesDbName(String modulesDbName);
-
-    Integer getModulesForestsPerHost();
-    void setModulesForestsPerHost(Integer modulesForestsPerHost);
-
-
-    // triggers
-    String getTriggersDbName();
-    void setTriggersDbName(String triggersDbName);
-
-    Integer getTriggersForestsPerHost();
-    void setTriggersForestsPerHost(Integer triggersForestsPerHost);
-
-    // schemas
-    String getSchemasDbName();
-    void setSchemasDbName(String schemasDbName);
-
-    Integer getSchemasForestsPerHost();
-    void setSchemasForestsPerHost(Integer schemasForestsPerHost);
 
     // roles and users
     String getHubRoleName();
@@ -243,19 +96,14 @@ public interface HubConfig {
     String getHubUserName();
     void setHubUserName(String hubUserName);
 
-
     String[] getLoadBalancerHosts();
-    void setLoadBalancerHosts(String[] loadBalancerHosts);
 
     String getCustomForestPath();
-    void setCustomForestPath(String customForestPath);
 
     String getModulePermissions();
-    void setModulePermissions(String modulePermissions);
 
     String getProjectDir();
     void setProjectDir(String projectDir);
-
 
     HubProject getHubProject();
 
@@ -265,8 +113,6 @@ public interface HubConfig {
 
 
     String getUserModulesDeployTimestampFile();
-
-    File getUserContentDeployTimestampFile();
 
     DatabaseClient newAppServicesClient();
 
@@ -323,6 +169,7 @@ public interface HubConfig {
     Path getHubMimetypesDir();
 
     AppConfig getAppConfig();
+
     void setAppConfig(AppConfig config);
 
     void setAppConfig(AppConfig config, boolean skipUpdate);

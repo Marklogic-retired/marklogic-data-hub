@@ -112,38 +112,38 @@ public class DataHubImpl implements DataHub {
         InstallInfo installInfo = InstallInfo.create();
 
         ResourcesFragment srf = getServerManager().getAsXml();
-        installInfo.setAppServerExistent(DatabaseKind.STAGING, srf.resourceExists(hubConfig.getStagingHttpName()));
-        installInfo.setAppServerExistent(DatabaseKind.FINAL, srf.resourceExists(hubConfig.getFinalHttpName()));
-        installInfo.setAppServerExistent(DatabaseKind.TRACE, srf.resourceExists(hubConfig.getTraceHttpName()));
-        installInfo.setAppServerExistent(DatabaseKind.JOB, srf.resourceExists(hubConfig.getJobHttpName()));
+        installInfo.setAppServerExistent(DatabaseKind.STAGING, srf.resourceExists(hubConfig.getHttpName(DatabaseKind.STAGING)));
+        installInfo.setAppServerExistent(DatabaseKind.FINAL, srf.resourceExists(hubConfig.getHttpName(DatabaseKind.FINAL)));
+        installInfo.setAppServerExistent(DatabaseKind.TRACE, srf.resourceExists(hubConfig.getHttpName(DatabaseKind.TRACE)));
+        installInfo.setAppServerExistent(DatabaseKind.JOB, srf.resourceExists(hubConfig.getHttpName(DatabaseKind.JOB)));
 
         ResourcesFragment drf = getDatabaseManager().getAsXml();
-        installInfo.setDbExistent(DatabaseKind.STAGING, drf.resourceExists(hubConfig.getStagingDbName()));
-        installInfo.setDbExistent(DatabaseKind.FINAL, drf.resourceExists(hubConfig.getFinalDbName()));
-        installInfo.setDbExistent(DatabaseKind.TRACE, drf.resourceExists(hubConfig.getTraceDbName()));
-        installInfo.setDbExistent(DatabaseKind.JOB, drf.resourceExists(hubConfig.getJobDbName()));
+        installInfo.setDbExistent(DatabaseKind.STAGING, drf.resourceExists(hubConfig.getDbName(DatabaseKind.STAGING)));
+        installInfo.setDbExistent(DatabaseKind.FINAL, drf.resourceExists(hubConfig.getDbName(DatabaseKind.FINAL)));
+        installInfo.setDbExistent(DatabaseKind.TRACE, drf.resourceExists(hubConfig.getDbName(DatabaseKind.TRACE)));
+        installInfo.setDbExistent(DatabaseKind.JOB, drf.resourceExists(hubConfig.getDbName(DatabaseKind.JOB)));
 
         if (installInfo.isDbExistent(DatabaseKind.STAGING)) {
-            Fragment f = getDatabaseManager().getPropertiesAsXml(hubConfig.getStagingDbName());
+            Fragment f = getDatabaseManager().getPropertiesAsXml(hubConfig.getDbName(DatabaseKind.STAGING));
             installInfo.setTripleIndexOn(DatabaseKind.STAGING, Boolean.parseBoolean(f.getElementValue("//m:triple-index")));
             installInfo.setCollectionLexiconOn(DatabaseKind.STAGING, Boolean.parseBoolean(f.getElementValue("//m:collection-lexicon")));
             installInfo.setForestsExistent(DatabaseKind.STAGING, (f.getElements("//m:forest").size() > 0));
         }
 
         if (installInfo.isDbExistent(DatabaseKind.FINAL)) {
-            Fragment f = getDatabaseManager().getPropertiesAsXml(hubConfig.getFinalDbName());
+            Fragment f = getDatabaseManager().getPropertiesAsXml(hubConfig.getDbName(DatabaseKind.FINAL));
             installInfo.setTripleIndexOn(DatabaseKind.FINAL, Boolean.parseBoolean(f.getElementValue("//m:triple-index")));
             installInfo.setCollectionLexiconOn(DatabaseKind.FINAL, Boolean.parseBoolean(f.getElementValue("//m:collection-lexicon")));
             installInfo.setForestsExistent(DatabaseKind.FINAL, (f.getElements("//m:forest").size() > 0));
         }
 
         if (installInfo.isDbExistent(DatabaseKind.TRACE)) {
-            Fragment f = getDatabaseManager().getPropertiesAsXml(hubConfig.getTraceDbName());
+            Fragment f = getDatabaseManager().getPropertiesAsXml(hubConfig.getDbName(DatabaseKind.TRACE));
             installInfo.setForestsExistent(DatabaseKind.TRACE, (f.getElements("//m:forest").size() > 0));
         }
 
         if (installInfo.isDbExistent(DatabaseKind.JOB)) {
-            Fragment f = getDatabaseManager().getPropertiesAsXml(hubConfig.getJobDbName());
+            Fragment f = getDatabaseManager().getPropertiesAsXml(hubConfig.getDbName(DatabaseKind.JOB));
             installInfo.setForestsExistent(DatabaseKind.JOB, (f.getElements("//m:forest").size() > 0));
         }
 
@@ -236,7 +236,7 @@ public class DataHubImpl implements DataHub {
                     "    fn:matches(., \"/marklogic.rest.transform/(" + String.join("|", transforms) + ")/assets/(metadata\\.xml|transform\\.(xqy|sjs))\")\n" +
                     "  )\n" +
                     "] ! xdmp:document-delete(.)\n";
-            runInDatabase(query, hubConfig.getModulesDbName());
+            runInDatabase(query, hubConfig.getDbName(DatabaseKind.MODULES));
         }
         catch(FailedRequestException e) {
             logger.error("Failed to clear user modules");
@@ -263,26 +263,26 @@ public class DataHubImpl implements DataHub {
         Map<Integer, String> portsInUse = getServerPortsInUse();
         Set<Integer> ports = portsInUse.keySet();
 
-        String serverName = portsInUse.get(hubConfig.getStagingPort());
-        stagingPortInUse = ports.contains(hubConfig.getStagingPort()) && serverName != null && !serverName.equals(hubConfig.getStagingHttpName());
+        String serverName = portsInUse.get(hubConfig.getPort(DatabaseKind.STAGING));
+        stagingPortInUse = ports.contains(hubConfig.getPort(DatabaseKind.STAGING)) && serverName != null && !serverName.equals(hubConfig.getHttpName(DatabaseKind.STAGING));
         if (stagingPortInUse) {
             stagingPortInUseBy = serverName;
         }
 
-        serverName = portsInUse.get(hubConfig.getFinalPort());
-        finalPortInUse = ports.contains(hubConfig.getFinalPort()) && serverName != null && !serverName.equals(hubConfig.getFinalHttpName());
+        serverName = portsInUse.get(hubConfig.getPort(DatabaseKind.FINAL));
+        finalPortInUse = ports.contains(hubConfig.getPort(DatabaseKind.FINAL)) && serverName != null && !serverName.equals(hubConfig.getHttpName(DatabaseKind.FINAL));
         if (finalPortInUse) {
             finalPortInUseBy = serverName;
         }
 
-        serverName = portsInUse.get(hubConfig.getJobPort());
-        jobPortInUse = ports.contains(hubConfig.getJobPort()) && serverName != null && !serverName.equals(hubConfig.getJobHttpName());
+        serverName = portsInUse.get(hubConfig.getPort(DatabaseKind.JOB));
+        jobPortInUse = ports.contains(hubConfig.getPort(DatabaseKind.JOB)) && serverName != null && !serverName.equals(hubConfig.getHttpName(DatabaseKind.JOB));
         if (jobPortInUse) {
             jobPortInUseBy = serverName;
         }
 
-        serverName = portsInUse.get(hubConfig.getTracePort());
-        tracePortInUse = ports.contains(hubConfig.getTracePort()) && serverName != null && !serverName.equals(hubConfig.getTraceHttpName());
+        serverName = portsInUse.get(hubConfig.getPort(DatabaseKind.TRACE));
+        tracePortInUse = ports.contains(hubConfig.getPort(DatabaseKind.TRACE)) && serverName != null && !serverName.equals(hubConfig.getHttpName(DatabaseKind.TRACE));
         if (tracePortInUse) {
             tracePortInUseBy = serverName;
         }

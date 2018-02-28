@@ -239,10 +239,10 @@ public class HubTestBase {
         HubConfig hubConfig = HubConfigBuilder.newHubConfigBuilder(projectDir)
             .withPropertiesFromEnvironment("local")
             .build();
-        hubConfig.setStagingPort(stagingPort);
-        hubConfig.setFinalPort(finalPort);
-        hubConfig.setTracePort(tracePort);
-        hubConfig.setJobPort(jobPort);
+        hubConfig.setPort(DatabaseKind.STAGING, stagingPort);
+        hubConfig.setPort(DatabaseKind.FINAL, finalPort);
+        hubConfig.setPort(DatabaseKind.TRACE, tracePort);
+        hubConfig.setPort(DatabaseKind.JOB, jobPort);
         hubConfig.getAppConfig().setAppServicesUsername(user);
         hubConfig.getAppConfig().setAppServicesPassword(password);
         hubConfig.getAppConfig().setHost(host);

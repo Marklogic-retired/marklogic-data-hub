@@ -17,6 +17,7 @@ package com.marklogic.quickstart.web;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.InstallInfo;
 import com.marklogic.hub.Tracing;
@@ -190,7 +191,7 @@ public class CurrentProjectController extends EnvironmentAware implements FileSy
     @ResponseBody
     public ResponseEntity<?> clearDatabase() {
         HubConfig config = envConfig().getMlSettings();
-        String[] databases = { config.getStagingDbName(), config.getFinalDbName(), config.getJobDbName(), config.getTraceDbName() };
+        String[] databases = { config.getDbName(DatabaseKind.STAGING), config.getDbName(DatabaseKind.FINAL), config.getDbName(DatabaseKind.JOB), config.getDbName(DatabaseKind.TRACE) };
         for (String database: databases) {
             dataHubService.clearContent(envConfig().getMlSettings(), database);
         }

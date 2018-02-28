@@ -5,5 +5,7 @@ public enum DatabaseKind {
         FINAL,
         JOB,
         TRACE,
-        SCHEMA
+        SCHEMAS,
+        TRIGGERS,
+        MODULES
 }

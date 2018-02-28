@@ -26,6 +26,7 @@ import com.marklogic.client.extensions.ResourceServices;
 import com.marklogic.client.io.Format;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.util.RequestParameters;
+import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.collector.Collector;
 import com.marklogic.hub.collector.DiskQueue;
@@ -66,7 +67,7 @@ public class FlowRunnerImpl implements FlowRunner {
     public FlowRunnerImpl(HubConfig hubConfig) {
         this.hubConfig = hubConfig;
         this.sourceClient = hubConfig.newStagingClient();
-        this.destinationDatabase = hubConfig.getFinalDbName();
+        this.destinationDatabase = hubConfig.getDbName(DatabaseKind.FINAL);
     }
 
     @Override
