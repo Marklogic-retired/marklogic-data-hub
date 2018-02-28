@@ -45,7 +45,6 @@ describe('QuickStart', function () {
       // our Jenkins machine runs with a pretty low resolution, and we also
       // have an app that's misbehaving in smaller windows, so this is a delicate
       // setting
-      //.then(() => browser.driver.manage().window().setSize(width, height))
       .then(() => browser.driver.manage().window().maximize())
       .then(() => done())
     });
