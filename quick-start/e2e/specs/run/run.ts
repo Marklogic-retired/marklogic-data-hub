@@ -7,10 +7,16 @@ import flowPage from '../../page-objects/flows/flows';
 import jobsPage from '../../page-objects/jobs/jobs';
 import browsePage from '../../page-objects/browse/browse';
 import viewerPage from '../../page-objects/viewer/viewer';
+import appPage from '../../page-objects/appPage';
+const fs = require('fs-extra');
 
-export default function() {
+export default function(tmpDir) {
   describe('Run Flows', () => {
     beforeAll(() => {
+      flowPage.isLoaded();
+    });
+
+    beforeEach(() => {
       flowPage.isLoaded();
     });
 
@@ -34,7 +40,7 @@ export default function() {
       //verify on jobs page
       flowPage.jobsTab.click();
       jobsPage.isLoaded();
-      expect(jobsPage.finishedFlows.isPresent()).toBe(true);
+      expect(jobsPage.lastFinishedJob.isPresent()).toBe(true);
       //verify the output
       jobsPage.jobOutputByPosition(1).click();
       browser.wait(EC.visibilityOf(jobsPage.jobOutputTitle()));
@@ -45,6 +51,7 @@ export default function() {
       //verify on browse data page
       jobsPage.browseDataTab.click();
       browsePage.isLoaded();
+      browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
       expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 10 of 450');
       browsePage.databaseDropDown().click();
       browsePage.selectDatabase('STAGING').click();
@@ -73,28 +80,25 @@ export default function() {
     });
 
     it ('should setup Harmonize Products flow', function() {
+      //copy customized content.sjs
+      console.log('copy customized content.sjs');
       let contentWithOptionsFilePath = 'e2e/qa-data/plugins/contentWithOptions.sjs';
-      flowPage.entityDisclosure('Product').click();
-      browser.wait(EC.elementToBeClickable(flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE')));
-      flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE').click();
-      browser.wait(EC.visibilityOf(flowPage.tabs));
-      //change content.sjs to include flow options
-      flowPage.getFlowTab('content').click();
-      flowPage.pluginTextArea().click();
-      browser.actions().sendKeys(flowPage.ctrlA(), protractor.Key.DELETE, flowPage.readFileContent(contentWithOptionsFilePath)).perform();
-      browser.actions().sendKeys(flowPage.ctrlS()).perform();
-      browser.sleep(5000);
-      browser.executeScript('window.document.getElementById("jobs-tab").click()');
-      flowPage.flowsTab.click();
-      flowPage.isLoaded();
+      fs.copy(contentWithOptionsFilePath, tmpDir + '/plugins/entities/Product/harmonize/Harmonize\ Products/content.sjs');
     });
 
-    it ('should logout', function() {
+    it ('should redeploy modules', function() {
+      flowPage.redeployButton.click();
+      browser.wait(element(by.css('#last-deployed-time')).getText().then((txt) => {
+        return (
+          txt === 'Last Deployed: less than a minute ago' ||
+          txt === 'Last Deployed: 1 minute ago'
+        );
+      }));
+    });
+
+    it ('should logout and login', function() {
       flowPage.logout();
       loginPage.isLoaded();
-    });
-
-    it('should login', function() {
       loginPage.clickNext('ProjectDirTab');
       browser.wait(EC.elementToBeClickable(loginPage.environmentTab));
       loginPage.clickNext('EnvironmentTab');
@@ -104,13 +108,17 @@ export default function() {
 
     it('should run Harmonize Products flow', function() {
       flowPage.isLoaded();
+      console.log('clicking Product entity');
       flowPage.entityDisclosure('Product').click();
-      browser.wait(EC.elementToBeClickable(flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE')));
+      console.log('clicking Harmonize Products flow');
+      browser.wait(EC.visibilityOf(flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE')));
+      expect(flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE').isPresent()).toBe(true);
       flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE').click();
-      browser.wait(EC.visibilityOf(flowPage.tabs));
-      flowPage.getFlowTab('flowInfo').click();
-      browser.wait(EC.elementToBeClickable(flowPage.runHarmonizeButton()));
+      browser.wait(EC.visibilityOf(flowPage.runHarmonizeButton()));
+      expect(flowPage.runHarmonizeButton().isPresent()).toBe(true);
+      console.log('found the button and clicking Run Harmonize button');
       flowPage.runHarmonizeButton().click();
+      console.log('clicked the button');
       browser.wait(EC.elementToBeClickable(flowPage.toastButton));
       flowPage.toastButton.click();
       flowPage.jobsTab.click();
@@ -123,6 +131,7 @@ export default function() {
     it('should verify the harmonized data', function() {
       flowPage.browseDataTab.click();
       browsePage.isLoaded();
+      browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
       expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 10 of 450');
       browsePage.databaseDropDown().click();
       browsePage.selectDatabase('FINAL').click();
@@ -138,6 +147,7 @@ export default function() {
       expect(element(by.cssContainingText('.cm-variable', 'opt1')).isPresent()).toBe(true);
       expect(element(by.cssContainingText('.cm-string', 'world')).isPresent()).toBe(true);
       viewerPage.flowsTab.click();
+      flowPage.isLoaded();
     });
 
     it ('should open the TestEntity disclosure', function() {

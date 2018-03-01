@@ -1,7 +1,7 @@
 import runFlows from './run'
 
-export default function () {
+export default function (tmpDir) {
   describe('runFlows', function () {
-    runFlows()
+    runFlows(tmpDir)
   })
 }
