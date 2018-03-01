@@ -11,7 +11,8 @@ The Data Hub Framework ensures best practices are followed when building Data Hu
 There are several ways to run Input flows.
 
 1. [QuickStart UI](quickstart.md) - A user interface for developing against the DHF.  
-Use the Quickstart tool if want to get started with DHF quickly.
+Use the Quickstart tool if want to get started with DHF quickly (for development
+ only; not supported for production use).
 1. [MLCP (MarkLogic Content Pump)](mlcp.md) - A command-line utility for ingesting content into MarkLogic.  
 Use MLCP if you need to easily load data into MarkLogic via the command line.
 1. [MarkLogic Java Client API](javaclientapi.md) - A Java API for interacting with MarkLogic.  

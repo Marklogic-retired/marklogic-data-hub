@@ -7,6 +7,8 @@ permalink: /ingest/quickstart/
 ### Ingesting with the Quickstart UI
 Before you can ingest, make sure you created a DHF project with [QuickStart](../project/quickstart.md) or with the [Gradle Plugin](../project/gradle.md).
 
+Please note, QuickStart is not supported for production use.
+
 #### Create an Entity
 
 See our [Tutorial](../tutorial/create-product-entity.md) for an example of creating an entity.
