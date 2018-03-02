@@ -32,11 +32,13 @@ export default function() {
         jobsPage.searchBox().sendKeys('input');
         jobsPage.searchButton().click();
         browser.wait(EC.visibilityOf(jobsPage.jobResults()));
-        // bug -- should be showing 5 results
-        expect(jobsPage.jobResults().getText()).toContain('Showing Results 1 to 6 of 6');
+        expect(jobsPage.jobResults().getText()).toContain('Showing Results 1 to 5 of 5');
       });
 
       it ('search with facet for finished jobs', function() {
+        jobsPage.searchBox().clear();
+        jobsPage.searchButton().click();
+        browser.wait(EC.visibilityOf(jobsPage.jobResults()));
         jobsPage.facetButton('FINISHED').click();
         browser.wait(EC.visibilityOf(jobsPage.jobResults()));
         expect(jobsPage.jobResults().getText()).toContain('Showing Results 1 to 5 of 5');

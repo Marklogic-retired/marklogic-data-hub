@@ -32,25 +32,25 @@ public class HubProjectTest extends HubTestBase {
     @Test
     public void testInit() throws IOException {
         HubConfig config = getHubConfig();
-        config.setStagingHttpName("my-crazy-test-staging");
-        config.setStagingDbName("my-crazy-test-staging");
-        config.setStagingForestsPerHost(100);
-        config.setStagingPort(1111);
+        config.setHttpName(DatabaseKind.STAGING, "my-crazy-test-staging");
+        config.setDbName(DatabaseKind.STAGING, "my-crazy-test-staging");
+        config.setForestsPerHost(DatabaseKind.STAGING, 100);
+        config.setPort(DatabaseKind.STAGING, 1111);
 
-        config.setFinalHttpName("my-crazy-test-final");
-        config.setFinalDbName("my-crazy-test-final");
-        config.setFinalForestsPerHost(100);
-        config.setFinalPort(2222);
+        config.setHttpName(DatabaseKind.FINAL, "my-crazy-test-final");
+        config.setDbName(DatabaseKind.FINAL, "my-crazy-test-final");
+        config.setForestsPerHost(DatabaseKind.FINAL, 100);
+        config.setPort(DatabaseKind.FINAL, 2222);
 
-        config.setTraceHttpName("my-crazy-test-trace");
-        config.setTraceDbName("my-crazy-test-trace");
-        config.setTraceForestsPerHost(100);
-        config.setTracePort(3333);
+        config.setHttpName(DatabaseKind.TRACE, "my-crazy-test-trace");
+        config.setDbName(DatabaseKind.TRACE, "my-crazy-test-trace");
+        config.setForestsPerHost(DatabaseKind.TRACE, 100);
+        config.setPort(DatabaseKind.TRACE, 3333);
 
-        config.setModulesForestsPerHost(3);
-        config.setTriggersForestsPerHost(4);
+        config.setForestsPerHost(DatabaseKind.MODULES,3);
+        config.setForestsPerHost(DatabaseKind.TRIGGERS, 4);
 
-        config.setSchemasForestsPerHost(5);
+        config.setForestsPerHost(DatabaseKind.SCHEMAS, 5);
 
         config.setHubRoleName("myrole");
         config.setHubUserName("myuser");
@@ -105,34 +105,34 @@ public class HubProjectTest extends HubTestBase {
         assertEquals("9001", props.getProperty("mlAdminPort"));
         assertEquals("9002", props.getProperty("mlManagePort"));
 
-        assertEquals(config.getStagingHttpName(), props.getProperty("mlStagingAppserverName"));
-        assertEquals(config.getStagingPort().toString(), props.getProperty("mlStagingPort"));
-        assertEquals(config.getStagingDbName(), props.getProperty("mlStagingDbName"));
-        assertEquals(config.getStagingForestsPerHost().toString(), props.getProperty("mlStagingForestsPerHost"));
+        assertEquals(config.getHttpName(DatabaseKind.STAGING), props.getProperty("mlStagingAppserverName"));
+        assertEquals(config.getPort(DatabaseKind.STAGING).toString(), props.getProperty("mlStagingPort"));
+        assertEquals(config.getDbName(DatabaseKind.STAGING), props.getProperty("mlStagingDbName"));
+        assertEquals(config.getForestsPerHost(DatabaseKind.STAGING).toString(), props.getProperty("mlStagingForestsPerHost"));
 
-        assertEquals(config.getFinalHttpName(), props.getProperty("mlFinalAppserverName"));
-        assertEquals(config.getFinalPort().toString(), props.getProperty("mlFinalPort"));
-        assertEquals(config.getFinalDbName(), props.getProperty("mlFinalDbName"));
-        assertEquals(config.getFinalForestsPerHost().toString(), props.getProperty("mlFinalForestsPerHost"));
+        assertEquals(config.getHttpName(DatabaseKind.FINAL), props.getProperty("mlFinalAppserverName"));
+        assertEquals(config.getPort(DatabaseKind.FINAL).toString(), props.getProperty("mlFinalPort"));
+        assertEquals(config.getDbName(DatabaseKind.FINAL), props.getProperty("mlFinalDbName"));
+        assertEquals(config.getForestsPerHost(DatabaseKind.FINAL).toString(), props.getProperty("mlFinalForestsPerHost"));
 
-        assertEquals(config.getTraceHttpName(), props.getProperty("mlTraceAppserverName"));
-        assertEquals(config.getTracePort().toString(), props.getProperty("mlTracePort"));
-        assertEquals(config.getTraceDbName(), props.getProperty("mlTraceDbName"));
-        assertEquals(config.getTraceForestsPerHost().toString(), props.getProperty("mlTraceForestsPerHost"));
+        assertEquals(config.getHttpName(DatabaseKind.TRACE), props.getProperty("mlTraceAppserverName"));
+        assertEquals(config.getPort(DatabaseKind.TRACE).toString(), props.getProperty("mlTracePort"));
+        assertEquals(config.getDbName(DatabaseKind.TRACE), props.getProperty("mlTraceDbName"));
+        assertEquals(config.getForestsPerHost(DatabaseKind.TRACE).toString(), props.getProperty("mlTraceForestsPerHost"));
 
-        assertEquals(config.getJobHttpName(), props.getProperty("mlJobAppserverName"));
-        assertEquals(config.getJobPort().toString(), props.getProperty("mlJobPort"));
-        assertEquals(config.getJobDbName(), props.getProperty("mlJobDbName"));
-        assertEquals(config.getJobForestsPerHost().toString(), props.getProperty("mlJobForestsPerHost"));
+        assertEquals(config.getHttpName(DatabaseKind.JOB), props.getProperty("mlJobAppserverName"));
+        assertEquals(config.getPort(DatabaseKind.JOB).toString(), props.getProperty("mlJobPort"));
+        assertEquals(config.getDbName(DatabaseKind.JOB), props.getProperty("mlJobDbName"));
+        assertEquals(config.getForestsPerHost(DatabaseKind.JOB).toString(), props.getProperty("mlJobForestsPerHost"));
 
-        assertEquals(config.getModulesDbName(), props.getProperty("mlModulesDbName"));
-        assertEquals(config.getModulesForestsPerHost().toString(), props.getProperty("mlModulesForestsPerHost"));
+        assertEquals(config.getDbName(DatabaseKind.MODULES), props.getProperty("mlModulesDbName"));
+        assertEquals(config.getForestsPerHost(DatabaseKind.MODULES).toString(), props.getProperty("mlModulesForestsPerHost"));
 
-        assertEquals(config.getTriggersDbName(), props.getProperty("mlTriggersDbName"));
-        assertEquals(config.getTriggersForestsPerHost().toString(), props.getProperty("mlTriggersForestsPerHost"));
+        assertEquals(config.getDbName(DatabaseKind.TRIGGERS), props.getProperty("mlTriggersDbName"));
+        assertEquals(config.getForestsPerHost(DatabaseKind.TRIGGERS).toString(), props.getProperty("mlTriggersForestsPerHost"));
 
-        assertEquals(config.getSchemasDbName(), props.getProperty("mlSchemasDbName"));
-        assertEquals(config.getSchemasForestsPerHost().toString(), props.getProperty("mlSchemasForestsPerHost"));
+        assertEquals(config.getDbName(DatabaseKind.SCHEMAS), props.getProperty("mlSchemasDbName"));
+        assertEquals(config.getForestsPerHost(DatabaseKind.SCHEMAS).toString(), props.getProperty("mlSchemasForestsPerHost"));
 
         assertEquals(config.getHubRoleName(), props.getProperty("mlHubUserRole"));
         assertEquals(config.getHubUserName(), props.getProperty("mlHubUserName"));

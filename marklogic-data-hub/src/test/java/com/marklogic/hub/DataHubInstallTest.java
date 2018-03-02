@@ -183,7 +183,7 @@ public class DataHubInstallTest extends HubTestBase {
         URL url = DataHubInstallTest.class.getClassLoader().getResource("data-hub-test");
         String path = Paths.get(url.toURI()).toFile().getAbsolutePath();
         HubConfig hubConfig = getHubConfig(path);
-        DataHub dataHub = new DataHub(hubConfig);
+        DataHub dataHub = DataHub.create(hubConfig);
         dataHub.clearUserModules();
 
         int totalCount = getDocCount(HubConfig.DEFAULT_MODULES_DB_NAME, null);

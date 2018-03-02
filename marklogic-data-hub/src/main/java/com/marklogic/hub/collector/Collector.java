@@ -17,14 +17,9 @@ package com.marklogic.hub.collector;
 
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.hub.HubConfig;
-import com.marklogic.hub.HubDatabase;
 import com.marklogic.hub.flow.CodeFormat;
-import com.marklogic.hub.flow.FlowType;
 
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
 import java.util.Map;
-import java.util.Properties;
 
 public interface Collector {
 

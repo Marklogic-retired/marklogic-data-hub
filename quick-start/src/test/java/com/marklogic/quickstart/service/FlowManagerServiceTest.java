@@ -1,3 +1,20 @@
+/*
+ * Copyright 2012-2018 MarkLogic Corporation
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ */
+
 package com.marklogic.quickstart.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -58,7 +75,7 @@ public class FlowManagerServiceTest extends HubTestBase {
         FileUtils.deleteDirectory(projectDir.toFile());
         installHub();
 
-        Scaffolding scaffolding = new Scaffolding(projectDir.toString(), stagingClient);
+        Scaffolding scaffolding = Scaffolding.create(projectDir.toString(), stagingClient);
         scaffolding.createEntity(ENTITY);
         scaffolding.createFlow(ENTITY, "sjs-json-input-flow", FlowType.INPUT,
             CodeFormat.JAVASCRIPT, DataFormat.JSON);
@@ -135,7 +152,7 @@ public class FlowManagerServiceTest extends HubTestBase {
 
         String flowName = "sjs-json-input-flow";
 
-        FlowManager flowManager = new FlowManager(getHubConfig());
+        FlowManager flowManager = FlowManager.create(getHubConfig());
         Flow flow = flowManager.getFlow(ENTITY, flowName, FlowType.INPUT);
 
         ObjectMapper objectMapper = new ObjectMapper();
@@ -183,7 +200,7 @@ public class FlowManagerServiceTest extends HubTestBase {
         setEnvConfig(envConfig);
 
         String flowName = "sjs-json-harmonization-flow";
-        FlowManager flowManager = new FlowManager(getHubConfig());
+        FlowManager flowManager = FlowManager.create(getHubConfig());
         Flow flow = flowManager.getFlow(ENTITY, flowName, FlowType.HARMONIZE);
 
         HubConfig hubConfig = getHubConfig();
@@ -226,7 +243,7 @@ public class FlowManagerServiceTest extends HubTestBase {
         setEnvConfig(envConfig);
 
         String flowName = "sjs-json-harmonization-flow";
-        FlowManager flowManager = new FlowManager(getHubConfig());
+        FlowManager flowManager = FlowManager.create(getHubConfig());
         Flow flow = flowManager.getFlow(ENTITY, flowName, FlowType.HARMONIZE);
 
         HubConfig hubConfig = getHubConfig();

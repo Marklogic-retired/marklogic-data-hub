@@ -133,7 +133,7 @@ public class LoadUserModulesCommand extends AbstractCommand {
 
     @Override
     public void execute(CommandContext context) {
-        FlowManager flowManager = new FlowManager(hubConfig);
+        FlowManager flowManager = FlowManager.create(hubConfig);
         List<String> legacyFlows = flowManager.getLegacyFlows();
         if (legacyFlows.size() > 0) {
             throw new LegacyFlowsException(legacyFlows);
@@ -163,8 +163,8 @@ public class LoadUserModulesCommand extends AbstractCommand {
         }
 
         // deploy the auto-generated ES search options
-        EntityManager entityManager = new EntityManager(hubConfig);
-        entityManager.deploySearchOptions();
+        EntityManager entityManager = EntityManager.create(hubConfig);
+        entityManager.deployQueryOptions();
 
         try {
             if (startPath.toFile().exists()) {

@@ -1,17 +1,18 @@
 /*
  * Copyright 2012-2018 MarkLogic Corporation
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
  */
 package com.marklogic.quickstart.service;
 
@@ -124,7 +125,7 @@ public class EntityManagerService {
     }
 
     public EntityModel createEntity(String projectDir, EntityModel newEntity) throws IOException {
-        Scaffolding scaffolding = new Scaffolding(projectDir, envConfig().getFinalClient());
+        Scaffolding scaffolding = Scaffolding.create(projectDir, envConfig().getFinalClient());
         scaffolding.createEntity(newEntity.getName());
 
         if (newEntity.inputFlows != null) {
@@ -202,12 +203,12 @@ public class EntityManagerService {
     }
 
     public void deploySearchOptions(EnvironmentConfig environmentConfig) {
-        EntityManager em = new EntityManager(environmentConfig.getMlSettings());
-        em.deploySearchOptions();
+        EntityManager em = EntityManager.create(environmentConfig.getMlSettings());
+        em.deployQueryOptions();
     }
 
     public void saveDbIndexes(EnvironmentConfig environmentConfig) {
-        EntityManager em = new EntityManager(environmentConfig.getMlSettings());
+        EntityManager em = EntityManager.create(environmentConfig.getMlSettings());
         em.saveDbIndexes();
     }
 
@@ -300,14 +301,14 @@ public class EntityManagerService {
     }
 
     public FlowModel createFlow(String projectDir, String entityName, FlowType flowType, FlowModel newFlow) throws IOException {
-        Scaffolding scaffolding = new Scaffolding(projectDir, envConfig().getFinalClient());
+        Scaffolding scaffolding = Scaffolding.create(projectDir, envConfig().getFinalClient());
         newFlow.entityName = entityName;
         scaffolding.createFlow(entityName, newFlow.flowName, flowType, newFlow.codeFormat, newFlow.dataFormat, newFlow.useEsModel);
         return getFlow(entityName, flowType, newFlow.flowName);
     }
 
     public void deleteFlow(String projectDir, String entityName, String flowName, FlowType flowType) throws IOException {
-        Scaffolding scaffolding = new Scaffolding(projectDir, envConfig().getFinalClient());
+        Scaffolding scaffolding = Scaffolding.create(projectDir, envConfig().getFinalClient());
         Path flowDir = scaffolding.getFlowDir(entityName, flowName, flowType);
         FileUtils.deleteDirectory(flowDir.toFile());
     }
@@ -326,7 +327,7 @@ public class EntityManagerService {
         else {
             type = "xquery";
         }
-        EntitiesValidator validator = new EntitiesValidator(config.newStagingClient());
+        EntitiesValidator validator = EntitiesValidator.create(config.newStagingClient());
         return validator.validate(entityName, flowName, plugin.fileContents.replaceAll("\\.(sjs|xqy)", ""), type, plugin.fileContents);
     }
 
