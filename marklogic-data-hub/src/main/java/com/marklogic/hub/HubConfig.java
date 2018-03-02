@@ -15,17 +15,12 @@
  */
 package com.marklogic.hub;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
-import com.marklogic.mgmt.ManageClient;
-import com.marklogic.mgmt.ManageConfig;
-import com.marklogic.mgmt.admin.AdminConfig;
-import com.marklogic.mgmt.admin.AdminManager;
+import com.marklogic.hub.impl.HubConfigImpl;
 
 import javax.net.ssl.SSLContext;
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 
@@ -41,8 +36,8 @@ public interface HubConfig {
     String HUB_CONFIG_DIR = "hub-internal-config";
     String USER_CONFIG_DIR = "user-config";
     String ENTITY_CONFIG_DIR = "entity-config";
-    String STAGING_ENTITY_SEARCH_OPTIONS_FILE = "staging-entity-options.xml";
-    String FINAL_ENTITY_SEARCH_OPTIONS_FILE = "final-entity-options.xml";
+    String STAGING_ENTITY_QUERY_OPTIONS_FILE = "staging-entity-options.xml";
+    String FINAL_ENTITY_QUERY_OPTIONS_FILE = "final-entity-options.xml";
 
     String DEFAULT_STAGING_NAME = "data-hub-STAGING";
     String DEFAULT_FINAL_NAME = "data-hub-FINAL";
@@ -70,182 +65,32 @@ public interface HubConfig {
 
     String getHost();
 
-    // staging
-    String getStagingDbName();
-    void setStagingDbName(String stagingDbName);
+    static HubConfig create(String projectDir) {
+        return new HubConfigImpl(projectDir);
+    }
+    String getDbName(DatabaseKind kind);
 
-    String getStagingHttpName();
-    void setStagingHttpName(String stagingHttpName);
+    void setDbName(DatabaseKind kind, String dbName);
 
-    Integer getStagingForestsPerHost();
-    void setStagingForestsPerHost(Integer stagingForestsPerHost);
+    String getHttpName(DatabaseKind kind);
 
-    Integer getStagingPort();
-    void setStagingPort(Integer stagingPort);
+    void setHttpName(DatabaseKind kind, String httpName);
 
-    String getStagingAuthMethod();
-    void setStagingAuthMethod(String stagingAuthMethod);
+    Integer getForestsPerHost(DatabaseKind kind);
 
-    String getStagingScheme();
-    void setStagingScheme(String stagingScheme);
+    void setForestsPerHost(DatabaseKind kind, Integer forestsPerHost);
 
-    boolean getStagingSimpleSsl();
-    void setStagingSimpleSsl(boolean stagingSimpleSsl);
+    Integer getPort(DatabaseKind kind);
 
-    @JsonIgnore
-    SSLContext getStagingSslContext();
+    void setPort(DatabaseKind kind, Integer port);
+
     void setStagingSslContext(SSLContext stagingSslContext);
 
-    @JsonIgnore
-    DatabaseClientFactory.SSLHostnameVerifier getStagingSslHostnameVerifier();
     void setStagingSslHostnameVerifier(DatabaseClientFactory.SSLHostnameVerifier stagingSslHostnameVerifier);
 
-    String getStagingCertFile();
-    void setStagingCertFile(String stagingCertFile);
-
-    String getStagingCertPassword();
-    void setStagingCertPassword(String stagingCertPassword);
-
-    String getStagingExternalName();
-    void setStagingExternalName(String stagingExternalName);
-
-    // final
-    String getFinalDbName();
-    void setFinalDbName(String finalDbName);
-
-    String getFinalHttpName();
-    void setFinalHttpName(String finalHttpName);
-
-    Integer getFinalForestsPerHost();
-    void setFinalForestsPerHost(Integer finalForestsPerHost);
-
-    Integer getFinalPort();
-    void setFinalPort(Integer finalPort);
-
-    String getFinalAuthMethod();
-    void setFinalAuthMethod(String finalAuthMethod);
-
-    String getFinalScheme();
-    void setFinalScheme(String finalScheme);
-
-    @JsonIgnore
-    boolean getFinalSimpleSsl();
-    void setFinalSimpleSsl(boolean finalSimpleSsl);
-
-    @JsonIgnore
-    SSLContext getFinalSslContext();
     void setFinalSslContext(SSLContext finalSslContext);
 
-    DatabaseClientFactory.SSLHostnameVerifier getFinalSslHostnameVerifier();
     void setFinalSslHostnameVerifier(DatabaseClientFactory.SSLHostnameVerifier finalSslHostnameVerifier);
-
-    String getFinalCertFile();
-    void setFinalCertFile(String finalCertFile);
-
-    String getFinalCertPassword();
-    void setFinalCertPassword(String finalCertPassword);
-
-    String getFinalExternalName();
-    void setFinalExternalName(String finalExternalName);
-
-    // traces
-    String getTraceDbName();
-    void setTraceDbName(String traceDbName);
-
-    String getTraceHttpName();
-    void setTraceHttpName(String traceHttpName);
-
-    Integer getTraceForestsPerHost();
-    void setTraceForestsPerHost(Integer traceForestsPerHost);
-
-    Integer getTracePort();
-    void setTracePort(Integer tracePort);
-
-    String getTraceAuthMethod();
-    void setTraceAuthMethod(String traceAuthMethod);
-
-    String getTraceScheme();
-    void setTraceScheme(String traceScheme);
-
-    @JsonIgnore
-    boolean getTraceSimpleSsl();
-    void setTraceSimpleSsl(boolean traceSimpleSsl);
-
-    @JsonIgnore
-    SSLContext getTraceSslContext();
-    void setTraceSslContext(SSLContext traceSslContext);
-
-    DatabaseClientFactory.SSLHostnameVerifier getTraceSslHostnameVerifier();
-    void setTraceSslHostnameVerifier(DatabaseClientFactory.SSLHostnameVerifier traceSslHostnameVerifier);
-
-    String getTraceCertFile();
-    void setTraceCertFile(String traceCertFile);
-
-    String getTraceCertPassword();
-    void setTraceCertPassword(String traceCertPassword);
-
-    String getTraceExternalName();
-    void setTraceExternalName(String traceExternalName);
-
-    // jobs
-    String getJobDbName();
-    void setJobDbName(String jobDbName);
-
-    String getJobHttpName();
-    void setJobHttpName(String jobHttpName);
-
-    Integer getJobForestsPerHost();
-    void setJobForestsPerHost(Integer jobForestsPerHost);
-
-    Integer getJobPort();
-    void setJobPort(Integer jobPort);
-
-    String getJobAuthMethod();
-    void setJobAuthMethod(String jobAuthMethod);
-
-    String getJobScheme();
-    void setJobScheme(String jobScheme);
-
-    boolean getJobSimpleSsl();
-    void setJobSimpleSsl(boolean jobSimpleSsl);
-
-    @JsonIgnore
-    SSLContext getJobSslContext();
-    void setJobSslContext(SSLContext jobSslContext);
-
-    @JsonIgnore
-    DatabaseClientFactory.SSLHostnameVerifier getJobSslHostnameVerifier();
-    void setJobSslHostnameVerifier(DatabaseClientFactory.SSLHostnameVerifier jobSslHostnameVerifier);
-
-    String getJobCertFile();
-    void setJobCertFile(String jobCertFile);
-
-    String getJobCertPassword();
-    void setJobCertPassword(String jobCertPassword);
-
-    String getJobExternalName();
-    void setJobExternalName(String jobExternalName);
-
-    String getModulesDbName();
-    void setModulesDbName(String modulesDbName);
-
-    Integer getModulesForestsPerHost();
-    void setModulesForestsPerHost(Integer modulesForestsPerHost);
-
-
-    // triggers
-    String getTriggersDbName();
-    void setTriggersDbName(String triggersDbName);
-
-    Integer getTriggersForestsPerHost();
-    void setTriggersForestsPerHost(Integer triggersForestsPerHost);
-
-    // schemas
-    String getSchemasDbName();
-    void setSchemasDbName(String schemasDbName);
-
-    Integer getSchemasForestsPerHost();
-    void setSchemasForestsPerHost(Integer schemasForestsPerHost);
 
     // roles and users
     String getHubRoleName();
@@ -254,44 +99,23 @@ public interface HubConfig {
     String getHubUserName();
     void setHubUserName(String hubUserName);
 
-
     String[] getLoadBalancerHosts();
-    void setLoadBalancerHosts(String[] loadBalancerHosts);
 
     String getCustomForestPath();
-    void setCustomForestPath(String customForestPath);
 
     String getModulePermissions();
-    void setModulePermissions(String modulePermissions);
 
     String getProjectDir();
     void setProjectDir(String projectDir);
 
-    @JsonIgnore
     HubProject getHubProject();
 
     void initHubProject();
 
-    @JsonIgnore
     String getHubModulesDeployTimestampFile();
-    @JsonIgnore
+
+
     String getUserModulesDeployTimestampFile();
-    @JsonIgnore
-    File getUserContentDeployTimestampFile();
-
-    @JsonIgnore
-    ManageConfig getManageConfig();
-    void setManageConfig(ManageConfig manageConfig);
-    @JsonIgnore
-    ManageClient getManageClient();
-    void setManageClient(ManageClient manageClient);
-
-    @JsonIgnore
-    AdminConfig getAdminConfig();
-    void setAdminConfig(AdminConfig adminConfig);
-    @JsonIgnore
-    AdminManager getAdminManager();
-    void setAdminManager(AdminManager adminManager);
 
     DatabaseClient newAppServicesClient();
 
@@ -327,34 +151,28 @@ public interface HubConfig {
      */
     DatabaseClient newModulesDbClient();
 
-    @JsonIgnore
     Path getHubPluginsDir();
-    @JsonIgnore
     Path getHubEntitiesDir();
 
-    @JsonIgnore
     Path getHubConfigDir();
-    @JsonIgnore
     Path getHubDatabaseDir();
-    @JsonIgnore
     Path getHubServersDir();
-    @JsonIgnore
     Path getHubSecurityDir();
-    @JsonIgnore
+
     Path getUserSecurityDir();
-    @JsonIgnore
+
     Path getUserConfigDir();
-    @JsonIgnore
+
     Path getUserDatabaseDir();
-    @JsonIgnore
+
     Path getEntityDatabaseDir();
-    @JsonIgnore
+
     Path getUserServersDir();
-    @JsonIgnore
+
     Path getHubMimetypesDir();
 
-    @JsonIgnore
     AppConfig getAppConfig();
+
     void setAppConfig(AppConfig config);
 
     void setAppConfig(AppConfig config, boolean skipUpdate);

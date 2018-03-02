@@ -23,8 +23,10 @@ import com.marklogic.client.DatabaseClientFactory;
 import com.marklogic.client.ext.DatabaseClientConfig;
 import com.marklogic.client.ext.SecurityContextType;
 import com.marklogic.client.ext.modulesloader.ssl.SimpleX509TrustManager;
+import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubProject;
+import com.marklogic.hub.error.InvalidDBOperationError;
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.ManageConfig;
 import com.marklogic.mgmt.admin.AdminConfig;
@@ -135,37 +137,204 @@ public class HubConfigImpl implements HubConfig {
     public HubConfigImpl(String projectDir) {
         setProjectDir(new File(projectDir).getAbsolutePath());
     }
-    public HubConfigImpl() {}
 
 
     public String getHost() { return appConfig.getHost(); }
 
-    public String getStagingDbName() {
-        return stagingDbName;
-    }
-    public void setStagingDbName(String stagingDbName) {
-        this.stagingDbName = stagingDbName;
+    @Override public String getDbName(DatabaseKind kind){
+        String name;
+        switch (kind) {
+            case STAGING:
+                name = stagingDbName;
+                break;
+            case FINAL:
+                name = finalDbName;
+                break;
+            case JOB:
+                name = jobDbName;
+                break;
+            case TRACE:
+                name = traceDbName;
+                break;
+            case MODULES:
+                name = modulesDbName;
+                break;
+            case TRIGGERS:
+                name = triggersDbName;
+                break;
+            case SCHEMAS:
+                name = schemasDbName;
+                break;
+            default:
+                throw new InvalidDBOperationError(kind, "grab database name");
+        }
+        return name;
     }
 
-    public String getStagingHttpName() {
-        return stagingHttpName;
-    }
-    public void setStagingHttpName(String stagingHttpName) {
-        this.stagingHttpName = stagingHttpName;
+    @Override public void setDbName(DatabaseKind kind, String dbName){
+        switch (kind) {
+            case STAGING:
+                stagingDbName = dbName;
+                break;
+            case FINAL:
+                finalDbName = dbName;
+                break;
+            case JOB:
+                jobDbName = dbName;
+                break;
+            case TRACE:
+                traceDbName = dbName;
+                break;
+            case MODULES:
+                modulesDbName = dbName;
+                break;
+            case TRIGGERS:
+                triggersDbName = dbName;
+                break;
+            case SCHEMAS:
+                schemasDbName = dbName;
+                break;
+            default:
+                throw new InvalidDBOperationError(kind, "set database name");
+        }
     }
 
-    public Integer getStagingForestsPerHost() {
-        return stagingForestsPerHost;
-    }
-    public void setStagingForestsPerHost(Integer stagingForestsPerHost) {
-        this.stagingForestsPerHost = stagingForestsPerHost;
+    @Override public String getHttpName(DatabaseKind kind){
+        String name;
+        switch (kind) {
+            case STAGING:
+                name = stagingHttpName;
+                break;
+            case FINAL:
+                name = finalHttpName;
+                break;
+            case JOB:
+                name = jobHttpName;
+                break;
+            case TRACE:
+                name = traceHttpName;
+                break;
+            default:
+                throw new InvalidDBOperationError(kind, "grab http name");
+        }
+        return name;
     }
 
-    public Integer getStagingPort() {
-        return stagingPort;
+    @Override public void setHttpName(DatabaseKind kind, String httpName){
+        switch (kind) {
+            case STAGING:
+                stagingHttpName = httpName;
+                break;
+            case FINAL:
+                finalHttpName = httpName;
+                break;
+            case JOB:
+                jobHttpName = httpName;
+                break;
+            case TRACE:
+                traceHttpName = httpName;
+                break;
+            default:
+                throw new InvalidDBOperationError(kind, "set http name");
+        }
     }
-    public void setStagingPort(Integer stagingPort) {
-        this.stagingPort = stagingPort;
+
+    @Override public Integer getForestsPerHost(DatabaseKind kind){
+        Integer forests;
+        switch (kind) {
+            case STAGING:
+                forests = stagingForestsPerHost;
+                break;
+            case FINAL:
+                forests = finalForestsPerHost;
+                break;
+            case JOB:
+                forests = jobForestsPerHost;
+                break;
+            case TRACE:
+                forests = traceForestsPerHost;
+                break;
+            case MODULES:
+                forests = modulesForestsPerHost;
+                break;
+            case TRIGGERS:
+                forests = triggersForestsPerHost;
+                break;
+            case SCHEMAS:
+                forests = schemasForestsPerHost;
+                break;
+            default:
+                throw new InvalidDBOperationError(kind, "grab count of forests per host");
+        }
+        return forests;
+    }
+
+    @Override public void setForestsPerHost(DatabaseKind kind, Integer forestsPerHost){
+        switch (kind) {
+            case STAGING:
+                stagingForestsPerHost = forestsPerHost;
+                break;
+            case FINAL:
+                finalForestsPerHost = forestsPerHost;
+                break;
+            case JOB:
+                jobForestsPerHost = forestsPerHost;
+                break;
+            case TRACE:
+                traceForestsPerHost = forestsPerHost;
+                break;
+            case MODULES:
+                modulesForestsPerHost = forestsPerHost;
+                break;
+            case TRIGGERS:
+                triggersForestsPerHost = forestsPerHost;
+                break;
+            case SCHEMAS:
+                schemasForestsPerHost = forestsPerHost;
+                break;
+            default:
+                throw new InvalidDBOperationError(kind, "set count of forests per host");
+        }
+    }
+
+    @Override public Integer getPort(DatabaseKind kind){
+        Integer port;
+        switch (kind) {
+            case STAGING:
+                port = stagingPort;
+                break;
+            case FINAL:
+                port = finalPort;
+                break;
+            case JOB:
+                port = jobPort;
+                break;
+            case TRACE:
+                port = tracePort;
+                break;
+            default:
+                throw new InvalidDBOperationError(kind, "grab app port");
+        }
+        return port;
+    }
+
+    @Override public void setPort(DatabaseKind kind, Integer port){
+        switch (kind) {
+            case STAGING:
+                stagingPort = port;
+                break;
+            case FINAL:
+                finalPort = port;
+                break;
+            case JOB:
+                jobPort = port;
+                break;
+            case TRACE:
+                tracePort = port;
+                break;
+            default:
+                throw new InvalidDBOperationError(kind, "set app port");
+        }
     }
 
     public String getStagingAuthMethod() {
@@ -192,14 +361,14 @@ public class HubConfigImpl implements HubConfig {
     public SSLContext getStagingSslContext() {
         return stagingSslContext;
     }
-    public void setStagingSslContext(SSLContext stagingSslContext) {
+    @Override public void setStagingSslContext(SSLContext stagingSslContext) {
         this.stagingSslContext = stagingSslContext;
     }
 
     public DatabaseClientFactory.SSLHostnameVerifier getStagingSslHostnameVerifier() {
         return stagingSslHostnameVerifier;
     }
-    public void setStagingSslHostnameVerifier(DatabaseClientFactory.SSLHostnameVerifier stagingSslHostnameVerifier) {
+    @Override public void setStagingSslHostnameVerifier(DatabaseClientFactory.SSLHostnameVerifier stagingSslHostnameVerifier) {
         this.stagingSslHostnameVerifier = stagingSslHostnameVerifier;
     }
 
@@ -225,34 +394,6 @@ public class HubConfigImpl implements HubConfig {
     }
 
     // final
-    public String getFinalDbName() {
-        return finalDbName;
-    }
-    public void setFinalDbName(String finalDbName) {
-        this.finalDbName = finalDbName;
-    }
-
-    public String getFinalHttpName() {
-        return finalHttpName;
-    }
-    public void setFinalHttpName(String finalHttpName) {
-        this.finalHttpName = finalHttpName;
-    }
-
-    public Integer getFinalForestsPerHost() {
-        return finalForestsPerHost;
-    }
-    public void setFinalForestsPerHost(Integer finalForestsPerHost) {
-        this.finalForestsPerHost = finalForestsPerHost;
-    }
-
-    public Integer getFinalPort() {
-        return finalPort;
-    }
-    public void setFinalPort(Integer finalPort) {
-        this.finalPort = finalPort;
-    }
-
     public String getFinalAuthMethod() {
         return finalAuthMethod;
     }
@@ -277,7 +418,7 @@ public class HubConfigImpl implements HubConfig {
     public SSLContext getFinalSslContext() {
         return finalSslContext;
     }
-    public void setFinalSslContext(SSLContext finalSslContext) {
+    @Override public void setFinalSslContext(SSLContext finalSslContext) {
         this.finalSslContext = finalSslContext;
     }
 
@@ -305,39 +446,11 @@ public class HubConfigImpl implements HubConfig {
     public String getFinalExternalName() {
         return finalExternalName;
     }
-    public void setFinalExternalName(String finalExternalName) {
+   public void setFinalExternalName(String finalExternalName) {
         this.finalExternalName = finalExternalName;
     }
 
     // traces
-    public String getTraceDbName() {
-        return traceDbName;
-    }
-    public void setTraceDbName(String traceDbName) {
-        this.traceDbName = traceDbName;
-    }
-
-    public String getTraceHttpName() {
-        return traceHttpName;
-    }
-    public void setTraceHttpName(String traceHttpName) {
-        this.traceHttpName = traceHttpName;
-    }
-
-    public Integer getTraceForestsPerHost() {
-        return traceForestsPerHost;
-    }
-    public void setTraceForestsPerHost(Integer traceForestsPerHost) {
-        this.traceForestsPerHost = traceForestsPerHost;
-    }
-
-    public Integer getTracePort() {
-        return tracePort;
-    }
-    public void setTracePort(Integer tracePort) {
-        this.tracePort = tracePort;
-    }
-
     public String getTraceAuthMethod() {
         return traceAuthMethod;
     }
@@ -395,34 +508,6 @@ public class HubConfigImpl implements HubConfig {
     }
 
     // jobs
-    public String getJobDbName() {
-        return jobDbName;
-    }
-    public void setJobDbName(String jobDbName) {
-        this.jobDbName = jobDbName;
-    }
-
-    public String getJobHttpName() {
-        return jobHttpName;
-    }
-    public void setJobHttpName(String jobHttpName) {
-        this.jobHttpName = jobHttpName;
-    }
-
-    public Integer getJobForestsPerHost() {
-        return jobForestsPerHost;
-    }
-    public void setJobForestsPerHost(Integer jobForestsPerHost) {
-        this.jobForestsPerHost = jobForestsPerHost;
-    }
-
-    public Integer getJobPort() {
-        return jobPort;
-    }
-    public void setJobPort(Integer jobPort) {
-        this.jobPort = jobPort;
-    }
-
     public String getJobAuthMethod() {
         return jobAuthMethod;
     }
@@ -479,69 +564,24 @@ public class HubConfigImpl implements HubConfig {
         this.jobExternalName = jobExternalName;
     }
 
-    public String getModulesDbName() {
-        return modulesDbName;
-    }
-    public void setModulesDbName(String modulesDbName) {
-        this.modulesDbName = modulesDbName;
-    }
-
-    public Integer getModulesForestsPerHost() {
-        return modulesForestsPerHost;
-    }
-    public void setModulesForestsPerHost(Integer modulesForestsPerHost) {
-        this.modulesForestsPerHost = modulesForestsPerHost;
-    }
-
-
-    // triggers
-    public String getTriggersDbName() {
-        return triggersDbName;
-    }
-    public void setTriggersDbName(String triggersDbName) {
-        this.triggersDbName = triggersDbName;
-    }
-
-    public Integer getTriggersForestsPerHost() {
-        return triggersForestsPerHost;
-    }
-    public void setTriggersForestsPerHost(Integer triggersForestsPerHost) {
-        this.triggersForestsPerHost = triggersForestsPerHost;
-    }
-
-    // schemas
-    public String getSchemasDbName() {
-        return schemasDbName;
-    }
-    public void setSchemasDbName(String schemasDbName) {
-        this.schemasDbName = schemasDbName;
-    }
-
-    public Integer getSchemasForestsPerHost() {
-        return schemasForestsPerHost;
-    }
-    public void setSchemasForestsPerHost(Integer schemasForestsPerHost) {
-        this.schemasForestsPerHost = schemasForestsPerHost;
-    }
-
     // roles and users
-    public String getHubRoleName() {
+    @Override public String getHubRoleName() {
         return hubRoleName;
     }
-    public void setHubRoleName(String hubRoleName) {
+    @Override public void setHubRoleName(String hubRoleName) {
         this.hubRoleName = hubRoleName;
     }
 
-    public String getHubUserName() {
+    @Override public String getHubUserName() {
         return hubUserName;
     }
-    public void setHubUserName(String hubUserName) {
+    @Override  public void setHubUserName(String hubUserName) {
         this.hubUserName = hubUserName;
     }
 
 
     @JsonIgnore
-    public String[] getLoadBalancerHosts() {
+    @Override  public String[] getLoadBalancerHosts() {
         return loadBalancerHosts;
     }
     public void setLoadBalancerHosts(String[] loadBalancerHosts) {
@@ -549,7 +589,7 @@ public class HubConfigImpl implements HubConfig {
     }
 
     @JsonIgnore
-    public String getCustomForestPath() {
+    @Override public String getCustomForestPath() {
         return customForestPath;
     }
     public void setCustomForestPath(String customForestPath) {
@@ -557,38 +597,38 @@ public class HubConfigImpl implements HubConfig {
     }
 
     @JsonIgnore
-    public String getModulePermissions() {
+    @Override public String getModulePermissions() {
         return modulePermissions;
     }
     public void setModulePermissions(String modulePermissions) {
         this.modulePermissions = modulePermissions;
     }
 
-    public String getProjectDir() {
+    @Override public String getProjectDir() {
         return this.projectDir;
     }
 
-    public void setProjectDir(String projectDir) {
+    @Override public void setProjectDir(String projectDir) {
         this.projectDir = projectDir;
-        this.hubProject = new HubProject(projectDir);
+        this.hubProject = HubProject.create(projectDir);
     }
 
     @JsonIgnore
-    public HubProject getHubProject() {
+    @Override  public HubProject getHubProject() {
         return this.hubProject;
     }
 
-    public void initHubProject() {
+    @Override  public void initHubProject() {
         this.hubProject.init(getCustomTokens());
     }
 
     @JsonIgnore
-    public String getHubModulesDeployTimestampFile() {
+    @Override  public String getHubModulesDeployTimestampFile() {
         return Paths.get(projectDir, ".tmp", HUB_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES).toString();
     }
 
     @JsonIgnore
-    public String getUserModulesDeployTimestampFile() {
+    @Override public String getUserModulesDeployTimestampFile() {
         return Paths.get(projectDir, ".tmp", USER_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES).toString();
     }
 
@@ -597,7 +637,7 @@ public class HubConfigImpl implements HubConfig {
         return Paths.get(projectDir, ".tmp", USER_CONTENT_DEPLOY_TIMESTAMPS_PROPERTIES).toFile();
     }
 
-    public void loadConfigurationFromProperties(Properties environmentProperties) {
+     public void loadConfigurationFromProperties(Properties environmentProperties) {
         this.environmentProperties = environmentProperties;
 
         if (this.environmentProperties != null) {
@@ -812,81 +852,81 @@ public class HubConfigImpl implements HubConfig {
     }
 
     @JsonIgnore
-    public Path getHubPluginsDir() {
+    @Override public Path getHubPluginsDir() {
         return hubProject.getHubPluginsDir();
     }
 
     @JsonIgnore
-    public Path getHubEntitiesDir() { return hubProject.getHubEntitiesDir(); }
+    @Override public Path getHubEntitiesDir() { return hubProject.getHubEntitiesDir(); }
 
     @JsonIgnore
-    public Path getHubConfigDir() {
+    @Override public Path getHubConfigDir() {
         return hubProject.getHubConfigDir();
     }
 
     @JsonIgnore
-    public Path getHubDatabaseDir() {
+    @Override public Path getHubDatabaseDir() {
         return hubProject.getHubDatabaseDir();
     }
 
     @JsonIgnore
-    public Path getHubServersDir() {
+    @Override public Path getHubServersDir() {
         return hubProject.getHubServersDir();
     }
 
     @JsonIgnore
-    public Path getHubSecurityDir() {
+    @Override public Path getHubSecurityDir() {
         return hubProject.getHubSecurityDir();
     }
 
     @JsonIgnore
-    public Path getUserSecurityDir() {
+    @Override public Path getUserSecurityDir() {
         return hubProject.getUserSecurityDir();
     }
 
     @JsonIgnore
-    public Path getUserConfigDir() {
+    @Override public Path getUserConfigDir() {
         return hubProject.getUserConfigDir();
     }
 
     @JsonIgnore
-    public Path getUserDatabaseDir() {
+    @Override public Path getUserDatabaseDir() {
         return hubProject.getUserDatabaseDir();
     }
 
     @JsonIgnore
-    public Path getEntityDatabaseDir() {
+    @Override public Path getEntityDatabaseDir() {
         return hubProject.getEntityDatabaseDir();
     }
 
     @JsonIgnore
-    public Path getUserServersDir() {
+    @Override public Path getUserServersDir() {
         return hubProject.getUserServersDir();
     }
 
     @JsonIgnore
-    public Path getHubMimetypesDir() {
+    @Override public Path getHubMimetypesDir() {
         return hubProject.getHubMimetypesDir();
     }
 
     @JsonIgnore
-    public AppConfig getAppConfig() {
+    @Override public AppConfig getAppConfig() {
         return appConfig;
     }
 
 
-    public void setAppConfig(AppConfig config) {
+    @Override public void setAppConfig(AppConfig config) {
         setAppConfig(config, false);
     }
 
-    public void setAppConfig(AppConfig config, boolean skipUpdate) {
+    @Override public void setAppConfig(AppConfig config, boolean skipUpdate) {
         this.appConfig = config;
         if (!skipUpdate) {
             updateAppConfig(this.appConfig);
         }
     }
 
-    public String getJarVersion() throws IOException {
+    @Override public String getJarVersion() throws IOException {
         Properties properties = new Properties();
         InputStream inputStream = getClass().getClassLoader().getResourceAsStream("version.properties");
         properties.load(inputStream);

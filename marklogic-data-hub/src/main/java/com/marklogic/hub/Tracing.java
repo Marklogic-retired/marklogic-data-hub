@@ -13,56 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.marklogic.hub;
 
 import com.marklogic.client.DatabaseClient;
-import com.marklogic.client.extensions.ResourceManager;
-import com.marklogic.client.extensions.ResourceServices.ServiceResult;
-import com.marklogic.client.extensions.ResourceServices.ServiceResultIterator;
-import com.marklogic.client.io.Format;
-import com.marklogic.client.io.StringHandle;
-import com.marklogic.client.util.RequestParameters;
+import com.marklogic.hub.impl.TracingImpl;
 
-public class Tracing extends ResourceManager {
-    private static final String NAME = "ml:tracing";
+public interface Tracing {
 
-    public Tracing(DatabaseClient client) {
-        super();
-        client.init(NAME, this);
-    }
+    static Tracing create(DatabaseClient client){
+        return new TracingImpl(client);
+    };
 
     /**
      * Enables tracing
      */
-    public void enable() {
-        RequestParameters params = new RequestParameters();
-        params.add("enable", "true");
-        this.getServices().post(params, new StringHandle("{}").withFormat(Format.JSON));
-    }
+    void enable();
 
     /**
      * Disables tracing
      */
-    public void disable() {
-        RequestParameters params = new RequestParameters();
-        params.add("enable", "false");
-        this.getServices().post(params, new StringHandle("{}").withFormat(Format.JSON));
-    }
+    void disable();
 
     /**
      * Determines if the hub has tracing enabled or not
      *
      * @return - true if enabled, false otherwise
      */
-    public boolean isEnabled() {
-        RequestParameters params = new RequestParameters();
-        ServiceResultIterator resultItr = this.getServices().get(params);
-        if (resultItr == null || ! resultItr.hasNext()) {
-            return false;
-        }
-        ServiceResult res = resultItr.next();
-        StringHandle handle = new StringHandle();
-        String enabled = res.getContent(handle).get();
-        return Boolean.parseBoolean(enabled);
-    }
+    boolean isEnabled();
 }

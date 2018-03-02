@@ -158,10 +158,10 @@ public class FlowManagerTest extends HubTestBase {
 
     @Test
     public void testGetLocalFlows() throws IOException {
-        Scaffolding scaffolding = new Scaffolding("del-me-dir", stagingClient);
+        Scaffolding scaffolding = Scaffolding.create("del-me-dir", stagingClient);
         scaffolding.createEntity("my-entity");
 
-        FlowManager fm = new FlowManager(getHubConfig("del-me-dir"));
+        FlowManager fm = FlowManager.create(getHubConfig("del-me-dir"));
         assertEquals(0, fm.getLocalFlows().size());
 
         CodeFormat[] codeFormats = new CodeFormat[] { CodeFormat.JAVASCRIPT, CodeFormat.XQUERY };
@@ -188,10 +188,10 @@ public class FlowManagerTest extends HubTestBase {
 
     @Test
     public void testGetFlowFromProperties() throws IOException {
-        Scaffolding scaffolding = new Scaffolding("del-me-dir", stagingClient);
+        Scaffolding scaffolding = Scaffolding.create("del-me-dir", stagingClient);
         scaffolding.createEntity("my-entity");
 
-        FlowManager fm = new FlowManager(getHubConfig("del-me-dir"));
+        FlowManager fm = FlowManager.create(getHubConfig("del-me-dir"));
 
         allCombos((codeFormat, dataFormat, flowType, useEs) -> {
             String flowName = flowType.toString() + "-" + codeFormat.toString() + "-" + dataFormat.toString();
@@ -222,7 +222,7 @@ public class FlowManagerTest extends HubTestBase {
         installModule("/entities/test/harmonize/my-test-flow1/my-test-flow1.xml", "flow-manager-test/my-test-flow1/my-test-flow1.xml");
         installModule("/entities/test/harmonize/my-test-flow2/my-test-flow2.xml", "flow-manager-test/my-test-flow1/my-test-flow2.xml");
 
-        FlowManager fm = new FlowManager(getHubConfig());
+        FlowManager fm = FlowManager.create(getHubConfig());
         List<Flow> flows = fm.getFlows("test");
         assertEquals(2, flows.size());
 
@@ -263,7 +263,7 @@ public class FlowManagerTest extends HubTestBase {
     public void getTestFlow() {
         installModule("/entities/test/harmonize/my-test-flow1/my-test-flow1.xml", "flow-manager-test/my-test-flow1/my-test-flow1-json.xml");
 
-        FlowManager fm = new FlowManager(getHubConfig());
+        FlowManager fm = FlowManager.create(getHubConfig());
         Flow flow1 = fm.getFlow("test", "my-test-flow1");
         assertEquals("my-test-flow1", flow1.getName());
         assertEquals(CodeFormat.JAVASCRIPT, flow1.getCodeFormat());
@@ -286,7 +286,7 @@ public class FlowManagerTest extends HubTestBase {
         installModules();
         assertEquals(2, getStagingDocCount());
         assertEquals(0, getFinalDocCount());
-        FlowManager fm = new FlowManager(getHubConfig());
+        FlowManager fm = FlowManager.create(getHubConfig());
         Flow flow1 = fm.getFlow("test", "my-test-flow1");
         FlowRunner flowRunner = fm.newFlowRunner()
             .withFlow(flow1)
@@ -306,7 +306,7 @@ public class FlowManagerTest extends HubTestBase {
         installModules();
         assertEquals(0, getStagingDocCount());
         assertEquals(2, getFinalDocCount());
-        FlowManager fm = new FlowManager(getHubConfig());
+        FlowManager fm = FlowManager.create(getHubConfig());
         Flow flow1 = fm.getFlow("test", "my-test-flow1");
         FlowRunner flowRunner = fm.newFlowRunner()
             .withFlow(flow1)
@@ -337,7 +337,7 @@ public class FlowManagerTest extends HubTestBase {
 
         assertEquals(2, getStagingDocCount());
         assertEquals(0, getFinalDocCount());
-        FlowManager fm = new FlowManager(getHubConfig());
+        FlowManager fm = FlowManager.create(getHubConfig());
         Flow flow1 = fm.getFlow("test", "my-test-flow-with-header");
         FlowRunner flowRunner = fm.newFlowRunner()
             .withFlow(flow1)
@@ -368,7 +368,7 @@ public class FlowManagerTest extends HubTestBase {
 
         assertEquals(2, getStagingDocCount());
         assertEquals(0, getFinalDocCount());
-        FlowManager fm = new FlowManager(getHubConfig());
+        FlowManager fm = FlowManager.create(getHubConfig());
         Flow flow1 = fm.getFlow("test", "my-test-flow-with-all");
         FlowRunner flowRunner = fm.newFlowRunner()
             .withFlow(flow1)
@@ -387,9 +387,9 @@ public class FlowManagerTest extends HubTestBase {
 
     @Test
     public void testHasLegacyflows() throws IOException, InterruptedException, ParserConfigurationException, SAXException, JSONException {
-        FlowManager fm = new FlowManager(getHubConfig());
+        FlowManager fm = FlowManager.create(getHubConfig());
 
-        Scaffolding scaffolding = new Scaffolding(getHubConfig().getProjectDir(), stagingClient);
+        Scaffolding scaffolding = Scaffolding.create(getHubConfig().getProjectDir(), stagingClient);
         scaffolding.createEntity("new-entity");
         scaffolding.createFlow("new-entity", "new-flow", FlowType.HARMONIZE, CodeFormat.XQUERY, DataFormat.XML);
         assertEquals(0, fm.getLegacyFlows().size());

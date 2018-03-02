@@ -1,18 +1,11 @@
 package com.marklogic.hub.deploy.commands;
 
-import com.marklogic.appdeployer.command.CommandContext;
-import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.FileUtil;
-import org.custommonkey.xmlunit.XMLUnit;
-import org.easymock.EasyMock;
 import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.jupiter.api.BeforeEach;
-import org.xml.sax.SAXException;
 
 import java.io.File;
 import java.io.IOException;
@@ -52,7 +45,7 @@ public class GenerateHubTDETemplateCommandTest extends HubTestBase  {
     }
 
     private void installEntity(String entityName) {
-        Scaffolding scaffolding = new Scaffolding(projectDir.toString(), finalClient);
+        Scaffolding scaffolding = Scaffolding.create(projectDir.toString(), finalClient);
         Path entityDir = scaffolding.getEntityDir(entityName);
         entityDir.toFile().mkdirs();
         assertTrue(entityDir.toFile().exists());
