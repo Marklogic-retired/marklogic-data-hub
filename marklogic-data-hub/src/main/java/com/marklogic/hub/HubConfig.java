@@ -84,13 +84,37 @@ public interface HubConfig {
 
     void setPort(DatabaseKind kind, Integer port);
 
-    void setStagingSslContext(SSLContext stagingSslContext);
+    SSLContext getSslContext(DatabaseKind databaseKind);
 
-    void setStagingSslHostnameVerifier(DatabaseClientFactory.SSLHostnameVerifier stagingSslHostnameVerifier);
+    void setSslContext(DatabaseKind databaseKind, SSLContext sslContext);
 
-    void setFinalSslContext(SSLContext finalSslContext);
+    void setSslHostnameVerifier(DatabaseKind databaseKind, DatabaseClientFactory.SSLHostnameVerifier stagingSslHostnameVerifier);
 
-    void setFinalSslHostnameVerifier(DatabaseClientFactory.SSLHostnameVerifier finalSslHostnameVerifier);
+    DatabaseClientFactory.SSLHostnameVerifier getSslHostnameVerifier(DatabaseKind kind);
+
+    String getAuthMethod(DatabaseKind kind);
+
+    void setAuthMethod(DatabaseKind kind, String authMethod);
+
+    String getScheme(DatabaseKind kind);
+
+    void setScheme(DatabaseKind kind, String scheme);
+
+    boolean getSimpleSsl(DatabaseKind kind);
+
+    void setSimpleSsl(DatabaseKind kind, Boolean simpleSsl);
+
+    String getCertFile(DatabaseKind kind);
+
+    void setCertFile(DatabaseKind kind, String certFile);
+
+    String getCertPassword(DatabaseKind kind);
+
+    void setCertPass(DatabaseKind kind, String certPassword);
+
+    String getExternalName(DatabaseKind kind);
+
+    void setExternalName(DatabaseKind kind, String externalName);
 
     // roles and users
     String getHubRoleName();
