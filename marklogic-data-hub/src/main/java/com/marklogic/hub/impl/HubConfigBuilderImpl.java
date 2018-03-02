@@ -62,7 +62,7 @@ public class HubConfigBuilderImpl implements HubConfigBuilder {
 
     public HubConfigBuilderImpl(String projectDir) {
         this.projectDir = projectDir;
-        this.hubConfig = new HubConfigImpl(projectDir);
+        this.hubConfig = (HubConfigImpl)HubConfig.create(projectDir);
     }
 
     /**

@@ -295,14 +295,14 @@ public class DataHubImpl implements DataHub {
     }
 
     /**
-     * Installs the data hub configuration and server-side modules into MarkLogic
+     * Installs the data hub configuration and server-side config files into MarkLogic
      */
     @Override public void install() {
         install(null);
     }
 
     /**
-     * Installs the data hub configuration and server-side modules into MarkLogic
+     * Installs the data hub configuration and server-side config files into MarkLogic
      * @param listener - the callback method to receive status updates
      */
     @Override public void install(HubDeployStatusListener listener) {
@@ -326,14 +326,14 @@ public class DataHubImpl implements DataHub {
     }
 
     /**
-     * Uninstalls the data hub configuration and server-side modules from MarkLogic
+     * Uninstalls the data hub configuration and server-side config files from MarkLogic
      */
     @Override public void uninstall() {
         uninstall(null);
     }
 
     /**
-     * Uninstalls the data hub configuration and server-side modules from MarkLogic
+     * Uninstalls the data hub configuration and server-side config files from MarkLogic
      * @param listener - the callback method to receive status updates
      */
     @Override public void uninstall(HubDeployStatusListener listener) {

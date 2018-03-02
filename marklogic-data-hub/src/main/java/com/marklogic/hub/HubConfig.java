@@ -18,6 +18,7 @@ package com.marklogic.hub;
 import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
+import com.marklogic.hub.impl.HubConfigImpl;
 
 import javax.net.ssl.SSLContext;
 import java.io.IOException;
@@ -64,7 +65,9 @@ public interface HubConfig {
 
     String getHost();
 
-
+    static HubConfig create(String projectDir) {
+        return new HubConfigImpl(projectDir);
+    }
     String getDbName(DatabaseKind kind);
 
     void setDbName(DatabaseKind kind, String dbName);
