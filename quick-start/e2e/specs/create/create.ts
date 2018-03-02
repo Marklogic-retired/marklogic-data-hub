@@ -488,13 +488,18 @@ export default function() {
       console.log('going to the other flow and back');
       flowPage.entityDisclosure('TestEntity').click();
       browser.wait(EC.visibilityOf(flowPage.getFlow('TestEntity', 'sjs json HARMONIZE', 'HARMONIZE')));
+      expect(flowPage.getFlow('TestEntity', 'sjs json HARMONIZE', 'HARMONIZE').isPresent()).toBe(true);
       flowPage.getFlow('TestEntity', 'sjs json HARMONIZE', 'HARMONIZE').click();
+      browser.wait(EC.visibilityOf(flowPage.runHarmonizeButton()));
+      expect(flowPage.runHarmonizeButton().isPresent()).toBe(true);
       flowPage.entityDisclosure('Product').click();
       browser.wait(EC.visibilityOf(flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE')));
+      expect(flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE').isPresent()).toBe(true);
       flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE').click();
       //verify the options are retained
       console.log('verify the flow options');
-      browser.wait(EC.visibilityOf(flowPage.tabs));
+      browser.wait(EC.visibilityOf(flowPage.runHarmonizeButton()));
+      expect(flowPage.runHarmonizeButton().isPresent()).toBe(true);
       expect(flowPage.getKeyFlowOptionsByPosition(1).getAttribute('ng-reflect-model')).toEqual('hello');
       expect(flowPage.getValueFlowOptionsByPosition(1).getAttribute('ng-reflect-model')).toEqual('world');
       expect(flowPage.getKeyFlowOptionsByPosition(2).getAttribute('ng-reflect-model')).toEqual('myNumber');
@@ -514,8 +519,11 @@ export default function() {
       flowPage.entitiesTab.click();
       entityPage.flowsTab.click();
       flowPage.entityDisclosure('Product').click();
+      browser.wait(EC.visibilityOf(flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE')));
+      expect(flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE').isPresent()).toBe(true);
       flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE').click();
-      browser.wait(EC.visibilityOf(flowPage.tabs));
+      browser.wait(EC.visibilityOf(flowPage.runHarmonizeButton()));
+      expect(flowPage.runHarmonizeButton().isPresent()).toBe(true);
       expect(flowPage.getKeyFlowOptionsByPosition(3).getAttribute('ng-reflect-model')).toEqual('myDate');
       expect(flowPage.getValueFlowOptionsByPosition(3).getAttribute('ng-reflect-model')).toEqual('2017-03-07');
       //verify the flow options count
