@@ -201,7 +201,6 @@ public class DataHubImpl implements DataHub {
 
     /**
      * Removes user's modules from the modules db
-     * TODO: this becomes much simpler when we move code into the server dir
      */
     @Override public void clearUserModules() {
         ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver(DataHub.class.getClassLoader());
