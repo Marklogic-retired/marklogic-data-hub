@@ -337,231 +337,325 @@ public class HubConfigImpl implements HubConfig {
         }
     }
 
-    public String getStagingAuthMethod() {
-        return stagingAuthMethod;
-    }
-    public void setStagingAuthMethod(String stagingAuthMethod) {
-        this.stagingAuthMethod = stagingAuthMethod;
+
+    @Override public SSLContext getSslContext(DatabaseKind kind) {
+        SSLContext sslContext;
+        switch (kind) {
+            case STAGING:
+                sslContext = this.stagingSslContext;
+                break;
+            case FINAL:
+                sslContext = this.finalSslContext;
+                break;
+            case JOB:
+                sslContext = this.jobSslContext;
+                break;
+            case TRACE:
+                sslContext = this.traceSslContext;
+                break;
+            default:
+                throw new InvalidDBOperationError(kind, "get ssl context");
+        }
+        return sslContext;
     }
 
-    public String getStagingScheme() {
-        return stagingScheme;
-    }
-    public void setStagingScheme(String stagingScheme) {
-        this.stagingScheme = stagingScheme;
-    }
-
-    public boolean getStagingSimpleSsl() {
-        return stagingSimpleSsl;
-    }
-    public void setStagingSimpleSsl(boolean stagingSimpleSsl) {
-        this.stagingSimpleSsl = stagingSimpleSsl;
-    }
-
-    public SSLContext getStagingSslContext() {
-        return stagingSslContext;
-    }
-    @Override public void setStagingSslContext(SSLContext stagingSslContext) {
-        this.stagingSslContext = stagingSslContext;
+    @Override public void setSslContext(DatabaseKind kind, SSLContext sslContext) {
+        switch (kind) {
+            case STAGING:
+                this.stagingSslContext = sslContext;
+                break;
+            case FINAL:
+                this.finalSslContext= sslContext;
+                break;
+            case JOB:
+                this.jobSslContext = sslContext;
+                break;
+            case TRACE:
+                this.traceSslContext = sslContext;
+                break;
+            default:
+                throw new InvalidDBOperationError(kind, "set ssl context");
+        }
     }
 
-    public DatabaseClientFactory.SSLHostnameVerifier getStagingSslHostnameVerifier() {
-        return stagingSslHostnameVerifier;
-    }
-    @Override public void setStagingSslHostnameVerifier(DatabaseClientFactory.SSLHostnameVerifier stagingSslHostnameVerifier) {
-        this.stagingSslHostnameVerifier = stagingSslHostnameVerifier;
-    }
-
-    public String getStagingCertFile() {
-        return stagingCertFile;
-    }
-    public void setStagingCertFile(String stagingCertFile) {
-        this.stagingCertFile = stagingCertFile;
-    }
-
-    public String getStagingCertPassword() {
-        return stagingCertPassword;
-    }
-    public void setStagingCertPassword(String stagingCertPassword) {
-        this.stagingCertPassword = stagingCertPassword;
-    }
-
-    public String getStagingExternalName() {
-        return stagingExternalName;
-    }
-    public void setStagingExternalName(String stagingExternalName) {
-        this.stagingExternalName = stagingExternalName;
+    @Override public DatabaseClientFactory.SSLHostnameVerifier getSslHostnameVerifier(DatabaseKind kind) {
+        DatabaseClientFactory.SSLHostnameVerifier sslHostnameVerifier;
+        switch (kind) {
+            case STAGING:
+                sslHostnameVerifier = this.stagingSslHostnameVerifier;
+                break;
+            case FINAL:
+                sslHostnameVerifier = this.finalSslHostnameVerifier;
+                break;
+            case JOB:
+                sslHostnameVerifier = this.jobSslHostnameVerifier;
+                break;
+            case TRACE:
+                sslHostnameVerifier = this.traceSslHostnameVerifier;
+                break;
+            default:
+                throw new InvalidDBOperationError(kind, "get ssl hostname verifier");
+        }
+        return sslHostnameVerifier;
     }
 
-    // final
-    public String getFinalAuthMethod() {
-        return finalAuthMethod;
-    }
-    public void setFinalAuthMethod(String finalAuthMethod) {
-        this.finalAuthMethod = finalAuthMethod;
-    }
-
-    public String getFinalScheme() {
-        return finalScheme;
-    }
-    public void setFinalScheme(String finalScheme) {
-        this.finalScheme = finalScheme;
-    }
-
-    public boolean getFinalSimpleSsl() {
-        return finalSimpleSsl;
-    }
-    public void setFinalSimpleSsl(boolean finalSimpleSsl) {
-        this.finalSimpleSsl = finalSimpleSsl;
+    @Override public void setSslHostnameVerifier(DatabaseKind kind, DatabaseClientFactory.SSLHostnameVerifier sslHostnameVerifier) {
+        switch (kind) {
+            case STAGING:
+                 this.stagingSslHostnameVerifier = sslHostnameVerifier;
+                break;
+            case FINAL:
+                this.finalSslHostnameVerifier = sslHostnameVerifier;
+                break;
+            case JOB:
+                this.jobSslHostnameVerifier = sslHostnameVerifier;
+                break;
+            case TRACE:
+                this.traceSslHostnameVerifier = sslHostnameVerifier;
+                break;
+            default:
+                throw new InvalidDBOperationError(kind, "set ssl hostname verifier");
+        }
     }
 
-    public SSLContext getFinalSslContext() {
-        return finalSslContext;
-    }
-    @Override public void setFinalSslContext(SSLContext finalSslContext) {
-        this.finalSslContext = finalSslContext;
-    }
-
-    public DatabaseClientFactory.SSLHostnameVerifier getFinalSslHostnameVerifier() {
-        return finalSslHostnameVerifier;
-    }
-    public void setFinalSslHostnameVerifier(DatabaseClientFactory.SSLHostnameVerifier finalSslHostnameVerifier) {
-        this.finalSslHostnameVerifier = finalSslHostnameVerifier;
-    }
-
-    public String getFinalCertFile() {
-        return finalCertFile;
-    }
-    public void setFinalCertFile(String finalCertFile) {
-        this.finalCertFile = finalCertFile;
-    }
-
-    public String getFinalCertPassword() {
-        return finalCertPassword;
-    }
-    public void setFinalCertPassword(String finalCertPassword) {
-        this.finalCertPassword = finalCertPassword;
+    @Override public String getAuthMethod(DatabaseKind kind){
+        String authMethod;
+        switch (kind) {
+            case STAGING:
+                authMethod = this.stagingAuthMethod;
+                break;
+            case FINAL:
+                authMethod = this.finalAuthMethod;
+                break;
+            case JOB:
+                authMethod = this.jobAuthMethod;
+                break;
+            case TRACE:
+                authMethod = this.traceAuthMethod;
+                break;
+            default:
+                throw new InvalidDBOperationError(kind, "get auth method");
+        }
+        return authMethod;
     }
 
-    public String getFinalExternalName() {
-        return finalExternalName;
-    }
-   public void setFinalExternalName(String finalExternalName) {
-        this.finalExternalName = finalExternalName;
-    }
-
-    // traces
-    public String getTraceAuthMethod() {
-        return traceAuthMethod;
-    }
-    public void setTraceAuthMethod(String traceAuthMethod) {
-        this.traceAuthMethod = traceAuthMethod;
-    }
-
-    public String getTraceScheme() {
-        return traceScheme;
-    }
-    public void setTraceScheme(String traceScheme) {
-        this.traceScheme = traceScheme;
+    @Override public void setAuthMethod(DatabaseKind kind, String authMethod) {
+        switch (kind) {
+            case STAGING:
+                this.stagingAuthMethod = authMethod;
+                break;
+            case FINAL:
+                this.finalAuthMethod = authMethod;
+                break;
+            case JOB:
+                this.jobAuthMethod = authMethod;
+                break;
+            case TRACE:
+                this.traceAuthMethod = authMethod;
+                break;
+            default:
+                throw new InvalidDBOperationError(kind, "set auth method");
+        }
     }
 
-    public boolean getTraceSimpleSsl() {
-        return traceSimpleSsl;
-    }
-    public void setTraceSimpleSsl(boolean traceSimpleSsl) {
-        this.traceSimpleSsl = traceSimpleSsl;
-    }
-
-    public SSLContext getTraceSslContext() {
-        return traceSslContext;
-    }
-    public void setTraceSslContext(SSLContext traceSslContext) {
-        this.traceSslContext = traceSslContext;
-    }
-
-    public DatabaseClientFactory.SSLHostnameVerifier getTraceSslHostnameVerifier() {
-        return traceSslHostnameVerifier;
-    }
-    public void setTraceSslHostnameVerifier(DatabaseClientFactory.SSLHostnameVerifier traceSslHostnameVerifier) {
-        this.traceSslHostnameVerifier = traceSslHostnameVerifier;
-    }
-
-    public String getTraceCertFile() {
-        return traceCertFile;
-    }
-    public void setTraceCertFile(String traceCertFile) {
-        this.traceCertFile = traceCertFile;
+    @Override public String getScheme(DatabaseKind kind){
+        String scheme;
+        switch (kind) {
+            case STAGING:
+                scheme = this.stagingScheme;
+                break;
+            case FINAL:
+                scheme = this.finalScheme;
+                break;
+            case JOB:
+                scheme = this.jobScheme;
+                break;
+            case TRACE:
+                scheme = this.traceScheme;
+                break;
+            default:
+                throw new InvalidDBOperationError(kind, "get scheme");
+        }
+        return scheme;
     }
 
-    public String getTraceCertPassword() {
-        return traceCertPassword;
-    }
-    public void setTraceCertPassword(String traceCertPassword) {
-        this.traceCertPassword = traceCertPassword;
-    }
-
-    public String getTraceExternalName() {
-        return traceExternalName;
-    }
-    public void setTraceExternalName(String traceExternalName) {
-        this.traceExternalName = traceExternalName;
-    }
-
-    // jobs
-    public String getJobAuthMethod() {
-        return jobAuthMethod;
-    }
-    public void setJobAuthMethod(String jobAuthMethod) {
-        this.jobAuthMethod = jobAuthMethod;
+    @Override public void setScheme(DatabaseKind kind, String scheme) {
+        switch (kind) {
+            case STAGING:
+                this.stagingScheme = scheme;
+                break;
+            case FINAL:
+                this.finalScheme = scheme;
+                break;
+            case JOB:
+                this.jobScheme = scheme;
+                break;
+            case TRACE:
+                this.traceScheme = scheme;
+                break;
+            default:
+                throw new InvalidDBOperationError(kind, "set auth method");
+        }
     }
 
-    public String getJobScheme() {
-        return jobScheme;
-    }
-    public void setJobScheme(String jobScheme) {
-        this.jobScheme = jobScheme;
-    }
-
-    public boolean getJobSimpleSsl() {
-        return jobSimpleSsl;
-    }
-    public void setJobSimpleSsl(boolean jobSimpleSsl) {
-        this.jobSimpleSsl = jobSimpleSsl;
-    }
-
-    public SSLContext getJobSslContext() {
-        return jobSslContext;
-    }
-    public void setJobSslContext(SSLContext jobSslContext) {
-        this.jobSslContext = jobSslContext;
-    }
-
-    public DatabaseClientFactory.SSLHostnameVerifier getJobSslHostnameVerifier() {
-        return jobSslHostnameVerifier;
-    }
-    public void setJobSslHostnameVerifier(DatabaseClientFactory.SSLHostnameVerifier jobSslHostnameVerifier) {
-        this.jobSslHostnameVerifier = jobSslHostnameVerifier;
+    @Override public boolean getSimpleSsl(DatabaseKind kind){
+        boolean simple;
+        switch (kind) {
+            case STAGING:
+                simple = this.stagingSimpleSsl;
+                break;
+            case FINAL:
+                simple = this.finalSimpleSsl;
+                break;
+            case JOB:
+                simple = this.jobSimpleSsl;
+                break;
+            case TRACE:
+                simple = this.traceSimpleSsl;
+                break;
+            default:
+                throw new InvalidDBOperationError(kind, "get simple ssl");
+        }
+        return simple;
     }
 
-    public String getJobCertFile() {
-        return jobCertFile;
-    }
-    public void setJobCertFile(String jobCertFile) {
-        this.jobCertFile = jobCertFile;
+    @Override public void setSimpleSsl(DatabaseKind kind, Boolean simpleSsl) {
+        switch (kind) {
+            case STAGING:
+                this.stagingSimpleSsl = simpleSsl;
+                break;
+            case FINAL:
+                this.finalSimpleSsl = simpleSsl;
+                break;
+            case JOB:
+                this.jobSimpleSsl = simpleSsl;
+                break;
+            case TRACE:
+                this.traceSimpleSsl = simpleSsl;
+                break;
+            default:
+                throw new InvalidDBOperationError(kind, "set simple ssl");
+        }
     }
 
-    public String getJobCertPassword() {
-        return jobCertPassword;
-    }
-    public void setJobCertPassword(String jobCertPassword) {
-        this.jobCertPassword = jobCertPassword;
+    @Override public String getCertFile(DatabaseKind kind){
+        String certFile;
+        switch (kind) {
+            case STAGING:
+                certFile = this.stagingCertFile;
+                break;
+            case FINAL:
+                certFile = this.finalCertFile;
+                break;
+            case JOB:
+                certFile = this.jobCertFile;
+                break;
+            case TRACE:
+                certFile = this.traceCertFile;
+                break;
+            default:
+                throw new InvalidDBOperationError(kind, "get cert file");
+        }
+        return certFile;
     }
 
-    public String getJobExternalName() {
-        return jobExternalName;
+    @Override public void setCertFile(DatabaseKind kind, String certFile) {
+        switch (kind) {
+            case STAGING:
+                this.stagingCertFile = certFile;
+                break;
+            case FINAL:
+                this.finalCertFile = certFile;
+                break;
+            case JOB:
+                this.jobCertFile = certFile;
+                break;
+            case TRACE:
+                this.traceCertFile = certFile;
+                break;
+            default:
+                throw new InvalidDBOperationError(kind, "set certificate file");
+        }
     }
-    public void setJobExternalName(String jobExternalName) {
-        this.jobExternalName = jobExternalName;
+
+    @Override public String getCertPassword(DatabaseKind kind){
+        String certPass;
+        switch (kind) {
+            case STAGING:
+                certPass = this.stagingCertPassword;
+                break;
+            case FINAL:
+                certPass = this.finalCertPassword;
+                break;
+            case JOB:
+                certPass = this.jobCertPassword;
+                break;
+            case TRACE:
+                certPass = this.traceCertPassword;
+                break;
+            default:
+                throw new InvalidDBOperationError(kind, "get cert password");
+        }
+        return certPass;
+    }
+
+    @Override public void setCertPass(DatabaseKind kind, String certPassword) {
+        switch (kind) {
+            case STAGING:
+                this.stagingCertPassword = certPassword;
+                break;
+            case FINAL:
+                this.finalCertPassword = certPassword;
+                break;
+            case JOB:
+                this.jobCertPassword = certPassword;
+                break;
+            case TRACE:
+                this.traceCertPassword = certPassword;
+                break;
+            default:
+                throw new InvalidDBOperationError(kind, "set certificate password");
+        }
+    }
+
+    @Override public String getExternalName(DatabaseKind kind){
+        String name;
+        switch (kind) {
+            case STAGING:
+                name = this.stagingExternalName;
+                break;
+            case FINAL:
+                name = this.finalExternalName;
+                break;
+            case JOB:
+                name = this.jobExternalName;
+                break;
+            case TRACE:
+                name = this.traceExternalName;
+                break;
+            default:
+                throw new InvalidDBOperationError(kind, "get external name");
+        }
+        return name;
+    }
+
+    @Override public void setExternalName(DatabaseKind kind, String externalName) {
+        switch (kind) {
+            case STAGING:
+                this.stagingExternalName = externalName;
+                break;
+            case FINAL:
+                this.finalExternalName = externalName;
+                break;
+            case JOB:
+                this.jobExternalName = externalName;
+                break;
+            case TRACE:
+                this.traceExternalName = externalName;
+                break;
+            default:
+                throw new InvalidDBOperationError(kind, "set auth method");
+        }
     }
 
     // roles and users
