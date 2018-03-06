@@ -18,6 +18,7 @@ package com.marklogic.quickstart.web;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.InstallInfo;
@@ -54,6 +55,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.HashMap;
 
 @Controller
 @RequestMapping(value = "/api/current-project")
@@ -212,8 +214,15 @@ public class CurrentProjectController extends EnvironmentAware implements FileSy
 
     @RequestMapping(value = "/preinstall-check", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_VALUE})
     @ResponseBody
-    public void preInstallCheck() {
-        dataHubService.preInstallCheck(envConfig().getMlSettings());
+    public String preInstallCheck() {
+        HashMap response = dataHubService.preInstallCheck(envConfig().getMlSettings());
+        String jsonResponse = null;
+        try {
+            jsonResponse = new ObjectMapper().writeValueAsString(response);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return jsonResponse;
     }
 
     private void startProjectWatcher() throws IOException {
