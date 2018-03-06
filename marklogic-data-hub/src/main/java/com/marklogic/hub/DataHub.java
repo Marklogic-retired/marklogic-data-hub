@@ -22,6 +22,7 @@ import com.marklogic.hub.error.ServerValidationException;
 import com.marklogic.hub.impl.DataHubImpl;
 import com.marklogic.hub.util.Versions;
 
+import java.util.HashMap;
 import java.util.List;
 
 public interface DataHub {
@@ -66,7 +67,7 @@ public interface DataHub {
      * with variables necessary to perform the install.
      * This is used for running install.
      */
-    void runPreInstallCheck();
+    HashMap runPreInstallCheck();
 
     /**
      * Runs the pre-install check for the datahub populating the object
@@ -74,7 +75,7 @@ public interface DataHub {
      * This is used for running install.
      * @param versions - the versions that the check is to be run against
      */
-    void runPreInstallCheck(Versions versions);
+    HashMap runPreInstallCheck(Versions versions);
 
     /**
      * Installs the data hub configuration and server-side config files into MarkLogic
