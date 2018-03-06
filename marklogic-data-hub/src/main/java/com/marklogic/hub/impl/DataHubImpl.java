@@ -253,11 +253,11 @@ public class DataHubImpl implements DataHub {
         return commands;
     }
 
-    @Override public void runPreInstallCheck() {
-        runPreInstallCheck(null);
+    @Override public HashMap runPreInstallCheck() {
+       return runPreInstallCheck(null);
     }
 
-    @Override public void runPreInstallCheck(Versions versions) {
+    @Override public HashMap runPreInstallCheck(Versions versions) {
 
         Map<Integer, String> portsInUse = getServerPortsInUse();
         Set<Integer> ports = portsInUse.keySet();
@@ -291,6 +291,20 @@ public class DataHubImpl implements DataHub {
         }
         serverVersion = versions.getMarkLogicVersion();
         serverVersionOk = isServerVersionValid(serverVersion);
+        HashMap response = new HashMap();
+        response.put("serverVersion", serverVersion);
+        response.put("serverVersionOk", serverVersionOk);
+        response.put("stagingPortInUse", stagingPortInUse);
+        response.put("stagingPortInUseBy", stagingPortInUseBy);
+        response.put("finalPortInUse", finalPortInUse);
+        response.put("finalPortInUseBy", finalPortInUseBy);
+        response.put("jobPortInUse", jobPortInUse);
+        response.put("jobPortInUseBy", jobPortInUseBy);
+        response.put("tracePortInUse", tracePortInUse);
+        response.put("tracePortInUseBy", tracePortInUseBy);
+        response.put("safeToInstall", isSafeToInstall());
+
+        return response;
     }
 
     /**

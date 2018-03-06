@@ -43,10 +43,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.TimeZone;
+import java.util.*;
 
 @Service
 public class DataHubService {
@@ -127,9 +124,9 @@ public class DataHubService {
         PerformanceLogger.logTimeInsideMethod(startTime, "DataHubService.uninstallUserModules");
     }
 
-    public void preInstallCheck(HubConfig config) {
+    public HashMap preInstallCheck(HubConfig config) {
         DataHub dataHub = DataHub.create(config);
-        dataHub.runPreInstallCheck();
+        return dataHub.runPreInstallCheck();
     }
 
     @Async
