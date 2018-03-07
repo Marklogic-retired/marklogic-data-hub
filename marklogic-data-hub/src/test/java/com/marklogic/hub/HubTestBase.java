@@ -392,6 +392,17 @@ public class HubTestBase {
         return count;
     }
 
+    protected static int getTelemetryInstallCount(){
+        int count = 0;
+        EvalResultIterator resultItr = runInDatabase("xdmp:feature-metric-status()/*:feature-metrics/*:features/*:feature[@name=\"datahub.core.install.count\"]/data()", stagingClient.getDatabase());
+        if (resultItr == null || ! resultItr.hasNext()) {
+            return count;
+        }
+        EvalResult res = resultItr.next();
+        count = Math.toIntExact(Integer.parseInt(res.getString()));
+        return count;
+    }
+
     protected static int getMlMajorVersion() {
         return Integer.parseInt(new Versions(getHubConfig()).getMarkLogicVersion().substring(0, 1));
     }
