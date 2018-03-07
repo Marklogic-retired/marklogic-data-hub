@@ -86,7 +86,7 @@ public class HubAppDeployer extends SimpleAppDeployer {
             eval.xquery(query).eval().close();
         }
         catch(FailedRequestException e) {
-            logger.error("Failed to increment feature metric telementry count: " + query, e);
+            logger.error("Failed to increment feature metric telemetry count: " + query, e);
             e.printStackTrace();
         }
         logger.info(format("Deployed app %s", appConfig.getName()));
