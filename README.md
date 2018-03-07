@@ -8,7 +8,7 @@ The MarkLogic Data Hub Framework is a data integration framework and tool-set to
 Grab the [latest release](https://github.com/marklogic-community/marklogic-data-hub/releases) then visit our [Data Hub Framework website](https://marklogic-community.github.io/marklogic-data-hub/) to get started.
 
 
-##Advanced Hub Usage
+## Advanced Hub Usage
 Ready to go beyond QuickStart and start using DHF in your own Java or Gradle project? The [Data Hub Framework website](https://marklogic-community.github.io/) also provides that.
 
 ## Don't get this code
