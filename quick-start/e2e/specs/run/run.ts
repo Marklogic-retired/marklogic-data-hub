@@ -79,11 +79,18 @@ export default function(tmpDir) {
       flowPage.isLoaded();
     });
 
-    it ('should setup Harmonize Products flow', function() {
+    it ('should setup customized content on Harmonize Products flow', function() {
       //copy customized content.sjs
       console.log('copy customized content.sjs');
       let contentWithOptionsFilePath = 'e2e/qa-data/plugins/contentWithOptions.sjs';
       fs.copy(contentWithOptionsFilePath, tmpDir + '/plugins/entities/Product/harmonize/Harmonize\ Products/content.sjs');
+    });
+
+    it ('should setup customized headers on Harmonize Products flow', function() {
+      //copy customized headers.sjs
+      console.log('copy customized headers.sjs');
+      let headersWithOptionsFilePath = 'e2e/qa-data/plugins/headersWithOptions.sjs';
+      fs.copy(headersWithOptionsFilePath, tmpDir + '/plugins/entities/Product/harmonize/Harmonize\ Products/headers.sjs');
     });
 
     it ('should redeploy modules', function() {

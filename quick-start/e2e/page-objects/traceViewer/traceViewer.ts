@@ -16,6 +16,10 @@ export class TraceViewerPage extends AppPage {
   pluginButton(pluginName: string) {
     return element(by.cssContainingText('.plugins .plugin-name', pluginName));
   }
+
+  pluginSubheader(pluginName: string) {
+    return element(by.cssContainingText('.subheader', `${pluginName} Plugin`));
+  }
 }
 
 var traceViewerPage = new TraceViewerPage();
