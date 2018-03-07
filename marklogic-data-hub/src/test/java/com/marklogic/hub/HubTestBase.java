@@ -36,6 +36,7 @@ import com.marklogic.hub.deploy.commands.LoadUserModulesCommand;
 import com.marklogic.hub.flow.CodeFormat;
 import com.marklogic.hub.flow.DataFormat;
 import com.marklogic.hub.flow.FlowType;
+import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.util.Versions;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -211,19 +212,19 @@ public class HubTestBase {
     }
 
     protected static void enableDebugging() {
-        new Debugging(stagingClient).enable();
+        Debugging.create(stagingClient).enable();
     }
 
     protected static void disableDebugging() {
-        new Debugging(stagingClient).disable();
+        Debugging.create(stagingClient).disable();
     }
 
     protected static void enableTracing() {
-        new Tracing(stagingClient).enable();
+        Tracing.create(stagingClient).enable();
     }
 
     protected static void disableTracing() {
-        new Tracing(stagingClient).disable();
+        Tracing.create(stagingClient).disable();
     }
 
     protected static HubConfig getHubConfig() {
@@ -231,17 +232,17 @@ public class HubTestBase {
     }
 
     protected static DataHub getDataHub() {
-        return new DataHub(getHubConfig());
+        return DataHub.create(getHubConfig());
     }
 
     protected static HubConfig getHubConfig(String projectDir) {
         HubConfig hubConfig = HubConfigBuilder.newHubConfigBuilder(projectDir)
             .withPropertiesFromEnvironment("local")
             .build();
-        hubConfig.setStagingPort(stagingPort);
-        hubConfig.setFinalPort(finalPort);
-        hubConfig.setTracePort(tracePort);
-        hubConfig.setJobPort(jobPort);
+        hubConfig.setPort(DatabaseKind.STAGING, stagingPort);
+        hubConfig.setPort(DatabaseKind.FINAL, finalPort);
+        hubConfig.setPort(DatabaseKind.TRACE, tracePort);
+        hubConfig.setPort(DatabaseKind.JOB, jobPort);
         hubConfig.getAppConfig().setAppServicesUsername(user);
         hubConfig.getAppConfig().setAppServicesPassword(password);
         hubConfig.getAppConfig().setHost(host);
@@ -388,6 +389,17 @@ public class HubTestBase {
         }
         EvalResult res = resultItr.next();
         count = Math.toIntExact((long) res.getNumber());
+        return count;
+    }
+
+    protected static int getTelemetryInstallCount(){
+        int count = 0;
+        EvalResultIterator resultItr = runInDatabase("xdmp:feature-metric-status()/*:feature-metrics/*:features/*:feature[@name=\"datahub.core.install.count\"]/data()", stagingClient.getDatabase());
+        if (resultItr == null || ! resultItr.hasNext()) {
+            return count;
+        }
+        EvalResult res = resultItr.next();
+        count = Math.toIntExact(Integer.parseInt(res.getString()));
         return count;
     }
 
@@ -573,7 +585,7 @@ public class HubTestBase {
     protected static void installHubModules() {
         logger.debug("Installing Data Hub Framework modules into MarkLogic");
 
-        HubConfig hubConfig = getHubConfig();
+        HubConfigImpl hubConfig = (HubConfigImpl) getHubConfig();
 
         List<Command> commands = new ArrayList<>();
         commands.add(new LoadHubModulesCommand(hubConfig));
@@ -591,7 +603,7 @@ public class HubTestBase {
         loadUserModulesCommand.setForceLoad(force);
         commands.add(loadUserModulesCommand);
 
-        SimpleAppDeployer deployer = new SimpleAppDeployer(hubConfig.getManageClient(), hubConfig.getAdminManager());
+        SimpleAppDeployer deployer = new SimpleAppDeployer(((HubConfigImpl)hubConfig).getManageClient(), ((HubConfigImpl)hubConfig).getAdminManager());
         deployer.setCommands(commands);
         deployer.deploy(hubConfig.getAppConfig());
     }

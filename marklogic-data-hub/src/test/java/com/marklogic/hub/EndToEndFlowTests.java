@@ -109,7 +109,7 @@ public class EndToEndFlowTests extends HubTestBase {
         enableTracing();
         enableDebugging();
 
-        scaffolding = new Scaffolding(projectDir.toString(), finalClient);
+        scaffolding = Scaffolding.create(projectDir.toString(), finalClient);
         scaffolding.createEntity(ENTITY);
 
         scaffoldFlows("scaffolded");
@@ -146,7 +146,7 @@ public class EndToEndFlowTests extends HubTestBase {
             createLegacyFlow("legacy", codeFormat, dataFormat, flowType, useEs);
         });
 
-        flowManager = new FlowManager(getHubConfig());
+        flowManager = FlowManager.create(getHubConfig());
         List<String> legacyFlows = flowManager.getLegacyFlows();
         assertEquals(8, legacyFlows.size(), String.join("\n", legacyFlows));
         assertEquals(8, flowManager.updateLegacyFlows("2.0.0").size()); // don't change this value
@@ -172,7 +172,7 @@ public class EndToEndFlowTests extends HubTestBase {
     }
 
     private JsonNode validateUserModules() {
-        EntitiesValidator ev = new EntitiesValidator(getHubConfig().newStagingClient());
+        EntitiesValidator ev = EntitiesValidator.create(getHubConfig().newStagingClient());
         return ev.validateAll();
     }
 

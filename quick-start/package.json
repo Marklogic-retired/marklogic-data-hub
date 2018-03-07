@@ -6,7 +6,7 @@
   "scripts": {
     "rimraf": "rimraf",
     "ng": "ng",
-    "start": "ng serve -pc proxy.config.json --host 0.0.0.0",
+    "start": "ng serve -pc proxy.config.json --host 0.0.0.0 --disable-host-check",
     "clean.dist": "npm run rimraf -- dist",
     "build.prod": "npm run clean.dist && ng build -prod",
     "test": "ng test",

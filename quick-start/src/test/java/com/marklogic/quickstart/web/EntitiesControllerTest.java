@@ -1,3 +1,20 @@
+/*
+ * Copyright 2012-2018 MarkLogic Corporation
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ */
+
 package com.marklogic.quickstart.web;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -5,7 +22,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.client.document.DocumentRecord;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.JacksonHandle;
-import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubConfigBuilder;
 import com.marklogic.hub.flow.CodeFormat;
 import com.marklogic.hub.flow.DataFormat;
@@ -67,7 +83,7 @@ public class EntitiesControllerTest extends BaseTestController {
         installHub();
 
         Path projectDir = Paths.get(".", PROJECT_PATH);
-        Scaffolding scaffolding = new Scaffolding(projectDir.toString(), stagingClient);
+        Scaffolding scaffolding = Scaffolding.create(projectDir.toString(), stagingClient);
 
         scaffolding.createFlow(ENTITY, "sjs-json-harmonization-flow", FlowType.HARMONIZE,
             CodeFormat.JAVASCRIPT, DataFormat.JSON);
@@ -108,7 +124,7 @@ public class EntitiesControllerTest extends BaseTestController {
         installHub();
 
         Path projectDir = Paths.get(".", PROJECT_PATH);
-        Scaffolding scaffolding = new Scaffolding(projectDir.toString(), stagingClient);
+        Scaffolding scaffolding = Scaffolding.create(projectDir.toString(), stagingClient);
 
         scaffolding.createFlow(ENTITY, "sjs-json-harmonization-flow", FlowType.HARMONIZE,
             CodeFormat.JAVASCRIPT, DataFormat.JSON);

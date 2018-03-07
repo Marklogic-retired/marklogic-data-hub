@@ -20,6 +20,8 @@ import com.marklogic.appdeployer.command.Command;
 import com.marklogic.appdeployer.command.CommandContext;
 import com.marklogic.appdeployer.command.UndoableCommand;
 import com.marklogic.appdeployer.impl.SimpleAppDeployer;
+import com.marklogic.client.FailedRequestException;
+import com.marklogic.client.eval.ServerEvaluationCall;
 import com.marklogic.hub.deploy.util.HubDeployStatusListener;
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.admin.AdminManager;
@@ -75,6 +77,18 @@ public class HubAppDeployer extends SimpleAppDeployer {
             completed++;
         }
         onStatusChange(100, "Installation Complete");
+
+        //Below is telemetry metric code for tracking successful dhf installs
+        //TODO: when more uses of telemetry are defined, change this to a more e-node based method
+        ServerEvaluationCall eval = appConfig.newDatabaseClient().newServerEval();
+        String query = "xdmp:feature-metric-increment(xdmp:feature-metric-register(\"datahub.core.install.count\"))";
+        try {
+            eval.xquery(query).eval().close();
+        }
+        catch(FailedRequestException e) {
+            logger.error("Failed to increment feature metric telemetry count: " + query, e);
+            e.printStackTrace();
+        }
         logger.info(format("Deployed app %s", appConfig.getName()));
     }
 

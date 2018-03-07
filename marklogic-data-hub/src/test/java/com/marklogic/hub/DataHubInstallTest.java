@@ -21,12 +21,19 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class DataHubInstallTest extends HubTestBase {
+    private static int afterTelemetryInstallCount = 0;
 
     @BeforeClass
     public static void setup() {
         XMLUnit.setIgnoreWhitespace(true);
         uninstallHub();
         installHub();
+        afterTelemetryInstallCount = getTelemetryInstallCount();
+    }
+
+    @Test
+    public void testTelemetryInstallCount() throws IOException {
+        assertTrue("Telemetry install count was not incremented during install", afterTelemetryInstallCount > 0);
     }
 
     @Test
@@ -183,7 +190,7 @@ public class DataHubInstallTest extends HubTestBase {
         URL url = DataHubInstallTest.class.getClassLoader().getResource("data-hub-test");
         String path = Paths.get(url.toURI()).toFile().getAbsolutePath();
         HubConfig hubConfig = getHubConfig(path);
-        DataHub dataHub = new DataHub(hubConfig);
+        DataHub dataHub = DataHub.create(hubConfig);
         dataHub.clearUserModules();
 
         int totalCount = getDocCount(HubConfig.DEFAULT_MODULES_DB_NAME, null);

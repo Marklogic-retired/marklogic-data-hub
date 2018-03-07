@@ -13,27 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.marklogic.hub;
 
-public enum HubDatabase {
-    STAGING("staging"),
-    FINAL("final");
+package com.marklogic.hub.error;
 
-    private String type;
-    HubDatabase(String type) {
-        this.type = type;
-    }
+import com.marklogic.hub.DatabaseKind;
 
-    public static HubDatabase getHubDatabase(String database) {
-        for (HubDatabase hubDatabase : HubDatabase.values()) {
-            if (hubDatabase.toString().equals(database)) {
-                return hubDatabase;
-            }
-        }
-        return null;
-    }
-
-    public String toString() {
-        return this.type;
+public class InvalidDBOperationError extends Error {
+    public InvalidDBOperationError(DatabaseKind kind, String operation) {
+        super("Attempt to " + operation + " on the " + kind + " database");
     }
 }

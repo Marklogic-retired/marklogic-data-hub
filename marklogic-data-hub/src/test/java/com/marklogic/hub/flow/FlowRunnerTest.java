@@ -55,12 +55,12 @@ public class FlowRunnerTest extends HubTestBase {
         enableDebugging();
         enableTracing();
 
-        Scaffolding scaffolding = new Scaffolding(projectDir.toString(), stagingClient);
+        Scaffolding scaffolding = Scaffolding.create(projectDir.toString(), stagingClient);
         scaffolding.createEntity(ENTITY);
         scaffolding.createFlow(ENTITY, "testharmonize", FlowType.HARMONIZE,
             CodeFormat.XQUERY, DataFormat.XML);
 
-        DataHub dh = new DataHub(getHubConfig());
+        DataHub dh = DataHub.create(getHubConfig());
         dh.clearUserModules();
         installUserModules(getHubConfig(), false);
 
@@ -76,7 +76,7 @@ public class FlowRunnerTest extends HubTestBase {
     @Test
     public void testPassOptions() throws IOException, ParserConfigurationException, SAXException {
 
-        FlowManager fm = new FlowManager(getHubConfig());
+        FlowManager fm = FlowManager.create(getHubConfig());
         Flow harmonizeFlow = fm.getFlow(ENTITY, "testharmonize",
             FlowType.HARMONIZE);
         HashMap<String, Object> options = new HashMap<>();
