@@ -21,12 +21,19 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class DataHubInstallTest extends HubTestBase {
+    private static int afterTelemetryInstallCount = 0;
 
     @BeforeClass
     public static void setup() {
         XMLUnit.setIgnoreWhitespace(true);
         uninstallHub();
         installHub();
+        afterTelemetryInstallCount = getTelemetryInstallCount();
+    }
+
+    @Test
+    public void testTelemetryInstallCount() throws IOException {
+        assertTrue("Telemetry install count was not incremented during install", afterTelemetryInstallCount > 0);
     }
 
     @Test
