@@ -104,6 +104,9 @@ public class EndToEndFlowTests extends HubTestBase {
         XMLUnit.setIgnoreWhitespace(true);
 
         deleteProjectDir();
+        if(isSslRun() || isCertAuth()) {
+     		sslSetup();
+		}
 
         installHub();
         enableTracing();
@@ -169,6 +172,9 @@ public class EndToEndFlowTests extends HubTestBase {
     @AfterAll
     public static void teardown() {
         uninstallHub();
+        if(isSslRun() || isCertAuth()) {
+    		sslCleanup();
+    	}
     }
 
     private JsonNode validateUserModules() {
@@ -190,16 +196,19 @@ public class EndToEndFlowTests extends HubTestBase {
             String prefix = "legacy";
             String flowName = getFlowName(prefix, codeFormat, dataFormat, flowType, useEs);
             if (flowType.equals(FlowType.INPUT)) {
-                tests.add(DynamicTest.dynamicTest(flowName + " MLCP", () -> {
-                    Map<String, Object> options = new HashMap<>();
-                    FinalCounts finalCounts = new FinalCounts(1, 0, 1, 1, 0, 0, 1, 0, 0, 0, "FINISHED");
-                    testInputFlowViaMlcp(prefix, useEs ? "-es" : "", stagingClient, codeFormat, dataFormat, useEs, options, finalCounts);
-                }));
-                tests.add(DynamicTest.dynamicTest(flowName + " MLCP", () -> {
-                    Map<String, Object> options = new HashMap<>();
-                    FinalCounts finalCounts = new FinalCounts(0, 1, 1, 1, 0, 0, 1, 0, 0, 0, "FINISHED");
-                    testInputFlowViaMlcp(prefix, useEs ? "-es" : "", finalClient, codeFormat, dataFormat, useEs, options, finalCounts);
-                }));
+            	if(! isSslRun() && !isCertAuth()) {
+            		tests.add(DynamicTest.dynamicTest(flowName + " MLCP", () -> {
+                        Map<String, Object> options = new HashMap<>();
+                        FinalCounts finalCounts = new FinalCounts(1, 0, 1, 1, 0, 0, 1, 0, 0, 0, "FINISHED");
+                        testInputFlowViaMlcp(prefix, useEs ? "-es" : "", stagingClient, codeFormat, dataFormat, useEs, options, finalCounts);
+                    }));
+
+                    tests.add(DynamicTest.dynamicTest(flowName + " MLCP", () -> {
+                        Map<String, Object> options = new HashMap<>();
+                        FinalCounts finalCounts = new FinalCounts(0, 1, 1, 1, 0, 0, 1, 0, 0, 0, "FINISHED");
+                        testInputFlowViaMlcp(prefix, useEs ? "-es" : "", finalClient, codeFormat, dataFormat, useEs, options, finalCounts);
+                    }));
+            	}
                 tests.add(DynamicTest.dynamicTest(flowName + " REST", () -> {
                     Map<String, Object> options = new HashMap<>();
                     FinalCounts finalCounts = new FinalCounts(1, 0, 1, 0, 0, 0, 0, 0, 0, 0, "FINISHED");
@@ -228,11 +237,13 @@ public class EndToEndFlowTests extends HubTestBase {
             String prefix = "has a space ";
             String flowName = getFlowName(prefix, codeFormat, dataFormat, flowType, useEs);
             if (flowType.equals(FlowType.INPUT)) {
-                tests.add(DynamicTest.dynamicTest(flowName + " MLCP", () -> {
-                    Map<String, Object> options = new HashMap<>();
-                    FinalCounts finalCounts = new FinalCounts(1, 0, 1, 1, 0, 0, 1, 0, 0, 0, "FINISHED");
-                    testInputFlowViaMlcp(prefix, useEs ? "-es" : "", stagingClient, codeFormat, dataFormat, useEs, options, finalCounts);
-                }));
+            	if(!isSslRun() && !isCertAuth()) {
+            		tests.add(DynamicTest.dynamicTest(flowName + " MLCP", () -> {
+                        Map<String, Object> options = new HashMap<>();
+                        FinalCounts finalCounts = new FinalCounts(1, 0, 1, 1, 0, 0, 1, 0, 0, 0, "FINISHED");
+                        testInputFlowViaMlcp(prefix, useEs ? "-es" : "", stagingClient, codeFormat, dataFormat, useEs, options, finalCounts);
+                    }));
+            	}
                 tests.add(DynamicTest.dynamicTest(flowName + " REST", () -> {
                     Map<String, Object> options = new HashMap<>();
                     FinalCounts finalCounts = new FinalCounts(1, 0, 1, 0, 0, 0, 0, 0, 0, 0, "FINISHED");
@@ -257,16 +268,19 @@ public class EndToEndFlowTests extends HubTestBase {
             String prefix = "1x-legacy";
             String flowName = getFlowName(prefix, codeFormat, dataFormat, flowType, useEs);
             if (flowType.equals(FlowType.INPUT)) {
-                tests.add(DynamicTest.dynamicTest(flowName + " MLCP", () -> {
-                    Map<String, Object> options = new HashMap<>();
-                    FinalCounts finalCounts = new FinalCounts(1, 0, 1, 1, 0, 0, 1, 0, 0, 0, "FINISHED");
-                    testInputFlowViaMlcp(prefix, useEs ? "-es" : "", stagingClient, codeFormat, dataFormat, useEs, options, finalCounts);
-                }));
-                tests.add(DynamicTest.dynamicTest(flowName + " MLCP", () -> {
-                    Map<String, Object> options = new HashMap<>();
-                    FinalCounts finalCounts = new FinalCounts(0, 1, 1, 1, 0, 0, 1, 0, 0, 0, "FINISHED");
-                    testInputFlowViaMlcp(prefix, useEs ? "-es" : "", finalClient, codeFormat, dataFormat, useEs, options, finalCounts);
-                }));
+            	if(! isSslRun() && !isCertAuth()) {
+            		tests.add(DynamicTest.dynamicTest(flowName + " MLCP", () -> {
+                        Map<String, Object> options = new HashMap<>();
+                        FinalCounts finalCounts = new FinalCounts(1, 0, 1, 1, 0, 0, 1, 0, 0, 0, "FINISHED");
+                        testInputFlowViaMlcp(prefix, useEs ? "-es" : "", stagingClient, codeFormat, dataFormat, useEs, options, finalCounts);
+                    }));
+
+                    tests.add(DynamicTest.dynamicTest(flowName + " MLCP", () -> {
+                        Map<String, Object> options = new HashMap<>();
+                        FinalCounts finalCounts = new FinalCounts(0, 1, 1, 1, 0, 0, 1, 0, 0, 0, "FINISHED");
+                        testInputFlowViaMlcp(prefix, useEs ? "-es" : "", finalClient, codeFormat, dataFormat, useEs, options, finalCounts);
+                    }));
+            	}
                 tests.add(DynamicTest.dynamicTest(flowName + " REST", () -> {
                     Map<String, Object> options = new HashMap<>();
                     FinalCounts finalCounts = new FinalCounts(1, 0, 1, 0, 0, 0, 0, 0, 0, 0, "FINISHED");
@@ -294,12 +308,14 @@ public class EndToEndFlowTests extends HubTestBase {
             String prefix = "extra-plugin";
             String flowName = getFlowName(prefix, codeFormat, dataFormat, flowType, useEs);
             if (flowType.equals(FlowType.INPUT)) {
-                tests.add(DynamicTest.dynamicTest(flowName + " MLCP", () -> {
-                    Map<String, Object> options = new HashMap<>();
-                    options.put("extraPlugin", true);
-                    FinalCounts finalCounts = new FinalCounts(1, 0, 1, 1, 0, 0, 1, 0, 0, 0, "FINISHED");
-                    testInputFlowViaMlcp(prefix, useEs ? "-es" : "", stagingClient, codeFormat, dataFormat, useEs, options, finalCounts);
-                }));
+              	if(!isSslRun() && !isCertAuth()) {
+            			tests.add(DynamicTest.dynamicTest(flowName + " MLCP", () -> {
+                           Map<String, Object> options = new HashMap<>();
+                           options.put("extraPlugin", true);
+                           FinalCounts finalCounts = new FinalCounts(1, 0, 1, 1, 0, 0, 1, 0, 0, 0, "FINISHED");
+                           testInputFlowViaMlcp(prefix, useEs ? "-es" : "", stagingClient, codeFormat, dataFormat, useEs, options, finalCounts);
+                       }));	
+                }
                 tests.add(DynamicTest.dynamicTest(flowName + " REST", () -> {
                     Map<String, Object> options = new HashMap<>();
                     options.put("extraPlugin", true);
@@ -332,11 +348,13 @@ public class EndToEndFlowTests extends HubTestBase {
             String prefix = "scaffolded";
             String flowName = getFlowName(prefix, codeFormat, dataFormat, flowType, useEs);
             if (flowType.equals(FlowType.INPUT)) {
-                tests.add(DynamicTest.dynamicTest(flowName + " MLCP", () -> {
-                    Map<String, Object> options = new HashMap<>();
-                    FinalCounts finalCounts = new FinalCounts(1, 0, 1, 1, 0, 0, 1, 0, 0, 0, "FINISHED");
-                    testInputFlowViaMlcp(prefix, useEs ? "-es" : "", stagingClient, codeFormat, dataFormat, useEs, options, finalCounts);
-                }));
+               	if(!isSslRun() && !isCertAuth()) {
+                    tests.add(DynamicTest.dynamicTest(flowName + " MLCP", () -> {
+                        Map<String, Object> options = new HashMap<>();
+                        FinalCounts finalCounts = new FinalCounts(1, 0, 1, 1, 0, 0, 1, 0, 0, 0, "FINISHED");
+                        testInputFlowViaMlcp(prefix, useEs ? "-es" : "", stagingClient, codeFormat, dataFormat, useEs, options, finalCounts);
+                    }));
+            	}
                 tests.add(DynamicTest.dynamicTest(flowName + " REST", () -> {
                     Map<String, Object> options = new HashMap<>();
                     FinalCounts finalCounts = new FinalCounts(1, 0, 1, 0, 0, 0, 0, 0, 0, 0, "FINISHED");
@@ -365,12 +383,13 @@ public class EndToEndFlowTests extends HubTestBase {
             String flowName = getFlowName(prefix, codeFormat, dataFormat, flowType, useEs);
             if (codeFormat.equals(CodeFormat.XQUERY)) {
                 if (flowType.equals(FlowType.INPUT)) {
-                    tests.add(DynamicTest.dynamicTest(flowName + " MLCP", () -> {
-                        Map<String, Object> options = new HashMap<>();
-                        FinalCounts finalCounts = new FinalCounts(1, 0, 1, 1, 0, 0, 1, 0, 0, 0, "FINISHED");
-                        testInputFlowViaMlcp(prefix, useEs ? "-es" : "", stagingClient, codeFormat, dataFormat, useEs, options, finalCounts);
-                    }));
-
+                	if(!isSslRun() && !isCertAuth()) {
+                		tests.add(DynamicTest.dynamicTest(flowName + " MLCP", () -> {
+                            Map<String, Object> options = new HashMap<>();
+                            FinalCounts finalCounts = new FinalCounts(1, 0, 1, 1, 0, 0, 1, 0, 0, 0, "FINISHED");
+                            testInputFlowViaMlcp(prefix, useEs ? "-es" : "", stagingClient, codeFormat, dataFormat, useEs, options, finalCounts);
+                        }));
+                	}
                     tests.add(DynamicTest.dynamicTest(flowName + " REST", () -> {
                         Map<String, Object> options = new HashMap<>();
                         FinalCounts finalCounts = new FinalCounts(1, 0, 1, 0, 0, 0, 1, 0, 0, 0, "FINISHED");
@@ -393,10 +412,12 @@ public class EndToEndFlowTests extends HubTestBase {
                 for (String plugin : new String[] { "main", "content", "headers", "triples"}) {
                     Map<String, Object> options = new HashMap<>();
                     options.put(plugin + "GoBoom", true);
-                    tests.add(DynamicTest.dynamicTest(flowName + ": " + plugin + " error MLCP", () -> {
-                        FinalCounts finalCounts = new FinalCounts(0, 0, 1, 1, 0, 0, 0, 0, 0, 0, "FAILED");
-                        testInputFlowViaMlcp(prefix, "-2", stagingClient, codeFormat, dataFormat, useEs, options, finalCounts);
-                    }));
+                    if(!isSslRun() && !isCertAuth()) {
+                        tests.add(DynamicTest.dynamicTest(flowName + ": " + plugin + " error MLCP", () -> {
+                            FinalCounts finalCounts = new FinalCounts(0, 0, 1, 1, 0, 0, 0, 0, 0, 0, "FAILED");
+                            testInputFlowViaMlcp(prefix, "-2", stagingClient, codeFormat, dataFormat, useEs, options, finalCounts);
+                        }));
+                    }
 
                     tests.add(DynamicTest.dynamicTest(flowName + ": " + plugin + " error REST", () -> {
                         FinalCounts finalCounts = new FinalCounts(0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "FAILED");
