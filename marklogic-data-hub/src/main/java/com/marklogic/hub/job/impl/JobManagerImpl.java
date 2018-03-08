@@ -104,12 +104,6 @@ public class JobManagerImpl implements JobManager {
         return this.jobDeleteRunner.deleteJobs(jobIds);
     }
 
-    /**
-     * Export Job documents and their associated Trace documents to a zip file.
-     *
-     * @param exportFilePath specifies where the zip file will be written
-     * @param jobIds a comma-separated list of jobIds; if null, all will be exported
-     */
     @Override public JobExportResponse exportJobs(Path exportFilePath, String[] jobIds) {
         JobExportResponse response = new JobExportResponse();
         response.fullPath = exportFilePath.toAbsolutePath().toString();
@@ -177,11 +171,6 @@ public class JobManagerImpl implements JobManager {
         return response;
     }
 
-    /**
-     * Import Job documents and their associated Trace documents from a zip file.
-     *
-     * @param importFilePath specifies where the zip file exists
-     */
     @Override public void importJobs(Path importFilePath) throws IOException {
         ZipFile importZip = new ZipFile(importFilePath.toFile());
         Enumeration<? extends ZipEntry> entries = importZip.entries();

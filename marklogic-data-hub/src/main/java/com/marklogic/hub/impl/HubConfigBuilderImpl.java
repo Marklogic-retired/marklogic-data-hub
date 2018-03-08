@@ -65,92 +65,46 @@ public class HubConfigBuilderImpl implements HubConfigBuilder {
         this.hubConfig = (HubConfigImpl)HubConfig.create(projectDir);
     }
 
-    /**
-     * Tells the builder to load properties from the gradle files in the project dir
-     * @return the {@link HubConfigBuilder} instance
-     */
     @Override public HubConfigBuilder withPropertiesFromEnvironment() {
         return withPropertiesFromEnvironment(null);
     }
 
-    /**
-     * Tells the builder to load properties from the gradle files in the project dir
-     * but to look for an environment properties file with overrides
-     * @param environment - the name of the environment to use (local,dev,qa,prod,...)
-     * @return the {@link HubConfigBuilder} instance
-     */
     @Override public HubConfigBuilder withPropertiesFromEnvironment(String environment) {
         this.usePropertiesFromEnvironment = true;
         this.environment = environment;
         return this;
     }
 
-    /**
-     * Tells the builder to use the given properties. If properties are also being loaded from the
-     * gradle files in the project dir, then these properties will be merged into the others taking
-     * precedence over the ones loaded from disk
-     * @param properties - A {@link Properties} object with properties set
-     * @return the {@link HubConfigBuilder} instance
-     */
     @Override public HubConfigBuilder withProperties(Properties properties) {
         this.properties = properties;
         return this;
     }
 
-    /**
-     * Sets the {@link AppConfig} for the {@link HubConfig}
-     * @param appConfig - an {@link AppConfig} object
-     * @return the {@link HubConfigBuilder} instance
-     */
     @Override public HubConfigBuilder withAppConfig(AppConfig appConfig) {
         this.appConfig = appConfig;
         return this;
     }
 
-    /**
-     * Sets the {@link AdminConfig} for the {@link HubConfig}
-     * @param adminConfig - an {@link AdminConfig} object
-     * @return the {@link HubConfigBuilder} instance
-     */
     @Override public HubConfigBuilder withAdminConfig(AdminConfig adminConfig) {
         this.adminConfig = adminConfig;
         return this;
     }
 
-    /**
-     * Sets the {@link AdminManager} for the {@link HubConfig}
-     * @param adminManager - an {@link AdminManager} object
-     * @return the {@link HubConfigBuilder} instance
-     */
     @Override public HubConfigBuilder withAdminManager(AdminManager adminManager) {
         this.adminManager = adminManager;
         return this;
     }
 
-    /**
-     * Sets the {@link ManageConfig} for the {@link HubConfig}
-     * @param manageConfig - a {@link ManageConfig} object
-     * @return the {@link HubConfigBuilder} instance
-     */
     @Override public HubConfigBuilder withManageConfig(ManageConfig manageConfig) {
         this.manageConfig = manageConfig;
         return this;
     }
 
-    /**
-     * Sets the {@link ManageClient} for the {@link HubConfig}
-     * @param manageClient - a {@link ManageClient}
-     * @return the {@link HubConfigBuilder} instance
-     */
     @Override public HubConfigBuilder withManageClient(ManageClient manageClient) {
         this.manageClient = manageClient;
         return this;
     }
 
-    /**
-     * Builds the {@link HubConfig} instance
-     * @return the created {@link HubConfig}
-     */
     @Override public HubConfig build() {
         Properties actualProperties = null;
         if (usePropertiesFromEnvironment) {

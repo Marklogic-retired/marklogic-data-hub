@@ -103,10 +103,6 @@ public class DataHubImpl implements DataHub {
     }
     public void setServerManager(ServerManager manager) { this._serverManager = manager; }
 
-    /**
-     * Determines if the data hub is installed in MarkLogic
-     * @return true if installed, false otherwise
-     */
     @Override public InstallInfo isInstalled() {
 
         InstallInfo installInfo = InstallInfo.create();
@@ -152,12 +148,6 @@ public class DataHubImpl implements DataHub {
         return installInfo;
     }
 
-    /**
-     * Validates the MarkLogic server to ensure compatibility with the hub
-     * @param versionString - the version of the server to validate
-     * @return true if valid, false otherwise
-     * @throws ServerValidationException if the server is not compatible
-     */
     @Override public boolean isServerVersionValid(String versionString) {
         try {
             if (versionString == null) {
@@ -199,9 +189,7 @@ public class DataHubImpl implements DataHub {
         hubConfig.initHubProject();
     }
 
-    /**
-     * Removes user's modules from the modules db
-     */
+
     @Override public void clearUserModules() {
         ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver(DataHub.class.getClassLoader());
         try {
