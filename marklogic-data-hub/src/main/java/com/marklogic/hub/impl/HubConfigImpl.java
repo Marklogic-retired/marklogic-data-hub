@@ -856,10 +856,6 @@ public class HubConfigImpl implements HubConfig {
         return getAppConfig().newAppServicesDatabaseClient(null);
     }
 
-    /**
-     * Creates a new DatabaseClient for accessing the Staging database
-     * @return - a DatabaseClient
-     */
     public DatabaseClient newStagingClient() {
         return newStagingClient(stagingDbName);
     }
@@ -877,10 +873,6 @@ public class HubConfigImpl implements HubConfig {
         return appConfig.getConfiguredDatabaseClientFactory().newDatabaseClient(config);
     }
 
-    /**
-     * Creates a new DatabaseClient for accessing the Final database
-     * @return - a DatabaseClient
-     */
     public DatabaseClient newFinalClient() {
         AppConfig appConfig = getAppConfig();
         DatabaseClientConfig config = new DatabaseClientConfig(appConfig.getHost(), finalPort, appConfig.getRestAdminUsername(), appConfig.getRestAdminPassword());
@@ -894,10 +886,6 @@ public class HubConfigImpl implements HubConfig {
         return appConfig.getConfiguredDatabaseClientFactory().newDatabaseClient(config);
     }
 
-    /**
-     * Creates a new DatabaseClient for accessing the Job database
-     * @return - a DatabaseClient
-     */
     public DatabaseClient newJobDbClient() {
         AppConfig appConfig = getAppConfig();
         DatabaseClientConfig config = new DatabaseClientConfig(appConfig.getHost(), jobPort, appConfig.getRestAdminUsername(), appConfig.getRestAdminPassword());
@@ -911,10 +899,6 @@ public class HubConfigImpl implements HubConfig {
         return appConfig.getConfiguredDatabaseClientFactory().newDatabaseClient(config);
     }
 
-    /**
-     * Creates a new DatabaseClient for accessing the Trace database
-     * @return - a DatabaseClient
-     */
     public DatabaseClient newTraceDbClient() {
         AppConfig appConfig = getAppConfig();
         DatabaseClientConfig config = new DatabaseClientConfig(appConfig.getHost(), tracePort, appConfig.getRestAdminUsername(), appConfig.getRestAdminPassword());
@@ -928,10 +912,6 @@ public class HubConfigImpl implements HubConfig {
         return appConfig.getConfiguredDatabaseClientFactory().newDatabaseClient(config);
     }
 
-    /**
-     * Creates a new DatabaseClient for accessing the Hub Modules database
-     * @return - a DatabaseClient
-     */
     public DatabaseClient newModulesDbClient() {
         AppConfig appConfig = getAppConfig();
         DatabaseClientConfig config = new DatabaseClientConfig(appConfig.getHost(), stagingPort, appConfig.getRestAdminUsername(), appConfig.getRestAdminPassword());

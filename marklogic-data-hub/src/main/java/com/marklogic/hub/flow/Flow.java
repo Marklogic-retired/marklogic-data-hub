@@ -32,6 +32,9 @@ public interface Flow {
     void setCodeFormat(CodeFormat codeFormat);
     CodeFormat getCodeFormat();
 
+    /**
+     * Serializes the flow into an xml string
+     */
     String serialize();
 
     Properties toProperties();

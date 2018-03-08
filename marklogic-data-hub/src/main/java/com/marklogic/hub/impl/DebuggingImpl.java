@@ -33,29 +33,18 @@ public class DebuggingImpl extends ResourceManager implements Debugging {
         client.init(NAME, this);
     }
 
-    /**
-     * Enables debugging
-     */
     @Override public void enable() {
         RequestParameters params = new RequestParameters();
         params.add("enable", "true");
         this.getServices().post(params, new StringHandle("{}").withFormat(Format.JSON));
     }
 
-    /**
-     * Disables debugging
-     */
     @Override public void disable() {
         RequestParameters params = new RequestParameters();
         params.add("enable", "false");
         this.getServices().post(params, new StringHandle("{}").withFormat(Format.JSON));
     }
 
-    /**
-     * Determines if the hub has debugging enabled or not
-     *
-     * @return - true if enabled, false otherwise
-     */
     @Override public boolean isEnabled() {
         RequestParameters params = new RequestParameters();
         ServiceResultIterator resultItr = this.getServices().get(params);

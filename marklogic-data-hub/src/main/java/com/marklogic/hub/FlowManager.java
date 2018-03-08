@@ -55,9 +55,7 @@ public interface FlowManager {
 
     /**
      * Retrieves a list of flows installed on the MarkLogic server
-     *
-     * @param entityName
-     *            - the entity from which to fetch the flows
+     * @param entityName - the entity from which to fetch the flows
      * @return - a list of flows for the given entity
      */
     List<Flow> getFlows(String entityName);
@@ -65,10 +63,8 @@ public interface FlowManager {
     /**
      * Retrieves a named flow from a given entity
      *
-     * @param entityName
-     *            - the entity that the flow belongs to
-     * @param flowName
-     *            - the name of the flow to get
+     * @param entityName - the entity that the flow belongs to
+     * @param flowName - the name of the flow to get
      * @return the flow
      */
     Flow getFlow(String entityName, String flowName);
