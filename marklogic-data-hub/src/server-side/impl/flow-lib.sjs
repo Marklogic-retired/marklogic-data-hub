@@ -401,6 +401,7 @@ function instanceToCanonicalXml(entityInstance) {
       }
     x.endElement();
   x.endDocument();
+  return x.toNode();
 };
 
 function setDefaultOptions(options, flow) {

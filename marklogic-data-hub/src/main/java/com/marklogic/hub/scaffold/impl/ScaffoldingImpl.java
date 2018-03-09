@@ -44,6 +44,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ScaffoldingImpl implements Scaffolding {
@@ -161,6 +162,9 @@ public class ScaffoldingImpl implements Scaffolding {
                 if (updateLegacyFlow(fromVersion, entityName, inputFlow.getName(), FlowType.INPUT)) {
                     updatedFlows.add(entityName + " => " + inputFlow.getName());
                 }
+                else if(update2xFlow(entityName, inputFlow.getName(), FlowType.INPUT)) {
+                    updatedFlows.add(entityName + " => " + inputFlow.getName());
+                }
             }
         }
 
@@ -168,6 +172,9 @@ public class ScaffoldingImpl implements Scaffolding {
         if (harmonizeFlows != null) {
             for (File harmonizeFlow : harmonizeFlows) {
                 if(updateLegacyFlow(fromVersion, entityName, harmonizeFlow.getName(), FlowType.HARMONIZE)) {
+                    updatedFlows.add(entityName + " => " + harmonizeFlow.getName());
+                }
+                else if(update2xFlow(entityName, harmonizeFlow.getName(), FlowType.HARMONIZE)) {
                     updatedFlows.add(entityName + " => " + harmonizeFlow.getName());
                 }
             }
@@ -254,6 +261,43 @@ public class ScaffoldingImpl implements Scaffolding {
                         }
                         updated = true;
                     }
+            }
+        }
+        return updated;
+    }
+
+    public boolean update2xFlow(String entityName, String flowName, FlowType flowType) {
+        boolean updated = false;
+
+        Path flowDir = getFlowDir(entityName, flowName, flowType);
+        Path mainPath = flowDir.resolve("main.sjs");
+        if (mainPath.toFile().exists()) {
+            try {
+                String mainFile = FileUtils.readFileToString(mainPath.toFile());
+                // determine if this main needs to be updated to the 3.0 format
+                if (mainFile.contains("dhf.xqy")) {
+                    // switch out dhf.xqy for dhf.sjs
+                    mainFile = mainFile.replaceAll("dhf\\.xqy", "dhf.sjs");
+
+                    // update the write reference for harmonize flows
+                    if (flowType.equals(FlowType.HARMONIZE)) {
+                        Pattern pattern = Pattern.compile("dhf\\.runWriter\\(xdmp\\.function\\(null,\\s*'\\.(.*)/writer\\.sjs'\\),\\s*id,\\s*envelope,\\s*options\\);");
+                        Matcher matcher = pattern.matcher(mainFile);
+                        String writerPath = "";
+                        if (matcher.find()) {
+                            writerPath = matcher.group(1);
+                        }
+                        mainFile = mainFile.replaceFirst("(const\\s+triplesPlugin\\s*=\\s*require.*)", "$1\nconst writerPlugin = require('." + writerPath + "/writer.sjs');");
+                        mainFile = mainFile.replaceFirst("dhf\\.runWriter\\(xdmp\\.function\\.+\\);", "dhf.runWriter(writerPlugin, id, envelope, options);");
+                    }
+
+                    FileOutputStream fileOutputStream = new FileOutputStream(mainPath.toFile());
+                    IOUtils.write(mainFile, fileOutputStream);
+                    fileOutputStream.close();
+                    updated = true;
+                }
+            } catch (Exception e) {
+                throw new RuntimeException(e);
             }
         }
         return updated;
