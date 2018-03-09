@@ -16,5 +16,10 @@
 package com.marklogic.hub.flow;
 
 public interface FlowItemFailureListener {
+    /**
+     * Listener interface for each flow item that failed
+     * @param jobId - the id of the job as a string
+     * @param itemId - the id of the item as a string
+     */
     void processFailure(String jobId, String itemId);
 }
