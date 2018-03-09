@@ -16,6 +16,15 @@
 package com.marklogic.hub.deploy.util;
 
 public interface HubDeployStatusListener {
+    /**
+     * Sets the status change with a message
+     * @param percentComplete - percentage (out of 100) completed in integer
+     * @param message - the string message to be passed with this threshold
+     */
     void onStatusChange(int percentComplete, String message);
+
+    /**
+     * Method to execute when the listener throws an error
+     */
     void onError();
 }

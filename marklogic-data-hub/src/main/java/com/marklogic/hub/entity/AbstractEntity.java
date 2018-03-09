@@ -63,25 +63,16 @@ public abstract class AbstractEntity implements Entity {
         }
     }
 
-    /**
-     * Returns the name of the Entity
-     */
     @Override
     public String getName() {
         return name;
     }
 
-    /**
-     * Serializes the entity to an XML string
-     */
     @Override
     public String serialize() {
         return null;
     }
 
-    /**
-     * Returns the entity's flows
-     */
     @Override
     public List<Flow> getFlows() {
         return flows;
