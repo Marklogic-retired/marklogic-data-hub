@@ -246,11 +246,7 @@ public class JobManagerImpl implements JobManager {
             this.srcClient.init(DELETE_SERVICE, this);
         }
 
-        /**
-         *
-         * @param jobIds comma-separated list of jobIds to delete.
-         * @return comma-separated list of jobIds that were successfully deleted
-         */
+
         public JobDeleteResponse deleteJobs(String jobIds) {
             JobDeleteResponse resp = null;
             try {
