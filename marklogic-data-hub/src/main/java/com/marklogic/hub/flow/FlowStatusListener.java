@@ -16,5 +16,11 @@
 package com.marklogic.hub.flow;
 
 public interface FlowStatusListener {
+    /**
+     *
+     * @param jobId - the id of the job to change
+     * @param percentComplete - the percentage of completeness expressed as an int
+     * @param message - the message you'd like to send along with it
+     */
     void onStatusChange(String jobId, int percentComplete, String message);
 }
