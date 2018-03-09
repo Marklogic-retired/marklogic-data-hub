@@ -22,11 +22,29 @@ import com.marklogic.hub.validate.impl.EntitiesValidatorImpl;
 
 public interface EntitiesValidator {
 
+    /**
+     * Creates and returns a an EntityValidator object
+     * @param client - DatabaseClient to be used to obtain the information
+     * @return EntitiesValidator object
+     */
     static EntitiesValidator create(DatabaseClient client){
         return new EntitiesValidatorImpl(client);
     }
 
+    /**
+     * Validates all entities
+     * @return JsonNode from jackson showing if entities are valid or not
+     */
     JsonNode validateAll();
 
+    /**
+     * Creates and returns a an EntityValidator object
+     * @param  entity - name of the entity you are attempting to validate
+     * @param flow - name of the flow you want to use
+     * @param plugin - which plugin (triples/headers/etc) without extension
+     * @param type - xquery or javascript
+     * @param content - the content to validate against
+     * @return JsonNode from jackson if the entity is valid
+     */
     JsonNode validate(String entity, String flow, String plugin, String type, String content);
 }

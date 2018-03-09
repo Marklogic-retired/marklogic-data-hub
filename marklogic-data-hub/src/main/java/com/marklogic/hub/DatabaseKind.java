@@ -37,7 +37,7 @@ public enum DatabaseKind {
             "modules"
         };
 
-    /**
+     /**
      * Validates the MarkLogic server to ensure compatibility with the hub
      * @param databaseKind - the enum for the type of database
      * @return string name of the database kind
