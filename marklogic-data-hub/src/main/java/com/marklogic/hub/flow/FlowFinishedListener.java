@@ -16,5 +16,8 @@
 package com.marklogic.hub.flow;
 
 public interface FlowFinishedListener {
+    /**
+     * Listens for when the flow is complete
+     */
     void onFlowFinished();
 }
