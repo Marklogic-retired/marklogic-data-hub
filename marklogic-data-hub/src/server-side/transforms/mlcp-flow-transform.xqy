@@ -1,3 +1,18 @@
+(:
+  Copyright 2012-2018 MarkLogic Corporation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+:)
 xquery version "1.0-ml";
 
 module namespace mlcpFlow = "http://marklogic.com/data-hub/mlcp-flow-transform";
@@ -65,47 +80,15 @@ declare function mlcpFlow:transform(
       )[1]
       let $_ := flow:set-default-options($options, $flow)
 
+      let $mainFunc := flow:get-main($flow/hub:main)
       (: this can throw, but we want MLCP to know about problems, so let it :)
-      let $envelope := mlcpFlow:run-flow(
-        $job-id, $flow, $uri, map:get($content, "value"), $options
-      )
+      let $envelope := flow:run-flow($job-id, $flow, $uri, map:get($content, "value"), $options, $mainFunc)
+
+      (: write the trace for the current identifier :)
+      let $item-context := map:get($flow:context-queue, $uri)
+      let $_ := trace:write-trace($item-context)
       let $_ := map:put($content, "value", $envelope)
       return
         $content
     })
-};
-
-declare function mlcpFlow:run-flow(
-  $jobId, $flow, $uri, $content, $options)
-{
-  (: mlcp in runs in update mode :)
-  xdmp:eval('
-    import module namespace flow = "http://marklogic.com/data-hub/flow-lib"
-      at "/MarkLogic/data-hub-framework/impl/flow-lib.xqy";
-
-    import module namespace trace = "http://marklogic.com/data-hub/trace"
-      at "/MarkLogic/data-hub-framework/impl/trace-lib.xqy";
-
-    declare variable $jobId external;
-    declare variable $flow external;
-    declare variable $uri external;
-    declare variable $content external;
-    declare variable $options external;
-
-    flow:run-flow($jobId, $flow, $uri, $content, $options),
-
-    (: write the trace for the current identifier :)
-    let $item-context := map:get($flow:context-queue, $uri)
-    return
-      trace:write-trace($item-context)
-  ',
-  map:new((
-    map:entry("jobId", $jobId),
-    map:entry("flow", $flow),
-    map:entry("uri", $uri),
-    map:entry("content", $content),
-    map:entry("options", $options)
-  )),
-    map:entry("ignoreAmps", fn:true())
-  )
 };

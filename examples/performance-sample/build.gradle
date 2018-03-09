@@ -1,7 +1,19 @@
+buildscript {
+  repositories {
+    mavenLocal()
+    jcenter()
+  }
+  dependencies {
+    classpath "com.marklogic:ml-data-hub:2.0.5"
+  }
+}
+
 plugins {
     id 'net.saliman.properties' version '1.4.6'
-    id 'com.marklogic.ml-data-hub' version '2.0.4'
+    // id 'com.marklogic.ml-data-hub' version '2.0.4'
 }
+
+apply plugin: "com.marklogic.ml-data-hub"
 
 repositories {
   jcenter()
@@ -175,7 +187,7 @@ task prepareMlcpLog() {
   ].join("\n")
 }
 
-task loadSjsJson(type: com.marklogic.gradle.task.MlcpTask) {
+task loadSjsJson(type: MlcpTask) {
   mustRunAfter createSjsJsonInputFlow
   mustRunAfter mlLoadModules
   mustRunAfter getInputData
@@ -194,13 +206,14 @@ task loadSjsJson(type: com.marklogic.gradle.task.MlcpTask) {
   output_uri_prefix = "/city/"
   output_uri_suffix = ".json"
   output_collections = "input-json"
-  transform_module = "/com.marklogic.hub/mlcp-flow-transform.xqy"
-  transform_namespace = "http://marklogic.com/data-hub/mlcp-flow-transform"
+  transform_module = "/MarkLogic/data-hub-framework/transforms/mlcp-flow-transform.sjs"
+  transform_function = "transform"
   transform_param =  "entity-name=input-json,flow-name=input-sjs-json"
+  modules_root = "/"
   thread_count = 4
 }
 
-task loadXqyJson(type: com.marklogic.gradle.task.MlcpTask) {
+task loadXqyJson(type: MlcpTask) {
   mustRunAfter createXqyJsonInputFlow
   mustRunAfter mlLoadModules
   mustRunAfter getInputData
@@ -219,13 +232,14 @@ task loadXqyJson(type: com.marklogic.gradle.task.MlcpTask) {
   output_uri_prefix = "/city/"
   output_uri_suffix = ".json"
   output_collections = "input-json"
-  transform_module = "/com.marklogic.hub/mlcp-flow-transform.xqy"
+  transform_module = "/MarkLogic/data-hub-framework/transforms/mlcp-flow-transform.xqy"
   transform_namespace = "http://marklogic.com/data-hub/mlcp-flow-transform"
   transform_param =  "entity-name=input-json,flow-name=input-xqy-json"
+  modules_root = "/"
   thread_count = 4
 }
 
-task loadSjsXml(type: com.marklogic.gradle.task.MlcpTask) {
+task loadSjsXml(type: MlcpTask) {
   mustRunAfter createSjsXmlInputFlow
   mustRunAfter mlLoadModules
   mustRunAfter getInputData
@@ -244,13 +258,14 @@ task loadSjsXml(type: com.marklogic.gradle.task.MlcpTask) {
   output_uri_prefix = "/city/"
   output_uri_suffix = ".xml"
   output_collections = "input-xml"
-  transform_module = "/com.marklogic.hub/mlcp-flow-transform.xqy"
-  transform_namespace = "http://marklogic.com/data-hub/mlcp-flow-transform"
+  transform_module = "/MarkLogic/data-hub-framework/transforms/mlcp-flow-transform.sjs"
+  transform_function = "transform"
   transform_param =  "entity-name=input-xml,flow-name=input-sjs-xml"
+  modules_root = "/"
   thread_count = 4
 }
 
-task loadXqyXml(type: com.marklogic.gradle.task.MlcpTask) {
+task loadXqyXml(type: MlcpTask) {
   mustRunAfter createXqyXmlInputFlow
   mustRunAfter mlLoadModules
   mustRunAfter getInputData
@@ -269,9 +284,10 @@ task loadXqyXml(type: com.marklogic.gradle.task.MlcpTask) {
   output_uri_prefix = "/city/"
   output_uri_suffix = ".xml"
   output_collections = "input-xml"
-  transform_module = "/com.marklogic.hub/mlcp-flow-transform.xqy"
+  transform_module = "/MarkLogic/data-hub-framework/transforms/mlcp-flow-transform.xqy"
   transform_namespace = "http://marklogic.com/data-hub/mlcp-flow-transform"
   transform_param =  "entity-name=input-xml,flow-name=input-xqy-xml"
+  modules_root = "/"
   thread_count = 4
 }
 
@@ -416,4 +432,111 @@ class TimingsListener implements TaskExecutionListener, BuildListener {
 
 if (project.hasProperty('profile')) {
   gradle.addListener new TimingsListener()
+}
+
+
+import com.marklogic.client.DatabaseClient
+import com.marklogic.client.io.FileHandle
+import com.marklogic.contentpump.bean.MlcpBean
+import org.gradle.api.logging.Logger
+import org.gradle.api.logging.Logging
+import org.gradle.api.tasks.JavaExec
+import org.gradle.api.tasks.TaskAction
+
+import com.marklogic.appdeployer.AppConfig
+class MlcpTask extends JavaExec {
+
+    @Delegate
+    MlcpBean mlcpBean = new MlcpBean();
+
+    // Set this to define a URI in your content database for mlcp output to be written to as a text document
+    String logOutputUri
+
+    Logger getLogger() {
+        return Logging.getLogger(MlcpTask.class)
+    }
+
+    @TaskAction
+    @Override
+    void exec() {
+        setMain("com.marklogic.contentpump.ContentPump")
+        AppConfig config = getProject().property("mlAppConfig")
+
+        List<String> newArgs = new ArrayList<>()
+        newArgs.add(command)
+
+        mlcpBean.properties.each { prop, val ->
+            def propVal
+            if (val) {
+                switch (prop) {
+                    case "host":
+                        propVal = (val ? val : config.getHost())
+                        break
+                    case "port":
+                        propVal = (val ? val : 8000)
+                        break
+                    case "username":
+                        propVal = (val ? val : config.getRestAdminUsername())
+                        break
+                    case ["class", "logger", "command", "password"]:
+                        // skip for now
+                        return
+                    case "additionalOptions":
+                        // Not supported by this task; use JavaExec's args instead
+                        return
+                    default:
+                        propVal = val
+                        break
+                }
+
+                newArgs.add("-" + prop);
+                newArgs.add(String.valueOf(propVal));
+            }
+        }
+
+        // Ensure connection arguments are present, but not if a COPY
+        boolean isCopy = "COPY".equals(command)
+        if (!isCopy) {
+            if (!newArgs.contains("-host")) {
+                newArgs.add("-host")
+                newArgs.add(config.getHost())
+            }
+            if (!newArgs.contains("-port")) {
+                newArgs.add("-port")
+                newArgs.add("8000")
+            }
+            if (!newArgs.contains("-username")) {
+                newArgs.add("-username")
+                newArgs.add(config.getRestAdminUsername())
+            }
+        }
+
+        // Include any args that a user has configured via the args parameter of the Gradle task
+        newArgs.addAll(getArgs())
+
+        println "mlcp arguments, excluding password: " + newArgs
+
+        if (!isCopy) {
+            newArgs.add("-password")
+            newArgs.add(password ? password : config.getRestAdminPassword())
+        }
+
+        setArgs(newArgs)
+
+        File logOutputFile = null
+        if (logOutputUri) {
+            println "Will write mlcp log output to URI: " + logOutputUri
+            logOutputFile = new File(getProject().getBuildDir(), "mlcp-log-output-" + System.currentTimeMillis() + ".txt")
+            setStandardOutput(logOutputFile.newOutputStream())
+        }
+
+        super.exec()
+
+        if (logOutputFile != null) {
+            AppConfig appConfig = project.property("mlAppConfig")
+            DatabaseClient client = appConfig.newDatabaseClient()
+            client.newDocumentManager().write(logOutputUri, new FileHandle(logOutputFile))
+            println "Wrote mlcp log output to URI: " + logOutputUri
+        }
+    }
 }

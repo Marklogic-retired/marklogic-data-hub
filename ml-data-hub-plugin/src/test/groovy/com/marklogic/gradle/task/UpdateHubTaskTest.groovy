@@ -43,7 +43,7 @@ class UpdateHubTaskTest extends BaseTest {
         result.task(":hubUpdate").outcome == SUCCESS
     }
 
-    def "updates needed"() {
+    def "pre-main updates needed"() {
         given:
         println(runTask('hubCreateHarmonizeFlow', '-PentityName=my-new-entity', '-PflowName=my-new-harmonize-flow', '-PdataFormat=xml', '-PpluginFormat=xqy').getOutput())
         def entityDir = Paths.get(hubConfig().projectDir).resolve("plugins").resolve("entities").resolve("legacy-test")
@@ -59,6 +59,25 @@ class UpdateHubTaskTest extends BaseTest {
         then:
         notThrown(UnexpectedBuildSuccess)
         result.output.contains('Legacy Flows Updated:\n\tlegacy-test => legacy-input-flow\n\tlegacy-test => legacy-harmonize-flow')
+        result.task(":hubUpdate").outcome == SUCCESS
+    }
+
+    def "2x (pre-3x) updates needed"() {
+        given:
+        println(runTask('hubCreateHarmonizeFlow', '-PentityName=my-new-entity', '-PflowName=my-new-harmonize-flow', '-PdataFormat=xml', '-PpluginFormat=xqy').getOutput())
+        def entityDir = Paths.get(hubConfig().projectDir).resolve("plugins").resolve("entities").resolve("2x-test")
+        def inputDir = entityDir.resolve("input")
+        def harmonizeDir = entityDir.resolve("harmonize")
+        inputDir.toFile().mkdirs()
+        harmonizeDir.toFile().mkdirs()
+        FileUtils.copyDirectory(new File("src/test/resources/2x-input-flow"), inputDir.resolve("2x-input-flow").toFile())
+        FileUtils.copyDirectory(new File("src/test/resources/2x-harmonize-flow"), harmonizeDir.resolve("2x-harmonize-flow").toFile())
+        when:
+        def result = runTask("hubUpdate")
+
+        then:
+        notThrown(UnexpectedBuildSuccess)
+        result.output.contains('Legacy Flows Updated:\n\t2x-test => 2x-input-flow\n\t2x-test => 2x-harmonize-flow')
         result.task(":hubUpdate").outcome == SUCCESS
     }
 }

@@ -100,13 +100,13 @@ import com.marklogic.rest.util.JsonNodeUtil;
 public class HubTestBase {
     static final protected Logger logger = LoggerFactory.getLogger(HubTestBase.class);
 
-    //As a note, whenever you see the 25 || 5, it's due to the additional building of the javascript files bundling down that will then get
+    //As a note, whenever you see these consts, it's due to the additional building of the javascript files bundling down that will then get
     //deployed with the rest of the modules code. This means it'll be 20 higher than if the trace UI was never built
-    public static final int CORE_MODULE_COUNT_WITH_TRACE_MODULES = 21;
-    public static final int CORE_MODULE_COUNT = 1;
-    public static final int MODULE_COUNT = 25;
-    public static final int MODULE_COUNT_WITH_TRACE_MODULES = 5;
-    public static final int MODULE_COUNT_WITH_USER_MODULES = 25;
+    public static final int CORE_MODULE_COUNT_WITH_TRACE_MODULES = 22;
+    public static final int CORE_MODULE_COUNT = 2;
+    public static final int MODULE_COUNT = 26;
+    public static final int MODULE_COUNT_WITH_TRACE_MODULES = 6;
+    public static final int MODULE_COUNT_WITH_USER_MODULES = 26;
     public static final int MODULE_COUNT_WITH_USER_MODULES_AND_TRACE_MODULES = 45;
     public static final String PROJECT_PATH = "ye-olde-project";
     public static String host;
@@ -594,6 +594,7 @@ public class HubTestBase {
             writeSet.add(path, handle);
         });
         modMgr.write(writeSet);
+        clearFlowCache();
     }
 
     protected static void installModule(String path, String localPath) {
@@ -612,6 +613,22 @@ public class HubTestBase {
         }
 
         modMgr.write(path, handle);
+        clearFlowCache();
+    }
+
+    protected static void clearFlowCache() {
+        ServerEvaluationCall eval = stagingClient.newServerEval();
+        String installer =
+            "xdmp:invoke-function(function() {" +
+                "  for $f in xdmp:get-server-field-names()[starts-with(., 'flow-cache-')] " +
+                "  return xdmp:set-server-field($f, ())" +
+                "}," +
+                "<options xmlns=\"xdmp:eval\">" +
+                "  <database>{xdmp:modules-database()}</database>" +
+                "  <transaction-mode>update-auto-commit</transaction-mode>" +
+                "</options>)";
+
+        eval.xquery(installer).eval();
     }
 
     protected static EvalResultIterator runInModules(String query) {
@@ -662,6 +679,7 @@ public class HubTestBase {
             "</options>)";
 
         eval.xquery(installer).eval();
+        clearFlowCache();
     }
 
     protected static String genModel(String modelName) {

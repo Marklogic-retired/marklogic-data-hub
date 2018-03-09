@@ -1,5 +1,5 @@
 (:
-  Copyright 2012-2016 MarkLogic Corporation
+  Copyright 2012-2018 MarkLogic Corporation
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -119,10 +119,11 @@ declare function post(
     return
       if (fn:exists($flow)) then
         let $_ :=
+          let $mainFunc := flow:get-main($flow/hub:main)
           for $identifier in $identifiers
           return
             try {
-              flow:run-flow($job-id, $flow, $identifier, $options)
+              flow:run-flow($job-id, $flow, $identifier, $options, $mainFunc)
             }
             catch($ex) {
               xdmp:log(("caught error in run-flow")),

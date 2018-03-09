@@ -1,5 +1,5 @@
 (:
-  Copyright 2012-2016 MarkLogic Corporation
+  Copyright 2012-2018 MarkLogic Corporation
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -47,6 +47,9 @@ declare variable $ENTITIES-DIR := "/entities/";
 
 declare variable $PLUGIN-NS := "http://marklogic.com/data-hub/plugins";
 
+declare variable $FLOW-CACHE-KEY-PREFIX := "flow-cache-";
+declare variable $MAIN-CACHE-KEY-PREFIX := "main-cache-";
+
 declare variable $context-queue := map:map();
 declare variable $writer-queue := map:map();
 
@@ -71,6 +74,26 @@ declare function flow:get-flow(
   $flow-name as xs:string,
   $flow-type as xs:string?) as element(hub:flow)?
 {
+  let $duration := xs:dayTimeDuration("PT10S")
+  let $key := $FLOW-CACHE-KEY-PREFIX||$entity-name||$flow-name||$flow-type
+  let $flow :=  hul:from-field-cache-or-empty($key, $duration)
+  return
+    if ($flow) then
+      $flow
+    else
+      hul:set-field-cache(
+        $key,
+        flow:get-flow-nocache($entity-name, $flow-name, $flow-type),
+        $duration
+      )
+};
+
+declare function flow:get-flow-nocache(
+  $entity-name as xs:string,
+  $flow-name as xs:string,
+  $flow-type as xs:string?) as element(hub:flow)?
+{
+
   hul:run-in-modules(function() {
     /hub:flow[
       hub:entity = $entity-name and
@@ -81,7 +104,7 @@ declare function flow:get-flow(
         else
           fn:true()
       ]
-  })
+  }) ! hul:deep-copy(.)
 };
 
 (:~
@@ -198,7 +221,8 @@ declare function flow:run-collector(
   let $_ := (
     rfc:with-job-id($job-id),
     rfc:with-flow($flow),
-    rfc:with-module-uri($flow/hub:collector/@module)
+    rfc:with-module-uri($flow/hub:collector/@module),
+    rfc:with-code-format($flow/hub:collector/@code-format)
   )
 
   let $func := flow:make-function(
@@ -237,9 +261,10 @@ declare function flow:run-flow(
   $job-id as xs:string,
   $flow as element(hub:flow),
   $identifier as xs:string,
-  $options as map:map)
+  $options as map:map,
+  $mainFunc)
 {
-  flow:run-flow($job-id, $flow, $identifier, (), $options)
+  flow:run-flow($job-id, $flow, $identifier, (), $options, $mainFunc)
 };
 
 (:~
@@ -256,7 +281,8 @@ declare function flow:run-flow(
   $flow as element(hub:flow),
   $identifier as xs:string,
   $content as item()?,
-  $options as map:map)
+  $options as map:map,
+  $mainFunc)
 {
   (: assert that we are in query mode :)
   let $_must_run_in_query_mode as xs:unsignedLong := xdmp:request-timestamp()
@@ -281,7 +307,7 @@ declare function flow:run-flow(
 
   (: run the users main.(sjs|xqy) :)
   return
-    flow:run-main($item-context, $flow/hub:main)
+    flow:run-main($item-context, $mainFunc)
 };
 
 declare function flow:clean-data($resp, $destination, $data-format)
@@ -590,18 +616,34 @@ declare function flow:set-default-options(
   map:put($options, "dataFormat", fn:string($flow/hub:data-format))
 };
 
-declare function flow:run-main(
-  $item-context as map:map,
+declare function flow:get-main(
   $main as element(hub:main))
 {
-  (: sanity check on required info :)
-  if (fn:empty($main/@module) or fn:empty($main/@code-format)) then
-    fn:error(xs:QName("INVALID-PLUGIN"), "The plugin definition is invalid.")
-  else (),
-
   let $module-uri as xs:string? := $main/@module
+  let $_ :=
+    (: sanity check on required info :)
+    if (fn:empty($module-uri) or fn:empty($main/@code-format)) then
+      fn:error(xs:QName("INVALID-PLUGIN"), "The plugin definition is invalid.")
+    else ()
+
   let $_ := rfc:with-module-uri($module-uri)
-  let $func := flow:make-function($main/@code-format, "main", $module-uri)
+  let $_ := rfc:with-code-format($main/@code-format)
+  let $duration := xs:dayTimeDuration("PT10S")
+  let $key := $MAIN-CACHE-KEY-PREFIX||$module-uri
+  let $main-func :=  hul:from-field-cache-or-empty($key, $duration)
+  return
+    if (fn:exists($main-func)) then $main-func
+    else
+      let $main-func := flow:make-function($main/@code-format, "main", $module-uri)
+      let $_ := hul:set-field-cache($key, $main-func, $duration)
+      return
+        $main-func
+};
+
+declare function flow:run-main(
+  $item-context as map:map,
+  $func)
+{
   let $before := xdmp:elapsed-time()
   let $_ := map:put($context-queue, rfc:get-id($item-context), $item-context)
   let $resp := try {
