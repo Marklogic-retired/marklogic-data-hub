@@ -27,7 +27,11 @@ import java.nio.file.Path;
 import java.util.List;
 
 public interface FlowManager {
-
+    /**
+     * Creates and returns the FlowManager object
+     * @param hubConfig - the hubConfig for the FlowManager to use
+     * @return a FlowManager object with a set hubConfig
+     */
     static FlowManager create(HubConfig hubConfig){
         return new FlowManagerImpl(hubConfig);
     }
@@ -47,10 +51,26 @@ public interface FlowManager {
      */
     List<Flow> getLocalFlows();
 
+    /**
+     * retrieves a list of all the flows on the local files systems
+     * @param entityName - string name of the entity for the flow 
+     * @return a list of Flows
+     */
     List<Flow> getLocalFlowsForEntity(String entityName);
 
+    /**
+     * retrieves a list of all the flows on the local files systems
+     * @param entityName - string name of the entity for the flow
+     * @param flowType - the FlowType enum, eg: ingest or harmonize
+     * @return a list of Flows
+     */
     List<Flow> getLocalFlowsForEntity(String entityName, FlowType flowType);
 
+    /**
+     * Obtains a flow form a property file
+     * @param propertiesFile - the Path to the property file
+     * @return - a flow object
+     */
     Flow getFlowFromProperties(Path propertiesFile);
 
     /**
@@ -69,6 +89,14 @@ public interface FlowManager {
      */
     Flow getFlow(String entityName, String flowName);
 
+    /**
+     * Retrieves a named flow from a given entity
+     *
+     * @param entityName - the entity that the flow belongs to
+     * @param flowName - the name of the flow to get
+     * @param flowType - the type of flow (ingest/harmonize)
+     * @return the flow
+     */
     Flow getFlow(String entityName, String flowName, FlowType flowType);
 
     /**
@@ -77,7 +105,16 @@ public interface FlowManager {
 
     List<String> getLegacyFlows();
 
+    /**
+     * Sets the version that the legacy flow is to be updated from
+     * @param fromVersion - string representation of DHF version
+     * @return a list of updated flow names that were updated
+     */
     List<String> updateLegacyFlows(String fromVersion);
 
+    /**
+     * Creates and returns a new FlowRunner object using the FlowManager's hubconfig
+     * @return FlowRunner object with current hubconfig already set
+     */
     FlowRunner newFlowRunner();
 }
