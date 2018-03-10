@@ -21,9 +21,14 @@ import com.marklogic.hub.impl.DebuggingImpl;
 
 public interface Debugging {
 
+    /**
+     * Creates and returns a debugging object
+     * @param client - the databaseclient that will be used
+     * @return the debugging object
+     */
     static Debugging create(DatabaseClient client){
         return new DebuggingImpl(client);
-    };
+    }
 
     /**
      * Enables debugging

@@ -20,7 +20,11 @@ import com.marklogic.client.DatabaseClient;
 import com.marklogic.hub.impl.TracingImpl;
 
 public interface Tracing {
-
+    /**
+     * Creates and returns a tracing object
+     * @param client - the databaseclient that will be used
+     * @return the Tracing object
+     */
     static Tracing create(DatabaseClient client){
         return new TracingImpl(client);
     };
