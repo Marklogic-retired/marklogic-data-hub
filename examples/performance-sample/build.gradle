@@ -1,19 +1,7 @@
-buildscript {
-  repositories {
-    mavenLocal()
-    jcenter()
-  }
-  dependencies {
-    classpath "com.marklogic:ml-data-hub:2.0.5"
-  }
-}
-
 plugins {
     id 'net.saliman.properties' version '1.4.6'
-    // id 'com.marklogic.ml-data-hub' version '2.0.4'
+    id 'com.marklogic.ml-data-hub' version '2.0.4'
 }
-
-apply plugin: "com.marklogic.ml-data-hub"
 
 repositories {
   jcenter()
@@ -434,7 +422,11 @@ if (project.hasProperty('profile')) {
   gradle.addListener new TimingsListener()
 }
 
-
+// This example needs mlcp-util 0.9.0 or greater
+// right now we are relying on an older version of
+// ml-gradle which relies on 0.2.0 of mlcp-util
+// redefining this class here is a stop-gap until
+// we update stuff
 import com.marklogic.client.DatabaseClient
 import com.marklogic.client.io.FileHandle
 import com.marklogic.contentpump.bean.MlcpBean

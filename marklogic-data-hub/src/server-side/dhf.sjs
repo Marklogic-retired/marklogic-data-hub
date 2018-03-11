@@ -191,17 +191,6 @@ function logTrace(context) {
   tracelib.pluginTrace(null, "PT0S");
 };
 
-function dhfRequire(moduleUri, func) {
-  if (_requireCache[moduleUri]) {
-    return _requireCache[moduleUri];
-  }
-
-  let cache = func();
-  //require.call(caller, moduleUri);
-  _requireCache[moduleUri] = cache;
-  return cache;
-}
-
 module.exports = {
   run: run,
   makeLegacyEnvelope: makeLegacyEnvelope,
@@ -213,6 +202,5 @@ module.exports = {
   triplesContext: triplesContext,
   writerContext: writerContext,
   addTraceInput: addTraceInput,
-  logTrace: logTrace,
-  require: dhfRequire
+  logTrace: logTrace
 };
