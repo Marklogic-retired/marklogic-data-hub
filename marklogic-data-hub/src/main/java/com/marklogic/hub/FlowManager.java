@@ -53,7 +53,7 @@ public interface FlowManager {
 
     /**
      * retrieves a list of all the flows on the local files systems
-     * @param entityName - string name of the entity for the flow 
+     * @param entityName - string name of the entity for the flow
      * @return a list of Flows
      */
     List<Flow> getLocalFlowsForEntity(String entityName);
