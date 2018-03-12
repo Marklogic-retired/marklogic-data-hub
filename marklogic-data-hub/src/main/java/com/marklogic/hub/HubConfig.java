@@ -68,6 +68,7 @@ public interface HubConfig {
     static HubConfig create(String projectDir) {
         return new HubConfigImpl(projectDir);
     }
+
     String getDbName(DatabaseKind kind);
 
     void setDbName(DatabaseKind kind, String dbName);
