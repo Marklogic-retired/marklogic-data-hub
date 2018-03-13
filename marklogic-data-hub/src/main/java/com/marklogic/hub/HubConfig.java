@@ -78,27 +78,72 @@ public interface HubConfig {
         return new HubConfigImpl(projectDir);
     }
 
+    /**
+     * Returns the database name for the DatabaseKind set in the config
+     * @param kind - DatabaseKind enum, eg: STAGING or JOB
+     * @return The name of the database
+     */
     String getDbName(DatabaseKind kind);
 
+    /**
+     * Sets the database name for the databaseKind on the hubconfig
+     * @param kind- DatabaseKind enum, eg: STAGING or JOB
+     * @param dbName The name desired for the database
+     */
     void setDbName(DatabaseKind kind, String dbName);
 
+    /**
+     * Returns the appserver name for the DatabaseKind set in the config
+     * @param kind - DatabaseKind enum, eg: STAGING or JOB
+     * @return The name of the App server
+     */
     String getHttpName(DatabaseKind kind);
 
+    /**
+     * Sets the appserver name for the databaseKind on the hubconfig
+     * @param kind- DatabaseKind enum, eg: STAGING or JOB
+     * @param httpName The name to set for the appserver
+     */
     void setHttpName(DatabaseKind kind, String httpName);
 
+    /**
+     * Returns the number of forests per host for the DatabaseKind set in the config
+     * @param kind - DatabaseKind enum, eg: STAGING or JOB
+     * @return The number of forests per host for this database
+     */
     Integer getForestsPerHost(DatabaseKind kind);
 
+    /**
+     * Sets the number of forests per host for the databaseKind on the hubconfig
+     * @param kind- DatabaseKind enum, eg: STAGING or JOB
+     * @param forestsPerHost The number of forests per host
+     */
     void setForestsPerHost(DatabaseKind kind, Integer forestsPerHost);
 
+    /**
+     * Returns the port number for the DatabaseKind set in the config
+     * @param kind - DatabaseKind enum, eg: STAGING or JOB
+     * @return The port set for the appserver connected to the database
+     */
     Integer getPort(DatabaseKind kind);
 
+    /**
+     * Sets the port number for the databaseKind on the hubconfig
+     * @param kind- DatabaseKind enum, eg: STAGING or JOB
+     * @param port The port number for the database appserver
+     */
     void setPort(DatabaseKind kind, Integer port);
 
-    SSLContext getSslContext(DatabaseKind databaseKind);
+    /**
+     * Returns the SSL Context for the DatabaseKind set in the config
+     * @param kind - DatabaseKind enum, eg: STAGING or JOB
+     * @return The SSLContext set for the database connection
+     */
+    SSLContext getSslContext(DatabaseKind kind);
 
-    void setSslContext(DatabaseKind databaseKind, SSLContext sslContext);
+    void setSslContext(DatabaseKind kind, SSLContext sslContext);
 
-    void setSslHostnameVerifier(DatabaseKind databaseKind, DatabaseClientFactory.SSLHostnameVerifier stagingSslHostnameVerifier);
+    void setSslHostnameVerifier(DatabaseKind kind, DatabaseClientFactory.SSLHostnameVerifier stagingSslHostnameVerifier);
 
     DatabaseClientFactory.SSLHostnameVerifier getSslHostnameVerifier(DatabaseKind kind);
 
