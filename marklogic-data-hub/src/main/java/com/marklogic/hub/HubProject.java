@@ -25,36 +25,97 @@ public interface HubProject {
     String HUB_CONFIG_DIR = "hub-internal-config";
     String USER_CONFIG_DIR = "user-config";
 
+    /**
+     * Creates a HubProject object and returns it in the base project directory
+     * @param projectDirStr - the base project directory
+     * @return the HubProject object for the newly created project
+     */
     static HubProject create(String projectDirStr) {
         return new HubProjectImpl(projectDirStr);
     }
 
+    /**
+     * Gets the path for the entity database directory
+     * @return the path for the entity's database directory
+     */
     Path getHubPluginsDir();
 
+    /**
+     * Gets the path for the hub plugins directory
+     * @return the path for the hub plugins directory
+     */
     Path getHubEntitiesDir();
 
+    /**
+     * Gets the path for the hub's entities directory
+     * @return the path for the hub's entities directory
+     */
     Path getHubConfigDir();
 
+    /**
+     * Gets the path for the hub's config directory
+     * @return the path for the hub's config directory
+     */
     Path getHubDatabaseDir();
 
+    /**
+     * Gets the path for the hub's database directory
+     * @return the path for the hub's database directory
+     */
     Path getHubServersDir();
 
+    /**
+     * Gets the path for the hub servers directory
+     * @return the path for the hub servers database directory
+     */
     Path getHubSecurityDir();
 
+    /**
+     * Gets the path for the hub security directory
+     * @return the path for the hub security directory
+     */
     Path getHubMimetypesDir();
 
+    /**
+     * Gets the path for the entity database directory
+     * @return the path for the entity's database directory
+     */
     Path getUserConfigDir();
 
+    /**
+     * Gets the path for the user config directory
+     * @return the path for the user config directory
+     */
     Path getUserSecurityDir();
 
+    /**
+     * Gets the path for the user security directory
+     * @return the path for the user security directory
+     */
     Path getUserDatabaseDir();
 
+    /**
+     * Gets the path for the user schemas directory
+     * @return the path for the user schemas directory
+     */
     Path getUserSchemasDir();
 
+    /**
+     * Gets the path for the entity database directory
+     * @return the path for the entity's database directory
+     */
     Path getUserServersDir();
 
+    /**
+     * Gets the path for the user server's directory
+     * @return the path for the user server's directory
+     */
     Path getEntityConfigDir();
 
+    /**
+     * Gets the path for the entity database directory
+     * @return the path for the entity's database directory
+     */
     Path getEntityDatabaseDir();
 
     boolean isInitialized();
