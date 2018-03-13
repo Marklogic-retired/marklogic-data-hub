@@ -63,8 +63,17 @@ public interface HubConfig {
 
     String DEFAULT_CUSTOM_FOREST_PATH = "forests";
 
+    /**
+     * Gets the hostname of the AppConfig
+     * @return name of host
+     */
     String getHost();
 
+    /**
+     * Creates and returns a hubconfig object for a project directory
+     * @param projectDir - string path to the project directory
+     * @return HubConfig based in the project directory
+     */
     static HubConfig create(String projectDir) {
         return new HubConfigImpl(projectDir);
     }
@@ -119,9 +128,11 @@ public interface HubConfig {
 
     // roles and users
     String getHubRoleName();
+
     void setHubRoleName(String hubRoleName);
 
     String getHubUserName();
+
     void setHubUserName(String hubUserName);
 
     String[] getLoadBalancerHosts();
@@ -130,18 +141,45 @@ public interface HubConfig {
 
     String getModulePermissions();
 
+    /**
+     * Obtains the project directory as a string
+     * @return project directory
+     */
     String getProjectDir();
+
+    /**
+     *
+     * @param projectDir
+     */
     void setProjectDir(String projectDir);
 
+    /**
+     * Returns the HubProject associated with the HubConfig
+     * @return current hubProject associated with the HubConfig
+     */
     HubProject getHubProject();
 
+    /**
+     * Initializes the hub project on disk
+     */
     void initHubProject();
 
+    /**
+     * Returns the last deployed timestamp file for the hub config and modules
+     * @return string of what's located in the timestamp file
+     */
     String getHubModulesDeployTimestampFile();
 
-
+    /**
+     * Returns the last deployed timestamp file for the user modules
+     * @return string of what's located in the timestamp file
+     */
     String getUserModulesDeployTimestampFile();
 
+    /**
+     * Creates a new DatabaseClient for accessing the AppServices app
+     * @return - a DatabaseClient
+     */
     DatabaseClient newAppServicesClient();
 
     /**
@@ -150,6 +188,11 @@ public interface HubConfig {
      */
      DatabaseClient newStagingClient();
 
+    /**
+     * Creates a new DatabaseClient for accessing the Staging database
+     * @param databaseName - the name of the database for the staging Client to use
+     * @return- a DatabaseClient
+     */
      DatabaseClient newStagingClient(String databaseName);
 
     /**
@@ -176,31 +219,101 @@ public interface HubConfig {
      */
     DatabaseClient newModulesDbClient();
 
+    /**
+     * Gets the path for the entity database directory
+     * @return the path for the entity's database directory
+     */
     Path getHubPluginsDir();
+
+    /**
+     * Gets the path for the hub plugins directory
+     * @return the path for the hub plugins directory
+     */
     Path getHubEntitiesDir();
 
+    /**
+     * Gets the path for the hub's entities directory
+     * @return the path for the hub's entities directory
+     */
     Path getHubConfigDir();
+
+    /**
+     * Gets the path for the hub's config directory
+     * @return the path for the hub's config directory
+     */
     Path getHubDatabaseDir();
+
+    /**
+     * Gets the path for the hub's database directory
+     * @return the path for the hub's database directory
+     */
     Path getHubServersDir();
+
+    /**
+     * Gets the path for the hub servers directory
+     * @return the path for the hub servers database directory
+     */
     Path getHubSecurityDir();
 
-    Path getUserSecurityDir();
-
-    Path getUserConfigDir();
-
-    Path getUserDatabaseDir();
-
-    Path getEntityDatabaseDir();
-
-    Path getUserServersDir();
-
+    /**
+     * Gets the path for the hub security directory
+     * @return the path for the hub security directory
+     */
     Path getHubMimetypesDir();
 
+    /**
+     * Gets the path for the entity database directory
+     * @return the path for the entity's database directory
+     */
+    Path getUserConfigDir();
+
+    /**
+     * Gets the path for the user config directory
+     * @return the path for the user config directory
+     */
+    Path getUserSecurityDir();
+
+    /**
+     * Gets the path for the user security directory
+     * @return the path for the user security directory
+     */
+    Path getUserDatabaseDir();
+
+    /**
+     * Gets the path for the entity database directory
+     * @return the path for the entity's database directory
+     */
+    Path getUserServersDir();
+
+    /**
+     * Gets the path for the entity database directory
+     * @return the path for the entity's database directory
+     */
+    Path getEntityDatabaseDir();
+
+    /**
+     * Returns the current appconfig object attached to the HubConfig
+     * @return Returns current AppConfig object set for HubConfig
+     */
     AppConfig getAppConfig();
 
+    /**
+     * Sets the App Config for the current HubConfig
+     * @param config AppConfig to associate with the HubConfig
+     */
     void setAppConfig(AppConfig config);
 
+    /**
+     * Sets the App Config for the current HubConfig, with skipUpdate option
+     * @param config - AppConfig to associate with the HubConfig
+     * @param skipUpdate false to force update of AppConfig, true to skip it
+     */
     void setAppConfig(AppConfig config, boolean skipUpdate);
 
+    /**
+     * Gets the current version of the DHF Jar
+     * @return Version of DHF Jar file as string
+     * @throws IOException if current jar can't be found
+     */
     String getJarVersion() throws IOException;
 }
