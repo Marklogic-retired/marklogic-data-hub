@@ -127,18 +127,47 @@ public interface HubConfig {
     void setExternalName(DatabaseKind kind, String externalName);
 
     // roles and users
+
+    /**
+     * Get the roleName the hub uses
+     * @return the name of the role the DHF uses
+     */
     String getHubRoleName();
 
+    /**
+     * Set the role name that the hub uses
+     * @param hubRoleName the name to use
+     */
     void setHubRoleName(String hubRoleName);
 
+    /**
+     * Get the current marklogic user name the hub uses
+     * @return the username
+     */
     String getHubUserName();
 
+    /**
+     * Sets the username for the hub to use in MarkLogic
+     * @param hubUserName - username to use
+     */
     void setHubUserName(String hubUserName);
 
+    /**
+     * Gets a string array of hosts
+     * @return String array of hosts
+     */
     String[] getLoadBalancerHosts();
 
+    /**
+     * Returns the path for the custom forests definition
+     * @return path where the custom forests are as string
+     */
     String getCustomForestPath();
 
+    /**
+     * Gets the permissions used to execute a module in string form
+     * @return a string reprsenting the marklogic permissions for a module
+     */
     String getModulePermissions();
 
     /**
