@@ -126,7 +126,7 @@ declare function post(
               flow:run-flow($job-id, $flow, $identifier, $options, $mainFunc)
             }
             catch($ex) {
-              xdmp:log(("caught error in run-flow")),
+              xdmp:log(("error in run-flow:", $ex)),
               json:array-push($errors, $ex/err:error-to-json(.))
             }
         (: run writers :)
@@ -135,7 +135,7 @@ declare function post(
             flow:run-writers($identifiers)
           }
           catch($ex) {
-            xdmp:log(("caught error in writer")),
+            xdmp:log(("error in run-writers", $ex)),
             json:array-push($errors, $ex/err:error-to-json(.))
           }
         let $resp :=

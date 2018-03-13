@@ -169,7 +169,7 @@ function setTraceLabel(context, label) {
  */
 function addTraceInput(context, inputLabel, input) {
   let inputs = context.inputs;
-  inputs['input-label'] = input;
+  inputs[inputLabel] = input;
   context.inputs = inputs;
   return context;
 };

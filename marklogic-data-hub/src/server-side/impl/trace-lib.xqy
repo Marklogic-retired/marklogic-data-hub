@@ -167,10 +167,7 @@ declare %private function trace:get-plugin-input(
       let $_ :=
         for $key in map:keys($o)
         let $value := map:get($o, $key)
-        let $value :=
-          if ($value instance of null-node()) then ()
-          else if ($value instance of binary()) then "binary data"
-          else $value
+        let $value := trace:sanitize-data($value)
         return
          map:put($oo, $key, $value)
       return $oo
@@ -180,9 +177,7 @@ declare %private function trace:get-plugin-input(
         element { $key } {
           let $value := map:get($o, $key)
           return
-            if ($value instance of null-node()) then ()
-            else if ($value instance of binary()) then "binary data"
-            else $value
+            trace:sanitize-data($value)
         }
 };
 
@@ -324,6 +319,15 @@ declare %private function trace:write-error-trace(
     else ()
 };
 
+declare function trace:sanitize-data($data)
+{
+  if ($data instance of binary()) then xs:hexBinary($data)
+  else if (fn:not(rfc:is-json())) then
+    if ($data instance of null-node()) then ()
+    else $data
+  else $data
+};
+
 declare function trace:plugin-trace(
   $output,
   $duration) as empty-sequence()
@@ -337,6 +341,7 @@ declare function trace:plugin-trace(
   $duration) as empty-sequence()
 {
   let $current-trace := rfc:get-trace($item-context)
+  let $output := trace:sanitize-data($output)
   return
     if (trace:enabled()) then(
       let $new-step := map:map()

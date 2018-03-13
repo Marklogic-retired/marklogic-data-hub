@@ -25,6 +25,24 @@ let internalContexts = {
   currentTraceSettings: {}
 }
 
+function isObjectLike(value) {
+  return value != null && typeof value == 'object';
+}
+
+function isString(value) {
+  return typeof value == 'string' ||
+    (!Array.isArray(value) && isObjectLike(value));
+}
+
+function isXmlNode(value) {
+  return (value instanceof XMLNode && (value.nodeName !== null));
+}
+
+function isObject(value) {
+  var type = typeof value;
+  return value != null && (type == 'object' || type == 'function');
+}
+
 function setCurrentTraceSettings(settings) {
   internalContexts.currentTraceSettings = settings;
 }
@@ -101,27 +119,32 @@ function getPluginInput(currentTrace) {
       let oo = {};
       for (let key in o) {
         let value = o[key];
-        if (value instanceof BinaryNode) {
-          value = "binary data";
-        }
-        oo[key] = value;
+        oo[key] = sanitizeData(value);
       }
       return oo;
     }
-    else {
-      const x = new NodeBuilder();
-      return x.toNode();
-      for (let key in o) {
-        x.startElement(key);
-        let value = o[key];
-        if (value instanceof BinaryNode) {
-          value = "binary data";
+
+    // for xml build this
+    let inputs = [];
+    for (let key in o) {
+      const nb = new NodeBuilder();
+      nb.startElement(key);
+      let value = sanitizeData(o[key]);
+      if (value) {
+        if (isXmlNode(value)) {
+          nb.addNode(value);
         }
-        x.addNode(value);
-        x.endElement();
+        else {
+          nb.addText(value.toString());
+        }
       }
+      nb.endElement();
+      inputs.push(nb.toNode());
     }
+    return Sequence.from(inputs);
   }
+
+  return null;
 }
 
 function setPluginInput(label, input, currentTrace) {
@@ -185,89 +208,97 @@ function writeErrorTrace(itemContext) {
       }
     }
     else {
-      const x = new NodeBuilder();
-      x.startDocument();
-        x.startElement("trace");
-          x.startElement("jobId");
-            x.addText(rfc.getJobId());
-          x.endElement();
-          x.startElement("format");
-            x.addText(rfc.getDataFormat());
-          x.endElement();
-          x.startElement("traceId");
-            x.addText(currentTrace.traceId.toString());
-          x.endElement();
-          x.startElement("created");
-            x.addText(currentTrace.created.toString());
-          x.endElement();
-          x.startElement("identifier");
-            x.addText(rfc.getId(itemContext).toString());
-          x.endElement();
-          x.startElement("flowType");
-            x.addText(rfc.getFlowType());
-          x.endElement();
-          x.startElement("hasError");
-            x.addText(hasErrors().toString());
-          x.endElement();
-          x.startElement("steps");
+      const nb = new NodeBuilder();
+      nb.startDocument();
+        nb.startElement("trace");
+          nb.startElement("jobId");
+            nb.addText(rfc.getJobId().toString());
+          nb.endElement();
+          nb.startElement("format");
+            nb.addText(rfc.getDataFormat().toString());
+          nb.endElement();
+          nb.startElement("traceId");
+            nb.addText(currentTrace.traceId.toString());
+          nb.endElement();
+          nb.startElement("created");
+            nb.addText(currentTrace.created.toString());
+          nb.endElement();
+          nb.startElement("identifier");
+            nb.addText(rfc.getId(itemContext).toString());
+          nb.endElement();
+          nb.startElement("flowType");
+            nb.addText(rfc.getFlowType().toString());
+          nb.endElement();
+          nb.startElement("hasError");
+            nb.addText(hasErrors().toString());
+          nb.endElement();
+          nb.startElement("steps");
             let i;
             for (i = 0; i < currentTrace.traceSteps.length; i++) {
               let step = currentTrace.traceSteps[i];
-              x.startElement("step")
-                x.startElement("label");
-                  x.addText(step.label);
-                x.endElement();
-                x.startElement("input");
+              nb.startElement("step")
+                nb.startElement("label");
+                  nb.addText(step.label.toString());
+                nb.endElement();
+                nb.startElement("input");
                   if (step.input) {
-                    if (step.input instanceof XMLNode) {
-                      x.addNode(step.input);
+                    if (step.input instanceof Sequence) {
+                      for (let i of step.input) {
+                        nb.addNode(i);
+                      }
+                    }
+                    else if (isXmlNode(step.input)) {
+                      nb.addNode(step.input);
                     }
                     else {
-                      x.addText(JSON.stringify(step.input));
+                      nb.addText(JSON.stringify(step.input));
                     }
                   }
-                x.endElement();
-                x.startElement("output");
+                nb.endElement();
+                nb.startElement("output");
                   if (step.output) {
-                    if (step.output instanceof XMLNode) {
-                      x.addNode(step.output);
+                    if (isXmlNode(step.output)) {
+                      nb.addNode(step.output);
+                    }
+                    else if (isString(step.output)) {
+                      nb.addText(step.output.toString());
                     }
                     else {
-                      x.addText(JSON.stringify(step.output));
+                      nb.addText(step.output.toString());
                     }
                   }
-                x.endElement();
-                x.startElement("error");
+                nb.endElement();
+                nb.startElement("error");
                   if (step.error) {
-                    if (step.error instanceof XMLNode) {
-                      x.addNode(step.error);
+                    if (isXmlNode(step.error)) {
+                      nb.addNode(step.error);
                     }
                     else {
-                      x.addText(JSON.stringify(step.error));
+                      nb.addText(JSON.stringify(step.error));
                     }
                   }
-                x.endElement();
-                x.startElement("duration");
+                nb.endElement();
+                nb.startElement("duration");
                   if (step.duration) {
-                    x.addText(step.duration.toString());
+                    nb.addText(step.duration.toString());
                   }
-                x.endElement();
-                x.startElement("options");
+                nb.endElement();
+                nb.startElement("options");
                   if (step.options) {
-                    if (step.options instanceof XMLNode) {
-                      x.addNode(step.options);
+                    if (isXmlNode(step.options)) {
+                      nb.addNode(step.options);
                     }
                     else {
-                      x.addText(JSON.stringify(step.options));
+                      nb.addText(JSON.stringify(step.options));
                     }
                   }
-                x.endElement();
-              x.endElement();
+                nb.endElement();
+              nb.endElement();
             }
-          x.endElement();
-        x.endElement();
-      x.endDocument();
-      trace = x.toNode();
+          nb.endElement();
+        nb.endElement();
+      nb.endDocument();
+      trace = nb.toNode();
     }
     let extension = rfc.isJson() ? '.json' : '.xml';
     xdmp.eval(
@@ -287,9 +318,25 @@ function writeErrorTrace(itemContext) {
   }
 }
 
+function sanitizeData(data) {
+  if (!data) {
+    return null;
+  }
+
+  let result = data;
+  if (data instanceof BinaryNode) {
+    result = xs.hexBinary(data);
+  }
+  else if (!rfc.isJson() && !isXmlNode(data)) {
+    result = xdmp.quote(data);
+  }
+  return result;
+};
+
 function pluginTrace(itemContext, output, duration) {
   let ic = itemContext || rfc.getItemContext();
   let currentTrace = rfc.getTrace(ic);
+  output = sanitizeData(output);
 
   if (enabled()) {
     let input = getPluginInput(currentTrace);
@@ -342,10 +389,6 @@ function getTrace(id) {
   return tracelib.getTrace(id);
 }
 
-function getTraceIds(q) {
-  return getTraceIds(q);
-}
-
 module.exports = {
   setCurrentTraceSettings: setCurrentTraceSettings,
   getCurrentTraceSettings: getCurrentTraceSettings,
@@ -371,5 +414,5 @@ module.exports = {
   findTraces: findTraces,
   getTraces: getTraces,
   getTrace: getTrace,
-  getTraceIds: getTraceIds
+  isXmlNode: isXmlNode
 };

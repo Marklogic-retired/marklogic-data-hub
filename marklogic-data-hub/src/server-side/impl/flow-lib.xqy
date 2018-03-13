@@ -325,6 +325,7 @@ declare function flow:clean-data($resp, $destination, $data-format)
   (: clean up output :)
   return
     typeswitch($resp)
+      case binary() return xs:hexBinary($resp)
       case object-node() | json:object return
         (: object with $type key is ES response type :)
         if ($resp instance of map:map and map:keys($resp) = "$type") then
@@ -579,7 +580,7 @@ declare function flow:get-trace-input(
       case "content" return
         if ($flow-type = $consts:INPUT_FLOW) then
           if ($content instance of binary()) then
-            map:put($o, "rawContent", "binary document")
+            map:put($o, "rawContent", xs:hexBinary($content))
           else
             map:put($o, "rawContent", $content)
         else
@@ -775,6 +776,8 @@ declare function flow:run-writer(
     try {
         $writer-function($identifier, $envelope, $options),
 
+        trace:plugin-trace($item-context, (), xdmp:elapsed-time() - $before),
+
         (: write the trace for the current identifier :)
         trace:write-trace($item-context)
     }
@@ -783,7 +786,6 @@ declare function flow:run-writer(
       trace:error-trace($item-context, $ex, xdmp:elapsed-time() - $before)
     }
   let $duration := xdmp:elapsed-time() - $before
-  let $_ := trace:plugin-trace($item-context, (), xdmp:elapsed-time() - $before)
   return
     $resp
 };

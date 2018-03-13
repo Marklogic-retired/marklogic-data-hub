@@ -208,7 +208,6 @@ public class EndToEndFlowTests extends HubTestBase {
         DataHub dataHub = getDataHub();
         List<DynamicTest> tests = new ArrayList<>();
 
-        // flows before a structured change get updated. this ru
         allCombos((codeFormat, dataFormat, flowType, useEs) -> {
             // we don't need to worry about legacy tests and ES
             // so skip creating them if the flag is on
@@ -435,6 +434,10 @@ public class EndToEndFlowTests extends HubTestBase {
                     Map<String, Object> options = new HashMap<>();
                     options.put(plugin + "GoBoom", true);
                     if(!isSslRun() && !isCertAuth()) {
+                        // TODO
+                        // THIS code should be turned back on when MLCP 9.0-5 is released.
+                        // There is currently a bug in MLCP that doesn't work when an sjs transform
+                        // throws an error when only 1 single document is being processed.
 //                    tests.add(DynamicTest.dynamicTest(flowName + ": " + plugin + " error MLCP", () -> {
 //                        // bug #49274 in mlcp causes 15 retries
 //                        // so we get 15 traces

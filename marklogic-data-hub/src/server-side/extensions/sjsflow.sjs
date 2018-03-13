@@ -80,7 +80,7 @@ function post(context, params, input) {
         resp = flowlib.runFlow(jobId, flow, identifier, null, options, mainFunc);
       }
       catch(ex) {
-        xdmp.log(['error in runFlow:', ex]);
+        xdmp.log(['error in runFlow:', ex.toString()]);
         errors.push(ex);
       }
     }
@@ -89,7 +89,7 @@ function post(context, params, input) {
       flowlib.runWriters(identifiers);
     }
     catch(ex) {
-      xdmp.log(["error in runWriters", ex]);
+      xdmp.log(["error in runWriters", ex.toString()]);
       errors.push(ex);
     }
 
