@@ -141,34 +141,109 @@ public interface HubConfig {
      */
     SSLContext getSslContext(DatabaseKind kind);
 
+    /**
+     * Sets the SSL Context for the DatabaseKind in the config
+     * @param kind - DatabaseKind enum, eg: STAGING or JOB
+     * @param sslContext - The SSLContext set for the database connection
+     */
     void setSslContext(DatabaseKind kind, SSLContext sslContext);
 
+    /**
+     * Sets the SSL Hostname Verifier object for the DatabaseKind in the config
+     * @param kind - DatabaseKind enum, eg: STAGING or JOB
+     * @param stagingSslHostnameVerifier - The SSL Hostname Verifier object for the database connection
+     */
     void setSslHostnameVerifier(DatabaseKind kind, DatabaseClientFactory.SSLHostnameVerifier stagingSslHostnameVerifier);
 
+    /**
+     * Returns the SSL hostname verifier object for the DatabaseKind in the hub config
+     * @param kind - DatabaseKind enum, eg: STAGING or JOB
+     * @return The SSL Hostname Verifier for the DatabaseKind in hubconfig
+     */
     DatabaseClientFactory.SSLHostnameVerifier getSslHostnameVerifier(DatabaseKind kind);
 
+    /**
+     * Returns the AuthMethod object for the DatabaseKind in the hub config
+     * @param kind - DatabaseKind enum, eg: STAGING or JOB
+     * @return The Auth Method for the DatabaseKind in hubconfig
+     */
     String getAuthMethod(DatabaseKind kind);
 
+    /**
+     * Sets the SSL Auth Method for the DatabaseKind in the config
+     * @param kind - DatabaseKind enum, eg: STAGING or JOB
+     * @param authMethod - The SSL Auth Method for the database connection
+     */
     void setAuthMethod(DatabaseKind kind, String authMethod);
 
+    /**
+     * Returns the SSL Scheme as string for the DatabaseKind in the hub config
+     * @param kind - DatabaseKind enum, eg: STAGING or JOB
+     * @return The SSL Scheme for the DatabaseKind in hubconfig
+     */
     String getScheme(DatabaseKind kind);
 
+    /**
+     * Sets the SSL Scheme for the DatabaseKind in the config
+     * @param kind - DatabaseKind enum, eg: STAGING or JOB
+     * @param scheme - The SSL Scheme for the database connection
+     */
     void setScheme(DatabaseKind kind, String scheme);
 
+    /**
+     * Returns if Simple SSL is set for the DatabaseKind in the hub config
+     * @param kind - DatabaseKind enum, eg: STAGING or JOB
+     * @return true if Simple SSL is set for the DatabaseKind in hubconfig
+     */
     boolean getSimpleSsl(DatabaseKind kind);
 
+    /**
+     * Sets if Simple SSL is to be used for the DatabaseKind in the config
+     * @param kind - DatabaseKind enum, eg: STAGING or JOB
+     * @param simpleSsl- true if you want to use Simple SSL, false if you don't
+     */
     void setSimpleSsl(DatabaseKind kind, Boolean simpleSsl);
 
+    /**
+     * Returns the SSL Cert file as a string for the DatabaseKind in the hub config
+     * @param kind - DatabaseKind enum, eg: STAGING or JOB
+     * @return The SSL Cert File as a string for the DatabaseKind in hubconfig
+     */
     String getCertFile(DatabaseKind kind);
 
+    /**
+     * Sets the SSL Certfile to use for the DatabaseKind in the config
+     * @param kind - DatabaseKind enum, eg: STAGING or JOB
+     * @param certFile - The SSL Cert File as a string to be used for the database connection
+     */
     void setCertFile(DatabaseKind kind, String certFile);
 
+    /**
+     * Returns the SSL Cert Password as a string for the DatabaseKind in the hub config
+     * @param kind - DatabaseKind enum, eg: STAGING or JOB
+     * @return The SSL Cert Password for the DatabaseKind in hubconfig
+     */
     String getCertPassword(DatabaseKind kind);
 
+    /**
+     * Sets the SSL Cert password for the DatabaseKind in the config
+     * @param kind - DatabaseKind enum, eg: STAGING or JOB
+     * @param certPassword - The SSL certificate password for the database connection
+     */
     void setCertPass(DatabaseKind kind, String certPassword);
 
+    /**
+     * Returns the external name for the host for the DatabaseKind in the hub config
+     * @param kind - DatabaseKind enum, eg: STAGING or JOB
+     * @return The external name of the host for the DatabaseKind in hubconfig
+     */
     String getExternalName(DatabaseKind kind);
 
+    /**
+     * Sets the external hostname for the DatabaseKind in the config
+     * @param kind - DatabaseKind enum, eg: STAGING or JOB
+     * @param externalName- The external host name for the database connection
+     */
     void setExternalName(DatabaseKind kind, String externalName);
 
     // roles and users
