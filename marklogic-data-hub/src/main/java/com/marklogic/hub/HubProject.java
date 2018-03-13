@@ -118,6 +118,10 @@ public interface HubProject {
      */
     Path getEntityDatabaseDir();
 
+    /**
+     * Checks if the project has been initialized or not
+     * @return true if initialized, false if not
+     */
     boolean isInitialized();
 
     /**
