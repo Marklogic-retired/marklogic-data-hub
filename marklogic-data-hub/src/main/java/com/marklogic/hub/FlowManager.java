@@ -67,7 +67,7 @@ public interface FlowManager {
     List<Flow> getLocalFlowsForEntity(String entityName, FlowType flowType);
 
     /**
-     * Obtains a flow form a property file
+     * Obtains a flow from a property file
      * @param propertiesFile - the Path to the property file
      * @return - a flow object
      */
