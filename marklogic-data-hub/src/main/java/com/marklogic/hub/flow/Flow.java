@@ -89,8 +89,8 @@ public interface Flow {
     String serialize();
 
     /**
-     *
-     * @return
+     * Creates a properties object representing the flow
+     * @return a Properties object representation of the flow
      */
     Properties toProperties();
 
