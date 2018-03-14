@@ -7,6 +7,7 @@ import com.marklogic.client.FailedRequestException;
 import com.marklogic.client.datamovement.DataMovementManager;
 import com.marklogic.client.datamovement.JobTicket;
 import com.marklogic.client.datamovement.WriteBatcher;
+import com.marklogic.client.datamovement.WriteEvent;
 import com.marklogic.client.document.GenericDocumentManager;
 import com.marklogic.client.document.ServerTransform;
 import com.marklogic.client.io.*;
@@ -214,6 +215,11 @@ public class EndToEndFlowTests extends HubTestBase {
                     FinalCounts finalCounts = new FinalCounts(1, 0, 1, 0, 0, 0, 0, 0, 0, 0, "FINISHED");
                     testInputFlowViaREST(prefix, useEs ? "-es" : "", codeFormat, dataFormat, useEs, true, options, finalCounts);
                 }));
+                tests.add(DynamicTest.dynamicTest(flowName + " DMSDK", () -> {
+                    Map<String, Object> options = new HashMap<>();
+                    FinalCounts finalCounts = new FinalCounts(1, 0, 1, 0, 0, 0, 0, 0, 0, 0, "FINISHED");
+                    testInputFlowViaDMSDK(prefix, useEs ? "-es" : "", codeFormat, dataFormat, useEs, true, options, finalCounts);
+                }));
             }
             else {
                 Map<String, Object> options = new HashMap<>();
@@ -248,6 +254,11 @@ public class EndToEndFlowTests extends HubTestBase {
                     Map<String, Object> options = new HashMap<>();
                     FinalCounts finalCounts = new FinalCounts(1, 0, 1, 0, 0, 0, 0, 0, 0, 0, "FINISHED");
                     testInputFlowViaREST(prefix, useEs ? "-es" : "", codeFormat, dataFormat, useEs, false, options, finalCounts);
+                }));
+                tests.add(DynamicTest.dynamicTest(flowName + " DMSDK", () -> {
+                    Map<String, Object> options = new HashMap<>();
+                    FinalCounts finalCounts = new FinalCounts(1, 0, 1, 0, 0, 0, 0, 0, 0, 0, "FINISHED");
+                    testInputFlowViaDMSDK(prefix, useEs ? "-es" : "", codeFormat, dataFormat, useEs, false, options, finalCounts);
                 }));
             }
             else {
@@ -286,6 +297,11 @@ public class EndToEndFlowTests extends HubTestBase {
                     FinalCounts finalCounts = new FinalCounts(1, 0, 1, 0, 0, 0, 0, 0, 0, 0, "FINISHED");
                     testInputFlowViaREST(prefix, useEs ? "-es" : "", codeFormat, dataFormat, useEs, true, options, finalCounts);
                 }));
+                tests.add(DynamicTest.dynamicTest(flowName + " DMSDK", () -> {
+                    Map<String, Object> options = new HashMap<>();
+                    FinalCounts finalCounts = new FinalCounts(1, 0, 1, 0, 0, 0, 0, 0, 0, 0, "FINISHED");
+                    testInputFlowViaDMSDK(prefix, useEs ? "-es" : "", codeFormat, dataFormat, useEs, true, options, finalCounts);
+                }));
             }
             else {
                 Map<String, Object> options = new HashMap<>();
@@ -321,6 +337,12 @@ public class EndToEndFlowTests extends HubTestBase {
                     options.put("extraPlugin", true);
                     FinalCounts finalCounts = new FinalCounts(1, 0, 1, 0, 0, 0, 0, 0, 0, 0, "FINISHED");
                     testInputFlowViaREST(prefix, useEs ? "-es" : "", codeFormat, dataFormat, useEs, false, options, finalCounts);
+                }));
+                tests.add(DynamicTest.dynamicTest(flowName + " DMSDK", () -> {
+                    Map<String, Object> options = new HashMap<>();
+                    options.put("extraPlugin", true);
+                    FinalCounts finalCounts = new FinalCounts(1, 0, 1, 0, 0, 0, 0, 0, 0, 0, "FINISHED");
+                    testInputFlowViaDMSDK(prefix, useEs ? "-es" : "", codeFormat, dataFormat, useEs, false, options, finalCounts);
                 }));
             }
             else {
@@ -360,6 +382,11 @@ public class EndToEndFlowTests extends HubTestBase {
                     FinalCounts finalCounts = new FinalCounts(1, 0, 1, 0, 0, 0, 0, 0, 0, 0, "FINISHED");
                     testInputFlowViaREST(prefix, useEs ? "-es" : "", codeFormat, dataFormat, useEs, true, options, finalCounts);
                 }));
+                tests.add(DynamicTest.dynamicTest(flowName + " DMSDK", () -> {
+                    Map<String, Object> options = new HashMap<>();
+                    FinalCounts finalCounts = new FinalCounts(1, 0, 1, 0, 0, 0, 0, 0, 0, 0, "FINISHED");
+                    testInputFlowViaDMSDK(prefix, useEs ? "-es" : "", codeFormat, dataFormat, useEs, true, options, finalCounts);
+                }));
             }
             else {
                 Map<String, Object> options = new HashMap<>();
@@ -395,6 +422,11 @@ public class EndToEndFlowTests extends HubTestBase {
                         FinalCounts finalCounts = new FinalCounts(1, 0, 1, 0, 0, 0, 1, 0, 0, 0, "FINISHED");
                         testInputFlowViaREST(prefix, useEs ? "-es" : "", codeFormat, dataFormat, useEs, false, options, finalCounts);
                     }));
+                    tests.add(DynamicTest.dynamicTest(flowName + " DMSDK", () -> {
+                        Map<String, Object> options = new HashMap<>();
+                        FinalCounts finalCounts = new FinalCounts(1, 0, 1, 0, 0, 0, 1, 0, 0, 0, "FINISHED");
+                        testInputFlowViaDMSDK(prefix, useEs ? "-es" : "", codeFormat, dataFormat, useEs, false, options, finalCounts);
+                    }));
                 } else {
                     Map<String, Object> options = new HashMap<>();
                     FinalCounts finalCounts = new FinalCounts(TEST_SIZE, TEST_SIZE * 2, TEST_SIZE + 1, 1, TEST_SIZE, 0, TEST_SIZE, 0, TEST_SIZE / BATCH_SIZE, 0, "FINISHED");
@@ -422,6 +454,10 @@ public class EndToEndFlowTests extends HubTestBase {
                     tests.add(DynamicTest.dynamicTest(flowName + ": " + plugin + " error REST", () -> {
                         FinalCounts finalCounts = new FinalCounts(0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "FAILED");
                         testInputFlowViaREST(prefix, "-2", codeFormat, dataFormat, useEs, true, options, finalCounts);
+                    }));
+                    tests.add(DynamicTest.dynamicTest(flowName + ": " + plugin + " error DMSDK", () -> {
+                        FinalCounts finalCounts = new FinalCounts(0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "FAILED");
+                        testInputFlowViaDMSDK(prefix, "-2", codeFormat, dataFormat, useEs, true, options, finalCounts);
                     }));
                 }
             }
@@ -959,6 +995,86 @@ public class EndToEndFlowTests extends HubTestBase {
         catch(FailedRequestException e) {
 
         }
+
+        stagingCount = getStagingDocCount();
+        finalCount = getFinalDocCount();
+        tracingCount = getTracingDocCount();
+        jobsCount = getJobDocCount();
+
+        assertEquals(finalCounts.stagingCount, stagingCount);
+        assertEquals(finalCounts.finalCount, finalCount);
+        assertEquals(finalCounts.tracingCount, tracingCount);
+        assertEquals(finalCounts.jobCount, jobsCount);
+
+        if (finalCounts.stagingCount == 1) {
+            String filename = "final";
+            if (useEs && prefix.equals("triples-array")) {
+                filename = "input/input-es-trips";
+            }
+            else if (useEs) {
+                filename = "es";
+            }
+            else if (prefix.equals("scaffolded")) {
+                filename = "staged";
+            }
+            else if (prefix.equals("1x-legacy")) {
+                filename = "1x";
+            }
+            if (dataFormat.equals(DataFormat.JSON)) {
+                String expected = getResource("e2e-test/" + filename + "." + dataFormat.toString());
+                String actual = stagingDocMgr.read("/input" + fileSuffix + "." + dataFormat.toString()).next().getContent(new StringHandle()).get();
+                assertJsonEqual(expected, actual, false);
+            } else {
+                Document expected = getXmlFromResource("e2e-test/" + filename + "." + dataFormat.toString());
+                Document actual = stagingDocMgr.read("/input" + fileSuffix + "." + dataFormat.toString()).next().getContent(new DOMHandle()).get();
+                assertXMLEqual(expected, actual);
+            }
+        }
+    }
+    
+    private void testInputFlowViaDMSDK(String prefix, String fileSuffix, CodeFormat codeFormat, DataFormat dataFormat, boolean useEs, boolean passJobId, Map<String, Object> options, FinalCounts finalCounts) {
+        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_TRACE_NAME, HubConfig.DEFAULT_JOB_NAME);
+        String flowName = getFlowName(prefix, codeFormat, dataFormat, FlowType.INPUT, useEs);
+        int stagingCount = getStagingDocCount();
+        int finalCount = getFinalDocCount();
+        int tracingCount = getTracingDocCount();
+        int jobsCount = getJobDocCount();
+
+        assertEquals(0, stagingCount);
+        assertEquals(0, finalCount);
+        assertEquals(0, tracingCount);
+        assertEquals(0, jobsCount);
+
+        ServerTransform serverTransform = new ServerTransform("ml:inputFlow");
+        if (passJobId) {
+            serverTransform.addParameter("job-id", UUID.randomUUID().toString());
+        }
+        serverTransform.addParameter("entity-name", ENTITY);
+        serverTransform.addParameter("flow-name", flowName);
+        String optionString = toJsonString(options);
+        serverTransform.addParameter("options", optionString);
+        FileHandle handle = new FileHandle(getResourceFile("e2e-test/input/input" + fileSuffix + "." + dataFormat.toString()));
+        Format format = null;
+        switch (dataFormat) {
+            case XML:
+                format = Format.XML;
+                break;
+
+            case JSON:
+                format = Format.JSON;
+                break;
+        }
+        handle.setFormat(format);
+        
+        WriteBatcher batcher = stagingDataMovementManager.newWriteBatcher();
+        batcher.withBatchSize(1).withTransform(serverTransform);
+        batcher.onBatchSuccess(batch -> {	
+		}).onBatchFailure((batch, throwable) -> {
+			throwable.printStackTrace();
+		});
+        stagingDataMovementManager.startJob(batcher);
+        batcher.add("/input" + fileSuffix + "." + dataFormat.toString(), handle);
+        batcher.flushAndWait();
 
         stagingCount = getStagingDocCount();
         finalCount = getFinalDocCount();
