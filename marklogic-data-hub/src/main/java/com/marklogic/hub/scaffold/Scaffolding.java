@@ -16,14 +16,13 @@
 
 package com.marklogic.hub.scaffold;
 
+import com.marklogic.client.DatabaseClient;
 import com.marklogic.hub.error.ScaffoldingValidationException;
 import com.marklogic.hub.flow.CodeFormat;
 import com.marklogic.hub.flow.DataFormat;
 import com.marklogic.hub.flow.FlowType;
 import com.marklogic.hub.scaffold.impl.ScaffoldingImpl;
-import com.marklogic.client.DatabaseClient;
 
-import java.io.File;
 import java.nio.file.Path;
 import java.util.List;
 
@@ -37,21 +36,6 @@ public interface Scaffolding {
      */
     static Scaffolding create(String projectDir, DatabaseClient databaseClient) {
         return new ScaffoldingImpl(projectDir, databaseClient);
-    }
-
-    /**
-     * Grabs the absolute path of a series of strings
-     * @param first - the minimum required string path to get the absolute path from
-     * @param more - additional paths submitted
-     * @return the absolute path of each string path provided
-     */
-    static String getAbsolutePath(String first, String... more) {
-        StringBuilder absolutePath = new StringBuilder(first);
-        for (String path : more) {
-            absolutePath.append(File.separator);
-            absolutePath.append(path);
-        }
-        return absolutePath.toString();
     }
 
     /**
@@ -139,11 +123,4 @@ public interface Scaffolding {
      */
     void createRestTransform(String entityName, String transformName,
                              FlowType flowType, CodeFormat codeFormat) throws ScaffoldingValidationException;
-
-    /**
-     * Returns the disk path of the entity
-     * @param entityName - name of the entity as string
-     * @return Path of the entity
-     */
-    Path getEntityDir(String entityName);
 }

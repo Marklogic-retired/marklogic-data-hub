@@ -63,6 +63,15 @@ public class ScaffoldingImpl implements Scaffolding {
         validator = new ScaffoldingValidator(projectDir);
     }
 
+    public static String getAbsolutePath(String first, String... more) {
+        StringBuilder absolutePath = new StringBuilder(first);
+        for (String path : more) {
+            absolutePath.append(File.separator);
+            absolutePath.append(path);
+        }
+        return absolutePath.toString();
+    }
+
     @Override public Path getFlowDir(String entityName, String flowName, FlowType flowType) {
         Path entityDir = entitiesDir.resolve(entityName);
         Path typeDir = entityDir.resolve(flowType.toString());
@@ -358,7 +367,7 @@ public class ScaffoldingImpl implements Scaffolding {
         return file;
     }
 
-    @Override public Path getEntityDir(String entityName) {
+    public Path getEntityDir(String entityName) {
         return entitiesDir.resolve(entityName);
     }
 
