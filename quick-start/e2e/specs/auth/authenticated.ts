@@ -2,6 +2,7 @@ import { protractor , browser, element, by, By, $, $$, ExpectedConditions as EC}
 import { pages } from '../../page-objects/page';
 import loginPage from '../../page-objects/auth/login';
 import dashboardPage from '../../page-objects/dashboard/dashboard';
+import appPage from '../../page-objects/appPage';
 
 export default function(tmpDir) {
   describe('login', () => {
@@ -147,7 +148,8 @@ export default function(tmpDir) {
 
     it ('should complete the install and go to the dashboard', function() {
       expect(loginPage.installProgress.isDisplayed()).toBe(true);
-      dashboardPage.isLoadedWithtimeout(360000);
+      browser.wait(EC.visibilityOf(dashboardPage.clearButton), 360000);
+      //dashboardPage.isLoadedWithtimeout(360000);
     });
 
     it ('should logout', function() {
