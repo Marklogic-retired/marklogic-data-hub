@@ -30,6 +30,7 @@ import com.marklogic.hub.flow.impl.FlowRunnerImpl;
 import com.marklogic.hub.job.JobManager;
 import com.marklogic.hub.main.impl.MainPluginImpl;
 import com.marklogic.hub.scaffold.Scaffolding;
+import org.apache.commons.io.FileUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -37,6 +38,7 @@ import org.w3c.dom.NodeList;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -229,32 +231,35 @@ public class FlowManagerImpl extends ResourceManager implements FlowManager {
                 Path inputDir = entityDir.toPath().resolve("input");
                 Path harmonizeDir = entityDir.toPath().resolve("harmonize");
 
-
                 File[] inputFlows = inputDir.toFile().listFiles((pathname) -> pathname.isDirectory() && !pathname.getName().equals("REST"));
-                if (inputFlows != null) {
-                    for (File inputFlow : inputFlows) {
-                        File[] mainFiles = inputFlow.listFiles((dir, name) -> name.matches("main\\.(sjs|xqy)"));
-                        File[] flowFiles = inputFlow.listFiles((dir, name) -> name.matches(inputFlow.getName() + "\\.xml"));
-                        if (mainFiles.length < 1 && flowFiles.length == 1) {
-                            oldFlows.add(entityDir.getName() + " => " + inputFlow.getName());
-                        }
-                    }
-                }
+                addLegacyFlowToList(oldFlows, entityDir, inputFlows);
 
                 File[] harmonizeFlows = harmonizeDir.toFile().listFiles((pathname) -> pathname.isDirectory() && !pathname.getName().equals("REST"));
-                if (harmonizeFlows != null) {
-                    for (File harmonizeFlow : harmonizeFlows) {
-                        File[] mainFiles = harmonizeFlow.listFiles((dir, name) -> name.matches("main\\.(sjs|xqy)"));
-                        File[] flowFiles = harmonizeFlow.listFiles((dir, name) -> name.matches(harmonizeFlow.getName() + "\\.xml"));
-                        if (mainFiles.length < 1 && flowFiles.length == 1) {
-                            oldFlows.add(entityDir.getName() + " => " + harmonizeFlow.getName());
-                        }
-                    }
-                }
+                addLegacyFlowToList(oldFlows, entityDir, harmonizeFlows);
             }
         }
 
         return oldFlows;
+    }
+
+    private void addLegacyFlowToList(List<String> oldFlows, File entityDir, File[] flows) {
+        if (flows != null) {
+            for (File flow : flows) {
+                File[] mainFiles = flow.listFiles((dir, name) -> name.matches("main\\.(sjs|xqy)"));
+                File[] flowFiles = flow.listFiles((dir, name) -> name.matches(flow.getName() + "\\.xml"));
+                if (mainFiles.length < 1 && flowFiles.length == 1) {
+                    oldFlows.add(entityDir.getName() + " => " + flow.getName());
+                } else if (mainFiles.length == 1 && mainFiles[0].getName().contains(".sjs")) {
+                    try {
+                        String mainFile = FileUtils.readFileToString(mainFiles[0]);
+                        if (mainFile.contains("dhf.xqy")) {
+                            oldFlows.add(entityDir.getName() + " => " + flow.getName());
+                        }
+                    }
+                    catch(IOException e) {}
+                }
+            }
+        }
     }
 
     @Override public List<String> updateLegacyFlows(String fromVersion) {

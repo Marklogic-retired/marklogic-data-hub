@@ -44,8 +44,8 @@ import javax.xml.parsers.ParserConfigurationException
 
 class BaseTest extends Specification {
 
-    static final int MOD_COUNT_WITH_TRACE_MODULES = 25
-    static final int MOD_COUNT = 5
+    static final int MOD_COUNT_WITH_TRACE_MODULES = 26
+    static final int MOD_COUNT = 6
     static final TemporaryFolder testProjectDir = new TemporaryFolder()
     static File buildFile
     static File propertiesFile
