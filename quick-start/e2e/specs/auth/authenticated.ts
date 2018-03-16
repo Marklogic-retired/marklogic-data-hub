@@ -139,17 +139,19 @@ export default function(tmpDir) {
       expect(loginPage.preInstallCheckTab.isDisplayed()).toBe(false);
       expect(loginPage.installerTab.isDisplayed()).toBe(true);
       expect(loginPage.installProgress.isPresent()).toBe(false);
-      return loginPage.clickInstall();
+      loginPage.clickInstall();
     });
 
     it ('should install the hub into MarkLogic', function() {
-      return browser.wait(EC.presenceOf(loginPage.installProgress));
+      browser.wait(EC.presenceOf(loginPage.installProgress));
+      expect(loginPage.installProgress.isDisplayed()).toBe(true);
+      browser.wait(EC.elementToBeClickable(appPage.flowsTab), 360000, 'dashboard page is not displayed');
     });
 
     it ('should complete the install and go to the dashboard', function() {
-      expect(loginPage.installProgress.isDisplayed()).toBe(true);
-      browser.wait(EC.visibilityOf(dashboardPage.clearButton), 360000);
-      //dashboardPage.isLoadedWithtimeout(360000);
+      dashboardPage.isLoaded();
+      expect(appPage.flowsTab.isPresent()).toBe(true);
+      expect(appPage.jobsTab.isPresent()).toBe(true);
     });
 
     it ('should logout', function() {
