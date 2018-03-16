@@ -68,11 +68,6 @@ public class FlowManagerImpl extends ResourceManager implements FlowManager {
         this.stagingClient.init(NAME, this);
     }
 
-
-    /**
-     * retrieves a list of all the flows on the local files systems
-     * @return a list of Flows
-     */
     @Override public List<Flow> getLocalFlows() {
         List<Flow> flows = new ArrayList<>();
 
@@ -178,13 +173,6 @@ public class FlowManagerImpl extends ResourceManager implements FlowManager {
         return null;
     }
 
-    /**
-     * Retrieves a list of flows installed on the MarkLogic server
-     *
-     * @param entityName
-     *            - the entity from which to fetch the flows
-     * @return - a list of flows for the given entity
-     */
     @Override public List<Flow> getFlows(String entityName) {
         RequestParameters params = new RequestParameters();
         params.add("entity-name", entityName);
@@ -212,15 +200,6 @@ public class FlowManagerImpl extends ResourceManager implements FlowManager {
         return flows;
     }
 
-    /**
-     * Retrieves a named flow from a given entity
-     *
-     * @param entityName
-     *            - the entity that the flow belongs to
-     * @param flowName
-     *            - the name of the flow to get
-     * @return the flow
-     */
     @Override public Flow getFlow(String entityName, String flowName) {
         return getFlow(entityName, flowName, null);
     }

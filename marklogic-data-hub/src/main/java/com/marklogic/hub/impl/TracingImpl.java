@@ -32,29 +32,18 @@ public class TracingImpl extends ResourceManager implements Tracing {
         client.init(NAME, this);
     }
 
-    /**
-     * Enables tracing
-     */
     @Override public void enable() {
         RequestParameters params = new RequestParameters();
         params.add("enable", "true");
         this.getServices().post(params, new StringHandle("{}").withFormat(Format.JSON));
     }
 
-    /**
-     * Disables tracing
-     */
     @Override public void disable() {
         RequestParameters params = new RequestParameters();
         params.add("enable", "false");
         this.getServices().post(params, new StringHandle("{}").withFormat(Format.JSON));
     }
 
-    /**
-     * Determines if the hub has tracing enabled or not
-     *
-     * @return - true if enabled, false otherwise
-     */
     @Override public boolean isEnabled() {
         RequestParameters params = new RequestParameters();
         ServiceResultIterator resultItr = this.getServices().get(params);

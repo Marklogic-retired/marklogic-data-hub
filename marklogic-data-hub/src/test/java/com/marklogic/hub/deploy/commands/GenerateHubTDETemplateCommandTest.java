@@ -1,7 +1,7 @@
 package com.marklogic.hub.deploy.commands;
 
 import com.marklogic.hub.HubTestBase;
-import com.marklogic.hub.scaffold.Scaffolding;
+import com.marklogic.hub.scaffold.impl.ScaffoldingImpl;
 import com.marklogic.hub.util.FileUtil;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -15,9 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class GenerateHubTDETemplateCommandTest extends HubTestBase  {
     static Path projectPath = Paths.get(PROJECT_PATH).toAbsolutePath();
@@ -45,7 +43,7 @@ public class GenerateHubTDETemplateCommandTest extends HubTestBase  {
     }
 
     private void installEntity(String entityName) {
-        Scaffolding scaffolding = Scaffolding.create(projectDir.toString(), finalClient);
+        ScaffoldingImpl scaffolding = new ScaffoldingImpl(projectDir.toString(), finalClient);
         Path entityDir = scaffolding.getEntityDir(entityName);
         entityDir.toFile().mkdirs();
         assertTrue(entityDir.toFile().exists());

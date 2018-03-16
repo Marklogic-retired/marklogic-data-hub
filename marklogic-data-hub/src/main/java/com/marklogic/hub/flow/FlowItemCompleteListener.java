@@ -16,5 +16,10 @@
 package com.marklogic.hub.flow;
 
 public interface FlowItemCompleteListener {
+    /**
+     * Listener interface for each flow item completing successfully
+     * @param jobId - the id of the job as a string
+     * @param itemId - the id of the item as a string
+     */
     void processCompletion(String jobId, String itemId);
 }
