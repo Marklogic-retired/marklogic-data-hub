@@ -52,7 +52,7 @@ public class SearchService extends SearchableService {
     public StringHandle search(SearchQuery searchQuery) {
         QueryManager queryMgr;
         String dbPrefix;
-        if (searchQuery.database.equals(DatabaseKind.STAGING)) {
+        if (searchQuery.database.equalsIgnoreCase(DatabaseKind.getName(DatabaseKind.STAGING))) {
             queryMgr = stagingQueryMgr;
             dbPrefix = "staging-";
         }
