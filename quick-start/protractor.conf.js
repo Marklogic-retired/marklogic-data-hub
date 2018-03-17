@@ -27,7 +27,7 @@ exports.config = {
     showTiming: true,
     showColors: true,
     includeStackTrace: true,
-    defaultTimeoutInterval: 360000,
+    defaultTimeoutInterval: 220000,
     print: function() {}
   },
   onPrepare() {
