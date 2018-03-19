@@ -16,7 +16,7 @@ export class MapComponent {
   private entityPrimaryKey: string = '';
 
   // Source Document
-  private currentDatabase: string = 'data-hub-STAGING';
+  private currentDatabase: string = 'STAGING';
   private entitiesOnly: boolean = false;
   private searchText: string = null;
   private activeFacets: any = {};
