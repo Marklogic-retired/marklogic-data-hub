@@ -13,24 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.marklogic.hub.util;
+package com.marklogic.hub.error;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
+import com.marklogic.hub.entity.Entity;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+public class EntityServicesGenerationException  extends RuntimeException {
 
-public class FileUtil {
-
-    public static void copy(InputStream source, File destination) {
-        try {
-            FileUtils.copyInputStreamToFile(source, destination);
-        }
-        catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+    public EntityServicesGenerationException() {
+        super();
     }
+
+    public EntityServicesGenerationException(String message) {
+        super(message);
+    }
+
+    public EntityServicesGenerationException(String message, Throwable e) { super(message, e); }
 }

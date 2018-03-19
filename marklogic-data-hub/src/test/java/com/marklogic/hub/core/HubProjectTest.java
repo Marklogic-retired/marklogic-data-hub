@@ -1,9 +1,10 @@
-package com.marklogic.hub;
+package com.marklogic.hub.core;
 
+import com.marklogic.hub.DatabaseKind;
+import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.HubTestBase;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.File;
@@ -19,15 +20,6 @@ public class HubProjectTest extends HubTestBase {
 
     private static File projectPath = new File(PROJECT_PATH);
 
-    @BeforeClass
-    public static void setup() throws IOException {
-        FileUtils.deleteDirectory(projectPath);
-    }
-
-    @AfterClass
-    public static void teardown() throws IOException {
-        FileUtils.deleteDirectory(projectPath);
-    }
 
     @Test
     public void testInit() throws IOException {

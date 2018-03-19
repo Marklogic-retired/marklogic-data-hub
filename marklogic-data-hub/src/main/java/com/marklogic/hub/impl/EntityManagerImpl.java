@@ -15,8 +15,14 @@
  */
 package com.marklogic.hub.impl;
 
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.ext.helper.LoggingObject;
 import com.marklogic.client.ext.modulesloader.impl.AssetFileLoader;
@@ -29,6 +35,7 @@ import com.marklogic.client.util.RequestParameters;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.EntityManager;
 import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.error.EntityServicesGenerationException;
 import com.marklogic.hub.util.HubModuleManager;
 import org.apache.commons.io.FileUtils;
 import org.springframework.core.io.FileSystemResource;
@@ -39,10 +46,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class EntityManagerImpl extends LoggingObject implements EntityManager {
@@ -141,6 +145,7 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
         return false;
     }
 
+
     private HubModuleManager getPropsMgr() {
         String timestampFile = hubConfig.getUserModulesDeployTimestampFile();
         HubModuleManager propertiesModuleManager = new HubModuleManager(timestampFile);
@@ -188,6 +193,27 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
         return entities;
     }
 
+    private class PiiGenerator extends ResourceManager {
+        private static final String NAME = "ml:piiGenerator";
+        private RequestParameters params = new RequestParameters();
+
+        PiiGenerator(DatabaseClient client) {
+            super();
+            client.init(NAME, this);
+        }
+
+        public String piiGenerate(List<JsonNode> entities) {
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode node = objectMapper.valueToTree(entities);
+            ResourceServices.ServiceResultIterator resultItr = this.getServices().post(params, new JacksonHandle(node));
+            if (resultItr == null || ! resultItr.hasNext()) {
+                throw new EntityServicesGenerationException("Unable to generate pii config");
+            }
+            ResourceServices.ServiceResult res = resultItr.next();
+            return res.getContent(new StringHandle()).get();
+        }
+
+    }
     private class QueryOptionsGenerator extends ResourceManager {
         private static final String NAME = "ml:searchOptionsGenerator";
 

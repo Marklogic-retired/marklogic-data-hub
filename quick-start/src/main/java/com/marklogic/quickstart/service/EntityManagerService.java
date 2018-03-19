@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.hub.EntityManager;
 import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.error.DataHubProjectException;
 import com.marklogic.hub.flow.FlowType;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.validate.EntitiesValidator;
@@ -276,8 +277,7 @@ public class EntityManagerService {
                 return entity;
             }
         }
-
-        return null;
+        throw new DataHubProjectException("Entity not found in project: " + entityName);
     }
 
     public FlowModel getFlow(String entityName, FlowType flowType, String flowName) throws IOException {
@@ -297,7 +297,7 @@ public class EntityManagerService {
             }
         }
 
-        return null;
+        throw new DataHubProjectException("Flow not found: " + entityName + " / " + flowName);
     }
 
     public FlowModel createFlow(String projectDir, String entityName, FlowType flowType, FlowModel newFlow) throws IOException {

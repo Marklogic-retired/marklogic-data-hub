@@ -33,6 +33,7 @@ import com.marklogic.quickstart.model.PluginModel;
 import com.marklogic.quickstart.util.FileUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -52,7 +53,8 @@ public class FlowManagerService {
     private static final String PROJECT_TMP_FOLDER = ".tmp";
 
     private EnvironmentConfig envConfig() {
-        ConnectionAuthenticationToken authenticationToken = (ConnectionAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+        SecurityContext context = SecurityContextHolder.getContext();
+        ConnectionAuthenticationToken authenticationToken = (ConnectionAuthenticationToken) context.getAuthentication();
         return authenticationToken.getEnvironmentConfig();
     }
 

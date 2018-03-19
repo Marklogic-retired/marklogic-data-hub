@@ -1000,10 +1000,15 @@ public class HubConfigImpl implements HubConfig {
         }
     }
 
-    @Override public String getJarVersion() throws IOException {
+    @Override public String getJarVersion() {
         Properties properties = new Properties();
         InputStream inputStream = getClass().getClassLoader().getResourceAsStream("version.properties");
-        properties.load(inputStream);
+        try {
+            properties.load(inputStream);
+        } catch (IOException e)
+        {
+            throw new RuntimeException(e);
+        }
         String version = (String)properties.get("version");
 
         // this lets debug builds work from an IDE
@@ -1115,13 +1120,8 @@ public class HubConfigImpl implements HubConfig {
         }
 
 
-        try {
-            String version = getJarVersion();
-            customTokens.put("%%mlHubVersion%%", version);
-        }
-        catch(IOException e) {
-            e.printStackTrace();
-        }
+        String version = getJarVersion();
+        customTokens.put("%%mlHubVersion%%", version);
 
         appConfig = config;
     }

@@ -88,6 +88,7 @@ dependencies {
     testCompile "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}"
     testRuntime "org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}"
 
+
     testCompile "org.junit.platform:junit-platform-runner:${junitPlatformVersion}"
 
     // If you also want to support JUnit 3 and JUnit 4 tests

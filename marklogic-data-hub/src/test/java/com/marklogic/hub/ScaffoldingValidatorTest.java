@@ -52,13 +52,13 @@ public class ScaffoldingValidatorTest extends HubTestBase {
 
    @Before
    public void setup() throws IOException {
-       FileUtils.deleteDirectory(new File(projectPath));
+       deleteProjectDir();
        createPlugins(TEST_ENTITY_NAME, FlowType.INPUT, CodeFormat.XQUERY);
        createPlugins(TEST_ENTITY_NAME, FlowType.HARMONIZE, CodeFormat.XQUERY);
    }
 
    @After
-   public void teardown() throws IOException {
+   public void teardownDir() throws IOException {
        FileUtils.deleteDirectory(new File(projectPath));
    }
 

@@ -19,15 +19,12 @@ package com.marklogic.quickstart.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.marklogic.hub.HubConfigBuilder;
-import com.marklogic.hub.HubTestBase;
+import com.marklogic.hub.error.DataHubProjectException;
 import com.marklogic.hub.flow.CodeFormat;
 import com.marklogic.hub.flow.DataFormat;
 import com.marklogic.hub.flow.FlowType;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.FileUtil;
-import com.marklogic.quickstart.auth.ConnectionAuthenticationToken;
-import com.marklogic.quickstart.model.EnvironmentConfig;
 import com.marklogic.quickstart.model.FlowModel;
 import com.marklogic.quickstart.model.entity_services.EntityModel;
 import org.apache.commons.io.FileUtils;
@@ -35,7 +32,6 @@ import org.junit.*;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
@@ -43,9 +39,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
+import static org.junit.Assert.fail;
+
 @RunWith(SpringRunner.class)
 @SpringBootTest()
-public class EntityManagerServiceTest extends HubTestBase {
+public class EntityManagerServiceTest extends AbstractServiceTest {
 
     private static String ENTITY = "test-entity";
     private static String ENTITY2 = "test-entity2";
@@ -54,27 +52,10 @@ public class EntityManagerServiceTest extends HubTestBase {
     @Autowired
     EntityManagerService entityMgrService;
 
-    @BeforeClass
-    public static void setupSuite() throws IOException {
-        FileUtils.deleteDirectory(projectDir.toFile());
-
-        EnvironmentConfig envConfig = new EnvironmentConfig(projectDir.toString(), "local", "admin", "admin");
-        envConfig.setMlSettings(HubConfigBuilder.newHubConfigBuilder(projectDir.toString()).withPropertiesFromEnvironment().build());
-        envConfig.checkIfInstalled();
-        setEnvConfig(envConfig);
-
-        installHub();
-    }
-
-    private static void setEnvConfig(EnvironmentConfig envConfig) {
-        ConnectionAuthenticationToken authenticationToken = new ConnectionAuthenticationToken("admin", "admin", "localhost", 1, "local");
-        authenticationToken.setEnvironmentConfig(envConfig);
-        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-    }
-
     @Before
-    public void setUp() throws IOException {
-        FileUtils.deleteDirectory(projectDir.toFile());
+    public void setUp() {
+        installHubOnce();
+        setupEnv();
 
         Scaffolding scaffolding = Scaffolding.create(projectDir.toString(), stagingClient);
         scaffolding.createEntity(ENTITY);
@@ -115,12 +96,6 @@ public class EntityManagerServiceTest extends HubTestBase {
         installUserModules(getHubConfig(), true);
     }
 
-    @AfterClass
-    public static void tearDown() throws IOException {
-        FileUtils.deleteDirectory(projectDir.toFile());
-        uninstallHub();
-    }
-
     @Test
     public void getEntities() throws IOException {
         List<EntityModel> entities = entityMgrService.getEntities();
@@ -158,10 +133,11 @@ public class EntityManagerServiceTest extends HubTestBase {
         Assert.assertEquals(0, entity.getHarmonizeFlows().size());
     }
 
-    @Test public void getNoSuchEntity() throws IOException {
+    @Test(expected = DataHubProjectException.class)
+    // this is a behavior change -- returning null sucks.
+    public void getNoSuchEntity() throws IOException {
         EntityModel entity = entityMgrService.getEntity("no-such-entity");
-
-        Assert.assertNull(entity);
+        fail("Fetching no entity should throw exception");
     }
 
     @Test
@@ -173,22 +149,22 @@ public class EntityManagerServiceTest extends HubTestBase {
         Assert.assertEquals(FlowType.INPUT, flow.flowType);
     }
 
-    @Test
+    @Test(expected = DataHubProjectException.class)
     public void getNoSuchFlow() throws IOException {
         final String FLOW_NAME = "no-such-flow";
         FlowModel flow = entityMgrService.getFlow(ENTITY, FlowType.INPUT, FLOW_NAME);
-        Assert.assertNull(flow);
+        fail("No such flow should throw an error");
     }
 
     /**
      * Try getting a flow using the name of a valid flow, but requesting using the wrong type.
      * @throws IOException
      */
-    @Test
+    @Test(expected = DataHubProjectException.class)
     public void getFlowByWrongType() throws IOException {
         final String FLOW_NAME = "sjs-json-input-flow";
         FlowModel flow = entityMgrService.getFlow(ENTITY, FlowType.HARMONIZE, FLOW_NAME);
-        Assert.assertNull(flow);
+        fail("Flow by wrong type should throw an exception");
     }
 
     /**
@@ -224,6 +200,10 @@ public class EntityManagerServiceTest extends HubTestBase {
         Assert.assertEquals(RENAMED_ENTITY, inputFlows.get(0).entityName);
         Assert.assertEquals(FLOW_NAME, inputFlows.get(0).flowName);
         Assert.assertEquals(FlowType.INPUT, inputFlows.get(0).flowType);
+
+        //cleanup.
+        entityMgrService.deleteEntity(RENAMED_ENTITY);
+
 
     }
 }

@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package com.marklogic.hub;
+package com.marklogic.hub.jupiterbased;
 
+import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.error.ScaffoldingValidationException;
 import com.marklogic.hub.flow.CodeFormat;
 import com.marklogic.hub.flow.DataFormat;
@@ -25,8 +26,10 @@ import com.marklogic.hub.scaffold.impl.ScaffoldingImpl;
 import com.marklogic.hub.util.FileUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.custommonkey.xmlunit.XMLUnit;
-import org.junit.jupiter.api.*;
+import org.junit.Before;
+import org.junit.jupiter.api.DynamicTest;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestFactory;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 import org.xml.sax.SAXException;
@@ -51,31 +54,14 @@ public class ScaffoldingTest extends HubTestBase {
     private static File pluginDir = projectPath.resolve("plugins").toFile();
     private static boolean isMl9 = true;
 
-    @BeforeAll
-    public static void setup() throws IOException {
-        XMLUnit.setIgnoreWhitespace(true);
-
-        if (projectDir.exists()) {
-            FileUtils.deleteDirectory(projectDir);
-        }
-        installHub();
+    @Before
+    public void setup() throws IOException {
+        basicSetup();
         isMl9 = getMlMajorVersion() == 9;
-
-    }
-    
-    @AfterAll
-    public static void teardownFinal() {
-        uninstallHub();
-    }
-
-    @AfterEach
-    public void teardown() throws IOException {
-        FileUtils.deleteDirectory(projectDir);
     }
 
     @Test
     public void createEntity() throws FileNotFoundException {
-        assertFalse(projectDir.exists());
         ScaffoldingImpl scaffolding = new ScaffoldingImpl(projectDir.toString(), stagingClient);
         scaffolding.createEntity("my-fun-test");
         assertTrue(projectDir.exists());
@@ -370,4 +356,6 @@ public class ScaffoldingTest extends HubTestBase {
             }
         }));
     }
+
+
 }

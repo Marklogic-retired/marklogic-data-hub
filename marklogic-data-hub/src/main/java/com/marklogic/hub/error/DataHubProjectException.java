@@ -13,24 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.marklogic.hub.util;
+package com.marklogic.hub.error;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
+/**
+ * An exception for issues when retrieving data from the project directory.
+ */
+public class DataHubProjectException extends RuntimeException {
+    public DataHubProjectException() {
+        super();
+    }
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+    public DataHubProjectException(String message) {
+        super(message);
+    }
 
-public class FileUtil {
+    public DataHubProjectException(String message, Throwable t) {
+        super(message, t);
+    }
 
-    public static void copy(InputStream source, File destination) {
-        try {
-            FileUtils.copyInputStreamToFile(source, destination);
-        }
-        catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+    public DataHubProjectException(Throwable t) {
+        super(t);
     }
 }

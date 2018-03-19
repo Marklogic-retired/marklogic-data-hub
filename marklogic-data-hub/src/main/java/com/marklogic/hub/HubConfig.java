@@ -462,7 +462,6 @@ public interface HubConfig {
     /**
      * Gets the current version of the DHF Jar
      * @return Version of DHF Jar file as string
-     * @throws IOException if current jar can't be found
      */
-    String getJarVersion() throws IOException;
+    String getJarVersion();
 }
