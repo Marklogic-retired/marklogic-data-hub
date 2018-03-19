@@ -71,7 +71,7 @@ export class MapComponent {
       // get contents of the document
       this.searchService.getDoc(this.currentDatabase, this.sampleDoc.uri).subscribe(doc => {
         this.sampleDocSrc = doc;
-        _.forEach(this.sampleDocSrc, function(val, key) {
+        _.forEach(this.sampleDocSrc['envelope']['instance'], function(val, key) {
           let prop = {
             key: key,
             val: String(val),
