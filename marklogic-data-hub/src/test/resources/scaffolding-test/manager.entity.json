@@ -9,6 +9,7 @@
       "primaryKey": "id",
       "rangeIndex" : [ ],
       "wordLexicon" : [ ],
+      "pii":["title"],
       "properties" : {
         "id": {
           "datatype": "string",
