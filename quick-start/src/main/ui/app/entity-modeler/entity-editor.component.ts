@@ -28,6 +28,7 @@ export class EntityEditorComponent {
   indexHeader: boolean = false;
   wordLexiconHeader: boolean = false;
   requiredHeader: boolean = false;
+  piiHeader: boolean = false;
 
   cardinalities: Array<any> = [
     {
@@ -167,6 +168,10 @@ export class EntityEditorComponent {
     return this.entity.definition.required.indexOf(key) >= 0;
   }
 
+  isPii(key: string) {
+    return this.entity.definition.pii.indexOf(key) >= 0;
+  }
+
   addProperty() {
     this.entity.definition.properties.push(new PropertyType());
   }
@@ -190,6 +195,10 @@ export class EntityEditorComponent {
           });
 
           _.remove(this.entity.definition.required, (index: string) => {
+            return (index === value.name);
+          });
+
+          _.remove(this.entity.definition.pii, (index: string) => {
             return (index === value.name);
           });
 
@@ -297,6 +306,14 @@ export class EntityEditorComponent {
     }
   }
 
+  togglePiiSelection() {
+    if (this.selectedCount()) {
+      this.piiHeader = !this.piiHeader;
+      this.toggleArraySelection(this.piiHeader, 'pii');
+    }
+  }
+
+
   toggleArraySelection(checked: boolean, field: string) {
     let indexes = [];
     this.entity.definition.properties.forEach((prop: PropertyType) => {
@@ -329,6 +346,15 @@ export class EntityEditorComponent {
       this.entity.definition.required.splice(idx, 1);
     } else {
       this.entity.definition.required.push(property.name);
+    }
+  }
+
+  togglePii(property: PropertyType) {
+    let idx = this.entity.definition.pii.indexOf(property.name);
+    if (idx >= 0) {
+      this.entity.definition.pii.splice(idx, 1);
+    } else {
+      this.entity.definition.pii.push(property.name);
     }
   }
 
