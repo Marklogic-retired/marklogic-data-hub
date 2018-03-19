@@ -375,7 +375,7 @@ export class MlcpUiComponent implements OnChanges {
             field: 'transform_module',
             type: 'string',
             description: 'The path in the modules database or modules directory of a custom content transformation function installed on MarkLogic Server. This option is required to enable a custom transformation. For details, see Transforming Content During Ingestion.',
-            value: '/MarkLogic/data-hub-framework/transforms/mlcp-flow-transform.xqy',
+            value: this.flow.codeFormat.toLowerCase() === 'javascript' ? '/MarkLogic/data-hub-framework/transforms/mlcp-flow-transform.sjs' : '/MarkLogic/data-hub-framework/transforms/mlcp-flow-transform.xqy',
             readOnly: true,
           },
           {
