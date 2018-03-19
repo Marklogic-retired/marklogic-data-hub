@@ -1,5 +1,5 @@
 .map-container {
-  width: 650px;
+  width: 700px;
   padding: 0;
 }
 
@@ -16,13 +16,13 @@ p.item-identifying-info {
 #source, #harmonized {
   position: relative;
   float: left;
-  width: 325px;
+  width: 350px;
   margin: 0;
   /* border: solid 1px red; */
 }
 
 .prop-container {
-  width: 325px;
+  width: 350px;
   height: 45px;
   font-size: 14px;
   border: solid 2px #5b8db3;
@@ -49,7 +49,7 @@ p.item-identifying-info {
 }
 
 .prop-select-content {
-  width: 280px;
+  width: 305px;
 }
 
 .prop-name, .prop-type, .is-primary {
@@ -58,7 +58,7 @@ p.item-identifying-info {
 }
 
 .prop-name {
-  width: 205px;
+  width: 230px;
   font-size: 14px;
   cursor: default;
 }
