@@ -28,6 +28,7 @@ export class EntityEditorComponent {
   indexHeader: boolean = false;
   wordLexiconHeader: boolean = false;
   requiredHeader: boolean = false;
+  piiHeader: boolean = false;
 
   cardinalities: Array<any> = [
     {
@@ -155,6 +156,30 @@ export class EntityEditorComponent {
     });
   }
 
+  isPrimaryKey(key: string) {
+    return this.entity.definition.primaryKey === key;
+  }
+
+  isRangeIndex(key: string) {
+    return this.entity.definition.elementRangeIndex.indexOf(key) >= 0;
+  }
+
+  isPathRangeIndex(key: string) {
+    return this.entity.definition.rangeIndex.indexOf(key) >= 0;
+  }
+
+  isWordLexicon(key: string) {
+    return this.entity.definition.wordLexicon.indexOf(key) >= 0;
+  }
+
+  isRequired(key: string) {
+    return this.entity.definition.required.indexOf(key) >= 0;
+  }
+
+  isPii(key: string) {
+    return this.entity.definition.pii.indexOf(key) >= 0;
+  }
+
   addProperty() {
     this.entity.definition.properties.push(new PropertyType());
   }
@@ -178,6 +203,10 @@ export class EntityEditorComponent {
           });
 
           _.remove(this.entity.definition.required, (index: string) => {
+            return (index === value.name);
+          });
+
+          _.remove(this.entity.definition.pii, (index: string) => {
             return (index === value.name);
           });
 
@@ -294,6 +323,14 @@ export class EntityEditorComponent {
     }
   }
 
+  togglePiiSelection() {
+    if (this.selectedCount()) {
+      this.piiHeader = !this.piiHeader;
+      this.toggleArraySelection(this.piiHeader, 'pii');
+    }
+  }
+
+
   toggleArraySelection(checked: boolean, field: string) {
     let indexes = [];
     this.entity.definition.properties.forEach((prop: PropertyType) => {
@@ -308,6 +345,33 @@ export class EntityEditorComponent {
       _.remove(this.entity.definition[field], (idx: string) => {
         return indexes.indexOf(idx) >= 0;
       });
+    }
+  }
+
+  toggleWordLexicon(property: PropertyType) {
+    let idx = this.entity.definition.wordLexicon.indexOf(property.name);
+    if (idx >= 0) {
+      this.entity.definition.wordLexicon.splice(idx, 1);
+    } else {
+      this.entity.definition.wordLexicon.push(property.name);
+    }
+  }
+
+  toggleRequired(property: PropertyType) {
+    let idx = this.entity.definition.required.indexOf(property.name);
+    if (idx >= 0) {
+      this.entity.definition.required.splice(idx, 1);
+    } else {
+      this.entity.definition.required.push(property.name);
+    }
+  }
+
+  togglePii(property: PropertyType) {
+    let idx = this.entity.definition.pii.indexOf(property.name);
+    if (idx >= 0) {
+      this.entity.definition.pii.splice(idx, 1);
+    } else {
+      this.entity.definition.pii.push(property.name);
     }
   }
 

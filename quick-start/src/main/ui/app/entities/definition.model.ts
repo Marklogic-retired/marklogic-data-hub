@@ -7,6 +7,7 @@ export class DefinitionType {
   elementRangeIndex: Array<string>;
   rangeIndex: Array<string>;
   wordLexicon: Array<string>;
+  pii: Array<string>;
   properties: Array<PropertyType>;
 
   fromJSON(json: any) {
@@ -16,6 +17,7 @@ export class DefinitionType {
     this.elementRangeIndex = json.elementRangeIndex;
     this.rangeIndex = json.rangeIndex;
     this.wordLexicon = json.wordLexicon;
+    this.pii = json.pii;
     this.properties = new Array<PropertyType>();
 
     for (let property of json.properties) {
