@@ -22,6 +22,16 @@
           (input)="saveSettings()"
           ></mdl-textfield>
       </div>
+      <div class="map">
+        <mdl-select
+          label="Map"
+          floating-label
+          [(ngModel)]="settings.map"
+          (blur)="mapChanged($event)"
+        >
+          <mdl-option *ngFor="let m of mapsMenu" [value]="m">{{m}}</mdl-option>
+        </mdl-select>
+      </div>
       <app-select-key-values
         [title]="keyValTitle"
         [keyVals]="keyVals"

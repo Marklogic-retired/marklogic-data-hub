@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Router, ActivatedRoute, Params } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
 import { Entity } from '../entities';
 import { EntitiesService } from '../entities/entities.service';
 import { SearchService } from '../search/search.service';
@@ -9,9 +10,8 @@ import * as _ from 'lodash';
   templateUrl: './map.component.html',
   styleUrls: ['./map.component.scss'],
 })
-export class MapComponent {
+export class MapComponent implements OnInit {
   // Harmonized Model
-  public entities: Array<Entity>;
   public chosenEntity: Entity;
   private entityPrimaryKey: string = '';
 
@@ -30,16 +30,19 @@ export class MapComponent {
   // Connections
   private conns: Array<any> = [];
 
+  private entityName: string;
+  private flowName: string;
+
   /**
    * Get entities and choose one to serve as harmonized model.
    */
   getEntities(): void {
     let self = this;
     this.entitiesService.entitiesChange.subscribe(entities => {
-      this.entities = entities;
-      this.chosenEntity = this.entities[0]; // currently just taking the first entity defined. Will add choice via UI later
+      this.chosenEntity = _.find(entities, (e: Entity) => {
+        return e.name === this.entityName;
+      });
       this.entityPrimaryKey = this.chosenEntity.definition.primaryKey;
-
       _.forEach(this.chosenEntity.definition.properties, function(prop) {
           // Set up connections (all empty initially)
           self.conns.push({
@@ -47,9 +50,6 @@ export class MapComponent {
             harm: {name: prop.name, type: prop.datatype}
           });
       });
-
-      console.log(self.conns);
-
     });
     this.entitiesService.getEntities();
   }
@@ -57,8 +57,11 @@ export class MapComponent {
   /**
    * Get sample documents and choose one to serve as source.
    */
-  getSampleDoc(): void {
+  getSampleDoc(entityName): void {
     let self = this;
+    this.activeFacets = { Collection: {
+      values: [entityName]
+    }};
     this.searchService.getResults(
       this.currentDatabase,
       this.entitiesOnly,
@@ -90,9 +93,17 @@ export class MapComponent {
 
   constructor(
     private searchService: SearchService,
-    private entitiesService: EntitiesService) {
-    this.getEntities();
-    this.getSampleDoc();
+    private entitiesService: EntitiesService,
+    private activatedRoute: ActivatedRoute
+  ) {}
+
+  ngOnInit() {
+    this.activatedRoute.queryParams.subscribe((params: Params) => {
+      this.entityName = params['entityName'] || null;
+      this.flowName = params['flowName'] || null;
+      this.getEntities();
+      this.getSampleDoc(this.entityName);
+    });
   }
 
   handleSelection(prop, proptype, index): void {
