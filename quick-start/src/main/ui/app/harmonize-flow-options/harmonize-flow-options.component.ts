@@ -8,6 +8,7 @@ import {
   OnChanges,
   SimpleChanges
 } from '@angular/core';
+import { Router, ActivatedRoute, Params } from '@angular/router';
 import { Flow } from '../entities/flow.model';
 
 import { SelectKeyValuesComponent } from '../select-key-values/select-key-values.component';
@@ -23,13 +24,19 @@ export class HarmonizeFlowOptionsComponent implements OnInit, OnChanges {
   @Output() onChange = new EventEmitter<any>();
   @Output() onRun: EventEmitter<any> = new EventEmitter();;
 
+  static readonly newLabel: string = 'New...';
+
   _isVisible: boolean = false;
 
   settings: any;
+  maps: Array<any>;
+  mapsMenu: Array<any>;
   keyVals: any;
   keyValTitle = 'Options';
 
-  constructor() {}
+  constructor(
+    private router: Router
+  ) {}
 
   setDefaults() {
     this.settings = {
@@ -45,6 +52,7 @@ export class HarmonizeFlowOptionsComponent implements OnInit, OnChanges {
 
   ngOnInit() {
     this.setDefaults();
+    this.loadMaps(this.flow.flowName);
     this.loadSettings(this.flow.flowName);
   }
 
@@ -65,6 +73,27 @@ export class HarmonizeFlowOptionsComponent implements OnInit, OnChanges {
       }
     }, this);
     this.onRun.emit(this.settings);
+  }
+
+  mapChanged(selected) {
+    if (selected === HarmonizeFlowOptionsComponent.newLabel) {
+      this.settings.map = undefined; // keep map unselected
+      this.router.navigate(['map'], {
+        queryParams: {
+          entityName: this.flow.entityName,
+          flowName: this.flow.flowName
+       }
+     });
+    } else {
+      this.settings.map = selected;
+    }
+  }
+
+  loadMaps(flowName) {
+    // TODO retrieve maps associated with flow
+    this.maps = [];
+    this.mapsMenu = this.maps;
+    this.mapsMenu.push(HarmonizeFlowOptionsComponent.newLabel);
   }
 
   loadSettings(flowName) {
