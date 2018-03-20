@@ -37,6 +37,10 @@ export class BrowsePage extends AppPage {
     return element(by.css('.results .result a'));
   }
 
+  resultsSpecificUri(uri: string) {
+    return element(by.cssContainingText('.results .result a', uri));
+  }
+
 }
 
 var browsePage = new BrowsePage();
