@@ -30,6 +30,7 @@ public class DefinitionType extends JsonPojo {
     protected String description;
     protected String primaryKey;
     protected List<String> required;
+    protected List<String> pii;
     protected List<String> elementRangeIndex;
     protected List<String> rangeIndex;
     protected List<String> wordLexicon;
@@ -67,6 +68,14 @@ public class DefinitionType extends JsonPojo {
 
     public void setRequired(List<String> required) {
         this.required = required;
+    }
+
+    public List<String> getPii() {
+        return pii;
+    }
+
+    public void setPii(List<String> pii) {
+        this.pii = pii;
     }
 
     public List<String> getRangeIndex() {
@@ -126,6 +135,15 @@ public class DefinitionType extends JsonPojo {
         }
         definitionType.setRequired(required);
 
+        ArrayList<String> pii = new ArrayList<>();
+        JsonNode piiNodes = node.get("pii");
+        if (piiNodes != null) {
+            for (final JsonNode n : piiNodes) {
+                pii.add(n.asText());
+            }
+        }
+        definitionType.setPii(pii);
+
         ArrayList<String> elementRangeIndexes = new ArrayList<>();
         JsonNode elementRangeIndexNodes = node.get("elementRangeIndex");
         if (elementRangeIndexNodes != null) {
@@ -178,6 +196,10 @@ public class DefinitionType extends JsonPojo {
         ArrayNode requiredArray = JsonNodeFactory.instance.arrayNode();
         required.forEach(requiredArray::add);
         node.set("required", requiredArray);
+
+        ArrayNode piiArray = JsonNodeFactory.instance.arrayNode();
+        pii.forEach(piiArray::add);
+        node.set("required", piiArray);
 
         ArrayNode elementRangeIndexArray = JsonNodeFactory.instance.arrayNode();
         elementRangeIndex.forEach(elementRangeIndexArray ::add);
