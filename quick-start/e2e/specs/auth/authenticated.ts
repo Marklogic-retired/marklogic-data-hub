@@ -157,6 +157,7 @@ export default function(tmpDir) {
       if(!appPage.flowsTab.isPresent()) {
         console.log('installation is stuck, go to the dashboard page using url');
         browser.get('/');
+        browser.sleep(5000);
       }
       console.log('loading dashboard page');
       dashboardPage.isLoaded();
