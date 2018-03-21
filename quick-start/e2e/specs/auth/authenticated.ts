@@ -2,6 +2,7 @@ import { protractor , browser, element, by, By, $, $$, ExpectedConditions as EC}
 import { pages } from '../../page-objects/page';
 import loginPage from '../../page-objects/auth/login';
 import dashboardPage from '../../page-objects/dashboard/dashboard';
+import appPage from '../../page-objects/appPage';
 
 export default function(tmpDir) {
   describe('login', () => {
@@ -51,7 +52,6 @@ export default function(tmpDir) {
       expect(loginPage.stagingAppserverNameLabel.isPresent()).toBe(true);
       expect(loginPage.stagingAppserverName.getAttribute('value')).toEqual('data-hub-ol-STAGING');
       expect(loginPage.modulesDbName.getAttribute('value')).toEqual('data-hub-ol-MODULES');
-      browser.driver.sleep(3000);
       loginPage.clickAdvancedSettings();
       console.log('restore to default settings');
       loginPage.clickRestoreDefaults();
@@ -63,7 +63,6 @@ export default function(tmpDir) {
       expect(loginPage.stagingAppserverName.getAttribute('value')).toEqual('data-hub-STAGING');
       expect(loginPage.modulesDbName.getAttribute('value')).toEqual('data-hub-MODULES');
       expect(loginPage.dataHubName.getAttribute('value')).toEqual('');
-      browser.driver.sleep(3000);
       expect(loginPage.projectDirTab.isDisplayed()).toBe(false);
       expect(loginPage.initIfNeededTab.isDisplayed()).toBe(true);
       expect(loginPage.postInitTab.isDisplayed()).toBe(false);
@@ -138,16 +137,31 @@ export default function(tmpDir) {
       expect(loginPage.preInstallCheckTab.isDisplayed()).toBe(false);
       expect(loginPage.installerTab.isDisplayed()).toBe(true);
       expect(loginPage.installProgress.isPresent()).toBe(false);
-      return loginPage.clickInstall();
+      loginPage.clickInstall();
     });
 
     it ('should install the hub into MarkLogic', function() {
-      return browser.wait(EC.presenceOf(loginPage.installProgress));
+      let originalTimeout;
+      originalTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
+      console.log('original jasmine timeout: ' + originalTimeout);
+      jasmine.DEFAULT_TIMEOUT_INTERVAL = 370000;
+      console.log('modified jasmine timeout: ' + jasmine.DEFAULT_TIMEOUT_INTERVAL);
+      browser.wait(EC.presenceOf(loginPage.installProgress));
+      expect(loginPage.installProgress.isDisplayed()).toBe(true);
+      browser.wait(EC.elementToBeClickable(appPage.flowsTab), 360000, 'dashboard page is not displayed');
+      jasmine.DEFAULT_TIMEOUT_INTERVAL = originalTimeout;
+      console.log('changed back to original jasmine timeout: ' + jasmine.DEFAULT_TIMEOUT_INTERVAL);
     });
 
     it ('should complete the install and go to the dashboard', function() {
-      expect(loginPage.installProgress.isDisplayed()).toBe(true);
-      dashboardPage.isLoadedWithtimeout(300000);
+      if(!appPage.flowsTab.isPresent()) {
+        console.log('installation is stuck, go to the dashboard page using url');
+        browser.get('/');
+      }
+      console.log('loading dashboard page');
+      dashboardPage.isLoaded();
+      expect(appPage.flowsTab.isPresent()).toBe(true);
+      expect(appPage.jobsTab.isPresent()).toBe(true);
     });
 
     it ('should logout', function() {

@@ -135,7 +135,7 @@ export default function(tmpDir) {
       flowPage.isLoaded();
     });
 
-    it('should verify the harmonized data', function() {
+    it('should verify the harmonized data with sku as original property', function() {
       flowPage.browseDataTab.click();
       browsePage.isLoaded();
       browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
@@ -147,10 +147,40 @@ export default function(tmpDir) {
       browsePage.searchBox().sendKeys('442403950907');
       browsePage.searchButton().click();
       browser.wait(EC.elementToBeClickable(browsePage.resultsUri()));
+      expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 1 of 1');
       expect(browsePage.resultsUri().getText()).toContain('/board_games_accessories.csv-0-1');
       browsePage.resultsUri().click();
       viewerPage.isLoaded();
       expect(viewerPage.searchResultUri().getText()).toContain('/board_games_accessories.csv-0-1');
+      expect(element(by.cssContainingText('.cm-variable', 'sku')).isPresent()).toBe(true);
+      expect(element(by.cssContainingText('.cm-string', '442403950907')).isPresent()).toBe(true);
+      expect(element(by.cssContainingText('.cm-variable', 'opt1')).isPresent()).toBe(true);
+      expect(element(by.cssContainingText('.cm-string', 'world')).isPresent()).toBe(true);
+      viewerPage.flowsTab.click();
+      flowPage.isLoaded();
+    });
+
+    it('should verify the harmonized data with SKU as original property', function() {
+      flowPage.browseDataTab.click();
+      browsePage.isLoaded();
+      browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
+      expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 10 of 450');
+      browsePage.databaseDropDown().click();
+      browsePage.selectDatabase('FINAL').click();
+      browser.wait(EC.elementToBeClickable(browsePage.resultsUri()));
+      browsePage.searchBox().clear();
+      browsePage.searchBox().sendKeys('159929577929');
+      browsePage.searchButton().click();
+      browser.wait(EC.elementToBeClickable(browsePage.resultsUri()));
+      expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 3 of 3');
+      expect(browsePage.resultsSpecificUri('/board_games.csv-0-10').getText()).toContain('/board_games.csv-0-10');
+      expect(browsePage.resultsSpecificUri('/board_games_accessories.csv-0-5').getText()).toContain('/board_games_accessories.csv-0-5');
+      expect(browsePage.resultsSpecificUri('/board_games_extensions.csv-0-7').getText()).toContain('/board_games_extensions.csv-0-7');
+      browsePage.resultsSpecificUri('/board_games.csv-0-10').click();
+      viewerPage.isLoaded();
+      expect(viewerPage.searchResultUri().getText()).toContain('/board_games.csv-0-10');
+      expect(element(by.cssContainingText('.cm-variable', 'sku')).isPresent()).toBe(true);
+      expect(element(by.cssContainingText('.cm-string', '159929577929')).isPresent()).toBe(true);
       expect(element(by.cssContainingText('.cm-variable', 'opt1')).isPresent()).toBe(true);
       expect(element(by.cssContainingText('.cm-string', 'world')).isPresent()).toBe(true);
       viewerPage.flowsTab.click();

@@ -7,6 +7,7 @@ var HTMLReport = require('protractor-html-reporter')
 var Jasmine2HtmlReporter = require('protractor-jasmine2-html-reporter');
 
 exports.config = {
+  seleniumAddress: 'http://localhost:4444/wd/hub',
   suites: {
     all: './e2e/specs/index.ts',
     auth: './e2e/specs/auth/auth.ts'
@@ -20,13 +21,13 @@ exports.config = {
   directConnect: true,
   baseUrl: 'http://localhost:4200/',
   framework: 'jasmine',
-  allScriptsTimeout: 300000,
-  getPageTimeout: 300000,
+  allScriptsTimeout: 220000,
+  getPageTimeout: 70000,
   jasmineNodeOpts: {
     showTiming: true,
     showColors: true,
     includeStackTrace: true,
-    defaultTimeoutInterval: 300000,
+    defaultTimeoutInterval: 220000,
     print: function() {}
   },
   onPrepare() {
