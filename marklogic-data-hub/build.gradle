@@ -48,11 +48,22 @@ dependencies {
     testCompile 'org.hamcrest:hamcrest-junit:2.0.0.0'
     testCompile 'org.easymock:easymock:3.4'
     testCompile 'ch.qos.logback:logback-classic:1.1.11'
-    testCompile("com.marklogic:mlcp-util:0.9.0")
+    testCompile 'org.slf4j:log4j-over-slf4j:1.7.13'
+    testCompile("com.marklogic:mlcp-util:0.3.0")
     testCompile("com.marklogic:mlcp:9.0.3") {
       exclude group: 'org.apache.avro', module: 'avro-tools'
     }
 }
+
+
+configurations.all {
+    exclude group: "org.slf4j", module: "slf4j-log4j12"
+    exclude group: "log4j", module: "log4j"
+}
+
+
+
+
 import com.marklogic.mgmt.ManageClient
 import com.marklogic.mgmt.resource.hosts.HostManager
 
@@ -249,42 +260,42 @@ task collectorTest(type: Test, dependsOn: testClasses) {
     maxHeapSize = "256m"
 }
 
-task createLocalFile{
-	boolean sslRun = Boolean.parseBoolean(System.properties['ssl'])
-	boolean certAuth = Boolean.parseBoolean(System.properties['certauth'])
-	com.marklogic.mgmt.ManageClient mC = new ManageClient(new com.marklogic.mgmt.ManageConfig());
-	com.marklogic.mgmt.resource.hosts.HostManager hm = new HostManager(mC);
-	def	bootStrapHost = hm.getHostNames().get(0);
-	def fileName = "gradle-local.properties"
-	def inputFile = new File(fileName)
-	if(sslRun) {
-		inputFile.write("# Put your overrides from gradle.properties here\n" + 
-    			"# Don't check this in to version control\n" + 
-    			"mlJobSimpleSsl=true\n" + 
-    			"mlTraceSimpleSsl=true\n" + 
-    			"mlFinalSimpleSsl=true\n" + 
-    			"mlAdminScheme=https\n" + 
-		        "mlManageScheme=https\n" +
-    			"mlStagingSimpleSsl=true")		
-	}
-	
-	if(certAuth) {
-		inputFile.write("# Put your overrides from gradle.properties here\n" + 
-				"# Don't check this in to version control\n" + 
-				"mlStagingAuth=certificate\n" + 
-	    		"mlTraceAuth=certificate\n" + 
-	    		"mlFinalAuth=certificate\n" +
-	    		"mlHost="+bootStrapHost+"\n"+
-	    		"mlAdminScheme=https\n" + 
-	   	        "mlManageScheme=https\n" +
-	    		"mlJobAuth=certificate")		
-	}
-}
+//task createLocalFile() {
+//	boolean sslRun = Boolean.parseBoolean(System.properties['ssl'])
+//	boolean certAuth = Boolean.parseBoolean(System.properties['certauth'])
+//	com.marklogic.mgmt.ManageClient mC = new ManageClient(new com.marklogic.mgmt.ManageConfig());
+//	com.marklogic.mgmt.resource.hosts.HostManager hm = new HostManager(mC);
+//	def	bootStrapHost = hm.getHostNames().get(0);
+//	def fileName = "gradle-local.properties"
+//	def inputFile = new File(fileName)
+//	if(sslRun) {
+//		inputFile.write("# Put your overrides from gradle.properties here\n" +
+//    			"# Don't check this in to version control\n" +
+//    			"mlJobSimpleSsl=true\n" +
+//    			"mlTraceSimpleSsl=true\n" +
+//    			"mlFinalSimpleSsl=true\n" +
+//    			"mlAdminScheme=https\n" +
+//		        "mlManageScheme=https\n" +
+//    			"mlStagingSimpleSsl=true")
+//	}
+//
+//	if(certAuth) {
+//		inputFile.write("# Put your overrides from gradle.properties here\n" +
+//				"# Don't check this in to version control\n" +
+//				"mlStagingAuth=certificate\n" +
+//	    		"mlTraceAuth=certificate\n" +
+//	    		"mlFinalAuth=certificate\n" +
+//	    		"mlHost="+bootStrapHost+"\n"+
+//	    		"mlAdminScheme=https\n" +
+//	   	        "mlManageScheme=https\n" +
+//	    		"mlJobAuth=certificate")
+//	}
+//}
 
 test {
     // we exclude the StreamCollectorTest
     exclude '**/StreamCollector*'
-	dependsOn tasks.createLocalFile
+	//dependsOn tasks.createLocalFile
     // depend on the collectorTest task above
-    dependsOn tasks.collectorTest	
+    dependsOn tasks.collectorTest
 }
