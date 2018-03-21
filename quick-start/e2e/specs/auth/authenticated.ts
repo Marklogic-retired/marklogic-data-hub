@@ -155,8 +155,10 @@ export default function(tmpDir) {
 
     it ('should complete the install and go to the dashboard', function() {
       if(!appPage.flowsTab.isPresent()) {
+        console.log('installation is stuck, go to the dashboard page using url');
         browser.get('/');
       }
+      console.log('loading dashboard page');
       dashboardPage.isLoaded();
       expect(appPage.flowsTab.isPresent()).toBe(true);
       expect(appPage.jobsTab.isPresent()).toBe(true);
