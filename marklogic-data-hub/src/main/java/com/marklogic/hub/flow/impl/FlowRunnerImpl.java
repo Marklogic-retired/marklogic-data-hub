@@ -345,8 +345,6 @@ public class FlowRunnerImpl implements FlowRunner {
 
     class FlowResource extends ResourceManager {
 
-        static final public String NAME = "ml:flow";
-
         private DatabaseClient srcClient;
         private String targetDatabase;
         private Flow flow;
@@ -356,7 +354,7 @@ public class FlowRunnerImpl implements FlowRunner {
             this.flow = flow;
             this.srcClient = srcClient;
             this.targetDatabase = targetDatabase;
-            this.srcClient.init(NAME, this);
+            this.srcClient.init(flow.getCodeFormat().equals(CodeFormat.JAVASCRIPT) ? "ml:sjsFlow" : "ml:flow", this);
         }
 
         public RunFlowResponse run(String jobId, String[] items) {

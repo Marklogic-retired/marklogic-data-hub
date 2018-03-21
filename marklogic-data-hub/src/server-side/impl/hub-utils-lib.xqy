@@ -1,5 +1,5 @@
 (:
-  Copyright 2012-2016 MarkLogic Corporation
+  Copyright 2012-2018 MarkLogic Corporation
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -87,21 +87,42 @@ declare function hul:invalidate-field-cache($name)
   xdmp:set-server-field($name || "-refresh-date", ())
 };
 
+(:  faster cache function. Won't take a closure, so caller has to
+ :  call hul:set-field-cache($name, $func(), $duration) to re-initialize if empty
+ :  Likely faster because caller does not have to build a closure.
+ :)
+declare function hul:from-field-cache-or-empty($name, $duration as xs:dayTimeDuration?) {
+  let $existing := xdmp:get-server-field($name)
+  let $still-fresh := empty($duration) or (fn:current-dateTime() < xdmp:get-server-field($name || "-refresh-date"))
+  return
+    if(exists($existing) and $still-fresh)
+    then $existing
+    else
+      let$_ := hul:invalidate-field-cache($name)
+      return ()
+};
+
+(:~
+ : Get a cahced value, but if missing or expired invoke $func to get the value and cache it.
+ :)
 declare function hul:from-field-cache($name, $func, $duration as xs:dayTimeDuration?)
 {
   let $existing := xdmp:get-server-field($name)
   let $refresh-date := xdmp:get-server-field($name || "-refresh-date")
+  (: update the cache and duration if any of these hold:
+       cache is empty
+       duration has expired
+       there is now a duration supplied and an eternal/noduration entry is already cached
+       :)
   return
-    if (fn:exists($existing)) then
-      if (fn:exists($refresh-date) and ($refresh-date < fn:current-dateTime())) then
-        hul:set-field-cache($name, $func(), $duration)
+    if ( (exists($refresh-date) and ($refresh-date < fn:current-dateTime() + xs:dayTimeDuration("PT0."||xdmp:random(9)||"S")))
+         or empty($existing)
+         or exists($duration) and empty($refresh-date)
+        )
+      then
+          hul:set-field-cache($name, $func(), $duration)
       else
         $existing[1]
-    else
-      if (fn:exists($duration)) then
-        hul:set-field-cache($name, $func(), $duration)
-      else
-        hul:set-field-cache($name, $func(), $duration)
 };
 
 (:~
@@ -167,4 +188,13 @@ declare function hul:get-file-name($filename as xs:string)
 declare function hul:is-ml-8() as xs:boolean
 {
   fn:starts-with(xdmp:version(), "8")
+};
+
+(: used to convert a db object to a pure memory object to store in a server field :)
+declare function hul:deep-copy($n as node()) {
+  typeswitch ($n)
+  case document-node() return document{$n/node() ! hul:deep-copy(.)}
+  case element() return element {fn:node-name($n)} {$n/@*, $n/node() ! hul:deep-copy(.)}
+  case text() return text{xs:string($n)}
+  default return ()
 };
