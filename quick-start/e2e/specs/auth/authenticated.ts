@@ -154,6 +154,9 @@ export default function(tmpDir) {
     });
 
     it ('should complete the install and go to the dashboard', function() {
+      if(!appPage.flowsTab.isPresent()) {
+        browser.get('/');
+      }
       dashboardPage.isLoaded();
       expect(appPage.flowsTab.isPresent()).toBe(true);
       expect(appPage.jobsTab.isPresent()).toBe(true);
