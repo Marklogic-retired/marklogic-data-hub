@@ -120,6 +120,37 @@ public class FlowManagerService extends EnvironmentAware {
         return flowRunner.run();
     }
 
+    private Path getHarmonizeOptionsFilePath(Path destFolder, String entityName, String flowName) {
+        return destFolder.resolve(entityName + "-harmonize-" + flowName + ".txt");
+    }
+
+    public Map<String, Object> getHarmonizeFlowOptionsFromFile(String entityName, String flowName) throws IOException {
+        Path destFolder = Paths.get(envConfig().getProjectDir(), PROJECT_TMP_FOLDER);
+        Path filePath = getHarmonizeOptionsFilePath(destFolder, entityName, flowName);
+        File file = filePath.toFile();
+        if(file.exists()) {
+            return new ObjectMapper().readValue(file, Map.class);
+        }
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("harmonize_file_path", envConfig().getProjectDir());
+        return result;
+    }
+
+    public void saveOrUpdateHarmonizeFlowOptionsToFile(String entityName, String flowName, String harmonizeOptionsFileContent) throws IOException {
+        Path destFolder = Paths.get(envConfig().getProjectDir(), PROJECT_TMP_FOLDER);
+        File destFolderFile = destFolder.toFile();
+        if (!destFolderFile.exists()) {
+            FileUtils.forceMkdir(destFolderFile);
+        }
+        Path filePath = getHarmonizeOptionsFilePath(destFolder, entityName, flowName);
+        FileWriter fw = new FileWriter(filePath.toString());
+        BufferedWriter bw = new BufferedWriter(fw);
+        bw.write(harmonizeOptionsFileContent);
+        bw.close();
+    }
+
+
     private Path getMlcpOptionsFilePath(Path destFolder, String entityName, String flowName) {
         return destFolder.resolve(entityName + "-" + flowName + ".txt");
     }
