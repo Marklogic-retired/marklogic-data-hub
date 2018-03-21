@@ -7,17 +7,17 @@ plugins {
 }
 
 repositories {
-    mavenLocal()
     jcenter()
     maven {url 'http://developer.marklogic.com/maven2/'}
 }
 
 dependencies {
     compile 'com.marklogic:marklogic-data-hub:2.0.4'
-    compile "com.marklogic:marklogic-spring-batch-core:1.0.1"
+    compile "com.marklogic:marklogic-spring-batch-core:1.7.0"
+    compile 'com.marklogic:spring-batch-rdbms:1.7.0'
 
     testCompile "com.h2database:h2:1.4.193"
-    testCompile "com.marklogic:marklogic-spring-batch-test:1.0.1"
+    testCompile "com.marklogic:marklogic-spring-batch-test:1.7.0"
 
     runtime "com.h2database:h2:1.4.193"
     runtime "ch.qos.logback:logback-classic:1.1.8"
@@ -27,14 +27,14 @@ dependencies {
 
 mainClassName = "com.marklogic.spring.batch.core.launch.support.CommandLineJobRunner"
 
-task ingestInvoices(type: JavaExec) {
-    classpath = sourceSets.main.runtimeClasspath
+task runInputCustomersFlow(type: JavaExec) {
+    classpath = sourceSets.test.runtimeClasspath
     main = "com.marklogic.spring.batch.core.launch.support.CommandLineJobRunner"
     args = [
-            "--job_path", "com.marklogic.hub.job.MigrateInvoicesConfiguration",
-            "--job_id", "job",
-            "--entity", "Invoice",
-            "--flow", "ingest-invoice-db",
+            "--job_path", "com.marklogic.hub.job.SqlDbToHubJobConfig",
+            "--job_id", "sqlDbToHubJob",
+            "--entity", "customer",
+            "--flow", "customerInput",
             "--hubJobId", UUID.randomUUID().toString()
     ]
 }
@@ -59,4 +59,4 @@ task loadH2Data(type: JavaExec) {
     ]
 }
 
-ingestInvoices.dependsOn loadH2Data
+runInputCustomersFlow.dependsOn loadH2Data

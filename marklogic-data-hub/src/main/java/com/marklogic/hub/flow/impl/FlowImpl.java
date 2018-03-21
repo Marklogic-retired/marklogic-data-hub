@@ -131,9 +131,6 @@ public class FlowImpl implements Flow {
         }
     }
 
-    /**
-     * Serializes the flow into an xml string
-     */
     @Override
     public String serialize() {
         try {

@@ -1,5 +1,5 @@
 (:
-  Copyright 2012-2016 MarkLogic Corporation
+  Copyright 2012-2018 MarkLogic Corporation
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -70,20 +70,26 @@ declare function trace:enable-tracing($enabled as xs:boolean)
 
 declare function trace:enabled() as xs:boolean
 {
-  hul:from-field-cache("tracing-enabled", function() {
-    xdmp:eval('
-      declare namespace trace = "http://marklogic.com/data-hub/trace";
-      fn:exists(
-        cts:search(
-          fn:doc("/com.marklogic.hub/settings/__tracing_enabled__.xml"),
-          cts:element-value-query(xs:QName("trace:is-tracing-enabled"), "1", ("exact")),
-          ("unfiltered", "score-zero", "unchecked", "unfaceted")
-        )
+  let $key := "tracing-enabled"
+  let $flag :=  hul:from-field-cache-or-empty($key, ())
+  return
+    if (exists($flag)) then
+      $flag
+    else
+      hul:set-field-cache(
+        $key,
+        xdmp:eval('
+          declare namespace trace = "http://marklogic.com/data-hub/trace";
+          fn:exists(
+            cts:search(
+              fn:doc("/com.marklogic.hub/settings/__tracing_enabled__.xml"),
+              cts:element-value-query(xs:QName("trace:is-tracing-enabled"), "1", ("exact")),
+              ("unfiltered", "score-zero", "unchecked", "unfaceted")
+            )
+          )
+        ',(), map:new(map:entry("database", xdmp:modules-database()))),
+        xs:dayTimeDuration("PT1M")
       )
-    ',(), map:new((map:entry("database", xdmp:modules-database()), map:entry("ignoreAmps", fn:true())))
-    )
-  },
-  xs:dayTimeDuration("PT1M"))
 };
 
 declare function trace:has-errors() as xs:boolean
@@ -161,10 +167,7 @@ declare %private function trace:get-plugin-input(
       let $_ :=
         for $key in map:keys($o)
         let $value := map:get($o, $key)
-        let $value :=
-          if ($value instance of null-node()) then ()
-          else if ($value instance of binary()) then "binary data"
-          else $value
+        let $value := trace:sanitize-data($value)
         return
          map:put($oo, $key, $value)
       return $oo
@@ -174,9 +177,7 @@ declare %private function trace:get-plugin-input(
         element { $key } {
           let $value := map:get($o, $key)
           return
-            if ($value instance of null-node()) then ()
-            else if ($value instance of binary()) then "binary data"
-            else $value
+            trace:sanitize-data($value)
         }
 };
 
@@ -318,6 +319,15 @@ declare %private function trace:write-error-trace(
     else ()
 };
 
+declare function trace:sanitize-data($data)
+{
+  if ($data instance of binary()) then xs:hexBinary($data)
+  else if (fn:not(rfc:is-json())) then
+    if ($data instance of null-node()) then ()
+    else $data
+  else $data
+};
+
 declare function trace:plugin-trace(
   $output,
   $duration) as empty-sequence()
@@ -331,6 +341,7 @@ declare function trace:plugin-trace(
   $duration) as empty-sequence()
 {
   let $current-trace := rfc:get-trace($item-context)
+  let $output := trace:sanitize-data($output)
   return
     if (trace:enabled()) then(
       let $new-step := map:map()

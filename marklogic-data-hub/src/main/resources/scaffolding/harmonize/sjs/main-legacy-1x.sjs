@@ -1,8 +1,9 @@
-const dhf = require('/MarkLogic/data-hub-framework/dhf.xqy');
+const dhf = require('/MarkLogic/data-hub-framework/dhf.sjs');
 
 const contentPlugin = require('./content/content.sjs');
 const headersPlugin = require('./headers/headers.sjs');
 const triplesPlugin = require('./triples/triples.sjs');
+const writerPlugin = require('./writer/writer.sjs');
 
 /*
  * Plugin Entry point
@@ -31,7 +32,7 @@ function main(id, options) {
 
   // writers must be invoked this way.
   // see: https://github.com/marklogic-community/marklogic-data-hub/wiki/dhf-lib#run-writer
-  dhf.runWriter(xdmp.function(null, './writer/writer.sjs'), id, envelope, options);
+  dhf.runWriter(writerPlugin, id, envelope, options);
 }
 
 module.exports = {

@@ -107,10 +107,10 @@ configurations {
 
 node {
   // Version of node to use.
-  version = '8.9.3'
+  version = '8.9.4'
 
   // // Version of npm to use.
-  npmVersion = '5.4.2'
+  npmVersion = '5.7.1'
 
   download = true
 

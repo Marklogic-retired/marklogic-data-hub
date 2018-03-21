@@ -25,7 +25,7 @@ ext.junitJupiterVersion  = '5.0.0-RC3'
 
 dependencies {
     compile 'com.marklogic:marklogic-client-api:4.0.3.1'
-    compile 'com.marklogic:mlcp-util:0.3.0'
+    compile 'com.marklogic:mlcp-util:0.9.0'
     compile 'com.marklogic:ml-app-deployer:3.4.0'
     compile 'commons-io:commons-io:2.4'
     compile 'org.apache.commons:commons-text:1.1'
@@ -48,18 +48,31 @@ dependencies {
     testCompile 'org.hamcrest:hamcrest-junit:2.0.0.0'
     testCompile 'org.easymock:easymock:3.4'
     testCompile 'ch.qos.logback:logback-classic:1.1.11'
+    testCompile 'org.slf4j:log4j-over-slf4j:1.7.13'
     testCompile("com.marklogic:mlcp-util:0.3.0")
     testCompile("com.marklogic:mlcp:9.0.3") {
       exclude group: 'org.apache.avro', module: 'avro-tools'
     }
 }
 
+
+configurations.all {
+    exclude group: "org.slf4j", module: "slf4j-log4j12"
+    exclude group: "log4j", module: "log4j"
+}
+
+
+
+
+import com.marklogic.mgmt.ManageClient
+import com.marklogic.mgmt.resource.hosts.HostManager
+
 node {
   // Version of node to use.
-  version = '8.9.3'
+  version = '8.9.4'
 
   // // Version of npm to use.
-  npmVersion = '5.4.2'
+  npmVersion = '5.7.1'
 
   download = true
 
@@ -235,23 +248,6 @@ ext {
     }
 }
 
-/*
- * Copyright 2012-2018 MarkLogic Corporation
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- *
- */
-
 // for the StreamCollectorTest we need to constrain the memory
 // to a lower value so that the out of memory issue appears
 // the hack here is to run that single test in this task with
@@ -264,10 +260,42 @@ task collectorTest(type: Test, dependsOn: testClasses) {
     maxHeapSize = "256m"
 }
 
+//task createLocalFile() {
+//	boolean sslRun = Boolean.parseBoolean(System.properties['ssl'])
+//	boolean certAuth = Boolean.parseBoolean(System.properties['certauth'])
+//	com.marklogic.mgmt.ManageClient mC = new ManageClient(new com.marklogic.mgmt.ManageConfig());
+//	com.marklogic.mgmt.resource.hosts.HostManager hm = new HostManager(mC);
+//	def	bootStrapHost = hm.getHostNames().get(0);
+//	def fileName = "gradle-local.properties"
+//	def inputFile = new File(fileName)
+//	if(sslRun) {
+//		inputFile.write("# Put your overrides from gradle.properties here\n" +
+//    			"# Don't check this in to version control\n" +
+//    			"mlJobSimpleSsl=true\n" +
+//    			"mlTraceSimpleSsl=true\n" +
+//    			"mlFinalSimpleSsl=true\n" +
+//    			"mlAdminScheme=https\n" +
+//		        "mlManageScheme=https\n" +
+//    			"mlStagingSimpleSsl=true")
+//	}
+//
+//	if(certAuth) {
+//		inputFile.write("# Put your overrides from gradle.properties here\n" +
+//				"# Don't check this in to version control\n" +
+//				"mlStagingAuth=certificate\n" +
+//	    		"mlTraceAuth=certificate\n" +
+//	    		"mlFinalAuth=certificate\n" +
+//	    		"mlHost="+bootStrapHost+"\n"+
+//	    		"mlAdminScheme=https\n" +
+//	   	        "mlManageScheme=https\n" +
+//	    		"mlJobAuth=certificate")
+//	}
+//}
+
 test {
     // we exclude the StreamCollectorTest
     exclude '**/StreamCollector*'
-
+	//dependsOn tasks.createLocalFile
     // depend on the collectorTest task above
     dependsOn tasks.collectorTest
 }
