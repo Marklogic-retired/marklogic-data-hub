@@ -199,7 +199,7 @@ public class DefinitionType extends JsonPojo {
 
         ArrayNode piiArray = JsonNodeFactory.instance.arrayNode();
         pii.forEach(piiArray::add);
-        node.set("required", piiArray);
+        node.set("pii", piiArray);
 
         ArrayNode elementRangeIndexArray = JsonNodeFactory.instance.arrayNode();
         elementRangeIndex.forEach(elementRangeIndexArray ::add);
