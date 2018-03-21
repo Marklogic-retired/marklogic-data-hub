@@ -189,7 +189,18 @@ class EntitiesController extends EnvironmentAware {
         return entityManagerService.validatePlugin(envConfig().getMlSettings(), entityName, flowName, plugin);
     }
 
+    @RequestMapping(value = "/entities/{entityName}/flows/harmonize/{flowName}/save-harmonize-options", method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseEntity<?> saveHarmonizeFlowOptions(
+        @PathVariable String entityName,
+        @PathVariable String flowName,
+        @RequestBody JsonNode json) throws IOException {
 
+        flowManagerService.saveOrUpdateHarmonizeFlowOptionsToFile(entityName,
+            flowName, json.toString());
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 
     @RequestMapping(value = "/entities/{entityName}/flows/input/{flowName}/save-input-options", method = RequestMethod.POST)
     @ResponseBody
