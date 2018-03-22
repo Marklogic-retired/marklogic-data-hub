@@ -59,6 +59,7 @@ export class HarmonizeFlowOptionsComponent implements OnInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges) {
     this.setDefaults();
+    this.loadMaps(changes.flow.currentValue.flowName);
     this.loadSettings(changes.flow.currentValue.flowName);
   }
 
@@ -97,8 +98,10 @@ export class HarmonizeFlowOptionsComponent implements OnInit, OnChanges {
     let localString = localStorage.getItem("mapping");
     if (localString) {
       let localObj = JSON.parse(localString);
-      if (localObj[this.flow.entityName][flowName]) {
-        mapName = localObj[this.flow.entityName][flowName].name;
+      if (localObj[this.flow.entityName]) {
+        if (localObj[this.flow.entityName][flowName]) {
+          mapName = localObj[this.flow.entityName][flowName].name;
+        }
       }
     }
     this.maps = [];
