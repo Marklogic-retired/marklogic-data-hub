@@ -268,6 +268,28 @@ public class EntityManagerService {
         fileOutputStream.close();
     }
 
+    //Here goes the mapping stuff
+    public JsonNode getAllMappingsForEntity(String entityName) throws IOException {
+        EntityModel entity = this.getEntity(entityName);
+        JsonNode mappings = JsonNodeFactory.instance.objectNode();
+        return mappings;
+
+    }
+
+    public JsonNode getMappingForEntity(String entityName, String mapName) throws IOException{
+        EntityModel entity = this.getEntity(entityName);
+        JsonNode mappings = JsonNodeFactory.instance.objectNode();
+        return mappings;
+    }
+
+    public void saveMappingForEntity(String entityName, String mapName, JsonNode mapping) throws IOException{
+        EntityModel entity = this.getEntity(entityName);
+    }
+
+    public void deleteMappingForEntity(String entityName, String mapName) throws IOException{
+        EntityModel entity = this.getEntity(entityName);
+    }
+
     public EntityModel getEntity(String entityName) throws IOException {
         List<EntityModel> entities = getEntities();
 

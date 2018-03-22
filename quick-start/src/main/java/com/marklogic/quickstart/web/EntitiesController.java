@@ -42,10 +42,10 @@ import java.util.*;
 @RequestMapping("/api/current-project")
 class EntitiesController extends EnvironmentAware {
     @Autowired
-    private EntityManagerService entityManagerService;
+    protected EntityManagerService entityManagerService;
 
     @Autowired
-    private DataHubService dataHubService;
+    protected DataHubService dataHubService;
 
     @Autowired
     private FlowManagerService flowManagerService;
