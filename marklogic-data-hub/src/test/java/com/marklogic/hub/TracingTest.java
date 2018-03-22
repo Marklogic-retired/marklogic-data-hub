@@ -99,6 +99,8 @@ public class TracingTest extends HubTestBase {
     public static void teardown() {
         clearDatabases(HubConfig.DEFAULT_JOB_NAME, HubConfig.DEFAULT_TRACE_NAME, HubConfig.DEFAULT_FINAL_NAME);
         Tracing.create(stagingClient).disable();
+        disableDebugging();
+        uninstallHub();
     }
 
     @Test
