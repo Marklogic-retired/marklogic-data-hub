@@ -87,12 +87,25 @@ export class HarmonizeFlowOptionsComponent implements OnInit, OnChanges {
      });
     } else {
       this.settings.map = selected;
+      this.saveSettings();
     }
   }
 
   loadMaps(flowName) {
     // TODO retrieve maps associated with flow
+    let mapName: string;
+    let localString = localStorage.getItem("mapping");
+    if (localString) {
+      let localObj = JSON.parse(localString);
+      if (localObj[this.flow.entityName][flowName]) {
+        mapName = localObj[this.flow.entityName][flowName].name;
+      }
+    }
     this.maps = [];
+    if (mapName) {
+      this.maps.push(mapName);
+      this.settings.map = mapName;
+    }
     this.mapsMenu = this.maps;
     this.mapsMenu.push(HarmonizeFlowOptionsComponent.newLabel);
   }
@@ -104,6 +117,7 @@ export class HarmonizeFlowOptionsComponent implements OnInit, OnChanges {
       if (localObj[flowName]) {
         this.settings.batchSize = localObj[flowName].batchSize,
         this.settings.threadCount = localObj[flowName].threadCount,
+        this.settings.map = localObj[flowName].map,
         this.keyVals = localObj[flowName].keyVals;
       }
     }
@@ -118,6 +132,7 @@ export class HarmonizeFlowOptionsComponent implements OnInit, OnChanges {
     localObj[this.flow.flowName] = {
       batchSize: this.settings.batchSize,
       threadCount: this.settings.threadCount,
+      map: this.settings.map,
       keyVals: this.keyVals
     }
     localStorage.setItem("flowSettings", JSON.stringify(localObj));

@@ -67,6 +67,17 @@
       </div><!-- ngFor -->
     </div><!-- harmonized -->
 
+    <div id="save-map">
+
+      <mdl-textfield floating-label type="string"
+          label="Map Name"
+          name="mapName"
+          [(ngModel)]="mapName"
+      ></mdl-textfield>
+      <mdl-button mdl-button-type="raised" mdl-colored="primary" mdl-ripple (click)="saveMap()">Save Map</mdl-button>
+
+    </div><!-- save-map -->
+
   </div><!-- map-container -->
 
 </div><!-- layout-padding -->
