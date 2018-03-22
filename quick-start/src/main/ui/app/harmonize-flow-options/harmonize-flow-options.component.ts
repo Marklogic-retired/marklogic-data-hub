@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import { Router, ActivatedRoute, Params } from '@angular/router';
 import { Flow } from '../entities/flow.model';
-
+import { EntitiesService } from '../entities/entities.service';
 import { SelectKeyValuesComponent } from '../select-key-values/select-key-values.component';
 
 @Component({
@@ -35,7 +35,8 @@ export class HarmonizeFlowOptionsComponent implements OnInit, OnChanges {
   keyValTitle = 'Options';
 
   constructor(
-    private router: Router
+    private router: Router,
+    private entitiesService: EntitiesService
   ) {}
 
   setDefaults() {
@@ -120,6 +121,13 @@ export class HarmonizeFlowOptionsComponent implements OnInit, OnChanges {
       keyVals: this.keyVals
     }
     localStorage.setItem("flowSettings", JSON.stringify(localObj));
+    // save to file
+    this.keyVals.forEach(function (kv) {
+      if (kv.key !== '' && kv.val !== '') {
+        this.settings.options[kv.key] = kv.val;
+      }
+    }, this);
+    this.entitiesService.saveHarmonizeFlowOptions(this.flow, this.settings.batchSize, this.settings.threadCount, {foo: "bar"}, this.settings.options);
   }
 
   deleteSettings(flowName) {
