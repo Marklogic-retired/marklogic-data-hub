@@ -933,7 +933,7 @@ public class EndToEndFlowTests extends HubTestBase {
         String optionString;
         JsonNode mlcpOptions;
         try {
-            optionString = toJsonString(options).replace("\"", "\\\"");
+        	optionString = toJsonString(options).replace("\"", "\\\\\\\"");
             String optionsJson =
                 "{" +
                     "\"input_file_path\":\"" + inputPath.replace("\\", "\\\\\\\\") + "\"," +
@@ -1127,8 +1127,9 @@ public class EndToEndFlowTests extends HubTestBase {
         assertEquals(0, finalCount);
         assertEquals(0, tracingCount);
         assertEquals(0, jobsCount);
-
-        ServerTransform serverTransform = new ServerTransform("ml:inputFlow");
+        
+        String transform = codeFormat.equals(CodeFormat.JAVASCRIPT) ? "ml:sjsInputFlow" : "ml:inputFlow";
+		ServerTransform serverTransform = new ServerTransform(transform);
         if (passJobId) {
             serverTransform.addParameter("job-id", UUID.randomUUID().toString());
         }
