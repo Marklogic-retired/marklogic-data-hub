@@ -1,5 +1,5 @@
 .map-container {
-  width: 700px;
+  width: 1050px;
   padding: 0;
 }
 
@@ -13,12 +13,17 @@ p.item-identifying-info {
   margin: 0 0 6px 2px;
 }
 
-#source, #harmonized {
+#source, #harmonized, #save-map {
   position: relative;
   float: left;
   width: 350px;
   margin: 0;
   /* border: solid 1px red; */
+}
+
+#save-map {
+  padding-top: 5px;
+  padding-left: 40px;
 }
 
 .prop-container {

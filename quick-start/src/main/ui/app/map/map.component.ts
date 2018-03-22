@@ -29,9 +29,11 @@ export class MapComponent implements OnInit {
 
   // Connections
   private conns: Array<any> = [];
+  private connsInit: boolean = false;
 
   private entityName: string;
   private flowName: string;
+  private mapName: string;
 
   /**
    * Get entities and choose one to serve as harmonized model.
@@ -43,13 +45,16 @@ export class MapComponent implements OnInit {
         return e.name === this.entityName;
       });
       this.entityPrimaryKey = this.chosenEntity.definition.primaryKey;
-      _.forEach(this.chosenEntity.definition.properties, function(prop) {
-          // Set up connections (all empty initially)
+      // Set up connections once (all empty initially)
+      if (!this.connsInit) {
+        _.forEach(this.chosenEntity.definition.properties, function(prop) {
           self.conns.push({
             src: null,
             harm: {name: prop.name, type: prop.datatype}
           });
-      });
+        });
+        this.connsInit = true;
+      }
     });
     this.entitiesService.getEntities();
   }
@@ -82,9 +87,6 @@ export class MapComponent implements OnInit {
           };
           self.sampleDocSrcProps.push(prop);
         });
-
-        console.log('sampleDocSrcProps', this.sampleDocSrcProps);
-
       });
     },
     () => {},
@@ -94,6 +96,7 @@ export class MapComponent implements OnInit {
   constructor(
     private searchService: SearchService,
     private entitiesService: EntitiesService,
+    private router: Router,
     private activatedRoute: ActivatedRoute
   ) {}
 
@@ -101,9 +104,9 @@ export class MapComponent implements OnInit {
     this.activatedRoute.queryParams.subscribe((params: Params) => {
       this.entityName = params['entityName'] || null;
       this.flowName = params['flowName'] || null;
-      this.getEntities();
-      this.getSampleDoc(this.entityName);
     });
+    this.getEntities();
+    this.getSampleDoc(this.entityName);
   }
 
   handleSelection(prop, proptype, index): void {
@@ -120,6 +123,26 @@ export class MapComponent implements OnInit {
         val: prop.val
       };
     }
+  }
+
+  saveMap(): void {
+    let localString = localStorage.getItem("mapping");
+    let localObj = {};
+    if (localString) {
+      localObj = JSON.parse(localString);
+    }
+    if (!localObj[this.entityName]) {
+      localObj[this.entityName] = {}
+    };
+    if (!localObj[this.entityName][this.flowName]) {
+      localObj[this.entityName][this.flowName] = {}
+    };
+    localObj[this.entityName][this.flowName] = {
+      name: this.mapName,
+      conns: this.conns
+    }
+    localStorage.setItem("mapping", JSON.stringify(localObj));
+    this.router.navigate(['/flows', this.entityName, this.flowName, 'HARMONIZE'])
   }
 
 }
