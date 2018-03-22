@@ -6,7 +6,7 @@ const dhf = require('/MarkLogic/data-hub-framework/dhf.sjs');
 const contentPlugin = require('./content/content.sjs');
 const headersPlugin = require('./headers/headers.sjs');
 const triplesPlugin = require('./triples/triples.sjs');
-const writerPlugin = require('./writer.sjs');
+const writerPlugin = require('./writer/writer.sjs');
 
 /*
  * Plugin Entry point
