@@ -70,6 +70,7 @@ public class FlowRunnerTest extends HubTestBase {
 
     @AfterClass
     public static void teardown() {
+    	uninstallHub();
         deleteProjectDir();
     }
 

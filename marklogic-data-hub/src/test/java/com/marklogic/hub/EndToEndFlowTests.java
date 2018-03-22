@@ -123,7 +123,7 @@ public class EndToEndFlowTests extends HubTestBase {
     @BeforeAll
     public static void setup() {
         XMLUnit.setIgnoreWhitespace(true);
-
+        uninstallHub();
         deleteProjectDir();
         if(isSslRun() || isCertAuth()) {
      		sslSetup();

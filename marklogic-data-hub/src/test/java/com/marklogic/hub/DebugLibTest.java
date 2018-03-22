@@ -9,6 +9,8 @@ import com.marklogic.hub.flow.CodeFormat;
 import com.marklogic.hub.flow.DataFormat;
 import com.marklogic.hub.flow.FlowType;
 import com.marklogic.hub.scaffold.Scaffolding;
+
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -33,6 +35,12 @@ public class DebugLibTest extends HubTestBase {
         scaffolding.createFlow(entityName, flowName, FlowType.INPUT, CodeFormat.XQUERY, DataFormat.XML);
 
         installUserModules(getHubConfig(), true);
+    }
+    
+    @AfterClass
+    public static void teardown() {
+      uninstallHub();
+      deleteProjectDir();
     }
 
     // testing https://github.com/marklogic-community/marklogic-data-hub/issues/516
