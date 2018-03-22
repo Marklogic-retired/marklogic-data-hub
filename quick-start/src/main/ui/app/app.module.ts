@@ -47,6 +47,7 @@ import { EntitiesService } from './entities/entities.service';
 import { InstallService } from './installer';
 import { JobService } from './jobs/jobs.service';
 import { JobListenerService } from './jobs/job-listener.service';
+import { MapService } from './map/map.service';
 import { ProjectService } from './projects/projects.service';
 import { SettingsService } from './settings/settings.service';
 import { STOMPService } from './stomp/stomp.service';
@@ -138,6 +139,7 @@ import { MapComponent } from './map';
     InstallService,
     JobService,
     JobListenerService,
+    MapService,
     ProjectService,
     SettingsService,
     STOMPService,
