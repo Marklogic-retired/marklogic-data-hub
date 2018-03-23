@@ -64,11 +64,12 @@ public class EntityManagerTest extends HubTestBase {
 
     @AfterClass
     public static void teardown() {
+    	uninstallHub();
         deleteProjectDir();
     }
 
     private void installEntities() {
-        Scaffolding scaffolding = Scaffolding.create(projectDir.toString(), finalClient);
+        ScaffoldingImpl scaffolding = new ScaffoldingImpl(projectDir.toString(), finalClient);
         Path employeeDir = scaffolding.getEntityDir("employee");
         employeeDir.toFile().mkdirs();
         assertTrue(employeeDir.toFile().exists());
@@ -81,7 +82,7 @@ public class EntityManagerTest extends HubTestBase {
     }
 
     private void updateManagerEntity() {
-        Scaffolding scaffolding = Scaffolding.create(projectDir.toString(), finalClient);
+        ScaffoldingImpl scaffolding = new ScaffoldingImpl(projectDir.toString(), finalClient);
         Path managerDir = scaffolding.getEntityDir("manager");
         assertTrue(managerDir.toFile().exists());
         File targetFile = managerDir.resolve("manager.entity.json").toFile();

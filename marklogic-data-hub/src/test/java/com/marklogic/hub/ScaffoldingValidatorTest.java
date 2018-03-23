@@ -21,6 +21,7 @@ import com.marklogic.hub.flow.CodeFormat;
 import com.marklogic.hub.flow.FlowType;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.scaffold.ScaffoldingValidator;
+import com.marklogic.hub.scaffold.impl.ScaffoldingImpl;
 import com.marklogic.hub.util.FileUtil;
 import org.apache.commons.io.FileUtils;
 import org.custommonkey.xmlunit.XMLUnit;
@@ -64,8 +65,8 @@ public class ScaffoldingValidatorTest extends HubTestBase {
    private void createPlugins(String entityName, FlowType flowType, CodeFormat codeFormat) throws IOException {
 
        String flowName = entityName + flowType + "-flow";
-       String flowTypePath = Scaffolding.getAbsolutePath(projectPath, "entities", entityName, flowType.toString());
-       String flowPath = Scaffolding.getAbsolutePath(flowTypePath, flowName);
+       String flowTypePath = ScaffoldingImpl.getAbsolutePath(projectPath, "entities", entityName, flowType.toString());
+       String flowPath = ScaffoldingImpl.getAbsolutePath(flowTypePath, flowName);
 
        List<Plugin> plugins = new ArrayList<>();
        if (flowType.equals(FlowType.HARMONIZE)) {
@@ -81,7 +82,7 @@ public class ScaffoldingValidatorTest extends HubTestBase {
    }
 
    private Plugin createPluginObj(String flowPath, String pluginType, FlowType flowType, CodeFormat codeFormat) {
-       String parentDirectory = Scaffolding.getAbsolutePath(flowPath, pluginType);
+       String parentDirectory = ScaffoldingImpl.getAbsolutePath(flowPath, pluginType);
        String filename = pluginType + "." + codeFormat;
        String templateFilePath = "scaffolding/" + flowType + "/" + codeFormat + "/" + pluginType + "." + codeFormat;
        return new Plugin(parentDirectory, filename, templateFilePath);

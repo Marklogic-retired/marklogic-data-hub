@@ -25,14 +25,33 @@ import java.nio.file.Path;
 
 public interface JobManager {
 
+    /**
+     * Creates and returns a JobManager object
+     * @param jobClient the database client that is used to connect to the jobs database
+     * @param traceClient the database client that is used to connect to the trace database
+     * @return JobManager object
+     */
     static JobManager create(DatabaseClient jobClient, DatabaseClient traceClient){
         return new JobManagerImpl(jobClient, traceClient);
     }
 
+    /**
+     * Saves the job to the database
+     * @param job - the job you want to save
+     */
     void saveJob(Job job);
 
+    /**
+     * Saves the job to the database
+     * @param job - the job you want to save
+     * @param transaction - the transaction that is to be used to write the job
+     */
     void saveJob(Job job, Transaction transaction);
 
+    /**
+     * @param jobIds comma-separated list of jobIds to delete.
+     * @return comma-separated list of jobIds that were successfully deleted
+     */
     JobDeleteResponse deleteJobs(String jobIds);
 
     /**

@@ -110,20 +110,56 @@ public interface DataHub {
      */
     boolean isSafeToInstall();
 
+    /**
+     * Checks to see if the port is in use
+     * @param kind - the DatabaseKind enum value (ex STAGING or JOB)
+     * @return true if the port is in use, false if it is not
+     */
     boolean isPortInUse(DatabaseKind kind);
 
+    /**
+     * Sets what appserver name is using the port
+     * @param kind - the DatabaseKind enum value (ex STAGING or JOB)
+     * @param usedBy - string name of what is using the port
+     */
     void setPortInUseBy(DatabaseKind kind, String usedBy);
 
+    /**
+     * Returns name of what is using the port
+     * @param kind - the DatabaseKind enum value (ex STAGING or JOB)
+     * @return name of who using the port
+     */
     String getPortInUseBy(DatabaseKind kind);
 
+    /**
+     * Checks to see if the datahub and server versions are compatible
+     * @return true if the server version matches, false if it does not
+     */
     boolean isServerVersionOk();
 
+    /**
+     * Sets true or false if the server version is okay with this version of DHF
+     * @param serverVersionOk - true if it compatible or false if it is not
+     */
     void setServerVersionOk(boolean serverVersionOk);
 
+    /**
+     * Returns the string presentation of the server version, eg: "9.03-1"
+     * @return server version as a string, eg: "9.03-1"
+     */
     String getServerVersion();
 
+    /**
+     * Sets the server version holder on the datahub object - currently unused
+     * @param serverVersion - server version as a string, eg: "9.03-1"
+     */
     void setServerVersion(String serverVersion);
 
+    /**
+     * Upgrades the installed datahub on the server to this version of the DataHub
+     * @return true or false based on success of the upgrade
+     * @throws CantUpgradeException - exception thrown when an upgrade can't happen
+     */
     boolean upgradeHub() throws CantUpgradeException;
 
     /**

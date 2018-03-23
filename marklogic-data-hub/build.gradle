@@ -55,6 +55,8 @@ dependencies {
       exclude group: 'org.apache.avro', module: 'avro-tools'
     }
 }
+import com.marklogic.mgmt.ManageClient
+import com.marklogic.mgmt.resource.hosts.HostManager
 
 
 configurations.all {
@@ -298,5 +300,5 @@ test {
     exclude '**/StreamCollector*'
 	//dependsOn tasks.createLocalFile
     // depend on the collectorTest task above
-    dependsOn tasks.collectorTest
+    dependsOn tasks.collectorTest	
 }

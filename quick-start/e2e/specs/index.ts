@@ -13,7 +13,7 @@ const request = require('request').defaults({ strictSSL: false })
 const tmp = require('tmp');
 const fs = require('fs-extra');
 const path = require('path');
-let tmpobj = tmp.dirSync();
+let tmpobj = tmp.dirSync({ unsafeCleanup: true });
 fs.copySync('../examples/online-store/input', path.join(tmpobj.name, 'input'));
 console.log('DIR: ' + tmpobj.name);
 

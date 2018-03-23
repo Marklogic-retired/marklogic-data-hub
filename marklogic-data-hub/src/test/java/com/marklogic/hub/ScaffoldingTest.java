@@ -21,6 +21,7 @@ import com.marklogic.hub.flow.CodeFormat;
 import com.marklogic.hub.flow.DataFormat;
 import com.marklogic.hub.flow.FlowType;
 import com.marklogic.hub.scaffold.Scaffolding;
+import com.marklogic.hub.scaffold.impl.ScaffoldingImpl;
 import com.marklogic.hub.util.FileUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -61,6 +62,11 @@ public class ScaffoldingTest extends HubTestBase {
         isMl9 = getMlMajorVersion() == 9;
 
     }
+    
+    @AfterAll
+    public static void teardownFinal() {
+        uninstallHub();
+    }
 
     @AfterEach
     public void teardown() throws IOException {
@@ -70,7 +76,7 @@ public class ScaffoldingTest extends HubTestBase {
     @Test
     public void createEntity() throws FileNotFoundException {
         assertFalse(projectDir.exists());
-        Scaffolding scaffolding = Scaffolding.create(projectDir.toString(), stagingClient);
+        ScaffoldingImpl scaffolding = new ScaffoldingImpl(projectDir.toString(), stagingClient);
         scaffolding.createEntity("my-fun-test");
         assertTrue(projectDir.exists());
 
@@ -104,7 +110,7 @@ public class ScaffoldingTest extends HubTestBase {
         String entityName = "my-fun-test";
         String flowName = "test-" + flowType.toString() + "-" + codeFormat.toString() + "-" + dataFormat.toString();
 
-        Scaffolding scaffolding = Scaffolding.create(projectDir.toString(), finalClient);
+        ScaffoldingImpl scaffolding = new ScaffoldingImpl(projectDir.toString(), finalClient);
 
         Path entityDir = scaffolding.getEntityDir(entityName);
         assertFalse(entityDir.toFile().exists(), entityDir.toString() + " should not exist but does");

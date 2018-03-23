@@ -14,21 +14,15 @@ function createContent(id, rawContent, options) {
     fn.error(xs.QName("CONTENT-BOOM"), "I BLEW UP");
   }
 
-  xdmp.log(['rawContent', rawContent]);
-  xdmp.log(['rawContent-kind', xdmp.nodeKind(rawContent)]);
   let source;
 
   // for xml we need to use xpath
   if (rawContent && xdmp.nodeKind(rawContent) === 'element') {
     let instance = rawContent.xpath('/*:envelope/*:instance/node()').root;
-    xdmp.log(['instance:', instance]);
     if (instance != null) {
-      xdmp.log('setting source to instance');
       source = instance;
     }
     else {
-      xdmp.log('setting source to rawContent');
-      xdmp.log(['rawContent', rawContent]);
       source = rawContent;
     }
   }
@@ -52,8 +46,6 @@ function createContent(id, rawContent, options) {
  *   metadata about the instance.
  */
 function extractInstanceE2eentity(source) {
-  xdmp.log(['source', source]);
-  xdmp.log(xdmp.nodeKind(source));
 
   // the original source documents
   let attachments = source;

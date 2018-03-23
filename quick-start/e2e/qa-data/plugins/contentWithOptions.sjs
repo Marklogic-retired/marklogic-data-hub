@@ -44,7 +44,6 @@
       var sku = xs.string(source.sku || source.SKU);
       var title = xs.string(source.title);
       var price = xs.decimal(source.price);
-      var id = xs.string(source.id);
       var value1 = xs.string(opts.hello);
       var value2 = xs.string(opts.myNumber);
       

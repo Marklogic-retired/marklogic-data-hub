@@ -116,6 +116,7 @@ public class StreamCollectorTest extends HubTestBase {
     @AfterClass
     public static void teardown() {
         uninstallHub();
+        deleteProjectDir();
     }
 
     @Test
