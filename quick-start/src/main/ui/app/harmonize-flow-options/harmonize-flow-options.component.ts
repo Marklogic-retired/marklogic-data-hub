@@ -11,6 +11,7 @@ import {
 import { Router, ActivatedRoute, Params } from '@angular/router';
 import { Flow } from '../entities/flow.model';
 import { EntitiesService } from '../entities/entities.service';
+import { SearchService } from '../search/search.service';
 import { SelectKeyValuesComponent } from '../select-key-values/select-key-values.component';
 
 @Component({
@@ -32,8 +33,10 @@ export class HarmonizeFlowOptionsComponent implements OnInit, OnChanges {
   mapName: string = null;
   keyVals: any;
   keyValTitle = 'Options';
+  hasDocs: boolean = false;
 
   constructor(
+    private searchService: SearchService,
     private router: Router,
     private entitiesService: EntitiesService
   ) {}
@@ -54,12 +57,14 @@ export class HarmonizeFlowOptionsComponent implements OnInit, OnChanges {
     this.setDefaults();
     this.loadMap(this.flow.flowName);
     this.loadSettings(this.flow.flowName);
+    this.docsLoaded(this.flow.entityName);
   }
 
   ngOnChanges(changes: SimpleChanges) {
     this.setDefaults();
     this.loadMap(changes.flow.currentValue.flowName);
     this.loadSettings(changes.flow.currentValue.flowName);
+    this.docsLoaded(changes.flow.currentValue.entityName);
   }
 
   updateKayVals(newKeyVals) {
@@ -147,6 +152,21 @@ export class HarmonizeFlowOptionsComponent implements OnInit, OnChanges {
       delete localObj[flowName];
     }
     localStorage.setItem("flowSettings", JSON.stringify(localObj));
+  }
+
+  /**
+   * Check if documents for entity have been input.
+   */
+  docsLoaded(entityName): void {
+    let activeFacets = { Collection: {
+      values: [entityName]
+    }};
+    this.searchService.getResults('STAGING', false, null, activeFacets, 1, 1)
+      .subscribe(response => {
+      this.hasDocs = (response.results.length > 0);
+    },
+    () => {},
+    () => {});
   }
 
 }
