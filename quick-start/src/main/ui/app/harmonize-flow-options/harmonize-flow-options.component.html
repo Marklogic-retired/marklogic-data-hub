@@ -26,21 +26,23 @@
         <div class="map-heading">
           <h4>Map</h4>
         </div>
-        <!-- <div>
+        <div *ngIf="!hasDocs">
           <span>No documents for mapping. To use a map, run an input flow to load documents.</span>
-        </div> -->
-        <div *ngIf="!mapName">
-          <mdl-button mdl-button-type="raised" mdl-colored="primary" mdl-ripple [routerLink]="['/map']"
-            [queryParams]="{entityName: flow.entityName,flowName: flow.flowName}">Create Map</mdl-button>
         </div>
-        <div *ngIf="mapName">
-          <span class="map-saved">
-            <a [routerLink]="['/map']"
-              [queryParams]="{entityName: flow.entityName,flowName: flow.flowName}">Saved</a>
-          </span>
-          <span class="map-delete">
-            <i class="fa fa-trash" (click)="deleteMap($event)"></i>
-          </span>
+        <div *ngIf="hasDocs">
+          <div *ngIf="!mapName">
+            <mdl-button mdl-button-type="raised" mdl-colored="primary" mdl-ripple [routerLink]="['/map']"
+              [queryParams]="{entityName: flow.entityName,flowName: flow.flowName}">Create Map</mdl-button>
+          </div>
+          <div *ngIf="mapName">
+            <span class="map-saved">
+              <a [routerLink]="['/map']"
+                [queryParams]="{entityName: flow.entityName,flowName: flow.flowName}">Saved</a>
+            </span>
+            <span class="map-delete">
+              <i class="fa fa-trash" (click)="deleteMap($event)"></i>
+            </span>
+          </div>
         </div>
         <!-- <mdl-select
           label="Map"
