@@ -29,8 +29,7 @@ export class HarmonizeFlowOptionsComponent implements OnInit, OnChanges {
   _isVisible: boolean = false;
 
   settings: any;
-  maps: Array<any>;
-  mapsMenu: Array<any>;
+  mapName: string = null;
   keyVals: any;
   keyValTitle = 'Options';
 
@@ -53,13 +52,13 @@ export class HarmonizeFlowOptionsComponent implements OnInit, OnChanges {
 
   ngOnInit() {
     this.setDefaults();
-    this.loadMaps(this.flow.flowName);
+    this.loadMap(this.flow.flowName);
     this.loadSettings(this.flow.flowName);
   }
 
   ngOnChanges(changes: SimpleChanges) {
     this.setDefaults();
-    this.loadMaps(changes.flow.currentValue.flowName);
+    this.loadMap(changes.flow.currentValue.flowName);
     this.loadSettings(changes.flow.currentValue.flowName);
   }
 
@@ -77,40 +76,32 @@ export class HarmonizeFlowOptionsComponent implements OnInit, OnChanges {
     this.onRun.emit(this.settings);
   }
 
-  mapChanged(selected) {
-    if (selected === HarmonizeFlowOptionsComponent.newLabel) {
-      this.settings.map = undefined; // keep map unselected
-      this.router.navigate(['map'], {
-        queryParams: {
-          entityName: this.flow.entityName,
-          flowName: this.flow.flowName
-       }
-     });
-    } else {
-      this.settings.map = selected;
-      this.saveSettings();
-    }
-  }
-
-  loadMaps(flowName) {
-    // TODO retrieve maps associated with flow
-    let mapName: string;
+  loadMap(flowName) {
     let localString = localStorage.getItem("mapping");
     if (localString) {
       let localObj = JSON.parse(localString);
       if (localObj[this.flow.entityName]) {
         if (localObj[this.flow.entityName][flowName]) {
-          mapName = localObj[this.flow.entityName][flowName].name;
+          this.mapName = localObj[this.flow.entityName][flowName].name;
         }
       }
     }
-    this.maps = [];
-    if (mapName) {
-      this.maps.push(mapName);
-      this.settings.map = mapName;
+  }
+
+  deleteMap() {
+    console.log('deleteMap');
+    let localString = localStorage.getItem("mapping");
+    let localObj = {};
+    if (localString) {
+      let localObj = JSON.parse(localString);
+      if (localObj[this.flow.entityName]) {
+        if (localObj[this.flow.entityName][this.flow.flowName]) {
+          delete localObj[this.flow.entityName][this.flow.flowName];
+          this.mapName = null;
+        }
+      }
     }
-    this.mapsMenu = this.maps;
-    this.mapsMenu.push(HarmonizeFlowOptionsComponent.newLabel);
+    localStorage.setItem("mapping", JSON.stringify(localObj));
   }
 
   loadSettings(flowName) {
