@@ -356,14 +356,10 @@ public class HubTestBase {
         if(isCertAuth()) {
         	AppConfig appConfig = hubConfig.getAppConfig();
         	appConfig.setRestSslContext(certContext);
-        	appConfig.setRestAuthentication(Authentication.CERTIFICATE);
-        	appConfig.setRestAdminPassword(null);
         	appConfig.setRestSecurityContextType(SecurityContextType.CERTIFICATE);
 
         	appConfig.setAppServicesSslContext(certContext);
         	appConfig.setHost(bootStrapHost);
-        	appConfig.setAppServicesPassword(null);
-        	appConfig.setAppServicesAuthentication(Authentication.CERTIFICATE);
         	appConfig.setAppServicesSecurityContextType(SecurityContextType.CERTIFICATE);
         	hubConfig.setAppConfig(appConfig);
 

@@ -47,4 +47,12 @@ public interface EntityManager {
      * @return boolean - if it fails to do so, false is returned
      */
     boolean saveDbIndexes();
+
+    /**
+     * Uses entity services to create protected path and query roleset configuration
+     * and save those configurations on the filesystem.
+     * @return boolean - if it fails to so, false is returned
+     */
+    boolean savePii();
+
 }

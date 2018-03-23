@@ -12,8 +12,8 @@
 - spock 1.1-groovy-2.4 -> http://spockframework.org/
 
 # DHF Runtime
-- ml-gradle 3.4 -> https://github.com/marklogic-community/ml-gradle
-- ml-app-deployer 3.4 -> https://github.com/marklogic-community/ml-app-deployer
+- ml-gradle 3.6.1 -> https://github.com/marklogic-community/ml-gradle
+- ml-app-deployer 3.6.1 -> https://github.com/marklogic-community/ml-app-deployer
 - ml-javaclient-util 3.3.1 -> https://github.com/marklogic-community/ml-javaclient-util
 - marklogic-client-api 4.0.3.1 -> https://github.com/marklogic/java-client-api
 - mlcp-util 0.9.0 -> https://github.com/marklogic-community/mlcp-util
