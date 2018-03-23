@@ -27,4 +27,20 @@ export class MapService {
     });
   }
 
+  public extractData = (res: Response) => {
+    return res.json();
+  }
+
+  private get(url: string) {
+    return this.http.get(url).map(this.extractData);
+  }
+
+  private post(url: string, data: any) {
+    return this.http.post(url, data).map(this.extractData);
+  }
+
+  private url(u: string): string {
+    return `/api/current-project${u}`;
+  }
+
 }

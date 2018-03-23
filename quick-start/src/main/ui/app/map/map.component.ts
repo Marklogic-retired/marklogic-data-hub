@@ -33,7 +33,6 @@ export class MapComponent implements OnInit {
 
   private entityName: string;
   private flowName: string;
-  private mapName: string;
 
   /**
    * Get entities and choose one to serve as harmonized model.
@@ -47,14 +46,20 @@ export class MapComponent implements OnInit {
       this.entityPrimaryKey = this.chosenEntity.definition.primaryKey;
       // Set up connections once (all empty initially)
       if (!this.connsInit) {
-        _.forEach(this.chosenEntity.definition.properties, function(prop) {
-          self.conns.push({
-            src: null,
-            harm: {name: prop.name, type: prop.datatype}
+        let savedConns = this.getMap();
+        if (savedConns === null) {
+          _.forEach(this.chosenEntity.definition.properties, function(prop) {
+            self.conns.push({
+              src: null,
+              harm: {name: prop.name, type: prop.datatype}
+            });
           });
-        });
+        } else {
+          self.conns = savedConns;
+        }
         this.connsInit = true;
       }
+      console.log('self.conns after', self.conns);
     });
     this.entitiesService.getEntities();
   }
@@ -126,6 +131,7 @@ export class MapComponent implements OnInit {
   }
 
   saveMap(): void {
+    let mapName = encodeURI(this.entityName + '-' + this.flowName + '-' + 'map');
     let localString = localStorage.getItem("mapping");
     let localObj = {};
     if (localString) {
@@ -138,11 +144,25 @@ export class MapComponent implements OnInit {
       localObj[this.entityName][this.flowName] = {}
     };
     localObj[this.entityName][this.flowName] = {
-      name: this.mapName,
+      name: mapName,
       conns: this.conns
     }
     localStorage.setItem("mapping", JSON.stringify(localObj));
     this.router.navigate(['/flows', this.entityName, this.flowName, 'HARMONIZE'])
+  }
+
+  getMap() {
+    let result = null;
+    let localString = localStorage.getItem("mapping");
+    if (localString) {
+      let localObj = JSON.parse(localString);
+      if (localObj[this.entityName]) {
+        if (localObj[this.entityName][this.flowName]) {
+          result = localObj[this.entityName][this.flowName].conns;
+        }
+      }
+    }
+    return result;
   }
 
 }
