@@ -62,6 +62,11 @@ public class ScaffoldingTest extends HubTestBase {
         isMl9 = getMlMajorVersion() == 9;
 
     }
+    
+    @AfterAll
+    public static void teardownFinal() {
+        uninstallHub();
+    }
 
     @AfterEach
     public void teardown() throws IOException {

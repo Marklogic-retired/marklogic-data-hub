@@ -282,7 +282,7 @@ public class HubTestBase {
         initialized = true;
     }
 
-    private static DatabaseClient getClient(String host, int port, String dbName, String user,String password, Authentication authMethod) throws Exception {
+    protected static DatabaseClient getClient(String host, int port, String dbName, String user,String password, Authentication authMethod) throws Exception {
     	if(isCertAuth()) {
     		certContext = createSSLContext(getResourceFile("ssl/client-cert.p12"));
     		return DatabaseClientFactory.newClient(host, port, dbName, new DatabaseClientFactory.CertificateAuthContext(certContext,SSLHostnameVerifier.ANY));
