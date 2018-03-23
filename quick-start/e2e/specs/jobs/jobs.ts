@@ -44,7 +44,7 @@ export default function() {
         expect(jobsPage.jobResults().getText()).toContain('Showing Results 1 to 5 of 5');
         jobsPage.removeFacetButton('FINISHED').click();
         browser.wait(EC.visibilityOf(jobsPage.jobResults()));
-        expect(jobsPage.jobResults().getText()).toContain('Showing Results 1 to 6 of 6');
+        expect(jobsPage.jobResults().getText()).toContain('Showing Results 1 to 5 of 5');
       });
 
       it ('search with facet for TestEntity jobs', function() {
@@ -53,7 +53,7 @@ export default function() {
         expect(jobsPage.jobResults().getText()).toContain('Showing Results 1 to 4 of 4');
         jobsPage.removeFacetButton('TestEntity').click();
         browser.wait(EC.visibilityOf(jobsPage.jobResults()));
-        expect(jobsPage.jobResults().getText()).toContain('Showing Results 1 to 6 of 6');
+        expect(jobsPage.jobResults().getText()).toContain('Showing Results 1 to 5 of 5');
       });
 
       it ('check and export some jobs', function() {
