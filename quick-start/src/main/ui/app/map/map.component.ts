@@ -60,7 +60,6 @@ export class MapComponent implements OnInit {
         }
         this.connsInit = true;
       }
-      console.log('self.conns after', self.conns);
     });
     this.entitiesService.getEntities();
   }
