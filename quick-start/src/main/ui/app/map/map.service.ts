@@ -1,6 +1,5 @@
 import { Injectable, EventEmitter } from '@angular/core';
 import { Http, Response } from '@angular/http';
-
 import { Map } from './map.model';
 
 import * as _ from 'lodash';
@@ -9,34 +8,54 @@ import * as _ from 'lodash';
 export class MapService {
 
   maps: Array<Map>;
+  map: any;
 
   constructor(
     private http: Http,
   ) {}
 
-  getMaps() {
-    this.http.get(this.url('/maps/')).map((res: Response) => {
+  getName(entityName, flowName) {
+    return encodeURI(entityName + '-' + flowName + '-' + 'map');
+  }
+
+  getMaps(entityName) {
+    this.http.get(this.url('/entities/{{entityName}}/maps')).map((res: Response) => {
       let maps: Array<any> = res.json();
-      return maps.map((map) => {
-        return new Map().fromJSON(map);
-      });
-    }).subscribe((maps: Array<Map>) => {
+      console.log('GET /entities/' + entityName + '/maps', maps);
+      return maps;
+    }).subscribe((maps: any) => {
       this.maps = maps;
-      //this.entitiesChange.emit(this.entities);
-      //this.extractTypes();
+      console.log('Result: ', maps);
     });
   }
 
-  public extractData = (res: Response) => {
-    return res.json();
+  getMap(entityName, mapName) {
+    this.http.get(this.url('/entities/{{entityName}}/maps/{{mapName}}')).map((res: Response) => {
+      let map: Array<any> = res.json();
+      console.log('GET /entities/' + entityName + '/maps' + mapName, map);
+      return map;
+    }).subscribe((map: any) => {
+      this.map = map;
+      console.log('Result: ', map);
+    });
   }
 
-  private get(url: string) {
-    return this.http.get(url).map(this.extractData);
+  saveMap(entityName, mapName, map) {
+    this.http.post(this.url('/entities/{{entityName}}/maps/{{mapName}}'), JSON.parse(map)).map((res: Response) => {
+      console.log('POST /entities/' + entityName + '/maps' + mapName, map);
+      return res;
+    }).subscribe((res: any) => {
+      console.log('Result: ', res);
+    });
   }
 
-  private post(url: string, data: any) {
-    return this.http.post(url, data).map(this.extractData);
+  deleteMap(entityName, mapName) {
+    this.http.delete(this.url('/entities/{{entityName}}/maps/{{mapName}}')).map((res: Response) => {
+      console.log('DELETE /entities/' + entityName + '/maps' + mapName);
+      return res;
+    }).subscribe((res: any) => {
+      console.log('Result: ', res);
+    });
   }
 
   private url(u: string): string {
