@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { Entity } from '../entities';
 import { EntitiesService } from '../entities/entities.service';
 import { SearchService } from '../search/search.service';
+import { MapService } from './map.service';
 
 import * as _ from 'lodash';
 
@@ -100,6 +101,7 @@ export class MapComponent implements OnInit {
 
   constructor(
     private searchService: SearchService,
+    private mapService: MapService,
     private entitiesService: EntitiesService,
     private router: Router,
     private activatedRoute: ActivatedRoute
@@ -131,7 +133,7 @@ export class MapComponent implements OnInit {
   }
 
   saveMap(): void {
-    let mapName = encodeURI(this.entityName + '-' + this.flowName + '-' + 'map');
+    let mapName = this.mapService.getName(this.entityName, this.flowName);
     let localString = localStorage.getItem("mapping");
     let localObj = {};
     if (localString) {
@@ -148,6 +150,8 @@ export class MapComponent implements OnInit {
       conns: this.conns
     }
     localStorage.setItem("mapping", JSON.stringify(localObj));
+    // TODO use service to save
+    this.mapService.saveMap(this.entityName, mapName, JSON.stringify(localObj));
     this.router.navigate(['/flows', this.entityName, this.flowName, 'HARMONIZE'])
   }
 
@@ -162,6 +166,8 @@ export class MapComponent implements OnInit {
         }
       }
     }
+    // TODO use service to get
+    this.mapService.getMaps(this.entityName);
     return result;
   }
 

@@ -13,6 +13,7 @@ import { Flow } from '../entities/flow.model';
 import { EntitiesService } from '../entities/entities.service';
 import { SearchService } from '../search/search.service';
 import { SelectKeyValuesComponent } from '../select-key-values/select-key-values.component';
+import { MapService } from '../map/map.service';
 
 @Component({
   selector: 'app-harmonize-flow-options',
@@ -37,6 +38,7 @@ export class HarmonizeFlowOptionsComponent implements OnInit, OnChanges {
 
   constructor(
     private searchService: SearchService,
+    private mapService: MapService,
     private router: Router,
     private entitiesService: EntitiesService
   ) {}
@@ -94,7 +96,6 @@ export class HarmonizeFlowOptionsComponent implements OnInit, OnChanges {
   }
 
   deleteMap() {
-    console.log('deleteMap');
     let localString = localStorage.getItem("mapping");
     let localObj = {};
     if (localString) {
@@ -106,6 +107,9 @@ export class HarmonizeFlowOptionsComponent implements OnInit, OnChanges {
         }
       }
     }
+    // TODO use service to delete
+    let mapName = this.mapService.getName(this.flow.entityName, this.flow.flowName);
+    this.mapService.deleteMap(this.flow.entityName, mapName);
     localStorage.setItem("mapping", JSON.stringify(localObj));
   }
 
