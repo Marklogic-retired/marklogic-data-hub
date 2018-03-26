@@ -20,7 +20,7 @@ import { TooltipOptions } from './tooltip-options.class';
       <div class="tooltip-inner"
            *ngIf="htmlContent && isTemplate">
         <ng-template [ngTemplateOutlet]="htmlContent"
-                  [ngOutletContext]="{model: context}">
+                  [ngTemplateOutletContext]="{model: context}">
         </ng-template>
       </div>
       <div class="tooltip-inner"
