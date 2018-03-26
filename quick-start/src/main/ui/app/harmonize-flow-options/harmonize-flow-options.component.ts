@@ -14,6 +14,7 @@ import { EntitiesService } from '../entities/entities.service';
 import { SearchService } from '../search/search.service';
 import { SelectKeyValuesComponent } from '../select-key-values/select-key-values.component';
 import { MapService } from '../map/map.service';
+import { MdlDialogService } from '@angular-mdl/core';
 
 @Component({
   selector: 'app-harmonize-flow-options',
@@ -40,7 +41,8 @@ export class HarmonizeFlowOptionsComponent implements OnInit, OnChanges {
     private searchService: SearchService,
     private mapService: MapService,
     private router: Router,
-    private entitiesService: EntitiesService
+    private entitiesService: EntitiesService,
+    private dialogService: MdlDialogService
   ) {}
 
   setDefaults() {
@@ -96,21 +98,28 @@ export class HarmonizeFlowOptionsComponent implements OnInit, OnChanges {
   }
 
   deleteMap() {
-    let localString = localStorage.getItem("mapping");
-    let localObj = {};
-    if (localString) {
-      let localObj = JSON.parse(localString);
-      if (localObj[this.flow.entityName]) {
-        if (localObj[this.flow.entityName][this.flow.flowName]) {
-          delete localObj[this.flow.entityName][this.flow.flowName];
-          this.mapName = null;
+    let result = this.dialogService.confirm('Delete map?', 'Cancel', 'Delete');
+    result.subscribe( () => {
+      let localString = localStorage.getItem("mapping");
+      let localObj = {};
+      if (localString) {
+        let localObj = JSON.parse(localString);
+        if (localObj[this.flow.entityName]) {
+          if (localObj[this.flow.entityName][this.flow.flowName]) {
+            delete localObj[this.flow.entityName][this.flow.flowName];
+            this.mapName = null;
+          }
         }
       }
-    }
-    // TODO use service to delete
-    let mapName = this.mapService.getName(this.flow.entityName, this.flow.flowName);
-    this.mapService.deleteMap(this.flow.entityName, mapName);
-    localStorage.setItem("mapping", JSON.stringify(localObj));
+      // TODO use service to delete
+      let mapName = this.mapService.getName(this.flow.entityName, this.flow.flowName);
+      this.mapService.deleteMap(this.flow.entityName, mapName);
+      localStorage.setItem("mapping", JSON.stringify(localObj));
+      },
+      (err: any) => {
+        console.log('map delete canceled');
+      }
+    );
   }
 
   loadSettings(flowName) {
