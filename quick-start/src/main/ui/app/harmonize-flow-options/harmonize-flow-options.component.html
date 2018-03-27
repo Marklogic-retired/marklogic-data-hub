@@ -37,7 +37,7 @@
           <div *ngIf="mapName">
             <span class="map-saved">
               <a [routerLink]="['/map']"
-                [queryParams]="{entityName: flow.entityName,flowName: flow.flowName}">Saved</a>
+                [queryParams]="{entityName: flow.entityName,flowName: flow.flowName}">{{flow.flowName}} Map</a>
             </span>
             <span class="map-delete">
               <i class="fa fa-trash" (click)="deleteMap($event)"></i>

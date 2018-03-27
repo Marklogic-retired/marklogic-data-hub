@@ -2,9 +2,13 @@
 
   <div class="map-container">
 
+    <div id="map-heading">
+      <h1>{{flowName}} Map</h1>
+    </div>
+
     <div id="source">
       <div id="src-heading" #srcheading>
-        <h4 class="item-type">Source Document</h4>
+        <h4 class="item-type">Source</h4>
         <p class="item-identifying-info">{{ sampleDoc?.uri }}</p>
       </div>
 
@@ -54,7 +58,7 @@
 
     <div id="harmonized">
       <div id="harm-heading">
-        <h4 class="item-type">Harmonized Model</h4>
+        <h4 class="item-type">Model</h4>
         <p class="item-identifying-info">{{ chosenEntity?.info.title }}</p>
       </div>
 
@@ -75,6 +79,7 @@
           [(ngModel)]="mapName"
       ></mdl-textfield> -->
       <mdl-button mdl-button-type="raised" mdl-colored="primary" mdl-ripple (click)="saveMap()">Save Map</mdl-button>
+      <mdl-button mdl-button-type="raised" mdl-colored mdl-ripple (click)="cancelMap()">Cancel</mdl-button>
 
     </div><!-- save-map -->
 
