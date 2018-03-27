@@ -100,6 +100,7 @@ export class HarmonizeFlowOptionsComponent implements OnInit, OnChanges {
   deleteMap() {
     let result = this.dialogService.confirm('Delete map?', 'Cancel', 'Delete');
     result.subscribe( () => {
+      // Temporarily saving locally
       let localString = localStorage.getItem("mapping");
       let localObj = {};
       if (localString) {
