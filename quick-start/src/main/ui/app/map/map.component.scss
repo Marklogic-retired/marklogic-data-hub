@@ -1,6 +1,12 @@
 .map-container {
   width: 1050px;
   padding: 0;
+  #map-heading h1 {
+    font-size: 34px;
+    font-weight: normal;
+    margin: 10px 0;
+    padding: 0;
+  }
 }
 
 h4.item-type {
