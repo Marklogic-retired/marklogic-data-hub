@@ -26,9 +26,9 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 
-class LoadUserModulesCommandTest extends HubTestBase {
+public class LoadUserModulesCommandTest extends HubTestBase {
 
-    LoadUserModulesCommand loadUserModulesCommand;
+    public LoadUserModulesCommand loadUserModulesCommand;
 
     @Before
     public void setup() {
@@ -36,7 +36,7 @@ class LoadUserModulesCommandTest extends HubTestBase {
     }
 
     @Test
-    void testIsEntityDir() {
+    public void testIsEntityDir() {
         Path startPath = Paths.get("/tmp/my-project/plugins/entities");
         Path dir = Paths.get("/tmp/my-project/plugins/entities/my-entity");
         assertTrue(loadUserModulesCommand.isEntityDir(dir, startPath));
