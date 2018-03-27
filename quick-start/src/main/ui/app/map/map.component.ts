@@ -45,19 +45,23 @@ export class MapComponent implements OnInit {
         return e.name === this.entityName;
       });
       this.entityPrimaryKey = this.chosenEntity.definition.primaryKey;
-      // Set up connections once (all empty initially)
+      // Set up connections once
       if (!this.connsInit) {
         let savedConns = this.getMap();
-        if (savedConns === null) {
-          _.forEach(this.chosenEntity.definition.properties, function(prop) {
+        _.forEach(this.chosenEntity.definition.properties, function(prop) {
+          // If this prop pair has been saved, load its conn
+          let savedConn = _.find(savedConns, function(c) { return c['harm'].name === prop.name; });
+          if (savedConn) {
+            self.conns.push(savedConn);
+          }
+          // Else load an empty version
+          else {
             self.conns.push({
               src: null,
               harm: {name: prop.name, type: prop.datatype}
             });
-          });
-        } else {
-          self.conns = savedConns;
-        }
+          }
+        });
         this.connsInit = true;
       }
     });
@@ -148,6 +152,7 @@ export class MapComponent implements OnInit {
       name: mapName,
       conns: this.conns
     }
+    // Temporarily saving locally
     localStorage.setItem("mapping", JSON.stringify(localObj));
     // TODO use service to save
     this.mapService.saveMap(this.entityName, mapName, JSON.stringify(localObj));
@@ -156,6 +161,7 @@ export class MapComponent implements OnInit {
 
   getMap() {
     let result = null;
+    // Temporarily saving locally
     let localString = localStorage.getItem("mapping");
     if (localString) {
       let localObj = JSON.parse(localString);
