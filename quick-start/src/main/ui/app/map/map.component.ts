@@ -4,6 +4,7 @@ import { Entity } from '../entities';
 import { EntitiesService } from '../entities/entities.service';
 import { SearchService } from '../search/search.service';
 import { MapService } from './map.service';
+import { MdlDialogService } from '@angular-mdl/core';
 
 import * as _ from 'lodash';
 
@@ -107,7 +108,8 @@ export class MapComponent implements OnInit {
     private mapService: MapService,
     private entitiesService: EntitiesService,
     private router: Router,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    private dialogService: MdlDialogService
   ) {}
 
   ngOnInit() {
@@ -121,9 +123,6 @@ export class MapComponent implements OnInit {
 
   handleSelection(prop, proptype, index): void {
     let conn = this.conns[index];
-    console.log('conns', this.conns);
-    console.log('conn', conn);
-    console.log('prop', prop);
     if (prop === null) {
       conn[proptype] = null;
     } else {
@@ -156,7 +155,17 @@ export class MapComponent implements OnInit {
     localStorage.setItem("mapping", JSON.stringify(localObj));
     // TODO use service to save
     this.mapService.saveMap(this.entityName, mapName, JSON.stringify(localObj));
-    this.router.navigate(['/flows', this.entityName, this.flowName, 'HARMONIZE'])
+    this.router.navigate(['/flows', this.entityName, this.flowName, 'HARMONIZE']);
+  }
+
+  cancelMap(): void {
+    let result = this.dialogService.confirm('Cancel and lose any changes?', 'Stay On Page', 'Cancel');
+    result.subscribe( () => {
+        this.router.navigate(['/flows', this.entityName, this.flowName, 'HARMONIZE']);
+      },(err: any) => {
+        console.log('map cancel aborted');
+      }
+    );
   }
 
   getMap() {
