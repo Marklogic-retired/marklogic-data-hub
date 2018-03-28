@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package com.marklogic.hub;
+package com.marklogic.hub.scaffolding;
 
+import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.error.ScaffoldingValidationException;
 import com.marklogic.hub.flow.CodeFormat;
 import com.marklogic.hub.flow.FlowType;
