@@ -18,7 +18,7 @@ package com.marklogic.hub.main;
 import com.marklogic.hub.flow.CodeFormat;
 
 /**
- * Interface to the main plugin module
+ * Interface to the in-memory representation of the main plugin module (main.sjs or main.xqy)
  */
 public interface MainPlugin {
     String getModule();

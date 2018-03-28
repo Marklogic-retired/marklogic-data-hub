@@ -21,7 +21,7 @@ import com.marklogic.client.DatabaseClient;
 import com.marklogic.hub.validate.impl.EntitiesValidatorImpl;
 
 /**
- * Uses a databaseClient to run an entity validation against all entities defined or
+ * Uses a supplied DatabaseClient to run an entity validation against all entities defined or
  * against a specific entity/flow/plugins (triples etc) combination
  */
 public interface EntitiesValidator {

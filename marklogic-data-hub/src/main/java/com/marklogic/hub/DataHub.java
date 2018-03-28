@@ -26,7 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * Base DHF class. This handles creation and orchastration of DHF with a MarkLogic server.
+ * Handles creation and orchastration of DHF with a MarkLogic server.
  *
  * Includes installs, version validation, updates, and the init of a DHF project.
  */
