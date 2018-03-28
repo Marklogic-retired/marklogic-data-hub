@@ -97,6 +97,11 @@ export class MapComponent implements OnInit {
           };
           self.sampleDocSrcProps.push(prop);
         });
+        console.log('start with', self.sampleDocSrcProps);
+        // TODO sort order
+        self.sampleDocSrcProps = _.sortBy(self.sampleDocSrcProps, ['key']);
+        // TODO filter by type
+        self.sampleDocSrcProps = _.filter(self.sampleDocSrcProps, ['type', 'string']);
       });
     },
     () => {},
