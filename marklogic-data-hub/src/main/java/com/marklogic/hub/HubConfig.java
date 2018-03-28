@@ -68,6 +68,8 @@ public interface HubConfig {
     Integer DEFAULT_FORESTS_PER_HOST = 4;
 
     String DEFAULT_CUSTOM_FOREST_PATH = "forests";
+    String PII_QUERY_ROLESET_FILE = "pii-reader.json";
+    String PII_PROTECTED_PATHS_FILE = "pii-protected-paths.json";
 
     /**
      * Gets the hostname of the AppConfig
