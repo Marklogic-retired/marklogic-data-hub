@@ -20,7 +20,7 @@ import com.marklogic.hub.flow.Flow;
 import java.util.List;
 
 /**
- * A entity object. The data hub groups data by entities.
+ * Entity interface, holds basics about a defined entity object
  */
 public interface Entity {
     /**

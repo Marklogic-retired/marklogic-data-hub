@@ -19,6 +19,11 @@ package com.marklogic.hub;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.hub.impl.TracingImpl;
 
+/**
+ * Enables or disables tracing in the DHF for the specified database using the supplied client.
+ *
+ * Please keep tracing disabled against a production environment.
+ */
 public interface Tracing {
     /**
      * Creates and returns a tracing object

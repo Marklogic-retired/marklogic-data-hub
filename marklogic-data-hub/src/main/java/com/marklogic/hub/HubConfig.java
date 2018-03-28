@@ -25,7 +25,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 
 /**
- * A class for passing around the Data Hub's Configuration
+ * An interface to set, manage and recall the Data Hub's Configuration
  */
 public interface HubConfig {
 

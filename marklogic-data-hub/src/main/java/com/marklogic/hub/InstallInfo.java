@@ -18,6 +18,11 @@ package com.marklogic.hub;
 
 import com.marklogic.hub.impl.InstallInfoImpl;
 
+/**
+ * Stores and reports information from MarkLogic server about the installed status of the DHF
+ *
+ * This interface abstracts holding state. It does not make any calls itself.
+ */
 public interface InstallInfo {
 
     /**

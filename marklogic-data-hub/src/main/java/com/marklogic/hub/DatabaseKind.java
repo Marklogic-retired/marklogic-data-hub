@@ -18,6 +18,12 @@ package com.marklogic.hub;
 
 import com.marklogic.hub.error.InvalidDBOperationError;
 
+/**
+ * Public enumeration for the types of databases in MarkLogic that the
+ * DHF uses. databaseNames are the string representations of types.
+ *
+ * Throws an error if an invalid DatabaseKind is specified.
+ */
 public enum DatabaseKind {
         STAGING,
         FINAL,

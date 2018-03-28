@@ -20,6 +20,9 @@ import com.marklogic.hub.impl.EntityManagerImpl;
 
 import java.util.HashMap;
 
+/**
+ * Manages existing entities' MarkLogic Server database index settings and query options.
+ */
 public interface EntityManager {
     /**
      * Creates and returns the EntityManager object

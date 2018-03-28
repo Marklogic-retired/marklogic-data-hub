@@ -17,10 +17,9 @@ package com.marklogic.hub.main;
 
 import com.marklogic.hub.flow.CodeFormat;
 
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-import java.util.Properties;
-
+/**
+ * Interface to the main plugin module
+ */
 public interface MainPlugin {
     String getModule();
     CodeFormat getCodeFormat();
