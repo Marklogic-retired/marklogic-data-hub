@@ -3,8 +3,27 @@
   <div class="map-container">
 
     <div id="map-heading">
+
       <h1>{{flowName}} Map</h1>
+
+      <div id="save-map">
+        <mdl-button mdl-button-type="raised" mdl-colored="primary" mdl-ripple (click)="saveMap()">Save Map</mdl-button>
+        <mdl-button mdl-button-type="raised" mdl-colored mdl-ripple (click)="cancelMap()">Cancel</mdl-button>
+      </div>
+
     </div>
+
+    <!-- Filter menu for narrowing menu properties -->
+    <!-- <div>
+      <mdl-select
+        label="Types to show"
+        floating-label
+        [(ngModel)]="filterSelected"
+        (blur)="handleFilter($event)"
+      >
+        <mdl-option *ngFor="let f of filterMenu" [value]="f">{{f}}</mdl-option>
+      </mdl-select>
+    </div> -->
 
     <div id="source">
       <div id="src-heading" #srcheading>
@@ -22,7 +41,8 @@
                   <!--<span class="prop-name">{{conns[i]['src'].key}}</span><span class="prop-type">{{conns[i]['src'].val}}</span>-->
 
                   <span class="prop-name">{{conns[i]['src'].key}}</span>
-                  <span class="prop-val" title="{{type}}">{{ conns[i]['src'].type === "string" ? '"' : '' }}{{ conns[i]['src'].val | slice:0:valMaxLen }}{{ conns[i]['src'].val.length > valMaxLen ? '...' : '' }}{{ conns[i]['src'].type === "string" ? '"' : '' }}</span>
+                  <!-- <span class="prop-type">{{conns[i]['src'].type}}</span> -->
+                  <span class="prop-val" title="{{conns[i]['src'].type}}">{{ getType(conns[i]['src'].val) === "string" ? '"' : '' }}{{ conns[i]['src'].val | slice:0:valMaxLen }}{{ conns[i]['src'].val.length > valMaxLen ? '...' : '' }}{{ getType(conns[i]['src'].val) === "string" ? '"' : '' }}</span>
 
                 </div>
               </div>
@@ -32,13 +52,14 @@
               <div class="prop-select-control"><span class="caret"></span></div>
             </button>
             <ul *dropdownMenu class="dropdown-menu" role="menu">
-              <li *ngFor="let prop of sampleDocSrcProps;"
+              <li *ngFor="let prop of getProps(conns[i]['harm'].type);"
                   role="menuitem"
                   on-click="handleSelection(prop, 'src', i)">
                 <a class="dropdown-item" href="javascript:void(0)">
                   <!--<span class="prop-name">{{prop.key}}</span><span class="prop-val">{{prop.val}}</span>-->
 
                   <span class="prop-name">{{prop.key}}</span>
+                  <!-- <span class="prop-type">{{prop.type}}</span> -->
                   <span class="prop-val" title="{{type}}">{{ prop.type === "string" ? '"' : '' }}{{ prop.val | slice:0:valMaxLen }}{{ prop.val.length > valMaxLen ? '...' : '' }}{{ prop.type === "string" ? '"' : '' }}</span>
 
                 </a>
@@ -70,18 +91,6 @@
 
       </div><!-- ngFor -->
     </div><!-- harmonized -->
-
-    <div id="save-map">
-
-      <!-- <mdl-textfield floating-label type="string"
-          label="Map Name"
-          name="mapName"
-          [(ngModel)]="mapName"
-      ></mdl-textfield> -->
-      <mdl-button mdl-button-type="raised" mdl-colored="primary" mdl-ripple (click)="saveMap()">Save Map</mdl-button>
-      <mdl-button mdl-button-type="raised" mdl-colored mdl-ripple (click)="cancelMap()">Cancel</mdl-button>
-
-    </div><!-- save-map -->
 
   </div><!-- map-container -->
 

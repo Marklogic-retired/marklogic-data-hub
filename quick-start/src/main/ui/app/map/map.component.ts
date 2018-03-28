@@ -36,6 +36,9 @@ export class MapComponent implements OnInit {
   private entityName: string;
   private flowName: string;
 
+  private filterMenu: Array<string> = ['all', 'matching', 'string', 'number', 'date'];
+  private filterSelected: string = 'all';
+
   /**
    * Get entities and choose one to serve as harmonized model.
    */
@@ -93,7 +96,7 @@ export class MapComponent implements OnInit {
           let prop = {
             key: key,
             val: String(val),
-            type: typeof(val)
+            type: self.getType(val)
           };
           self.sampleDocSrcProps.push(prop);
         });
@@ -131,11 +134,50 @@ export class MapComponent implements OnInit {
     if (prop === null) {
       conn[proptype] = null;
     } else {
+      console.log('prop', prop);
       conn[proptype] = {
         key: prop.key,
         type: prop.type,
         val: prop.val
       };
+    }
+  }
+
+  handleFilter(event) {
+    console.log('filterChanged', event);
+    this.filterSelected = event;
+  }
+
+  getProps(type) {
+    console.log('type', type);
+    let self = this;
+    this.sampleDocSrcProps = [];
+    _.forEach(this.sampleDocSrc['envelope']['instance'], function(val, key) {
+      let prop = {
+        key: key,
+        val: String(val),
+        type: self.getType(val)
+      };
+      self.sampleDocSrcProps.push(prop);
+    });
+    // TODO filter by type
+    if (this.filterSelected !== 'all') {
+      if (this.filterSelected === 'type match') {
+        self.sampleDocSrcProps = _.filter(self.sampleDocSrcProps, ['type', type]);
+      } else {
+        self.sampleDocSrcProps = _.filter(self.sampleDocSrcProps, ['type', this.filterSelected]);
+      }
+    }
+    return self.sampleDocSrcProps;
+  }
+
+  getType(value) {
+    if (value instanceof Date) {
+      return 'date';
+    } else if (Number.isInteger(Number.parseInt(value))) {
+      return 'number';
+    } else {
+      return 'string';
     }
   }
 
