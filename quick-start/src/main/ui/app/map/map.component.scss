@@ -1,17 +1,33 @@
 .map-container {
   width: 1050px;
   padding: 0;
-  #map-heading h1 {
-    font-size: 34px;
-    font-weight: normal;
-    margin: 10px 0;
-    padding: 0;
+}
+
+#map-heading {
+  height: 70px;
+}
+
+#map-heading h1 {
+  font-size: 34px;
+  font-weight: normal;
+  margin: 10px 0;
+  padding: 0;
+  width: 700px;
+  position: relative;
+  float: left;
+}
+
+#save-map {
+  padding-top: 15px;
+  padding-left: 30px;
+  mdl-button {
+    margin-right: 5px;
   }
 }
 
 h4.item-type {
   margin: 0;
-  padding: 20px 0 0 0;
+  padding: 0;
 }
 
 p.item-identifying-info {
@@ -25,14 +41,6 @@ p.item-identifying-info {
   width: 350px;
   margin: 0;
   /* border: solid 1px red; */
-}
-
-#save-map {
-  padding-top: 25px;
-  padding-left: 40px;
-  mdl-button {
-    margin-right: 5px;
-  }
 }
 
 .prop-container {
