@@ -32,3 +32,12 @@ $error: unquote("rgb(#{$palette-datahub-red})");
     }
   }
 }
+
+.map-not-avail {
+  color: #999;
+  font-style: italic;
+}
+
+.map-saved a {
+  color: #000;
+}

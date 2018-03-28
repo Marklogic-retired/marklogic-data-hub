@@ -27,7 +27,7 @@
           <h4>Map</h4>
         </div>
         <div *ngIf="!hasDocs">
-          <span>No documents for mapping. To use a map, run an input flow to load documents.</span>
+          <span class="map-not-avail">No source documents available for mapping. To define a map, run an input flow to load documents.</span>
         </div>
         <div *ngIf="hasDocs">
           <div *ngIf="!mapName">
@@ -44,14 +44,6 @@
             </span>
           </div>
         </div>
-        <!-- <mdl-select
-          label="Map"
-          floating-label
-          [(ngModel)]="settings.map"
-          (blur)="mapChanged($event)"
-        >
-          <mdl-option *ngFor="let m of mapsMenu" [value]="m">{{m}}</mdl-option>
-        </mdl-select> -->
       </div>
       <app-select-key-values
         [title]="keyValTitle"
