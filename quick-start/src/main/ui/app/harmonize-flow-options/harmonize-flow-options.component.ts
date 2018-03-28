@@ -62,6 +62,7 @@ export class HarmonizeFlowOptionsComponent implements OnInit, OnChanges {
     this.loadMap(this.flow.flowName);
     this.loadSettings(this.flow.flowName);
     this.docsLoaded(this.flow.entityName);
+    this.saveSettings();
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -116,6 +117,7 @@ export class HarmonizeFlowOptionsComponent implements OnInit, OnChanges {
       let mapName = this.mapService.getName(this.flow.entityName, this.flow.flowName);
       this.mapService.deleteMap(this.flow.entityName, mapName);
       localStorage.setItem("mapping", JSON.stringify(localObj));
+      this.saveSettings();
       },
       (err: any) => {
         console.log('map delete canceled');
@@ -155,7 +157,9 @@ export class HarmonizeFlowOptionsComponent implements OnInit, OnChanges {
         this.settings.options[kv.key] = kv.val;
       }
     }, this);
-    this.entitiesService.saveHarmonizeFlowOptions(this.flow, this.settings.batchSize, this.settings.threadCount, {foo: "bar"}, this.settings.options);
+    this.entitiesService.saveHarmonizeFlowOptions(
+      this.flow, this.settings.batchSize, this.settings.threadCount, {name: this.mapName}, this.settings.options
+    );
   }
 
   deleteSettings(flowName) {
