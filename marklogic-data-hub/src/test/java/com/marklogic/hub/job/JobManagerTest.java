@@ -1,3 +1,18 @@
+/*
+ * Copyright 2012-2018 MarkLogic Corporation
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.marklogic.hub.job;
 
 import com.marklogic.client.eval.EvalResultIterator;
@@ -8,7 +23,8 @@ import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.flow.*;
 import com.marklogic.hub.scaffold.Scaffolding;
 import org.custommonkey.xmlunit.XMLUnit;
-import org.junit.jupiter.api.*;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,7 +38,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.zip.ZipFile;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.Assert.*;
+
 
 public class JobManagerTest extends HubTestBase {
     private static final String ENTITY = "e2eentity";
@@ -34,12 +51,13 @@ public class JobManagerTest extends HubTestBase {
     private FlowItemCompleteListener flowItemCompleteListener =
         (jobId, itemId) -> recordJobId(jobId);
 
-    @BeforeAll
-    public static void setupSuite() {
+    @Before
+    public void setupStuff() {
         XMLUnit.setIgnoreWhitespace(true);
         deleteProjectDir();
 
-        installHub();
+        installHubOnce();
+
         enableDebugging();
         enableTracing();
 
@@ -62,17 +80,8 @@ public class JobManagerTest extends HubTestBase {
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME,
             HubConfig.DEFAULT_TRACE_NAME);
 
-    }
 
-    @AfterAll
-    public static void teardownSuite() {
-        uninstallHub();
 
-        deleteProjectDir();
-    }
-
-    @BeforeEach
-    public void setup() {
         // Run a flow a couple times to generate some job/trace data.
         jobIds.clear();
         FlowManager fm = FlowManager.create(getHubConfig());
@@ -103,11 +112,6 @@ public class JobManagerTest extends HubTestBase {
         flowRunner.awaitCompletion();
     }
 
-    @AfterEach
-    public void teardown() {
-        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME,
-            HubConfig.DEFAULT_TRACE_NAME);
-    }
 
     private static synchronized void recordJobId(String jobId) {
         jobIds.add(jobId);

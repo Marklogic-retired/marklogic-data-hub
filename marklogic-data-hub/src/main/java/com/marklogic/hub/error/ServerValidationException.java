@@ -17,8 +17,6 @@ package com.marklogic.hub.error;
 
 public class ServerValidationException extends RuntimeException {
 
-    private static final long serialVersionUID = -958991214928671059L;
-
     public ServerValidationException(String message) {
         super(message);
     }

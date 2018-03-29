@@ -43,3 +43,4 @@ bin/
 build/
 src/main/resources/static/
 src/main/resources/templates/
+package-lock.json

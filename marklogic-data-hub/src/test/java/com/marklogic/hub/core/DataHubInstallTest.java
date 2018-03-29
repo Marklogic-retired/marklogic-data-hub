@@ -1,11 +1,29 @@
-package com.marklogic.hub;
+/*
+ * Copyright 2012-2018 MarkLogic Corporation
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.marklogic.hub.core;
 
 import com.marklogic.client.eval.EvalResult;
 import com.marklogic.client.eval.EvalResultIterator;
 import com.marklogic.client.ext.modulesloader.impl.PropertiesModuleManager;
+import com.marklogic.hub.DataHub;
+import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.util.Versions;
 import org.custommonkey.xmlunit.XMLUnit;
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
@@ -16,24 +34,35 @@ import java.net.URL;
 import java.nio.file.Paths;
 
 import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class DataHubInstallTest extends HubTestBase {
     private static int afterTelemetryInstallCount = 0;
+    //As a note, whenever you see these consts, it's due to the additional building of the javascript files bundling down that will then get
+    //deployed with the rest of the modules code. This means it'll be 20 higher than if the trace UI was never built
+    public static final int CORE_MODULE_COUNT_WITH_TRACE_MODULES = 22;
+    public static final int CORE_MODULE_COUNT = 2;
+    public static final int MODULE_COUNT = 6;
+    public static final int MODULE_COUNT_WITH_TRACE_MODULES = 26;
+    public static final int MODULE_COUNT_WITH_USER_MODULES = 26;
+    public static final int MODULE_COUNT_WITH_USER_MODULES_AND_TRACE_MODULES = 46;
 
-    @BeforeClass
-    public static void setup() {
+    static boolean setupDone=false;
+    @Before
+    public void setup() {
+        // special case do-one setup.
         XMLUnit.setIgnoreWhitespace(true);
-        uninstallHub();
-        installHub();
+        // the project dir must be available for uninstall to do anything... interesting.
+        createProjectDir();
+        if (!setupDone) getDataHub().uninstall();
+        if (!setupDone) installHubOnce();
+        setupDone=true;
         afterTelemetryInstallCount = getTelemetryInstallCount();
     }
 
     @Test
     public void testTelemetryInstallCount() throws IOException {
-        assertTrue("Telemetry install count was not incremented during install", afterTelemetryInstallCount > 0);
+        assertTrue("Telemetry install count was not incremented during install.  Value now is " + afterTelemetryInstallCount, afterTelemetryInstallCount > 0);
     }
 
     @Test
@@ -44,8 +73,8 @@ public class DataHubInstallTest extends HubTestBase {
         int totalCount = getDocCount(HubConfig.DEFAULT_MODULES_DB_NAME, null);
         int hubModulesCount = getDocCount(HubConfig.DEFAULT_MODULES_DB_NAME, "hub-core-module");
 
-        assertTrue(totalCount + " is not correct", MODULE_COUNT == totalCount || MODULE_COUNT_WITH_TRACE_MODULES == totalCount);
-        assertTrue(hubModulesCount + "  is not correct", CORE_MODULE_COUNT_WITH_TRACE_MODULES == hubModulesCount || CORE_MODULE_COUNT == hubModulesCount);
+        assertTrue(totalCount + " is not correct.  I was expecting either " + MODULE_COUNT + " or " + MODULE_COUNT_WITH_TRACE_MODULES, MODULE_COUNT == totalCount || MODULE_COUNT_WITH_TRACE_MODULES == totalCount);
+        assertTrue(hubModulesCount + "  is not correct.  I was expecting either " + CORE_MODULE_COUNT_WITH_TRACE_MODULES + " or " + CORE_MODULE_COUNT_WITH_TRACE_MODULES, CORE_MODULE_COUNT_WITH_TRACE_MODULES == hubModulesCount || CORE_MODULE_COUNT == hubModulesCount);
 
         assertTrue("trace options not installed", getModulesFile("/Default/data-hub-TRACING/rest-api/options/traces.xml").length() > 0);
         assertTrue("trace options not installed", getModulesFile("/Default/data-hub-JOBS/rest-api/options/jobs.xml").length() > 0);
@@ -67,12 +96,12 @@ public class DataHubInstallTest extends HubTestBase {
         HubConfig hubConfig = getHubConfig(path);
 
         int totalCount = getDocCount(HubConfig.DEFAULT_MODULES_DB_NAME, null);
-        assertTrue(totalCount + " is not correct", MODULE_COUNT == totalCount || MODULE_COUNT_WITH_TRACE_MODULES == totalCount);
+        assertTrue(totalCount + " is not correct.  I was expecting either " + MODULE_COUNT + " or " + MODULE_COUNT_WITH_TRACE_MODULES, MODULE_COUNT == totalCount || MODULE_COUNT_WITH_TRACE_MODULES == totalCount);
 
         installUserModules(hubConfig, true);
 
         totalCount = getDocCount(HubConfig.DEFAULT_MODULES_DB_NAME, null);
-        assertTrue(totalCount + " is not correct", MODULE_COUNT_WITH_USER_MODULES == totalCount || MODULE_COUNT_WITH_USER_MODULES_AND_TRACE_MODULES == totalCount);
+        assertTrue(totalCount + " is not correct.  I was expecting either " + MODULE_COUNT_WITH_USER_MODULES + " or " + MODULE_COUNT_WITH_USER_MODULES_AND_TRACE_MODULES, MODULE_COUNT_WITH_USER_MODULES == totalCount || MODULE_COUNT_WITH_USER_MODULES_AND_TRACE_MODULES == totalCount);
 
         assertEquals(
             getResource("data-hub-test/plugins/entities/test-entity/harmonize/final/collector.xqy"),
@@ -194,17 +223,20 @@ public class DataHubInstallTest extends HubTestBase {
         dataHub.clearUserModules();
 
         int totalCount = getDocCount(HubConfig.DEFAULT_MODULES_DB_NAME, null);
-        assertTrue(totalCount + " is not correct", MODULE_COUNT == totalCount || MODULE_COUNT_WITH_TRACE_MODULES == totalCount);
+        assertTrue(totalCount + " is not correct.  I was expecting either " + MODULE_COUNT + " or " + MODULE_COUNT_WITH_TRACE_MODULES,
+            MODULE_COUNT == totalCount || MODULE_COUNT_WITH_TRACE_MODULES == totalCount);
 
         installUserModules(hubConfig, true);
 
         totalCount = getDocCount(HubConfig.DEFAULT_MODULES_DB_NAME, null);
-        assertTrue(totalCount + " is not correct", MODULE_COUNT_WITH_USER_MODULES == totalCount || MODULE_COUNT_WITH_USER_MODULES_AND_TRACE_MODULES == totalCount);
+        assertTrue(totalCount + " is not correct.  I was expecting either " + MODULE_COUNT_WITH_USER_MODULES + " or " + MODULE_COUNT_WITH_USER_MODULES_AND_TRACE_MODULES,
+            MODULE_COUNT_WITH_USER_MODULES == totalCount || MODULE_COUNT_WITH_USER_MODULES_AND_TRACE_MODULES == totalCount);
 
         dataHub.clearUserModules();
 
         totalCount = getDocCount(HubConfig.DEFAULT_MODULES_DB_NAME, null);
-        assertTrue(totalCount + " is not correct", MODULE_COUNT == totalCount || MODULE_COUNT_WITH_TRACE_MODULES == totalCount);
+        assertTrue(totalCount + " is not correct.  I was expecting either " + MODULE_COUNT + " or " + MODULE_COUNT_WITH_TRACE_MODULES,
+            MODULE_COUNT == totalCount || MODULE_COUNT_WITH_TRACE_MODULES == totalCount);
 
     }
 }

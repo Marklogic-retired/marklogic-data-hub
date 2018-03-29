@@ -43,13 +43,13 @@ public class HubConfigJsonTest {
     private JacksonTester<HubConfig> jsonSerializer;
 
     @Autowired
-    private JacksonTester<HubConfigImpl> jsonDeserializer;
+    private JacksonTester<HubConfig> jsonDeserializer;
 
     @Test
     public void testDeserialize() throws IOException {
         // need to escape the backslashes on Windows. On Linux, there won't be any, so the replace will have no effect
         String projectPath = new File(PROJECT_PATH).getAbsolutePath().replace("\\", "\\\\");
-        String content = "{\n" +
+        String expected = "{\n" +
             "  \"host\": null,\n" +
             "  \"stagingDbName\": \"data-hub-STAGING\",\n" +
             "  \"stagingHttpName\": \"data-hub-STAGING\",\n" +
@@ -84,8 +84,8 @@ public class HubConfigJsonTest {
             "  \"projectDir\": \"" + projectPath + "\",\n" +
             "  \"jarVersion\": \"0.1.2\"\n" +
             "}";
-        HubConfig expected = HubConfigBuilder.newHubConfigBuilder(PROJECT_PATH).withPropertiesFromEnvironment().build();
-        assertThat(this.jsonDeserializer.parseObject(content).getHubPluginsDir()).isEqualTo(expected.getHubPluginsDir());
+        HubConfig actual = HubConfigBuilder.newHubConfigBuilder(PROJECT_PATH).withPropertiesFromEnvironment().build();
+        assertThat(this.jsonDeserializer.parseObject(expected).getHubPluginsDir()).isEqualTo(actual.getHubPluginsDir());
     }
 
     @Test

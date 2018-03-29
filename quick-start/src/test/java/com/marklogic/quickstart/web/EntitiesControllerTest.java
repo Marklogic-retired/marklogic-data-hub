@@ -80,7 +80,7 @@ public class EntitiesControllerTest extends BaseTestController {
     public void runHarmonizeNoOptions() throws IOException, InterruptedException {
         // Set up (not needed for other tests)
         baseSetUp();
-        installHub();
+        installHubOnce();
 
         Path projectDir = Paths.get(".", PROJECT_PATH);
         Scaffolding scaffolding = Scaffolding.create(projectDir.toString(), stagingClient);
@@ -121,7 +121,7 @@ public class EntitiesControllerTest extends BaseTestController {
     public void runHarmonizeFlowWithOptions() throws IOException, InterruptedException {
         // Set up (not needed for other tests)
         baseSetUp();
-        installHub();
+        installHubOnce();
 
         Path projectDir = Paths.get(".", PROJECT_PATH);
         Scaffolding scaffolding = Scaffolding.create(projectDir.toString(), stagingClient);

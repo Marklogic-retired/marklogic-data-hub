@@ -13,8 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.marklogic.hub;
+package com.marklogic.hub.core;
 
+import com.marklogic.hub.DatabaseKind;
+import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.impl.DataHubImpl;
 import com.marklogic.hub.util.Versions;
 import com.marklogic.mgmt.resource.appservers.ServerManager;

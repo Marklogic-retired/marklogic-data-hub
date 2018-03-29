@@ -15,6 +15,10 @@
  */
 package com.marklogic.hub;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
@@ -27,6 +31,8 @@ import java.nio.file.Path;
 /**
  * A class for passing around the Data Hub's Configuration
  */
+@JsonDeserialize(as = HubConfigImpl.class)
+@JsonSerialize(as = HubConfigImpl.class)
 public interface HubConfig {
 
     String HUB_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES = "hub-modules-deploy-timestamps.properties";
@@ -444,6 +450,7 @@ public interface HubConfig {
      * Returns the current appconfig object attached to the HubConfig
      * @return Returns current AppConfig object set for HubConfig
      */
+    @JsonIgnore
     AppConfig getAppConfig();
 
     /**
@@ -462,7 +469,6 @@ public interface HubConfig {
     /**
      * Gets the current version of the DHF Jar
      * @return Version of DHF Jar file as string
-     * @throws IOException if current jar can't be found
      */
-    String getJarVersion() throws IOException;
+    String getJarVersion();
 }

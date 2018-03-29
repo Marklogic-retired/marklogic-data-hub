@@ -163,7 +163,7 @@ public class HubConfigBuilderImpl implements HubConfigBuilder {
         return hubConfig;
     }
 
-    // loads properties off of disk
+    // loads properties off of disk, from project directory
     private Properties getPropertiesFromEnvironment() {
         Properties environmentProperties = new Properties();
 

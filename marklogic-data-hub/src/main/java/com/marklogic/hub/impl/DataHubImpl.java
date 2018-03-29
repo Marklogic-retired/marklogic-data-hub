@@ -309,7 +309,7 @@ public class DataHubImpl implements DataHub {
     @Override public void install(HubDeployStatusListener listener) {
         initProject();
 
-        logger.info("Installing the Data Hub into MarkLogic");
+        logger.warn("Installing the Data Hub into MarkLogic");
 
         AppConfig config = hubConfig.getAppConfig();
         HubAppDeployer deployer = new HubAppDeployer(getManageClient(), getAdminManager(), listener);
@@ -338,7 +338,7 @@ public class DataHubImpl implements DataHub {
      * @param listener - the callback method to receive status updates
      */
     @Override public void uninstall(HubDeployStatusListener listener) {
-        logger.debug("Uninstalling the Data Hub from MarkLogic");
+        logger.warn("Uninstalling the Data Hub from MarkLogic");
 
         AppConfig config = hubConfig.getAppConfig();
         HubAppDeployer deployer = new HubAppDeployer(getManageClient(), getAdminManager(), listener);

@@ -62,7 +62,7 @@ public class ProjectsControllerTest extends BaseTestController {
     }
 
     @After
-    public void teardown() {
+    public void teardownDir() {
         temporaryFolder.delete();
     }
 

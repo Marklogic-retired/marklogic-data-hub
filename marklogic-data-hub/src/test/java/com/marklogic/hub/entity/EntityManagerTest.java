@@ -13,16 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.marklogic.hub;
+package com.marklogic.hub.entity;
 
+import com.marklogic.hub.EntityManager;
+import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.scaffold.impl.ScaffoldingImpl;
 import com.marklogic.hub.util.FileUtil;
 import com.marklogic.hub.util.HubModuleManager;
 import org.apache.commons.io.FileUtils;
-import org.custommonkey.xmlunit.XMLUnit;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
@@ -39,27 +39,17 @@ public class EntityManagerTest extends HubTestBase {
     static Path projectPath = Paths.get(PROJECT_PATH).toAbsolutePath();
     private static File projectDir = projectPath.toFile();
 
-    @BeforeClass
-    public static void setup() {
-        XMLUnit.setIgnoreWhitespace(true);
-
-        deleteProjectDir();
-        installHub();
+    @Before
+    public void setup() {
+        basicSetup();
     }
 
     @Before
     public void clearDbs() {
-        deleteProjectDir();
-        createProjectDir();
+        basicSetup();
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_MODULES_DB_NAME);
         installHubModules();
         getPropsMgr().deletePropertiesFile();
-    }
-
-    @AfterClass
-    public static void teardown() {
-    	uninstallHub();
-        deleteProjectDir();
     }
 
     private void installEntities() {
@@ -158,6 +148,7 @@ public class EntityManagerTest extends HubTestBase {
         deployed = entityManager.deployQueryOptions();
         assertEquals(0, deployed.size());
     }
+
 
     @Test
     public void testSaveDbIndexes() throws IOException {

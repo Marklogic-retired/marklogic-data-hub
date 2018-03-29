@@ -1,37 +1,19 @@
-package com.marklogic.hub;
-
-import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-
-import java.io.FileWriter;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.Vector;
-import java.util.concurrent.TimeUnit;
-
-import org.apache.commons.io.FileUtils;
-import org.custommonkey.xmlunit.XMLUnit;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.DynamicTest;
-import org.junit.jupiter.api.TestFactory;
-import org.junit.platform.runner.JUnitPlatform;
-import org.junit.runner.RunWith;
-import org.skyscreamer.jsonassert.JSONAssert;
-import org.skyscreamer.jsonassert.JSONCompare;
-import org.skyscreamer.jsonassert.JSONCompareMode;
-import org.skyscreamer.jsonassert.JSONCompareResult;
-import org.w3c.dom.Document;
+/*
+ * Copyright 2012-2018 MarkLogic Corporation
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.marklogic.hub.jupiterbased;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -42,6 +24,25 @@ import com.marklogic.client.datamovement.JobTicket;
 import com.marklogic.client.datamovement.WriteBatcher;
 import com.marklogic.client.document.GenericDocumentManager;
 import com.marklogic.client.document.ServerTransform;
+import com.marklogic.hub.DataHub;
+import com.marklogic.hub.FlowManager;
+import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.HubTestBase;
+import com.marklogic.hub.scaffold.Scaffolding;
+import com.marklogic.hub.util.FileUtil;
+import com.marklogic.hub.util.MlcpRunner;
+import com.marklogic.hub.validate.EntitiesValidator;
+import org.apache.commons.io.FileUtils;
+import org.custommonkey.xmlunit.XMLUnit;
+import org.junit.jupiter.api.*;
+import org.junit.platform.runner.JUnitPlatform;
+import org.junit.runner.RunWith;
+import org.skyscreamer.jsonassert.JSONAssert;
+import org.skyscreamer.jsonassert.JSONCompare;
+import org.skyscreamer.jsonassert.JSONCompareMode;
+import org.skyscreamer.jsonassert.JSONCompareResult;
+import org.w3c.dom.Document;
+
 import com.marklogic.client.io.DOMHandle;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.FileHandle;
@@ -54,10 +55,16 @@ import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.FlowBuilder;
 import com.marklogic.hub.flow.FlowRunner;
 import com.marklogic.hub.flow.FlowType;
-import com.marklogic.hub.scaffold.Scaffolding;
-import com.marklogic.hub.util.FileUtil;
-import com.marklogic.hub.util.MlcpRunner;
-import com.marklogic.hub.validate.EntitiesValidator;
+
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
+
+import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual;
+import static org.junit.jupiter.api.Assertions.*;
 
 interface CreateFlowListener {
     void onFlowCreated(CodeFormat codeFormat, DataFormat dataFormat, FlowType flowType, String srcDir, Path flowDir, boolean useEs);
@@ -110,26 +117,26 @@ public class EndToEndFlowTests extends HubTestBase {
     private static Path projectDir = Paths.get(".", "ye-olde-project");
     private static final int TEST_SIZE = 500;
     private static final int BATCH_SIZE = 10;
-    private static FlowManager flowManager;
-    private static DataMovementManager stagingDataMovementManager;
-    private static DataMovementManager finalDataMovementManager;
+    private FlowManager flowManager;
+    private DataMovementManager stagingDataMovementManager;
+    private DataMovementManager finalDataMovementManager;
 
     private boolean installDocsFinished = false;
     private boolean installDocsFailed = false;
     private String installDocError;
 
-    private static Scaffolding scaffolding;
+    private Scaffolding scaffolding;
 
-    @BeforeAll
-    public static void setup() {
+    @BeforeEach
+    public void setup() {
         XMLUnit.setIgnoreWhitespace(true);
-        uninstallHub();
+        //uninstallHub();
         deleteProjectDir();
         if(isSslRun() || isCertAuth()) {
      		sslSetup();
 		}
 
-        installHub();
+        installHubOnce();
         enableTracing();
         enableDebugging();
 
@@ -210,13 +217,6 @@ public class EndToEndFlowTests extends HubTestBase {
         finalDataMovementManager = finalClient.newDataMovementManager();
     }
 
-    @AfterAll
-    public static void teardown() {
-        uninstallHub();
-        if(isSslRun() || isCertAuth()) {
-    		sslCleanup();
-    	}
-    }
 
     private JsonNode validateUserModules() {
         EntitiesValidator ev = EntitiesValidator.create(getHubConfig().newStagingClient());
@@ -738,11 +738,11 @@ public class EndToEndFlowTests extends HubTestBase {
         return tests;
     }
 
-    private static String getFlowName(String prefix, CodeFormat codeFormat, DataFormat dataFormat, FlowType flowType, boolean useEs) {
+    private String getFlowName(String prefix, CodeFormat codeFormat, DataFormat dataFormat, FlowType flowType, boolean useEs) {
         return prefix + "-" + flowType.toString() + "-" + codeFormat.toString() + "-" + dataFormat.toString() + (useEs ? "-es" : "" );
     }
 
-    private static void createLegacyFlow(String prefix, CodeFormat codeFormat, DataFormat dataFormat, FlowType flowType, boolean useEs) {
+    private void createLegacyFlow(String prefix, CodeFormat codeFormat, DataFormat dataFormat, FlowType flowType, boolean useEs) {
 
         if (useEs) {
             return;
@@ -776,7 +776,7 @@ public class EndToEndFlowTests extends HubTestBase {
         copyFile("e2e-test/legacy-" + dataFormat.toString() + ".xml", flowDir.resolve("" + flowName + ".xml"));
     }
 
-    private static void create2xFlow(String prefix, CodeFormat codeFormat, DataFormat dataFormat, FlowType flowType, boolean useEs) {
+    private void create2xFlow(String prefix, CodeFormat codeFormat, DataFormat dataFormat, FlowType flowType, boolean useEs) {
 
         if (useEs) {
             return;
@@ -820,13 +820,13 @@ public class EndToEndFlowTests extends HubTestBase {
         }
     }
 
-    private static void scaffoldFlows(String prefix) {
+    private void scaffoldFlows(String prefix) {
         allCombos(((codeFormat, dataFormat, flowType, useEs) -> {
             scaffoldFlow(prefix, codeFormat, dataFormat, flowType, useEs);
         }));
     }
 
-    private static void scaffoldFlow(String prefix, CodeFormat codeFormat, DataFormat dataFormat, FlowType flowType, boolean useEs) {
+    private void scaffoldFlow(String prefix, CodeFormat codeFormat, DataFormat dataFormat, FlowType flowType, boolean useEs) {
         Path entityDir = projectDir.resolve("plugins").resolve("entities").resolve(ENTITY);
         if (useEs) {
             copyFile("e2e-test/" + ENTITY + ".entity.json", entityDir.resolve(ENTITY + ".entity.json"));
@@ -843,13 +843,13 @@ public class EndToEndFlowTests extends HubTestBase {
         }
     }
 
-    private static void createFlows(String prefix, CreateFlowListener listener) {
+    private void createFlows(String prefix, CreateFlowListener listener) {
         allCombos(((codeFormat, dataFormat, flowType, useEs) -> {
             createFlow(prefix, codeFormat, dataFormat, flowType, useEs, listener);
         }));
     }
 
-    private static void createFlow(String prefix, CodeFormat codeFormat, DataFormat dataFormat, FlowType flowType, boolean useEs, CreateFlowListener listener) {
+    private void createFlow(String prefix, CodeFormat codeFormat, DataFormat dataFormat, FlowType flowType, boolean useEs, CreateFlowListener listener) {
         String flowName = getFlowName(prefix, codeFormat, dataFormat, flowType, useEs);
         Path entityDir = projectDir.resolve("plugins").resolve("entities").resolve(ENTITY);
         Path flowDir = entityDir.resolve(flowType.toString()).resolve(flowName);
@@ -886,7 +886,7 @@ public class EndToEndFlowTests extends HubTestBase {
         }
     }
 
-    private static void copyFile(String srcDir, Path dstDir) {
+    private void copyFile(String srcDir, Path dstDir) {
         FileUtil.copy(getResourceStream(srcDir), dstDir.toFile());
     }
 
@@ -1139,7 +1139,7 @@ public class EndToEndFlowTests extends HubTestBase {
             }
         }
     }
-    
+
     private void testInputFlowViaDMSDK(String prefix, String fileSuffix, CodeFormat codeFormat, DataFormat dataFormat, boolean useEs, boolean passJobId, Map<String, Object> options, FinalCounts finalCounts) {
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_TRACE_NAME, HubConfig.DEFAULT_JOB_NAME);
         String flowName = getFlowName(prefix, codeFormat, dataFormat, FlowType.INPUT, useEs);
@@ -1152,7 +1152,7 @@ public class EndToEndFlowTests extends HubTestBase {
         assertEquals(0, finalCount);
         assertEquals(0, tracingCount);
         assertEquals(0, jobsCount);
-        
+
         String transform = codeFormat.equals(CodeFormat.JAVASCRIPT) ? "ml:sjsInputFlow" : "ml:inputFlow";
 		ServerTransform serverTransform = new ServerTransform(transform);
         if (passJobId) {
@@ -1174,10 +1174,10 @@ public class EndToEndFlowTests extends HubTestBase {
                 break;
         }
         handle.setFormat(format);
-        
+
         WriteBatcher batcher = stagingDataMovementManager.newWriteBatcher();
         batcher.withBatchSize(1).withTransform(serverTransform);
-        batcher.onBatchSuccess(batch -> {	
+        batcher.onBatchSuccess(batch -> {
 		}).onBatchFailure((batch, throwable) -> {
 			throwable.printStackTrace();
 		});

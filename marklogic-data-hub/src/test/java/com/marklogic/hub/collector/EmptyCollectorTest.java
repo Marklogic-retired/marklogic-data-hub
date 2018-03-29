@@ -1,3 +1,18 @@
+/*
+ * Copyright 2012-2018 MarkLogic Corporation
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.marklogic.hub.collector;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -9,13 +24,10 @@ import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.flow.*;
 import com.marklogic.hub.scaffold.Scaffolding;
-import org.apache.commons.io.FileUtils;
 import org.custommonkey.xmlunit.XMLUnit;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -28,17 +40,16 @@ public class EmptyCollectorTest extends HubTestBase {
     private static final String ENTITY = "streamentity";
     private static Path projectDir = Paths.get(".", "ye-olde-project");
 
-    @BeforeClass
-    public static void setup() throws IOException {
+    @Before
+    public void setup() throws IOException {
+        // note, not basicSetup
+
         XMLUnit.setIgnoreWhitespace(true);
-        File projectDirFile = projectDir.toFile();
-        if (projectDirFile.isDirectory() && projectDirFile.exists()) {
-            FileUtils.deleteDirectory(projectDirFile);
-        }
+        deleteProjectDir();
 
         createProjectDir();
 
-        installHub();
+        installHubOnce();
 
         Scaffolding scaffolding = Scaffolding.create(projectDir.toString(), stagingClient);
         scaffolding.createEntity(ENTITY);
@@ -51,11 +62,6 @@ public class EmptyCollectorTest extends HubTestBase {
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_TRACE_NAME, HubConfig.DEFAULT_JOB_NAME);
     }
 
-
-    @AfterClass
-    public static void teardown() {
-        uninstallHub();
-    }
 
     @Test
     public void runCollector() {
