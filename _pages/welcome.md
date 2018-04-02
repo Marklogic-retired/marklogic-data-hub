@@ -15,7 +15,7 @@ Put simply, an Operational Data Hub is a silo-busting approach that focuses on a
 By grouping <span style="text-decoration: underline">all the data</span> about an entity into one consolidated record (with context and history) a Data Hub provides a 360° view of data, across silos.
 
 ### What is the Data Hub Framework?
-The MarkLogic Data Hub Framework (or DHF) is a set of tools and libraries that help you build an Operational Data Hub on top of MarkLogic Server. 
+The MarkLogic Data Hub Framework (or DHF) is a set of tools and libraries that help you build an Operational Data Hub on top of the most current maintenance release of MarkLogic Server version 9. Version 3.x of DHF requires MarkLogic Server 9.0-5 or later.
 
 ### Why do I need the DHF?
 Here's what the DHF can do for you:
