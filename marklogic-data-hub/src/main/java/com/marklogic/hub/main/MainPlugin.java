@@ -17,10 +17,9 @@ package com.marklogic.hub.main;
 
 import com.marklogic.hub.flow.CodeFormat;
 
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-import java.util.Properties;
-
+/**
+ * Interface to the in-memory representation of the main plugin module (main.sjs or main.xqy)
+ */
 public interface MainPlugin {
     String getModule();
     CodeFormat getCodeFormat();

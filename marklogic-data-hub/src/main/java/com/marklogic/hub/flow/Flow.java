@@ -20,6 +20,9 @@ import com.marklogic.hub.main.MainPlugin;
 
 import java.util.Properties;
 
+/**
+ * Manages the creation and configuration of flow objects
+ */
 public interface Flow {
 
     /**

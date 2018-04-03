@@ -21,6 +21,9 @@ import com.marklogic.hub.flow.CodeFormat;
 
 import java.util.Map;
 
+/**
+ * Manages config and client for the collector, as well as runs the collector for the associated entity and flow
+ */
 public interface Collector {
 
     /**
