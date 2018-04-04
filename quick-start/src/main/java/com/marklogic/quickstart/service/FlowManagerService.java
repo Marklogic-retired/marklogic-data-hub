@@ -33,6 +33,7 @@ import com.marklogic.quickstart.model.PluginModel;
 import com.marklogic.quickstart.util.FileUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -52,19 +53,12 @@ public class FlowManagerService {
 
     private static final String PROJECT_TMP_FOLDER = ".tmp";
 
-    private EnvironmentConfig envConfig() {
-        SecurityContext context = SecurityContextHolder.getContext();
-        ConnectionAuthenticationToken authenticationToken = (ConnectionAuthenticationToken) context.getAuthentication();
-        return authenticationToken.getEnvironmentConfig();
-    }
-
-    private FlowManager getFlowManager() {
-        return FlowManager.create(envConfig().getMlSettings());
-    }
+    @Autowired
+    private FlowManager flowManager;
 
     public List<FlowModel> getFlows(String projectDir, String entityName, FlowType flowType) {
         Path entityPath = Paths.get(projectDir, "plugins", "entities", entityName);
-        return getFlowManager().getLocalFlowsForEntity(entityName, flowType).stream().map(flow -> {
+        return flowManager.getLocalFlowsForEntity(entityName, flowType).stream().map(flow -> {
             FlowModel flowModel = new FlowModel(entityName, flow.getName());
             flowModel.codeFormat = flow.getCodeFormat();
             flowModel.dataFormat = flow.getDataFormat();
@@ -105,13 +99,11 @@ public class FlowManagerService {
     }
 
     public Flow getServerFlow(String entityName, String flowName, FlowType flowType) {
-        FlowManager flowManager = getFlowManager();
         return flowManager.getFlow(entityName, flowName, flowType);
     }
 
     public JobTicket runFlow(Flow flow, int batchSize, int threadCount, Map<String, Object> options, FlowStatusListener statusListener) {
 
-        FlowManager flowManager = getFlowManager();
         FlowRunner flowRunner = flowManager.newFlowRunner()
             .withFlow(flow)
             .withOptions(options)
@@ -126,7 +118,7 @@ public class FlowManagerService {
     }
 
     public void saveOrUpdateFlowMlcpOptionsToFile(String entityName, String flowName, String mlcpOptionsFileContent) throws IOException {
-        Path destFolder = Paths.get(envConfig().getProjectDir(), PROJECT_TMP_FOLDER);
+        Path destFolder = Paths.get(ServiceConfiguration.envConfig().getProjectDir(), PROJECT_TMP_FOLDER);
         File destFolderFile = destFolder.toFile();
         if (!destFolderFile.exists()) {
             FileUtils.forceMkdir(destFolderFile);
@@ -139,7 +131,7 @@ public class FlowManagerService {
     }
 
     public Map<String, Object> getFlowMlcpOptionsFromFile(String entityName, String flowName) throws IOException {
-        Path destFolder = Paths.get(envConfig().getProjectDir(), PROJECT_TMP_FOLDER);
+        Path destFolder = Paths.get(ServiceConfiguration.envConfig().getProjectDir(), PROJECT_TMP_FOLDER);
         Path filePath = getMlcpOptionsFilePath(destFolder, entityName, flowName);
         File file = filePath.toFile();
         if(file.exists()) {
@@ -147,13 +139,13 @@ public class FlowManagerService {
         }
 
         Map<String, Object> result = new HashMap<>();
-        result.put("input_file_path", envConfig().getProjectDir());
+        result.put("input_file_path", ServiceConfiguration.envConfig().getProjectDir());
         return result;
     }
 
     public void runMlcp(Flow flow, JsonNode json, FlowStatusListener statusListener) {
         String mlcpPath = json.get("mlcpPath").textValue();
-        HubConfig hubConfig = envConfig().getMlSettings();
+        HubConfig hubConfig = ServiceConfiguration.envConfig().getMlSettings();
         MlcpRunner runner = new MlcpRunner(mlcpPath, "com.marklogic.contentpump.ContentPump", hubConfig, flow, hubConfig.newStagingClient(), json.get("mlcpOptions"), statusListener);
         runner.start();
     }

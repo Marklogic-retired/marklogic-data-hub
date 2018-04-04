@@ -49,8 +49,6 @@ public class EmptyCollectorTest extends HubTestBase {
 
         createProjectDir();
 
-        installHubOnce();
-
         Scaffolding scaffolding = Scaffolding.create(projectDir.toString(), stagingClient);
         scaffolding.createEntity(ENTITY);
         scaffolding.createFlow(ENTITY, "testharmonize", FlowType.HARMONIZE,

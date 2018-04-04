@@ -49,6 +49,7 @@ import com.marklogic.hub.jupiterbased.ComboListener;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.hadoop.conf.Configuration;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.json.JSONException;
 import org.junit.After;
@@ -104,6 +105,8 @@ import com.marklogic.mgmt.util.ObjectMapperFactory;
 import com.marklogic.rest.util.JsonNodeUtil;
 
 
+// FIXME remove deprecated methods
+@SuppressWarnings(value="deprecation")
 public class HubTestBase {
 
     // to speedup dev cycle, you can create a hub and set this to true.
@@ -122,7 +125,6 @@ public class HubTestBase {
     public  int jobPort;
     public  String user;
     public  String password;
-    // FIXME deprecated methods
     protected  Authentication stagingAuthMethod;
     private  Authentication finalAuthMethod;
     private  Authentication traceAuthMethod;
@@ -176,10 +178,10 @@ public class HubTestBase {
 
     protected void basicSetup() {
         XMLUnit.setIgnoreWhitespace(true);
-        installHubOnce();
+        createProjectDir();
     }
 
-    private void init() {
+    protected void init() {
         try {
             Properties p = new Properties();
             p.load(new FileInputStream("gradle.properties"));
@@ -336,7 +338,7 @@ public class HubTestBase {
         return getHubConfig(PROJECT_PATH);
     }
 
-    protected DataHub getDataHub() {
+    public DataHub getDataHub() {
         return DataHub.create(getHubConfig());
     }
 
@@ -402,17 +404,7 @@ public class HubTestBase {
         }
     }
 
-    protected void installHubOnce() {
-        createProjectDir();
-        if (!isInstalled) {
-            nInstalls++;
-            logger.warn("Installing the hub.  Hit this block " + nInstalls + " times this run.");
-            getDataHub().install();
-            isInstalled = true;
-        }
-    }
-
-    protected void deleteProjectDir() {
+    public void deleteProjectDir() {
         if (new File(PROJECT_PATH).exists()) {
             try {
                 FileUtils.forceDelete(new File(PROJECT_PATH));
@@ -421,15 +413,6 @@ public class HubTestBase {
             }
         }
     }
-
-    protected void uninstallHub() {
-        if (isInstalled) {
-            getDataHub().uninstall();
-        }
-        deleteProjectDir();
-        isInstalled = false;
-    }
-
     protected File getResourceFile(String resourceName) {
         return new File(HubTestBase.class.getClassLoader().getResource(resourceName).getFile());
     }
@@ -890,7 +873,7 @@ public class HubTestBase {
         adminManager = new com.marklogic.mgmt.admin.AdminManager(adminConfig);
 	}
 
-	protected  void sslCleanup() {
+	public  void sslCleanup() {
 	    Path localPath = getResourceFile("scaffolding/gradle-local_properties").toPath();
 	    String localProps = new String("# Put your overrides from gradle.properties here\n" +
 	    		"# Don't check this in to version control\n" +
@@ -1012,24 +995,6 @@ public class HubTestBase {
         }
     }
 
-    // I think this can be a teardown for every test.
-    // rather than part of setup.
-    @After
-    public void teardownConfig() throws IOException {
-        deleteProjectDir();
-    }
-
-
-
-    @AfterClass
-    public static void teardown() {
-        logger.warn("Tearing down the hub.  Install was called " + nInstalls + " times so far.");
-        HubTestBase htb = new HubTestBase();
-        htb.uninstallHub();
-        if(htb.isSslRun() || htb.isCertAuth()) {
-            htb.sslCleanup();
-        }
-    }
 }
 
 

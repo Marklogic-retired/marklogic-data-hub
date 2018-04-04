@@ -30,6 +30,7 @@ import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.FileUtil;
+import com.marklogic.hub.util.Installer;
 import com.marklogic.hub.util.MlcpRunner;
 import com.marklogic.hub.validate.EntitiesValidator;
 import org.apache.commons.io.FileUtils;
@@ -130,18 +131,21 @@ public class EndToEndFlowTests extends HubTestBase {
     @BeforeEach
     public void setup() {
         XMLUnit.setIgnoreWhitespace(true);
-        //uninstallHub();
-        deleteProjectDir();
+        //new Installer().installHubOnce();
+        //deleteProjectDir();
         if(isSslRun() || isCertAuth()) {
      		sslSetup();
 		}
 
-        installHubOnce();
+        clearDatabases();
+        createProjectDir();
+
         enableTracing();
         enableDebugging();
 
         scaffolding = Scaffolding.create(projectDir.toString(), finalClient);
         scaffolding.createEntity(ENTITY);
+
 
         scaffoldFlows("scaffolded");
 
@@ -891,10 +895,7 @@ public class EndToEndFlowTests extends HubTestBase {
     }
 
     private void installDocs(DataFormat dataFormat, String collection, DatabaseClient srcClient, boolean useEs) {
-        DataMovementManager mgr = stagingDataMovementManager;
-        if (srcClient.getDatabase().equals(HubConfig.DEFAULT_FINAL_NAME)) {
-            mgr = finalDataMovementManager;
-        }
+        DataMovementManager mgr = srcClient.newDataMovementManager();
 
         WriteBatcher writeBatcher = mgr.newWriteBatcher()
             .withBatchSize(100)
@@ -936,7 +937,7 @@ public class EndToEndFlowTests extends HubTestBase {
         }
     }
 
-    private void testInputFlowViaMlcp(String prefix, String fileSuffix, DatabaseClient databaseClient, CodeFormat codeFormat, DataFormat dataFormat, boolean useEs, Map<String, Object> options, FinalCounts finalCounts) {
+    private void testInputFlowViaMlcp(String prefix, String fileSuffix, DatabaseClient databaseClient, CodeFormat codeFormat, DataFormat dataFormat, boolean useEs, Map<String, Object> options, FinalCounts finalCounts) throws InterruptedException {
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_TRACE_NAME, HubConfig.DEFAULT_JOB_NAME);
 
         String flowName = getFlowName(prefix, codeFormat, dataFormat, FlowType.INPUT, useEs);
@@ -994,6 +995,8 @@ public class EndToEndFlowTests extends HubTestBase {
         }
         logger.error(mlcpRunner.getProcessOutput());
 
+        // wait for completion
+        Thread.sleep(2000);
         int stagingCount = getStagingDocCount();
         int finalCount = getFinalDocCount();
         int tracingCount = getTracingDocCount();
@@ -1001,6 +1004,7 @@ public class EndToEndFlowTests extends HubTestBase {
 
         assertEquals(finalCounts.stagingCount, stagingCount);
         assertEquals(finalCounts.finalCount, finalCount);
+        // most currently failing tests are cause of trace.
         assertEquals(finalCounts.tracingCount, tracingCount);
         assertEquals(finalCounts.jobCount, jobsCount);
 
@@ -1270,8 +1274,8 @@ public class EndToEndFlowTests extends HubTestBase {
     private void testHarmonizeFlow(
         String prefix, CodeFormat codeFormat, DataFormat dataFormat, boolean useEs,
         Map<String, Object> options, DatabaseClient srcClient, String destDb,
-        FinalCounts finalCounts, boolean waitForCompletion)
-    {
+        FinalCounts finalCounts, boolean waitForCompletion) throws InterruptedException {
+        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_TRACE_NAME, HubConfig.DEFAULT_JOB_NAME);
         String flowName = getFlowName(prefix, codeFormat, dataFormat, FlowType.HARMONIZE, useEs);
 
         Vector<String> completed = new Vector<>();
@@ -1280,6 +1284,8 @@ public class EndToEndFlowTests extends HubTestBase {
         Tuple<FlowRunner, JobTicket> tuple = runHarmonizeFlow(flowName, dataFormat, completed, failed, options, srcClient, destDb, useEs, waitForCompletion);
 
         if (waitForCompletion) {
+            // takes a little time to run.
+            Thread.sleep(2000);
             int stagingCount = getStagingDocCount();
             int finalCount = getFinalDocCount();
             int tracingCount = getTracingDocCount();

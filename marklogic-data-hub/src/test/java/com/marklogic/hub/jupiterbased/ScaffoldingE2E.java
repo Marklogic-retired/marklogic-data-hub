@@ -55,7 +55,7 @@ public class ScaffoldingE2E extends HubTestBase {
         XMLUnit.setIgnoreWhitespace(true);
         deleteProjectDir();
 
-        installHubOnce();
+        createProjectDir();
     }
 
     private void createFlow(CodeFormat codeFormat, DataFormat dataFormat, FlowType flowType, boolean useEsModel) {

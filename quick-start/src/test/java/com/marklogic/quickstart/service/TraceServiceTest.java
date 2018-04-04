@@ -29,8 +29,10 @@ import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.quickstart.auth.ConnectionAuthenticationToken;
 import com.marklogic.quickstart.model.EnvironmentConfig;
 import com.marklogic.quickstart.model.TraceQuery;
+import net.sf.saxon.functions.Abs;
 import org.junit.*;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -42,12 +44,13 @@ import java.util.HashMap;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest()
-public class TraceServiceTest extends HubTestBase {
+public class TraceServiceTest extends AbstractServiceTest {
 
     private DatabaseClient traceClient;
     private static Path projectDir = Paths.get(".", PROJECT_PATH);
     private static String ENTITY = "test-entity";
 
+    @Autowired
     private FlowManagerService flowMgrService;
 
 
@@ -58,7 +61,7 @@ public class TraceServiceTest extends HubTestBase {
         envConfig.setMlSettings(HubConfigBuilder.newHubConfigBuilder(".").withPropertiesFromEnvironment().build());
         envConfig.checkIfInstalled();
         setEnvConfig(envConfig);
-        installHubOnce();
+        createProjectDir();
         enableTracing();
 
         Scaffolding scaffolding = Scaffolding.create(projectDir.toString(), stagingClient);
@@ -73,7 +76,6 @@ public class TraceServiceTest extends HubTestBase {
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_TRACE_NAME, HubConfig.DEFAULT_JOB_NAME);
 
         traceClient = getHubConfig().newTraceDbClient();
-        flowMgrService =  new FlowManagerService();
         final String FLOW_NAME = "sjs-json-harmonize-flow";
         Flow flow = flowMgrService.getServerFlow(ENTITY, FLOW_NAME, FlowType.HARMONIZE);
         flowMgrService.runFlow(flow, 1, 1, new HashMap<String, Object>(), (jobId, percentComplete, message) -> { });

@@ -56,7 +56,7 @@ public class JobManagerTest extends HubTestBase {
         XMLUnit.setIgnoreWhitespace(true);
         deleteProjectDir();
 
-        installHubOnce();
+        createProjectDir();
 
         enableDebugging();
         enableTracing();

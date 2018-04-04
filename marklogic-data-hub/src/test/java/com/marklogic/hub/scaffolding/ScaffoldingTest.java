@@ -55,7 +55,7 @@ public class ScaffoldingTest extends HubTestBase {
         XMLUnit.setIgnoreWhitespace(true);
         deleteProjectDir();
 
-        installHubOnce();
+        createProjectDir();
         isMl9 = getMlMajorVersion() == 9;
     }
 
