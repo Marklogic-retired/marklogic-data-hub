@@ -242,7 +242,7 @@ declare function flow:run-collector(
     }
   (: log and write the trace :)
   let $_ := (
-    trace:plugin-trace($item-context, xdmp:describe($resp, 1000000), xdmp:elapsed-time() - $before),
+    trace:plugin-trace($item-context, xdmp:describe($resp, 1000000, 1000000), xdmp:elapsed-time() - $before),
     trace:write-trace($item-context)
   )
   return
