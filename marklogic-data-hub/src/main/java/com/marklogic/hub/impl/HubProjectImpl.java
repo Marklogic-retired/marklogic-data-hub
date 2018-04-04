@@ -165,6 +165,11 @@ public class HubProjectImpl implements HubProject {
         writeResourceFile("ml-config/security/roles/data-hub-role.json", rolesDir.resolve("data-hub-role.json"), true);
         writeResourceFile("ml-config/security/users/data-hub-user.json", usersDir.resolve("data-hub-user.json"), true);
 
+        Path mimetypesDir = getHubMimetypesDir();
+        mimetypesDir.toFile().mkdirs();
+        writeResourceFile("ml-config/mimetypes/woff.json", mimetypesDir.resolve("woff.json"), true);
+        writeResourceFile("ml-config/mimetypes/woff2.json", mimetypesDir.resolve("woff2.json"), true);
+
         getUserServersDir().toFile().mkdirs();
         getUserDatabaseDir().toFile().mkdirs();
 
