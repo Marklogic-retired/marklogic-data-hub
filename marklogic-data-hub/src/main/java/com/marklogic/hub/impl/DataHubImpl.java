@@ -388,9 +388,6 @@ public class DataHubImpl implements DataHub {
         moduleCommands.add(new LoadUserModulesCommand(hubConfig));
         commandMap.put("mlModuleCommands", moduleCommands);
 
-        List<Command> mimetypeCommands = commandMap.get("mlMimetypeCommands");
-        mimetypeCommands.add(0, new DeployHubMimetypesCommand(hubConfig));
-
         List<Command> forestCommands = commandMap.get("mlForestCommands");
         DeployCustomForestsCommand deployCustomForestsCommand = (DeployCustomForestsCommand)forestCommands.get(0);
         deployCustomForestsCommand.setCustomForestsPath(hubConfig.getCustomForestPath());
