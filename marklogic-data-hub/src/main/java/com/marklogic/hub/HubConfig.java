@@ -411,12 +411,6 @@ public interface HubConfig {
     Path getHubSecurityDir();
 
     /**
-     * Gets the path for the hub security directory
-     * @return the path for the hub security directory
-     */
-    Path getHubMimetypesDir();
-
-    /**
      * Gets the path for the entity database directory
      * @return the path for the entity's database directory
      */
