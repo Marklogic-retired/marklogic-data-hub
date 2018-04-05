@@ -9,7 +9,7 @@ Grab the [latest release](https://github.com/marklogic-community/marklogic-data-
 
 
 ## Advanced Hub Usage
-Ready to go beyond QuickStart and start using DHF in your own Java or Gradle project? The [Data Hub Framework website](https://marklogic-community.github.io/) also provides that.
+Ready to go beyond QuickStart and start using DHF in your own Java or Gradle project? The [Data Hub Framework website](https://marklogic-community.github.io/marklogic-data-hub/) also provides that.
 
 ## Don't get this code
 You don't need to checkout this repo unless you plan to actively contribute changes to the Data Hub Framework. Go to [our website](https://marklogic-community.github.io/marklogic-data-hub/) to get started with DHF.
