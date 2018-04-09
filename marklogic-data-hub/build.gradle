@@ -297,9 +297,10 @@ task collectorTest(type: Test, dependsOn: testClasses) {
 //}
 
 test {
-    // we exclude the StreamCollectorTest
-    exclude '**/StreamCollector*'
-	//dependsOn tasks.createLocalFile
-    // depend on the collectorTest task above
-    dependsOn tasks.collectorTest
+    //dependsOn tasks.collectorTest
+
+    // the core test suite runs these tests, so exclude them here.
+    include 'com/marklogic/hub/CoreTestSuite.class'
+    include 'com/marklogic/hub/EndToEndFlowTests.class'
+    include 'com/marklogic/hub/ScaffoldingE2E.class'
 }

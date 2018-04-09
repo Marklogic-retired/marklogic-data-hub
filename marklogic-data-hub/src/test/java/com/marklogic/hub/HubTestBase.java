@@ -45,15 +45,12 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import com.marklogic.hub.error.DataHubConfigurationException;
-import com.marklogic.hub.jupiterbased.ComboListener;
+import com.marklogic.hub.util.ComboListener;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.hadoop.conf.Configuration;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.json.JSONException;
-import org.junit.After;
-import org.junit.AfterClass;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

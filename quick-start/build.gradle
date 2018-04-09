@@ -213,3 +213,7 @@ springBoot {
     mainClass = "com.marklogic.quickstart.Application"
     buildInfo()
 }
+
+test {
+  include 'com/marklogic/quickstart/WebTestSuite.class'
+}

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.marklogic.hub.jupiterbased;
+package com.marklogic.hub;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -24,10 +24,6 @@ import com.marklogic.client.datamovement.JobTicket;
 import com.marklogic.client.datamovement.WriteBatcher;
 import com.marklogic.client.document.GenericDocumentManager;
 import com.marklogic.client.document.ServerTransform;
-import com.marklogic.hub.DataHub;
-import com.marklogic.hub.FlowManager;
-import com.marklogic.hub.HubConfig;
-import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.FileUtil;
 import com.marklogic.hub.util.Installer;
@@ -128,14 +124,22 @@ public class EndToEndFlowTests extends HubTestBase {
 
     private Scaffolding scaffolding;
 
-    @BeforeEach
-    public void setup() {
+    @BeforeAll
+    public static void setup() {
         XMLUnit.setIgnoreWhitespace(true);
-        //new Installer().installHubOnce();
-        //deleteProjectDir();
-        if(isSslRun() || isCertAuth()) {
-     		sslSetup();
-		}
+        new Installer().installHubOnce();
+    }
+
+    @AfterAll
+    public static void teardown() {
+        new Installer().uninstallHub();
+    }
+
+    @BeforeEach
+    public void setupEach() {
+        if (isSslRun() || isCertAuth()) {
+            sslSetup();
+        }
 
         clearDatabases();
         createProjectDir();
