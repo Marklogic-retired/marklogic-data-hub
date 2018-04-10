@@ -151,7 +151,7 @@ public class HubTestBase {
     public  GenericDocumentManager modMgr;
     public  String bootStrapHost = null;
 	private  TrustManagerFactory tmf;
-
+	private List<DatabaseClient> clients = new ArrayList<DatabaseClient>();
     private GenericDocumentManager getStagingMgr() {
         return stagingClient.newDocumentManager();
     }
@@ -324,11 +324,39 @@ public class HubTestBase {
     }
 
     protected void enableTracing() {
-        Tracing.create(stagingClient).enable();
+        ManageClient manageClient = ((HubConfigImpl)getHubConfig()).getManageClient();
+        String resp = manageClient.getJson("/manage/v2/hosts?format=json");
+        JsonNode actualObj = null;
+		try {
+			actualObj = new ObjectMapper().readTree(resp);
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		JsonNode nameNode = actualObj.path("host-default-list").path("list-items");
+		List<String> hosts = nameNode.findValuesAsText("nameref");
+        hosts.forEach(serverHost ->
+		{
+			try {
+				DatabaseClient client = getClient(serverHost, stagingPort, HubConfig.DEFAULT_STAGING_NAME, user, password, stagingAuthMethod);
+				Tracing.create(client).enable();
+				clients.add(client);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		});     
     }
 
     protected void disableTracing() {
-        Tracing.create(stagingClient).disable();
+        clients.forEach(client ->
+		{	
+			Tracing.create(client).disable();
+			client.newServerEval().xquery("xquery version \"1.0-ml\";\n" +
+					"import module namespace hul = \"http://marklogic.com/data-hub/hub-utils-lib\" at \"/MarkLogic/data-hub-framework/impl/hub-utils-lib.xqy\";\n" +
+					"hul:invalidate-field-cache(\"tracing-enabled\")").eval();
+			
+		});
     }
 
     protected HubConfig getHubConfig() {

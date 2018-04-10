@@ -15,14 +15,22 @@
  */
 package com.marklogic.hub.job;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.eval.EvalResultIterator;
 import com.marklogic.hub.DataHub;
 import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
+import com.marklogic.hub.Tracing;
 import com.marklogic.hub.flow.*;
+import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.scaffold.Scaffolding;
+import com.marklogic.mgmt.ManageClient;
+
 import org.custommonkey.xmlunit.XMLUnit;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -34,6 +42,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.zip.ZipFile;
@@ -45,14 +54,15 @@ public class JobManagerTest extends HubTestBase {
     private static final String ENTITY = "e2eentity";
     private static final String HARMONIZE_FLOW_XML = "testharmonize-xml";
     private static final String HARMONIZE_FLOW_JSON = "testharmonize-json";
-    private static ArrayList<String> jobIds = new ArrayList<String>();
+    private static List<String> jobIds = Collections.synchronizedList(new ArrayList<String>());
     private static Path projectDir = Paths.get(".", "ye-olde-project");
-
+    private static Path exportPath = projectDir.resolve("testExport.zip");
+    
     private FlowItemCompleteListener flowItemCompleteListener =
         (jobId, itemId) -> recordJobId(jobId);
 
     @Before
-    public void setupStuff() {
+    public void setupStuff() throws InterruptedException, IOException {
         XMLUnit.setIgnoreWhitespace(true);
         deleteProjectDir();
 
@@ -112,8 +122,16 @@ public class JobManagerTest extends HubTestBase {
         flowRunner.awaitCompletion();
     }
 
-
-    private static synchronized void recordJobId(String jobId) {
+    @After
+    public void cleanup() {
+    	try {
+			Files.deleteIfExists(exportPath);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+    	disableTracing();
+    }
+    private static void recordJobId(String jobId) {
         jobIds.add(jobId);
     }
 
@@ -201,8 +219,6 @@ public class JobManagerTest extends HubTestBase {
 
     @Test
     public void exportOneJob() throws IOException {
-        final String EXPORT_FILENAME = "testExport.zip";
-        Path exportPath = projectDir.resolve(EXPORT_FILENAME);
         JobManager manager = JobManager.create(jobClient, traceClient);
 
         File zipFile = exportPath.toFile();
@@ -217,15 +233,11 @@ public class JobManagerTest extends HubTestBase {
         // There should be one job and two trace documents
         assertEquals(3, actual.size());
 
-        actual.close();
-
-        Files.delete(exportPath);
+        actual.close();  
     }
 
     @Test
-    public void exportMultipleJobs() throws IOException {
-        final String EXPORT_FILENAME = "testExport.zip";
-        Path exportPath = projectDir.resolve(EXPORT_FILENAME);
+    public void exportMultipleJobs() throws IOException, InterruptedException {
         JobManager manager = JobManager.create(jobClient, traceClient);
 
         File zipFile = exportPath.toFile();
@@ -235,20 +247,15 @@ public class JobManagerTest extends HubTestBase {
         manager.exportJobs(exportPath, jobs);
 
         assertTrue(zipFile.exists());
-
         ZipFile actual = new ZipFile(zipFile);
         // There should be two job and four trace documents
         assertEquals(6, actual.size());
 
-        actual.close();
-
-        Files.delete(exportPath);
+        actual.close();      
     }
 
     @Test
     public void exportAllJobs() throws IOException {
-        final String EXPORT_FILENAME = "testExport.zip";
-        Path exportPath = projectDir.resolve(EXPORT_FILENAME);
         JobManager manager = JobManager.create(jobClient, traceClient);
 
         File zipFile = exportPath.toFile();
@@ -262,9 +269,7 @@ public class JobManagerTest extends HubTestBase {
         // There should be four job and eight trace documents
         assertEquals(12, actual.size());
 
-        actual.close();
-
-        Files.delete(exportPath);
+        actual.close();      
     }
 
     @Test
@@ -273,8 +278,6 @@ public class JobManagerTest extends HubTestBase {
             HubConfig.DEFAULT_TRACE_NAME);
 
         // if the jobs database is empty, do not produce a zip file.
-        final String EXPORT_FILENAME = "testExport.zip";
-        Path exportPath = projectDir.resolve(EXPORT_FILENAME);
         JobManager manager = JobManager.create(jobClient, traceClient);
 
         File zipFile = exportPath.toFile();
