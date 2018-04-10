@@ -288,7 +288,7 @@ test {
     minHeapSize = "128m"
     maxHeapSize = "256m"
 
-    // the core test suite runs these tests, so exclude them here.
+    // include just the three top-level tests.  they include setup/teardown
     include 'com/marklogic/hub/CoreTestSuite.class'
     include 'com/marklogic/hub/EndToEndFlowTests.class'
     include 'com/marklogic/hub/ScaffoldingE2E.class'
