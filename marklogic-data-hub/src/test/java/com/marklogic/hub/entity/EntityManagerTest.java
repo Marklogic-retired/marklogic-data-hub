@@ -40,12 +40,8 @@ public class EntityManagerTest extends HubTestBase {
     private static File projectDir = projectPath.toFile();
 
     @Before
-    public void setup() {
-        basicSetup();
-    }
-
-    @Before
     public void clearDbs() {
+        deleteProjectDir();
         basicSetup();
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_MODULES_DB_NAME);
         installHubModules();

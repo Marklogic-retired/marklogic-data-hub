@@ -30,7 +30,7 @@ public class JobServiceTest extends HubTestBase {
     @Before
     public void setup() throws IOException {
         deleteProjectDir();
-        installHubOnce();
+        createProjectDir();
     }
 
     @Test

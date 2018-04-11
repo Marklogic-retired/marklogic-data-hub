@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.marklogic.hub.jupiterbased;
+package com.marklogic.hub;
 
 import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.flow.CodeFormat;
@@ -21,12 +21,10 @@ import com.marklogic.hub.flow.DataFormat;
 import com.marklogic.hub.flow.FlowType;
 import com.marklogic.hub.scaffold.impl.ScaffoldingImpl;
 import com.marklogic.hub.util.FileUtil;
+import com.marklogic.hub.util.Installer;
 import org.apache.commons.io.FileUtils;
 import org.custommonkey.xmlunit.XMLUnit;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DynamicTest;
-import org.junit.jupiter.api.TestFactory;
+import org.junit.jupiter.api.*;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 import org.xml.sax.SAXException;
@@ -50,12 +48,22 @@ public class ScaffoldingE2E extends HubTestBase {
     private static File projectDir = projectPath.toFile();
     private static File pluginDir = projectPath.resolve("plugins").toFile();
 
+    @BeforeAll
+    public static void setupHub() {
+        XMLUnit.setIgnoreWhitespace(true);
+        new Installer().installHubOnce();
+    }
+
+    @AfterAll
+    public static void teardown() {
+        new Installer().uninstallHub();
+    }
+
     @BeforeEach
     public void setup() throws IOException {
-        XMLUnit.setIgnoreWhitespace(true);
         deleteProjectDir();
 
-        installHubOnce();
+        createProjectDir();
     }
 
     private void createFlow(CodeFormat codeFormat, DataFormat dataFormat, FlowType flowType, boolean useEsModel) {

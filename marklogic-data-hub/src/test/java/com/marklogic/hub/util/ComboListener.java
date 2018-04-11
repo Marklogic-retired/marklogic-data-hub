@@ -13,25 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.marklogic.hub.deploy.commands;
+package com.marklogic.hub.util;
 
-import com.marklogic.appdeployer.command.CommandContext;
-import com.marklogic.appdeployer.command.mimetypes.DeployMimetypesCommand;
-import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.flow.CodeFormat;
+import com.marklogic.hub.flow.DataFormat;
+import com.marklogic.hub.flow.FlowType;
 
-import java.io.File;
-
-public class DeployHubMimetypesCommand extends DeployMimetypesCommand {
-
-    private HubConfig config;
-
-    public DeployHubMimetypesCommand(HubConfig config) {
-        super();
-        this.config = config;
-    }
-
-    @Override
-    protected File[] getResourceDirs(CommandContext context) {
-        return new File[]{config.getHubMimetypesDir().toFile()};
-    }
+public interface ComboListener {
+    void onCombo(CodeFormat codeFormat, DataFormat dataFormat, FlowType flowType, boolean useEs);
 }

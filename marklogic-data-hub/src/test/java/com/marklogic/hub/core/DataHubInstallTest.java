@@ -21,6 +21,7 @@ import com.marklogic.client.ext.modulesloader.impl.PropertiesModuleManager;
 import com.marklogic.hub.DataHub;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
+import com.marklogic.hub.impl.DataHubImpl;
 import com.marklogic.hub.util.Versions;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Before;
@@ -55,7 +56,7 @@ public class DataHubInstallTest extends HubTestBase {
         // the project dir must be available for uninstall to do anything... interesting.
         createProjectDir();
         if (!setupDone) getDataHub().uninstall();
-        if (!setupDone) installHubOnce();
+        if (!setupDone) getDataHub().install();
         setupDone=true;
         afterTelemetryInstallCount = getTelemetryInstallCount();
     }
