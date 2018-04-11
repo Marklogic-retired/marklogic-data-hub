@@ -26,14 +26,18 @@ import com.marklogic.hub.job.Job;
 import com.marklogic.hub.job.JobManager;
 import com.marklogic.hub.job.JobStatus;
 import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
 
 public class MlcpRunner extends ProcessRunner {
 
+    private static Logger logger = LoggerFactory.getLogger(MlcpRunner.class);
     private JobManager jobManager;
     private Flow flow;
     private JsonNode mlcpOptions;
@@ -171,6 +175,15 @@ public class MlcpRunner extends ProcessRunner {
                 File.separator + "java";
             String classpath = System.getProperty("java.class.path");
 
+            // strip out non-essential entries to truncate classpath
+            List<String> classpathEntries = Arrays.asList(classpath.split(File.pathSeparator));
+            String filteredClasspathEntries = classpathEntries
+                            .stream()
+                            .filter(
+                                u -> (!u.contains("spring")))
+                            .collect(Collectors.joining(File.pathSeparator));
+
+
             File loggerFile = File.createTempFile("mlcp-", "-logger.xml");
             FileUtils.writeStringToFile(loggerFile, buildLoggerconfig());
 
@@ -183,7 +196,7 @@ public class MlcpRunner extends ProcessRunner {
             }
             else {
                 args.add("-cp");
-                args.add(classpath);
+                args.add(filteredClasspathEntries);
                 args.add(mainClass);
             }
         }
