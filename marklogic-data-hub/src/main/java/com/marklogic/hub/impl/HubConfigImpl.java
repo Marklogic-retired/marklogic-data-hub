@@ -985,11 +985,6 @@ public class HubConfigImpl implements HubConfig {
     }
 
     @JsonIgnore
-    @Override public Path getHubMimetypesDir() {
-        return hubProject.getHubMimetypesDir();
-    }
-
-    @JsonIgnore
     @Override public AppConfig getAppConfig() {
         return appConfig;
     }
