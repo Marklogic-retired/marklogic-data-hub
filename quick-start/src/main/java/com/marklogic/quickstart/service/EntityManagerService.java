@@ -26,6 +26,7 @@ import com.marklogic.hub.error.DataHubProjectException;
 import com.marklogic.hub.flow.FlowType;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.validate.EntitiesValidator;
+import com.marklogic.quickstart.EnvironmentAware;
 import com.marklogic.quickstart.auth.ConnectionAuthenticationToken;
 import com.marklogic.quickstart.model.EnvironmentConfig;
 import com.marklogic.quickstart.model.FlowModel;
@@ -51,7 +52,7 @@ import java.nio.file.StandardOpenOption;
 import java.util.*;
 
 @Service
-public class EntityManagerService {
+public class EntityManagerService extends EnvironmentAware {
 
     private static final String UI_LAYOUT_FILE = "entities.layout.json";
     private static final String PLUGINS_DIR = "plugins";
@@ -68,9 +69,9 @@ public class EntityManagerService {
     private DataHubService dataHubService;
 
     public List<EntityModel> getLegacyEntities() throws IOException {
-        String projectDir = ServiceConfiguration.envConfig().getProjectDir();
+        String projectDir = envConfig().getProjectDir();
         List<EntityModel> entities = new ArrayList<>();
-        Path entitiesDir = ServiceConfiguration.envConfig().getMlSettings().getHubEntitiesDir();
+        Path entitiesDir = envConfig().getMlSettings().getHubEntitiesDir();
         List<String> entityNames = FileUtil.listDirectFolders(entitiesDir.toFile());
         for (String entityName : entityNames) {
             EntityModel entityModel = new EntityModel();
@@ -85,15 +86,15 @@ public class EntityManagerService {
     }
 
     public List<EntityModel> getEntities() throws IOException {
-        if (ServiceConfiguration.envConfig().getMarklogicVersion().startsWith("8")) {
+        if (envConfig().getMarklogicVersion().startsWith("8")) {
             return getLegacyEntities();
         }
 
-        String projectDir = ServiceConfiguration.envConfig().getProjectDir();
+        String projectDir = envConfig().getProjectDir();
 
         Map<String, HubUIData> hubUiData = getUiData();
         List<EntityModel> entities = new ArrayList<>();
-        Path entitiesPath = Paths.get(ServiceConfiguration.envConfig().getProjectDir(), PLUGINS_DIR, ENTITIES_DIR);
+        Path entitiesPath = Paths.get(envConfig().getProjectDir(), PLUGINS_DIR, ENTITIES_DIR);
         List<String> entityNames = FileUtil.listDirectFolders(entitiesPath.toFile());
         ObjectMapper objectMapper = new ObjectMapper();
         for (String entityName : entityNames) {
@@ -121,7 +122,7 @@ public class EntityManagerService {
     }
 
     public EntityModel createEntity(String projectDir, EntityModel newEntity) throws IOException {
-        Scaffolding scaffolding = Scaffolding.create(projectDir, ServiceConfiguration.envConfig().getFinalClient());
+        Scaffolding scaffolding = Scaffolding.create(projectDir, envConfig().getFinalClient());
         scaffolding.createEntity(newEntity.getName());
 
         if (newEntity.inputFlows != null) {
@@ -146,7 +147,7 @@ public class EntityManagerService {
         String title = entity.getInfo().getTitle();
 
         if (fullpath == null) {
-            Path dir = Paths.get(ServiceConfiguration.envConfig().getProjectDir(), PLUGINS_DIR, ENTITIES_DIR, title);
+            Path dir = Paths.get(envConfig().getProjectDir(), PLUGINS_DIR, ENTITIES_DIR, title);
             if (!dir.toFile().exists()) {
                 dir.toFile().mkdirs();
             }
@@ -179,7 +180,7 @@ public class EntityManagerService {
                 entity.setFilename(fullpath);
 
                 // Redeploy the flows
-                dataHubService.reinstallUserModules(ServiceConfiguration.envConfig().getMlSettings(), null, null);
+                dataHubService.reinstallUserModules(envConfig().getMlSettings(), null, null);
             }
         }
 
@@ -191,7 +192,7 @@ public class EntityManagerService {
     }
 
     public void deleteEntity(String entity) throws IOException {
-        Path dir = Paths.get(ServiceConfiguration.envConfig().getProjectDir(), PLUGINS_DIR, ENTITIES_DIR, entity);
+        Path dir = Paths.get(envConfig().getProjectDir(), PLUGINS_DIR, ENTITIES_DIR, entity);
         if (dir.toFile().exists()) {
             watcherService.unwatch(dir.getParent().toString());
             FileUtils.deleteDirectory(dir.toFile());
@@ -218,7 +219,7 @@ public class EntityManagerService {
             uiData = JsonNodeFactory.instance.objectNode();
         }
 
-        Path dir = Paths.get(ServiceConfiguration.envConfig().getProjectDir(), HubConfig.USER_CONFIG_DIR);
+        Path dir = Paths.get(envConfig().getProjectDir(), HubConfig.USER_CONFIG_DIR);
         if (!dir.toFile().exists()) {
             dir.toFile().mkdirs();
         }
@@ -248,7 +249,7 @@ public class EntityManagerService {
             uiData = JsonNodeFactory.instance.objectNode();
         }
 
-        Path dir = Paths.get(ServiceConfiguration.envConfig().getProjectDir(), HubConfig.USER_CONFIG_DIR);
+        Path dir = Paths.get(envConfig().getProjectDir(), HubConfig.USER_CONFIG_DIR);
         if (!dir.toFile().exists()) {
             dir.toFile().mkdirs();
         }
@@ -296,14 +297,14 @@ public class EntityManagerService {
     }
 
     public FlowModel createFlow(String projectDir, String entityName, FlowType flowType, FlowModel newFlow) throws IOException {
-        Scaffolding scaffolding = Scaffolding.create(projectDir, ServiceConfiguration.envConfig().getFinalClient());
+        Scaffolding scaffolding = Scaffolding.create(projectDir, envConfig().getFinalClient());
         newFlow.entityName = entityName;
         scaffolding.createFlow(entityName, newFlow.flowName, flowType, newFlow.codeFormat, newFlow.dataFormat, newFlow.useEsModel);
         return getFlow(entityName, flowType, newFlow.flowName);
     }
 
     public void deleteFlow(String projectDir, String entityName, String flowName, FlowType flowType) throws IOException {
-        Scaffolding scaffolding = Scaffolding.create(projectDir, ServiceConfiguration.envConfig().getFinalClient());
+        Scaffolding scaffolding = Scaffolding.create(projectDir, envConfig().getFinalClient());
         Path flowDir = scaffolding.getFlowDir(entityName, flowName, flowType);
         FileUtils.deleteDirectory(flowDir.toFile());
     }
@@ -335,7 +336,7 @@ public class EntityManagerService {
     }
     private JsonNode getUiRawData() {
         JsonNode json = null;
-        Path dir = Paths.get(ServiceConfiguration.envConfig().getProjectDir(), HubConfig.USER_CONFIG_DIR);
+        Path dir = Paths.get(envConfig().getProjectDir(), HubConfig.USER_CONFIG_DIR);
         File file = Paths.get(dir.toString(), UI_LAYOUT_FILE).toFile();
         if (file.exists()) {
             try {

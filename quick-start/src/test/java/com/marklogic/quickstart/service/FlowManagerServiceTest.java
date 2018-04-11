@@ -60,8 +60,7 @@ public class FlowManagerServiceTest extends AbstractServiceTest {
     private static String ENTITY = "test-entity";
     private static Path projectDir = Paths.get(".", PROJECT_PATH);
 
-    @Autowired private ApplicationContext context;
-
+    @Autowired
     FlowManagerService fm;
 
     @Before
@@ -109,7 +108,6 @@ public class FlowManagerServiceTest extends AbstractServiceTest {
         FileUtil.copy(getResourceStream("flow-manager/sjs-harmonize-flow/headers.sjs"), harmonizeDir.resolve("sjs-json-harmonization-flow/headers.sjs").toFile());
 
         installUserModules(getHubConfig(), true);
-        fm = context.getBean(FlowManagerService.class);
     }
 
     protected void setEnvConfig(EnvironmentConfig envConfig) {

@@ -19,7 +19,6 @@ public class AbstractServiceTest extends HubTestBase {
         createProjectDir();
         EnvironmentConfig envConfig = new EnvironmentConfig(PROJECT_PATH, null, "admin", "admin");
         envConfig.setMlSettings(HubConfigBuilder.newHubConfigBuilder(PROJECT_PATH).withPropertiesFromEnvironment().build());
-        // this method throws an exception on initialization so ridding of it.
         envConfig.checkIfInstalled();
         setEnvConfig(envConfig);
     }
