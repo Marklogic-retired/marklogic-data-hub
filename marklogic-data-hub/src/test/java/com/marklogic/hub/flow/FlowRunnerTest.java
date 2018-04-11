@@ -45,7 +45,7 @@ public class FlowRunnerTest extends HubTestBase {
 
         deleteProjectDir();
 
-        installHubOnce();
+        createProjectDir();
 
         enableDebugging();
         enableTracing();

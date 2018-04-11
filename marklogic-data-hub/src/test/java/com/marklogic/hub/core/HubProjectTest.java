@@ -5,6 +5,7 @@ import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
@@ -20,6 +21,10 @@ public class HubProjectTest extends HubTestBase {
 
     private static File projectPath = new File(PROJECT_PATH);
 
+    @Before
+    public void setupDir() {
+        deleteProjectDir();
+    }
 
     @Test
     public void testInit() throws IOException {

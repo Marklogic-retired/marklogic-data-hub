@@ -252,18 +252,6 @@ ext {
     }
 }
 
-// for the StreamCollectorTest we need to constrain the memory
-// to a lower value so that the out of memory issue appears
-// the hack here is to run that single test in this task with
-// the appropriate memory constraints. This task is a dependency
-// of the regular test task and thus gets run right before all
-// of the other tests run.
-task collectorTest(type: Test, dependsOn: testClasses) {
-    include '**/StreamCollector*'
-    minHeapSize = "128m"
-    maxHeapSize = "256m"
-}
-
 //task createLocalFile() {
 //	boolean sslRun = Boolean.parseBoolean(System.properties['ssl'])
 //	boolean certAuth = Boolean.parseBoolean(System.properties['certauth'])
@@ -297,9 +285,11 @@ task collectorTest(type: Test, dependsOn: testClasses) {
 //}
 
 test {
-    // we exclude the StreamCollectorTest
-    exclude '**/StreamCollector*'
-	//dependsOn tasks.createLocalFile
-    // depend on the collectorTest task above
-    dependsOn tasks.collectorTest
+    minHeapSize = "128m"
+    maxHeapSize = "256m"
+
+    // include just the three top-level tests.  they include setup/teardown
+    include 'com/marklogic/hub/CoreTestSuite.class'
+    include 'com/marklogic/hub/EndToEndFlowTests.class'
+    include 'com/marklogic/hub/ScaffoldingE2E.class'
 }

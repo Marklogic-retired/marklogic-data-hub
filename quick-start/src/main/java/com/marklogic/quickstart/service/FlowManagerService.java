@@ -26,6 +26,7 @@ import com.marklogic.hub.flow.FlowRunner;
 import com.marklogic.hub.flow.FlowStatusListener;
 import com.marklogic.hub.flow.FlowType;
 import com.marklogic.hub.util.MlcpRunner;
+import com.marklogic.quickstart.EnvironmentAware;
 import com.marklogic.quickstart.auth.ConnectionAuthenticationToken;
 import com.marklogic.quickstart.model.EnvironmentConfig;
 import com.marklogic.quickstart.model.FlowModel;
@@ -33,6 +34,7 @@ import com.marklogic.quickstart.model.PluginModel;
 import com.marklogic.quickstart.util.FileUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -48,23 +50,22 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class FlowManagerService {
+public class FlowManagerService extends EnvironmentAware {
 
     private static final String PROJECT_TMP_FOLDER = ".tmp";
 
-    private EnvironmentConfig envConfig() {
-        SecurityContext context = SecurityContextHolder.getContext();
-        ConnectionAuthenticationToken authenticationToken = (ConnectionAuthenticationToken) context.getAuthentication();
-        return authenticationToken.getEnvironmentConfig();
-    }
+    @Autowired
+    private FlowManager flowManager;
 
-    private FlowManager getFlowManager() {
-        return FlowManager.create(envConfig().getMlSettings());
+    // before login, flowManager is null, so check each time.
+    private FlowManager flowManager() {
+        if (flowManager != null) return flowManager;
+        else return flowManager = FlowManager.create(envConfig().getMlSettings());
     }
 
     public List<FlowModel> getFlows(String projectDir, String entityName, FlowType flowType) {
         Path entityPath = Paths.get(projectDir, "plugins", "entities", entityName);
-        return getFlowManager().getLocalFlowsForEntity(entityName, flowType).stream().map(flow -> {
+        return flowManager().getLocalFlowsForEntity(entityName, flowType).stream().map(flow -> {
             FlowModel flowModel = new FlowModel(entityName, flow.getName());
             flowModel.codeFormat = flow.getCodeFormat();
             flowModel.dataFormat = flow.getDataFormat();
@@ -105,14 +106,12 @@ public class FlowManagerService {
     }
 
     public Flow getServerFlow(String entityName, String flowName, FlowType flowType) {
-        FlowManager flowManager = getFlowManager();
-        return flowManager.getFlow(entityName, flowName, flowType);
+        return flowManager().getFlow(entityName, flowName, flowType);
     }
 
     public JobTicket runFlow(Flow flow, int batchSize, int threadCount, Map<String, Object> options, FlowStatusListener statusListener) {
 
-        FlowManager flowManager = getFlowManager();
-        FlowRunner flowRunner = flowManager.newFlowRunner()
+        FlowRunner flowRunner = flowManager().newFlowRunner()
             .withFlow(flow)
             .withOptions(options)
             .withBatchSize(batchSize)

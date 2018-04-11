@@ -54,8 +54,7 @@ public class EntityManagerServiceTest extends AbstractServiceTest {
 
     @Before
     public void setUp() {
-        installHubOnce();
-        setupEnv();
+        createProjectDir();
 
         Scaffolding scaffolding = Scaffolding.create(projectDir.toString(), stagingClient);
         scaffolding.createEntity(ENTITY);

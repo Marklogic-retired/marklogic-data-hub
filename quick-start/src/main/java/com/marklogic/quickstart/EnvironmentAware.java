@@ -28,7 +28,7 @@ public class EnvironmentAware {
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    protected EnvironmentConfig envConfig() {
+    public EnvironmentConfig envConfig() {
         ConnectionAuthenticationToken authenticationToken = (ConnectionAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
         if (authenticationToken != null) {
             _envConfig = authenticationToken.getEnvironmentConfig();

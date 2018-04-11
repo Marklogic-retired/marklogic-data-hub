@@ -168,7 +168,7 @@ task startRest {
 
 task e2eLaunch(type: NpmTask) {
     args = ['run', 'e2e']
-    dependsOn buildUI, startRest
+    dependsOn compileJava, buildUI, startRest
 }
 
 task e2eUI {
@@ -212,4 +212,8 @@ springBoot {
     executable = true
     mainClass = "com.marklogic.quickstart.Application"
     buildInfo()
+}
+
+test {
+  include 'com/marklogic/quickstart/WebTestSuite.class'
 }
