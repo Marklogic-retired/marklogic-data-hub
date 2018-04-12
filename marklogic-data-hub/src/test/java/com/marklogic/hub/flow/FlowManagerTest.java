@@ -13,10 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.marklogic.hub;
+package com.marklogic.hub.flow;
 
 import com.marklogic.client.io.DOMHandle;
 import com.marklogic.client.io.DocumentMetadataHandle;
+import com.marklogic.hub.FlowManager;
+import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.collector.Collector;
 import com.marklogic.hub.flow.*;
 import com.marklogic.hub.main.MainPlugin;
@@ -24,8 +27,8 @@ import com.marklogic.hub.scaffold.Scaffolding;
 import org.apache.commons.io.FileUtils;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.json.JSONException;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
@@ -44,12 +47,9 @@ import static org.junit.Assert.*;
 
 public class FlowManagerTest extends HubTestBase {
 
-    @BeforeClass
-    public static void setup() throws IOException {
-        XMLUnit.setIgnoreWhitespace(true);
-
-        deleteProjectDir();
-        installHub();
+    @Before
+    public void setup() throws IOException {
+        basicSetup();
         enableDebugging();
 
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME);
@@ -61,12 +61,7 @@ public class FlowManagerTest extends HubTestBase {
         installModules();
     }
 
-    @AfterClass
-    public static void teardown() {
-        uninstallHub();
-    }
-
-    private static void installModules() {
+    private void installModules() {
         HashMap<String, String> modules = new HashMap<>();
         modules.put(
             "/entities/test/harmonize/my-test-flow1/collector.xqy",
@@ -113,7 +108,7 @@ public class FlowManagerTest extends HubTestBase {
         installModules(modules);
     }
 
-    private static void addStagingDocs() {
+    private void addStagingDocs() {
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME);
         DocumentMetadataHandle meta = new DocumentMetadataHandle();
         meta.getCollections().add("tester");
@@ -121,7 +116,7 @@ public class FlowManagerTest extends HubTestBase {
         installStagingDoc("/employee2.xml", meta, "flow-manager-test/input/employee2.xml");
     }
 
-    private static void addFinalDocs() {
+    private void addFinalDocs() {
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME);
         DocumentMetadataHandle meta = new DocumentMetadataHandle();
         meta.getCollections().add("tester");
@@ -205,9 +200,9 @@ public class FlowManagerTest extends HubTestBase {
             Flow flow = fm.getFlowFromProperties(propertiesFile);
             assertEquals(flowName, flow.getName());
             assertEquals("my-entity", flow.getEntityName());
-            assertEquals(codeFormat, flow.getCodeFormat());
-            assertEquals(dataFormat, flow.getDataFormat());
-            assertEquals(flowType, flow.getType());
+            Assert.assertEquals(codeFormat, flow.getCodeFormat());
+            Assert.assertEquals(dataFormat, flow.getDataFormat());
+            Assert.assertEquals(flowType, flow.getType());
         });
 
         FileUtils.deleteDirectory(Paths.get("./del-me-dir").toFile());

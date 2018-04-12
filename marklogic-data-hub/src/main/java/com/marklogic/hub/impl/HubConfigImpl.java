@@ -15,7 +15,9 @@
  */
 package com.marklogic.hub.impl;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.appdeployer.ConfigDir;
 import com.marklogic.client.DatabaseClient;
@@ -47,13 +49,17 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+@JsonAutoDetect(
+    fieldVisibility = JsonAutoDetect.Visibility.PROTECTED_AND_PUBLIC,
+    getterVisibility = JsonAutoDetect.Visibility.ANY,
+    setterVisibility = JsonAutoDetect.Visibility.ANY)
 public class HubConfigImpl implements HubConfig {
 
-    private String stagingDbName = DEFAULT_STAGING_NAME;
-    private String stagingHttpName = DEFAULT_STAGING_NAME;
-    private Integer stagingForestsPerHost = DEFAULT_FORESTS_PER_HOST;
-    private Integer stagingPort = DEFAULT_STAGING_PORT;
-    private String stagingAuthMethod = DEFAULT_AUTH_METHOD;
+    protected String stagingDbName = DEFAULT_STAGING_NAME;
+    protected String stagingHttpName = DEFAULT_STAGING_NAME;
+    protected Integer stagingForestsPerHost = DEFAULT_FORESTS_PER_HOST;
+    protected Integer stagingPort = DEFAULT_STAGING_PORT;
+    protected String stagingAuthMethod = DEFAULT_AUTH_METHOD;
     private String stagingScheme = DEFAULT_SCHEME;
     private boolean stagingSimpleSsl = false;
     private SSLContext stagingSslContext;
@@ -62,11 +68,11 @@ public class HubConfigImpl implements HubConfig {
     private String stagingCertPassword;
     private String stagingExternalName;
 
-    private String finalDbName = DEFAULT_FINAL_NAME;
-    private String finalHttpName = DEFAULT_FINAL_NAME;
-    private Integer finalForestsPerHost = DEFAULT_FORESTS_PER_HOST;
-    private Integer finalPort = DEFAULT_FINAL_PORT;
-    private String finalAuthMethod = DEFAULT_AUTH_METHOD;
+    protected String finalDbName = DEFAULT_FINAL_NAME;
+    protected String finalHttpName = DEFAULT_FINAL_NAME;
+    protected Integer finalForestsPerHost = DEFAULT_FORESTS_PER_HOST;
+    protected Integer finalPort = DEFAULT_FINAL_PORT;
+    protected String finalAuthMethod = DEFAULT_AUTH_METHOD;
     private String finalScheme = DEFAULT_SCHEME;
     private boolean finalSimpleSsl = false;
     private SSLContext finalSslContext;
@@ -75,11 +81,11 @@ public class HubConfigImpl implements HubConfig {
     private String finalCertPassword;
     private String finalExternalName;
 
-    private String traceDbName = DEFAULT_TRACE_NAME;
-    private String traceHttpName = DEFAULT_TRACE_NAME;
-    private Integer traceForestsPerHost = 1;
-    private Integer tracePort = DEFAULT_TRACE_PORT;
-    private String traceAuthMethod = DEFAULT_AUTH_METHOD;
+    protected String traceDbName = DEFAULT_TRACE_NAME;
+    protected String traceHttpName = DEFAULT_TRACE_NAME;
+    protected Integer traceForestsPerHost = 1;
+    protected Integer tracePort = DEFAULT_TRACE_PORT;
+    protected String traceAuthMethod = DEFAULT_AUTH_METHOD;
     private String traceScheme = DEFAULT_SCHEME;
     private boolean traceSimpleSsl = false;
     private SSLContext traceSslContext;
@@ -88,11 +94,11 @@ public class HubConfigImpl implements HubConfig {
     private String traceCertPassword;
     private String traceExternalName;
 
-    private String jobDbName = DEFAULT_JOB_NAME;
-    private String jobHttpName = DEFAULT_JOB_NAME;
-    private Integer jobForestsPerHost = 1;
-    private Integer jobPort = DEFAULT_JOB_PORT;
-    private String jobAuthMethod = DEFAULT_AUTH_METHOD;
+    protected String jobDbName = DEFAULT_JOB_NAME;
+    protected String jobHttpName = DEFAULT_JOB_NAME;
+    protected Integer jobForestsPerHost = 1;
+    protected Integer jobPort = DEFAULT_JOB_PORT;
+    protected String jobAuthMethod = DEFAULT_AUTH_METHOD;
     private String jobScheme = DEFAULT_SCHEME;
     private boolean jobSimpleSsl = false;
     private SSLContext jobSslContext;
@@ -101,23 +107,22 @@ public class HubConfigImpl implements HubConfig {
     private String jobCertPassword;
     private String jobExternalName;
 
-    private String modulesDbName = DEFAULT_MODULES_DB_NAME;
-    private Integer modulesForestsPerHost = 1;
+    protected String modulesDbName = DEFAULT_MODULES_DB_NAME;
+    protected Integer modulesForestsPerHost = 1;
 
-    private String triggersDbName = DEFAULT_TRIGGERS_DB_NAME;
-    private Integer triggersForestsPerHost = 1;
+    protected String triggersDbName = DEFAULT_TRIGGERS_DB_NAME;
+    protected Integer triggersForestsPerHost = 1;
 
-    private String schemasDbName = DEFAULT_SCHEMAS_DB_NAME;
-    private Integer schemasForestsPerHost = 1;
+    protected String schemasDbName = DEFAULT_SCHEMAS_DB_NAME;
+    protected Integer schemasForestsPerHost = 1;
 
     private String hubRoleName = DEFAULT_ROLE_NAME;
     private String hubUserName = DEFAULT_USER_NAME;
 
     private String[] loadBalancerHosts;
 
-    private String customForestPath = DEFAULT_CUSTOM_FOREST_PATH;
-
-    private String modulePermissions = "rest-reader,read,rest-writer,insert,rest-writer,update,rest-extension-user,execute";
+    protected String customForestPath = DEFAULT_CUSTOM_FOREST_PATH;
+    protected String modulePermissions = "rest-reader,read,rest-writer,insert,rest-writer,update,rest-extension-user,execute";
 
     private String projectDir;
 
@@ -132,7 +137,10 @@ public class HubConfigImpl implements HubConfig {
 
     private AppConfig appConfig;
 
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private static final Logger logger = LoggerFactory.getLogger(HubConfigImpl.class);
+
+    public HubConfigImpl() {
+    }
 
     public HubConfigImpl(String projectDir) {
         setProjectDir(new File(projectDir).getAbsolutePath());
@@ -682,7 +690,6 @@ public class HubConfigImpl implements HubConfig {
         this.loadBalancerHosts = loadBalancerHosts;
     }
 
-    @JsonIgnore
     @Override public String getCustomForestPath() {
         return customForestPath;
     }
@@ -690,7 +697,6 @@ public class HubConfigImpl implements HubConfig {
         this.customForestPath = customForestPath;
     }
 
-    @JsonIgnore
     @Override public String getModulePermissions() {
         return modulePermissions;
     }
@@ -979,11 +985,6 @@ public class HubConfigImpl implements HubConfig {
     }
 
     @JsonIgnore
-    @Override public Path getHubMimetypesDir() {
-        return hubProject.getHubMimetypesDir();
-    }
-
-    @JsonIgnore
     @Override public AppConfig getAppConfig() {
         return appConfig;
     }
@@ -1000,10 +1001,15 @@ public class HubConfigImpl implements HubConfig {
         }
     }
 
-    @Override public String getJarVersion() throws IOException {
+    @Override public String getJarVersion() {
         Properties properties = new Properties();
         InputStream inputStream = getClass().getClassLoader().getResourceAsStream("version.properties");
-        properties.load(inputStream);
+        try {
+            properties.load(inputStream);
+        } catch (IOException e)
+        {
+            throw new RuntimeException(e);
+        }
         String version = (String)properties.get("version");
 
         // this lets debug builds work from an IDE
@@ -1115,13 +1121,8 @@ public class HubConfigImpl implements HubConfig {
         }
 
 
-        try {
-            String version = getJarVersion();
-            customTokens.put("%%mlHubVersion%%", version);
-        }
-        catch(IOException e) {
-            e.printStackTrace();
-        }
+        String version = getJarVersion();
+        customTokens.put("%%mlHubVersion%%", version);
 
         appConfig = config;
     }

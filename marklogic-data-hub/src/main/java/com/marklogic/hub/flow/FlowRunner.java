@@ -21,6 +21,9 @@ import com.marklogic.client.datamovement.JobTicket;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Executes a flow with options
+ */
 public interface FlowRunner {
 
     /**

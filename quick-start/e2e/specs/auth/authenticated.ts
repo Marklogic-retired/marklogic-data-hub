@@ -63,6 +63,8 @@ export default function(tmpDir) {
       expect(loginPage.stagingAppserverName.getAttribute('value')).toEqual('data-hub-STAGING');
       expect(loginPage.modulesDbName.getAttribute('value')).toEqual('data-hub-MODULES');
       expect(loginPage.dataHubName.getAttribute('value')).toEqual('');
+      expect(loginPage.dataHubName.getAttribute('value')).toEqual('data-hub');
+      browser.driver.sleep(3000);
       expect(loginPage.projectDirTab.isDisplayed()).toBe(false);
       expect(loginPage.initIfNeededTab.isDisplayed()).toBe(true);
       expect(loginPage.postInitTab.isDisplayed()).toBe(false);
@@ -157,6 +159,7 @@ export default function(tmpDir) {
       if(!appPage.flowsTab.isPresent()) {
         console.log('installation is stuck, go to the dashboard page using url');
         browser.get('/');
+        browser.sleep(5000);
       }
       console.log('loading dashboard page');
       dashboardPage.isLoaded();

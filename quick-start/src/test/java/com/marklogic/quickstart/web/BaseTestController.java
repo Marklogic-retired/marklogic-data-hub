@@ -42,14 +42,14 @@ public class BaseTestController extends HubTestBase {
 
     protected void setEnvConfig(EnvironmentConfig envConfig) {
 
-        ConnectionAuthenticationToken authenticationToken = new ConnectionAuthenticationToken("admin", "admin", "localhost", 1, "local");
+        ConnectionAuthenticationToken authenticationToken = new ConnectionAuthenticationToken("admin", "admin", envConfig.getMlSettings().getHost(), 1, "local");
         authenticationToken.setEnvironmentConfig(envConfig);
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
     }
 
     @Before
     public void baseSetUp() throws IOException {
-        envConfig = new EnvironmentConfig(PROJECT_PATH, "local", "admin", "admin");
+        envConfig = new EnvironmentConfig(PROJECT_PATH, null, "admin", "admin");
         setEnvConfig(envConfig);
         DataHub dh = DataHub.create(envConfig.getMlSettings());
         dh.initProject();
@@ -58,6 +58,6 @@ public class BaseTestController extends HubTestBase {
 
     @After
     public void baseTeardown() throws IOException {
-        FileUtils.deleteDirectory(new File(PROJECT_PATH));
+        deleteProjectDir();
     }
 }

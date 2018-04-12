@@ -1,15 +1,20 @@
-package com.marklogic.hub;
+package com.marklogic.hub.core;
 
 import com.marklogic.client.datamovement.DataMovementManager;
 import com.marklogic.client.datamovement.WriteBatcher;
 import com.marklogic.client.document.ServerTransform;
 import com.marklogic.client.io.Format;
 import com.marklogic.client.io.StringHandle;
+import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.flow.CodeFormat;
 import com.marklogic.hub.flow.DataFormat;
 import com.marklogic.hub.flow.FlowType;
 import com.marklogic.hub.scaffold.Scaffolding;
+
+import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -25,9 +30,9 @@ public class DebugLibTest extends HubTestBase {
     private String errorMessage;
     private boolean runFlowFailed;
 
-    @BeforeClass
-    public static void setup() {
-        installHub();
+    @Before
+    public void setup() {
+        basicSetup();
 
         Scaffolding scaffolding = Scaffolding.create(PROJECT_PATH, stagingClient);
         scaffolding.createFlow(entityName, flowName, FlowType.INPUT, CodeFormat.XQUERY, DataFormat.XML);

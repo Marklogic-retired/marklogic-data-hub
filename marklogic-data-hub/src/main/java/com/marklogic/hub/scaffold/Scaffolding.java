@@ -17,6 +17,7 @@
 package com.marklogic.hub.scaffold;
 
 import com.marklogic.client.DatabaseClient;
+import com.marklogic.hub.HubProject;
 import com.marklogic.hub.error.ScaffoldingValidationException;
 import com.marklogic.hub.flow.CodeFormat;
 import com.marklogic.hub.flow.DataFormat;
@@ -26,6 +27,13 @@ import com.marklogic.hub.scaffold.impl.ScaffoldingImpl;
 import java.nio.file.Path;
 import java.util.List;
 
+/**
+ * Interface that handles the management of DHF projects on disk
+ *
+ * Includes creating entities, flows, rest extensions, and transforms for an already initialized project
+ *
+ * @see HubProject for the initialization of the project itself to disk
+ */
 public interface Scaffolding {
 
     /**

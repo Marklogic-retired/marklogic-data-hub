@@ -27,27 +27,26 @@ import com.marklogic.client.io.StringHandle;
 import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubConfigBuilder;
-import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.flow.*;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.FileUtil;
 import com.marklogic.hub.util.MlcpRunner;
 import com.marklogic.quickstart.auth.ConnectionAuthenticationToken;
 import com.marklogic.quickstart.model.EnvironmentConfig;
-import org.apache.commons.io.FileUtils;
 import org.json.JSONException;
 import org.junit.Assert;
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpSession;
+import org.springframework.context.ApplicationContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -56,24 +55,17 @@ import java.util.Map;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest()
-public class FlowManagerServiceTest extends HubTestBase {
+public class FlowManagerServiceTest extends AbstractServiceTest {
 
     private static String ENTITY = "test-entity";
     private static Path projectDir = Paths.get(".", PROJECT_PATH);
 
     @Autowired
-    MockHttpServletRequest request;
-
-    @Autowired
-    MockHttpSession session;
-
-    @Autowired
     FlowManagerService fm;
 
-    @BeforeClass
-    public static void setup() throws IOException {
-        FileUtils.deleteDirectory(projectDir.toFile());
-        installHub();
+    @Before
+    public void setup() {
+        createProjectDir();
 
         Scaffolding scaffolding = Scaffolding.create(projectDir.toString(), stagingClient);
         scaffolding.createEntity(ENTITY);
@@ -117,7 +109,8 @@ public class FlowManagerServiceTest extends HubTestBase {
 
         installUserModules(getHubConfig(), true);
     }
-    private void setEnvConfig(EnvironmentConfig envConfig) {
+
+    protected void setEnvConfig(EnvironmentConfig envConfig) {
 
         ConnectionAuthenticationToken authenticationToken = new ConnectionAuthenticationToken("admin", "admin", "localhost", 1, "local");
         authenticationToken.setEnvironmentConfig(envConfig);
@@ -166,7 +159,7 @@ public class FlowManagerServiceTest extends HubTestBase {
                 "\"output_permissions\":\"\\\"rest-reader,read,rest-writer,update\\\"\"," +
                 "\"output_uri_replace\":\"\\\"" + basePath.replace("\\", "/").replaceAll("^([A-Za-z]):", "/$1:") + ",''\\\"\"," +
                 "\"document_type\":\"\\\"json\\\"\"," +
-                "\"transform_module\":\"\\\"/MarkLogic/data-hub-framework/transforms/mlcp-flow-transform.xqy\\\"\"," +
+                "\"transform_module\":\"\\\"/MarkLogic/data-hub-framework/transforms/mlcp-flow-transform.sjs\\\"\"," +
                 "\"transform_namespace\":\"\\\"http://marklogic.com/data-hub/mlcp-flow-transform\\\"\"," +
                 "\"transform_param\":\"\\\"entity-name=" + ENTITY + ",flow-name=" + flowName + "\\\"\"" +
                 "}");
@@ -196,7 +189,7 @@ public class FlowManagerServiceTest extends HubTestBase {
 
         String pdir = "C:\\some\\crazy\\path\\to\\project";
         EnvironmentConfig envConfig = new EnvironmentConfig(pdir, "local", "admin", "admin");
-        envConfig.setMlSettings(HubConfigBuilder.newHubConfigBuilder(pdir).withPropertiesFromEnvironment().build());
+        envConfig.setMlSettings(HubConfigBuilder.newHubConfigBuilder(pdir).build());
         setEnvConfig(envConfig);
 
         String flowName = "sjs-json-harmonization-flow";
@@ -239,7 +232,7 @@ public class FlowManagerServiceTest extends HubTestBase {
 
         String pdir = "C:\\some\\crazy\\path\\to\\project";
         EnvironmentConfig envConfig = new EnvironmentConfig(pdir, "local", "admin", "admin");
-        envConfig.setMlSettings(HubConfigBuilder.newHubConfigBuilder(pdir).withPropertiesFromEnvironment().build());
+        envConfig.setMlSettings(HubConfigBuilder.newHubConfigBuilder(pdir).build());
         setEnvConfig(envConfig);
 
         String flowName = "sjs-json-harmonization-flow";

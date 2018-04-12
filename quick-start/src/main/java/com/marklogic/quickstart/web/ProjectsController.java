@@ -21,6 +21,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubConfigBuilder;
+import com.marklogic.quickstart.model.HubSettings;
 import com.marklogic.quickstart.model.Project;
 import com.marklogic.quickstart.service.ProjectManagerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -99,10 +100,10 @@ public class ProjectsController {
 
     @RequestMapping(value = "/{projectId}/defaults", method = RequestMethod.GET)
     @ResponseBody
-    public HubConfig getDefaults(@PathVariable int projectId) {
+    public HubSettings getDefaults(@PathVariable int projectId) {
         Project project = pm.getProject(projectId);
-        return HubConfigBuilder.newHubConfigBuilder(project.path)
+        return HubSettings.fromHubConfig(HubConfigBuilder.newHubConfigBuilder(project.path)
             .withPropertiesFromEnvironment()
-            .build();
+            .build());
     }
 }

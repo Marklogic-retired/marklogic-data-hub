@@ -1,5 +1,7 @@
-package com.marklogic.hub;
+package com.marklogic.hub.core;
 
+import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.HubTestBase;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -23,11 +25,6 @@ public class HubConfigTest extends HubTestBase {
         FileUtils.deleteDirectory(projectPath);
         HubConfig config = getHubConfig();
         config.initHubProject();
-    }
-
-    @After
-    public void teardown() throws IOException {
-        FileUtils.deleteDirectory(projectPath);
     }
 
     private void deleteProp(String key) {

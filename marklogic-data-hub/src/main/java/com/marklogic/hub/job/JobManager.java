@@ -23,6 +23,9 @@ import com.marklogic.hub.job.impl.JobManagerImpl;
 import java.io.IOException;
 import java.nio.file.Path;
 
+/**
+ * Handles jobs and their creation, status, and deletion.
+ */
 public interface JobManager {
 
     /**

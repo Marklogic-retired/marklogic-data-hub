@@ -17,8 +17,6 @@ package com.marklogic.hub.error;
 
 public class ScaffoldingValidationException extends Exception {
 
-    private static final long serialVersionUID = 3058767542162618337L;
-
     public ScaffoldingValidationException(String message) {
         super(message);
     }

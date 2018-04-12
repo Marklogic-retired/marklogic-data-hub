@@ -309,7 +309,7 @@ public class DataHubImpl implements DataHub {
     @Override public void install(HubDeployStatusListener listener) {
         initProject();
 
-        logger.info("Installing the Data Hub into MarkLogic");
+        logger.warn("Installing the Data Hub into MarkLogic");
 
         AppConfig config = hubConfig.getAppConfig();
         HubAppDeployer deployer = new HubAppDeployer(getManageClient(), getAdminManager(), listener);
@@ -338,7 +338,7 @@ public class DataHubImpl implements DataHub {
      * @param listener - the callback method to receive status updates
      */
     @Override public void uninstall(HubDeployStatusListener listener) {
-        logger.debug("Uninstalling the Data Hub from MarkLogic");
+        logger.warn("Uninstalling the Data Hub from MarkLogic");
 
         AppConfig config = hubConfig.getAppConfig();
         HubAppDeployer deployer = new HubAppDeployer(getManageClient(), getAdminManager(), listener);
@@ -387,9 +387,6 @@ public class DataHubImpl implements DataHub {
         moduleCommands.add(new LoadHubModulesCommand(hubConfig));
         moduleCommands.add(new LoadUserModulesCommand(hubConfig));
         commandMap.put("mlModuleCommands", moduleCommands);
-
-        List<Command> mimetypeCommands = commandMap.get("mlMimetypeCommands");
-        mimetypeCommands.add(0, new DeployHubMimetypesCommand(hubConfig));
 
         List<Command> forestCommands = commandMap.get("mlForestCommands");
         DeployCustomForestsCommand deployCustomForestsCommand = (DeployCustomForestsCommand)forestCommands.get(0);

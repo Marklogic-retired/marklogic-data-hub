@@ -88,6 +88,7 @@ dependencies {
     testCompile "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}"
     testRuntime "org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}"
 
+
     testCompile "org.junit.platform:junit-platform-runner:${junitPlatformVersion}"
 
     // If you also want to support JUnit 3 and JUnit 4 tests
@@ -167,7 +168,7 @@ task startRest {
 
 task e2eLaunch(type: NpmTask) {
     args = ['run', 'e2e']
-    dependsOn buildUI, startRest
+    dependsOn compileJava, buildUI, startRest
 }
 
 task e2eUI {
@@ -199,7 +200,8 @@ if (!(
   processResources.dependsOn copyIndexHtml
 }
 
-test.dependsOn e2eUI
+//removing test dependency on e2e tests
+//test.dependsOn e2eUI
 
 bootRun {
     addResources = true
@@ -210,4 +212,8 @@ springBoot {
     executable = true
     mainClass = "com.marklogic.quickstart.Application"
     buildInfo()
+}
+
+test {
+  include 'com/marklogic/quickstart/WebTestSuite.class'
 }

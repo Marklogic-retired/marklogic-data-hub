@@ -26,6 +26,9 @@ import org.w3c.dom.Element;
 import java.nio.file.Path;
 import java.util.List;
 
+/**
+ * Manages existing flows and creates flow runners to execute flows.
+ */
 public interface FlowManager {
     /**
      * Creates and returns the FlowManager object

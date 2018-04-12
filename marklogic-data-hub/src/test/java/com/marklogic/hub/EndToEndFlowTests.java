@@ -1,3 +1,18 @@
+/*
+ * Copyright 2012-2018 MarkLogic Corporation
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.marklogic.hub;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -7,21 +22,16 @@ import com.marklogic.client.FailedRequestException;
 import com.marklogic.client.datamovement.DataMovementManager;
 import com.marklogic.client.datamovement.JobTicket;
 import com.marklogic.client.datamovement.WriteBatcher;
-import com.marklogic.client.datamovement.WriteEvent;
 import com.marklogic.client.document.GenericDocumentManager;
 import com.marklogic.client.document.ServerTransform;
-import com.marklogic.client.io.*;
-import com.marklogic.hub.flow.*;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.FileUtil;
+import com.marklogic.hub.util.Installer;
 import com.marklogic.hub.util.MlcpRunner;
 import com.marklogic.hub.validate.EntitiesValidator;
 import org.apache.commons.io.FileUtils;
 import org.custommonkey.xmlunit.XMLUnit;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.DynamicTest;
-import org.junit.jupiter.api.TestFactory;
+import org.junit.jupiter.api.*;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 import org.skyscreamer.jsonassert.JSONAssert;
@@ -29,6 +39,19 @@ import org.skyscreamer.jsonassert.JSONCompare;
 import org.skyscreamer.jsonassert.JSONCompareMode;
 import org.skyscreamer.jsonassert.JSONCompareResult;
 import org.w3c.dom.Document;
+
+import com.marklogic.client.io.DOMHandle;
+import com.marklogic.client.io.DocumentMetadataHandle;
+import com.marklogic.client.io.FileHandle;
+import com.marklogic.client.io.Format;
+import com.marklogic.client.io.JacksonHandle;
+import com.marklogic.client.io.StringHandle;
+import com.marklogic.hub.flow.CodeFormat;
+import com.marklogic.hub.flow.DataFormat;
+import com.marklogic.hub.flow.Flow;
+import com.marklogic.hub.flow.FlowBuilder;
+import com.marklogic.hub.flow.FlowRunner;
+import com.marklogic.hub.flow.FlowType;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -91,31 +114,42 @@ public class EndToEndFlowTests extends HubTestBase {
     private static Path projectDir = Paths.get(".", "ye-olde-project");
     private static final int TEST_SIZE = 500;
     private static final int BATCH_SIZE = 10;
-    private static FlowManager flowManager;
-    private static DataMovementManager stagingDataMovementManager;
-    private static DataMovementManager finalDataMovementManager;
+    private FlowManager flowManager;
+    private DataMovementManager stagingDataMovementManager;
+    private DataMovementManager finalDataMovementManager;
 
     private boolean installDocsFinished = false;
     private boolean installDocsFailed = false;
     private String installDocError;
 
-    private static Scaffolding scaffolding;
+    private Scaffolding scaffolding;
 
     @BeforeAll
     public static void setup() {
         XMLUnit.setIgnoreWhitespace(true);
+        new Installer().installHubOnce();
+    }
 
-        deleteProjectDir();
-        if(isSslRun() || isCertAuth()) {
-     		sslSetup();
-		}
+    @AfterAll
+    public static void teardown() {
+        new Installer().uninstallHub();
+    }
 
-        installHub();
+    @BeforeEach
+    public void setupEach() {
+        if (isSslRun() || isCertAuth()) {
+            sslSetup();
+        }
+
+        clearDatabases();
+        createProjectDir();
+
         enableTracing();
         enableDebugging();
 
         scaffolding = Scaffolding.create(projectDir.toString(), finalClient);
         scaffolding.createEntity(ENTITY);
+
 
         scaffoldFlows("scaffolded");
 
@@ -191,13 +225,6 @@ public class EndToEndFlowTests extends HubTestBase {
         finalDataMovementManager = finalClient.newDataMovementManager();
     }
 
-    @AfterAll
-    public static void teardown() {
-        uninstallHub();
-        if(isSslRun() || isCertAuth()) {
-    		sslCleanup();
-    	}
-    }
 
     private JsonNode validateUserModules() {
         EntitiesValidator ev = EntitiesValidator.create(getHubConfig().newStagingClient());
@@ -719,11 +746,11 @@ public class EndToEndFlowTests extends HubTestBase {
         return tests;
     }
 
-    private static String getFlowName(String prefix, CodeFormat codeFormat, DataFormat dataFormat, FlowType flowType, boolean useEs) {
+    private String getFlowName(String prefix, CodeFormat codeFormat, DataFormat dataFormat, FlowType flowType, boolean useEs) {
         return prefix + "-" + flowType.toString() + "-" + codeFormat.toString() + "-" + dataFormat.toString() + (useEs ? "-es" : "" );
     }
 
-    private static void createLegacyFlow(String prefix, CodeFormat codeFormat, DataFormat dataFormat, FlowType flowType, boolean useEs) {
+    private void createLegacyFlow(String prefix, CodeFormat codeFormat, DataFormat dataFormat, FlowType flowType, boolean useEs) {
 
         if (useEs) {
             return;
@@ -757,7 +784,7 @@ public class EndToEndFlowTests extends HubTestBase {
         copyFile("e2e-test/legacy-" + dataFormat.toString() + ".xml", flowDir.resolve("" + flowName + ".xml"));
     }
 
-    private static void create2xFlow(String prefix, CodeFormat codeFormat, DataFormat dataFormat, FlowType flowType, boolean useEs) {
+    private void create2xFlow(String prefix, CodeFormat codeFormat, DataFormat dataFormat, FlowType flowType, boolean useEs) {
 
         if (useEs) {
             return;
@@ -801,13 +828,13 @@ public class EndToEndFlowTests extends HubTestBase {
         }
     }
 
-    private static void scaffoldFlows(String prefix) {
+    private void scaffoldFlows(String prefix) {
         allCombos(((codeFormat, dataFormat, flowType, useEs) -> {
             scaffoldFlow(prefix, codeFormat, dataFormat, flowType, useEs);
         }));
     }
 
-    private static void scaffoldFlow(String prefix, CodeFormat codeFormat, DataFormat dataFormat, FlowType flowType, boolean useEs) {
+    private void scaffoldFlow(String prefix, CodeFormat codeFormat, DataFormat dataFormat, FlowType flowType, boolean useEs) {
         Path entityDir = projectDir.resolve("plugins").resolve("entities").resolve(ENTITY);
         if (useEs) {
             copyFile("e2e-test/" + ENTITY + ".entity.json", entityDir.resolve(ENTITY + ".entity.json"));
@@ -824,13 +851,13 @@ public class EndToEndFlowTests extends HubTestBase {
         }
     }
 
-    private static void createFlows(String prefix, CreateFlowListener listener) {
+    private void createFlows(String prefix, CreateFlowListener listener) {
         allCombos(((codeFormat, dataFormat, flowType, useEs) -> {
             createFlow(prefix, codeFormat, dataFormat, flowType, useEs, listener);
         }));
     }
 
-    private static void createFlow(String prefix, CodeFormat codeFormat, DataFormat dataFormat, FlowType flowType, boolean useEs, CreateFlowListener listener) {
+    private void createFlow(String prefix, CodeFormat codeFormat, DataFormat dataFormat, FlowType flowType, boolean useEs, CreateFlowListener listener) {
         String flowName = getFlowName(prefix, codeFormat, dataFormat, flowType, useEs);
         Path entityDir = projectDir.resolve("plugins").resolve("entities").resolve(ENTITY);
         Path flowDir = entityDir.resolve(flowType.toString()).resolve(flowName);
@@ -867,15 +894,12 @@ public class EndToEndFlowTests extends HubTestBase {
         }
     }
 
-    private static void copyFile(String srcDir, Path dstDir) {
+    private void copyFile(String srcDir, Path dstDir) {
         FileUtil.copy(getResourceStream(srcDir), dstDir.toFile());
     }
 
     private void installDocs(DataFormat dataFormat, String collection, DatabaseClient srcClient, boolean useEs) {
-        DataMovementManager mgr = stagingDataMovementManager;
-        if (srcClient.getDatabase().equals(HubConfig.DEFAULT_FINAL_NAME)) {
-            mgr = finalDataMovementManager;
-        }
+        DataMovementManager mgr = srcClient.newDataMovementManager();
 
         WriteBatcher writeBatcher = mgr.newWriteBatcher()
             .withBatchSize(100)
@@ -917,7 +941,7 @@ public class EndToEndFlowTests extends HubTestBase {
         }
     }
 
-    private void testInputFlowViaMlcp(String prefix, String fileSuffix, DatabaseClient databaseClient, CodeFormat codeFormat, DataFormat dataFormat, boolean useEs, Map<String, Object> options, FinalCounts finalCounts) {
+    private void testInputFlowViaMlcp(String prefix, String fileSuffix, DatabaseClient databaseClient, CodeFormat codeFormat, DataFormat dataFormat, boolean useEs, Map<String, Object> options, FinalCounts finalCounts) throws InterruptedException {
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_TRACE_NAME, HubConfig.DEFAULT_JOB_NAME);
 
         String flowName = getFlowName(prefix, codeFormat, dataFormat, FlowType.INPUT, useEs);
@@ -930,10 +954,16 @@ public class EndToEndFlowTests extends HubTestBase {
         Flow flow = flowManager.getFlow(ENTITY, flowName, FlowType.INPUT);
         String inputPath = getResourceFile("e2e-test/input/input" + fileSuffix + "." + dataFormat.toString()).getAbsolutePath();
         String basePath = getResourceFile("e2e-test/input").getAbsolutePath();
+        String OS = System.getProperty("os.name").toLowerCase();
         String optionString;
         JsonNode mlcpOptions;
         try {
-            optionString = toJsonString(options).replace("\"", "\\\"");
+        	if (OS.indexOf("win") >= 0) {
+        		optionString = toJsonString(options).replace("\"", "\\\\\\\"");
+        	}
+        	else {
+        		optionString = toJsonString(options).replace("\"", "\\\"");
+        	}
             String optionsJson =
                 "{" +
                     "\"input_file_path\":\"" + inputPath.replace("\\", "\\\\\\\\") + "\"," +
@@ -969,6 +999,8 @@ public class EndToEndFlowTests extends HubTestBase {
         }
         logger.error(mlcpRunner.getProcessOutput());
 
+        // wait for completion
+        Thread.sleep(2000);
         int stagingCount = getStagingDocCount();
         int finalCount = getFinalDocCount();
         int tracingCount = getTracingDocCount();
@@ -976,6 +1008,7 @@ public class EndToEndFlowTests extends HubTestBase {
 
         assertEquals(finalCounts.stagingCount, stagingCount);
         assertEquals(finalCounts.finalCount, finalCount);
+        // most currently failing tests are cause of trace.
         assertEquals(finalCounts.tracingCount, tracingCount);
         assertEquals(finalCounts.jobCount, jobsCount);
 
@@ -1114,7 +1147,7 @@ public class EndToEndFlowTests extends HubTestBase {
             }
         }
     }
-    
+
     private void testInputFlowViaDMSDK(String prefix, String fileSuffix, CodeFormat codeFormat, DataFormat dataFormat, boolean useEs, boolean passJobId, Map<String, Object> options, FinalCounts finalCounts) {
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_TRACE_NAME, HubConfig.DEFAULT_JOB_NAME);
         String flowName = getFlowName(prefix, codeFormat, dataFormat, FlowType.INPUT, useEs);
@@ -1128,7 +1161,8 @@ public class EndToEndFlowTests extends HubTestBase {
         assertEquals(0, tracingCount);
         assertEquals(0, jobsCount);
 
-        ServerTransform serverTransform = new ServerTransform("ml:inputFlow");
+        String transform = codeFormat.equals(CodeFormat.JAVASCRIPT) ? "ml:sjsInputFlow" : "ml:inputFlow";
+		ServerTransform serverTransform = new ServerTransform(transform);
         if (passJobId) {
             serverTransform.addParameter("job-id", UUID.randomUUID().toString());
         }
@@ -1148,10 +1182,10 @@ public class EndToEndFlowTests extends HubTestBase {
                 break;
         }
         handle.setFormat(format);
-        
+
         WriteBatcher batcher = stagingDataMovementManager.newWriteBatcher();
         batcher.withBatchSize(1).withTransform(serverTransform);
-        batcher.onBatchSuccess(batch -> {	
+        batcher.onBatchSuccess(batch -> {
 		}).onBatchFailure((batch, throwable) -> {
 			throwable.printStackTrace();
 		});
@@ -1244,8 +1278,8 @@ public class EndToEndFlowTests extends HubTestBase {
     private void testHarmonizeFlow(
         String prefix, CodeFormat codeFormat, DataFormat dataFormat, boolean useEs,
         Map<String, Object> options, DatabaseClient srcClient, String destDb,
-        FinalCounts finalCounts, boolean waitForCompletion)
-    {
+        FinalCounts finalCounts, boolean waitForCompletion) throws InterruptedException {
+        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_TRACE_NAME, HubConfig.DEFAULT_JOB_NAME);
         String flowName = getFlowName(prefix, codeFormat, dataFormat, FlowType.HARMONIZE, useEs);
 
         Vector<String> completed = new Vector<>();
@@ -1254,6 +1288,8 @@ public class EndToEndFlowTests extends HubTestBase {
         Tuple<FlowRunner, JobTicket> tuple = runHarmonizeFlow(flowName, dataFormat, completed, failed, options, srcClient, destDb, useEs, waitForCompletion);
 
         if (waitForCompletion) {
+            // takes a little time to run.
+            Thread.sleep(2000);
             int stagingCount = getStagingDocCount();
             int finalCount = getFinalDocCount();
             int tracingCount = getTracingDocCount();

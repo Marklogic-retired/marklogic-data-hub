@@ -18,26 +18,25 @@
 package com.marklogic.quickstart.service;
 
 import com.marklogic.client.DatabaseClient;
-import com.marklogic.client.DatabaseClientFactory;
-import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
 import com.marklogic.quickstart.model.JobQuery;
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
 
 public class JobServiceTest extends HubTestBase {
-    @BeforeClass
-    public static void setup() throws IOException {
+
+    @Before
+    public void setup() throws IOException {
         deleteProjectDir();
-        installHub();
+        createProjectDir();
     }
 
     @Test
     public void getJobs() {
-        DatabaseClient traceClient = DatabaseClientFactory.newClient("localhost", HubConfig.DEFAULT_JOB_PORT, "admin", "admin", DatabaseClientFactory.Authentication.DIGEST);
-        JobService jobService = new JobService(jobClient, traceClient);
+        DatabaseClient jobClient = getHubConfig().newJobDbClient();
+        JobService jobService = new JobService(jobClient, jobClient);
         JobQuery jobQuery = new JobQuery();
         jobQuery.start = new Long(1);
         jobQuery.count = new Long(10);

@@ -19,6 +19,9 @@ package com.marklogic.hub;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.hub.impl.DebuggingImpl;
 
+/**
+ * Enables or disables debugging in the DHF for the specified database using the supplied client.
+ */
 public interface Debugging {
 
     /**

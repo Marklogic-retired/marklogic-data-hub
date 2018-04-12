@@ -55,6 +55,7 @@ public class EntitiesControllerTest extends BaseTestController {
     @Autowired
     private EntitiesController ec;
 
+
     @Test
     public void getInputFlowOptions() throws Exception {
         String path = "/some/project/path";
@@ -78,9 +79,12 @@ public class EntitiesControllerTest extends BaseTestController {
 
     @Test
     public void runHarmonizeNoOptions() throws IOException, InterruptedException {
-        // Set up (not needed for other tests)
-        baseSetUp();
-        installHub();
+        deleteProjectDir();
+        createProjectDir();
+
+        envConfig.setInitialized(true);
+        envConfig.setProjectDir(PROJECT_PATH);
+        envConfig.setMlSettings(HubConfigBuilder.newHubConfigBuilder(PROJECT_PATH).withPropertiesFromEnvironment().build());
 
         Path projectDir = Paths.get(".", PROJECT_PATH);
         Scaffolding scaffolding = Scaffolding.create(projectDir.toString(), stagingClient);
@@ -107,22 +111,24 @@ public class EntitiesControllerTest extends BaseTestController {
         ResponseEntity<?> responseEntity = ec.runHarmonizeFlow(ENTITY, "sjs-json-harmonization-flow", body);
 
         Assert.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        // document takes a moment to arrive.
+        Thread.sleep(1000);
         DocumentRecord doc = finalDocMgr.read("/staged.json").next();
         JsonNode root = doc.getContent(new JacksonHandle()).get();
         JsonNode env = root.path("envelope");
         JsonNode headers = env.path("headers");
         JsonNode optionNode = headers.path("test-option");
         Assert.assertTrue(optionNode.isMissingNode());
-
-        uninstallHub();
     }
 
     @Test
     public void runHarmonizeFlowWithOptions() throws IOException, InterruptedException {
-        // Set up (not needed for other tests)
-        baseSetUp();
-        installHub();
+        deleteProjectDir();
+        createProjectDir();
 
+        envConfig.setInitialized(true);
+        envConfig.setProjectDir(PROJECT_PATH);
+        envConfig.setMlSettings(HubConfigBuilder.newHubConfigBuilder(PROJECT_PATH).withPropertiesFromEnvironment().build());
         Path projectDir = Paths.get(".", PROJECT_PATH);
         Scaffolding scaffolding = Scaffolding.create(projectDir.toString(), stagingClient);
 
@@ -149,6 +155,8 @@ public class EntitiesControllerTest extends BaseTestController {
         ResponseEntity<?> responseEntity = ec.runHarmonizeFlow(ENTITY, "sjs-json-harmonization-flow", body);
 
         Assert.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        // document takes a moment to arrive.
+        Thread.sleep(1000);
         DocumentRecord doc = finalDocMgr.read("/staged.json").next();
         JsonNode root = doc.getContent(new JacksonHandle()).get();
         JsonNode env = root.path("envelope");
@@ -157,7 +165,7 @@ public class EntitiesControllerTest extends BaseTestController {
         Assert.assertFalse(optionNode.isMissingNode());
         Assert.assertEquals(OPT_VALUE, optionNode.asText());
 
-        uninstallHub();
+        //uninstallHub();
     }
 
 }

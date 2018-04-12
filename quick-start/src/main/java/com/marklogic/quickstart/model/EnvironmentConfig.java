@@ -104,17 +104,10 @@ public class EnvironmentConfig {
         }
         dataHub = DataHub.create(mlSettings);
 
-        // warm the caches
-        getStagingClient();
-        getFinalClient();
-        getJobClient();
-        getTraceClient();
-
-        isInitialized = true;
     }
 
     @JsonIgnore
-    public void checkIfInstalled() throws IOException {
+    public void checkIfInstalled() {
         this.installInfo = dataHub.isInstalled();
         Versions versions = new Versions(mlSettings);
         this.installedVersion = versions.getHubVersion();

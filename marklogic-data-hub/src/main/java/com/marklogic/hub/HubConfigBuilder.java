@@ -25,6 +25,11 @@ import com.marklogic.mgmt.admin.AdminManager;
 
 import java.util.Properties;
 
+/**
+ * Helper interface that constructs a HubConfig object from a properties file or pre-existing config.
+ *
+ * To manipulate a HubConfig or build one from scratch {@link HubConfig}
+ */
 public interface HubConfigBuilder {
     /**
      * Returns a new {@link HubConfigBuilder} instance

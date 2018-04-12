@@ -21,6 +21,11 @@ import com.marklogic.hub.impl.HubProjectImpl;
 import java.nio.file.Path;
 import java.util.Map;
 
+/**
+ * Creates and gathers information about a hub project.
+ *
+ * This handles what is initially created on disk for the project.
+ */
 public interface HubProject {
     String HUB_CONFIG_DIR = "hub-internal-config";
     String USER_CONFIG_DIR = "user-config";
@@ -69,12 +74,6 @@ public interface HubProject {
      * @return the path for the hub servers database directory
      */
     Path getHubSecurityDir();
-
-    /**
-     * Gets the path for the hub security directory
-     * @return the path for the hub security directory
-     */
-    Path getHubMimetypesDir();
 
     /**
      * Gets the path for the entity database directory

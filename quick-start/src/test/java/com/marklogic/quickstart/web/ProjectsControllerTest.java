@@ -19,6 +19,7 @@ package com.marklogic.quickstart.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.hub.HubConfig;
+import com.marklogic.quickstart.model.HubSettings;
 import com.marklogic.quickstart.model.Project;
 import com.marklogic.quickstart.model.ProjectInfo;
 import com.marklogic.quickstart.service.ProjectManagerService;
@@ -61,7 +62,7 @@ public class ProjectsControllerTest extends BaseTestController {
     }
 
     @After
-    public void teardown() {
+    public void teardownDir() {
         temporaryFolder.delete();
     }
 
@@ -130,8 +131,8 @@ public class ProjectsControllerTest extends BaseTestController {
         pc.addProject(projectPath);
         assertEquals(1, ((Collection<ProjectInfo>)pc.getProjects().get("projects")).size());
 
-        HubConfig hubConfig = pc.getDefaults(1);
-        assertEquals(projectPath, hubConfig.getProjectDir());
+        HubSettings hubSettings = pc.getDefaults(1);
+        assertEquals(projectPath, hubSettings.getProjectDir());
     }
 
 }

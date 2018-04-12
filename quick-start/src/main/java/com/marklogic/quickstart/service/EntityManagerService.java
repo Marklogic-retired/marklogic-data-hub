@@ -22,9 +22,11 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.hub.EntityManager;
 import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.error.DataHubProjectException;
 import com.marklogic.hub.flow.FlowType;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.validate.EntitiesValidator;
+import com.marklogic.quickstart.EnvironmentAware;
 import com.marklogic.quickstart.auth.ConnectionAuthenticationToken;
 import com.marklogic.quickstart.model.EnvironmentConfig;
 import com.marklogic.quickstart.model.FlowModel;
@@ -50,7 +52,7 @@ import java.nio.file.StandardOpenOption;
 import java.util.*;
 
 @Service
-public class EntityManagerService {
+public class EntityManagerService extends EnvironmentAware {
 
     private static final String UI_LAYOUT_FILE = "entities.layout.json";
     private static final String PLUGINS_DIR = "plugins";
@@ -65,11 +67,6 @@ public class EntityManagerService {
 
     @Autowired
     private DataHubService dataHubService;
-
-    private EnvironmentConfig envConfig() {
-        ConnectionAuthenticationToken authenticationToken = (ConnectionAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
-        return authenticationToken.getEnvironmentConfig();
-    }
 
     public List<EntityModel> getLegacyEntities() throws IOException {
         String projectDir = envConfig().getProjectDir();
@@ -276,8 +273,7 @@ public class EntityManagerService {
                 return entity;
             }
         }
-
-        return null;
+        throw new DataHubProjectException("Entity not found in project: " + entityName);
     }
 
     public FlowModel getFlow(String entityName, FlowType flowType, String flowName) throws IOException {
@@ -297,7 +293,7 @@ public class EntityManagerService {
             }
         }
 
-        return null;
+        throw new DataHubProjectException("Flow not found: " + entityName + " / " + flowName);
     }
 
     public FlowModel createFlow(String projectDir, String entityName, FlowType flowType, FlowModel newFlow) throws IOException {

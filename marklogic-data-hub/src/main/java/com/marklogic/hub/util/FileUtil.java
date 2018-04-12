@@ -15,6 +15,7 @@
  */
 package com.marklogic.hub.util;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 
 import java.io.File;
@@ -26,10 +27,7 @@ public class FileUtil {
 
     public static void copy(InputStream source, File destination) {
         try {
-            FileOutputStream fos = new FileOutputStream(destination);
-            IOUtils.copy(source, fos);
-            fos.flush();
-            fos.close();
+            FileUtils.copyInputStreamToFile(source, destination);
         }
         catch (IOException e) {
             throw new RuntimeException(e);
