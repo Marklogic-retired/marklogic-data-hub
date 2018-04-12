@@ -179,7 +179,11 @@ public class MlcpRunner extends ProcessRunner {
             //logger.warn("Classpath before is: " + classpath);
             // strip out non-essential entries to truncate classpath
             List<String> classpathEntries = Arrays.asList(classpath.split(File.pathSeparator));
-            String filteredClasspathEntries = classpathEntries
+            String filteredClasspathEntries = classpath;
+            int MAX_CLASSPATH_LENGTH = 10000;
+            // if classpath was not alrady shortened (say, by IDE) then strip to run mlcp
+            if (filteredClasspathEntries.length() > MAX_CLASSPATH_LENGTH)
+                filteredClasspathEntries = classpathEntries
                             .stream()
                             .filter(
                                 u -> (
@@ -188,17 +192,19 @@ public class MlcpRunner extends ProcessRunner {
                                     u.contains("log") ||
                                     u.contains("xml") ||
                                     u.contains("json") ||
+                                    u.contains("jackson") ||
+                                    u.contains("xerces") ||
                                     u.contains("slf") ||
                                     u.contains("mlcp") ||
                                     u.contains("xcc") ||
-                                    u.contains("data-hub") ||
+                                    u.contains("xpp") ||
+                                    u.contains("protobuf") ||
                                     u.contains("mapreduce") ||
-                                    u.contains("google") ||
+                                    u.contains("guava") ||
                                     u.contains("apache") ||
                                     u.contains("commons") ||
                                     u.contains("hadoop"))
-                            )
-                            .collect(Collectors.joining(File.pathSeparator));
+                            ).collect(Collectors.joining(File.pathSeparator));
 
             //logger.warn("Classpath filtered to: " + filteredClasspathEntries);
 
