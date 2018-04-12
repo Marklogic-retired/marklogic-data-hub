@@ -36,6 +36,7 @@ import com.marklogic.quickstart.model.EnvironmentConfig;
 import org.json.JSONException;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.skyscreamer.jsonassert.JSONAssert;
@@ -140,6 +141,9 @@ public class FlowManagerServiceTest extends AbstractServiceTest {
     }
 
     @Test
+    @Ignore
+    // this test fails in some environments because wihen running in test,
+    // its classpath is too long to call mlcp as an interprocess communication.
     public void runMlcp() throws IOException, InterruptedException, JSONException {
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_TRACE_NAME, HubConfig.DEFAULT_JOB_NAME);
 
