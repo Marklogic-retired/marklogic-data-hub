@@ -34,7 +34,6 @@ public class DefinitionType extends JsonPojo {
     protected List<String> elementRangeIndex;
     protected List<String> rangeIndex;
     protected List<String> wordLexicon;
-    protected List<String> pii;
 
     protected List<PropertyType> properties;
 
@@ -100,14 +99,6 @@ public class DefinitionType extends JsonPojo {
 
     public void setWordLexicon(List<String> wordLexicon) {
         this.wordLexicon = wordLexicon;
-    }
-
-    public List<String> getPii() {
-        return pii;
-    }
-
-    public void setPii(List<String> pii) {
-        this.pii = pii;
     }
 
     public List<PropertyType> getProperties() {
