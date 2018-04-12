@@ -34,7 +34,11 @@ mkdir input
 
 Your directory should look like this:
 
-![Directory Tree]({{site.baseurl}}/images/2x/dir-tree.png)
+<pre class="cmdline">
+data-hub
+ +-- input  
+ +-- quick-start-{{ site.data.global.hub_version }}.war
+</pre>
 
 ## 4 - Run the QuickStart
 
@@ -69,7 +73,7 @@ Click **Allow Access**
 
 After opening the QuickStart Application you must step through a wizard to properly configure the Hub.
 
-1. Browse to the directory where your hub where live. If you ran the Quickstart war file in the correct directory then the folder should already be correct. <i class="fa fa-hand-pointer-o"></i> Click **Next**{:.blue-button}.
+1. Browse to the directory where your hub lives. If you saved and ran the Quickstart war file in the hub directory, then you should be in the correct directory. <i class="fa fa-hand-pointer-o"></i> Click **Next**{:.blue-button}.
 ![Hub Directory]({{site.baseurl}}/images/2x/hub-wizard-1.png)
 
 2. Initialize your Data Hub Project Directory. <i class="fa fa-hand-pointer-o"></i> Click **INITIALIZE**{:.blue-button}.
