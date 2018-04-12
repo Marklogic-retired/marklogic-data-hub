@@ -21,6 +21,6 @@ This example shows how to use the [v1/documents endpoint](https://docs.marklogic
 
 <pre class="cmdline">
 curl --anyauth --user user:password -T ./my-content -i \
-  -H "Content-type: application/xml" \
+  -X PUT -H "Content-type: application/xml" \
   http://localhost:8010/v1/documents?uri=/shakespeare/plays/a_and_c.xml&transform=run-flow&trans:entity-name=YourEntityName&trans:flow-name=YourFlowName&trans:options={"your":"options"}&trans:job-id=someString
 </pre>
