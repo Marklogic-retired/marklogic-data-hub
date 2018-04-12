@@ -6,6 +6,7 @@ import com.marklogic.hub.collector.EmptyCollectorTest;
 import com.marklogic.hub.collector.StreamCollectorTest;
 import com.marklogic.hub.core.*;
 import com.marklogic.hub.deploy.commands.GenerateHubTDETemplateCommandTest;
+import com.marklogic.hub.deploy.commands.GeneratePiiCommandTest;
 import com.marklogic.hub.deploy.commands.LoadUserModulesCommandTest;
 import com.marklogic.hub.entity.EntityManagerTest;
 import com.marklogic.hub.flow.FlowManagerTest;
@@ -32,6 +33,7 @@ import org.junit.runners.Suite.SuiteClasses;
     HubConfigTest.class,
     HubProjectTest.class,
     GenerateHubTDETemplateCommandTest.class,
+    GeneratePiiCommandTest.class,
     LoadUserModulesCommandTest.class,
     EntityManagerTest.class,
     FlowManagerTest.class,
