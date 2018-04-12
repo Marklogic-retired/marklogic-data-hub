@@ -1,30 +1,35 @@
 {
-  "info": {
-    "title": "OrderLine",
-    "version": "0.0.6",
-    "baseUri": "http://marklogic.com/sample-data/order",
+  "info" : {
+    "title" : "OrderLine",
+    "version" : "0.0.6",
+    "baseUri" : "http://marklogic.com/sample-data/order",
     "description" : "This OrderLine is a flat model for mapping superstore data."
   },
-  "definitions": {
-    "OrderLine": {
-      "properties": {
-        "orderId": {
-          "datatype": "string"
+  "definitions" : {
+    "OrderLine" : {
+      "primaryKey" : "lineItemId",
+      "required" : [ ],
+      "pii" : [ "lineItemId" ],
+      "elementRangeIndex" : [ ],
+      "rangeIndex" : [ ],
+      "wordLexicon" : [ ],
+      "properties" : {
+        "orderId" : {
+          "datatype" : "string"
         },
-        "orderDate": {
-          "datatype": "date"
+        "orderDate" : {
+          "datatype" : "date"
         },
-        "lineItemId": {
-          "datatype":"integer"
+        "lineItemId" : {
+          "datatype" : "integer"
         },
-        "quantity": {
-          "datatype": "integer"
+        "quantity" : {
+          "datatype" : "integer"
         },
-        "productName": {
-          "datatype": "string"
+        "productName" : {
+          "datatype" : "string"
         }
-      },
-      "primaryKey":"lineItemId"
+      }
     }
   }
 }

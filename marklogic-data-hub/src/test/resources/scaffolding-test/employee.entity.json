@@ -10,6 +10,7 @@
       "rangeIndex" : [ "name" ],
       "elementRangeIndex": ["salary"],
       "wordLexicon" : [ ],
+      "pii": [ "salary" ],
       "properties" : {
         "id": {
           "datatype": "string",
