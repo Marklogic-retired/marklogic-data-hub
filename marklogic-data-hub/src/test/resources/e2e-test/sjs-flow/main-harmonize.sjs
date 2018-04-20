@@ -42,7 +42,7 @@ function main(id, options) {
   var envelope = dhf.makeEnvelope(content, headers, triples, options.dataFormat);
 
   // writers must be invoked this way.
-  // see: https://github.com/marklogic-community/marklogic-data-hub/wiki/dhf-lib#run-writer
+  // see: https://github.com/marklogic/marklogic-data-hub/wiki/dhf-lib#run-writer
   dhf.runWriter(xdmp.function(null, './writer.sjs'), id, envelope, options);
 }
 

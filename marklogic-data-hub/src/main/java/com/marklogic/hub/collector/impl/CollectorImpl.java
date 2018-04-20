@@ -95,8 +95,8 @@ public class CollectorImpl implements Collector {
 
             // Important design info:
             // The collector is invoked with a regular http client due to streaming limitations in OkHttp.
-            // https://github.com/marklogic-community/marklogic-data-hub/issues/632
-            // https://github.com/marklogic-community/marklogic-data-hub/issues/633
+            // https://github.com/marklogic/marklogic-data-hub/issues/632
+            // https://github.com/marklogic/marklogic-data-hub/issues/633
             //
             AppConfig appConfig = hubConfig.getAppConfig();
 

@@ -119,7 +119,7 @@ public class EntityManager extends LoggingObject {
             }
         }
 
-        // TODO: fix this when PR #71 is merged https://github.com/marklogic-community/ml-javaclient-util/pull/71
+        // TODO: fix this when PR #71 is merged https://github.com/marklogic/ml-javaclient-util/pull/71
         threadPoolTaskExecutor.shutdown();
 
         return loadedResources;

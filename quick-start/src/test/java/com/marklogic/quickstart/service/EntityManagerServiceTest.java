@@ -178,7 +178,7 @@ public class EntityManagerServiceTest extends HubTestBase {
     }
 
     /**
-     * Addresses https://github.com/marklogic-community/marklogic-data-hub/issues/558.
+     * Addresses https://github.com/marklogic/marklogic-data-hub/issues/558.
      */
     @Test
     public void changeEntityName() throws IOException {

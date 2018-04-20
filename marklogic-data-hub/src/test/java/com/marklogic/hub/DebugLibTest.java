@@ -35,7 +35,7 @@ public class DebugLibTest extends HubTestBase {
         installUserModules(getHubConfig(), true);
     }
 
-    // testing https://github.com/marklogic-community/marklogic-data-hub/issues/516
+    // testing https://github.com/marklogic/marklogic-data-hub/issues/516
     // when debugging is enable the debug-lib explodes if http post body is multi-part
     @Test
     public void testBug516WithDebugging() {
@@ -43,7 +43,7 @@ public class DebugLibTest extends HubTestBase {
         run516();
     }
 
-    // testing https://github.com/marklogic-community/marklogic-data-hub/issues/516
+    // testing https://github.com/marklogic/marklogic-data-hub/issues/516
     // when debugging is enable the debug-lib explodes if http post body is multi-part
     @Test
     public void testBug516WithoutDebugging() {

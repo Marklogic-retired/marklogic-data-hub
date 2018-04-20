@@ -129,7 +129,7 @@ Node pomCustomizations = new NodeBuilder(). project {
     name 'marklogic-data-hub'
     packaging 'jar'
     textdescription 'Library for Creating an Operational Data Hub on MarkLogic'
-    url 'https://github.com/marklogic-community/marklogic-data-hub'
+    url 'https://github.com/marklogic/marklogic-data-hub'
 
     scm {
         url 'git@github.com:marklogic/marklogic-data-hub.git'
@@ -155,7 +155,7 @@ Node pomCustomizations = new NodeBuilder(). project {
             name 'MarkLogic Github Contributors'
             email 'general@developer.marklogic.com'
             organization 'Github Contributors'
-            organizationUrl 'https://github.com/marklogic-community/marklogic-data-hub/graphs/contributors'
+            organizationUrl 'https://github.com/marklogic/marklogic-data-hub/graphs/contributors'
         }
     }
 }
@@ -187,12 +187,12 @@ bintray {
     pkg {
         repo = 'Maven'
         name = project.name
-        userOrg = 'marklogic-community'
+        userOrg = 'marklogic'
         desc = pomCustomizations.textdescription.text()
         licenses = ['Apache-2.0']
         websiteUrl = pomCustomizations.url
         vcsUrl = pomCustomizations.scm.url
-        issueTrackerUrl = 'https://github.com/marklogic-community/marklogic-data-hub/issues'
+        issueTrackerUrl = 'https://github.com/marklogic/marklogic-data-hub/issues'
     }
 }
 

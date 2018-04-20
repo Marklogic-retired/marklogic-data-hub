@@ -72,8 +72,8 @@ bintray {
         name = 'ml-data-hub'
         desc = 'A gradle plugin for Data Hub tasks'
         licenses = ['Apache-2.0']
-        websiteUrl = 'https://github.com/marklogic-community/marklogic-data-hub'
-        issueTrackerUrl = 'https://github.com/marklogic-community/marklogic-data-hub/issues'
+        websiteUrl = 'https://github.com/marklogic/marklogic-data-hub'
+        issueTrackerUrl = 'https://github.com/marklogic/marklogic-data-hub/issues'
     }
 }
 
