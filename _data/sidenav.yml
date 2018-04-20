@@ -88,4 +88,4 @@ main:
       ]
     }
     - { url: '/faqs/', text: 'FAQs' }
-    - { absurl: 'https://github.com/marklogic-community/marklogic-data-hub', text: 'DHF on GitHub' }
+    - { absurl: 'https://github.com/marklogic/marklogic-data-hub', text: 'DHF on GitHub' }

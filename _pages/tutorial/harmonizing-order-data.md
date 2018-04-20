@@ -41,7 +41,7 @@ This code is simply returning all unique values in the **id** field. The one tri
 By default jsearch will paginate results. The slice is telling it to return all results from 0 to **a really big number**.
 
 The final collector.sjs code:  
-<div class="embed-git lang-js" href="//raw.githubusercontent.com/marklogic-community/marklogic-data-hub/develop/examples/online-store/plugins/entities/Order/harmonize/Harmonize Orders/collector/collector.sjs"></div>
+<div class="embed-git lang-js" href="//raw.githubusercontent.com/marklogic/marklogic-data-hub/develop/examples/online-store/plugins/entities/Order/harmonize/Harmonize Orders/collector/collector.sjs"></div>
 
 1. Make the code change.
 1. <i class="fa fa-hand-pointer-o"></i> Click on **SAVE**{:.blue-button} button.
@@ -64,7 +64,7 @@ You can also see how we iterate over the orders to sum up the price and add poin
 
 **The Final content plugin looks like:**
 
-<div class="embed-git lang-js" href="//raw.githubusercontent.com/marklogic-community/marklogic-data-hub/develop/examples/online-store/plugins/entities/Order/harmonize/Harmonize Orders/content/content.sjs"></div>
+<div class="embed-git lang-js" href="//raw.githubusercontent.com/marklogic/marklogic-data-hub/develop/examples/online-store/plugins/entities/Order/harmonize/Harmonize Orders/content/content.sjs"></div>
 
 1. Change the code.
 1. <i class="fa fa-hand-pointer-o"></i> Click **SAVE**{:.blue-button}.

@@ -37,8 +37,8 @@ The DHF does this by both running key operations itself, and also generating cod
 #### Have a question?
 Someone else might have already asked.
 1. Look at our [Stack Overflow Questions](https://stackoverflow.com/questions/tagged/marklogic-dhf)
-1. Look at our [Github Issues](https://github.com/marklogic-community/marklogic-data-hub/issues)
+1. Look at our [Github Issues](https://github.com/marklogic/marklogic-data-hub/issues)
 1. Still can't find an answer? Use the [#marklogic-dhf tag on StackOverflow](https://stackoverflow.com/questions/ask?tags=marklogic-dhf) to ask us.
 
 #### Found a bug? Have a comment?
-[File an issue on Github](https://github.com/marklogic-community/marklogic-data-hub/issues/new) and we will see it.
+[File an issue on Github](https://github.com/marklogic/marklogic-data-hub/issues/new) and we will see it.
