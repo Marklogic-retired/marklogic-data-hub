@@ -106,4 +106,4 @@ gradle hubCreateInputFlow -PentityName=myNewEntity -PflowName=myInputFlow
 gradle hubCreateHarmonizeFlow -PentityName=myNewEntity -PflowName=myHarmonizationFlow
 ```
 
-For a complete list of gradle tasks, check here: [https://github.com/marklogic-community/marklogic-data-hub/wiki/Gradle-Tasks](https://github.com/marklogic-community/marklogic-data-hub/wiki/Gradle-Tasks)
+For a complete list of gradle tasks, check here: [https://github.com/marklogic/marklogic-data-hub/wiki/Gradle-Tasks](https://github.com/marklogic/marklogic-data-hub/wiki/Gradle-Tasks)

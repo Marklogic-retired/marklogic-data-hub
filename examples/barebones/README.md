@@ -41,4 +41,4 @@ You can use scaffolding commands to configure flows.
 gradle hubCreateInputFlow
 gradle hubCreateHarmonizeFlow
 ```
-For a complete list of gradle tasks, check here: [https://github.com/marklogic-community/marklogic-data-hub/wiki/Gradle-Tasks](https://github.com/marklogic-community/marklogic-data-hub/wiki/Gradle-Tasks)
+For a complete list of gradle tasks, check here: [https://github.com/marklogic/marklogic-data-hub/wiki/Gradle-Tasks](https://github.com/marklogic/marklogic-data-hub/wiki/Gradle-Tasks)
