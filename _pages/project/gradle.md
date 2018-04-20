@@ -67,17 +67,17 @@ You should see output like this:
 
  - Set username and password
      There are several ways to do this. The easiest is to set mlUsername and mlPassword in gradle.properties.
-     For other approaches see: https://github.com/marklogic-community/marklogic-data-hub/wiki/Password-Management
+     For other approaches see: https://github.com/marklogic/marklogic-data-hub/wiki/Password-Management
 
  - To deploy your application into MarkLogic...
      gradle mlDeploy    # this will bootstrap your application
      gradle mlLodModules        # this will load your custom plugins into MarkLogic
 
  - Full list of gradle tasks:
-     https://github.com/marklogic-community/marklogic-data-hub/wiki/Gradle-Tasks
+     https://github.com/marklogic/marklogic-data-hub/wiki/Gradle-Tasks
 
  - Curious about the project structure?
-     Look here: https://github.com/marklogic-community/marklogic-data-hub/wiki/Project-Directory-Structure
+     Look here: https://github.com/marklogic/marklogic-data-hub/wiki/Project-Directory-Structure
 
 BUILD SUCCESSFUL
 

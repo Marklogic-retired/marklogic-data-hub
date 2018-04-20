@@ -9,7 +9,7 @@ At the highest conceptual level an Operational Data Hub is a place to harmonize 
 
 The following diagram illustrates the architectural view of an ODH.
 
-![What is it](//raw.githubusercontent.com/marklogic-community/marklogic-data-hub/design/images/hub-architecture.png){: .center-image }
+![What is it](//raw.githubusercontent.com/marklogic/marklogic-data-hub/design/images/hub-architecture.png){: .center-image }
 
 ### An ODH performs four key functions:
 

@@ -55,7 +55,7 @@ The default options passed in to the plugin are:
 - **flow**: the name of the flow this plugin belongs to
 - **flowType**: the type of flow being run (input or harmonize)
 
-<div class="embed-git lang-js" href="//raw.githubusercontent.com/marklogic-community/marklogic-data-hub/develop/examples/online-store/plugins/entities/Product/harmonize/Harmonize Products/collector/collector.sjs"></div>
+<div class="embed-git lang-js" href="//raw.githubusercontent.com/marklogic/marklogic-data-hub/develop/examples/online-store/plugins/entities/Product/harmonize/Harmonize Products/collector/collector.sjs"></div>
 
 <hr>
 
@@ -79,7 +79,7 @@ This change will use either sku or SKU depending on which one is found. This cov
 
 **Here is the Final content.sjs file:**
 
-<div class="embed-git lang-js" href="//raw.githubusercontent.com/marklogic-community/marklogic-data-hub/develop/examples/online-store/plugins/entities/Product/harmonize/Harmonize Products/content/content.sjs"></div>
+<div class="embed-git lang-js" href="//raw.githubusercontent.com/marklogic/marklogic-data-hub/develop/examples/online-store/plugins/entities/Product/harmonize/Harmonize Products/content/content.sjs"></div>
 
 After making the code change, <i class="fa fa-hand-pointer-o"></i> Click **SAVE**{:.blue-button}.
 

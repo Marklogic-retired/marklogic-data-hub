@@ -18,8 +18,8 @@ You just created a Data Hub.
 There are other resources available to help you on your MarkLogic Data Hub journey.
 
 - [MarkLogic University](https://mlu.marklogic.com/ondemand/index.xqy?q=Series%3A%22Operational%20Data%20Hubs%22) - Data Hub Framework On Demand Video Courses
-- [Data Hub Framework Wiki](https://github.com/marklogic-community/marklogic-data-hub/wiki) - Read about more advanced uses
-- [Data Hub Framework Examples](https://github.com/marklogic-community/marklogic-data-hub/tree/develop/examples) - Many examples of how to use the Data Hub Framework
+- [Data Hub Framework Wiki](https://github.com/marklogic/marklogic-data-hub/wiki) - Read about more advanced uses
+- [Data Hub Framework Examples](https://github.com/marklogic/marklogic-data-hub/tree/develop/examples) - Many examples of how to use the Data Hub Framework
 
 Remember that QuickStart is a tool to help show how the Data Hub Framework
 works. For production use, use MLCP or other tools for Input Flows and gradle
@@ -27,4 +27,4 @@ tasks or your own code (using the provided Java classes) for the Harmonize Flows
 
 Have a question? Use the [#marklogic-dhf tag on StackOverflow](https://stackoverflow.com/questions/ask?tags=marklogic-dhf).
 
-Have a comment? Found a bug? [File an issue on Github](https://github.com/marklogic-community/marklogic-data-hub/issues/new) and we will see it.
+Have a comment? Found a bug? [File an issue on Github](https://github.com/marklogic/marklogic-data-hub/issues/new) and we will see it.

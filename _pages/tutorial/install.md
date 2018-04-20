@@ -20,7 +20,7 @@ mkdir data-hub
 cd data-hub
 </pre>
 
-- Download the latest [Quick Start war](https://github.com/marklogic-community/marklogic-data-hub/releases/download/v{{ site.data.global.hub_version }}/quick-start-{{ site.data.global.hub_version }}.war) and place it in the folder you just created.
+- Download the latest [Quick Start war](https://github.com/marklogic/marklogic-data-hub/releases/download/v{{ site.data.global.hub_version }}/quick-start-{{ site.data.global.hub_version }}.war) and place it in the folder you just created.
 
 ## 3 - Download the Sample Data
 
@@ -79,7 +79,7 @@ After opening the QuickStart Application you must step through a wizard to prope
 2. Initialize your Data Hub Project Directory. <i class="fa fa-hand-pointer-o"></i> Click **INITIALIZE**{:.blue-button}.
 ![Hub Directory]({{site.baseurl}}/images/2x/hub-wizard-2.png)
 
-3. You have now initialized your Data Hub Framework project. Your project folder now contains many new files and directories. If you are curious, you can read about the [files in a Data Hub project](https://github.com/marklogic-community/marklogic-data-hub/wiki/Project-Directory-Structure). <i class="fa fa-hand-pointer-o"></i> Click **Next**{:.blue-button}.
+3. You have now initialized your Data Hub Framework project. Your project folder now contains many new files and directories. If you are curious, you can read about the [files in a Data Hub project](https://github.com/marklogic/marklogic-data-hub/wiki/Project-Directory-Structure). <i class="fa fa-hand-pointer-o"></i> Click **Next**{:.blue-button}.
 ![Hub Directory]({{site.baseurl}}/images/2x/hub-wizard-3.png)
 
 4. Choose the Local Environment. <i class="fa fa-hand-pointer-o"></i> Click **Next**{:.blue-button}.
