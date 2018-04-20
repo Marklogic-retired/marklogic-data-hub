@@ -43,7 +43,7 @@ If you prefer not to store passwords in plain text in a configuration file you c
 gradle someTask -PmlUsername=admin -PmlUsername=admin
 </pre>
 
-See [ml-gradle issue #171](https://github.com/marklogic-community/ml-gradle/issues/171) for more details.
+See [ml-gradle issue #171](https://github.com/marklogic/ml-gradle/issues/171) for more details.
 
 <br>
 
@@ -54,4 +54,4 @@ See our [Harmonize via REST page](harmonize/rest.md) for details on how to run a
 
 #### How do I load binaries via an Input Flow?
 
-We have a [code example](https://github.com/marklogic-community/marklogic-data-hub/tree/master/examples/load-binaries) of doing this. The README file there has all the info you need.
+We have a [code example](https://github.com/marklogic/marklogic-data-hub/tree/master/examples/load-binaries) of doing this. The README file there has all the info you need.
