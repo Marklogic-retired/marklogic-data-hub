@@ -353,9 +353,28 @@ export class EntityModelerComponent implements AfterViewChecked {
     this.saveUiState();
   }
 
+  /**
+   * Adjust entity container coordinates based on number of entities already in UI
+   * @param {Entity} entity
+   */
+  adjustCoords(entity: Entity) {
+    entity.hubUi.x += 20*this.entities.length;
+    entity.hubUi.y += 30*this.entities.length;
+  }
+
+  /**
+   * Adjust entity container size based on its number of properties
+   * @param {Entity} entity
+   */
+  adjustSize(entity: Entity) {
+    entity.hubUi.height += 22*entity.definition.properties.length;
+  }
+
   addEntity() {
     let entity = new Entity().defaultValues();
     this.entitiesService.editEntity(entity).subscribe(() => {
+      this.adjustCoords(entity);
+      this.adjustSize(entity);
       this.entitiesService.saveEntity(entity);
     },
     // cancel... do nothing
