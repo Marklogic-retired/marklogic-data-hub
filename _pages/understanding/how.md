@@ -94,7 +94,7 @@ With the envelope you can normalize the fields into a preferred format:
     { "normalizedGender": "female" }
   ],
   "triples": [],
-  "content": {
+  "instance": {
     "gender": "f",
     "age": "32",
     ...,
@@ -116,7 +116,7 @@ With the envelope you can normalize the fields into a preferred format:
     { "normalizedGender": "female" }
   ],
   "triples": [],
-  "content": {
+  "instance": {
     "gndr": "female",
     "age": "39",
     ...,
