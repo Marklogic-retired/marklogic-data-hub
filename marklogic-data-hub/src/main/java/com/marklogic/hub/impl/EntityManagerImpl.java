@@ -153,7 +153,7 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
     }
 
     private List<JsonNode> getModifiedRawEntities(long minimumFileTimestampToLoad) {
-        logger.info("min modified: " + minimumFileTimestampToLoad);
+        logger.debug("min modified: " + minimumFileTimestampToLoad);
         HubModuleManager propsManager = getPropsMgr();
         propsManager.setMinimumFileTimestampToLoad(minimumFileTimestampToLoad);
 
@@ -288,6 +288,7 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
             ObjectMapper mapper = new ObjectMapper();
             ObjectWriter writer = mapper.writerWithDefaultPrettyPrinter();
             List<JsonNode> entities = getModifiedRawEntities(queryRolesetsConfig.lastModified());
+            logger.debug("SIZE OF ENTITIES TO PII " + entities.size());
             if (entities.size() > 0) {
                 PiiGenerator piiGenerator = new PiiGenerator(hubConfig.newFinalClient());
 
