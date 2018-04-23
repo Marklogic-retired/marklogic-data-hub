@@ -2,7 +2,7 @@
   "name": "data-hub-quickstart",
   "version": "3.0.0",
   "license": "APACHE",
-  "homepage": "https://github.com/marklogic-community/marklogic-data-hub",
+  "homepage": "https://github.com/marklogic/marklogic-data-hub",
   "scripts": {
     "rimraf": "rimraf",
     "ng": "ng",
