@@ -199,6 +199,7 @@ public class EntityManagerService extends EnvironmentAware {
         }
     }
 
+    //TODO Autowire in an Entity Manager
     public void deploySearchOptions(EnvironmentConfig environmentConfig) {
         EntityManager em = EntityManager.create(environmentConfig.getMlSettings());
         em.deployQueryOptions();
@@ -207,6 +208,11 @@ public class EntityManagerService extends EnvironmentAware {
     public void saveDbIndexes(EnvironmentConfig environmentConfig) {
         EntityManager em = EntityManager.create(environmentConfig.getMlSettings());
         em.saveDbIndexes();
+    }
+
+    public void savePii(EnvironmentConfig environmentConfig) {
+        EntityManager em = EntityManager.create(environmentConfig.getMlSettings());
+        em.savePii();
     }
 
     public void saveAllUiData(List<EntityModel> entities) throws IOException {
