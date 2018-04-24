@@ -48,7 +48,7 @@ export default function() {
         console.log('verifying headers output');
         expect(traceViewerPage.pluginSubheader('headers').isPresent()).toBe(true);
         expect(element(by.cssContainingText('.cm-variable', 'key1')).isPresent()).toBe(true);
-        expect(element(by.cssContainingText('.cm-atom', '250.456')).isPresent()).toBe(true);
+        expect(element(by.cssContainingText('.cm-string', 'world')).isPresent()).toBe(true);
         traceViewerPage.tracesTab.click();
       });
 
