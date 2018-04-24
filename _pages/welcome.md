@@ -30,14 +30,14 @@ The DHF does this by both running key operations itself, and also generating cod
 
 1. If you are new to MarkLogic start [here](http://www.marklogic.com/what-is-marklogic/). <i class="fa fa-clock-o"></i> _10 minutes_
 1. Read through the [Understanding DHF](understanding/understanding.md) links on the left to get up to speed on the high level concepts. <i class="fa fa-clock-o"></i> _30 minutes_
-1. Work through the [Tutorial](tutorial/2x.md) to get your hands on the tool. <i class="fa fa-clock-o"></i> _2 hours_
+1. Work through the [Tutorial](tutorial/) to get your hands on the tool. <i class="fa fa-clock-o"></i> _2 hours_
 
 ### How Do I Ask a Question or Send Feedback?
 
 #### Have a question?
 Someone else might have already asked.
 1. Look at our [Stack Overflow Questions](https://stackoverflow.com/questions/tagged/marklogic-dhf)
-1. Look at our [Github Issues](https://github.com/marklogic/marklogic-data-hub/issues)
+1. Look at our [GitHub Issues](https://github.com/marklogic/marklogic-data-hub/issues)
 1. Still can't find an answer? Use the [#marklogic-dhf tag on StackOverflow](https://stackoverflow.com/questions/ask?tags=marklogic-dhf) to ask us.
 
 #### Found a bug? Have a comment?
