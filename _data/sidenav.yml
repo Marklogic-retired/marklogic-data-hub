@@ -5,7 +5,7 @@ main:
       text: 'Understanding DHF',
       childPages: [
         { url: '/understanding/concepts/', text: 'Concepts' },
-        { url: '/understanding/architecture/', text: 'Architecture' },
+        { url: '/understanding/architecture/', text: 'Organization' },
         { url: '/understanding/how-it-works/', text: 'How It Works'},
         { url: '/understanding/flowtracing/', text: 'Flow Tracing'},
         { url: '/understanding/project-structure/', text: 'Project Structure'}
