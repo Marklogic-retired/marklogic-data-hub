@@ -297,12 +297,9 @@ export class EntityModelerComponent implements AfterViewChecked {
   }
 
   deleteEntity(entity: Entity) {
-    let result = this.dialogService.confirm(`Really delete ${entity.name}?`, 'No', 'Yes');
+    let result = this.dialogService.confirm(`Delete the ${entity.name} entity?\n\nAny flows associated with the entity will also be deleted.`, 'No', 'Yes');
     result.subscribe(() => {
-      let confirmResult = this.dialogService.confirm(`Are you sure really want to delete the ${entity.name} entity as it will delete the entity and all associated flows and code?`, 'No', 'Yes');
-      confirmResult.subscribe(() => {
-        this.entitiesService.deleteEntity(entity);
-      }, () => {});
+      this.entitiesService.deleteEntity(entity);
     }, () => {});
   }
 
@@ -356,9 +353,28 @@ export class EntityModelerComponent implements AfterViewChecked {
     this.saveUiState();
   }
 
+  /**
+   * Adjust entity container coordinates based on number of entities already in UI
+   * @param {Entity} entity
+   */
+  adjustCoords(entity: Entity) {
+    entity.hubUi.x += 20*this.entities.length;
+    entity.hubUi.y += 30*this.entities.length;
+  }
+
+  /**
+   * Adjust entity container size based on its number of properties
+   * @param {Entity} entity
+   */
+  adjustSize(entity: Entity) {
+    entity.hubUi.height += 22*entity.definition.properties.length;
+  }
+
   addEntity() {
     let entity = new Entity().defaultValues();
     this.entitiesService.editEntity(entity).subscribe(() => {
+      this.adjustCoords(entity);
+      this.adjustSize(entity);
       this.entitiesService.saveEntity(entity);
     },
     // cancel... do nothing
