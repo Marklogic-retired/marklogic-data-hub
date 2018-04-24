@@ -49,8 +49,8 @@ main:
           childPages: [
             { url: '/ingest/quickstart/', text: 'QuickStart' },
             { url: '/ingest/mlcp/', text: 'MLCP' },
-            { url: '/ingest/marklogic-client-api/', text: 'MarkLogic Client API' },
-            { url: '/ingest/rest/', text: 'REST API' }
+            { url: '/ingest/marklogic-client-api/', text: 'Java Client API' },
+            { url: '/ingest/rest/', text: 'REST Client API' }
           ]
         },
         # {
