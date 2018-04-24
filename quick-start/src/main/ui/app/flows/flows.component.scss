@@ -363,6 +363,11 @@ li.flow.mdl-list__item div ul li {
   height: 100%;
 }
 
+/deep/ .mdl-tabs__tab {
+  padding: 0 12px;
+  white-space: nowrap;
+}
+
 /deep/ mdl-tab-panel-title {
   .fa {
     margin-right: 5px;
