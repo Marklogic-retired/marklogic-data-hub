@@ -66,7 +66,7 @@ Similar to the Jobs view, the Traces view offers <strong>free-text search</stron
 
 ![Trace View]({{site.baseurl}}/images/3x/load-products-as-is/trace-view.png)
 
-<i class="fa fa-hand-pointer-o"></i> Click one of the rows in the Traces table so see a detailed view of the trace.
+<i class="fa fa-hand-pointer-o"></i> Click one of the rows in the Traces table to see a detailed view of the trace.
 
 The trace detail view allows you to click each plugin in the flow to see the inputs and outputs. You can also see the **identifier** that was being processed as well as the time each plugin took to execute.
 

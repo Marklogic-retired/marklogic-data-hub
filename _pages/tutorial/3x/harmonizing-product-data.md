@@ -17,6 +17,8 @@ Now that we have modeled the Product entity we can use the Data Hub Framework's 
 
 This time we want to use the default option of **Create Structure from Entity Definition**. This means that the Data Hub Framework will create boilerplate code based on our entity model. The code will prepopulate the fields we need to add.
 
+<!--- DHFPROD-646 TODO Pre-populate them in what/where? Add to what/where? -->
+
 ![Create Product Harmonize Flow]({{site.baseurl}}/images/3x/harmonizing-product-data/create-product-harmonize-flow.png)
 
 1. <i class="fa fa-hand-pointer-o"></i> Click the **Harmonize Products** flow. 
@@ -25,9 +27,9 @@ You can run the harmonize flow from the **Flow Info** tab. The other tabs allow 
 
 ![Harmonize Flow Overview]({{site.baseurl}}/images/3x/harmonizing-product-data/harmonize-flow-overview.png)
 
-Harmonize flows were designed to be run as batch jobs. To support this batch running, the Data Hub Framework exposes a collector plugin whose purpose is to return a list of things to batch over. The Data Hub Framework then breaks the list of things into parallel batches of a configurable size and sends each and every single thing to the (content, headers, triples, writer) plugins as a transaction. The main plugin receives id values from the collector and orchestrates the behavior of the other plugins.
+Harmonize flows were designed to be run as batch jobs. To support this batch running, the Data Hub Framework exposes a collector plugin whose purpose is to return a list of things to operate on. The Data Hub Framework then breaks the list of things into parallel batches of a configurable size and sends each and every single thing to the (content, headers, triples, writer) plugins as a transaction. The main plugin receives id values from the collector and orchestrates the behavior of the other plugins.
 
-If you are not interested in running harmonization flows as batches we do provide ways for running them on-demand for single items.
+If you are not interested in running harmonization flows as batches we do [provide ways](../../faqs/#how-can-i-run-a-harmonize-flow-immediately-for-1-document) for running them on-demand for single items.
 
 ![Harmonize Flow Overview]({{site.baseurl}}/images/3x/harmonizing-product-data/harmonize-flow-diagram.png)
 
@@ -66,7 +68,7 @@ The default options passed in to the plugin are:
 
 ### Content Plugin
 
-The content code receives an id as the first parameter. This id happens to be the URI for a staging product document. The id can be anything: a URI, a relational row id, a twitter handle, a random number. It's up to you to decide how to use that id to harmonize your data.
+The `createContent()` function receives an id as the first parameter. The id can be anything: a URI, a relational row id, a twitter handle, a random number. It's up to you to decide how to use that id to harmonize your data. For this flow, the id is the URI for a staging product document. 
 
 The only modification we need to make to this file is to change the way we look up the sku.
 
@@ -106,7 +108,6 @@ Now let's explore our harmonized data.
 
 1. <i class="fa fa-hand-pointer-o"></i> Click **Browse Data** to view your data.
 1. Select **Final** in the database menu.
-1. <i class="fa fa-hand-pointer-o"></i> Click **Search**{:.blue-button}.
 
 The search results should show the harmonized documents.
 
