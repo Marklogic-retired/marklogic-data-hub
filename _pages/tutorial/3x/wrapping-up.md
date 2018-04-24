@@ -15,6 +15,10 @@ You just created a data hub.
 
 A finished version of this tutorial is available here: [Finished Online Shopping Hub Example](https://github.com/marklogic-community/marklogic-data-hub/tree/develop/examples/online-store){:target="_blank"}
 
+## Uninstalling QuickStart
+
+You can uninstall QuickStart by clicking Settings in the top navigation and then Uninstall Hub on the page that appears.
+
 ## Next Steps
 
 There are more resources available to help you on your MarkLogic Data Hub journey:

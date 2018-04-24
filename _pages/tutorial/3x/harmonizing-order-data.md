@@ -28,15 +28,19 @@ Note that this time we used the default option of **Create Structure from Entity
 
 ### Collector Plugin
 
-Because each order can consist of multiple rows which are then turned into multiple documents in MarkLogic, we cannot do a 1:1 mapping like we did for products. This means we cannot simply return a list of URIs. Instead we need to return a unique list of all of the values from the relation **id** column.
+Because each order can consist of multiple rows which are then turned into multiple documents in MarkLogic, we cannot do a 1:1 mapping like we did for products. This means we cannot simply return a list of URIs. Instead, we need to return a unique list of all of the values from the relation **id** column.
 
-We use the [jsearch library](https://docs.marklogic.com/guide/search-dev/javascript) to run our query.
+We can use the [jsearch library](https://docs.marklogic.com/guide/search-dev/javascript) library to run our query. The following code finds all the values of id in the Order collection:
 
-This code is simply returning all unique values in the **id** field. The one tricky bit is the `slice()` call:
+```$javascript
+jsearch
+    .values('id')
+    .where(cts.collectionQuery(options.entity))
+    .slice(0, Number.MAX_SAFE_INTEGER)
+    .result();
+```
 
-`.slice(0, Number.MAX_SAFE_INTEGER)`
-
-By default jsearch will paginate results. The slice is telling it to return all results from 0 to a really big number.
+By default jsearch will paginate results. The `slice()` call tells jsearch to return all results from 0 to a really big number.
 
 Here is the final collector.sjs code:  
 
@@ -53,13 +57,15 @@ Here is the final collector.sjs code:
 ### Content Plugin
 For the Order entity, the id is the id from the original relational system. Instead of a 1:1 mapping of source documents, we must find all source documents that match the given id.
 
-After we get all of the matching documents we must then build up an array of the products while also summing the total price.
+After we get all of the matching documents we must build up an array of the products while also summing the total price.
 
-Once again we use the [jsearch library](https://docs.marklogic.com/guide/search-dev/javascript) to run our query.
+Once again, we use the [jsearch library](https://docs.marklogic.com/guide/search-dev/javascript) to run our query.
 
-Note how we query all Order documents containing the matching id. We use the `map` function to extract out the original content (stored in the instance part of the envelope). The `orders` variable will contain an array of original JSON objects.
+Note how the `createContent()` function queries all Order documents containing the matching id.  We use the `map` function to extract out the original content (stored in the instance part of the envelope). The `orders` variable will contain an array of original JSON objects.
 
 You can also see how we iterate over the orders to sum up the price and add pointers to the Product entities into the `products` array.
+
+<!--- DHFPROD-646 TODO https://github.com/marklogic/marklogic-data-hub/issues/790#issuecomment-373142377 -->
 
 The final content plugin looks like:
 
@@ -91,7 +97,6 @@ You might also want to explore your harmonized data.
 
 1. <i class="fa fa-hand-pointer-o"></i> Click **Browse Data**.
 1. Change the database to **Final**.
-1. <i class="fa fa-hand-pointer-o"></i> Click **Search**{:.blue-button}.
 1. <i class="fa fa-hand-pointer-o"></i> Click the **Order** facet to filter the results.
 
 You should see harmonized documents in the search results.
