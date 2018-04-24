@@ -60,11 +60,11 @@ export default function(tmpDir) {
       browsePage.searchBox().sendKeys('442403950907');
       browsePage.searchButton().click();
       browser.wait(EC.elementToBeClickable(browsePage.resultsUri()));
-      expect(browsePage.resultsUri().getText()).toContain('/board_games_accessories.csv-0-1');
+      expect(browsePage.resultsUri().getText()).toContain('/board_games_accessories.csv-0-1?doc=yes&type=foo');
       //verify on viewer page
       browsePage.resultsUri().click();
       viewerPage.isLoaded();
-      expect(viewerPage.searchResultUri().getText()).toContain('/board_games_accessories.csv-0-1');
+      expect(viewerPage.searchResultUri().getText()).toContain('/board_games_accessories.csv-0-1?doc=yes&type=foo');
       expect(element(by.cssContainingText('.cm-variable', 'sku')).isPresent()).toBe(true);
       expect(element(by.cssContainingText('.cm-string', '442403950907')).isPresent()).toBe(true);
       expect(element(by.cssContainingText('.cm-variable', 'attachments')).isPresent()).toBe(true);
