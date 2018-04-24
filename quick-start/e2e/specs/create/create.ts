@@ -169,10 +169,11 @@ export default function() {
       // add id property
       console.log('add id property');
       entityPage.addProperty.click();
+      // setting primary key first
+      entityPage.getPropertyPrimaryKeyColumn(lastProperty).click();
       entityPage.getPropertyName(lastProperty).sendKeys('id');
       entityPage.getPropertyType(lastProperty).element(by.cssContainingText('option', 'string')).click();
       entityPage.getPropertyDescription(lastProperty).sendKeys('id description');
-      entityPage.getPropertyPrimaryKeyColumn(lastProperty).click();
       // add price property
       console.log('add price property');
       entityPage.addProperty.click();
@@ -190,6 +191,11 @@ export default function() {
       entityPage.getPropertyCardinality(lastProperty).element(by.css(selectCardinalityOneToManyOption)).click();
       entityPage.getPropertyDescription(lastProperty).sendKeys('products description');
       entityPage.getPropertyWordLexiconColumn(lastProperty).click();
+      // add a duplicate price property, negative test
+      entityPage.addProperty.click();
+      lastProperty = entityPage.lastProperty;
+      entityPage.getPropertyName(lastProperty).sendKeys('price');
+      entityPage.getPropertyType(lastProperty).element(by.cssContainingText('option', 'decimal')).click();
       entityPage.saveEntity.click();
       browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
       expect(entityPage.confirmDialogYesButton.isPresent()).toBe(true);
@@ -223,6 +229,7 @@ export default function() {
       browser.wait(EC.visibilityOf(entityPage.entityEditor));
       expect(entityPage.entityEditor.isPresent()).toBe(true);
       let idProperty = entityPage.getPropertyByPosition(1);
+      // verify that primary key is retained
       expect(entityPage.getPropertyName(idProperty).getAttribute('value')).toEqual('id');
       expect(entityPage.getPropertyType(idProperty).getAttribute('ng-reflect-model')).toEqual('string');
       expect(entityPage.getPropertyDescription(idProperty).getAttribute('value')).toEqual('id description');
@@ -239,6 +246,8 @@ export default function() {
       expect(entityPage.getPropertyCardinality(productsProperty).getAttribute('ng-reflect-model')).toEqual('ONE_TO_MANY');
       expect(entityPage.getPropertyDescription(productsProperty).getAttribute('value')).toEqual('products description');
       expect(entityPage.hasClass(entityPage.getPropertyWordLexicon(productsProperty), 'active')).toBe(true);
+      // verify duplicate property is not created, the count should be 3
+      entityPage.getPropertiesCount().then(function(props){expect(props === 3)});
       entityPage.cancelEntity.click();
       browser.wait(EC.invisibilityOf(entityPage.entityEditor));
     });
