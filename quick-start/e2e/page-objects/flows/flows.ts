@@ -182,6 +182,10 @@ export class FlowPage extends AppPage {
     return element(by.css(`mdl-switch[id="${name}"]`));
   }
 
+  mlcpInput(name: string) {
+    return element(by.css(`input[name="${name}"]`));
+  }
+
   get toast() {
     return element(by.css('mdl-snackbar-component'));
   }
@@ -251,6 +255,11 @@ export class FlowPage extends AppPage {
     browser.wait(EC.elementToBeClickable(this.menuItem(dataFormat)));
     browser.actions().mouseMove(this.menuItem(dataFormat)).perform();
     this.menuItem(dataFormat).click();
+
+    // set output uri suffix
+    this.mlcpInput('output_uri_suffix').clear();
+    // verify that uri can contain character &
+    this.mlcpInput('output_uri_suffix').sendKeys('?doc=yes&type=foo');
 
     browser.wait(EC.elementToBeClickable(this.mlcpSection(' Delimited Text Options')));
     this.mlcpSection(' Delimited Text Options').click();
