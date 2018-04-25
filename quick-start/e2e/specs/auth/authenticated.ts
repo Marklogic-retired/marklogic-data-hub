@@ -62,7 +62,6 @@ export default function(tmpDir) {
       expect(loginPage.stagingAppserverNameLabel.isPresent()).toBe(true);
       expect(loginPage.stagingAppserverName.getAttribute('value')).toEqual('data-hub-STAGING');
       expect(loginPage.modulesDbName.getAttribute('value')).toEqual('data-hub-MODULES');
-      expect(loginPage.dataHubName.getAttribute('value')).toEqual('');
       expect(loginPage.dataHubName.getAttribute('value')).toEqual('data-hub');
       browser.driver.sleep(3000);
       expect(loginPage.projectDirTab.isDisplayed()).toBe(false);
