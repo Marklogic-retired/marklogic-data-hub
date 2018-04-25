@@ -41,7 +41,6 @@ function extractInstanceProduct(source) {
   let attachments = source;
 
   let sku = xs.string(source.sku || source.SKU);
-  let title = xs.string(source.title);
   let price = xs.decimal(source.price);
 
   // return the instance object
@@ -50,7 +49,6 @@ function extractInstanceProduct(source) {
     '$type': 'Product',
     '$version': '0.0.1',
     'sku': sku,
-    'title': title,
     'price': price
   }
 };
