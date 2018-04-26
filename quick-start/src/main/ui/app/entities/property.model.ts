@@ -13,6 +13,11 @@ export class PropertyType {
 
   // ui only
   showCollation: boolean = false;
+  isPrimaryKey: boolean = false;
+  hasElementRangeIndex: boolean = false;
+  hasRangeIndex: boolean = false;
+  hasWordLexicon: boolean = false;
+  required: boolean = false;
 
   UNICODE_COLLATION: string = 'http://marklogic.com/collation/codepoint';
 
