@@ -1,0 +1,14 @@
+{
+  "server-name": "%%TEST_SERVER_NAME%%",
+  "server-type": "http",
+  "root": "/",
+  "group-name": "%%GROUP%%",
+  "port": "%%TEST_SERVER_PORT%%",
+  "modules-database": "%%mlModulesDbName%%",
+  "content-database": "%%TEST_DATABASE_NAME%%",
+  "authentication": "%%TEST_TRACE_AUTH%%",
+  "default-error-format": "json",
+  "error-handler": "/MarkLogic/rest-api/error-handler.xqy",
+  "url-rewriter": "/MarkLogic/rest-api/rewriter.xml",
+  "rewrite-resolves-globally": true
+}
