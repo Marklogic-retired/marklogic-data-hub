@@ -64,7 +64,7 @@ After clicking **Save** you will be prompted whether you want to update indexes 
 
 ![Update Indexes]({{site.baseurl}}/images/3x/modeling-order-entity/update-indexes2.png)
 
-One of the benefits of having the Data Hub Framework model your data with Entity Services is that it can use the model to create database configuration options automatically. This means it can update the necessary index settings bases on how you model your data. For the Product entity, you made sku the primary key. The Data Hub Framework will create a range index on the sku element.
+One of the benefits of having the Data Hub Framework model your data with Entity Services is that it can use the model to create database configuration options automatically. This means it can update the necessary index settings based on how you model your data.
 
 ## Up Next
 
