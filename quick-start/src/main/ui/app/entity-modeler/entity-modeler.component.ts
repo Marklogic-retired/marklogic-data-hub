@@ -282,14 +282,7 @@ export class EntityModelerComponent implements AfterViewChecked {
   startEditing(entity: Entity) {
     this.entitiesService.editEntity(entity).subscribe(() => {
       this.entitiesService.saveEntity(entity).subscribe(() => {
-        let result = this.dialogService.confirm(`Saved. Update Indexes in MarkLogic?`, 'No', 'Yes');
-        result.subscribe(() => {
-          this.installService.updateIndexes().subscribe(() => {
-            this.snackbar.showSnackbar({
-              message: 'Indexes updated.',
-            });
-          });
-        }, () => {});
+        this.confirmUpdateIndexes()
       });
     },
     // cancel... do nothing
@@ -375,12 +368,32 @@ export class EntityModelerComponent implements AfterViewChecked {
     this.entitiesService.editEntity(entity).subscribe(() => {
       this.adjustCoords(entity);
       this.adjustSize(entity);
-      this.entitiesService.saveEntity(entity);
+      this.entitiesService.saveEntity(entity).subscribe(() => {
+        this.confirmUpdateIndexes();
+      });
     },
     // cancel... do nothing
     () => {
       console.log('cancel');
     });
+  }
+
+  /**
+   * Display confirm dialog and update entity indexes upon confirmation
+   */
+  confirmUpdateIndexes() {
+    let result = this.dialogService.confirm(
+      `Saved. Update Indexes in MarkLogic?`,
+      'No',
+      'Yes'
+    );
+    result.subscribe(() => {
+      this.installService.updateIndexes().subscribe(() => {
+        this.snackbar.showSnackbar({
+          message: 'Indexes updated.',
+        });
+      });
+    }, () => {});
   }
 
 }
