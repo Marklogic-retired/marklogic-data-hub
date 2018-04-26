@@ -90,6 +90,11 @@ export default function() {
       expect(entityPage.entityEditor.isPresent()).toBe(true);
       entityPage.entityTitle.sendKeys('Order');
       entityPage.saveEntity.click();
+      browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
+      expect(entityPage.confirmDialogYesButton.isPresent()).toBe(true);
+      entityPage.confirmDialogYesButton.click();
+      browser.wait(EC.presenceOf(entityPage.toast));
+      browser.wait(EC.stalenessOf(entityPage.toast));
       browser.wait(EC.visibilityOf(entityPage.getEntityBox('Order')));
       expect(entityPage.getEntityBox('Order').isDisplayed()).toBe(true);
       console.log('click edit Order entity');
@@ -113,6 +118,11 @@ export default function() {
       expect(entityPage.entityEditor.isPresent()).toBe(true);
       entityPage.entityTitle.sendKeys('Product');
       entityPage.saveEntity.click();
+      browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
+      expect(entityPage.confirmDialogYesButton.isPresent()).toBe(true);
+      entityPage.confirmDialogYesButton.click();
+      browser.wait(EC.presenceOf(entityPage.toast));
+      browser.wait(EC.stalenessOf(entityPage.toast));
       browser.wait(EC.visibilityOf(entityPage.getEntityBox('Product')));
       expect(entityPage.getEntityBox('Product').isDisplayed()).toBe(true);
       console.log('click edit Product entity');
@@ -316,6 +326,11 @@ export default function() {
       entityPage.getPropertyType(lastProperty).element(by.cssContainingText('option', 'string')).click();
       entityPage.getPropertyDescription(lastProperty).sendKeys('remove-prop1 description');
       entityPage.saveEntity.click();
+      browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
+      expect(entityPage.confirmDialogYesButton.isPresent()).toBe(true);
+      entityPage.confirmDialogYesButton.click();
+      browser.wait(EC.presenceOf(entityPage.toast));
+      browser.wait(EC.stalenessOf(entityPage.toast));
       browser.wait(EC.visibilityOf(entityPage.getEntityBox('removeEntity')));
       entityPage.toolsButton.click();
       //remove removeEntity entity
@@ -334,6 +349,9 @@ export default function() {
       expect(entityPage.entityEditor.isPresent()).toBe(true);
       entityPage.entityTitle.sendKeys('TestEntity');
       entityPage.saveEntity.click();
+      browser.wait(EC.elementToBeClickable(entityPage.confirmDialogNoButton));
+      expect(entityPage.confirmDialogNoButton.isPresent()).toBe(true);
+      entityPage.confirmDialogNoButton.click();
       browser.wait(EC.visibilityOf(entityPage.getEntityBox('TestEntity')));
       expect(entityPage.getEntityBox('TestEntity').isDisplayed()).toBe(true);
       entityPage.toolsButton.click();
@@ -376,8 +394,6 @@ export default function() {
       entityPage.getPropertyPrimaryKeyColumn(lastProperty).click();
       entityPage.getPropertyType(lastProperty).element(by.cssContainingText('option', 'integer')).click();
       entityPage.getPropertyDescription(lastProperty).sendKeys("this is our primary key");
-
-
       //let's save it now that it's populated
       entityPage.saveEntity.click();
       browser.wait(EC.elementToBeClickable(entityPage.confirmDialogNoButton));
