@@ -282,14 +282,7 @@ export class EntityModelerComponent implements AfterViewChecked {
   startEditing(entity: Entity) {
     this.entitiesService.editEntity(entity).subscribe(() => {
       this.entitiesService.saveEntity(entity).subscribe(() => {
-        let result = this.dialogService.confirm(`Saved. Update Indexes in MarkLogic?`, 'No', 'Yes');
-        result.subscribe(() => {
-          this.installService.updateIndexes().subscribe(() => {
-            this.snackbar.showSnackbar({
-              message: 'Indexes updated.',
-            });
-          });
-        }, () => {});
+        this.confirmUpdateIndexes()
       });
     },
     // cancel... do nothing
@@ -353,15 +346,54 @@ export class EntityModelerComponent implements AfterViewChecked {
     this.saveUiState();
   }
 
+  /**
+   * Adjust entity container coordinates based on number of entities already in UI
+   * @param {Entity} entity
+   */
+  adjustCoords(entity: Entity) {
+    entity.hubUi.x += 20*this.entities.length;
+    entity.hubUi.y += 30*this.entities.length;
+  }
+
+  /**
+   * Adjust entity container size based on its number of properties
+   * @param {Entity} entity
+   */
+  adjustSize(entity: Entity) {
+    entity.hubUi.height += 22*entity.definition.properties.length;
+  }
+
   addEntity() {
     let entity = new Entity().defaultValues();
     this.entitiesService.editEntity(entity).subscribe(() => {
-      this.entitiesService.saveEntity(entity);
+      this.adjustCoords(entity);
+      this.adjustSize(entity);
+      this.entitiesService.saveEntity(entity).subscribe(() => {
+        this.confirmUpdateIndexes();
+      });
     },
     // cancel... do nothing
     () => {
       console.log('cancel');
     });
+  }
+
+  /**
+   * Display confirm dialog and update entity indexes upon confirmation
+   */
+  confirmUpdateIndexes() {
+    let result = this.dialogService.confirm(
+      `Saved. Update Indexes in MarkLogic?`,
+      'No',
+      'Yes'
+    );
+    result.subscribe(() => {
+      this.installService.updateIndexes().subscribe(() => {
+        this.snackbar.showSnackbar({
+          message: 'Indexes updated.',
+        });
+      });
+    }, () => {});
   }
 
 }

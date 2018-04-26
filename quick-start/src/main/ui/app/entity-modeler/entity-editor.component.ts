@@ -51,6 +51,14 @@ export class EntityEditorComponent {
     this.actions = actions;
     this.dataTypes = dataTypes;
     this.entityBackup = JSON.stringify(this.entity);
+    // Set property ui flags based on entity state
+    this.entity.definition.properties.forEach(function(property) {
+      property.isPrimaryKey = this.entity.definition.primaryKey === property.name;
+      property.hasElementRangeIndex = this.entity.definition.elementRangeIndex.indexOf(property.name) >= 0;
+      property.hasRangeIndex = this.entity.definition.rangeIndex.indexOf(property.name) >= 0;
+      property.hasWordLexicon = this.entity.definition.wordLexicon.indexOf(property.name) >= 0;
+      property.required = this.entity.definition.required.indexOf(property.name) >= 0;
+    }, this);
   }
 
   getType(property: PropertyType) {
@@ -147,26 +155,6 @@ export class EntityEditorComponent {
     });
   }
 
-  isPrimaryKey(key: string) {
-    return this.entity.definition.primaryKey === key;
-  }
-
-  isRangeIndex(key: string) {
-    return this.entity.definition.elementRangeIndex.indexOf(key) >= 0;
-  }
-
-  isPathRangeIndex(key: string) {
-    return this.entity.definition.rangeIndex.indexOf(key) >= 0;
-  }
-
-  isWordLexicon(key: string) {
-    return this.entity.definition.wordLexicon.indexOf(key) >= 0;
-  }
-
-  isRequired(key: string) {
-    return this.entity.definition.required.indexOf(key) >= 0;
-  }
-
   addProperty() {
     this.entity.definition.properties.push(new PropertyType());
   }
@@ -212,6 +200,29 @@ export class EntityEditorComponent {
 
   saveEntity() {
     if (this.actions.save) {
+      // Set entity state based on property ui flags
+      this.entity.definition.primaryKey = null;
+      this.entity.definition.elementRangeIndex = [];
+      this.entity.definition.rangeIndex = [];
+      this.entity.definition.wordLexicon = [];
+      this.entity.definition.required = [];
+      this.entity.definition.properties.forEach(function(property) {
+        if (property.isPrimaryKey) {
+          this.entity.definition.primaryKey = property.name;
+        }
+        if (property.hasElementRangeIndex) {
+          this.entity.definition.elementRangeIndex.push(property.name);
+        }
+        if (property.hasRangeIndex) {
+          this.entity.definition.rangeIndex.push(property.name);
+        }
+        if (property.hasWordLexicon) {
+          this.entity.definition.wordLexicon.push(property.name);
+        }
+        if (property.required) {
+          this.entity.definition.required.push(property.name);
+        }
+      }, this);
       this.actions.save();
     }
     this.dialog.hide();
@@ -243,28 +254,14 @@ export class EntityEditorComponent {
   }
 
   togglePrimaryKey(property: PropertyType) {
-    if (this.entity.definition.primaryKey === property.name) {
-      this.entity.definition.primaryKey = null;
+    if (property.isPrimaryKey) {
+      property.isPrimaryKey = false;
     } else {
-      this.entity.definition.primaryKey = property.name;
-    }
-  }
-
-  toggleRangeIndex(property: PropertyType) {
-    let idx = this.entity.definition.elementRangeIndex.indexOf(property.name);
-    if (idx >= 0) {
-      this.entity.definition.elementRangeIndex.splice(idx, 1);
-    } else {
-      this.entity.definition.elementRangeIndex.push(property.name);
-    }
-  }
-
-  togglePathRangeIndex(property: PropertyType) {
-    let idx = this.entity.definition.rangeIndex.indexOf(property.name);
-    if (idx >= 0) {
-      this.entity.definition.rangeIndex.splice(idx, 1);
-    } else {
-      this.entity.definition.rangeIndex.push(property.name);
+      // Unset any existing primary key
+      this.entity.definition.properties.map(function(prop) {
+        prop.isPrimaryKey = false;
+      });
+      property.isPrimaryKey = true;
     }
   }
 
@@ -311,24 +308,6 @@ export class EntityEditorComponent {
       _.remove(this.entity.definition[field], (idx: string) => {
         return indexes.indexOf(idx) >= 0;
       });
-    }
-  }
-
-  toggleWordLexicon(property: PropertyType) {
-    let idx = this.entity.definition.wordLexicon.indexOf(property.name);
-    if (idx >= 0) {
-      this.entity.definition.wordLexicon.splice(idx, 1);
-    } else {
-      this.entity.definition.wordLexicon.push(property.name);
-    }
-  }
-
-  toggleRequired(property: PropertyType) {
-    let idx = this.entity.definition.required.indexOf(property.name);
-    if (idx >= 0) {
-      this.entity.definition.required.splice(idx, 1);
-    } else {
-      this.entity.definition.required.push(property.name);
     }
   }
 
