@@ -506,7 +506,7 @@ public class DataHubImpl implements DataHub {
     }
 
     //DataHubUpgrader stuff
-    public static String MIN_UPGRADE_VERSION = "1.1.3";
+    public static String MIN_UPGRADE_VERSION = "2.0.0";
 
     @Override public boolean upgradeHub() throws CantUpgradeException {
         return upgradeHub(null);
@@ -544,6 +544,8 @@ public class DataHubImpl implements DataHub {
             if (updatedFlows != null) {
                 updatedFlows.addAll(flows);
             }
+
+            runInDatabase("for $i in cts:uris(\"\", (), cts:and-not-query(cts:collection-query(\"hub-core-module\"), cts:document-query((\"/com.marklogic.hub/config.sjs\", \"/com.marklogic.hub/config.xqy\")))) return xdmp:document-delete($i)", hubConfig.getDbName(DatabaseKind.MODULES));
 
             if (isHubInstalled) {
                 // install hub modules into MarkLogic
