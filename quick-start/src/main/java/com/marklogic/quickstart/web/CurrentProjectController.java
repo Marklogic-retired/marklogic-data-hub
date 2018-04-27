@@ -211,7 +211,7 @@ public class CurrentProjectController extends EnvironmentAware implements FileSy
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }
         } catch (CantUpgradeException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(e, HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
