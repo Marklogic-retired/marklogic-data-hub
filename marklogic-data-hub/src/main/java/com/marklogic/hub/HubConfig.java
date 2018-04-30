@@ -467,4 +467,20 @@ public interface HubConfig {
      * @return Version of DHF Jar file as string
      */
     String getJarVersion();
+
+    /**
+     * Gets a new DatabaseClient with privileges to run flows but
+     * not to install modules or configure databases.  Uses mlUsername
+     * and mlPassword
+     * @return A client without elevated administrative privileges.
+     */
+    DatabaseClient newFlowClient();
+
+    /**
+     * Gets a new DatabaseClient with privileges to run flows
+     * in reverse from final to staging.  Uses mlUsername
+     * and mlPassword
+     * @return A client without elevated administrative privileges.
+     */
+    DatabaseClient newReverseFlowClient();
 }

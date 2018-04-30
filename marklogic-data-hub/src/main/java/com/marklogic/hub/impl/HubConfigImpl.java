@@ -106,6 +106,10 @@ public class HubConfigImpl implements HubConfig {
     private String hubRoleName = DEFAULT_ROLE_NAME;
     private String hubUserName = DEFAULT_USER_NAME;
 
+    // these hold runtime credentials for flows.
+    private String mlUsername = null;
+    private String mlPassword = null;
+
     private String[] loadBalancerHosts;
 
     protected String customForestPath = DEFAULT_CUSTOM_FOREST_PATH;
@@ -664,6 +668,15 @@ public class HubConfigImpl implements HubConfig {
     @Override public String getHubUserName() {
         return hubUserName;
     }
+
+    // impl only pending refactor to Flow Component
+    public String getMlUsername() {
+        return mlUsername;
+    }
+    // impl only pending refactor to Flow Component
+    public String getMlPassword() {
+        return mlPassword;
+    }
     @Override  public void setHubUserName(String hubUserName) {
         this.hubUserName = hubUserName;
     }
@@ -790,6 +803,12 @@ public class HubConfigImpl implements HubConfig {
             hubRoleName = getEnvPropString(environmentProperties, "mlHubUserRole", hubRoleName);
             hubUserName = getEnvPropString(environmentProperties, "mlHubUserName", hubUserName);
 
+
+            // this is a runtime username/password for running flows
+            // could be factored away with FlowRunner
+            mlUsername = getEnvPropString(environmentProperties, "mlUsername", mlUsername);
+            mlPassword = getEnvPropString(environmentProperties, "mlPassword", mlPassword);
+
             String lbh = getEnvPropString(environmentProperties, "mlLoadBalancerHosts", null);
             if (lbh != null && lbh.length() > 0) {
                 loadBalancerHosts = lbh.split(",");
@@ -831,11 +850,39 @@ public class HubConfigImpl implements HubConfig {
     public void setAdminManager(AdminManager adminManager) { this.adminManager = adminManager; }
 
     public DatabaseClient newAppServicesClient() {
-        return getAppConfig().newAppServicesDatabaseClient(null);
+        return getAppConfig().newAppServicesDatabaseClient(stagingDbName);
     }
 
     public DatabaseClient newStagingClient() {
         return newStagingClient(stagingDbName);
+    }
+
+    @Override
+    public DatabaseClient newFlowClient() {
+        AppConfig appConfig = getAppConfig();
+        DatabaseClientConfig config = new DatabaseClientConfig(appConfig.getHost(), stagingPort, getMlUsername(), getMlPassword());
+        config.setDatabase(stagingDbName);
+        config.setSecurityContextType(SecurityContextType.valueOf(stagingAuthMethod.toUpperCase()));
+        config.setSslHostnameVerifier(stagingSslHostnameVerifier);
+        config.setSslContext(stagingSslContext);
+        config.setCertFile(stagingCertFile);
+        config.setCertPassword(stagingCertPassword);
+        config.setExternalName(stagingExternalName);
+        return appConfig.getConfiguredDatabaseClientFactory().newDatabaseClient(config);
+    }
+
+    @Override
+    public DatabaseClient newReverseFlowClient() {
+        AppConfig appConfig = getAppConfig();
+        DatabaseClientConfig config = new DatabaseClientConfig(appConfig.getHost(), finalPort, getMlUsername(), getMlPassword());
+        config.setDatabase(finalDbName);
+        config.setSecurityContextType(SecurityContextType.valueOf(finalAuthMethod.toUpperCase()));
+        config.setSslHostnameVerifier(finalSslHostnameVerifier);
+        config.setSslContext(finalSslContext);
+        config.setCertFile(finalCertFile);
+        config.setCertPassword(finalCertPassword);
+        config.setExternalName(finalExternalName);
+        return appConfig.getConfiguredDatabaseClientFactory().newDatabaseClient(config);
     }
 
     public DatabaseClient newStagingClient(String databaseName) {
@@ -981,6 +1028,7 @@ public class HubConfigImpl implements HubConfig {
         }
         return version;
     }
+
 
     private Map<String, String> getCustomTokens() {
         AppConfig appConfig = getAppConfig();

@@ -66,7 +66,7 @@ public class FlowRunnerImpl implements FlowRunner {
 
     public FlowRunnerImpl(HubConfig hubConfig) {
         this.hubConfig = hubConfig;
-        this.sourceClient = hubConfig.newStagingClient();
+        this.sourceClient = hubConfig.newFlowClient();
         this.destinationDatabase = hubConfig.getDbName(DatabaseKind.FINAL);
     }
 

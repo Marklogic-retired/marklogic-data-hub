@@ -101,6 +101,9 @@ import com.marklogic.mgmt.resource.security.CertificateAuthorityManager;
 import com.marklogic.mgmt.util.ObjectMapperFactory;
 import com.marklogic.rest.util.JsonNodeUtil;
 
+import static com.marklogic.client.io.DocumentMetadataHandle.Capability.READ;
+import static com.marklogic.client.io.DocumentMetadataHandle.Capability.UPDATE;
+
 
 // FIXME remove deprecated methods
 @SuppressWarnings(value="deprecation")
@@ -125,6 +128,7 @@ public class HubTestBase {
     private  Authentication finalAuthMethod;
     private  Authentication jobAuthMethod;
     public  DatabaseClient stagingClient = null;
+    // this is needed for some evals in the test suite that are not mainline tests.
     public  DatabaseClient stagingModulesClient = null;
     public  DatabaseClient finalClient = null;
     public  DatabaseClient finalModulesClient = null;
@@ -583,7 +587,9 @@ public class HubTestBase {
                 default:
                     handle.setFormat(Format.TEXT);
             }
-            writeSet.add(path, handle);
+            DocumentMetadataHandle permissions = new DocumentMetadataHandle()
+                .withPermission("data-hub-role", DocumentMetadataHandle.Capability.EXECUTE, UPDATE, READ);
+            writeSet.add(path, permissions, handle);
         });
         modMgr.write(writeSet);
         clearFlowCache();
@@ -593,6 +599,8 @@ public class HubTestBase {
 
         InputStreamHandle handle = new InputStreamHandle(HubTestBase.class.getClassLoader().getResourceAsStream(localPath));
         String ext = FilenameUtils.getExtension(path);
+        DocumentMetadataHandle permissions = new DocumentMetadataHandle()
+            .withPermission("data-hub-role", DocumentMetadataHandle.Capability.EXECUTE, UPDATE, READ);
         switch(ext) {
         case "xml":
             handle.setFormat(Format.XML);
@@ -604,7 +612,7 @@ public class HubTestBase {
             handle.setFormat(Format.TEXT);
         }
 
-        modMgr.write(path, handle);
+        modMgr.write(path, permissions, handle);
         clearFlowCache();
     }
 

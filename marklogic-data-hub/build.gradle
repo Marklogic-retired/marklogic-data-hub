@@ -3,7 +3,7 @@ plugins {
     id 'java'
     id 'maven-publish'
     id 'com.jfrog.bintray' version '1.7.2'
-    id 'com.marklogic.ml-gradle' version '3.6.1'
+    id 'com.marklogic.ml-gradle' version '3.6.2'
     id 'com.moowork.node' version '1.1.1'
 }
 
@@ -27,7 +27,7 @@ ext.junitJupiterVersion  = '5.0.0-RC3'
 dependencies {
     compile 'com.marklogic:marklogic-client-api:4.0.4'
     compile 'com.marklogic:mlcp-util:0.9.0'
-    compile 'com.marklogic:ml-app-deployer:3.6.1'
+    compile 'com.marklogic:ml-app-deployer:3.6.2'
     compile 'com.marklogic:marklogic-data-movement-components:1.0'
     compile 'commons-io:commons-io:2.4'
     compile 'org.apache.commons:commons-text:1.1'
@@ -244,7 +244,6 @@ ext {
 
         modulePaths = ["marklogic-data-hub/src/main/resources/ml-modules"]
 
-        mlModulePermissions = "rest-reader,read,rest-writer,insert,rest-writer,update,rest-extension-user,execute"
     }
 }
 
