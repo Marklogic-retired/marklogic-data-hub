@@ -347,7 +347,7 @@ public class DataHubImpl implements DataHub {
     }
 
     private void runInDatabase(String query, String databaseName) {
-        ServerEvaluationCall eval = hubConfig.newStagingClient().newServerEval();
+        ServerEvaluationCall eval = hubConfig.newModulesDbClient().newServerEval();
         String xqy =
             "xdmp:invoke-function(function() {" +
                 query +
