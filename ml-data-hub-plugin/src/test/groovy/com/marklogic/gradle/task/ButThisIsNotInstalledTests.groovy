@@ -12,7 +12,7 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
- *  
+ *
  */
 
 package com.marklogic.gradle.task
@@ -21,12 +21,16 @@ import org.gradle.testkit.runner.UnexpectedBuildSuccess
 
 import static org.gradle.testkit.runner.TaskOutcome.FAILED
 
-class NotInstalledTests extends BaseTest {
+class ButThisIsNotInstalledTests extends BaseTest {
 
     def setupSpec() {
         createGradleFiles()
         runTask('hubInit')
         runTask('mlUndeploy',  '-Pconfirm=true')
+    }
+
+    def cleanupSpec() {
+        runTask('mlDeploy')
     }
 
     def "enable debugging hub not installed"() {
