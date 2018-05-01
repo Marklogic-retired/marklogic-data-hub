@@ -24,9 +24,11 @@ Create a folder to hold your input data
 mkdir input
 </pre>
 
-Download the [Zip file of sample data]({{site.baseurl}}/data/store-data.zip){:target="_blank"} into the **input** folder you just created. Now extract it.
+Download the [.zip file of sample data]({{site.baseurl}}/data/store-data.zip){:target="_blank"}.
 
-Your directory should look like this:
+Open the .zip file and move the subfolders of sample data (campaigns/, customers/, etc.) into the **input** folder you just created.
+
+Your project folder should look like this:
 
 <pre class="cmdline">
 data-hub
@@ -34,7 +36,7 @@ data-hub
  +-- quick-start-{{ site.data.global.hub_version }}.war
 </pre>
 
-## 3. Run the QuickStart
+## 3. Run QuickStart
 
 The QuickStart application is a stand-alone Java Web Application. It runs its own internal web server and serves up the application on port 8080. You do have the option to change the port as noted below. QuickStart can be run on any computer as long as there is network connectivity to your MarkLogic instance. QuickStart will communicate with MarkLogic over HTTP.
 
