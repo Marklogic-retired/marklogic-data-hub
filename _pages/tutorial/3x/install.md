@@ -14,7 +14,7 @@ mkdir data-hub
 cd data-hub
 </pre>
 
-Download the latest [QuickStart .war](https://github.com/marklogic-community/marklogic-data-hub/releases/download/v{{ site.data.global.hub_version }}/quick-start-{{ site.data.global.hub_version }}.war) and place it in the folder you just created.
+Download the latest [QuickStart .war](https://github.com/marklogic/marklogic-data-hub/releases/download/v{{ site.data.global.hub_version }}/quick-start-{{ site.data.global.hub_version }}.war) and place it in the folder you just created.
 
 ## 2. Download the Sample Data
 
