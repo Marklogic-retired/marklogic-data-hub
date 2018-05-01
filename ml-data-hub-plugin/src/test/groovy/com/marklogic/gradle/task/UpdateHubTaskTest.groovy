@@ -29,6 +29,7 @@ class UpdateHubTaskTest extends BaseTest {
     def setupSpec() {
         createGradleFiles()
         runTask('hubInit')
+        println(runTask('mlDeploy', '-i').getOutput())
     }
 
     def "no updates needed"() {

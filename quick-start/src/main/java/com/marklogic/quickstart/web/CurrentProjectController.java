@@ -204,10 +204,14 @@ public class CurrentProjectController extends EnvironmentAware implements FileSy
 
     @RequestMapping(value = "/update-hub", method = RequestMethod.POST)
     public ResponseEntity<?> updateHub() throws IOException, CantUpgradeException {
-        if (dataHubService.updateHub(envConfig().getMlSettings())) {
-            installUserModules(envConfig().getMlSettings(), true);
-            startProjectWatcher();
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        try {
+            if (dataHubService.updateHub(envConfig().getMlSettings())) {
+                installUserModules(envConfig().getMlSettings(), true);
+                startProjectWatcher();
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+        } catch (CantUpgradeException e) {
+            return new ResponseEntity<>(e, HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
