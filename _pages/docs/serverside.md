@@ -4,9 +4,9 @@ title: Using Gradle
 permalink: /docs/server-side/
 ---
 
-# DHF Server Side Library
+# DHF Server-Side Library
 
-The `/com.marklogic.hub/dhf.xqy` library module exposes functions to make interacting with the Data Hub Framework from your XQuery or Javascript code easier.
+The `/com.marklogic.hub/dhf.xqy` library module exposes functions to make interacting with the Data Hub Framework from your XQuery or JavaScript code easier.
 
 ## Including the Library
 
@@ -69,7 +69,7 @@ declare function dhf:run-writer($writer-function, $id as xs:string+, $envelope a
 
 ### Make Envelope
 
-Creates an envelope in the desired format (xml or json). If the data format is XML then the namespace is `http://marklogic.com/entity-services`.
+Creates an envelope in the desired format (XML or JSON). If the data format is XML, then the namespace is `http://marklogic.com/entity-services`.
 
 ```xquery
 declare function dhf:make-envelope($content, $headers, $triples, $data-format) as document-node()
@@ -83,7 +83,7 @@ declare function dhf:make-envelope($content, $headers, $triples, $data-format) a
  - **data-format** - the format to use for making the envelope (xml|json)
 
 #### Returns
-Either a JSON or XML envelope (depending on data-format).
+Either an XML or JSON envelope (depending on data-format).
 
 #### Usage
 
@@ -93,7 +93,7 @@ Either a JSON or XML envelope (depending on data-format).
 
 ### Make Legacy Envelope
 
-Creates a legacy envelope. If the data format is XML then the namespace is `http://marklogic.com/data-hub/envelope`. This function is for users who upgraded from 1.x and have legacy envelopes already in production.
+Creates a legacy envelope in the desired format (XML or JSON). If the data format is XML then the namespace is `http://marklogic.com/data-hub/envelope`. This function is for users who upgraded from 1.x and have legacy envelopes already in production.
 
 
 ```xquery
@@ -108,7 +108,7 @@ declare function dhf:make-legacy-envelope($content, $headers, $triples, $data-fo
 - **data-format** - the format to use for making the envelope (xml|json)
 
 #### Returns
-Either a JSON or XML envelope (depending on data-format).
+Either an XML or JSON envelope (depending on data-format).
 
 #### Usage
 
@@ -118,7 +118,7 @@ Either a JSON or XML envelope (depending on data-format).
 
 ### Context
 
-Creates a generic context for use in any plugin. Contexts are passed to the [the Run function](#run) function. A Context defines information needed for proper tracing.
+Creates a generic context for use in any plugin. Contexts are passed to the [the Run function](#run). A Context defines information needed for proper tracing.
 
 ```xquery
 declare function dhf:context($label as xs:string) as json:object

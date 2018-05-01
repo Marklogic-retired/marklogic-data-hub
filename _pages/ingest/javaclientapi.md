@@ -18,7 +18,7 @@ The parameters are the following:
 
  - **entity-name** - the name of the entity to which the input flow belongs.
  - **flow-name** - the name of the input flow.
- - **options** - [_Optional_] additional JSON options you can pass to the flow. Must be a JSON object
+ - **options** - [_Optional_] additional JSON options you can pass to the flow. Must be a JSON object.
  - **job-id** - [_Optional_] a job id, any string is OK. If none is provided then a UUID is generated for you.
 
 ```java
