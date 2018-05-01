@@ -247,3 +247,14 @@ gradle hubExportJobs \
   associated with those jobs will be exported.
 - **filename** - name of the zip file to be generated, including extension
   (default: "jobexport.zip")
+
+## Uninstalling MarkLogic Data Hub
+
+### mlUndeploy
+Removes all components of your data hub on MarkLogic, including databases, application servers, forests, and users.
+
+<pre class="cmdline">
+./gradlew mlUndeploy \
+  -Pconfirm=true 
+</pre>
+
