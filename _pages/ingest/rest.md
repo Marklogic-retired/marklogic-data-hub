@@ -17,7 +17,7 @@ This example shows how to use the [v1/documents endpoint](https://docs.marklogic
 1. **transform** - the name of the transform. This must be **run-flow**.
 1. **trans:entity-name** - the name of the entity to which the input flow belongs.
 1. **trans:flow-name** - the name of the input flow.
-1. **trans:options** - [_Optional_] additional JSON options you can pass to the flow. Must be a JSON object
+1. **trans:options** - [_Optional_] additional JSON options you can pass to the flow. Must be a JSON object.
 1. **trans:job-id** - [_Optional_] a job id, any string is OK. If none is provided then a UUID is generated for you.
 
 <pre class="cmdline">

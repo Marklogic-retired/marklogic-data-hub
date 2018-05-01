@@ -4,17 +4,18 @@ title: Gradle Tasks
 permalink: /docs/gradle-tasks/
 ---
 
-This page provides a complete list of all of the gradle tasks available to you from the ml-data-hub plugin.
+This page provides a complete list of all of the Gradle tasks available from the ml-data-hub plugin.
 
 1. [In General](#in-general)
 1. [MarkLogic Data Hub Setup tasks](#marklogic-data-hub-setup-tasks)
 1. [MarkLogic Data Hub Scaffolding tasks](#marklogic-data-hub-scaffolding-tasks)
 1. [MarkLogic Data Hub Flow Management tasks](#marklogic-data-hub-flow-management-tasks)
+1. [Uninstalling MarkLogic Data Hub](#uninstalling-marklogic-data-hub)
 
 ## In General
-When passing parameters to gradle tasks you must use the environment variable syntax `-PparameterName=parameterValue`.
+When passing parameters to Gradle tasks you must use the environment variable syntax `-PparameterName=parameterValue`.
 
-We recommend the use of the [net.saliman.properties](https://github.com/stevesaliman/gradle-properties-plugin) gradle plugin to manage different environments.
+We recommend the use of the [net.saliman.properties](https://github.com/stevesaliman/gradle-properties-plugin) Gradle plugin to manage different environments.
 
 You can include the plugin by adding this to your `build.gradle` file:
 
@@ -40,19 +41,19 @@ You can create multiple environment scoped properties files with the naming conv
 
 The contents of these environment files will override any values set in the gradle.properties file.
 
-To specify an environment at runtime you must pass the `-PenvironmentName=xxx` option to the gradle command line. To run a gradle command against the production file you would type:
+To specify an environment at runtime you must pass the `-PenvironmentName=xxx` option to the gradle command line. To run a Gradle command against the production file you would type:
 
 <pre class="cmdline">
 gradle -PenvironmentName=production ...
 </pre>
 
-# MarkLogic Data Hub Setup tasks
+## MarkLogic Data Hub Setup tasks
 These tasks are for configuring the Data Hub Framework.
 
 ### hubUpdate
 Update your DHF instance from a previous version. Run this after you update your build.gradle to point to a newer ml-data-hub plugin.
 
-Before you can run this command you will need to update your build.gradle file manually to point to the latest version of the ml-data-hub Gradle Plugin.
+Before you can run this command you will need to update your build.gradle file manually to point to the latest version of the ml-data-hub plugin.
 
 ```groovy
 plugins {
@@ -105,7 +106,7 @@ Print out some basic info about the Data Hub Framework config
 gradle hubInfo
 </pre>
 
-# MarkLogic Data Hub Scaffolding tasks
+## MarkLogic Data Hub Scaffolding tasks
 These tasks allow you to scaffold projects, entities, and flows.
 
 ### hubInit
@@ -164,7 +165,7 @@ gradle hubCreateHarmonizeFlow \
 ##### Default Values
 - **dataFormat**=json
 
-# MarkLogic Data Hub Flow Management tasks
+## MarkLogic Data Hub Flow Management tasks
 These tasks allow you to run and clean up after flows.
 
 ### hubRunFlow
