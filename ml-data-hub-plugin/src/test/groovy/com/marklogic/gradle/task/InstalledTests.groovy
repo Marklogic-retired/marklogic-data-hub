@@ -12,7 +12,7 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
- *  
+ *
  */
 
 package com.marklogic.gradle.task
@@ -35,12 +35,12 @@ class InstalledTests extends BaseTest {
     def setupSpec() {
         createGradleFiles()
         runTask('hubInit')
-        runTask('mlUndeploy',  '-Pconfirm=true')
-        println(runTask('mlDeploy', '-i').getOutput())
+        //runTask('mlUndeploy',  '-Pconfirm=true')
+        //println(runTask('mlDeploy', '-i').getOutput())
     }
 
     def cleanupSpec() {
-        runTask('mlUndeploy', '-Pconfirm=true')
+        //runTask('mlUndeploy', '-Pconfirm=true')
     }
 
     def "enable debugging with hub installed"() {

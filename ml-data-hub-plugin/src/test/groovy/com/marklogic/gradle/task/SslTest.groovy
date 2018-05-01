@@ -12,7 +12,7 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
- *  
+ *
  */
 
 package com.marklogic.gradle.task
@@ -32,8 +32,12 @@ import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
 
+/* this particular test requires bootstrap to run on a clean
+   and ssl-enabled database.
+ */
 class SslTest extends BaseTest {
     def setupSpec() {
+        createFullPropertiesFile()
         buildFile = testProjectDir.newFile('build.gradle')
         buildFile << '''
             plugins {
@@ -133,6 +137,11 @@ class SslTest extends BaseTest {
         copyResourceToFile("ssl-test/ssl-server.json", new File(testProjectDir.root, "user-config/servers/staging-server.json"))
         copyResourceToFile("ssl-test/ssl-server.json", new File(testProjectDir.root, "user-config/servers/trace-server.json"))
         createProperties()
+        try {
+            clearDatabases("data-hub-MODULES")
+        } catch (e) {
+            //pass
+        }
         runTask("enableSSL")
     }
 
@@ -141,51 +150,10 @@ class SslTest extends BaseTest {
         runTask("disableSSL", "--stacktrace")
     }
 
+
     void createProperties() {
         propertiesFile = new File(testProjectDir.root, 'gradle.properties')
         propertiesFile << """
-        mlHost=localhost
-
-        mlUsername=admin
-        mlPassword=admin
-
-        mlStagingAppserverName=data-hub-STAGING
-        mlStagingPort=8010
-        mlStagingDbName=data-hub-STAGING
-        mlStagingForestsPerHost=4
-        mlStagingAuth=digest
-
-        mlFinalAppserverName=data-hub-FINAL
-        mlFinalPort=8011
-        mlFinalDbName=data-hub-FINAL
-        mlFinalForestsPerHost=4
-        mlFinalAuth=digest
-
-        mlTraceAppserverName=data-hub-TRACING
-        mlTracePort=8012
-        mlTraceDbName=data-hub-TRACING
-        mlTraceForestsPerHost=1
-        mlTraceAuth=digest
-
-        mlJobAppserverName=data-hub-JOBS
-        mlJobPort=8013
-        mlJobDbName=data-hub-JOBS
-        mlJobForestsPerHost=1
-        mlJobAuth=digest
-
-        mlModulesDbName=data-hub-MODULES
-        mlModulesForestsPerHost=1
-
-        mlTriggersDbName=data-hub-TRIGGERS
-        mlTriggersForestsPerHost=1
-
-        mlSchemasDbName=data-hub-SCHEMAS
-        mlSchemasForestsPerHost=1
-
-        mlHubUserRole=data-hub-role
-        mlHubUserName=data-hub-user
-        mlHubUserPassword=bI7'3Ya|&;Ohw.ZzsDY
-
         mlAdminScheme=https
         mlManageScheme=https
         mlAdminSimpleSsl=true

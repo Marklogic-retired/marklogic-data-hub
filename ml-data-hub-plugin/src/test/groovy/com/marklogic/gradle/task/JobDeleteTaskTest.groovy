@@ -12,7 +12,7 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
- *  
+ *
  */
 
 package com.marklogic.gradle.task
@@ -35,8 +35,8 @@ class JobDeleteTaskTest extends BaseTest {
     def setupSpec() {
         createGradleFiles()
         runTask('hubInit')
-        runTask('mlUndeploy', '-Pconfirm=true')
-        println(runTask('mlDeploy', '-i').getOutput())
+        //runTask('mlUndeploy', '-Pconfirm=true')
+        //println(runTask('mlDeploy', '-i').getOutput())
 
         println(runTask('hubCreateHarmonizeFlow', '-PentityName=test-entity', '-PflowName=test-harmonize-flow', '-PdataFormat=xml', '-PpluginFormat=xqy').getOutput())
         println(runTask('mlReLoadModules'))
@@ -62,7 +62,7 @@ class JobDeleteTaskTest extends BaseTest {
     }
 
     def cleanupSpec() {
-        runTask('mlUndeploy', '-Pconfirm=true')
+        //runTask('mlUndeploy', '-Pconfirm=true')
     }
 
     def getJobIds() {

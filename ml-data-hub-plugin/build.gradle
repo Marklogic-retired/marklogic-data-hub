@@ -46,8 +46,12 @@ repositories {
 
 dependencies {
     compile gradleApi()
-    compile project(':marklogic-data-hub')
-    compile ('com.marklogic:ml-gradle:3.4.0')
+    compile (project(':marklogic-data-hub')) {
+        exclude group: 'ch.qos.logback'
+    }
+    compile ('com.marklogic:ml-gradle:3.4.0') {
+        exclude group: 'ch.qos.logback'
+    }
     testCompile localGroovy()
     testCompile gradleTestKit()
     testCompile 'xmlunit:xmlunit:1.3'
