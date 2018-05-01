@@ -31,7 +31,11 @@ Harmonize flows were designed to be run as batch jobs. To support this batch run
 
 If you are not interested in running harmonization flows as batches we do [provide ways](../../faqs/#how-can-i-run-a-harmonize-flow-immediately-for-1-document) for running them on-demand for single items.
 
+This diagram shows the steps in a harmonize flow:
+
 ![Harmonize Flow Overview]({{site.baseurl}}/images/3x/harmonizing-product-data/harmonize-flow-diagram.png)
+
+Here is a summary of the plugins involved:
 
 - **collector**: returns a list of strings to operate on
 - **content**: returns data to put into the content section of the envelope
@@ -50,13 +54,13 @@ If you are not interested in running harmonization flows as batches we do [provi
 
 This collector code is returning a list of URIs, one for every product document in the staging database. We are using URIs because we intend to create one harmonized document for every ingested staging document.
 
-The code you see is using [cts.uris](https://docs.marklogic.com/cts.uris) to get values from the URI lexicon. We pass in [cts.collectionQuery](https://docs.marklogic.com/cts.collectionQuery) as the third parameter to constrain our results to only the URIs for documents in the **Product** collection. We are using `options.entity` as the parameter. The Data Hub Framework passes in options from Java to the plugins.
-
-The default options passed in to the plugin are:
+The default options passed in to the collector plugin are:
 
 - **entity**: the name of the entity this plugin belongs to
 - **flow**: the name of the flow this plugin belongs to
 - **flowType**: the type of flow being run (input or harmonize)
+
+The code you see is using [cts.uris](https://docs.marklogic.com/cts.uris) to get values from the URI lexicon. We pass in [cts.collectionQuery](https://docs.marklogic.com/cts.collectionQuery) as the third parameter to constrain our results to only the URIs for documents in the **Product** collection. We are using `options.entity` as the parameter. The Data Hub Framework passes in options from Java to the plugins.
 
 <div class="embed-git lang-js" href="//raw.githubusercontent.com/marklogic-community/marklogic-data-hub/develop/examples/online-store/plugins/entities/Product/harmonize/Harmonize Products/collector/collector.sjs"></div>
 

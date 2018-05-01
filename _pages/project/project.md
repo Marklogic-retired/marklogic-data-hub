@@ -1,10 +1,8 @@
 ---
 layout: inner
-title: Using the DHF from Java
+title: Create a Data Hub Project
 permalink: /project/
 ---
-
-# Creating a Data Hub Project
 
 Before you can get started you need to create a Data Hub Project. You can do this via the QuickStart UI or the Gradle plugin.
 
