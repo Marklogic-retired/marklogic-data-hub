@@ -1,4 +1,4 @@
-{% for image in site.static_files %}
+{% for image in site.static_files reversed %}
   {% assign parts = (image.path | split: "/") %}
   {% if parts.size == 4 and parts[1] == 'javadocs' and parts[3] == 'index.html' %}
   <p><a href="{{parts[2]}}/">MarkLogic Data Hub Framework {{parts[2]}}</a></p>
