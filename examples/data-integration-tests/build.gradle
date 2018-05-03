@@ -36,7 +36,7 @@ dependencies {
     // on the Data Hub Framework library
     compile 'com.marklogic:marklogic-data-hub:2.0.3'
     compile 'com.marklogic:marklogic-xcc:9.0.4'
-    compile 'com.marklogic:marklogic-client-api:4.0.3.1'
+    compile 'com.marklogic:marklogic-client-api:4.0.4'
     // prototyping with kotlin tests
     compile 'io.github.microutils:kotlin-logging:1.4.6'
     compile "org.jetbrains.kotlin:kotlin-stdlib"
