@@ -1,11 +1,213 @@
 # Change Log
 
+## [v3.0.0](https://github.com/marklogic/marklogic-data-hub/tree/v3.0.0) (2018-05-03)
+
+[Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v2.0.4...v3.0.0)
+
+**Implemented enhancements:**
+
+- Update Spring Batch example to version 1.4.0 [\#622](https://github.com/marklogic/marklogic-data-hub/issues/622)
+- Update writers to be batched vs individualized - delete/dupe [\#617](https://github.com/marklogic/marklogic-data-hub/issues/617)
+- Export traces [\#571](https://github.com/marklogic/marklogic-data-hub/issues/571)
+- Create gradle command to generate a TDE Template [\#551](https://github.com/marklogic/marklogic-data-hub/issues/551)
+- Allow specifying flow options for harmonization flows run from quickstart [\#504](https://github.com/marklogic/marklogic-data-hub/issues/504)
+- Migration guidance from 1.0 \(8\) to 2.0 \(9\) [\#373](https://github.com/marklogic/marklogic-data-hub/issues/373)
+
+**Fixed bugs:**
+
+- Loading documents through input flow is failing [\#883](https://github.com/marklogic/marklogic-data-hub/issues/883)
+- gradlew quick-start:e2eLaunch could not find or load main class com.marklogic.quickstart.Application [\#877](https://github.com/marklogic/marklogic-data-hub/issues/877)
+- Tutorial: version numbers don't match [\#852](https://github.com/marklogic/marklogic-data-hub/issues/852)
+- Example in documentation is incorrect [\#845](https://github.com/marklogic/marklogic-data-hub/issues/845)
+- README.md link to "Data Hub Framework website" in "Advanced Hub Usage" is broken [\#837](https://github.com/marklogic/marklogic-data-hub/issues/837)
+- defaults are missing on hub init tab [\#833](https://github.com/marklogic/marklogic-data-hub/issues/833)
+- Getting Started Tutorial: More issues [\#818](https://github.com/marklogic/marklogic-data-hub/issues/818)
+- Running input flow produces error "MISSING\_CURRENT\_TRACE" and the documents are not loaded [\#814](https://github.com/marklogic/marklogic-data-hub/issues/814)
+- Missing dhf.sjs when creating a new flow \(blocker\) [\#813](https://github.com/marklogic/marklogic-data-hub/issues/813)
+- Upgrade npmVersion to 5.6.0 on build.gradle to avoid error on Windows [\#804](https://github.com/marklogic/marklogic-data-hub/issues/804)
+- Tutorial link hard coded to old \(2.0.3\) release [\#801](https://github.com/marklogic/marklogic-data-hub/issues/801)
+- Reverse DB EndToEndFlowTests fail on AWS [\#800](https://github.com/marklogic/marklogic-data-hub/issues/800)
+- quickstart harmonize flow view elides tab labels to meaninglessness [\#798](https://github.com/marklogic/marklogic-data-hub/issues/798)
+- QuickStart Browse Data throws XDMP-LEXVAL [\#797](https://github.com/marklogic/marklogic-data-hub/issues/797)
+- Documents are not shown under Browse Data STAGING database after running the input flow [\#788](https://github.com/marklogic/marklogic-data-hub/issues/788)
+- Remove mimetypes from gradle config [\#780](https://github.com/marklogic/marklogic-data-hub/issues/780)
+- Install screen on quickstart is broken, unable to install hub \[blocker\] [\#778](https://github.com/marklogic/marklogic-data-hub/issues/778)
+- Run undeploy tasks with configured mlManageUsername [\#766](https://github.com/marklogic/marklogic-data-hub/issues/766)
+- Error when running gradlew mlUndeploy [\#762](https://github.com/marklogic/marklogic-data-hub/issues/762)
+- MLCPBean doesn't have -ssl option [\#760](https://github.com/marklogic/marklogic-data-hub/issues/760)
+- mlDeploy fails when run by an LDAP user with full admin rights [\#759](https://github.com/marklogic/marklogic-data-hub/issues/759)
+- QuickStart won't connect to HTTPS-enabled App Services [\#752](https://github.com/marklogic/marklogic-data-hub/issues/752)
+- Search results on jobs page is showing the wrong results when searching for "input" jobs [\#746](https://github.com/marklogic/marklogic-data-hub/issues/746)
+- Trace view is not displayed after clicking the trace link [\#738](https://github.com/marklogic/marklogic-data-hub/issues/738)
+- One entity's indexes configurations clobber all the others' [\#711](https://github.com/marklogic/marklogic-data-hub/issues/711)
+- When modeling Order entity, needs to add element range index on "id" property [\#705](https://github.com/marklogic/marklogic-data-hub/issues/705)
+- Quickstart tutorial doesn't have $version on content.sjs, but the screenshots have it [\#701](https://github.com/marklogic/marklogic-data-hub/issues/701)
+- QuickStart harmonize flow settings not persisted during browser session [\#684](https://github.com/marklogic/marklogic-data-hub/issues/684)
+- Primary key is not retained if it's clicked first when adding a property [\#679](https://github.com/marklogic/marklogic-data-hub/issues/679)
+- Huge ID lists from a collector fail with FRAGTOOLARGE if Tracing is on [\#658](https://github.com/marklogic/marklogic-data-hub/issues/658)
+- Old entity name is still retained on property entities type [\#651](https://github.com/marklogic/marklogic-data-hub/issues/651)
+- run-flow rest extension is not setting a default job-id [\#620](https://github.com/marklogic/marklogic-data-hub/issues/620)
+- Tutorial - Can not create "Harmonize Orders" flow [\#602](https://github.com/marklogic/marklogic-data-hub/issues/602)
+- Collector's disk queue is filling up [\#601](https://github.com/marklogic/marklogic-data-hub/issues/601)
+- QuickStart Project Initialize does not recognize change to hostname [\#585](https://github.com/marklogic/marklogic-data-hub/issues/585)
+- Object type changed after upgrade to Hub 2.0 so fields are missing or undefined [\#583](https://github.com/marklogic/marklogic-data-hub/issues/583)
+- The mlUndeploy task does not completely remove a data hub [\#580](https://github.com/marklogic/marklogic-data-hub/issues/580)
+- MLCP failing on INPUT FLOW after upgrade [\#579](https://github.com/marklogic/marklogic-data-hub/issues/579)
+- info block for JSON [\#577](https://github.com/marklogic/marklogic-data-hub/issues/577)
+- QuickStart - Browse Data does not display content for certain URIs [\#557](https://github.com/marklogic/marklogic-data-hub/issues/557)
+- Add Spring-Batch jobRepo configuration to data-hub-JOBS database & app-server? [\#493](https://github.com/marklogic/marklogic-data-hub/issues/493)
+- Added Price, but didn't see it in the Product entity [\#408](https://github.com/marklogic/marklogic-data-hub/issues/408)
+- A trace is created with an invalid format [\#397](https://github.com/marklogic/marklogic-data-hub/issues/397)
+- Hub \(un\)install time on windows is horrible [\#253](https://github.com/marklogic/marklogic-data-hub/issues/253)
+- Add --disable-host-check to allow external access [\#773](https://github.com/marklogic/marklogic-data-hub/pull/773) ([wooldridge](https://github.com/wooldridge))
+
+**Closed issues:**
+
+- Some broken links on docs-3.0 DHF Tutorial [\#930](https://github.com/marklogic/marklogic-data-hub/issues/930)
+- Data Hub Framework website links still refer to old marklogic-community address [\#899](https://github.com/marklogic/marklogic-data-hub/issues/899)
+- Error when harmonising literal in triple [\#878](https://github.com/marklogic/marklogic-data-hub/issues/878)
+- One of the links to the data hub framework website on readme.md is broken [\#864](https://github.com/marklogic/marklogic-data-hub/issues/864)
+- Tutorial: need a goal [\#854](https://github.com/marklogic/marklogic-data-hub/issues/854)
+- Clean up inconsistencies in content/instance in documentation [\#848](https://github.com/marklogic/marklogic-data-hub/issues/848)
+- Error when trying to run mlDeploy from online store example on development branch [\#835](https://github.com/marklogic/marklogic-data-hub/issues/835)
+- Include verb in example curl command [\#808](https://github.com/marklogic/marklogic-data-hub/issues/808)
+- Code edited externally not updating on quickstart editor windows [\#795](https://github.com/marklogic/marklogic-data-hub/issues/795)
+- Harmonization fails [\#756](https://github.com/marklogic/marklogic-data-hub/issues/756)
+- Missing custom webservices in DHF [\#716](https://github.com/marklogic/marklogic-data-hub/issues/716)
+- problem with instance-json-from document when extracting array of string [\#708](https://github.com/marklogic/marklogic-data-hub/issues/708)
+- Final content.sjs is out of date in tutorial [\#676](https://github.com/marklogic/marklogic-data-hub/issues/676)
+- Add documentation for gradle task to uninstall data-hub [\#670](https://github.com/marklogic/marklogic-data-hub/issues/670)
+- Clarify docs: REST resources can be added without being connected to an entity [\#629](https://github.com/marklogic/marklogic-data-hub/issues/629)
+- Update Hub ES code to get inline with newer ES features [\#553](https://github.com/marklogic/marklogic-data-hub/issues/553)
+- Example: Single-step ingest [\#476](https://github.com/marklogic/marklogic-data-hub/issues/476)
+- Invoking harmonize flow via post-commit trigger fails with non-admin user [\#378](https://github.com/marklogic/marklogic-data-hub/issues/378)
+- Getting Started tutorial shows a stack trace for step 8, sub-step 6 [\#316](https://github.com/marklogic/marklogic-data-hub/issues/316)
+- Refine JavaDocs [\#222](https://github.com/marklogic/marklogic-data-hub/issues/222)
+- Epic: MDM support [\#126](https://github.com/marklogic/marklogic-data-hub/issues/126)
+
+**Merged pull requests:**
+
+- 3.x develop fast forward [\#958](https://github.com/marklogic/marklogic-data-hub/pull/958) ([aebadirad](https://github.com/aebadirad))
+- Add Javadoc info to docs README [\#956](https://github.com/marklogic/marklogic-data-hub/pull/956) ([wooldridge](https://github.com/wooldridge))
+- Add javadocs version 3.0.0 to docs [\#955](https://github.com/marklogic/marklogic-data-hub/pull/955) ([wooldridge](https://github.com/wooldridge))
+- Update Java Client API dependency to 4.0.4 [\#954](https://github.com/marklogic/marklogic-data-hub/pull/954) ([grechaw](https://github.com/grechaw))
+- Fix old finished example link [\#952](https://github.com/marklogic/marklogic-data-hub/pull/952) ([wooldridge](https://github.com/wooldridge))
+- Fix links in Tutorial Wrapping Up [\#951](https://github.com/marklogic/marklogic-data-hub/pull/951) ([wooldridge](https://github.com/wooldridge))
+- Fix link to QuickStart .war file in tutorial [\#950](https://github.com/marklogic/marklogic-data-hub/pull/950) ([wooldridge](https://github.com/wooldridge))
+- DHFPROD-646 misc 3.x docs fixes [\#949](https://github.com/marklogic/marklogic-data-hub/pull/949) ([wooldridge](https://github.com/wooldridge))
+- DHFPROD-646 remove link in setup, no content [\#948](https://github.com/marklogic/marklogic-data-hub/pull/948) ([wooldridge](https://github.com/wooldridge))
+- Fix update test develop [\#947](https://github.com/marklogic/marklogic-data-hub/pull/947) ([grechaw](https://github.com/grechaw))
+- DHFPROD-663 improve sample-data setup info [\#946](https://github.com/marklogic/marklogic-data-hub/pull/946) ([wooldridge](https://github.com/wooldridge))
+- DHFPROD-493, DHFPROD-646 3.x documentation updates [\#945](https://github.com/marklogic/marklogic-data-hub/pull/945) ([wooldridge](https://github.com/wooldridge))
+- Updated legal notices [\#944](https://github.com/marklogic/marklogic-data-hub/pull/944) ([grechaw](https://github.com/grechaw))
+- QuickStart UI fixes for 2.x-develop [\#942](https://github.com/marklogic/marklogic-data-hub/pull/942) ([wooldridge](https://github.com/wooldridge))
+- Develop [\#941](https://github.com/marklogic/marklogic-data-hub/pull/941) ([aebadirad](https://github.com/aebadirad))
+- E2e/save index new entity [\#940](https://github.com/marklogic/marklogic-data-hub/pull/940) ([ayuwono](https://github.com/ayuwono))
+- DHFPROD-502 fix tutorial, primary key does not add element range index [\#939](https://github.com/marklogic/marklogic-data-hub/pull/939) ([wooldridge](https://github.com/wooldridge))
+- First pass on 2.x flow upgrade to 3, and removing unneeded modules [\#938](https://github.com/marklogic/marklogic-data-hub/pull/938) ([aebadirad](https://github.com/aebadirad))
+- Updating Issue \#578: Update the deletion message [\#937](https://github.com/marklogic/marklogic-data-hub/pull/937) ([mhuang-ml](https://github.com/mhuang-ml))
+- Develop [\#936](https://github.com/marklogic/marklogic-data-hub/pull/936) ([aebadirad](https://github.com/aebadirad))
+- DHFPROD-675 add index confirm for save new entity [\#935](https://github.com/marklogic/marklogic-data-hub/pull/935) ([wooldridge](https://github.com/wooldridge))
+- DHFPROD-496 crop terminal screenshot in tutorial [\#934](https://github.com/marklogic/marklogic-data-hub/pull/934) ([wooldridge](https://github.com/wooldridge))
+- DHFPROD-496 make consistent with current tutorial [\#933](https://github.com/marklogic/marklogic-data-hub/pull/933) ([wooldridge](https://github.com/wooldridge))
+- Latest batch of develop approved changes [\#932](https://github.com/marklogic/marklogic-data-hub/pull/932) ([aebadirad](https://github.com/aebadirad))
+- Add let variable declarations [\#929](https://github.com/marklogic/marklogic-data-hub/pull/929) ([wooldridge](https://github.com/wooldridge))
+- Update README for docs branch [\#928](https://github.com/marklogic/marklogic-data-hub/pull/928) ([wooldridge](https://github.com/wooldridge))
+- E2E/bug fixes -- tests for some bug fixes [\#927](https://github.com/marklogic/marklogic-data-hub/pull/927) ([ayuwono](https://github.com/ayuwono))
+- DHFPROD-646 3.x documentation, Tutorial [\#926](https://github.com/marklogic/marklogic-data-hub/pull/926) ([wooldridge](https://github.com/wooldridge))
+- Updating Issue \#578: Update the deletion message [\#925](https://github.com/marklogic/marklogic-data-hub/pull/925) ([mhuang-ml](https://github.com/mhuang-ml))
+- DHFPROD-646 3.x documentation, Understanding [\#924](https://github.com/marklogic/marklogic-data-hub/pull/924) ([wooldridge](https://github.com/wooldridge))
+- DHFPROD-646 3.x documentation, Ingest [\#923](https://github.com/marklogic/marklogic-data-hub/pull/923) ([wooldridge](https://github.com/wooldridge))
+- Entity box css fix [\#922](https://github.com/marklogic/marklogic-data-hub/pull/922) ([ayuwono](https://github.com/ayuwono))
+- Develop [\#921](https://github.com/marklogic/marklogic-data-hub/pull/921) ([aebadirad](https://github.com/aebadirad))
+- Develop update [\#920](https://github.com/marklogic/marklogic-data-hub/pull/920) ([aebadirad](https://github.com/aebadirad))
+- Updating Issue \#578: Update the deletion message [\#919](https://github.com/marklogic/marklogic-data-hub/pull/919) ([mhuang-ml](https://github.com/mhuang-ml))
+- DHFPROD-664 adjust offset, size of new entities in UI [\#918](https://github.com/marklogic/marklogic-data-hub/pull/918) ([wooldridge](https://github.com/wooldridge))
+- Fix for Issue \#578 [\#917](https://github.com/marklogic/marklogic-data-hub/pull/917) ([clockworked247](https://github.com/clockworked247))
+- Rework of fix for issue \#557 where URI in request to /doc API [\#916](https://github.com/marklogic/marklogic-data-hub/pull/916) ([clockworked247](https://github.com/clockworked247))
+- Rework of fix for issue \#557 where URI in request to /doc API [\#915](https://github.com/marklogic/marklogic-data-hub/pull/915) ([clockworked247](https://github.com/clockworked247))
+- Fixes \#582 - should be reviewed for UX before merging. [\#914](https://github.com/marklogic/marklogic-data-hub/pull/914) ([clockworked247](https://github.com/clockworked247))
+- Fix tab bar layout issue \#798 [\#913](https://github.com/marklogic/marklogic-data-hub/pull/913) ([clockworked247](https://github.com/clockworked247))
+- DHFPROD-730 update “content” to “instance” in docs [\#912](https://github.com/marklogic/marklogic-data-hub/pull/912) ([wooldridge](https://github.com/wooldridge))
+- DHFPROD-496 update tutorial documentation for 3.x [\#911](https://github.com/marklogic/marklogic-data-hub/pull/911) ([wooldridge](https://github.com/wooldridge))
+- Fix tab bar layout issue \#798 [\#909](https://github.com/marklogic/marklogic-data-hub/pull/909) ([clockworked247](https://github.com/clockworked247))
+- Fixing Issue \#440: Adding example w/ gradle props [\#908](https://github.com/marklogic/marklogic-data-hub/pull/908) ([mhuang-ml](https://github.com/mhuang-ml))
+- Fixing Issue \#440: Adding example w/ gradle props [\#907](https://github.com/marklogic/marklogic-data-hub/pull/907) ([mhuang-ml](https://github.com/mhuang-ml))
+- Data hub job status/error popup word wrap change [\#906](https://github.com/marklogic/marklogic-data-hub/pull/906) ([clockworked247](https://github.com/clockworked247))
+- Update 3.x from head [\#905](https://github.com/marklogic/marklogic-data-hub/pull/905) ([aebadirad](https://github.com/aebadirad))
+- Updating the docs for the repo move [\#904](https://github.com/marklogic/marklogic-data-hub/pull/904) ([aebadirad](https://github.com/aebadirad))
+- Update urls for the repository move [\#903](https://github.com/marklogic/marklogic-data-hub/pull/903) ([aebadirad](https://github.com/aebadirad))
+- DHFPROD-497 fix property index selection [\#900](https://github.com/marklogic/marklogic-data-hub/pull/900) ([wooldridge](https://github.com/wooldridge))
+- DHFPROD-496 fix QuickStart naming in app [\#898](https://github.com/marklogic/marklogic-data-hub/pull/898) ([wooldridge](https://github.com/wooldridge))
+- DHFPROD-496 add let variable declarations [\#896](https://github.com/marklogic/marklogic-data-hub/pull/896) ([wooldridge](https://github.com/wooldridge))
+- Update README.md [\#891](https://github.com/marklogic/marklogic-data-hub/pull/891) ([aebadirad](https://github.com/aebadirad))
+- Fixing Issue \#578: Adding deletion dialog [\#889](https://github.com/marklogic/marklogic-data-hub/pull/889) ([mhuang-ml](https://github.com/mhuang-ml))
+- Ignore mlcp test.  False failures occur and the test is redundant [\#885](https://github.com/marklogic/marklogic-data-hub/pull/885) ([grechaw](https://github.com/grechaw))
+- Issue \#883 quickstart cannnot load delimited text [\#884](https://github.com/marklogic/marklogic-data-hub/pull/884) ([grechaw](https://github.com/grechaw))
+- DHFPROD-645 add -X PUT to curl command [\#881](https://github.com/marklogic/marklogic-data-hub/pull/881) ([wooldridge](https://github.com/wooldridge))
+- DHFPROD-731 display install tree as dynamic text [\#880](https://github.com/marklogic/marklogic-data-hub/pull/880) ([wooldridge](https://github.com/wooldridge))
+- Develop [\#879](https://github.com/marklogic/marklogic-data-hub/pull/879) ([aebadirad](https://github.com/aebadirad))
+- Dhfprod 602 issue780 mimetypes [\#876](https://github.com/marklogic/marklogic-data-hub/pull/876) ([grechaw](https://github.com/grechaw))
+- DHFPROD-466 Improving tests for quickstart host config [\#875](https://github.com/marklogic/marklogic-data-hub/pull/875) ([grechaw](https://github.com/grechaw))
+- updating  quick-start test task to remove dependency on gui tests [\#867](https://github.com/marklogic/marklogic-data-hub/pull/867) ([kkanthet](https://github.com/kkanthet))
+- Develop fast forward the 3.x branch [\#859](https://github.com/marklogic/marklogic-data-hub/pull/859) ([aebadirad](https://github.com/aebadirad))
+- Last known good [\#858](https://github.com/marklogic/marklogic-data-hub/pull/858) ([grechaw](https://github.com/grechaw))
+- Bugfixes, issues with truncation and mime types removal. [\#851](https://github.com/marklogic/marklogic-data-hub/pull/851) ([grechaw](https://github.com/grechaw))
+- Remove mimetypes from deployed configuration \#780 [\#850](https://github.com/marklogic/marklogic-data-hub/pull/850) ([grechaw](https://github.com/grechaw))
+- 3.0.0 versioning update [\#847](https://github.com/marklogic/marklogic-data-hub/pull/847) ([aebadirad](https://github.com/aebadirad))
+- Develop [\#846](https://github.com/marklogic/marklogic-data-hub/pull/846) ([aebadirad](https://github.com/aebadirad))
+- Feature/dhfprod 522 java doc update [\#844](https://github.com/marklogic/marklogic-data-hub/pull/844) ([aebadirad](https://github.com/aebadirad))
+- Update MarkLogic server version in readme [\#843](https://github.com/marklogic/marklogic-data-hub/pull/843) ([aebadirad](https://github.com/aebadirad))
+- Truncate the response being logged to something reasonable [\#842](https://github.com/marklogic/marklogic-data-hub/pull/842) ([aebadirad](https://github.com/aebadirad))
+- Issue \#557 fix [\#841](https://github.com/marklogic/marklogic-data-hub/pull/841) ([clockworked247](https://github.com/clockworked247))
+- DHFPROD-263 - addition of license and notice files [\#839](https://github.com/marklogic/marklogic-data-hub/pull/839) ([aebadirad](https://github.com/aebadirad))
+- Refactor of unit tests to make DHFPROD-630 actionable [\#838](https://github.com/marklogic/marklogic-data-hub/pull/838) ([grechaw](https://github.com/grechaw))
+- fixing issue \#833 [\#834](https://github.com/marklogic/marklogic-data-hub/pull/834) ([paxtonhare](https://github.com/paxtonhare))
+- fixing bad writer.sjs paths [\#832](https://github.com/marklogic/marklogic-data-hub/pull/832) ([paxtonhare](https://github.com/paxtonhare))
+- More harmonize flow validation [\#829](https://github.com/marklogic/marklogic-data-hub/pull/829) ([ayuwono](https://github.com/ayuwono))
+- Fix for DHFPROD-412, other failing tests [\#828](https://github.com/marklogic/marklogic-data-hub/pull/828) ([srinathgit](https://github.com/srinathgit))
+- Bugfix/dhfprod 660 \#814 running input flow produces [\#816](https://github.com/marklogic/marklogic-data-hub/pull/816) ([aebadirad](https://github.com/aebadirad))
+- fixes \#788 - db string comparison when setting query manager [\#812](https://github.com/marklogic/marklogic-data-hub/pull/812) ([wooldridge](https://github.com/wooldridge))
+- Fixing hard-coding of admin/admin in project setup [\#811](https://github.com/marklogic/marklogic-data-hub/pull/811) ([grechaw](https://github.com/grechaw))
+- Upgrade to Angular CLI latest [\#805](https://github.com/marklogic/marklogic-data-hub/pull/805) ([aebadirad](https://github.com/aebadirad))
+- Feature/java doc updates [\#803](https://github.com/marklogic/marklogic-data-hub/pull/803) ([aebadirad](https://github.com/aebadirad))
+- Adding test for input flow using DMSDK [\#802](https://github.com/marklogic/marklogic-data-hub/pull/802) ([srinathgit](https://github.com/srinathgit))
+- Feature/sjs perf [\#789](https://github.com/marklogic/marklogic-data-hub/pull/789) ([paxtonhare](https://github.com/paxtonhare))
+- Update README.md [\#787](https://github.com/marklogic/marklogic-data-hub/pull/787) ([popzip](https://github.com/popzip))
+- Add telemetetry call via eval + setup test for it [\#786](https://github.com/marklogic/marklogic-data-hub/pull/786) ([aebadirad](https://github.com/aebadirad))
+- Cert auth and simple SSL tests [\#785](https://github.com/marklogic/marklogic-data-hub/pull/785) ([srinathgit](https://github.com/srinathgit))
+- Fix for \#778, return back precheck json string instead of directly re… [\#779](https://github.com/marklogic/marklogic-data-hub/pull/779) ([aebadirad](https://github.com/aebadirad))
+- E2E - more traces tests [\#776](https://github.com/marklogic/marklogic-data-hub/pull/776) ([ayuwono](https://github.com/ayuwono))
+- Add exposed SSL settings [\#772](https://github.com/marklogic/marklogic-data-hub/pull/772) ([aebadirad](https://github.com/aebadirad))
+- adding notes about quickstart not being supported [\#768](https://github.com/marklogic/marklogic-data-hub/pull/768) ([dmcassel](https://github.com/dmcassel))
+- adding support document [\#767](https://github.com/marklogic/marklogic-data-hub/pull/767) ([dmcassel](https://github.com/dmcassel))
+- E2E tests stabilization and traces tests  [\#765](https://github.com/marklogic/marklogic-data-hub/pull/765) ([ayuwono](https://github.com/ayuwono))
+- Feature/3.x refactor [\#764](https://github.com/marklogic/marklogic-data-hub/pull/764) ([aebadirad](https://github.com/aebadirad))
+- Refactor install info [\#763](https://github.com/marklogic/marklogic-data-hub/pull/763) ([dmcassel](https://github.com/dmcassel))
+- \#571 updating docs for Export Traces [\#761](https://github.com/marklogic/marklogic-data-hub/pull/761) ([dmcassel](https://github.com/dmcassel))
+- fixes for trace-ui [\#755](https://github.com/marklogic/marklogic-data-hub/pull/755) ([dmcassel](https://github.com/dmcassel))
+- E2E tests on jobs page [\#751](https://github.com/marklogic/marklogic-data-hub/pull/751) ([ayuwono](https://github.com/ayuwono))
+- making it a bit more clear [\#750](https://github.com/marklogic/marklogic-data-hub/pull/750) ([paxtonhare](https://github.com/paxtonhare))
+- fixing tracing stuff [\#749](https://github.com/marklogic/marklogic-data-hub/pull/749) ([paxtonhare](https://github.com/paxtonhare))
+- cleaning up things I noticed while working on docs [\#748](https://github.com/marklogic/marklogic-data-hub/pull/748) ([dmcassel](https://github.com/dmcassel))
+- \#738 allowing for trace URIs with extensions [\#745](https://github.com/marklogic/marklogic-data-hub/pull/745) ([dmcassel](https://github.com/dmcassel))
+- fixing \#711 [\#743](https://github.com/marklogic/marklogic-data-hub/pull/743) ([paxtonhare](https://github.com/paxtonhare))
+- adding Windows instructions [\#742](https://github.com/marklogic/marklogic-data-hub/pull/742) ([dmcassel](https://github.com/dmcassel))
+- fixing \#701 [\#741](https://github.com/marklogic/marklogic-data-hub/pull/741) ([paxtonhare](https://github.com/paxtonhare))
+- fixing \#620 [\#740](https://github.com/marklogic/marklogic-data-hub/pull/740) ([paxtonhare](https://github.com/paxtonhare))
+- E2E tests on run harmonize with flow options [\#737](https://github.com/marklogic/marklogic-data-hub/pull/737) ([ayuwono](https://github.com/ayuwono))
+- \#591 - Show 2.0 features for server versions \>= 9 [\#646](https://github.com/marklogic/marklogic-data-hub/pull/646) ([wooldridge](https://github.com/wooldridge))
+- \#622 - update to MarkLogic Spring Batch 1.7.0 [\#625](https://github.com/marklogic/marklogic-data-hub/pull/625) ([sastafford](https://github.com/sastafford))
+
 ## [v2.0.4](https://github.com/marklogic/marklogic-data-hub/tree/v2.0.4) (2018-02-13)
-[Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v2.0.3...v2.0.4)
+
+[Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/2.0.3...v2.0.4)
 
 **Implemented enhancements:**
 
 - Need ability to specify cluster hostnames in configuration, override automatic host detection [\#662](https://github.com/marklogic/marklogic-data-hub/issues/662)
+- Allow me to set custom SSL Context and Hostname verifiers  [\#647](https://github.com/marklogic/marklogic-data-hub/issues/647)
+- Stream uris list [\#633](https://github.com/marklogic/marklogic-data-hub/issues/633)
 
 **Fixed bugs:**
 
@@ -14,16 +216,19 @@
 - Browse Data Entities Only Error [\#726](https://github.com/marklogic/marklogic-data-hub/issues/726)
 - Setting up QuickStart UI takes me to the update screen, then vicious cycle [\#698](https://github.com/marklogic/marklogic-data-hub/issues/698)
 - Performance example gradle hubinit task throws a directory error on windows [\#674](https://github.com/marklogic/marklogic-data-hub/issues/674)
+- deleting an entity property causes quickstart to forget the existing primary key/range index/required field settings [\#616](https://github.com/marklogic/marklogic-data-hub/issues/616)
 - DataMovementServices is holdover from DHF 1.0 [\#613](https://github.com/marklogic/marklogic-data-hub/issues/613)
 - Quickstart runs in 2.0 mode only for version 9, not \> 9.x [\#591](https://github.com/marklogic/marklogic-data-hub/issues/591)
 
 **Closed issues:**
 
 - Put min ML version in docs and error message [\#229](https://github.com/marklogic/marklogic-data-hub/issues/229)
+- publish javadocs to a website [\#212](https://github.com/marklogic/marklogic-data-hub/issues/212)
 
 **Merged pull requests:**
 
 - 203 fixes [\#736](https://github.com/marklogic/marklogic-data-hub/pull/736) ([paxtonhare](https://github.com/paxtonhare))
+- Export jobs ui [\#733](https://github.com/marklogic/marklogic-data-hub/pull/733) ([dmcassel](https://github.com/dmcassel))
 - updating CONTRIBUTING for e-node changes [\#732](https://github.com/marklogic/marklogic-data-hub/pull/732) ([paxtonhare](https://github.com/paxtonhare))
 - Copyrights [\#731](https://github.com/marklogic/marklogic-data-hub/pull/731) ([grechaw](https://github.com/grechaw))
 - Center the actions icons, narrow the space between them [\#730](https://github.com/marklogic/marklogic-data-hub/pull/730) ([wooldridge](https://github.com/wooldridge))
@@ -46,13 +251,16 @@
 - \#551 Create gradle command to generate a TDE Template [\#685](https://github.com/marklogic/marklogic-data-hub/pull/685) ([derms](https://github.com/derms))
 - 2.0.3 documentation & ml8 deprecation update [\#681](https://github.com/marklogic/marklogic-data-hub/pull/681) ([aebadirad](https://github.com/aebadirad))
 
+## [2.0.3](https://github.com/marklogic/marklogic-data-hub/tree/2.0.3) (2018-01-30)
+
+[Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v2.0.3...2.0.3)
+
 ## [v2.0.3](https://github.com/marklogic/marklogic-data-hub/tree/v2.0.3) (2018-01-30)
+
 [Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v2.0.2...v2.0.3)
 
 **Implemented enhancements:**
 
-- Allow me to set custom SSL Context and Hostname verifiers  [\#647](https://github.com/marklogic/marklogic-data-hub/issues/647)
-- Stream uris list [\#633](https://github.com/marklogic/marklogic-data-hub/issues/633)
 - Deprecate ML8 support [\#618](https://github.com/marklogic/marklogic-data-hub/issues/618)
 - MLCP options: Add ability to select individual files [\#413](https://github.com/marklogic/marklogic-data-hub/issues/413)
 - Long collection names wrap \(ugly\) [\#409](https://github.com/marklogic/marklogic-data-hub/issues/409)
@@ -63,7 +271,6 @@
 - Quickstart doesn't have "Delimited Text Options" anymore, the documentation and tutorial should be changed [\#683](https://github.com/marklogic/marklogic-data-hub/issues/683)
 - Unable to load data on Input Flows [\#682](https://github.com/marklogic/marklogic-data-hub/issues/682)
 - double parent XML elements created when serializing complex type  [\#619](https://github.com/marklogic/marklogic-data-hub/issues/619)
-- deleting an entity property causes quickstart to forget the existing primary key/range index/required field settings [\#616](https://github.com/marklogic/marklogic-data-hub/issues/616)
 - setting sourceDB in custom task extending RunFlowTaks in v2.0.2 fails [\#608](https://github.com/marklogic/marklogic-data-hub/issues/608)
 - Fixes to closing input stream as recommended @paxtonhare also clean u… [\#700](https://github.com/marklogic/marklogic-data-hub/pull/700) ([aebadirad](https://github.com/aebadirad))
 - Fixed \#616 [\#627](https://github.com/marklogic/marklogic-data-hub/pull/627) ([aebadirad](https://github.com/aebadirad))
@@ -76,7 +283,6 @@
 - Error on Harmonize batch on a F5 LB [\#632](https://github.com/marklogic/marklogic-data-hub/issues/632)
 - dhf.makeEnvelope does not include $version and $type [\#626](https://github.com/marklogic/marklogic-data-hub/issues/626)
 - gradle tasks broken in 2.0.1 [\#599](https://github.com/marklogic/marklogic-data-hub/issues/599)
-- publish javadocs to a website [\#212](https://github.com/marklogic/marklogic-data-hub/issues/212)
 
 **Merged pull requests:**
 
@@ -127,16 +333,22 @@
 - \#553 [\#595](https://github.com/marklogic/marklogic-data-hub/pull/595) ([paxtonhare](https://github.com/paxtonhare))
 
 ## [v2.0.2](https://github.com/marklogic/marklogic-data-hub/tree/v2.0.2) (2017-12-04)
-[Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v2.0.1...v2.0.2)
+
+[Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/2.0.1...v2.0.2)
 
 **Implemented enhancements:**
 
+- Update hubCreateEntity task to use ES too [\#547](https://github.com/marklogic/marklogic-data-hub/issues/547)
 - Delete old jobs [\#534](https://github.com/marklogic/marklogic-data-hub/issues/534)
 
 **Fixed bugs:**
 
 - Main is executed in staging db even when setting -PsourceDB=Final  [\#565](https://github.com/marklogic/marklogic-data-hub/issues/565)
 - Blank harmonization page [\#558](https://github.com/marklogic/marklogic-data-hub/issues/558)
+
+**Closed issues:**
+
+- Add e2e tests for Quickstart [\#555](https://github.com/marklogic/marklogic-data-hub/issues/555)
 
 **Merged pull requests:**
 
@@ -146,23 +358,16 @@
 - fixed \#547 [\#568](https://github.com/marklogic/marklogic-data-hub/pull/568) ([paxtonhare](https://github.com/paxtonhare))
 - Feature/delete old jobs [\#566](https://github.com/marklogic/marklogic-data-hub/pull/566) ([dmcassel](https://github.com/dmcassel))
 
-## [v2.0.1](https://github.com/marklogic/marklogic-data-hub/tree/v2.0.1) (2017-11-20)
-[Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/2.0.1...v2.0.1)
-
 ## [2.0.1](https://github.com/marklogic/marklogic-data-hub/tree/2.0.1) (2017-11-20)
-[Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v2.0.0...2.0.1)
+
+[Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v2.0.1...2.0.1)
 
 **Implemented enhancements:**
 
-- Harmonize Writer could benefit from more context like $type [\#564](https://github.com/marklogic/marklogic-data-hub/issues/564)
-- Update hubCreateEntity task to use ES too [\#547](https://github.com/marklogic/marklogic-data-hub/issues/547)
-- Update 2.x version checker to omit pre-release version [\#485](https://github.com/marklogic/marklogic-data-hub/issues/485)
 - Browse Data: Reset search when changing databases [\#535](https://github.com/marklogic/marklogic-data-hub/issues/535)
 
 **Fixed bugs:**
 
-- Error running sample product-catalog example [\#560](https://github.com/marklogic/marklogic-data-hub/issues/560)
-- Entity definition partially written, everything hosed [\#435](https://github.com/marklogic/marklogic-data-hub/issues/435)
 - Harmonization code generation fails for a relationships where entities hold mutual references [\#544](https://github.com/marklogic/marklogic-data-hub/issues/544)
 - Out of memory when flow has too many errors [\#543](https://github.com/marklogic/marklogic-data-hub/issues/543)
 - admin role required for quick start login [\#542](https://github.com/marklogic/marklogic-data-hub/issues/542)
@@ -171,8 +376,28 @@
 
 **Closed issues:**
 
+- Add README.md at top of examples folder [\#549](https://github.com/marklogic/marklogic-data-hub/issues/549)
+- Quickstart build fails [\#541](https://github.com/marklogic/marklogic-data-hub/issues/541)
+- hubPreinstallCheck, AdminConfig ignores SSL setting [\#539](https://github.com/marklogic/marklogic-data-hub/issues/539)
+- Enhance command line to build entity indexes via entity JSON descriptors [\#526](https://github.com/marklogic/marklogic-data-hub/issues/526)
+
+## [v2.0.1](https://github.com/marklogic/marklogic-data-hub/tree/v2.0.1) (2017-11-20)
+
+[Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v2.0.0...v2.0.1)
+
+**Implemented enhancements:**
+
+- Harmonize Writer could benefit from more context like $type [\#564](https://github.com/marklogic/marklogic-data-hub/issues/564)
+- Update 2.x version checker to omit pre-release version [\#485](https://github.com/marklogic/marklogic-data-hub/issues/485)
+
+**Fixed bugs:**
+
+- Error running sample product-catalog example [\#560](https://github.com/marklogic/marklogic-data-hub/issues/560)
+- Entity definition partially written, everything hosed [\#435](https://github.com/marklogic/marklogic-data-hub/issues/435)
+
+**Closed issues:**
+
 - REST search options deployed to wrong location in modules db [\#567](https://github.com/marklogic/marklogic-data-hub/issues/567)
-- Add e2e tests for Quickstart [\#555](https://github.com/marklogic/marklogic-data-hub/issues/555)
 - Getting MISSING\_FLOW error when invoking from DMSDK [\#552](https://github.com/marklogic/marklogic-data-hub/issues/552)
 - Add support for mlcp -input\_file\_pattern [\#550](https://github.com/marklogic/marklogic-data-hub/issues/550)
 - Browse Data: not obvious that I needed to click Search [\#530](https://github.com/marklogic/marklogic-data-hub/issues/530)
@@ -180,13 +405,10 @@
 - incorrect scaffolding [\#525](https://github.com/marklogic/marklogic-data-hub/issues/525)
 - Issue upgrade from rc1 to rc2 [\#511](https://github.com/marklogic/marklogic-data-hub/issues/511)
 - Create Performance Sample [\#492](https://github.com/marklogic/marklogic-data-hub/issues/492)
+- Prevent install if ports are in use [\#477](https://github.com/marklogic/marklogic-data-hub/issues/477)
 - MLCP fails if no "jobId" parameter specified even with trace off [\#426](https://github.com/marklogic/marklogic-data-hub/issues/426)
 - Test deploy against ssl enabled server [\#417](https://github.com/marklogic/marklogic-data-hub/issues/417)
 - Epic - error handling [\#289](https://github.com/marklogic/marklogic-data-hub/issues/289)
-- Add README.md at top of examples folder [\#549](https://github.com/marklogic/marklogic-data-hub/issues/549)
-- Quickstart build fails [\#541](https://github.com/marklogic/marklogic-data-hub/issues/541)
-- hubPreinstallCheck, AdminConfig ignores SSL setting [\#539](https://github.com/marklogic/marklogic-data-hub/issues/539)
-- Enhance command line to build entity indexes via entity JSON descriptors [\#526](https://github.com/marklogic/marklogic-data-hub/issues/526)
 
 **Merged pull requests:**
 
@@ -194,6 +416,7 @@
 - adds performance sample [\#556](https://github.com/marklogic/marklogic-data-hub/pull/556) ([joemfb](https://github.com/joemfb))
 
 ## [v2.0.0](https://github.com/marklogic/marklogic-data-hub/tree/v2.0.0) (2017-10-02)
+
 [Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v2.0.0-rc.2...v2.0.0)
 
 **Fixed bugs:**
@@ -215,9 +438,9 @@
 - Links need updating [\#508](https://github.com/marklogic/marklogic-data-hub/issues/508)
 - Update to latest ml-gradle [\#505](https://github.com/marklogic/marklogic-data-hub/issues/505)
 - Input flow \(mlcp\) options aren't saved [\#481](https://github.com/marklogic/marklogic-data-hub/issues/481)
-- Prevent install if ports are in use [\#477](https://github.com/marklogic/marklogic-data-hub/issues/477)
 
 ## [v2.0.0-rc.2](https://github.com/marklogic/marklogic-data-hub/tree/v2.0.0-rc.2) (2017-09-12)
+
 [Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v1.1.5...v2.0.0-rc.2)
 
 **Implemented enhancements:**
@@ -247,6 +470,7 @@
 - Support MLCP fastload [\#500](https://github.com/marklogic/marklogic-data-hub/pull/500) ([RobertSzkutak](https://github.com/RobertSzkutak))
 
 ## [v1.1.5](https://github.com/marklogic/marklogic-data-hub/tree/v1.1.5) (2017-08-14)
+
 [Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v1.1.4...v1.1.5)
 
 **Implemented enhancements:**
@@ -282,9 +506,11 @@
 - Some typos and suggestions [\#475](https://github.com/marklogic/marklogic-data-hub/pull/475) ([patrickmcelwee](https://github.com/patrickmcelwee))
 
 ## [v1.1.4](https://github.com/marklogic/marklogic-data-hub/tree/v1.1.4) (2017-07-25)
+
 [Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v2.0.0-rc.1...v1.1.4)
 
 ## [v2.0.0-rc.1](https://github.com/marklogic/marklogic-data-hub/tree/v2.0.0-rc.1) (2017-07-24)
+
 [Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v2.0.0-beta.1...v2.0.0-rc.1)
 
 **Implemented enhancements:**
@@ -329,6 +555,7 @@
 - Consider name and description for data hub framework and tooling [\#175](https://github.com/marklogic/marklogic-data-hub/issues/175)
 
 ## [v2.0.0-beta.1](https://github.com/marklogic/marklogic-data-hub/tree/v2.0.0-beta.1) (2017-05-31)
+
 [Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v1.1.3...v2.0.0-beta.1)
 
 **Implemented enhancements:**
@@ -340,6 +567,7 @@
 - Entity properties starting with a capital generate templates with a preceding dash in var names [\#350](https://github.com/marklogic/marklogic-data-hub/issues/350)
 
 ## [v1.1.3](https://github.com/marklogic/marklogic-data-hub/tree/v1.1.3) (2017-05-24)
+
 [Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v2.0.0-alpha.4...v1.1.3)
 
 **Implemented enhancements:**
@@ -386,12 +614,15 @@
 - disabled frame options in quickstart so it can be run inside an iframe [\#364](https://github.com/marklogic/marklogic-data-hub/pull/364) ([ryan321](https://github.com/ryan321))
 
 ## [v2.0.0-alpha.4](https://github.com/marklogic/marklogic-data-hub/tree/v2.0.0-alpha.4) (2017-05-12)
+
 [Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v2.0.0-alpha.3...v2.0.0-alpha.4)
 
 ## [v2.0.0-alpha.3](https://github.com/marklogic/marklogic-data-hub/tree/v2.0.0-alpha.3) (2017-05-08)
+
 [Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v1.1.2...v2.0.0-alpha.3)
 
 ## [v1.1.2](https://github.com/marklogic/marklogic-data-hub/tree/v1.1.2) (2017-04-12)
+
 [Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v1.1.1...v1.1.2)
 
 **Fixed bugs:**
@@ -404,6 +635,7 @@
 - QuickStart Template Compile Error 2.0-alpha.2 [\#380](https://github.com/marklogic/marklogic-data-hub/issues/380)
 
 ## [v1.1.1](https://github.com/marklogic/marklogic-data-hub/tree/v1.1.1) (2017-03-20)
+
 [Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v2.0.0-alpha.2...v1.1.1)
 
 **Implemented enhancements:**
@@ -430,6 +662,7 @@
 - Updates Java Client API dependency to stable build [\#359](https://github.com/marklogic/marklogic-data-hub/pull/359) ([jmakeig](https://github.com/jmakeig))
 
 ## [v2.0.0-alpha.2](https://github.com/marklogic/marklogic-data-hub/tree/v2.0.0-alpha.2) (2017-01-16)
+
 [Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v1.1.0...v2.0.0-alpha.2)
 
 **Implemented enhancements:**
@@ -449,6 +682,7 @@
 - Entity modeling rendering incorrectly [\#347](https://github.com/marklogic/marklogic-data-hub/issues/347)
 
 ## [v1.1.0](https://github.com/marklogic/marklogic-data-hub/tree/v1.1.0) (2016-12-16)
+
 [Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v2.0.0-alpha.1...v1.1.0)
 
 **Implemented enhancements:**
@@ -471,6 +705,7 @@
 - Create a non-admin user for doing hub stuff [\#200](https://github.com/marklogic/marklogic-data-hub/issues/200)
 
 ## [v2.0.0-alpha.1](https://github.com/marklogic/marklogic-data-hub/tree/v2.0.0-alpha.1) (2016-11-30)
+
 [Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v1.0.2...v2.0.0-alpha.1)
 
 **Implemented enhancements:**
@@ -478,6 +713,7 @@
 - Visual entity type model editor [\#286](https://github.com/marklogic/marklogic-data-hub/issues/286)
 
 ## [v1.0.2](https://github.com/marklogic/marklogic-data-hub/tree/v1.0.2) (2016-11-22)
+
 [Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v1.0.1...v1.0.2)
 
 **Fixed bugs:**
@@ -492,6 +728,7 @@
 - Error Extension hubstats does not exist. [\#328](https://github.com/marklogic/marklogic-data-hub/issues/328)
 
 ## [v1.0.1](https://github.com/marklogic/marklogic-data-hub/tree/v1.0.1) (2016-11-08)
+
 [Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v1.0.0...v1.0.1)
 
 **Fixed bugs:**
@@ -508,6 +745,7 @@
 - Allow users to clear out corrupt install [\#304](https://github.com/marklogic/marklogic-data-hub/issues/304)
 
 ## [v1.0.0](https://github.com/marklogic/marklogic-data-hub/tree/v1.0.0) (2016-10-25)
+
 [Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v1.0.0-rc.6...v1.0.0)
 
 **Fixed bugs:**
@@ -525,6 +763,7 @@
 - Last deployed time sometimes says 47 years ago [\#303](https://github.com/marklogic/marklogic-data-hub/issues/303)
 
 ## [v1.0.0-rc.6](https://github.com/marklogic/marklogic-data-hub/tree/v1.0.0-rc.6) (2016-10-17)
+
 [Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v1.0.0-rc.5...v1.0.0-rc.6)
 
 **Fixed bugs:**
@@ -548,6 +787,7 @@
 - mlcp\_transform needs profiling [\#162](https://github.com/marklogic/marklogic-data-hub/issues/162)
 
 ## [v1.0.0-rc.5](https://github.com/marklogic/marklogic-data-hub/tree/v1.0.0-rc.5) (2016-09-27)
+
 [Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v1.0.0-rc.4...v1.0.0-rc.5)
 
 **Implemented enhancements:**
@@ -578,6 +818,7 @@
 - QuickStart App data not loaded to correct collection [\#250](https://github.com/marklogic/marklogic-data-hub/issues/250)
 
 ## [v1.0.0-rc.4](https://github.com/marklogic/marklogic-data-hub/tree/v1.0.0-rc.4) (2016-09-02)
+
 [Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v1.0.0-rc.3...v1.0.0-rc.4)
 
 **Implemented enhancements:**
@@ -591,6 +832,7 @@
 - UI rework based on new screen designs [\#70](https://github.com/marklogic/marklogic-data-hub/issues/70)
 
 ## [v1.0.0-rc.3](https://github.com/marklogic/marklogic-data-hub/tree/v1.0.0-rc.3) (2016-08-25)
+
 [Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v1.0.0-rc.2...v1.0.0-rc.3)
 
 **Fixed bugs:**
@@ -614,6 +856,7 @@
 - Better error handling for failed hub install [\#176](https://github.com/marklogic/marklogic-data-hub/issues/176)
 
 ## [v1.0.0-rc.2](https://github.com/marklogic/marklogic-data-hub/tree/v1.0.0-rc.2) (2016-08-10)
+
 [Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v1.0.0-rc.1...v1.0.0-rc.2)
 
 **Closed issues:**
@@ -622,10 +865,12 @@
 - Remove Tweets Example [\#234](https://github.com/marklogic/marklogic-data-hub/issues/234)
 
 ## [v1.0.0-rc.1](https://github.com/marklogic/marklogic-data-hub/tree/v1.0.0-rc.1) (2016-08-04)
+
 [Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v1.0.0-beta.6...v1.0.0-rc.1)
 
 **Fixed bugs:**
 
+- Error in writer caused exception with tracing [\#235](https://github.com/marklogic/marklogic-data-hub/issues/235)
 - Failed test : DataHubTest.testInstallUserModules [\#106](https://github.com/marklogic/marklogic-data-hub/issues/106)
 
 **Closed issues:**
@@ -635,6 +880,7 @@
 - rename config to marklogic-config [\#239](https://github.com/marklogic/marklogic-data-hub/issues/239)
 - Allow many developers to share a server, each with their own Data Hub [\#237](https://github.com/marklogic/marklogic-data-hub/issues/237)
 - Change colors and icons to match other MarkLogic content/GUIs [\#236](https://github.com/marklogic/marklogic-data-hub/issues/236)
+- isInstalled fails on 9 nightly [\#216](https://github.com/marklogic/marklogic-data-hub/issues/216)
 - Tracing UI [\#210](https://github.com/marklogic/marklogic-data-hub/issues/210)
 - During install, list the artifacts being created [\#194](https://github.com/marklogic/marklogic-data-hub/issues/194)
 - Performance tracing [\#193](https://github.com/marklogic/marklogic-data-hub/issues/193)
@@ -642,17 +888,16 @@
 - Support index configuration as a part of pushbutton deploy.  [\#10](https://github.com/marklogic/marklogic-data-hub/issues/10)
 
 ## [v1.0.0-beta.6](https://github.com/marklogic/marklogic-data-hub/tree/v1.0.0-beta.6) (2016-06-20)
+
 [Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v1.0.0-beta.5...v1.0.0-beta.6)
 
 **Fixed bugs:**
 
-- Error in writer caused exception with tracing [\#235](https://github.com/marklogic/marklogic-data-hub/issues/235)
 - Need to specify collation in query in trace-lib.xqy [\#230](https://github.com/marklogic/marklogic-data-hub/issues/230)
 
 **Closed issues:**
 
 - Better gradle integration [\#232](https://github.com/marklogic/marklogic-data-hub/issues/232)
-- isInstalled fails on 9 nightly [\#216](https://github.com/marklogic/marklogic-data-hub/issues/216)
 - Add example project for advanced gradle [\#185](https://github.com/marklogic/marklogic-data-hub/issues/185)
 
 **Merged pull requests:**
@@ -660,6 +905,7 @@
 - Refactored the hub gradle integration [\#233](https://github.com/marklogic/marklogic-data-hub/pull/233) ([paxtonhare](https://github.com/paxtonhare))
 
 ## [v1.0.0-beta.5](https://github.com/marklogic/marklogic-data-hub/tree/v1.0.0-beta.5) (2016-05-03)
+
 [Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v1.0.0-beta.4...v1.0.0-beta.5)
 
 **Fixed bugs:**
@@ -682,6 +928,7 @@
 - fixed \#197 [\#213](https://github.com/marklogic/marklogic-data-hub/pull/213) ([divino](https://github.com/divino))
 
 ## [v1.0.0-beta.4](https://github.com/marklogic/marklogic-data-hub/tree/v1.0.0-beta.4) (2016-04-21)
+
 [Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v1.0.0-beta.3...v1.0.0-beta.4)
 
 **Implemented enhancements:**
@@ -706,7 +953,12 @@
 - 192 - Removed automatic closing of notification [\#208](https://github.com/marklogic/marklogic-data-hub/pull/208) ([maeisabelle](https://github.com/maeisabelle))
 
 ## [v1.0.0-beta.3](https://github.com/marklogic/marklogic-data-hub/tree/v1.0.0-beta.3) (2016-04-15)
+
 [Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v1.0.0-beta.2...v1.0.0-beta.3)
+
+**Closed issues:**
+
+- Enable Tracing in the Hub [\#199](https://github.com/marklogic/marklogic-data-hub/issues/199)
 
 **Merged pull requests:**
 
@@ -717,6 +969,7 @@
 - Gradle fixes [\#202](https://github.com/marklogic/marklogic-data-hub/pull/202) ([paxtonhare](https://github.com/paxtonhare))
 
 ## [v1.0.0-beta.2](https://github.com/marklogic/marklogic-data-hub/tree/v1.0.0-beta.2) (2016-04-13)
+
 [Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v1.0.0-beta.1...v1.0.0-beta.2)
 
 **Implemented enhancements:**
@@ -730,7 +983,6 @@
 
 **Closed issues:**
 
-- Enable Tracing in the Hub [\#199](https://github.com/marklogic/marklogic-data-hub/issues/199)
 - REST folder is being deployed as assets [\#189](https://github.com/marklogic/marklogic-data-hub/issues/189)
 - Create Hub example for simple gradle integration [\#184](https://github.com/marklogic/marklogic-data-hub/issues/184)
 - Error while loading data [\#179](https://github.com/marklogic/marklogic-data-hub/issues/179)
@@ -755,6 +1007,7 @@
 - update plugin signatures [\#178](https://github.com/marklogic/marklogic-data-hub/pull/178) ([paxtonhare](https://github.com/paxtonhare))
 
 ## [v1.0.0-beta.1](https://github.com/marklogic/marklogic-data-hub/tree/v1.0.0-beta.1) (2016-04-01)
+
 [Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v1.0.0-alpha.4...v1.0.0-beta.1)
 
 **Closed issues:**
@@ -780,6 +1033,7 @@
 - 75 - Swagger UI to browse the Hub APIs [\#160](https://github.com/marklogic/marklogic-data-hub/pull/160) ([maeisabelle](https://github.com/maeisabelle))
 
 ## [v1.0.0-alpha.4](https://github.com/marklogic/marklogic-data-hub/tree/v1.0.0-alpha.4) (2016-03-25)
+
 [Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v1.0.0-alpha.3...v1.0.0-alpha.4)
 
 **Closed issues:**
@@ -818,6 +1072,7 @@
 - adding a gradle plugin for the hub [\#128](https://github.com/marklogic/marklogic-data-hub/pull/128) ([paxtonhare](https://github.com/paxtonhare))
 
 ## [v1.0.0-alpha.3](https://github.com/marklogic/marklogic-data-hub/tree/v1.0.0-alpha.3) (2016-03-15)
+
 [Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v1.0.0-alpha.2...v1.0.0-alpha.3)
 
 **Closed issues:**
@@ -849,6 +1104,7 @@
 - 79 - Run-flow transform [\#107](https://github.com/marklogic/marklogic-data-hub/pull/107) ([maeisabelle](https://github.com/maeisabelle))
 
 ## [v1.0.0-alpha.2](https://github.com/marklogic/marklogic-data-hub/tree/v1.0.0-alpha.2) (2016-03-09)
+
 [Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v1.0.0-alpha.1...v1.0.0-alpha.2)
 
 **Fixed bugs:**
@@ -864,8 +1120,12 @@
 
 - prepping for alpha 2 drop [\#96](https://github.com/marklogic/marklogic-data-hub/pull/96) ([paxtonhare](https://github.com/paxtonhare))
 - fixed \#92 [\#95](https://github.com/marklogic/marklogic-data-hub/pull/95) ([paxtonhare](https://github.com/paxtonhare))
+- prepping for first release. [\#93](https://github.com/marklogic/marklogic-data-hub/pull/93) ([paxtonhare](https://github.com/paxtonhare))
 
 ## [v1.0.0-alpha.1](https://github.com/marklogic/marklogic-data-hub/tree/v1.0.0-alpha.1) (2016-03-08)
+
+[Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/bf7c86635c504f7ff8324e974c2a62f8298135c9...v1.0.0-alpha.1)
+
 **Implemented enhancements:**
 
 - Add a button to deploy a User's hub modules [\#24](https://github.com/marklogic/marklogic-data-hub/issues/24)
@@ -908,7 +1168,6 @@
 
 **Merged pull requests:**
 
-- prepping for first release. [\#93](https://github.com/marklogic/marklogic-data-hub/pull/93) ([paxtonhare](https://github.com/paxtonhare))
 - 72 define search options [\#90](https://github.com/marklogic/marklogic-data-hub/pull/90) ([paxtonhare](https://github.com/paxtonhare))
 - Replaced domains with entities [\#86](https://github.com/marklogic/marklogic-data-hub/pull/86) ([maeisabelle](https://github.com/maeisabelle))
 - fixed \#76 - added transform to get content only [\#84](https://github.com/marklogic/marklogic-data-hub/pull/84) ([paxtonhare](https://github.com/paxtonhare))
