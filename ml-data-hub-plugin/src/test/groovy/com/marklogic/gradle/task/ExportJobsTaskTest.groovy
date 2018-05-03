@@ -32,8 +32,8 @@ class ExportJobsTaskTest extends BaseTest {
     def setupSpec() {
         createGradleFiles()
         runTask('hubInit')
-        //runTask('mlUndeploy', '-Pconfirm=true')
-        //println(runTask('mlDeploy', '-i').getOutput())
+        // this will be relatively fast (idempotent) for already-installed hubs
+        println(runTask('mlDeploy', '-i').getOutput())
 
         println(runTask('hubCreateHarmonizeFlow', '-PentityName=test-entity', '-PflowName=test-harmonize-flow', '-PdataFormat=xml', '-PpluginFormat=xqy').getOutput())
         println(runTask('mlReLoadModules'))

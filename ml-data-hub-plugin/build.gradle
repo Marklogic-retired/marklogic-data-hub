@@ -67,6 +67,8 @@ test {
         // in Gradle output.
         showStandardStreams = true
     }
+    include 'com/marklogic/gradle/fullcycle/**'
+    include 'com/marklogic/gradle/task/**'
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {

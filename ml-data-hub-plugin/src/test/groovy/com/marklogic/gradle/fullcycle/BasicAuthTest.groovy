@@ -15,8 +15,9 @@
  *
  */
 
-package com.marklogic.gradle.task
+package com.marklogic.gradle.fullcycle
 
+import com.marklogic.gradle.task.BaseTest
 import org.gradle.testkit.runner.UnexpectedBuildFailure
 
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
@@ -26,7 +27,7 @@ class BasicAuthTest extends BaseTest {
     def setupSpec() {
         createGradleFiles()
         runTask("hubInit")
-        println(testProjectDir.getRoot().getAbsolutePath());
+        println(BaseTest.testProjectDir.getRoot().getAbsolutePath());
         createProperties()
     }
 
@@ -35,8 +36,8 @@ class BasicAuthTest extends BaseTest {
     }
 
     void createProperties() {
-        propertiesFile = new File(testProjectDir.root, 'gradle.properties')
-        propertiesFile << """
+        BaseTest.propertiesFile = new File(BaseTest.testProjectDir.root, 'gradle.properties')
+        BaseTest.propertiesFile << """
             mlStagingAuth=basic
             mlFinalAuth=basic
             mlTraceAuth=basic

@@ -29,7 +29,8 @@ class HubUpdateTaskTest extends BaseTest {
     def setupSpec() {
         createGradleFiles()
         runTask('hubInit')
-        //println(runTask('mlDeploy', '-i').getOutput())
+        // this will be relatively fast (idempotent) for already-installed hubs
+        println(runTask('mlDeploy', '-i').getOutput())
     }
 
     def "no updates needed"() {

@@ -15,12 +15,13 @@
  *
  */
 
-package com.marklogic.gradle.task
+package com.marklogic.gradle.fullcycle
 
 import com.marklogic.client.DatabaseClientFactory
 import com.marklogic.client.ext.modulesloader.ssl.SimpleX509TrustManager
 import com.marklogic.client.io.DOMHandle
 import com.marklogic.client.io.DocumentMetadataHandle
+import com.marklogic.gradle.task.BaseTest
 import com.marklogic.hub.HubConfig
 import org.gradle.testkit.runner.UnexpectedBuildFailure
 
@@ -37,8 +38,8 @@ import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 class TlsTest extends BaseTest {
     def setupSpec() {
         createFullPropertiesFile()
-        buildFile = testProjectDir.newFile('build.gradle')
-        buildFile << '''
+        BaseTest.buildFile = BaseTest.testProjectDir.newFile('build.gradle')
+        BaseTest.buildFile << '''
             plugins {
                 id 'com.marklogic.ml-data-hub'
             }
@@ -192,11 +193,11 @@ class TlsTest extends BaseTest {
         '''
 
         def result = runTask("hubInit")
-        copyResourceToFile("tls-test/my-template.xml", new File(testProjectDir.root, "user-config/security/certificate-templates/my-template.xml"))
-        copyResourceToFile("tls-test/ssl-server.json", new File(testProjectDir.root, "user-config/servers/final-server.json"))
-        copyResourceToFile("tls-test/ssl-server.json", new File(testProjectDir.root, "user-config/servers/job-server.json"))
-        copyResourceToFile("tls-test/ssl-server.json", new File(testProjectDir.root, "user-config/servers/staging-server.json"))
-        copyResourceToFile("tls-test/ssl-server.json", new File(testProjectDir.root, "user-config/servers/trace-server.json"))
+        copyResourceToFile("tls-test/my-template.xml", new File(BaseTest.testProjectDir.root, "user-config/security/certificate-templates/my-template.xml"))
+        copyResourceToFile("tls-test/ssl-server.json", new File(BaseTest.testProjectDir.root, "user-config/servers/final-server.json"))
+        copyResourceToFile("tls-test/ssl-server.json", new File(BaseTest.testProjectDir.root, "user-config/servers/job-server.json"))
+        copyResourceToFile("tls-test/ssl-server.json", new File(BaseTest.testProjectDir.root, "user-config/servers/staging-server.json"))
+        copyResourceToFile("tls-test/ssl-server.json", new File(BaseTest.testProjectDir.root, "user-config/servers/trace-server.json"))
         createProperties()
         result = runTask("enableSSL")
         print(result.output)
@@ -208,8 +209,8 @@ class TlsTest extends BaseTest {
     }
 
     void createProperties() {
-        propertiesFile = new File(testProjectDir.root, 'gradle.properties')
-        propertiesFile << """
+        BaseTest.propertiesFile = new File(BaseTest.testProjectDir.root, 'gradle.properties')
+        BaseTest.propertiesFile << """
         mlAdminScheme=https
         mlManageScheme=https
         # mlAdminSimpleSsl=true
@@ -236,7 +237,7 @@ class TlsTest extends BaseTest {
         then:
         notThrown(UnexpectedBuildFailure)
         def modCount = getModulesDocCount()
-        modCount == MOD_COUNT_WITH_TRACE_MODULES || modCount == MOD_COUNT
+        modCount == BaseTest.MOD_COUNT_WITH_TRACE_MODULES || modCount == BaseTest.MOD_COUNT
         result.task(":mlDeploy").outcome == SUCCESS
     }
 
