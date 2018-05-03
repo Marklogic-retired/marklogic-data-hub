@@ -42,3 +42,27 @@ Most of the content is located in `_pages` with screenshots in `images`. Making 
 
 ### Updating the Live website
 There is a travis job that builds and deploys the website every time a push is made to the **dhf-website** branch.
+
+# Building DHF Javadocs
+
+You can run a Gradle task to build [Javadoc](https://en.wikipedia.org/wiki/Javadoc) pages for the Data Hub Framework. From the project root of, for example, the develop branch (_not_ the docs branch) run the following:
+  
+```
+./gradlew javadoc
+```
+  
+The static Javadoc files are generated in the following folder:
+
+```
+marklogic-data-hub/build/docs/javadoc
+```
+
+## Adding to the Documentation
+
+You can commit those files to a version folder on the docs branch to display them in the DHF documentation, e.g.:
+  
+```
+javadocs/3.0.0
+```
+  
+Links to the different versions are dynamically displayed on the Docs > Javadocs documentation page.
