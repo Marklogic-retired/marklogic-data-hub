@@ -4,17 +4,16 @@ title: Ingest with QuickStart
 permalink: /ingest/quickstart/
 ---
 
-### Ingesting with the Quickstart UI
-Before you can ingest, make sure you created a DHF project with [QuickStart](../project/quickstart.md) or with the [Gradle Plugin](../project/gradle.md).
+### Ingest with QuickStart
 
-#### Create an Entity
+QuickStart is an easy-to-use user interface for working with the Data Hub Framework.
 
-See our [Tutorial](../tutorial/create-product-entity.md) for an example of creating an entity.
+The following parts of the [tutorial](../../tutorial/) describe the ingest process in QuickStart, from creating an entity to defining and running an input flow:
 
-#### Create an Input Flow
+1. [Create the Product Entity](../../tutorial/create-product-entity/)
+1. [Create the Product Input Flow](../../tutorial/create-product-input-flow/)
+1. [Load the Product Data As-Is](../../tutorial/load-products-as-is/)
 
-See our [Tutorial](../tutorial/create-product-input-flow.md) for an example of creating an Input Flow.
+Under the covers, QuickStart uses [MLCP](../mlcp/) to execute its input flows. 
 
-#### Run your Input Flow
-
-See our [Tutorial](../tutorial/load-products-as-is.md) for an example of running an Input Flow.
+Note that QuickStart is not supported for production use.

@@ -4,52 +4,45 @@ title: Ingest with MLCP
 permalink: /ingest/mlcp/
 ---
 
-### Ingesting with MLCP (MarkLogic Content Pump)
+### Ingest with MLCP (MarkLogic Content Pump)
 
-Before you can ingest, make sure you created a DHF project with [QuickStart](../project/quickstart.md) or with the [Gradle Plugin](../project/gradle.md).
+[MLCP](https://docs.marklogic.com/guide/ingestion/content-pump) is a standalone Java utility provided by MarkLogic. It provides a rich command-line interface for loading content into MarkLogic. You can read more in the [MLCP User Guide](https://docs.marklogic.com/guide/mlcp).
 
-[MLCP](https://docs.marklogic.com/guide/ingestion/content-pump) is a standalone Java utility provided by MarkLogic. It provides a rich command line interface for loading content into MarkLogic Server.
+Before you can ingest, make sure you have created a DHF project with [QuickStart](../project/quickstart.md) or with the [Gradle Plugin](../project/gradle.md).
 
-In order to get MLCP to invoke your Input Flow you must supply the `transform` command line parameter.
+You can have MLCP invoke your input flow by including three parameters with your MLCP command:
 
-_If you happen to be running the **Quickstart UI**, it will generate the appropriate command line for you._
+- `-transform_module`
+- `-transform_namespace`
+- `-transform_param`
 
-<br>
+_Note: If you are loading content with QuickStart, it will generate the appropriate MLCP command for you._
 
-#### MLCP Parameters
+#### Input Flow Parameters
 
-The 3 parameters necessary for running Input Flows are:
-- transform_module
-- transform_namespace
-- transform_param
-
-**NOTE** that **transform_module** and **transform_namespace** must be set to the values shown:
+The `-transform_module` and `-transform_namespace` parameters must be set to the following:
 
 <pre class="cmdline">
 -transform_module "/com.marklogic.hub/mlcp-flow-transform.xqy"
 -transform_namespace "http://marklogic.com/data-hub/mlcp-flow-transform"
 </pre>
 
-<br>
-#### The Important Parameter
+The `-transform_param` parameter will contain a comma-delimited list of key=value pairs to be passed to the `mlcp-flow-transform.xqy` module. Here are the keys and a description of their values:
 
-**transform_param** contains a comma-delimited list of key=value parameters to be passed to the `mlcp-flow-transform.xqy` module.
+ - **entity-name** - the URL-encoded name of the entity to which the flow belongs.
+ - **flow-name** - the URL-encoded name of the flow.
+ - **job-id** - [_Optional_] a job id, any string is OK. If none is provided then a UUID is generated for you.
+ - **options** - [_Optional_] additional JSON options you can pass to the flow. Must be a JSON object
+ 
+#### Spaces in Flow Names
 
-##### The parameters are:
- - **entity-name** - the URL encoded name of the entity the flow belongs to
- - **flow-name** - the URL encoded name of the flow
- - **options** - [_Optional_] additional json options you can pass to the flow. must be a json object
- - **job-id** - [_Optional_] a job id. any string is legit. If none is provided then a UUID is generated for you.
+MLCP does not allow spaces in the command line options for **-output_collections** and **-transform_param**. Prior to Data Hub Framework 2.0.0 there is no way to run a flow with a space in the name from standalone MLCP.
 
-<br>
+Since 2.0.0 you can [URL encode](https://en.wikipedia.org/wiki/Percent-encoding) the name and it will run (as in the example below).
 
-#### A note about spaces in Flow Names
+#### MLCP Example
 
-MLCP does not allow spaces in the command line options for **-output_collections** and **-transform_param**. Prior to Data Hub Framework 2.0.0 there is no way to run a flow with a space in the name from a standalone MLCP.
-
-Since 2.0.0 you can **url encode** the name and it will run.
-
-This is how you would run a flow named **My Awesome Flow** for the entity named **YourEntityName**.
+This is how you would run a flow named "My Awesome Flow" for the entity named "YourEntityName".
 
 <pre class="cmdline">
 /path/to/mlcp import \

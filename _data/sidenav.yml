@@ -5,7 +5,7 @@ main:
       text: 'Understanding DHF',
       childPages: [
         { url: '/understanding/concepts/', text: 'Concepts' },
-        { url: '/understanding/architecture/', text: 'Architecture' },
+        { url: '/understanding/architecture/', text: 'Organization' },
         { url: '/understanding/how-it-works/', text: 'How It Works'},
         { url: '/understanding/flowtracing/', text: 'Flow Tracing'},
         { url: '/understanding/project-structure/', text: 'Project Structure'}
@@ -33,7 +33,7 @@ main:
     }
     - {
       url: '/using/',
-      text: 'Using the DHF',
+      text: 'Using DHF',
       childPages: [
         {
           url: '/project/',
@@ -49,8 +49,8 @@ main:
           childPages: [
             { url: '/ingest/quickstart/', text: 'QuickStart' },
             { url: '/ingest/mlcp/', text: 'MLCP' },
-            { url: '/ingest/marklogic-client-api/', text: 'MarkLogic Client API' },
-            { url: '/ingest/rest/', text: 'REST API' }
+            { url: '/ingest/marklogic-client-api/', text: 'Java Client API' },
+            { url: '/ingest/rest/', text: 'REST Client API' }
           ]
         },
         # {
@@ -62,7 +62,7 @@ main:
           url: '/harmonize/',
           text: 'Harmonize',
           childPages: [
-            { url: '/harmonize/quickstart/', text: 'Quickstart'},
+            { url: '/harmonize/quickstart/', text: 'QuickStart'},
             { url: '/harmonize/gradle/', text: 'Gradle'},
             { url: '/harmonize/java/', text: 'Java Library'},
             { url: '/harmonize/rest/', text: 'REST'},
@@ -70,11 +70,7 @@ main:
         },
         {
           url: '/serve/',
-          text: 'Serve',
-          childPages: [
-            { url: '/serve/rest/', text: 'REST'},
-            { url: '/serve/odbc/', text: 'ODBC'}
-          ]
+          text: 'Serve (REST, ODBC)'
         }
       ]
     }
@@ -82,8 +78,8 @@ main:
       url: '/docs/',
       text: 'Docs',
       childPages: [
-        { url: '/docs/gradle-tasks/', text: 'Gradle Tasks' },
         { url: '/docs/server-side/', text: 'Server Side (xqy, sjs)' },
+        { url: '/docs/gradle-tasks/', text: 'Gradle Tasks' },
         { url: '/javadocs/', text: 'Javadocs' }
       ]
     }

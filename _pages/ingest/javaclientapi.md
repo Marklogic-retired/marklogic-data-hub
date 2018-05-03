@@ -4,21 +4,22 @@ title: Ingest with the MarkLogic Client API
 permalink: /ingest/marklogic-client-api/
 ---
 
-### Ingesting with the MarkLogic Java Client API
-
-Before you can ingest, make sure you created a DHF project with [QuickStart](../project/quickstart.md) or with the [Gradle Plugin](../project/gradle.md).
+### Ingest with the MarkLogic Java Client API
 
 The [MarkLogic Java Client API](https://developer.marklogic.com/products/java) is a Java library that facilitates communicating with MarkLogic Server from Java applications.
 
-The following example shows how you can use the [DocumentManager Interface](https://docs.marklogic.com/javadoc/client/com/marklogic/client/document/DocumentManager.html) to ingest data into MarkLogic and run Input Flows against the data.
+Before you can ingest, make sure you created a DHF project with [QuickStart](../project/quickstart.md) or with the [Gradle Plugin](../project/gradle.md). When you set up a DHF project, a transform is installed on MarkLogic with the name **run-flow**, which you can invoke using the Java Client API.
 
-**NOTE** how the code is using the [ServerTransform class](https://docs.marklogic.com/javadoc/client/com/marklogic/client/document/ServerTransform.html) to execute the **run-flow** transform and pass parameters to it.
+#### Java Client API Example
 
-##### The parameters are:
- - **entity-name** - the name of the entity the flow belongs to
- - **flow-name** - the name of the flow
- - **options** - [_Optional_] additional json options you can pass to the flow. must be a json object
- - **job-id** - [_Optional_] a job id. any string is legit. If none is provided then a UUID is generated for you.
+The following example shows how you can use the [DocumentManager Interface](https://docs.marklogic.com/javadoc/client/com/marklogic/client/document/DocumentManager.html) to ingest data into MarkLogic and run input flows against the data. The code uses the [ServerTransform class](https://docs.marklogic.com/javadoc/client/com/marklogic/client/document/ServerTransform.html) to execute the **run-flow** transform and pass parameters to it.
+
+The parameters are the following:
+
+ - **entity-name** - the name of the entity to which the input flow belongs.
+ - **flow-name** - the name of the input flow.
+ - **options** - [_Optional_] additional JSON options you can pass to the flow. Must be a JSON object.
+ - **job-id** - [_Optional_] a job id, any string is OK. If none is provided then a UUID is generated for you.
 
 ```java
 class FlowRunner {

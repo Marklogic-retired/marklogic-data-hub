@@ -6,13 +6,11 @@ permalink: /harmonize/gradle/
 
 ### Harmonizing with the Gradle Plugin
 
-### Creating Entities
+#### Creating Entities
 
-Entities are the high level business objects in your enterprise. They can be things like Employee, Product, Purchase Order, Department, etc.
+Entities are the high-level business objects in your enterprise. They can be things like Employee, Product, Purchase Order, Department, etc. With DHF, you have a choice between using abstract entities or [Entity Services](https://docs.marklogic.com/guide/entity-services/intro).
 
-With the DHF you have a choice between using abstract entities or Entity Services.
-
-To create an entity you simply issue this gradle command:
+To create an entity, you simply issue this gradle command:
 
 {% include ostabs.html linux="./gradlew hubCreateEntity -PEntityName=\"My Awesome Entity\"" windows="gradlew.bat hubCreateEntity -PEntityName=\"My Awesome Entity\"" %}
 
