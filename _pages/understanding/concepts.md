@@ -13,13 +13,13 @@ The following diagram illustrates the architectural view of an ODH.
 
 ### An ODH performs four key functions:
 
-1. **Ingest** - Load Data from upstream system
+1. **Ingest** - Load data from upstream system
 1. **Govern** - Provides trust about your data. Where did it come from? Is the data valid?
-1. **Harmonize** - Harmonize the incoming Data into consistent, usable formats
+1. **Harmonize** - Harmonize the incoming data into consistent, usable formats
 1. **Serve** - Serve the harmonized data to other systems
 
 ### Ingest
-First thing is first. Load all of your data into MarkLogic... every last bit. Upon ingest, data is stored in a staging area. During the ingest phase you can enhance your data with extra metadata like provenance. _Where did this data come from and when did it get ingested?_ See our [Ingest page](../ingest/ingest.md) for more details on ingesting data.
+First thing is first. Load all of your data into MarkLogic... every last bit. Upon ingest, data is stored in a staging area. During the ingest phase you can enhance your data with extra metadata like provenance. _Where did this data come from and when did it get ingested?_ See our [ingest page](../ingest/ingest.md) for more details on ingesting data.
 
 ### Govern
 In order to trust your data you need to know where it came from, how it maps to the sources, how and when it was transformed, if there were errors on ingest or harmonize, and if the data is valid.
@@ -37,7 +37,7 @@ Harmonization is the process of creating a canonical model of your data using on
 - Enrich data with additional information
 - Extract important data into indexes for faster searching
 - Leverage semantic triples to enrich your data
-- Denormalizing multiple data sources into one document
+- Denormalize multiple data sources into one document
 
 While not all of these are explicitly "harmonization" tasks, they do tend to happen during this phase.
 

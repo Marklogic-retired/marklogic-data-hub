@@ -4,13 +4,13 @@ title: Harmonize from QuickStart
 permalink: /harmonize/quickstart/
 ---
 
-### Harmonizing with the Quickstart UI
+### Harmonize with Quickstart
 
-#### Create an Entity
-See our [Tutorial](../tutorial/create-product-entity.md) for an example of creating an entity.
+QuickStart is an easy-to-use user interface for working with the Data Hub Framework.
 
-#### Create a Harmonize Flow
-See our [Tutorial](../tutorial/harmonizing-product-data.md) for an example of creating a Harmonize Flow.
+The following parts of the [tutorial](../../tutorial/) describe the harmonize process in QuickStart, from creating an entity to defining and running a harmonize flow:
 
-#### Run your Harmonize Flow
-See our [Tutorial](../tutorial/harmonizing-product-data.md) for an example of running a Harmonize Flow.
+1. [Create the Product Entity](../../tutorial/create-product-entity/)
+1. [Harmonizing the Product Data](../../tutorial/harmonizing-product-data/)
+
+Note that QuickStart is not supported for production use.

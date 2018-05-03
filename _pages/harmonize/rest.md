@@ -4,30 +4,28 @@ title: Harmonize with the REST API
 permalink: /harmonize/rest/
 ---
 
-## Harmonizing via REST
+### Harmonizing via REST
 
-There are cases where you don't want to run Harmonize Flows in Batches. Perhaps you already know the id or uri that you would pass to the flow and want to skip the Collector.
+There are cases where you don't want to run harmonize flows in batches. Perhaps you already know the id or uri to pass to the flow and want to skip the collector.
 
-When the DHF library runs a flow it first calls the collector to get a list of strings to operate on. Once it has the list it then splits these up into batches and calls a custom REST extension that invokes the main.(xqy\|sjs) for your flow.
+When the DHF library runs a flow, it first calls the collector to get a list of strings to operate on. Once it has the list, it then splits the strings into batches and calls a custom REST extension that invokes the main.(xqy\|sjs) for your flow.
 
-You can skip the collector part and manually invoke a **Harmonize** flow via the flow Rest extension.
+You can skip the collector phase and go to the harmonize phase by invoking the REST Client API "flow" extension that gets installed when you set up DHF. To use the extension, send a POST HTTP request to /LATEST/resources/flow.
 
-To do this send a POST Http Request to invoke a Harmonize flow with a given list of identifiers.
-
-
-### Via HTTP
+#### Via HTTP
 
 ```
 POST /v1/resources/flow?rs:identifiers=someIdentifier&rs:entity-name=EntityName&rs:flow-name=FlowName&rs:target-database=Documents&rs:options={"some":"json"}&rs:job-id=SomeJobID
 ```
 
-#### The parameters are:
-- **rs:identifiers** - the identifier of the document(s) to operate on. Pass this parameter multiple times for > 1 identifier.
-- **rs:entity-name** - the name of the entity the flow belongs to
-- **rs:flow-name** - the name of the flow
-- **rs:target-database** - the name of the target database
-- **rs:options** - a json object with key/value pairs
-- **rs:job-id** - a job id. any string is legit
+The parameters are the following:
+
+- **rs:identifiers** - the identifier of the document(s) to operate on. Pass this parameter multiple times for multiple identifiers.
+- **rs:entity-name** - the name of the entity to which the flow belongs.
+- **rs:flow-name** - the name of the flow.
+- **rs:target-database** - the name of the target database.
+- **rs:options** -  additional JSON options you can pass to the flow. Must be a JSON object.
+- **rs:job-id** - a job id, any string is OK.
 
 ### Via Java Client API
 
@@ -85,7 +83,7 @@ class FlowResource extends ResourceManager {
 }
 ```
 
-Now Run it:
+Now run it:
 
 ```java
 import java.util.*;
