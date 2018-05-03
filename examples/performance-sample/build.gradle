@@ -1,6 +1,6 @@
 plugins {
     id 'net.saliman.properties' version '1.4.6'
-    id 'com.marklogic.ml-data-hub' version '2.0.4'
+    id 'com.marklogic.ml-data-hub' version '3.0.0'
 }
 
 repositories {
@@ -26,6 +26,40 @@ dependencies {
   data "export:cities5000:x@zip"
 }
 
+task clearStagingDatabase(type: com.marklogic.gradle.task.databases.ClearDatabaseTask) {
+  doFirst {
+    project.ext.database = project.properties.mlStagingDbName
+    project.ext.confirm = "true"
+  }
+  outputs.upToDateWhen { false }
+}
+task clearFinalDatabase(type: com.marklogic.gradle.task.databases.ClearDatabaseTask) {
+  doFirst {
+    project.ext.database = project.properties.mlFinalDbName
+    project.ext.confirm = "true"
+  }
+  outputs.upToDateWhen { false }
+}
+task clearTraceDatabase(type: com.marklogic.gradle.task.databases.ClearDatabaseTask) {
+  doFirst {
+    project.ext.database = project.properties.mlTraceDbName
+    project.ext.confirm = "true"
+  }
+  outputs.upToDateWhen { false }
+}
+task clearJobDatabase(type: com.marklogic.gradle.task.databases.ClearDatabaseTask) {
+  doFirst {
+    project.ext.database = project.properties.mlJobDbName
+    project.ext.confirm = "true"
+  }
+  outputs.upToDateWhen { false }
+}
+task clearDatabases() {
+  dependsOn clearFinalDatabase
+  dependsOn clearTraceDatabase
+  dependsOn clearJobDatabase
+}
+
 task createXmlEntity(type: com.marklogic.gradle.task.CreateEntityTask) {
   doFirst { project.ext.entityName = "input-xml" }
 }
@@ -34,23 +68,47 @@ task createJsonEntity(type: com.marklogic.gradle.task.CreateEntityTask) {
   doFirst { project.ext.entityName = "input-json" }
 }
 
-task createInputXmlFlow(type: com.marklogic.gradle.task.CreateInputFlowTask) {
+task createSjsXmlInputFlow(type: com.marklogic.gradle.task.CreateInputFlowTask) {
   mustRunAfter createXmlEntity
 
   doFirst {
     project.ext.entityName = "input-xml"
-    project.ext.flowName = "raw-input-xml"
+    project.ext.flowName = "input-sjs-xml"
     project.ext.dataFormat = "xml"
+    project.ext.pluginFormat = "sjs"
   }
 }
 
-task createInputJsonFlow(type: com.marklogic.gradle.task.CreateInputFlowTask) {
+task createXqyXmlInputFlow(type: com.marklogic.gradle.task.CreateInputFlowTask) {
+  mustRunAfter createXmlEntity
+
+  doFirst {
+    project.ext.entityName = "input-xml"
+    project.ext.flowName = "input-xqy-xml"
+    project.ext.dataFormat = "xml"
+    project.ext.pluginFormat = "xqy"
+  }
+}
+
+task createSjsJsonInputFlow(type: com.marklogic.gradle.task.CreateInputFlowTask) {
   mustRunAfter createJsonEntity
 
   doFirst {
     project.ext.entityName = "input-json"
-    project.ext.flowName = "raw-input-json"
+    project.ext.flowName = "input-sjs-json"
     project.ext.dataFormat = "json"
+    project.ext.pluginFormat = "sjs"
+  }
+}
+
+task createXqyJsonInputFlow(type: com.marklogic.gradle.task.CreateInputFlowTask) {
+  mustRunAfter createJsonEntity
+
+  doFirst {
+    project.ext.entityName = "input-json"
+    project.ext.flowName = "input-xqy-json"
+    project.ext.dataFormat = "json"
+    project.ext.pluginFormat = "xqy"
   }
 }
 
@@ -59,8 +117,10 @@ task createEntityInput() {
 
   dependsOn createXmlEntity
   dependsOn createJsonEntity
-  dependsOn createInputXmlFlow
-  dependsOn createInputJsonFlow
+  dependsOn createSjsXmlInputFlow
+  dependsOn createXqyXmlInputFlow
+  dependsOn createSjsJsonInputFlow
+  dependsOn createXqyJsonInputFlow
 
   finalizedBy mlLoadModules
   doLast { println "created XML and JSON entities and input flows" }
@@ -115,10 +175,11 @@ task prepareMlcpLog() {
   ].join("\n")
 }
 
-task loadJson(type: com.marklogic.gradle.task.MlcpTask) {
-  mustRunAfter createInputXmlFlow
+task loadSjsJson(type: MlcpTask) {
+  mustRunAfter createSjsJsonInputFlow
   mustRunAfter mlLoadModules
   mustRunAfter getInputData
+  dependsOn clearStagingDatabase
 
   doFirst {
     database = mlStagingDbName
@@ -133,15 +194,44 @@ task loadJson(type: com.marklogic.gradle.task.MlcpTask) {
   output_uri_prefix = "/city/"
   output_uri_suffix = ".json"
   output_collections = "input-json"
-  transform_module = "/com.marklogic.hub/mlcp-flow-transform.xqy"
-  transform_namespace = "http://marklogic.com/data-hub/mlcp-flow-transform"
-  transform_param =  "entity-name=input-json,flow-name=raw-input-json"
+  transform_module = "/MarkLogic/data-hub-framework/transforms/mlcp-flow-transform.sjs"
+  transform_function = "transform"
+  transform_param =  "entity-name=input-json,flow-name=input-sjs-json"
+  modules_root = "/"
+  thread_count = 4
 }
 
-task loadXml(type: com.marklogic.gradle.task.MlcpTask) {
-  mustRunAfter createInputJsonFlow
+task loadXqyJson(type: MlcpTask) {
+  mustRunAfter createXqyJsonInputFlow
   mustRunAfter mlLoadModules
   mustRunAfter getInputData
+  dependsOn clearStagingDatabase
+
+  doFirst {
+    database = mlStagingDbName
+    port = mlStagingPort.toInteger()
+  }
+  classpath = configurations.mlcp
+  command = "IMPORT"
+  input_file_path = "./input/raw.txt"
+  delimiter = "\t"
+  input_file_type = "delimited_text"
+  document_type = "json"
+  output_uri_prefix = "/city/"
+  output_uri_suffix = ".json"
+  output_collections = "input-json"
+  transform_module = "/MarkLogic/data-hub-framework/transforms/mlcp-flow-transform.xqy"
+  transform_namespace = "http://marklogic.com/data-hub/mlcp-flow-transform"
+  transform_param =  "entity-name=input-json,flow-name=input-xqy-json"
+  modules_root = "/"
+  thread_count = 4
+}
+
+task loadSjsXml(type: MlcpTask) {
+  mustRunAfter createSjsXmlInputFlow
+  mustRunAfter mlLoadModules
+  mustRunAfter getInputData
+  dependsOn clearStagingDatabase
 
   doFirst {
     database = mlStagingDbName
@@ -156,113 +246,139 @@ task loadXml(type: com.marklogic.gradle.task.MlcpTask) {
   output_uri_prefix = "/city/"
   output_uri_suffix = ".xml"
   output_collections = "input-xml"
-  transform_module = "/com.marklogic.hub/mlcp-flow-transform.xqy"
+  transform_module = "/MarkLogic/data-hub-framework/transforms/mlcp-flow-transform.sjs"
+  transform_function = "transform"
+  transform_param =  "entity-name=input-xml,flow-name=input-sjs-xml"
+  modules_root = "/"
+  thread_count = 4
+}
+
+task loadXqyXml(type: MlcpTask) {
+  mustRunAfter createXqyXmlInputFlow
+  mustRunAfter mlLoadModules
+  mustRunAfter getInputData
+  dependsOn clearStagingDatabase
+
+  doFirst {
+    database = mlStagingDbName
+    port = mlStagingPort.toInteger()
+  }
+  classpath = configurations.mlcp
+  command = "IMPORT"
+  input_file_path = "./input/raw.txt"
+  delimiter = "\t"
+  input_file_type = "delimited_text"
+  document_type = "xml"
+  output_uri_prefix = "/city/"
+  output_uri_suffix = ".xml"
+  output_collections = "input-xml"
+  transform_module = "/MarkLogic/data-hub-framework/transforms/mlcp-flow-transform.xqy"
   transform_namespace = "http://marklogic.com/data-hub/mlcp-flow-transform"
-  transform_param =  "entity-name=input-xml,flow-name=raw-input-xml"
+  transform_param =  "entity-name=input-xml,flow-name=input-xqy-xml"
+  modules_root = "/"
+  thread_count = 4
 }
 
-task loadInputData {
-  dependsOn getInputData
-  dependsOn loadJson
-  dependsOn loadXml
-}
-
-task createHarmonizeXmlXqy(type: com.marklogic.gradle.task.CreateHarmonizeFlowTask) {
+task createHarmonizeXqyXml(type: com.marklogic.gradle.task.CreateHarmonizeFlowTask) {
   mustRunAfter createEntityInput
 
   doFirst {
     project.ext.entityName = "input-xml"
-    project.ext.flowName = "harmonize-xml-xqy"
+    project.ext.flowName = "harmonize-xqy-xml"
     project.ext.pluginFormat = "xqy"
     project.ext.dataFormat = "xml"
   }
 }
 
-task createHarmonizeXmlSjs(type: com.marklogic.gradle.task.CreateHarmonizeFlowTask) {
+task createHarmonizeSjsXml(type: com.marklogic.gradle.task.CreateHarmonizeFlowTask) {
   mustRunAfter createEntityInput
 
   doFirst {
     project.ext.entityName = "input-xml"
-    project.ext.flowName = "harmonize-xml-sjs"
+    project.ext.flowName = "harmonize-sjs-xml"
     project.ext.pluginFormat = "sjs"
     project.ext.dataFormat = "xml"
   }
 }
 
-task createHarmonizeJsonXqy(type: com.marklogic.gradle.task.CreateHarmonizeFlowTask) {
+task createHarmonizeXqyJson(type: com.marklogic.gradle.task.CreateHarmonizeFlowTask) {
   mustRunAfter createEntityInput
 
   doFirst {
     project.ext.entityName = "input-json"
-    project.ext.flowName = "harmonize-json-xqy"
+    project.ext.flowName = "harmonize-xqy-json"
     project.ext.pluginFormat = "xqy"
     project.ext.dataFormat = "json"
   }
 }
 
-task createHarmonizeJsonSjs(type: com.marklogic.gradle.task.CreateHarmonizeFlowTask) {
+task createHarmonizeSjsJson(type: com.marklogic.gradle.task.CreateHarmonizeFlowTask) {
   mustRunAfter createEntityInput
 
   doFirst {
     project.ext.entityName = "input-json"
-    project.ext.flowName = "harmonize-json-sjs"
+    project.ext.flowName = "harmonize-sjs-json"
     project.ext.pluginFormat = "sjs"
     project.ext.dataFormat = "json"
   }
 }
 
 task createHarmonizeFlows() {
-  dependsOn createHarmonizeXmlXqy
-  dependsOn createHarmonizeXmlSjs
-  dependsOn createHarmonizeJsonXqy
-  dependsOn createHarmonizeJsonSjs
+  dependsOn createHarmonizeXqyXml
+  dependsOn createHarmonizeSjsXml
+  dependsOn createHarmonizeXqyJson
+  dependsOn createHarmonizeSjsJson
   finalizedBy mlLoadModules
 }
 
-task runHarmonizeXmlXqy(type: com.marklogic.gradle.task.RunFlowTask) {
-  mustRunAfter loadInputData
-  mustRunAfter createHarmonizeXmlXqy
+task runHarmonizeXqyXml(type: com.marklogic.gradle.task.RunFlowTask) {
+  mustRunAfter createHarmonizeXqyXml
+  dependsOn clearDatabases
+  dependsOn loadXqyXml
 
   entityName = "input-xml"
-  flowName = "harmonize-xml-xqy"
+  flowName = "harmonize-xqy-xml"
 }
 
-task runHarmonizeXmlSjs(type: com.marklogic.gradle.task.RunFlowTask) {
-  mustRunAfter loadInputData
-  mustRunAfter createHarmonizeXmlSjs
+task runHarmonizeSjsXml(type: com.marklogic.gradle.task.RunFlowTask) {
+  mustRunAfter createHarmonizeSjsXml
+  dependsOn clearDatabases
+  dependsOn loadSjsXml
 
   entityName = "input-xml"
-  flowName = "harmonize-xml-sjs"
+  flowName = "harmonize-sjs-xml"
 }
 
-task runHarmonizeJsonXqy(type: com.marklogic.gradle.task.RunFlowTask) {
-  mustRunAfter loadInputData
-  mustRunAfter createHarmonizeJsonXqy
+task runHarmonizeXqyJson(type: com.marklogic.gradle.task.RunFlowTask) {
+  mustRunAfter createHarmonizeXqyJson
+  dependsOn clearDatabases
+  dependsOn loadXqyJson
 
   entityName = "input-json"
-  flowName = "harmonize-json-xqy"
+  flowName = "harmonize-xqy-json"
 }
 
-task runHarmonizeJsonSjs(type: com.marklogic.gradle.task.RunFlowTask) {
-  mustRunAfter loadInputData
-  mustRunAfter createHarmonizeJsonSjs
+task runHarmonizeSjsJson(type: com.marklogic.gradle.task.RunFlowTask) {
+  mustRunAfter createHarmonizeSjsJson
+  dependsOn clearDatabases
+  dependsOn loadSjsJson
 
   entityName = "input-json"
-  flowName = "harmonize-json-sjs"
+  flowName = "harmonize-sjs-json"
 }
 
 task allHarmonizeFlows() {
   dependsOn createHarmonizeFlows
-  dependsOn runHarmonizeXmlXqy
-  dependsOn runHarmonizeXmlSjs
-  dependsOn runHarmonizeJsonXqy
-  dependsOn runHarmonizeJsonSjs
+  dependsOn runHarmonizeXqyXml
+  dependsOn runHarmonizeSjsXml
+  dependsOn runHarmonizeXqyJson
+  dependsOn runHarmonizeSjsJson
 }
 
 task doAll() {
   dependsOn mlDeploy
+  dependsOn getInputData
   dependsOn createEntityInput
-  dependsOn loadInputData
   dependsOn allHarmonizeFlows
 }
 
@@ -304,4 +420,115 @@ class TimingsListener implements TaskExecutionListener, BuildListener {
 
 if (project.hasProperty('profile')) {
   gradle.addListener new TimingsListener()
+}
+
+// This example needs mlcp-util 0.9.0 or greater
+// right now we are relying on an older version of
+// ml-gradle which relies on 0.2.0 of mlcp-util
+// redefining this class here is a stop-gap until
+// we update stuff
+import com.marklogic.client.DatabaseClient
+import com.marklogic.client.io.FileHandle
+import com.marklogic.contentpump.bean.MlcpBean
+import org.gradle.api.logging.Logger
+import org.gradle.api.logging.Logging
+import org.gradle.api.tasks.JavaExec
+import org.gradle.api.tasks.TaskAction
+
+import com.marklogic.appdeployer.AppConfig
+class MlcpTask extends JavaExec {
+
+    @Delegate
+    MlcpBean mlcpBean = new MlcpBean();
+
+    // Set this to define a URI in your content database for mlcp output to be written to as a text document
+    String logOutputUri
+
+    Logger getLogger() {
+        return Logging.getLogger(MlcpTask.class)
+    }
+
+    @TaskAction
+    @Override
+    void exec() {
+        setMain("com.marklogic.contentpump.ContentPump")
+        AppConfig config = getProject().property("mlAppConfig")
+
+        List<String> newArgs = new ArrayList<>()
+        newArgs.add(command)
+
+        mlcpBean.properties.each { prop, val ->
+            def propVal
+            if (val) {
+                switch (prop) {
+                    case "host":
+                        propVal = (val ? val : config.getHost())
+                        break
+                    case "port":
+                        propVal = (val ? val : 8000)
+                        break
+                    case "username":
+                        propVal = (val ? val : config.getRestAdminUsername())
+                        break
+                    case ["class", "logger", "command", "password"]:
+                        // skip for now
+                        return
+                    case "additionalOptions":
+                        // Not supported by this task; use JavaExec's args instead
+                        return
+                    default:
+                        propVal = val
+                        break
+                }
+
+                newArgs.add("-" + prop);
+                newArgs.add(String.valueOf(propVal));
+            }
+        }
+
+        // Ensure connection arguments are present, but not if a COPY
+        boolean isCopy = "COPY".equals(command)
+        if (!isCopy) {
+            if (!newArgs.contains("-host")) {
+                newArgs.add("-host")
+                newArgs.add(config.getHost())
+            }
+            if (!newArgs.contains("-port")) {
+                newArgs.add("-port")
+                newArgs.add("8000")
+            }
+            if (!newArgs.contains("-username")) {
+                newArgs.add("-username")
+                newArgs.add(config.getRestAdminUsername())
+            }
+        }
+
+        // Include any args that a user has configured via the args parameter of the Gradle task
+        newArgs.addAll(getArgs())
+
+        println "mlcp arguments, excluding password: " + newArgs
+
+        if (!isCopy) {
+            newArgs.add("-password")
+            newArgs.add(password ? password : config.getRestAdminPassword())
+        }
+
+        setArgs(newArgs)
+
+        File logOutputFile = null
+        if (logOutputUri) {
+            println "Will write mlcp log output to URI: " + logOutputUri
+            logOutputFile = new File(getProject().getBuildDir(), "mlcp-log-output-" + System.currentTimeMillis() + ".txt")
+            setStandardOutput(logOutputFile.newOutputStream())
+        }
+
+        super.exec()
+
+        if (logOutputFile != null) {
+            AppConfig appConfig = project.property("mlAppConfig")
+            DatabaseClient client = appConfig.newDatabaseClient()
+            client.newDocumentManager().write(logOutputUri, new FileHandle(logOutputFile))
+            println "Wrote mlcp log output to URI: " + logOutputUri
+        }
+    }
 }

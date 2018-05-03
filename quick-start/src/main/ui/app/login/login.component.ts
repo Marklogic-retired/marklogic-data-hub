@@ -26,6 +26,7 @@ export class LoginComponent implements OnInit {
   hubVersions: any;
   hubUpdating: boolean = false;
   hubUpdateFailed: boolean = false;
+  hubUpdateError: string = '';
 
   currentTab: string = 'ProjectDir';
 
@@ -314,11 +315,13 @@ export class LoginComponent implements OnInit {
     this.hubUpdating = true;
     this.projectService.updateProject().subscribe(() => {
       this.hubUpdating = false;
+      this.hubUpdateError = '';
       this.loginNext();
     },
-    () => {
+    error => {
       this.hubUpdating = false;
       this.hubUpdateFailed = true;
+      this.hubUpdateError = error.json().message;
     });
   }
 
@@ -364,7 +367,7 @@ export class LoginComponent implements OnInit {
   hubUpdateUrl() {
     if (this.currentEnvironment && this.currentEnvironment.runningVersion) {
       const versionString = this.currentEnvironment.runningVersion.replace(/\./g, '');
-      return `https://github.com/marklogic-community/marklogic-data-hub/wiki/Updating-to-a-New-Hub-Version#${versionString}`;
+      return `https://github.com/marklogic/marklogic-data-hub/wiki/Updating-to-a-New-Hub-Version#${versionString}`;
     }
     return '';
   }

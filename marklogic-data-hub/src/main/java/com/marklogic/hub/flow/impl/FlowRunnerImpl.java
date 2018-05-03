@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2016 MarkLogic Corporation
+ * Copyright 2012-2018 MarkLogic Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import com.marklogic.client.extensions.ResourceServices;
 import com.marklogic.client.io.Format;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.util.RequestParameters;
+import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.collector.Collector;
 import com.marklogic.hub.collector.DiskQueue;
@@ -66,7 +67,7 @@ public class FlowRunnerImpl implements FlowRunner {
     public FlowRunnerImpl(HubConfig hubConfig) {
         this.hubConfig = hubConfig;
         this.sourceClient = hubConfig.newStagingClient();
-        this.destinationDatabase = hubConfig.getFinalDbName();
+        this.destinationDatabase = hubConfig.getDbName(DatabaseKind.FINAL);
     }
 
     @Override
@@ -153,7 +154,7 @@ public class FlowRunnerImpl implements FlowRunner {
     @Override
     public JobTicket run() {
         String jobId = UUID.randomUUID().toString();
-        JobManager jobManager = new JobManager(hubConfig.newJobDbClient());
+        JobManager jobManager = JobManager.create(hubConfig.newJobDbClient(), hubConfig.newTraceDbClient());
 
         Job job = Job.withFlow(flow)
             .withJobId(jobId);
@@ -344,8 +345,6 @@ public class FlowRunnerImpl implements FlowRunner {
 
     class FlowResource extends ResourceManager {
 
-        static final public String NAME = "flow";
-
         private DatabaseClient srcClient;
         private String targetDatabase;
         private Flow flow;
@@ -355,7 +354,7 @@ public class FlowRunnerImpl implements FlowRunner {
             this.flow = flow;
             this.srcClient = srcClient;
             this.targetDatabase = targetDatabase;
-            this.srcClient.init(NAME, this);
+            this.srcClient.init(flow.getCodeFormat().equals(CodeFormat.JAVASCRIPT) ? "ml:sjsFlow" : "ml:flow", this);
         }
 
         public RunFlowResponse run(String jobId, String[] items) {

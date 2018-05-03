@@ -24,6 +24,18 @@ export class EntityPage extends AppPage {
   get entityEditor() {
     return element(by.css('app-entity-editor'));
   }
+  
+  clickEditEntity(entityName: string) {
+    return element(by.css('#aeb-' + entityName + ' .edit-start > i')).click();
+  }
+
+  deleteEntityButton(entityName: string) {
+    return element(by.css('svg > .nodes * #fo-' + entityName + ' > .foreign > app-entity-box > .entity-def-box > app-resizable > .title > .edit-area > span:nth-of-type(2) > i'));
+  }
+
+  editEntityButton(entityName: string) {
+    return element(by.css('svg > .nodes * #fo-' + entityName + ' > .foreign > app-entity-box > .entity-def-box > app-resizable > .title > .edit-area > .edit-start'));
+  }
 
   get entityTitle() {
     return element(by.css('mdl-textfield[label=Title] input'));
@@ -65,8 +77,16 @@ export class EntityPage extends AppPage {
     return element.all(by.css('.properties > tBody > tr')).last();
   }
 
+  getPropertiesCount() {
+    return element.all(by.css('.selected-entity .properties > table > tBody > tr')).count();
+  }
+
+  getEntitiesCount() {
+    return element.all(by.css('.entity-def')).count();
+  }
+
   getPropertyByPosition(position: number){
-    return element.all(by.css('.properties > tBody > tr:nth-child('+position+')'));
+    return element(by.css('.selected-entity .properties > tBody > tr:nth-child('+position+')'));
   }
 
   getPropertyColumn(property: ElementFinder, column: number){
@@ -153,16 +173,16 @@ export class EntityPage extends AppPage {
     return property.element(by.css('td:nth-child(10)'));
   }
 
-  get editEntityButton(){
-    return element(by.css('.edit-start > i'));
-  }
-
   get saveEntity() {
     return element(by.buttonText('Save'));
   }
 
   get cancelEntity() {
     return element(by.buttonText('Cancel'));
+  }
+
+  get toast() {
+    return element(by.css('mdl-snackbar-component'));
   }
 }
 

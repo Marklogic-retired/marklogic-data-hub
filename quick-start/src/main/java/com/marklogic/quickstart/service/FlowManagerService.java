@@ -1,17 +1,18 @@
 /*
- * Copyright 2012-2016 MarkLogic Corporation
+ * Copyright 2012-2018 MarkLogic Corporation
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
  */
 package com.marklogic.quickstart.service;
 
@@ -24,8 +25,8 @@ import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.FlowRunner;
 import com.marklogic.hub.flow.FlowStatusListener;
 import com.marklogic.hub.flow.FlowType;
-import com.marklogic.hub.flow.impl.FlowImpl;
 import com.marklogic.hub.util.MlcpRunner;
+import com.marklogic.quickstart.EnvironmentAware;
 import com.marklogic.quickstart.auth.ConnectionAuthenticationToken;
 import com.marklogic.quickstart.model.EnvironmentConfig;
 import com.marklogic.quickstart.model.FlowModel;
@@ -33,6 +34,8 @@ import com.marklogic.quickstart.model.PluginModel;
 import com.marklogic.quickstart.util.FileUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -47,22 +50,22 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class FlowManagerService {
+public class FlowManagerService extends EnvironmentAware {
 
     private static final String PROJECT_TMP_FOLDER = ".tmp";
 
-    private EnvironmentConfig envConfig() {
-        ConnectionAuthenticationToken authenticationToken = (ConnectionAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
-        return authenticationToken.getEnvironmentConfig();
-    }
+    @Autowired
+    private FlowManager flowManager;
 
-    private FlowManager getFlowManager() {
-        return new FlowManager(envConfig().getMlSettings());
+    // before login, flowManager is null, so check each time.
+    private FlowManager flowManager() {
+        if (flowManager != null) return flowManager;
+        else return flowManager = FlowManager.create(envConfig().getMlSettings());
     }
 
     public List<FlowModel> getFlows(String projectDir, String entityName, FlowType flowType) {
         Path entityPath = Paths.get(projectDir, "plugins", "entities", entityName);
-        return getFlowManager().getLocalFlowsForEntity(entityName, flowType).stream().map(flow -> {
+        return flowManager().getLocalFlowsForEntity(entityName, flowType).stream().map(flow -> {
             FlowModel flowModel = new FlowModel(entityName, flow.getName());
             flowModel.codeFormat = flow.getCodeFormat();
             flowModel.dataFormat = flow.getDataFormat();
@@ -103,14 +106,12 @@ public class FlowManagerService {
     }
 
     public Flow getServerFlow(String entityName, String flowName, FlowType flowType) {
-        FlowManager flowManager = getFlowManager();
-        return flowManager.getFlow(entityName, flowName, flowType);
+        return flowManager().getFlow(entityName, flowName, flowType);
     }
 
     public JobTicket runFlow(Flow flow, int batchSize, int threadCount, Map<String, Object> options, FlowStatusListener statusListener) {
 
-        FlowManager flowManager = getFlowManager();
-        FlowRunner flowRunner = flowManager.newFlowRunner()
+        FlowRunner flowRunner = flowManager().newFlowRunner()
             .withFlow(flow)
             .withOptions(options)
             .withBatchSize(batchSize)

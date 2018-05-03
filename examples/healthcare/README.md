@@ -15,9 +15,9 @@ The sample data is located in the input/ folder.
 ```
 
 # TLDR; How do I run it?
-1. Download the [latest quick-start war](https://github.com/marklogic-community/marklogic-data-hub/releases/download/v2.0.4/quick-start-2.0.4.war) into this folder.
+1. Download the [latest quick-start war](https://github.com/marklogic/marklogic-data-hub/releases/download/v3.0.0/quick-start-3.0.0.war) into this folder.
 
-1. Run the quick-start jar `java -jar quick-start-2.0.4.war`
+1. Run the quick-start jar `java -jar quick-start-3.0.0.war`
 
 1. Open your web browser to [http://localhost:8080](http://localhost:8080).
 

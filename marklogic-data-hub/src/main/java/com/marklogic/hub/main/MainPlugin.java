@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2016 MarkLogic Corporation
+ * Copyright 2012-2018 MarkLogic Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,10 +17,9 @@ package com.marklogic.hub.main;
 
 import com.marklogic.hub.flow.CodeFormat;
 
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-import java.util.Properties;
-
+/**
+ * Interface to the in-memory representation of the main plugin module (main.sjs or main.xqy)
+ */
 public interface MainPlugin {
     String getModule();
     CodeFormat getCodeFormat();

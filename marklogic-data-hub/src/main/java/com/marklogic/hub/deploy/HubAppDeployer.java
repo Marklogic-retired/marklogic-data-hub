@@ -1,3 +1,18 @@
+/*
+ * Copyright 2012-2018 MarkLogic Corporation
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.marklogic.hub.deploy;
 
 import com.marklogic.appdeployer.AppConfig;
@@ -5,6 +20,8 @@ import com.marklogic.appdeployer.command.Command;
 import com.marklogic.appdeployer.command.CommandContext;
 import com.marklogic.appdeployer.command.UndoableCommand;
 import com.marklogic.appdeployer.impl.SimpleAppDeployer;
+import com.marklogic.client.FailedRequestException;
+import com.marklogic.client.eval.ServerEvaluationCall;
 import com.marklogic.hub.deploy.util.HubDeployStatusListener;
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.admin.AdminManager;
@@ -60,6 +77,18 @@ public class HubAppDeployer extends SimpleAppDeployer {
             completed++;
         }
         onStatusChange(100, "Installation Complete");
+
+        //Below is telemetry metric code for tracking successful dhf installs
+        //TODO: when more uses of telemetry are defined, change this to a more e-node based method
+        ServerEvaluationCall eval = appConfig.newDatabaseClient().newServerEval();
+        String query = "xdmp:feature-metric-increment(xdmp:feature-metric-register(\"datahub.core.install.count\"))";
+        try {
+            eval.xquery(query).eval().close();
+        }
+        catch(FailedRequestException e) {
+            logger.error("Failed to increment feature metric telemetry count: " + query, e);
+            e.printStackTrace();
+        }
         logger.info(format("Deployed app %s", appConfig.getName()));
     }
 

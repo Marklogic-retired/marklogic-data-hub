@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2016 MarkLogic Corporation
+ * Copyright 2012-2018 MarkLogic Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,14 +26,19 @@ import com.marklogic.hub.job.Job;
 import com.marklogic.hub.job.JobManager;
 import com.marklogic.hub.job.JobStatus;
 import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 public class MlcpRunner extends ProcessRunner {
 
+    private static Logger logger = LoggerFactory.getLogger(MlcpRunner.class);
     private JobManager jobManager;
     private Flow flow;
     private JsonNode mlcpOptions;
@@ -50,7 +55,7 @@ public class MlcpRunner extends ProcessRunner {
 
         this.withHubconfig(hubConfig);
 
-        this.jobManager = new JobManager(hubConfig.newJobDbClient());
+        this.jobManager = JobManager.create(hubConfig.newJobDbClient(), hubConfig.newTraceDbClient());
         this.flowStatusListener = statusListener;
         this.flow = flow;
         this.mlcpOptions = mlcpOptions;
@@ -84,7 +89,8 @@ public class MlcpRunner extends ProcessRunner {
             File file = new File(mlcpOptions.get("input_file_path").asText());
             String canonicalPath = file.getCanonicalPath();
             bean.setInput_file_path(canonicalPath);
-            bean.setTransform_param("\"" + bean.getTransform_param().replaceAll("\"", "") + ",job-id=" + jobId + "\"");
+            bean.setTransform_param("\"" + bean.getTransform_param() + ",job-id=" + jobId + "\"");
+            bean.setModules_root("/");
 
             buildCommand(bean);
 
@@ -170,6 +176,38 @@ public class MlcpRunner extends ProcessRunner {
                 File.separator + "java";
             String classpath = System.getProperty("java.class.path");
 
+            //logger.warn("Classpath before is: " + classpath);
+            // strip out non-essential entries to truncate classpath
+            List<String> classpathEntries = Arrays.asList(classpath.split(File.pathSeparator));
+            String filteredClasspathEntries = classpath;
+            int MAX_CLASSPATH_LENGTH = 10000;
+            // if classpath was not alrady shortened (say, by IDE) then strip to run mlcp
+            if (filteredClasspathEntries.length() > MAX_CLASSPATH_LENGTH)
+                filteredClasspathEntries = classpathEntries
+                            .stream()
+                            .filter(
+                                u -> (
+                                    u.contains("jdk") ||
+                                    u.contains("jre") ||
+                                    u.contains("log") ||
+                                    u.contains("xml") ||
+                                    u.contains("json") ||
+                                    u.contains("jackson") ||
+                                    u.contains("xerces") ||
+                                    u.contains("slf") ||
+                                    u.contains("mlcp") ||
+                                    u.contains("xcc") ||
+                                    u.contains("xpp") ||
+                                    u.contains("protobuf") ||
+                                    u.contains("mapreduce") ||
+                                    u.contains("guava") ||
+                                    u.contains("apache") ||
+                                    u.contains("commons") ||
+                                    u.contains("hadoop"))
+                            ).collect(Collectors.joining(File.pathSeparator));
+
+            //logger.warn("Classpath filtered to: " + filteredClasspathEntries);
+
             File loggerFile = File.createTempFile("mlcp-", "-logger.xml");
             FileUtils.writeStringToFile(loggerFile, buildLoggerconfig());
 
@@ -182,7 +220,7 @@ public class MlcpRunner extends ProcessRunner {
             }
             else {
                 args.add("-cp");
-                args.add(classpath);
+                args.add(filteredClasspathEntries);
                 args.add(mainClass);
             }
         }

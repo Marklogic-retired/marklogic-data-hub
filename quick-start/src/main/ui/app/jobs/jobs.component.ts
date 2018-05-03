@@ -9,6 +9,7 @@ import { MdlDialogService, MdlDialogReference } from '@angular-mdl/core';
 import { differenceInSeconds } from 'date-fns';
 
 import * as _ from 'lodash';
+import {JobExportDialogComponent} from "./job-export.component";
 
 @Component({
   selector: 'app-jobs',
@@ -25,7 +26,7 @@ export class JobsComponent implements OnChanges, OnDestroy, OnInit {
   loadingJobs: boolean = false;
   searchResponse: SearchResponse;
   jobs: Array<Job>;
-  jobsToDelete: string[] = [];
+  selectedJobs: string[] = [];
   runningFlows: Map<number, string> = new Map<number, string>();
   facetNames: Array<string> = ['entityName', 'status', 'flowName', 'flowType'];
 
@@ -120,7 +121,7 @@ export class JobsComponent implements OnChanges, OnDestroy, OnInit {
       this.currentPage,
       this.pageLength
     ).subscribe(response => {
-      this.jobsToDelete.length = 0;
+      this.selectedJobs.length = 0;
       this.searchResponse = response;
       this.jobs = _.map(response.results, (result: any) => {
         return result.content;
@@ -183,19 +184,21 @@ export class JobsComponent implements OnChanges, OnDestroy, OnInit {
   }
 
   toggleDeleteJob(jobId) {
-    let index = this.jobsToDelete.indexOf(jobId);
+    let index = this.selectedJobs.indexOf(jobId);
     if (index > -1) {
-      this.jobsToDelete.splice(index, 1);
+      this.selectedJobs.splice(index, 1);
     } else {
-      this.jobsToDelete.push(jobId);
+      this.selectedJobs.push(jobId);
     }
   }
 
   deleteJobs() {
-    if (this.jobsToDelete.length > 0) {
-      const message = 'Delete ' + this.jobsToDelete.length + ' jobs and their traces?';
+    if (this.selectedJobs.length > 0) {
+      let message = 'Delete ' + this.selectedJobs.length +
+        (this.selectedJobs.length === 1 ? ' job and its traces?' : ' jobs and their traces?');
+
       this.dialogService.confirm(message, 'Cancel', 'Delete').subscribe(() => {
-        this.jobService.deleteJobs(this.jobsToDelete)
+        this.jobService.deleteJobs(this.selectedJobs)
           .subscribe(response => {
               this.getJobs();
             },
@@ -205,6 +208,18 @@ export class JobsComponent implements OnChanges, OnDestroy, OnInit {
       },
       () => {});
     }
+  }
+
+  exportJobs() {
+    let pDialog = this.dialogService.showCustomDialog({
+      component: JobExportDialogComponent,
+      providers: [{provide: 'jobIds', useValue: this.selectedJobs}],
+      isModal: true,
+      styles: {'width': '350px'},
+      clickOutsideToClose: true,
+      enterTransitionDuration: 400,
+      leaveTransitionDuration: 400
+    });
   }
 
   render(o) {

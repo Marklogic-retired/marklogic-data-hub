@@ -1,7 +1,7 @@
 // dhf.xqy exposes helper functions to make your life easier
 // See documentation at:
 // https://github.com/marklogic/marklogic-data-hub/wiki/dhf-lib
-const dhf = require('/com.marklogic.hub/dhf.xqy');
+const dhf = require('/MarkLogic/data-hub-framework/dhf.xqy');
 
 const contentPlugin = require('./content/content.sjs');
 const headersPlugin = require('./headers/headers.sjs');
@@ -33,7 +33,7 @@ function main(id, options) {
   var envelope = dhf.makeEnvelope(content, headers, triples, options.dataFormat);
 
   // writers must be invoked this way.
-  // see: https://github.com/marklogic-community/marklogic-data-hub/wiki/dhf-lib#run-writer
+  // see: https://github.com/marklogic/marklogic-data-hub/wiki/dhf-lib#run-writer
   dhf.runWriter(xdmp.function(null, './writer/writer.sjs'), id, envelope, options);
 }
 

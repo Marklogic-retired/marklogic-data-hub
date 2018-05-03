@@ -1,12 +1,12 @@
 {
   "name": "data-hub-quickstart",
-  "version": "2.0.4",
+  "version": "3.0.0",
   "license": "APACHE",
-  "homepage": "https://github.com/marklogic-community/marklogic-data-hub",
+  "homepage": "https://github.com/marklogic/marklogic-data-hub",
   "scripts": {
     "rimraf": "rimraf",
     "ng": "ng",
-    "start": "ng serve -pc proxy.config.json --host 0.0.0.0",
+    "start": "ng serve -pc proxy.config.json --host 0.0.0.0 --disable-host-check",
     "clean.dist": "npm run rimraf -- dist",
     "build.prod": "npm run clean.dist && ng build -prod",
     "test": "ng test",
@@ -46,7 +46,7 @@
     "zone.js": "^0.8.14"
   },
   "devDependencies": {
-    "@angular/cli": "^1.6.3",
+    "@angular/cli": "^1.7.3",
     "@angular/compiler-cli": "^4.2.4",
     "@angular/language-service": "^4.2.4",
     "@types/jasmine": "~2.5.53",

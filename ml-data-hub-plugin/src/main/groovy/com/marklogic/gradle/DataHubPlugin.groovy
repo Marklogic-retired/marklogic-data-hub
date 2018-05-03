@@ -1,9 +1,27 @@
+/*
+ * Copyright 2012-2018 MarkLogic Corporation
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ */
+
 package com.marklogic.gradle
 
 import com.marklogic.appdeployer.impl.SimpleAppDeployer
 import com.marklogic.gradle.task.*
 import com.marklogic.hub.DataHub
 import com.marklogic.hub.HubConfigBuilder
+import com.marklogic.hub.impl.DataHubImpl
 import com.marklogic.hub.util.Versions
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -51,6 +69,9 @@ class DataHubPlugin implements Plugin<Project> {
         project.task("hubCreateEntity", group: scaffoldGroup, type: CreateEntityTask)
         project.task("hubCreateHarmonizeFlow", group: scaffoldGroup, type: CreateHarmonizeFlowTask)
         project.task("hubCreateInputFlow", group: scaffoldGroup, type: CreateInputFlowTask)
+        project.task("hubGenerateTDETemplates", group: scaffoldGroup, type: GenerateTDETemplateFromEntityTask,
+            description: "Generates TDE Templates from the entity definition files. It is possible to only generate TDE templates" +
+                " for specific entities by setting the (comma separated) project property 'entityNames'. E.g. -PentityNames=Entity1,Entity2")
 
         project.tasks.replace("mlLoadModules", DeployUserModulesTask)
         project.tasks.replace("mlWatch", HubWatchTask)
@@ -61,6 +82,9 @@ class DataHubPlugin implements Plugin<Project> {
         String flowGroup = "MarkLogic Data Hub Flow Management"
         project.task("hubRunFlow", group: flowGroup, type: RunFlowTask)
         project.task("hubDeleteJobs", group: flowGroup, type: DeleteJobsTask )
+        project.task("hubExportJobs", group: flowGroup, type: ExportJobsTask )
+        // This task is undocumented, so don't let it appear in the list
+        project.task("hubImportJobs", group: null, type: ImportJobsTask )
 
         logger.info("Finished initializing ml-data-hub\n")
     }
@@ -80,7 +104,7 @@ class DataHubPlugin implements Plugin<Project> {
             .build()
         project.extensions.add("hubConfig", hubConfig)
 
-        dataHub = new DataHub(hubConfig)
+        dataHub = DataHub.create(hubConfig)
         project.extensions.add("dataHub", dataHub)
     }
 
@@ -90,6 +114,6 @@ class DataHubPlugin implements Plugin<Project> {
             throw new RuntimeException("You must apply the ml-gradle plugin before the ml-datahub plugin.")
         }
 
-        mlAppDeployer.setCommands(dataHub.getCommandList())
+        mlAppDeployer.setCommands(((DataHubImpl)dataHub).getCommandList())
     }
 }

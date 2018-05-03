@@ -7,6 +7,7 @@ var HTMLReport = require('protractor-html-reporter')
 var Jasmine2HtmlReporter = require('protractor-jasmine2-html-reporter');
 
 exports.config = {
+  seleniumAddress: 'http://localhost:4444/wd/hub',
   suites: {
     all: './e2e/specs/index.ts',
     auth: './e2e/specs/auth/auth.ts'
@@ -14,7 +15,7 @@ exports.config = {
   capabilities: {
     'browserName': 'chrome',
     chromeOptions: {
-      args: ["--headless", "--disable-gpu", "--window-size=1920,1080" ]
+      args: ["--headless", "--disable-gpu", "--window-size=1920,1080"]
     }
   },
   directConnect: true,

@@ -1,25 +1,27 @@
 /*
- * Copyright 2012-2016 MarkLogic Corporation
+ * Copyright 2012-2018 MarkLogic Corporation
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
  */
 package com.marklogic.quickstart.web;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.InstallInfo;
-import com.marklogic.hub.PreInstallCheck;
 import com.marklogic.hub.Tracing;
 import com.marklogic.hub.deploy.util.HubDeployStatusListener;
 import com.marklogic.hub.error.CantUpgradeException;
@@ -53,6 +55,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.HashMap;
 
 @Controller
 @RequestMapping(value = "/api/current-project")
@@ -100,7 +103,7 @@ public class CurrentProjectController extends EnvironmentAware implements FileSy
         envConfig().setInitialized(installed);
         if (installed) {
             if (envConfig().getEnvironment().equals("local")) {
-                Tracing tracing = new Tracing(envConfig().getStagingClient());
+                Tracing tracing = Tracing.create(envConfig().getStagingClient());
                 tracing.enable();
             }
             logger.info("OnFinished: installing user modules");
@@ -191,7 +194,7 @@ public class CurrentProjectController extends EnvironmentAware implements FileSy
     @ResponseBody
     public ResponseEntity<?> clearDatabase() {
         HubConfig config = envConfig().getMlSettings();
-        String[] databases = { config.getStagingDbName(), config.getFinalDbName(), config.getJobDbName(), config.getTraceDbName() };
+        String[] databases = { config.getDbName(DatabaseKind.STAGING), config.getDbName(DatabaseKind.FINAL), config.getDbName(DatabaseKind.JOB), config.getDbName(DatabaseKind.TRACE) };
         for (String database: databases) {
             dataHubService.clearContent(envConfig().getMlSettings(), database);
         }
@@ -201,18 +204,29 @@ public class CurrentProjectController extends EnvironmentAware implements FileSy
 
     @RequestMapping(value = "/update-hub", method = RequestMethod.POST)
     public ResponseEntity<?> updateHub() throws IOException, CantUpgradeException {
-        if (dataHubService.updateHub(envConfig().getMlSettings())) {
-            installUserModules(envConfig().getMlSettings(), true);
-            startProjectWatcher();
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        try {
+            if (dataHubService.updateHub(envConfig().getMlSettings())) {
+                installUserModules(envConfig().getMlSettings(), true);
+                startProjectWatcher();
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+        } catch (CantUpgradeException e) {
+            return new ResponseEntity<>(e, HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
     @RequestMapping(value = "/preinstall-check", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_VALUE})
     @ResponseBody
-    public PreInstallCheck preInstallCheck() {
-        return dataHubService.preInstallCheck(envConfig().getMlSettings());
+    public String preInstallCheck() {
+        HashMap response = dataHubService.preInstallCheck(envConfig().getMlSettings());
+        String jsonResponse = null;
+        try {
+            jsonResponse = new ObjectMapper().writeValueAsString(response);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return jsonResponse;
     }
 
     private void startProjectWatcher() throws IOException {

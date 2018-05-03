@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2016 MarkLogic Corporation
+ * Copyright 2012-2018 MarkLogic Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,6 @@
 package com.marklogic.hub.error;
 
 public class ServerValidationException extends RuntimeException {
-
-    private static final long serialVersionUID = -958991214928671059L;
 
     public ServerValidationException(String message) {
         super(message);

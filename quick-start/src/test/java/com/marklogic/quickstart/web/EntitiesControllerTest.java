@@ -1,3 +1,20 @@
+/*
+ * Copyright 2012-2018 MarkLogic Corporation
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ */
+
 package com.marklogic.quickstart.web;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -5,7 +22,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.client.document.DocumentRecord;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.JacksonHandle;
-import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubConfigBuilder;
 import com.marklogic.hub.flow.CodeFormat;
 import com.marklogic.hub.flow.DataFormat;
@@ -39,6 +55,7 @@ public class EntitiesControllerTest extends BaseTestController {
     @Autowired
     private EntitiesController ec;
 
+
     @Test
     public void getInputFlowOptions() throws Exception {
         String path = "/some/project/path";
@@ -62,12 +79,15 @@ public class EntitiesControllerTest extends BaseTestController {
 
     @Test
     public void runHarmonizeNoOptions() throws IOException, InterruptedException {
-        // Set up (not needed for other tests)
-        baseSetUp();
-        installHub();
+        deleteProjectDir();
+        createProjectDir();
+
+        envConfig.setInitialized(true);
+        envConfig.setProjectDir(PROJECT_PATH);
+        envConfig.setMlSettings(HubConfigBuilder.newHubConfigBuilder(PROJECT_PATH).withPropertiesFromEnvironment().build());
 
         Path projectDir = Paths.get(".", PROJECT_PATH);
-        Scaffolding scaffolding = new Scaffolding(projectDir.toString(), stagingClient);
+        Scaffolding scaffolding = Scaffolding.create(projectDir.toString(), stagingClient);
 
         scaffolding.createFlow(ENTITY, "sjs-json-harmonization-flow", FlowType.HARMONIZE,
             CodeFormat.JAVASCRIPT, DataFormat.JSON);
@@ -91,24 +111,26 @@ public class EntitiesControllerTest extends BaseTestController {
         ResponseEntity<?> responseEntity = ec.runHarmonizeFlow(ENTITY, "sjs-json-harmonization-flow", body);
 
         Assert.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        // document takes a moment to arrive.
+        Thread.sleep(1000);
         DocumentRecord doc = finalDocMgr.read("/staged.json").next();
         JsonNode root = doc.getContent(new JacksonHandle()).get();
         JsonNode env = root.path("envelope");
         JsonNode headers = env.path("headers");
         JsonNode optionNode = headers.path("test-option");
         Assert.assertTrue(optionNode.isMissingNode());
-
-        uninstallHub();
     }
 
     @Test
     public void runHarmonizeFlowWithOptions() throws IOException, InterruptedException {
-        // Set up (not needed for other tests)
-        baseSetUp();
-        installHub();
+        deleteProjectDir();
+        createProjectDir();
 
+        envConfig.setInitialized(true);
+        envConfig.setProjectDir(PROJECT_PATH);
+        envConfig.setMlSettings(HubConfigBuilder.newHubConfigBuilder(PROJECT_PATH).withPropertiesFromEnvironment().build());
         Path projectDir = Paths.get(".", PROJECT_PATH);
-        Scaffolding scaffolding = new Scaffolding(projectDir.toString(), stagingClient);
+        Scaffolding scaffolding = Scaffolding.create(projectDir.toString(), stagingClient);
 
         scaffolding.createFlow(ENTITY, "sjs-json-harmonization-flow", FlowType.HARMONIZE,
             CodeFormat.JAVASCRIPT, DataFormat.JSON);
@@ -133,6 +155,8 @@ public class EntitiesControllerTest extends BaseTestController {
         ResponseEntity<?> responseEntity = ec.runHarmonizeFlow(ENTITY, "sjs-json-harmonization-flow", body);
 
         Assert.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        // document takes a moment to arrive.
+        Thread.sleep(1000);
         DocumentRecord doc = finalDocMgr.read("/staged.json").next();
         JsonNode root = doc.getContent(new JacksonHandle()).get();
         JsonNode env = root.path("envelope");
@@ -141,7 +165,7 @@ public class EntitiesControllerTest extends BaseTestController {
         Assert.assertFalse(optionNode.isMissingNode());
         Assert.assertEquals(OPT_VALUE, optionNode.asText());
 
-        uninstallHub();
+        //uninstallHub();
     }
 
 }

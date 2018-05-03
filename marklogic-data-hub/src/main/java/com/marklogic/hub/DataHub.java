@@ -13,132 +13,41 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.marklogic.hub;
 
-import com.marklogic.appdeployer.AppConfig;
-import com.marklogic.appdeployer.command.Command;
-import com.marklogic.appdeployer.command.CommandMapBuilder;
-import com.marklogic.appdeployer.command.appservers.DeployOtherServersCommand;
-import com.marklogic.appdeployer.command.forests.DeployCustomForestsCommand;
-import com.marklogic.client.FailedRequestException;
-import com.marklogic.client.eval.ServerEvaluationCall;
-import com.marklogic.hub.deploy.HubAppDeployer;
-import com.marklogic.hub.deploy.commands.*;
 import com.marklogic.hub.deploy.util.HubDeployStatusListener;
+import com.marklogic.hub.error.CantUpgradeException;
 import com.marklogic.hub.error.ServerValidationException;
+import com.marklogic.hub.impl.DataHubImpl;
 import com.marklogic.hub.util.Versions;
-import com.marklogic.mgmt.ManageClient;
-import com.marklogic.mgmt.admin.AdminManager;
-import com.marklogic.mgmt.resource.appservers.ServerManager;
-import com.marklogic.mgmt.resource.databases.DatabaseManager;
-import com.marklogic.rest.util.Fragment;
-import com.marklogic.rest.util.ResourcesFragment;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
-import org.springframework.core.io.support.ResourcePatternResolver;
 
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
 
-public class DataHub {
+/**
+ * Handles creation and orchastration of DHF with a MarkLogic server.
+ *
+ * Includes installs, version validation, updates, and the init of a DHF project.
+ */
+public interface DataHub {
 
-    private ManageClient _manageClient;
-    private DatabaseManager _databaseManager;
-    private ServerManager _serverManager;
-    private HubConfig hubConfig;
-
-    private AdminManager _adminManager;
-
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
-
-
-    public DataHub(HubConfig hubConfig) {
-        this.hubConfig = hubConfig;
+    static DataHub create(HubConfig hubConfig) {
+        return new DataHubImpl(hubConfig);
     }
 
-    public ManageClient getManageClient() {
-        if (this._manageClient == null) {
-            this._manageClient = hubConfig.getManageClient();
-        }
-        return this._manageClient;
-    }
+    /**
+     * Clears the database of all documents
+     * @param database - the name of the database in string form
+     */
 
-    public AdminManager getAdminManager() {
-        if (this._adminManager == null) {
-            this._adminManager = hubConfig.getAdminManager();
-        }
-        return this._adminManager;
-    }
-    void setAdminManager(AdminManager manager) {
-        this._adminManager = manager;
-    }
+    void clearDatabase(String database);
 
-    public DatabaseManager getDatabaseManager() {
-        if (this._databaseManager == null) {
-            this._databaseManager = new DatabaseManager(getManageClient());
-        }
-        return this._databaseManager;
-    }
-
-    public ServerManager getServerManager() {
-        if (this._serverManager == null) {
-            this._serverManager = new ServerManager(getManageClient());
-        }
-        return this._serverManager;
-    }
-    void setServerManager(ServerManager manager) { this._serverManager = manager; }
     /**
      * Determines if the data hub is installed in MarkLogic
      * @return true if installed, false otherwise
      */
-    public InstallInfo isInstalled() {
-
-        InstallInfo installInfo = new InstallInfo();
-
-        ResourcesFragment srf = getServerManager().getAsXml();
-        installInfo.stagingAppServerExists = srf.resourceExists(hubConfig.getStagingHttpName());
-        installInfo.finalAppServerExists = srf.resourceExists(hubConfig.getFinalHttpName());
-        installInfo.traceAppServerExists = srf.resourceExists(hubConfig.getTraceHttpName());
-        installInfo.jobAppServerExists = srf.resourceExists(hubConfig.getJobHttpName());
-
-        ResourcesFragment drf = getDatabaseManager().getAsXml();
-        installInfo.stagingDbExists = drf.resourceExists(hubConfig.getStagingDbName());
-        installInfo.finalDbExists = drf.resourceExists(hubConfig.getFinalDbName());
-        installInfo.traceDbExists = drf.resourceExists(hubConfig.getTraceDbName());
-        installInfo.jobDbExists = drf.resourceExists(hubConfig.getJobDbName());
-
-        if (installInfo.stagingDbExists) {
-            Fragment f = getDatabaseManager().getPropertiesAsXml(hubConfig.getStagingDbName());
-            installInfo.stagingTripleIndexOn = Boolean.parseBoolean(f.getElementValue("//m:triple-index"));
-            installInfo.stagingCollectionLexiconOn = Boolean.parseBoolean(f.getElementValue("//m:collection-lexicon"));
-            installInfo.stagingForestsExist = (f.getElements("//m:forest").size() > 0);
-        }
-
-        if (installInfo.finalDbExists) {
-            Fragment f = getDatabaseManager().getPropertiesAsXml(hubConfig.getFinalDbName());
-            installInfo.finalTripleIndexOn = Boolean.parseBoolean(f.getElementValue("//m:triple-index"));
-            installInfo.finalCollectionLexiconOn = Boolean.parseBoolean(f.getElementValue("//m:collection-lexicon"));
-            installInfo.finalForestsExist = (f.getElements("//m:forest").size() > 0);
-        }
-
-        if (installInfo.traceDbExists) {
-            Fragment f = getDatabaseManager().getPropertiesAsXml(hubConfig.getTraceDbName());
-            installInfo.traceForestsExist = (f.getElements("//m:forest").size() > 0);
-        }
-
-        if (installInfo.jobDbExists) {
-            Fragment f = getDatabaseManager().getPropertiesAsXml(hubConfig.getJobDbName());
-            installInfo.jobForestsExist = (f.getElements("//m:forest").size() > 0);
-        }
-
-        logger.info(installInfo.toString());
-
-        return installInfo;
-    }
+    InstallInfo isInstalled();
 
     /**
      * Validates the MarkLogic server to ensure compatibility with the hub
@@ -146,255 +55,124 @@ public class DataHub {
      * @return true if valid, false otherwise
      * @throws ServerValidationException if the server is not compatible
      */
-    public boolean isServerVersionValid(String versionString) {
-        try {
-            if (versionString == null) {
-                versionString = new Versions(hubConfig).getMarkLogicVersion();
-            }
-            int major = Integer.parseInt(versionString.replaceAll("([^.]+)\\..*", "$1"));
-            if (major < 9) {
-                return false;
-            }
-            boolean isNightly = versionString.matches("[^-]+-(\\d{4})(\\d{2})(\\d{2})");
-            if (major == 9) {
-                String alteredString = versionString.replaceAll("[^\\d]+", "");
-                if (alteredString.length() < 4) {
-                    alteredString = StringUtils.rightPad(alteredString, 4, "0");
-                }
-                int ver = Integer.parseInt(alteredString.substring(0, 4));
-                if (!isNightly && ver < 9011) {
-                    return false;
-                }
-            }
-            if (isNightly) {
-                String dateString = versionString.replaceAll("[^-]+-(\\d{4})(\\d{2})(\\d{2})", "$1-$2-$3");
-                Date minDate = new GregorianCalendar(2017, 6, 1).getTime();
-                Date date = new SimpleDateFormat("y-M-d").parse(dateString);
-                if (date.before(minDate)) {
-                    return false;
-                }
-            }
+    boolean isServerVersionValid(String versionString);
 
-        }
-        catch(Exception e) {
-            throw new ServerValidationException(e.toString());
-        }
-        return true;
-    }
-
-    public void initProject() {
-        logger.info("Initializing the Hub Project");
-        hubConfig.initHubProject();
-    }
+    /**
+     * Initializes the project on disk, creates scaffold project code
+     */
+    void initProject();
 
     /**
      * Removes user's modules from the modules db
-     * TODO: this becomes much simpler when we move code into the server dir
      */
-    public void clearUserModules() {
-        ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver(DataHub.class.getClassLoader());
-        try {
-            ArrayList<String> options = new ArrayList<>();
-            for (Resource r : resolver.getResources("classpath*:/ml-modules/options/*.xml")) {
-                options.add(r.getFilename().replace(".xml", ""));
-            }
-            for (Resource r : resolver.getResources("classpath*:/ml-modules-traces/options/*.xml")) {
-                options.add(r.getFilename().replace(".xml", ""));
-            }
-            for (Resource r : resolver.getResources("classpath*:/ml-modules-jobs/options/*.xml")) {
-                options.add(r.getFilename().replace(".xml", ""));
-            }
-
-            ArrayList<String> services = new ArrayList<>();
-            for (Resource r : resolver.getResources("classpath*:/ml-modules/services/*.xqy")) {
-                services.add(r.getFilename().replaceAll("\\.(xqy|sjs)", ""));
-            }
-
-
-            ArrayList<String> transforms = new ArrayList<>();
-            for (Resource r : resolver.getResources("classpath*:/ml-modules/transforms/*")) {
-                transforms.add(r.getFilename().replaceAll("\\.(xqy|sjs)", ""));
-            }
-
-            String query =
-                "cts:uris((),(),cts:not-query(cts:collection-query('hub-core-module')))[\n" +
-                    "  fn:not(\n" +
-                    "    fn:matches(., \"^.+options/(" + String.join("|", options) + ").xml$\") or\n" +
-                    "    fn:matches(., \"/marklogic.rest.resource/(" + String.join("|", services) + ")/assets/(metadata\\.xml|resource\\.(xqy|sjs))\") or\n" +
-                    "    fn:matches(., \"/marklogic.rest.transform/(" + String.join("|", transforms) + ")/assets/(metadata\\.xml|transform\\.(xqy|sjs))\")\n" +
-                    "  )\n" +
-                    "] ! xdmp:document-delete(.)\n";
-            runInDatabase(query, hubConfig.getModulesDbName());
-        }
-        catch(FailedRequestException e) {
-            logger.error("Failed to clear user modules");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public List<Command> getCommandList() {
-        Map<String, List<Command>> commandMap = getCommands();
-        List<Command> commands = new ArrayList<>();
-        for (String name : commandMap.keySet()) {
-            commands.addAll(commandMap.get(name));
-        }
-        return commands;
-    }
-
-    public PreInstallCheck runPreInstallCheck() {
-        return runPreInstallCheck(null);
-    }
-
-    public PreInstallCheck runPreInstallCheck(Versions versions) {
-        PreInstallCheck check = new PreInstallCheck();
-
-        Map<Integer, String> portsInUse = getServerPortsInUse();
-        Set<Integer> ports = portsInUse.keySet();
-
-        String serverName = portsInUse.get(hubConfig.getStagingPort());
-        check.stagingPortInUse = ports.contains(hubConfig.getStagingPort()) && serverName != null && !serverName.equals(hubConfig.getStagingHttpName());
-        if (check.stagingPortInUse) {
-            check.stagingPortInUseBy = serverName;
-        }
-
-        serverName = portsInUse.get(hubConfig.getFinalPort());
-        check.finalPortInUse = ports.contains(hubConfig.getFinalPort()) && serverName != null && !serverName.equals(hubConfig.getFinalHttpName());
-        if (check.finalPortInUse) {
-            check.finalPortInUseBy = serverName;
-        }
-
-        serverName = portsInUse.get(hubConfig.getJobPort());
-        check.jobPortInUse = ports.contains(hubConfig.getJobPort()) && serverName != null && !serverName.equals(hubConfig.getJobHttpName());
-        if (check.jobPortInUse) {
-            check.jobPortInUseBy = serverName;
-        }
-
-        serverName = portsInUse.get(hubConfig.getTracePort());
-        check.tracePortInUse = ports.contains(hubConfig.getTracePort()) && serverName != null && !serverName.equals(hubConfig.getTraceHttpName());
-        if (check.tracePortInUse) {
-            check.tracePortInUseBy = serverName;
-        }
-
-        if (versions == null) {
-            versions = new Versions(hubConfig);
-        }
-        check.serverVersion = versions.getMarkLogicVersion();
-        check.serverVersionOk = isServerVersionValid(check.serverVersion);
-        return check;
-    }
+    void clearUserModules();
 
     /**
-     * Installs the data hub configuration and server-side modules into MarkLogic
+     * Runs the pre-install check for the datahub populating the object
+     * with variables necessary to perform the install.
+     * This is used for running install.
      */
-    public void install() {
-        install(null);
-    }
+    HashMap runPreInstallCheck();
 
     /**
-     * Installs the data hub configuration and server-side modules into MarkLogic
+     * Runs the pre-install check for the datahub populating the object
+     * with variables necessary to perform the install.
+     * This is used for running install.
+     * @param versions - the versions that the check is to be run against
+     */
+    HashMap runPreInstallCheck(Versions versions);
+
+    /**
+     * Installs the data hub configuration and server-side config files into MarkLogic
+     */
+    void install();
+
+    /**
+     * Installs the data hub configuration and server-side config files into MarkLogic
      * @param listener - the callback method to receive status updates
      */
-    public void install(HubDeployStatusListener listener) {
-        initProject();
-
-        logger.info("Installing the Data Hub into MarkLogic");
-
-        AppConfig config = hubConfig.getAppConfig();
-        HubAppDeployer deployer = new HubAppDeployer(getManageClient(), getAdminManager(), listener);
-        deployer.setCommands(getCommandList());
-        deployer.deploy(config);
-    }
-
-    public void updateIndexes() {
-        AppConfig config = hubConfig.getAppConfig();
-        HubAppDeployer deployer = new HubAppDeployer(getManageClient(), getAdminManager(), null);
-        List<Command> commands = new ArrayList<>();
-        commands.add(new DeployHubDatabasesCommand(hubConfig));
-        deployer.setCommands(commands);
-        deployer.deploy(config);
-    }
+    void install(HubDeployStatusListener listener);
 
     /**
-     * Uninstalls the data hub configuration and server-side modules from MarkLogic
+     * Updates the indexes in the database based on the project
      */
-    public void uninstall() {
-        uninstall(null);
-    }
+    void updateIndexes();
 
     /**
-     * Uninstalls the data hub configuration and server-side modules from MarkLogic
+     * Uninstalls the data hub configuration and server-side config files from MarkLogic
+     */
+    void uninstall();
+
+    /**
+     * Uninstalls the data hub configuration and server-side config files from MarkLogic
      * @param listener - the callback method to receive status updates
      */
-    public void uninstall(HubDeployStatusListener listener) {
-        logger.debug("Uninstalling the Data Hub from MarkLogic");
+    void uninstall(HubDeployStatusListener listener);
 
-        AppConfig config = hubConfig.getAppConfig();
-        HubAppDeployer deployer = new HubAppDeployer(getManageClient(), getAdminManager(), listener);
-        deployer.setCommands(getCommandList());
-        deployer.undeploy(config);
-    }
+    /**
+     * Checks to make sure all the versions and database in a valid configuration with version check
+     * @return boolean - if not, returns false, if safe to proceed ahead returns true
+     */
+    boolean isSafeToInstall();
 
-    private void runInDatabase(String query, String databaseName) {
-        ServerEvaluationCall eval = hubConfig.newStagingClient().newServerEval();
-        String xqy =
-            "xdmp:invoke-function(function() {" +
-                query +
-                "}," +
-                "<options xmlns=\"xdmp:eval\">" +
-                "  <database>{xdmp:database(\"" + databaseName + "\")}</database>" +
-                "  <transaction-mode>update-auto-commit</transaction-mode>" +
-                "</options>)";
-        eval.xquery(xqy).eval();
-    }
+    /**
+     * Checks to see if the port is in use
+     * @param kind - the DatabaseKind enum value (ex STAGING or JOB)
+     * @return true if the port is in use, false if it is not
+     */
+    boolean isPortInUse(DatabaseKind kind);
 
-    private Map<String, List<Command>> getCommands() {
-        Map<String, List<Command>> commandMap = new CommandMapBuilder().buildCommandMap();
+    /**
+     * Sets what appserver name is using the port
+     * @param kind - the DatabaseKind enum value (ex STAGING or JOB)
+     * @param usedBy - string name of what is using the port
+     */
+    void setPortInUseBy(DatabaseKind kind, String usedBy);
 
-        List<Command> securityCommands = commandMap.get("mlSecurityCommands");
-        securityCommands.set(0, new DeployHubRolesCommand(hubConfig));
-        securityCommands.set(1, new DeployHubUsersCommand(hubConfig));
+    /**
+     * Returns name of what is using the port
+     * @param kind - the DatabaseKind enum value (ex STAGING or JOB)
+     * @return name of who using the port
+     */
+    String getPortInUseBy(DatabaseKind kind);
 
-        List<Command> dbCommands = new ArrayList<>();
-        dbCommands.add(new DeployHubDatabasesCommand(hubConfig));
-        dbCommands.add(new DeployHubOtherDatabasesCommand(hubConfig));
-        dbCommands.add(new DeployHubTriggersDatabaseCommand(hubConfig));
-        dbCommands.add(new DeployHubSchemasDatabaseCommand(hubConfig));
-        commandMap.put("mlDatabaseCommands", dbCommands);
+    /**
+     * Checks to see if the datahub and server versions are compatible
+     * @return true if the server version matches, false if it does not
+     */
+    boolean isServerVersionOk();
 
-        // don't deploy rest api servers
-        commandMap.remove("mlRestApiCommands");
+    /**
+     * Sets true or false if the server version is okay with this version of DHF
+     * @param serverVersionOk - true if it compatible or false if it is not
+     */
+    void setServerVersionOk(boolean serverVersionOk);
 
-        List<Command> serverCommands = new ArrayList<>();
-        serverCommands.add(new DeployHubServersCommand(hubConfig));
-        DeployOtherServersCommand otherServersCommand = new DeployOtherServersCommand();
-        otherServersCommand.setFilenamesToIgnore("staging-server.json", "final-server.json", "job-server.json", "trace-server.json");
-        serverCommands.add(otherServersCommand);
-        commandMap.put("mlServerCommands", serverCommands);
+    /**
+     * Returns the string presentation of the server version, eg: "9.03-1"
+     * @return server version as a string, eg: "9.03-1"
+     */
+    String getServerVersion();
 
-        List<Command> moduleCommands = new ArrayList<>();
-        moduleCommands.add(new LoadHubModulesCommand(hubConfig));
-        moduleCommands.add(new LoadUserModulesCommand(hubConfig));
-        commandMap.put("mlModuleCommands", moduleCommands);
+    /**
+     * Sets the server version holder on the datahub object - currently unused
+     * @param serverVersion - server version as a string, eg: "9.03-1"
+     */
+    void setServerVersion(String serverVersion);
 
-        List<Command> mimetypeCommands = commandMap.get("mlMimetypeCommands");
-        mimetypeCommands.add(0, new DeployHubMimetypesCommand(hubConfig));
+    /**
+     * Upgrades the installed datahub on the server to this version of the DataHub
+     * @return true or false based on success of the upgrade
+     * @throws CantUpgradeException - exception thrown when an upgrade can't happen
+     */
+    boolean upgradeHub() throws CantUpgradeException;
 
-        List<Command> forestCommands = commandMap.get("mlForestCommands");
-        DeployCustomForestsCommand deployCustomForestsCommand = (DeployCustomForestsCommand)forestCommands.get(0);
-        deployCustomForestsCommand.setCustomForestsPath(hubConfig.getCustomForestPath());
+    /**
+     * Upgrades the hub based on list of provided updated flows. All flows SHOULD be provided.
+     * The method without params will handle this automatically.
+     * @return boolean - false if upgrade fails for a reason other than an upgrade exception
+     * @throws CantUpgradeException - should the hub fail to upgrade for incompatibility reasons
+     */
+    boolean upgradeHub(List<String> updatedFlows) throws CantUpgradeException;
 
-        return commandMap;
-    }
-
-    private Map<Integer, String> getServerPortsInUse() {
-        Map<Integer, String> portsInUse = new HashMap<>();
-        ResourcesFragment srf = getServerManager().getAsXml();
-        srf.getListItemNameRefs().forEach(s -> {
-            Fragment fragment = getServerManager().getPropertiesAsXml(s);
-            int port = Integer.parseInt(fragment.getElementValue("//m:port"));
-            portsInUse.put(port, s);
-        });
-        return portsInUse;
-    }
 }

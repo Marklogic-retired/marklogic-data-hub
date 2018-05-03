@@ -1,3 +1,20 @@
+/*
+ * Copyright 2012-2018 MarkLogic Corporation
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ */
+
 import java.util.concurrent.Executors
 
 buildscript {
@@ -71,6 +88,7 @@ dependencies {
     testCompile "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}"
     testRuntime "org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}"
 
+
     testCompile "org.junit.platform:junit-platform-runner:${junitPlatformVersion}"
 
     // If you also want to support JUnit 3 and JUnit 4 tests
@@ -90,10 +108,10 @@ configurations {
 
 node {
   // Version of node to use.
-  version = '8.9.3'
+  version = '8.9.4'
 
   // // Version of npm to use.
-  npmVersion = '5.4.2'
+  npmVersion = '5.7.1'
 
   download = true
 
@@ -150,7 +168,7 @@ task startRest {
 
 task e2eLaunch(type: NpmTask) {
     args = ['run', 'e2e']
-    dependsOn buildUI, startRest
+    dependsOn compileJava, buildUI, startRest
 }
 
 task e2eUI {
@@ -182,7 +200,8 @@ if (!(
   processResources.dependsOn copyIndexHtml
 }
 
-test.dependsOn e2eUI
+//removing test dependency on e2e tests
+//test.dependsOn e2eUI
 
 bootRun {
     addResources = true
@@ -193,4 +212,8 @@ springBoot {
     executable = true
     mainClass = "com.marklogic.quickstart.Application"
     buildInfo()
+}
+
+test {
+  include 'com/marklogic/quickstart/WebTestSuite.class'
 }

@@ -1,36 +1,38 @@
+/*
+ * Copyright 2012-2018 MarkLogic Corporation
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.marklogic.hub.collector;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.marklogic.client.datamovement.DataMovementManager;
 import com.marklogic.client.datamovement.JobTicket;
-import com.marklogic.client.datamovement.WriteBatcher;
-import com.marklogic.client.io.DocumentMetadataHandle;
-import com.marklogic.client.io.Format;
 import com.marklogic.client.io.JacksonHandle;
-import com.marklogic.client.io.StringHandle;
 import com.marklogic.hub.DataHub;
 import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.flow.*;
 import com.marklogic.hub.scaffold.Scaffolding;
-import com.marklogic.hub.util.FileUtil;
-import org.apache.commons.io.FileUtils;
 import org.custommonkey.xmlunit.XMLUnit;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.HashMap;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
 
 public class EmptyCollectorTest extends HubTestBase {
@@ -38,40 +40,32 @@ public class EmptyCollectorTest extends HubTestBase {
     private static final String ENTITY = "streamentity";
     private static Path projectDir = Paths.get(".", "ye-olde-project");
 
-    @BeforeClass
-    public static void setup() throws IOException {
+    @Before
+    public void setup() throws IOException {
+        // note, not basicSetup
+
         XMLUnit.setIgnoreWhitespace(true);
-        File projectDirFile = projectDir.toFile();
-        if (projectDirFile.isDirectory() && projectDirFile.exists()) {
-            FileUtils.deleteDirectory(projectDirFile);
-        }
+        deleteProjectDir();
 
         createProjectDir();
 
-        installHub();
-
-        Scaffolding scaffolding = new Scaffolding(projectDir.toString(), stagingClient);
+        Scaffolding scaffolding = Scaffolding.create(projectDir.toString(), stagingClient);
         scaffolding.createEntity(ENTITY);
         scaffolding.createFlow(ENTITY, "testharmonize", FlowType.HARMONIZE,
             CodeFormat.XQUERY, DataFormat.XML);
 
-        DataHub dh = new DataHub(getHubConfig());
+        DataHub dh = DataHub.create(getHubConfig());
         dh.clearUserModules();
         installUserModules(getHubConfig(), false);
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_TRACE_NAME, HubConfig.DEFAULT_JOB_NAME);
     }
 
 
-    @AfterClass
-    public static void teardown() {
-        uninstallHub();
-    }
-
     @Test
     public void runCollector() {
         assertEquals(0, getStagingDocCount());
         assertEquals(0, getFinalDocCount());
-        FlowManager fm = new FlowManager(getHubConfig());
+        FlowManager fm = FlowManager.create(getHubConfig());
         Flow harmonizeFlow = fm.getFlow(ENTITY, "testharmonize",
             FlowType.HARMONIZE);
         HashMap<String, Object> options = new HashMap<>();

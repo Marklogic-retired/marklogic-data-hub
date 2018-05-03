@@ -1,7 +1,7 @@
 <header class="mdl-layout__header">
   <div class="mdl-layout__header-row">
     <img src="assets/img/odh.svg">
-    <span class="mdl-layout-title">Data Hub Quick Start</span>
+    <span class="mdl-layout-title">Data Hub QuickStart</span>
     <!-- Add spacer, to align navigation to the right -->
     <div class="mdl-layout-spacer"></div>
     <div *ngIf="getRunningJobCount() !== 0" layout="row" layout-align="center center" class="job-progress" (click)="gotoJobs()">
@@ -12,7 +12,7 @@
     <div class="mdl-layout-spacer"></div>
     <nav class="mdl-navigation mdl-layout--large-screen-only">
       <a id="database-tab" class="mdl-navigation__link" [ngClass]="{'active': isActive('/')}" [routerLink]="['']"><i class="fa fa-dashboard"></i> Dashboard</a>
-      <a id="entities-tab" class="mdl-navigation__link" *ngIf="getMarkLogicVersion().startsWith('9')" [ngClass]="{'active': isActive('/entities')}" [routerLink]="['entities']"><i class="fa fa-industry"></i> Entities</a>
+      <a id="entities-tab" class="mdl-navigation__link" *ngIf="getMarkLogicVersion() >= 9" [ngClass]="{'active': isActive('/entities')}" [routerLink]="['entities']"><i class="fa fa-industry"></i> Entities</a>
       <a id="flows-tab" class="mdl-navigation__link" [ngClass]="{'active': isActive('/flows')}" [routerLink]="['flows']"><i class="mdi mdi-looks"></i> Flows</a>
       <a id="browser-tab" class="mdl-navigation__link" [ngClass]="{'active': isActive('/browse')}" [routerLink]="['browse']"><i class="mdi mdi-magnify"></i> Browse Data</a>
       <a id="jobs-tab" class="mdl-navigation__link" [ngClass]="{'active': isActive('/jobs')}" [routerLink]="['jobs']"><i class="fa fa-tasks"></i> <span *ngIf="getRunningJobCount() !== 0" [mdl-badge]="getRunningJobCount()">Jobs</span><span *ngIf="getRunningJobCount() === 0">Jobs</span></a>

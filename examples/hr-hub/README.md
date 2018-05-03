@@ -14,7 +14,7 @@ The data are separated into 2 folders under the input/ folder.
 ```
 
 # TLDR; How do I run it?
-Check out the [HR Hub Tutorial](https://marklogic-community.github.io/marklogic-data-hub/getting-started) on the Datahub Site.
+Check out the [HR Hub Tutorial](https://marklogic.github.io/marklogic-data-hub/getting-started) on the Datahub Site.
 
 # Global Corp
 Global Corp has exported the Employee data from a relational database. They are provided to you as csv files, one for each table.
@@ -30,4 +30,4 @@ In this example we are loading the CSV table dumps from Global Corp and the JSON
 - Employee Salary
 
 # Wait. What is a data Hub?
-Get started over at the [Data Hub Site](https://marklogic-community.github.io/marklogic-data-hub/)
+Get started over at the [Data Hub Site](https://marklogic.github.io/marklogic-data-hub/)

@@ -44,11 +44,11 @@
       <tbody>
         <tr *ngFor="let property of entity.definition.properties; let i = index">
           <td><input type="checkbox" [(ngModel)]="property.selected"></td>
-          <td class="col-toggler" (click)="togglePrimaryKey(property)"><i [ngClass]="{'active': isPrimaryKey(property.name)}" class="fa fa-key"></i></td>
-          <td class="col-toggler" (click)="toggleRangeIndex(property)"><i [ngClass]="{'active': isRangeIndex(property.name)}" class="fa fa-bolt"></i></td>
-          <td class="col-toggler" (click)="togglePathRangeIndex(property)"><i [ngClass]="{'active': isPathRangeIndex(property.name)}" class="fa fa-code"></i></td>
-          <td class="col-toggler" (click)="toggleWordLexicon(property)"><i [ngClass]="{'active': isWordLexicon(property.name)}" class="fa fa-won"></i></td>
-          <td class="col-toggler" (click)="toggleRequired(property)"><i [ngClass]="{'active': isRequired(property.name)}" class="fa fa-exclamation"></i></td>
+          <td class="col-toggler" (click)="togglePrimaryKey(property)"><i [ngClass]="{'active': property.isPrimaryKey}" class="fa fa-key"></i></td>
+          <td class="col-toggler" (click)="property.hasElementRangeIndex = !property.hasElementRangeIndex"><i [ngClass]="{'active': property.hasElementRangeIndex}" class="fa fa-bolt"></i></td>
+          <td class="col-toggler" (click)="property.hasRangeIndex = !property.hasRangeIndex"><i [ngClass]="{'active': property.hasRangeIndex}" class="fa fa-code"></i></td>
+          <td class="col-toggler" (click)="property.hasWordLexicon = !property.hasWordLexicon"><i [ngClass]="{'active': property.hasWordLexicon}" class="fa fa-won"></i></td>
+          <td class="col-toggler" (click)="property.required = !property.required"><i [ngClass]="{'active': property.required}" class="fa fa-exclamation"></i></td>
 
           <td><input type="text" [(ngModel)]="property.name"></td>
           <td>

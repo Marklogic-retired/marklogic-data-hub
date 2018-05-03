@@ -84,6 +84,9 @@ export class MlcpUiComponent implements OnChanges {
 
     this.flow = flow;
 
+    //TODO: we need to make this more consistent than just enforcing it everytime quickstart loads up the flow
+    mlcpOptions['transform_module'] = this.flow.transformModulePath();
+
     this.inputFilePath = this.startPath = mlcpOptions.input_file_path || '.';
     this.groups = this.getGroups(flow.entityName, flow.flowName, flow.dataFormat, mlcpOptions);
 
@@ -375,7 +378,7 @@ export class MlcpUiComponent implements OnChanges {
             field: 'transform_module',
             type: 'string',
             description: 'The path in the modules database or modules directory of a custom content transformation function installed on MarkLogic Server. This option is required to enable a custom transformation. For details, see Transforming Content During Ingestion.',
-            value: '/com.marklogic.hub/mlcp-flow-transform.xqy',
+            value: this.flow.transformModulePath(),
             readOnly: true,
           },
           {

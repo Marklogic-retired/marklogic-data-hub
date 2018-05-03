@@ -22,14 +22,10 @@ function createContent(id, options) {
   // for xml we need to use xpath
   if (root && xdmp.nodeKind(root) === 'element') {
     let instance = root.xpath('/*:envelope/*:instance/node()').root;
-    xdmp.log(['instance:', instance]);
     if (instance != null) {
-      xdmp.log('setting source to instance');
       source = instance;
     }
     else {
-      xdmp.log('setting source to rawContent');
-      xdmp.log(['root', root]);
       source = root;
     }
   }
@@ -41,11 +37,6 @@ function createContent(id, options) {
   else {
     source = root;
   }
-
-  xdmp.log(['root:', root]);
-  xdmp.log(['root kind:', xdmp.nodeKind(root)]);
-  xdmp.log(['source:', source]);
-  xdmp.log(['source kind:', xdmp.nodeKind(source)]);
 
   return extractInstanceE2eentity(source);
 }

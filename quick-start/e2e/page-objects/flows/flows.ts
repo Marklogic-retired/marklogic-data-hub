@@ -1,7 +1,8 @@
-import { protractor, browser, element, by, By, $, $$, ExpectedConditions as EC } from 'protractor'
+import { protractor, browser, element, by, By, $, $$, ExpectedConditions as EC, ElementFinder, ElementArrayFinder} from 'protractor'
 import { AppPage } from '../appPage';
 import { pages } from '../page';
 import jobsPage from '../jobs/jobs';
+const fs = require('fs-extra');
 
 export class FlowPage extends AppPage {
 
@@ -32,6 +33,33 @@ export class FlowPage extends AppPage {
 
   get esTemplateButton() {
     return element(by.cssContainingText('mdl-list-item td', 'Create Structure from Entity Definition'));
+  }
+
+  addFlowOptionsButton() {
+    return element(by.css('.key-value-add > mdl-button'));
+  }
+  
+  removeFlowOptionsByPositionButton(position: number) {
+    return element(by.css('app-select-key-values > div:nth-child(' + (position + 1) + ') > .key-value-remove > mdl-button'));
+  }
+  
+  getKeyFlowOptionsByPosition(position: number){
+    return element(by.css('app-select-key-values > div:nth-child(' + (position + 1) + ') > div:nth-child(1) > mdl-textfield > div > input'));
+  }
+
+  getValueFlowOptionsByPosition(position: number){
+    return element(by.css('app-select-key-values > div:nth-child(' + (position + 1) + ') > div:nth-child(2) > mdl-textfield > div > input'));
+  }
+
+  setKeyValueFlowOptionsByPosition(position: number, key: string, value: string) {
+    this.getKeyFlowOptionsByPosition(position).clear();
+    this.getKeyFlowOptionsByPosition(position).sendKeys(key);
+    this.getValueFlowOptionsByPosition(position).clear();
+    this.getValueFlowOptionsByPosition(position).sendKeys(value);
+  }
+
+  getFlowOptionsCount() {
+    return element.all(by.css('app-select-key-values .key-value-remove')).count();
   }
 
   get newFlowName() {
@@ -74,6 +102,58 @@ export class FlowPage extends AppPage {
     return element(by.cssContainingText('.mdl-tabs__tab mdl-tab-panel-title span', tabName));
   }
 
+  getFlowTab(tabName: string) {
+    let tabNum = 1;
+    switch(tabName) {
+      case 'flowInfo':
+        tabNum = 1;
+        break;
+      case 'collector':
+        tabNum = 2;
+        break;
+      case 'content':
+        tabNum = 3;
+        break;
+      case 'headers':
+        tabNum = 4;
+        break;
+      case 'main':
+        tabNum = 5;
+        break;
+      case 'triples':
+        tabNum = 6;
+        break;
+      case 'writer':
+        tabNum = 7;
+        break;
+      default:
+        tabNum = 1;      
+    }
+    return element(by.css(`mdl-tabs>div:nth-of-type(1)>div:nth-of-type(${tabNum})>div>span:nth-of-type(1)`));
+  } 
+  
+  pluginTextArea() {
+    return element(by.css('mdl-tabs > mdl-tab-panel.mdl-tabs__panel.is-active > mdl-tab-panel-content > div > div.plugin-codemirror > app-codemirror > div > div.CodeMirror-scroll > div.CodeMirror-sizer > div > div > div > div.CodeMirror-code'));
+  }
+
+  ctrlA() {
+    let osName = process.platform;
+    if(osName = 'darwin') {
+      return protractor.Key.chord(protractor.Key.COMMAND, "a");
+    }
+    else
+      return protractor.Key.chord(protractor.Key.CONTROL, "a");
+  }
+
+  ctrlS() {
+    let osName = process.platform;
+    if(osName = 'darwin') {
+      return protractor.Key.chord(protractor.Key.COMMAND, "s");
+    }
+    else
+      return protractor.Key.chord(protractor.Key.CONTROL, "s");
+  }
+
   getInputFlow(entityName: string, flowName: string) {
     return this.getFlow(entityName, flowName, 'INPUT');
   }
@@ -102,6 +182,10 @@ export class FlowPage extends AppPage {
     return element(by.css(`mdl-switch[id="${name}"]`));
   }
 
+  mlcpInput(name: string) {
+    return element(by.css(`input[name="${name}"]`));
+  }
+
   get toast() {
     return element(by.css('mdl-snackbar-component'));
   }
@@ -118,6 +202,10 @@ export class FlowPage extends AppPage {
     return element(by.cssContainingText('mdl-button', 'Run Import'));
   }
 
+  runHarmonizeButton() {
+    return element(by.cssContainingText('mdl-button', 'Run Harmonize'));
+  }
+
   get mlcpCommand() {
     return element(by.css('mlcp-cmd pre')).getText();
   }
@@ -128,6 +216,10 @@ export class FlowPage extends AppPage {
 
   menuItem(value: string) {
     return element(by.css(`mdl-menu-item[data-value="${value}"]`));
+  }
+
+  readFileContent(filepath: string) {
+    return fs.readFileSync(filepath, 'utf8');
   }
 
   runInputFlow(entityName: string, flowName: string, dataFormat: string, count: number) {
@@ -164,6 +256,11 @@ export class FlowPage extends AppPage {
     browser.actions().mouseMove(this.menuItem(dataFormat)).perform();
     this.menuItem(dataFormat).click();
 
+    // set output uri suffix
+    this.mlcpInput('output_uri_suffix').clear();
+    // verify that uri can contain character &
+    this.mlcpInput('output_uri_suffix').sendKeys('?doc=yes&type=foo');
+
     browser.wait(EC.elementToBeClickable(this.mlcpSection(' Delimited Text Options')));
     this.mlcpSection(' Delimited Text Options').click();
     browser.wait(EC.visibilityOf(this.mlcpSection(' Delimited Text Options')));
@@ -172,10 +269,6 @@ export class FlowPage extends AppPage {
     browser.wait(EC.elementToBeClickable(this.mlcpSwitch('generate_uri')));
     this.mlcpSwitch('generate_uri').click();
 
-    // no progress bar before we start
-    // expect(element(by.css('.job-progress')).isPresent()).toBe(false);
-
-    browser.wait(EC.elementToBeClickable(this.mlcpRunButton));
     this.mlcpRunButton.click();
 
     browser.wait(EC.elementToBeClickable(this.toastButton));
@@ -185,8 +278,8 @@ export class FlowPage extends AppPage {
 
     jobsPage.isLoaded();
 
-    browser.wait(EC.presenceOf(jobsPage.firstFinishedFlow));
-    expect(jobsPage.finishedFlows.count()).toBe(count);
+    let lastFinishedJob = jobsPage.lastFinishedJob;
+    expect(jobsPage.jobFlowName(lastFinishedJob).getText()).toEqual(flowName);
 
     this.flowsTab.click();
 

@@ -8,10 +8,10 @@
  * @return - your content
  */
 function createContent(id, options) {
-  var doc = cts.doc(id);
-  var root = doc.root.toObject();
+  let doc = cts.doc(id);
+  let root = doc.root.toObject();
 
-  var source;
+  let source;
 
   // for xml we need to use xpath
   if (root && xdmp.nodeKind(root) === 'element') {
@@ -38,18 +38,17 @@ function createContent(id, options) {
  */
 function extractInstanceProduct(source) {
   // the original source documents
-  var attachments = source;
+  let attachments = source;
 
-  var sku = xs.string(source.sku || source.SKU);
-  var title = xs.string(source.title);
-  var price = xs.decimal(source.price);
+  let sku = xs.string(source.sku || source.SKU);
+  let price = xs.decimal(source.price);
 
   // return the instance object
   return {
     '$attachments': attachments,
     '$type': 'Product',
+    '$version': '0.0.1',
     'sku': sku,
-    'title': title,
     'price': price
   }
 };

@@ -4,7 +4,7 @@
   </div>
   <div class="login-wrapper" layout="row" layout-align="center start">
     <section layout="column" layout-align="center center" class="left-pane">
-      <h1 id="mla-loginPage-Text">Data Hub Quick Start</h1>
+      <h1 id="mla-loginPage-Text">Data Hub QuickStart</h1>
       <img class="odh-icon" src="assets/img/odh.svg">
       <section flex layout-padding class="install-status" *ngIf="installationStatus">
         <pre>{{installationStatus}}</pre>
@@ -149,7 +149,7 @@
           <h3>Project Initialized <i class="fa fa-thumbs-up"></i></h3>
           <p>Project files have been created in</p>
           <p class="project-path">{{currentProject.path}}</p>
-          <p>Read more about the project structure on the <a target="_blank" href="https://github.com/marklogic-community/marklogic-data-hub/wiki/Project-Directory-Structure">github wiki</a>.</p>
+          <p>Read more about the project structure on the <a target="_blank" href="https://github.com/marklogic/marklogic-data-hub/wiki/Project-Directory-Structure">github wiki</a>.</p>
         </section>
         <div layout="row" layout-align="end center" class="init-buttons">
           <button type="button" mdl-button (click)="back()">&lt; Back</button>
@@ -165,8 +165,10 @@
 
             <p class="help-text">Each Hub Project can be deployed to multiple environments. Environments are
             determined by the presence of a gradle-env.properties file in your hub project
-            directory. By default the Quick Start only creates a local environment file.
-            Read more <a target="_blank" href="https://github.com/marklogic-community/marklogic-data-hub/wiki/Data-Hub-QuickStart-Project-Environments">on the Data Hub Framework Wiki</a>.
+            directory. By default QuickStart only creates a local environment file.
+            <!-- DHFPROD-663 TODO no content here
+            Read more <a target="_blank" href="https://github.com/marklogic/marklogic-data-hub/wiki/Data-Hub-QuickStart-Project-Environments">on the Data Hub Framework Wiki</a>.
+            -->
             </p>
             <app-select-list
               [items]="currentProject.environments"
@@ -241,6 +243,7 @@
             <h3>Automatic Hub Update Failed!</h3>
             <p *ngIf="currentEnvironment" class="error">
               Sorry. We failed to update you to version <span class="version">{{currentEnvironment.runningVersion}}</span>.
+              <span>{{hubUpdateError}}.</span>
             </p>
             <p>Go read the wiki page that describes the changes necessary and try them manually.</p>
             <a target="_blank" [href]="hubUpdateUrl()">How to update a Hub Project</a>

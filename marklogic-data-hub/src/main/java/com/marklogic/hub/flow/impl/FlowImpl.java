@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2016 MarkLogic Corporation
+ * Copyright 2012-2018 MarkLogic Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -131,9 +131,6 @@ public class FlowImpl implements Flow {
         }
     }
 
-    /**
-     * Serializes the flow into an xml string
-     */
     @Override
     public String serialize() {
         try {

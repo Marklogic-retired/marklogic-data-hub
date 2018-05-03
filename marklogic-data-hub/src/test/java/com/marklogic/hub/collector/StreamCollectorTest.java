@@ -1,3 +1,18 @@
+/*
+ * Copyright 2012-2018 MarkLogic Corporation
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.marklogic.hub.collector;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -15,14 +30,10 @@ import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.flow.*;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.FileUtil;
-import org.apache.commons.io.FileUtils;
 import org.custommonkey.xmlunit.XMLUnit;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -45,13 +56,11 @@ public class StreamCollectorTest extends HubTestBase {
     private boolean installDocsFailed = false;
     private String installDocError;
 
-    @BeforeClass
-    public static void setup() throws IOException {
+    @Before
+    public void setup() throws IOException {
         XMLUnit.setIgnoreWhitespace(true);
-        File projectDirFile = projectDir.toFile();
-        if (projectDirFile.isDirectory() && projectDirFile.exists()) {
-            FileUtils.deleteDirectory(projectDirFile);
-        }
+
+        deleteProjectDir();
 
         createProjectDir();
 
@@ -59,28 +68,26 @@ public class StreamCollectorTest extends HubTestBase {
         dbDir.toFile().mkdirs();
         FileUtil.copy(getResourceStream("stream-collector-test/staging-database.json"), dbDir.resolve("staging-database.json").toFile());
 
-        installHub();
+        createProjectDir();
 
         // disable tracing because trying to trace the 3 million ids to a doc will fail.
         disableDebugging();
         disableTracing();
 
-        Scaffolding scaffolding = new Scaffolding(projectDir.toString(), stagingClient);
+        Scaffolding scaffolding = Scaffolding.create(projectDir.toString(), stagingClient);
         scaffolding.createEntity(ENTITY);
         scaffolding.createFlow(ENTITY, "testharmonize", FlowType.HARMONIZE,
             CodeFormat.XQUERY, DataFormat.XML);
 
-        DataHub dh = new DataHub(getHubConfig());
+        DataHub dh = DataHub.create(getHubConfig());
         dh.clearUserModules();
-        installUserModules(getHubConfig(), false);
+        installUserModules(getHubConfig(), true);
+        getDataHub().updateIndexes();
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_TRACE_NAME, HubConfig.DEFAULT_JOB_NAME);
 
         installModule("/entities/" + ENTITY + "/harmonize/testharmonize/collector.xqy", "stream-collector-test/collector.xqy");
         installModule("/entities/" + ENTITY + "/harmonize/testharmonize/content.xqy", "stream-collector-test/content.xqy");
-    }
 
-    @Before
-    public void setupFiles() {
         DataMovementManager stagingDataMovementManager = stagingClient.newDataMovementManager();
         WriteBatcher writeBatcher = stagingDataMovementManager.newWriteBatcher()
             .withBatchSize(2000)
@@ -113,11 +120,6 @@ public class StreamCollectorTest extends HubTestBase {
         assertFalse("Doc install failed: " + installDocError, installDocsFailed);
     }
 
-    @AfterClass
-    public static void teardown() {
-        uninstallHub();
-    }
-
     @Test
     public void runCollector() {
         // this test relies on a flow that returns DOC_COUNT items from the collector.
@@ -126,7 +128,7 @@ public class StreamCollectorTest extends HubTestBase {
         // having to wait for the entire harmonize flow to finish.
         assertEquals(DOC_COUNT, getStagingDocCount());
         assertEquals(0, getFinalDocCount());
-        FlowManager fm = new FlowManager(getHubConfig());
+        FlowManager fm = FlowManager.create(getHubConfig());
         Flow harmonizeFlow = fm.getFlow(ENTITY, "testharmonize",
             FlowType.HARMONIZE);
         HashMap<String, Object> options = new HashMap<>();

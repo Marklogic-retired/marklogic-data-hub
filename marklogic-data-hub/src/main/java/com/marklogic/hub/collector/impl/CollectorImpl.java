@@ -1,3 +1,18 @@
+/*
+ * Copyright 2012-2018 MarkLogic Corporation
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.marklogic.hub.collector.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -95,8 +110,8 @@ public class CollectorImpl implements Collector {
 
             // Important design info:
             // The collector is invoked with a regular http client due to streaming limitations in OkHttp.
-            // https://github.com/marklogic-community/marklogic-data-hub/issues/632
-            // https://github.com/marklogic-community/marklogic-data-hub/issues/633
+            // https://github.com/marklogic/marklogic-data-hub/issues/632
+            // https://github.com/marklogic/marklogic-data-hub/issues/633
             //
             AppConfig appConfig = hubConfig.getAppConfig();
 
@@ -106,7 +121,7 @@ public class CollectorImpl implements Collector {
                 client.getSecurityContext().getSSLContext() != null ? "https" : "http",
                 client.getHost(),
                 client.getPort(),
-                "/com.marklogic.hub/endpoints/collector.xqy",
+                "/v1/internal/hubcollector",
                 URLEncoder.encode(jobId, "UTF-8"),
                 URLEncoder.encode(entity, "UTF-8"),
                 URLEncoder.encode(flow, "UTF-8"),
@@ -130,6 +145,7 @@ public class CollectorImpl implements Collector {
                 }
                 inputStream.close();
             }
+
             return results;
         }
         catch(Exception e) {

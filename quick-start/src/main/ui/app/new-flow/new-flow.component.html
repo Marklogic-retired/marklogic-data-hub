@@ -16,7 +16,7 @@
             label="{{flowType}} Flow Name (required)"
             #flowTypeInput="ngModel"
             [(ngModel)]="flow.flowName"></mdl-textfield>
-          <ng-template [ngIf]="getMarkLogicVersion().startsWith('9')">
+          <ng-template [ngIf]="getMarkLogicVersion() >= 9">
             <label>Code Generation</label>
             <app-select-list
               [items]="scaffoldOptions"
