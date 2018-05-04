@@ -1,8 +1,10 @@
-{% for image in site.static_files reversed %}
-  {% assign parts = (image.path | split: "/") %}
-  {% if parts.size == 4 and parts[1] == 'javadocs' and parts[3] == 'index.html' %}
-    {% assign doclinks = doclinks | push: parts[2] %}
-  {% endif %}
+{% assign doclinks = "" | split: ',' %}
+
+{% for image in site.static_files | sort: 'path' | reverse %}
+{% assign parts = (image.path | split: "/") %}
+{% if parts.size == 4 and parts[1] == 'javadocs' and parts[3] == 'index.html' %}
+{% assign doclinks = doclinks | push: parts[2] %}
+{% endif %}
 {% endfor %}
 
 {% assign doclinks = doclinks | reverse %}
