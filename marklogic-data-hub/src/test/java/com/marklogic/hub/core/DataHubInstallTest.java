@@ -77,7 +77,7 @@ public class DataHubInstallTest extends HubTestBase {
         assertTrue(totalCount + " is not correct.  I was expecting either " + MODULE_COUNT + " or " + MODULE_COUNT_WITH_TRACE_MODULES, MODULE_COUNT == totalCount || MODULE_COUNT_WITH_TRACE_MODULES == totalCount);
         assertTrue(hubModulesCount + "  is not correct.  I was expecting either " + CORE_MODULE_COUNT_WITH_TRACE_MODULES + " or " + CORE_MODULE_COUNT_WITH_TRACE_MODULES, CORE_MODULE_COUNT_WITH_TRACE_MODULES == hubModulesCount || CORE_MODULE_COUNT == hubModulesCount);
 
-        assertTrue("trace options not installed", getModulesFile("/Default/data-hub-TRACING/rest-api/options/traces.xml").length() > 0);
+        assertTrue("trace options not installed", getModulesFile("/Default/data-hub-JOBS/rest-api/options/traces.xml").length() > 0);
         assertTrue("trace options not installed", getModulesFile("/Default/data-hub-JOBS/rest-api/options/jobs.xml").length() > 0);
         assertTrue("trace options not installed", getModulesFile("/Default/data-hub-STAGING/rest-api/options/default.xml").length() > 0);
         assertTrue("trace options not installed", getModulesFile("/Default/data-hub-FINAL/rest-api/options/default.xml").length() > 0);

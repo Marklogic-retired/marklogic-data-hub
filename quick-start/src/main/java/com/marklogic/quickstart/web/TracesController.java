@@ -38,7 +38,7 @@ public class TracesController extends EnvironmentAware {
     @Bean
     @Scope(proxyMode= ScopedProxyMode.TARGET_CLASS, value="session")
     TraceService traceManager() {
-        return new TraceService(envConfig().getTraceClient());
+        return new TraceService(envConfig().getJobClient());
     }
 
     @RequestMapping(method = RequestMethod.POST)

@@ -28,7 +28,6 @@ public enum DatabaseKind {
         STAGING,
         FINAL,
         JOB,
-        TRACE,
         SCHEMAS,
         TRIGGERS,
         MODULES;
@@ -37,7 +36,6 @@ public enum DatabaseKind {
            "staging",
            "final",
            "job",
-            "trace",
             "schemas",
             "triggers",
             "modules"

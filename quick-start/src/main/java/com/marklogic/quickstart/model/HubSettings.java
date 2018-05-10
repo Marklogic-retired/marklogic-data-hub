@@ -23,12 +23,6 @@ public class HubSettings {
         settings.finalPort = config.getPort(DatabaseKind.FINAL);
         settings.finalAuthMethod = config.getAuthMethod(DatabaseKind.FINAL);
 
-        settings.traceDbName = config.getDbName(DatabaseKind.TRACE);
-        settings.traceHttpName = config.getHttpName(DatabaseKind.TRACE);
-        settings.traceForestsPerHost = config.getForestsPerHost(DatabaseKind.TRACE);
-        settings.tracePort = config.getPort(DatabaseKind.TRACE);
-        settings.traceAuthMethod = config.getAuthMethod(DatabaseKind.TRACE);
-
         settings.jobDbName = config.getDbName(DatabaseKind.JOB);
         settings.jobHttpName = config.getHttpName(DatabaseKind.JOB);
         settings.jobForestsPerHost = config.getForestsPerHost(DatabaseKind.JOB);
@@ -140,46 +134,6 @@ public class HubSettings {
         this.finalAuthMethod = finalAuthMethod;
     }
 
-    public String getTraceDbName() {
-        return traceDbName;
-    }
-
-    public void setTraceDbName(String traceDbName) {
-        this.traceDbName = traceDbName;
-    }
-
-    public String getTraceHttpName() {
-        return traceHttpName;
-    }
-
-    public void setTraceHttpName(String traceHttpName) {
-        this.traceHttpName = traceHttpName;
-    }
-
-    public Integer getTraceForestsPerHost() {
-        return traceForestsPerHost;
-    }
-
-    public void setTraceForestsPerHost(Integer traceForestsPerHost) {
-        this.traceForestsPerHost = traceForestsPerHost;
-    }
-
-    public Integer getTracePort() {
-        return tracePort;
-    }
-
-    public void setTracePort(Integer tracePort) {
-        this.tracePort = tracePort;
-    }
-
-    public String getTraceAuthMethod() {
-        return traceAuthMethod;
-    }
-
-    public void setTraceAuthMethod(String traceAuthMethod) {
-        this.traceAuthMethod = traceAuthMethod;
-    }
-
     public String getJobDbName() {
         return jobDbName;
     }
@@ -274,12 +228,6 @@ public class HubSettings {
     Integer finalForestsPerHost = null;
     Integer finalPort = null;
     String finalAuthMethod = null;
-
-    String traceDbName = null;
-    String traceHttpName = null;
-    Integer traceForestsPerHost = null;
-    Integer tracePort = null;
-    String traceAuthMethod = null;
 
     String jobDbName = null;
     String jobHttpName = null;

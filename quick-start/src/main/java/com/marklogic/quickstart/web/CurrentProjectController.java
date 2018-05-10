@@ -194,7 +194,7 @@ public class CurrentProjectController extends EnvironmentAware implements FileSy
     @ResponseBody
     public ResponseEntity<?> clearDatabase() {
         HubConfig config = envConfig().getMlSettings();
-        String[] databases = { config.getDbName(DatabaseKind.STAGING), config.getDbName(DatabaseKind.FINAL), config.getDbName(DatabaseKind.JOB), config.getDbName(DatabaseKind.TRACE) };
+        String[] databases = { config.getDbName(DatabaseKind.STAGING), config.getDbName(DatabaseKind.FINAL), config.getDbName(DatabaseKind.JOB) };
         for (String database: databases) {
             dataHubService.clearContent(envConfig().getMlSettings(), database);
         }

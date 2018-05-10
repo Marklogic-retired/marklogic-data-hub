@@ -189,7 +189,6 @@ public class DataHubTest extends HubTestBase {
         assertFalse(dh.isPortInUse(DatabaseKind.STAGING));
         assertFalse(dh.isPortInUse(DatabaseKind.FINAL));
         assertFalse(dh.isPortInUse(DatabaseKind.JOB));
-        assertFalse(dh.isPortInUse(DatabaseKind.TRACE));
         assertTrue(dh.isSafeToInstall());
     }
 
@@ -213,7 +212,6 @@ public class DataHubTest extends HubTestBase {
         assertFalse(dh.isPortInUse(DatabaseKind.STAGING));
         assertFalse(dh.isPortInUse(DatabaseKind.FINAL));
         assertFalse(dh.isPortInUse(DatabaseKind.JOB));
-        assertFalse(dh.isPortInUse(DatabaseKind.TRACE));
         assertTrue(dh.isSafeToInstall());
     }
 
@@ -235,7 +233,6 @@ public class DataHubTest extends HubTestBase {
         assertEquals("port-stealer", dh.getPortInUseBy(DatabaseKind.STAGING));
         assertFalse(dh.isPortInUse(DatabaseKind.FINAL));
         assertFalse(dh.isPortInUse(DatabaseKind.JOB));
-        assertFalse(dh.isPortInUse(DatabaseKind.TRACE));
         assertFalse(dh.isSafeToInstall());
     }
 
@@ -257,7 +254,6 @@ public class DataHubTest extends HubTestBase {
         assertEquals("port-stealer", dh.getPortInUseBy(DatabaseKind.STAGING));
         assertFalse(dh.isPortInUse(DatabaseKind.FINAL));
         assertFalse(dh.isPortInUse(DatabaseKind.JOB));
-        assertFalse(dh.isPortInUse(DatabaseKind.TRACE));
         assertFalse(dh.isSafeToInstall());
     }
 
@@ -279,7 +275,6 @@ public class DataHubTest extends HubTestBase {
         assertTrue(dh.isPortInUse(DatabaseKind.FINAL));
         assertEquals("port-stealer", dh.getPortInUseBy(DatabaseKind.FINAL));
         assertFalse(dh.isPortInUse(DatabaseKind.JOB));
-        assertFalse(dh.isPortInUse(DatabaseKind.TRACE));
         assertFalse(dh.isSafeToInstall());
     }
 }
