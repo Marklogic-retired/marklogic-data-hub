@@ -39,10 +39,10 @@ public class HubProjectTest extends HubTestBase {
         config.setForestsPerHost(DatabaseKind.FINAL, 100);
         config.setPort(DatabaseKind.FINAL, 2222);
 
-        config.setHttpName(DatabaseKind.TRACE, "my-crazy-test-trace");
-        config.setDbName(DatabaseKind.TRACE, "my-crazy-test-trace");
-        config.setForestsPerHost(DatabaseKind.TRACE, 100);
-        config.setPort(DatabaseKind.TRACE, 3333);
+        config.setHttpName(DatabaseKind.JOB, "my-crazy-test-trace");
+        config.setDbName(DatabaseKind.JOB, "my-crazy-test-trace");
+        config.setForestsPerHost(DatabaseKind.JOB, 100);
+        config.setPort(DatabaseKind.JOB, 3333);
 
         config.setForestsPerHost(DatabaseKind.MODULES,3);
         config.setForestsPerHost(DatabaseKind.TRIGGERS, 4);
@@ -56,11 +56,9 @@ public class HubProjectTest extends HubTestBase {
 
         assertTrue(new File(projectPath, "hub-internal-config/servers/staging-server.json").exists());
         assertTrue(new File(projectPath, "hub-internal-config/servers/final-server.json").exists());
-        assertTrue(new File(projectPath, "hub-internal-config/servers/trace-server.json").exists());
 
         assertTrue(new File(projectPath, "hub-internal-config/databases/staging-database.json").exists());
         assertTrue(new File(projectPath, "hub-internal-config/databases/final-database.json").exists());
-        assertTrue(new File(projectPath, "hub-internal-config/databases/trace-database.json").exists());
         assertTrue(new File(projectPath, "hub-internal-config/databases/modules-database.json").exists());
         assertTrue(new File(projectPath, "hub-internal-config/databases/schemas-database.json").exists());
         assertTrue(new File(projectPath, "hub-internal-config/databases/triggers-database.json").exists());
@@ -112,10 +110,10 @@ public class HubProjectTest extends HubTestBase {
         assertEquals(config.getDbName(DatabaseKind.FINAL), props.getProperty("mlFinalDbName"));
         assertEquals(config.getForestsPerHost(DatabaseKind.FINAL).toString(), props.getProperty("mlFinalForestsPerHost"));
 
-        assertEquals(config.getHttpName(DatabaseKind.TRACE), props.getProperty("mlTraceAppserverName"));
-        assertEquals(config.getPort(DatabaseKind.TRACE).toString(), props.getProperty("mlTracePort"));
-        assertEquals(config.getDbName(DatabaseKind.TRACE), props.getProperty("mlTraceDbName"));
-        assertEquals(config.getForestsPerHost(DatabaseKind.TRACE).toString(), props.getProperty("mlTraceForestsPerHost"));
+//        assertEquals(config.getHttpName(DatabaseKind.TRACE), props.getProperty("mlTraceAppserverName"));
+//        assertEquals(config.getPort(DatabaseKind.TRACE).toString(), props.getProperty("mlTracePort"));
+//        assertEquals(config.getDbName(DatabaseKind.TRACE), props.getProperty("mlTraceDbName"));
+//        assertEquals(config.getForestsPerHost(DatabaseKind.TRACE).toString(), props.getProperty("mlTraceForestsPerHost"));
 
         assertEquals(config.getHttpName(DatabaseKind.JOB), props.getProperty("mlJobAppserverName"));
         assertEquals(config.getPort(DatabaseKind.JOB).toString(), props.getProperty("mlJobPort"));

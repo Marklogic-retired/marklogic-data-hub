@@ -234,10 +234,6 @@ ext {
         customTokens.put("%%mlFinalPort%%", mlFinalPort)
         customTokens.put("%%mlFinalDbName%%", mlFinalDbName)
 
-        customTokens.put("%%mlTraceAppserverName%%", mlTraceAppserverName)
-        customTokens.put("%%mlTracePort%%", mlTracePort)
-        customTokens.put("%%mlTraceDbName%%", mlTraceDbName)
-
         customTokens.put("%%mlJobAppserverName%%", mlJobAppserverName)
         customTokens.put("%%mlJobPort%%", mlJobPort)
         customTokens.put("%%mlJobDbName%%", mlJobDbName)
