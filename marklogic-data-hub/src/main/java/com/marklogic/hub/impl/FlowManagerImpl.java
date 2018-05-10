@@ -63,7 +63,7 @@ public class FlowManagerImpl extends ResourceManager implements FlowManager {
         this.stagingClient = hubConfig.newStagingClient();
         this.finalClient = hubConfig.newFinalClient();
         this.jobClient = hubConfig.newJobDbClient();
-        this.jobManager = JobManager.create(this.jobClient, this.hubConfig.newTraceDbClient());
+        this.jobManager = JobManager.create(this.jobClient);
         this.dataMovementManager = this.stagingClient.newDataMovementManager();
         this.stagingClient.init(NAME, this);
     }
@@ -281,4 +281,4 @@ public class FlowManagerImpl extends ResourceManager implements FlowManager {
         return new FlowRunnerImpl(hubConfig);
     }
 
-    }
+}

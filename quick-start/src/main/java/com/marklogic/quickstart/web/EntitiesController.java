@@ -235,7 +235,7 @@ class EntitiesController extends EnvironmentAware {
             @PathVariable String entityName,
             @PathVariable String flowName,
             @PathVariable String jobId) throws IOException {
-        JobService jm = new JobService(envConfig().getJobClient(), envConfig().getTraceClient());
+        JobService jm = new JobService(envConfig().getJobClient());
         jm.cancelJob(Long.parseLong(jobId));
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

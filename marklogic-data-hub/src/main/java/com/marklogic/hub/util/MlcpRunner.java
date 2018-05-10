@@ -55,7 +55,7 @@ public class MlcpRunner extends ProcessRunner {
 
         this.withHubconfig(hubConfig);
 
-        this.jobManager = JobManager.create(hubConfig.newJobDbClient(), hubConfig.newTraceDbClient());
+        this.jobManager = JobManager.create(hubConfig.newJobDbClient());
         this.flowStatusListener = statusListener;
         this.flow = flow;
         this.mlcpOptions = mlcpOptions;

@@ -31,11 +31,10 @@ public interface JobManager {
     /**
      * Creates and returns a JobManager object
      * @param jobClient the database client that is used to connect to the jobs database
-     * @param traceClient the database client that is used to connect to the trace database
      * @return JobManager object
      */
-    static JobManager create(DatabaseClient jobClient, DatabaseClient traceClient){
-        return new JobManagerImpl(jobClient, traceClient);
+    static JobManager create(DatabaseClient jobClient){
+        return new JobManagerImpl(jobClient);
     }
 
     /**

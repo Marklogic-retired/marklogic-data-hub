@@ -208,7 +208,7 @@ public class HubTestBase {
         host = properties.getProperty("mlHost");
         stagingPort = Integer.parseInt(properties.getProperty("mlStagingPort"));
         finalPort = Integer.parseInt(properties.getProperty("mlFinalPort"));
-        tracePort = Integer.parseInt(properties.getProperty("mlTracePort"));
+        tracePort = Integer.parseInt(properties.getProperty("mlJobPort"));
         jobPort = Integer.parseInt(properties.getProperty("mlJobPort"));
         user = properties.getProperty("mlUsername");
         password = properties.getProperty("mlPassword");
@@ -264,7 +264,7 @@ public class HubTestBase {
             stagingModulesClient  = getClient(host, stagingPort, HubConfig.DEFAULT_MODULES_DB_NAME, user, password, stagingAuthMethod);
             finalClient = getClient(host, finalPort, HubConfig.DEFAULT_FINAL_NAME, user, password, finalAuthMethod);
             finalModulesClient  = getClient(host, stagingPort, HubConfig.DEFAULT_MODULES_DB_NAME, user, password, finalAuthMethod);
-            traceClient = getClient(host, tracePort, HubConfig.DEFAULT_TRACE_NAME, user, password, traceAuthMethod);
+            traceClient = getClient(host, jobPort, HubConfig.DEFAULT_JOB_NAME, user, password, jobAuthMethod);
             traceModulesClient  = getClient(host, stagingPort, HubConfig.DEFAULT_MODULES_DB_NAME, user, password, traceAuthMethod);
             jobClient = getClient(host, jobPort, HubConfig.DEFAULT_JOB_NAME, user, password, jobAuthMethod);
             jobModulesClient  = getClient(host, stagingPort, HubConfig.DEFAULT_MODULES_DB_NAME, user, password, jobAuthMethod);
@@ -345,17 +345,17 @@ public class HubTestBase {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		});     
+		});
     }
 
     protected void disableTracing() {
         clients.forEach(client ->
-		{	
+		{
 			Tracing.create(client).disable();
 			client.newServerEval().xquery("xquery version \"1.0-ml\";\n" +
 					"import module namespace hul = \"http://marklogic.com/data-hub/hub-utils-lib\" at \"/MarkLogic/data-hub-framework/impl/hub-utils-lib.xqy\";\n" +
 					"hul:invalidate-field-cache(\"tracing-enabled\")").eval();
-			
+
 		});
     }
 
@@ -373,7 +373,6 @@ public class HubTestBase {
             .build();
         hubConfig.setPort(DatabaseKind.STAGING, stagingPort);
         hubConfig.setPort(DatabaseKind.FINAL, finalPort);
-        hubConfig.setPort(DatabaseKind.TRACE, tracePort);
         hubConfig.setPort(DatabaseKind.JOB, jobPort);
         hubConfig.getAppConfig().setAppServicesUsername(user);
         hubConfig.getAppConfig().setAppServicesPassword(password);
@@ -393,11 +392,9 @@ public class HubTestBase {
 
         	hubConfig.setSslContext(DatabaseKind.STAGING,certContext);
         	hubConfig.setSslContext(DatabaseKind.FINAL,certContext);
-        	hubConfig.setSslContext(DatabaseKind.TRACE,certContext);
         	hubConfig.setSslContext(DatabaseKind.JOB,certContext);
         	hubConfig.setSslHostnameVerifier(DatabaseKind.STAGING,SSLHostnameVerifier.ANY);
         	hubConfig.setSslHostnameVerifier(DatabaseKind.FINAL,SSLHostnameVerifier.ANY);
-        	hubConfig.setSslHostnameVerifier(DatabaseKind.TRACE,SSLHostnameVerifier.ANY);
         	hubConfig.setSslHostnameVerifier(DatabaseKind.JOB,SSLHostnameVerifier.ANY);
 
         }
@@ -658,9 +655,7 @@ public class HubTestBase {
             case HubConfig.DEFAULT_MODULES_DB_NAME:
                 eval = stagingModulesClient.newServerEval();
                 break;
-            case HubConfig.DEFAULT_TRACE_NAME:
-                eval = traceClient.newServerEval();
-                break;
+
             case HubConfig.DEFAULT_JOB_NAME:
                 eval = jobClient.newServerEval();
                 break;
