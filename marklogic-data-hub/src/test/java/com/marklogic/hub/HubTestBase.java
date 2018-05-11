@@ -510,14 +510,14 @@ public class HubTestBase {
     }
 
     protected int getTracingDocCount() {
-        return getTracingDocCount(null);
+        return getTracingDocCount("trace");
     }
     protected int getTracingDocCount(String collection) {
         return getDocCount(HubConfig.DEFAULT_TRACE_NAME, collection);
     }
 
     protected int getJobDocCount() {
-        return getJobDocCount(null);
+        return getJobDocCount("job");
     }
     protected int getJobDocCount(String collection) {
         return getDocCount(HubConfig.DEFAULT_JOB_NAME, collection);
