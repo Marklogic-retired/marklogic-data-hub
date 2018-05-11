@@ -1,5 +1,7 @@
 package com.marklogic.hub;
 
+import static org.junit.Assert.fail;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -32,6 +34,7 @@ import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSyntaxException;
 import com.marklogic.appdeployer.command.Command;
 import com.marklogic.appdeployer.command.security.*;
+
 import com.marklogic.appdeployer.impl.SimpleAppDeployer;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
@@ -74,8 +77,7 @@ public class PiiE2E extends HubTestBase {
             		FileUtils.copyInputStreamToFile(Files.newInputStream(sourcePath), dest.resolve(src.relativize(sourcePath)).toFile());
                 }
             	catch (Exception e) {
-            		// TODO Auto-generated catch block
-            		e.printStackTrace();
+            		throw new RuntimeException(e);
                 }
             });
             
@@ -89,8 +91,7 @@ public class PiiE2E extends HubTestBase {
     			runInputFLow();
     			runHarmonizeFlow("harmonizer", stagingClient, HubConfig.DEFAULT_FINAL_NAME);
     		} catch (URISyntaxException e) {
-    			// TODO Auto-generated catch block
-    			e.printStackTrace();
+    			throw new RuntimeException(e);
     		}
         	e2eInit = true;
         }             
@@ -107,22 +108,38 @@ public class PiiE2E extends HubTestBase {
     	Assert.assertEquals("{\"fullName\":\"Ellie Holland\",\"worksFor\":\"SuperMemo Limited\",\"email\":\"ellie.holland@supermemolimited.biz\",\"ssn\":\"164-32-6412\"}",getCustomerHistory(officerClient, "Holland"));
        	Assert.assertEquals("{\"fullName\":\"Melanie Douglas\",\"worksFor\":\"Erntogra Inc.\",\"email\":\"melanie.douglas@erntograinc.eu\",\"ssn\":\"228-80-9858\"}",getCustomerHistoryBySSN(officerClient, "228-80-9858"));
    
+        //Compliance officer should not be able to update harmonized docs 
+       	try {
+       		updateHarmonizedDocument(officerClient);
+       		fail("Officer client should be able to update");
+       	}
+       	catch(Exception e) {
+       		Assert.assertTrue(e.getMessage().contains("Permission denied"));
+       	}
+       	//verify that doc is not changed
+       	Assert.assertEquals("{\"fullName\":\"Morgan King\",\"worksFor\":\"Linger Company\",\"email\":\"morgan.king@lingercompany.com\",\"ssn\":\"136-70-5036\"}",getCustomerHistory(officerClient, "King"));
+       	
        	JsonParser parser = new JsonParser();
-    	// Provide "harmonized-reader" role to clerk and make "ssn" as pii in the entity  
+    	// Provide "harmonized-reader" role to clerk, "harmonized-updater" to compliance officer and make "ssn" as pii in the entity  
         Files.walk(Paths.get(projectPath.toUri()))
-        .filter(path -> path.toAbsolutePath().toString().contains("clerk.json") || path.toAbsolutePath().toString().contains("Customer.entity.json"))
+        .filter(path -> path.toAbsolutePath().toString().contains("clerk.json") 
+        		|| path.toAbsolutePath().toString().contains("Customer.entity.json")
+        		|| path.toAbsolutePath().toString().contains("compliance-officer.json"))
         .forEach(f-> {
         	FileReader reader = null;
         	File jsonFile = f.toFile();
 			try {
 				reader = new FileReader(jsonFile);
 			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				
+				throw new RuntimeException(e);
 			}
         	JsonElement ele = parser.parse(reader);
         	if(jsonFile.getAbsolutePath().contains("clerk.json")) {
         		ele.getAsJsonObject().get("role").getAsJsonArray().add(new JsonPrimitive("harmonized-reader"));
+        	}
+        	else if(jsonFile.getAbsolutePath().contains("compliance-officer.json")) {
+        		ele.getAsJsonObject().get("role").getAsJsonArray().add(new JsonPrimitive("harmonized-updater"));
         	}
         	else {
         		ele.getAsJsonObject().get("definitions").getAsJsonObject().get("Customer").getAsJsonObject().get("pii").getAsJsonArray().add(new JsonPrimitive("ssn"));
@@ -131,15 +148,13 @@ public class PiiE2E extends HubTestBase {
         		FileUtils.write(jsonFile, ele.getAsJsonObject().toString());  
         		
 			} catch (IOException e2) {
-				// TODO Auto-generated catch block
-				e2.printStackTrace();
+				throw new RuntimeException(e2);
 			} 
         	finally {
         		try {
 					reader.close();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					throw new RuntimeException(e);
 				}
         	}      	
         }); 
@@ -156,9 +171,14 @@ public class PiiE2E extends HubTestBase {
     	// Clerk unable to search by "ssn"
     	Assert.assertEquals("{}",getCustomerHistoryBySSN(clerkClient, "228-80-9858"));
     	
-    	//COmpliance oficer able to search using ssn and see all fields in harmonized document
+    	//Compliance oficer able to search using ssn and see all fields in harmonized document
     	Assert.assertEquals("{\"fullName\":\"Ellie Holland\",\"worksFor\":\"SuperMemo Limited\",\"email\":\"ellie.holland@supermemolimited.biz\",\"ssn\":\"164-32-6412\"}",getCustomerHistory(officerClient, "Holland"));
-    	Assert.assertEquals("{\"fullName\":\"Melanie Douglas\",\"worksFor\":\"Erntogra Inc.\",\"email\":\"melanie.douglas@erntograinc.eu\",\"ssn\":\"228-80-9858\"}",getCustomerHistoryBySSN(officerClient, "228-80-9858"));   
+    	Assert.assertEquals("{\"fullName\":\"Melanie Douglas\",\"worksFor\":\"Erntogra Inc.\",\"email\":\"melanie.douglas@erntograinc.eu\",\"ssn\":\"228-80-9858\"}",getCustomerHistoryBySSN(officerClient, "228-80-9858"));
+    	
+   		updateHarmonizedDocument(officerClient);
+   		//verify that doc is changed
+   		Assert.assertEquals("{\"fullName\":\"Morgan King\",\"worksFor\":\"MarkLogic\",\"email\":\"morgan.king@lingercompany.com\",\"ssn\":\"136-70-5036\"}",getCustomerHistory(officerClient, "King"));
+   	
     }
     
     @Test
@@ -191,25 +211,20 @@ public class PiiE2E extends HubTestBase {
 				actual = parser.parse(actualReader).getAsJsonObject();
 				expected = parser.parse(expectedReader).getAsJsonObject();
 			} catch (JsonIOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				throw new RuntimeException(e);
 			} catch (JsonSyntaxException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				throw new RuntimeException(e);
 			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				throw new RuntimeException(e);
 			} catch (URISyntaxException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				throw new RuntimeException(e);
 			}
 			finally {
 				try {
 					actualReader.close();
 					expectedReader.close();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					throw new RuntimeException(e);
 				}
 			}
 			Assert.assertEquals(expected, actual); 	        	
@@ -258,7 +273,7 @@ public class PiiE2E extends HubTestBase {
         batcher.withBatchSize(1).withTransform(runFlow);
         batcher.onBatchSuccess(batch -> {
 		}).onBatchFailure((batch, throwable) -> {
-			throwable.printStackTrace();
+			throw new RuntimeException(throwable);
 		});
         stagingDataMovementManager.startJob(batcher);
         try (Stream<Path> paths = Files.walk(Paths.get(PiiE2E.class.getClassLoader().getResource("pii-test/test-data").toURI()))) {
@@ -268,10 +283,9 @@ public class PiiE2E extends HubTestBase {
                 	FileHandle handle = new FileHandle(path.toFile());
                 	batcher.add("/input/"+path.toFile().getName(), new DocumentMetadataHandle().withCollections("SupportCall"),handle);
             	}
-
             });
           } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
           }
         batcher.flushAndWait();
 
@@ -326,5 +340,14 @@ public class PiiE2E extends HubTestBase {
     			"}\r\n" + 
     			"jsonResult";
     	return client.newServerEval().javascript(query).evalAs(String.class);	
+    }
+    
+    private void updateHarmonizedDocument(DatabaseClient client) {
+    	String query = "declareUpdate();\r\n" + 
+    			"var doc = cts.doc(\"/input/UU4BRHD9K.json\");\r\n" + 
+    			"var docObj = doc.toObject();\r\n" + 
+    			"docObj.envelope.instance.SupportCall.caller.Customer.worksFor= \"MarkLogic\";\r\n" + 
+    			"xdmp.nodeReplace(doc, docObj);";
+    	client.newServerEval().javascript(query).eval();
     }
 }
