@@ -287,8 +287,8 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
 
             ObjectMapper mapper = new ObjectMapper();
             ObjectWriter writer = mapper.writerWithDefaultPrettyPrinter();
-            List<JsonNode> entities = getModifiedRawEntities(queryRolesetsConfig.lastModified());
-            logger.debug("SIZE OF ENTITIES TO PII " + entities.size());
+            // get all the entities.
+            List<JsonNode> entities = getModifiedRawEntities(0L);
             if (entities.size() > 0) {
                 PiiGenerator piiGenerator = new PiiGenerator(hubConfig.newFinalClient());
 
