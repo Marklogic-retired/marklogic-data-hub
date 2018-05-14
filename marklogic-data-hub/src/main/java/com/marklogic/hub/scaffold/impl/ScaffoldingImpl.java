@@ -280,6 +280,7 @@ public class ScaffoldingImpl implements Scaffolding {
 
         Path flowDir = getFlowDir(entityName, flowName, flowType);
         Path mainPath = flowDir.resolve("main.sjs");
+        Path xqyMainPath = flowDir.resolve("main.xqy");
         if (mainPath.toFile().exists()) {
             try {
                 String mainFile = FileUtils.readFileToString(mainPath.toFile());
@@ -309,6 +310,22 @@ public class ScaffoldingImpl implements Scaffolding {
                 throw new RuntimeException(e);
             }
         }
+
+        if (mainPath.toFile().exists() || xqyMainPath.toFile().exists()) {
+            if (xqyMainPath.toFile().exists()) {
+                mainPath = xqyMainPath;
+            }
+            try {
+                String mainFile = FileUtils.readFileToString(mainPath.toFile());
+                mainFile = mainFile.replaceFirst("com\\.marklogic\\.hub", "MarkLogic/data-hub-framework");
+                FileOutputStream fileOutputStream = new FileOutputStream(mainPath.toFile());
+                IOUtils.write(mainFile, fileOutputStream);
+                fileOutputStream.close();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+
         return updated;
     }
 

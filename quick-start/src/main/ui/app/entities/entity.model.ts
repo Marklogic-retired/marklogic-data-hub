@@ -134,7 +134,8 @@ export class Entity {
         'elementRangeIndex': [],
         'rangeIndex': [],
         'required': [],
-        'wordLexicon': []
+        'wordLexicon': [],
+        'pii': []
       },
       'filename': null,
       'hubUi': {

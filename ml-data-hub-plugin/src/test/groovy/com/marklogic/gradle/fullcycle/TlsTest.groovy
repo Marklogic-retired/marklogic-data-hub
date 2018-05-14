@@ -15,12 +15,13 @@
  *
  */
 
-package com.marklogic.gradle.task
+package com.marklogic.gradle.fullcycle
 
 import com.marklogic.client.DatabaseClientFactory
 import com.marklogic.client.ext.modulesloader.ssl.SimpleX509TrustManager
 import com.marklogic.client.io.DOMHandle
 import com.marklogic.client.io.DocumentMetadataHandle
+import com.marklogic.gradle.task.BaseTest
 import com.marklogic.hub.HubConfig
 import org.gradle.testkit.runner.UnexpectedBuildFailure
 
@@ -36,8 +37,9 @@ import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
 class TlsTest extends BaseTest {
     def setupSpec() {
-        buildFile = testProjectDir.newFile('build.gradle')
-        buildFile << '''
+        createFullPropertiesFile()
+        BaseTest.buildFile = BaseTest.testProjectDir.newFile('build.gradle')
+        BaseTest.buildFile << '''
             plugins {
                 id 'com.marklogic.ml-data-hub'
             }
@@ -191,11 +193,11 @@ class TlsTest extends BaseTest {
         '''
 
         def result = runTask("hubInit")
-        copyResourceToFile("tls-test/my-template.xml", new File(testProjectDir.root, "user-config/security/certificate-templates/my-template.xml"))
-        copyResourceToFile("tls-test/ssl-server.json", new File(testProjectDir.root, "user-config/servers/final-server.json"))
-        copyResourceToFile("tls-test/ssl-server.json", new File(testProjectDir.root, "user-config/servers/job-server.json"))
-        copyResourceToFile("tls-test/ssl-server.json", new File(testProjectDir.root, "user-config/servers/staging-server.json"))
-        copyResourceToFile("tls-test/ssl-server.json", new File(testProjectDir.root, "user-config/servers/trace-server.json"))
+        copyResourceToFile("tls-test/my-template.xml", new File(BaseTest.testProjectDir.root, "user-config/security/certificate-templates/my-template.xml"))
+        copyResourceToFile("tls-test/ssl-server.json", new File(BaseTest.testProjectDir.root, "user-config/servers/final-server.json"))
+        copyResourceToFile("tls-test/ssl-server.json", new File(BaseTest.testProjectDir.root, "user-config/servers/job-server.json"))
+        copyResourceToFile("tls-test/ssl-server.json", new File(BaseTest.testProjectDir.root, "user-config/servers/staging-server.json"))
+        copyResourceToFile("tls-test/ssl-server.json", new File(BaseTest.testProjectDir.root, "user-config/servers/trace-server.json"))
         createProperties()
         result = runTask("enableSSL")
         print(result.output)
@@ -207,50 +209,8 @@ class TlsTest extends BaseTest {
     }
 
     void createProperties() {
-        propertiesFile = new File(testProjectDir.root, 'gradle.properties')
-        propertiesFile << """
-        mlHost=localhost
-
-        mlUsername=admin
-        mlPassword=admin
-
-        mlStagingAppserverName=data-hub-STAGING
-        mlStagingPort=8010
-        mlStagingDbName=data-hub-STAGING
-        mlStagingForestsPerHost=4
-        mlStagingAuth=digest
-
-        mlFinalAppserverName=data-hub-FINAL
-        mlFinalPort=8011
-        mlFinalDbName=data-hub-FINAL
-        mlFinalForestsPerHost=4
-        mlFinalAuth=digest
-
-        mlTraceAppserverName=data-hub-TRACING
-        mlTracePort=8012
-        mlTraceDbName=data-hub-TRACING
-        mlTraceForestsPerHost=1
-        mlTraceAuth=digest
-
-        mlJobAppserverName=data-hub-JOBS
-        mlJobPort=8013
-        mlJobDbName=data-hub-JOBS
-        mlJobForestsPerHost=1
-        mlJobAuth=digest
-
-        mlModulesDbName=data-hub-MODULES
-        mlModulesForestsPerHost=1
-
-        mlTriggersDbName=data-hub-TRIGGERS
-        mlTriggersForestsPerHost=1
-
-        mlSchemasDbName=data-hub-SCHEMAS
-        mlSchemasForestsPerHost=1
-
-        mlHubUserRole=data-hub-role
-        mlHubUserName=data-hub-user
-        mlHubUserPassword=bI7'3Ya|&;Ohw.ZzsDY
-
+        BaseTest.propertiesFile = new File(BaseTest.testProjectDir.root, 'gradle.properties')
+        BaseTest.propertiesFile << """
         mlAdminScheme=https
         mlManageScheme=https
         # mlAdminSimpleSsl=true
@@ -277,7 +237,7 @@ class TlsTest extends BaseTest {
         then:
         notThrown(UnexpectedBuildFailure)
         def modCount = getModulesDocCount()
-        modCount == MOD_COUNT_WITH_TRACE_MODULES || modCount == MOD_COUNT
+        modCount == BaseTest.MOD_COUNT_WITH_TRACE_MODULES || modCount == BaseTest.MOD_COUNT
         result.task(":mlDeploy").outcome == SUCCESS
     }
 

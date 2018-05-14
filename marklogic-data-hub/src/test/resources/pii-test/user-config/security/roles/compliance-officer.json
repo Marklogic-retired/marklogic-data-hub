@@ -1,0 +1,12 @@
+{
+  "role-name": "compliance-officer",
+  "description": "A role for users who have clearance to see the entire customer record.",
+  "role": [
+      "harmonized-reader",
+      "pii-reader",
+      "rest-extension-user"      
+  ],
+  "privilege": [
+    {"privilege-name" : "rest-reader", "action":"http://marklogic.com/xdmp/privileges/rest-reader", "kind":"execute"}
+  ]
+}

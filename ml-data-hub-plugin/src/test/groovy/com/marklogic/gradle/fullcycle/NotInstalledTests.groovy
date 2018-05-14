@@ -12,11 +12,12 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
- *  
+ *
  */
 
-package com.marklogic.gradle.task
+package com.marklogic.gradle.fullcycle
 
+import com.marklogic.gradle.task.BaseTest
 import org.gradle.testkit.runner.UnexpectedBuildSuccess
 
 import static org.gradle.testkit.runner.TaskOutcome.FAILED
@@ -26,7 +27,11 @@ class NotInstalledTests extends BaseTest {
     def setupSpec() {
         createGradleFiles()
         runTask('hubInit')
-        runTask('mlUndeploy',  '-Pconfirm=true')
+        //runTask('mlUndeploy',  '-Pconfirm=true')
+    }
+
+    def cleanupSpec() {
+        //runTask('mlDeploy')
     }
 
     def "enable debugging hub not installed"() {
@@ -61,7 +66,7 @@ class NotInstalledTests extends BaseTest {
 
     def "test run flow with no flow"() {
         given:
-        propertiesFile << """
+        BaseTest.propertiesFile << """
             ext {
                 entityName=my-entity
             }
@@ -78,7 +83,7 @@ class NotInstalledTests extends BaseTest {
 
     def "test run flow when hub not installed"() {
         given:
-        propertiesFile << """
+        BaseTest.propertiesFile << """
                 ext {
                     entityName=my-entity
                     flowName=my-flow

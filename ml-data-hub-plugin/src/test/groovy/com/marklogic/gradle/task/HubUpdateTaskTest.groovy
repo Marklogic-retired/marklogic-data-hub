@@ -24,11 +24,13 @@ import java.nio.file.Paths
 
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
-class UpdateHubTaskTest extends BaseTest {
+class HubUpdateTaskTest extends BaseTest {
 
     def setupSpec() {
         createGradleFiles()
         runTask('hubInit')
+        // this will be relatively fast (idempotent) for already-installed hubs
+        println(runTask('mlDeploy', '-i').getOutput())
     }
 
     def "no updates needed"() {

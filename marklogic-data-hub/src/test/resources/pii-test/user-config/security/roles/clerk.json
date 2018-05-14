@@ -1,0 +1,10 @@
+{
+  "role-name": "clerk",
+  "description": "A role that each clerk has.  A reader of final data, but shouldn't see ssns.",
+  "role": [
+    "rest-extension-user"
+  ],
+  "privilege": [
+    {"privilege-name" : "rest-reader", "action":"http://marklogic.com/xdmp/privileges/rest-reader", "kind":"execute"}
+  ]
+}

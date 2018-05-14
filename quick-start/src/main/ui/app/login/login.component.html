@@ -166,7 +166,9 @@
             <p class="help-text">Each Hub Project can be deployed to multiple environments. Environments are
             determined by the presence of a gradle-env.properties file in your hub project
             directory. By default QuickStart only creates a local environment file.
+            <!-- DHFPROD-663 TODO no content here
             Read more <a target="_blank" href="https://github.com/marklogic/marklogic-data-hub/wiki/Data-Hub-QuickStart-Project-Environments">on the Data Hub Framework Wiki</a>.
+            -->
             </p>
             <app-select-list
               [items]="currentProject.environments"
@@ -241,6 +243,7 @@
             <h3>Automatic Hub Update Failed!</h3>
             <p *ngIf="currentEnvironment" class="error">
               Sorry. We failed to update you to version <span class="version">{{currentEnvironment.runningVersion}}</span>.
+              <span>{{hubUpdateError}}.</span>
             </p>
             <p>Go read the wiki page that describes the changes necessary and try them manually.</p>
             <a target="_blank" [href]="hubUpdateUrl()">How to update a Hub Project</a>
