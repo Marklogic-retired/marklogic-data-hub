@@ -125,7 +125,6 @@ declare function hent:dump-search-options($entities as json:array)
 declare function hent:dump-pii($entities as json:array)
 {
   let $uber-model := hent:uber-model(json:array-values($entities) ! xdmp:to-json(.)/object-node())
-let $_ := xdmp:log(("UBER", $uber-model))
   return es:pii-generate($uber-model)
 };
 
