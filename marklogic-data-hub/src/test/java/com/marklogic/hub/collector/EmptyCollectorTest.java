@@ -57,7 +57,7 @@ public class EmptyCollectorTest extends HubTestBase {
         DataHub dh = DataHub.create(getHubConfig());
         dh.clearUserModules();
         installUserModules(getHubConfig(), false);
-        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_TRACE_NAME, HubConfig.DEFAULT_JOB_NAME);
+        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME, HubConfig.DEFAULT_JOB_NAME);
     }
 
 

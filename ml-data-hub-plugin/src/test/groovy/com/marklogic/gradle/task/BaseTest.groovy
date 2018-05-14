@@ -42,7 +42,6 @@ import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.parsers.ParserConfigurationException
 import java.nio.file.Files
-import java.nio.file.Path
 import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
 
@@ -186,7 +185,7 @@ class BaseTest extends Specification {
             case HubConfig.DEFAULT_MODULES_DB_NAME:
                 eval = hubConfig().newModulesDbClient().newServerEval()
                 break
-            case HubConfig.DEFAULT_TRACE_NAME:
+            case HubConfig.DEFAULT_JOB_NAME:
                 eval = hubConfig().newTraceDbClient().newServerEval()
                 break
             case HubConfig.DEFAULT_JOB_NAME:
