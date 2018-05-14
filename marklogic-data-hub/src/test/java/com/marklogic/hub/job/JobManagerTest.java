@@ -81,8 +81,7 @@ public class JobManagerTest extends HubTestBase {
 
         installModule("/entities/" + ENTITY + "/harmonize/" + HARMONIZE_FLOW_JSON + "/collector.sjs", "flow-runner-test/collector.sjs");
 
-        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME,
-            HubConfig.DEFAULT_JOB_NAME);
+        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
 
 
 
@@ -268,8 +267,7 @@ public class JobManagerTest extends HubTestBase {
 
     @Test
     public void exportNoJobs() throws IOException {
-        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME,
-            HubConfig.DEFAULT_JOB_NAME);
+        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
 
         // if the jobs database is empty, do not produce a zip file.
         JobManager manager = JobManager.create(jobClient);
@@ -286,7 +284,7 @@ public class JobManagerTest extends HubTestBase {
     public void importJobs() throws URISyntaxException, IOException {
         URL url = JobManagerTest.class.getClassLoader().getResource("job-manager-test/jobexport.zip");
 
-        clearDatabases(HubConfig.DEFAULT_JOB_NAME, HubConfig.DEFAULT_JOB_NAME);
+        clearDatabases(HubConfig.DEFAULT_JOB_NAME);
 
         assertEquals(0, getJobDocCount());
         assertEquals(0, getTracingDocCount());
