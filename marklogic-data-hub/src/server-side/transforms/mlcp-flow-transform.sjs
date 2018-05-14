@@ -36,7 +36,7 @@ function transform(content, context) {
   let flow = flowlib.getFlow(entityName, flowName, consts.INPUT_FLOW);
 
   if (!flow) {
-    fn.error(xs.QName("MISSING_FLOW"), "The specified flow " + params.flow + " is missing.");
+    fn.error(null, "RESTAPI-SRVEXERR", "The specified flow " + params.flow + " is missing.");
   }
 
   // configure the options
