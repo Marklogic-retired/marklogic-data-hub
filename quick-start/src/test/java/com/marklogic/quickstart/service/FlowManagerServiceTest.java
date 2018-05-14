@@ -142,7 +142,7 @@ public class FlowManagerServiceTest extends AbstractServiceTest {
     // this test fails in some environments because wihen running in test,
     // its classpath is too long to call mlcp as an interprocess communication.
     public void runMlcp() throws IOException, InterruptedException, JSONException {
-        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME, HubConfig.DEFAULT_JOB_NAME);
+        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
 
         String flowName = "sjs-json-input-flow";
 
@@ -180,7 +180,7 @@ public class FlowManagerServiceTest extends AbstractServiceTest {
 
     @Test
     public void runHarmonizationFlow() throws InterruptedException {
-        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME, HubConfig.DEFAULT_JOB_NAME);
+        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
 
         Assert.assertEquals(0, getFinalDocCount());
 
@@ -223,7 +223,7 @@ public class FlowManagerServiceTest extends AbstractServiceTest {
 
     @Test
     public void runHarmonizationFlowWithOptions() throws InterruptedException {
-        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME, HubConfig.DEFAULT_JOB_NAME);
+        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
 
         Assert.assertEquals(0, getFinalDocCount());
 
