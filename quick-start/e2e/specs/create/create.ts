@@ -447,6 +447,64 @@ export default function() {
       entityPage.confirmDialogNoButton.click();
     });
 
+    it ('should create a new entity for PII', function() {
+      entityPage.toolsButton.click();
+      entityPage.newEntityButton.click();
+      expect(entityPage.entityEditor.isPresent()).toBe(true);
+      entityPage.entityTitle.sendKeys('PIIEntity');
+      entityPage.saveEntity.click();
+      browser.wait(EC.elementToBeClickable(entityPage.confirmDialogNoButton));
+      expect(entityPage.confirmDialogNoButton.isPresent()).toBe(true);
+      entityPage.confirmDialogNoButton.click();
+      browser.wait(EC.visibilityOf(entityPage.getEntityBox('PIIEntity')));
+      expect(entityPage.getEntityBox('PIIEntity').isDisplayed()).toBe(true);
+      entityPage.toolsButton.click();
+    });
+
+    it('should create a pii property', function(){
+      browser.executeScript('window.document.getElementsByClassName("edit-start")[3].click()');
+      browser.wait(EC.visibilityOf(entityPage.entityEditor));
+      expect(entityPage.entityEditor.isPresent()).toBe(true);
+      //tell the UI to add the visual row
+      entityPage.addProperty.click();
+      //now compare to see if the current count is 1
+      element.all(by.css('.properties > table > tBody > tr')).count().then(function(props){expect(props === 1)});
+
+      //select the last (or first if only 1) property
+      let lastProperty = entityPage.lastProperty;
+      expect(lastProperty.isPresent() && lastProperty.isDisplayed());
+      //populate the fields for name, range index, type, and description
+      entityPage.getPropertyName(lastProperty).sendKeys("pii_test");
+      entityPage.getPropertyPii(lastProperty).click();
+      entityPage.getPropertyType(lastProperty).element(by.cssContainingText('option', 'string')).click();
+      entityPage.getPropertyDescription(lastProperty).sendKeys("this is a pii property");
+      //let's see if our values hold!
+      expect(entityPage.getPropertyName(lastProperty).getAttribute('value')).toEqual("pii_test");
+      expect(entityPage.hasClass(entityPage.getPropertyPii(lastProperty), 'active')).toBe(true);
+      expect(entityPage.getPropertyType(lastProperty).getAttribute('value')).toEqual("24: string");
+      expect(entityPage.getPropertyDescription(lastProperty).getAttribute('value')).toEqual("this is a pii property");
+      entityPage.saveEntity.click();
+      browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
+      expect(entityPage.confirmDialogYesButton.isPresent()).toBe(true);
+      entityPage.confirmDialogYesButton.click();
+      browser.wait(EC.presenceOf(entityPage.toast));
+      browser.wait(EC.stalenessOf(entityPage.toast));
+    });
+
+    it ('should verify pii property to PII entity', function() {
+      console.log('verify pii property to PII entity');
+      browser.executeScript('window.document.getElementsByClassName("edit-start")[3].click()');
+      browser.wait(EC.visibilityOf(entityPage.entityEditor));
+      expect(entityPage.entityEditor.isPresent()).toBe(true);
+      let piiProperty = entityPage.getPropertyByPosition(1);
+      expect(entityPage.getPropertyName(piiProperty).getAttribute('value')).toEqual('pii_test');
+      expect(entityPage.getPropertyType(piiProperty).getAttribute('ng-reflect-model')).toEqual('string');
+      expect(entityPage.getPropertyDescription(piiProperty).getAttribute('value')).toEqual('this is a pii property');
+      expect(entityPage.hasClass(entityPage.getPropertyPii(piiProperty), 'active')).toBe(true);
+      entityPage.cancelEntity.click();
+      browser.wait(EC.invisibilityOf(entityPage.entityEditor));
+    });
+
     it ('should go to the flow page', function() {
       entityPage.flowsTab.click();
       flowPage.isLoaded();
