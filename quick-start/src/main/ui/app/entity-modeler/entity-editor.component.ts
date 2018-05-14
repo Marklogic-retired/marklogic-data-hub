@@ -59,6 +59,7 @@ export class EntityEditorComponent {
       property.hasRangeIndex = this.entity.definition.rangeIndex.indexOf(property.name) >= 0;
       property.hasWordLexicon = this.entity.definition.wordLexicon.indexOf(property.name) >= 0;
       property.required = this.entity.definition.required.indexOf(property.name) >= 0;
+      property.pii = this.entity.definition.pii.indexOf(property.name) >= 0;
     }, this);
   }
 
@@ -156,30 +157,6 @@ export class EntityEditorComponent {
     });
   }
 
-  isPrimaryKey(key: string) {
-    return this.entity.definition.primaryKey === key;
-  }
-
-  isRangeIndex(key: string) {
-    return this.entity.definition.elementRangeIndex.indexOf(key) >= 0;
-  }
-
-  isPathRangeIndex(key: string) {
-    return this.entity.definition.rangeIndex.indexOf(key) >= 0;
-  }
-
-  isWordLexicon(key: string) {
-    return this.entity.definition.wordLexicon.indexOf(key) >= 0;
-  }
-
-  isRequired(key: string) {
-    return this.entity.definition.required.indexOf(key) >= 0;
-  }
-
-  isPii(key: string) {
-    return this.entity.definition.pii.indexOf(key) >= 0;
-  }
-
   addProperty() {
     this.entity.definition.properties.push(new PropertyType());
   }
@@ -235,6 +212,7 @@ export class EntityEditorComponent {
       this.entity.definition.rangeIndex = [];
       this.entity.definition.wordLexicon = [];
       this.entity.definition.required = [];
+      this.entity.definition.pii = [];
       this.entity.definition.properties.forEach(function(property) {
         if (property.isPrimaryKey) {
           this.entity.definition.primaryKey = property.name;
@@ -250,6 +228,9 @@ export class EntityEditorComponent {
         }
         if (property.required) {
           this.entity.definition.required.push(property.name);
+        }
+        if (property.pii) {
+          this.entity.definition.pii.push(property.name);
         }
       }, this);
       this.actions.save();
@@ -315,7 +296,6 @@ export class EntityEditorComponent {
     }
   }
 
-
   toggleRequiredSelection() {
     if (this.selectedCount()) {
       this.requiredHeader = !this.requiredHeader;
@@ -329,7 +309,6 @@ export class EntityEditorComponent {
       this.toggleArraySelection(this.piiHeader, 'pii');
     }
   }
-
 
   toggleArraySelection(checked: boolean, field: string) {
     let indexes = [];
@@ -345,33 +324,6 @@ export class EntityEditorComponent {
       _.remove(this.entity.definition[field], (idx: string) => {
         return indexes.indexOf(idx) >= 0;
       });
-    }
-  }
-
-  toggleWordLexicon(property: PropertyType) {
-    let idx = this.entity.definition.wordLexicon.indexOf(property.name);
-    if (idx >= 0) {
-      this.entity.definition.wordLexicon.splice(idx, 1);
-    } else {
-      this.entity.definition.wordLexicon.push(property.name);
-    }
-  }
-
-  toggleRequired(property: PropertyType) {
-    let idx = this.entity.definition.required.indexOf(property.name);
-    if (idx >= 0) {
-      this.entity.definition.required.splice(idx, 1);
-    } else {
-      this.entity.definition.required.push(property.name);
-    }
-  }
-
-  togglePii(property: PropertyType) {
-    let idx = this.entity.definition.pii.indexOf(property.name);
-    if (idx >= 0) {
-      this.entity.definition.pii.splice(idx, 1);
-    } else {
-      this.entity.definition.pii.push(property.name);
     }
   }
 
