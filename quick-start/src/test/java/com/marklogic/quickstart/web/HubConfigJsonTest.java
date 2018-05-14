@@ -104,11 +104,6 @@ public class HubConfigJsonTest {
             "  \"finalForestsPerHost\": 4,\n" +
             "  \"finalPort\": 8011,\n" +
             "  \"finalAuthMethod\": \"digest\",\n" +
-            "  \"traceDbName\": \"data-hub-TRACING\",\n" +
-            "  \"traceHttpName\": \"data-hub-TRACING\",\n" +
-            "  \"traceForestsPerHost\": 1,\n" +
-            "  \"tracePort\": 8012,\n" +
-            "  \"traceAuthMethod\": \"digest\",\n" +
             "  \"jobDbName\": \"data-hub-JOBS\",\n" +
             "  \"jobHttpName\": \"data-hub-JOBS\",\n" +
             "  \"jobForestsPerHost\": 1,\n" +

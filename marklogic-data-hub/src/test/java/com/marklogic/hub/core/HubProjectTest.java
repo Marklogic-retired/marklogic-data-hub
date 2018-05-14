@@ -110,11 +110,6 @@ public class HubProjectTest extends HubTestBase {
         assertEquals(config.getDbName(DatabaseKind.FINAL), props.getProperty("mlFinalDbName"));
         assertEquals(config.getForestsPerHost(DatabaseKind.FINAL).toString(), props.getProperty("mlFinalForestsPerHost"));
 
-//        assertEquals(config.getHttpName(DatabaseKind.TRACE), props.getProperty("mlTraceAppserverName"));
-//        assertEquals(config.getPort(DatabaseKind.TRACE).toString(), props.getProperty("mlTracePort"));
-//        assertEquals(config.getDbName(DatabaseKind.TRACE), props.getProperty("mlTraceDbName"));
-//        assertEquals(config.getForestsPerHost(DatabaseKind.TRACE).toString(), props.getProperty("mlTraceForestsPerHost"));
-
         assertEquals(config.getHttpName(DatabaseKind.JOB), props.getProperty("mlJobAppserverName"));
         assertEquals(config.getPort(DatabaseKind.JOB).toString(), props.getProperty("mlJobPort"));
         assertEquals(config.getDbName(DatabaseKind.JOB), props.getProperty("mlJobDbName"));

@@ -118,20 +118,16 @@ public class HubTestBase {
     public  String host;
     public  int stagingPort;
     public  int finalPort;
-    public  int tracePort;
     public  int jobPort;
     public  String user;
     public  String password;
     protected  Authentication stagingAuthMethod;
     private  Authentication finalAuthMethod;
-    private  Authentication traceAuthMethod;
     private  Authentication jobAuthMethod;
     public  DatabaseClient stagingClient = null;
     public  DatabaseClient stagingModulesClient = null;
     public  DatabaseClient finalClient = null;
     public  DatabaseClient finalModulesClient = null;
-    public  DatabaseClient traceClient = null;
-    public  DatabaseClient traceModulesClient = null;
     public  DatabaseClient jobClient = null;
     public  DatabaseClient jobModulesClient = null;
     private  AdminConfig adminConfig = null;
@@ -169,7 +165,7 @@ public class HubTestBase {
     }
 
     private GenericDocumentManager getTraceMgr() {
-        return traceClient.newDocumentManager();
+        return jobClient.newDocumentManager();
     }
 
 
@@ -200,15 +196,13 @@ public class HubTestBase {
         boolean sslStaging = Boolean.parseBoolean(properties.getProperty("mlStagingSimpleSsl"));
         boolean sslJob = Boolean.parseBoolean(properties.getProperty("mlJobSimpleSsl"));
         boolean sslFinal = Boolean.parseBoolean(properties.getProperty("mlFinalSimpleSsl"));
-        boolean sslTrace = Boolean.parseBoolean(properties.getProperty("mlTraceSimpleSsl"));
-        if(sslStaging && sslJob && sslFinal && sslTrace){
+        if(sslStaging && sslJob && sslFinal){
 	    	setSslRun(true);
 	    }
 
         host = properties.getProperty("mlHost");
         stagingPort = Integer.parseInt(properties.getProperty("mlStagingPort"));
         finalPort = Integer.parseInt(properties.getProperty("mlFinalPort"));
-        tracePort = Integer.parseInt(properties.getProperty("mlJobPort"));
         jobPort = Integer.parseInt(properties.getProperty("mlJobPort"));
         user = properties.getProperty("mlUsername");
         password = properties.getProperty("mlPassword");
@@ -233,14 +227,6 @@ public class HubTestBase {
             finalAuthMethod = Authentication.DIGEST;
         }
 
-        auth = properties.getProperty("mlTraceAuth");
-        if (auth != null) {
-            traceAuthMethod = Authentication.valueOf(auth.toUpperCase());
-        }
-        else {
-            traceAuthMethod = Authentication.DIGEST;
-        }
-
         auth = properties.getProperty("mlJobAuth");
         if (auth != null) {
             jobAuthMethod = Authentication.valueOf(auth.toUpperCase());
@@ -248,7 +234,7 @@ public class HubTestBase {
         else {
             jobAuthMethod = Authentication.DIGEST;
         }
-        if(jobAuthMethod.equals(Authentication.CERTIFICATE) && traceAuthMethod.equals(Authentication.CERTIFICATE)
+        if(jobAuthMethod.equals(Authentication.CERTIFICATE)
         && finalAuthMethod.equals(Authentication.CERTIFICATE) && stagingAuthMethod.equals(Authentication.CERTIFICATE)) {
         	setCertAuth(true);
         	try {
@@ -264,8 +250,6 @@ public class HubTestBase {
             stagingModulesClient  = getClient(host, stagingPort, HubConfig.DEFAULT_MODULES_DB_NAME, user, password, stagingAuthMethod);
             finalClient = getClient(host, finalPort, HubConfig.DEFAULT_FINAL_NAME, user, password, finalAuthMethod);
             finalModulesClient  = getClient(host, stagingPort, HubConfig.DEFAULT_MODULES_DB_NAME, user, password, finalAuthMethod);
-            traceClient = getClient(host, jobPort, HubConfig.DEFAULT_JOB_NAME, user, password, jobAuthMethod);
-            traceModulesClient  = getClient(host, stagingPort, HubConfig.DEFAULT_MODULES_DB_NAME, user, password, traceAuthMethod);
             jobClient = getClient(host, jobPort, HubConfig.DEFAULT_JOB_NAME, user, password, jobAuthMethod);
             jobModulesClient  = getClient(host, stagingPort, HubConfig.DEFAULT_MODULES_DB_NAME, user, password, jobAuthMethod);
         }
@@ -513,7 +497,7 @@ public class HubTestBase {
         return getTracingDocCount("trace");
     }
     protected int getTracingDocCount(String collection) {
-        return getDocCount(HubConfig.DEFAULT_TRACE_NAME, collection);
+        return getDocCount(HubConfig.DEFAULT_JOB_NAME, collection);
     }
 
     protected int getJobDocCount() {
@@ -844,7 +828,6 @@ public class HubTestBase {
 	    Path localPath = getResourceFile("scaffolding/gradle-local_properties").toPath();
 		String localProps = null;
 	    localProps = new String("mlJobSimpleSsl=true\n" +
-		    		"mlTraceSimpleSsl=true\n" +
 		    		"mlFinalSimpleSsl=true\n" +
 		    		"mlStagingSimpleSsl=true\n" +
 		            "mlAdminScheme=https\n" +
@@ -854,7 +837,6 @@ public class HubTestBase {
 		            "mlAppServicesSimpleSsl=true");
 	    if(isCertAuth()) {
 	    	localProps = new String("mlStagingAuth=certificate\n" +
-	    			"mlTraceAuth=certificate\n" +
 	    			"mlFinalAuth=certificate\n" +
 	    			"mlHost="+bootStrapHost+"\n"+
 	    			"mlAdminScheme=https\n" +

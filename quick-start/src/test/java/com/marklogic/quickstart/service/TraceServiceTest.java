@@ -23,13 +23,11 @@ import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubConfigBuilder;
-import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.flow.*;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.quickstart.auth.ConnectionAuthenticationToken;
 import com.marklogic.quickstart.model.EnvironmentConfig;
 import com.marklogic.quickstart.model.TraceQuery;
-import net.sf.saxon.functions.Abs;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,7 +71,7 @@ public class TraceServiceTest extends AbstractServiceTest {
             CodeFormat.XQUERY, DataFormat.XML);
 
         installUserModules(getHubConfig(), true);
-        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_TRACE_NAME, HubConfig.DEFAULT_JOB_NAME);
+        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME, HubConfig.DEFAULT_JOB_NAME);
 
         traceClient = getHubConfig().newJobDbClient();
         final String FLOW_NAME = "sjs-json-harmonize-flow";
