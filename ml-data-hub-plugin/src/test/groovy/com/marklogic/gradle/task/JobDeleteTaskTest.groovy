@@ -21,10 +21,7 @@ import com.marklogic.client.eval.EvalResult
 import com.marklogic.client.eval.EvalResultIterator
 import com.marklogic.client.io.DocumentMetadataHandle
 import com.marklogic.hub.HubConfig
-import org.gradle.testkit.runner.UnexpectedBuildFailure
 import org.gradle.testkit.runner.UnexpectedBuildSuccess
-
-import java.nio.file.Paths
 
 import static org.gradle.testkit.runner.TaskOutcome.FAILED
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
@@ -53,7 +50,7 @@ class JobDeleteTaskTest extends BaseTest {
     def setup() {
         propertiesFile.delete()
         createFullPropertiesFile()
-        clearDatabases(HubConfig.DEFAULT_JOB_NAME, HubConfig.DEFAULT_TRACE_NAME)
+        clearDatabases(HubConfig.DEFAULT_JOB_NAME, HubConfig.DEFAULT_JOB_NAME)
 
 
         for (int i = 0; i < JOB_COUNT; i++) {
