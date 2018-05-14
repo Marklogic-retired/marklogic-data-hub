@@ -186,9 +186,6 @@ class BaseTest extends Specification {
                 eval = hubConfig().newModulesDbClient().newServerEval()
                 break
             case HubConfig.DEFAULT_JOB_NAME:
-                eval = hubConfig().newTraceDbClient().newServerEval()
-                break
-            case HubConfig.DEFAULT_JOB_NAME:
                 eval = hubConfig().newJobDbClient().newServerEval()
         }
         try {
