@@ -50,7 +50,7 @@ class JobDeleteTaskTest extends BaseTest {
     def setup() {
         propertiesFile.delete()
         createFullPropertiesFile()
-        clearDatabases(HubConfig.DEFAULT_JOB_NAME, HubConfig.DEFAULT_JOB_NAME)
+        clearDatabases(HubConfig.DEFAULT_JOB_NAME)
 
 
         for (int i = 0; i < JOB_COUNT; i++) {

@@ -71,7 +71,7 @@ public class TraceServiceTest extends AbstractServiceTest {
             CodeFormat.XQUERY, DataFormat.XML);
 
         installUserModules(getHubConfig(), true);
-        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME, HubConfig.DEFAULT_JOB_NAME);
+        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
 
         traceClient = getHubConfig().newJobDbClient();
         final String FLOW_NAME = "sjs-json-harmonize-flow";
