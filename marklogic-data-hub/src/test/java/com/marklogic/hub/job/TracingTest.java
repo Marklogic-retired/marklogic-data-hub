@@ -65,7 +65,7 @@ public class TracingTest extends HubTestBase {
     @After
     public void beforeEach() {
     	disableTracing();
-        clearDatabases(HubConfig.DEFAULT_JOB_NAME, HubConfig.DEFAULT_JOB_NAME, HubConfig.DEFAULT_FINAL_NAME);
+        clearDatabases(HubConfig.DEFAULT_JOB_NAME, HubConfig.DEFAULT_FINAL_NAME);
     }
 
 
