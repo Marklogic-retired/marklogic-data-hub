@@ -148,6 +148,9 @@ public class HubConfigImpl implements HubConfig {
             case JOB:
                 name = jobDbName;
                 break;
+            case TRACE:
+                name = jobDbName;
+                break;
             case MODULES:
                 name = modulesDbName;
                 break;
@@ -172,6 +175,9 @@ public class HubConfigImpl implements HubConfig {
                 finalDbName = dbName;
                 break;
             case JOB:
+                jobDbName = dbName;
+                break;
+            case TRACE:
                 jobDbName = dbName;
                 break;
             case MODULES:
@@ -200,6 +206,9 @@ public class HubConfigImpl implements HubConfig {
             case JOB:
                 name = jobHttpName;
                 break;
+            case TRACE:
+                name = jobHttpName;
+                break;
             default:
                 throw new InvalidDBOperationError(kind, "grab http name");
         }
@@ -217,6 +226,9 @@ public class HubConfigImpl implements HubConfig {
             case JOB:
                 jobHttpName = httpName;
                 break;
+            case TRACE:
+                jobHttpName = httpName;
+                break;
             default:
                 throw new InvalidDBOperationError(kind, "set http name");
         }
@@ -232,6 +244,9 @@ public class HubConfigImpl implements HubConfig {
                 forests = finalForestsPerHost;
                 break;
             case JOB:
+                forests = jobForestsPerHost;
+                break;
+            case TRACE:
                 forests = jobForestsPerHost;
                 break;
             case MODULES:
@@ -260,6 +275,9 @@ public class HubConfigImpl implements HubConfig {
             case JOB:
                 jobForestsPerHost = forestsPerHost;
                 break;
+            case TRACE:
+                jobForestsPerHost = forestsPerHost;
+                break;
             case MODULES:
                 modulesForestsPerHost = forestsPerHost;
                 break;
@@ -286,6 +304,9 @@ public class HubConfigImpl implements HubConfig {
             case JOB:
                 port = jobPort;
                 break;
+            case TRACE:
+                port = jobPort;
+                break;
             default:
                 throw new InvalidDBOperationError(kind, "grab app port");
         }
@@ -301,6 +322,9 @@ public class HubConfigImpl implements HubConfig {
                 finalPort = port;
                 break;
             case JOB:
+                jobPort = port;
+                break;
+            case TRACE:
                 jobPort = port;
                 break;
             default:
@@ -321,6 +345,9 @@ public class HubConfigImpl implements HubConfig {
             case JOB:
                 sslContext = this.jobSslContext;
                 break;
+            case TRACE:
+                sslContext = this.jobSslContext;
+                break;
             default:
                 throw new InvalidDBOperationError(kind, "get ssl context");
         }
@@ -336,6 +363,9 @@ public class HubConfigImpl implements HubConfig {
                 this.finalSslContext= sslContext;
                 break;
             case JOB:
+                this.jobSslContext = sslContext;
+                break;
+            case TRACE:
                 this.jobSslContext = sslContext;
                 break;
             default:
@@ -355,6 +385,9 @@ public class HubConfigImpl implements HubConfig {
             case JOB:
                 sslHostnameVerifier = this.jobSslHostnameVerifier;
                 break;
+            case TRACE:
+                sslHostnameVerifier = this.jobSslHostnameVerifier;
+                break;
             default:
                 throw new InvalidDBOperationError(kind, "get ssl hostname verifier");
         }
@@ -370,6 +403,9 @@ public class HubConfigImpl implements HubConfig {
                 this.finalSslHostnameVerifier = sslHostnameVerifier;
                 break;
             case JOB:
+                this.jobSslHostnameVerifier = sslHostnameVerifier;
+                break;
+            case TRACE:
                 this.jobSslHostnameVerifier = sslHostnameVerifier;
                 break;
             default:
@@ -389,6 +425,9 @@ public class HubConfigImpl implements HubConfig {
             case JOB:
                 authMethod = this.jobAuthMethod;
                 break;
+            case TRACE:
+                authMethod = this.jobAuthMethod;
+                break;
             default:
                 throw new InvalidDBOperationError(kind, "get auth method");
         }
@@ -404,6 +443,9 @@ public class HubConfigImpl implements HubConfig {
                 this.finalAuthMethod = authMethod;
                 break;
             case JOB:
+                this.jobAuthMethod = authMethod;
+                break;
+            case TRACE:
                 this.jobAuthMethod = authMethod;
                 break;
             default:
@@ -423,6 +465,9 @@ public class HubConfigImpl implements HubConfig {
             case JOB:
                 scheme = this.jobScheme;
                 break;
+            case TRACE:
+                scheme = this.jobScheme;
+                break;
             default:
                 throw new InvalidDBOperationError(kind, "get scheme");
         }
@@ -438,6 +483,9 @@ public class HubConfigImpl implements HubConfig {
                 this.finalScheme = scheme;
                 break;
             case JOB:
+                this.jobScheme = scheme;
+                break;
+            case TRACE:
                 this.jobScheme = scheme;
                 break;
             default:
@@ -457,6 +505,9 @@ public class HubConfigImpl implements HubConfig {
             case JOB:
                 simple = this.jobSimpleSsl;
                 break;
+            case TRACE:
+                simple = this.jobSimpleSsl;
+                break;
             default:
                 throw new InvalidDBOperationError(kind, "get simple ssl");
         }
@@ -472,6 +523,9 @@ public class HubConfigImpl implements HubConfig {
                 this.finalSimpleSsl = simpleSsl;
                 break;
             case JOB:
+                this.jobSimpleSsl = simpleSsl;
+                break;
+            case TRACE:
                 this.jobSimpleSsl = simpleSsl;
                 break;
             default:
@@ -491,6 +545,9 @@ public class HubConfigImpl implements HubConfig {
             case JOB:
                 certFile = this.jobCertFile;
                 break;
+            case TRACE:
+                certFile = this.jobCertFile;
+                break;
             default:
                 throw new InvalidDBOperationError(kind, "get cert file");
         }
@@ -506,6 +563,9 @@ public class HubConfigImpl implements HubConfig {
                 this.finalCertFile = certFile;
                 break;
             case JOB:
+                this.jobCertFile = certFile;
+                break;
+            case TRACE:
                 this.jobCertFile = certFile;
                 break;
             default:
@@ -525,6 +585,9 @@ public class HubConfigImpl implements HubConfig {
             case JOB:
                 certPass = this.jobCertPassword;
                 break;
+            case TRACE:
+                certPass = this.jobCertPassword;
+                break;
             default:
                 throw new InvalidDBOperationError(kind, "get cert password");
         }
@@ -540,6 +603,9 @@ public class HubConfigImpl implements HubConfig {
                 this.finalCertPassword = certPassword;
                 break;
             case JOB:
+                this.jobCertPassword = certPassword;
+                break;
+            case TRACE:
                 this.jobCertPassword = certPassword;
                 break;
             default:
@@ -559,6 +625,9 @@ public class HubConfigImpl implements HubConfig {
             case JOB:
                 name = this.jobExternalName;
                 break;
+            case TRACE:
+                name = this.jobExternalName;
+                break;
             default:
                 throw new InvalidDBOperationError(kind, "get external name");
         }
@@ -574,6 +643,9 @@ public class HubConfigImpl implements HubConfig {
                 this.finalExternalName = externalName;
                 break;
             case JOB:
+                this.jobExternalName = externalName;
+                break;
+            case TRACE:
                 this.jobExternalName = externalName;
                 break;
             default:
@@ -803,6 +875,10 @@ public class HubConfigImpl implements HubConfig {
         config.setCertPassword(jobCertPassword);
         config.setExternalName(jobExternalName);
         return appConfig.getConfiguredDatabaseClientFactory().newDatabaseClient(config);
+    }
+
+    public DatabaseClient newTraceDbClient() {
+        return newJobDbClient();
     }
 
     public DatabaseClient newModulesDbClient() {

@@ -363,6 +363,14 @@ public interface HubConfig {
     DatabaseClient newJobDbClient();
 
     /**
+     * Use newJobDbClient instead.  This function returns a client to
+     * the JOBS dataabse.
+     * @return - a DatabaseClient
+     */
+    @Deprecated
+    DatabaseClient newTraceDbClient();
+
+    /**
      * Creates a new DatabaseClient for accessing the Hub Modules database
      * @return - a DatabaseClient
      */
