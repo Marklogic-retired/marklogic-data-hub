@@ -659,7 +659,7 @@ declare function flow:run-main(
       $resp
   }
   catch($ex) {
-    if ($ex/error:name eq "DATAHUB-PLUGIN-ERROR") then
+    if ($ex/error:code eq "DATAHUB-PLUGIN-ERROR") then
       (: plugin errors are already handled :)
       ()
     else (
