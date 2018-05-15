@@ -487,7 +487,7 @@ function runMain(itemContext, func) {
     }
   }
   catch(ex) {
-    if (ex.name != "error in a plugin") {
+    if (ex.code == "DATAHUB-PLUGIN-ERROR") {
       // this is an error in main.(sjs|xqy)
       xdmp.log(ex.toString());
 
