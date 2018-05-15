@@ -244,7 +244,7 @@ export default function() {
     });
 
     it ('should logout and login', function() {
-    	  entityPage.logout();
+      entityPage.logout();
       loginPage.isLoaded();
       loginPage.clickNext('ProjectDirTab');
       browser.wait(EC.elementToBeClickable(loginPage.environmentTab));
@@ -254,7 +254,7 @@ export default function() {
     });
     
     it ('should verify properties to Product entity', function() {
-    	  entityPage.isLoaded();
+      entityPage.isLoaded();
       console.log('verify properties to Product entity');
       browser.executeScript('window.document.getElementsByClassName("edit-start")[1].click()');
       browser.wait(EC.visibilityOf(entityPage.entityEditor));
