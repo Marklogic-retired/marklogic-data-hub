@@ -154,7 +154,6 @@ export default function() {
       entityPage.getPropertyDescription(lastProperty).sendKeys('sku description');
       entityPage.getPropertyPrimaryKeyColumn(lastProperty).click();
       entityPage.getPropertyPiiColumn(lastProperty).click();
-      
       // add price property
       console.log('add price property');
       entityPage.addProperty.click();
@@ -171,23 +170,29 @@ export default function() {
       browser.wait(EC.stalenessOf(entityPage.toast));
     });
     
-    it ('should toggle pii button for product entity', function() {
-      console.log('ad');
+    it ('should toggle pii button for Product entity', function() {
+      console.log('should verify toggling action of PII icon');
       browser.executeScript('window.document.getElementsByClassName("edit-start")[1].click()');
       browser.wait(EC.visibilityOf(entityPage.entityEditor));
       expect(entityPage.entityEditor.isPresent()).toBe(true);
       let skuProperty = entityPage.getPropertyByPosition(1);
+      // Already PII property set to true for SKU, Verifying it
       expect(entityPage.hasClass(entityPage.getPropertyPii(skuProperty), 'active')).toBe(true);
+      // Turning off PII property to verify toggling
       entityPage.getPropertyPiiColumn(skuProperty).click();
       expect(entityPage.hasClass(entityPage.getPropertyPii(skuProperty), 'active')).toBe(false);
+      // Resetting back to the original state
       entityPage.getPropertyPiiColumn(skuProperty).click();
       expect(entityPage.hasClass(entityPage.getPropertyPii(skuProperty), 'active')).toBe(true);
-      skuProperty = entityPage.getPropertyByPosition(2);
-      expect(entityPage.hasClass(entityPage.getPropertyPii(skuProperty), 'active')).toBe(false);
-      entityPage.getPropertyPiiColumn(skuProperty).click();
-      expect(entityPage.hasClass(entityPage.getPropertyPii(skuProperty), 'active')).toBe(true);
-      entityPage.getPropertyPiiColumn(skuProperty).click();
-      expect(entityPage.hasClass(entityPage.getPropertyPii(skuProperty), 'active')).toBe(false);
+      let priceProperty = entityPage.getPropertyByPosition(2);
+      // PII property is not set for Price Entity, Verifying it
+      expect(entityPage.hasClass(entityPage.getPropertyPii(priceProperty), 'active')).toBe(false);
+      // Turning off PII property to verify toggling
+      entityPage.getPropertyPiiColumn(priceProperty).click();
+      expect(entityPage.hasClass(entityPage.getPropertyPii(priceProperty), 'active')).toBe(true);
+      // Resetting back to the original state      
+      entityPage.getPropertyPiiColumn(priceProperty).click();      
+      expect(entityPage.hasClass(entityPage.getPropertyPii(priceProperty), 'active')).toBe(false);
       entityPage.cancelEntity.click();
       browser.wait(EC.invisibilityOf(entityPage.entityEditor));
     });
@@ -213,7 +218,7 @@ export default function() {
       lastProperty = entityPage.lastProperty;
       entityPage.getPropertyName(lastProperty).sendKeys('price');
       entityPage.getPropertyType(lastProperty).element(by.cssContainingText('option', 'decimal')).click();
-      entityPage.getPropertyDescription(lastProperty).sendKeys('pricedesc');
+      entityPage.getPropertyDescription(lastProperty).sendKeys('price description');
       entityPage.getPropertyRangeIndexColumn(lastProperty).click();
      // add products property
       console.log('add products property');
@@ -229,7 +234,7 @@ export default function() {
       lastProperty = entityPage.lastProperty;
       entityPage.getPropertyName(lastProperty).sendKeys('price');
       entityPage.getPropertyType(lastProperty).element(by.cssContainingText('option', 'decimal')).click();
-      entityPage.getPropertyDescription(lastProperty).sendKeys('pricedesc');
+      entityPage.getPropertyDescription(lastProperty).sendKeys('price description');
       entityPage.saveEntity.click();
       browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
       expect(entityPage.confirmDialogYesButton.isPresent()).toBe(true);
@@ -239,65 +244,65 @@ export default function() {
     });
 
     it ('should logout and login', function() {
-    		entityPage.logout();
-        loginPage.isLoaded();
-        loginPage.clickNext('ProjectDirTab');
-        browser.wait(EC.elementToBeClickable(loginPage.environmentTab));
-        loginPage.clickNext('EnvironmentTab');
-        browser.wait(EC.elementToBeClickable(loginPage.loginTab));
-        loginPage.login();
-      });
+    	  entityPage.logout();
+      loginPage.isLoaded();
+      loginPage.clickNext('ProjectDirTab');
+      browser.wait(EC.elementToBeClickable(loginPage.environmentTab));
+      loginPage.clickNext('EnvironmentTab');
+      browser.wait(EC.elementToBeClickable(loginPage.loginTab));
+      loginPage.login();
+    });
     
     it ('should verify properties to Product entity', function() {
-    		entityPage.isLoaded();
-        console.log('verify properties to Product entity');
-        browser.executeScript('window.document.getElementsByClassName("edit-start")[1].click()');
-        browser.wait(EC.visibilityOf(entityPage.entityEditor));
-        expect(entityPage.entityEditor.isPresent()).toBe(true);
-        let skuProperty = entityPage.getPropertyByPosition(1);
-        expect(entityPage.getPropertyName(skuProperty).getAttribute('value')).toEqual('sku');
-        expect(entityPage.getPropertyType(skuProperty).getAttribute('ng-reflect-model')).toEqual('string');
-        expect(entityPage.getPropertyDescription(skuProperty).getAttribute('value')).toEqual('sku description');
-        expect(entityPage.hasClass(entityPage.getPropertyPrimaryKey(skuProperty), 'active')).toBe(true);
-        expect(entityPage.hasClass(entityPage.getPropertyPii(skuProperty), 'active')).toBe(true);
-        let priceProperty = entityPage.getPropertyByPosition(2);
-        expect(entityPage.getPropertyName(priceProperty).getAttribute('value')).toEqual('price');
-        expect(entityPage.getPropertyType(priceProperty).getAttribute('ng-reflect-model')).toEqual('decimal');
-        expect(entityPage.getPropertyDescription(priceProperty).getAttribute('value')).toEqual('price description');
-        expect(entityPage.hasClass(entityPage.getPropertyRangeIndex(priceProperty), 'active')).toBe(true);
-        entityPage.cancelEntity.click();
-        browser.wait(EC.invisibilityOf(entityPage.entityEditor));
-      });
+    	  entityPage.isLoaded();
+      console.log('verify properties to Product entity');
+      browser.executeScript('window.document.getElementsByClassName("edit-start")[1].click()');
+      browser.wait(EC.visibilityOf(entityPage.entityEditor));
+      expect(entityPage.entityEditor.isPresent()).toBe(true);
+      let skuProperty = entityPage.getPropertyByPosition(1);
+      expect(entityPage.getPropertyName(skuProperty).getAttribute('value')).toEqual('sku');
+      expect(entityPage.getPropertyType(skuProperty).getAttribute('ng-reflect-model')).toEqual('string');
+      expect(entityPage.getPropertyDescription(skuProperty).getAttribute('value')).toEqual('sku description');
+      expect(entityPage.hasClass(entityPage.getPropertyPrimaryKey(skuProperty), 'active')).toBe(true);
+      expect(entityPage.hasClass(entityPage.getPropertyPii(skuProperty), 'active')).toBe(true);
+      let priceProperty = entityPage.getPropertyByPosition(2);
+      expect(entityPage.getPropertyName(priceProperty).getAttribute('value')).toEqual('price');
+      expect(entityPage.getPropertyType(priceProperty).getAttribute('ng-reflect-model')).toEqual('decimal');
+      expect(entityPage.getPropertyDescription(priceProperty).getAttribute('value')).toEqual('price description');
+      expect(entityPage.hasClass(entityPage.getPropertyRangeIndex(priceProperty), 'active')).toBe(true);
+      entityPage.cancelEntity.click();
+      browser.wait(EC.invisibilityOf(entityPage.entityEditor));
+    });
 
     it ('should verify properties to Order entity', function() {
-        console.log('verify properties to Order entity');
-		entityPage.isLoaded();
-        browser.executeScript('window.document.getElementsByClassName("edit-start")[0].click()');
-        browser.wait(EC.visibilityOf(entityPage.entityEditor));
-        expect(entityPage.entityEditor.isPresent()).toBe(true);
-        let idProperty = entityPage.getPropertyByPosition(1);
-        // verify that primary key is retained
-        expect(entityPage.getPropertyName(idProperty).getAttribute('value')).toEqual('id');
-        expect(entityPage.getPropertyType(idProperty).getAttribute('ng-reflect-model')).toEqual('string');
-        expect(entityPage.getPropertyDescription(idProperty).getAttribute('value')).toEqual('id description');
-        expect(entityPage.hasClass(entityPage.getPropertyPrimaryKey(idProperty), 'active')).toBe(true);
-        let priceProperty = entityPage.getPropertyByPosition(2);
-        expect(entityPage.getPropertyName(priceProperty).getAttribute('value')).toEqual('price');
-        expect(entityPage.getPropertyType(priceProperty).getAttribute('ng-reflect-model')).toEqual('decimal');
-        expect(entityPage.getPropertyCardinality(priceProperty).getAttribute('ng-reflect-model')).toEqual('ONE_TO_ONE');
-        expect(entityPage.getPropertyDescription(priceProperty).getAttribute('value')).toEqual('pricedesc');
-        expect(entityPage.hasClass(entityPage.getPropertyRangeIndex(priceProperty), 'active')).toBe(true);
-        let productsProperty = entityPage.getPropertyByPosition(3);
-        expect(entityPage.getPropertyName(productsProperty).getAttribute('value')).toEqual('products');
-        expect(entityPage.getPropertyType(productsProperty).getAttribute('ng-reflect-model')).toEqual('#/definitions/Product');
-        expect(entityPage.getPropertyCardinality(productsProperty).getAttribute('ng-reflect-model')).toEqual('ONE_TO_MANY');
-        expect(entityPage.getPropertyDescription(productsProperty).getAttribute('value')).toEqual('products description');
-        expect(entityPage.hasClass(entityPage.getPropertyWordLexicon(productsProperty), 'active')).toBe(true);
-        // verify duplicate property is not created, the count should be 3
-        entityPage.getPropertiesCount().then(function(props){expect(props === 3)});
-        entityPage.cancelEntity.click();
-        browser.wait(EC.invisibilityOf(entityPage.entityEditor));
-      });
+      console.log('verify properties to Order entity');
+      entityPage.isLoaded();
+      browser.executeScript('window.document.getElementsByClassName("edit-start")[0].click()');
+      browser.wait(EC.visibilityOf(entityPage.entityEditor));
+      expect(entityPage.entityEditor.isPresent()).toBe(true);
+      let idProperty = entityPage.getPropertyByPosition(1);
+      // verify that primary key is retained
+      expect(entityPage.getPropertyName(idProperty).getAttribute('value')).toEqual('id');
+      expect(entityPage.getPropertyType(idProperty).getAttribute('ng-reflect-model')).toEqual('string');
+      expect(entityPage.getPropertyDescription(idProperty).getAttribute('value')).toEqual('id description');
+      expect(entityPage.hasClass(entityPage.getPropertyPrimaryKey(idProperty), 'active')).toBe(true);
+      let priceProperty = entityPage.getPropertyByPosition(2);
+      expect(entityPage.getPropertyName(priceProperty).getAttribute('value')).toEqual('price');
+      expect(entityPage.getPropertyType(priceProperty).getAttribute('ng-reflect-model')).toEqual('decimal');
+      expect(entityPage.getPropertyCardinality(priceProperty).getAttribute('ng-reflect-model')).toEqual('ONE_TO_ONE');
+      expect(entityPage.getPropertyDescription(priceProperty).getAttribute('value')).toEqual('price description');
+      expect(entityPage.hasClass(entityPage.getPropertyRangeIndex(priceProperty), 'active')).toBe(true);
+      let productsProperty = entityPage.getPropertyByPosition(3);
+      expect(entityPage.getPropertyName(productsProperty).getAttribute('value')).toEqual('products');
+      expect(entityPage.getPropertyType(productsProperty).getAttribute('ng-reflect-model')).toEqual('#/definitions/Product');
+      expect(entityPage.getPropertyCardinality(productsProperty).getAttribute('ng-reflect-model')).toEqual('ONE_TO_MANY');
+      expect(entityPage.getPropertyDescription(productsProperty).getAttribute('value')).toEqual('products description');
+      expect(entityPage.hasClass(entityPage.getPropertyWordLexicon(productsProperty), 'active')).toBe(true);
+      // verify duplicate property is not created, the count should be 3
+      entityPage.getPropertiesCount().then(function(props){expect(props === 3)});
+      entityPage.cancelEntity.click();
+      browser.wait(EC.invisibilityOf(entityPage.entityEditor));
+    });
     
     it ('should remove some properties on Order entity', function() {
       console.log('verify remove properties on Order entity');
