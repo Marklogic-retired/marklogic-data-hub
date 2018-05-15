@@ -29,6 +29,7 @@ import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.Tracing;
+import com.sun.xml.internal.fastinfoset.util.QualifiedNameArray;
 import org.junit.*;
 import org.w3c.dom.Document;
 
@@ -41,6 +42,9 @@ import com.marklogic.client.query.RawStructuredQueryDefinition;
 import com.marklogic.client.query.StructuredQueryBuilder;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.FlowRunner;
+
+import javax.xml.namespace.QName;
+
 
 public class TracingTest extends HubTestBase {
 
@@ -167,12 +171,20 @@ public class TracingTest extends HubTestBase {
         Document finalDoc = doc.getContent(new DOMHandle()).get();
         assertXMLEqual(getXmlFromResource("tracing-test/traces/finalSjsXmlDoc.xml"), finalDoc);
 
-        StructuredQueryBuilder sqb = jobClient.newQueryManager().newStructuredQueryBuilder();
-        RawStructuredQueryDefinition sqd = sqb.build(sqb.not(sqb.value(sqb.jsonProperty("label"), "collector")));
-        Document node = traceDocMgr.search(sqd, 1).next().getContent(new DOMHandle()).get();
+        Document node = traceDocMgr.search(allButCollectors(), 1).next().getContent(new DOMHandle()).get();
         Assert.assertEquals(4, node.getElementsByTagName("step").getLength());
         Assert.assertEquals("content", node.getElementsByTagName("label").item(0).getTextContent());
         Assert.assertEquals(BINARY_HEX_ENCODED_XQY, node.getElementsByTagName("output").item(0).getTextContent().toLowerCase());
+    }
+
+    private RawStructuredQueryDefinition allButCollectors() {
+
+        StructuredQueryBuilder sqb = jobClient.newQueryManager().newStructuredQueryBuilder();
+        RawStructuredQueryDefinition allButCollectors = sqb.build(
+            sqb.and(
+                sqb.containerQuery(sqb.element("trace"),
+                    sqb.not(sqb.value(sqb.jsonProperty("label"), "collector")))));
+        return allButCollectors;
     }
 
     @Test
@@ -204,9 +216,7 @@ public class TracingTest extends HubTestBase {
         assertJsonEqual(getResource("tracing-test/traces/finalXqyJsonDoc.json"), finalDoc, true);
 
 
-        StructuredQueryBuilder sqb = jobClient.newQueryManager().newStructuredQueryBuilder();
-        RawStructuredQueryDefinition sqd = sqb.build(sqb.not(sqb.value(sqb.jsonProperty("label"), "collector")));
-        JsonNode node = traceDocMgr.search(sqd, 1).next().getContent(new JacksonHandle()).get();
+        JsonNode node = traceDocMgr.search(allButCollectors(), 1).next().getContent(new JacksonHandle()).get();
         Assert.assertEquals(4, node.get("trace").get("steps").size());
         Assert.assertEquals("content", node.get("trace").get("steps").get(0).get("label").asText());
         Assert.assertEquals(BINARY_HEX_ENCODED_XQY, node.get("trace").get("steps").get(0).get("output").asText().toLowerCase());
@@ -266,9 +276,7 @@ public class TracingTest extends HubTestBase {
         String finalDoc= doc.getContent(new StringHandle()).get();
         assertJsonEqual(getResource("tracing-test/traces/finalSjsJsonDoc.json"), finalDoc, true);
 
-        StructuredQueryBuilder sqb = jobClient.newQueryManager().newStructuredQueryBuilder();
-        RawStructuredQueryDefinition sqd = sqb.build(sqb.not(sqb.value(sqb.jsonProperty("label"), "collector")));
-        JsonNode node = traceDocMgr.search(sqd, 1).next().getContent(new JacksonHandle()).get();
+        JsonNode node = traceDocMgr.search(allButCollectors(), 1).next().getContent(new JacksonHandle()).get();
         Assert.assertEquals(4, node.get("trace").get("steps").size());
         Assert.assertEquals("content", node.get("trace").get("steps").get(0).get("label").asText());
         Assert.assertEquals(BINARY_HEX_ENCODED_SJS, node.get("trace").get("steps").get(0).get("output").asText());
@@ -302,9 +310,7 @@ public class TracingTest extends HubTestBase {
         Document finalDoc = doc.getContent(new DOMHandle()).get();
         assertXMLEqual(getXmlFromResource("tracing-test/traces/finalSjsXmlDoc.xml"), finalDoc);
 
-        StructuredQueryBuilder sqb = jobClient.newQueryManager().newStructuredQueryBuilder();
-        RawStructuredQueryDefinition sqd = sqb.build(sqb.not(sqb.value(sqb.jsonProperty("label"), "collector")));
-        Document node = traceDocMgr.search(sqd, 1).next().getContent(new DOMHandle()).get();
+        Document node = traceDocMgr.search(allButCollectors(), 1).next().getContent(new DOMHandle()).get();
         Assert.assertEquals(4, node.getElementsByTagName("step").getLength());
         Assert.assertEquals("content", node.getElementsByTagName("label").item(0).getTextContent());
         Assert.assertEquals(BINARY_HEX_ENCODED_SJS, node.getElementsByTagName("output").item(0).getTextContent());
@@ -332,9 +338,7 @@ public class TracingTest extends HubTestBase {
         assertEquals(0, getFinalDocCount());
         assertEquals(5, getTracingDocCount());
 
-        StructuredQueryBuilder sqb = jobClient.newQueryManager().newStructuredQueryBuilder();
-        RawStructuredQueryDefinition sqd = sqb.build(sqb.not(sqb.value(sqb.jsonProperty("label"), "collector")));
-        Document node = traceDocMgr.search(sqd, 1).next().getContent(new DOMHandle()).get();
+        Document node = traceDocMgr.search(allButCollectors(), 1).next().getContent(new DOMHandle()).get();
         Assert.assertEquals(1, node.getElementsByTagName("step").getLength());
         Assert.assertEquals("content", node.getElementsByTagName("label").item(0).getTextContent());
     }
@@ -360,9 +364,7 @@ public class TracingTest extends HubTestBase {
         assertEquals(0, getFinalDocCount());
         assertEquals(5, getTracingDocCount());
 
-        StructuredQueryBuilder sqb = jobClient.newQueryManager().newStructuredQueryBuilder();
-        RawStructuredQueryDefinition sqd = sqb.build(sqb.not(sqb.value(sqb.jsonProperty("label"), "collector")));
-        Document node = traceDocMgr.search(sqd, 1).next().getContent(new DOMHandle()).get();
+        Document node = traceDocMgr.search(allButCollectors(), 1).next().getContent(new DOMHandle()).get();
         Assert.assertEquals(1, node.getElementsByTagName("step").getLength());
         Assert.assertEquals("writer", node.getElementsByTagName("label").item(0).getTextContent());
     }
@@ -388,9 +390,7 @@ public class TracingTest extends HubTestBase {
         assertEquals(0, getFinalDocCount());
         assertEquals(5, getTracingDocCount());
 
-        StructuredQueryBuilder sqb = jobClient.newQueryManager().newStructuredQueryBuilder();
-        RawStructuredQueryDefinition sqd = sqb.build(sqb.not(sqb.value(sqb.jsonProperty("label"), "collector")));
-        JsonNode node = traceDocMgr.search(sqd, 1).next().getContent(new JacksonHandle()).get();
+        JsonNode node = traceDocMgr.search(allButCollectors(), 1).next().getContent(new JacksonHandle()).get();
         System.out.println(node.asText());
         Assert.assertEquals(1, node.get("trace").get("steps").size());
         Assert.assertEquals("content", node.get("trace").get("steps").get(0).get("label").asText());
@@ -418,9 +418,7 @@ public class TracingTest extends HubTestBase {
         assertEquals(0, getFinalDocCount());
         assertEquals(5, getTracingDocCount());
 
-        StructuredQueryBuilder sqb = jobClient.newQueryManager().newStructuredQueryBuilder();
-        RawStructuredQueryDefinition sqd = sqb.build(sqb.not(sqb.value(sqb.jsonProperty("label"), "collector")));
-        JsonNode node = traceDocMgr.search(sqd, 1).next().getContent(new JacksonHandle()).get();
+        JsonNode node = traceDocMgr.search(allButCollectors(), 1).next().getContent(new JacksonHandle()).get();
         Assert.assertEquals(1, node.get("trace").get("steps").size());
         Assert.assertEquals("writer", node.get("trace").get("steps").get(0).get("label").asText());
     }
