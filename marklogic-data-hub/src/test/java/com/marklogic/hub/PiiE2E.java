@@ -157,10 +157,10 @@ public class PiiE2E extends HubTestBase {
         });
 
         // save pii, install user modules and deploy security
+        installUserModules(getHubConfig(), true);
         EntityManager entityManager = EntityManager.create(getHubConfig());
         entityManager.savePii();
 
-        installUserModules(getHubConfig(), true);
         deploySecurity();
 
         //Clerk able to see harmonized document but not ssn
@@ -227,7 +227,7 @@ public class PiiE2E extends HubTestBase {
             InputStreamReader configReader = new InputStreamReader(PiiE2E.class.getClassLoader().getResourceAsStream("pii-test/keys/" + keyFileName));
             expected = parser.parse(configReader).getAsJsonObject();
             logger.debug("Checking contents of " + keyFileName + " which are " + expected.toString());
-            assertTrue("Collected actuals contains key " + keyFileName + ".", actuals.contains(expected.toString()));
+            assertTrue("Collected actuals must contain key " + keyFileName + ".", actuals.contains(expected.toString()));
         }
     }
 

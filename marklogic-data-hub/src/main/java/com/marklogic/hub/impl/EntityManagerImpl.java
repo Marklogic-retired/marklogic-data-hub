@@ -152,6 +152,35 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
         return propertiesModuleManager;
     }
 
+    private List<JsonNode> getAllEntities() {
+        List<JsonNode> entities = new ArrayList<>();
+        Path entitiesPath = hubConfig.getHubEntitiesDir();
+        File[] entityFiles = entitiesPath.toFile().listFiles(pathname -> pathname.isDirectory() && !pathname.isHidden());
+        List<String> entityNames;
+        if (entityFiles != null) {
+            entityNames = Arrays.stream(entityFiles)
+                .map(file -> file.getName())
+                .collect(Collectors.toList());
+
+            ObjectMapper objectMapper = new ObjectMapper();
+            try {
+                boolean hasOneChanged = false;
+                for (String entityName : entityNames) {
+                    File[] entityDefs = entitiesPath.resolve(entityName).toFile().listFiles((dir, name) -> name.endsWith(ENTITY_FILE_EXTENSION));
+                    for (File entityDef : entityDefs) {
+                        FileInputStream fileInputStream = new FileInputStream(entityDef);
+                        entities.add(objectMapper.readTree(fileInputStream));
+                        fileInputStream.close();
+                    }
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+        }
+        return entities;
+    }
+
     private List<JsonNode> getModifiedRawEntities(long minimumFileTimestampToLoad) {
         logger.debug("min modified: " + minimumFileTimestampToLoad);
         HubModuleManager propsManager = getPropsMgr();
@@ -288,7 +317,7 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
             ObjectMapper mapper = new ObjectMapper();
             ObjectWriter writer = mapper.writerWithDefaultPrettyPrinter();
             // get all the entities.
-            List<JsonNode> entities = getModifiedRawEntities(0L);
+            List<JsonNode> entities = getAllEntities();
             if (entities.size() > 0) {
                 PiiGenerator piiGenerator = new PiiGenerator(hubConfig.newFinalClient());
 
