@@ -29,7 +29,6 @@ import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.Tracing;
-import com.sun.xml.internal.fastinfoset.util.QualifiedNameArray;
 import org.junit.*;
 import org.w3c.dom.Document;
 
@@ -42,8 +41,6 @@ import com.marklogic.client.query.RawStructuredQueryDefinition;
 import com.marklogic.client.query.StructuredQueryBuilder;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.FlowRunner;
-
-import javax.xml.namespace.QName;
 
 
 public class TracingTest extends HubTestBase {
