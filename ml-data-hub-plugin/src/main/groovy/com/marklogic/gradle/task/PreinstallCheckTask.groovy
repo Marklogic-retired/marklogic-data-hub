@@ -12,7 +12,7 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
- *  
+ *
  */
 
 package com.marklogic.gradle.task
@@ -67,10 +67,6 @@ class PreinstallCheckTask extends HubTask {
                 .append("      FIX: Change the [mlJobPort] property in gradle.properties to a free port\n")
             }
 
-            if (dh.getTracePortInUseBy() != null) {
-                sb.append("- PROBLEM: Trace Port " + hubConfig.tracePort + " already in use by: [" + dh.getTracePortInUseBy() + "]\n")
-                .append("      FIX: Change the [mlTracePort] property in gradle.properties to a free port\n")
-            }
             throw new TaskExecutionException(this, new Throwable(sb.toString()))
         }
         print(dh.toString())

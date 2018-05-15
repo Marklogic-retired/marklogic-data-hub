@@ -178,9 +178,6 @@ class TlsTest extends BaseTest {
                     finalSslContext = newSslContext
                     finalSslHostnameVerifier = DatabaseClientFactory.SSLHostnameVerifier.ANY
 
-                    traceSslContext = newSslContext
-                    traceSslHostnameVerifier = DatabaseClientFactory.SSLHostnameVerifier.ANY
-
                     jobSslContext = newSslContext
                     jobSslHostnameVerifier = DatabaseClientFactory.SSLHostnameVerifier.ANY
                 }
@@ -197,7 +194,6 @@ class TlsTest extends BaseTest {
         copyResourceToFile("tls-test/ssl-server.json", new File(BaseTest.testProjectDir.root, "user-config/servers/final-server.json"))
         copyResourceToFile("tls-test/ssl-server.json", new File(BaseTest.testProjectDir.root, "user-config/servers/job-server.json"))
         copyResourceToFile("tls-test/ssl-server.json", new File(BaseTest.testProjectDir.root, "user-config/servers/staging-server.json"))
-        copyResourceToFile("tls-test/ssl-server.json", new File(BaseTest.testProjectDir.root, "user-config/servers/trace-server.json"))
         createProperties()
         result = runTask("enableSSL")
         print(result.output)
@@ -219,7 +215,6 @@ class TlsTest extends BaseTest {
 
         mlStagingSimpleSsl=false
         mlFinalSimpleSsl=false
-        mlTraceSimpleSsl=false
         mlJobSimpleSsl=false
 
         """

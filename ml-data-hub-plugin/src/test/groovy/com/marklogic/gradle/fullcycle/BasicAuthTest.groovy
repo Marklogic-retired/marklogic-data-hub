@@ -40,7 +40,6 @@ class BasicAuthTest extends BaseTest {
         BaseTest.propertiesFile << """
             mlStagingAuth=basic
             mlFinalAuth=basic
-            mlTraceAuth=basic
             mlJobAuth=basic
         """
     }
