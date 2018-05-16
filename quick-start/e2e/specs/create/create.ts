@@ -5,6 +5,7 @@ import dashboardPage from '../../page-objects/dashboard/dashboard';
 import entityPage from '../../page-objects/entities/entities';
 import flowPage from '../../page-objects/flows/flows';
 import {assertNotNull} from "@angular/compiler/src/output/output_ast";
+import appPage from '../../page-objects/appPage';
 
 const selectCardinalityOneToOneOption = 'select option:nth-child(1)';
 const selectCardinalityOneToManyOption = 'select option:nth-child(2)';
@@ -153,7 +154,6 @@ export default function() {
       entityPage.getPropertyType(lastProperty).element(by.cssContainingText('option', 'string')).click();
       entityPage.getPropertyDescription(lastProperty).sendKeys('sku description');
       entityPage.getPropertyPrimaryKeyColumn(lastProperty).click();
-      entityPage.getPropertyPiiColumn(lastProperty).click();
       // add price property
       console.log('add price property');
       entityPage.addProperty.click();
@@ -169,34 +169,7 @@ export default function() {
       browser.wait(EC.presenceOf(entityPage.toast));
       browser.wait(EC.stalenessOf(entityPage.toast));
     });
-    
-    it ('should toggle pii button for Product entity', function() {
-      console.log('should verify toggling action of PII icon');
-      browser.executeScript('window.document.getElementsByClassName("edit-start")[1].click()');
-      browser.wait(EC.visibilityOf(entityPage.entityEditor));
-      expect(entityPage.entityEditor.isPresent()).toBe(true);
-      let skuProperty = entityPage.getPropertyByPosition(1);
-      // Already PII property set to true for SKU, Verifying it
-      expect(entityPage.hasClass(entityPage.getPropertyPii(skuProperty), 'active')).toBe(true);
-      // Turning off PII property to verify toggling
-      entityPage.getPropertyPiiColumn(skuProperty).click();
-      expect(entityPage.hasClass(entityPage.getPropertyPii(skuProperty), 'active')).toBe(false);
-      // Resetting back to the original state
-      entityPage.getPropertyPiiColumn(skuProperty).click();
-      expect(entityPage.hasClass(entityPage.getPropertyPii(skuProperty), 'active')).toBe(true);
-      let priceProperty = entityPage.getPropertyByPosition(2);
-      // PII property is not set for Price Entity, Verifying it
-      expect(entityPage.hasClass(entityPage.getPropertyPii(priceProperty), 'active')).toBe(false);
-      // Turning off PII property to verify toggling
-      entityPage.getPropertyPiiColumn(priceProperty).click();
-      expect(entityPage.hasClass(entityPage.getPropertyPii(priceProperty), 'active')).toBe(true);
-      // Resetting back to the original state      
-      entityPage.getPropertyPiiColumn(priceProperty).click();      
-      expect(entityPage.hasClass(entityPage.getPropertyPii(priceProperty), 'active')).toBe(false);
-      entityPage.cancelEntity.click();
-      browser.wait(EC.invisibilityOf(entityPage.entityEditor));
-    });
-    
+
     it ('should add properties to Order entity', function() {
       //add properties
       console.log('add properties to Order entity');
@@ -234,7 +207,6 @@ export default function() {
       lastProperty = entityPage.lastProperty;
       entityPage.getPropertyName(lastProperty).sendKeys('price');
       entityPage.getPropertyType(lastProperty).element(by.cssContainingText('option', 'decimal')).click();
-      entityPage.getPropertyDescription(lastProperty).sendKeys('price description');
       entityPage.saveEntity.click();
       browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
       expect(entityPage.confirmDialogYesButton.isPresent()).toBe(true);
@@ -243,20 +215,9 @@ export default function() {
       browser.wait(EC.stalenessOf(entityPage.toast));
     });
 
-    it ('should logout and login', function() {
-      entityPage.logout();
-      loginPage.isLoaded();
-      loginPage.clickNext('ProjectDirTab');
-      browser.wait(EC.elementToBeClickable(loginPage.environmentTab));
-      loginPage.clickNext('EnvironmentTab');
-      browser.wait(EC.elementToBeClickable(loginPage.loginTab));
-      loginPage.login();
-    });
-    
     it ('should verify properties to Product entity', function() {
-      entityPage.isLoaded();
       console.log('verify properties to Product entity');
-      browser.executeScript('window.document.getElementsByClassName("edit-start")[1].click()');
+      browser.executeScript('window.document.getElementsByClassName("edit-start")[0].click()');
       browser.wait(EC.visibilityOf(entityPage.entityEditor));
       expect(entityPage.entityEditor.isPresent()).toBe(true);
       let skuProperty = entityPage.getPropertyByPosition(1);
@@ -264,7 +225,6 @@ export default function() {
       expect(entityPage.getPropertyType(skuProperty).getAttribute('ng-reflect-model')).toEqual('string');
       expect(entityPage.getPropertyDescription(skuProperty).getAttribute('value')).toEqual('sku description');
       expect(entityPage.hasClass(entityPage.getPropertyPrimaryKey(skuProperty), 'active')).toBe(true);
-      expect(entityPage.hasClass(entityPage.getPropertyPii(skuProperty), 'active')).toBe(true);
       let priceProperty = entityPage.getPropertyByPosition(2);
       expect(entityPage.getPropertyName(priceProperty).getAttribute('value')).toEqual('price');
       expect(entityPage.getPropertyType(priceProperty).getAttribute('ng-reflect-model')).toEqual('decimal');
@@ -276,7 +236,6 @@ export default function() {
 
     it ('should verify properties to Order entity', function() {
       console.log('verify properties to Order entity');
-      entityPage.isLoaded();
       browser.executeScript('window.document.getElementsByClassName("edit-start")[0].click()');
       browser.wait(EC.visibilityOf(entityPage.entityEditor));
       expect(entityPage.entityEditor.isPresent()).toBe(true);
@@ -303,7 +262,7 @@ export default function() {
       entityPage.cancelEntity.click();
       browser.wait(EC.invisibilityOf(entityPage.entityEditor));
     });
-    
+
     it ('should remove some properties on Order entity', function() {
       console.log('verify remove properties on Order entity');
       let lastProperty = entityPage.lastProperty;
@@ -355,7 +314,7 @@ export default function() {
       entityPage.cancelEntity.click();
       browser.wait(EC.invisibilityOf(entityPage.entityEditor));
     });
-    
+
     it ('should remove a created entity', function() {
       //create removeEntity entity
       console.log('create removeEntity entity');
@@ -487,6 +446,118 @@ export default function() {
       browser.wait(EC.elementToBeClickable(entityPage.confirmDialogNoButton));
       expect(entityPage.confirmDialogNoButton.isPresent()).toBe(true);
       entityPage.confirmDialogNoButton.click();
+    });
+
+    it ('should create a new entity for PII', function() {
+      entityPage.toolsButton.click();
+      entityPage.newEntityButton.click();
+      expect(entityPage.entityEditor.isPresent()).toBe(true);
+      entityPage.entityTitle.sendKeys('PIIEntity');
+      entityPage.saveEntity.click();
+      browser.wait(EC.elementToBeClickable(entityPage.confirmDialogNoButton));
+      expect(entityPage.confirmDialogNoButton.isPresent()).toBe(true);
+      entityPage.confirmDialogNoButton.click();
+      browser.wait(EC.visibilityOf(entityPage.getEntityBox('PIIEntity')));
+      expect(entityPage.getEntityBox('PIIEntity').isDisplayed()).toBe(true);
+      entityPage.toolsButton.click();
+    });
+
+    it('should create a pii property', function(){
+      browser.executeScript('window.document.getElementsByClassName("edit-start")[3].click()');
+      browser.wait(EC.visibilityOf(entityPage.entityEditor));
+      expect(entityPage.entityEditor.isPresent()).toBe(true);
+      //tell the UI to add the visual row
+      entityPage.addProperty.click();
+      //now compare to see if the current count is 1
+      element.all(by.css('.properties > table > tBody > tr')).count().then(function(props){expect(props === 1)});
+
+      //select the last (or first if only 1) property
+      let lastProperty = entityPage.lastProperty;
+      expect(lastProperty.isPresent() && lastProperty.isDisplayed());
+      //populate the fields for name, range index, type, and description
+      entityPage.getPropertyName(lastProperty).sendKeys("pii_test");
+      entityPage.getPropertyPii(lastProperty).click();
+      entityPage.getPropertyType(lastProperty).element(by.cssContainingText('option', 'string')).click();
+      entityPage.getPropertyDescription(lastProperty).sendKeys("this is a pii property");
+      //let's see if our values hold!
+      expect(entityPage.getPropertyName(lastProperty).getAttribute('value')).toEqual("pii_test");
+      expect(entityPage.hasClass(entityPage.getPropertyPii(lastProperty), 'active')).toBe(true);
+      expect(entityPage.getPropertyType(lastProperty).getAttribute('value')).toEqual("24: string");
+      expect(entityPage.getPropertyDescription(lastProperty).getAttribute('value')).toEqual("this is a pii property");
+      
+      //add a non pii property
+      entityPage.addProperty.click();
+      lastProperty = entityPage.lastProperty;
+      entityPage.getPropertyName(lastProperty).sendKeys("no_pii");
+      entityPage.getPropertyType(lastProperty).element(by.cssContainingText('option', 'string')).click();
+      entityPage.getPropertyDescription(lastProperty).sendKeys("not a pii property");
+
+      entityPage.saveEntity.click();
+      browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
+      expect(entityPage.confirmDialogYesButton.isPresent()).toBe(true);
+      entityPage.confirmDialogYesButton.click();
+      browser.wait(EC.presenceOf(entityPage.toast));
+      browser.wait(EC.stalenessOf(entityPage.toast));
+    });
+
+    it ('should verify pii property to PII entity', function() {
+      console.log('verify pii property to PII entity');
+      browser.executeScript('window.document.getElementsByClassName("edit-start")[3].click()');
+      browser.wait(EC.visibilityOf(entityPage.entityEditor));
+      expect(entityPage.entityEditor.isPresent()).toBe(true);
+      let piiProperty = entityPage.getPropertyByPosition(1);
+      expect(entityPage.getPropertyName(piiProperty).getAttribute('value')).toEqual('pii_test');
+      expect(entityPage.getPropertyType(piiProperty).getAttribute('ng-reflect-model')).toEqual('string');
+      expect(entityPage.getPropertyDescription(piiProperty).getAttribute('value')).toEqual('this is a pii property');
+      // Verify that PII attribute is checked
+      expect(entityPage.hasClass(entityPage.getPropertyPii(piiProperty), 'active')).toBe(true);
+      console.log('verify pii toggling');
+      // Turning off PII attribute to verify toggling
+      entityPage.getPropertyPiiColumn(piiProperty).click();
+      expect(entityPage.hasClass(entityPage.getPropertyPii(piiProperty), 'active')).toBe(false);
+      // Resetting back to the original state
+      entityPage.getPropertyPiiColumn(piiProperty).click();
+      expect(entityPage.hasClass(entityPage.getPropertyPii(piiProperty), 'active')).toBe(true);
+      let nonPiiProperty = entityPage.getPropertyByPosition(2);
+      // Verify that PII attribute is not checked
+      expect(entityPage.hasClass(entityPage.getPropertyPii(nonPiiProperty), 'active')).toBe(false);
+      // Turning on PII property to verify toggling
+      entityPage.getPropertyPiiColumn(nonPiiProperty).click();
+      expect(entityPage.hasClass(entityPage.getPropertyPii(nonPiiProperty), 'active')).toBe(true);
+      // Resetting back to the original state      
+      entityPage.getPropertyPiiColumn(nonPiiProperty).click();      
+      expect(entityPage.hasClass(entityPage.getPropertyPii(nonPiiProperty), 'active')).toBe(false);
+      entityPage.cancelEntity.click();
+      browser.wait(EC.invisibilityOf(entityPage.entityEditor));
+    });
+
+    it ('should logout and login', function() {
+      entityPage.logout();
+      loginPage.isLoaded();
+      loginPage.clickNext('ProjectDirTab');
+      browser.wait(EC.elementToBeClickable(loginPage.environmentTab));
+      loginPage.clickNext('EnvironmentTab');
+      browser.wait(EC.elementToBeClickable(loginPage.loginTab));
+      loginPage.login();
+      entityPage.isLoaded();
+    });
+
+    it ('should verify pii property is retained after logout', function() {
+      console.log('verify pii property is retained after logout');
+      browser.executeScript('window.document.getElementsByClassName("edit-start")[3].click()');
+      browser.wait(EC.visibilityOf(entityPage.entityEditor));
+      expect(entityPage.entityEditor.isPresent()).toBe(true);
+      let piiProperty = entityPage.getPropertyByPosition(1);
+      expect(entityPage.getPropertyName(piiProperty).getAttribute('value')).toEqual('pii_test');
+      expect(entityPage.getPropertyType(piiProperty).getAttribute('ng-reflect-model')).toEqual('string');
+      expect(entityPage.getPropertyDescription(piiProperty).getAttribute('value')).toEqual('this is a pii property');
+      // Verify that PII attribute is checked
+      expect(entityPage.hasClass(entityPage.getPropertyPii(piiProperty), 'active')).toBe(true);
+      let nonPiiProperty = entityPage.getPropertyByPosition(2);
+      // Verify that PII attribute is not checked
+      expect(entityPage.hasClass(entityPage.getPropertyPii(nonPiiProperty), 'active')).toBe(false);
+      entityPage.cancelEntity.click();
+      browser.wait(EC.invisibilityOf(entityPage.entityEditor));
     });
 
     it ('should go to the flow page', function() {
