@@ -153,6 +153,7 @@ export default function() {
       entityPage.getPropertyType(lastProperty).element(by.cssContainingText('option', 'string')).click();
       entityPage.getPropertyDescription(lastProperty).sendKeys('sku description');
       entityPage.getPropertyPrimaryKeyColumn(lastProperty).click();
+      entityPage.getPropertyPiiColumn(lastProperty).click();
       // add price property
       console.log('add price property');
       entityPage.addProperty.click();
@@ -168,7 +169,34 @@ export default function() {
       browser.wait(EC.presenceOf(entityPage.toast));
       browser.wait(EC.stalenessOf(entityPage.toast));
     });
-
+    
+    it ('should toggle pii button for Product entity', function() {
+      console.log('should verify toggling action of PII icon');
+      browser.executeScript('window.document.getElementsByClassName("edit-start")[1].click()');
+      browser.wait(EC.visibilityOf(entityPage.entityEditor));
+      expect(entityPage.entityEditor.isPresent()).toBe(true);
+      let skuProperty = entityPage.getPropertyByPosition(1);
+      // Already PII property set to true for SKU, Verifying it
+      expect(entityPage.hasClass(entityPage.getPropertyPii(skuProperty), 'active')).toBe(true);
+      // Turning off PII property to verify toggling
+      entityPage.getPropertyPiiColumn(skuProperty).click();
+      expect(entityPage.hasClass(entityPage.getPropertyPii(skuProperty), 'active')).toBe(false);
+      // Resetting back to the original state
+      entityPage.getPropertyPiiColumn(skuProperty).click();
+      expect(entityPage.hasClass(entityPage.getPropertyPii(skuProperty), 'active')).toBe(true);
+      let priceProperty = entityPage.getPropertyByPosition(2);
+      // PII property is not set for Price Entity, Verifying it
+      expect(entityPage.hasClass(entityPage.getPropertyPii(priceProperty), 'active')).toBe(false);
+      // Turning off PII property to verify toggling
+      entityPage.getPropertyPiiColumn(priceProperty).click();
+      expect(entityPage.hasClass(entityPage.getPropertyPii(priceProperty), 'active')).toBe(true);
+      // Resetting back to the original state      
+      entityPage.getPropertyPiiColumn(priceProperty).click();      
+      expect(entityPage.hasClass(entityPage.getPropertyPii(priceProperty), 'active')).toBe(false);
+      entityPage.cancelEntity.click();
+      browser.wait(EC.invisibilityOf(entityPage.entityEditor));
+    });
+    
     it ('should add properties to Order entity', function() {
       //add properties
       console.log('add properties to Order entity');
@@ -206,6 +234,7 @@ export default function() {
       lastProperty = entityPage.lastProperty;
       entityPage.getPropertyName(lastProperty).sendKeys('price');
       entityPage.getPropertyType(lastProperty).element(by.cssContainingText('option', 'decimal')).click();
+      entityPage.getPropertyDescription(lastProperty).sendKeys('price description');
       entityPage.saveEntity.click();
       browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
       expect(entityPage.confirmDialogYesButton.isPresent()).toBe(true);
@@ -214,9 +243,20 @@ export default function() {
       browser.wait(EC.stalenessOf(entityPage.toast));
     });
 
+    it ('should logout and login', function() {
+      entityPage.logout();
+      loginPage.isLoaded();
+      loginPage.clickNext('ProjectDirTab');
+      browser.wait(EC.elementToBeClickable(loginPage.environmentTab));
+      loginPage.clickNext('EnvironmentTab');
+      browser.wait(EC.elementToBeClickable(loginPage.loginTab));
+      loginPage.login();
+    });
+    
     it ('should verify properties to Product entity', function() {
+      entityPage.isLoaded();
       console.log('verify properties to Product entity');
-      browser.executeScript('window.document.getElementsByClassName("edit-start")[0].click()');
+      browser.executeScript('window.document.getElementsByClassName("edit-start")[1].click()');
       browser.wait(EC.visibilityOf(entityPage.entityEditor));
       expect(entityPage.entityEditor.isPresent()).toBe(true);
       let skuProperty = entityPage.getPropertyByPosition(1);
@@ -224,6 +264,7 @@ export default function() {
       expect(entityPage.getPropertyType(skuProperty).getAttribute('ng-reflect-model')).toEqual('string');
       expect(entityPage.getPropertyDescription(skuProperty).getAttribute('value')).toEqual('sku description');
       expect(entityPage.hasClass(entityPage.getPropertyPrimaryKey(skuProperty), 'active')).toBe(true);
+      expect(entityPage.hasClass(entityPage.getPropertyPii(skuProperty), 'active')).toBe(true);
       let priceProperty = entityPage.getPropertyByPosition(2);
       expect(entityPage.getPropertyName(priceProperty).getAttribute('value')).toEqual('price');
       expect(entityPage.getPropertyType(priceProperty).getAttribute('ng-reflect-model')).toEqual('decimal');
@@ -235,6 +276,7 @@ export default function() {
 
     it ('should verify properties to Order entity', function() {
       console.log('verify properties to Order entity');
+      entityPage.isLoaded();
       browser.executeScript('window.document.getElementsByClassName("edit-start")[0].click()');
       browser.wait(EC.visibilityOf(entityPage.entityEditor));
       expect(entityPage.entityEditor.isPresent()).toBe(true);
@@ -261,7 +303,7 @@ export default function() {
       entityPage.cancelEntity.click();
       browser.wait(EC.invisibilityOf(entityPage.entityEditor));
     });
-
+    
     it ('should remove some properties on Order entity', function() {
       console.log('verify remove properties on Order entity');
       let lastProperty = entityPage.lastProperty;
@@ -313,7 +355,7 @@ export default function() {
       entityPage.cancelEntity.click();
       browser.wait(EC.invisibilityOf(entityPage.entityEditor));
     });
-
+    
     it ('should remove a created entity', function() {
       //create removeEntity entity
       console.log('create removeEntity entity');

@@ -109,7 +109,7 @@ function cleanData(resp, destination, dataFormat)
 {
   if (resp instanceof Document) {
     if (fn.count(resp.xpath('node()')) > 1) {
-      fn.error(xs.QName("TOO_MANY_NODES"), "Too Many Nodes!. Return just 1 node");
+      fn.error(null, "DATAHUB-TOO-MANY-NODES", Sequence.from([400, "Too Many Nodes!. Return just 1 node"]));
     } else {
       resp = resp.xpath('node()');
     }
@@ -274,7 +274,7 @@ function makeEnvelope(content, headers, triples, dataFormat) {
     return nb.toNode();
   }
 
-  fn.error(xs.QName("INVALID-DATA-FORMAT"), "Invalid data format: " + dataFormat)
+  fn.error(null, "RESTAPI-INVALIDCONTENT", Sequence.from(["Invalid data format: " + dataFormat + ".  Must be JSON or XML"]))
 };
 
 function makeLegacyEnvelope(content, headers, triples, dataFormat) {
@@ -337,7 +337,7 @@ function makeLegacyEnvelope(content, headers, triples, dataFormat) {
     return nb.toNode();
   }
 
-  fn.error(xs.QName("INVALID-DATA-FORMAT"), "Invalid data format: " || dataFormat)
+  fn.error(null, "RESTAPI-INVALIDCONTENT", Sequence.from(["Invalid data format: " + dataFormat + ".  Must be JSON or XML"]))
 };
 
 function instanceToCanonicalJson(entityInstance) {
@@ -450,7 +450,7 @@ function getMainFunc(main) {
   // sanity check on required info
   let moduleUri = main.module;
   if (!main.module || !main.codeFormat) {
-    fn.error(xs.QName("INVALID-PLUGIN"), "The plugin definition is invalid.");
+    fn.error(null, "DATAHUB-INVALID-PLUGIN", Sequence.from(["The plugin definition is invalid."]));
   }
   rfc.withModuleUri(moduleUri);
   rfc.withCodeFormat(main.codeFormat);
@@ -487,7 +487,7 @@ function runMain(itemContext, func) {
     }
   }
   catch(ex) {
-    if (ex.name != "error in a plugin") {
+    if (ex.code == "DATAHUB-PLUGIN-ERROR") {
       // this is an error in main.(sjs|xqy)
       xdmp.log(ex.toString());
 
@@ -594,7 +594,7 @@ function safeRun(func) {
   }
   catch(ex) {
     tracelib.errorTrace(rfc.getItemContext(), ex, xdmp.elapsedTime().subtract(before));
-    fn.error(xs.QName("PLUGIN-ERROR"), "error in a plugin", JSON.stringify(ex));
+    fn.error(null, "DATAHUB-PLUGIN-ERROR", Sequence.from(["error in a plugin", JSON.stringify(ex)]));
   }
 };
 
