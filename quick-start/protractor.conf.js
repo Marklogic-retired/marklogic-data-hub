@@ -39,6 +39,7 @@ exports.config = {
     jasmine.getEnv().addReporter(new Jasmine2HtmlReporter({
       takeScreenshots: true,
       takeScreenshotsOnlyOnFailures: true,
+      fixedScreenshotName: true,
       consolidateAll: true,
       savePath: './e2e/reports/',
       filePrefix: 'html-report'
