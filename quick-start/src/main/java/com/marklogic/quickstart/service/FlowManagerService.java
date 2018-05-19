@@ -54,7 +54,6 @@ public class FlowManagerService extends EnvironmentAware {
 
     private static final String PROJECT_TMP_FOLDER = ".tmp";
 
-    @Autowired
     private FlowManager flowManager;
 
     // before login, flowManager is null, so check each time.
