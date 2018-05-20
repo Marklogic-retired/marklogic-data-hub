@@ -24,9 +24,17 @@ export class EntityPage extends AppPage {
   get entityEditor() {
     return element(by.css('app-entity-editor'));
   }
+
+  selectEntity(entityName: string) {
+    return element(by.id(`aeb-${entityName}`)).element(by.css('div.title')).click();
+  }
+
+  entityBox(entityName: string) {
+    return element(by.id(`aeb-${entityName}`)).element(by.css('div.title'));
+  }
   
   clickEditEntity(entityName: string) {
-    return element(by.css('#aeb-' + entityName + ' .edit-start > i')).click();
+    browser.executeScript(`window.document.getElementById("aeb-${entityName}").getElementsByClassName("edit-start")[0].click()`);
   }
 
   deleteEntityButton(entityName: string) {
