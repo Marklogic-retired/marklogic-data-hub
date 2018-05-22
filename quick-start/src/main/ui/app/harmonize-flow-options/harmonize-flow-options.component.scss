@@ -1,3 +1,7 @@
+@import '../../styles/variables';
+
+$error: unquote("rgb(#{$palette-datahub-red})");
+
 :host {
   display: block;
   margin: 20px;
@@ -10,4 +14,30 @@
   .mdl-textfield {
     width: 100%;
   }
+}
+
+.map-saved {
+  font-size: 16px;
+  padding-right: 10px;
+  cursor: pointer;
+}
+
+.map-delete {
+  .fa-trash {
+    color: #999;
+    font-size: 16px;
+    cursor: pointer;
+    &:hover {
+      color: $error;
+    }
+  }
+}
+
+.map-not-avail {
+  color: #999;
+  font-style: italic;
+}
+
+.map-saved a {
+  color: #000;
 }

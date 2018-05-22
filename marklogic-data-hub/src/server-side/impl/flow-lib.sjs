@@ -487,16 +487,15 @@ function runMain(itemContext, func) {
     }
   }
   catch(ex) {
-    if (ex.code == "DATAHUB-PLUGIN-ERROR") {
+    if (! ex.name.includes("DATAHUB-PLUGIN-ERROR")) {
       // this is an error in main.(sjs|xqy)
-      xdmp.log(ex.toString());
-
       // log the trace event for main
       tracelib.setPluginLabel("main", rfc.getTrace(itemContext));
       tracelib.errorTrace(itemContext, ex, xdmp.elapsedTime().subtract(before));
+      throw(ex);
+    }  else {
+      throw(ex);
     }
-
-    throw(ex);
   }
 
   if (resp instanceof Sequence) {

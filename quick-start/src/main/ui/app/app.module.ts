@@ -21,6 +21,7 @@ import { MdlModule } from '@angular-mdl/core';
 import { MdlPopoverModule } from '@angular-mdl/popover';
 import { MdlSelectModule } from '@angular-mdl/select';
 import { GridManiaModule } from './grid';
+import { BsDropdownModule } from 'ngx-bootstrap';
 
 import { ROUTES } from './app.routes';
 import { AUTH_PROVIDERS } from './auth';
@@ -46,6 +47,7 @@ import { EntitiesService } from './entities/entities.service';
 import { InstallService } from './installer';
 import { JobService } from './jobs/jobs.service';
 import { JobListenerService } from './jobs/job-listener.service';
+import { MapService } from './map/map.service';
 import { ProjectService } from './projects/projects.service';
 import { SettingsService } from './settings/settings.service';
 import { STOMPService } from './stomp/stomp.service';
@@ -63,6 +65,7 @@ import { DatePipeModule } from './date-pipe/date-pipe.module';
 import { SelectKeyValuesComponent } from './select-key-values/select-key-values.component';
 import {JobExportDialogComponent} from "./jobs/job-export.component";
 
+import { MapComponent } from './map';
 
 @NgModule({
   declarations: [
@@ -103,7 +106,8 @@ import {JobExportDialogComponent} from "./jobs/job-export.component";
     TitlecasePipe,
     TruncateCharactersPipe,
     ObjectToArrayPipe,
-    SelectKeyValuesComponent
+    SelectKeyValuesComponent,
+    MapComponent
   ],
   entryComponents: [
     HasBugsDialogComponent,
@@ -125,7 +129,8 @@ import {JobExportDialogComponent} from "./jobs/job-export.component";
     TooltipModule,
     GridManiaModule,
     RouterModule.forRoot(ROUTES, { useHash: true }),
-    DatePipeModule
+    DatePipeModule,
+    BsDropdownModule.forRoot()
   ],
   providers: [
     AUTH_PROVIDERS,
@@ -134,6 +139,7 @@ import {JobExportDialogComponent} from "./jobs/job-export.component";
     InstallService,
     JobService,
     JobListenerService,
+    MapService,
     ProjectService,
     SettingsService,
     STOMPService,
