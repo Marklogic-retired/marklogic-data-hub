@@ -22,6 +22,29 @@
           (input)="saveSettings()"
           ></mdl-textfield>
       </div>
+      <div class="map">
+        <div class="map-heading">
+          <h4>Map</h4>
+        </div>
+        <div *ngIf="!hasDocs">
+          <span class="map-not-avail">No source documents available for mapping. To define a map, run an input flow to load documents.</span>
+        </div>
+        <div *ngIf="hasDocs">
+          <div *ngIf="!mapName">
+            <mdl-button mdl-button-type="raised" mdl-colored="primary" mdl-ripple [routerLink]="['/map']"
+              [queryParams]="{entityName: flow.entityName,flowName: flow.flowName}">Create Map</mdl-button>
+          </div>
+          <div *ngIf="mapName">
+            <span class="map-saved">
+              <a [routerLink]="['/map']"
+                [queryParams]="{entityName: flow.entityName,flowName: flow.flowName}">{{flow.flowName}} Map</a>
+            </span>
+            <span class="map-delete">
+              <i class="fa fa-trash" (click)="deleteMap($event)"></i>
+            </span>
+          </div>
+        </div>
+      </div>
       <app-select-key-values
         [title]="keyValTitle"
         [keyVals]="keyVals"
