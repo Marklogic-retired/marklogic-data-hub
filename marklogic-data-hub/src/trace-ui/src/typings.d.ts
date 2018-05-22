@@ -5,8 +5,6 @@ interface NodeModule {
 }
 
 declare var System: any;
-declare var require: any;
-
 
 declare class Clipboard {
     constructor(selector: (string | Element | NodeListOf<Element>), options?: ClipboardOptions);

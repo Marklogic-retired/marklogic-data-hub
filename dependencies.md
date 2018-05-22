@@ -1,6 +1,6 @@
 # development and build time 
 - junit 4 & 5 -> www.junit.org
-- gradle 3.4+ -> www.gradle.org
+- gradle 4.0.2+ -> www.gradle.org
 - gradle properties plugin -> https://github.com/stevesaliman/gradle-properties-plugin
 - gradle node plugin -> https://github.com/srs/gradle-node-plugin
 - xmlunit 1.3 -> http://www.xmlunit.org/
@@ -27,10 +27,10 @@
 - aspectj 1.8.9 -> https://www.eclipse.org/aspectj/
 - spring messaging -> https://github.com/spring-projects/spring-framework/tree/master/spring-messaging/src/main/java/org/springframework/messaging
 - angular-mdl 4.0.8 -> https://github.com/mseemann/angular2-mdl
-- angular 4.2.4 -> https://angular.io/
+- angular 6.0.3 -> https://angular.io/
 - classlist.js 1.1.20150312 -> https://www.npmjs.com/package/classList.js
 - clipboard 1.7.1 -> https://www.npmjs.com/package/clipboard
-- codemirror 5.30.0 -> https://www.npmjs.com/package/codemirror
+- codemirror 5.37.0 -> https://www.npmjs.com/package/codemirror
 - core-js 2.5.1 -> https://www.npmjs.com/package/core-js
 - date-fns 1.29.0 -> https://www.npmjs.com/package/date-fns
 - font-awesome 4.7.0 -> https://www.npmjs.com/package/font-awesome
@@ -39,8 +39,8 @@
 - material-design-lite 1.3.0 -> https://www.npmjs.com/package/material-design-lite
 - mdi 2.0.46 -> https://www.npmjs.com/package/mdi
 - ng2-device-detector 1.0.0 -> https://www.npmjs.com/package/ng2-device-detector
-- rxjs 5.4.3 -> https://www.npmjs.com/package/rxjs
+- rxjs 6.1. -> https://www.npmjs.com/package/rxjs
 - semver 5.4.1 -> https://www.npmjs.com/package/semver
 - sockjs-client 1.1.4 -> https://www.npmjs.com/package/sockjs-client
 - stompjs 2.3.3 -> https://www.npmjs.com/package/stompjs
-- zone.js 0.8.18 -> https://www.npmjs.com/package/zone.js
+- zone.js 0.8.26 -> https://www.npmjs.com/package/zone.js

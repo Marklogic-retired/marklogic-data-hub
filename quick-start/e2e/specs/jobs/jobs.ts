@@ -8,7 +8,7 @@ export default function() {
       beforeAll(() => {
         jobsPage.isLoaded();
       });
-  
+
       it ('should count the jobs', function() {
         expect(jobsPage.jobResults().getText()).toContain('Showing Results 1 to 6 of 6');
         //verfiy on dashboard page
@@ -20,31 +20,29 @@ export default function() {
       });
 
       it ('search only harmonize jobs', function() {
-        jobsPage.searchBox().clear();
-        jobsPage.searchBox().sendKeys('harmonize');
-        jobsPage.searchButton().click();
+        jobsPage.facetButton('harmonize').click();
         browser.wait(EC.visibilityOf(jobsPage.jobResults()));
         expect(jobsPage.jobResults().getText()).toContain('Showing Results 1 to 1 of 1');
       });
 
       it ('search only input jobs', function() {
-        jobsPage.searchBox().clear();
-        jobsPage.searchBox().sendKeys('input');
-        jobsPage.searchButton().click();
+        jobsPage.removeFacetButton('harmonize').click();
         browser.wait(EC.visibilityOf(jobsPage.jobResults()));
+        jobsPage.facetButton('input').click();
+        browser.wait(EC.visibilityOf(jobsPage.jobResults()));
+
         expect(jobsPage.jobResults().getText()).toContain('Showing Results 1 to 5 of 5');
       });
 
       it ('search with facet for finished jobs', function() {
-        jobsPage.searchBox().clear();
-        jobsPage.searchButton().click();
+        jobsPage.removeFacetButton('input').click();
         browser.wait(EC.visibilityOf(jobsPage.jobResults()));
         jobsPage.facetButton('FINISHED').click();
         browser.wait(EC.visibilityOf(jobsPage.jobResults()));
-        expect(jobsPage.jobResults().getText()).toContain('Showing Results 1 to 5 of 5');
+        expect(jobsPage.jobResults().getText()).toContain('Showing Results 1 to 6 of 6');
         jobsPage.removeFacetButton('FINISHED').click();
         browser.wait(EC.visibilityOf(jobsPage.jobResults()));
-        expect(jobsPage.jobResults().getText()).toContain('Showing Results 1 to 5 of 5');
+        expect(jobsPage.jobResults().getText()).toContain('Showing Results 1 to 6 of 6');
       });
 
       it ('search with facet for TestEntity jobs', function() {
@@ -53,7 +51,7 @@ export default function() {
         expect(jobsPage.jobResults().getText()).toContain('Showing Results 1 to 4 of 4');
         jobsPage.removeFacetButton('TestEntity').click();
         browser.wait(EC.visibilityOf(jobsPage.jobResults()));
-        expect(jobsPage.jobResults().getText()).toContain('Showing Results 1 to 5 of 5');
+        expect(jobsPage.jobResults().getText()).toContain('Showing Results 1 to 6 of 6');
       });
 
       it ('check and export some jobs', function() {
