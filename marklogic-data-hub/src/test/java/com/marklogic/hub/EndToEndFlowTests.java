@@ -135,94 +135,99 @@ public class EndToEndFlowTests extends HubTestBase {
         new Installer().uninstallHub();
     }
 
+    private static boolean isSetup = false;
     @BeforeEach
     public void setupEach() {
         if (isSslRun() || isCertAuth()) {
             sslSetup();
         }
 
-        clearDatabases();
+        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_TRACE_NAME, HubConfig.DEFAULT_JOB_NAME);
         createProjectDir();
 
         enableTracing();
         enableDebugging();
 
-        scaffolding = Scaffolding.create(projectDir.toString(), finalClient);
-        scaffolding.createEntity(ENTITY);
+        // the following block only needs to be run once, but there's lots of non-static methods
+        // in it, hence a boolean static flag.
+        if (!isSetup) {
+            isSetup = true;
+            scaffolding = Scaffolding.create(projectDir.toString(), finalClient);
+            scaffolding.createEntity(ENTITY);
+
+            scaffoldFlows("scaffolded");
+
+            createFlows("with-error", (codeFormat, dataFormat, flowType, srcDir, flowDir, useES) -> {
+                copyFile(srcDir + "main-" + flowType.toString() + "." + codeFormat.toString(), flowDir.resolve("main." + codeFormat.toString()));
+                if (useES) {
+                    copyFile(srcDir + "es-content-" + flowType.toString() + "-" + dataFormat.toString() + "." + codeFormat.toString(), flowDir.resolve("content." + codeFormat.toString()));
+                    copyFile(srcDir + "es-headers" + "." + codeFormat.toString(), flowDir.resolve("headers." + codeFormat.toString()));
+                    copyFile(srcDir + "es-triples" + "." + codeFormat.toString(), flowDir.resolve("triples." + codeFormat.toString()));
+                    copyFile(srcDir + "es-writer" + "." + codeFormat.toString(), flowDir.resolve("writer." + codeFormat.toString()));
+                }
+                copyFile(srcDir + "extra-plugin." + codeFormat.toString(), flowDir.resolve("extra-plugin." + codeFormat.toString()));
+            });
+
+            createFlows("extra-plugin", (codeFormat, dataFormat, flowType, srcDir, flowDir, useES) -> {
+                copyFile(srcDir + "main-" + flowType.toString() + "." + codeFormat.toString(), flowDir.resolve("main." + codeFormat.toString()));
+                copyFile(srcDir + "extra-plugin." + codeFormat.toString(), flowDir.resolve("extra-plugin." + codeFormat.toString()));
+            });
+
+            allCombos((codeFormat, dataFormat, flowType, useEs) -> {
+                if (codeFormat.equals(CodeFormat.XQUERY)) {
+                    createFlow("triples-array", codeFormat, dataFormat, flowType, useEs, (codeFormat1, dataFormat1, flowType1, srcDir, flowDir, useEs2) -> {
+                        copyFile(srcDir + "triples-json-array.xqy", flowDir.resolve("triples.xqy"));
+                    });
+                }
+            });
+
+            allCombos((codeFormat, dataFormat, flowType, useEs) -> {
+                createFlow("has a space ", codeFormat, dataFormat, flowType, useEs, null);
+            });
+
+            // create some flows in a format that pre-dates the 2.0 flow format with properties files
+            allCombos((codeFormat, dataFormat, flowType, useEs) -> {
+                createLegacyFlow("legacy", codeFormat, dataFormat, flowType, useEs);
+            });
+
+            flowManager = FlowManager.create(getHubConfig());
+            List<String> legacyFlows = flowManager.getLegacyFlows();
+            assertEquals(8, legacyFlows.size(), String.join("\n", legacyFlows));
+            assertEquals(8, flowManager.updateLegacyFlows("2.0.0").size()); // don't change this value
+            assertEquals(0, flowManager.getLegacyFlows().size());
+
+            // flows from DHF 1.x
+            allCombos((codeFormat, dataFormat, flowType, useEs) -> {
+                createLegacyFlow("1x-legacy", codeFormat, dataFormat, flowType, useEs);
+            });
+
+            // verify that all of the legacy flows get detected
+            // update all of the legacy flows to tne new format
+            // verify that the legacy flows were updated. there should be no more legacy flows (0)
+            legacyFlows = flowManager.getLegacyFlows();
+            assertEquals(8, legacyFlows.size(), String.join("\n", legacyFlows));
+            assertEquals(8, flowManager.updateLegacyFlows("1.1.5").size());
+            assertEquals(0, flowManager.getLegacyFlows().size());
 
 
-        scaffoldFlows("scaffolded");
+            // create some flows in a format that pre-dates the 3.0 sjs enhancement
+            allCombos((codeFormat, dataFormat, flowType, useEs) -> {
+                create2xFlow("2x-before-3x", codeFormat, dataFormat, flowType, useEs);
+            });
 
-        createFlows("with-error", (codeFormat, dataFormat, flowType, srcDir, flowDir, useES) -> {
-            copyFile(srcDir + "main-" + flowType.toString() + "." + codeFormat.toString(), flowDir.resolve("main." + codeFormat.toString()));
-            if (useES) {
-                copyFile(srcDir + "es-content-" + flowType.toString() + "-" + dataFormat.toString() + "." + codeFormat.toString(), flowDir.resolve("content." + codeFormat.toString()));
-                copyFile(srcDir + "es-headers" + "." + codeFormat.toString(), flowDir.resolve("headers." + codeFormat.toString()));
-                copyFile(srcDir + "es-triples" + "." + codeFormat.toString(), flowDir.resolve("triples." + codeFormat.toString()));
-                copyFile(srcDir + "es-writer" + "." + codeFormat.toString(), flowDir.resolve("writer." + codeFormat.toString()));
-            }
-            copyFile(srcDir + "extra-plugin." + codeFormat.toString(), flowDir.resolve("extra-plugin." + codeFormat.toString()));
-        });
+            // verify that all of the legacy flows get detected
+            // update all of the legacy flows to tne new format
+            // verify that the legacy flows were updated. there should be no more legacy flows (0)
+            legacyFlows = flowManager.getLegacyFlows();
+            assertEquals(4, legacyFlows.size(), String.join("\n", legacyFlows));
+            assertEquals(4, flowManager.updateLegacyFlows("2.0.0").size());
+            assertEquals(0, flowManager.getLegacyFlows().size());
 
-        createFlows("extra-plugin", (codeFormat, dataFormat, flowType, srcDir, flowDir, useES) -> {
-            copyFile(srcDir + "main-" + flowType.toString() + "." + codeFormat.toString(), flowDir.resolve("main." + codeFormat.toString()));
-            copyFile(srcDir + "extra-plugin." + codeFormat.toString(), flowDir.resolve("extra-plugin." + codeFormat.toString()));
-        });
+            installUserModules(getHubConfig(), true);
 
-        allCombos((codeFormat, dataFormat, flowType, useEs) -> {
-            if (codeFormat.equals(CodeFormat.XQUERY)) {
-                createFlow("triples-array", codeFormat, dataFormat, flowType, useEs, (codeFormat1, dataFormat1, flowType1, srcDir, flowDir, useEs2) -> {
-                    copyFile(srcDir + "triples-json-array.xqy", flowDir.resolve("triples.xqy"));
-                });
-            }
-        });
-
-        allCombos((codeFormat, dataFormat, flowType, useEs) -> {
-            createFlow("has a space ", codeFormat, dataFormat, flowType, useEs, null);
-        });
-
-        // create some flows in a format that pre-dates the 2.0 flow format with properties files
-        allCombos((codeFormat, dataFormat, flowType, useEs) -> {
-            createLegacyFlow("legacy", codeFormat, dataFormat, flowType, useEs);
-        });
-
-        flowManager = FlowManager.create(getHubConfig());
-        List<String> legacyFlows = flowManager.getLegacyFlows();
-        assertEquals(8, legacyFlows.size(), String.join("\n", legacyFlows));
-        assertEquals(8, flowManager.updateLegacyFlows("2.0.0").size()); // don't change this value
-        assertEquals(0, flowManager.getLegacyFlows().size());
-
-        // flows from DHF 1.x
-        allCombos((codeFormat, dataFormat, flowType, useEs) -> {
-            createLegacyFlow("1x-legacy", codeFormat, dataFormat, flowType, useEs);
-        });
-
-        // verify that all of the legacy flows get detected
-        // update all of the legacy flows to tne new format
-        // verify that the legacy flows were updated. there should be no more legacy flows (0)
-        legacyFlows = flowManager.getLegacyFlows();
-        assertEquals(8, legacyFlows.size(), String.join("\n", legacyFlows));
-        assertEquals(8, flowManager.updateLegacyFlows("1.1.5").size());
-        assertEquals(0, flowManager.getLegacyFlows().size());
-
-
-        // create some flows in a format that pre-dates the 3.0 sjs enhancement
-        allCombos((codeFormat, dataFormat, flowType, useEs) -> {
-            create2xFlow("2x-before-3x", codeFormat, dataFormat, flowType, useEs);
-        });
-
-        // verify that all of the legacy flows get detected
-        // update all of the legacy flows to tne new format
-        // verify that the legacy flows were updated. there should be no more legacy flows (0)
-        legacyFlows = flowManager.getLegacyFlows();
-        assertEquals(4, legacyFlows.size(), String.join("\n", legacyFlows));
-        assertEquals(4, flowManager.updateLegacyFlows("2.0.0").size());
-        assertEquals(0, flowManager.getLegacyFlows().size());
-
-        installUserModules(getHubConfig(), true);
-
-        stagingDataMovementManager = stagingClient.newDataMovementManager();
-        finalDataMovementManager = finalClient.newDataMovementManager();
+            stagingDataMovementManager = stagingClient.newDataMovementManager();
+            finalDataMovementManager = finalClient.newDataMovementManager();
+        }
     }
 
 
@@ -742,6 +747,7 @@ public class EndToEndFlowTests extends HubTestBase {
                 }));
             }
         }));
+
 
         return tests;
     }

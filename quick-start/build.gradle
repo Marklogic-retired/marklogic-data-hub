@@ -17,25 +17,13 @@
 
 import java.util.concurrent.Executors
 
-buildscript {
-    ext {
-        springBootVersion = '1.5.6.RELEASE'
-    }
-    repositories {
-        jcenter()
-        maven {url 'http://developer.marklogic.com/maven2/'}
-    }
-    dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-    }
-}
-
 plugins {
     id 'java'
     id 'eclipse'
     id 'idea'
     id 'com.moowork.node' version '1.2.0'
-    id 'org.springframework.boot' version '1.5.3.RELEASE'
+    id 'org.springframework.boot' version '2.0.2.RELEASE'
+  id "io.spring.dependency-management" version "1.0.5.RELEASE"
 }
 
 apply plugin: 'war'
@@ -64,19 +52,19 @@ ext.junitPlatformVersion = '1.0.0-RC3'
 ext.junitJupiterVersion  = '5.0.0-RC3'
 
 dependencies {
-    compile("org.springframework.boot:spring-boot-starter:${springBootVersion}")
-    compile("org.springframework.boot:spring-boot-starter-actuator:${springBootVersion}")
-    compile("org.springframework.boot:spring-boot-starter-web:${springBootVersion}")
-    compile("org.springframework.boot:spring-boot-starter-websocket:${springBootVersion}")
-    compile("org.springframework.boot:spring-boot-starter-security:${springBootVersion}")
-    compile("org.springframework.boot:spring-boot-starter-thymeleaf:${springBootVersion}")
+    compile("org.springframework.boot:spring-boot-starter")
+    compile("org.springframework.boot:spring-boot-starter-actuator")
+    compile("org.springframework.boot:spring-boot-starter-web")
+    compile("org.springframework.boot:spring-boot-starter-websocket")
+    compile("org.springframework.boot:spring-boot-starter-security")
+    compile("org.springframework.boot:spring-boot-starter-thymeleaf")
     compile("org.aspectj:aspectjweaver:1.8.9")
     compile("org.springframework:spring-messaging")
     compile project(":marklogic-data-hub")
     compile("org.apache.commons:commons-csv:1.4")
 
     // Optional Boot library - see https://docs.spring.io/spring-boot/docs/current/reference/html/using-boot-devtools.html
-    compile("org.springframework.boot:spring-boot-devtools:${springBootVersion}")
+    compile("org.springframework.boot:spring-boot-devtools")
 
     // Needed for the Upload feature using mlcp
     compile("com.marklogic:mlcp:9.0.4") {
@@ -95,7 +83,7 @@ dependencies {
     testCompile "junit:junit:${junit4Version}"
     testRuntime "org.junit.vintage:junit-vintage-engine:${junitVintageVersion}"
 
-    testCompile("org.springframework.boot:spring-boot-starter-test:${springBootVersion}")
+    testCompile("org.springframework.boot:spring-boot-starter-test")
     testCompile files(project(':marklogic-data-hub').sourceSets.test.output)
 }
 
@@ -204,13 +192,13 @@ if (!(
 //test.dependsOn e2eUI
 
 bootRun {
-    addResources = true
+    // this is not in spring boot 2 addResources = true
     environment 'spring.profiles.active', 'dev'
 }
 
 springBoot {
-    executable = true
-    mainClass = "com.marklogic.quickstart.Application"
+    // not in spring boot 2 executable = true
+    mainClassName = "com.marklogic.quickstart.Application"
     buildInfo()
 }
 
