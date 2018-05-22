@@ -24,17 +24,17 @@ export class MapComponent implements OnInit {
   private activeFacets: any = {};
   private currentPage: number = 1;
   private pageLength: number = 1; // pulling single record
-  private sampleDoc: any = null;
+  public sampleDoc: any = null;
   private sampleDocSrc: any = null;
   private sampleDocSrcProps: Array<any> = [];
   private valMaxLen: number = 15;
 
   // Connections
-  private conns: Array<any> = [];
+  public conns: Array<any> = [];
   private connsInit: boolean = false;
 
   private entityName: string;
-  private flowName: string;
+  public flowName: string;
 
   private filterMenu: Array<string> = ['all', 'matching', 'string', 'number', 'date'];
   private filterSelected: string = 'all';
