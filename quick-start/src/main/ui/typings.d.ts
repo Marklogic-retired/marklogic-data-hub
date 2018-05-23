@@ -5,7 +5,6 @@ interface NodeModule {
 }
 
 declare var System: any;
-declare var require: any;
 
 
 declare class Clipboard {

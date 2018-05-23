@@ -1,0 +1,137 @@
+.map-container {
+  width: 1050px;
+  padding: 0;
+}
+
+#map-heading {
+  height: 70px;
+}
+
+#map-heading h1 {
+  font-size: 34px;
+  font-weight: normal;
+  margin: 10px 0;
+  padding: 0;
+  width: 700px;
+  position: relative;
+  float: left;
+}
+
+#save-map {
+  padding-top: 15px;
+  padding-left: 30px;
+  mdl-button {
+    margin-right: 5px;
+  }
+}
+
+h4.item-type {
+  margin: 0;
+  padding: 0;
+}
+
+p.item-identifying-info {
+  font-weight: bold;
+  margin: 0 0 6px 2px;
+}
+
+#source, #harmonized, #save-map {
+  position: relative;
+  float: left;
+  width: 350px;
+  margin: 0;
+  /* border: solid 1px red; */
+}
+
+.prop-container {
+  width: 350px;
+  height: 45px;
+  font-size: 14px;
+  border: solid 2px #5b8db3;
+  margin: 10px 0;
+  padding: 0;
+  display: flex;
+  align-items: center; /* align vertical */
+  justify-content: center;
+}
+
+#harmonized .prop-container {
+  justify-content: left;
+  border-left: 0;
+}
+
+.prop-select {
+  background-color: transparent;
+  display: flex;
+  align-items: center; /* align vertical */
+  height: 32px;
+  text-align: left;
+  border: solid 1px #5b8db3;
+  padding: 0 10px;
+}
+
+.prop-select-content {
+  width: 305px;
+}
+
+.prop-name, .prop-type, .is-primary {
+  display: inline-block;
+  padding: 5px 10px;
+}
+
+.prop-name {
+  width: 230px;
+  font-size: 14px;
+  cursor: default;
+}
+
+.prop-val {
+  width: 110px;
+  font-size: 12px;
+  color: #666;
+  white-space: nowrap;
+  cursor: default;
+}
+
+.prop-type {
+  width: 60px;
+  font-size: 12px;
+  color: #666;
+  white-space: nowrap;
+  cursor: default;
+}
+
+.is-primary {
+  width: 30px;
+  cursor: default;
+}
+
+.prop-select-content .prop-name,
+.prop-select-content .prop-val,
+.prop-select-content .prop-type,
+.prop-select-content .is-primary {
+  padding: 0 5px;
+}
+
+.prop-select-content .prop-name {
+  width: 160px;
+}
+
+.prop-select-content .prop-type {
+  font-size: 12px;
+  color: #666;
+}
+
+.prop-select-content .is-primary {
+  padding-left: 10px;
+}
+
+.dropdown-menu .prop-type {
+  font-size: 12px;
+  color: #666;
+}
+
+.unselected {
+  color: #999;
+  font-style: italic;
+}
