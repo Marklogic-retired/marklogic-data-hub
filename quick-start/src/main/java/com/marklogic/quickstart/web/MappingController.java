@@ -17,6 +17,8 @@
 package com.marklogic.quickstart.web;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.marklogic.quickstart.service.EntityManagerService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -25,8 +27,11 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 
 @Controller
-public class MappingController extends EntitiesController {
+public class MappingController {
 
+
+    @Autowired
+    private EntityManagerService entityManagerService;
 
     /*
      *GET /api/maps/{entityName} - Returns all maps for an entity
