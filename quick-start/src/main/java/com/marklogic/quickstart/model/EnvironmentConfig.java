@@ -136,15 +136,6 @@ public class EnvironmentConfig {
         return _finalClient;
     }
 
-    private DatabaseClient _traceClient = null;
-    @JsonIgnore
-    public DatabaseClient getTraceClient() {
-        if (_traceClient == null) {
-            _traceClient = mlSettings.newTraceDbClient();
-        }
-        return _traceClient ;
-    }
-
     private DatabaseClient _jobClient = null;
     @JsonIgnore
     public DatabaseClient getJobClient() {

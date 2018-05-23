@@ -55,7 +55,7 @@ abstract class HubTask extends DefaultTask {
 
     @Internal
     JobManager getJobManager() {
-        return JobManager.create(getHubConfig().newJobDbClient(), getHubConfig().newTraceDbClient());
+        return JobManager.create(getHubConfig().newJobDbClient());
     }
 
     @Internal

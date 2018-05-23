@@ -47,7 +47,6 @@ public interface HubConfig {
 
     String DEFAULT_STAGING_NAME = "data-hub-STAGING";
     String DEFAULT_FINAL_NAME = "data-hub-FINAL";
-    String DEFAULT_TRACE_NAME = "data-hub-TRACING";
     String DEFAULT_JOB_NAME = "data-hub-JOBS";
     String DEFAULT_MODULES_DB_NAME = "data-hub-MODULES";
     String DEFAULT_TRIGGERS_DB_NAME = "data-hub-TRIGGERS";
@@ -58,7 +57,6 @@ public interface HubConfig {
 
     Integer DEFAULT_STAGING_PORT = 8010;
     Integer DEFAULT_FINAL_PORT = 8011;
-    Integer DEFAULT_TRACE_PORT = 8012;
     Integer DEFAULT_JOB_PORT = 8013;
 
     String DEFAULT_AUTH_METHOD = "digest";
@@ -365,9 +363,11 @@ public interface HubConfig {
     DatabaseClient newJobDbClient();
 
     /**
-     * Creates a new DatabaseClient for accessing the Trace database
+     * Use newJobDbClient instead.  This function returns a client to
+     * the JOBS dataabse.
      * @return - a DatabaseClient
      */
+    @Deprecated
     DatabaseClient newTraceDbClient();
 
     /**

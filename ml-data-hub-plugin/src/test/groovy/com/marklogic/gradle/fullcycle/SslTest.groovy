@@ -136,7 +136,6 @@ class SslTest extends BaseTest {
         copyResourceToFile("ssl-test/ssl-server.json", new File(BaseTest.testProjectDir.root, "user-config/servers/final-server.json"))
         copyResourceToFile("ssl-test/ssl-server.json", new File(BaseTest.testProjectDir.root, "user-config/servers/job-server.json"))
         copyResourceToFile("ssl-test/ssl-server.json", new File(BaseTest.testProjectDir.root, "user-config/servers/staging-server.json"))
-        copyResourceToFile("ssl-test/ssl-server.json", new File(BaseTest.testProjectDir.root, "user-config/servers/trace-server.json"))
         createProperties()
         try {
             clearDatabases(hubConfig().DEFAULT_MODULES_DB_NAME)
@@ -163,7 +162,6 @@ class SslTest extends BaseTest {
 
         mlStagingSimpleSsl=true
         mlFinalSimpleSsl=true
-        mlTraceSimpleSsl=true
         mlJobSimpleSsl=true
         """
     }

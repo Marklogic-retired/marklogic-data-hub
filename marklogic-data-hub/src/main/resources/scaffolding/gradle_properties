@@ -72,13 +72,6 @@ mlFinalAuth=%%mlFinalAuth%%
 # To enable SSL for final
 # mlFinalSimpleSsl=true
 
-mlTraceAppserverName=%%mlTraceAppserverName%%
-mlTracePort="%%mlTracePort%%"
-mlTraceDbName=%%mlTraceDbName%%
-mlTraceForestsPerHost=%%mlTraceForestsPerHost%%
-mlTraceAuth=%%mlTraceAuth%%
-# To enable SSL for trace
-# mlTraceSimpleSsl=true
 
 mlJobAppserverName=%%mlJobAppserverName%%
 mlJobPort="%%mlJobPort%%"
