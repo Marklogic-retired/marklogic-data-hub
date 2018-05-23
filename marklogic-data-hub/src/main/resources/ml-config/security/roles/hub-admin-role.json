@@ -1,10 +1,8 @@
 {
-  "role-name": "%%mlHubUserRole%%",
-  "description": "A role that allows the user to read and write from MarkLogic Data Hub databases",
+  "role-name": "%%mlHubAdminRole%%",
+  "description": "A role can deploy modules to a data hub instance.",
   "role": [
-    "rest-reader",
-    "rest-extension-user",
-    "rest-writer"
+    "rest-admin"
   ],
   "privilege": [
     {
