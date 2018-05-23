@@ -341,20 +341,20 @@ public interface HubConfig {
      * Creates a new DatabaseClient for accessing the Staging database
      * @return - a DatabaseClient
      */
-     DatabaseClient newStagingClient();
+     DatabaseClient newStagingManageClient();
 
     /**
      * Creates a new DatabaseClient for accessing the Staging database
      * @param databaseName - the name of the database for the staging Client to use
      * @return- a DatabaseClient
      */
-     DatabaseClient newStagingClient(String databaseName);
+     DatabaseClient newStagingManageClient(String databaseName);
 
     /**
      * Creates a new DatabaseClient for accessing the Final database
      * @return - a DatabaseClient
      */
-    DatabaseClient newFinalClient();
+    DatabaseClient newFinalManageClient();
 
     /**
      * Creates a new DatabaseClient for accessing the Job database
@@ -474,7 +474,7 @@ public interface HubConfig {
      * and mlPassword
      * @return A client without elevated administrative privileges.
      */
-    DatabaseClient newFlowClient();
+    DatabaseClient newStagingClient();
 
     /**
      * Gets a new DatabaseClient with privileges to run flows
@@ -482,5 +482,5 @@ public interface HubConfig {
      * and mlPassword
      * @return A client without elevated administrative privileges.
      */
-    DatabaseClient newReverseFlowClient();
+    DatabaseClient newFinalClient();
 }

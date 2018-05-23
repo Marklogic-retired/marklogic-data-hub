@@ -16,7 +16,7 @@ public class Installer {
     // A method to manually setup
     // uncomment @Test and run
     // do NOT check in as a a test.
-     @Test
+    // @Test
     public void installHubOnce() {
         htb.createProjectDir();
         htb.getDataHub().install();
@@ -30,7 +30,7 @@ public class Installer {
     // A method to manually teardown.
     // uncomment @Test and run
     // do NOT check in as a a test.
-    @Test
+    // @Test
     public void uninstallHub() {
         htb.createProjectDir();
         htb.getDataHub().uninstall();

@@ -82,12 +82,12 @@ class BaseTest extends Specification {
     }
 
     void installStagingDoc(String uri, DocumentMetadataHandle meta, String doc) {
-        hubConfig().newStagingClient().newDocumentManager().write(uri, meta, new StringHandle(doc))
+        hubConfig().newStagingManageClient().newDocumentManager().write(uri, meta, new StringHandle(doc))
     }
 
 
     void installFinalDoc(String uri, DocumentMetadataHandle meta, String doc) {
-        hubConfig().newFinalClient().newDocumentManager().write(uri, meta, new StringHandle(doc))
+        hubConfig().newFinalManageClient().newDocumentManager().write(uri, meta, new StringHandle(doc))
     }
 
     static void installModule(String path, String localPath) {
@@ -111,7 +111,7 @@ class BaseTest extends Specification {
 
 
     void clearDatabases(String... databases) {
-        ServerEvaluationCall eval = hubConfig().newStagingClient().newServerEval();
+        ServerEvaluationCall eval = hubConfig().newStagingManageClient().newServerEval();
         String installer = '''
             declare variable $databases external;
             for $database in fn:tokenize($databases, ",")
@@ -177,10 +177,10 @@ class BaseTest extends Specification {
         ServerEvaluationCall eval
         switch(databaseName) {
             case HubConfig.DEFAULT_STAGING_NAME:
-                eval = hubConfig().newStagingClient().newServerEval()
+                eval = hubConfig().newStagingManageClient().newServerEval()
                 break
             case HubConfig.DEFAULT_FINAL_NAME:
-                eval = hubConfig().newFinalClient().newServerEval()
+                eval = hubConfig().newFinalManageClient().newServerEval()
                 break
             case HubConfig.DEFAULT_MODULES_DB_NAME:
                 eval = hubConfig().newModulesDbClient().newServerEval()

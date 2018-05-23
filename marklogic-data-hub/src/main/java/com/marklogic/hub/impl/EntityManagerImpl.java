@@ -15,14 +15,10 @@
  */
 package com.marklogic.hub.impl;
 
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.ext.helper.LoggingObject;
 import com.marklogic.client.ext.modulesloader.impl.AssetFileLoader;
@@ -59,7 +55,7 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
     }
 
     @Override public boolean saveQueryOptions() {
-        QueryOptionsGenerator generator = new QueryOptionsGenerator(hubConfig.newStagingClient());
+        QueryOptionsGenerator generator = new QueryOptionsGenerator(hubConfig.newStagingManageClient());
         try {
             Path dir = Paths.get(hubConfig.getProjectDir(), HubConfig.ENTITY_CONFIG_DIR);
             if (!dir.toFile().exists()) {
@@ -89,7 +85,7 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
         saveQueryOptions();
 
         HubModuleManager propsManager = getPropsMgr();
-        DefaultModulesLoader modulesLoader = new DefaultModulesLoader(new AssetFileLoader(hubConfig.newFinalClient(), propsManager));
+        DefaultModulesLoader modulesLoader = new DefaultModulesLoader(new AssetFileLoader(hubConfig.newFinalManageClient(), propsManager));
 
         modulesLoader.setModulesManager(propsManager);
         modulesLoader.setShutdownTaskExecutorAfterLoadingModules(false);
@@ -99,7 +95,7 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
         Path dir = Paths.get(hubConfig.getProjectDir(), HubConfig.ENTITY_CONFIG_DIR);
         File stagingFile = Paths.get(dir.toString(), HubConfig.STAGING_ENTITY_QUERY_OPTIONS_FILE).toFile();
         if (stagingFile.exists()) {
-            modulesLoader.setDatabaseClient(hubConfig.newStagingClient());
+            modulesLoader.setDatabaseClient(hubConfig.newStagingManageClient());
             Resource r = modulesLoader.installQueryOptions(new FileSystemResource(stagingFile));
             if (r != null) {
                 loadedResources.put(DatabaseKind.STAGING, true);
@@ -108,7 +104,7 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
 
         File finalFile = Paths.get(dir.toString(), HubConfig.FINAL_ENTITY_QUERY_OPTIONS_FILE).toFile();
         if (finalFile.exists()) {
-            modulesLoader.setDatabaseClient(hubConfig.newFinalClient());
+            modulesLoader.setDatabaseClient(hubConfig.newFinalManageClient());
             Resource r = modulesLoader.installQueryOptions(new FileSystemResource(finalFile));
             if (r != null) {
                 loadedResources.put(DatabaseKind.FINAL, true);
@@ -132,7 +128,7 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
             long lastModified = Math.max(finalFile.lastModified(), stagingFile.lastModified());
             List<JsonNode> entities = getModifiedRawEntities(lastModified);
             if (entities.size() > 0) {
-                DbIndexGenerator generator = new DbIndexGenerator(hubConfig.newFinalClient());
+                DbIndexGenerator generator = new DbIndexGenerator(hubConfig.newFinalManageClient());
                 String indexes = generator.getIndexes(entities);
                 FileUtils.writeStringToFile(finalFile, indexes);
                 FileUtils.writeStringToFile(stagingFile, indexes);
@@ -319,7 +315,7 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
             // get all the entities.
             List<JsonNode> entities = getAllEntities();
             if (entities.size() > 0) {
-                PiiGenerator piiGenerator = new PiiGenerator(hubConfig.newFinalClient());
+                PiiGenerator piiGenerator = new PiiGenerator(hubConfig.newFinalManageClient());
 
                 String v3Config = piiGenerator.piiGenerate(entities);
                 JsonNode v3ConfigAsJson = null;

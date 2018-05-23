@@ -21,15 +21,12 @@ import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.collector.Collector;
-import com.marklogic.hub.flow.*;
 import com.marklogic.hub.main.MainPlugin;
 import com.marklogic.hub.scaffold.Scaffolding;
 import org.apache.commons.io.FileUtils;
-import org.custommonkey.xmlunit.XMLUnit;
 import org.json.JSONException;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
@@ -314,7 +311,7 @@ public class FlowManagerTest extends HubTestBase {
             .withFlow(flow1)
             .withBatchSize(10)
             .withThreadCount(1)
-            .withSourceClient(getHubConfig().newReverseFlowClient())
+            .withSourceClient(getHubConfig().newFinalClient())
             .withDestinationDatabase(HubConfig.DEFAULT_STAGING_NAME);
         flowRunner.run();
         flowRunner.awaitCompletion();

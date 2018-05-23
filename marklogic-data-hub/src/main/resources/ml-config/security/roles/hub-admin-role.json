@@ -2,7 +2,7 @@
   "role-name": "%%mlHubAdminRole%%",
   "description": "A role can deploy modules to a data hub instance.",
   "role": [
-    "rest-admin"
+    "rest-admin","manage-admin"
   ],
   "privilege": [
     {

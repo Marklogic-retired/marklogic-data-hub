@@ -33,7 +33,7 @@ public class Versions extends ResourceManager {
     public Versions(HubConfig hubConfig) {
         super();
         this.appServicesClient = hubConfig.newAppServicesClient();
-        this.stagingClient = hubConfig.newStagingClient();
+        this.stagingClient = hubConfig.newStagingManageClient();
         this.stagingClient.init(NAME, this);
     }
 

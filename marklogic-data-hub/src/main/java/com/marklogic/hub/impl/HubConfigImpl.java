@@ -17,7 +17,6 @@ package com.marklogic.hub.impl;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.appdeployer.ConfigDir;
 import com.marklogic.client.DatabaseClient;
@@ -853,12 +852,12 @@ public class HubConfigImpl implements HubConfig {
         return getAppConfig().newAppServicesDatabaseClient(stagingDbName);
     }
 
-    public DatabaseClient newStagingClient() {
-        return newStagingClient(stagingDbName);
+    public DatabaseClient newStagingManageClient() {
+        return newStagingManageClient(stagingDbName);
     }
 
     @Override
-    public DatabaseClient newFlowClient() {
+    public DatabaseClient newStagingClient() {
         AppConfig appConfig = getAppConfig();
         DatabaseClientConfig config = new DatabaseClientConfig(appConfig.getHost(), stagingPort, getMlUsername(), getMlPassword());
         config.setDatabase(stagingDbName);
@@ -872,7 +871,7 @@ public class HubConfigImpl implements HubConfig {
     }
 
     @Override
-    public DatabaseClient newReverseFlowClient() {
+    public DatabaseClient newFinalClient() {
         AppConfig appConfig = getAppConfig();
         DatabaseClientConfig config = new DatabaseClientConfig(appConfig.getHost(), finalPort, getMlUsername(), getMlPassword());
         config.setDatabase(finalDbName);
@@ -885,7 +884,7 @@ public class HubConfigImpl implements HubConfig {
         return appConfig.getConfiguredDatabaseClientFactory().newDatabaseClient(config);
     }
 
-    public DatabaseClient newStagingClient(String databaseName) {
+    public DatabaseClient newStagingManageClient(String databaseName) {
         AppConfig appConfig = getAppConfig();
         DatabaseClientConfig config = new DatabaseClientConfig(appConfig.getHost(), stagingPort, appConfig.getRestAdminUsername(), appConfig.getRestAdminPassword());
         config.setDatabase(databaseName);
@@ -898,7 +897,7 @@ public class HubConfigImpl implements HubConfig {
         return appConfig.getConfiguredDatabaseClientFactory().newDatabaseClient(config);
     }
 
-    public DatabaseClient newFinalClient() {
+    public DatabaseClient newFinalManageClient() {
         AppConfig appConfig = getAppConfig();
         DatabaseClientConfig config = new DatabaseClientConfig(appConfig.getHost(), finalPort, appConfig.getRestAdminUsername(), appConfig.getRestAdminPassword());
         config.setDatabase(finalDbName);
