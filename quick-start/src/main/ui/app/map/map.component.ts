@@ -7,6 +7,7 @@ import { MapService } from './map.service';
 import { MdlDialogService } from '@angular-mdl/core';
 
 import * as _ from 'lodash';
+import * as moment from 'moment';
 
 @Component({
   templateUrl: './map.component.html',
