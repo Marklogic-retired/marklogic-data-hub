@@ -52,7 +52,6 @@ import java.util.zip.ZipFile;
 
 public class JobManagerImpl implements JobManager {
 
-    private DatabaseClient traceClient;
     private DatabaseClient jobClient;
     private JSONDocumentManager docMgr;
     private JobDeleteResource jobDeleteRunner = null;
@@ -79,9 +78,8 @@ public class JobManagerImpl implements JobManager {
         .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
         .setDateFormat(simpleDateFormat8601);
 
-    public JobManagerImpl(DatabaseClient jobClient, DatabaseClient traceClient) {
+    public JobManagerImpl(DatabaseClient jobClient) {
         this.jobClient = jobClient;
-        this.traceClient = traceClient;
         this.docMgr = jobClient.newJSONDocumentManager();
         this.jobDeleteRunner = new JobDeleteResource(jobClient);
     }
@@ -142,7 +140,7 @@ public class JobManagerImpl implements JobManager {
         if (jobCount > 0) {
 
             // Get the traces that go with the job(s)
-            dmm = this.traceClient.newDataMovementManager();
+            dmm = this.jobClient.newDataMovementManager();
             if (jobIds == null) {
                 batcher = dmm.newQueryBatcher(emptyQuery);
             }
@@ -209,7 +207,7 @@ public class JobManagerImpl implements JobManager {
         dmm.release();
 
         if (traceEntries.size() > 0) {
-            dmm = this.traceClient.newDataMovementManager();
+            dmm = this.jobClient.newDataMovementManager();
             writer = dmm
                 .newWriteBatcher()
                 .withJobName("Load traces");

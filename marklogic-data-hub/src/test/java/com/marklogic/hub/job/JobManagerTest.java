@@ -15,19 +15,13 @@
  */
 package com.marklogic.hub.job;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.eval.EvalResultIterator;
 import com.marklogic.hub.DataHub;
 import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
-import com.marklogic.hub.Tracing;
 import com.marklogic.hub.flow.*;
-import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.scaffold.Scaffolding;
-import com.marklogic.mgmt.ManageClient;
 
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.After;
@@ -57,7 +51,7 @@ public class JobManagerTest extends HubTestBase {
     private static List<String> jobIds = Collections.synchronizedList(new ArrayList<String>());
     private static Path projectDir = Paths.get(".", "ye-olde-project");
     private static Path exportPath = projectDir.resolve("testExport.zip");
-    
+
     private FlowItemCompleteListener flowItemCompleteListener =
         (jobId, itemId) -> recordJobId(jobId);
 
@@ -87,8 +81,7 @@ public class JobManagerTest extends HubTestBase {
 
         installModule("/entities/" + ENTITY + "/harmonize/" + HARMONIZE_FLOW_JSON + "/collector.sjs", "flow-runner-test/collector.sjs");
 
-        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME,
-            HubConfig.DEFAULT_TRACE_NAME);
+        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
 
 
 
@@ -139,7 +132,7 @@ public class JobManagerTest extends HubTestBase {
     public void deleteOneJob() {
         assertEquals(4, getJobDocCount());
         assertEquals(8, getTracingDocCount());
-        JobManager manager = JobManager.create(jobClient, traceClient);
+        JobManager manager = JobManager.create(jobClient);
         String jobs = jobIds.get(1);
 
         JobDeleteResponse actual = manager.deleteJobs(jobs);
@@ -163,7 +156,7 @@ public class JobManagerTest extends HubTestBase {
         assertEquals(4, getJobDocCount());
         assertEquals(8, getTracingDocCount());
         String jobs = jobIds.get(0) + "," + jobIds.get(2);
-        JobManager manager = JobManager.create(jobClient, traceClient);
+        JobManager manager = JobManager.create(jobClient);
 
         JobDeleteResponse actual = manager.deleteJobs(jobs);
 
@@ -183,7 +176,7 @@ public class JobManagerTest extends HubTestBase {
 
     @Test
     public void deleteInvalidJob() {
-        JobManager manager = JobManager.create(jobClient, traceClient);
+        JobManager manager = JobManager.create(jobClient);
 
         JobDeleteResponse actual = manager.deleteJobs("InvalidId");
 
@@ -195,7 +188,7 @@ public class JobManagerTest extends HubTestBase {
 
     @Test
     public void deleteEmptyStringJob() {
-        JobManager manager = JobManager.create(jobClient, traceClient);
+        JobManager manager = JobManager.create(jobClient);
 
         JobDeleteResponse actual = manager.deleteJobs("");
 
@@ -207,7 +200,7 @@ public class JobManagerTest extends HubTestBase {
 
     @Test
     public void deleteNullJob() {
-        JobManager manager = JobManager.create(jobClient, traceClient);
+        JobManager manager = JobManager.create(jobClient);
 
         JobDeleteResponse actual = manager.deleteJobs(null);
 
@@ -219,7 +212,7 @@ public class JobManagerTest extends HubTestBase {
 
     @Test
     public void exportOneJob() throws IOException {
-        JobManager manager = JobManager.create(jobClient, traceClient);
+        JobManager manager = JobManager.create(jobClient);
 
         File zipFile = exportPath.toFile();
         assertFalse(zipFile.exists());
@@ -233,12 +226,12 @@ public class JobManagerTest extends HubTestBase {
         // There should be one job and two trace documents
         assertEquals(3, actual.size());
 
-        actual.close();  
+        actual.close();
     }
 
     @Test
     public void exportMultipleJobs() throws IOException, InterruptedException {
-        JobManager manager = JobManager.create(jobClient, traceClient);
+        JobManager manager = JobManager.create(jobClient);
 
         File zipFile = exportPath.toFile();
         assertFalse(zipFile.exists());
@@ -251,12 +244,12 @@ public class JobManagerTest extends HubTestBase {
         // There should be two job and four trace documents
         assertEquals(6, actual.size());
 
-        actual.close();      
+        actual.close();
     }
 
     @Test
     public void exportAllJobs() throws IOException {
-        JobManager manager = JobManager.create(jobClient, traceClient);
+        JobManager manager = JobManager.create(jobClient);
 
         File zipFile = exportPath.toFile();
         assertFalse(zipFile.exists());
@@ -269,16 +262,15 @@ public class JobManagerTest extends HubTestBase {
         // There should be four job and eight trace documents
         assertEquals(12, actual.size());
 
-        actual.close();      
+        actual.close();
     }
 
     @Test
     public void exportNoJobs() throws IOException {
-        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME,
-            HubConfig.DEFAULT_TRACE_NAME);
+        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
 
         // if the jobs database is empty, do not produce a zip file.
-        JobManager manager = JobManager.create(jobClient, traceClient);
+        JobManager manager = JobManager.create(jobClient);
 
         File zipFile = exportPath.toFile();
         assertFalse(zipFile.exists());
@@ -292,19 +284,19 @@ public class JobManagerTest extends HubTestBase {
     public void importJobs() throws URISyntaxException, IOException {
         URL url = JobManagerTest.class.getClassLoader().getResource("job-manager-test/jobexport.zip");
 
-        clearDatabases(HubConfig.DEFAULT_JOB_NAME, HubConfig.DEFAULT_TRACE_NAME);
+        clearDatabases(HubConfig.DEFAULT_JOB_NAME);
 
         assertEquals(0, getJobDocCount());
         assertEquals(0, getTracingDocCount());
 
-        JobManager manager = JobManager.create(jobClient, traceClient);
+        JobManager manager = JobManager.create(jobClient);
         manager.importJobs(Paths.get(url.toURI()));
 
         assertEquals(4, getJobDocCount());
         assertEquals(8, getTracingDocCount());
 
         // Check one of the (known) JSON trace documents to make sure it was loaded as JSON
-        EvalResultIterator evalResults = runInDatabase("xdmp:type(fn:doc('/5177365055356498236.json'))", HubConfig.DEFAULT_TRACE_NAME);
+        EvalResultIterator evalResults = runInDatabase("xdmp:type(fn:doc('/5177365055356498236.json'))", HubConfig.DEFAULT_JOB_NAME);
         if (evalResults.hasNext()) {
             String type = evalResults.next().getString();
             assertEquals("object", type);
@@ -314,7 +306,7 @@ public class JobManagerTest extends HubTestBase {
         }
 
         // Check one of the (known) XML trace documents to make sure it was loaded as XML
-        evalResults = runInDatabase("xdmp:type(fn:doc('/1311179527065924494.xml'))", HubConfig.DEFAULT_TRACE_NAME);
+        evalResults = runInDatabase("xdmp:type(fn:doc('/1311179527065924494.xml'))", HubConfig.DEFAULT_JOB_NAME);
         if (evalResults.hasNext()) {
             String type = evalResults.next().getString();
             assertEquals("untypedAtomic", type);

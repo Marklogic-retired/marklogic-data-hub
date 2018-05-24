@@ -110,13 +110,11 @@ public class DataHubImpl implements DataHub {
         ResourcesFragment srf = getServerManager().getAsXml();
         installInfo.setAppServerExistent(DatabaseKind.STAGING, srf.resourceExists(hubConfig.getHttpName(DatabaseKind.STAGING)));
         installInfo.setAppServerExistent(DatabaseKind.FINAL, srf.resourceExists(hubConfig.getHttpName(DatabaseKind.FINAL)));
-        installInfo.setAppServerExistent(DatabaseKind.TRACE, srf.resourceExists(hubConfig.getHttpName(DatabaseKind.TRACE)));
         installInfo.setAppServerExistent(DatabaseKind.JOB, srf.resourceExists(hubConfig.getHttpName(DatabaseKind.JOB)));
 
         ResourcesFragment drf = getDatabaseManager().getAsXml();
         installInfo.setDbExistent(DatabaseKind.STAGING, drf.resourceExists(hubConfig.getDbName(DatabaseKind.STAGING)));
         installInfo.setDbExistent(DatabaseKind.FINAL, drf.resourceExists(hubConfig.getDbName(DatabaseKind.FINAL)));
-        installInfo.setDbExistent(DatabaseKind.TRACE, drf.resourceExists(hubConfig.getDbName(DatabaseKind.TRACE)));
         installInfo.setDbExistent(DatabaseKind.JOB, drf.resourceExists(hubConfig.getDbName(DatabaseKind.JOB)));
 
         if (installInfo.isDbExistent(DatabaseKind.STAGING)) {
@@ -131,11 +129,6 @@ public class DataHubImpl implements DataHub {
             installInfo.setTripleIndexOn(DatabaseKind.FINAL, Boolean.parseBoolean(f.getElementValue("//m:triple-index")));
             installInfo.setCollectionLexiconOn(DatabaseKind.FINAL, Boolean.parseBoolean(f.getElementValue("//m:collection-lexicon")));
             installInfo.setForestsExistent(DatabaseKind.FINAL, (f.getElements("//m:forest").size() > 0));
-        }
-
-        if (installInfo.isDbExistent(DatabaseKind.TRACE)) {
-            Fragment f = getDatabaseManager().getPropertiesAsXml(hubConfig.getDbName(DatabaseKind.TRACE));
-            installInfo.setForestsExistent(DatabaseKind.TRACE, (f.getElements("//m:forest").size() > 0));
         }
 
         if (installInfo.isDbExistent(DatabaseKind.JOB)) {
@@ -268,11 +261,6 @@ public class DataHubImpl implements DataHub {
             jobPortInUseBy = serverName;
         }
 
-        serverName = portsInUse.get(hubConfig.getPort(DatabaseKind.TRACE));
-        tracePortInUse = ports.contains(hubConfig.getPort(DatabaseKind.TRACE)) && serverName != null && !serverName.equals(hubConfig.getHttpName(DatabaseKind.TRACE));
-        if (tracePortInUse) {
-            tracePortInUseBy = serverName;
-        }
 
         if (versions == null) {
             versions = new Versions(hubConfig);
@@ -288,8 +276,6 @@ public class DataHubImpl implements DataHub {
         response.put("finalPortInUseBy", finalPortInUseBy);
         response.put("jobPortInUse", jobPortInUse);
         response.put("jobPortInUseBy", jobPortInUseBy);
-        response.put("tracePortInUse", tracePortInUse);
-        response.put("tracePortInUseBy", tracePortInUseBy);
         response.put("safeToInstall", isSafeToInstall());
 
         return response;
@@ -416,16 +402,13 @@ public class DataHubImpl implements DataHub {
     private String finalPortInUseBy;
     private boolean jobPortInUse;
     private String jobPortInUseBy;
-    private boolean tracePortInUse;
-    private String tracePortInUseBy;
     private boolean serverVersionOk;
     private String serverVersion;
 
     @Override public boolean isSafeToInstall() {
         return !(isPortInUse(DatabaseKind.FINAL) ||
             isPortInUse(DatabaseKind.STAGING) ||
-            isPortInUse(DatabaseKind.JOB) ||
-            isPortInUse(DatabaseKind.TRACE)) && isServerVersionOk();
+            isPortInUse(DatabaseKind.JOB)) && isServerVersionOk();
     }
 
     @Override public boolean isPortInUse(DatabaseKind kind){
@@ -439,9 +422,6 @@ public class DataHubImpl implements DataHub {
                 break;
             case JOB:
                 inUse = jobPortInUse;
-                break;
-            case TRACE:
-                inUse = tracePortInUse;
                 break;
             default:
                 throw new InvalidDBOperationError(kind, "check for port use");
@@ -460,9 +440,6 @@ public class DataHubImpl implements DataHub {
             case JOB:
                 jobPortInUseBy = usedBy;
                 break;
-            case TRACE:
-                tracePortInUseBy = usedBy;
-                break;
             default:
                 throw new InvalidDBOperationError(kind, "set if port in use");
         }
@@ -479,9 +456,6 @@ public class DataHubImpl implements DataHub {
                 break;
             case JOB:
                 inUseBy = jobPortInUseBy;
-                break;
-            case TRACE:
-                inUseBy = tracePortInUseBy;
                 break;
             default:
                 throw new InvalidDBOperationError(kind, "check if port is in use");
