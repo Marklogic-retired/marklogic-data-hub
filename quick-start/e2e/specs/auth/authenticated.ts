@@ -116,13 +116,13 @@ export default function(tmpDir) {
       expect(loginPage.preInstallCheckTab.isDisplayed()).toBe(false);
       expect(loginPage.installerTab.isPresent()).toBe(false);
       //negative test on login
-      console.log('login negative test');
+      /*console.log('login negative test');
       loginPage.loginAs('foo', 'foo');
       expect(loginPage.loginInvalidCredentialsError.isDisplayed()).toBe(true);
       loginPage.loginAs('foo', '');
       expect(loginPage.loginInvalidCredentialsError.isDisplayed()).toBe(true);
       loginPage.loginAs('', 'foo');
-      expect(loginPage.loginInvalidCredentialsError.isDisplayed()).toBe(true);
+      expect(loginPage.loginInvalidCredentialsError.isDisplayed()).toBe(true);*/
       loginPage.login();
     });
 
