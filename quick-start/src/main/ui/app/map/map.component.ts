@@ -246,7 +246,7 @@ export class MapComponent implements OnInit {
    * Handle cancel button event
    */
   cancelMap(): void {
-    let result = this.dialogService.confirm('Cancel and lose any changes?', 'Stay On Page', 'Cancel');
+    let result = this.dialogService.confirm('Cancel and lose any changes?', 'Stay On Page', 'OK');
     result.subscribe( () => {
         this.router.navigate(['/flows', this.entityName, this.flowName, 'HARMONIZE']);
       },(err: any) => {

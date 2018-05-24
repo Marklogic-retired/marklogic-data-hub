@@ -208,3 +208,23 @@ p.item-identifying-info {
   border: 1px solid #2A4356;
   padding: 3px 6px;
 }
+
+.dropdown-menu {
+  overflow: scroll;
+  height: 300px;
+}
+
+.entity-icons {
+  width: 160px;
+  margin-left: 10px;
+}
+
+.entity-icon {
+  cursor: default;
+  margin-left: 3px;
+  padding: 0;
+}
+
+.icon-hide {
+  color: #ccc;
+}
