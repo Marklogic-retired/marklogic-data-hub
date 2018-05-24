@@ -48,7 +48,6 @@ export class MapComponent implements OnInit {
       this.chosenEntity = _.find(entities, (e: Entity) => {
         return e.name === this.entityName;
       });
-      console.log('this.chosenEntity', this.chosenEntity);
       this.entityPrimaryKey = this.chosenEntity.definition.primaryKey;
       // Set up connections once
       if (!this.connsInit) {
@@ -137,14 +136,12 @@ export class MapComponent implements OnInit {
     if (prop === null) {
       conn[proptype] = null;
     } else {
-      console.log('conns before', this.conns);
       conn[proptype] = {
         key: prop.key,
         type: prop.type,
         val: prop.val
       };
     }
-    console.log('conns after', this.conns);
   }
 
   /**
