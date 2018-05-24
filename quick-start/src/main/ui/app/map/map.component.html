@@ -13,55 +13,42 @@
 
     </div>
 
-    <!-- Filter menu for narrowing menu properties -->
-    <!-- <div>
-      <mdl-select
-        label="Types to show"
-        floating-label
-        [(ngModel)]="filterSelected"
-        (blur)="handleFilter($event)"
-      >
-        <mdl-option *ngFor="let f of filterMenu" [value]="f">{{f}}</mdl-option>
-      </mdl-select>
-    </div> -->
-
     <div id="source">
       <div id="src-heading" #srcheading>
         <h4 class="item-type">Source</h4>
-        <p class="item-identifying-info">{{ sampleDoc?.uri }}</p>
+        <p class="item-identifying-info" title="{{ sampleDoc?.uri }}">{{ getLastChars(sampleDoc?.uri, 40, '...') }}</p>
       </div>
 
+      <!-- Dropdown row for each entity property -->
       <div *ngFor="let prop of chosenEntity?.definition.properties; let i = index;" class="prop-container">
 
           <div class="btn-group" dropdown>
             <button dropdownToggle type="button" class="btn dropdown-toggle prop-select">
+
+              <!-- Connection exists, display selected item -->
               <div *ngIf="conns[i]['src'] !== null">
                 <div class="prop-select-content">
-
-                  <!--<span class="prop-name">{{conns[i]['src'].key}}</span><span class="prop-type">{{conns[i]['src'].val}}</span>-->
-
                   <span class="prop-name">{{conns[i]['src'].key}}</span>
-                  <!-- <span class="prop-type">{{conns[i]['src'].type}}</span> -->
-                  <span class="prop-val" title="{{conns[i]['src'].type}}">{{ getType(conns[i]['src'].val) === "string" ? '"' : '' }}{{ conns[i]['src'].val | slice:0:valMaxLen }}{{ conns[i]['src'].val.length > valMaxLen ? '...' : '' }}{{ getType(conns[i]['src'].val) === "string" ? '"' : '' }}</span>
-
+                  <span class="prop-type">{{conns[i]['src'].type}}</span>
+                  <span class="prop-val">{{ isQuoted(conns[i]['src'].type) ? '"' : '' }}{{ conns[i]['src'].val | slice:0:valMaxLen }}{{ conns[i]['src'].val.length > valMaxLen ? '...' : '' }}{{ isQuoted(conns[i]['src'].type) ? '"' : '' }}</span>
                 </div>
               </div>
+
+              <!-- Connection does not exist, display placeholder -->
               <div *ngIf="conns[i]['src'] === null">
                 <div class="prop-select-content unselected">Select...</div>
               </div>
+
               <div class="prop-select-control"><span class="caret"></span></div>
             </button>
             <ul *dropdownMenu class="dropdown-menu" role="menu">
-              <li *ngFor="let prop of getProps(conns[i]['harm'].type);"
+              <li *ngFor="let prop of getProps();"
                   role="menuitem"
                   on-click="handleSelection(prop, 'src', i)">
                 <a class="dropdown-item" href="javascript:void(0)">
-                  <!--<span class="prop-name">{{prop.key}}</span><span class="prop-val">{{prop.val}}</span>-->
-
                   <span class="prop-name">{{prop.key}}</span>
-                  <!-- <span class="prop-type">{{prop.type}}</span> -->
-                  <span class="prop-val" title="{{type}}">{{ prop.type === "string" ? '"' : '' }}{{ prop.val | slice:0:valMaxLen }}{{ prop.val.length > valMaxLen ? '...' : '' }}{{ prop.type === "string" ? '"' : '' }}</span>
-
+                  <span class="prop-type">{{prop.type}}</span>
+                  <span class="prop-val" title="{{type}}">{{ isQuoted(prop.type) ? '"' : '' }}{{ prop.val | slice:0:valMaxLen }}{{ prop.val.length > valMaxLen ? '...' : '' }}{{ isQuoted(prop.type) ? '"' : '' }}</span>
                 </a>
               </li>
               <li role="menuitem"
@@ -83,10 +70,20 @@
         <p class="item-identifying-info">{{ chosenEntity?.info.title }}</p>
       </div>
 
+      <!-- Row for each entity property -->
       <div *ngFor="let prop of chosenEntity?.definition.properties; let i = index;">
 
         <div class="prop-container" d>
-          <span class="prop-name">{{prop.name}}</span><span class="prop-type">{{prop.datatype}}</span><span class="is-primary" *ngIf="prop.name === entityPrimaryKey"><i class="fa fa-key"></i></span>
+          <span class="prop-name">{{prop.name}}</span>
+          <span class="prop-type">{{prop.datatype}}</span>
+          <span class="entity-icons">
+            <span class="entity-icon" title="Primary Key"><i class="fa fa-key" [ngClass]="{'icon-hide': !(prop.name === entityPrimaryKey)}"></i></span>
+            <span class="entity-icon" title="Element Range Index"><i class="fa fa-bolt" [ngClass]="{'icon-hide': !hasElementRangeIndex(prop.name)}"></i></span>
+            <span class="entity-icon" title="Path Range Index"><i class="fa fa-code" [ngClass]="{'icon-hide': !hasRangeIndex(prop.name)}"></i></span>
+            <span class="entity-icon" title="Word Lexicon"><i class="fa fa-won" [ngClass]="{'icon-hide': !hasWordLexicon(prop.name)}"></i></span>
+            <span class="entity-icon" title="Required"><i class="fa fa-exclamation" [ngClass]="{'icon-hide': !isRequired(prop.name)}"></i></span>
+            <span class="entity-icon" title="Personally Identifiable Information"><i class="fa fa-lock" [ngClass]="{'icon-hide': !isPII(prop.name)}"></i></span>
+          </span>
         </div>
 
       </div><!-- ngFor -->

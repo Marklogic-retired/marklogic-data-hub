@@ -15,7 +15,7 @@ import * as moment from 'moment';
 })
 export class MapComponent implements OnInit {
   // Harmonized Model
-  public chosenEntity: Entity;
+  public  chosenEntity: Entity;
   private entityPrimaryKey: string = '';
 
   // Source Document
@@ -25,20 +25,19 @@ export class MapComponent implements OnInit {
   private activeFacets: any = {};
   private currentPage: number = 1;
   private pageLength: number = 1; // pulling single record
-  public sampleDoc: any = null;
+  public  sampleDoc: any = null;
   private sampleDocSrc: any = null;
   private sampleDocSrcProps: Array<any> = [];
-  private valMaxLen: number = 15;
+  public  valMaxLen: number = 15;
 
-  // Connections
-  public conns: Array<any> = [];
+  // Connections, one for each row:
+  // { src:  { name: 'src-prop-name',  type: 'prop-datatype' },
+  //   harm: { name: 'harm-prop-name', type: 'harm-prop-datatype'} }
+  public  conns: Array<any> = [];
   private connsInit: boolean = false;
 
-  private entityName: string;
-  public flowName: string;
-
-  private filterMenu: Array<string> = ['all', 'matching', 'string', 'number', 'date'];
-  private filterSelected: string = 'all';
+  public  entityName: string;
+  public  flowName: string;
 
   /**
    * Get entities and choose one to serve as harmonized model.
@@ -49,6 +48,7 @@ export class MapComponent implements OnInit {
       this.chosenEntity = _.find(entities, (e: Entity) => {
         return e.name === this.entityName;
       });
+      console.log('this.chosenEntity', this.chosenEntity);
       this.entityPrimaryKey = this.chosenEntity.definition.primaryKey;
       // Set up connections once
       if (!this.connsInit) {
@@ -101,11 +101,6 @@ export class MapComponent implements OnInit {
           };
           self.sampleDocSrcProps.push(prop);
         });
-        console.log('start with', self.sampleDocSrcProps);
-        // TODO sort order
-        self.sampleDocSrcProps = _.sortBy(self.sampleDocSrcProps, ['key']);
-        // TODO filter by type
-        self.sampleDocSrcProps = _.filter(self.sampleDocSrcProps, ['type', 'string']);
       });
     },
     () => {},
@@ -130,27 +125,33 @@ export class MapComponent implements OnInit {
     this.getSampleDoc(this.entityName);
   }
 
+  /**
+   * Handle property selection from source menu
+   * @param prop Property object
+   * @param proptype 'src' or 'harm'
+   * @param index Index of menu (not item)
+   */
   handleSelection(prop, proptype, index): void {
+    // Get the corresponding connection
     let conn = this.conns[index];
     if (prop === null) {
       conn[proptype] = null;
     } else {
-      console.log('prop', prop);
+      console.log('conns before', this.conns);
       conn[proptype] = {
         key: prop.key,
         type: prop.type,
         val: prop.val
       };
     }
+    console.log('conns after', this.conns);
   }
 
-  handleFilter(event) {
-    console.log('filterChanged', event);
-    this.filterSelected = event;
-  }
-
-  getProps(type) {
-    console.log('type', type);
+  /**
+   * Get property objects of source document
+   * @returns {Array<any>} Array of property objects
+   */
+  getProps() {
     let self = this;
     this.sampleDocSrcProps = [];
     _.forEach(this.sampleDocSrc['envelope']['instance'], function(val, key) {
@@ -161,34 +162,47 @@ export class MapComponent implements OnInit {
       };
       self.sampleDocSrcProps.push(prop);
     });
-    // TODO filter by type
-    if (this.filterSelected !== 'all') {
-      if (this.filterSelected === 'type match') {
-        self.sampleDocSrcProps = _.filter(self.sampleDocSrcProps, ['type', type]);
-      } else {
-        self.sampleDocSrcProps = _.filter(self.sampleDocSrcProps, ['type', this.filterSelected]);
-      }
-    }
     return self.sampleDocSrcProps;
   }
 
+  /**
+   * Interpret datatype of property value
+   * @param property value
+   * @returns {string} datatype
+   */
   getType(value) {
-    if (value instanceof Date) {
-      return 'date';
+    let result = '';
+    if (moment(value, moment.ISO_8601,true).isValid()) {
+      result = 'date';
     } else if (Number.isInteger(Number.parseInt(value))) {
-      return 'number';
+      result = 'number';
+    } else if (typeof value === 'boolean') {
+      result = 'boolean';
+    } else if (value === null) {
+      result = 'null';
     } else {
-      return 'string';
+      result = 'string';
     }
+    return result;
   }
 
+  /**
+   * Should datatype be displayed with quotes?
+   * @param property datatype
+   * @returns {boolean}
+   */
+  isQuoted(type) {
+    let typesToQuote = ['string', 'date'];
+    return _.indexOf(typesToQuote, type) > -1;
+  }
+
+  /**
+   * Save the mapping artifact
+   */
   saveMap(): void {
     let mapName = this.mapService.getName(this.entityName, this.flowName);
     let localString = localStorage.getItem("mapping");
-    let localObj = {};
-    if (localString) {
-      localObj = JSON.parse(localString);
-    }
+    let localObj = (localString) ? JSON.parse(localString) : {};
     if (!localObj[this.entityName]) {
       localObj[this.entityName] = {}
     };
@@ -206,8 +220,11 @@ export class MapComponent implements OnInit {
     this.router.navigate(['/flows', this.entityName, this.flowName, 'HARMONIZE']);
   }
 
+  /**
+   * Handle cancel button event
+   */
   cancelMap(): void {
-    let result = this.dialogService.confirm('Cancel and lose any changes?', 'Stay On Page', 'Cancel');
+    let result = this.dialogService.confirm('Cancel and lose any changes?', 'Stay On Page', 'OK');
     result.subscribe( () => {
         this.router.navigate(['/flows', this.entityName, this.flowName, 'HARMONIZE']);
       },(err: any) => {
@@ -216,6 +233,9 @@ export class MapComponent implements OnInit {
     );
   }
 
+  /**
+   * Retrieve the mapping artifact
+   */
   getMap() {
     let result = null;
     // Temporarily saving locally
@@ -231,6 +251,38 @@ export class MapComponent implements OnInit {
     // TODO use service to get
     this.mapService.getMaps(this.entityName);
     return result;
+  }
+
+  /**
+   * Trim start of long string and add prefix ('...trimmed-string'
+   * @param str String to trim
+   * @param num Character threshold
+   * @param prefix Prefix to add
+   * @returns {any} Trimmed string
+   */
+  getLastChars(str, num, prefix) {
+    prefix = prefix ? prefix : '...';
+    let result = str;
+    if (typeof str === 'string' && str.length > num) {
+      result = prefix + str.substr(str.length - num);
+    }
+    return result;
+  }
+
+  hasElementRangeIndex(name) {
+    return _.includes(this.chosenEntity.definition.elementRangeIndex, name);
+  }
+  hasRangeIndex(name) {
+    return _.includes(this.chosenEntity.definition.rangeIndex, name);
+  }
+  hasWordLexicon(name) {
+    return _.includes(this.chosenEntity.definition.wordLexicon, name);
+  }
+  isRequired(name) {
+    return _.includes(this.chosenEntity.definition.required, name);
+  }
+  isPII(name) {
+    return _.includes(this.chosenEntity.definition.pii, name);
   }
 
 }
