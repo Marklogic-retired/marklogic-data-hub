@@ -128,6 +128,7 @@ public class HubTestBase {
     private  Authentication finalAuthMethod;
     private  Authentication jobAuthMethod;
     public  DatabaseClient stagingClient = null;
+    public  DatabaseClient stagingPrivilegedClient = null;
     // this is needed for some evals in the test suite that are not mainline tests.
     public  DatabaseClient stagingModulesClient = null;
     public  DatabaseClient finalClient = null;
@@ -251,6 +252,7 @@ public class HubTestBase {
 
         try {
         	stagingClient = getClient(host, stagingPort, HubConfig.DEFAULT_STAGING_NAME, user, password, stagingAuthMethod);
+            stagingPrivilegedClient = getHubConfig().newStagingManageClient();
             stagingModulesClient  = getClient(host, stagingPort, HubConfig.DEFAULT_MODULES_DB_NAME, user, password, stagingAuthMethod);
             finalClient = getClient(host, finalPort, HubConfig.DEFAULT_FINAL_NAME, user, password, finalAuthMethod);
             finalModulesClient  = getClient(host, stagingPort, HubConfig.DEFAULT_MODULES_DB_NAME, user, password, finalAuthMethod);
@@ -542,7 +544,7 @@ public class HubTestBase {
     }
 
     public void clearDatabases(String... databases) {
-        ServerEvaluationCall eval = stagingClient.newServerEval();
+        ServerEvaluationCall eval = stagingPrivilegedClient.newServerEval();
         String installer =
             "declare variable $databases external;\n" +
             "for $database in fn:tokenize($databases, \",\")\n" +

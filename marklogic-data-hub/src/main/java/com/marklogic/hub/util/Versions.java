@@ -27,12 +27,12 @@ import com.marklogic.hub.HubConfig;
 public class Versions extends ResourceManager {
     private static final String NAME = "ml:hubversion";
 
-    DatabaseClient appServicesClient;
     DatabaseClient stagingClient;
+    private HubConfig hubConfig;
 
     public Versions(HubConfig hubConfig) {
         super();
-        this.appServicesClient = hubConfig.newAppServicesClient();
+        this.hubConfig = hubConfig;
         this.stagingClient = hubConfig.newStagingManageClient();
         this.stagingClient.init(NAME, this);
     }
@@ -54,9 +54,9 @@ public class Versions extends ResourceManager {
     }
 
     public String getMarkLogicVersion() {
-        // do it this way to avoid needing an admin user
-        // vs getAdminManager().getServerVersion() which needs admin :(
-        ServerEvaluationCall eval = this.appServicesClient.newServerEval();
+        // get a client for eval on port 8000 with no database
+        DatabaseClient noDbClient = hubConfig.getAppConfig().newAppServicesDatabaseClient(null);
+        ServerEvaluationCall eval = noDbClient.newServerEval();
         String xqy = "xdmp:version()";
         EvalResultIterator result = eval.xquery(xqy).eval();
         if (result.hasNext()) {
