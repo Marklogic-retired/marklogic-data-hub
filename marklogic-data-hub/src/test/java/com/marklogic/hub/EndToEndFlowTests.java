@@ -60,6 +60,9 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
+import static com.marklogic.client.io.DocumentMetadataHandle.Capability.EXECUTE;
+import static com.marklogic.client.io.DocumentMetadataHandle.Capability.READ;
+import static com.marklogic.client.io.DocumentMetadataHandle.Capability.UPDATE;
 import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -136,6 +139,7 @@ public class EndToEndFlowTests extends HubTestBase {
     }
 
     private static boolean isSetup = false;
+
     @BeforeEach
     public void setupEach() {
         if (isSslRun() || isCertAuth()) {
@@ -209,7 +213,6 @@ public class EndToEndFlowTests extends HubTestBase {
             assertEquals(8, flowManager.updateLegacyFlows("1.1.5").size());
             assertEquals(0, flowManager.getLegacyFlows().size());
 
-
             // create some flows in a format that pre-dates the 3.0 sjs enhancement
             allCombos((codeFormat, dataFormat, flowType, useEs) -> {
                 create2xFlow("2x-before-3x", codeFormat, dataFormat, flowType, useEs);
@@ -222,12 +225,12 @@ public class EndToEndFlowTests extends HubTestBase {
             assertEquals(4, legacyFlows.size(), String.join("\n", legacyFlows));
             assertEquals(4, flowManager.updateLegacyFlows("2.0.0").size());
             assertEquals(0, flowManager.getLegacyFlows().size());
-
             installUserModules(getHubConfig(), true);
 
-            stagingDataMovementManager = stagingClient.newDataMovementManager();
-            finalDataMovementManager = finalClient.newDataMovementManager();
         }
+        flowManager = FlowManager.create(getHubConfig());
+        stagingDataMovementManager = stagingClient.newDataMovementManager();
+        finalDataMovementManager = finalClient.newDataMovementManager();
     }
 
 
@@ -237,9 +240,10 @@ public class EndToEndFlowTests extends HubTestBase {
     }
 
     @TestFactory
-    public List<DynamicTest> generateTests() {
+    public List<DynamicTest> generateLegacyTests() {
         DataHub dataHub = getDataHub();
         List<DynamicTest> tests = new ArrayList<>();
+        Path entityDir = projectDir.resolve("plugins").resolve("entities").resolve(ENTITY);
 
         allCombos((codeFormat, dataFormat, flowType, useEs) -> {
             // we don't need to worry about legacy tests and ES
@@ -250,8 +254,8 @@ public class EndToEndFlowTests extends HubTestBase {
             String prefix = "legacy";
             String flowName = getFlowName(prefix, codeFormat, dataFormat, flowType, useEs);
             if (flowType.equals(FlowType.INPUT)) {
-            	if(! isSslRun() && !isCertAuth()) {
-            		tests.add(DynamicTest.dynamicTest(flowName + " MLCP", () -> {
+                if (!isSslRun() && !isCertAuth()) {
+                    tests.add(DynamicTest.dynamicTest(flowName + " MLCP", () -> {
                         Map<String, Object> options = new HashMap<>();
                         FinalCounts finalCounts = new FinalCounts(1, 0, 1, 1, 0, 0, 1, 0, 0, 0, "FINISHED");
                         testInputFlowViaMlcp(prefix, useEs ? "-es" : "", stagingClient, codeFormat, dataFormat, useEs, options, finalCounts);
@@ -262,7 +266,7 @@ public class EndToEndFlowTests extends HubTestBase {
                         FinalCounts finalCounts = new FinalCounts(0, 1, 1, 1, 0, 0, 1, 0, 0, 0, "FINISHED");
                         testInputFlowViaMlcp(prefix, useEs ? "-es" : "", finalClient, codeFormat, dataFormat, useEs, options, finalCounts);
                     }));
-            	}
+                }
                 tests.add(DynamicTest.dynamicTest(flowName + " REST", () -> {
                     Map<String, Object> options = new HashMap<>();
                     FinalCounts finalCounts = new FinalCounts(1, 0, 1, 0, 0, 0, 0, 0, 0, 0, "FINISHED");
@@ -273,90 +277,7 @@ public class EndToEndFlowTests extends HubTestBase {
                     FinalCounts finalCounts = new FinalCounts(1, 0, 1, 0, 0, 0, 0, 0, 0, 0, "FINISHED");
                     testInputFlowViaDMSDK(prefix, useEs ? "-es" : "", codeFormat, dataFormat, useEs, true, options, finalCounts);
                 }));
-            }
-            else {
-                Map<String, Object> options = new HashMap<>();
-                tests.add(DynamicTest.dynamicTest(flowName + " wait", () -> {
-                    FinalCounts finalCounts = new FinalCounts(TEST_SIZE, TEST_SIZE * 2, TEST_SIZE + 1, 1, TEST_SIZE, 0, TEST_SIZE, 0, TEST_SIZE / BATCH_SIZE, 0, "FINISHED");
-                    testHarmonizeFlow(prefix, codeFormat, dataFormat, useEs, options, stagingClient, HubConfig.DEFAULT_FINAL_NAME, finalCounts, true);
-                }));
-                tests.add(DynamicTest.dynamicTest(flowName + " wait Reverse Dbs", () -> {
-                    FinalCounts finalCounts = new FinalCounts(TEST_SIZE * 2, TEST_SIZE, TEST_SIZE + 1, 1, TEST_SIZE, 0, TEST_SIZE, 0, TEST_SIZE/BATCH_SIZE, 0, "FINISHED");
-                    testHarmonizeFlow(prefix, codeFormat, dataFormat, useEs, options, finalClient, HubConfig.DEFAULT_STAGING_NAME, finalCounts, true);
-                }));
-                tests.add(DynamicTest.dynamicTest(flowName + " no-wait", () -> {
-                    FinalCounts finalCounts = new FinalCounts(TEST_SIZE, TEST_SIZE + 1, TEST_SIZE + 1, 1, TEST_SIZE, 0, TEST_SIZE, 0, TEST_SIZE/BATCH_SIZE, 0, "FINISHED");
-                    testHarmonizeFlow(prefix, codeFormat, dataFormat, useEs, options, stagingClient, HubConfig.DEFAULT_FINAL_NAME, finalCounts, false);
-                }));
-            }
-        });
-
-
-        allCombos((codeFormat, dataFormat, flowType, useEs) -> {
-            String prefix = "has a space ";
-            String flowName = getFlowName(prefix, codeFormat, dataFormat, flowType, useEs);
-            if (flowType.equals(FlowType.INPUT)) {
-            	if(!isSslRun() && !isCertAuth()) {
-            		tests.add(DynamicTest.dynamicTest(flowName + " MLCP", () -> {
-                        Map<String, Object> options = new HashMap<>();
-                        FinalCounts finalCounts = new FinalCounts(1, 0, 1, 1, 0, 0, 1, 0, 0, 0, "FINISHED");
-                        testInputFlowViaMlcp(prefix, useEs ? "-es" : "", stagingClient, codeFormat, dataFormat, useEs, options, finalCounts);
-                    }));
-            	}
-                tests.add(DynamicTest.dynamicTest(flowName + " REST", () -> {
-                    Map<String, Object> options = new HashMap<>();
-                    FinalCounts finalCounts = new FinalCounts(1, 0, 1, 0, 0, 0, 0, 0, 0, 0, "FINISHED");
-                    testInputFlowViaREST(prefix, useEs ? "-es" : "", codeFormat, dataFormat, useEs, false, options, finalCounts);
-                }));
-                tests.add(DynamicTest.dynamicTest(flowName + " DMSDK", () -> {
-                    Map<String, Object> options = new HashMap<>();
-                    FinalCounts finalCounts = new FinalCounts(1, 0, 1, 0, 0, 0, 0, 0, 0, 0, "FINISHED");
-                    testInputFlowViaDMSDK(prefix, useEs ? "-es" : "", codeFormat, dataFormat, useEs, false, options, finalCounts);
-                }));
-            }
-            else {
-                Map<String, Object> options = new HashMap<>();
-                tests.add(DynamicTest.dynamicTest(flowName + " wait", () -> {
-                    FinalCounts finalCounts = new FinalCounts(TEST_SIZE, TEST_SIZE * 2, TEST_SIZE + 1, 1, TEST_SIZE, 0, TEST_SIZE, 0, TEST_SIZE/BATCH_SIZE, 0, "FINISHED");
-                    testHarmonizeFlow(prefix, codeFormat, dataFormat, useEs, options, stagingClient, HubConfig.DEFAULT_FINAL_NAME, finalCounts, true);
-                }));
-            }
-        });
-
-        allCombos((codeFormat, dataFormat, flowType, useEs) -> {
-            // we don't need to worry about legacy tests and ES
-            // so skip creating them if the flag is on
-            if (useEs) {
-                return;
-            }
-            String prefix = "1x-legacy";
-            String flowName = getFlowName(prefix, codeFormat, dataFormat, flowType, useEs);
-            if (flowType.equals(FlowType.INPUT)) {
-            	if(! isSslRun() && !isCertAuth()) {
-            		tests.add(DynamicTest.dynamicTest(flowName + " MLCP", () -> {
-                        Map<String, Object> options = new HashMap<>();
-                        FinalCounts finalCounts = new FinalCounts(1, 0, 1, 1, 0, 0, 1, 0, 0, 0, "FINISHED");
-                        testInputFlowViaMlcp(prefix, useEs ? "-es" : "", stagingClient, codeFormat, dataFormat, useEs, options, finalCounts);
-                    }));
-
-                    tests.add(DynamicTest.dynamicTest(flowName + " MLCP", () -> {
-                        Map<String, Object> options = new HashMap<>();
-                        FinalCounts finalCounts = new FinalCounts(0, 1, 1, 1, 0, 0, 1, 0, 0, 0, "FINISHED");
-                        testInputFlowViaMlcp(prefix, useEs ? "-es" : "", finalClient, codeFormat, dataFormat, useEs, options, finalCounts);
-                    }));
-            	}
-                tests.add(DynamicTest.dynamicTest(flowName + " REST", () -> {
-                    Map<String, Object> options = new HashMap<>();
-                    FinalCounts finalCounts = new FinalCounts(1, 0, 1, 0, 0, 0, 0, 0, 0, 0, "FINISHED");
-                    testInputFlowViaREST(prefix, useEs ? "-es" : "", codeFormat, dataFormat, useEs, true, options, finalCounts);
-                }));
-                tests.add(DynamicTest.dynamicTest(flowName + " DMSDK", () -> {
-                    Map<String, Object> options = new HashMap<>();
-                    FinalCounts finalCounts = new FinalCounts(1, 0, 1, 0, 0, 0, 0, 0, 0, 0, "FINISHED");
-                    testInputFlowViaDMSDK(prefix, useEs ? "-es" : "", codeFormat, dataFormat, useEs, true, options, finalCounts);
-                }));
-            }
-            else {
+            } else {
                 Map<String, Object> options = new HashMap<>();
                 tests.add(DynamicTest.dynamicTest(flowName + " wait", () -> {
                     FinalCounts finalCounts = new FinalCounts(TEST_SIZE, TEST_SIZE * 2, TEST_SIZE + 1, 1, TEST_SIZE, 0, TEST_SIZE, 0, TEST_SIZE / BATCH_SIZE, 0, "FINISHED");
@@ -372,18 +293,120 @@ public class EndToEndFlowTests extends HubTestBase {
                 }));
             }
         });
+        return tests;
+    }
+
+
+    @TestFactory
+    public List<DynamicTest> generateHasASpaceTests() {
+        DataHub dataHub = getDataHub();
+        List<DynamicTest> tests = new ArrayList<>();
+        allCombos((codeFormat, dataFormat, flowType, useEs) -> {
+            String prefix = "has a space ";
+            String flowName = getFlowName(prefix, codeFormat, dataFormat, flowType, useEs);
+            if (flowType.equals(FlowType.INPUT)) {
+                if (!isSslRun() && !isCertAuth()) {
+                    tests.add(DynamicTest.dynamicTest(flowName + " MLCP", () -> {
+                        Map<String, Object> options = new HashMap<>();
+                        FinalCounts finalCounts = new FinalCounts(1, 0, 1, 1, 0, 0, 1, 0, 0, 0, "FINISHED");
+                        testInputFlowViaMlcp(prefix, useEs ? "-es" : "", stagingClient, codeFormat, dataFormat, useEs, options, finalCounts);
+                    }));
+                }
+                tests.add(DynamicTest.dynamicTest(flowName + " REST", () -> {
+                    Map<String, Object> options = new HashMap<>();
+                    FinalCounts finalCounts = new FinalCounts(1, 0, 1, 0, 0, 0, 0, 0, 0, 0, "FINISHED");
+                    testInputFlowViaREST(prefix, useEs ? "-es" : "", codeFormat, dataFormat, useEs, false, options, finalCounts);
+                }));
+                tests.add(DynamicTest.dynamicTest(flowName + " DMSDK", () -> {
+                    Map<String, Object> options = new HashMap<>();
+                    FinalCounts finalCounts = new FinalCounts(1, 0, 1, 0, 0, 0, 0, 0, 0, 0, "FINISHED");
+                    testInputFlowViaDMSDK(prefix, useEs ? "-es" : "", codeFormat, dataFormat, useEs, false, options, finalCounts);
+                }));
+            } else {
+                Map<String, Object> options = new HashMap<>();
+                tests.add(DynamicTest.dynamicTest(flowName + " wait", () -> {
+                    FinalCounts finalCounts = new FinalCounts(TEST_SIZE, TEST_SIZE * 2, TEST_SIZE + 1, 1, TEST_SIZE, 0, TEST_SIZE, 0, TEST_SIZE / BATCH_SIZE, 0, "FINISHED");
+                    testHarmonizeFlow(prefix, codeFormat, dataFormat, useEs, options, stagingClient, HubConfig.DEFAULT_FINAL_NAME, finalCounts, true);
+                }));
+            }
+        });
+        return tests;
+    }
+
+
+    @TestFactory
+    public List<DynamicTest> generate1xLegacyTests() {
+        DataHub dataHub = getDataHub();
+        List<DynamicTest> tests = new ArrayList<>();
+
+        allCombos((codeFormat, dataFormat, flowType, useEs) -> {
+            // we don't need to worry about legacy tests and ES
+            // so skip creating them if the flag is on
+            if (useEs) {
+                return;
+            }
+            String prefix = "1x-legacy";
+            String flowName = getFlowName(prefix, codeFormat, dataFormat, flowType, useEs);
+            if (flowType.equals(FlowType.INPUT)) {
+                if (!isSslRun() && !isCertAuth()) {
+                    tests.add(DynamicTest.dynamicTest(flowName + " MLCP", () -> {
+                        Map<String, Object> options = new HashMap<>();
+                        FinalCounts finalCounts = new FinalCounts(1, 0, 1, 1, 0, 0, 1, 0, 0, 0, "FINISHED");
+                        testInputFlowViaMlcp(prefix, useEs ? "-es" : "", stagingClient, codeFormat, dataFormat, useEs, options, finalCounts);
+                    }));
+
+                    tests.add(DynamicTest.dynamicTest(flowName + " MLCP", () -> {
+                        Map<String, Object> options = new HashMap<>();
+                        FinalCounts finalCounts = new FinalCounts(0, 1, 1, 1, 0, 0, 1, 0, 0, 0, "FINISHED");
+                        testInputFlowViaMlcp(prefix, useEs ? "-es" : "", finalClient, codeFormat, dataFormat, useEs, options, finalCounts);
+                    }));
+                }
+                tests.add(DynamicTest.dynamicTest(flowName + " REST", () -> {
+                    Map<String, Object> options = new HashMap<>();
+                    FinalCounts finalCounts = new FinalCounts(1, 0, 1, 0, 0, 0, 0, 0, 0, 0, "FINISHED");
+                    testInputFlowViaREST(prefix, useEs ? "-es" : "", codeFormat, dataFormat, useEs, true, options, finalCounts);
+                }));
+                tests.add(DynamicTest.dynamicTest(flowName + " DMSDK", () -> {
+                    Map<String, Object> options = new HashMap<>();
+                    FinalCounts finalCounts = new FinalCounts(1, 0, 1, 0, 0, 0, 0, 0, 0, 0, "FINISHED");
+                    testInputFlowViaDMSDK(prefix, useEs ? "-es" : "", codeFormat, dataFormat, useEs, true, options, finalCounts);
+                }));
+            } else {
+                Map<String, Object> options = new HashMap<>();
+                tests.add(DynamicTest.dynamicTest(flowName + " wait", () -> {
+                    FinalCounts finalCounts = new FinalCounts(TEST_SIZE, TEST_SIZE * 2, TEST_SIZE + 1, 1, TEST_SIZE, 0, TEST_SIZE, 0, TEST_SIZE / BATCH_SIZE, 0, "FINISHED");
+                    testHarmonizeFlow(prefix, codeFormat, dataFormat, useEs, options, stagingClient, HubConfig.DEFAULT_FINAL_NAME, finalCounts, true);
+                }));
+                tests.add(DynamicTest.dynamicTest(flowName + " wait Reverse Dbs", () -> {
+                    FinalCounts finalCounts = new FinalCounts(TEST_SIZE * 2, TEST_SIZE, TEST_SIZE + 1, 1, TEST_SIZE, 0, TEST_SIZE, 0, TEST_SIZE / BATCH_SIZE, 0, "FINISHED");
+                    testHarmonizeFlow(prefix, codeFormat, dataFormat, useEs, options, finalClient, HubConfig.DEFAULT_STAGING_NAME, finalCounts, true);
+                }));
+                tests.add(DynamicTest.dynamicTest(flowName + " no-wait", () -> {
+                    FinalCounts finalCounts = new FinalCounts(TEST_SIZE, TEST_SIZE + 1, TEST_SIZE + 1, 1, TEST_SIZE, 0, TEST_SIZE, 0, TEST_SIZE / BATCH_SIZE, 0, "FINISHED");
+                    testHarmonizeFlow(prefix, codeFormat, dataFormat, useEs, options, stagingClient, HubConfig.DEFAULT_FINAL_NAME, finalCounts, false);
+                }));
+            }
+        });
+        return tests;
+    }
+
+
+    @TestFactory
+    public List<DynamicTest> generateExtraPluginTests() {
+        DataHub dataHub = getDataHub();
+        List<DynamicTest> tests = new ArrayList<>();
 
         allCombos((codeFormat, dataFormat, flowType, useEs) -> {
             String prefix = "extra-plugin";
             String flowName = getFlowName(prefix, codeFormat, dataFormat, flowType, useEs);
             if (flowType.equals(FlowType.INPUT)) {
-              	if(!isSslRun() && !isCertAuth()) {
-            			tests.add(DynamicTest.dynamicTest(flowName + " MLCP", () -> {
-                           Map<String, Object> options = new HashMap<>();
-                           options.put("extraPlugin", true);
-                           FinalCounts finalCounts = new FinalCounts(1, 0, 1, 1, 0, 0, 1, 0, 0, 0, "FINISHED");
-                           testInputFlowViaMlcp(prefix, useEs ? "-es" : "", stagingClient, codeFormat, dataFormat, useEs, options, finalCounts);
-                       }));
+                if (!isSslRun() && !isCertAuth()) {
+                    tests.add(DynamicTest.dynamicTest(flowName + " MLCP", () -> {
+                        Map<String, Object> options = new HashMap<>();
+                        options.put("extraPlugin", true);
+                        FinalCounts finalCounts = new FinalCounts(1, 0, 1, 1, 0, 0, 1, 0, 0, 0, "FINISHED");
+                        testInputFlowViaMlcp(prefix, useEs ? "-es" : "", stagingClient, codeFormat, dataFormat, useEs, options, finalCounts);
+                    }));
                 }
                 tests.add(DynamicTest.dynamicTest(flowName + " REST", () -> {
                     Map<String, Object> options = new HashMap<>();
@@ -397,12 +420,11 @@ public class EndToEndFlowTests extends HubTestBase {
                     FinalCounts finalCounts = new FinalCounts(1, 0, 1, 0, 0, 0, 0, 0, 0, 0, "FINISHED");
                     testInputFlowViaDMSDK(prefix, useEs ? "-es" : "", codeFormat, dataFormat, useEs, false, options, finalCounts);
                 }));
-            }
-            else {
+            } else {
                 tests.add(DynamicTest.dynamicTest(flowName + " wait", () -> {
                     Map<String, Object> options = new HashMap<>();
                     options.put("extraPlugin", true);
-                    FinalCounts finalCounts = new FinalCounts(TEST_SIZE, TEST_SIZE * 2, TEST_SIZE + 1, 1, TEST_SIZE, 0, TEST_SIZE, 0, TEST_SIZE/BATCH_SIZE, 0, "FINISHED");
+                    FinalCounts finalCounts = new FinalCounts(TEST_SIZE, TEST_SIZE * 2, TEST_SIZE + 1, 1, TEST_SIZE, 0, TEST_SIZE, 0, TEST_SIZE / BATCH_SIZE, 0, "FINISHED");
                     finalCounts.optionsFile = "options-extra";
                     testHarmonizeFlow(prefix, codeFormat, dataFormat, useEs, options, stagingClient, HubConfig.DEFAULT_FINAL_NAME, finalCounts, true);
                 }));
@@ -411,25 +433,31 @@ public class EndToEndFlowTests extends HubTestBase {
                     Map<String, Object> options = new HashMap<>();
                     options.put("extraPlugin", true);
                     options.put("extraGoBoom", true);
-                    FinalCounts finalCounts = new FinalCounts(TEST_SIZE, (TEST_SIZE - 1) * 2, TEST_SIZE + 1, 1, TEST_SIZE - 1, 1, TEST_SIZE - 1, 1, TEST_SIZE/BATCH_SIZE, 0, "FINISHED_WITH_ERRORS");
+                    FinalCounts finalCounts = new FinalCounts(TEST_SIZE, (TEST_SIZE - 1) * 2, TEST_SIZE + 1, 1, TEST_SIZE - 1, 1, TEST_SIZE - 1, 1, TEST_SIZE / BATCH_SIZE, 0, "FINISHED_WITH_ERRORS");
                     testHarmonizeFlowWithFailedMain(prefix, codeFormat, dataFormat, useEs, options, stagingClient, HubConfig.DEFAULT_FINAL_NAME, finalCounts);
                 }));
             }
         });
+        return tests;
+    }
 
+    @TestFactory
+    public List<DynamicTest> generateScaffoldedTests() {
+        DataHub dataHub = getDataHub();
+        List<DynamicTest> tests = new ArrayList<>();
         Path entityDir = projectDir.resolve("plugins").resolve("entities").resolve(ENTITY);
 
         allCombos((codeFormat, dataFormat, flowType, useEs) -> {
             String prefix = "scaffolded";
             String flowName = getFlowName(prefix, codeFormat, dataFormat, flowType, useEs);
             if (flowType.equals(FlowType.INPUT)) {
-               	if(!isSslRun() && !isCertAuth()) {
+                if (!isSslRun() && !isCertAuth()) {
                     tests.add(DynamicTest.dynamicTest(flowName + " MLCP", () -> {
                         Map<String, Object> options = new HashMap<>();
                         FinalCounts finalCounts = new FinalCounts(1, 0, 1, 1, 0, 0, 1, 0, 0, 0, "FINISHED");
                         testInputFlowViaMlcp(prefix, useEs ? "-es" : "", stagingClient, codeFormat, dataFormat, useEs, options, finalCounts);
                     }));
-            	}
+                }
                 tests.add(DynamicTest.dynamicTest(flowName + " REST", () -> {
                     Map<String, Object> options = new HashMap<>();
                     FinalCounts finalCounts = new FinalCounts(1, 0, 1, 0, 0, 0, 0, 0, 0, 0, "FINISHED");
@@ -440,8 +468,7 @@ public class EndToEndFlowTests extends HubTestBase {
                     FinalCounts finalCounts = new FinalCounts(1, 0, 1, 0, 0, 0, 0, 0, 0, 0, "FINISHED");
                     testInputFlowViaDMSDK(prefix, useEs ? "-es" : "", codeFormat, dataFormat, useEs, true, options, finalCounts);
                 }));
-            }
-            else {
+            } else {
                 Map<String, Object> options = new HashMap<>();
                 tests.add(DynamicTest.dynamicTest(flowName + " wait", () -> {
                     FinalCounts finalCounts = new FinalCounts(TEST_SIZE, TEST_SIZE, TEST_SIZE + 1, 1, TEST_SIZE, 0, TEST_SIZE, 0, TEST_SIZE / BATCH_SIZE, 0, "FINISHED");
@@ -457,19 +484,28 @@ public class EndToEndFlowTests extends HubTestBase {
                 }));
             }
         });
+        return tests;
+    }
+
+
+    @TestFactory
+    public List<DynamicTest> generateTriplesArrayTests() {
+        DataHub dataHub = getDataHub();
+        List<DynamicTest> tests = new ArrayList<>();
+        Path entityDir = projectDir.resolve("plugins").resolve("entities").resolve(ENTITY);
 
         allCombos((codeFormat, dataFormat, flowType, useEs) -> {
             String prefix = "triples-array";
             String flowName = getFlowName(prefix, codeFormat, dataFormat, flowType, useEs);
             if (codeFormat.equals(CodeFormat.XQUERY)) {
                 if (flowType.equals(FlowType.INPUT)) {
-                	if(!isSslRun() && !isCertAuth()) {
-                		tests.add(DynamicTest.dynamicTest(flowName + " MLCP", () -> {
+                    if (!isSslRun() && !isCertAuth()) {
+                        tests.add(DynamicTest.dynamicTest(flowName + " MLCP", () -> {
                             Map<String, Object> options = new HashMap<>();
                             FinalCounts finalCounts = new FinalCounts(1, 0, 1, 1, 0, 0, 1, 0, 0, 0, "FINISHED");
                             testInputFlowViaMlcp(prefix, useEs ? "-es" : "", stagingClient, codeFormat, dataFormat, useEs, options, finalCounts);
                         }));
-                	}
+                    }
                     tests.add(DynamicTest.dynamicTest(flowName + " REST", () -> {
                         Map<String, Object> options = new HashMap<>();
                         FinalCounts finalCounts = new FinalCounts(1, 0, 1, 0, 0, 0, 1, 0, 0, 0, "FINISHED");
@@ -489,15 +525,24 @@ public class EndToEndFlowTests extends HubTestBase {
                 }
             }
         });
+        return tests;
+    }
+
+
+    @TestFactory
+    public List<DynamicTest> generateWithErrorTests() {
+        DataHub dataHub = getDataHub();
+        List<DynamicTest> tests = new ArrayList<>();
+        Path entityDir = projectDir.resolve("plugins").resolve("entities").resolve(ENTITY);
 
         allCombos(((codeFormat, dataFormat, flowType, useEs) -> {
             String prefix = "with-error";
             String flowName = getFlowName(prefix, codeFormat, dataFormat, flowType, useEs);
             if (flowType.equals(FlowType.INPUT)) {
-                for (String plugin : new String[] { "main", "content", "headers", "triples"}) {
+                for (String plugin : new String[]{"main", "content", "headers", "triples"}) {
                     Map<String, Object> options = new HashMap<>();
                     options.put(plugin + "GoBoom", true);
-                    if(!isSslRun() && !isCertAuth()) {
+                    if (!isSslRun() && !isCertAuth()) {
                         // TODO
                         // THIS code should be turned back on when MLCP 9.0-5 is released.
                         // There is currently a bug in MLCP that doesn't work when an sjs transform
@@ -520,8 +565,7 @@ public class EndToEndFlowTests extends HubTestBase {
                         testInputFlowViaDMSDK(prefix, "-2", codeFormat, dataFormat, useEs, true, options, finalCounts);
                     }));
                 }
-            }
-            else {
+            } else {
                 tests.add(DynamicTest.dynamicTest(flowName + ": collector error", () -> {
                     Map<String, Object> options = new HashMap<>();
                     options.put("collectorGoBoom", true);
@@ -529,15 +573,14 @@ public class EndToEndFlowTests extends HubTestBase {
                     testHarmonizeFlowWithFailedMain(prefix, codeFormat, dataFormat, useEs, options, stagingClient, HubConfig.DEFAULT_FINAL_NAME, finalCounts);
                 }));
 
-                FinalCounts finalCounts = new FinalCounts(TEST_SIZE, TEST_SIZE, TEST_SIZE + 1, 1, TEST_SIZE - 1, 1, TEST_SIZE - 1, 1, TEST_SIZE/BATCH_SIZE, 0, "FINISHED_WITH_ERRORS");
-                for (String plugin : new String[] { "main", "content", "headers", "triples", "writer"}) {
+                FinalCounts finalCounts = new FinalCounts(TEST_SIZE, TEST_SIZE, TEST_SIZE + 1, 1, TEST_SIZE - 1, 1, TEST_SIZE - 1, 1, TEST_SIZE / BATCH_SIZE, 0, "FINISHED_WITH_ERRORS");
+                for (String plugin : new String[]{"main", "content", "headers", "triples", "writer"}) {
                     tests.add(DynamicTest.dynamicTest(flowName + ": " + plugin + " error", () -> {
                         Map<String, Object> options = new HashMap<>();
                         options.put(plugin + "GoBoom", true);
                         if (useEs) {
                             finalCounts.finalCount = TEST_SIZE - 1;
-                        }
-                        else {
+                        } else {
                             finalCounts.finalCount = (TEST_SIZE - 1) * 2;
                         }
                         testHarmonizeFlowWithFailedMain(prefix, codeFormat, dataFormat, useEs, options, stagingClient, HubConfig.DEFAULT_FINAL_NAME, finalCounts);
@@ -545,6 +588,15 @@ public class EndToEndFlowTests extends HubTestBase {
                 }
             }
         }));
+        return tests;
+    }
+
+
+    @TestFactory
+    public List<DynamicTest> generateValidationTests() {
+        DataHub dataHub = getDataHub();
+        List<DynamicTest> tests = new ArrayList<>();
+        Path entityDir = projectDir.resolve("plugins").resolve("entities").resolve(ENTITY);
 
         allCombos(((codeFormat, dataFormat, flowType, useEs) -> {
             String prefix = "validation-no-errors";
@@ -587,8 +639,7 @@ public class EndToEndFlowTests extends HubTestBase {
                     String expected = "{\"errors\":{\"e2eentity\":{\"" + flowName + "\":{\"content\":{\"msg\":\"JS-JAVASCRIPT: =-00=--\\\\8\\\\sthifalkj;; -- Error running JavaScript request: SyntaxError: Unexpected token =\",\"uri\":\"/entities/e2eentity/" + flowType.toString() + "/" + flowName + "/content.sjs\",\"line\":18,\"column\":0}}}}}";
                     String actualStr = toJsonString(actual);
                     assertJsonEqual(expected, actualStr, true);
-                }
-                else {
+                } else {
                     String expected = "{\"errors\":{\"e2eentity\":{\"" + flowName + "\":{\"content\":{\"msg\":\"XDMP-UNEXPECTED: (err:XPST0003) Unexpected token syntax error, unexpected Function_, expecting $end\",\"uri\":\"/entities/e2eentity/" + flowType.toString() + "/" + flowName + "/content.xqy\",\"line\":8,\"column\":0}}}}}";
                     JSONAssert.assertEquals(expected, toJsonString(actual), true);
                 }
@@ -597,6 +648,15 @@ public class EndToEndFlowTests extends HubTestBase {
                 FileUtils.deleteDirectory(flowDir.toFile());
             }));
         }));
+        return tests;
+    }
+
+
+    @TestFactory
+    public List<DynamicTest> generateValidationHeadersErrorsTests() {
+        DataHub dataHub = getDataHub();
+        List<DynamicTest> tests = new ArrayList<>();
+        Path entityDir = projectDir.resolve("plugins").resolve("entities").resolve(ENTITY);
 
         allCombos(((codeFormat, dataFormat, flowType, useEs) -> {
             String prefix = "validation-headers-errors";
