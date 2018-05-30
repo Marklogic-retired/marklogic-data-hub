@@ -44,7 +44,7 @@ export class MapComponent implements OnInit {
   private filterSelected: string = 'all';
   public filterFocus = {};
   public filterText = {};
-
+  
   public srcProps = [];
 
 
