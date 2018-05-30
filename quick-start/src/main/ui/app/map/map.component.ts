@@ -42,6 +42,9 @@ export class MapComponent implements OnInit {
 
   private filterMenu: Array<string> = ['all', 'matching', 'string', 'number', 'date'];
   private filterSelected: string = 'all';
+  public filterFocus = {};
+  public filterText = {};
+
 
   /**
    * Get entities and choose one to serve as harmonized model.
