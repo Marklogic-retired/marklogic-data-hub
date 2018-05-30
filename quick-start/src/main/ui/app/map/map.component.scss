@@ -85,7 +85,16 @@ p.item-identifying-info {
 }
 
 .prop-select-content {
-  width: 385px;
+  width: 374px;
+}
+.prop-clear-control {
+  width: 11px;
+  float: right;
+  margin-right: 4px;
+}
+.prop-select-control {
+  width: 11px;
+  float: right;
 }
 
 .prop-name, .prop-type {

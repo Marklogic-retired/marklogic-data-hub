@@ -23,7 +23,7 @@
       <div *ngFor="let entityProp of chosenEntity?.definition.properties; let i = index;" class="prop-container">
 
           <div class="btn-group" dropdown>
-            <button dropdownToggle type="button" class="btn dropdown-toggle prop-select">
+            <button dropdownToggle type="button" class="btn prop-select">
 
               <!-- Connection exists, display selected item -->
               <div *ngIf="conns[entityProp.name]">
@@ -39,7 +39,13 @@
                 <div class="prop-select-content unselected">Select...</div>
               </div>
 
-              <div class="prop-select-control"><span class="caret"></span></div>
+              <div class="prop-clear-control">
+                <span *ngIf="conns[entityProp.name]" 
+                      class="fa fa-remove"
+                      on-click="clearSelection($event, entityProp.name)">
+                </span>
+              </div>
+              <div class="prop-select-control"><span class="fa fa-caret-down"></span></div>
             </button>
             <ul *dropdownMenu class="dropdown-menu" role="menu">
               <li *ngFor="let srcProp of getSrcProps();"
