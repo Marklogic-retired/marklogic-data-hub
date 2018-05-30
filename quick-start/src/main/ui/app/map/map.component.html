@@ -20,41 +20,35 @@
       </div>
 
       <!-- Dropdown row for each entity property -->
-      <div *ngFor="let prop of chosenEntity?.definition.properties; let i = index;" class="prop-container">
+      <div *ngFor="let entityProp of chosenEntity?.definition.properties; let i = index;" class="prop-container">
 
           <div class="btn-group" dropdown>
             <button dropdownToggle type="button" class="btn dropdown-toggle prop-select">
 
               <!-- Connection exists, display selected item -->
-              <div *ngIf="conns[i]['src'] !== null">
+              <div *ngIf="conns[entityProp.name]">
                 <div class="prop-select-content">
-                  <span class="prop-name">{{conns[i]['src'].key}}</span>
-                  <span class="prop-type">{{conns[i]['src'].type}}</span>
-                  <span class="prop-val">{{ isQuoted(conns[i]['src'].type) ? '"' : '' }}{{ conns[i]['src'].val | slice:0:valMaxLen }}{{ conns[i]['src'].val.length > valMaxLen ? '...' : '' }}{{ isQuoted(conns[i]['src'].type) ? '"' : '' }}</span>
+                  <span class="prop-name">{{ getConnSrcData(entityProp.name, 'key') }}</span>
+                  <span class="prop-type">{{ getConnSrcData(entityProp.name, 'type') }}</span>
+                  <span class="prop-val">{{ getConnSrcData(entityProp.name, 'val') }}</span>
                 </div>
               </div>
 
               <!-- Connection does not exist, display placeholder -->
-              <div *ngIf="conns[i]['src'] === null">
+              <div *ngIf="!conns[entityProp.name]">
                 <div class="prop-select-content unselected">Select...</div>
               </div>
 
               <div class="prop-select-control"><span class="caret"></span></div>
             </button>
             <ul *dropdownMenu class="dropdown-menu" role="menu">
-              <li *ngFor="let prop of getProps();"
+              <li *ngFor="let srcProp of getSrcProps();"
                   role="menuitem"
-                  on-click="handleSelection(prop, 'src', i)">
+                  on-click="handleSelection(entityProp.name, srcProp.key)">
                 <a class="dropdown-item" href="javascript:void(0)">
-                  <span class="prop-name">{{prop.key}}</span>
-                  <span class="prop-type">{{prop.type}}</span>
-                  <span class="prop-val" title="{{type}}">{{ isQuoted(prop.type) ? '"' : '' }}{{ prop.val | slice:0:valMaxLen }}{{ prop.val.length > valMaxLen ? '...' : '' }}{{ isQuoted(prop.type) ? '"' : '' }}</span>
-                </a>
-              </li>
-              <li role="menuitem"
-                  on-click="handleSelection(null, 'src', i)">
-                <a class="dropdown-item" href="javascript:void(0)">
-                  <div class="prop-name unselected">none</div>
+                  <span class="prop-name">{{srcProp.key}}</span>
+                  <span class="prop-type">{{srcProp.type}}</span>
+                  <span class="prop-val" title="{{type}}">{{ isQuoted(srcProp.type) ? '"' : '' }}{{ srcProp.val | slice:0:valMaxLen }}{{ srcProp.val.length > valMaxLen ? '...' : '' }}{{ isQuoted(srcProp.type) ? '"' : '' }}</span>
                 </a>
               </li>
             </ul>
