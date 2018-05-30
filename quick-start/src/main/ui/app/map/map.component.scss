@@ -143,10 +143,6 @@ p.item-identifying-info {
   padding-left: 10px;
 }
 
-.dropdown-menu .prop-type {
-  font-size: 12px;
-  color: #666;
-}
 
 .unselected {
   color: #999;
@@ -154,8 +150,19 @@ p.item-identifying-info {
 }
 
 .dropdown-menu {
-  overflow: scroll;
+  padding:0;
+}
+
+.dropdown-menu .prop-type {
+  font-size: 12px;
+  color: #666;
+}
+
+.dropdown-menu ul {
+  overflow-y: scroll;
+  list-style: none;
   height: 300px;
+  padding: 40px 0 0 0;
 }
 
 .entity-icons {
@@ -171,4 +178,16 @@ p.item-identifying-info {
 
 .icon-hide {
   color: #ccc;
+}
+
+.dropdown-filter {
+  position:fixed;
+  background-color: #DBDFE3;
+}
+
+.dropdown-filter input {
+  width: 368px;
+  margin: 6px 26px;
+  border: 1px solid #2A4356;
+  padding: 3px 6px;
 }

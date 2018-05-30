@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { RouterModule } from '@angular/router';
 import { TruncateCharactersPipe } from './truncate';
+import { ListFilterPipe } from './listfilter';
 import { AppComponent } from './app.component';
 import { FlowsComponent } from './flows';
 import { HasBugsDialogComponent } from './has-bugs-dialog';
@@ -105,6 +106,7 @@ import { MapComponent } from './map';
     FacetsComponent,
     TitlecasePipe,
     TruncateCharactersPipe,
+    ListFilterPipe,
     ObjectToArrayPipe,
     SelectKeyValuesComponent,
     MapComponent
