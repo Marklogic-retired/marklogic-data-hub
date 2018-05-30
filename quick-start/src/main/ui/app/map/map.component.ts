@@ -136,8 +136,22 @@ export class MapComponent implements OnInit {
   }
 
   /**
+   * Handle property selection from source menu
+   * @param event Event object, used to stop propagation
+   * @param entityPropName Entity property name mapping to clear
+   */
+  clearSelection(event, entityPropName): void {
+    // Get the corresponding connection
+    if (this.conns[entityPropName])
+      delete this.conns[entityPropName];
+    event.stopPropagation();
+  }
+
+  /**
    * Get property objects of source document
-   * @returns {Array<any>} Array of property objects
+   * @param entityPropName Entity property name mapping to lookup
+   * @param srcKey 'key', 'val' or 'type'
+   * @returns {String} Value of the src data requested
    */
   getConnSrcData(entityPropName, srcKey): string {
     let data;
@@ -149,7 +163,7 @@ export class MapComponent implements OnInit {
       data = obj[srcKey];
     }
 
-    return data;
+    return String(data);
   }
 
   /**
