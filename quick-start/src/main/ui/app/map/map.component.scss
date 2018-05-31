@@ -49,7 +49,7 @@ p.item-identifying-info {
   width: 400px;
 }
 
-.prop-container {
+.entity-prop-container, .src-prop-container {
   height: 45px;
   border: solid 2px #5b8db3;
   margin: 10px 0;
@@ -59,15 +59,15 @@ p.item-identifying-info {
   justify-content: center;
 }
 
-#source .prop-container {
+#source .src-prop-container,  {
   width: 470px;
 }
 
-#harmonized .prop-container {
+#harmonized .entity-prop-container {
   width: 400px;
 }
 
-#harmonized .prop-container {
+#harmonized .entity-prop-container {
   border-left: 0;
 }
 
