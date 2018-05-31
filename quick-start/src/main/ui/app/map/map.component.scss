@@ -59,6 +59,7 @@ p.item-identifying-info {
   justify-content: center;
 }
 
+<<<<<<< b601783d17d19bc71f3af109185bd49e53e5b376
 <<<<<<< ab68e89f0d833c347b1edc72df40d921f48e3c0a
 #source .src-prop-container,  {
   width: 470px;
@@ -71,15 +72,22 @@ p.item-identifying-info {
 #harmonized .entity-prop-container {
 =======
 #source .prop-container {
+=======
+#source .src-prop-container,  {
+>>>>>>> Added QA selectors
   width: 470px;
 }
 
-#harmonized .prop-container {
+#harmonized .entity-prop-container {
   width: 400px;
 }
 
+<<<<<<< b601783d17d19bc71f3af109185bd49e53e5b376
 #harmonized .prop-container {
 >>>>>>> Mapping UI style and content adjustments
+=======
+#harmonized .entity-prop-container {
+>>>>>>> Added QA selectors
   border-left: 0;
 }
 
