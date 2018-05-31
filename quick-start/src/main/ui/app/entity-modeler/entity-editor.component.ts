@@ -41,6 +41,9 @@ export class EntityEditorComponent {
     }
   ];
 
+  // property name pattern: name cannot have space characters in it
+  readonly PROPERTY_NAME_PATTERN = /^[^\s]+$/;
+
   constructor(
     private dialog: MdlDialogReference,
     private dialogService: MdlDialogService,
@@ -325,6 +328,36 @@ export class EntityEditorComponent {
         return indexes.indexOf(idx) >= 0;
       });
     }
+  }
+
+  /**
+   * Editor is valid if all names in definition properties are valid.
+   *
+   * Used: for disabling 'Save' button
+   * Used: for rendering error message
+   *
+   * TODO: more properties should be added here for validation
+   * TODO: better model validation framework is planned in MLUI Team
+   *
+   * @returns {boolean} if the property editor is valid and ok to be saved
+   */
+  get isValid() {
+    if (
+      this.entity &&
+      this.entity.definition &&
+      this.entity.definition.properties &&
+      this.entity.definition.properties.length > 0
+    ) {
+      const result = this.entity.definition.properties
+        .reduce((accumulated, p) => {
+          if (!p.name) {
+            return false;
+          }
+          return accumulated && this.PROPERTY_NAME_PATTERN.test(p.name);
+        }, true);
+      return result;
+    }
+    return false;
   }
 
   onDescKey($event: KeyboardEvent, propertyIndex: number) {
