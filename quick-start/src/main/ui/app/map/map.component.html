@@ -52,7 +52,7 @@
             </button>
             <div *dropdownMenu class="dropdown-menu" role="menu">
               <div class="dropdown-filter dropdown-filter-{{entityProp.name}}"><input type="text" [(ngModel)]="filterText[entityProp.name]" [attr.autofocus]="filterFocus[entityProp.name]" (click)="$event.stopPropagation();" /></div>
-              <ul>
+              <ul class="prop-select-menu prop-select-menu-{{entityProp.name}}">
                 <li *ngFor="let srcProp of srcProps | listFilter:['key','type']:filterText[entityProp.name]"
                     role="menuitem"
                     class="prop-select-item"
