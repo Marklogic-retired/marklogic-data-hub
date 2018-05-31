@@ -97,7 +97,7 @@ export class MapComponent implements OnInit {
         });
         // console.log('start with', self.sampleDocSrcProps);
         // TODO sort order
-        self.sampleDocSrcProps = _.sortBy(self.sampleDocSrcProps, ['key']);
+        //self.sampleDocSrcProps = _.sortBy(self.sampleDocSrcProps, ['key']);
         // TODO filter by type
         //self.sampleDocSrcProps = _.filter(self.sampleDocSrcProps, ['type', 'string']);
       });
@@ -227,7 +227,7 @@ export class MapComponent implements OnInit {
 
     _.forEach(this.conns, function(srcPropName, entityPropName) {
       if (srcPropName)
-        formattedConns[entityPropName] = { "sourcedFrom" : srcPropName }; 
+        formattedConns[entityPropName] = { "sourcedFrom" : srcPropName };
     });
 
     let mapObj = {
@@ -275,7 +275,7 @@ export class MapComponent implements OnInit {
     if (result && result.mapping && result.mapping.properties) {
       connMap = {};
       _.forEach(result.mapping.properties, function(srcObj, entityPropName) {
-        connMap[entityPropName] = srcObj.sourcedFrom; 
+        connMap[entityPropName] = srcObj.sourcedFrom;
       });
     }
 
@@ -314,6 +314,6 @@ export class MapComponent implements OnInit {
   }
   isPII(name) {
     return _.includes(this.chosenEntity.definition.pii, name);
-  }  
+  }
 
 }

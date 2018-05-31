@@ -25,7 +25,7 @@
       <div *ngFor="let entityProp of chosenEntity?.definition.properties; let i = index;" class="prop-container">
 
           <div class="btn-group" dropdown #dropdown="bs-dropdown" (onShown)="filterFocus[entityProp.name] = true;" (onHidden)="filterFocus[entityProp.name] = false;">
-            <button dropdownToggle type="button" class="btn prop-select" (click)="$event.stopPropagation();">
+            <button dropdownToggle type="button" class="btn prop-select">
 
               <div class="prop-clear-control">
                 <span *ngIf="conns[entityProp.name]"
