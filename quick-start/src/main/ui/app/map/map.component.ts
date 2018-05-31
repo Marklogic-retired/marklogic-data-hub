@@ -97,12 +97,10 @@ export class MapComponent implements OnInit {
           };
           self.sampleDocSrcProps.push(prop);
         });
-        // console.log('start with', self.sampleDocSrcProps);
-        // TODO sort order
+        // TODO sort order feature
         //self.sampleDocSrcProps = _.sortBy(self.sampleDocSrcProps, ['key']);
-        // TODO filter by type
+        // TODO filter by type feature
         //self.sampleDocSrcProps = _.filter(self.sampleDocSrcProps, ['type', 'string']);
-        this.srcProps = this.getSrcProps();
       });
     },
     () => {},
@@ -163,31 +161,12 @@ export class MapComponent implements OnInit {
     let data;
     let propertyKey = this.conns[entityPropName];
 
-    if (this.srcProps.length > 0 && this.conns[entityPropName]) {
-      let obj = _.find(this.srcProps, function(o) { return o && (o.key === propertyKey); });
+    if (this.sampleDocSrcProps.length > 0 && this.conns[entityPropName]) {
+      let obj = _.find(this.sampleDocSrcProps, function(o) { return o && (o.key === propertyKey); });
       data = obj[srcKey];
     }
 
     return String(data);
-  }
-
-  /**
-   * Get property objects of source document
-   * @returns {Array<any>} Array of property objects
-   */
-  getSrcProps() {
-    let self = this;
-    this.sampleDocSrcProps = [];
-    if (this.sampleDocSrc && this.sampleDocSrc['envelope'])
-      _.forEach(this.sampleDocSrc['envelope']['instance'], function(val, key) {
-        let prop = {
-          key: key,
-          val: String(val),
-          type: self.getType(val)
-        };
-        self.sampleDocSrcProps.push(prop);
-      });
-    return self.sampleDocSrcProps;
   }
 
   /**
