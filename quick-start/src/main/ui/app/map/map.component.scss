@@ -12,7 +12,7 @@
   font-weight: normal;
   margin: 10px 0;
   padding: 0;
-  width: 750px;
+  width: 870px;
   position: relative;
   float: left;
 }
@@ -39,20 +39,18 @@ p.item-identifying-info {
   position: relative;
   float: left;
   margin: 0;
-  /* border: solid 1px red; */
 }
 
 #source {
-  width: 430px;
+  width: 470px;
 }
 
 #harmonized {
-  width: 320px;
+  width: 400px;
 }
 
 .prop-container {
   height: 45px;
-  font-size: 14px;
   border: solid 2px #5b8db3;
   margin: 10px 0;
   padding: 0;
@@ -62,15 +60,14 @@ p.item-identifying-info {
 }
 
 #source .prop-container {
-  width: 430px;
+  width: 470px;
 }
 
 #harmonized .prop-container {
-  width: 320px;
+  width: 400px;
 }
 
 #harmonized .prop-container {
-  justify-content: left;
   border-left: 0;
 }
 
@@ -85,19 +82,22 @@ p.item-identifying-info {
 }
 
 .prop-select-content {
-  width: 374px;
+  width: 409px;
 }
 .prop-clear-control {
   width: 11px;
-  float: right;
-  margin-right: 4px;
+  font-size: 11px;
+  margin-right: 3px;
+  color: #999;
 }
 .prop-select-control {
   width: 11px;
+  font-size: 15px;
   float: right;
+  color: #999;
 }
 
-.prop-name, .prop-type {
+.prop-name, .prop-type, .prop-val {
   display: inline-block;
   padding: 8px 10px;
 }
@@ -109,7 +109,7 @@ p.item-identifying-info {
 }
 
 .prop-val {
-  width: 110px;
+  width: 130px;
   font-size: 12px;
   color: #666;
   white-space: nowrap;
@@ -117,17 +117,21 @@ p.item-identifying-info {
 }
 
 .prop-type {
-  width: 80px;
+  width: 100px;
   font-size: 12px;
   color: #666;
   white-space: nowrap;
   cursor: default;
 }
 
+#harmonized .prop-type {
+  width: 120px; /* entities have greater variety of types */
+}
+
 .prop-select-content .prop-name,
 .prop-select-content .prop-val,
 .prop-select-content .prop-type {
-  padding: 0 5px;
+  padding: 0 10px;
 }
 
 .prop-select-content .prop-name {
@@ -139,18 +143,28 @@ p.item-identifying-info {
   color: #666;
 }
 
-.prop-select-content .is-primary {
-  padding-left: 10px;
+.dropdown-item .prop-name {
+  width: 170px;
+  cursor: pointer;
 }
 
+.dropdown-item .prop-type {
+  width: 100px;
+  cursor: pointer;
+}
+
+.dropdown-item .prop-val {
+  cursor: pointer;
+}
 
 .unselected {
   color: #999;
   font-style: italic;
+  padding-left: 8px;
 }
 
 .dropdown-menu {
-  padding:0;
+  padding: 0;
 }
 
 .dropdown-menu .prop-type {
@@ -161,12 +175,13 @@ p.item-identifying-info {
 .dropdown-menu ul {
   overflow-y: scroll;
   list-style: none;
-  height: 300px;
+  max-height: 280px;
   padding: 40px 0 0 0;
+  cursor:pointer;
 }
 
 .entity-icons {
-  width: 160px;
+  width: 130px;
   margin-left: 10px;
 }
 
@@ -174,6 +189,7 @@ p.item-identifying-info {
   cursor: default;
   margin-left: 3px;
   padding: 0;
+  color: #666;
 }
 
 .icon-hide {
@@ -182,11 +198,11 @@ p.item-identifying-info {
 
 .dropdown-filter {
   position:fixed;
-  background-color: #DBDFE3;
+  background-color: #b7cae2;
 }
 
 .dropdown-filter input {
-  width: 368px;
+  width: 398px;
   margin: 6px 26px;
   border: 1px solid #2A4356;
   padding: 3px 6px;

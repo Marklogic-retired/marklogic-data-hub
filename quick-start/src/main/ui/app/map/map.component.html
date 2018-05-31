@@ -16,7 +16,9 @@
     <div id="source">
       <div id="src-heading" #srcheading>
         <h4 class="item-type">Source</h4>
-        <p class="item-identifying-info" title="{{ sampleDoc?.uri }}">{{ getLastChars(sampleDoc?.uri, 40, '...') }}</p>
+        <p class="item-identifying-info">
+          <span title="{{ sampleDoc?.uri }}">{{ getLastChars(sampleDoc?.uri, 40, '...') }}</span>
+        </p>
       </div>
 
       <!-- Dropdown row for each entity property -->
@@ -25,12 +27,19 @@
           <div class="btn-group" dropdown (onShown)="filterFocus[entityProp.name] = true;" (onHidden)="filterFocus[entityProp.name] = false;">
             <button dropdownToggle type="button" class="btn prop-select" (click)="$event.stopPropagation();">
 
+              <div class="prop-clear-control">
+                <span *ngIf="conns[entityProp.name]"
+                      class="fa fa-remove"
+                      (click)="clearSelection($event, entityProp.name)">
+                </span>
+              </div>
+
               <!-- Connection exists, display selected item -->
               <div *ngIf="conns[entityProp.name]">
                 <div class="prop-select-content">
                   <span class="prop-name">{{ getConnSrcData(entityProp.name, 'key') }}</span>
                   <span class="prop-type">{{ getConnSrcData(entityProp.name, 'type') }}</span>
-                  <span class="prop-val">{{ getConnSrcData(entityProp.name, 'val') }}</span>
+                  <span class="prop-val" title="{{ getConnSrcData(entityProp.name, 'val') }}">{{ isQuoted(getConnSrcData(entityProp.name, 'type')) ? '"' : '' }}{{ getConnSrcData(entityProp.name, 'val') | slice:0:valMaxLen }}{{ getConnSrcData(entityProp.name, 'val').length > valMaxLen ? '...' : '' }}{{ isQuoted(getConnSrcData(entityProp.name, 'type')) ? '"' : '' }}</span>
                 </div>
               </div>
 
@@ -39,12 +48,6 @@
                 <div class="prop-select-content unselected">Select...</div>
               </div>
 
-              <div class="prop-clear-control">
-                <span *ngIf="conns[entityProp.name]" 
-                      class="fa fa-remove"
-                      (click)="clearSelection($event, entityProp.name)">
-                </span>
-              </div>
               <div class="prop-select-control"><span class="fa fa-caret-down"></span></div>
             </button>
             <div *dropdownMenu class="dropdown-menu" role="menu">
