@@ -34,6 +34,13 @@
                 </span>
               </div>
 
+              <div class="prop-clear-control">
+                <span *ngIf="conns[entityProp.name]"
+                      class="fa fa-remove"
+                      (click)="clearSelection($event, entityProp.name)">
+                </span>
+              </div>
+
               <!-- Connection exists, display selected item -->
               <div *ngIf="conns[entityProp.name]">
                 <div class="prop-select-content {{ 'prop-select-content-' + entityProp.name }}">

@@ -59,6 +59,7 @@ p.item-identifying-info {
   justify-content: center;
 }
 
+<<<<<<< ab68e89f0d833c347b1edc72df40d921f48e3c0a
 #source .src-prop-container,  {
   width: 470px;
 }
@@ -68,6 +69,17 @@ p.item-identifying-info {
 }
 
 #harmonized .entity-prop-container {
+=======
+#source .prop-container {
+  width: 470px;
+}
+
+#harmonized .prop-container {
+  width: 400px;
+}
+
+#harmonized .prop-container {
+>>>>>>> Mapping UI style and content adjustments
   border-left: 0;
 }
 
@@ -210,7 +222,7 @@ p.item-identifying-info {
 }
 
 .dropdown-menu {
-  padding:0;
+  padding: 0;
 }
 
 .dropdown-menu .prop-type {
@@ -221,12 +233,13 @@ p.item-identifying-info {
 .dropdown-menu ul {
   overflow-y: scroll;
   list-style: none;
-  height: 300px;
+  max-height: 280px;
   padding: 40px 0 0 0;
+  cursor:pointer;
 }
 
 .entity-icons {
-  width: 160px;
+  width: 130px;
   margin-left: 10px;
 }
 
@@ -234,6 +247,7 @@ p.item-identifying-info {
   cursor: default;
   margin-left: 3px;
   padding: 0;
+  color: #666;
 }
 
 .icon-hide {
@@ -242,11 +256,11 @@ p.item-identifying-info {
 
 .dropdown-filter {
   position:fixed;
-  background-color: #DBDFE3;
+  background-color: #b7cae2;
 }
 
 .dropdown-filter input {
-  width: 368px;
+  width: 398px;
   margin: 6px 26px;
   border: 1px solid #2A4356;
   padding: 3px 6px;
