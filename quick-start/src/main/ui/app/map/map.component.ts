@@ -45,6 +45,8 @@ export class MapComponent implements OnInit {
   public filterFocus = {};
   public filterText = {};
 
+  public srcProps = [];
+
 
   /**
    * Get entities and choose one to serve as harmonized model.
@@ -100,6 +102,7 @@ export class MapComponent implements OnInit {
         //self.sampleDocSrcProps = _.sortBy(self.sampleDocSrcProps, ['key']);
         // TODO filter by type
         //self.sampleDocSrcProps = _.filter(self.sampleDocSrcProps, ['type', 'string']);
+        this.srcProps = this.getSrcProps();
       });
     },
     () => {},
@@ -159,10 +162,9 @@ export class MapComponent implements OnInit {
   getConnSrcData(entityPropName, srcKey): string {
     let data;
     let propertyKey = this.conns[entityPropName];
-    let srcProps = this.getSrcProps();
 
-    if (srcProps.length > 0 && this.conns[entityPropName]) {
-      let obj = _.find(srcProps, function(o) { return o && (o.key === propertyKey); });
+    if (this.srcProps.length > 0 && this.conns[entityPropName]) {
+      let obj = _.find(this.srcProps, function(o) { return o && (o.key === propertyKey); });
       data = obj[srcKey];
     }
 
