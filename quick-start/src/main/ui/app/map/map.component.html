@@ -24,7 +24,7 @@
       <!-- Dropdown row for each entity property -->
       <div *ngFor="let entityProp of chosenEntity?.definition.properties; let i = index;" class="prop-container">
 
-          <div class="btn-group" dropdown (onShown)="filterFocus[entityProp.name] = true;" (onHidden)="filterFocus[entityProp.name] = false;">
+          <div class="btn-group" dropdown #dropdown="bs-dropdown" (onShown)="filterFocus[entityProp.name] = true;" (onHidden)="filterFocus[entityProp.name] = false;">
             <button dropdownToggle type="button" class="btn prop-select" (click)="$event.stopPropagation();">
 
               <div class="prop-clear-control">
@@ -55,7 +55,7 @@
               <ul>
                 <li *ngFor="let srcProp of getSrcProps() | listFilter:['key','type']:filterText[entityProp.name]"
                     role="menuitem"
-                    (click)="handleSelection(entityProp.name, srcProp.key)">
+                    (mouseup)="handleSelection(entityProp.name, srcProp.key, $event); dropdown.hide();">
                   <a class="dropdown-item" href="javascript:void(0)">
                     <span class="prop-name">{{srcProp.key}}</span>
                     <span class="prop-type">{{srcProp.type}}</span>
