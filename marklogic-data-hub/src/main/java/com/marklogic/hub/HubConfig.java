@@ -389,6 +389,12 @@ public interface HubConfig {
     Path getHubEntitiesDir();
 
     /**
+     * Gets the path for the hub mappings directory
+     * @return the path for the hub mappings directory
+     */
+    Path getHubMappingsDir();
+
+    /**
      * Gets the path for the hub's entities directory
      * @return the path for the hub's entities directory
      */
