@@ -188,7 +188,7 @@ function logTrace(context) {
   for (let key in inputs) {
     tracelib.setPluginInput(key, inputs[key]);
   }
-  tracelib.pluginTrace(null, "PT0S");
+  tracelib.pluginTrace(null, null, "PT0S");
 };
 
 module.exports = {
