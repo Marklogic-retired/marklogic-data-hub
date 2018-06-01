@@ -52,6 +52,7 @@ public class ScaffoldingImpl implements Scaffolding {
     private String projectDir;
     private Path pluginsDir;
     private Path entitiesDir;
+    private Path mappingsDir;
     private ScaffoldingValidator validator;
     private DatabaseClient databaseClient;
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -60,6 +61,7 @@ public class ScaffoldingImpl implements Scaffolding {
         this.projectDir = projectDir;
         this.pluginsDir = Paths.get(this.projectDir, "plugins");
         this.entitiesDir = this.pluginsDir.resolve("entities");
+        this.mappingsDir = this.mappingsDir.resolve("mappings");
         this.databaseClient = databaseClient;
         validator = new ScaffoldingValidator(projectDir);
     }
@@ -83,6 +85,11 @@ public class ScaffoldingImpl implements Scaffolding {
     @Override public void createEntity(String entityName) {
         Path entityDir = entitiesDir.resolve(entityName);
         entityDir.toFile().mkdirs();
+    }
+
+    public void createMappingsDir(String mappingName) {
+        Path mappingDir = mappingsDir.resolve(mappingName);
+        mappingDir.toFile().mkdirs();
     }
 
     @Override public void createFlow(String entityName, String flowName,

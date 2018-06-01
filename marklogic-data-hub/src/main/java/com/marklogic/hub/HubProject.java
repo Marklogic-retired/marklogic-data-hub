@@ -40,16 +40,22 @@ public interface HubProject {
     }
 
     /**
-     * Gets the path for the entity database directory
-     * @return the path for the entity's database directory
+     * Gets the path for the plugins directory
+     * @return the path for the plugins directory
      */
     Path getHubPluginsDir();
 
     /**
-     * Gets the path for the hub plugins directory
-     * @return the path for the hub plugins directory
+     * Gets the path for the hub entities directory
+     * @return the path for the hub entities directory
      */
     Path getHubEntitiesDir();
+
+    /**
+     * Gets the path for the hub mappings directory
+     * @return the path for the hub mappings directory
+     */
+    Path getHubMappingsDir();
 
     /**
      * Gets the path for the hub's entities directory
