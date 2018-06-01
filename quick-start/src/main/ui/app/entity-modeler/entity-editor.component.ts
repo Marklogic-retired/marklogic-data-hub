@@ -342,22 +342,13 @@ export class EntityEditorComponent {
    * @returns {boolean} if the property editor is valid and ok to be saved
    */
   get isValid() {
-    if (
-      this.entity &&
-      this.entity.definition &&
-      this.entity.definition.properties &&
-      this.entity.definition.properties.length > 0
-    ) {
-      const result = this.entity.definition.properties
-        .reduce((accumulated, p) => {
-          if (!p.name) {
-            return false;
-          }
-          return accumulated && this.PROPERTY_NAME_PATTERN.test(p.name);
-        }, true);
-      return result;
-    }
-    return false;
+    return this.entity.definition.properties
+      .reduce((accumulated, p) => {
+        if (!p.name) {
+          return false;
+        }
+        return accumulated && this.PROPERTY_NAME_PATTERN.test(p.name);
+      }, true);
   }
 
   onDescKey($event: KeyboardEvent, propertyIndex: number) {
