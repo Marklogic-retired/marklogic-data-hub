@@ -58,6 +58,10 @@ public class HubProjectImpl implements HubProject {
         return this.pluginsDir.resolve("entities");
     }
 
+    @Override public Path getHubMappingsDir() {
+        return this.pluginsDir.resolve("mappings");
+    }
+
     @Override public Path getHubConfigDir() {
         return this.projectDir.resolve(HUB_CONFIG_DIR);
     }
