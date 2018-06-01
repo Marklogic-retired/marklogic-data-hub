@@ -53,6 +53,7 @@ import { ProjectService } from './projects/projects.service';
 import { SettingsService } from './settings/settings.service';
 import { STOMPService } from './stomp/stomp.service';
 import { ClipboardDirective } from './clipboard/clipboard.directive';
+import { FocusElementDirective } from './focus-elment/focus-elment.directive';
 import { TraceService } from './traces/trace.service';
 import { SearchService } from './search/search.service';
 import { HarmonizeFlowOptionsComponent } from './harmonize-flow-options/harmonize-flow-options.component';
@@ -100,6 +101,7 @@ import { MapComponent } from './map';
     SearchViewerComponent,
     NoContentComponent,
     ClipboardDirective,
+    FocusElementDirective,
     HarmonizeFlowOptionsComponent,
     DashboardComponent,
     InlineEditComponent,
