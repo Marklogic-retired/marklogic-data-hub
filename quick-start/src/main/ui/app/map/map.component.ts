@@ -176,7 +176,10 @@ export class MapComponent implements OnInit {
    */
   getType(value) {
     let result = '';
-    if (moment(value, moment.ISO_8601,true).isValid()) {
+    let RFC_2822 = 'ddd, DD MMM YYYY HH:mm:ss ZZ';
+    if (/^\d+$/.test(value)) {
+      result = 'number';
+    } else if (moment(value, [moment.ISO_8601, RFC_2822], true).isValid()) {
       result = 'date';
     } else if (Number.isInteger(Number.parseInt(value))) {
       result = 'number';
