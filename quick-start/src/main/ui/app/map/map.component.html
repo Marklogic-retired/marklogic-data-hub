@@ -79,6 +79,10 @@
         </p>
       </div>
 
+      <div *ngIf="chosenEntity?.definition.properties.length === 0">
+        <em>{{ chosenEntity?.info.title }} has no properties to map. Add them in the <a [routerLink]="['/entities']">Entities</a> view.</em>
+      </div>
+
       <!-- Row for each entity property -->
       <div *ngFor="let prop of chosenEntity?.definition.properties; let i = index;">
 
