@@ -16,10 +16,9 @@
 
 package com.marklogic.hub.mapping;
 
-import com.marklogic.hub.HubProject;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import java.io.IOException;
-import java.util.List;
+import java.util.HashMap;
 
 public class MappingImpl implements Mapping {
 
@@ -28,5 +27,83 @@ public class MappingImpl implements Mapping {
     private String targetEntityType;
     private String description;
     private String language;
+    private String version;
+    private HashMap<String, ObjectNode> properties;
 
+    public MappingImpl(String name) {
+        this.name = name;
+        this.language = "zxx";
+        this.version = "1";
+    }
+
+
+    @Override
+    public String getVersion() {
+        return version;
+    }
+
+    @Override
+    public void setVersion(String version) {
+        this.version = version;
+    }
+
+    @Override
+    public HashMap<String, ObjectNode> getProperties() {
+        return properties;
+    }
+
+    @Override
+    public void setProperties(HashMap<String, ObjectNode> properties) {
+        this.properties = properties;
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public String getSourceContext() {
+        return sourceContext;
+    }
+
+    @Override
+    public void setSourceContext(String sourceContext) {
+        this.sourceContext = sourceContext;
+    }
+
+    @Override
+    public String getTargetEntityType() {
+        return targetEntityType;
+    }
+
+    @Override
+    public void setTargetEntityType(String targetEntityType) {
+        this.targetEntityType = targetEntityType;
+    }
+
+    @Override
+    public String getDescription() {
+        return description;
+    }
+
+    @Override
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    @Override
+    public String getLanguage() {
+        return language;
+    }
+
+    @Override
+    public void setLanguage(String language) {
+        this.language = language;
+    }
 }
