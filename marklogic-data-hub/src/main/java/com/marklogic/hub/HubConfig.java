@@ -344,11 +344,12 @@ public interface HubConfig {
      DatabaseClient newStagingManageClient();
 
     /**
-     * Creates a new DatabaseClient for accessing the Staging database
+     * Creates a new DatabaseClient for accessing the Staging database,
+     * which overrides the database used for the connection.
      * @param databaseName - the name of the database for the staging Client to use
      * @return- a DatabaseClient
      */
-     DatabaseClient newStagingManageClient(String databaseName);
+     DatabaseClient newStagingClient(String databaseName);
 
     /**
      * Creates a new DatabaseClient for accessing the Final database

@@ -82,12 +82,12 @@ class BaseTest extends Specification {
     }
 
     void installStagingDoc(String uri, DocumentMetadataHandle meta, String doc) {
-        hubConfig().newStagingManageClient().newDocumentManager().write(uri, meta, new StringHandle(doc))
+        hubConfig().newStagingClient().newDocumentManager().write(uri, meta, new StringHandle(doc))
     }
 
 
     void installFinalDoc(String uri, DocumentMetadataHandle meta, String doc) {
-        hubConfig().newFinalManageClient().newDocumentManager().write(uri, meta, new StringHandle(doc))
+        hubConfig().newFinalClient().newDocumentManager().write(uri, meta, new StringHandle(doc))
     }
 
     static void installModule(String path, String localPath) {

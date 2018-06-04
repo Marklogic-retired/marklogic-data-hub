@@ -68,6 +68,7 @@ public interface HubConfigBuilder {
      * Sets the {@link AppConfig} for the {@link HubConfig}
      * @param appConfig - an {@link AppConfig} object
      * @return the {@link HubConfigBuilder} instance
+     * @deprecated Use {@link Properties} to configure a DataHub
      */
     @Deprecated
     HubConfigBuilder withAppConfig(AppConfig appConfig);
@@ -77,6 +78,7 @@ public interface HubConfigBuilder {
      * Sets the {@link AdminConfig} for the {@link HubConfig}
      * @param adminConfig - an {@link AdminConfig} object
      * @return the {@link HubConfigBuilder} instance
+     * @deprecated Use {@link Properties} to configure a DataHub
      */
     @Deprecated
     HubConfigBuilder withAdminConfig(AdminConfig adminConfig);
@@ -86,6 +88,7 @@ public interface HubConfigBuilder {
      * Sets the {@link AdminManager} for the {@link HubConfig}
      * @param adminManager - an {@link AdminManager} object
      * @return the {@link HubConfigBuilder} instance
+     * @deprecated Use {@link Properties} to configure a DataHub
      */
     @Deprecated
     HubConfigBuilder withAdminManager(AdminManager adminManager);
@@ -95,6 +98,7 @@ public interface HubConfigBuilder {
      * Sets the {@link ManageConfig} for the {@link HubConfig}
      * @param manageConfig - a {@link ManageConfig} object
      * @return the {@link HubConfigBuilder} instance
+     * @deprecated Use {@link Properties} to configure a DataHub
      */
     @Deprecated
     HubConfigBuilder withManageConfig(ManageConfig manageConfig);
@@ -104,6 +108,7 @@ public interface HubConfigBuilder {
      * Sets the {@link ManageClient} for the {@link HubConfig}
      * @param manageClient - a {@link ManageClient}
      * @return the {@link HubConfigBuilder} instance
+     * @deprecated Use {@link Properties} to configure a DataHub
      */
     @Deprecated
     HubConfigBuilder withManageClient(ManageClient manageClient);

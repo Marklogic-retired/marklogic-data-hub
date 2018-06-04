@@ -852,15 +852,21 @@ public class HubConfigImpl implements HubConfig {
         return getAppConfig().newAppServicesDatabaseClient(stagingDbName);
     }
 
+    @Override
     public DatabaseClient newStagingManageClient() {
         return newStagingManageClient(stagingDbName);
     }
 
     @Override
     public DatabaseClient newStagingClient() {
+        return newStagingClient(stagingDbName);
+    }
+
+    @Override
+    public DatabaseClient newStagingClient(String dbName) {
         AppConfig appConfig = getAppConfig();
         DatabaseClientConfig config = new DatabaseClientConfig(appConfig.getHost(), stagingPort, getMlUsername(), getMlPassword());
-        config.setDatabase(stagingDbName);
+        config.setDatabase(dbName);
         config.setSecurityContextType(SecurityContextType.valueOf(stagingAuthMethod.toUpperCase()));
         config.setSslHostnameVerifier(stagingSslHostnameVerifier);
         config.setSslContext(stagingSslContext);
