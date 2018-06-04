@@ -171,21 +171,29 @@ export class MapComponent implements OnInit {
 
   /**
    * Interpret datatype of property value
+   * Recognize all JSON types: array, object, number, boolean, null
+   * Also do a basic interpretation of dates (ISO 8601, RFC 2822)
    * @param property value
-   * @returns {string} datatype
+   * @returns {string} datatype ("array"|"object"|"number"|"date"|"boolean"|"null")
    */
-  getType(value) {
+  getType(value: any): string {
     let result = '';
     let RFC_2822 = 'ddd, DD MMM YYYY HH:mm:ss ZZ';
-    if (/^\d+$/.test(value)) {
+    if (_.isArray(value)) {
+      result = 'array';
+    } else if (_.isObject(value)) {
+      result = 'object';
+    }
+    // Quoted numbers (example: "123") are not recognized as numbers
+    else if (_.isNumber(value)) {
       result = 'number';
-    } else if (moment(value, [moment.ISO_8601, RFC_2822], true).isValid()) {
+    }
+    // Do not recognize ordinal dates (example: "1981095")
+    else if (moment(value, [moment.ISO_8601, RFC_2822], true).isValid() && !/^\d+$/.test(value)) {
       result = 'date';
-    } else if (Number.isInteger(Number.parseInt(value))) {
-      result = 'number';
-    } else if (typeof value === 'boolean') {
+    } else if (_.isBoolean(value)) {
       result = 'boolean';
-    } else if (value === null) {
+    } else if (_.isNull(value)) {
       result = 'null';
     } else {
       result = 'string';
