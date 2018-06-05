@@ -198,7 +198,7 @@ export class EntityPage extends AppPage {
   }
   
   get errorWhiteSpaceMessage() {
-	return element(by.className('alert-text'));
+    return element(by.className('alert-text'));
   }
 
   get toast() {
