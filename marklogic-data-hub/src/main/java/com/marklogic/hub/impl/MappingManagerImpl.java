@@ -47,7 +47,6 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.marklogic.hub.impl.HubConfigImpl.logger;
 
 public class MappingManagerImpl extends LoggingObject implements MappingManager {
     private static final String MAPPING_FILE_EXTENSION = ".mapping.json";

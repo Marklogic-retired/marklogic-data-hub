@@ -1,10 +1,19 @@
 package com.marklogic.hub.mapping;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import java.io.IOException;
 import java.util.HashMap;
 
 public interface Mapping {
+
+    static Mapping create(String mappingName) {
+        return new MappingImpl(mappingName);
+    }
+
+    Mapping fromJSON(String json) throws IOException;
 
     /**
      * Returns the mapping version
@@ -89,4 +98,11 @@ public interface Mapping {
      * @param language
      */
     void setLanguage(String language);
+
+    /**
+     * Serializes the mapping as a json string
+     * @return the serialized JSON string
+     * @throws JsonProcessingException
+     */
+    String serialize() throws JsonProcessingException;
 }
