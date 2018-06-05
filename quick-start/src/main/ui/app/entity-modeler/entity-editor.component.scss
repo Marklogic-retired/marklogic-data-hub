@@ -21,6 +21,8 @@ table.properties {
   border-collapse: collapse;
   border: 1px solid #ccc;
   width: 100%;
+  margin-top: 10px;
+  margin-bottom: 10px;
 
   thead {
     background-color: #ccc;
@@ -68,7 +70,16 @@ table.properties {
     padding: 2px;
   }
 
+  .ng-invalid:not(form)  {
+    border: 2px solid #a94442; /* red */
+    outline-width: 0;
+  }
+
   select {
     max-width: 150px;
   }
+}
+
+.alert-text {
+  color: #a94442;
 }
