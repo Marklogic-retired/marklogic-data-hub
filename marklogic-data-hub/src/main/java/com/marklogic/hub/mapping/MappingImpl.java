@@ -16,8 +16,14 @@
 
 package com.marklogic.hub.mapping;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 
 public class MappingImpl implements Mapping {
@@ -34,6 +40,15 @@ public class MappingImpl implements Mapping {
         this.name = name;
         this.language = "zxx";
         this.version = "1";
+        this.description = "Default description";
+        this.sourceContext = ".";
+        this.properties = new HashMap<>();
+        this.targetEntityType = "";
+    }
+
+    @Override public Mapping fromJSON(String json) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.readValue(json, MappingImpl.class);
     }
 
 
@@ -105,5 +120,12 @@ public class MappingImpl implements Mapping {
     @Override
     public void setLanguage(String language) {
         this.language = language;
+    }
+
+    @Override
+    public String serialize() throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.enable(SerializationFeature.INDENT_OUTPUT);
+        return mapper.writeValueAsString(this);
     }
 }

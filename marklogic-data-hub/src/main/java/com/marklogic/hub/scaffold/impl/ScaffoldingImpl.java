@@ -87,7 +87,7 @@ public class ScaffoldingImpl implements Scaffolding {
         entityDir.toFile().mkdirs();
     }
 
-    public void createMappingsDir(String mappingName) {
+    @Override public void createMapping(String mappingName) {
         Path mappingDir = mappingsDir.resolve(mappingName);
         mappingDir.toFile().mkdirs();
     }
