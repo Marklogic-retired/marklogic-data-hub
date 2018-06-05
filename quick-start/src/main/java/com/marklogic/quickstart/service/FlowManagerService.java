@@ -27,16 +27,11 @@ import com.marklogic.hub.flow.FlowStatusListener;
 import com.marklogic.hub.flow.FlowType;
 import com.marklogic.hub.util.MlcpRunner;
 import com.marklogic.quickstart.EnvironmentAware;
-import com.marklogic.quickstart.auth.ConnectionAuthenticationToken;
-import com.marklogic.quickstart.model.EnvironmentConfig;
 import com.marklogic.quickstart.model.FlowModel;
 import com.marklogic.quickstart.model.PluginModel;
 import com.marklogic.quickstart.util.FileUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedWriter;
@@ -183,7 +178,7 @@ public class FlowManagerService extends EnvironmentAware {
     public void runMlcp(Flow flow, JsonNode json, FlowStatusListener statusListener) {
         String mlcpPath = json.get("mlcpPath").textValue();
         HubConfig hubConfig = envConfig().getMlSettings();
-        MlcpRunner runner = new MlcpRunner(mlcpPath, "com.marklogic.contentpump.ContentPump", hubConfig, flow, hubConfig.newStagingClient(), json.get("mlcpOptions"), statusListener);
+        MlcpRunner runner = new MlcpRunner(mlcpPath, "com.marklogic.contentpump.ContentPump", hubConfig, flow, hubConfig.newStagingManageClient(), json.get("mlcpOptions"), statusListener);
         runner.start();
     }
 }

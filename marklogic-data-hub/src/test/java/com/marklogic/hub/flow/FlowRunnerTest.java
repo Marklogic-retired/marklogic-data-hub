@@ -29,8 +29,7 @@ import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
 import java.util.HashMap;
 
 import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual;
@@ -57,10 +56,15 @@ public class FlowRunnerTest extends HubTestBase {
 
         DataHub dh = DataHub.create(getHubConfig());
         dh.clearUserModules();
+
+        Files.copy(getResourceStream("flow-runner-test/collector.xqy"),
+            projectDir.resolve("plugins/entities/" + ENTITY + "/harmonize/testharmonize/collector.xqy"),
+            StandardCopyOption.REPLACE_EXISTING);
+        Files.copy(getResourceStream("flow-runner-test/content-for-options.xqy"),
+            projectDir.resolve("plugins/entities/" + ENTITY + "/harmonize/testharmonize/content.xqy"),
+            StandardCopyOption.REPLACE_EXISTING);
         installUserModules(getHubConfig(), false);
 
-        installModule("/entities/" + ENTITY + "/harmonize/testharmonize/collector.xqy", "flow-runner-test/collector.xqy");
-        installModule("/entities/" + ENTITY + "/harmonize/testharmonize/content.xqy", "flow-runner-test/content-for-options.xqy");
     }
 
     @Test

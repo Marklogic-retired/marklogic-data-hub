@@ -101,6 +101,9 @@ import com.marklogic.mgmt.resource.security.CertificateAuthorityManager;
 import com.marklogic.mgmt.util.ObjectMapperFactory;
 import com.marklogic.rest.util.JsonNodeUtil;
 
+import static com.marklogic.client.io.DocumentMetadataHandle.Capability.READ;
+import static com.marklogic.client.io.DocumentMetadataHandle.Capability.UPDATE;
+
 
 // FIXME remove deprecated methods
 @SuppressWarnings(value="deprecation")
@@ -125,6 +128,8 @@ public class HubTestBase {
     private  Authentication finalAuthMethod;
     private  Authentication jobAuthMethod;
     public  DatabaseClient stagingClient = null;
+    public  DatabaseClient stagingPrivilegedClient = null;
+    // this is needed for some evals in the test suite that are not mainline tests.
     public  DatabaseClient stagingModulesClient = null;
     public  DatabaseClient finalClient = null;
     public  DatabaseClient finalModulesClient = null;
@@ -247,6 +252,7 @@ public class HubTestBase {
 
         try {
         	stagingClient = getClient(host, stagingPort, HubConfig.DEFAULT_STAGING_NAME, user, password, stagingAuthMethod);
+            stagingPrivilegedClient = getHubConfig().newStagingManageClient();
             stagingModulesClient  = getClient(host, stagingPort, HubConfig.DEFAULT_MODULES_DB_NAME, user, password, stagingAuthMethod);
             finalClient = getClient(host, finalPort, HubConfig.DEFAULT_FINAL_NAME, user, password, finalAuthMethod);
             finalModulesClient  = getClient(host, stagingPort, HubConfig.DEFAULT_MODULES_DB_NAME, user, password, finalAuthMethod);
@@ -538,7 +544,7 @@ public class HubTestBase {
     }
 
     public void clearDatabases(String... databases) {
-        ServerEvaluationCall eval = stagingClient.newServerEval();
+        ServerEvaluationCall eval = stagingPrivilegedClient.newServerEval();
         String installer =
             "declare variable $databases external;\n" +
             "for $database in fn:tokenize($databases, \",\")\n" +
@@ -583,7 +589,9 @@ public class HubTestBase {
                 default:
                     handle.setFormat(Format.TEXT);
             }
-            writeSet.add(path, handle);
+            DocumentMetadataHandle permissions = new DocumentMetadataHandle()
+                .withPermission("data-hub-role", DocumentMetadataHandle.Capability.EXECUTE, UPDATE, READ);
+            writeSet.add(path, permissions, handle);
         });
         modMgr.write(writeSet);
         clearFlowCache();
@@ -593,6 +601,8 @@ public class HubTestBase {
 
         InputStreamHandle handle = new InputStreamHandle(HubTestBase.class.getClassLoader().getResourceAsStream(localPath));
         String ext = FilenameUtils.getExtension(path);
+        DocumentMetadataHandle permissions = new DocumentMetadataHandle()
+            .withPermission("data-hub-role", DocumentMetadataHandle.Capability.EXECUTE, UPDATE, READ);
         switch(ext) {
         case "xml":
             handle.setFormat(Format.XML);
@@ -604,7 +614,7 @@ public class HubTestBase {
             handle.setFormat(Format.TEXT);
         }
 
-        modMgr.write(path, handle);
+        modMgr.write(path, permissions, handle);
         clearFlowCache();
     }
 

@@ -58,7 +58,7 @@ public class GeneratePiiCommandTest extends HubTestBase  {
     }
 
     @Test
-    public void genearatePii() throws IOException {
+    public void generatePii() throws IOException {
         installEntities();
         generatePiiCommand.execute(null);
         File protectedPathConfig = getHubConfig().getUserSecurityDir().resolve("protected-paths/01_" + HubConfig.PII_PROTECTED_PATHS_FILE).toFile();

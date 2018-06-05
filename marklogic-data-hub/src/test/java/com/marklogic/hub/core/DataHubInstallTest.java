@@ -43,6 +43,9 @@ public class DataHubInstallTest extends HubTestBase {
     //deployed with the rest of the modules code. This means it'll be 20 higher than if the trace UI was never built
     public static final int CORE_MODULE_COUNT_WITH_TRACE_MODULES = 22;
     public static final int CORE_MODULE_COUNT = 2;
+    // if running as non-admin user, REST extensions are not visible from eval.
+    public static final int VISIBLE_MODULE_COUNT = 2;
+    public static final int VISIBLE_MODULE_COUNT_WITH_USER_MODULES = 20;
     public static final int MODULE_COUNT = 6;
     public static final int MODULE_COUNT_WITH_TRACE_MODULES = 26;
     public static final int MODULE_COUNT_WITH_USER_MODULES = 26;
@@ -74,7 +77,7 @@ public class DataHubInstallTest extends HubTestBase {
         int totalCount = getDocCount(HubConfig.DEFAULT_MODULES_DB_NAME, null);
         int hubModulesCount = getDocCount(HubConfig.DEFAULT_MODULES_DB_NAME, "hub-core-module");
 
-        assertTrue(totalCount + " is not correct.  I was expecting either " + MODULE_COUNT + " or " + MODULE_COUNT_WITH_TRACE_MODULES, MODULE_COUNT == totalCount || MODULE_COUNT_WITH_TRACE_MODULES == totalCount);
+        assertTrue(totalCount + " is not correct.  I was expecting either " + VISIBLE_MODULE_COUNT + " or " + MODULE_COUNT + " or " + MODULE_COUNT_WITH_TRACE_MODULES, VISIBLE_MODULE_COUNT == totalCount || MODULE_COUNT == totalCount || MODULE_COUNT_WITH_TRACE_MODULES == totalCount);
         assertTrue(hubModulesCount + "  is not correct.  I was expecting either " + CORE_MODULE_COUNT_WITH_TRACE_MODULES + " or " + CORE_MODULE_COUNT_WITH_TRACE_MODULES, CORE_MODULE_COUNT_WITH_TRACE_MODULES == hubModulesCount || CORE_MODULE_COUNT == hubModulesCount);
 
         assertTrue("trace options not installed", getModulesFile("/Default/data-hub-JOBS/rest-api/options/traces.xml").length() > 0);
@@ -97,17 +100,21 @@ public class DataHubInstallTest extends HubTestBase {
         HubConfig hubConfig = getHubConfig(path);
 
         int totalCount = getDocCount(HubConfig.DEFAULT_MODULES_DB_NAME, null);
-        assertTrue(totalCount + " is not correct.  I was expecting either " + MODULE_COUNT + " or " + MODULE_COUNT_WITH_TRACE_MODULES, MODULE_COUNT == totalCount || MODULE_COUNT_WITH_TRACE_MODULES == totalCount);
+        assertTrue(totalCount + " is not correct.  I was expecting either " + VISIBLE_MODULE_COUNT + " or " + MODULE_COUNT + " or " + MODULE_COUNT_WITH_TRACE_MODULES,
+            VISIBLE_MODULE_COUNT == totalCount || MODULE_COUNT == totalCount || MODULE_COUNT_WITH_TRACE_MODULES == totalCount);
 
         installUserModules(hubConfig, true);
 
         totalCount = getDocCount(HubConfig.DEFAULT_MODULES_DB_NAME, null);
-        assertTrue(totalCount + " is not correct.  I was expecting either " + MODULE_COUNT_WITH_USER_MODULES + " or " + MODULE_COUNT_WITH_USER_MODULES_AND_TRACE_MODULES, MODULE_COUNT_WITH_USER_MODULES == totalCount || MODULE_COUNT_WITH_USER_MODULES_AND_TRACE_MODULES == totalCount);
+        assertTrue(totalCount + " is not correct.  I was expecting either " + VISIBLE_MODULE_COUNT_WITH_USER_MODULES + " or " + MODULE_COUNT_WITH_USER_MODULES + " or " + MODULE_COUNT_WITH_USER_MODULES_AND_TRACE_MODULES,
+            VISIBLE_MODULE_COUNT_WITH_USER_MODULES == totalCount || MODULE_COUNT_WITH_USER_MODULES == totalCount || MODULE_COUNT_WITH_USER_MODULES_AND_TRACE_MODULES == totalCount);
 
         assertEquals(
             getResource("data-hub-test/plugins/entities/test-entity/harmonize/final/collector.xqy"),
             getModulesFile("/entities/test-entity/harmonize/final/collector.xqy"));
 
+        /* this test requires a privilege we don't want to give to data-hub-role
+          TODO implement admin testing for specific assertions.
         EvalResultIterator resultItr = runInModules(
             "xquery version \"1.0-ml\";\n" +
                 "import module namespace sec=\"http://marklogic.com/xdmp/security\" at \n" +
@@ -124,6 +131,7 @@ public class DataHubInstallTest extends HubTestBase {
                 "    return $x, \",\")");
         EvalResult res = resultItr.next();
         assertEquals("data-hub-role,rest-admin,rest-reader,rest-writer", res.getString());
+         */
 
         assertEquals(
             getResource("data-hub-test/plugins/my-lib.xqy"),
@@ -224,20 +232,20 @@ public class DataHubInstallTest extends HubTestBase {
         dataHub.clearUserModules();
 
         int totalCount = getDocCount(HubConfig.DEFAULT_MODULES_DB_NAME, null);
-        assertTrue(totalCount + " is not correct.  I was expecting either " + MODULE_COUNT + " or " + MODULE_COUNT_WITH_TRACE_MODULES,
-            MODULE_COUNT == totalCount || MODULE_COUNT_WITH_TRACE_MODULES == totalCount);
+        assertTrue(totalCount + " is not correct.  I was expecting either " + VISIBLE_MODULE_COUNT + " or " + MODULE_COUNT + " or " + MODULE_COUNT_WITH_TRACE_MODULES,
+            VISIBLE_MODULE_COUNT == totalCount || MODULE_COUNT == totalCount || MODULE_COUNT_WITH_TRACE_MODULES == totalCount);
 
         installUserModules(hubConfig, true);
 
         totalCount = getDocCount(HubConfig.DEFAULT_MODULES_DB_NAME, null);
-        assertTrue(totalCount + " is not correct.  I was expecting either " + MODULE_COUNT_WITH_USER_MODULES + " or " + MODULE_COUNT_WITH_USER_MODULES_AND_TRACE_MODULES,
-            MODULE_COUNT_WITH_USER_MODULES == totalCount || MODULE_COUNT_WITH_USER_MODULES_AND_TRACE_MODULES == totalCount);
+        assertTrue(totalCount + " is not correct.  I was expecting either " + VISIBLE_MODULE_COUNT_WITH_USER_MODULES + " or " + MODULE_COUNT_WITH_USER_MODULES + " or " + MODULE_COUNT_WITH_USER_MODULES_AND_TRACE_MODULES,
+            VISIBLE_MODULE_COUNT_WITH_USER_MODULES == totalCount || MODULE_COUNT_WITH_USER_MODULES == totalCount || MODULE_COUNT_WITH_USER_MODULES_AND_TRACE_MODULES == totalCount);
 
         dataHub.clearUserModules();
 
         totalCount = getDocCount(HubConfig.DEFAULT_MODULES_DB_NAME, null);
         assertTrue(totalCount + " is not correct.  I was expecting either " + MODULE_COUNT + " or " + MODULE_COUNT_WITH_TRACE_MODULES,
-            MODULE_COUNT == totalCount || MODULE_COUNT_WITH_TRACE_MODULES == totalCount);
+            VISIBLE_MODULE_COUNT == totalCount || MODULE_COUNT == totalCount || MODULE_COUNT_WITH_TRACE_MODULES == totalCount);
 
     }
 }

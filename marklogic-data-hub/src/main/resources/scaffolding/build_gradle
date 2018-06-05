@@ -33,3 +33,5 @@ dependencies {
     compile 'com.marklogic:marklogic-data-hub:3.0.0'
     compile 'com.marklogic:marklogic-xcc:9.0.4'
 }
+
+ext.mlAppConfig.modulePermissions = "rest-reader,read,rest-writer,insert,rest-writer,update,rest-extension-user,execute,rest-extension-user,read"
