@@ -77,6 +77,19 @@ public class ScaffoldingTest extends HubTestBase {
         assertFalse(flowDir.toFile().exists());
     }
 
+    @Test
+    public void createMapping() {
+        ScaffoldingImpl scaffolding = new ScaffoldingImpl(projectDir.toString(), stagingClient);
+        scaffolding.createMapping("my-fun-test");
+        assertTrue(projectDir.exists());
+
+        Path mappingDir = scaffolding.getMappingDir("my-fun-test");
+        assertTrue(mappingDir.toFile().exists());
+        assertEquals(
+            Paths.get(pluginDir.toString(), "mapping", "my-fun-test"),
+            mappingDir);
+    }
+
 
     @Test
     public void createXqyRestExtension() throws IOException {

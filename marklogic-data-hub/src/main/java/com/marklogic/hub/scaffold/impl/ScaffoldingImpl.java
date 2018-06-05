@@ -439,6 +439,10 @@ public class ScaffoldingImpl implements Scaffolding {
         return entitiesDir.resolve(entityName);
     }
 
+    public Path getMappingDir(String mappingName) {
+        return mappingsDir.resolve(mappingName);
+    }
+
     private Path getRestDirectory(String entityName, FlowType flowType) {
         return getFlowDir(entityName, "REST", flowType);
     }
