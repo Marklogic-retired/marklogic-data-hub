@@ -3,6 +3,8 @@ package com.marklogic.quickstart.web;
 
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubConfigBuilder;
+import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +16,7 @@ import java.io.File;
 import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static sun.awt.OSInfo.OSType.WINDOWS;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @JsonTest
@@ -23,6 +26,11 @@ public class HubConfigJsonTest {
 
     @Autowired
     private JacksonTester<HubConfig> json;
+
+    @Before
+    public void skipWindows() {
+        org.junit.Assume.assumeTrue(!System.getProperty("os.name").startsWith("Windows"));
+    }
 
     @Test
     public void testDeserialize() throws IOException {
