@@ -61,6 +61,10 @@ public class MappingManagerImpl extends LoggingObject implements MappingManager 
 
     }
 
+    @Override public void createMappingFromJSON(String json) {
+
+    }
+
     @Override public void deleteMapping(String mappingName) {
 
     }
@@ -76,6 +80,14 @@ public class MappingManagerImpl extends LoggingObject implements MappingManager 
         Mapping mapping = null;
 
         return mapping;
+    }
+
+
+    @Override public String getMappingAsJSON(String mappingName) {
+        Mapping mapping = null;
+
+
+        return "";
     }
 
 
