@@ -5,17 +5,18 @@ lead_text: ''
 permalink: /tutorial/harmonizing-order-data/
 ---
 
-Now that we have modeled the Order entity we can use the Data Hub Framework's code scaffolding to create boilerplate for harmonizing our data.
+Now that we have modeled the Order entity we can use the Data Hub Framework's code scaffolding to generate harmonization code and then customize it for our application.
 
-<i class="fa fa-hand-pointer-o"></i> Click **Flows** in the top navigation bar.
+## Create the Order Harmonize Flow
 
-![Click Flows]({{site.baseurl}}/images/3x/harmonizing-order-data/click-flows-4.png)
+Follow these steps to create a harmonize flow for Order entities and generate the default flow code:
 
-1. <i class="fa fa-hand-pointer-o"></i> Click the **+** icon next to **Harmonize Flows**
+1. Click **Flows** in the top navigation bar.
+1. Click the **+** icon next to **Harmonize Flows**
 1. Type **Harmonize Orders** in the **Harmonize Flow Name** field
-1. <i class="fa fa-hand-pointer-o"></i> Click **CREATE**{:.blue-button}.
+1. Click **Create**.
 
-Note that this time we used the default option of **Create Structure from Entity Definition**. This means that the Data Hub Framework will create boilerplate code based on our Entity model. The code will prepopulate the fields we need to add.
+Since we used the default option of **Create Structure from Entity Definition**, the Data Hub Framework will create boilerplate code based on our Entity model. The code will prepopulate the fields we need to add.
 
 ![Create Product Harmonize Flow]({{site.baseurl}}/images/3x/harmonizing-order-data/create-order-harmonize-flow.png)
 

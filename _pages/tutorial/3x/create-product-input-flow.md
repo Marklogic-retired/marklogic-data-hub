@@ -5,20 +5,24 @@ lead_text: ''
 permalink: /tutorial/create-product-input-flow/
 ---
 
-**Input flows** are responsible for getting data into the Hub staging area. These flows wrap incoming data in envelopes. It's useful to wrap incoming data in envelopes to track lineage and provenance, to answer questions such as: Who loaded this data? When was it loaded? Where did it come from?
+**Input flows** are responsible for getting data into the Hub staging area. These flows wrap incoming data in envelopes so you can track lineage and provenance. Such tracking enables you to answer questions such as: Who loaded this data? When was it loaded? Where did it come from?
 
 **Harmonize flows** are responsible for batch harmonization of data from staging to final. Harmonization is the *main purpose* of using the Data Hub Framework.
 
-We start by creating an input flow so that we can load data as-is. This gives us a chance to explore our data a bit and hopefully better understand it.
+In this exercise, we create an input flow for our Product entity. The input flow will enable us to load data into the staging area as-is. Exploring the as-is data enables you to understand it better and refine your entity models.
 
-<i class="fa fa-hand-pointer-o"></i> Click **Flows** in the top navigation bar.
+To create an input flow, click **Flows** in the top navigation bar:
 
-![Click Flows]({{site.baseurl}}/images/3x/create-product-input-flow/click-flows-1.png)
+![Click Flows]({{site.baseurl}}/images/3x/create-product-input-flow/select-flows.png)
 
-1. <i class="fa fa-hand-pointer-o"></i> Click the disclosure arrow <i class="fa fa-sort-desc"></i> next to **Product** to show the Input and Harmonize Flows.
-1. <i class="fa fa-hand-pointer-o"></i> Click the **+** icon next to **Input Flows**.
+Now, use the following procedure to create an input flow for the Product entity:
+
+1. Click **Product** in the left sidebar to expand the flow options for this entity. You should see Input Flows and Harmonize Flows.
+1. Click the **+** icon next to **Input Flows**. The Create Input Flow dialog appears.
 1. Type **Load Products** in the **Input Flow Name** field.
-1. <i class="fa fa-hand-pointer-o"></i> Click **CREATE**{:.blue-button}.
+1. Click **CREATE** to save your new flow and dismiss the dialog. Your new flow shows up under Input Flows in the left sidebar.
+
+The following picture summarizes the procedure for creating an input flow:
 
 ![New Load Products Flows]({{site.baseurl}}/images/3x/create-product-input-flow/create-load-product-flow.png)
 
