@@ -91,8 +91,12 @@ public class ProjectsController {
                 .build();
             config = om.readerForUpdating(config).readValue(hubConfig);
             AppConfig appConfig = config.getAppConfig();
-            appConfig.setHost(hubConfig.get("host").asText());
-            appConfig.setName(hubConfig.get("name").asText());
+            if (hubConfig.get("host") != null) {
+                appConfig.setHost(hubConfig.get("host").asText());
+            }
+            if (hubConfig.get("name") != null) {
+                appConfig.setName(hubConfig.get("name").asText());
+            }
             project.initialize(config);
             return project;
         }
