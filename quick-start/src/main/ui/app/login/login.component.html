@@ -98,18 +98,6 @@
                       <mdl-radio name="finalAuthMethod" [(ngModel)]="initSettings.finalAuthMethod" value="basic">basic</mdl-radio>
                     </div>
                   </section>
-                  <h3 class="md-primary">Trace</h3>
-                  <section class="sub-section" layout="column">
-                    <mdl-textfield floating-label label="Trace Appserver Name" type="text" name="traceHttpName" [(ngModel)]="initSettings.traceHttpName" required="required"></mdl-textfield>
-                    <mdl-textfield floating-label label="Trace Appserver Port" type="number" name="tracePort" [(ngModel)]="initSettings.tracePort" required="required"></mdl-textfield>
-                    <mdl-textfield floating-label label="Trace Database Name" type="text" name="traceDbName" [(ngModel)]="initSettings.traceDbName" required="required"></mdl-textfield>
-                    <mdl-textfield floating-label label="Trace Forests Per Host" type="number" name="traceForestsPerHost" [(ngModel)]="initSettings.traceForestsPerHost" required="required"></mdl-textfield>
-                    <div class="auth">
-                      <div><label>Authentication Method</label></div>
-                      <mdl-radio name="traceAuthMethod" [(ngModel)]="initSettings.traceAuthMethod" value="digest">digest</mdl-radio>
-                      <mdl-radio name="traceAuthMethod" [(ngModel)]="initSettings.traceAuthMethod" value="basic">basic</mdl-radio>
-                    </div>
-                  </section>
                   <h3 class="md-primary">Job</h3>
                   <section class="sub-section" layout="column">
                     <mdl-textfield floating-label label="Job Appserver Name" type="text" name="jobHttpName" [(ngModel)]="initSettings.jobHttpName" required="required"></mdl-textfield>
@@ -317,9 +305,6 @@
                     <td>Final AppServer Installed:</td><td><i class="fa" [ngClass]="getInstalledIcon(currentEnvironment.installInfo.finalAppServerExists)"></i></td>
                   </tr>
                   <tr>
-                    <td>Trace AppServer Installed:</td><td><i class="fa" [ngClass]="getInstalledIcon(currentEnvironment.installInfo.traceAppServerExists)"></i></td>
-                  </tr>
-                  <tr>
                     <td>Job AppServer Installed:</td><td><i class="fa" [ngClass]="getInstalledIcon(currentEnvironment.installInfo.jobAppServerExists)"></i></td>
                   </tr>
                   <tr>
@@ -327,9 +312,6 @@
                   </tr>
                   <tr>
                     <td>Final Database Installed:</td><td><i class="fa" [ngClass]="getInstalledIcon(currentEnvironment.installInfo.finalDbExists)"></i></td>
-                  </tr>
-                  <tr>
-                    <td>Trace Database Installed:</td><td><i class="fa" [ngClass]="getInstalledIcon(currentEnvironment.installInfo.traceDbExists)"></i></td>
                   </tr>
                   <tr>
                     <td>Job Database Installed:</td><td><i class="fa" [ngClass]="getInstalledIcon(currentEnvironment.installInfo.jobDbExists)"></i></td>
@@ -351,9 +333,6 @@
                   </tr>
                   <tr>
                     <td>Final Forests Installed:</td><td><i class="fa" [ngClass]="getInstalledIcon(currentEnvironment.installInfo.finalForestsExist)"></i></td>
-                  </tr>
-                  <tr>
-                    <td>Trace Forests Installed:</td><td><i class="fa" [ngClass]="getInstalledIcon(currentEnvironment.installInfo.traceForestsExist)"></i></td>
                   </tr>
                   <tr>
                     <td>Job Forests Installed:</td><td><i class="fa" [ngClass]="getInstalledIcon(currentEnvironment.installInfo.jobForestsExist)"></i></td>

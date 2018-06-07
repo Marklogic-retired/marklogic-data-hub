@@ -55,6 +55,7 @@ public class JobService extends SearchableService {
         StructuredQueryBuilder sb = queryMgr.newStructuredQueryBuilder(SEARCH_OPTIONS_NAME);
 
         ArrayList<StructuredQueryDefinition> queries = new ArrayList<>();
+        queries.add(sb.collection("job"));
         if (jobQuery.query != null && !jobQuery.query.equals("")) {
             queries.add(sb.term(jobQuery.query));
         }
