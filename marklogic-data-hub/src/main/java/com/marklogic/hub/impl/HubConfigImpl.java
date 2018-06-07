@@ -104,6 +104,8 @@ public class HubConfigImpl implements HubConfig {
 
     private String hubRoleName = DEFAULT_ROLE_NAME;
     private String hubUserName = DEFAULT_USER_NAME;
+    private String hubAdminRoleName = DEFAULT_ADMIN_ROLE_NAME;
+    private String hubAdminUserName = DEFAULT_ADMIN_USER_NAME;
 
     // these hold runtime credentials for flows.
     private String mlUsername = null;
@@ -1073,9 +1075,14 @@ public class HubConfigImpl implements HubConfig {
         customTokens.put("%%mlHubUserRole%%", hubRoleName);
         customTokens.put("%%mlHubUserName%%", hubUserName);
 
+        customTokens.put("%%mlHubAdminRole%%", hubAdminRoleName);
+        customTokens.put("%%mlHubAdminUserName%%", hubAdminUserName);
+
         // random password for hub user
         RandomStringGenerator randomStringGenerator = new RandomStringGenerator.Builder().withinRange(33, 126).filteredBy((CharacterPredicate) codePoint -> (codePoint != 92 && codePoint != 34)).build();
         customTokens.put("%%mlHubUserPassword%%", randomStringGenerator.generate(20));
+        // and another random password for hub Admin User
+        customTokens.put("%%mlHubAdminUserPassword%%", randomStringGenerator.generate(20));
 
         customTokens.put("%%mlCustomForestPath%%", customForestPath);
 
