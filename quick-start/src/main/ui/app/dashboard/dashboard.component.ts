@@ -18,8 +18,7 @@ export class DashboardComponent implements OnInit {
   databases: any = [
     'staging',
     'final',
-    'job',
-    'trace'
+    'job'
   ];
 
   stats: any;
