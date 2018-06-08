@@ -103,3 +103,7 @@ $easingFunc: ease-in-out;
 /deep/ mdl-button.mdl-button.mdl-button--raised.mdl-button--primary.error-button {
   background-color: $error;
 }
+
+/deep/ .mdl-textfield__label:after {
+  bottom: 12px;
+}
