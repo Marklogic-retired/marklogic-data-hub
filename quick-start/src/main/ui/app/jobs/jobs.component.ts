@@ -183,7 +183,7 @@ export class JobsComponent implements OnChanges, OnDestroy, OnInit {
     });
   }
 
-  toggleDeleteJob(jobId) {
+  toggleSelectJob(jobId) {
     let index = this.selectedJobs.indexOf(jobId);
     if (index > -1) {
       this.selectedJobs.splice(index, 1);
