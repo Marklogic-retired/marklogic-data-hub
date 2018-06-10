@@ -28,11 +28,12 @@
 h4.item-type {
   margin: 0;
   padding: 0;
+  margin-bottom: 3px;
 }
 
 p.item-identifying-info {
   font-weight: bold;
-  margin: 0 0 6px 2px;
+  margin: 0 0 14px 2px;
 }
 
 #source, #harmonized, #save-map {
@@ -160,40 +161,6 @@ p.item-identifying-info {
   padding-left: 8px;
 }
 
-.dropdown-menu {
-  padding: 0;
-}
-
-.dropdown-menu .prop-type {
-  font-size: 12px;
-  color: #666;
-}
-
-.dropdown-menu ul {
-  overflow-y: scroll;
-  list-style: none;
-  max-height: 280px;
-  margin: 40px 0 0 0;
-  padding: 0;
-  cursor:pointer;
-}
-
-.entity-icons {
-  width: 130px;
-  margin-left: 10px;
-}
-
-.entity-icon {
-  cursor: default;
-  margin-left: 3px;
-  padding: 0;
-  color: #666;
-}
-
-.icon-hide {
-  color: #ccc;
-}
-
 .dropdown-filter {
   position:fixed;
   background-color: #b7cae2;
@@ -238,4 +205,27 @@ p.item-identifying-info {
 
 .icon-hide {
   color: #ccc;
+}
+
+.edit-uri-val {
+  width: 411px;
+  padding: 3px 1px;
+  height: 28px;
+}
+
+.edit-uri-save, .edit-uri-cancel {
+  padding-left: 7px;
+  cursor: pointer;
+}
+
+.edit-uri-save {
+  color: green;
+}
+
+.edit-uri-cancel {
+  color: red;
+}
+
+p.edit-uri {
+  margin: 0 0 6px 2px;
 }

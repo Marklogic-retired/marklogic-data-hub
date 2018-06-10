@@ -16,8 +16,13 @@
     <div id="source">
       <div id="src-heading" #srcheading>
         <h4 class="item-type">Source</h4>
-        <p class="item-identifying-info">
-          <span ng-class="title-sample-doc" title="{{ sampleDoc?.uri }}">{{ getLastChars(sampleDoc?.uri, 40, '...') }}</span>
+        <p *ngIf="!editingURI" class="item-identifying-info">
+          <span (click)="editingURI = true" ng-class="title-sample-doc" title="{{ sampleDocURI }}">{{ getLastChars(sampleDocURI, 40, '...') }}</span>
+        </p>
+        <p *ngIf="editingURI" class="edit-uri">
+          <input type="text" class="edit-uri-val" [(ngModel)]="editURIVal" />
+          <span class="edit-uri-save" (click)="updateSampleDoc();"><i class="fa fa-check"></i></span>
+          <span class="edit-uri-cancel" (click)="cancelEditURI()"><i class="fa fa-remove"></i></span>
         </p>
       </div>
 
@@ -90,12 +95,12 @@
           <span class="prop-name">{{prop.name}}</span>
           <span class="prop-type">{{prop.datatype}}</span>
           <span class="entity-icons">
-            <span class="entity-icon" title="Primary Key"><i class="fa fa-key" [ngClass]="{'icon-hide': !(prop.name === entityPrimaryKey)}"></i></span>
-            <span class="entity-icon" title="Element Range Index"><i class="fa fa-bolt" [ngClass]="{'icon-hide': !hasElementRangeIndex(prop.name)}"></i></span>
-            <span class="entity-icon" title="Path Range Index"><i class="fa fa-code" [ngClass]="{'icon-hide': !hasRangeIndex(prop.name)}"></i></span>
-            <span class="entity-icon" title="Word Lexicon"><i class="fa fa-won" [ngClass]="{'icon-hide': !hasWordLexicon(prop.name)}"></i></span>
-            <span class="entity-icon" title="Required"><i class="fa fa-exclamation" [ngClass]="{'icon-hide': !isRequired(prop.name)}"></i></span>
-            <span class="entity-icon" title="Personally Identifiable Information"><i class="fa fa-lock" [ngClass]="{'icon-hide': !isPII(prop.name)}"></i></span>
+            <span class="entity-icon" title="Primary Key"><i class="fa fa-key fa-fw" [ngClass]="{'icon-hide': !(prop.name === entityPrimaryKey)}"></i></span>
+            <span class="entity-icon" title="Element Range Index"><i class="fa fa-bolt fa-fw" [ngClass]="{'icon-hide': !hasElementRangeIndex(prop.name)}"></i></span>
+            <span class="entity-icon" title="Path Range Index"><i class="fa fa-code fa-fw" [ngClass]="{'icon-hide': !hasRangeIndex(prop.name)}"></i></span>
+            <span class="entity-icon" title="Word Lexicon"><i class="fa fa-won fa-fw" [ngClass]="{'icon-hide': !hasWordLexicon(prop.name)}"></i></span>
+            <span class="entity-icon" title="Required"><i class="fa fa-exclamation fa-fw" [ngClass]="{'icon-hide': !isRequired(prop.name)}"></i></span>
+            <span class="entity-icon" title="Personally Identifiable Information"><i class="fa fa-lock fa-fw" [ngClass]="{'icon-hide': !isPII(prop.name)}"></i></span>
           </span>
         </div>
 
