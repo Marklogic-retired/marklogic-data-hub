@@ -109,7 +109,9 @@ function cleanData(resp, destination, dataFormat)
 {
   if (resp instanceof Document) {
     if (fn.count(resp.xpath('node()')) > 1) {
-      fn.error(null, "DATAHUB-TOO-MANY-NODES", Sequence.from([400, "Too Many Nodes!. Return just 1 node"]));
+	  if(fn.count(resp.xpath('element()')) > 1) {
+        fn.error(null, "DATAHUB-TOO-MANY-NODES", Sequence.from([400, "Too Many Nodes!. Return just 1 node"]));
+	  }	
     } else {
       resp = resp.xpath('node()');
     }
