@@ -26,7 +26,6 @@ import com.marklogic.hub.HubConfigBuilder;
 import com.marklogic.hub.InstallInfo;
 import com.marklogic.hub.util.Versions;
 
-import java.io.IOException;
 import java.util.Properties;
 
 public class EnvironmentConfig {
@@ -120,7 +119,7 @@ public class EnvironmentConfig {
     @JsonIgnore
     public DatabaseClient getStagingClient() {
         if (_stagingClient == null) {
-            _stagingClient = mlSettings.newStagingClient();
+            _stagingClient = mlSettings.newStagingManageClient();
         }
         return _stagingClient;
     }
@@ -131,7 +130,7 @@ public class EnvironmentConfig {
     @JsonIgnore
     public DatabaseClient getFinalClient() {
         if (_finalClient == null) {
-            _finalClient = mlSettings.newFinalClient();
+            _finalClient = mlSettings.newFinalManageClient();
         }
         return _finalClient;
     }

@@ -24,6 +24,7 @@ import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.collector.Collector;
 import com.marklogic.hub.collector.DiskQueue;
 import com.marklogic.hub.flow.CodeFormat;
+import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.rest.util.MgmtResponseErrorHandler;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -115,7 +116,7 @@ public class CollectorImpl implements Collector {
             //
             AppConfig appConfig = hubConfig.getAppConfig();
 
-            RestTemplate template = newRestTemplate(appConfig.getAppServicesUsername(), appConfig.getAppServicesPassword());
+            RestTemplate template = newRestTemplate(  ((HubConfigImpl) hubConfig).getMlUsername(), ( (HubConfigImpl) hubConfig).getMlPassword());
             String uriString = String.format(
                 "%s://%s:%d%s?job-id=%s&entity-name=%s&flow-name=%s&database=%s",
                 client.getSecurityContext().getSSLContext() != null ? "https" : "http",

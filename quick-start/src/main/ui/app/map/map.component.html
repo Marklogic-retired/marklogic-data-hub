@@ -7,70 +7,64 @@
       <h1>{{flowName}} Map</h1>
 
       <div id="save-map">
-        <mdl-button mdl-button-type="raised" mdl-colored="primary" mdl-ripple (click)="saveMap()">Save Map</mdl-button>
-        <mdl-button mdl-button-type="raised" mdl-colored mdl-ripple (click)="cancelMap()">Cancel</mdl-button>
+        <mdl-button mdl-button-type="raised" mdl-colored="primary" mdl-ripple ng-class="btn-save-map" (click)="saveMap()">Save Map</mdl-button>
+        <mdl-button mdl-button-type="raised" mdl-colored mdl-ripple ng-class="btn-cancel-map" (click)="cancelMap()">Cancel</mdl-button>
       </div>
 
     </div>
 
-    <!-- Filter menu for narrowing menu properties -->
-    <!-- <div>
-      <mdl-select
-        label="Types to show"
-        floating-label
-        [(ngModel)]="filterSelected"
-        (blur)="handleFilter($event)"
-      >
-        <mdl-option *ngFor="let f of filterMenu" [value]="f">{{f}}</mdl-option>
-      </mdl-select>
-    </div> -->
-
     <div id="source">
       <div id="src-heading" #srcheading>
         <h4 class="item-type">Source</h4>
-        <p class="item-identifying-info">{{ sampleDoc?.uri }}</p>
+        <p class="item-identifying-info">
+          <span ng-class="title-sample-doc" title="{{ sampleDoc?.uri }}">{{ getLastChars(sampleDoc?.uri, 40, '...') }}</span>
+        </p>
       </div>
 
-      <div *ngFor="let prop of chosenEntity?.definition.properties; let i = index;" class="prop-container">
+      <!-- Dropdown row for each entity property -->
+      <div *ngFor="let entityProp of chosenEntity?.definition.properties; let i = index;" class="src-prop-container">
 
-          <div class="btn-group" dropdown>
-            <button dropdownToggle type="button" class="btn dropdown-toggle prop-select">
-              <div *ngIf="conns[i]['src'] !== null">
-                <div class="prop-select-content">
+          <div class="btn-group" dropdown #dropdown="bs-dropdown" (onShown)="filterFocus[entityProp.name] = true;" (onHidden)="filterFocus[entityProp.name] = false;">
+            <button dropdownToggle type="button" class="btn prop-select {{ 'prop-entity-' + entityProp.name }}">
 
-                  <!--<span class="prop-name">{{conns[i]['src'].key}}</span><span class="prop-type">{{conns[i]['src'].val}}</span>-->
+              <div class="prop-clear-control {{ 'prop-clear-control-' + entityProp.name }}">
+                <span *ngIf="conns[entityProp.name]"
+                      class="fa fa-remove"
+                      (click)="clearSelection($event, entityProp.name)">
+                </span>
+              </div>
 
-                  <span class="prop-name">{{conns[i]['src'].key}}</span>
-                  <!-- <span class="prop-type">{{conns[i]['src'].type}}</span> -->
-                  <span class="prop-val" title="{{conns[i]['src'].type}}">{{ getType(conns[i]['src'].val) === "string" ? '"' : '' }}{{ conns[i]['src'].val | slice:0:valMaxLen }}{{ conns[i]['src'].val.length > valMaxLen ? '...' : '' }}{{ getType(conns[i]['src'].val) === "string" ? '"' : '' }}</span>
-
+              <!-- Connection exists, display selected item -->
+              <div *ngIf="conns[entityProp.name]">
+                <div class="prop-select-content {{ 'prop-select-content-' + entityProp.name }}">
+                  <span class="prop-name">{{ getConnSrcData(entityProp.name, 'key') }}</span>
+                  <span class="prop-type">{{ getConnSrcData(entityProp.name, 'type') }}</span>
+                  <span class="prop-val" title="{{ getConnSrcData(entityProp.name, 'val') }}">{{ isQuoted(getConnSrcData(entityProp.name, 'type')) ? '"' : '' }}{{ getConnSrcData(entityProp.name, 'val') | slice:0:valMaxLen }}{{ getConnSrcData(entityProp.name, 'val').length > valMaxLen ? '...' : '' }}{{ isQuoted(getConnSrcData(entityProp.name, 'type')) ? '"' : '' }}</span>
                 </div>
               </div>
-              <div *ngIf="conns[i]['src'] === null">
+
+              <!-- Connection does not exist, display placeholder -->
+              <div *ngIf="!conns[entityProp.name]">
                 <div class="prop-select-content unselected">Select...</div>
               </div>
-              <div class="prop-select-control"><span class="caret"></span></div>
+
+              <div class="prop-select-control"><span class="fa fa-caret-down"></span></div>
             </button>
-            <ul *dropdownMenu class="dropdown-menu" role="menu">
-              <li *ngFor="let prop of getProps(conns[i]['harm'].type);"
-                  role="menuitem"
-                  on-click="handleSelection(prop, 'src', i)">
-                <a class="dropdown-item" href="javascript:void(0)">
-                  <!--<span class="prop-name">{{prop.key}}</span><span class="prop-val">{{prop.val}}</span>-->
-
-                  <span class="prop-name">{{prop.key}}</span>
-                  <!-- <span class="prop-type">{{prop.type}}</span> -->
-                  <span class="prop-val" title="{{type}}">{{ prop.type === "string" ? '"' : '' }}{{ prop.val | slice:0:valMaxLen }}{{ prop.val.length > valMaxLen ? '...' : '' }}{{ prop.type === "string" ? '"' : '' }}</span>
-
-                </a>
-              </li>
-              <li role="menuitem"
-                  on-click="handleSelection(null, 'src', i)">
-                <a class="dropdown-item" href="javascript:void(0)">
-                  <div class="prop-name unselected">none</div>
-                </a>
-              </li>
-            </ul>
+            <div *dropdownMenu class="dropdown-menu" role="menu">
+              <div class="dropdown-filter dropdown-filter-{{entityProp.name}}"><input type="text" [(ngModel)]="filterText[entityProp.name]" [focusElement]="filterFocus[entityProp.name]" (click)="$event.stopPropagation();" /></div>
+              <ul class="prop-select-menu prop-select-menu-{{entityProp.name}}"l>
+                <li *ngFor="let srcProp of sampleDocSrcProps | listFilter:['key','type']:filterText[entityProp.name]"
+                    role="menuitem"
+                    class="prop-select-item"
+                    (mouseup)="handleSelection(entityProp.name, srcProp.key, $event); dropdown.hide();">
+                  <a class="dropdown-item dropdown-item-{{srcProp.key}}" href="javascript:void(0)">
+                    <span class="prop-name">{{srcProp.key}}</span>
+                    <span class="prop-type">{{srcProp.type}}</span>
+                    <span class="prop-val" title="{{type}}">{{ isQuoted(srcProp.type) ? '"' : '' }}{{ srcProp.val | slice:0:valMaxLen }}{{ srcProp.val.length > valMaxLen ? '...' : '' }}{{ isQuoted(srcProp.type) ? '"' : '' }}</span>
+                  </a>
+                </li>
+              </ul>
+            </div>
           </div><!-- button-group -->
 
       </div><!-- ngFor -->
@@ -80,13 +74,29 @@
     <div id="harmonized">
       <div id="harm-heading">
         <h4 class="item-type">Model</h4>
-        <p class="item-identifying-info">{{ chosenEntity?.info.title }}</p>
+        <p class="item-identifying-info">
+          <span ng-class="title-entity-model">{{ chosenEntity?.info.title }}</span>
+        </p>
       </div>
 
+      <div *ngIf="chosenEntity?.definition.properties.length === 0">
+        <em>{{ chosenEntity?.info.title }} has no properties to map. Add them in the <a [routerLink]="['/entities']">Entities</a> view.</em>
+      </div>
+
+      <!-- Row for each entity property -->
       <div *ngFor="let prop of chosenEntity?.definition.properties; let i = index;">
 
-        <div class="prop-container" d>
-          <span class="prop-name">{{prop.name}}</span><span class="prop-type">{{prop.datatype}}</span><span class="is-primary" *ngIf="prop.name === entityPrimaryKey"><i class="fa fa-key"></i></span>
+        <div class="entity-prop-container {{ 'entity-prop-container-' + prop.name }} ">
+          <span class="prop-name">{{prop.name}}</span>
+          <span class="prop-type">{{prop.datatype}}</span>
+          <span class="entity-icons">
+            <span class="entity-icon" title="Primary Key"><i class="fa fa-key" [ngClass]="{'icon-hide': !(prop.name === entityPrimaryKey)}"></i></span>
+            <span class="entity-icon" title="Element Range Index"><i class="fa fa-bolt" [ngClass]="{'icon-hide': !hasElementRangeIndex(prop.name)}"></i></span>
+            <span class="entity-icon" title="Path Range Index"><i class="fa fa-code" [ngClass]="{'icon-hide': !hasRangeIndex(prop.name)}"></i></span>
+            <span class="entity-icon" title="Word Lexicon"><i class="fa fa-won" [ngClass]="{'icon-hide': !hasWordLexicon(prop.name)}"></i></span>
+            <span class="entity-icon" title="Required"><i class="fa fa-exclamation" [ngClass]="{'icon-hide': !isRequired(prop.name)}"></i></span>
+            <span class="entity-icon" title="Personally Identifiable Information"><i class="fa fa-lock" [ngClass]="{'icon-hide': !isPII(prop.name)}"></i></span>
+          </span>
         </div>
 
       </div><!-- ngFor -->

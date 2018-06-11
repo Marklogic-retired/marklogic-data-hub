@@ -141,8 +141,8 @@ public class LoadUserModulesCommand extends AbstractCommand {
 
         AppConfig config = context.getAppConfig();
 
-        DatabaseClient stagingClient = hubConfig.newStagingClient();
-        DatabaseClient finalClient = hubConfig.newFinalClient();
+        DatabaseClient stagingClient = hubConfig.newStagingManageClient();
+        DatabaseClient finalClient = hubConfig.newFinalManageClient();
 
         Path userModulesPath = hubConfig.getHubPluginsDir();
         String baseDir = userModulesPath.normalize().toAbsolutePath().toString();

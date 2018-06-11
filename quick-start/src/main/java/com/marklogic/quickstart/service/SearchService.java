@@ -41,8 +41,8 @@ public class SearchService extends SearchableService {
 
     public SearchService(HubConfig hubConfig) {
         this.hubConfig = hubConfig;
-        DatabaseClient stagingClient = hubConfig.newStagingClient();
-        DatabaseClient finalClient = hubConfig.newFinalClient();
+        DatabaseClient stagingClient = hubConfig.newStagingManageClient();
+        DatabaseClient finalClient = hubConfig.newFinalManageClient();
         this.stagingQueryMgr = stagingClient.newQueryManager();
         this.stagingDocMgr = stagingClient.newDocumentManager();
         this.finalQueryMgr = finalClient.newQueryManager();
