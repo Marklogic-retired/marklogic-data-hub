@@ -299,9 +299,9 @@ declare function flow:run-flow(
     => rfc:with-id($identifier)
     => rfc:with-content(
         if ($content instance of document-node()) then
-		  if(fn:count($content/node()) > 1) then
-		    $content
-		  else
+          if (fn:count($content/node()) > 1) then
+            $content
+          else
             $content/node()
         else $content
       )
@@ -319,10 +319,10 @@ declare function flow:clean-data($resp, $destination, $data-format)
     typeswitch($resp)
       case document-node() return
         if (fn:count($resp/node()) > 1) then
-		  if(fn:count($resp/element()) > 1) then
+          if (fn:count($resp/element()) > 1) then
             fn:error((), "DATAHUB-TOO-MANY-NODES", "Too Many Nodes!. Return just 1 node")
-		  else
-		    $resp
+          else
+            $resp
         else
           $resp/node()
       default return
