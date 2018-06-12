@@ -30,13 +30,8 @@ export default function(tmpDir) {
       expect(loginPage.installerTab.isPresent()).toBe(false);
     });
 
-    it ('Has the correct current folder', function() {
-      expect(loginPage.currentFolderValue).toContain('quick-start');
-    });
-
     it ('Should select the temp folder', function() {
       loginPage.setCurrentFolder(tmpDir);
-      //loginPage.selectOnlineStore();
       console.log('clicking next!');
       loginPage.clickNext('ProjectDirTab');
       browser.wait(EC.elementToBeClickable(loginPage.initIfNeededTab));
@@ -115,6 +110,7 @@ export default function(tmpDir) {
       expect(loginPage.requiresUpdateUpdateTab.isDisplayed()).toBe(false);
       expect(loginPage.preInstallCheckTab.isDisplayed()).toBe(false);
       expect(loginPage.installerTab.isPresent()).toBe(false);
+      // Bug: DHFPROD-925
       //negative test on login
       /*console.log('login negative test');
       loginPage.loginAs('foo', 'foo');
@@ -155,10 +151,8 @@ export default function(tmpDir) {
     });
 
     it ('should complete the install and go to the dashboard', function() {
-      if(!appPage.flowsTab.isDisplayed()) {
-        console.log('installation is stuck, go to the dashboard page using url');
-        browser.refresh();
-      }
+      console.log('refresh the browser');
+      browser.refresh();
       console.log('loading dashboard page');
       dashboardPage.isLoaded();
       expect(appPage.flowsTab.isPresent()).toBe(true);
