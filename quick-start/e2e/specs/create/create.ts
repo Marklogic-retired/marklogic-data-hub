@@ -523,6 +523,24 @@ export default function() {
       browser.wait(EC.invisibilityOf(entityPage.entityEditor));
     });
 
+    it ('should verify naming conventions on properties', function() {
+      entityPage.clickEditEntity('PIIEntity');
+      browser.wait(EC.visibilityOf(entityPage.entityEditor));
+      expect(entityPage.entityEditor.isPresent()).toBe(true);
+      // add test property to verify white spaces
+      console.log('add test property');
+      entityPage.addProperty.click();
+      let lastProperty = entityPage.lastProperty;
+      entityPage.getPropertyName(lastProperty).sendKeys('test white space');
+      // verify the error message on white space in property name
+      let errorMessage = entityPage.errorWhiteSpaceMessage;
+      expect(errorMessage.getText()).toBe('Property names are required and whitespaces are not allowed');
+      // verify if the Save button is disabled on white space
+      expect(entityPage.saveEntity.isEnabled()).toBe(false);
+      entityPage.cancelEntity.click();
+      browser.wait(EC.invisibilityOf(entityPage.entityEditor));
+    });
+    
     it ('should logout and login', function() {
       entityPage.logout();
       loginPage.isLoaded();

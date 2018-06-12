@@ -54,6 +54,8 @@ public interface HubConfig {
 
     String DEFAULT_ROLE_NAME = "data-hub-role";
     String DEFAULT_USER_NAME = "data-hub-user";
+    String DEFAULT_ADMIN_ROLE_NAME = "hub-admin-role";
+    String DEFAULT_ADMIN_USER_NAME = "hub-admin-user";
 
     Integer DEFAULT_STAGING_PORT = 8010;
     Integer DEFAULT_FINAL_PORT = 8011;
@@ -341,10 +343,11 @@ public interface HubConfig {
      * Creates a new DatabaseClient for accessing the Staging database
      * @return - a DatabaseClient
      */
-     DatabaseClient newStagingClient();
+     DatabaseClient newStagingManageClient();
 
     /**
-     * Creates a new DatabaseClient for accessing the Staging database
+     * Creates a new DatabaseClient for accessing the Staging database,
+     * which overrides the database used for the connection.
      * @param databaseName - the name of the database for the staging Client to use
      * @return- a DatabaseClient
      */
@@ -354,7 +357,7 @@ public interface HubConfig {
      * Creates a new DatabaseClient for accessing the Final database
      * @return - a DatabaseClient
      */
-    DatabaseClient newFinalClient();
+    DatabaseClient newFinalManageClient();
 
     /**
      * Creates a new DatabaseClient for accessing the Job database
@@ -467,4 +470,20 @@ public interface HubConfig {
      * @return Version of DHF Jar file as string
      */
     String getJarVersion();
+
+    /**
+     * Gets a new DatabaseClient with privileges to run flows but
+     * not to install modules or configure databases.  Uses mlUsername
+     * and mlPassword
+     * @return A client without elevated administrative privileges.
+     */
+    DatabaseClient newStagingClient();
+
+    /**
+     * Gets a new DatabaseClient with privileges to run flows
+     * in reverse from final to staging.  Uses mlUsername
+     * and mlPassword
+     * @return A client without elevated administrative privileges.
+     */
+    DatabaseClient newFinalClient();
 }

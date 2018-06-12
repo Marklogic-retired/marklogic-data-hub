@@ -137,12 +137,10 @@ public class DeployHubDatabaseCommand extends DeployDatabaseCommand {
 
     protected DeployForestsCommand buildDeployForestsCommand(String dbPayload, SaveReceipt receipt,
                                                              CommandContext context) {
-        DeployForestsCommand c = new DeployForestsCommand();
+        DeployForestsCommand c = new DeployForestsCommand(receipt.getResourceId());
         c.setCreateForestsOnEachHost(createForestsOnEachHost);
         c.setForestsPerHost(determineForestCountPerHost(dbPayload, context));
         c.setForestFilename(forestFilename);
-        c.setDatabaseName(receipt.getResourceId());
-        c.setForestPayload(DeployForestsCommand.DEFAULT_FOREST_PAYLOAD);
         return c;
     }
 

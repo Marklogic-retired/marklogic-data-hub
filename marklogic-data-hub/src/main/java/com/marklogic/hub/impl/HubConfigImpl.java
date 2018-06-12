@@ -17,7 +17,6 @@ package com.marklogic.hub.impl;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.appdeployer.ConfigDir;
 import com.marklogic.client.DatabaseClient;
@@ -105,6 +104,12 @@ public class HubConfigImpl implements HubConfig {
 
     private String hubRoleName = DEFAULT_ROLE_NAME;
     private String hubUserName = DEFAULT_USER_NAME;
+    private String hubAdminRoleName = DEFAULT_ADMIN_ROLE_NAME;
+    private String hubAdminUserName = DEFAULT_ADMIN_USER_NAME;
+
+    // these hold runtime credentials for flows.
+    private String mlUsername = null;
+    private String mlPassword = null;
 
     private String[] loadBalancerHosts;
 
@@ -664,6 +669,15 @@ public class HubConfigImpl implements HubConfig {
     @Override public String getHubUserName() {
         return hubUserName;
     }
+
+    // impl only pending refactor to Flow Component
+    public String getMlUsername() {
+        return mlUsername;
+    }
+    // impl only pending refactor to Flow Component
+    public String getMlPassword() {
+        return mlPassword;
+    }
     @Override  public void setHubUserName(String hubUserName) {
         this.hubUserName = hubUserName;
     }
@@ -790,6 +804,12 @@ public class HubConfigImpl implements HubConfig {
             hubRoleName = getEnvPropString(environmentProperties, "mlHubUserRole", hubRoleName);
             hubUserName = getEnvPropString(environmentProperties, "mlHubUserName", hubUserName);
 
+
+            // this is a runtime username/password for running flows
+            // could be factored away with FlowRunner
+            mlUsername = getEnvPropString(environmentProperties, "mlUsername", mlUsername);
+            mlPassword = getEnvPropString(environmentProperties, "mlPassword", mlPassword);
+
             String lbh = getEnvPropString(environmentProperties, "mlLoadBalancerHosts", null);
             if (lbh != null && lbh.length() > 0) {
                 loadBalancerHosts = lbh.split(",");
@@ -831,14 +851,48 @@ public class HubConfigImpl implements HubConfig {
     public void setAdminManager(AdminManager adminManager) { this.adminManager = adminManager; }
 
     public DatabaseClient newAppServicesClient() {
-        return getAppConfig().newAppServicesDatabaseClient(null);
+        return getAppConfig().newAppServicesDatabaseClient(stagingDbName);
     }
 
+    @Override
+    public DatabaseClient newStagingManageClient() {
+        return newStagingManageClient(stagingDbName);
+    }
+
+    @Override
     public DatabaseClient newStagingClient() {
         return newStagingClient(stagingDbName);
     }
 
-    public DatabaseClient newStagingClient(String databaseName) {
+    @Override
+    public DatabaseClient newStagingClient(String dbName) {
+        AppConfig appConfig = getAppConfig();
+        DatabaseClientConfig config = new DatabaseClientConfig(appConfig.getHost(), stagingPort, getMlUsername(), getMlPassword());
+        config.setDatabase(dbName);
+        config.setSecurityContextType(SecurityContextType.valueOf(stagingAuthMethod.toUpperCase()));
+        config.setSslHostnameVerifier(stagingSslHostnameVerifier);
+        config.setSslContext(stagingSslContext);
+        config.setCertFile(stagingCertFile);
+        config.setCertPassword(stagingCertPassword);
+        config.setExternalName(stagingExternalName);
+        return appConfig.getConfiguredDatabaseClientFactory().newDatabaseClient(config);
+    }
+
+    @Override
+    public DatabaseClient newFinalClient() {
+        AppConfig appConfig = getAppConfig();
+        DatabaseClientConfig config = new DatabaseClientConfig(appConfig.getHost(), finalPort, getMlUsername(), getMlPassword());
+        config.setDatabase(finalDbName);
+        config.setSecurityContextType(SecurityContextType.valueOf(finalAuthMethod.toUpperCase()));
+        config.setSslHostnameVerifier(finalSslHostnameVerifier);
+        config.setSslContext(finalSslContext);
+        config.setCertFile(finalCertFile);
+        config.setCertPassword(finalCertPassword);
+        config.setExternalName(finalExternalName);
+        return appConfig.getConfiguredDatabaseClientFactory().newDatabaseClient(config);
+    }
+
+    public DatabaseClient newStagingManageClient(String databaseName) {
         AppConfig appConfig = getAppConfig();
         DatabaseClientConfig config = new DatabaseClientConfig(appConfig.getHost(), stagingPort, appConfig.getRestAdminUsername(), appConfig.getRestAdminPassword());
         config.setDatabase(databaseName);
@@ -851,7 +905,7 @@ public class HubConfigImpl implements HubConfig {
         return appConfig.getConfiguredDatabaseClientFactory().newDatabaseClient(config);
     }
 
-    public DatabaseClient newFinalClient() {
+    public DatabaseClient newFinalManageClient() {
         AppConfig appConfig = getAppConfig();
         DatabaseClientConfig config = new DatabaseClientConfig(appConfig.getHost(), finalPort, appConfig.getRestAdminUsername(), appConfig.getRestAdminPassword());
         config.setDatabase(finalDbName);
@@ -977,10 +1031,11 @@ public class HubConfigImpl implements HubConfig {
 
         // this lets debug builds work from an IDE
         if (version.equals("${project.version}")) {
-            version = "3.0.0";
+            version = "3.1.0";
         }
         return version;
     }
+
 
     private Map<String, String> getCustomTokens() {
         AppConfig appConfig = getAppConfig();
@@ -1020,9 +1075,14 @@ public class HubConfigImpl implements HubConfig {
         customTokens.put("%%mlHubUserRole%%", hubRoleName);
         customTokens.put("%%mlHubUserName%%", hubUserName);
 
+        customTokens.put("%%mlHubAdminRole%%", hubAdminRoleName);
+        customTokens.put("%%mlHubAdminUserName%%", hubAdminUserName);
+
         // random password for hub user
         RandomStringGenerator randomStringGenerator = new RandomStringGenerator.Builder().withinRange(33, 126).filteredBy((CharacterPredicate) codePoint -> (codePoint != 92 && codePoint != 34)).build();
         customTokens.put("%%mlHubUserPassword%%", randomStringGenerator.generate(20));
+        // and another random password for hub Admin User
+        customTokens.put("%%mlHubAdminUserPassword%%", randomStringGenerator.generate(20));
 
         customTokens.put("%%mlCustomForestPath%%", customForestPath);
 

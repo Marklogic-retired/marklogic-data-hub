@@ -27,7 +27,6 @@ import com.marklogic.hub.flow.FlowType;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.validate.EntitiesValidator;
 import com.marklogic.quickstart.EnvironmentAware;
-import com.marklogic.quickstart.auth.ConnectionAuthenticationToken;
 import com.marklogic.quickstart.model.EnvironmentConfig;
 import com.marklogic.quickstart.model.FlowModel;
 import com.marklogic.quickstart.model.PluginModel;
@@ -37,7 +36,6 @@ import com.marklogic.quickstart.model.entity_services.InfoType;
 import com.marklogic.quickstart.util.FileUtil;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -351,7 +349,7 @@ public class EntityManagerService extends EnvironmentAware {
         else {
             type = "xquery";
         }
-        EntitiesValidator validator = EntitiesValidator.create(config.newStagingClient());
+        EntitiesValidator validator = EntitiesValidator.create(config.newStagingManageClient());
         return validator.validate(entityName, flowName, plugin.fileContents.replaceAll("\\.(sjs|xqy)", ""), type, plugin.fileContents);
     }
 

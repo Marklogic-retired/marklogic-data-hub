@@ -9,9 +9,7 @@
  */
 function write(id, envelope, options) {
   xdmp.documentInsert(id, envelope,
-          [ xdmp.defaultPermissions(),
-          xdmp.permission("harmonized-reader", "read"),
-          xdmp.permission("harmonized-updater", "update")],
+          [ xdmp.defaultPermissions()],
           options.entity);
 }
 

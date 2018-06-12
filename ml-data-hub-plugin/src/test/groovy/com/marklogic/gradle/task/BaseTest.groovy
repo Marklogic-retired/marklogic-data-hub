@@ -111,7 +111,7 @@ class BaseTest extends Specification {
 
 
     void clearDatabases(String... databases) {
-        ServerEvaluationCall eval = hubConfig().newStagingClient().newServerEval();
+        ServerEvaluationCall eval = hubConfig().newStagingManageClient().newServerEval();
         String installer = '''
             declare variable $databases external;
             for $database in fn:tokenize($databases, ",")
@@ -177,10 +177,10 @@ class BaseTest extends Specification {
         ServerEvaluationCall eval
         switch(databaseName) {
             case HubConfig.DEFAULT_STAGING_NAME:
-                eval = hubConfig().newStagingClient().newServerEval()
+                eval = hubConfig().newStagingManageClient().newServerEval()
                 break
             case HubConfig.DEFAULT_FINAL_NAME:
-                eval = hubConfig().newFinalClient().newServerEval()
+                eval = hubConfig().newFinalManageClient().newServerEval()
                 break
             case HubConfig.DEFAULT_MODULES_DB_NAME:
                 eval = hubConfig().newModulesDbClient().newServerEval()

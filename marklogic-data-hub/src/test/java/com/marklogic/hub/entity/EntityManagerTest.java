@@ -17,15 +17,12 @@ package com.marklogic.hub.entity;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
 import com.marklogic.hub.EntityManager;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
-import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.scaffold.impl.ScaffoldingImpl;
 import com.marklogic.hub.util.FileUtil;
 import com.marklogic.hub.util.HubModuleManager;
-import com.marklogic.mgmt.ManageClient;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -58,7 +55,8 @@ public class EntityManagerTest extends HubTestBase {
         Path employeeDir = scaffolding.getEntityDir("employee");
         employeeDir.toFile().mkdirs();
         assertTrue(employeeDir.toFile().exists());
-        FileUtil.copy(getResourceStream("scaffolding-test/employee.entity.json"), employeeDir.resolve("employee.entity.json").toFile());
+        FileUtil.copy(getResourceStream("scaffolding-test/employee.entity.json"),
+            employeeDir.resolve("employee.entity.json").toFile());
 
         Path managerDir = scaffolding.getEntityDir("manager");
         managerDir.toFile().mkdirs();

@@ -80,26 +80,31 @@ public class HubConfigBuilderImpl implements HubConfigBuilder {
         return this;
     }
 
+    @Deprecated
     @Override public HubConfigBuilder withAppConfig(AppConfig appConfig) {
         this.appConfig = appConfig;
         return this;
     }
 
+    @Deprecated
     @Override public HubConfigBuilder withAdminConfig(AdminConfig adminConfig) {
         this.adminConfig = adminConfig;
         return this;
     }
 
+    @Deprecated
     @Override public HubConfigBuilder withAdminManager(AdminManager adminManager) {
         this.adminManager = adminManager;
         return this;
     }
 
+    @Deprecated
     @Override public HubConfigBuilder withManageConfig(ManageConfig manageConfig) {
         this.manageConfig = manageConfig;
         return this;
     }
 
+    @Deprecated
     @Override public HubConfigBuilder withManageClient(ManageClient manageClient) {
         this.manageClient = manageClient;
         return this;
