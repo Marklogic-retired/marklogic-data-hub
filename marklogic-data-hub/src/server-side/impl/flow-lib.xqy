@@ -479,7 +479,7 @@ declare function flow:instance-to-canonical-json(
       let $_ := (
         for $key in map:keys($entity-instance)
         let $instance-property := map:get($entity-instance, $key)
-        where ($key castable as xs:NCName and $key ne "$type")
+        where ($key castable as xs:NCName and not($key = ("$type", "$attachments","$version")))
         return
           typeswitch ($instance-property)
           (: This branch handles embedded objects.  You can choose to prune
