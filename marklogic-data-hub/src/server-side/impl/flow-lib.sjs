@@ -348,7 +348,8 @@ function instanceToCanonicalJson(entityInstance) {
   else {
     o = {};
     for (let key in entityInstance) {
-      if (key !== '$type') {
+      if (key === '$attachments' || key === '$type' || key === '$version') {
+      } else {
         let instanceProperty = entityInstance[key];
         if (instanceProperty instanceof Sequence) {
           for (let prop in instanceProperty) {
