@@ -266,7 +266,12 @@ function makeEnvelope(content, headers, triples, dataFormat) {
 
         nb.startElement("attachments", "http://marklogic.com/entity-services");
         if (content instanceof Object && content.hasOwnProperty("$attachments")) {
-          nb.addNode(content["$attachments"]);
+            let attachments = content["$attachments"];
+            if (tracelib.isXmlNode(content)) {
+              nb.addNode(attachments);
+            } else {
+              nb.addText(xdmp.quote(attachments))
+            }
         }
         nb.endElement();
       nb.endElement();
