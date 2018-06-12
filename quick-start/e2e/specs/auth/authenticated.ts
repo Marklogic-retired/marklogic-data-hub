@@ -30,6 +30,10 @@ export default function(tmpDir) {
       expect(loginPage.installerTab.isPresent()).toBe(false);
     });
 
+    it ('Has the correct current folder', function() {
+      expect(loginPage.currentFolderValue).toContain('quick-start');
+    });
+
     it ('Should select the temp folder', function() {
       loginPage.setCurrentFolder(tmpDir);
       console.log('clicking next!');
