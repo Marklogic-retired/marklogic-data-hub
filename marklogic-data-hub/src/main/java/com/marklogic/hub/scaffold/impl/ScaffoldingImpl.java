@@ -61,7 +61,7 @@ public class ScaffoldingImpl implements Scaffolding {
         this.projectDir = projectDir;
         this.pluginsDir = Paths.get(this.projectDir, "plugins");
         this.entitiesDir = this.pluginsDir.resolve("entities");
-        this.mappingsDir = this.mappingsDir.resolve("mappings");
+        this.mappingsDir = this.pluginsDir.resolve("mappings");
         this.databaseClient = databaseClient;
         validator = new ScaffoldingValidator(projectDir);
     }
@@ -87,7 +87,7 @@ public class ScaffoldingImpl implements Scaffolding {
         entityDir.toFile().mkdirs();
     }
 
-    @Override public void createMapping(String mappingName) {
+    @Override public void createMappingDir(String mappingName) {
         Path mappingDir = mappingsDir.resolve(mappingName);
         mappingDir.toFile().mkdirs();
     }

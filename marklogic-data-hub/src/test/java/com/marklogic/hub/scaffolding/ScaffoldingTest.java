@@ -78,15 +78,15 @@ public class ScaffoldingTest extends HubTestBase {
     }
 
     @Test
-    public void createMapping() {
+    public void createMappingDir() {
         ScaffoldingImpl scaffolding = new ScaffoldingImpl(projectDir.toString(), stagingClient);
-        scaffolding.createMapping("my-fun-test");
+        scaffolding.createMappingDir("my-fun-test");
         assertTrue(projectDir.exists());
 
         Path mappingDir = scaffolding.getMappingDir("my-fun-test");
         assertTrue(mappingDir.toFile().exists());
         assertEquals(
-            Paths.get(pluginDir.toString(), "mapping", "my-fun-test"),
+            Paths.get(pluginDir.toString(), "mappings", "my-fun-test"),
             mappingDir);
     }
 

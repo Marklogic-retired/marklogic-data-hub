@@ -85,7 +85,7 @@ public class MappingManagerService extends EnvironmentAware {
 
     public MappingModel createMapping(String projectDir, MappingModel newMapping) throws IOException {
         Scaffolding scaffolding = Scaffolding.create(projectDir, envConfig().getFinalClient());
-        scaffolding.createMapping(newMapping.getName());
+        scaffolding.createMappingDir(newMapping.getName());
 
         return getMapping(newMapping.getName());
     }

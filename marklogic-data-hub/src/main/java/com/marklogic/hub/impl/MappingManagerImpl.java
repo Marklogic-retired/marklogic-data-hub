@@ -15,71 +15,110 @@
  */
 package com.marklogic.hub.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.ext.helper.LoggingObject;
-import com.marklogic.client.ext.modulesloader.impl.AssetFileLoader;
-import com.marklogic.client.ext.modulesloader.impl.DefaultModulesLoader;
-import com.marklogic.client.extensions.ResourceManager;
-import com.marklogic.client.extensions.ResourceServices;
-import com.marklogic.client.io.JacksonHandle;
-import com.marklogic.client.io.StringHandle;
-import com.marklogic.client.util.RequestParameters;
-import com.marklogic.hub.DatabaseKind;
-import com.marklogic.hub.EntityManager;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.MappingManager;
-import com.marklogic.hub.error.EntityServicesGenerationException;
+import com.marklogic.hub.error.DataHubProjectException;
 import com.marklogic.hub.mapping.Mapping;
+import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.HubModuleManager;
 import org.apache.commons.io.FileUtils;
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.Resource;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
 
 public class MappingManagerImpl extends LoggingObject implements MappingManager {
-    private static final String MAPPING_FILE_EXTENSION = ".mapping.json";
+    public static final String MAPPING_FILE_EXTENSION = ".mapping.json";
 
     private HubConfig hubConfig;
+
 
     public MappingManagerImpl(HubConfig hubConfig) {
         this.hubConfig = hubConfig;
     }
 
-    @Override public void createMapping(String mappingName) {
+    @Override public Mapping createMapping(String mappingName) {
+        Mapping newMap = null;
+
+        if(getMapping(mappingName) != null){
+
+        }
+
+        return newMap;
+    }
+
+    @Override public Mapping createMappingFromJSON(String json) {
+        Mapping newMap = null;
+
+
+        return newMap;
+    }
+
+    @Override public void deleteMapping(String mappingName) throws IOException {
+        Path dir = getMappingDirPath(mappingName);
+        if (dir.toFile().exists()) {
+            FileUtils.deleteDirectory(dir.toFile());
+        }
+    }
+
+    @Override public void saveMapping(Mapping mapping) throws IOException{
+        Scaffolding scaffold = Scaffolding.create(hubConfig.getProjectDir(), hubConfig.newStagingManageClient());
+        scaffold.createMappingDir(mapping.getName());
+
+        try {
+            String  mappingString = mapping.serialize();
+            Path dir = getMappingDirPath(mapping.getName());
+            if (!dir.toFile().exists()) {
+                dir.toFile().mkdirs();
+            }
+            String mappingFileName = mapping.getName() + "-" + mapping.getVersion() + MAPPING_FILE_EXTENSION;
+            File file = Paths.get(dir.toString(), mappingFileName).toFile();
+
+            ObjectMapper objectMapper = new ObjectMapper();
+            FileOutputStream fileOutputStream = new FileOutputStream(file);
+            objectMapper.writerWithDefaultPrettyPrinter().writeValue(fileOutputStream, mappingString);
+            fileOutputStream.flush();
+            fileOutputStream.close();
+        } catch (JsonProcessingException e) {
+            throw new DataHubProjectException("Could not serialize mapping for project.");
+        }
 
     }
 
-    @Override public void createMappingFromJSON(String json) {
-
-    }
-
-    @Override public void deleteMapping(String mappingName) {
-
-    }
-
-    @Override public ArrayList<String> getMappings() {
+    @Override public ArrayList<String> getMappingsNames() {
         ArrayList<String> mappingNames = new ArrayList<>();
 
         return mappingNames;
     }
 
+    @Override public ArrayList<Mapping> getMappings() {
+        ArrayList<Mapping> mappings = new ArrayList<>();
+
+        return mappings;
+    }
+
 
     @Override public Mapping getMapping(String mappingName) {
-        Mapping mapping = null;
+        ArrayList<Mapping> mappings = getMappings();
 
-        return mapping;
+        for (Mapping mapping : mappings) {
+            if (mapping.getName().equals(mappingName)) {
+                return mapping;
+            }
+        }
+        throw new DataHubProjectException("Mapping not found in project: " + mappingName);
     }
 
 
@@ -88,6 +127,10 @@ public class MappingManagerImpl extends LoggingObject implements MappingManager 
 
 
         return "";
+    }
+
+    private Path getMappingDirPath(String mappingName){
+        return Paths.get(hubConfig.getHubMappingsDir().toString(), mappingName);
     }
 
 

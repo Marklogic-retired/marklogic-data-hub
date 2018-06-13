@@ -65,7 +65,7 @@ public interface Scaffolding {
      * Creates a mapping given a string name
      * @param mappingName - the name of the mapping as string
      */
-    void createMapping(String mappingName);
+    void createMappingDir(String mappingName);
 
     /**
      * Creates a flow for an entity with Entity Services model as default

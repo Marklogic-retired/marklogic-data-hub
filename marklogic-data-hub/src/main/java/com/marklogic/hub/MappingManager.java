@@ -18,6 +18,7 @@ package com.marklogic.hub;
 import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.marklogic.hub.mapping.Mapping;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 public interface MappingManager {
@@ -26,25 +27,35 @@ public interface MappingManager {
      * Creates a mapping given a string name
      * @param mappingName
      */
-    void createMapping(String mappingName);
+    Mapping createMapping(String mappingName);
 
     /**
      * Creates a mapping from a given JSON string
      * @param json
      */
-    void createMappingFromJSON(String json);
+    Mapping createMappingFromJSON(String json);
 
+    /**
+     * Saves a map to disk
+     * @param mapping - the mapping object to be saved
+     */
+    void saveMapping(Mapping mapping) throws IOException;
 
     /**
      * Deletes a defined mapping by string name
      * @param mappingName
      */
-    void deleteMapping(String mappingName);
+    void deleteMapping(String mappingName) throws IOException;
+
+    /**
+     * Returns a list of all mappings currently defined
+     */
+    ArrayList<Mapping> getMappings();
 
     /**
      * Returns a string list of names for all mappings currently defined
      */
-    ArrayList<String> getMappings();
+    ArrayList<String> getMappingsNames();
 
     /**
      * Returns a mapping based on the provided name
@@ -59,4 +70,5 @@ public interface MappingManager {
      * @return string json respresentation of the mapping object
      */
     String getMappingAsJSON(String mappingName);
+
 }
