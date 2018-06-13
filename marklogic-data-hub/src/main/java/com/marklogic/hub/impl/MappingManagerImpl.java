@@ -40,13 +40,21 @@ import java.util.stream.Collectors;
 
 
 public class MappingManagerImpl extends LoggingObject implements MappingManager {
-    public static final String MAPPING_FILE_EXTENSION = ".mapping.json";
 
+    private static MappingManagerImpl mappingManager;
+    public final String MAPPING_FILE_EXTENSION = ".mapping.json";
     private HubConfig hubConfig;
 
 
-    public MappingManagerImpl(HubConfig hubConfig) {
+    private MappingManagerImpl(HubConfig hubConfig) {
         this.hubConfig = hubConfig;
+    }
+
+    static public MappingManager getInstance(HubConfig hubConfig){
+        if(mappingManager == null){
+            mappingManager = new MappingManagerImpl(hubConfig);
+        }
+        return (MappingManager)mappingManager;
     }
 
     @Override public Mapping createMapping(String mappingName) {

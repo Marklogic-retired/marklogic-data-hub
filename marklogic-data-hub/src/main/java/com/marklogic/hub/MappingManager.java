@@ -16,12 +16,22 @@
 package com.marklogic.hub;
 
 import com.fasterxml.jackson.databind.util.JSONPObject;
+import com.marklogic.hub.impl.MappingManagerImpl;
 import com.marklogic.hub.mapping.Mapping;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
 public interface MappingManager {
+
+    /**
+     * Grabs the Mapping Manager instance and uses the given hubConfig
+     * @param hubConfig
+     * @return A mapping manager instance
+     */
+    static MappingManager getMappingManager(HubConfig hubConfig) {
+        return MappingManagerImpl.getInstance(hubConfig);
+    };
 
     /**
      * Creates a mapping given a string name
