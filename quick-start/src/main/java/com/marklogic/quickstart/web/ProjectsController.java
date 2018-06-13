@@ -19,6 +19,7 @@ package com.marklogic.quickstart.web;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubConfigBuilder;
 import com.marklogic.quickstart.model.HubSettings;
@@ -89,6 +90,13 @@ public class ProjectsController {
             HubConfig config = HubConfigBuilder.newHubConfigBuilder(project.path)
                 .build();
             config = om.readerForUpdating(config).readValue(hubConfig);
+            AppConfig appConfig = config.getAppConfig();
+            if (hubConfig.get("host") != null) {
+                appConfig.setHost(hubConfig.get("host").asText());
+            }
+            if (hubConfig.get("name") != null) {
+                appConfig.setName(hubConfig.get("name").asText());
+            }
             project.initialize(config);
             return project;
         }

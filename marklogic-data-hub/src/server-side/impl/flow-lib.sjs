@@ -621,4 +621,3 @@ module.exports = {
   runWriters: runWriters,
   runWriter: runWriter
 };
-

@@ -797,6 +797,37 @@ public class EndToEndFlowTests extends HubTestBase {
 
         return tests;
     }
+    
+    //The XML file in the following input flows have comments, processing instruction nodes in addition to root node.
+    // DHFPROD-767 (Github #882)
+    @TestFactory
+    public List<DynamicTest> generateExtranodesTests() {
+        createFlow("extra-nodes", CodeFormat.XQUERY, DataFormat.XML, FlowType.INPUT, false, (CreateFlowListener)null);
+        createFlow("extra-nodes", CodeFormat.JAVASCRIPT, DataFormat.XML, FlowType.INPUT, false, (CreateFlowListener)null);
+        List<DynamicTest> tests = new ArrayList<>();
+        allCombos((codeFormat, dataFormat, flowType, useEs) -> {
+            String prefix = "extra-nodes";
+            String flowName = getFlowName(prefix, codeFormat, dataFormat, flowType, useEs);
+            if (flowType.equals(FlowType.INPUT) && !useEs && dataFormat.equals(DataFormat.XML)) {
+	            tests.add(DynamicTest.dynamicTest(flowName + " MLCP", () -> {
+	                Map<String, Object> options = new HashMap<>();
+	                FinalCounts finalCounts = new FinalCounts(1, 0, 1, 1, 0, 0, 1, 0, 0, 0, "FINISHED");
+	                testInputFlowViaMlcp(prefix, "-extra-nodes", stagingClient, codeFormat, DataFormat.XML, false, options, finalCounts);
+	            }));
+	            tests.add(DynamicTest.dynamicTest(flowName + " REST", () -> {
+	                Map<String, Object> options = new HashMap<>();
+	                FinalCounts finalCounts = new FinalCounts(1, 0, 1, 0, 0, 0, 0, 0, 0, 0, "FINISHED");
+	                testInputFlowViaREST(prefix, "-extra-nodes", codeFormat, DataFormat.XML, false, false, options, finalCounts);
+	            }));
+	            tests.add(DynamicTest.dynamicTest(flowName + " DMSDK", () -> {
+	                Map<String, Object> options = new HashMap<>();
+	                FinalCounts finalCounts = new FinalCounts(1, 0, 1, 0, 0, 0, 0, 0, 0, 0, "FINISHED");
+	                testInputFlowViaDMSDK(prefix, "-extra-nodes", codeFormat, DataFormat.XML, false, false, options, finalCounts);
+	            }));
+            }
+        });
+        return tests;
+    }
 
     private String getFlowName(String prefix, CodeFormat codeFormat, DataFormat dataFormat, FlowType flowType, boolean useEs) {
         return prefix + "-" + flowType.toString() + "-" + codeFormat.toString() + "-" + dataFormat.toString() + (useEs ? "-es" : "" );
@@ -1073,6 +1104,12 @@ public class EndToEndFlowTests extends HubTestBase {
             else if (prefix.equals("1x-legacy")) {
                 filename = "1x";
             }
+            else if (prefix.equals("extra-nodes")) {
+            	filename = "extra-nodes";
+            	if(codeFormat.equals(CodeFormat.JAVASCRIPT)) {
+            		filename = filename+"-js";
+            	}
+            }
             if (dataFormat.equals(DataFormat.JSON)) {
                 String expected = getResource("e2e-test/" + filename + "." + dataFormat.toString());
                 String actual = stagingDocMgr.read("/input" + fileSuffix + "." + dataFormat.toString()).next().getContent(new StringHandle()).get();
@@ -1183,6 +1220,12 @@ public class EndToEndFlowTests extends HubTestBase {
             else if (prefix.equals("1x-legacy")) {
                 filename = "1x";
             }
+            else if (prefix.equals("extra-nodes")) {
+            	filename = "extra-nodes";
+            	if(codeFormat.equals(CodeFormat.JAVASCRIPT)) {
+            		filename = filename+"-js";
+            	}
+            }
             if (dataFormat.equals(DataFormat.JSON)) {
                 String expected = getResource("e2e-test/" + filename + "." + dataFormat.toString());
                 String actual = stagingDocMgr.read("/input" + fileSuffix + "." + dataFormat.toString()).next().getContent(new StringHandle()).get();
@@ -1263,6 +1306,12 @@ public class EndToEndFlowTests extends HubTestBase {
             }
             else if (prefix.equals("1x-legacy")) {
                 filename = "1x";
+            }
+            else if (prefix.equals("extra-nodes")) {
+            	filename = "extra-nodes";
+            	if(codeFormat.equals(CodeFormat.JAVASCRIPT)) {
+            		filename = filename+"-js";
+            	}
             }
             if (dataFormat.equals(DataFormat.JSON)) {
                 String expected = getResource("e2e-test/" + filename + "." + dataFormat.toString());
