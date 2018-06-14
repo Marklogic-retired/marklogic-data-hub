@@ -44,7 +44,6 @@ import java.util.stream.Collectors;
 public class MappingManagerImpl extends LoggingObject implements MappingManager {
 
     private static MappingManagerImpl mappingManager = new MappingManagerImpl(null);
-    public final String MAPPING_FILE_EXTENSION = ".mapping.json";
     private HubConfig hubConfig;
 
 
@@ -60,13 +59,11 @@ public class MappingManagerImpl extends LoggingObject implements MappingManager 
     }
 
     @Override public Mapping createMapping(String mappingName) {
-        Mapping newMap = null;
-
         if(getMapping(mappingName) != null){
-            newMap = Mapping.create(mappingName);
+           return Mapping.create(mappingName);
+        } else {
+            throw new DataHubProjectException("Mapping with that name already exists");
         }
-
-        return newMap;
     }
 
     @Override public Mapping createMappingFromJSON(String json) throws IOException {
@@ -82,10 +79,17 @@ public class MappingManagerImpl extends LoggingObject implements MappingManager 
     }
 
     @Override public void saveMapping(Mapping mapping) {
+        saveMapping(mapping, false);
+    }
+
+    @Override public void saveMapping(Mapping mapping, boolean autoIncrement) {
         Scaffolding scaffold = Scaffolding.create(hubConfig.getProjectDir(), hubConfig.newStagingManageClient());
         scaffold.createMappingDir(mapping.getName());
 
         try {
+            if(autoIncrement){
+                mapping.incrementVersion();;
+            }
             String mappingString = mapping.serialize();
             Path dir = getMappingDirPath(mapping.getName());
             if (!dir.toFile().exists()) {
@@ -93,7 +97,7 @@ public class MappingManagerImpl extends LoggingObject implements MappingManager 
             }
             String mappingFileName = mapping.getName() + "-" + mapping.getVersion() + MAPPING_FILE_EXTENSION;
             File file = Paths.get(dir.toString(), mappingFileName).toFile();
-
+            //create the object mapper to pretty print to disk
             ObjectMapper objectMapper = new ObjectMapper();
             objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
             Object json = objectMapper.readValue(mappingString, Object.class);
@@ -106,7 +110,6 @@ public class MappingManagerImpl extends LoggingObject implements MappingManager 
         } catch (IOException e){
             throw new DataHubProjectException("Could not write mapping to for project.");
         }
-
     }
 
     @Override public ArrayList<String> getMappingsNames() {

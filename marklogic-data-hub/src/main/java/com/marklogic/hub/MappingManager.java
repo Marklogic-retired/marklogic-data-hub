@@ -25,6 +25,11 @@ import java.util.ArrayList;
 public interface MappingManager {
 
     /**
+     * String value for the mapping file extension
+     */
+    String MAPPING_FILE_EXTENSION = ".mapping.json";
+
+    /**
      * Grabs the Mapping Manager instance and uses the given hubConfig
      * @param hubConfig
      * @return A mapping manager instance
@@ -50,6 +55,13 @@ public interface MappingManager {
      * @param mapping - the mapping object to be saved
      */
     void saveMapping(Mapping mapping);
+
+    /**
+     * Saves a map to disk, incrementing its version by 1
+     * @param mapping the mapping object to be saved
+     * @param incrementVersion - true to increment version, false if not to
+     */
+    void saveMapping(Mapping mapping, boolean incrementVersion);
 
     /**
      * Deletes a defined mapping by string name

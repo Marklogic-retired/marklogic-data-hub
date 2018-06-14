@@ -16,15 +16,11 @@
 
 package com.marklogic.hub.mapping;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 
 @JsonPropertyOrder({ "language", "name", "description", "version",  "targetEntityType", "sourceContext", "properties"})
@@ -35,13 +31,13 @@ public class MappingImpl implements Mapping {
     private String targetEntityType;
     private String description;
     private String language;
-    private String version;
+    private int version;
     private HashMap<String, ObjectNode> properties;
 
     public MappingImpl(String name) {
         this.name = name;
         this.language = "zxx";
-        this.version = "1";
+        this.version = 1;
         this.description = "Default description";
         this.sourceContext = ".";
         this.properties = new HashMap<>();
@@ -57,12 +53,12 @@ public class MappingImpl implements Mapping {
     }
 
     @Override
-    public String getVersion() {
+    public int getVersion() {
         return version;
     }
 
     @Override
-    public void setVersion(String version) {
+    public void setVersion(int version) {
         this.version = version;
     }
 
@@ -130,5 +126,10 @@ public class MappingImpl implements Mapping {
     public String serialize() throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         return mapper.writeValueAsString(this);
+    }
+
+    @Override
+    public void incrementVersion() {
+        setVersion(getVersion()+1);
     }
 }

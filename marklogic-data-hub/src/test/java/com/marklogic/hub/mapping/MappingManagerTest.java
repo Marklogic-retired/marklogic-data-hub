@@ -38,6 +38,7 @@ import java.util.HashMap;
 
 import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual;
 import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MappingManagerTest extends HubTestBase {
     static Path projectPath = Paths.get(PROJECT_PATH).toAbsolutePath();
@@ -54,9 +55,10 @@ public class MappingManagerTest extends HubTestBase {
 
     @Test
     public void createMapping() {
+        //Create our mapping via the exposed java api
         ObjectMapper mapper = new ObjectMapper();
-        String entityName = "my-fun-test";
-        Mapping testMap = Mapping.create(entityName);
+        String mappingName = "my-fun-test";
+        Mapping testMap = Mapping.create(mappingName);
         testMap.setDescription("This is a test.");
         testMap.setSourceContext("/fake/path");
         testMap.setTargetEntityType("http://marklogic.com/example/Schema-0.0.2/Person");
@@ -73,8 +75,23 @@ public class MappingManagerTest extends HubTestBase {
         MappingManager manager = MappingManager.getMappingManager(getHubConfig());
         manager.saveMapping(testMap);
 
+        //now let's see if it's on disk!
+        String mappingFileName = testMap.getName() + "-" + testMap.getVersion() + MappingManager.MAPPING_FILE_EXTENSION;
+        assertTrue(Paths.get((getHubConfig().getHubMappingsDir().toString()), mappingName, mappingFileName).toFile().exists());
 
+    }
 
+    public void getMapping() {
+        //here, we're going to get the mapping we just made
+
+    }
+
+    public void getMappingFromJSON() {
+        //Now let's get the same mapping, but out of band off disk as JSON
+    }
+
+    public void updateMapping() {
+        //Get the mapping, update it, and save the new version back
     }
 
     private void installMappings() {

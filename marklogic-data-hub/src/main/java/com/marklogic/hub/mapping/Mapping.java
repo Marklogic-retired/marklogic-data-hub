@@ -25,13 +25,13 @@ public interface Mapping {
      * Returns the mapping version
      * @return mapping version
      */
-    String getVersion();
+    int getVersion();
 
     /**
      * Sets the version for the mapping
      * @param version
      */
-    void setVersion(String version);
+    void setVersion(int version);
 
     /**
      * Gets the hashmap of the properties mapping
@@ -111,4 +111,9 @@ public interface Mapping {
      * @throws JsonProcessingException
      */
     String serialize() throws JsonProcessingException;
+
+    /**
+     * Automatically increments the version of the mapping by 1
+     */
+    void incrementVersion();
 }
