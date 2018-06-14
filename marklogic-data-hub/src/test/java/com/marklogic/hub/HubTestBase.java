@@ -15,12 +15,7 @@
  */
 package com.marklogic.hub;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -43,6 +38,12 @@ import javax.net.ssl.TrustManagerFactory;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import com.marklogic.hub.error.DataHubConfigurationException;
 import com.marklogic.hub.util.ComboListener;
@@ -1007,6 +1008,17 @@ public class HubTestBase {
         }
     }
 
+    protected void debugOutput(Document xmldoc) throws TransformerException {
+        debugOutput(xmldoc, System.out);
+    }
+
+    protected void debugOutput(Document xmldoc, OutputStream os) throws TransformerException {
+        TransformerFactory tf = TransformerFactory.newInstance();
+        Transformer transformer = tf.newTransformer();
+        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+        transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+        transformer.transform(new DOMSource(xmldoc), new StreamResult(os));
+    }
 }
 
 

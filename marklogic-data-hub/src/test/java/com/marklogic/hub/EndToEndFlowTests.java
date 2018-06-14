@@ -42,6 +42,7 @@ import org.skyscreamer.jsonassert.JSONCompareMode;
 import org.skyscreamer.jsonassert.JSONCompareResult;
 import org.w3c.dom.Document;
 
+import javax.xml.transform.TransformerException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -988,7 +989,7 @@ public class EndToEndFlowTests extends HubTestBase {
         }
     }
 
-    private void testInputFlowViaMlcp(String prefix, String fileSuffix, DatabaseClient databaseClient, CodeFormat codeFormat, DataFormat dataFormat, boolean useEs, Map<String, Object> options, FinalCounts finalCounts) throws InterruptedException {
+    private void testInputFlowViaMlcp(String prefix, String fileSuffix, DatabaseClient databaseClient, CodeFormat codeFormat, DataFormat dataFormat, boolean useEs, Map<String, Object> options, FinalCounts finalCounts) throws InterruptedException, TransformerException {
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
 
         String flowName = getFlowName(prefix, codeFormat, dataFormat, FlowType.INPUT, useEs);
@@ -1080,6 +1081,8 @@ public class EndToEndFlowTests extends HubTestBase {
             } else {
                 Document expected = getXmlFromResource("e2e-test/" + filename + "." + dataFormat.toString());
                 Document actual = stagingDocMgr.read("/input" + fileSuffix + "." + dataFormat.toString()).next().getContent(new DOMHandle()).get();
+                //debugOutput(expected);
+                //debugOutput(actual);
                 assertXMLEqual(expected, actual);
             }
         }
