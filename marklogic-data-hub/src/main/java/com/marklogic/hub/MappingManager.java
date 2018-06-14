@@ -43,13 +43,13 @@ public interface MappingManager {
      * Creates a mapping from a given JSON string
      * @param json
      */
-    Mapping createMappingFromJSON(String json);
+    Mapping createMappingFromJSON(String json) throws IOException;
 
     /**
      * Saves a map to disk
      * @param mapping - the mapping object to be saved
      */
-    void saveMapping(Mapping mapping) throws IOException;
+    void saveMapping(Mapping mapping);
 
     /**
      * Deletes a defined mapping by string name

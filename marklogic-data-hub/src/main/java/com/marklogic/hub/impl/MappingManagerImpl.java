@@ -18,11 +18,13 @@ package com.marklogic.hub.impl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.marklogic.client.ext.helper.LoggingObject;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.MappingManager;
 import com.marklogic.hub.error.DataHubProjectException;
 import com.marklogic.hub.mapping.Mapping;
+import com.marklogic.hub.mapping.MappingImpl;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.HubModuleManager;
 import org.apache.commons.io.FileUtils;
@@ -41,7 +43,7 @@ import java.util.stream.Collectors;
 
 public class MappingManagerImpl extends LoggingObject implements MappingManager {
 
-    private static MappingManagerImpl mappingManager;
+    private static MappingManagerImpl mappingManager = new MappingManagerImpl(null);
     public final String MAPPING_FILE_EXTENSION = ".mapping.json";
     private HubConfig hubConfig;
 
@@ -51,7 +53,7 @@ public class MappingManagerImpl extends LoggingObject implements MappingManager 
     }
 
     static public MappingManager getInstance(HubConfig hubConfig){
-        if(mappingManager == null){
+        if(mappingManager == null || mappingManager.hubConfig == null){
             mappingManager = new MappingManagerImpl(hubConfig);
         }
         return (MappingManager)mappingManager;
@@ -61,17 +63,15 @@ public class MappingManagerImpl extends LoggingObject implements MappingManager 
         Mapping newMap = null;
 
         if(getMapping(mappingName) != null){
-
+            newMap = Mapping.create(mappingName);
         }
 
         return newMap;
     }
 
-    @Override public Mapping createMappingFromJSON(String json) {
-        Mapping newMap = null;
-
-
-        return newMap;
+    @Override public Mapping createMappingFromJSON(String json) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.readValue(json, MappingImpl.class);
     }
 
     @Override public void deleteMapping(String mappingName) throws IOException {
@@ -81,12 +81,12 @@ public class MappingManagerImpl extends LoggingObject implements MappingManager 
         }
     }
 
-    @Override public void saveMapping(Mapping mapping) throws IOException{
+    @Override public void saveMapping(Mapping mapping) {
         Scaffolding scaffold = Scaffolding.create(hubConfig.getProjectDir(), hubConfig.newStagingManageClient());
         scaffold.createMappingDir(mapping.getName());
 
         try {
-            String  mappingString = mapping.serialize();
+            String mappingString = mapping.serialize();
             Path dir = getMappingDirPath(mapping.getName());
             if (!dir.toFile().exists()) {
                 dir.toFile().mkdirs();
@@ -95,12 +95,16 @@ public class MappingManagerImpl extends LoggingObject implements MappingManager 
             File file = Paths.get(dir.toString(), mappingFileName).toFile();
 
             ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+            Object json = objectMapper.readValue(mappingString, Object.class);
             FileOutputStream fileOutputStream = new FileOutputStream(file);
-            objectMapper.writerWithDefaultPrettyPrinter().writeValue(fileOutputStream, mappingString);
+            fileOutputStream.write(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(json).getBytes());
             fileOutputStream.flush();
             fileOutputStream.close();
         } catch (JsonProcessingException e) {
             throw new DataHubProjectException("Could not serialize mapping for project.");
+        } catch (IOException e){
+            throw new DataHubProjectException("Could not write mapping to for project.");
         }
 
     }

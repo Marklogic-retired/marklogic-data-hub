@@ -17,6 +17,7 @@
 package com.marklogic.hub.mapping;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -26,6 +27,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 
+@JsonPropertyOrder({ "language", "name", "description", "version",  "targetEntityType", "sourceContext", "properties"})
 public class MappingImpl implements Mapping {
 
     private String name;
@@ -43,14 +45,16 @@ public class MappingImpl implements Mapping {
         this.description = "Default description";
         this.sourceContext = ".";
         this.properties = new HashMap<>();
+        properties.put("id", createProperty("sourcedFrom", "id"));
         this.targetEntityType = "";
     }
 
-    @Override public Mapping fromJSON(String json) throws IOException {
+    private ObjectNode createProperty(String name, String value) {
         ObjectMapper mapper = new ObjectMapper();
-        return mapper.readValue(json, MappingImpl.class);
+        ObjectNode node = mapper.createObjectNode();
+        node.put(name, value);
+        return node;
     }
-
 
     @Override
     public String getVersion() {
@@ -125,7 +129,6 @@ public class MappingImpl implements Mapping {
     @Override
     public String serialize() throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
-        mapper.enable(SerializationFeature.INDENT_OUTPUT);
         return mapper.writeValueAsString(this);
     }
 }

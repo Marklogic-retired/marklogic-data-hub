@@ -17,9 +17,11 @@ package com.marklogic.hub.mapping;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.hub.EntityManager;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
+import com.marklogic.hub.MappingManager;
 import com.marklogic.hub.scaffold.impl.ScaffoldingImpl;
 import com.marklogic.hub.util.FileUtil;
 import com.marklogic.hub.util.HubModuleManager;
@@ -41,17 +43,37 @@ public class MappingManagerTest extends HubTestBase {
     static Path projectPath = Paths.get(PROJECT_PATH).toAbsolutePath();
     private static File projectDir = projectPath.toFile();
 
-   // @Before
+    @Before
     public void clearDbs() {
         deleteProjectDir();
         basicSetup();
-        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_MODULES_DB_NAME);
-        installHubModules();
+        //clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_MODULES_DB_NAME);
+        //installHubModules();
         getPropsMgr().deletePropertiesFile();
     }
 
     @Test
     public void createMapping() {
+        ObjectMapper mapper = new ObjectMapper();
+        String entityName = "my-fun-test";
+        Mapping testMap = Mapping.create(entityName);
+        testMap.setDescription("This is a test.");
+        testMap.setSourceContext("/fake/path");
+        testMap.setTargetEntityType("http://marklogic.com/example/Schema-0.0.2/Person");
+        HashMap<String, ObjectNode> properties = new HashMap<>();
+        ObjectNode id = mapper.createObjectNode();
+        id.put("sourcedFrom", "id");
+        properties.put("id", id);
+        ObjectNode name = mapper.createObjectNode();
+        name.put("sourcedFrom", "name");
+        properties.put("name", name);
+        testMap.setProperties(properties);
+        //we should now have a fully fleshed out, in memory mapping object that was created
+        //So let's try saving it!
+        MappingManager manager = MappingManager.getMappingManager(getHubConfig());
+        manager.saveMapping(testMap);
+
+
 
     }
 
