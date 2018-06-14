@@ -36,6 +36,7 @@ export class HarmonizeFlowOptionsComponent implements OnInit, OnChanges {
   keyVals: any;
   keyValTitle = 'Options';
   hasDocs: boolean = false;
+  mapPrefix: string = 'dhf-map-';  // TODO: remove need for prefix.  Bake into mapService.getName()
 
   constructor(
     private searchService: SearchService,
@@ -87,14 +88,12 @@ export class HarmonizeFlowOptionsComponent implements OnInit, OnChanges {
   }
 
   loadMap(flowName) {
-    let localString = localStorage.getItem("mapping");
+    let storedMap = this.mapPrefix + this.mapService.getName(this.flow.entityName, this.flow.flowName);
+    let localString = localStorage.getItem(storedMap);
     if (localString) {
       let localObj = JSON.parse(localString);
-      if (localObj[this.flow.entityName]) {
-        if (localObj[this.flow.entityName][flowName]) {
-          this.mapName = localObj[this.flow.entityName][flowName].name;
-        }
-      }
+      if (localObj.mapping && localObj.mapping.name)
+        this.mapName = localObj.mapping.name;
     }
   }
 
