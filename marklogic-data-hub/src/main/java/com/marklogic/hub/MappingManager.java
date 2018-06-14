@@ -67,7 +67,7 @@ public interface MappingManager {
      * Deletes a defined mapping by string name
      * @param mappingName
      */
-    void deleteMapping(String mappingName) throws IOException;
+    void deleteMapping(String mappingName);
 
     /**
      * Returns a list of all mappings currently defined

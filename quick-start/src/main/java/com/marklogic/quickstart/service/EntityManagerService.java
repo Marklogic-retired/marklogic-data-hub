@@ -33,7 +33,7 @@ import com.marklogic.quickstart.model.PluginModel;
 import com.marklogic.quickstart.model.entity_services.EntityModel;
 import com.marklogic.quickstart.model.entity_services.HubUIData;
 import com.marklogic.quickstart.model.entity_services.InfoType;
-import com.marklogic.quickstart.util.FileUtil;
+import com.marklogic.hub.util.FileUtil;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

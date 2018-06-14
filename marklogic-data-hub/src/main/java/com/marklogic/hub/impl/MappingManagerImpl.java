@@ -26,6 +26,7 @@ import com.marklogic.hub.error.DataHubProjectException;
 import com.marklogic.hub.mapping.Mapping;
 import com.marklogic.hub.mapping.MappingImpl;
 import com.marklogic.hub.scaffold.Scaffolding;
+import com.marklogic.hub.util.FileUtil;
 import com.marklogic.hub.util.HubModuleManager;
 import org.apache.commons.io.FileUtils;
 
@@ -71,10 +72,14 @@ public class MappingManagerImpl extends LoggingObject implements MappingManager 
         return mapper.readValue(json, MappingImpl.class);
     }
 
-    @Override public void deleteMapping(String mappingName) throws IOException {
+    @Override public void deleteMapping(String mappingName) {
         Path dir = getMappingDirPath(mappingName);
         if (dir.toFile().exists()) {
-            FileUtils.deleteDirectory(dir.toFile());
+            try {
+                FileUtils.deleteDirectory(dir.toFile());
+            } catch (IOException e){
+                throw new DataHubProjectException("Could not delete mapping for project.");
+            }
         }
     }
 
@@ -108,18 +113,17 @@ public class MappingManagerImpl extends LoggingObject implements MappingManager 
         } catch (JsonProcessingException e) {
             throw new DataHubProjectException("Could not serialize mapping for project.");
         } catch (IOException e){
-            throw new DataHubProjectException("Could not write mapping to for project.");
+            throw new DataHubProjectException("Could not write mapping to disk for project.");
         }
     }
 
     @Override public ArrayList<String> getMappingsNames() {
-        ArrayList<String> mappingNames = new ArrayList<>();
-
-        return mappingNames;
+        return (ArrayList<String>)FileUtil.listDirectFolders(hubConfig.getHubMappingsDir().toFile());
     }
 
     @Override public ArrayList<Mapping> getMappings() {
         ArrayList<Mapping> mappings = new ArrayList<>();
+
 
         return mappings;
     }

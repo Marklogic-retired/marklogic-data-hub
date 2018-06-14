@@ -43,6 +43,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class MappingManagerTest extends HubTestBase {
     static Path projectPath = Paths.get(PROJECT_PATH).toAbsolutePath();
     private static File projectDir = projectPath.toFile();
+    private        MappingManager manager = MappingManager.getMappingManager(getHubConfig());
+    private        String mappingName = "my-fun-test";
 
     @Before
     public void clearDbs() {
@@ -57,7 +59,6 @@ public class MappingManagerTest extends HubTestBase {
     public void createMapping() {
         //Create our mapping via the exposed java api
         ObjectMapper mapper = new ObjectMapper();
-        String mappingName = "my-fun-test";
         Mapping testMap = Mapping.create(mappingName);
         testMap.setDescription("This is a test.");
         testMap.setSourceContext("/fake/path");
@@ -72,7 +73,6 @@ public class MappingManagerTest extends HubTestBase {
         testMap.setProperties(properties);
         //we should now have a fully fleshed out, in memory mapping object that was created
         //So let's try saving it!
-        MappingManager manager = MappingManager.getMappingManager(getHubConfig());
         manager.saveMapping(testMap);
 
         //now let's see if it's on disk!
@@ -81,8 +81,18 @@ public class MappingManagerTest extends HubTestBase {
 
     }
 
+    @Test
     public void getMapping() {
         //here, we're going to get the mapping we just made
+        Mapping testMap = manager.getMapping(mappingName);
+        assertTrue(testMap != null);
+        assertTrue(testMap.getName() == mappingName);
+
+    }
+
+    @Test
+    public void getMappingNames() {
+        //get a list of names to be returned of exiting mappings
 
     }
 
@@ -92,6 +102,24 @@ public class MappingManagerTest extends HubTestBase {
 
     public void updateMapping() {
         //Get the mapping, update it, and save the new version back
+    }
+
+    public void deleteMapping() {
+        //now let's erase the mapping
+        //check to see if its there
+        Mapping testMap = manager.getMapping(mappingName);
+        assertTrue(testMap != null);
+        //check to make sure its on disk
+        String mappingFileName = testMap.getName() + "-" + testMap.getVersion() + MappingManager.MAPPING_FILE_EXTENSION;
+        assertTrue(Paths.get((getHubConfig().getHubMappingsDir().toString()), mappingName, mappingFileName).toFile().exists());
+
+        //now let's delete it
+        manager.deleteMapping(mappingName);
+
+        //make sure it's gone off disk
+        assertTrue(manager.getMapping(mappingName) == null);
+        assertFalse(Paths.get((getHubConfig().getHubMappingsDir().toString()), mappingName, mappingFileName).toFile().exists());
+
     }
 
     private void installMappings() {

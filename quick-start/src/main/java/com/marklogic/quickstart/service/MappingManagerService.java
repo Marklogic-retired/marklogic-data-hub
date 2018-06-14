@@ -18,33 +18,22 @@ package com.marklogic.quickstart.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.marklogic.hub.MappingManager;
-import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.error.DataHubProjectException;
-import com.marklogic.hub.flow.FlowType;
 import com.marklogic.hub.scaffold.Scaffolding;
+import com.marklogic.hub.util.FileUtil;
 import com.marklogic.quickstart.EnvironmentAware;
-import com.marklogic.quickstart.model.EnvironmentConfig;
-import com.marklogic.quickstart.model.FlowModel;
 import com.marklogic.quickstart.model.MappingModel;
-import com.marklogic.quickstart.model.PluginModel;
-import com.marklogic.quickstart.util.FileUtil;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class MappingManagerService extends EnvironmentAware {
