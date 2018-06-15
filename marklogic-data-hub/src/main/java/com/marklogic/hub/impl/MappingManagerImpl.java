@@ -34,6 +34,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -123,29 +124,79 @@ public class MappingManagerImpl extends LoggingObject implements MappingManager 
 
     @Override public ArrayList<Mapping> getMappings() {
         ArrayList<Mapping> mappings = new ArrayList<>();
-
+        ArrayList<String> mappingNames = getMappingsNames();
+        for(String mappingName : mappingNames) {
+          Mapping newMap = getMappingVersion(mappingName);
+          if(newMap != null) {
+              mappings.add(newMap);
+          }
+        }
 
         return mappings;
     }
 
+    private Mapping getMappingVersion(String mappingName) {
+        return  getMappingVersion(mappingName, -1);
+    }
 
-    @Override public Mapping getMapping(String mappingName) {
-        ArrayList<Mapping> mappings = getMappings();
-
-        for (Mapping mapping : mappings) {
-            if (mapping.getName().equals(mappingName)) {
-                return mapping;
+    private Mapping getMappingVersion(String mappingName, int version){
+        int mappingExtensionCount = MAPPING_FILE_EXTENSION.length();
+        Path mappingPath = Paths.get(hubConfig.getHubMappingsDir().toString(), mappingName);
+        List<String> fileNames = FileUtil.listDirectFiles(mappingPath);
+        String targetFileName = null;
+        int    highestVersion  = 0;
+        for(String fileName : fileNames) {
+            if(!(fileName.substring(0,mappingName.length()).equalsIgnoreCase(mappingName.toLowerCase()))
+                || !(fileName.substring(fileName.length()-mappingExtensionCount).equalsIgnoreCase(MAPPING_FILE_EXTENSION))
+                ){
+                continue;
+            }
+            String parsedFileNameVersion = fileName.replace(mappingName, "").replace(MAPPING_FILE_EXTENSION, "").replaceAll("-", "");
+            int fileNameVersion = Integer.parseInt(parsedFileNameVersion);
+            if( version == -1 && fileNameVersion > highestVersion){
+                highestVersion = fileNameVersion;
+                targetFileName = fileName;
+            } else if(version != -1 && fileNameVersion == version) {
+                targetFileName = fileName;
+                break;
             }
         }
-        throw new DataHubProjectException("Mapping not found in project: " + mappingName);
+        if(targetFileName !=null ){
+            try {
+                String jsonMap = new String(Files.readAllBytes(mappingPath.resolve(targetFileName)));
+                Mapping newMap = createMappingFromJSON(jsonMap);
+                if(newMap != null && newMap.getName().length() > 0) {
+                    return newMap;
+                }
+            } catch (IOException e) {
+                throw new DataHubProjectException("Could not read mapping on disk.");
+            }
+        }
+        return null;
+    }
+
+    @Override public Mapping getMapping(String mappingName) {
+
+        Mapping foundMap = getMappingVersion(mappingName);
+        if(foundMap != null){
+            return foundMap;
+        } else {
+            throw new DataHubProjectException("Mapping not found in project: " + mappingName);
+        }
     }
 
 
     @Override public String getMappingAsJSON(String mappingName) {
-        Mapping mapping = null;
-
-
-        return "";
+        Mapping mapping = getMapping(mappingName);
+        String jsonMap = null;
+        if(mapping != null){
+            try {
+                jsonMap = mapping.serialize();
+            } catch (JsonProcessingException e) {
+                throw new DataHubProjectException("Mapping was unable to be serialized: " + mappingName);
+            }
+        }
+        return jsonMap;
     }
 
     private Path getMappingDirPath(String mappingName){

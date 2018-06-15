@@ -34,6 +34,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual;
@@ -83,6 +84,8 @@ public class MappingManagerTest extends HubTestBase {
 
     @Test
     public void getMapping() {
+        copyTestMap();
+
         //here, we're going to get the mapping we just made
         Mapping testMap = manager.getMapping(mappingName);
         assertTrue(testMap != null);
@@ -92,7 +95,11 @@ public class MappingManagerTest extends HubTestBase {
 
     @Test
     public void getMappingNames() {
+        copyTestMap();
+
         //get a list of names to be returned of exiting mappings
+        ArrayList<String> mappingNames = manager.getMappingsNames();
+        assertTrue(mappingNames.size() > 0);
 
     }
 
@@ -104,7 +111,11 @@ public class MappingManagerTest extends HubTestBase {
         //Get the mapping, update it, and save the new version back
     }
 
+    @Test
     public void deleteMapping() {
+        //reput that mapping from create there
+        copyTestMap();
+
         //now let's erase the mapping
         //check to see if its there
         Mapping testMap = manager.getMapping(mappingName);
@@ -120,6 +131,10 @@ public class MappingManagerTest extends HubTestBase {
         assertTrue(manager.getMapping(mappingName) == null);
         assertFalse(Paths.get((getHubConfig().getHubMappingsDir().toString()), mappingName, mappingFileName).toFile().exists());
 
+    }
+
+    private void copyTestMap() {
+        FileUtil.copy(getResourceStream("scaffolding-test/"+mappingName+"-1"+MappingManager.MAPPING_FILE_EXTENSION), getHubConfig().getHubMappingsDir().resolve(mappingName+"/"+mappingName+"-1"+MappingManager.MAPPING_FILE_EXTENSION).toFile());
     }
 
     private void installMappings() {
