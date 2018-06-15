@@ -71,6 +71,13 @@ export default function() {
         flowPage.isLoaded();
         flowPage.jobsTab.click();
         jobsPage.isLoaded();
+        //verify jobs delete button is disabled if no job is selected
+        jobsPage.actionDropDown().click();
+        browser.wait(EC.elementToBeClickable(jobsPage.exportActionMenuItem()));
+        expect(jobsPage.deleteButton().isEnabled()).toBe(false);
+        jobsPage.actionDropDown().click();
+        browser.wait(EC.invisibilityOf(jobsPage.exportActionMenuItem()));
+        //verify to delete some jobs
         jobsPage.jobCheckboxByPosition(1).click();
         jobsPage.jobCheckboxByPosition(2).click();
         jobsPage.actionDropDown().click();
@@ -80,7 +87,7 @@ export default function() {
         jobsPage.deleteButton().click();
         browser.wait(EC.visibilityOf(jobsPage.jobResults()));
         expect(jobsPage.jobResults().getText()).toContain('Showing Results 1 to 4 of 4');
-        //verfiy on dashboard page
+        //verifiy on dashboard page
         jobsPage.dashboardTab.click();
         dashboardPage.isLoaded();
         expect(dashboardPage.jobCount().getText()).toEqual('4');
