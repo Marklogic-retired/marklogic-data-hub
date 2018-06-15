@@ -87,7 +87,7 @@ export default function() {
         jobsPage.deleteButton().click();
         browser.wait(EC.visibilityOf(jobsPage.jobResults()));
         expect(jobsPage.jobResults().getText()).toContain('Showing Results 1 to 4 of 4');
-        //verifiy on dashboard page
+        //verify on dashboard page
         jobsPage.dashboardTab.click();
         dashboardPage.isLoaded();
         expect(dashboardPage.jobCount().getText()).toEqual('4');
