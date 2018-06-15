@@ -27,6 +27,7 @@ import com.marklogic.hub.util.FileUtil;
 import com.marklogic.hub.util.HubModuleManager;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
@@ -103,12 +104,76 @@ public class MappingManagerTest extends HubTestBase {
 
     }
 
+    @Test
     public void getMappingFromJSON() {
+        copyTestMap();
         //Now let's get the same mapping, but out of band off disk as JSON
+        String json = manager.getMappingAsJSON(mappingName);
+        assertTrue(json.length() == 253);
+        //now let's see if this parses properly
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            JsonNode node = mapper.readTree(json);
+            assertTrue(node.get("name").asText().equalsIgnoreCase(mappingName));
+        } catch (IOException e) {
+            fail("Can not parse json response.");
+        }
     }
 
+    @Test
     public void updateMapping() {
+        copyTestMap();
         //Get the mapping, update it, and save the new version back
+        Mapping testMap = manager.getMapping(mappingName);
+        //make sure it's the right map
+        assertTrue(testMap.getVersion() == 1);
+        assertTrue(testMap.getName().equalsIgnoreCase(mappingName));
+
+        //Manipulate it
+        String newDesc = "This is a new Description.";
+        testMap.setDescription(newDesc);
+        String newContext = "/path/is/updated";
+        testMap.setSourceContext(newContext);
+        ObjectMapper mapper = new ObjectMapper();
+        ObjectNode newNode = mapper.createObjectNode();
+        newNode.put("sourcedFrom", "test");
+        testMap.getProperties().put("test", newNode);
+
+        //Let's save it and auto increment version
+        manager.saveMapping(testMap, true);
+
+        //now let's check the in memory instance
+        assertTrue(testMap.getVersion() == 2);
+        assertTrue(testMap.getDescription().equalsIgnoreCase(newDesc));
+        assertTrue(testMap.getProperties().size() == 3);
+        assertTrue(testMap.getSourceContext().equalsIgnoreCase(newContext));
+
+        //now let's pull the map back from disk and compare it to our in memory
+        Mapping testMapDisk = manager.getMapping(mappingName);
+        assertTrue(testMapDisk.getVersion() == testMap.getVersion());
+        assertTrue(testMapDisk.getDescription().equalsIgnoreCase(newDesc));
+        assertTrue(testMapDisk.getDescription().equalsIgnoreCase(testMap.getDescription()));
+
+    }
+
+    @Test
+    public void getMostRecentMapping() {
+        copyTestMap();
+        //add a new version of the map
+        copySecondTestMap();
+        //get most recent version of the mapping
+        Mapping testMap = manager.getMapping(mappingName);
+        assertTrue(testMap.getVersion() == 2);
+    }
+
+    @Test
+    public void getMappingByVersion() {
+        copyTestMap();
+        //add a new version of the map
+        copySecondTestMap();
+        //get an older version of the mapping
+        Mapping testMap = manager.getMapping(mappingName, 1);
+        assertTrue(testMap.getVersion() == 1);
     }
 
     @Test
@@ -134,6 +199,10 @@ public class MappingManagerTest extends HubTestBase {
 
     private void copyTestMap() {
         FileUtil.copy(getResourceStream("scaffolding-test/"+mappingName+"-1"+MappingManager.MAPPING_FILE_EXTENSION), getHubConfig().getHubMappingsDir().resolve(mappingName+"/"+mappingName+"-1"+MappingManager.MAPPING_FILE_EXTENSION).toFile());
+    }
+
+    private void copySecondTestMap() {
+        FileUtil.copy(getResourceStream("scaffolding-test/"+mappingName+"-2"+MappingManager.MAPPING_FILE_EXTENSION), getHubConfig().getHubMappingsDir().resolve(mappingName+"/"+mappingName+"-2"+MappingManager.MAPPING_FILE_EXTENSION).toFile());
     }
 
     private void installMappings() {

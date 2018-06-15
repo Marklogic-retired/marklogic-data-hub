@@ -95,10 +95,26 @@ public interface MappingManager {
     Mapping getMapping(String mappingName);
 
     /**
+     * Returns a mapping based on the provided name
+     * @param mappingName - name of the map
+     * @param version - the version of the mapping
+     * @return Mapping object for the defined map
+     */
+    Mapping getMapping(String mappingName, int version);
+
+    /**
      * Returns a mapping based on the provided name as JSON string
-     * @param mappingName
+     * @param mappingName - name of the mapping
      * @return string json respresentation of the mapping object
      */
     String getMappingAsJSON(String mappingName);
+
+    /**
+     * Returns a mapping based on the provided name as JSON string
+     * @param mappingName - name of the mapping
+     * @param version - the version number of the mapping
+     * @return string json respresentation of the mapping object
+     */
+    String getMappingAsJSON(String mappingName, int version);
 
 }

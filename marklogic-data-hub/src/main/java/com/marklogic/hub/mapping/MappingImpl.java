@@ -52,7 +52,7 @@ public class MappingImpl implements Mapping {
         ObjectMapper mapper = new ObjectMapper();
         HashMap<String, ObjectNode> jsonProperties = new HashMap<>();
         try {
-            jsonProperties = mapper.treeToValue(json, HashMap.class);
+            jsonProperties = mapper.treeToValue(json.get("properties"), HashMap.class);
         } catch (JsonProcessingException e) {
             throw new DataHubProjectException("Could not parse mapper properties");
         }

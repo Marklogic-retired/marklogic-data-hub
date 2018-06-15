@@ -197,12 +197,31 @@ public class MappingManagerImpl extends LoggingObject implements MappingManager 
         }
     }
 
+    @Override public Mapping getMapping(String mappingName, int version) {
+
+        Mapping foundMap = getMappingVersion(mappingName, version);
+        if(foundMap != null){
+            return foundMap;
+        } else {
+            throw new DataHubProjectException("Mapping not found in project: " + mappingName);
+        }
+    }
+
 
     @Override public String getMappingAsJSON(String mappingName) {
         Mapping mapping = getMapping(mappingName);
         String jsonMap = null;
         if(mapping != null){
                 jsonMap = mapping.serialize();
+        }
+        return jsonMap;
+    }
+
+    @Override public String getMappingAsJSON(String mappingName, int version) {
+        Mapping mapping = getMapping(mappingName, version);
+        String jsonMap = null;
+        if(mapping != null){
+            jsonMap = mapping.serialize();
         }
         return jsonMap;
     }
