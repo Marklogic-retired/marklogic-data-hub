@@ -19,6 +19,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.ext.helper.LoggingObject;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.MappingManager;
@@ -34,6 +35,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -70,7 +72,14 @@ public class MappingManagerImpl extends LoggingObject implements MappingManager 
 
     @Override public Mapping createMappingFromJSON(String json) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
-        return mapper.readValue(json, MappingImpl.class);
+        JsonNode node = mapper.readValue(json, JsonNode.class);
+        return mapper.treeToValue(node, MappingImpl.class);
+    }
+
+    @Override public Mapping createMappingFromJSON(JsonNode json) throws IOException {
+        Mapping newMap = Mapping.create("default");
+        newMap.deserialize(json);
+        return newMap;
     }
 
     @Override public void deleteMapping(String mappingName) {
@@ -163,8 +172,11 @@ public class MappingManagerImpl extends LoggingObject implements MappingManager 
         }
         if(targetFileName !=null ){
             try {
-                String jsonMap = new String(Files.readAllBytes(mappingPath.resolve(targetFileName)));
-                Mapping newMap = createMappingFromJSON(jsonMap);
+                //String jsonMap = new String(Files.readAllBytes(mappingPath.resolve(targetFileName)), StandardCharsets.UTF_8);
+                FileInputStream fileInputStream = new FileInputStream(mappingPath.resolve(targetFileName).toFile());
+                ObjectMapper objectMapper = new ObjectMapper();
+                JsonNode node = objectMapper.readTree(fileInputStream);
+                Mapping newMap = createMappingFromJSON(node);
                 if(newMap != null && newMap.getName().length() > 0) {
                     return newMap;
                 }
@@ -190,11 +202,7 @@ public class MappingManagerImpl extends LoggingObject implements MappingManager 
         Mapping mapping = getMapping(mappingName);
         String jsonMap = null;
         if(mapping != null){
-            try {
                 jsonMap = mapping.serialize();
-            } catch (JsonProcessingException e) {
-                throw new DataHubProjectException("Mapping was unable to be serialized: " + mappingName);
-            }
         }
         return jsonMap;
     }
@@ -208,35 +216,6 @@ public class MappingManagerImpl extends LoggingObject implements MappingManager 
         String timestampFile = hubConfig.getUserModulesDeployTimestampFile();
         HubModuleManager propertiesModuleManager = new HubModuleManager(timestampFile);
         return propertiesModuleManager;
-    }
-
-    private List<JsonNode> getAllMappings() {
-        List<JsonNode> mappings = new ArrayList<>();
-        Path mappingsPath = hubConfig.getHubMappingsDir();
-        File[] mappingFiles = mappingsPath.toFile().listFiles(pathname -> pathname.isDirectory() && !pathname.isHidden());
-        List<String> mappingNames;
-        if (mappingFiles != null) {
-            mappingNames = Arrays.stream(mappingFiles)
-                .map(file -> file.getName())
-                .collect(Collectors.toList());
-
-            ObjectMapper objectMapper = new ObjectMapper();
-            try {
-                boolean hasOneChanged = false;
-                for (String mappingName : mappingNames) {
-                    File[] mappingDefs = mappingsPath.resolve(mappingName).toFile().listFiles((dir, name) -> name.endsWith(MAPPING_FILE_EXTENSION));
-                    for (File mappingDef : mappingDefs) {
-                        FileInputStream fileInputStream = new FileInputStream(mappingDef);
-                        mappings.add(objectMapper.readTree(fileInputStream));
-                        fileInputStream.close();
-                    }
-                }
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-
-        }
-        return mappings;
     }
 
     private List<JsonNode> getModifiedRawMappings(long minimumFileTimestampToLoad) {

@@ -15,6 +15,7 @@
  */
 package com.marklogic.hub;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.marklogic.hub.impl.MappingManagerImpl;
 import com.marklogic.hub.mapping.Mapping;
@@ -46,9 +47,16 @@ public interface MappingManager {
 
     /**
      * Creates a mapping from a given JSON string
-     * @param json
+     * @param json - string representation of json
      */
     Mapping createMappingFromJSON(String json) throws IOException;
+
+    /**
+     * Creates a mapping from a given JsonNode
+     * @param json - JsonNode
+     */
+    Mapping createMappingFromJSON(JsonNode json) throws IOException;
+
 
     /**
      * Saves a map to disk

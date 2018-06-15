@@ -18,8 +18,10 @@ package com.marklogic.hub.mapping;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.marklogic.hub.error.DataHubProjectException;
 
 import java.util.HashMap;
 
@@ -43,6 +45,32 @@ public class MappingImpl implements Mapping {
         this.properties = new HashMap<>();
         properties.put("id", createProperty("sourcedFrom", "id"));
         this.targetEntityType = "";
+    }
+
+    @Override
+    public Mapping deserialize(JsonNode json) {
+        ObjectMapper mapper = new ObjectMapper();
+        HashMap<String, ObjectNode> jsonProperties = new HashMap<>();
+        try {
+            jsonProperties = mapper.treeToValue(json, HashMap.class);
+        } catch (JsonProcessingException e) {
+            throw new DataHubProjectException("Could not parse mapper properties");
+        }
+
+        int jsonVersion = json.get("version").asInt();
+        String jsonName = json.get("name").asText();
+        String jsonSourceContext = json.get("sourceContext").asText();
+        String jsonDescription = json.get("description").asText();
+        String jsonTarget = json.get("targetEntityType").asText();
+        String jsonLanguage = json.get("language").asText();
+        setVersion(jsonVersion);
+        setName(jsonName);
+        setSourceContext(jsonSourceContext);
+        setDescription(jsonDescription);
+        setTargetEntityType(jsonTarget);
+        setLanguage(jsonLanguage);
+        setProperties(jsonProperties);
+        return this;
     }
 
     private ObjectNode createProperty(String name, String value) {
@@ -123,9 +151,13 @@ public class MappingImpl implements Mapping {
     }
 
     @Override
-    public String serialize() throws JsonProcessingException {
+    public String serialize() {
         ObjectMapper mapper = new ObjectMapper();
-        return mapper.writeValueAsString(this);
+        try {
+            return mapper.writeValueAsString(this);
+        } catch (JsonProcessingException e) {
+        throw new DataHubProjectException("Unable to serialize mapping object.");
+    }
     }
 
     @Override

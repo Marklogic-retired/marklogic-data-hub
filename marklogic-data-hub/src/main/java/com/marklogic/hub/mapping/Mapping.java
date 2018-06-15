@@ -2,6 +2,7 @@ package com.marklogic.hub.mapping;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
@@ -110,7 +111,14 @@ public interface Mapping {
      * @return the serialized JSON string
      * @throws JsonProcessingException
      */
-    String serialize() throws JsonProcessingException;
+    String serialize();
+
+    /**
+     * Deserializes a json response and applies it to this mapping
+     * @param json - the jsonnode you want deserialized
+     * @return this mapping
+     */
+    Mapping deserialize(JsonNode json);
 
     /**
      * Automatically increments the version of the mapping by 1

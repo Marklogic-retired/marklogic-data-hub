@@ -89,7 +89,7 @@ public class MappingManagerTest extends HubTestBase {
         //here, we're going to get the mapping we just made
         Mapping testMap = manager.getMapping(mappingName);
         assertTrue(testMap != null);
-        assertTrue(testMap.getName() == mappingName);
+        assertTrue(testMap.getName().equalsIgnoreCase(mappingName));
 
     }
 
@@ -128,7 +128,6 @@ public class MappingManagerTest extends HubTestBase {
         manager.deleteMapping(mappingName);
 
         //make sure it's gone off disk
-        assertTrue(manager.getMapping(mappingName) == null);
         assertFalse(Paths.get((getHubConfig().getHubMappingsDir().toString()), mappingName, mappingFileName).toFile().exists());
 
     }
