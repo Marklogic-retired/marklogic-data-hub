@@ -48,6 +48,7 @@ public class FlowImpl implements Flow {
     private CodeFormat codeFormat;
     private Collector collector;
     private MainPlugin main;
+    private String mappingName;
 
     public FlowImpl() {}
 
@@ -69,6 +70,16 @@ public class FlowImpl implements Flow {
     @Override
     public String getName() {
         return name;
+    }
+
+    @Override
+    public void setMappingName(String mappingName) {
+        this.mappingName = mappingName;
+    }
+
+    @Override
+    public String getMappingName() {
+        return mappingName;
     }
 
     @Override
@@ -152,6 +163,12 @@ public class FlowImpl implements Flow {
             serializer.writeStartElement("type");
             serializer.writeCharacters(this.type.toString());
             serializer.writeEndElement();
+
+            if(this.type == FlowType.HARMONIZE && this.mappingName != null) {
+                serializer.writeStartElement("mappingName");
+                serializer.writeCharacters(this.mappingName);
+                serializer.writeEndElement();
+            }
 
             serializer.writeStartElement("data-format");
             serializer.writeCharacters(this.dataFormat.toString());
@@ -284,6 +301,9 @@ public class FlowImpl implements Flow {
                         CodeFormat.getCodeFormat(node.getAttributes().getNamedItem("code-format").getNodeValue())
                     );
                     flowBuilder.withMain(main);
+                    break;
+                case "mappingName":
+                    flowBuilder.withMapping(node.getTextContent());
                     break;
             }
         }

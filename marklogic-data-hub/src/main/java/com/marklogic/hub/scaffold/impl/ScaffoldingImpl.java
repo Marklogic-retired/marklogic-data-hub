@@ -145,6 +145,7 @@ public class ScaffoldingImpl implements Scaffolding {
                 .withType(flowType)
                 .withCodeFormat(codeFormat)
                 .withDataFormat(dataFormat)
+                .withMapping(mappingName)
                 .build();
 
             FileWriter fw = new FileWriter(flowDir.resolve(flowName + ".properties").toFile());
