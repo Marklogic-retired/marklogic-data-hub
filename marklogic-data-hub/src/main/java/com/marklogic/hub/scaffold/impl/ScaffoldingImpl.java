@@ -93,14 +93,20 @@ public class ScaffoldingImpl implements Scaffolding {
     }
 
     @Override public void createFlow(String entityName, String flowName,
-                           FlowType flowType, CodeFormat codeFormat,
-                           DataFormat dataFormat) {
-        createFlow(entityName, flowName, flowType, codeFormat, dataFormat, false);
+                                       FlowType flowType, CodeFormat codeFormat,
+                                       DataFormat dataFormat) {
+        createFlow(entityName, flowName, flowType, codeFormat, dataFormat, true);
+    }
+
+    @Override public void createFlow(String entityName, String flowName,
+                                     FlowType flowType, CodeFormat codeFormat,
+                                     DataFormat dataFormat, boolean useEsModel) {
+        createFlow(entityName, flowName, flowType, codeFormat, dataFormat, useEsModel, null);
     }
 
     @Override public void createFlow(String entityName, String flowName,
                            FlowType flowType, CodeFormat codeFormat,
-                           DataFormat dataFormat, boolean useEsModel) {
+                           DataFormat dataFormat, boolean useEsModel, String mappingName) {
         try {
             Path flowDir = getFlowDir(entityName, flowName, flowType);
             flowDir.toFile().mkdirs();
@@ -500,9 +506,16 @@ public class ScaffoldingImpl implements Scaffolding {
         }
 
         public String getContents(String entityName, CodeFormat codeFormat, FlowType flowType) {
+            return getContents(entityName, codeFormat, flowType, null);
+        }
+
+        public String getContents(String entityName, CodeFormat codeFormat, FlowType flowType, String mappingName) {
             params.add("entity", entityName);
             params.add("codeFormat", codeFormat.toString());
             params.add("flowType", flowType.toString());
+            if(mappingName != null) {
+                params.add("mapping", mappingName);
+            }
             ResourceServices.ServiceResultIterator resultItr = this.getServices().get(params);
             if (resultItr == null || ! resultItr.hasNext()) {
                 throw new RuntimeException("Unable to get Content Plugin scaffold");

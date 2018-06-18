@@ -93,6 +93,20 @@ public interface Scaffolding {
                     DataFormat dataFormat, boolean useEsModel);
 
     /**
+     * Creates a flow for an entity with an additional option for using Entity Services
+     * @param entityName - name of the entity to associate the flow with
+     * @param flowName - the name of the flow as a string
+     * @param flowType - the type of flow as TypeFlow, eg: harmonize or ingest
+     * @param codeFormat - the format of the code as CodeFormat enum
+     * @param dataFormat - the format of the data (json or xml)
+     * @param useEsModel - true to use Entity Services, false not to
+     * @param mappingName - the name of the mapping you wish to use to generate the content plugin
+     */
+    void createFlow(String entityName, String flowName,
+                    FlowType flowType, CodeFormat codeFormat,
+                    DataFormat dataFormat, boolean useEsModel,String mappingName);
+
+    /**
      * Updates a legacy flow on disk
      * @param fromVersion - string version number of DHF
      * @param entityName - the entity which the flow is attached
