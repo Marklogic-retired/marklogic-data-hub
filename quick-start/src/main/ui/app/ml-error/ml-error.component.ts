@@ -25,7 +25,7 @@ export class MlErrorComponent implements OnInit {
     }
 
     this.activeStack = stack;
-    this.variables = Object.keys(stack.variables);
+    this.variables = (stack.variables) ? Object.keys(stack.variables) : null;
   }
 
   isActiveStack(stack: MlErrorStack) {
