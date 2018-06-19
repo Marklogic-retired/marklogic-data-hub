@@ -54,9 +54,9 @@ export class JobOutputComponent {
   }
 
   getJobOutput(job: Job): Array<String> {
-    let output: Array<String>;
+    let output: String;
     if (job.jobOutput) {
-      output = this.formatJobOutput(job.jobOutput);
+      output = job.jobOutput;
     } else if (this.hasLiveOutput(job)) {
       output = this.jobListener.getJobOutput(job.jobId);
     } else {
@@ -65,6 +65,6 @@ export class JobOutputComponent {
         output =  j.jobOutput;
       }
     }
-    return output;
+    return this.formatJobOutput(output);
   }
 }
