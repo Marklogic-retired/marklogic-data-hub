@@ -271,8 +271,9 @@ export class FlowPage extends AppPage {
 
     this.mlcpRunButton.click();
 
-    browser.wait(EC.elementToBeClickable(this.toastButton));
-    this.toastButton.click();
+    //browser.wait(EC.elementToBeClickable(this.toastButton));
+    //this.toastButton.click();
+    browser.sleep(10000);
 
     this.jobsTab.click();
 
