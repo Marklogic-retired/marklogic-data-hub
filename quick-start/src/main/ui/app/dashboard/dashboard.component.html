@@ -11,7 +11,7 @@
     </div>
     <div layout="row" layout-align="center center" *ngFor="let row of rows">
       <div class="info-card" mdl-shadow="2" *ngFor="let db of databases.slice(row * 2, (row * 2) + 2)">
-        <div class="info-title"><i class="mdi mdi-database"></i> {{db | titlecase }}</div>
+        <div class="info-title"><i class="mdi mdi-database"></i> {{labelify(db) | titlecase }}</div>
         <div class="info-body" layout="column" *ngIf="!stats">
           <div class="info-column" layout="column" layout-align="center center">
             <mdl-spinner single-color active></mdl-spinner>
