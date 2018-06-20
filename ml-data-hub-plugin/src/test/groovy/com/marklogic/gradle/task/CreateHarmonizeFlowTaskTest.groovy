@@ -100,11 +100,11 @@ class CreateHarmonizeFlowTaskTest extends BaseTest {
     def "createHarmonizeFlow with valid mappingName"() {
         given:
         def pluginDir = Paths.get(hubConfig().projectDir).resolve("plugins")
-        def mappingDir = entityDir.resolve("mappings")
-        def newMappingDir = entityDir.resolve("my-new-mapping")
+        def mappingDir = pluginDir.resolve("mappings")
+        def newMappingDir = mappingDir.resolve("my-new-mapping")
         mappingDir.toFile().mkdirs()
         newMappingDir.toFile().mkdirs()
-        FileUtils.copyF(new File("src/test/resources/my-new-mapping-1.mapping.json"), newMappingDir.resolve('my-new-mapping-1.mapping.json'))
+        FileUtils.copyFile(new File("src/test/resources/my-new-mapping-1.mapping.json"), newMappingDir.resolve('my-new-mapping-1.mapping.json').toFile())
         propertiesFile << """
             ext {
                 entityName=my-new-entity
