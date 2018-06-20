@@ -486,4 +486,10 @@ public interface HubConfig {
      * @return A client without elevated administrative privileges.
      */
     DatabaseClient newFinalClient();
+
+    /**
+     * Gets information on a datahub configuration
+     * @return information on the datahub configuration as a string
+     */
+    String getInfo();
 }
