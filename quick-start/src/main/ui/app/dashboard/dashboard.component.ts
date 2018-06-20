@@ -18,7 +18,7 @@ export class DashboardComponent implements OnInit {
   databases: any = [
     'staging',
     'final',
-    'jobs'
+    'job'
   ];
 
   stats: any;
@@ -40,6 +40,14 @@ export class DashboardComponent implements OnInit {
     this.getStatus();
   }
 
+  labelify(db) {
+    if (db === "job") {
+      return "jobs";
+    } else {
+      return db;
+    }
+
+  }
   getDbCount(db) {
     return this.stats[db + 'Count'];
   }
