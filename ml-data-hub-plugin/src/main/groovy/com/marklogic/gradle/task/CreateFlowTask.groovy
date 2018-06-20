@@ -12,7 +12,7 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
- *  
+ *
  */
 
 package com.marklogic.gradle.task
@@ -62,12 +62,19 @@ abstract class CreateFlowTask extends HubTask {
 
         if (useES == null) {
             useES = project.hasProperty("useES") ?
-                Boolean.parseBoolean(project.property("useES")) : false
+                Boolean.parseBoolean(project.property("useES")) : true
+        }
+
+        def mappingName = project.hasProperty("mappingName") ? project.property("mappingName") : null
+
+        def withMapping
+        if(mappingName != null){
+            withMapping = " with mapping: " + mappingName
         }
 
         def projectDir = getHubConfig().projectDir
         Scaffolding scaffolding = Scaffolding.create(projectDir, getFinalClient())
-        println "Creating an " + pluginFormat + " " + flowType + " flow named " + flowName + " for entity " + entityName
-        scaffolding.createFlow(entityName, flowName, flowType, pluginFormat, dataFormat, useES)
+        println "Creating an " + pluginFormat + " " + flowType + " flow named " + flowName + " for entity " + entityName + withMapping
+        scaffolding.createFlow(entityName, flowName, flowType, pluginFormat, dataFormat, useES, mappingName)
     }
 }

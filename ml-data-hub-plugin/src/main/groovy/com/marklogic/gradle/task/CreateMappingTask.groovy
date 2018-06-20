@@ -18,6 +18,7 @@
 package com.marklogic.gradle.task
 
 import com.marklogic.gradle.exception.MappingNameRequiredException
+import com.marklogic.hub.MappingManager
 import com.marklogic.hub.scaffold.Scaffolding
 import org.gradle.api.tasks.TaskAction
 
@@ -35,5 +36,8 @@ class CreateMappingTask extends HubTask {
         println "projectDir: " + projectDir.toString()
         Scaffolding scaffolding = Scaffolding.create(projectDir, getFinalClient())
         scaffolding.createMapping(mappingName)
+        MappingManager mappingManager = MappingManager.getMappingManager(hubConfig)
+        mappingManager.createMapping(mappingName)
+        mappingManager.saveMapping()
     }
 }
