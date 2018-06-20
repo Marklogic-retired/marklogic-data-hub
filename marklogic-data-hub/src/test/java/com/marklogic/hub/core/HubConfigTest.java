@@ -91,10 +91,9 @@ public class HubConfigTest extends HubTestBase {
     }
 
     @Test
-    public void testHubInfo() {//throws org.apache.htrace.fasterxml.jackson.core.JsonProcessingException {
-        //logger.error(getHubConfig().toString());
+    public void testHubInfo() {
         HubConfig config = getHubConfig();
-        ObjectMapper objmapper = new ObjectMapper();
+
         try {
 
             System.out.println(config.getInfo());
@@ -106,23 +105,5 @@ public class HubConfigTest extends HubTestBase {
 
     }
 
-    @Test
-    public void testHubInfo2() {
-
-        HubConfig config = getHubConfig();
-        ObjectMapper objmapper = new ObjectMapper();
-
-        try {
-            System.out.println(config.getInfo());
-            JsonNode jsonNode = objmapper.readTree(config.getInfo());
-
-
-
-        }
-        catch (Exception e)
-        {
-            System.out.println("FAILED: " + e);
-        }
-    }
 
 }
