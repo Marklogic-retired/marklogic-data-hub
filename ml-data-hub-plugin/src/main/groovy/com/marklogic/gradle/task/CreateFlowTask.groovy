@@ -67,7 +67,7 @@ abstract class CreateFlowTask extends HubTask {
 
         def mappingName = project.hasProperty("mappingName") ? project.property("mappingName") : null
 
-        def withMapping
+        def withMapping = ""
         if(mappingName != null){
             withMapping = " with mapping: " + mappingName
         }

@@ -17,6 +17,7 @@
 
 package com.marklogic.gradle.task
 
+import org.apache.commons.io.FileUtils
 import org.gradle.testkit.runner.UnexpectedBuildFailure
 import org.gradle.testkit.runner.UnexpectedBuildSuccess
 
@@ -98,7 +99,12 @@ class CreateHarmonizeFlowTaskTest extends BaseTest {
 
     def "createHarmonizeFlow with valid mappingName"() {
         given:
-        runTask('hubCreateMapping', 'my-new-mapping')
+        def pluginDir = Paths.get(hubConfig().projectDir).resolve("plugins")
+        def mappingDir = entityDir.resolve("mappings")
+        def newMappingDir = entityDir.resolve("my-new-mapping")
+        mappingDir.toFile().mkdirs()
+        newMappingDir.toFile().mkdirs()
+        FileUtils.copyF(new File("src/test/resources/my-new-mapping-1.mapping.json"), newMappingDir.resolve('my-new-mapping-1.mapping.json'))
         propertiesFile << """
             ext {
                 entityName=my-new-entity
@@ -114,7 +120,7 @@ class CreateHarmonizeFlowTaskTest extends BaseTest {
         notThrown(UnexpectedBuildFailure)
         result.task(":hubCreateHarmonizeFlow").outcome == SUCCESS
 
-        File mappingDir = Paths.get(testProjectDir.root.toString(), "plugins", "mappings", "my-new-mapping").toFile()
-        mappingDir.isDirectory() == true
+        File entityDir = Paths.get(testProjectDir.root.toString(), "plugins", "entities", "my-new-entity", "harmonize", "my-new-harmonize-flow").toFile()
+        entityDir.isDirectory() == true
     }
 }
