@@ -76,4 +76,45 @@ class CreateHarmonizeFlowTaskTest extends BaseTest {
         File entityDir = Paths.get(testProjectDir.root.toString(), "plugins", "entities", "my-new-entity", "harmonize", "my-new-harmonize-flow").toFile()
         entityDir.isDirectory() == true
     }
+
+    def "createHarmonizeFlow with bad mappingName"() {
+        given:
+        propertiesFile << """
+            ext {
+                entityName=my-new-entity
+                flowName=my-new-harmonize-flow
+                mappingName=missing-mapping
+            }
+        """
+
+        when:
+        def result = runFailTask('hubCreateHarmonizeFlow')
+
+        then:
+        notThrown(UnexpectedBuildSuccess)
+        result.output.contains('Not Found document: The requested mapping: ')
+        result.task(":hubCreateHarmonizeFlow").outcome == FAILED
+    }
+
+    def "createHarmonizeFlow with valid mappingName"() {
+        given:
+        runTask('hubCreateMapping', 'my-new-mapping')
+        propertiesFile << """
+            ext {
+                entityName=my-new-entity
+                flowName=my-new-harmonize-flow
+                mappingName=my-new-mapping
+            }
+        """
+
+        when:
+        def result = runTask('hubCreateHarmonizeFlow')
+
+        then:
+        notThrown(UnexpectedBuildFailure)
+        result.task(":hubCreateHarmonizeFlow").outcome == SUCCESS
+
+        File mappingDir = Paths.get(testProjectDir.root.toString(), "plugins", "mappings", "my-new-mapping").toFile()
+        mappingDir.isDirectory() == true
+    }
 }
