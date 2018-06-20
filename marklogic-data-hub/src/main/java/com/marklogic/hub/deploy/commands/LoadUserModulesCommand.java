@@ -184,6 +184,7 @@ public class LoadUserModulesCommand extends AbstractCommand {
 
                 ModulesManager modulesManager = modulesLoader.getModulesManager();
 
+                //first let's do the entities and flows + extensions
                 Files.walkFileTree(startPath, new SimpleFileVisitor<Path>() {
                     @Override
                     public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
@@ -214,7 +215,34 @@ public class LoadUserModulesCommand extends AbstractCommand {
                                 }
                             }
                             return FileVisitResult.CONTINUE;
-                        } else if (isMappingDir(dir, mappingPath.toAbsolutePath())){
+                        }
+                        else {
+                            return FileVisitResult.CONTINUE;
+                        }
+                    }
+
+                    @Override
+                    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
+                        throws IOException
+                    {
+                        if (isFlowPropertiesFile(file) && modulesManager.hasFileBeenModifiedSinceLastLoaded(file.toFile())) {
+                            Flow flow = flowManager.getFlowFromProperties(file);
+                            StringHandle handle = new StringHandle(flow.serialize());
+                            handle.setFormat(Format.XML);
+                            documentWriteSet.add(flow.getFlowDbPath(), handle);
+                            modulesManager.saveLastLoadedTimestamp(file.toFile(), new Date());
+                        }
+                        return FileVisitResult.CONTINUE;
+                    }
+                });
+
+                //now let's do the mappings path
+                Files.walkFileTree(mappingPath, new SimpleFileVisitor<Path>() {
+                    @Override
+                    public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+                        String currentDir = dir.normalize().toAbsolutePath().toString();
+
+                       if (isMappingDir(dir, mappingPath.toAbsolutePath())){
                             Modules modules = new MappingDefModulesFinder().findModules(dir.toString());
                             DocumentMetadataHandle meta = new DocumentMetadataHandle();
                             meta.getCollections().add("http://marklogic.com/data-hub/mappings");
@@ -224,7 +252,7 @@ public class LoadUserModulesCommand extends AbstractCommand {
                                     InputStream inputStream = r.getInputStream();
                                     StringHandle handle = new StringHandle(IOUtils.toString(inputStream));
                                     inputStream.close();
-                                    mappingDocMgr.write("/mappings/" + r.getFilename(), meta, handle);
+                                    mappingDocMgr.write("/mappings/" + r.getFile().getParentFile().getName() +"/" + r.getFilename(), meta, handle);
                                     modulesManager.saveLastLoadedTimestamp(r.getFile(), new Date());
                                 }
                             }
