@@ -1,4 +1,4 @@
-import { browser, ExpectedConditions as EC} from 'protractor';
+import { browser, ExpectedConditions as EC, element, by} from 'protractor';
 import dashboardPage from '../../page-objects/dashboard/dashboard';
 import flowPage from '../../page-objects/flows/flows';
 import jobsPage from '../../page-objects/jobs/jobs';
@@ -71,12 +71,6 @@ export default function() {
         flowPage.isLoaded();
         flowPage.jobsTab.click();
         jobsPage.isLoaded();
-        //verify jobs delete button is disabled if no job is selected
-        jobsPage.actionDropDown().click();
-        browser.wait(EC.elementToBeClickable(jobsPage.exportActionMenuItem()));
-        expect(jobsPage.deleteButton().isEnabled()).toBe(false);
-        jobsPage.actionDropDown().click();
-        browser.wait(EC.invisibilityOf(jobsPage.exportActionMenuItem()));
         //verify to delete some jobs
         jobsPage.jobCheckboxByPosition(1).click();
         jobsPage.jobCheckboxByPosition(2).click();

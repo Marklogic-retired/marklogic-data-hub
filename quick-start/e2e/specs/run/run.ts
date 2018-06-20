@@ -126,8 +126,9 @@ export default function(tmpDir) {
       console.log('found the button and clicking Run Harmonize button');
       flowPage.runHarmonizeButton().click();
       console.log('clicked the button');
-      browser.wait(EC.elementToBeClickable(flowPage.toastButton));
-      flowPage.toastButton.click();
+      //browser.wait(EC.elementToBeClickable(flowPage.toastButton));
+      //flowPage.toastButton.click();
+      browser.sleep(10000);
       flowPage.jobsTab.click();
       jobsPage.isLoaded();
       expect(jobsPage.finishedHarmonizedFlows.isPresent()).toBe(true);

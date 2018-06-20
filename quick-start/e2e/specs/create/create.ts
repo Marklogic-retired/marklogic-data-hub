@@ -283,7 +283,7 @@ export default function() {
       entityPage.deleteProperty.click();
       browser.wait(EC.visibilityOf(entityPage.confirmDialogYesButton));
       entityPage.confirmDialogYesButton.click();
-      browser.wait(EC.invisibilityOf(entityPage.confirmDialogYesButton));
+      browser.sleep(3000);
       entityPage.saveEntity.click();
       browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
       expect(entityPage.confirmDialogYesButton.isPresent()).toBe(true);
@@ -405,7 +405,7 @@ export default function() {
       browser.wait(EC.visibilityOf(entityPage.confirmDialogYesButton));
       expect(entityPage.confirmDialogYesButton.isPresent()).toBe(true);
       entityPage.confirmDialogYesButton.click();
-      browser.wait(EC.invisibilityOf(entityPage.confirmDialogYesButton));
+      browser.sleep(3000);
       element.all(by.css('.properties > table > tBody > tr')).count().then(function(props){expect(props === 1)});
       //let's save it now that it's populated
       entityPage.saveEntity.click();
