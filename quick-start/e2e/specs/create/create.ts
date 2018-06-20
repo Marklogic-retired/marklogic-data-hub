@@ -576,6 +576,16 @@ export default function() {
       flowPage.isLoaded();
     });
 
+    it ('should redeploy modules', function() {
+      flowPage.redeployButton.click();
+      browser.wait(element(by.css('#last-deployed-time')).getText().then((txt) => {
+        return (
+          txt === 'Last Deployed: less than a minute ago' ||
+          txt === 'Last Deployed: 1 minute ago'
+        );
+      }));
+    });
+
     it ('should open the Entity disclosure', function() {
       flowPage.entityDisclosure('TestEntity').click();
     });
