@@ -15,7 +15,7 @@
 :)
 xquery version "1.0-ml";
 
-(:module namespace service = "http://marklogic.com/rest-api/extensions/scaffold-content";:)
+module namespace service = "http://marklogic.com/rest-api/extensions/scaffold-content";
 
 import module namespace consts = "http://marklogic.com/data-hub/consts"
 at "/MarkLogic/data-hub-framework/impl/consts.xqy";
@@ -96,7 +96,7 @@ declare function service:casting-function-name-sjs(
   else "xs." || $datatype
 };
 
-declare function service:generate-lets($model as map:map, $entity-type-name, $mapping as map:map)
+declare function service:generate-lets($model as map:map, $entity-type-name, $mapping as map:map?)
 {
   fn:string-join(
     let $definitions := map:get($model, "definitions")
@@ -147,7 +147,7 @@ declare function service:generate-lets($model as map:map, $entity-type-name, $ma
         "    plugin:make-reference-object('" || $ref-name || "', (: put your value here :) '')"
       ), "&#10;")
     let $value :=
-      if (empty($ref)) then (if(fn:not(fn:empty(map:get(map:get($mapping, "properties"), $property-name)))) then (fn:concat("$source",service:map-value($property-name, $mapping))) else ("()"))
+      if (empty($ref)) then (if(service:mapping-present($mapping, $property-name)) then (fn:concat("$source",service:map-value($property-name, $mapping))) else ("()"))
       else if (contains($ref, "#/definitions")) then
         let $inner-var := "$" || fn:lower-case($ref-name) || "s"
         return
@@ -349,7 +349,7 @@ declare function service:generate-xqy($entity as xs:string, $flow-type as xs:str
 };
 
 
-declare function service:generate-vars($model as map:map, $entity-type-name)
+declare function service:generate-vars($model as map:map, $entity-type-name, $mapping as map:map?)
 {
   fn:string-join(
     let $definitions := map:get($model, "definitions")
@@ -379,7 +379,8 @@ declare function service:generate-vars($model as map:map, $entity-type-name)
           $items ! map:get(., "$ref")
       else
         map:get($property, "$ref")
-    let $path-to-property := service:get-property("source", $property-name)
+    let $path-to-property :=
+      if (service:mapping-present($mapping, $property-name)) then (fn:concat("source.xpath('",service:map-value($property-name, $mapping), "')"))  else (service:get-property("source", $property-name))
     let $property-comment :=
       if (fn:empty($ref)) then ()
       else if (fn:contains($ref, "#/definitions")) then
@@ -400,6 +401,7 @@ declare function service:generate-vars($model as map:map, $entity-type-name)
       ), "&#10;"):)
     let $value :=
       if (empty($ref)) then
+        "!fn.empty(" || $path-to-property || ") ? " ||
         $casting-function-name || "(" ||
         $path-to-property ||
         (
@@ -408,7 +410,7 @@ declare function service:generate-vars($model as map:map, $entity-type-name)
           else
             ()
         ) ||
-        ")"
+        ") : null"
       else if (contains($ref, "#/definitions")) then
         if ($is-array) then
           fn:string-join((
@@ -459,7 +461,7 @@ declare function service:generate-vars($model as map:map, $entity-type-name)
 (: end code generation block :)
 };
 
-declare function service:generate-sjs($entity as xs:string, $flow-type as xs:string, $model as map:map, $mapping-name as xs:string?)
+declare function service:generate-sjs($entity as xs:string, $flow-type as xs:string, $model as map:map, $mapping as map:map?)
 {
   let $root-name :=
     if ($flow-type eq $consts:INPUT_FLOW) then "rawContent"
@@ -522,7 +524,7 @@ declare function service:generate-sjs($entity as xs:string, $flow-type as xs:str
               let attachments = source;
 
               {
-                service:generate-vars($model, $entity-type-name)
+                service:generate-vars($model, $entity-type-name, $mapping)
               }
 
               // return the instance object
@@ -585,6 +587,10 @@ declare function service:get-mapping($mapping-name) {
     else ()
 };
 
+declare function service:mapping-present($mapping as map:map?, $property-name as xs:string?) {
+  (fn:empty($mapping) eq fn:false() and fn:empty(map:get(map:get($mapping, "properties"), $property-name)) eq fn:false())
+};
+
 declare function service:get(
   $context as map:map,
   $params  as map:map
@@ -596,12 +602,12 @@ declare function service:get(
     let $entity as xs:string := map:get($params, "entity")
     let $code-format as xs:string := map:get($params, "codeFormat")
     let $flow-type as xs:string := map:get($params, "flowType")
-    let $mapping-name   as xs:string? := map:get($params, "mappingName")
-    let $mapping as map:map? := if(fn:not(fn:empty($mapping-name))) then (service:get-mapping($mapping-name)) else ()
+    let $mapping-name as xs:string? := map:get($params, "mappingName")
+    let $mapping as map:map? := if(fn:empty($mapping-name) eq fn:false()) then (service:get-mapping($mapping-name)) else ()
     let $model as map:map? := hent:get-model($entity)
     return
       if (fn:exists($model)) then
-        if(fn:exists($mapping) and fn:exists($mapping-name)) then
+        if((fn:empty($mapping) eq fn:false() and fn:empty($mapping-name) eq fn:false()) or (fn:empty($mapping-name) eq fn:true())) then
           if ($code-format eq "xqy") then
             service:generate-xqy($entity, $flow-type, $model, $mapping)
           else
