@@ -21,6 +21,6 @@ import org.gradle.api.GradleException
 
 class MappingNameRequiredException extends GradleException {
     MappingNameRequiredException() {
-        super("mappingName property is required. Supply the parameter with -PmappingName=Yourentity")
+        super("mappingName property is required. Supply the parameter with -PmappingName=YourMapping")
     }
 }
