@@ -18,6 +18,7 @@ package com.marklogic.hub.impl;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.appdeployer.ConfigDir;
 import com.marklogic.client.DatabaseClient;
@@ -1178,9 +1179,9 @@ public class HubConfigImpl implements HubConfig {
         return res;
     }
 
+    @JsonIgnore
     public String getInfo()
     {
-        System.out.println("Hi there friends");
         ObjectMapper objmapper = new ObjectMapper();
         try {
             return objmapper.writerWithDefaultPrettyPrinter().writeValueAsString(this);
@@ -1190,6 +1191,7 @@ public class HubConfigImpl implements HubConfig {
             throw new DataHubConfigurationException("Your datahub configuration could not serialize");
 
         }
+
     }
 
 }

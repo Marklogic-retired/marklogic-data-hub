@@ -7,6 +7,7 @@ import com.marklogic.hub.impl.HubConfigImpl;
 import org.apache.commons.io.FileUtils;
 //import org.apache.htrace.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -18,13 +19,14 @@ import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-
+import com.fasterxml.jackson.databind.JsonNode;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 
 public class HubConfigTest extends HubTestBase {
+
 
     private static File projectPath = new File(PROJECT_PATH);
 
@@ -92,36 +94,35 @@ public class HubConfigTest extends HubTestBase {
     public void testHubInfo() {//throws org.apache.htrace.fasterxml.jackson.core.JsonProcessingException {
         //logger.error(getHubConfig().toString());
         HubConfig config = getHubConfig();
-        System.out.println("HTTP Name: " + config.getHttpName(DatabaseKind.STAGING));
-
-
         ObjectMapper objmapper = new ObjectMapper();
         try {
-            //String str = objmapper.writeValueAsString(getHubConfig());
-            //System.out.println("SUCCESSFUL: " + str);
-            System.out.println(objmapper.writerWithDefaultPrettyPrinter().writeValueAsString(getHubConfig()));
+
+            System.out.println(config.getInfo());
         }
         catch(Exception e) {
          System.out.println("FAILED: " + e);
 
         }
 
-
     }
 
-    /*@Test
+    @Test
     public void testHubInfo2() {
 
-        Rectangle rect = new Rectangle(5, 6);
+        HubConfig config = getHubConfig();
         ObjectMapper objmapper = new ObjectMapper();
+
         try {
-            System.out.println(objmapper.writerWithDefaultPrettyPrinter().writeValueAsString(this));
-        }
-        catch(Exception e)
-        {
-            System.out.println("FAILED: " + e);
+            System.out.println(config.getInfo());
+            JsonNode jsonNode = objmapper.readTree(config.getInfo());
+
+
 
         }
-    }*/
+        catch (Exception e)
+        {
+            System.out.println("FAILED: " + e);
+        }
+    }
 
 }
