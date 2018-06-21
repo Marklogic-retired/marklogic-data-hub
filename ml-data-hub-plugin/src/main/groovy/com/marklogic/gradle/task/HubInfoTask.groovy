@@ -23,9 +23,8 @@ class HubInfoTask extends HubTask {
 
     @TaskAction
     void dumpHubInfo() {
-        //print(this.hubConfig.toString());
+        print(this.hubConfig.toString());
 
-        print("test");
 
     }
 }
