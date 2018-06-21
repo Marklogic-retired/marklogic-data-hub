@@ -498,7 +498,7 @@ declare function service:generate-sjs($entity as xs:string, $flow-type as xs:str
 
         let source;
 
-// for xml we need to use xpath
+        // for xml we need to use xpath
         if ({$root-name} &amp;&amp; xdmp.nodeKind({$root-name}) === 'element' &amp;&amp; {$root-name} instanceof XMLDocument) {{
         source = fn.head({$root-name}.xpath('/*:envelope/*:instance/node()'));
         }}
@@ -527,6 +527,10 @@ declare function service:generate-sjs($entity as xs:string, $flow-type as xs:str
               function {service:camel-case("extractInstance-" || $entity-type-name)}(source) {{
               // the original source documents
               let attachments = source;
+              // now check to see if we have XML or json, if xml grab just our root
+              if(source instanceof Element){{
+              source = fn.head(source.xpath('/*:envelope/*:instance/*:root/node()'))
+              }}
               {
                 if (fn:empty($mapping) eq fn:false() and fn:empty(map:get($mapping, "name")) eq fn:false()) then
                   <txt>/* These mappings were generated using mapping: {map:get($mapping, "name")}, version: {map:get($mapping, "version")} on {fn:current-dateTime()}. */
