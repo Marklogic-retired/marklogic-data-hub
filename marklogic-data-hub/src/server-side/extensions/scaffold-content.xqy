@@ -407,7 +407,8 @@ declare function service:generate-vars($model as map:map, $entity-type-name, $ma
     let $value :=
       if (empty($ref)) then
         "!fn.empty(" || $path-to-property || ") ? " ||
-        $casting-function-name || "(" ||
+        $casting-function-name || "("
+        || "fn.head(" ||
         $path-to-property ||
         (
           if ($property-datatype eq "iri") then
@@ -415,7 +416,7 @@ declare function service:generate-vars($model as map:map, $entity-type-name, $ma
           else
             ()
         ) ||
-        ") : null"
+        ")) : null"
       else if (contains($ref, "#/definitions")) then
         if ($is-array) then
           fn:string-join((

@@ -426,7 +426,9 @@ function instanceToCanonicalXml(entityInstance) {
             }
             else {
               nb.startElement(key);
-              nb.addText(prop.toString());
+              if(prop) {
+                nb.addText(prop.toString());
+              }
               nb.endElement();
             }
           }
