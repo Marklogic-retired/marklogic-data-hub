@@ -49,6 +49,8 @@ export default function() {
         expect(traceViewerPage.pluginSubheader('headers').isPresent()).toBe(true);
         expect(element(by.cssContainingText('.cm-variable', 'key1')).isPresent()).toBe(true);
         expect(element(by.cssContainingText('.cm-string', 'world')).isPresent()).toBe(true);
+        expect(element(by.cssContainingText('.cm-variable', 'user')).isPresent()).toBe(true);
+        expect(element(by.cssContainingText('.cm-string', 'admin')).isPresent()).toBe(true);
         traceViewerPage.tracesTab.click();
       });
 
