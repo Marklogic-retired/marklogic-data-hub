@@ -257,7 +257,12 @@ declare function service:generate-xqy($entity as xs:string, $flow-type as xs:str
                   </txt>/text()
                 else ()
               }
-
+              {
+                if (fn:empty($mapping) eq fn:false() and fn:empty(map:get($mapping, "name")) eq fn:false()) then
+                  <txt>(: These mappings were generated using mapping: {map:get($mapping, "name")}, version: {map:get($mapping, "version")} on {fn:current-dateTime()}. :)
+                  </txt>/text()
+                else ()
+              }
               {
                 service:generate-lets($model, $entity-type-name, $mapping)
               }
@@ -522,7 +527,12 @@ declare function service:generate-sjs($entity as xs:string, $flow-type as xs:str
               function {service:camel-case("extractInstance-" || $entity-type-name)}(source) {{
               // the original source documents
               let attachments = source;
-
+              {
+                if (fn:empty($mapping) eq fn:false() and fn:empty(map:get($mapping, "name")) eq fn:false()) then
+                  <txt>/* These mappings were generated using mapping: {map:get($mapping, "name")}, version: {map:get($mapping, "version")} on {fn:current-dateTime()}. */
+                  </txt>/text()
+                else ()
+              }
               {
                 service:generate-vars($model, $entity-type-name, $mapping)
               }
