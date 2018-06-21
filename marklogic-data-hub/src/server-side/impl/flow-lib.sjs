@@ -266,7 +266,12 @@ function makeEnvelope(content, headers, triples, dataFormat) {
 
         nb.startElement("attachments", "http://marklogic.com/entity-services");
         if (content instanceof Object && content.hasOwnProperty("$attachments")) {
-          nb.addNode(content["$attachments"]);
+            let attachments = content["$attachments"];
+            if (attachments instanceof XMLDocument || tracelib.isXmlNode(attachments)) {
+              nb.addNode(attachments);
+            } else {
+              nb.addText(xdmp.quote(attachments))
+            }
         }
         nb.endElement();
       nb.endElement();
@@ -348,7 +353,8 @@ function instanceToCanonicalJson(entityInstance) {
   else {
     o = {};
     for (let key in entityInstance) {
-      if (key !== '$type') {
+      if (key === '$attachments' || key === '$type' || key === '$version') {
+      } else {
         let instanceProperty = entityInstance[key];
         if (instanceProperty instanceof Sequence) {
           for (let prop in instanceProperty) {
