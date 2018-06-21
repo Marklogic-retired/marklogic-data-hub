@@ -17,15 +17,14 @@ declare option xdmp:mapping "false";
  :)
 declare function plugin:create-content(
   $id as xs:string,
-  $options as map:map) as map:map
+  $options as map:map)
 {
-  let $m := json:object()
-  let $_ :=
-    for $x in map:keys($options)
-    return
-      map:put($m, $x, map:get($options, $x))
-  let $_ := map:put($m, "$type", "Person")
-  let $_ := map:put($m, "$version", "0.0.2")
-  let $_ := map:put($m, "$attachments", element original { "data" } )
-  return $m
+  object-node {
+    "$type":"Person",
+    "$version":"0.0.2",
+    "$attachments": object-node { "you":"there!" },
+    "and":"of",
+    "course":"other",
+    "keys":"yeah"
+  }=>xdmp:from-json()
 };
