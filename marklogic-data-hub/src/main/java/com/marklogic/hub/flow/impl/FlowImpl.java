@@ -165,7 +165,7 @@ public class FlowImpl implements Flow {
             serializer.writeEndElement();
 
             if(this.type == FlowType.HARMONIZE && this.mappingName != null) {
-                serializer.writeStartElement("mappingName");
+                serializer.writeStartElement("mapping");
                 serializer.writeCharacters(this.mappingName);
                 serializer.writeEndElement();
             }
@@ -217,6 +217,7 @@ public class FlowImpl implements Flow {
         Properties flowProperties = new Properties();
         flowProperties.setProperty("dataFormat", dataFormat.toString());
         flowProperties.setProperty("codeFormat", codeFormat.toString());
+        flowProperties.setProperty("mapping", mappingName);
         if (this.collector != null) {
             flowProperties.setProperty("collectorCodeFormat", collector.getCodeFormat().toString());
             flowProperties.setProperty("collectorModule", collector.getModule());
@@ -302,7 +303,7 @@ public class FlowImpl implements Flow {
                     );
                     flowBuilder.withMain(main);
                     break;
-                case "mappingName":
+                case "mapping":
                     flowBuilder.withMapping(node.getTextContent());
                     break;
             }
