@@ -612,7 +612,7 @@ declare function service:get(
     let $entity as xs:string := map:get($params, "entity")
     let $code-format as xs:string := map:get($params, "codeFormat")
     let $flow-type as xs:string := map:get($params, "flowType")
-    let $mapping-name as xs:string? := map:get($params, "mappingName")
+    let $mapping-name as xs:string? := map:get($params, "mapping")
     let $mapping as map:map? := if(fn:empty($mapping-name) eq fn:false()) then (service:get-mapping($mapping-name)) else ()
     let $model as map:map? := hent:get-model($entity)
     return
