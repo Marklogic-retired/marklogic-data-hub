@@ -134,12 +134,15 @@ public class HubConfigImpl implements HubConfig {
 
     private static final Logger logger = LoggerFactory.getLogger(HubConfigImpl.class);
 
-    private ObjectMapper objmapper;
+    private ObjectMapper objmapper; //= new ObjectMapper();
 
     public HubConfigImpl() {
+
+        objmapper = new ObjectMapper();
     }
 
     public HubConfigImpl(String projectDir) {
+        this();
         setProjectDir(new File(projectDir).getAbsolutePath());
     }
 
@@ -1184,7 +1187,7 @@ public class HubConfigImpl implements HubConfig {
     @JsonIgnore
     public String getInfo()
     {
-        objmapper = new ObjectMapper();
+        //objmapper = new ObjectMapper();
         try {
             return objmapper.writerWithDefaultPrettyPrinter().writeValueAsString(this);
         }
