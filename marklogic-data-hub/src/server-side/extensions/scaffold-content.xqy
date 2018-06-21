@@ -493,7 +493,7 @@ declare function service:generate-sjs($entity as xs:string, $flow-type as xs:str
         {
           if ($flow-type eq $consts:HARMONIZE_FLOW) then
             "let doc = cts.doc(id);
-  let " || $root-name || " = doc.root.toObject();"
+  let " || $root-name || " = doc.root;"
           else ()
         }
 
