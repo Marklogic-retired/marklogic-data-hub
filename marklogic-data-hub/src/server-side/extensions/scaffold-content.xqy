@@ -471,7 +471,7 @@ declare function service:generate-sjs($entity as xs:string, $flow-type as xs:str
 {
   let $root-name :=
     if ($flow-type eq $consts:INPUT_FLOW) then "rawContent"
-    else "root"
+    else "doc"
   return
     document {
       <module>
@@ -492,20 +492,19 @@ declare function service:generate-sjs($entity as xs:string, $flow-type as xs:str
       }options) {{
         {
           if ($flow-type eq $consts:HARMONIZE_FLOW) then
-            "let doc = cts.doc(id);
-  let " || $root-name || " = doc.root;"
+            "let doc = cts.doc(id);"
           else ()
         }
 
         let source;
 
-        // for xml we need to use xpath
-        if ({$root-name} &amp;&amp; xdmp.nodeKind({$root-name}) === 'element') {{
-        source = {$root-name}.xpath('/*:envelope/*:instance/node()');
+// for xml we need to use xpath
+        if ({$root-name} &amp;&amp; xdmp.nodeKind({$root-name}) === 'element' &amp;&amp; {$root-name} instanceof XMLDocument) {{
+        source = fn.head({$root-name}.xpath('/*:envelope/*:instance/node()'));
         }}
         // for json we need to return the instance
-        else if ({$root-name} &amp;&amp; {$root-name}.envelope &amp;&amp; {$root-name}.envelope.instance) {{
-        source = {$root-name}.envelope.instance;
+        else if({$root-name} &amp;&amp; {$root-name} instanceof Document) {{
+        source = fn.head({$root-name}.root);
         }}
         // for everything else
         else {{
