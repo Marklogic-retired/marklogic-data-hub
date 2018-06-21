@@ -121,7 +121,7 @@ public class ScaffoldingImpl implements Scaffolding {
 
             if (useEsModel) {
                 ContentPlugin cp = new ContentPlugin(databaseClient);
-                String content = cp.getContents(entityName, codeFormat, flowType);
+                String content = cp.getContents(entityName, codeFormat, flowType, mappingName);
                 writeBuffer(content, flowDir.resolve("content." + codeFormat));
 
             } else {

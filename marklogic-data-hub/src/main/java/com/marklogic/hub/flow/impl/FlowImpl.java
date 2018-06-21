@@ -217,7 +217,9 @@ public class FlowImpl implements Flow {
         Properties flowProperties = new Properties();
         flowProperties.setProperty("dataFormat", dataFormat.toString());
         flowProperties.setProperty("codeFormat", codeFormat.toString());
-        flowProperties.setProperty("mapping", mappingName);
+        if(mappingName != null) {
+            flowProperties.setProperty("mapping", mappingName);
+        }
         if (this.collector != null) {
             flowProperties.setProperty("collectorCodeFormat", collector.getCodeFormat().toString());
             flowProperties.setProperty("collectorModule", collector.getModule());

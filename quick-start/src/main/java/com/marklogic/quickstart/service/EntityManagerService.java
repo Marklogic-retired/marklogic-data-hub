@@ -325,7 +325,7 @@ public class EntityManagerService extends EnvironmentAware {
     public FlowModel createFlow(String projectDir, String entityName, FlowType flowType, FlowModel newFlow) throws IOException {
         Scaffolding scaffolding = Scaffolding.create(projectDir, envConfig().getFinalClient());
         newFlow.entityName = entityName;
-        scaffolding.createFlow(entityName, newFlow.flowName, flowType, newFlow.codeFormat, newFlow.dataFormat, newFlow.useEsModel);
+        scaffolding.createFlow(entityName, newFlow.flowName, flowType, newFlow.codeFormat, newFlow.dataFormat, newFlow.useEsModel, newFlow.mappingName);
         return getFlow(entityName, flowType, newFlow.flowName);
     }
 
