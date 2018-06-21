@@ -60,6 +60,7 @@ dependencies {
     compile("org.springframework.boot:spring-boot-starter-thymeleaf")
     compile("org.aspectj:aspectjweaver:1.8.9")
     compile("org.springframework:spring-messaging")
+    compile("io.rest-assured:rest-assured:3.0.3")
     compile project(":marklogic-data-hub")
     compile("org.apache.commons:commons-csv:1.4")
 
