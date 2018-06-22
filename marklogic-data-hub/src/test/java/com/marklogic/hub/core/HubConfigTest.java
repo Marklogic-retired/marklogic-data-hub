@@ -3,6 +3,7 @@ package com.marklogic.hub.core;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
+import com.marklogic.hub.error.DataHubConfigurationException;
 import com.marklogic.hub.impl.HubConfigImpl;
 import org.apache.commons.io.FileUtils;
 //import org.apache.htrace.fasterxml.jackson.databind.ObjectMapper;
@@ -19,6 +20,8 @@ import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import com.fasterxml.jackson.databind.JsonNode;
 
 
@@ -90,19 +93,30 @@ public class HubConfigTest extends HubTestBase {
         assertEquals("host1", config.getLoadBalancerHosts()[0]);
     }
 
+
     @Test
     public void testHubInfo() {
+
         HubConfig config = getHubConfig();
+        ObjectMapper objmapper = new ObjectMapper();
 
         try {
 
-            System.out.println(config.getInfo());
-        }
-        catch(Exception e) {
-         System.out.println("FAILED: " + e);
+            JsonNode jsonNode = objmapper.readTree(config.getInfo());
+
+            assertTrue(jsonNode.get("stagingDbName").asText().equals(config.getDbName(DatabaseKind.STAGING)));
+
+            assertTrue(jsonNode.get("stagingHttpName").asText().equals(config.getHttpName(DatabaseKind.STAGING)));
+
+            assertTrue(jsonNode.get("finalForestsPerHost").asInt() == config.getForestsPerHost(DatabaseKind.FINAL));
+
+            assertTrue(jsonNode.get("finalPort").asInt() == config.getPort(DatabaseKind.FINAL));
 
         }
-
+        catch (Exception e)
+        {
+            throw new DataHubConfigurationException("Your datahub configuration could not serialize");
+        }
     }
 
 
