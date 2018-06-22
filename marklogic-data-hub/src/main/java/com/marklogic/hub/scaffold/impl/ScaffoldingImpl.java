@@ -114,13 +114,12 @@ public class ScaffoldingImpl implements Scaffolding {
             flowDir.toFile().mkdirs();
 
             if (useEsModel) {
-                if (Files.exists(getMappingDir(mappingName))) {
-                    ContentPlugin cp = new ContentPlugin(databaseClient);
-                    String content = cp.getContents(entityName, codeFormat, flowType, mappingName);
-                    writeBuffer(content, flowDir.resolve("content." + codeFormat));
-                } else {
+                if (mappingName != null && !Files.exists(getMappingDir(mappingName))) {
                     throw new DataHubConfigurationException("The requested mapping " + mappingName + " could not be found");
                 }
+                ContentPlugin cp = new ContentPlugin(databaseClient);
+                String content = cp.getContents(entityName, codeFormat, flowType, mappingName);
+                writeBuffer(content, flowDir.resolve("content." + codeFormat));
             } else {
                 writeFile("scaffolding/" + flowType + "/" + codeFormat + "/content." + codeFormat,
                     flowDir.resolve("content." + codeFormat));

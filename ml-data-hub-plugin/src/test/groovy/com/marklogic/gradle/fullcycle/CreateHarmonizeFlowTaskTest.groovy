@@ -15,8 +15,9 @@
  *
  */
 
-package com.marklogic.gradle.task
+package com.marklogic.gradle.fullcycle
 
+import com.marklogic.gradle.task.BaseTest
 import org.apache.commons.io.FileUtils
 import org.gradle.testkit.runner.UnexpectedBuildFailure
 import org.gradle.testkit.runner.UnexpectedBuildSuccess
@@ -29,6 +30,12 @@ import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 class CreateHarmonizeFlowTaskTest extends BaseTest {
     def setupSpec() {
         createGradleFiles()
+        runTask("hubInit")
+        runTask("mlDeploy")
+    }
+
+    def cleanupSpec() {
+        runTask('mlUndeploy', '-Pconfirm=true')
     }
 
     def "createHarmonizeFlow with no entityName"() {
@@ -43,7 +50,7 @@ class CreateHarmonizeFlowTaskTest extends BaseTest {
 
     def "createHarmonizeFlow with no flowName"() {
         given:
-        propertiesFile << """
+        BaseTest.propertiesFile << """
             ext {
                 entityName=my-new-entity
             }
@@ -60,7 +67,7 @@ class CreateHarmonizeFlowTaskTest extends BaseTest {
 
     def "createHarmonizeFlow with valid name"() {
         given:
-        propertiesFile << """
+        BaseTest.propertiesFile << """
             ext {
                 entityName=my-new-entity
                 flowName=my-new-harmonize-flow
@@ -75,13 +82,13 @@ class CreateHarmonizeFlowTaskTest extends BaseTest {
         notThrown(UnexpectedBuildFailure)
         result.task(":hubCreateHarmonizeFlow").outcome == SUCCESS
 
-        File entityDir = Paths.get(testProjectDir.root.toString(), "plugins", "entities", "my-new-entity", "harmonize", "my-new-harmonize-flow").toFile()
+        File entityDir = Paths.get(BaseTest.testProjectDir.root.toString(), "plugins", "entities", "my-new-entity", "harmonize", "my-new-harmonize-flow").toFile()
         entityDir.isDirectory() == true
     }
 
     def "createHarmonizeFlow with bad mappingName"() {
         given:
-        propertiesFile << """
+        BaseTest.propertiesFile << """
             ext {
                 entityName=my-new-entity
                 flowName=my-new-harmonize-flow
@@ -107,7 +114,7 @@ class CreateHarmonizeFlowTaskTest extends BaseTest {
         mappingDir.toFile().mkdirs()
         newMappingDir.toFile().mkdirs()
         FileUtils.copyFile(new File("src/test/resources/my-new-mapping-1.mapping.json"), newMappingDir.resolve('my-new-mapping-1.mapping.json').toFile())
-        propertiesFile << """
+        BaseTest.propertiesFile << """
             ext {
                 entityName=my-new-entity
                 flowName=my-new-harmonize-flow
@@ -124,7 +131,7 @@ class CreateHarmonizeFlowTaskTest extends BaseTest {
         notThrown(UnexpectedBuildFailure)
         result.task(":hubCreateHarmonizeFlow").outcome == SUCCESS
 
-        File entityDir = Paths.get(testProjectDir.root.toString(), "plugins", "entities", "my-new-entity", "harmonize", "my-new-harmonize-flow").toFile()
+        File entityDir = Paths.get(BaseTest.testProjectDir.root.toString(), "plugins", "entities", "my-new-entity", "harmonize", "my-new-harmonize-flow").toFile()
         entityDir.isDirectory() == true
     }
 }
