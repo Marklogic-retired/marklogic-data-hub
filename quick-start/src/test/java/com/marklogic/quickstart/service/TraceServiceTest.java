@@ -62,13 +62,13 @@ public class TraceServiceTest extends AbstractServiceTest {
         createProjectDir();
         enableTracing();
 
-        Scaffolding scaffolding = Scaffolding.create(projectDir.toString(), stagingClient);
+        Scaffolding scaffolding = Scaffolding.create(projectDir.toString(), finalClient);
         scaffolding.createEntity(ENTITY);
         scaffolding.createFlow(ENTITY, "sjs-json-harmonize-flow", FlowType.HARMONIZE,
-            CodeFormat.JAVASCRIPT, DataFormat.JSON);
+            CodeFormat.JAVASCRIPT, DataFormat.JSON, false);
 
         scaffolding.createFlow(ENTITY, "xqy-xml-harmonize-flow", FlowType.HARMONIZE,
-            CodeFormat.XQUERY, DataFormat.XML);
+            CodeFormat.XQUERY, DataFormat.XML, false);
 
         installUserModules(getHubConfig(), true);
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);

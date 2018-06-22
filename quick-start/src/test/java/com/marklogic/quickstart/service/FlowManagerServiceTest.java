@@ -68,22 +68,22 @@ public class FlowManagerServiceTest extends AbstractServiceTest {
         Scaffolding scaffolding = Scaffolding.create(projectDir.toString(), stagingClient);
         scaffolding.createEntity(ENTITY);
         scaffolding.createFlow(ENTITY, "sjs-json-input-flow", FlowType.INPUT,
-            CodeFormat.JAVASCRIPT, DataFormat.JSON);
+            CodeFormat.JAVASCRIPT, DataFormat.JSON, false);
 
         scaffolding.createFlow(ENTITY, "sjs-xml-input-flow", FlowType.INPUT,
-            CodeFormat.JAVASCRIPT, DataFormat.XML);
+            CodeFormat.JAVASCRIPT, DataFormat.XML, false);
 
         scaffolding.createFlow(ENTITY, "xqy-json-input-flow", FlowType.INPUT,
-            CodeFormat.XQUERY, DataFormat.JSON);
+            CodeFormat.XQUERY, DataFormat.JSON, false);
 
         scaffolding.createFlow(ENTITY, "xqy-xml-input-flow", FlowType.INPUT,
-            CodeFormat.XQUERY, DataFormat.XML);
+            CodeFormat.XQUERY, DataFormat.XML, false);
 
         scaffolding.createFlow(ENTITY, "sjs-json-harmonization-flow", FlowType.HARMONIZE,
-            CodeFormat.JAVASCRIPT, DataFormat.JSON);
+            CodeFormat.JAVASCRIPT, DataFormat.JSON, false);
 
         scaffolding.createFlow(ENTITY, "xqy-xml-harmonization-flow", FlowType.HARMONIZE,
-            CodeFormat.XQUERY, DataFormat.XML);
+            CodeFormat.XQUERY, DataFormat.XML, false);
 
         Path inputDir = projectDir.resolve("plugins/entities/" + ENTITY + "/input");
         FileUtil.copy(getResourceStream("flow-manager/sjs-flow/headers.sjs"), inputDir.resolve("sjs-json-input-flow/headers.sjs").toFile());
