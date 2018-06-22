@@ -64,6 +64,7 @@ class CreateHarmonizeFlowTaskTest extends BaseTest {
             ext {
                 entityName=my-new-entity
                 flowName=my-new-harmonize-flow
+                useES=false
             }
         """
 
@@ -112,6 +113,7 @@ class CreateHarmonizeFlowTaskTest extends BaseTest {
                 mappingName=my-new-mapping
             }
         """
+        runTask("mlLoadModules")
 
         when:
         def result = runTask('hubCreateHarmonizeFlow')

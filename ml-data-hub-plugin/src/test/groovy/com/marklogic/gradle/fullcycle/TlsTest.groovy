@@ -235,7 +235,7 @@ class TlsTest extends BaseTest {
 
     def "runHarmonizeFlow with default src and dest"() {
         given:
-        println(runTask('hubCreateHarmonizeFlow', '-PentityName=my-new-entity', '-PflowName=my-new-harmonize-flow', '-PdataFormat=xml', '-PpluginFormat=xqy').getOutput())
+        println(runTask('hubCreateHarmonizeFlow', '-PentityName=my-new-entity', '-PflowName=my-new-harmonize-flow', '-PdataFormat=xml', '-PpluginFormat=xqy', '-PuseES=false').getOutput())
         println(runTask('mlReLoadModules'))
         def newSslContext = SSLContext.getInstance("TLSv1.2")
         newSslContext.init(null, [new SimpleX509TrustManager()] as TrustManager[], null)
@@ -271,7 +271,7 @@ class TlsTest extends BaseTest {
 
     def "runHarmonizeFlow with swapped src and dest"() {
         given:
-        println(runTask('hubCreateHarmonizeFlow', '-PentityName=my-new-entity', '-PflowName=my-new-harmonize-flow', '-PdataFormat=xml', '-PpluginFormat=xqy').getOutput())
+        println(runTask('hubCreateHarmonizeFlow', '-PentityName=my-new-entity', '-PflowName=my-new-harmonize-flow', '-PdataFormat=xml', '-PpluginFormat=xqy', '-PuseES=false').getOutput())
         println(runTask('mlReLoadModules'))
         def newSslContext = SSLContext.getInstance("TLSv1.2")
         newSslContext.init(null, [new SimpleX509TrustManager()] as TrustManager[], null)

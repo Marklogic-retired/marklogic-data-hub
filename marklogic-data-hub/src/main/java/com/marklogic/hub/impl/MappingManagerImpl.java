@@ -63,10 +63,12 @@ public class MappingManagerImpl extends LoggingObject implements MappingManager 
     }
 
     @Override public Mapping createMapping(String mappingName) {
-        if(getMapping(mappingName) != null){
-           return Mapping.create(mappingName);
-        } else {
+        try {
+            getMapping(mappingName);
             throw new DataHubProjectException("Mapping with that name already exists");
+        }
+        catch (DataHubProjectException e) {
+           return Mapping.create(mappingName);
         }
     }
 
@@ -145,7 +147,7 @@ public class MappingManagerImpl extends LoggingObject implements MappingManager 
     }
 
     private Mapping getMappingVersion(String mappingName) {
-        return  getMappingVersion(mappingName, -1);
+        return  getMappingVersion(mappingName, 1);
     }
 
     private Mapping getMappingVersion(String mappingName, int version){

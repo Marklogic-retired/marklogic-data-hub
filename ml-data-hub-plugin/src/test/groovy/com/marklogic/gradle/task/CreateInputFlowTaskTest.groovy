@@ -64,6 +64,7 @@ class CreateInputFlowTaskTest extends BaseTest {
             ext {
                 entityName=my-new-entity
                 flowName=my-new-harmonize-flow
+                useES=false
             }
         """
 
