@@ -545,12 +545,12 @@ function {service:camel-case("extractInstance-" || $entity-type-name)}(source) {
   return {{
   {
     if ($entity eq $entity-type-name) then
-      "'$attachments': attachments,"
+      "  '$attachments': attachments,"
     else
       ()
   }
-  '$type': '{ $entity-type-name }',
-  '$version': '{ map:get(map:get($model, "info"), "version") }'{
+    '$type': '{ $entity-type-name }',
+    '$version': '{ map:get(map:get($model, "info"), "version") }'{
   let $definitions := map:get($model, "definitions")
   let $entity-type := map:get($definitions, $entity-type-name)
   let $properties := map:get($entity-type, "properties")
@@ -575,11 +575,11 @@ function makeReferenceObject(type, ref) {{
   return {{
     '$type': type,
     '$ref': ref
-    }};
+  }};
 }}
 
 module.exports = {{
-createContent: createContent
+  createContent: createContent
 }};
 
 </module>/text()
