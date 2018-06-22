@@ -527,9 +527,11 @@ declare function service:generate-sjs($entity as xs:string, $flow-type as xs:str
               function {service:camel-case("extractInstance-" || $entity-type-name)}(source) {{
               // the original source documents
               let attachments = source;
-              // now check to see if we have XML or json, if xml grab just our root
+              // now check to see if we have XML or json, then just go to the instance
               if(source instanceof Element) {{
               source = fn.head(source.xpath('/*:envelope/*:instance/*:root/node()'))
+              }} else if(source instanceof ObjectNode) {{
+                source = source.envelope.instance;
               }}
               {
                 if (fn:empty($mapping) eq fn:false() and fn:empty(map:get($mapping, "name")) eq fn:false()) then
