@@ -71,6 +71,7 @@ public interface DataHub {
      * Runs the pre-install check for the datahub populating the object
      * with variables necessary to perform the install.
      * This is used for running install.
+     * @return - a hashmap of the results of the preinstall check
      */
     HashMap runPreInstallCheck();
 
@@ -79,6 +80,7 @@ public interface DataHub {
      * with variables necessary to perform the install.
      * This is used for running install.
      * @param versions - the versions that the check is to be run against
+     * @return - a hashmap of the results of the preinstall check
      */
     HashMap runPreInstallCheck(Versions versions);
 

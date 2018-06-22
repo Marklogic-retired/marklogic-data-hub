@@ -32,7 +32,7 @@ public interface MappingManager {
 
     /**
      * Grabs the Mapping Manager instance and uses the given hubConfig
-     * @param hubConfig
+     * @param hubConfig - a hubConfig object for the mappingmanager to use
      * @return A mapping manager instance
      */
     static MappingManager getMappingManager(HubConfig hubConfig) {
@@ -41,19 +41,24 @@ public interface MappingManager {
 
     /**
      * Creates a mapping given a string name
-     * @param mappingName
+     * @param mappingName - the base name of the mapping you want to create
+     * @return - a Mapping object
      */
     Mapping createMapping(String mappingName);
 
-    /**
+     /**
      * Creates a mapping from a given JSON string
      * @param json - string representation of json
+     * @return - a Mapping object
+     * @throws IOException - thrown if mapping file cannot be found/read off disk
      */
     Mapping createMappingFromJSON(String json) throws IOException;
 
     /**
      * Creates a mapping from a given JsonNode
      * @param json - JsonNode
+     * @return - a Mapping object
+     * @throws IOException - thrown if mapping file cannot be found/read off disk
      */
     Mapping createMappingFromJSON(JsonNode json) throws IOException;
 
@@ -73,17 +78,19 @@ public interface MappingManager {
 
     /**
      * Deletes a defined mapping by string name
-     * @param mappingName
+     * @param mappingName - the base-name of the mapping you want to delete as a string
      */
     void deleteMapping(String mappingName);
 
     /**
      * Returns a list of all mappings currently defined
+     * @return - an arraylist of ALL mapping objects from disk
      */
     ArrayList<Mapping> getMappings();
 
     /**
      * Returns a string list of names for all mappings currently defined
+     * @return - A list of strings that represent mapping names
      */
     ArrayList<String> getMappingsNames();
 

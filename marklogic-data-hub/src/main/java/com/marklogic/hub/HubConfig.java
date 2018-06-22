@@ -305,8 +305,8 @@ public interface HubConfig {
     String getProjectDir();
 
     /**
-     *
-     * @param projectDir
+     * Sets the directory for the current project
+     * @param projectDir - a string that represents the path to the project directory
      */
     void setProjectDir(String projectDir);
 

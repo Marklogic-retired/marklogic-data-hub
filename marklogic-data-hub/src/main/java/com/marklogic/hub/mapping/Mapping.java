@@ -30,7 +30,7 @@ public interface Mapping {
 
     /**
      * Sets the version for the mapping
-     * @param version
+     * @param version - a whole integer representing the version of the mapping
      */
     void setVersion(int version);
 
@@ -42,7 +42,7 @@ public interface Mapping {
 
     /**
      * Sets the properties hashmap for the mapping
-     * @param properties
+     * @param properties - hashmap of properties and their settings for the mapping
      */
     void setProperties(HashMap<String, ObjectNode> properties);
 
@@ -54,7 +54,7 @@ public interface Mapping {
 
     /**
      * Sets the name of the mapping as a string
-     * @param name
+     * @param name - the name of the mapping (warning: be careful of name changes)
      */
     void setName(String name);
 
@@ -66,19 +66,19 @@ public interface Mapping {
 
     /**
      * Sets the source context for the mapping
-     * @param sourceContext
+     * @param sourceContext - the xpath to start the mapping from inside the root of the documents
      */
     void setSourceContext(String sourceContext);
 
     /**
      * Returns the IRI for the targeted entity type
-     * @return
+     * @return - IRI as string for what entity this mapping is targeted towards
      */
     String getTargetEntityType();
 
     /**
      * Setting the IRI for the target entity type
-     * @param targetEntityType
+     * @param targetEntityType - the IRI of the entity you want this mapping to use
      */
     void setTargetEntityType(String targetEntityType);
 
@@ -90,7 +90,7 @@ public interface Mapping {
 
     /**
      * Set the description for the mapping
-     * @param description
+     * @param description - a short description of what this mapping's purpose is
      */
     void setDescription(String description);
 
@@ -101,15 +101,15 @@ public interface Mapping {
     String getLanguage();
 
     /**
+     * *CAREFUL - DO NOT TOUCH IF YOU DON'T EXPLICITLY KNOW WHAT THIS VALUE REPRESENTS*
      * Sets the language for the mapping to use for MarkLogic server
-     * @param language
+     * @param language - sets the language key for the server - don't modify please!
      */
     void setLanguage(String language);
 
     /**
      * Serializes the mapping as a json string
      * @return the serialized JSON string
-     * @throws JsonProcessingException
      */
     String serialize();
 

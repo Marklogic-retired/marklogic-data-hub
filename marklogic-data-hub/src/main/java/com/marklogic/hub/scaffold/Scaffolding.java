@@ -126,7 +126,7 @@ public interface Scaffolding {
      * @param entityName - the entity which the flow is attached
      * @param flowName - the name of the flow as a string
      * @param flowType - the type of flow as TypeFlow, eg: harmonize or ingest
-     * @return
+     * @return true if successful, false if it failed to update the flow
      */
     boolean updateLegacyFlow(String fromVersion, String entityName, String flowName, FlowType flowType);
 
@@ -136,7 +136,7 @@ public interface Scaffolding {
      * @param extensionName - the name of the extension as a string
      * @param flowType - the type of flow as TypeFlow, eg: harmonize or ingest
      * @param codeFormat - the format of the code as CodeFormat enum
-     * @throws ScaffoldingValidationException
+     * @throws ScaffoldingValidationException - thrown if the extension fails to pass validation
      */
     void createRestExtension(String entityName, String extensionName,
                              FlowType flowType, CodeFormat codeFormat) throws ScaffoldingValidationException;
@@ -147,7 +147,7 @@ public interface Scaffolding {
      * @param transformName - the name of the transform as a string
      * @param flowType - the type of flow as TypeFlow, eg: harmonize or ingest
      * @param codeFormat - the format of the code as CodeFormat enum
-     * @throws ScaffoldingValidationException
+     * @throws ScaffoldingValidationException - thrown if the extension fails to pass validation
      */
     void createRestTransform(String entityName, String transformName,
                              FlowType flowType, CodeFormat codeFormat) throws ScaffoldingValidationException;
