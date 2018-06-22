@@ -193,164 +193,164 @@ declare function service:generate-xqy($entity as xs:string, $flow-type as xs:str
     else "$doc"
   return
     document {
-      <module>xquery version "1.0-ml";
+<module>xquery version "1.0-ml";
 
-        module namespace plugin = "http://marklogic.com/data-hub/plugins";
+module namespace plugin = "http://marklogic.com/data-hub/plugins";
 
-        import module namespace es = "http://marklogic.com/entity-services"
-        at "/MarkLogic/entity-services/entity-services.xqy";
+import module namespace es = "http://marklogic.com/entity-services"
+at "/MarkLogic/entity-services/entity-services.xqy";
 
-        declare option xdmp:mapping "false";
+declare option xdmp:mapping "false";
 
-        (:~
-        : Create Content Plugin
-        :
-        : @param $id          - the identifier returned by the collector
-        : @param $options     - a map containing options. Options are sent from Java
-        :
-        : @return - your transformed content
-        :)
-        declare function plugin:create-content(
-        $id as xs:string,
-        {
-          if ($flow-type eq $consts:INPUT_FLOW) then
-            "$raw-content as node()?,&#10;  "
-          else ()
-        }$options as map:map) as map:map
-        {{
-        {
-          if ($flow-type eq $consts:HARMONIZE_FLOW) then
-            "let $doc := fn:doc($id)&#10;  "
-          else ()
-        }let $source :=
-        if ({$root-name}/es:envelope) then
-        {$root-name}/es:envelope/es:instance/node()
-        else if ({$root-name}/instance) then
-        {$root-name}/instance
+(:~
+: Create Content Plugin
+:
+: @param $id          - the identifier returned by the collector
+: @param $options     - a map containing options. Options are sent from Java
+:
+: @return - your transformed content
+:)
+declare function plugin:create-content(
+  $id as xs:string,
+  {
+    if ($flow-type eq $consts:INPUT_FLOW) then
+      "$raw-content as node()?,&#10;  "
+    else ()
+  }$options as map:map) as map:map
+  {{
+  {
+    if ($flow-type eq $consts:HARMONIZE_FLOW) then
+      "let $doc := fn:doc($id)&#10;  "
+    else ()
+  }let $source :=
+    if ({$root-name}/es:envelope) then
+      {$root-name}/es:envelope/es:instance/node()
+    else if ({$root-name}/instance) then
+      {$root-name}/instance
+    else
+      {$root-name}
+  return
+  {
+    "plugin:extract-instance-" || $entity || "($source)"
+  }
+}};
+  {
+for $entity-type-name in map:keys(map:get($model, "definitions"))
+return
+<extract-instance>
+(:~
+: Creates a map:map instance from some source document.
+: @param $source-node  A document or node that contains
+:   data for populating a {$entity-type-name}
+: @return A map:map instance with extracted data and
+:   metadata about the instance.
+:)
+declare function plugin:extract-instance-{$entity-type-name}(
+$source as node()?
+) as map:map
+{{
+{
+  if ($entity-type-name eq $entity) then
+  <txt>
+  (: the original source documents :)
+  let $attachments := $source
+  </txt>/text()
+  else ()
+}
+{
+  if (fn:empty($mapping) eq fn:false() and fn:empty(map:get($mapping, "name")) eq fn:false()) then
+  <txt>(: These mappings were generated using mapping: {map:get($mapping, "name")}, version: {map:get($mapping, "version")} on {fn:current-dateTime()}. :)
+  </txt>/text()
+  else ()
+}
+{
+service:generate-lets($model, $entity-type-name, $mapping)
+}
+
+  (: return the in-memory instance :)
+  (: using the XQuery 3.0 syntax... :)
+  let $model := json:object()
+  let $_ := (
+  {
+    if ($entity-type-name eq $entity) then
+      "map:put($model, '$attachments', $attachments),&#10;    "
+    else ()
+  }
+  map:put($model, '$type', '{ $entity-type-name }'),
+  map:put($model, '$version', '{ map:get(map:get($model, "info"), "version") }'){
+  let $definitions := map:get($model, "definitions")
+  let $entity-type := map:get($definitions, $entity-type-name)
+  let $properties := map:get($entity-type, "properties")
+  let $property-keys := map:keys($properties)
+  where fn:count($property-keys) > 0
+  return
+    ",&#10;    " ||
+    fn:string-join(
+      (: Begin code generation block :)
+      let $required-properties := (
+        map:get($entity-type, "primaryKey"),
+        map:get($entity-type, "required") ! json:array-values(.)
+      )
+      for $property-name in $property-keys
+      let $is-required := $property-name = $required-properties
+      return
+        if ($is-required) then
+          "map:put($model, '" || $property-name || "', $" || service:kebob-case($property-name) || ")"
         else
-        {$root-name}
-        return
-        {
-          "plugin:extract-instance-" || $entity || "($source)"
-        }
-        }};
-        {
-          for $entity-type-name in map:keys(map:get($model, "definitions"))
-          return
-            <extract-instance>
-              (:~
-              : Creates a map:map instance from some source document.
-              : @param $source-node  A document or node that contains
-              :   data for populating a {$entity-type-name}
-              : @return A map:map instance with extracted data and
-              :   metadata about the instance.
-              :)
-              declare function plugin:extract-instance-{$entity-type-name}(
-              $source as node()?
-              ) as map:map
-              {{
-              {
-                if ($entity-type-name eq $entity) then
-                  <txt>(: the original source documents :)
-                    let $attachments := $source
+          "es:optional($model, '" || $property-name || "', $" || service:kebob-case($property-name) || ")"
+      , ",&#10;    ")
+  (: end code generation block :)
+  }
+  )
 
-                  </txt>/text()
-                else ()
-              }
-              {
-                if (fn:empty($mapping) eq fn:false() and fn:empty(map:get($mapping, "name")) eq fn:false()) then
-                  <txt>(: These mappings were generated using mapping: {map:get($mapping, "name")}, version: {map:get($mapping, "version")} on {fn:current-dateTime()}. :)
-                  </txt>/text()
-                else ()
-              }
-              {
-                service:generate-lets($model, $entity-type-name, $mapping)
-              }
-
-              (: return the in-memory instance :)
-              (: using the XQuery 3.0 syntax... :)
-              let $model := json:object()
-              let $_ := (
-              {
-                if ($entity-type-name eq $entity) then
-                  "map:put($model, '$attachments', $attachments),&#10;    "
-                else ()
-              }map:put($model, '$type', '{ $entity-type-name }'),
-              map:put($model, '$version', '{ map:get(map:get($model, "info"), "version") }'){
-              let $definitions := map:get($model, "definitions")
-              let $entity-type := map:get($definitions, $entity-type-name)
-              let $properties := map:get($entity-type, "properties")
-              let $property-keys := map:keys($properties)
-              where fn:count($property-keys) > 0
-              return
-                ",&#10;    " ||
-                fn:string-join(
-                  (: Begin code generation block :)
-                  let $required-properties := (
-                    map:get($entity-type, "primaryKey"),
-                    map:get($entity-type, "required") ! json:array-values(.)
-                  )
-                  for $property-name in $property-keys
-                  let $is-required := $property-name = $required-properties
-                  return
-                    if ($is-required) then
-                      "map:put($model, '" || $property-name || "', $" || service:kebob-case($property-name) || ")"
-                    else
-                      "es:optional($model, '" || $property-name || "', $" || service:kebob-case($property-name) || ")"
-                  , ",&#10;    ")
-            (: end code generation block :)
-            }
-              )
-
-              (: if you prefer the xquery 3.1 version with the => operator....
-              : https://www.w3.org/TR/xquery-31/#id-arrow-operator
-              let $model :=
-              json:object()
-              {
-                if ($entity-type-name eq $entity) then
-                  "    =>map:with('$attachments', $attachments)&#10;  "
-                else ()
-              }    =>map:with('$type', '{ $entity-type-name }')
-              =>map:with('$version', '{ map:get(map:get($model, "info"), "version") }')
-              {
-                fn:string-join(
-                  (: Begin code generation block :)
-                  let $definitions := map:get($model, "definitions")
-                  let $entity-type := map:get($definitions, $entity-type-name)
-                  let $properties := map:get($entity-type, "properties")
-                  let $required-properties := (
-                    map:get($entity-type, "primaryKey"),
-                    json:array-values(map:get($entity-type, "required"))
-                  )
-                  for $property-name in map:keys($properties)
-                  let $is-required := $property-name = $required-properties
-                  return
-                    if ($is-required) then
-                      "  =>map:with('" || $property-name || "', $" || service:kebob-case($property-name) || ")"
-                    else
-                      "  =>es:optional('" || $property-name || "', $" || service:kebob-case($property-name) || ")"
-                  , "&#10;    ")
-              (: end code generation block :)
-              }
-              :)
-              return
-              $model
-              }};
-            </extract-instance>/text()
-        }
-        declare function plugin:make-reference-object(
-        $type as xs:string,
-        $ref as xs:string)
-        {{
-        let $o := json:object()
-        let $_ := (
-        map:put($o, '$type', $type),
-        map:put($o, '$ref', $ref)
-        )
-        return
-        $o
-        }};</module>/text()
-    }
+  (: if you prefer the xquery 3.1 version with the => operator....
+  https://www.w3.org/TR/xquery-31/#id-arrow-operator
+  let $model :=
+  json:object()
+  {
+  if ($entity-type-name eq $entity) then
+    "    =>map:with('$attachments', $attachments)&#10;  "
+  else ()
+  }    =>map:with('$type', '{ $entity-type-name }')
+  =>map:with('$version', '{ map:get(map:get($model, "info"), "version") }')
+  {
+  fn:string-join(
+    (: Begin code generation block :)
+    let $definitions := map:get($model, "definitions")
+    let $entity-type := map:get($definitions, $entity-type-name)
+    let $properties := map:get($entity-type, "properties")
+    let $required-properties := (
+      map:get($entity-type, "primaryKey"),
+      json:array-values(map:get($entity-type, "required"))
+    )
+    for $property-name in map:keys($properties)
+    let $is-required := $property-name = $required-properties
+    return
+      if ($is-required) then
+        "  =>map:with('" || $property-name || "', $" || service:kebob-case($property-name) || ")"
+      else
+        "  =>es:optional('" || $property-name || "', $" || service:kebob-case($property-name) || ")"
+    , "&#10;    ")
+  (: end code generation block :)
+  }
+  :)
+  return $model
+}};
+</extract-instance>/text()
+  }
+declare function plugin:make-reference-object(
+$type as xs:string,
+$ref as xs:string)
+{{
+  let $o := json:object()
+  let $_ := (
+    map:put($o, '$type', $type),
+    map:put($o, '$ref', $ref)
+  )
+  return
+  $o
+}};</module>/text()
+}
 };
 
 
@@ -473,117 +473,114 @@ declare function service:generate-sjs($entity as xs:string, $flow-type as xs:str
     if ($flow-type eq $consts:INPUT_FLOW) then "rawContent"
     else "doc"
   return
-    document {
-      <module>
-      'use strict'
+    document {<module>'use strict'
 
-        /*
-        * Create Content Plugin
-        *
-        * @param id         - the identifier returned by the collector
-        * @param options    - an object containing options. Options are sent from Java
-        *
-        * @return - your content
-        */
-        function createContent(id, {
-        if ($flow-type eq $consts:INPUT_FLOW) then
-          "rawContent, "
-        else ()
-      }options) {{
-        {
-          if ($flow-type eq $consts:HARMONIZE_FLOW) then
-            "let doc = cts.doc(id);"
-          else ()
-        }
+/*
+* Create Content Plugin
+*
+* @param id         - the identifier returned by the collector
+* @param options    - an object containing options. Options are sent from Java
+*
+* @return - your content
+*/
+function createContent(id, {
+  if ($flow-type eq $consts:INPUT_FLOW) then
+    "rawContent, "
+  else ()
+}options) {{
+  {
+    if ($flow-type eq $consts:HARMONIZE_FLOW) then
+      "let doc = cts.doc(id);"
+    else ()
+  }
 
-        let source;
+  let source;
 
-        // for xml we need to use xpath
-        if({$root-name} &amp;&amp; xdmp.nodeKind({$root-name}) === 'element' &amp;&amp; {$root-name} instanceof XMLDocument) {{
-        source = fn.head({$root-name}.xpath('/*:envelope/*:instance/node()'));
-        }}
-        // for json we need to return the instance
-        else if({$root-name} &amp;&amp; {$root-name} instanceof Document) {{
-        source = fn.head({$root-name}.root);
-        }}
-        // for everything else
-        else {{
-        source = {if ($flow-type eq $consts:INPUT_FLOW) then $root-name else "doc"};
-        }}
+  // for xml we need to use xpath
+  if({$root-name} &amp;&amp; xdmp.nodeKind({$root-name}) === 'element' &amp;&amp; {$root-name} instanceof XMLDocument) {{
+  source = fn.head({$root-name}.xpath('/*:envelope/*:instance/node()'));
+  }}
+  // for json we need to return the instance
+  else if({$root-name} &amp;&amp; {$root-name} instanceof Document) {{
+  source = fn.head({$root-name}.root);
+  }}
+  // for everything else
+  else {{
+  source = {if ($flow-type eq $consts:INPUT_FLOW) then $root-name else "doc"};
+  }}
 
-        return {service:camel-case("extractInstance-" || $entity) || "(source)"};
-        }}
-        {
-          for $entity-type-name in map:keys(map:get($model, "definitions"))
-          return
-            <extract-instance>
-              /**
-              * Creates an object instance from some source document.
-              * @param source  A document or node that contains
-              *   data for populating a {$entity-type-name}
-              * @return An object with extracted data and
-              *   metadata about the instance.
-              */
-              function {service:camel-case("extractInstance-" || $entity-type-name)}(source) {{
-              // the original source documents
-              let attachments = source;
-              // now check to see if we have XML or json, then just go to the instance
-              if(source instanceof Element) {{
-              source = fn.head(source.xpath('/*:envelope/*:instance/*:root/node()'))
-              }} else if(source instanceof ObjectNode) {{
-                source = source.envelope.instance;
-              }}
-              {
-                if (fn:empty($mapping) eq fn:false() and fn:empty(map:get($mapping, "name")) eq fn:false()) then
-                  <txt>/* These mappings were generated using mapping: {map:get($mapping, "name")}, version: {map:get($mapping, "version")} on {fn:current-dateTime()}. */
-                  </txt>/text()
-                else ()
-              }
-              {
-                service:generate-vars($model, $entity-type-name, $mapping)
-              }
+  return {service:camel-case("extractInstance-" || $entity) || "(source)"};
+}}
+  {
+for $entity-type-name in map:keys(map:get($model, "definitions"))
+return <extract-instance>
+/**
+* Creates an object instance from some source document.
+* @param source  A document or node that contains
+*   data for populating a {$entity-type-name}
+* @return An object with extracted data and
+*   metadata about the instance.
+*/
+function {service:camel-case("extractInstance-" || $entity-type-name)}(source) {{
+  // the original source documents
+  let attachments = source;
+  // now check to see if we have XML or json, then just go to the instance
+  if(source instanceof Element) {{
+  source = fn.head(source.xpath('/*:envelope/*:instance/*:root/node()'))
+  }} else if(source instanceof ObjectNode) {{
+    source = source.envelope.instance;
+  }}
+  {
+    if (fn:empty($mapping) eq fn:false() and fn:empty(map:get($mapping, "name")) eq fn:false()) then
+      <txt>/* These mappings were generated using mapping: {map:get($mapping, "name")}, version: {map:get($mapping, "version")} on {fn:current-dateTime()}. */
+      </txt>/text()
+    else ()
+  }
+  {
+    service:generate-vars($model, $entity-type-name, $mapping)
+  }
 
-              // return the instance object
-              return {{
-              {
-                if ($entity eq $entity-type-name) then
-                  "'$attachments': attachments,&#10;    "
-                else
-                  ()
-              }'$type': '{ $entity-type-name }',
-              '$version': '{ map:get(map:get($model, "info"), "version") }'{
-              let $definitions := map:get($model, "definitions")
-              let $entity-type := map:get($definitions, $entity-type-name)
-              let $properties := map:get($entity-type, "properties")
-              let $properties-keys := map:keys($properties)
-              where fn:count($properties-keys) > 0
-              return
-                ",&#10;    " ||
-                fn:string-join(
-                  (: Begin code generation block :)
-                  for $property-name in $properties-keys
-                  return
-                    "'" || $property-name || "': " || $property-name
-                  , ",&#10;    ")
-            (: end code generation block :)
-            }
-              }}
-              }};
-            </extract-instance>/text()
-        }
+  // return the instance object
+  return {{
+  {
+    if ($entity eq $entity-type-name) then
+      "'$attachments': attachments,&#10;    "
+    else
+      ()
+  }'$type': '{ $entity-type-name }',
+  '$version': '{ map:get(map:get($model, "info"), "version") }'{
+  let $definitions := map:get($model, "definitions")
+  let $entity-type := map:get($definitions, $entity-type-name)
+  let $properties := map:get($entity-type, "properties")
+  let $properties-keys := map:keys($properties)
+  where fn:count($properties-keys) > 0
+  return
+    ",&#10;    " ||
+    fn:string-join(
+      (: Begin code generation block :)
+      for $property-name in $properties-keys
+      return
+        "'" || $property-name || "': " || $property-name
+      , ",&#10;    ")
+  (: end code generation block :)
+  }
+  }}
+}};
+</extract-instance>/text()
+}
 
-        function makeReferenceObject(type, ref) {{
-        return {{
-        '$type': type,
-        '$ref': ref
-        }};
-        }}
+function makeReferenceObject(type, ref) {{
+  return {{
+    '$type': type,
+    '$ref': ref
+    }};
+}}
 
-        module.exports = {{
-        createContent: createContent
-        }};
+module.exports = {{
+createContent: createContent
+}};
 
-      </module>/text()
+</module>/text()
     }
 };
 

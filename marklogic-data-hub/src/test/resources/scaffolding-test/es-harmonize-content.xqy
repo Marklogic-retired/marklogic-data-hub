@@ -90,7 +90,7 @@ declare function plugin:extract-instance-my-fun-test(
   )
 
   (: if you prefer the xquery 3.1 version with the => operator....
-              : https://www.w3.org/TR/xquery-31/#id-arrow-operator
+              https://www.w3.org/TR/xquery-31/#id-arrow-operator
               let $model :=
               json:object()
                   =>map:with('$attachments', $attachments)
@@ -133,7 +133,7 @@ declare function plugin:extract-instance-Employee(
   )
 
   (: if you prefer the xquery 3.1 version with the => operator....
-              : https://www.w3.org/TR/xquery-31/#id-arrow-operator
+              https://www.w3.org/TR/xquery-31/#id-arrow-operator
               let $model :=
               json:object()
                   =>map:with('$type', 'Employee')
