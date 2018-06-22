@@ -166,7 +166,7 @@ public class FlowManagerTest extends HubTestBase {
             for (DataFormat dataFormat : dataFormats) {
                 for (FlowType flowType : flowTypes) {
                     String flowName = flowType.toString() + "-" + codeFormat.toString() + "-" + dataFormat.toString();
-                    scaffolding.createFlow("my-entity", flowName, flowType, codeFormat, dataFormat);
+                    scaffolding.createFlow("my-entity", flowName, flowType, codeFormat, dataFormat, false);
                 }
             }
         }
@@ -190,7 +190,7 @@ public class FlowManagerTest extends HubTestBase {
 
         allCombos((codeFormat, dataFormat, flowType, useEs) -> {
             String flowName = flowType.toString() + "-" + codeFormat.toString() + "-" + dataFormat.toString();
-            scaffolding.createFlow("my-entity", flowName, flowType, codeFormat, dataFormat);
+            scaffolding.createFlow("my-entity", flowName, flowType, codeFormat, dataFormat, false);
         });
 
 
