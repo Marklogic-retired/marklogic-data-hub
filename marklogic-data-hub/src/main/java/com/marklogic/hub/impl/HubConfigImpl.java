@@ -17,6 +17,8 @@ package com.marklogic.hub.impl;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.appdeployer.ConfigDir;
 import com.marklogic.client.DatabaseClient;
@@ -27,6 +29,7 @@ import com.marklogic.client.ext.modulesloader.ssl.SimpleX509TrustManager;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubProject;
+import com.marklogic.hub.error.DataHubConfigurationException;
 import com.marklogic.hub.error.InvalidDBOperationError;
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.ManageConfig;
@@ -131,10 +134,15 @@ public class HubConfigImpl implements HubConfig {
 
     private static final Logger logger = LoggerFactory.getLogger(HubConfigImpl.class);
 
+    private ObjectMapper objmapper;
+
     public HubConfigImpl() {
+
+        objmapper = new ObjectMapper();
     }
 
     public HubConfigImpl(String projectDir) {
+        this();
         setProjectDir(new File(projectDir).getAbsolutePath());
     }
 
@@ -1175,4 +1183,20 @@ public class HubConfigImpl implements HubConfig {
         }
         return res;
     }
+
+    @JsonIgnore
+    public String getInfo()
+    {
+
+        try {
+            return objmapper.writerWithDefaultPrettyPrinter().writeValueAsString(this);
+        }
+        catch(Exception e)
+        {
+            throw new DataHubConfigurationException("Your datahub configuration could not serialize");
+
+        }
+
+    }
+
 }
