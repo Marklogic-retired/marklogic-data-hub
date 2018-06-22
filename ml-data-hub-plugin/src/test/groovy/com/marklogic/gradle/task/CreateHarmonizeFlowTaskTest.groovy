@@ -86,6 +86,7 @@ class CreateHarmonizeFlowTaskTest extends BaseTest {
                 entityName=my-new-entity
                 flowName=my-new-harmonize-flow
                 mappingName=missing-mapping
+                useES=true
             }
         """
 
@@ -94,7 +95,7 @@ class CreateHarmonizeFlowTaskTest extends BaseTest {
 
         then:
         notThrown(UnexpectedBuildSuccess)
-        result.output.contains('Not Found document: The requested mapping: ')
+        result.output.contains('The requested mapping ')
         result.task(":hubCreateHarmonizeFlow").outcome == FAILED
     }
 
@@ -111,6 +112,7 @@ class CreateHarmonizeFlowTaskTest extends BaseTest {
                 entityName=my-new-entity
                 flowName=my-new-harmonize-flow
                 mappingName=my-new-mapping
+                useES=false
             }
         """
         runTask("mlLoadModules")

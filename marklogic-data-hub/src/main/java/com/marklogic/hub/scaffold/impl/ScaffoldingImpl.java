@@ -21,6 +21,7 @@ import com.marklogic.client.extensions.ResourceServices;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.util.RequestParameters;
 import com.marklogic.hub.collector.impl.CollectorImpl;
+import com.marklogic.hub.error.DataHubConfigurationException;
 import com.marklogic.hub.error.ScaffoldingValidationException;
 import com.marklogic.hub.flow.*;
 import com.marklogic.hub.main.impl.MainPluginImpl;
@@ -40,6 +41,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -111,22 +113,25 @@ public class ScaffoldingImpl implements Scaffolding {
             Path flowDir = getFlowDir(entityName, flowName, flowType);
             flowDir.toFile().mkdirs();
 
+            if (useEsModel) {
+                if (Files.exists(getMappingDir(mappingName))) {
+                    ContentPlugin cp = new ContentPlugin(databaseClient);
+                    String content = cp.getContents(entityName, codeFormat, flowType, mappingName);
+                    writeBuffer(content, flowDir.resolve("content." + codeFormat));
+                } else {
+                    throw new DataHubConfigurationException("The requested mapping " + mappingName + " could not be found");
+                }
+            } else {
+                writeFile("scaffolding/" + flowType + "/" + codeFormat + "/content." + codeFormat,
+                    flowDir.resolve("content." + codeFormat));
+            }
+
             if (flowType.equals(FlowType.HARMONIZE)) {
                 writeFile("scaffolding/" + flowType + "/" + codeFormat + "/collector." + codeFormat,
                     flowDir.resolve("collector." + codeFormat));
 
                 writeFile("scaffolding/" + flowType + "/" + codeFormat + "/writer." + codeFormat,
                     flowDir.resolve("writer." + codeFormat));
-            }
-
-            if (useEsModel) {
-                ContentPlugin cp = new ContentPlugin(databaseClient);
-                String content = cp.getContents(entityName, codeFormat, flowType, mappingName);
-                writeBuffer(content, flowDir.resolve("content." + codeFormat));
-
-            } else {
-                writeFile("scaffolding/" + flowType + "/" + codeFormat + "/content." + codeFormat,
-                    flowDir.resolve("content." + codeFormat));
             }
 
             writeFile("scaffolding/" + flowType + "/" + codeFormat + "/headers." + codeFormat,
