@@ -39,9 +39,11 @@ function createContent(id, options) {
 function extractInstanceMyFunTest(source) {
   // the original source documents
   let attachments = source;
-  // now check to see if we have XML or json, if xml grab just our root
+  // now check to see if we have XML or json, then just go to the instance
   if(source instanceof Element) {
     source = fn.head(source.xpath('/*:envelope/*:instance/*:root/node()'))
+  } else if(source instanceof ObjectNode) {
+    source = source.envelope.instance;
   }
   let name = !fn.empty(source.name) ? xs.string(fn.head(source.name)) : null;
   let price = !fn.empty(source.price) ? xs.decimal(fn.head(source.price)) : null;
@@ -90,9 +92,11 @@ function extractInstanceMyFunTest(source) {
 function extractInstanceEmployee(source) {
   // the original source documents
   let attachments = source;
-  // now check to see if we have XML or json, if xml grab just our root
+  // now check to see if we have XML or json, then just go to the instance
   if(source instanceof Element) {
     source = fn.head(source.xpath('/*:envelope/*:instance/*:root/node()'))
+  } else if(source instanceof ObjectNode) {
+    source = source.envelope.instance;
   }
   let id = !fn.empty(source.id) ? xs.string(fn.head(source.id)) : null;
   let name = !fn.empty(source.name) ? xs.string(fn.head(source.name)) : null;
