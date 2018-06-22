@@ -147,7 +147,7 @@ public class MappingManagerImpl extends LoggingObject implements MappingManager 
     }
 
     private Mapping getMappingVersion(String mappingName) {
-        return  getMappingVersion(mappingName, 1);
+        return  getMappingVersion(mappingName, -1);
     }
 
     private Mapping getMappingVersion(String mappingName, int version){
