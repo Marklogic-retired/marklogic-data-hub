@@ -394,7 +394,7 @@ public class FlowManagerTest extends HubTestBase {
 
         Scaffolding scaffolding = Scaffolding.create(getHubConfig().getProjectDir(), stagingClient);
         scaffolding.createEntity("new-entity");
-        scaffolding.createFlow("new-entity", "new-flow", FlowType.HARMONIZE, CodeFormat.XQUERY, DataFormat.XML);
+        scaffolding.createFlow("new-entity", "new-flow", FlowType.HARMONIZE, CodeFormat.XQUERY, DataFormat.XML, false);
         assertEquals(0, fm.getLegacyFlows().size());
 
         Path projectPath = Paths.get(PROJECT_PATH);

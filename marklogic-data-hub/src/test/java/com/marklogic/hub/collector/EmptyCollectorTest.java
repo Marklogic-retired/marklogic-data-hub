@@ -52,7 +52,7 @@ public class EmptyCollectorTest extends HubTestBase {
         Scaffolding scaffolding = Scaffolding.create(projectDir.toString(), stagingClient);
         scaffolding.createEntity(ENTITY);
         scaffolding.createFlow(ENTITY, "testharmonize", FlowType.HARMONIZE,
-            CodeFormat.XQUERY, DataFormat.XML);
+            CodeFormat.XQUERY, DataFormat.XML, false);
 
         DataHub dh = DataHub.create(getHubConfig());
         dh.clearUserModules();

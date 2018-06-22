@@ -65,7 +65,7 @@ public class FlowRunnerTest extends HubTestBase {
     @Test
     public void testPassOptions() throws IOException, ParserConfigurationException, SAXException {
         scaffolding.createFlow(ENTITY, "testharmonize", FlowType.HARMONIZE,
-            CodeFormat.XQUERY, DataFormat.XML);
+            CodeFormat.XQUERY, DataFormat.XML, false);
         Files.copy(getResourceStream("flow-runner-test/collector.xqy"),
             projectDir.resolve("plugins/entities/" + ENTITY + "/harmonize/testharmonize/collector.xqy"),
             StandardCopyOption.REPLACE_EXISTING);
@@ -199,7 +199,7 @@ public class FlowRunnerTest extends HubTestBase {
     @Test
     public void testEnvelopeSJSXML() throws IOException, SAXException {
         scaffolding.createFlow(ENTITY, "testharmonize-sjs-xml", FlowType.HARMONIZE,
-            CodeFormat.JAVASCRIPT, DataFormat.XML);
+            CodeFormat.JAVASCRIPT, DataFormat.XML, false);
 
         Files.copy(getResourceStream("flow-runner-test/collector2.sjs"),
             projectDir.resolve("plugins/entities/" + ENTITY + "/harmonize/testharmonize-sjs-xml/collector.sjs"),
