@@ -217,7 +217,7 @@ declare function plugin:create-content(
       "$raw-content as node()?,&#10;  "
     else ()
   }$options as map:map) as map:map
-  {{
+{{
   {
     if ($flow-type eq $consts:HARMONIZE_FLOW) then
       "let $doc := fn:doc($id)&#10;  "
@@ -273,7 +273,7 @@ service:generate-lets($model, $entity-type-name, $mapping)
   let $_ := (
   {
     if ($entity-type-name eq $entity) then
-      "map:put($model, '$attachments', $attachments),&#10;    "
+      "map:put($model, '$attachments', $attachments),"
     else ()
   }
   map:put($model, '$type', '{ $entity-type-name }'),
@@ -284,7 +284,7 @@ service:generate-lets($model, $entity-type-name, $mapping)
   let $property-keys := map:keys($properties)
   where fn:count($property-keys) > 0
   return
-    ",&#10;    " ||
+    ",&#10;" ||
     fn:string-join(
       (: Begin code generation block :)
       let $required-properties := (
@@ -295,10 +295,10 @@ service:generate-lets($model, $entity-type-name, $mapping)
       let $is-required := $property-name = $required-properties
       return
         if ($is-required) then
-          "map:put($model, '" || $property-name || "', $" || service:kebob-case($property-name) || ")"
+        "map:put($model, '" || $property-name || "', $" || service:kebob-case($property-name) || ")"
         else
-          "es:optional($model, '" || $property-name || "', $" || service:kebob-case($property-name) || ")"
-      , ",&#10;    ")
+        "  es:optional($model, '" || $property-name || "', $" || service:kebob-case($property-name) || ")"
+      , ",&#10;")
   (: end code generation block :)
   }
   )
@@ -309,9 +309,10 @@ service:generate-lets($model, $entity-type-name, $mapping)
   json:object()
   {
   if ($entity-type-name eq $entity) then
-    "    =>map:with('$attachments', $attachments)&#10;  "
+    "=>map:with('$attachments', $attachments)"
   else ()
-  }    =>map:with('$type', '{ $entity-type-name }')
+  }
+  =>map:with('$type', '{ $entity-type-name }')
   =>map:with('$version', '{ map:get(map:get($model, "info"), "version") }')
   {
   fn:string-join(
@@ -327,10 +328,10 @@ service:generate-lets($model, $entity-type-name, $mapping)
     let $is-required := $property-name = $required-properties
     return
       if ($is-required) then
-        "  =>map:with('" || $property-name || "', $" || service:kebob-case($property-name) || ")"
+        "=>map:with('" || $property-name || "', $" || service:kebob-case($property-name) || ")"
       else
         "  =>es:optional('" || $property-name || "', $" || service:kebob-case($property-name) || ")"
-    , "&#10;    ")
+    , "&#10;")
   (: end code generation block :)
   }
   :)
@@ -498,15 +499,15 @@ function createContent(id, {
 
   // for xml we need to use xpath
   if({$root-name} &amp;&amp; xdmp.nodeKind({$root-name}) === 'element' &amp;&amp; {$root-name} instanceof XMLDocument) {{
-  source = fn.head({$root-name}.xpath('/*:envelope/*:instance/node()'));
+    source = fn.head({$root-name}.xpath('/*:envelope/*:instance/node()'));
   }}
   // for json we need to return the instance
   else if({$root-name} &amp;&amp; {$root-name} instanceof Document) {{
-  source = fn.head({$root-name}.root);
+    source = fn.head({$root-name}.root);
   }}
   // for everything else
   else {{
-  source = {if ($flow-type eq $consts:INPUT_FLOW) then $root-name else "doc"};
+    source = {if ($flow-type eq $consts:INPUT_FLOW) then $root-name else "doc"};
   }}
 
   return {service:camel-case("extractInstance-" || $entity) || "(source)"};
@@ -526,7 +527,7 @@ function {service:camel-case("extractInstance-" || $entity-type-name)}(source) {
   let attachments = source;
   // now check to see if we have XML or json, then just go to the instance
   if(source instanceof Element) {{
-  source = fn.head(source.xpath('/*:envelope/*:instance/*:root/node()'))
+    source = fn.head(source.xpath('/*:envelope/*:instance/*:root/node()'))
   }} else if(source instanceof ObjectNode) {{
     source = source.envelope.instance;
   }}
@@ -544,10 +545,11 @@ function {service:camel-case("extractInstance-" || $entity-type-name)}(source) {
   return {{
   {
     if ($entity eq $entity-type-name) then
-      "'$attachments': attachments,&#10;    "
+      "'$attachments': attachments,"
     else
       ()
-  }'$type': '{ $entity-type-name }',
+  }
+  '$type': '{ $entity-type-name }',
   '$version': '{ map:get(map:get($model, "info"), "version") }'{
   let $definitions := map:get($model, "definitions")
   let $entity-type := map:get($definitions, $entity-type-name)

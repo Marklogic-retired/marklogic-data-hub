@@ -107,12 +107,12 @@ declare function plugin:extract-instance-my-fun-test(
 };
 
 (:~
-              : Creates a map:map instance from some source document.
-              : @param $source-node  A document or node that contains
-              :   data for populating a Employee
-              : @return A map:map instance with extracted data and
-              :   metadata about the instance.
-              :)
+: Creates a map:map instance from some source document.
+: @param $source-node  A document or node that contains
+:   data for populating a Employee
+: @return A map:map instance with extracted data and
+:   metadata about the instance.
+:)
 declare function plugin:extract-instance-Employee(
   $source as node()?
 ) as map:map
