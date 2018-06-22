@@ -475,7 +475,7 @@ declare function service:generate-sjs($entity as xs:string, $flow-type as xs:str
   return
     document {
       <module>
-        'use strict'
+      'use strict'
 
         /*
         * Create Content Plugin
@@ -499,7 +499,7 @@ declare function service:generate-sjs($entity as xs:string, $flow-type as xs:str
         let source;
 
         // for xml we need to use xpath
-        if ({$root-name} &amp;&amp; xdmp.nodeKind({$root-name}) === 'element' &amp;&amp; {$root-name} instanceof XMLDocument) {{
+        if({$root-name} &amp;&amp; xdmp.nodeKind({$root-name}) === 'element' &amp;&amp; {$root-name} instanceof XMLDocument) {{
         source = fn.head({$root-name}.xpath('/*:envelope/*:instance/node()'));
         }}
         // for json we need to return the instance
@@ -528,7 +528,7 @@ declare function service:generate-sjs($entity as xs:string, $flow-type as xs:str
               // the original source documents
               let attachments = source;
               // now check to see if we have XML or json, if xml grab just our root
-              if(source instanceof Element){{
+              if(source instanceof Element) {{
               source = fn.head(source.xpath('/*:envelope/*:instance/*:root/node()'))
               }}
               {
