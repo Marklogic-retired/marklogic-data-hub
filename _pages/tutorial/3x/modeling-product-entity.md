@@ -16,10 +16,10 @@ Before we can harmonize the data, we must add the "sku" and "price" properties t
 Click **Entities** in the top navigation bar to open the entity modeling view,
 and then follow these steps to add the "sku" property:
 
-1. Click the pencil icon in the upper right corner of the **Product** entity to edit the entity definition.
+1. Click the **pencil** icon (<i class="fa fa-pencil"></i>) in the upper right corner of the **Product** entity to edit the entity definition.
 1. Click **+**{:.circle-button} below **Properties** to add a new property.
 1. Enter **sku** as the Name.
-1. Click in the area just below the **key** icon to make "sku" the primary key.
+1. Click in the area just below the **key** icon (<i class="fa fa-key"></i>) to make "sku" the primary key.
 1. Select **string** as the Type.
 
 The following picture summarizes the step for adding the "sku" property to the Product entity definition:

@@ -20,8 +20,8 @@ Since we used the default option of **Create Structure from Entity Definition**,
 
 ![Create Product Harmonize Flow]({{site.baseurl}}/images/3x/harmonizing-order-data/create-order-harmonize-flow.png)
 
-1. <i class="fa fa-hand-pointer-o"></i> Click the **Harmonize Orders** flow. 
-1. <i class="fa fa-hand-pointer-o"></i> Click the **Collector** tab.
+1. Click the **Harmonize Orders** flow. 
+1. Click the **Collector** tab.
 
 ![Harmonize Flow Overview]({{site.baseurl}}/images/3x/harmonizing-order-data/go-to-order-collector.png)
 
@@ -48,10 +48,10 @@ Here is the final collector.sjs code:
 <div class="embed-git lang-js" href="//raw.githubusercontent.com/marklogic-community/marklogic-data-hub/develop/examples/online-store/plugins/entities/Order/harmonize/Harmonize Orders/collector/collector.sjs"></div>
 
 1. Make the code change.
-1. <i class="fa fa-hand-pointer-o"></i> Click **Save**{:.blue-button}.
-1. <i class="fa fa-hand-pointer-o"></i> Click the **Content** tab.
+1. Click **SAVE**.
+1. Click the **Content** tab.
 
-![Click Content Tab]({{site.baseurl}}/images/3x/harmonizing-order-data/save-order-collector.png)
+![Click Content Tab]({{site.baseurl}}/images/3x/harmonizing-order-data/save-order-collector.png){:.screenshot-border}
 
 <hr>
 
@@ -73,15 +73,15 @@ The final content plugin looks like:
 <div class="embed-git lang-js" href="//raw.githubusercontent.com/marklogic-community/marklogic-data-hub/develop/examples/online-store/plugins/entities/Order/harmonize/Harmonize Orders/content/content.sjs"></div>
 
 1. Change the code.
-1. <i class="fa fa-hand-pointer-o"></i> Click **SAVE**{:.blue-button}.
+1. Click **SAVE**.
 
 ![Edit and Save Content]({{site.baseurl}}/images/3x/harmonizing-order-data/save-order-content.png)
 
-<i class="fa fa-hand-pointer-o"></i> Now click the **Flow Info** tab.
+Now click the **Flow Info** tab.
 
 ![Click Flow Info]({{site.baseurl}}/images/3x/harmonizing-order-data/click-flow-info2.png)
 
-Let's run the flow. <i class="fa fa-hand-pointer-o"></i> Click **RUN HARMONIZE**{:.blue-button} to start the flow.
+Let's run the flow. Click **RUN HARMONIZE** to start the flow.
 
 ![Run Order Harmonize]({{site.baseurl}}/images/3x/harmonizing-order-data/run-order-harmonize.png)
 
@@ -89,24 +89,24 @@ Let's run the flow. <i class="fa fa-hand-pointer-o"></i> Click **RUN HARMONIZE**
 
 Similar to what we did after running the other flows, you might want to verify that the job finished.
 
-1. <i class="fa fa-hand-pointer-o"></i> Click **Jobs**.
-1. Make sure the job finished.
+1. Click **Jobs**.
+1. Make sure the job has a FINISHED status.
 
 ![Harmonized Products Jobs]({{site.baseurl}}/images/3x/harmonizing-order-data/harmonized-orders-jobs.png)
 
 You might also want to explore your harmonized data.
 
-1. <i class="fa fa-hand-pointer-o"></i> Click **Browse Data**.
+1. Click **Browse Data**.
 1. Change the database to **Final**.
-1. <i class="fa fa-hand-pointer-o"></i> Click the **Order** facet to filter the results.
+1. Click the **Order** facet to filter the results.
 
 You should see harmonized documents in the search results.
 
 ![Harmonized Products]({{site.baseurl}}/images/3x/harmonizing-order-data/harmonized-orders.png)
 
-<i class="fa fa-hand-pointer-o"></i> Click a result to see the raw data.
+Click a result to see the raw data.
 
-![Harmonized Product Detail]({{site.baseurl}}/images/3x/harmonizing-order-data/harmonized-order-details.png)
+![Harmonized Product Detail]({{site.baseurl}}/images/3x/harmonizing-order-data/harmonized-order-details.png){:.screenshot-border}
 
 ## Up Next
 

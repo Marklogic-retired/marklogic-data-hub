@@ -11,6 +11,8 @@ In this exercise, we will create a harmonize flow for Product, and then run it t
 
 To begin, click **Flows** in the top navigation bar.
 
+![Click Flows]({{site.baseurl}}/images/3x/harmonizing-product-data/select-flows.png)
+
 ## Create the Harmonize Flow
 
 Use the following procedure to create a Product harmonize flow:
@@ -65,7 +67,7 @@ The following options are passed into the collector plugin by default:
 - **flow**: the name of the flow this plugin belongs to
 - **flowType**: the type of flow being run (input or harmonize)
 
-The genterated code uses [cts.uris](https://docs.marklogic.com/cts.uris) to get values from the URI lexicon. We pass in [cts.collectionQuery](https://docs.marklogic.com/cts.collectionQuery) as the third parameter to constrain our results to only the URIs for documents in the **Product** collection. We are using `options.entity` as the parameter. The Data Hub Framework passes in options from Java to the plugins.
+The genterated code uses [cts.uris](https://docs.marklogic.com/cts.uris) to get values from the URI lexicon. We pass in [cts.collectionQuery](https://docs.marklogic.com/cts.collectionQuery) as the third parameter to constrain our results to only the URIs for documents in the Product collection. We are using `options.entity` as the parameter. The Data Hub Framework passes in options from Java to the plugins.
 
 <div class="embed-git lang-js" href="//raw.githubusercontent.com/marklogic-community/marklogic-data-hub/develop/examples/online-store/plugins/entities/Product/harmonize/Harmonize Products/collector/collector.sjs"></div>
 
@@ -109,7 +111,7 @@ We do not need to modify the code for any of the other plugins, so we can now ru
 Recall that we verified the job status after running the input flow. We will now do the same thing for the harmonize flow.
 
 1. Click **Jobs** in the top navigation bar to view your jobs.
-1. Verify the harmonization job appears in the list and has finished.
+1. Verify the harmonization job appears in the list and has a FINISHED status.
 
 ![Harmonized Products Jobs]({{site.baseurl}}/images/3x/harmonizing-product-data/harmonized-products-jobs.png)
 
@@ -121,7 +123,7 @@ To explore the harmonized data:
 1. Select **Final** in the database dropdown. The search results show the harmonized documents.
 1. Click a result to see the harmonized data. For example:
 
-![Harmonized Product Detail]({{site.baseurl}}/images/3x/harmonizing-product-data/harmonized-product-details.png)
+![Harmonized Product Detail]({{site.baseurl}}/images/3x/harmonizing-product-data/harmonized-product-details.png){:.screenshot-border}
 
 ## Up Next
 
