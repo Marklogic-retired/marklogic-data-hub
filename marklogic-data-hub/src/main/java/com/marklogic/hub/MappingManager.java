@@ -96,7 +96,7 @@ public interface MappingManager {
 
     /**
      * Returns a mapping based on the provided name
-     * @param mappingName
+     * @param mappingName - the basename of the mapping
      * @return Mapping object for the defined map
      */
     Mapping getMapping(String mappingName);

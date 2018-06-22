@@ -172,6 +172,7 @@ public interface DataHub {
     /**
      * Upgrades the hub based on list of provided updated flows. All flows SHOULD be provided.
      * The method without params will handle this automatically.
+     * @param  - the list of the name of the flows you want to update
      * @return boolean - false if upgrade fails for a reason other than an upgrade exception
      * @throws CantUpgradeException - should the hub fail to upgrade for incompatibility reasons
      */
