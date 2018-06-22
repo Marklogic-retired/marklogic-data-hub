@@ -237,46 +237,46 @@ public class LoadUserModulesCommand extends AbstractCommand {
                 });
 
                 //now let's do the mappings path
-                Files.walkFileTree(mappingPath, new SimpleFileVisitor<Path>() {
-                    @Override
-                    public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-                        String currentDir = dir.normalize().toAbsolutePath().toString();
+                if (mappingPath.toFile().exists()) {
+                    Files.walkFileTree(mappingPath, new SimpleFileVisitor<Path>() {
+                        @Override
+                        public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+                            String currentDir = dir.normalize().toAbsolutePath().toString();
 
-                       if (isMappingDir(dir, mappingPath.toAbsolutePath())){
-                            Modules modules = new MappingDefModulesFinder().findModules(dir.toString());
-                            DocumentMetadataHandle meta = new DocumentMetadataHandle();
-                            meta.getCollections().add("http://marklogic.com/data-hub/mappings");
-                            documentPermissionsParser.parsePermissions(hubConfig.getModulePermissions(), meta.getPermissions());
-                            for (Resource r : modules.getAssets()) {
-                                if (forceLoad || modulesManager.hasFileBeenModifiedSinceLastLoaded(r.getFile())) {
-                                    InputStream inputStream = r.getInputStream();
-                                    StringHandle handle = new StringHandle(IOUtils.toString(inputStream));
-                                    inputStream.close();
-                                    mappingDocMgr.write("/mappings/" + r.getFile().getParentFile().getName() +"/" + r.getFilename(), meta, handle);
-                                    modulesManager.saveLastLoadedTimestamp(r.getFile(), new Date());
+                            if (isMappingDir(dir, mappingPath.toAbsolutePath())) {
+                                Modules modules = new MappingDefModulesFinder().findModules(dir.toString());
+                                DocumentMetadataHandle meta = new DocumentMetadataHandle();
+                                meta.getCollections().add("http://marklogic.com/data-hub/mappings");
+                                documentPermissionsParser.parsePermissions(hubConfig.getModulePermissions(), meta.getPermissions());
+                                for (Resource r : modules.getAssets()) {
+                                    if (forceLoad || modulesManager.hasFileBeenModifiedSinceLastLoaded(r.getFile())) {
+                                        InputStream inputStream = r.getInputStream();
+                                        StringHandle handle = new StringHandle(IOUtils.toString(inputStream));
+                                        inputStream.close();
+                                        mappingDocMgr.write("/mappings/" + r.getFile().getParentFile().getName() + "/" + r.getFilename(), meta, handle);
+                                        modulesManager.saveLastLoadedTimestamp(r.getFile(), new Date());
+                                    }
                                 }
+                                return FileVisitResult.CONTINUE;
+                            } else {
+                                return FileVisitResult.CONTINUE;
+                            }
+                        }
+
+                        @Override
+                        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
+                            throws IOException {
+                            if (isFlowPropertiesFile(file) && modulesManager.hasFileBeenModifiedSinceLastLoaded(file.toFile())) {
+                                Flow flow = flowManager.getFlowFromProperties(file);
+                                StringHandle handle = new StringHandle(flow.serialize());
+                                handle.setFormat(Format.XML);
+                                documentWriteSet.add(flow.getFlowDbPath(), handle);
+                                modulesManager.saveLastLoadedTimestamp(file.toFile(), new Date());
                             }
                             return FileVisitResult.CONTINUE;
                         }
-                        else {
-                            return FileVisitResult.CONTINUE;
-                        }
-                    }
-
-                    @Override
-                    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
-                        throws IOException
-                    {
-                        if (isFlowPropertiesFile(file) && modulesManager.hasFileBeenModifiedSinceLastLoaded(file.toFile())) {
-                            Flow flow = flowManager.getFlowFromProperties(file);
-                            StringHandle handle = new StringHandle(flow.serialize());
-                            handle.setFormat(Format.XML);
-                            documentWriteSet.add(flow.getFlowDbPath(), handle);
-                            modulesManager.saveLastLoadedTimestamp(file.toFile(), new Date());
-                        }
-                        return FileVisitResult.CONTINUE;
-                    }
-                });
+                    });
+                }
 
                 if (documentWriteSet.size() > 0) {
                     documentManager.write(documentWriteSet);
