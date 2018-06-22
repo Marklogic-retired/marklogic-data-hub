@@ -123,7 +123,7 @@ public class FlowRunnerTest extends HubTestBase {
     @Test
     public void testEnvelopeSJS() throws IOException {
         scaffolding.createFlow(ENTITY, "testharmonize-sjs-json", FlowType.HARMONIZE,
-            CodeFormat.JAVASCRIPT, DataFormat.JSON);
+            CodeFormat.JAVASCRIPT, DataFormat.JSON, false);
         //testing sjs JSON canonical instance
         Files.copy(getResourceStream("flow-runner-test/collector.sjs"),
             projectDir.resolve("plugins/entities/" + ENTITY + "/harmonize/testharmonize-sjs-json/collector.sjs"),
@@ -161,7 +161,7 @@ public class FlowRunnerTest extends HubTestBase {
 
         //testing xqy JSON canonical instance
         scaffolding.createFlow(ENTITY, "testharmonize-xqy-json", FlowType.HARMONIZE,
-            CodeFormat.XQUERY, DataFormat.JSON);
+            CodeFormat.XQUERY, DataFormat.JSON, false);
         Files.copy(getResourceStream("flow-runner-test/collector2.xqy"),
             projectDir.resolve("plugins/entities/" + ENTITY + "/harmonize/testharmonize-xqy-json/collector.xqy"),
             StandardCopyOption.REPLACE_EXISTING);
