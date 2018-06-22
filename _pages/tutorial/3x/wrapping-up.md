@@ -17,7 +17,7 @@ A finished version of this tutorial is available here: [Finished Online Shopping
 
 ## Uninstalling QuickStart
 
-You can uninstall QuickStart by clicking Settings in the top navigation and then Uninstall Hub on the page that appears.
+You can uninstall QuickStart by clicking **Settings** in the top navigation and then **UNINSTALL HUB** on the page that appears.
 
 ## Next Steps
 

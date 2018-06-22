@@ -15,13 +15,13 @@ The following picture highlights key features of the Browse Data view.
 
 ![Browse View]({{site.baseurl}}/images/3x/browse-understand-product-data/browse-view.png)
 
-<i class="fa fa-hand-pointer-o"></i> Click the first search result to see the raw document.
+Click the first search result to see the raw document.
 
 ![Click First Result]({{site.baseurl}}/images/3x/browse-understand-product-data/click-first-result.png)
 
 You are shown the raw data.
 
-![Detail View]({{site.baseurl}}/images/3x/browse-understand-product-data/search-result-detail.png)
+![Detail View]({{site.baseurl}}/images/3x/browse-understand-product-data/search-result-detail.png){:.screenshot-border}
 
 ## Up Next
 

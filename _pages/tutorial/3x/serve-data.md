@@ -15,7 +15,7 @@ You can access hub data in the Staging database via the [Staging search endpoint
 
 Pictured here is the Final search endpoint:
 
-![Rest Search]({{site.baseurl}}/images/3x/serve-data/rest-screenshot.png)
+![Rest Search]({{site.baseurl}}/images/3x/serve-data/rest-screenshot.png){:.screenshot-border}
 
 
 ## Up Next

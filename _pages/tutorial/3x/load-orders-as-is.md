@@ -18,11 +18,20 @@ We will configure the flow to do the following:
 Follow these steps to configure the input flow:
 
 1. Click **Load Orders** under the Orders **Input Flows**. The Run Input Flow wizard appears.
-2. Under **Input Files**, use the file browser to select the **input/orders** directory.
-3. Under **General Options**, change **Input File Type** to **Delimited Text**.
-4. Under **Delimited Text Options**, slide the **Generate URI?** slider to the right, enabling automatic unique URI generation.
-5. Scroll to the bottom of the wizard and click **Save Options**.
-6. Click **Run Import**. MarkLogic begins loading data. Quickstart displays a progress bar at the bottom of your browser.
+1. Under **Input Files**, use the file browser to select the **input/orders** directory.
+
+    ![Input Files]({{site.baseurl}}/images/3x/load-orders-as-is/input-files.png){:.screenshot-border}
+    
+1. Under **General Options**, change **Input File Type** to **Delimited Text**.
+
+    ![General Options]({{site.baseurl}}/images/3x/load-orders-as-is/general-options.png)
+    
+1. Under **Delimited Text Options**, slide the **Generate URI?** slider to the right, enabling automatic unique URI generation.
+    
+    ![Delimited Text Options]({{site.baseurl}}/images/3x/load-orders-as-is/delimited-text-options.png)
+
+1. Scroll to the bottom of the wizard and click **SAVE OPTIONS**.
+1. Click **RUN IMPORT**. MarkLogic begins loading data. Quickstart displays a progress bar at the bottom of your browser.
 
 When the load finishes, QuickStart displays a completion notice at the bottom of your browser.
 
@@ -30,8 +39,11 @@ When the load finishes, QuickStart displays a completion notice at the bottom of
 
 As when we loaded product data, we will inspect the status of our Load Orders job.
 
-1. Click **Jobs** in the top navigation bar.
-2. Examine the Load Orders job results. This job should be the most recent run.
+Click **Jobs** in the top navigation bar to open the job viewer:
+
+![Click Jobs]({{site.baseurl}}/images/3x/load-orders-as-is/select-jobs.png)
+
+Examine the Load Orders job results. This job should be the most recent run.
 
 ## Up Next
 
