@@ -12,7 +12,7 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
- *  
+ *
  */
 
 package com.marklogic.gradle.task
@@ -35,12 +35,12 @@ class InstalledTests extends BaseTest {
     def setupSpec() {
         createGradleFiles()
         runTask('hubInit')
-        runTask('mlUndeploy',  '-Pconfirm=true')
+        // this will be relatively fast (idempotent) for already-installed hubs
         println(runTask('mlDeploy', '-i').getOutput())
     }
 
     def cleanupSpec() {
-        runTask('mlUndeploy', '-Pconfirm=true')
+        //runTask('mlUndeploy', '-Pconfirm=true')
     }
 
     def "enable debugging with hub installed"() {
@@ -50,7 +50,7 @@ class InstalledTests extends BaseTest {
         then:
         notThrown(UnexpectedBuildFailure)
         result.task(":hubEnableDebugging").outcome == SUCCESS
-        Debugging d = Debugging.create(hubConfig().newStagingClient())
+        Debugging d = Debugging.create(hubConfig().newStagingManageClient())
         d.isEnabled() == true
     }
 
@@ -61,7 +61,7 @@ class InstalledTests extends BaseTest {
         then:
         notThrown(UnexpectedBuildFailure)
         result.task(":hubDisableDebugging").outcome == SUCCESS
-        Debugging d = Debugging.create(hubConfig().newStagingClient())
+        Debugging d = Debugging.create(hubConfig().newStagingManageClient())
         d.isEnabled() == false
     }
 
@@ -72,7 +72,7 @@ class InstalledTests extends BaseTest {
         then:
         notThrown(UnexpectedBuildFailure)
         result.task(":hubEnableTracing").outcome == SUCCESS
-        Tracing t = Tracing.create(hubConfig().newStagingClient())
+        Tracing t = Tracing.create(hubConfig().newStagingManageClient())
         t.isEnabled() == true
     }
 
@@ -83,7 +83,7 @@ class InstalledTests extends BaseTest {
         then:
         notThrown(UnexpectedBuildFailure)
         result.task(":hubDisableTracing").outcome == SUCCESS
-        Tracing t = Tracing.create(hubConfig().newStagingClient())
+        Tracing t = Tracing.create(hubConfig().newStagingManageClient())
         t.isEnabled() == false
     }
 
@@ -107,7 +107,7 @@ class InstalledTests extends BaseTest {
 
     def "runHarmonizeFlow with default src and dest"() {
         given:
-        println(runTask('hubCreateHarmonizeFlow', '-PentityName=my-new-entity', '-PflowName=my-new-harmonize-flow', '-PdataFormat=xml', '-PpluginFormat=xqy').getOutput())
+        println(runTask('hubCreateHarmonizeFlow', '-PentityName=my-new-entity', '-PflowName=my-new-harmonize-flow', '-PdataFormat=xml', '-PpluginFormat=xqy', '-PuseES=false').getOutput())
         println(runTask('mlReLoadModules'))
 
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME)
@@ -131,13 +131,13 @@ class InstalledTests extends BaseTest {
         notThrown(UnexpectedBuildFailure)
         getStagingDocCount() == 2
         getFinalDocCount() == 2
-        assertXMLEqual(getXmlFromResource("run-flow-test/harmonized1.xml"), hubConfig().newFinalClient().newDocumentManager().read("/employee1.xml").next().getContent(new DOMHandle()).get())
-        assertXMLEqual(getXmlFromResource("run-flow-test/harmonized2.xml"), hubConfig().newFinalClient().newDocumentManager().read("/employee2.xml").next().getContent(new DOMHandle()).get())
+        assertXMLEqual(getXmlFromResource("run-flow-test/harmonized1.xml"), hubConfig().newFinalManageClient().newDocumentManager().read("/employee1.xml").next().getContent(new DOMHandle()).get())
+        assertXMLEqual(getXmlFromResource("run-flow-test/harmonized2.xml"), hubConfig().newFinalManageClient().newDocumentManager().read("/employee2.xml").next().getContent(new DOMHandle()).get())
     }
 
     def "runHarmonizeFlow with swapped src and dest"() {
         given:
-        println(runTask('hubCreateHarmonizeFlow', '-PentityName=my-new-entity', '-PflowName=my-new-harmonize-flow', '-PdataFormat=xml', '-PpluginFormat=xqy').getOutput())
+        println(runTask('hubCreateHarmonizeFlow', '-PentityName=my-new-entity', '-PflowName=my-new-harmonize-flow', '-PdataFormat=xml', '-PpluginFormat=xqy', '-PuseES=false').getOutput())
         println(runTask('mlReLoadModules'))
 
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME)
@@ -168,8 +168,8 @@ class InstalledTests extends BaseTest {
         getStagingDocCount() == 2
         getFinalDocCount() == 2
 
-        assertXMLEqual(getXmlFromResource("run-flow-test/harmonized1.xml"), hubConfig().newStagingClient().newDocumentManager().read("/employee1.xml").next().getContent(new DOMHandle()).get())
-        assertXMLEqual(getXmlFromResource("run-flow-test/harmonized2.xml"), hubConfig().newStagingClient().newDocumentManager().read("/employee2.xml").next().getContent(new DOMHandle()).get())
+        assertXMLEqual(getXmlFromResource("run-flow-test/harmonized1.xml"), hubConfig().newStagingManageClient().newDocumentManager().read("/employee1.xml").next().getContent(new DOMHandle()).get())
+        assertXMLEqual(getXmlFromResource("run-flow-test/harmonized2.xml"), hubConfig().newStagingManageClient().newDocumentManager().read("/employee2.xml").next().getContent(new DOMHandle()).get())
     }
 
     def "install Legacy Modules should fail"() {
@@ -219,7 +219,7 @@ class InstalledTests extends BaseTest {
     def "runHarmonizeFlow with bad sourceDB"() {
         given:
 
-        println(runTask('hubCreateHarmonizeFlow', '-PentityName=my-new-entity', '-PflowName=my-new-harmonize-flow', '-PdataFormat=xml', '-PpluginFormat=xqy').getOutput())
+        println(runTask('hubCreateHarmonizeFlow', '-PentityName=my-new-entity', '-PflowName=my-new-harmonize-flow', '-PdataFormat=xml', '-PpluginFormat=xqy', '-PuseES=false').getOutput())
         println(runTask('mlReLoadModules'))
 
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME)

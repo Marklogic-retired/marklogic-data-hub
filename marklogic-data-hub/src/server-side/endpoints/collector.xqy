@@ -60,7 +60,7 @@ perf:log('/v1/resources/collector:post', function() {
   let $_ :=
     if (fn:exists($flow)) then ()
     else
-      fn:error(xs:QName("MISSING_FLOW"), "Missing Harmonize Flow: [" || $entity-name || " => " || $flow-name || "]")
+      fn:error((),"RESTAPI-SRVEXERR", (404, "Not Found", "The requested harmonize flow was not found"))
   let $resp := flow:run-collector($flow, $job-id, $options)
   let $resp :=
     if ($resp instance of json:array) then

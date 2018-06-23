@@ -20,7 +20,7 @@
         <span class="edit-start" (click)="startEditing()">
           <i class="fa fa-pencil"></i>
         </span>
-        <span (click)="deleteEntity()">
+        <span class="delete-entity" (click)="deleteEntity()">
           <i class="fa fa-remove"></i>
         </span>
       </span>
@@ -42,6 +42,7 @@
             <th class="icons" title="Path Range Index"><i class="fa fa-code"></i></th>
             <th class="icons" title="Word Lexicon"><i class="fa fa-won"></i></th>
             <th class="icons" title="Required Field"><i class="fa fa-exclamation"></i></th>
+            <th class="icons" title="Personally Identifiable Information"><i class="fa fa-lock"></i></th>
             <th>Name</th>
             <th>Type</th>
           </tr>
@@ -68,6 +69,9 @@
             </td>
             <td class="icons">
               <i [hidden]="!isRequired(property.name)" class="fa fa-exclamation"></i>
+            </td>
+            <td class="icons">
+              <i [hidden]="!isPii(property.name)" class="fa fa-lock"></i>
             </td>
             <td class="key-cell">
               <span class="property-name">{{property.name}}</span>

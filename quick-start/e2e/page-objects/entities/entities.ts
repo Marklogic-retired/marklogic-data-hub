@@ -24,9 +24,17 @@ export class EntityPage extends AppPage {
   get entityEditor() {
     return element(by.css('app-entity-editor'));
   }
+
+  selectEntity(entityName: string) {
+    return element(by.id(`aeb-${entityName}`)).element(by.css('div.title')).click();
+  }
+
+  entityBox(entityName: string) {
+    return element(by.id(`aeb-${entityName}`)).element(by.css('div.title'));
+  }
   
   clickEditEntity(entityName: string) {
-    return element(by.css('#aeb-' + entityName + ' .edit-start > i')).click();
+    browser.executeScript(`window.document.getElementById("aeb-${entityName}").getElementsByClassName("edit-start")[0].click()`);
   }
 
   deleteEntityButton(entityName: string) {
@@ -117,20 +125,24 @@ export class EntityPage extends AppPage {
     return property.element(by.css('td:nth-child(6) > i'));
   }
 
+  getPropertyPii(property: ElementFinder){
+    return property.element(by.css('td:nth-child(7) > i'));
+  }
+  
   getPropertyName(property: ElementFinder){
-    return property.element(by.css('td:nth-child(7) > input[type="text"]'));
+    return property.element(by.css('td:nth-child(8) > input[type="text"]'));
   }
 
   getPropertyType(property: ElementFinder){
-    return property.element(by.css('td:nth-child(8) > select'));
-  }
-
-  getPropertyCardinality(property: ElementFinder){
     return property.element(by.css('td:nth-child(9) > select'));
   }
 
+  getPropertyCardinality(property: ElementFinder){
+    return property.element(by.css('td:nth-child(10) > select'));
+  }
+
   getPropertyDescription(property: ElementFinder){
-    return property.element(by.css('td:nth-child(10) > input[type="text"]'));
+    return property.element(by.css('td:nth-child(11) > input[type="text"]'));
   }
 
   getPropertyCheckBoxColumn(property: ElementFinder){
@@ -156,21 +168,25 @@ export class EntityPage extends AppPage {
   getPropertyRequiredColumn(property: ElementFinder){
     return property.element(by.css('td:nth-child(6)'));
   }
-
-  getPropertyNameColumn(property: ElementFinder){
-    return property.element(by.css('td:nth-child(7)'));
+  
+  getPropertyPiiColumn(property: ElementFinder){
+	return property.element(by.css('td:nth-child(7)'));
   }
 
-  getPropertyTypeColumn(property: ElementFinder){
+  getPropertyNameColumn(property: ElementFinder){
     return property.element(by.css('td:nth-child(8)'));
   }
 
-  getPropertyCardinalityColumn(property: ElementFinder){
+  getPropertyTypeColumn(property: ElementFinder){
     return property.element(by.css('td:nth-child(9)'));
   }
 
-  getPropertyDescriptionColumn(property: ElementFinder){
+  getPropertyCardinalityColumn(property: ElementFinder){
     return property.element(by.css('td:nth-child(10)'));
+  }
+
+  getPropertyDescriptionColumn(property: ElementFinder){
+    return property.element(by.css('td:nth-child(11)'));
   }
 
   get saveEntity() {
@@ -179,6 +195,10 @@ export class EntityPage extends AppPage {
 
   get cancelEntity() {
     return element(by.buttonText('Cancel'));
+  }
+  
+  get errorWhiteSpaceMessage() {
+    return element(by.className('alert-text'));
   }
 
   get toast() {

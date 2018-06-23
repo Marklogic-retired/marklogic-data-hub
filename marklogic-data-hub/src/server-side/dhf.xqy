@@ -43,7 +43,7 @@ declare function dhf:run(
     if (fn:exists($label)) then
       trace:set-plugin-label($label)
     else
-      fn:error(xs:QName("CONTEXT_MISSING_LABEL"), "Your context object is missing a label")
+      fn:error((), "DATAHUB-CONTEXT-MISSING-LABEL", "Your context is missing a label.")
   let $_ := trace:reset-plugin-input()
   let $_ :=
     let $inputs := map:get($context, "inputs")
@@ -216,7 +216,7 @@ declare function dhf:log-trace(
     if (fn:exists($label)) then
       trace:set-plugin-label($label)
     else
-      fn:error(xs:QName("CONTEXT_MISSING_LABEL"), "Your context object is missing a label")
+      fn:error((), "DATAHUB-CONTEXT-MISSING-LABEL", "Your context is missing a label")
   let $_ := trace:reset-plugin-input()
   let $_ :=
     let $inputs := map:get($context, "inputs")

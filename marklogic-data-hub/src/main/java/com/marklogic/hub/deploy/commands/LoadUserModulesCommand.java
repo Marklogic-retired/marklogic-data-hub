@@ -36,6 +36,7 @@ import com.marklogic.client.io.Format;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.com.marklogic.client.ext.file.CacheBusterDocumentFileProcessor;
 import com.marklogic.com.marklogic.client.ext.modulesloader.impl.EntityDefModulesFinder;
+import com.marklogic.com.marklogic.client.ext.modulesloader.impl.MappingDefModulesFinder;
 import com.marklogic.com.marklogic.client.ext.modulesloader.impl.UserModulesFinder;
 import com.marklogic.hub.EntityManager;
 import com.marklogic.hub.FlowManager;
@@ -123,6 +124,13 @@ public class LoadUserModulesCommand extends AbstractCommand {
         return dirStr.matches(regex);
     }
 
+    boolean isMappingDir(Path dir, Path startPath) {
+        String dirStr = dir.toString();
+        String startPathStr = Pattern.quote(startPath.toString());
+        String regex = startPathStr + "[/\\\\][^/\\\\]+$";
+        return dirStr.matches(regex);
+    }
+
     boolean isFlowPropertiesFile(Path dir) {
         Path parent = dir.getParent();
         return dir.toFile().isFile() &&
@@ -141,19 +149,22 @@ public class LoadUserModulesCommand extends AbstractCommand {
 
         AppConfig config = context.getAppConfig();
 
-        DatabaseClient stagingClient = hubConfig.newStagingClient();
-        DatabaseClient finalClient = hubConfig.newFinalClient();
+        DatabaseClient stagingClient = hubConfig.newStagingManageClient();
+        DatabaseClient finalClient = hubConfig.newFinalManageClient();
 
         Path userModulesPath = hubConfig.getHubPluginsDir();
         String baseDir = userModulesPath.normalize().toAbsolutePath().toString();
         Path startPath = userModulesPath.resolve("entities");
+        Path mappingPath = userModulesPath.resolve("mappings");
 
         // load any user files under plugins/* int the modules database.
         // this will ignore REST folders under entities
         DefaultModulesLoader modulesLoader = getStagingModulesLoader(config);
         modulesLoader.loadModules(baseDir, new UserModulesFinder(), stagingClient);
 
+        //for now we'll use two different document managers
         JSONDocumentManager entityDocMgr = finalClient.newJSONDocumentManager();
+        JSONDocumentManager mappingDocMgr = finalClient.newJSONDocumentManager();
 
         AllButAssetsModulesFinder allButAssetsModulesFinder = new AllButAssetsModulesFinder();
 
@@ -173,6 +184,7 @@ public class LoadUserModulesCommand extends AbstractCommand {
 
                 ModulesManager modulesManager = modulesLoader.getModulesManager();
 
+                //first let's do the entities and flows + extensions
                 Files.walkFileTree(startPath, new SimpleFileVisitor<Path>() {
                     @Override
                     public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
@@ -223,6 +235,48 @@ public class LoadUserModulesCommand extends AbstractCommand {
                         return FileVisitResult.CONTINUE;
                     }
                 });
+
+                //now let's do the mappings path
+                if (mappingPath.toFile().exists()) {
+                    Files.walkFileTree(mappingPath, new SimpleFileVisitor<Path>() {
+                        @Override
+                        public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+                            String currentDir = dir.normalize().toAbsolutePath().toString();
+
+                            if (isMappingDir(dir, mappingPath.toAbsolutePath())) {
+                                Modules modules = new MappingDefModulesFinder().findModules(dir.toString());
+                                DocumentMetadataHandle meta = new DocumentMetadataHandle();
+                                meta.getCollections().add("http://marklogic.com/data-hub/mappings");
+                                documentPermissionsParser.parsePermissions(hubConfig.getModulePermissions(), meta.getPermissions());
+                                for (Resource r : modules.getAssets()) {
+                                    if (forceLoad || modulesManager.hasFileBeenModifiedSinceLastLoaded(r.getFile())) {
+                                        InputStream inputStream = r.getInputStream();
+                                        StringHandle handle = new StringHandle(IOUtils.toString(inputStream));
+                                        inputStream.close();
+                                        mappingDocMgr.write("/mappings/" + r.getFile().getParentFile().getName() + "/" + r.getFilename(), meta, handle);
+                                        modulesManager.saveLastLoadedTimestamp(r.getFile(), new Date());
+                                    }
+                                }
+                                return FileVisitResult.CONTINUE;
+                            } else {
+                                return FileVisitResult.CONTINUE;
+                            }
+                        }
+
+                        @Override
+                        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
+                            throws IOException {
+                            if (isFlowPropertiesFile(file) && modulesManager.hasFileBeenModifiedSinceLastLoaded(file.toFile())) {
+                                Flow flow = flowManager.getFlowFromProperties(file);
+                                StringHandle handle = new StringHandle(flow.serialize());
+                                handle.setFormat(Format.XML);
+                                documentWriteSet.add(flow.getFlowDbPath(), handle);
+                                modulesManager.saveLastLoadedTimestamp(file.toFile(), new Date());
+                            }
+                            return FileVisitResult.CONTINUE;
+                        }
+                    });
+                }
 
                 if (documentWriteSet.size() > 0) {
                     documentManager.write(documentWriteSet);

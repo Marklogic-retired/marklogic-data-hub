@@ -27,17 +27,15 @@ import com.marklogic.hub.flow.FlowType;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.validate.EntitiesValidator;
 import com.marklogic.quickstart.EnvironmentAware;
-import com.marklogic.quickstart.auth.ConnectionAuthenticationToken;
 import com.marklogic.quickstart.model.EnvironmentConfig;
 import com.marklogic.quickstart.model.FlowModel;
 import com.marklogic.quickstart.model.PluginModel;
 import com.marklogic.quickstart.model.entity_services.EntityModel;
 import com.marklogic.quickstart.model.entity_services.HubUIData;
 import com.marklogic.quickstart.model.entity_services.InfoType;
-import com.marklogic.quickstart.util.FileUtil;
+import com.marklogic.hub.util.FileUtil;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -199,6 +197,7 @@ public class EntityManagerService extends EnvironmentAware {
         }
     }
 
+    //TODO Autowire in an Entity Manager
     public void deploySearchOptions(EnvironmentConfig environmentConfig) {
         EntityManager em = EntityManager.create(environmentConfig.getMlSettings());
         em.deployQueryOptions();
@@ -207,6 +206,11 @@ public class EntityManagerService extends EnvironmentAware {
     public void saveDbIndexes(EnvironmentConfig environmentConfig) {
         EntityManager em = EntityManager.create(environmentConfig.getMlSettings());
         em.saveDbIndexes();
+    }
+
+    public void savePii(EnvironmentConfig environmentConfig) {
+        EntityManager em = EntityManager.create(environmentConfig.getMlSettings());
+        em.savePii();
     }
 
     public void saveAllUiData(List<EntityModel> entities) throws IOException {
@@ -265,6 +269,28 @@ public class EntityManagerService extends EnvironmentAware {
         fileOutputStream.close();
     }
 
+    //Here goes the mapping stuff
+    public JsonNode getAllMappingsForEntity(String entityName) throws IOException {
+        EntityModel entity = this.getEntity(entityName);
+        JsonNode mappings = JsonNodeFactory.instance.objectNode();
+        return mappings;
+
+    }
+
+    public JsonNode getMappingForEntity(String entityName, String mapName) throws IOException{
+        EntityModel entity = this.getEntity(entityName);
+        JsonNode mappings = JsonNodeFactory.instance.objectNode();
+        return mappings;
+    }
+
+    public void saveMappingForEntity(String entityName, String mapName, JsonNode mapping) throws IOException{
+        EntityModel entity = this.getEntity(entityName);
+    }
+
+    public void deleteMappingForEntity(String entityName, String mapName) throws IOException{
+        EntityModel entity = this.getEntity(entityName);
+    }
+
     public EntityModel getEntity(String entityName) throws IOException {
         List<EntityModel> entities = getEntities();
 
@@ -299,7 +325,7 @@ public class EntityManagerService extends EnvironmentAware {
     public FlowModel createFlow(String projectDir, String entityName, FlowType flowType, FlowModel newFlow) throws IOException {
         Scaffolding scaffolding = Scaffolding.create(projectDir, envConfig().getFinalClient());
         newFlow.entityName = entityName;
-        scaffolding.createFlow(entityName, newFlow.flowName, flowType, newFlow.codeFormat, newFlow.dataFormat, newFlow.useEsModel);
+        scaffolding.createFlow(entityName, newFlow.flowName, flowType, newFlow.codeFormat, newFlow.dataFormat, newFlow.useEsModel, newFlow.mappingName);
         return getFlow(entityName, flowType, newFlow.flowName);
     }
 
@@ -323,7 +349,7 @@ public class EntityManagerService extends EnvironmentAware {
         else {
             type = "xquery";
         }
-        EntitiesValidator validator = EntitiesValidator.create(config.newStagingClient());
+        EntitiesValidator validator = EntitiesValidator.create(config.newStagingManageClient());
         return validator.validate(entityName, flowName, plugin.fileContents.replaceAll("\\.(sjs|xqy)", ""), type, plugin.fileContents);
     }
 

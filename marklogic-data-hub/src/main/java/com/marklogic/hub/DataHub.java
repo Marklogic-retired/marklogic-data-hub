@@ -71,6 +71,7 @@ public interface DataHub {
      * Runs the pre-install check for the datahub populating the object
      * with variables necessary to perform the install.
      * This is used for running install.
+     * @return - a hashmap of the results of the preinstall check
      */
     HashMap runPreInstallCheck();
 
@@ -79,6 +80,7 @@ public interface DataHub {
      * with variables necessary to perform the install.
      * This is used for running install.
      * @param versions - the versions that the check is to be run against
+     * @return - a hashmap of the results of the preinstall check
      */
     HashMap runPreInstallCheck(Versions versions);
 
@@ -170,6 +172,7 @@ public interface DataHub {
     /**
      * Upgrades the hub based on list of provided updated flows. All flows SHOULD be provided.
      * The method without params will handle this automatically.
+     * @param updatedFlows - the list of the name of the flows you want to update
      * @return boolean - false if upgrade fails for a reason other than an upgrade exception
      * @throws CantUpgradeException - should the hub fail to upgrade for incompatibility reasons
      */

@@ -55,7 +55,7 @@ export class CodemirrorComponent implements AfterViewInit, OnInit, OnChanges {
   @Input()
   get history() {
     if (this.instance) {
-      return this.instance.getDoc().history;
+      return this.instance.getDoc()['history'];
     }
 
     return this._history;
@@ -68,9 +68,9 @@ export class CodemirrorComponent implements AfterViewInit, OnInit, OnChanges {
 
     if (this.instance) {
       let doc = this.instance.getDoc();
-      if (doc.history !== this._history) {
+      if (doc['history'] !== this._history) {
         if (this._history.generation) {
-          doc.history = this._history;
+          doc['history'] = this._history;
         } else {
           doc.setHistory(this._history);
         }
@@ -265,9 +265,9 @@ export class CodemirrorComponent implements AfterViewInit, OnInit, OnChanges {
     this.instance.on('keydown', this.onKeyDown);
 
     let doc = this.instance.getDoc();
-    if (this._history && doc.history !== this._history) {
+    if (this._history && doc['history'] !== this._history) {
       if (this._history.generation) {
-        doc.history = this._history;
+        doc['history'] = this._history;
       } else {
         doc.setHistory(this._history);
       }

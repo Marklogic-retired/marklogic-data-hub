@@ -70,7 +70,7 @@ public interface FlowRunner {
 
     /**
      * Sets if this will stop the job on a failure, or if it will continue on
-     * @param stopOnFailure
+     * @param stopOnFailure - true to stop the job if a failure happens
      * @return the flow runner object
      */
     FlowRunner withStopOnFailure(boolean stopOnFailure);

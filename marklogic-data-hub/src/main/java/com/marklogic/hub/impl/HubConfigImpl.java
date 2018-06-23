@@ -17,7 +17,8 @@ package com.marklogic.hub.impl;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.appdeployer.ConfigDir;
 import com.marklogic.client.DatabaseClient;
@@ -28,6 +29,7 @@ import com.marklogic.client.ext.modulesloader.ssl.SimpleX509TrustManager;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubProject;
+import com.marklogic.hub.error.DataHubConfigurationException;
 import com.marklogic.hub.error.InvalidDBOperationError;
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.ManageConfig;
@@ -81,19 +83,6 @@ public class HubConfigImpl implements HubConfig {
     private String finalCertPassword;
     private String finalExternalName;
 
-    protected String traceDbName = DEFAULT_TRACE_NAME;
-    protected String traceHttpName = DEFAULT_TRACE_NAME;
-    protected Integer traceForestsPerHost = 1;
-    protected Integer tracePort = DEFAULT_TRACE_PORT;
-    protected String traceAuthMethod = DEFAULT_AUTH_METHOD;
-    private String traceScheme = DEFAULT_SCHEME;
-    private boolean traceSimpleSsl = false;
-    private SSLContext traceSslContext;
-    private DatabaseClientFactory.SSLHostnameVerifier traceSslHostnameVerifier;
-    private String traceCertFile;
-    private String traceCertPassword;
-    private String traceExternalName;
-
     protected String jobDbName = DEFAULT_JOB_NAME;
     protected String jobHttpName = DEFAULT_JOB_NAME;
     protected Integer jobForestsPerHost = 1;
@@ -118,6 +107,12 @@ public class HubConfigImpl implements HubConfig {
 
     private String hubRoleName = DEFAULT_ROLE_NAME;
     private String hubUserName = DEFAULT_USER_NAME;
+    private String hubAdminRoleName = DEFAULT_ADMIN_ROLE_NAME;
+    private String hubAdminUserName = DEFAULT_ADMIN_USER_NAME;
+
+    // these hold runtime credentials for flows.
+    private String mlUsername = null;
+    private String mlPassword = null;
 
     private String[] loadBalancerHosts;
 
@@ -139,10 +134,15 @@ public class HubConfigImpl implements HubConfig {
 
     private static final Logger logger = LoggerFactory.getLogger(HubConfigImpl.class);
 
+    private ObjectMapper objmapper;
+
     public HubConfigImpl() {
+
+        objmapper = new ObjectMapper();
     }
 
     public HubConfigImpl(String projectDir) {
+        this();
         setProjectDir(new File(projectDir).getAbsolutePath());
     }
 
@@ -162,7 +162,7 @@ public class HubConfigImpl implements HubConfig {
                 name = jobDbName;
                 break;
             case TRACE:
-                name = traceDbName;
+                name = jobDbName;
                 break;
             case MODULES:
                 name = modulesDbName;
@@ -191,7 +191,7 @@ public class HubConfigImpl implements HubConfig {
                 jobDbName = dbName;
                 break;
             case TRACE:
-                traceDbName = dbName;
+                jobDbName = dbName;
                 break;
             case MODULES:
                 modulesDbName = dbName;
@@ -220,7 +220,7 @@ public class HubConfigImpl implements HubConfig {
                 name = jobHttpName;
                 break;
             case TRACE:
-                name = traceHttpName;
+                name = jobHttpName;
                 break;
             default:
                 throw new InvalidDBOperationError(kind, "grab http name");
@@ -240,7 +240,7 @@ public class HubConfigImpl implements HubConfig {
                 jobHttpName = httpName;
                 break;
             case TRACE:
-                traceHttpName = httpName;
+                jobHttpName = httpName;
                 break;
             default:
                 throw new InvalidDBOperationError(kind, "set http name");
@@ -260,7 +260,7 @@ public class HubConfigImpl implements HubConfig {
                 forests = jobForestsPerHost;
                 break;
             case TRACE:
-                forests = traceForestsPerHost;
+                forests = jobForestsPerHost;
                 break;
             case MODULES:
                 forests = modulesForestsPerHost;
@@ -289,7 +289,7 @@ public class HubConfigImpl implements HubConfig {
                 jobForestsPerHost = forestsPerHost;
                 break;
             case TRACE:
-                traceForestsPerHost = forestsPerHost;
+                jobForestsPerHost = forestsPerHost;
                 break;
             case MODULES:
                 modulesForestsPerHost = forestsPerHost;
@@ -318,7 +318,7 @@ public class HubConfigImpl implements HubConfig {
                 port = jobPort;
                 break;
             case TRACE:
-                port = tracePort;
+                port = jobPort;
                 break;
             default:
                 throw new InvalidDBOperationError(kind, "grab app port");
@@ -338,7 +338,7 @@ public class HubConfigImpl implements HubConfig {
                 jobPort = port;
                 break;
             case TRACE:
-                tracePort = port;
+                jobPort = port;
                 break;
             default:
                 throw new InvalidDBOperationError(kind, "set app port");
@@ -359,7 +359,7 @@ public class HubConfigImpl implements HubConfig {
                 sslContext = this.jobSslContext;
                 break;
             case TRACE:
-                sslContext = this.traceSslContext;
+                sslContext = this.jobSslContext;
                 break;
             default:
                 throw new InvalidDBOperationError(kind, "get ssl context");
@@ -379,7 +379,7 @@ public class HubConfigImpl implements HubConfig {
                 this.jobSslContext = sslContext;
                 break;
             case TRACE:
-                this.traceSslContext = sslContext;
+                this.jobSslContext = sslContext;
                 break;
             default:
                 throw new InvalidDBOperationError(kind, "set ssl context");
@@ -399,7 +399,7 @@ public class HubConfigImpl implements HubConfig {
                 sslHostnameVerifier = this.jobSslHostnameVerifier;
                 break;
             case TRACE:
-                sslHostnameVerifier = this.traceSslHostnameVerifier;
+                sslHostnameVerifier = this.jobSslHostnameVerifier;
                 break;
             default:
                 throw new InvalidDBOperationError(kind, "get ssl hostname verifier");
@@ -410,7 +410,7 @@ public class HubConfigImpl implements HubConfig {
     @Override public void setSslHostnameVerifier(DatabaseKind kind, DatabaseClientFactory.SSLHostnameVerifier sslHostnameVerifier) {
         switch (kind) {
             case STAGING:
-                 this.stagingSslHostnameVerifier = sslHostnameVerifier;
+                this.stagingSslHostnameVerifier = sslHostnameVerifier;
                 break;
             case FINAL:
                 this.finalSslHostnameVerifier = sslHostnameVerifier;
@@ -419,7 +419,7 @@ public class HubConfigImpl implements HubConfig {
                 this.jobSslHostnameVerifier = sslHostnameVerifier;
                 break;
             case TRACE:
-                this.traceSslHostnameVerifier = sslHostnameVerifier;
+                this.jobSslHostnameVerifier = sslHostnameVerifier;
                 break;
             default:
                 throw new InvalidDBOperationError(kind, "set ssl hostname verifier");
@@ -439,7 +439,7 @@ public class HubConfigImpl implements HubConfig {
                 authMethod = this.jobAuthMethod;
                 break;
             case TRACE:
-                authMethod = this.traceAuthMethod;
+                authMethod = this.jobAuthMethod;
                 break;
             default:
                 throw new InvalidDBOperationError(kind, "get auth method");
@@ -459,7 +459,7 @@ public class HubConfigImpl implements HubConfig {
                 this.jobAuthMethod = authMethod;
                 break;
             case TRACE:
-                this.traceAuthMethod = authMethod;
+                this.jobAuthMethod = authMethod;
                 break;
             default:
                 throw new InvalidDBOperationError(kind, "set auth method");
@@ -479,7 +479,7 @@ public class HubConfigImpl implements HubConfig {
                 scheme = this.jobScheme;
                 break;
             case TRACE:
-                scheme = this.traceScheme;
+                scheme = this.jobScheme;
                 break;
             default:
                 throw new InvalidDBOperationError(kind, "get scheme");
@@ -499,7 +499,7 @@ public class HubConfigImpl implements HubConfig {
                 this.jobScheme = scheme;
                 break;
             case TRACE:
-                this.traceScheme = scheme;
+                this.jobScheme = scheme;
                 break;
             default:
                 throw new InvalidDBOperationError(kind, "set auth method");
@@ -519,7 +519,7 @@ public class HubConfigImpl implements HubConfig {
                 simple = this.jobSimpleSsl;
                 break;
             case TRACE:
-                simple = this.traceSimpleSsl;
+                simple = this.jobSimpleSsl;
                 break;
             default:
                 throw new InvalidDBOperationError(kind, "get simple ssl");
@@ -539,7 +539,7 @@ public class HubConfigImpl implements HubConfig {
                 this.jobSimpleSsl = simpleSsl;
                 break;
             case TRACE:
-                this.traceSimpleSsl = simpleSsl;
+                this.jobSimpleSsl = simpleSsl;
                 break;
             default:
                 throw new InvalidDBOperationError(kind, "set simple ssl");
@@ -559,7 +559,7 @@ public class HubConfigImpl implements HubConfig {
                 certFile = this.jobCertFile;
                 break;
             case TRACE:
-                certFile = this.traceCertFile;
+                certFile = this.jobCertFile;
                 break;
             default:
                 throw new InvalidDBOperationError(kind, "get cert file");
@@ -579,7 +579,7 @@ public class HubConfigImpl implements HubConfig {
                 this.jobCertFile = certFile;
                 break;
             case TRACE:
-                this.traceCertFile = certFile;
+                this.jobCertFile = certFile;
                 break;
             default:
                 throw new InvalidDBOperationError(kind, "set certificate file");
@@ -599,7 +599,7 @@ public class HubConfigImpl implements HubConfig {
                 certPass = this.jobCertPassword;
                 break;
             case TRACE:
-                certPass = this.traceCertPassword;
+                certPass = this.jobCertPassword;
                 break;
             default:
                 throw new InvalidDBOperationError(kind, "get cert password");
@@ -619,7 +619,7 @@ public class HubConfigImpl implements HubConfig {
                 this.jobCertPassword = certPassword;
                 break;
             case TRACE:
-                this.traceCertPassword = certPassword;
+                this.jobCertPassword = certPassword;
                 break;
             default:
                 throw new InvalidDBOperationError(kind, "set certificate password");
@@ -639,7 +639,7 @@ public class HubConfigImpl implements HubConfig {
                 name = this.jobExternalName;
                 break;
             case TRACE:
-                name = this.traceExternalName;
+                name = this.jobExternalName;
                 break;
             default:
                 throw new InvalidDBOperationError(kind, "get external name");
@@ -659,7 +659,7 @@ public class HubConfigImpl implements HubConfig {
                 this.jobExternalName = externalName;
                 break;
             case TRACE:
-                this.traceExternalName = externalName;
+                this.jobExternalName = externalName;
                 break;
             default:
                 throw new InvalidDBOperationError(kind, "set auth method");
@@ -676,6 +676,15 @@ public class HubConfigImpl implements HubConfig {
 
     @Override public String getHubUserName() {
         return hubUserName;
+    }
+
+    // impl only pending refactor to Flow Component
+    public String getMlUsername() {
+        return mlUsername;
+    }
+    // impl only pending refactor to Flow Component
+    public String getMlPassword() {
+        return mlPassword;
     }
     @Override  public void setHubUserName(String hubUserName) {
         this.hubUserName = hubUserName;
@@ -737,7 +746,7 @@ public class HubConfigImpl implements HubConfig {
         return Paths.get(projectDir, ".tmp", USER_CONTENT_DEPLOY_TIMESTAMPS_PROPERTIES).toFile();
     }
 
-     public void loadConfigurationFromProperties(Properties environmentProperties) {
+    public void loadConfigurationFromProperties(Properties environmentProperties) {
         this.environmentProperties = environmentProperties;
 
         if (this.environmentProperties != null) {
@@ -772,21 +781,6 @@ public class HubConfigImpl implements HubConfig {
             finalCertPassword = getEnvPropString(environmentProperties, "mlFinalCertPassword", finalCertPassword);
             finalExternalName = getEnvPropString(environmentProperties, "mlFinalExternalName", finalExternalName);
 
-            traceDbName = getEnvPropString(environmentProperties, "mlTraceDbName", traceDbName);
-            traceHttpName = getEnvPropString(environmentProperties, "mlTraceAppserverName", traceHttpName);
-            traceForestsPerHost = getEnvPropInteger(environmentProperties, "mlTraceForestsPerHost", traceForestsPerHost);
-            tracePort = getEnvPropInteger(environmentProperties, "mlTracePort", tracePort);
-            traceAuthMethod = getEnvPropString(environmentProperties, "mlTraceAuth", traceAuthMethod);
-            traceScheme = getEnvPropString(environmentProperties, "mlTraceScheme", traceScheme);
-            traceSimpleSsl = getEnvPropBoolean(environmentProperties, "mlTraceSimpleSsl", false);
-            if (traceSimpleSsl) {
-                traceSslContext = SimpleX509TrustManager.newSSLContext();
-                traceSslHostnameVerifier = DatabaseClientFactory.SSLHostnameVerifier.ANY;
-            }
-            traceCertFile = getEnvPropString(environmentProperties, "mlTraceCertFile", traceCertFile);
-            traceCertPassword = getEnvPropString(environmentProperties, "mlTraceCertPassword", traceCertPassword);
-            traceExternalName = getEnvPropString(environmentProperties, "mlTraceExternalName", traceExternalName);
-
 
             jobDbName = getEnvPropString(environmentProperties, "mlJobDbName", jobDbName);
             jobHttpName = getEnvPropString(environmentProperties, "mlJobAppserverName", jobHttpName);
@@ -817,6 +811,12 @@ public class HubConfigImpl implements HubConfig {
 
             hubRoleName = getEnvPropString(environmentProperties, "mlHubUserRole", hubRoleName);
             hubUserName = getEnvPropString(environmentProperties, "mlHubUserName", hubUserName);
+
+
+            // this is a runtime username/password for running flows
+            // could be factored away with FlowRunner
+            mlUsername = getEnvPropString(environmentProperties, "mlUsername", mlUsername);
+            mlPassword = getEnvPropString(environmentProperties, "mlPassword", mlPassword);
 
             String lbh = getEnvPropString(environmentProperties, "mlLoadBalancerHosts", null);
             if (lbh != null && lbh.length() > 0) {
@@ -859,14 +859,48 @@ public class HubConfigImpl implements HubConfig {
     public void setAdminManager(AdminManager adminManager) { this.adminManager = adminManager; }
 
     public DatabaseClient newAppServicesClient() {
-        return getAppConfig().newAppServicesDatabaseClient(null);
+        return getAppConfig().newAppServicesDatabaseClient(stagingDbName);
     }
 
+    @Override
+    public DatabaseClient newStagingManageClient() {
+        return newStagingManageClient(stagingDbName);
+    }
+
+    @Override
     public DatabaseClient newStagingClient() {
         return newStagingClient(stagingDbName);
     }
 
-    public DatabaseClient newStagingClient(String databaseName) {
+    @Override
+    public DatabaseClient newStagingClient(String dbName) {
+        AppConfig appConfig = getAppConfig();
+        DatabaseClientConfig config = new DatabaseClientConfig(appConfig.getHost(), stagingPort, getMlUsername(), getMlPassword());
+        config.setDatabase(dbName);
+        config.setSecurityContextType(SecurityContextType.valueOf(stagingAuthMethod.toUpperCase()));
+        config.setSslHostnameVerifier(stagingSslHostnameVerifier);
+        config.setSslContext(stagingSslContext);
+        config.setCertFile(stagingCertFile);
+        config.setCertPassword(stagingCertPassword);
+        config.setExternalName(stagingExternalName);
+        return appConfig.getConfiguredDatabaseClientFactory().newDatabaseClient(config);
+    }
+
+    @Override
+    public DatabaseClient newFinalClient() {
+        AppConfig appConfig = getAppConfig();
+        DatabaseClientConfig config = new DatabaseClientConfig(appConfig.getHost(), finalPort, getMlUsername(), getMlPassword());
+        config.setDatabase(finalDbName);
+        config.setSecurityContextType(SecurityContextType.valueOf(finalAuthMethod.toUpperCase()));
+        config.setSslHostnameVerifier(finalSslHostnameVerifier);
+        config.setSslContext(finalSslContext);
+        config.setCertFile(finalCertFile);
+        config.setCertPassword(finalCertPassword);
+        config.setExternalName(finalExternalName);
+        return appConfig.getConfiguredDatabaseClientFactory().newDatabaseClient(config);
+    }
+
+    public DatabaseClient newStagingManageClient(String databaseName) {
         AppConfig appConfig = getAppConfig();
         DatabaseClientConfig config = new DatabaseClientConfig(appConfig.getHost(), stagingPort, appConfig.getRestAdminUsername(), appConfig.getRestAdminPassword());
         config.setDatabase(databaseName);
@@ -879,7 +913,7 @@ public class HubConfigImpl implements HubConfig {
         return appConfig.getConfiguredDatabaseClientFactory().newDatabaseClient(config);
     }
 
-    public DatabaseClient newFinalClient() {
+    public DatabaseClient newFinalManageClient() {
         AppConfig appConfig = getAppConfig();
         DatabaseClientConfig config = new DatabaseClientConfig(appConfig.getHost(), finalPort, appConfig.getRestAdminUsername(), appConfig.getRestAdminPassword());
         config.setDatabase(finalDbName);
@@ -906,16 +940,7 @@ public class HubConfigImpl implements HubConfig {
     }
 
     public DatabaseClient newTraceDbClient() {
-        AppConfig appConfig = getAppConfig();
-        DatabaseClientConfig config = new DatabaseClientConfig(appConfig.getHost(), tracePort, appConfig.getRestAdminUsername(), appConfig.getRestAdminPassword());
-        config.setDatabase(traceDbName);
-        config.setSecurityContextType(SecurityContextType.valueOf(traceAuthMethod.toUpperCase()));
-        config.setSslHostnameVerifier(traceSslHostnameVerifier);
-        config.setSslContext(traceSslContext);
-        config.setCertFile(traceCertFile);
-        config.setCertPassword(traceCertPassword);
-        config.setExternalName(traceExternalName);
-        return appConfig.getConfiguredDatabaseClientFactory().newDatabaseClient(config);
+        return newJobDbClient();
     }
 
     public DatabaseClient newModulesDbClient() {
@@ -938,6 +963,9 @@ public class HubConfigImpl implements HubConfig {
 
     @JsonIgnore
     @Override public Path getHubEntitiesDir() { return hubProject.getHubEntitiesDir(); }
+
+    @JsonIgnore
+    @Override public Path getHubMappingsDir() { return hubProject.getHubMappingsDir(); }
 
     @JsonIgnore
     @Override public Path getHubConfigDir() {
@@ -1014,10 +1042,11 @@ public class HubConfigImpl implements HubConfig {
 
         // this lets debug builds work from an IDE
         if (version.equals("${project.version}")) {
-            version = "3.0.0";
+            version = "3.1.0";
         }
         return version;
     }
+
 
     private Map<String, String> getCustomTokens() {
         AppConfig appConfig = getAppConfig();
@@ -1038,11 +1067,6 @@ public class HubConfigImpl implements HubConfig {
         customTokens.put("%%mlFinalForestsPerHost%%", finalForestsPerHost.toString());
         customTokens.put("%%mlFinalAuth%%", finalAuthMethod);
 
-        customTokens.put("%%mlTraceAppserverName%%", traceHttpName);
-        customTokens.put("\"%%mlTracePort%%\"", tracePort.toString());
-        customTokens.put("%%mlTraceDbName%%", traceDbName);
-        customTokens.put("%%mlTraceForestsPerHost%%", traceForestsPerHost.toString());
-        customTokens.put("%%mlTraceAuth%%", traceAuthMethod);
 
         customTokens.put("%%mlJobAppserverName%%", jobHttpName);
         customTokens.put("\"%%mlJobPort%%\"", jobPort.toString());
@@ -1062,9 +1086,14 @@ public class HubConfigImpl implements HubConfig {
         customTokens.put("%%mlHubUserRole%%", hubRoleName);
         customTokens.put("%%mlHubUserName%%", hubUserName);
 
+        customTokens.put("%%mlHubAdminRole%%", hubAdminRoleName);
+        customTokens.put("%%mlHubAdminUserName%%", hubAdminUserName);
+
         // random password for hub user
         RandomStringGenerator randomStringGenerator = new RandomStringGenerator.Builder().withinRange(33, 126).filteredBy((CharacterPredicate) codePoint -> (codePoint != 92 && codePoint != 34)).build();
         customTokens.put("%%mlHubUserPassword%%", randomStringGenerator.generate(20));
+        // and another random password for hub Admin User
+        customTokens.put("%%mlHubAdminUserPassword%%", randomStringGenerator.generate(20));
 
         customTokens.put("%%mlCustomForestPath%%", customForestPath);
 
@@ -1096,7 +1125,6 @@ public class HubConfigImpl implements HubConfig {
         HashMap<String, Integer> forestCounts = new HashMap<>();
         forestCounts.put(stagingDbName, stagingForestsPerHost);
         forestCounts.put(finalDbName, finalForestsPerHost);
-        forestCounts.put(traceDbName, traceForestsPerHost);
         forestCounts.put(jobDbName, jobForestsPerHost);
         forestCounts.put(modulesDbName, modulesForestsPerHost);
         forestCounts.put(triggersDbName, triggersForestsPerHost);
@@ -1158,4 +1186,20 @@ public class HubConfigImpl implements HubConfig {
         }
         return res;
     }
+
+    @JsonIgnore
+    public String getInfo()
+    {
+
+        try {
+            return objmapper.writerWithDefaultPrettyPrinter().writeValueAsString(this);
+        }
+        catch(Exception e)
+        {
+            throw new DataHubConfigurationException("Your datahub configuration could not serialize");
+
+        }
+
+    }
+
 }

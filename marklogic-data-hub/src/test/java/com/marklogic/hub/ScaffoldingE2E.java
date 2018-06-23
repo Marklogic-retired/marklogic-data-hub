@@ -134,10 +134,10 @@ public class ScaffoldingE2E extends HubTestBase {
                 assertEquals(
                     getResource("scaffolding-test/es-" + flowType.toString() + "-content." + codeFormat.toString())
                         .replaceAll("\\s+", " ")
-                        .replaceAll("[\r\n]", ""),
+                        .replaceAll("[\r\n]", "").trim(),
                     FileUtils.readFileToString(defaultContent.toFile())
                         .replaceAll("\\s+", " ")
-                        .replaceAll("[\r\n]", ""));
+                        .replaceAll("[\r\n]", "").trim());
             }
             catch(IOException e) {
                 throw new RuntimeException(e);

@@ -93,6 +93,13 @@ export default function(tmpDir) {
       fs.copy(headersWithOptionsFilePath, tmpDir + '/plugins/entities/Product/harmonize/Harmonize\ Products/headers.sjs');
     });
 
+    it ('should setup customized triples on Harmonize Products flow', function() {
+      //copy customized triples.sjs
+      console.log('copy customized triples.sjs');
+      let customTriplesFilePath = 'e2e/qa-data/plugins/customTriples.sjs';
+      fs.copy(customTriplesFilePath, tmpDir + '/plugins/entities/Product/harmonize/Harmonize\ Products/triples.sjs');
+    });
+
     it ('should redeploy modules', function() {
       flowPage.redeployButton.click();
       browser.wait(element(by.css('#last-deployed-time')).getText().then((txt) => {
@@ -126,8 +133,9 @@ export default function(tmpDir) {
       console.log('found the button and clicking Run Harmonize button');
       flowPage.runHarmonizeButton().click();
       console.log('clicked the button');
-      browser.wait(EC.elementToBeClickable(flowPage.toastButton));
-      flowPage.toastButton.click();
+      //browser.wait(EC.elementToBeClickable(flowPage.toastButton));
+      //flowPage.toastButton.click();
+      browser.sleep(10000);
       flowPage.jobsTab.click();
       jobsPage.isLoaded();
       expect(jobsPage.finishedHarmonizedFlows.isPresent()).toBe(true);
@@ -156,6 +164,10 @@ export default function(tmpDir) {
       expect(element(by.cssContainingText('.cm-string', '442403950907')).isPresent()).toBe(true);
       expect(element(by.cssContainingText('.cm-variable', 'opt1')).isPresent()).toBe(true);
       expect(element(by.cssContainingText('.cm-string', 'world')).isPresent()).toBe(true);
+      expect(element(by.cssContainingText('.cm-variable', 'user')).isPresent()).toBe(true);
+      expect(element(by.cssContainingText('.cm-string', 'admin')).isPresent()).toBe(true);
+      expect(element(by.cssContainingText('.cm-variable', 'object')).isPresent()).toBe(true);
+      expect(element(by.cssContainingText('.cm-string', 'http://www.marklogic.com/foo/456')).isPresent()).toBe(true);
       viewerPage.flowsTab.click();
       flowPage.isLoaded();
     });
@@ -183,6 +195,10 @@ export default function(tmpDir) {
       expect(element(by.cssContainingText('.cm-string', '159929577929')).isPresent()).toBe(true);
       expect(element(by.cssContainingText('.cm-variable', 'opt1')).isPresent()).toBe(true);
       expect(element(by.cssContainingText('.cm-string', 'world')).isPresent()).toBe(true);
+      expect(element(by.cssContainingText('.cm-variable', 'user')).isPresent()).toBe(true);
+      expect(element(by.cssContainingText('.cm-string', 'admin')).isPresent()).toBe(true);
+      expect(element(by.cssContainingText('.cm-variable', 'object')).isPresent()).toBe(true);
+      expect(element(by.cssContainingText('.cm-string', 'http://www.marklogic.com/foo/456')).isPresent()).toBe(true);
       viewerPage.flowsTab.click();
       flowPage.isLoaded();
     });

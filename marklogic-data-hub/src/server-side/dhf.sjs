@@ -1,4 +1,4 @@
-/**
+/*
   Copyright 2012-2018 MarkLogic Corporation
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -35,7 +35,7 @@ function run(context, func)
   if (label) {
     tracelib.setPluginLabel(label);
   } else {
-    fn.error(xs.QName("CONTEXT_MISSING_LABEL"), "Your context object is missing a label");
+    fn.error(null, "DATAHUB-CONTEXT-MISSING-LABEL", "Your context object is missing a label");
   }
 
   tracelib.resetPluginInput();
@@ -179,7 +179,7 @@ function logTrace(context) {
   if (label) {
     tracelib.setPluginLabel(label);
   } else{
-    fn.error(xs.QName("CONTEXT_MISSING_LABEL"), "Your context object is missing a label");
+    fn.error(null, "DATAHUB-CONTEXT-MISSING-LABEL", "Your context object is missing a label");
   }
 
   tracelib.resetPluginInput();
@@ -188,7 +188,7 @@ function logTrace(context) {
   for (let key in inputs) {
     tracelib.setPluginInput(key, inputs[key]);
   }
-  tracelib.pluginTrace(null, "PT0S");
+  tracelib.pluginTrace(null, null, "PT0S");
 };
 
 module.exports = {

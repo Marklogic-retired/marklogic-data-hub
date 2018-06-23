@@ -47,7 +47,6 @@ public interface HubConfig {
 
     String DEFAULT_STAGING_NAME = "data-hub-STAGING";
     String DEFAULT_FINAL_NAME = "data-hub-FINAL";
-    String DEFAULT_TRACE_NAME = "data-hub-TRACING";
     String DEFAULT_JOB_NAME = "data-hub-JOBS";
     String DEFAULT_MODULES_DB_NAME = "data-hub-MODULES";
     String DEFAULT_TRIGGERS_DB_NAME = "data-hub-TRIGGERS";
@@ -55,10 +54,11 @@ public interface HubConfig {
 
     String DEFAULT_ROLE_NAME = "data-hub-role";
     String DEFAULT_USER_NAME = "data-hub-user";
+    String DEFAULT_ADMIN_ROLE_NAME = "hub-admin-role";
+    String DEFAULT_ADMIN_USER_NAME = "hub-admin-user";
 
     Integer DEFAULT_STAGING_PORT = 8010;
     Integer DEFAULT_FINAL_PORT = 8011;
-    Integer DEFAULT_TRACE_PORT = 8012;
     Integer DEFAULT_JOB_PORT = 8013;
 
     String DEFAULT_AUTH_METHOD = "digest";
@@ -68,6 +68,8 @@ public interface HubConfig {
     Integer DEFAULT_FORESTS_PER_HOST = 4;
 
     String DEFAULT_CUSTOM_FOREST_PATH = "forests";
+    String PII_QUERY_ROLESET_FILE = "pii-reader.json";
+    String PII_PROTECTED_PATHS_FILE = "pii-protected-paths.json";
 
     /**
      * Gets the hostname of the AppConfig
@@ -303,8 +305,8 @@ public interface HubConfig {
     String getProjectDir();
 
     /**
-     *
-     * @param projectDir
+     * Sets the directory for the current project
+     * @param projectDir - a string that represents the path to the project directory
      */
     void setProjectDir(String projectDir);
 
@@ -341,10 +343,11 @@ public interface HubConfig {
      * Creates a new DatabaseClient for accessing the Staging database
      * @return - a DatabaseClient
      */
-     DatabaseClient newStagingClient();
+     DatabaseClient newStagingManageClient();
 
     /**
-     * Creates a new DatabaseClient for accessing the Staging database
+     * Creates a new DatabaseClient for accessing the Staging database,
+     * which overrides the database used for the connection.
      * @param databaseName - the name of the database for the staging Client to use
      * @return- a DatabaseClient
      */
@@ -354,7 +357,7 @@ public interface HubConfig {
      * Creates a new DatabaseClient for accessing the Final database
      * @return - a DatabaseClient
      */
-    DatabaseClient newFinalClient();
+    DatabaseClient newFinalManageClient();
 
     /**
      * Creates a new DatabaseClient for accessing the Job database
@@ -363,9 +366,11 @@ public interface HubConfig {
     DatabaseClient newJobDbClient();
 
     /**
-     * Creates a new DatabaseClient for accessing the Trace database
+     * Use newJobDbClient instead.  This function returns a client to
+     * the JOBS dataabse.
      * @return - a DatabaseClient
      */
+    @Deprecated
     DatabaseClient newTraceDbClient();
 
     /**
@@ -385,6 +390,12 @@ public interface HubConfig {
      * @return the path for the hub plugins directory
      */
     Path getHubEntitiesDir();
+
+    /**
+     * Gets the path for the hub mappings directory
+     * @return the path for the hub mappings directory
+     */
+    Path getHubMappingsDir();
 
     /**
      * Gets the path for the hub's entities directory
@@ -465,4 +476,26 @@ public interface HubConfig {
      * @return Version of DHF Jar file as string
      */
     String getJarVersion();
+
+    /**
+     * Gets a new DatabaseClient with privileges to run flows but
+     * not to install modules or configure databases.  Uses mlUsername
+     * and mlPassword
+     * @return A client without elevated administrative privileges.
+     */
+    DatabaseClient newStagingClient();
+
+    /**
+     * Gets a new DatabaseClient with privileges to run flows
+     * in reverse from final to staging.  Uses mlUsername
+     * and mlPassword
+     * @return A client without elevated administrative privileges.
+     */
+    DatabaseClient newFinalClient();
+
+    /**
+     * Gets information on a datahub configuration
+     * @return information on the datahub configuration as a string
+     */
+    String getInfo();
 }

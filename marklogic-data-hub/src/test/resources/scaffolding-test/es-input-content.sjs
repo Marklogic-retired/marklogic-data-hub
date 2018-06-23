@@ -1,26 +1,25 @@
-
 'use strict'
 
 /*
- * Create Content Plugin
- *
- * @param id         - the identifier returned by the collector
- * @param options    - an object containing options. Options are sent from Java
- *
- * @return - your content
- */
+* Create Content Plugin
+*
+* @param id         - the identifier returned by the collector
+* @param options    - an object containing options. Options are sent from Java
+*
+* @return - your content
+*/
 function createContent(id, rawContent, options) {
 
 
   let source;
 
   // for xml we need to use xpath
-  if (rawContent && xdmp.nodeKind(rawContent) === 'element') {
-    source = rawContent.xpath('/*:envelope/*:instance/node()');
+  if(rawContent && xdmp.nodeKind(rawContent) === 'element' && rawContent instanceof XMLDocument) {
+    source = fn.head(rawContent.xpath('/*:envelope/*:instance/node()'));
   }
   // for json we need to return the instance
-  else if (rawContent && rawContent.envelope && rawContent.envelope.instance) {
-    source = rawContent.envelope.instance;
+  else if(rawContent && rawContent instanceof Document) {
+    source = fn.head(rawContent.root);
   }
   // for everything else
   else {
@@ -40,10 +39,15 @@ function createContent(id, rawContent, options) {
 function extractInstanceMyFunTest(source) {
   // the original source documents
   let attachments = source;
-
-  let name = xs.string(source.name);
-  let price = xs.decimal(source.price);
-  let ages = xs.int(source.ages);
+  // now check to see if we have XML or json, then just go to the instance
+  if(source instanceof Element) {
+    source = fn.head(source.xpath('/*:envelope/*:instance/*:root/node()'))
+  } else if(source instanceof ObjectNode) {
+    source = source.envelope.instance;
+  }
+  let name = !fn.empty(source.name) ? xs.string(fn.head(source.name)) : null;
+  let price = !fn.empty(source.price) ? xs.decimal(fn.head(source.price)) : null;
+  let ages = !fn.empty(source.ages) ? xs.int(fn.head(source.ages)) : null;
 
   /* The following property is a local reference. */
   let employee = null;
@@ -88,10 +92,15 @@ function extractInstanceMyFunTest(source) {
 function extractInstanceEmployee(source) {
   // the original source documents
   let attachments = source;
-
-  let id = xs.string(source.id);
-  let name = xs.string(source.name);
-  let salary = xs.decimal(source.salary);
+  // now check to see if we have XML or json, then just go to the instance
+  if(source instanceof Element) {
+    source = fn.head(source.xpath('/*:envelope/*:instance/*:root/node()'))
+  } else if(source instanceof ObjectNode) {
+    source = source.envelope.instance;
+  }
+  let id = !fn.empty(source.id) ? xs.string(fn.head(source.id)) : null;
+  let name = !fn.empty(source.name) ? xs.string(fn.head(source.name)) : null;
+  let salary = !fn.empty(source.salary) ? xs.decimal(fn.head(source.salary)) : null;
 
   // return the instance object
   return {

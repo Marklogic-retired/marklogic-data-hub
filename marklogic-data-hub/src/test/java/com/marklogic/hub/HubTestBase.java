@@ -15,12 +15,7 @@
  */
 package com.marklogic.hub;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -43,6 +38,12 @@ import javax.net.ssl.TrustManagerFactory;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import com.marklogic.hub.error.DataHubConfigurationException;
 import com.marklogic.hub.util.ComboListener;
@@ -101,6 +102,9 @@ import com.marklogic.mgmt.resource.security.CertificateAuthorityManager;
 import com.marklogic.mgmt.util.ObjectMapperFactory;
 import com.marklogic.rest.util.JsonNodeUtil;
 
+import static com.marklogic.client.io.DocumentMetadataHandle.Capability.READ;
+import static com.marklogic.client.io.DocumentMetadataHandle.Capability.UPDATE;
+
 
 // FIXME remove deprecated methods
 @SuppressWarnings(value="deprecation")
@@ -118,20 +122,18 @@ public class HubTestBase {
     public  String host;
     public  int stagingPort;
     public  int finalPort;
-    public  int tracePort;
     public  int jobPort;
     public  String user;
     public  String password;
     protected  Authentication stagingAuthMethod;
     private  Authentication finalAuthMethod;
-    private  Authentication traceAuthMethod;
     private  Authentication jobAuthMethod;
     public  DatabaseClient stagingClient = null;
+    public  DatabaseClient stagingPrivilegedClient = null;
+    // this is needed for some evals in the test suite that are not mainline tests.
     public  DatabaseClient stagingModulesClient = null;
     public  DatabaseClient finalClient = null;
     public  DatabaseClient finalModulesClient = null;
-    public  DatabaseClient traceClient = null;
-    public  DatabaseClient traceModulesClient = null;
     public  DatabaseClient jobClient = null;
     public  DatabaseClient jobModulesClient = null;
     private  AdminConfig adminConfig = null;
@@ -169,7 +171,7 @@ public class HubTestBase {
     }
 
     private GenericDocumentManager getTraceMgr() {
-        return traceClient.newDocumentManager();
+        return jobClient.newDocumentManager();
     }
 
 
@@ -200,15 +202,13 @@ public class HubTestBase {
         boolean sslStaging = Boolean.parseBoolean(properties.getProperty("mlStagingSimpleSsl"));
         boolean sslJob = Boolean.parseBoolean(properties.getProperty("mlJobSimpleSsl"));
         boolean sslFinal = Boolean.parseBoolean(properties.getProperty("mlFinalSimpleSsl"));
-        boolean sslTrace = Boolean.parseBoolean(properties.getProperty("mlTraceSimpleSsl"));
-        if(sslStaging && sslJob && sslFinal && sslTrace){
+        if(sslStaging && sslJob && sslFinal){
 	    	setSslRun(true);
 	    }
 
         host = properties.getProperty("mlHost");
         stagingPort = Integer.parseInt(properties.getProperty("mlStagingPort"));
         finalPort = Integer.parseInt(properties.getProperty("mlFinalPort"));
-        tracePort = Integer.parseInt(properties.getProperty("mlTracePort"));
         jobPort = Integer.parseInt(properties.getProperty("mlJobPort"));
         user = properties.getProperty("mlUsername");
         password = properties.getProperty("mlPassword");
@@ -233,14 +233,6 @@ public class HubTestBase {
             finalAuthMethod = Authentication.DIGEST;
         }
 
-        auth = properties.getProperty("mlTraceAuth");
-        if (auth != null) {
-            traceAuthMethod = Authentication.valueOf(auth.toUpperCase());
-        }
-        else {
-            traceAuthMethod = Authentication.DIGEST;
-        }
-
         auth = properties.getProperty("mlJobAuth");
         if (auth != null) {
             jobAuthMethod = Authentication.valueOf(auth.toUpperCase());
@@ -248,7 +240,7 @@ public class HubTestBase {
         else {
             jobAuthMethod = Authentication.DIGEST;
         }
-        if(jobAuthMethod.equals(Authentication.CERTIFICATE) && traceAuthMethod.equals(Authentication.CERTIFICATE)
+        if(jobAuthMethod.equals(Authentication.CERTIFICATE)
         && finalAuthMethod.equals(Authentication.CERTIFICATE) && stagingAuthMethod.equals(Authentication.CERTIFICATE)) {
         	setCertAuth(true);
         	try {
@@ -261,11 +253,10 @@ public class HubTestBase {
 
         try {
         	stagingClient = getClient(host, stagingPort, HubConfig.DEFAULT_STAGING_NAME, user, password, stagingAuthMethod);
+            stagingPrivilegedClient = getHubConfig().newStagingManageClient();
             stagingModulesClient  = getClient(host, stagingPort, HubConfig.DEFAULT_MODULES_DB_NAME, user, password, stagingAuthMethod);
             finalClient = getClient(host, finalPort, HubConfig.DEFAULT_FINAL_NAME, user, password, finalAuthMethod);
             finalModulesClient  = getClient(host, stagingPort, HubConfig.DEFAULT_MODULES_DB_NAME, user, password, finalAuthMethod);
-            traceClient = getClient(host, tracePort, HubConfig.DEFAULT_TRACE_NAME, user, password, traceAuthMethod);
-            traceModulesClient  = getClient(host, stagingPort, HubConfig.DEFAULT_MODULES_DB_NAME, user, password, traceAuthMethod);
             jobClient = getClient(host, jobPort, HubConfig.DEFAULT_JOB_NAME, user, password, jobAuthMethod);
             jobModulesClient  = getClient(host, stagingPort, HubConfig.DEFAULT_MODULES_DB_NAME, user, password, jobAuthMethod);
         }
@@ -345,17 +336,17 @@ public class HubTestBase {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		});     
+		});
     }
 
     protected void disableTracing() {
         clients.forEach(client ->
-		{	
+		{
 			Tracing.create(client).disable();
 			client.newServerEval().xquery("xquery version \"1.0-ml\";\n" +
 					"import module namespace hul = \"http://marklogic.com/data-hub/hub-utils-lib\" at \"/MarkLogic/data-hub-framework/impl/hub-utils-lib.xqy\";\n" +
 					"hul:invalidate-field-cache(\"tracing-enabled\")").eval();
-			
+
 		});
     }
 
@@ -373,7 +364,6 @@ public class HubTestBase {
             .build();
         hubConfig.setPort(DatabaseKind.STAGING, stagingPort);
         hubConfig.setPort(DatabaseKind.FINAL, finalPort);
-        hubConfig.setPort(DatabaseKind.TRACE, tracePort);
         hubConfig.setPort(DatabaseKind.JOB, jobPort);
         hubConfig.getAppConfig().setAppServicesUsername(user);
         hubConfig.getAppConfig().setAppServicesPassword(password);
@@ -393,11 +383,9 @@ public class HubTestBase {
 
         	hubConfig.setSslContext(DatabaseKind.STAGING,certContext);
         	hubConfig.setSslContext(DatabaseKind.FINAL,certContext);
-        	hubConfig.setSslContext(DatabaseKind.TRACE,certContext);
         	hubConfig.setSslContext(DatabaseKind.JOB,certContext);
         	hubConfig.setSslHostnameVerifier(DatabaseKind.STAGING,SSLHostnameVerifier.ANY);
         	hubConfig.setSslHostnameVerifier(DatabaseKind.FINAL,SSLHostnameVerifier.ANY);
-        	hubConfig.setSslHostnameVerifier(DatabaseKind.TRACE,SSLHostnameVerifier.ANY);
         	hubConfig.setSslHostnameVerifier(DatabaseKind.JOB,SSLHostnameVerifier.ANY);
 
         }
@@ -513,14 +501,14 @@ public class HubTestBase {
     }
 
     protected int getTracingDocCount() {
-        return getTracingDocCount(null);
+        return getTracingDocCount("trace");
     }
     protected int getTracingDocCount(String collection) {
-        return getDocCount(HubConfig.DEFAULT_TRACE_NAME, collection);
+        return getDocCount(HubConfig.DEFAULT_JOB_NAME, collection);
     }
 
     protected int getJobDocCount() {
-        return getJobDocCount(null);
+        return getJobDocCount("job");
     }
     protected int getJobDocCount(String collection) {
         return getDocCount(HubConfig.DEFAULT_JOB_NAME, collection);
@@ -557,7 +545,7 @@ public class HubTestBase {
     }
 
     public void clearDatabases(String... databases) {
-        ServerEvaluationCall eval = stagingClient.newServerEval();
+        ServerEvaluationCall eval = stagingPrivilegedClient.newServerEval();
         String installer =
             "declare variable $databases external;\n" +
             "for $database in fn:tokenize($databases, \",\")\n" +
@@ -602,7 +590,9 @@ public class HubTestBase {
                 default:
                     handle.setFormat(Format.TEXT);
             }
-            writeSet.add(path, handle);
+            DocumentMetadataHandle permissions = new DocumentMetadataHandle()
+                .withPermission("data-hub-role", DocumentMetadataHandle.Capability.EXECUTE, UPDATE, READ);
+            writeSet.add(path, permissions, handle);
         });
         modMgr.write(writeSet);
         clearFlowCache();
@@ -612,6 +602,8 @@ public class HubTestBase {
 
         InputStreamHandle handle = new InputStreamHandle(HubTestBase.class.getClassLoader().getResourceAsStream(localPath));
         String ext = FilenameUtils.getExtension(path);
+        DocumentMetadataHandle permissions = new DocumentMetadataHandle()
+            .withPermission("data-hub-role", DocumentMetadataHandle.Capability.EXECUTE, UPDATE, READ);
         switch(ext) {
         case "xml":
             handle.setFormat(Format.XML);
@@ -623,7 +615,7 @@ public class HubTestBase {
             handle.setFormat(Format.TEXT);
         }
 
-        modMgr.write(path, handle);
+        modMgr.write(path, permissions, handle);
         clearFlowCache();
     }
 
@@ -658,9 +650,7 @@ public class HubTestBase {
             case HubConfig.DEFAULT_MODULES_DB_NAME:
                 eval = stagingModulesClient.newServerEval();
                 break;
-            case HubConfig.DEFAULT_TRACE_NAME:
-                eval = traceClient.newServerEval();
-                break;
+
             case HubConfig.DEFAULT_JOB_NAME:
                 eval = jobClient.newServerEval();
                 break;
@@ -849,7 +839,6 @@ public class HubTestBase {
 	    Path localPath = getResourceFile("scaffolding/gradle-local_properties").toPath();
 		String localProps = null;
 	    localProps = new String("mlJobSimpleSsl=true\n" +
-		    		"mlTraceSimpleSsl=true\n" +
 		    		"mlFinalSimpleSsl=true\n" +
 		    		"mlStagingSimpleSsl=true\n" +
 		            "mlAdminScheme=https\n" +
@@ -859,7 +848,6 @@ public class HubTestBase {
 		            "mlAppServicesSimpleSsl=true");
 	    if(isCertAuth()) {
 	    	localProps = new String("mlStagingAuth=certificate\n" +
-	    			"mlTraceAuth=certificate\n" +
 	    			"mlFinalAuth=certificate\n" +
 	    			"mlHost="+bootStrapHost+"\n"+
 	    			"mlAdminScheme=https\n" +
@@ -1020,6 +1008,17 @@ public class HubTestBase {
         }
     }
 
+    protected void debugOutput(Document xmldoc) throws TransformerException {
+        debugOutput(xmldoc, System.out);
+    }
+
+    protected void debugOutput(Document xmldoc, OutputStream os) throws TransformerException {
+        TransformerFactory tf = TransformerFactory.newInstance();
+        Transformer transformer = tf.newTransformer();
+        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+        transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+        transformer.transform(new DOMSource(xmldoc), new StreamResult(os));
+    }
 }
 
 
