@@ -17,7 +17,9 @@
 package com.marklogic.quickstart.web;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.marklogic.quickstart.model.MappingModel;
 import com.marklogic.quickstart.service.EntityManagerService;
+import com.marklogic.quickstart.service.MappingManagerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,13 +27,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 @Controller
 public class MappingController {
 
-
     @Autowired
-    private EntityManagerService entityManagerService;
+    private MappingManagerService mappingManagerService;
 
     /*
      *GET /api/maps/{entityName} - Returns all maps for an entity
@@ -41,39 +43,33 @@ public class MappingController {
 
      */
 
-    @RequestMapping(value = "/entities/{entityName}/maps", method = RequestMethod.GET)
+    @RequestMapping(value = "/mappings/", method = RequestMethod.GET)
     @ResponseBody
-    public JsonNode getMaps(
-        @PathVariable String entityName) throws ClassNotFoundException, IOException {
-
-        return entityManagerService.getAllMappingsForEntity(entityName);
+    public ArrayList<MappingModel> getMaps() throws ClassNotFoundException, IOException {
+        return mappingManagerService.getMappings();
     }
 
-    @RequestMapping(value = "/entities/{entityName}/maps/{mapName}", method = RequestMethod.GET)
+    @RequestMapping(value = "/mappings/{mapName}", method = RequestMethod.GET)
     @ResponseBody
-    public JsonNode getEntityMap(
-        @PathVariable String entityName,
+    public JsonNode getMapping(
         @PathVariable String mapName) throws ClassNotFoundException, IOException {
-
-        return entityManagerService.getMappingForEntity(entityName, mapName);
+        return mappingManagerService.getMapping(mapName).toJson();
     }
 
-    @RequestMapping(value = "/entities/{entityName}/maps/{mapName}", method = RequestMethod.POST)
+    @RequestMapping(value = "/mappings/{mapName}", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<?> addEntityMap(
-        @PathVariable String entityName,
+    public ResponseEntity<?> addMapping(
         @PathVariable String mapName,
         @RequestBody JsonNode mapping) throws ClassNotFoundException, IOException {
-        entityManagerService.saveMappingForEntity(entityName, mapName, mapping);
+        mappingManagerService.saveMapping(mapName, mapping);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/entities/{entityName}/maps/{mapName}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/mappings/{mapName}", method = RequestMethod.DELETE)
     @ResponseBody
-    public ResponseEntity<?> deleteEntityMap(
-        @PathVariable String entityName,
+    public ResponseEntity<?> deleteMapping(
         @PathVariable String mapName) throws ClassNotFoundException, IOException {
-        entityManagerService.deleteMappingForEntity(entityName, mapName);
+        mappingManagerService.deleteMapping(mapName);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

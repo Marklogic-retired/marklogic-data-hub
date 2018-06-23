@@ -25,55 +25,38 @@ import java.nio.file.Paths
 import static org.gradle.testkit.runner.TaskOutcome.FAILED
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
-class CreateHarmonizeFlowTaskTest extends BaseTest {
+class CreateMappingTaskTest extends BaseTest {
     def setupSpec() {
         createGradleFiles()
     }
 
-    def "createHarmonizeFlow with no entityName"() {
+    def "create mapping with no name"() {
         when:
-        def result = runFailTask('hubCreateHarmonizeFlow')
+        def result = runFailTask('hubCreateMapping')
 
         then:
         notThrown(UnexpectedBuildSuccess)
-        result.output.contains('entityName property is required')
-        result.task(":hubCreateHarmonizeFlow").outcome == FAILED
+        result.output.contains('mappingName property is required')
+        result.task(":hubCreateMapping").outcome == FAILED
     }
 
-    def "createHarmonizeFlow with no flowName"() {
+    def "create mapping with valid name"() {
         given:
         propertiesFile << """
             ext {
-                entityName=my-new-entity
+                mappingName=my-new-mapping
             }
         """
 
         when:
-        def result = runFailTask('hubCreateHarmonizeFlow')
-
-        then:
-        notThrown(UnexpectedBuildSuccess)
-        result.output.contains('flowName property is required')
-        result.task(":hubCreateHarmonizeFlow").outcome == FAILED
-    }
-
-    def "createHarmonizeFlow with valid name"() {
-        given:
-        propertiesFile << """
-            ext {
-                entityName=my-new-entity
-                flowName=my-new-harmonize-flow
-            }
-        """
-
-        when:
-        def result = runTask('hubCreateHarmonizeFlow')
+        def result = runTask('hubCreateMapping')
 
         then:
         notThrown(UnexpectedBuildFailure)
-        result.task(":hubCreateHarmonizeFlow").outcome == SUCCESS
+        result.task(":hubCreateMapping").outcome == SUCCESS
 
-        File entityDir = Paths.get(testProjectDir.root.toString(), "plugins", "entities", "my-new-entity", "harmonize", "my-new-harmonize-flow").toFile()
-        entityDir.isDirectory() == true
+        File mappingDir = Paths.get(testProjectDir.root.toString(), "plugins", "mappings", "my-new-mapping").toFile()
+        mappingDir.isDirectory() == true
     }
+
 }

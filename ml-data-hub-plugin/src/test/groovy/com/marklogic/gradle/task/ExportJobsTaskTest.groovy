@@ -35,14 +35,16 @@ class ExportJobsTaskTest extends BaseTest {
         // this will be relatively fast (idempotent) for already-installed hubs
         println(runTask('mlDeploy', '-i').getOutput())
 
-        println(runTask('hubCreateHarmonizeFlow', '-PentityName=test-entity', '-PflowName=test-harmonize-flow', '-PdataFormat=xml', '-PpluginFormat=xqy').getOutput())
-        println(runTask('mlReLoadModules'))
-
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME)
         DocumentMetadataHandle meta = new DocumentMetadataHandle();
         meta.getCollections().add("test-entity");
         installStagingDoc("/employee1.xml", meta, new File("src/test/resources/run-flow-test/employee1.xml").text)
         installStagingDoc("/employee2.xml", meta, new File("src/test/resources/run-flow-test/employee2.xml").text)
+        println(runTask('mlReLoadModules'))
+
+        println(runTask('hubCreateHarmonizeFlow', '-PentityName=test-entity', '-PflowName=test-harmonize-flow', '-PdataFormat=xml', '-PpluginFormat=xqy', '-PuseES=false').getOutput())
+        println(runTask('mlReLoadModules'))
+
         installModule("/entities/my-new-entity/harmonize/my-new-harmonize-flow/content/content.xqy", "run-flow-test/content.xqy")
 
     }

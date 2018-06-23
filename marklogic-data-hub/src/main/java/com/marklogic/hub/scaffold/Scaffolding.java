@@ -62,6 +62,12 @@ public interface Scaffolding {
     void createEntity(String entityName);
 
     /**
+     * Creates a mapping given a string name
+     * @param mappingName - the name of the mapping as string
+     */
+    void createMappingDir(String mappingName);
+
+    /**
      * Creates a flow for an entity with Entity Services model as default
      * @param entityName - name of the entity to associate the flow with
      * @param flowName - the name of the flow as a string
@@ -87,6 +93,20 @@ public interface Scaffolding {
                     DataFormat dataFormat, boolean useEsModel);
 
     /**
+     * Creates a flow for an entity with an additional option for using Entity Services
+     * @param entityName - name of the entity to associate the flow with
+     * @param flowName - the name of the flow as a string
+     * @param flowType - the type of flow as TypeFlow, eg: harmonize or ingest
+     * @param codeFormat - the format of the code as CodeFormat enum
+     * @param dataFormat - the format of the data (json or xml)
+     * @param useEsModel - true to use Entity Services, false not to
+     * @param mappingName - the name of the mapping you wish to use to generate the content plugin
+     */
+    void createFlow(String entityName, String flowName,
+                    FlowType flowType, CodeFormat codeFormat,
+                    DataFormat dataFormat, boolean useEsModel,String mappingName);
+
+    /**
      * Updates a legacy flow on disk
      * @param fromVersion - string version number of DHF
      * @param entityName - the entity which the flow is attached
@@ -106,7 +126,7 @@ public interface Scaffolding {
      * @param entityName - the entity which the flow is attached
      * @param flowName - the name of the flow as a string
      * @param flowType - the type of flow as TypeFlow, eg: harmonize or ingest
-     * @return
+     * @return true if successful, false if it failed to update the flow
      */
     boolean updateLegacyFlow(String fromVersion, String entityName, String flowName, FlowType flowType);
 
@@ -116,7 +136,7 @@ public interface Scaffolding {
      * @param extensionName - the name of the extension as a string
      * @param flowType - the type of flow as TypeFlow, eg: harmonize or ingest
      * @param codeFormat - the format of the code as CodeFormat enum
-     * @throws ScaffoldingValidationException
+     * @throws ScaffoldingValidationException - thrown if the extension fails to pass validation
      */
     void createRestExtension(String entityName, String extensionName,
                              FlowType flowType, CodeFormat codeFormat) throws ScaffoldingValidationException;
@@ -127,7 +147,7 @@ public interface Scaffolding {
      * @param transformName - the name of the transform as a string
      * @param flowType - the type of flow as TypeFlow, eg: harmonize or ingest
      * @param codeFormat - the format of the code as CodeFormat enum
-     * @throws ScaffoldingValidationException
+     * @throws ScaffoldingValidationException - thrown if the extension fails to pass validation
      */
     void createRestTransform(String entityName, String transformName,
                              FlowType flowType, CodeFormat codeFormat) throws ScaffoldingValidationException;

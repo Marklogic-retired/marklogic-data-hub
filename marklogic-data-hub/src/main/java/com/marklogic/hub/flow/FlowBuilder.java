@@ -68,6 +68,11 @@ public class FlowBuilder {
         return this;
     }
 
+    public FlowBuilder withMapping(String mappingName) {
+        flow.setMappingName(mappingName);
+        return this;
+    }
+
     public Flow build() {
 
         if (flow.getCollector() == null && flow.getType().equals(FlowType.HARMONIZE)) {

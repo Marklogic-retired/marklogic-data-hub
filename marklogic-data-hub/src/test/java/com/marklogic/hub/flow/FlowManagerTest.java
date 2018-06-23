@@ -166,7 +166,7 @@ public class FlowManagerTest extends HubTestBase {
             for (DataFormat dataFormat : dataFormats) {
                 for (FlowType flowType : flowTypes) {
                     String flowName = flowType.toString() + "-" + codeFormat.toString() + "-" + dataFormat.toString();
-                    scaffolding.createFlow("my-entity", flowName, flowType, codeFormat, dataFormat);
+                    scaffolding.createFlow("my-entity", flowName, flowType, codeFormat, dataFormat, false);
                 }
             }
         }
@@ -190,7 +190,7 @@ public class FlowManagerTest extends HubTestBase {
 
         allCombos((codeFormat, dataFormat, flowType, useEs) -> {
             String flowName = flowType.toString() + "-" + codeFormat.toString() + "-" + dataFormat.toString();
-            scaffolding.createFlow("my-entity", flowName, flowType, codeFormat, dataFormat);
+            scaffolding.createFlow("my-entity", flowName, flowType, codeFormat, dataFormat, false);
         });
 
 
@@ -394,7 +394,7 @@ public class FlowManagerTest extends HubTestBase {
 
         Scaffolding scaffolding = Scaffolding.create(getHubConfig().getProjectDir(), stagingClient);
         scaffolding.createEntity("new-entity");
-        scaffolding.createFlow("new-entity", "new-flow", FlowType.HARMONIZE, CodeFormat.XQUERY, DataFormat.XML);
+        scaffolding.createFlow("new-entity", "new-flow", FlowType.HARMONIZE, CodeFormat.XQUERY, DataFormat.XML, false);
         assertEquals(0, fm.getLegacyFlows().size());
 
         Path projectPath = Paths.get(PROJECT_PATH);

@@ -50,6 +50,18 @@ public interface Flow {
     String getName();
 
     /**
+     * Sets the mapping name used to generate the flow
+     * @param mappingName - string representing the mapping name for the flow
+     */
+    void setMappingName(String mappingName);
+
+    /**
+     * Gets the mapping name used for the flow
+     * @return the mapping name of the flow in string form
+     */
+    String getMappingName();
+
+    /**
      * Sets the type of the flow
      * @param type - FlowType enum for harmonize or input
      */

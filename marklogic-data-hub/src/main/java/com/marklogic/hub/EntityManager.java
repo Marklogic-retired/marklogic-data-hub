@@ -54,6 +54,7 @@ public interface EntityManager {
     /**
      * Scans the entities in the project for pii properties, and saves the
      * required ELS configurations to support those properties.
+     * @return - true if successfully saved, false if it did not
      */
     public boolean savePii();
 }

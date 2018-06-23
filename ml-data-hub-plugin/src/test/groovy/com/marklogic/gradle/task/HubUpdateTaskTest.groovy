@@ -35,7 +35,7 @@ class HubUpdateTaskTest extends BaseTest {
 
     def "no updates needed"() {
         given:
-            println(runTask('hubCreateHarmonizeFlow', '-PentityName=my-new-entity', '-PflowName=my-new-harmonize-flow', '-PdataFormat=xml', '-PpluginFormat=xqy').getOutput())
+            println(runTask('hubCreateHarmonizeFlow', '-PentityName=my-new-entity', '-PflowName=my-new-harmonize-flow', '-PdataFormat=xml', '-PpluginFormat=xqy', '-PuseES=false').getOutput())
         when:
             def result = runTask("hubUpdate")
 
@@ -47,7 +47,7 @@ class HubUpdateTaskTest extends BaseTest {
 
     def "pre-main updates needed"() {
         given:
-        println(runTask('hubCreateHarmonizeFlow', '-PentityName=my-new-entity', '-PflowName=my-new-harmonize-flow', '-PdataFormat=xml', '-PpluginFormat=xqy').getOutput())
+        println(runTask('hubCreateHarmonizeFlow', '-PentityName=my-new-entity', '-PflowName=my-new-harmonize-flow', '-PdataFormat=xml', '-PpluginFormat=xqy', '-PuseES=false').getOutput())
         def entityDir = Paths.get(hubConfig().projectDir).resolve("plugins").resolve("entities").resolve("legacy-test")
         def inputDir = entityDir.resolve("input")
         def harmonizeDir = entityDir.resolve("harmonize")
@@ -66,7 +66,7 @@ class HubUpdateTaskTest extends BaseTest {
 
     def "2x (pre-3x) updates needed"() {
         given:
-        println(runTask('hubCreateHarmonizeFlow', '-PentityName=my-new-entity', '-PflowName=my-new-harmonize-flow', '-PdataFormat=xml', '-PpluginFormat=xqy').getOutput())
+        println(runTask('hubCreateHarmonizeFlow', '-PentityName=my-new-entity', '-PflowName=my-new-harmonize-flow', '-PdataFormat=xml', '-PpluginFormat=xqy', '-PuseES=false').getOutput())
         def entityDir = Paths.get(hubConfig().projectDir).resolve("plugins").resolve("entities").resolve("2x-test")
         def inputDir = entityDir.resolve("input")
         def harmonizeDir = entityDir.resolve("harmonize")
