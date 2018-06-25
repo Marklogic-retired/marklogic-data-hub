@@ -9,7 +9,7 @@ This page provides information about the implementation of DHF as it runs on Mar
 1. [In General](#in-general)
 1. [Databases](#databases)
 1. [Application Servers](#appservers)
-1. [REST Extensions](#extensions)
+1. [REST Extensions](#rest-extensions)
 
 ## In General
 
