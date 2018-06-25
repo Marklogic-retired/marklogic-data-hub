@@ -59,35 +59,12 @@ p.item-identifying-info {
   justify-content: center;
 }
 
-<<<<<<< b601783d17d19bc71f3af109185bd49e53e5b376
-<<<<<<< ab68e89f0d833c347b1edc72df40d921f48e3c0a
-#source .src-prop-container,  {
+#source .src-prop-container {
   width: 470px;
 }
 
 #harmonized .entity-prop-container {
   width: 400px;
-}
-
-#harmonized .entity-prop-container {
-=======
-#source .prop-container {
-=======
-#source .src-prop-container,  {
->>>>>>> Added QA selectors
-  width: 470px;
-}
-
-#harmonized .entity-prop-container {
-  width: 400px;
-}
-
-<<<<<<< b601783d17d19bc71f3af109185bd49e53e5b376
-#harmonized .prop-container {
->>>>>>> Mapping UI style and content adjustments
-=======
-#harmonized .entity-prop-container {
->>>>>>> Added QA selectors
   border-left: 0;
 }
 
@@ -223,7 +200,7 @@ p.item-identifying-info {
 }
 
 .dropdown-filter input {
-  width: 398px;
+  width: 405px;
   margin: 6px 26px;
   border: 1px solid #2A4356;
   padding: 3px 6px;
@@ -249,28 +226,16 @@ p.item-identifying-info {
 
 .entity-icons {
   width: 130px;
-  margin-left: 10px;
+  margin-left: 13px;
 }
 
 .entity-icon {
   cursor: default;
-  margin-left: 3px;
+  margin-left: 7px;
   padding: 0;
   color: #666;
 }
 
 .icon-hide {
   color: #ccc;
-}
-
-.dropdown-filter {
-  position:fixed;
-  background-color: #b7cae2;
-}
-
-.dropdown-filter input {
-  width: 398px;
-  margin: 6px 26px;
-  border: 1px solid #2A4356;
-  padding: 3px 6px;
 }
