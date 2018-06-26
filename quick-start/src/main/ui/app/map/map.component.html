@@ -15,9 +15,12 @@
 
     <div id="source">
       <div id="src-heading" #srcheading>
-        <h4 class="item-type">Source</h4>
+        <div class="item-type">
+          Source
+          <span class="fa fa-pencil edit-uri" (click)="editingURI=true"></span>
+        </div>
         <p *ngIf="!editingURI" class="item-identifying-info">
-          <span (click)="editingURI = true" ng-class="title-sample-doc" title="{{ sampleDocURI }}">{{ getLastChars(sampleDocURI, 40, '...') }}</span>
+          <span (click)="editingURI=true" ng-class="title-sample-doc" title="{{ sampleDocURI }}">{{ getLastChars(sampleDocURI, 40, '...') }}</span>
         </p>
         <p *ngIf="editingURI" class="edit-uri">
           <input type="text" class="edit-uri-val" [(ngModel)]="editURIVal" />
@@ -78,7 +81,7 @@
 
     <div id="harmonized">
       <div id="harm-heading">
-        <h4 class="item-type">Model</h4>
+        <div class="item-type">Model</div>
         <p class="item-identifying-info">
           <span ng-class="title-entity-model">{{ chosenEntity?.info.title }}</span>
         </p>

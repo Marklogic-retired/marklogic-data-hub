@@ -25,15 +25,19 @@
   }
 }
 
-h4.item-type {
+div.item-type {
   margin: 0;
   padding: 0;
-  margin-bottom: 3px;
+  margin-top: 5px;
+  margin-bottom: 10px;
+  font-size: 24px;
+  font-weight: 200;
 }
 
 p.item-identifying-info {
   font-weight: bold;
   margin: 0 0 14px 2px;
+  font-size: 15px;
 }
 
 #source, #harmonized, #save-map {
@@ -47,7 +51,11 @@ p.item-identifying-info {
 }
 
 #harmonized {
-  width: 440px;
+  width: 430px;
+}
+
+#src-heading, #harm-heading {
+  height: 55px;
 }
 
 .entity-prop-container, .src-prop-container {
@@ -65,7 +73,7 @@ p.item-identifying-info {
 }
 
 #harmonized .entity-prop-container {
-  width: 440px;
+  width: 430px;
   border-left: 0;
 }
 
@@ -192,15 +200,15 @@ p.item-identifying-info {
 }
 
 .entity-icons {
-  width: 130px;
+  width: 120px;
   margin-left: 5px;
 }
 
 .entity-icon {
   cursor: default;
-  margin-left: 3px;
+  margin-left: 1px;
   padding: 0;
-  color: #666;
+  color: #aaa;
 }
 
 .icon-hide {
@@ -211,6 +219,14 @@ p.item-identifying-info {
   width: 411px;
   padding: 3px 1px;
   height: 28px;
+}
+
+.edit-uri {
+  font-size: 16px;
+  padding-left: 0;
+  vertical-align: middle;
+  margin-bottom: 2px;
+  cursor: pointer;
 }
 
 .edit-uri-save, .edit-uri-cancel {
