@@ -5,6 +5,7 @@ import { MdlDialogReference } from '@angular-mdl/core';
 import { EnvironmentService } from '../environment';
 
 import * as _ from 'lodash';
+import {MapService} from "../map/map.service";
 
 @Component({
   selector: 'app-new-flow',
@@ -18,6 +19,9 @@ export class NewFlowComponent {
   scaffoldOptions = [
     { label: 'Create Structure from Entity Definition', value: true },
     { label: 'Blank Template', value: false }
+  ];
+  mappingOptions = [
+    { label: 'None', value: null}
   ];
   codeFormats = [
     { label: 'Javascript', value: 'JAVASCRIPT' },
@@ -34,7 +38,8 @@ export class NewFlowComponent {
     flowName: <string>null,
     codeFormat: 'JAVASCRIPT',
     dataFormat: 'JSON',
-    useEsModel: true
+    useEsModel: true,
+    mappingName: <string>null
   };
 
   flow = _.clone(this.emptyFlow);
@@ -44,6 +49,7 @@ export class NewFlowComponent {
   constructor(
     private dialog: MdlDialogReference,
     private envService: EnvironmentService,
+    private mapService: MapService,
     @Inject('flowType') flowType: string,
     @Inject('actions') actions: any
   ) {
@@ -59,6 +65,11 @@ export class NewFlowComponent {
       } else {
         this.startingScaffoldOption = this.scaffoldOptions[0];
       }
+      this.mapService.getMaps();
+      for(let mapName of this.mapService.maps) {
+        this.mappingOptions.push({label : mapName, value : mapName});
+      }
+
     }
   }
 

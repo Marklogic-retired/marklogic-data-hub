@@ -7,7 +7,7 @@ import * as _ from 'lodash';
 @Injectable()
 export class MapService {
 
-  maps: Array<Map>;
+  maps: Array<string>;
   map: any;
 
   constructor(

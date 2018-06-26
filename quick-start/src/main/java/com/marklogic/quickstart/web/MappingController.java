@@ -44,7 +44,7 @@ public class MappingController {
 
      */
 
-    @RequestMapping(value = "/mappings/", method = RequestMethod.GET)
+    @RequestMapping(value = "/mappings", method = RequestMethod.GET)
     @ResponseBody
     public ArrayList<String> getMappings() throws ClassNotFoundException {
         return mappingManagerService.getMappings();
