@@ -12,7 +12,9 @@ export class MapService {
 
   constructor(
     private http: Http,
-  ) {}
+  ) {
+    this.getMaps();
+  }
 
   getName(entityName, flowName) {
     return encodeURI(entityName + '-' + flowName + '-' + 'map');
