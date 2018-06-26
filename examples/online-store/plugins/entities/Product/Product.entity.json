@@ -11,12 +11,12 @@
       "rangeIndex" : [ ],
       "wordLexicon" : [ ],
       "properties" : {
-        "sku test" : {
+        "sku" : {
           "datatype" : "string",
           "description" : "",
           "collation" : "http://marklogic.com/collation/codepoint"
         },
-        "title test" : {
+        "title" : {
           "datatype" : "string",
           "description" : "",
           "collation" : "http://marklogic.com/collation/codepoint"

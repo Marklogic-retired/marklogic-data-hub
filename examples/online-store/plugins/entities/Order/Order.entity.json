@@ -19,7 +19,7 @@
         "price" : {
           "datatype" : "decimal"
         },
-        "products test" : {
+        "products" : {
           "datatype" : "array",
           "description" : "",
           "items" : {
