@@ -57,14 +57,13 @@ public class MappingManagerService extends EnvironmentAware {
         mappingManager = MappingManager.getMappingManager(envConfig().getMlSettings());
         Scaffolding scaffolding = Scaffolding.create(projectDir, envConfig().getFinalClient());
         scaffolding.createMappingDir(newMapping.getName());
+        Mapping mapping = mappingManager.createMappingFromJSON(newMapping.toJson());
+        mappingManager.saveMapping(mapping);
         Path dir = envConfig().getMlSettings().getHubMappingsDir().resolve(newMapping.getName());
         if (dir.toFile().exists()) {
             watcherService.watch(dir.toString());
         }
-        Mapping mapping = mappingManager.createMappingFromJSON(newMapping.toJson());
-        mappingManager.saveMapping(mapping);
-
-        return getMapping(newMapping.getName());
+        return getMapping(mapping.getName());
     }
 
     public MappingModel saveMapping(String mapName, JsonNode jsonMapping) throws IOException {
@@ -74,8 +73,7 @@ public class MappingManagerService extends EnvironmentAware {
         MappingModel existingMapping = null;
         try {
             existingMapping = getMapping(mapName);
-
-          mappingManager.saveMapping(mappingManager.createMappingFromJSON(mapping.toJson()), true);
+            mappingManager.saveMapping(mappingManager.createMappingFromJSON(mapping.toJson()), true);
         }catch (DataHubProjectException e){
             String projectDir = envConfig().getProjectDir();
             createMapping(projectDir, mapping);
@@ -93,11 +91,12 @@ public class MappingManagerService extends EnvironmentAware {
 
     public MappingModel getMapping(String mappingName) throws IOException {
         mappingManager = MappingManager.getMappingManager(envConfig().getMlSettings());
-        if(mappingManager.getMapping(mappingName, -1) != null){
-            ObjectMapper objectMapper = new ObjectMapper();
+        try{
+           ObjectMapper objectMapper = new ObjectMapper();
             return MappingModel.fromJson(objectMapper.readTree(mappingManager.getMappingAsJSON(mappingName, -1)));
+        }catch(DataHubProjectException e) {
+            throw new DataHubProjectException("Mapping not found in project: " + mappingName);
         }
-        throw new DataHubProjectException("Mapping not found in project: " + mappingName);
     }
 
 }

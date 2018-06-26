@@ -34,7 +34,7 @@ public class MappingModel extends JsonPojo {
     protected String targetEntityType;
     protected String description;
     protected String language;
-    protected int version;
+    protected int version = 1;
     protected JsonNode properties;
 
     @JsonIgnore
@@ -117,13 +117,22 @@ public class MappingModel extends JsonPojo {
 
     public JsonNode toJson() {
         ObjectNode node = JsonNodeFactory.instance.objectNode();
-        node.put("name", getName());
+
         node.put("version", getVersion());
-        node.put("language", getLanguage());
+        if(getLanguage() != null) {
+            node.put("language", getLanguage());
+        }
+        node.put("name", getName());
         node.set("properties", getProperties());
-        node.put("sourceContext", getSourceContext());
-        node.put("targetEntityType", getTargetEntityType());
-        node.put("description", getDescription());
+        if(getSourceContext() != null) {
+            node.put("sourceContext", getSourceContext());
+        }
+        if(getTargetEntityType() != null) {
+            node.put("targetEntityType", getTargetEntityType());
+        }
+        if(getDescription() != null) {
+            node.put("description", getDescription());
+        }
         return node;
     }
 }
