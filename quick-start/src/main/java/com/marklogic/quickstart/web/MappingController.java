@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 @Controller
+@RequestMapping("/api/current-project")
 public class MappingController {
 
     @Autowired

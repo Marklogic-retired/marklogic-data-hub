@@ -18,6 +18,7 @@ package com.marklogic.quickstart.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.marklogic.hub.MappingManager;
 import com.marklogic.hub.error.DataHubProjectException;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.FileUtil;
@@ -47,6 +48,8 @@ public class MappingManagerService extends EnvironmentAware {
 
     @Autowired
     private DataHubService dataHubService;
+
+    private MappingManager mappingManager = MappingManager.getMappingManager(envConfig().getMlSettings());
 
     public ArrayList<MappingModel> getMappings() throws IOException {
 
@@ -86,49 +89,6 @@ public class MappingManagerService extends EnvironmentAware {
             String projectDir = envConfig().getProjectDir();
             createMapping(projectDir, mapping);
         }
-/*
-        if (fullpath == null) {
-            Path dir = Paths.get(envConfig().getProjectDir(), PLUGINS_DIR, MAPPINGS_DIR, title);
-            if (!dir.toFile().exists()) {
-                dir.toFile().mkdirs();
-            }
-            fullpath = Paths.get(dir.toString(), title + MAPPING_FILE_EXTENSION).toString();
-        }
-        else {
-            String filename = new File(fullpath).getName();
-            String mappingFromFilename = filename.substring(0, filename.indexOf(MAPPING_FILE_EXTENSION));
-            if (!mappingFromFilename.equals(mapping.getName())) {
-                // The mapping name was changed since the files were created. Update
-                // the path.
-
-                // Update the name of the mapping definition file
-                File origFile = new File(fullpath);
-                File newFile = new File(origFile.getParent() + File.separator + title + MAPPING_FILE_EXTENSION);
-                if (!origFile.renameTo(newFile)) {
-                    throw new IOException("Unable to rename " + origFile.getAbsolutePath() + " to " +
-                        newFile.getAbsolutePath());
-                };
-
-                // Update the directory name
-                File origDirectory = new File(origFile.getParent());
-                File newDirectory = new File(origDirectory.getParent() + File.separator + title);
-                if (!origDirectory.renameTo(newDirectory)) {
-                    throw new IOException("Unable to rename " + origDirectory.getAbsolutePath() + " to " +
-                        newDirectory.getAbsolutePath());
-                }
-
-                fullpath = newDirectory.getAbsolutePath() + File.separator + title + MAPPING_FILE_EXTENSION;
-                mapping.setFilename(fullpath);
-
-                // Redeploy the flows
-                dataHubService.reinstallUserModules(envConfig().getMlSettings(), null, null);
-            }
-        }
-
-
-        String json = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(node);
-        FileUtils.writeStringToFile(new File(fullpath), json);
-*/
         return mapping;
     }
 
@@ -141,12 +101,8 @@ public class MappingManagerService extends EnvironmentAware {
     }
 
     public MappingModel getMapping(String mappingName) throws IOException {
-        List<MappingModel> mappings = getMappings();
-
-        for (MappingModel mapping : mappings) {
-            if (mapping.getName().equals(mappingName)) {
-                return mapping;
-            }
+        if(mappingManager.getMapping(mappingName, -1) != null){
+            return mappingManager.getMapping(mappingName, -1);
         }
         throw new DataHubProjectException("Mapping not found in project: " + mappingName);
     }
