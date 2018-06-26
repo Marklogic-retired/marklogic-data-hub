@@ -31,38 +31,25 @@ Navigate to the Settings screen in QuickStart. On that page, you will find a sel
 ![Quickstart enable disable]({{site.baseurl}}/images/traces/FlowTracingEnableDisableViaQuickStart.png)
 
 ## Flow Tracing Database
-All flow tracing events are stored in the separate JOBS database that is created when you initialize a project. By default, the database is called _your-project-name_-JOBS. An application server is created that is associated with this database, which provides a UI you can use to view the trace events. The default port for this application server is 8013.
+Initializing a project creates a JOBS database trace flow tracing events and job logs. By default, the database is called _your-project-name_-JOBS. The database is configured to index the text in trace events to facilitate searching this data.
+
+Project initialization also creates an App Server attached to this database, called _your-project-name_-JOBS. By default, this App Server uses port 8013.
 
 ## Viewing Flow Tracing
+
 You can view flow tracing events in the following ways:
-* Using QuickStart 
-* Using the Trace Viewer, a standalone application.
+* In QuickStart: Click **Traces** in the QuickStart top navigation bar.
+* Standalone: Navigate your browser to the Trace Viewer application. By default, the application is installed on port 8013 of your MarkLogic host.
 
-### Viewing with QuickStart
-You can view flow tracing events with QuickStart.
+Both methods display a UI like the following. The viewer displays a list of all flow trace events in the JOBS database. You can search the text of trace events via the search bar and browse events via the facet navigation control on the left side.
 
-From the main QuickStart dashboard, select Traces.
+![Displaying traces Quickstart 1]({{site.baseurl}}/images/traces/TraceViewer.png){:.screenshot-border}
 
-![Displaying traces Quickstart 1]({{site.baseurl}}/images/traces/DisplayingTracingInQuickstartScreen1.png)
+Tracing logs inputs and outputs to each of the plugins that run during a flow. Clicking on a trace event displays the detailed flow for that event. For example:
 
-This will show a list of all events currently in the database. Note that you can search the text of the trace events via the search bar. All text in the trace events is indexed and searchable.
+![Displaying single trace Quickstart]({{site.baseurl}}/images/traces/DisplaySingleTrace.png){:.screenshot-border}
 
-![Displaying traces Quickstart 2]({{site.baseurl}}/images/traces/DisplayingTracingInQuickstartScreen2.png)
-
-Selecting a single trace event will display the detailed flow.
-
-![Displaying single trace Quickstart]({{site.baseurl}}/images/traces/DisplayingSingleTraceInQuickstart.png)
-
-### Viewing with the Trace Viewer
-You can also view flow tracing events with a Trace Viewer provided in the application server associated with the JOBS database (by default installed on port 8013). This UI is installed into MarkLogic and you do not need a separate tool to view it.
-
-Navigate your browser to the port running the `TRACES` application server, by default on port 8013. You will be presented with the dedicated Trace Viewer application.
-
-![Displaying all traces dedicated]({{site.baseurl}}/images/traces/DisplayingTracingInDedicatedApp.png)
-
-Selecting a single tracing event will display the detailed flow.
-
-![Displaying single trace dedicated]({{site.baseurl}}/images/traces/DisplayingSingleTraceInDedicatedApp.png)
+Across the top is the flow plugin pipeline. Clicking on a plugin displays its inputs and output.
 
 ## Cleaning up Traces
 You can delete traces by deleting the job that created them. To do so, go to the Jobs page, click the checkboxes for the jobs you wish to delete, click `ACTION`, then select "Delete Jobs and Traces". After confirming, the selected jobs and the associated traces will be removed from the JOBS databases.
@@ -70,4 +57,4 @@ You can delete traces by deleting the job that created them. To do so, go to the
 ![Displaying deletion of a job]({{site.baseurl}}/images/traces/DeleteJobs.png)
 
 ## Exporting Traces
-You can export jobs and traces associated with those jobs. Go to the Jobs page, click the checkboxes for the Jobs you wish to export, click `ACTION`, then select "Export Jobs and Traces". After confirming, the selected jobs and their associated traces will be exported to a zip file, which your browser will download. This feature is generally used to help communicate with MarkLogic's support team. 
+You can export jobs and traces associated with those jobs. Go to the Jobs page, click the checkboxes for the Jobs you wish to export, click `ACTION`, then select "Export Jobs and Traces". After confirming, the selected jobs and their associated traces will be exported to a zip file, which your browser will download. This feature is generally used to help communicate with MarkLogic's support team.
