@@ -20,7 +20,6 @@ export class PropertyType {
   required: boolean = false;
   pii: boolean = false;
 
-
   UNICODE_COLLATION: string = 'http://marklogic.com/collation/codepoint';
 
   $ref: string;
@@ -40,9 +39,7 @@ export class PropertyType {
     this.$ref = json.$ref;
     this.collation = json.collation;
     this.items = new ItemType().fromJSON(json.items);
-
     return this;
-
   }
 
   setExternalRef(ref: string) {
@@ -57,22 +54,18 @@ export class PropertyType {
       this.$ref = ref;
       this.items = null;
     }
-
   }
 
   get isString(): boolean {
-
     return this.datatype === 'string' ||
       (this.datatype === 'array' && this.items.datatype === 'string');
   }
 
   get isArray(): boolean {
-
     return this.datatype === 'array';
   }
 
   get isRef(): boolean {
-
     return (
       (this.$ref && this.$ref.startsWith('#/definitions/')) ||
       (this.isArray && this.items.$ref && this.items.$ref.startsWith('#/definitions/'))
@@ -80,7 +73,6 @@ export class PropertyType {
   }
 
   get refName(): string {
-
     if (this.$ref && this.$ref.startsWith('#/definitions/')) {
       return this.$ref.replace('#/definitions/', '');
     } else if (this.isArray && this.items.$ref && this.items.$ref.startsWith('#/definitions/')) {
@@ -91,7 +83,6 @@ export class PropertyType {
   }
 
   setCardinality(cardinality: Cardinality) {
-
     if (cardinality === Cardinality.ONE_TO_ONE) {
       if (this.items.$ref) {
         this.$ref = this.items.$ref;
@@ -122,7 +113,6 @@ export class PropertyType {
   }
 
   getType(): string {
-
     let type = null;
     if (this.isArray) {
       type = (this.items.$ref || this.items.datatype) + '[]';
@@ -132,12 +122,10 @@ export class PropertyType {
     if (type) {
       type = type.replace('#/definitions/', '');
     }
-
     return type;
   }
 
   setCollation(collation: string) {
-
     if (this.isArray) {
       this.items.collation = collation;
     } else {
@@ -146,7 +134,6 @@ export class PropertyType {
   }
 
   setType(type: string) {
-
     const isArray = this.isArray;
     if (isArray) {
       if (!this.items) {
@@ -197,15 +184,10 @@ export class PropertyType {
 
   get invalidString(): boolean
   {
-
     if(this.name.indexOf(" ") != -1)
     {
       return true;
     }
     return false;
   }
-
-
-
-
 }

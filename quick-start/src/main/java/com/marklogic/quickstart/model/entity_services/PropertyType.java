@@ -109,5 +109,4 @@ public class PropertyType extends JsonPojo {
 
         return node;
     }
-
 }

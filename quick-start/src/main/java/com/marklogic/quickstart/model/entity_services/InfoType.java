@@ -118,7 +118,7 @@ public class InfoType extends JsonPojo {
      *
      */
     public void setDescription(String value) {
-        this.description = description;
+        this.description = value;
     }
 
     public static InfoType fromJson(JsonNode node) {
