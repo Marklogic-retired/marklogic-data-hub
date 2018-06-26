@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 @Controller
+@RequestMapping("/api/current-project")
 public class MappingController {
 
     @Autowired
@@ -45,7 +46,7 @@ public class MappingController {
 
     @RequestMapping(value = "/mappings/", method = RequestMethod.GET)
     @ResponseBody
-    public ArrayList<MappingModel> getMaps() throws ClassNotFoundException, IOException {
+    public ArrayList<String> getMappings() throws ClassNotFoundException {
         return mappingManagerService.getMappings();
     }
 

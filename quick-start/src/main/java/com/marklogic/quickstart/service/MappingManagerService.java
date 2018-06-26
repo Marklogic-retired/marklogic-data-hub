@@ -18,22 +18,20 @@ package com.marklogic.quickstart.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.marklogic.hub.MappingManager;
 import com.marklogic.hub.error.DataHubProjectException;
+import com.marklogic.hub.mapping.Mapping;
 import com.marklogic.hub.scaffold.Scaffolding;
-import com.marklogic.hub.util.FileUtil;
 import com.marklogic.quickstart.EnvironmentAware;
 import com.marklogic.quickstart.model.MappingModel;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.List;
 
 @Service
 public class MappingManagerService extends EnvironmentAware {
@@ -45,90 +43,41 @@ public class MappingManagerService extends EnvironmentAware {
     @Autowired
     private FileSystemWatcherService watcherService;
 
-    @Autowired
-    private DataHubService dataHubService;
+    private MappingManager mappingManager;
 
-    public ArrayList<MappingModel> getMappings() throws IOException {
 
-        String projectDir = envConfig().getProjectDir();
-
-        ArrayList<MappingModel> mappings = new ArrayList<>();
-        Path mappingsPath = Paths.get(envConfig().getProjectDir(), PLUGINS_DIR, MAPPINGS_DIR);
-        List<String> mappingNames = FileUtil.listDirectFolders(mappingsPath.toFile());
-        ObjectMapper objectMapper = new ObjectMapper();
-        for (String mappingName : mappingNames) {
-            File[] mappingDefs = mappingsPath.resolve(mappingName).toFile().listFiles((dir, name) -> name.endsWith(MAPPING_FILE_EXTENSION));
-            for (File mappingDef : mappingDefs) {
-                FileInputStream fileInputStream = new FileInputStream(mappingDef);
-                JsonNode node = objectMapper.readTree(fileInputStream);
-                fileInputStream.close();
-                MappingModel mappingModel = MappingModel.fromJson(mappingDef.getAbsolutePath(), node);
-                if (mappingModel != null) {
-                    mappings.add(mappingModel);
-                }
-            }
-        }
+    public ArrayList<String> getMappings() {
+        mappingManager = MappingManager.getMappingManager(envConfig().getMlSettings());
+        ArrayList<String> mappings = mappingManager.getMappingsNames();
 
         return mappings;
     }
 
     public MappingModel createMapping(String projectDir, MappingModel newMapping) throws IOException {
+        mappingManager = MappingManager.getMappingManager(envConfig().getMlSettings());
         Scaffolding scaffolding = Scaffolding.create(projectDir, envConfig().getFinalClient());
         scaffolding.createMappingDir(newMapping.getName());
-
-        return getMapping(newMapping.getName());
+        Mapping mapping = mappingManager.createMappingFromJSON(newMapping.toJson());
+        mappingManager.saveMapping(mapping);
+        Path dir = envConfig().getMlSettings().getHubMappingsDir().resolve(newMapping.getName());
+        if (dir.toFile().exists()) {
+            watcherService.watch(dir.toString());
+        }
+        return getMapping(mapping.getName());
     }
 
     public MappingModel saveMapping(String mapName, JsonNode jsonMapping) throws IOException {
+        mappingManager = MappingManager.getMappingManager(envConfig().getMlSettings());
         ObjectMapper objectMapper = new ObjectMapper();
         MappingModel mapping = objectMapper.readValue(jsonMapping.toString(), MappingModel.class);
-        if( getMapping(mapName) == null) {
+        MappingModel existingMapping = null;
+        try {
+            existingMapping = getMapping(mapName);
+            mappingManager.saveMapping(mappingManager.createMappingFromJSON(mapping.toJson()), true);
+        }catch (DataHubProjectException e){
             String projectDir = envConfig().getProjectDir();
             createMapping(projectDir, mapping);
         }
-/*
-        if (fullpath == null) {
-            Path dir = Paths.get(envConfig().getProjectDir(), PLUGINS_DIR, MAPPINGS_DIR, title);
-            if (!dir.toFile().exists()) {
-                dir.toFile().mkdirs();
-            }
-            fullpath = Paths.get(dir.toString(), title + MAPPING_FILE_EXTENSION).toString();
-        }
-        else {
-            String filename = new File(fullpath).getName();
-            String mappingFromFilename = filename.substring(0, filename.indexOf(MAPPING_FILE_EXTENSION));
-            if (!mappingFromFilename.equals(mapping.getName())) {
-                // The mapping name was changed since the files were created. Update
-                // the path.
-
-                // Update the name of the mapping definition file
-                File origFile = new File(fullpath);
-                File newFile = new File(origFile.getParent() + File.separator + title + MAPPING_FILE_EXTENSION);
-                if (!origFile.renameTo(newFile)) {
-                    throw new IOException("Unable to rename " + origFile.getAbsolutePath() + " to " +
-                        newFile.getAbsolutePath());
-                };
-
-                // Update the directory name
-                File origDirectory = new File(origFile.getParent());
-                File newDirectory = new File(origDirectory.getParent() + File.separator + title);
-                if (!origDirectory.renameTo(newDirectory)) {
-                    throw new IOException("Unable to rename " + origDirectory.getAbsolutePath() + " to " +
-                        newDirectory.getAbsolutePath());
-                }
-
-                fullpath = newDirectory.getAbsolutePath() + File.separator + title + MAPPING_FILE_EXTENSION;
-                mapping.setFilename(fullpath);
-
-                // Redeploy the flows
-                dataHubService.reinstallUserModules(envConfig().getMlSettings(), null, null);
-            }
-        }
-
-
-        String json = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(node);
-        FileUtils.writeStringToFile(new File(fullpath), json);
-*/
         return mapping;
     }
 
@@ -141,14 +90,13 @@ public class MappingManagerService extends EnvironmentAware {
     }
 
     public MappingModel getMapping(String mappingName) throws IOException {
-        List<MappingModel> mappings = getMappings();
-
-        for (MappingModel mapping : mappings) {
-            if (mapping.getName().equals(mappingName)) {
-                return mapping;
-            }
+        mappingManager = MappingManager.getMappingManager(envConfig().getMlSettings());
+        try{
+           ObjectMapper objectMapper = new ObjectMapper();
+            return MappingModel.fromJson(objectMapper.readTree(mappingManager.getMappingAsJSON(mappingName, -1)));
+        }catch(DataHubProjectException e) {
+            throw new DataHubProjectException("Mapping not found in project: " + mappingName);
         }
-        throw new DataHubProjectException("Mapping not found in project: " + mappingName);
     }
 
 }

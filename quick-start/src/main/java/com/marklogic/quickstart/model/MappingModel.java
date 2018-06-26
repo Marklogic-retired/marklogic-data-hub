@@ -22,45 +22,117 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.quickstart.model.entity_services.*;
 
+import java.util.HashMap;
 import java.util.List;
 
 public class MappingModel extends JsonPojo {
 
     protected String filename;
 
-    protected JsonNode content;
+    protected String name;
+    protected String sourceContext;
+    protected String targetEntityType;
+    protected String description;
+    protected String language;
+    protected int version = 1;
+    protected JsonNode properties;
 
     @JsonIgnore
-    public String getName() {
-        return getContent().get("name").textValue();
-    }
-
     public String getFilename() {
         return filename;
+    }
+
+    public String getVersionedName() {
+        return this.name + "-" + this.version;
     }
 
     public void setFilename(String filename) {
         this.filename = filename;
     }
 
-    public JsonNode getContent() {
-        return content;
+    public String getName() {
+        return name;
     }
 
-    public void setContent(JsonNode json) {
-        this.content = json;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public static MappingModel fromJson(String filename, JsonNode node) {
-        MappingModel mappingModel = new MappingModel();
-        mappingModel.setFilename(filename);
-        mappingModel.setContent(node);
+    public String getSourceContext() {
+        return sourceContext;
+    }
 
-        return mappingModel;
+    public void setSourceContext(String sourceContext) {
+        this.sourceContext = sourceContext;
+    }
+
+    public String getTargetEntityType() {
+        return targetEntityType;
+    }
+
+    public void setTargetEntityType(String targetEntityType) {
+        this.targetEntityType = targetEntityType;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
+    }
+
+    public int getVersion() {
+        return version;
+    }
+
+    public void setVersion(int version) {
+        this.version = version;
+    }
+
+    public JsonNode getProperties() {return properties;}
+
+    public void setProperties(JsonNode properties) {this.properties = properties;}
+
+    public static MappingModel fromJson(JsonNode node) {
+        MappingModel mapping = new MappingModel();
+        mapping.setName(node.get("name").asText());
+        mapping.setVersion((node.get("version").asInt()));
+        mapping.setDescription(node.get("description").asText());
+        mapping.setTargetEntityType(node.get("targetEntityType").asText());
+        mapping.setSourceContext(node.get("sourceContext").asText());
+        mapping.setProperties(node.get("properties"));
+        mapping.setLanguage("zxx");
+
+        return mapping;
     }
 
     public JsonNode toJson() {
+        ObjectNode node = JsonNodeFactory.instance.objectNode();
 
-        return this.content;
+        node.put("version", getVersion());
+        if(getLanguage() != null) {
+            node.put("language", getLanguage());
+        }
+        node.put("name", getName());
+        node.set("properties", getProperties());
+        if(getSourceContext() != null) {
+            node.put("sourceContext", getSourceContext());
+        }
+        if(getTargetEntityType() != null) {
+            node.put("targetEntityType", getTargetEntityType());
+        }
+        if(getDescription() != null) {
+            node.put("description", getDescription());
+        }
+        return node;
     }
 }
