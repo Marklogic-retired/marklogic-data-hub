@@ -18,10 +18,9 @@ export class MapService {
     return encodeURI(entityName + '-' + flowName + '-' + 'map');
   }
 
-  getMaps(entityName) {
+  getMaps() {
     this.http.get(this.url('/mappings')).map((res: Response) => {
       let maps: Array<any> = res.json();
-      console.log('GET /entities/' + entityName + '/maps', maps);
       return maps;
     }).subscribe((maps: any) => {
       this.maps = maps;
