@@ -19,7 +19,7 @@ export class MapService {
   }
 
   getMaps(entityName) {
-    this.http.get(this.url('/entities/{{entityName}}/maps')).map((res: Response) => {
+    this.http.get(this.url('/mappings')).map((res: Response) => {
       let maps: Array<any> = res.json();
       console.log('GET /entities/' + entityName + '/maps', maps);
       return maps;
@@ -29,10 +29,10 @@ export class MapService {
     });
   }
 
-  getMap(entityName, mapName) {
-    this.http.get(this.url('/entities/{{entityName}}/maps/{{mapName}}')).map((res: Response) => {
+  getMap(mapName) {
+    this.http.get(this.url('/mappings/{{mapName}}')).map((res: Response) => {
       let map: Array<any> = res.json();
-      console.log('GET /entities/' + entityName + '/maps' + mapName, map);
+      console.log('GET /mappings' + mapName, map);
       return map;
     }).subscribe((map: any) => {
       this.map = map;
@@ -40,18 +40,18 @@ export class MapService {
     });
   }
 
-  saveMap(entityName, mapName, map) {
-    this.http.post(this.url('/entities/{{entityName}}/maps/{{mapName}}'), JSON.parse(map)).map((res: Response) => {
-      console.log('POST /entities/' + entityName + '/maps' + mapName, map);
+  saveMap(mapName, map) {
+    this.http.post(this.url('/mappings/{{mapName}}'), JSON.parse(map)).map((res: Response) => {
+      console.log('POST /mappings' + mapName, map);
       return res;
     }).subscribe((res: any) => {
       console.log('Result: ', res);
     });
   }
 
-  deleteMap(entityName, mapName) {
-    this.http.delete(this.url('/entities/{{entityName}}/maps/{{mapName}}')).map((res: Response) => {
-      console.log('DELETE /entities/' + entityName + '/maps' + mapName);
+  deleteMap(mapName) {
+    this.http.delete(this.url('/mappings/{{mapName}}')).map((res: Response) => {
+      console.log('DELETE /mappings' + mapName);
       return res;
     }).subscribe((res: any) => {
       console.log('Result: ', res);
