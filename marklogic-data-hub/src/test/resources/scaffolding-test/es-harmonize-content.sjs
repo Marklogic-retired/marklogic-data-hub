@@ -41,7 +41,7 @@ function extractInstanceMyFunTest(source) {
   let attachments = source;
   // now check to see if we have XML or json, then just go to the instance
   if(source instanceof Element) {
-    source = fn.head(source.xpath('/*:envelope/*:instance/*:root/node()'))
+    source = fn.head(source.xpath('/*:envelope/*:instance/node()'))
   } else if(source instanceof ObjectNode) {
     source = source.envelope.instance;
   }
