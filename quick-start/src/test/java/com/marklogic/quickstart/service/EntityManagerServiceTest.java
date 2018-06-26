@@ -27,6 +27,7 @@ import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.FileUtil;
 import com.marklogic.quickstart.model.FlowModel;
 import com.marklogic.quickstart.model.entity_services.EntityModel;
+import com.marklogic.quickstart.model.entity_services.PropertyType;
 import org.apache.commons.io.FileUtils;
 import org.junit.*;
 import org.junit.runner.RunWith;
@@ -205,4 +206,5 @@ public class EntityManagerServiceTest extends AbstractServiceTest {
 
 
     }
+
 }

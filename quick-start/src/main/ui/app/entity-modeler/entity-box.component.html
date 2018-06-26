@@ -74,10 +74,12 @@
               <i [hidden]="!isPii(property.name)" class="fa fa-lock"></i>
             </td>
             <td class="key-cell">
-              <span class="property-name">{{property.name}}</span>
+              <span class="property-name" *ngIf="property.invalidString" class="has-whitespace">{{property.name}}</span>
+              <span class = "property-name" *ngIf="!property.invalidString" class="no-whitespace">{{property.name}}</span>
+
             </td>
             <td class="value-cell">
-              <span>{{property.getType()}}</span>
+              <span>{{property.getType()}} </span>
               <span *ngIf="property.isString" class="collation-toggler" (click)="property.showCollation = !property.showCollation">...</span>
               <span *ngIf="property.isString && property.showCollation" class="collation">{{getCollation(property)}}</span>
             </td>

@@ -34,9 +34,7 @@ public class PropertyType extends JsonPojo {
 
     ItemType items;
 
-    public String getName() {
-        return name;
-    }
+    public String getName() { return name; }
 
     public void setName(String name) {
         this.name = name;
@@ -111,4 +109,5 @@ public class PropertyType extends JsonPojo {
 
         return node;
     }
+
 }

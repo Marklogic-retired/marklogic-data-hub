@@ -101,9 +101,7 @@ public class DefinitionType extends JsonPojo {
         this.wordLexicon = wordLexicon;
     }
 
-    public List<PropertyType> getProperties() {
-        return properties;
-    }
+    public List<PropertyType> getProperties() { return properties; }
 
     public void setProperties(List<PropertyType> properties) {
         this.properties = properties;
@@ -212,4 +210,5 @@ public class DefinitionType extends JsonPojo {
         node.set("properties", propertiesObj);
         return node;
     }
+
 }

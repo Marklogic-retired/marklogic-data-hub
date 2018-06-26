@@ -120,6 +120,7 @@ export class EntityBoxComponent implements OnChanges, AfterViewInit {
         property.datatype = value;
       }
     }
+
   }
 
   handleStartDrag(event: MouseEvent) {

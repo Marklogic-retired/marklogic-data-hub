@@ -7,6 +7,8 @@
     "Order" : {
       "primaryKey" : "id",
       "required" : [ ],
+      "pii" : [ ],
+      "elementRangeIndex" : [ ],
       "rangeIndex" : [ "id" ],
       "wordLexicon" : [ ],
       "properties" : {
@@ -17,8 +19,9 @@
         "price" : {
           "datatype" : "decimal"
         },
-        "products" : {
+        "products test" : {
           "datatype" : "array",
+          "description" : "",
           "items" : {
             "$ref" : "#/definitions/Product"
           }
