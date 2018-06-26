@@ -66,6 +66,9 @@ public class EntityManagerService extends EnvironmentAware {
     @Autowired
     private DataHubService dataHubService;
 
+    @Autowired
+    private MappingManagerService mappingManagerService;
+
     public List<EntityModel> getLegacyEntities() throws IOException {
         String projectDir = envConfig().getProjectDir();
         List<EntityModel> entities = new ArrayList<>();
@@ -269,28 +272,6 @@ public class EntityManagerService extends EnvironmentAware {
         fileOutputStream.close();
     }
 
-    //Here goes the mapping stuff
-    public JsonNode getAllMappingsForEntity(String entityName) throws IOException {
-        EntityModel entity = this.getEntity(entityName);
-        JsonNode mappings = JsonNodeFactory.instance.objectNode();
-        return mappings;
-
-    }
-
-    public JsonNode getMappingForEntity(String entityName, String mapName) throws IOException{
-        EntityModel entity = this.getEntity(entityName);
-        JsonNode mappings = JsonNodeFactory.instance.objectNode();
-        return mappings;
-    }
-
-    public void saveMappingForEntity(String entityName, String mapName, JsonNode mapping) throws IOException{
-        EntityModel entity = this.getEntity(entityName);
-    }
-
-    public void deleteMappingForEntity(String entityName, String mapName) throws IOException{
-        EntityModel entity = this.getEntity(entityName);
-    }
-
     public EntityModel getEntity(String entityName) throws IOException {
         List<EntityModel> entities = getEntities();
 
@@ -325,6 +306,11 @@ public class EntityManagerService extends EnvironmentAware {
     public FlowModel createFlow(String projectDir, String entityName, FlowType flowType, FlowModel newFlow) throws IOException {
         Scaffolding scaffolding = Scaffolding.create(projectDir, envConfig().getFinalClient());
         newFlow.entityName = entityName;
+        String mappingName = mappingManagerService.getMapping(newFlow.mappingName).getVersionedName();
+        if(mappingName == null){
+            throw new DataHubProjectException("Mapping not found in project: "+ newFlow.mappingName);
+        }
+        newFlow.mappingName = mappingName;
         scaffolding.createFlow(entityName, newFlow.flowName, flowType, newFlow.codeFormat, newFlow.dataFormat, newFlow.useEsModel, newFlow.mappingName);
         return getFlow(entityName, flowType, newFlow.flowName);
     }
