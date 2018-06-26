@@ -35,11 +35,15 @@ public class MappingModel extends JsonPojo {
     protected String description;
     protected String language;
     protected int version;
-    protected HashMap<String, ObjectNode> properties;
+    protected JsonNode properties;
 
     @JsonIgnore
     public String getFilename() {
         return filename;
+    }
+
+    public String getVersionedName() {
+        return this.name + "-" + this.version;
     }
 
     public void setFilename(String filename) {
@@ -94,20 +98,32 @@ public class MappingModel extends JsonPojo {
         this.version = version;
     }
 
-    public HashMap<String, ObjectNode> getProperties() {return properties;}
+    public JsonNode getProperties() {return properties;}
 
-    public void setProperties(HashMap<String, ObjectNode> properties) {this.properties = properties;}
+    public void setProperties(JsonNode properties) {this.properties = properties;}
 
-    public static MappingModel fromJson(String filename, JsonNode node) {
-        MappingModel mappingModel = new MappingModel();
-        mappingModel.setFilename(filename);
-        mappingModel.setContent(node);
+    public static MappingModel fromJson(JsonNode node) {
+        MappingModel mapping = new MappingModel();
+        mapping.setName(node.get("name").asText());
+        mapping.setVersion((node.get("version").asInt()));
+        mapping.setDescription(node.get("description").asText());
+        mapping.setTargetEntityType(node.get("targetEntityType").asText());
+        mapping.setSourceContext(node.get("sourceContext").asText());
+        mapping.setProperties(node.get("properties"));
+        mapping.setLanguage("zxx");
 
-        return mappingModel;
+        return mapping;
     }
 
     public JsonNode toJson() {
-
-        return this.content;
+        ObjectNode node = JsonNodeFactory.instance.objectNode();
+        node.put("name", getName());
+        node.put("version", getVersion());
+        node.put("language", getLanguage());
+        node.set("properties", getProperties());
+        node.put("sourceContext", getSourceContext());
+        node.put("targetEntityType", getTargetEntityType());
+        node.put("description", getDescription());
+        return node;
     }
 }
