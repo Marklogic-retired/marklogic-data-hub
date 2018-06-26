@@ -19,13 +19,11 @@ declare function plugin:create-content(
   $id as xs:string,
   $options as map:map) as node()?
 {
-  let $source := fn:doc($id)
-  return
-    element result {
-      for $x in map:keys($options)
-      return
-        element { xs:QName($x) } {
-          map:get($options, $x)
-        }
-    }
+  element result {
+    for $x in map:keys($options)
+    return
+      element { xs:QName($x) } {
+        map:get($options, $x)
+      }
+  }
 };

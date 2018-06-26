@@ -15,6 +15,8 @@
  */
 package com.marklogic.hub.entity;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.hub.EntityManager;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
@@ -53,7 +55,8 @@ public class EntityManagerTest extends HubTestBase {
         Path employeeDir = scaffolding.getEntityDir("employee");
         employeeDir.toFile().mkdirs();
         assertTrue(employeeDir.toFile().exists());
-        FileUtil.copy(getResourceStream("scaffolding-test/employee.entity.json"), employeeDir.resolve("employee.entity.json").toFile());
+        FileUtil.copy(getResourceStream("scaffolding-test/employee.entity.json"),
+            employeeDir.resolve("employee.entity.json").toFile());
 
         Path managerDir = scaffolding.getEntityDir("manager");
         managerDir.toFile().mkdirs();
@@ -178,5 +181,38 @@ public class EntityManagerTest extends HubTestBase {
         // shouldn't save them on round 3 because of timestamps
         assertFalse(entityManager.saveDbIndexes());
     }
+
+
+    @Test
+    public void testDeployPiiConfigurations() throws IOException {
+        installEntities();
+
+        ObjectMapper mapper = new ObjectMapper();
+        Path dir = Paths.get(getHubConfig().getProjectDir(), HubConfig.ENTITY_CONFIG_DIR);
+
+        EntityManager entityManager = EntityManager.create(getHubConfig());
+
+        // deploy is separate
+        entityManager.savePii();
+
+        File protectedPathConfig = getHubConfig().getUserSecurityDir().resolve("protected-paths/01_" + HubConfig.PII_PROTECTED_PATHS_FILE).toFile();
+        File secondProtectedPathConfig = getHubConfig().getUserSecurityDir().resolve("protected-paths/02_" + HubConfig.PII_PROTECTED_PATHS_FILE).toFile();
+        File queryRolesetsConfig = getHubConfig().getUserSecurityDir().resolve("query-rolesets/" + HubConfig.PII_QUERY_ROLESET_FILE).toFile();
+
+                    // assert that ELS configuation is in project
+        JsonNode protectedPaths = mapper.readTree(protectedPathConfig);
+        assertTrue("Protected Path Config should have path expression.",
+            protectedPaths.get("path-expression").isTextual());
+        protectedPaths = mapper.readTree(secondProtectedPathConfig);
+        assertTrue("Protected Path Config should have path expression.",
+            protectedPaths.get("path-expression").isTextual());
+        JsonNode rolesets = mapper.readTree(queryRolesetsConfig);
+        assertEquals("Config should have one roleset, pii-reader.",
+            "pii-reader",
+            rolesets.get("role-name").get(0).asText());
+
+
+    }
+
 
 }

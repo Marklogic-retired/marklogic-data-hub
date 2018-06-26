@@ -12,7 +12,7 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
- *  
+ *
  */
 
 package com.marklogic.gradle.task
@@ -41,6 +41,9 @@ import spock.lang.Specification
 import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.parsers.ParserConfigurationException
+import java.nio.file.Files
+import java.nio.file.Paths
+import java.nio.file.StandardCopyOption
 
 class BaseTest extends Specification {
 
@@ -108,7 +111,7 @@ class BaseTest extends Specification {
 
 
     void clearDatabases(String... databases) {
-        ServerEvaluationCall eval = hubConfig().newStagingClient().newServerEval();
+        ServerEvaluationCall eval = hubConfig().newStagingManageClient().newServerEval();
         String installer = '''
             declare variable $databases external;
             for $database in fn:tokenize($databases, ",")
@@ -174,16 +177,13 @@ class BaseTest extends Specification {
         ServerEvaluationCall eval
         switch(databaseName) {
             case HubConfig.DEFAULT_STAGING_NAME:
-                eval = hubConfig().newStagingClient().newServerEval()
+                eval = hubConfig().newStagingManageClient().newServerEval()
                 break
             case HubConfig.DEFAULT_FINAL_NAME:
-                eval = hubConfig().newFinalClient().newServerEval()
+                eval = hubConfig().newFinalManageClient().newServerEval()
                 break
             case HubConfig.DEFAULT_MODULES_DB_NAME:
                 eval = hubConfig().newModulesDbClient().newServerEval()
-                break
-            case HubConfig.DEFAULT_TRACE_NAME:
-                eval = hubConfig().newTraceDbClient().newServerEval()
                 break
             case HubConfig.DEFAULT_JOB_NAME:
                 eval = hubConfig().newJobDbClient().newServerEval()
@@ -207,50 +207,10 @@ class BaseTest extends Specification {
     }
 
     static void createFullPropertiesFile() {
-        propertiesFile = testProjectDir.newFile('gradle.properties')
-        propertiesFile << """
-            mlHost=localhost
-            mlAppName=data-hub
-
-            mlUsername=admin
-            mlPassword=admin
-
-            mlManageUsername=admin
-            mlManagePassword=admin
-
-            mlAdminUsername=admin
-            mlAdminPassword=admin
-
-
-            mlStagingAppserverName=data-hub-STAGING
-            mlStagingPort=8010
-            mlStagingDbName=data-hub-STAGING
-            mlStagingForestsPerHost=4
-            mlStagingAuth=digest
-
-
-            mlFinalAppserverName=data-hub-FINAL
-            mlFinalPort=8011
-            mlFinalDbName=data-hub-FINAL
-            mlFinalForestsPerHost=4
-            mlFinalAuth=digest
-
-            mlTraceAppserverName=data-hub-TRACING
-            mlTracePort=8012
-            mlTraceDbName=data-hub-TRACING
-            mlTraceForestsPerHost=1
-            mlTraceAuth=digest
-
-            mlJobAppserverName=data-hub-JOBS
-            mlJobPort=8013
-            mlJobDbName=data-hub-JOBS
-            mlJobForestsPerHost=1
-            mlJobAuth=digest
-
-            mlModulesDbName=data-hub-MODULES
-            mlTriggersDbName=data-hub-TRIGGERS
-            mlSchemasDbName=data-hub-SCHEMAS
-        """
+        def props = Paths.get(".").resolve("gradle.properties")
+        propertiesFile = testProjectDir.newFile("gradle.properties")
+        def dst = propertiesFile.toPath()
+        Files.copy(props, dst, StandardCopyOption.REPLACE_EXISTING)
     }
 
     static void createGradleFiles() {

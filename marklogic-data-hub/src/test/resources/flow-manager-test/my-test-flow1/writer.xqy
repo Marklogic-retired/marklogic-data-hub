@@ -18,5 +18,7 @@ declare function plugin:write(
   $envelope as node(),
   $options as map:map) as empty-sequence()
 {
+  xdmp:log(("WRITING my test flow as ", xdmp:get-current-user())),
+  xdmp:log(("WRITING envelope ", $envelope)),
   xdmp:document-insert($id, $envelope, xdmp:default-permissions(), map:get($options, "entity"))
 };

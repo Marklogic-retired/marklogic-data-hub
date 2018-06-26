@@ -71,7 +71,7 @@ declare function mlcpFlow:transform(
       let $_ :=
         if ($flow) then ()
         else
-          fn:error(xs:QName("MISSING_FLOW"), "The specified flow " || map:get($params, "flow") || " is missing.")
+          fn:error((), "RESTAPI-SRVEXERR", "The specified flow " || map:get($params, "flow") || " is missing.")
 
       (: configure the options :)
       let $options as map:map := (

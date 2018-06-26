@@ -71,6 +71,10 @@ export class EntityBoxComponent implements OnChanges, AfterViewInit {
     return this.entity.definition.required.indexOf(key) >= 0;
   }
 
+  isPii(key: string) {
+    return this.entity.definition.pii.indexOf(key) >= 0;
+  }
+
 
   startEditing() {
     this.onStartEditing.emit(this.entity);
@@ -116,6 +120,7 @@ export class EntityBoxComponent implements OnChanges, AfterViewInit {
         property.datatype = value;
       }
     }
+
   }
 
   handleStartDrag(event: MouseEvent) {

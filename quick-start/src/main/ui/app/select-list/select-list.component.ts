@@ -66,7 +66,7 @@ export class SelectListComponent implements OnInit, OnChanges {
   }
 
   removeItem(item: any, event: Event): void {
-    const message = 'Remove the project from the list of projects? Does not destroy anything on disk.';
+    const message = 'Remove the project from the list of projects? Will not remove any project data on disk.';
     this.dialogService.confirm(message, 'Cancel', 'Remove').subscribe(() => {
       this.removedItem.emit({
         item: item,

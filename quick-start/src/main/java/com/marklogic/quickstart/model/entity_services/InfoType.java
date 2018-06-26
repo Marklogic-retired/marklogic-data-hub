@@ -107,9 +107,7 @@ public class InfoType extends JsonPojo {
      *     {@link String }
      *
      */
-    public String getDescription() {
-        return description;
-    }
+    public String getDescription() { return description; }
 
     /**
      * Sets the value of the description property.
@@ -120,7 +118,7 @@ public class InfoType extends JsonPojo {
      *
      */
     public void setDescription(String value) {
-        this.description = value;
+        this.description = description;
     }
 
     public static InfoType fromJson(JsonNode node) {
