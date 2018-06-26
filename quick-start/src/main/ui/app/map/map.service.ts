@@ -17,7 +17,7 @@ export class MapService {
   }
 
   getName(entityName, flowName) {
-    return encodeURI(entityName + '-' + flowName + '-' + 'map');
+    return encodeURI(entityName + '-' + flowName);
   }
 
   getMaps() {
