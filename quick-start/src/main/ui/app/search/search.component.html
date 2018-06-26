@@ -29,9 +29,16 @@
       <div class="mdl-cell mdl-cell--10-col">
         <div *ngIf="searchResponse && searchResponse.total > 0">
           <div *ngFor="let result of searchResponse.results" class="result">
-            <h4 class="link">
-              <a (click)="showDoc(currentDatabase, result.uri)">{{ result.label || result.uri }}</a>
-            </h4>
+            <div class="link">
+              <a (click)="showDoc(currentDatabase, result.uri)" #uri>{{ result.label || result.uri }}</a>
+              <span
+                class="copy-uri"
+                [appClipboard]="uri"
+                (onSuccess)="uriCopied()">
+                <i class="fa fa-copy" aria-hidden="true">
+                </i>
+              </span>
+            </div>
             <div class="matches">
               <div class="match" *ngFor="let match of result.matches">
                 <em *ngFor="let text of match['match-text']">
