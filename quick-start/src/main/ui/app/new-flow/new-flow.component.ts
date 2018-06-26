@@ -58,7 +58,11 @@ export class NewFlowComponent {
     this.flowType = _.capitalize(flowType);
     this.flow = _.clone(this.emptyFlow);
     this.actions = actions;
-    let maps = this.mapService.maps;
+    this.mapService.getMaps().subscribe((maps: any) => {
+      for(let mapName of maps) {
+      this.mappingOptions.push({label : mapName, value : mapName});
+    }
+    });
 
     this.startingMappingOption = this.mappingOptions[0];
     if (this.getMarkLogicVersion() === 8) {
@@ -69,10 +73,6 @@ export class NewFlowComponent {
       } else {
         this.startingScaffoldOption = this.scaffoldOptions[0];
       }
-      for(let mapName of maps) {
-        this.mappingOptions.push({label : mapName, value : mapName});
-      }
-
     }
   }
 

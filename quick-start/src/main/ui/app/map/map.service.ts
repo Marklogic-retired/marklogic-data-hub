@@ -21,13 +21,11 @@ export class MapService {
   }
 
   getMaps() {
-    this.http.get(this.url('/mappings')).map((res: Response) => {
+    return this.http.get(this.url('/mappings')).map((res: Response) => {
       let maps: Array<any> = res.json();
+      this.maps = maps
       return maps;
-    }).subscribe((maps: any) => {
-      this.maps = maps;
-      console.log('Result: ', maps);
-    });
+    })
   }
 
   getMap(mapName) {

@@ -100,11 +100,11 @@ public interface Scaffolding {
      * @param codeFormat - the format of the code as CodeFormat enum
      * @param dataFormat - the format of the data (json or xml)
      * @param useEsModel - true to use Entity Services, false not to
-     * @param mappingName - the name of the mapping you wish to use to generate the content plugin
+     * @param mappingNameWithVersion - the name of the mapping name and version together (name-version) you wish to use to generate the content plugin
      */
     void createFlow(String entityName, String flowName,
                     FlowType flowType, CodeFormat codeFormat,
-                    DataFormat dataFormat, boolean useEsModel,String mappingName);
+                    DataFormat dataFormat, boolean useEsModel,String mappingNameWithVersion);
 
     /**
      * Updates a legacy flow on disk
