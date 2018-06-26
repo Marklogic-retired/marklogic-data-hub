@@ -229,7 +229,6 @@ export class MapComponent implements OnInit {
     });
 
     let mapObj = {
-      "mapping" : {
         "language" : "zxx",
         "name" : this.mapName,
         "description" : "",  // TODO
@@ -237,7 +236,6 @@ export class MapComponent implements OnInit {
         "targetEntityType" : "http://marklogic.com/example/Schema-0.0.2/Person",  // TODO
         "sourceContext": "/path/to/properties/",  // TODO
         "properties": formattedConns
-      }
     }
 
     // Temporarily saving locally
