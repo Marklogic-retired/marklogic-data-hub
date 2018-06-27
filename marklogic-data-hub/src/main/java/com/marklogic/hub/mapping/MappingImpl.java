@@ -57,19 +57,31 @@ public class MappingImpl implements Mapping {
             throw new DataHubProjectException("Could not parse mapper properties");
         }
 
-        int jsonVersion = json.get("version").asInt();
-        String jsonName = json.get("name").asText();
-        String jsonSourceContext = json.get("sourceContext").asText();
-        String jsonDescription = json.get("description").asText();
-        String jsonTarget = json.get("targetEntityType").asText();
-        String jsonLanguage = json.get("language").asText();
-        setVersion(jsonVersion);
-        setName(jsonName);
-        setSourceContext(jsonSourceContext);
-        setDescription(jsonDescription);
-        setTargetEntityType(jsonTarget);
-        setLanguage(jsonLanguage);
-        setProperties(jsonProperties);
+        if(json.has("version")) {
+            setVersion(json.get("version").asInt());
+        }
+        if(json.has("name")) {
+            setName(json.get("name").asText());
+        }
+        if(json.has("sourceContext")) {
+            setSourceContext(json.get("sourceContext").asText());
+        }
+
+        if(json.has("description")) {
+            setDescription(json.get("description").asText());
+        }
+
+        if(json.has("targetEntityType")) {
+            setTargetEntityType(json.get("targetEntityType").asText());
+        }
+
+        if(json.has("language")) {
+            setLanguage(json.get("language").asText());
+        }
+        if(json.has("properties")) {
+            setProperties(jsonProperties);
+        }
+
         return this;
     }
 

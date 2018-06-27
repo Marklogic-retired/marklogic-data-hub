@@ -25,7 +25,7 @@ export class HarmonizeFlowOptionsComponent implements OnInit, OnChanges {
 
   @Input() flow: Flow;
   @Output() onChange = new EventEmitter<any>();
-  @Output() onRun: EventEmitter<any> = new EventEmitter();;
+  @Output() onRun: EventEmitter<any> = new EventEmitter();
 
   static readonly newLabel: string = 'New...';
 
@@ -115,7 +115,7 @@ export class HarmonizeFlowOptionsComponent implements OnInit, OnChanges {
       }
       // TODO use service to delete
       let mapName = this.mapService.getName(this.flow.entityName, this.flow.flowName);
-      this.mapService.deleteMap(this.flow.entityName, mapName);
+      this.mapService.deleteMap(mapName);
       localStorage.setItem("mapping", JSON.stringify(localObj));
       this.saveSettings();
       },

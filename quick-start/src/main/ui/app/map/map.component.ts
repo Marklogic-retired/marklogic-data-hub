@@ -14,7 +14,7 @@ import * as moment from 'moment';
   styleUrls: ['./map.component.scss'],
 })
 export class MapComponent implements OnInit {
-  // Harmonized Model
+  // Entity Model
   public chosenEntity: Entity;
   private entityPrimaryKey: string = '';
 
@@ -24,39 +24,28 @@ export class MapComponent implements OnInit {
   private searchText: string = null;
   private activeFacets: any = {};
   private currentPage: number = 1;
-  private pageLength: number = 1; // pulling single record
-  public sampleDoc: any = null;
+  private pageLength: number = 1;
+  public sampleDocURI: string = null;
   private sampleDocSrc: any = null;
   private sampleDocSrcProps: Array<any> = [];
-  private valMaxLen: number = 15;
-
-  private currentSelection: string = '';
 
   // Connections
-  public conns: Object = [];
+  public conns: Object = {};
   private mapPrefix: string = 'dhf-map-';
 
   private entityName: string;
   private mapName: string;
   public flowName: string;
 
-  private filterMenu: Array<string> = ['all', 'matching', 'string', 'number', 'date'];
-  private filterSelected: string = 'all';
   public filterFocus = {};
   public filterText = {};
 
-  public srcProps = [];
-
-
-  /**
-   * Get entities and choose one to serve as harmonized model.
-   */
-  loadMap(): void {
-    this.conns = this.getMap();
-  }
+  // Edit source URI
+  public editURIVal = '';
+  public editingURI = false;
 
   /**
-   * Load choosen entity and serve as harmonized model.
+   * Load chosen entity to use as harmonized model.
    */
   loadEntity(): void {
     let self = this;
@@ -70,13 +59,15 @@ export class MapComponent implements OnInit {
   }
 
   /**
-   * Get sample documents and choose one to serve as source.
+   * Search for a sample document by entity name and load that document by its URI.
+   * @param entityName An entity name
    */
   loadSampleDoc(entityName): void {
-    let self = this;
-    this.activeFacets = { Collection: {
-      values: [entityName]
-    }};
+    this.activeFacets = {
+      Collection: {
+        values: [entityName]
+      }
+    };
     this.searchService.getResults(
       this.currentDatabase,
       this.entitiesOnly,
@@ -85,26 +76,72 @@ export class MapComponent implements OnInit {
       this.currentPage,
       this.pageLength
     ).subscribe(response => {
-      this.sampleDoc = response.results[0];
-      // get contents of the document
-      this.searchService.getDoc(this.currentDatabase, this.sampleDoc.uri).subscribe(doc => {
-        this.sampleDocSrc = doc;
-        _.forEach(this.sampleDocSrc['envelope']['instance'], function(val, key) {
-          let prop = {
-            key: key,
-            val: String(val),
-            type: self.getType(val)
-          };
-          self.sampleDocSrcProps.push(prop);
-        });
-        // TODO sort order feature
-        //self.sampleDocSrcProps = _.sortBy(self.sampleDocSrcProps, ['key']);
-        // TODO filter by type feature
-        //self.sampleDocSrcProps = _.filter(self.sampleDocSrcProps, ['type', 'string']);
-      });
+      this.sampleDocURI = response.results[0].uri;
+      this.editURIVal = this.sampleDocURI;
+      this.loadSampleDocByURI(this.sampleDocURI)
     },
-    () => {},
-    () => {});
+      () => {},
+      () => {}
+    );
+  }
+
+  /**
+   * Load a sample document by its URI.
+   * @param uri A document URI
+   */
+  loadSampleDocByURI(uri): void {
+    let self = this;
+    this.searchService.getDoc(this.currentDatabase, uri).subscribe(doc => {
+      this.sampleDocSrcProps = [];
+      this.sampleDocSrc = doc;
+      _.forEach(this.sampleDocSrc['envelope']['instance'], function(val, key) {
+        let prop = {
+          key: key,
+          val: String(val),
+          type: self.getType(val)
+        };
+        self.sampleDocSrcProps.push(prop);
+      });
+      this.sampleDocURI = this.editURIVal;
+      this.editingURI = false;
+    },
+      (err) => {
+        // URI not found; this can only occur when editing the URI
+        let result = this.dialogService.alert(
+          'Document URI not found: ' + uri,
+          'OK'
+        );
+        result.subscribe( () => {
+            this.editURIVal = this.sampleDocURI;
+            this.editingURI = false;
+          },
+          () => {},
+          () => {}
+          )
+        }
+      );
+  }
+
+  /**
+   * Update the sample document based on a URI.
+   */
+  updateSampleDoc() {
+    if (Object.keys(this.conns).length > 0) {
+      let result = this.dialogService.confirm(
+          'Changing your source document will remove<br/>existing property selections. Proceed?',
+          'Cancel', 'OK');
+      result.subscribe( () => {
+          this.conns = {};
+          this.loadSampleDocByURI(this.editURIVal);
+        },(err: any) => {
+          console.log('source change aborted');
+          this.editingURI = false;
+        },
+        () => {}
+      );
+    } else {
+      this.loadSampleDocByURI(this.editURIVal);
+    }
   }
 
   constructor(
@@ -116,14 +153,18 @@ export class MapComponent implements OnInit {
     private dialogService: MdlDialogService
   ) {}
 
+  /**
+   * Initialize the UI.
+   */
   ngOnInit() {
     this.activatedRoute.queryParams.subscribe((params: Params) => {
       this.entityName = params['entityName'] || null;
       this.flowName = params['flowName'] || null;
+
       this.mapName = this.mapService.getName(this.entityName, this.flowName);
 
       this.loadEntity();
-      this.loadSampleDoc(this.entityName);
+      this.loadSampleDoc(this.entityName)
       this.loadMap();
     });
   }
@@ -135,20 +176,27 @@ export class MapComponent implements OnInit {
    * @param index Index of menu (not item)
    */
   handleSelection(entityPropName, srcPropName): void {
-    // Get the corresponding connection
     this.conns[entityPropName] = srcPropName;
   }
 
   /**
-   * Handle property selection from source menu
+   * Clear a property selection from source menu
    * @param event Event object, used to stop propagation
    * @param entityPropName Entity property name mapping to clear
    */
   clearSelection(event, entityPropName): void {
-    // Get the corresponding connection
     if (this.conns[entityPropName])
       delete this.conns[entityPropName];
+    this.editingURI = false; // close edit box if open
     event.stopPropagation();
+  }
+
+  /**
+   * Cancel the editing of the source document URI.
+   */
+  cancelEditURI() {
+    this.editURIVal = this.sampleDocURI;
+    this.editingURI = false;
   }
 
   /**
@@ -170,10 +218,80 @@ export class MapComponent implements OnInit {
   }
 
   /**
-   * Interpret datatype of property value
+   * Save the mapping artifact
+   */
+  saveMap(): void {
+    let formattedConns = {};
+
+    _.forEach(this.conns, function(srcPropName, entityPropName) {
+      if (srcPropName)
+        formattedConns[entityPropName] = { "sourcedFrom" : srcPropName };
+    });
+
+    let mapObj = {
+        "language" : "zxx",
+        "name" : this.mapName,
+        "description" : "",  // TODO
+        "version" : "1",
+        "targetEntityType" : "http://marklogic.com/example/Schema-0.0.2/Person",  // TODO
+        "sourceContext": "/path/to/properties/",  // TODO
+        "properties": formattedConns
+    }
+
+    // Temporarily saving locally
+    //localStorage.setItem(this.mapPrefix + this.mapName, JSON.stringify(mapObj));
+
+    // TODO use service to save
+    this.mapService.saveMap(this.mapName, JSON.stringify(mapObj));
+    this.router.navigate(['/flows', this.entityName, this.flowName, 'HARMONIZE']);
+  }
+
+  /**
+   * Handle cancel button event
+   */
+  cancelMap(): void {
+    let result = this.dialogService.confirm('Cancel and lose any changes?', 'Stay On Page', 'OK');
+    result.subscribe( () => {
+        this.router.navigate(['/flows', this.entityName, this.flowName, 'HARMONIZE']);
+      },(err: any) => {
+        console.log('map cancel aborted');
+      }
+    );
+  }
+
+  /**
+   * Retrieve the mapping artifact
+   */
+  loadMap() {
+    let result, connMap;
+    try {
+      result = JSON.parse(localStorage.getItem(this.mapPrefix + this.mapName));
+    } catch(e) {}
+
+    if (result && result.mapping && result.mapping.properties) {
+      connMap = {};
+      _.forEach(result.mapping.properties, function(srcObj, entityPropName) {
+        connMap[entityPropName] = srcObj.sourcedFrom;
+      });
+    }
+
+    // TODO use service to get
+   connMap = this.mapService.getMap(this.mapName);
+    return connMap || {};
+  }
+
+  loadMaps() {
+    let result;
+    // TODO use service to get
+    result = this.mapService.getMaps();
+    return result || {};
+  }
+
+  /**
+   * Interpret the datatype of a property value
    * Recognize all JSON types: array, object, number, boolean, null
    * Also do a basic interpretation of dates (ISO 8601, RFC 2822)
-   * @param property value
+   * @param value Property value
    * @returns {string} datatype ("array"|"object"|"number"|"date"|"boolean"|"null")
    */
   getType(value: any): string {
@@ -212,71 +330,6 @@ export class MapComponent implements OnInit {
   }
 
   /**
-   * Save the mapping artifact
-   */
-  saveMap(): void {
-    let formattedConns = {};
-
-    _.forEach(this.conns, function(srcPropName, entityPropName) {
-      if (srcPropName)
-        formattedConns[entityPropName] = { "sourcedFrom" : srcPropName };
-    });
-
-    let mapObj = {
-      "mapping" : {
-        "language" : "zxx",
-        "name" : this.mapName,
-        "description" : "",  // TODO
-        "version" : "1",
-        "targetEntityType" : "http://marklogic.com/example/Schema-0.0.2/Person",  // TODO
-        "sourceContext": "/path/to/properties/",  // TODO
-        "properties": formattedConns
-      }
-    }
-
-    // Temporarily saving locally
-    localStorage.setItem(this.mapPrefix + this.mapName, JSON.stringify(mapObj));
-
-    // TODO use service to save
-    // this.mapService.saveMap(this.entityName, mapName, JSON.stringify(localObj));
-    this.router.navigate(['/flows', this.entityName, this.flowName, 'HARMONIZE']);
-  }
-
-  /**
-   * Handle cancel button event
-   */
-  cancelMap(): void {
-    let result = this.dialogService.confirm('Cancel and lose any changes?', 'Stay On Page', 'Cancel');
-    result.subscribe( () => {
-        this.router.navigate(['/flows', this.entityName, this.flowName, 'HARMONIZE']);
-      },(err: any) => {
-        // console.log('map cancel aborted');
-      }
-    );
-  }
-
-  /**
-   * Retrieve the mapping artifact
-   */
-  getMap() {
-    let result, connMap;
-    try {
-      result = JSON.parse(localStorage.getItem(this.mapPrefix + this.mapName));
-    } catch(e) {}
-
-    if (result && result.mapping && result.mapping.properties) {
-      connMap = {};
-      _.forEach(result.mapping.properties, function(srcObj, entityPropName) {
-        connMap[entityPropName] = srcObj.sourcedFrom;
-      });
-    }
-
-    // TODO use service to get
-    // this.mapService.getMaps(this.entityName);
-    return connMap || {};
-  }
-
-  /**
    * Trim start of long string and add prefix ('...trimmed-string'
    * @param str String to trim
    * @param num Character threshold
@@ -292,18 +345,47 @@ export class MapComponent implements OnInit {
     return result;
   }
 
+  /**
+   * Does entity property have an element range index set?
+   * @param name Name of property
+   * @returns {boolean}
+   */
   hasElementRangeIndex(name) {
     return _.includes(this.chosenEntity.definition.elementRangeIndex, name);
   }
+
+  /**
+   * Does entity property have a path range index set?
+   * @param name Name of property
+   * @returns {boolean}
+   */
   hasRangeIndex(name) {
     return _.includes(this.chosenEntity.definition.rangeIndex, name);
   }
+
+  /**
+   * Does entity property have a word lexicon set?
+   * @param name Name of property
+   * @returns {boolean}
+   */
   hasWordLexicon(name) {
     return _.includes(this.chosenEntity.definition.wordLexicon, name);
   }
+
+  /**
+   * Is an entity property required?
+   * @param name Name of property
+   * @returns {boolean}
+   */
   isRequired(name) {
     return _.includes(this.chosenEntity.definition.required, name);
   }
+
+  /**
+   * Is an entity property personally identifiable information?
+   * @param name Name of property
+   * @returns {boolean}
+   */
   isPII(name) {
     return _.includes(this.chosenEntity.definition.pii, name);
   }
