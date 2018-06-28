@@ -288,4 +288,5 @@ test {
     include 'com/marklogic/hub/EndToEndFlowTests.class'
     include 'com/marklogic/hub/PiiE2E.class'
     include 'com/marklogic/hub/ScaffoldingE2E.class'
+    include 'com/marklogic/hub/MappingE2E.class'
 }
