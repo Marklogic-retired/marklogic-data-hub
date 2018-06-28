@@ -92,8 +92,8 @@ export class HarmonizeFlowOptionsComponent implements OnInit, OnChanges {
     let localString = localStorage.getItem(storedMap);
     if (localString) {
       let localObj = JSON.parse(localString);
-      if (localObj.mapping && localObj.mapping.name)
-        this.mapName = localObj.mapping.name;
+      if (localObj.name)
+        this.mapName = localObj.name;
     }
   }
 
