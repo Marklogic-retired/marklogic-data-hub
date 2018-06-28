@@ -422,8 +422,8 @@ public class MappingE2E extends HubTestBase {
 	                Document expected = getXmlFromResource("e2e-test/" + filename + ".xml");
 	                for (int i = 0; i < TEST_SIZE; i+=10) {
 	                    Document actual = mgr.read("/input-" + i + ".xml").next().getContent(new DOMHandle()).get();
-	                    debugOutput(expected, System.out);
-                        debugOutput(actual, System.out);
+	                    //debugOutput(expected, System.out);
+                        //debugOutput(actual, System.out);
 	                    assertXMLEqual(expected, actual);
 	                }
 	            } else {

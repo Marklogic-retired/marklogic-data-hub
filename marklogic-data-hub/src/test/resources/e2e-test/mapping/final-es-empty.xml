@@ -8,7 +8,9 @@
          <version>0.0.1</version>
       </info>
       <e2eentity xmlns="">
-         <id></id>
+         <id/>
+         <name/>
+         <salary/>
       </e2eentity>
    </instance>
    <attachments>

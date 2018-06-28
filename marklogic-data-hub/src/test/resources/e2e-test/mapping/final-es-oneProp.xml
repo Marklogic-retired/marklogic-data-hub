@@ -9,6 +9,8 @@
       </info>
       <e2eentity xmlns="">
          <id>123</id>
+         <name/>
+         <salary/>
       </e2eentity>
    </instance>
    <attachments>
