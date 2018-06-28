@@ -104,7 +104,7 @@ export class HarmonizeFlowOptionsComponent implements OnInit, OnChanges {
         // Temporarily saving locally
         localStorage.removeItem(storedMap);
         this.mapName = null;
-        // this.mapService.deleteMap(this.flow.entityName, storedMap);  // TODO: Restore once backend exists
+        this.mapService.deleteMap(storedMap);  // TODO: Restore once backend exists
         this.saveSettings();
       },
       (err: any) => {

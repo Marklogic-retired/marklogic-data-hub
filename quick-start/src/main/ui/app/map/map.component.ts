@@ -239,10 +239,10 @@ export class MapComponent implements OnInit {
     }
 
     // Temporarily saving locally
-    localStorage.setItem(this.mapPrefix + this.mapName, JSON.stringify(mapObj));
+    //localStorage.setItem(this.mapPrefix + this.mapName, JSON.stringify(mapObj));
 
     // TODO use service to save
-    //this.mapService.saveMap(this.mapName, JSON.stringify(mapObj));
+    this.mapService.saveMap(this.mapName, JSON.stringify(mapObj));
 
     this.router.navigate(['/flows', this.entityName, this.flowName, 'HARMONIZE']);
   }
@@ -278,7 +278,7 @@ export class MapComponent implements OnInit {
     }
 
     // TODO use service to get
-    //connMap = this.mapService.getMap(this.mapName);
+    connMap = this.mapService.getMap(this.mapName);
   }
 
   loadMaps() {
