@@ -147,7 +147,10 @@ declare function service:generate-lets($model as map:map, $entity-type-name, $ma
         "    plugin:make-reference-object('" || $ref-name || "', (: put your value here :) '')"
       ), "&#10;")
     let $value :=
-      if (empty($ref)) then (if(service:mapping-present($mapping, $property-name)) then (fn:concat("$source",service:map-value($property-name, $mapping))) else ("()"))
+      if (empty($ref)) then (
+        if(service:mapping-present($mapping, $property-name)) 
+        then (fn:concat("$source",service:map-value($property-name, $mapping))) 
+        else ("()"))
       else if (contains($ref, "#/definitions")) then
         let $inner-var := "$" || fn:lower-case($ref-name) || "s"
         return
@@ -222,13 +225,7 @@ declare function plugin:create-content(
     if ($flow-type eq $consts:HARMONIZE_FLOW) then
       "let $doc := fn:doc($id)&#10;  "
     else ()
-  }let $source :=
-    if ({$root-name}/es:envelope) then
-      {$root-name}/es:envelope/es:instance/node()
-    else if ({$root-name}/instance) then
-      {$root-name}/instance
-    else
-      {$root-name}
+  }let $source := {$root-name}
   return
   {
     "plugin:extract-instance-" || $entity || "($source)"
@@ -254,6 +251,13 @@ $source as node()?
   <txt>
   (: the original source documents :)
   let $attachments := $source
+  let $source      := 
+    if ($source/es:envelope) then
+      $source/es:envelope/es:instance/node()
+    else if ($source/instance) then
+      $source/instance
+    else
+      $source
   </txt>/text()
   else ()
 }
@@ -294,10 +298,7 @@ service:generate-lets($model, $entity-type-name, $mapping)
       for $property-name in $property-keys
       let $is-required := $property-name = $required-properties
       return
-        if ($is-required) then
         "map:put($model, '" || $property-name || "', $" || service:kebob-case($property-name) || ")"
-        else
-        "  es:optional($model, '" || $property-name || "', $" || service:kebob-case($property-name) || ")"
       , ",&#10;")
   (: end code generation block :)
   }
@@ -499,7 +500,7 @@ function createContent(id, {
 
   // for xml we need to use xpath
   if({$root-name} &amp;&amp; xdmp.nodeKind({$root-name}) === 'element' &amp;&amp; {$root-name} instanceof XMLDocument) {{
-    source = fn.head({$root-name}.xpath('/*:envelope/*:instance/node()'));
+    source = {$root-name}
   }}
   // for json we need to return the instance
   else if({$root-name} &amp;&amp; {$root-name} instanceof Document) {{
@@ -527,7 +528,7 @@ function {service:camel-case("extractInstance-" || $entity-type-name)}(source) {
   let attachments = source;
   // now check to see if we have XML or json, then just go to the instance
   if(source instanceof Element) {{
-    source = fn.head(source.xpath('/*:envelope/*:instance/*:root/node()'))
+    source = fn.head(source.xpath('/*:envelope/*:instance/node()'))
   }} else if(source instanceof ObjectNode) {{
     source = source.envelope.instance;
   }}
