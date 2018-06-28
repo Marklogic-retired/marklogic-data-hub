@@ -239,10 +239,11 @@ export class MapComponent implements OnInit {
     }
 
     // Temporarily saving locally
-    //localStorage.setItem(this.mapPrefix + this.mapName, JSON.stringify(mapObj));
+    localStorage.setItem(this.mapPrefix + this.mapName, JSON.stringify(mapObj));
 
     // TODO use service to save
-    this.mapService.saveMap(this.mapName, JSON.stringify(mapObj));
+    //this.mapService.saveMap(this.mapName, JSON.stringify(mapObj));
+
     this.router.navigate(['/flows', this.entityName, this.flowName, 'HARMONIZE']);
   }
 
@@ -264,20 +265,20 @@ export class MapComponent implements OnInit {
    */
   loadMap() {
     let result, connMap;
+    let self = this;
     try {
       result = JSON.parse(localStorage.getItem(this.mapPrefix + this.mapName));
     } catch(e) {}
 
-    if (result && result.mapping && result.mapping.properties) {
-      connMap = {};
-      _.forEach(result.mapping.properties, function(srcObj, entityPropName) {
-        connMap[entityPropName] = srcObj.sourcedFrom;
+    if (result && result.properties) {
+      self.conns = {};
+      _.forEach(result.properties, function(srcObj, entityPropName) {
+        self.conns[entityPropName] = srcObj.sourcedFrom;
       });
     }
 
     // TODO use service to get
-   connMap = this.mapService.getMap(this.mapName);
-    return connMap || {};
+    //connMap = this.mapService.getMap(this.mapName);
   }
 
   loadMaps() {
