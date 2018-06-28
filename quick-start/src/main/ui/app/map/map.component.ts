@@ -234,7 +234,7 @@ export class MapComponent implements OnInit {
         "description" : "",  // TODO
         "version" : "1",
         "targetEntityType" : "http://marklogic.com/example/Schema-0.0.2/Person",  // TODO
-        "sourceContext": "/path/to/properties/",  // TODO
+        "sourceContext": "//",  // TODO
         "properties": formattedConns
     }
 
