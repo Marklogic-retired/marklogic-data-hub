@@ -14,17 +14,24 @@
       </e2eentity>
    </instance>
    <attachments>
-      <test xmlns="" type="unit">
-         <invalidtest>
-            <id>354</id>
-            <name>joe smith</name>
-            <salary>1500</salary>
-         </invalidtest>
-         <validtest>
-            <empid>123</empid>
-            <fullname>bob smith</fullname>
-            <monthlysalary>1000</monthlysalary>
-         </validtest>
-      </test>
+     <envelope>
+       <headers/>
+       <triples/>
+       <instance>
+         <test xmlns="" type="unit">
+           <invalidtest>
+             <id>354</id>
+             <name>joe smith</name>
+             <salary>1500</salary>
+           </invalidtest>
+           <validtest>
+             <empid>123</empid>
+             <fullname>bob smith</fullname>
+             <monthlysalary>1000</monthlysalary>
+           </validtest>
+         </test>
+       </instance>
+       <attachments/>
+     </envelope>
    </attachments>
 </envelope>

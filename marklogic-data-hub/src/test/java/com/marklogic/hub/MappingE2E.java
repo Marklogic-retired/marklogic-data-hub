@@ -89,7 +89,7 @@ public class MappingE2E extends HubTestBase {
     private List<String> modelProperties;
     private Scaffolding scaffolding;
     private List<String> allMappings;
-    
+
     @BeforeAll
     public static void setup() {
         XMLUnit.setIgnoreWhitespace(true);
@@ -113,10 +113,10 @@ public class MappingE2E extends HubTestBase {
             isSetup = true;
             scaffolding = Scaffolding.create(projectDir.toString(), finalClient);
             scaffolding.createEntity(ENTITY);
-            
-            Path entityDir = projectDir.resolve("plugins").resolve("entities").resolve(ENTITY);                
+
+            Path entityDir = projectDir.resolve("plugins").resolve("entities").resolve(ENTITY);
             copyFile("e2e-test/" + ENTITY + ".entity.json", entityDir.resolve(ENTITY + ".entity.json"));
-                        
+
             if (modelProperties == null) {
     	        ObjectMapper objectMapper = new ObjectMapper();
     	     	JsonNode rootNode = null;
@@ -131,10 +131,10 @@ public class MappingE2E extends HubTestBase {
     	        modelProperties = new ArrayList<>();
     	        while(itr.hasNext()) {
     	        	modelProperties.add(itr.next().getKey());
-    	        }    
+    	        }
             }
             createMappings();
-            
+
             allCombos((codeFormat, dataFormat, flowType, useEs) -> {
             	if(flowType.equals(FlowType.HARMONIZE)) {
             		for(String mapping: allMappings) {
@@ -142,13 +142,13 @@ public class MappingE2E extends HubTestBase {
             			for(int i = 1 ; i<=version; i++) {
             				createFlow("mapping", codeFormat, dataFormat, flowType, useEs, mapping, i, null);
             			}
-            			 
-            		}                  
+
+            		}
             	}
             });
             flowManager = FlowManager.create(getHubConfig());
             installUserModules(getHubConfig(), true);
-            stagingDataMovementManager = stagingClient.newDataMovementManager();                                          
+            stagingDataMovementManager = stagingClient.newDataMovementManager();
         }
     }
 
@@ -160,23 +160,23 @@ public class MappingE2E extends HubTestBase {
 	    		if(useEs && flowType.equals(FlowType.HARMONIZE)) {
 	    			String prefix = "mapping";
 	    		    int version = mappingManager.getMapping(mapping).getVersion();
-	    		    
-		            String flowName = getFlowName(prefix, codeFormat, dataFormat, flowType, mapping, version);  
-	    
+
+		            String flowName = getFlowName(prefix, codeFormat, dataFormat, flowType, mapping, version);
+
 		            Map<String, Object> options = new HashMap<>();
 		            tests.add(DynamicTest.dynamicTest(flowName , () -> {
 		            	FinalCounts finalCounts = new FinalCounts(TEST_SIZE, TEST_SIZE * 2, TEST_SIZE + 1, 1, TEST_SIZE, 0, TEST_SIZE, 0, TEST_SIZE/BATCH_SIZE, 0, "FINISHED");
 		                //This is a failing test, so finalCounts changed accordingly
 		            	if(codeFormat.equals(CodeFormat.XQUERY) && flowName.contains("empty-sourceContext")) {
 		                	 finalCounts = new FinalCounts(TEST_SIZE, 0 , TEST_SIZE + 1, 1, 0, TEST_SIZE , 0, TEST_SIZE, 0,TEST_SIZE/BATCH_SIZE,  "FAILED");
-		                } 
+		                }
 		               // Run flow for the mapping with whose version is 2.
 		                if(version == 2) {
 		                	testHarmonizeFlow(prefix, codeFormat, dataFormat, useEs, options, stagingClient, HubConfig.DEFAULT_FINAL_NAME, finalCounts, true, mapping, 1);
 		               }
 		               testHarmonizeFlow(prefix, codeFormat, dataFormat, useEs, options, stagingClient, HubConfig.DEFAULT_FINAL_NAME, finalCounts, true, mapping, version);
 		            }));
-	    		    
+
 	    		}
 	    	});
     	}
@@ -193,12 +193,12 @@ public class MappingE2E extends HubTestBase {
     		String flowName = getFlowName(prefix, codeFormat, dataFormat, flowType, mapping, version);
 	        Path entityDir = projectDir.resolve("plugins").resolve("entities").resolve(ENTITY);
 	        Path flowDir = entityDir.resolve(flowType.toString()).resolve(flowName);
-	        
+
 	        copyFile("e2e-test/" + ENTITY + ".entity.json", entityDir.resolve(ENTITY + ".entity.json"));
 	        installUserModules(getHubConfig(), true);
-	        
+
 	        scaffolding.createFlow(ENTITY, flowName, flowType, codeFormat, dataFormat, true, mapping + "-" +version);
-	
+
 	        String srcDir = "e2e-test/" + codeFormat.toString() + "-flow/";
 	        copyFile(srcDir + "collector." + codeFormat.toString(), flowDir.resolve("collector." + codeFormat.toString()));
             copyFile(srcDir + "writer." + codeFormat.toString(), flowDir.resolve("writer." + codeFormat.toString()));
@@ -214,20 +214,20 @@ public class MappingE2E extends HubTestBase {
     	sourceContexts.put("validPath", "//validtest/");
     	sourceContexts.put("nonExistentPath", "//test1/validtest/");
     	sourceContexts.put("inCorrectPath", "//invalidtest/");
-    	
-        
+
+
     	String targetEntity = "http://marklogic.com/example/Schema-0.0.1/e2eentity";
     	Map<String, String> properties = new HashMap<>();
     	properties.put("oneProp","empid");
     	properties.put("threeProp","empid,fullname,monthlysalary");
     	properties.put("nonExistingProp", "fakeprop1");
     	properties.put("nonMatchingCanonicalProp", "empid,fullname");
-        
+
         for (Entry<String,String> sourceContext : sourceContexts.entrySet()) {
         	for (Entry<String,String> property : properties.entrySet()) {
         		String mapName = sourceContext.getKey()+"-"+property.getKey();
         		allMappings.add(mapName);
-                createMapping(mapName, sourceContext.getValue(), targetEntity , property.getValue().split(","));                 
+                createMapping(mapName, sourceContext.getValue(), targetEntity , property.getValue().split(","));
         	}
         }
         // Corner/ Invalid cases
@@ -240,19 +240,19 @@ public class MappingE2E extends HubTestBase {
         allMappings.addAll(Arrays.asList("empty-sourceContext,empty-properties,diff-entity-validPath,without-sourcedFrom".split(",")));
         installUserModules(getHubConfig(), true);
     }
-    
+
     private void createMapping(String name, String sourceContext, String targetEntityType,  String ... properties) {
     	createMapping(name, sourceContext, targetEntityType, false,  properties);
-  
+
     }
-    
+
     private void createMapping(String name, String sourceContext, String targetEntityType, boolean incrementVersion,  String ... properties) {
     	  ObjectMapper mapper = new ObjectMapper();
           Mapping testMap = Mapping.create(name);
           testMap.setDescription("This is a test.");
           testMap.setSourceContext(sourceContext);
           testMap.setTargetEntityType(targetEntityType);
-          
+
           HashMap<String, ObjectNode> mappingProperties = new HashMap<>();
           for(String property:properties) {
           	if(property == null) {
@@ -275,15 +275,15 @@ public class MappingE2E extends HubTestBase {
           			String key = modelProperties.stream().filter(str -> property.contains(str)).findFirst().get();
                   	mappingProperties.put(key, mapper.createObjectNode().put("sourcedFrom", property));
           		}
-          		
-          	}        
+
+          	}
           }
           if(!name.contains("without-sourcedFrom")) {
           	testMap.setProperties(mappingProperties);
           }
-          
+
           mappingManager.saveMapping(testMap, incrementVersion);
-    	
+
     }
 
     private void copyFile(String srcDir, Path dstDir) {
@@ -379,13 +379,13 @@ public class MappingE2E extends HubTestBase {
         String prefix, CodeFormat codeFormat, DataFormat dataFormat, boolean useEs,
         Map<String, Object> options, DatabaseClient srcClient, String destDb,
         FinalCounts finalCounts, boolean waitForCompletion, String mapping, int version) throws InterruptedException {
-    	
+
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
         String flowName = getFlowName(prefix, codeFormat, dataFormat, FlowType.HARMONIZE, mapping, version);
-                
+
         Vector<String> completed = new Vector<>();
         Vector<String> failed = new Vector<>();
-        
+
         Tuple<FlowRunner, JobTicket> tuple = runHarmonizeFlow(flowName, dataFormat, completed, failed, options, srcClient, destDb, waitForCompletion);
 
         if (waitForCompletion) {
@@ -410,7 +410,7 @@ public class MappingE2E extends HubTestBase {
             }
 
             String filename = "mapping/final-es";
-            
+
             if(flowName.contains("oneProp")) {
             	filename = "mapping/final-es-oneProp";
             }
@@ -422,6 +422,8 @@ public class MappingE2E extends HubTestBase {
 	                Document expected = getXmlFromResource("e2e-test/" + filename + ".xml");
 	                for (int i = 0; i < TEST_SIZE; i+=10) {
 	                    Document actual = mgr.read("/input-" + i + ".xml").next().getContent(new DOMHandle()).get();
+	                    debugOutput(expected, System.out);
+                        debugOutput(actual, System.out);
 	                    assertXMLEqual(expected, actual);
 	                }
 	            } else {
@@ -430,9 +432,9 @@ public class MappingE2E extends HubTestBase {
 	                    String actual = mgr.read("/input-" + i + "." + dataFormat.toString()).next().getContent(new StringHandle()).get();
 	                    //ignoring for now
 	                    try {
-							JSONAssert.assertEquals(expected, actual, 
-							new CustomComparator(JSONCompareMode.STRICT,	
-					                Customization.customization("envelope.instance.e2eentity", 
+							JSONAssert.assertEquals(expected, actual,
+							new CustomComparator(JSONCompareMode.STRICT,
+					                Customization.customization("envelope.instance.e2eentity",
 					                                            new ValueMatcher<Object>() {
 					                  @Override public boolean equal(Object o1, Object o2) {
 					                    return true;
@@ -452,12 +454,12 @@ public class MappingE2E extends HubTestBase {
             assertEquals(finalCounts.jobFailedEvents, node.get("failedEvents").asInt());
             assertEquals(finalCounts.jobSuccessfulBatches, node.get("successfulBatches").asInt());
             assertEquals(finalCounts.jobFailedBatches, node.get("failedBatches").asInt());
-            assertEquals(finalCounts.jobStatus, node.get("status").asText());           
+            assertEquals(finalCounts.jobStatus, node.get("status").asText());
         }
         else {
             assertNotEquals(TEST_SIZE, getFinalDocCount());
             tuple.x.awaitCompletion();
         }
-	
+
     }
 }
