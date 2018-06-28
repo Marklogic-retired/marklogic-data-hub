@@ -181,4 +181,13 @@ export class PropertyType {
       }
     }
   }
+
+  get invalidString(): boolean
+  {
+    if(this.name.indexOf(" ") != -1)
+    {
+      return true;
+    }
+    return false;
+  }
 }
