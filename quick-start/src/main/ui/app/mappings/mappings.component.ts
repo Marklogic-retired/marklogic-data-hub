@@ -42,8 +42,6 @@ export class MappingsComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private dialogService: MdlDialogService
   ) {
-  this.getEntities();
-  this.mapService.getMappings();
   }
 
   /**
@@ -53,7 +51,10 @@ export class MappingsComponent implements OnInit {
     this.activatedRoute.queryParams.subscribe((params: Params) => {
       //this.loadMap();
     });
-    this.mapService.getMappings();
+    this.getEntities();
+    this.entitiesService.entitiesChange.subscribe(entities => {
+      this.mapService.getMappings();
+    });
   }
 
   getEntities(): void {
@@ -63,6 +64,7 @@ export class MappingsComponent implements OnInit {
     this.entities.forEach((entity: Entity) => {
       this.entityMap.set(entity.name, entity);
       this.docsLoaded(entity.name);
+      this.getMappingsByEntity(entity);
     });
   });
   this.entitiesService.getEntities();
