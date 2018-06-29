@@ -64,6 +64,7 @@ export class NewFlowComponent {
     this.actions = actions;
     this.entity = entity;
     this.startingMappingOption = this.mappingOptions[0];
+    this.mapService.getMappings();
     if (this.getMarkLogicVersion() === 8) {
       this.flow.useEsModel = false;
     } else {
