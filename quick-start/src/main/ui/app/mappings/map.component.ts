@@ -38,7 +38,7 @@ export class MapComponent implements OnInit {
   private mapName: string;
   public flowName: string;
 
-  private mapping: Mapping = new Mapping();
+  public mapping: Mapping = new Mapping();
 
   public filterFocus = {};
   public filterText = {};
