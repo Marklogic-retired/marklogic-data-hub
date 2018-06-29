@@ -4,7 +4,11 @@
 
     <div id="map-heading">
 
-      <h1>{{flowName}} Map</h1>
+      <div id="map-name">
+        <h1>
+         {{mapName}}
+        </h1>
+      </div>
 
       <div id="save-map">
         <mdl-button mdl-button-type="raised" mdl-colored="primary" mdl-ripple ng-class="btn-save-map" (click)="saveMap()">Save Map</mdl-button>
@@ -98,12 +102,12 @@
           <span class="prop-name">{{prop.name}}</span>
           <span class="prop-type">{{prop.datatype}}</span>
           <span class="entity-icons">
-            <span class="entity-icon" title="Primary Key"><i class="fa fa-key fa-fw" [ngClass]="{'icon-hide': !(prop.name === entityPrimaryKey)}"></i></span>
-            <span class="entity-icon" title="Element Range Index"><i class="fa fa-bolt fa-fw" [ngClass]="{'icon-hide': !hasElementRangeIndex(prop.name)}"></i></span>
-            <span class="entity-icon" title="Path Range Index"><i class="fa fa-code fa-fw" [ngClass]="{'icon-hide': !hasRangeIndex(prop.name)}"></i></span>
-            <span class="entity-icon" title="Word Lexicon"><i class="fa fa-won fa-fw" [ngClass]="{'icon-hide': !hasWordLexicon(prop.name)}"></i></span>
-            <span class="entity-icon" title="Required"><i class="fa fa-exclamation fa-fw" [ngClass]="{'icon-hide': !isRequired(prop.name)}"></i></span>
-            <span class="entity-icon" title="Personally Identifiable Information"><i class="fa fa-lock fa-fw" [ngClass]="{'icon-hide': !isPII(prop.name)}"></i></span>
+            <span class="entity-icon" title="Primary Key"><i class="fa fa-key fa-fw" [ngClass]="prop.name === entityPrimaryKey ? 'entity-icon-selected' : 'icon-hide'"></i></span>
+            <span class="entity-icon" title="Element Range Index"><i class="fa fa-bolt fa-fw" [ngClass]="hasElementRangeIndex(prop.name) ? 'entity-icon-selected' : 'icon-hide'"></i></span>
+            <span class="entity-icon" title="Path Range Index"><i class="fa fa-code fa-fw" [ngClass]="hasRangeIndex(prop.name) ? 'entity-icon-selected' : 'icon-hide'"></i></span>
+            <span class="entity-icon" title="Word Lexicon"><i class="fa fa-won fa-fw" [ngClass]="hasWordLexicon(prop.name) ? 'entity-icon-selected' : 'icon-hide'"></i></span>
+            <span class="entity-icon" title="Required"><i class="fa fa-exclamation fa-fw" [ngClass]="isRequired(prop.name)? 'entity-icon-selected' : 'icon-hide'"></i></span>
+            <span class="entity-icon" title="Personally Identifiable Information"><i class="fa fa-lock fa-fw" [ngClass]="isPII(prop.name)? 'entity-icon-selected' : 'icon-hide'"></i></span>
           </span>
         </div>
 

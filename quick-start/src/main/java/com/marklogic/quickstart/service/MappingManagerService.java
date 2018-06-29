@@ -46,7 +46,14 @@ public class MappingManagerService extends EnvironmentAware {
     private MappingManager mappingManager;
 
 
-    public ArrayList<String> getMappings() {
+    public ArrayList<Mapping> getMappings() {
+        mappingManager = MappingManager.getMappingManager(envConfig().getMlSettings());
+        ArrayList<Mapping> mappings = mappingManager.getMappings();
+
+        return mappings;
+    }
+
+    public ArrayList<String> getMappingsNames() {
         mappingManager = MappingManager.getMappingManager(envConfig().getMlSettings());
         ArrayList<String> mappings = mappingManager.getMappingsNames();
 

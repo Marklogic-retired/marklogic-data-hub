@@ -2,7 +2,8 @@ import { Routes } from '@angular/router';
 import { DashboardComponent } from './dashboard';
 import { FlowsComponent } from './flows';
 import { EntityModelerComponent } from './entity-modeler/entity-modeler.component';
-import { MapComponent } from './map';
+import { MapComponent } from './mappings';
+import { MappingsComponent } from './mappings';
 import { LoginComponent } from './login';
 import { JobsComponent } from './jobs';
 import { TracesComponent, TraceViewerComponent } from './traces';
@@ -15,7 +16,8 @@ export const ROUTES: Routes = [
   { path: '', component: DashboardComponent, canActivate: [AuthGuard] },
   { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
   { path: 'entities', component: EntityModelerComponent, canActivate: [AuthGuard] },
-  { path: 'map', component: MapComponent, canActivate: [AuthGuard] },
+  { path: 'mappings', component: MappingsComponent, canActivate: [AuthGuard] },
+  { path: 'mappings/map', component: MapComponent, canActivate: [AuthGuard] },
   { path: 'flows', component: FlowsComponent, canActivate: [AuthGuard] },
   { path: 'flows/:entityName/:flowName/:flowType', component: FlowsComponent, canActivate: [AuthGuard] },
   { path: 'jobs', component: JobsComponent, canActivate: [AuthGuard] },

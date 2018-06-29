@@ -44,6 +44,9 @@ export class MapComponent implements OnInit {
   public editURIVal = '';
   public editingURI = false;
 
+  //edit map name
+  public editingSourceContext = false;
+
   /**
    * Load chosen entity to use as harmonized model.
    */
@@ -158,10 +161,8 @@ export class MapComponent implements OnInit {
    */
   ngOnInit() {
     this.activatedRoute.queryParams.subscribe((params: Params) => {
-      this.entityName = params['entityName'] || null;
-      this.flowName = params['flowName'] || null;
-
-      this.mapName = this.mapService.getName(this.entityName, this.flowName);
+      this.entityName = params['entityName']|| null;
+      this.mapName = params['mapName'] || null;
 
       this.loadEntity();
       this.loadSampleDoc(this.entityName)
@@ -233,7 +234,7 @@ export class MapComponent implements OnInit {
         "name" : this.mapName,
         "description" : "",  // TODO
         "version" : "1",
-        "targetEntityType" : "http://marklogic.com/example/Schema-0.0.2/Person",  // TODO
+        "targetEntityType" : this.chosenEntity.info.baseUri + '/' + this.chosenEntity.info.version + '/' + this.chosenEntity.name,  // TODO
         "sourceContext": "//",  // TODO
         "properties": formattedConns
     }
@@ -242,9 +243,9 @@ export class MapComponent implements OnInit {
     //localStorage.setItem(this.mapPrefix + this.mapName, JSON.stringify(mapObj));
 
     // TODO use service to save
-    this.mapService.saveMap(this.mapName, JSON.stringify(mapObj));
-
-    this.router.navigate(['/flows', this.entityName, this.flowName, 'HARMONIZE']);
+    this.mapService.saveMap(this.mapName, JSON.stringify(mapObj)).subscribe((res: any) => {
+      this.router.navigate(['/mappings']);
+    });
   }
 
   /**
@@ -253,7 +254,7 @@ export class MapComponent implements OnInit {
   cancelMap(): void {
     let result = this.dialogService.confirm('Cancel and lose any changes?', 'Stay On Page', 'OK');
     result.subscribe( () => {
-        this.router.navigate(['/flows', this.entityName, this.flowName, 'HARMONIZE']);
+        this.router.navigate(['/mappings']);
       },(err: any) => {
         console.log('map cancel aborted');
       }
@@ -284,7 +285,7 @@ export class MapComponent implements OnInit {
   loadMaps() {
     let result;
     // TODO use service to get
-    result = this.mapService.getMaps();
+    result = this.mapService.getMappings();
     return result || {};
   }
 

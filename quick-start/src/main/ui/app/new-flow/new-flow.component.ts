@@ -5,7 +5,9 @@ import { MdlDialogReference } from '@angular-mdl/core';
 import { EnvironmentService } from '../environment';
 
 import * as _ from 'lodash';
-import {MapService} from "../map/map.service";
+import {MapService} from "../mappings/map.service";
+import {Mapping} from "../mappings/mapping.model";
+import {Entity} from "../entities";
 
 @Component({
   selector: 'app-new-flow',
@@ -15,6 +17,7 @@ import {MapService} from "../map/map.service";
 export class NewFlowComponent {
   flowType: string;
   actions: any;
+  entity: Entity;
 
   scaffoldOptions = [
     { label: 'Create Structure from Entity Definition', value: true },
@@ -53,17 +56,13 @@ export class NewFlowComponent {
     private envService: EnvironmentService,
     private mapService: MapService,
     @Inject('flowType') flowType: string,
-    @Inject('actions') actions: any
+    @Inject('actions') actions: any,
+    @Inject('entity') entity: Entity
   ) {
     this.flowType = _.capitalize(flowType);
     this.flow = _.clone(this.emptyFlow);
     this.actions = actions;
-    this.mapService.getMaps().subscribe((maps: any) => {
-      for(let mapName of maps) {
-      this.mappingOptions.push({label : mapName, value : mapName});
-    }
-    });
-
+    this.entity = entity;
     this.startingMappingOption = this.mappingOptions[0];
     if (this.getMarkLogicVersion() === 8) {
       this.flow.useEsModel = false;
@@ -75,6 +74,15 @@ export class NewFlowComponent {
       }
     }
   }
+
+  ngOnInit() {
+    this.mapService.mappingsChange.subscribe( () => {
+      this.mapService.getMappingsByEntity(this.entity).forEach( (map) => {
+        this.mappingOptions.push({label: map.name, value: map.name});
+      });
+    });
+  }
+
 
   hide() {
     this.dialog.hide();

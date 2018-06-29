@@ -13,7 +13,7 @@ import { Flow } from '../entities/flow.model';
 import { EntitiesService } from '../entities/entities.service';
 import { SearchService } from '../search/search.service';
 import { SelectKeyValuesComponent } from '../select-key-values/select-key-values.component';
-import { MapService } from '../map/map.service';
+import { MapService } from '../mappings/map.service';
 import { MdlDialogService } from '@angular-mdl/core';
 
 @Component({
@@ -104,7 +104,7 @@ export class HarmonizeFlowOptionsComponent implements OnInit, OnChanges {
         // Temporarily saving locally
         localStorage.removeItem(storedMap);
         this.mapName = null;
-        this.mapService.deleteMap(storedMap);  // TODO: Restore once backend exists
+        //this.mapService.deleteMap(storedMap);  // TODO: Restore once backend exists
         this.saveSettings();
       },
       (err: any) => {

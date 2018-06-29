@@ -17,6 +17,7 @@
 package com.marklogic.quickstart.web;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.marklogic.hub.mapping.Mapping;
 import com.marklogic.quickstart.model.MappingModel;
 import com.marklogic.quickstart.service.EntityManagerService;
 import com.marklogic.quickstart.service.MappingManagerService;
@@ -46,8 +47,14 @@ public class MappingController {
 
     @RequestMapping(value = "/mappings", method = RequestMethod.GET)
     @ResponseBody
-    public ArrayList<String> getMappings() throws ClassNotFoundException {
+    public ArrayList<Mapping> getMappings() throws ClassNotFoundException {
         return mappingManagerService.getMappings();
+    }
+
+    @RequestMapping(value = "/mappings/names", method = RequestMethod.GET)
+    @ResponseBody
+    public ArrayList<String> getMappingsNames() throws ClassNotFoundException {
+        return mappingManagerService.getMappingsNames();
     }
 
     @RequestMapping(value = "/mappings/{mapName}", method = RequestMethod.GET)
