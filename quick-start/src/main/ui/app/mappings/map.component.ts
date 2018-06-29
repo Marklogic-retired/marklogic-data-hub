@@ -35,7 +35,7 @@ export class MapComponent implements OnInit {
   private mapPrefix: string = 'dhf-map-';
 
   private entityName: string;
-  private mapName: string;
+  public mapName: string;
   public flowName: string;
 
   public mapping: Mapping = new Mapping();
