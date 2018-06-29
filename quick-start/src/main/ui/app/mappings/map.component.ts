@@ -38,7 +38,7 @@ export class MapComponent implements OnInit {
   private mapName: string;
   public flowName: string;
 
-  private mapping: Mapping;
+  private mapping: Mapping = new Mapping();
 
   public filterFocus = {};
   public filterText = {};
@@ -47,9 +47,12 @@ export class MapComponent implements OnInit {
   public editURIVal = '';
   public editingURI = false;
 
-  //edit map name
+  //edit source Context
   public editingSourceContext = false;
 
+  //edit description
+  public editDescriptionVal = '';
+  public editingDescription = false;
   /**
    * Load chosen entity to use as harmonized model.
    */
@@ -150,6 +153,11 @@ export class MapComponent implements OnInit {
     }
   }
 
+  updateDescription() {
+    this.mapping.description = this.editDescriptionVal;
+    this.editingDescription = false;
+  }
+
   constructor(
     private searchService: SearchService,
     private mapService: MapService,
@@ -236,7 +244,7 @@ export class MapComponent implements OnInit {
         "language" : "zxx",
         "name" : this.mapName,
         "description" : this.mapping.description || "",  // TODO
-        "version" : this.mapping.version || "!",
+        "version" : this.mapping.version || "1",
         "targetEntityType" : this.chosenEntity.info.baseUri + '/' + this.chosenEntity.info.version + '/' + this.chosenEntity.name,  // TODO
         "sourceContext": this.mapping.sourceContext || "//",  // TODO
         "properties": formattedConns
@@ -272,7 +280,9 @@ export class MapComponent implements OnInit {
     let self = this;
 
     this.mapService.getMap(this.mapName).subscribe((map: any) => {
-      this.mapping = map;
+      if(map) {
+        this.mapping = map;
+      }
       if (map && map.properties) {
         self.conns = {};
         _.forEach(map.properties, function(srcObj, entityPropName) {

@@ -6,7 +6,16 @@
 
       <div id="map-name">
         <h1>
-         {{mapName}} <p>Version: {{mapping.version}}</p>
+         {{mapName}}
+          <p>Version: {{mapping.version}}</p>
+          <p *ngIf="!editingDescription" class="desc">
+            Description: <span (click)="editingDescription=true" ng-class="description">{{ mapping.description }}</span>   <span class="fa fa-pencil edit-uri" (click)="editingDescription=true"></span>
+          </p>
+          <p *ngIf="editingDescription" class="edit-description">
+            Description: <input type="text" class="edit-description-val" [(ngModel)]="editDescriptionVal" />
+            <span class="edit-description-save" (click)="updateDescription();"><i class="fa fa-check"></i></span>
+            <span class="edit-description-cancel" (click)="cancelEditDescription();"><i class="fa fa-remove"></i></span>
+          </p>
         </h1>
       </div>
 
