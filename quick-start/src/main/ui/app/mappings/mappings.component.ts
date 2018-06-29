@@ -114,6 +114,10 @@ export class MappingsComponent implements OnInit {
     });
   }
 
+  editMapping(entity: Entity, mapping: Mapping){
+    this.router.navigate(['/mappings/map'], {queryParams: {entityName: entity.name, mapName: mapping.name}});
+  }
+
   deleteMapping(event: MouseEvent, mapping: Mapping): void {
     if (event.stopPropagation) {
       event.stopPropagation();

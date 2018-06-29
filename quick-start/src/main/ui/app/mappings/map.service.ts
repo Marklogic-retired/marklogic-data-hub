@@ -46,14 +46,11 @@ export class MapService {
   }
 
   getMap(mapName) {
-    this.http.get(this.url('/mappings/' + mapName)).map((res: Response) => {
+    return this.http.get(this.url('/mappings/' + mapName)).map((res: Response) => {
       let map: Array<any> = res.json();
       console.log('GET /mappings/' + mapName, map);
       return map;
-    }).subscribe((map: any) => {
-      this.map = map;
-      console.log('Result: ', map);
-    });
+    })
   }
 
   saveMap(mapName, map) {

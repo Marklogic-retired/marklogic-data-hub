@@ -8,6 +8,7 @@ import { MdlDialogService } from '@angular-mdl/core';
 
 import * as _ from 'lodash';
 import * as moment from 'moment';
+import {Mapping} from "./mapping.model";
 
 @Component({
   templateUrl: './map.component.html',
@@ -36,6 +37,8 @@ export class MapComponent implements OnInit {
   private entityName: string;
   private mapName: string;
   public flowName: string;
+
+  private mapping: Mapping;
 
   public filterFocus = {};
   public filterText = {};
@@ -232,10 +235,10 @@ export class MapComponent implements OnInit {
     let mapObj = {
         "language" : "zxx",
         "name" : this.mapName,
-        "description" : "",  // TODO
-        "version" : "1",
+        "description" : this.mapping.description || "",  // TODO
+        "version" : this.mapping.version || "!",
         "targetEntityType" : this.chosenEntity.info.baseUri + '/' + this.chosenEntity.info.version + '/' + this.chosenEntity.name,  // TODO
-        "sourceContext": "//",  // TODO
+        "sourceContext": this.mapping.sourceContext || "//",  // TODO
         "properties": formattedConns
     }
 
@@ -265,21 +268,18 @@ export class MapComponent implements OnInit {
    * Retrieve the mapping artifact
    */
   loadMap() {
-    let result, connMap;
+    let result;
     let self = this;
-    try {
-      result = JSON.parse(localStorage.getItem(this.mapPrefix + this.mapName));
-    } catch(e) {}
 
-    if (result && result.properties) {
-      self.conns = {};
-      _.forEach(result.properties, function(srcObj, entityPropName) {
-        self.conns[entityPropName] = srcObj.sourcedFrom;
-      });
-    }
-
-    // TODO use service to get
-    connMap = this.mapService.getMap(this.mapName);
+    this.mapService.getMap(this.mapName).subscribe((map: any) => {
+      this.mapping = map;
+      if (map && map.properties) {
+        self.conns = {};
+        _.forEach(map.properties, function(srcObj, entityPropName) {
+          self.conns[entityPropName] = srcObj.sourcedFrom;
+        });
+      }
+    });
   }
 
   loadMaps() {

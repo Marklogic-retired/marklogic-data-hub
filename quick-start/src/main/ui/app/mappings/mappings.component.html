@@ -10,7 +10,7 @@
       <!-- list entities -->
       <div *ngFor="let entity of entities;" class="entity">
 
-        <h4>{{entity.name}}
+        <h4 class="entity-header">{{entity.name}}
           <span *ngIf="entity.hasDocs">
           <mdl-button mdl-button-type="icon" id="new-mapping" (click)="showNewMapping(entity)">
           <i class="fa fa-plus"></i>
@@ -21,13 +21,19 @@
         <!-- each map -->
         <table class="mappings-table">
           <thead>
+          <tr>
+            <th class="">Name</th>
+            <th>Description</th>
+            <th>Version #</th>
+            <th class="icons"></th>
+          </tr>
           </thead>
           <tbody>
-          <tr *ngFor="let mapping of getMappingsByEntity(entity);let i = index;" class="mapping-row">
-            <td>{{mapping.name}}</td>
-            <td>{{mapping.description}}</td>
-            <td>{{mapping.version}}</td>
-            <td><i class="fa fa-trash" (click)="deleteMapping($event, mapping)"></i></td>
+          <tr *ngFor="let mapping of getMappingsByEntity(entity);let i = index;" class="mapping-row" (click)="editMapping(entity, mapping)">
+            <td class="name">{{mapping.name}}</td>
+            <td class="description">{{mapping.description}}</td>
+            <td class="version">{{mapping.version}}</td>
+            <td class="icons"><i class="fa fa-trash" (click)="deleteMapping($event, mapping)"></i></td>
           </tr>
           </tbody>
         </table>
