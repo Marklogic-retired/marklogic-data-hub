@@ -78,9 +78,12 @@ export class NewFlowComponent {
 
   ngOnInit() {
     this.mapService.mappingsChange.subscribe( () => {
+      this.mappingOptions = [];
+      this.mappingOptions.push({ label: 'None', value: null});
       this.mapService.getMappingsByEntity(this.entity).forEach( (map) => {
         this.mappingOptions.push({label: map.name, value: map.name});
       });
+      this.startingMappingOption = this.mappingOptions[0];
     });
   }
 

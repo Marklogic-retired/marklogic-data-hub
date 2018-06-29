@@ -38,7 +38,7 @@ export class MapService {
   }
 
   getMappingsByEntity(entity: Entity) {
-    let entityName = entity.info.baseUri + '/' + entity.info.version + '/' + entity.name;
+    let entityName = entity.info.baseUri + '/'+entity.name+'-0.0.' + entity.info.version + '/' + entity.name;
 
     return this.maps.filter((mapping) => {
       return mapping.targetEntityType.toLocaleLowerCase() == entityName.toLocaleLowerCase();
