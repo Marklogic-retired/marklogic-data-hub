@@ -53,11 +53,13 @@ main:
             { url: '/ingest/rest/', text: 'REST Client API' }
           ]
         },
-        # {
-        #   url: '/govern/',
-        #   text: 'Govern',
-        #   childPages: []
-        # },
+        {
+          url: '/govern/',
+          text: 'Govern',
+          childPages: [
+            { url: '/govern/pii/', text: 'Managing PII' },
+          ]
+        },
         {
           url: '/harmonize/',
           text: 'Harmonize',
