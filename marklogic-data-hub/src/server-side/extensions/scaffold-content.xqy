@@ -428,23 +428,24 @@ declare function service:generate-vars($model as map:map, $entity-type-name, $ma
         if ($is-array) then
           fn:string-join((
             "[];",
-            "if (" || $path-to-property || ") {",
-            "  // either return an instance of a " || $ref-name,
-            "  " || service:camel-case($property-name) || ".push(" || service:camel-case("extractInstance-" || $ref-name) || "(item." || $ref-name || "));",
-            "",
-            "  // or a reference to a " || $ref-name,
-            "  // " || service:camel-case($property-name) || ".push(makeReferenceObject('" || $ref-name || "', item));",
+            "if(" || $path-to-property || ") {",
+            "  for(const item of Sequence.from(source." || $property-name || ")) {",
+            "    // either return an instance of a " || $ref-name,
+            "  "   || service:camel-case($property-name) || ".push(" || service:camel-case("extractInstance-" || $ref-name) || "(item));",
+            "    // or a reference to a " || $ref-name,
+            "    // " || service:camel-case($property-name) || ".push(makeReferenceObject('" || $ref-name || "', item));",
+            "  }",
             "}"
           ), "&#10;  ")
         else
           fn:string-join((
             "null;",
-            "if (" || $path-to-property || ") {",
+            "if(" || $path-to-property || ") {",
             "  // either return an instance of a " || $ref-name,
-            "  " || service:camel-case($property-name) || " = " || service:camel-case("extractInstance-" || $ref-name) || "(item." || $ref-name || ");",
+            "  " || service:camel-case($property-name) || " = " || service:camel-case("extractInstance-" || $ref-name) || "(source." || $property-name || ");",
             "",
             "  // or a reference to a " || $ref-name,
-            "  // " || service:camel-case($property-name) || " = makeReferenceObject('" || $ref-name || "', item);",
+            "  // " || service:camel-case($property-name) || " = makeReferenceObject('" || $ref-name || "', source." || $property-name || ");",
             "}"
           ), "&#10;  ")
       else
@@ -453,7 +454,7 @@ declare function service:generate-vars($model as map:map, $entity-type-name, $ma
             " null;",
             "  if (" || service:get-property($path-to-property, $ref-name) || ") {",
             "    " || service:camel-case($property-name) || " = " || service:get-property($path-to-property, $ref-name) || ".map(function(item) {",
-            "      return makeReferenceObject('" || $ref-name || "', item);",
+            "      return makeReferenceObject('" || $ref-name || "', source."|| $property-name || ");",
             "    });",
             "  }"
           ), "&#10;")
@@ -552,8 +553,7 @@ function {service:camel-case("extractInstance-" || $entity-type-name)}(source) {
   {
     if ($entity eq $entity-type-name) then
       "  '$attachments': attachments,"
-    else
-      ()
+    else ()
   }
     '$type': '{ $entity-type-name }',
     '$version': '{ map:get(map:get($model, "info"), "version") }'{
