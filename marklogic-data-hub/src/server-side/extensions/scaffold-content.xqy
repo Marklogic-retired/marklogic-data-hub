@@ -252,8 +252,8 @@ $source as node()?
   (: the original source documents :)
   let $attachments := $source
   let $source      :=
-    if ($source/es:envelope) then
-      $source/es:envelope/es:instance/node()
+    if ($source/*:envelope) then
+      $source/*:envelope/*:instance
     else if ($source/instance) then
       $source/instance
     else
@@ -408,7 +408,10 @@ declare function service:generate-vars($model as map:map, $entity-type-name, $ma
       ), "&#10;"):)
     let $value :=
       if (empty($ref)) then
-        "!fn.empty(" || $path-to-property || ") ? " ||
+        "!fn.empty(" || $path-to-property || ") ? " || (
+        if($is-array) then
+          $path-to-property || ": []"
+        else
         $casting-function-name || "("
         || "fn.head(" ||
         $path-to-property ||
@@ -419,6 +422,8 @@ declare function service:generate-vars($model as map:map, $entity-type-name, $ma
             ()
         ) ||
         ")) : null"
+        )
+
       else if (contains($ref, "#/definitions")) then
         if ($is-array) then
           fn:string-join((
@@ -528,7 +533,7 @@ function {service:camel-case("extractInstance-" || $entity-type-name)}(source) {
   let attachments = source;
   // now check to see if we have XML or json, then just go to the instance
   if(source instanceof Element) {{
-    source = fn.head(source.xpath('/*:envelope/*:instance/node()'))
+    source = fn.head(source.xpath('/*:envelope/*:instance'))
   }} else if(source instanceof ObjectNode) {{
     source = source.envelope.instance;
   }}
