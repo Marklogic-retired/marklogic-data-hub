@@ -148,9 +148,9 @@ declare function service:generate-lets($model as map:map, $entity-type-name, $ma
       ), "&#10;")
     let $value :=
       if (empty($ref)) then (
-        if(service:mapping-present($mapping, $property-name)) 
-        then (fn:concat("$source",service:map-value($property-name, $mapping))) 
-        else ("()"))
+        if(service:mapping-present($mapping, $property-name))
+        then (fn:concat("$source",service:map-value($property-name, $mapping)))
+        else (fn:concat("$source/", $property-name)))
       else if (contains($ref, "#/definitions")) then
         let $inner-var := "$" || fn:lower-case($ref-name) || "s"
         return
@@ -251,7 +251,7 @@ $source as node()?
   <txt>
   (: the original source documents :)
   let $attachments := $source
-  let $source      := 
+  let $source      :=
     if ($source/es:envelope) then
       $source/es:envelope/es:instance/node()
     else if ($source/instance) then
@@ -298,7 +298,7 @@ service:generate-lets($model, $entity-type-name, $mapping)
       for $property-name in $property-keys
       let $is-required := $property-name = $required-properties
       return
-        "map:put($model, '" || $property-name || "', $" || service:kebob-case($property-name) || ")"
+        "  map:put($model, '" || $property-name || "', $" || service:kebob-case($property-name) || ")"
       , ",&#10;")
   (: end code generation block :)
   }
@@ -563,7 +563,7 @@ function {service:camel-case("extractInstance-" || $entity-type-name)}(source) {
       (: Begin code generation block :)
       for $property-name in $properties-keys
       return
-        "'" || $property-name || "': " || $property-name
+        "'" || $property-name || "': " ||  service:camel-case($property-name)
       , ",&#10;    ")
   (: end code generation block :)
   }
