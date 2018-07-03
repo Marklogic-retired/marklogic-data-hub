@@ -15,7 +15,7 @@ function createContent(id, rawContent, options) {
 
   // for xml we need to use xpath
   if(rawContent && xdmp.nodeKind(rawContent) === 'element' && rawContent instanceof XMLDocument) {
-    source = fn.head(rawContent.xpath('/*:envelope/*:instance/node()'));
+    source = rawContent
   }
   // for json we need to return the instance
   else if(rawContent && rawContent instanceof Document) {
@@ -41,32 +41,33 @@ function extractInstanceMyFunTest(source) {
   let attachments = source;
   // now check to see if we have XML or json, then just go to the instance
   if(source instanceof Element) {
-    source = fn.head(source.xpath('/*:envelope/*:instance/node()'))
+    source = fn.head(source.xpath('/*:envelope/*:instance'))
   } else if(source instanceof ObjectNode) {
     source = source.envelope.instance;
   }
   let name = !fn.empty(source.name) ? xs.string(fn.head(source.name)) : null;
   let price = !fn.empty(source.price) ? xs.decimal(fn.head(source.price)) : null;
-  let ages = !fn.empty(source.ages) ? xs.int(fn.head(source.ages)) : null;
+  let ages = !fn.empty(source.ages) ? source.ages: [];
 
   /* The following property is a local reference. */
   let employee = null;
-  if (source.employee) {
+  if(source.employee) {
     // either return an instance of a Employee
-    employee = extractInstanceEmployee(item.Employee);
+    employee = extractInstanceEmployee(source.employee);
 
     // or a reference to a Employee
-    // employee = makeReferenceObject('Employee', item);
+    // employee = makeReferenceObject('Employee', source.employee);
   };
 
   /* The following property is a local reference. */
   let employees = [];
-  if (source.employees) {
-    // either return an instance of a Employee
-    employees.push(extractInstanceEmployee(item.Employee));
-
-    // or a reference to a Employee
-    // employees.push(makeReferenceObject('Employee', item));
+  if(source.employees) {
+    for(const item of Sequence.from(source.employees)) {
+      // either return an instance of a Employee
+      employees.push(extractInstanceEmployee(item));
+      // or a reference to a Employee
+      // employees.push(makeReferenceObject('Employee', item));
+    }
   };
 
   // return the instance object
@@ -94,7 +95,7 @@ function extractInstanceEmployee(source) {
   let attachments = source;
   // now check to see if we have XML or json, then just go to the instance
   if(source instanceof Element) {
-    source = fn.head(source.xpath('/*:envelope/*:instance/node()'))
+    source = fn.head(source.xpath('/*:envelope/*:instance'))
   } else if(source instanceof ObjectNode) {
     source = source.envelope.instance;
   }
@@ -104,6 +105,7 @@ function extractInstanceEmployee(source) {
 
   // return the instance object
   return {
+
     '$type': 'Employee',
     '$version': '0.0.1',
     'id': id,
@@ -123,4 +125,3 @@ function makeReferenceObject(type, ref) {
 module.exports = {
   createContent: createContent
 };
-

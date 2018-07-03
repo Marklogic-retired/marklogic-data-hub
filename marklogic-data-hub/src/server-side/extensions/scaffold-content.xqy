@@ -277,11 +277,11 @@ service:generate-lets($model, $entity-type-name, $mapping)
   let $_ := (
   {
     if ($entity-type-name eq $entity) then
-      "map:put($model, '$attachments', $attachments),"
+      "  map:put($model, '$attachments', $attachments),"
     else ()
   }
-  map:put($model, '$type', '{ $entity-type-name }'),
-  map:put($model, '$version', '{ map:get(map:get($model, "info"), "version") }'){
+    map:put($model, '$type', '{ $entity-type-name }'),
+    map:put($model, '$version', '{ map:get(map:get($model, "info"), "version") }'){
   let $definitions := map:get($model, "definitions")
   let $entity-type := map:get($definitions, $entity-type-name)
   let $properties := map:get($entity-type, "properties")
@@ -298,7 +298,7 @@ service:generate-lets($model, $entity-type-name, $mapping)
       for $property-name in $property-keys
       let $is-required := $property-name = $required-properties
       return
-        "  map:put($model, '" || $property-name || "', $" || service:kebob-case($property-name) || ")"
+        "    map:put($model, '" || $property-name || "', $" || service:kebob-case($property-name) || ")"
       , ",&#10;")
   (: end code generation block :)
   }
@@ -310,11 +310,11 @@ service:generate-lets($model, $entity-type-name, $mapping)
   json:object()
   {
   if ($entity-type-name eq $entity) then
-    "=>map:with('$attachments', $attachments)"
+    "  =>map:with('$attachments', $attachments)"
   else ()
   }
-  =>map:with('$type', '{ $entity-type-name }')
-  =>map:with('$version', '{ map:get(map:get($model, "info"), "version") }')
+    =>map:with('$type', '{ $entity-type-name }')
+    =>map:with('$version', '{ map:get(map:get($model, "info"), "version") }')
   {
   fn:string-join(
     (: Begin code generation block :)
@@ -329,9 +329,9 @@ service:generate-lets($model, $entity-type-name, $mapping)
     let $is-required := $property-name = $required-properties
     return
       if ($is-required) then
-        "=>map:with('" || $property-name || "', $" || service:kebob-case($property-name) || ")"
+        "  =>map:with('" || $property-name || "', $" || service:kebob-case($property-name) || ")"
       else
-        "  =>es:optional('" || $property-name || "', $" || service:kebob-case($property-name) || ")"
+        "    =>es:optional('" || $property-name || "', $" || service:kebob-case($property-name) || ")"
     , "&#10;")
   (: end code generation block :)
   }
