@@ -375,16 +375,22 @@ public class FlowRunnerImpl implements FlowRunner {
                     params.put("options", objectMapper.writeValueAsString(options));
                 }
                 ResourceServices.ServiceResultIterator resultItr = this.getServices().post(params, new StringHandle("{}").withFormat(Format.JSON));
-                if (resultItr == null || ! resultItr.hasNext()) {
-                    resp = new RunFlowResponse();
+                try {
+                    if (resultItr == null || !resultItr.hasNext()) {
+                        resp = new RunFlowResponse();
+                    }
+                    else {
+                        ResourceServices.ServiceResult res = resultItr.next();
+                        StringHandle handle = new StringHandle();
+                        ObjectMapper objectMapper = new ObjectMapper();
+                        resp = objectMapper.readValue(res.getContent(handle).get(), RunFlowResponse.class);
+                    }
                 }
-                else {
-                    ResourceServices.ServiceResult res = resultItr.next();
-                    StringHandle handle = new StringHandle();
-                    ObjectMapper objectMapper = new ObjectMapper();
-                    resp = objectMapper.readValue(res.getContent(handle).get(), RunFlowResponse.class);
+                finally {
+                    if (resultItr != null) {
+                        resultItr.close();
+                    }
                 }
-
             }
             catch(Exception e) {
                 e.printStackTrace();
