@@ -50,7 +50,7 @@ public class FlowRunnerImpl implements FlowRunner {
     private Flow flow;
     private int batchSize = DEFAULT_BATCH_SIZE;
     private int threadCount = DEFAULT_THREAD_COUNT;
-    private DatabaseClient sourceClient;
+    private DatabaseClient stagingClient;
     private String destinationDatabase;
     private Map<String, Object> options;
     private int previousPercentComplete;
@@ -66,7 +66,7 @@ public class FlowRunnerImpl implements FlowRunner {
 
     public FlowRunnerImpl(HubConfig hubConfig) {
         this.hubConfig = hubConfig;
-        this.sourceClient = hubConfig.newStagingClient();
+        this.stagingClient = hubConfig.newStagingClient();
         this.destinationDatabase = hubConfig.getDbName(DatabaseKind.FINAL);
     }
 
@@ -89,8 +89,8 @@ public class FlowRunnerImpl implements FlowRunner {
     }
 
     @Override
-    public FlowRunner withSourceClient(DatabaseClient sourceClient) {
-        this.sourceClient = sourceClient;
+    public FlowRunner withSourceClient(DatabaseClient stagingClient) {
+        this.stagingClient = stagingClient;
         return this;
     }
 
@@ -162,7 +162,7 @@ public class FlowRunnerImpl implements FlowRunner {
 
         Collector c = flow.getCollector();
         c.setHubConfig(hubConfig);
-        c.setClient(sourceClient);
+        c.setClient(stagingClient);
 
         AtomicLong successfulEvents = new AtomicLong(0);
         AtomicLong failedEvents = new AtomicLong(0);
@@ -203,11 +203,13 @@ public class FlowRunnerImpl implements FlowRunner {
 
         Vector<String> errorMessages = new Vector<>();
 
-        DataMovementManager dataMovementManager = sourceClient.newDataMovementManager();
+        DataMovementManager dataMovementManager = stagingClient.newDataMovementManager();
 
         double batchCount = Math.ceil((double)uris.size() / (double)batchSize);
 
         HashMap<String, JobTicket> ticketWrapper = new HashMap<>();
+
+        final FlowResource flowResource = new FlowResource(stagingClient, destinationDatabase, flow);
 
         QueryBatcher tempQueryBatcher = dataMovementManager.newQueryBatcher(uris.iterator())
             .withBatchSize(batchSize)
@@ -215,8 +217,7 @@ public class FlowRunnerImpl implements FlowRunner {
             .withJobId(jobId)
             .onUrisReady((QueryBatch batch) -> {
                 try {
-                    FlowResource flowRunner = new FlowResource(batch.getClient(), destinationDatabase, flow);
-                    RunFlowResponse response = flowRunner.run(jobId, batch.getItems(), options);
+                    RunFlowResponse response = flowResource.run(jobId, batch.getItems(), options);
                     failedEvents.addAndGet(response.errorCount);
                     successfulEvents.addAndGet(response.totalCount - response.errorCount);
                     if (response.errors != null) {
