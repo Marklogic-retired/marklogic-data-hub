@@ -184,7 +184,7 @@ export class PropertyType {
 
   get invalidString(): boolean
   {
-    if(this.name.indexOf(" ") != -1)
+    if(this.name && this.name.trim().length > 1 && this.name.indexOf(" ") != -1)
     {
       return true;
     }

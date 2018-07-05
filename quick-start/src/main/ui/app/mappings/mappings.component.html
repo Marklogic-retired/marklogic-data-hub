@@ -1,0 +1,60 @@
+<div layout-padding layout="column" layout-align="center center" class="map-page">
+
+  <div class="map-container">
+
+    <div id="map-heading">
+      <h1>Mappings</h1>
+    </div>
+
+    <div  class="entity-container">
+      <!-- list entities -->
+      <div *ngFor="let entity of entities;" class="entity">
+
+        <h4 class="entity-header">{{entity.name}}
+          <span *ngIf="entity.hasDocs">
+          <mdl-button mdl-button-type="icon" id="new-mapping" (click)="showNewMapping(entity)">
+          <i class="fa fa-plus"></i>
+        </mdl-button>
+          </span>
+        <span *ngIf="!entity.hasDocs" class="load-docs">Load source documents to create a mapping from for this entity.</span>
+        </h4>
+        <!-- each map -->
+        <table class="mappings-table">
+          <thead>
+          <tr>
+            <th class="">Name</th>
+            <th>Description</th>
+            <th>Version #</th>
+            <th class="icons"></th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let mapping of getMappingsByEntity(entity);let i = index;" class="mapping-row" (click)="editMapping(entity, mapping)">
+            <td class="name">{{mapping.name}}</td>
+            <td class="description">{{mapping.description}}</td>
+            <td class="version">{{mapping.version}}</td>
+            <td class="icons"><i class="fa fa-trash" (click)="deleteMapping($event, mapping)"></i></td>
+          </tr>
+          </tbody>
+        </table>
+
+      </div> <!-- for -->
+
+      <!-- unassigned to models -->
+      <div class="entity">
+        <h4>Unassigned or Unmatched Mappings</h4>
+        <!-- each map -->
+        <table class="mappings-table">
+          <thead>
+          </thead>
+          <tbody>
+          </tbody>
+        </table>
+
+      </div> <!-- unassigned -->
+
+    </div><!-- entity list container -->
+
+  </div><!-- map-container -->
+
+</div><!-- layout-padding -->

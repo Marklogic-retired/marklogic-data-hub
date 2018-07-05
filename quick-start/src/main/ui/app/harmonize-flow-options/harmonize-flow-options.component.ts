@@ -13,7 +13,7 @@ import { Flow } from '../entities/flow.model';
 import { EntitiesService } from '../entities/entities.service';
 import { SearchService } from '../search/search.service';
 import { SelectKeyValuesComponent } from '../select-key-values/select-key-values.component';
-import { MapService } from '../map/map.service';
+import { MapService } from '../mappings/map.service';
 import { MdlDialogService } from '@angular-mdl/core';
 
 @Component({
@@ -25,7 +25,7 @@ export class HarmonizeFlowOptionsComponent implements OnInit, OnChanges {
 
   @Input() flow: Flow;
   @Output() onChange = new EventEmitter<any>();
-  @Output() onRun: EventEmitter<any> = new EventEmitter();;
+  @Output() onRun: EventEmitter<any> = new EventEmitter();
 
   static readonly newLabel: string = 'New...';
 
@@ -36,6 +36,7 @@ export class HarmonizeFlowOptionsComponent implements OnInit, OnChanges {
   keyVals: any;
   keyValTitle = 'Options';
   hasDocs: boolean = false;
+  mapPrefix: string = 'dhf-map-';  // TODO: remove need for prefix.  Bake into mapService.getName()
 
   constructor(
     private searchService: SearchService,
@@ -87,37 +88,24 @@ export class HarmonizeFlowOptionsComponent implements OnInit, OnChanges {
   }
 
   loadMap(flowName) {
-    let localString = localStorage.getItem("mapping");
+    let storedMap = this.mapPrefix + this.mapService.getName(this.flow.entityName, this.flow.flowName);
+    let localString = localStorage.getItem(storedMap);
     if (localString) {
       let localObj = JSON.parse(localString);
-      if (localObj[this.flow.entityName]) {
-        if (localObj[this.flow.entityName][flowName]) {
-          this.mapName = localObj[this.flow.entityName][flowName].name;
-        }
-      }
+      if (localObj.name)
+        this.mapName = localObj.name;
     }
   }
 
   deleteMap() {
     let result = this.dialogService.confirm('Delete map?', 'Cancel', 'Delete');
     result.subscribe( () => {
-      // Temporarily saving locally
-      let localString = localStorage.getItem("mapping");
-      let localObj = {};
-      if (localString) {
-        let localObj = JSON.parse(localString);
-        if (localObj[this.flow.entityName]) {
-          if (localObj[this.flow.entityName][this.flow.flowName]) {
-            delete localObj[this.flow.entityName][this.flow.flowName];
-            this.mapName = null;
-          }
-        }
-      }
-      // TODO use service to delete
-      let mapName = this.mapService.getName(this.flow.entityName, this.flow.flowName);
-      this.mapService.deleteMap(this.flow.entityName, mapName);
-      localStorage.setItem("mapping", JSON.stringify(localObj));
-      this.saveSettings();
+        let storedMap = this.mapPrefix + this.mapService.getName(this.flow.entityName, this.flow.flowName);
+        // Temporarily saving locally
+        localStorage.removeItem(storedMap);
+        this.mapName = null;
+        //this.mapService.deleteMap(storedMap);  // TODO: Restore once backend exists
+        this.saveSettings();
       },
       (err: any) => {
         console.log('map delete canceled');

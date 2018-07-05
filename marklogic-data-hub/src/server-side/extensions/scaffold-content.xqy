@@ -147,7 +147,10 @@ declare function service:generate-lets($model as map:map, $entity-type-name, $ma
         "    plugin:make-reference-object('" || $ref-name || "', (: put your value here :) '')"
       ), "&#10;")
     let $value :=
-      if (empty($ref)) then (if(service:mapping-present($mapping, $property-name)) then (fn:concat("$source",service:map-value($property-name, $mapping))) else ("()"))
+      if (empty($ref)) then (
+        if(service:mapping-present($mapping, $property-name))
+        then (fn:concat("$source",service:map-value($property-name, $mapping)))
+        else (fn:concat("$source/", $property-name)))
       else if (contains($ref, "#/definitions")) then
         let $inner-var := "$" || fn:lower-case($ref-name) || "s"
         return
@@ -222,13 +225,7 @@ declare function plugin:create-content(
     if ($flow-type eq $consts:HARMONIZE_FLOW) then
       "let $doc := fn:doc($id)&#10;  "
     else ()
-  }let $source :=
-    if ({$root-name}/es:envelope) then
-      {$root-name}/es:envelope/es:instance/node()
-    else if ({$root-name}/instance) then
-      {$root-name}/instance
-    else
-      {$root-name}
+  }let $source := {$root-name}
   return
   {
     "plugin:extract-instance-" || $entity || "($source)"
@@ -254,6 +251,13 @@ $source as node()?
   <txt>
   (: the original source documents :)
   let $attachments := $source
+  let $source      :=
+    if ($source/*:envelope) then
+      $source/*:envelope/*:instance
+    else if ($source/instance) then
+      $source/instance
+    else
+      $source
   </txt>/text()
   else ()
 }
@@ -273,11 +277,11 @@ service:generate-lets($model, $entity-type-name, $mapping)
   let $_ := (
   {
     if ($entity-type-name eq $entity) then
-      "map:put($model, '$attachments', $attachments),"
+      "  map:put($model, '$attachments', $attachments),"
     else ()
   }
-  map:put($model, '$type', '{ $entity-type-name }'),
-  map:put($model, '$version', '{ map:get(map:get($model, "info"), "version") }'){
+    map:put($model, '$type', '{ $entity-type-name }'),
+    map:put($model, '$version', '{ map:get(map:get($model, "info"), "version") }'){
   let $definitions := map:get($model, "definitions")
   let $entity-type := map:get($definitions, $entity-type-name)
   let $properties := map:get($entity-type, "properties")
@@ -294,10 +298,7 @@ service:generate-lets($model, $entity-type-name, $mapping)
       for $property-name in $property-keys
       let $is-required := $property-name = $required-properties
       return
-        if ($is-required) then
-        "map:put($model, '" || $property-name || "', $" || service:kebob-case($property-name) || ")"
-        else
-        "  es:optional($model, '" || $property-name || "', $" || service:kebob-case($property-name) || ")"
+        "    map:put($model, '" || $property-name || "', $" || service:kebob-case($property-name) || ")"
       , ",&#10;")
   (: end code generation block :)
   }
@@ -309,11 +310,11 @@ service:generate-lets($model, $entity-type-name, $mapping)
   json:object()
   {
   if ($entity-type-name eq $entity) then
-    "=>map:with('$attachments', $attachments)"
+    "  =>map:with('$attachments', $attachments)"
   else ()
   }
-  =>map:with('$type', '{ $entity-type-name }')
-  =>map:with('$version', '{ map:get(map:get($model, "info"), "version") }')
+    =>map:with('$type', '{ $entity-type-name }')
+    =>map:with('$version', '{ map:get(map:get($model, "info"), "version") }')
   {
   fn:string-join(
     (: Begin code generation block :)
@@ -328,9 +329,9 @@ service:generate-lets($model, $entity-type-name, $mapping)
     let $is-required := $property-name = $required-properties
     return
       if ($is-required) then
-        "=>map:with('" || $property-name || "', $" || service:kebob-case($property-name) || ")"
+        "  =>map:with('" || $property-name || "', $" || service:kebob-case($property-name) || ")"
       else
-        "  =>es:optional('" || $property-name || "', $" || service:kebob-case($property-name) || ")"
+        "    =>es:optional('" || $property-name || "', $" || service:kebob-case($property-name) || ")"
     , "&#10;")
   (: end code generation block :)
   }
@@ -407,7 +408,10 @@ declare function service:generate-vars($model as map:map, $entity-type-name, $ma
       ), "&#10;"):)
     let $value :=
       if (empty($ref)) then
-        "!fn.empty(" || $path-to-property || ") ? " ||
+        "!fn.empty(" || $path-to-property || ") ? " || (
+        if($is-array) then
+          $path-to-property || ": []"
+        else
         $casting-function-name || "("
         || "fn.head(" ||
         $path-to-property ||
@@ -418,27 +422,30 @@ declare function service:generate-vars($model as map:map, $entity-type-name, $ma
             ()
         ) ||
         ")) : null"
+        )
+
       else if (contains($ref, "#/definitions")) then
         if ($is-array) then
           fn:string-join((
             "[];",
-            "if (" || $path-to-property || ") {",
-            "  // either return an instance of a " || $ref-name,
-            "  " || service:camel-case($property-name) || ".push(" || service:camel-case("extractInstance-" || $ref-name) || "(item." || $ref-name || "));",
-            "",
-            "  // or a reference to a " || $ref-name,
-            "  // " || service:camel-case($property-name) || ".push(makeReferenceObject('" || $ref-name || "', item));",
+            "if(" || $path-to-property || ") {",
+            "  for(const item of Sequence.from(source." || $property-name || ")) {",
+            "    // either return an instance of a " || $ref-name,
+            "  "   || service:camel-case($property-name) || ".push(" || service:camel-case("extractInstance-" || $ref-name) || "(item));",
+            "    // or a reference to a " || $ref-name,
+            "    // " || service:camel-case($property-name) || ".push(makeReferenceObject('" || $ref-name || "', item));",
+            "  }",
             "}"
           ), "&#10;  ")
         else
           fn:string-join((
             "null;",
-            "if (" || $path-to-property || ") {",
+            "if(" || $path-to-property || ") {",
             "  // either return an instance of a " || $ref-name,
-            "  " || service:camel-case($property-name) || " = " || service:camel-case("extractInstance-" || $ref-name) || "(item." || $ref-name || ");",
+            "  " || service:camel-case($property-name) || " = " || service:camel-case("extractInstance-" || $ref-name) || "(source." || $property-name || ");",
             "",
             "  // or a reference to a " || $ref-name,
-            "  // " || service:camel-case($property-name) || " = makeReferenceObject('" || $ref-name || "', item);",
+            "  // " || service:camel-case($property-name) || " = makeReferenceObject('" || $ref-name || "', source." || $property-name || ");",
             "}"
           ), "&#10;  ")
       else
@@ -447,7 +454,7 @@ declare function service:generate-vars($model as map:map, $entity-type-name, $ma
             " null;",
             "  if (" || service:get-property($path-to-property, $ref-name) || ") {",
             "    " || service:camel-case($property-name) || " = " || service:get-property($path-to-property, $ref-name) || ".map(function(item) {",
-            "      return makeReferenceObject('" || $ref-name || "', item);",
+            "      return makeReferenceObject('" || $ref-name || "', source."|| $property-name || ");",
             "    });",
             "  }"
           ), "&#10;")
@@ -499,7 +506,7 @@ function createContent(id, {
 
   // for xml we need to use xpath
   if({$root-name} &amp;&amp; xdmp.nodeKind({$root-name}) === 'element' &amp;&amp; {$root-name} instanceof XMLDocument) {{
-    source = fn.head({$root-name}.xpath('/*:envelope/*:instance/node()'));
+    source = {$root-name}
   }}
   // for json we need to return the instance
   else if({$root-name} &amp;&amp; {$root-name} instanceof Document) {{
@@ -527,7 +534,7 @@ function {service:camel-case("extractInstance-" || $entity-type-name)}(source) {
   let attachments = source;
   // now check to see if we have XML or json, then just go to the instance
   if(source instanceof Element) {{
-    source = fn.head(source.xpath('/*:envelope/*:instance/node()'))
+    source = fn.head(source.xpath('/*:envelope/*:instance'))
   }} else if(source instanceof ObjectNode) {{
     source = source.envelope.instance;
   }}
@@ -546,8 +553,7 @@ function {service:camel-case("extractInstance-" || $entity-type-name)}(source) {
   {
     if ($entity eq $entity-type-name) then
       "  '$attachments': attachments,"
-    else
-      ()
+    else ()
   }
     '$type': '{ $entity-type-name }',
     '$version': '{ map:get(map:get($model, "info"), "version") }'{
@@ -562,7 +568,7 @@ function {service:camel-case("extractInstance-" || $entity-type-name)}(source) {
       (: Begin code generation block :)
       for $property-name in $properties-keys
       return
-        "'" || $property-name || "': " || $property-name
+        "'" || $property-name || "': " ||  service:camel-case($property-name)
       , ",&#10;    ")
   (: end code generation block :)
   }

@@ -3,6 +3,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { SearchService } from './search.service';
 import { SearchResponse } from '../search';
 
+import { MdlSnackbarService } from '@angular-mdl/core';
+
 import * as _ from 'lodash';
 
 @Component({
@@ -27,7 +29,8 @@ export class SearchComponent implements OnDestroy, OnInit {
   constructor(
     private searchService: SearchService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private snackbar: MdlSnackbarService,
   ) {}
 
   ngOnInit() {
@@ -121,5 +124,11 @@ export class SearchComponent implements OnDestroy, OnInit {
 
   setDatabase(database) {
     this.currentDatabase = database;
+  }
+
+  uriCopied() {
+    this.snackbar.showSnackbar({
+      message: 'URI copied to the clipboard.'
+    });
   }
 }

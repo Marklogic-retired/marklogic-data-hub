@@ -1,0 +1,27 @@
+<div class="dialog-container new-flow-dialog">
+  <div class="mdl-dialog__title">
+    <div>Create New Mapping</div>
+    <div class="mdl-layout-spacer"></div>
+    <mdl-button mdl-button-type="icon" (click)="cancel()">
+      <i class="fa fa-close"></i>
+    </mdl-button>
+  </div>
+  <div class="mdl-dialog__content">
+    <form (submit)="create()">
+      <div class="modal-body">
+        <div class="md-dialog-content" flex layout="column">
+          <mdl-textfield name="mapNameInput" type="text"
+            required autofocus floating-label
+            id="mapNameInput"
+            label="Mapping Name (required)"
+            #mapNameInput="ngModel"
+            [(ngModel)]="mapName"></mdl-textfield>
+        </div>
+      </div>
+      <div class="mdl-dialog__actions">
+        <button type="submit" [disabled]="mapNameInput && mapNameInput.errors && mapNameInput.errors.required" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect">Create</button>
+        <button type="button" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" (click)="cancel()">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
