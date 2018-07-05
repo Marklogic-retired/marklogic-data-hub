@@ -165,6 +165,12 @@ gradle hubCreateHarmonizeFlow \
 ##### Default Values
 - **dataFormat**=json
 
+### hubGeneratePii
+Generate security configuration files for protecting entity properties designated as Personally Identifiable Information (PII). For details, see [Managing Personally Identifiable Information]({{site.baseurl}}/govern/pii).
+<pre class="cmdline">
+gradle hubGeneratePii
+</pre>
+
 ## MarkLogic Data Hub Flow Management tasks
 These tasks allow you to run and clean up after flows.
 
