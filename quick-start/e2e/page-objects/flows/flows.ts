@@ -16,7 +16,7 @@ export class FlowPage extends AppPage {
   }
 
   get newFlowDialog() {
-    return element(by.css('.new-flow-dialog'));
+    return element(by.css('app-new-flow .new-flow-dialog'));
   }
 
   inputFlowButton(entityName: string) {
@@ -38,11 +38,11 @@ export class FlowPage extends AppPage {
   addFlowOptionsButton() {
     return element(by.css('.key-value-add > mdl-button'));
   }
-  
+
   removeFlowOptionsByPositionButton(position: number) {
     return element(by.css('app-select-key-values > div:nth-child(' + (position + 1) + ') > .key-value-remove > mdl-button'));
   }
-  
+
   getKeyFlowOptionsByPosition(position: number){
     return element(by.css('app-select-key-values > div:nth-child(' + (position + 1) + ') > div:nth-child(1) > mdl-textfield > div > input'));
   }
@@ -127,11 +127,11 @@ export class FlowPage extends AppPage {
         tabNum = 7;
         break;
       default:
-        tabNum = 1;      
+        tabNum = 1;
     }
     return element(by.css(`mdl-tabs>div:nth-of-type(1)>div:nth-of-type(${tabNum})>div>span:nth-of-type(1)`));
-  } 
-  
+  }
+
   pluginTextArea() {
     return element(by.css('mdl-tabs > mdl-tab-panel.mdl-tabs__panel.is-active > mdl-tab-panel-content > div > div.plugin-codemirror > app-codemirror > div > div.CodeMirror-scroll > div.CodeMirror-sizer > div > div > div > div.CodeMirror-code'));
   }
@@ -192,6 +192,12 @@ export class FlowPage extends AppPage {
 
   get toastButton() {
     return element(by.css('mdl-snackbar-component button'));
+  }
+
+  get jobID() {
+    return element(by.css('mdl-snackbar-component div div')).getText().then(id => {
+      return id.toString().replace('Job ','').replace('Finished.','');
+    }, (err) => null);
   }
 
   get redeployButton() {
