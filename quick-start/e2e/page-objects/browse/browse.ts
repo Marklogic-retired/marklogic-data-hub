@@ -20,7 +20,11 @@ export class BrowsePage extends AppPage {
   selectDatabase(databaseName: string) {
     return element(by.cssContainingText('div.mdl-list__item-primary-content', databaseName));
   }
-  
+
+  entitiesOnlyChkBox() {
+    return element(by.css('app-search .mdl-checkbox'));
+  }
+
   searchBox() {
     return element(by.css('.search-box > form > input'));
   }
@@ -28,7 +32,11 @@ export class BrowsePage extends AppPage {
   searchButton() {
     return element(by.buttonText('Search'));
   }
-  
+
+  get noDataText() {
+    return element(by.xpath('//div[contains(text(),\'No Data\')]'));
+  }
+
   resultsPagination() {
     return element(by.css('app-pagination > .container'));
   }
@@ -40,6 +48,8 @@ export class BrowsePage extends AppPage {
   resultsSpecificUri(uri: string) {
     return element(by.cssContainingText('.results .result a', uri));
   }
+
+  //TODO Locators for Collection facet
 
 }
 

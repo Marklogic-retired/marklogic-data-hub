@@ -72,9 +72,9 @@ export default function() {
       browser.driver.sleep(3000);
       browser.wait(EC.elementToBeClickable(dashboardPage.clearButton));
       dashboardPage.clearButton.click();
-      //wait for all four to be 0
+      //wait for all three to be 0
       browser.wait(dashboardPage.zeroCounts.count().then((count) => {
-        return count === 4;
+        expect(count).toEqual(3);
       }));
     });
 
@@ -139,7 +139,7 @@ export default function() {
       entityPage.getPropertyName(lastProperty).sendKeys('sku');
       entityPage.getPropertyType(lastProperty).element(by.cssContainingText('option', 'string')).click();
       entityPage.getPropertyDescription(lastProperty).sendKeys('sku description');
-      entityPage.getPropertyPrimaryKeyColumn(lastProperty).click();
+      entityPage.getPropertyPrimaryKey(lastProperty).click();
       // add price property
       console.log('add price property');
       entityPage.addProperty.click();
@@ -147,7 +147,7 @@ export default function() {
       entityPage.getPropertyName(lastProperty).sendKeys('price');
       entityPage.getPropertyType(lastProperty).element(by.cssContainingText('option', 'decimal')).click();
       entityPage.getPropertyDescription(lastProperty).sendKeys('price description');
-      entityPage.getPropertyRangeIndexColumn(lastProperty).click();
+      entityPage.getPropertyRangeIndex(lastProperty).click();
       entityPage.saveEntity.click();
       browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
       expect(entityPage.confirmDialogYesButton.isPresent()).toBe(true);
@@ -167,7 +167,7 @@ export default function() {
       console.log('add id property');
       entityPage.addProperty.click();
       // setting primary key first
-      entityPage.getPropertyPrimaryKeyColumn(lastProperty).click();
+      entityPage.getPropertyPrimaryKey(lastProperty).click();
       entityPage.getPropertyName(lastProperty).sendKeys('id');
       entityPage.getPropertyType(lastProperty).element(by.cssContainingText('option', 'string')).click();
       entityPage.getPropertyDescription(lastProperty).sendKeys('id description');
@@ -178,7 +178,7 @@ export default function() {
       entityPage.getPropertyName(lastProperty).sendKeys('price');
       entityPage.getPropertyType(lastProperty).element(by.cssContainingText('option', 'decimal')).click();
       entityPage.getPropertyDescription(lastProperty).sendKeys('price description');
-      entityPage.getPropertyRangeIndexColumn(lastProperty).click();
+      entityPage.getPropertyRangeIndex(lastProperty).click();
      // add products property
       console.log('add products property');
       entityPage.addProperty.click();
@@ -187,7 +187,7 @@ export default function() {
       entityPage.getPropertyType(lastProperty).element(by.cssContainingText('option', 'Product')).click();
       entityPage.getPropertyCardinality(lastProperty).element(by.css(selectCardinalityOneToManyOption)).click();
       entityPage.getPropertyDescription(lastProperty).sendKeys('products description');
-      entityPage.getPropertyWordLexiconColumn(lastProperty).click();
+      entityPage.getPropertyWordLexicon(lastProperty).click();
       // add a duplicate price property, negative test
       entityPage.addProperty.click();
       lastProperty = entityPage.lastProperty;
@@ -208,12 +208,12 @@ export default function() {
       expect(entityPage.entityEditor.isPresent()).toBe(true);
       let skuProperty = entityPage.getPropertyByPosition(1);
       expect(entityPage.getPropertyName(skuProperty).getAttribute('value')).toEqual('sku');
-      expect(entityPage.getPropertyType(skuProperty).getAttribute('ng-reflect-model')).toEqual('string');
+      expect(entityPage.getPropertyType(skuProperty).getAttribute('value')).toContain('string');
       expect(entityPage.getPropertyDescription(skuProperty).getAttribute('value')).toEqual('sku description');
       expect(entityPage.hasClass(entityPage.getPropertyPrimaryKey(skuProperty), 'active')).toBe(true);
       let priceProperty = entityPage.getPropertyByPosition(2);
       expect(entityPage.getPropertyName(priceProperty).getAttribute('value')).toEqual('price');
-      expect(entityPage.getPropertyType(priceProperty).getAttribute('ng-reflect-model')).toEqual('decimal');
+      expect(entityPage.getPropertyType(priceProperty).getAttribute('value')).toContain('decimal');
       expect(entityPage.getPropertyDescription(priceProperty).getAttribute('value')).toEqual('price description');
       expect(entityPage.hasClass(entityPage.getPropertyRangeIndex(priceProperty), 'active')).toBe(true);
       entityPage.cancelEntity.click();
@@ -228,23 +228,23 @@ export default function() {
       let idProperty = entityPage.getPropertyByPosition(1);
       // verify that primary key is retained
       expect(entityPage.getPropertyName(idProperty).getAttribute('value')).toEqual('id');
-      expect(entityPage.getPropertyType(idProperty).getAttribute('ng-reflect-model')).toEqual('string');
+      expect(entityPage.getPropertyType(idProperty).getAttribute('value')).toContain('string');
       expect(entityPage.getPropertyDescription(idProperty).getAttribute('value')).toEqual('id description');
       expect(entityPage.hasClass(entityPage.getPropertyPrimaryKey(idProperty), 'active')).toBe(true);
       let priceProperty = entityPage.getPropertyByPosition(2);
       expect(entityPage.getPropertyName(priceProperty).getAttribute('value')).toEqual('price');
-      expect(entityPage.getPropertyType(priceProperty).getAttribute('ng-reflect-model')).toEqual('decimal');
-      expect(entityPage.getPropertyCardinality(priceProperty).getAttribute('ng-reflect-model')).toEqual('ONE_TO_ONE');
+      expect(entityPage.getPropertyType(priceProperty).getAttribute('value')).toContain('decimal');
+      expect(entityPage.getPropertyCardinality(priceProperty).getAttribute('value')).toContain('ONE_TO_ONE');
       expect(entityPage.getPropertyDescription(priceProperty).getAttribute('value')).toEqual('price description');
       expect(entityPage.hasClass(entityPage.getPropertyRangeIndex(priceProperty), 'active')).toBe(true);
       let productsProperty = entityPage.getPropertyByPosition(3);
       expect(entityPage.getPropertyName(productsProperty).getAttribute('value')).toEqual('products');
-      expect(entityPage.getPropertyType(productsProperty).getAttribute('ng-reflect-model')).toEqual('#/definitions/Product');
-      expect(entityPage.getPropertyCardinality(productsProperty).getAttribute('ng-reflect-model')).toEqual('ONE_TO_MANY');
+      expect(entityPage.getPropertyType(productsProperty).getAttribute('value')).toContain('#/definitions/Product');
+      expect(entityPage.getPropertyCardinality(productsProperty).getAttribute('value')).toContain('ONE_TO_MANY');
       expect(entityPage.getPropertyDescription(productsProperty).getAttribute('value')).toEqual('products description');
       expect(entityPage.hasClass(entityPage.getPropertyWordLexicon(productsProperty), 'active')).toBe(true);
       // verify duplicate property is not created, the count should be 3
-      entityPage.getPropertiesCount().then(function(props){expect(props === 3)});
+      entityPage.getPropertiesCount().then(function(props){expect(props).toEqual(3)});
       entityPage.cancelEntity.click();
       browser.wait(EC.invisibilityOf(entityPage.entityEditor));
     });
@@ -296,7 +296,7 @@ export default function() {
       browser.wait(EC.visibilityOf(entityPage.entityEditor));
       expect(entityPage.entityEditor.isPresent()).toBe(true);
       console.log('verify properties count');
-      entityPage.getPropertiesCount().then(function(props){expect(props === 3)});
+      entityPage.getPropertiesCount().then(function(props){expect(props).toEqual(3)});
       entityPage.cancelEntity.click();
       browser.wait(EC.invisibilityOf(entityPage.entityEditor));
     });
@@ -359,14 +359,14 @@ export default function() {
       //tell the UI to add the visual row
       entityPage.addProperty.click();
       //now compare to see if the current count is 1
-      element.all(by.css('.properties > table > tBody > tr')).count().then(function(props){expect(props === 1)});
+      entityPage.getPropertiesCount().then(function(props){expect(props).toEqual(1)});
 
       //select the last (or first if only 1) property
       let lastProperty = entityPage.lastProperty;
       expect(lastProperty.isPresent() && lastProperty.isDisplayed());
       //populate the fields for name, range index, type, and description
       entityPage.getPropertyName(lastProperty).sendKeys("test");
-      entityPage.getPropertyRangeIndexColumn(lastProperty).click();
+      entityPage.getPropertyRangeIndex(lastProperty).click();
       entityPage.getPropertyType(lastProperty).element(by.cssContainingText('option', 'string')).click();
       entityPage.getPropertyDescription(lastProperty).sendKeys("this is a test property");
       //let's see if our values hold!
@@ -381,7 +381,7 @@ export default function() {
       expect(lastProperty.isPresent() && lastProperty.isDisplayed());
       //populate the fields for name, range index, type, and description
       entityPage.getPropertyName(lastProperty).sendKeys("ID");
-      entityPage.getPropertyPrimaryKeyColumn(lastProperty).click();
+      entityPage.getPropertyPrimaryKey(lastProperty).click();
       entityPage.getPropertyType(lastProperty).element(by.cssContainingText('option', 'integer')).click();
       entityPage.getPropertyDescription(lastProperty).sendKeys("this is our primary key");
       //let's save it now that it's populated
@@ -397,7 +397,7 @@ export default function() {
       browser.wait(EC.visibilityOf(entityPage.entityEditor));
       expect(entityPage.entityEditor.isPresent()).toBe(true);
       //let's grab the count of the rows before we add so we can compare
-      element.all(by.css('.properties > table > tBody > tr')).count().then(function(props){expect(props === 2)});
+      entityPage.getPropertiesCount().then(function(props){expect(props).toEqual(2)});
       let lastProperty = entityPage.lastProperty;
       expect(lastProperty.isPresent() && lastProperty.isDisplayed());
       entityPage.getPropertyCheckBox(lastProperty).click();
@@ -406,7 +406,7 @@ export default function() {
       expect(entityPage.confirmDialogYesButton.isPresent()).toBe(true);
       entityPage.confirmDialogYesButton.click();
       browser.sleep(3000);
-      element.all(by.css('.properties > table > tBody > tr')).count().then(function(props){expect(props === 1)});
+      entityPage.getPropertiesCount().then(function(props){expect(props).toEqual(1)});
       //let's save it now that it's populated
       entityPage.saveEntity.click();
       browser.wait(EC.elementToBeClickable(entityPage.confirmDialogNoButton));
@@ -420,7 +420,7 @@ export default function() {
       browser.wait(EC.visibilityOf(entityPage.entityEditor));
       expect(entityPage.entityEditor.isPresent()).toBe(true);
       //Do we still have 1 property left?
-      element.all(by.css('.properties > table > tBody > tr')).count().then(function(props){expect(props === 1)});
+      entityPage.getPropertiesCount().then(function(props){expect(props).toEqual(1)});
       //if so, grab it
       let lastProperty = entityPage.lastProperty;
       expect(lastProperty.isPresent() && lastProperty.isDisplayed());
@@ -462,8 +462,8 @@ export default function() {
       //tell the UI to add the visual row
       entityPage.addProperty.click();
       //now compare to see if the current count is 1
-      element.all(by.css('.properties > table > tBody > tr')).count().then(function(props){expect(props === 1)});
-      
+      entityPage.getPropertiesCount().then(function(props){expect(props).toEqual(1)});
+
       //select the last (or first if only 1) property
       let lastProperty = entityPage.lastProperty;
       expect(lastProperty.isPresent() && lastProperty.isDisplayed());
@@ -477,7 +477,7 @@ export default function() {
       expect(entityPage.hasClass(entityPage.getPropertyPii(lastProperty), 'active')).toBe(true);
       expect(entityPage.getPropertyType(lastProperty).getAttribute('value')).toEqual("24: string");
       expect(entityPage.getPropertyDescription(lastProperty).getAttribute('value')).toEqual("this is a pii property");
-      
+
       //add a non pii property
       entityPage.addProperty.click();
       lastProperty = entityPage.lastProperty;
@@ -500,25 +500,25 @@ export default function() {
       expect(entityPage.entityEditor.isPresent()).toBe(true);
       let piiProperty = entityPage.getPropertyByPosition(1);
       expect(entityPage.getPropertyName(piiProperty).getAttribute('value')).toEqual('pii_test');
-      expect(entityPage.getPropertyType(piiProperty).getAttribute('ng-reflect-model')).toEqual('string');
+      expect(entityPage.getPropertyType(piiProperty).getAttribute('value')).toContain('string');
       expect(entityPage.getPropertyDescription(piiProperty).getAttribute('value')).toEqual('this is a pii property');
       // Verify that PII attribute is checked
       expect(entityPage.hasClass(entityPage.getPropertyPii(piiProperty), 'active')).toBe(true);
       console.log('verify pii toggling');
       // Turning off PII attribute to verify toggling
-      entityPage.getPropertyPiiColumn(piiProperty).click();
+      entityPage.getPropertyPii(piiProperty).click();
       expect(entityPage.hasClass(entityPage.getPropertyPii(piiProperty), 'active')).toBe(false);
       // Resetting back to the original state
-      entityPage.getPropertyPiiColumn(piiProperty).click();
+      entityPage.getPropertyPii(piiProperty).click();
       expect(entityPage.hasClass(entityPage.getPropertyPii(piiProperty), 'active')).toBe(true);
       let nonPiiProperty = entityPage.getPropertyByPosition(2);
       // Verify that PII attribute is not checked
       expect(entityPage.hasClass(entityPage.getPropertyPii(nonPiiProperty), 'active')).toBe(false);
       // Turning on PII property to verify toggling
-      entityPage.getPropertyPiiColumn(nonPiiProperty).click();
+      entityPage.getPropertyPii(nonPiiProperty).click();
       expect(entityPage.hasClass(entityPage.getPropertyPii(nonPiiProperty), 'active')).toBe(true);
-      // Resetting back to the original state      
-      entityPage.getPropertyPiiColumn(nonPiiProperty).click();      
+      // Resetting back to the original state
+      entityPage.getPropertyPii(nonPiiProperty).click();
       expect(entityPage.hasClass(entityPage.getPropertyPii(nonPiiProperty), 'active')).toBe(false);
       entityPage.cancelEntity.click();
       browser.wait(EC.invisibilityOf(entityPage.entityEditor));
@@ -541,7 +541,7 @@ export default function() {
       entityPage.cancelEntity.click();
       browser.wait(EC.invisibilityOf(entityPage.entityEditor));
     });
-    
+
     it ('should logout and login', function() {
       entityPage.logout();
       loginPage.isLoaded();
@@ -560,7 +560,7 @@ export default function() {
       expect(entityPage.entityEditor.isPresent()).toBe(true);
       let piiProperty = entityPage.getPropertyByPosition(1);
       expect(entityPage.getPropertyName(piiProperty).getAttribute('value')).toEqual('pii_test');
-      expect(entityPage.getPropertyType(piiProperty).getAttribute('ng-reflect-model')).toEqual('string');
+      expect(entityPage.getPropertyType(piiProperty).getAttribute('value')).toContain('string');
       expect(entityPage.getPropertyDescription(piiProperty).getAttribute('value')).toEqual('this is a pii property');
       // Verify that PII attribute is checked
       expect(entityPage.hasClass(entityPage.getPropertyPii(piiProperty), 'active')).toBe(true);
@@ -578,12 +578,8 @@ export default function() {
 
     it ('should redeploy modules', function() {
       flowPage.redeployButton.click();
-      browser.wait(element(by.css('#last-deployed-time')).getText().then((txt) => {
-        return (
-          txt === 'Last Deployed: less than a minute ago' ||
-          txt === 'Last Deployed: 1 minute ago'
-        );
-      }));
+      browser.wait(EC.textToBePresentInElement(element(by.css('#last-deployed-time')),
+        'Last Deployed: less than a minute ago' || 'Last Deployed: 1 minute ago'));
     });
 
     it ('should open the Entity disclosure', function() {
@@ -687,7 +683,7 @@ export default function() {
       expect(flowPage.getValueFlowOptionsByPosition(3).getAttribute('ng-reflect-model')).toEqual('2017-03-07');
       //verify the flow options count
       console.log('verify the flow options count');
-      flowPage.getFlowOptionsCount().then(function(flowOptions){expect(flowOptions === 3)});
+      flowPage.getFlowOptionsCount().then(function(flowOptions){expect(flowOptions).toEqual(3)});
     });
   });
 }

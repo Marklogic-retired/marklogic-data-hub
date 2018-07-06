@@ -22,12 +22,8 @@ export default function(tmpDir) {
 
     it ('should redeploy modules', function() {
       flowPage.redeployButton.click();
-      browser.wait(element(by.css('#last-deployed-time')).getText().then((txt) => {
-        return (
-          txt === 'Last Deployed: less than a minute ago' ||
-          txt === 'Last Deployed: 1 minute ago'
-        );
-      }));
+      browser.wait(EC.textToBePresentInElement(element(by.css('#last-deployed-time')),
+        'Last Deployed: less than a minute ago' || 'Last Deployed: 1 minute ago'));
     });
 
     it ('should run Load Products flow', function() {
@@ -102,12 +98,8 @@ export default function(tmpDir) {
 
     it ('should redeploy modules', function() {
       flowPage.redeployButton.click();
-      browser.wait(element(by.css('#last-deployed-time')).getText().then((txt) => {
-        return (
-          txt === 'Last Deployed: less than a minute ago' ||
-          txt === 'Last Deployed: 1 minute ago'
-        );
-      }));
+      browser.wait(EC.textToBePresentInElement(element(by.css('#last-deployed-time')),
+        'Last Deployed: less than a minute ago' || 'Last Deployed: 1 minute ago'));
     });
 
     it ('should logout and login', function() {
