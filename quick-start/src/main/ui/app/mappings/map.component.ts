@@ -5,6 +5,7 @@ import { EntitiesService } from '../entities/entities.service';
 import { SearchService } from '../search/search.service';
 import { MapService } from './map.service';
 import { MdlDialogService } from '@angular-mdl/core';
+import { MdlSnackbarService } from '@angular-mdl/core';
 
 import * as _ from 'lodash';
 import * as moment from 'moment';
@@ -32,6 +33,7 @@ export class MapComponent implements OnInit {
 
   // Connections
   public conns: Object = {};
+  public connsOrig: Object = {};
   private mapPrefix: string = 'dhf-map-';
 
   private entityName: string;
@@ -51,8 +53,8 @@ export class MapComponent implements OnInit {
   public editingSourceContext = false;
 
   //edit description
-  public editDescriptionVal = '';
-  public editingDescription = false;
+  public editDescVal = '';
+  public editingDesc = false;
   /**
    * Load chosen entity to use as harmonized model.
    */
@@ -153,9 +155,40 @@ export class MapComponent implements OnInit {
     }
   }
 
-  updateDescription() {
-    this.mapping.description = this.editDescriptionVal;
-    this.editingDescription = false;
+  /**
+   * Cancel the editing of the source document URI.
+   */
+  cancelEditURI() {
+    this.editURIVal = this.sampleDocURI;
+    this.editingURI = false;
+  }
+
+  /**
+   * Cancel the editing of the source document URI.
+   */
+  cancelEditDesc() {
+    this.editDescVal = this.mapping.description;
+    this.editingDesc = false;
+  }
+
+  keyPressURI(event) {
+    if (event.key === 'Enter') {
+      this.updateSampleDoc();
+    }
+  }
+
+  updateDesc() {
+    this.mapping.description = this.editDescVal;
+    this.mapService.saveMap(this.mapping.name, JSON.stringify(this.mapping)).subscribe((res: any) => {
+      console.log('map saved with edited description');
+    });
+    this.editingDesc = false;
+  }
+
+  keyPressDesc(event) {
+    if (event.key === 'Enter') {
+      this.updateDesc();
+    }
   }
 
   constructor(
@@ -164,16 +197,17 @@ export class MapComponent implements OnInit {
     private entitiesService: EntitiesService,
     private router: Router,
     private activatedRoute: ActivatedRoute,
-    private dialogService: MdlDialogService
+    private dialogService: MdlDialogService,
+    private snackbar: MdlSnackbarService,
   ) {}
 
   /**
    * Initialize the UI.
    */
   ngOnInit() {
-    this.activatedRoute.queryParams.subscribe((params: Params) => {
-      this.entityName = params['entityName']|| null;
-      this.mapName = params['mapName'] || null;
+    this.activatedRoute.params.subscribe((params: Params) => {
+      this.entityName = params['entity']|| null;
+      this.mapName = params['map'] || null;
 
       this.loadEntity();
       this.loadSampleDoc(this.entityName)
@@ -201,14 +235,6 @@ export class MapComponent implements OnInit {
       delete this.conns[entityPropName];
     this.editingURI = false; // close edit box if open
     event.stopPropagation();
-  }
-
-  /**
-   * Cancel the editing of the source document URI.
-   */
-  cancelEditURI() {
-    this.editURIVal = this.sampleDocURI;
-    this.editingURI = false;
   }
 
   /**
@@ -253,9 +279,16 @@ export class MapComponent implements OnInit {
     // Temporarily saving locally
     //localStorage.setItem(this.mapPrefix + this.mapName, JSON.stringify(mapObj));
 
+    let tmpEntityName = this.chosenEntity.name;
+    let tmpMapName = this.mapName;
+
     // TODO use service to save
     this.mapService.saveMap(this.mapName, JSON.stringify(mapObj)).subscribe((res: any) => {
-      this.router.navigate(['/mappings']);
+      this.snackbar.showSnackbar({
+        message: 'Mapping "' + tmpMapName + '" saved'
+      });
+      this.loadMap();
+      this.router.navigate(['/mappings', tmpEntityName, tmpMapName]);
     });
   }
 
@@ -269,6 +302,22 @@ export class MapComponent implements OnInit {
       },(err: any) => {
         console.log('map cancel aborted');
       }
+    );
+  }
+
+  /**
+   * Handle reset button event
+   */
+  resetMap(): void {
+    let result = this.dialogService.confirm(
+      'Reset map to previously saved version?',
+      'Cancel', 'OK');
+    result.subscribe( () => {
+        this.loadMap();
+      },(err: any) => {
+        console.log('reset map aborted');
+      },
+      () => {}
     );
   }
 
@@ -288,6 +337,7 @@ export class MapComponent implements OnInit {
         _.forEach(map.properties, function(srcObj, entityPropName) {
           self.conns[entityPropName] = srcObj.sourcedFrom;
         });
+        self.connsOrig = _.clone(self.conns);
       }
     });
   }
@@ -297,6 +347,10 @@ export class MapComponent implements OnInit {
     // TODO use service to get
     result = this.mapService.getMappings();
     return result || {};
+  }
+
+  mapChanged() {
+    return !_.isEqual(this.conns, this.connsOrig);
   }
 
   /**

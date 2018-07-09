@@ -16,7 +16,17 @@ export const ROUTES: Routes = [
   { path: '', component: DashboardComponent, canActivate: [AuthGuard] },
   { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
   { path: 'entities', component: EntityModelerComponent, canActivate: [AuthGuard] },
-  { path: 'mappings', component: MappingsComponent, canActivate: [AuthGuard] },
+  {
+    path: 'mappings',
+    component: MappingsComponent,
+    canActivate: [AuthGuard],
+    children: [
+      {
+        path: ':entity/:map',
+        component: MapComponent
+      }
+    ]
+  },
   { path: 'mappings/map', component: MapComponent, canActivate: [AuthGuard] },
   { path: 'flows', component: FlowsComponent, canActivate: [AuthGuard] },
   { path: 'flows/:entityName/:flowName/:flowType', component: FlowsComponent, canActivate: [AuthGuard] },

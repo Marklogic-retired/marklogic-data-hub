@@ -1,27 +1,30 @@
 <div layout-padding layout="column" layout-align="center center" class="map-page">
 
-  <div class="map-container">
+  <div class="map-container2">
 
     <div id="map-heading">
 
       <div id="map-name">
         <h1>
          {{mapName}}
-          <p>Version: {{mapping.version}}</p>
-          <p *ngIf="!editingDescription" class="desc">
-            Description: <span (click)="editingDescription=true" ng-class="description">{{ mapping.description }}</span>   <span class="fa fa-pencil edit-uri" (click)="editingDescription=true"></span>
+          <!-- <p>Version: {{mapping.version}}</p> -->
+          <p *ngIf="!editingDesc">
+            <span *ngIf="!mapping.description" (click)="editingDesc=true" class="no-desc">No description</span>
+            <span *ngIf="mapping.description" (click)="editingDesc=true" class="desc">{{ mapping.description }}</span>   <span class="fa fa-pencil edit-item" (click)="editingDesc=true"></span>
           </p>
-          <p *ngIf="editingDescription" class="edit-description">
-            Description: <input type="text" class="edit-description-val" [(ngModel)]="editDescriptionVal" />
-            <span class="edit-description-save" (click)="updateDescription();"><i class="fa fa-check"></i></span>
-            <span class="edit-description-cancel" (click)="cancelEditDescription();"><i class="fa fa-remove"></i></span>
+          <p *ngIf="editingDesc" class="edit-desc">
+            <input type="text" class="edit-desc-val" [(ngModel)]="editDescVal" (keypress)="keyPressDesc($event)" />
+            <span class="edit-save" (click)="updateDesc();"><i class="fa fa-check"></i></span>
+            <span class="edit-cancel" (click)="cancelEditDesc();"><i class="fa fa-remove"></i></span>
           </p>
         </h1>
       </div>
 
       <div id="save-map">
-        <mdl-button mdl-button-type="raised" mdl-colored="primary" mdl-ripple ng-class="btn-save-map" (click)="saveMap()">Save Map</mdl-button>
-        <mdl-button mdl-button-type="raised" mdl-colored mdl-ripple ng-class="btn-cancel-map" (click)="cancelMap()">Cancel</mdl-button>
+        <mdl-button *ngIf="mapChanged()" mdl-button-type="raised" mdl-colored="primary" mdl-ripple ng-class="btn-save-map" (click)="saveMap()">Save Map</mdl-button>
+        <mdl-button *ngIf="!mapChanged()" mdl-button-type="raised" mdl-colored="primary" mdl-ripple ng-class="btn-save-map" disabled>Save Map</mdl-button>
+        <mdl-button *ngIf="mapChanged()" mdl-button-type="raised" mdl-colored mdl-ripple ng-class="btn-cancel-map" (click)="resetMap()">Reset</mdl-button>
+        <mdl-button *ngIf="!mapChanged()" mdl-button-type="raised" mdl-colored mdl-ripple ng-class="btn-cancel-map" disabled>Reset</mdl-button>
       </div>
 
     </div>
@@ -30,15 +33,15 @@
       <div id="src-heading" #srcheading>
         <div class="item-type">
           Source
-          <span class="fa fa-pencil edit-uri" (click)="editingURI=true"></span>
+          <span class="fa fa-pencil edit-item" (click)="editingURI=true"></span>
         </div>
         <p *ngIf="!editingURI" class="item-identifying-info">
           <span (click)="editingURI=true" ng-class="title-sample-doc" title="{{ sampleDocURI }}">{{ getLastChars(sampleDocURI, 40, '...') }}</span>
         </p>
         <p *ngIf="editingURI" class="edit-uri">
-          <input type="text" class="edit-uri-val" [(ngModel)]="editURIVal" />
-          <span class="edit-uri-save" (click)="updateSampleDoc();"><i class="fa fa-check"></i></span>
-          <span class="edit-uri-cancel" (click)="cancelEditURI()"><i class="fa fa-remove"></i></span>
+          <input type="text" class="edit-uri-val" [(ngModel)]="editURIVal" (keypress)="keyPressURI($event)" />
+          <span class="edit-save" (click)="updateSampleDoc();"><i class="fa fa-check"></i></span>
+          <span class="edit-cancel" (click)="cancelEditURI()"><i class="fa fa-remove"></i></span>
         </p>
       </div>
 
