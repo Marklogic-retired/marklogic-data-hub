@@ -63,7 +63,7 @@ export class MapService {
 
   deleteMap(mapping: Mapping) {
     _.remove(this.maps, { 'name': mapping.name });
-
+    this.mappingsChange.emit(this.maps);
    return  this.http.delete(this.url('/mappings/' + mapping.name)).map((res: Response) => {
       console.log('DELETE /mappings/' + mapping.name);
       return res;

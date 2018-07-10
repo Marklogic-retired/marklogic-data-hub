@@ -41,36 +41,34 @@ export class MappingsComponent implements OnInit, OnDestroy, AfterViewInit {
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private dialogService: MdlDialogService
-  ) {}
+  ) {
+      let entitySub = this.entitiesService.entitiesChange.subscribe(entities => {
+        this.entitiesLoaded = true;
+        this.entities = entities;
+        this.entities.forEach((entity: Entity) => {
+          this.entityMap.set(entity.name, entity);
+          this.docsLoaded(entity.name);
+        });
+        //reget mappings to confirm
+        this.mapService.getMappings();
+      });
+      this.subscribers.set('entities', entitySub);
+
+      let mapSub = this.mapService.mappingsChange.subscribe(mappings => {
+        this.mappings = mappings;
+        this.entities.forEach((entity: Entity) => {
+          this.entityMappingsMap.set(entity, this.mapService.getMappingsByEntity(entity));
+        });
+      });
+      this.subscribers.set('mappings', mapSub);
+    //reget entities to confirm
+    this.entitiesService.getEntities();
+  }
 
   /**
    * Initialize the UI.
    */
   ngOnInit() {
-    let entitySub = this.entitiesService.entitiesChange.subscribe(entities => {
-      this.entitiesLoaded = true;
-      this.entities = entities;
-      //reget mappings to confirm
-      this.mapService.getMappings();
-    });
-    this.subscribers.set('entities', entitySub);
-
-    let mapSub = this.mapService.mappingsChange.subscribe(mappings => {
-      this.mappings = mappings;
-      if(this.router.url.toLowerCase() === '/mappings') {
-        this.entities.forEach((entity: Entity) => {
-          this.entityMap.set(entity.name, entity);
-          this.entityMappingsMap.set(entity, this.mapService.getMappingsByEntity(entity));
-          this.docsLoaded(entity.name);
-        });
-      }
-    });
-    this.subscribers.set('mappings', mapSub);
-
-    //reget entities to confirm
-    this.entitiesService.getEntities();
-
-
 
   }
 
@@ -80,7 +78,7 @@ export class MappingsComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    this.mapService.mappingsChange.emit();
+
   }
 
   getMappingsWithoutEntity() {
@@ -135,8 +133,7 @@ export class MappingsComponent implements OnInit, OnDestroy, AfterViewInit {
     event.cancelBubble = true;
     this.dialogService.confirm(`Really delete ${mapping.name} mapping?`, 'Cancel', 'Delete').subscribe(() => {
         this.mapService.deleteMap(mapping).subscribe((res: any) => {
-          this.mapService.getMappings();
-        });;
+        });
       },
       () => {});
   }
