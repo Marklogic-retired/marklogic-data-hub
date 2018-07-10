@@ -25,7 +25,7 @@ export class MappingsComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private entitiesLoaded: boolean = false;
 
-  public entities: Array<Entity> = [];
+  public entities: Array<Entity> = new Array<Entity>();
 
   public mappings: Array<Mapping> = [];
 
@@ -41,35 +41,30 @@ export class MappingsComponent implements OnInit, OnDestroy, AfterViewInit {
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private dialogService: MdlDialogService
-  ) {
-      let entitySub = this.entitiesService.entitiesChange.subscribe(entities => {
-        this.entitiesLoaded = true;
-        this.entities = entities;
-        this.entities.forEach((entity: Entity) => {
-          this.entityMap.set(entity.name, entity);
-          this.docsLoaded(entity.name);
-        });
-        //reget mappings to confirm
-        this.mapService.getMappings();
-      });
-      this.subscribers.set('entities', entitySub);
+  ) {}
 
-      let mapSub = this.mapService.mappingsChange.subscribe(mappings => {
-        this.mappings = mappings;
-        this.entities.forEach((entity: Entity) => {
-          this.entityMappingsMap.set(entity, this.mapService.getMappingsByEntity(entity));
-        });
-      });
-      this.subscribers.set('mappings', mapSub);
-    //reget entities to confirm
-    this.entitiesService.getEntities();
-  }
 
   /**
    * Initialize the UI.
    */
   ngOnInit() {
+    let entitySub = this.entitiesService.entitiesChange.subscribe(entities => {
+      this.entitiesLoaded = true;
+      this.entities = entities;
+      this.populateEntities();
+      this.mapService.getMappings();
+    });
+    this.subscribers.set('entities', entitySub);
 
+    let mapSub = this.mapService.mappingsChange.subscribe(mappings => {
+      this.mappings = mappings;
+      this.entities.forEach((entity: Entity) => {
+        this.entityMappingsMap.set(entity, this.mapService.getMappingsByEntity(entity));
+      });
+    });
+    this.subscribers.set('mappings', mapSub);
+
+    this.entitiesService.getEntities();
   }
 
   ngOnDestroy(){
@@ -79,6 +74,13 @@ export class MappingsComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngAfterViewInit() {
 
+  }
+
+  populateEntities() : void {
+    this.entities.forEach((entity: Entity) => {
+      this.entityMap.set(entity.name, entity);
+      this.docsLoaded(entity.name);
+    });
   }
 
   getMappingsWithoutEntity() {

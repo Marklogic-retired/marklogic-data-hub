@@ -255,8 +255,9 @@ export class MapComponent implements OnInit {
 
     // TODO use service to save
     this.mapService.saveMap(this.mapName, JSON.stringify(mapObj)).subscribe((res: any) => {
-      this.router.navigate(['/mappings']);
-    });
+
+    }).unsubscribe();
+    this.router.navigate(['/mappings']);
   }
 
   /**
