@@ -1,25 +1,23 @@
 import { Router, ActivatedRoute, Params } from '@angular/router';
-import { Component, OnInit } from '@angular/core';
+import {AfterViewInit, Component, OnDestroy, OnInit} from '@angular/core';
 import { Entity } from '../entities';
 import { EntitiesService } from '../entities/entities.service';
 import { MapService } from './map.service';
 import { MdlDialogService } from '@angular-mdl/core';
 
 import * as _ from 'lodash';
-import * as moment from 'moment';
 import {Mapping} from "./mapping.model";
 import {SearchService} from "../search/search.service";
 import {NewMapComponent} from "./new-map.component";
+import {Subscriber} from "rxjs/Subscriber";
 
 @Component({
   templateUrl: './mappings.component.html',
   styleUrls: ['./mappings.component.scss'],
 })
-export class MappingsComponent implements OnInit {
+export class MappingsComponent implements OnInit, OnDestroy, AfterViewInit {
 
-  // Connections
-  public conns: Object = {};
-  private mapPrefix: string = 'dhf-map-';
+  public subscribers: Map<string, Subscriber<any>> = new Map();
 
   private entityName: string;
   private mapName: string;
@@ -27,7 +25,9 @@ export class MappingsComponent implements OnInit {
 
   private entitiesLoaded: boolean = false;
 
-  public entities: Array<Entity>;
+  public entities: Array<Entity> = new Array<Entity>();
+
+  public mappings: Array<Mapping> = [];
 
   private entityMap: Map<string, Entity> = new Map<string, Entity>();
 
@@ -41,41 +41,46 @@ export class MappingsComponent implements OnInit {
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private dialogService: MdlDialogService
-  ) {
-  }
+  ) {}
+
 
   /**
    * Initialize the UI.
    */
   ngOnInit() {
-    this.activatedRoute.queryParams.subscribe((params: Params) => {
-      //this.loadMap();
-    });
-    this.getEntities();
-    this.entitiesService.entitiesChange.subscribe(entities => {
+    let entitySub = this.entitiesService.entitiesChange.subscribe(entities => {
+      this.entitiesLoaded = true;
+      this.entities = entities;
+      this.populateEntities();
       this.mapService.getMappings();
     });
+    this.subscribers.set('entities', entitySub);
+
+    let mapSub = this.mapService.mappingsChange.subscribe(mappings => {
+      this.mappings = mappings;
+      this.entities.forEach((entity: Entity) => {
+        this.entityMappingsMap.set(entity, this.mapService.getMappingsByEntity(entity));
+      });
+    });
+    this.subscribers.set('mappings', mapSub);
+
+    this.entitiesService.getEntities();
   }
 
-  getEntities(): void {
-    this.entitiesService.entitiesChange.subscribe(entities => {
-    this.entitiesLoaded = true;
-    this.entities = entities;
+  ngOnDestroy(){
+    this.subscribers.get('entities').unsubscribe();
+    this.subscribers.get('mappings').unsubscribe();
+  }
+
+  ngAfterViewInit() {
+
+  }
+
+  populateEntities() : void {
     this.entities.forEach((entity: Entity) => {
       this.entityMap.set(entity.name, entity);
       this.docsLoaded(entity.name);
-      this.getMappingsByEntity(entity);
     });
-  });
-  this.entitiesService.getEntities();
-  }
-
-  getMappingsByEntity(entity: Entity) {
-    this.mapService.mappingsChange.subscribe( () => {
-      this.entityMappingsMap.set(entity, this.mapService.getMappingsByEntity(entity));
-    });
-
-    return this.entityMappingsMap.get(entity);
   }
 
   getMappingsWithoutEntity() {
@@ -130,8 +135,7 @@ export class MappingsComponent implements OnInit {
     event.cancelBubble = true;
     this.dialogService.confirm(`Really delete ${mapping.name} mapping?`, 'Cancel', 'Delete').subscribe(() => {
         this.mapService.deleteMap(mapping).subscribe((res: any) => {
-          this.mapService.getMappings();
-        });;
+        });
       },
       () => {});
   }
