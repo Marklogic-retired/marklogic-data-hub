@@ -67,8 +67,12 @@ public class MappingManagerService extends EnvironmentAware {
         mappingManager = MappingManager.getMappingManager(envConfig().getMlSettings());
         Scaffolding scaffolding = Scaffolding.create(projectDir, envConfig().getFinalClient());
         scaffolding.createMappingDir(newMapping.getName());
+        Path dir = envConfig().getMlSettings().getHubMappingsDir().resolve(newMapping.getName());
         Mapping mapping = mappingManager.createMappingFromJSON(newMapping.toJson());
         mappingManager.saveMapping(mapping);
+        if (dir.toFile().exists()) {
+            watcherService.watch(dir.toString());
+        }
         return getMapping(mapping.getName());
     }
 
@@ -80,11 +84,13 @@ public class MappingManagerService extends EnvironmentAware {
         try {
             existingMapping = getMapping(mapName);
             mappingManager.saveMapping(mappingManager.createMappingFromJSON(mapping.toJson()), true);
-            dataHubService.reinstallUserModules(envConfig().getMlSettings(), null, null);
+
         }catch (DataHubProjectException e){
             String projectDir = envConfig().getProjectDir();
             createMapping(projectDir, mapping);
         }
+        //let's push this out
+        dataHubService.reinstallUserModules(envConfig().getMlSettings(), null, null);
         return mapping;
     }
 
