@@ -29,3 +29,7 @@ node_modules/
 *.db
 ye-olde-project
 /bin/
+# ignore local BIT artifacts
+.bit
+.bitmap
+bit.json
