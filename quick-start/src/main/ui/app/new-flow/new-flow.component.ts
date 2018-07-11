@@ -1,4 +1,4 @@
-import { Component, HostListener, Inject } from '@angular/core';
+import {Component, HostListener, Inject, OnDestroy} from '@angular/core';
 
 import { MdlDialogReference } from '@angular-mdl/core';
 
@@ -14,7 +14,7 @@ import {Entity} from "../entities";
   templateUrl: './new-flow.component.html',
   styleUrls: ['./new-flow.component.scss']
 })
-export class NewFlowComponent {
+export class NewFlowComponent implements OnDestroy {
   flowType: string;
   actions: any;
   entity: Entity;
@@ -51,6 +51,8 @@ export class NewFlowComponent {
 
   dataFormat: any;
 
+  mapSub: any;
+
   constructor(
     private dialog: MdlDialogReference,
     private envService: EnvironmentService,
@@ -77,16 +79,19 @@ export class NewFlowComponent {
   }
 
   ngOnInit() {
-    this.mapService.mappingsChange.subscribe( () => {
-      this.mappingOptions = [];
-      this.mappingOptions.push({ label: 'None', value: null});
-      this.mapService.getMappingsByEntity(this.entity).forEach( (map) => {
-        this.mappingOptions.push({label: map.name, value: map.name});
-      });
-      this.startingMappingOption = this.mappingOptions[0];
+    this.mapSub = this.mapService.mappingsChange.subscribe( () => {
+        this.mappingOptions = [];
+        this.mappingOptions.push({label: 'None', value: null});
+        this.mapService.getMappingsByEntity(this.entity).forEach((map) => {
+          this.mappingOptions.push({label: map.name, value: map.name});
+        });
+        this.startingMappingOption = this.mappingOptions[0];
     });
   }
 
+  ngOnDestroy() {
+    this.mapSub.unsubscribe();
+  }
 
   hide() {
     this.dialog.hide();

@@ -290,6 +290,7 @@ export class MapComponent implements OnInit {
       this.loadMap();
       this.router.navigate(['/mappings', tmpEntityName, tmpMapName]);
     });
+    this.router.navigate(['/mappings']);
   }
 
   /**

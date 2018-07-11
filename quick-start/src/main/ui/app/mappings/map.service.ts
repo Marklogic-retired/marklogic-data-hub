@@ -8,7 +8,7 @@ import {Entity} from "../entities/entity.model";
 @Injectable()
 export class MapService {
 
-  maps: Array<Mapping>;
+  maps: Array<Mapping> = new Array<Mapping>();
   mappingsChange: EventEmitter<Array<Mapping>> = new EventEmitter<Array<Mapping>>();
   map: any;
 
@@ -63,7 +63,7 @@ export class MapService {
 
   deleteMap(mapping: Mapping) {
     _.remove(this.maps, { 'name': mapping.name });
-
+    this.mappingsChange.emit(this.maps);
    return  this.http.delete(this.url('/mappings/' + mapping.name)).map((res: Response) => {
       console.log('DELETE /mappings/' + mapping.name);
       return res;
