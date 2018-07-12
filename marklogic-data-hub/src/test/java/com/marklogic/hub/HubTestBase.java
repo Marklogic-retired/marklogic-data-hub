@@ -1012,12 +1012,16 @@ public class HubTestBase {
         debugOutput(xmldoc, System.out);
     }
 
-    protected void debugOutput(Document xmldoc, OutputStream os) throws TransformerException {
-        TransformerFactory tf = TransformerFactory.newInstance();
-        Transformer transformer = tf.newTransformer();
-        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-        transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-        transformer.transform(new DOMSource(xmldoc), new StreamResult(os));
+    protected void debugOutput(Document xmldoc, OutputStream os) {
+        try {
+            TransformerFactory tf = TransformerFactory.newInstance();
+            Transformer transformer = tf.newTransformer();
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+            transformer.transform(new DOMSource(xmldoc), new StreamResult(os));
+        } catch (TransformerException e) {
+            throw new DataHubConfigurationException(e);
+        }
     }
 }
 

@@ -108,17 +108,14 @@ public class ScaffoldingImpl implements Scaffolding {
 
     @Override public void createFlow(String entityName, String flowName,
                            FlowType flowType, CodeFormat codeFormat,
-                           DataFormat dataFormat, boolean useEsModel, String mappingName) {
+                           DataFormat dataFormat, boolean useEsModel, String mappingNameWithVersion) {
         try {
             Path flowDir = getFlowDir(entityName, flowName, flowType);
             flowDir.toFile().mkdirs();
 
             if (useEsModel) {
-                if (mappingName != null && !Files.exists(getMappingDir(mappingName))) {
-                    throw new DataHubConfigurationException("The requested mapping " + mappingName + " could not be found");
-                }
                 ContentPlugin cp = new ContentPlugin(databaseClient);
-                String content = cp.getContents(entityName, codeFormat, flowType, mappingName);
+                String content = cp.getContents(entityName, codeFormat, flowType, mappingNameWithVersion);
                 writeBuffer(content, flowDir.resolve("content." + codeFormat));
             } else {
                 writeFile("scaffolding/" + flowType + "/" + codeFormat + "/content." + codeFormat,
@@ -149,7 +146,7 @@ public class ScaffoldingImpl implements Scaffolding {
                 .withType(flowType)
                 .withCodeFormat(codeFormat)
                 .withDataFormat(dataFormat)
-                .withMapping(mappingName)
+                .withMapping(mappingNameWithVersion)
                 .build();
 
             FileWriter fw = new FileWriter(flowDir.resolve(flowName + ".properties").toFile());

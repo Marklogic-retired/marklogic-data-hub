@@ -54,13 +54,13 @@
         <span tooltip="This is the MLCP Command line that we generated from the options you chose.">
           MLCP Command
         </span>
-        <!--<button-->
-          <!--class="mdl-button mdl-js-button mdl-button&#45;&#45;icon"-->
-          <!--[appClipboard]="mlcpcmd"-->
-          <!--(onSuccess)="cmdCopied()">-->
-          <!--<i class="fa fa-copy" aria-hidden="true">-->
-          <!--</i>-->
-        <!--</button>-->
+        <button
+          class="mdl-button mdl-js-button mdl-button&#45;&#45;icon"
+          [appClipboard]="mlcpcmd"
+          (onSuccess)="cmdCopied()">
+          <i class="fa fa-copy" aria-hidden="true">
+          </i>
+        </button>
       </h4>
       <div class="mlcp-cmd" flex layout="column">
         <div id="mlcp-cmd-copied" class="mdl-js-snackbar mdl-snackbar">

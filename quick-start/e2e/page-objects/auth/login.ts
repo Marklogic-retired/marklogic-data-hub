@@ -86,7 +86,7 @@ export class LoginPage extends AppPage {
     return element(by.css('#finished-button'));
   }
 
-  get dataHubNameLabel() {  
+  get dataHubNameLabel() {
     return element(by.cssContainingText('#InitIfNeededTab', 'DataHub Name'));
   }
 
@@ -99,13 +99,13 @@ export class LoginPage extends AppPage {
     return this.dataHubName.sendKeys(dataHubName);
   }
 
-  get marklogicHostLabel() {  
+  get marklogicHostLabel() {
     return element(by.name('host'));
   }
 
   clickAdvancedSettings() {
     return element(by.buttonText('Advanced Settings')).click();
-  } 
+  }
 
   get stagingAppserverNameLabel() {
     return element(by.name('stagingHttpName'));
@@ -151,7 +151,7 @@ export class LoginPage extends AppPage {
 
   //get userName element
   get userName(){
-    return element(by.name('username')).element(by.tagName('input'));
+    return element(by.css('input#username'))
   }
 
   //get password element

@@ -4,7 +4,20 @@
 
     <div id="map-heading">
 
-      <h1>{{flowName}} Map</h1>
+      <div id="map-name">
+        <h1>
+         {{mapName}}
+          <p>Version: {{mapping.version}}</p>
+          <p *ngIf="!editingDescription" class="desc">
+            Description: <span (click)="editingDescription=true" ng-class="description">{{ mapping.description }}</span>   <span class="fa fa-pencil edit-uri" (click)="editingDescription=true"></span>
+          </p>
+          <p *ngIf="editingDescription" class="edit-description">
+            Description: <input type="text" class="edit-description-val" [(ngModel)]="editDescriptionVal" />
+            <span class="edit-description-save" (click)="updateDescription();"><i class="fa fa-check"></i></span>
+            <span class="edit-description-cancel" (click)="cancelEditDescription();"><i class="fa fa-remove"></i></span>
+          </p>
+        </h1>
+      </div>
 
       <div id="save-map">
         <mdl-button mdl-button-type="raised" mdl-colored="primary" mdl-ripple ng-class="btn-save-map" (click)="saveMap()">Save Map</mdl-button>
@@ -15,9 +28,17 @@
 
     <div id="source">
       <div id="src-heading" #srcheading>
-        <h4 class="item-type">Source</h4>
-        <p class="item-identifying-info">
-          <span ng-class="title-sample-doc" title="{{ sampleDoc?.uri }}">{{ getLastChars(sampleDoc?.uri, 40, '...') }}</span>
+        <div class="item-type">
+          Source
+          <span class="fa fa-pencil edit-uri" (click)="editingURI=true"></span>
+        </div>
+        <p *ngIf="!editingURI" class="item-identifying-info">
+          <span (click)="editingURI=true" ng-class="title-sample-doc" title="{{ sampleDocURI }}">{{ getLastChars(sampleDocURI, 40, '...') }}</span>
+        </p>
+        <p *ngIf="editingURI" class="edit-uri">
+          <input type="text" class="edit-uri-val" [(ngModel)]="editURIVal" />
+          <span class="edit-uri-save" (click)="updateSampleDoc();"><i class="fa fa-check"></i></span>
+          <span class="edit-uri-cancel" (click)="cancelEditURI()"><i class="fa fa-remove"></i></span>
         </p>
       </div>
 
@@ -73,7 +94,7 @@
 
     <div id="harmonized">
       <div id="harm-heading">
-        <h4 class="item-type">Model</h4>
+        <div class="item-type">Model</div>
         <p class="item-identifying-info">
           <span ng-class="title-entity-model">{{ chosenEntity?.info.title }}</span>
         </p>
@@ -90,12 +111,12 @@
           <span class="prop-name">{{prop.name}}</span>
           <span class="prop-type">{{prop.datatype}}</span>
           <span class="entity-icons">
-            <span class="entity-icon" title="Primary Key"><i class="fa fa-key" [ngClass]="{'icon-hide': !(prop.name === entityPrimaryKey)}"></i></span>
-            <span class="entity-icon" title="Element Range Index"><i class="fa fa-bolt" [ngClass]="{'icon-hide': !hasElementRangeIndex(prop.name)}"></i></span>
-            <span class="entity-icon" title="Path Range Index"><i class="fa fa-code" [ngClass]="{'icon-hide': !hasRangeIndex(prop.name)}"></i></span>
-            <span class="entity-icon" title="Word Lexicon"><i class="fa fa-won" [ngClass]="{'icon-hide': !hasWordLexicon(prop.name)}"></i></span>
-            <span class="entity-icon" title="Required"><i class="fa fa-exclamation" [ngClass]="{'icon-hide': !isRequired(prop.name)}"></i></span>
-            <span class="entity-icon" title="Personally Identifiable Information"><i class="fa fa-lock" [ngClass]="{'icon-hide': !isPII(prop.name)}"></i></span>
+            <span class="entity-icon" title="Primary Key"><i class="fa fa-key fa-fw" [ngClass]="prop.name === entityPrimaryKey ? 'entity-icon-selected' : 'icon-hide'"></i></span>
+            <span class="entity-icon" title="Element Range Index"><i class="fa fa-bolt fa-fw" [ngClass]="hasElementRangeIndex(prop.name) ? 'entity-icon-selected' : 'icon-hide'"></i></span>
+            <span class="entity-icon" title="Path Range Index"><i class="fa fa-code fa-fw" [ngClass]="hasRangeIndex(prop.name) ? 'entity-icon-selected' : 'icon-hide'"></i></span>
+            <span class="entity-icon" title="Word Lexicon"><i class="fa fa-won fa-fw" [ngClass]="hasWordLexicon(prop.name) ? 'entity-icon-selected' : 'icon-hide'"></i></span>
+            <span class="entity-icon" title="Required"><i class="fa fa-exclamation fa-fw" [ngClass]="isRequired(prop.name)? 'entity-icon-selected' : 'icon-hide'"></i></span>
+            <span class="entity-icon" title="Personally Identifiable Information"><i class="fa fa-lock fa-fw" [ngClass]="isPII(prop.name)? 'entity-icon-selected' : 'icon-hide'"></i></span>
           </span>
         </div>
 
