@@ -1,60 +1,59 @@
-<div layout-padding layout="column" layout-align="center center" class="map-page">
+<div gm-grid>
+  <div gm-row class="flex-100 maps-page">
+    <div gm-col class="flex-0 maps-bar">
+      <span class="mdl-layout-title">
+        Mappings
+      </span>
 
-  <div class="map-container">
+      <ul class="entities mdl-list">
+        <li
+          class="entity mdl-list__item"
+          *ngFor="let entity of entities">
+          <div [attr.data-entity]="entity.name" class="mdl-list__item-primary-content">
+            <i class="fa fa-industry"></i> {{ entity.name }}
+            <div class="mdl-layout-spacer"></div>
+            <mdl-button *ngIf="entity.hasDocs" mdl-button-type="icon" id="new-map" (click)="showNewMapping(entity)">
+              <i class="fa fa-plus"></i>
+            </mdl-button>
+            <mdl-button *ngIf="!entity.hasDocs" mdl-button-type="icon" id="new-map-disabled" disabled>
+              <i class="fa fa-plus"></i>
+            </mdl-button>
+          </div>
+          <div *ngIf="!entity.hasDocs" class="no-src-docs">Load source documents for this entity to create mappings</div>
+          <div *ngIf="entity.hasDocs" [attr.data-for-entity]="entity.name" class="map-container">
+            <div class="padder">
+              <!-- <ng-template ngFor let-type [ngForOf]="flowTypes"> -->
+                <ul class="maps mdl-list">
+                  <li
+                    class="map mdl-list__item"
+                    [ngClass]="{'active': isActiveMap(entity, map)}"
+                    *ngFor="let map of entityMappingsMap.get(entity)">
+                    <div [attr.data-map-name]="map.name" (click)="editMapping(entity, map)">
+                      <span class="mdl-list__item-primary-content">
+                        <i class="fa fa-map"></i>
+                        {{ map.name }}
+                        <span class="mdl-layout-spacer"></span>
+                        <i class="fa fa-trash" (click)="deleteMapping($event, map)"></i>
+                      </span>
+                    </div>
+                  </li>
+                </ul>
+              <!-- </ng-template> -->
+            </div>
+          </div>
+        </li>
+      </ul>
 
-    <div id="map-heading">
-      <h1>Mappings</h1>
     </div>
+    <gm-divider></gm-divider>
+    <div gm-col class="flex-100">
 
-    <div  class="entity-container">
-      <!-- list entities -->
-      <div *ngFor="let entity of entities;" class="entity">
+      <router-outlet></router-outlet>
 
-        <h4 class="entity-header">{{entity.name}}
-          <span *ngIf="entity.hasDocs">
-          <mdl-button mdl-button-type="icon" id="new-mapping" (click)="showNewMapping(entity)">
-          <i class="fa fa-plus"></i>
-        </mdl-button>
-          </span>
-        <span *ngIf="!entity.hasDocs" class="load-docs">Load source documents to create a mapping from for this entity.</span>
-        </h4>
-        <!-- each map -->
-        <table class="mappings-table">
-          <thead>
-          <tr>
-            <th class="">Name</th>
-            <th>Description</th>
-            <th>Version #</th>
-            <th class="icons"></th>
-          </tr>
-          </thead>
-          <tbody>
-          <tr *ngFor="let mapping of entityMappingsMap.get(entity);let i = index;" class="mapping-row" (click)="editMapping(entity, mapping)">
-            <td class="name">{{mapping.name}}</td>
-            <td class="description">{{mapping.description}}</td>
-            <td class="version">{{mapping.version}}</td>
-            <td class="icons"><i class="fa fa-trash" (click)="deleteMapping($event, mapping)"></i></td>
-          </tr>
-          </tbody>
-        </table>
+    </div>
+  </div>
+</div>
 
-      </div> <!-- for -->
 
-      <!-- unassigned to models -->
-      <div class="entity">
-        <h4>Unassigned or Unmatched Mappings</h4>
-        <!-- each map -->
-        <table class="mappings-table">
-          <thead>
-          </thead>
-          <tbody>
-          </tbody>
-        </table>
 
-      </div> <!-- unassigned -->
 
-    </div><!-- entity list container -->
-
-  </div><!-- map-container -->
-
-</div><!-- layout-padding -->

@@ -19,8 +19,8 @@ export class MappingsComponent implements OnInit, OnDestroy, AfterViewInit {
 
   public subscribers: Map<string, Subscriber<any>> = new Map();
 
-  private entityName: string;
-  private mapName: string;
+  private activeEntity: Entity;
+  private activeMapping: Mapping;
   public flowName: string;
 
   private entitiesLoaded: boolean = false;
@@ -92,23 +92,34 @@ export class MappingsComponent implements OnInit, OnDestroy, AfterViewInit {
     return this.entityMappingsMap.get(entity);
   }
 
-  /**
-   * Handle cancel button event
-   */
-  cancelMap(): void {
-    let result = this.dialogService.confirm('Cancel and lose any changes?', 'Stay On Page', 'OK');
-    result.subscribe( () => {
-        this.router.navigate(['/flows', this.entityName, this.flowName, 'HARMONIZE']);
-      },(err: any) => {
-        console.log('map cancel aborted');
-      }
-    );
+  isActiveMap(entity: Entity, mapping: Mapping): boolean {
+    return this.activeEntity && this.activeEntity.name === entity.name &&
+      this.activeMapping && this.activeMapping.name === mapping.name;
   }
 
   showNewMapping(entity: Entity) {
     let actions = {
       save: (newMapName: string) => {
-        this.router.navigate(['/mappings/map'], {queryParams: {entityName: entity.name, mapName: newMapName}});
+
+        let mapObj = {
+          "language" : "zxx",
+          "name" : newMapName,
+          "description" : "",
+          "version" : "1",
+          "targetEntityType" : entity.info.baseUri + '/'+ entity.name +'-0.0.' + entity.info.version + '/' + entity.name,  // TODO
+          "sourceContext": '',
+          "properties": {}
+        }
+
+
+        this.mapService.saveMap(newMapName, JSON.stringify(mapObj)).subscribe((res: any) => {
+          this.mapService.getMap(newMapName).subscribe((res: any) => {
+            this.activeEntity = entity;
+            this.activeMapping = new Mapping().fromJSON(res);
+            this.router.navigate(['/mappings', entity.name, newMapName]);
+          });
+        });
+
       }
     };
     this.dialogService.showCustomDialog({
@@ -122,7 +133,9 @@ export class MappingsComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   editMapping(entity: Entity, mapping: Mapping){
-    this.router.navigate(['/mappings/map'], {queryParams: {entityName: entity.name, mapName: mapping.name}});
+    this.activeEntity = entity;
+    this.activeMapping = mapping;
+    this.router.navigate(['/mappings', entity.name, mapping.name]);
   }
 
   deleteMapping(event: MouseEvent, mapping: Mapping): void {
@@ -135,6 +148,11 @@ export class MappingsComponent implements OnInit, OnDestroy, AfterViewInit {
     event.cancelBubble = true;
     this.dialogService.confirm(`Really delete ${mapping.name} mapping?`, 'Cancel', 'Delete').subscribe(() => {
         this.mapService.deleteMap(mapping).subscribe((res: any) => {
+          this.mapService.getMappings();
+          // Delete mapping currently being viewed?
+          if (this.activeMapping && this.activeMapping.name === mapping.name) {
+            this.router.navigate(['/mappings']);
+          }
         });
       },
       () => {});

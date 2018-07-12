@@ -1,5 +1,5 @@
-.map-container {
-  width: 1200px;
+.map-container2 {
+  width: 1000px;
   padding: 0;
 }
 
@@ -12,7 +12,7 @@
   font-weight: normal;
   margin: 10px 0;
   padding: 0;
-  width: 870px;
+  width: 685px;
   position: relative;
   float: left;
 }
@@ -219,13 +219,7 @@ p.item-identifying-info {
   color: #ccc;
 }
 
-.edit-uri-val {
-  width: 411px;
-  padding: 3px 1px;
-  height: 28px;
-}
-
-.edit-uri {
+.edit-item {
   font-size: 16px;
   padding-left: 0;
   vertical-align: middle;
@@ -233,19 +227,50 @@ p.item-identifying-info {
   cursor: pointer;
 }
 
-.edit-uri-save, .edit-uri-cancel {
+.edit-save, .edit-cancel {
   padding-left: 7px;
   cursor: pointer;
 }
 
-.edit-uri-save {
+.edit-save {
   color: green;
 }
 
-.edit-uri-cancel {
+.edit-cancel {
   color: red;
 }
 
 p.edit-uri {
   margin: 0 0 6px 2px;
+}
+
+.edit-desc {
+  font-size: 16px;
+  padding-left: 0;
+  vertical-align: middle;
+  margin-bottom: 2px;
+  cursor: pointer;
+}
+
+.edit-uri-val, .edit-desc-val {
+  width: 411px;
+  padding: 3px 1px;
+  height: 28px;
+}
+
+.edit-desc-val {
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+.desc {
+  font-size: 14px;
+  padding-right: 7px;
+}
+
+.no-desc {
+  font-size: 14px;
+  color: #AAA;
+  font-style: italic;
+  padding-right: 7px;
 }
