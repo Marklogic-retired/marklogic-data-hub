@@ -540,8 +540,7 @@ function {service:camel-case("extractInstance-" || $entity-type-name)}(source) {
   }}
   {
     if (fn:empty($mapping) eq fn:false() and fn:empty(map:get($mapping, "name")) eq fn:false()) then
-      <txt>/* These mappings were generated using mapping: {map:get($mapping, "name")}, version: {map:get($mapping, "version")} on {fn:current-dateTime()}. */
-      </txt>/text()
+      <txt>/* These mappings were generated using mapping: {map:get($mapping, "name")}, version: {map:get($mapping, "version")} on {fn:current-dateTime()}. */&#10;  </txt>/text()
     else ()
   }
   {
