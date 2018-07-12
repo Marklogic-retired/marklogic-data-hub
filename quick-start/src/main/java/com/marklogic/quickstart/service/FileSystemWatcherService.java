@@ -149,7 +149,9 @@ public class FileSystemWatcherService extends EnvironmentAware implements Dispos
 
     @Override
     public synchronized void destroy() throws Exception {
-        watcher().close();
+        if (watcher() != null) {
+            watcher().close();
+        }
     }
 
     private class DirectoryWatcherThread extends Thread {

@@ -17,6 +17,8 @@
 package com.marklogic.quickstart.service;
 
 import com.marklogic.appdeployer.command.Command;
+import com.marklogic.appdeployer.command.security.DeployProtectedPathsCommand;
+import com.marklogic.appdeployer.command.security.DeployQueryRolesetsCommand;
 import com.marklogic.appdeployer.impl.SimpleAppDeployer;
 import com.marklogic.hub.DataHub;
 import com.marklogic.hub.HubConfig;
@@ -182,6 +184,10 @@ public class DataHubService {
         LoadUserModulesCommand loadUserModulesCommand = new LoadUserModulesCommand(hubConfig);
         loadUserModulesCommand.setForceLoad(forceLoad);
         commands.add(loadUserModulesCommand);
+
+        //Deploy security modules for PII
+        commands.add(new DeployProtectedPathsCommand());
+        commands.add(new DeployQueryRolesetsCommand());
 
         SimpleAppDeployer deployer = new SimpleAppDeployer(((HubConfigImpl)hubConfig).getManageClient(), ((HubConfigImpl)hubConfig).getAdminManager());
         deployer.setCommands(commands);
