@@ -51,8 +51,7 @@
           <td class="col-toggler" (click)="property.hasWordLexicon = !property.hasWordLexicon"><i [ngClass]="{'active': property.hasWordLexicon}" class="fa fa-won"></i></td>
           <td class="col-toggler" (click)="property.required = !property.required"><i [ngClass]="{'active': property.required}" class="fa fa-exclamation"></i></td>
           <td class="col-toggler" (click)="property.pii = !property.pii"><i [ngClass]="{'active': property.pii}" class="fa fa-lock"></i></td>
-
-          <td><input type="text" name="name" [ngClass]="{'has-whitespace': property.invalidString}" [(ngModel)]="property.name" [pattern]="PROPERTY_NAME_PATTERN" required></td>
+          <td><input type="text" name="name" [ngClass]="{'has-whitespace':!property.validString}" [(ngModel)]="property.name" [pattern]="PROPERTY_NAME_PATTERN" required></td>
           <td>
             <select [ngModel]="getTypeForEdit(property)" (ngModelChange)="setType(property, $event)">
               <option *ngFor="let option of dataTypes" [disabled]="!!option.disabled" [ngValue]="option.value">{{option.label}}</option>

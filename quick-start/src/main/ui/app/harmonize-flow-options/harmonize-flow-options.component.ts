@@ -15,6 +15,9 @@ import { SearchService } from '../search/search.service';
 import { SelectKeyValuesComponent } from '../select-key-values/select-key-values.component';
 import { MapService } from '../mappings/map.service';
 import { MdlDialogService } from '@angular-mdl/core';
+import { PropertyType } from '../entities';
+import { Entity } from "../entities";
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-harmonize-flow-options',
@@ -64,6 +67,7 @@ export class HarmonizeFlowOptionsComponent implements OnInit, OnChanges {
     this.loadSettings(this.flow.flowName);
     this.docsLoaded(this.flow.entityName);
     this.saveSettings();
+    this.validEntityCheck();
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -71,6 +75,15 @@ export class HarmonizeFlowOptionsComponent implements OnInit, OnChanges {
     this.loadMap(changes.flow.currentValue.flowName);
     this.loadSettings(changes.flow.currentValue.flowName);
     this.docsLoaded(changes.flow.currentValue.entityName);
+  }
+
+  validEntityCheck(): boolean {
+    let entity = _.find(this.entitiesService.entities, {name: this.flow.entityName});
+    if(entity) {
+      return this.invalidString(entity);
+    } else {
+      return false;
+    }
   }
 
   updateKayVals(newKeyVals) {
@@ -173,6 +186,20 @@ export class HarmonizeFlowOptionsComponent implements OnInit, OnChanges {
     },
     () => {},
     () => {});
+  }
+
+  invalidString(entity : Entity): boolean
+  {
+    if(entity.info.title.indexOf(" ") !== -1)
+    {
+      return false;
+    }
+    for(let property of entity.definition.properties) {
+      if(property.name.indexOf(' ') !== -1) {
+        return false;
+      }
+    }
+    return true;
   }
 
 }
