@@ -45,6 +45,10 @@ $bg-color: unquote("rgb(#{$palette-datahub-500})");
       }
     }
   }
+
+  .facet-right-padding {
+    padding-right: 5px;
+  }
 }
 
 /deep/ span.badge.mdl-badge[data-badge] {
