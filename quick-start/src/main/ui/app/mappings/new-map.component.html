@@ -17,6 +17,13 @@
             #mapNameInput="ngModel"
             [(ngModel)]="mapName"></mdl-textfield>
         </div>
+        <mdl-textfield name="mapDescInput" type="text"
+             required floating-label
+             id="mapDescInput"
+             label="Mapping Description"
+             #mapDescInput="ngModel"
+             [(ngModel)]="mapDesc">
+        </mdl-textfield>
       </div>
       <div class="mdl-dialog__actions">
         <button type="submit" [disabled]="mapNameInput && mapNameInput.errors && mapNameInput.errors.required" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect">Create</button>

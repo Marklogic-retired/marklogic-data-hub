@@ -31,12 +31,10 @@
 
     <div id="source">
       <div id="src-heading" #srcheading>
-        <div class="item-type">
-          Source
-          <span class="fa fa-pencil edit-item" (click)="editingURI=true"></span>
-        </div>
+        <div class="item-type">Source</div>
         <p *ngIf="!editingURI" class="item-identifying-info">
-          <span (click)="editingURI=true" ng-class="title-sample-doc" title="{{ sampleDocURI }}">{{ getLastChars(sampleDocURI, 40, '...') }}</span>
+          <span (click)="editingURI=true" ng-class="sample-doc-uri" class="sample-doc-uri" title="{{ sampleDocURI }}">{{ getLastChars(sampleDocURI, 40, '...') }}</span>
+          <span class="fa fa-pencil edit-item" (click)="editingURI=true"></span>
         </p>
         <p *ngIf="editingURI" class="edit-uri">
           <input type="text" class="edit-uri-val" [(ngModel)]="editURIVal" (keypress)="keyPressURI($event)" />
