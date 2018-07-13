@@ -99,12 +99,12 @@ export class MappingsComponent implements OnInit, OnDestroy, AfterViewInit {
 
   showNewMapping(entity: Entity) {
     let actions = {
-      save: (newMapName: string) => {
+      save: (newMapName: string, newMapDesc: string) => {
 
         let mapObj = {
           "language" : "zxx",
           "name" : newMapName,
-          "description" : "",
+          "description" : newMapDesc,
           "version" : "1",
           "targetEntityType" : entity.info.baseUri + '/'+ entity.name +'-0.0.' + entity.info.version + '/' + entity.name,  // TODO
           "sourceContext": '',

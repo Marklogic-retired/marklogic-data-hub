@@ -19,7 +19,7 @@
               <i class="fa fa-plus"></i>
             </mdl-button>
           </div>
-          <div *ngIf="!entity.hasDocs" class="no-src-docs">Load source documents for this entity to create mappings</div>
+          <div *ngIf="!entity.hasDocs" class="no-src-docs">To enable mapping, load source data</div>
           <div *ngIf="entity.hasDocs" [attr.data-for-entity]="entity.name" class="map-container">
             <div class="padder">
               <!-- <ng-template ngFor let-type [ngForOf]="flowTypes"> -->
