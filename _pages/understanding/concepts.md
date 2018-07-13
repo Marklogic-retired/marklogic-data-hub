@@ -7,9 +7,9 @@ permalink: /understanding/concepts/
 # What Is an Operational Data Hub?
 At the highest conceptual level an Operational Data Hub is a place to harmonize and govern all of your enterprise data. The ODH allows you to harmonize data from many data sources in order to meet business needs.
 
-The following diagram illustrates the architectural view of an ODH.
+The following diagram illustrates the architectural view of an ODH:
 
-![What is it](//raw.githubusercontent.com/marklogic/marklogic-data-hub/design/images/hub-architecture.png){: .center-image }
+![Architecture diagram]({{site.baseurl}}/images/odh-arch.png)
 
 ### An ODH performs four key functions:
 
