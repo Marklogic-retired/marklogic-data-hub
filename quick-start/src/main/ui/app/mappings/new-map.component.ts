@@ -18,6 +18,7 @@ export class NewMapComponent {
   actions: any;
   entity: Entity;
   mapName: string;
+  mapDesc: string = '';
 
   constructor(
     private dialog: MdlDialogReference,
@@ -48,7 +49,7 @@ export class NewMapComponent {
     if (this.mapName && this.mapName.length > 0) {
       this.hide();
       if (this.actions && this.actions.save) {
-        this.actions.save(this.mapName);
+        this.actions.save(this.mapName, this.mapDesc);
       }
     }
   }

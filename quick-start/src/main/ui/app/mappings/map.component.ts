@@ -46,14 +46,14 @@ export class MapComponent implements OnInit {
   public filterText = {};
 
   // Edit source URI
-  public editURIVal = '';
+  public editURIVal;
   public editingURI = false;
 
   //edit source Context
   public editingSourceContext = false;
 
   //edit description
-  public editDescVal = '';
+  public editDescVal;
   public editingDesc = false;
   /**
    * Load chosen entity to use as harmonized model.
@@ -332,6 +332,10 @@ export class MapComponent implements OnInit {
     this.mapService.getMap(this.mapName).subscribe((map: any) => {
       if(map) {
         this.mapping = map;
+        this.editDescVal = map.description;
+        // close any open edit inputs when changing mappings
+        this.editingDesc = false;
+        this.editingURI = false;
       }
       if (map && map.properties) {
         self.conns = {};
