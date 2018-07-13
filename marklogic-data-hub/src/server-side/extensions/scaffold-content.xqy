@@ -387,7 +387,7 @@ declare function service:generate-vars($model as map:map, $entity-type-name, $ma
       else
         map:get($property, "$ref")
     let $path-to-property :=
-      if (service:mapping-present($mapping, $property-name)) then (fn:concat("source.xpath('",service:map-value($property-name, $mapping), "')"))  else (service:get-property("source", $property-name))
+      if (service:mapping-present($mapping, $property-name)) then (fn:concat("source.xpath('",service:map-value($property-name, $mapping), "')"))  else (fn:concat("source.xpath('/", $property-name, "')"))
     let $property-comment :=
       if (fn:empty($ref)) then ()
       else if (fn:contains($ref, "#/definitions")) then
@@ -429,11 +429,11 @@ declare function service:generate-vars($model as map:map, $entity-type-name, $ma
           fn:string-join((
             "[];",
             "if(" || $path-to-property || ") {",
-            "  for(const item of Sequence.from(source." || $property-name || ")) {",
+            "  for(const item of Sequence.from(source.xpath('/" || $property-name || "'))) {",
             "    // either return an instance of a " || $ref-name,
-            "  "   || service:camel-case($property-name) || ".push(" || service:camel-case("extractInstance-" || $ref-name) || "(item));",
+            "    "   || service:camel-case($property-name) || ".push(" || service:camel-case("extractInstance-" || $ref-name) || "(item));",
             "    // or a reference to a " || $ref-name,
-            "    // " || service:camel-case($property-name) || ".push(makeReferenceObject('" || $ref-name || "', item));",
+            "    " || service:camel-case($property-name) || ".push(makeReferenceObject('" || $ref-name || "', item));",
             "  }",
             "}"
           ), "&#10;  ")
@@ -442,10 +442,10 @@ declare function service:generate-vars($model as map:map, $entity-type-name, $ma
             "null;",
             "if(" || $path-to-property || ") {",
             "  // either return an instance of a " || $ref-name,
-            "  " || service:camel-case($property-name) || " = " || service:camel-case("extractInstance-" || $ref-name) || "(source." || $property-name || ");",
+            "  " || service:camel-case($property-name) || " = " || service:camel-case("extractInstance-" || $ref-name) || "(source.xpath('/" || $property-name || "'));",
             "",
             "  // or a reference to a " || $ref-name,
-            "  // " || service:camel-case($property-name) || " = makeReferenceObject('" || $ref-name || "', source." || $property-name || ");",
+            "  // " || service:camel-case($property-name) || " = makeReferenceObject('" || $ref-name || "', source.xpath('/" || $property-name || "'));",
             "}"
           ), "&#10;  ")
       else
@@ -454,7 +454,7 @@ declare function service:generate-vars($model as map:map, $entity-type-name, $ma
             " null;",
             "  if (" || service:get-property($path-to-property, $ref-name) || ") {",
             "    " || service:camel-case($property-name) || " = " || service:get-property($path-to-property, $ref-name) || ".map(function(item) {",
-            "      return makeReferenceObject('" || $ref-name || "', source."|| $property-name || ");",
+            "      return makeReferenceObject('" || $ref-name || "', source.xpath('/"|| $property-name || "'));",
             "    });",
             "  }"
           ), "&#10;")
@@ -530,14 +530,17 @@ return <extract-instance>
 *   metadata about the instance.
 */
 function {service:camel-case("extractInstance-" || $entity-type-name)}(source) {{
-  // the original source documents
+  {
+    if ($entity eq $entity-type-name) then
+  "// the original source documents
   let attachments = source;
-  // now check to see if we have XML or json, then just go to the instance
-  if(source instanceof Element) {{
-    source = fn.head(source.xpath('/*:envelope/*:instance'))
-  }} else if(source instanceof ObjectNode) {{
-    source = source.envelope.instance;
-  }}
+  // now check to see if we have XML or json, then create a node clone from the root of the instance
+  if (source instanceof Element || source instanceof ObjectNode) {
+    source = new NodeBuilder().addNode(fn.head(source.xpath('/*:envelope/*:instance'))).toNode();
+  }
+  "
+    else ()
+  }
   {
     if (fn:empty($mapping) eq fn:false() and fn:empty(map:get($mapping, "name")) eq fn:false()) then
       <txt>/* These mappings were generated using mapping: {map:get($mapping, "name")}, version: {map:get($mapping, "version")} on {fn:current-dateTime()}. */&#10;  </txt>/text()
