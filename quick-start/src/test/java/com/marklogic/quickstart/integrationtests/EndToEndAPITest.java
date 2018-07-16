@@ -126,22 +126,21 @@ public class EndToEndAPITest extends HubTestBase {
 		
 		assertEquals(200, projectInitResponse.statusCode());
 		assertTrue(projectInitStatus);
-		assertTrue(projectPath.contains("marklog-data-hub-develop/marklogic-data-hub/quick-start/ye-olde-project"));
-		System.out.println("projectInitResponse: "+ projectInitResponse.asString());
-		System.out.println("Project Init Test Passed");
+		assertTrue(projectPath.contains("marklogic-data-hub/quick-start/ye-olde-project"));
+		logger.info("Project Init Test Passed");
 		
 		// Tests api's to login into the quick-start application. A session cookie is received in
 		// header which has to be attached to the subsequent requests for security
 		loginResponse = utils.doLogin();
 		
 		assertTrue(!loginResponse.isEmpty());
-		System.out.println("Login Test Passed");
+		logger.info("Login Test Passed");
 		
 		// Clear all the documents in the databases
 		clearDbResponse = utils.clearAllDatabases();
 		
 		assertEquals(200, clearDbResponse.statusCode());
-		System.out.println("Clear DB's test passed");
+		logger.info("Clear DB's test passed");
 		
 		// Test api's to check the database names and the number of documents available in each database
 		statsResponse = utils.getDocStats();
@@ -156,7 +155,7 @@ public class EndToEndAPITest extends HubTestBase {
 		assertEquals("data-hub-FINAL", statsJson.get("finalDb"));
 		assertEquals("data-hub-JOBS", statsJson.get("jobDb"));
 		assertEquals("data-hub-JOBS", statsJson.get("traceDb"));
-		System.out.println("Stats Test Passed");
+		logger.info("Stats Test Passed");
 		
 		// Test api's to create new entities
 		createEntityJsonBody = getResource("integration-test-data/create-entity-model.json");
@@ -167,8 +166,7 @@ public class EndToEndAPITest extends HubTestBase {
 		
 		assertEquals(200, createEntityResponse.statusCode());
 		assertTrue(responseEntityTitle.equals(entityName));
-		System.out.println("createEntityResponse: "+ createEntityResponse.asString());
-		System.out.println("Create Entities Test Passed");
+		logger.info("Create Entities Test Passed");
 		
 		// Get the list of entities and verify if entities are created
 		getEnitiesResponse = utils.getAllEntities();
@@ -179,7 +177,7 @@ public class EndToEndAPITest extends HubTestBase {
 		assertEquals(200, getEnitiesResponse.statusCode());
 		assertEquals(1, entitiesList.size());
 		assertTrue(responseEntityTitle.equals(entityName));
-		System.out.println("Verify Entities Test Passed");
+		logger.info("Verify Entities Test Passed");
 		
 		// Test API's for creation on input flows.
 		flowType = "INPUT";
@@ -196,19 +194,19 @@ public class EndToEndAPITest extends HubTestBase {
 		assertTrue(entityName.equals(respEntityName));
 		assertTrue(flowType.equals(respFlowType));
 		assertTrue(pluginDir.contains("/"+respFlowName+"/content.sjs"));
-		System.out.println("Create Input Flow test passed");
+		logger.info("Create Input Flow test passed");
 		utils.waitForReloadModules();
 		
 		// Test API's for running the input flow created 
 		runFlowOptions = new HashMap<>();
 		inputPath = getResourceFile("integration-test-data/input/input" + "." + DataFormat.JSON.toString())
 				.getAbsolutePath();
-        basePath = getResourceFile("integration-test-data/input").getAbsolutePath();
+		basePath = getResourceFile("integration-test-data/input").getAbsolutePath();
 		mlcpOptions = utils.generateMLCPOptions(inputPath, basePath, entityName, "",
 				CodeFormat.JAVASCRIPT, DataFormat.JSON, runFlowOptions);
 		runIpFlowResponse = utils.runFlow(mlcpOptions, entityName, FlowType.INPUT);
 		assertEquals(204, runIpFlowResponse.statusCode());
-		System.out.println("Run Input Flow Test Passed");
+		logger.info("Run Input Flow Test Passed");
 		utils.waitForReloadModules();
 		
 		// Checking if the staging database has 1 document after input flow.
@@ -231,6 +229,7 @@ public class EndToEndAPITest extends HubTestBase {
 		((ObjectNode) mappingDataJsonNode).put("name", mapName);
 		createMapResponse = utils.createMap(mapName, mappingDataJsonNode);
 		assertEquals(200, createMapResponse.statusCode());
+		logger.info("Create Map test passed");
 		utils.waitForReloadModules();
 		
 		// The map created has the wrong mapping data. The harmonization flow which
@@ -249,7 +248,7 @@ public class EndToEndAPITest extends HubTestBase {
 		assertTrue(entityName.equals(respEntityName));
 		assertTrue(flowType.equals(respFlowType));
 		assertTrue(pluginDir.contains("/"+respFlowName+"/content.sjs"));
-		System.out.println("Create Harmonize Flow Passed");
+		logger.info("Create Harmonize Flow Passed");
 		
 		utils.waitForReloadModules();
 		
@@ -269,12 +268,13 @@ public class EndToEndAPITest extends HubTestBase {
 				}
 			}
 		}
-		System.out.println("Run Harmonize Flow test Passed");		
+		logger.info("Run Harmonize Flow test for incorrect mapping passed");
 		utils.waitForReloadModules();
 		
 		// Test to delete this harmonization flow.
 		deleteFlowResponse = utils.deleteFlow(entityName, respFlowName, flowType);
 		assertEquals(204, deleteFlowResponse.statusCode());
+		logger.info("Delete Flow test passed");
 		
 		// Edit the map and verify if the data is correct. To do this, get the map
 		// edit the map and save it. Next step is to get the map and verify the 
@@ -293,6 +293,7 @@ public class EndToEndAPITest extends HubTestBase {
 		assertEquals(200, getMappingResponse.statusCode());
 		assertEquals(2, getMappingResponse.jsonPath().getInt("version"));
 		assertTrue(mapName.equals(getMappingResponse.jsonPath().get("name")));
+		logger.info("Get Map info test passed");
 		utils.waitForReloadModules();
 		
 		// Test API's for creation on harmonize flows.
@@ -310,7 +311,7 @@ public class EndToEndAPITest extends HubTestBase {
 		assertTrue(entityName.equals(respEntityName));
 		assertTrue(flowType.equals(respFlowType));
 		assertTrue(pluginDir.contains("/"+respFlowName+"/content.sjs"));
-		System.out.println("Create Harmonize Flow Passed");
+		logger.info("Create Harmonize Flow Passed");
 		utils.waitForReloadModules();
 		
 		// Next step is to run the created harmonize flow
@@ -319,7 +320,7 @@ public class EndToEndAPITest extends HubTestBase {
 		runHmFlowResponse = utils.runFlow(runHmJsonObj, entityName, FlowType.HARMONIZE);
 		
 		assertEquals(200, runHmFlowResponse.statusCode());
-		System.out.println("Run Harmonize Flow test Passed");
+		logger.info("Run Harmonize Flow test Passed for correct mapping data");
 		utils.waitForReloadModules();
 		
 		// Checking job status
@@ -332,6 +333,7 @@ public class EndToEndAPITest extends HubTestBase {
 				}
 			}
 		}
+		logger.info("Get Jobs Data test passed");
 		
 		// Checking if the staging database has 1 document after input flow.
 		statsResponse = utils.getDocStats();
@@ -339,12 +341,10 @@ public class EndToEndAPITest extends HubTestBase {
 		assertEquals(200, statsResponse.statusCode());
 		assertEquals(1, statsJson.getInt("stagingCount"));
 		assertEquals(4, statsJson.getInt("finalCount"));
-		System.out.println("--------");
-		System.out.println("Waiting for other threads to complete");
 		
 		// Using thread sleep to make the main thread wait for the thread which 
 		// is installing user modules. Need to make wait the main thread for
-		// completion of the thread running installUserModules().
+		// completion of the thread running installUserModules()
 		utils.waitForReloadModules();
 	}
 }

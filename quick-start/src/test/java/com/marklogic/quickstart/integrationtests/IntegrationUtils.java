@@ -26,21 +26,15 @@ import io.restassured.response.Response;
 
 public class IntegrationUtils {
 	
+	private Cookie requestCookie;
+	private FlowModel flowModel;
+	private int hmFlowNameCount = 1;
+	private JobQuery jobQuery;
+	private LoginInfo loginInfo = new LoginInfo();
 	private String sessionID;
 	private String projectPath;
-	
-	// created this field to enable fetch the flowName that was created during the createFlow process
-	// and verify it.
 	private String flowName;
-	private int hmFlowNameCount = 1;
 	
-	private Cookie requestCookie;
-	private LoginInfo loginInfo = new LoginInfo();
-	private FlowModel flowModel;
-	private JobQuery jobQuery;
-	
-	// Tests api's to initialize the project folder and set the environment configuration
-	// Verifies if this the only project and status code of request is 200 OK
 	public Response initilizeProjectConfiguration() {
 		projectPath = new File(HubTestBase.PROJECT_PATH).getAbsolutePath();
 		Response projectInitResponse = 
@@ -54,9 +48,7 @@ public class IntegrationUtils {
 		
 		return projectInitResponse;
 	}
-	// Tests api's to login into the quick-start application. These tests are using the 
-	// admin/admin credentials. A session cookie is received in header which has to be
-	// attached to the subsequent requests for security.
+
 	public String doLogin() {
 		Response loginResponse = 
 				given()
@@ -73,8 +65,6 @@ public class IntegrationUtils {
 		return sessionID;
 	}
 	
-	// Test api's to create new entities and verify if the entities are created by
-	// making subsequent get request
 	public Response createEntity(String createEntityJsonBody, String entityName) {
 		Response createEntityResponse = 
 				given()
@@ -87,7 +77,6 @@ public class IntegrationUtils {
 		return createEntityResponse;
 	}
 	
-	// Get the list of entities and verify if entities are created
 	public Response getAllEntities() {
 		Response getEnitiesResponse = 
 				given()
@@ -222,18 +211,17 @@ public class IntegrationUtils {
                     "\"output_uri_replace\":\"\\\"" + basePath.replace("\\", "/")
                     .replaceAll("^([A-Za-z]):", "/$1:") + ",''\\\"\"," +
                     "\"document_type\":\"\\\"" + dataFormat.toString() + "\\\"\",";
-        if (codeFormat.equals(CodeFormat.JAVASCRIPT)) {
-                optionsJson += "\"transform_module\":\"\\\"/MarkLogic/data-hub-framework/transforms/"
+		if (codeFormat.equals(CodeFormat.JAVASCRIPT)) {
+				optionsJson += "\"transform_module\":\"\\\"/MarkLogic/data-hub-framework/transforms/"
                 		+ "mlcp-flow-transform.sjs\\\"\"," + "\"transform_function\":\"transform\",";
-        } else {
-                optionsJson += "\"transform_module\":\"\\\"/MarkLogic/data-hub-framework/transforms/"
+		} else {
+				optionsJson += "\"transform_module\":\"\\\"/MarkLogic/data-hub-framework/transforms/"
                 		+ "mlcp-flow-transform.xqy\\\"\"," + "\"transform_namespace\":\"\\\"http://marklogic.com/data-hub/"
                 		+ "mlcp-flow-transform\\\"\",";
         }
-        optionsJson += "\"transform_param\":\"entity-name=" + entityName + ",flow-name=" + flowName + ",options=" 
+		optionsJson += "\"transform_param\":\"entity-name=" + entityName + ",flow-name=" + flowName + ",options=" 
             			+ optionString + "\"" + "}}";
-        
-        JsonNode ipFlowJsonNode = new ObjectMapper().readTree(optionsJson);
+		JsonNode ipFlowJsonNode = new ObjectMapper().readTree(optionsJson);
         
 		return ipFlowJsonNode;
 	}
@@ -252,7 +240,6 @@ public class IntegrationUtils {
 	
 	public void waitForReloadModules() {
 		try {
-			System.out.println("Waiting to deploy Modules");
 			Thread.sleep(10000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
