@@ -19,6 +19,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.marklogic.appdeployer.command.Command;
+import com.marklogic.appdeployer.command.security.DeployProtectedPathsCommand;
+import com.marklogic.appdeployer.command.security.DeployQueryRolesetsCommand;
+import com.marklogic.appdeployer.impl.SimpleAppDeployer;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.ext.helper.LoggingObject;
 import com.marklogic.client.ext.modulesloader.impl.AssetFileLoader;
@@ -32,6 +36,7 @@ import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.EntityManager;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.error.EntityServicesGenerationException;
+import com.marklogic.hub.util.FileUtil;
 import com.marklogic.hub.util.HubModuleManager;
 import org.apache.commons.io.FileUtils;
 import org.springframework.core.io.FileSystemResource;
@@ -40,6 +45,7 @@ import org.springframework.core.io.Resource;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
@@ -322,16 +328,52 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
                 v3ConfigAsJson = mapper.readTree(v3Config);
 
                 ArrayNode paths = (ArrayNode) v3ConfigAsJson.get("config").get("protected-path");
-                int i=0;
-                // write each path as a separate file for ml-gradle
+                List<JsonNode> listNodes = new ArrayList<>();
                 Iterator<JsonNode> pathsIterator = paths.iterator();
                 while (pathsIterator.hasNext()) {
                     JsonNode n = pathsIterator.next();
+                    listNodes.add(n);
+
+                    /* Delete all protected-paths that are common to the filesystem and entities received from the server
+                    *  thus only the difference remains in the filesystem which will be removed during the undeploy stage.
+                    **/
+                    for (String fileName: FileUtil.listDirectFiles(protectedPaths)){
+                        String fileText = new String(Files.readAllBytes(Paths.get(protectedPaths.toString(), fileName)));
+                        JsonNode textJson = new ObjectMapper().readTree(fileText);
+                        JsonNode filePathExpression = textJson.get("path-expression");
+                        if (filePathExpression.asText().equals(n.get("path-expression"))) {
+                            Paths.get(protectedPaths.toString(), fileName).toFile().delete();
+                        }
+                    }
+                }
+
+                // Undeploy the removed protected-paths and query-rolesets
+                List<Command> commands = new ArrayList<>();
+                commands.add(new DeployProtectedPathsCommand());
+                commands.add(new DeployQueryRolesetsCommand());
+                SimpleAppDeployer deployer = new SimpleAppDeployer(((HubConfigImpl)hubConfig).getManageClient(), ((HubConfigImpl)hubConfig).getAdminManager());
+                deployer.setCommands(commands);
+                deployer.undeploy(hubConfig.getAppConfig());
+
+                // Delete the undeployed protected-path files from user-config
+                for (String fileName: FileUtil.listDirectFiles(protectedPaths)){
+                    Paths.get(protectedPaths.toString(), fileName).toFile().delete();
+                }
+
+                // Delete the undeployed query-rolesets files from user-config
+                for (String fileName: FileUtil.listDirectFiles(queryRolesets)){
+                    Paths.get(queryRolesets.toString(), fileName).toFile().delete();
+                }
+
+                // write each path as a separate file for ml-gradle
+                int i=0;
+                for (JsonNode n : listNodes){
                     i++;
                     String thisPath = String.format("%02d_%s", i , HubConfig.PII_PROTECTED_PATHS_FILE);
                     File protectedPathConfig = protectedPaths.resolve(thisPath).toFile();
                     writer.writeValue(protectedPathConfig, n);
                 }
+
                 writer.writeValue(queryRolesetsConfig,  v3ConfigAsJson.get("config").get("query-roleset"));
             }
         } catch (IOException e) {

@@ -165,6 +165,7 @@ public class HubProjectImpl implements HubProject {
         writeResourceFile("ml-config/security/roles/hub-admin-role.json", rolesDir.resolve("hub-admin-role.json"), true);
         writeResourceFile("ml-config/security/users/hub-admin-user.json", usersDir.resolve("hub-admin-user.json"), true);
 
+        getUserSecurityDir().toFile().mkdirs();
         getUserServersDir().toFile().mkdirs();
         getUserDatabaseDir().toFile().mkdirs();
 
