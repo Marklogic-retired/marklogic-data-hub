@@ -170,8 +170,9 @@ declare function service:generate-lets($model as map:map, $entity-type-name, $ma
               "  else ()"
             )
           ), "&#10;    ") || "&#10;"
-      else
-        $wrap-if-array($extract-reference-fn)
+      else if(fn:not(empty($ref))) then
+           fn:concat("$source/", $property-name)
+      else $wrap-if-array($extract-reference-fn)
 
     return (
       $property-comment ! ("", .),
@@ -430,9 +431,9 @@ declare function service:generate-vars($model as map:map, $entity-type-name, $ma
             "[];",
             "if(" || $path-to-property || ") {",
             "  for(const item of Sequence.from(source.xpath('/" || $property-name || "'))) {",
-            "    // either return an instance of a " || $ref-name,
-            "    "   || service:camel-case($property-name) || ".push(" || service:camel-case("extractInstance-" || $ref-name) || "(item));",
-            "    // or a reference to a " || $ref-name,
+            "    // uncomment to return an instance of a " || $ref-name,
+            "    //" || service:camel-case($property-name) || ".push(" || service:camel-case("extractInstance-" || $ref-name) || "(item));",
+            "    // or use the default creating of a reference to a " || $ref-name,
             "    " || service:camel-case($property-name) || ".push(makeReferenceObject('" || $ref-name || "', item));",
             "  }",
             "}"
