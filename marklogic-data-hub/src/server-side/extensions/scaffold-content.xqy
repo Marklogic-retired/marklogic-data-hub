@@ -96,7 +96,7 @@ declare function service:casting-function-name-sjs(
   else "xs." || $datatype
 };
 
-declare function service:generate-lets($model as map:map, $entity-type-name, $mapping as map:map?)
+declare function service:generate-lets($model as map:map, $entity-type-name, $mapping as map:map?, $parent-entity as xs:string)
 {
   fn:string-join(
     let $definitions := map:get($model, "definitions")
@@ -148,17 +148,21 @@ declare function service:generate-lets($model as map:map, $entity-type-name, $ma
       ), "&#10;")
     let $value :=
       if (empty($ref)) then (
-        if(service:mapping-present($mapping, $property-name))
+        if(service:mapping-present($mapping, $property-name) and $parent-entity eq $entity-type-name)
         then (fn:concat("$source",service:map-value($property-name, $mapping)))
         else (fn:concat("$source/", $property-name)))
       else if (contains($ref, "#/definitions")) then
         let $inner-var := "$" || fn:lower-case($ref-name) || "s"
+        let $inner-val :=
+          if(service:mapping-present($mapping, $property-name))
+          then (fn:concat("$source",service:map-value($property-name, $mapping)))
+          else (fn:concat("$source/", $property-name))
         return
           fn:string-join((
             "",
             "let " || $inner-var || " :=",
             "  (: create a sequence of " || $ref-name || " instances from your data :)",
-            "  for $sub-entity in ()",
+            "  for $sub-entity in ("||$inner-val||")",
             "  return",
             "    plugin:extract-instance-" || $ref-name || "($sub-entity)",
             "return",
@@ -263,13 +267,13 @@ $source as node()?
   else ()
 }
 {
-  if (fn:empty($mapping) eq fn:false() and fn:empty(map:get($mapping, "name")) eq fn:false()) then
+  if ($entity eq $entity-type-name and fn:empty($mapping) eq fn:false() and fn:empty(map:get($mapping, "name")) eq fn:false()) then
   <txt>(: These mappings were generated using mapping: {map:get($mapping, "name")}, version: {map:get($mapping, "version")} on {fn:current-dateTime()}. :)
   </txt>/text()
   else ()
 }
 {
-service:generate-lets($model, $entity-type-name, $mapping)
+service:generate-lets($model, $entity-type-name, $mapping, $entity)
 }
 
   (: return the in-memory instance :)
@@ -357,7 +361,7 @@ $ref as xs:string)
 };
 
 
-declare function service:generate-vars($model as map:map, $entity-type-name, $mapping as map:map?)
+declare function service:generate-vars($model as map:map, $entity-type-name, $mapping as map:map?, $parent-entity as xs:string)
 {
   fn:string-join(
     let $definitions := map:get($model, "definitions")
@@ -388,7 +392,7 @@ declare function service:generate-vars($model as map:map, $entity-type-name, $ma
       else
         map:get($property, "$ref")
     let $path-to-property :=
-      if (service:mapping-present($mapping, $property-name)) then (fn:concat("source.xpath('",service:map-value($property-name, $mapping), "')"))  else (fn:concat("source.xpath('/", $property-name, "')"))
+      if (service:mapping-present($mapping, $property-name) and $parent-entity eq $entity-type-name) then (fn:concat("source.xpath('",service:map-value($property-name, $mapping), "')"))  else (fn:concat("source.xpath('/", $property-name, "')"))
     let $property-comment :=
       if (fn:empty($ref)) then ()
       else if (fn:contains($ref, "#/definitions")) then
@@ -411,7 +415,7 @@ declare function service:generate-vars($model as map:map, $entity-type-name, $ma
       if (empty($ref)) then
         "!fn.empty(" || $path-to-property || ") ? " || (
         if($is-array) then
-          $path-to-property || ": []"
+          $path-to-property || ".valueOf(): []"
         else
         $casting-function-name || "("
         || "fn.head(" ||
@@ -543,12 +547,12 @@ function {service:camel-case("extractInstance-" || $entity-type-name)}(source) {
     else ()
   }
   {
-    if (fn:empty($mapping) eq fn:false() and fn:empty(map:get($mapping, "name")) eq fn:false()) then
-      <txt>/* These mappings were generated using mapping: {map:get($mapping, "name")}, version: {map:get($mapping, "version")} on {fn:current-dateTime()}. */&#10;  </txt>/text()
+    if ($entity eq $entity-type-name and fn:empty($mapping) eq fn:false() and fn:empty(map:get($mapping, "name")) eq fn:false()) then
+      <txt>/* These mappings were generated using mapping: {map:get($mapping, "name")}, version: {map:get($mapping, "version")} on {fn:current-dateTime()}.*/&#10;  </txt>/text()
     else ()
   }
   {
-    service:generate-vars($model, $entity-type-name, $mapping)
+    service:generate-vars($model, $entity-type-name, $mapping, $entity)
   }
 
   // return the instance object
