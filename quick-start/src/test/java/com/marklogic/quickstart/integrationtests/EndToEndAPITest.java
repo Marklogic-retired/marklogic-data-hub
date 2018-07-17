@@ -5,6 +5,9 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,8 +48,8 @@ public class EndToEndAPITest extends HubTestBase {
 	// Project Initialization variables
 	boolean projectInitStatus;
 	JsonPath projectInitJson;
+	Path projectPath;
 	Response projectInitResponse;
-	String projectPath;
 	
 	// Login Process variables
 	String loginResponse;
@@ -72,27 +75,26 @@ public class EndToEndAPITest extends HubTestBase {
 	JsonPath createInputFlowJson;
 	JsonPath createHarmonizeFlowJSON;
 	JsonNode mlcpOptions;
-	JsonNode runHmJsonObj;
+	JsonNode runHarmonizeFlowJsonObj;
 	Map<String, Object> runFlowOptions;
 	Response createInputFlowResponse;
-	Response runIpFlowResponse;
 	Response createHarmonizeFlowResponse;
-	Response runHmFlowResponse;
 	Response deleteFlowResponse;
-	String flowType;
-	String respFlowName;
-	String respEntityName;
-	String respFlowType;
-	String pluginDir;
-	String inputPath;
+	Response runInputFlowResponse;
+	Response runHarmonizeFlowResponse;
 	String basePath;
-	String runHmJsonBody;
+	String flowType;
+	String inputPath;
+	String responseEntityName;
+	String responseFlowName;
+	String responseFlowType;
+	String runHarmonizeJsonBody;
 	
 	// Map Creation variables
-	JsonNode mappingDataJsonNode;
 	JsonNode editMapRequestNode;
-	Response getMappingResponse;
+	JsonNode mappingDataJsonNode;
 	Response createMapResponse;
+	Response getMappingResponse;
 	String mapName;
 	String mappingData;
 	
@@ -122,18 +124,17 @@ public class EndToEndAPITest extends HubTestBase {
 		projectInitResponse = utils.initilizeProjectConfiguration();
 		projectInitJson = projectInitResponse.jsonPath();
 		projectInitStatus =  projectInitJson.getBoolean("initialized");
-		projectPath =  projectInitJson.getString("path");
-		
+		projectPath =  Paths.get(projectInitJson.getString("path"));
 		assertEquals(200, projectInitResponse.statusCode());
 		assertTrue(projectInitStatus);
-		assertTrue(projectPath.contains("marklogic-data-hub/quick-start/ye-olde-project"));
+		assertTrue(Files.exists(projectPath));
 		logger.info("Project Init Test Passed");
 		
 		// Tests api's to login into the quick-start application. A session cookie is received in
 		// header which has to be attached to the subsequent requests for security
 		loginResponse = utils.doLogin();
 		
-		assertTrue(!loginResponse.isEmpty());
+		assertFalse(loginResponse.isEmpty());
 		logger.info("Login Test Passed");
 		
 		// Clear all the documents in the databases
@@ -184,16 +185,14 @@ public class EndToEndAPITest extends HubTestBase {
 		createInputFlowResponse = utils.createFlow(entityName, flowType, DataFormat.JSON, 
 				CodeFormat.JAVASCRIPT, false, null);
 		createInputFlowJson = createInputFlowResponse.jsonPath();
-		respFlowName = createInputFlowJson.getString("flowName");
-		respEntityName = createInputFlowJson.getString("entityName");
-		respFlowType = createInputFlowJson.getString("flowType");
-		pluginDir = createInputFlowJson.getString("plugins.pluginPath");
+		responseFlowName = createInputFlowJson.getString("flowName");
+		responseEntityName = createInputFlowJson.getString("entityName");
+		responseFlowType = createInputFlowJson.getString("flowType");
 		
 		assertEquals(200, createInputFlowResponse.statusCode());
-		assertTrue(utils.getFlowName().equals(respFlowName));
-		assertTrue(entityName.equals(respEntityName));
-		assertTrue(flowType.equals(respFlowType));
-		assertTrue(pluginDir.contains("/"+respFlowName+"/content.sjs"));
+		assertTrue(utils.getFlowName().equals(responseFlowName));
+		assertTrue(entityName.equals(responseEntityName));
+		assertTrue(flowType.equals(responseFlowType));
 		logger.info("Create Input Flow test passed");
 		utils.waitForReloadModules();
 		
@@ -204,8 +203,8 @@ public class EndToEndAPITest extends HubTestBase {
 		basePath = getResourceFile("integration-test-data/input").getAbsolutePath();
 		mlcpOptions = utils.generateMLCPOptions(inputPath, basePath, entityName, "",
 				CodeFormat.JAVASCRIPT, DataFormat.JSON, runFlowOptions);
-		runIpFlowResponse = utils.runFlow(mlcpOptions, entityName, FlowType.INPUT);
-		assertEquals(204, runIpFlowResponse.statusCode());
+		runInputFlowResponse = utils.runFlow(mlcpOptions, entityName, FlowType.INPUT);
+		assertEquals(204, runInputFlowResponse.statusCode());
 		logger.info("Run Input Flow Test Passed");
 		utils.waitForReloadModules();
 		
@@ -238,32 +237,30 @@ public class EndToEndAPITest extends HubTestBase {
 		createHarmonizeFlowResponse = utils.createFlow(entityName, flowType, DataFormat.JSON, 
 				CodeFormat.JAVASCRIPT, true, mapName);
 		createHarmonizeFlowJSON = createHarmonizeFlowResponse.jsonPath();
-		respFlowName = createHarmonizeFlowJSON.getString("flowName");
-		respEntityName = createHarmonizeFlowJSON.getString("entityName");
-		respFlowType = createHarmonizeFlowJSON.getString("flowType");
-		pluginDir = createHarmonizeFlowJSON.getString("plugins.pluginPath");
+		responseFlowName = createHarmonizeFlowJSON.getString("flowName");
+		responseEntityName = createHarmonizeFlowJSON.getString("entityName");
+		responseFlowType = createHarmonizeFlowJSON.getString("flowType");
 		
 		assertEquals(200, createHarmonizeFlowResponse.statusCode());
-		assertTrue(utils.getFlowName().equals(respFlowName));
-		assertTrue(entityName.equals(respEntityName));
-		assertTrue(flowType.equals(respFlowType));
-		assertTrue(pluginDir.contains("/"+respFlowName+"/content.sjs"));
+		assertTrue(utils.getFlowName().equals(responseFlowName));
+		assertTrue(entityName.equals(responseEntityName));
+		assertTrue(flowType.equals(responseFlowType));
 		logger.info("Create Harmonize Flow Passed");
 		
 		utils.waitForReloadModules();
 		
 		// Tests to run the created harmonize flow
-		runHmJsonBody = getResource("integration-test-data/run-harm-flow-request.json");
-		runHmJsonObj = new ObjectMapper().readTree(runHmJsonBody);
-		runHmFlowResponse = utils.runFlow(runHmJsonObj, entityName, FlowType.HARMONIZE);
-		assertEquals(200, runHmFlowResponse.statusCode());
+		runHarmonizeJsonBody = getResource("integration-test-data/run-harm-flow-request.json");
+		runHarmonizeFlowJsonObj = new ObjectMapper().readTree(runHarmonizeJsonBody);
+		runHarmonizeFlowResponse = utils.runFlow(runHarmonizeFlowJsonObj, entityName, FlowType.HARMONIZE);
+		assertEquals(200, runHarmonizeFlowResponse.statusCode());
 		
 		// Tests to check job status. Job status should not be FINISHED.
 		getJobsResponse = utils.getJobs(1, 10);
 		jobResultsNode = new ObjectMapper().readTree(getJobsResponse.asString()).get("results");
 		if(jobResultsNode.isArray()) {
 			for(JsonNode node : jobResultsNode) {
-				if(node.path("content").path("flowName").asText().equals(respFlowName)) {
+				if(node.path("content").path("flowName").asText().equals(responseFlowName)) {
 					assertFalse(node.path("content").path("status").asText().equals("FINISHED"));
 				}
 			}
@@ -272,7 +269,7 @@ public class EndToEndAPITest extends HubTestBase {
 		utils.waitForReloadModules();
 		
 		// Test to delete this harmonization flow.
-		deleteFlowResponse = utils.deleteFlow(entityName, respFlowName, flowType);
+		deleteFlowResponse = utils.deleteFlow(entityName, responseFlowName, flowType);
 		assertEquals(204, deleteFlowResponse.statusCode());
 		logger.info("Delete Flow test passed");
 		
@@ -301,25 +298,23 @@ public class EndToEndAPITest extends HubTestBase {
 		createHarmonizeFlowResponse = utils.createFlow(entityName, flowType, DataFormat.JSON, 
 				CodeFormat.JAVASCRIPT, true, mapName);
 		createHarmonizeFlowJSON = createHarmonizeFlowResponse.jsonPath();
-		respFlowName = createHarmonizeFlowJSON.getString("flowName");
-		respEntityName = createHarmonizeFlowJSON.getString("entityName");
-		respFlowType = createHarmonizeFlowJSON.getString("flowType");
-		pluginDir = createHarmonizeFlowJSON.getString("plugins.pluginPath");
+		responseFlowName = createHarmonizeFlowJSON.getString("flowName");
+		responseEntityName = createHarmonizeFlowJSON.getString("entityName");
+		responseFlowType = createHarmonizeFlowJSON.getString("flowType");
 		
 		assertEquals(200, createHarmonizeFlowResponse.statusCode());
-		assertTrue(utils.getFlowName().equals(respFlowName));
-		assertTrue(entityName.equals(respEntityName));
-		assertTrue(flowType.equals(respFlowType));
-		assertTrue(pluginDir.contains("/"+respFlowName+"/content.sjs"));
+		assertTrue(utils.getFlowName().equals(responseFlowName));
+		assertTrue(entityName.equals(responseEntityName));
+		assertTrue(flowType.equals(responseFlowType));
 		logger.info("Create Harmonize Flow Passed");
 		utils.waitForReloadModules();
 		
 		// Next step is to run the created harmonize flow
-		runHmJsonBody = getResource("integration-test-data/run-harm-flow-request.json");
-		runHmJsonObj = new ObjectMapper().readTree(runHmJsonBody);
-		runHmFlowResponse = utils.runFlow(runHmJsonObj, entityName, FlowType.HARMONIZE);
+		runHarmonizeJsonBody = getResource("integration-test-data/run-harm-flow-request.json");
+		runHarmonizeFlowJsonObj = new ObjectMapper().readTree(runHarmonizeJsonBody);
+		runHarmonizeFlowResponse = utils.runFlow(runHarmonizeFlowJsonObj, entityName, FlowType.HARMONIZE);
 		
-		assertEquals(200, runHmFlowResponse.statusCode());
+		assertEquals(200, runHarmonizeFlowResponse.statusCode());
 		logger.info("Run Harmonize Flow test Passed for correct mapping data");
 		utils.waitForReloadModules();
 		
@@ -328,7 +323,7 @@ public class EndToEndAPITest extends HubTestBase {
 		jobResultsNode = new ObjectMapper().readTree(getJobsResponse.asString()).get("results");
 		if(jobResultsNode.isArray()) {
 			for(JsonNode node : jobResultsNode) {
-				if(node.path("content").path("flowName").asText().equals(respFlowName)) {
+				if(node.path("content").path("flowName").asText().equals(responseFlowName)) {
 					assertTrue(node.path("content").path("status").asText().equals("FINISHED"));
 				}
 			}

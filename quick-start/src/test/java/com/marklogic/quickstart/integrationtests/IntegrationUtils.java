@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -27,23 +29,20 @@ import io.restassured.response.Response;
 public class IntegrationUtils {
 	
 	private Cookie requestCookie;
-	private FlowModel flowModel;
-	private int hmFlowNameCount = 1;
-	private JobQuery jobQuery;
+	private int harmonizeFlowNameCount = 1;
 	private LoginInfo loginInfo = new LoginInfo();
 	private String sessionID;
-	private String projectPath;
 	private String flowName;
+	static final protected Logger logger = LoggerFactory.getLogger(IntegrationUtils.class);
 	
 	public Response initilizeProjectConfiguration() {
-		projectPath = new File(HubTestBase.PROJECT_PATH).getAbsolutePath();
+		String projectPath = new File(HubTestBase.PROJECT_PATH).getAbsolutePath();
 		Response projectInitResponse = 
 				given()
 					.contentType("application/x-www-form-urlencoded")
 					.queryParam("path", projectPath)
 				.when()
 					.post("/api/projects/");
-		
 		createLoginCredentials(projectInitResponse);
 		
 		return projectInitResponse;
@@ -99,7 +98,7 @@ public class IntegrationUtils {
 	
 	public Response createFlow(String entityName, String flowType, DataFormat dataFormat, CodeFormat codeFormat,
 			boolean useEsModel, String mappingName) {
-		flowModel = createFlowModel(entityName, flowType, dataFormat, codeFormat, useEsModel, mappingName);
+		FlowModel flowModel = createFlowModel(entityName, flowType, dataFormat, codeFormat, useEsModel, mappingName);
 		Response createFlowResponse = 
 				given()
 					.contentType(ContentType.JSON)
@@ -173,7 +172,7 @@ public class IntegrationUtils {
 	}
 	
 	public Response getJobs(long start, long count) {
-		jobQuery = buildJobQuery();
+		JobQuery jobQuery = buildJobQuery();
 		Response getJobsResponse = 
 				given()
 					.contentType(ContentType.JSON)
@@ -240,6 +239,7 @@ public class IntegrationUtils {
 	
 	public void waitForReloadModules() {
 		try {
+			logger.info("Waiting to load modules");
 			Thread.sleep(10000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
@@ -261,19 +261,19 @@ public class IntegrationUtils {
 	
 	private FlowModel createFlowModel(String entityName, String flowType, DataFormat dataFormat, 
 			CodeFormat codeFormat, boolean useEsModel, String mappingName) {
-		flowModel = new FlowModel();
+		FlowModel flowModel = new FlowModel();
 		flowModel.dataFormat = dataFormat;
 		flowModel.codeFormat = codeFormat;
 		flowModel.useEsModel = useEsModel;
 		flowModel.mappingName = mappingName;
-		flowModel.flowName = entityName+"-"+flowType.toLowerCase()+"-flow"+hmFlowNameCount;
-		hmFlowNameCount++;
+		flowModel.flowName = entityName+"-"+flowType.toLowerCase()+"-flow"+harmonizeFlowNameCount;
+		harmonizeFlowNameCount++;
 		this.flowName = flowModel.flowName;
 		return flowModel;
 	}
 	
 	private JobQuery buildJobQuery() {
-		jobQuery = new JobQuery();
+		JobQuery jobQuery = new JobQuery();
 		return jobQuery;
 	}
 }

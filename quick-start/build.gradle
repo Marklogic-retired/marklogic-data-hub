@@ -60,7 +60,6 @@ dependencies {
     compile("org.springframework.boot:spring-boot-starter-thymeleaf")
     compile("org.aspectj:aspectjweaver:1.8.9")
     compile("org.springframework:spring-messaging")
-    compile("io.rest-assured:rest-assured:3.0.3")
     compile project(":marklogic-data-hub")
     compile("org.apache.commons:commons-csv:1.4")
 
@@ -85,6 +84,7 @@ dependencies {
     testRuntime "org.junit.vintage:junit-vintage-engine:${junitVintageVersion}"
 
     testCompile("org.springframework.boot:spring-boot-starter-test")
+    testCompile("io.rest-assured:rest-assured:3.0.3")
     testCompile files(project(':marklogic-data-hub').sourceSets.test.output)
 }
 
