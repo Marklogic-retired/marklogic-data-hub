@@ -43,7 +43,7 @@ public class EndToEndAPITest extends HubTestBase {
 	@LocalServerPort
 	int port;
 
-	private IntegrationUtils utils = new IntegrationUtils();
+	private E2ETestsRequestHelper utils = new E2ETestsRequestHelper();
 	
 	// Project Initialization variables
 	boolean projectInitStatus;
