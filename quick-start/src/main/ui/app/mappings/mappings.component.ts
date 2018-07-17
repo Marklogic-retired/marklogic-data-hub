@@ -97,7 +97,7 @@ export class MappingsComponent implements OnInit, OnDestroy, AfterViewInit {
       this.activeMapping && this.activeMapping.name === mapping.name;
   }
 
-  showNewMapping(entity: Entity) {
+  showNewMapping(entity: Entity, mappings: Array<Mapping>) {
     let actions = {
       save: (newMapName: string, newMapDesc: string) => {
 
@@ -126,7 +126,8 @@ export class MappingsComponent implements OnInit, OnDestroy, AfterViewInit {
       component: NewMapComponent,
       providers: [
         { provide: 'actions', useValue: actions },
-        { provide: 'entity', useValue: entity}
+        { provide: 'entity', useValue: entity },
+        { provide: 'mappings', useValue: mappings }
       ],
       isModal: true
     });

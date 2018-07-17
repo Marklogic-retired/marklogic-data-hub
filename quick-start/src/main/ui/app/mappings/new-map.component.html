@@ -10,23 +10,34 @@
     <form (submit)="create()">
       <div class="modal-body">
         <div class="md-dialog-content" flex layout="column">
-          <mdl-textfield name="mapNameInput" type="text"
-            required autofocus floating-label
+          <mdl-textfield
+            name="mapNameInput"
+            type="text"
+            [class.is-invalid]="nameDuplicate()"
+            floating-label
             id="mapNameInput"
             label="Mapping Name (required)"
+            disableNativeValidityChecking
             #mapNameInput="ngModel"
-            [(ngModel)]="mapName"></mdl-textfield>
+            [(ngModel)]="mapName"
+            error-msg="A mapping with this name already exists"
+          >
+          </mdl-textfield>
         </div>
-        <mdl-textfield name="mapDescInput" type="text"
-             required floating-label
-             id="mapDescInput"
-             label="Mapping Description"
-             #mapDescInput="ngModel"
-             [(ngModel)]="mapDesc">
+        <mdl-textfield
+            name="mapDescInput"
+            type="text"
+            floating-label
+            id="mapDescInput"
+            label="Mapping Description"
+            disableNativeValidityChecking
+            #mapDescInput="ngModel"
+            [(ngModel)]="mapDesc"
+        >
         </mdl-textfield>
       </div>
       <div class="mdl-dialog__actions">
-        <button type="submit" [disabled]="mapNameInput && mapNameInput.errors && mapNameInput.errors.required" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect">Create</button>
+        <button type="submit" [disabled]="nameEmpty() || nameDuplicate()" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect">Create</button>
         <button type="button" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" (click)="cancel()">Cancel</button>
       </div>
     </form>
