@@ -368,10 +368,6 @@ function instanceToCanonicalJson(entityInstance) {
             }
           }
           o[key] = a;
-        } else if (instanceProperty instanceof Sequence) {
-            for (let val of instanceProperty) {
-              o[key] = val;
-            }
         } else {
           o[key] = instanceProperty;
         }
