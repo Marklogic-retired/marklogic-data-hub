@@ -89,7 +89,7 @@ export class MapComponent implements OnInit {
     ).subscribe(response => {
       this.sampleDocURI = response.results[0].uri;
       this.editURIVal = this.sampleDocURI;
-      this.loadSampleDocByURI(this.sampleDocURI)
+      this.loadSampleDocByURI(this.sampleDocURI, {})
     },
       () => {},
       () => {}
@@ -99,8 +99,9 @@ export class MapComponent implements OnInit {
   /**
    * Load a sample document by its URI.
    * @param uri A document URI
+   * @param conns A connections object in case rollback is required
    */
-  loadSampleDocByURI(uri): void {
+  loadSampleDocByURI(uri: string, conns: Object): void {
     let self = this;
     this.searchService.getDoc(this.currentDatabase, uri).subscribe(doc => {
       this.sampleDocSrcProps = [];
@@ -125,6 +126,10 @@ export class MapComponent implements OnInit {
         result.subscribe( () => {
             this.editURIVal = this.sampleDocURI;
             this.editingURI = false;
+            // rollback to conns from previous URI
+            if (!_.isEmpty(conns)) {
+              this.conns = conns;
+            }
           },
           () => {},
           () => {}
@@ -142,8 +147,10 @@ export class MapComponent implements OnInit {
           'Changing your source document will remove<br/>existing property selections. Proceed?',
           'Cancel', 'OK');
       result.subscribe( () => {
+          let connsOrig = _.cloneDeep(this.conns);
           this.conns = {};
-          this.loadSampleDocByURI(this.editURIVal);
+          // provide connsOrig for rollback purposes if needed
+          this.loadSampleDocByURI(this.editURIVal, connsOrig);
         },(err: any) => {
           console.log('source change aborted');
           this.editingURI = false;
@@ -151,7 +158,7 @@ export class MapComponent implements OnInit {
         () => {}
       );
     } else {
-      this.loadSampleDocByURI(this.editURIVal);
+      this.loadSampleDocByURI(this.editURIVal, {});
     }
   }
 
