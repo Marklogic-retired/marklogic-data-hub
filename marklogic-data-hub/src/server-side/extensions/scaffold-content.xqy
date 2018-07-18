@@ -415,7 +415,7 @@ declare function service:generate-vars($model as map:map, $entity-type-name, $ma
       if (empty($ref)) then
         "!fn.empty(" || $path-to-property || ") ? " || (
         if($is-array) then
-          $path-to-property || ".valueOf(): []"
+          $path-to-property || " : []"
         else
         $casting-function-name || "("
         || "fn.head(" ||
@@ -428,17 +428,19 @@ declare function service:generate-vars($model as map:map, $entity-type-name, $ma
         ) ||
         ")) : null"
         )
-
       else if (contains($ref, "#/definitions")) then
         if ($is-array) then
           fn:string-join((
             "[];",
             "if(" || $path-to-property || ") {",
-            "  for(const item of Sequence.from(source.xpath('/" || $property-name || "'))) {",
-            "    // uncomment to return an instance of a " || $ref-name,
-            "    //" || service:camel-case($property-name) || ".push(" || service:camel-case("extractInstance-" || $ref-name) || "(item));",
-            "    // or use the default creating of a reference to a " || $ref-name,
-            "    " || service:camel-case($property-name) || ".push(makeReferenceObject('" || $ref-name || "', item));",
+            "  for(const item of Sequence.from(source.xpath('/"|| $property-name || "'))) {",
+            "    // let's create and pass the node",
+            "    let itemSource = new NodeBuilder();",
+            "    itemSource.addNode(fn.head(item));",
+            "    // this will return an instance of a " || $ref-name,
+            "    " || service:camel-case($property-name) || ".push(" || service:camel-case("extractInstance-" || $ref-name) || "(itemSource.toNode()));",
+            "    // or uncomment this to create an external reference to a " || $ref-name,
+            "    //" || service:camel-case($property-name) || ".push(makeReferenceObject('" || $ref-name || "', itemSource.toNode()));",
             "  }",
             "}"
           ), "&#10;  ")
@@ -446,11 +448,14 @@ declare function service:generate-vars($model as map:map, $entity-type-name, $ma
           fn:string-join((
             "null;",
             "if(" || $path-to-property || ") {",
+            "  // let's create and pass the node",
+            "  let " ||$property-name||"Source = new NodeBuilder();",
+            "  " ||$property-name||"Source.addNode(fn.head(source.xpath('/"|| $property-name || "'))).toNode();",
             "  // either return an instance of a " || $ref-name,
-            "  " || service:camel-case($property-name) || " = " || service:camel-case("extractInstance-" || $ref-name) || "(source.xpath('/" || $property-name || "'));",
+            "  " || service:camel-case($property-name) || " = " || service:camel-case("extractInstance-" || $ref-name) || "("||$property-name||"Source);",
             "",
             "  // or a reference to a " || $ref-name,
-            "  // " || service:camel-case($property-name) || " = makeReferenceObject('" || $ref-name || "', source.xpath('/" || $property-name || "'));",
+            "  // " || service:camel-case($property-name) || " = makeReferenceObject('" || $ref-name || "', "||$property-name||"Source));",
             "}"
           ), "&#10;  ")
       else
