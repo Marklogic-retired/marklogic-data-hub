@@ -402,7 +402,7 @@ function instanceToCanonicalXml(entityInstance) {
                 }
               }
             } else if (prop instanceof Array) {
-              for (let item in prop) {
+              for (let item of prop) {
                 if (item instanceof Object) {
                   nb.startElement(key);
                   nb.addAttribute('datatype', 'array');
