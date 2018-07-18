@@ -179,7 +179,7 @@ export default function() {
       entityPage.getPropertyType(lastProperty).element(by.cssContainingText('option', 'decimal')).click();
       entityPage.getPropertyDescription(lastProperty).sendKeys('price description');
       entityPage.getPropertyRangeIndex(lastProperty).click();
-     // add products property
+      // add products property
       console.log('add products property');
       entityPage.addProperty.click();
       lastProperty = entityPage.lastProperty;
@@ -256,7 +256,7 @@ export default function() {
       browser.wait(EC.visibilityOf(entityPage.entityEditor));
       expect(entityPage.entityEditor.isPresent()).toBe(true);
       //add some additional properties
-      console.log('add addtional properties');
+      console.log('add additional properties');
       entityPage.addProperty.click();
       entityPage.getPropertyName(lastProperty).sendKeys('remove-prop1');
       entityPage.getPropertyType(lastProperty).element(by.cssContainingText('option', 'dateTime')).click();
@@ -633,12 +633,12 @@ export default function() {
       console.log('verify the flow options');
       flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE').click();
       browser.wait(EC.visibilityOf(flowPage.tabs));
-      expect(flowPage.getKeyFlowOptionsByPosition(1).getAttribute('ng-reflect-model')).toEqual('hello');
-      expect(flowPage.getValueFlowOptionsByPosition(1).getAttribute('ng-reflect-model')).toEqual('world');
-      expect(flowPage.getKeyFlowOptionsByPosition(2).getAttribute('ng-reflect-model')).toEqual('myNumber');
-      expect(flowPage.getValueFlowOptionsByPosition(2).getAttribute('ng-reflect-model')).toEqual('250.456');
-      expect(flowPage.getKeyFlowOptionsByPosition(3).getAttribute('ng-reflect-model')).toEqual('myDate');
-      expect(flowPage.getValueFlowOptionsByPosition(3).getAttribute('ng-reflect-model')).toEqual('2017-03-07');
+      expect(flowPage.getKeyFlowOptionsByPosition(1).getAttribute('value')).toEqual('hello');
+      expect(flowPage.getValueFlowOptionsByPosition(1).getAttribute('value')).toEqual('world');
+      expect(flowPage.getKeyFlowOptionsByPosition(2).getAttribute('value')).toEqual('myNumber');
+      expect(flowPage.getValueFlowOptionsByPosition(2).getAttribute('value')).toEqual('250.456');
+      expect(flowPage.getKeyFlowOptionsByPosition(3).getAttribute('value')).toEqual('myDate');
+      expect(flowPage.getValueFlowOptionsByPosition(3).getAttribute('value')).toEqual('2017-03-07');
       //move to other harmonize flow and go back to the flow
       console.log('going to the other flow and back');
       flowPage.entityDisclosure('TestEntity').click();
@@ -655,12 +655,12 @@ export default function() {
       console.log('verify the flow options');
       browser.wait(EC.visibilityOf(flowPage.runHarmonizeButton()));
       expect(flowPage.runHarmonizeButton().isPresent()).toBe(true);
-      expect(flowPage.getKeyFlowOptionsByPosition(1).getAttribute('ng-reflect-model')).toEqual('hello');
-      expect(flowPage.getValueFlowOptionsByPosition(1).getAttribute('ng-reflect-model')).toEqual('world');
-      expect(flowPage.getKeyFlowOptionsByPosition(2).getAttribute('ng-reflect-model')).toEqual('myNumber');
-      expect(flowPage.getValueFlowOptionsByPosition(2).getAttribute('ng-reflect-model')).toEqual('250.456');
-      expect(flowPage.getKeyFlowOptionsByPosition(3).getAttribute('ng-reflect-model')).toEqual('myDate');
-      expect(flowPage.getValueFlowOptionsByPosition(3).getAttribute('ng-reflect-model')).toEqual('2017-03-07');
+      expect(flowPage.getKeyFlowOptionsByPosition(1).getAttribute('value')).toEqual('hello');
+      expect(flowPage.getValueFlowOptionsByPosition(1).getAttribute('value')).toEqual('world');
+      expect(flowPage.getKeyFlowOptionsByPosition(2).getAttribute('value')).toEqual('myNumber');
+      expect(flowPage.getValueFlowOptionsByPosition(2).getAttribute('value')).toEqual('250.456');
+      expect(flowPage.getKeyFlowOptionsByPosition(3).getAttribute('value')).toEqual('myDate');
+      expect(flowPage.getValueFlowOptionsByPosition(3).getAttribute('value')).toEqual('2017-03-07');
     });
 
     it ('should remove the flow options', function() {
@@ -679,8 +679,8 @@ export default function() {
       flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE').click();
       browser.wait(EC.visibilityOf(flowPage.runHarmonizeButton()));
       expect(flowPage.runHarmonizeButton().isPresent()).toBe(true);
-      expect(flowPage.getKeyFlowOptionsByPosition(3).getAttribute('ng-reflect-model')).toEqual('myDate');
-      expect(flowPage.getValueFlowOptionsByPosition(3).getAttribute('ng-reflect-model')).toEqual('2017-03-07');
+      expect(flowPage.getKeyFlowOptionsByPosition(3).getAttribute('value')).toEqual('myDate');
+      expect(flowPage.getValueFlowOptionsByPosition(3).getAttribute('value')).toEqual('2017-03-07');
       //verify the flow options count
       console.log('verify the flow options count');
       flowPage.getFlowOptionsCount().then(function(flowOptions){expect(flowOptions).toEqual(3)});
