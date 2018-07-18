@@ -30,9 +30,10 @@ public class E2ETestsRequestHelper {
 	
 	private Cookie requestCookie;
 	private int harmonizeFlowNameCount = 1;
+	private int mapNameCount = 1;
 	private LoginInfo loginInfo = new LoginInfo();
-	private String sessionID;
 	private String flowName;
+	private String sessionID;
 	static final protected Logger logger = LoggerFactory.getLogger(E2ETestsRequestHelper.class);
 	
 	public Response initilizeProjectConfiguration() {
@@ -157,6 +158,26 @@ public class E2ETestsRequestHelper {
 		
 		return getMapResponse;
 	}
+
+	public Response getMapNames() {
+		Response getMapNamesResponse = 
+				given()
+					.cookie(requestCookie)
+				.when()
+					.get("/api/current-project/mappings/names");
+
+		return getMapNamesResponse;
+	}
+
+	public Response getMaps() {
+		Response getAllMapsResponse = 
+				given()
+					.cookie(requestCookie)
+				.when()
+					.get("/api/current-project/mappings");
+
+		return getAllMapsResponse;
+	}
 	
 	public Response createMap(String mapName, JsonNode mapJsonNode) {
 		Response createMapResponse = 
@@ -171,6 +192,18 @@ public class E2ETestsRequestHelper {
 		return createMapResponse;
 	}
 	
+	public Response deleteMap(String mapName) {
+		Response deleteMapResponse = 
+				given()
+				.contentType(ContentType.JSON)
+			    .cookie(requestCookie)
+				.pathParam("mapName", mapName)
+			.when()
+				.delete("/api/current-project/mappings/{mapName}");
+
+		return deleteMapResponse;
+	}
+
 	public Response getJobs(long start, long count) {
 		JobQuery jobQuery = buildJobQuery();
 		Response getJobsResponse = 
@@ -240,12 +273,18 @@ public class E2ETestsRequestHelper {
 	public void waitForReloadModules() {
 		try {
 			logger.info("Waiting to load modules");
-			Thread.sleep(10000);
+			Thread.sleep(15000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
 	}
 	
+	public String createMapName() {
+		String mapName = "map" + mapNameCount;
+		mapNameCount++;
+		return mapName;
+	}
+
 	private void buildCookie() {
 		requestCookie = new Cookie.Builder("JSESSIONID", sessionID).setSecured(true)
 			      .setComment("session id cookie").build();
