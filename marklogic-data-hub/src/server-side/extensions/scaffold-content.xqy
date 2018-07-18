@@ -118,7 +118,7 @@ declare function service:generate-lets($model as map:map, $entity-type-name, $ma
       else ()
     let $wrap-if-array := function($str) {
       if ($is-array) then
-        "json:to-array(" || $str || "&#10;  )"
+        "json:to-array(" || $str || ")"
       else
         $str
     }
@@ -150,7 +150,7 @@ declare function service:generate-lets($model as map:map, $entity-type-name, $ma
       if (empty($ref)) then (
         if(service:mapping-present($mapping, $property-name) and $parent-entity eq $entity-type-name)
         then (fn:concat("$source",service:map-value($property-name, $mapping)))
-        else (fn:concat("$source/", $property-name)))
+        else ($wrap-if-array(fn:concat("$source/", $property-name))))
       else if (contains($ref, "#/definitions")) then
         let $inner-var := "$" || fn:lower-case($ref-name) || "s"
         let $inner-val :=
