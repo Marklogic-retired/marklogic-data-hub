@@ -270,7 +270,9 @@ function makeEnvelope(content, headers, triples, dataFormat) {
             if (attachments instanceof XMLDocument || tracelib.isXmlNode(attachments)) {
               nb.addNode(attachments);
             } else {
-              nb.addText(xdmp.quote(attachments))
+              let config = json.config('custom');
+              let  cx = (config, 'attribute-names' , ('subKey' , 'boolKey' , 'empty' ));
+              nb.addNode(json.transformFromJson(attachments, config));
             }
         }
         nb.endElement();
