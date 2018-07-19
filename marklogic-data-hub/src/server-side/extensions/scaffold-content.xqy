@@ -257,14 +257,24 @@ $source as node()?
   (: the original source documents :)
   let $attachments := $source
   let $source      :=
-    if ($source/*:envelope) then
+    if ($source/*:envelope and $source/node() instance of element()) then
+      $source/*:envelope/*:instance/node()
+    else if ($source/*:envelope) then
       $source/*:envelope/*:instance
     else if ($source/instance) then
       $source/instance
     else
       $source
   </txt>/text()
-  else ()
+  else (<txt>
+  let $source :=
+    if($source/node() instance of element()) then
+    $source/node()
+  else (
+    $source
+  )
+  </txt>/text()
+  )
 }
 {
   if ($entity eq $entity-type-name and fn:empty($mapping) eq fn:false() and fn:empty(map:get($mapping, "name")) eq fn:false()) then
