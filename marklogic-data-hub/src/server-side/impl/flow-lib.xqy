@@ -400,9 +400,10 @@ declare function flow:make-envelope($content, $headers, $triples, $data-format)
           ),
           map:put($o, "attachments",
             if ($content instance of map:map and map:keys($content) = "$attachments") then
-              if($content instance of element()) then
-                let $c := json:config("full")
+              if(map:get($content, "$attachments")/node() instance of element()) then
+                let $c := json:config("custom")
                 let $_ := map:put($c,"whitespace" , "ignore" )
+                let $_ := map:put($c, "element-namespace", "http://marklogic.com/entity-services")
                 return json:transform-to-json(map:get($content, "$attachments"),$c)
               else
                 map:get($content, "$attachments")
@@ -437,12 +438,13 @@ declare function flow:make-envelope($content, $headers, $triples, $data-format)
           <attachments>
           {
             if ($content instance of map:map and map:keys($content) = "$attachments") then
-              if($content instance of element()) then
+              if(map:get($content, "$attachments")/node() instance of element()) then
                 map:get($content, "$attachments")
               else
                 let $c := json:config("basic")
                 let $_ := map:put($c,"whitespace" , "ignore" )
-                return json:transform-from-json(map:get($content, "$attachments"),$c)/node()
+                return
+                 json:transform-from-json(map:get($content, "$attachments"),$c)
             else
               ()
           }
