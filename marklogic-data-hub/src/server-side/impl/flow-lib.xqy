@@ -38,6 +38,9 @@ import module namespace rfc = "http://marklogic.com/data-hub/run-flow-context"
 import module namespace trace = "http://marklogic.com/data-hub/trace"
   at "/MarkLogic/data-hub-framework/impl/trace-lib.xqy";
 
+import module namespace es = "http://marklogic.com/entity-services"
+  at "/MarkLogic/entity-services/entity-services.xqy";
+
 declare namespace hub = "http://marklogic.com/data-hub";
 
 declare option xdmp:mapping "false";
@@ -429,7 +432,7 @@ declare function flow:make-envelope($content, $headers, $triples, $data-format)
           <attachments>
           {
             if ($content instance of map:map and map:keys($content) = "$attachments") then
-              map:get($content, "$attachments")
+              es:serialize-attachments(map:get($content, "$attachments"), "xml")
             else
               ()
           }
