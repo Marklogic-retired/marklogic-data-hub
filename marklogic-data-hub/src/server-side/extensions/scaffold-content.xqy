@@ -553,7 +553,17 @@ function {service:camel-case("extractInstance-" || $entity-type-name)}(source) {
     source = new NodeBuilder().addNode(fn.head(source.xpath(instancePath))).toNode();
   }
   "
-    else ()
+    else (
+  "// now check to see if we have XML or json, then create a node clone to operate of off
+  if (source instanceof Element || source instanceof ObjectNode) {
+    let instancePath = '/';
+    if(source instanceof Element) {
+      instancePath = '/node()';
+    }
+    source = new NodeBuilder().addNode(fn.head(source.xpath(instancePath))).toNode();
+  }
+  "
+    )
   }
   {
     if ($entity eq $entity-type-name and fn:empty($mapping) eq fn:false() and fn:empty(map:get($mapping, "name")) eq fn:false()) then
