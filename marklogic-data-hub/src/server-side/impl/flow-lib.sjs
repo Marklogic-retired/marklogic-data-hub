@@ -190,7 +190,13 @@ function makeEnvelope(content, headers, triples, dataFormat) {
 
     let attachments = null;
     if (content instanceof Object && content.hasOwnProperty("$attachments")) {
-      attachments = content['$attachments'];
+      if(content['$attachments'] instanceof Element){
+        let config = json.config('custom');
+        config['element-namespace'] = "http://marklogic.com/entity-services";
+        attachments = json.transformToJson(content['$attachments'], config);
+      } else {
+        attachments = content['$attachments'];
+      }
     }
 
     return {

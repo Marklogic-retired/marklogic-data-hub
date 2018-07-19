@@ -546,7 +546,11 @@ function {service:camel-case("extractInstance-" || $entity-type-name)}(source) {
   let attachments = source;
   // now check to see if we have XML or json, then create a node clone from the root of the instance
   if (source instanceof Element || source instanceof ObjectNode) {
-    source = new NodeBuilder().addNode(fn.head(source.xpath('/*:envelope/*:instance'))).toNode();
+    let instancePath = '/*:envelope/*:instance';
+    if(source instanceof Element) {
+      instancePath += '/node()';
+    }
+    source = new NodeBuilder().addNode(fn.head(source.xpath(instancePath))).toNode();
   }
   "
     else ()

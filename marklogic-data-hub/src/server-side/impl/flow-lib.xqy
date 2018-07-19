@@ -400,7 +400,12 @@ declare function flow:make-envelope($content, $headers, $triples, $data-format)
           ),
           map:put($o, "attachments",
             if ($content instance of map:map and map:keys($content) = "$attachments") then
-              map:get($content, "$attachments")
+              if($content instance of element()) then
+                let $c := json:config("full")
+                let $_ := map:put($c,"whitespace" , "ignore" )
+                return json:transform-to-json(map:get($content, "$attachments"),$c)
+              else
+                map:get($content, "$attachments")
             else
               ()
           )
@@ -432,7 +437,12 @@ declare function flow:make-envelope($content, $headers, $triples, $data-format)
           <attachments>
           {
             if ($content instance of map:map and map:keys($content) = "$attachments") then
-              es:serialize-attachments(map:get($content, "$attachments"), "xml")
+              if($content instance of element()) then
+                map:get($content, "$attachments")
+              else
+                let $c := json:config("basic")
+                let $_ := map:put($c,"whitespace" , "ignore" )
+                return json:transform-from-json(map:get($content, "$attachments"),$c)/node()
             else
               ()
           }
