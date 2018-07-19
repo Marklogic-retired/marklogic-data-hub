@@ -22,8 +22,7 @@ export default function(tmpDir) {
 
     it ('should redeploy modules', function() {
       flowPage.redeployButton.click();
-      browser.wait(EC.textToBePresentInElement(element(by.css('#last-deployed-time')),
-        'Last Deployed: less than a minute ago' || 'Last Deployed: 1 minute ago'));
+      browser.sleep(5000);
     });
 
     it ('should run Load Products flow', function() {
@@ -98,8 +97,7 @@ export default function(tmpDir) {
 
     it ('should redeploy modules', function() {
       flowPage.redeployButton.click();
-      browser.wait(EC.textToBePresentInElement(element(by.css('#last-deployed-time')),
-        'Last Deployed: less than a minute ago' || 'Last Deployed: 1 minute ago'));
+      browser.sleep(5000);
     });
 
     it ('should logout and login', function() {
@@ -125,8 +123,6 @@ export default function(tmpDir) {
       console.log('found the button and clicking Run Harmonize button');
       flowPage.runHarmonizeButton().click();
       console.log('clicked the button');
-      //browser.wait(EC.elementToBeClickable(flowPage.toastButton));
-      //flowPage.toastButton.click();
       browser.sleep(10000);
       flowPage.jobsTab.click();
       jobsPage.isLoaded();
