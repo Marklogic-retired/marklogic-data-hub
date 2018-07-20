@@ -7,6 +7,7 @@ export class Mapping {
   public sourceContext: string;
   public targetEntityType: string;
   public description: string;
+  public sourceURI: string;
   public language: string;
   public version: number = 0;
   public properties: object = {};
@@ -26,6 +27,9 @@ export class Mapping {
     }
     if(json.description) {
       this.description = json.description;
+    }
+    if(json.sourceURI) {
+      this.sourceURI = json.sourceURI;
     }
     if(json.version && isNumber(parseInt(json.version))){
       this.version = json.version;

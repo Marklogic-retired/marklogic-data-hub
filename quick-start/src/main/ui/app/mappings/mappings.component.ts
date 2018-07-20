@@ -108,6 +108,7 @@ export class MappingsComponent implements OnInit, OnDestroy, AfterViewInit {
           "version" : "1",
           "targetEntityType" : entity.info.baseUri + '/'+ entity.name +'-0.0.' + entity.info.version + '/' + entity.name,  // TODO
           "sourceContext": '',
+          "sourceURI": '',
           "properties": {}
         }
 
