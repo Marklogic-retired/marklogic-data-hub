@@ -105,7 +105,7 @@ export class MappingsComponent implements OnInit, OnDestroy, AfterViewInit {
           "language" : "zxx",
           "name" : newMapName,
           "description" : newMapDesc,
-          "version" : "1",
+          "version" : "0",
           "targetEntityType" : entity.info.baseUri + '/'+ entity.name +'-0.0.' + entity.info.version + '/' + entity.name,  // TODO
           "sourceContext": '',
           "properties": {}
