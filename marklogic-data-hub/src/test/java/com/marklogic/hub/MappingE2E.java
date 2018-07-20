@@ -135,6 +135,9 @@ public class MappingE2E extends HubTestBase {
             }
             createMappings();
 
+            copyFile("e2e-test/" + ENTITY + ".entity.json", entityDir.resolve(ENTITY + ".entity.json"));
+            installUserModules(getHubConfig(), true);
+
             allCombos((codeFormat, dataFormat, flowType, useEs) -> {
             	if(flowType.equals(FlowType.HARMONIZE)) {
             		for(String mapping: allMappings) {
@@ -193,9 +196,6 @@ public class MappingE2E extends HubTestBase {
     		String flowName = getFlowName(prefix, codeFormat, dataFormat, flowType, mapping, version);
 	        Path entityDir = projectDir.resolve("plugins").resolve("entities").resolve(ENTITY);
 	        Path flowDir = entityDir.resolve(flowType.toString()).resolve(flowName);
-
-	        copyFile("e2e-test/" + ENTITY + ".entity.json", entityDir.resolve(ENTITY + ".entity.json"));
-	        installUserModules(getHubConfig(), true);
 
 	        scaffolding.createFlow(ENTITY, flowName, flowType, codeFormat, dataFormat, true, mapping + "-" +version);
 
@@ -422,8 +422,8 @@ public class MappingE2E extends HubTestBase {
 	                Document expected = getXmlFromResource("e2e-test/" + filename + ".xml");
 	                for (int i = 0; i < TEST_SIZE; i+=10) {
 	                    Document actual = mgr.read("/input-" + i + ".xml").next().getContent(new DOMHandle()).get();
-	                    //debugOutput(expected, System.out);
-                        //debugOutput(actual, System.out);
+	                    debugOutput(expected, System.out);
+                        debugOutput(actual, System.out);
 	                    assertXMLEqual(expected, actual);
 	                }
 	            } else {

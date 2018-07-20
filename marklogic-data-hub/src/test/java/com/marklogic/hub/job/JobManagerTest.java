@@ -65,7 +65,7 @@ public class JobManagerTest extends HubTestBase {
         enableDebugging();
         enableTracing();
 
-        Scaffolding scaffolding = Scaffolding.create(projectDir.toString(), stagingClient);
+        Scaffolding scaffolding = Scaffolding.create(projectDir.toString(), stagingPrivilegedClient);
         scaffolding.createEntity(ENTITY);
         // Traces can be XML or JSON, depending on the DataFormat of the flow that created them. Get some of each
         // to make sure export and import work correctly.

@@ -193,7 +193,7 @@ public class EndToEndFlowTests extends HubTestBase {
     }
 
     private JsonNode validateUserModules() {
-        EntitiesValidator ev = EntitiesValidator.create(getHubConfig().newStagingManageClient());
+        EntitiesValidator ev = EntitiesValidator.create(getHubConfig().newStagingClient());
         return ev.validateAll();
     }
 
@@ -798,7 +798,7 @@ public class EndToEndFlowTests extends HubTestBase {
 
         return tests;
     }
-    
+
     //The XML file in the following input flows have comments, processing instruction nodes in addition to root node.
     // DHFPROD-767 (Github #882)
     @TestFactory

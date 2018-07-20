@@ -340,26 +340,6 @@ public interface HubConfig {
     DatabaseClient newAppServicesClient();
 
     /**
-     * Creates a new DatabaseClient for accessing the Staging database
-     * @return - a DatabaseClient
-     */
-     DatabaseClient newStagingManageClient();
-
-    /**
-     * Creates a new DatabaseClient for accessing the Staging database,
-     * which overrides the database used for the connection.
-     * @param databaseName - the name of the database for the staging Client to use
-     * @return- a DatabaseClient
-     */
-     DatabaseClient newStagingClient(String databaseName);
-
-    /**
-     * Creates a new DatabaseClient for accessing the Final database
-     * @return - a DatabaseClient
-     */
-    DatabaseClient newFinalManageClient();
-
-    /**
      * Creates a new DatabaseClient for accessing the Job database
      * @return - a DatabaseClient
      */
@@ -478,18 +458,15 @@ public interface HubConfig {
     String getJarVersion();
 
     /**
-     * Gets a new DatabaseClient with privileges to run flows but
-     * not to install modules or configure databases.  Uses mlUsername
-     * and mlPassword
+     * Gets a new DatabaseClient that queries the staging database and appserver
+     * Uses mlUsername and mlPassword
      * @return A client without elevated administrative privileges.
      */
     DatabaseClient newStagingClient();
 
     /**
-     * Gets a new DatabaseClient with privileges to run flows
-     * in reverse from final to staging.  Uses mlUsername
-     * and mlPassword
-     * @return A client without elevated administrative privileges.
+     * Gets a new DatabaseClient that queries the Final database using the staging appserver.
+     * @return A DatabaseClient
      */
     DatabaseClient newFinalClient();
 

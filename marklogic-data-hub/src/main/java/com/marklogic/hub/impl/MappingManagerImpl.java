@@ -100,7 +100,7 @@ public class MappingManagerImpl extends LoggingObject implements MappingManager 
     }
 
     @Override public void saveMapping(Mapping mapping, boolean autoIncrement) {
-        Scaffolding scaffold = Scaffolding.create(hubConfig.getProjectDir(), hubConfig.newStagingManageClient());
+        Scaffolding scaffold = Scaffolding.create(hubConfig.getProjectDir(), hubConfig.newStagingClient());
         scaffold.createMappingDir(mapping.getName());
 
         try {

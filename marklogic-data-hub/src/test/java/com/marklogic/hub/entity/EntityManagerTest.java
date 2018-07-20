@@ -44,8 +44,8 @@ public class EntityManagerTest extends HubTestBase {
     @Before
     public void clearDbs() {
         deleteProjectDir();
-        basicSetup();
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_MODULES_DB_NAME);
+        basicSetup();
         installHubModules();
         getPropsMgr().deletePropertiesFile();
     }
@@ -131,7 +131,7 @@ public class EntityManagerTest extends HubTestBase {
         assertEquals(0, getStagingDocCount());
         assertEquals(0, getFinalDocCount());
         assertXMLEqual(getResource("entity-manager-test/options.xml"), getModulesFile("/Default/" + HubConfig.DEFAULT_STAGING_NAME + "/rest-api/options/" + HubConfig.STAGING_ENTITY_QUERY_OPTIONS_FILE));
-        assertXMLEqual(getResource("entity-manager-test/options.xml"), getModulesFile("/Default/" + HubConfig.DEFAULT_FINAL_NAME + "/rest-api/options/" + HubConfig.FINAL_ENTITY_QUERY_OPTIONS_FILE));
+        assertXMLEqual(getResource("entity-manager-test/options.xml"), getModulesFile("/Default/" + HubConfig.DEFAULT_STAGING_NAME + "/rest-api/options/" + HubConfig.FINAL_ENTITY_QUERY_OPTIONS_FILE));
 
         updateManagerEntity();
         deployed = entityManager.deployQueryOptions();
@@ -141,7 +141,7 @@ public class EntityManagerTest extends HubTestBase {
         assertEquals(0, getStagingDocCount());
         assertEquals(0, getFinalDocCount());
         assertXMLEqual(getResource("entity-manager-test/options2.xml"), getModulesFile("/Default/" + HubConfig.DEFAULT_STAGING_NAME + "/rest-api/options/" + HubConfig.STAGING_ENTITY_QUERY_OPTIONS_FILE));
-        assertXMLEqual(getResource("entity-manager-test/options2.xml"), getModulesFile("/Default/" + HubConfig.DEFAULT_FINAL_NAME + "/rest-api/options/" + HubConfig.FINAL_ENTITY_QUERY_OPTIONS_FILE));
+        assertXMLEqual(getResource("entity-manager-test/options2.xml"), getModulesFile("/Default/" + HubConfig.DEFAULT_STAGING_NAME + "/rest-api/options/" + HubConfig.FINAL_ENTITY_QUERY_OPTIONS_FILE));
 
         // shouldn't deploy a 2nd time because of modules properties files
         deployed = entityManager.deployQueryOptions();

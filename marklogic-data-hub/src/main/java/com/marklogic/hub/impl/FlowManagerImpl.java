@@ -53,7 +53,7 @@ public class FlowManagerImpl extends ResourceManager implements FlowManager {
     public FlowManagerImpl(HubConfig hubConfig) {
         super();
         this.hubConfig = hubConfig;
-        this.stagingClient = hubConfig.newStagingManageClient();
+        this.stagingClient = hubConfig.newStagingClient();
         this.stagingClient.init(NAME, this);
     }
 
@@ -253,7 +253,7 @@ public class FlowManagerImpl extends ResourceManager implements FlowManager {
 
     @Override public List<String> updateLegacyFlows(String fromVersion) {
 
-        Scaffolding scaffolding = Scaffolding.create(hubConfig.getProjectDir(), hubConfig.newFinalManageClient());
+        Scaffolding scaffolding = Scaffolding.create(hubConfig.getProjectDir(), hubConfig.newFinalClient());
 
         List<String> updatedFlows = new ArrayList<>();
         File[] entityDirs = hubConfig.getHubEntitiesDir().toFile().listFiles(pathname -> pathname.isDirectory());

@@ -154,6 +154,7 @@ public class FlowManagerTest extends HubTestBase {
     @Test
     public void testGetLocalFlows() throws IOException {
         Scaffolding scaffolding = Scaffolding.create("del-me-dir", stagingClient);
+        createProjectDir("del-me-dir");
         scaffolding.createEntity("my-entity");
 
         FlowManager fm = FlowManager.create(getHubConfig("del-me-dir"));
@@ -186,6 +187,7 @@ public class FlowManagerTest extends HubTestBase {
         Scaffolding scaffolding = Scaffolding.create("del-me-dir", stagingClient);
         scaffolding.createEntity("my-entity");
 
+        createProjectDir("del-me-dir");
         FlowManager fm = FlowManager.create(getHubConfig("del-me-dir"));
 
         allCombos((codeFormat, dataFormat, flowType, useEs) -> {

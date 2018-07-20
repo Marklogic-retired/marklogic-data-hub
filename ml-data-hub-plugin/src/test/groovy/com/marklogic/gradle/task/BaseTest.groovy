@@ -47,8 +47,9 @@ import java.nio.file.StandardCopyOption
 
 class BaseTest extends Specification {
 
+    // this value is for legacy purposes.  on dev should always be 5
     static final int MOD_COUNT_WITH_TRACE_MODULES = 26
-    static final int MOD_COUNT = 6
+    static final int MOD_COUNT = 5
     static final TemporaryFolder testProjectDir = new TemporaryFolder()
     static File buildFile
     static File propertiesFile
