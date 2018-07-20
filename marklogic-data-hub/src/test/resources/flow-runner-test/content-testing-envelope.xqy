@@ -19,12 +19,12 @@ declare function plugin:create-content(
   $id as xs:string,
   $options as map:map)
 {
-  object-node {
-    "$type":"Person",
-    "$version":"0.0.2",
-    "$attachments": object-node { "you":"there!" },
-    "and":"of",
-    "course":"other",
-    "keys":"yeah"
-  }=>xdmp:from-json()
+  let $m := json:object()
+  let $_ := map:put($m, "$type","Person")
+  let $_ := map:put($m, "$version", "0.0.2")
+  let $_ := map:put($m, "$attachments", object-node { "you":"there!" })
+  let $_ := map:put($m, "and", "of")
+  let $_ := map:put($m, "course", "other")
+  let $_ := map:put($m, "keys", "yeah")
+  return $m
 };
