@@ -438,7 +438,8 @@ declare function flow:make-envelope($content, $headers, $triples, $data-format)
           <attachments>
           {
             if ($content instance of map:map and map:keys($content) = "$attachments") then
-              if(map:get($content, "$attachments")/node() instance of element()) then
+              if(map:get($content, "$attachments") instance of element() or 
+                 map:get($content, "$attachments")/node() instance of element()) then
                 map:get($content, "$attachments")
               else
                 let $c := json:config("basic")
