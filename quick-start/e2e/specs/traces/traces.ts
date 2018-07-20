@@ -51,6 +51,12 @@ export default function() {
         expect(element(by.cssContainingText('.cm-string', 'world')).isPresent()).toBe(true);
         expect(element(by.cssContainingText('.cm-variable', 'user')).isPresent()).toBe(true);
         expect(element(by.cssContainingText('.cm-string', 'admin')).isPresent()).toBe(true);
+        console.log('clicking triples plugin');
+        traceViewerPage.pluginButton('triples').click();
+        browser.wait(EC.visibilityOf(traceViewerPage.pluginSubheader('triples')));
+        console.log('verifying triples output');
+        expect(traceViewerPage.pluginSubheader('triples').isPresent()).toBe(true);
+        expect(element(by.cssContainingText('.cm-string', 'http://www.marklogic.com/foo/123')).isPresent()).toBe(true);
         traceViewerPage.tracesTab.click();
       });
 

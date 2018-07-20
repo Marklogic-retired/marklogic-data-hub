@@ -20,12 +20,6 @@ export default function(tmpDir) {
       flowPage.isLoaded();
     });
 
-    it ('should redeploy modules', function() {
-      flowPage.redeployButton.click();
-      browser.wait(EC.textToBePresentInElement(element(by.css('#last-deployed-time')),
-        'Last Deployed: less than a minute ago' || 'Last Deployed: 1 minute ago'));
-    });
-
     it ('should run Load Products flow', function() {
       flowPage.entityDisclosure('Product').click();
       browser.wait(EC.elementToBeClickable(flowPage.getFlow('Product', 'Load Products', 'INPUT')));
@@ -96,12 +90,6 @@ export default function(tmpDir) {
       fs.copy(customTriplesFilePath, tmpDir + '/plugins/entities/Product/harmonize/Harmonize\ Products/triples.sjs');
     });
 
-    it ('should redeploy modules', function() {
-      flowPage.redeployButton.click();
-      browser.wait(EC.textToBePresentInElement(element(by.css('#last-deployed-time')),
-        'Last Deployed: less than a minute ago' || 'Last Deployed: 1 minute ago'));
-    });
-
     it ('should logout and login', function() {
       flowPage.logout();
       loginPage.isLoaded();
@@ -125,8 +113,6 @@ export default function(tmpDir) {
       console.log('found the button and clicking Run Harmonize button');
       flowPage.runHarmonizeButton().click();
       console.log('clicked the button');
-      //browser.wait(EC.elementToBeClickable(flowPage.toastButton));
-      //flowPage.toastButton.click();
       browser.sleep(10000);
       flowPage.jobsTab.click();
       jobsPage.isLoaded();
