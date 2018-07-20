@@ -576,6 +576,11 @@ export default function() {
       flowPage.isLoaded();
     });
 
+    it ('should redeploy modules', function() {
+      flowPage.redeployButton.click();
+      browser.sleep(5000);
+    });
+
     it ('should open the Entity disclosure', function() {
       flowPage.entityDisclosure('TestEntity').click();
     });

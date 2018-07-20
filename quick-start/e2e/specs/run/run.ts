@@ -100,6 +100,11 @@ export default function(tmpDir) {
       loginPage.login();
     });
 
+    it ('should redeploy modules', function() {
+      flowPage.redeployButton.click();
+      browser.sleep(5000);
+    });
+
     it('should run Harmonize Products flow', function() {
       flowPage.isLoaded();
       console.log('clicking Product entity');
@@ -179,6 +184,11 @@ export default function(tmpDir) {
       expect(element(by.cssContainingText('.cm-string', 'http://www.marklogic.com/foo/456')).isPresent()).toBe(true);
       viewerPage.flowsTab.click();
       flowPage.isLoaded();
+    });
+
+    it ('should redeploy modules', function() {
+      flowPage.redeployButton.click();
+      browser.sleep(5000);
     });
 
     it ('should open the TestEntity disclosure', function() {
