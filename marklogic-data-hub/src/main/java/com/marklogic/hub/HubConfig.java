@@ -367,7 +367,7 @@ public interface HubConfig {
 
     /**
      * Use newJobDbClient instead.  This function returns a client to
-     * the JOBS dataabse.
+     * the JOBS database.
      * @return - a DatabaseClient
      */
     @Deprecated
@@ -380,14 +380,14 @@ public interface HubConfig {
     DatabaseClient newModulesDbClient();
 
     /**
-     * Gets the path for the entity database directory
-     * @return the path for the entity's database directory
+     * Gets the path for the hub plugins directory
+     * @return the path for the hub plugins directory
      */
     Path getHubPluginsDir();
 
     /**
-     * Gets the path for the hub plugins directory
-     * @return the path for the hub plugins directory
+     * Gets the path for the hub entities directory
+     * @return the path for the hub entities directory
      */
     Path getHubEntitiesDir();
 
@@ -398,50 +398,50 @@ public interface HubConfig {
     Path getHubMappingsDir();
 
     /**
-     * Gets the path for the hub's entities directory
-     * @return the path for the hub's entities directory
-     */
-    Path getHubConfigDir();
-
-    /**
      * Gets the path for the hub's config directory
      * @return the path for the hub's config directory
      */
-    Path getHubDatabaseDir();
+    Path getHubConfigDir();
 
     /**
      * Gets the path for the hub's database directory
      * @return the path for the hub's database directory
      */
-    Path getHubServersDir();
+    Path getHubDatabaseDir();
 
     /**
      * Gets the path for the hub servers directory
      * @return the path for the hub servers database directory
      */
-    Path getHubSecurityDir();
+    Path getHubServersDir();
 
     /**
-     * Gets the path for the entity database directory
-     * @return the path for the entity's database directory
+     * Gets the path for the hub's security directory
+     * @return the path for the hub's security directory
      */
-    Path getUserConfigDir();
+    Path getHubSecurityDir();
 
     /**
      * Gets the path for the user config directory
      * @return the path for the user config directory
      */
-    Path getUserSecurityDir();
+    Path getUserConfigDir();
 
     /**
      * Gets the path for the user security directory
      * @return the path for the user security directory
      */
+    Path getUserSecurityDir();
+
+    /**
+     * Gets the path for the user database directory
+     * @return the path for the user database directory
+     */
     Path getUserDatabaseDir();
 
     /**
-     * Gets the path for the entity database directory
-     * @return the path for the entity's database directory
+     * Gets the path for the user servers directory
+     * @return the path for the user servers database directory
      */
     Path getUserServersDir();
 

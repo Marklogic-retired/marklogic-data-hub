@@ -40,8 +40,8 @@ public interface HubProject {
     }
 
     /**
-     * Gets the path for the plugins directory
-     * @return the path for the plugins directory
+     * Gets the path for the hub plugins directory
+     * @return the path for the hub plugins directory
      */
     Path getHubPluginsDir();
 
@@ -58,44 +58,44 @@ public interface HubProject {
     Path getHubMappingsDir();
 
     /**
-     * Gets the path for the hub's entities directory
-     * @return the path for the hub's entities directory
-     */
-    Path getHubConfigDir();
-
-    /**
      * Gets the path for the hub's config directory
      * @return the path for the hub's config directory
      */
-    Path getHubDatabaseDir();
+    Path getHubConfigDir();
 
     /**
      * Gets the path for the hub's database directory
      * @return the path for the hub's database directory
      */
-    Path getHubServersDir();
+    Path getHubDatabaseDir();
 
     /**
      * Gets the path for the hub servers directory
      * @return the path for the hub servers database directory
      */
-    Path getHubSecurityDir();
+    Path getHubServersDir();
 
     /**
-     * Gets the path for the entity database directory
-     * @return the path for the entity's database directory
+     * Gets the path for the hub's security directory
+     * @return the path for the hub's security directory
      */
-    Path getUserConfigDir();
+    Path getHubSecurityDir();
 
     /**
      * Gets the path for the user config directory
      * @return the path for the user config directory
      */
-    Path getUserSecurityDir();
+    Path getUserConfigDir();
 
     /**
      * Gets the path for the user security directory
      * @return the path for the user security directory
+     */
+    Path getUserSecurityDir();
+
+    /**
+     * Gets the path for the user database directory
+     * @return the path for the user database directory
      */
     Path getUserDatabaseDir();
 
@@ -106,14 +106,14 @@ public interface HubProject {
     Path getUserSchemasDir();
 
     /**
-     * Gets the path for the entity database directory
-     * @return the path for the entity's database directory
+     * Gets the path for the user servers directory
+     * @return the path for the user servers database directory
      */
     Path getUserServersDir();
 
     /**
-     * Gets the path for the user server's directory
-     * @return the path for the user server's directory
+     * Gets the path for the entity's config directory
+     * @return the path for the entity's config directory
      */
     Path getEntityConfigDir();
 
