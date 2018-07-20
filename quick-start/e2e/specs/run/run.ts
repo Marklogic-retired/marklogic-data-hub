@@ -20,11 +20,6 @@ export default function(tmpDir) {
       flowPage.isLoaded();
     });
 
-    it ('should redeploy modules', function() {
-      flowPage.redeployButton.click();
-      browser.sleep(5000);
-    });
-
     it ('should run Load Products flow', function() {
       flowPage.entityDisclosure('Product').click();
       browser.wait(EC.elementToBeClickable(flowPage.getFlow('Product', 'Load Products', 'INPUT')));
@@ -93,11 +88,6 @@ export default function(tmpDir) {
       console.log('copy customized triples.sjs');
       let customTriplesFilePath = 'e2e/qa-data/plugins/customTriples.sjs';
       fs.copy(customTriplesFilePath, tmpDir + '/plugins/entities/Product/harmonize/Harmonize\ Products/triples.sjs');
-    });
-
-    it ('should redeploy modules', function() {
-      flowPage.redeployButton.click();
-      browser.sleep(5000);
     });
 
     it ('should logout and login', function() {
