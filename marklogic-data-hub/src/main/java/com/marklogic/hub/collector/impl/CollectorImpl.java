@@ -134,7 +134,6 @@ public class CollectorImpl implements Collector {
             template.execute(uri, HttpMethod.GET, requestCallback, responseExtractor);
 
             return results;
-            return results;
         }
         catch(Exception e) {
             e.printStackTrace();
