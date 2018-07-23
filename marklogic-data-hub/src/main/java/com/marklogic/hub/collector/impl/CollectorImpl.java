@@ -120,12 +120,17 @@ public class CollectorImpl implements Collector {
             URI uri = new URI(uriString);
             HttpHeaders headers = new HttpHeaders();
             headers.set("Accept", MediaType.TEXT_PLAIN_VALUE);
-            Resource responseBody = template.exchange(uri, HttpMethod.GET, new HttpEntity<>(headers), Resource.class).getBody();
-            if(responseBody != null) {
-                InputStream inputStream = responseBody.getInputStream();
+            InputStream inputStream;
+            try {
+               inputStream = template.exchange(uri, HttpMethod.GET, new HttpEntity<>(headers), Resource.class).getBody().getInputStream();
+            }
+            catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            if(inputStream != null) {
                 BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
                 String line;
-                while((line = bufferedReader.readLine()) != null) {
+                while ((line = bufferedReader.readLine()) != null) {
                     results.add(line);
                 }
                 inputStream.close();
