@@ -17,6 +17,8 @@
 package com.marklogic.quickstart.service;
 
 import com.marklogic.appdeployer.command.Command;
+import com.marklogic.appdeployer.command.security.DeployProtectedPathsCommand;
+import com.marklogic.appdeployer.command.security.DeployQueryRolesetsCommand;
 import com.marklogic.appdeployer.impl.SimpleAppDeployer;
 import com.marklogic.hub.DataHub;
 import com.marklogic.hub.HubConfig;
@@ -79,20 +81,20 @@ public class DataHubService {
     }
 
     @Async
-    public void installUserModulesAsync(HubConfig config, boolean forceLoad, DeployUserModulesListener deployListener, ValidateListener validateListener) {
-        installUserModules(config, forceLoad, deployListener, validateListener);
+    public void installUserModulesAndSecurityConfigsAsync(HubConfig config, boolean forceLoad, DeployUserModulesListener deployListener, ValidateListener validateListener) {
+        installUserModulesAndSecurityConfigs(config, forceLoad, deployListener, validateListener);
     }
 
-    public void installUserModules(HubConfig config, boolean forceLoad, DeployUserModulesListener deployListener, ValidateListener validateListener) {
+    public void installUserModulesAndSecurityConfigs(HubConfig config, boolean forceLoad, DeployUserModulesListener deployListener, ValidateListener validateListener) {
         long startTime = PerformanceLogger.monitorTimeInsideMethod();
 
         try {
-            installUserModules(config, forceLoad, deployListener);
+            installUserModulesAndSecurityConfigs(config, forceLoad, deployListener);
             validateUserModules(config, validateListener);
         } catch (Throwable e) {
             throw new DataHubException(e.getMessage(), e);
         }
-        PerformanceLogger.logTimeInsideMethod(startTime, "DataHubService.installUserModules");
+        PerformanceLogger.logTimeInsideMethod(startTime, "DataHubService.installUserModulesAndSecurityConfigs");
     }
 
     @Async
@@ -102,7 +104,7 @@ public class DataHubService {
         DataHub dataHub = DataHub.create(config);
         try {
             dataHub.clearUserModules();
-            installUserModules(config, true, deployListener);
+            installUserModulesAndSecurityConfigs(config, true, deployListener);
             if(validateListener != null) {
                 validateUserModules(config, validateListener);
             }
@@ -177,11 +179,15 @@ public class DataHubService {
         dataHub.clearDatabase(database);
     }
 
-    private void installUserModules(HubConfig hubConfig, boolean forceLoad, DeployUserModulesListener deployListener) {
+    private void installUserModulesAndSecurityConfigs(HubConfig hubConfig, boolean forceLoad, DeployUserModulesListener deployListener) {
         List<Command> commands = new ArrayList<>();
         LoadUserModulesCommand loadUserModulesCommand = new LoadUserModulesCommand(hubConfig);
         loadUserModulesCommand.setForceLoad(forceLoad);
         commands.add(loadUserModulesCommand);
+
+        //Deploy security modules for PII
+        commands.add(new DeployProtectedPathsCommand());
+        commands.add(new DeployQueryRolesetsCommand());
 
         SimpleAppDeployer deployer = new SimpleAppDeployer(((HubConfigImpl)hubConfig).getManageClient(), ((HubConfigImpl)hubConfig).getAdminManager());
         deployer.setCommands(commands);

@@ -107,7 +107,7 @@ public class CurrentProjectController extends EnvironmentAware implements FileSy
                 tracing.enable();
             }
             logger.info("OnFinished: installing user modules");
-            installUserModules(cachedConfig.getMlSettings(), true);
+            installUserModulesAndSecurityConfigs(cachedConfig.getMlSettings(), true);
             startProjectWatcher();
         }
 
@@ -206,7 +206,7 @@ public class CurrentProjectController extends EnvironmentAware implements FileSy
     public ResponseEntity<?> updateHub() throws IOException, CantUpgradeException {
         try {
             if (dataHubService.updateHub(envConfig().getMlSettings())) {
-                installUserModules(envConfig().getMlSettings(), true);
+                installUserModulesAndSecurityConfigs(envConfig().getMlSettings(), true);
                 startProjectWatcher();
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }
@@ -231,14 +231,16 @@ public class CurrentProjectController extends EnvironmentAware implements FileSy
 
     private void startProjectWatcher() throws IOException {
         String pluginDir = Paths.get(envConfig().getProjectDir(), "plugins").toString();
+        String securityDir = Paths.get(envConfig().getProjectDir(), "user-config", "security").toString();
         if (!watcherService.hasListener(this)) {
             watcherService.watch(pluginDir);
+            watcherService.watch(securityDir);
             watcherService.addListener(this);
         }
     }
 
-    private void installUserModules(HubConfig hubConfig, boolean force) {
-        dataHubService.installUserModulesAsync(hubConfig, force, this, this);
+    private void installUserModulesAndSecurityConfigs(HubConfig hubConfig, boolean force) {
+        dataHubService.installUserModulesAndSecurityConfigsAsync(hubConfig, force, this, this);
     }
 
     @Override
@@ -253,7 +255,7 @@ public class CurrentProjectController extends EnvironmentAware implements FileSy
      */
     @Override
     public void onWatchEvent(HubConfig hubConfig) {
-        installUserModules(hubConfig, false);
+        installUserModulesAndSecurityConfigs(hubConfig, false);
     }
 
     @Override
@@ -269,7 +271,7 @@ public class CurrentProjectController extends EnvironmentAware implements FileSy
 
         InstallInfo installInfo = envConfig.getInstallInfo();
         if (installInfo.isInstalled() && envConfig.getRunningVersion().equals(envConfig.getInstalledVersion())) {
-            installUserModules(envConfig.getMlSettings(), false);
+            installUserModulesAndSecurityConfigs(envConfig.getMlSettings(), false);
             startProjectWatcher();
         }
 
