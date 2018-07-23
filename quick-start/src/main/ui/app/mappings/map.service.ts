@@ -38,10 +38,10 @@ export class MapService {
   }
 
   getMappingsByEntity(entity: Entity) {
-    if(!entity.info.baseUri.trim()){
+    if(!entity.info.baseUri){
       entity.info.baseUri = "http://example.org/"
     }
-    let entityName = entity.info.baseUri + +entity.name+'-' + entity.info.version + '/' + entity.name;
+    let entityName = entity.info.baseUri.trim() + entity.name+'-' + entity.info.version + '/' + entity.name;
 
     return this.maps.filter((mapping) => {
       return mapping.targetEntityType.toLocaleLowerCase() == entityName.toLocaleLowerCase();
@@ -58,7 +58,7 @@ export class MapService {
 
   saveMap(mapName, map) {
     let parsedMap = JSON.parse(map);
-   return this.http.post(this.url('/mappings/' + mapName), parsedMap).map((res: Response) => {
+    return this.http.post(this.url('/mappings/' + mapName), parsedMap).map((res: Response) => {
       console.log('POST /mappings/' + mapName, map);
       return res;
     })
@@ -67,7 +67,7 @@ export class MapService {
   deleteMap(mapping: Mapping) {
     _.remove(this.maps, { 'name': mapping.name });
     this.mappingsChange.emit(this.maps);
-   return  this.http.delete(this.url('/mappings/' + mapping.name)).map((res: Response) => {
+    return  this.http.delete(this.url('/mappings/' + mapping.name)).map((res: Response) => {
       console.log('DELETE /mappings/' + mapping.name);
       return res;
     })
