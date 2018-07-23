@@ -84,8 +84,8 @@ public class PiiE2E extends HubTestBase {
         installHubModules();
         // Hardcoding to "digest" auth for now
         // needs to be final db
-        clerkClient = DatabaseClientFactory.newClient(finalClient.getHost(),stagingPort, "SydneyGardner", "x", Authentication.DIGEST);
-        officerClient = DatabaseClientFactory.newClient(finalClient.getHost(),stagingPort, "GiannaEmerson", "x" , Authentication.DIGEST);
+        clerkClient = DatabaseClientFactory.newClient(finalClient.getHost(),stagingPort, HubConfig.DEFAULT_FINAL_NAME, "SydneyGardner", "x", Authentication.DIGEST);
+        officerClient = DatabaseClientFactory.newClient(finalClient.getHost(),stagingPort, HubConfig.DEFAULT_FINAL_NAME, "GiannaEmerson", "x" , Authentication.DIGEST);
 
         try {
             runInputFLow();
@@ -103,8 +103,10 @@ public class PiiE2E extends HubTestBase {
     	assertEquals("{}",getCustomerHistoryBySSN(clerkClient, "228-80-9858"));
 
     	//Compliance officer should be able see harmonized docs including ssn
-        assertEquals("{\"fullName\":\"Ellie Holland\",\"worksFor\":\"SuperMemo Limited\",\"email\":\"ellie.holland@supermemolimited.biz\",\"ssn\":\"164-32-6412\"}", getCustomerHistory(officerClient, "Holland"));
-       	assertEquals("{\"fullName\":\"Melanie Douglas\",\"worksFor\":\"Erntogra Inc.\",\"email\":\"melanie.douglas@erntograinc.eu\",\"ssn\":\"228-80-9858\"}",getCustomerHistoryBySSN(officerClient, "228-80-9858"));
+        assertEquals("{\"fullName\":\"Ellie Holland\",\"worksFor\":\"SuperMemo Limited\",\"email\":\"ellie.holland@supermemolimited.biz\",\"ssn\":\"164-32-6412\"}",
+            getCustomerHistory(officerClient, "Holland"));
+       	assertEquals("{\"fullName\":\"Melanie Douglas\",\"worksFor\":\"Erntogra Inc.\",\"email\":\"melanie.douglas@erntograinc.eu\",\"ssn\":\"228-80-9858\"}",
+            getCustomerHistoryBySSN(officerClient, "228-80-9858"));
 
         //Compliance officer should not be able to update harmonized docs
        	try {
@@ -289,7 +291,8 @@ public class PiiE2E extends HubTestBase {
         finalCount = getFinalDocCount();
 
         assertEquals(12, stagingCount);
-        assertTrue("After save, pii, this value is 4, before, it's 3.  Actual is " + finalCount, finalCount == 3 || finalCount == 4);
+        assertTrue("After save, pii, this value is 4, before, it's 3.  Actual is " + finalCount, finalCount == 3 ||
+            finalCount == 4);
     }
 
     private void runHarmonizeFlow(String flowName, DatabaseClient srcClient, String destDb){

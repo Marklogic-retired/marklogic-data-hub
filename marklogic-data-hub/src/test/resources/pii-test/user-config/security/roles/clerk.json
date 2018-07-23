@@ -5,6 +5,16 @@
     "rest-extension-user"
   ],
   "privilege": [
-    {"privilege-name" : "rest-reader", "action":"http://marklogic.com/xdmp/privileges/rest-reader", "kind":"execute"}
+    {"privilege-name" : "rest-reader", "action":"http://marklogic.com/xdmp/privileges/rest-reader", "kind":"execute"},
+    {
+      "privilege-name": "xdbc:eval-in",
+      "action": "http://marklogic.com/xdmp/privileges/xdbc-eval-in",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "xdmp:eval-in",
+      "action": "http://marklogic.com/xdmp/privileges/xdmp-eval-in",
+      "kind": "execute"
+    }
   ]
 }
