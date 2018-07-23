@@ -40,21 +40,23 @@ declare function plugin:extract-instance-my-fun-test(
 (: the original source documents :)
   let $attachments := $source
   let $source      :=
-    if ($source/*:envelope) then
+    if ($source/*:envelope and $source/node() instance of element()) then
+      $source/*:envelope/*:instance/node()
+    else if ($source/*:envelope) then
       $source/*:envelope/*:instance
     else if ($source/instance) then
-      $source/instance
-    else
-      $source
+        $source/instance
+      else
+        $source
   let $name := xs:string($source/name)
   let $price := xs:decimal($source/price)
-  let $ages := ($source/ages)
+  let $ages := (json:to-array($source/ages))
 
   (: The following property is a local reference. :)
   let $employee := (
     let $employees :=
       (: create a sequence of Employee instances from your data :)
-      for $sub-entity in ()
+      for $sub-entity in ($source/employee)
       return
         plugin:extract-instance-Employee($sub-entity)
     return
@@ -67,7 +69,7 @@ declare function plugin:extract-instance-my-fun-test(
   let $employees := (
     let $employees :=
       (: create a sequence of Employee instances from your data :)
-      for $sub-entity in ()
+      for $sub-entity in ($source/employees)
       return
         plugin:extract-instance-Employee($sub-entity)
     return
@@ -117,6 +119,13 @@ declare function plugin:extract-instance-Employee(
   $source as node()?
 ) as map:map
 {
+
+  let $source :=
+    if($source/node() instance of element()) then
+      $source/node()
+    else (
+      $source
+    )
   let $id := xs:string($source/id)
   let $name := xs:string($source/name)
   let $salary := xs:decimal($source/salary)
