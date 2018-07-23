@@ -8,8 +8,8 @@
       ],
       "instance":{
          "e2eentity":{
-            "id":"123",
-            "name":"bob smith",
+            "id":"154",
+            "name":"mike smith",
             "salary":1000
          },
          "info":{
@@ -18,13 +18,9 @@
          }
       },
       "attachments":{
-		"envelope": {
-				"headers": {
-		
-				},
-				"triples": [
-		
-				],
+			"envelope": {
+				"headers": {},
+				"triples": [],
 				"instance": {
 					"id": "154",
 					"name": "mike smith",
