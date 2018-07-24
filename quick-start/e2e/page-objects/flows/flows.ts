@@ -82,10 +82,6 @@ export class FlowPage extends AppPage {
     return element(by.cssContainingText('app-select-list td', 'XML'));
   }
 
-  mapNameButton(mapName: string) {
-    return element(by.cssContainingText('app-select-list td', mapName));
-  }
-
   get createFlowButton() {
     return element(by.buttonText('Create'));
   }
