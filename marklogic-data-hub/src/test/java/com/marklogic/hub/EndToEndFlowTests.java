@@ -1069,7 +1069,8 @@ public class EndToEndFlowTests extends HubTestBase {
             throw new RuntimeException(e);
         }
 
-    MlcpRunner mlcpRunner = new MlcpRunner(null, "com.marklogic.hub.util.MlcpMain", getHubConfig(), flow, databaseClient, mlcpOptions, null);
+        MlcpRunner mlcpRunner = new MlcpRunner(null, "com.marklogic.hub.util.MlcpMain", getHubConfig(), flow, databaseClient, mlcpOptions, null);
+        mlcpRunner.setDatabase(databaseClient.getDatabase());
         mlcpRunner.start();
         try {
             mlcpRunner.join();
