@@ -5,7 +5,7 @@ import create from './create';
 import runFlows from './run';
 import jobs from './jobs';
 import runTraces from './traces';
-import runTypeAhead from './mappings';
+import mappings from './mappings';
 import uninstall from './uninstall';
 
 import CUSTOM_MATCHERS from '../matchers'
@@ -61,6 +61,6 @@ describe('QuickStart', function () {
   runFlows(tmpobj.name);
   jobs();
   runTraces();
-  runTypeAhead();
+  mappings();
   uninstall(tmpobj.name);
 });
