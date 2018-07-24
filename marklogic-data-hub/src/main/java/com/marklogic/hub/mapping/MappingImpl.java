@@ -46,7 +46,7 @@ public class MappingImpl implements Mapping {
         this.sourceURI = "";
         this.properties = new HashMap<>();
         properties.put("id", createProperty("sourcedFrom", "id"));
-        this.targetEntityType = "";
+        this.targetEntityType = "http://example.org/modelName-version/entityType";
     }
 
     @Override
