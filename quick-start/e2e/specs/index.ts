@@ -5,7 +5,7 @@ import create from './create';
 import runFlows from './run';
 import jobs from './jobs';
 import runTraces from './traces';
-import runTypeAhead from './typeAhead';
+import runTypeAhead from './mappings';
 import uninstall from './uninstall';
 
 import CUSTOM_MATCHERS from '../matchers'
