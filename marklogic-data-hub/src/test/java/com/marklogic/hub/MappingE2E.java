@@ -35,7 +35,6 @@ import java.util.Vector;
 import java.util.concurrent.TimeUnit;
 
 import org.custommonkey.xmlunit.XMLUnit;
-import org.json.JSONException;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -43,11 +42,6 @@ import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
-import org.skyscreamer.jsonassert.Customization;
-import org.skyscreamer.jsonassert.JSONAssert;
-import org.skyscreamer.jsonassert.JSONCompareMode;
-import org.skyscreamer.jsonassert.ValueMatcher;
-import org.skyscreamer.jsonassert.comparator.CustomComparator;
 import org.w3c.dom.Document;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -116,7 +110,7 @@ public class MappingE2E extends HubTestBase {
 
             Path entityDir = projectDir.resolve("plugins").resolve("entities").resolve(ENTITY);
             copyFile("e2e-test/" + ENTITY + ".entity.json", entityDir.resolve(ENTITY + ".entity.json"));
-
+            installUserModules(getHubConfig(), true);
             if (modelProperties == null) {
     	        ObjectMapper objectMapper = new ObjectMapper();
     	     	JsonNode rootNode = null;
@@ -193,9 +187,9 @@ public class MappingE2E extends HubTestBase {
 
     private void createFlow(String prefix, CodeFormat codeFormat, DataFormat dataFormat, FlowType flowType, boolean useEs, String mapping, int  version, CreateFlowListener listener) {
     	if(useEs && flowType.equals(FlowType.HARMONIZE)) {
-    		String flowName = getFlowName(prefix, codeFormat, dataFormat, flowType, mapping, version);
-	        Path entityDir = projectDir.resolve("plugins").resolve("entities").resolve(ENTITY);
-	        Path flowDir = entityDir.resolve(flowType.toString()).resolve(flowName);
+    		String flowName = getFlowName(prefix, codeFormat, dataFormat, flowType, mapping, version);  		  
+    		Path entityDir = projectDir.resolve("plugins").resolve("entities").resolve(ENTITY);
+    		Path flowDir = entityDir.resolve(flowType.toString()).resolve(flowName);
 
 	        scaffolding.createFlow(ENTITY, flowName, flowType, codeFormat, dataFormat, true, mapping + "-" +version);
 
@@ -211,17 +205,17 @@ public class MappingE2E extends HubTestBase {
     private void createMappings() {
     	allMappings = new ArrayList<String>();
     	Map<String, String> sourceContexts = new HashMap<>();
-    	sourceContexts.put("validPath", "//validtest/");
-    	sourceContexts.put("nonExistentPath", "//test1/validtest/");
-    	sourceContexts.put("inCorrectPath", "//invalidtest/");
-
+    	sourceContexts.put("validPath1", "//validtest/");
+    	sourceContexts.put("validPath2", "/test/validtest/");
+    	sourceContexts.put("validPath3", "//*:validtestns/*:");
+    	sourceContexts.put("validPath4", "/test/*[name()='validtestns']/");
 
     	String targetEntity = "http://marklogic.com/example/Schema-0.0.1/e2eentity";
     	Map<String, String> properties = new HashMap<>();
-    	properties.put("oneProp","empid");
+    	properties.put("twoProp","empid,fullname");
     	properties.put("threeProp","empid,fullname,monthlysalary");
     	properties.put("nonExistingProp", "fakeprop1");
-    	properties.put("nonMatchingCanonicalProp", "empid,fullname");
+  
 
         for (Entry<String,String> sourceContext : sourceContexts.entrySet()) {
         	for (Entry<String,String> property : properties.entrySet()) {
@@ -231,13 +225,19 @@ public class MappingE2E extends HubTestBase {
         	}
         }
         // Corner/ Invalid cases
+        createMapping("nonExistentPath", "//test1/validtest/","http://marklogic.com/example/Schema-0.0.1/e2eentity", "empid,fullname,monthlysalary".split(","));
+        createMapping("inCorrectPath", "//invalidtestns/","http://marklogic.com/example/Schema-0.0.1/e2eentity",  "empid,fullname,monthlysalary".split(","));
         createMapping("empty-sourceContext", null,"http://marklogic.com/example/Schema-0.0.1/e2eentity", "empid,fullname,monthlysalary".split(","));
-        createMapping("without-sourcedFrom", "//validtest/","http://marklogic.com/example/Schema-0.0.1/e2eentity",  "empid,fullname,monthlysalary".split(","));
-        createMapping("empty-properties", "//validtest/","http://marklogic.com/example/Schema-0.0.1/e2eentity", new String[1]);
+        
+        createMapping("default-without-sourcedFrom", "/","http://marklogic.com/example/Schema-0.0.1/e2eentity",  "empid,fullname,monthlysalary".split(","));
+        createMapping("default-no-properties", "//validtest/","http://marklogic.com/example/Schema-0.0.1/e2eentity", new String[1]);
+        createMapping("default-diffCanonicalProp", "//validtest/","http://marklogic.com/example/Schema-0.0.1/e2eentity","empid,fullname,monthlysalary".split(","));
+        
         createMapping("diff-entity-validPath", "//validtest/","http://marklogic.com/example/Schema-0.0.1/fakeentity", "empid,fullname,monthlysalary".split(","));
         //Create another version of existing mapping
-        createMapping("validPath-threeProp", "//validtest/","http://marklogic.com/example/Schema-0.0.1/e2eentity", true, "empid,fullname,monthlysalary".split(","));
-        allMappings.addAll(Arrays.asList("empty-sourceContext,empty-properties,diff-entity-validPath,without-sourcedFrom".split(",")));
+        createMapping("validPath1-threeProp", "//validtest/","http://marklogic.com/example/Schema-0.0.1/e2eentity", true, "empid,fullname,monthlysalary".split(","));
+        allMappings.addAll(Arrays.asList("nonExistentPath,inCorrectPath,empty-sourceContext,default-without-sourcedFrom,default-no-properties,default-diffCanonicalProp,diff-entity-validPath".split(",")));
+        
         installUserModules(getHubConfig(), true);
     }
 
@@ -262,11 +262,14 @@ public class MappingE2E extends HubTestBase {
           		//non-existing property in source doc
           		if(property.equals("fakeprop1")) {
           			mappingProperties.put("id", mapper.createObjectNode().put("sourcedFrom", "fakeprop1"));
+          			mappingProperties.put("name", mapper.createObjectNode().put("sourcedFrom", "fakeprop1"));
+          			mappingProperties.put("salary", mapper.createObjectNode().put("sourcedFrom", "fakeprop1"));
           		}
           		//non-existing property in canonical model
-          		else if(name.contains("nonMatchingCanonicalProp")) {
+          		else if(name.contains("default-diffCanonicalProp")) {
           			mappingProperties.put("id1", mapper.createObjectNode().put("sourcedFrom", "empid"));
           			mappingProperties.put("name1", mapper.createObjectNode().put("sourcedFrom", "fullname"));
+          			mappingProperties.put("salary1", mapper.createObjectNode().put("sourcedFrom", "monthlysalary"));
           		}
           		else if(name.contains("without-sourcedFrom")) {
           			//do nothing
@@ -283,7 +286,6 @@ public class MappingE2E extends HubTestBase {
           }
 
           mappingManager.saveMapping(testMap, incrementVersion);
-
     }
 
     private void copyFile(String srcDir, Path dstDir) {
@@ -408,42 +410,37 @@ public class MappingE2E extends HubTestBase {
             if (destDb.equals(HubConfig.DEFAULT_STAGING_NAME)) {
                 mgr = stagingDocMgr;
             }
+            
+            String filename = null;
+            
+            if(flowName.contains("validPath")) {
+            	filename = "mapping/final-es";
 
-            String filename = "mapping/final-es";
-
-            if(flowName.contains("oneProp")) {
-            	filename = "mapping/final-es-oneProp";
+                if(flowName.contains("validPath3") || flowName.contains("validPath4")) {
+                	filename = filename.concat("-1");
+                }
             }
-            if(! flowName.contains("validPath") || flowName.contains("non")) {
+            else if(flowName.contains("default")) {
+            	filename = "mapping/final-es-default";
+            }
+            else {
             	filename = "mapping/final-es-empty";
             }
-            if (! flowName.contains("empty-sourceContext")) {
+            if(! codeFormat.equals(CodeFormat.XQUERY) && flowName.contains("empty-sourceContext")) {
 	            if (dataFormat.equals(DataFormat.XML)) {
 	                Document expected = getXmlFromResource("e2e-test/" + filename + ".xml");
 	                for (int i = 0; i < TEST_SIZE; i+=10) {
 	                    Document actual = mgr.read("/input-" + i + ".xml").next().getContent(new DOMHandle()).get();
 	                    debugOutput(expected, System.out);
                         debugOutput(actual, System.out);
+
 	                    assertXMLEqual(expected, actual);
 	                }
 	            } else {
 	                String expected = getResource("e2e-test/" + filename + "." + dataFormat.toString());
 	                for (int i = 0; i < TEST_SIZE; i+=10) {
 	                    String actual = mgr.read("/input-" + i + "." + dataFormat.toString()).next().getContent(new StringHandle()).get();
-	                    //ignoring for now
-	                    try {
-							JSONAssert.assertEquals(expected, actual,
-							new CustomComparator(JSONCompareMode.STRICT,
-					                Customization.customization("envelope.instance.e2eentity",
-					                                            new ValueMatcher<Object>() {
-					                  @Override public boolean equal(Object o1, Object o2) {
-					                    return true;
-					                  }
-					                })));
-						} catch (JSONException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
+	                    assertJsonEqual(expected, actual, true);
 	                }
 	            }
             }
@@ -459,7 +456,6 @@ public class MappingE2E extends HubTestBase {
         else {
             assertNotEquals(TEST_SIZE, getFinalDocCount());
             tuple.x.awaitCompletion();
-        }
-
+        }        
     }
 }

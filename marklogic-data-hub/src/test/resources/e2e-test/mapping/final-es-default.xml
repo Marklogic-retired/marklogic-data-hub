@@ -8,9 +8,9 @@
          <version>0.0.1</version>
       </info>
       <e2eentity xmlns="">
-         <id />
-         <name />
-         <salary />
+         <id>154</id>
+         <fullname>mike smith</fullname>
+         <salary>1000</salary>
       </e2eentity>
    </instance>
    <attachments>
