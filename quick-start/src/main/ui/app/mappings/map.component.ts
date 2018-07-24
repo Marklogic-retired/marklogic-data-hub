@@ -89,7 +89,7 @@ export class MapComponent implements OnInit {
     ).subscribe(response => {
       this.sampleDocURI = response.results[0].uri;
       this.editURIVal = this.sampleDocURI;
-      this.loadSampleDocByURI(this.sampleDocURI, {})
+      this.loadSampleDocByURI(this.sampleDocURI, {}, false)
     },
       () => {},
       () => {}
@@ -100,8 +100,9 @@ export class MapComponent implements OnInit {
    * Load a sample document by its URI.
    * @param uri A document URI
    * @param conns A connections object in case rollback is required
+   * @param save {boolean} Save map after successful load (when updating URI)
    */
-  loadSampleDocByURI(uri: string, conns: Object): void {
+  loadSampleDocByURI(uri: string, conns: Object, save: boolean): void {
     let self = this;
     this.searchService.getDoc(this.currentDatabase, uri).subscribe(doc => {
       this.sampleDocSrcProps = [];
@@ -116,6 +117,10 @@ export class MapComponent implements OnInit {
       });
       this.sampleDocURI = this.editURIVal;
       this.editingURI = false;
+      if (save) {
+        this.saveMap();
+        console.log('map saved with updated URI');
+      }
     },
       (err) => {
         // URI not found; this can only occur when editing the URI
@@ -150,7 +155,7 @@ export class MapComponent implements OnInit {
           let connsOrig = _.cloneDeep(this.conns);
           this.conns = {};
           // provide connsOrig for rollback purposes if needed
-          this.loadSampleDocByURI(this.editURIVal, connsOrig);
+          this.loadSampleDocByURI(this.editURIVal, connsOrig, true);
         },(err: any) => {
           console.log('source change aborted');
           this.editingURI = false;
@@ -158,7 +163,7 @@ export class MapComponent implements OnInit {
         () => {}
       );
     } else {
-      this.loadSampleDocByURI(this.editURIVal, {});
+      this.loadSampleDocByURI(this.editURIVal, {}, true);
     }
   }
 
@@ -217,7 +222,6 @@ export class MapComponent implements OnInit {
       this.mapName = params['map'] || null;
 
       this.loadEntity();
-      this.loadSampleDoc(this.entityName)
       this.loadMap();
     });
   }
@@ -284,13 +288,9 @@ export class MapComponent implements OnInit {
         "properties": formattedConns
     }
 
-    // Temporarily saving locally
-    //localStorage.setItem(this.mapPrefix + this.mapName, JSON.stringify(mapObj));
-
     let tmpEntityName = this.chosenEntity.name;
     let tmpMapName = this.mapName;
 
-    // TODO use service to save
     this.mapService.saveMap(this.mapName, JSON.stringify(mapObj)).subscribe((res: any) => {
       this.snackbar.showSnackbar({
         message: 'Mapping "' + tmpMapName + '" saved'
@@ -299,19 +299,6 @@ export class MapComponent implements OnInit {
       this.router.navigate(['/mappings', tmpEntityName, tmpMapName]);
     });
     this.router.navigate(['/mappings']);
-  }
-
-  /**
-   * Handle cancel button event
-   */
-  cancelMap(): void {
-    let result = this.dialogService.confirm('Cancel and lose any changes?', 'Stay On Page', 'OK');
-    result.subscribe( () => {
-        this.router.navigate(['/mappings']);
-      },(err: any) => {
-        console.log('map cancel aborted');
-      }
-    );
   }
 
   /**
@@ -334,16 +321,25 @@ export class MapComponent implements OnInit {
    * Retrieve the mapping artifact
    */
   loadMap() {
-    let result;
     let self = this;
 
     this.mapService.getMap(this.mapName).subscribe((map: any) => {
       if(map) {
         this.mapping = map;
+        this.sampleDocURI = map.sourceURI;
+        this.editURIVal = this.sampleDocURI;
         this.editDescVal = map.description;
         // close any open edit inputs when changing mappings
         this.editingDesc = false;
         this.editingURI = false;
+      }
+      // if source URI unset in mapping, load sample source doc based on entity
+      if (this.mapping && !this.mapping.sourceURI) {
+        this.loadSampleDoc(this.entityName)
+      }
+      // else load source doc based on source URI in mapping
+      else {
+        this.loadSampleDocByURI(this.sampleDocURI, {}, false);
       }
       if (map && map.properties) {
         self.conns = {};
@@ -353,13 +349,6 @@ export class MapComponent implements OnInit {
         self.connsOrig = _.clone(self.conns);
       }
     });
-  }
-
-  loadMaps() {
-    let result;
-    // TODO use service to get
-    result = this.mapService.getMappings();
-    return result || {};
   }
 
   mapChanged() {
