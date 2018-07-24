@@ -621,11 +621,11 @@ export default function() {
 
     it ('should create input and harmonize flows on Product entity', function() {
       //create Product input flow
-      flowPage.createFlow('Product', 'Load Products', 'INPUT', 'json', 'sjs', false);
+      flowPage.createInputFlow('Product', 'Load Products', 'json', 'sjs', false);
       browser.wait(EC.visibilityOf(flowPage.getFlow('Product', 'Load Products', 'INPUT')));
       expect(flowPage.getFlow('Product', 'Load Products', 'INPUT').isDisplayed()).toBe(true, 'Load Products' + ' is not present');
       //create Product harmonize flow
-      flowPage.createFlow('Product', 'Harmonize Products', 'HARMONIZE', 'json', 'sjs', false);
+      flowPage.createHarmonizeFlow('Product', 'Harmonize Products', 'json', 'sjs', true);
       browser.wait(EC.visibilityOf(flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE')));
       expect(flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE').isDisplayed()).toBe(true, 'Harmonize Products' + ' is not present');
       //add flow options
