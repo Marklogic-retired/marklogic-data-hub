@@ -47,7 +47,9 @@ public class HubProjectTest extends HubTestBase {
         config.setForestsPerHost(DatabaseKind.MODULES,3);
         config.setForestsPerHost(DatabaseKind.TRIGGERS, 4);
 
-        config.setForestsPerHost(DatabaseKind.SCHEMAS, 5);
+        //config.setForestsPerHost(DatabaseKind.SCHEMAS, 5);
+        config.setForestsPerHost(DatabaseKind.STAGING_SCHEMAS, 5);
+        config.setForestsPerHost(DatabaseKind.FINAL_SCHEMAS, 5);
 
         config.setHubRoleName("myrole");
         config.setHubUserName("myuser");
@@ -121,8 +123,8 @@ public class HubProjectTest extends HubTestBase {
         assertEquals(config.getDbName(DatabaseKind.TRIGGERS), props.getProperty("mlTriggersDbName"));
         assertEquals(config.getForestsPerHost(DatabaseKind.TRIGGERS).toString(), props.getProperty("mlTriggersForestsPerHost"));
 
-        assertEquals(config.getDbName(DatabaseKind.SCHEMAS), props.getProperty("mlSchemasDbName"));
-        assertEquals(config.getForestsPerHost(DatabaseKind.SCHEMAS).toString(), props.getProperty("mlSchemasForestsPerHost"));
+        //assertEquals(config.getDbName(DatabaseKind.SCHEMAS), props.getProperty("mlSchemasDbName"));
+        //assertEquals(config.getForestsPerHost(DatabaseKind.SCHEMAS).toString(), props.getProperty("mlSchemasForestsPerHost"));
 
         assertEquals(config.getHubRoleName(), props.getProperty("mlHubUserRole"));
         assertEquals(config.getHubUserName(), props.getProperty("mlHubUserName"));

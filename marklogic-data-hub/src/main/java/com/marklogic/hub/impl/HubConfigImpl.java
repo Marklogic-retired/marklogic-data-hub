@@ -102,8 +102,12 @@ public class HubConfigImpl implements HubConfig {
     protected String triggersDbName = DEFAULT_TRIGGERS_DB_NAME;
     protected Integer triggersForestsPerHost = 1;
 
-    protected String schemasDbName = DEFAULT_SCHEMAS_DB_NAME;
-    protected Integer schemasForestsPerHost = 1;
+    //protected String schemasDbName = DEFAULT_SCHEMAS_DB_NAME;
+    //protected Integer schemasForestsPerHost = 1;
+    protected String stagingSchemasDbName = DEFAULT_STAGING_SCHEMAS_DB_NAME;
+    protected Integer stagingSchemasForestsPerHost = 1;
+    protected String finalSchemasDbName = DEFAULT_FINAL_SCHEMAS_DB_NAME;
+    protected Integer finalSchemasForestsPerHost = 1;
 
     private String hubRoleName = DEFAULT_ROLE_NAME;
     private String hubUserName = DEFAULT_USER_NAME;
@@ -170,8 +174,14 @@ public class HubConfigImpl implements HubConfig {
             case TRIGGERS:
                 name = triggersDbName;
                 break;
-            case SCHEMAS:
+            /*case SCHEMAS:
                 name = schemasDbName;
+                break;*/
+            case STAGING_SCHEMAS:
+                name = stagingSchemasDbName;
+                break;
+            case FINAL_SCHEMAS:
+                name = finalSchemasDbName;
                 break;
             default:
                 throw new InvalidDBOperationError(kind, "grab database name");
@@ -199,8 +209,14 @@ public class HubConfigImpl implements HubConfig {
             case TRIGGERS:
                 triggersDbName = dbName;
                 break;
-            case SCHEMAS:
+            /*case SCHEMAS:
                 schemasDbName = dbName;
+                break;*/
+            case STAGING_SCHEMAS:
+                stagingSchemasDbName = dbName;
+                break;
+            case FINAL_SCHEMAS:
+                finalSchemasDbName = dbName;
                 break;
             default:
                 throw new InvalidDBOperationError(kind, "set database name");
@@ -268,8 +284,14 @@ public class HubConfigImpl implements HubConfig {
             case TRIGGERS:
                 forests = triggersForestsPerHost;
                 break;
-            case SCHEMAS:
+            /*case SCHEMAS:
                 forests = schemasForestsPerHost;
+                break;*/
+            case STAGING_SCHEMAS:
+                forests = stagingSchemasForestsPerHost;
+                break;
+            case FINAL_SCHEMAS:
+                forests = finalSchemasForestsPerHost;
                 break;
             default:
                 throw new InvalidDBOperationError(kind, "grab count of forests per host");
@@ -297,8 +319,14 @@ public class HubConfigImpl implements HubConfig {
             case TRIGGERS:
                 triggersForestsPerHost = forestsPerHost;
                 break;
-            case SCHEMAS:
+            /*case SCHEMAS:
                 schemasForestsPerHost = forestsPerHost;
+                break;*/
+            case STAGING_SCHEMAS:
+                stagingSchemasForestsPerHost = forestsPerHost;
+                break;
+            case FINAL_SCHEMAS:
+                finalSchemasForestsPerHost = forestsPerHost;
                 break;
             default:
                 throw new InvalidDBOperationError(kind, "set count of forests per host");
@@ -806,8 +834,14 @@ public class HubConfigImpl implements HubConfig {
             triggersDbName = getEnvPropString(environmentProperties, "mlTriggersDbName", triggersDbName);
             triggersForestsPerHost = getEnvPropInteger(environmentProperties, "mlTriggersForestsPerHost", triggersForestsPerHost);
 
-            schemasDbName = getEnvPropString(environmentProperties, "mlSchemasDbName", schemasDbName);
-            schemasForestsPerHost = getEnvPropInteger(environmentProperties, "mlSchemasForestsPerHost", schemasForestsPerHost);
+            //schemasDbName = getEnvPropString(environmentProperties, "mlSchemasDbName", schemasDbName);
+            //schemasForestsPerHost = getEnvPropInteger(environmentProperties, "mlSchemasForestsPerHost", schemasForestsPerHost);
+
+            stagingSchemasDbName = getEnvPropString(environmentProperties, "mlStagingSchemasDbName", stagingSchemasDbName);
+            stagingSchemasForestsPerHost = getEnvPropInteger(environmentProperties, "mlStagingSchemasForestsPerHost", stagingSchemasForestsPerHost);
+
+            finalSchemasDbName = getEnvPropString(environmentProperties, "mlFinalSchemasDbName", finalSchemasDbName);
+            finalSchemasForestsPerHost = getEnvPropInteger(environmentProperties, "mlFinalSchemasForestsPerHost", finalSchemasForestsPerHost);
 
             hubRoleName = getEnvPropString(environmentProperties, "mlHubUserRole", hubRoleName);
             hubUserName = getEnvPropString(environmentProperties, "mlHubUserName", hubUserName);
@@ -1080,8 +1114,14 @@ public class HubConfigImpl implements HubConfig {
         customTokens.put("%%mlTriggersDbName%%", triggersDbName);
         customTokens.put("%%mlTriggersForestsPerHost%%", triggersForestsPerHost.toString());
 
-        customTokens.put("%%mlSchemasDbName%%", schemasDbName);
-        customTokens.put("%%mlSchemasForestsPerHost%%", schemasForestsPerHost.toString());
+        //customTokens.put("%%mlSchemasDbName%%", schemasDbName);
+        //customTokens.put("%%mlSchemasForestsPerHost%%", schemasForestsPerHost.toString());
+
+        customTokens.put("%%mlStagingSchemasDbName%%", stagingSchemasDbName);
+        customTokens.put("%%mlStagingSchemasForestsPerHost%%", stagingSchemasForestsPerHost.toString());
+
+        customTokens.put("%%mlFinalSchemasDbName%%", finalSchemasDbName);
+        customTokens.put("%%mlFinalSchemasForestsPerHost%%", finalSchemasForestsPerHost.toString());
 
         customTokens.put("%%mlHubUserRole%%", hubRoleName);
         customTokens.put("%%mlHubUserName%%", hubUserName);
@@ -1115,7 +1155,8 @@ public class HubConfigImpl implements HubConfig {
         config.setModulesDatabaseName(modulesDbName);
 
         config.setTriggersDatabaseName(triggersDbName);
-        config.setSchemasDatabaseName(schemasDbName);
+        //config.setSchemasDatabaseName(schemasDbName);
+        config.setSchemasDatabaseName(finalSchemasDbName);
         config.setModulesDatabaseName(modulesDbName);
 
         config.setReplaceTokensInModules(true);
@@ -1128,7 +1169,9 @@ public class HubConfigImpl implements HubConfig {
         forestCounts.put(jobDbName, jobForestsPerHost);
         forestCounts.put(modulesDbName, modulesForestsPerHost);
         forestCounts.put(triggersDbName, triggersForestsPerHost);
-        forestCounts.put(schemasDbName, schemasForestsPerHost);
+        //forestCounts.put(schemasDbName, schemasForestsPerHost);
+        forestCounts.put(stagingSchemasDbName, stagingSchemasForestsPerHost);
+        forestCounts.put(finalSchemasDbName, finalSchemasForestsPerHost);
         config.setForestCounts(forestCounts);
 
         ConfigDir configDir = new ConfigDir(getUserConfigDir().toFile());

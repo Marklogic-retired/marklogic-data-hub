@@ -29,7 +29,9 @@ public enum DatabaseKind {
         FINAL,
         JOB,
         @Deprecated TRACE,
-        SCHEMAS,
+        //SCHEMAS,
+        STAGING_SCHEMAS,
+        FINAL_SCHEMAS,
         TRIGGERS,
         MODULES;
 
@@ -38,9 +40,11 @@ public enum DatabaseKind {
            "final",
            "jobs",
            "jobs",
-            "schemas",
-            "triggers",
-            "modules"
+           //"schema",
+           "staging_schemas",
+           "final_schemas",
+           "triggers",
+           "modules"
         };
 
      /**
