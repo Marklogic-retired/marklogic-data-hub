@@ -33,7 +33,8 @@ export default function() {
       it ('should run Load TypeAhead flow', function() {
         flowPage.entityDisclosure('TypeAhead').click();
         browser.wait(EC.elementToBeClickable(flowPage.getFlow('TypeAhead', 'Load TypeAhead', 'INPUT')));
-        flowPage.runInputFlowWithFolder('TypeAhead', 'Load TypeAhead', 'json', 'long-props', 'documents');
+        flowPage.runInputFlowWithFolder('TypeAhead', 'Load TypeAhead', 'json', 'long-props', 'documents', 
+          '?doc=yes&type=foo');
       });
 
       it('should verify the loaded data', function() {
@@ -106,32 +107,32 @@ export default function() {
         // verify the typeahead on property name
         mappingsPage.sourcePropertyDropDown('title').click();
         mappingsPage.sourceTypeAheadInput('title').sendKeys('he');
-        expect(element(by.cssContainingText('.prop-name', 'anywhere')).isPresent()).toBe(true);
-        expect(element(by.cssContainingText('.prop-name', 'further')).isPresent()).toBe(true);
-        expect(element(by.cssContainingText('.prop-name', 'leather')).isPresent()).toBe(true);
-        expect(element(by.cssContainingText('.prop-name', 'sheet')).isPresent()).toBe(true);
-        expect(element(by.cssContainingText('.prop-name', 'these')).isPresent()).toBe(true);
+        expect(mappingsPage.verifySourcePropertyName('anywhere').isPresent()).toBeTruthy();
+        expect(mappingsPage.verifySourcePropertyName('further').isPresent()).toBeTruthy();
+        expect(mappingsPage.verifySourcePropertyName('leather').isPresent()).toBeTruthy();
+        expect(mappingsPage.verifySourcePropertyName('sheet').isPresent()).toBeTruthy();
+        expect(mappingsPage.verifySourcePropertyName('these').isPresent()).toBeTruthy();
         // verify the list to contain different data types
-        expect(element(by.cssContainingText('.prop-type', 'string')).isPresent()).toBe(true);
-        expect(element(by.cssContainingText('.prop-type', 'number')).isPresent()).toBe(true);
-        expect(element(by.cssContainingText('.prop-type', 'boolean')).isPresent()).toBe(true);
+        expect(mappingsPage.verifySourcePropertyType('string').isPresent()).toBeTruthy();
+        expect(mappingsPage.verifySourcePropertyType('number').isPresent()).toBeTruthy();
+        expect(mappingsPage.verifySourcePropertyType('boolean').isPresent()).toBeTruthy();
         // select the source property
         mappingsPage.mapSourceProperty('anywhere', 'title').click();
         // verify the typeahead on date type
         mappingsPage.sourcePropertyDropDown('date').click();
         mappingsPage.sourceTypeAheadInput('date').sendKeys('date');
-        expect(element(by.cssContainingText('.prop-name', 'active')).isPresent()).toBe(true);
-        expect(element(by.cssContainingText('.prop-name', 'been')).isPresent()).toBe(true);
-        expect(element(by.cssContainingText('.prop-name', 'birthday')).isPresent()).toBe(true);
-        expect(element(by.cssContainingText('.prop-type', 'date')).isPresent()).toBe(true);
+        expect(mappingsPage.verifySourcePropertyName('active').isPresent()).toBeTruthy();
+        expect(mappingsPage.verifySourcePropertyName('been').isPresent()).toBeTruthy();
+        expect(mappingsPage.verifySourcePropertyName('birthday').isPresent()).toBeTruthy();
+        expect(mappingsPage.verifySourcePropertyType('date').isPresent()).toBeTruthy();
         // select the source property
         mappingsPage.mapSourceProperty('been', 'date').click();
         // verify the typeahead on number type
         mappingsPage.sourcePropertyDropDown('count').click();
         mappingsPage.sourceTypeAheadInput('count').sendKeys('buffalo');
-        expect(element(by.cssContainingText('.prop-name', 'buffalo')).isPresent()).toBe(true);
-        expect(element(by.cssContainingText('.prop-type', 'number')).isPresent()).toBe(true);
-        expect(element(by.cssContainingText('.prop-val', '262418957')).isPresent()).toBe(true);
+        expect(mappingsPage.verifySourcePropertyName('buffalo').isPresent()).toBeTruthy();
+        expect(mappingsPage.verifySourcePropertyType('number').isPresent()).toBeTruthy();
+        expect(mappingsPage.verifySourcePropertyValue('262418957').isPresent()).toBeTruthy();
         // select the source property
         mappingsPage.mapSourceProperty('buffalo', 'count').click();
         // save the map
@@ -141,13 +142,12 @@ export default function() {
         //flicker bug, sleep will be removed once it's fixed
         browser.sleep(5000);
         browser.wait(EC.elementToBeClickable(mappingsPage.entityMapping('MapTypeAhead')));
-        // verify the selected sources are saved
-        expect(element(by.cssContainingText('.prop-name', 'anywhere')).isPresent()).toBe(true);
-        expect(element(by.cssContainingText('.prop-name', 'been')).isPresent()).toBe(true);
-        expect(element(by.cssContainingText('.prop-name', 'buffalo')).isPresent()).toBe(true);
+        expect(mappingsPage.verifySourcePropertyName('anywhere').isPresent()).toBeTruthy();
+        expect(mappingsPage.verifySourcePropertyName('been').isPresent()).toBeTruthy();
+        expect(mappingsPage.verifySourcePropertyName('buffalo').isPresent()).toBeTruthy();
         // verify that unselected sources are not saved
-        expect(element(by.cssContainingText('.prop-name', 'further')).isPresent()).toBe(false);
-        expect(element(by.cssContainingText('.prop-name', 'active')).isPresent()).toBe(false);
+        expect(mappingsPage.verifySourcePropertyName('further').isPresent()).toBeFalsy();
+        expect(mappingsPage.verifySourcePropertyName('active').isPresent()).toBeFalsy();
       });
 
       it ('should go to flows page', function() {
