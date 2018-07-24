@@ -33,6 +33,7 @@ public class MappingModel extends JsonPojo {
     protected String sourceContext;
     protected String targetEntityType;
     protected String description;
+    protected String sourceURI;
     protected String language;
     protected int version = 1;
     protected JsonNode properties;
@@ -82,6 +83,14 @@ public class MappingModel extends JsonPojo {
         this.description = description;
     }
 
+    public String getSourceURI() {
+        return sourceURI;
+    }
+
+    public void setSourceURI(String sourceURI) {
+        this.sourceURI = sourceURI;
+    }
+
     public String getLanguage() {
         return language;
     }
@@ -107,6 +116,7 @@ public class MappingModel extends JsonPojo {
         mapping.setName(node.get("name").asText());
         mapping.setVersion((node.get("version").asInt()));
         mapping.setDescription(node.get("description").asText());
+        mapping.setSourceURI(node.get("sourceURI").asText());
         mapping.setTargetEntityType(node.get("targetEntityType").asText());
         mapping.setSourceContext(node.get("sourceContext").asText());
         mapping.setProperties(node.get("properties"));
@@ -132,6 +142,9 @@ public class MappingModel extends JsonPojo {
         }
         if(getDescription() != null) {
             node.put("description", getDescription());
+        }
+        if(getSourceURI() != null) {
+            node.put("sourceURI", getSourceURI());
         }
         return node;
     }

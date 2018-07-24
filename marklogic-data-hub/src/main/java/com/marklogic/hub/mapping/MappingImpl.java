@@ -25,7 +25,7 @@ import com.marklogic.hub.error.DataHubProjectException;
 
 import java.util.HashMap;
 
-@JsonPropertyOrder({ "language", "name", "description", "version",  "targetEntityType", "sourceContext", "properties"})
+@JsonPropertyOrder({ "language", "name", "description", "version",  "targetEntityType", "sourceContext", "sourceURI", "properties"})
 public class MappingImpl implements Mapping {
 
     private String name;
@@ -34,6 +34,7 @@ public class MappingImpl implements Mapping {
     private String description;
     private String language;
     private int version;
+    private String sourceURI;
     private HashMap<String, ObjectNode> properties;
 
     public MappingImpl(String name) {
@@ -42,9 +43,10 @@ public class MappingImpl implements Mapping {
         this.version = 1;
         this.description = "Default description";
         this.sourceContext = ".";
+        this.sourceURI = "";
         this.properties = new HashMap<>();
         properties.put("id", createProperty("sourcedFrom", "id"));
-        this.targetEntityType = "";
+        this.targetEntityType = "http://example.org/modelName-version/entityType";
     }
 
     @Override
@@ -78,6 +80,11 @@ public class MappingImpl implements Mapping {
         if(json.has("language")) {
             setLanguage(json.get("language").asText());
         }
+
+        if(json.has("sourceURI")) {
+            setSourceURI(json.get("sourceURI").asText());
+        }
+
         if(json.has("properties")) {
             setProperties(jsonProperties);
         }
@@ -150,6 +157,16 @@ public class MappingImpl implements Mapping {
     @Override
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    @Override
+    public String getSourceURI() {
+        return sourceURI;
+    }
+
+    @Override
+    public void setSourceURI(String sourceURI) {
+        this.sourceURI = sourceURI;
     }
 
     @Override
