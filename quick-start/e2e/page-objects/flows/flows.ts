@@ -82,6 +82,10 @@ export class FlowPage extends AppPage {
     return element(by.cssContainingText('app-select-list td', 'XML'));
   }
 
+  mapNameButton(mapName: string) {
+    return element(by.cssContainingText('app-select-list td', mapName));
+  }
+
   get createFlowButton() {
     return element(by.buttonText('Create'));
   }
@@ -302,7 +306,66 @@ export class FlowPage extends AppPage {
     // expect(element(by.css('.job-progress')).isPresent()).toBe(false);
   }
 
+  // this function has more flexibility on choosing the folder and input file type
+  // we will change it to runInputFlow in the future
+  // we need to change the old runInputFlow as it's hardcoded to products folder 
+  runInputFlowWithFolder(entityName: string, flowName: string, dataFormat: string, 
+      dataFolderName: string, inputFileType: string) {
+    console.log(`running flow: ${entityName}: ${flowName}: ${dataFormat}`)
+    this.getFlow(entityName, flowName, 'INPUT').click();
 
+    browser.wait(EC.visibilityOf(this.tabs));
+    browser.wait(EC.visibilityOf(this.mlcpTab(entityName, flowName)));
+
+    browser.wait(EC.visibilityOf(element(by.cssContainingText('.foldertree-container div.entry p', 'input'))));
+    // set the input folder to products
+    element(by.cssContainingText('.foldertree-container div.entry p', 'input')).click();
+    element(by.cssContainingText('.foldertree-container div.entry p', dataFolderName)).click();
+
+    // open general options
+    browser.wait(EC.elementToBeClickable(this.mlcpSection(' General Options')));
+    this.mlcpSection(' General Options').click();
+
+    // click input file type
+    browser.wait(EC.elementToBeClickable(this.mlcpDropdown('input_file_type')));
+    this.mlcpDropdown('input_file_type').click();
+
+    // click delimited text
+    browser.wait(EC.elementToBeClickable(this.menuItem(inputFileType)));
+    this.menuItem(inputFileType).click();
+
+    // click Document Type
+    browser.wait(EC.elementToBeClickable(this.mlcpDropdown('document_type')));
+    this.mlcpDropdown('document_type').click();
+    browser.wait(EC.elementToBeClickable(this.menuItem(dataFormat)));
+    browser.actions().mouseMove(this.menuItem(dataFormat)).perform();
+    this.menuItem(dataFormat).click();
+
+    // set output uri suffix
+    this.mlcpInput('output_uri_suffix').clear();
+    // verify that uri can contain character &
+    this.mlcpInput('output_uri_suffix').sendKeys('?doc=yes&type=foo');
+ 
+    if(inputFileType === 'delimited_text') {
+      // click delimited text options
+      browser.wait(EC.elementToBeClickable(this.mlcpSection(' Delimited Text Options')));
+      this.mlcpSection(' Delimited Text Options').click();
+      browser.wait(EC.visibilityOf(this.mlcpSection(' Delimited Text Options')));
+  
+      // enable generate uri
+      browser.wait(EC.elementToBeClickable(this.mlcpSwitch('generate_uri')));
+      this.mlcpSwitch('generate_uri').click();
+    }
+
+    this.mlcpRunButton.click();
+    browser.sleep(10000);
+    this.jobsTab.click();
+    jobsPage.isLoaded();
+    let lastFinishedJob = jobsPage.lastFinishedJob;
+    expect(jobsPage.jobFlowName(lastFinishedJob).getText()).toEqual(flowName);
+    this.flowsTab.click();
+    this.isLoaded();
+  }
 
   createFlow(
     entityName: string, flowName: string,
@@ -343,7 +406,45 @@ export class FlowPage extends AppPage {
     browser.wait(EC.not(EC.presenceOf(this.newFlowDialog)));
     expect(this.newFlowDialog.isPresent()).toBe(false);
   }
+  
+  // we will separate creating flow from general function createFlow
+  // it is because harmonized flow has new mapping selection parameter
+  createInputFlow(
+    entityName: string, flowName: string, dataFormat: string,
+    codeFormat: string, useEs: boolean)
+  {
+    this.inputFlowButton(entityName).click();
+    
+    browser.wait(EC.visibilityOf(this.newFlowDialog));
+    expect(this.newFlowDialog.isDisplayed()).toBe(true);
+
+    this.newFlowName.sendKeys(flowName);
+
+    if (useEs) {
+      this.esTemplateButton.click();
+    } else {
+      this.blankTemplateButton.click();
+    }
+
+    if (codeFormat === 'sjs') {
+      this.sjsFlowTypeButton.click();
+    } else {
+      this.xqyFlowTypeButton.click();
+    }
+
+    if (dataFormat === 'json') {
+      this.jsonDataFormatButton.click();
+    } else {
+      this.xmlDataFormatButton.click();
+    }
+
+    this.createFlowButton.click();
+
+    browser.wait(EC.not(EC.presenceOf(this.newFlowDialog)));
+    expect(this.newFlowDialog.isPresent()).toBe(false);
+  }
 }
+
 
 var flowPage = new FlowPage();
 export default flowPage;
