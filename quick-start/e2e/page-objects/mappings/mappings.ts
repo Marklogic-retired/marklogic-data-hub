@@ -192,6 +192,18 @@ export class MappingsPage extends AppPage {
   entityPropertyIcon(entityProperty: string, iconClass: string) {
     return this.entityPropertyContainer(entityProperty).element(by.css(`.entity-icon .fa-${iconClass}`));
   }
+
+  verifySourcePropertyName(propertyName: string) {
+    return element(by.cssContainingText('.prop-name', propertyName));
+  }
+
+  verifySourcePropertyType(propertyType: string) {
+    return element(by.cssContainingText('.prop-type', propertyType));
+  }
+
+  verifySourcePropertyValue(propertyValue: string) {
+    return element(by.cssContainingText('.prop-val', propertyValue));
+  }
 }
 
 var mappingsPage = new MappingsPage();

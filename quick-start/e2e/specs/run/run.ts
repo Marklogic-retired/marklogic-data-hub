@@ -23,7 +23,8 @@ export default function(tmpDir) {
     it ('should run Load Products flow', function() {
       flowPage.entityDisclosure('Product').click();
       browser.wait(EC.elementToBeClickable(flowPage.getFlow('Product', 'Load Products', 'INPUT')));
-      flowPage.runInputFlow('Product', 'Load Products', 'json', 1);
+      flowPage.runInputFlowWithFolder('Product', 'Load Products', 'json', 'products', 
+        'delimited_text', '?doc=yes&type=foo');
     });
 
     it('should verify the loaded data', function() {

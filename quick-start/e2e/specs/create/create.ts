@@ -571,6 +571,23 @@ export default function() {
       browser.wait(EC.invisibilityOf(entityPage.entityEditor));
     });
 
+    it ('should create a new entity for TypeAhead', function() {
+      entityPage.toolsButton.click();
+      entityPage.newEntityButton.click();
+      expect(entityPage.entityEditor.isPresent()).toBe(true);
+      entityPage.entityTitle.sendKeys('TypeAhead');
+      entityPage.saveEntity.click();
+      browser.wait(EC.elementToBeClickable(entityPage.confirmDialogNoButton));
+      expect(entityPage.confirmDialogNoButton.isPresent()).toBe(true);
+      entityPage.confirmDialogNoButton.click();
+      browser.wait(EC.visibilityOf(entityPage.getEntityBox('TypeAhead')));
+      expect(entityPage.getEntityBox('TypeAhead').isDisplayed()).toBe(true);
+      entityPage.toolsButton.click();
+      // move entity TypeAhead
+      entityPage.selectEntity('TypeAhead');
+      browser.actions().dragAndDrop(entityPage.entityBox('TypeAhead'), {x: 750, y: 750}).perform();
+    });
+
     it ('should go to the flow page', function() {
       entityPage.flowsTab.click();
       flowPage.isLoaded();
@@ -604,11 +621,11 @@ export default function() {
 
     it ('should create input and harmonize flows on Product entity', function() {
       //create Product input flow
-      flowPage.createFlow('Product', 'Load Products', 'INPUT', 'json', 'sjs', false);
+      flowPage.createInputFlow('Product', 'Load Products', 'json', 'sjs', false);
       browser.wait(EC.visibilityOf(flowPage.getFlow('Product', 'Load Products', 'INPUT')));
       expect(flowPage.getFlow('Product', 'Load Products', 'INPUT').isDisplayed()).toBe(true, 'Load Products' + ' is not present');
       //create Product harmonize flow
-      flowPage.createFlow('Product', 'Harmonize Products', 'HARMONIZE', 'json', 'sjs', false);
+      flowPage.createHarmonizeFlow('Product', 'Harmonize Products', 'json', 'sjs', true);
       browser.wait(EC.visibilityOf(flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE')));
       expect(flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE').isDisplayed()).toBe(true, 'Harmonize Products' + ' is not present');
       //add flow options
