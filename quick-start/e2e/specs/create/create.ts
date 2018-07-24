@@ -571,6 +571,23 @@ export default function() {
       browser.wait(EC.invisibilityOf(entityPage.entityEditor));
     });
 
+    it ('should create a new entity for TypeAhead', function() {
+      entityPage.toolsButton.click();
+      entityPage.newEntityButton.click();
+      expect(entityPage.entityEditor.isPresent()).toBe(true);
+      entityPage.entityTitle.sendKeys('TypeAhead');
+      entityPage.saveEntity.click();
+      browser.wait(EC.elementToBeClickable(entityPage.confirmDialogNoButton));
+      expect(entityPage.confirmDialogNoButton.isPresent()).toBe(true);
+      entityPage.confirmDialogNoButton.click();
+      browser.wait(EC.visibilityOf(entityPage.getEntityBox('TypeAhead')));
+      expect(entityPage.getEntityBox('TypeAhead').isDisplayed()).toBe(true);
+      entityPage.toolsButton.click();
+      // move entity TypeAhead
+      entityPage.selectEntity('TypeAhead');
+      browser.actions().dragAndDrop(entityPage.entityBox('TypeAhead'), {x: 750, y: 750}).perform();
+    });
+
     it ('should go to the flow page', function() {
       entityPage.flowsTab.click();
       flowPage.isLoaded();
