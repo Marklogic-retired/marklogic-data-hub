@@ -59,9 +59,10 @@ public class MappingController {
 
     @RequestMapping(value = "/mappings/{mapName}", method = RequestMethod.GET)
     @ResponseBody
-    public JsonNode getMapping(
+    public ResponseEntity<?> getMapping(
         @PathVariable String mapName) throws ClassNotFoundException, IOException {
-        return mappingManagerService.getMapping(mapName).toJson();
+        MappingModel mappingModel = mappingManagerService.getMapping(mapName);
+        return (mappingModel == null) ? new ResponseEntity<>(HttpStatus.NOT_FOUND) : new ResponseEntity<>(mappingModel.toJson(), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/mappings/{mapName}", method = RequestMethod.POST)
