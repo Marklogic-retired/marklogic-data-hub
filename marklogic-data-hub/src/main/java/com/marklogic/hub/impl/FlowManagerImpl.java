@@ -139,6 +139,11 @@ public class FlowManagerImpl extends ResourceManager implements FlowManager {
                 Properties properties = new Properties();
                 FileInputStream fis = new FileInputStream(propertiesFile);
                 properties.load(fis);
+
+                // trim trailing whitespaces for properties.
+                for (String key : properties.stringPropertyNames()){
+                    properties.put(key, properties.get(key).toString().trim());
+                }
                 fis.close();
 
                 FlowBuilder flowBuilder = FlowBuilder.newFlow()
