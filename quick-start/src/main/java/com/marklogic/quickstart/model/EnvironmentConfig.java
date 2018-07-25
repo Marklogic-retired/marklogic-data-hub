@@ -119,7 +119,7 @@ public class EnvironmentConfig {
     @JsonIgnore
     public DatabaseClient getStagingClient() {
         if (_stagingClient == null) {
-            _stagingClient = mlSettings.newStagingManageClient();
+            _stagingClient = mlSettings.newStagingClient();
         }
         return _stagingClient;
     }
@@ -130,7 +130,7 @@ public class EnvironmentConfig {
     @JsonIgnore
     public DatabaseClient getFinalClient() {
         if (_finalClient == null) {
-            _finalClient = mlSettings.newFinalManageClient();
+            _finalClient = mlSettings.newFinalClient();
         }
         return _finalClient;
     }

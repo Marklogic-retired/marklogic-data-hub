@@ -163,7 +163,7 @@ export class MapComponent implements OnInit {
         () => {}
       );
     } else {
-      this.loadSampleDocByURI(this.editURIVal, {}, true);
+     this.loadSampleDocByURI(this.editURIVal, {}, true);
     }
   }
 

@@ -38,6 +38,9 @@ import module namespace rfc = "http://marklogic.com/data-hub/run-flow-context"
 import module namespace trace = "http://marklogic.com/data-hub/trace"
   at "/MarkLogic/data-hub-framework/impl/trace-lib.xqy";
 
+import module namespace es = "http://marklogic.com/entity-services"
+  at "/MarkLogic/entity-services/entity-services.xqy";
+
 declare namespace hub = "http://marklogic.com/data-hub";
 
 declare option xdmp:mapping "false";
@@ -397,7 +400,13 @@ declare function flow:make-envelope($content, $headers, $triples, $data-format)
           ),
           map:put($o, "attachments",
             if ($content instance of map:map and map:keys($content) = "$attachments") then
-              map:get($content, "$attachments")
+              if(map:get($content, "$attachments")/node() instance of element()) then
+                let $c := json:config("custom")
+                let $_ := map:put($c,"whitespace" , "ignore" )
+                let $_ := map:put($c, "element-namespace", "http://marklogic.com/entity-services")
+                return json:transform-to-json(map:get($content, "$attachments"),$c)
+              else
+                map:get($content, "$attachments")
             else
               ()
           )
@@ -429,7 +438,14 @@ declare function flow:make-envelope($content, $headers, $triples, $data-format)
           <attachments>
           {
             if ($content instance of map:map and map:keys($content) = "$attachments") then
-              map:get($content, "$attachments")
+              if(map:get($content, "$attachments") instance of element() or 
+                 map:get($content, "$attachments")/node() instance of element()) then
+                map:get($content, "$attachments")
+              else
+                let $c := json:config("basic")
+                let $_ := map:put($c,"whitespace" , "ignore" )
+                return
+                 json:transform-from-json(map:get($content, "$attachments"),$c)
             else
               ()
           }

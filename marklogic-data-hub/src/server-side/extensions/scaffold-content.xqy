@@ -96,7 +96,7 @@ declare function service:casting-function-name-sjs(
   else "xs." || $datatype
 };
 
-declare function service:generate-lets($model as map:map, $entity-type-name, $mapping as map:map?)
+declare function service:generate-lets($model as map:map, $entity-type-name, $mapping as map:map?, $parent-entity as xs:string)
 {
   fn:string-join(
     let $definitions := map:get($model, "definitions")
@@ -118,7 +118,7 @@ declare function service:generate-lets($model as map:map, $entity-type-name, $ma
       else ()
     let $wrap-if-array := function($str) {
       if ($is-array) then
-        "json:to-array(" || $str || "&#10;  )"
+        "json:to-array(" || $str || ")"
       else
         $str
     }
@@ -148,17 +148,21 @@ declare function service:generate-lets($model as map:map, $entity-type-name, $ma
       ), "&#10;")
     let $value :=
       if (empty($ref)) then (
-        if(service:mapping-present($mapping, $property-name))
+        if(service:mapping-present($mapping, $property-name) and $parent-entity eq $entity-type-name)
         then (fn:concat("$source",service:map-value($property-name, $mapping)))
-        else (fn:concat("$source/", $property-name)))
+        else ($wrap-if-array(fn:concat("$source/", $property-name))))
       else if (contains($ref, "#/definitions")) then
         let $inner-var := "$" || fn:lower-case($ref-name) || "s"
+        let $inner-val :=
+          if(service:mapping-present($mapping, $property-name))
+          then (fn:concat("$source",service:map-value($property-name, $mapping)))
+          else (fn:concat("$source/", $property-name))
         return
           fn:string-join((
             "",
             "let " || $inner-var || " :=",
             "  (: create a sequence of " || $ref-name || " instances from your data :)",
-            "  for $sub-entity in ()",
+            "  for $sub-entity in ("||$inner-val||")",
             "  return",
             "    plugin:extract-instance-" || $ref-name || "($sub-entity)",
             "return",
@@ -170,8 +174,9 @@ declare function service:generate-lets($model as map:map, $entity-type-name, $ma
               "  else ()"
             )
           ), "&#10;    ") || "&#10;"
-      else
-        $wrap-if-array($extract-reference-fn)
+      else if(fn:not(empty($ref))) then
+           fn:concat("$source/", $property-name)
+      else $wrap-if-array($extract-reference-fn)
 
     return (
       $property-comment ! ("", .),
@@ -252,23 +257,33 @@ $source as node()?
   (: the original source documents :)
   let $attachments := $source
   let $source      :=
-    if ($source/*:envelope) then
+    if ($source/*:envelope and $source/node() instance of element()) then
+      $source/*:envelope/*:instance/node()
+    else if ($source/*:envelope) then
       $source/*:envelope/*:instance
     else if ($source/instance) then
       $source/instance
     else
       $source
   </txt>/text()
-  else ()
+  else (<txt>
+  let $source :=
+    if($source/node() instance of element()) then
+    $source/node()
+  else (
+    $source
+  )
+  </txt>/text()
+  )
 }
 {
-  if (fn:empty($mapping) eq fn:false() and fn:empty(map:get($mapping, "name")) eq fn:false()) then
+  if ($entity eq $entity-type-name and fn:empty($mapping) eq fn:false() and fn:empty(map:get($mapping, "name")) eq fn:false()) then
   <txt>(: These mappings were generated using mapping: {map:get($mapping, "name")}, version: {map:get($mapping, "version")} on {fn:current-dateTime()}. :)
   </txt>/text()
   else ()
 }
 {
-service:generate-lets($model, $entity-type-name, $mapping)
+service:generate-lets($model, $entity-type-name, $mapping, $entity)
 }
 
   (: return the in-memory instance :)
@@ -356,7 +371,7 @@ $ref as xs:string)
 };
 
 
-declare function service:generate-vars($model as map:map, $entity-type-name, $mapping as map:map?)
+declare function service:generate-vars($model as map:map, $entity-type-name, $mapping as map:map?, $parent-entity as xs:string)
 {
   fn:string-join(
     let $definitions := map:get($model, "definitions")
@@ -387,7 +402,7 @@ declare function service:generate-vars($model as map:map, $entity-type-name, $ma
       else
         map:get($property, "$ref")
     let $path-to-property :=
-      if (service:mapping-present($mapping, $property-name)) then (fn:concat("source.xpath('",service:map-value($property-name, $mapping), "')"))  else (service:get-property("source", $property-name))
+      if (service:mapping-present($mapping, $property-name) and $parent-entity eq $entity-type-name) then (fn:concat("source.xpath('",service:map-value($property-name, $mapping), "')"))  else (fn:concat("source.xpath('/", $property-name, "')"))
     let $property-comment :=
       if (fn:empty($ref)) then ()
       else if (fn:contains($ref, "#/definitions")) then
@@ -410,7 +425,7 @@ declare function service:generate-vars($model as map:map, $entity-type-name, $ma
       if (empty($ref)) then
         "!fn.empty(" || $path-to-property || ") ? " || (
         if($is-array) then
-          $path-to-property || ": []"
+          $path-to-property || " : []"
         else
         $casting-function-name || "("
         || "fn.head(" ||
@@ -423,17 +438,19 @@ declare function service:generate-vars($model as map:map, $entity-type-name, $ma
         ) ||
         ")) : null"
         )
-
       else if (contains($ref, "#/definitions")) then
         if ($is-array) then
           fn:string-join((
             "[];",
             "if(" || $path-to-property || ") {",
-            "  for(const item of Sequence.from(source." || $property-name || ")) {",
-            "    // either return an instance of a " || $ref-name,
-            "  "   || service:camel-case($property-name) || ".push(" || service:camel-case("extractInstance-" || $ref-name) || "(item));",
-            "    // or a reference to a " || $ref-name,
-            "    // " || service:camel-case($property-name) || ".push(makeReferenceObject('" || $ref-name || "', item));",
+            "  for(const item of Sequence.from(source.xpath('/"|| $property-name || "'))) {",
+            "    // let's create and pass the node",
+            "    let itemSource = new NodeBuilder();",
+            "    itemSource.addNode(fn.head(item));",
+            "    // this will return an instance of a " || $ref-name,
+            "    " || service:camel-case($property-name) || ".push(" || service:camel-case("extractInstance-" || $ref-name) || "(itemSource.toNode()));",
+            "    // or uncomment this to create an external reference to a " || $ref-name,
+            "    //" || service:camel-case($property-name) || ".push(makeReferenceObject('" || $ref-name || "', itemSource.toNode()));",
             "  }",
             "}"
           ), "&#10;  ")
@@ -441,11 +458,14 @@ declare function service:generate-vars($model as map:map, $entity-type-name, $ma
           fn:string-join((
             "null;",
             "if(" || $path-to-property || ") {",
+            "  // let's create and pass the node",
+            "  let " ||$property-name||"Source = new NodeBuilder();",
+            "  " ||$property-name||"Source.addNode(fn.head(source.xpath('/"|| $property-name || "'))).toNode();",
             "  // either return an instance of a " || $ref-name,
-            "  " || service:camel-case($property-name) || " = " || service:camel-case("extractInstance-" || $ref-name) || "(source." || $property-name || ");",
+            "  " || service:camel-case($property-name) || " = " || service:camel-case("extractInstance-" || $ref-name) || "("||$property-name||"Source);",
             "",
             "  // or a reference to a " || $ref-name,
-            "  // " || service:camel-case($property-name) || " = makeReferenceObject('" || $ref-name || "', source." || $property-name || ");",
+            "  // " || service:camel-case($property-name) || " = makeReferenceObject('" || $ref-name || "', "||$property-name||"Source));",
             "}"
           ), "&#10;  ")
       else
@@ -454,7 +474,7 @@ declare function service:generate-vars($model as map:map, $entity-type-name, $ma
             " null;",
             "  if (" || service:get-property($path-to-property, $ref-name) || ") {",
             "    " || service:camel-case($property-name) || " = " || service:get-property($path-to-property, $ref-name) || ".map(function(item) {",
-            "      return makeReferenceObject('" || $ref-name || "', source."|| $property-name || ");",
+            "      return makeReferenceObject('" || $ref-name || "', source.xpath('/"|| $property-name || "'));",
             "    });",
             "  }"
           ), "&#10;")
@@ -530,21 +550,38 @@ return <extract-instance>
 *   metadata about the instance.
 */
 function {service:camel-case("extractInstance-" || $entity-type-name)}(source) {{
-  // the original source documents
-  let attachments = source;
-  // now check to see if we have XML or json, then just go to the instance
-  if(source instanceof Element) {{
-    source = fn.head(source.xpath('/*:envelope/*:instance'))
-  }} else if(source instanceof ObjectNode) {{
-    source = source.envelope.instance;
-  }}
   {
-    if (fn:empty($mapping) eq fn:false() and fn:empty(map:get($mapping, "name")) eq fn:false()) then
-      <txt>/* These mappings were generated using mapping: {map:get($mapping, "name")}, version: {map:get($mapping, "version")} on {fn:current-dateTime()}. */&#10;  </txt>/text()
+    if ($entity eq $entity-type-name) then
+  "// the original source documents
+  let attachments = source;
+  // now check to see if we have XML or json, then create a node clone from the root of the instance
+  if (source instanceof Element || source instanceof ObjectNode) {
+    let instancePath = '/*:envelope/*:instance';
+    if(source instanceof Element) {
+      instancePath += '/node()';
+    }
+    source = new NodeBuilder().addNode(fn.head(source.xpath(instancePath))).toNode();
+  }
+  "
+    else (
+  "// now check to see if we have XML or json, then create a node clone to operate of off
+  if (source instanceof Element || source instanceof ObjectNode) {
+    let instancePath = '/';
+    if(source instanceof Element) {
+      instancePath = '/node()';
+    }
+    source = new NodeBuilder().addNode(fn.head(source.xpath(instancePath))).toNode();
+  }
+  "
+    )
+  }
+  {
+    if ($entity eq $entity-type-name and fn:empty($mapping) eq fn:false() and fn:empty(map:get($mapping, "name")) eq fn:false()) then
+      <txt>/* These mappings were generated using mapping: {map:get($mapping, "name")}, version: {map:get($mapping, "version")} on {fn:current-dateTime()}.*/&#10;  </txt>/text()
     else ()
   }
   {
-    service:generate-vars($model, $entity-type-name, $mapping)
+    service:generate-vars($model, $entity-type-name, $mapping, $entity)
   }
 
   // return the instance object

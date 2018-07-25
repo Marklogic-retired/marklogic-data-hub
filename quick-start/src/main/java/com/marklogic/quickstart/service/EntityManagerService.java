@@ -338,7 +338,7 @@ public class EntityManagerService extends EnvironmentAware {
         else {
             type = "xquery";
         }
-        EntitiesValidator validator = EntitiesValidator.create(config.newStagingManageClient());
+        EntitiesValidator validator = EntitiesValidator.create(config.newStagingClient());
         return validator.validate(entityName, flowName, plugin.fileContents.replaceAll("\\.(sjs|xqy)", ""), type, plugin.fileContents);
     }
 

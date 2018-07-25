@@ -237,11 +237,12 @@ public class FlowRunnerTest extends HubTestBase {
                 "       <harmononized>yeah</harmononized>\n" +
                 "    </Person>\n" +
                 "  </instance>\n" +
-                "  <attachments>{\"and\":\"originaldochere\"}</attachments>\n" +
+                "  <attachments><and xmlns=\"\">originaldochere</and></attachments>\n" +
                 "</envelope>";
 
         String actual = finalDocMgr.read("2.xml").next().getContentAs(String.class);
-        logger.debug(actual);
+        //logger.debug(expected);
+        //logger.debug(actual);
         XMLAssert.assertXMLEqual(expected, actual);
 
     }
