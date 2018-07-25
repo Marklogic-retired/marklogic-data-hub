@@ -631,7 +631,7 @@ module.exports = {{
 declare function service:map-value($key as xs:string, $mapping as map:map?) {
   let $properties := map:get($mapping, "properties")
   let $property := map:get($properties, $key)
-  let $source := map:get($mapping, "sourceContext")
+  let $source := fn:replace(map:get($mapping, "sourceContext"), "'", '"')
   return fn:concat($source, map:get($property, "sourcedFrom"))
 };
 
