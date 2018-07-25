@@ -108,7 +108,8 @@ public class MappingManagerService extends EnvironmentAware {
            ObjectMapper objectMapper = new ObjectMapper();
             return MappingModel.fromJson(objectMapper.readTree(mappingManager.getMappingAsJSON(mappingName, -1)));
         }catch(DataHubProjectException e) {
-            throw new DataHubProjectException("Mapping not found in project: " + mappingName);
+            logger.error("Mapping not found in project: " + mappingName);
+            return null;
         }
     }
 
