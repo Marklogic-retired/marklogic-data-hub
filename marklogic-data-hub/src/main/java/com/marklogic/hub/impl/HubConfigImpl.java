@@ -76,12 +76,12 @@ public class HubConfigImpl implements HubConfig {
     protected Integer finalPort = DEFAULT_FINAL_PORT;
     protected String finalAuthMethod = DEFAULT_AUTH_METHOD;
     private String finalScheme = DEFAULT_SCHEME;
-    private boolean finalSimpleSsl = false;
-    private SSLContext finalSslContext;
-    private DatabaseClientFactory.SSLHostnameVerifier finalSslHostnameVerifier;
-    private String finalCertFile;
-    private String finalCertPassword;
-    private String finalExternalName;
+//    private boolean finalSimpleSsl = false;
+//    private SSLContext finalSslContext;
+//    private DatabaseClientFactory.SSLHostnameVerifier finalSslHostnameVerifier;
+//    private String finalCertFile;
+//    private String finalCertPassword;
+//    private String finalExternalName;
 
     protected String jobDbName = DEFAULT_JOB_NAME;
     protected String jobHttpName = DEFAULT_JOB_NAME;
@@ -352,9 +352,6 @@ public class HubConfigImpl implements HubConfig {
             case STAGING:
                 sslContext = this.stagingSslContext;
                 break;
-            case FINAL:
-                sslContext = this.finalSslContext;
-                break;
             case JOB:
                 sslContext = this.jobSslContext;
                 break;
@@ -371,9 +368,6 @@ public class HubConfigImpl implements HubConfig {
         switch (kind) {
             case STAGING:
                 this.stagingSslContext = sslContext;
-                break;
-            case FINAL:
-                this.finalSslContext= sslContext;
                 break;
             case JOB:
                 this.jobSslContext = sslContext;
@@ -392,9 +386,6 @@ public class HubConfigImpl implements HubConfig {
             case STAGING:
                 sslHostnameVerifier = this.stagingSslHostnameVerifier;
                 break;
-            case FINAL:
-                sslHostnameVerifier = this.finalSslHostnameVerifier;
-                break;
             case JOB:
                 sslHostnameVerifier = this.jobSslHostnameVerifier;
                 break;
@@ -411,9 +402,6 @@ public class HubConfigImpl implements HubConfig {
         switch (kind) {
             case STAGING:
                 this.stagingSslHostnameVerifier = sslHostnameVerifier;
-                break;
-            case FINAL:
-                this.finalSslHostnameVerifier = sslHostnameVerifier;
                 break;
             case JOB:
                 this.jobSslHostnameVerifier = sslHostnameVerifier;
@@ -512,9 +500,6 @@ public class HubConfigImpl implements HubConfig {
             case STAGING:
                 simple = this.stagingSimpleSsl;
                 break;
-            case FINAL:
-                simple = this.finalSimpleSsl;
-                break;
             case JOB:
                 simple = this.jobSimpleSsl;
                 break;
@@ -531,9 +516,6 @@ public class HubConfigImpl implements HubConfig {
         switch (kind) {
             case STAGING:
                 this.stagingSimpleSsl = simpleSsl;
-                break;
-            case FINAL:
-                this.finalSimpleSsl = simpleSsl;
                 break;
             case JOB:
                 this.jobSimpleSsl = simpleSsl;
@@ -552,9 +534,6 @@ public class HubConfigImpl implements HubConfig {
             case STAGING:
                 certFile = this.stagingCertFile;
                 break;
-            case FINAL:
-                certFile = this.finalCertFile;
-                break;
             case JOB:
                 certFile = this.jobCertFile;
                 break;
@@ -571,9 +550,6 @@ public class HubConfigImpl implements HubConfig {
         switch (kind) {
             case STAGING:
                 this.stagingCertFile = certFile;
-                break;
-            case FINAL:
-                this.finalCertFile = certFile;
                 break;
             case JOB:
                 this.jobCertFile = certFile;
@@ -592,9 +568,6 @@ public class HubConfigImpl implements HubConfig {
             case STAGING:
                 certPass = this.stagingCertPassword;
                 break;
-            case FINAL:
-                certPass = this.finalCertPassword;
-                break;
             case JOB:
                 certPass = this.jobCertPassword;
                 break;
@@ -611,9 +584,6 @@ public class HubConfigImpl implements HubConfig {
         switch (kind) {
             case STAGING:
                 this.stagingCertPassword = certPassword;
-                break;
-            case FINAL:
-                this.finalCertPassword = certPassword;
                 break;
             case JOB:
                 this.jobCertPassword = certPassword;
@@ -632,9 +602,6 @@ public class HubConfigImpl implements HubConfig {
             case STAGING:
                 name = this.stagingExternalName;
                 break;
-            case FINAL:
-                name = this.finalExternalName;
-                break;
             case JOB:
                 name = this.jobExternalName;
                 break;
@@ -651,9 +618,6 @@ public class HubConfigImpl implements HubConfig {
         switch (kind) {
             case STAGING:
                 this.stagingExternalName = externalName;
-                break;
-            case FINAL:
-                this.finalExternalName = externalName;
                 break;
             case JOB:
                 this.jobExternalName = externalName;
@@ -772,14 +736,6 @@ public class HubConfigImpl implements HubConfig {
             finalPort = getEnvPropInteger(environmentProperties, "mlFinalPort", finalPort);
             finalAuthMethod = getEnvPropString(environmentProperties, "mlFinalAuth", finalAuthMethod);
             finalScheme = getEnvPropString(environmentProperties, "mlFinalScheme", finalScheme);
-            finalSimpleSsl = getEnvPropBoolean(environmentProperties, "mlFinalSimpleSsl", false);
-            if (finalSimpleSsl) {
-                finalSslContext = SimpleX509TrustManager.newSSLContext();
-                finalSslHostnameVerifier = DatabaseClientFactory.SSLHostnameVerifier.ANY;
-            }
-            finalCertFile = getEnvPropString(environmentProperties, "mlFinalCertFile", finalCertFile);
-            finalCertPassword = getEnvPropString(environmentProperties, "mlFinalCertPassword", finalCertPassword);
-            finalExternalName = getEnvPropString(environmentProperties, "mlFinalExternalName", finalExternalName);
 
 
             jobDbName = getEnvPropString(environmentProperties, "mlJobDbName", jobDbName);
