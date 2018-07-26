@@ -60,12 +60,12 @@ abstract class HubTask extends DefaultTask {
 
     @Internal
     DatabaseClient getStagingClient() {
-        return getHubConfig().newStagingManageClient()
+        return getHubConfig().newStagingClient()
     }
 
     @Internal
     DatabaseClient getFinalClient() {
-        return getHubConfig().newFinalManageClient()
+        return getHubConfig().newFinalClient()
     }
 
     @Internal

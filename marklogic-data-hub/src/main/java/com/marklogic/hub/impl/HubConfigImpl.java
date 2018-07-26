@@ -41,6 +41,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.X509TrustManager;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -69,6 +70,7 @@ public class HubConfigImpl implements HubConfig {
     private String stagingCertFile;
     private String stagingCertPassword;
     private String stagingExternalName;
+    private X509TrustManager stagingTrustManager;
 
     protected String finalDbName = DEFAULT_FINAL_NAME;
     protected String finalHttpName = DEFAULT_FINAL_NAME;
@@ -76,12 +78,12 @@ public class HubConfigImpl implements HubConfig {
     protected Integer finalPort = DEFAULT_FINAL_PORT;
     protected String finalAuthMethod = DEFAULT_AUTH_METHOD;
     private String finalScheme = DEFAULT_SCHEME;
-    private boolean finalSimpleSsl = false;
-    private SSLContext finalSslContext;
-    private DatabaseClientFactory.SSLHostnameVerifier finalSslHostnameVerifier;
-    private String finalCertFile;
-    private String finalCertPassword;
-    private String finalExternalName;
+//    private boolean finalSimpleSsl = false;
+//    private SSLContext finalSslContext;
+//    private DatabaseClientFactory.SSLHostnameVerifier finalSslHostnameVerifier;
+//    private String finalCertFile;
+//    private String finalCertPassword;
+//    private String finalExternalName;
 
     protected String jobDbName = DEFAULT_JOB_NAME;
     protected String jobHttpName = DEFAULT_JOB_NAME;
@@ -95,6 +97,7 @@ public class HubConfigImpl implements HubConfig {
     private String jobCertFile;
     private String jobCertPassword;
     private String jobExternalName;
+    private X509TrustManager jobTrustManager;
 
     protected String modulesDbName = DEFAULT_MODULES_DB_NAME;
     protected Integer modulesForestsPerHost = 1;
@@ -352,9 +355,6 @@ public class HubConfigImpl implements HubConfig {
             case STAGING:
                 sslContext = this.stagingSslContext;
                 break;
-            case FINAL:
-                sslContext = this.finalSslContext;
-                break;
             case JOB:
                 sslContext = this.jobSslContext;
                 break;
@@ -371,9 +371,6 @@ public class HubConfigImpl implements HubConfig {
         switch (kind) {
             case STAGING:
                 this.stagingSslContext = sslContext;
-                break;
-            case FINAL:
-                this.finalSslContext= sslContext;
                 break;
             case JOB:
                 this.jobSslContext = sslContext;
@@ -392,9 +389,6 @@ public class HubConfigImpl implements HubConfig {
             case STAGING:
                 sslHostnameVerifier = this.stagingSslHostnameVerifier;
                 break;
-            case FINAL:
-                sslHostnameVerifier = this.finalSslHostnameVerifier;
-                break;
             case JOB:
                 sslHostnameVerifier = this.jobSslHostnameVerifier;
                 break;
@@ -411,9 +405,6 @@ public class HubConfigImpl implements HubConfig {
         switch (kind) {
             case STAGING:
                 this.stagingSslHostnameVerifier = sslHostnameVerifier;
-                break;
-            case FINAL:
-                this.finalSslHostnameVerifier = sslHostnameVerifier;
                 break;
             case JOB:
                 this.jobSslHostnameVerifier = sslHostnameVerifier;
@@ -512,9 +503,6 @@ public class HubConfigImpl implements HubConfig {
             case STAGING:
                 simple = this.stagingSimpleSsl;
                 break;
-            case FINAL:
-                simple = this.finalSimpleSsl;
-                break;
             case JOB:
                 simple = this.jobSimpleSsl;
                 break;
@@ -531,9 +519,6 @@ public class HubConfigImpl implements HubConfig {
         switch (kind) {
             case STAGING:
                 this.stagingSimpleSsl = simpleSsl;
-                break;
-            case FINAL:
-                this.finalSimpleSsl = simpleSsl;
                 break;
             case JOB:
                 this.jobSimpleSsl = simpleSsl;
@@ -552,9 +537,6 @@ public class HubConfigImpl implements HubConfig {
             case STAGING:
                 certFile = this.stagingCertFile;
                 break;
-            case FINAL:
-                certFile = this.finalCertFile;
-                break;
             case JOB:
                 certFile = this.jobCertFile;
                 break;
@@ -571,9 +553,6 @@ public class HubConfigImpl implements HubConfig {
         switch (kind) {
             case STAGING:
                 this.stagingCertFile = certFile;
-                break;
-            case FINAL:
-                this.finalCertFile = certFile;
                 break;
             case JOB:
                 this.jobCertFile = certFile;
@@ -592,9 +571,6 @@ public class HubConfigImpl implements HubConfig {
             case STAGING:
                 certPass = this.stagingCertPassword;
                 break;
-            case FINAL:
-                certPass = this.finalCertPassword;
-                break;
             case JOB:
                 certPass = this.jobCertPassword;
                 break;
@@ -611,9 +587,6 @@ public class HubConfigImpl implements HubConfig {
         switch (kind) {
             case STAGING:
                 this.stagingCertPassword = certPassword;
-                break;
-            case FINAL:
-                this.finalCertPassword = certPassword;
                 break;
             case JOB:
                 this.jobCertPassword = certPassword;
@@ -632,9 +605,6 @@ public class HubConfigImpl implements HubConfig {
             case STAGING:
                 name = this.stagingExternalName;
                 break;
-            case FINAL:
-                name = this.finalExternalName;
-                break;
             case JOB:
                 name = this.jobExternalName;
                 break;
@@ -651,9 +621,6 @@ public class HubConfigImpl implements HubConfig {
         switch (kind) {
             case STAGING:
                 this.stagingExternalName = externalName;
-                break;
-            case FINAL:
-                this.finalExternalName = externalName;
                 break;
             case JOB:
                 this.jobExternalName = externalName;
@@ -760,6 +727,7 @@ public class HubConfigImpl implements HubConfig {
             if (stagingSimpleSsl) {
                 stagingSslContext = SimpleX509TrustManager.newSSLContext();
                 stagingSslHostnameVerifier = DatabaseClientFactory.SSLHostnameVerifier.ANY;
+                stagingTrustManager = new SimpleX509TrustManager();
             }
             stagingCertFile = getEnvPropString(environmentProperties, "mlStagingCertFile", stagingCertFile);
             stagingCertPassword = getEnvPropString(environmentProperties, "mlStagingCertPassword", stagingCertPassword);
@@ -772,14 +740,8 @@ public class HubConfigImpl implements HubConfig {
             finalPort = getEnvPropInteger(environmentProperties, "mlFinalPort", finalPort);
             finalAuthMethod = getEnvPropString(environmentProperties, "mlFinalAuth", finalAuthMethod);
             finalScheme = getEnvPropString(environmentProperties, "mlFinalScheme", finalScheme);
-            finalSimpleSsl = getEnvPropBoolean(environmentProperties, "mlFinalSimpleSsl", false);
-            if (finalSimpleSsl) {
-                finalSslContext = SimpleX509TrustManager.newSSLContext();
-                finalSslHostnameVerifier = DatabaseClientFactory.SSLHostnameVerifier.ANY;
-            }
-            finalCertFile = getEnvPropString(environmentProperties, "mlFinalCertFile", finalCertFile);
-            finalCertPassword = getEnvPropString(environmentProperties, "mlFinalCertPassword", finalCertPassword);
-            finalExternalName = getEnvPropString(environmentProperties, "mlFinalExternalName", finalExternalName);
+            // For 3.1 removed some properties that are not in use by DHF.  If DHF again needs the final appserver access in the future
+            // (smart mastering?) then reincorporate the props here
 
 
             jobDbName = getEnvPropString(environmentProperties, "mlJobDbName", jobDbName);
@@ -792,6 +754,7 @@ public class HubConfigImpl implements HubConfig {
             if (jobSimpleSsl) {
                 jobSslContext = SimpleX509TrustManager.newSSLContext();
                 jobSslHostnameVerifier = DatabaseClientFactory.SSLHostnameVerifier.ANY;
+                jobTrustManager = new SimpleX509TrustManager();
             }
             jobCertFile = getEnvPropString(environmentProperties, "mlJobCertFile", jobCertFile);
             jobCertPassword = getEnvPropString(environmentProperties, "mlJobCertPassword", jobCertPassword);
@@ -877,6 +840,7 @@ public class HubConfigImpl implements HubConfig {
         config.setCertFile(stagingCertFile);
         config.setCertPassword(stagingCertPassword);
         config.setExternalName(stagingExternalName);
+        config.setTrustManager(stagingTrustManager);
         return appConfig.getConfiguredDatabaseClientFactory().newDatabaseClient(config);
     }
 
@@ -885,26 +849,9 @@ public class HubConfigImpl implements HubConfig {
         return newStagingClient(finalDbName);
     }
 
-    public DatabaseClient newStagingManageClient(String databaseName) {
-        AppConfig appConfig = getAppConfig();
-        DatabaseClientConfig config = new DatabaseClientConfig(appConfig.getHost(), stagingPort, appConfig.getRestAdminUsername(), appConfig.getRestAdminPassword());
-        config.setDatabase(databaseName);
-        config.setSecurityContextType(SecurityContextType.valueOf(stagingAuthMethod.toUpperCase()));
-        config.setSslHostnameVerifier(stagingSslHostnameVerifier);
-        config.setSslContext(stagingSslContext);
-        config.setCertFile(stagingCertFile);
-        config.setCertPassword(stagingCertPassword);
-        config.setExternalName(stagingExternalName);
-        return appConfig.getConfiguredDatabaseClientFactory().newDatabaseClient(config);
-    }
-
-    public DatabaseClient newFinalManageClient() {
-        return newStagingClient(finalDbName);
-    }
-
     public DatabaseClient newJobDbClient() {
         AppConfig appConfig = getAppConfig();
-        DatabaseClientConfig config = new DatabaseClientConfig(appConfig.getHost(), jobPort, appConfig.getRestAdminUsername(), appConfig.getRestAdminPassword());
+        DatabaseClientConfig config = new DatabaseClientConfig(appConfig.getHost(), jobPort, mlUsername, mlPassword);
         config.setDatabase(jobDbName);
         config.setSecurityContextType(SecurityContextType.valueOf(jobAuthMethod.toUpperCase()));
         config.setSslHostnameVerifier(jobSslHostnameVerifier);
@@ -912,6 +859,7 @@ public class HubConfigImpl implements HubConfig {
         config.setCertFile(jobCertFile);
         config.setCertPassword(jobCertPassword);
         config.setExternalName(jobExternalName);
+        config.setTrustManager(jobTrustManager);
         return appConfig.getConfiguredDatabaseClientFactory().newDatabaseClient(config);
     }
 
@@ -921,7 +869,7 @@ public class HubConfigImpl implements HubConfig {
 
     public DatabaseClient newModulesDbClient() {
         AppConfig appConfig = getAppConfig();
-        DatabaseClientConfig config = new DatabaseClientConfig(appConfig.getHost(), stagingPort, appConfig.getRestAdminUsername(), appConfig.getRestAdminPassword());
+        DatabaseClientConfig config = new DatabaseClientConfig(appConfig.getHost(), stagingPort, mlUsername, mlPassword);
         config.setDatabase(appConfig.getModulesDatabaseName());
         config.setSecurityContextType(SecurityContextType.valueOf(stagingAuthMethod.toUpperCase()));
         config.setSslHostnameVerifier(stagingSslHostnameVerifier);
@@ -929,6 +877,7 @@ public class HubConfigImpl implements HubConfig {
         config.setCertFile(stagingCertFile);
         config.setCertPassword(stagingCertPassword);
         config.setExternalName(stagingExternalName);
+        config.setTrustManager(stagingTrustManager);
         return appConfig.getConfiguredDatabaseClientFactory().newDatabaseClient(config);
     }
 
