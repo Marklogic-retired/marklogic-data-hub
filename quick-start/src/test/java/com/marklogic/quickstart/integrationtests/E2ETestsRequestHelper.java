@@ -26,7 +26,7 @@ import io.restassured.http.Cookie;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 
-public class E2ETestsRequestHelper {
+public class E2ETestsRequestHelper extends HubTestBase {
 	
 	private Cookie requestCookie;
 	private int harmonizeFlowNameCount = 1;
@@ -285,6 +285,14 @@ public class E2ETestsRequestHelper {
 		return mapName;
 	}
 
+	public String getResourceFileContent(String fileLoc) {
+		return getResource(fileLoc);
+	}
+
+	public String getResourceFilePath(String fileLoc) {
+		return getResourceFile(fileLoc).getAbsolutePath();
+	}
+
 	private void buildCookie() {
 		requestCookie = new Cookie.Builder("JSESSIONID", sessionID).setSecured(true)
 			      .setComment("session id cookie").build();
@@ -294,8 +302,8 @@ public class E2ETestsRequestHelper {
 		JsonPath projectInitJson = projectInitResponse.jsonPath();
 		loginInfo.projectId = projectInitJson.getInt("id");
 		loginInfo.environment = projectInitJson.getList("environments").get(0).toString();
-		loginInfo.username = "admin";
-		loginInfo.password = "admin";
+		loginInfo.username = user;
+		loginInfo.password = password;
 	}
 	
 	private FlowModel createFlowModel(String entityName, String flowType, DataFormat dataFormat, 

@@ -19,6 +19,8 @@ import org.junit.Test;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -26,7 +28,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.flow.CodeFormat;
 import com.marklogic.hub.flow.DataFormat;
 import com.marklogic.hub.flow.FlowType;
@@ -39,12 +40,13 @@ import io.restassured.response.Response;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class EndToEndAPITest extends HubTestBase {
+public class EndToEndAPITest {
 
 	@LocalServerPort
 	int port;
 
 	private E2ETestsRequestHelper requestHelper = new E2ETestsRequestHelper();
+	static final protected Logger logger = LoggerFactory.getLogger(EndToEndAPITest.class);
 	
 	// Project Initialization variables
 	boolean projectInitStatus;
@@ -109,12 +111,12 @@ public class EndToEndAPITest extends HubTestBase {
 	
 	@BeforeAll
 	public void setUp() {
-		createProjectDir();
+		requestHelper.createProjectDir();
 	}
 
 	@AfterAll
 	public void tearDown() {
-		deleteProjectDir();
+		requestHelper.deleteProjectDir();
 	}
 
 	@Before
@@ -164,7 +166,7 @@ public class EndToEndAPITest extends HubTestBase {
 		logger.info("Stats Test Passed");
 		
 		// Test api's to create new entities
-		createEntityJsonBody = getResource("integration-test-data/create-entity-model.json");
+		createEntityJsonBody = requestHelper.getResourceFileContent("integration-test-data/create-entity-model.json");
 		createEntityJsonObj = new JSONObject(createEntityJsonBody);
 		entityName = createEntityJsonObj.getJSONObject("info").getString("title");
 		createEntityResponse = requestHelper.createEntity(createEntityJsonBody, entityName);
@@ -203,9 +205,8 @@ public class EndToEndAPITest extends HubTestBase {
 		
 		// Test API's for running the input flow created 
 		runFlowOptions = new HashMap<>();
-		inputPath = getResourceFile("integration-test-data/input/input" + "." + DataFormat.JSON.toString())
-				.getAbsolutePath();
-		basePath = getResourceFile("integration-test-data/input").getAbsolutePath();
+		inputPath = requestHelper.getResourceFilePath("integration-test-data/input/input" + "." + DataFormat.JSON.toString());
+		basePath = requestHelper.getResourceFilePath("integration-test-data/input");
 		mlcpOptions = requestHelper.generateMLCPOptions(inputPath, basePath, entityName, "",
 				CodeFormat.JAVASCRIPT, DataFormat.JSON, runFlowOptions);
 		runInputFlowResponse = requestHelper.runFlow(mlcpOptions, entityName, FlowType.INPUT);
@@ -225,10 +226,10 @@ public class EndToEndAPITest extends HubTestBase {
 		mapName = requestHelper.createMapName();
 		getMappingResponse = requestHelper.getMap(mapName);
 		
-		assertEquals(500, getMappingResponse.statusCode());
+		assertEquals(404, getMappingResponse.statusCode());
 		
 		// Test API's to create a map with a name
-		mappingData = getResource("integration-test-data/mapping-data.json");
+		mappingData = requestHelper.getResourceFileContent("integration-test-data/mapping-data.json");
 		mappingDataJsonNode = new ObjectMapper().readTree(mappingData);
 		((ObjectNode) mappingDataJsonNode).put("name", mapName);
 		createMapResponse = requestHelper.createMap(mapName, mappingDataJsonNode);
@@ -238,7 +239,7 @@ public class EndToEndAPITest extends HubTestBase {
 
 		// Create a second Map
 		mapName = requestHelper.createMapName();
-		mappingData = getResource("integration-test-data/mapping-data.json");
+		mappingData = requestHelper.getResourceFileContent("integration-test-data/mapping-data.json");
 		mappingDataJsonNode = new ObjectMapper().readTree(mappingData);
 		((ObjectNode) mappingDataJsonNode).put("name", mapName);
 		createMapResponse = requestHelper.createMap(mapName, mappingDataJsonNode);
@@ -285,7 +286,7 @@ public class EndToEndAPITest extends HubTestBase {
 		requestHelper.waitForReloadModules();
 		
 		// Tests to run the created harmonize flow
-		runHarmonizeJsonBody = getResource("integration-test-data/run-harm-flow-request.json");
+		runHarmonizeJsonBody = requestHelper.getResourceFileContent("integration-test-data/run-harm-flow-request.json");
 		runHarmonizeFlowJsonObj = new ObjectMapper().readTree(runHarmonizeJsonBody);
 		runHarmonizeFlowResponse = requestHelper.runFlow(runHarmonizeFlowJsonObj, entityName, FlowType.HARMONIZE);
 		assertEquals(200, runHarmonizeFlowResponse.statusCode());
@@ -345,7 +346,7 @@ public class EndToEndAPITest extends HubTestBase {
 		requestHelper.waitForReloadModules();
 		
 		// Next step is to run the created harmonize flow
-		runHarmonizeJsonBody = getResource("integration-test-data/run-harm-flow-request.json");
+		runHarmonizeJsonBody = requestHelper.getResourceFileContent("integration-test-data/run-harm-flow-request.json");
 		runHarmonizeFlowJsonObj = new ObjectMapper().readTree(runHarmonizeJsonBody);
 		runHarmonizeFlowResponse = requestHelper.runFlow(runHarmonizeFlowJsonObj, entityName, FlowType.HARMONIZE);
 		

@@ -2,7 +2,7 @@
   "language": "zxx",
   "name": "",
   "description": "",
-  "version": 1,
+  "version": 0,
   "targetEntityType": "/prod-entity-0.0.0.0.1/prod-entity",
   "sourceContext": "//",
   "properties": {
