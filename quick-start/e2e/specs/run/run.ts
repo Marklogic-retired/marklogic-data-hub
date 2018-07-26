@@ -23,7 +23,7 @@ export default function(tmpDir) {
     it ('should run Load Products flow', function() {
       flowPage.entityDisclosure('Product').click();
       browser.wait(EC.elementToBeClickable(flowPage.getFlow('Product', 'Load Products', 'INPUT')));
-      flowPage.runInputFlowWithFolder('Product', 'Load Products', 'json', 'products', 
+      flowPage.runInputFlow('Product', 'Load Products', 'json', 'products', 
         'delimited_text', '?doc=yes&type=foo');
     });
 
@@ -197,14 +197,12 @@ export default function(tmpDir) {
       browser.wait(EC.elementToBeClickable(flowPage.getFlow('TestEntity', 'sjs json INPUT', 'INPUT')));
     });
 
-    let flowCount = 1;
     ['sjs', 'xqy'].forEach((codeFormat) => {
       ['xml', 'json'].forEach((dataFormat) => {
         let flowType = 'INPUT';
         let flowName = `${codeFormat} ${dataFormat} ${flowType}`;
         it (`should run a ${flowName} flow`, function() {
-          flowPage.runInputFlow('TestEntity', flowName, dataFormat, flowCount);
-          flowCount++;
+          flowPage.runInputFlow('TestEntity', flowName, dataFormat, 'products', 'delimited_text', '');
         });
       });
     });
