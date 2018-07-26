@@ -41,6 +41,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.X509TrustManager;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -69,6 +70,7 @@ public class HubConfigImpl implements HubConfig {
     private String stagingCertFile;
     private String stagingCertPassword;
     private String stagingExternalName;
+    private X509TrustManager stagingTrustManager;
 
     protected String finalDbName = DEFAULT_FINAL_NAME;
     protected String finalHttpName = DEFAULT_FINAL_NAME;
@@ -95,6 +97,7 @@ public class HubConfigImpl implements HubConfig {
     private String jobCertFile;
     private String jobCertPassword;
     private String jobExternalName;
+    private X509TrustManager jobTrustManager;
 
     protected String modulesDbName = DEFAULT_MODULES_DB_NAME;
     protected Integer modulesForestsPerHost = 1;
@@ -724,6 +727,7 @@ public class HubConfigImpl implements HubConfig {
             if (stagingSimpleSsl) {
                 stagingSslContext = SimpleX509TrustManager.newSSLContext();
                 stagingSslHostnameVerifier = DatabaseClientFactory.SSLHostnameVerifier.ANY;
+                stagingTrustManager = new SimpleX509TrustManager();
             }
             stagingCertFile = getEnvPropString(environmentProperties, "mlStagingCertFile", stagingCertFile);
             stagingCertPassword = getEnvPropString(environmentProperties, "mlStagingCertPassword", stagingCertPassword);
@@ -736,6 +740,8 @@ public class HubConfigImpl implements HubConfig {
             finalPort = getEnvPropInteger(environmentProperties, "mlFinalPort", finalPort);
             finalAuthMethod = getEnvPropString(environmentProperties, "mlFinalAuth", finalAuthMethod);
             finalScheme = getEnvPropString(environmentProperties, "mlFinalScheme", finalScheme);
+            // For 3.1 removed some properties that are not in use by DHF.  If DHF again needs the final appserver access in the future
+            // (smart mastering?) then reincorporate the props here
 
 
             jobDbName = getEnvPropString(environmentProperties, "mlJobDbName", jobDbName);
@@ -748,6 +754,7 @@ public class HubConfigImpl implements HubConfig {
             if (jobSimpleSsl) {
                 jobSslContext = SimpleX509TrustManager.newSSLContext();
                 jobSslHostnameVerifier = DatabaseClientFactory.SSLHostnameVerifier.ANY;
+                jobTrustManager = new SimpleX509TrustManager();
             }
             jobCertFile = getEnvPropString(environmentProperties, "mlJobCertFile", jobCertFile);
             jobCertPassword = getEnvPropString(environmentProperties, "mlJobCertPassword", jobCertPassword);
@@ -833,6 +840,7 @@ public class HubConfigImpl implements HubConfig {
         config.setCertFile(stagingCertFile);
         config.setCertPassword(stagingCertPassword);
         config.setExternalName(stagingExternalName);
+        config.setTrustManager(stagingTrustManager);
         return appConfig.getConfiguredDatabaseClientFactory().newDatabaseClient(config);
     }
 
@@ -851,6 +859,7 @@ public class HubConfigImpl implements HubConfig {
         config.setCertFile(jobCertFile);
         config.setCertPassword(jobCertPassword);
         config.setExternalName(jobExternalName);
+        config.setTrustManager(jobTrustManager);
         return appConfig.getConfiguredDatabaseClientFactory().newDatabaseClient(config);
     }
 
@@ -868,6 +877,7 @@ public class HubConfigImpl implements HubConfig {
         config.setCertFile(stagingCertFile);
         config.setCertPassword(stagingCertPassword);
         config.setExternalName(stagingExternalName);
+        config.setTrustManager(stagingTrustManager);
         return appConfig.getConfiguredDatabaseClientFactory().newDatabaseClient(config);
     }
 

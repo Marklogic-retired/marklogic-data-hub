@@ -35,6 +35,7 @@ import com.marklogic.hub.deploy.HubAppDeployer;
 import com.marklogic.hub.deploy.commands.*;
 import com.marklogic.hub.deploy.util.HubDeployStatusListener;
 import com.marklogic.hub.error.CantUpgradeException;
+import com.marklogic.hub.error.DataHubConfigurationException;
 import com.marklogic.hub.error.InvalidDBOperationError;
 import com.marklogic.hub.error.ServerValidationException;
 import com.marklogic.hub.util.Versions;
@@ -72,8 +73,7 @@ public class DataHubImpl implements DataHub {
 
     public DataHubImpl(HubConfig hubConfig) {
         if (hubConfig == null) {
-            //FIXME
-            throw new RuntimeException("HAY DON'T MAKE ME NULL");
+            throw new DataHubConfigurationException("HubConfig must not be null when creating a data hub");
         }
         this.hubConfig = ((HubConfigImpl)hubConfig);
     }
