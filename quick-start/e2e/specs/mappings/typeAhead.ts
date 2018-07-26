@@ -7,6 +7,7 @@ import appPage from '../../page-objects/appPage';
 import entityPage from '../../page-objects/entities/entities';
 import browsePage from '../../page-objects/browse/browse';
 import mappingsPage from '../../page-objects/mappings/mappings';
+import viewerPage from '../../page-objects/viewer/viewer';
 
 export default function() {
     describe('Run TypeAhead', () => {
@@ -22,18 +23,17 @@ export default function() {
 
       it ('should create input flow on TypeAhead entity', function() {  
         //create TypeAhead input flow
-        flowPage.entityDisclosure('TypeAhead').click();
+        flowPage.clickEntityDisclosure('TypeAhead');
         flowPage.createInputFlow('TypeAhead', 'Load TypeAhead', 'json', 'sjs', false);
         browser.wait(EC.visibilityOf(flowPage.getFlow('TypeAhead', 'Load TypeAhead', 'INPUT')));
         expect(flowPage.getFlow('TypeAhead', 'Load TypeAhead', 'INPUT').isDisplayed()).
           toBe(true, 'Load TypeAhead' + ' is not present');
-        flowPage.entityDisclosure('TypeAhead').click();
       });
 
       it ('should run Load TypeAhead flow', function() {
-        flowPage.entityDisclosure('TypeAhead').click();
+        flowPage.clickEntityDisclosure('TypeAhead');
         browser.wait(EC.elementToBeClickable(flowPage.getFlow('TypeAhead', 'Load TypeAhead', 'INPUT')));
-        flowPage.runInputFlowWithFolder('TypeAhead', 'Load TypeAhead', 'json', 'long-props', 'documents', 
+        flowPage.runInputFlow('TypeAhead', 'Load TypeAhead', 'json', 'long-props', 'documents', 
           '?doc=yes&type=foo');
       });
 
@@ -99,7 +99,7 @@ export default function() {
         mappingsPage.mapCreateButton().click();
         browser.wait(EC.elementToBeClickable(mappingsPage.entityMapping('MapTypeAhead')));
         //flicker bug, sleep will be removed once it's fixed
-        browser.sleep(5000);
+        browser.sleep(8000);
         browser.wait(EC.elementToBeClickable(mappingsPage.entityMapping('MapTypeAhead')));
         mappingsPage.entityMapping('MapTypeAhead').click();
         browser.wait(EC.elementToBeClickable(mappingsPage.editMapDescription()));
@@ -140,7 +140,7 @@ export default function() {
         mappingsPage.saveMapButton().click();
         browser.wait(EC.elementToBeClickable(mappingsPage.entityMapping('MapTypeAhead')));
         //flicker bug, sleep will be removed once it's fixed
-        browser.sleep(5000);
+        browser.sleep(8000);
         browser.wait(EC.elementToBeClickable(mappingsPage.entityMapping('MapTypeAhead')));
         expect(mappingsPage.verifySourcePropertyName('anywhere').isPresent()).toBeTruthy();
         expect(mappingsPage.verifySourcePropertyName('been').isPresent()).toBeTruthy();
@@ -148,6 +148,54 @@ export default function() {
         // verify that unselected sources are not saved
         expect(mappingsPage.verifySourcePropertyName('further').isPresent()).toBeFalsy();
         expect(mappingsPage.verifySourcePropertyName('active').isPresent()).toBeFalsy();
+      });
+
+      it('should go to flows tab', function() {
+        appPage.flowsTab.click();
+        flowPage.isLoaded();
+      });
+
+      it('should create Harmonize TypeAhead flow', function() {
+        flowPage.clickEntityDisclosure('TypeAhead');
+        flowPage.createHarmonizeFlow('TypeAhead', 'Harmonize TypeAhead', 'json', 'sjs', true, 'MapTypeAhead');
+        browser.wait(EC.visibilityOf(flowPage.getFlow('TypeAhead', 'Harmonize TypeAhead', 'HARMONIZE')));
+        expect(flowPage.getFlow('TypeAhead', 'Harmonize TypeAhead', 'HARMONIZE').isDisplayed()).
+          toBe(true, 'Harmonize TypeAhead' + ' is not present');
+      });
+
+      it ('should redeploy modules', function() {
+        flowPage.redeployButton.click();
+        browser.sleep(5000);
+      });
+      
+      it('should run Harmonize TypeAhead flow with mapping', function() {
+        flowPage.clickEntityDisclosure('TypeAhead');
+        browser.wait(EC.visibilityOf(flowPage.getFlow('TypeAhead', 'Harmonize TypeAhead', 'HARMONIZE')));
+        expect(flowPage.getFlow('TypeAhead', 'Harmonize TypeAhead', 'HARMONIZE').isPresent()).toBe(true);
+        flowPage.getFlow('TypeAhead', 'Harmonize TypeAhead', 'HARMONIZE').click();
+        browser.wait(EC.visibilityOf(flowPage.runHarmonizeButton()));
+        expect(flowPage.runHarmonizeButton().isPresent()).toBe(true);
+        flowPage.runHarmonizeButton().click();
+        browser.sleep(10000);
+      });
+
+      it('should verify the harmonized data with mappings', function() {
+        appPage.browseDataTab.click()
+        browsePage.isLoaded();
+        browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
+        browsePage.databaseDropDown().click();
+        browsePage.selectDatabase('FINAL').click();
+        browser.wait(EC.elementToBeClickable(browsePage.resultsUri()));
+        browsePage.searchBox().clear();
+        browsePage.searchBox().sendKeys('passage married child');
+        browsePage.searchButton().click();
+        browser.wait(EC.elementToBeClickable(browsePage.resultsUri()));
+        expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 1 of 1');
+        expect(browsePage.resultsUri().getText()).toContain('long_props_typeahead');
+        browsePage.resultsUri().click();
+        viewerPage.isLoaded();
+        expect(viewerPage.searchResultUri().getText()).toContain('long_props_typeahead');
+        expect(viewerPage.verifyHarmonizedProperty('title', 'passage married child')).toBeTruthy();
       });
 
       it ('should go to flows page', function() {
