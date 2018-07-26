@@ -601,20 +601,29 @@ export default function() {
     it ('should open the Entity disclosure', function() {
       flowPage.entityDisclosure('TestEntity').click();
     });
-
-    ['INPUT', 'HARMONIZE'].forEach((flowType) => {
-      ['sjs', 'xqy'].forEach((codeFormat) => {
-        ['xml', 'json'].forEach((dataFormat) => {
-          let flowName = `${codeFormat} ${dataFormat} ${flowType}`;
-          it (`should create a ${flowName} flow`, function() {
-            flowPage.createFlow('TestEntity', flowName, flowType, dataFormat, codeFormat, false);
-            browser.wait(EC.visibilityOf(flowPage.getFlow('TestEntity', flowName, flowType)));
-            expect(flowPage.getFlow('TestEntity', flowName, flowType).isDisplayed()).toBe(true, flowName + ' is not present');
-          });
+    
+    ['sjs', 'xqy'].forEach((codeFormat) => {
+      ['xml', 'json'].forEach((dataFormat) => {
+        let flowName = `${codeFormat} ${dataFormat} INPUT`;
+        it (`should create a ${flowName} input flow`, function() {
+          flowPage.createInputFlow('TestEntity', flowName, dataFormat, codeFormat, false);
+          browser.wait(EC.visibilityOf(flowPage.getFlow('TestEntity', flowName, 'INPUT')));
+          expect(flowPage.getFlow('TestEntity', flowName, 'INPUT').isDisplayed()).toBe(true, flowName + ' is not present');
         });
       });
     });
 
+    ['sjs', 'xqy'].forEach((codeFormat) => {
+      ['xml', 'json'].forEach((dataFormat) => {
+        let flowName = `${codeFormat} ${dataFormat} HARMONIZE`;
+        it (`should create a ${flowName} harmonize flow`, function() {
+          flowPage.createHarmonizeFlow('TestEntity', flowName, dataFormat, codeFormat, true);
+          browser.wait(EC.visibilityOf(flowPage.getFlow('TestEntity', flowName, 'HARMONIZE')));
+          expect(flowPage.getFlow('TestEntity', flowName, 'HARMONIZE').isDisplayed()).toBe(true, flowName + ' is not present');
+        });
+      });
+    });
+    
     it ('should open Product entity disclosure', function() {
       flowPage.entityDisclosure('Product').click();
     });
