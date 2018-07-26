@@ -337,14 +337,14 @@ public class DataHubImpl implements DataHub {
         logger.warn("Installing the Data Hub into MarkLogic");
 
         AppConfig config = hubConfig.getAppConfig();
-        HubAppDeployer deployer = new HubAppDeployer(getManageClient(), getAdminManager(), listener);
+        HubAppDeployer deployer = new HubAppDeployer(getManageClient(), getAdminManager(),  listener, hubConfig.newStagingClient());
         deployer.setCommands(getCommandList());
         deployer.deploy(config);
     }
 
     @Override public void updateIndexes() {
         AppConfig config = hubConfig.getAppConfig();
-        HubAppDeployer deployer = new HubAppDeployer(getManageClient(), getAdminManager(), null);
+        HubAppDeployer deployer = new HubAppDeployer(getManageClient(), getAdminManager(), null, hubConfig.newStagingClient());
         List<Command> commands = new ArrayList<>();
         commands.add(new DeployHubDatabasesCommand(hubConfig));
         deployer.setCommands(commands);
@@ -366,7 +366,7 @@ public class DataHubImpl implements DataHub {
         logger.warn("Uninstalling the Data Hub from MarkLogic");
 
         AppConfig config = hubConfig.getAppConfig();
-        HubAppDeployer deployer = new HubAppDeployer(getManageClient(), getAdminManager(), listener);
+        HubAppDeployer deployer = new HubAppDeployer(getManageClient(), getAdminManager(), listener, hubConfig.newStagingClient());
         deployer.setCommands(getCommandList());
         deployer.undeploy(config);
     }
