@@ -885,26 +885,9 @@ public class HubConfigImpl implements HubConfig {
         return newStagingClient(finalDbName);
     }
 
-    public DatabaseClient newStagingManageClient(String databaseName) {
-        AppConfig appConfig = getAppConfig();
-        DatabaseClientConfig config = new DatabaseClientConfig(appConfig.getHost(), stagingPort, appConfig.getRestAdminUsername(), appConfig.getRestAdminPassword());
-        config.setDatabase(databaseName);
-        config.setSecurityContextType(SecurityContextType.valueOf(stagingAuthMethod.toUpperCase()));
-        config.setSslHostnameVerifier(stagingSslHostnameVerifier);
-        config.setSslContext(stagingSslContext);
-        config.setCertFile(stagingCertFile);
-        config.setCertPassword(stagingCertPassword);
-        config.setExternalName(stagingExternalName);
-        return appConfig.getConfiguredDatabaseClientFactory().newDatabaseClient(config);
-    }
-
-    public DatabaseClient newFinalManageClient() {
-        return newStagingClient(finalDbName);
-    }
-
     public DatabaseClient newJobDbClient() {
         AppConfig appConfig = getAppConfig();
-        DatabaseClientConfig config = new DatabaseClientConfig(appConfig.getHost(), jobPort, appConfig.getRestAdminUsername(), appConfig.getRestAdminPassword());
+        DatabaseClientConfig config = new DatabaseClientConfig(appConfig.getHost(), jobPort, mlUsername, mlPassword);
         config.setDatabase(jobDbName);
         config.setSecurityContextType(SecurityContextType.valueOf(jobAuthMethod.toUpperCase()));
         config.setSslHostnameVerifier(jobSslHostnameVerifier);
@@ -921,7 +904,7 @@ public class HubConfigImpl implements HubConfig {
 
     public DatabaseClient newModulesDbClient() {
         AppConfig appConfig = getAppConfig();
-        DatabaseClientConfig config = new DatabaseClientConfig(appConfig.getHost(), stagingPort, appConfig.getRestAdminUsername(), appConfig.getRestAdminPassword());
+        DatabaseClientConfig config = new DatabaseClientConfig(appConfig.getHost(), stagingPort, mlUsername, mlPassword);
         config.setDatabase(appConfig.getModulesDatabaseName());
         config.setSecurityContextType(SecurityContextType.valueOf(stagingAuthMethod.toUpperCase()));
         config.setSslHostnameVerifier(stagingSslHostnameVerifier);
