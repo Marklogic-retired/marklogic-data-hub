@@ -48,7 +48,7 @@ import { EntitiesService } from './entities/entities.service';
 import { InstallService } from './installer';
 import { JobService } from './jobs/jobs.service';
 import { JobListenerService } from './jobs/job-listener.service';
-import { MapService } from './map/map.service';
+import { MapService } from './mappings/map.service';
 import { ProjectService } from './projects/projects.service';
 import { SettingsService } from './settings/settings.service';
 import { STOMPService } from './stomp/stomp.service';
@@ -67,7 +67,9 @@ import { DatePipeModule } from './date-pipe/date-pipe.module';
 import { SelectKeyValuesComponent } from './select-key-values/select-key-values.component';
 import {JobExportDialogComponent} from "./jobs/job-export.component";
 
-import { MapComponent } from './map';
+import { MapComponent } from './mappings';
+import { MappingsComponent } from "./mappings";
+import { NewMapComponent } from "./mappings/new-map.component";
 
 @NgModule({
   declarations: [
@@ -90,6 +92,7 @@ import { MapComponent } from './map';
     MlErrorComponent,
     NewEntityComponent,
     NewFlowComponent,
+    NewMapComponent,
     PaginationComponent,
     ResizableComponent,
     SelectComponent,
@@ -111,7 +114,8 @@ import { MapComponent } from './map';
     ListFilterPipe,
     ObjectToArrayPipe,
     SelectKeyValuesComponent,
-    MapComponent
+    MapComponent,
+    MappingsComponent
   ],
   entryComponents: [
     HasBugsDialogComponent,
@@ -120,6 +124,7 @@ import { MapComponent } from './map';
     EntityEditorComponent,
     NewEntityComponent,
     NewFlowComponent,
+    NewMapComponent,
     JobOutputComponent,
     JobExportDialogComponent
   ],

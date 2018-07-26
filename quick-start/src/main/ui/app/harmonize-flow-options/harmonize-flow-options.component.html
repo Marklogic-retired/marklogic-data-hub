@@ -22,6 +22,7 @@
           (input)="saveSettings()"
           ></mdl-textfield>
       </div>
+      <!--
       <div class="map">
         <div class="map-heading">
           <h4>Map</h4>
@@ -45,6 +46,7 @@
           </div>
         </div>
       </div>
+      -->
       <app-select-key-values
         [title]="keyValTitle"
         [keyVals]="keyVals"
@@ -52,8 +54,15 @@
         (onRemove)="saveSettings()"
       ></app-select-key-values>
 </div>
-    <div>
-      <mdl-button mdl-button-type="raised" mdl-colored="primary" mdl-ripple (click)="runHarmonize()">Run Harmonize</mdl-button>
-    </div>
+    <div *ngIf="!validEntityCheck(); else noWhitespace">
+            <span class="has-whitespace">Whitespaces are not allowed in property names</span>
+            <div>
+              <button class="mdl-button mdl-js-button mdl-button--raised" disabled>Run Harmonize</button>
+            </div>
+          </div>
+
+        <ng-template #noWhitespace>
+          <mdl-button mdl-button-type="raised" mdl-colored="primary" mdl-ripple (click)="runHarmonize()">Run Harmonize</mdl-button>
+        </ng-template>
   </div>
 </ng-template>

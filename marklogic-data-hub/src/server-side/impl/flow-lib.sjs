@@ -190,7 +190,13 @@ function makeEnvelope(content, headers, triples, dataFormat) {
 
     let attachments = null;
     if (content instanceof Object && content.hasOwnProperty("$attachments")) {
-      attachments = content['$attachments'];
+      if(content['$attachments'] instanceof Element){
+        let config = json.config('custom');
+        config['element-namespace'] = "http://marklogic.com/entity-services";
+        attachments = json.transformToJson(content['$attachments'], config);
+      } else {
+        attachments = content['$attachments'];
+      }
     }
 
     return {
@@ -270,7 +276,9 @@ function makeEnvelope(content, headers, triples, dataFormat) {
             if (attachments instanceof XMLDocument || tracelib.isXmlNode(attachments)) {
               nb.addNode(attachments);
             } else {
-              nb.addText(xdmp.quote(attachments))
+              let config = json.config('custom');
+              let  cx = (config, 'attribute-names' , ('subKey' , 'boolKey' , 'empty' ));
+              nb.addNode(json.transformFromJson(attachments, config));
             }
         }
         nb.endElement();
@@ -356,11 +364,7 @@ function instanceToCanonicalJson(entityInstance) {
       if (key === '$attachments' || key === '$type' || key === '$version') {
       } else {
         let instanceProperty = entityInstance[key];
-        if (instanceProperty instanceof Sequence) {
-          for (let prop in instanceProperty) {
-            o[key] = instanceToCanonicalJson(prop);
-          }
-        } else if (instanceProperty instanceof Array) {
+         if (instanceProperty instanceof Array) {
           let a = [];
           let i = 0;
           for (i = 0; i < instanceProperty.length; i++) {
@@ -372,10 +376,6 @@ function instanceToCanonicalJson(entityInstance) {
             }
           }
           o[key] = a;
-        } else if (instanceProperty instanceof Sequence) {
-            for (let val of instanceProperty) {
-              o[key] = val;
-            }
         } else {
           o[key] = instanceProperty;
         }
@@ -410,7 +410,7 @@ function instanceToCanonicalXml(entityInstance) {
                 }
               }
             } else if (prop instanceof Array) {
-              for (let item in prop) {
+              for (let item of prop) {
                 if (item instanceof Object) {
                   nb.startElement(key);
                   nb.addAttribute('datatype', 'array');

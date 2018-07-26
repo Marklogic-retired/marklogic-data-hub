@@ -306,11 +306,14 @@ public class EntityManagerService extends EnvironmentAware {
     public FlowModel createFlow(String projectDir, String entityName, FlowType flowType, FlowModel newFlow) throws IOException {
         Scaffolding scaffolding = Scaffolding.create(projectDir, envConfig().getFinalClient());
         newFlow.entityName = entityName;
-        String mappingName = mappingManagerService.getMapping(newFlow.mappingName).getVersionedName();
-        if(mappingName == null){
-            throw new DataHubProjectException("Mapping not found in project: "+ newFlow.mappingName);
+        if(newFlow.mappingName != null) {
+            try {
+                String mappingName = mappingManagerService.getMapping(newFlow.mappingName).getVersionedName();
+                newFlow.mappingName = mappingName;
+            } catch (DataHubProjectException e) {
+                throw new DataHubProjectException("Mapping not found in project: " + newFlow.mappingName);
+            }
         }
-        newFlow.mappingName = mappingName;
         scaffolding.createFlow(entityName, newFlow.flowName, flowType, newFlow.codeFormat, newFlow.dataFormat, newFlow.useEsModel, newFlow.mappingName);
         return getFlow(entityName, flowType, newFlow.flowName);
     }
@@ -335,7 +338,7 @@ public class EntityManagerService extends EnvironmentAware {
         else {
             type = "xquery";
         }
-        EntitiesValidator validator = EntitiesValidator.create(config.newStagingManageClient());
+        EntitiesValidator validator = EntitiesValidator.create(config.newStagingClient());
         return validator.validate(entityName, flowName, plugin.fileContents.replaceAll("\\.(sjs|xqy)", ""), type, plugin.fileContents);
     }
 

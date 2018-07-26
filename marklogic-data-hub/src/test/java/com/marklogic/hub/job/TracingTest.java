@@ -51,13 +51,12 @@ public class TracingTest extends HubTestBase {
 
     @Before
     public void setup() throws IOException, URISyntaxException {
-        basicSetup();
-
         enableDebugging();
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME,  HubConfig.DEFAULT_JOB_NAME, HubConfig.DEFAULT_FINAL_NAME);
 
         URL url = TracingTest.class.getClassLoader().getResource("tracing-test");
         String path = Paths.get(url.toURI()).toFile().getAbsolutePath();
+        createProjectDir(path);
         installUserModules(getHubConfig(path), true);
 
 

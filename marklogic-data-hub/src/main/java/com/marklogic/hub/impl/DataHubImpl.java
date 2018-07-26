@@ -63,6 +63,10 @@ public class DataHubImpl implements DataHub {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     public DataHubImpl(HubConfig hubConfig) {
+        if (hubConfig == null) {
+            //FIXME
+            throw new RuntimeException("HAY DON'T MAKE ME NULL");
+        }
         this.hubConfig = ((HubConfigImpl)hubConfig);
     }
 

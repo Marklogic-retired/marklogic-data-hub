@@ -25,7 +25,7 @@ import com.marklogic.hub.error.DataHubProjectException;
 
 import java.util.HashMap;
 
-@JsonPropertyOrder({ "language", "name", "description", "version",  "targetEntityType", "sourceContext", "properties"})
+@JsonPropertyOrder({ "language", "name", "description", "version",  "targetEntityType", "sourceContext", "sourceURI", "properties"})
 public class MappingImpl implements Mapping {
 
     private String name;
@@ -34,6 +34,7 @@ public class MappingImpl implements Mapping {
     private String description;
     private String language;
     private int version;
+    private String sourceURI;
     private HashMap<String, ObjectNode> properties;
 
     public MappingImpl(String name) {
@@ -42,9 +43,10 @@ public class MappingImpl implements Mapping {
         this.version = 1;
         this.description = "Default description";
         this.sourceContext = ".";
+        this.sourceURI = "";
         this.properties = new HashMap<>();
         properties.put("id", createProperty("sourcedFrom", "id"));
-        this.targetEntityType = "";
+        this.targetEntityType = "http://example.org/modelName-version/entityType";
     }
 
     @Override
@@ -57,19 +59,36 @@ public class MappingImpl implements Mapping {
             throw new DataHubProjectException("Could not parse mapper properties");
         }
 
-        int jsonVersion = json.get("version").asInt();
-        String jsonName = json.get("name").asText();
-        String jsonSourceContext = json.get("sourceContext").asText();
-        String jsonDescription = json.get("description").asText();
-        String jsonTarget = json.get("targetEntityType").asText();
-        String jsonLanguage = json.get("language").asText();
-        setVersion(jsonVersion);
-        setName(jsonName);
-        setSourceContext(jsonSourceContext);
-        setDescription(jsonDescription);
-        setTargetEntityType(jsonTarget);
-        setLanguage(jsonLanguage);
-        setProperties(jsonProperties);
+        if(json.has("version")) {
+            setVersion(json.get("version").asInt());
+        }
+        if(json.has("name")) {
+            setName(json.get("name").asText());
+        }
+        if(json.has("sourceContext")) {
+            setSourceContext(json.get("sourceContext").asText());
+        }
+
+        if(json.has("description")) {
+            setDescription(json.get("description").asText());
+        }
+
+        if(json.has("targetEntityType")) {
+            setTargetEntityType(json.get("targetEntityType").asText());
+        }
+
+        if(json.has("language")) {
+            setLanguage(json.get("language").asText());
+        }
+
+        if(json.has("sourceURI")) {
+            setSourceURI(json.get("sourceURI").asText());
+        }
+
+        if(json.has("properties")) {
+            setProperties(jsonProperties);
+        }
+
         return this;
     }
 
@@ -138,6 +157,16 @@ public class MappingImpl implements Mapping {
     @Override
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    @Override
+    public String getSourceURI() {
+        return sourceURI;
+    }
+
+    @Override
+    public void setSourceURI(String sourceURI) {
+        this.sourceURI = sourceURI;
     }
 
     @Override

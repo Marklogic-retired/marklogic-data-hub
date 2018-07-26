@@ -863,17 +863,11 @@ public class HubConfigImpl implements HubConfig {
     }
 
     @Override
-    public DatabaseClient newStagingManageClient() {
-        return newStagingManageClient(stagingDbName);
-    }
-
-    @Override
     public DatabaseClient newStagingClient() {
         return newStagingClient(stagingDbName);
     }
 
-    @Override
-    public DatabaseClient newStagingClient(String dbName) {
+    private DatabaseClient newStagingClient(String dbName) {
         AppConfig appConfig = getAppConfig();
         DatabaseClientConfig config = new DatabaseClientConfig(appConfig.getHost(), stagingPort, getMlUsername(), getMlPassword());
         config.setDatabase(dbName);
@@ -888,16 +882,7 @@ public class HubConfigImpl implements HubConfig {
 
     @Override
     public DatabaseClient newFinalClient() {
-        AppConfig appConfig = getAppConfig();
-        DatabaseClientConfig config = new DatabaseClientConfig(appConfig.getHost(), finalPort, getMlUsername(), getMlPassword());
-        config.setDatabase(finalDbName);
-        config.setSecurityContextType(SecurityContextType.valueOf(finalAuthMethod.toUpperCase()));
-        config.setSslHostnameVerifier(finalSslHostnameVerifier);
-        config.setSslContext(finalSslContext);
-        config.setCertFile(finalCertFile);
-        config.setCertPassword(finalCertPassword);
-        config.setExternalName(finalExternalName);
-        return appConfig.getConfiguredDatabaseClientFactory().newDatabaseClient(config);
+        return newStagingClient(finalDbName);
     }
 
     public DatabaseClient newStagingManageClient(String databaseName) {
@@ -914,16 +899,7 @@ public class HubConfigImpl implements HubConfig {
     }
 
     public DatabaseClient newFinalManageClient() {
-        AppConfig appConfig = getAppConfig();
-        DatabaseClientConfig config = new DatabaseClientConfig(appConfig.getHost(), finalPort, appConfig.getRestAdminUsername(), appConfig.getRestAdminPassword());
-        config.setDatabase(finalDbName);
-        config.setSecurityContextType(SecurityContextType.valueOf(finalAuthMethod.toUpperCase()));
-        config.setSslHostnameVerifier(finalSslHostnameVerifier);
-        config.setSslContext(finalSslContext);
-        config.setCertFile(finalCertFile);
-        config.setCertPassword(finalCertPassword);
-        config.setExternalName(finalExternalName);
-        return appConfig.getConfiguredDatabaseClientFactory().newDatabaseClient(config);
+        return newStagingClient(finalDbName);
     }
 
     public DatabaseClient newJobDbClient() {

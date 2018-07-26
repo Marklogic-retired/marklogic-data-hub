@@ -59,7 +59,11 @@ export class TraceViewerComponent implements OnInit, OnDestroy {
     if (_.isObject(data) || _.isArray(data)) {
       return JSON.stringify(data, null, '  ');
     }
-    return JSON.stringify(JSON.parse(data), null, '  ');
+    try {
+      return JSON.stringify(JSON.parse(data), null, '  ');
+     } catch(e) {
+      return data;
+     }
   }
 
   getButtonClasses(plugin) {

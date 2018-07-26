@@ -103,7 +103,9 @@ public class DataHubService {
         try {
             dataHub.clearUserModules();
             installUserModules(config, true, deployListener);
-            validateUserModules(config, validateListener);
+            if(validateListener != null) {
+                validateUserModules(config, validateListener);
+            }
         } catch(Throwable e) {
             throw new DataHubException(e.getMessage(), e);
         }
@@ -131,7 +133,7 @@ public class DataHubService {
 
     @Async
     public void validateUserModules(HubConfig hubConfig, ValidateListener validateListener) {
-        EntitiesValidator ev = EntitiesValidator.create(hubConfig.newStagingManageClient());
+        EntitiesValidator ev = EntitiesValidator.create(hubConfig.newStagingClient());
         validateListener.onValidate(ev.validateAll());
 
     }
@@ -185,6 +187,8 @@ public class DataHubService {
         deployer.setCommands(commands);
         deployer.deploy(hubConfig.getAppConfig());
 
-        deployListener.onDeploy(getLastDeployed(hubConfig));
+        if(deployListener != null) {
+            deployListener.onDeploy(getLastDeployed(hubConfig));
+        }
     }
 }

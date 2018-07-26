@@ -20,20 +20,11 @@ export default function(tmpDir) {
       flowPage.isLoaded();
     });
 
-    it ('should redeploy modules', function() {
-      flowPage.redeployButton.click();
-      browser.wait(element(by.css('#last-deployed-time')).getText().then((txt) => {
-        return (
-          txt === 'Last Deployed: less than a minute ago' ||
-          txt === 'Last Deployed: 1 minute ago'
-        );
-      }));
-    });
-
     it ('should run Load Products flow', function() {
       flowPage.entityDisclosure('Product').click();
       browser.wait(EC.elementToBeClickable(flowPage.getFlow('Product', 'Load Products', 'INPUT')));
-      flowPage.runInputFlow('Product', 'Load Products', 'json', 1);
+      flowPage.runInputFlowWithFolder('Product', 'Load Products', 'json', 'products', 
+        'delimited_text', '?doc=yes&type=foo');
     });
 
     it('should verify the loaded data', function() {
@@ -100,16 +91,6 @@ export default function(tmpDir) {
       fs.copy(customTriplesFilePath, tmpDir + '/plugins/entities/Product/harmonize/Harmonize\ Products/triples.sjs');
     });
 
-    it ('should redeploy modules', function() {
-      flowPage.redeployButton.click();
-      browser.wait(element(by.css('#last-deployed-time')).getText().then((txt) => {
-        return (
-          txt === 'Last Deployed: less than a minute ago' ||
-          txt === 'Last Deployed: 1 minute ago'
-        );
-      }));
-    });
-
     it ('should logout and login', function() {
       flowPage.logout();
       loginPage.isLoaded();
@@ -118,6 +99,11 @@ export default function(tmpDir) {
       loginPage.clickNext('EnvironmentTab');
       browser.wait(EC.elementToBeClickable(loginPage.loginTab));
       loginPage.login();
+    });
+
+    it ('should redeploy modules', function() {
+      flowPage.redeployButton.click();
+      browser.sleep(5000);
     });
 
     it('should run Harmonize Products flow', function() {
@@ -133,8 +119,6 @@ export default function(tmpDir) {
       console.log('found the button and clicking Run Harmonize button');
       flowPage.runHarmonizeButton().click();
       console.log('clicked the button');
-      //browser.wait(EC.elementToBeClickable(flowPage.toastButton));
-      //flowPage.toastButton.click();
       browser.sleep(10000);
       flowPage.jobsTab.click();
       jobsPage.isLoaded();
@@ -201,6 +185,11 @@ export default function(tmpDir) {
       expect(element(by.cssContainingText('.cm-string', 'http://www.marklogic.com/foo/456')).isPresent()).toBe(true);
       viewerPage.flowsTab.click();
       flowPage.isLoaded();
+    });
+
+    it ('should redeploy modules', function() {
+      flowPage.redeployButton.click();
+      browser.sleep(5000);
     });
 
     it ('should open the TestEntity disclosure', function() {

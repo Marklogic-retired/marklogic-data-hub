@@ -16,7 +16,7 @@ export class FlowPage extends AppPage {
   }
 
   get newFlowDialog() {
-    return element(by.css('.new-flow-dialog'));
+    return element(by.css('app-new-flow .new-flow-dialog'));
   }
 
   inputFlowButton(entityName: string) {
@@ -38,11 +38,11 @@ export class FlowPage extends AppPage {
   addFlowOptionsButton() {
     return element(by.css('.key-value-add > mdl-button'));
   }
-  
+
   removeFlowOptionsByPositionButton(position: number) {
     return element(by.css('app-select-key-values > div:nth-child(' + (position + 1) + ') > .key-value-remove > mdl-button'));
   }
-  
+
   getKeyFlowOptionsByPosition(position: number){
     return element(by.css('app-select-key-values > div:nth-child(' + (position + 1) + ') > div:nth-child(1) > mdl-textfield > div > input'));
   }
@@ -80,6 +80,10 @@ export class FlowPage extends AppPage {
 
   get xmlDataFormatButton() {
     return element(by.cssContainingText('app-select-list td', 'XML'));
+  }
+
+  useMapButton(mapName: string) {
+    return element(by.cssContainingText('app-select-list td', mapName));
   }
 
   get createFlowButton() {
@@ -127,31 +131,13 @@ export class FlowPage extends AppPage {
         tabNum = 7;
         break;
       default:
-        tabNum = 1;      
+        tabNum = 1;
     }
     return element(by.css(`mdl-tabs>div:nth-of-type(1)>div:nth-of-type(${tabNum})>div>span:nth-of-type(1)`));
-  } 
-  
+  }
+
   pluginTextArea() {
     return element(by.css('mdl-tabs > mdl-tab-panel.mdl-tabs__panel.is-active > mdl-tab-panel-content > div > div.plugin-codemirror > app-codemirror > div > div.CodeMirror-scroll > div.CodeMirror-sizer > div > div > div > div.CodeMirror-code'));
-  }
-
-  ctrlA() {
-    let osName = process.platform;
-    if(osName = 'darwin') {
-      return protractor.Key.chord(protractor.Key.COMMAND, "a");
-    }
-    else
-      return protractor.Key.chord(protractor.Key.CONTROL, "a");
-  }
-
-  ctrlS() {
-    let osName = process.platform;
-    if(osName = 'darwin') {
-      return protractor.Key.chord(protractor.Key.COMMAND, "s");
-    }
-    else
-      return protractor.Key.chord(protractor.Key.CONTROL, "s");
   }
 
   getInputFlow(entityName: string, flowName: string) {
@@ -192,6 +178,12 @@ export class FlowPage extends AppPage {
 
   get toastButton() {
     return element(by.css('mdl-snackbar-component button'));
+  }
+
+  get jobID() {
+    return element(by.css('mdl-snackbar-component div div')).getText().then(id => {
+      return id.toString().replace('Job ','').replace('Finished.','');
+    }, (err) => null);
   }
 
   get redeployButton() {
@@ -285,18 +277,76 @@ export class FlowPage extends AppPage {
     this.flowsTab.click();
 
     this.isLoaded();
-
-    // let message = `${entityName}: ${flowName} starting...`;
-    // browser.wait(EC.visibilityOf(this.toast));
-    // expect(this.toast.isDisplayed()).toBe(true);
-
-    // browser.wait(EC.visibilityOf(this.jobProgress));
-    // expect(element(by.css('.job-progress')).isDisplayed()).toBe(true);
-    // browser.wait(EC.not(EC.visibilityOf(this.jobProgress)));
-    // expect(element(by.css('.job-progress')).isPresent()).toBe(false);
   }
 
+  /*
+  * Run input flow -- this will replace the old runInputFlow that has hardcoded input folder
+  * @entityName: entity name
+  * @flowName: flow name
+  * @dataFormat: json | xml
+  * @dataFolderName: folder name under input directory
+  * @inputFileType: aggregates | archive | delimited_text | delimited_json | documents
+  *   | forest | rdf | sequencefile
+  * @uriSuffix: document uri suffix to append
+  */
+  runInputFlowWithFolder(entityName: string, flowName: string, dataFormat: string, 
+      dataFolderName: string, inputFileType: string, uriSuffix: string) {
+    console.log(`running flow: ${entityName}: ${flowName}: ${dataFormat}`)
+    this.getFlow(entityName, flowName, 'INPUT').click();
 
+    browser.wait(EC.visibilityOf(this.tabs));
+    browser.wait(EC.visibilityOf(this.mlcpTab(entityName, flowName)));
+
+    browser.wait(EC.visibilityOf(element(by.cssContainingText('.foldertree-container div.entry p', 'input'))));
+    // set the input folder to products
+    element(by.cssContainingText('.foldertree-container div.entry p', 'input')).click();
+    element(by.cssContainingText('.foldertree-container div.entry p', dataFolderName)).click();
+
+    // open general options
+    browser.wait(EC.elementToBeClickable(this.mlcpSection(' General Options')));
+    this.mlcpSection(' General Options').click();
+
+    // click input file type
+    browser.wait(EC.elementToBeClickable(this.mlcpDropdown('input_file_type')));
+    this.mlcpDropdown('input_file_type').click();
+
+    // select input file type
+    browser.wait(EC.elementToBeClickable(this.menuItem(inputFileType)));
+    this.menuItem(inputFileType).click();
+
+    // click Document Type
+    browser.wait(EC.elementToBeClickable(this.mlcpDropdown('document_type')));
+    this.mlcpDropdown('document_type').click();
+
+    // select document type
+    browser.wait(EC.elementToBeClickable(this.menuItem(dataFormat)));
+    browser.actions().mouseMove(this.menuItem(dataFormat)).perform();
+    this.menuItem(dataFormat).click();
+
+    // set output uri suffix
+    this.mlcpInput('output_uri_suffix').clear();
+    this.mlcpInput('output_uri_suffix').sendKeys(uriSuffix);
+ 
+    if(inputFileType === 'delimited_text') {
+      // click delimited text options
+      browser.wait(EC.elementToBeClickable(this.mlcpSection(' Delimited Text Options')));
+      this.mlcpSection(' Delimited Text Options').click();
+      browser.wait(EC.visibilityOf(this.mlcpSection(' Delimited Text Options')));
+  
+      // enable generate uri
+      browser.wait(EC.elementToBeClickable(this.mlcpSwitch('generate_uri')));
+      this.mlcpSwitch('generate_uri').click();
+    }
+
+    this.mlcpRunButton.click();
+    browser.sleep(10000);
+    this.jobsTab.click();
+    jobsPage.isLoaded();
+    let lastFinishedJob = jobsPage.lastFinishedJob;
+    expect(jobsPage.jobFlowName(lastFinishedJob).getText()).toEqual(flowName);
+    this.flowsTab.click();
+    this.isLoaded();
+  }
 
   createFlow(
     entityName: string, flowName: string,
@@ -337,6 +387,95 @@ export class FlowPage extends AppPage {
     browser.wait(EC.not(EC.presenceOf(this.newFlowDialog)));
     expect(this.newFlowDialog.isPresent()).toBe(false);
   }
+  
+  /*
+  * Create input flow
+  * @entityName: entity name
+  * @flowName: flow name
+  * @dataFormat: json | xml
+  * @codeFormat: sjs | xqy
+  * @useEs: false - use blank template | true - use entity service
+  */
+  createInputFlow(
+    entityName: string, flowName: string, dataFormat: string,
+    codeFormat: string, useEs: boolean)
+  {
+    this.inputFlowButton(entityName).click();
+    
+    browser.wait(EC.visibilityOf(this.newFlowDialog));
+    expect(this.newFlowDialog.isDisplayed()).toBe(true);
+
+    this.newFlowName.sendKeys(flowName);
+
+    if (useEs) {
+      this.esTemplateButton.click();
+    } else {
+      this.blankTemplateButton.click();
+    }
+
+    if (codeFormat === 'sjs') {
+      this.sjsFlowTypeButton.click();
+    } else {
+      this.xqyFlowTypeButton.click();
+    }
+
+    if (dataFormat === 'json') {
+      this.jsonDataFormatButton.click();
+    } else {
+      this.xmlDataFormatButton.click();
+    }
+
+    this.createFlowButton.click();
+
+    browser.wait(EC.not(EC.presenceOf(this.newFlowDialog)));
+    expect(this.newFlowDialog.isPresent()).toBe(false);
+  }
+
+  /*
+  * Create harmonize flow
+  * @entityName: entity name
+  * @flowName: flow name
+  * @dataFormat: json | xml
+  * @codeFormat: sjs | xqy
+  * @useEs: false - use blank template | true - use entity service
+  * @mapName: mapping name, default is None. Only valid when useEs is true
+  */
+  createHarmonizeFlow(
+    entityName: string, flowName: string, dataFormat: string,
+    codeFormat: string, useEs: boolean, mapName = 'None')
+  {
+    this.harmonizeFlowButton(entityName).click();
+    
+    browser.wait(EC.visibilityOf(this.newFlowDialog));
+    expect(this.newFlowDialog.isDisplayed()).toBe(true);
+
+    this.newFlowName.sendKeys(flowName);
+
+    if (useEs) {
+      this.esTemplateButton.click();
+    } else {
+      this.blankTemplateButton.click();
+    }
+
+    if (codeFormat === 'sjs') {
+      this.sjsFlowTypeButton.click();
+    } else {
+      this.xqyFlowTypeButton.click();
+    }
+
+    if (dataFormat === 'json') {
+      this.jsonDataFormatButton.click();
+    } else {
+      this.xmlDataFormatButton.click();
+    }
+
+    this.useMapButton(mapName).click();
+
+    this.createFlowButton.click();
+
+    browser.wait(EC.not(EC.presenceOf(this.newFlowDialog)));
+    expect(this.newFlowDialog.isPresent()).toBe(false);
+  }  
 }
 
 var flowPage = new FlowPage();

@@ -121,12 +121,12 @@ public class HubTestBase {
 
     public  String host;
     public  int stagingPort;
-    public  int finalPort;
     public  int jobPort;
     public  String user;
     public  String password;
+    public  String manageUser;
+    public  String managePassword;
     protected  Authentication stagingAuthMethod;
-    private  Authentication finalAuthMethod;
     private  Authentication jobAuthMethod;
     public  DatabaseClient stagingClient = null;
     public  DatabaseClient stagingPrivilegedClient = null;
@@ -208,10 +208,11 @@ public class HubTestBase {
 
         host = properties.getProperty("mlHost");
         stagingPort = Integer.parseInt(properties.getProperty("mlStagingPort"));
-        finalPort = Integer.parseInt(properties.getProperty("mlFinalPort"));
         jobPort = Integer.parseInt(properties.getProperty("mlJobPort"));
         user = properties.getProperty("mlUsername");
         password = properties.getProperty("mlPassword");
+        manageUser = properties.getProperty("mlManageUsername");
+        managePassword = properties.getProperty("mlManagePassword");
 
         //TODO refactor to new JCL Security context
         String auth = properties.getProperty("mlStagingAuth");
@@ -225,14 +226,6 @@ public class HubTestBase {
 
         auth = properties.getProperty("mlFinalAuth");
 
-
-        if (auth != null) {
-            finalAuthMethod = Authentication.valueOf(auth.toUpperCase());
-        }
-        else {
-            finalAuthMethod = Authentication.DIGEST;
-        }
-
         auth = properties.getProperty("mlJobAuth");
         if (auth != null) {
             jobAuthMethod = Authentication.valueOf(auth.toUpperCase());
@@ -241,7 +234,7 @@ public class HubTestBase {
             jobAuthMethod = Authentication.DIGEST;
         }
         if(jobAuthMethod.equals(Authentication.CERTIFICATE)
-        && finalAuthMethod.equals(Authentication.CERTIFICATE) && stagingAuthMethod.equals(Authentication.CERTIFICATE)) {
+        && stagingAuthMethod.equals(Authentication.CERTIFICATE)) {
         	setCertAuth(true);
         	try {
         		installCARootCertIntoStore(getResourceFile("ssl/ca-cert.crt"));
@@ -253,10 +246,10 @@ public class HubTestBase {
 
         try {
         	stagingClient = getClient(host, stagingPort, HubConfig.DEFAULT_STAGING_NAME, user, password, stagingAuthMethod);
-            stagingPrivilegedClient = getHubConfig().newStagingManageClient();
+            stagingPrivilegedClient =  getClient(host, stagingPort, HubConfig.DEFAULT_STAGING_NAME, manageUser, managePassword, stagingAuthMethod);
             stagingModulesClient  = getClient(host, stagingPort, HubConfig.DEFAULT_MODULES_DB_NAME, user, password, stagingAuthMethod);
-            finalClient = getClient(host, finalPort, HubConfig.DEFAULT_FINAL_NAME, user, password, finalAuthMethod);
-            finalModulesClient  = getClient(host, stagingPort, HubConfig.DEFAULT_MODULES_DB_NAME, user, password, finalAuthMethod);
+            finalClient = getClient(host, stagingPort, HubConfig.DEFAULT_FINAL_NAME, user, password, stagingAuthMethod);
+            finalModulesClient  = getClient(host, stagingPort, HubConfig.DEFAULT_MODULES_DB_NAME, manageUser, managePassword, stagingAuthMethod);
             jobClient = getClient(host, jobPort, HubConfig.DEFAULT_JOB_NAME, user, password, jobAuthMethod);
             jobModulesClient  = getClient(host, stagingPort, HubConfig.DEFAULT_MODULES_DB_NAME, user, password, jobAuthMethod);
         }
@@ -363,7 +356,6 @@ public class HubTestBase {
             .withPropertiesFromEnvironment()
             .build();
         hubConfig.setPort(DatabaseKind.STAGING, stagingPort);
-        hubConfig.setPort(DatabaseKind.FINAL, finalPort);
         hubConfig.setPort(DatabaseKind.JOB, jobPort);
         hubConfig.getAppConfig().setAppServicesUsername(user);
         hubConfig.getAppConfig().setAppServicesPassword(password);
@@ -402,8 +394,13 @@ public class HubTestBase {
     }
 
     public void createProjectDir() {
+        createProjectDir(PROJECT_PATH);
+    }
+
+    // this method creates a project dir and copies the gradle.properties in.
+    public void createProjectDir(String projectDirName) {
         try {
-            File projectDir = new File(PROJECT_PATH);
+            File projectDir = new File(projectDirName);
             if (!projectDir.isDirectory() || !projectDir.exists()) {
                 getDataHub().initProject();
             }
@@ -1012,12 +1009,16 @@ public class HubTestBase {
         debugOutput(xmldoc, System.out);
     }
 
-    protected void debugOutput(Document xmldoc, OutputStream os) throws TransformerException {
-        TransformerFactory tf = TransformerFactory.newInstance();
-        Transformer transformer = tf.newTransformer();
-        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-        transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-        transformer.transform(new DOMSource(xmldoc), new StreamResult(os));
+    protected void debugOutput(Document xmldoc, OutputStream os) {
+        try {
+            TransformerFactory tf = TransformerFactory.newInstance();
+            Transformer transformer = tf.newTransformer();
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+            transformer.transform(new DOMSource(xmldoc), new StreamResult(os));
+        } catch (TransformerException e) {
+            throw new DataHubConfigurationException(e);
+        }
     }
 }
 

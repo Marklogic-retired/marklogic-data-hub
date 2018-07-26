@@ -95,6 +95,18 @@ public interface Mapping {
     void setDescription(String description);
 
     /**
+     * Returns a URI of the mapping source document
+     * @return a source URI
+     */
+    String getSourceURI();
+
+    /**
+     * Set the URI for the mapping source document
+     * @param sourceURI - a source URI
+     */
+    void setSourceURI(String sourceURI);
+
+    /**
      * Return the language key setting
      * @return the string key
      */

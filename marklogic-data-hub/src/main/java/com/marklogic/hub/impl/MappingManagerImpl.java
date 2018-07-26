@@ -100,7 +100,7 @@ public class MappingManagerImpl extends LoggingObject implements MappingManager 
     }
 
     @Override public void saveMapping(Mapping mapping, boolean autoIncrement) {
-        Scaffolding scaffold = Scaffolding.create(hubConfig.getProjectDir(), hubConfig.newStagingManageClient());
+        Scaffolding scaffold = Scaffolding.create(hubConfig.getProjectDir(), hubConfig.newStagingClient());
         scaffold.createMappingDir(mapping.getName());
 
         try {
@@ -155,7 +155,7 @@ public class MappingManagerImpl extends LoggingObject implements MappingManager 
         Path mappingPath = Paths.get(hubConfig.getHubMappingsDir().toString(), mappingName);
         List<String> fileNames = FileUtil.listDirectFiles(mappingPath);
         String targetFileName = null;
-        int    highestVersion  = 0;
+        int    highestVersion  = -1;
         for(String fileName : fileNames) {
             if(!(fileName.substring(0,mappingName.length()).equalsIgnoreCase(mappingName.toLowerCase()))
                 || !(fileName.substring(fileName.length()-mappingExtensionCount).equalsIgnoreCase(MAPPING_FILE_EXTENSION))

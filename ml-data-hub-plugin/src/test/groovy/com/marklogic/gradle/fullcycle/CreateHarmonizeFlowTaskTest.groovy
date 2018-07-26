@@ -102,7 +102,7 @@ class CreateHarmonizeFlowTaskTest extends BaseTest {
 
         then:
         notThrown(UnexpectedBuildSuccess)
-        result.output.contains('The requested mapping ')
+        result.output.contains('The requested entity: ')
         result.task(":hubCreateHarmonizeFlow").outcome == FAILED
     }
 

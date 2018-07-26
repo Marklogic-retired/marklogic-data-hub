@@ -1,5 +1,5 @@
-.map-container {
-  width: 1200px;
+.map-container2 {
+  width: 1000px;
   padding: 0;
 }
 
@@ -12,7 +12,7 @@
   font-weight: normal;
   margin: 10px 0;
   padding: 0;
-  width: 870px;
+  width: 685px;
   position: relative;
   float: left;
 }
@@ -25,14 +25,23 @@
   }
 }
 
-h4.item-type {
+div.item-type {
   margin: 0;
   padding: 0;
+  margin-top: 5px;
+  margin-bottom: 10px;
+  font-size: 24px;
+  font-weight: 200;
 }
 
 p.item-identifying-info {
   font-weight: bold;
-  margin: 0 0 6px 2px;
+  margin: 0 0 14px 2px;
+  font-size: 15px;
+}
+
+.sample-doc-uri {
+  padding-right: 7px;
 }
 
 #source, #harmonized, #save-map {
@@ -46,7 +55,11 @@ p.item-identifying-info {
 }
 
 #harmonized {
-  width: 400px;
+  width: 430px;
+}
+
+#src-heading, #harm-heading {
+  height: 55px;
 }
 
 .entity-prop-container, .src-prop-container {
@@ -59,15 +72,12 @@ p.item-identifying-info {
   justify-content: center;
 }
 
-#source .src-prop-container,  {
+#source .src-prop-container {
   width: 470px;
 }
 
 #harmonized .entity-prop-container {
-  width: 400px;
-}
-
-#harmonized .entity-prop-container {
+  width: 430px;
   border-left: 0;
 }
 
@@ -163,6 +173,18 @@ p.item-identifying-info {
   padding-left: 8px;
 }
 
+.dropdown-filter {
+  position:fixed;
+  background-color: #b7cae2;
+}
+
+.dropdown-filter input {
+  width: 405px;
+  margin: 6px 26px;
+  border: 1px solid #2A4356;
+  padding: 3px 6px;
+}
+
 .dropdown-menu {
   padding: 0;
 }
@@ -182,29 +204,77 @@ p.item-identifying-info {
 }
 
 .entity-icons {
-  width: 130px;
-  margin-left: 10px;
+  width: 120px;
+  margin-left: 5px;
 }
 
 .entity-icon {
   cursor: default;
-  margin-left: 3px;
+  margin-left: 1px;
   padding: 0;
-  color: #666;
+  color: #aaa;
+}
+
+.entity-icon-selected {
+  color: #000;
 }
 
 .icon-hide {
   color: #ccc;
 }
 
-.dropdown-filter {
-  position:fixed;
-  background-color: #b7cae2;
+.edit-item {
+  font-size: 16px;
+  padding-left: 0;
+  vertical-align: middle;
+  margin-bottom: 2px;
+  cursor: pointer;
 }
 
-.dropdown-filter input {
-  width: 398px;
-  margin: 6px 26px;
-  border: 1px solid #2A4356;
-  padding: 3px 6px;
+.edit-save, .edit-cancel {
+  padding-left: 7px;
+  cursor: pointer;
+}
+
+.edit-save {
+  color: green;
+}
+
+.edit-cancel {
+  color: red;
+}
+
+p.edit-uri {
+  margin: 0 0 6px 2px;
+}
+
+.edit-desc {
+  font-size: 16px;
+  padding-left: 0;
+  vertical-align: middle;
+  margin-bottom: 2px;
+  cursor: pointer;
+}
+
+.edit-uri-val, .edit-desc-val {
+  width: 411px;
+  padding: 3px 1px;
+  height: 28px;
+}
+
+.edit-desc-val {
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+.desc {
+  font-size: 14px;
+  padding-right: 7px;
+}
+
+.no-desc {
+  font-size: 14px;
+  color: #AAA;
+  font-style: italic;
+  padding-right: 7px;
 }
