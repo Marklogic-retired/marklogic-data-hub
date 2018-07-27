@@ -1,0 +1,192 @@
+import { browser, element, by, ExpectedConditions as EC} from 'protractor';
+import loginPage from '../../page-objects/auth/login';
+import flowPage from '../../page-objects/flows/flows';
+import tracesPage from '../../page-objects/traces/traces';
+import traceViewerPage from '../../page-objects/traceViewer/traceViewer';
+import appPage from '../../page-objects/appPage';
+import entityPage from '../../page-objects/entities/entities';
+import browsePage from '../../page-objects/browse/browse';
+import mappingsPage from '../../page-objects/mappings/mappings';
+import viewerPage from '../../page-objects/viewer/viewer';
+
+export default function() {
+    describe('Run Mappings', () => {
+      it('should go to flows tab', function() {
+        appPage.flowsTab.click();
+        flowPage.isLoaded();
+      });
+
+      it ('should redeploy modules', function() {
+        flowPage.redeployButton.click();
+        browser.sleep(5000);
+      });
+
+      it('should create a mapping for Product entity with sku source', function() {
+        appPage.mappingsTab.click();
+        mappingsPage.isLoaded();
+        browser.wait(EC.elementToBeClickable(mappingsPage.newMapButton('Product')));
+        mappingsPage.newMapButton('Product').click();
+        browser.wait(EC.elementToBeClickable(mappingsPage.mapNameInputField()));
+        mappingsPage.mapNameInputField().sendKeys('MapProduct');
+        mappingsPage.mapDescriptionInputField().sendKeys('description for Product map');
+        mappingsPage.mapCreateButton().click();
+        browser.wait(EC.elementToBeClickable(mappingsPage.entityMapping('MapProduct')));
+        //flicker bug, sleep will be removed once it's fixed
+        browser.sleep(8000);
+        browser.wait(EC.elementToBeClickable(mappingsPage.entityMapping('MapProduct')));
+        mappingsPage.entityMapping('MapProduct').click();
+        browser.wait(EC.elementToBeClickable(mappingsPage.editMapDescription()));
+        expect(mappingsPage.mapTitle.getText()).toContain('MapProduct');
+        // change the source URI to document containing sku
+        mappingsPage.editSourceURI().click()
+        browser.wait(EC.elementToBeClickable(mappingsPage.inputSourceURI()));
+        mappingsPage.inputSourceURI().clear();
+        mappingsPage.inputSourceURI().sendKeys('/private/board_games_accessories.csv-0-1?doc=yes&type=foo');
+        mappingsPage.editSourceURITick().click();
+        browser.wait(EC.elementToBeClickable(mappingsPage.srcPropertyContainer('sku')));
+        // select source for sku
+        mappingsPage.sourcePropertyDropDown('sku').click();
+        mappingsPage.sourceTypeAheadInput('sku').sendKeys('sku');
+        mappingsPage.mapSourceProperty('sku', 'sku').click();
+        // select source for price
+        mappingsPage.sourcePropertyDropDown('price').click();
+        mappingsPage.sourceTypeAheadInput('price').sendKeys('price');
+        mappingsPage.mapSourceProperty('price', 'price').click();
+        // verify the source property
+        expect(mappingsPage.verifySourcePropertyName('sku').isPresent()).toBeTruthy();
+        expect(mappingsPage.verifySourcePropertyName('price').isPresent()).toBeTruthy();
+        // verify the property icon
+        expect(mappingsPage.entityPropertyIcon('sku', 'key').isPresent()).toBeTruthy();
+        expect(mappingsPage.entityPropertyIcon('price', 'bolt').isPresent()).toBeTruthy();
+        // save the map
+        browser.wait(EC.elementToBeClickable(mappingsPage.saveMapButton()));
+        mappingsPage.saveMapButton().click();
+        browser.wait(EC.elementToBeClickable(mappingsPage.entityMapping('MapProduct')));
+        //flicker bug, sleep will be removed once it's fixed
+        browser.sleep(8000);
+        browser.wait(EC.elementToBeClickable(mappingsPage.entityMapping('MapProduct')));
+        expect(mappingsPage.verifySourcePropertyName('sku').isPresent()).toBeTruthy();
+        expect(mappingsPage.verifySourcePropertyName('price').isPresent()).toBeTruthy();
+      });
+
+      it('should update MapProduct with SKU source', function() {
+        appPage.mappingsTab.click();
+        mappingsPage.isLoaded();
+        browser.wait(EC.elementToBeClickable(mappingsPage.entityMapping('MapProduct')));
+        mappingsPage.entityMapping('MapProduct').click();
+        browser.wait(EC.elementToBeClickable(mappingsPage.editMapDescription()));
+        // change the source URI
+        mappingsPage.editSourceURI().click()
+        browser.wait(EC.elementToBeClickable(mappingsPage.inputSourceURI()));
+        mappingsPage.inputSourceURI().clear();
+        mappingsPage.inputSourceURI().sendKeys('/private/board_games.csv-0-10?doc=yes&type=foo');
+        mappingsPage.editSourceURITick().click();
+        browser.wait(EC.elementToBeClickable(mappingsPage.editSourceURIConfirmationOK()));
+        mappingsPage.editSourceURIConfirmationOK().click();
+        browser.wait(EC.elementToBeClickable(mappingsPage.srcPropertyContainer('sku')));
+        // change the source to SKU
+        mappingsPage.sourcePropertyDropDown('sku').click();
+        mappingsPage.sourceTypeAheadInput('sku').sendKeys('SKU');
+        mappingsPage.mapSourceProperty('SKU', 'sku').click();
+        // select source for price
+        mappingsPage.sourcePropertyDropDown('price').click();
+        mappingsPage.sourceTypeAheadInput('price').sendKeys('price');
+        mappingsPage.mapSourceProperty('price', 'price').click();
+        // verify the source property
+        expect(mappingsPage.verifySourcePropertyName('SKU').isPresent()).toBeTruthy();
+        expect(mappingsPage.verifySourcePropertyName('price').isPresent()).toBeTruthy();
+        expect(mappingsPage.verifySourcePropertyValue('159929577929').isPresent()).toBeTruthy();
+        // save the map
+        browser.wait(EC.elementToBeClickable(mappingsPage.saveMapButton()));
+        mappingsPage.saveMapButton().click();
+        browser.wait(EC.elementToBeClickable(mappingsPage.entityMapping('MapProduct')));
+        //flicker bug, sleep will be removed once it's fixed
+        browser.sleep(8000);
+        browser.wait(EC.elementToBeClickable(mappingsPage.entityMapping('MapProduct')));
+      }); 
+
+      it('should go to flows tab', function() {
+        appPage.flowsTab.click();
+        flowPage.isLoaded();
+      });
+
+      it('should create Harmonize SKU flow on Product', function() {
+        flowPage.clickEntityDisclosure('Product');
+        flowPage.createHarmonizeFlow('Product', 'Harmonize SKU', 'json', 'sjs', true, 'MapProduct');
+        browser.wait(EC.visibilityOf(flowPage.getFlow('Product', 'Harmonize SKU', 'HARMONIZE')));
+        expect(flowPage.getFlow('Product', 'Harmonize SKU', 'HARMONIZE').isDisplayed()).
+          toBe(true, 'Harmonize Product' + ' is not present');
+      });
+
+      it ('should redeploy modules', function() {
+        flowPage.redeployButton.click();
+        browser.sleep(5000);
+      });
+      
+      it('should run Harmonize SKU flow with mapping', function() {
+        flowPage.clickEntityDisclosure('Product');
+        browser.wait(EC.visibilityOf(flowPage.getFlow('Product', 'Harmonize SKU', 'HARMONIZE')));
+        expect(flowPage.getFlow('Product', 'Harmonize SKU', 'HARMONIZE').isPresent()).toBe(true);
+        flowPage.getFlow('Product', 'Harmonize SKU', 'HARMONIZE').click();
+        browser.wait(EC.visibilityOf(flowPage.runHarmonizeButton()));
+        expect(flowPage.runHarmonizeButton().isPresent()).toBe(true);
+        flowPage.runHarmonizeButton().click();
+        browser.sleep(10000);
+      });
+
+      it('should verify the harmonized SKU data with mappings', function() {
+        appPage.browseDataTab.click()
+        browsePage.isLoaded();
+        browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
+        browsePage.databaseDropDown().click();
+        browsePage.selectDatabase('FINAL').click();
+        browser.wait(EC.elementToBeClickable(browsePage.resultsUri()));
+        browsePage.searchBox().clear();
+        browsePage.searchBox().sendKeys('159929577929');
+        browsePage.searchButton().click();
+        browser.wait(EC.elementToBeClickable(browsePage.resultsUri()));
+        expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 3 of 3');
+        expect(browsePage.resultsSpecificUri('/board_games.csv-0-10').getText()).toContain('/board_games.csv-0-10');
+        expect(browsePage.resultsSpecificUri('/board_games_accessories.csv-0-5').getText()).toContain('/board_games_accessories.csv-0-5');
+        expect(browsePage.resultsSpecificUri('/board_games_extensions.csv-0-7').getText()).toContain('/board_games_extensions.csv-0-7');
+        browsePage.resultsSpecificUri('/board_games.csv-0-10').click();
+        viewerPage.isLoaded();
+        expect(viewerPage.searchResultUri().getText()).toContain('/board_games.csv-0-10');
+        // verify that SKU data is harmonized to sku on instance section
+        expect(viewerPage.verifyHarmonizedProperty('sku', '159929577929').isPresent()).toBeTruthy();
+        // verify original SKU data on attachment secion
+        expect(viewerPage.verifyHarmonizedProperty('SKU', '159929577929').isPresent()).toBeTruthy();
+      });
+
+      it('should rollback to current URI when providing invalid URI', function() {
+        appPage.mappingsTab.click();
+        mappingsPage.isLoaded();
+        browser.wait(EC.elementToBeClickable(mappingsPage.entityMapping('MapProduct')));
+        mappingsPage.entityMapping('MapProduct').click();
+        browser.wait(EC.elementToBeClickable(mappingsPage.editMapDescription()));
+        // change the source URI
+        mappingsPage.editSourceURI().click()
+        browser.wait(EC.elementToBeClickable(mappingsPage.inputSourceURI()));
+        mappingsPage.inputSourceURI().clear();
+        mappingsPage.inputSourceURI().sendKeys('invalidURI');
+        mappingsPage.editSourceURITick().click();
+        browser.wait(EC.elementToBeClickable(mappingsPage.editSourceURIConfirmationOK()));
+        mappingsPage.editSourceURIConfirmationOK().click();
+        browser.wait(EC.elementToBeClickable(mappingsPage.docNotFoundConfirmationOK()));
+        expect(mappingsPage.docNotFoundMessage().getText()).toContain('Document URI not found: invalidURI');
+        mappingsPage.docNotFoundConfirmationOK().click();
+        browser.wait(EC.elementToBeClickable(mappingsPage.srcPropertyContainer('sku')));
+        // verify that the old valid URI persists
+        expect(mappingsPage.getSourceURITitle()).toEqual('/private/board_games.csv-0-10?doc=yes&type=foo');
+        // verify that the selected properties persist
+        expect(mappingsPage.verifySourcePropertyName('SKU').isPresent()).toBeTruthy();
+        expect(mappingsPage.verifySourcePropertyName('price').isPresent()).toBeTruthy();
+        expect(mappingsPage.verifySourcePropertyValue('159929577929').isPresent()).toBeTruthy();
+      });
+
+      it ('should go to flows page', function() {
+        appPage.flowsTab.click();
+        flowPage.isLoaded();
+      });
+    });
+  }
