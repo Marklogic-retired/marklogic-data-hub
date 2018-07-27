@@ -21,7 +21,7 @@ export default function(tmpDir) {
     });
 
     it ('should run Load Products flow', function() {
-      flowPage.entityDisclosure('Product').click();
+      flowPage.clickEntityDisclosure('Product');
       browser.wait(EC.elementToBeClickable(flowPage.getFlow('Product', 'Load Products', 'INPUT')));
       flowPage.runInputFlow('Product', 'Load Products', 'json', 'products', 
         'delimited_text', '?doc=yes&type=foo');
@@ -109,7 +109,7 @@ export default function(tmpDir) {
     it('should run Harmonize Products flow', function() {
       flowPage.isLoaded();
       console.log('clicking Product entity');
-      flowPage.entityDisclosure('Product').click();
+      flowPage.clickEntityDisclosure('Product');
       console.log('clicking Harmonize Products flow');
       browser.wait(EC.visibilityOf(flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE')));
       expect(flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE').isPresent()).toBe(true);
@@ -193,7 +193,7 @@ export default function(tmpDir) {
     });
 
     it ('should open the TestEntity disclosure', function() {
-      flowPage.entityDisclosure('TestEntity').click();
+      flowPage.clickEntityDisclosure('TestEntity');
       browser.wait(EC.elementToBeClickable(flowPage.getFlow('TestEntity', 'sjs json INPUT', 'INPUT')));
     });
 
