@@ -30,6 +30,11 @@ export default function() {
           toBe(true, 'Load TypeAhead' + ' is not present');
       });
 
+      it ('should redeploy modules', function() {
+        flowPage.redeployButton.click();
+        browser.sleep(5000);
+      });
+
       it ('should run Load TypeAhead flow', function() {
         flowPage.clickEntityDisclosure('TypeAhead');
         browser.wait(EC.elementToBeClickable(flowPage.getFlow('TypeAhead', 'Load TypeAhead', 'INPUT')));
@@ -195,7 +200,7 @@ export default function() {
         browsePage.resultsUri().click();
         viewerPage.isLoaded();
         expect(viewerPage.searchResultUri().getText()).toContain('long_props_typeahead');
-        expect(viewerPage.verifyHarmonizedProperty('title', 'passage married child')).toBeTruthy();
+        expect(viewerPage.verifyHarmonizedProperty('title', 'passage married child').isPresent()).toBeTruthy();
       });
 
       it ('should go to flows page', function() {
