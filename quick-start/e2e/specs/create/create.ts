@@ -599,7 +599,7 @@ export default function() {
     });
 
     it ('should open the Entity disclosure', function() {
-      flowPage.entityDisclosure('TestEntity').click();
+      flowPage.clickEntityDisclosure('TestEntity');
     });
     
     ['sjs', 'xqy'].forEach((codeFormat) => {
@@ -625,7 +625,7 @@ export default function() {
     });
     
     it ('should open Product entity disclosure', function() {
-      flowPage.entityDisclosure('Product').click();
+      flowPage.clickEntityDisclosure('Product');
     });
 
     it ('should create input and harmonize flows on Product entity', function() {
@@ -666,13 +666,13 @@ export default function() {
       expect(flowPage.getValueFlowOptionsByPosition(3).getAttribute('value')).toEqual('2017-03-07');
       //move to other harmonize flow and go back to the flow
       console.log('going to the other flow and back');
-      flowPage.entityDisclosure('TestEntity').click();
+      flowPage.clickEntityDisclosure('TestEntity');
       browser.wait(EC.visibilityOf(flowPage.getFlow('TestEntity', 'sjs json HARMONIZE', 'HARMONIZE')));
       expect(flowPage.getFlow('TestEntity', 'sjs json HARMONIZE', 'HARMONIZE').isPresent()).toBe(true);
       flowPage.getFlow('TestEntity', 'sjs json HARMONIZE', 'HARMONIZE').click();
       browser.wait(EC.visibilityOf(flowPage.runHarmonizeButton()));
       expect(flowPage.runHarmonizeButton().isPresent()).toBe(true);
-      flowPage.entityDisclosure('Product').click();
+      flowPage.clickEntityDisclosure('Product');
       browser.wait(EC.visibilityOf(flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE')));
       expect(flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE').isPresent()).toBe(true);
       flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE').click();
@@ -698,7 +698,7 @@ export default function() {
       console.log('verify the removed option');
       flowPage.entitiesTab.click();
       entityPage.flowsTab.click();
-      flowPage.entityDisclosure('Product').click();
+      flowPage.clickEntityDisclosure('Product');
       browser.wait(EC.visibilityOf(flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE')));
       expect(flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE').isPresent()).toBe(true);
       flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE').click();
