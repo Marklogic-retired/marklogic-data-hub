@@ -2,6 +2,7 @@ package com.marklogic.quickstart;
 
 
 import com.marklogic.hub.util.Installer;
+import com.marklogic.quickstart.integrationtests.EndToEndAPITest;
 import com.marklogic.quickstart.service.EntityManagerServiceTest;
 import com.marklogic.quickstart.service.FlowManagerServiceTest;
 import com.marklogic.quickstart.service.JobServiceTest;
@@ -23,7 +24,8 @@ import org.junit.runners.Suite.SuiteClasses;
     TraceServiceTest.class,
     EntitiesControllerTest.class,
     HubConfigJsonTest.class,
-    ProjectsControllerTest.class
+    ProjectsControllerTest.class,
+    EndToEndAPITest.class
 })
 
 public class WebTestSuite {
