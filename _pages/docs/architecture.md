@@ -45,6 +45,8 @@ Jobs        | data-hub-JOBS    | 8013              | data-hub-MODULES
 
 Note: deployment of DHF also makes use of the MarkLogic management API on port 8002.
 
+The "Final" appserver in 3.1 is not actually used by any code in the DHF.  It is provided as a provisioned location from which to write applications, and represents the final product of running DHF flows.  It can of course also contain other data or artifacts unrelated to the DHF flows.
+
 ### REST Extensions
 
 The core of the DHF runs on MarkLogic.  Much of this code finds itself in REST API
