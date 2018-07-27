@@ -131,6 +131,7 @@ class SslTest extends BaseTest {
         '''
 
         runTask("hubInit")
+        runTask("mlDeploySecurity")
         copyResourceToFile("ssl-test/my-template.xml", new File(BaseTest.testProjectDir.root, "user-config/security/certificate-templates/my-template.xml"))
         copyResourceToFile("ssl-test/ssl-server.json", new File(BaseTest.testProjectDir.root, "user-config/servers/final-server.json"))
         copyResourceToFile("ssl-test/ssl-server.json", new File(BaseTest.testProjectDir.root, "user-config/servers/job-server.json"))
@@ -146,7 +147,9 @@ class SslTest extends BaseTest {
 
     def cleanupSpec() {
         runTask("mlUndeploy", "-Pconfirm=true")
+        runTask("mlDeploySecurity")
         runTask("disableSSL", "--stacktrace")
+        //runTask("mlUnDeploySecurity")
     }
 
 
@@ -177,7 +180,7 @@ class SslTest extends BaseTest {
         then:
         notThrown(UnexpectedBuildFailure)
         def modCount = getModulesDocCount()
-        modCount == BaseTest.MOD_COUNT_WITH_TRACE_MODULES || modCount == BaseTest.MOD_COUNT
+        modCount == BaseTest.MOD_COUNT_NO_OPTIONS_NO_TRACES
         result.task(":mlDeploy").outcome == SUCCESS
     }
 

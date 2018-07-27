@@ -25,6 +25,8 @@ import com.marklogic.mgmt.SaveReceipt;
 import com.marklogic.mgmt.resource.ResourceManager;
 import com.marklogic.mgmt.resource.appservers.ServerManager;
 import com.marklogic.rest.util.JsonNodeUtil;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -71,6 +73,12 @@ public class DeployHubServersCommand extends AbstractResourceCommand {
                 context.getAdminManager().invokeActionRequiringRestart(() -> mgr.delete(payload).isDeleted());
             } else {
                 mgr.delete(payload);
+            }
+        } catch (HttpClientErrorException e) {
+            if (e.getStatusCode() == HttpStatus.UNAUTHORIZED) {
+                logger.warn("Unable to delete resource due to missing user or bad credentials, skipping.");
+            } else {
+                throw e;
             }
         } catch (RuntimeException e) {
             throw e;

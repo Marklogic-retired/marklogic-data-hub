@@ -50,6 +50,8 @@ class BaseTest extends Specification {
     // this value is for legacy purposes.  on dev should always be 5
     static final int MOD_COUNT_WITH_TRACE_MODULES = 26
     static final int MOD_COUNT = 5
+    // this value under good security conditions is 2 because hub-admin-user cannot read options files directly.
+    static final int MOD_COUNT_NO_OPTIONS_NO_TRACES = 2
     static final TemporaryFolder testProjectDir = new TemporaryFolder()
     static File buildFile
     static File propertiesFile

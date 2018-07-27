@@ -26,6 +26,7 @@ public class DeployHubRolesCommand extends DeployRolesCommand {
     private HubConfig hubConfig;
 
     public DeployHubRolesCommand(HubConfig hubConfig) {
+        super();
         this.hubConfig = hubConfig;
     }
 
