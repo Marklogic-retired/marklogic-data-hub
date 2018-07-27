@@ -208,7 +208,7 @@ public class FlowImpl implements Flow {
             return finalWriter.toString().replaceFirst("<!--", "\n<!--").replaceFirst("-->", "-->\n");
         }
         catch(Exception e) {
-            throw new MarkLogicIOException(e);
+            throw new MarkLogicIOException("Invalid properties file", e);
         }
     }
 
