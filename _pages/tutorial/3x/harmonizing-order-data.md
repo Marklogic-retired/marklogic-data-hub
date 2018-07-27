@@ -1,6 +1,6 @@
 ---
 layout: inner
-title: Getting Started Tutorial 3.x<br>Harmonizing the Order Data
+title: Getting Started Tutorial 3.x<br>Harmonize the Order Data
 lead_text: ''
 permalink: /tutorial/harmonizing-order-data/
 ---
@@ -20,7 +20,7 @@ Since we used the default option of **Create Structure from Entity Definition**,
 
 ![Create Product Harmonize Flow]({{site.baseurl}}/images/3x/harmonizing-order-data/create-order-harmonize-flow.png)
 
-1. Click the **Harmonize Orders** flow. 
+1. Click the **Harmonize Orders** flow.
 1. Click the **Collector** tab.
 
 ![Harmonize Flow Overview]({{site.baseurl}}/images/3x/harmonizing-order-data/go-to-order-collector.png)

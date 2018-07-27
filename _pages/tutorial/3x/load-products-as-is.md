@@ -9,27 +9,27 @@ permalink: /tutorial/load-products-as-is/
 
 In this exercise, you will configure and execute an input flow to load product data.
 
-The QuickStart input flow wizard enables you to quickly start loading data without learning the intricacies of the underlying tools. When you run your flow, QuickStart loads data into MarkLogic using [MarkLogic Content Pump](https://docs.marklogic.com/guide/mlcp){:target="_blank"} (mlcp). The mlcp command line tool can be used to import large amounts of data into MarkLogic, among other things. 
+The QuickStart input flow wizard enables you to quickly start loading data without learning the intricacies of the underlying tools. When you run your flow, QuickStart loads data into MarkLogic using [MarkLogic Content Pump](https://docs.marklogic.com/guide/mlcp){:target="_blank"} (mlcp), a tool capable of importing large amounts of data into MarkLogic.
 
 We will configure the flow to do the following:
 
-* Load data from the sample data directory input/product.
+* Load data from the sample data directory input/product/games.
 * Interpret the input data as delimited text (CSV).
 * Automatically generate unique URIs as the data is loaded, rather than basing the URIs on the first field in each row. This prevents one document from overwriting another if multiple rows contain the same value in the first field.
 
 Use the following steps to configure the "Load Products" input flow, and then load the sample product data into MarkLogic:
 
 1. Click **Load Products** under **Input Flows**. The Run Input Flow wizard appears.
-1. Under **Input Files**, use the file browser to select the **input/products** directory.
+1. Under **Input Files**, use the file browser to select the **input/products/games** directory.
 
     ![Input Files]({{site.baseurl}}/images/3x/load-products-as-is/input-files.png){:.screenshot-border}
 
 1. Under **General Options**, change **Input File Type** to **Delimited Text**.
 
     ![General Options]({{site.baseurl}}/images/3x/load-products-as-is/general-options.png)
-    
-1. Under **Delimited Text Options**, slide the **Generate URI?** slider to the right so MarkLogic will generate a unique URI for each document you load. 
-    
+
+1. Under **Delimited Text Options**, slide the **Generate URI?** slider to the right so MarkLogic will generate a unique URI for each document you load.
+
     ![Delimited Text Options]({{site.baseurl}}/images/3x/load-products-as-is/delimited-text-options.png)
 
 1. Scroll to the bottom of the wizard and click **SAVE OPTIONS**.
