@@ -87,11 +87,11 @@ public class InstallInfoImpl implements InstallInfo {
             "\tAppServers:\n" +
             "\t\tStaging: " + (isAppServerExistent(DatabaseKind.STAGING) ? "exists" : "MISSING") + "\n" +
             "\t\tFinal:   " + (isAppServerExistent(DatabaseKind.FINAL) ? "exists" : "MISSING") + "\n" +
-            "\t\tJob:     " + (isAppServerExistent(DatabaseKind.JOB) ? "exists" : "MISSING") + "\n" +
+            "\t\tJobs:     " + (isAppServerExistent(DatabaseKind.JOB) ? "exists" : "MISSING") + "\n" +
             "\tDatabases:\n" +
             "\t\tStaging: " + (isDbExistent(DatabaseKind.STAGING) ? "exists" : "MISSING") + "\n" +
             "\t\tFinal:   " + (isDbExistent(DatabaseKind.FINAL) ? "exists" : "MISSING") + "\n" +
-            "\t\tJob:     " + (isDbExistent(DatabaseKind.JOB) ? "exists" : "MISSING") + "\n" +
+            "\t\tJobs:     " + (isDbExistent(DatabaseKind.JOB) ? "exists" : "MISSING") + "\n" +
             "\tDatabases Indexes:\n" +
             "\t\tStaging Triples Index : " + (isTripleIndexOn(DatabaseKind.STAGING) ? "exists" : "MISSING") + "\n" +
             "\t\tStaging Collection Lexicon : " + (isCollectionLexiconOn(DatabaseKind.STAGING) ? "exists" : "MISSING") + "\n" +
@@ -100,9 +100,9 @@ public class InstallInfoImpl implements InstallInfo {
             "\tForests\n" +
             "\t\tStaging: " + (areForestsExistent(DatabaseKind.STAGING) ? "exists" : "MISSING") + "\n" +
             "\t\tFinal:   " + (areForestsExistent(DatabaseKind.FINAL) ? "exists" : "MISSING") + "\n" +
-            "\t\tJob:     " + (areForestsExistent(DatabaseKind.JOB) ? "exists" : "MISSING") + "\n" +
+            "\t\tJobs:     " + (areForestsExistent(DatabaseKind.JOB) ? "exists" : "MISSING") + "\n" +
             "\n\n" +
-            "OVERAL RESULT: " + (isInstalled() ? "INSTALLED" : "NOT INSTALLED") + "\n";
+            "OVERALL RESULT: " + (isInstalled() ? "INSTALLED" : "NOT INSTALLED") + "\n";
     }
 
     @Override public boolean isAppServerExistent(DatabaseKind kind) {
