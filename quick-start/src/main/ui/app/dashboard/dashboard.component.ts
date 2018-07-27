@@ -53,7 +53,7 @@ export class DashboardComponent implements OnInit {
   }
 
   clearDatabase(db) {
-    const message = `Do you really want to remove all files from your ${db} Database?`;
+    const message = `Do you really want to remove all files from your ${this.labelify(db)} Database?`;
     this.dialogService.confirm(message, 'Cancel', 'Clear!').subscribe(() => {
       const database = this.stats[db + 'Db'];
       this.projectService.clearDatabase(database).subscribe(() => {
