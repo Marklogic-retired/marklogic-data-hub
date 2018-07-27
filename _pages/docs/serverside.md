@@ -6,7 +6,7 @@ permalink: /docs/server-side/
 
 # DHF Server-Side Library
 
-The `/com.marklogic.hub/dhf.xqy` library module exposes functions to make interacting with the Data Hub Framework from your XQuery or JavaScript code easier.
+The `/MarkLogic/data-hub-framework/dhf.xqy` library module exposes functions to make interacting with the Data Hub Framework from your XQuery or JavaScript code easier.
 
 ## Including the Library
 
