@@ -15,6 +15,16 @@ export class FlowPage extends AppPage {
     return element(by.css(`div[data-entity="${entityName}"]`));
   }
 
+  isEntityCollapsed(entityName: string) {
+    return element(by.css(`div[data-entity="${entityName}"] .collapsed`)).isPresent();
+  }
+
+  clickEntityDisclosure(entityName: string) {
+    if(this.isEntityCollapsed(entityName)) {
+      this.entityDisclosure(entityName).click();
+    }
+  }
+
   get newFlowDialog() {
     return element(by.css('app-new-flow .new-flow-dialog'));
   }
@@ -214,71 +224,6 @@ export class FlowPage extends AppPage {
     return fs.readFileSync(filepath, 'utf8');
   }
 
-  runInputFlow(entityName: string, flowName: string, dataFormat: string, count: number) {
-    console.log(`running flow: ${entityName}: ${flowName}: ${dataFormat} => ${count}`)
-    this.getFlow(entityName, flowName, 'INPUT').click();
-
-    browser.wait(EC.visibilityOf(this.tabs));
-    browser.wait(EC.visibilityOf(this.mlcpTab(entityName, flowName)));
-
-    browser.wait(EC.visibilityOf(element(by.cssContainingText('.foldertree-container div.entry p', 'input'))));
-    // set the input folder to products
-    element(by.cssContainingText('.foldertree-container div.entry p', 'input')).click();
-    element(by.cssContainingText('.foldertree-container div.entry p', 'products')).click();
-
-    // open general options
-    browser.wait(EC.elementToBeClickable(this.mlcpSection(' General Options')));
-    this.mlcpSection(' General Options').click();
-
-    // click input file type
-    browser.wait(EC.elementToBeClickable(this.mlcpDropdown('input_file_type')));
-    this.mlcpDropdown('input_file_type').click();
-
-    // click delimited text
-    browser.wait(EC.elementToBeClickable(this.menuItem('delimited_text')));
-    this.menuItem('delimited_text').click();
-
-    browser.wait(EC.visibilityOf(this.mlcpDropdownWithText('input_file_type', 'Delimited Text')));
-
-    // click Document Type
-    browser.wait(EC.elementToBeClickable(this.mlcpDropdown('document_type')));
-    this.mlcpDropdown('document_type').click();
-
-    browser.wait(EC.elementToBeClickable(this.menuItem(dataFormat)));
-    browser.actions().mouseMove(this.menuItem(dataFormat)).perform();
-    this.menuItem(dataFormat).click();
-
-    // set output uri suffix
-    this.mlcpInput('output_uri_suffix').clear();
-    // verify that uri can contain character &
-    this.mlcpInput('output_uri_suffix').sendKeys('?doc=yes&type=foo');
-
-    browser.wait(EC.elementToBeClickable(this.mlcpSection(' Delimited Text Options')));
-    this.mlcpSection(' Delimited Text Options').click();
-    browser.wait(EC.visibilityOf(this.mlcpSection(' Delimited Text Options')));
-
-    // enable generate uri
-    browser.wait(EC.elementToBeClickable(this.mlcpSwitch('generate_uri')));
-    this.mlcpSwitch('generate_uri').click();
-
-    this.mlcpRunButton.click();
-
-    //browser.wait(EC.elementToBeClickable(this.toastButton));
-    //this.toastButton.click();
-    browser.sleep(10000);
-
-    this.jobsTab.click();
-
-    jobsPage.isLoaded();
-
-    let lastFinishedJob = jobsPage.lastFinishedJob;
-    expect(jobsPage.jobFlowName(lastFinishedJob).getText()).toEqual(flowName);
-
-    this.flowsTab.click();
-
-    this.isLoaded();
-  }
-
   /*
   * Run input flow -- this will replace the old runInputFlow that has hardcoded input folder
   * @entityName: entity name
@@ -289,7 +234,7 @@ export class FlowPage extends AppPage {
   *   | forest | rdf | sequencefile
   * @uriSuffix: document uri suffix to append
   */
-  runInputFlowWithFolder(entityName: string, flowName: string, dataFormat: string, 
+  runInputFlow(entityName: string, flowName: string, dataFormat: string, 
       dataFolderName: string, inputFileType: string, uriSuffix: string) {
     console.log(`running flow: ${entityName}: ${flowName}: ${dataFormat}`)
     this.getFlow(entityName, flowName, 'INPUT').click();
@@ -346,46 +291,6 @@ export class FlowPage extends AppPage {
     expect(jobsPage.jobFlowName(lastFinishedJob).getText()).toEqual(flowName);
     this.flowsTab.click();
     this.isLoaded();
-  }
-
-  createFlow(
-    entityName: string, flowName: string,
-    flowType: string, dataFormat: string,
-    codeFormat: string, useEs: boolean)
-  {
-    if (flowType === 'INPUT') {
-      this.inputFlowButton(entityName).click();
-    } else {
-      this.harmonizeFlowButton(entityName).click();
-    }
-
-    browser.wait(EC.visibilityOf(this.newFlowDialog));
-    expect(this.newFlowDialog.isDisplayed()).toBe(true);
-
-    this.newFlowName.sendKeys(flowName);
-
-    if (useEs) {
-      this.esTemplateButton.click();
-    } else {
-      this.blankTemplateButton.click();
-    }
-
-    if (codeFormat === 'sjs') {
-      this.sjsFlowTypeButton.click();
-    } else {
-      this.xqyFlowTypeButton.click();
-    }
-
-    if (dataFormat === 'json') {
-      this.jsonDataFormatButton.click();
-    } else {
-      this.xmlDataFormatButton.click();
-    }
-
-    this.createFlowButton.click();
-
-    browser.wait(EC.not(EC.presenceOf(this.newFlowDialog)));
-    expect(this.newFlowDialog.isPresent()).toBe(false);
   }
   
   /*
