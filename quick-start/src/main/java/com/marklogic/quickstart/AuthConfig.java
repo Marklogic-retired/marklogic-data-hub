@@ -142,7 +142,8 @@ public class AuthConfig extends WebSecurityConfigurerAdapter {
             "/traces/**",
             "/404",
             "/assets/**",
-            "/shutdown"
+            "/shutdown",
+            "/main/ui/assets/img/*"
         };
     }
 }
