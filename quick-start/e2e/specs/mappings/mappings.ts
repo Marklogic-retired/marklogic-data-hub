@@ -184,6 +184,50 @@ export default function() {
         expect(mappingsPage.verifySourcePropertyValue('159929577929').isPresent()).toBeTruthy();
       });
 
+      it('should verify the behavior on reset cancel', function() {
+        appPage.mappingsTab.click();
+        mappingsPage.isLoaded();
+        browser.wait(EC.elementToBeClickable(mappingsPage.entityMapping('MapProduct')));
+        mappingsPage.entityMapping('MapProduct').click();
+        browser.wait(EC.elementToBeClickable(mappingsPage.editMapDescription()));
+        // change the sku source
+        mappingsPage.sourcePropertyDropDown('sku').click();
+        mappingsPage.sourceTypeAheadInput('sku').sendKeys('game_id');
+        mappingsPage.mapSourceProperty('game_id', 'sku').click();
+        browser.wait(EC.elementToBeClickable(mappingsPage.resetButton()));
+        // verify reset - cancel behavior
+        mappingsPage.resetButton().click();
+        browser.wait(EC.elementToBeClickable(mappingsPage.resetConfirmationCancel()));
+        mappingsPage.resetConfirmationCancel().click();
+        browser.wait(EC.elementToBeClickable(mappingsPage.srcPropertyContainer('sku')));
+        // verify that the source URI and the properties persist (still game_id, but not saved)
+        expect(mappingsPage.getSourceURITitle()).toEqual('/private/board_games.csv-0-10?doc=yes&type=foo');
+        expect(mappingsPage.verifySourcePropertyName('game_id').isPresent()).toBeTruthy();
+        expect(mappingsPage.verifySourcePropertyName('price').isPresent()).toBeTruthy();
+      });
+
+      it('should verify the behavior on reset ok', function() {
+        appPage.mappingsTab.click();
+        mappingsPage.isLoaded();
+        browser.wait(EC.elementToBeClickable(mappingsPage.entityMapping('MapProduct')));
+        mappingsPage.entityMapping('MapProduct').click();
+        browser.wait(EC.elementToBeClickable(mappingsPage.editMapDescription()));
+        // change the sku source
+        mappingsPage.sourcePropertyDropDown('sku').click();
+        mappingsPage.sourceTypeAheadInput('sku').sendKeys('game_id');
+        mappingsPage.mapSourceProperty('game_id', 'sku').click();
+        browser.wait(EC.elementToBeClickable(mappingsPage.resetButton()));
+        // verify reset - cancel behavior
+        mappingsPage.resetButton().click();
+        browser.wait(EC.elementToBeClickable(mappingsPage.resetConfirmationCancel()));
+        mappingsPage.resetConfirmationOK().click()
+        browser.wait(EC.elementToBeClickable(mappingsPage.srcPropertyContainer('sku')));
+        // verify that the properties reset to old SKU (rollback to previous version)
+        expect(mappingsPage.getSourceURITitle()).toEqual('/private/board_games.csv-0-10?doc=yes&type=foo');
+        expect(mappingsPage.verifySourcePropertyName('SKU').isPresent()).toBeTruthy();
+        expect(mappingsPage.verifySourcePropertyName('price').isPresent()).toBeTruthy();
+      });
+
       it ('should go to flows page', function() {
         appPage.flowsTab.click();
         flowPage.isLoaded();
