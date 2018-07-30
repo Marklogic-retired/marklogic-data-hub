@@ -654,6 +654,8 @@ export default function() {
       console.log('going to the other tab and back');
       flowPage.entitiesTab.click();
       entityPage.flowsTab.click();
+      flowPage.clickEntityDisclosure('Product');
+      browser.wait(EC.visibilityOf(flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE')));
       //verify the options are retained
       console.log('verify the flow options');
       flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE').click();
