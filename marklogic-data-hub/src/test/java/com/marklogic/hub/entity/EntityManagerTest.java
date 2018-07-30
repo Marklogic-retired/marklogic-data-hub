@@ -111,6 +111,7 @@ public class EntityManagerTest extends HubTestBase {
 
     @Test
     public void testDeploySearchOptions() throws IOException, SAXException {
+        getDataHub().clearUserModules();
         installEntities();
 
         Path dir = Paths.get(getHubConfig().getProjectDir(), HubConfig.ENTITY_CONFIG_DIR);
