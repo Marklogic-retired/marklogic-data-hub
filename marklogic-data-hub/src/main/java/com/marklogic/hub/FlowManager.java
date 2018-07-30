@@ -104,6 +104,7 @@ public interface FlowManager {
 
     /**
      * Updates the indexes in the database based on the project
+     * @return - a list of names for all the flows that are legacy
      */
 
     List<String> getLegacyFlows();

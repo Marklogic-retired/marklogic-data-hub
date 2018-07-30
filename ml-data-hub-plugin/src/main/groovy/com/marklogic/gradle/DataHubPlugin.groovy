@@ -66,9 +66,12 @@ class DataHubPlugin implements Plugin<Project> {
 
         String scaffoldGroup = "MarkLogic Data Hub Scaffolding"
         project.task("hubInit", group: scaffoldGroup, type: InitProjectTask)
+        project.task("hubCreateMapping", group: scaffoldGroup, type: CreateMappingTask)
         project.task("hubCreateEntity", group: scaffoldGroup, type: CreateEntityTask)
         project.task("hubCreateHarmonizeFlow", group: scaffoldGroup, type: CreateHarmonizeFlowTask)
         project.task("hubCreateInputFlow", group: scaffoldGroup, type: CreateInputFlowTask)
+        project.task("hubGeneratePii", group: scaffoldGroup, type: GeneratePiiTask,
+            description: "Generates Security Configuration for all Entity Properties marked 'pii'")
         project.task("hubGenerateTDETemplates", group: scaffoldGroup, type: GenerateTDETemplateFromEntityTask,
             description: "Generates TDE Templates from the entity definition files. It is possible to only generate TDE templates" +
                 " for specific entities by setting the (comma separated) project property 'entityNames'. E.g. -PentityNames=Entity1,Entity2")

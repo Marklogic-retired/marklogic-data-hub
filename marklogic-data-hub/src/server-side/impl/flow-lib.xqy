@@ -38,6 +38,9 @@ import module namespace rfc = "http://marklogic.com/data-hub/run-flow-context"
 import module namespace trace = "http://marklogic.com/data-hub/trace"
   at "/MarkLogic/data-hub-framework/impl/trace-lib.xqy";
 
+import module namespace es = "http://marklogic.com/entity-services"
+  at "/MarkLogic/entity-services/entity-services.xqy";
+
 declare namespace hub = "http://marklogic.com/data-hub";
 
 declare option xdmp:mapping "false";
@@ -205,7 +208,7 @@ declare function flow:run-collector(
 {
     (: sanity check on required info :)
   if (fn:empty($flow/hub:collector/@module) or fn:empty($flow/hub:collector/@code-format)) then
-    fn:error(xs:QName("INVALID-PLUGIN"), "The plugin definition is invalid.")
+    fn:error((), "DATAHUB-INVALID-PLUGIN", "The plugin definition is invalid.")
   else (),
 
   (: assert that we are in query mode :)
@@ -299,7 +302,10 @@ declare function flow:run-flow(
     => rfc:with-id($identifier)
     => rfc:with-content(
         if ($content instance of document-node()) then
-          $content/node()
+          if (fn:count($content/node()) > 1) then
+            $content
+          else
+            $content/node()
         else $content
       )
     => rfc:with-options($options)
@@ -316,7 +322,10 @@ declare function flow:clean-data($resp, $destination, $data-format)
     typeswitch($resp)
       case document-node() return
         if (fn:count($resp/node()) > 1) then
-          fn:error(xs:QName("TOO_MANY_NODES"), "Too Many Nodes!. Return just 1 node")
+          if (fn:count($resp/element()) > 1) then
+            fn:error((), "DATAHUB-TOO-MANY-NODES", "Too Many Nodes!. Return just 1 node")
+          else
+            $resp
         else
           $resp/node()
       default return
@@ -391,7 +400,13 @@ declare function flow:make-envelope($content, $headers, $triples, $data-format)
           ),
           map:put($o, "attachments",
             if ($content instance of map:map and map:keys($content) = "$attachments") then
-              map:get($content, "$attachments")
+              if(map:get($content, "$attachments")/node() instance of element()) then
+                let $c := json:config("custom")
+                let $_ := map:put($c,"whitespace" , "ignore" )
+                let $_ := map:put($c, "element-namespace", "http://marklogic.com/entity-services")
+                return json:transform-to-json(map:get($content, "$attachments"),$c)
+              else
+                map:get($content, "$attachments")
             else
               ()
           )
@@ -423,7 +438,14 @@ declare function flow:make-envelope($content, $headers, $triples, $data-format)
           <attachments>
           {
             if ($content instance of map:map and map:keys($content) = "$attachments") then
-              map:get($content, "$attachments")
+              if(map:get($content, "$attachments") instance of element() or 
+                 map:get($content, "$attachments")/node() instance of element()) then
+                map:get($content, "$attachments")
+              else
+                let $c := json:config("basic")
+                let $_ := map:put($c,"whitespace" , "ignore" )
+                return
+                 json:transform-from-json(map:get($content, "$attachments"),$c)
             else
               ()
           }
@@ -431,7 +453,7 @@ declare function flow:make-envelope($content, $headers, $triples, $data-format)
         </envelope>
       }
     else
-      fn:error(xs:QName("INVALID-DATA-FORMAT"), "Invalid data format: " || $data-format)
+      fn:error((), "RESTAPI-INVALIDCONTENT", "Invalid data format: " || $data-format)
 };
 
 declare function flow:make-legacy-envelope($content, $headers, $triples, $data-format)
@@ -464,7 +486,7 @@ declare function flow:make-legacy-envelope($content, $headers, $triples, $data-f
         </envelope>
       }
     else
-      fn:error(xs:QName("INVALID-DATA-FORMAT"), "Invalid data format: " || $data-format)
+      fn:error((), "RESTAPI-INVALIDCONTENT", "Invalid data format: " || $data-format)
 };
 
 declare function flow:instance-to-canonical-json(
@@ -479,7 +501,7 @@ declare function flow:instance-to-canonical-json(
       let $_ := (
         for $key in map:keys($entity-instance)
         let $instance-property := map:get($entity-instance, $key)
-        where ($key castable as xs:NCName and $key ne "$type")
+        where ($key castable as xs:NCName and not($key = ("$type", "$attachments","$version")))
         return
           typeswitch ($instance-property)
           (: This branch handles embedded objects.  You can choose to prune
@@ -624,7 +646,7 @@ declare function flow:get-main(
   let $_ :=
     (: sanity check on required info :)
     if (fn:empty($module-uri) or fn:empty($main/@code-format)) then
-      fn:error(xs:QName("INVALID-PLUGIN"), "The plugin definition is invalid.")
+      fn:error((), "DATAHUB-INVALID-PLUGIN", "The plugin definition is invalid.")
     else ()
 
   let $_ := rfc:with-module-uri($module-uri)
@@ -659,7 +681,7 @@ declare function flow:run-main(
       $resp
   }
   catch($ex) {
-    if ($ex/error:name eq "PLUGIN-ERROR") then
+    if ($ex/error:code eq "DATAHUB-PLUGIN-ERROR") then
       (: plugin errors are already handled :)
       ()
     else (
@@ -929,7 +951,7 @@ declare function flow:safe-run($func)
     catch($ex) {
       debug:log(xdmp:describe($ex, (), ())),
       trace:error-trace($rfc:item-context, $ex, xdmp:elapsed-time() - $before),
-      fn:error(xs:QName("PLUGIN-ERROR"), "error in a plugin", $ex)
+      fn:error((), "DATAHUB-PLUGIN-ERROR", ("error in a plugin", $ex))
     }
 };
 

@@ -166,6 +166,14 @@ $red-color: unquote("rgb(#{$palette-datahub-red})");
       width: 20px;
       min-width: 20px;
     }
+
+    .has-whitespace {
+      color: #a94442;
+    }
+
+    .no-whitespace {
+      color: black;
+    }
   }
 }
 

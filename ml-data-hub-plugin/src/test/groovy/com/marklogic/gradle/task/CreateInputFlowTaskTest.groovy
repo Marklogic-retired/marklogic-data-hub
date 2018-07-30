@@ -12,7 +12,7 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
- *  
+ *
  */
 
 package com.marklogic.gradle.task
@@ -24,6 +24,7 @@ import java.nio.file.Paths
 
 import static org.gradle.testkit.runner.TaskOutcome.FAILED
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
+
 
 class CreateInputFlowTaskTest extends BaseTest {
     def setupSpec() {
@@ -63,6 +64,7 @@ class CreateInputFlowTaskTest extends BaseTest {
             ext {
                 entityName=my-new-entity
                 flowName=my-new-harmonize-flow
+                useES=false
             }
         """
 

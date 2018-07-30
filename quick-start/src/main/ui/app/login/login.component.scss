@@ -403,3 +403,7 @@ mdl-list.precheck-list {
     color: $red-color;
   }
 }
+
+/deep/ .mdl-textfield__label:after {
+  bottom: 12px;
+}

@@ -26,7 +26,6 @@ import com.marklogic.hub.HubConfigBuilder;
 import com.marklogic.hub.InstallInfo;
 import com.marklogic.hub.util.Versions;
 
-import java.io.IOException;
 import java.util.Properties;
 
 public class EnvironmentConfig {
@@ -134,15 +133,6 @@ public class EnvironmentConfig {
             _finalClient = mlSettings.newFinalClient();
         }
         return _finalClient;
-    }
-
-    private DatabaseClient _traceClient = null;
-    @JsonIgnore
-    public DatabaseClient getTraceClient() {
-        if (_traceClient == null) {
-            _traceClient = mlSettings.newTraceDbClient();
-        }
-        return _traceClient ;
     }
 
     private DatabaseClient _jobClient = null;

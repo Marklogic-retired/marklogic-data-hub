@@ -17,7 +17,7 @@
           class="plugin"
           [ngClass]="getButtonClasses(plugin)">
           <div class="plugin-name">{{plugin.label}}</div>
-          <div class="plugin-duration">{{plugin.duration}}<span class="unit">s</span></div>
+          <div class="plugin-duration">{{plugin.duration}}<span *ngIf="plugin.duration" class="unit">s</span></div>
         </mdl-button>
         <i class="mdi mdi-arrow-right"></i>
       </ng-template>

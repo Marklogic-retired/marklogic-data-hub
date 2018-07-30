@@ -58,6 +58,10 @@ public class HubProjectImpl implements HubProject {
         return this.pluginsDir.resolve("entities");
     }
 
+    @Override public Path getHubMappingsDir() {
+        return this.pluginsDir.resolve("mappings");
+    }
+
     @Override public Path getHubConfigDir() {
         return this.projectDir.resolve(HUB_CONFIG_DIR);
     }
@@ -138,14 +142,12 @@ public class HubProjectImpl implements HubProject {
         serversDir.toFile().mkdirs();
         writeResourceFile("ml-config/servers/staging-server.json", serversDir.resolve("staging-server.json"), true);
         writeResourceFile("ml-config/servers/final-server.json", serversDir.resolve("final-server.json"), true);
-        writeResourceFile("ml-config/servers/trace-server.json", serversDir.resolve("trace-server.json"), true);
         writeResourceFile("ml-config/servers/job-server.json", serversDir.resolve("job-server.json"), true);
 
         Path databasesDir = getHubDatabaseDir();
         databasesDir.toFile().mkdirs();
         writeResourceFile("ml-config/databases/staging-database.json", databasesDir.resolve("staging-database.json"), true);
         writeResourceFile("ml-config/databases/final-database.json", databasesDir.resolve("final-database.json"), true);
-        writeResourceFile("ml-config/databases/trace-database.json", databasesDir.resolve("trace-database.json"), true);
         writeResourceFile("ml-config/databases/job-database.json", databasesDir.resolve("job-database.json"), true);
         writeResourceFile("ml-config/databases/modules-database.json", databasesDir.resolve("modules-database.json"), true);
         writeResourceFile("ml-config/databases/schemas-database.json", databasesDir.resolve("schemas-database.json"), true);
@@ -160,6 +162,8 @@ public class HubProjectImpl implements HubProject {
 
         writeResourceFile("ml-config/security/roles/data-hub-role.json", rolesDir.resolve("data-hub-role.json"), true);
         writeResourceFile("ml-config/security/users/data-hub-user.json", usersDir.resolve("data-hub-user.json"), true);
+        writeResourceFile("ml-config/security/roles/hub-admin-role.json", rolesDir.resolve("hub-admin-role.json"), true);
+        writeResourceFile("ml-config/security/users/hub-admin-user.json", usersDir.resolve("hub-admin-user.json"), true);
 
         getUserServersDir().toFile().mkdirs();
         getUserDatabaseDir().toFile().mkdirs();

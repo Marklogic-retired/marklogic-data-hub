@@ -39,6 +39,10 @@ export class AppPage extends Page {
     return element(by.css('#flows-tab'));
   }
 
+  get mappingsTab() {
+    return element(by.css('#mappings-tab'))
+  }
+
   get browseDataTab() {
     return element(by.css('#browser-tab'));
   }

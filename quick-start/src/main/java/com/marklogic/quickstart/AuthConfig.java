@@ -67,7 +67,7 @@ public class AuthConfig extends WebSecurityConfigurerAdapter {
      */
     @Bean
     public MarkLogicAuthenticationManager markLogicAuthenticationManager() {
-        return new MarkLogicAuthenticationManager(restConfig());
+        return new MarkLogicAuthenticationManager();
     }
 
     /**

@@ -15,14 +15,10 @@
  */
 package com.marklogic.hub.impl;
 
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.ext.helper.LoggingObject;
 import com.marklogic.client.ext.modulesloader.impl.AssetFileLoader;
@@ -152,8 +148,37 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
         return propertiesModuleManager;
     }
 
+    private List<JsonNode> getAllEntities() {
+        List<JsonNode> entities = new ArrayList<>();
+        Path entitiesPath = hubConfig.getHubEntitiesDir();
+        File[] entityFiles = entitiesPath.toFile().listFiles(pathname -> pathname.isDirectory() && !pathname.isHidden());
+        List<String> entityNames;
+        if (entityFiles != null) {
+            entityNames = Arrays.stream(entityFiles)
+                .map(file -> file.getName())
+                .collect(Collectors.toList());
+
+            ObjectMapper objectMapper = new ObjectMapper();
+            try {
+                boolean hasOneChanged = false;
+                for (String entityName : entityNames) {
+                    File[] entityDefs = entitiesPath.resolve(entityName).toFile().listFiles((dir, name) -> name.endsWith(ENTITY_FILE_EXTENSION));
+                    for (File entityDef : entityDefs) {
+                        FileInputStream fileInputStream = new FileInputStream(entityDef);
+                        entities.add(objectMapper.readTree(fileInputStream));
+                        fileInputStream.close();
+                    }
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+        }
+        return entities;
+    }
+
     private List<JsonNode> getModifiedRawEntities(long minimumFileTimestampToLoad) {
-        logger.info("min modified: " + minimumFileTimestampToLoad);
+        logger.debug("min modified: " + minimumFileTimestampToLoad);
         HubModuleManager propsManager = getPropsMgr();
         propsManager.setMinimumFileTimestampToLoad(minimumFileTimestampToLoad);
 
@@ -268,6 +293,51 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
             }
             return "{}";
         }
+    }
+
+
+    @Override
+    public boolean savePii() {
+        try {
+
+            Path protectedPaths = hubConfig.getUserSecurityDir().resolve("protected-paths");
+            Path queryRolesets = hubConfig.getUserSecurityDir().resolve("query-rolesets");
+            if (!protectedPaths.toFile().exists()) {
+                protectedPaths.toFile().mkdirs();
+            }
+            if (!queryRolesets.toFile().exists()) {
+                queryRolesets.toFile().mkdirs();
+            }
+            File queryRolesetsConfig = queryRolesets.resolve(HubConfig.PII_QUERY_ROLESET_FILE).toFile();
+
+            ObjectMapper mapper = new ObjectMapper();
+            ObjectWriter writer = mapper.writerWithDefaultPrettyPrinter();
+            // get all the entities.
+            List<JsonNode> entities = getAllEntities();
+            if (entities.size() > 0) {
+                PiiGenerator piiGenerator = new PiiGenerator(hubConfig.newFinalClient());
+
+                String v3Config = piiGenerator.piiGenerate(entities);
+                JsonNode v3ConfigAsJson = null;
+                v3ConfigAsJson = mapper.readTree(v3Config);
+
+                ArrayNode paths = (ArrayNode) v3ConfigAsJson.get("config").get("protected-path");
+                int i=0;
+                // write each path as a separate file for ml-gradle
+                Iterator<JsonNode> pathsIterator = paths.iterator();
+                while (pathsIterator.hasNext()) {
+                    JsonNode n = pathsIterator.next();
+                    i++;
+                    String thisPath = String.format("%02d_%s", i , HubConfig.PII_PROTECTED_PATHS_FILE);
+                    File protectedPathConfig = protectedPaths.resolve(thisPath).toFile();
+                    writer.writeValue(protectedPathConfig, n);
+                }
+                writer.writeValue(queryRolesetsConfig,  v3ConfigAsJson.get("config").get("query-roleset"));
+            }
+        } catch (IOException e) {
+            throw new EntityServicesGenerationException("Protected path writing failed",e);
+        }
+        return true;
     }
 
 }

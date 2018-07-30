@@ -64,38 +64,53 @@ public interface HubConfigBuilder {
     HubConfigBuilder withProperties(Properties properties);
 
     /**
+     * Use properties to cnofigure the DHF.
      * Sets the {@link AppConfig} for the {@link HubConfig}
      * @param appConfig - an {@link AppConfig} object
      * @return the {@link HubConfigBuilder} instance
+     * @deprecated Use {@link Properties} to configure a DataHub
      */
+    @Deprecated
     HubConfigBuilder withAppConfig(AppConfig appConfig);
 
     /**
+     * Use properties to cnofigure the DHF.
      * Sets the {@link AdminConfig} for the {@link HubConfig}
      * @param adminConfig - an {@link AdminConfig} object
      * @return the {@link HubConfigBuilder} instance
+     * @deprecated Use {@link Properties} to configure a DataHub
      */
+    @Deprecated
     HubConfigBuilder withAdminConfig(AdminConfig adminConfig);
 
     /**
+     * Use properties to cnofigure the DHF.
      * Sets the {@link AdminManager} for the {@link HubConfig}
      * @param adminManager - an {@link AdminManager} object
      * @return the {@link HubConfigBuilder} instance
+     * @deprecated Use {@link Properties} to configure a DataHub
      */
+    @Deprecated
     HubConfigBuilder withAdminManager(AdminManager adminManager);
 
     /**
+     * Use properties to cnofigure the DHF.
      * Sets the {@link ManageConfig} for the {@link HubConfig}
      * @param manageConfig - a {@link ManageConfig} object
      * @return the {@link HubConfigBuilder} instance
+     * @deprecated Use {@link Properties} to configure a DataHub
      */
+    @Deprecated
     HubConfigBuilder withManageConfig(ManageConfig manageConfig);
 
     /**
+     * Use properties to cnofigure the DHF.
      * Sets the {@link ManageClient} for the {@link HubConfig}
      * @param manageClient - a {@link ManageClient}
      * @return the {@link HubConfigBuilder} instance
+     * @deprecated Use {@link Properties} to configure a DataHub
      */
+    @Deprecated
     HubConfigBuilder withManageClient(ManageClient manageClient);
 
     /**

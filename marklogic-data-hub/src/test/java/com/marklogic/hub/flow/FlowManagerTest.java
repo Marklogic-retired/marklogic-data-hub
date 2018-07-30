@@ -21,11 +21,9 @@ import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.collector.Collector;
-import com.marklogic.hub.flow.*;
 import com.marklogic.hub.main.MainPlugin;
 import com.marklogic.hub.scaffold.Scaffolding;
 import org.apache.commons.io.FileUtils;
-import org.custommonkey.xmlunit.XMLUnit;
 import org.json.JSONException;
 import org.junit.Assert;
 import org.junit.Before;
@@ -41,6 +39,9 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 
+import static com.marklogic.client.io.DocumentMetadataHandle.Capability.EXECUTE;
+import static com.marklogic.client.io.DocumentMetadataHandle.Capability.READ;
+import static com.marklogic.client.io.DocumentMetadataHandle.Capability.UPDATE;
 import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.*;
@@ -54,10 +55,7 @@ public class FlowManagerTest extends HubTestBase {
 
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME);
 
-        DocumentMetadataHandle meta = new DocumentMetadataHandle();
-        meta.getCollections().add("tester");
-        installStagingDoc("/employee1.xml", meta, "flow-manager-test/input/employee1.xml");
-        installStagingDoc("/employee2.xml", meta, "flow-manager-test/input/employee2.xml");
+        addStagingDocs();
         installModules();
     }
 
@@ -112,6 +110,7 @@ public class FlowManagerTest extends HubTestBase {
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME);
         DocumentMetadataHandle meta = new DocumentMetadataHandle();
         meta.getCollections().add("tester");
+        meta.getPermissions().add("data-hub-role", READ, UPDATE, EXECUTE);
         installStagingDoc("/employee1.xml", meta, "flow-manager-test/input/employee1.xml");
         installStagingDoc("/employee2.xml", meta, "flow-manager-test/input/employee2.xml");
     }
@@ -120,6 +119,7 @@ public class FlowManagerTest extends HubTestBase {
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME);
         DocumentMetadataHandle meta = new DocumentMetadataHandle();
         meta.getCollections().add("tester");
+        meta.getPermissions().add("data-hub-role", READ, UPDATE, EXECUTE);
         installFinalDoc("/employee1.xml", meta, "flow-manager-test/input/employee1.xml");
         installFinalDoc("/employee2.xml", meta, "flow-manager-test/input/employee2.xml");
     }
@@ -154,6 +154,7 @@ public class FlowManagerTest extends HubTestBase {
     @Test
     public void testGetLocalFlows() throws IOException {
         Scaffolding scaffolding = Scaffolding.create("del-me-dir", stagingClient);
+        createProjectDir("del-me-dir");
         scaffolding.createEntity("my-entity");
 
         FlowManager fm = FlowManager.create(getHubConfig("del-me-dir"));
@@ -166,7 +167,7 @@ public class FlowManagerTest extends HubTestBase {
             for (DataFormat dataFormat : dataFormats) {
                 for (FlowType flowType : flowTypes) {
                     String flowName = flowType.toString() + "-" + codeFormat.toString() + "-" + dataFormat.toString();
-                    scaffolding.createFlow("my-entity", flowName, flowType, codeFormat, dataFormat);
+                    scaffolding.createFlow("my-entity", flowName, flowType, codeFormat, dataFormat, false);
                 }
             }
         }
@@ -186,11 +187,12 @@ public class FlowManagerTest extends HubTestBase {
         Scaffolding scaffolding = Scaffolding.create("del-me-dir", stagingClient);
         scaffolding.createEntity("my-entity");
 
+        createProjectDir("del-me-dir");
         FlowManager fm = FlowManager.create(getHubConfig("del-me-dir"));
 
         allCombos((codeFormat, dataFormat, flowType, useEs) -> {
             String flowName = flowType.toString() + "-" + codeFormat.toString() + "-" + dataFormat.toString();
-            scaffolding.createFlow("my-entity", flowName, flowType, codeFormat, dataFormat);
+            scaffolding.createFlow("my-entity", flowName, flowType, codeFormat, dataFormat, false);
         });
 
 
@@ -293,6 +295,10 @@ public class FlowManagerTest extends HubTestBase {
         assertEquals(2, getFinalDocCount());
         assertXMLEqual(getXmlFromResource("flow-manager-test/harmonized/harmonized1.xml"), finalDocMgr.read("/employee1.xml").next().getContent(new DOMHandle()).get() );
         assertXMLEqual(getXmlFromResource("flow-manager-test/harmonized/harmonized2.xml"), finalDocMgr.read("/employee2.xml").next().getContent(new DOMHandle()).get());
+        DocumentMetadataHandle metadata = finalDocMgr.readMetadata("/employee1.xml", new DocumentMetadataHandle());
+        DocumentMetadataHandle.DocumentPermissions permissions = metadata.getPermissions();
+        assertEquals("Default permissions on harmonized documents should contain harmonized-reader/read", permissions.get("harmonized-reader").toString(),     "[READ]");
+        assertEquals("Default permissions on harmonized documents should contain harmonized-updater/update", permissions.get("harmonized-updater").toString(), "[UPDATE]");
     }
 
     @Test
@@ -315,6 +321,10 @@ public class FlowManagerTest extends HubTestBase {
         assertEquals(2, getFinalDocCount());
         assertXMLEqual(getXmlFromResource("flow-manager-test/harmonized/harmonized1.xml"), stagingDocMgr.read("/employee1.xml").next().getContent(new DOMHandle()).get() );
         assertXMLEqual(getXmlFromResource("flow-manager-test/harmonized/harmonized2.xml"), stagingDocMgr.read("/employee2.xml").next().getContent(new DOMHandle()).get());
+        DocumentMetadataHandle metadata = stagingDocMgr.readMetadata("/employee1.xml", new DocumentMetadataHandle());
+        DocumentMetadataHandle.DocumentPermissions permissions = metadata.getPermissions();
+        assertEquals("Default permissions on harmonized documents should contain harmonized-reader/read", permissions.get("harmonized-reader").toString(),     "[READ]");
+        assertEquals("Default permissions on harmonized documents should contain harmonized-updater/update", permissions.get("harmonized-updater").toString(), "[UPDATE]");
     }
 
     @Test
@@ -386,7 +396,7 @@ public class FlowManagerTest extends HubTestBase {
 
         Scaffolding scaffolding = Scaffolding.create(getHubConfig().getProjectDir(), stagingClient);
         scaffolding.createEntity("new-entity");
-        scaffolding.createFlow("new-entity", "new-flow", FlowType.HARMONIZE, CodeFormat.XQUERY, DataFormat.XML);
+        scaffolding.createFlow("new-entity", "new-flow", FlowType.HARMONIZE, CodeFormat.XQUERY, DataFormat.XML, false);
         assertEquals(0, fm.getLegacyFlows().size());
 
         Path projectPath = Paths.get(PROJECT_PATH);

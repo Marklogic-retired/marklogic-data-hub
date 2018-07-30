@@ -47,7 +47,6 @@ public interface HubConfig {
 
     String DEFAULT_STAGING_NAME = "data-hub-STAGING";
     String DEFAULT_FINAL_NAME = "data-hub-FINAL";
-    String DEFAULT_TRACE_NAME = "data-hub-TRACING";
     String DEFAULT_JOB_NAME = "data-hub-JOBS";
     String DEFAULT_MODULES_DB_NAME = "data-hub-MODULES";
     String DEFAULT_TRIGGERS_DB_NAME = "data-hub-TRIGGERS";
@@ -55,10 +54,11 @@ public interface HubConfig {
 
     String DEFAULT_ROLE_NAME = "data-hub-role";
     String DEFAULT_USER_NAME = "data-hub-user";
+    String DEFAULT_ADMIN_ROLE_NAME = "hub-admin-role";
+    String DEFAULT_ADMIN_USER_NAME = "hub-admin-user";
 
     Integer DEFAULT_STAGING_PORT = 8010;
     Integer DEFAULT_FINAL_PORT = 8011;
-    Integer DEFAULT_TRACE_PORT = 8012;
     Integer DEFAULT_JOB_PORT = 8013;
 
     String DEFAULT_AUTH_METHOD = "digest";
@@ -68,6 +68,8 @@ public interface HubConfig {
     Integer DEFAULT_FORESTS_PER_HOST = 4;
 
     String DEFAULT_CUSTOM_FOREST_PATH = "forests";
+    String PII_QUERY_ROLESET_FILE = "pii-reader.json";
+    String PII_PROTECTED_PATHS_FILE = "pii-protected-paths.json";
 
     /**
      * Gets the hostname of the AppConfig
@@ -303,8 +305,8 @@ public interface HubConfig {
     String getProjectDir();
 
     /**
-     *
-     * @param projectDir
+     * Sets the directory for the current project
+     * @param projectDir - a string that represents the path to the project directory
      */
     void setProjectDir(String projectDir);
 
@@ -338,34 +340,17 @@ public interface HubConfig {
     DatabaseClient newAppServicesClient();
 
     /**
-     * Creates a new DatabaseClient for accessing the Staging database
-     * @return - a DatabaseClient
-     */
-     DatabaseClient newStagingClient();
-
-    /**
-     * Creates a new DatabaseClient for accessing the Staging database
-     * @param databaseName - the name of the database for the staging Client to use
-     * @return- a DatabaseClient
-     */
-     DatabaseClient newStagingClient(String databaseName);
-
-    /**
-     * Creates a new DatabaseClient for accessing the Final database
-     * @return - a DatabaseClient
-     */
-    DatabaseClient newFinalClient();
-
-    /**
      * Creates a new DatabaseClient for accessing the Job database
      * @return - a DatabaseClient
      */
     DatabaseClient newJobDbClient();
 
     /**
-     * Creates a new DatabaseClient for accessing the Trace database
+     * Use newJobDbClient instead.  This function returns a client to
+     * the JOBS database.
      * @return - a DatabaseClient
      */
+    @Deprecated
     DatabaseClient newTraceDbClient();
 
     /**
@@ -375,62 +360,68 @@ public interface HubConfig {
     DatabaseClient newModulesDbClient();
 
     /**
-     * Gets the path for the entity database directory
-     * @return the path for the entity's database directory
+     * Gets the path for the hub plugins directory
+     * @return the path for the hub plugins directory
      */
     Path getHubPluginsDir();
 
     /**
-     * Gets the path for the hub plugins directory
-     * @return the path for the hub plugins directory
+     * Gets the path for the hub entities directory
+     * @return the path for the hub entities directory
      */
     Path getHubEntitiesDir();
 
     /**
-     * Gets the path for the hub's entities directory
-     * @return the path for the hub's entities directory
+     * Gets the path for the hub mappings directory
+     * @return the path for the hub mappings directory
      */
-    Path getHubConfigDir();
+    Path getHubMappingsDir();
 
     /**
      * Gets the path for the hub's config directory
      * @return the path for the hub's config directory
      */
-    Path getHubDatabaseDir();
+    Path getHubConfigDir();
 
     /**
      * Gets the path for the hub's database directory
      * @return the path for the hub's database directory
      */
-    Path getHubServersDir();
+    Path getHubDatabaseDir();
 
     /**
      * Gets the path for the hub servers directory
      * @return the path for the hub servers database directory
      */
-    Path getHubSecurityDir();
+    Path getHubServersDir();
 
     /**
-     * Gets the path for the entity database directory
-     * @return the path for the entity's database directory
+     * Gets the path for the hub's security directory
+     * @return the path for the hub's security directory
      */
-    Path getUserConfigDir();
+    Path getHubSecurityDir();
 
     /**
      * Gets the path for the user config directory
      * @return the path for the user config directory
      */
-    Path getUserSecurityDir();
+    Path getUserConfigDir();
 
     /**
      * Gets the path for the user security directory
      * @return the path for the user security directory
      */
+    Path getUserSecurityDir();
+
+    /**
+     * Gets the path for the user database directory
+     * @return the path for the user database directory
+     */
     Path getUserDatabaseDir();
 
     /**
-     * Gets the path for the entity database directory
-     * @return the path for the entity's database directory
+     * Gets the path for the user servers directory
+     * @return the path for the user servers database directory
      */
     Path getUserServersDir();
 
@@ -465,4 +456,23 @@ public interface HubConfig {
      * @return Version of DHF Jar file as string
      */
     String getJarVersion();
+
+    /**
+     * Gets a new DatabaseClient that queries the staging database and appserver
+     * Uses mlUsername and mlPassword
+     * @return A client without elevated administrative privileges.
+     */
+    DatabaseClient newStagingClient();
+
+    /**
+     * Gets a new DatabaseClient that queries the Final database using the staging appserver.
+     * @return A DatabaseClient
+     */
+    DatabaseClient newFinalClient();
+
+    /**
+     * Gets information on a datahub configuration
+     * @return information on the datahub configuration as a string
+     */
+    String getInfo();
 }

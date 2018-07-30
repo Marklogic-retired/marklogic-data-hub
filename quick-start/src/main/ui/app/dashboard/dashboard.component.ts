@@ -18,8 +18,7 @@ export class DashboardComponent implements OnInit {
   databases: any = [
     'staging',
     'final',
-    'job',
-    'trace'
+    'job'
   ];
 
   stats: any;
@@ -41,12 +40,20 @@ export class DashboardComponent implements OnInit {
     this.getStatus();
   }
 
+  labelify(db) {
+    if (db === "job") {
+      return "jobs";
+    } else {
+      return db;
+    }
+
+  }
   getDbCount(db) {
     return this.stats[db + 'Count'];
   }
 
   clearDatabase(db) {
-    const message = `Do you really want to remove all files from your ${db} Database?`;
+    const message = `Do you really want to remove all files from your ${this.labelify(db)} Database?`;
     this.dialogService.confirm(message, 'Cancel', 'Clear!').subscribe(() => {
       const database = this.stats[db + 'Db'];
       this.projectService.clearDatabase(database).subscribe(() => {

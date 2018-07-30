@@ -109,7 +109,7 @@ function cleanData(resp, destination, dataFormat)
 {
   if (resp instanceof Document) {
     if (fn.count(resp.xpath('node()')) > 1) {
-      fn.error(xs.QName("TOO_MANY_NODES"), "Too Many Nodes!. Return just 1 node");
+      fn.error(null, "DATAHUB-TOO-MANY-NODES", Sequence.from([400, "Too Many Nodes!. Return just 1 node"]));
     } else {
       resp = resp.xpath('node()');
     }
@@ -190,7 +190,13 @@ function makeEnvelope(content, headers, triples, dataFormat) {
 
     let attachments = null;
     if (content instanceof Object && content.hasOwnProperty("$attachments")) {
-      attachments = content['$attachments'];
+      if(content['$attachments'] instanceof Element){
+        let config = json.config('custom');
+        config['element-namespace'] = "http://marklogic.com/entity-services";
+        attachments = json.transformToJson(content['$attachments'], config);
+      } else {
+        attachments = content['$attachments'];
+      }
     }
 
     return {
@@ -266,7 +272,14 @@ function makeEnvelope(content, headers, triples, dataFormat) {
 
         nb.startElement("attachments", "http://marklogic.com/entity-services");
         if (content instanceof Object && content.hasOwnProperty("$attachments")) {
-          nb.addNode(content["$attachments"]);
+            let attachments = content["$attachments"];
+            if (attachments instanceof XMLDocument || tracelib.isXmlNode(attachments)) {
+              nb.addNode(attachments);
+            } else {
+              let config = json.config('custom');
+              let  cx = (config, 'attribute-names' , ('subKey' , 'boolKey' , 'empty' ));
+              nb.addNode(json.transformFromJson(attachments, config));
+            }
         }
         nb.endElement();
       nb.endElement();
@@ -274,7 +287,7 @@ function makeEnvelope(content, headers, triples, dataFormat) {
     return nb.toNode();
   }
 
-  fn.error(xs.QName("INVALID-DATA-FORMAT"), "Invalid data format: " + dataFormat)
+  fn.error(null, "RESTAPI-INVALIDCONTENT", Sequence.from(["Invalid data format: " + dataFormat + ".  Must be JSON or XML"]))
 };
 
 function makeLegacyEnvelope(content, headers, triples, dataFormat) {
@@ -337,7 +350,7 @@ function makeLegacyEnvelope(content, headers, triples, dataFormat) {
     return nb.toNode();
   }
 
-  fn.error(xs.QName("INVALID-DATA-FORMAT"), "Invalid data format: " || dataFormat)
+  fn.error(null, "RESTAPI-INVALIDCONTENT", Sequence.from(["Invalid data format: " + dataFormat + ".  Must be JSON or XML"]))
 };
 
 function instanceToCanonicalJson(entityInstance) {
@@ -348,13 +361,10 @@ function instanceToCanonicalJson(entityInstance) {
   else {
     o = {};
     for (let key in entityInstance) {
-      if (key !== '$type') {
+      if (key === '$attachments' || key === '$type' || key === '$version') {
+      } else {
         let instanceProperty = entityInstance[key];
-        if (instanceProperty instanceof Sequence) {
-          for (let prop in instanceProperty) {
-            o[key] = instanceToCanonicalJson(prop);
-          }
-        } else if (instanceProperty instanceof Array) {
+         if (instanceProperty instanceof Array) {
           let a = [];
           let i = 0;
           for (i = 0; i < instanceProperty.length; i++) {
@@ -366,10 +376,6 @@ function instanceToCanonicalJson(entityInstance) {
             }
           }
           o[key] = a;
-        } else if (instanceProperty instanceof Sequence) {
-            for (let val of instanceProperty) {
-              o[key] = val;
-            }
         } else {
           o[key] = instanceProperty;
         }
@@ -404,7 +410,7 @@ function instanceToCanonicalXml(entityInstance) {
                 }
               }
             } else if (prop instanceof Array) {
-              for (let item in prop) {
+              for (let item of prop) {
                 if (item instanceof Object) {
                   nb.startElement(key);
                   nb.addAttribute('datatype', 'array');
@@ -426,7 +432,9 @@ function instanceToCanonicalXml(entityInstance) {
             }
             else {
               nb.startElement(key);
-              nb.addText(prop.toString());
+              if(prop) {
+                nb.addText(prop.toString());
+              }
               nb.endElement();
             }
           }
@@ -450,7 +458,7 @@ function getMainFunc(main) {
   // sanity check on required info
   let moduleUri = main.module;
   if (!main.module || !main.codeFormat) {
-    fn.error(xs.QName("INVALID-PLUGIN"), "The plugin definition is invalid.");
+    fn.error(null, "DATAHUB-INVALID-PLUGIN", Sequence.from(["The plugin definition is invalid."]));
   }
   rfc.withModuleUri(moduleUri);
   rfc.withCodeFormat(main.codeFormat);
@@ -487,16 +495,15 @@ function runMain(itemContext, func) {
     }
   }
   catch(ex) {
-    if (ex.name != "error in a plugin") {
+    if (! ex.name.includes("DATAHUB-PLUGIN-ERROR")) {
       // this is an error in main.(sjs|xqy)
-      xdmp.log(ex.toString());
-
       // log the trace event for main
       tracelib.setPluginLabel("main", rfc.getTrace(itemContext));
       tracelib.errorTrace(itemContext, ex, xdmp.elapsedTime().subtract(before));
+      throw(ex);
+    }  else {
+      throw(ex);
     }
-
-    throw(ex);
   }
 
   if (resp instanceof Sequence) {
@@ -594,7 +601,7 @@ function safeRun(func) {
   }
   catch(ex) {
     tracelib.errorTrace(rfc.getItemContext(), ex, xdmp.elapsedTime().subtract(before));
-    fn.error(xs.QName("PLUGIN-ERROR"), "error in a plugin", JSON.stringify(ex));
+    fn.error(null, "DATAHUB-PLUGIN-ERROR", Sequence.from(["error in a plugin", JSON.stringify(ex)]));
   }
 };
 
@@ -622,4 +629,3 @@ module.exports = {
   runWriters: runWriters,
   runWriter: runWriter
 };
-

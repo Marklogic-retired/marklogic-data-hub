@@ -20,20 +20,11 @@ export default function(tmpDir) {
       flowPage.isLoaded();
     });
 
-    it ('should redeploy modules', function() {
-      flowPage.redeployButton.click();
-      browser.wait(element(by.css('#last-deployed-time')).getText().then((txt) => {
-        return (
-          txt === 'Last Deployed: less than a minute ago' ||
-          txt === 'Last Deployed: 1 minute ago'
-        );
-      }));
-    });
-
     it ('should run Load Products flow', function() {
-      flowPage.entityDisclosure('Product').click();
+      flowPage.clickEntityDisclosure('Product');
       browser.wait(EC.elementToBeClickable(flowPage.getFlow('Product', 'Load Products', 'INPUT')));
-      flowPage.runInputFlow('Product', 'Load Products', 'json', 1);
+      flowPage.runInputFlow('Product', 'Load Products', 'json', 'products', 
+        'delimited_text', '?doc=yes&type=foo');
     });
 
     it('should verify the loaded data', function() {
@@ -93,14 +84,11 @@ export default function(tmpDir) {
       fs.copy(headersWithOptionsFilePath, tmpDir + '/plugins/entities/Product/harmonize/Harmonize\ Products/headers.sjs');
     });
 
-    it ('should redeploy modules', function() {
-      flowPage.redeployButton.click();
-      browser.wait(element(by.css('#last-deployed-time')).getText().then((txt) => {
-        return (
-          txt === 'Last Deployed: less than a minute ago' ||
-          txt === 'Last Deployed: 1 minute ago'
-        );
-      }));
+    it ('should setup customized triples on Harmonize Products flow', function() {
+      //copy customized triples.sjs
+      console.log('copy customized triples.sjs');
+      let customTriplesFilePath = 'e2e/qa-data/plugins/customTriples.sjs';
+      fs.copy(customTriplesFilePath, tmpDir + '/plugins/entities/Product/harmonize/Harmonize\ Products/triples.sjs');
     });
 
     it ('should logout and login', function() {
@@ -113,10 +101,15 @@ export default function(tmpDir) {
       loginPage.login();
     });
 
+    it ('should redeploy modules', function() {
+      flowPage.redeployButton.click();
+      browser.sleep(5000);
+    });
+
     it('should run Harmonize Products flow', function() {
       flowPage.isLoaded();
       console.log('clicking Product entity');
-      flowPage.entityDisclosure('Product').click();
+      flowPage.clickEntityDisclosure('Product');
       console.log('clicking Harmonize Products flow');
       browser.wait(EC.visibilityOf(flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE')));
       expect(flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE').isPresent()).toBe(true);
@@ -126,8 +119,7 @@ export default function(tmpDir) {
       console.log('found the button and clicking Run Harmonize button');
       flowPage.runHarmonizeButton().click();
       console.log('clicked the button');
-      browser.wait(EC.elementToBeClickable(flowPage.toastButton));
-      flowPage.toastButton.click();
+      browser.sleep(10000);
       flowPage.jobsTab.click();
       jobsPage.isLoaded();
       expect(jobsPage.finishedHarmonizedFlows.isPresent()).toBe(true);
@@ -156,6 +148,10 @@ export default function(tmpDir) {
       expect(element(by.cssContainingText('.cm-string', '442403950907')).isPresent()).toBe(true);
       expect(element(by.cssContainingText('.cm-variable', 'opt1')).isPresent()).toBe(true);
       expect(element(by.cssContainingText('.cm-string', 'world')).isPresent()).toBe(true);
+      expect(element(by.cssContainingText('.cm-variable', 'user')).isPresent()).toBe(true);
+      expect(element(by.cssContainingText('.cm-string', 'admin')).isPresent()).toBe(true);
+      expect(element(by.cssContainingText('.cm-variable', 'object')).isPresent()).toBe(true);
+      expect(element(by.cssContainingText('.cm-string', 'http://www.marklogic.com/foo/456')).isPresent()).toBe(true);
       viewerPage.flowsTab.click();
       flowPage.isLoaded();
     });
@@ -183,23 +179,30 @@ export default function(tmpDir) {
       expect(element(by.cssContainingText('.cm-string', '159929577929')).isPresent()).toBe(true);
       expect(element(by.cssContainingText('.cm-variable', 'opt1')).isPresent()).toBe(true);
       expect(element(by.cssContainingText('.cm-string', 'world')).isPresent()).toBe(true);
+      expect(element(by.cssContainingText('.cm-variable', 'user')).isPresent()).toBe(true);
+      expect(element(by.cssContainingText('.cm-string', 'admin')).isPresent()).toBe(true);
+      expect(element(by.cssContainingText('.cm-variable', 'object')).isPresent()).toBe(true);
+      expect(element(by.cssContainingText('.cm-string', 'http://www.marklogic.com/foo/456')).isPresent()).toBe(true);
       viewerPage.flowsTab.click();
       flowPage.isLoaded();
     });
 
+    it ('should redeploy modules', function() {
+      flowPage.redeployButton.click();
+      browser.sleep(5000);
+    });
+
     it ('should open the TestEntity disclosure', function() {
-      flowPage.entityDisclosure('TestEntity').click();
+      flowPage.clickEntityDisclosure('TestEntity');
       browser.wait(EC.elementToBeClickable(flowPage.getFlow('TestEntity', 'sjs json INPUT', 'INPUT')));
     });
 
-    let flowCount = 1;
     ['sjs', 'xqy'].forEach((codeFormat) => {
       ['xml', 'json'].forEach((dataFormat) => {
         let flowType = 'INPUT';
         let flowName = `${codeFormat} ${dataFormat} ${flowType}`;
         it (`should run a ${flowName} flow`, function() {
-          flowPage.runInputFlow('TestEntity', flowName, dataFormat, flowCount);
-          flowCount++;
+          flowPage.runInputFlow('TestEntity', flowName, dataFormat, 'products', 'delimited_text', '');
         });
       });
     });

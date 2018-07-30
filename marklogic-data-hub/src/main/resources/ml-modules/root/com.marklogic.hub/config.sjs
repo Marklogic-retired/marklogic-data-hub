@@ -1,7 +1,7 @@
 module.exports = {
   STAGINGDATABASE: "%%mlStagingDbName%%",
   FINALDATABASE: "%%mlFinalDbName%%",
-  TRACEDATABASE: "%%mlTraceDbName%%",
+  TRACEDATABASE: "%%mlJobDbName%%",
   JOBDATABASE: "%%mlJobDbName%%",
   MODULESDATABASE: "%%mlModulesDbName%%",
   HUBVERSION: "%%mlHubVersion%%"

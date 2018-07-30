@@ -31,6 +31,7 @@ public class FlowModel {
     public CodeFormat codeFormat;
     public DataFormat dataFormat;
     public Boolean useEsModel;
+    public String mappingName;
     public List<PluginModel> plugins = new ArrayList<>();
 
     public FlowModel() {}
@@ -52,8 +53,10 @@ public class FlowModel {
         sb.append(flowType.toString());
         sb.append("codeFormat=");
         sb.append(codeFormat.toString());
-        sb.append("dataFomrat=");
+        sb.append("dataFormat=");
         sb.append(dataFormat.toString());
+        sb.append("mappingName=");
+        sb.append(mappingName);
         sb.append("}");
 
         return sb.toString();

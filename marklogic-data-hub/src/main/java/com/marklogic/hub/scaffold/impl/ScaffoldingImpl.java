@@ -21,6 +21,7 @@ import com.marklogic.client.extensions.ResourceServices;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.util.RequestParameters;
 import com.marklogic.hub.collector.impl.CollectorImpl;
+import com.marklogic.hub.error.DataHubConfigurationException;
 import com.marklogic.hub.error.ScaffoldingValidationException;
 import com.marklogic.hub.flow.*;
 import com.marklogic.hub.main.impl.MainPluginImpl;
@@ -40,6 +41,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -52,6 +54,7 @@ public class ScaffoldingImpl implements Scaffolding {
     private String projectDir;
     private Path pluginsDir;
     private Path entitiesDir;
+    private Path mappingsDir;
     private ScaffoldingValidator validator;
     private DatabaseClient databaseClient;
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -60,6 +63,7 @@ public class ScaffoldingImpl implements Scaffolding {
         this.projectDir = projectDir;
         this.pluginsDir = Paths.get(this.projectDir, "plugins");
         this.entitiesDir = this.pluginsDir.resolve("entities");
+        this.mappingsDir = this.pluginsDir.resolve("mappings");
         this.databaseClient = databaseClient;
         validator = new ScaffoldingValidator(projectDir);
     }
@@ -85,18 +89,38 @@ public class ScaffoldingImpl implements Scaffolding {
         entityDir.toFile().mkdirs();
     }
 
+    @Override public void createMappingDir(String mappingName) {
+        Path mappingDir = mappingsDir.resolve(mappingName);
+        mappingDir.toFile().mkdirs();
+    }
+
     @Override public void createFlow(String entityName, String flowName,
-                           FlowType flowType, CodeFormat codeFormat,
-                           DataFormat dataFormat) {
-        createFlow(entityName, flowName, flowType, codeFormat, dataFormat, false);
+                                       FlowType flowType, CodeFormat codeFormat,
+                                       DataFormat dataFormat) {
+        createFlow(entityName, flowName, flowType, codeFormat, dataFormat, true);
+    }
+
+    @Override public void createFlow(String entityName, String flowName,
+                                     FlowType flowType, CodeFormat codeFormat,
+                                     DataFormat dataFormat, boolean useEsModel) {
+        createFlow(entityName, flowName, flowType, codeFormat, dataFormat, useEsModel, null);
     }
 
     @Override public void createFlow(String entityName, String flowName,
                            FlowType flowType, CodeFormat codeFormat,
-                           DataFormat dataFormat, boolean useEsModel) {
+                           DataFormat dataFormat, boolean useEsModel, String mappingNameWithVersion) {
         try {
             Path flowDir = getFlowDir(entityName, flowName, flowType);
             flowDir.toFile().mkdirs();
+
+            if (useEsModel) {
+                ContentPlugin cp = new ContentPlugin(databaseClient);
+                String content = cp.getContents(entityName, codeFormat, flowType, mappingNameWithVersion);
+                writeBuffer(content, flowDir.resolve("content." + codeFormat));
+            } else {
+                writeFile("scaffolding/" + flowType + "/" + codeFormat + "/content." + codeFormat,
+                    flowDir.resolve("content." + codeFormat));
+            }
 
             if (flowType.equals(FlowType.HARMONIZE)) {
                 writeFile("scaffolding/" + flowType + "/" + codeFormat + "/collector." + codeFormat,
@@ -104,16 +128,6 @@ public class ScaffoldingImpl implements Scaffolding {
 
                 writeFile("scaffolding/" + flowType + "/" + codeFormat + "/writer." + codeFormat,
                     flowDir.resolve("writer." + codeFormat));
-            }
-
-            if (useEsModel) {
-                ContentPlugin cp = new ContentPlugin(databaseClient);
-                String content = cp.getContents(entityName, codeFormat, flowType);
-                writeBuffer(content, flowDir.resolve("content." + codeFormat));
-
-            } else {
-                writeFile("scaffolding/" + flowType + "/" + codeFormat + "/content." + codeFormat,
-                    flowDir.resolve("content." + codeFormat));
             }
 
             writeFile("scaffolding/" + flowType + "/" + codeFormat + "/headers." + codeFormat,
@@ -132,6 +146,7 @@ public class ScaffoldingImpl implements Scaffolding {
                 .withType(flowType)
                 .withCodeFormat(codeFormat)
                 .withDataFormat(dataFormat)
+                .withMapping(mappingNameWithVersion)
                 .build();
 
             FileWriter fw = new FileWriter(flowDir.resolve(flowName + ".properties").toFile());
@@ -432,6 +447,10 @@ public class ScaffoldingImpl implements Scaffolding {
         return entitiesDir.resolve(entityName);
     }
 
+    public Path getMappingDir(String mappingName) {
+        return mappingsDir.resolve(mappingName);
+    }
+
     private Path getRestDirectory(String entityName, FlowType flowType) {
         return getFlowDir(entityName, "REST", flowType);
     }
@@ -489,9 +508,16 @@ public class ScaffoldingImpl implements Scaffolding {
         }
 
         public String getContents(String entityName, CodeFormat codeFormat, FlowType flowType) {
+            return getContents(entityName, codeFormat, flowType, null);
+        }
+
+        public String getContents(String entityName, CodeFormat codeFormat, FlowType flowType, String mappingName) {
             params.add("entity", entityName);
             params.add("codeFormat", codeFormat.toString());
             params.add("flowType", flowType.toString());
+            if(mappingName != null) {
+                params.add("mapping", mappingName);
+            }
             ResourceServices.ServiceResultIterator resultItr = this.getServices().get(params);
             if (resultItr == null || ! resultItr.hasNext()) {
                 throw new RuntimeException("Unable to get Content Plugin scaffold");

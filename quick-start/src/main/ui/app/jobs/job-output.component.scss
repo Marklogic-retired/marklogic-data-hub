@@ -8,3 +8,9 @@ pre {
   overflow: auto;
   white-space: pre-wrap;
 }
+
+.fixed-header {
+  position: fixed;
+  top: 0;
+  width: 100%;
+}

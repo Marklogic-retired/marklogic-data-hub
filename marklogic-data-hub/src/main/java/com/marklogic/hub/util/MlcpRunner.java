@@ -49,13 +49,14 @@ public class MlcpRunner extends ProcessRunner {
     private String mlcpPath;
     private String mainClass;
     private DatabaseClient databaseClient;
+    private String database = null;
 
     public MlcpRunner(String mlcpPath, String mainClass, HubConfig hubConfig, Flow flow, DatabaseClient databaseClient, JsonNode mlcpOptions, FlowStatusListener statusListener) {
         super();
 
         this.withHubconfig(hubConfig);
 
-        this.jobManager = JobManager.create(hubConfig.newJobDbClient(), hubConfig.newTraceDbClient());
+        this.jobManager = JobManager.create(hubConfig.newJobDbClient());
         this.flowStatusListener = statusListener;
         this.flow = flow;
         this.mlcpOptions = mlcpOptions;
@@ -81,6 +82,9 @@ public class MlcpRunner extends ProcessRunner {
             MlcpBean bean = new ObjectMapper().readerFor(MlcpBean.class).readValue(mlcpOptions);
             bean.setHost(databaseClient.getHost());
             bean.setPort(databaseClient.getPort());
+            if (database != null) {
+                bean.setDatabase(database);
+            }
 
             // Assume that the HTTP credentials will work for mlcp
             bean.setUsername(hubConfig.getAppConfig().getAppServicesUsername());
@@ -231,5 +235,13 @@ public class MlcpRunner extends ProcessRunner {
 
         this.withStreamConsumer(new MlcpConsumer(successfulEvents,
             failedEvents, flowStatusListener, jobId));
+    }
+
+    /**
+     * Set the database context for the MlCP Client
+     * @param database the database name to use
+     */
+    public void setDatabase(String database) {
+        this.database = database;
     }
 }

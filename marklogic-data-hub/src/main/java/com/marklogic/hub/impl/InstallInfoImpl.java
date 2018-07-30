@@ -22,12 +22,10 @@ import com.marklogic.hub.error.InvalidDBOperationError;
 public class InstallInfoImpl implements InstallInfo {
     private boolean stagingAppServerExists = false;
     private boolean finalAppServerExists = false;
-    private boolean traceAppServerExists = false;
     private boolean jobAppServerExists = false;
 
     private boolean stagingDbExists = false;
     private boolean finalDbExists = false;
-    private boolean traceDbExists = false;
     private boolean jobDbExists = false;
 
     private boolean stagingTripleIndexOn = false;
@@ -44,7 +42,6 @@ public class InstallInfoImpl implements InstallInfo {
         return (
             isAppServerExistent(DatabaseKind.STAGING) ||
                 isAppServerExistent(DatabaseKind.FINAL) ||
-                isAppServerExistent(DatabaseKind.TRACE) ||
                 isAppServerExistent(DatabaseKind.JOB) ||
                 isDbExistent(DatabaseKind.STAGING) ||
                 isTripleIndexOn(DatabaseKind.STAGING) ||
@@ -52,11 +49,9 @@ public class InstallInfoImpl implements InstallInfo {
                 isDbExistent(DatabaseKind.FINAL) ||
                 isTripleIndexOn(DatabaseKind.FINAL) ||
                 isCollectionLexiconOn(DatabaseKind.FINAL) ||
-                isDbExistent(DatabaseKind.TRACE) ||
                 isDbExistent(DatabaseKind.JOB) ||
                 areForestsExistent(DatabaseKind.STAGING) ||
                 areForestsExistent(DatabaseKind.FINAL) ||
-                areForestsExistent(DatabaseKind.TRACE) ||
                 areForestsExistent(DatabaseKind.JOB)
         );
     }
@@ -65,7 +60,6 @@ public class InstallInfoImpl implements InstallInfo {
         boolean appserversOk = (
             isAppServerExistent(DatabaseKind.STAGING) &&
                 isAppServerExistent(DatabaseKind.FINAL) &&
-                isAppServerExistent(DatabaseKind.TRACE) &&
                 isAppServerExistent(DatabaseKind.JOB)
         );
 
@@ -76,13 +70,11 @@ public class InstallInfoImpl implements InstallInfo {
                 isDbExistent(DatabaseKind.FINAL) &&
                 isTripleIndexOn(DatabaseKind.FINAL) &&
                 isCollectionLexiconOn(DatabaseKind.FINAL) &&
-                isDbExistent(DatabaseKind.TRACE) &&
                 isDbExistent(DatabaseKind.JOB)
         );
         boolean forestsOk = (
             areForestsExistent(DatabaseKind.STAGING) &&
                 areForestsExistent(DatabaseKind.FINAL) &&
-                areForestsExistent(DatabaseKind.TRACE) &&
                 areForestsExistent(DatabaseKind.JOB)
         );
 
@@ -95,13 +87,11 @@ public class InstallInfoImpl implements InstallInfo {
             "\tAppServers:\n" +
             "\t\tStaging: " + (isAppServerExistent(DatabaseKind.STAGING) ? "exists" : "MISSING") + "\n" +
             "\t\tFinal:   " + (isAppServerExistent(DatabaseKind.FINAL) ? "exists" : "MISSING") + "\n" +
-            "\t\tTrace:   " + (isAppServerExistent(DatabaseKind.TRACE) ? "exists" : "MISSING") + "\n" +
-            "\t\tJob:     " + (isAppServerExistent(DatabaseKind.JOB) ? "exists" : "MISSING") + "\n" +
+            "\t\tJobs:     " + (isAppServerExistent(DatabaseKind.JOB) ? "exists" : "MISSING") + "\n" +
             "\tDatabases:\n" +
             "\t\tStaging: " + (isDbExistent(DatabaseKind.STAGING) ? "exists" : "MISSING") + "\n" +
             "\t\tFinal:   " + (isDbExistent(DatabaseKind.FINAL) ? "exists" : "MISSING") + "\n" +
-            "\t\tTrace:   " + (isDbExistent(DatabaseKind.TRACE) ? "exists" : "MISSING") + "\n" +
-            "\t\tJob:     " + (isDbExistent(DatabaseKind.JOB) ? "exists" : "MISSING") + "\n" +
+            "\t\tJobs:     " + (isDbExistent(DatabaseKind.JOB) ? "exists" : "MISSING") + "\n" +
             "\tDatabases Indexes:\n" +
             "\t\tStaging Triples Index : " + (isTripleIndexOn(DatabaseKind.STAGING) ? "exists" : "MISSING") + "\n" +
             "\t\tStaging Collection Lexicon : " + (isCollectionLexiconOn(DatabaseKind.STAGING) ? "exists" : "MISSING") + "\n" +
@@ -110,10 +100,9 @@ public class InstallInfoImpl implements InstallInfo {
             "\tForests\n" +
             "\t\tStaging: " + (areForestsExistent(DatabaseKind.STAGING) ? "exists" : "MISSING") + "\n" +
             "\t\tFinal:   " + (areForestsExistent(DatabaseKind.FINAL) ? "exists" : "MISSING") + "\n" +
-            "\t\tTrace:   " + (areForestsExistent(DatabaseKind.TRACE) ? "exists" : "MISSING") + "\n" +
-            "\t\tJob:     " + (areForestsExistent(DatabaseKind.JOB) ? "exists" : "MISSING") + "\n" +
+            "\t\tJobs:     " + (areForestsExistent(DatabaseKind.JOB) ? "exists" : "MISSING") + "\n" +
             "\n\n" +
-            "OVERAL RESULT: " + (isInstalled() ? "INSTALLED" : "NOT INSTALLED") + "\n";
+            "OVERALL RESULT: " + (isInstalled() ? "INSTALLED" : "NOT INSTALLED") + "\n";
     }
 
     @Override public boolean isAppServerExistent(DatabaseKind kind) {
@@ -128,9 +117,7 @@ public class InstallInfoImpl implements InstallInfo {
             case JOB:
                 exists = jobAppServerExists;
                 break;
-            case TRACE:
-                exists = traceAppServerExists;
-                break;
+
             default:
                 throw new InvalidDBOperationError(kind, "test appserver existence");
         }
@@ -145,9 +132,7 @@ public class InstallInfoImpl implements InstallInfo {
             case FINAL:
                 this.finalAppServerExists = exists;
                 break;
-            case TRACE:
-                this.traceAppServerExists = exists;
-                break;
+
             case JOB:
                 this.jobAppServerExists = exists;
                 break;
@@ -168,9 +153,7 @@ public class InstallInfoImpl implements InstallInfo {
             case JOB:
                 exists = jobDbExists;
                 break;
-            case TRACE:
-                exists = traceDbExists;
-                break;
+
             default:
                 throw new InvalidDBOperationError(kind, "test database existence");
         }
@@ -185,9 +168,7 @@ public class InstallInfoImpl implements InstallInfo {
             case FINAL:
                 this.finalDbExists = exists;
                 break;
-            case TRACE:
-                this.traceDbExists = exists;
-                break;
+
             case JOB:
                 this.jobDbExists = exists;
                 break;
@@ -262,9 +243,6 @@ public class InstallInfoImpl implements InstallInfo {
             case FINAL:
                 exists = finalForestsExist;
                 break;
-            case TRACE:
-                exists = traceForestsExist;
-                break;
             case JOB:
                 exists = jobForestsExist;
                 break;
@@ -281,9 +259,6 @@ public class InstallInfoImpl implements InstallInfo {
                 break;
             case FINAL:
                 this.finalForestsExist = forestsExistent;
-                break;
-            case TRACE:
-                this.traceForestsExist = forestsExistent;
                 break;
             case JOB:
                 this.jobForestsExist = forestsExistent;

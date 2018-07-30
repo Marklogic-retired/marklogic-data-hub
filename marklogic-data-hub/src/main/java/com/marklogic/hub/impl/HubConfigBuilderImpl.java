@@ -26,10 +26,14 @@ import com.marklogic.mgmt.admin.AdminConfig;
 import com.marklogic.mgmt.admin.AdminManager;
 import com.marklogic.mgmt.admin.DefaultAdminConfigFactory;
 import com.marklogic.mgmt.util.SimplePropertySource;
+import org.apache.http.conn.ssl.X509HostnameVerifier;
 
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.SSLSocket;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.security.cert.X509Certificate;
 import java.util.Properties;
 
 /**
@@ -80,26 +84,31 @@ public class HubConfigBuilderImpl implements HubConfigBuilder {
         return this;
     }
 
+    @Deprecated
     @Override public HubConfigBuilder withAppConfig(AppConfig appConfig) {
         this.appConfig = appConfig;
         return this;
     }
 
+    @Deprecated
     @Override public HubConfigBuilder withAdminConfig(AdminConfig adminConfig) {
         this.adminConfig = adminConfig;
         return this;
     }
 
+    @Deprecated
     @Override public HubConfigBuilder withAdminManager(AdminManager adminManager) {
         this.adminManager = adminManager;
         return this;
     }
 
+    @Deprecated
     @Override public HubConfigBuilder withManageConfig(ManageConfig manageConfig) {
         this.manageConfig = manageConfig;
         return this;
     }
 
+    @Deprecated
     @Override public HubConfigBuilder withManageClient(ManageClient manageClient) {
         this.manageClient = manageClient;
         return this;
@@ -150,7 +159,27 @@ public class HubConfigBuilderImpl implements HubConfigBuilder {
             hubConfig.setManageConfig(manageConfig);
         }
         else {
-            hubConfig.setManageConfig(new DefaultManageConfigFactory(propertySource).newManageConfig());
+            // this works around https://github.com/marklogic-community/ml-app-deployer/issues/292
+            // can be changed to this when 292 is fixed:
+            // hubConfig.setManageConfig(new DefaultManageConfigFactory(propertySource).newManageConfig());
+
+            ManageConfig manageConfig = new DefaultManageConfigFactory(propertySource).newManageConfig();
+            manageConfig.setHostnameVerifier(new X509HostnameVerifier() {
+                @Override
+                public void verify(String s, SSLSocket sslSocket) {}
+
+                @Override
+                public void verify(String s, X509Certificate x509Certificate) {}
+
+                @Override
+                public void verify(String s, String[] strings, String[] strings1) {}
+
+                @Override
+                public boolean verify(String s, SSLSession sslSession) {
+                    return true;
+                }
+            });
+            hubConfig.setManageConfig(manageConfig);
         }
 
         if (manageClient != null) {

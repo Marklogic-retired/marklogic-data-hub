@@ -37,6 +37,7 @@ export class Entity {
   editDescription: boolean = false;
   editBaseUri: boolean = false;
   editing: boolean = false;
+  hasDocs: boolean = false;
 
   dragging: boolean = false;
   transform: string = 'translate(0, 0)';
@@ -134,7 +135,8 @@ export class Entity {
         'elementRangeIndex': [],
         'rangeIndex': [],
         'required': [],
-        'wordLexicon': []
+        'wordLexicon': [],
+        'pii': []
       },
       'filename': null,
       'hubUi': {

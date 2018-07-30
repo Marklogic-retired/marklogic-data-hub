@@ -1,11 +1,14 @@
 {
   "info" : {
     "title" : "Product",
-    "version" : "0.0.1"
+    "version" : "0.0.1",
+    "baseUri" : ""
   },
   "definitions" : {
     "Product" : {
       "required" : [ ],
+      "pii" : [ ],
+      "elementRangeIndex" : [ ],
       "rangeIndex" : [ ],
       "wordLexicon" : [ ],
       "properties" : {

@@ -1,4 +1,4 @@
-import { browser, ExpectedConditions as EC} from 'protractor';
+import { browser, ExpectedConditions as EC, element, by} from 'protractor';
 import dashboardPage from '../../page-objects/dashboard/dashboard';
 import flowPage from '../../page-objects/flows/flows';
 import jobsPage from '../../page-objects/jobs/jobs';
@@ -8,43 +8,42 @@ export default function() {
       beforeAll(() => {
         jobsPage.isLoaded();
       });
-  
+
       it ('should count the jobs', function() {
         expect(jobsPage.jobResults().getText()).toContain('Showing Results 1 to 6 of 6');
         //verfiy on dashboard page
         jobsPage.dashboardTab.click();
         dashboardPage.isLoaded();
-        expect(dashboardPage.jobCount().getText()).toEqual('6');
+        //count jobs and traces
+        expect(dashboardPage.jobCount().getText()).toEqual('2,707');
         dashboardPage.jobsTab.click();
         jobsPage.isLoaded();
       });
 
       it ('search only harmonize jobs', function() {
-        jobsPage.searchBox().clear();
-        jobsPage.searchBox().sendKeys('harmonize');
-        jobsPage.searchButton().click();
+        jobsPage.facetButton('harmonize').click();
         browser.wait(EC.visibilityOf(jobsPage.jobResults()));
         expect(jobsPage.jobResults().getText()).toContain('Showing Results 1 to 1 of 1');
       });
 
       it ('search only input jobs', function() {
-        jobsPage.searchBox().clear();
-        jobsPage.searchBox().sendKeys('input');
-        jobsPage.searchButton().click();
+        jobsPage.removeFacetButton('harmonize').click();
         browser.wait(EC.visibilityOf(jobsPage.jobResults()));
+        jobsPage.facetButton('input').click();
+        browser.wait(EC.visibilityOf(jobsPage.jobResults()));
+
         expect(jobsPage.jobResults().getText()).toContain('Showing Results 1 to 5 of 5');
       });
 
       it ('search with facet for finished jobs', function() {
-        jobsPage.searchBox().clear();
-        jobsPage.searchButton().click();
+        jobsPage.removeFacetButton('input').click();
         browser.wait(EC.visibilityOf(jobsPage.jobResults()));
         jobsPage.facetButton('FINISHED').click();
         browser.wait(EC.visibilityOf(jobsPage.jobResults()));
-        expect(jobsPage.jobResults().getText()).toContain('Showing Results 1 to 5 of 5');
+        expect(jobsPage.jobResults().getText()).toContain('Showing Results 1 to 6 of 6');
         jobsPage.removeFacetButton('FINISHED').click();
         browser.wait(EC.visibilityOf(jobsPage.jobResults()));
-        expect(jobsPage.jobResults().getText()).toContain('Showing Results 1 to 5 of 5');
+        expect(jobsPage.jobResults().getText()).toContain('Showing Results 1 to 6 of 6');
       });
 
       it ('search with facet for TestEntity jobs', function() {
@@ -53,7 +52,7 @@ export default function() {
         expect(jobsPage.jobResults().getText()).toContain('Showing Results 1 to 4 of 4');
         jobsPage.removeFacetButton('TestEntity').click();
         browser.wait(EC.visibilityOf(jobsPage.jobResults()));
-        expect(jobsPage.jobResults().getText()).toContain('Showing Results 1 to 5 of 5');
+        expect(jobsPage.jobResults().getText()).toContain('Showing Results 1 to 6 of 6');
       });
 
       it ('check and export some jobs', function() {
@@ -73,6 +72,7 @@ export default function() {
         flowPage.isLoaded();
         flowPage.jobsTab.click();
         jobsPage.isLoaded();
+        //verify to delete some jobs
         jobsPage.jobCheckboxByPosition(1).click();
         jobsPage.jobCheckboxByPosition(2).click();
         jobsPage.actionDropDown().click();
@@ -82,10 +82,11 @@ export default function() {
         jobsPage.deleteButton().click();
         browser.wait(EC.visibilityOf(jobsPage.jobResults()));
         expect(jobsPage.jobResults().getText()).toContain('Showing Results 1 to 4 of 4');
-        //verfiy on dashboard page
+        //verify on dashboard page
         jobsPage.dashboardTab.click();
         dashboardPage.isLoaded();
-        expect(dashboardPage.jobCount().getText()).toEqual('4');
+        //count jobs and traces
+        expect(dashboardPage.jobCount().getText()).toEqual('1,805');
         dashboardPage.jobsTab.click();
         jobsPage.isLoaded();
       });

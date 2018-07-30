@@ -314,7 +314,8 @@ export class FlowsComponent implements OnInit, OnDestroy {
       component: NewFlowComponent,
       providers: [
         { provide: 'flowType', useValue: flowType },
-        { provide: 'actions', useValue: actions }
+        { provide: 'actions', useValue: actions },
+        { provide: 'entity', useValue: entity}
       ],
       isModal: true
     });

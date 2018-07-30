@@ -15,6 +15,8 @@
  */
 package com.marklogic.hub.entity;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.hub.EntityManager;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
@@ -42,8 +44,9 @@ public class EntityManagerTest extends HubTestBase {
     @Before
     public void clearDbs() {
         deleteProjectDir();
-        basicSetup();
+        // FIXME -- test eval requires admin to remove all the modeules.  rewrite to remove query options...
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_MODULES_DB_NAME);
+        basicSetup();
         installHubModules();
         getPropsMgr().deletePropertiesFile();
     }
@@ -53,7 +56,8 @@ public class EntityManagerTest extends HubTestBase {
         Path employeeDir = scaffolding.getEntityDir("employee");
         employeeDir.toFile().mkdirs();
         assertTrue(employeeDir.toFile().exists());
-        FileUtil.copy(getResourceStream("scaffolding-test/employee.entity.json"), employeeDir.resolve("employee.entity.json").toFile());
+        FileUtil.copy(getResourceStream("scaffolding-test/employee.entity.json"),
+            employeeDir.resolve("employee.entity.json").toFile());
 
         Path managerDir = scaffolding.getEntityDir("manager");
         managerDir.toFile().mkdirs();
@@ -83,12 +87,11 @@ public class EntityManagerTest extends HubTestBase {
 
     @Test
     public void testDeploySearchOptionsWithNoEntities() {
+        clearDatabases(HubConfig.DEFAULT_MODULES_DB_NAME);
         Path dir = Paths.get(getHubConfig().getProjectDir(), HubConfig.ENTITY_CONFIG_DIR);
 
         assertNull(getModulesFile("/Default/" + HubConfig.DEFAULT_STAGING_NAME + "/rest-api/options/" + HubConfig.STAGING_ENTITY_QUERY_OPTIONS_FILE));
-        assertNull(getModulesFile("/Default/" + HubConfig.DEFAULT_FINAL_NAME + "/rest-api/options/" + HubConfig.FINAL_ENTITY_QUERY_OPTIONS_FILE));
-        Paths.get(dir.toString(), HubConfig.STAGING_ENTITY_QUERY_OPTIONS_FILE).toFile().delete();
-        Paths.get(dir.toString(), HubConfig.FINAL_ENTITY_QUERY_OPTIONS_FILE).toFile().delete();
+        assertNull(getModulesFile("/Default/" + HubConfig.DEFAULT_STAGING_NAME + "/rest-api/options/" + HubConfig.FINAL_ENTITY_QUERY_OPTIONS_FILE));
         assertFalse(Paths.get(dir.toString(), HubConfig.STAGING_ENTITY_QUERY_OPTIONS_FILE).toFile().exists());
         assertFalse(Paths.get(dir.toString(), HubConfig.FINAL_ENTITY_QUERY_OPTIONS_FILE).toFile().exists());
         assertEquals(0, getStagingDocCount());
@@ -113,7 +116,7 @@ public class EntityManagerTest extends HubTestBase {
         Path dir = Paths.get(getHubConfig().getProjectDir(), HubConfig.ENTITY_CONFIG_DIR);
 
         assertNull(getModulesFile("/Default/" + HubConfig.DEFAULT_STAGING_NAME + "/rest-api/options/" + HubConfig.STAGING_ENTITY_QUERY_OPTIONS_FILE));
-        assertNull(getModulesFile("/Default/" + HubConfig.DEFAULT_FINAL_NAME + "/rest-api/options/" + HubConfig.FINAL_ENTITY_QUERY_OPTIONS_FILE));
+        assertNull(getModulesFile("/Default/" + HubConfig.DEFAULT_STAGING_NAME + "/rest-api/options/" + HubConfig.FINAL_ENTITY_QUERY_OPTIONS_FILE));
         assertFalse(Paths.get(dir.toString(), HubConfig.STAGING_ENTITY_QUERY_OPTIONS_FILE).toFile().exists());
         assertFalse(Paths.get(dir.toString(), HubConfig.FINAL_ENTITY_QUERY_OPTIONS_FILE).toFile().exists());
         assertEquals(0, getStagingDocCount());
@@ -128,7 +131,7 @@ public class EntityManagerTest extends HubTestBase {
         assertEquals(0, getStagingDocCount());
         assertEquals(0, getFinalDocCount());
         assertXMLEqual(getResource("entity-manager-test/options.xml"), getModulesFile("/Default/" + HubConfig.DEFAULT_STAGING_NAME + "/rest-api/options/" + HubConfig.STAGING_ENTITY_QUERY_OPTIONS_FILE));
-        assertXMLEqual(getResource("entity-manager-test/options.xml"), getModulesFile("/Default/" + HubConfig.DEFAULT_FINAL_NAME + "/rest-api/options/" + HubConfig.FINAL_ENTITY_QUERY_OPTIONS_FILE));
+        assertXMLEqual(getResource("entity-manager-test/options.xml"), getModulesFile("/Default/" + HubConfig.DEFAULT_STAGING_NAME + "/rest-api/options/" + HubConfig.FINAL_ENTITY_QUERY_OPTIONS_FILE));
 
         updateManagerEntity();
         deployed = entityManager.deployQueryOptions();
@@ -138,7 +141,7 @@ public class EntityManagerTest extends HubTestBase {
         assertEquals(0, getStagingDocCount());
         assertEquals(0, getFinalDocCount());
         assertXMLEqual(getResource("entity-manager-test/options2.xml"), getModulesFile("/Default/" + HubConfig.DEFAULT_STAGING_NAME + "/rest-api/options/" + HubConfig.STAGING_ENTITY_QUERY_OPTIONS_FILE));
-        assertXMLEqual(getResource("entity-manager-test/options2.xml"), getModulesFile("/Default/" + HubConfig.DEFAULT_FINAL_NAME + "/rest-api/options/" + HubConfig.FINAL_ENTITY_QUERY_OPTIONS_FILE));
+        assertXMLEqual(getResource("entity-manager-test/options2.xml"), getModulesFile("/Default/" + HubConfig.DEFAULT_STAGING_NAME + "/rest-api/options/" + HubConfig.FINAL_ENTITY_QUERY_OPTIONS_FILE));
 
         // shouldn't deploy a 2nd time because of modules properties files
         deployed = entityManager.deployQueryOptions();
@@ -178,5 +181,39 @@ public class EntityManagerTest extends HubTestBase {
         // shouldn't save them on round 3 because of timestamps
         assertFalse(entityManager.saveDbIndexes());
     }
+
+
+    @Test
+    public void testDeployPiiConfigurations() throws IOException {
+        installEntities();
+
+        ObjectMapper mapper = new ObjectMapper();
+        Path dir = Paths.get(getHubConfig().getProjectDir(), HubConfig.ENTITY_CONFIG_DIR);
+
+        EntityManager entityManager = EntityManager.create(getHubConfig());
+
+        // deploy is separate
+        entityManager.savePii();
+
+        File protectedPathConfig = getHubConfig().getUserSecurityDir().resolve("protected-paths/01_" + HubConfig.PII_PROTECTED_PATHS_FILE).toFile();
+        File secondProtectedPathConfig = getHubConfig().getUserSecurityDir().resolve("protected-paths/02_" + HubConfig.PII_PROTECTED_PATHS_FILE).toFile();
+        File queryRolesetsConfig = getHubConfig().getUserSecurityDir().resolve("query-rolesets/" + HubConfig.PII_QUERY_ROLESET_FILE).toFile();
+
+                    // assert that ELS configuation is in project
+        JsonNode protectedPaths = mapper.readTree(protectedPathConfig);
+        assertTrue("Protected Path Config should have path expression.",
+            protectedPaths.get("path-expression").isTextual());
+        protectedPaths = mapper.readTree(secondProtectedPathConfig);
+        assertTrue("Protected Path Config should have path expression.",
+            protectedPaths.get("path-expression").isTextual());
+        JsonNode rolesets = mapper.readTree(queryRolesetsConfig);
+        assertEquals("Config should have one roleset, pii-reader.",
+            "pii-reader",
+            rolesets.get("role-name").get(0).asText());
+
+
+    }
+
+
 
 }

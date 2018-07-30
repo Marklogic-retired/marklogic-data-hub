@@ -15,18 +15,27 @@
  */
 package com.marklogic.hub.impl;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.appdeployer.command.Command;
 import com.marklogic.appdeployer.command.CommandMapBuilder;
 import com.marklogic.appdeployer.command.appservers.DeployOtherServersCommand;
 import com.marklogic.appdeployer.command.forests.DeployCustomForestsCommand;
 import com.marklogic.client.FailedRequestException;
+import com.marklogic.client.admin.QueryOptionsManager;
+import com.marklogic.client.admin.ResourceExtensionsManager;
+import com.marklogic.client.admin.ServerConfigurationManager;
+import com.marklogic.client.admin.TransformExtensionsManager;
 import com.marklogic.client.eval.ServerEvaluationCall;
+import com.marklogic.client.io.JacksonHandle;
+import com.marklogic.client.io.QueryOptionsListHandle;
 import com.marklogic.hub.*;
 import com.marklogic.hub.deploy.HubAppDeployer;
 import com.marklogic.hub.deploy.commands.*;
 import com.marklogic.hub.deploy.util.HubDeployStatusListener;
 import com.marklogic.hub.error.CantUpgradeException;
+import com.marklogic.hub.error.DataHubConfigurationException;
 import com.marklogic.hub.error.InvalidDBOperationError;
 import com.marklogic.hub.error.ServerValidationException;
 import com.marklogic.hub.util.Versions;
@@ -63,6 +72,9 @@ public class DataHubImpl implements DataHub {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     public DataHubImpl(HubConfig hubConfig) {
+        if (hubConfig == null) {
+            throw new DataHubConfigurationException("HubConfig must not be null when creating a data hub");
+        }
         this.hubConfig = ((HubConfigImpl)hubConfig);
     }
 
@@ -110,13 +122,11 @@ public class DataHubImpl implements DataHub {
         ResourcesFragment srf = getServerManager().getAsXml();
         installInfo.setAppServerExistent(DatabaseKind.STAGING, srf.resourceExists(hubConfig.getHttpName(DatabaseKind.STAGING)));
         installInfo.setAppServerExistent(DatabaseKind.FINAL, srf.resourceExists(hubConfig.getHttpName(DatabaseKind.FINAL)));
-        installInfo.setAppServerExistent(DatabaseKind.TRACE, srf.resourceExists(hubConfig.getHttpName(DatabaseKind.TRACE)));
         installInfo.setAppServerExistent(DatabaseKind.JOB, srf.resourceExists(hubConfig.getHttpName(DatabaseKind.JOB)));
 
         ResourcesFragment drf = getDatabaseManager().getAsXml();
         installInfo.setDbExistent(DatabaseKind.STAGING, drf.resourceExists(hubConfig.getDbName(DatabaseKind.STAGING)));
         installInfo.setDbExistent(DatabaseKind.FINAL, drf.resourceExists(hubConfig.getDbName(DatabaseKind.FINAL)));
-        installInfo.setDbExistent(DatabaseKind.TRACE, drf.resourceExists(hubConfig.getDbName(DatabaseKind.TRACE)));
         installInfo.setDbExistent(DatabaseKind.JOB, drf.resourceExists(hubConfig.getDbName(DatabaseKind.JOB)));
 
         if (installInfo.isDbExistent(DatabaseKind.STAGING)) {
@@ -131,11 +141,6 @@ public class DataHubImpl implements DataHub {
             installInfo.setTripleIndexOn(DatabaseKind.FINAL, Boolean.parseBoolean(f.getElementValue("//m:triple-index")));
             installInfo.setCollectionLexiconOn(DatabaseKind.FINAL, Boolean.parseBoolean(f.getElementValue("//m:collection-lexicon")));
             installInfo.setForestsExistent(DatabaseKind.FINAL, (f.getElements("//m:forest").size() > 0));
-        }
-
-        if (installInfo.isDbExistent(DatabaseKind.TRACE)) {
-            Fragment f = getDatabaseManager().getPropertiesAsXml(hubConfig.getDbName(DatabaseKind.TRACE));
-            installInfo.setForestsExistent(DatabaseKind.TRACE, (f.getElements("//m:forest").size() > 0));
         }
 
         if (installInfo.isDbExistent(DatabaseKind.JOB)) {
@@ -164,13 +169,13 @@ public class DataHubImpl implements DataHub {
                     alteredString = StringUtils.rightPad(alteredString, 4, "0");
                 }
                 int ver = Integer.parseInt(alteredString.substring(0, 4));
-                if (!isNightly && ver < 9011) {
+                if (!isNightly && ver < 9050) {
                     return false;
                 }
             }
             if (isNightly) {
                 String dateString = versionString.replaceAll("[^-]+-(\\d{4})(\\d{2})(\\d{2})", "$1-$2-$3");
-                Date minDate = new GregorianCalendar(2017, 6, 1).getTime();
+                Date minDate = new GregorianCalendar(2018, 4, 5).getTime();
                 Date date = new SimpleDateFormat("y-M-d").parse(dateString);
                 if (date.before(minDate)) {
                     return false;
@@ -193,8 +198,11 @@ public class DataHubImpl implements DataHub {
     @Override public void clearUserModules() {
         ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver(DataHub.class.getClassLoader());
         try {
-            ArrayList<String> options = new ArrayList<>();
+            HashSet<String> options = new HashSet<>();
             for (Resource r : resolver.getResources("classpath*:/ml-modules/options/*.xml")) {
+                options.add(r.getFilename().replace(".xml", ""));
+            }
+            for (Resource r : resolver.getResources("classpath*:/ml-modules-final/options/*.xml")) {
                 options.add(r.getFilename().replace(".xml", ""));
             }
             for (Resource r : resolver.getResources("classpath*:/ml-modules-traces/options/*.xml")) {
@@ -204,16 +212,40 @@ public class DataHubImpl implements DataHub {
                 options.add(r.getFilename().replace(".xml", ""));
             }
 
-            ArrayList<String> services = new ArrayList<>();
+            HashSet<String> services = new HashSet<>();
             for (Resource r : resolver.getResources("classpath*:/ml-modules/services/*.xqy")) {
                 services.add(r.getFilename().replaceAll("\\.(xqy|sjs)", ""));
             }
 
-
-            ArrayList<String> transforms = new ArrayList<>();
+            HashSet<String> transforms = new HashSet<>();
             for (Resource r : resolver.getResources("classpath*:/ml-modules/transforms/*")) {
                 transforms.add(r.getFilename().replaceAll("\\.(xqy|sjs)", ""));
             }
+
+            ServerConfigurationManager configMgr = hubConfig.newStagingClient().newServerConfigManager();
+            QueryOptionsManager stagingOptionsManager = configMgr.newQueryOptionsManager();
+
+            // remove options using mgr.
+            QueryOptionsListHandle handle = stagingOptionsManager.optionsList(new QueryOptionsListHandle());
+            Map<String, String> optionsMap = handle.getValuesMap();
+            optionsMap.keySet().forEach(
+               optionsName -> { if (!options.contains(optionsName)) { stagingOptionsManager.deleteOptions(optionsName); }
+               }
+            );
+
+            // remove transforms using amped channel
+            TransformExtensionsManager transformExtensionsManager = configMgr.newTransformExtensionsManager();
+            JsonNode transformsList = transformExtensionsManager.listTransforms(new JacksonHandle()).get();
+            transformsList.findValuesAsText("name").forEach(
+                x -> { if (! transforms.contains(x)) { transformExtensionsManager.deleteTransform(x);} }
+            );
+
+            // remove resource extensions using amped channel
+            ResourceExtensionsManager resourceExtensionsManager = configMgr.newResourceExtensionsManager();
+            JsonNode resourceExtensions = resourceExtensionsManager.listServices(new JacksonHandle()).get();
+            resourceExtensions.findValuesAsText("name").forEach(
+                x -> { if (! services.contains(x)) { resourceExtensionsManager.deleteServices(x); } }
+            );
 
             String query =
                 "cts:uris((),(),cts:not-query(cts:collection-query('hub-core-module')))[\n" +
@@ -268,11 +300,6 @@ public class DataHubImpl implements DataHub {
             jobPortInUseBy = serverName;
         }
 
-        serverName = portsInUse.get(hubConfig.getPort(DatabaseKind.TRACE));
-        tracePortInUse = ports.contains(hubConfig.getPort(DatabaseKind.TRACE)) && serverName != null && !serverName.equals(hubConfig.getHttpName(DatabaseKind.TRACE));
-        if (tracePortInUse) {
-            tracePortInUseBy = serverName;
-        }
 
         if (versions == null) {
             versions = new Versions(hubConfig);
@@ -288,8 +315,6 @@ public class DataHubImpl implements DataHub {
         response.put("finalPortInUseBy", finalPortInUseBy);
         response.put("jobPortInUse", jobPortInUse);
         response.put("jobPortInUseBy", jobPortInUseBy);
-        response.put("tracePortInUse", tracePortInUse);
-        response.put("tracePortInUseBy", tracePortInUseBy);
         response.put("safeToInstall", isSafeToInstall());
 
         return response;
@@ -312,14 +337,14 @@ public class DataHubImpl implements DataHub {
         logger.warn("Installing the Data Hub into MarkLogic");
 
         AppConfig config = hubConfig.getAppConfig();
-        HubAppDeployer deployer = new HubAppDeployer(getManageClient(), getAdminManager(), listener);
+        HubAppDeployer deployer = new HubAppDeployer(getManageClient(), getAdminManager(),  listener, hubConfig.newStagingClient());
         deployer.setCommands(getCommandList());
         deployer.deploy(config);
     }
 
     @Override public void updateIndexes() {
         AppConfig config = hubConfig.getAppConfig();
-        HubAppDeployer deployer = new HubAppDeployer(getManageClient(), getAdminManager(), null);
+        HubAppDeployer deployer = new HubAppDeployer(getManageClient(), getAdminManager(), null, hubConfig.newStagingClient());
         List<Command> commands = new ArrayList<>();
         commands.add(new DeployHubDatabasesCommand(hubConfig));
         deployer.setCommands(commands);
@@ -341,7 +366,7 @@ public class DataHubImpl implements DataHub {
         logger.warn("Uninstalling the Data Hub from MarkLogic");
 
         AppConfig config = hubConfig.getAppConfig();
-        HubAppDeployer deployer = new HubAppDeployer(getManageClient(), getAdminManager(), listener);
+        HubAppDeployer deployer = new HubAppDeployer(getManageClient(), getAdminManager(), listener, hubConfig.newStagingClient());
         deployer.setCommands(getCommandList());
         deployer.undeploy(config);
     }
@@ -416,16 +441,13 @@ public class DataHubImpl implements DataHub {
     private String finalPortInUseBy;
     private boolean jobPortInUse;
     private String jobPortInUseBy;
-    private boolean tracePortInUse;
-    private String tracePortInUseBy;
     private boolean serverVersionOk;
     private String serverVersion;
 
     @Override public boolean isSafeToInstall() {
         return !(isPortInUse(DatabaseKind.FINAL) ||
             isPortInUse(DatabaseKind.STAGING) ||
-            isPortInUse(DatabaseKind.JOB) ||
-            isPortInUse(DatabaseKind.TRACE)) && isServerVersionOk();
+            isPortInUse(DatabaseKind.JOB)) && isServerVersionOk();
     }
 
     @Override public boolean isPortInUse(DatabaseKind kind){
@@ -439,9 +461,6 @@ public class DataHubImpl implements DataHub {
                 break;
             case JOB:
                 inUse = jobPortInUse;
-                break;
-            case TRACE:
-                inUse = tracePortInUse;
                 break;
             default:
                 throw new InvalidDBOperationError(kind, "check for port use");
@@ -460,9 +479,6 @@ public class DataHubImpl implements DataHub {
             case JOB:
                 jobPortInUseBy = usedBy;
                 break;
-            case TRACE:
-                tracePortInUseBy = usedBy;
-                break;
             default:
                 throw new InvalidDBOperationError(kind, "set if port in use");
         }
@@ -479,9 +495,6 @@ public class DataHubImpl implements DataHub {
                 break;
             case JOB:
                 inUseBy = jobPortInUseBy;
-                break;
-            case TRACE:
-                inUseBy = tracePortInUseBy;
                 break;
             default:
                 throw new InvalidDBOperationError(kind, "check if port is in use");

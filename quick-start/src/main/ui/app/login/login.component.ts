@@ -355,8 +355,8 @@ export class LoginComponent implements OnInit {
     this.initSettings.stagingDbName = name + '-STAGING';
     this.initSettings.finalHttpName = name + '-FINAL';
     this.initSettings.finalDbName = name + '-FINAL';
-    this.initSettings.traceHttpName = name + '-TRACING';
-    this.initSettings.traceDbName = name + '-TRACING';
+    this.initSettings.traceHttpName = name + '-JOBS';
+    this.initSettings.traceDbName = name + '-JOBS';
     this.initSettings.jobHttpName = name + '-JOBS';
     this.initSettings.jobDbName = name + '-JOBS';
     this.initSettings.modulesDbName = name + '-MODULES';

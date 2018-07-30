@@ -44,9 +44,9 @@ public class JobService extends SearchableService {
     private JobManager jobMgr;
 
 
-    public JobService(DatabaseClient jobClient, DatabaseClient traceClient) {
+    public JobService(DatabaseClient jobClient) {
         this.queryMgr = jobClient.newQueryManager();
-        this.jobMgr = JobManager.create(jobClient, traceClient);
+        this.jobMgr = JobManager.create(jobClient);
     }
 
     public StringHandle getJobs(JobQuery jobQuery) {
@@ -55,6 +55,7 @@ public class JobService extends SearchableService {
         StructuredQueryBuilder sb = queryMgr.newStructuredQueryBuilder(SEARCH_OPTIONS_NAME);
 
         ArrayList<StructuredQueryDefinition> queries = new ArrayList<>();
+        queries.add(sb.collection("job"));
         if (jobQuery.query != null && !jobQuery.query.equals("")) {
             queries.add(sb.term(jobQuery.query));
         }

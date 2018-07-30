@@ -6,6 +6,6 @@ declare option xdmp:mapping "false";
 
 declare variable $STAGING-DATABASE := "data-hub-STAGING";
 declare variable $FINAL-DATABASE := "data-hub-FINAL";
-declare variable $TRACE-DATABASE := "data-hub-TRACING";
+declare variable $TRACE-DATABASE := "data-hub-JOBS";
 declare variable $JOB-DATABASE := "data-hub-JOBS";
 declare variable $MODULES-DATABASE := "data-hub-MODULES";

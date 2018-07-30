@@ -12,7 +12,7 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
- *  
+ *
  */
 
 package com.marklogic.gradle.task
@@ -35,12 +35,12 @@ class InstalledTests extends BaseTest {
     def setupSpec() {
         createGradleFiles()
         runTask('hubInit')
-        runTask('mlUndeploy',  '-Pconfirm=true')
+        // this will be relatively fast (idempotent) for already-installed hubs
         println(runTask('mlDeploy', '-i').getOutput())
     }
 
     def cleanupSpec() {
-        runTask('mlUndeploy', '-Pconfirm=true')
+        //runTask('mlUndeploy', '-Pconfirm=true')
     }
 
     def "enable debugging with hub installed"() {
@@ -107,7 +107,7 @@ class InstalledTests extends BaseTest {
 
     def "runHarmonizeFlow with default src and dest"() {
         given:
-        println(runTask('hubCreateHarmonizeFlow', '-PentityName=my-new-entity', '-PflowName=my-new-harmonize-flow', '-PdataFormat=xml', '-PpluginFormat=xqy').getOutput())
+        println(runTask('hubCreateHarmonizeFlow', '-PentityName=my-new-entity', '-PflowName=my-new-harmonize-flow', '-PdataFormat=xml', '-PpluginFormat=xqy', '-PuseES=false').getOutput())
         println(runTask('mlReLoadModules'))
 
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME)
@@ -137,7 +137,7 @@ class InstalledTests extends BaseTest {
 
     def "runHarmonizeFlow with swapped src and dest"() {
         given:
-        println(runTask('hubCreateHarmonizeFlow', '-PentityName=my-new-entity', '-PflowName=my-new-harmonize-flow', '-PdataFormat=xml', '-PpluginFormat=xqy').getOutput())
+        println(runTask('hubCreateHarmonizeFlow', '-PentityName=my-new-entity', '-PflowName=my-new-harmonize-flow', '-PdataFormat=xml', '-PpluginFormat=xqy', '-PuseES=false').getOutput())
         println(runTask('mlReLoadModules'))
 
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME)
@@ -219,7 +219,7 @@ class InstalledTests extends BaseTest {
     def "runHarmonizeFlow with bad sourceDB"() {
         given:
 
-        println(runTask('hubCreateHarmonizeFlow', '-PentityName=my-new-entity', '-PflowName=my-new-harmonize-flow', '-PdataFormat=xml', '-PpluginFormat=xqy').getOutput())
+        println(runTask('hubCreateHarmonizeFlow', '-PentityName=my-new-entity', '-PflowName=my-new-harmonize-flow', '-PdataFormat=xml', '-PpluginFormat=xqy', '-PuseES=false').getOutput())
         println(runTask('mlReLoadModules'))
 
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME)
