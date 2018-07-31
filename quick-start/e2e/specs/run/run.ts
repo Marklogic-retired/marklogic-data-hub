@@ -24,7 +24,7 @@ export default function(tmpDir) {
       flowPage.clickEntityDisclosure('Product');
       browser.wait(EC.elementToBeClickable(flowPage.getFlow('Product', 'Load Products', 'INPUT')));
       flowPage.runInputFlow('Product', 'Load Products', 'json', 'products', 
-        'delimited_text', '?doc=yes&type=foo');
+        'delimited_text', '/product', '?doc=yes&type=foo');
     });
 
     it('should verify the loaded data', function() {
@@ -202,7 +202,7 @@ export default function(tmpDir) {
         let flowType = 'INPUT';
         let flowName = `${codeFormat} ${dataFormat} ${flowType}`;
         it (`should run a ${flowName} flow`, function() {
-          flowPage.runInputFlow('TestEntity', flowName, dataFormat, 'products', 'delimited_text', '');
+          flowPage.runInputFlow('TestEntity', flowName, dataFormat, 'products', 'delimited_text', '/testEntity', '');
         });
       });
     });
