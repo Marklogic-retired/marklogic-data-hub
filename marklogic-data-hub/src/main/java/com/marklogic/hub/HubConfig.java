@@ -25,6 +25,8 @@ import com.marklogic.client.DatabaseClientFactory;
 import com.marklogic.hub.impl.HubConfigImpl;
 
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 import java.io.IOException;
 import java.nio.file.Path;
 
@@ -183,6 +185,20 @@ public interface HubConfig {
      * @param authMethod - The SSL Auth Method for the database connection
      */
     void setAuthMethod(DatabaseKind kind, String authMethod);
+
+    /**
+     * Returns the TrustManager object for the DatabaseKind in the hub config
+     * @param kind - DatabaseKind enum, eg: STAGING or JOB
+     * @return The TrustManager for the DatabaseKind in hubconfig
+     */
+    X509TrustManager getTrustManager(DatabaseKind kind);
+
+    /**
+     * Sets the Trust Manager for the DatabaseKind in the config
+     * @param kind - DatabaseKind enum, eg: STAGING or JOB
+     * @param trustManager - The Trust Manager for the database connection
+     */
+    void setTrustManager(DatabaseKind kind, X509TrustManager trustManager);
 
     /**
      * Returns the SSL Scheme as string for the DatabaseKind in the hub config
@@ -475,4 +491,6 @@ public interface HubConfig {
      * @return information on the datahub configuration as a string
      */
     String getInfo();
+
+
 }

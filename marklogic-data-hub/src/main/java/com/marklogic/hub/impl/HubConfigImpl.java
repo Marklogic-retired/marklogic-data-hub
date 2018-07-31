@@ -41,6 +41,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 import java.io.File;
 import java.io.IOException;
@@ -451,6 +452,31 @@ public class HubConfigImpl implements HubConfig {
                 break;
             case TRACE:
                 this.jobAuthMethod = authMethod;
+                break;
+            default:
+                throw new InvalidDBOperationError(kind, "set auth method");
+        }
+    }
+
+    public X509TrustManager getTrustManager(DatabaseKind kind) {
+        switch (kind) {
+            case STAGING:
+                return this.stagingTrustManager;
+            case JOB:
+                return this.jobTrustManager;
+            default:
+                throw new InvalidDBOperationError(kind, "set auth method");
+        }
+    }
+
+    @Override
+    public void setTrustManager(DatabaseKind kind, X509TrustManager trustManager) {
+        switch (kind) {
+            case STAGING:
+                this.stagingTrustManager = trustManager;
+                break;
+            case JOB:
+                this.jobTrustManager = trustManager;
                 break;
             default:
                 throw new InvalidDBOperationError(kind, "set auth method");
