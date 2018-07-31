@@ -652,8 +652,10 @@ export default function() {
     it ('should retain flow options when moving around', function() {
       //move to other tab and go back to flows tab
       console.log('going to the other tab and back');
-      flowPage.entitiesTab.click();
-      entityPage.flowsTab.click();
+      appPage.entitiesTab.click();
+      entityPage.isLoaded();
+      appPage.flowsTab.click();
+      flowPage.isLoaded();
       flowPage.clickEntityDisclosure('Product');
       browser.wait(EC.visibilityOf(flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE')));
       //verify the options are retained
@@ -698,8 +700,10 @@ export default function() {
       flowPage.removeFlowOptionsByPositionButton(4).click();
       //verify the removed option
       console.log('verify the removed option');
-      flowPage.entitiesTab.click();
-      entityPage.flowsTab.click();
+      appPage.entitiesTab.click();
+      entityPage.isLoaded();
+      appPage.flowsTab.click();
+      flowPage.isLoaded();
       flowPage.clickEntityDisclosure('Product');
       browser.wait(EC.visibilityOf(flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE')));
       expect(flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE').isPresent()).toBe(true);

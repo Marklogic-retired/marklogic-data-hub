@@ -39,7 +39,7 @@ export default function() {
         flowPage.clickEntityDisclosure('TypeAhead');
         browser.wait(EC.elementToBeClickable(flowPage.getFlow('TypeAhead', 'Load TypeAhead', 'INPUT')));
         flowPage.runInputFlow('TypeAhead', 'Load TypeAhead', 'json', 'long-props', 'documents', 
-          '?doc=yes&type=foo');
+          '/typeahead', '?doc=yes&type=foo');
       });
 
       it('should verify the loaded data', function() {

@@ -232,10 +232,11 @@ export class FlowPage extends AppPage {
   * @dataFolderName: folder name under input directory
   * @inputFileType: aggregates | archive | delimited_text | delimited_json | documents
   *   | forest | rdf | sequencefile
+  * @uriPrefix: document uri prefix to append
   * @uriSuffix: document uri suffix to append
   */
   runInputFlow(entityName: string, flowName: string, dataFormat: string, 
-      dataFolderName: string, inputFileType: string, uriSuffix: string) {
+      dataFolderName: string, inputFileType: string, uriPrefix: string, uriSuffix: string) {
     console.log(`running flow: ${entityName}: ${flowName}: ${dataFormat}`)
     this.getFlow(entityName, flowName, 'INPUT').click();
 
@@ -268,6 +269,10 @@ export class FlowPage extends AppPage {
     browser.actions().mouseMove(this.menuItem(dataFormat)).perform();
     this.menuItem(dataFormat).click();
 
+    // set output uri prefix
+    this.mlcpInput('output_uri_prefix').clear();
+    this.mlcpInput('output_uri_prefix').sendKeys(uriPrefix);
+    
     // set output uri suffix
     this.mlcpInput('output_uri_suffix').clear();
     this.mlcpInput('output_uri_suffix').sendKeys(uriSuffix);
