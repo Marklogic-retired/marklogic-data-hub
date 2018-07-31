@@ -22,6 +22,17 @@ export default function() {
       });
 
       it('should create a mapping for Product entity with sku source', function() {
+        // get the document uri with sku - board_games_accessories.csv-0-1
+        appPage.browseDataTab.click()
+        browsePage.isLoaded();
+        browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
+        browsePage.searchBox().clear();
+        browsePage.searchBox().sendKeys('442403950907');
+        browsePage.searchButton().click();
+        browser.wait(EC.elementToBeClickable(browsePage.resultsUri()));
+        let sourceDocUriWithSmallSku = 
+          browsePage.resultsSpecificUri('/board_games_accessories.csv-0-1?doc=yes&type=foo').getText(); 
+        // create the map with specific sku doc uri
         appPage.mappingsTab.click();
         mappingsPage.isLoaded();
         browser.wait(EC.elementToBeClickable(mappingsPage.newMapButton('Product')));
@@ -41,7 +52,7 @@ export default function() {
         mappingsPage.editSourceURI().click()
         browser.wait(EC.elementToBeClickable(mappingsPage.inputSourceURI()));
         mappingsPage.inputSourceURI().clear();
-        mappingsPage.inputSourceURI().sendKeys('/private/board_games_accessories.csv-0-1?doc=yes&type=foo');
+        mappingsPage.inputSourceURI().sendKeys(sourceDocUriWithSmallSku);
         mappingsPage.editSourceURITick().click();
         browser.wait(EC.elementToBeClickable(mappingsPage.srcPropertyContainer('sku')));
         // select source for sku
@@ -70,6 +81,17 @@ export default function() {
       });
 
       it('should update MapProduct with SKU source', function() {
+        // get the document uri with SKU - board_games.csv-0-10
+        appPage.browseDataTab.click()
+        browsePage.isLoaded();
+        browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
+        browsePage.searchBox().clear();
+        browsePage.searchBox().sendKeys('159929577929');
+        browsePage.searchButton().click();
+        browser.wait(EC.elementToBeClickable(browsePage.resultsUri()));
+        let sourceDocUriWithBigSku = 
+          browsePage.resultsSpecificUri('/board_games.csv-0-10?doc=yes&type=foo').getText();
+        // update the map with specific SKU doc uri
         appPage.mappingsTab.click();
         mappingsPage.isLoaded();
         browser.wait(EC.elementToBeClickable(mappingsPage.entityMapping('MapProduct')));
@@ -79,7 +101,7 @@ export default function() {
         mappingsPage.editSourceURI().click()
         browser.wait(EC.elementToBeClickable(mappingsPage.inputSourceURI()));
         mappingsPage.inputSourceURI().clear();
-        mappingsPage.inputSourceURI().sendKeys('/private/board_games.csv-0-10?doc=yes&type=foo');
+        mappingsPage.inputSourceURI().sendKeys(sourceDocUriWithBigSku);
         mappingsPage.editSourceURITick().click();
         browser.wait(EC.elementToBeClickable(mappingsPage.editSourceURIConfirmationOK()));
         mappingsPage.editSourceURIConfirmationOK().click();
@@ -164,6 +186,8 @@ export default function() {
         browser.wait(EC.elementToBeClickable(mappingsPage.entityMapping('MapProduct')));
         mappingsPage.entityMapping('MapProduct').click();
         browser.wait(EC.elementToBeClickable(mappingsPage.editMapDescription()));
+        // get the original doc URI
+        let originalDocUri = mappingsPage.getSourceURITitle();
         // change the source URI
         mappingsPage.editSourceURI().click()
         browser.wait(EC.elementToBeClickable(mappingsPage.inputSourceURI()));
@@ -172,12 +196,13 @@ export default function() {
         mappingsPage.editSourceURITick().click();
         browser.wait(EC.elementToBeClickable(mappingsPage.editSourceURIConfirmationOK()));
         mappingsPage.editSourceURIConfirmationOK().click();
+        browser.sleep(3000);
         browser.wait(EC.elementToBeClickable(mappingsPage.docNotFoundConfirmationOK()));
         expect(mappingsPage.docNotFoundMessage().getText()).toContain('Document URI not found: invalidURI');
         mappingsPage.docNotFoundConfirmationOK().click();
         browser.wait(EC.elementToBeClickable(mappingsPage.srcPropertyContainer('sku')));
         // verify that the old valid URI persists
-        expect(mappingsPage.getSourceURITitle()).toEqual('/private/board_games.csv-0-10?doc=yes&type=foo');
+        expect(mappingsPage.getSourceURITitle()).toEqual(originalDocUri);
         // verify that the selected properties persist
         expect(mappingsPage.verifySourcePropertyName('SKU').isPresent()).toBeTruthy();
         expect(mappingsPage.verifySourcePropertyName('price').isPresent()).toBeTruthy();
@@ -190,6 +215,8 @@ export default function() {
         browser.wait(EC.elementToBeClickable(mappingsPage.entityMapping('MapProduct')));
         mappingsPage.entityMapping('MapProduct').click();
         browser.wait(EC.elementToBeClickable(mappingsPage.editMapDescription()));
+        // get the original doc URI
+        let originalDocUri = mappingsPage.getSourceURITitle();
         // change the sku source
         mappingsPage.sourcePropertyDropDown('sku').click();
         mappingsPage.sourceTypeAheadInput('sku').sendKeys('game_id');
@@ -201,7 +228,7 @@ export default function() {
         mappingsPage.resetConfirmationCancel().click();
         browser.wait(EC.elementToBeClickable(mappingsPage.srcPropertyContainer('sku')));
         // verify that the source URI and the properties persist (still game_id, but not saved)
-        expect(mappingsPage.getSourceURITitle()).toEqual('/private/board_games.csv-0-10?doc=yes&type=foo');
+        expect(mappingsPage.getSourceURITitle()).toEqual(originalDocUri);
         expect(mappingsPage.verifySourcePropertyName('game_id').isPresent()).toBeTruthy();
         expect(mappingsPage.verifySourcePropertyName('price').isPresent()).toBeTruthy();
       });
@@ -212,6 +239,8 @@ export default function() {
         browser.wait(EC.elementToBeClickable(mappingsPage.entityMapping('MapProduct')));
         mappingsPage.entityMapping('MapProduct').click();
         browser.wait(EC.elementToBeClickable(mappingsPage.editMapDescription()));
+        // get the original doc URI
+        let originalDocUri = mappingsPage.getSourceURITitle();
         // change the sku source
         mappingsPage.sourcePropertyDropDown('sku').click();
         mappingsPage.sourceTypeAheadInput('sku').sendKeys('game_id');
@@ -223,7 +252,7 @@ export default function() {
         mappingsPage.resetConfirmationOK().click()
         browser.wait(EC.elementToBeClickable(mappingsPage.srcPropertyContainer('sku')));
         // verify that the properties reset to old SKU (rollback to previous version)
-        expect(mappingsPage.getSourceURITitle()).toEqual('/private/board_games.csv-0-10?doc=yes&type=foo');
+        expect(mappingsPage.getSourceURITitle()).toEqual(originalDocUri);
         expect(mappingsPage.verifySourcePropertyName('SKU').isPresent()).toBeTruthy();
         expect(mappingsPage.verifySourcePropertyName('price').isPresent()).toBeTruthy();
       });
