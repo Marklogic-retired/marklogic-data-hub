@@ -42,3 +42,8 @@ bin/
 build/
 src/main/resources/static/
 src/main/resources/templates/
+
+# BIT artifacts
+.bit
+.bitmap
+bit.json

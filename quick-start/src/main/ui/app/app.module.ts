@@ -70,6 +70,7 @@ import {JobExportDialogComponent} from "./jobs/job-export.component";
 import { MapComponent } from './mappings';
 import { MappingsComponent } from "./mappings";
 import { NewMapComponent } from "./mappings/new-map.component";
+import {ThemeModule} from "./theme/theme.module";
 
 @NgModule({
   declarations: [
@@ -139,7 +140,8 @@ import { NewMapComponent } from "./mappings/new-map.component";
     GridManiaModule,
     RouterModule.forRoot(ROUTES, { useHash: true }),
     DatePipeModule,
-    BsDropdownModule.forRoot()
+    BsDropdownModule.forRoot(),
+    ThemeModule
   ],
   providers: [
     AUTH_PROVIDERS,

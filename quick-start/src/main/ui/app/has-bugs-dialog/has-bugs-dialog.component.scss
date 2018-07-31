@@ -1,4 +1,4 @@
-@import '../../styles/variables';
+@import '../theme/styles/variables';
 $error: unquote("rgb(#{$palette-datahub-red})");
 
 .has-bugs-dialog {

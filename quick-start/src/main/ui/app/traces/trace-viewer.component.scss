@@ -1,5 +1,5 @@
-@import '../../styles/variables';
-@import '../../styles/material';
+@import '../theme/styles/variables';
+@import '../theme/styles/material';
 
 $gutter-color: unquote("rgb(#{$palette-datahub-A100})");
 $active-border-color: unquote("rgb(#{$palette-datahub-900})");
