@@ -81,11 +81,11 @@ public class MappingManagerService extends EnvironmentAware {
         ObjectMapper objectMapper = new ObjectMapper();
         MappingModel mapping = objectMapper.readValue(jsonMapping.toString(), MappingModel.class);
         MappingModel existingMapping = null;
-        try {
-            existingMapping = getMapping(mapName);
+        existingMapping = getMapping(mapName);
+        if (existingMapping != null) {
             mappingManager.saveMapping(mappingManager.createMappingFromJSON(mapping.toJson()), true);
-
-        }catch (DataHubProjectException e){
+        }
+        else {
             String projectDir = envConfig().getProjectDir();
             createMapping(projectDir, mapping);
         }
