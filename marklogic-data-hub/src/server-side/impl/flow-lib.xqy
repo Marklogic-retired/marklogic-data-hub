@@ -365,6 +365,41 @@ declare function flow:clean-data($resp, $destination, $data-format)
 };
 
 (:~
+ : parse out invalid elements from json conversion, such as comments and PI
+ :
+ : @param $input - the xml you want cleaned
+ : @return - a copy of the xml without the bad elements
+ :)
+declare function flow:clean-xml-for-json($input as item()*) as item()* {
+  for $node in $input
+  return
+    typeswitch($node)
+      case text()
+        return fn:replace($node,"<\?[^>]+\?>","")
+      case element()
+        return
+          element {name($node)} {
+
+          (: output each attribute in this element :)
+            for $att in $node/@*
+            return
+              attribute {name($att)} {$att}
+            ,
+            (: output all the sub-elements of this element recursively :)
+            for $child in $node
+            return flow:clean-xml-for-json($child/node())
+
+          }
+      case processing-instruction()
+        return ()
+      case comment()
+        return ()
+    (: otherwise pass it through.  Used for text(), comments, and PIs :)
+      default return $node
+};
+
+
+(:~
  : Construct an envelope
  :
  : @param $map - a map with all the stuff in it
@@ -404,7 +439,7 @@ declare function flow:make-envelope($content, $headers, $triples, $data-format)
                 let $c := json:config("custom")
                 let $_ := map:put($c,"whitespace" , "ignore" )
                 let $_ := map:put($c, "element-namespace", "http://marklogic.com/entity-services")
-                return json:transform-to-json(map:get($content, "$attachments"),$c)
+                return json:transform-to-json(flow:clean-xml-for-json(map:get($content, "$attachments")/node()),$c)
               else
                 map:get($content, "$attachments")
             else
@@ -438,7 +473,7 @@ declare function flow:make-envelope($content, $headers, $triples, $data-format)
           <attachments>
           {
             if ($content instance of map:map and map:keys($content) = "$attachments") then
-              if(map:get($content, "$attachments") instance of element() or 
+              if(map:get($content, "$attachments") instance of element() or
                  map:get($content, "$attachments")/node() instance of element()) then
                 map:get($content, "$attachments")
               else

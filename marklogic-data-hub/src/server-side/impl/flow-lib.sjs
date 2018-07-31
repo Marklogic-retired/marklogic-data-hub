@@ -166,6 +166,28 @@ function tripleToXml(triple) {
 }
 
 /**
+: parse out invalid elements from json conversion, such as comments and PI
+  :
+  : @param input - the xml you want cleaned
+  : @return - a copy of the xml without the bad elements
+ */
+
+function cleanXMLforJSON(input) {
+  for(let node in input) {
+    if(node instanceof Text){
+      fn.replace(node,"<\?[^>]+\?>","")
+    } else if(node instanceof Element){
+    } else if(node instanceof Comment){
+      return;
+    } else if (node instanceof ProcessingInstruction){
+      return;
+    }else {
+      return node;
+    }
+  }
+}
+
+/**
  : Construct an envelope
  :
  : @param map - a map with all the stuff in it
@@ -193,7 +215,7 @@ function makeEnvelope(content, headers, triples, dataFormat) {
       if(content['$attachments'] instanceof Element){
         let config = json.config('custom');
         config['element-namespace'] = "http://marklogic.com/entity-services";
-        attachments = json.transformToJson(content['$attachments'], config);
+        attachments = json.transformToJson(flowlib.cleanXmlForJson(content['$attachments']), config);
       } else {
         attachments = content['$attachments'];
       }
