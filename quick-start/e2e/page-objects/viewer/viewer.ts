@@ -16,6 +16,18 @@ export class ViewerPage extends AppPage {
   searchResultUri() {
     return element(by.css('.title > h4'));
   }
+
+  verifyVariableName(variableName: string) {
+    return element(by.cssContainingText('.cm-variable', variableName));
+  }
+
+  verifyStringName(stringName: string) {
+    return element(by.cssContainingText('.cm-string', stringName));
+  }
+
+  verifyHarmonizedProperty(propertyName: string, harmonizedValue: string) {
+    return element(by.xpath(`//span[@class="cm-variable" and contains(text(), "${propertyName}")]/../span[@class="cm-string" and contains(text(), "${harmonizedValue}")]`));
+  }
 }
 
 var viewerPage = new ViewerPage();

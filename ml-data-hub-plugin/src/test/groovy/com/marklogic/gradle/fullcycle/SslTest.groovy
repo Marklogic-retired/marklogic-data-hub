@@ -190,8 +190,6 @@ class SslTest extends BaseTest {
         newSslContext.init(null, [new SimpleX509TrustManager()] as TrustManager[], null)
         hubConfig().stagingSslContext = newSslContext
         hubConfig().stagingSslHostnameVerifier = DatabaseClientFactory.SSLHostnameVerifier.ANY
-        hubConfig().finalSslContext = newSslContext
-        hubConfig().finalSslHostnameVerifier = DatabaseClientFactory.SSLHostnameVerifier.ANY
 
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME)
 
@@ -214,8 +212,8 @@ class SslTest extends BaseTest {
         notThrown(UnexpectedBuildFailure)
         getStagingDocCount() == 2
         getFinalDocCount() == 2
-        assertXMLEqual(getXmlFromResource("run-flow-test/harmonized1.xml"), hubConfig().newFinalManageClient().newDocumentManager().read("/employee1.xml").next().getContent(new DOMHandle()).get())
-        assertXMLEqual(getXmlFromResource("run-flow-test/harmonized2.xml"), hubConfig().newFinalManageClient().newDocumentManager().read("/employee2.xml").next().getContent(new DOMHandle()).get())
+        assertXMLEqual(getXmlFromResource("run-flow-test/harmonized1.xml"), hubConfig().newFinalClient().newDocumentManager().read("/employee1.xml").next().getContent(new DOMHandle()).get())
+        assertXMLEqual(getXmlFromResource("run-flow-test/harmonized2.xml"), hubConfig().newFinalClient().newDocumentManager().read("/employee2.xml").next().getContent(new DOMHandle()).get())
     }
 
     def "runHarmonizeFlow with swapped src and dest"() {
@@ -227,8 +225,6 @@ class SslTest extends BaseTest {
         newSslContext.init(null, [new SimpleX509TrustManager()] as TrustManager[], null)
         hubConfig().stagingSslContext = newSslContext
         hubConfig().stagingSslHostnameVerifier = DatabaseClientFactory.SSLHostnameVerifier.ANY
-        hubConfig().finalSslContext = newSslContext
-        hubConfig().finalSslHostnameVerifier = DatabaseClientFactory.SSLHostnameVerifier.ANY
 
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME)
         assert (getStagingDocCount() == 0)
@@ -258,7 +254,7 @@ class SslTest extends BaseTest {
         getStagingDocCount() == 2
         getFinalDocCount() == 2
 
-        assertXMLEqual(getXmlFromResource("run-flow-test/harmonized1.xml"), hubConfig().newStagingManageClient().newDocumentManager().read("/employee1.xml").next().getContent(new DOMHandle()).get())
-        assertXMLEqual(getXmlFromResource("run-flow-test/harmonized2.xml"), hubConfig().newStagingManageClient().newDocumentManager().read("/employee2.xml").next().getContent(new DOMHandle()).get())
+        assertXMLEqual(getXmlFromResource("run-flow-test/harmonized1.xml"), hubConfig().newStagingClient().newDocumentManager().read("/employee1.xml").next().getContent(new DOMHandle()).get())
+        assertXMLEqual(getXmlFromResource("run-flow-test/harmonized2.xml"), hubConfig().newStagingClient().newDocumentManager().read("/employee2.xml").next().getContent(new DOMHandle()).get())
     }
 }

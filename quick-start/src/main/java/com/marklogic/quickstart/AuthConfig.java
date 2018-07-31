@@ -67,7 +67,7 @@ public class AuthConfig extends WebSecurityConfigurerAdapter {
      */
     @Bean
     public MarkLogicAuthenticationManager markLogicAuthenticationManager() {
-        return new MarkLogicAuthenticationManager(restConfig());
+        return new MarkLogicAuthenticationManager();
     }
 
     /**
@@ -142,7 +142,8 @@ public class AuthConfig extends WebSecurityConfigurerAdapter {
             "/traces/**",
             "/404",
             "/assets/**",
-            "/shutdown"
+            "/shutdown",
+            "/main/ui/assets/img/*"
         };
     }
 }

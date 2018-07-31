@@ -21,10 +21,10 @@ export default function(tmpDir) {
     });
 
     it ('should run Load Products flow', function() {
-      flowPage.entityDisclosure('Product').click();
+      flowPage.clickEntityDisclosure('Product');
       browser.wait(EC.elementToBeClickable(flowPage.getFlow('Product', 'Load Products', 'INPUT')));
-      flowPage.runInputFlowWithFolder('Product', 'Load Products', 'json', 'products', 
-        'delimited_text', '?doc=yes&type=foo');
+      flowPage.runInputFlow('Product', 'Load Products', 'json', 'products', 
+        'delimited_text', '/product', '?doc=yes&type=foo');
     });
 
     it('should verify the loaded data', function() {
@@ -109,7 +109,7 @@ export default function(tmpDir) {
     it('should run Harmonize Products flow', function() {
       flowPage.isLoaded();
       console.log('clicking Product entity');
-      flowPage.entityDisclosure('Product').click();
+      flowPage.clickEntityDisclosure('Product');
       console.log('clicking Harmonize Products flow');
       browser.wait(EC.visibilityOf(flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE')));
       expect(flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE').isPresent()).toBe(true);
@@ -193,18 +193,16 @@ export default function(tmpDir) {
     });
 
     it ('should open the TestEntity disclosure', function() {
-      flowPage.entityDisclosure('TestEntity').click();
+      flowPage.clickEntityDisclosure('TestEntity');
       browser.wait(EC.elementToBeClickable(flowPage.getFlow('TestEntity', 'sjs json INPUT', 'INPUT')));
     });
 
-    let flowCount = 1;
     ['sjs', 'xqy'].forEach((codeFormat) => {
       ['xml', 'json'].forEach((dataFormat) => {
         let flowType = 'INPUT';
         let flowName = `${codeFormat} ${dataFormat} ${flowType}`;
         it (`should run a ${flowName} flow`, function() {
-          flowPage.runInputFlow('TestEntity', flowName, dataFormat, flowCount);
-          flowCount++;
+          flowPage.runInputFlow('TestEntity', flowName, dataFormat, 'products', 'delimited_text', '/testEntity', '');
         });
       });
     });

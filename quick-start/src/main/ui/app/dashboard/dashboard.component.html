@@ -27,7 +27,7 @@
           <div class="info-column" layout="column" layout-align="end center">
             <button mdl-button mdl-button-type="icon" mdl-colored="primary" mdl-ripple
               (click)="clearDatabase(db)"
-              tooltip="This will clear out any documents in your {{db | titlecase}} database.">
+              tooltip="This will clear out any documents in your {{labelify(db) | titlecase}} database.">
               <i class="mdi mdi-delete"></i>
             </button>
           </div>

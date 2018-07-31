@@ -20,6 +20,7 @@ import com.marklogic.appdeployer.command.Command;
 import com.marklogic.appdeployer.command.CommandContext;
 import com.marklogic.appdeployer.command.UndoableCommand;
 import com.marklogic.appdeployer.impl.SimpleAppDeployer;
+import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.FailedRequestException;
 import com.marklogic.client.eval.ServerEvaluationCall;
 import com.marklogic.hub.deploy.util.HubDeployStatusListener;
@@ -36,11 +37,14 @@ public class HubAppDeployer extends SimpleAppDeployer {
     private ManageClient manageClient;
     private AdminManager adminManager;
     private HubDeployStatusListener listener;
+    // this is for the telemetry hook to use mlUsername/mlPassword
+    private DatabaseClient stagingClient;
 
-    public HubAppDeployer(ManageClient manageClient, AdminManager adminManager, HubDeployStatusListener listener) {
+    public HubAppDeployer(ManageClient manageClient, AdminManager adminManager, HubDeployStatusListener listener, DatabaseClient stagingClient) {
         super(manageClient, adminManager);
         this.manageClient = manageClient;
         this.adminManager = adminManager;
+        this.stagingClient = stagingClient;
         this.listener = listener;
     }
 
@@ -80,7 +84,7 @@ public class HubAppDeployer extends SimpleAppDeployer {
 
         //Below is telemetry metric code for tracking successful dhf installs
         //TODO: when more uses of telemetry are defined, change this to a more e-node based method
-        ServerEvaluationCall eval = appConfig.newDatabaseClient().newServerEval();
+        ServerEvaluationCall eval = stagingClient.newServerEval();
         String query = "xdmp:feature-metric-increment(xdmp:feature-metric-register(\"datahub.core.install.count\"))";
         try {
             eval.xquery(query).eval().close();

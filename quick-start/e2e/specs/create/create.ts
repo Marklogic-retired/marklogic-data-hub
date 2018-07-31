@@ -599,24 +599,33 @@ export default function() {
     });
 
     it ('should open the Entity disclosure', function() {
-      flowPage.entityDisclosure('TestEntity').click();
+      flowPage.clickEntityDisclosure('TestEntity');
     });
-
-    ['INPUT', 'HARMONIZE'].forEach((flowType) => {
-      ['sjs', 'xqy'].forEach((codeFormat) => {
-        ['xml', 'json'].forEach((dataFormat) => {
-          let flowName = `${codeFormat} ${dataFormat} ${flowType}`;
-          it (`should create a ${flowName} flow`, function() {
-            flowPage.createFlow('TestEntity', flowName, flowType, dataFormat, codeFormat, false);
-            browser.wait(EC.visibilityOf(flowPage.getFlow('TestEntity', flowName, flowType)));
-            expect(flowPage.getFlow('TestEntity', flowName, flowType).isDisplayed()).toBe(true, flowName + ' is not present');
-          });
+    
+    ['sjs', 'xqy'].forEach((codeFormat) => {
+      ['xml', 'json'].forEach((dataFormat) => {
+        let flowName = `${codeFormat} ${dataFormat} INPUT`;
+        it (`should create a ${flowName} input flow`, function() {
+          flowPage.createInputFlow('TestEntity', flowName, dataFormat, codeFormat, false);
+          browser.wait(EC.visibilityOf(flowPage.getFlow('TestEntity', flowName, 'INPUT')));
+          expect(flowPage.getFlow('TestEntity', flowName, 'INPUT').isDisplayed()).toBe(true, flowName + ' is not present');
         });
       });
     });
 
+    ['sjs', 'xqy'].forEach((codeFormat) => {
+      ['xml', 'json'].forEach((dataFormat) => {
+        let flowName = `${codeFormat} ${dataFormat} HARMONIZE`;
+        it (`should create a ${flowName} harmonize flow`, function() {
+          flowPage.createHarmonizeFlow('TestEntity', flowName, dataFormat, codeFormat, true);
+          browser.wait(EC.visibilityOf(flowPage.getFlow('TestEntity', flowName, 'HARMONIZE')));
+          expect(flowPage.getFlow('TestEntity', flowName, 'HARMONIZE').isDisplayed()).toBe(true, flowName + ' is not present');
+        });
+      });
+    });
+    
     it ('should open Product entity disclosure', function() {
-      flowPage.entityDisclosure('Product').click();
+      flowPage.clickEntityDisclosure('Product');
     });
 
     it ('should create input and harmonize flows on Product entity', function() {
@@ -643,8 +652,12 @@ export default function() {
     it ('should retain flow options when moving around', function() {
       //move to other tab and go back to flows tab
       console.log('going to the other tab and back');
-      flowPage.entitiesTab.click();
-      entityPage.flowsTab.click();
+      appPage.entitiesTab.click();
+      entityPage.isLoaded();
+      appPage.flowsTab.click();
+      flowPage.isLoaded();
+      flowPage.clickEntityDisclosure('Product');
+      browser.wait(EC.visibilityOf(flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE')));
       //verify the options are retained
       console.log('verify the flow options');
       flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE').click();
@@ -657,13 +670,13 @@ export default function() {
       expect(flowPage.getValueFlowOptionsByPosition(3).getAttribute('value')).toEqual('2017-03-07');
       //move to other harmonize flow and go back to the flow
       console.log('going to the other flow and back');
-      flowPage.entityDisclosure('TestEntity').click();
+      flowPage.clickEntityDisclosure('TestEntity');
       browser.wait(EC.visibilityOf(flowPage.getFlow('TestEntity', 'sjs json HARMONIZE', 'HARMONIZE')));
       expect(flowPage.getFlow('TestEntity', 'sjs json HARMONIZE', 'HARMONIZE').isPresent()).toBe(true);
       flowPage.getFlow('TestEntity', 'sjs json HARMONIZE', 'HARMONIZE').click();
       browser.wait(EC.visibilityOf(flowPage.runHarmonizeButton()));
       expect(flowPage.runHarmonizeButton().isPresent()).toBe(true);
-      flowPage.entityDisclosure('Product').click();
+      flowPage.clickEntityDisclosure('Product');
       browser.wait(EC.visibilityOf(flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE')));
       expect(flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE').isPresent()).toBe(true);
       flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE').click();
@@ -687,9 +700,11 @@ export default function() {
       flowPage.removeFlowOptionsByPositionButton(4).click();
       //verify the removed option
       console.log('verify the removed option');
-      flowPage.entitiesTab.click();
-      entityPage.flowsTab.click();
-      flowPage.entityDisclosure('Product').click();
+      appPage.entitiesTab.click();
+      entityPage.isLoaded();
+      appPage.flowsTab.click();
+      flowPage.isLoaded();
+      flowPage.clickEntityDisclosure('Product');
       browser.wait(EC.visibilityOf(flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE')));
       expect(flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE').isPresent()).toBe(true);
       flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE').click();

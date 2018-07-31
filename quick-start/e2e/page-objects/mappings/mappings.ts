@@ -133,6 +133,10 @@ export class MappingsPage extends AppPage {
     return element(by.css('#src-heading .fa-remove'));
   }
 
+  getSourceURITitle() {
+    return element(by.css('#src-heading .sample-doc-uri')).getAttribute('title');
+  }
+
   editSourceURIConfirmationMessage() {
     return this.dialogComponentContent();
   }

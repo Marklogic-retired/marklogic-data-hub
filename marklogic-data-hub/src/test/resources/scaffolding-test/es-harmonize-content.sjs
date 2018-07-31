@@ -43,7 +43,8 @@ function extractInstanceMyFunTest(source) {
   if (source instanceof Element || source instanceof ObjectNode) {
     let instancePath = '/*:envelope/*:instance';
     if(source instanceof Element) {
-      instancePath += '/node()';
+      //make sure we grab content root only
+      instancePath += '/node()[not(. instance of processing-instruction() or . instance of comment())]';
     }
     source = new NodeBuilder().addNode(fn.head(source.xpath(instancePath))).toNode();
   }
@@ -103,7 +104,8 @@ function extractInstanceEmployee(source) {
   if (source instanceof Element || source instanceof ObjectNode) {
     let instancePath = '/';
     if(source instanceof Element) {
-      instancePath = '/node()';
+      //make sure we grab content root only
+      instancePath = '/node()[not(. instance of processing-instruction() or . instance of comment())]';
     }
     source = new NodeBuilder().addNode(fn.head(source.xpath(instancePath))).toNode();
   }

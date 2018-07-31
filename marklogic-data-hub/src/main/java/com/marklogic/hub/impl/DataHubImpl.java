@@ -15,18 +15,27 @@
  */
 package com.marklogic.hub.impl;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.appdeployer.command.Command;
 import com.marklogic.appdeployer.command.CommandMapBuilder;
 import com.marklogic.appdeployer.command.appservers.DeployOtherServersCommand;
 import com.marklogic.appdeployer.command.forests.DeployCustomForestsCommand;
 import com.marklogic.client.FailedRequestException;
+import com.marklogic.client.admin.QueryOptionsManager;
+import com.marklogic.client.admin.ResourceExtensionsManager;
+import com.marklogic.client.admin.ServerConfigurationManager;
+import com.marklogic.client.admin.TransformExtensionsManager;
 import com.marklogic.client.eval.ServerEvaluationCall;
+import com.marklogic.client.io.JacksonHandle;
+import com.marklogic.client.io.QueryOptionsListHandle;
 import com.marklogic.hub.*;
 import com.marklogic.hub.deploy.HubAppDeployer;
 import com.marklogic.hub.deploy.commands.*;
 import com.marklogic.hub.deploy.util.HubDeployStatusListener;
 import com.marklogic.hub.error.CantUpgradeException;
+import com.marklogic.hub.error.DataHubConfigurationException;
 import com.marklogic.hub.error.InvalidDBOperationError;
 import com.marklogic.hub.error.ServerValidationException;
 import com.marklogic.hub.util.Versions;
@@ -64,8 +73,7 @@ public class DataHubImpl implements DataHub {
 
     public DataHubImpl(HubConfig hubConfig) {
         if (hubConfig == null) {
-            //FIXME
-            throw new RuntimeException("HAY DON'T MAKE ME NULL");
+            throw new DataHubConfigurationException("HubConfig must not be null when creating a data hub");
         }
         this.hubConfig = ((HubConfigImpl)hubConfig);
     }
@@ -190,8 +198,11 @@ public class DataHubImpl implements DataHub {
     @Override public void clearUserModules() {
         ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver(DataHub.class.getClassLoader());
         try {
-            ArrayList<String> options = new ArrayList<>();
+            HashSet<String> options = new HashSet<>();
             for (Resource r : resolver.getResources("classpath*:/ml-modules/options/*.xml")) {
+                options.add(r.getFilename().replace(".xml", ""));
+            }
+            for (Resource r : resolver.getResources("classpath*:/ml-modules-final/options/*.xml")) {
                 options.add(r.getFilename().replace(".xml", ""));
             }
             for (Resource r : resolver.getResources("classpath*:/ml-modules-traces/options/*.xml")) {
@@ -201,16 +212,40 @@ public class DataHubImpl implements DataHub {
                 options.add(r.getFilename().replace(".xml", ""));
             }
 
-            ArrayList<String> services = new ArrayList<>();
+            HashSet<String> services = new HashSet<>();
             for (Resource r : resolver.getResources("classpath*:/ml-modules/services/*.xqy")) {
                 services.add(r.getFilename().replaceAll("\\.(xqy|sjs)", ""));
             }
 
-
-            ArrayList<String> transforms = new ArrayList<>();
+            HashSet<String> transforms = new HashSet<>();
             for (Resource r : resolver.getResources("classpath*:/ml-modules/transforms/*")) {
                 transforms.add(r.getFilename().replaceAll("\\.(xqy|sjs)", ""));
             }
+
+            ServerConfigurationManager configMgr = hubConfig.newStagingClient().newServerConfigManager();
+            QueryOptionsManager stagingOptionsManager = configMgr.newQueryOptionsManager();
+
+            // remove options using mgr.
+            QueryOptionsListHandle handle = stagingOptionsManager.optionsList(new QueryOptionsListHandle());
+            Map<String, String> optionsMap = handle.getValuesMap();
+            optionsMap.keySet().forEach(
+               optionsName -> { if (!options.contains(optionsName)) { stagingOptionsManager.deleteOptions(optionsName); }
+               }
+            );
+
+            // remove transforms using amped channel
+            TransformExtensionsManager transformExtensionsManager = configMgr.newTransformExtensionsManager();
+            JsonNode transformsList = transformExtensionsManager.listTransforms(new JacksonHandle()).get();
+            transformsList.findValuesAsText("name").forEach(
+                x -> { if (! transforms.contains(x)) { transformExtensionsManager.deleteTransform(x);} }
+            );
+
+            // remove resource extensions using amped channel
+            ResourceExtensionsManager resourceExtensionsManager = configMgr.newResourceExtensionsManager();
+            JsonNode resourceExtensions = resourceExtensionsManager.listServices(new JacksonHandle()).get();
+            resourceExtensions.findValuesAsText("name").forEach(
+                x -> { if (! services.contains(x)) { resourceExtensionsManager.deleteServices(x); } }
+            );
 
             String query =
                 "cts:uris((),(),cts:not-query(cts:collection-query('hub-core-module')))[\n" +
@@ -302,14 +337,14 @@ public class DataHubImpl implements DataHub {
         logger.warn("Installing the Data Hub into MarkLogic");
 
         AppConfig config = hubConfig.getAppConfig();
-        HubAppDeployer deployer = new HubAppDeployer(getManageClient(), getAdminManager(), listener);
+        HubAppDeployer deployer = new HubAppDeployer(getManageClient(), getAdminManager(),  listener, hubConfig.newStagingClient());
         deployer.setCommands(getCommandList());
         deployer.deploy(config);
     }
 
     @Override public void updateIndexes() {
         AppConfig config = hubConfig.getAppConfig();
-        HubAppDeployer deployer = new HubAppDeployer(getManageClient(), getAdminManager(), null);
+        HubAppDeployer deployer = new HubAppDeployer(getManageClient(), getAdminManager(), null, hubConfig.newStagingClient());
         List<Command> commands = new ArrayList<>();
         commands.add(new DeployHubDatabasesCommand(hubConfig));
         deployer.setCommands(commands);
@@ -331,7 +366,7 @@ public class DataHubImpl implements DataHub {
         logger.warn("Uninstalling the Data Hub from MarkLogic");
 
         AppConfig config = hubConfig.getAppConfig();
-        HubAppDeployer deployer = new HubAppDeployer(getManageClient(), getAdminManager(), listener);
+        HubAppDeployer deployer = new HubAppDeployer(getManageClient(), getAdminManager(), listener, hubConfig.newStagingClient());
         deployer.setCommands(getCommandList());
         deployer.undeploy(config);
     }
