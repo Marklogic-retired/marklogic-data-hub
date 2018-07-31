@@ -105,7 +105,7 @@ function extractInstanceEmployee(source) {
     let instancePath = '/';
     if(source instanceof Element) {
       //make sure we grab content root only
-      instancePath += '/node()[not(. instance of processing-instruction() or . instance of comment())]';
+      instancePath = '/node()[not(. instance of processing-instruction() or . instance of comment())]';
     }
     source = new NodeBuilder().addNode(fn.head(source.xpath(instancePath))).toNode();
   }
