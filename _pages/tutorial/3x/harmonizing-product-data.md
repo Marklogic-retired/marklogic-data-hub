@@ -5,7 +5,7 @@ lead_text: ''
 permalink: /tutorial/harmonizing-product-data/
 ---
 
-Now that we have modeled Product and defined a model-to-model mapping for it, we can use the Data Hub Framework to harmonize our source data with our entity model. Harmonization creates canonical entity instances containing the necessary parts of your source data.
+Now that we have modeled the Product entity type and defined a model-to-model mapping for it, we can use the Data Hub Framework to harmonize our source data with our entity model. Harmonization creates canonical entity instances containing the necessary parts of your source data.
 
 Recall from earlier that the Data Hub Framework can use the Entity Services model definition and a mapping to generate harmonization code. In this exercise, we will do the following:
 
@@ -28,7 +28,7 @@ Use the following procedure to create a Product harmonize flow:
 The following picture summarizes the steps for creating the Harmonize Products flow:
 ![Create Product Harmonize Flow]({{site.baseurl}}/images/3x/harmonizing-product-data/create-product-harmonize-flow.png)
 
-When you create the flow, QuickStart generates harmonization code based on the Product model and the **ProductMapping** model-to-model mapping and deploys the code to MarkLogic.
+When you create the flow, QuickStart generates harmonization code based on the Product entity model and the **ProductMapping** model-to-model mapping, and then deploys the code to MarkLogic.
 
 Though you can customize the harmonization code, it is not necessary. The mapping expressed everything needed to create Product entities. For example, the mapping caused the generated code to include the following assignments for initializing a Product instance:
 ```

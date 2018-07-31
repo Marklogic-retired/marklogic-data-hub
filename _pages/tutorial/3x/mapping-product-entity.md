@@ -42,7 +42,9 @@ The following picture summarizes the steps for creating a mapping:
 
 The mapping editor displays a row for each property in your entity model. The right column in each row is the name of an entity property. The left column in each row is a dropdown list from which you can select the source property to map on to the entity property in the right column.
 
-QuickStart generates the list of source property names by examining one of your source documents in the STAGE database. You can view the name of the selected document at the to of the **Source** column of the mapping editor. You can enter the name of a different document by clicking on the pencil icon next to the source URI.
+QuickStart generates the list of source property names by examining one of your source documents in the STAGE database. You can view the URI of the selected document at the top of the **Source** column of the mapping editor.
+
+You change the source document by clicking on the pencil icon next to the source URI. To find an alternative document URI, use the **Browse Data** view to review the documents in the "Product" collection in the **STAGING** database.
 
 The following diagram illustrates key parts of the mapping editor:
 

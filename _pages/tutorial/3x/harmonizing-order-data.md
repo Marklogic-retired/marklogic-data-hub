@@ -7,7 +7,7 @@ permalink: /tutorial/harmonizing-order-data/
 
 Now that we have modeled the Order entity we can use the Data Hub Framework's code scaffolding to generate harmonization code and then customize it for our application.
 
-Recall that you can either generate customized harmonization code based on a model to model mapping, as we did with Product, or you can generate default harmonization code and customize it. In this exercise, we will generate and customize the default code since the **price** property of an Order is a computed value.
+Recall that you can either generate customized harmonization code based on a model-to-model mapping, as we did with Product, or you can generate default harmonization code and customize it. In this exercise, we will generate and customize the default code since the **price** property of an Order is a computed value.
 
 ## Create the Order Harmonize Flow
 
@@ -57,7 +57,7 @@ When you create a flow, the Data Hub Framework generates harmonize code to be ru
 
 Click the **COLLECTOR** tab to view the collector plugin code. We will discuss the cusotmizations and then apply them.
 
-The Data Hub Framework calls the `collect` function to "collect" a list of ids for the flow to operate on. By default, this function generates a list of source document URIS. The ids can be anything: URIs, relational row ids, twitter handles - whatever suits the needs of your application.
+The Data Hub Framework calls the `collect` function to "collect" a list of ids for the flow to operate on. By default, this function generates a list of source document URIs. The ids can be anything: URIs, relational row ids, twitter handles - whatever suits the needs of your application.
 
 The `options` parameter passed into the collector plugin contains the following properties by default:
 
