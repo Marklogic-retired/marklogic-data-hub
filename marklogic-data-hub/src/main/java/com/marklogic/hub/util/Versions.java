@@ -54,9 +54,7 @@ public class Versions extends ResourceManager {
     }
 
     public String getMarkLogicVersion() {
-        // get a client for eval on port 8000 with no database
-        DatabaseClient noDbClient = hubConfig.getAppConfig().newAppServicesDatabaseClient(null);
-        ServerEvaluationCall eval = noDbClient.newServerEval();
+        ServerEvaluationCall eval = hubConfig.newModulesDbClient().newServerEval();
         String xqy = "xdmp:version()";
         EvalResultIterator result = eval.xquery(xqy).eval();
         if (result.hasNext()) {
