@@ -17,6 +17,7 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses( {
     EntityManagerServiceTest.class,
     FlowManagerServiceTest.class,
+    MappingManagerServiceTest.class,
     JobServiceTest.class,
     TraceServiceTest.class,
     EntitiesControllerTest.class,
