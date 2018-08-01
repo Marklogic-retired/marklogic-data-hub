@@ -165,6 +165,7 @@ public class LoadUserModulesCommand extends AbstractCommand {
         //for now we'll use two different document managers
         JSONDocumentManager entityDocMgr = finalClient.newJSONDocumentManager();
         JSONDocumentManager mappingDocMgr = finalClient.newJSONDocumentManager();
+        DocumentWriteSet mappingDocumentWriteSet = mappingDocMgr.newWriteSet();
 
         AllButAssetsModulesFinder allButAssetsModulesFinder = new AllButAssetsModulesFinder();
 
@@ -253,7 +254,7 @@ public class LoadUserModulesCommand extends AbstractCommand {
                                         InputStream inputStream = r.getInputStream();
                                         StringHandle handle = new StringHandle(IOUtils.toString(inputStream));
                                         inputStream.close();
-                                        mappingDocMgr.write("/mappings/" + r.getFile().getParentFile().getName() + "/" + r.getFilename(), meta, handle);
+                                        mappingDocumentWriteSet.add("/mappings/" + r.getFile().getParentFile().getName() + "/" + r.getFilename(), meta, handle);
                                         modulesManager.saveLastLoadedTimestamp(r.getFile(), new Date());
                                     }
                                 }
@@ -280,6 +281,10 @@ public class LoadUserModulesCommand extends AbstractCommand {
 
                 if (documentWriteSet.size() > 0) {
                     documentManager.write(documentWriteSet);
+                }
+
+                if (mappingDocumentWriteSet.size() > 0) {
+                    mappingDocMgr.write(mappingDocumentWriteSet);
                 }
             }
             threadPoolTaskExecutor.shutdown();
