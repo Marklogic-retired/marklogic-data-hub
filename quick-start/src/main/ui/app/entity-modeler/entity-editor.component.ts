@@ -357,8 +357,7 @@ export class EntityEditorComponent {
    * @returns {boolean} if the property editor is valid and ok to be saved
    */
   get isValid() {
-    let properties = this.entity.definition.properties;
-    return properties
+    return this.entity.definition.properties
       .reduce((accumulated, p) => {
         return accumulated && this.isPropertyValid(p);
       }, true);
