@@ -3,10 +3,7 @@ package com.marklogic.quickstart;
 
 import com.marklogic.hub.util.Installer;
 import com.marklogic.quickstart.integrationtests.EndToEndAPITest;
-import com.marklogic.quickstart.service.EntityManagerServiceTest;
-import com.marklogic.quickstart.service.FlowManagerServiceTest;
-import com.marklogic.quickstart.service.JobServiceTest;
-import com.marklogic.quickstart.service.TraceServiceTest;
+import com.marklogic.quickstart.service.*;
 import com.marklogic.quickstart.web.EntitiesControllerTest;
 import com.marklogic.quickstart.web.HubConfigJsonTest;
 import com.marklogic.quickstart.web.ProjectsControllerTest;
