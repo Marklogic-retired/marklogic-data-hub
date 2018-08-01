@@ -535,7 +535,7 @@ export default function() {
       entityPage.getPropertyName(lastProperty).sendKeys('test white space');
       // verify the error message on white space in property name
       let errorMessage = entityPage.errorWhiteSpaceMessage;
-      expect(errorMessage.getText()).toBe('Property names are required and whitespaces are not allowed');
+      expect(errorMessage.getText()).toBe('Property names are required, must be unique and whitespaces are not allowed');
       // verify if the Save button is disabled on white space
       expect(entityPage.saveEntity.isEnabled()).toBe(false);
       entityPage.cancelEntity.click();
