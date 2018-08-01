@@ -22,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -82,8 +83,7 @@ public class MappingE2E extends HubTestBase {
     private String installDocError;
     private List<String> modelProperties;
     private Scaffolding scaffolding;
-    private List<String> allMappings;
-
+    
     @BeforeAll
     public static void setup() {
         XMLUnit.setIgnoreWhitespace(true);
@@ -131,10 +131,9 @@ public class MappingE2E extends HubTestBase {
 
             copyFile("e2e-test/" + ENTITY + ".entity.json", entityDir.resolve(ENTITY + ".entity.json"));
             installUserModules(getHubConfig(), true);
-
             allCombos((codeFormat, dataFormat, flowType, useEs) -> {
             	if(flowType.equals(FlowType.HARMONIZE)) {
-            		for(String mapping: allMappings) {
+            		for(String mapping:getMappings()) {
             			int version = mappingManager.getMapping(mapping).getVersion();
             			for(int i = 1 ; i<=version; i++) {
             				createFlow("mapping", codeFormat, dataFormat, flowType, useEs, mapping, i, null);
@@ -143,6 +142,8 @@ public class MappingE2E extends HubTestBase {
             		}
             	}
             });
+            createFlow("extranodes", CodeFormat.XQUERY, DataFormat.XML, FlowType.HARMONIZE, true,"validPath1-threeProp", 1, (CreateFlowListener)null);
+            createFlow("extranodes", CodeFormat.JAVASCRIPT, DataFormat.XML, FlowType.HARMONIZE, true, "validPath1-threeProp", 1, (CreateFlowListener)null);
             flowManager = FlowManager.create(getHubConfig());
             installUserModules(getHubConfig(), true);
             stagingDataMovementManager = stagingClient.newDataMovementManager();
@@ -152,7 +153,22 @@ public class MappingE2E extends HubTestBase {
     @TestFactory
     public List<DynamicTest> generateTests() {
     	List<DynamicTest> tests = new ArrayList<>();
-    	for(String mapping: allMappings) {
+    	
+        allCombos((codeFormat, dataFormat, flowType, useEs) -> {
+            String prefix = "extranodes";
+            String mapping = "validPath1-threeProp";
+            int version = 1;
+            String flowName = getFlowName(prefix, codeFormat, dataFormat, flowType, mapping, version);
+            if (flowType.equals(FlowType.HARMONIZE) && useEs && dataFormat.equals(DataFormat.XML)) {
+	            tests.add(DynamicTest.dynamicTest(flowName , () -> {
+	                Map<String, Object> options = new HashMap<>();
+	                FinalCounts finalCounts = new FinalCounts(TEST_SIZE, TEST_SIZE * 2, TEST_SIZE + 1, 1, TEST_SIZE, 0, TEST_SIZE, 0, TEST_SIZE/BATCH_SIZE, 0, "FINISHED");
+	                testHarmonizeFlow(prefix, codeFormat, dataFormat, useEs, options, stagingClient, HubConfig.DEFAULT_FINAL_NAME, finalCounts, true, mapping, version);
+	            }));
+	        }
+        });
+        
+    	for(String mapping: getMappings()) {
 	    	allCombos((codeFormat, dataFormat, flowType, useEs) -> {
 	    		if(useEs && flowType.equals(FlowType.HARMONIZE)) {
 	    			String prefix = "mapping";
@@ -179,7 +195,20 @@ public class MappingE2E extends HubTestBase {
     	}
         return tests;
     }
-
+    
+    private List<String> getMappings() {
+    	Path mappingDir = getHubConfig().getHubMappingsDir();
+    	List<String> allMappings = new ArrayList<>();
+    	try {
+    		Files.walk(mappingDir).filter(f->Files.isDirectory(f)).forEach(f -> allMappings.add(f.getFileName().toString()));    		
+			
+		} catch (IOException e) {
+		      throw new RuntimeException(e);
+		}
+    	//remove "mappings" form the list
+    	allMappings.remove(0);
+    	return allMappings;
+    }
     private String getFlowName(String prefix, CodeFormat codeFormat, DataFormat dataFormat, FlowType flowType, String mapping, int version) {
         return prefix + "-" + flowType.toString() + "-" + codeFormat.toString() + "-" + dataFormat.toString() + "-" + mapping+"-"+version ;
     }
@@ -203,7 +232,7 @@ public class MappingE2E extends HubTestBase {
     }
 
     private void createMappings() {
-    	allMappings = new ArrayList<String>();
+    	List<String> allMappings = new ArrayList<String>();
     	Map<String, String> sourceContexts = new HashMap<>();
     	sourceContexts.put("validPath1", "//validtest/");
     	sourceContexts.put("validPath2", "/test/validtest/");
@@ -238,7 +267,7 @@ public class MappingE2E extends HubTestBase {
         createMapping("validPath1-threeProp", "//validtest/","http://marklogic.com/example/Schema-0.0.1/e2eentity", true, "empid,fullname,monthlysalary".split(","));
         allMappings.addAll(Arrays.asList("nonExistentPath,inCorrectPath,empty-sourceContext,default-without-sourcedFrom,default-no-properties,default-diffCanonicalProp,diff-entity-validPath".split(",")));
         
-        installUserModules(getHubConfig(), true);
+        installUserModules(getHubConfig(), true);      
     }
 
     private void createMapping(String name, String sourceContext, String targetEntityType,  String ... properties) {
@@ -292,7 +321,7 @@ public class MappingE2E extends HubTestBase {
         FileUtil.copy(getResourceStream(srcDir), dstDir.toFile());
     }
 
-    private void installDocs(DataFormat dataFormat, String collection, DatabaseClient srcClient) {
+    private void installDocs(String flowName, DataFormat dataFormat, String collection, DatabaseClient srcClient) {
         DataMovementManager mgr = srcClient.newDataMovementManager();
 
         WriteBatcher writeBatcher = mgr.newWriteBatcher()
@@ -312,6 +341,9 @@ public class MappingE2E extends HubTestBase {
         DocumentMetadataHandle metadataHandle = new DocumentMetadataHandle();
         metadataHandle.getCollections().add(collection);
         String filename = "mapping/staging-es";
+        if(flowName.contains("extranodes")) {
+        	filename = filename.concat("-extranodes");
+        }
         StringHandle handle = new StringHandle(getResource("e2e-test/" + filename + "." + dataFormat.toString()));
         String dataFormatString = dataFormat.toString();
         for (int i = 0; i < TEST_SIZE; i++) {
@@ -345,7 +377,7 @@ public class MappingE2E extends HubTestBase {
         assertEquals(0, getTracingDocCount());
         assertEquals(0, getJobDocCount());
 
-        installDocs(dataFormat, ENTITY, srcClient);
+        installDocs(flowName, dataFormat, ENTITY, srcClient);
 
         Flow harmonizeFlow = flowManager.getFlow(ENTITY, flowName, FlowType.HARMONIZE);
 
@@ -415,7 +447,9 @@ public class MappingE2E extends HubTestBase {
             
             if(flowName.contains("validPath")) {
             	filename = "mapping/final-es";
-
+            	if(flowName.contains("extranodes") && codeFormat.equals(CodeFormat.XQUERY)) {
+            		filename = filename.concat("-extranodes");
+            	}
                 if(flowName.contains("validPath3") || flowName.contains("validPath4")) {
                 	filename = filename.concat("-1");
                 }
@@ -426,7 +460,11 @@ public class MappingE2E extends HubTestBase {
             else {
             	filename = "mapping/final-es-empty";
             }
-            if(! codeFormat.equals(CodeFormat.XQUERY) && flowName.contains("empty-sourceContext")) {
+            
+            if(flowName.contains("nonExistingProp")) {
+            	filename = "mapping/final-es-empty";
+            }
+            if(! (codeFormat.equals(CodeFormat.XQUERY) && flowName.contains("empty-sourceContext"))) {
 	            if (dataFormat.equals(DataFormat.XML)) {
 	                Document expected = getXmlFromResource("e2e-test/" + filename + ".xml");
 	                for (int i = 0; i < TEST_SIZE; i+=10) {
