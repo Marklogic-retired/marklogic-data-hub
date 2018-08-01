@@ -26,9 +26,6 @@
 		
 				],
 				"instance": {
-					"id": "154",
-					"name": "mike smith",
-					"salary": "1000",
 					"test": {
 						"validtestns": {
 							"empid": "354",
