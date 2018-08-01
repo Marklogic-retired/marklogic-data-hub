@@ -54,7 +54,7 @@ public class Versions extends ResourceManager {
     }
 
     public String getMarkLogicVersion() {
-        ServerEvaluationCall eval = hubConfig.newModulesDbClient().newServerEval();
+        ServerEvaluationCall eval = hubConfig.newAppServicesClient().newServerEval();
         String xqy = "xdmp:version()";
         EvalResultIterator result = eval.xquery(xqy).eval();
         if (result.hasNext()) {
