@@ -204,6 +204,10 @@ export class FlowPage extends AppPage {
     return element(by.cssContainingText('mdl-button', 'Run Import'));
   }
 
+  get mlcpSaveOptionsButton() {
+    return element(by.cssContainingText('mdl-button', 'Save Options'));
+  }
+
   runHarmonizeButton() {
     return element(by.cssContainingText('mdl-button', 'Run Harmonize'));
   }
@@ -287,7 +291,8 @@ export class FlowPage extends AppPage {
       browser.wait(EC.elementToBeClickable(this.mlcpSwitch('generate_uri')));
       this.mlcpSwitch('generate_uri').click();
     }
-
+    
+    this.mlcpSaveOptionsButton.click();
     this.mlcpRunButton.click();
     browser.sleep(10000);
     this.jobsTab.click();
