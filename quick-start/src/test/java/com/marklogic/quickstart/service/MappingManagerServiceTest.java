@@ -54,7 +54,6 @@ public class MappingManagerServiceTest extends AbstractServiceTest {
 
     @Test
     public void testMappingVersion() throws IOException {
-
         String mappingName = "testMapping";
         String jsonString = "{" +
                             "   \"language\":\"zxx\"," +
@@ -71,12 +70,12 @@ public class MappingManagerServiceTest extends AbstractServiceTest {
         JsonNode jsonNode = objectMapper.readTree(jsonString);
 
         // First Save
-        mappingManagerService.saveMapping(jsonNode.get("name").asText(), jsonNode);
+        mappingManagerService.saveMapping(mappingName, jsonNode);
         MappingModel mappingModel = mappingManagerService.getMapping(mappingName);
         Assert.assertEquals(0, mappingModel.getVersion());
 
         // Second save
-        mappingManagerService.saveMapping(jsonNode.get("name").asText(), jsonNode);
+        mappingManagerService.saveMapping(mappingName, jsonNode);
         mappingModel = mappingManagerService.getMapping(mappingName);
         Assert.assertEquals(1, mappingModel.getVersion());
     }
