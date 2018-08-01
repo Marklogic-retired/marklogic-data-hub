@@ -373,7 +373,7 @@ public interface HubConfig {
      * @return - a DatabaseClient
      */
     @Deprecated
-    DatabaseClient newTraceDbClient();
+    //DatabaseClient newTraceDbClient();
 
     /**
      * Creates a new DatabaseClient for accessing the Hub Modules database

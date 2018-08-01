@@ -65,6 +65,7 @@ public class HubAppDeployer extends SimpleAppDeployer {
         CommandContext context = new CommandContext(appConfig, manageClient, adminManager);
 
         int count = commands.size();
+        System.out.println("count: " + count);
         int completed = 0;
         onStatusChange(0, "Installing...");
         for (Command command : commands) {
@@ -75,6 +76,7 @@ public class HubAppDeployer extends SimpleAppDeployer {
             command.execute(context);
             logger.info(format("Finished executing command [%s]\n", name));
             completed++;
+            System.out.println("completed: " + completed);
         }
         onStatusChange(100, "Installation Complete");
 
@@ -119,6 +121,7 @@ public class HubAppDeployer extends SimpleAppDeployer {
         });
 
         int count = undoableCommands.size();
+        System.out.println("count: " + count);
         int completed = 0;
         onStatusChange(0, "Uninstalling...");
 
@@ -130,6 +133,7 @@ public class HubAppDeployer extends SimpleAppDeployer {
             command.undo(new CommandContext(appConfig, manageClient, adminManager));
             logger.info(format("Finished undoing command [%s]\n", name));
             completed++;
+            System.out.println("Completed: " + completed);
         }
         onStatusChange(100, "Installation Complete");
 

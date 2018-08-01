@@ -39,8 +39,8 @@ public class HubProjectTest extends HubTestBase {
         config.setForestsPerHost(DatabaseKind.FINAL, 100);
         config.setPort(DatabaseKind.FINAL, 2222);
 
-        config.setHttpName(DatabaseKind.JOB, "my-crazy-test-trace");
-        config.setDbName(DatabaseKind.JOB, "my-crazy-test-trace");
+        //config.setHttpName(DatabaseKind.JOB, "my-crazy-test-trace");
+        //config.setDbName(DatabaseKind.JOB, "my-crazy-test-trace");
         config.setForestsPerHost(DatabaseKind.JOB, 100);
         config.setPort(DatabaseKind.JOB, 3333);
 

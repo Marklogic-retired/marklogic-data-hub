@@ -28,7 +28,7 @@ public enum DatabaseKind {
         STAGING,
         FINAL,
         JOB,
-        @Deprecated TRACE,
+        //@Deprecated TRACE,
         //SCHEMAS,
         STAGING_SCHEMAS,
         FINAL_SCHEMAS,

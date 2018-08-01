@@ -136,6 +136,8 @@ public class HubTestBase {
     public  DatabaseClient finalModulesClient = null;
     public  DatabaseClient jobClient = null;
     public  DatabaseClient jobModulesClient = null;
+    public  DatabaseClient stagingSchemasClient = null;
+    public  DatabaseClient finalSchemasClient = null;
     private  AdminConfig adminConfig = null;
     private  AdminManager adminManager = null;
     private  ManageConfig manageConfig = null;
@@ -149,7 +151,9 @@ public class HubTestBase {
     public  GenericDocumentManager stagingDocMgr;
     public  GenericDocumentManager finalDocMgr;
     public  JSONDocumentManager jobDocMgr;
-    public  GenericDocumentManager traceDocMgr;
+    public  GenericDocumentManager stagingSchemasDocMgr;
+    public  GenericDocumentManager finalSchemasDocMgr;
+    //public  GenericDocumentManager traceDocMgr;
     public  GenericDocumentManager modMgr;
     public  String bootStrapHost = null;
 	private  TrustManagerFactory tmf;
@@ -170,9 +174,9 @@ public class HubTestBase {
         return jobClient.newJSONDocumentManager();
     }
 
-    private GenericDocumentManager getTraceMgr() {
+    /*private GenericDocumentManager getTraceMgr() {
         return jobClient.newDocumentManager();
-    }
+    }*/
 
 
     protected void basicSetup() {
@@ -252,6 +256,7 @@ public class HubTestBase {
         }
 
         try {
+            System.out.println("initializing clients...");
         	stagingClient = getClient(host, stagingPort, HubConfig.DEFAULT_STAGING_NAME, user, password, stagingAuthMethod);
             stagingPrivilegedClient = getHubConfig().newStagingManageClient();
             stagingModulesClient  = getClient(host, stagingPort, HubConfig.DEFAULT_MODULES_DB_NAME, user, password, stagingAuthMethod);
@@ -259,6 +264,14 @@ public class HubTestBase {
             finalModulesClient  = getClient(host, stagingPort, HubConfig.DEFAULT_MODULES_DB_NAME, user, password, finalAuthMethod);
             jobClient = getClient(host, jobPort, HubConfig.DEFAULT_JOB_NAME, user, password, jobAuthMethod);
             jobModulesClient  = getClient(host, stagingPort, HubConfig.DEFAULT_MODULES_DB_NAME, user, password, jobAuthMethod);
+            stagingSchemasClient = getClient(host, stagingPort, HubConfig.DEFAULT_STAGING_SCHEMAS_DB_NAME, user, password, stagingAuthMethod);
+            finalSchemasClient = getClient(host, stagingPort, HubConfig.DEFAULT_FINAL_SCHEMAS_DB_NAME, user, password, stagingAuthMethod);
+            System.out.println("stagingSchemasClient database: " + stagingSchemasClient.getDatabase());
+            System.out.println("stagingSchemasClient port: " + stagingSchemasClient.getPort());
+
+            System.out.println("finalModulesClient port: " + finalModulesClient.getPort());
+            System.out.println("finalSchemasClient database: " + finalSchemasClient.getDatabase());
+            System.out.println("finalSchemasClient port: " + finalSchemasClient.getPort());
         }
         catch(Exception e) {
         	System.err.println("client objects not created.");
@@ -267,8 +280,9 @@ public class HubTestBase {
         stagingDocMgr = getStagingMgr();
         finalDocMgr = getFinalMgr();
         jobDocMgr = getJobMgr();
-        traceDocMgr = getTraceMgr();
+        //traceDocMgr = getTraceMgr();
         modMgr = getModMgr();
+
     }
 
     protected DatabaseClient getClient(String host, int port, String dbName, String user,String password, Authentication authMethod) throws Exception {
@@ -500,12 +514,12 @@ public class HubTestBase {
         return getDocCount(HubConfig.DEFAULT_FINAL_NAME, collection);
     }
 
-    protected int getTracingDocCount() {
+    /*protected int getTracingDocCount() {
         return getTracingDocCount("trace");
     }
     protected int getTracingDocCount(String collection) {
         return getDocCount(HubConfig.DEFAULT_JOB_NAME, collection);
-    }
+    }*/
 
     protected int getJobDocCount() {
         return getJobDocCount("job");
