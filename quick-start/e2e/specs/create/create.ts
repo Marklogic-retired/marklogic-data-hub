@@ -188,11 +188,6 @@ export default function() {
       entityPage.getPropertyCardinality(lastProperty).element(by.css(selectCardinalityOneToManyOption)).click();
       entityPage.getPropertyDescription(lastProperty).sendKeys('products description');
       entityPage.getPropertyWordLexicon(lastProperty).click();
-      // add a duplicate price property, negative test
-      entityPage.addProperty.click();
-      lastProperty = entityPage.lastProperty;
-      entityPage.getPropertyName(lastProperty).sendKeys('price');
-      entityPage.getPropertyType(lastProperty).element(by.cssContainingText('option', 'decimal')).click();
       entityPage.saveEntity.click();
       browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
       expect(entityPage.confirmDialogYesButton.isPresent()).toBe(true);
@@ -533,6 +528,24 @@ export default function() {
       entityPage.addProperty.click();
       let lastProperty = entityPage.lastProperty;
       entityPage.getPropertyName(lastProperty).sendKeys('test white space');
+      // verify the error message on white space in property name
+      let errorMessage = entityPage.errorWhiteSpaceMessage;
+      expect(errorMessage.getText()).toBe('Property names are required, must be unique and whitespaces are not allowed');
+      // verify if the Save button is disabled on white space
+      expect(entityPage.saveEntity.isEnabled()).toBe(false);
+      entityPage.cancelEntity.click();
+      browser.wait(EC.invisibilityOf(entityPage.entityEditor));
+    });
+
+    it ('should not be able to create duplicate properties', function() {
+      entityPage.clickEditEntity('PIIEntity');
+      browser.wait(EC.visibilityOf(entityPage.entityEditor));
+      expect(entityPage.entityEditor.isPresent()).toBe(true);
+      // add test property to verify duplicate property
+      console.log('add duplicate property');
+      entityPage.addProperty.click();
+      let lastProperty = entityPage.lastProperty;
+      entityPage.getPropertyName(lastProperty).sendKeys('pii_test');
       // verify the error message on white space in property name
       let errorMessage = entityPage.errorWhiteSpaceMessage;
       expect(errorMessage.getText()).toBe('Property names are required, must be unique and whitespaces are not allowed');
