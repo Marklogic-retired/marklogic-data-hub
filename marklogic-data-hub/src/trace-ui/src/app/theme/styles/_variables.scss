@@ -29,10 +29,10 @@ mdl-button {
   box-sizing: border-box;
 }
 
-@import '../../../../node_modules/@angular-mdl/core/scss/material-design-lite';
+@import '~@angular-mdl/core/scss/material-design-lite';
 
-@import '../../../../node_modules/~@angular-mdl/popover/popover';
-@import '../../../../node_modules/~@angular-mdl/select/select';
+@import '~@angular-mdl/popover/popover';
+@import '~@angular-mdl/select/select';
 
 .mdl-dialog {
   width: fit-content;

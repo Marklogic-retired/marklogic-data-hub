@@ -1,4 +1,4 @@
-@import '../../styles/variables';
+@import '../theme/styles/variables';
 
 $primary: unquote("rgb(#{$color-primary})");
 $light: unquote("rgb(#{$palette-datahub-A100})");
