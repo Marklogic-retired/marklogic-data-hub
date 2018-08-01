@@ -464,14 +464,27 @@ public interface HubConfig {
      * Sets the App Config for the current HubConfig
      * @param config AppConfig to associate with the HubConfig
      */
-    void setAppConfig(AppConfig config);
+    void setStagingAppConfig(AppConfig config);
 
     /**
      * Sets the App Config for the current HubConfig, with skipUpdate option
      * @param config - AppConfig to associate with the HubConfig
      * @param skipUpdate false to force update of AppConfig, true to skip it
      */
-    void setAppConfig(AppConfig config, boolean skipUpdate);
+    void setStagingAppConfig(AppConfig config, boolean skipUpdate);
+
+    /**
+     * Sets the App Config for the current HubConfig
+     * @param config AppConfig to associate with the HubConfig
+     */
+    void setFinalAppConfig(AppConfig config);
+
+    /**
+     * Sets the App Config for the current HubConfig, with skipUpdate option
+     * @param config - AppConfig to associate with the HubConfig
+     * @param skipUpdate false to force update of AppConfig, true to skip it
+     */
+    void setFinalAppConfig(AppConfig config, boolean skipUpdate);
 
     /**
      * Gets the current version of the DHF Jar

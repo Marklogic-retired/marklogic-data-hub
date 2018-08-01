@@ -59,6 +59,8 @@ public class HubConfigBuilderImpl implements HubConfigBuilder {
     private AdminConfig adminConfig;
     private AdminManager adminManager;
     private AppConfig appConfig;
+    private AppConfig stagingAppConfig;
+    private AppConfig finalAppConfig;
 
     public HubConfigBuilderImpl(String projectDir) {
         this.projectDir = projectDir;
@@ -82,6 +84,7 @@ public class HubConfigBuilderImpl implements HubConfigBuilder {
 
     @Deprecated
     @Override public HubConfigBuilder withAppConfig(AppConfig appConfig) {
+        System.out.println("withAppConfig");
         this.appConfig = appConfig;
         return this;
     }
@@ -130,11 +133,18 @@ public class HubConfigBuilderImpl implements HubConfigBuilder {
 
         SimplePropertySource propertySource = new SimplePropertySource(actualProperties);
 
-        if (appConfig != null) {
-            hubConfig.setAppConfig(appConfig);
+        if (stagingAppConfig != null) {
+            hubConfig.setStagingAppConfig(stagingAppConfig);
         }
         else {
-            hubConfig.setAppConfig(new DefaultAppConfigFactory(propertySource).newAppConfig());
+            hubConfig.setStagingAppConfig(new DefaultAppConfigFactory(propertySource).newAppConfig());
+        }
+
+        if (finalAppConfig != null) {
+            hubConfig.setFinalAppConfig(finalAppConfig);
+        }
+        else {
+            hubConfig.setFinalAppConfig(new DefaultAppConfigFactory(propertySource).newAppConfig());
         }
 
         if (adminConfig != null) {

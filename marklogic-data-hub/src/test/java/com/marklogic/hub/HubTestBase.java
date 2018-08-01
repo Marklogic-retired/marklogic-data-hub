@@ -386,14 +386,23 @@ public class HubTestBase {
         	hubConfig.getAppConfig().setSimpleSslConfig();
         }
         if(isCertAuth()) {
-        	AppConfig appConfig = hubConfig.getAppConfig();
-        	appConfig.setRestSslContext(certContext);
-        	appConfig.setRestSecurityContextType(SecurityContextType.CERTIFICATE);
+        	AppConfig stagingAppConfig = hubConfig.getAppConfig();
+        	stagingAppConfig.setRestSslContext(certContext);
+            stagingAppConfig.setRestSecurityContextType(SecurityContextType.CERTIFICATE);
 
-        	appConfig.setAppServicesSslContext(certContext);
-        	appConfig.setHost(bootStrapHost);
-        	appConfig.setAppServicesSecurityContextType(SecurityContextType.CERTIFICATE);
-        	hubConfig.setAppConfig(appConfig);
+            stagingAppConfig.setAppServicesSslContext(certContext);
+            stagingAppConfig.setHost(bootStrapHost);
+            stagingAppConfig.setAppServicesSecurityContextType(SecurityContextType.CERTIFICATE);
+        	hubConfig.setStagingAppConfig(stagingAppConfig);
+
+            AppConfig finalAppConfig = hubConfig.getAppConfig();
+            finalAppConfig.setRestSslContext(certContext);
+            finalAppConfig.setRestSecurityContextType(SecurityContextType.CERTIFICATE);
+
+            finalAppConfig.setAppServicesSslContext(certContext);
+            finalAppConfig.setHost(bootStrapHost);
+            finalAppConfig.setAppServicesSecurityContextType(SecurityContextType.CERTIFICATE);
+            hubConfig.setFinalAppConfig(finalAppConfig);
 
         	hubConfig.setSslContext(DatabaseKind.STAGING,certContext);
         	hubConfig.setSslContext(DatabaseKind.FINAL,certContext);

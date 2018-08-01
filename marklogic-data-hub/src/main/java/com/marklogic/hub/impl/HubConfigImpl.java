@@ -1053,14 +1053,25 @@ public class HubConfigImpl implements HubConfig {
     }
 
 
-    @Override public void setAppConfig(AppConfig config) {
-        setAppConfig(config, false);
+    @Override public void setStagingAppConfig(AppConfig config) {
+        setStagingAppConfig(config, false);
     }
 
-    @Override public void setAppConfig(AppConfig config, boolean skipUpdate) {
+    @Override public void setStagingAppConfig(AppConfig config, boolean skipUpdate) {
         this.appConfig = config;
         if (!skipUpdate) {
-            updateAppConfig(this.appConfig);
+            updateStagingAppConfig(this.appConfig);
+        }
+    }
+
+    @Override public void setFinalAppConfig(AppConfig config) {
+        setFinalAppConfig(config, false);
+    }
+
+    @Override public void setFinalAppConfig(AppConfig config, boolean skipUpdate) {
+        this.appConfig = config;
+        if (!skipUpdate) {
+            updateFinalAppConfig(this.appConfig);
         }
     }
 
@@ -1151,20 +1162,13 @@ public class HubConfigImpl implements HubConfig {
         return customTokens;
     }
 
-    private void updateAppConfig(AppConfig config) {
+    private void updateStagingAppConfig(AppConfig config) {
+        logger.info("Updating staging appconfig");
         config.setRestPort(stagingPort);
         config.setModulesDatabaseName(modulesDbName);
 
         config.setTriggersDatabaseName(triggersDbName);
-        //config.setSchemasDatabaseName(schemasDbName);
-
-        //logger.info("SchemasDatabaseName: " + config.getRestPort());
-        if(config.getSchemasDatabaseName() == "data-hub-STAGING") {
-            config.setSchemasDatabaseName(stagingSchemasDbName);
-        }
-        else {//if (config.getSchemasDatabaseName() == "data-hub-FINAL"){
-            config.setSchemasDatabaseName(finalSchemasDbName);
-        }
+        config.setSchemasDatabaseName(stagingSchemasDbName);
         config.setModulesDatabaseName(modulesDbName);
 
         config.setReplaceTokensInModules(true);
@@ -1173,12 +1177,60 @@ public class HubConfigImpl implements HubConfig {
 
         HashMap<String, Integer> forestCounts = new HashMap<>();
         forestCounts.put(stagingDbName, stagingForestsPerHost);
-        forestCounts.put(finalDbName, finalForestsPerHost);
+        //forestCounts.put(finalDbName, finalForestsPerHost);
         forestCounts.put(jobDbName, jobForestsPerHost);
         forestCounts.put(modulesDbName, modulesForestsPerHost);
         forestCounts.put(triggersDbName, triggersForestsPerHost);
         //forestCounts.put(schemasDbName, schemasForestsPerHost);
         forestCounts.put(stagingSchemasDbName, stagingSchemasForestsPerHost);
+        //forestCounts.put(finalSchemasDbName, finalSchemasForestsPerHost);
+        config.setForestCounts(forestCounts);
+
+        ConfigDir configDir = new ConfigDir(getUserConfigDir().toFile());
+        config.setConfigDir(configDir);
+
+        config.setSchemasPath(getUserConfigDir().resolve("schemas").toString());
+
+        Map<String, String> customTokens = getCustomTokens(config, config.getCustomTokens());
+
+        if (environmentProperties != null) {
+            Enumeration keyEnum = environmentProperties.propertyNames();
+            while (keyEnum.hasMoreElements()) {
+                String key = (String) keyEnum.nextElement();
+                if (key.matches("^ml[A-Z].+") && !customTokens.containsKey(key)) {
+                    customTokens.put("%%" + key + "%%", (String) environmentProperties.get(key));
+                }
+            }
+        }
+
+
+        String version = getJarVersion();
+        customTokens.put("%%mlHubVersion%%", version);
+
+        appConfig = config;
+    }
+
+    private void updateFinalAppConfig(AppConfig config) {
+        logger.info("Updating final appconfig");
+        config.setRestPort(stagingPort);
+        config.setModulesDatabaseName(modulesDbName);
+
+        config.setTriggersDatabaseName(triggersDbName);
+        config.setSchemasDatabaseName(finalSchemasDbName);
+        config.setModulesDatabaseName(modulesDbName);
+
+        config.setReplaceTokensInModules(true);
+        config.setUseRoxyTokenPrefix(false);
+        config.setModulePermissions(modulePermissions);
+
+        HashMap<String, Integer> forestCounts = new HashMap<>();
+        //forestCounts.put(stagingDbName, stagingForestsPerHost);
+        forestCounts.put(finalDbName, finalForestsPerHost);
+        forestCounts.put(jobDbName, jobForestsPerHost);
+        forestCounts.put(modulesDbName, modulesForestsPerHost);
+        forestCounts.put(triggersDbName, triggersForestsPerHost);
+        //forestCounts.put(schemasDbName, schemasForestsPerHost);
+        //forestCounts.put(stagingSchemasDbName, stagingSchemasForestsPerHost);
         forestCounts.put(finalSchemasDbName, finalSchemasForestsPerHost);
         config.setForestCounts(forestCounts);
 
