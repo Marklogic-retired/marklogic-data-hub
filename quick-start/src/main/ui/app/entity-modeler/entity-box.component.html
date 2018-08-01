@@ -74,8 +74,7 @@
               <i [hidden]="!isPii(property.name)" class="fa fa-lock"></i>
             </td>
             <td class="key-cell">
-              <span class="property-name" *ngIf="!property.validString" class="has-whitespace">{{property.name}}</span>
-              <span class="property-name" *ngIf="property.validString" class="no-whitespace">{{property.name}}</span>
+              <span class="property-name" [ngClass]="{'invalid':!property.validString}">{{property.name}}</span>
             </td>
             <td class="value-cell">
               <span>{{property.getType()}}</span>

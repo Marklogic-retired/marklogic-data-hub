@@ -167,12 +167,8 @@ $red-color: unquote("rgb(#{$palette-datahub-red})");
       min-width: 20px;
     }
 
-    .has-whitespace {
+    .invalid {
       color: #a94442;
-    }
-
-    .no-whitespace {
-      color: black;
     }
   }
 }

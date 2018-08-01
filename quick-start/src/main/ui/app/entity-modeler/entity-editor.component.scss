@@ -88,6 +88,8 @@ table.properties {
   color: #a94442;
 }
 
-.has-whitespace {
+.invalid {
   color: #a94442;
+  border: 2px solid #a94442 !important;
+  outline-width: 0;
 }
