@@ -1,0 +1,331 @@
+{
+  "template": {
+    "description": "Populates the rows for the Issues view",
+    "context": "/ExampleDataType",
+    "vars": [
+        {
+          "name": "varanyURI",
+          "val": "testanyURI"
+        },
+        {
+          "name": "varbase64Binary",
+          "val": "testbase64Binary"
+        },
+        {
+          "name": "varboolean",
+          "val": "testboolean"
+        },
+        {
+          "name": "varbyte",
+          "val": "testbyte"
+        },
+        {
+          "name": "vardate",
+          "val": "testdate"
+        },
+        {
+          "name": "vardateTime",
+          "val": "testdateTime"
+        },
+        {
+          "name": "vardayTimeDuration",
+          "val": "testdayTimeDuration"
+        },
+        {
+          "name": "vardecimal",
+          "val": "testdecimal"
+        },
+        {
+          "name": "vardouble",
+          "val": "testdouble"
+        },
+       {
+          "name": "varduration",
+          "val": "testduration"
+        },
+        {
+          "name": "varfloat",
+          "val": "testfloat"
+        },
+        {
+          "name": "vargDay",
+          "val": "testgDay"
+        },
+      {
+          "name": "vargMonth",
+          "val": "testgMonth"
+        },
+        {
+          "name": "vargMonthDay",
+          "val": "testgMonthDay"
+        },
+        {
+          "name": "vargYear",
+          "val": "testgYear"
+        },
+        {
+          "name": "vargYearMonth",
+          "val": "testgYearMonth"
+        },
+        {
+          "name": "varhexBinary",
+          "val": "testhexBinary"
+        },
+        {
+          "name": "varint",
+          "val": "testint"
+        },
+        {
+          "name": "varinteger",
+          "val": "testinteger"
+        },
+        {
+          "name": "varlong",
+          "val": "testlong"
+        },
+        {
+          "name": "varnegativeInteger",
+          "val": "testnegativeInteger"
+        },
+        {
+          "name": "varnonNegativeInteger",
+          "val": "testnonNegativeInteger"
+        },
+        {
+          "name": "varnonPositiveInteger",
+          "val": "testnonPositiveInteger"
+        },
+        {
+          "name": "varpositiveInteger",
+          "val": "testpositiveInteger"
+        },
+        {
+          "name": "varshort",
+          "val": "testshort"
+        },
+        {
+          "name": "varstring",
+          "val": "teststring"
+        },
+        {
+          "name": "vartime",
+          "val": "testtime"
+        },
+        {
+          "name": "varunsignedByte",
+          "val": "testunsignedByte"
+        },
+          {
+          "name": "varunsignedInt",
+          "val": "testunsignedInt"
+        },
+        {
+          "name": "varunsignedLong",
+          "val": "testunsignedLong"
+        },
+        {
+          "name": "varunsignedShort",
+          "val": "testunsignedShort"
+        },
+        {
+          "name": "varyearMonthDuration",
+          "val": "testyearMonthDuration"
+        },
+        {
+          "name": "varpoint",
+          "val": "testpoint"
+        },
+        {
+          "name": "varlongLatPoint",
+          "val": "testlongLatPoint"
+        },
+        {
+          "name": "varIRI",
+          "val": "testIRI"
+        }
+    ],
+    "rows": [
+      {
+        "schemaName": "TestTypesSchema",
+        "viewName": "TestTypesView",
+        "columns": [
+            {
+              "name": "TESTCOLUMNanyURI",
+              "scalarType": "anyURI",
+              "val": "$varanyURI"
+            },
+            {
+              "name": "TESTCOLUMNbase64Binary",
+              "scalarType": "base64Binary",
+              "val": "$varbase64Binary"
+            },
+            {
+              "name": "TESTCOLUMNboolean",
+              "scalarType": "boolean",
+              "val": "$varboolean"
+            },
+            {
+              "name": "TESTCOLUMNbyte",
+              "scalarType": "byte",
+              "val": "$varbyte"
+            },
+            {
+              "name": "TESTCOLUMNdate",
+              "scalarType": "date",
+              "val": "$vardate"
+            },
+            {
+              "name": "TESTCOLUMNdateTime",
+              "scalarType": "dateTime",
+              "val": "$vardateTime"
+            },
+          {
+              "name": "TESTCOLUMNdayTimeDuration",
+              "scalarType": "dayTimeDuration",
+              "val": "$vardayTimeDuration"
+            },
+            {
+              "name": "TESTCOLUMNdecimal",
+              "scalarType": "decimal",
+              "val": "$vardecimal"
+            },
+            {
+              "name": "TESTCOLUMNdouble",
+              "scalarType": "double",
+              "val": "$vardouble"
+            },
+            {
+              "name": "TESTCOLUMNduration",
+              "scalarType": "duration",
+              "val": "$varduration"
+            },
+            {
+              "name": "TESTCOLUMNfloat",
+              "scalarType": "float",
+              "val": "$varfloat"
+            },
+            {
+              "name": "TESTCOLUMNgDay",
+              "scalarType": "gDay",
+              "val": "$vargDay"
+            },
+            {
+              "name": "TESTCOLUMNgMonth",
+              "scalarType": "gMonth",
+              "val": "$vargMonth"
+            },
+            {
+              "name": "TESTCOLUMNgMonthDay",
+              "scalarType": "gMonthDay",
+              "val": "$vargMonthDay"
+            },
+            {
+              "name": "TESTCOLUMNgYear",
+              "scalarType": "gYear",
+              "val": "$vargYear"
+            },
+            {
+              "name": "TESTCOLUMNgYearMonth",
+              "scalarType": "gYearMonth",
+              "val": "$vargYearMonth"
+            },
+            {
+              "name": "TESTCOLUMNhexBinary",
+              "scalarType": "hexBinary",
+              "val": "$varhexBinary"
+            },
+            {
+              "name": "TESTCOLUMNint",
+              "scalarType": "int",
+              "val": "$varint"
+            },
+            {
+              "name": "TESTCOLUMNinteger",
+              "scalarType": "integer",
+              "val": "$varinteger"
+            },
+            {
+              "name": "TESTCOLUMNlong",
+              "scalarType": "long",
+              "val": "$varlong"
+            },
+            {
+              "name": "TESTCOLUMNnegativeInteger",
+              "scalarType": "negativeInteger",
+              "val": "$varnegativeInteger"
+            },
+           {
+              "name": "TESTCOLUMNnonNegativeInteger",
+              "scalarType": "nonNegativeInteger",
+              "val": "$varnonNegativeInteger"
+            },
+            {
+              "name": "TESTCOLUMNnonPositiveInteger",
+              "scalarType": "nonPositiveInteger",
+              "val": "$varnonPositiveInteger"
+            },
+            {
+              "name": "TESTCOLUMNpositiveInteger",
+              "scalarType": "positiveInteger",
+              "val": "$varpositiveInteger"
+            },
+            {
+              "name": "TESTCOLUMNshort",
+              "scalarType": "short",
+              "val": "$varshort"
+            },
+            {
+              "name": "TESTCOLUMNstring",
+              "scalarType": "string",
+              "val": "$varstring"
+            },
+            {
+              "name": "TESTCOLUMNtime",
+              "scalarType": "time",
+              "val": "$vartime"
+            },
+            {
+              "name": "TESTCOLUMNunsignedByte",
+              "scalarType": "unsignedByte",
+              "val": "$varunsignedByte"
+            },
+            {
+              "name": "TESTCOLUMNunsignedInt",
+              "scalarType": "unsignedInt",
+              "val": "$varunsignedInt"
+            },
+            {
+              "name": "TESTCOLUMNunsignedLong",
+              "scalarType": "unsignedLong",
+              "val": "$varunsignedLong"
+            },
+            {
+              "name": "TESTCOLUMNunsignedShort",
+              "scalarType": "unsignedShort",
+              "val": "$varunsignedShort"
+            },
+            {
+              "name": "TESTCOLUMNyearMonthDuration",
+              "scalarType": "yearMonthDuration",
+              "val": "$varyearMonthDuration"
+            },
+            {
+              "name": "TESTCOLUMNpoint",
+              "scalarType": "point",
+              "val": "$varpoint"
+            },
+            {
+              "name": "TESTCOLUMNlongLatPoint",
+              "scalarType": "longLatPoint",
+              "val": "$varlongLatPoint"
+            },
+            {
+              "name": "TESTCOLUMNIRI",
+              "scalarType": "IRI",
+              "val": "$varIRI"
+            }
+         ]
+      }
+     ]
+  }
+}

@@ -1,0 +1,22 @@
+<template xmlns="http://marklogic.com/xdmp/tde">
+  <description>Populates the rows for the Issues view</description>
+  <context>/MedlineCitation/Article/Journal/JournalIssue</context>
+  <rows>
+    <row>
+      <schema-name>medline</schema-name>
+      <view-name>Publications</view-name>
+      <columns>
+        <column>
+          <name>MedID</name>
+          <scalar-type>long</scalar-type>
+          <val>../../../MedlineID</val>
+        </column>
+        <column>
+          <name>ISSN</name>
+          <scalar-type>string</scalar-type>
+          <val>../ISSN</val>
+        </column>
+      </columns>
+    </row>
+  </rows>
+</template>
