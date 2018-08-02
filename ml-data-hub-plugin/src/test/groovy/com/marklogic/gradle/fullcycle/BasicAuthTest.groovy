@@ -32,7 +32,7 @@ class BasicAuthTest extends BaseTest {
     }
 
     def cleanupSpec() {
-        runTask('mlUndeploy', '-Pconfirm=true')
+        //runTask('mlUndeploy', '-Pconfirm=true')
     }
 
     void createProperties() {

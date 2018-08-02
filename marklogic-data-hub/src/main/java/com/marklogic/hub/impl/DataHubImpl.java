@@ -16,7 +16,6 @@
 package com.marklogic.hub.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.appdeployer.command.Command;
 import com.marklogic.appdeployer.command.CommandMapBuilder;
@@ -52,6 +51,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.io.File;
 import java.io.IOException;
@@ -279,7 +279,26 @@ public class DataHubImpl implements DataHub {
 
     @Override public HashMap runPreInstallCheck(Versions versions) {
 
-        Map<Integer, String> portsInUse = getServerPortsInUse();
+
+        Map<Integer, String> portsInUse = null;
+
+        try {
+            portsInUse = getServerPortsInUse();
+        } catch (HttpClientErrorException e) {
+            logger.warn("Used non-existing user to verify data hub.  Usually this means a fresh system, ready to install.");
+            HashMap response = new HashMap();
+            response.put("serverVersion", serverVersion);
+            response.put("serverVersionOk", serverVersionOk);
+            response.put("stagingPortInUse", stagingPortInUse);
+            response.put("stagingPortInUseBy", stagingPortInUseBy);
+            response.put("finalPortInUse", finalPortInUse);
+            response.put("finalPortInUseBy", finalPortInUseBy);
+            response.put("jobPortInUse", jobPortInUse);
+            response.put("jobPortInUseBy", jobPortInUseBy);
+            response.put("safeToInstall", true);
+            return response;
+        }
+
         Set<Integer> ports = portsInUse.keySet();
 
         String serverName = portsInUse.get(hubConfig.getPort(DatabaseKind.STAGING));
@@ -390,6 +409,8 @@ public class DataHubImpl implements DataHub {
         List<Command> securityCommands = commandMap.get("mlSecurityCommands");
         securityCommands.set(0, new DeployHubRolesCommand(hubConfig));
         securityCommands.set(1, new DeployHubUsersCommand(hubConfig));
+        // mlDeploySecurity is not finding these classes.
+        commandMap.put("mlSecurityCommands", securityCommands);
 
         List<Command> dbCommands = new ArrayList<>();
         dbCommands.add(new DeployHubDatabasesCommand(hubConfig));

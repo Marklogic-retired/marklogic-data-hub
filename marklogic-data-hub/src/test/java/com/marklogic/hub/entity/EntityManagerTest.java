@@ -87,7 +87,7 @@ public class EntityManagerTest extends HubTestBase {
 
     @Test
     public void testDeploySearchOptionsWithNoEntities() {
-        clearDatabases(HubConfig.DEFAULT_MODULES_DB_NAME);
+        getDataHub().clearUserModules();
         Path dir = Paths.get(getHubConfig().getProjectDir(), HubConfig.ENTITY_CONFIG_DIR);
 
         assertNull(getModulesFile("/Default/" + HubConfig.DEFAULT_STAGING_NAME + "/rest-api/options/" + HubConfig.STAGING_ENTITY_QUERY_OPTIONS_FILE));
@@ -111,6 +111,7 @@ public class EntityManagerTest extends HubTestBase {
 
     @Test
     public void testDeploySearchOptions() throws IOException, SAXException {
+        getDataHub().clearUserModules();
         installEntities();
 
         Path dir = Paths.get(getHubConfig().getProjectDir(), HubConfig.ENTITY_CONFIG_DIR);

@@ -26,6 +26,7 @@ public class DeployHubUsersCommand extends DeployUsersCommand {
     private HubConfig hubConfig;
 
     public DeployHubUsersCommand(HubConfig hubConfig) {
+        super();
         this.hubConfig = hubConfig;
     }
 
