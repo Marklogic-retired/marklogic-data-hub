@@ -107,7 +107,6 @@ public class MappingE2E extends HubTestBase {
             isSetup = true;
             scaffolding = Scaffolding.create(projectDir.toString(), finalClient);
             scaffolding.createEntity(ENTITY);
-
             Path entityDir = projectDir.resolve("plugins").resolve("entities").resolve(ENTITY);
             copyFile("e2e-test/" + ENTITY + ".entity.json", entityDir.resolve(ENTITY + ".entity.json"));
             installUserModules(getHubConfig(), true);
@@ -142,6 +141,7 @@ public class MappingE2E extends HubTestBase {
             		}
             	}
             });
+            //Flows with xml docs having processing instructions/comments
             createFlow("extranodes", CodeFormat.XQUERY, DataFormat.XML, FlowType.HARMONIZE, true,"validPath1-threeProp", 1, (CreateFlowListener)null);
             createFlow("extranodes", CodeFormat.JAVASCRIPT, DataFormat.XML, FlowType.HARMONIZE, true, "validPath1-threeProp", 1, (CreateFlowListener)null);
             flowManager = FlowManager.create(getHubConfig());
@@ -153,7 +153,7 @@ public class MappingE2E extends HubTestBase {
     @TestFactory
     public List<DynamicTest> generateTests() {
     	List<DynamicTest> tests = new ArrayList<>();
-    	
+    	//Flows with xml docs having processing instructions/comments
         allCombos((codeFormat, dataFormat, flowType, useEs) -> {
             String prefix = "extranodes";
             String mapping = "validPath1-threeProp";
@@ -173,10 +173,9 @@ public class MappingE2E extends HubTestBase {
 	    		if(useEs && flowType.equals(FlowType.HARMONIZE)) {
 	    			String prefix = "mapping";
 	    		    int version = mappingManager.getMapping(mapping).getVersion();
-
 		            String flowName = getFlowName(prefix, codeFormat, dataFormat, flowType, mapping, version);
-
 		            Map<String, Object> options = new HashMap<>();
+		            //if(flowName.contains("validPath")&&codeFormat.equals(CodeFormat.JAVASCRIPT)&&dataFormat.equals(DataFormat.XML))
 		            tests.add(DynamicTest.dynamicTest(flowName , () -> {
 		            	FinalCounts finalCounts = new FinalCounts(TEST_SIZE, TEST_SIZE * 2, TEST_SIZE + 1, 1, TEST_SIZE, 0, TEST_SIZE, 0, TEST_SIZE/BATCH_SIZE, 0, "FINISHED");
 		                //This is a failing test, so finalCounts changed accordingly
@@ -188,8 +187,8 @@ public class MappingE2E extends HubTestBase {
 		                	testHarmonizeFlow(prefix, codeFormat, dataFormat, useEs, options, stagingClient, HubConfig.DEFAULT_FINAL_NAME, finalCounts, true, mapping, 1);
 		               }
 		               testHarmonizeFlow(prefix, codeFormat, dataFormat, useEs, options, stagingClient, HubConfig.DEFAULT_FINAL_NAME, finalCounts, true, mapping, version);
-		            }));
-
+		            	
+		            }));	    		
 	    		}
 	    	});
     	}
@@ -209,10 +208,10 @@ public class MappingE2E extends HubTestBase {
     	allMappings.remove(0);
     	return allMappings;
     }
+    
     private String getFlowName(String prefix, CodeFormat codeFormat, DataFormat dataFormat, FlowType flowType, String mapping, int version) {
         return prefix + "-" + flowType.toString() + "-" + codeFormat.toString() + "-" + dataFormat.toString() + "-" + mapping+"-"+version ;
     }
-
 
     private void createFlow(String prefix, CodeFormat codeFormat, DataFormat dataFormat, FlowType flowType, boolean useEs, String mapping, int  version, CreateFlowListener listener) {
     	if(useEs && flowType.equals(FlowType.HARMONIZE)) {
@@ -234,14 +233,14 @@ public class MappingE2E extends HubTestBase {
     private void createMappings() {
     	List<String> allMappings = new ArrayList<String>();
     	Map<String, String> sourceContexts = new HashMap<>();
-    	sourceContexts.put("validPath1", "//validtest/");
-    	sourceContexts.put("validPath2", "/test/validtest/");
+    	sourceContexts.put("validPath1", "//*:validtest/*:");
+    	sourceContexts.put("validPath2", "/*:test/*:validtest/*:");
     	sourceContexts.put("validPath3", "//*:validtestns/*:");
-    	sourceContexts.put("validPath4", "/test/*[name()='validtestns']/");
+    	sourceContexts.put("validPath4", "/*:test/*[name()='validtestns']/*:");
 
     	String targetEntity = "http://marklogic.com/example/Schema-0.0.1/e2eentity";
     	Map<String, String> properties = new HashMap<>();
-    	properties.put("twoProp","empid,fullname");
+    	//properties.put("twoProp","empid,fullname");
     	properties.put("threeProp","empid,fullname,monthlysalary");
     	properties.put("nonExistingProp", "fakeprop1");
   
@@ -259,12 +258,12 @@ public class MappingE2E extends HubTestBase {
         createMapping("empty-sourceContext", null,"http://marklogic.com/example/Schema-0.0.1/e2eentity", "empid,fullname,monthlysalary".split(","));
         
         createMapping("default-without-sourcedFrom", "/","http://marklogic.com/example/Schema-0.0.1/e2eentity",  "empid,fullname,monthlysalary".split(","));
-        createMapping("default-no-properties", "//validtest/","http://marklogic.com/example/Schema-0.0.1/e2eentity", new String[1]);
-        createMapping("default-diffCanonicalProp", "//validtest/","http://marklogic.com/example/Schema-0.0.1/e2eentity","empid,fullname,monthlysalary".split(","));
+        createMapping("default-no-properties", "//*:validtest/*:","http://marklogic.com/example/Schema-0.0.1/e2eentity", new String[1]);
+        createMapping("default-diffCanonicalProp", "//*:validtest/*:","http://marklogic.com/example/Schema-0.0.1/e2eentity","empid,fullname,monthlysalary".split(","));
         
-        createMapping("diff-entity-validPath", "//validtest/","http://marklogic.com/example/Schema-0.0.1/fakeentity", "empid,fullname,monthlysalary".split(","));
+        createMapping("diff-entity-validPath", "//*:validtest/*:","http://marklogic.com/example/Schema-0.0.1/fakeentity", "empid,fullname,monthlysalary".split(","));
         //Create another version of existing mapping
-        createMapping("validPath1-threeProp", "//validtest/","http://marklogic.com/example/Schema-0.0.1/e2eentity", true, "empid,fullname,monthlysalary".split(","));
+        createMapping("validPath1-threeProp", "//*:validtest/*:","http://marklogic.com/example/Schema-0.0.1/e2eentity", true, "empid,fullname,monthlysalary".split(","));
         allMappings.addAll(Arrays.asList("nonExistentPath,inCorrectPath,empty-sourceContext,default-without-sourcedFrom,default-no-properties,default-diffCanonicalProp,diff-entity-validPath".split(",")));
         
         installUserModules(getHubConfig(), true);      
@@ -272,50 +271,46 @@ public class MappingE2E extends HubTestBase {
 
     private void createMapping(String name, String sourceContext, String targetEntityType,  String ... properties) {
     	createMapping(name, sourceContext, targetEntityType, false,  properties);
-
     }
 
     private void createMapping(String name, String sourceContext, String targetEntityType, boolean incrementVersion,  String ... properties) {
-    	  ObjectMapper mapper = new ObjectMapper();
-          Mapping testMap = Mapping.create(name);
-          testMap.setDescription("This is a test.");
-          testMap.setSourceContext(sourceContext);
-          testMap.setTargetEntityType(targetEntityType);
-
-          HashMap<String, ObjectNode> mappingProperties = new HashMap<>();
-          for(String property:properties) {
-          	if(property == null) {
-          		mappingProperties.put("id", (ObjectNode)null);
-          	}
-          	else {
-          		//non-existing property in source doc
-          		if(property.equals("fakeprop1")) {
-          			mappingProperties.put("id", mapper.createObjectNode().put("sourcedFrom", "fakeprop1"));
-          			mappingProperties.put("name", mapper.createObjectNode().put("sourcedFrom", "fakeprop1"));
-          			mappingProperties.put("salary", mapper.createObjectNode().put("sourcedFrom", "fakeprop1"));
-          		}
-          		//non-existing property in canonical model
-          		else if(name.contains("default-diffCanonicalProp")) {
-          			mappingProperties.put("id1", mapper.createObjectNode().put("sourcedFrom", "empid"));
-          			mappingProperties.put("name1", mapper.createObjectNode().put("sourcedFrom", "fullname"));
-          			mappingProperties.put("salary1", mapper.createObjectNode().put("sourcedFrom", "monthlysalary"));
-          		}
-          		else if(name.contains("without-sourcedFrom")) {
-          			//do nothing
-          		}
-          		else {
-          			String key = modelProperties.stream().filter(str -> property.contains(str)).findFirst().get();
-                  	mappingProperties.put(key, mapper.createObjectNode().put("sourcedFrom", property));
-          		}
-
-          	}
-          }
-          if(!name.contains("without-sourcedFrom")) {
-          	testMap.setProperties(mappingProperties);
-          }
-
-          mappingManager.saveMapping(testMap, incrementVersion);
-    }
+		ObjectMapper mapper = new ObjectMapper();
+		Mapping testMap = Mapping.create(name);
+		testMap.setDescription("This is a test.");
+		testMap.setSourceContext(sourceContext);
+		testMap.setTargetEntityType(targetEntityType);
+		HashMap<String, ObjectNode> mappingProperties = new HashMap<>();
+		for(String property:properties) {
+		    if(property == null) {
+		    	mappingProperties.put("id", (ObjectNode)null);
+		    }
+		    else {
+		    	//non-existing property in source doc
+		    	if(property.equals("fakeprop1")) {
+		    		mappingProperties.put("id", mapper.createObjectNode().put("sourcedFrom", "fakeprop1"));
+		    		mappingProperties.put("name", mapper.createObjectNode().put("sourcedFrom", "fakeprop1"));
+		    		mappingProperties.put("salary", mapper.createObjectNode().put("sourcedFrom", "fakeprop1"));
+		      	}
+		    	//non-existing property in canonical model
+		    	else if(name.contains("default-diffCanonicalProp")) {
+		    		mappingProperties.put("id1", mapper.createObjectNode().put("sourcedFrom", "empid"));
+		    		mappingProperties.put("name1", mapper.createObjectNode().put("sourcedFrom", "fullname"));
+		    		mappingProperties.put("salary1", mapper.createObjectNode().put("sourcedFrom", "monthlysalary"));
+		      	}
+		    	else if(name.contains("without-sourcedFrom")) {
+		    		//do nothing
+		      	}
+		    	else {
+		    		String key = modelProperties.stream().filter(str -> property.contains(str)).findFirst().get();
+		    		mappingProperties.put(key, mapper.createObjectNode().put("sourcedFrom", property));
+		    	}
+		    }
+		}
+		if(!name.contains("without-sourcedFrom")) {
+			testMap.setProperties(mappingProperties);
+		}
+		mappingManager.saveMapping(testMap, incrementVersion);
+    }	
 
     private void copyFile(String srcDir, Path dstDir) {
         FileUtil.copy(getResourceStream(srcDir), dstDir.toFile());
@@ -363,6 +358,7 @@ public class MappingE2E extends HubTestBase {
             assertEquals(0, getStagingDocCount(collection));
         }
     }
+    
     private Tuple<FlowRunner, JobTicket> runHarmonizeFlow(
         String flowName, DataFormat dataFormat,
         Vector<String> completed, Vector<String> failed,
@@ -447,15 +443,12 @@ public class MappingE2E extends HubTestBase {
             
             if(flowName.contains("validPath")) {
             	filename = "mapping/final-es";
-            	if(flowName.contains("extranodes") && codeFormat.equals(CodeFormat.XQUERY)) {
+            	if(flowName.contains("extranodes")) {
             		filename = filename.concat("-extranodes");
             	}
                 if(flowName.contains("validPath3") || flowName.contains("validPath4")) {
                 	filename = filename.concat("-1");
                 }
-            }
-            else if(flowName.contains("default")) {
-            	filename = "mapping/final-es-default";
             }
             else {
             	filename = "mapping/final-es-empty";
