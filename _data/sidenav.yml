@@ -84,6 +84,7 @@ main:
         { url: '/docs/gradle-tasks/', text: 'Gradle Tasks' },
         { url: '/javadocs/', text: 'Javadocs' }
         { url: '/docs/architecture/', text: 'Architecture' }
+        { url: '/docs/security/', text: 'Security' }
       ]
     }
     - { url: '/faqs/', text: 'FAQs' }
