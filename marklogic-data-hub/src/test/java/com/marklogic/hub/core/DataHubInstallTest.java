@@ -62,7 +62,7 @@ public class DataHubInstallTest extends HubTestBase {
         // the project dir must be available for uninstall to do anything... interesting.
         createProjectDir();
         try {
-            if (!setupDone) getDataHub().uninstall();
+            // if (!setupDone) getDataHub().uninstall();
         } catch (HttpClientErrorException e) {
             if (e.getStatusCode() == HttpStatus.UNAUTHORIZED) {
                 //pass

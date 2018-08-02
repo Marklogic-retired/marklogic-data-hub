@@ -23,6 +23,7 @@ import com.marklogic.client.extensions.ResourceServices;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.util.RequestParameters;
 import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.impl.HubConfigImpl;
 
 public class Versions extends ResourceManager {
     private static final String NAME = "ml:hubversion";
@@ -54,7 +55,8 @@ public class Versions extends ResourceManager {
     }
 
     public String getMarkLogicVersion() {
-        ServerEvaluationCall eval = hubConfig.newAppServicesClient().newServerEval();
+        // this call specifically needs to access marklogic without a known database
+        ServerEvaluationCall eval = hubConfig.getAppConfig().newAppServicesDatabaseClient(null).newServerEval();
         String xqy = "xdmp:version()";
         EvalResultIterator result = eval.xquery(xqy).eval();
         if (result.hasNext()) {
