@@ -70,7 +70,7 @@ public class TracingTest extends HubTestBase {
     }
 
 
-    /*@Test
+    @Test
     public void runXMLFlowSansTracing() {
         assertEquals(0, getFinalDocCount());
         assertEquals(0, getTracingDocCount());
@@ -418,5 +418,5 @@ public class TracingTest extends HubTestBase {
         JsonNode node = traceDocMgr.search(allButCollectors(), 1).next().getContent(new JacksonHandle()).get();
         Assert.assertEquals(1, node.get("trace").get("steps").size());
         Assert.assertEquals("writer", node.get("trace").get("steps").get(0).get("label").asText());
-    }*/
+    }
 }

@@ -31,7 +31,6 @@ public class HubSettings {
 
         settings.modulesDbName = config.getDbName(DatabaseKind.MODULES);
         settings.triggersDbName = config.getDbName(DatabaseKind.TRIGGERS);
-        //settings.schemasDbName = config.getDbName(DatabaseKind.SCHEMAS);
         settings.stagingSchemasDbName = config.getDbName(DatabaseKind.STAGING_SCHEMAS);
         settings.finalSchemasDbName = config.getDbName(DatabaseKind.FINAL_SCHEMAS);
 
@@ -192,14 +191,6 @@ public class HubSettings {
         this.triggersDbName = triggersDbName;
     }
 
-    /*public String getSchemasDbName() {
-        return schemasDbName;
-    }
-
-    public void setSchemasDbName(String schemasDbName) {
-        this.schemasDbName = schemasDbName;
-    }*/
-
     public String getStagingSchemasDbName() {
         return stagingSchemasDbName;
     }
@@ -255,7 +246,6 @@ public class HubSettings {
 
     String modulesDbName = null;
     String triggersDbName = null;
-    //String schemasDbName = null;
     String stagingSchemasDbName = null;
     String finalSchemasDbName = null;
 

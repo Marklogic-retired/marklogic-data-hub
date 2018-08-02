@@ -102,8 +102,6 @@ public class HubConfigImpl implements HubConfig {
     protected String triggersDbName = DEFAULT_TRIGGERS_DB_NAME;
     protected Integer triggersForestsPerHost = 1;
 
-    //protected String schemasDbName = DEFAULT_SCHEMAS_DB_NAME;
-    //protected Integer schemasForestsPerHost = 1;
     protected String stagingSchemasDbName = DEFAULT_STAGING_SCHEMAS_DB_NAME;
     protected Integer stagingSchemasForestsPerHost = 1;
     protected String finalSchemasDbName = DEFAULT_FINAL_SCHEMAS_DB_NAME;
@@ -117,7 +115,6 @@ public class HubConfigImpl implements HubConfig {
     // these hold runtime credentials for flows.
     private String mlUsername = null;
     private String mlPassword = null;
-    String name;
     private String[] loadBalancerHosts;
 
     protected String customForestPath = DEFAULT_CUSTOM_FOREST_PATH;
@@ -154,6 +151,7 @@ public class HubConfigImpl implements HubConfig {
     public String getHost() { return appConfig.getHost(); }
 
     @Override public String getDbName(DatabaseKind kind){
+        String name;
 
         switch (kind) {
             case STAGING:
@@ -165,18 +163,15 @@ public class HubConfigImpl implements HubConfig {
             case JOB:
                 name = jobDbName;
                 break;
-            /*case TRACE:
+            case TRACE:
                 name = jobDbName;
-                break;*/
+                break;
             case MODULES:
                 name = modulesDbName;
                 break;
             case TRIGGERS:
                 name = triggersDbName;
                 break;
-            /*case SCHEMAS:
-                name = schemasDbName;
-                break;*/
             case STAGING_SCHEMAS:
                 name = stagingSchemasDbName;
                 break;
@@ -200,18 +195,15 @@ public class HubConfigImpl implements HubConfig {
             case JOB:
                 jobDbName = dbName;
                 break;
-            /*case TRACE:
+            case TRACE:
                 jobDbName = dbName;
-                break;*/
+                break;
             case MODULES:
                 modulesDbName = dbName;
                 break;
             case TRIGGERS:
                 triggersDbName = dbName;
                 break;
-            /*case SCHEMAS:
-                schemasDbName = dbName;
-                break;*/
             case STAGING_SCHEMAS:
                 stagingSchemasDbName = dbName;
                 break;
@@ -235,9 +227,9 @@ public class HubConfigImpl implements HubConfig {
             case JOB:
                 name = jobHttpName;
                 break;
-            /*case TRACE:
+            case TRACE:
                 name = jobHttpName;
-                break;*/
+                break;
             default:
                 throw new InvalidDBOperationError(kind, "grab http name");
         }
@@ -255,9 +247,9 @@ public class HubConfigImpl implements HubConfig {
             case JOB:
                 jobHttpName = httpName;
                 break;
-            /*case TRACE:
+            case TRACE:
                 jobHttpName = httpName;
-                break;*/
+                break;
             default:
                 throw new InvalidDBOperationError(kind, "set http name");
         }
@@ -275,18 +267,15 @@ public class HubConfigImpl implements HubConfig {
             case JOB:
                 forests = jobForestsPerHost;
                 break;
-            /*case TRACE:
+            case TRACE:
                 forests = jobForestsPerHost;
-                break;*/
+                break;
             case MODULES:
                 forests = modulesForestsPerHost;
                 break;
             case TRIGGERS:
                 forests = triggersForestsPerHost;
                 break;
-            /*case SCHEMAS:
-                forests = schemasForestsPerHost;
-                break;*/
             case STAGING_SCHEMAS:
                 forests = stagingSchemasForestsPerHost;
                 break;
@@ -310,18 +299,15 @@ public class HubConfigImpl implements HubConfig {
             case JOB:
                 jobForestsPerHost = forestsPerHost;
                 break;
-            /*case TRACE:
+            case TRACE:
                 jobForestsPerHost = forestsPerHost;
-                break;*/
+                break;
             case MODULES:
                 modulesForestsPerHost = forestsPerHost;
                 break;
             case TRIGGERS:
                 triggersForestsPerHost = forestsPerHost;
                 break;
-            /*case SCHEMAS:
-                schemasForestsPerHost = forestsPerHost;
-                break;*/
             case STAGING_SCHEMAS:
                 stagingSchemasForestsPerHost = forestsPerHost;
                 break;
@@ -345,9 +331,9 @@ public class HubConfigImpl implements HubConfig {
             case JOB:
                 port = jobPort;
                 break;
-            /*case TRACE:
+            case TRACE:
                 port = jobPort;
-                break;*/
+                break;
             default:
                 throw new InvalidDBOperationError(kind, "grab app port");
         }
@@ -365,9 +351,9 @@ public class HubConfigImpl implements HubConfig {
             case JOB:
                 jobPort = port;
                 break;
-            /*case TRACE:
+            case TRACE:
                 jobPort = port;
-                break;*/
+                break;
             default:
                 throw new InvalidDBOperationError(kind, "set app port");
         }
@@ -386,9 +372,9 @@ public class HubConfigImpl implements HubConfig {
             case JOB:
                 sslContext = this.jobSslContext;
                 break;
-            /*case TRACE:
+            case TRACE:
                 sslContext = this.jobSslContext;
-                break;*/
+                break;
             default:
                 throw new InvalidDBOperationError(kind, "get ssl context");
         }
@@ -406,9 +392,9 @@ public class HubConfigImpl implements HubConfig {
             case JOB:
                 this.jobSslContext = sslContext;
                 break;
-            /*case TRACE:
+            case TRACE:
                 this.jobSslContext = sslContext;
-                break;*/
+                break;
             default:
                 throw new InvalidDBOperationError(kind, "set ssl context");
         }
@@ -426,9 +412,9 @@ public class HubConfigImpl implements HubConfig {
             case JOB:
                 sslHostnameVerifier = this.jobSslHostnameVerifier;
                 break;
-            /*case TRACE:
+            case TRACE:
                 sslHostnameVerifier = this.jobSslHostnameVerifier;
-                break;*/
+                break;
             default:
                 throw new InvalidDBOperationError(kind, "get ssl hostname verifier");
         }
@@ -446,9 +432,9 @@ public class HubConfigImpl implements HubConfig {
             case JOB:
                 this.jobSslHostnameVerifier = sslHostnameVerifier;
                 break;
-            /*case TRACE:
+            case TRACE:
                 this.jobSslHostnameVerifier = sslHostnameVerifier;
-                break;*/
+                break;
             default:
                 throw new InvalidDBOperationError(kind, "set ssl hostname verifier");
         }
@@ -466,9 +452,9 @@ public class HubConfigImpl implements HubConfig {
             case JOB:
                 authMethod = this.jobAuthMethod;
                 break;
-            /*case TRACE:
+            case TRACE:
                 authMethod = this.jobAuthMethod;
-                break;*/
+                break;
             default:
                 throw new InvalidDBOperationError(kind, "get auth method");
         }
@@ -486,9 +472,9 @@ public class HubConfigImpl implements HubConfig {
             case JOB:
                 this.jobAuthMethod = authMethod;
                 break;
-            /*case TRACE:
+            case TRACE:
                 this.jobAuthMethod = authMethod;
-                break;*/
+                break;
             default:
                 throw new InvalidDBOperationError(kind, "set auth method");
         }
@@ -506,9 +492,9 @@ public class HubConfigImpl implements HubConfig {
             case JOB:
                 scheme = this.jobScheme;
                 break;
-            /*case TRACE:
+            case TRACE:
                 scheme = this.jobScheme;
-                break;*/
+                break;
             default:
                 throw new InvalidDBOperationError(kind, "get scheme");
         }
@@ -526,9 +512,9 @@ public class HubConfigImpl implements HubConfig {
             case JOB:
                 this.jobScheme = scheme;
                 break;
-            /*case TRACE:
+            case TRACE:
                 this.jobScheme = scheme;
-                break;*/
+                break;
             default:
                 throw new InvalidDBOperationError(kind, "set auth method");
         }
@@ -546,9 +532,9 @@ public class HubConfigImpl implements HubConfig {
             case JOB:
                 simple = this.jobSimpleSsl;
                 break;
-            /*case TRACE:
+            case TRACE:
                 simple = this.jobSimpleSsl;
-                break;*/
+                break;
             default:
                 throw new InvalidDBOperationError(kind, "get simple ssl");
         }
@@ -566,9 +552,9 @@ public class HubConfigImpl implements HubConfig {
             case JOB:
                 this.jobSimpleSsl = simpleSsl;
                 break;
-            /*case TRACE:
+            case TRACE:
                 this.jobSimpleSsl = simpleSsl;
-                break;*/
+                break;
             default:
                 throw new InvalidDBOperationError(kind, "set simple ssl");
         }
@@ -586,9 +572,9 @@ public class HubConfigImpl implements HubConfig {
             case JOB:
                 certFile = this.jobCertFile;
                 break;
-            /*case TRACE:
+            case TRACE:
                 certFile = this.jobCertFile;
-                break;*/
+                break;
             default:
                 throw new InvalidDBOperationError(kind, "get cert file");
         }
@@ -606,9 +592,9 @@ public class HubConfigImpl implements HubConfig {
             case JOB:
                 this.jobCertFile = certFile;
                 break;
-            /*case TRACE:
+            case TRACE:
                 this.jobCertFile = certFile;
-                break;*/
+                break;
             default:
                 throw new InvalidDBOperationError(kind, "set certificate file");
         }
@@ -626,9 +612,9 @@ public class HubConfigImpl implements HubConfig {
             case JOB:
                 certPass = this.jobCertPassword;
                 break;
-            /*case TRACE:
+            case TRACE:
                 certPass = this.jobCertPassword;
-                break;*/
+                break;
             default:
                 throw new InvalidDBOperationError(kind, "get cert password");
         }
@@ -646,9 +632,9 @@ public class HubConfigImpl implements HubConfig {
             case JOB:
                 this.jobCertPassword = certPassword;
                 break;
-            /*case TRACE:
+            case TRACE:
                 this.jobCertPassword = certPassword;
-                break;*/
+                break;
             default:
                 throw new InvalidDBOperationError(kind, "set certificate password");
         }
@@ -666,9 +652,9 @@ public class HubConfigImpl implements HubConfig {
             case JOB:
                 name = this.jobExternalName;
                 break;
-            /*case TRACE:
+            case TRACE:
                 name = this.jobExternalName;
-                break;*/
+                break;
             default:
                 throw new InvalidDBOperationError(kind, "get external name");
         }
@@ -686,9 +672,9 @@ public class HubConfigImpl implements HubConfig {
             case JOB:
                 this.jobExternalName = externalName;
                 break;
-            /*case TRACE:
+            case TRACE:
                 this.jobExternalName = externalName;
-                break;*/
+                break;
             default:
                 throw new InvalidDBOperationError(kind, "set auth method");
         }
@@ -834,9 +820,6 @@ public class HubConfigImpl implements HubConfig {
             triggersDbName = getEnvPropString(environmentProperties, "mlTriggersDbName", triggersDbName);
             triggersForestsPerHost = getEnvPropInteger(environmentProperties, "mlTriggersForestsPerHost", triggersForestsPerHost);
 
-            //schemasDbName = getEnvPropString(environmentProperties, "mlSchemasDbName", schemasDbName);
-            //schemasForestsPerHost = getEnvPropInteger(environmentProperties, "mlSchemasForestsPerHost", schemasForestsPerHost);
-
             stagingSchemasDbName = getEnvPropString(environmentProperties, "mlStagingSchemasDbName", stagingSchemasDbName);
             stagingSchemasForestsPerHost = getEnvPropInteger(environmentProperties, "mlStagingSchemasForestsPerHost", stagingSchemasForestsPerHost);
 
@@ -974,9 +957,9 @@ public class HubConfigImpl implements HubConfig {
         return appConfig.getConfiguredDatabaseClientFactory().newDatabaseClient(config);
     }
 
-    /*public DatabaseClient newTraceDbClient() {
+    public DatabaseClient newTraceDbClient() {
         return newJobDbClient();
-    }*/
+    }
 
     public DatabaseClient newModulesDbClient() {
         AppConfig appConfig = getAppConfig();
@@ -1126,9 +1109,6 @@ public class HubConfigImpl implements HubConfig {
         customTokens.put("%%mlTriggersDbName%%", triggersDbName);
         customTokens.put("%%mlTriggersForestsPerHost%%", triggersForestsPerHost.toString());
 
-        //customTokens.put("%%mlSchemasDbName%%", schemasDbName);
-        //customTokens.put("%%mlSchemasForestsPerHost%%", schemasForestsPerHost.toString());
-
         customTokens.put("%%mlStagingSchemasDbName%%", stagingSchemasDbName);
         customTokens.put("%%mlStagingSchemasForestsPerHost%%", stagingSchemasForestsPerHost.toString());
 
@@ -1177,13 +1157,10 @@ public class HubConfigImpl implements HubConfig {
 
         HashMap<String, Integer> forestCounts = new HashMap<>();
         forestCounts.put(stagingDbName, stagingForestsPerHost);
-        //forestCounts.put(finalDbName, finalForestsPerHost);
         forestCounts.put(jobDbName, jobForestsPerHost);
         forestCounts.put(modulesDbName, modulesForestsPerHost);
         forestCounts.put(triggersDbName, triggersForestsPerHost);
-        //forestCounts.put(schemasDbName, schemasForestsPerHost);
         forestCounts.put(stagingSchemasDbName, stagingSchemasForestsPerHost);
-        //forestCounts.put(finalSchemasDbName, finalSchemasForestsPerHost);
         config.setForestCounts(forestCounts);
 
         ConfigDir configDir = new ConfigDir(getUserConfigDir().toFile());
@@ -1224,13 +1201,10 @@ public class HubConfigImpl implements HubConfig {
         config.setModulePermissions(modulePermissions);
 
         HashMap<String, Integer> forestCounts = new HashMap<>();
-        //forestCounts.put(stagingDbName, stagingForestsPerHost);
         forestCounts.put(finalDbName, finalForestsPerHost);
         forestCounts.put(jobDbName, jobForestsPerHost);
         forestCounts.put(modulesDbName, modulesForestsPerHost);
         forestCounts.put(triggersDbName, triggersForestsPerHost);
-        //forestCounts.put(schemasDbName, schemasForestsPerHost);
-        //forestCounts.put(stagingSchemasDbName, stagingSchemasForestsPerHost);
         forestCounts.put(finalSchemasDbName, finalSchemasForestsPerHost);
         config.setForestCounts(forestCounts);
 

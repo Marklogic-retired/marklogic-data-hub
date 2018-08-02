@@ -50,15 +50,15 @@ public class DataHubInstallTest extends HubTestBase {
     private static int afterTelemetryInstallCount = 0;
     //As a note, whenever you see these consts, it's due to the additional building of the javascript files bundling down that will then get
     //deployed with the rest of the modules code. This means it'll be 20 higher than if the trace UI was never built
-    //public static final int CORE_MODULE_COUNT_WITH_TRACE_MODULES = 22;
+    public static final int CORE_MODULE_COUNT_WITH_TRACE_MODULES = 22;
     public static final int CORE_MODULE_COUNT = 2;
     // if running as non-admin user, REST extensions are not visible from eval.
     public static final int VISIBLE_MODULE_COUNT = 2;
     public static final int VISIBLE_MODULE_COUNT_WITH_USER_MODULES = 20;
     public static final int MODULE_COUNT = 6;
-    //public static final int MODULE_COUNT_WITH_TRACE_MODULES = 26;
+    public static final int MODULE_COUNT_WITH_TRACE_MODULES = 26;
     public static final int MODULE_COUNT_WITH_USER_MODULES = 26;
-    //public static final int MODULE_COUNT_WITH_USER_MODULES_AND_TRACE_MODULES = 46;
+    public static final int MODULE_COUNT_WITH_USER_MODULES_AND_TRACE_MODULES = 46;
 
     static boolean setupDone=false;
     @Before
@@ -67,7 +67,6 @@ public class DataHubInstallTest extends HubTestBase {
         XMLUnit.setIgnoreWhitespace(true);
         // the project dir must be available for uninstall to do anything... interesting.
         createProjectDir();
-        System.out.println("setup: " + setupDone);
         if (!setupDone) getDataHub().uninstall();
         //copy tde files
         Path schemasDir = getHubConfig().getUserConfigDir().resolve("schemas");
@@ -91,26 +90,13 @@ public class DataHubInstallTest extends HubTestBase {
     @Test
     public void testTdedocs() throws IOException {
 
-        System.out.println("testing Tdedocs");
         String expected = getResource("data-hub-test/tde/stagingtde.json");
-
-
-        DocumentManager documentMgr = stagingSchemasClient.newDocumentManager();
-        String uri = "/staging/tde/stagingtde.json";
-        DocumentRecord documentRecord = documentMgr.read(uri).next();
-        String actual = (documentRecord.getContent(new StringHandle())).get();
-        //String actual = stagingSchemasClient.newDocumentManager().read("/staging/tde/stagingtde.json").next().getContent(new StringHandle()).get();
+        String actual = stagingSchemasClient.newDocumentManager().read("/staging/tde/stagingtde.json").next().getContent(new StringHandle()).get();
         assertJsonEqual(expected, actual, false);
 
-        DocumentManager documentMgr2 = finalSchemasClient.newDocumentManager();
-        String uri2 = "/final/tde/finaltde.xml";
-        DocumentRecord documentRecord2 = documentMgr2.read(uri2).next();
-        Document actualXml = (documentRecord2.getContent(new DOMHandle())).get();
-
         Document expectedXml = getXmlFromResource("data-hub-test/tde/finaltde.xml");
-        //Document actualXml = finalSchemasClient.newDocumentManager().read("/final/tde/finaltde.xml").next().getContent(new DOMHandle()).get();
+        Document actualXml = finalSchemasClient.newDocumentManager().read("/final/tde/finaltde.xml").next().getContent(new DOMHandle()).get();
         assertXMLEqual(expectedXml, actualXml);
-        System.out.println("finished");
     }
 
     @Test
@@ -126,10 +112,10 @@ public class DataHubInstallTest extends HubTestBase {
         int totalCount = getDocCount(HubConfig.DEFAULT_MODULES_DB_NAME, null);
         int hubModulesCount = getDocCount(HubConfig.DEFAULT_MODULES_DB_NAME, "hub-core-module");
 
-        //assertTrue(totalCount + " is not correct.  I was expecting either " + VISIBLE_MODULE_COUNT + " or " + MODULE_COUNT + " or " + MODULE_COUNT_WITH_TRACE_MODULES, VISIBLE_MODULE_COUNT == totalCount || MODULE_COUNT == totalCount || MODULE_COUNT_WITH_TRACE_MODULES == totalCount);
-        //assertTrue(hubModulesCount + "  is not correct.  I was expecting either " + CORE_MODULE_COUNT_WITH_TRACE_MODULES + " or " + CORE_MODULE_COUNT_WITH_TRACE_MODULES, CORE_MODULE_COUNT_WITH_TRACE_MODULES == hubModulesCount || CORE_MODULE_COUNT == hubModulesCount);
+        assertTrue(totalCount + " is not correct.  I was expecting either " + VISIBLE_MODULE_COUNT + " or " + MODULE_COUNT + " or " + MODULE_COUNT_WITH_TRACE_MODULES, VISIBLE_MODULE_COUNT == totalCount || MODULE_COUNT == totalCount || MODULE_COUNT_WITH_TRACE_MODULES == totalCount);
+        assertTrue(hubModulesCount + "  is not correct.  I was expecting either " + CORE_MODULE_COUNT_WITH_TRACE_MODULES + " or " + CORE_MODULE_COUNT_WITH_TRACE_MODULES, CORE_MODULE_COUNT_WITH_TRACE_MODULES == hubModulesCount || CORE_MODULE_COUNT == hubModulesCount);
 
-        //assertTrue("trace options not installed", getModulesFile("/Default/data-hub-JOBS/rest-api/options/traces.xml").length() > 0);
+        assertTrue("trace options not installed", getModulesFile("/Default/data-hub-JOBS/rest-api/options/traces.xml").length() > 0);
         assertTrue("trace options not installed", getModulesFile("/Default/data-hub-JOBS/rest-api/options/jobs.xml").length() > 0);
         assertTrue("trace options not installed", getModulesFile("/Default/data-hub-STAGING/rest-api/options/default.xml").length() > 0);
         assertTrue("trace options not installed", getModulesFile("/Default/data-hub-STAGING/rest-api/options/default.xml").length() > 0);
@@ -150,15 +136,15 @@ public class DataHubInstallTest extends HubTestBase {
         HubConfig hubConfig = getHubConfig(path);
 
         int totalCount = getDocCount(HubConfig.DEFAULT_MODULES_DB_NAME, null);
-        /*assertTrue(totalCount + " is not correct.  I was expecting either " + VISIBLE_MODULE_COUNT + " or " + MODULE_COUNT + " or " + MODULE_COUNT_WITH_TRACE_MODULES,
+        assertTrue(totalCount + " is not correct.  I was expecting either " + VISIBLE_MODULE_COUNT + " or " + MODULE_COUNT + " or " + MODULE_COUNT_WITH_TRACE_MODULES,
             VISIBLE_MODULE_COUNT == totalCount || MODULE_COUNT == totalCount || MODULE_COUNT_WITH_TRACE_MODULES == totalCount);
-*/
+
         installUserModules(hubConfig, true);
 
         totalCount = getDocCount(HubConfig.DEFAULT_MODULES_DB_NAME, null);
-        /*assertTrue(totalCount + " is not correct.  I was expecting either " + VISIBLE_MODULE_COUNT_WITH_USER_MODULES + " or " + MODULE_COUNT_WITH_USER_MODULES + " or " + MODULE_COUNT_WITH_USER_MODULES_AND_TRACE_MODULES,
+        assertTrue(totalCount + " is not correct.  I was expecting either " + VISIBLE_MODULE_COUNT_WITH_USER_MODULES + " or " + MODULE_COUNT_WITH_USER_MODULES + " or " + MODULE_COUNT_WITH_USER_MODULES_AND_TRACE_MODULES,
             VISIBLE_MODULE_COUNT_WITH_USER_MODULES == totalCount || MODULE_COUNT_WITH_USER_MODULES == totalCount || MODULE_COUNT_WITH_USER_MODULES_AND_TRACE_MODULES == totalCount);
-*/
+
         assertEquals(
             getResource("data-hub-test/plugins/entities/test-entity/harmonize/final/collector.xqy"),
             getModulesFile("/entities/test-entity/harmonize/final/collector.xqy"));
@@ -283,7 +269,7 @@ public class DataHubInstallTest extends HubTestBase {
         dataHub.clearUserModules();
 
         int totalCount = getDocCount(HubConfig.DEFAULT_MODULES_DB_NAME, null);
-        /*assertTrue(totalCount + " is not correct.  I was expecting either " + VISIBLE_MODULE_COUNT + " or " + MODULE_COUNT + " or " + MODULE_COUNT_WITH_TRACE_MODULES,
+        assertTrue(totalCount + " is not correct.  I was expecting either " + VISIBLE_MODULE_COUNT + " or " + MODULE_COUNT + " or " + MODULE_COUNT_WITH_TRACE_MODULES,
             VISIBLE_MODULE_COUNT == totalCount || MODULE_COUNT == totalCount || MODULE_COUNT_WITH_TRACE_MODULES == totalCount);
 
         installUserModules(hubConfig, true);
@@ -297,6 +283,6 @@ public class DataHubInstallTest extends HubTestBase {
         totalCount = getDocCount(HubConfig.DEFAULT_MODULES_DB_NAME, null);
         assertTrue(totalCount + " is not correct.  I was expecting either " + MODULE_COUNT + " or " + MODULE_COUNT_WITH_TRACE_MODULES,
             VISIBLE_MODULE_COUNT == totalCount || MODULE_COUNT == totalCount || MODULE_COUNT_WITH_TRACE_MODULES == totalCount);
-*/
+
     }
 }

@@ -39,15 +39,14 @@ public class HubProjectTest extends HubTestBase {
         config.setForestsPerHost(DatabaseKind.FINAL, 100);
         config.setPort(DatabaseKind.FINAL, 2222);
 
-        //config.setHttpName(DatabaseKind.JOB, "my-crazy-test-trace");
-        //config.setDbName(DatabaseKind.JOB, "my-crazy-test-trace");
+        config.setHttpName(DatabaseKind.JOB, "my-crazy-test-trace");
+        config.setDbName(DatabaseKind.JOB, "my-crazy-test-trace");
         config.setForestsPerHost(DatabaseKind.JOB, 100);
         config.setPort(DatabaseKind.JOB, 3333);
 
         config.setForestsPerHost(DatabaseKind.MODULES,3);
         config.setForestsPerHost(DatabaseKind.TRIGGERS, 4);
 
-        //config.setForestsPerHost(DatabaseKind.SCHEMAS, 5);
         config.setForestsPerHost(DatabaseKind.STAGING_SCHEMAS, 5);
         config.setForestsPerHost(DatabaseKind.FINAL_SCHEMAS, 5);
 
@@ -122,9 +121,6 @@ public class HubProjectTest extends HubTestBase {
 
         assertEquals(config.getDbName(DatabaseKind.TRIGGERS), props.getProperty("mlTriggersDbName"));
         assertEquals(config.getForestsPerHost(DatabaseKind.TRIGGERS).toString(), props.getProperty("mlTriggersForestsPerHost"));
-
-        //assertEquals(config.getDbName(DatabaseKind.SCHEMAS), props.getProperty("mlSchemasDbName"));
-        //assertEquals(config.getForestsPerHost(DatabaseKind.SCHEMAS).toString(), props.getProperty("mlSchemasForestsPerHost"));
 
         assertEquals(config.getHubRoleName(), props.getProperty("mlHubUserRole"));
         assertEquals(config.getHubUserName(), props.getProperty("mlHubUserName"));

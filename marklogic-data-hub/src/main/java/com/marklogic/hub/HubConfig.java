@@ -50,7 +50,6 @@ public interface HubConfig {
     String DEFAULT_JOB_NAME = "data-hub-JOBS";
     String DEFAULT_MODULES_DB_NAME = "data-hub-MODULES";
     String DEFAULT_TRIGGERS_DB_NAME = "data-hub-TRIGGERS";
-    //String DEFAULT_SCHEMAS_DB_NAME = "data-hub-SCHEMAS";
     String DEFAULT_STAGING_SCHEMAS_DB_NAME = "data-hub-STAGING-SCHEMAS";
     String DEFAULT_FINAL_SCHEMAS_DB_NAME = "data-hub-FINAL-SCHEMAS";
 
@@ -373,7 +372,7 @@ public interface HubConfig {
      * @return - a DatabaseClient
      */
     @Deprecated
-    //DatabaseClient newTraceDbClient();
+    DatabaseClient newTraceDbClient();
 
     /**
      * Creates a new DatabaseClient for accessing the Hub Modules database

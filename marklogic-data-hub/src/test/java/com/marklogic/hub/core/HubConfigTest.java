@@ -102,8 +102,6 @@ public class HubConfigTest extends HubTestBase {
 
         try {
 
-            System.out.println(objmapper.writeValueAsString(config.getInfo()));
-
             JsonNode jsonNode = objmapper.readTree(config.getInfo());
 
             assertTrue(jsonNode.get("stagingDbName").asText().equals(config.getDbName(DatabaseKind.STAGING)));
@@ -114,7 +112,6 @@ public class HubConfigTest extends HubTestBase {
 
             assertTrue(jsonNode.get("finalPort").asInt() == config.getPort(DatabaseKind.FINAL));
 
-            //assertTrue(jsonNode.get("schemasDbName").asText().equals(config.getScheme(DatabaseKind.STAGING)));
 
         }
         catch (Exception e)

@@ -190,9 +190,9 @@ public class DataHubImpl implements DataHub {
             for (Resource r : resolver.getResources("classpath*:/ml-modules/options/*.xml")) {
                 options.add(r.getFilename().replace(".xml", ""));
             }
-            /*for (Resource r : resolver.getResources("classpath*:/ml-modules-traces/options/*.xml")) {
+            for (Resource r : resolver.getResources("classpath*:/ml-modules-traces/options/*.xml")) {
                 options.add(r.getFilename().replace(".xml", ""));
-            }*/
+            }
             for (Resource r : resolver.getResources("classpath*:/ml-modules-jobs/options/*.xml")) {
                 options.add(r.getFilename().replace(".xml", ""));
             }
@@ -356,7 +356,6 @@ public class DataHubImpl implements DataHub {
         dbCommands.add(new DeployHubDatabasesCommand(hubConfig));
         dbCommands.add(new DeployHubOtherDatabasesCommand(hubConfig));
         dbCommands.add(new DeployHubTriggersDatabaseCommand(hubConfig));
-        //dbCommands.add(new DeployHubSchemasDatabaseCommand(hubConfig));
         dbCommands.add(new DeployHubStagingSchemasDatabaseCommand(hubConfig));
         dbCommands.add(new DeployHubFinalSchemasDatabaseCommand(hubConfig));
         commandMap.put("mlDatabaseCommands", dbCommands);
@@ -367,7 +366,7 @@ public class DataHubImpl implements DataHub {
         List<Command> serverCommands = new ArrayList<>();
         serverCommands.add(new DeployHubServersCommand(hubConfig));
         DeployOtherServersCommand otherServersCommand = new DeployOtherServersCommand();
-        otherServersCommand.setFilenamesToIgnore("staging-server.json", "final-server.json", "job-server.json", "schemas-database.json");
+        otherServersCommand.setFilenamesToIgnore("staging-server.json", "final-server.json", "job-server.json", "trace-server.json");
         serverCommands.add(otherServersCommand);
         commandMap.put("mlServerCommands", serverCommands);
 

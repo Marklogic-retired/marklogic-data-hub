@@ -222,7 +222,6 @@ ext {
         // override some default values with our values
         setModulesDatabaseName(mlModulesDbName)
         setTriggersDatabaseName(mlTriggersDbName)
-        //schemasDatabaseName = mlSchemasDbName
         stagingSchemasDatabaseName = mlStagingSchemasDbName
         finalSchemasDatabaseName = mlFinalSchemasDbName
         restPort = Integer.parseInt(mlJobPort)
@@ -242,7 +241,6 @@ ext {
 
         customTokens.put("%%mlModulesDbName%%", mlModulesDbName)
         customTokens.put("%%mlTriggersDbName%%", mlTriggersDbName)
-        //customTokens.put("%%mlSchemasDbName%%", mlSchemasDbName)
         customTokens.put("%%mlStagingSchemasDbName%%", mlStagingSchemasDbName)
         customTokens.put("%%mlFinalSchemasDbName%%", mlFinalSchemasDbName)
 
