@@ -33,7 +33,6 @@ For SJS transforms use
 -transform_module "/com.marklogic.hub/mlcp-flow-transform.sjs"
 </pre>
 
-
 The `-transform_param` parameter will contain a comma-delimited list of key=value pairs to be passed to the `mlcp-flow-transform.xqy` module. Here are the keys and a description of their values:
 
  - **entity-name** - the URL-encoded name of the entity to which the flow belongs.
@@ -56,11 +55,10 @@ This is how you would run a flow named "My Awesome Flow" for the entity named "Y
 
 ... \
 
--transform_module "/MarklOgic/data-hub-framework/transforms/mlcp-flow-transform.xqy" \
+-transform_module "/MarkLogic/data-hub-framework/transforms/mlcp-flow-transform.xqy" \
 -transform_namespace "http://marklogic.com/data-hub/mlcp-flow-transform" \
 -transform_param "entity-name=YourEntityName,flow-name=My%20Awesome%20Flow,job-id=someString,options={'your':'options'}"
 </pre>
-
 
 If your flow is implemented with JavaScript, use this module:
 
@@ -70,5 +68,5 @@ If your flow is implemented with JavaScript, use this module:
 
 ... \
 
--transform_module "/MarklOgic/data-hub-framework/transforms/mlcp-flow-transform.sjs" \
+-transform_module "/MarkLogic/data-hub-framework/transforms/mlcp-flow-transform.sjs" \
 -transform_param "entity-name=YourEntityName,flow-name=My%20Awesome%20Flow,job-id=someString,options={'your':'options'}"
