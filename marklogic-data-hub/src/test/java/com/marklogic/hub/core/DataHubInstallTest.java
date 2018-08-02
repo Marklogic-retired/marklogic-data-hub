@@ -102,7 +102,7 @@ public class DataHubInstallTest extends HubTestBase {
         //String actual = stagingSchemasClient.newDocumentManager().read("/staging/tde/stagingtde.json").next().getContent(new StringHandle()).get();
         assertJsonEqual(expected, actual, false);
 
-        DocumentManager documentMgr2 = stagingSchemasClient.newDocumentManager();
+        DocumentManager documentMgr2 = finalSchemasClient.newDocumentManager();
         String uri2 = "/final/tde/finaltde.xml";
         DocumentRecord documentRecord2 = documentMgr2.read(uri2).next();
         Document actualXml = (documentRecord2.getContent(new DOMHandle())).get();
