@@ -25,6 +25,7 @@ import com.marklogic.hub.impl.DataHubImpl;
 import com.marklogic.hub.util.Versions;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.client.HttpClientErrorException;
@@ -75,6 +76,7 @@ public class DataHubInstallTest extends HubTestBase {
     }
 
     @Test
+    @Ignore
     public void testTelemetryInstallCount() throws IOException {
         assertTrue("Telemetry install count was not incremented during install.  Value now is " + afterTelemetryInstallCount, afterTelemetryInstallCount > 0);
     }
