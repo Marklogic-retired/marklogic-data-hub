@@ -68,6 +68,7 @@ public class DataHubInstallTest extends HubTestBase {
             }
             else throw e;
         }
+        getDataHub().runPreInstallCheck();
         if (!setupDone) getDataHub().install();
         setupDone=true;
         afterTelemetryInstallCount = getTelemetryInstallCount();
