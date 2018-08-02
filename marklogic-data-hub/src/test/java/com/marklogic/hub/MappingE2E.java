@@ -233,10 +233,10 @@ public class MappingE2E extends HubTestBase {
     private void createMappings() {
     	List<String> allMappings = new ArrayList<String>();
     	Map<String, String> sourceContexts = new HashMap<>();
-    	sourceContexts.put("validPath1", "//validtest/");
-    	sourceContexts.put("validPath2", "/test/validtest/");
+    	sourceContexts.put("validPath1", "//*:validtest/*:");
+    	sourceContexts.put("validPath2", "/*:test/*:validtest/*:");
     	sourceContexts.put("validPath3", "//*:validtestns/*:");
-    	sourceContexts.put("validPath4", "/test/*[name()='validtestns']/*:");
+    	sourceContexts.put("validPath4", "/*:test/*[name()='validtestns']/*:");
 
     	String targetEntity = "http://marklogic.com/example/Schema-0.0.1/e2eentity";
     	Map<String, String> properties = new HashMap<>();
@@ -258,12 +258,12 @@ public class MappingE2E extends HubTestBase {
         createMapping("empty-sourceContext", null,"http://marklogic.com/example/Schema-0.0.1/e2eentity", "empid,fullname,monthlysalary".split(","));
         
         createMapping("default-without-sourcedFrom", "/","http://marklogic.com/example/Schema-0.0.1/e2eentity",  "empid,fullname,monthlysalary".split(","));
-        createMapping("default-no-properties", "//validtest/","http://marklogic.com/example/Schema-0.0.1/e2eentity", new String[1]);
-        createMapping("default-diffCanonicalProp", "//validtest/","http://marklogic.com/example/Schema-0.0.1/e2eentity","empid,fullname,monthlysalary".split(","));
+        createMapping("default-no-properties", "//*:validtest/*:","http://marklogic.com/example/Schema-0.0.1/e2eentity", new String[1]);
+        createMapping("default-diffCanonicalProp", "//*:validtest/*:","http://marklogic.com/example/Schema-0.0.1/e2eentity","empid,fullname,monthlysalary".split(","));
         
-        createMapping("diff-entity-validPath", "//validtest/","http://marklogic.com/example/Schema-0.0.1/fakeentity", "empid,fullname,monthlysalary".split(","));
+        createMapping("diff-entity-validPath", "//*:validtest/*:","http://marklogic.com/example/Schema-0.0.1/fakeentity", "empid,fullname,monthlysalary".split(","));
         //Create another version of existing mapping
-        createMapping("validPath1-threeProp", "//validtest/","http://marklogic.com/example/Schema-0.0.1/e2eentity", true, "empid,fullname,monthlysalary".split(","));
+        createMapping("validPath1-threeProp", "//*:validtest/*:","http://marklogic.com/example/Schema-0.0.1/e2eentity", true, "empid,fullname,monthlysalary".split(","));
         allMappings.addAll(Arrays.asList("nonExistentPath,inCorrectPath,empty-sourceContext,default-without-sourcedFrom,default-no-properties,default-diffCanonicalProp,diff-entity-validPath".split(",")));
         
         installUserModules(getHubConfig(), true);      
@@ -274,13 +274,13 @@ public class MappingE2E extends HubTestBase {
     }
 
     private void createMapping(String name, String sourceContext, String targetEntityType, boolean incrementVersion,  String ... properties) {
-    	ObjectMapper mapper = new ObjectMapper();
-        Mapping testMap = Mapping.create(name);
-        testMap.setDescription("This is a test.");
-        testMap.setSourceContext(sourceContext);
-        testMap.setTargetEntityType(targetEntityType);
-        HashMap<String, ObjectNode> mappingProperties = new HashMap<>();
-	    for(String property:properties) {
+		ObjectMapper mapper = new ObjectMapper();
+		Mapping testMap = Mapping.create(name);
+		testMap.setDescription("This is a test.");
+		testMap.setSourceContext(sourceContext);
+		testMap.setTargetEntityType(targetEntityType);
+		HashMap<String, ObjectNode> mappingProperties = new HashMap<>();
+		for(String property:properties) {
 		    if(property == null) {
 		    	mappingProperties.put("id", (ObjectNode)null);
 		    }
@@ -305,11 +305,11 @@ public class MappingE2E extends HubTestBase {
 		    		mappingProperties.put(key, mapper.createObjectNode().put("sourcedFrom", property));
 		    	}
 		    }
-	    }
-	    if(!name.contains("without-sourcedFrom")) {
-	    	testMap.setProperties(mappingProperties);
-	    }
-	    mappingManager.saveMapping(testMap, incrementVersion);
+		}
+		if(!name.contains("without-sourcedFrom")) {
+			testMap.setProperties(mappingProperties);
+		}
+		mappingManager.saveMapping(testMap, incrementVersion);
     }	
 
     private void copyFile(String srcDir, Path dstDir) {
@@ -443,7 +443,7 @@ public class MappingE2E extends HubTestBase {
             
             if(flowName.contains("validPath")) {
             	filename = "mapping/final-es";
-            	if(flowName.contains("extranodes") && codeFormat.equals(CodeFormat.XQUERY)) {
+            	if(flowName.contains("extranodes")) {
             		filename = filename.concat("-extranodes");
             	}
                 if(flowName.contains("validPath3") || flowName.contains("validPath4")) {

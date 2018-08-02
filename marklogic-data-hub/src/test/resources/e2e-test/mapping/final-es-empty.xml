@@ -14,7 +14,7 @@
       </e2eentity>
    </instance>
    <attachments>
-      <envelope xmlns="">
+      <envelope>
          <headers />
          <triples />
          <instance>
