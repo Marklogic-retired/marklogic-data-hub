@@ -28,6 +28,10 @@ export class ViewerPage extends AppPage {
   verifyHarmonizedProperty(propertyName: string, harmonizedValue: string) {
     return element(by.xpath(`//span[@class="cm-variable" and contains(text(), "${propertyName}")]/../span[@class="cm-string" and contains(text(), "${harmonizedValue}")]`));
   }
+
+  verifyHarmonizedPropertyAtomicValue(propertyName: string, harmonizedValue: number) {
+    return element(by.xpath(`//span[@class="cm-variable" and contains(text(), "${propertyName}")]/../span[@class="cm-atom" and . = ${harmonizedValue}]`));
+  }
 }
 
 var viewerPage = new ViewerPage();
