@@ -68,6 +68,7 @@ main:
             { url: '/harmonize/gradle/', text: 'Gradle'},
             { url: '/harmonize/java/', text: 'Java Library'},
             { url: '/harmonize/rest/', text: 'REST'},
+            { url: '/harmonize/mapping/', text: 'Using Model-to-Model Mapping'},
           ]
         },
         {
