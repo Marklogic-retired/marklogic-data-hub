@@ -79,4 +79,24 @@ public class MappingManagerServiceTest extends AbstractServiceTest {
         mappingModel = mappingManagerService.getMapping(mappingName);
         Assert.assertEquals(1, mappingModel.getVersion());
     }
+
+    @Test
+    public void testMappingNameWithWhitespace() throws IOException {
+        String mappingName = "test mapping";
+        String jsonString = "{" +
+            "   \"language\":\"zxx\"," +
+            "   \"name\":\"" + mappingName + "\"," +
+            "   \"description\":\"\"," +
+            "   \"version\":\"0\"," +
+            "   \"targetEntityType\":\"http://example.org/" + ENTITY + "-0.0.1/" + ENTITY + "\"," +
+            "   \"sourceContext\":\"\"," +
+            "   \"sourceURI\":\"\"," +
+            "   \"properties\":{}" +
+            "}";
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode jsonNode = objectMapper.readTree(jsonString);
+
+        Assert.assertNotNull(mappingManagerService.saveMapping(mappingName, jsonNode));
+    }
 }
