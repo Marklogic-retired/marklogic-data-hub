@@ -584,21 +584,21 @@ export default function() {
       browser.wait(EC.invisibilityOf(entityPage.entityEditor));
     });
 
-    it ('should create a new entity for TypeAhead', function() {
+    it ('should create a new entity for WorldBank', function() {
       entityPage.toolsButton.click();
       entityPage.newEntityButton.click();
       expect(entityPage.entityEditor.isPresent()).toBe(true);
-      entityPage.entityTitle.sendKeys('TypeAhead');
+      entityPage.entityTitle.sendKeys('WorldBank');
       entityPage.saveEntity.click();
       browser.wait(EC.elementToBeClickable(entityPage.confirmDialogNoButton));
       expect(entityPage.confirmDialogNoButton.isPresent()).toBe(true);
       entityPage.confirmDialogNoButton.click();
-      browser.wait(EC.visibilityOf(entityPage.getEntityBox('TypeAhead')));
-      expect(entityPage.getEntityBox('TypeAhead').isDisplayed()).toBe(true);
+      browser.wait(EC.visibilityOf(entityPage.getEntityBox('WorldBank')));
+      expect(entityPage.getEntityBox('WorldBank').isDisplayed()).toBe(true);
       entityPage.toolsButton.click();
-      // move entity TypeAhead
-      entityPage.selectEntity('TypeAhead');
-      browser.actions().dragAndDrop(entityPage.entityBox('TypeAhead'), {x: 750, y: 750}).perform();
+      // move entity WorldBank
+      entityPage.selectEntity('WorldBank');
+      browser.actions().dragAndDrop(entityPage.entityBox('WorldBank'), {x: 750, y: 750}).perform();
     });
 
     it ('should go to the flow page', function() {
