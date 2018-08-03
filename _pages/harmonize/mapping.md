@@ -11,13 +11,13 @@ Use a model-to-model mapping to quickly and easily define how to harmonize sourc
 * [Using a Mapping for Harmonization](#using-a-mapping-for-harmonization)
 * [Modifying an Existing Mapping](#modifying-an-existing-mapping)
 * [Understanding the Harmonization Code](#understanding-the-harmonization-code)
-* [Model-to-Model Limitations](#model-to-model-limitations)
+* [Model-to-Model Mapping Limitations](#model-to-model-mapping-limitations)
 
 ## What is Model-to-Model Mapping?
 
 The process of harmonization extracts values from your source data and uses them to create canonical instances of your entity model. A model-to-model mapping defines the source property from which to extract a given entity property value.
 
-For example, the following diagram illustrates a case where the **sku** entity property is extracted from the the **SKU** source property and the **price** entity property is extracted from the **price** source property.
+For example, the following diagram illustrates a case where the **sku** entity property is extracted from the **SKU** source property and the **price** entity property is extracted from the **price** source property.
 
 ![Basic Mapping Diagram]({{site.baseurl}}/images/mapping/m2m-basic.png)
 
@@ -33,7 +33,7 @@ For details, see [Using a Mapping for Harmonization](#using-a-mapping-for-harmon
 
 When you associate a mapping with a harmonization flow, Data Hub Framework generates harmonization code that extracts entity property values from the sources specified in the mapping. You can customize the generated code. For more details, see [Understanding the Harmonization Code](#understanding-the-harmonization-code).
 
-Model-to-model mapping addresses many common harmonization use cases, but it is not the best choice for all cases. For details, see [Model-to-Model Limitations](#model-to-model-limitations).
+Model-to-model mapping addresses many common harmonization use cases, but it is not the best choice for some cases. For details, see [Model-to-Model Mapping Limitations](#model-to-model-mapping-limitations).
 
 ## Creating a Mapping
 
@@ -58,7 +58,7 @@ The following diagram highlights key parts of the mapping editor:
 
 ![Mapping Editor Highlights]({{site.baseurl}}/images/mapping/mapping-editor.png){:.screenshot-border}
 
-QuickStart chooses an arbitrary document from the appropriate source documents in the STAGING database from which to create the list of source properties, but you can change it. For details, see [Changing the Source Document](#changing-the source-document).
+QuickStart chooses an arbitrary document from the appropriate source documents in the STAGING database from which to create the list of source properties, but you can change it. For details, see [Changing the Mapping Source Document](#changing-the-mapping-source-document).
 
 When you create or update a mapping, QuickStart saves the mapping configuration in your project as:
 ```
@@ -103,8 +103,8 @@ You cannot add a mapping to an existing flow. Instead, create a new flow that us
 
 For an end to end example, see the following parts of the QuickStart tutorial:
 
-* [Create a Product Source-to-Entity Mapping](../../tutorial/mapping-product-entity/)
-* [Harmonizing the Product Data](../../tutorial/harmonizing-product-data/)
+* [Create a Model-to-Model Mapping for Product](../../tutorial/mapping-product-entity/)
+* [Harmonize the Product Data](../../tutorial/harmonizing-product-data/)
 
 ## Modifying an Existing Mapping
 
@@ -131,7 +131,7 @@ When you configure a harmonization flow with a mapping, Data Hub Framework gener
 
 Harmonization code for some entity type _T_ always includes a function named `extractInstanceT`. Data Hub Framework calls this function when constructing entity instance envelope documents during harmonization. The code in the function is affected by your mapping, and this function is usually where you will apply content customizations.
 
-The `extractInstanceT` function contains a variable declaration for each entity property. This declaration extracts the source property (SP) value for use as the corresponding entity property value (EP).
+The `extractInstanceT` function contains a variable declaration for each entity property. This declaration extracts the source property value for use as the corresponding entity property value.
 
 For some entity property _EP_ whose value gets extracted from a source property _SP_, the declaration looks like the following. Notice that if the source data does not include the targeted property, then the entity property is initialized to `null`.
 ```javascript
@@ -197,11 +197,11 @@ The products property of an Order is an array of references to Product entity in
 
 Such a relationship cannot be captured in a mapping. Whether you use a mapping to generate baseline code or not, you must customize the content plugin to handle this case.
 
-In the tutorial, the Order harmonization flow does not use a mapping to generate baseline code, but it could: The same code customizations could be applied to mapping-based baseline code. To review the Order customizations, see [Harmonizing the Order Data](../../tutorial/harmonizing-order-data/) in the tutorial.
+In the tutorial, the Order harmonization flow does not use a mapping to generate baseline code, but it could: The same code customizations could be applied to mapping-based baseline code. To review the Order customizations, see [Harmonize the Order Data](../../tutorial/harmonizing-order-data/) in the tutorial.
 
 ### Simple Value Transformation Requirement
 The code generated from a mapping handles the case where the source value can be converted to the entity property data type through a simple type conversion. For example, if you have a string source property whose contents can always be safely cast to a number, such as "1234", then you can map it on to an entity property of type decimal.
 
-However, if a source value requires a more sophisticated transformation, such as date normalization, string concatenation, or a computation, then the code generated from a mapping will not work out of the box. The **price** property of the Order entity type in the QuickStart tutorial is an example of a property whose value is computed during harmonization. See [Harmonizing the Order Data](../../tutorial/harmonizing-order-data/) in the tutorial.
+However, if a source value requires a more sophisticated transformation, such as date normalization, string concatenation, or a computation, then the code generated from a mapping will not work out of the box. The **price** property of the Order entity type in the QuickStart tutorial is an example of a property whose value is computed during harmonization. See [Harmonize the Order Data](../../tutorial/harmonizing-order-data/) in the tutorial.
 
 Whether you use a mapping as a baseline or not, you must customize the content plugin to handle this case.

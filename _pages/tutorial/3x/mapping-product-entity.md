@@ -1,6 +1,6 @@
 ---
 layout: inner
-title: Getting Started Tutorial 3.x<br>Create a Product Source-to-Entity Mapping
+title: Getting Started Tutorial 3.x<br>Create a Model-to-Model Mapping for Product
 lead_text: ''
 permalink: /tutorial/mapping-product-entity/
 ---
@@ -17,7 +17,7 @@ A mapping enables you to quickly and easily create a harmonization flow without 
 
 You can create a mapping using QuickStart's mapping tool. QuickStart generates a list of possible source JSON property names by examining one of your source documents. Then, you use the UI to specify which source properties map to which entity properties.
 
-To learn more about model to model mapping, see _XXX insert xref here XXX_.
+To learn more about model to model mapping, see [Using Model-to-Model Mapping]({{site.baseurl}}/harmonize/mapping/).
 
 ### Product Mapping Requirements
 We want to define a mapping that maps the **SKU** JSON property in the source data on to the **sku** entity property. The value is represented as a string in both source and model.
