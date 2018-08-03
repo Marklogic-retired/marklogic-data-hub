@@ -238,9 +238,12 @@ export class FlowPage extends AppPage {
   *   | forest | rdf | sequencefile
   * @uriPrefix: document uri prefix to append
   * @uriSuffix: document uri suffix to append
+  * @useInputCompressed: whether using input compressed file, default is false
+  * @compressionCoded: zip | gzip
   */
   runInputFlow(entityName: string, flowName: string, dataFormat: string, 
-      dataFolderName: string, inputFileType: string, uriPrefix: string, uriSuffix: string) {
+      dataFolderName: string, inputFileType: string, uriPrefix: string, 
+      uriSuffix: string, useInputCompressed = false, compressionCodec = '') {
     console.log(`running flow: ${entityName}: ${flowName}: ${dataFormat}`)
     this.getFlow(entityName, flowName, 'INPUT').click();
 
@@ -290,6 +293,17 @@ export class FlowPage extends AppPage {
       // enable generate uri
       browser.wait(EC.elementToBeClickable(this.mlcpSwitch('generate_uri')));
       this.mlcpSwitch('generate_uri').click();
+    }
+    
+    if(useInputCompressed) {
+      // enable input_compressed
+      browser.wait(EC.elementToBeClickable(this.mlcpSwitch('input_compressed')));
+      this.mlcpSwitch('input_compressed').click();
+      // select compression codec
+      browser.wait(EC.elementToBeClickable(this.mlcpDropdown('input_compression_codec')));
+      this.mlcpDropdown('input_compression_codec').click();
+      browser.wait(EC.elementToBeClickable(this.menuItem(compressionCodec)));
+      this.menuItem(compressionCodec).click();
     }
     
     this.mlcpSaveOptionsButton.click();
