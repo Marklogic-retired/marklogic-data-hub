@@ -93,7 +93,6 @@ public class DataHubInstallTest extends HubTestBase {
         String expected = getResource("data-hub-test/tde/stagingtde.json");
         String actual = stagingSchemasClient.newDocumentManager().read("/staging/tde/stagingtde.json").next().getContent(new StringHandle()).get();
         assertJsonEqual(expected, actual, false);
-
         Document expectedXml = getXmlFromResource("data-hub-test/tde/finaltde.xml");
         Document actualXml = finalSchemasClient.newDocumentManager().read("/final/tde/finaltde.xml").next().getContent(new DOMHandle()).get();
         assertXMLEqual(expectedXml, actualXml);
