@@ -16,19 +16,20 @@ This page provides information about the implementation of DHF as it runs on Mar
 As far as maintaining data goes, DHF provides the following services:
 
 * manages the flow and integration of data into and through a MarkLogic system.
-* records job and tracing metadata
+* records job and tracing metadata.
 * exposes code to operate upon data in the hub.
 
 ## Databases
 
 In installing a data hub, the following databases are created:
 
-Database    | Default Name     | Triggers DB       | Schema DB
-Staging     | data-hub-STAGING | TRIGGERS          | SCHEMAS
-Final       | data-hub-FINAL   | TRIGGERS          | SCHEMAS
-Jobs        | data-hub-JOBS    | TRIGGERS          | SCHEMAS
-Triggers    | data-hub-TRIGGERS| none              | none
-Modules     | data-hub-MODULES | none              | none
+| Database    | Default Name     | Triggers DB       | Schema DB  |
+|-------------|------------------|-------------------|------------|
+| Staging     | data-hub-STAGING | TRIGGERS          | SCHEMAS    |
+| Final       | data-hub-FINAL   | TRIGGERS          | SCHEMAS    |
+| Jobs        | data-hub-JOBS    | TRIGGERS          | SCHEMAS    |
+| Triggers    | data-hub-TRIGGERS| none              | none       |
+| Modules     | data-hub-MODULES | none              | none       |
 
 The names of these databases are all configurable using values in `gradle.properties`.
 
@@ -45,9 +46,14 @@ Jobs        | data-hub-JOBS    | 8013              | data-hub-MODULES
 
 Note: deployment of DHF also makes use of the MarkLogic management API on port 8002.
 
+Data Hub Framework creates the "Final" App Server as a provisioned location
+from which to serve your harmonized data. Data Hub Framework does not make use
+of this App Server itself.
+
+
 ### REST Extensions
 
-The core of the DHF runs on MarkLogic.  Much of this code finds itself in REST API
+The core of the DHF runs on MarkLogic.  This code is explosed to clients as REST API
 extensions, which include both *transforms* and *service extensions*.  These extensions
 work identically to other [REST API Extensions](https://docs.marklogic.com/guide/rest-dev/extensions) except that they are provided as out-of-the-box for DHF use.
 
