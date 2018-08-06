@@ -23,7 +23,7 @@ For example, the following diagram illustrates a case where the **sku** entity p
 
 A model-to-model mapping enables you to encode such relationships so Data Hub Framework can act on them.
 
-The models in "model-to-model mapping" are your source model and your entity model. The source model is inferred from your source data, rather than explicitly defined in the same way as your entity model. When you create a mapping using the Quickstart **Mappings** view, QuickStart does this inferencing for you.
+The models in "model-to-model mapping" are your source model and your entity model. The source model is inferred from your source data, rather than explicitly defined in the same way as your entity model. When you create a mapping using the QuickStart **Mappings** view, QuickStart does this inferencing for you.
 
 When you configure a harmonization flow, you can associate a mapping with the flow, so mapping creation fits into your workflow between modeling and harmonization. For example, you might go through steps such as the following:
 
@@ -136,7 +136,7 @@ The `extractInstanceT` function contains a variable declaration for each entity 
 For some entity property _EP_ whose value gets extracted from a source property _SP_, the declaration looks like the following. Notice that if the source data does not include the targeted property, then the entity property is initialized to `null`.
 ```javascript
 let EPName = !fn.empty(source.xpath(pathToSP))
-             ? EPType(fn.head(source.xpath(pathToEP)))
+             ? EPType(fn.head(source.xpath(pathToSP)))
              : null
 ```
 
