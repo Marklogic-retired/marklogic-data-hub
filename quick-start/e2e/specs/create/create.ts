@@ -276,7 +276,7 @@ export default function() {
       entityPage.getPropertyCheckBox(removeProp1).click();
       entityPage.getPropertyCheckBox(removeProp2).click();
       entityPage.deleteProperty.click();
-      browser.wait(EC.visibilityOf(entityPage.confirmDialogYesButton));
+      browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
       entityPage.confirmDialogYesButton.click();
       browser.sleep(3000);
       entityPage.saveEntity.click();
@@ -397,7 +397,7 @@ export default function() {
       expect(lastProperty.isPresent() && lastProperty.isDisplayed());
       entityPage.getPropertyCheckBox(lastProperty).click();
       entityPage.deleteProperty.click();
-      browser.wait(EC.visibilityOf(entityPage.confirmDialogYesButton));
+      browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
       expect(entityPage.confirmDialogYesButton.isPresent()).toBe(true);
       entityPage.confirmDialogYesButton.click();
       browser.sleep(3000);
