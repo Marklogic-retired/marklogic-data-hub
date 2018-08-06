@@ -237,6 +237,29 @@ public class EndToEndAPITest {
 		logger.info("Create Map test passed");
 		requestHelper.waitForReloadModules();
 
+		// Create maps with space and special character in mapping name and delete them
+		mapName = requestHelper.createMapName()+" "+"test";
+		mappingData = requestHelper.getResourceFileContent("integration-test-data/mapping-data.json");
+		mappingDataJsonNode = new ObjectMapper().readTree(mappingData);
+		((ObjectNode) mappingDataJsonNode).put("name", mapName);
+		createMapResponse = requestHelper.createMap(mapName, mappingDataJsonNode);
+		assertEquals(200, createMapResponse.statusCode());
+		logger.info("Create Map test with space in mapping name passed");
+		requestHelper.waitForReloadModules();
+		deleteMapResponse = requestHelper.deleteMap(mapName);
+		logger.info("Deleted Map with space in mapping name passed");
+
+		mapName = requestHelper.createMapName()+"_"+"test";
+		mappingData = requestHelper.getResourceFileContent("integration-test-data/mapping-data.json");
+		mappingDataJsonNode = new ObjectMapper().readTree(mappingData);
+		((ObjectNode) mappingDataJsonNode).put("name", mapName);
+		createMapResponse = requestHelper.createMap(mapName, mappingDataJsonNode);
+		assertEquals(200, createMapResponse.statusCode());
+		logger.info("Create Map test with special charatcer in mapping name passed");
+		requestHelper.waitForReloadModules();
+		deleteMapResponse = requestHelper.deleteMap(mapName);
+		logger.info("Delete Map test with special charatcer in mapping name passed");
+
 		// Create a second Map
 		mapName = requestHelper.createMapName();
 		mappingData = requestHelper.getResourceFileContent("integration-test-data/mapping-data.json");
@@ -371,7 +394,7 @@ public class EndToEndAPITest {
 		statsJson = statsResponse.jsonPath();
 		assertEquals(200, statsResponse.statusCode());
 		assertEquals(1, statsJson.getInt("stagingCount"));
-		assertEquals(5, statsJson.getInt("finalCount"));
+		assertEquals(7, statsJson.getInt("finalCount"));
 
 		// Using thread sleep to make the main thread wait for the thread which
 		// is installing user modules. Need to make wait the main thread for
