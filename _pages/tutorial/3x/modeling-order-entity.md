@@ -1,6 +1,6 @@
 ---
 layout: inner
-title: Getting Started Tutorial 3.x<br>Modeling the Order Entity
+title: Getting Started Tutorial 3.x<br>Model the Order Entity
 lead_text: ''
 permalink: /tutorial/modeling-order-entity/
 ---
@@ -14,7 +14,7 @@ If we were developing a production application, we would now explore the order d
 * Each product is identified by its sku.
 * Each order should include a total price, computed from the per product prices and quantities.
 
-From this, we know we want to harmonize three fields: **id**, **price**, 
+From this, we know we want to harmonize three fields: **id**, **price**,
 and **products**.
 
 * **id** is the unique identifier of each order.
@@ -49,7 +49,7 @@ From this information, we can compute the price of the order as follows:
 $76.98
 ~~~
 
-Now, we can model our Order entity. 
+Now, we can model our Order entity.
 
 1. Click **Entities** in the top navigation bar.
 1. Open the entity editor by clicking on the **pencil** icon (<i class="fa fa-pencil"></i>) in the upper right corner of the Order entity.

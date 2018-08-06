@@ -114,7 +114,7 @@ Initialize the current directory as a Data Hub Framework project
 <pre class="cmdline">
 gradle hubInit
 </pre>
----
+
 ### hubCreateEntity
 Create a boilerplate entity
 <pre class="cmdline">
@@ -124,7 +124,6 @@ gradle hubCreateEntity -PentityName=yourentityname
 ##### Required
 - **entityName** - the entity name to create
 
----
 ### hubCreateInputFlow
 Create an input flow
 <pre class="cmdline">
@@ -152,7 +151,8 @@ gradle hubCreateHarmonizeFlow \
   -PentityName=yourentityname \
   -PflowName=yourflowname \
   -PdataFormat=(xml|json) \
-  -PpluginFormat=(xqy|sjs)
+  -PpluginFormat=(xqy|sjs) \
+  -PmappingName=yourmappingname
 </pre>
 #### Parameters
 ##### Required
@@ -161,6 +161,8 @@ gradle hubCreateHarmonizeFlow \
 
 ##### Optional
 - **dataFormat** - xml or json
+- **pluginFormat** - xqy or sjs; the plugin programming language
+- **mappingName** - the name of a model-to-model mapping to use during code generation
 
 ##### Default Values
 - **dataFormat**=json
@@ -262,6 +264,5 @@ Removes all components of your data hub on MarkLogic, including databases, appli
 
 <pre class="cmdline">
 ./gradlew mlUndeploy \
-  -Pconfirm=true 
+  -Pconfirm=true
 </pre>
-
