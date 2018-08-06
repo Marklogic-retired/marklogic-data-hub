@@ -30,6 +30,7 @@ export class MapComponent implements OnInit {
   public sampleDocURI: string = null;
   private sampleDocSrc: any = null;
   private sampleDocSrcProps: Array<any> = [];
+  public valMaxLen: number = 17;
 
   // Connections
   public conns: Object = {};
