@@ -302,7 +302,7 @@ declare %private function trace:write-error-trace(
             "/" || $trace/*:trace/*:traceId || $extension,
             $trace,
             xdmp:default-permissions(),
-            ("trace", $trace/*:trace/*:type)
+            ("trace", $trace/*:trace/*:flow-type)
           )
         ',
         map:new((
