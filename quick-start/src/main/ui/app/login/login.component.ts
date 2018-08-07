@@ -344,6 +344,9 @@ export class LoginComponent implements OnInit {
       },
       error => {
         this.loginError = error;
+        if(error && error.status === 401){
+          this.loginError = "Authentication Failed: Invalid credentials";
+        }
         this.auth.setAuthenticated(false);
         this.loggingIn = false;
       });
