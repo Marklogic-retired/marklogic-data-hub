@@ -1,7 +1,7 @@
 ---
 layout: inner
 title: Security
-permalink: /docs/security
+permalink: /docs/security/
 ---
 
 This page provides information about the roles, privileges and users that are

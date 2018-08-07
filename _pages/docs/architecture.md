@@ -1,7 +1,7 @@
 ---
 layout: inner
 title: Architecture
-permalink: /docs/architecture
+permalink: /docs/architecture/
 ---
 
 This page provides information about the implementation of DHF as it runs on MarkLogic
@@ -35,14 +35,15 @@ The names of these databases are all configurable using values in `gradle.proper
 
 Note: as of 3.1 there is no separate TRACING database.  JOBS holds tracing and jobs info.
 
-### Application Servers
+## Application Servers
 
 The following application servers are in use by a Data hub:
 
-Appserver   | Default Name     | Default Port      | Modules DB
-Final       | data-hub-FINAL   | 8011              | data-hub-MODULES
-Staging     | data-hub-STAGING | 8010              | data-hub-MODULES
-Jobs        | data-hub-JOBS    | 8013              | data-hub-MODULES
+| Appserver   | Default Name     | Default Port      | Modules DB |
+|-------------|------------------|-------------------|------------------|
+| Final       | data-hub-FINAL   | 8011              | data-hub-MODULES |
+| Staging     | data-hub-STAGING | 8010              | data-hub-MODULES |
+| Jobs        | data-hub-JOBS    | 8013              | data-hub-MODULES |
 
 Note: deployment of DHF also makes use of the MarkLogic management API on port 8002.
 
@@ -51,7 +52,7 @@ from which to serve your harmonized data. Data Hub Framework does not make use
 of this App Server itself.
 
 
-### REST Extensions
+## REST Extensions
 
 The core of the DHF runs on MarkLogic.  This code is explosed to clients as REST API
 extensions, which include both *transforms* and *service extensions*.  These extensions
@@ -59,7 +60,7 @@ work identically to other [REST API Extensions](https://docs.marklogic.com/guide
 
 Here is the list of extensions comprising DHF:
 
-#### Transforms:
+### Transforms:
 
 
 | Extension name            | Implementing module name |
@@ -73,7 +74,7 @@ Here is the list of extensions comprising DHF:
 | ml:prettifyXML            | prettify |
 
 
-#### Service extensions: 
+### Service extensions:
 
 
 | Extension name            | Implementing module name |
