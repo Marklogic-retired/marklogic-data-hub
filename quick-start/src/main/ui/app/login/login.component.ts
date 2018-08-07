@@ -343,7 +343,7 @@ export class LoginComponent implements OnInit {
         this.loggingIn = false;
       },
       error => {
-        this.loginError = error.json().message;
+        this.loginError = error;
         this.auth.setAuthenticated(false);
         this.loggingIn = false;
       });
