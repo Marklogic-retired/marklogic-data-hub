@@ -290,6 +290,8 @@ public class FlowRunnerImpl implements FlowRunner {
         ticketWrapper.put("jobTicket", jobTicket);
         jobManager.saveJob(job.withStatus(JobStatus.RUNNING_HARMONIZE));
 
+        int uriCount = uris.size();
+
         runningThread = new Thread(() -> {
             queryBatcher.awaitCompletion();
 
@@ -305,7 +307,7 @@ public class FlowRunnerImpl implements FlowRunner {
             if (failedEvents.get() > 0 && stopOnFailure) {
                 status = JobStatus.STOP_ON_ERROR;
             }
-            else if (failedEvents.get() + successfulEvents.get() != uris.size()) {
+            else if (failedEvents.get() + successfulEvents.get() != uriCount) {
                 status = JobStatus.CANCELED;
             }
             else if (failedEvents.get() > 0 && successfulEvents.get() > 0) {
