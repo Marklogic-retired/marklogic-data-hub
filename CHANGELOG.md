@@ -1,5 +1,17 @@
 # Change Log
 
+## [v2.0.6](https://github.com/marklogic/marklogic-data-hub/tree/v2.0.6) (2018-08-10)
+[Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v2.0.5...v2.0.6)
+
+**Fixed bugs:**
+
+- DHF can enter a condition were harmonize flows return a status of canceled, even if they succeed. This release corrects that issue.
+
+**Closed issues:**
+
+- Harmonize flow finishes with "CANCELED" status even though successful  [\#1259](https://github.com/marklogic/marklogic-data-hub/issues/1259)
+
+
 ## [v2.0.5](https://github.com/marklogic/marklogic-data-hub/tree/v2.0.5) (2018-08-10)
 [Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v2.0.4...v2.0.5)
 

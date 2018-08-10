@@ -75,7 +75,7 @@ plugins {
    ...
 
    // comment out this line. It pulls the version from the cloud
-   // id 'com.marklogic.ml-data-hub' version '2.0.5'
+   // id 'com.marklogic.ml-data-hub' version '2.0.6'
 }
 
 // this tells gradle to apply the plugin you included above in the buildscript section
