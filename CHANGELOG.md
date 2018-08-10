@@ -1,5 +1,17 @@
 # Change Log
 
+## [v2.0.5](https://github.com/marklogic/marklogic-data-hub/tree/v2.0.5) (2018-08-10)
+[Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v2.0.4...v2.0.5)
+
+**Fixed bugs:**
+
+- Huge URI/ID response from collector now properly streams with efficient memory use and excess queues on disk in system tmp
+
+**Closed issues:**
+
+- Issue when using a collector on a huge amount of URIs [\#1201](https://github.com/marklogic/marklogic-data-hub/issues/1201)
+
+
 ## [v2.0.4](https://github.com/marklogic/marklogic-data-hub/tree/v2.0.4) (2018-02-13)
 [Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v2.0.3...v2.0.4)
 
