@@ -24,7 +24,7 @@ Looking to build the code from source? Look no further.
 #### Prerequisites
 You need these to get started
 
-- MarkLogic 9+
+- MarkLogic 9.1-1+
 - Java 8 JDK
 - Gradle (3.4 or greater)
 - A decent IDE. IntelliJ is nice.
@@ -75,7 +75,7 @@ plugins {
    ...
 
    // comment out this line. It pulls the version from the cloud
-   // id 'com.marklogic.ml-data-hub' version '2.0.4'
+   // id 'com.marklogic.ml-data-hub' version '2.0.5'
 }
 
 // this tells gradle to apply the plugin you included above in the buildscript section
