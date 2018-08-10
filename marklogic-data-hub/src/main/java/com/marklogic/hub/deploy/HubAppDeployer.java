@@ -83,7 +83,7 @@ public class HubAppDeployer extends SimpleAppDeployer {
         onStatusChange(100, "Installation Complete");
 
         //Below is telemetry metric code for tracking successful dhf installs
-        //TODO: when more uses of telemetry are defined, change this to a more e-node based method
+        //TODO: when more uses of telemetry are defined, change this to a more data-hub based method
         ServerEvaluationCall eval = stagingClient.newServerEval();
         String query = "xdmp:feature-metric-increment(xdmp:feature-metric-register(\"datahub.core.install.count\"))";
         try {

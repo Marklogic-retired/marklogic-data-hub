@@ -87,6 +87,9 @@ public class LoadHubModulesCommand extends AbstractCommand {
         });
         modulesLoader.setModulesManager(propsManager);
         if (caughtException == null) {
+            modulesLoader.loadModules("classpath*:/e-node", new DefaultModulesFinder(), modulesClient);
+        }
+        if (caughtException == null) {
             modulesLoader.loadModules("classpath*:/ml-modules", new DefaultModulesFinder(), modulesClient);
         }
         if (caughtException == null) {

@@ -113,7 +113,7 @@ task buildUI(type: NpmTask) {
 
 task copyUIAssets(type: Copy) {
     from 'src/trace-ui/dist'
-    into 'src/server-side/tracing/dist'
+    into 'src/main/resources/data-hub/4/tracing/dist'
     dependsOn tasks.buildUI
 }
 
