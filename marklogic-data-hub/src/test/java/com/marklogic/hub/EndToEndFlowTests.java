@@ -212,15 +212,15 @@ public class EndToEndFlowTests extends HubTestBase {
                 Map<String, Object> options = new HashMap<>();
                 tests.add(DynamicTest.dynamicTest(flowName + " wait", () -> {
                     FinalCounts finalCounts = new FinalCounts(TEST_SIZE, TEST_SIZE + 1, TEST_SIZE + 1, 1, TEST_SIZE, 0, TEST_SIZE, 0, TEST_SIZE/BATCH_SIZE, 0, "FINISHED");
-                    testHarmonizeFlow(prefix, codeFormat, dataFormat, useEs, options, stagingClient, HubConfig.DEFAULT_FINAL_NAME, finalCounts, true);
+                    testHarmonizeFlow(prefix, codeFormat, dataFormat, useEs, options, stagingClient, HubConfig.DEFAULT_FINAL_NAME, finalCounts, TEST_SIZE, true);
                 }));
                 tests.add(DynamicTest.dynamicTest(flowName + " wait Reverse Dbs", () -> {
                     FinalCounts finalCounts = new FinalCounts(TEST_SIZE + 1, TEST_SIZE, TEST_SIZE + 1, 1, TEST_SIZE, 0, TEST_SIZE, 0, TEST_SIZE/BATCH_SIZE, 0, "FINISHED");
-                    testHarmonizeFlow(prefix, codeFormat, dataFormat, useEs, options, finalClient, HubConfig.DEFAULT_STAGING_NAME, finalCounts, true);
+                    testHarmonizeFlow(prefix, codeFormat, dataFormat, useEs, options, finalClient, HubConfig.DEFAULT_STAGING_NAME, finalCounts, TEST_SIZE, true);
                 }));
                 tests.add(DynamicTest.dynamicTest(flowName + " no-wait", () -> {
                     FinalCounts finalCounts = new FinalCounts(TEST_SIZE, TEST_SIZE + 1, TEST_SIZE + 1, 1, TEST_SIZE, 0, TEST_SIZE, 0, TEST_SIZE/BATCH_SIZE, 0, "FINISHED");
-                    testHarmonizeFlow(prefix, codeFormat, dataFormat, useEs, options, stagingClient, HubConfig.DEFAULT_FINAL_NAME, finalCounts, false);
+                    testHarmonizeFlow(prefix, codeFormat, dataFormat, useEs, options, stagingClient, HubConfig.DEFAULT_FINAL_NAME, finalCounts, TEST_SIZE, false);
                 }));
             }
         });
@@ -245,7 +245,7 @@ public class EndToEndFlowTests extends HubTestBase {
                 Map<String, Object> options = new HashMap<>();
                 tests.add(DynamicTest.dynamicTest(flowName + " wait", () -> {
                     FinalCounts finalCounts = new FinalCounts(TEST_SIZE, TEST_SIZE + 1, TEST_SIZE + 1, 1, TEST_SIZE, 0, TEST_SIZE, 0, TEST_SIZE/BATCH_SIZE, 0, "FINISHED");
-                    testHarmonizeFlow(prefix, codeFormat, dataFormat, useEs, options, stagingClient, HubConfig.DEFAULT_FINAL_NAME, finalCounts, true);
+                    testHarmonizeFlow(prefix, codeFormat, dataFormat, useEs, options, stagingClient, HubConfig.DEFAULT_FINAL_NAME, finalCounts, TEST_SIZE, true);
                 }));
             }
         });
@@ -279,15 +279,15 @@ public class EndToEndFlowTests extends HubTestBase {
                 Map<String, Object> options = new HashMap<>();
                 tests.add(DynamicTest.dynamicTest(flowName + " wait", () -> {
                     FinalCounts finalCounts = new FinalCounts(TEST_SIZE, TEST_SIZE + 1, TEST_SIZE + 1, 1, TEST_SIZE, 0, TEST_SIZE, 0, TEST_SIZE/BATCH_SIZE, 0, "FINISHED");
-                    testHarmonizeFlow(prefix, codeFormat, dataFormat, useEs, options, stagingClient, HubConfig.DEFAULT_FINAL_NAME, finalCounts, true);
+                    testHarmonizeFlow(prefix, codeFormat, dataFormat, useEs, options, stagingClient, HubConfig.DEFAULT_FINAL_NAME, finalCounts, TEST_SIZE, true);
                 }));
                 tests.add(DynamicTest.dynamicTest(flowName + " wait Reverse Dbs", () -> {
                     FinalCounts finalCounts = new FinalCounts(TEST_SIZE + 1, TEST_SIZE, TEST_SIZE + 1, 1, TEST_SIZE, 0, TEST_SIZE, 0, TEST_SIZE/BATCH_SIZE, 0, "FINISHED");
-                    testHarmonizeFlow(prefix, codeFormat, dataFormat, useEs, options, finalClient, HubConfig.DEFAULT_STAGING_NAME, finalCounts, true);
+                    testHarmonizeFlow(prefix, codeFormat, dataFormat, useEs, options, finalClient, HubConfig.DEFAULT_STAGING_NAME, finalCounts, TEST_SIZE, true);
                 }));
                 tests.add(DynamicTest.dynamicTest(flowName + " no-wait", () -> {
                     FinalCounts finalCounts = new FinalCounts(TEST_SIZE, TEST_SIZE + 1, TEST_SIZE + 1, 1, TEST_SIZE, 0, TEST_SIZE, 0, TEST_SIZE/BATCH_SIZE, 0, "FINISHED");
-                    testHarmonizeFlow(prefix, codeFormat, dataFormat, useEs, options, stagingClient, HubConfig.DEFAULT_FINAL_NAME, finalCounts, false);
+                    testHarmonizeFlow(prefix, codeFormat, dataFormat, useEs, options, stagingClient, HubConfig.DEFAULT_FINAL_NAME, finalCounts, TEST_SIZE, false);
                 }));
             }
         });
@@ -315,7 +315,7 @@ public class EndToEndFlowTests extends HubTestBase {
                     options.put("extraPlugin", true);
                     FinalCounts finalCounts = new FinalCounts(TEST_SIZE, TEST_SIZE + 1, TEST_SIZE + 1, 1, TEST_SIZE, 0, TEST_SIZE, 0, TEST_SIZE/BATCH_SIZE, 0, "FINISHED");
                     finalCounts.optionsFile = "options-extra";
-                    testHarmonizeFlow(prefix, codeFormat, dataFormat, useEs, options, stagingClient, HubConfig.DEFAULT_FINAL_NAME, finalCounts, true);
+                    testHarmonizeFlow(prefix, codeFormat, dataFormat, useEs, options, stagingClient, HubConfig.DEFAULT_FINAL_NAME, finalCounts, TEST_SIZE, true);
                 }));
 
                 tests.add(DynamicTest.dynamicTest(flowName + " extra error", () -> {
@@ -349,16 +349,28 @@ public class EndToEndFlowTests extends HubTestBase {
                 Map<String, Object> options = new HashMap<>();
                 tests.add(DynamicTest.dynamicTest(flowName + " wait", () -> {
                     FinalCounts finalCounts = new FinalCounts(TEST_SIZE, TEST_SIZE, TEST_SIZE + 1, 1, TEST_SIZE, 0, TEST_SIZE, 0, TEST_SIZE / BATCH_SIZE, 0, "FINISHED");
-                    testHarmonizeFlow(prefix, codeFormat, dataFormat, useEs, options, stagingClient, HubConfig.DEFAULT_FINAL_NAME, finalCounts, true);
+                    testHarmonizeFlow(prefix, codeFormat, dataFormat, useEs, options, stagingClient, HubConfig.DEFAULT_FINAL_NAME, finalCounts, TEST_SIZE, true);
                 }));
                 tests.add(DynamicTest.dynamicTest(flowName + " wait Reverse DBs", () -> {
                     FinalCounts finalCounts = new FinalCounts(TEST_SIZE, TEST_SIZE, TEST_SIZE + 1, 1, TEST_SIZE, 0, TEST_SIZE, 0, TEST_SIZE / BATCH_SIZE, 0, "FINISHED");
-                    testHarmonizeFlow(prefix, codeFormat, dataFormat, useEs, options, stagingClient, HubConfig.DEFAULT_FINAL_NAME, finalCounts, true);
+                    testHarmonizeFlow(prefix, codeFormat, dataFormat, useEs, options, stagingClient, HubConfig.DEFAULT_FINAL_NAME, finalCounts, TEST_SIZE, true);
                 }));
                 tests.add(DynamicTest.dynamicTest(flowName + " no-wait", () -> {
                     FinalCounts finalCounts = new FinalCounts(TEST_SIZE, TEST_SIZE, TEST_SIZE + 1, 1, TEST_SIZE, 0, TEST_SIZE, 0, TEST_SIZE / BATCH_SIZE, 0, "FINISHED");
-                    testHarmonizeFlow(prefix, codeFormat, dataFormat, useEs, options, stagingClient, HubConfig.DEFAULT_FINAL_NAME, finalCounts, true);
+                    testHarmonizeFlow(prefix, codeFormat, dataFormat, useEs, options, stagingClient, HubConfig.DEFAULT_FINAL_NAME, finalCounts, TEST_SIZE, true);
                 }));
+
+                // test big size to expose timing issues
+                // we only need 1 test to expose tbe bug
+                // https://github.com/marklogic/marklogic-data-hub/issues/1259
+                if (codeFormat.equals(CodeFormat.XQUERY) && dataFormat.equals(DataFormat.XML) && useEs == false) {
+                    int testSize = 50000;
+                    tests.add(DynamicTest.dynamicTest("Big Count: " + flowName + " wait", () -> {
+                        FinalCounts finalCounts = new FinalCounts(testSize, testSize, testSize + 1, 1, testSize, 0, testSize, 0, testSize / BATCH_SIZE, 0, "FINISHED");
+                        testHarmonizeFlow(prefix, codeFormat, dataFormat, useEs, options, stagingClient, HubConfig.DEFAULT_FINAL_NAME, finalCounts, testSize, true);
+                    }));
+                }
+
             }
         });
 
@@ -382,7 +394,7 @@ public class EndToEndFlowTests extends HubTestBase {
                     Map<String, Object> options = new HashMap<>();
                     FinalCounts finalCounts = new FinalCounts(TEST_SIZE, TEST_SIZE + 1, TEST_SIZE + 1, 1, TEST_SIZE, 0, TEST_SIZE, 0, TEST_SIZE / BATCH_SIZE, 0, "FINISHED");
                     tests.add(DynamicTest.dynamicTest(flowName, () -> {
-                        testHarmonizeFlow(prefix, codeFormat, dataFormat, useEs, options, stagingClient, HubConfig.DEFAULT_FINAL_NAME, finalCounts, true);
+                        testHarmonizeFlow(prefix, codeFormat, dataFormat, useEs, options, stagingClient, HubConfig.DEFAULT_FINAL_NAME, finalCounts, TEST_SIZE, true);
                     }));
                 }
             }
@@ -752,7 +764,7 @@ public class EndToEndFlowTests extends HubTestBase {
         FileUtil.copy(getResourceStream(srcDir), dstDir.toFile());
     }
 
-    private void installDocs(DataFormat dataFormat, String collection, DatabaseClient srcClient, boolean useEs) {
+    private void installDocs(DataFormat dataFormat, String collection, DatabaseClient srcClient, boolean useEs, int testSize) {
         DataMovementManager mgr = stagingDataMovementManager;
         if (srcClient.getDatabase().equals(HubConfig.DEFAULT_FINAL_NAME)) {
             mgr = finalDataMovementManager;
@@ -780,7 +792,7 @@ public class EndToEndFlowTests extends HubTestBase {
         }
         StringHandle handle = new StringHandle(getResource("e2e-test/" + filename + "." + dataFormat.toString()));
         String dataFormatString = dataFormat.toString();
-        for (int i = 0; i < TEST_SIZE; i++) {
+        for (int i = 0; i < testSize; i++) {
             writeBatcher.add("/input-" + i + "." + dataFormatString, metadataHandle, handle);
         }
 
@@ -789,11 +801,11 @@ public class EndToEndFlowTests extends HubTestBase {
         assertFalse(installDocsFailed, "Doc install failed: " + installDocError);
 
         if (srcClient.getDatabase().equals(HubConfig.DEFAULT_STAGING_NAME)) {
-            assertEquals(TEST_SIZE, getStagingDocCount(collection));
+            assertEquals(testSize, getStagingDocCount(collection));
             assertEquals(0, getFinalDocCount(collection));
         }
         else {
-            assertEquals(TEST_SIZE, getFinalDocCount(collection));
+            assertEquals(testSize, getFinalDocCount(collection));
             assertEquals(0, getStagingDocCount(collection));
         }
     }
@@ -988,7 +1000,7 @@ public class EndToEndFlowTests extends HubTestBase {
         Vector<String> completed, Vector<String> failed,
         Map<String, Object> options,
         DatabaseClient srcClient, String destDb,
-        boolean useEs, boolean waitForCompletion)
+        boolean useEs, boolean waitForCompletion, int testSize)
     {
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_TRACE_NAME, HubConfig.DEFAULT_JOB_NAME);
 
@@ -997,7 +1009,7 @@ public class EndToEndFlowTests extends HubTestBase {
         assertEquals(0, getTracingDocCount());
         assertEquals(0, getJobDocCount());
 
-        installDocs(dataFormat, ENTITY, srcClient, useEs);
+        installDocs(dataFormat, ENTITY, srcClient, useEs, testSize);
 
         Flow harmonizeFlow = flowManager.getFlow(ENTITY, flowName, FlowType.HARMONIZE);
 
@@ -1032,14 +1044,14 @@ public class EndToEndFlowTests extends HubTestBase {
     private void testHarmonizeFlow(
         String prefix, CodeFormat codeFormat, DataFormat dataFormat, boolean useEs,
         Map<String, Object> options, DatabaseClient srcClient, String destDb,
-        FinalCounts finalCounts, boolean waitForCompletion)
+        FinalCounts finalCounts, int docCount, boolean waitForCompletion)
     {
         String flowName = getFlowName(prefix, codeFormat, dataFormat, FlowType.HARMONIZE, useEs);
 
         Vector<String> completed = new Vector<>();
         Vector<String> failed = new Vector<>();
 
-        Tuple<FlowRunner, JobTicket> tuple = runHarmonizeFlow(flowName, dataFormat, completed, failed, options, srcClient, destDb, useEs, waitForCompletion);
+        Tuple<FlowRunner, JobTicket> tuple = runHarmonizeFlow(flowName, dataFormat, completed, failed, options, srcClient, destDb, useEs, waitForCompletion, docCount);
 
         if (waitForCompletion) {
             int stagingCount = getStagingDocCount();
@@ -1076,13 +1088,13 @@ public class EndToEndFlowTests extends HubTestBase {
             }
             if (dataFormat.equals(DataFormat.XML)) {
                 Document expected = getXmlFromResource("e2e-test/" + filename + ".xml");
-                for (int i = 0; i < TEST_SIZE; i+=10) {
+                for (int i = 0; i < docCount; i+=10) {
                     Document actual = mgr.read("/input-" + i + ".xml").next().getContent(new DOMHandle()).get();
                     assertXMLEqual(expected, actual);
                 }
             } else {
                 String expected = getResource("e2e-test/" + filename + "." + dataFormat.toString());
-                for (int i = 0; i < TEST_SIZE; i+=10) {
+                for (int i = 0; i < docCount; i+=10) {
                     String actual = mgr.read("/input-" + i + "." + dataFormat.toString()).next().getContent(new StringHandle()).get();
                     assertJsonEqual(expected, actual, false);
                 }
@@ -1110,7 +1122,7 @@ public class EndToEndFlowTests extends HubTestBase {
             }
         }
         else {
-            assertNotEquals(TEST_SIZE, getFinalDocCount());
+            assertNotEquals(docCount, getFinalDocCount());
             tuple.x.awaitCompletion();
         }
     }
@@ -1125,7 +1137,7 @@ public class EndToEndFlowTests extends HubTestBase {
         Vector<String> completed = new Vector<>();
         Vector<String> failed = new Vector<>();
 
-        Tuple<FlowRunner, JobTicket> tuple = runHarmonizeFlow(flowName, dataFormat, completed, failed, options, srcClient, destDb, useEs, true);
+        Tuple<FlowRunner, JobTicket> tuple = runHarmonizeFlow(flowName, dataFormat, completed, failed, options, srcClient, destDb, useEs, true, TEST_SIZE);
 
         int stagingCount = getStagingDocCount();
         int finalCount = getFinalDocCount();
