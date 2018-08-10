@@ -5,9 +5,7 @@ lead_text: ''
 permalink: /understanding/project-structure/
 ---
 
-<!--- DHFPROD-646 TODO a couple intro sentences. Is this a required layout? Suggested layout? The layout created by running some particular setup command? -->
-
-This page describes the directory structure for a Data Hub Framework project.
+When you initialize a Data Hub Framework project using QuickStart or the `hubInit` gradle task, it sets up the following directory hierarchy. The diagram includes some placeholder entries so you can see, for example, how creation of entities, flows, and mappings interacts with the layout. An explanation of the sub-directories and files follows the diagram.
 
 ```
 |- your-data-hub-dir
@@ -45,11 +43,16 @@ This page describes the directory structure for a Data Hub Framework project.
                |- ...
                |- harmonizeflow N
                |- REST
+      |- mappings
+        |- mappingName 1
+          |- mappingName-0.mapping.json
+          |- ...
+          |- mappingName-N.mapping.json
    |- user-config
    |- .tmp
 ```
 ### build.gradle
-This file allows you to use [Gradle](https://gradle.org/) to configure and manage your data hub instance. Visit the [Gradle website](https://gradle.org/) for full documentation on how to configure it.
+This file enables you to use [Gradle](https://gradle.org/) to configure and manage your data hub instance. Visit the [Gradle website](https://gradle.org/) for full documentation on how to configure it.
 
 ### gradle
 This directory houses the gradle wrapper. When you provision a new DHF project you get the gradle wrapper. Gradle wrapper is a specific, local version of gradle. You can use the wrapper to avoid having to install gradle on your system.
@@ -99,12 +102,12 @@ This folder contains sub-folders and JSON files used to configure your MarkLogic
 Each of the above JSON files conforms to the MarkLogic REST API for creating [databases](https://docs.marklogic.com/REST/PUT/manage/v2/databases/[id-or-name]/properties), [mimetypes](https://docs.marklogic.com/REST/PUT/manage/v2/mimetypes/[id-or-name]/properties), [roles](https://docs.marklogic.com/REST/PUT/manage/v2/roles/[id-or-name]/properties), [users](https://docs.marklogic.com/REST/PUT/manage/v2/users/[id-or-name]/properties), or [servers](https://docs.marklogic.com/REST/PUT/manage/v2/servers/[id-or-name]/properties).
 
 ## plugins folder
-This folder contains your server-side modules that get deployed into MarkLogic. You can put any server-side files in here that you like. When deployed to MarkLogic ./plugins is equivalent to the root uri **/**, so a library module at `./plugins/my-folder/my-lib.xqy` would be loaded into the modules database as `/my-folder/my-lib.xqy`. 
+This folder contains project-specific server-side modules that get deployed into MarkLogic. You can put any server-side files in here that you like. When deployed to MarkLogic ./plugins is equivalent to the root uri **/**, so a library module at `./plugins/my-folder/my-lib.xqy` would be loaded into the modules database as `/my-folder/my-lib.xqy`.
 
 The only caveat is that the **entities** folder is reserved for Hub use and is treated as a special case by the deploy process.
 
 ### plugins/entities
-This folder contains your entity definitions. An entity is a domain object like Employee or SalesOrder. Each entity folder contains two sub-folders: **input** and **harmonize**. DHF has custom logic to handle the deployment of this folder to MarkLogic. 
+This folder contains your entity definitions. An entity is a domain object like Employee or SalesOrder. Each entity folder contains two sub-folders: **input** and **harmonize**. DHF has custom logic to handle the deployment of this folder to MarkLogic.
 
 ### plugins/entities/{entity}/input
 The input sub-folder contains all of the input flows for a given entity. Input flows are responsible for creating an XML or JSON envelope during content ingest. This folder contains one server-side module for each part of the envelope: content, headers, and triples. You may also optionally include a REST folder that contains custom MarkLogic REST extensions related to this input flow.
@@ -184,13 +187,24 @@ This folder contains REST transform modules (XQuery or JavaScript). See the [Mar
 ### plugins/entities/{entity}/harmonize/REST/services
 This folder contains REST extension modules (XQuery or JavaScript). See the [MarkLogic REST API Docs](https://docs.marklogic.com/guide/rest-dev/extensions) for details. Once deployed, these options are available on the FINAL server.
 
-## Entity-independent REST resources
-In DHF, REST resources (search options, extensions, and transforms) are intended to be associated with entities. As such, they would be created under a `plugins/entities/{entity}` folder. It is currently possible to deploy REST resources from `plugins/entities/input/REST` (without a specific entity); however, this is unsupported and may be removed in a future release. 
+### Entity-independent REST resources
+In DHF, REST resources (search options, extensions, and transforms) are intended to be associated with entities. As such, they would be created under a `plugins/entities/{entity}` folder. It is currently possible to deploy REST resources from `plugins/entities/input/REST` (without a specific entity); however, this is unsupported and may be removed in a future release.
 
-### user-config folder
+### plugins/mappings
+This folder contains model-to-model mapping configuration artifacts that can be used to configure an input flow. For details, see [Using Model-to-Model Mapping]({{site.baseurl}}/harmonize/mapping/).
+
+### plugins/mappings/{mapping}
+
+This folder contains all versions of a given model-to-model mapping. The name of the folder is the same as mapping name. For details, see For details, see [Using Model-to-Model Mapping]({{site.baseurl}}/harmonize/mapping/).
+
+### plugins/mappings/{mapping}/{mapping}-{version}.json
+
+A model to model mapping configuration files. There may be multiple versions. For example, QuickStart creates a new version each time you modify a mapping. For details, see For details, see [Using Model-to-Model Mapping]({{site.baseurl}}/harmonize/mapping/).
+
+## user-config folder
 This folder contains sub-folders and JSON files used to configure your MarkLogic server.
 See [ml-gradle wiki](https://github.com/marklogic/ml-gradle/wiki) for details on what goes in here.
 Any JSON files you put here will be merged with the hub-internal-config configurations by the Data Hub Framework upon deploy.
 
-### .tmp folder
+## .tmp folder
 This folder contains temporary hub artifacts. You may safely ignore it.
