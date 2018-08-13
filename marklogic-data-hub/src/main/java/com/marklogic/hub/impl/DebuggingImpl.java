@@ -26,7 +26,7 @@ import com.marklogic.client.util.RequestParameters;
 import com.marklogic.hub.Debugging;
 
 public class DebuggingImpl extends ResourceManager implements Debugging {
-    private static final String NAME = "ml:debug";
+    private static final String NAME = "dh_debug";
 
     public DebuggingImpl(DatabaseClient client) {
         super();

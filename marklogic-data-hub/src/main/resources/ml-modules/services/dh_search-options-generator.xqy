@@ -15,31 +15,30 @@
 :)
 xquery version "1.0-ml";
 
-module namespace transform = "http://marklogic.com/rest-api/transform/get-content";
+module namespace service = "http://marklogic.com/rest-api/resource/dh_search-options-generator";
+
+import module namespace debug = "http://marklogic.com/data-hub/debug"
+  at "/data-hub/4/impl/debug-lib.xqy";
+
+import module namespace hent = "http://marklogic.com/data-hub/hub-entities"
+  at "/data-hub/4/impl/hub-entities.xqy";
 
 import module namespace perf = "http://marklogic.com/data-hub/perflog-lib"
   at "/data-hub/4/impl/perflog-lib.xqy";
 
-declare namespace envelope = "http://marklogic.com/data-hub/envelope";
+declare option xdmp:mapping "false";
 
-declare function transform(
+declare function post(
   $context as map:map,
-  $params as map:map,
-  $content as document-node()
-  ) as document-node()
+  $params  as map:map,
+  $input   as document-node()*
+  ) as document-node()*
 {
-  perf:log('/transforms/get-content:transform', function() {
+  debug:dump-env(),
+
+  perf:log('/v1/resources/validate:get', function() {
     document {
-      if ($content/envelope:envelope) then
-      (
-        map:put($context, "output-type", "application/xml"),
-        $content/envelope:envelope/envelope:content/node()
-      )
-      else
-      (
-        map:put($context, "output-type", "application/json"),
-        $content/content
-      )
+      hent:dump-search-options($input)
     }
   })
 };

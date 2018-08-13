@@ -15,7 +15,7 @@
 :)
 xquery version "1.0-ml";
 
-module namespace service = "http://marklogic.com/rest-api/resource/scaffold-content";
+module namespace service = "http://marklogic.com/rest-api/resource/dh_scaffold-content";
 
 import module namespace consts = "http://marklogic.com/data-hub/consts"
   at "/data-hub/4/impl/consts.xqy";

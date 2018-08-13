@@ -16,19 +16,19 @@
 xquery version "1.0-ml";
 
 import module namespace consts = "http://marklogic.com/data-hub/consts"
-  at "../impl/consts.xqy";
+  at "/data-hub/4/impl/consts.xqy";
 
 import module namespace debug = "http://marklogic.com/data-hub/debug"
-  at "../impl/debug-lib.xqy";
+  at "/data-hub/4/impl/debug-lib.xqy";
 
 import module namespace flow = "http://marklogic.com/data-hub/flow-lib"
-  at "../impl/flow-lib.xqy";
+  at "/data-hub/4/impl/flow-lib.xqy";
 
 import module namespace parameters = "http://marklogic.com/rest-api/endpoints/parameters"
   at "/MarkLogic/rest-api/endpoints/parameters.xqy";
 
 import module namespace perf = "http://marklogic.com/data-hub/perflog-lib"
-  at "../impl/perflog-lib.xqy";
+  at "/data-hub/4/impl/perflog-lib.xqy";
 
 declare option xdmp:mapping "false";
 

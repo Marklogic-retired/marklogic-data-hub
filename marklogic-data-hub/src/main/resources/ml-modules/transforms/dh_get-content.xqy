@@ -15,29 +15,31 @@
 :)
 xquery version "1.0-ml";
 
-module namespace service = "http://marklogic.com/rest-api/resource/hubversion";
-
-import module namespace config = "http://marklogic.com/data-hub/config"
-  at "/com.marklogic.hub/config.xqy";
-
-import module namespace debug = "http://marklogic.com/data-hub/debug"
-  at "/data-hub/4/impl/debug-lib.xqy";
+module namespace transform = "http://marklogic.com/rest-api/transform/dh_get-content";
 
 import module namespace perf = "http://marklogic.com/data-hub/perflog-lib"
   at "/data-hub/4/impl/perflog-lib.xqy";
 
-declare option xdmp:mapping "false";
+declare namespace envelope = "http://marklogic.com/data-hub/envelope";
 
-declare function get(
+declare function transform(
   $context as map:map,
-  $params  as map:map
-  ) as document-node()*
+  $params as map:map,
+  $content as document-node()
+  ) as document-node()
 {
-  debug:dump-env(),
-  perf:log('/v1/resources/hubversion:get', function() {
-    xdmp:set-response-content-type("text/plain"),
+  perf:log('/transforms/get-content:transform', function() {
     document {
-      $config:HUB-VERSION
+      if ($content/envelope:envelope) then
+      (
+        map:put($context, "output-type", "application/xml"),
+        $content/envelope:envelope/envelope:content/node()
+      )
+      else
+      (
+        map:put($context, "output-type", "application/json"),
+        $content/content
+      )
     }
   })
 };

@@ -753,13 +753,13 @@ declare function flow:run-writers(
 {
   let $updated-settings := xdmp:eval('
     import module namespace flow = "http://marklogic.com/data-hub/flow-lib"
-      at "/MarkLogic/data-hub-framework/impl/flow-lib.xqy";
+      at "/data-hub/4/impl/flow-lib.xqy";
 
     import module namespace rfc = "http://marklogic.com/data-hub/run-flow-context"
-      at "/MarkLogic/data-hub-framework/impl/run-flow-context.xqy";
+      at "/data-hub/4/impl/run-flow-context.xqy";
 
     import module namespace trace = "http://marklogic.com/data-hub/trace"
-      at "/MarkLogic/data-hub-framework/impl/trace-lib.xqy";
+      at "/data-hub/4/impl/trace-lib.xqy";
 
     declare variable $identifiers external;
     declare variable $context-queue external;

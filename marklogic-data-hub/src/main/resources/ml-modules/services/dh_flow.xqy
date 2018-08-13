@@ -15,7 +15,7 @@
 :)
 xquery version "1.0-ml";
 
-module namespace service = "http://marklogic.com/rest-api/resource/flow";
+module namespace service = "http://marklogic.com/rest-api/resource/dh_flow";
 
 import module namespace config = "http://marklogic.com/data-hub/config"
   at "/com.marklogic.hub/config.xqy";

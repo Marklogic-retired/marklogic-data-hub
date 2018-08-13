@@ -24,9 +24,13 @@ import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.util.RequestParameters;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.impl.HubConfigImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Versions extends ResourceManager {
-    private static final String NAME = "ml:hubversion";
+    private static final String NAME = "dh_hubversion";
+
+    private static Logger logger = LoggerFactory.getLogger(Versions.class);
 
     DatabaseClient stagingClient;
     private HubConfig hubConfig;
@@ -47,7 +51,10 @@ public class Versions extends ResourceManager {
             ResourceServices.ServiceResult res = resultItr.next();
             return res.getContent(new StringHandle()).get();
         }
-        catch(Exception e) {}
+        catch(Exception e) {
+            logger.warn("Server returned no version number.");
+            e.printStackTrace();
+        }
 
         // 2.0.0 is the version at which we started using this method. It's the
         // default fallback and should not be changed.

@@ -121,7 +121,7 @@ public class CollectorImpl implements Collector {
                 client.getSecurityContext().getSSLContext() != null ? "https" : "http",
                 client.getHost(),
                 client.getPort(),
-                "/v1/internal/hubcollector",
+                "/data-hub/4/endpoints/collector.xqy",
                 URLEncoder.encode(jobId, "UTF-8"),
                 URLEncoder.encode(entity, "UTF-8"),
                 URLEncoder.encode(flow, "UTF-8"),

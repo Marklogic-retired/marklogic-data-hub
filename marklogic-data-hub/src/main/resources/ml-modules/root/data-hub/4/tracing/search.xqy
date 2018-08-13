@@ -16,10 +16,10 @@
 xquery version "1.0-ml";
 
 import module namespace debug = "http://marklogic.com/data-hub/debug"
-  at "/MarkLogic/data-hub-framework/impl/debug-lib.xqy";
+  at "/data-hub/4/impl/debug-lib.xqy";
 
 import module namespace trace = "http://marklogic.com/data-hub/trace"
-  at "/MarkLogic/data-hub-framework/impl/trace-lib.xqy";
+  at "/data-hub/4/impl/trace-lib.xqy";
 
 declare option xdmp:mapping "false";
 

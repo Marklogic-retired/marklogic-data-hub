@@ -15,7 +15,7 @@
 :)
 xquery version "1.0-ml";
 
-module namespace service = "http://marklogic.com/rest-api/resource/entity";
+module namespace service = "http://marklogic.com/rest-api/resource/dh_entity";
 
 import module namespace debug = "http://marklogic.com/data-hub/debug"
   at "/data-hub/4/impl/debug-lib.xqy";

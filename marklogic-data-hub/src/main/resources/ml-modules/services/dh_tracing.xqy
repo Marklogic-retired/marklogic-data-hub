@@ -15,29 +15,38 @@
 :)
 xquery version "1.0-ml";
 
-module namespace transform = "http://marklogic.com/rest-api/transform/trace-json";
+module namespace service = "http://marklogic.com/rest-api/resource/dh_tracing";
 
-import module namespace perf = "http://marklogic.com/data-hub/perflog-lib"
-  at "/data-hub/4/impl/perflog-lib.xqy";
+import module namespace debug = "http://marklogic.com/data-hub/debug"
+  at "/data-hub/4/impl/debug-lib.xqy";
 
 import module namespace trace = "http://marklogic.com/data-hub/trace"
   at "/data-hub/4/impl/trace-lib.xqy";
 
-declare function transform(
-  $context as map:map,
-  $params as map:map,
-  $content as document-node()
-  ) as document-node()
-{
-  perf:log('/transforms/trace-json:transform', function() {
+declare namespace rapi = "http://marklogic.com/rest-api";
 
-    map:put($context, "output-types", "application/json"),
-    document {
-      if ($content/trace) then
-        xdmp:to-json(trace:trace-to-json($content/trace))
-      else if ($content/node() instance of object-node()) then
-        xdmp:to-json(trace:trace-to-json($content/node()))
-      else ()
-    }
-  })
+declare option xdmp:mapping "false";
+
+declare function get(
+  $context as map:map,
+  $params  as map:map
+  ) as document-node()*
+{
+  debug:dump-env(),
+
+  document { trace:enabled() }
+};
+
+declare %rapi:transaction-mode("update") function post(
+  $context as map:map,
+  $params  as map:map,
+  $input   as document-node()*
+  ) as document-node()*
+{
+  debug:dump-env(),
+
+  let $enable := map:get($params, "enable") = ("true", "yes")
+  let $_ := trace:enable-tracing($enable)
+  return
+    document { () }
 };

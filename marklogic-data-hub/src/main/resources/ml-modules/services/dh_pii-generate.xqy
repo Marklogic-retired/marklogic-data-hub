@@ -15,7 +15,7 @@
 :)
 xquery version "1.0-ml";
 
-module namespace service = "http://marklogic.com/rest-api/resource/search-options-generator";
+module namespace service = "http://marklogic.com/rest-api/resource/dh_pii-generate";
 
 import module namespace debug = "http://marklogic.com/data-hub/debug"
   at "/data-hub/4/impl/debug-lib.xqy";
@@ -29,16 +29,18 @@ import module namespace perf = "http://marklogic.com/data-hub/perflog-lib"
 declare option xdmp:mapping "false";
 
 declare function post(
-  $context as map:map,
-  $params  as map:map,
-  $input   as document-node()*
-  ) as document-node()*
+$context as map:map,
+$params  as map:map,
+$input   as document-node()*
+) as document-node()*
 {
-  debug:dump-env(),
+    debug:dump-env(),
 
-  perf:log('/v1/resources/validate:get', function() {
+    perf:log('/v1/resources/validate:get', function() {
     document {
-      hent:dump-search-options($input)
+        hent:dump-pii($input)
     }
-  })
+    })
 };
+
+

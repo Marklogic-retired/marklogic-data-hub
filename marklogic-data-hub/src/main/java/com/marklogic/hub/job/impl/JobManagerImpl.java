@@ -234,7 +234,7 @@ public class JobManagerImpl implements JobManager {
     }
 
     public class JobDeleteResource extends ResourceManager {
-        private static final String DELETE_SERVICE = "ml:deleteJobs";
+        private static final String DELETE_SERVICE = "dh_delete-jobs";
 
         private DatabaseClient srcClient;
 

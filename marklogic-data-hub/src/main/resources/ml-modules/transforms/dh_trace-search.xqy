@@ -14,7 +14,7 @@
   limitations under the License.
 :)
 xquery version "1.0-ml";
-module namespace trace-search = "http://marklogic.com/rest-api/transform/trace-search";
+module namespace trace-search = "http://marklogic.com/rest-api/transform/dh_trace-search";
 
 import module namespace extut = "http://marklogic.com/rest-api/lib/extensions-util"
     at "/MarkLogic/rest-api/lib/extensions-util.xqy";

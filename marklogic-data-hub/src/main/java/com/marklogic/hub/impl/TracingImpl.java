@@ -25,7 +25,7 @@ import com.marklogic.client.util.RequestParameters;
 import com.marklogic.hub.Tracing;
 
 public class TracingImpl extends ResourceManager implements Tracing {
-    private static final String NAME = "ml:tracing";
+    private static final String NAME = "dh_tracing";
 
     public TracingImpl(DatabaseClient client) {
         super();

@@ -545,9 +545,9 @@ function queueWriter(writerFunction, identifier, envelope, options) {
 function runWriters(identifiers) {
   let updatedSettings =
     fn.head(xdmp.eval(
-    '  let flowlib = require("/MarkLogic/data-hub-framework/impl/flow-lib.sjs"); ' +
-    '  let rfc = require("/MarkLogic/data-hub-framework/impl/run-flow-context.sjs"); ' +
-    '  let tracelib = require("/MarkLogic/data-hub-framework/impl/trace-lib.sjs"); ' +
+    '  let flowlib = require("/data-hub/4/impl/flow-lib.sjs"); ' +
+    '  let rfc = require("/data-hub/4/impl/run-flow-context.sjs"); ' +
+    '  let tracelib = require("/data-hub/4/impl/trace-lib.sjs"); ' +
     '  rfc.setGlobalContext(rfcContext); ' +
     '  tracelib.setCurrentTraceSettings(currentTraceSettings); ' +
     '  for (let identifier of identifiers) { ' +

@@ -15,7 +15,7 @@
 :)
 xquery version "1.0-ml";
 
-module namespace runFlow = "http://marklogic.com/rest-api/transform/run-flow";
+module namespace runFlow = "http://marklogic.com/rest-api/transform/dh_input-flow";
 
 import module namespace consts = "http://marklogic.com/data-hub/consts"
   at "/data-hub/4/impl/consts.xqy";

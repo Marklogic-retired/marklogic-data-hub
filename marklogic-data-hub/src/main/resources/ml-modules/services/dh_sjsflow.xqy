@@ -14,44 +14,43 @@
   limitations under the License.
 :)
 xquery version "1.0-ml";
-module namespace job-search = "http://marklogic.com/rest-api/transform/job-search";
-
+module namespace sjsflow = "http://marklogic.com/rest-api/resource/dh_sjsflow";
 import module namespace extut = "http://marklogic.com/rest-api/lib/extensions-util"
     at "/MarkLogic/rest-api/lib/extensions-util.xqy";
 
 declare default function namespace "http://www.w3.org/2005/xpath-functions";
 declare option xdmp:mapping "false";
 
-declare private variable $extName := "job-search";
-declare private variable $modPath := "/data-hub/4/transforms/job-search.sjs";
+declare private variable $extName := "sjsflow";
+declare private variable $modPath := "/data-hub/4/services/sjsflow.sjs";
 declare private variable $caller  := xdmp:function(
     xs:QName("applyOnce"), "/MarkLogic/rest-api/lib/extensions-util.sjs"
     );
 
-declare function job-search:source-format() as xs:string {
+declare function sjsflow:source-format() as xs:string {
     "javascript"
 };
-declare function job-search:get(
+declare function sjsflow:get(
     $context as map:map, $params as map:map
-) as map:map {
+) as document-node()? {
     xdmp:apply($caller,$extName,$modPath,"GET",$context,$params)
 };
-declare function job-search:delete(
+declare function sjsflow:delete(
     $context as map:map, $params as map:map
-) as map:map {
+) as document-node()? {
     xdmp:apply($caller,$extName,$modPath,"DELETE",$context,$params)
 };
-declare function job-search:post(
+declare function sjsflow:post(
     $context as map:map, $params as map:map, $input as document-node()*
-) as map:map {
+) as document-node()* {
     xdmp:apply($caller,$extName,$modPath,"POST",$context,$params,$input)
 };
-declare function job-search:put($context as map:map, $params as map:map, $input as document-node()*
-) as map:map {
+declare function sjsflow:put($context as map:map, $params as map:map, $input as document-node()*
+) as document-node()? {
     xdmp:apply($caller,$extName,$modPath,"PUT",$context,$params,$input)
 };
-declare function job-search:transform(
-    $context as map:map, $params as map:map, $input as document-node()
-) as document-node()? {
+declare function sjsflow:transform(
+    $context as map:map, $params as map:map, $input as document-node()?
+) as map:map {
     xdmp:apply($caller,$extName,$modPath,"transform",$context,$params,$input)
 };

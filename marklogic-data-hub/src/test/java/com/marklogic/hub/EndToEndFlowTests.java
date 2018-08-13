@@ -1053,12 +1053,12 @@ public class EndToEndFlowTests extends HubTestBase {
                     "\"document_type\":\"\\\"" + dataFormat.toString() + "\\\"\",";
             if (codeFormat.equals(CodeFormat.JAVASCRIPT)) {
                 optionsJson +=
-                    "\"transform_module\":\"\\\"/MarkLogic/data-hub-framework/transforms/mlcp-flow-transform.sjs\\\"\"," +
+                    "\"transform_module\":\"\\\"/data-hub/4/mlcp-flow-transform.sjs\\\"\"," +
                     "\"transform_function\":\"transform\",";
             }
             else {
                 optionsJson +=
-                    "\"transform_module\":\"\\\"/MarkLogic/data-hub-framework/transforms/mlcp-flow-transform.xqy\\\"\"," +
+                    "\"transform_module\":\"\\\"/data-hub/4/mlcp-flow-transform.xqy\\\"\"," +
                     "\"transform_namespace\":\"\\\"http://marklogic.com/data-hub/mlcp-flow-transform\\\"\",";
             }
             optionsJson +=
@@ -1168,7 +1168,7 @@ public class EndToEndFlowTests extends HubTestBase {
         assertEquals(0, tracingCount);
         assertEquals(0, jobsCount);
 
-        String transform = codeFormat.equals(CodeFormat.JAVASCRIPT) ? "ml:sjsInputFlow" : "ml:inputFlow";
+        String transform = codeFormat.equals(CodeFormat.JAVASCRIPT) ? "dh_sjs-input-flow" : "dh_input-flow";
         ServerTransform serverTransform = new ServerTransform(transform);
         if (passJobId) {
             serverTransform.addParameter("job-id", UUID.randomUUID().toString());
@@ -1255,7 +1255,7 @@ public class EndToEndFlowTests extends HubTestBase {
         assertEquals(0, tracingCount);
         assertEquals(0, jobsCount);
 
-        String transform = codeFormat.equals(CodeFormat.JAVASCRIPT) ? "ml:sjsInputFlow" : "ml:inputFlow";
+        String transform = codeFormat.equals(CodeFormat.JAVASCRIPT) ? "dh_sjs-input-flow" : "dh_input-flow";
 		ServerTransform serverTransform = new ServerTransform(transform);
         if (passJobId) {
             serverTransform.addParameter("job-id", UUID.randomUUID().toString());
