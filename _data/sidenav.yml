@@ -81,6 +81,7 @@ main:
       url: '/docs/',
       text: 'Docs',
       childPages: [
+        { url: '/docs/upgrade/', text: 'Upgrading Data Hub Framework' },
         { url: '/docs/server-side/', text: 'Server Side (xqy, sjs)' },
         { url: '/docs/gradle-tasks/', text: 'Gradle Tasks' },
         { url: '/javadocs/', text: 'Javadocs' },
