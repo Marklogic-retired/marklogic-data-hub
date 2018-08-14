@@ -72,10 +72,10 @@ public class FlowRunnerTest extends HubTestBase {
             projectDir.resolve("plugins/entities/" + ENTITY + "/harmonize/testharmonize/content.xqy"),
             StandardCopyOption.REPLACE_EXISTING);
 
-        installUserModules(getHubConfig(true), false);
+        installUserModules(getHubAdminConfig(), false);
 
 
-        FlowManager fm = FlowManager.create(getHubConfig(getRequireAdmin()));
+        FlowManager fm = FlowManager.create(getHubFlowRunnerConfig());
         Flow harmonizeFlow = fm.getFlow(ENTITY, "testharmonize",
             FlowType.HARMONIZE);
         HashMap<String, Object> options = new HashMap<>();
@@ -131,10 +131,10 @@ public class FlowRunnerTest extends HubTestBase {
             projectDir.resolve("plugins/entities/" + ENTITY + "/harmonize/testharmonize-sjs-json/content.sjs"),
             StandardCopyOption.REPLACE_EXISTING);
 
-        installUserModules(getHubConfig(true), false);
+        installUserModules(getHubAdminConfig(), false);
 
 
-        FlowManager fm = FlowManager.create(getHubConfig(getRequireAdmin()));
+        FlowManager fm = FlowManager.create(getHubFlowRunnerConfig());
         Flow harmonizeFlow = fm.getFlow(ENTITY, "testharmonize-sjs-json",
             FlowType.HARMONIZE);
         FlowRunner flowRunner = fm.newFlowRunner()
@@ -168,12 +168,12 @@ public class FlowRunnerTest extends HubTestBase {
             projectDir.resolve("plugins/entities/" + ENTITY + "/harmonize/testharmonize-xqy-json/content.xqy"),
             StandardCopyOption.REPLACE_EXISTING);
 
-        installUserModules(getHubConfig(getRequireAdmin()), false);
+        installUserModules(getHubAdminConfig(), false);
 
 
 
 
-        FlowManager fm = FlowManager.create(getHubConfig(getRequireAdmin()));
+        FlowManager fm = FlowManager.create(getHubFlowRunnerConfig());
         Flow harmonizeFlow = fm.getFlow(ENTITY, "testharmonize-xqy-json",
             FlowType.HARMONIZE);
         FlowRunner flowRunner = fm.newFlowRunner()
@@ -207,10 +207,10 @@ public class FlowRunnerTest extends HubTestBase {
             projectDir.resolve("plugins/entities/" + ENTITY + "/harmonize/testharmonize-sjs-xml/content.sjs"),
             StandardCopyOption.REPLACE_EXISTING);
 
-        installUserModules(getHubConfig(getRequireAdmin()), false);
+        installUserModules(getHubAdminConfig(), false);
 
 
-        FlowManager fm = FlowManager.create(getHubConfig(getRequireAdmin()));
+        FlowManager fm = FlowManager.create(getHubFlowRunnerConfig());
         Flow harmonizeFlow = fm.getFlow(ENTITY, "testharmonize-sjs-xml",
             FlowType.HARMONIZE);
         FlowRunner flowRunner = fm.newFlowRunner()

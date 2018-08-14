@@ -40,7 +40,7 @@ public class GeneratePiiCommandTest extends HubTestBase  {
 
     @Before
     public void setup() {
-        generatePiiCommand = new GeneratePiiCommand(getHubConfig(true));
+        generatePiiCommand = new GeneratePiiCommand(getHubAdminConfig());
         deleteProjectDir();
     }
 
@@ -61,9 +61,9 @@ public class GeneratePiiCommandTest extends HubTestBase  {
     public void generatePii() throws IOException {
         installEntities();
         generatePiiCommand.execute(null);
-        File protectedPathConfig = getHubConfig(true).getUserSecurityDir().resolve("protected-paths/01_" + HubConfig.PII_PROTECTED_PATHS_FILE).toFile();
-        File secondProtectedPathConfig = getHubConfig(true).getUserSecurityDir().resolve("protected-paths/02_" + HubConfig.PII_PROTECTED_PATHS_FILE).toFile();
-        File queryRolesetsConfig = getHubConfig(true).getUserSecurityDir().resolve("query-rolesets/" + HubConfig.PII_QUERY_ROLESET_FILE).toFile();
+        File protectedPathConfig = getHubAdminConfig().getUserSecurityDir().resolve("protected-paths/01_" + HubConfig.PII_PROTECTED_PATHS_FILE).toFile();
+        File secondProtectedPathConfig = getHubAdminConfig().getUserSecurityDir().resolve("protected-paths/02_" + HubConfig.PII_PROTECTED_PATHS_FILE).toFile();
+        File queryRolesetsConfig = getHubAdminConfig().getUserSecurityDir().resolve("query-rolesets/" + HubConfig.PII_QUERY_ROLESET_FILE).toFile();
 
         // assert that ELS configuation is in project
         ObjectMapper mapper = new ObjectMapper();

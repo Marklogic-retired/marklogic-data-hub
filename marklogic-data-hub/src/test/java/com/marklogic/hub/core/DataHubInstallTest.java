@@ -62,9 +62,8 @@ public class DataHubInstallTest extends HubTestBase {
         // the project dir must be available for uninstall to do anything... interesting.
         createProjectDir();
         try {
-            if (!setupDone) {
-            	setRequireAdmin(true);
-            	getDataHub(getRequireAdmin()).uninstall();
+            if (!setupDone) {            	
+            	getDataHub().uninstall();
             }
         } catch (HttpClientErrorException e) {
             if (e.getStatusCode() == HttpStatus.UNAUTHORIZED) {
@@ -72,11 +71,10 @@ public class DataHubInstallTest extends HubTestBase {
             }
             else throw e;
         }
-        getDataHub(getRequireAdmin()).runPreInstallCheck();
+        getDataHub().runPreInstallCheck();
         if (!setupDone) {
-        	getDataHub(getRequireAdmin()).install();
-        	setupDone=true;
-        	setRequireAdmin(false);
+        	getDataHub().install();
+        	setupDone=true;        	
         }                
         afterTelemetryInstallCount = getTelemetryInstallCount();
     }
@@ -89,7 +87,7 @@ public class DataHubInstallTest extends HubTestBase {
 
     @Test
     public void testInstallHubModules() throws IOException {
-        assertTrue(getDataHub(getRequireAdmin()).isInstalled().isInstalled());
+        assertTrue(getDataHub().isInstalled().isInstalled());
 
         assertTrue(getModulesFile("/com.marklogic.hub/config.xqy").startsWith(getResource("data-hub-test/core-modules/config.xqy")));
         int totalCount = getDocCount(HubConfig.DEFAULT_MODULES_DB_NAME, null);
@@ -106,8 +104,8 @@ public class DataHubInstallTest extends HubTestBase {
 
     @Test
     public void getHubModulesVersion() throws IOException {
-        String version = getHubConfig(getRequireAdmin()).getJarVersion();
-        assertEquals(version, new Versions(getHubConfig(getRequireAdmin())).getHubVersion());
+        String version = getHubFlowRunnerConfig().getJarVersion();
+        assertEquals(version, new Versions(getHubFlowRunnerConfig()).getHubVersion());
     }
 
     @Test
@@ -116,7 +114,7 @@ public class DataHubInstallTest extends HubTestBase {
         String path = Paths.get(url.toURI()).toFile().getAbsolutePath();
 
         createProjectDir(path);
-        HubConfig hubConfig = getHubConfig(path, true);
+        HubConfig hubConfig = getHubAdminConfig(path);
 
         int totalCount = getDocCount(HubConfig.DEFAULT_MODULES_DB_NAME, null);
         assertTrue(totalCount + " is not correct.  I was expecting either " + VISIBLE_MODULE_COUNT + " or " + MODULE_COUNT + " or " + MODULE_COUNT_WITH_TRACE_MODULES,
@@ -247,7 +245,7 @@ public class DataHubInstallTest extends HubTestBase {
         URL url = DataHubInstallTest.class.getClassLoader().getResource("data-hub-test");
         String path = Paths.get(url.toURI()).toFile().getAbsolutePath();
         createProjectDir(path);
-        HubConfig hubConfig = getHubConfig(path, true);
+        HubConfig hubConfig = getHubAdminConfig(path);
         DataHub dataHub = DataHub.create(hubConfig);
         dataHub.clearUserModules();
 

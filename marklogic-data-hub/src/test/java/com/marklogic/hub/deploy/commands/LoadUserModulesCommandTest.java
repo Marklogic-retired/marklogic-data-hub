@@ -32,7 +32,7 @@ public class LoadUserModulesCommandTest extends HubTestBase {
 
     @Before
     public void setup() {
-        loadUserModulesCommand = new LoadUserModulesCommand(getHubConfig(true));
+        loadUserModulesCommand = new LoadUserModulesCommand(getHubAdminConfig());
     }
 
     @Test

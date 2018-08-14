@@ -260,16 +260,13 @@ test {
     
     doFirst{
 		if(sslRun || certAuth){
-			String host = props.getProperty('mlHost')
-			String user = props.getProperty('mlSecurityUsername')
-			String password = props.getProperty('mlSecurityPassword')
-			com.marklogic.mgmt.ManageClient manageClient = new ManageClient(new com.marklogic.mgmt.ManageConfig(host, 8002, user, password))
+			com.marklogic.mgmt.ManageClient manageClient = new ManageClient(new com.marklogic.mgmt.ManageConfig(mlHost, 8002, mlSecurityUsername, mlSecurityPassword))
 			com.marklogic.mgmt.resource.hosts.HostManager hostManager = new HostManager(manageClient)
 			def	bootStrapHost = hostManager.getHostNames().get(0)
 			def ipAddress = [127, 0, 0, 1] as byte[]
 			java.net.InetAddress address = InetAddress.getByAddress(ipAddress)
 		    String localhost = address.getCanonicalHostName()
-			if(! (bootStrapHost.contains("marklogic.com") && localhost.contains("marklogic.com"))){
+		    if(! (bootStrapHost.contains("marklogic.com") && localhost.contains("marklogic.com"))){
 				 throw new GradleException("The test with current options will run only in marklogic.com domain")
 			}
 			if(sslRun) {
@@ -299,12 +296,12 @@ test {
 
     // include just the top-level tests.  they include setup/teardown
 	include 'com/marklogic/hub/CoreTestSuite.class'
-    include 'com/marklogic/hub/EndToEndFlowTests.class'
-    if (!(certAuth || sslRun)){
-    	include 'com/marklogic/hub/PiiE2E.class'
-    }
-    include 'com/marklogic/hub/ScaffoldingE2E.class'
-    include 'com/marklogic/hub/MappingE2E.class'         
+	include 'com/marklogic/hub/EndToEndFlowTests.class'
+	if (!(certAuth || sslRun)){
+		include 'com/marklogic/hub/PiiE2E.class'
+	}
+	include 'com/marklogic/hub/ScaffoldingE2E.class'
+	include 'com/marklogic/hub/MappingE2E.class'         
 }
 task restoreFile{
 	doFirst{

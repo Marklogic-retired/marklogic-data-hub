@@ -65,7 +65,6 @@ public class FlowManagerServiceTest extends AbstractServiceTest {
     @Before
     public void setup() {
         createProjectDir();
-        HubTestBase.setRequireAdmin(false);
         Scaffolding scaffolding = Scaffolding.create(projectDir.toString(), stagingClient);
         scaffolding.createEntity(ENTITY);
         scaffolding.createFlow(ENTITY, "sjs-json-input-flow", FlowType.INPUT,
@@ -106,7 +105,7 @@ public class FlowManagerServiceTest extends AbstractServiceTest {
         Path harmonizeDir = projectDir.resolve("plugins/entities/" + ENTITY + "/harmonize");
         FileUtil.copy(getResourceStream("flow-manager/sjs-harmonize-flow/headers.sjs"), harmonizeDir.resolve("sjs-json-harmonization-flow/headers.sjs").toFile());
 
-        installUserModules(getHubConfig(true), true);
+        installUserModules(getHubAdminConfig(), true);
     }
 
     protected void setEnvConfig(EnvironmentConfig envConfig) {
@@ -147,7 +146,7 @@ public class FlowManagerServiceTest extends AbstractServiceTest {
 
         String flowName = "sjs-json-input-flow";
 
-        FlowManager flowManager = FlowManager.create(getHubConfig(getRequireAdmin()));
+        FlowManager flowManager = FlowManager.create(getHubFlowRunnerConfig());
         Flow flow = flowManager.getFlow(ENTITY, flowName, FlowType.INPUT);
 
         ObjectMapper objectMapper = new ObjectMapper();
@@ -168,7 +167,7 @@ public class FlowManagerServiceTest extends AbstractServiceTest {
         FlowStatusListener flowStatusListener = (jobId, percentComplete, message) -> {
             logger.error(message);
         };
-        MlcpRunner mlcpRunner = new MlcpRunner(null, "com.marklogic.hub.util.MlcpMain", getHubConfig(getRequireAdmin()), flow, stagingClient, mlcpOptions, flowStatusListener);
+        MlcpRunner mlcpRunner = new MlcpRunner(null, "com.marklogic.hub.util.MlcpMain", getHubFlowRunnerConfig(), flow, stagingClient, mlcpOptions, flowStatusListener);
         mlcpRunner.start();
         mlcpRunner.join();
 
@@ -195,7 +194,7 @@ public class FlowManagerServiceTest extends AbstractServiceTest {
         setEnvConfig(envConfig);
 
         String flowName = "sjs-json-harmonization-flow";
-        FlowManager flowManager = FlowManager.create(getHubConfig(getRequireAdmin()));
+        FlowManager flowManager = FlowManager.create(getHubFlowRunnerConfig());
         Flow flow = flowManager.getFlow(ENTITY, flowName, FlowType.HARMONIZE);
 
         //HubConfig hubConfig = getHubConfig();
@@ -238,7 +237,7 @@ public class FlowManagerServiceTest extends AbstractServiceTest {
         setEnvConfig(envConfig);
 
         String flowName = "sjs-json-harmonization-flow";
-        FlowManager flowManager = FlowManager.create(getHubConfig(getRequireAdmin()));
+        FlowManager flowManager = FlowManager.create(getHubFlowRunnerConfig());
         Flow flow = flowManager.getFlow(ENTITY, flowName, FlowType.HARMONIZE);
 
         //HubConfig hubConfig = getHubConfig();

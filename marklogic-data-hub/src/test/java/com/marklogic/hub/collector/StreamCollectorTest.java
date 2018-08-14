@@ -80,8 +80,8 @@ public class StreamCollectorTest extends HubTestBase {
             CodeFormat.XQUERY, DataFormat.XML, false);
 
         clearUserModules();
-        installUserModules(getHubConfig(true), true);
-        getDataHub(true).updateIndexes();
+        installUserModules(getHubAdminConfig(), true);
+        getDataHub().updateIndexes();
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
 
         installModule("/entities/" + ENTITY + "/harmonize/testharmonize/collector.xqy", "stream-collector-test/collector.xqy");
@@ -127,7 +127,7 @@ public class StreamCollectorTest extends HubTestBase {
         // having to wait for the entire harmonize flow to finish.
         assertEquals(DOC_COUNT, getStagingDocCount());
         assertEquals(0, getFinalDocCount());
-        FlowManager fm = FlowManager.create(getHubConfig(getRequireAdmin()));
+        FlowManager fm = FlowManager.create(getHubFlowRunnerConfig());
         Flow harmonizeFlow = fm.getFlow(ENTITY, "testharmonize",
             FlowType.HARMONIZE);
         HashMap<String, Object> options = new HashMap<>();

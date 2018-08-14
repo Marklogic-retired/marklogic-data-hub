@@ -135,7 +135,7 @@ public class EndToEndFlowTests extends HubTestBase {
         enableDebugging();
 
 
-        flowManager = FlowManager.create(getHubConfig(getRequireAdmin()));
+        flowManager = FlowManager.create(getHubFlowRunnerConfig());
         flowRunnerDataMovementManager = flowRunnerClient.newDataMovementManager();
         scaffolding = Scaffolding.create(projectDir.toString(), finalClient);
         scaffolding.createEntity(ENTITY);
@@ -145,7 +145,7 @@ public class EndToEndFlowTests extends HubTestBase {
             createLegacyFlow("legacy", codeFormat, dataFormat, flowType, useEs);
         });
 
-        flowManager = FlowManager.create(getHubConfig(getRequireAdmin()));
+        flowManager = FlowManager.create(getHubFlowRunnerConfig());
         List<String> legacyFlows = flowManager.getLegacyFlows();
         assertEquals(8, legacyFlows.size(), String.join("\n", legacyFlows));
         assertEquals(8, flowManager.updateLegacyFlows("2.0.0").size()); // don't change this value
@@ -177,7 +177,7 @@ public class EndToEndFlowTests extends HubTestBase {
         assertEquals(4, legacyFlows.size(), String.join("\n", legacyFlows));
         assertEquals(4, flowManager.updateLegacyFlows("2.0.0").size());
         assertEquals(0, flowManager.getLegacyFlows().size());
-        installUserModules(getHubConfig(true), true);
+        installUserModules(getHubAdminConfig(), true);
     }
 
     @AfterEach
@@ -186,7 +186,7 @@ public class EndToEndFlowTests extends HubTestBase {
     }
 
     private JsonNode validateUserModules() {
-        EntitiesValidator ev = EntitiesValidator.create(getHubConfig(true).newStagingClient());
+        EntitiesValidator ev = EntitiesValidator.create(getHubAdminConfig().newStagingClient());
         return ev.validateAll();
     }
 
@@ -233,7 +233,7 @@ public class EndToEndFlowTests extends HubTestBase {
                 }));
                 tests.add(DynamicTest.dynamicTest(flowName + " wait Reverse Dbs", () -> {
                     FinalCounts finalCounts = new FinalCounts(TEST_SIZE * 2, TEST_SIZE, TEST_SIZE + 1, 1, TEST_SIZE, 0, TEST_SIZE, 0, TEST_SIZE / BATCH_SIZE, 0, "FINISHED");
-                    testHarmonizeFlow(prefix, codeFormat, dataFormat, useEs, options, finalClient, HubConfig.DEFAULT_STAGING_NAME, finalCounts, true);
+                    testHarmonizeFlow(prefix, codeFormat, dataFormat, useEs, options, finalFlowRunnerClient, HubConfig.DEFAULT_STAGING_NAME, finalCounts, true);
                 }));
                 tests.add(DynamicTest.dynamicTest(flowName + " no-wait", () -> {
                     FinalCounts finalCounts = new FinalCounts(TEST_SIZE, TEST_SIZE + 1, TEST_SIZE + 1, 1, TEST_SIZE, 0, TEST_SIZE, 0, TEST_SIZE / BATCH_SIZE, 0, "FINISHED");
@@ -302,7 +302,7 @@ public class EndToEndFlowTests extends HubTestBase {
                 tests.add(DynamicTest.dynamicTest(flowName + " MLCP", () -> {
                     Map<String, Object> options = new HashMap<>();
                     FinalCounts finalCounts = new FinalCounts(0, 1, 1, 1, 0, 0, 1, 0, 0, 0, "FINISHED");
-                    testInputFlowViaMlcp(prefix, useEs ? "-es" : "", finalClient, codeFormat, dataFormat, useEs, options, finalCounts);
+                    testInputFlowViaMlcp(prefix, useEs ? "-es" : "", finalFlowRunnerClient, codeFormat, dataFormat, useEs, options, finalCounts);
                 }));
                tests.add(DynamicTest.dynamicTest(flowName + " REST", () -> {
                     Map<String, Object> options = new HashMap<>();
@@ -322,7 +322,7 @@ public class EndToEndFlowTests extends HubTestBase {
                 }));
                 tests.add(DynamicTest.dynamicTest(flowName + " wait Reverse Dbs", () -> {
                     FinalCounts finalCounts = new FinalCounts(TEST_SIZE * 2, TEST_SIZE, TEST_SIZE + 1, 1, TEST_SIZE, 0, TEST_SIZE, 0, TEST_SIZE / BATCH_SIZE, 0, "FINISHED");
-                    testHarmonizeFlow(prefix, codeFormat, dataFormat, useEs, options, finalClient, HubConfig.DEFAULT_STAGING_NAME, finalCounts, true);
+                    testHarmonizeFlow(prefix, codeFormat, dataFormat, useEs, options, finalFlowRunnerClient, HubConfig.DEFAULT_STAGING_NAME, finalCounts, true);
                 }));
                 tests.add(DynamicTest.dynamicTest(flowName + " no-wait", () -> {
                     FinalCounts finalCounts = new FinalCounts(TEST_SIZE, TEST_SIZE + 1, TEST_SIZE + 1, 1, TEST_SIZE, 0, TEST_SIZE, 0, TEST_SIZE / BATCH_SIZE, 0, "FINISHED");
@@ -553,7 +553,7 @@ public class EndToEndFlowTests extends HubTestBase {
 
                 createFlow(prefix, codeFormat, dataFormat, flowType, useEs, null);
                 clearUserModules();
-                installUserModules(getHubConfig(true), true);
+                installUserModules(getHubAdminConfig(), true);
 
                 JsonNode actual = validateUserModules();
 
@@ -577,7 +577,7 @@ public class EndToEndFlowTests extends HubTestBase {
                     copyFile(srcDir + "content-syntax-error." + codeFormat1.toString(), flowDir.resolve("content." + codeFormat1.toString()));
                 });
                 clearUserModules();
-                installUserModules(getHubConfig(true), true);
+                installUserModules(getHubAdminConfig(), true);
                 JsonNode actual = validateUserModules();
 
                 if (codeFormat.equals(CodeFormat.JAVASCRIPT)) {
@@ -614,7 +614,7 @@ public class EndToEndFlowTests extends HubTestBase {
                     copyFile(srcDir + "headers-syntax-error." + codeFormat.toString(), flowDir.resolve("headers." + codeFormat.toString()));
                 });
                 clearUserModules();
-                installUserModules(getHubConfig(true), true);
+                installUserModules(getHubAdminConfig(), true);
                 JsonNode actual = validateUserModules();
                 if (codeFormat.equals(CodeFormat.JAVASCRIPT)) {
                     String expected = "{\"errors\":{\"e2eentity\":{\"" + flowName + "\":{\"headers\":{\"msg\":\"JS-JAVASCRIPT: =-00=--\\\\8\\\\sthifalkj;; -- Error running JavaScript request: SyntaxError: Unexpected token =\",\"uri\":\"/entities/e2eentity/" + flowType.toString() + "/" + flowName + "/headers.sjs\",\"line\":16,\"column\":2}}}}}";
@@ -643,7 +643,7 @@ public class EndToEndFlowTests extends HubTestBase {
                     copyFile(srcDir + "triples-syntax-error." + codeFormat.toString(), flowDir.resolve("triples." + codeFormat.toString()));
                 });
                 clearUserModules();
-                installUserModules(getHubConfig(true), true);
+                installUserModules(getHubAdminConfig(), true);
                 JsonNode actual = validateUserModules();
                 if (codeFormat.equals(CodeFormat.JAVASCRIPT)) {
                     String expected = "{\"errors\":{\"e2eentity\":{\"" + flowName + "\":{\"triples\":{\"msg\":\"JS-JAVASCRIPT: =-00=--\\\\8\\\\sthifalkj;; -- Error running JavaScript request: SyntaxError: Unexpected token =\",\"uri\":\"/entities/e2eentity/" + flowType.toString() + "/" + flowName + "/triples.sjs\",\"line\":16,\"column\":2}}}}}";
@@ -672,7 +672,7 @@ public class EndToEndFlowTests extends HubTestBase {
                     copyFile(srcDir + "main-syntax-error." + codeFormat.toString(), flowDir.resolve("main." + codeFormat.toString()));
                 });
                 clearUserModules();
-                installUserModules(getHubConfig(true), true);
+                installUserModules(getHubAdminConfig(), true);
                 JsonNode actual = validateUserModules();
                 String expected;
                 if (codeFormat.equals(CodeFormat.JAVASCRIPT)) {
@@ -702,7 +702,7 @@ public class EndToEndFlowTests extends HubTestBase {
                         copyFile(srcDir + "collector-syntax-error." + codeFormat.toString(), flowDir.resolve("collector." + codeFormat.toString()));
                     });
                     clearUserModules();
-                    installUserModules(getHubConfig(true), true);
+                    installUserModules(getHubAdminConfig(), true);
                     JsonNode actual = validateUserModules();
                     if (codeFormat.equals(CodeFormat.JAVASCRIPT)) {
                         String expected = "{\"errors\":{\"e2eentity\":{\"" + flowName + "\":{\"collector\":{\"msg\":\"JS-JAVASCRIPT: =-00=--\\\\8\\\\sthifalkj;; -- Error running JavaScript request: SyntaxError: Unexpected token =\",\"uri\":\"/entities/e2eentity/" + flowType.toString() + "/" + flowName + "/collector.sjs\",\"line\":13,\"column\":2}}}}}";
@@ -736,7 +736,7 @@ public class EndToEndFlowTests extends HubTestBase {
                         copyFile(srcDir + "writer-syntax-error." + codeFormat.toString(), flowDir.resolve("writer." + codeFormat.toString()));
                     });
                     clearUserModules();
-                    installUserModules(getHubConfig(true), true);
+                    installUserModules(getHubAdminConfig(), true);
                     JsonNode actual = validateUserModules();
                     String expected;
                     if (codeFormat.equals(CodeFormat.JAVASCRIPT)) {
@@ -880,7 +880,7 @@ public class EndToEndFlowTests extends HubTestBase {
             Path flowDir = entityDir.resolve(flowType.toString()).resolve(flowName);
             copyFile(srcDir + "es-content-" + flowType.toString() + "-" + dataFormat.toString() + "." + codeFormat.toString(), flowDir.resolve("content." + codeFormat.toString()));
         }
-        installUserModules(getHubConfig(true), true);
+        installUserModules(getHubAdminConfig(), true);
     }
 
     private void createFlows(String prefix, CreateFlowListener listener) {
@@ -923,7 +923,7 @@ public class EndToEndFlowTests extends HubTestBase {
         if (listener != null) {
             listener.onFlowCreated(codeFormat, dataFormat, flowType, srcDir, flowDir, useEs);
         }
-        installUserModules(getHubConfig(true), true);
+        installUserModules(getHubAdminConfig(), true);
     }
 
     private void copyFile(String srcDir, Path dstDir) {
@@ -1025,7 +1025,7 @@ public class EndToEndFlowTests extends HubTestBase {
             throw new RuntimeException(e);
         }
 
-        MlcpRunner mlcpRunner = new MlcpRunner(null, "com.marklogic.hub.util.MlcpMain", getHubConfig(getRequireAdmin()), flow, databaseClient, mlcpOptions, null);
+        MlcpRunner mlcpRunner = new MlcpRunner(null, "com.marklogic.hub.util.MlcpMain", getHubFlowRunnerConfig(), flow, databaseClient, mlcpOptions, null);
         mlcpRunner.setDatabase(databaseClient.getDatabase());
         mlcpRunner.start();
         try {

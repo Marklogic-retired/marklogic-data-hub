@@ -36,7 +36,7 @@ public class HubConfigTest extends HubTestBase {
     @Before
     public void setup() throws IOException {
         FileUtils.deleteDirectory(projectPath);
-        HubConfig config = getHubConfig(getRequireAdmin());
+        HubConfig config = getHubFlowRunnerConfig();
         config.initHubProject();
     }
 
@@ -76,19 +76,19 @@ public class HubConfigTest extends HubTestBase {
     @Test
     public void testLoadBalancerProps() {
         deleteProp("mlLoadBalancerHosts");
-        assertNull(getHubConfig(getRequireAdmin()).getLoadBalancerHosts());
+        assertNull(getHubFlowRunnerConfig().getLoadBalancerHosts());
 
         writeProp("mlLoadBalancerHosts", "");
-        assertNull(getHubConfig(getRequireAdmin()).getLoadBalancerHosts());
+        assertNull(getHubFlowRunnerConfig().getLoadBalancerHosts());
 
         writeProp("mlLoadBalancerHosts", "host1,host2");
-        HubConfig config = getHubConfig(getRequireAdmin());
+        HubConfig config = getHubFlowRunnerConfig();
         assertEquals(2, config.getLoadBalancerHosts().length);
         assertEquals("host1", config.getLoadBalancerHosts()[0]);
         assertEquals("host2", config.getLoadBalancerHosts()[1]);
 
         writeProp("mlLoadBalancerHosts", "host1");
-        config = getHubConfig(getRequireAdmin());
+        config = getHubFlowRunnerConfig();
         assertEquals(1, config.getLoadBalancerHosts().length);
         assertEquals("host1", config.getLoadBalancerHosts()[0]);
     }
@@ -97,7 +97,7 @@ public class HubConfigTest extends HubTestBase {
     @Test
     public void testHubInfo() {
 
-        HubConfig config = getHubConfig(getRequireAdmin());
+        HubConfig config = getHubFlowRunnerConfig();
         ObjectMapper objmapper = new ObjectMapper();
 
         try {

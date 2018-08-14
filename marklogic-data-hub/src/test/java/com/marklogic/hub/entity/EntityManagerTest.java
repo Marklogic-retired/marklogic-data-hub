@@ -81,15 +81,15 @@ public class EntityManagerTest extends HubTestBase {
     }
 
     private HubModuleManager getPropsMgr() {
-        String timestampFile = getHubConfig(true).getUserModulesDeployTimestampFile();
+        String timestampFile = getHubAdminConfig().getUserModulesDeployTimestampFile();
         HubModuleManager propertiesModuleManager = new HubModuleManager(timestampFile);
         return propertiesModuleManager;
     }
 
     @Test
     public void testDeploySearchOptionsWithNoEntities() {
-    	getDataHub(true).clearUserModules();
-        Path dir = Paths.get(getHubConfig(true).getProjectDir(), HubConfig.ENTITY_CONFIG_DIR);
+    	getDataHub().clearUserModules();
+        Path dir = Paths.get(getHubAdminConfig().getProjectDir(), HubConfig.ENTITY_CONFIG_DIR);
 
         assertNull(getModulesFile("/Default/" + HubConfig.DEFAULT_STAGING_NAME + "/rest-api/options/" + HubConfig.STAGING_ENTITY_QUERY_OPTIONS_FILE));
         assertNull(getModulesFile("/Default/" + HubConfig.DEFAULT_STAGING_NAME + "/rest-api/options/" + HubConfig.FINAL_ENTITY_QUERY_OPTIONS_FILE));
@@ -98,7 +98,7 @@ public class EntityManagerTest extends HubTestBase {
         assertEquals(0, getStagingDocCount());
         assertEquals(0, getFinalDocCount());
 
-        EntityManager entityManager = EntityManager.create(getHubConfig(true));
+        EntityManager entityManager = EntityManager.create(getHubAdminConfig());
         HashMap<Enum, Boolean> deployed = entityManager.deployQueryOptions();
 
         assertEquals(0, deployed.size());
@@ -112,10 +112,10 @@ public class EntityManagerTest extends HubTestBase {
 
     @Test
     public void testDeploySearchOptions() throws IOException, SAXException {
-    	getDataHub(true).clearUserModules();
+    	getDataHub().clearUserModules();
         installEntities();
 
-        Path dir = Paths.get(getHubConfig(true).getProjectDir(), HubConfig.ENTITY_CONFIG_DIR);
+        Path dir = Paths.get(getHubAdminConfig().getProjectDir(), HubConfig.ENTITY_CONFIG_DIR);
 
         assertNull(getModulesFile("/Default/" + HubConfig.DEFAULT_STAGING_NAME + "/rest-api/options/" + HubConfig.STAGING_ENTITY_QUERY_OPTIONS_FILE));
         assertNull(getModulesFile("/Default/" + HubConfig.DEFAULT_STAGING_NAME + "/rest-api/options/" + HubConfig.FINAL_ENTITY_QUERY_OPTIONS_FILE));
@@ -124,7 +124,7 @@ public class EntityManagerTest extends HubTestBase {
         assertEquals(0, getStagingDocCount());
         assertEquals(0, getFinalDocCount());
 
-        EntityManager entityManager = EntityManager.create(getHubConfig(true));
+        EntityManager entityManager = EntityManager.create(getHubAdminConfig());
         HashMap<Enum, Boolean> deployed = entityManager.deployQueryOptions();
 
         assertEquals(2, deployed.size());
@@ -155,12 +155,12 @@ public class EntityManagerTest extends HubTestBase {
     public void testSaveDbIndexes() throws IOException {
         installEntities();
 
-        Path dir = getHubConfig(true).getEntityDatabaseDir();
+        Path dir = getHubAdminConfig().getEntityDatabaseDir();
 
         assertFalse(dir.resolve("final-database.json").toFile().exists());
         assertFalse(dir.resolve("staging-database.json").toFile().exists());
 
-        EntityManager entityManager = EntityManager.create(getHubConfig(true));
+        EntityManager entityManager = EntityManager.create(getHubAdminConfig());
         assertTrue(entityManager.saveDbIndexes());
 
         assertTrue(dir.resolve("final-database.json").toFile().exists());
@@ -178,7 +178,7 @@ public class EntityManagerTest extends HubTestBase {
         // shouldn't save them on round 2 because of timestamps
         assertFalse(entityManager.saveDbIndexes());
 
-        installUserModules(getHubConfig(true), false);
+        installUserModules(getHubAdminConfig(), false);
 
         // shouldn't save them on round 3 because of timestamps
         assertFalse(entityManager.saveDbIndexes());
@@ -190,16 +190,16 @@ public class EntityManagerTest extends HubTestBase {
         installEntities();
 
         ObjectMapper mapper = new ObjectMapper();
-        Path dir = Paths.get(getHubConfig(true).getProjectDir(), HubConfig.ENTITY_CONFIG_DIR);
+        Path dir = Paths.get(getHubAdminConfig().getProjectDir(), HubConfig.ENTITY_CONFIG_DIR);
 
-        EntityManager entityManager = EntityManager.create(getHubConfig(true));
+        EntityManager entityManager = EntityManager.create(getHubAdminConfig());
 
         // deploy is separate
         entityManager.savePii();
 
-        File protectedPathConfig = getHubConfig(true).getUserSecurityDir().resolve("protected-paths/01_" + HubConfig.PII_PROTECTED_PATHS_FILE).toFile();
-        File secondProtectedPathConfig = getHubConfig(true).getUserSecurityDir().resolve("protected-paths/02_" + HubConfig.PII_PROTECTED_PATHS_FILE).toFile();
-        File queryRolesetsConfig = getHubConfig(true).getUserSecurityDir().resolve("query-rolesets/" + HubConfig.PII_QUERY_ROLESET_FILE).toFile();
+        File protectedPathConfig = getHubAdminConfig().getUserSecurityDir().resolve("protected-paths/01_" + HubConfig.PII_PROTECTED_PATHS_FILE).toFile();
+        File secondProtectedPathConfig = getHubAdminConfig().getUserSecurityDir().resolve("protected-paths/02_" + HubConfig.PII_PROTECTED_PATHS_FILE).toFile();
+        File queryRolesetsConfig = getHubAdminConfig().getUserSecurityDir().resolve("query-rolesets/" + HubConfig.PII_QUERY_ROLESET_FILE).toFile();
 
                     // assert that ELS configuation is in project
         JsonNode protectedPaths = mapper.readTree(protectedPathConfig);

@@ -15,19 +15,16 @@ public class Installer {
     // do NOT check in as a a test.
     // @Test
     public void installHubOnce() {
-    	HubTestBase.setRequireAdmin(true);
-        htb.createProjectDir();
+    	htb.createProjectDir();
         if (htb.isCertAuth() || htb.isSslRun()) {
         	htb.sslSetup();
         }
-        htb.getDataHub(true).install();
+        htb.getDataHub().install();
         try {
-           //htb.getDataHub(true).upgradeHub();
+        	htb.getDataHub().upgradeHub();
         } catch (Exception e) {
 
-        }
-        //setting 'requireAdmin' to false after installation
-        HubTestBase.setRequireAdmin(false);
+        }               
     }
 
     // A method to manually teardown.
@@ -35,9 +32,8 @@ public class Installer {
     // do NOT check in as a a test.
     // @Test
     public void uninstallHub() {
-    	HubTestBase.setRequireAdmin(true);
-        htb.createProjectDir();
-        htb.getDataHub(true).uninstall();
+    	htb.createProjectDir();
+        htb.getDataHub().uninstall();
         if (htb.isCertAuth() || htb.isSslRun()) {
         	htb.sslCleanup();
         }

@@ -135,6 +135,7 @@ public class HubTestBase {
     // this is needed for some evals in the test suite that are not mainline tests.
     public  DatabaseClient stagingModulesClient = null;
     public  DatabaseClient finalClient = null;
+    public  DatabaseClient finalFlowRunnerClient = null;   
     public  DatabaseClient finalModulesClient = null;
     public  DatabaseClient jobClient = null;
     public  DatabaseClient jobModulesClient = null;
@@ -145,8 +146,6 @@ public class HubTestBase {
     private  AdminManager adminManager = null;
     private  CertificateTemplateManagerPlus certManager;
     private  HashMap<File, String> serverFiles= new HashMap<File, String>();
-    //determines whether a task needs to be run as 'hub-admin-user' or not(run as 'data-hub-user')
-    private static  boolean requireAdmin = true;
 	private  boolean sslRun = false;
     private  boolean certAuth = false;
     private  SSLContext datahubadmincertContext = null;
@@ -260,6 +259,7 @@ public class HubTestBase {
         	flowRunnerClient = getClient(host, stagingPort, HubConfig.DEFAULT_STAGING_NAME, flowRunnerUser, flowRunnerPassword, stagingAuthMethod);
             stagingModulesClient  = getClient(host, stagingPort, HubConfig.DEFAULT_MODULES_DB_NAME, user, password, stagingAuthMethod);
             finalClient = getClient(host, stagingPort, HubConfig.DEFAULT_FINAL_NAME, user, password, stagingAuthMethod);
+            finalFlowRunnerClient = getClient(host, stagingPort, HubConfig.DEFAULT_FINAL_NAME, flowRunnerUser, flowRunnerPassword, stagingAuthMethod);
             jobClient = getClient(host, jobPort, HubConfig.DEFAULT_JOB_NAME, user, password, jobAuthMethod);               
         }
         catch(Exception e) {
@@ -309,14 +309,6 @@ public class HubTestBase {
 		this.sslRun = sslRun;
 	}
 	
-    public boolean getRequireAdmin() {
-		return requireAdmin;
-	}
-
-	public static void setRequireAdmin(boolean requireAdmin) {
-		HubTestBase.requireAdmin = requireAdmin;
-	}
-
     protected void enableDebugging() {
         Debugging.create(stagingClient).enable();
     }
@@ -326,7 +318,7 @@ public class HubTestBase {
     }
 
     protected void enableTracing() {
-        ManageClient manageClient = ((HubConfigImpl)getHubConfig(getRequireAdmin())).getManageClient();
+        ManageClient manageClient = ((HubConfigImpl)getHubFlowRunnerConfig()).getManageClient();
         String resp = manageClient.getJson("/manage/v2/hosts?format=json");
         JsonNode actualObj = null;
 		try {
@@ -360,16 +352,26 @@ public class HubTestBase {
 
 		});
     }
-    //'requireAdmin' indicates whether hubconfig uses 'hub-admin-user' or not ('data-hub-user' is used).
-    protected HubConfig getHubConfig(boolean requireAdmin) {
-        return getHubConfig(PROJECT_PATH, requireAdmin);
+    
+    //getHubAdminConfig is used for installation, scaffolding
+    protected HubConfig getHubAdminConfig(String projectDir) {
+        return getHubConfig(projectDir, true);
+    }
+    
+    protected HubConfig getHubAdminConfig() {
+        return getHubConfig(PROJECT_PATH, true);
+    }
+    
+    //getHubFlowRunnerConfig is used for running flows
+    protected HubConfig getHubFlowRunnerConfig() {
+        return getHubConfig(PROJECT_PATH, false);
     }
 
-    public DataHub getDataHub(boolean requireAdmin) {
-        return DataHub.create(getHubConfig(requireAdmin));
+    public DataHub getDataHub() {
+        return DataHub.create(getHubAdminConfig());
     }
 
-    protected HubConfig getHubConfig(String projectDir, boolean requireAdmin) {
+    private HubConfig getHubConfig(String projectDir, boolean requireAdmin) {
     	HubConfigBuilder builder = HubConfigBuilder.newHubConfigBuilder(projectDir)
                 .withPropertiesFromEnvironment();
     	
@@ -463,7 +465,7 @@ public class HubTestBase {
         try {
             File projectDir = new File(projectDirName);
             if (!projectDir.isDirectory() || !projectDir.exists()) {
-                getDataHub(getRequireAdmin()).initProject();
+                getDataHub().initProject();
             }
 
             Path devProperties = Paths.get(".").resolve("gradle.properties");
@@ -599,7 +601,7 @@ public class HubTestBase {
     }
 
     protected int getMlMajorVersion() {
-        return Integer.parseInt(new Versions(getHubConfig(getRequireAdmin())).getMarkLogicVersion().substring(0, 1));
+        return Integer.parseInt(new Versions(getHubFlowRunnerConfig()).getMarkLogicVersion().substring(0, 1));
     }
 
     public void clearDatabases(String... databases) {
@@ -797,7 +799,7 @@ public class HubTestBase {
     //installHubModules(), installUserModules() and clearUserModules() must be run as 'hub-admin-user'.
     protected void installHubModules() {
         logger.debug("Installing Data Hub Framework modules into MarkLogic");
-        HubConfigImpl hubConfig = (HubConfigImpl) getHubConfig(true);
+        HubConfigImpl hubConfig = (HubConfigImpl) getHubAdminConfig();
         List<Command> commands = new ArrayList<>();
         commands.add(new LoadHubModulesCommand(hubConfig));
 
@@ -819,7 +821,7 @@ public class HubTestBase {
     }
     
     public void clearUserModules() {
-    	getDataHub(true).clearUserModules();
+    	getDataHub().clearUserModules();
     }
     
 	public void sslSetup()  {
@@ -900,7 +902,7 @@ public class HubTestBase {
 	public void sslCleanup() {
 		//'hub-admin-user' and 'data-hub-user' don't exist anymore as this method is called after uninstall(). 
 		//So security user is used here.
-		manageConfig = ((HubConfigImpl)getHubConfig(true)).getManageConfig();
+		manageConfig = ((HubConfigImpl)getHubAdminConfig()).getManageConfig();
 		manageConfig.setUsername(secUser);
 		manageConfig.setSecurityUsername(secUser);
 		if(isSslRun()) {
