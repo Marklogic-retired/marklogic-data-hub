@@ -37,7 +37,7 @@ public class DebugLibTest extends HubTestBase {
         Scaffolding scaffolding = Scaffolding.create(PROJECT_PATH, stagingClient);
         scaffolding.createFlow(entityName, flowName, FlowType.INPUT, CodeFormat.XQUERY, DataFormat.XML, false);
 
-        installUserModules(getHubConfig(), true);
+        installUserModules(getHubConfig(true), true);
     }
 
     // testing https://github.com/marklogic/marklogic-data-hub/issues/516

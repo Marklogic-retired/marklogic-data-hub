@@ -54,9 +54,8 @@ public class EmptyCollectorTest extends HubTestBase {
         scaffolding.createFlow(ENTITY, "testharmonize", FlowType.HARMONIZE,
             CodeFormat.XQUERY, DataFormat.XML, false);
 
-        DataHub dh = DataHub.create(getHubConfig());
-        dh.clearUserModules();
-        installUserModules(getHubConfig(), false);
+        clearUserModules();
+        installUserModules(getHubConfig(true), false);
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
     }
 
@@ -65,7 +64,7 @@ public class EmptyCollectorTest extends HubTestBase {
     public void runCollector() {
         assertEquals(0, getStagingDocCount());
         assertEquals(0, getFinalDocCount());
-        FlowManager fm = FlowManager.create(getHubConfig());
+        FlowManager fm = FlowManager.create(getHubConfig(getRequireAdmin()));
         Flow harmonizeFlow = fm.getFlow(ENTITY, "testharmonize",
             FlowType.HARMONIZE);
         HashMap<String, Object> options = new HashMap<>();

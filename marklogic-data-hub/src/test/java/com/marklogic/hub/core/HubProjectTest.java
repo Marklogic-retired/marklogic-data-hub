@@ -28,7 +28,7 @@ public class HubProjectTest extends HubTestBase {
 
     @Test
     public void testInit() throws IOException {
-        HubConfig config = getHubConfig();
+        HubConfig config = getHubConfig(getRequireAdmin());
         config.setHttpName(DatabaseKind.STAGING, "my-crazy-test-staging");
         config.setDbName(DatabaseKind.STAGING, "my-crazy-test-staging");
         config.setForestsPerHost(DatabaseKind.STAGING, 100);
