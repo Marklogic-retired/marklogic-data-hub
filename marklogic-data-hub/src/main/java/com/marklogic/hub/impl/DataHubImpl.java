@@ -213,7 +213,7 @@ public class DataHubImpl implements DataHub {
             }
 
             HashSet<String> services = new HashSet<>();
-            for (Resource r : resolver.getResources("classpath*:/ml-modules/services/*.xqy")) {
+            for (Resource r : resolver.getResources("classpath*:/ml-modules/services/*")) {
                 services.add(r.getFilename().replaceAll("\\.(xqy|sjs)", ""));
             }
 

@@ -30,7 +30,7 @@ import java.io.File;
 import java.util.*;
 
 /**
- * This commands handles deploying/undeploying every database file except the "default" ones of content-database.json,
+ * This command handles deploying/undeploying every database file except the "default" ones of content-database.json,
  * triggers-database.json, and schemas-database.json. Those default ones are supported for ease-of-use, but it's not
  * uncommon to need to create additional databases (and perhaps REST API servers to go with them).
  * <p>

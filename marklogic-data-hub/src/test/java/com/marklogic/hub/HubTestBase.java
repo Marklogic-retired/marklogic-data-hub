@@ -335,7 +335,7 @@ public class HubTestBase {
 		{
 			Tracing.create(client).disable();
 			client.newServerEval().xquery("xquery version \"1.0-ml\";\n" +
-					"import module namespace hul = \"http://marklogic.com/data-hub/hub-utils-lib\" at \"/MarkLogic/data-hub-framework/impl/hub-utils-lib.xqy\";\n" +
+					"import module namespace hul = \"http://marklogic.com/data-hub/hub-utils-lib\" at \"/data-hub/4/impl/hub-utils-lib.xqy\";\n" +
 					"hul:invalidate-field-cache(\"tracing-enabled\")").eval();
 
 		});
@@ -546,7 +546,7 @@ public class HubTestBase {
             "for $database in fn:tokenize($databases, \",\")\n" +
             "return\n" +
             "  xdmp:eval('\n" +
-            "    cts:uris() ! xdmp:document-delete(.)\n" +
+            "    cts:uris()[fn:not(fn:contains(., \"marklogic.rest.\"))] ! xdmp:document-delete(.)\n" +
             "  ',\n" +
             "  (),\n" +
             "  map:entry(\"database\", xdmp:database($database))\n" +

@@ -1,7 +1,7 @@
 // dhf.sjs exposes helper functions to make your life easier
 // See documentation at:
 // https://marklogic.github.io/marklogic-data-hub/docs/server-side/
-const dhf = require('/MarkLogic/data-hub-framework/dhf.sjs');
+const dhf = require('/data-hub/4/dhf.sjs');
 
 const contentPlugin = require('./content.sjs');
 const headersPlugin = require('./headers.sjs');

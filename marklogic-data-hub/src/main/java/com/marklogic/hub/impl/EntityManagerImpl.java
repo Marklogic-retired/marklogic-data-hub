@@ -219,7 +219,7 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
     }
 
     private class PiiGenerator extends ResourceManager {
-        private static final String NAME = "ml:piiGenerator";
+        private static final String NAME = "dh_pii-generate";
         private RequestParameters params = new RequestParameters();
 
         PiiGenerator(DatabaseClient client) {
@@ -240,7 +240,7 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
 
     }
     private class QueryOptionsGenerator extends ResourceManager {
-        private static final String NAME = "ml:searchOptionsGenerator";
+        private static final String NAME = "dh_search-options-generator";
 
         private RequestParameters params = new RequestParameters();
 
@@ -268,7 +268,7 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
     }
 
     private class DbIndexGenerator extends ResourceManager {
-        private static final String NAME = "ml:dbConfigs";
+        private static final String NAME = "dh_db-configs";
 
         private RequestParameters params = new RequestParameters();
 

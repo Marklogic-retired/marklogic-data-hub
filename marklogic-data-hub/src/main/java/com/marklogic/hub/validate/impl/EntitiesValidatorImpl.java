@@ -26,7 +26,7 @@ import com.marklogic.client.util.RequestParameters;
 import com.marklogic.hub.validate.EntitiesValidator;
 
 public class EntitiesValidatorImpl extends ResourceManager implements EntitiesValidator {
-    private static final String NAME = "ml:validate";
+    private static final String NAME = "dh_validate";
 
     public EntitiesValidatorImpl(DatabaseClient client) {
         super();

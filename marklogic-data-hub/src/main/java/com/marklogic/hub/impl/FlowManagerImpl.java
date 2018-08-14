@@ -45,7 +45,7 @@ import java.util.regex.Pattern;
 
 public class FlowManagerImpl extends ResourceManager implements FlowManager {
 
-    private static final String NAME = "ml:flow";
+    private static final String NAME = "dh_flow";
 
     private DatabaseClient stagingClient;
     private HubConfig hubConfig;

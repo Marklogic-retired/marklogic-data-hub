@@ -366,7 +366,7 @@ public class FlowRunnerImpl implements FlowRunner {
             this.flow = flow;
             this.srcClient = srcClient;
             this.targetDatabase = targetDatabase;
-            this.srcClient.init(flow.getCodeFormat().equals(CodeFormat.JAVASCRIPT) ? "ml:sjsFlow" : "ml:flow", this);
+            this.srcClient.init(flow.getCodeFormat().equals(CodeFormat.JAVASCRIPT) ? "dh_sjsflow" : "dh_flow", this);
         }
 
         public RunFlowResponse run(String jobId, String[] items) {
