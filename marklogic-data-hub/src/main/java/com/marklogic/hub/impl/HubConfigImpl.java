@@ -1153,4 +1153,7 @@ public class HubConfigImpl implements HubConfig {
 
     }
 
+    public String toString() {
+        return getInfo();
+    }
 }
