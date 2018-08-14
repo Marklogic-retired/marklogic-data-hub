@@ -87,7 +87,7 @@ public class TraceService extends SearchableService {
         String searchXml = sqd.serialize();
 
         RawCombinedQueryDefinition querydef = queryMgr.newRawCombinedQueryDefinition(new StringHandle(searchXml), SEARCH_OPTIONS_NAME);
-        querydef.setResponseTransform(new ServerTransform("ml:traceSearchResults"));
+        querydef.setResponseTransform(new ServerTransform("dh_trace-search"));
         StringHandle sh = new StringHandle();
         sh.setFormat(Format.JSON);
         return queryMgr.search(querydef, sh, traceQuery.start);
@@ -96,7 +96,7 @@ public class TraceService extends SearchableService {
     public JsonNode getTrace(String traceId) {
         // Traces can be .json or .xml. Legacy traces may not have an extension. Figure out what we have.
         DocumentPage docs = this.docMgr.read(
-            new ServerTransform("ml:traceUISearchResults"),
+            new ServerTransform("dh_trace-json"),
             "/" + traceId, "/" + traceId + ".json", "/" + traceId + ".xml");
 
         if (docs.size() < 1) {
