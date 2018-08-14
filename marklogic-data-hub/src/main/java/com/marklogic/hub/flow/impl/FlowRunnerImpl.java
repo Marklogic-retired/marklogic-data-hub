@@ -38,6 +38,7 @@ import com.marklogic.hub.job.JobStatus;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
@@ -209,7 +210,7 @@ public class FlowRunnerImpl implements FlowRunner {
 
         HashMap<String, JobTicket> ticketWrapper = new HashMap<>();
 
-        final FlowResource flowResource = new FlowResource(stagingClient, destinationDatabase, flow);
+        ConcurrentHashMap<DatabaseClient, FlowResource> databaseClientMap = new ConcurrentHashMap<>();
 
         QueryBatcher tempQueryBatcher = dataMovementManager.newQueryBatcher(uris.iterator())
             .withBatchSize(batchSize)
@@ -217,6 +218,16 @@ public class FlowRunnerImpl implements FlowRunner {
             .withJobId(jobId)
             .onUrisReady((QueryBatch batch) -> {
                 try {
+                    FlowResource flowResource;
+
+                    if (databaseClientMap.containsKey(batch.getClient())){
+                        flowResource = databaseClientMap.get(batch.getClient());
+                    }
+                    else {
+                        flowResource = new FlowResource(batch.getClient(), destinationDatabase, flow);
+                        databaseClientMap.put(batch.getClient(), flowResource);
+                    }
+
                     RunFlowResponse response = flowResource.run(jobId, batch.getItems(), options);
                     failedEvents.addAndGet(response.errorCount);
                     successfulEvents.addAndGet(response.totalCount - response.errorCount);

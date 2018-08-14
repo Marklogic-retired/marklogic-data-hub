@@ -6,7 +6,7 @@ module namespace plugin = "http://marklogic.com/data-hub/plugins";
 (:
  : This module exposes helper functions to make your life easier
  : See documentation at:
- : https://github.com/marklogic/marklogic-data-hub/wiki/dhf-lib
+ : https://marklogic.github.io/marklogic-data-hub/docs/server-side/
  :)
 import module namespace dhf = "http://marklogic.com/dhf"
   at "/data-hub/4/dhf.xqy";

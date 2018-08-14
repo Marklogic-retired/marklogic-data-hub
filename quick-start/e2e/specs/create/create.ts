@@ -279,6 +279,7 @@ export default function() {
       browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
       entityPage.confirmDialogYesButton.click();
       browser.sleep(3000);
+      browser.wait(EC.elementToBeClickable(entityPage.saveEntity));
       entityPage.saveEntity.click();
       browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
       expect(entityPage.confirmDialogYesButton.isPresent()).toBe(true);
@@ -401,6 +402,7 @@ export default function() {
       expect(entityPage.confirmDialogYesButton.isPresent()).toBe(true);
       entityPage.confirmDialogYesButton.click();
       browser.sleep(3000);
+      browser.wait(EC.elementToBeClickable(entityPage.saveEntity));
       entityPage.getPropertiesCount().then(function(props){expect(props).toEqual(1)});
       //let's save it now that it's populated
       entityPage.saveEntity.click();

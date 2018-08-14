@@ -302,7 +302,7 @@ declare %private function trace:write-error-trace(
             "/" || $trace/*:trace/*:traceId || $extension,
             $trace,
             xdmp:default-permissions(),
-            ("trace", $trace/*:trace/*:type)
+            ("trace", $trace/*:trace/*:flow-type, $trace/*:trace/*:flowType)
           )
         ',
         map:new((
@@ -488,7 +488,8 @@ declare function trace:_walk_json($nodes as node()* ,$o)
         let $_ :=
           for $x in $n/*
           return
-            map:put($oo, fn:local-name($x), xdmp:quote($x/*, $quote-options))
+            if($x instance of element()) then (map:put($oo, fn:local-name($x), xdmp:quote($x/node(), $quote-options)))
+            else (map:put($oo, fn:local-name($x), xdmp:quote($x/node()/data(), $quote-options)))
         return
           map:put($o, "input", $oo)
       case element(output) return
