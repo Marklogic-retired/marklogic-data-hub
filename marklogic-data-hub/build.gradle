@@ -263,10 +263,7 @@ test {
 			com.marklogic.mgmt.ManageClient manageClient = new ManageClient(new com.marklogic.mgmt.ManageConfig(mlHost, 8002, mlSecurityUsername, mlSecurityPassword))
 			com.marklogic.mgmt.resource.hosts.HostManager hostManager = new HostManager(manageClient)
 			def	bootStrapHost = hostManager.getHostNames().get(0)
-			def ipAddress = [127, 0, 0, 1] as byte[]
-			java.net.InetAddress address = InetAddress.getByAddress(ipAddress)
-		    String localhost = address.getCanonicalHostName()
-		    if(! (bootStrapHost.contains("marklogic.com") && localhost.contains("marklogic.com"))){
+		    if(! bootStrapHost.toLowerCase().contains("marklogic.com")){
 				 throw new GradleException("The test with current options will run only in marklogic.com domain")
 			}
 			if(sslRun) {
