@@ -895,15 +895,15 @@ public class HubConfigImpl implements HubConfig {
 
     public DatabaseClient newModulesDbClient() {
         AppConfig appConfig = getAppConfig();
-        DatabaseClientConfig config = new DatabaseClientConfig(appConfig.getHost(), stagingPort, mlUsername, mlPassword);
+        DatabaseClientConfig config = new DatabaseClientConfig(appConfig.getHost(), finalPort, mlUsername, mlPassword);
         config.setDatabase(appConfig.getModulesDatabaseName());
-        config.setSecurityContextType(SecurityContextType.valueOf(stagingAuthMethod.toUpperCase()));
-        config.setSslHostnameVerifier(stagingSslHostnameVerifier);
-        config.setSslContext(stagingSslContext);
-        config.setCertFile(stagingCertFile);
-        config.setCertPassword(stagingCertPassword);
-        config.setExternalName(stagingExternalName);
-        config.setTrustManager(stagingTrustManager);
+        config.setSecurityContextType(SecurityContextType.valueOf(finalAuthMethod.toUpperCase()));
+        //config.setSslHostnameVerifier(finalSslHostnameVerifier);
+        //config.setSslContext(finalSslContext);
+        //config.setCertFile(finalCertFile);
+        //config.setCertPassword(finalCertPassword);
+        //config.setExternalName(finalExternalName);
+        //config.setTrustManager(finalTrustManager);
         return appConfig.getConfiguredDatabaseClientFactory().newDatabaseClient(config);
     }
 
@@ -993,7 +993,7 @@ public class HubConfigImpl implements HubConfig {
 
         // this lets debug builds work from an IDE
         if (version.equals("${project.version}")) {
-            version = "3.1.0";
+            version = "4.0.0";
         }
         return version;
     }

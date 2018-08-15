@@ -16,10 +16,13 @@
 package com.marklogic.hub.impl;
 
 import com.marklogic.hub.HubProject;
+import com.marklogic.hub.error.DataHubConfigurationException;
 import com.marklogic.hub.util.FileUtil;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -156,17 +159,34 @@ public class HubProjectImpl implements HubProject {
         Path securityDir = getHubSecurityDir();
         Path rolesDir = securityDir.resolve("roles");
         Path usersDir = securityDir.resolve("users");
+        Path ampsDir = securityDir.resolve("amps");
 
         rolesDir.toFile().mkdirs();
         usersDir.toFile().mkdirs();
+        ampsDir.toFile().mkdirs();
 
         writeResourceFile("ml-config/security/roles/data-hub-role.json", rolesDir.resolve("data-hub-role.json"), true);
         writeResourceFile("ml-config/security/users/data-hub-user.json", usersDir.resolve("data-hub-user.json"), true);
         writeResourceFile("ml-config/security/roles/hub-admin-role.json", rolesDir.resolve("hub-admin-role.json"), true);
         writeResourceFile("ml-config/security/users/hub-admin-user.json", usersDir.resolve("hub-admin-user.json"), true);
 
+        PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+
+        // Ant-style path matching
+        Resource[] resources = new Resource[0];
+        try {
+            resources = resolver.getResources("/ml-config/security/amps/**");
+            for (Resource resource : resources) {
+                InputStream is = resource.getInputStream();
+                FileUtil.copy(is, ampsDir.resolve(resource.getFilename()).toFile());
+            }
+        } catch (IOException e) {
+            throw new DataHubConfigurationException(e);
+        }
+
         getUserServersDir().toFile().mkdirs();
         getUserDatabaseDir().toFile().mkdirs();
+
 
         Path gradlew = projectDir.resolve("gradlew");
         writeResourceFile("scaffolding/gradlew", gradlew);

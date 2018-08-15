@@ -409,6 +409,7 @@ public class DataHubImpl implements DataHub {
         List<Command> securityCommands = commandMap.get("mlSecurityCommands");
         securityCommands.set(0, new DeployHubRolesCommand(hubConfig));
         securityCommands.set(1, new DeployHubUsersCommand(hubConfig));
+        securityCommands.set(2, new DeployHubAmpsCommand(hubConfig));
         // mlDeploySecurity is not finding these classes.
         commandMap.put("mlSecurityCommands", securityCommands);
 

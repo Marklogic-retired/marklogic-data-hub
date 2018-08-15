@@ -332,7 +332,7 @@ public class ScaffoldingImpl implements Scaffolding {
             }
             try {
                 String mainFile = FileUtils.readFileToString(mainPath.toFile());
-                mainFile = mainFile.replaceFirst("com\\.marklogic\\.hub", "MarkLogic/data-hub-framework");
+                mainFile = mainFile.replaceFirst("com\\.marklogic\\.hub", "data-hub/4");
                 FileOutputStream fileOutputStream = new FileOutputStream(mainPath.toFile());
                 IOUtils.write(mainFile, fileOutputStream);
                 fileOutputStream.close();
