@@ -18,6 +18,7 @@ package com.marklogic.hub.flow;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.eval.EvalResultIterator;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.client.io.StringHandle;
@@ -25,10 +26,16 @@ import com.marklogic.hub.DataHub;
 import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
+import com.marklogic.hub.MappingManager;
+import com.marklogic.hub.mapping.Mapping;
 import com.marklogic.hub.scaffold.Scaffolding;
+import com.marklogic.hub.util.FileUtil;
+
 import org.custommonkey.xmlunit.XMLAssert;
 import org.custommonkey.xmlunit.XMLUnit;
+import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
@@ -245,5 +252,56 @@ public class FlowRunnerTest extends HubTestBase {
         XMLAssert.assertXMLEqual(expected, actual);
 
     }
+    
+    @Ignore
+    public void testCreateandDeployFlowWithHubUser() throws IOException {
 
+        Scaffolding scaffolding = Scaffolding.create(projectDir.toString(), finalFlowRunnerClient);
+
+        scaffolding.createFlow(ENTITY, "FlowWithHubUser", FlowType.HARMONIZE,
+            CodeFormat.XQUERY, DataFormat.JSON, false);
+        Files.copy(getResourceStream("flow-runner-test/collector2.xqy"),
+            projectDir.resolve("plugins/entities/" + ENTITY + "/harmonize/FlowWithHubUser/collector.xqy"),
+            StandardCopyOption.REPLACE_EXISTING);
+        Files.copy(getResourceStream("flow-runner-test/content-testing-envelope.xqy"),
+            projectDir.resolve("plugins/entities/" + ENTITY + "/harmonize/FlowWithHubUser/content.xqy"),
+            StandardCopyOption.REPLACE_EXISTING);
+        
+        installUserModules(getHubFlowRunnerConfig(), false);
+        //The flow should not be deployed.
+        assertNull(getModulesFile("/entities/"+ENTITY+"/harmonize/FlowWithHubUser/FlowWithHubUser.xml"));
+        
+    	Path entityDir = projectDir.resolve("plugins").resolve("entities").resolve(ENTITY);
+    	copyFile("e2e-test/" + ENTITY + ".entity.json", entityDir.resolve(ENTITY + ".entity.json"));
+        installUserModules(getHubFlowRunnerConfig(), false);
+        assertNull(getModulesFile("/entities/"+ENTITY+".entity.json"));
+        //deploys the entity to final db
+        installUserModules(getHubAdminConfig(), false);
+        
+        MappingManager mappingManager = MappingManager.getMappingManager(getHubAdminConfig());
+        ObjectMapper mapper = new ObjectMapper();
+		Mapping testMap = Mapping.create("test");
+		testMap.setDescription("This is a test.");
+		testMap.setSourceContext("//");
+		testMap.setTargetEntityType(ENTITY);
+		HashMap<String, ObjectNode> mappingProperties = new HashMap<>();
+		mappingProperties.put("id", mapper.createObjectNode().put("sourcedFrom", "id"));
+		mappingProperties.put("name", mapper.createObjectNode().put("sourcedFrom", "name"));
+		mappingProperties.put("salary", mapper.createObjectNode().put("sourcedFrom", "salary"));
+		mappingManager.saveMapping(testMap);
+		
+		installUserModules(getHubFlowRunnerConfig(), false);	
+		// Mapping should not be deployed
+        Assert.assertFalse(finalDocMgr.read("/mappings/test/test-1.mapping.json").hasNext());
+        // Deploys mapping to final db
+        installUserModules(getHubAdminConfig(), true);
+        
+		scaffolding.createFlow(ENTITY, "MappingFlowWithHubUser", FlowType.HARMONIZE, CodeFormat.JAVASCRIPT, DataFormat.XML, true, "test-1");
+        installUserModules(getHubFlowRunnerConfig(), false);
+        assertNull(getModulesFile("/entities/"+ENTITY+"/harmonize/MappingFlowWithHubUser/MappingFlowWithHubUser.xml"));
+    }
+    
+    private void copyFile(String srcDir, Path dstDir) {
+        FileUtil.copy(getResourceStream(srcDir), dstDir.toFile());
+    }
 }

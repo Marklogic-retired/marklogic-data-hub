@@ -381,6 +381,8 @@ public class HubTestBase {
     		Properties updatedProp = new Properties();
     		updatedProp.setProperty("mlUsername", flowRunnerUser);
     		updatedProp.setProperty("mlPassword", flowRunnerPassword);
+    		updatedProp.setProperty("mlManageUsername", flowRunnerUser);
+    		updatedProp.setProperty("mlManagePassword", flowRunnerPassword);
     		builder.withProperties(updatedProp);
     	}
     	
@@ -420,12 +422,14 @@ public class HubTestBase {
 	           	hubConfig.setCertFile(DatabaseKind.STAGING, "src/test/resources/ssl/client-hub-admin-user.p12");
 	           	hubConfig.setSslContext(DatabaseKind.JOB,datahubadmincertContext);
 	           	manageConfig.setSslContext(datahubadmincertContext);
+	           	adminConfig.setSslContext(datahubadmincertContext);
         	}
         	else {
         		appConfig.setAppServicesCertFile("src/test/resources/ssl/client-data-hub-user.p12");
         		hubConfig.setCertFile(DatabaseKind.STAGING, "src/test/resources/ssl/client-data-hub-user.p12");
 	           	hubConfig.setSslContext(DatabaseKind.JOB,flowRunnercertContext);
 	           	manageConfig.setSslContext(flowRunnercertContext);
+	           	adminConfig.setSslContext(flowRunnercertContext);
         	}
            	appConfig.setAppServicesCertPassword("abcd");
             appConfig.setAppServicesTrustManager((X509TrustManager) tmf.getTrustManagers()[0]);
@@ -436,9 +440,7 @@ public class HubTestBase {
          	hubConfig.setAuthMethod(DatabaseKind.STAGING,"certificate");
         	hubConfig.setAuthMethod(DatabaseKind.JOB,"certificate");
            	hubConfig.setTrustManager(DatabaseKind.STAGING, (X509TrustManager) tmf.getTrustManagers()[0]);
-        	hubConfig.setCertPass(DatabaseKind.STAGING, "abcd");     
-        	
-        	adminConfig.setSslContext(certContext);
+        	hubConfig.setCertPass(DatabaseKind.STAGING, "abcd");             	        
         	
         	manageConfig.setConfigureSimpleSsl(false);      	
         	manageConfig.setSecuritySslContext(certContext);

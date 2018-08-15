@@ -23,8 +23,8 @@ import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.scaffold.impl.ScaffoldingImpl;
 import com.marklogic.hub.util.FileUtil;
 import com.marklogic.hub.util.HubModuleManager;
+
 import org.apache.commons.io.FileUtils;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.xml.sax.SAXException;
@@ -149,6 +149,30 @@ public class EntityManagerTest extends HubTestBase {
         deployed = entityManager.deployQueryOptions();
         assertEquals(0, deployed.size());
     }
+    
+    @Test
+    public void testDeploySearchOptionsWithFlowRunnerUser() throws IOException, SAXException {
+    	getDataHub().clearUserModules();
+        installEntities();
+
+        Path dir = Paths.get(getHubFlowRunnerConfig().getProjectDir(), HubConfig.ENTITY_CONFIG_DIR);
+
+        assertNull(getModulesFile("/Default/" + HubConfig.DEFAULT_STAGING_NAME + "/rest-api/options/" + HubConfig.STAGING_ENTITY_QUERY_OPTIONS_FILE));
+        assertNull(getModulesFile("/Default/" + HubConfig.DEFAULT_STAGING_NAME + "/rest-api/options/" + HubConfig.FINAL_ENTITY_QUERY_OPTIONS_FILE));
+        assertFalse(Paths.get(dir.toString(), HubConfig.STAGING_ENTITY_QUERY_OPTIONS_FILE).toFile().exists());
+        assertFalse(Paths.get(dir.toString(), HubConfig.FINAL_ENTITY_QUERY_OPTIONS_FILE).toFile().exists());
+        assertEquals(0, getStagingDocCount());
+        assertEquals(0, getFinalDocCount());
+
+        EntityManager entityManager = EntityManager.create(getHubFlowRunnerConfig());
+        HashMap<Enum, Boolean> deployed = entityManager.deployQueryOptions();
+        
+        //Search options files not written to modules db but created.
+        assertNull(getModulesFile("/Default/" + HubConfig.DEFAULT_STAGING_NAME + "/rest-api/options/" + HubConfig.STAGING_ENTITY_QUERY_OPTIONS_FILE));
+        assertNull(getModulesFile("/Default/" + HubConfig.DEFAULT_STAGING_NAME + "/rest-api/options/" + HubConfig.FINAL_ENTITY_QUERY_OPTIONS_FILE));
+        assertTrue(Paths.get(dir.toString(), HubConfig.STAGING_ENTITY_QUERY_OPTIONS_FILE).toFile().exists());
+        assertTrue(Paths.get(dir.toString(), HubConfig.FINAL_ENTITY_QUERY_OPTIONS_FILE).toFile().exists());
+    }
 
 
     @Test
@@ -215,7 +239,4 @@ public class EntityManagerTest extends HubTestBase {
 
 
     }
-
-
-
 }
