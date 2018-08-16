@@ -37,6 +37,7 @@ import com.marklogic.client.io.StringHandle;
 import com.marklogic.com.marklogic.client.ext.file.CacheBusterDocumentFileProcessor;
 import com.marklogic.com.marklogic.client.ext.modulesloader.impl.EntityDefModulesFinder;
 import com.marklogic.com.marklogic.client.ext.modulesloader.impl.MappingDefModulesFinder;
+import com.marklogic.com.marklogic.client.ext.modulesloader.impl.SearchOptionsFinder;
 import com.marklogic.com.marklogic.client.ext.modulesloader.impl.UserModulesFinder;
 import com.marklogic.hub.EntityManager;
 import com.marklogic.hub.FlowManager;
@@ -161,6 +162,7 @@ public class LoadUserModulesCommand extends AbstractCommand {
         // this will ignore REST folders under entities
         DefaultModulesLoader modulesLoader = getStagingModulesLoader(config);
         modulesLoader.loadModules(baseDir, new UserModulesFinder(), stagingClient);
+        modulesLoader.loadModules("classpath*:/ml-modules-final", new SearchOptionsFinder(), finalClient);
 
         //for now we'll use two different document managers
         JSONDocumentManager entityDocMgr = finalClient.newJSONDocumentManager();

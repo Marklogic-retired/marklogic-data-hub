@@ -3,6 +3,6 @@ module.exports = {
   FINALDATABASE: "%%mlFinalDbName%%",
   TRACEDATABASE: "%%mlJobDbName%%",
   JOBDATABASE: "%%mlJobDbName%%",
-  MODULESDATABASE: "%%mlModulesDbName%%",
+  MODULESDATABASE: "%%mlStagingModulesDbName%%",
   HUBVERSION: "%%mlHubVersion%%"
 };

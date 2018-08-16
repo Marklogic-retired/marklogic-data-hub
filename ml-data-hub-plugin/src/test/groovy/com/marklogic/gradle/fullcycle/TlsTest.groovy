@@ -69,7 +69,7 @@ class TlsTest extends BaseTest {
                     def gtcc = new com.marklogic.appdeployer.command.security.GenerateTemporaryCertificateCommand();
                     gtcc.setTemplateIdOrName("admin-cert");
                     gtcc.setCommonName("localhost");
-                    gtcc.execute(new com.marklogic.appdeployer.command.CommandContext(getAppConfig(), manageClient, adminManager));
+                    gtcc.execute(new com.marklogic.appdeployer.command.CommandContext(getStagingAppConfig(), manageClient, adminManager));
 
                     adminConfig = getProject().property("mlAdminConfig")
                     adminConfig.setScheme("https")
@@ -109,8 +109,8 @@ class TlsTest extends BaseTest {
             }
 
             // there is a bug in ML 8 that won't unset the ssl
-            def disableSSL(appConfig, serverName) {
-                def eval = appConfig.newAppServicesDatabaseClient().newServerEval()
+            def disableSSL(stagingAppConfig, serverName) {
+                def eval = stagingAppConfig.newAppServicesDatabaseClient().newServerEval()
                 def xqy = """
                     import module namespace admin = "http://marklogic.com/xdmp/admin" at "/MarkLogic/admin.xqy";
                     let \\$config := admin:get-configuration()
@@ -179,7 +179,7 @@ class TlsTest extends BaseTest {
                 mlManageClient.setManageConfig(mlManageConfig)
                 mlAdminManager.setAdminConfig(mlAdminConfig)
 
-                hubConfig.setAppConfig(mlAppConfig, true)
+                hubConfig.setStagingAppConfig(mlAppConfig, true)
             }
         '''
 

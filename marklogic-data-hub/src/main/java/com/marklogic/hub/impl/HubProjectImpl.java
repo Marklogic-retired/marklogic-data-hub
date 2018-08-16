@@ -38,7 +38,7 @@ import java.util.Set;
  */
 public class HubProjectImpl implements HubProject {
 
-    public static final String ENTITY_CONFIG_DIR = "entity-config";
+    public static final String ENTITY_CONFIG_DIR = PATH_PREFIX + "entity-config";
 
     private Path projectDir;
     private Path pluginsDir;
@@ -138,35 +138,41 @@ public class HubProjectImpl implements HubProject {
     @Override public void init(Map<String, String> customTokens) {
         this.pluginsDir.toFile().mkdirs();
 
-        Path serversDir = getHubServersDir();
-        serversDir.toFile().mkdirs();
-        writeResourceFile("ml-config/servers/staging-server.json", serversDir.resolve("staging-server.json"), true);
-        writeResourceFile("ml-config/servers/final-server.json", serversDir.resolve("final-server.json"), true);
-        writeResourceFile("ml-config/servers/job-server.json", serversDir.resolve("job-server.json"), true);
+        Path hubServersDir = getHubServersDir();
+        hubServersDir.toFile().mkdirs();
+        writeResourceFile("hub-internal-config/servers/staging-server.json", hubServersDir.resolve("staging-server.json"), true);
+        writeResourceFile("hub-internal-config/servers/job-server.json", hubServersDir.resolve("job-server.json"), true);
 
-        Path databasesDir = getHubDatabaseDir();
-        databasesDir.toFile().mkdirs();
-        writeResourceFile("ml-config/databases/staging-database.json", databasesDir.resolve("staging-database.json"), true);
-        writeResourceFile("ml-config/databases/final-database.json", databasesDir.resolve("final-database.json"), true);
-        writeResourceFile("ml-config/databases/job-database.json", databasesDir.resolve("job-database.json"), true);
-        writeResourceFile("ml-config/databases/modules-database.json", databasesDir.resolve("modules-database.json"), true);
-        writeResourceFile("ml-config/databases/schemas-database.json", databasesDir.resolve("schemas-database.json"), true);
-        writeResourceFile("ml-config/databases/triggers-database.json", databasesDir.resolve("triggers-database.json"), true);
+        Path userServersDir = getUserServersDir();
+        userServersDir.toFile().mkdirs();
+        writeResourceFile("ml-config/servers/final-server.json", userServersDir.resolve("final-server.json"), true);
 
-        Path securityDir = getHubSecurityDir();
-        Path rolesDir = securityDir.resolve("roles");
-        Path usersDir = securityDir.resolve("users");
+        Path hubDatabaseDir = getHubDatabaseDir();
+        hubDatabaseDir.toFile().mkdirs();
+        writeResourceFile("hub-internal-config/databases/staging-database.json", hubDatabaseDir.resolve("staging-database.json"), true);
+        writeResourceFile("hub-internal-config/databases/job-database.json", hubDatabaseDir.resolve("job-database.json"), true);
+        writeResourceFile("hub-internal-config/databases/staging-modules-database.json", hubDatabaseDir.resolve("staging-modules-database.json"), true);
+        writeResourceFile("hub-internal-config/databases/staging-schemas-database.json", hubDatabaseDir.resolve("staging-schemas-database.json"), true);
+        writeResourceFile("hub-internal-config/databases/staging-triggers-database.json", hubDatabaseDir.resolve("staging-triggers-database.json"), true);
+
+        Path userDatabaseDir = getUserDatabaseDir();
+        userDatabaseDir.toFile().mkdirs();
+        writeResourceFile("ml-config/databases/final-database.json", userDatabaseDir.resolve("final-database.json"), true);
+        writeResourceFile("ml-config/databases/final-modules-database.json", userDatabaseDir.resolve("final-modules-database.json"), true);
+        writeResourceFile("ml-config/databases/final-schemas-database.json", userDatabaseDir.resolve("final-schemas-database.json"), true);
+        writeResourceFile("ml-config/databases/final-triggers-database.json", userDatabaseDir.resolve("final-triggers-database.json"), true);
+
+        Path hubSecurityDir = getHubSecurityDir();
+        Path rolesDir = hubSecurityDir.resolve("roles");
+        Path usersDir = hubSecurityDir.resolve("users");
 
         rolesDir.toFile().mkdirs();
         usersDir.toFile().mkdirs();
 
-        writeResourceFile("ml-config/security/roles/data-hub-role.json", rolesDir.resolve("data-hub-role.json"), true);
-        writeResourceFile("ml-config/security/users/data-hub-user.json", usersDir.resolve("data-hub-user.json"), true);
-        writeResourceFile("ml-config/security/roles/hub-admin-role.json", rolesDir.resolve("hub-admin-role.json"), true);
-        writeResourceFile("ml-config/security/users/hub-admin-user.json", usersDir.resolve("hub-admin-user.json"), true);
-
-        getUserServersDir().toFile().mkdirs();
-        getUserDatabaseDir().toFile().mkdirs();
+        writeResourceFile("hub-internal-config/security/roles/data-hub-role.json", rolesDir.resolve("data-hub-role.json"), true);
+        writeResourceFile("hub-internal-config/security/users/data-hub-user.json", usersDir.resolve("data-hub-user.json"), true);
+        writeResourceFile("hub-internal-config/security/roles/hub-admin-role.json", rolesDir.resolve("hub-admin-role.json"), true);
+        writeResourceFile("hub-internal-config/security/users/hub-admin-user.json", usersDir.resolve("hub-admin-user.json"), true);
 
         Path gradlew = projectDir.resolve("gradlew");
         writeResourceFile("scaffolding/gradlew", gradlew);

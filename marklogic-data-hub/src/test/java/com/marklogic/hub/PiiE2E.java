@@ -33,7 +33,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
-import org.skyscreamer.jsonassert.JSONAssert;
 
 import java.io.*;
 import java.net.URISyntaxException;
@@ -246,7 +245,7 @@ public class PiiE2E extends HubTestBase {
 
         SimpleAppDeployer deployer = new SimpleAppDeployer(hubConfig.getManageClient(), hubConfig.getAdminManager());
         deployer.setCommands(securityCommands);
-        deployer.deploy(hubConfig.getAppConfig());
+        deployer.deploy(hubConfig.getStagingAppConfig());
     }
 
     private void installEntities() {

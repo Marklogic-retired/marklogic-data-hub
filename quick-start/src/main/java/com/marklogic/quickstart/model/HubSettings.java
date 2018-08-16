@@ -29,9 +29,9 @@ public class HubSettings {
         settings.jobPort = config.getPort(DatabaseKind.JOB);
         settings.jobAuthMethod = config.getAuthMethod(DatabaseKind.JOB);
 
-        settings.modulesDbName = config.getDbName(DatabaseKind.MODULES);
-        settings.triggersDbName = config.getDbName(DatabaseKind.TRIGGERS);
-        settings.schemasDbName = config.getDbName(DatabaseKind.SCHEMAS);
+        settings.modulesDbName = config.getDbName(DatabaseKind.STAGING_MODULES);
+        settings.triggersDbName = config.getDbName(DatabaseKind.STAGING_TRIGGERS);
+        settings.schemasDbName = config.getDbName(DatabaseKind.STAGING_SCHEMAS);
 
         settings.username = config.getHubUserName();
         settings.projectDir = config.getProjectDir();

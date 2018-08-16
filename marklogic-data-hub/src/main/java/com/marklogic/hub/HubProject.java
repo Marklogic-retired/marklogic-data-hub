@@ -27,8 +27,9 @@ import java.util.Map;
  * This handles what is initially created on disk for the project.
  */
 public interface HubProject {
-    String HUB_CONFIG_DIR = "hub-internal-config";
-    String USER_CONFIG_DIR = "user-config";
+    String PATH_PREFIX = "src/main/";
+    String HUB_CONFIG_DIR = PATH_PREFIX + "hub-internal-config";
+    String USER_CONFIG_DIR = PATH_PREFIX + "ml-config";
 
     /**
      * Creates a HubProject object and returns it in the base project directory

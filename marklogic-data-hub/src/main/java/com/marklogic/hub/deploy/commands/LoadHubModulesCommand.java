@@ -95,9 +95,7 @@ public class LoadHubModulesCommand extends AbstractCommand {
         if (caughtException == null) {
             modulesLoader.loadModules("classpath*:/ml-modules-jobs", new SearchOptionsFinder(), hubConfig.newJobDbClient());
         }
-        if (caughtException == null) {
-            modulesLoader.loadModules("classpath*:/ml-modules-final", new SearchOptionsFinder(), hubConfig.newFinalClient());
-        }
+
 
         if (caughtException != null) {
             throw new RuntimeException(caughtException);
