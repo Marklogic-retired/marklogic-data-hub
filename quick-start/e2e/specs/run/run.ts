@@ -1,8 +1,6 @@
-import { protractor , browser, element, by, By, $, $$, ExpectedConditions as EC} from 'protractor';
-import { pages } from '../../page-objects/page';
+import {  browser, ExpectedConditions as EC} from 'protractor';
 import loginPage from '../../page-objects/auth/login';
 import dashboardPage from '../../page-objects/dashboard/dashboard';
-import entityPage from '../../page-objects/entities/entities';
 import flowPage from '../../page-objects/flows/flows';
 import jobsPage from '../../page-objects/jobs/jobs';
 import browsePage from '../../page-objects/browse/browse';
@@ -12,11 +10,8 @@ const fs = require('fs-extra');
 
 export default function(tmpDir) {
   describe('Run Flows', () => {
-    beforeAll(() => {
-      flowPage.isLoaded();
-    });
-
-    beforeEach(() => {
+    it ('should go to the flow page', function() {
+      appPage.flowsTab.click();
       flowPage.isLoaded();
     });
 
@@ -29,7 +24,7 @@ export default function(tmpDir) {
 
     it('should verify the loaded data', function() {
       //verify on jobs page
-      flowPage.jobsTab.click();
+      appPage.jobsTab.click();
       jobsPage.isLoaded();
       expect(jobsPage.lastFinishedJob.isPresent()).toBe(true);
       //verify the output
@@ -40,7 +35,7 @@ export default function(tmpDir) {
       expect(jobsPage.jobOutputContent('OUTPUT_RECORDS_FAILED: 0').isPresent()).toBe(true);
       jobsPage.jobOutputCloseButton().click();
       //verify on browse data page
-      jobsPage.browseDataTab.click();
+      appPage.browseDataTab.click();
       browsePage.isLoaded();
       browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
       expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 10 of 450');
@@ -63,10 +58,10 @@ export default function(tmpDir) {
       expect(viewerPage.verifyVariableName('opt1').isPresent()).toBeFalsy();
       expect(viewerPage.verifyStringName('world').isPresent()).toBeFalsy();
       //verfiy on dashboard page
-      viewerPage.dashboardTab.click();
+      appPage.dashboardTab.click();
       dashboardPage.isLoaded();
       expect(dashboardPage.stagingCount().getText()).toEqual('450');
-      dashboardPage.flowsTab.click();
+      appPage.flowsTab.click();
       flowPage.isLoaded();
     });
 
@@ -92,13 +87,18 @@ export default function(tmpDir) {
     });
 
     it ('should logout and login', function() {
-      flowPage.logout();
+      appPage.logout();
       loginPage.isLoaded();
       loginPage.clickNext('ProjectDirTab');
       browser.wait(EC.elementToBeClickable(loginPage.environmentTab));
       loginPage.clickNext('EnvironmentTab');
       browser.wait(EC.elementToBeClickable(loginPage.loginTab));
       loginPage.login();
+    });
+
+    it ('should go to the flow page', function() {
+      appPage.flowsTab.click();
+      flowPage.isLoaded();
     });
 
     it ('should redeploy modules', function() {
@@ -120,15 +120,15 @@ export default function(tmpDir) {
       flowPage.runHarmonizeButton().click();
       console.log('clicked the button');
       browser.sleep(10000);
-      flowPage.jobsTab.click();
+      appPage.jobsTab.click();
       jobsPage.isLoaded();
       expect(jobsPage.finishedHarmonizedFlows.isPresent()).toBe(true);
-      jobsPage.flowsTab.click();
+      appPage.flowsTab.click();
       flowPage.isLoaded();
     });
 
     it('should verify the harmonized data with sku as original property', function() {
-      flowPage.browseDataTab.click();
+      appPage.browseDataTab.click();
       browsePage.isLoaded();
       browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
       expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 10 of 450');
@@ -148,12 +148,12 @@ export default function(tmpDir) {
       expect(viewerPage.verifyHarmonizedProperty('opt1', 'world').isPresent()).toBeTruthy();
       expect(viewerPage.verifyHarmonizedProperty('user', 'admin').isPresent()).toBeTruthy();
       expect(viewerPage.verifyHarmonizedProperty('object', 'http://www.marklogic.com/foo/456').isPresent()).toBeTruthy();
-      viewerPage.flowsTab.click();
+      appPage.flowsTab.click();
       flowPage.isLoaded();
     });
 
     it('should verify the harmonized data with SKU as original property', function() {
-      flowPage.browseDataTab.click();
+      appPage.browseDataTab.click();
       browsePage.isLoaded();
       browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
       expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 10 of 450');
@@ -175,7 +175,7 @@ export default function(tmpDir) {
       expect(viewerPage.verifyHarmonizedProperty('opt1', 'world').isPresent()).toBeTruthy();
       expect(viewerPage.verifyHarmonizedProperty('user', 'admin').isPresent()).toBeTruthy();
       expect(viewerPage.verifyHarmonizedProperty('object', 'http://www.marklogic.com/foo/456').isPresent()).toBeTruthy();
-      viewerPage.flowsTab.click();
+      appPage.flowsTab.click();
       flowPage.isLoaded();
     });
 
@@ -197,11 +197,6 @@ export default function(tmpDir) {
           flowPage.runInputFlow('TestEntity', flowName, dataFormat, 'products', 'delimited_text', '/testEntity', '');
         });
       });
-    });
-
-    it ('should go to jobs page', function() {
-      flowPage.jobsTab.click();
-      jobsPage.isLoaded();
     });
   });
 }

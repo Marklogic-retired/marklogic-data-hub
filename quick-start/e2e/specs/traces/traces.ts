@@ -1,13 +1,11 @@
 import { browser, element, by, ExpectedConditions as EC} from 'protractor';
-import loginPage from '../../page-objects/auth/login';
-import flowPage from '../../page-objects/flows/flows';
 import tracesPage from '../../page-objects/traces/traces';
 import traceViewerPage from '../../page-objects/traceViewer/traceViewer';
 import appPage from '../../page-objects/appPage';
 
 export default function() {
     describe('Run Traces', () => {
-      beforeAll(() => {
+      it ('should go to traces page', function() {
         appPage.tracesTab.click();
         tracesPage.isLoaded();
       });
@@ -58,12 +56,6 @@ export default function() {
         expect(traceViewerPage.pluginSubheader('triples').isPresent()).toBe(true);
         expect(element(by.cssContainingText('.cm-string', 'http://www.marklogic.com/foo/123')).isPresent()).toBe(true);
         traceViewerPage.tracesTab.click();
-      });
-
-      it ('should go to flows page', function() {
-        tracesPage.isLoaded();
-        tracesPage.flowsTab.click();
-        flowPage.isLoaded();
       });
     });
   }
