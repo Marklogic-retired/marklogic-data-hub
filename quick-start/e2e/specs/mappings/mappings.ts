@@ -1,10 +1,6 @@
-import { browser, element, by, ExpectedConditions as EC} from 'protractor';
-import loginPage from '../../page-objects/auth/login';
+import { browser, ExpectedConditions as EC} from 'protractor';
 import flowPage from '../../page-objects/flows/flows';
-import tracesPage from '../../page-objects/traces/traces';
-import traceViewerPage from '../../page-objects/traceViewer/traceViewer';
 import appPage from '../../page-objects/appPage';
-import entityPage from '../../page-objects/entities/entities';
 import browsePage from '../../page-objects/browse/browse';
 import mappingsPage from '../../page-objects/mappings/mappings';
 import viewerPage from '../../page-objects/viewer/viewer';
@@ -255,11 +251,6 @@ export default function() {
         expect(mappingsPage.getSourceURITitle()).toEqual(originalDocUri);
         expect(mappingsPage.verifySourcePropertyName('SKU').isPresent()).toBeTruthy();
         expect(mappingsPage.verifySourcePropertyName('price').isPresent()).toBeTruthy();
-      });
-
-      it ('should go to flows page', function() {
-        appPage.flowsTab.click();
-        flowPage.isLoaded();
       });
     });
   }

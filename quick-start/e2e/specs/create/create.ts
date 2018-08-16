@@ -1,10 +1,8 @@
-import { protractor , browser, element, by, By, $, $$, ExpectedConditions as EC} from 'protractor';
-import { pages } from '../../page-objects/page';
+import {  browser, by, ExpectedConditions as EC} from 'protractor';
 import loginPage from '../../page-objects/auth/login';
 import dashboardPage from '../../page-objects/dashboard/dashboard';
 import entityPage from '../../page-objects/entities/entities';
 import flowPage from '../../page-objects/flows/flows';
-import {assertNotNull} from "@angular/compiler/src/output/output_ast";
 import appPage from '../../page-objects/appPage';
 
 const selectCardinalityOneToOneOption = 'select option:nth-child(1)';
@@ -79,7 +77,7 @@ export default function() {
     });
 
     it ('should go to the entities page', function() {
-      dashboardPage.entitiesTab.click();
+      appPage.entitiesTab.click();
       entityPage.isLoaded();
     });
 
@@ -604,7 +602,7 @@ export default function() {
     });
 
     it ('should go to the flow page', function() {
-      entityPage.flowsTab.click();
+      appPage.flowsTab.click();
       flowPage.isLoaded();
     });
 
@@ -621,9 +619,11 @@ export default function() {
       ['xml', 'json'].forEach((dataFormat) => {
         let flowName = `${codeFormat} ${dataFormat} INPUT`;
         it (`should create a ${flowName} input flow`, function() {
+          browser.wait(EC.elementToBeClickable(flowPage.inputFlowButton('TestEntity')));
           flowPage.createInputFlow('TestEntity', flowName, dataFormat, codeFormat, false);
           browser.wait(EC.visibilityOf(flowPage.getFlow('TestEntity', flowName, 'INPUT')));
           expect(flowPage.getFlow('TestEntity', flowName, 'INPUT').isDisplayed()).toBe(true, flowName + ' is not present');
+          browser.sleep(3000);
         });
       });
     });
@@ -632,9 +632,11 @@ export default function() {
       ['xml', 'json'].forEach((dataFormat) => {
         let flowName = `${codeFormat} ${dataFormat} HARMONIZE`;
         it (`should create a ${flowName} harmonize flow`, function() {
+          browser.wait(EC.elementToBeClickable(flowPage.harmonizeFlowButton('TestEntity')));
           flowPage.createHarmonizeFlow('TestEntity', flowName, dataFormat, codeFormat, true);
           browser.wait(EC.visibilityOf(flowPage.getFlow('TestEntity', flowName, 'HARMONIZE')));
           expect(flowPage.getFlow('TestEntity', flowName, 'HARMONIZE').isDisplayed()).toBe(true, flowName + ' is not present');
+          browser.sleep(3000);
         });
       });
     });
