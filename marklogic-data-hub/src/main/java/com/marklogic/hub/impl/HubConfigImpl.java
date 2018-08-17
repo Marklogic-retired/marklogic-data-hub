@@ -930,21 +930,7 @@ public class HubConfigImpl implements HubConfig {
 
     @Override
     public DatabaseClient newFinalClient() {
-        return newFinalClient(finalDbName);
-    }
-
-    private DatabaseClient newFinalClient(String dbName) {
-        AppConfig appConfig = getFinalAppConfig();
-        DatabaseClientConfig config = new DatabaseClientConfig(appConfig.getHost(), finalPort, getMlUsername(), getMlPassword());
-        config.setDatabase(dbName);
-        config.setSecurityContextType(SecurityContextType.valueOf(finalAuthMethod.toUpperCase()));
-        config.setSslHostnameVerifier(stagingSslHostnameVerifier);
-        config.setSslContext(stagingSslContext);
-        config.setCertFile(stagingCertFile);
-        config.setCertPassword(stagingCertPassword);
-        config.setExternalName(stagingExternalName);
-        config.setTrustManager(stagingTrustManager);
-        return appConfig.getConfiguredDatabaseClientFactory().newDatabaseClient(config);
+        return newStagingClient(finalDbName);
     }
 
     public DatabaseClient newJobDbClient() {
