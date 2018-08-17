@@ -174,17 +174,17 @@ public class HubProjectImpl implements HubProject {
         usersDir.toFile().mkdirs();
         ampsDir.toFile().mkdirs();
 
-        writeResourceFile("ml-config/security/roles/data-hub-role.json", rolesDir.resolve("data-hub-role.json"), true);
-        writeResourceFile("ml-config/security/users/data-hub-user.json", usersDir.resolve("data-hub-user.json"), true);
-        writeResourceFile("ml-config/security/roles/hub-admin-role.json", rolesDir.resolve("hub-admin-role.json"), true);
-        writeResourceFile("ml-config/security/users/hub-admin-user.json", usersDir.resolve("hub-admin-user.json"), true);
+        writeResourceFile("hub-internal-config/security/roles/data-hub-role.json", rolesDir.resolve("data-hub-role.json"), true);
+        writeResourceFile("hub-internal-config/security/users/data-hub-user.json", usersDir.resolve("data-hub-user.json"), true);
+        writeResourceFile("hub-internal-config/security/roles/hub-admin-role.json", rolesDir.resolve("hub-admin-role.json"), true);
+        writeResourceFile("hub-internal-config/security/users/hub-admin-user.json", usersDir.resolve("hub-admin-user.json"), true);
 
         PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
 
         // Ant-style path matching
         Resource[] resources = new Resource[0];
         try {
-            resources = resolver.getResources("/ml-config/security/amps/**");
+            resources = resolver.getResources("hub-internal-config/security/amps/**");
             for (Resource resource : resources) {
                 InputStream is = resource.getInputStream();
                 FileUtil.copy(is, ampsDir.resolve(resource.getFilename()).toFile());

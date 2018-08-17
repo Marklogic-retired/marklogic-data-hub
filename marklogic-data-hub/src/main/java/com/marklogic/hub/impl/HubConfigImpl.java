@@ -967,7 +967,7 @@ public class HubConfigImpl implements HubConfig {
 
     public DatabaseClient newModulesDbClient() {
         AppConfig appConfig = getStagingAppConfig();
-        DatabaseClientConfig config = new DatabaseClientConfig(appConfig.getHost(), stagingPort, mlUsername, mlPassword);
+        DatabaseClientConfig config = new DatabaseClientConfig(appConfig.getHost(), finalPort, mlUsername, mlPassword);
         config.setDatabase(appConfig.getModulesDatabaseName());
         config.setSecurityContextType(SecurityContextType.valueOf(finalAuthMethod.toUpperCase()));
         //config.setSslHostnameVerifier(finalSslHostnameVerifier);
