@@ -424,6 +424,17 @@ public class EndToEndFlowTests extends HubTestBase {
                     FinalCounts finalCounts = new FinalCounts(TEST_SIZE, TEST_SIZE, TEST_SIZE + 1, 1, TEST_SIZE, 0, TEST_SIZE, 0, TEST_SIZE / BATCH_SIZE, 0, "FINISHED");
                     testHarmonizeFlow(prefix, codeFormat, dataFormat, useEs, options, flowRunnerClient, HubConfig.DEFAULT_FINAL_NAME, finalCounts, true);
                 }));
+
+                // test big size to expose timing issues
+                // we only need 1 test to expose tbe bug
+                // https://github.com/marklogic/marklogic-data-hub/issues/1259
+                if (codeFormat.equals(CodeFormat.XQUERY) && dataFormat.equals(DataFormat.XML) && useEs == false) {
+                    int testSize = 50000;
+                    tests.add(DynamicTest.dynamicTest("Big Count: " + flowName + " wait", () -> {
+                        FinalCounts finalCounts = new FinalCounts(testSize, testSize, testSize + 1, 1, testSize, 0, testSize, 0, testSize / BATCH_SIZE, 0, "FINISHED");
+                        testHarmonizeFlow(prefix, codeFormat, dataFormat, useEs, options, stagingClient, HubConfig.DEFAULT_FINAL_NAME, finalCounts, true, testSize);
+                    }));
+                }
             }
         });
         return tests;
@@ -931,6 +942,10 @@ public class EndToEndFlowTests extends HubTestBase {
     }
 
     private void installDocs(DataFormat dataFormat, String collection, DatabaseClient srcClient, boolean useEs) {
+        installDocs(dataFormat, collection, srcClient, useEs, TEST_SIZE);
+    }
+
+    private void installDocs(DataFormat dataFormat, String collection, DatabaseClient srcClient, boolean useEs, int testSize) {
         DataMovementManager mgr = srcClient.newDataMovementManager();
 
         WriteBatcher writeBatcher = mgr.newWriteBatcher()
@@ -955,7 +970,7 @@ public class EndToEndFlowTests extends HubTestBase {
         }
         StringHandle handle = new StringHandle(getResource("e2e-test/" + filename + "." + dataFormat.toString()));
         String dataFormatString = dataFormat.toString();
-        for (int i = 0; i < TEST_SIZE; i++) {
+        for (int i = 0; i <  testSize; i++) {
             writeBatcher.add("/input-" + i + "." + dataFormatString, metadataHandle, handle);
         }
 
@@ -964,11 +979,11 @@ public class EndToEndFlowTests extends HubTestBase {
         assertFalse(installDocsFailed, "Doc install failed: " + installDocError);
 
         if (srcClient.getDatabase().equals(HubConfig.DEFAULT_STAGING_NAME)) {
-            assertEquals(TEST_SIZE, getStagingDocCount(collection));
+            assertEquals(testSize, getStagingDocCount(collection));
             assertEquals(0, getFinalDocCount(collection));
         }
         else {
-            assertEquals(TEST_SIZE, getFinalDocCount(collection));
+            assertEquals(testSize, getFinalDocCount(collection));
             assertEquals(0, getStagingDocCount(collection));
         }
     }
@@ -1290,7 +1305,16 @@ public class EndToEndFlowTests extends HubTestBase {
         Vector<String> completed, Vector<String> failed,
         Map<String, Object> options,
         DatabaseClient srcClient, String destDb,
-        boolean useEs, boolean waitForCompletion)
+        boolean useEs, boolean waitForCompletion) {
+        return runHarmonizeFlow(flowName, dataFormat, completed, failed, options, srcClient, destDb, useEs,waitForCompletion, TEST_SIZE);
+    }
+
+    private Tuple<FlowRunner, JobTicket> runHarmonizeFlow(
+        String flowName, DataFormat dataFormat,
+        Vector<String> completed, Vector<String> failed,
+        Map<String, Object> options,
+        DatabaseClient srcClient, String destDb,
+        boolean useEs, boolean waitForCompletion, int testSize)
     {
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
 
@@ -1299,10 +1323,9 @@ public class EndToEndFlowTests extends HubTestBase {
         assertEquals(0, getTracingDocCount());
         assertEquals(0, getJobDocCount());
 
-        installDocs(dataFormat, ENTITY, srcClient, useEs);
-        
-        Flow harmonizeFlow = flowManager.getFlow(ENTITY, flowName, FlowType.HARMONIZE);
+        installDocs(dataFormat, ENTITY, srcClient, useEs, testSize);
 
+        Flow harmonizeFlow = flowManager.getFlow(ENTITY, flowName, FlowType.HARMONIZE);
         FlowRunner flowRunner = flowManager.newFlowRunner()
             .withFlow(harmonizeFlow)
             .withBatchSize(BATCH_SIZE)
@@ -1335,6 +1358,13 @@ public class EndToEndFlowTests extends HubTestBase {
         String prefix, CodeFormat codeFormat, DataFormat dataFormat, boolean useEs,
         Map<String, Object> options, DatabaseClient srcClient, String destDb,
         FinalCounts finalCounts, boolean waitForCompletion) throws InterruptedException {
+        testHarmonizeFlow(prefix, codeFormat, dataFormat, useEs, options, srcClient, destDb, finalCounts, waitForCompletion, TEST_SIZE);
+    }
+
+    private void testHarmonizeFlow(
+        String prefix, CodeFormat codeFormat, DataFormat dataFormat, boolean useEs,
+        Map<String, Object> options, DatabaseClient srcClient, String destDb,
+        FinalCounts finalCounts, boolean waitForCompletion, int testSize) throws InterruptedException {
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
         String flowName = getFlowName(prefix, codeFormat, dataFormat, FlowType.HARMONIZE, useEs);
 
@@ -1342,7 +1372,7 @@ public class EndToEndFlowTests extends HubTestBase {
         Vector<String> failed = new Vector<>();
 
         Tuple<FlowRunner, JobTicket> tuple= null;
-        tuple = runHarmonizeFlow(flowName, dataFormat, completed, failed, options, srcClient, destDb, useEs, waitForCompletion);
+        tuple = runHarmonizeFlow(flowName, dataFormat, completed, failed, options, srcClient, destDb, useEs, waitForCompletion, testSize);
 
         if (waitForCompletion) {
             // takes a little time to run.
