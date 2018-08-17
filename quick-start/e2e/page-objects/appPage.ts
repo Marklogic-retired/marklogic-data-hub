@@ -19,6 +19,10 @@ export class AppPage extends Page {
     }, (err) => null)
   }
 
+  get odhLogo() {
+    return element(by.css('a img[src="/main/ui/assets/img/odh.svg"]'));
+  }
+
   get dashboardTab() {
     return element(by.css('#database-tab'));
   }
