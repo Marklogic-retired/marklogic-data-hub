@@ -212,7 +212,7 @@ public class FlowManagerTest extends HubTestBase {
 
     @Test
     public void testGetFlows() {
-        clearDatabases(HubConfig.DEFAULT_MODULES_DB_NAME);
+        clearDatabases(HubConfig.DEFAULT_STAGING_MODULES_DB_NAME);
 
         installHubModules();
 

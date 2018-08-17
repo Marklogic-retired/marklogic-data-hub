@@ -117,7 +117,7 @@ class DataHubPlugin implements Plugin<Project> {
 
         def hubConfig = HubConfigBuilder.newHubConfigBuilder(projectDir)
             .withProperties(properties)
-            .withAppConfig(extensions.getByName("mlAppConfig"))
+            .withStagingAppConfig(extensions.getByName("mlAppConfig"))
             .withAdminConfig(extensions.getByName("mlAdminConfig"))
             .withAdminManager(extensions.getByName("mlAdminManager"))
             .withManageConfig(extensions.getByName("mlManageConfig"))
@@ -135,6 +135,7 @@ class DataHubPlugin implements Plugin<Project> {
             throw new RuntimeException("You must apply the ml-gradle plugin before the ml-datahub plugin.")
         }
 
-        mlAppDeployer.setCommands(((DataHubImpl)dataHub).getCommandList())
+        mlAppDeployer.setCommands(((DataHubImpl)dataHub).getStagingCommandList())
+        // TODO Akshay Add final here?
     }
 }

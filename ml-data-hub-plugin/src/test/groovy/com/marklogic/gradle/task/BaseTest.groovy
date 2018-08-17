@@ -158,7 +158,7 @@ class BaseTest extends Specification {
     }
 
     static int getModulesDocCount() {
-        return getDocCount(HubConfig.DEFAULT_MODULES_DB_NAME, null)
+        return getDocCount(HubConfig.DEFAULT_STAGING_MODULES_DB_NAME, null)
     }
 
     static int getDocCount(String database, String collection) {
@@ -185,7 +185,7 @@ class BaseTest extends Specification {
             case HubConfig.DEFAULT_FINAL_NAME:
                 eval = hubConfig().newFinalClient().newServerEval()
                 break
-            case HubConfig.DEFAULT_MODULES_DB_NAME:
+            case HubConfig.DEFAULT_STAGING_MODULES_DB_NAME:
                 eval = hubConfig().newModulesDbClient().newServerEval()
                 break
             case HubConfig.DEFAULT_JOB_NAME:

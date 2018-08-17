@@ -86,8 +86,8 @@ public class DataHubInstallTest extends HubTestBase {
         assertTrue(getDataHub().isInstalled().isInstalled());
 
         assertTrue(getModulesFile("/com.marklogic.hub/config.xqy").startsWith(getResource("data-hub-test/core-modules/config.xqy")));
-        int totalCount = getDocCount(HubConfig.DEFAULT_MODULES_DB_NAME, null);
-        int hubModulesCount = getDocCount(HubConfig.DEFAULT_MODULES_DB_NAME, "hub-core-module");
+        int totalCount = getDocCount(HubConfig.DEFAULT_STAGING_MODULES_DB_NAME, null);
+        int hubModulesCount = getDocCount(HubConfig.DEFAULT_STAGING_MODULES_DB_NAME, "hub-core-module");
 
         assertTrue(totalCount + " is not correct.  I was expecting either " + VISIBLE_MODULE_COUNT + " or " + MODULE_COUNT + " or " + MODULE_COUNT_WITH_TRACE_MODULES, VISIBLE_MODULE_COUNT == totalCount || MODULE_COUNT == totalCount || MODULE_COUNT_WITH_TRACE_MODULES == totalCount);
         assertTrue(hubModulesCount + "  is not correct.  I was expecting either " + CORE_MODULE_COUNT_WITH_TRACE_MODULES + " or " + CORE_MODULE_COUNT_WITH_TRACE_MODULES, CORE_MODULE_COUNT_WITH_TRACE_MODULES == hubModulesCount || CORE_MODULE_COUNT == hubModulesCount);
@@ -112,13 +112,13 @@ public class DataHubInstallTest extends HubTestBase {
         createProjectDir(path);
         HubConfig hubConfig = getHubConfig(path);
 
-        int totalCount = getDocCount(HubConfig.DEFAULT_MODULES_DB_NAME, null);
+        int totalCount = getDocCount(HubConfig.DEFAULT_STAGING_MODULES_DB_NAME, null);
         assertTrue(totalCount + " is not correct.  I was expecting either " + VISIBLE_MODULE_COUNT + " or " + MODULE_COUNT + " or " + MODULE_COUNT_WITH_TRACE_MODULES,
             VISIBLE_MODULE_COUNT == totalCount || MODULE_COUNT == totalCount || MODULE_COUNT_WITH_TRACE_MODULES == totalCount);
 
         installUserModules(hubConfig, true);
 
-        totalCount = getDocCount(HubConfig.DEFAULT_MODULES_DB_NAME, null);
+        totalCount = getDocCount(HubConfig.DEFAULT_STAGING_MODULES_DB_NAME, null);
         assertTrue(totalCount + " is not correct.  I was expecting either " + VISIBLE_MODULE_COUNT_WITH_USER_MODULES + " or " + MODULE_COUNT_WITH_USER_MODULES + " or " + MODULE_COUNT_WITH_USER_MODULES_AND_TRACE_MODULES,
             VISIBLE_MODULE_COUNT_WITH_USER_MODULES == totalCount || MODULE_COUNT_WITH_USER_MODULES == totalCount || MODULE_COUNT_WITH_USER_MODULES_AND_TRACE_MODULES == totalCount);
 
@@ -245,19 +245,19 @@ public class DataHubInstallTest extends HubTestBase {
         DataHub dataHub = DataHub.create(hubConfig);
         dataHub.clearUserModules();
 
-        int totalCount = getDocCount(HubConfig.DEFAULT_MODULES_DB_NAME, null);
+        int totalCount = getDocCount(HubConfig.DEFAULT_STAGING_MODULES_DB_NAME, null);
         assertTrue(totalCount + " is not correct.  I was expecting either " + VISIBLE_MODULE_COUNT + " or " + MODULE_COUNT + " or " + MODULE_COUNT_WITH_TRACE_MODULES,
             VISIBLE_MODULE_COUNT == totalCount || MODULE_COUNT == totalCount || MODULE_COUNT_WITH_TRACE_MODULES == totalCount);
 
         installUserModules(hubConfig, true);
 
-        totalCount = getDocCount(HubConfig.DEFAULT_MODULES_DB_NAME, null);
+        totalCount = getDocCount(HubConfig.DEFAULT_STAGING_MODULES_DB_NAME, null);
         assertTrue(totalCount + " is not correct.  I was expecting either " + VISIBLE_MODULE_COUNT_WITH_USER_MODULES + " or " + MODULE_COUNT_WITH_USER_MODULES + " or " + MODULE_COUNT_WITH_USER_MODULES_AND_TRACE_MODULES,
             VISIBLE_MODULE_COUNT_WITH_USER_MODULES == totalCount || MODULE_COUNT_WITH_USER_MODULES == totalCount || MODULE_COUNT_WITH_USER_MODULES_AND_TRACE_MODULES == totalCount);
 
         dataHub.clearUserModules();
 
-        totalCount = getDocCount(HubConfig.DEFAULT_MODULES_DB_NAME, null);
+        totalCount = getDocCount(HubConfig.DEFAULT_STAGING_MODULES_DB_NAME, null);
         assertTrue(totalCount + " is not correct.  I was expecting either " + MODULE_COUNT + " or " + MODULE_COUNT_WITH_TRACE_MODULES,
             VISIBLE_MODULE_COUNT == totalCount || MODULE_COUNT == totalCount || MODULE_COUNT_WITH_TRACE_MODULES == totalCount);
 

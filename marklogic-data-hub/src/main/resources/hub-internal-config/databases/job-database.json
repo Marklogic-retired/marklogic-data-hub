@@ -110,8 +110,8 @@
       "invalid-values": "reject"
     }
   ],
-  "schema-database": "%%SCHEMAS_DATABASE%%",
-  "triggers-database": "%%TRIGGERS_DATABASE%%",
+  "schema-database": "%%mlStagingSchemasDbName%%",
+  "triggers-database": "%%mlStagingTriggersDbName%%",
   "triple-index": true,
   "collection-lexicon": true,
   "uri-lexicon": true

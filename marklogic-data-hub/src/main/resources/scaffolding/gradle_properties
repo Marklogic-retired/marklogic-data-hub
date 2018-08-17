@@ -81,14 +81,14 @@ mlJobAuth=%%mlJobAuth%%
 # To enable SSL for jobs
 # mlJobSimpleSsl=true
 
-mlModulesDbName=%%mlModulesDbName%%
-mlModulesForestsPerHost=%%mlModulesForestsPerHost%%
+mlStagingModulesDbName=%%mlStagingModulesDbName%%
+mlStagingModulesForestsPerHost=%%mlStagingModulesForestsPerHost%%
 
-mlTriggersDbName=%%mlTriggersDbName%%
-mlTriggersForestsPerHost=%%mlTriggersForestsPerHost%%
+mlStagingTriggersDbName=%%mlStagingTriggersDbName%%
+mlStagingTriggersForestsPerHost=%%mlStagingTriggersForestsPerHost%%
 
-mlSchemasDbName=%%mlSchemasDbName%%
-mlSchemasForestsPerHost=%%mlSchemasForestsPerHost%%
+mlStagingSchemasDbName=%%mlStagingSchemasDbName%%
+mlStagingSchemasForestsPerHost=%%mlStagingSchemasForestsPerHost%%
 
 # You can override this to specify an alternate folder for your
 # custom forest info. Defaults to user-config/forests/

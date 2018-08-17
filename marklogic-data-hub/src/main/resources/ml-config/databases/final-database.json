@@ -1,8 +1,8 @@
 {
   "database-name": "%%mlFinalDbName%%",
   "range-element-index": [],
-  "schema-database": "%%SCHEMAS_DATABASE%%",
-  "triggers-database": "%%TRIGGERS_DATABASE%%",
+  "schema-database": "%%mlFinalSchemasDbName%%",
+  "triggers-database": "%%mlFinalTriggersDbName%%",
   "triple-index": true,
   "collection-lexicon": true,
   "uri-lexicon": true

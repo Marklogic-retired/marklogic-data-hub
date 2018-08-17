@@ -45,7 +45,7 @@ public class EntityManagerTest extends HubTestBase {
     public void clearDbs() {
         deleteProjectDir();
         // FIXME -- test eval requires admin to remove all the modeules.  rewrite to remove query options...
-        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_MODULES_DB_NAME);
+        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_STAGING_MODULES_DB_NAME);
         basicSetup();
         installHubModules();
         getPropsMgr().deletePropertiesFile();

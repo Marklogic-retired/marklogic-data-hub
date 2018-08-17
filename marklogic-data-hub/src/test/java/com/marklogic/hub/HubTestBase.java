@@ -121,6 +121,7 @@ public class HubTestBase {
 
     public  String host;
     public  int stagingPort;
+    public int finalPort;
     public  int jobPort;
     public  String user;
     public  String password;
@@ -128,6 +129,7 @@ public class HubTestBase {
     public  String managePassword;
     protected  Authentication stagingAuthMethod;
     private  Authentication jobAuthMethod;
+    private  Authentication finalAuthMethod;
     public  DatabaseClient stagingClient = null;
     // this is needed for some evals in the test suite that are not mainline tests.
     public  DatabaseClient stagingModulesClient = null;
@@ -208,6 +210,7 @@ public class HubTestBase {
         host = properties.getProperty("mlHost");
         stagingPort = Integer.parseInt(properties.getProperty("mlStagingPort"));
         jobPort = Integer.parseInt(properties.getProperty("mlJobPort"));
+        finalPort = Integer.parseInt(properties.getProperty("mlFinalPort"));
         user = properties.getProperty("mlUsername");
         password = properties.getProperty("mlPassword");
         manageUser = properties.getProperty("mlManageUsername");
@@ -224,6 +227,12 @@ public class HubTestBase {
 
 
         auth = properties.getProperty("mlFinalAuth");
+        if (auth != null) {
+            finalAuthMethod = Authentication.valueOf(auth.toUpperCase());
+        }
+        else {
+            finalAuthMethod = Authentication.DIGEST;
+        }
 
         auth = properties.getProperty("mlJobAuth");
         if (auth != null) {
@@ -245,11 +254,11 @@ public class HubTestBase {
 
         try {
         	stagingClient = getClient(host, stagingPort, HubConfig.DEFAULT_STAGING_NAME, user, password, stagingAuthMethod);
-            stagingModulesClient  = getClient(host, stagingPort, HubConfig.DEFAULT_MODULES_DB_NAME, user, password, stagingAuthMethod);
-            finalClient = getClient(host, stagingPort, HubConfig.DEFAULT_FINAL_NAME, user, password, stagingAuthMethod);
-            finalModulesClient  = getClient(host, stagingPort, HubConfig.DEFAULT_MODULES_DB_NAME, manageUser, managePassword, stagingAuthMethod);
+            stagingModulesClient  = getClient(host, stagingPort, HubConfig.DEFAULT_STAGING_MODULES_DB_NAME, user, password, stagingAuthMethod);
+            finalClient = getClient(host, finalPort, HubConfig.DEFAULT_FINAL_NAME, user, password, finalAuthMethod);
+            finalModulesClient  = getClient(host, finalPort, HubConfig.DEFAULT_STAGING_MODULES_DB_NAME, manageUser, managePassword, stagingAuthMethod);
             jobClient = getClient(host, jobPort, HubConfig.DEFAULT_JOB_NAME, user, password, jobAuthMethod);
-            jobModulesClient  = getClient(host, stagingPort, HubConfig.DEFAULT_MODULES_DB_NAME, user, password, jobAuthMethod);
+            jobModulesClient  = getClient(host, stagingPort, HubConfig.DEFAULT_STAGING_MODULES_DB_NAME, user, password, jobAuthMethod);
         }
         catch(Exception e) {
         	System.err.println("client objects not created.");
@@ -355,21 +364,22 @@ public class HubTestBase {
             .build();
         hubConfig.setPort(DatabaseKind.STAGING, stagingPort);
         hubConfig.setPort(DatabaseKind.JOB, jobPort);
-        hubConfig.getAppConfig().setAppServicesUsername(user);
-        hubConfig.getAppConfig().setAppServicesPassword(password);
-        hubConfig.getAppConfig().setHost(host);
+        hubConfig.setPort(DatabaseKind.FINAL, finalPort);
+        hubConfig.getStagingAppConfig().setAppServicesUsername(user);
+        hubConfig.getStagingAppConfig().setAppServicesPassword(password);
+        hubConfig.getStagingAppConfig().setHost(host);
         if(isSslRun()) {
-        	hubConfig.getAppConfig().setSimpleSslConfig();
+        	hubConfig.getStagingAppConfig().setSimpleSslConfig();
         }
         if(isCertAuth()) {
-        	AppConfig appConfig = hubConfig.getAppConfig();
+        	AppConfig appConfig = hubConfig.getStagingAppConfig();
         	appConfig.setRestSslContext(certContext);
         	appConfig.setRestSecurityContextType(SecurityContextType.CERTIFICATE);
 
         	appConfig.setAppServicesSslContext(certContext);
         	appConfig.setHost(bootStrapHost);
         	appConfig.setAppServicesSecurityContextType(SecurityContextType.CERTIFICATE);
-        	hubConfig.setAppConfig(appConfig);
+        	hubConfig.setStagingAppConfig(appConfig);
 
         	hubConfig.setSslContext(DatabaseKind.STAGING,certContext);
         	hubConfig.setSslContext(DatabaseKind.FINAL,certContext);
@@ -630,7 +640,7 @@ public class HubTestBase {
     }
 
     protected EvalResultIterator runInModules(String query) {
-        return runInDatabase(query, HubConfig.DEFAULT_MODULES_DB_NAME);
+        return runInDatabase(query, HubConfig.DEFAULT_STAGING_MODULES_DB_NAME);
     }
 
     protected EvalResultIterator runInDatabase(String query, String databaseName) {
@@ -642,7 +652,7 @@ public class HubTestBase {
             case HubConfig.DEFAULT_FINAL_NAME:
                 eval = finalClient.newServerEval();
                 break;
-            case HubConfig.DEFAULT_MODULES_DB_NAME:
+            case HubConfig.DEFAULT_STAGING_MODULES_DB_NAME:
                 eval = stagingModulesClient.newServerEval();
                 break;
 
@@ -744,7 +754,7 @@ public class HubTestBase {
 
         SimpleAppDeployer deployer = new SimpleAppDeployer(hubConfig.getManageClient(), hubConfig.getAdminManager());
         deployer.setCommands(commands);
-        deployer.deploy(hubConfig.getAppConfig());
+        deployer.deploy(hubConfig.getStagingAppConfig());
     }
 
     protected void installUserModules(HubConfig hubConfig, boolean force) {
@@ -757,7 +767,7 @@ public class HubTestBase {
 
         SimpleAppDeployer deployer = new SimpleAppDeployer(((HubConfigImpl)hubConfig).getManageClient(), ((HubConfigImpl)hubConfig).getAdminManager());
         deployer.setCommands(commands);
-        deployer.deploy(hubConfig.getAppConfig());
+        deployer.deploy(hubConfig.getStagingAppConfig());
     }
 
 	protected  void sslSetup()  {

@@ -4,7 +4,7 @@
   "root": "/",
   "group-name": "%%GROUP%%",
   "port": "%%mlJobPort%%",
-  "modules-database": "%%mlModulesDbName%%",
+  "modules-database": "%%mlStagingModulesDbName%%",
   "content-database": "%%mlJobDbName%%",
   "authentication": "%%mlJobAuth%%",
   "default-error-format": "json",

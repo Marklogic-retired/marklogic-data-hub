@@ -4,7 +4,7 @@
   "root": "/",
   "group-name": "%%GROUP%%",
   "port": "%%mlStagingPort%%",
-  "modules-database": "%%mlModulesDbName%%",
+  "modules-database": "%%mlStagingModulesDbName%%",
   "content-database": "%%mlStagingDbName%%",
   "authentication": "%%mlStagingAuth%%",
   "default-error-format": "json",
