@@ -1,8 +1,5 @@
-import { browser, element, by, ExpectedConditions as EC} from 'protractor';
-import loginPage from '../../page-objects/auth/login';
+import { browser, by, ExpectedConditions as EC} from 'protractor';
 import flowPage from '../../page-objects/flows/flows';
-import tracesPage from '../../page-objects/traces/traces';
-import traceViewerPage from '../../page-objects/traceViewer/traceViewer';
 import appPage from '../../page-objects/appPage';
 import entityPage from '../../page-objects/entities/entities';
 import browsePage from '../../page-objects/browse/browse';
@@ -236,11 +233,6 @@ export default function() {
         expect(viewerPage.verifyHarmonizedProperty('approvalDate', '2013-06-28T00:00:00Z').isPresent()).toBeTruthy();
         expect(viewerPage.verifyHarmonizedPropertyAtomicValue('cost', 60000000).isPresent()).toBeTruthy();
         expect(viewerPage.verifyHarmonizedProperty('title', 'Adaptable Program Loan').isPresent()).toBeTruthy();
-      });
-
-      it ('should go to flows page', function() {
-        appPage.flowsTab.click();
-        flowPage.isLoaded();
       });
     });
   }

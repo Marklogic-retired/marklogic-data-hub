@@ -80,7 +80,7 @@ public class PiiE2E extends HubTestBase {
     @BeforeEach
     public void setup() {
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME,  HubConfig.DEFAULT_FINAL_NAME);
-        installUserModules(getHubConfig(), true);
+        installUserModules(getHubAdminConfig(), true);
         installHubModules();
         // Hardcoding to "digest" auth for now
         // needs to be final db
@@ -89,7 +89,7 @@ public class PiiE2E extends HubTestBase {
 
         try {
             runInputFLow();
-            runHarmonizeFlow("harmonizer", stagingClient, HubConfig.DEFAULT_FINAL_NAME);
+            runHarmonizeFlow("harmonizer", flowRunnerClient, HubConfig.DEFAULT_FINAL_NAME);
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }
@@ -160,8 +160,8 @@ public class PiiE2E extends HubTestBase {
         });
 
         // save pii, install user modules and deploy security
-        installUserModules(getHubConfig(), true);
-        EntityManager entityManager = EntityManager.create(getHubConfig());
+        installUserModules(getHubAdminConfig(), true);
+        EntityManager entityManager = EntityManager.create(getHubAdminConfig());
         entityManager.savePii();
 
         deploySecurity();
@@ -184,10 +184,10 @@ public class PiiE2E extends HubTestBase {
     @Test
     public void testSavePii() throws Exception {
     	installEntities();
-    	EntityManager entityManager = EntityManager.create(getHubConfig());
+    	EntityManager entityManager = EntityManager.create(getHubAdminConfig());
     	entityManager.savePii();
 
-        verifyResults(getHubConfig().getUserSecurityDir());
+        verifyResults(getHubAdminConfig().getUserSecurityDir());
 
     }
 
@@ -236,7 +236,7 @@ public class PiiE2E extends HubTestBase {
 
 
     private void deploySecurity() {
-    	HubConfigImpl hubConfig = (HubConfigImpl) getHubConfig();
+    	HubConfigImpl hubConfig = (HubConfigImpl) getHubAdminConfig();
 		// Security
 		List<Command> securityCommands = new ArrayList<Command>();
 		securityCommands.add(new DeployRolesCommand());
@@ -266,7 +266,7 @@ public class PiiE2E extends HubTestBase {
         runFlow.addParameter("flow-name", "test-data");
         runFlow.addParameter("job-id", UUID.randomUUID().toString());
 
-        DataMovementManager stagingDataMovementManager = stagingClient.newDataMovementManager();
+        DataMovementManager stagingDataMovementManager = flowRunnerClient.newDataMovementManager();
         WriteBatcher batcher = stagingDataMovementManager.newWriteBatcher();
         batcher.withBatchSize(1).withTransform(runFlow);
         batcher.onBatchSuccess(batch -> {
@@ -296,7 +296,7 @@ public class PiiE2E extends HubTestBase {
     }
 
     private void runHarmonizeFlow(String flowName, DatabaseClient srcClient, String destDb){
-    	FlowManager flowManager = FlowManager.create(getHubConfig());
+    	FlowManager flowManager = FlowManager.create(getHubFlowRunnerConfig());
         Flow harmonizeFlow = flowManager.getFlow("SupportCall", flowName, FlowType.HARMONIZE);
         FlowRunner flowRunner = flowManager.newFlowRunner()
             .withFlow(harmonizeFlow)

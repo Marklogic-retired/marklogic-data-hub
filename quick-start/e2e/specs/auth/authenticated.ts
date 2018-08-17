@@ -1,8 +1,8 @@
-import { protractor , browser, element, by, By, $, $$, ExpectedConditions as EC} from 'protractor';
-import { pages } from '../../page-objects/page';
+import {  browser, ExpectedConditions as EC} from 'protractor';
 import loginPage from '../../page-objects/auth/login';
 import dashboardPage from '../../page-objects/dashboard/dashboard';
 import appPage from '../../page-objects/appPage';
+const fs = require('fs-extra');
 
 export default function(tmpDir) {
   describe('login', () => {
@@ -76,6 +76,20 @@ export default function(tmpDir) {
       browser.wait(EC.elementToBeClickable(loginPage.postInitTab));
     });
 
+    it ('should copy run-flow-user.json file', function() {
+      //copy run-flow-user.json
+      console.log('copy run-flow-user.json');
+      let runFlowUserFilePath = 'e2e/qa-data/users/run-flow-user.json';
+      fs.copy(runFlowUserFilePath, tmpDir + '/hub-internal-config/security/users/run-flow-user.json');
+    });
+
+    it ('should copy flow-admin-user.json file', function() {
+      //copy flow-admin-user.json
+      console.log('copy flow-admin-user.json');
+      let flowAdminUserFilePath = 'e2e/qa-data/users/flow-admin-user.json';
+      fs.copy(flowAdminUserFilePath, tmpDir + '/hub-internal-config/security/users/flow-admin-user.json');
+    });
+
     it ('Should be on the post init page', function() {
       expect(loginPage.projectDirTab.isDisplayed()).toBe(false);
       expect(loginPage.initIfNeededTab.isDisplayed()).toBe(false);
@@ -114,15 +128,14 @@ export default function(tmpDir) {
       expect(loginPage.requiresUpdateUpdateTab.isDisplayed()).toBe(false);
       expect(loginPage.preInstallCheckTab.isDisplayed()).toBe(false);
       expect(loginPage.installerTab.isPresent()).toBe(false);
-      // Bug: DHFPROD-925
       //negative test on login
-      /*console.log('login negative test');
+      console.log('login negative test');
       loginPage.loginAs('foo', 'foo');
       expect(loginPage.loginInvalidCredentialsError.isDisplayed()).toBe(true);
       loginPage.loginAs('foo', '');
       expect(loginPage.loginInvalidCredentialsError.isDisplayed()).toBe(true);
       loginPage.loginAs('', 'foo');
-      expect(loginPage.loginInvalidCredentialsError.isDisplayed()).toBe(true);*/
+      expect(loginPage.loginInvalidCredentialsError.isDisplayed()).toBe(true);
       loginPage.login();
     });
 

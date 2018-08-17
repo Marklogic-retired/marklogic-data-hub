@@ -27,6 +27,7 @@ import com.marklogic.client.io.StringHandle;
 import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubConfigBuilder;
+import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.flow.*;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.FileUtil;
@@ -64,7 +65,6 @@ public class FlowManagerServiceTest extends AbstractServiceTest {
     @Before
     public void setup() {
         createProjectDir();
-
         Scaffolding scaffolding = Scaffolding.create(projectDir.toString(), stagingClient);
         scaffolding.createEntity(ENTITY);
         scaffolding.createFlow(ENTITY, "sjs-json-input-flow", FlowType.INPUT,
@@ -105,7 +105,7 @@ public class FlowManagerServiceTest extends AbstractServiceTest {
         Path harmonizeDir = projectDir.resolve("plugins/entities/" + ENTITY + "/harmonize");
         FileUtil.copy(getResourceStream("flow-manager/sjs-harmonize-flow/headers.sjs"), harmonizeDir.resolve("sjs-json-harmonization-flow/headers.sjs").toFile());
 
-        installUserModules(getHubConfig(), true);
+        installUserModules(getHubAdminConfig(), true);
     }
 
     protected void setEnvConfig(EnvironmentConfig envConfig) {
@@ -146,7 +146,7 @@ public class FlowManagerServiceTest extends AbstractServiceTest {
 
         String flowName = "sjs-json-input-flow";
 
-        FlowManager flowManager = FlowManager.create(getHubConfig());
+        FlowManager flowManager = FlowManager.create(getHubFlowRunnerConfig());
         Flow flow = flowManager.getFlow(ENTITY, flowName, FlowType.INPUT);
 
         ObjectMapper objectMapper = new ObjectMapper();
@@ -167,7 +167,7 @@ public class FlowManagerServiceTest extends AbstractServiceTest {
         FlowStatusListener flowStatusListener = (jobId, percentComplete, message) -> {
             logger.error(message);
         };
-        MlcpRunner mlcpRunner = new MlcpRunner(null, "com.marklogic.hub.util.MlcpMain", getHubConfig(), flow, stagingClient, mlcpOptions, flowStatusListener);
+        MlcpRunner mlcpRunner = new MlcpRunner(null, "com.marklogic.hub.util.MlcpMain", getHubFlowRunnerConfig(), flow, stagingClient, mlcpOptions, flowStatusListener);
         mlcpRunner.start();
         mlcpRunner.join();
 
@@ -194,10 +194,10 @@ public class FlowManagerServiceTest extends AbstractServiceTest {
         setEnvConfig(envConfig);
 
         String flowName = "sjs-json-harmonization-flow";
-        FlowManager flowManager = FlowManager.create(getHubConfig());
+        FlowManager flowManager = FlowManager.create(getHubFlowRunnerConfig());
         Flow flow = flowManager.getFlow(ENTITY, flowName, FlowType.HARMONIZE);
 
-        HubConfig hubConfig = getHubConfig();
+        //HubConfig hubConfig = getHubConfig();
 
         Object monitor = new Object();
         JobTicket jobTicket = fm.runFlow(flow, 1, 1, null, new FlowStatusListener(){
@@ -237,10 +237,10 @@ public class FlowManagerServiceTest extends AbstractServiceTest {
         setEnvConfig(envConfig);
 
         String flowName = "sjs-json-harmonization-flow";
-        FlowManager flowManager = FlowManager.create(getHubConfig());
+        FlowManager flowManager = FlowManager.create(getHubFlowRunnerConfig());
         Flow flow = flowManager.getFlow(ENTITY, flowName, FlowType.HARMONIZE);
 
-        HubConfig hubConfig = getHubConfig();
+        //HubConfig hubConfig = getHubConfig();
 
         final String OPT_VALUE = "test-value";
         Map<String, Object> options = new HashMap<String, Object>();
