@@ -43,7 +43,7 @@ public class HubProjectImpl implements HubProject {
 
     public static final String ENTITY_CONFIG_DIR = PATH_PREFIX + "entity-config";
     public static final String USER_MODULES_DIR = PATH_PREFIX + "ml-modules";
-    public static final String HUB_MODULES_DIR = PATH_PREFIX + "ml-staging-modules";
+    public static final String HUB_MODULES_DIR = PATH_PREFIX + "ml-modules-staging";
 
     private Path projectDir;
     private Path pluginsDir;

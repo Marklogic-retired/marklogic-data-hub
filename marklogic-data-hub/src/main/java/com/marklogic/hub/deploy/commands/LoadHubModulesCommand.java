@@ -68,6 +68,7 @@ public class LoadHubModulesCommand extends AbstractCommand {
         propsManager.deletePropertiesFile();
 
         DatabaseClient modulesClient = hubConfig.newModulesDbClient();
+        DatabaseClient stagingClient = hubConfig.newStagingClient();
 
         AppConfig appConfig = context.getAppConfig();
         AssetFileLoader assetFileLoader = new AssetFileLoader(modulesClient);
@@ -88,7 +89,7 @@ public class LoadHubModulesCommand extends AbstractCommand {
         modulesLoader.setModulesManager(propsManager);
         if (caughtException == null) {
             modulesLoader.loadModules("classpath*:/ml-modules", new DefaultModulesFinder(), modulesClient);
-            modulesLoader.loadModules("classpath*:/ml-modules", new SearchOptionsFinder(), modulesClient);
+            modulesLoader.loadModules("classpath*:/ml-modules-staging", new SearchOptionsFinder(), modulesClient);
         }
         if (caughtException == null) {
             modulesLoader.loadModules("classpath*:/ml-modules-traces", new SearchOptionsFinder(), hubConfig.newJobDbClient());

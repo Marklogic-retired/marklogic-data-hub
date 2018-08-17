@@ -47,7 +47,7 @@ public class MappingManagerTest extends HubTestBase {
     private        String mappingName = "my-fun-test";
 
     @BeforeEach
-    public void clearDbs() {
+    public void setup() {
         basicSetup();
         //clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_STAGING_MODULES_DB_NAME);
         //installHubModules();

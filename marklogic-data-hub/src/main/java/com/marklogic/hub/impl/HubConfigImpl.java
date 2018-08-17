@@ -974,6 +974,20 @@ public class HubConfigImpl implements HubConfig {
         return newStagingClient(finalDbName);
     }
 
+    public DatabaseClient newFinalAppserverClient() {
+        AppConfig appConfig = getFinalAppConfig();
+        DatabaseClientConfig config = new DatabaseClientConfig(appConfig.getHost(), finalPort, getMlUsername(), getMlPassword());
+        config.setDatabase(finalDbName);
+        config.setSecurityContextType(SecurityContextType.valueOf(finalAuthMethod.toUpperCase()));
+        config.setSslHostnameVerifier(finalSslHostnameVerifier);
+        config.setSslContext(finalSslContext);
+        config.setCertFile(finalCertFile);
+        config.setCertPassword(finalCertPassword);
+        config.setExternalName(finalExternalName);
+        config.setTrustManager(finalTrustManager);
+        return appConfig.getConfiguredDatabaseClientFactory().newDatabaseClient(config);
+    }
+
     public DatabaseClient newJobDbClient() {
         AppConfig appConfig = getStagingAppConfig();
         DatabaseClientConfig config = new DatabaseClientConfig(appConfig.getHost(), jobPort, mlUsername, mlPassword);
@@ -994,15 +1008,17 @@ public class HubConfigImpl implements HubConfig {
 
     public DatabaseClient newModulesDbClient() {
         AppConfig appConfig = getStagingAppConfig();
+        // this has to be finalPort because final is a stock REST API.
+        // staging will not be; but its rewriter isn't loaded yet.
         DatabaseClientConfig config = new DatabaseClientConfig(appConfig.getHost(), finalPort, mlUsername, mlPassword);
         config.setDatabase(appConfig.getModulesDatabaseName());
         config.setSecurityContextType(SecurityContextType.valueOf(finalAuthMethod.toUpperCase()));
-        //config.setSslHostnameVerifier(finalSslHostnameVerifier);
-        //config.setSslContext(finalSslContext);
-        //config.setCertFile(finalCertFile);
-        //config.setCertPassword(finalCertPassword);
-        //config.setExternalName(finalExternalName);
-        //config.setTrustManager(finalTrustManager);
+        config.setSslHostnameVerifier(finalSslHostnameVerifier);
+        config.setSslContext(finalSslContext);
+        config.setCertFile(finalCertFile);
+        config.setCertPassword(finalCertPassword);
+        config.setExternalName(finalExternalName);
+        config.setTrustManager(finalTrustManager);
         return appConfig.getConfiguredDatabaseClientFactory().newDatabaseClient(config);
     }
 
