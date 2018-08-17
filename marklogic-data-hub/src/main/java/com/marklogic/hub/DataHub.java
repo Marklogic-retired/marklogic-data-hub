@@ -106,17 +106,43 @@ public interface DataHub {
     void updateIndexes();
 
     /**
-     * Uninstalls the data hub configuration and server-side config files from MarkLogic
+     * Uninstalls the data hub configuration, server-side config files and final databases and servers from MarkLogic
      * Must be run as a user with sufficient privileges to install a data hub.
      */
     void uninstall();
+
+    /**
+     * Uninstalls the data hub configuration, server-side config files and final databases and servers from MarkLogic
+     * Must be run as a user with sufficient privileges to install a data hub.
+     * @param listener - the callback method to receive status updates
+     */
+    void uninstall(HubDeployStatusListener listener);
+
+    /**
+     * Uninstalls the data hub configuration and server-side config files from MarkLogic
+     * Must be run as a user with sufficient privileges to install a data hub.
+     */
+    void uninstallStaging();
 
     /**
      * Uninstalls the data hub configuration and server-side config files from MarkLogic
      * Must be run as a user with sufficient privileges to install a data hub.
      * @param listener - the callback method to receive status updates
      */
-    void uninstall(HubDeployStatusListener listener);
+    void uninstallStaging(HubDeployStatusListener listener);
+
+    /**
+     * Uninstalls the final databases and servers from MarkLogic
+     * Must be run as a user with sufficient privileges to install a data hub.
+     */
+    void uninstallFinal();
+
+    /**
+     * Uninstalls the final databases and servers from MarkLogic
+     * Must be run as a user with sufficient privileges to install a data hub.
+     * @param listener - the callback method to receive status updates
+     */
+    void uninstallFinal(HubDeployStatusListener listener);
 
     /**
      * Checks to make sure all the versions and database in a valid configuration with version check

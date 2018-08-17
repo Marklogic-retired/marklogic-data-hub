@@ -77,12 +77,13 @@ public class HubConfigImpl implements HubConfig {
     protected Integer finalPort = DEFAULT_FINAL_PORT;
     protected String finalAuthMethod = DEFAULT_AUTH_METHOD;
     private String finalScheme = DEFAULT_SCHEME;
-//    private boolean finalSimpleSsl = false;
-//    private SSLContext finalSslContext;
-//    private DatabaseClientFactory.SSLHostnameVerifier finalSslHostnameVerifier;
-//    private String finalCertFile;
-//    private String finalCertPassword;
-//    private String finalExternalName;
+    private boolean finalSimpleSsl = false;
+    private SSLContext finalSslContext;
+    private DatabaseClientFactory.SSLHostnameVerifier finalSslHostnameVerifier;
+    private String finalCertFile;
+    private String finalCertPassword;
+    private String finalExternalName;
+    private X509TrustManager finalTrustManager;
 
     protected String jobDbName = DEFAULT_JOB_NAME;
     protected String jobHttpName = DEFAULT_JOB_NAME;
@@ -98,23 +99,16 @@ public class HubConfigImpl implements HubConfig {
     private String jobExternalName;
     private X509TrustManager jobTrustManager;
 
-//    protected String modulesDbName = DEFAULT_STAGING_MODULES_DB_NAME;
-//    protected Integer modulesForestsPerHost = 1;
     protected String stagingModulesDbName = DEFAULT_STAGING_MODULES_DB_NAME;
     protected Integer stagingModulesForestsPerHost = 1;
     protected String finalModulesDbName = DEFAULT_FINAL_MODULES_DB_NAME;
     protected Integer finalModulesForestsPerHost = 1;
 
-
-//    protected String triggersDbName = DEFAULT_TRIGGERS_DB_NAME;
-//    protected Integer triggersForestsPerHost = 1;
     protected String stagingTriggersDbName = DEFAULT_STAGING_TRIGGERS_DB_NAME;
     protected Integer stagingTriggersForestsPerHost = 1;
     protected String finalTriggersDbName = DEFAULT_FINAL_TRIGGERS_DB_NAME;
     protected Integer finalTriggersForestsPerHost = 1;
 
-//    protected String schemasDbName = DEFAULT_SCHEMAS_DB_NAME;
-//    protected Integer schemasForestsPerHost = 1;
     protected String stagingSchemasDbName = DEFAULT_STAGING_SCHEMAS_DB_NAME;
     protected Integer stagingSchemasForestsPerHost = 1;
     protected String finalSchemasDbName = DEFAULT_FINAL_SCHEMAS_DB_NAME;
@@ -410,6 +404,9 @@ public class HubConfigImpl implements HubConfig {
             case TRACE:
                 sslContext = this.jobSslContext;
                 break;
+            case FINAL:
+                sslContext = this.finalSslContext;
+                break;
             default:
                 throw new InvalidDBOperationError(kind, "get ssl context");
         }
@@ -426,6 +423,9 @@ public class HubConfigImpl implements HubConfig {
                 break;
             case TRACE:
                 this.jobSslContext = sslContext;
+                break;
+            case FINAL:
+                this.finalSslContext = sslContext;
                 break;
             default:
                 throw new InvalidDBOperationError(kind, "set ssl context");
@@ -444,6 +444,9 @@ public class HubConfigImpl implements HubConfig {
             case TRACE:
                 sslHostnameVerifier = this.jobSslHostnameVerifier;
                 break;
+            case FINAL:
+                sslHostnameVerifier = this.finalSslHostnameVerifier;
+                break;
             default:
                 throw new InvalidDBOperationError(kind, "get ssl hostname verifier");
         }
@@ -460,6 +463,9 @@ public class HubConfigImpl implements HubConfig {
                 break;
             case TRACE:
                 this.jobSslHostnameVerifier = sslHostnameVerifier;
+                break;
+            case FINAL:
+                this.finalSslHostnameVerifier = sslHostnameVerifier;
                 break;
             default:
                 throw new InvalidDBOperationError(kind, "set ssl hostname verifier");
@@ -512,6 +518,8 @@ public class HubConfigImpl implements HubConfig {
                 return this.stagingTrustManager;
             case JOB:
                 return this.jobTrustManager;
+            case FINAL:
+                return this.finalTrustManager;
             default:
                 throw new InvalidDBOperationError(kind, "set auth method");
         }
@@ -525,6 +533,9 @@ public class HubConfigImpl implements HubConfig {
                 break;
             case JOB:
                 this.jobTrustManager = trustManager;
+                break;
+            case FINAL:
+                this.finalTrustManager = trustManager;
                 break;
             default:
                 throw new InvalidDBOperationError(kind, "set auth method");
@@ -583,6 +594,9 @@ public class HubConfigImpl implements HubConfig {
             case TRACE:
                 simple = this.jobSimpleSsl;
                 break;
+            case FINAL:
+                simple = this.finalSimpleSsl;
+                break;
             default:
                 throw new InvalidDBOperationError(kind, "get simple ssl");
         }
@@ -599,6 +613,9 @@ public class HubConfigImpl implements HubConfig {
                 break;
             case TRACE:
                 this.jobSimpleSsl = simpleSsl;
+                break;
+            case FINAL:
+                this.finalSimpleSsl = simpleSsl;
                 break;
             default:
                 throw new InvalidDBOperationError(kind, "set simple ssl");
@@ -617,6 +634,9 @@ public class HubConfigImpl implements HubConfig {
             case TRACE:
                 certFile = this.jobCertFile;
                 break;
+            case FINAL:
+                certFile = this.finalCertFile;
+                break;
             default:
                 throw new InvalidDBOperationError(kind, "get cert file");
         }
@@ -633,6 +653,9 @@ public class HubConfigImpl implements HubConfig {
                 break;
             case TRACE:
                 this.jobCertFile = certFile;
+                break;
+            case FINAL:
+                this.finalCertFile = certFile;
                 break;
             default:
                 throw new InvalidDBOperationError(kind, "set certificate file");
@@ -651,6 +674,9 @@ public class HubConfigImpl implements HubConfig {
             case TRACE:
                 certPass = this.jobCertPassword;
                 break;
+            case FINAL:
+                certPass = this.finalCertPassword;
+                break;
             default:
                 throw new InvalidDBOperationError(kind, "get cert password");
         }
@@ -667,6 +693,9 @@ public class HubConfigImpl implements HubConfig {
                 break;
             case TRACE:
                 this.jobCertPassword = certPassword;
+                break;
+            case FINAL:
+                this.finalCertPassword = certPassword;
                 break;
             default:
                 throw new InvalidDBOperationError(kind, "set certificate password");
@@ -685,6 +714,9 @@ public class HubConfigImpl implements HubConfig {
             case TRACE:
                 name = this.jobExternalName;
                 break;
+            case FINAL:
+                name = this.finalExternalName;
+                break;
             default:
                 throw new InvalidDBOperationError(kind, "get external name");
         }
@@ -701,6 +733,9 @@ public class HubConfigImpl implements HubConfig {
                 break;
             case TRACE:
                 this.jobExternalName = externalName;
+                break;
+            case FINAL:
+                this.finalExternalName = externalName;
                 break;
             default:
                 throw new InvalidDBOperationError(kind, "set auth method");
@@ -980,6 +1015,17 @@ public class HubConfigImpl implements HubConfig {
     }
 
     @JsonIgnore
+    @Override public Path getHubStagingModulesDir() {
+        return hubProject.getHubStagingModulesDir();
+    }
+
+    @JsonIgnore
+    @Override public Path getUserStagingModulesDir() {
+        return hubProject.getUserStagingModulesDir();
+    }
+
+
+    @JsonIgnore
     @Override public Path getHubPluginsDir() {
         return hubProject.getHubPluginsDir();
     }
@@ -1172,17 +1218,11 @@ public class HubConfigImpl implements HubConfig {
 
         HashMap<String, Integer> forestCounts = new HashMap<>();
         forestCounts.put(stagingDbName, stagingForestsPerHost);
-        forestCounts.put(finalDbName, finalForestsPerHost);
         forestCounts.put(jobDbName, jobForestsPerHost);
         forestCounts.put(stagingModulesDbName, stagingModulesForestsPerHost);
         forestCounts.put(stagingTriggersDbName, stagingTriggersForestsPerHost);
         forestCounts.put(stagingSchemasDbName, stagingSchemasForestsPerHost);
         config.setForestCounts(forestCounts);
-
-        ConfigDir configDir = new ConfigDir(getUserConfigDir().toFile());
-        config.setConfigDir(configDir);
-
-        config.setSchemasPath(getUserConfigDir().resolve("schemas").toString());
 
         Map<String, String> customTokens = getCustomTokens(config, config.getCustomTokens());
 
@@ -1215,9 +1255,7 @@ public class HubConfigImpl implements HubConfig {
         config.setModulePermissions(modulePermissions);
 
         HashMap<String, Integer> forestCounts = new HashMap<>();
-        forestCounts.put(stagingDbName, stagingForestsPerHost);
         forestCounts.put(finalDbName, finalForestsPerHost);
-        forestCounts.put(jobDbName, jobForestsPerHost);
         forestCounts.put(finalModulesDbName, finalModulesForestsPerHost);
         forestCounts.put(finalTriggersDbName, finalTriggersForestsPerHost);
         forestCounts.put(finalSchemasDbName, finalSchemasForestsPerHost);
