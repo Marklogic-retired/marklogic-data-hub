@@ -439,13 +439,8 @@ public class DataHubImpl implements DataHub {
      */
     @Override public void uninstallFinal(HubDeployStatusListener listener) {
         logger.warn("Uninstalling Final Databases and Servers from MarkLogic");
-        AppConfig stagingAppConfig = hubConfig.getStagingAppConfig();
-        HubAppDeployer deployer = new HubAppDeployer(getManageClient(), getAdminManager(), listener, hubConfig.newStagingClient());
-        deployer.setCommands(getStagingCommandList());
-        deployer.undeploy(stagingAppConfig);
-
         AppConfig finalAppConfig = hubConfig.getFinalAppConfig();
-        deployer = new HubAppDeployer(getManageClient(), getAdminManager(), listener, hubConfig.newFinalClient());
+        HubAppDeployer deployer = new HubAppDeployer(getManageClient(), getAdminManager(), listener, hubConfig.newFinalClient());
         deployer.setCommands(getFinalCommandList());
         deployer.undeploy(finalAppConfig);
     }

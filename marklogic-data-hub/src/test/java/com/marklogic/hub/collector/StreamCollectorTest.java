@@ -64,7 +64,7 @@ public class StreamCollectorTest extends HubTestBase {
 
         createProjectDir();
 
-        Path dbDir = projectDir.resolve("user-config").resolve("databases");
+        Path dbDir = projectDir.resolve("ml-config").resolve("databases");
         dbDir.toFile().mkdirs();
         FileUtil.copy(getResourceStream("stream-collector-test/staging-database.json"), dbDir.resolve("staging-database.json").toFile());
 

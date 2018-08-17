@@ -849,8 +849,14 @@ public class HubConfigImpl implements HubConfig {
             finalPort = getEnvPropInteger(environmentProperties, "mlFinalPort", finalPort);
             finalAuthMethod = getEnvPropString(environmentProperties, "mlFinalAuth", finalAuthMethod);
             finalScheme = getEnvPropString(environmentProperties, "mlFinalScheme", finalScheme);
-            // For 3.1 removed some properties that are not in use by DHF.  If DHF again needs the final appserver access in the future
-            // (smart mastering?) then reincorporate the props here
+            if (finalSimpleSsl) {
+                finalSslContext = SimpleX509TrustManager.newSSLContext();
+                finalSslHostnameVerifier = DatabaseClientFactory.SSLHostnameVerifier.ANY;
+                finalTrustManager = new SimpleX509TrustManager();
+            }
+            finalCertFile = getEnvPropString(environmentProperties, "mlfinalCertFile", finalCertFile);
+            finalCertPassword = getEnvPropString(environmentProperties, "mlfinalCertPassword", finalCertPassword);
+            finalExternalName = getEnvPropString(environmentProperties, "mlfinalExternalName", finalExternalName);
 
 
             jobDbName = getEnvPropString(environmentProperties, "mlJobDbName", jobDbName);
