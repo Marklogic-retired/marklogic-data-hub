@@ -45,7 +45,7 @@ public class LoadHubModulesCommandTest extends HubTestBase {
         createProjectDir();
         config = getHubConfig();
         loadHubModulesCommand = new LoadHubModulesCommand(config);
-        commandContext = new CommandContext(config.getAppConfig(), null, null);
+        commandContext = new CommandContext(config.getStagingAppConfig(), null, null);
     }
 
     @Test
