@@ -979,12 +979,12 @@ public class HubConfigImpl implements HubConfig {
         DatabaseClientConfig config = new DatabaseClientConfig(appConfig.getHost(), finalPort, getMlUsername(), getMlPassword());
         config.setDatabase(dbName);
         config.setSecurityContextType(SecurityContextType.valueOf(finalAuthMethod.toUpperCase()));
-        config.setSslHostnameVerifier(stagingSslHostnameVerifier);
-        config.setSslContext(stagingSslContext);
-        config.setCertFile(stagingCertFile);
-        config.setCertPassword(stagingCertPassword);
-        config.setExternalName(stagingExternalName);
-        config.setTrustManager(stagingTrustManager);
+        config.setSslHostnameVerifier(finalSslHostnameVerifier);
+        config.setSslContext(finalSslContext);
+        config.setCertFile(finalCertFile);
+        config.setCertPassword(finalCertPassword);
+        config.setExternalName(finalExternalName);
+        config.setTrustManager(finalTrustManager);
         return appConfig.getConfiguredDatabaseClientFactory().newDatabaseClient(config);
     }
 
