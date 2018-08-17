@@ -158,10 +158,15 @@ public class LoadUserModulesCommand extends AbstractCommand {
         Path startPath = userModulesPath.resolve("entities");
         Path mappingPath = userModulesPath.resolve("mappings");
 
+        Path stagingModulesPath = hubConfig.getHubStagingModulesDir();
+        String stagingModulesDir = stagingModulesPath.normalize().toAbsolutePath().toString();
+
+
         // load any user files under plugins/* int the modules database.
         // this will ignore REST folders under entities
         DefaultModulesLoader modulesLoader = getStagingModulesLoader(config);
         modulesLoader.loadModules(baseDir, new UserModulesFinder(), stagingClient);
+        modulesLoader.loadModules(stagingModulesDir, new UserModulesFinder(), stagingClient);
         modulesLoader.loadModules("classpath*:/ml-modules-final", new SearchOptionsFinder(), finalClient);
 
         //for now we'll use two different document managers

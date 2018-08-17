@@ -380,6 +380,18 @@ public interface HubConfig {
     DatabaseClient newModulesDbClient();
 
     /**
+     * Gets the path for the hub staging modules
+     * @return the path for the hub staging modules
+     */
+    Path getHubStagingModulesDir();
+
+    /**
+     * Gets the path for the user staging modules
+     * @return the path for the user staging modules
+     */
+    Path getUserStagingModulesDir();
+
+    /**
      * Gets the path for the hub plugins directory
      * @return the path for the hub plugins directory
      */

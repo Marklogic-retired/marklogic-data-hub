@@ -136,6 +136,6 @@ class DataHubPlugin implements Plugin<Project> {
         }
 
         mlAppDeployer.setCommands(((DataHubImpl)dataHub).getStagingCommandList())
-        // TODO Akshay Add final here?
+        // TODO Add final here?
     }
 }

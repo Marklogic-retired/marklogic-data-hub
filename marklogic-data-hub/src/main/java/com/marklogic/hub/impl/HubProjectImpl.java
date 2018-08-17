@@ -42,6 +42,8 @@ import java.util.Set;
 public class HubProjectImpl implements HubProject {
 
     public static final String ENTITY_CONFIG_DIR = PATH_PREFIX + "entity-config";
+    public static final String USER_MODULES_DIR = PATH_PREFIX + "ml-modules";
+    public static final String HUB_MODULES_DIR = PATH_PREFIX + "ml-staging-modules";
 
     private Path projectDir;
     private Path pluginsDir;
@@ -109,7 +111,13 @@ public class HubProjectImpl implements HubProject {
         return getEntityConfigDir().resolve("databases");
     }
 
+    @Override public Path getHubStagingModulesDir() {
+        return this.projectDir.resolve(HUB_MODULES_DIR);
+    }
 
+    @Override public Path getUserStagingModulesDir() {
+        return this.projectDir.resolve(HUB_MODULES_DIR);
+    }
 
     @Override public boolean isInitialized() {
         File buildGradle = this.projectDir.resolve("build.gradle").toFile();
@@ -140,6 +148,12 @@ public class HubProjectImpl implements HubProject {
 
     @Override public void init(Map<String, String> customTokens) {
         this.pluginsDir.toFile().mkdirs();
+
+        Path userModules = this.projectDir.resolve(USER_MODULES_DIR);
+        userModules.toFile().mkdirs();
+
+        Path hubModules = this.projectDir.resolve(HUB_MODULES_DIR);
+        hubModules.toFile().mkdirs();
 
         Path hubServersDir = getHubServersDir();
         hubServersDir.toFile().mkdirs();
