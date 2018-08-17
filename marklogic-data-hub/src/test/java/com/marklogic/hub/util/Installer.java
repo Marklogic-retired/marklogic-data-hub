@@ -1,11 +1,8 @@
 package com.marklogic.hub.util;
 
 import com.marklogic.hub.HubTestBase;
-import com.marklogic.hub.error.CantUpgradeException;
-import org.junit.Test;
 
 public class Installer {
-
 
     HubTestBase htb;
 
@@ -18,13 +15,16 @@ public class Installer {
     // do NOT check in as a a test.
     // @Test
     public void installHubOnce() {
-        htb.createProjectDir();
+    	htb.createProjectDir();
+        if (htb.isCertAuth() || htb.isSslRun()) {
+        	htb.sslSetup();
+        }
         htb.getDataHub().install();
         try {
-            htb.getDataHub().upgradeHub();
+        	htb.getDataHub().upgradeHub();
         } catch (Exception e) {
 
-        }
+        }               
     }
 
     // A method to manually teardown.
@@ -32,10 +32,11 @@ public class Installer {
     // do NOT check in as a a test.
     // @Test
     public void uninstallHub() {
-        htb.createProjectDir();
+    	htb.createProjectDir();
         htb.getDataHub().uninstall();
-        htb.deleteProjectDir();
-
+        if (htb.isCertAuth() || htb.isSslRun()) {
+        	htb.sslCleanup();
+        }
+        htb.deleteProjectDir();        
     }
-
 }

@@ -62,14 +62,14 @@ public class DataHubTest extends HubTestBase {
     public void beforeTests() {
         dh = EasyMock.createMockBuilder(DataHubImpl.class)
             .withConstructor(HubConfig.class)
-            .withArgs(getHubConfig())
+            .withArgs(getHubFlowRunnerConfig())
             .createMock();
         dh.setServerManager(serverManager);
 
         versions = EasyMock.createMockBuilder(Versions.class)
             .addMockedMethod("getMarkLogicVersion")
             .withConstructor(HubConfig.class)
-            .withArgs(getHubConfig())
+            .withArgs(getHubFlowRunnerConfig())
             .createMock();
     }
 
