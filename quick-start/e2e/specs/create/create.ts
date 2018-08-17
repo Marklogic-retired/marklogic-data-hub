@@ -563,6 +563,11 @@ export default function() {
       loginPage.clickNext('EnvironmentTab');
       browser.wait(EC.elementToBeClickable(loginPage.loginTab));
       loginPage.login();
+      browser.wait(EC.elementToBeClickable(appPage.odhLogo));
+    });
+
+    it ('should go to the entity page', function() {
+      appPage.entitiesTab.click();
       entityPage.isLoaded();
     });
 

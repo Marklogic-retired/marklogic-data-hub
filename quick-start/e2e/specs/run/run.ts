@@ -94,6 +94,7 @@ export default function(tmpDir) {
       loginPage.clickNext('EnvironmentTab');
       browser.wait(EC.elementToBeClickable(loginPage.loginTab));
       loginPage.login();
+      browser.wait(EC.elementToBeClickable(appPage.odhLogo));
     });
 
     it ('should go to the flow page', function() {
