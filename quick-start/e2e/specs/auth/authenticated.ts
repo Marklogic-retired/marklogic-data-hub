@@ -177,7 +177,7 @@ export default function(tmpDir) {
     });
 
     it ('should logout', function() {
-      dashboardPage.logout();
+      appPage.logout();
       loginPage.isLoaded();
     });
   });
