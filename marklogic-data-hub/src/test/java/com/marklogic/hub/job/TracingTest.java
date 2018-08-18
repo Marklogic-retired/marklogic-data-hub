@@ -57,7 +57,7 @@ public class TracingTest extends HubTestBase {
         URL url = TracingTest.class.getClassLoader().getResource("tracing-test");
         String path = Paths.get(url.toURI()).toFile().getAbsolutePath();
         createProjectDir(path);
-        installUserModules(getHubConfig(path), true);
+        installUserModules(getHubAdminConfig(path), true);
 
 
      }
@@ -74,10 +74,10 @@ public class TracingTest extends HubTestBase {
         assertEquals(0, getFinalDocCount());
         assertEquals(0, getTracingDocCount());
 
-        Tracing t = Tracing.create(stagingClient);
+        Tracing t = Tracing.create(flowRunnerClient);
         assertFalse(t.isEnabled());
 
-        FlowManager fm = FlowManager.create(getHubConfig());
+        FlowManager fm = FlowManager.create(getHubFlowRunnerConfig());
         Flow flow = fm.getFlow("trace-entity", "tracemeXML");
 
         FlowRunner flowRunner = fm.newFlowRunner()
@@ -96,10 +96,10 @@ public class TracingTest extends HubTestBase {
         assertEquals(0, getFinalDocCount());
         assertEquals(0, getTracingDocCount());
 
-        Tracing t = Tracing.create(stagingClient);
+        Tracing t = Tracing.create(flowRunnerClient);
         assertFalse(t.isEnabled());
 
-        FlowManager fm = FlowManager.create(getHubConfig());
+        FlowManager fm = FlowManager.create(getHubFlowRunnerConfig());
         Flow flow = fm.getFlow("trace-entity", "tracemeJSON");
 
         FlowRunner flowRunner = fm.newFlowRunner()
@@ -118,13 +118,13 @@ public class TracingTest extends HubTestBase {
         assertEquals(0, getFinalDocCount());
         assertEquals(0, getTracingDocCount());
 
-        Tracing t = Tracing.create(stagingClient);
+        Tracing t = Tracing.create(flowRunnerClient);
         assertFalse(t.isEnabled());
 
         enableTracing();
         assertTrue(t.isEnabled());
 
-        FlowManager fm = FlowManager.create(getHubConfig());
+        FlowManager fm = FlowManager.create(getHubFlowRunnerConfig());
         Flow flow = fm.getFlow("trace-entity", "tracemeXML");
 
         FlowRunner flowRunner = fm.newFlowRunner()
@@ -143,13 +143,13 @@ public class TracingTest extends HubTestBase {
         assertEquals(0, getFinalDocCount());
         assertEquals(0, getTracingDocCount());
 
-        Tracing t = Tracing.create(stagingClient);
+        Tracing t = Tracing.create(flowRunnerClient);
         assertFalse(t.isEnabled());
 
         enableTracing();
         assertTrue(t.isEnabled());
 
-        FlowManager fm = FlowManager.create(getHubConfig());
+        FlowManager fm = FlowManager.create(getHubFlowRunnerConfig());
         Flow flow = fm.getFlow("trace-entity", "tracemeXqyXmlWithBinary");
 
         FlowRunner flowRunner = fm.newFlowRunner()
@@ -188,13 +188,13 @@ public class TracingTest extends HubTestBase {
         assertEquals(0, getFinalDocCount());
         assertEquals(0, getTracingDocCount());
 
-        Tracing t = Tracing.create(stagingClient);
+        Tracing t = Tracing.create(flowRunnerClient);
         assertFalse(t.isEnabled());
 
         enableTracing();
         assertTrue(t.isEnabled());
 
-        FlowManager fm = FlowManager.create(getHubConfig());
+        FlowManager fm = FlowManager.create(getHubFlowRunnerConfig());
         Flow flow = fm.getFlow("trace-entity", "tracemeXqyJsonWithBinary");
 
         FlowRunner flowRunner = fm.newFlowRunner()
@@ -223,13 +223,13 @@ public class TracingTest extends HubTestBase {
         assertEquals(0, getFinalDocCount());
         assertEquals(0, getTracingDocCount());
 
-        Tracing t = Tracing.create(stagingClient);
+        Tracing t = Tracing.create(flowRunnerClient);
         assertFalse(t.isEnabled());
 
         enableTracing();
         assertTrue(t.isEnabled());
 
-        FlowManager fm = FlowManager.create(getHubConfig());
+        FlowManager fm = FlowManager.create(getHubFlowRunnerConfig());
         Flow flow = fm.getFlow("trace-entity", "tracemeJSON");
 
         FlowRunner flowRunner = fm.newFlowRunner()
@@ -249,13 +249,13 @@ public class TracingTest extends HubTestBase {
         assertEquals(0, getFinalDocCount());
         assertEquals(0, getTracingDocCount());
 
-        Tracing t = Tracing.create(stagingClient);
+        Tracing t = Tracing.create(flowRunnerClient);
         assertFalse(t.isEnabled());
 
         enableTracing();
         assertTrue(t.isEnabled());
 
-        FlowManager fm = FlowManager.create(getHubConfig());
+        FlowManager fm = FlowManager.create(getHubFlowRunnerConfig());
         Flow flow = fm.getFlow("trace-entity", "tracemeSjsJsonWithBinary");
 
         FlowRunner flowRunner = fm.newFlowRunner()
@@ -283,13 +283,13 @@ public class TracingTest extends HubTestBase {
         assertEquals(0, getFinalDocCount());
         assertEquals(0, getTracingDocCount());
 
-        Tracing t = Tracing.create(stagingClient);
+        Tracing t = Tracing.create(flowRunnerClient);
         assertFalse(t.isEnabled());
 
         enableTracing();
         assertTrue(t.isEnabled());
 
-        FlowManager fm = FlowManager.create(getHubConfig());
+        FlowManager fm = FlowManager.create(getHubFlowRunnerConfig());
         Flow flow = fm.getFlow("trace-entity", "tracemeSjsXmlWithBinary");
 
         FlowRunner flowRunner = fm.newFlowRunner()
@@ -318,10 +318,10 @@ public class TracingTest extends HubTestBase {
         assertEquals(0, getFinalDocCount());
         assertEquals(0, getTracingDocCount());
 
-        Tracing t = Tracing.create(stagingClient);
+        Tracing t = Tracing.create(flowRunnerClient);
         assertFalse(t.isEnabled());
 
-        FlowManager fm = FlowManager.create(getHubConfig());
+        FlowManager fm = FlowManager.create(getHubFlowRunnerConfig());
         Flow flow = fm.getFlow("trace-entity", "tracemeXMLError");
 
         FlowRunner flowRunner = fm.newFlowRunner()
@@ -344,10 +344,10 @@ public class TracingTest extends HubTestBase {
         assertEquals(0, getFinalDocCount());
         assertEquals(0, getTracingDocCount());
 
-        Tracing t = Tracing.create(stagingClient);
+        Tracing t = Tracing.create(flowRunnerClient);
         assertFalse(t.isEnabled());
 
-        FlowManager fm = FlowManager.create(getHubConfig());
+        FlowManager fm = FlowManager.create(getHubFlowRunnerConfig());
         Flow flow = fm.getFlow("trace-entity", "tracemeXMLWriterError");
 
         FlowRunner flowRunner = fm.newFlowRunner()
@@ -370,10 +370,10 @@ public class TracingTest extends HubTestBase {
         assertEquals(0, getFinalDocCount());
         assertEquals(0, getTracingDocCount());
 
-        Tracing t = Tracing.create(stagingClient);
+        Tracing t = Tracing.create(flowRunnerClient);
         assertFalse(t.isEnabled());
 
-        FlowManager fm = FlowManager.create(getHubConfig());
+        FlowManager fm = FlowManager.create(getHubFlowRunnerConfig());
         Flow flow = fm.getFlow("trace-entity", "tracemeJSONError");
 
         FlowRunner flowRunner = fm.newFlowRunner()
@@ -398,10 +398,10 @@ public class TracingTest extends HubTestBase {
         assertEquals(0, getFinalDocCount());
         assertEquals(0, getTracingDocCount());
 
-        Tracing t = Tracing.create(stagingClient);
+        Tracing t = Tracing.create(flowRunnerClient);
         assertFalse(t.isEnabled());
 
-        FlowManager fm = FlowManager.create(getHubConfig());
+        FlowManager fm = FlowManager.create(getHubFlowRunnerConfig());
         Flow flow = fm.getFlow("trace-entity", "tracemeJSONWriterError");
 
         FlowRunner flowRunner = fm.newFlowRunner()

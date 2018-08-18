@@ -15,16 +15,15 @@
  */
 package com.marklogic.hub.core;
 
-import com.marklogic.client.eval.EvalResult;
-import com.marklogic.client.eval.EvalResultIterator;
 import com.marklogic.client.ext.modulesloader.impl.PropertiesModuleManager;
 import com.marklogic.hub.DataHub;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
-import com.marklogic.hub.impl.DataHubImpl;
 import com.marklogic.hub.util.Versions;
 import org.custommonkey.xmlunit.XMLUnit;
+import org.junit.After;
 import org.junit.Before;
+
 import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
@@ -55,6 +54,7 @@ public class DataHubInstallTest extends HubTestBase {
     public static final int MODULE_COUNT_WITH_USER_MODULES_AND_TRACE_MODULES = 46;
 
     static boolean setupDone=false;
+
     @Before
     public void setup() {
         // special case do-one setup.
@@ -62,7 +62,9 @@ public class DataHubInstallTest extends HubTestBase {
         // the project dir must be available for uninstall to do anything... interesting.
         createProjectDir();
         try {
-            if (!setupDone) getDataHub().uninstall();
+            if (!setupDone) {            	
+            	getDataHub().uninstall();
+            }
         } catch (HttpClientErrorException e) {
             if (e.getStatusCode() == HttpStatus.UNAUTHORIZED) {
                 //pass
@@ -70,11 +72,13 @@ public class DataHubInstallTest extends HubTestBase {
             else throw e;
         }
         getDataHub().runPreInstallCheck();
-        if (!setupDone) getDataHub().install();
-        setupDone=true;
+        if (!setupDone) {
+        	getDataHub().install();
+        	setupDone=true;        	
+        }                
         afterTelemetryInstallCount = getTelemetryInstallCount();
     }
-
+    
     @Test
     @Ignore
     public void testTelemetryInstallCount() throws IOException {
@@ -100,8 +104,8 @@ public class DataHubInstallTest extends HubTestBase {
 
     @Test
     public void getHubModulesVersion() throws IOException {
-        String version = getHubConfig().getJarVersion();
-        assertEquals(version, new Versions(getHubConfig()).getHubVersion());
+        String version = getHubFlowRunnerConfig().getJarVersion();
+        assertEquals(version, new Versions(getHubFlowRunnerConfig()).getHubVersion());
     }
 
     @Test
@@ -110,7 +114,7 @@ public class DataHubInstallTest extends HubTestBase {
         String path = Paths.get(url.toURI()).toFile().getAbsolutePath();
 
         createProjectDir(path);
-        HubConfig hubConfig = getHubConfig(path);
+        HubConfig hubConfig = getHubAdminConfig(path);
 
         int totalCount = getDocCount(HubConfig.DEFAULT_STAGING_MODULES_DB_NAME, null);
         assertTrue(totalCount + " is not correct.  I was expecting either " + VISIBLE_MODULE_COUNT + " or " + MODULE_COUNT + " or " + MODULE_COUNT_WITH_TRACE_MODULES,
@@ -241,7 +245,7 @@ public class DataHubInstallTest extends HubTestBase {
         URL url = DataHubInstallTest.class.getClassLoader().getResource("data-hub-test");
         String path = Paths.get(url.toURI()).toFile().getAbsolutePath();
         createProjectDir(path);
-        HubConfig hubConfig = getHubConfig(path);
+        HubConfig hubConfig = getHubAdminConfig(path);
         DataHub dataHub = DataHub.create(hubConfig);
         dataHub.clearUserModules();
 
