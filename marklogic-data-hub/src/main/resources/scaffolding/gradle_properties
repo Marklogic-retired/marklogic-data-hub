@@ -90,6 +90,15 @@ mlStagingTriggersForestsPerHost=%%mlStagingTriggersForestsPerHost%%
 mlStagingSchemasDbName=%%mlStagingSchemasDbName%%
 mlStagingSchemasForestsPerHost=%%mlStagingSchemasForestsPerHost%%
 
+mlFinalModulesDbName=%%mlFinalModulesDbName%%
+mlFinalModulesForestsPerHost=%%mlFinalModulesForestsPerHost%%
+
+mlFinalTriggersDbName=%%mlFinalTriggersDbName%%
+mlFinalTriggersForestsPerHost=%%mlFinalTriggersForestsPerHost%%
+
+mlFinalSchemasDbName=%%mlFinalSchemasDbName%%
+mlFinalSchemasForestsPerHost=%%mlFinalSchemasForestsPerHost%%
+
 # You can override this to specify an alternate folder for your
 # custom forest info. Defaults to user-config/forests/
 # mlCustomForestPath=%%mlCustomForestPath%%
@@ -112,4 +121,5 @@ mlHubAdminUserPassword=%%mlHubAdminUserPassword%%
 # mlLoadBalancerHosts=your-load-balancer-hostnames,separated,by-commas
 
 # Default module permissions which allow data-hub-role to execute flows
-mlModulePermissions=rest-reader,read,rest-writer,insert,rest-writer,update,rest-extension-user,execute,%%mlHubUserRole%%,read,%%mlHubUserRole%%,execute
+mlStagingModulePermissions=rest-reader,read,rest-writer,insert,rest-writer,update,rest-extension-user,execute,%%mlHubUserRole%%,read,%%mlHubUserRole%%,execute
+mlFinalModulePermissions=rest-reader,read,rest-writer,insert,rest-writer,update,rest-extension-user,execute,%%mlHubUserRole%%,read,%%mlHubUserRole%%,execute

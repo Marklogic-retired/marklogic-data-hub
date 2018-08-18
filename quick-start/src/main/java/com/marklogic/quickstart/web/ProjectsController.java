@@ -89,7 +89,7 @@ public class ProjectsController {
         try {
             HubConfig config = HubConfigBuilder.newHubConfigBuilder(project.path)
                 .build();
-            //config = om.readerForUpdating(config).readValue(hubConfig);
+            config = om.readerForUpdating(config).readValue(hubConfig);
             AppConfig appConfig = config.getStagingAppConfig();
             if (hubConfig.get("host") != null) {
                 appConfig.setHost(hubConfig.get("host").asText());
