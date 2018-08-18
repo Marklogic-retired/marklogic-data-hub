@@ -179,19 +179,23 @@ public class HubProjectImpl implements HubProject {
         writeResourceFile("ml-config/databases/final-schemas-database.json", userDatabaseDir.resolve("final-schemas-database.json"), true);
         writeResourceFile("ml-config/databases/final-triggers-database.json", userDatabaseDir.resolve("final-triggers-database.json"), true);
 
+        // the following config has to do with ordering of initialization.
+        // users and roles must be present to install the hub.
+        // amps cannot be installed until after staging modules db exists.
         Path hubSecurityDir = getHubSecurityDir();
-        Path rolesDir = hubSecurityDir.resolve("roles");
-        Path usersDir = hubSecurityDir.resolve("users");
+        Path userSecurityDir = getUserSecurityDir();
+        Path rolesDir = userSecurityDir.resolve("roles");
+        Path usersDir = userSecurityDir.resolve("users");
         Path ampsDir = hubSecurityDir.resolve("amps");
 
         rolesDir.toFile().mkdirs();
         usersDir.toFile().mkdirs();
         ampsDir.toFile().mkdirs();
 
-        writeResourceFile("hub-internal-config/security/roles/data-hub-role.json", rolesDir.resolve("data-hub-role.json"), true);
-        writeResourceFile("hub-internal-config/security/users/data-hub-user.json", usersDir.resolve("data-hub-user.json"), true);
-        writeResourceFile("hub-internal-config/security/roles/hub-admin-role.json", rolesDir.resolve("hub-admin-role.json"), true);
-        writeResourceFile("hub-internal-config/security/users/hub-admin-user.json", usersDir.resolve("hub-admin-user.json"), true);
+        writeResourceFile("ml-config/security/roles/data-hub-role.json", rolesDir.resolve("data-hub-role.json"), true);
+        writeResourceFile("ml-config/security/users/data-hub-user.json", usersDir.resolve("data-hub-user.json"), true);
+        writeResourceFile("ml-config/security/roles/hub-admin-role.json", rolesDir.resolve("hub-admin-role.json"), true);
+        writeResourceFile("ml-config/security/users/hub-admin-user.json", usersDir.resolve("hub-admin-user.json"), true);
 
         PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
 

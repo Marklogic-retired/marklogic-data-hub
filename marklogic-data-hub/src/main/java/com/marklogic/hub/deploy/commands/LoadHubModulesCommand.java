@@ -68,7 +68,6 @@ public class LoadHubModulesCommand extends AbstractCommand {
         propsManager.deletePropertiesFile();
 
         DatabaseClient modulesClient = hubConfig.newModulesDbClient();
-        DatabaseClient stagingClient = hubConfig.newStagingClient();
 
         AppConfig appConfig = context.getAppConfig();
         AssetFileLoader assetFileLoader = new AssetFileLoader(modulesClient);

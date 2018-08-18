@@ -363,12 +363,12 @@ public class DataHubImpl implements DataHub {
         initProject();
 
         logger.warn("Installing the Data Hub into MarkLogic");
-        AppConfig stagingConfig = hubConfig.getStagingAppConfig();
         AppConfig finalConfig = hubConfig.getFinalAppConfig();
         HubAppDeployer deployer = new HubAppDeployer(getManageClient(), getAdminManager(),  listener, hubConfig.newFinalAppserverClient());
         deployer.setCommands(getFinalCommandList());
         deployer.deploy(finalConfig);
 
+        AppConfig stagingConfig = hubConfig.getStagingAppConfig();
         deployer = new HubAppDeployer(getManageClient(), getAdminManager(),  listener, hubConfig.newStagingClient());
         deployer.setCommands(getStagingCommandList());
         deployer.deploy(stagingConfig);
@@ -460,15 +460,9 @@ public class DataHubImpl implements DataHub {
         eval.xquery(xqy).eval();
     }
 
+
     private Map<String, List<Command>> getStagingCommands() {
         Map<String, List<Command>> commandMap = new CommandMapBuilder().buildCommandMap();
-
-        List<Command> securityCommands = commandMap.get("mlSecurityCommands");
-        securityCommands.set(0, new DeployHubRolesCommand(hubConfig));
-        securityCommands.set(1, new DeployHubUsersCommand(hubConfig));
-        securityCommands.set(2, new DeployHubAmpsCommand(hubConfig));
-        // mlDeploySecurity is not finding these classes.
-        commandMap.put("mlSecurityCommands", securityCommands);
 
         List<Command> dbCommands = new ArrayList<>();
         dbCommands.add(new DeployHubDatabasesCommand(hubConfig));
