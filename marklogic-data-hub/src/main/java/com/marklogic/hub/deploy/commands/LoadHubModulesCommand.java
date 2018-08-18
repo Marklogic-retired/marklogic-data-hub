@@ -88,7 +88,7 @@ public class LoadHubModulesCommand extends AbstractCommand {
         modulesLoader.setModulesManager(propsManager);
         if (caughtException == null) {
             modulesLoader.loadModules("classpath*:/ml-modules", new DefaultModulesFinder(), modulesClient);
-            modulesLoader.loadModules("classpath*:/ml-modules-staging", new SearchOptionsFinder(), modulesClient);
+            modulesLoader.loadModules("classpath*:/ml-modules-staging", new SearchOptionsFinder(), hubConfig.newStagingClient());
         }
         if (caughtException == null) {
             modulesLoader.loadModules("classpath*:/ml-modules-traces", new SearchOptionsFinder(), hubConfig.newJobDbClient());

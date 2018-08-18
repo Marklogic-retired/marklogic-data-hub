@@ -31,8 +31,9 @@ import com.marklogic.hub.flow.*;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.FileUtil;
 import org.custommonkey.xmlunit.XMLUnit;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -56,14 +57,15 @@ public class StreamCollectorTest extends HubTestBase {
     private boolean installDocsFailed = false;
     private String installDocError;
 
-    @Before
+    @BeforeEach
     public void setup() throws IOException {
         XMLUnit.setIgnoreWhitespace(true);
 
-        deleteProjectDir();
-
         createProjectDir();
 
+        // FIXME: this resource, is left around, interferes with bootstrapping because
+        // it triggers installation of staging db before staging schemas db exists.
+        // a subtle bug. to solve, users must create schemas db hook here too.
         Path dbDir = projectDir.resolve("src/main/ml-config").resolve("databases");
         dbDir.toFile().mkdirs();
         FileUtil.copy(getResourceStream("stream-collector-test/staging-database.json"), dbDir.resolve("staging-database.json").toFile());
@@ -117,6 +119,11 @@ public class StreamCollectorTest extends HubTestBase {
         writeBatcher.flushAndWait();
         assertTrue("Doc install not finished", installDocsFinished );
         assertFalse("Doc install failed: " + installDocError, installDocsFailed);
+    }
+
+    @AfterEach
+    public void deleteProjectDir() {
+        deleteProjectDir();
     }
 
     @Test

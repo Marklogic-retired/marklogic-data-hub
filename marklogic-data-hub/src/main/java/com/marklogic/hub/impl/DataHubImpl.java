@@ -409,44 +409,6 @@ public class DataHubImpl implements DataHub {
         deployer.undeploy(finalAppConfig);
     }
 
-    /**
-     * Uninstalls the data hub configuration and server-side config files from MarkLogic
-     */
-    @Override public void uninstallStaging() {
-        uninstallStaging(null);
-    }
-
-    /**
-     * Uninstalls the data hub configuration and server-side config files from MarkLogic
-     * @param listener - the callback method to receive status updates
-     */
-    @Override public void uninstallStaging(HubDeployStatusListener listener) {
-        logger.warn("Uninstalling the Data Hub from MarkLogic");
-        AppConfig stagingAppConfig = hubConfig.getStagingAppConfig();
-        HubAppDeployer deployer = new HubAppDeployer(getManageClient(), getAdminManager(), listener, hubConfig.newStagingClient());
-        deployer.setCommands(getStagingCommandList());
-        deployer.undeploy(stagingAppConfig);
-    }
-
-    /**
-     * Uninstalls the data hub configuration and server-side config files from MarkLogic
-     */
-    @Override public void uninstallFinal() {
-        uninstallFinal(null);
-    }
-
-    /**
-     * Uninstalls the data hub configuration and server-side config files from MarkLogic
-     * @param listener - the callback method to receive status updates
-     */
-    @Override public void uninstallFinal(HubDeployStatusListener listener) {
-        logger.warn("Uninstalling Final Databases and Servers from MarkLogic");
-        AppConfig finalAppConfig = hubConfig.getFinalAppConfig();
-        HubAppDeployer deployer = new HubAppDeployer(getManageClient(), getAdminManager(), listener, hubConfig.newFinalAppserverClient());
-        deployer.setCommands(getFinalCommandList());
-        deployer.undeploy(finalAppConfig);
-    }
-
 
     private void runInDatabase(String query, String databaseName) {
         ServerEvaluationCall eval = hubConfig.newModulesDbClient().newServerEval();
