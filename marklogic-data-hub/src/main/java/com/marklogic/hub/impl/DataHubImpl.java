@@ -21,6 +21,7 @@ import com.marklogic.appdeployer.command.Command;
 import com.marklogic.appdeployer.command.CommandMapBuilder;
 import com.marklogic.appdeployer.command.appservers.DeployOtherServersCommand;
 import com.marklogic.appdeployer.command.forests.DeployCustomForestsCommand;
+import com.marklogic.appdeployer.command.security.DeployAmpsCommand;
 import com.marklogic.client.FailedRequestException;
 import com.marklogic.client.admin.QueryOptionsManager;
 import com.marklogic.client.admin.ResourceExtensionsManager;
@@ -470,6 +471,11 @@ public class DataHubImpl implements DataHub {
         dbCommands.add(new DeployHubStagingSchemasDatabaseCommand(hubConfig));
         commandMap.put("mlDatabaseCommands", dbCommands);
 
+        // staging deploys amps.
+        List<Command> securityCommands = commandMap.get("mlSecurityCommands");
+        securityCommands.set(2, new DeployHubAmpsCommand(hubConfig));
+        commandMap.put("mlSecurityCommands", securityCommands);
+
         // don't deploy rest api servers
         commandMap.remove("mlRestApiCommands");
 
@@ -494,10 +500,10 @@ public class DataHubImpl implements DataHub {
     private Map<String, List<Command>> getFinalCommands() {
         Map<String, List<Command>> commandMap = new CommandMapBuilder().buildCommandMap();
 
+        // final bootstraps users and roles for the hub
         List<Command> securityCommands = commandMap.get("mlSecurityCommands");
         securityCommands.set(0, new DeployUserRolesCommand(hubConfig));
         securityCommands.set(1, new DeployUserUsersCommand(hubConfig));
-        // mlDeploySecurity is not finding these classes.
         commandMap.put("mlSecurityCommands", securityCommands);
 
         List<Command> dbCommands = new ArrayList<>();

@@ -43,7 +43,7 @@ public class LoadHubModulesCommandTest extends HubTestBase {
     @BeforeEach
     public void setup() {
         createProjectDir();
-        config = getHubConfig();
+        config = getHubAdminConfig();
         loadHubModulesCommand = new LoadHubModulesCommand(config);
         commandContext = new CommandContext(config.getStagingAppConfig(), null, null);
     }

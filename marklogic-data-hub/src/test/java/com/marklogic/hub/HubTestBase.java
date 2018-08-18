@@ -125,6 +125,8 @@ public class HubTestBase {
     public  int jobPort;
     public  String user;
     public  String password;
+    public  String manageUser;
+    public  String managePassword;
     public  String secUser;
     public  String secPassword;
     public  String flowRunnerUser;
@@ -224,6 +226,8 @@ public class HubTestBase {
         finalPort = Integer.parseInt(properties.getProperty("mlFinalPort"));
         user = properties.getProperty("mlUsername");
         password = properties.getProperty("mlPassword");
+        manageUser = properties.getProperty("mlManageUsername");
+        managePassword = properties.getProperty("mlManagePassword");
         secUser = properties.getProperty("mlSecurityUsername");
         secPassword = properties.getProperty("mlSecurityPassword");
         flowRunnerUser = properties.getProperty("mlHubUserName");
@@ -266,11 +270,11 @@ public class HubTestBase {
         try {
         	stagingClient = getClient(host, stagingPort, HubConfig.DEFAULT_STAGING_NAME, user, password, stagingAuthMethod);
             flowRunnerClient = getClient(host, stagingPort, HubConfig.DEFAULT_STAGING_NAME, flowRunnerUser, flowRunnerPassword, stagingAuthMethod);
-            stagingModulesClient  = getClient(host, stagingPort, HubConfig.DEFAULT_STAGING_MODULES_DB_NAME, user, password, stagingAuthMethod);
+            stagingModulesClient  = getClient(host, stagingPort, HubConfig.DEFAULT_STAGING_MODULES_DB_NAME, manageUser, managePassword, stagingAuthMethod);
             finalClient = getClient(host, finalPort, HubConfig.DEFAULT_FINAL_NAME, user, password, finalAuthMethod);
-            finalModulesClient  = getClient(host, finalPort, HubConfig.DEFAULT_STAGING_MODULES_DB_NAME, user, password, stagingAuthMethod);
+            finalModulesClient  = getClient(host, finalPort, HubConfig.DEFAULT_STAGING_MODULES_DB_NAME, manageUser, managePassword, stagingAuthMethod);
             jobClient = getClient(host, jobPort, HubConfig.DEFAULT_JOB_NAME, user, password, jobAuthMethod);
-            jobModulesClient  = getClient(host, stagingPort, HubConfig.DEFAULT_STAGING_MODULES_DB_NAME, user, password, jobAuthMethod);
+            jobModulesClient  = getClient(host, stagingPort, HubConfig.DEFAULT_STAGING_MODULES_DB_NAME, manageUser, managePassword, jobAuthMethod);
         }
         catch(Exception e) {
         	System.err.println("client objects not created.");
