@@ -202,7 +202,7 @@ public class HubProjectImpl implements HubProject {
         // Ant-style path matching
         Resource[] resources = new Resource[0];
         try {
-            resources = resolver.getResources("hub-internal-config/security/amps/**");
+            resources = resolver.getResources("classpath:hub-internal-config/security/amps/*.json");
             for (Resource resource : resources) {
                 InputStream is = resource.getInputStream();
                 FileUtil.copy(is, ampsDir.resolve(resource.getFilename()).toFile());

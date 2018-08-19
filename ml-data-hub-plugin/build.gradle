@@ -69,6 +69,7 @@ test {
     }
     include 'com/marklogic/gradle/fullcycle/**'
     include 'com/marklogic/gradle/task/**'
+    classpath = project.sourceSets.main.runtimeClasspath + project.sourceSets.test.runtimeClasspath
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {

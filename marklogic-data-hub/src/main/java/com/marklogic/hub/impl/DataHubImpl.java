@@ -287,7 +287,7 @@ public class DataHubImpl implements DataHub {
        return runPreInstallCheck(null);
     }
 
-    @Override public HashMap runPreInstallCheck(Versions versions) {
+    @Override public HashMap<String, Boolean> runPreInstallCheck(Versions versions) {
 
 
         Map<Integer, String> portsInUse = null;
@@ -298,7 +298,8 @@ public class DataHubImpl implements DataHub {
             logger.warn("Used non-existing user to verify data hub.  Usually this means a fresh system, ready to install.");
             HashMap response = new HashMap();
             response.put("serverVersion", serverVersion);
-            response.put("serverVersionOk", serverVersionOk);
+            // no server means give it a shot.
+            response.put("serverVersionOk", true);
             response.put("stagingPortInUse", stagingPortInUse);
             response.put("stagingPortInUseBy", stagingPortInUseBy);
             response.put("finalPortInUse", finalPortInUse);
