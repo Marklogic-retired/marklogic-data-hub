@@ -270,6 +270,7 @@ public class HubTestBase {
         try {
         	stagingClient = getClient(host, stagingPort, HubConfig.DEFAULT_STAGING_NAME, user, password, stagingAuthMethod);
             flowRunnerClient = getClient(host, stagingPort, HubConfig.DEFAULT_STAGING_NAME, flowRunnerUser, flowRunnerPassword, stagingAuthMethod);
+            finalFlowRunnerClient = getClient(host, stagingPort, HubConfig.DEFAULT_FINAL_NAME, flowRunnerUser, flowRunnerPassword, stagingAuthMethod);
             stagingModulesClient  = getClient(host, stagingPort, HubConfig.DEFAULT_STAGING_MODULES_DB_NAME, manageUser, managePassword, stagingAuthMethod);
             finalClient = getClient(host, finalPort, HubConfig.DEFAULT_FINAL_NAME, user, password, finalAuthMethod);
             finalModulesClient  = getClient(host, finalPort, HubConfig.DEFAULT_STAGING_MODULES_DB_NAME, manageUser, managePassword, stagingAuthMethod);
