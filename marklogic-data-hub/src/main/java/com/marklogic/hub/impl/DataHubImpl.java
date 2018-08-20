@@ -364,16 +364,29 @@ public class DataHubImpl implements DataHub {
     @Override public void install(HubDeployStatusListener listener) {
         initProject();
 
+        installFinal(listener);
+        installStaging(listener);
+    }
+
+    @Override
+    public void installFinal(HubDeployStatusListener listener) {
+
         logger.warn("Installing the Data Hub into MarkLogic");
         AppConfig finalConfig = hubConfig.getFinalAppConfig();
-        HubAppDeployer finalDeployer = new HubAppDeployer(getManageClient(), getAdminManager(),  listener, hubConfig.newFinalAppserverClient());
+        HubAppDeployer finalDeployer = new HubAppDeployer(getManageClient(), getAdminManager(), listener, hubConfig.newFinalAppserverClient());
         finalDeployer.setCommands(getFinalCommandList());
         finalDeployer.deploy(finalConfig);
+    }
 
+    @Override
+    public void installStaging(HubDeployStatusListener listener) {
+
+        // i know it's weird that the final client installs staging, but it's needed
         AppConfig stagingConfig = hubConfig.getStagingAppConfig();
-        HubAppDeployer stagingDeployer = new HubAppDeployer(getManageClient(), getAdminManager(),  listener, hubConfig.newStagingClient());
+        HubAppDeployer stagingDeployer = new HubAppDeployer(getManageClient(), getAdminManager(),  listener, hubConfig.newFinalAppserverClient());
         stagingDeployer.setCommands(getStagingCommandList());
         stagingDeployer.deploy(stagingConfig);
+
     }
 
     @Override public void updateIndexes() {
@@ -399,15 +412,28 @@ public class DataHubImpl implements DataHub {
     @Override public void uninstall(HubDeployStatusListener listener) {
         logger.warn("Uninstalling the Data Hub and Final Databases/Servers from MarkLogic");
 
+        uninstallStaging(listener);
+        uninstallFinal(listener);
+
+    }
+
+    @Override
+    public void uninstallStaging(HubDeployStatusListener listener) {
+
+        AppConfig config = hubConfig.getStagingAppConfig();
+        HubAppDeployer stagingDeployer = new HubAppDeployer(getManageClient(), getAdminManager(), listener, hubConfig.newFinalAppserverClient());
+        stagingDeployer.setCommands(getStagingCommandList());
+        stagingDeployer.undeploy(config);
+    }
+
+    @Override
+    public void uninstallFinal(HubDeployStatusListener listener) {
+
         AppConfig finalAppConfig = hubConfig.getFinalAppConfig();
         HubAppDeployer finalDeployer = new HubAppDeployer(getManageClient(), getAdminManager(), listener, hubConfig.newFinalAppserverClient());
         finalDeployer.setCommands(getFinalCommandList());
         finalDeployer.undeploy(finalAppConfig);
 
-        AppConfig config = hubConfig.getStagingAppConfig();
-        HubAppDeployer stagingDeployer = new HubAppDeployer(getManageClient(), getAdminManager(), listener, hubConfig.newStagingClient());
-        stagingDeployer.setCommands(getStagingCommandList());
-        stagingDeployer.undeploy(config);
     }
 
 
