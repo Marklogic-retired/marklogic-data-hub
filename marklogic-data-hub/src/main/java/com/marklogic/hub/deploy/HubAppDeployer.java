@@ -39,6 +39,7 @@ public class HubAppDeployer extends SimpleAppDeployer {
     private HubDeployStatusListener listener;
     // this is for the telemetry hook to use mlUsername/mlPassword
     private DatabaseClient stagingClient;
+    private String deploymentType = "";
 
     public HubAppDeployer(ManageClient manageClient, AdminManager adminManager, HubDeployStatusListener listener, DatabaseClient stagingClient) {
         super(manageClient, adminManager);
@@ -46,6 +47,16 @@ public class HubAppDeployer extends SimpleAppDeployer {
         this.adminManager = adminManager;
         this.stagingClient = stagingClient;
         this.listener = listener;
+    }
+
+    public void deployStaging(AppConfig appConfig) {
+        deploymentType = "Staging App ";
+        deploy(appConfig);
+    }
+
+    public void deployFinal(AppConfig appConfig){
+        deploymentType = "Final App ";
+        deploy(appConfig);
     }
 
     @Override
@@ -70,7 +81,7 @@ public class HubAppDeployer extends SimpleAppDeployer {
 
         int count = commands.size();
         int completed = 0;
-        onStatusChange(0, "Installing...");
+        onStatusChange(0, "Installing " + deploymentType + "...");
         for (Command command : commands) {
             String name = command.getClass().getName();
             logger.info(format("Executing command [%s] with sort order [%d]", name, command.getExecuteSortOrder()));
@@ -80,7 +91,7 @@ public class HubAppDeployer extends SimpleAppDeployer {
             logger.info(format("Finished executing command [%s]\n", name));
             completed++;
         }
-        onStatusChange(100, "Installation Complete");
+        onStatusChange(100, deploymentType + "Installation Complete");
 
         //Below is telemetry metric code for tracking successful dhf installs
         //TODO: when more uses of telemetry are defined, change this to a more e-node based method
@@ -135,7 +146,7 @@ public class HubAppDeployer extends SimpleAppDeployer {
             logger.info(format("Finished undoing command [%s]\n", name));
             completed++;
         }
-        onStatusChange(100, "Installation Complete");
+        onStatusChange(100, "Uninstallation Complete");
 
         logger.info(format("Undeployed app %s", appConfig.getName()));
     }

@@ -375,7 +375,7 @@ public class DataHubImpl implements DataHub {
         AppConfig finalConfig = hubConfig.getFinalAppConfig();
         HubAppDeployer finalDeployer = new HubAppDeployer(getManageClient(), getAdminManager(), listener, hubConfig.newFinalAppserverClient());
         finalDeployer.setCommands(getFinalCommandList());
-        finalDeployer.deploy(finalConfig);
+        finalDeployer.deployFinal(finalConfig);
     }
 
     @Override
@@ -385,7 +385,7 @@ public class DataHubImpl implements DataHub {
         AppConfig stagingConfig = hubConfig.getStagingAppConfig();
         HubAppDeployer stagingDeployer = new HubAppDeployer(getManageClient(), getAdminManager(),  listener, hubConfig.newFinalAppserverClient());
         stagingDeployer.setCommands(getStagingCommandList());
-        stagingDeployer.deploy(stagingConfig);
+        stagingDeployer.deployStaging(stagingConfig);
 
     }
 
