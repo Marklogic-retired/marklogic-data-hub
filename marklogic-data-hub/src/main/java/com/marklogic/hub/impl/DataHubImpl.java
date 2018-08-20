@@ -386,7 +386,6 @@ public class DataHubImpl implements DataHub {
         HubAppDeployer stagingDeployer = new HubAppDeployer(getManageClient(), getAdminManager(),  listener, hubConfig.newFinalAppserverClient());
         stagingDeployer.setCommands(getStagingCommandList());
         stagingDeployer.deploy(stagingConfig);
-
     }
 
     @Override public void updateIndexes() {

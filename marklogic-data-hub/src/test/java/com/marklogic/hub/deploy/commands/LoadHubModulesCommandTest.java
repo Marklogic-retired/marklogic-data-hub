@@ -68,8 +68,7 @@ public class LoadHubModulesCommandTest extends HubTestBase {
 
     @Test
     public void testAmpLoading() {
-        DeployAmpsCommand amps = new DeployAmpsCommand();
+        DeployAmpsCommand amps = new DeployHubAmpsCommand(config);
         amps.execute(commandContext);
-
     }
 }

@@ -18,9 +18,20 @@ package com.marklogic.hub.deploy.commands;
 import com.marklogic.appdeployer.command.CommandContext;
 import com.marklogic.appdeployer.command.security.DeployAmpsCommand;
 import com.marklogic.appdeployer.command.security.DeployRolesCommand;
+import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.DatabaseClientFactory;
+import com.marklogic.client.eval.ServerEvaluationCall;
+import com.marklogic.client.io.InputStreamHandle;
+import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.deploy.AmpsInstaller;
+import com.marklogic.hub.error.DataHubConfigurationException;
+import com.marklogic.mgmt.ManageConfig;
+import org.springframework.core.io.ClassPathResource;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 
 public class DeployHubAmpsCommand extends DeployAmpsCommand {
 
@@ -32,10 +43,52 @@ public class DeployHubAmpsCommand extends DeployAmpsCommand {
     }
 
     @Override
+    public void execute(CommandContext context) {
+        String stagingModulesDatabaseName = hubConfig.getStagingAppConfig().getModulesDatabaseName();
+        ManageConfig manageConfig = context.getManageClient().getManageConfig();
+        String securityUsername = manageConfig.getSecurityUsername();
+        String securityPassword = manageConfig.getSecurityPassword();
+        DatabaseClient installerClient = DatabaseClientFactory.newClient(
+            hubConfig.getHost(),
+            8000,
+            "Security",
+            new DatabaseClientFactory.DigestAuthContext(securityUsername, securityPassword)
+        );
+        //new AmpsInstaller(securityStagingClient).installAmps(stagingModulesDatabaseName);
+        ServerEvaluationCall call = installerClient.newServerEval();
+        try (InputStream is = new ClassPathResource("installer-util/install-amps.xqy").getInputStream()) {
+            call.xquery( new InputStreamHandle(is));
+        } catch (IOException e) {
+            throw new DataHubConfigurationException(e);
+        }
+        call.eval();
+    }
+
+    @Override
+    public void undo(CommandContext context) {
+        String stagingModulesDatabaseName = hubConfig.getStagingAppConfig().getModulesDatabaseName();
+        ManageConfig manageConfig = context.getManageClient().getManageConfig();
+        String securityUsername = manageConfig.getSecurityUsername();
+        String securityPassword = manageConfig.getSecurityPassword();
+        DatabaseClient installerClient = DatabaseClientFactory.newClient(
+            hubConfig.getHost(),
+            8000,
+            "Security",
+            new DatabaseClientFactory.DigestAuthContext(securityUsername, securityPassword)
+        );
+        //new AmpsInstaller(securityStagingClient).unInstallAmps(stagingModulesDatabaseName);
+        ServerEvaluationCall call = installerClient.newServerEval();
+        try (InputStream is = new ClassPathResource("installer-util/uninstall-amps.xqy").getInputStream()) {
+            call.xquery(new InputStreamHandle(is));
+            call.eval();
+        } catch (IOException e) {
+            throw new DataHubConfigurationException(e);
+        }
+    }
+
+    @Override
     protected File[] getResourceDirs(CommandContext context) {
         return new File[] {
-            hubConfig.getHubSecurityDir().resolve("amps").toFile(),
-            hubConfig.getUserSecurityDir().resolve("amps").toFile()
         };
     }
 }
