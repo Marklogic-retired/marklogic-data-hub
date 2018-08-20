@@ -366,15 +366,14 @@ public class DataHubImpl implements DataHub {
 
         logger.warn("Installing the Data Hub into MarkLogic");
         AppConfig finalConfig = hubConfig.getFinalAppConfig();
-        HubAppDeployer deployer = new HubAppDeployer(getManageClient(), getAdminManager(),  listener, hubConfig.newFinalAppserverClient());
-        deployer.setCommands(getFinalCommandList());
-        deployer.deploy(finalConfig);
+        HubAppDeployer finalDeployer = new HubAppDeployer(getManageClient(), getAdminManager(),  listener, hubConfig.newFinalAppserverClient());
+        finalDeployer.setCommands(getFinalCommandList());
+        finalDeployer.deploy(finalConfig);
 
         AppConfig stagingConfig = hubConfig.getStagingAppConfig();
-        deployer = new HubAppDeployer(getManageClient(), getAdminManager(),  listener, hubConfig.newStagingClient());
-        deployer.setCommands(getStagingCommandList());
-        deployer.deploy(stagingConfig);
-
+        HubAppDeployer stagingDeployer = new HubAppDeployer(getManageClient(), getAdminManager(),  listener, hubConfig.newStagingClient());
+        stagingDeployer.setCommands(getStagingCommandList());
+        stagingDeployer.deploy(stagingConfig);
     }
 
     @Override public void updateIndexes() {
@@ -399,15 +398,16 @@ public class DataHubImpl implements DataHub {
      */
     @Override public void uninstall(HubDeployStatusListener listener) {
         logger.warn("Uninstalling the Data Hub and Final Databases/Servers from MarkLogic");
-        AppConfig config = hubConfig.getStagingAppConfig();
-        HubAppDeployer deployer = new HubAppDeployer(getManageClient(), getAdminManager(), listener, hubConfig.newStagingClient());
-        deployer.setCommands(getStagingCommandList());
-        deployer.undeploy(config);
 
         AppConfig finalAppConfig = hubConfig.getFinalAppConfig();
-        deployer = new HubAppDeployer(getManageClient(), getAdminManager(), listener, hubConfig.newFinalAppserverClient());
-        deployer.setCommands(getFinalCommandList());
-        deployer.undeploy(finalAppConfig);
+        HubAppDeployer finalDeployer = new HubAppDeployer(getManageClient(), getAdminManager(), listener, hubConfig.newFinalAppserverClient());
+        finalDeployer.setCommands(getFinalCommandList());
+        finalDeployer.undeploy(finalAppConfig);
+
+        AppConfig config = hubConfig.getStagingAppConfig();
+        HubAppDeployer stagingDeployer = new HubAppDeployer(getManageClient(), getAdminManager(), listener, hubConfig.newStagingClient());
+        stagingDeployer.setCommands(getStagingCommandList());
+        stagingDeployer.undeploy(config);
     }
 
 

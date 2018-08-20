@@ -121,7 +121,7 @@ public class StreamCollectorTest extends HubTestBase {
     }
 
     @After
-    public void deleteProjectDir() {
+    public void removeProjectDir() {
         deleteProjectDir();
     }
 
