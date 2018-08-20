@@ -23,7 +23,6 @@ import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.Format;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.client.io.StringHandle;
-import com.marklogic.hub.DataHub;
 import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
@@ -31,9 +30,9 @@ import com.marklogic.hub.flow.*;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.FileUtil;
 import org.custommonkey.xmlunit.XMLUnit;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -57,7 +56,7 @@ public class StreamCollectorTest extends HubTestBase {
     private boolean installDocsFailed = false;
     private String installDocError;
 
-    @BeforeEach
+    @Before
     public void setup() throws IOException {
         XMLUnit.setIgnoreWhitespace(true);
 
@@ -121,7 +120,7 @@ public class StreamCollectorTest extends HubTestBase {
         assertFalse("Doc install failed: " + installDocError, installDocsFailed);
     }
 
-    @AfterEach
+    @After
     public void deleteProjectDir() {
         deleteProjectDir();
     }
