@@ -38,14 +38,94 @@ public class HubAppDeployer extends SimpleAppDeployer {
     private AdminManager adminManager;
     private HubDeployStatusListener listener;
     // this is for the telemetry hook to use mlUsername/mlPassword
-    private DatabaseClient stagingClient;
+    private DatabaseClient databaseClient;
+    private List<Command> stagingCommandsList;
+    private List<Command> finalCommandsList;
 
-    public HubAppDeployer(ManageClient manageClient, AdminManager adminManager, HubDeployStatusListener listener, DatabaseClient stagingClient) {
+    public HubAppDeployer(ManageClient manageClient, AdminManager adminManager, HubDeployStatusListener listener, DatabaseClient databaseClient) {
         super(manageClient, adminManager);
         this.manageClient = manageClient;
         this.adminManager = adminManager;
-        this.stagingClient = stagingClient;
+        this.databaseClient = databaseClient;
         this.listener = listener;
+    }
+
+    public void deployAll(AppConfig finalAppConfig, AppConfig stagingAppConfig){
+
+        Collections.sort(stagingCommandsList, new Comparator<Command>() {
+            @Override
+            public int compare(Command o1, Command o2) {
+                return o1.getExecuteSortOrder().compareTo(o2.getExecuteSortOrder());
+            }
+
+            @Override
+            public boolean equals(Object obj) {
+                return this.equals(obj);
+            }
+        });
+
+        Collections.sort(finalCommandsList, new Comparator<Command>() {
+            @Override
+            public int compare(Command o1, Command o2) {
+                return o1.getExecuteSortOrder().compareTo(o2.getExecuteSortOrder());
+            }
+
+            @Override
+            public boolean equals(Object obj) {
+                return this.equals(obj);
+            }
+        });
+
+        int count = stagingCommandsList.size() + finalCommandsList.size();
+        int completed = 0;
+        float percent = 0;
+
+        logger.info(format("Deploying app %s with config dir of: %s\n", finalAppConfig.getName(), finalAppConfig.getFirstConfigDir()
+            .getBaseDir().getAbsolutePath()));
+
+        CommandContext finalContext = new CommandContext(finalAppConfig, manageClient, adminManager);
+
+        onStatusChange(0, "Installing Final App...");
+        for (Command command : finalCommandsList) {
+            String name = command.getClass().getName();
+            logger.info(format("Executing command [%s] with sort order [%d]", name, command.getExecuteSortOrder()));
+            percent = ((float)completed / (float)count) * 100;
+            onStatusChange((int)percent, format("[Step %d of %d]  %s", completed + 1, count, name));
+            command.execute(finalContext);
+            logger.info(format("Finished executing command [%s]\n", name));
+            completed++;
+        }
+        onStatusChange((int)percent, "Final App Installation Complete");
+
+        logger.info(format("Deploying app %s with config dir of: %s\n", stagingAppConfig.getName(), stagingAppConfig.getFirstConfigDir()
+            .getBaseDir().getAbsolutePath()));
+
+        CommandContext stagingContext = new CommandContext(finalAppConfig, manageClient, adminManager);
+
+        onStatusChange((int)percent, "Installing Staging App...");
+        for (Command command : stagingCommandsList) {
+            String name = command.getClass().getName();
+            logger.info(format("Executing command [%s] with sort order [%d]", name, command.getExecuteSortOrder()));
+            percent = ((float)completed / (float)count) * 100;
+            onStatusChange((int)percent, format("[Step %d of %d]  %s", completed + 1, count, name));
+            command.execute(stagingContext);
+            logger.info(format("Finished executing command [%s]\n", name));
+            completed++;
+        }
+        onStatusChange(100, "Staging App Installation Complete");
+
+        //Below is telemetry metric code for tracking successful dhf installs
+        //TODO: when more uses of telemetry are defined, change this to a more e-node based method
+        ServerEvaluationCall eval = databaseClient.newServerEval();
+        String query = "xdmp:feature-metric-increment(xdmp:feature-metric-register(\"datahub.core.install.count\"))";
+        try {
+            eval.xquery(query).eval().close();
+        }
+        catch(FailedRequestException e) {
+            logger.error("Failed to increment feature metric telemetry count: " + query, e);
+            e.printStackTrace();
+        }
+        logger.info(format("Deployed app %s and %s", stagingAppConfig.getName(), finalAppConfig.getName()));
     }
 
     @Override
@@ -84,7 +164,7 @@ public class HubAppDeployer extends SimpleAppDeployer {
 
         //Below is telemetry metric code for tracking successful dhf installs
         //TODO: when more uses of telemetry are defined, change this to a more e-node based method
-        ServerEvaluationCall eval = stagingClient.newServerEval();
+        ServerEvaluationCall eval = databaseClient.newServerEval();
         String query = "xdmp:feature-metric-increment(xdmp:feature-metric-register(\"datahub.core.install.count\"))";
         try {
             eval.xquery(query).eval().close();
@@ -150,5 +230,15 @@ public class HubAppDeployer extends SimpleAppDeployer {
         if (this.listener != null) {
             this.listener.onError();
         }
+    }
+
+    public void setStagingCommandsList(List<Command> stagingCommandsList)
+    {
+        this.stagingCommandsList = stagingCommandsList;
+    }
+
+    public void setFinalCommandsList(List<Command> finalCommandsList)
+    {
+        this.finalCommandsList = finalCommandsList;
     }
 }

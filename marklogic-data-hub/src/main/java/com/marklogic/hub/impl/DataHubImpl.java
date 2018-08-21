@@ -363,8 +363,15 @@ public class DataHubImpl implements DataHub {
     @Override public void install(HubDeployStatusListener listener) {
         initProject();
 
-        installFinal(listener);
-        installStaging(listener);
+        logger.warn("Installing the Data Hub into MarkLogic");
+        AppConfig finalConfig = hubConfig.getFinalAppConfig();
+        HubAppDeployer finalDeployer = new HubAppDeployer(getManageClient(), getAdminManager(), listener, hubConfig.newFinalAppserverClient());
+        finalDeployer.setFinalCommandsList(getFinalCommandList());
+
+        AppConfig stagingConfig = hubConfig.getStagingAppConfig();
+        finalDeployer.setStagingCommandsList(getStagingCommandList());
+
+        finalDeployer.deployAll(finalConfig, stagingConfig);
     }
 
     @Override

@@ -138,10 +138,10 @@ public class DataHubService {
 
     }
 
-    public void uninstall(HubConfig config, HubDeployStatusListener listener) throws DataHubException {
+    public void uninstallStaging(HubConfig config, HubDeployStatusListener listener) throws DataHubException {
         DataHub dataHub = DataHub.create(config);
         try {
-            dataHub.uninstall(listener);
+            dataHub.uninstallStaging(listener);
         } catch(Throwable e) {
             e.printStackTrace();
             throw new DataHubException(e.getMessage(), e);
