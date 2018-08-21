@@ -67,6 +67,18 @@
           </p>
         </td>
       </tr>
+      <tr>
+        <td>
+          <label>Uninstall Everything</label>
+          <p>
+            Use this button to uninstall the DHF and production final application from MarkLogic.
+            <button mdl-button mdl-button-type="raised"
+                    mdl-colored mdl-ripple
+                    [disabled]="isUninstalling || isInstalling"
+                    (click)="uninstallAll()">Uninstall EVERYTHING</button>
+          </p>
+        </td>
+      </tr>
     </tbody>
   </table>
 
