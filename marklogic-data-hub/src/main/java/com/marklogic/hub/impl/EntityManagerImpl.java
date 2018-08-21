@@ -85,14 +85,14 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
         saveQueryOptions();
 
         HashMap<Enum, Boolean> loadedResources = new HashMap<>();
-        loadedResources.put(DatabaseKind.FINAL, deployFinalQueryOptions());
-        loadedResources.put(DatabaseKind.STAGING, deployStagingQueryOptions());
+        if (deployFinalQueryOptions()) loadedResources.put(DatabaseKind.FINAL, true);
+        if (deployStagingQueryOptions()) loadedResources.put(DatabaseKind.STAGING, true);
         return loadedResources;
     }
 
 
     public boolean deployFinalQueryOptions() {
-        return deployQueryOptions(hubConfig.newFinalClient(), HubConfig.STAGING_ENTITY_QUERY_OPTIONS_FILE);
+        return deployQueryOptions(hubConfig.newFinalClient(), HubConfig.FINAL_ENTITY_QUERY_OPTIONS_FILE);
     }
     public boolean deployStagingQueryOptions() {
         return deployQueryOptions(hubConfig.newStagingClient(), HubConfig.STAGING_ENTITY_QUERY_OPTIONS_FILE);
