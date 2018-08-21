@@ -15,7 +15,9 @@ import com.marklogic.client.datamovement.WriteBatcher;
 import com.marklogic.client.document.ServerTransform;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.FileHandle;
+import com.marklogic.hub.deploy.commands.DeployHubProtectedPathsCommand;
 import com.marklogic.hub.deploy.commands.DeployHubRolesCommand;
+import com.marklogic.hub.deploy.commands.DeployHubRolesetsCommand;
 import com.marklogic.hub.deploy.commands.DeployHubUsersCommand;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.FlowRunner;
@@ -242,8 +244,8 @@ public class PiiE2E extends HubTestBase {
 		List<Command> securityCommands = new ArrayList<Command>();
 		securityCommands.add(new DeployHubRolesCommand(hubConfig));
 		securityCommands.add(new DeployHubUsersCommand(hubConfig));
-		securityCommands.add(new DeployProtectedPathsCommand());
-		securityCommands.add(new DeployQueryRolesetsCommand());
+		securityCommands.add(new DeployHubProtectedPathsCommand(hubConfig));
+		securityCommands.add(new DeployHubRolesetsCommand(hubConfig));
 
         SimpleAppDeployer deployer = new SimpleAppDeployer(hubConfig.getManageClient(), hubConfig.getAdminManager());
         deployer.setCommands(securityCommands);
