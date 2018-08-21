@@ -1,3 +1,18 @@
+/*
+ * Copyright 2012-2018 MarkLogic Corporation
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.marklogic.hub.collector.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -9,6 +24,7 @@ import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.collector.Collector;
 import com.marklogic.hub.collector.DiskQueue;
 import com.marklogic.hub.flow.CodeFormat;
+import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.rest.util.MgmtResponseErrorHandler;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -22,6 +38,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.web.client.RequestCallback;
+import org.springframework.web.client.ResponseExtractor;
 import org.springframework.web.client.RestTemplate;
 
 import javax.naming.InvalidNameException;
@@ -40,10 +58,7 @@ import java.net.URLEncoder;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateParsingException;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class CollectorImpl implements Collector {
     private DatabaseClient client = null;
@@ -95,18 +110,18 @@ public class CollectorImpl implements Collector {
 
             // Important design info:
             // The collector is invoked with a regular http client due to streaming limitations in OkHttp.
-            // https://github.com/marklogic-community/marklogic-data-hub/issues/632
-            // https://github.com/marklogic-community/marklogic-data-hub/issues/633
+            // https://github.com/marklogic/marklogic-data-hub/issues/632
+            // https://github.com/marklogic/marklogic-data-hub/issues/633
             //
             AppConfig appConfig = hubConfig.getAppConfig();
 
-            RestTemplate template = newRestTemplate(appConfig.getAppServicesUsername(), appConfig.getAppServicesPassword());
+            RestTemplate template = newRestTemplate(  ((HubConfigImpl) hubConfig).getMlUsername(), ( (HubConfigImpl) hubConfig).getMlPassword());
             String uriString = String.format(
                 "%s://%s:%d%s?job-id=%s&entity-name=%s&flow-name=%s&database=%s",
-                "http",
+                client.getSecurityContext().getSSLContext() != null ? "https" : "http",
                 client.getHost(),
                 client.getPort(),
-                "/com.marklogic.hub/endpoints/collector.xqy",
+                "/v1/internal/hubcollector",
                 URLEncoder.encode(jobId, "UTF-8"),
                 URLEncoder.encode(entity, "UTF-8"),
                 URLEncoder.encode(flow, "UTF-8"),
@@ -118,16 +133,21 @@ public class CollectorImpl implements Collector {
                 uriString += "&options=" + URLEncoder.encode(objectMapper.writeValueAsString(options), "UTF-8");
             }
             URI uri = new URI(uriString);
-            HttpHeaders headers = new HttpHeaders();
-            headers.set("Accept", MediaType.TEXT_PLAIN_VALUE);
-            InputStream inputStream = template.exchange(uri, HttpMethod.GET, new HttpEntity<>(headers), Resource.class).getBody().getInputStream();
+            RequestCallback requestCallback = request -> request.getHeaders()
+                .setAccept(Arrays.asList(MediaType.APPLICATION_OCTET_STREAM, MediaType.ALL));
 
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-            String line;
-            while((line = bufferedReader.readLine()) != null) {
-                results.add(line);
-            }
-            inputStream.close();
+            // Streams the response instead of loading it all in memory
+            ResponseExtractor<Void> responseExtractor = response -> {
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(response.getBody()));
+                String line;
+                while((line = bufferedReader.readLine()) != null) {
+                    results.add(line);
+                }
+                bufferedReader.close();
+                return null;
+            };
+
+            template.execute(uri, HttpMethod.GET, requestCallback, responseExtractor);
 
             return results;
         }

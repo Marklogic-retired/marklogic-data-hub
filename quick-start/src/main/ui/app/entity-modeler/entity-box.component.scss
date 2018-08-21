@@ -166,6 +166,10 @@ $red-color: unquote("rgb(#{$palette-datahub-red})");
       width: 20px;
       min-width: 20px;
     }
+
+    .invalid {
+      color: #a94442;
+    }
   }
 }
 

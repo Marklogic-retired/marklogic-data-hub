@@ -10,10 +10,16 @@ $folder-color: unquote("rgb(#{$palette-datahub-50})");
 
 .container {
   border: 1px solid rgb(177, 199, 217);
+  padding-left: 0;
+  padding-right: 0;
 }
 
 .mdl-textfield {
   width: 100%;
+}
+
+/deep/ .mdl-textfield__label:after {
+  bottom: 12px;
 }
 
 .folder-browser {

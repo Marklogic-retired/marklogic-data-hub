@@ -28,3 +28,4 @@ node_modules/
 *.iws
 *.db
 ye-olde-project
+/bin/

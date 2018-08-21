@@ -1,3 +1,19 @@
+/*
+ * Copyright 2012-2018 MarkLogic Corporation
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ */
 package com.marklogic.quickstart.model.entity_services;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -14,9 +30,11 @@ public class DefinitionType extends JsonPojo {
     protected String description;
     protected String primaryKey;
     protected List<String> required;
+    protected List<String> pii;
     protected List<String> elementRangeIndex;
     protected List<String> rangeIndex;
     protected List<String> wordLexicon;
+
     protected List<PropertyType> properties;
 
     public String getName() {
@@ -49,6 +67,14 @@ public class DefinitionType extends JsonPojo {
 
     public void setRequired(List<String> required) {
         this.required = required;
+    }
+
+    public List<String> getPii() {
+        return pii;
+    }
+
+    public void setPii(List<String> pii) {
+        this.pii = pii;
     }
 
     public List<String> getRangeIndex() {
@@ -99,6 +125,15 @@ public class DefinitionType extends JsonPojo {
             }
         }
         definitionType.setRequired(required);
+
+        ArrayList<String> pii = new ArrayList<>();
+        JsonNode piiNodes = node.get("pii");
+        if (piiNodes != null) {
+            for (final JsonNode n : piiNodes) {
+                pii.add(n.asText());
+            }
+        }
+        definitionType.setPii(pii);
 
         ArrayList<String> elementRangeIndexes = new ArrayList<>();
         JsonNode elementRangeIndexNodes = node.get("elementRangeIndex");
@@ -152,6 +187,10 @@ public class DefinitionType extends JsonPojo {
         ArrayNode requiredArray = JsonNodeFactory.instance.arrayNode();
         required.forEach(requiredArray::add);
         node.set("required", requiredArray);
+
+        ArrayNode piiArray = JsonNodeFactory.instance.arrayNode();
+        pii.forEach(piiArray::add);
+        node.set("pii", piiArray);
 
         ArrayNode elementRangeIndexArray = JsonNodeFactory.instance.arrayNode();
         elementRangeIndex.forEach(elementRangeIndexArray ::add);

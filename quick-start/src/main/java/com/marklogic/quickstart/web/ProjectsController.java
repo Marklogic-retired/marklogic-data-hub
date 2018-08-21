@@ -1,21 +1,28 @@
 /*
- * Copyright 2012-2016 MarkLogic Corporation
+ * Copyright 2012-2018 MarkLogic Corporation
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
  */
 package com.marklogic.quickstart.web;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.HubConfigBuilder;
+import com.marklogic.quickstart.model.HubSettings;
 import com.marklogic.quickstart.model.Project;
 import com.marklogic.quickstart.service.ProjectManagerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,16 +82,36 @@ public class ProjectsController {
 
     @RequestMapping(value = "/{projectId}/initialize", method = RequestMethod.POST)
     @ResponseBody
-    public Project initializeProject(@PathVariable int projectId, @RequestBody HubConfig config) {
+    public Project initializeProject(@PathVariable int projectId, @RequestBody JsonNode hubConfig) {
         Project project = pm.getProject(projectId);
-        project.initialize(config);
-        return project;
+        ObjectMapper om = new ObjectMapper();
+        om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        try {
+            HubConfig config = HubConfigBuilder.newHubConfigBuilder(project.path)
+                .build();
+            config = om.readerForUpdating(config).readValue(hubConfig);
+            AppConfig appConfig = config.getAppConfig();
+            if (hubConfig.get("host") != null) {
+                appConfig.setHost(hubConfig.get("host").asText());
+            }
+            if (hubConfig.get("name") != null) {
+                appConfig.setName(hubConfig.get("name").asText());
+            }
+            project.initialize(config);
+            return project;
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
     }
 
     @RequestMapping(value = "/{projectId}/defaults", method = RequestMethod.GET)
     @ResponseBody
-    public HubConfig getDefaults(@PathVariable int projectId) {
+    public HubSettings getDefaults(@PathVariable int projectId) {
         Project project = pm.getProject(projectId);
-        return HubConfig.hubFromEnvironment(project.path, null);
+        return HubSettings.fromHubConfig(HubConfigBuilder.newHubConfigBuilder(project.path)
+            .withPropertiesFromEnvironment()
+            .build());
     }
 }

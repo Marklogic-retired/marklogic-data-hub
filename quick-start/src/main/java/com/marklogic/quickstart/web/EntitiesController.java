@@ -1,17 +1,18 @@
 /*
- * Copyright 2012-2016 MarkLogic Corporation
+ * Copyright 2012-2018 MarkLogic Corporation
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
  */
 package com.marklogic.quickstart.web;
 
@@ -41,10 +42,10 @@ import java.util.*;
 @RequestMapping("/api/current-project")
 class EntitiesController extends EnvironmentAware {
     @Autowired
-    private EntityManagerService entityManagerService;
+    protected EntityManagerService entityManagerService;
 
     @Autowired
-    private DataHubService dataHubService;
+    protected DataHubService dataHubService;
 
     @Autowired
     private FlowManagerService flowManagerService;
@@ -71,6 +72,7 @@ class EntitiesController extends EnvironmentAware {
         for (EntityModel entity : entities) {
             entityManagerService.saveEntity(entity);
         }
+        entityManagerService.savePii(envConfig());
         entityManagerService.deploySearchOptions(envConfig());
         entityManagerService.saveAllUiData(entities);
         entityManagerService.saveDbIndexes(envConfig());
@@ -90,6 +92,7 @@ class EntitiesController extends EnvironmentAware {
     public EntityModel saveEntity(@RequestBody EntityModel entity) throws ClassNotFoundException, IOException {
         entityManagerService.saveEntityUiData(entity);
         EntityModel m = entityManagerService.saveEntity(entity);
+        entityManagerService.savePii(envConfig());
         entityManagerService.deploySearchOptions(envConfig());
         entityManagerService.saveDbIndexes(envConfig());
         return m;
@@ -188,7 +191,18 @@ class EntitiesController extends EnvironmentAware {
         return entityManagerService.validatePlugin(envConfig().getMlSettings(), entityName, flowName, plugin);
     }
 
+    @RequestMapping(value = "/entities/{entityName}/flows/harmonize/{flowName}/save-harmonize-options", method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseEntity<?> saveHarmonizeFlowOptions(
+        @PathVariable String entityName,
+        @PathVariable String flowName,
+        @RequestBody JsonNode json) throws IOException {
 
+        flowManagerService.saveOrUpdateHarmonizeFlowOptionsToFile(entityName,
+            flowName, json.toString());
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 
     @RequestMapping(value = "/entities/{entityName}/flows/input/{flowName}/save-input-options", method = RequestMethod.POST)
     @ResponseBody

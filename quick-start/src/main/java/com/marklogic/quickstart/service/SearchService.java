@@ -1,17 +1,18 @@
 /*
- * Copyright 2012-2016 MarkLogic Corporation
+ * Copyright 2012-2018 MarkLogic Corporation
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
  */
 package com.marklogic.quickstart.service;
 
@@ -23,8 +24,8 @@ import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.query.QueryManager;
 import com.marklogic.client.query.StructuredQueryBuilder;
 import com.marklogic.client.query.StructuredQueryDefinition;
+import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
-import com.marklogic.hub.HubDatabase;
 import com.marklogic.quickstart.model.SearchQuery;
 
 import javax.xml.namespace.QName;
@@ -51,7 +52,7 @@ public class SearchService extends SearchableService {
     public StringHandle search(SearchQuery searchQuery) {
         QueryManager queryMgr;
         String dbPrefix;
-        if (searchQuery.database.equals(HubDatabase.STAGING)) {
+        if (searchQuery.database.equalsIgnoreCase(DatabaseKind.getName(DatabaseKind.STAGING))) {
             queryMgr = stagingQueryMgr;
             dbPrefix = "staging-";
         }
@@ -104,14 +105,14 @@ public class SearchService extends SearchableService {
         return queryMgr.search(sqd, sh, searchQuery.start);
     }
 
-    public String getDoc(HubDatabase database, String docUri) {
+    public String getDoc(String database, String docUri) {
         GenericDocumentManager docMgr;
-        if (database.equals(HubDatabase.STAGING)) {
+        if (database.equalsIgnoreCase(DatabaseKind.getName(DatabaseKind.STAGING))) {
             docMgr = stagingDocMgr;
         }
         else {
             docMgr = finalDocMgr;
         }
-        return docMgr.readAs(docUri, String.class, new ServerTransform("prettify"));
+        return docMgr.readAs(docUri, String.class, new ServerTransform("ml:prettifyXML"));
     }
 }

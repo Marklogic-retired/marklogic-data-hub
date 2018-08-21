@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2016 MarkLogic Corporation
+ * Copyright 2012-2018 MarkLogic Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import com.marklogic.hub.flow.Flow;
 import java.util.List;
 
 /**
- * A entity object. The data hub groups data by entities.
+ * Entity interface, holds basics about a defined entity object
  */
 public interface Entity {
     /**

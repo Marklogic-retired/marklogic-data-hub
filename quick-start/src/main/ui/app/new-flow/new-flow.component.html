@@ -16,13 +16,21 @@
             label="{{flowType}} Flow Name (required)"
             #flowTypeInput="ngModel"
             [(ngModel)]="flow.flowName"></mdl-textfield>
-          <ng-template [ngIf]="getMarkLogicVersion().startsWith('9')">
+          <ng-template [ngIf]="getMarkLogicVersion() >= 9">
             <label>Code Generation</label>
             <app-select-list
               [items]="scaffoldOptions"
               [initialSelectedItem]="startingScaffoldOption"
               label="label" identifier="value"
               (selectedItem)="flow.useEsModel = $event"></app-select-list>
+            <div *ngIf="flow.useEsModel">
+            <label>Mapping Generation</label>
+              <app-select-list
+                [items]="mappingOptions"
+                [initialSelectedItem]="startingMappingOption"
+                label="label" identifier="value"
+                (selectedItem)="flow.mappingName = $event"></app-select-list>
+            </div>
           </ng-template>
           <label>Plugin Type</label>
           <app-select-list

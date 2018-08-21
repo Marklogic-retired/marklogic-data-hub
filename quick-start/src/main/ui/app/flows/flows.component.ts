@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, OnDestroy, QueryList, ViewChildren } from '@angular/core';
+import { Component, EventEmitter, OnInit, OnDestroy, QueryList, ViewChildren, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { Entity } from '../entities/entity.model';
@@ -38,6 +38,7 @@ import * as _ from 'lodash';
 })
 export class FlowsComponent implements OnInit, OnDestroy {
   @ViewChildren(CodemirrorComponent) codemirrors: QueryList<CodemirrorComponent>;
+  @ViewChild(HarmonizeFlowOptionsComponent) harmonizeFlowOptions: HarmonizeFlowOptionsComponent;
 
   flowTypes: Array<string> = ['Input', 'Harmonize'];
   entities: Array<Entity>;
@@ -221,6 +222,7 @@ export class FlowsComponent implements OnInit, OnDestroy {
     event.cancelBubble = true;
     this.dialogService.confirm(`Really delete ${flow.flowName}`, 'Cancel', 'Delete').subscribe(() => {
       this.entitiesService.deleteFlow(flow, flowType).subscribe(() => {
+        this.harmonizeFlowOptions.deleteSettings(flow.flowName);
         this.router.navigate(['/flows']);
       });
     },
@@ -312,7 +314,8 @@ export class FlowsComponent implements OnInit, OnDestroy {
       component: NewFlowComponent,
       providers: [
         { provide: 'flowType', useValue: flowType },
-        { provide: 'actions', useValue: actions }
+        { provide: 'actions', useValue: actions },
+        { provide: 'entity', useValue: entity}
       ],
       isModal: true
     });
@@ -356,7 +359,7 @@ export class FlowsComponent implements OnInit, OnDestroy {
   }
 
   runHarmonizeFlow(flow: Flow, options: any): void {
-    this.entitiesService.runHarmonizeFlow(flow, options.batchSize, options.threadCount);
+    this.entitiesService.runHarmonizeFlow(flow, options.batchSize, options.threadCount, options.options);
     this.snackbar.showSnackbar({
       message: flow.entityName + ': ' + flow.flowName + ' starting...',
     });

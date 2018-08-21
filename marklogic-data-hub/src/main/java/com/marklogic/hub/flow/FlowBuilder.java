@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2016 MarkLogic Corporation
+ * Copyright 2012-2018 MarkLogic Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -65,6 +65,11 @@ public class FlowBuilder {
 
     public FlowBuilder withMain(MainPlugin main) {
         flow.setMain(main);
+        return this;
+    }
+
+    public FlowBuilder withMapping(String mappingName) {
+        flow.setMappingName(mappingName);
         return this;
     }
 

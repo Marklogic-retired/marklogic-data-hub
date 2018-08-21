@@ -1,23 +1,30 @@
-import { Component, HostListener, Inject } from '@angular/core';
+import {Component, HostListener, Inject, OnDestroy} from '@angular/core';
 
 import { MdlDialogReference } from '@angular-mdl/core';
 
 import { EnvironmentService } from '../environment';
 
 import * as _ from 'lodash';
+import {MapService} from "../mappings/map.service";
+import {Mapping} from "../mappings/mapping.model";
+import {Entity} from "../entities";
 
 @Component({
   selector: 'app-new-flow',
   templateUrl: './new-flow.component.html',
   styleUrls: ['./new-flow.component.scss']
 })
-export class NewFlowComponent {
+export class NewFlowComponent implements OnDestroy {
   flowType: string;
   actions: any;
+  entity: Entity;
 
   scaffoldOptions = [
     { label: 'Create Structure from Entity Definition', value: true },
     { label: 'Blank Template', value: false }
+  ];
+  mappingOptions = [
+    { label: 'None', value: null}
   ];
   codeFormats = [
     { label: 'Javascript', value: 'JAVASCRIPT' },
@@ -30,28 +37,37 @@ export class NewFlowComponent {
 
   startingScaffoldOption: any = null;
 
+  startingMappingOption: any = null;
+
   emptyFlow = {
     flowName: <string>null,
     codeFormat: 'JAVASCRIPT',
     dataFormat: 'JSON',
-    useEsModel: true
+    useEsModel: true,
+    mappingName: <string>null
   };
 
   flow = _.clone(this.emptyFlow);
 
   dataFormat: any;
 
+  mapSub: any;
+
   constructor(
     private dialog: MdlDialogReference,
     private envService: EnvironmentService,
+    private mapService: MapService,
     @Inject('flowType') flowType: string,
-    @Inject('actions') actions: any
+    @Inject('actions') actions: any,
+    @Inject('entity') entity: Entity
   ) {
     this.flowType = _.capitalize(flowType);
     this.flow = _.clone(this.emptyFlow);
     this.actions = actions;
-
-    if (this.getMarkLogicVersion().startsWith('8')) {
+    this.entity = entity;
+    this.startingMappingOption = this.mappingOptions[0];
+    this.mapService.getMappings();
+    if (this.getMarkLogicVersion() === 8) {
       this.flow.useEsModel = false;
     } else {
       if (flowType === 'INPUT') {
@@ -60,6 +76,21 @@ export class NewFlowComponent {
         this.startingScaffoldOption = this.scaffoldOptions[0];
       }
     }
+  }
+
+  ngOnInit() {
+    this.mapSub = this.mapService.mappingsChange.subscribe( () => {
+        this.mappingOptions = [];
+        this.mappingOptions.push({label: 'None', value: null});
+        this.mapService.getMappingsByEntity(this.entity).forEach((map) => {
+          this.mappingOptions.push({label: map.name, value: map.name});
+        });
+        this.startingMappingOption = this.mappingOptions[0];
+    });
+  }
+
+  ngOnDestroy() {
+    this.mapSub.unsubscribe();
   }
 
   hide() {
@@ -84,7 +115,8 @@ export class NewFlowComponent {
     this.hide();
   }
 
-  getMarkLogicVersion(): string {
-    return this.envService.marklogicVersion;
+  getMarkLogicVersion(): number {
+    let version = this.envService.marklogicVersion.substr(0, this.envService.marklogicVersion.indexOf('.'));
+    return parseInt(version);
   }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2016 MarkLogic Corporation
+ * Copyright 2012-2018 MarkLogic Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,683 +16,481 @@
 package com.marklogic.hub;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.marklogic.appdeployer.AppConfig;
-import com.marklogic.appdeployer.ConfigDir;
-import com.marklogic.appdeployer.DefaultAppConfigFactory;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
-import com.marklogic.client.ext.DatabaseClientConfig;
-import com.marklogic.client.ext.SecurityContextType;
-import com.marklogic.client.ext.modulesloader.ssl.SimpleX509TrustManager;
-import com.marklogic.mgmt.DefaultManageConfigFactory;
-import com.marklogic.mgmt.ManageClient;
-import com.marklogic.mgmt.admin.AdminManager;
-import com.marklogic.mgmt.admin.DefaultAdminConfigFactory;
-import com.marklogic.mgmt.util.SimplePropertySource;
-import org.apache.commons.text.CharacterPredicate;
-import org.apache.commons.text.RandomStringGenerator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.marklogic.hub.impl.HubConfigImpl;
 
 import javax.net.ssl.SSLContext;
-import java.io.File;
-import java.io.FileInputStream;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
 
 /**
- * A class for passing around the Data Hub's Configuration
+ * An interface to set, manage and recall the Data Hub's Configuration
  */
-public class HubConfig {
+@JsonDeserialize(as = HubConfigImpl.class)
+@JsonSerialize(as = HubConfigImpl.class)
+public interface HubConfig {
 
-    public static final String HUB_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES = "hub-modules-deploy-timestamps.properties";
-    public static final String USER_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES = "user-modules-deploy-timestamps.properties";
-    public static final String USER_CONTENT_DEPLOY_TIMESTAMPS_PROPERTIES = "user-content-deploy-timestamps.properties";
+    String HUB_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES = "hub-modules-deploy-timestamps.properties";
+    String USER_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES = "user-modules-deploy-timestamps.properties";
+    String USER_CONTENT_DEPLOY_TIMESTAMPS_PROPERTIES = "user-content-deploy-timestamps.properties";
 
-    public static final String HUB_CONFIG_DIR = "hub-internal-config";
-    public static final String USER_CONFIG_DIR = "user-config";
-    public static final String ENTITY_CONFIG_DIR = "entity-config";
-    public static final String STAGING_ENTITY_SEARCH_OPTIONS_FILE = "staging-entity-options.xml";
-    public static final String FINAL_ENTITY_SEARCH_OPTIONS_FILE = "final-entity-options.xml";
+    String HUB_CONFIG_DIR = "hub-internal-config";
+    String USER_CONFIG_DIR = "user-config";
+    String ENTITY_CONFIG_DIR = "entity-config";
+    String STAGING_ENTITY_QUERY_OPTIONS_FILE = "staging-entity-options.xml";
+    String FINAL_ENTITY_QUERY_OPTIONS_FILE = "final-entity-options.xml";
 
-    public static final String DEFAULT_STAGING_NAME = "data-hub-STAGING";
-    public static final String DEFAULT_FINAL_NAME = "data-hub-FINAL";
-    public static final String DEFAULT_TRACE_NAME = "data-hub-TRACING";
-    public static final String DEFAULT_JOB_NAME = "data-hub-JOBS";
-    public static final String DEFAULT_MODULES_DB_NAME = "data-hub-MODULES";
-    public static final String DEFAULT_TRIGGERS_DB_NAME = "data-hub-TRIGGERS";
-    public static final String DEFAULT_SCHEMAS_DB_NAME = "data-hub-SCHEMAS";
+    String DEFAULT_STAGING_NAME = "data-hub-STAGING";
+    String DEFAULT_FINAL_NAME = "data-hub-FINAL";
+    String DEFAULT_JOB_NAME = "data-hub-JOBS";
+    String DEFAULT_MODULES_DB_NAME = "data-hub-MODULES";
+    String DEFAULT_TRIGGERS_DB_NAME = "data-hub-TRIGGERS";
+    String DEFAULT_SCHEMAS_DB_NAME = "data-hub-SCHEMAS";
 
-    public static final String DEFAULT_ROLE_NAME = "data-hub-role";
-    public static final String DEFAULT_USER_NAME = "data-hub-user";
+    String DEFAULT_ROLE_NAME = "data-hub-role";
+    String DEFAULT_USER_NAME = "data-hub-user";
+    String DEFAULT_ADMIN_ROLE_NAME = "hub-admin-role";
+    String DEFAULT_ADMIN_USER_NAME = "hub-admin-user";
 
-    public static final Integer DEFAULT_STAGING_PORT = 8010;
-    public static final Integer DEFAULT_FINAL_PORT = 8011;
-    public static final Integer DEFAULT_TRACE_PORT = 8012;
-    public static final Integer DEFAULT_JOB_PORT = 8013;
+    Integer DEFAULT_STAGING_PORT = 8010;
+    Integer DEFAULT_FINAL_PORT = 8011;
+    Integer DEFAULT_JOB_PORT = 8013;
 
-    public static final String DEFAULT_AUTH_METHOD = "digest";
+    String DEFAULT_AUTH_METHOD = "digest";
 
-    public static final String DEFAULT_SCHEME = "http";
+    String DEFAULT_SCHEME = "http";
 
-    public static final Integer DEFAULT_FORESTS_PER_HOST = 4;
+    Integer DEFAULT_FORESTS_PER_HOST = 4;
 
-    public static final String DEFAULT_CUSTOM_FOREST_PATH = "forests";
-
-    private static final String GRADLE_PROPERTIES_FILENAME = "gradle.properties";
-
-    public String stagingDbName = DEFAULT_STAGING_NAME;
-    public String stagingHttpName = DEFAULT_STAGING_NAME;
-    public Integer stagingForestsPerHost = DEFAULT_FORESTS_PER_HOST;
-    public Integer stagingPort = DEFAULT_STAGING_PORT;
-    public String stagingAuthMethod = DEFAULT_AUTH_METHOD;
-    public String stagingScheme = DEFAULT_SCHEME;
-    public boolean stagingSimpleSsl;
-    private SSLContext stagingSslContext;
-    private DatabaseClientFactory.SSLHostnameVerifier stagingSslHostnameVerifier;
-    private String stagingCertFile;
-    private String stagingCertPassword;
-    private String stagingExternalName;
-
-    public String finalDbName = DEFAULT_FINAL_NAME;
-    public String finalHttpName = DEFAULT_FINAL_NAME;
-    public Integer finalForestsPerHost = DEFAULT_FORESTS_PER_HOST;
-    public Integer finalPort = DEFAULT_FINAL_PORT;
-    public String finalAuthMethod = DEFAULT_AUTH_METHOD;
-    public String finalScheme = DEFAULT_SCHEME;
-    public boolean finalSimpleSsl;
-    private SSLContext finalSslContext;
-    private DatabaseClientFactory.SSLHostnameVerifier finalSslHostnameVerifier;
-    private String finalCertFile;
-    private String finalCertPassword;
-    private String finalExternalName;
-
-    public String traceDbName = DEFAULT_TRACE_NAME;
-    public String traceHttpName = DEFAULT_TRACE_NAME;
-    public Integer traceForestsPerHost = 1;
-    public Integer tracePort = DEFAULT_TRACE_PORT;
-    public String traceAuthMethod = DEFAULT_AUTH_METHOD;
-    public String traceScheme = DEFAULT_SCHEME;
-    public boolean traceSimpleSsl;
-    private SSLContext traceSslContext;
-    private DatabaseClientFactory.SSLHostnameVerifier traceSslHostnameVerifier;
-    private String traceCertFile;
-    private String traceCertPassword;
-    private String traceExternalName;
-
-    public String jobDbName = DEFAULT_JOB_NAME;
-    public String jobHttpName = DEFAULT_JOB_NAME;
-    public Integer jobForestsPerHost = 1;
-    public Integer jobPort = DEFAULT_JOB_PORT;
-    public String jobAuthMethod = DEFAULT_AUTH_METHOD;
-    public String jobScheme = DEFAULT_SCHEME;
-    public boolean jobSimpleSsl;
-    private SSLContext jobSslContext;
-    private DatabaseClientFactory.SSLHostnameVerifier jobSslHostnameVerifier;
-    private String jobCertFile;
-    private String jobCertPassword;
-    private String jobExternalName;
-
-    public String modulesDbName = DEFAULT_MODULES_DB_NAME;
-    public Integer modulesForestsPerHost = 1;
-
-    public String triggersDbName = DEFAULT_TRIGGERS_DB_NAME;
-    public Integer triggersForestsPerHost = 1;
-
-    public String schemasDbName = DEFAULT_SCHEMAS_DB_NAME;
-    public Integer schemasForestsPerHost = 1;
-
-    public String hubRoleName = DEFAULT_ROLE_NAME;
-    public String hubUserName = DEFAULT_USER_NAME;
-
-    public String[] loadBalancerHosts;
-
-    public String customForestPath = DEFAULT_CUSTOM_FOREST_PATH;
-
-    public String modulePermissions = "rest-reader,read,rest-writer,insert,rest-writer,update,rest-extension-user,execute";
-
-    private String projectDir;
-
-    private Properties environmentProperties;
-
-    private String environment;
-
-    private HubProject hubProject;
-
-    private DefaultManageConfigFactory manageConfigFactory;
-    private DefaultAdminConfigFactory adminConfigFactory;
-    private AppConfig appConfig;
-
-    private Properties propertyOverrides;
-
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
-
-    public HubConfig() {
-        setProjectDir(".");
-    }
-
-    private HubConfig(String projectDir) {
-        setProjectDir(new File(projectDir).getAbsolutePath());
-    }
-
-    public String getProjectDir() {
-        return this.projectDir;
-    }
-
-    public void setProjectDir(String projectDir) {
-        this.projectDir = projectDir;
-        this.hubProject = new HubProject(projectDir);
-    }
+    String DEFAULT_CUSTOM_FOREST_PATH = "forests";
+    String PII_QUERY_ROLESET_FILE = "pii-reader.json";
+    String PII_PROTECTED_PATHS_FILE = "pii-protected-paths.json";
 
     /**
-     * Creates a hub config from a Project dir and environment.
-     * @param projectDir - the project directory
-     * @param environment - the environment to use
-     * @return a new HubConfig
+     * Gets the hostname of the AppConfig
+     * @return name of host
      */
-    public static HubConfig hubFromEnvironment(String projectDir, String environment) {
-        HubConfig config = new HubConfig(projectDir);
-        config.environment = environment;
-        config.loadConfigurationFromProperties(config.getProperties(environment));
-        return config;
-    }
-
-    public static HubConfig hubFromEnvironmentWithOverrides(String projectDir, String environment, Properties properties) {
-        HubConfig config = new HubConfig(projectDir);
-        config.environment = environment;
-        config.propertyOverrides = properties;
-        config.loadConfigurationFromProperties(config.getProperties(environment));
-        return config;
-    }
+    String getHost();
 
     /**
-     * Creates a hub config from a Project dir and Properties file
-     * @param projectDir - the project directory
-     * @param properties - the properties file
-     * @return a new HubConfig
+     * Creates and returns a hubconfig object for a project directory
+     * @param projectDir - string path to the project directory
+     * @return HubConfig based in the project directory
      */
-    public static HubConfig hubFromProperties(String projectDir, Properties properties) {
-        HubConfig config = new HubConfig(projectDir);
-        config.loadConfigurationFromProperties(properties);
-        return config;
-    }
-
-    private Properties getProperties(String environment) {
-        Properties environmentProperties = new Properties();
-
-        loadConfigurationFromFile(environmentProperties, GRADLE_PROPERTIES_FILENAME);
-        if (environment != null) {
-            String envPropertiesFile = "gradle-" + environment + ".properties";
-            loadConfigurationFromFile(environmentProperties, envPropertiesFile);
-        }
-
-        if (propertyOverrides != null) {
-            propertyOverrides.forEach((o, o2) -> {
-                environmentProperties.put(o, o2);
-            });
-        }
-
-        return environmentProperties;
-    }
-
-    @JsonIgnore
-    public HubProject getHubProject() {
-        return this.hubProject;
-    }
-
-    public void initHubProject() {
-        this.hubProject.init(getCustomTokens());
-    }
-
-    public String getHubModulesDeployTimestampFile() {
-        return Paths.get(projectDir, ".tmp", HUB_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES).toString();
-    }
-
-    public String getUserModulesDeployTimestampFile() {
-        return Paths.get(projectDir, ".tmp", USER_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES).toString();
-    }
-
-    public File getUserContentDeployTimestampFile() {
-        return Paths.get(projectDir, ".tmp", USER_CONTENT_DEPLOY_TIMESTAMPS_PROPERTIES).toFile();
-    }
-
-    private void loadConfigurationFromProperties(Properties environmentProperties) {
-        this.environmentProperties = environmentProperties;
-
-        if (this.environmentProperties != null) {
-            SimplePropertySource propertySource = new SimplePropertySource(this.environmentProperties);
-            manageConfigFactory = new DefaultManageConfigFactory(propertySource);
-            adminConfigFactory = new DefaultAdminConfigFactory(propertySource);
-
-            stagingDbName = getEnvPropString(environmentProperties, "mlStagingDbName", stagingDbName);
-            stagingHttpName = getEnvPropString(environmentProperties, "mlStagingAppserverName", stagingHttpName);
-            stagingForestsPerHost = getEnvPropInteger(environmentProperties, "mlStagingForestsPerHost", stagingForestsPerHost);
-            stagingPort = getEnvPropInteger(environmentProperties, "mlStagingPort", stagingPort);
-            stagingAuthMethod = getEnvPropString(environmentProperties, "mlStagingAuth", stagingAuthMethod);
-            stagingScheme = getEnvPropString(environmentProperties, "mlStagingScheme", stagingScheme);
-            stagingSimpleSsl = getEnvPropBoolean(environmentProperties, "mlStagingSimpleSsl", false);
-            if (stagingSimpleSsl) {
-                stagingSslContext = SimpleX509TrustManager.newSSLContext();
-                stagingSslHostnameVerifier = DatabaseClientFactory.SSLHostnameVerifier.ANY;
-            }
-            stagingCertFile = getEnvPropString(environmentProperties, "mlStagingCertFile", stagingCertFile);
-            stagingCertPassword = getEnvPropString(environmentProperties, "mlStagingCertPassword", stagingCertPassword);
-            stagingExternalName = getEnvPropString(environmentProperties, "mlStagingExternalName", stagingExternalName);
-
-
-            finalDbName = getEnvPropString(environmentProperties, "mlFinalDbName", finalDbName);
-            finalHttpName = getEnvPropString(environmentProperties, "mlFinalAppserverName", finalHttpName);
-            finalForestsPerHost = getEnvPropInteger(environmentProperties, "mlFinalForestsPerHost", finalForestsPerHost);
-            finalPort = getEnvPropInteger(environmentProperties, "mlFinalPort", finalPort);
-            finalAuthMethod = getEnvPropString(environmentProperties, "mlFinalAuth", finalAuthMethod);
-            finalScheme = getEnvPropString(environmentProperties, "mlFinalScheme", finalScheme);
-            finalSimpleSsl = getEnvPropBoolean(environmentProperties, "mlFinalSimpleSsl", false);
-            if (finalSimpleSsl) {
-                finalSslContext = SimpleX509TrustManager.newSSLContext();
-                finalSslHostnameVerifier = DatabaseClientFactory.SSLHostnameVerifier.ANY;
-            }
-            finalCertFile = getEnvPropString(environmentProperties, "mlFinalCertFile", finalCertFile);
-            finalCertPassword = getEnvPropString(environmentProperties, "mlFinalCertPassword", finalCertPassword);
-            finalExternalName = getEnvPropString(environmentProperties, "mlFinalExternalName", finalExternalName);
-
-            traceDbName = getEnvPropString(environmentProperties, "mlTraceDbName", traceDbName);
-            traceHttpName = getEnvPropString(environmentProperties, "mlTraceAppserverName", traceHttpName);
-            traceForestsPerHost = getEnvPropInteger(environmentProperties, "mlTraceForestsPerHost", traceForestsPerHost);
-            tracePort = getEnvPropInteger(environmentProperties, "mlTracePort", tracePort);
-            traceAuthMethod = getEnvPropString(environmentProperties, "mlTraceAuth", traceAuthMethod);
-            traceScheme = getEnvPropString(environmentProperties, "mlTraceScheme", traceScheme);
-            traceSimpleSsl = getEnvPropBoolean(environmentProperties, "mlTraceSimpleSsl", false);
-            if (traceSimpleSsl) {
-                traceSslContext = SimpleX509TrustManager.newSSLContext();
-                traceSslHostnameVerifier = DatabaseClientFactory.SSLHostnameVerifier.ANY;
-            }
-            traceCertFile = getEnvPropString(environmentProperties, "mlTraceCertFile", traceCertFile);
-            traceCertPassword = getEnvPropString(environmentProperties, "mlTraceCertPassword", traceCertPassword);
-            traceExternalName = getEnvPropString(environmentProperties, "mlTraceExternalName", traceExternalName);
-
-
-            jobDbName = getEnvPropString(environmentProperties, "mlJobDbName", jobDbName);
-            jobHttpName = getEnvPropString(environmentProperties, "mlJobAppserverName", jobHttpName);
-            jobForestsPerHost = getEnvPropInteger(environmentProperties, "mlJobForestsPerHost", jobForestsPerHost);
-            jobPort = getEnvPropInteger(environmentProperties, "mlJobPort", jobPort);
-            jobAuthMethod = getEnvPropString(environmentProperties, "mlJobAuth", jobAuthMethod);
-            jobScheme = getEnvPropString(environmentProperties, "mlJobScheme", jobScheme);
-            jobSimpleSsl = getEnvPropBoolean(environmentProperties, "mlJobSimpleSsl", false);
-            if (jobSimpleSsl) {
-                jobSslContext = SimpleX509TrustManager.newSSLContext();
-                jobSslHostnameVerifier = DatabaseClientFactory.SSLHostnameVerifier.ANY;
-            }
-            jobCertFile = getEnvPropString(environmentProperties, "mlJobCertFile", jobCertFile);
-            jobCertPassword = getEnvPropString(environmentProperties, "mlJobCertPassword", jobCertPassword);
-            jobExternalName = getEnvPropString(environmentProperties, "mlJobExternalName", jobExternalName);
-
-            customForestPath = getEnvPropString(environmentProperties, "mlCustomForestPath", customForestPath);
-
-            modulesDbName = getEnvPropString(environmentProperties, "mlModulesDbName", modulesDbName);
-            modulesForestsPerHost = getEnvPropInteger(environmentProperties, "mlModulesForestsPerHost", modulesForestsPerHost);
-            modulePermissions = getEnvPropString(environmentProperties, "mlModulePermissions", modulePermissions);
-
-            triggersDbName = getEnvPropString(environmentProperties, "mlTriggersDbName", triggersDbName);
-            triggersForestsPerHost = getEnvPropInteger(environmentProperties, "mlTriggersForestsPerHost", triggersForestsPerHost);
-
-            schemasDbName = getEnvPropString(environmentProperties, "mlSchemasDbName", schemasDbName);
-            schemasForestsPerHost = getEnvPropInteger(environmentProperties, "mlSchemasForestsPerHost", schemasForestsPerHost);
-
-            hubRoleName = getEnvPropString(environmentProperties, "mlHubUserRole", hubRoleName);
-            hubUserName = getEnvPropString(environmentProperties, "mlHubUserName", hubUserName);
-
-            String lbh = getEnvPropString(environmentProperties, "mlLoadBalancerHosts", null);
-            if (lbh != null && lbh.length() > 0) {
-                loadBalancerHosts = lbh.split(",");
-            }
-
-            projectDir = getEnvPropString(environmentProperties, "hubProjectDir", projectDir);
-
-            logger.info("Hub Project Dir: " + projectDir);
-        }
-        else {
-            logger.error("Missing environmentProperties");
-        }
-    }
-
-    public ManageClient newManageClient() {
-        return new ManageClient(manageConfigFactory.newManageConfig());
-    }
-
-    public AdminManager newAdminManager() {
-        return new AdminManager(adminConfigFactory.newAdminConfig());
-    }
-
-    public DatabaseClient newAppServicesClient() {
-        return getAppConfig().newAppServicesDatabaseClient(null);
+    static HubConfig create(String projectDir) {
+        return new HubConfigImpl(projectDir);
     }
 
     /**
-     * Creates a new DatabaseClient for accessing the Staging database
+     * Returns the database name for the DatabaseKind set in the config
+     * @param kind - DatabaseKind enum, eg: STAGING or JOB
+     * @return The name of the database
+     */
+    String getDbName(DatabaseKind kind);
+
+    /**
+     * Sets the database name for the databaseKind on the hubconfig
+     * @param kind- DatabaseKind enum, eg: STAGING or JOB
+     * @param dbName The name desired for the database
+     */
+    void setDbName(DatabaseKind kind, String dbName);
+
+    /**
+     * Returns the appserver name for the DatabaseKind set in the config
+     * @param kind - DatabaseKind enum, eg: STAGING or JOB
+     * @return The name of the App server
+     */
+    String getHttpName(DatabaseKind kind);
+
+    /**
+     * Sets the appserver name for the databaseKind on the hubconfig
+     * @param kind- DatabaseKind enum, eg: STAGING or JOB
+     * @param httpName The name to set for the appserver
+     */
+    void setHttpName(DatabaseKind kind, String httpName);
+
+    /**
+     * Returns the number of forests per host for the DatabaseKind set in the config
+     * @param kind - DatabaseKind enum, eg: STAGING or JOB
+     * @return The number of forests per host for this database
+     */
+    Integer getForestsPerHost(DatabaseKind kind);
+
+    /**
+     * Sets the number of forests per host for the databaseKind on the hubconfig
+     * @param kind- DatabaseKind enum, eg: STAGING or JOB
+     * @param forestsPerHost The number of forests per host
+     */
+    void setForestsPerHost(DatabaseKind kind, Integer forestsPerHost);
+
+    /**
+     * Returns the port number for the DatabaseKind set in the config
+     * @param kind - DatabaseKind enum, eg: STAGING or JOB
+     * @return The port set for the appserver connected to the database
+     */
+    Integer getPort(DatabaseKind kind);
+
+    /**
+     * Sets the port number for the databaseKind on the hubconfig
+     * @param kind- DatabaseKind enum, eg: STAGING or JOB
+     * @param port The port number for the database appserver
+     */
+    void setPort(DatabaseKind kind, Integer port);
+
+    /**
+     * Returns the SSL Context for the DatabaseKind set in the config
+     * @param kind - DatabaseKind enum, eg: STAGING or JOB
+     * @return The SSLContext set for the database connection
+     */
+    SSLContext getSslContext(DatabaseKind kind);
+
+    /**
+     * Sets the SSL Context for the DatabaseKind in the config
+     * @param kind - DatabaseKind enum, eg: STAGING or JOB
+     * @param sslContext - The SSLContext set for the database connection
+     */
+    void setSslContext(DatabaseKind kind, SSLContext sslContext);
+
+    /**
+     * Sets the SSL Hostname Verifier object for the DatabaseKind in the config
+     * @param kind - DatabaseKind enum, eg: STAGING or JOB
+     * @param stagingSslHostnameVerifier - The SSL Hostname Verifier object for the database connection
+     */
+    void setSslHostnameVerifier(DatabaseKind kind, DatabaseClientFactory.SSLHostnameVerifier stagingSslHostnameVerifier);
+
+    /**
+     * Returns the SSL hostname verifier object for the DatabaseKind in the hub config
+     * @param kind - DatabaseKind enum, eg: STAGING or JOB
+     * @return The SSL Hostname Verifier for the DatabaseKind in hubconfig
+     */
+    DatabaseClientFactory.SSLHostnameVerifier getSslHostnameVerifier(DatabaseKind kind);
+
+    /**
+     * Returns the AuthMethod object for the DatabaseKind in the hub config
+     * @param kind - DatabaseKind enum, eg: STAGING or JOB
+     * @return The Auth Method for the DatabaseKind in hubconfig
+     */
+    String getAuthMethod(DatabaseKind kind);
+
+    /**
+     * Sets the SSL Auth Method for the DatabaseKind in the config
+     * @param kind - DatabaseKind enum, eg: STAGING or JOB
+     * @param authMethod - The SSL Auth Method for the database connection
+     */
+    void setAuthMethod(DatabaseKind kind, String authMethod);
+
+    /**
+     * Returns the TrustManager object for the DatabaseKind in the hub config
+     * @param kind - DatabaseKind enum, eg: STAGING or JOB
+     * @return The TrustManager for the DatabaseKind in hubconfig
+     */
+    X509TrustManager getTrustManager(DatabaseKind kind);
+
+    /**
+     * Sets the Trust Manager for the DatabaseKind in the config
+     * @param kind - DatabaseKind enum, eg: STAGING or JOB
+     * @param trustManager - The Trust Manager for the database connection
+     */
+    void setTrustManager(DatabaseKind kind, X509TrustManager trustManager);
+
+    /**
+     * Returns the SSL Scheme as string for the DatabaseKind in the hub config
+     * @param kind - DatabaseKind enum, eg: STAGING or JOB
+     * @return The SSL Scheme for the DatabaseKind in hubconfig
+     */
+    String getScheme(DatabaseKind kind);
+
+    /**
+     * Sets the SSL Scheme for the DatabaseKind in the config
+     * @param kind - DatabaseKind enum, eg: STAGING or JOB
+     * @param scheme - The SSL Scheme for the database connection
+     */
+    void setScheme(DatabaseKind kind, String scheme);
+
+    /**
+     * Returns if Simple SSL is set for the DatabaseKind in the hub config
+     * @param kind - DatabaseKind enum, eg: STAGING or JOB
+     * @return true if Simple SSL is set for the DatabaseKind in hubconfig
+     */
+    boolean getSimpleSsl(DatabaseKind kind);
+
+    /**
+     * Sets if Simple SSL is to be used for the DatabaseKind in the config
+     * @param kind - DatabaseKind enum, eg: STAGING or JOB
+     * @param simpleSsl- true if you want to use Simple SSL, false if you don't
+     */
+    void setSimpleSsl(DatabaseKind kind, Boolean simpleSsl);
+
+    /**
+     * Returns the SSL Cert file as a string for the DatabaseKind in the hub config
+     * @param kind - DatabaseKind enum, eg: STAGING or JOB
+     * @return The SSL Cert File as a string for the DatabaseKind in hubconfig
+     */
+    String getCertFile(DatabaseKind kind);
+
+    /**
+     * Sets the SSL Certfile to use for the DatabaseKind in the config
+     * @param kind - DatabaseKind enum, eg: STAGING or JOB
+     * @param certFile - The SSL Cert File as a string to be used for the database connection
+     */
+    void setCertFile(DatabaseKind kind, String certFile);
+
+    /**
+     * Returns the SSL Cert Password as a string for the DatabaseKind in the hub config
+     * @param kind - DatabaseKind enum, eg: STAGING or JOB
+     * @return The SSL Cert Password for the DatabaseKind in hubconfig
+     */
+    String getCertPassword(DatabaseKind kind);
+
+    /**
+     * Sets the SSL Cert password for the DatabaseKind in the config
+     * @param kind - DatabaseKind enum, eg: STAGING or JOB
+     * @param certPassword - The SSL certificate password for the database connection
+     */
+    void setCertPass(DatabaseKind kind, String certPassword);
+
+    /**
+     * Returns the external name for the host for the DatabaseKind in the hub config
+     * @param kind - DatabaseKind enum, eg: STAGING or JOB
+     * @return The external name of the host for the DatabaseKind in hubconfig
+     */
+    String getExternalName(DatabaseKind kind);
+
+    /**
+     * Sets the external hostname for the DatabaseKind in the config
+     * @param kind - DatabaseKind enum, eg: STAGING or JOB
+     * @param externalName- The external host name for the database connection
+     */
+    void setExternalName(DatabaseKind kind, String externalName);
+
+    // roles and users
+
+    /**
+     * Get the roleName the hub uses
+     * @return the name of the role the DHF uses
+     */
+    String getHubRoleName();
+
+    /**
+     * Set the role name that the hub uses
+     * @param hubRoleName the name to use
+     */
+    void setHubRoleName(String hubRoleName);
+
+    /**
+     * Get the current marklogic user name the hub uses
+     * @return the username
+     */
+    String getHubUserName();
+
+    /**
+     * Sets the username for the hub to use in MarkLogic
+     * @param hubUserName - username to use
+     */
+    void setHubUserName(String hubUserName);
+
+    /**
+     * Gets a string array of hosts
+     * @return String array of hosts
+     */
+    String[] getLoadBalancerHosts();
+
+    /**
+     * Returns the path for the custom forests definition
+     * @return path where the custom forests are as string
+     */
+    String getCustomForestPath();
+
+    /**
+     * Gets the permissions used to execute a module in string form
+     * @return a string reprsenting the marklogic permissions for a module
+     */
+    String getModulePermissions();
+
+    /**
+     * Obtains the project directory as a string
+     * @return project directory
+     */
+    String getProjectDir();
+
+    /**
+     * Sets the directory for the current project
+     * @param projectDir - a string that represents the path to the project directory
+     */
+    void setProjectDir(String projectDir);
+
+    /**
+     * Returns the HubProject associated with the HubConfig
+     * @return current hubProject associated with the HubConfig
+     */
+    HubProject getHubProject();
+
+    /**
+     * Initializes the hub project on disk
+     */
+    void initHubProject();
+
+    /**
+     * Returns the last deployed timestamp file for the hub config and modules
+     * @return string of what's located in the timestamp file
+     */
+    String getHubModulesDeployTimestampFile();
+
+    /**
+     * Returns the last deployed timestamp file for the user modules
+     * @return string of what's located in the timestamp file
+     */
+    String getUserModulesDeployTimestampFile();
+
+    /**
+     * Creates a new DatabaseClient for accessing the AppServices app
      * @return - a DatabaseClient
      */
-    public DatabaseClient newStagingClient() {
-        return newStagingClient(stagingDbName);
-    }
-
-    public DatabaseClient newStagingClient(String databaseName) {
-        AppConfig appConfig = getAppConfig();
-        DatabaseClientConfig config = new DatabaseClientConfig(appConfig.getHost(), stagingPort, appConfig.getRestAdminUsername(), appConfig.getRestAdminPassword());
-        config.setDatabase(databaseName);
-        config.setSecurityContextType(SecurityContextType.valueOf(stagingAuthMethod.toUpperCase()));
-        config.setSslHostnameVerifier(stagingSslHostnameVerifier);
-        config.setSslContext(stagingSslContext);
-        config.setCertFile(stagingCertFile);
-        config.setCertPassword(stagingCertPassword);
-        config.setExternalName(stagingExternalName);
-        return appConfig.getConfiguredDatabaseClientFactory().newDatabaseClient(config);
-    }
-
-    /**
-     * Creates a new DatabaseClient for accessing the Final database
-     * @return - a DatabaseClient
-     */
-    public DatabaseClient newFinalClient() {
-        AppConfig appConfig = getAppConfig();
-        DatabaseClientConfig config = new DatabaseClientConfig(appConfig.getHost(), finalPort, appConfig.getRestAdminUsername(), appConfig.getRestAdminPassword());
-        config.setDatabase(finalDbName);
-        config.setSecurityContextType(SecurityContextType.valueOf(finalAuthMethod.toUpperCase()));
-        config.setSslHostnameVerifier(finalSslHostnameVerifier);
-        config.setSslContext(finalSslContext);
-        config.setCertFile(finalCertFile);
-        config.setCertPassword(finalCertPassword);
-        config.setExternalName(finalExternalName);
-        return appConfig.getConfiguredDatabaseClientFactory().newDatabaseClient(config);
-    }
+    DatabaseClient newAppServicesClient();
 
     /**
      * Creates a new DatabaseClient for accessing the Job database
      * @return - a DatabaseClient
      */
-    public DatabaseClient newJobDbClient() {
-        AppConfig appConfig = getAppConfig();
-        DatabaseClientConfig config = new DatabaseClientConfig(appConfig.getHost(), jobPort, appConfig.getRestAdminUsername(), appConfig.getRestAdminPassword());
-        config.setDatabase(jobDbName);
-        config.setSecurityContextType(SecurityContextType.valueOf(jobAuthMethod.toUpperCase()));
-        config.setSslHostnameVerifier(jobSslHostnameVerifier);
-        config.setSslContext(jobSslContext);
-        config.setCertFile(jobCertFile);
-        config.setCertPassword(jobCertPassword);
-        config.setExternalName(jobExternalName);
-        return appConfig.getConfiguredDatabaseClientFactory().newDatabaseClient(config);
-    }
+    DatabaseClient newJobDbClient();
 
     /**
-     * Creates a new DatabaseClient for accessing the Trace database
+     * Use newJobDbClient instead.  This function returns a client to
+     * the JOBS database.
      * @return - a DatabaseClient
      */
-    public DatabaseClient newTraceDbClient() {
-        AppConfig appConfig = getAppConfig();
-        DatabaseClientConfig config = new DatabaseClientConfig(appConfig.getHost(), tracePort, appConfig.getRestAdminUsername(), appConfig.getRestAdminPassword());
-        config.setDatabase(traceDbName);
-        config.setSecurityContextType(SecurityContextType.valueOf(traceAuthMethod.toUpperCase()));
-        config.setSslHostnameVerifier(traceSslHostnameVerifier);
-        config.setSslContext(traceSslContext);
-        config.setCertFile(traceCertFile);
-        config.setCertPassword(traceCertPassword);
-        config.setExternalName(traceExternalName);
-        return appConfig.getConfiguredDatabaseClientFactory().newDatabaseClient(config);
-    }
+    @Deprecated
+    DatabaseClient newTraceDbClient();
 
     /**
      * Creates a new DatabaseClient for accessing the Hub Modules database
      * @return - a DatabaseClient
      */
-    public DatabaseClient newModulesDbClient() {
-        AppConfig appConfig = getAppConfig();
-        DatabaseClientConfig config = new DatabaseClientConfig(appConfig.getHost(), stagingPort, appConfig.getRestAdminUsername(), appConfig.getRestAdminPassword());
-        config.setDatabase(appConfig.getModulesDatabaseName());
-        config.setSecurityContextType(SecurityContextType.valueOf(stagingAuthMethod.toUpperCase()));
-        config.setSslHostnameVerifier(stagingSslHostnameVerifier);
-        config.setSslContext(stagingSslContext);
-        config.setCertFile(stagingCertFile);
-        config.setCertPassword(stagingCertPassword);
-        config.setExternalName(stagingExternalName);
-        return appConfig.getConfiguredDatabaseClientFactory().newDatabaseClient(config);
-    }
+    DatabaseClient newModulesDbClient();
 
-    public Path getHubPluginsDir() {
-        return hubProject.getHubPluginsDir();
-    }
+    /**
+     * Gets the path for the hub plugins directory
+     * @return the path for the hub plugins directory
+     */
+    Path getHubPluginsDir();
 
-    public Path getHubEntitiesDir() { return hubProject.getHubEntitiesDir(); }
+    /**
+     * Gets the path for the hub entities directory
+     * @return the path for the hub entities directory
+     */
+    Path getHubEntitiesDir();
 
-    public Path getHubConfigDir() {
-        return hubProject.getHubConfigDir();
-    }
+    /**
+     * Gets the path for the hub mappings directory
+     * @return the path for the hub mappings directory
+     */
+    Path getHubMappingsDir();
 
-    public Path getHubDatabaseDir() {
-        return hubProject.getHubDatabaseDir();
-    }
+    /**
+     * Gets the path for the hub's config directory
+     * @return the path for the hub's config directory
+     */
+    Path getHubConfigDir();
 
-    public Path getHubServersDir() {
-        return hubProject.getHubServersDir();
-    }
+    /**
+     * Gets the path for the hub's database directory
+     * @return the path for the hub's database directory
+     */
+    Path getHubDatabaseDir();
 
-    public Path getHubSecurityDir() {
-        return hubProject.getHubSecurityDir();
-    }
+    /**
+     * Gets the path for the hub servers directory
+     * @return the path for the hub servers database directory
+     */
+    Path getHubServersDir();
 
-    public Path getUserSecurityDir() {
-        return hubProject.getUserSecurityDir();
-    }
+    /**
+     * Gets the path for the hub's security directory
+     * @return the path for the hub's security directory
+     */
+    Path getHubSecurityDir();
 
-    public Path getUserConfigDir() {
-        return hubProject.getUserConfigDir();
-    }
+    /**
+     * Gets the path for the user config directory
+     * @return the path for the user config directory
+     */
+    Path getUserConfigDir();
 
-    public Path getUserDatabaseDir() {
-        return hubProject.getUserDatabaseDir();
-    }
+    /**
+     * Gets the path for the user security directory
+     * @return the path for the user security directory
+     */
+    Path getUserSecurityDir();
 
-    public Path getEntityDatabaseDir() {
-        return hubProject.getEntityDatabaseDir();
-    }
+    /**
+     * Gets the path for the user database directory
+     * @return the path for the user database directory
+     */
+    Path getUserDatabaseDir();
 
-    public Path getUserServersDir() {
-        return hubProject.getUserServersDir();
-    }
+    /**
+     * Gets the path for the user servers directory
+     * @return the path for the user servers database directory
+     */
+    Path getUserServersDir();
 
-    public Path getHubMimetypesDir() {
-        return hubProject.getHubMimetypesDir();
-    }
+    /**
+     * Gets the path for the entity database directory
+     * @return the path for the entity's database directory
+     */
+    Path getEntityDatabaseDir();
 
+    /**
+     * Returns the current appconfig object attached to the HubConfig
+     * @return Returns current AppConfig object set for HubConfig
+     */
     @JsonIgnore
-    public AppConfig getAppConfig() {
-        if (appConfig == null) {
-            Properties properties = getProperties(this.environment);
-            appConfig = new DefaultAppConfigFactory(new SimplePropertySource(properties)).newAppConfig();
-            updateAppConfig(appConfig);
-        }
-        return appConfig;
-    }
+    AppConfig getAppConfig();
 
-    private Map<String, String> getCustomTokens() {
-        AppConfig appConfig = getAppConfig();
-        return getCustomTokens(appConfig, appConfig.getCustomTokens());
-    }
+    /**
+     * Sets the App Config for the current HubConfig
+     * @param config AppConfig to associate with the HubConfig
+     */
+    void setAppConfig(AppConfig config);
 
-    private Map<String, String> getCustomTokens(AppConfig appConfig, Map<String, String> customTokens) {
-        customTokens.put("%%mlHost%%", appConfig.getHost());
-        customTokens.put("%%mlStagingAppserverName%%", stagingHttpName);
-        customTokens.put("\"%%mlStagingPort%%\"", stagingPort.toString());
-        customTokens.put("%%mlStagingDbName%%", stagingDbName);
-        customTokens.put("%%mlStagingForestsPerHost%%", stagingForestsPerHost.toString());
-        customTokens.put("%%mlStagingAuth%%", stagingAuthMethod);
+    /**
+     * Sets the App Config for the current HubConfig, with skipUpdate option
+     * @param config - AppConfig to associate with the HubConfig
+     * @param skipUpdate false to force update of AppConfig, true to skip it
+     */
+    void setAppConfig(AppConfig config, boolean skipUpdate);
 
-        customTokens.put("%%mlFinalAppserverName%%", finalHttpName);
-        customTokens.put("\"%%mlFinalPort%%\"", finalPort.toString());
-        customTokens.put("%%mlFinalDbName%%", finalDbName);
-        customTokens.put("%%mlFinalForestsPerHost%%", finalForestsPerHost.toString());
-        customTokens.put("%%mlFinalAuth%%", finalAuthMethod);
+    /**
+     * Gets the current version of the DHF Jar
+     * @return Version of DHF Jar file as string
+     */
+    String getJarVersion();
 
-        customTokens.put("%%mlTraceAppserverName%%", traceHttpName);
-        customTokens.put("\"%%mlTracePort%%\"", tracePort.toString());
-        customTokens.put("%%mlTraceDbName%%", traceDbName);
-        customTokens.put("%%mlTraceForestsPerHost%%", traceForestsPerHost.toString());
-        customTokens.put("%%mlTraceAuth%%", traceAuthMethod);
+    /**
+     * Gets a new DatabaseClient that queries the staging database and appserver
+     * Uses mlUsername and mlPassword
+     * @return A client without elevated administrative privileges.
+     */
+    DatabaseClient newStagingClient();
 
-        customTokens.put("%%mlJobAppserverName%%", jobHttpName);
-        customTokens.put("\"%%mlJobPort%%\"", jobPort.toString());
-        customTokens.put("%%mlJobDbName%%", jobDbName);
-        customTokens.put("%%mlJobForestsPerHost%%", jobForestsPerHost.toString());
-        customTokens.put("%%mlJobAuth%%", jobAuthMethod);
+    /**
+     * Gets a new DatabaseClient that queries the Final database using the staging appserver.
+     * @return A DatabaseClient
+     */
+    DatabaseClient newFinalClient();
 
-        customTokens.put("%%mlModulesDbName%%", modulesDbName);
-        customTokens.put("%%mlModulesForestsPerHost%%", modulesForestsPerHost.toString());
-
-        customTokens.put("%%mlTriggersDbName%%", triggersDbName);
-        customTokens.put("%%mlTriggersForestsPerHost%%", triggersForestsPerHost.toString());
-
-        customTokens.put("%%mlSchemasDbName%%", schemasDbName);
-        customTokens.put("%%mlSchemasForestsPerHost%%", schemasForestsPerHost.toString());
-
-        customTokens.put("%%mlHubUserRole%%", hubRoleName);
-        customTokens.put("%%mlHubUserName%%", hubUserName);
-
-        // random password for hub user
-        RandomStringGenerator randomStringGenerator = new RandomStringGenerator.Builder().withinRange(33, 126).filteredBy((CharacterPredicate) codePoint -> (codePoint != 92 && codePoint != 34)).build();
-        customTokens.put("%%mlHubUserPassword%%", randomStringGenerator.generate(20));
-
-        customTokens.put("%%mlCustomForestPath%%", customForestPath);
-
-        if (environmentProperties != null) {
-            Enumeration keyEnum = environmentProperties.propertyNames();
-            while (keyEnum.hasMoreElements()) {
-                String key = (String) keyEnum.nextElement();
-                if (key.matches("^ml[A-Z].+") && !customTokens.containsKey(key)) {
-                    customTokens.put("%%" + key + "%%", (String) environmentProperties.get(key));
-                }
-            }
-        }
-
-        return customTokens;
-    }
-
-    public void setAppConfig(AppConfig config) {
-        this.appConfig = config;
-        updateAppConfig(this.appConfig);
-    }
-
-    public String getJarVersion() throws IOException {
-        Properties properties = new Properties();
-        InputStream inputStream = getClass().getClassLoader().getResourceAsStream("version.properties");
-        properties.load(inputStream);
-        String version = (String)properties.get("version");
-
-        // this lets debug builds work from an IDE
-        if (version.equals("${project.version}")) {
-            version = "0.1.2";
-        }
-        return version;
-    }
-
-    private void updateAppConfig(AppConfig config) {
-        config.setRestPort(stagingPort);
-        config.setModulesDatabaseName(modulesDbName);
-
-        config.setTriggersDatabaseName(triggersDbName);
-        config.setSchemasDatabaseName(schemasDbName);
-        config.setModulesDatabaseName(modulesDbName);
-
-        config.setReplaceTokensInModules(true);
-        config.setUseRoxyTokenPrefix(false);
-        config.setModulePermissions(modulePermissions);
-
-        HashMap<String, Integer> forestCounts = new HashMap<>();
-        forestCounts.put(stagingDbName, stagingForestsPerHost);
-        forestCounts.put(finalDbName, finalForestsPerHost);
-        forestCounts.put(traceDbName, traceForestsPerHost);
-        forestCounts.put(jobDbName, jobForestsPerHost);
-        forestCounts.put(modulesDbName, modulesForestsPerHost);
-        forestCounts.put(triggersDbName, triggersForestsPerHost);
-        forestCounts.put(schemasDbName, schemasForestsPerHost);
-        config.setForestCounts(forestCounts);
-
-        ConfigDir configDir = new ConfigDir(getUserConfigDir().toFile());
-        config.setConfigDir(configDir);
-
-        config.setSchemasPath(getUserConfigDir().resolve("schemas").toString());
-
-        Map<String, String> customTokens = getCustomTokens(config, config.getCustomTokens());
-
-        if (environmentProperties != null) {
-            Enumeration keyEnum = environmentProperties.propertyNames();
-            while (keyEnum.hasMoreElements()) {
-                String key = (String) keyEnum.nextElement();
-                if (key.matches("^ml[A-Z].+") && !customTokens.containsKey(key)) {
-                    customTokens.put("%%" + key + "%%", (String) environmentProperties.get(key));
-                }
-            }
-        }
+    /**
+     * Gets information on a datahub configuration
+     * @return information on the datahub configuration as a string
+     */
+    String getInfo();
 
 
-        try {
-            String version = getJarVersion();
-            customTokens.put("%%mlHubVersion%%", version);
-        }
-        catch(IOException e) {
-            e.printStackTrace();
-        }
-
-        appConfig = config;
-    }
-
-    private String getEnvPropString(Properties environmentProperties, String key, String fallback) {
-        String value = environmentProperties.getProperty(key);
-        if (value == null) {
-            value = fallback;
-        }
-        return value;
-    }
-
-    private int getEnvPropInteger(Properties environmentProperties, String key, int fallback) {
-        String value = environmentProperties.getProperty(key);
-        int res;
-        if (value != null) {
-            res = Integer.parseInt(value);
-        }
-        else {
-            res = fallback;
-        }
-        return res;
-    }
-
-    private boolean getEnvPropBoolean(Properties environmentProperties, String key, boolean fallback) {
-        String value = environmentProperties.getProperty(key);
-        boolean res;
-        if (value != null) {
-            res = Boolean.parseBoolean(value);
-        }
-        else {
-            res = fallback;
-        }
-        return res;
-    }
-
-    private void loadConfigurationFromFile(Properties configProperties, String fileName) {
-        InputStream is;
-        try {
-            File file = new File(this.projectDir, fileName);
-            if(file.exists()) {
-                is = new FileInputStream( file );
-                configProperties.load( is );
-                is.close();
-            }
-        }
-        catch ( Exception e ) {
-            e.printStackTrace();
-        }
-    }
 }

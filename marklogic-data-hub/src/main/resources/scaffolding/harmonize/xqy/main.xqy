@@ -6,10 +6,10 @@ module namespace plugin = "http://marklogic.com/data-hub/plugins";
 (:
  : This module exposes helper functions to make your life easier
  : See documentation at:
- : https://github.com/marklogic/marklogic-data-hub/wiki/dhf-lib
+ : https://marklogic.github.io/marklogic-data-hub/docs/server-side/
  :)
 import module namespace dhf = "http://marklogic.com/dhf"
-  at "/com.marklogic.hub/dhf.xqy";
+  at "/MarkLogic/data-hub-framework/dhf.xqy";
 
 (: include modules to construct various parts of the envelope :)
 import module namespace content = "http://marklogic.com/data-hub/plugins" at "content.xqy";
@@ -50,6 +50,6 @@ declare function plugin:main(
   let $envelope := dhf:make-envelope($content, $headers, $triples, map:get($options, "dataFormat"))
   return
     (: writers must be invoked this way.
-     see: https://github.com/marklogic-community/marklogic-data-hub/wiki/dhf-lib#run-writer :)
+     see: https://github.com/marklogic/marklogic-data-hub/wiki/dhf-lib#run-writer :)
     dhf:run-writer(xdmp:function(xs:QName("writer:write")), $id, $envelope, $options)
 };

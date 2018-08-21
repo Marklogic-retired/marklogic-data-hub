@@ -28,6 +28,7 @@ export class EntityEditorComponent {
   indexHeader: boolean = false;
   wordLexiconHeader: boolean = false;
   requiredHeader: boolean = false;
+  piiHeader: boolean = false;
 
   cardinalities: Array<any> = [
     {
@@ -40,6 +41,9 @@ export class EntityEditorComponent {
     }
   ];
 
+  // property name pattern: name cannot have space characters in it
+  readonly PROPERTY_NAME_PATTERN = /^[^\s]+$/;
+
   constructor(
     private dialog: MdlDialogReference,
     private dialogService: MdlDialogService,
@@ -51,6 +55,15 @@ export class EntityEditorComponent {
     this.actions = actions;
     this.dataTypes = dataTypes;
     this.entityBackup = JSON.stringify(this.entity);
+    // Set property ui flags based on entity state
+    this.entity.definition.properties.forEach(function(property) {
+      property.isPrimaryKey = this.entity.definition.primaryKey === property.name;
+      property.hasElementRangeIndex = this.entity.definition.elementRangeIndex.indexOf(property.name) >= 0;
+      property.hasRangeIndex = this.entity.definition.rangeIndex.indexOf(property.name) >= 0;
+      property.hasWordLexicon = this.entity.definition.wordLexicon.indexOf(property.name) >= 0;
+      property.required = this.entity.definition.required.indexOf(property.name) >= 0;
+      property.pii = this.entity.definition.pii.indexOf(property.name) >= 0;
+    }, this);
   }
 
   getType(property: PropertyType) {
@@ -147,26 +160,6 @@ export class EntityEditorComponent {
     });
   }
 
-  isPrimaryKey(key: string) {
-    return this.entity.definition.primaryKey === key;
-  }
-
-  isRangeIndex(key: string) {
-    return this.entity.definition.elementRangeIndex.indexOf(key) >= 0;
-  }
-
-  isPathRangeIndex(key: string) {
-    return this.entity.definition.rangeIndex.indexOf(key) >= 0;
-  }
-
-  isWordLexicon(key: string) {
-    return this.entity.definition.wordLexicon.indexOf(key) >= 0;
-  }
-
-  isRequired(key: string) {
-    return this.entity.definition.required.indexOf(key) >= 0;
-  }
-
   addProperty() {
     this.entity.definition.properties.push(new PropertyType());
   }
@@ -193,6 +186,10 @@ export class EntityEditorComponent {
             return (index === value.name);
           });
 
+          _.remove(this.entity.definition.pii, (index: string) => {
+            return (index === value.name);
+          });
+
           _.remove(this.entity.definition.wordLexicon, (index: string) => {
             return (index === value.name);
           });
@@ -212,6 +209,33 @@ export class EntityEditorComponent {
 
   saveEntity() {
     if (this.actions.save) {
+      // Set entity state based on property ui flags
+      this.entity.definition.primaryKey = null;
+      this.entity.definition.elementRangeIndex = [];
+      this.entity.definition.rangeIndex = [];
+      this.entity.definition.wordLexicon = [];
+      this.entity.definition.required = [];
+      this.entity.definition.pii = [];
+      this.entity.definition.properties.forEach(function(property) {
+        if (property.isPrimaryKey) {
+          this.entity.definition.primaryKey = property.name;
+        }
+        if (property.hasElementRangeIndex) {
+          this.entity.definition.elementRangeIndex.push(property.name);
+        }
+        if (property.hasRangeIndex) {
+          this.entity.definition.rangeIndex.push(property.name);
+        }
+        if (property.hasWordLexicon) {
+          this.entity.definition.wordLexicon.push(property.name);
+        }
+        if (property.required) {
+          this.entity.definition.required.push(property.name);
+        }
+        if (property.pii) {
+          this.entity.definition.pii.push(property.name);
+        }
+      }, this);
       this.actions.save();
     }
     this.dialog.hide();
@@ -243,28 +267,14 @@ export class EntityEditorComponent {
   }
 
   togglePrimaryKey(property: PropertyType) {
-    if (this.entity.definition.primaryKey === property.name) {
-      this.entity.definition.primaryKey = null;
+    if (property.isPrimaryKey) {
+      property.isPrimaryKey = false;
     } else {
-      this.entity.definition.primaryKey = property.name;
-    }
-  }
-
-  toggleRangeIndex(property: PropertyType) {
-    let idx = this.entity.definition.elementRangeIndex.indexOf(property.name);
-    if (idx >= 0) {
-      this.entity.definition.elementRangeIndex.splice(idx, 1);
-    } else {
-      this.entity.definition.elementRangeIndex.push(property.name);
-    }
-  }
-
-  togglePathRangeIndex(property: PropertyType) {
-    let idx = this.entity.definition.rangeIndex.indexOf(property.name);
-    if (idx >= 0) {
-      this.entity.definition.rangeIndex.splice(idx, 1);
-    } else {
-      this.entity.definition.rangeIndex.push(property.name);
+      // Unset any existing primary key
+      this.entity.definition.properties.map(function(prop) {
+        prop.isPrimaryKey = false;
+      });
+      property.isPrimaryKey = true;
     }
   }
 
@@ -289,11 +299,17 @@ export class EntityEditorComponent {
     }
   }
 
-
   toggleRequiredSelection() {
     if (this.selectedCount()) {
       this.requiredHeader = !this.requiredHeader;
       this.toggleArraySelection(this.requiredHeader, 'required');
+    }
+  }
+
+  togglePiiSelection() {
+    if (this.selectedCount()) {
+      this.piiHeader = !this.piiHeader;
+      this.toggleArraySelection(this.piiHeader, 'pii');
     }
   }
 
@@ -314,22 +330,37 @@ export class EntityEditorComponent {
     }
   }
 
-  toggleWordLexicon(property: PropertyType) {
-    let idx = this.entity.definition.wordLexicon.indexOf(property.name);
-    if (idx >= 0) {
-      this.entity.definition.wordLexicon.splice(idx, 1);
-    } else {
-      this.entity.definition.wordLexicon.push(property.name);
-    }
+  isPropertyValid(property: PropertyType) {
+    let properties = this.entity.definition.properties;
+    /**
+     * A valid property must not: 
+     *  - be a duplicate
+     *  - have spaces in the name
+     *  - must not be empty
+     */
+    let duplicate = _.filter(properties, { 'name': property.name }).length > 1;
+    let hasSpace = !this.PROPERTY_NAME_PATTERN.test(property.name);
+    let isEmpty = !property.name;
+
+    return !(duplicate || hasSpace || isEmpty);
   }
 
-  toggleRequired(property: PropertyType) {
-    let idx = this.entity.definition.required.indexOf(property.name);
-    if (idx >= 0) {
-      this.entity.definition.required.splice(idx, 1);
-    } else {
-      this.entity.definition.required.push(property.name);
-    }
+  /**
+   * Editor is valid if all names in definition properties are valid.
+   *
+   * Used: for disabling 'Save' button
+   * Used: for rendering error message
+   *
+   * TODO: more properties should be added here for validation
+   * TODO: better model validation framework is planned in MLUI Team
+   *
+   * @returns {boolean} if the property editor is valid and ok to be saved
+   */
+  get isValid() {
+    return this.entity.definition.properties
+      .reduce((accumulated, p) => {
+        return accumulated && this.isPropertyValid(p);
+      }, true);
   }
 
   onDescKey($event: KeyboardEvent, propertyIndex: number) {

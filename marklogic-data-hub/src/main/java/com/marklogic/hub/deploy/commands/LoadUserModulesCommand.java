@@ -1,3 +1,18 @@
+/*
+ * Copyright 2012-2018 MarkLogic Corporation
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.marklogic.hub.deploy.commands;
 
 import com.marklogic.appdeployer.AppConfig;
@@ -21,6 +36,7 @@ import com.marklogic.client.io.Format;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.com.marklogic.client.ext.file.CacheBusterDocumentFileProcessor;
 import com.marklogic.com.marklogic.client.ext.modulesloader.impl.EntityDefModulesFinder;
+import com.marklogic.com.marklogic.client.ext.modulesloader.impl.MappingDefModulesFinder;
 import com.marklogic.com.marklogic.client.ext.modulesloader.impl.UserModulesFinder;
 import com.marklogic.hub.EntityManager;
 import com.marklogic.hub.FlowManager;
@@ -108,6 +124,13 @@ public class LoadUserModulesCommand extends AbstractCommand {
         return dirStr.matches(regex);
     }
 
+    boolean isMappingDir(Path dir, Path startPath) {
+        String dirStr = dir.toString();
+        String startPathStr = Pattern.quote(startPath.toString());
+        String regex = startPathStr + "[/\\\\][^/\\\\]+$";
+        return dirStr.matches(regex);
+    }
+
     boolean isFlowPropertiesFile(Path dir) {
         Path parent = dir.getParent();
         return dir.toFile().isFile() &&
@@ -118,7 +141,7 @@ public class LoadUserModulesCommand extends AbstractCommand {
 
     @Override
     public void execute(CommandContext context) {
-        FlowManager flowManager = new FlowManager(hubConfig);
+        FlowManager flowManager = FlowManager.create(hubConfig);
         List<String> legacyFlows = flowManager.getLegacyFlows();
         if (legacyFlows.size() > 0) {
             throw new LegacyFlowsException(legacyFlows);
@@ -132,13 +155,17 @@ public class LoadUserModulesCommand extends AbstractCommand {
         Path userModulesPath = hubConfig.getHubPluginsDir();
         String baseDir = userModulesPath.normalize().toAbsolutePath().toString();
         Path startPath = userModulesPath.resolve("entities");
+        Path mappingPath = userModulesPath.resolve("mappings");
 
         // load any user files under plugins/* int the modules database.
         // this will ignore REST folders under entities
         DefaultModulesLoader modulesLoader = getStagingModulesLoader(config);
         modulesLoader.loadModules(baseDir, new UserModulesFinder(), stagingClient);
 
+        //for now we'll use two different document managers
         JSONDocumentManager entityDocMgr = finalClient.newJSONDocumentManager();
+        JSONDocumentManager mappingDocMgr = finalClient.newJSONDocumentManager();
+        DocumentWriteSet mappingDocumentWriteSet = mappingDocMgr.newWriteSet();
 
         AllButAssetsModulesFinder allButAssetsModulesFinder = new AllButAssetsModulesFinder();
 
@@ -148,8 +175,8 @@ public class LoadUserModulesCommand extends AbstractCommand {
         }
 
         // deploy the auto-generated ES search options
-        EntityManager entityManager = new EntityManager(hubConfig);
-        entityManager.deploySearchOptions();
+        EntityManager entityManager = EntityManager.create(hubConfig);
+        entityManager.deployQueryOptions();
 
         try {
             if (startPath.toFile().exists()) {
@@ -158,6 +185,7 @@ public class LoadUserModulesCommand extends AbstractCommand {
 
                 ModulesManager modulesManager = modulesLoader.getModulesManager();
 
+                //first let's do the entities and flows + extensions
                 Files.walkFileTree(startPath, new SimpleFileVisitor<Path>() {
                     @Override
                     public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
@@ -177,7 +205,7 @@ public class LoadUserModulesCommand extends AbstractCommand {
                             Modules modules = new EntityDefModulesFinder().findModules(dir.toString());
                             DocumentMetadataHandle meta = new DocumentMetadataHandle();
                             meta.getCollections().add("http://marklogic.com/entity-services/models");
-                            documentPermissionsParser.parsePermissions(hubConfig.modulePermissions, meta.getPermissions());
+                            documentPermissionsParser.parsePermissions(hubConfig.getModulePermissions(), meta.getPermissions());
                             for (Resource r : modules.getAssets()) {
                                 if (forceLoad || modulesManager.hasFileBeenModifiedSinceLastLoaded(r.getFile())) {
                                     InputStream inputStream = r.getInputStream();
@@ -209,8 +237,54 @@ public class LoadUserModulesCommand extends AbstractCommand {
                     }
                 });
 
+                //now let's do the mappings path
+                if (mappingPath.toFile().exists()) {
+                    Files.walkFileTree(mappingPath, new SimpleFileVisitor<Path>() {
+                        @Override
+                        public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+                            String currentDir = dir.normalize().toAbsolutePath().toString();
+
+                            if (isMappingDir(dir, mappingPath.toAbsolutePath())) {
+                                Modules modules = new MappingDefModulesFinder().findModules(dir.toString());
+                                DocumentMetadataHandle meta = new DocumentMetadataHandle();
+                                meta.getCollections().add("http://marklogic.com/data-hub/mappings");
+                                documentPermissionsParser.parsePermissions(hubConfig.getModulePermissions(), meta.getPermissions());
+                                for (Resource r : modules.getAssets()) {
+                                    if (forceLoad || modulesManager.hasFileBeenModifiedSinceLastLoaded(r.getFile())) {
+                                        InputStream inputStream = r.getInputStream();
+                                        StringHandle handle = new StringHandle(IOUtils.toString(inputStream));
+                                        inputStream.close();
+                                        mappingDocumentWriteSet.add("/mappings/" + r.getFile().getParentFile().getName() + "/" + r.getFilename(), meta, handle);
+                                        modulesManager.saveLastLoadedTimestamp(r.getFile(), new Date());
+                                    }
+                                }
+                                return FileVisitResult.CONTINUE;
+                            } else {
+                                return FileVisitResult.CONTINUE;
+                            }
+                        }
+
+                        @Override
+                        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
+                            throws IOException {
+                            if (isFlowPropertiesFile(file) && modulesManager.hasFileBeenModifiedSinceLastLoaded(file.toFile())) {
+                                Flow flow = flowManager.getFlowFromProperties(file);
+                                StringHandle handle = new StringHandle(flow.serialize());
+                                handle.setFormat(Format.XML);
+                                documentWriteSet.add(flow.getFlowDbPath(), handle);
+                                modulesManager.saveLastLoadedTimestamp(file.toFile(), new Date());
+                            }
+                            return FileVisitResult.CONTINUE;
+                        }
+                    });
+                }
+
                 if (documentWriteSet.size() > 0) {
                     documentManager.write(documentWriteSet);
+                }
+
+                if (mappingDocumentWriteSet.size() > 0) {
+                    mappingDocMgr.write(mappingDocumentWriteSet);
                 }
             }
             threadPoolTaskExecutor.shutdown();

@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2016 MarkLogic Corporation
+ * Copyright 2012-2018 MarkLogic Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,8 @@ import com.marklogic.mgmt.SaveReceipt;
 import com.marklogic.mgmt.resource.ResourceManager;
 import com.marklogic.mgmt.resource.appservers.ServerManager;
 import com.marklogic.rest.util.JsonNodeUtil;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -72,6 +74,12 @@ public class DeployHubServersCommand extends AbstractResourceCommand {
             } else {
                 mgr.delete(payload);
             }
+        } catch (HttpClientErrorException e) {
+            if (e.getStatusCode() == HttpStatus.UNAUTHORIZED) {
+                logger.warn("Unable to delete resource due to missing user or bad credentials, skipping.");
+            } else {
+                throw e;
+            }
         } catch (RuntimeException e) {
             throw e;
         }
@@ -79,7 +87,7 @@ public class DeployHubServersCommand extends AbstractResourceCommand {
     protected String getPayload(File f, CommandContext context) {
         JsonNode node = mergeServerFiles(f);
         if (node == null) {
-            logger.info("No server files found, so not processing");
+            logger.debug("No server files found, so not processing");
             return null;
         }
         String str = node.toString();
@@ -96,7 +104,7 @@ public class DeployHubServersCommand extends AbstractResourceCommand {
             files.add(otherServerFile);
         }
         if (logger.isInfoEnabled()) {
-            logger.info("Merging JSON files at locations: " + files);
+            logger.debug("Merging JSON files at locations: " + files);
         }
         return JsonNodeUtil.mergeJsonFiles(files);
     }

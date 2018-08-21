@@ -194,9 +194,14 @@ export class EntitiesService {
     return this.http.post(url, options).subscribe(() => {});
   }
 
-  runHarmonizeFlow(flow: Flow, batchSize: number, threadCount: number) {
+  saveHarmonizeFlowOptions(flow: Flow, batchSize: number, threadCount: number, mapping: any, options: any) {
+    const url = this.url(`/entities/${flow.entityName}/flows/harmonize/${flow.flowName}/save-harmonize-options`);
+    return this.http.post(url, { batchSize: batchSize, threadCount: threadCount, mapping: mapping, options: options }).subscribe(() => {});
+  }
+
+  runHarmonizeFlow(flow: Flow, batchSize: number, threadCount: number, options: any) {
     const url = this.url(`/entities/${flow.entityName}/flows/harmonize/${flow.flowName}/run`);
-    return this.http.post(url, { batchSize: batchSize, threadCount: threadCount }).subscribe(() => {});
+    return this.http.post(url, { batchSize: batchSize, threadCount: threadCount, options: options }).subscribe(() => {});
   }
 
   private extractTypes() {

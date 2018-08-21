@@ -26,6 +26,7 @@ export class LoginComponent implements OnInit {
   hubVersions: any;
   hubUpdating: boolean = false;
   hubUpdateFailed: boolean = false;
+  hubUpdateError: string = '';
 
   currentTab: string = 'ProjectDir';
 
@@ -314,11 +315,13 @@ export class LoginComponent implements OnInit {
     this.hubUpdating = true;
     this.projectService.updateProject().subscribe(() => {
       this.hubUpdating = false;
+      this.hubUpdateError = '';
       this.loginNext();
     },
-    () => {
+    error => {
       this.hubUpdating = false;
       this.hubUpdateFailed = true;
+      this.hubUpdateError = error.json().message;
     });
   }
 
@@ -340,7 +343,10 @@ export class LoginComponent implements OnInit {
         this.loggingIn = false;
       },
       error => {
-        this.loginError = error.json().message;
+        this.loginError = error;
+        if(error && error.status === 401){
+          this.loginError = "Authentication Failed: Invalid credentials";
+        }
         this.auth.setAuthenticated(false);
         this.loggingIn = false;
       });
@@ -352,8 +358,8 @@ export class LoginComponent implements OnInit {
     this.initSettings.stagingDbName = name + '-STAGING';
     this.initSettings.finalHttpName = name + '-FINAL';
     this.initSettings.finalDbName = name + '-FINAL';
-    this.initSettings.traceHttpName = name + '-TRACING';
-    this.initSettings.traceDbName = name + '-TRACING';
+    this.initSettings.traceHttpName = name + '-JOBS';
+    this.initSettings.traceDbName = name + '-JOBS';
     this.initSettings.jobHttpName = name + '-JOBS';
     this.initSettings.jobDbName = name + '-JOBS';
     this.initSettings.modulesDbName = name + '-MODULES';
@@ -364,7 +370,7 @@ export class LoginComponent implements OnInit {
   hubUpdateUrl() {
     if (this.currentEnvironment && this.currentEnvironment.runningVersion) {
       const versionString = this.currentEnvironment.runningVersion.replace(/\./g, '');
-      return `https://github.com/marklogic-community/marklogic-data-hub/wiki/Updating-to-a-New-Hub-Version#${versionString}`;
+      return `https://github.com/marklogic/marklogic-data-hub/wiki/Updating-to-a-New-Hub-Version#${versionString}`;
     }
     return '';
   }

@@ -2,7 +2,7 @@
 
 # This script will build the javadocs for the DHF jar file
 # and push them into the docs branch to be magically published
-# via travis to the https://marklogic-community.github.io/marklogic-data-hub site
+# via travis to the https://marklogic.github.io/marklogic-data-hub site
 
 # run this after you update gradle.properties to contain the new version
 # preferable after you do a release
@@ -15,7 +15,7 @@ tmpdir=$(mktemp -d)
 hubversion=$(cat gradle.properties | awk -F"=" '{print $2}')
 echo "tmpdir: ${tmpdir}"
 echo "version: ${hubversion}"
-git clone -b docs git@github.com:marklogic-community/marklogic-data-hub.git ${tmpdir}/docs
+git clone -b docs git@github.com:marklogic/marklogic-data-hub.git ${tmpdir}/docs
 ./gradlew javadoc
 mkdir -p ${tmpdir}/docs/javadocs/${hubversion}
 cp -R marklogic-data-hub/build/docs/javadoc ${tmpdir}/docs/javadocs/${hubversion}

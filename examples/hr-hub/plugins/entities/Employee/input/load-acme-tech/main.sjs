@@ -1,7 +1,7 @@
-// dhf.xqy exposes helper functions to make your life easier
+// dhf.sjs exposes helper functions to make your life easier
 // See documentation at:
 // https://github.com/marklogic/marklogic-data-hub/wiki/dhf-lib
-const dhf = require('/com.marklogic.hub/dhf.xqy');
+const dhf = require('/MarkLogic/data-hub-framework/dhf.sjs');
 
 const contentPlugin = require('./content/content.sjs');
 const headersPlugin = require('./headers/headers.sjs');
@@ -32,7 +32,7 @@ function main(id, rawContent, options) {
   });
 
   var envelope = dhf.makeEnvelope(content, headers, triples, options.dataFormat);
-  
+
   // log the final envelope as a trace
   // only fires if tracing is enabled
   dhf.logTrace(dhf.writerContext(envelope));

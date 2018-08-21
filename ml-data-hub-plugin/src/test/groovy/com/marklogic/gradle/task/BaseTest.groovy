@@ -1,3 +1,20 @@
+/*
+ * Copyright 2012-2018 MarkLogic Corporation
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ */
+
 package com.marklogic.gradle.task
 
 import com.marklogic.client.FailedRequestException
@@ -10,8 +27,7 @@ import com.marklogic.client.io.Format
 import com.marklogic.client.io.InputStreamHandle
 import com.marklogic.client.io.StringHandle
 import com.marklogic.hub.HubConfig
-import com.marklogic.mgmt.ManageClient
-import com.marklogic.mgmt.resource.databases.DatabaseManager
+import com.marklogic.hub.HubConfigBuilder
 import org.apache.commons.io.FileUtils
 import org.apache.commons.io.FilenameUtils
 import org.custommonkey.xmlunit.XMLUnit
@@ -25,12 +41,22 @@ import spock.lang.Specification
 import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.parsers.ParserConfigurationException
+import java.nio.file.Files
+import java.nio.file.Paths
+import java.nio.file.StandardCopyOption
 
 class BaseTest extends Specification {
 
+    // this value is for legacy purposes.  on dev should always be 5
+    static final int MOD_COUNT_WITH_TRACE_MODULES = 26
+    static final int MOD_COUNT = 5
+    // this value under good security conditions is 2 because hub-admin-user cannot read options files directly.
+    static final int MOD_COUNT_NO_OPTIONS_NO_TRACES = 2
     static final TemporaryFolder testProjectDir = new TemporaryFolder()
     static File buildFile
     static File propertiesFile
+
+    static HubConfig _hubConfig = null
 
     static BuildResult runTask(String... task) {
         return GradleRunner.create()
@@ -50,8 +76,12 @@ class BaseTest extends Specification {
     }
 
     static HubConfig hubConfig() {
-        HubConfig hubConfig = HubConfig.hubFromEnvironment(testProjectDir.root.toString(), null)
-        return hubConfig
+        if (_hubConfig == null || !_hubConfig.projectDir.equals(testProjectDir.root.toString())) {
+            _hubConfig = HubConfigBuilder.newHubConfigBuilder(testProjectDir.root.toString())
+                .withPropertiesFromEnvironment()
+                .build()
+        }
+        return _hubConfig
     }
 
     void installStagingDoc(String uri, DocumentMetadataHandle meta, String doc) {
@@ -158,9 +188,6 @@ class BaseTest extends Specification {
             case HubConfig.DEFAULT_MODULES_DB_NAME:
                 eval = hubConfig().newModulesDbClient().newServerEval()
                 break
-            case HubConfig.DEFAULT_TRACE_NAME:
-                eval = hubConfig().newTraceDbClient().newServerEval()
-                break
             case HubConfig.DEFAULT_JOB_NAME:
                 eval = hubConfig().newJobDbClient().newServerEval()
         }
@@ -183,50 +210,10 @@ class BaseTest extends Specification {
     }
 
     static void createFullPropertiesFile() {
-        propertiesFile = testProjectDir.newFile('gradle.properties')
-        propertiesFile << """
-            mlHost=localhost
-            mlAppName=data-hub
-
-            mlUsername=admin
-            mlPassword=admin
-
-            mlManageUsername=admin
-            mlManagePassword=admin
-
-            mlAdminUsername=admin
-            mlAdminPassword=admin
-
-
-            mlStagingAppserverName=data-hub-STAGING
-            mlStagingPort=8010
-            mlStagingDbName=data-hub-STAGING
-            mlStagingForestsPerHost=4
-            mlStagingAuth=digest
-
-
-            mlFinalAppserverName=data-hub-FINAL
-            mlFinalPort=8011
-            mlFinalDbName=data-hub-FINAL
-            mlFinalForestsPerHost=4
-            mlFinalAuth=digest
-
-            mlTraceAppserverName=data-hub-TRACING
-            mlTracePort=8012
-            mlTraceDbName=data-hub-TRACING
-            mlTraceForestsPerHost=1
-            mlTraceAuth=digest
-
-            mlJobAppserverName=data-hub-JOBS
-            mlJobPort=8013
-            mlJobDbName=data-hub-JOBS
-            mlJobForestsPerHost=1
-            mlJobAuth=digest
-
-            mlModulesDbName=data-hub-MODULES
-            mlTriggersDbName=data-hub-TRIGGERS
-            mlSchemasDbName=data-hub-SCHEMAS
-        """
+        def props = Paths.get(".").resolve("gradle.properties")
+        propertiesFile = testProjectDir.newFile("gradle.properties")
+        def dst = propertiesFile.toPath()
+        Files.copy(props, dst, StandardCopyOption.REPLACE_EXISTING)
     }
 
     static void createGradleFiles() {

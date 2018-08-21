@@ -14,7 +14,7 @@ export class EntityPage extends AppPage {
   }
 
   get toolsButton() {
-    return element(by.css('.tools-toggler'));
+    return element(by.css('app-entity-modeler .tools-toggler'));
   }
 
   get newEntityButton() {
@@ -23,6 +23,26 @@ export class EntityPage extends AppPage {
 
   get entityEditor() {
     return element(by.css('app-entity-editor'));
+  }
+
+  selectEntity(entityName: string) {
+    return element(by.id(`aeb-${entityName}`)).element(by.css('div.title')).click();
+  }
+
+  entityBox(entityName: string) {
+    return element(by.id(`aeb-${entityName}`)).element(by.css('div.title'));
+  }
+
+  clickEditEntity(entityName: string) {
+    browser.executeScript(`window.document.getElementById("aeb-${entityName}").getElementsByClassName("edit-start")[0].click()`);
+  }
+
+  deleteEntityButton(entityName: string) {
+    return element(by.css('svg > .nodes * #fo-' + entityName + ' > .foreign > app-entity-box > .entity-def-box > app-resizable > .title > .edit-area > .delete-entity > i'));
+  }
+
+  editEntityButton(entityName: string) {
+    return element(by.css('svg > .nodes * #fo-' + entityName + ' > .foreign > app-entity-box > .entity-def-box > app-resizable > .title > .edit-area > .edit-start'));
   }
 
   get entityTitle() {
@@ -58,15 +78,24 @@ export class EntityPage extends AppPage {
   }
 
   get getProperties() {
-    return element(by.css('.properties > tBody > tr'));
+    return element.all(by.css('.properties > tBody > tr'));
   }
 
   get lastProperty() {
-    return element.all(by.css('.properties > tBody > tr')).last();
+    return this.getProperties.last();
+  }
+
+  getPropertiesCount() {
+    return element.all(by.css('.selected-entity .properties > tBody > tr')).count();
+  }
+
+  getEntitiesCount() {
+    return element.all(by.css('.entity-def')).count();
   }
 
   getPropertyByPosition(position: number){
-    return element.all(by.css('.properties > tBody > tr:nth-child('+position+')'));
+    return element(by.css('.selected-entity .properties > tBody > tr:nth-child('+position+')'));
+    //DHFPROD-1060
   }
 
   getPropertyColumn(property: ElementFinder, column: number){
@@ -74,87 +103,50 @@ export class EntityPage extends AppPage {
   }
 
   getPropertyCheckBox(property: ElementFinder){
-    return property.element(by.css('td:nth-child(1) > input[type="checkbox"]'));
+    return property.element(by.css('td > input[type="checkbox"]'));
   }
 
   getPropertyPrimaryKey(property: ElementFinder){
-    return property.element(by.css('td:nth-child(2) > i'));
+    return property.element(by.css('app-entity-editor table.properties > tbody .fa-key'));
   }
 
   getPropertyRangeIndex(property: ElementFinder){
-    return property.element(by.css('td:nth-child(3) > i'));
+    return property.element(by.css('app-entity-editor table.properties > tbody .fa-bolt'));
   }
 
   getPropertyPathRange(property: ElementFinder){
-    return property.element(by.css('td:nth-child(4) > i'));
+    return property.element(by.css('app-entity-editor table.properties > tbody .fa-code'));
   }
 
   getPropertyWordLexicon(property: ElementFinder){
-    return property.element(by.css('td:nth-child(5) > i'));
+    return property.element(by.css('app-entity-editor table.properties > tbody .fa-won'));
   }
 
   getPropertyRequired(property: ElementFinder){
-    return property.element(by.css('td:nth-child(6) > i'));
+    return property.element(by.css('app-entity-editor table.properties > tbody .fa-exclamation'));
+  }
+
+  getPropertyPii(property: ElementFinder){
+    return property.element(by.css('app-entity-editor table.properties > tbody .fa-lock'));
   }
 
   getPropertyName(property: ElementFinder){
-    return property.element(by.css('td:nth-child(7) > input[type="text"]'));
+      return property.element(by.css('td > input[name="name"]'));
   }
 
   getPropertyType(property: ElementFinder){
-    return property.element(by.css('td:nth-child(8) > select'));
+    return property.element(by.css('td:nth-child(9) > select'));
+    //td > select[name="type"] DHFPROD-1060
   }
 
   getPropertyCardinality(property: ElementFinder){
-    return property.element(by.css('td:nth-child(9) > select'));
+    return property.element(by.css('td:nth-child(10) > select'));
+    //td > select[name="cardinality"] DHFPROD-1060
   }
 
   getPropertyDescription(property: ElementFinder){
-    return property.element(by.css('td:nth-child(10) > input[type="text"]'));
-  }
-
-  getPropertyCheckBoxColumn(property: ElementFinder){
-    return property.element(by.css('td:nth-child(1)'));
-  }
-
-  getPropertyPrimaryKeyColumn(property: ElementFinder){
-    return property.element(by.css('td:nth-child(2)'));
-  }
-
-  getPropertyRangeIndexColumn(property: ElementFinder){
-    return property.element(by.css('td:nth-child(3)'));
-  }
-
-  getPropertyPathRangeColumn(property: ElementFinder){
-    return property.element(by.css('td:nth-child(4)'));
-  }
-
-  getPropertyWordLexiconColumn(property: ElementFinder){
-    return property.element(by.css('td:nth-child(5)'));
-  }
-
-  getPropertyRequiredColumn(property: ElementFinder){
-    return property.element(by.css('td:nth-child(6)'));
-  }
-
-  getPropertyNameColumn(property: ElementFinder){
-    return property.element(by.css('td:nth-child(7)'));
-  }
-
-  getPropertyTypeColumn(property: ElementFinder){
-    return property.element(by.css('td:nth-child(8)'));
-  }
-
-  getPropertyCardinalityColumn(property: ElementFinder){
-    return property.element(by.css('td:nth-child(9)'));
-  }
-
-  getPropertyDescriptionColumn(property: ElementFinder){
-    return property.element(by.css('td:nth-child(10)'));
-  }
-
-  get editEntityButton(){
-    return element(by.css('.edit-start > i'));
+    return property.element(by.css('td:nth-child(11) > input[type="text"]'));
+    //td > input[name="description"] DHFPROD-1060
   }
 
   get saveEntity() {
@@ -163,6 +155,14 @@ export class EntityPage extends AppPage {
 
   get cancelEntity() {
     return element(by.buttonText('Cancel'));
+  }
+
+  get errorWhiteSpaceMessage() {
+    return element(by.className('alert-text'));
+  }
+
+  get toast() {
+    return element(by.css('mdl-snackbar-component'));
   }
 }
 

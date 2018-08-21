@@ -27,7 +27,7 @@ declare function plugin:create-content(
   (: save the incoming binary as a pdf :)
   let $_ :=
     xdmp:eval('
-    	declare variable $binary-uri external;
+      declare variable $binary-uri external;
       declare variable $raw-content external;
       xdmp:document-insert($binary-uri, $raw-content)
       ',
@@ -36,12 +36,13 @@ declare function plugin:create-content(
         map:entry("raw-content", $raw-content)
       )),
       map:new((
+        map:entry("ignoreAmps", fn:true()),
         map:entry("isolation", "different-transaction"),
         map:entry("commit", "auto")
       ))
    )
   return
-  (: 
+  (:
    : extract the contents of the pdf and return them
    : as the content for the envelope
    :)

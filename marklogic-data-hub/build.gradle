@@ -3,7 +3,7 @@ plugins {
     id 'java'
     id 'maven-publish'
     id 'com.jfrog.bintray' version '1.7.2'
-    id 'com.marklogic.ml-gradle' version '3.3.1'
+    id 'com.marklogic.ml-gradle' version '3.8.2'
     id 'com.moowork.node' version '1.1.1'
 }
 
@@ -18,15 +18,17 @@ group = 'com.marklogic'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
+
 ext.junit4Version        = '4.12'
 ext.junitVintageVersion  = '4.12.0-RC3'
 ext.junitPlatformVersion = '1.0.0-RC3'
 ext.junitJupiterVersion  = '5.0.0-RC3'
 
 dependencies {
-    compile 'com.marklogic:marklogic-client-api:4.0.2'
-    compile 'com.marklogic:mlcp-util:0.3.0'
-    compile 'com.marklogic:ml-app-deployer:3.3.1'
+    compile 'com.marklogic:marklogic-client-api:4.1.0'
+    compile 'com.marklogic:mlcp-util:0.9.0'
+    compile 'com.marklogic:ml-app-deployer:3.8.3'
+    compile 'com.marklogic:marklogic-data-movement-components:1.0'
     compile 'commons-io:commons-io:2.4'
     compile 'org.apache.commons:commons-text:1.1'
 
@@ -48,18 +50,33 @@ dependencies {
     testCompile 'org.hamcrest:hamcrest-junit:2.0.0.0'
     testCompile 'org.easymock:easymock:3.4'
     testCompile 'ch.qos.logback:logback-classic:1.1.11'
+    testCompile 'org.slf4j:log4j-over-slf4j:1.7.13'
     testCompile("com.marklogic:mlcp-util:0.3.0")
     testCompile("com.marklogic:mlcp:9.0.3") {
       exclude group: 'org.apache.avro', module: 'avro-tools'
     }
 }
+import com.marklogic.mgmt.ManageClient
+import com.marklogic.mgmt.resource.hosts.HostManager
+
+
+configurations.all {
+    exclude group: "org.slf4j", module: "slf4j-log4j12"
+    exclude group: "log4j", module: "log4j"
+}
+
+
+
+
+import com.marklogic.mgmt.ManageClient
+import com.marklogic.mgmt.resource.hosts.HostManager
 
 node {
   // Version of node to use.
-  version = '8.4.0'
+  version = '8.9.4'
 
   // // Version of npm to use.
-  npmVersion = '5.4.2'
+  npmVersion = '5.7.1'
 
   download = true
 
@@ -96,7 +113,7 @@ task buildUI(type: NpmTask) {
 
 task copyUIAssets(type: Copy) {
     from 'src/trace-ui/dist'
-    into 'src/main/resources/ml-modules/root/trace-ui'
+    into 'src/server-side/tracing/dist'
     dependsOn tasks.buildUI
 }
 
@@ -129,7 +146,7 @@ Node pomCustomizations = new NodeBuilder(). project {
     name 'marklogic-data-hub'
     packaging 'jar'
     textdescription 'Library for Creating an Operational Data Hub on MarkLogic'
-    url 'https://github.com/marklogic-community/marklogic-data-hub'
+    url 'https://github.com/marklogic/marklogic-data-hub'
 
     scm {
         url 'git@github.com:marklogic/marklogic-data-hub.git'
@@ -155,7 +172,7 @@ Node pomCustomizations = new NodeBuilder(). project {
             name 'MarkLogic Github Contributors'
             email 'general@developer.marklogic.com'
             organization 'Github Contributors'
-            organizationUrl 'https://github.com/marklogic-community/marklogic-data-hub/graphs/contributors'
+            organizationUrl 'https://github.com/marklogic/marklogic-data-hub/graphs/contributors'
         }
     }
 }
@@ -185,14 +202,14 @@ bintray {
     key = project.hasProperty('bintrayApiKey') ? project.property('bintrayApiKey') : System.getenv('BINTRAY_API_KEY')
     publications = ['main']
     pkg {
-        repo = 'Maven'
+        repo = 'maven'
         name = project.name
-        userOrg = 'marklogic-community'
+        userOrg = 'marklogic'
         desc = pomCustomizations.textdescription.text()
         licenses = ['Apache-2.0']
         websiteUrl = pomCustomizations.url
         vcsUrl = pomCustomizations.scm.url
-        issueTrackerUrl = 'https://github.com/marklogic-community/marklogic-data-hub/issues'
+        issueTrackerUrl = 'https://github.com/marklogic/marklogic-data-hub/issues'
     }
 }
 
@@ -217,10 +234,6 @@ ext {
         customTokens.put("%%mlFinalPort%%", mlFinalPort)
         customTokens.put("%%mlFinalDbName%%", mlFinalDbName)
 
-        customTokens.put("%%mlTraceAppserverName%%", mlTraceAppserverName)
-        customTokens.put("%%mlTracePort%%", mlTracePort)
-        customTokens.put("%%mlTraceDbName%%", mlTraceDbName)
-
         customTokens.put("%%mlJobAppserverName%%", mlJobAppserverName)
         customTokens.put("%%mlJobPort%%", mlJobPort)
         customTokens.put("%%mlJobDbName%%", mlJobDbName)
@@ -231,26 +244,67 @@ ext {
 
         modulePaths = ["marklogic-data-hub/src/main/resources/ml-modules"]
 
-        mlModulePermissions = "rest-reader,read,rest-writer,insert,rest-writer,update,rest-extension-user,execute"
     }
 }
 
-// for the StreamCollectorTest we need to constrain the memory
-// to a lower value so that the out of memory issue appears
-// the hack here is to run that single test in this task with
-// the appropriate memory constraints. This task is a dependency
-// of the regular test task and thus gets run right before all
-// of the other tests run.
-task collectorTest(type: Test, dependsOn: testClasses) {
-    include '**/StreamCollector*'
-    minHeapSize = "128m"
-    maxHeapSize = "256m"
-}
+def propFile = file("gradle.properties")
+String fileContents = propFile.text
+boolean sslRun = Boolean.parseBoolean(System.properties['ssl'])
+boolean certAuth = Boolean.parseBoolean(System.properties['certauth'])
+def props = new Properties()
+propFile.withInputStream { props.load(it) }
 
 test {
-    // we exclude the StreamCollectorTest
-    exclude '**/StreamCollector*'
+    minHeapSize = "128m"
+    maxHeapSize = "256m"
+    
+    doFirst{
+		if(sslRun || certAuth){
+			com.marklogic.mgmt.ManageClient manageClient = new ManageClient(new com.marklogic.mgmt.ManageConfig(mlHost, 8002, mlSecurityUsername, mlSecurityPassword))
+			com.marklogic.mgmt.resource.hosts.HostManager hostManager = new HostManager(manageClient)
+			def	bootStrapHost = hostManager.getHostNames().get(0)
+		    if(! bootStrapHost.toLowerCase().contains("marklogic.com")){
+				 throw new GradleException("The test with current options will run only in marklogic.com domain")
+			}
+			if(sslRun) {
+				//checking if one of the property is already set
+				if(props.getProperty('mlJobSimpleSsl')==null){
+					propFile.append("\n" +
+							"mlJobSimpleSsl=true\n" +
+							"mlFinalSimpleSsl=true\n" +
+							"mlAdminScheme=https\n" +
+							"mlManageScheme=https\n" +
+							"mlStagingSimpleSsl=true")
+				}
+			}
+			if(certAuth) {
+				if(props.getProperty('mlStagingAuth')==null){
+					propFile.append("\n" +
+							"mlStagingAuth=certificate\n" +
+							"mlFinalAuth=certificate\n" +
+							"mlHost="+bootStrapHost+"\n"+
+							"mlAdminScheme=https\n" +
+							"mlManageScheme=https\n" +
+							"mlJobAuth=certificate")
+				}
+			}
+		}
+    }
 
-    // depend on the collectorTest task above
-    dependsOn tasks.collectorTest
+    // include just the top-level tests.  they include setup/teardown
+	include 'com/marklogic/hub/CoreTestSuite.class'
+	include 'com/marklogic/hub/EndToEndFlowTests.class'
+	if (!(certAuth || sslRun)){
+		include 'com/marklogic/hub/PiiE2E.class'
+	}
+	include 'com/marklogic/hub/ScaffoldingE2E.class'
+	include 'com/marklogic/hub/MappingE2E.class'         
 }
+task restoreFile{
+	doFirst{
+    	if(sslRun || certAuth){
+    		propFile.write(fileContents)	
+		}
+    }
+}
+test.finalizedBy(restoreFile)

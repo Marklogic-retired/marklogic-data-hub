@@ -4,7 +4,7 @@
     "outDir": "../out-tsc/app",
     "module": "es2015",
     "baseUrl": "",
-    "types": ["app/codemirror/codemirror.types"]
+    "types": ["node"]
   },
   "exclude": [
     "test.ts",

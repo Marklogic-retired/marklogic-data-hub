@@ -13,6 +13,12 @@ export class PropertyType {
 
   // ui only
   showCollation: boolean = false;
+  isPrimaryKey: boolean = false;
+  hasElementRangeIndex: boolean = false;
+  hasRangeIndex: boolean = false;
+  hasWordLexicon: boolean = false;
+  required: boolean = false;
+  pii: boolean = false;
 
   UNICODE_COLLATION: string = 'http://marklogic.com/collation/codepoint';
 
@@ -23,6 +29,8 @@ export class PropertyType {
   items: ItemType;
 
   selected: boolean = false;
+  connected: boolean = false;
+  hovering: boolean = false;
 
   fromJSON(json) {
     this.name = json.name;
@@ -172,5 +180,14 @@ export class PropertyType {
         this.items.collation = null;
       }
     }
+  }
+
+  get validString(): boolean
+  {
+    if(this.name && this.name.trim().length > 1 && this.name.indexOf(" ") === -1)
+    {
+      return true;
+    }
+    return false;
   }
 }

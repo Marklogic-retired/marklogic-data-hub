@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2016 MarkLogic Corporation
+ * Copyright 2012-2018 MarkLogic Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -63,25 +63,16 @@ public abstract class AbstractEntity implements Entity {
         }
     }
 
-    /**
-     * Returns the name of the Entity
-     */
     @Override
     public String getName() {
         return name;
     }
 
-    /**
-     * Serializes the entity to an XML string
-     */
     @Override
     public String serialize() {
         return null;
     }
 
-    /**
-     * Returns the entity's flows
-     */
     @Override
     public List<Flow> getFlows() {
         return flows;

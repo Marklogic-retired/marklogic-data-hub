@@ -57,7 +57,7 @@
       <error:xquery-version>1.0-ml</error:xquery-version>
     </error:frame>
     <error:frame>
-      <error:uri>/com.marklogic.hub/lib/flow-lib.xqy</error:uri>
+      <error:uri>/MarkLogic/data-hub-framework/impl/flow-lib.xqy</error:uri>
       <error:line>648</error:line>
       <error:column>17</error:column>
       <error:operation>flow:call-plugin-function(&lt;plugin dest="content" type="xquery" module="/entities/emp2/input..." .../&gt;, "/SalaryTable.csv-0-916", document{&lt;root&gt;&lt;emp_id&gt;916&lt;/emp_id&gt;&lt;status&gt;Inactive&lt;/status&gt;&lt;job_effective_date&gt;...&lt;/job_effective_date&gt;...&lt;/root&gt;}, (), (), "input", fn:true(), map:map(&lt;map:map xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" .../&gt;))</error:operation>
@@ -106,7 +106,7 @@
       <error:xquery-version>1.0-ml</error:xquery-version>
     </error:frame>
     <error:frame>
-      <error:uri>/com.marklogic.hub/lib/flow-lib.xqy</error:uri>
+      <error:uri>/MarkLogic/data-hub-framework/impl/flow-lib.xqy</error:uri>
       <error:line>698</error:line>
       <error:column>6</error:column>
       <error:operation>flow:run-plugin(&lt;plugin dest="content" type="xquery" module="/entities/emp2/input..." .../&gt;, &lt;data-format xmlns="http://marklogic.com/data-hub"&gt;application/xml&lt;/data-format&gt;, "/SalaryTable.csv-0-916", document{&lt;root&gt;&lt;emp_id&gt;916&lt;/emp_id&gt;&lt;status&gt;Inactive&lt;/status&gt;&lt;job_effective_date&gt;...&lt;/job_effective_date&gt;...&lt;/root&gt;}, (), (), &lt;type xmlns="http://marklogic.com/data-hub"&gt;input&lt;/type&gt;, fn:true(), map:map(&lt;map:map xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" .../&gt;))</error:operation>
@@ -167,7 +167,7 @@
       <error:xquery-version>1.0-ml</error:xquery-version>
     </error:frame>
     <error:frame>
-      <error:uri>/com.marklogic.hub/lib/flow-lib.xqy</error:uri>
+      <error:uri>/MarkLogic/data-hub-framework/impl/flow-lib.xqy</error:uri>
       <error:line>513</error:line>
       <error:column>6</error:column>
       <error:operation>flow:run-plugins(&lt;flow xmlns="http://marklogic.com/data-hub"&gt;&lt;name&gt;load-xml&lt;/name&gt;...&lt;/flow&gt;, "/SalaryTable.csv-0-916", document{&lt;root&gt;&lt;emp_id&gt;916&lt;/emp_id&gt;&lt;status&gt;Inactive&lt;/status&gt;&lt;job_effective_date&gt;...&lt;/job_effective_date&gt;...&lt;/root&gt;}, map:map(&lt;map:map xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" .../&gt;))</error:operation>
@@ -220,7 +220,7 @@
       <error:xquery-version>1.0-ml</error:xquery-version>
     </error:frame>
     <error:frame>
-      <error:uri>/com.marklogic.hub/mlcp-flow-transform.xqy</error:uri>
+      <error:uri>/MarkLogic/data-hub-framework/transforms/mlcp-flow-transform.xqy</error:uri>
       <error:line>44</error:line>
       <error:column>23</error:column>
       <error:operation>function() as item()*()</error:operation>
@@ -249,7 +249,7 @@
       <error:xquery-version>1.0-ml</error:xquery-version>
     </error:frame>
     <error:frame>
-      <error:uri>/com.marklogic.hub/lib/perflog-lib.xqy</error:uri>
+      <error:uri>/MarkLogic/data-hub-framework/impl/perflog-lib.xqy</error:uri>
       <error:line>33</error:line>
       <error:column>9</error:column>
       <error:operation>perf:log("mlcp-flow-transform(/SalaryTable.csv-0-916)", function() as item()*)</error:operation>
@@ -266,10 +266,10 @@
       <error:xquery-version>1.0-ml</error:xquery-version>
     </error:frame>
     <error:frame>
-      <error:uri>/com.marklogic.hub/mlcp-flow-transform.xqy</error:uri>
+      <error:uri>/MarkLogic/data-hub-framework/transforms/mlcp-flow-transform.xqy</error:uri>
       <error:line>25</error:line>
       <error:column>4</error:column>
-      <error:operation>xdmp:function(fn:QName("http://marklogic.com/data-hub/mlcp-flow-transform","transform"), "/com.marklogic.hub/mlcp-flow-transform.xqy")(map:map(&lt;map:map xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" .../&gt;), map:map(&lt;map:map xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" .../&gt;))</error:operation>
+      <error:operation>xdmp:function(fn:QName("http://marklogic.com/data-hub/mlcp-flow-transform","transform"), "/MarkLogic/data-hub-framework/transforms/mlcp-flow-transform.xqy")(map:map(&lt;map:map xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" .../&gt;), map:map(&lt;map:map xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" .../&gt;))</error:operation>
       <error:variables>
         <error:variable>
     <error:name xmlns="http://marklogic.com/data-hub/mlcp-flow-transform">content</error:name>
@@ -290,11 +290,11 @@
       <error:uri>/MarkLogic/hadoop.xqy</error:uri>
       <error:line>374</error:line>
       <error:column>5</error:column>
-      <error:operation>transform-insert-item("/com.marklogic.hub/mlcp-flow-transform.xqy", xs:untypedAtomic("http://marklogic.com/data-hub/mlcp-flow-transform"), "transform", xs:untypedAtomic("entity=emp2,flow=load-xml,flowType=input,jobId=8c331d24-3217-46b..."), "/SalaryTable.csv-0-916", "&lt;root&gt;&lt;emp_id&gt;&lt;![CDATA[916]]&gt;&lt;/emp_id&gt;&lt;status&gt;&lt;![CDATA[Inactive]...", json:object(&lt;json:object xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" .../&gt;), (), ())</error:operation>
+      <error:operation>transform-insert-item("/MarkLogic/data-hub-framework/transforms/mlcp-flow-transform.xqy", xs:untypedAtomic("http://marklogic.com/data-hub/mlcp-flow-transform"), "transform", xs:untypedAtomic("entity=emp2,flow=load-xml,flowType=input,jobId=8c331d24-3217-46b..."), "/SalaryTable.csv-0-916", "&lt;root&gt;&lt;emp_id&gt;&lt;![CDATA[916]]&gt;&lt;/emp_id&gt;&lt;status&gt;&lt;![CDATA[Inactive]...", json:object(&lt;json:object xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" .../&gt;), (), ())</error:operation>
       <error:variables>
         <error:variable>
     <error:name xmlns="http://marklogic.com/xdmp/hadoop">transform-module</error:name>
-    <error:value>"/com.marklogic.hub/mlcp-flow-transform.xqy"</error:value>
+    <error:value>"/MarkLogic/data-hub-framework/transforms/mlcp-flow-transform.xqy"</error:value>
         </error:variable>
         <error:variable>
     <error:name xmlns="http://marklogic.com/xdmp/hadoop">transform-namespace</error:name>
@@ -431,11 +431,11 @@
       <error:uri>/MarkLogic/hadoop.xqy</error:uri>
       <error:line>256</error:line>
       <error:column>8</error:column>
-      <error:operation>hadoop:transform-insert-batch("/com.marklogic.hub/mlcp-flow-transform.xqy", "transform", json:object(&lt;json:object xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" .../&gt;), ("/SalaryTable.csv-0-901", "/SalaryTable.csv-0-902", "/SalaryTable.csv-0-903", ...), ("&lt;root&gt;&lt;emp_id&gt;&lt;![CDATA[901]]&gt;&lt;/emp_id&gt;&lt;status&gt;&lt;![CDATA[Active - ...", "&lt;root&gt;&lt;emp_id&gt;&lt;![CDATA[902]]&gt;&lt;/emp_id&gt;&lt;status&gt;&lt;![CDATA[Active - ...", "&lt;root&gt;&lt;emp_id&gt;&lt;![CDATA[903]]&gt;&lt;/emp_id&gt;&lt;status&gt;&lt;![CDATA[Active - ...", ...), (json:object(&lt;json:object xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" .../&gt;), json:object(&lt;json:object xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" .../&gt;), json:object(&lt;json:object xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" .../&gt;), ...))</error:operation>
+      <error:operation>hadoop:transform-insert-batch("/MarkLogic/data-hub-framework/transforms/mlcp-flow-transform.xqy", "transform", json:object(&lt;json:object xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" .../&gt;), ("/SalaryTable.csv-0-901", "/SalaryTable.csv-0-902", "/SalaryTable.csv-0-903", ...), ("&lt;root&gt;&lt;emp_id&gt;&lt;![CDATA[901]]&gt;&lt;/emp_id&gt;&lt;status&gt;&lt;![CDATA[Active - ...", "&lt;root&gt;&lt;emp_id&gt;&lt;![CDATA[902]]&gt;&lt;/emp_id&gt;&lt;status&gt;&lt;![CDATA[Active - ...", "&lt;root&gt;&lt;emp_id&gt;&lt;![CDATA[903]]&gt;&lt;/emp_id&gt;&lt;status&gt;&lt;![CDATA[Active - ...", ...), (json:object(&lt;json:object xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" .../&gt;), json:object(&lt;json:object xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" .../&gt;), json:object(&lt;json:object xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" .../&gt;), ...))</error:operation>
       <error:variables>
         <error:variable>
     <error:name xmlns="http://marklogic.com/xdmp/hadoop">transform-module</error:name>
-    <error:value>"/com.marklogic.hub/mlcp-flow-transform.xqy"</error:value>
+    <error:value>"/MarkLogic/data-hub-framework/transforms/mlcp-flow-transform.xqy"</error:value>
         </error:variable>
         <error:variable>
     <error:name xmlns="http://marklogic.com/xdmp/hadoop">transform-function</error:name>

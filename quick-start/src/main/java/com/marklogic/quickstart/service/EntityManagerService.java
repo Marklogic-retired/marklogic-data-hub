@@ -1,17 +1,18 @@
 /*
- * Copyright 2012-2016 MarkLogic Corporation
+ * Copyright 2012-2018 MarkLogic Corporation
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
  */
 package com.marklogic.quickstart.service;
 
@@ -19,37 +20,22 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.marklogic.appdeployer.AppConfig;
-import com.marklogic.client.DatabaseClient;
-import com.marklogic.client.ext.modulesloader.impl.AssetFileLoader;
-import com.marklogic.client.ext.modulesloader.impl.DefaultModulesLoader;
-import com.marklogic.client.ext.modulesloader.impl.PropertiesModuleManager;
-import com.marklogic.client.extensions.ResourceManager;
-import com.marklogic.client.extensions.ResourceServices;
-import com.marklogic.client.io.JacksonHandle;
-import com.marklogic.client.io.StringHandle;
-import com.marklogic.client.util.RequestParameters;
-import com.marklogic.hub.DataHub;
 import com.marklogic.hub.EntityManager;
 import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.error.DataHubProjectException;
 import com.marklogic.hub.flow.FlowType;
 import com.marklogic.hub.scaffold.Scaffolding;
-import com.marklogic.quickstart.auth.ConnectionAuthenticationToken;
-import com.marklogic.quickstart.listeners.DeployUserModulesListener;
-import com.marklogic.quickstart.listeners.ValidateListener;
+import com.marklogic.hub.validate.EntitiesValidator;
+import com.marklogic.quickstart.EnvironmentAware;
 import com.marklogic.quickstart.model.EnvironmentConfig;
 import com.marklogic.quickstart.model.FlowModel;
 import com.marklogic.quickstart.model.PluginModel;
 import com.marklogic.quickstart.model.entity_services.EntityModel;
 import com.marklogic.quickstart.model.entity_services.HubUIData;
 import com.marklogic.quickstart.model.entity_services.InfoType;
-import com.marklogic.quickstart.util.FileUtil;
-import com.sun.jersey.api.client.ClientHandlerException;
+import com.marklogic.hub.util.FileUtil;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -62,10 +48,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.*;
-import java.util.regex.Pattern;
 
 @Service
-public class EntityManagerService {
+public class EntityManagerService extends EnvironmentAware {
 
     private static final String UI_LAYOUT_FILE = "entities.layout.json";
     private static final String PLUGINS_DIR = "plugins";
@@ -81,10 +66,8 @@ public class EntityManagerService {
     @Autowired
     private DataHubService dataHubService;
 
-    private EnvironmentConfig envConfig() {
-        ConnectionAuthenticationToken authenticationToken = (ConnectionAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
-        return authenticationToken.getEnvironmentConfig();
-    }
+    @Autowired
+    private MappingManagerService mappingManagerService;
 
     public List<EntityModel> getLegacyEntities() throws IOException {
         String projectDir = envConfig().getProjectDir();
@@ -140,7 +123,7 @@ public class EntityManagerService {
     }
 
     public EntityModel createEntity(String projectDir, EntityModel newEntity) throws IOException {
-        Scaffolding scaffolding = new Scaffolding(projectDir, envConfig().getFinalClient());
+        Scaffolding scaffolding = Scaffolding.create(projectDir, envConfig().getFinalClient());
         scaffolding.createEntity(newEntity.getName());
 
         if (newEntity.inputFlows != null) {
@@ -217,14 +200,20 @@ public class EntityManagerService {
         }
     }
 
+    //TODO Autowire in an Entity Manager
     public void deploySearchOptions(EnvironmentConfig environmentConfig) {
-        EntityManager em = new EntityManager(environmentConfig.getMlSettings());
-        em.deploySearchOptions();
+        EntityManager em = EntityManager.create(environmentConfig.getMlSettings());
+        em.deployQueryOptions();
     }
 
     public void saveDbIndexes(EnvironmentConfig environmentConfig) {
-        EntityManager em = new EntityManager(environmentConfig.getMlSettings());
+        EntityManager em = EntityManager.create(environmentConfig.getMlSettings());
         em.saveDbIndexes();
+    }
+
+    public void savePii(EnvironmentConfig environmentConfig) {
+        EntityManager em = EntityManager.create(environmentConfig.getMlSettings());
+        em.savePii();
     }
 
     public void saveAllUiData(List<EntityModel> entities) throws IOException {
@@ -291,8 +280,7 @@ public class EntityManagerService {
                 return entity;
             }
         }
-
-        return null;
+        throw new DataHubProjectException("Entity not found in project: " + entityName);
     }
 
     public FlowModel getFlow(String entityName, FlowType flowType, String flowName) throws IOException {
@@ -312,18 +300,26 @@ public class EntityManagerService {
             }
         }
 
-        return null;
+        throw new DataHubProjectException("Flow not found: " + entityName + " / " + flowName);
     }
 
     public FlowModel createFlow(String projectDir, String entityName, FlowType flowType, FlowModel newFlow) throws IOException {
-        Scaffolding scaffolding = new Scaffolding(projectDir, envConfig().getFinalClient());
+        Scaffolding scaffolding = Scaffolding.create(projectDir, envConfig().getFinalClient());
         newFlow.entityName = entityName;
-        scaffolding.createFlow(entityName, newFlow.flowName, flowType, newFlow.codeFormat, newFlow.dataFormat, newFlow.useEsModel);
+        if(newFlow.mappingName != null) {
+            try {
+                String mappingName = mappingManagerService.getMapping(newFlow.mappingName).getVersionedName();
+                newFlow.mappingName = mappingName;
+            } catch (DataHubProjectException e) {
+                throw new DataHubProjectException("Mapping not found in project: " + newFlow.mappingName);
+            }
+        }
+        scaffolding.createFlow(entityName, newFlow.flowName, flowType, newFlow.codeFormat, newFlow.dataFormat, newFlow.useEsModel, newFlow.mappingName);
         return getFlow(entityName, flowType, newFlow.flowName);
     }
 
     public void deleteFlow(String projectDir, String entityName, String flowName, FlowType flowType) throws IOException {
-        Scaffolding scaffolding = new Scaffolding(projectDir, envConfig().getFinalClient());
+        Scaffolding scaffolding = Scaffolding.create(projectDir, envConfig().getFinalClient());
         Path flowDir = scaffolding.getFlowDir(entityName, flowName, flowType);
         FileUtils.deleteDirectory(flowDir.toFile());
     }
@@ -342,7 +338,8 @@ public class EntityManagerService {
         else {
             type = "xquery";
         }
-        return (new DataHub(config)).validateUserModule(entityName, flowName, plugin.fileContents.replaceAll("\\.(sjs|xqy)", ""), type, plugin.fileContents);
+        EntitiesValidator validator = EntitiesValidator.create(config.newStagingClient());
+        return validator.validate(entityName, flowName, plugin.fileContents.replaceAll("\\.(sjs|xqy)", ""), type, plugin.fileContents);
     }
 
     public void saveFlowPlugin(

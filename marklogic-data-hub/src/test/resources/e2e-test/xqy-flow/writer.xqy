@@ -23,7 +23,7 @@ declare function plugin:write(
       fn:error(xs:QName("WRITER-BOOM"), "I BLEW UP")
     else ()
   return (
-    xdmp:document-insert("/options-test.xml",
+    xdmp:document-insert("/options-test" || fn:replace(fn:replace($id, "/input", ""), ".(json|xml)", "") || ".xml",
       <doc>
         <collector>{map:get($options, "collectorTest")}</collector>
         <content>{map:get($options, "contentTest")}</content>

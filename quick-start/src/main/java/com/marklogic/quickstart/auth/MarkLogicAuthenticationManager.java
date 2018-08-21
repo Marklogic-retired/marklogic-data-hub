@@ -1,23 +1,25 @@
 /*
- * Copyright 2012-2016 MarkLogic Corporation
+ * Copyright 2012-2018 MarkLogic Corporation
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
  */
 package com.marklogic.quickstart.auth;
 
-import com.marklogic.spring.http.RestClient;
-import com.marklogic.spring.http.RestConfig;
-import com.marklogic.spring.http.SimpleRestConfig;
+import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.impl.HubConfigImpl;
+import com.marklogic.mgmt.ManageConfig;
+import com.marklogic.quickstart.model.EnvironmentConfig;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.Credentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -30,6 +32,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.ResourceAccessException;
+import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
 
@@ -40,19 +43,13 @@ import java.net.URI;
  */
 public class MarkLogicAuthenticationManager implements AuthenticationProvider, AuthenticationManager {
 
-    private SimpleRestConfig restConfig;
-
     private String pathToAuthenticateAgainst = "/v1/ping";
 
     /**
      * A RestConfig instance is needed so a request can be made to MarkLogic to see if the user can successfully
      * authenticate.
-     *
-     * @param restConfig
      */
-    public MarkLogicAuthenticationManager(RestConfig restConfig) {
-        this.restConfig = (SimpleRestConfig)restConfig;
-    }
+    public MarkLogicAuthenticationManager() {}
 
     @Override
     public boolean supports(Class<?> authentication) {
@@ -80,12 +77,13 @@ public class MarkLogicAuthenticationManager implements AuthenticationProvider, A
          * For now, building a new RestTemplate each time. This should in general be okay, because we're typically not
          * authenticating users over and over.
          */
-        restConfig.setHost(hostname);
-        restConfig.setRestPort(token.getEnvironmentConfig().getMlSettings().getAppConfig().getAppServicesPort());
-        RestClient client = new RestClient(restConfig, new SimpleCredentialsProvider(username, password));
-        URI uri = client.buildUri(pathToAuthenticateAgainst, null);
+        EnvironmentConfig environmentConfig = token.getEnvironmentConfig();
+        HubConfig hubConfig = environmentConfig.getMlSettings();
+        ManageConfig manageConfig = ((HubConfigImpl)hubConfig).getManageConfig();
+        RestTemplate restTemplate = ((HubConfigImpl) hubConfig).getManageClient().getRestTemplate();
+        URI uri = manageConfig.buildUri(pathToAuthenticateAgainst);
         try {
-            client.getRestOperations().getForEntity(uri, String.class);
+            restTemplate.getForObject(uri, String.class);
         }
         catch(ResourceAccessException ex) {
             throw new RuntimeException("Cannot connect to MarkLogic at " + hostname + ". Are you sure MarkLogic is running?");

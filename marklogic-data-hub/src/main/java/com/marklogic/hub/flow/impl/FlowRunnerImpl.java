@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2016 MarkLogic Corporation
+ * Copyright 2012-2018 MarkLogic Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,12 +21,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.datamovement.*;
 import com.marklogic.client.datamovement.impl.JobTicketImpl;
-import com.marklogic.client.datamovement.impl.QueryBatcherImpl;
 import com.marklogic.client.extensions.ResourceManager;
 import com.marklogic.client.extensions.ResourceServices;
 import com.marklogic.client.io.Format;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.util.RequestParameters;
+import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.collector.Collector;
 import com.marklogic.hub.collector.DiskQueue;
@@ -38,6 +38,7 @@ import com.marklogic.hub.job.JobStatus;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
@@ -50,7 +51,7 @@ public class FlowRunnerImpl implements FlowRunner {
     private Flow flow;
     private int batchSize = DEFAULT_BATCH_SIZE;
     private int threadCount = DEFAULT_THREAD_COUNT;
-    private DatabaseClient sourceClient;
+    private DatabaseClient stagingClient;
     private String destinationDatabase;
     private Map<String, Object> options;
     private int previousPercentComplete;
@@ -66,8 +67,8 @@ public class FlowRunnerImpl implements FlowRunner {
 
     public FlowRunnerImpl(HubConfig hubConfig) {
         this.hubConfig = hubConfig;
-        this.sourceClient = hubConfig.newStagingClient();
-        this.destinationDatabase = hubConfig.finalDbName;
+        this.stagingClient = hubConfig.newStagingClient();
+        this.destinationDatabase = hubConfig.getDbName(DatabaseKind.FINAL);
     }
 
     @Override
@@ -89,8 +90,8 @@ public class FlowRunnerImpl implements FlowRunner {
     }
 
     @Override
-    public FlowRunner withSourceClient(DatabaseClient sourceClient) {
-        this.sourceClient = sourceClient;
+    public FlowRunner withSourceClient(DatabaseClient stagingClient) {
+        this.stagingClient = stagingClient;
         return this;
     }
 
@@ -154,7 +155,7 @@ public class FlowRunnerImpl implements FlowRunner {
     @Override
     public JobTicket run() {
         String jobId = UUID.randomUUID().toString();
-        JobManager jobManager = new JobManager(hubConfig.newJobDbClient());
+        JobManager jobManager = JobManager.create(hubConfig.newJobDbClient());
 
         Job job = Job.withFlow(flow)
             .withJobId(jobId);
@@ -162,7 +163,7 @@ public class FlowRunnerImpl implements FlowRunner {
 
         Collector c = flow.getCollector();
         c.setHubConfig(hubConfig);
-        c.setClient(sourceClient);
+        c.setClient(stagingClient);
 
         AtomicLong successfulEvents = new AtomicLong(0);
         AtomicLong failedEvents = new AtomicLong(0);
@@ -203,19 +204,31 @@ public class FlowRunnerImpl implements FlowRunner {
 
         Vector<String> errorMessages = new Vector<>();
 
-        DataMovementManager dataMovementManager = sourceClient.newDataMovementManager();
+        DataMovementManager dataMovementManager = stagingClient.newDataMovementManager();
 
         double batchCount = Math.ceil((double)uris.size() / (double)batchSize);
 
         HashMap<String, JobTicket> ticketWrapper = new HashMap<>();
 
+        ConcurrentHashMap<DatabaseClient, FlowResource> databaseClientMap = new ConcurrentHashMap<>();
+
         QueryBatcher tempQueryBatcher = dataMovementManager.newQueryBatcher(uris.iterator())
             .withBatchSize(batchSize)
             .withThreadCount(threadCount)
+            .withJobId(jobId)
             .onUrisReady((QueryBatch batch) -> {
                 try {
-                    FlowResource flowRunner = new FlowResource(batch.getClient(), destinationDatabase, flow);
-                    RunFlowResponse response = flowRunner.run(jobId, batch.getItems(), options);
+                    FlowResource flowResource;
+
+                    if (databaseClientMap.containsKey(batch.getClient())){
+                        flowResource = databaseClientMap.get(batch.getClient());
+                    }
+                    else {
+                        flowResource = new FlowResource(batch.getClient(), destinationDatabase, flow);
+                        databaseClientMap.put(batch.getClient(), flowResource);
+                    }
+
+                    RunFlowResponse response = flowResource.run(jobId, batch.getItems(), options);
                     failedEvents.addAndGet(response.errorCount);
                     successfulEvents.addAndGet(response.totalCount - response.errorCount);
                     if (response.errors != null) {
@@ -276,11 +289,11 @@ public class FlowRunnerImpl implements FlowRunner {
             });
 
 
-        if (hubConfig.loadBalancerHosts != null && hubConfig.loadBalancerHosts.length > 0){
+        if (hubConfig.getLoadBalancerHosts() != null && hubConfig.getLoadBalancerHosts().length > 0){
             tempQueryBatcher = tempQueryBatcher.withForestConfig(
                 new FilteredForestConfiguration(
                     dataMovementManager.readForestConfig()
-                ).withWhiteList(hubConfig.loadBalancerHosts)
+                ).withWhiteList(hubConfig.getLoadBalancerHosts())
             );
         }
         QueryBatcher queryBatcher = tempQueryBatcher;
@@ -289,6 +302,8 @@ public class FlowRunnerImpl implements FlowRunner {
         JobTicket jobTicket = dataMovementManager.startJob(queryBatcher);
         ticketWrapper.put("jobTicket", jobTicket);
         jobManager.saveJob(job.withStatus(JobStatus.RUNNING_HARMONIZE));
+
+        int uriCount = uris.size();
 
         runningThread = new Thread(() -> {
             queryBatcher.awaitCompletion();
@@ -305,7 +320,7 @@ public class FlowRunnerImpl implements FlowRunner {
             if (failedEvents.get() > 0 && stopOnFailure) {
                 status = JobStatus.STOP_ON_ERROR;
             }
-            else if (failedEvents.get() + successfulEvents.get() != uris.size()) {
+            else if (failedEvents.get() + successfulEvents.get() != uriCount) {
                 status = JobStatus.CANCELED;
             }
             else if (failedEvents.get() > 0 && successfulEvents.get() > 0) {
@@ -330,8 +345,7 @@ public class FlowRunnerImpl implements FlowRunner {
         });
         runningThread.start();
 
-        // hack until https://github.com/marklogic/java-client-api/issues/752 is fixed
-        return new JobTicketImpl(jobId, JobTicket.JobType.QUERY_BATCHER).withQueryBatcher((QueryBatcherImpl)queryBatcher);
+        return jobTicket;
     }
 
     private String jsonToString(JsonNode node) {
@@ -345,8 +359,6 @@ public class FlowRunnerImpl implements FlowRunner {
 
     class FlowResource extends ResourceManager {
 
-        static final public String NAME = "flow";
-
         private DatabaseClient srcClient;
         private String targetDatabase;
         private Flow flow;
@@ -356,7 +368,7 @@ public class FlowRunnerImpl implements FlowRunner {
             this.flow = flow;
             this.srcClient = srcClient;
             this.targetDatabase = targetDatabase;
-            this.srcClient.init(NAME, this);
+            this.srcClient.init(flow.getCodeFormat().equals(CodeFormat.JAVASCRIPT) ? "ml:sjsFlow" : "ml:flow", this);
         }
 
         public RunFlowResponse run(String jobId, String[] items) {
@@ -377,16 +389,22 @@ public class FlowRunnerImpl implements FlowRunner {
                     params.put("options", objectMapper.writeValueAsString(options));
                 }
                 ResourceServices.ServiceResultIterator resultItr = this.getServices().post(params, new StringHandle("{}").withFormat(Format.JSON));
-                if (resultItr == null || ! resultItr.hasNext()) {
-                    resp = new RunFlowResponse();
+                try {
+                    if (resultItr == null || !resultItr.hasNext()) {
+                        resp = new RunFlowResponse();
+                    }
+                    else {
+                        ResourceServices.ServiceResult res = resultItr.next();
+                        StringHandle handle = new StringHandle();
+                        ObjectMapper objectMapper = new ObjectMapper();
+                        resp = objectMapper.readValue(res.getContent(handle).get(), RunFlowResponse.class);
+                    }
                 }
-                else {
-                    ResourceServices.ServiceResult res = resultItr.next();
-                    StringHandle handle = new StringHandle();
-                    ObjectMapper objectMapper = new ObjectMapper();
-                    resp = objectMapper.readValue(res.getContent(handle).get(), RunFlowResponse.class);
+                finally {
+                    if (resultItr != null) {
+                        resultItr.close();
+                    }
                 }
-
             }
             catch(Exception e) {
                 e.printStackTrace();

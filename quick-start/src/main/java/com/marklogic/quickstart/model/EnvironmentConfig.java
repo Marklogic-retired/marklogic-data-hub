@@ -1,17 +1,18 @@
 /*
- * Copyright 2012-2016 MarkLogic Corporation
+ * Copyright 2012-2018 MarkLogic Corporation
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
  */
 package com.marklogic.quickstart.model;
 
@@ -21,9 +22,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.hub.DataHub;
 import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.HubConfigBuilder;
 import com.marklogic.hub.InstallInfo;
+import com.marklogic.hub.util.Versions;
 
-import java.io.IOException;
 import java.util.Properties;
 
 public class EnvironmentConfig {
@@ -91,27 +93,24 @@ public class EnvironmentConfig {
         Properties overrides = new Properties();
         overrides.put("mlUsername", username);
         overrides.put("mlPassword", password);
-        mlSettings = HubConfig.hubFromEnvironmentWithOverrides(this.projectDir, environment, overrides);
+        mlSettings = HubConfigBuilder.newHubConfigBuilder(this.projectDir)
+            .withPropertiesFromEnvironment(environment)
+            .withProperties(overrides)
+            .build();
         if (username != null) {
             mlSettings.getAppConfig().setAppServicesUsername(username);
             mlSettings.getAppConfig().setAppServicesPassword(password);
         }
-        dataHub = new DataHub(mlSettings);
+        dataHub = DataHub.create(mlSettings);
 
-        // warm the caches
-        getStagingClient();
-        getFinalClient();
-        getJobClient();
-        getTraceClient();
-
-        isInitialized = true;
     }
 
     @JsonIgnore
-    public void checkIfInstalled() throws IOException {
+    public void checkIfInstalled() {
         this.installInfo = dataHub.isInstalled();
-        this.installedVersion = dataHub.getHubVersion();
-        this.marklogicVersion = dataHub.getMarkLogicVersion();
+        Versions versions = new Versions(mlSettings);
+        this.installedVersion = versions.getHubVersion();
+        this.marklogicVersion = versions.getMarkLogicVersion();
         this.runningVersion = this.mlSettings.getJarVersion();
     }
 
@@ -134,15 +133,6 @@ public class EnvironmentConfig {
             _finalClient = mlSettings.newFinalClient();
         }
         return _finalClient;
-    }
-
-    private DatabaseClient _traceClient = null;
-    @JsonIgnore
-    public DatabaseClient getTraceClient() {
-        if (_traceClient == null) {
-            _traceClient = mlSettings.newTraceDbClient();
-        }
-        return _traceClient ;
     }
 
     private DatabaseClient _jobClient = null;

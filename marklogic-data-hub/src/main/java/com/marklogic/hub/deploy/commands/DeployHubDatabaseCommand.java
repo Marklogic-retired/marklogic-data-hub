@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2016 MarkLogic Corporation
+ * Copyright 2012-2018 MarkLogic Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -137,12 +137,10 @@ public class DeployHubDatabaseCommand extends DeployDatabaseCommand {
 
     protected DeployForestsCommand buildDeployForestsCommand(String dbPayload, SaveReceipt receipt,
                                                              CommandContext context) {
-        DeployForestsCommand c = new DeployForestsCommand();
+        DeployForestsCommand c = new DeployForestsCommand(receipt.getResourceId());
         c.setCreateForestsOnEachHost(createForestsOnEachHost);
         c.setForestsPerHost(determineForestCountPerHost(dbPayload, context));
         c.setForestFilename(forestFilename);
-        c.setDatabaseName(receipt.getResourceId());
-        c.setForestPayload(DeployForestsCommand.DEFAULT_FOREST_PAYLOAD);
         return c;
     }
 
