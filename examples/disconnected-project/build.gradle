@@ -41,11 +41,18 @@ configurations {
 dependencies {
     // this allows you to write custom java code that depends
     // on the Data Hub Framework library
+	// Remove if not needed
     compile 'com.marklogic:marklogic-data-hub:3.0.0'
     compile 'com.marklogic:marklogic-xcc:9.0.5'
 
     //sample mlcp dependency. Remove if not required
 	mlcp "com.marklogic:mlcp:9.0.5"
+	/**
+	 * mlcp uses Log4j for logging, and if Log4j can't find a configuration file, it will complain and you'll
+	 * get none of mlcp's usually-useful logging. It is recommended then that your Gradle configuration for
+	 * mlcp include a directory or some other resource that provides a log4j.properties file.
+	 */
+	mlcp files("lib")
 }
 
 
@@ -94,3 +101,20 @@ task makeOfflineZip(type: Zip, dependsOn: downloadToProjectMavenRepo) {
 /**
  * END: Disconnected gradle tasks
  */
+
+ /**
+ * Start mlcpExample
+ */
+task mlcpExample(type: com.marklogic.gradle.task.MlcpTask) {
+	classpath = configurations.mlcp
+	command = "IMPORT"
+	port = Integer.parseInt(mlStagingPort)
+	input_file_path = "data/sample.csv" //assumes a csv file exists at "data/sample.csv" 
+	input_file_type = "delimited_text"
+	delimiter = ";"
+	document_type = "json"
+	output_collections = "/type/data"
+	output_uri_prefix = "/data/"
+	output_uri_replace = ".*/data/,''"
+}
+

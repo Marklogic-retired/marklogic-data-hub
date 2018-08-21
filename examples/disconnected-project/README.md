@@ -42,6 +42,7 @@ Also, the following directories have been omitted (as they were empty). These wo
 * entity-config
 * user-config
 
+It also includes an mlcp task (and mlcp dependencies) as part of the package
 
 ## Requirements
 
