@@ -116,7 +116,7 @@ public class HubProjectImpl implements HubProject {
     }
 
     @Override public Path getUserStagingModulesDir() {
-        return this.projectDir.resolve(HUB_MODULES_DIR);
+        return this.projectDir.resolve(USER_MODULES_DIR);
     }
 
     @Override public boolean isInitialized() {
