@@ -17,7 +17,7 @@
 
 package com.marklogic.gradle.task
 
-import com.marklogic.hub.deploy.commands.LoadUserModulesCommand
+import com.marklogic.hub.deploy.commands.LoadUserStagingModulesCommand
 import org.gradle.api.tasks.TaskAction
 
 class DeployUserModulesTask extends HubTask {
@@ -29,7 +29,7 @@ class DeployUserModulesTask extends HubTask {
             println("Data Hub is not installed.")
             return
         }
-        def cmd = new LoadUserModulesCommand(getHubConfig())
+        def cmd = new LoadUserStagingModulesCommand(getHubConfig())
         // TODO: make this user configurable
         cmd.setForceLoad(false);
 

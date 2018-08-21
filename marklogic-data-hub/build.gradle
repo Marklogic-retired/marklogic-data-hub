@@ -220,9 +220,9 @@ ext {
         moduleTokensPropertiesSources = new ArrayList<>()
 
         // override some default values with our values
-        modulesDatabaseName = mlModulesDbName
-        triggersDatabaseName = mlTriggersDbName
-        schemasDatabaseName = mlSchemasDbName
+        modulesDatabaseName = mlStagingModulesDbName
+        triggersDatabaseName = mlStagingTriggersDbName
+        schemasDatabaseName = mlStagingSchemasDbName
         restPort = Integer.parseInt(mlJobPort)
 
         // Configure custom tokens for our json files
@@ -238,9 +238,9 @@ ext {
         customTokens.put("%%mlJobPort%%", mlJobPort)
         customTokens.put("%%mlJobDbName%%", mlJobDbName)
 
-        customTokens.put("%%mlModulesDbName%%", mlModulesDbName)
-        customTokens.put("%%mlTriggersDbName%%", mlTriggersDbName)
-        customTokens.put("%%mlSchemasDbName%%", mlSchemasDbName)
+        customTokens.put("%%mlStagingModulesDbName%%", mlStagingModulesDbName)
+        customTokens.put("%%mlStagingTriggersDbName%%", mlStagingTriggersDbName)
+        customTokens.put("%%mlStagingSchemasDbName%%", mlStagingSchemasDbName)
 
         modulePaths = ["marklogic-data-hub/src/main/resources/ml-modules"]
 
