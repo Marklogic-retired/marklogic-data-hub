@@ -129,8 +129,8 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
             if (!dir.toFile().exists()) {
                 dir.toFile().mkdirs();
             }
-            File finalFile = dir.resolve("final-database.json").toFile();
-            File stagingFile = dir.resolve("staging-database.json").toFile();
+            File finalFile = Paths.get(dir.toString(), HubConfig.FINAL_ENTITY_DATABASE_FILE).toFile();
+            File stagingFile = Paths.get(dir.toString(), HubConfig.STAGING_ENTITY_DATABASE_FILE).toFile();
 
             long lastModified = Math.max(finalFile.lastModified(), stagingFile.lastModified());
             List<JsonNode> entities = getModifiedRawEntities(lastModified);
