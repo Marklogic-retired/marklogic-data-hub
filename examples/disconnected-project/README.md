@@ -37,12 +37,22 @@ Note that the following files have been modified slightly -
 * settings.gradle
 * build.gradle
 
-Also, the following directories have been omitted (as they were empty). These would normally be created as part of a data hub project once you start creating entities
-* plugins
-* entity-config
-* user-config
+An example Entity is included in this project. It also includes an mlcp task (and mlcp dependencies) as part of the package
 
-It also includes an mlcp task (and mlcp dependencies) as part of the package
+To merge this approach with your existing datahub project, you would typically -
+
+1. Replace the following directories with the existing ones from your project -
+    * plugins
+    * hub-internal-config
+    * entity-config
+    * user-config
+
+2. Merge the following files with the configuration from your existing project -
+    * gradle.properties 
+    * gradle-*.properties 
+    * settings.gradle
+    * build.gradle
+
 
 ## Requirements
 
