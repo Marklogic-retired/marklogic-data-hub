@@ -29,7 +29,19 @@ Once the zip has been created, you only need Java to run the deployment tasks.
 
 This approach is useful when you need to create a package that does not require any external resources (e.g. Maven/Gradle repositories) to perform deployment operations. 
 
-Note that the gradlew, gradlew.bat and gradle-wrapper.properties files have been modified slightly also
+Note that the following files have been modified slightly -
+* gradlew
+* gradlew.bat 
+* gradle-wrapper.properties 
+* gradle.properties 
+* settings.gradle
+* build.gradle
+
+Also, the following directories have been omitted (as they were empty). These would normally be created as part of a data hub project once you start creating entities
+* plugins
+* entity-config
+* user-config
+
 
 ## Requirements
 
