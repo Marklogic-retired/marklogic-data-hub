@@ -119,7 +119,7 @@ public class CurrentProjectController extends EnvironmentAware implements FileSy
     public ResponseEntity<?> unInstall() throws IOException {
 
         // uninstall the hub
-        dataHubService.uninstall(envConfig().getMlSettings(), new HubDeployStatusListener() {
+        dataHubService.uninstallStaging(envConfig().getMlSettings(), new HubDeployStatusListener() {
             @Override
             public void onStatusChange(int percentComplete, String message) {
                 template.convertAndSend("/topic/uninstall-status", new StatusMessage(percentComplete, message));
