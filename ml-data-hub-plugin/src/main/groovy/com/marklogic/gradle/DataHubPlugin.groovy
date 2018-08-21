@@ -17,6 +17,7 @@
 
 package com.marklogic.gradle
 
+import com.marklogic.appdeployer.command.Command
 import com.marklogic.appdeployer.impl.SimpleAppDeployer
 import com.marklogic.gradle.task.*
 import com.marklogic.hub.DataHub
@@ -134,8 +135,9 @@ class DataHubPlugin implements Plugin<Project> {
         if (mlAppDeployer == null) {
             throw new RuntimeException("You must apply the ml-gradle plugin before the ml-datahub plugin.")
         }
-
-        mlAppDeployer.setCommands(((DataHubImpl)dataHub).getStagingCommandList())
-        // TODO Add final here?
+        List <Command> allCommands = new ArrayList()
+        allCommands.addAll(((DataHubImpl)dataHub).getFinalCommandList())
+        allCommands.addAll(((DataHubImpl)dataHub).getStagingCommandList())
+        mlAppDeployer.setCommands(allCommands)
     }
 }
