@@ -21,7 +21,6 @@ import com.marklogic.appdeployer.command.Command;
 import com.marklogic.appdeployer.command.CommandMapBuilder;
 import com.marklogic.appdeployer.command.appservers.DeployOtherServersCommand;
 import com.marklogic.appdeployer.command.forests.DeployCustomForestsCommand;
-import com.marklogic.appdeployer.command.security.DeployAmpsCommand;
 import com.marklogic.client.FailedRequestException;
 import com.marklogic.client.admin.QueryOptionsManager;
 import com.marklogic.client.admin.ResourceExtensionsManager;
@@ -476,6 +475,7 @@ public class DataHubImpl implements DataHub {
 
         List<Command> moduleCommands = new ArrayList<>();
         moduleCommands.add(new LoadHubModulesCommand(hubConfig));
+        moduleCommands.add(new LoadUserStagingModulesCommand(hubConfig));
         commandMap.put("mlModuleCommands", moduleCommands);
 
         List<Command> forestCommands = commandMap.get("mlForestCommands");
@@ -511,7 +511,7 @@ public class DataHubImpl implements DataHub {
         commandMap.put("mlServerCommands", serverCommands);
 
         List<Command> moduleCommands = new ArrayList<>();
-        moduleCommands.add(new LoadUserModulesCommand(hubConfig));
+        moduleCommands.add(new LoadUserFinalModulesCommand(hubConfig));
         commandMap.put("mlModuleCommands", moduleCommands);
 
         List<Command> forestCommands = commandMap.get("mlForestCommands");

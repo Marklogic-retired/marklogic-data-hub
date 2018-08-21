@@ -15,6 +15,8 @@ import com.marklogic.client.datamovement.WriteBatcher;
 import com.marklogic.client.document.ServerTransform;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.FileHandle;
+import com.marklogic.hub.deploy.commands.DeployHubRolesCommand;
+import com.marklogic.hub.deploy.commands.DeployHubUsersCommand;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.FlowRunner;
 import com.marklogic.hub.flow.FlowType;
@@ -79,8 +81,8 @@ public class PiiE2E extends HubTestBase {
     @BeforeEach
     public void setup() {
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME,  HubConfig.DEFAULT_FINAL_NAME);
-        installUserModules(getHubAdminConfig(), true);
         installHubModules();
+        installUserModules(getHubAdminConfig(), true);
         // Hardcoding to "digest" auth for now
         // needs to be final db
         clerkClient = DatabaseClientFactory.newClient(finalClient.getHost(),stagingPort, HubConfig.DEFAULT_FINAL_NAME, "SydneyGardner", "x", Authentication.DIGEST);
@@ -238,8 +240,8 @@ public class PiiE2E extends HubTestBase {
     	HubConfigImpl hubConfig = (HubConfigImpl) getHubAdminConfig();
 		// Security
 		List<Command> securityCommands = new ArrayList<Command>();
-		securityCommands.add(new DeployRolesCommand());
-		securityCommands.add(new DeployUsersCommand());
+		securityCommands.add(new DeployHubRolesCommand(hubConfig));
+		securityCommands.add(new DeployHubUsersCommand(hubConfig));
 		securityCommands.add(new DeployProtectedPathsCommand());
 		securityCommands.add(new DeployQueryRolesetsCommand());
 

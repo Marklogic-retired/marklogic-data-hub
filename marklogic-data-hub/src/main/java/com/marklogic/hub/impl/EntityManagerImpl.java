@@ -84,36 +84,43 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
         // save them first
         saveQueryOptions();
 
+        HashMap<Enum, Boolean> loadedResources = new HashMap<>();
+        loadedResources.put(DatabaseKind.FINAL, deployFinalQueryOptions());
+        loadedResources.put(DatabaseKind.STAGING, deployStagingQueryOptions());
+        return loadedResources;
+    }
+
+
+    public boolean deployFinalQueryOptions() {
+        return deployQueryOptions(hubConfig.newFinalClient(), HubConfig.STAGING_ENTITY_QUERY_OPTIONS_FILE);
+    }
+    public boolean deployStagingQueryOptions() {
+        return deployQueryOptions(hubConfig.newStagingClient(), HubConfig.STAGING_ENTITY_QUERY_OPTIONS_FILE);
+    }
+
+    private boolean deployQueryOptions(DatabaseClient client, String filename) {
+
         HubModuleManager propsManager = getPropsMgr();
         DefaultModulesLoader modulesLoader = new DefaultModulesLoader(new AssetFileLoader(hubConfig.newFinalClient(), propsManager));
+
+        boolean isLoaded = false;
 
         modulesLoader.setModulesManager(propsManager);
         modulesLoader.setShutdownTaskExecutorAfterLoadingModules(false);
 
-        HashMap<Enum, Boolean> loadedResources = new HashMap<>();
-
         Path dir = Paths.get(hubConfig.getProjectDir(), HubConfig.ENTITY_CONFIG_DIR);
-        File stagingFile = Paths.get(dir.toString(), HubConfig.STAGING_ENTITY_QUERY_OPTIONS_FILE).toFile();
+        File stagingFile = Paths.get(dir.toString(), filename).toFile();
         if (stagingFile.exists()) {
-            modulesLoader.setDatabaseClient(hubConfig.newStagingClient());
+            modulesLoader.setDatabaseClient(client);
             Resource r = modulesLoader.installQueryOptions(new FileSystemResource(stagingFile));
             if (r != null) {
-                loadedResources.put(DatabaseKind.STAGING, true);
-            }
-        }
-
-        File finalFile = Paths.get(dir.toString(), HubConfig.FINAL_ENTITY_QUERY_OPTIONS_FILE).toFile();
-        if (finalFile.exists()) {
-            modulesLoader.setDatabaseClient(hubConfig.newFinalClient());
-            Resource r = modulesLoader.installQueryOptions(new FileSystemResource(finalFile));
-            if (r != null) {
-                loadedResources.put(DatabaseKind.FINAL, true);
+                isLoaded = true;
             }
         }
         modulesLoader.setShutdownTaskExecutorAfterLoadingModules(true);
         modulesLoader.waitForTaskExecutorToFinish();
 
-        return loadedResources;
+        return isLoaded;
     }
 
     @Override public boolean saveDbIndexes() {

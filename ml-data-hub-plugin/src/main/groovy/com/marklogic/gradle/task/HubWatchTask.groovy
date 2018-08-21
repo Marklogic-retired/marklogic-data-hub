@@ -12,12 +12,12 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
- *  
+ *
  */
 
 package com.marklogic.gradle.task
 
-import com.marklogic.hub.deploy.commands.LoadUserModulesCommand
+import com.marklogic.hub.deploy.commands.LoadUserStagingModulesCommand
 import org.gradle.api.tasks.TaskAction
 
 /**
@@ -34,7 +34,7 @@ class HubWatchTask extends HubTask {
     @TaskAction
     public void watchModules() {
 
-        LoadUserModulesCommand command = new LoadUserModulesCommand(getHubConfig())
+        LoadUserStagingModulesCommand command = new LoadUserStagingModulesCommand(getHubConfig())
         println "Watching modules in paths: " + getHubConfig().projectDir
 
         while (true) {

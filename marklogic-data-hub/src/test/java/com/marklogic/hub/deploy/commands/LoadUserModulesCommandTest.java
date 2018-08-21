@@ -28,11 +28,11 @@ import static org.junit.Assert.assertTrue;
 
 public class LoadUserModulesCommandTest extends HubTestBase {
 
-    public LoadUserModulesCommand loadUserModulesCommand;
+    public LoadUserStagingModulesCommand loadUserModulesCommand;
 
     @Before
     public void setup() {
-        loadUserModulesCommand = new LoadUserModulesCommand(getHubAdminConfig());
+        loadUserModulesCommand = new LoadUserStagingModulesCommand(getHubAdminConfig());
     }
 
     @Test

@@ -24,7 +24,6 @@ import com.marklogic.client.eval.ServerEvaluationCall;
 import com.marklogic.client.io.InputStreamHandle;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
-import com.marklogic.hub.deploy.AmpsInstaller;
 import com.marklogic.hub.error.DataHubConfigurationException;
 import com.marklogic.mgmt.ManageConfig;
 import org.springframework.core.io.ClassPathResource;
