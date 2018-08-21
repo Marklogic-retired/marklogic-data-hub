@@ -111,6 +111,18 @@ From the directory that you have unzipped the offline.zip file into
 
 This will use the jars that you have already downloaded to 'build/offline/maven-repo'
 
+## Ohter
+### Run disconnected Mlcp Task
+
+From the directory that you have unzipped the offline.zip file into, run 
+
+```
+./gradlew mlcpExample -Pdisconnected=true
+```
+
+Note that you need to customise the mlcp task to import the data you are interested in
+
+
 ## Customise
 
 **IMPORTANT**: If you want to include dependencies for a configuration (e.g. compile, runtime, mlcp etc), then you need to modify the 'downloadToProjectMavenRepo' task to include the relevant configuration. E.g. by adding 'configurations.compile.files' to the beginning of the task, all of the dependencies for the 'compile' task will be downloaded.
