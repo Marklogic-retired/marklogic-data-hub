@@ -21,9 +21,12 @@
       </match-path>
     <!-- XDBC -->
 
+    <match-path matches="^/?$">
+      <dispatch>/trace-ui/index.html</dispatch>
+    </match-path>
+
     <match-path matches="^/?$|^/content/([^/]+)/?$">
-        <add-query-param name="uri">/index.html</add-query-param>
-        <dispatch>/data-hub/4/tracing/trace-ui.xqy</dispatch>
+        <dispatch>/trace-ui/index.html</dispatch>
     </match-path>
 
     <match-path matches="^/.*\.(js|css|ttf|eot|woff|woff2|svg)$">

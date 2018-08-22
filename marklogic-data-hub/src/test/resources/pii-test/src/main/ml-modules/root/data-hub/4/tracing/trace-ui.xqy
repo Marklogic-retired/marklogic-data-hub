@@ -25,5 +25,5 @@ declare option xdmp:mapping "false";
 
 debug:dump-env(),
 hul:run-in-modules(function() {
-  xdmp:document-get("./Modules/data-hub/4/tracing/dist" || xdmp:get-request-field("uri"))
+  fn:doc("/trace-ui" || xdmp:get-request-field("uri"))
 })
