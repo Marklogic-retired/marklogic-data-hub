@@ -57,10 +57,10 @@ public class DeployHubAmpsCommand extends DeployAmpsCommand {
         ServerEvaluationCall call = installerClient.newServerEval();
         try (InputStream is = new ClassPathResource("installer-util/install-amps.xqy").getInputStream()) {
             call.xquery( new InputStreamHandle(is));
+            call.eval();
         } catch (IOException e) {
             throw new DataHubConfigurationException(e);
         }
-        call.eval();
     }
 
     @Override
