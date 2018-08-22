@@ -133,7 +133,7 @@ public class HubTestBase {
     public  String flowRunnerPassword;
     protected  Authentication stagingAuthMethod;
     private  Authentication jobAuthMethod;
-    private  Authentication finalAuthMethod;
+    protected  Authentication finalAuthMethod;
     public  DatabaseClient stagingClient = null;
     public  DatabaseClient flowRunnerClient = null;
     // this is needed for some evals in the test suite that are not mainline tests.
@@ -402,13 +402,8 @@ public class HubTestBase {
     	}
 
     	HubConfig hubConfig = builder.build();
-        hubConfig.setPort(DatabaseKind.STAGING, stagingPort);
-        hubConfig.setPort(DatabaseKind.JOB, jobPort);
-        hubConfig.setPort(DatabaseKind.FINAL, finalPort);
         AppConfig stagingAppConfig = hubConfig.getStagingAppConfig();
-        stagingAppConfig.setAppServicesUsername(user);
-        stagingAppConfig.setAppServicesPassword(password);
-        stagingAppConfig.setHost(host);
+        AppConfig finalAppConfig = hubConfig.getFinalAppConfig();
         manageConfig = ((HubConfigImpl)hubConfig).getManageConfig();
         adminConfig = ((HubConfigImpl)hubConfig).getAdminConfig();
 
@@ -418,6 +413,7 @@ public class HubTestBase {
         	hubConfig.setScheme(DatabaseKind.JOB,"https");
 
         	hubConfig.setSslHostnameVerifier(DatabaseKind.STAGING,SSLHostnameVerifier.ANY);
+        	hubConfig.setSslHostnameVerifier(DatabaseKind.FINAL,SSLHostnameVerifier.ANY);
         	hubConfig.setSslHostnameVerifier(DatabaseKind.JOB,SSLHostnameVerifier.ANY);
             manageConfig.setScheme("https");
             adminConfig.setScheme("https");
@@ -425,11 +421,16 @@ public class HubTestBase {
         if(isSslRun()) {
            	stagingAppConfig.setAppServicesSslContext(SimpleX509TrustManager.newSSLContext());
         	stagingAppConfig.setAppServicesSslHostnameVerifier(SSLHostnameVerifier.ANY);
+        	
+        	finalAppConfig.setAppServicesSslContext(SimpleX509TrustManager.newSSLContext());
+        	finalAppConfig.setAppServicesSslHostnameVerifier(SSLHostnameVerifier.ANY);
 
             hubConfig.setSimpleSsl(DatabaseKind.STAGING,true);
         	hubConfig.setSimpleSsl(DatabaseKind.JOB,true);
+        	hubConfig.setSimpleSsl(DatabaseKind.FINAL,true);
 
         	hubConfig.setSslContext(DatabaseKind.STAGING,SimpleX509TrustManager.newSSLContext());
+        	hubConfig.setSslContext(DatabaseKind.FINAL,SimpleX509TrustManager.newSSLContext());
         	hubConfig.setSslContext(DatabaseKind.JOB,SimpleX509TrustManager.newSSLContext());
 
 	    	manageConfig.setConfigureSimpleSsl(true);
@@ -438,6 +439,7 @@ public class HubTestBase {
         if(isCertAuth()) {
         	if(requireAdmin) {
 	           	stagingAppConfig.setAppServicesCertFile("src/test/resources/ssl/client-hub-admin-user.p12");
+	           	finalAppConfig.setAppServicesCertFile("src/test/resources/ssl/client-hub-admin-user.p12");
 	           	hubConfig.setCertFile(DatabaseKind.STAGING, "src/test/resources/ssl/client-hub-admin-user.p12");
 	           	hubConfig.setSslContext(DatabaseKind.JOB,datahubadmincertContext);
 	           	manageConfig.setSslContext(datahubadmincertContext);
@@ -445,6 +447,7 @@ public class HubTestBase {
         	}
         	else {
         		stagingAppConfig.setAppServicesCertFile("src/test/resources/ssl/client-data-hub-user.p12");
+        		finalAppConfig.setAppServicesCertFile("src/test/resources/ssl/client-data-hub-user.p12");
         		hubConfig.setCertFile(DatabaseKind.STAGING, "src/test/resources/ssl/client-data-hub-user.p12");
 	           	hubConfig.setSslContext(DatabaseKind.JOB,flowRunnercertContext);
 	           	manageConfig.setSslContext(flowRunnercertContext);
@@ -455,11 +458,22 @@ public class HubTestBase {
         	stagingAppConfig.setAppServicesSslHostnameVerifier(SSLHostnameVerifier.ANY);
         	stagingAppConfig.setAppServicesSecurityContextType(SecurityContextType.CERTIFICATE);
         	stagingAppConfig.setAppServicesPassword(null);
+        	
+        	finalAppConfig.setAppServicesCertPassword("abcd");
+        	finalAppConfig.setAppServicesTrustManager((X509TrustManager) tmf.getTrustManagers()[0]);
+        	finalAppConfig.setAppServicesSslHostnameVerifier(SSLHostnameVerifier.ANY);
+        	finalAppConfig.setAppServicesSecurityContextType(SecurityContextType.CERTIFICATE);
+        	finalAppConfig.setAppServicesPassword(null);
 
          	hubConfig.setAuthMethod(DatabaseKind.STAGING,"certificate");
         	hubConfig.setAuthMethod(DatabaseKind.JOB,"certificate");
-           	hubConfig.setTrustManager(DatabaseKind.STAGING, (X509TrustManager) tmf.getTrustManagers()[0]);
+        	hubConfig.setAuthMethod(DatabaseKind.FINAL,"certificate");
+           
+        	hubConfig.setTrustManager(DatabaseKind.STAGING, (X509TrustManager) tmf.getTrustManagers()[0]);
         	hubConfig.setCertPass(DatabaseKind.STAGING, "abcd");
+        	
+           	hubConfig.setTrustManager(DatabaseKind.FINAL, (X509TrustManager) tmf.getTrustManagers()[0]);
+        	hubConfig.setCertPass(DatabaseKind.FINAL, "abcd");
 
         	manageConfig.setConfigureSimpleSsl(false);
         	manageConfig.setSecuritySslContext(certContext);
@@ -467,6 +481,7 @@ public class HubTestBase {
         	manageConfig.setSecurityPassword(null);
         }
         hubConfig.setStagingAppConfig(stagingAppConfig);
+        hubConfig.setFinalAppConfig(finalAppConfig);
     	((HubConfigImpl)hubConfig).setManageConfig(manageConfig);
     	manageClient = new ManageClient(manageConfig);
     	((HubConfigImpl)hubConfig).setManageClient(manageClient);
