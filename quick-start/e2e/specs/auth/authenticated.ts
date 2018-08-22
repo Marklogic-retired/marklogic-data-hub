@@ -100,14 +100,14 @@ export default function(tmpDir) {
       //copy run-flow-user.json
       console.log('copy run-flow-user.json');
       let runFlowUserFilePath = 'e2e/qa-data/users/run-flow-user.json';
-      fs.copy(runFlowUserFilePath, tmpDir + '/src/main/ml-config/security/users/run-flow-user.json');
+      fs.copy(runFlowUserFilePath, tmpDir + '/src/main/hub-internal-config/security/users/run-flow-user.json');
     });
 
     it ('should copy flow-admin-user.json file', function() {
       //copy flow-admin-user.json
       console.log('copy flow-admin-user.json');
       let flowAdminUserFilePath = 'e2e/qa-data/users/flow-admin-user.json';
-      fs.copy(flowAdminUserFilePath, tmpDir + '/src/main/ml-config/security/users/flow-admin-user.json');
+      fs.copy(flowAdminUserFilePath, tmpDir + '/src/main/hub-internal-config/security/users/flow-admin-user.json');
     });
 
     it ('Should be on the post init page', function() {
