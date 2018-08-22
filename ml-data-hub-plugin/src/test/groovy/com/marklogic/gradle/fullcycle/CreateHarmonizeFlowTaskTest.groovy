@@ -107,31 +107,25 @@ class CreateHarmonizeFlowTaskTest extends BaseTest {
     }
 
     def "createHarmonizeFlow with valid mappingName"() {
-        given:
-        def pluginDir = Paths.get(hubConfig().projectDir).resolve("plugins")
-        def mappingDir = pluginDir.resolve("mappings")
-        def newMappingDir = mappingDir.resolve("my-new-mapping")
-        mappingDir.toFile().mkdirs()
-        newMappingDir.toFile().mkdirs()
-        FileUtils.copyFile(new File("src/test/resources/my-new-mapping-1.mapping.json"), newMappingDir.resolve('my-new-mapping-1.mapping.json').toFile())
-        BaseTest.propertiesFile << """
-            ext {
-                entityName=my-new-entity
-                flowName=my-new-harmonize-flow
-                mappingName=my-new-mapping
-                useES=false
-            }
-        """
-        runTask("mlLoadModules")
+		given:
+		def pluginDir = Paths.get(hubConfig().projectDir).resolve("plugins")
+		def mappingDir = pluginDir.resolve("mappings").resolve("my-new-mapping")
+		def entitiesDir = pluginDir.resolve("entities").resolve("Employee");
+		mappingDir.toFile().mkdirs()
+		FileUtils.copyFile(new File("src/test/resources/my-new-mapping-1.mapping.json"), mappingDir.resolve('my-new-mapping-1.mapping.json').toFile())
+		runTask("mlLoadModules")
+		entitiesDir.toFile().mkdirs();
+		FileUtils.copyFile(new File("src/test/resources/employee.entity.json"), entitiesDir.resolve('Employee.entity.json').toFile())
+		runTask("mlLoadModules")
 
-        when:
-        def result = runTask('hubCreateHarmonizeFlow')
+		when:
+		def result = runTask('hubCreateHarmonizeFlow', '-PentityName=Employee', '-PflowName=mapping-harmonize-flow', '-PmappingName=my-new-mapping-1', '-PuseES=true')
 
-        then:
-        notThrown(UnexpectedBuildFailure)
-        result.task(":hubCreateHarmonizeFlow").outcome == SUCCESS
+		then:
+		notThrown(UnexpectedBuildFailure)
+		result.task(":hubCreateHarmonizeFlow").outcome == SUCCESS
 
-        File entityDir = Paths.get(BaseTest.testProjectDir.root.toString(), "plugins", "entities", "my-new-entity", "harmonize", "my-new-harmonize-flow").toFile()
-        entityDir.isDirectory() == true
-    }
+		File entityDir = Paths.get(BaseTest.testProjectDir.root.toString(), "plugins", "entities", "my-new-entity", "harmonize", "my-new-harmonize-flow").toFile()
+		entityDir.isDirectory() == true
+	}
 }
