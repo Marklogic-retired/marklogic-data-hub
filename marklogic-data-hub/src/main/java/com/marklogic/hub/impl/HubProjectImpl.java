@@ -127,7 +127,7 @@ public class HubProjectImpl implements HubProject {
         File userConfigDir = getUserConfigDir().toFile();
         File databasesDir = getHubDatabaseDir().toFile();
         File serversDir = getHubServersDir().toFile();
-        File securityDir = getHubSecurityDir().toFile();
+        File securityDir = getUserSecurityDir().toFile();
 
         boolean newConfigInitialized =
             hubConfigDir.exists() &&
