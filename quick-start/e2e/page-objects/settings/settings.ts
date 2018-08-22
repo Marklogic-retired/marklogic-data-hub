@@ -13,6 +13,10 @@ export class SettingsPage extends AppPage {
     return element(by.buttonText('Uninstall Hub'));
   }
 
+  get uninstallEverythingButton() {
+    return element(by.buttonText('Uninstall EVERYTHING'));
+  }
+
   get uninstallConfirmation() {
     return element(by.buttonText('Uninstall'));
   }

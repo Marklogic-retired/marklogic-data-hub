@@ -12,7 +12,7 @@ export default function(tmpDir) {
     });
 
     it ('should click the uninstall button', function() {
-      settingsPage.uninstallButton.click();
+      settingsPage.uninstallEverythingButton.click();
       browser.wait(EC.elementToBeClickable(settingsPage.uninstallConfirmation));
       settingsPage.uninstallConfirmation.click();
     });
