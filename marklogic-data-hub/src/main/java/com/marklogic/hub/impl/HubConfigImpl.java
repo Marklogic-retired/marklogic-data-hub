@@ -1272,6 +1272,9 @@ public class HubConfigImpl implements HubConfig {
         forestCounts.put(finalSchemasDbName, finalSchemasForestsPerHost);
         config.setForestCounts(forestCounts);
 
+        ConfigDir configDir = new ConfigDir(getUserConfigDir().toFile());
+        config.setConfigDir(configDir);
+        config.setSchemasPath(getUserConfigDir().resolve("schemas").toString());
 
         Map<String, String> customTokens = getCustomTokens(config, config.getCustomTokens());
 
