@@ -85,8 +85,8 @@ public class PiiE2E extends HubTestBase {
         installUserModules(getHubAdminConfig(), true);
         // Hardcoding to "digest" auth for now
         // needs to be final db
-        clerkClient = DatabaseClientFactory.newClient(finalClient.getHost(),stagingPort, HubConfig.DEFAULT_FINAL_NAME, "SydneyGardner", "x", Authentication.DIGEST);
-        officerClient = DatabaseClientFactory.newClient(finalClient.getHost(),stagingPort, HubConfig.DEFAULT_FINAL_NAME, "GiannaEmerson", "x" , Authentication.DIGEST);
+        clerkClient = DatabaseClientFactory.newClient(finalClient.getHost(),finalPort, HubConfig.DEFAULT_FINAL_NAME, "SydneyGardner", "x", Authentication.DIGEST);
+        officerClient = DatabaseClientFactory.newClient(finalClient.getHost(),finalPort, HubConfig.DEFAULT_FINAL_NAME, "GiannaEmerson", "x" , Authentication.DIGEST);
 
         try {
             runInputFLow();

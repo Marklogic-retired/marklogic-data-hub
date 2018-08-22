@@ -416,7 +416,6 @@ public class DataHubImpl implements DataHub {
      */
     @Override public void uninstall(HubDeployStatusListener listener) {
         logger.warn("Uninstalling the Data Hub and Final Databases/Servers from MarkLogic");
-
         uninstallStaging(listener);
         uninstallFinal(listener);
 
@@ -499,6 +498,8 @@ public class DataHubImpl implements DataHub {
         List<Command> securityCommands = commandMap.get("mlSecurityCommands");
         securityCommands.set(0, new DeployUserRolesCommand(hubConfig));
         securityCommands.set(1, new DeployUserUsersCommand(hubConfig));
+        securityCommands.set(2, new DeployHubRolesCommand(hubConfig));
+        securityCommands.set(3, new DeployHubUsersCommand(hubConfig));
         commandMap.put("mlSecurityCommands", securityCommands);
 
         List<Command> dbCommands = new ArrayList<>();

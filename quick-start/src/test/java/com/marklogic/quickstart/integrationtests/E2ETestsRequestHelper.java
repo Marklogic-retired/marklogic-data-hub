@@ -244,10 +244,10 @@ public class E2ETestsRequestHelper extends HubTestBase {
                     .replaceAll("^([A-Za-z]):", "/$1:") + ",''\\\"\"," +
                     "\"document_type\":\"\\\"" + dataFormat.toString() + "\\\"\",";
 		if (codeFormat.equals(CodeFormat.JAVASCRIPT)) {
-				optionsJson += "\"transform_module\":\"\\\"/MarkLogic/data-hub-framework/transforms/"
+				optionsJson += "\"transform_module\":\"\\\"/data-hub/4/transforms/"
                 		+ "mlcp-flow-transform.sjs\\\"\"," + "\"transform_function\":\"transform\",";
 		} else {
-				optionsJson += "\"transform_module\":\"\\\"/MarkLogic/data-hub-framework/transforms/"
+				optionsJson += "\"transform_module\":\"\\\"/data-hub/4/transforms/"
                 		+ "mlcp-flow-transform.xqy\\\"\"," + "\"transform_namespace\":\"\\\"http://marklogic.com/data-hub/"
                 		+ "mlcp-flow-transform\\\"\",";
         }

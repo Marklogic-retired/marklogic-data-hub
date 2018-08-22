@@ -971,7 +971,7 @@ public class HubConfigImpl implements HubConfig {
 
     @Override
     public DatabaseClient newFinalClient() {
-        return newStagingClient(finalDbName);
+        return newFinalAppserverClient();
     }
 
     public DatabaseClient newFinalAppserverClient() {
@@ -1232,8 +1232,11 @@ public class HubConfigImpl implements HubConfig {
         forestCounts.put(stagingSchemasDbName, stagingSchemasForestsPerHost);
         config.setForestCounts(forestCounts);
 
-        Map<String, String> customTokens = getCustomTokens(config, config.getCustomTokens());
+        ConfigDir configDir = new ConfigDir(getHubConfigDir().toFile());
+        config.setConfigDir(configDir);
+        config.setSchemasPath(getHubConfigDir().resolve("schemas").toString());
 
+        Map<String, String> customTokens = getCustomTokens(config, config.getCustomTokens());
         if (environmentProperties != null) {
             Enumeration keyEnum = environmentProperties.propertyNames();
             while (keyEnum.hasMoreElements()) {
@@ -1269,10 +1272,6 @@ public class HubConfigImpl implements HubConfig {
         forestCounts.put(finalSchemasDbName, finalSchemasForestsPerHost);
         config.setForestCounts(forestCounts);
 
-        ConfigDir configDir = new ConfigDir(getUserConfigDir().toFile());
-        config.setConfigDir(configDir);
-
-        config.setSchemasPath(getUserConfigDir().resolve("schemas").toString());
 
         Map<String, String> customTokens = getCustomTokens(config, config.getCustomTokens());
 

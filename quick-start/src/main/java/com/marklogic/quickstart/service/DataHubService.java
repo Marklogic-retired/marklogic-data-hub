@@ -83,6 +83,7 @@ public class DataHubService {
         installUserModules(config, forceLoad, deployListener, validateListener);
     }
 
+    @Async
     public void installUserModules(HubConfig config, boolean forceLoad, DeployUserModulesListener deployListener, ValidateListener validateListener) {
         long startTime = PerformanceLogger.monitorTimeInsideMethod();
 

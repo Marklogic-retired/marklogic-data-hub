@@ -100,7 +100,7 @@ public class HubAppDeployer extends SimpleAppDeployer {
         logger.info(format("Deploying app %s with config dir of: %s\n", stagingAppConfig.getName(), stagingAppConfig.getFirstConfigDir()
             .getBaseDir().getAbsolutePath()));
 
-        CommandContext stagingContext = new CommandContext(finalAppConfig, manageClient, adminManager);
+        CommandContext stagingContext = new CommandContext(stagingAppConfig, manageClient, adminManager);
 
         onStatusChange((int)percent, "Installing Staging App...");
         for (Command command : stagingCommandsList) {
