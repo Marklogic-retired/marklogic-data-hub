@@ -397,7 +397,7 @@ public class DataHubImpl implements DataHub {
 
         logger.warn("Installing the Data Hub into MarkLogic");
         AppConfig finalConfig = hubConfig.getFinalAppConfig();
-        HubAppDeployer finalDeployer = new HubAppDeployer(getManageClient(), getAdminManager(), listener, hubConfig.newFinalAppserverClient());
+        HubAppDeployer finalDeployer = new HubAppDeployer(getManageClient(), getAdminManager(), listener, hubConfig.newFinalClient());
         finalDeployer.setCommands(getFinalCommandList());
         finalDeployer.deploy(finalConfig);
     }
@@ -407,7 +407,7 @@ public class DataHubImpl implements DataHub {
 
         // i know it's weird that the final client installs staging, but it's needed
         AppConfig stagingConfig = hubConfig.getStagingAppConfig();
-        HubAppDeployer stagingDeployer = new HubAppDeployer(getManageClient(), getAdminManager(),  listener, hubConfig.newFinalAppserverClient());
+        HubAppDeployer stagingDeployer = new HubAppDeployer(getManageClient(), getAdminManager(),  listener, hubConfig.newFinalClient());
         stagingDeployer.setCommands(getStagingCommandList());
         stagingDeployer.deploy(stagingConfig);
     }
@@ -452,7 +452,7 @@ public class DataHubImpl implements DataHub {
     public void uninstallFinal(HubDeployStatusListener listener) {
 
         AppConfig finalAppConfig = hubConfig.getFinalAppConfig();
-        HubAppDeployer finalDeployer = new HubAppDeployer(getManageClient(), getAdminManager(), listener, hubConfig.newFinalAppserverClient());
+        HubAppDeployer finalDeployer = new HubAppDeployer(getManageClient(), getAdminManager(), listener, hubConfig.newFinalClient());
         finalDeployer.setCommands(getFinalCommandList());
         finalDeployer.undeploy(finalAppConfig);
     }

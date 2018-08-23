@@ -970,11 +970,14 @@ public class HubConfigImpl implements HubConfig {
     }
 
     @Override
-    public DatabaseClient newFinalClient() {
-        return newFinalAppserverClient();
+    // this method uses STAGING appserver but FINAL database.
+    // it's only use is for reverse flows, which need to use staging modules.
+    public DatabaseClient newReverseFlowClient() {
+        return newStagingClient(finalDbName);
     }
 
-    public DatabaseClient newFinalAppserverClient() {
+    @Override
+    public DatabaseClient newFinalClient() {
         AppConfig appConfig = getFinalAppConfig();
         DatabaseClientConfig config = new DatabaseClientConfig(appConfig.getHost(), finalPort, getMlUsername(), getMlPassword());
         config.setDatabase(finalDbName);

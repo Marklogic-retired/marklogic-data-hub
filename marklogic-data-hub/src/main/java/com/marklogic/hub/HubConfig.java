@@ -533,6 +533,13 @@ public interface HubConfig {
 
     /**
      * Gets a new DatabaseClient that queries the Final database using the staging appserver.
+     * Uses mlUsername and mlPassword
+     * @return A database client configured for fetching from final database.
+     */
+    DatabaseClient newReverseFlowClient();
+
+    /**
+     * Gets a new DatabaseClient that queries the Final database using the staging appserver.
      * @return A DatabaseClient
      */
     DatabaseClient newFinalClient();
