@@ -401,6 +401,12 @@ public interface HubConfig {
     Path getUserFinalModulesDir();
 
     /**
+     * Gets the path for the base config directory
+     * @return the path for the base config directory
+     */
+    Path getBaseConfigDir();
+
+    /**
      * Gets the path for the hub plugins directory
      * @return the path for the hub plugins directory
      */

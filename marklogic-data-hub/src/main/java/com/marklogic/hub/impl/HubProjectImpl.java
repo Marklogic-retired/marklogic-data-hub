@@ -60,6 +60,10 @@ public class HubProjectImpl implements HubProject {
         return this.pluginsDir;
     }
 
+    @Override public Path getBaseConfigDir() {
+        return this.pluginsDir.resolve(PATH_PREFIX);
+    }
+
     @Override public Path getHubEntitiesDir() {
         return this.pluginsDir.resolve("entities");
     }
@@ -179,7 +183,7 @@ public class HubProjectImpl implements HubProject {
 
         Path userDatabaseDir = getUserDatabaseDir();
         userDatabaseDir.toFile().mkdirs();
-        writeResourceFile("ml-config/databases/final-database.json", userDatabaseDir.resolve("content-database.json"), true);
+        writeResourceFile("ml-config/databases/final-database.json", userDatabaseDir.resolve("final-database.json"), true);
         writeResourceFile("ml-config/databases/final-modules-database.json", userDatabaseDir.resolve("modules-database.json"), true);
         writeResourceFile("ml-config/databases/final-schemas-database.json", userDatabaseDir.resolve("schemas-database.json"), true);
         writeResourceFile("ml-config/databases/final-triggers-database.json", userDatabaseDir.resolve("triggers-database.json"), true);

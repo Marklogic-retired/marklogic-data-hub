@@ -1041,6 +1041,11 @@ public class HubConfigImpl implements HubConfig {
     }
 
     @JsonIgnore
+    @Override public Path getBaseConfigDir() {
+        return hubProject.getBaseConfigDir();
+    }
+
+    @JsonIgnore
     @Override public Path getHubEntitiesDir() { return hubProject.getHubEntitiesDir(); }
 
     @JsonIgnore

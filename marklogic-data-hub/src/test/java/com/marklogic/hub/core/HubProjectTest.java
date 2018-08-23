@@ -61,9 +61,9 @@ public class HubProjectTest extends HubTestBase {
 
         assertTrue(new File(projectPath, "src/main/ml-config/servers/final-server.json").exists());
         assertTrue(new File(projectPath, "src/main/ml-config/databases/final-database.json").exists());
-        assertTrue(new File(projectPath, "src/main/ml-config/databases/final-modules-database.json").exists());
-        assertTrue(new File(projectPath, "src/main/ml-config/databases/final-schemas-database.json").exists());
-        assertTrue(new File(projectPath, "src/main/ml-config/databases/final-triggers-database.json").exists());
+        assertTrue(new File(projectPath, "src/main/ml-config/databases/modules-database.json").exists());
+        assertTrue(new File(projectPath, "src/main/ml-config/databases/schemas-database.json").exists());
+        assertTrue(new File(projectPath, "src/main/ml-config/databases/triggers-database.json").exists());
 
         File buildGradle = new File(projectPath, "build.gradle");
         assertTrue(buildGradle.exists());

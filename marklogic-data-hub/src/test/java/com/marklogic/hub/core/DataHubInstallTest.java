@@ -52,10 +52,10 @@ public class DataHubInstallTest extends HubTestBase {
     private static int afterTelemetryInstallCount = 0;
     //As a note, whenever you see these consts, it's due to the additional building of the javascript files bundling down that will then get
     //deployed with the rest of the modules code. This means it'll be 20 higher than if the trace UI was never built
-    public static final int CORE_MODULE_COUNT_WITH_TRACE_MODULES = 121;
+    public static final int CORE_MODULE_COUNT_WITH_TRACE_MODULES = 124;
     public static final int CORE_MODULE_COUNT = 104;
     // if running as non-admin user, REST extensions are not visible from eval.
-    public static final int VISIBLE_MODULE_COUNT = 104;
+    public static final int VISIBLE_MODULE_COUNT = 124;
     public static final int VISIBLE_MODULE_COUNT_WITH_USER_MODULES = 122;
     public static final int MODULE_COUNT = 6;
     public static final int MODULE_COUNT_WITH_TRACE_MODULES = 26;

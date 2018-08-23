@@ -47,6 +47,12 @@ public interface HubProject {
     Path getHubPluginsDir();
 
     /**
+     * Gets the path for the base of the config (src/main/) directory
+     * @return the path for the config (src/main/) directory
+     */
+    Path getBaseConfigDir();
+
+    /**
      * Gets the path for the hub entities directory
      * @return the path for the hub entities directory
      */
