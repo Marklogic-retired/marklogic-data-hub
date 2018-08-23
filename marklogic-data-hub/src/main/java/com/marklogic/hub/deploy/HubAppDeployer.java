@@ -42,11 +42,10 @@ public class HubAppDeployer extends SimpleAppDeployer {
     private List<Command> stagingCommandsList;
     private List<Command> finalCommandsList;
 
-    public HubAppDeployer(ManageClient manageClient, AdminManager adminManager, HubDeployStatusListener listener, DatabaseClient databaseClient) {
+    public HubAppDeployer(ManageClient manageClient, AdminManager adminManager, HubDeployStatusListener listener) {
         super(manageClient, adminManager);
         this.manageClient = manageClient;
         this.adminManager = adminManager;
-        this.databaseClient = databaseClient;
         this.listener = listener;
     }
 
@@ -114,17 +113,6 @@ public class HubAppDeployer extends SimpleAppDeployer {
         }
         onStatusChange(100, "Staging App Installation Complete");
 
-        //Below is telemetry metric code for tracking successful dhf installs
-        //TODO: when more uses of telemetry are defined, change this to a more e-node based method
-        ServerEvaluationCall eval = databaseClient.newServerEval();
-        String query = "xdmp:feature-metric-increment(xdmp:feature-metric-register(\"datahub.core.install.count\"))";
-        try {
-            eval.xquery(query).eval().close();
-        }
-        catch(FailedRequestException e) {
-            logger.error("Failed to increment feature metric telemetry count: " + query, e);
-            e.printStackTrace();
-        }
         logger.info(format("Deployed app %s and %s", stagingAppConfig.getName(), finalAppConfig.getName()));
     }
 
@@ -162,7 +150,7 @@ public class HubAppDeployer extends SimpleAppDeployer {
         }
         onStatusChange(100, "Installation Complete");
 
-        //Below is telemetry metric code for tracking successful dhf installs
+        /*//Below is telemetry metric code for tracking successful dhf installs
         //TODO: when more uses of telemetry are defined, change this to a more e-node based method
         ServerEvaluationCall eval = databaseClient.newServerEval();
         String query = "xdmp:feature-metric-increment(xdmp:feature-metric-register(\"datahub.core.install.count\"))";
@@ -172,7 +160,7 @@ public class HubAppDeployer extends SimpleAppDeployer {
         catch(FailedRequestException e) {
             logger.error("Failed to increment feature metric telemetry count: " + query, e);
             e.printStackTrace();
-        }
+        }*/
         logger.info(format("Deployed app %s", appConfig.getName()));
     }
 

@@ -146,17 +146,17 @@ public class HubConfigBuilderImpl implements HubConfigBuilder {
             hubConfig.setStagingAppConfig(stagingAppConfig);
         }
         else {
-            hubConfig.setStagingAppConfig(new DefaultAppConfigFactory(propertySource).newAppConfig());
+            hubConfig.setStagingAppConfig(new AppConfig(hubConfig.getHubStagingModulesDir().toString()));
         }
-        hubConfig.getStagingAppConfig().setSortOtherDatabaseByDependencies(false);
+        hubConfig.getStagingAppConfig().setSortOtherDatabaseByDependencies(true);
 
         if (finalAppConfig != null) {
             hubConfig.setFinalAppConfig(finalAppConfig);
         }
         else {
-            hubConfig.setFinalAppConfig(new DefaultAppConfigFactory(propertySource).newAppConfig());
+            hubConfig.setFinalAppConfig(new AppConfig(hubConfig.getUserFinalModulesDir().toString()));
         }
-        hubConfig.getFinalAppConfig().setSortOtherDatabaseByDependencies(false);
+        hubConfig.getFinalAppConfig().setSortOtherDatabaseByDependencies(true);
 
         if (adminConfig != null) {
             hubConfig.setAdminConfig(adminConfig);

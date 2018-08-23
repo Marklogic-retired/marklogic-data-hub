@@ -1260,7 +1260,7 @@ public class HubConfigImpl implements HubConfig {
     }
 
     private void updateFinalAppConfig(AppConfig config) {
-        config.setRestPort(stagingPort);
+        config.setRestPort(finalPort);
 
         config.setTriggersDatabaseName(finalTriggersDbName);
         config.setSchemasDatabaseName(finalSchemasDbName);
