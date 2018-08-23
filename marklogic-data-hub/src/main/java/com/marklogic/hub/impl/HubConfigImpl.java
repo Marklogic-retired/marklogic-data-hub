@@ -1032,6 +1032,8 @@ public class HubConfigImpl implements HubConfig {
         return hubProject.getUserStagingModulesDir();
     }
 
+    @JsonIgnore
+    @Override public Path getUserFinalModulesDir() { return hubProject.getUserFinalModulesDir(); }
 
     @JsonIgnore
     @Override public Path getHubPluginsDir() {
@@ -1078,6 +1080,9 @@ public class HubConfigImpl implements HubConfig {
     @Override public Path getUserDatabaseDir() {
         return hubProject.getUserDatabaseDir();
     }
+
+    @JsonIgnore
+    @Override public Path getUserSchemasDir() { return hubProject.getUserSchemasDir(); }
 
     @JsonIgnore
     @Override public Path getEntityDatabaseDir() {
@@ -1272,6 +1277,9 @@ public class HubConfigImpl implements HubConfig {
         forestCounts.put(finalSchemasDbName, finalSchemasForestsPerHost);
         config.setForestCounts(forestCounts);
 
+        ConfigDir configDir = new ConfigDir(getUserConfigDir().toFile());
+        config.setConfigDir(configDir);
+        config.setSchemasPath(getUserSchemasDir().toString());
 
         Map<String, String> customTokens = getCustomTokens(config, config.getCustomTokens());
 
