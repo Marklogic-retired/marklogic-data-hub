@@ -53,9 +53,9 @@ public class DataHubInstallTest extends HubTestBase {
     //As a note, whenever you see these consts, it's due to the additional building of the javascript files bundling down that will then get
     //deployed with the rest of the modules code. This means it'll be 20 higher than if the trace UI was never built
     public static final int CORE_MODULE_COUNT_WITH_TRACE_MODULES = 121;
-    public static final int CORE_MODULE_COUNT = 104;
+    public static final int CORE_MODULE_COUNT = 124;
     // if running as non-admin user, REST extensions are not visible from eval.
-    public static final int VISIBLE_MODULE_COUNT = 104;
+    public static final int VISIBLE_MODULE_COUNT = 124;
     public static final int VISIBLE_MODULE_COUNT_WITH_USER_MODULES = 122;
     public static final int MODULE_COUNT = 6;
     public static final int MODULE_COUNT_WITH_TRACE_MODULES = 26;
@@ -81,33 +81,33 @@ public class DataHubInstallTest extends HubTestBase {
             else throw e;
         }
         getDataHub().runPreInstallCheck();
-        
+
         if (!setupDone) {
         	HubProject project =  getHubAdminConfig().getHubProject();
-            
+
         	//creating directories for adding final schemas/ modules and trigger files
             Path userSchemasDir = Paths.get(PROJECT_PATH).resolve(HubProject.PATH_PREFIX).resolve("ml-schemas");
             Path userModulesDir = project.getUserStagingModulesDir();
             Path userTriggersDir = project.getUserConfigDir().resolve("triggers");
-            
+
             userSchemasDir.resolve("tde").toFile().mkdirs();
             userModulesDir.resolve("ext").toFile().mkdirs();
             userTriggersDir.toFile().mkdirs();
-            
+
           //creating directories for adding staging schemas/ modules and trigger files
             Path hubSchemasDir = project.getHubConfigDir().resolve("schemas");
             Path hubModulesDir = project.getHubStagingModulesDir();
             Path hubTriggersDir = project.getHubConfigDir().resolve("triggers");
-            
+
             hubSchemasDir.resolve("tde").toFile().mkdirs();
             hubModulesDir.resolve("ext").toFile().mkdirs();
-            hubTriggersDir.toFile().mkdirs();     
+            hubTriggersDir.toFile().mkdirs();
             //Copying files to their locations
             try {
                 FileUtils.copyFileToDirectory(getResourceFile("data-hub-test/scaffolding/tdedoc.xml"), userSchemasDir.resolve("tde").toFile());
                 FileUtils.copyFileToDirectory(getResourceFile("data-hub-test/scaffolding/sample-trigger.xqy"), userModulesDir.resolve("ext").toFile());
                 FileUtils.copyFileToDirectory(getResourceFile("data-hub-test/scaffolding/final-trigger.json"),  userTriggersDir.toFile());
-                
+
                 FileUtils.copyFileToDirectory(getResourceFile("data-hub-test/scaffolding/tdedoc.xml"), hubSchemasDir.resolve("tde").toFile());
                 FileUtils.copyFileToDirectory(getResourceFile("data-hub-test/scaffolding/sample-trigger.xqy"), hubModulesDir.resolve("ext").toFile());
                 FileUtils.copyFileToDirectory(getResourceFile("data-hub-test/scaffolding/staging-trigger.json"),  hubTriggersDir.toFile());
@@ -125,12 +125,12 @@ public class DataHubInstallTest extends HubTestBase {
     public void testTelemetryInstallCount() throws IOException {
         assertTrue("Telemetry install count was not incremented during install.  Value now is " + afterTelemetryInstallCount, afterTelemetryInstallCount > 0);
     }
-    
+
     @Test
     public void testProjectScaffolding() throws IOException {
     	DatabaseClient stagingTriggersClient = null;
     	DatabaseClient finalTriggersClient = null;
-    	
+
     	DatabaseClient stagingSchemasClient = null;
     	DatabaseClient finalSchemasClient = null;
     	try {
@@ -144,11 +144,11 @@ public class DataHubInstallTest extends HubTestBase {
     	//checking if triggers are written
         Assert.assertTrue(finalTriggersClient.newServerEval().xquery("fn:count(fn:doc())").eval().next().getNumber().intValue()==1);
         Assert.assertTrue(stagingTriggersClient.newServerEval().xquery("fn:count(fn:doc())").eval().next().getNumber().intValue()==1);
-        
+
         //checking if modules are written to correct db
         Assert.assertNotNull(getModulesFile("/ext/sample-trigger.xqy"));
         Assert.assertNotNull(finalModulesClient.newDocumentManager().read("/ext/sample-trigger.xqy").next().getContent(new StringHandle()).get());
-        
+
         ////checking if tdes are written to correct db
         Document expectedXml = getXmlFromResource("data-hub-test/scaffolding/tdedoc.xml");
         Document actualXml =stagingSchemasClient.newDocumentManager().read("/tde/tdedoc.xml").next().getContent(new DOMHandle()).get();

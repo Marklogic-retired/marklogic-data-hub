@@ -313,7 +313,7 @@ public class FlowManagerTest extends HubTestBase {
             .withFlow(flow1)
             .withBatchSize(10)
             .withThreadCount(1)
-            .withSourceClient(getHubFlowRunnerConfig().newFinalClient())
+            .withSourceClient(getHubFlowRunnerConfig().newReverseFlowClient())
             .withDestinationDatabase(HubConfig.DEFAULT_STAGING_NAME);
         flowRunner.run();
         flowRunner.awaitCompletion();
