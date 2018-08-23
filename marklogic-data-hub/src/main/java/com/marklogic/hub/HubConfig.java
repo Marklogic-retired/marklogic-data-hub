@@ -395,6 +395,12 @@ public interface HubConfig {
     Path getUserStagingModulesDir();
 
     /**
+     * Gets the path for the user final modules
+     * @return the path for the user final modules
+     */
+    Path getUserFinalModulesDir();
+
+    /**
      * Gets the path for the hub plugins directory
      * @return the path for the hub plugins directory
      */
@@ -453,6 +459,12 @@ public interface HubConfig {
      * @return the path for the user database directory
      */
     Path getUserDatabaseDir();
+
+    /**
+     * Gets the path for the user schemas directory
+     * @return the path for the user schemas directory
+     */
+    Path getUserSchemasDir();
 
     /**
      * Gets the path for the user servers directory
