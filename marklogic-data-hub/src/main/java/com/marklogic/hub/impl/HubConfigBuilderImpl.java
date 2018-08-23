@@ -146,7 +146,7 @@ public class HubConfigBuilderImpl implements HubConfigBuilder {
             hubConfig.setStagingAppConfig(stagingAppConfig);
         }
         else {
-            hubConfig.setStagingAppConfig(new DefaultAppConfigFactory(propertySource).newAppConfig());
+            hubConfig.setStagingAppConfig(new AppConfig(hubConfig.getHubStagingModulesDir().toString()));
         }
         hubConfig.getStagingAppConfig().setSortOtherDatabaseByDependencies(false);
 
@@ -154,7 +154,7 @@ public class HubConfigBuilderImpl implements HubConfigBuilder {
             hubConfig.setFinalAppConfig(finalAppConfig);
         }
         else {
-            hubConfig.setFinalAppConfig(new DefaultAppConfigFactory(propertySource).newAppConfig());
+            hubConfig.setFinalAppConfig(new AppConfig(hubConfig.getUserFinalModulesDir().toString()));
         }
         hubConfig.getFinalAppConfig().setSortOtherDatabaseByDependencies(false);
 

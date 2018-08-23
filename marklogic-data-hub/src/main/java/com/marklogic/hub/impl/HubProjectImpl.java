@@ -180,9 +180,9 @@ public class HubProjectImpl implements HubProject {
         Path userDatabaseDir = getUserDatabaseDir();
         userDatabaseDir.toFile().mkdirs();
         writeResourceFile("ml-config/databases/final-database.json", userDatabaseDir.resolve("final-database.json"), true);
-        writeResourceFile("ml-config/databases/final-modules-database.json", userDatabaseDir.resolve("final-modules-database.json"), true);
-        writeResourceFile("ml-config/databases/final-schemas-database.json", userDatabaseDir.resolve("final-schemas-database.json"), true);
-        writeResourceFile("ml-config/databases/final-triggers-database.json", userDatabaseDir.resolve("final-triggers-database.json"), true);
+        writeResourceFile("ml-config/databases/final-modules-database.json", userDatabaseDir.resolve("modules-database.json"), true);
+        writeResourceFile("ml-config/databases/final-schemas-database.json", userDatabaseDir.resolve("schemas-database.json"), true);
+        writeResourceFile("ml-config/databases/final-triggers-database.json", userDatabaseDir.resolve("triggers-database.json"), true);
 
         // the following config has to do with ordering of initialization.
         // users and roles must be present to install the hub.
