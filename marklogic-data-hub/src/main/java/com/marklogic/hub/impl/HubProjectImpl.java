@@ -120,6 +120,10 @@ public class HubProjectImpl implements HubProject {
         return this.projectDir.resolve(USER_MODULES_DIR);
     }
 
+    @Override public Path getUserFinalModulesDir() {
+        return this.projectDir.resolve(USER_MODULES_DIR);
+    }
+
     @Override public boolean isInitialized() {
         File buildGradle = this.projectDir.resolve("build.gradle").toFile();
         File gradleProperties = this.projectDir.resolve("gradle.properties").toFile();
@@ -205,8 +209,13 @@ public class HubProjectImpl implements HubProject {
         getUserServersDir().toFile().mkdirs();
         getUserDatabaseDir().toFile().mkdirs();
 
+        //scaffold schemas
         getHubSchemasDir().toFile().mkdirs();
         getUserSchemasDir().toFile().mkdirs();
+
+        //scaffold triggers
+        getHubDatabaseDir().resolve("staging-triggers-database/triggers").toFile().mkdirs();
+        getUserDatabaseDir().resolve("final-triggers-database/triggers").toFile().mkdirs();
 
         Path gradlew = projectDir.resolve("gradlew");
         writeResourceFile("scaffolding/gradlew", gradlew);

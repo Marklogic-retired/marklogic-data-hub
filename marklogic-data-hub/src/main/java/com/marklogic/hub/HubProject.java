@@ -143,6 +143,12 @@ public interface HubProject {
     Path getUserStagingModulesDir();
 
     /**
+     * Gets the path for the user final modules
+     * @return the path for the user final modules
+     */
+    Path getUserFinalModulesDir();
+
+    /**
      * Checks if the project has been initialized or not
      * @return true if initialized, false if not
      */
