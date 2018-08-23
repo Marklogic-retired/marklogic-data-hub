@@ -71,12 +71,18 @@ public class HubConfigJsonTest {
             "  \"jobForestsPerHost\": 1,\n" +
             "  \"jobPort\": 8013,\n" +
             "  \"jobAuthMethod\": \"digest\",\n" +
-            "  \"modulesDbName\": \"data-hub-MODULES\",\n" +
-            "  \"triggersDbName\": \"data-hub-TRIGGERS\",\n" +
-            "  \"schemasDbName\": \"data-hub-SCHEMAS\",\n" +
-            "  \"modulesForestsPerHost\": 1,\n" +
-            "  \"triggersForestsPerHost\": 1,\n" +
-            "  \"schemasForestsPerHost\": 1,\n" +
+            "  \"stagingModulesDbName\": \"data-hub-staging-MODULES\",\n" +
+            "  \"stagingTriggersDbName\": \"data-hub-staging-TRIGGERS\",\n" +
+            "  \"stagingSchemasDbName\": \"data-hub-staging-SCHEMAS\",\n" +
+            "  \"finalModulesDbName\": \"data-hub-final-MODULES\",\n" +
+            "  \"finalTriggersDbName\": \"data-hub-final-TRIGGERS\",\n" +
+            "  \"finalSchemasDbName\": \"data-hub-final-SCHEMAS\",\n" +
+            "  \"stagingModulesForestsPerHost\": 1,\n" +
+            "  \"stagingTriggersForestsPerHost\": 1,\n" +
+            "  \"stagingSchemasForestsPerHost\": 1,\n" +
+            "  \"finalModulesForestsPerHost\": 1,\n" +
+            "  \"finalTriggersForestsPerHost\": 1,\n" +
+            "  \"finalSchemasForestsPerHost\": 1,\n" +
             "  \"hubRoleName\": \"data-hub-role\",\n" +
             "  \"hubUserName\": \"data-hub-user\",\n" +
             "  \"customForestPath\": \"forests\",\n" +
@@ -109,12 +115,18 @@ public class HubConfigJsonTest {
             "  \"jobForestsPerHost\": 1,\n" +
             "  \"jobPort\": 8013,\n" +
             "  \"jobAuthMethod\": \"digest\",\n" +
-            "  \"modulesDbName\": \"data-hub-MODULES\",\n" +
-            "  \"triggersDbName\": \"data-hub-TRIGGERS\",\n" +
-            "  \"schemasDbName\": \"data-hub-SCHEMAS\",\n" +
-            "  \"modulesForestsPerHost\": 1,\n" +
-            "  \"triggersForestsPerHost\": 1,\n" +
-            "  \"schemasForestsPerHost\": 1,\n" +
+            "  \"stagingModulesDbName\": \"data-hub-staging-MODULES\",\n" +
+            "  \"stagingTriggersDbName\": \"data-hub-staging-TRIGGERS\",\n" +
+            "  \"stagingSchemasDbName\": \"data-hub-staging-SCHEMAS\",\n" +
+            "  \"finalModulesDbName\": \"data-hub-final-MODULES\",\n" +
+            "  \"finalTriggersDbName\": \"data-hub-final-TRIGGERS\",\n" +
+            "  \"finalSchemasDbName\": \"data-hub-final-SCHEMAS\",\n" +
+            "  \"stagingModulesForestsPerHost\": 1,\n" +
+            "  \"stagingTriggersForestsPerHost\": 1,\n" +
+            "  \"stagingSchemasForestsPerHost\": 1,\n" +
+            "  \"finalModulesForestsPerHost\": 1,\n" +
+            "  \"finalTriggersForestsPerHost\": 1,\n" +
+            "  \"finalSchemasForestsPerHost\": 1,\n" +
             "  \"hubRoleName\": \"data-hub-role\",\n" +
             "  \"hubUserName\": \"data-hub-user\",\n" +
             "  \"customForestPath\": \"forests\",\n" +

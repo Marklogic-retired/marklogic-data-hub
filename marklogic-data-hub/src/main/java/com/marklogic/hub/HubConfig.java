@@ -41,18 +41,25 @@ public interface HubConfig {
     String USER_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES = "user-modules-deploy-timestamps.properties";
     String USER_CONTENT_DEPLOY_TIMESTAMPS_PROPERTIES = "user-content-deploy-timestamps.properties";
 
-    String HUB_CONFIG_DIR = "hub-internal-config";
-    String USER_CONFIG_DIR = "user-config";
-    String ENTITY_CONFIG_DIR = "entity-config";
+    String PATH_PREFIX = "src/main/";
+    String HUB_CONFIG_DIR = PATH_PREFIX + "hub-internal-config";
+    String USER_CONFIG_DIR = PATH_PREFIX + "ml-config";
+    String ENTITY_CONFIG_DIR = PATH_PREFIX + "entity-config";
     String STAGING_ENTITY_QUERY_OPTIONS_FILE = "staging-entity-options.xml";
     String FINAL_ENTITY_QUERY_OPTIONS_FILE = "final-entity-options.xml";
+    String STAGING_ENTITY_DATABASE_FILE = "staging-database.json";
+    String FINAL_ENTITY_DATABASE_FILE = "final-database.json";
+
 
     String DEFAULT_STAGING_NAME = "data-hub-STAGING";
     String DEFAULT_FINAL_NAME = "data-hub-FINAL";
     String DEFAULT_JOB_NAME = "data-hub-JOBS";
-    String DEFAULT_MODULES_DB_NAME = "data-hub-MODULES";
-    String DEFAULT_TRIGGERS_DB_NAME = "data-hub-TRIGGERS";
-    String DEFAULT_SCHEMAS_DB_NAME = "data-hub-SCHEMAS";
+    String DEFAULT_STAGING_MODULES_DB_NAME = "data-hub-staging-MODULES";
+    String DEFAULT_FINAL_MODULES_DB_NAME = "data-hub-final-MODULES";
+    String DEFAULT_STAGING_TRIGGERS_DB_NAME = "data-hub-staging-TRIGGERS";
+    String DEFAULT_FINAL_TRIGGERS_DB_NAME = "data-hub-final-TRIGGERS";
+    String DEFAULT_STAGING_SCHEMAS_DB_NAME = "data-hub-staging-SCHEMAS";
+    String DEFAULT_FINAL_SCHEMAS_DB_NAME = "data-hub-final-SCHEMAS";
 
     String DEFAULT_ROLE_NAME = "data-hub-role";
     String DEFAULT_USER_NAME = "data-hub-user";
@@ -376,6 +383,30 @@ public interface HubConfig {
     DatabaseClient newModulesDbClient();
 
     /**
+     * Gets the path for the hub staging modules
+     * @return the path for the hub staging modules
+     */
+    Path getHubStagingModulesDir();
+
+    /**
+     * Gets the path for the user staging modules
+     * @return the path for the user staging modules
+     */
+    Path getUserStagingModulesDir();
+
+    /**
+     * Gets the path for the user final modules
+     * @return the path for the user final modules
+     */
+    Path getUserFinalModulesDir();
+
+    /**
+     * Gets the path for the base config directory
+     * @return the path for the base config directory
+     */
+    Path getBaseConfigDir();
+
+    /**
      * Gets the path for the hub plugins directory
      * @return the path for the hub plugins directory
      */
@@ -436,6 +467,12 @@ public interface HubConfig {
     Path getUserDatabaseDir();
 
     /**
+     * Gets the path for the user schemas directory
+     * @return the path for the user schemas directory
+     */
+    Path getUserSchemasDir();
+
+    /**
      * Gets the path for the user servers directory
      * @return the path for the user servers database directory
      */
@@ -448,24 +485,44 @@ public interface HubConfig {
     Path getEntityDatabaseDir();
 
     /**
-     * Returns the current appconfig object attached to the HubConfig
-     * @return Returns current AppConfig object set for HubConfig
+     * Returns the current staging appconfig object attached to the HubConfig
+     * @return Returns current staging AppConfig object set for HubConfig
      */
     @JsonIgnore
-    AppConfig getAppConfig();
+    AppConfig getStagingAppConfig();
 
     /**
-     * Sets the App Config for the current HubConfig
-     * @param config AppConfig to associate with the HubConfig
+     * Sets the staging App Config for the current HubConfig
+     * @param config staging AppConfig to associate with the HubConfig
      */
-    void setAppConfig(AppConfig config);
+    void setStagingAppConfig(AppConfig config);
 
     /**
-     * Sets the App Config for the current HubConfig, with skipUpdate option
-     * @param config - AppConfig to associate with the HubConfig
-     * @param skipUpdate false to force update of AppConfig, true to skip it
+     * Sets the staging App Config for the current HubConfig, with skipUpdate option
+     * @param config - staging AppConfig to associate with the HubConfig
+     * @param skipUpdate false to force update of staging AppConfig, true to skip it
      */
-    void setAppConfig(AppConfig config, boolean skipUpdate);
+    void setStagingAppConfig(AppConfig config, boolean skipUpdate);
+
+    /**
+     * Returns the current final appconfig object attached to the HubConfig
+     * @return Returns current final AppConfig object set for HubConfig
+     */
+    @JsonIgnore
+    AppConfig getFinalAppConfig();
+
+    /**
+     * Sets the final App Config for the current HubConfig
+     * @param config final AppConfig to associate with the HubConfig
+     */
+    void setFinalAppConfig(AppConfig config);
+
+    /**
+     * Sets the final App Config for the current HubConfig, with skipUpdate option
+     * @param config - final AppConfig to associate with the HubConfig
+     * @param skipUpdate false to force update of final AppConfig, true to skip it
+     */
+    void setFinalAppConfig(AppConfig config, boolean skipUpdate);
 
     /**
      * Gets the current version of the DHF Jar

@@ -98,8 +98,8 @@ public class EnvironmentConfig {
             .withProperties(overrides)
             .build();
         if (username != null) {
-            mlSettings.getAppConfig().setAppServicesUsername(username);
-            mlSettings.getAppConfig().setAppServicesPassword(password);
+            mlSettings.getStagingAppConfig().setAppServicesUsername(username);
+            mlSettings.getStagingAppConfig().setAppServicesPassword(password);
         }
         dataHub = DataHub.create(mlSettings);
 

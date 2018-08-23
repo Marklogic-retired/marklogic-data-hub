@@ -102,7 +102,7 @@ public class ConnectionAuthenticationFilter extends
         EnvironmentConfig environmentConfig = new EnvironmentConfig(project.path, loginInfo.environment, username, password);
 
         ConnectionAuthenticationToken authRequest = new ConnectionAuthenticationToken(
-                username, password, environmentConfig.getMlSettings().getAppConfig().getHost(), loginInfo.projectId, loginInfo.environment);
+                username, password, environmentConfig.getMlSettings().getStagingAppConfig().getHost(), loginInfo.projectId, loginInfo.environment);
         authRequest.setEnvironmentConfig(environmentConfig);
 
         // Allow subclasses to set the "details" property

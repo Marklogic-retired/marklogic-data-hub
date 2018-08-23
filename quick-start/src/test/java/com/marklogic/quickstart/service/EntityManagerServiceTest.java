@@ -102,7 +102,7 @@ public class EntityManagerServiceTest extends AbstractServiceTest {
     public void getEntities() throws IOException {
         List<EntityModel> entities = entityMgrService.getEntities();
 
-        Assert.assertEquals(1, entities.size());
+        Assert.assertEquals(3, entities.size());
         Assert.assertEquals(ENTITY, entities.get(0).getName());
     }
 
@@ -120,7 +120,7 @@ public class EntityManagerServiceTest extends AbstractServiceTest {
 
         List<EntityModel> entities = entityMgrService.getEntities();
 
-        Assert.assertEquals(2, entities.size());
+        Assert.assertEquals(3, entities.size());
         String[] expected = {ENTITY, ENTITY2};
         String[] actual = { entities.get(0).getName(), entities.get(1).getName() };
         Assert.assertArrayEquals(expected, actual);
@@ -193,7 +193,7 @@ public class EntityManagerServiceTest extends AbstractServiceTest {
         entityMgrService.saveEntity(renamedEntity);
 
         List<EntityModel> entities = entityMgrService.getEntities();
-        Assert.assertEquals(1, entities.size());
+        Assert.assertEquals(2, entities.size());
 
         // Load the entity, then check the flows to make sure they know the right entity name
         final String FLOW_NAME = "sjs-json-input-flow";

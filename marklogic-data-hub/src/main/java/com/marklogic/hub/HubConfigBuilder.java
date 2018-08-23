@@ -64,14 +64,24 @@ public interface HubConfigBuilder {
     HubConfigBuilder withProperties(Properties properties);
 
     /**
-     * Use properties to cnofigure the DHF.
-     * Sets the {@link AppConfig} for the {@link HubConfig}
+     * Use properties to configure the DHF.
+     * Sets the staging {@link AppConfig} for the {@link HubConfig}
      * @param appConfig - an {@link AppConfig} object
      * @return the {@link HubConfigBuilder} instance
      * @deprecated Use {@link Properties} to configure a DataHub
      */
     @Deprecated
-    HubConfigBuilder withAppConfig(AppConfig appConfig);
+    HubConfigBuilder withStagingAppConfig(AppConfig appConfig);
+
+    /**
+     * Use properties to configure the DHF.
+     * Sets the final {@link AppConfig} for the {@link HubConfig}
+     * @param appConfig - an {@link AppConfig} object
+     * @return the {@link HubConfigBuilder} instance
+     * @deprecated Use {@link Properties} to configure a DataHub
+     */
+    @Deprecated
+    HubConfigBuilder withFinalAppConfig(AppConfig appConfig);
 
     /**
      * Use properties to cnofigure the DHF.

@@ -45,13 +45,13 @@ public class EntityManagerTest extends HubTestBase {
     @Before
     public void clearDbs() {
         deleteProjectDir();
-        // FIXME -- test eval requires admin to remove all the modeules.  rewrite to remove query options...
-        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_MODULES_DB_NAME);
         basicSetup();
+        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME);
+        getDataHub().clearUserModules();
         installHubModules();
         getPropsMgr().deletePropertiesFile();
     }
-    
+
     private void installEntities() {
         ScaffoldingImpl scaffolding = new ScaffoldingImpl(projectDir.toString(), finalClient);
         Path employeeDir = scaffolding.getEntityDir("employee");
@@ -92,7 +92,8 @@ public class EntityManagerTest extends HubTestBase {
         Path dir = Paths.get(getHubAdminConfig().getProjectDir(), HubConfig.ENTITY_CONFIG_DIR);
 
         assertNull(getModulesFile("/Default/" + HubConfig.DEFAULT_STAGING_NAME + "/rest-api/options/" + HubConfig.STAGING_ENTITY_QUERY_OPTIONS_FILE));
-        assertNull(getModulesFile("/Default/" + HubConfig.DEFAULT_STAGING_NAME + "/rest-api/options/" + HubConfig.FINAL_ENTITY_QUERY_OPTIONS_FILE));
+        // this should be true regardless
+        assertNull(getModulesFile("/Default/" + HubConfig.DEFAULT_FINAL_NAME + "/rest-api/options/" + HubConfig.FINAL_ENTITY_QUERY_OPTIONS_FILE));
         assertFalse(Paths.get(dir.toString(), HubConfig.STAGING_ENTITY_QUERY_OPTIONS_FILE).toFile().exists());
         assertFalse(Paths.get(dir.toString(), HubConfig.FINAL_ENTITY_QUERY_OPTIONS_FILE).toFile().exists());
         assertEquals(0, getStagingDocCount());
@@ -133,7 +134,8 @@ public class EntityManagerTest extends HubTestBase {
         assertEquals(0, getStagingDocCount());
         assertEquals(0, getFinalDocCount());
         assertXMLEqual(getResource("entity-manager-test/options.xml"), getModulesFile("/Default/" + HubConfig.DEFAULT_STAGING_NAME + "/rest-api/options/" + HubConfig.STAGING_ENTITY_QUERY_OPTIONS_FILE));
-        assertXMLEqual(getResource("entity-manager-test/options.xml"), getModulesFile("/Default/" + HubConfig.DEFAULT_STAGING_NAME + "/rest-api/options/" + HubConfig.FINAL_ENTITY_QUERY_OPTIONS_FILE));
+        // if we re-merge modules this assertion will be true again:
+        // assertXMLEqual(getResource("entity-manager-test/options.xml"), getModulesFile("/Default/" + HubConfig.DEFAULT_FINAL_NAME + "/rest-api/options/" + HubConfig.FINAL_ENTITY_QUERY_OPTIONS_FILE));
 
         updateManagerEntity();
         deployed = entityManager.deployQueryOptions();
@@ -143,13 +145,14 @@ public class EntityManagerTest extends HubTestBase {
         assertEquals(0, getStagingDocCount());
         assertEquals(0, getFinalDocCount());
         assertXMLEqual(getResource("entity-manager-test/options2.xml"), getModulesFile("/Default/" + HubConfig.DEFAULT_STAGING_NAME + "/rest-api/options/" + HubConfig.STAGING_ENTITY_QUERY_OPTIONS_FILE));
-        assertXMLEqual(getResource("entity-manager-test/options2.xml"), getModulesFile("/Default/" + HubConfig.DEFAULT_STAGING_NAME + "/rest-api/options/" + HubConfig.FINAL_ENTITY_QUERY_OPTIONS_FILE));
+        // if we re-merge modules this assertion will be true again:
+        //assertXMLEqual(getResource("entity-manager-test/options2.xml"), getModulesFile("/Default/" + HubConfig.DEFAULT_FINAL_NAME + "/rest-api/options/" + HubConfig.FINAL_ENTITY_QUERY_OPTIONS_FILE));
 
         // shouldn't deploy a 2nd time because of modules properties files
         deployed = entityManager.deployQueryOptions();
         assertEquals(0, deployed.size());
     }
-    
+
     @Test
     public void testDeploySearchOptionsWithFlowRunnerUser() throws IOException, SAXException {
     	getDataHub().clearUserModules();
@@ -166,7 +169,7 @@ public class EntityManagerTest extends HubTestBase {
 
         EntityManager entityManager = EntityManager.create(getHubFlowRunnerConfig());
         HashMap<Enum, Boolean> deployed = entityManager.deployQueryOptions();
-        
+
         //Search options files not written to modules db but created.
         assertNull(getModulesFile("/Default/" + HubConfig.DEFAULT_STAGING_NAME + "/rest-api/options/" + HubConfig.STAGING_ENTITY_QUERY_OPTIONS_FILE));
         assertNull(getModulesFile("/Default/" + HubConfig.DEFAULT_STAGING_NAME + "/rest-api/options/" + HubConfig.FINAL_ENTITY_QUERY_OPTIONS_FILE));

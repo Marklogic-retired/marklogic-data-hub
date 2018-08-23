@@ -72,7 +72,7 @@ class SslTest extends BaseTest {
                     def gtcc = new com.marklogic.appdeployer.command.security.GenerateTemporaryCertificateCommand();
                     gtcc.setTemplateIdOrName("admin-cert");
                     gtcc.setCommonName("localhost");
-                    gtcc.execute(new com.marklogic.appdeployer.command.CommandContext(getAppConfig(), manageClient, adminManager));
+                    gtcc.execute(new com.marklogic.appdeployer.command.CommandContext(getStagingAppConfig(), manageClient, adminManager));
 
                     adminConfig = getProject().property("mlAdminConfig")
                     adminConfig.setScheme("https")
@@ -138,7 +138,7 @@ class SslTest extends BaseTest {
         copyResourceToFile("ssl-test/ssl-server.json", new File(BaseTest.testProjectDir.root, "user-config/servers/staging-server.json"))
         createProperties()
         try {
-            clearDatabases(hubConfig().DEFAULT_MODULES_DB_NAME)
+            clearDatabases(hubConfig().DEFAULT_STAGING_MODULES_DB_NAME)
         } catch (e) {
             //pass
         }

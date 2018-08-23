@@ -14,9 +14,9 @@ export class Flow {
 
   transformModulePath(){
     if(this.codeFormat.toLowerCase() === 'javascript') {
-      return '/MarkLogic/data-hub-framework/transforms/mlcp-flow-transform.sjs'
+      return '/data-hub/4/transforms/mlcp-flow-transform.sjs'
     } else {
-      return '/MarkLogic/data-hub-framework/transforms/mlcp-flow-transform.xqy';
+      return '/data-hub/4/transforms/mlcp-flow-transform.xqy';
     }
   }
 

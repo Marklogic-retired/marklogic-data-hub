@@ -18,7 +18,6 @@ package com.marklogic.hub.impl;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
 import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.appdeployer.ConfigDir;
 import com.marklogic.client.DatabaseClient;
@@ -41,7 +40,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 import java.io.File;
 import java.io.IOException;
@@ -79,12 +77,13 @@ public class HubConfigImpl implements HubConfig {
     protected Integer finalPort = DEFAULT_FINAL_PORT;
     protected String finalAuthMethod = DEFAULT_AUTH_METHOD;
     private String finalScheme = DEFAULT_SCHEME;
-//    private boolean finalSimpleSsl = false;
-//    private SSLContext finalSslContext;
-//    private DatabaseClientFactory.SSLHostnameVerifier finalSslHostnameVerifier;
-//    private String finalCertFile;
-//    private String finalCertPassword;
-//    private String finalExternalName;
+    private boolean finalSimpleSsl = false;
+    private SSLContext finalSslContext;
+    private DatabaseClientFactory.SSLHostnameVerifier finalSslHostnameVerifier;
+    private String finalCertFile;
+    private String finalCertPassword;
+    private String finalExternalName;
+    private X509TrustManager finalTrustManager;
 
     protected String jobDbName = DEFAULT_JOB_NAME;
     protected String jobHttpName = DEFAULT_JOB_NAME;
@@ -100,14 +99,20 @@ public class HubConfigImpl implements HubConfig {
     private String jobExternalName;
     private X509TrustManager jobTrustManager;
 
-    protected String modulesDbName = DEFAULT_MODULES_DB_NAME;
-    protected Integer modulesForestsPerHost = 1;
+    protected String stagingModulesDbName = DEFAULT_STAGING_MODULES_DB_NAME;
+    protected Integer stagingModulesForestsPerHost = 1;
+    protected String finalModulesDbName = DEFAULT_FINAL_MODULES_DB_NAME;
+    protected Integer finalModulesForestsPerHost = 1;
 
-    protected String triggersDbName = DEFAULT_TRIGGERS_DB_NAME;
-    protected Integer triggersForestsPerHost = 1;
+    protected String stagingTriggersDbName = DEFAULT_STAGING_TRIGGERS_DB_NAME;
+    protected Integer stagingTriggersForestsPerHost = 1;
+    protected String finalTriggersDbName = DEFAULT_FINAL_TRIGGERS_DB_NAME;
+    protected Integer finalTriggersForestsPerHost = 1;
 
-    protected String schemasDbName = DEFAULT_SCHEMAS_DB_NAME;
-    protected Integer schemasForestsPerHost = 1;
+    protected String stagingSchemasDbName = DEFAULT_STAGING_SCHEMAS_DB_NAME;
+    protected Integer stagingSchemasForestsPerHost = 1;
+    protected String finalSchemasDbName = DEFAULT_FINAL_SCHEMAS_DB_NAME;
+    protected Integer finalSchemasForestsPerHost = 1;
 
     private String hubRoleName = DEFAULT_ROLE_NAME;
     private String hubUserName = DEFAULT_USER_NAME;
@@ -134,7 +139,8 @@ public class HubConfigImpl implements HubConfig {
     private AdminConfig adminConfig;
     private AdminManager adminManager;
 
-    private AppConfig appConfig;
+    private AppConfig stagingAppConfig;
+    private AppConfig finalAppConfig;
 
     private static final Logger logger = LoggerFactory.getLogger(HubConfigImpl.class);
 
@@ -151,7 +157,7 @@ public class HubConfigImpl implements HubConfig {
     }
 
 
-    public String getHost() { return appConfig.getHost(); }
+    public String getHost() { return stagingAppConfig.getHost(); }
 
     @Override public String getDbName(DatabaseKind kind){
         String name;
@@ -168,14 +174,23 @@ public class HubConfigImpl implements HubConfig {
             case TRACE:
                 name = jobDbName;
                 break;
-            case MODULES:
-                name = modulesDbName;
+            case STAGING_MODULES:
+                name = stagingModulesDbName;
                 break;
-            case TRIGGERS:
-                name = triggersDbName;
+            case FINAL_MODULES:
+                name = finalModulesDbName;
                 break;
-            case SCHEMAS:
-                name = schemasDbName;
+            case STAGING_TRIGGERS:
+                name = stagingTriggersDbName;
+                break;
+            case FINAL_TRIGGERS:
+                name = finalTriggersDbName;
+                break;
+            case STAGING_SCHEMAS:
+                name = stagingSchemasDbName;
+                break;
+            case FINAL_SCHEMAS:
+                name = finalSchemasDbName;
                 break;
             default:
                 throw new InvalidDBOperationError(kind, "grab database name");
@@ -197,14 +212,23 @@ public class HubConfigImpl implements HubConfig {
             case TRACE:
                 jobDbName = dbName;
                 break;
-            case MODULES:
-                modulesDbName = dbName;
+            case STAGING_MODULES:
+                stagingModulesDbName = dbName;
                 break;
-            case TRIGGERS:
-                triggersDbName = dbName;
+            case FINAL_MODULES:
+                finalModulesDbName = dbName;
                 break;
-            case SCHEMAS:
-                schemasDbName = dbName;
+            case STAGING_TRIGGERS:
+                stagingTriggersDbName = dbName;
+                break;
+            case FINAL_TRIGGERS:
+                finalTriggersDbName = dbName;
+                break;
+            case STAGING_SCHEMAS:
+                stagingSchemasDbName = dbName;
+                break;
+            case FINAL_SCHEMAS:
+                finalSchemasDbName = dbName;
                 break;
             default:
                 throw new InvalidDBOperationError(kind, "set database name");
@@ -266,14 +290,23 @@ public class HubConfigImpl implements HubConfig {
             case TRACE:
                 forests = jobForestsPerHost;
                 break;
-            case MODULES:
-                forests = modulesForestsPerHost;
+            case STAGING_MODULES:
+                forests = stagingModulesForestsPerHost;
                 break;
-            case TRIGGERS:
-                forests = triggersForestsPerHost;
+            case FINAL_MODULES:
+                forests = finalModulesForestsPerHost;
                 break;
-            case SCHEMAS:
-                forests = schemasForestsPerHost;
+            case STAGING_TRIGGERS:
+                forests = stagingTriggersForestsPerHost;
+                break;
+            case FINAL_TRIGGERS:
+                forests = finalTriggersForestsPerHost;
+                break;
+            case STAGING_SCHEMAS:
+                forests = stagingSchemasForestsPerHost;
+                break;
+            case FINAL_SCHEMAS:
+                forests = finalSchemasForestsPerHost;
                 break;
             default:
                 throw new InvalidDBOperationError(kind, "grab count of forests per host");
@@ -295,14 +328,23 @@ public class HubConfigImpl implements HubConfig {
             case TRACE:
                 jobForestsPerHost = forestsPerHost;
                 break;
-            case MODULES:
-                modulesForestsPerHost = forestsPerHost;
+            case STAGING_MODULES:
+                stagingModulesForestsPerHost = forestsPerHost;
                 break;
-            case TRIGGERS:
-                triggersForestsPerHost = forestsPerHost;
+            case FINAL_MODULES:
+                finalModulesForestsPerHost = forestsPerHost;
                 break;
-            case SCHEMAS:
-                schemasForestsPerHost = forestsPerHost;
+            case STAGING_TRIGGERS:
+                stagingTriggersForestsPerHost = forestsPerHost;
+                break;
+            case FINAL_TRIGGERS:
+                finalTriggersForestsPerHost = forestsPerHost;
+                break;
+            case STAGING_SCHEMAS:
+                stagingSchemasForestsPerHost = forestsPerHost;
+                break;
+            case FINAL_SCHEMAS:
+                finalSchemasForestsPerHost = forestsPerHost;
                 break;
             default:
                 throw new InvalidDBOperationError(kind, "set count of forests per host");
@@ -362,6 +404,9 @@ public class HubConfigImpl implements HubConfig {
             case TRACE:
                 sslContext = this.jobSslContext;
                 break;
+            case FINAL:
+                sslContext = this.finalSslContext;
+                break;
             default:
                 throw new InvalidDBOperationError(kind, "get ssl context");
         }
@@ -378,6 +423,9 @@ public class HubConfigImpl implements HubConfig {
                 break;
             case TRACE:
                 this.jobSslContext = sslContext;
+                break;
+            case FINAL:
+                this.finalSslContext = sslContext;
                 break;
             default:
                 throw new InvalidDBOperationError(kind, "set ssl context");
@@ -396,6 +444,9 @@ public class HubConfigImpl implements HubConfig {
             case TRACE:
                 sslHostnameVerifier = this.jobSslHostnameVerifier;
                 break;
+            case FINAL:
+                sslHostnameVerifier = this.finalSslHostnameVerifier;
+                break;
             default:
                 throw new InvalidDBOperationError(kind, "get ssl hostname verifier");
         }
@@ -412,6 +463,9 @@ public class HubConfigImpl implements HubConfig {
                 break;
             case TRACE:
                 this.jobSslHostnameVerifier = sslHostnameVerifier;
+                break;
+            case FINAL:
+                this.finalSslHostnameVerifier = sslHostnameVerifier;
                 break;
             default:
                 throw new InvalidDBOperationError(kind, "set ssl hostname verifier");
@@ -464,6 +518,8 @@ public class HubConfigImpl implements HubConfig {
                 return this.stagingTrustManager;
             case JOB:
                 return this.jobTrustManager;
+            case FINAL:
+                return this.finalTrustManager;
             default:
                 throw new InvalidDBOperationError(kind, "set auth method");
         }
@@ -477,6 +533,9 @@ public class HubConfigImpl implements HubConfig {
                 break;
             case JOB:
                 this.jobTrustManager = trustManager;
+                break;
+            case FINAL:
+                this.finalTrustManager = trustManager;
                 break;
             default:
                 throw new InvalidDBOperationError(kind, "set auth method");
@@ -535,6 +594,9 @@ public class HubConfigImpl implements HubConfig {
             case TRACE:
                 simple = this.jobSimpleSsl;
                 break;
+            case FINAL:
+                simple = this.finalSimpleSsl;
+                break;
             default:
                 throw new InvalidDBOperationError(kind, "get simple ssl");
         }
@@ -551,6 +613,9 @@ public class HubConfigImpl implements HubConfig {
                 break;
             case TRACE:
                 this.jobSimpleSsl = simpleSsl;
+                break;
+            case FINAL:
+                this.finalSimpleSsl = simpleSsl;
                 break;
             default:
                 throw new InvalidDBOperationError(kind, "set simple ssl");
@@ -569,6 +634,9 @@ public class HubConfigImpl implements HubConfig {
             case TRACE:
                 certFile = this.jobCertFile;
                 break;
+            case FINAL:
+                certFile = this.finalCertFile;
+                break;
             default:
                 throw new InvalidDBOperationError(kind, "get cert file");
         }
@@ -585,6 +653,9 @@ public class HubConfigImpl implements HubConfig {
                 break;
             case TRACE:
                 this.jobCertFile = certFile;
+                break;
+            case FINAL:
+                this.finalCertFile = certFile;
                 break;
             default:
                 throw new InvalidDBOperationError(kind, "set certificate file");
@@ -603,6 +674,9 @@ public class HubConfigImpl implements HubConfig {
             case TRACE:
                 certPass = this.jobCertPassword;
                 break;
+            case FINAL:
+                certPass = this.finalCertPassword;
+                break;
             default:
                 throw new InvalidDBOperationError(kind, "get cert password");
         }
@@ -619,6 +693,9 @@ public class HubConfigImpl implements HubConfig {
                 break;
             case TRACE:
                 this.jobCertPassword = certPassword;
+                break;
+            case FINAL:
+                this.finalCertPassword = certPassword;
                 break;
             default:
                 throw new InvalidDBOperationError(kind, "set certificate password");
@@ -637,6 +714,9 @@ public class HubConfigImpl implements HubConfig {
             case TRACE:
                 name = this.jobExternalName;
                 break;
+            case FINAL:
+                name = this.finalExternalName;
+                break;
             default:
                 throw new InvalidDBOperationError(kind, "get external name");
         }
@@ -653,6 +733,9 @@ public class HubConfigImpl implements HubConfig {
                 break;
             case TRACE:
                 this.jobExternalName = externalName;
+                break;
+            case FINAL:
+                this.finalExternalName = externalName;
                 break;
             default:
                 throw new InvalidDBOperationError(kind, "set auth method");
@@ -766,8 +849,14 @@ public class HubConfigImpl implements HubConfig {
             finalPort = getEnvPropInteger(environmentProperties, "mlFinalPort", finalPort);
             finalAuthMethod = getEnvPropString(environmentProperties, "mlFinalAuth", finalAuthMethod);
             finalScheme = getEnvPropString(environmentProperties, "mlFinalScheme", finalScheme);
-            // For 3.1 removed some properties that are not in use by DHF.  If DHF again needs the final appserver access in the future
-            // (smart mastering?) then reincorporate the props here
+            if (finalSimpleSsl) {
+                finalSslContext = SimpleX509TrustManager.newSSLContext();
+                finalSslHostnameVerifier = DatabaseClientFactory.SSLHostnameVerifier.ANY;
+                finalTrustManager = new SimpleX509TrustManager();
+            }
+            finalCertFile = getEnvPropString(environmentProperties, "mlfinalCertFile", finalCertFile);
+            finalCertPassword = getEnvPropString(environmentProperties, "mlfinalCertPassword", finalCertPassword);
+            finalExternalName = getEnvPropString(environmentProperties, "mlfinalExternalName", finalExternalName);
 
 
             jobDbName = getEnvPropString(environmentProperties, "mlJobDbName", jobDbName);
@@ -788,15 +877,25 @@ public class HubConfigImpl implements HubConfig {
 
             customForestPath = getEnvPropString(environmentProperties, "mlCustomForestPath", customForestPath);
 
-            modulesDbName = getEnvPropString(environmentProperties, "mlModulesDbName", modulesDbName);
-            modulesForestsPerHost = getEnvPropInteger(environmentProperties, "mlModulesForestsPerHost", modulesForestsPerHost);
-            modulePermissions = getEnvPropString(environmentProperties, "mlModulePermissions", modulePermissions);
+            stagingModulesDbName = getEnvPropString(environmentProperties, "mlStagingModulesDbName", stagingModulesDbName);
+            stagingModulesForestsPerHost = getEnvPropInteger(environmentProperties, "mlStagingModulesForestsPerHost", stagingModulesForestsPerHost);
+            modulePermissions = getEnvPropString(environmentProperties, "mlStagingModulePermissions", modulePermissions);
 
-            triggersDbName = getEnvPropString(environmentProperties, "mlTriggersDbName", triggersDbName);
-            triggersForestsPerHost = getEnvPropInteger(environmentProperties, "mlTriggersForestsPerHost", triggersForestsPerHost);
+            finalModulesDbName = getEnvPropString(environmentProperties, "mlFinalModulesDbName", finalModulesDbName);
+            finalModulesForestsPerHost = getEnvPropInteger(environmentProperties, "mlFinalModulesForestsPerHost", finalModulesForestsPerHost);
+            modulePermissions = getEnvPropString(environmentProperties, "mlFinalModulePermissions", modulePermissions);
 
-            schemasDbName = getEnvPropString(environmentProperties, "mlSchemasDbName", schemasDbName);
-            schemasForestsPerHost = getEnvPropInteger(environmentProperties, "mlSchemasForestsPerHost", schemasForestsPerHost);
+            stagingTriggersDbName = getEnvPropString(environmentProperties, "mlStagingTriggersDbName", stagingTriggersDbName);
+            stagingTriggersForestsPerHost = getEnvPropInteger(environmentProperties, "mlStagingTriggersForestsPerHost", stagingTriggersForestsPerHost);
+
+            finalTriggersDbName = getEnvPropString(environmentProperties, "mlFinalTriggersDbName", finalTriggersDbName);
+            finalTriggersForestsPerHost = getEnvPropInteger(environmentProperties, "mlFinalTriggersForestsPerHost", finalTriggersForestsPerHost);
+
+            stagingSchemasDbName = getEnvPropString(environmentProperties, "mlStagingSchemasDbName", stagingSchemasDbName);
+            stagingSchemasForestsPerHost = getEnvPropInteger(environmentProperties, "mlStagingSchemasForestsPerHost", stagingSchemasForestsPerHost);
+
+            finalSchemasDbName = getEnvPropString(environmentProperties, "mlFinalSchemasDbName", finalSchemasDbName);
+            finalSchemasForestsPerHost = getEnvPropInteger(environmentProperties, "mlFinalSchemasForestsPerHost", finalSchemasForestsPerHost);
 
             hubRoleName = getEnvPropString(environmentProperties, "mlHubUserRole", hubRoleName);
             hubUserName = getEnvPropString(environmentProperties, "mlHubUserName", hubUserName);
@@ -848,7 +947,7 @@ public class HubConfigImpl implements HubConfig {
     public void setAdminManager(AdminManager adminManager) { this.adminManager = adminManager; }
 
     public DatabaseClient newAppServicesClient() {
-        return getAppConfig().newAppServicesDatabaseClient(stagingDbName);
+        return getStagingAppConfig().newAppServicesDatabaseClient(stagingDbName);
     }
 
     @Override
@@ -857,7 +956,7 @@ public class HubConfigImpl implements HubConfig {
     }
 
     private DatabaseClient newStagingClient(String dbName) {
-        AppConfig appConfig = getAppConfig();
+        AppConfig appConfig = getStagingAppConfig();
         DatabaseClientConfig config = new DatabaseClientConfig(appConfig.getHost(), stagingPort, getMlUsername(), getMlPassword());
         config.setDatabase(dbName);
         config.setSecurityContextType(SecurityContextType.valueOf(stagingAuthMethod.toUpperCase()));
@@ -872,11 +971,25 @@ public class HubConfigImpl implements HubConfig {
 
     @Override
     public DatabaseClient newFinalClient() {
-        return newStagingClient(finalDbName);
+        return newFinalAppserverClient();
+    }
+
+    public DatabaseClient newFinalAppserverClient() {
+        AppConfig appConfig = getFinalAppConfig();
+        DatabaseClientConfig config = new DatabaseClientConfig(appConfig.getHost(), finalPort, getMlUsername(), getMlPassword());
+        config.setDatabase(finalDbName);
+        config.setSecurityContextType(SecurityContextType.valueOf(finalAuthMethod.toUpperCase()));
+        config.setSslHostnameVerifier(finalSslHostnameVerifier);
+        config.setSslContext(finalSslContext);
+        config.setCertFile(finalCertFile);
+        config.setCertPassword(finalCertPassword);
+        config.setExternalName(finalExternalName);
+        config.setTrustManager(finalTrustManager);
+        return appConfig.getConfiguredDatabaseClientFactory().newDatabaseClient(config);
     }
 
     public DatabaseClient newJobDbClient() {
-        AppConfig appConfig = getAppConfig();
+        AppConfig appConfig = getStagingAppConfig();
         DatabaseClientConfig config = new DatabaseClientConfig(appConfig.getHost(), jobPort, mlUsername, mlPassword);
         config.setDatabase(jobDbName);
         config.setSecurityContextType(SecurityContextType.valueOf(jobAuthMethod.toUpperCase()));
@@ -894,22 +1007,42 @@ public class HubConfigImpl implements HubConfig {
     }
 
     public DatabaseClient newModulesDbClient() {
-        AppConfig appConfig = getAppConfig();
-        DatabaseClientConfig config = new DatabaseClientConfig(appConfig.getHost(), stagingPort, mlUsername, mlPassword);
+        AppConfig appConfig = getStagingAppConfig();
+        // this has to be finalPort because final is a stock REST API.
+        // staging will not be; but its rewriter isn't loaded yet.
+        DatabaseClientConfig config = new DatabaseClientConfig(appConfig.getHost(), finalPort, mlUsername, mlPassword);
         config.setDatabase(appConfig.getModulesDatabaseName());
-        config.setSecurityContextType(SecurityContextType.valueOf(stagingAuthMethod.toUpperCase()));
-        config.setSslHostnameVerifier(stagingSslHostnameVerifier);
-        config.setSslContext(stagingSslContext);
-        config.setCertFile(stagingCertFile);
-        config.setCertPassword(stagingCertPassword);
-        config.setExternalName(stagingExternalName);
-        config.setTrustManager(stagingTrustManager);
+        config.setSecurityContextType(SecurityContextType.valueOf(finalAuthMethod.toUpperCase()));
+        config.setSslHostnameVerifier(finalSslHostnameVerifier);
+        config.setSslContext(finalSslContext);
+        config.setCertFile(finalCertFile);
+        config.setCertPassword(finalCertPassword);
+        config.setExternalName(finalExternalName);
+        config.setTrustManager(finalTrustManager);
         return appConfig.getConfiguredDatabaseClientFactory().newDatabaseClient(config);
     }
 
     @JsonIgnore
+    @Override public Path getHubStagingModulesDir() {
+        return hubProject.getHubStagingModulesDir();
+    }
+
+    @JsonIgnore
+    @Override public Path getUserStagingModulesDir() {
+        return hubProject.getUserStagingModulesDir();
+    }
+
+    @JsonIgnore
+    @Override public Path getUserFinalModulesDir() { return hubProject.getUserFinalModulesDir(); }
+
+    @JsonIgnore
     @Override public Path getHubPluginsDir() {
         return hubProject.getHubPluginsDir();
+    }
+
+    @JsonIgnore
+    @Override public Path getBaseConfigDir() {
+        return hubProject.getBaseConfigDir();
     }
 
     @JsonIgnore
@@ -954,6 +1087,9 @@ public class HubConfigImpl implements HubConfig {
     }
 
     @JsonIgnore
+    @Override public Path getUserSchemasDir() { return hubProject.getUserSchemasDir(); }
+
+    @JsonIgnore
     @Override public Path getEntityDatabaseDir() {
         return hubProject.getEntityDatabaseDir();
     }
@@ -964,19 +1100,36 @@ public class HubConfigImpl implements HubConfig {
     }
 
     @JsonIgnore
-    @Override public AppConfig getAppConfig() {
-        return appConfig;
+    @Override public AppConfig getStagingAppConfig() {
+        return stagingAppConfig;
     }
 
 
-    @Override public void setAppConfig(AppConfig config) {
-        setAppConfig(config, false);
+    @Override public void setStagingAppConfig(AppConfig config) {
+        setStagingAppConfig(config, false);
     }
 
-    @Override public void setAppConfig(AppConfig config, boolean skipUpdate) {
-        this.appConfig = config;
+    @Override public void setStagingAppConfig(AppConfig config, boolean skipUpdate) {
+        this.stagingAppConfig = config;
         if (!skipUpdate) {
-            updateAppConfig(this.appConfig);
+            updateStagingAppConfig(this.stagingAppConfig);
+        }
+    }
+
+    @JsonIgnore
+    @Override public AppConfig getFinalAppConfig() {
+        return finalAppConfig;
+    }
+
+
+    @Override public void setFinalAppConfig(AppConfig config) {
+        setFinalAppConfig(config, false);
+    }
+
+    @Override public void setFinalAppConfig(AppConfig config, boolean skipUpdate) {
+        this.finalAppConfig = config;
+        if (!skipUpdate) {
+            updateFinalAppConfig(this.finalAppConfig);
         }
     }
 
@@ -993,14 +1146,14 @@ public class HubConfigImpl implements HubConfig {
 
         // this lets debug builds work from an IDE
         if (version.equals("${project.version}")) {
-            version = "3.1.0";
+            version = "4.0.0";
         }
         return version;
     }
 
 
     private Map<String, String> getCustomTokens() {
-        AppConfig appConfig = getAppConfig();
+        AppConfig appConfig = getStagingAppConfig();
         return getCustomTokens(appConfig, appConfig.getCustomTokens());
     }
 
@@ -1025,14 +1178,23 @@ public class HubConfigImpl implements HubConfig {
         customTokens.put("%%mlJobForestsPerHost%%", jobForestsPerHost.toString());
         customTokens.put("%%mlJobAuth%%", jobAuthMethod);
 
-        customTokens.put("%%mlModulesDbName%%", modulesDbName);
-        customTokens.put("%%mlModulesForestsPerHost%%", modulesForestsPerHost.toString());
+        customTokens.put("%%mlStagingModulesDbName%%", stagingModulesDbName);
+        customTokens.put("%%mlStagingModulesForestsPerHost%%", stagingModulesForestsPerHost.toString());
 
-        customTokens.put("%%mlTriggersDbName%%", triggersDbName);
-        customTokens.put("%%mlTriggersForestsPerHost%%", triggersForestsPerHost.toString());
+        customTokens.put("%%mlFinalModulesDbName%%", finalModulesDbName);
+        customTokens.put("%%mlFinalModulesForestsPerHost%%", finalModulesForestsPerHost.toString());
 
-        customTokens.put("%%mlSchemasDbName%%", schemasDbName);
-        customTokens.put("%%mlSchemasForestsPerHost%%", schemasForestsPerHost.toString());
+        customTokens.put("%%mlStagingTriggersDbName%%", stagingTriggersDbName);
+        customTokens.put("%%mlStagingTriggersForestsPerHost%%", stagingTriggersForestsPerHost.toString());
+
+        customTokens.put("%%mlFinalTriggersDbName%%", finalTriggersDbName);
+        customTokens.put("%%mlFinalTriggersForestsPerHost%%", finalTriggersForestsPerHost.toString());
+
+        customTokens.put("%%mlStagingSchemasDbName%%", stagingSchemasDbName);
+        customTokens.put("%%mlStagingSchemasForestsPerHost%%", stagingSchemasForestsPerHost.toString());
+
+        customTokens.put("%%mlFinalSchemasDbName%%", finalSchemasDbName);
+        customTokens.put("%%mlFinalSchemasForestsPerHost%%", finalSchemasForestsPerHost.toString());
 
         customTokens.put("%%mlHubUserRole%%", hubRoleName);
         customTokens.put("%%mlHubUserName%%", hubUserName);
@@ -1061,13 +1223,12 @@ public class HubConfigImpl implements HubConfig {
         return customTokens;
     }
 
-    private void updateAppConfig(AppConfig config) {
+    private void updateStagingAppConfig(AppConfig config) {
         config.setRestPort(stagingPort);
-        config.setModulesDatabaseName(modulesDbName);
 
-        config.setTriggersDatabaseName(triggersDbName);
-        config.setSchemasDatabaseName(schemasDbName);
-        config.setModulesDatabaseName(modulesDbName);
+        config.setTriggersDatabaseName(stagingTriggersDbName);
+        config.setSchemasDatabaseName(stagingSchemasDbName);
+        config.setModulesDatabaseName(stagingModulesDbName);
 
         config.setReplaceTokensInModules(true);
         config.setUseRoxyTokenPrefix(false);
@@ -1075,17 +1236,55 @@ public class HubConfigImpl implements HubConfig {
 
         HashMap<String, Integer> forestCounts = new HashMap<>();
         forestCounts.put(stagingDbName, stagingForestsPerHost);
-        forestCounts.put(finalDbName, finalForestsPerHost);
         forestCounts.put(jobDbName, jobForestsPerHost);
-        forestCounts.put(modulesDbName, modulesForestsPerHost);
-        forestCounts.put(triggersDbName, triggersForestsPerHost);
-        forestCounts.put(schemasDbName, schemasForestsPerHost);
+        forestCounts.put(stagingModulesDbName, stagingModulesForestsPerHost);
+        forestCounts.put(stagingTriggersDbName, stagingTriggersForestsPerHost);
+        forestCounts.put(stagingSchemasDbName, stagingSchemasForestsPerHost);
+        config.setForestCounts(forestCounts);
+
+        ConfigDir configDir = new ConfigDir(getHubConfigDir().toFile());
+        config.setConfigDir(configDir);
+        config.setSchemasPath(getHubConfigDir().resolve("schemas").toString());
+
+        Map<String, String> customTokens = getCustomTokens(config, config.getCustomTokens());
+        if (environmentProperties != null) {
+            Enumeration keyEnum = environmentProperties.propertyNames();
+            while (keyEnum.hasMoreElements()) {
+                String key = (String) keyEnum.nextElement();
+                if (key.matches("^ml[A-Z].+") && !customTokens.containsKey(key)) {
+                    customTokens.put("%%" + key + "%%", (String) environmentProperties.get(key));
+                }
+            }
+        }
+
+
+        String version = getJarVersion();
+        customTokens.put("%%mlHubVersion%%", version);
+
+        stagingAppConfig = config;
+    }
+
+    private void updateFinalAppConfig(AppConfig config) {
+        config.setRestPort(finalPort);
+
+        config.setTriggersDatabaseName(finalTriggersDbName);
+        config.setSchemasDatabaseName(finalSchemasDbName);
+        config.setModulesDatabaseName(finalModulesDbName);
+
+        config.setReplaceTokensInModules(true);
+        config.setUseRoxyTokenPrefix(false);
+        config.setModulePermissions(modulePermissions);
+
+        HashMap<String, Integer> forestCounts = new HashMap<>();
+        forestCounts.put(finalDbName, finalForestsPerHost);
+        forestCounts.put(finalModulesDbName, finalModulesForestsPerHost);
+        forestCounts.put(finalTriggersDbName, finalTriggersForestsPerHost);
+        forestCounts.put(finalSchemasDbName, finalSchemasForestsPerHost);
         config.setForestCounts(forestCounts);
 
         ConfigDir configDir = new ConfigDir(getUserConfigDir().toFile());
         config.setConfigDir(configDir);
-
-        config.setSchemasPath(getUserConfigDir().resolve("schemas").toString());
+        config.setSchemasPath(getUserSchemasDir().toString());
 
         Map<String, String> customTokens = getCustomTokens(config, config.getCustomTokens());
 
@@ -1103,7 +1302,7 @@ public class HubConfigImpl implements HubConfig {
         String version = getJarVersion();
         customTokens.put("%%mlHubVersion%%", version);
 
-        appConfig = config;
+        finalAppConfig = config;
     }
 
     private String getEnvPropString(Properties environmentProperties, String key, String fallback) {

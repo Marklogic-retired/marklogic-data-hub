@@ -20,7 +20,7 @@ import com.marklogic.appdeployer.command.Command;
 import com.marklogic.appdeployer.impl.SimpleAppDeployer;
 import com.marklogic.hub.DataHub;
 import com.marklogic.hub.HubConfig;
-import com.marklogic.hub.deploy.commands.LoadUserModulesCommand;
+import com.marklogic.hub.deploy.commands.LoadUserStagingModulesCommand;
 import com.marklogic.hub.deploy.util.HubDeployStatusListener;
 import com.marklogic.hub.error.CantUpgradeException;
 import com.marklogic.hub.impl.HubConfigImpl;
@@ -83,6 +83,7 @@ public class DataHubService {
         installUserModules(config, forceLoad, deployListener, validateListener);
     }
 
+    @Async
     public void installUserModules(HubConfig config, boolean forceLoad, DeployUserModulesListener deployListener, ValidateListener validateListener) {
         long startTime = PerformanceLogger.monitorTimeInsideMethod();
 
@@ -138,6 +139,16 @@ public class DataHubService {
 
     }
 
+    public void uninstallStaging(HubConfig config, HubDeployStatusListener listener) throws DataHubException {
+        DataHub dataHub = DataHub.create(config);
+        try {
+            dataHub.uninstallStaging(listener);
+        } catch(Throwable e) {
+            e.printStackTrace();
+            throw new DataHubException(e.getMessage(), e);
+        }
+    }
+
     public void uninstall(HubConfig config, HubDeployStatusListener listener) throws DataHubException {
         DataHub dataHub = DataHub.create(config);
         try {
@@ -179,14 +190,14 @@ public class DataHubService {
 
     private void installUserModules(HubConfig hubConfig, boolean forceLoad, DeployUserModulesListener deployListener) {
         List<Command> commands = new ArrayList<>();
-        LoadUserModulesCommand loadUserModulesCommand = new LoadUserModulesCommand(hubConfig);
+        LoadUserStagingModulesCommand loadUserModulesCommand = new LoadUserStagingModulesCommand(hubConfig);
         loadUserModulesCommand.setForceLoad(forceLoad);
         commands.add(loadUserModulesCommand);
 
         SimpleAppDeployer deployer = new SimpleAppDeployer(((HubConfigImpl)hubConfig).getManageClient(), ((HubConfigImpl)hubConfig).getAdminManager());
         deployer.setCommands(commands);
-        deployer.deploy(hubConfig.getAppConfig());
-
+        deployer.deploy(hubConfig.getStagingAppConfig());
+        deployer.deploy(hubConfig.getFinalAppConfig());
         if(deployListener != null) {
             deployListener.onDeploy(getLastDeployed(hubConfig));
         }

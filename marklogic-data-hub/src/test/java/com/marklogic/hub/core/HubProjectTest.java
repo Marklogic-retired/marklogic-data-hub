@@ -3,7 +3,6 @@ package com.marklogic.hub.core;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -44,24 +43,27 @@ public class HubProjectTest extends HubTestBase {
         config.setForestsPerHost(DatabaseKind.JOB, 100);
         config.setPort(DatabaseKind.JOB, 3333);
 
-        config.setForestsPerHost(DatabaseKind.MODULES,3);
-        config.setForestsPerHost(DatabaseKind.TRIGGERS, 4);
+        config.setForestsPerHost(DatabaseKind.STAGING_MODULES,3);
+        config.setForestsPerHost(DatabaseKind.STAGING_TRIGGERS, 4);
 
-        config.setForestsPerHost(DatabaseKind.SCHEMAS, 5);
+        config.setForestsPerHost(DatabaseKind.STAGING_SCHEMAS, 5);
 
         config.setHubRoleName("myrole");
         config.setHubUserName("myuser");
 
         config.initHubProject();
 
-        assertTrue(new File(projectPath, "hub-internal-config/servers/staging-server.json").exists());
-        assertTrue(new File(projectPath, "hub-internal-config/servers/final-server.json").exists());
+        assertTrue(new File(projectPath, "src/main/hub-internal-config/servers/staging-server.json").exists());
+        assertTrue(new File(projectPath, "src/main/hub-internal-config/databases/staging-database.json").exists());
+        assertTrue(new File(projectPath, "src/main/hub-internal-config/databases/staging-modules-database.json").exists());
+        assertTrue(new File(projectPath, "src/main/hub-internal-config/databases/staging-schemas-database.json").exists());
+        assertTrue(new File(projectPath, "src/main/hub-internal-config/databases/staging-triggers-database.json").exists());
 
-        assertTrue(new File(projectPath, "hub-internal-config/databases/staging-database.json").exists());
-        assertTrue(new File(projectPath, "hub-internal-config/databases/final-database.json").exists());
-        assertTrue(new File(projectPath, "hub-internal-config/databases/modules-database.json").exists());
-        assertTrue(new File(projectPath, "hub-internal-config/databases/schemas-database.json").exists());
-        assertTrue(new File(projectPath, "hub-internal-config/databases/triggers-database.json").exists());
+        assertTrue(new File(projectPath, "src/main/ml-config/servers/final-server.json").exists());
+        assertTrue(new File(projectPath, "src/main/ml-config/databases/final-database.json").exists());
+        assertTrue(new File(projectPath, "src/main/ml-config/databases/modules-database.json").exists());
+        assertTrue(new File(projectPath, "src/main/ml-config/databases/schemas-database.json").exists());
+        assertTrue(new File(projectPath, "src/main/ml-config/databases/triggers-database.json").exists());
 
         File buildGradle = new File(projectPath, "build.gradle");
         assertTrue(buildGradle.exists());
@@ -85,7 +87,7 @@ public class HubProjectTest extends HubTestBase {
         props.load(updatedStream);
         propsStream.close();
 
-        assertEquals(config.getAppConfig().getHost(), props.getProperty("mlHost"));
+        assertEquals(config.getStagingAppConfig().getHost(), props.getProperty("mlHost"));
 
         assertEquals("twituser", props.getProperty("mlUsername"));
         assertEquals("twitpassword", props.getProperty("mlPassword"));
@@ -115,14 +117,14 @@ public class HubProjectTest extends HubTestBase {
         assertEquals(config.getDbName(DatabaseKind.JOB), props.getProperty("mlJobDbName"));
         assertEquals(config.getForestsPerHost(DatabaseKind.JOB).toString(), props.getProperty("mlJobForestsPerHost"));
 
-        assertEquals(config.getDbName(DatabaseKind.MODULES), props.getProperty("mlModulesDbName"));
-        assertEquals(config.getForestsPerHost(DatabaseKind.MODULES).toString(), props.getProperty("mlModulesForestsPerHost"));
+        assertEquals(config.getDbName(DatabaseKind.STAGING_MODULES), props.getProperty("mlStagingModulesDbName"));
+        assertEquals(config.getForestsPerHost(DatabaseKind.STAGING_MODULES).toString(), props.getProperty("mlStagingModulesForestsPerHost"));
 
-        assertEquals(config.getDbName(DatabaseKind.TRIGGERS), props.getProperty("mlTriggersDbName"));
-        assertEquals(config.getForestsPerHost(DatabaseKind.TRIGGERS).toString(), props.getProperty("mlTriggersForestsPerHost"));
+        assertEquals(config.getDbName(DatabaseKind.STAGING_TRIGGERS), props.getProperty("mlStagingTriggersDbName"));
+        assertEquals(config.getForestsPerHost(DatabaseKind.STAGING_TRIGGERS).toString(), props.getProperty("mlStagingTriggersForestsPerHost"));
 
-        assertEquals(config.getDbName(DatabaseKind.SCHEMAS), props.getProperty("mlSchemasDbName"));
-        assertEquals(config.getForestsPerHost(DatabaseKind.SCHEMAS).toString(), props.getProperty("mlSchemasForestsPerHost"));
+        assertEquals(config.getDbName(DatabaseKind.STAGING_SCHEMAS), props.getProperty("mlStagingSchemasDbName"));
+        assertEquals(config.getForestsPerHost(DatabaseKind.STAGING_SCHEMAS).toString(), props.getProperty("mlStagingSchemasForestsPerHost"));
 
         assertEquals(config.getHubRoleName(), props.getProperty("mlHubUserRole"));
         assertEquals(config.getHubUserName(), props.getProperty("mlHubUserName"));

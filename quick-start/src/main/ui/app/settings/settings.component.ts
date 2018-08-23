@@ -112,4 +112,25 @@ export class SettingsComponent {
     // cancel.. do nothing
     () => {});
   }
+
+  uninstallAll(): void {
+    this.dialogService.confirm('Uninstall the hub AND associated final apps from MarkLogic?', 'Cancel', 'Uninstall').subscribe(() => {
+        this.uninstallStatus = '';
+        this.isUninstalling = true;
+        let emitter = this.install.messageEmitter.subscribe((payload: any) => {
+          this.percentComplete = payload.percentComplete;
+          this.uninstallStatus += '\n' + payload.message;
+
+          if (this.percentComplete === 100) {
+            emitter.unsubscribe();
+            setTimeout(() => {
+              this.router.navigate(['login']);
+            }, 1000);
+          }
+        });
+        this.install.uninstallAll();
+      },
+      // cancel.. do nothing
+      () => {});
+  }
 }
