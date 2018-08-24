@@ -24,6 +24,7 @@ import com.marklogic.client.io.DocumentMetadataHandle
 import com.marklogic.gradle.task.BaseTest
 import com.marklogic.hub.HubConfig
 import org.gradle.testkit.runner.UnexpectedBuildFailure
+import spock.lang.Ignore
 
 import javax.net.ssl.SSLContext
 import javax.net.ssl.TrustManager
@@ -36,6 +37,8 @@ import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
    and ssl-enabled database.
  */
 class SslTest extends BaseTest {
+
+    @Ignore
     def setupSpec() {
         createFullPropertiesFile()
         BaseTest.buildFile = BaseTest.testProjectDir.newFile('build.gradle')
@@ -145,6 +148,7 @@ class SslTest extends BaseTest {
         runTask("enableSSL")
     }
 
+    @Ignore
     def cleanupSpec() {
         runTask("mlUndeploy", "-Pconfirm=true")
         runTask("mlDeploySecurity")
@@ -168,6 +172,7 @@ class SslTest extends BaseTest {
         """
     }
 
+    @Ignore
     def "bootstrap a project with ssl out the wazoo"() {
         when:
         def result = runTask('mlDeploy')
@@ -184,6 +189,7 @@ class SslTest extends BaseTest {
         result.task(":mlDeploy").outcome == SUCCESS
     }
 
+    @Ignore
     def "runHarmonizeFlow with default src and dest"() {
         given:
         println(runTask('hubCreateHarmonizeFlow', '-PentityName=my-new-entity', '-PflowName=my-new-harmonize-flow', '-PdataFormat=xml', '-PpluginFormat=xqy', '-PuseES=false').getOutput())
@@ -219,6 +225,7 @@ class SslTest extends BaseTest {
         assertXMLEqual(getXmlFromResource("run-flow-test/harmonized2.xml"), hubConfig().newFinalClient().newDocumentManager().read("/employee2.xml").next().getContent(new DOMHandle()).get())
     }
 
+    @Ignore
     def "runHarmonizeFlow with swapped src and dest"() {
         given:
         println(runTask('hubCreateHarmonizeFlow', '-PentityName=my-new-entity', '-PflowName=my-new-harmonize-flow', '-PdataFormat=xml', '-PpluginFormat=xqy', '-PuseES=false').getOutput())
