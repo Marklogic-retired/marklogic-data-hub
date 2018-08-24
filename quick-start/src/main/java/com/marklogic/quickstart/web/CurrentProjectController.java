@@ -134,26 +134,6 @@ public class CurrentProjectController extends EnvironmentAware implements FileSy
         return new ResponseEntity<>(envConfig().toJson(), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/uninstallAll", method = RequestMethod.DELETE, produces = {MediaType.APPLICATION_JSON_VALUE})
-    @ResponseBody
-    public ResponseEntity<?> unInstallAll() throws IOException {
-
-        // uninstall the hub
-        dataHubService.uninstall(envConfig().getMlSettings(), new HubDeployStatusListener() {
-            @Override
-            public void onStatusChange(int percentComplete, String message) {
-                template.convertAndSend("/topic/uninstall-status", new StatusMessage(percentComplete, message));
-            }
-
-            @Override
-            public void onError() {}
-        });
-        envConfig().checkIfInstalled();
-        envConfig().getInstallInfo().isInstalled();
-
-        return new ResponseEntity<>(envConfig().toJson(), HttpStatus.OK);
-    }
-
     @RequestMapping(value = "/update-indexes", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<?> updateIndexes() throws IOException {

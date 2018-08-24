@@ -149,16 +149,6 @@ public class DataHubService {
         }
     }
 
-    public void uninstall(HubConfig config, HubDeployStatusListener listener) throws DataHubException {
-        DataHub dataHub = DataHub.create(config);
-        try {
-            dataHub.uninstall(listener);
-        } catch(Throwable e) {
-            e.printStackTrace();
-            throw new DataHubException(e.getMessage(), e);
-        }
-    }
-
     public String getLastDeployed(HubConfig config) {
         File tsFile = new File(config.getUserModulesDeployTimestampFile());
         Date lastModified = new Date(tsFile.lastModified());
