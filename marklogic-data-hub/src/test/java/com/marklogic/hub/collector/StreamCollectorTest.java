@@ -62,7 +62,6 @@ public class StreamCollectorTest extends HubTestBase {
 
         createProjectDir();
 
-        // FIXME: this resource, is left around, interferes with bootstrapping because
         // it triggers installation of staging db before staging schemas db exists.
         // a subtle bug. to solve, users must create schemas db hook here too.
         Path dbDir = projectDir.resolve("src/main/ml-config").resolve("databases");
