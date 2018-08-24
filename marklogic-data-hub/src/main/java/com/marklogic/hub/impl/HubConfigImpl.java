@@ -46,10 +46,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 @JsonAutoDetect(
     fieldVisibility = JsonAutoDetect.Visibility.PROTECTED_AND_PUBLIC,
@@ -1283,6 +1280,9 @@ public class HubConfigImpl implements HubConfig {
         ConfigDir configDir = new ConfigDir(getUserConfigDir().toFile());
         config.setConfigDir(configDir);
         config.setSchemasPath(getUserSchemasDir().toString());
+        List<String> modulesPathList = new ArrayList<>();
+        modulesPathList.add(getUserStagingModulesDir().normalize().toAbsolutePath().toString());
+        config.setModulePaths(modulesPathList);
 
         Map<String, String> customTokens = getCustomTokens(config, config.getCustomTokens());
 
