@@ -52,11 +52,12 @@ public class DataHubInstallTest extends HubTestBase {
     private static int afterTelemetryInstallCount = 0;
     //As a note, whenever you see these consts, it's due to the additional building of the javascript files bundling down that will then get
     //deployed with the rest of the modules code. This means it'll be 20 higher than if the trace UI was never built
+    public static final int CORE_MODULE_COUNT = 123;
     public static final int CORE_MODULE_COUNT_WITH_TRACE_MODULES = 121;
-    public static final int CORE_MODULE_COUNT = 124;
     // if running as non-admin user, REST extensions are not visible from eval.
-    public static final int VISIBLE_MODULE_COUNT = 124;
-    public static final int VISIBLE_MODULE_COUNT_WITH_USER_MODULES = 122;
+    public static final int VISIBLE_MODULE_COUNT = 123;
+    public static final int VISIBLE_MODULE_COUNT_WITH_USER_MODULES = 139;
+
     public static final int MODULE_COUNT = 6;
     public static final int MODULE_COUNT_WITH_TRACE_MODULES = 26;
     public static final int MODULE_COUNT_WITH_USER_MODULES = 26;
@@ -151,9 +152,9 @@ public class DataHubInstallTest extends HubTestBase {
 
         ////checking if tdes are written to correct db
         Document expectedXml = getXmlFromResource("data-hub-test/scaffolding/tdedoc.xml");
-        Document actualXml =stagingSchemasClient.newDocumentManager().read("/tde/tdedoc.xml").next().getContent(new DOMHandle()).get();
+        Document actualXml = stagingSchemasClient.newDocumentManager().read("/tde/tdedoc.xml").next().getContent(new DOMHandle()).get();
         assertXMLEqual(expectedXml, actualXml);
-        actualXml =finalSchemasClient.newDocumentManager().read("/tde/tdedoc.xml").next().getContent(new DOMHandle()).get();
+        actualXml = finalSchemasClient.newDocumentManager().read("/tde/tdedoc.xml").next().getContent(new DOMHandle()).get();
         assertXMLEqual(expectedXml, actualXml);
     }
 
@@ -277,7 +278,8 @@ public class DataHubInstallTest extends HubTestBase {
 
         assertXMLEqual(
             getXmlFromResource("data-hub-test/plugins/entities/test-entity/harmonize/REST/options/patients.xml"),
-            getModulesDocument("/Default/" + HubConfig.DEFAULT_STAGING_NAME + "/rest-api/options/patients.xml"));
+                finalModulesClient.newDocumentManager().read("/Default/" + HubConfig.DEFAULT_FINAL_NAME + "/rest-api/options/patients.xml")
+                    .next().getContent(new DOMHandle()).get());
 
         assertXMLEqual(
             getXmlFromResource("data-hub-helpers/test-conf-metadata.xml"),
