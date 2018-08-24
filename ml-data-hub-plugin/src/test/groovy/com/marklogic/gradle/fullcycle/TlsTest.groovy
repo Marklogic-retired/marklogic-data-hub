@@ -35,7 +35,7 @@ import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
 class TlsTest extends BaseTest {
     @Ignore
-    def setupSpec() {
+    def setupSpecSKIPTHIS() {
         createFullPropertiesFile()
         BaseTest.buildFile = BaseTest.testProjectDir.newFile('build.gradle')
         BaseTest.buildFile << '''
@@ -197,7 +197,7 @@ class TlsTest extends BaseTest {
     }
 
     @Ignore
-    def cleanupSpec() {
+    def cleanupSpecSKIPTHIS() {
         runTask("mlUndeploy", "-Pconfirm=true")
         runTask("mlDeploySecurity")
         runTask("disableSSL")

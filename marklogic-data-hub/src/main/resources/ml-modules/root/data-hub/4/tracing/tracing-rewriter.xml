@@ -302,27 +302,27 @@
                     <set-transaction-timestamp>$0</set-transaction-timestamp>
                 </match-query-param>
                 <match-header name="if-match">
-                    <dispatch>/MarkLogic/rest-api/endpoints/document-item-query.xqy</dispatch>
+                    <dispatch>/data-hub/4/rest-api/endpoints/document-item-query.xqy</dispatch>
                 </match-header>
                 <match-header name="if-none-match">
-                    <dispatch>/MarkLogic/rest-api/endpoints/document-item-query.xqy</dispatch>
+                    <dispatch>/data-hub/4/rest-api/endpoints/document-item-query.xqy</dispatch>
                 </match-header>
                 <match-header name="accept" matches="^multipart/mixed">
-                    <dispatch>/MarkLogic/rest-api/endpoints/document-item-query.xqy</dispatch>
+                    <dispatch>/data-hub/4/rest-api/endpoints/document-item-query.xqy</dispatch>
                 </match-header>
                 <match-query-param name="category" repeated="true">
-                  <dispatch>/MarkLogic/rest-api/endpoints/document-item-query.xqy</dispatch>
+                  <dispatch>/data-hub/4/rest-api/endpoints/document-item-query.xqy</dispatch>
                 </match-query-param>
                 <match-query-param name="format">
-                  <dispatch>/MarkLogic/rest-api/endpoints/document-item-query.xqy</dispatch>
+                  <dispatch>/data-hub/4/rest-api/endpoints/document-item-query.xqy</dispatch>
                 </match-query-param>
                 <match-query-param name="transform">
-                  <dispatch>/MarkLogic/rest-api/endpoints/document-item-query.xqy</dispatch>
+                  <dispatch>/data-hub/4/rest-api/endpoints/document-item-query.xqy</dispatch>
                 </match-query-param>
                 <match-header name="range">
-                  <dispatch>/MarkLogic/rest-api/endpoints/document-item-query.xqy</dispatch>
+                  <dispatch>/data-hub/4/rest-api/endpoints/document-item-query.xqy</dispatch>
                 </match-header>
-                <dispatch>/MarkLogic/rest-api/endpoints/document-item-query-get.xqy</dispatch>
+                <dispatch>/data-hub/4/rest-api/endpoints/document-item-query-get.xqy</dispatch>
             </match-method>
             <match-method any-of="HEAD">
                 <match-query-param name="txid">
@@ -333,27 +333,27 @@
                     <set-transaction-timestamp>$0</set-transaction-timestamp>
                 </match-query-param>
                 <match-header name="if-match">
-                    <dispatch>/MarkLogic/rest-api/endpoints/document-item-query.xqy</dispatch>
+                    <dispatch>/data-hub/4/rest-api/endpoints/document-item-query.xqy</dispatch>
                 </match-header>
                 <match-header name="if-none-match">
-                    <dispatch>/MarkLogic/rest-api/endpoints/document-item-query.xqy</dispatch>
+                    <dispatch>/data-hub/4/rest-api/endpoints/document-item-query.xqy</dispatch>
                 </match-header>
                 <match-header name="accept" matches="^multipart/mixed">
-                    <dispatch>/MarkLogic/rest-api/endpoints/document-item-query.xqy</dispatch>
+                    <dispatch>/data-hub/4/rest-api/endpoints/document-item-query.xqy</dispatch>
                 </match-header>
                 <match-query-param name="category" repeated="true">
-                    <dispatch>/MarkLogic/rest-api/endpoints/document-item-query.xqy</dispatch>
+                    <dispatch>/data-hub/4/rest-api/endpoints/document-item-query.xqy</dispatch>
                 </match-query-param>
                 <match-query-param name="format">
-                    <dispatch>/MarkLogic/rest-api/endpoints/document-item-query.xqy</dispatch>
+                    <dispatch>/data-hub/4/rest-api/endpoints/document-item-query.xqy</dispatch>
                 </match-query-param>
                 <match-query-param name="transform">
-                    <dispatch>/MarkLogic/rest-api/endpoints/document-item-query.xqy</dispatch>
+                    <dispatch>/data-hub/4/rest-api/endpoints/document-item-query.xqy</dispatch>
                 </match-query-param>
                 <match-header name="range">
-                    <dispatch>/MarkLogic/rest-api/endpoints/document-item-query.xqy</dispatch>
+                    <dispatch>/data-hub/4/rest-api/endpoints/document-item-query.xqy</dispatch>
                 </match-header>
-                <dispatch>/MarkLogic/rest-api/endpoints/document-item-query-head.xqy</dispatch>
+                <dispatch>/data-hub/4/rest-api/endpoints/document-item-query-head.xqy</dispatch>
             </match-method>
             <match-method any-of="OPTIONS">
                 <match-query-param name="txid">
@@ -363,7 +363,7 @@
                 <match-query-param name="timestamp">
                     <set-transaction-timestamp>$0</set-transaction-timestamp>
                 </match-query-param>
-                <dispatch>/MarkLogic/rest-api/endpoints/document-item-query.xqy</dispatch>
+                <dispatch>/data-hub/4/rest-api/endpoints/document-item-query.xqy</dispatch>
             </match-method>
             <match-method any-of="PUT">
                 <match-query-param name="txid">
@@ -371,30 +371,30 @@
                     <set-transaction-mode>update</set-transaction-mode>
                 </match-query-param>
                 <match-header name="content-type" matches="^multipart/mixed">
-                    <dispatch>/MarkLogic/rest-api/endpoints/document-item-update.xqy</dispatch>
+                    <dispatch>/data-hub/4/rest-api/endpoints/document-item-update.xqy</dispatch>
                 </match-header>
                 <match-header name="if-match">
-                    <dispatch>/MarkLogic/rest-api/endpoints/document-item-update.xqy</dispatch>
+                    <dispatch>/data-hub/4/rest-api/endpoints/document-item-update.xqy</dispatch>
                 </match-header>
                 <match-query-param name="category" repeated="true">
-                    <dispatch>/MarkLogic/rest-api/endpoints/document-item-update.xqy</dispatch>
+                    <dispatch>/data-hub/4/rest-api/endpoints/document-item-update.xqy</dispatch>
                 </match-query-param>
                 <match-query-param name="extract">
-                  <dispatch>/MarkLogic/rest-api/endpoints/document-item-update.xqy</dispatch>
+                  <dispatch>/data-hub/4/rest-api/endpoints/document-item-update.xqy</dispatch>
                 </match-query-param>
                 <match-query-param name="format">
-                    <dispatch>/MarkLogic/rest-api/endpoints/document-item-update.xqy</dispatch>
+                    <dispatch>/data-hub/4/rest-api/endpoints/document-item-update.xqy</dispatch>
                 </match-query-param>
                 <match-query-param name="repair">
-                    <dispatch>/MarkLogic/rest-api/endpoints/document-item-update.xqy</dispatch>
+                    <dispatch>/data-hub/4/rest-api/endpoints/document-item-update.xqy</dispatch>
                 </match-query-param>
                 <match-query-param name="temporal-collection">
-                    <dispatch>/MarkLogic/rest-api/endpoints/document-item-update.xqy</dispatch>
+                    <dispatch>/data-hub/4/rest-api/endpoints/document-item-update.xqy</dispatch>
                 </match-query-param>
                 <match-query-param name="transform">
-                    <dispatch>/MarkLogic/rest-api/endpoints/document-item-update.xqy</dispatch>
+                    <dispatch>/data-hub/4/rest-api/endpoints/document-item-update.xqy</dispatch>
                 </match-query-param>
-                <dispatch>/MarkLogic/rest-api/endpoints/document-item-update-put.xqy</dispatch>
+                <dispatch>/data-hub/4/rest-api/endpoints/document-item-update-put.xqy</dispatch>
             </match-method>
             <match-method any-of="DELETE">
                 <match-query-param name="txid">
@@ -402,15 +402,15 @@
                   <set-transaction-mode>update</set-transaction-mode>
                 </match-query-param>
                 <match-header name="if-match">
-                    <dispatch>/MarkLogic/rest-api/endpoints/document-item-update.xqy</dispatch>
+                    <dispatch>/data-hub/4/rest-api/endpoints/document-item-update.xqy</dispatch>
                 </match-header>
                 <match-query-param name="temporal-collection">
-                    <dispatch>/MarkLogic/rest-api/endpoints/document-item-update.xqy</dispatch>
+                    <dispatch>/data-hub/4/rest-api/endpoints/document-item-update.xqy</dispatch>
                 </match-query-param>
                 <match-query-param name="category" repeated="true">
-                  <dispatch>/MarkLogic/rest-api/endpoints/document-item-update.xqy</dispatch>
+                  <dispatch>/data-hub/4/rest-api/endpoints/document-item-update.xqy</dispatch>
                 </match-query-param>
-                <dispatch>/MarkLogic/rest-api/endpoints/document-item-update-delete.xqy</dispatch>
+                <dispatch>/data-hub/4/rest-api/endpoints/document-item-update-delete.xqy</dispatch>
              </match-method>
             <match-method any-of="POST">
                 <match-query-param name="txid">
@@ -418,40 +418,40 @@
                     <set-transaction-mode>update</set-transaction-mode>
                 </match-query-param>
                 <match-content-type any-of="application/x-www-form-urlencoded">
-                    <dispatch>/MarkLogic/rest-api/endpoints/document-item-query.xqy</dispatch>
+                    <dispatch>/data-hub/4/rest-api/endpoints/document-item-query.xqy</dispatch>
                 </match-content-type>
                 <match-query-param name="extension">
                     <match-header name="content-type" matches="^multipart/mixed">
-                        <dispatch>/MarkLogic/rest-api/endpoints/document-item-update.xqy</dispatch>
+                        <dispatch>/data-hub/4/rest-api/endpoints/document-item-update.xqy</dispatch>
                     </match-header>
                     <match-query-param name="category" repeated="true">
-                        <dispatch>/MarkLogic/rest-api/endpoints/document-item-update.xqy</dispatch>
+                        <dispatch>/data-hub/4/rest-api/endpoints/document-item-update.xqy</dispatch>
                     </match-query-param>
                     <match-query-param name="extract">
-                        <dispatch>/MarkLogic/rest-api/endpoints/document-item-update.xqy</dispatch>
+                        <dispatch>/data-hub/4/rest-api/endpoints/document-item-update.xqy</dispatch>
                     </match-query-param>
                     <match-query-param name="format">
-                        <dispatch>/MarkLogic/rest-api/endpoints/document-item-update.xqy</dispatch>
+                        <dispatch>/data-hub/4/rest-api/endpoints/document-item-update.xqy</dispatch>
                     </match-query-param>
                     <match-query-param name="repair">
-                        <dispatch>/MarkLogic/rest-api/endpoints/document-item-update.xqy</dispatch>
+                        <dispatch>/data-hub/4/rest-api/endpoints/document-item-update.xqy</dispatch>
                     </match-query-param>
                     <match-query-param name="temporal-collection">
-                        <dispatch>/MarkLogic/rest-api/endpoints/document-item-update.xqy</dispatch>
+                        <dispatch>/data-hub/4/rest-api/endpoints/document-item-update.xqy</dispatch>
                     </match-query-param>
                     <match-query-param name="transform">
-                        <dispatch>/MarkLogic/rest-api/endpoints/document-item-update.xqy</dispatch>
+                        <dispatch>/data-hub/4/rest-api/endpoints/document-item-update.xqy</dispatch>
                     </match-query-param>
-                    <dispatch>/MarkLogic/rest-api/endpoints/document-item-create-post.xqy</dispatch>
+                    <dispatch>/data-hub/4/rest-api/endpoints/document-item-create-post.xqy</dispatch>
                 </match-query-param>
-                <dispatch>/MarkLogic/rest-api/endpoints/document-item-update.xqy</dispatch>
+                <dispatch>/data-hub/4/rest-api/endpoints/document-item-update.xqy</dispatch>
             </match-method>
             <match-method any-of="PATCH">
                 <match-query-param name="txid">
                     <set-transaction>$0</set-transaction>
                     <set-transaction-mode>update</set-transaction-mode>
                 </match-query-param>
-                <dispatch>/MarkLogic/rest-api/endpoints/document-item-update.xqy</dispatch>
+                <dispatch>/data-hub/4/rest-api/endpoints/document-item-update.xqy</dispatch>
             </match-method>
         </match-path>
 
@@ -464,7 +464,7 @@
                     <set-transaction>$0</set-transaction>
                     <set-transaction-mode>update</set-transaction-mode>
                 </match-query-param>
-                <dispatch>/MarkLogic/rest-api/endpoints/document-item-protection.xqy</dispatch>
+                <dispatch>/data-hub/4/rest-api/endpoints/document-item-protection.xqy</dispatch>
             </match-method>
         </match-path>
 
@@ -637,14 +637,14 @@
                     <set-transaction>$0</set-transaction>
                     <set-transaction-mode>query</set-transaction-mode>
                 </match-query-param>
-                <dispatch>/MarkLogic/rest-api/endpoints/resource-service-query.xqy</dispatch>
+                <dispatch>/data-hub/4/rest-api/endpoints/resource-service-query.xqy</dispatch>
             </match-method>
             <match-method any-of="PUT DELETE">
                 <match-query-param name="txid">
                     <set-transaction>$0</set-transaction>
                     <set-transaction-mode>update</set-transaction-mode>
                 </match-query-param>
-                <dispatch>/MarkLogic/rest-api/endpoints/resource-service-update.xqy</dispatch>
+                <dispatch>/data-hub/4/rest-api/endpoints/resource-service-update.xqy</dispatch>
             </match-method>
         </match-path>
 
@@ -807,7 +807,7 @@
                 </match-query-param>
                 <match-content-type any-of="text/uri-list">
                     <match-accept any-of="text/uri-list */*">
-                        <dispatch>/MarkLogic/rest-api/endpoints/apply-transform.xqy</dispatch>
+                        <dispatch>/data-hub/4/rest-api/endpoints/apply-transform.xqy</dispatch>
                     </match-accept>
                     <match-header name="accept">
                         <dispatch>/MarkLogic/rest-api/endpoints/unacceptable-type.xqy</dispatch>
@@ -815,7 +815,7 @@
                     <dispatch>/MarkLogic/rest-api/endpoints/apply-transform.xqy</dispatch>
                 </match-content-type>
             </match-method>
-            <dispatch>/MarkLogic/rest-api/endpoints/apply-transform-bad-request.xqy</dispatch>
+            <dispatch>/data-hub/4/rest-api/endpoints/apply-transform-bad-request.xqy</dispatch>
         </match-path>
 
         <match-path matches="^/(v1|LATEST)/internal/extract-via-template$">

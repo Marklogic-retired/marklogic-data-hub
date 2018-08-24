@@ -119,7 +119,7 @@ class CreateHarmonizeFlowTaskTest extends BaseTest {
 		runTask("mlLoadModules")
 
 		when:
-		def result = runTask('hubCreateHarmonizeFlow', '-PentityName=Employee', '-PflowName=mapping-harmonize-flow', '-PmappingName=my-new-mapping', '-PuseES=true')
+		def result = runTask('hubCreateHarmonizeFlow', '-PentityName=Employee', '-PflowName=mapping-harmonize-flow', '-PmappingName=my-new-mapping-1', '-PuseES=true')
 
 		then:
 		notThrown(UnexpectedBuildFailure)
