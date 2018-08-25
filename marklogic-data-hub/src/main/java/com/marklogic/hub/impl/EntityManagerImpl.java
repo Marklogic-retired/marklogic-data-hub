@@ -135,7 +135,7 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
             long lastModified = Math.max(finalFile.lastModified(), stagingFile.lastModified());
             List<JsonNode> entities = getModifiedRawEntities(lastModified);
             if (entities.size() > 0) {
-                DbIndexGenerator generator = new DbIndexGenerator(hubConfig.newFinalClient());
+                DbIndexGenerator generator = new DbIndexGenerator(hubConfig.newReverseFlowClient());
                 String indexes = generator.getIndexes(entities);
                 FileUtils.writeStringToFile(finalFile, indexes);
                 FileUtils.writeStringToFile(stagingFile, indexes);
@@ -322,7 +322,7 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
             // get all the entities.
             List<JsonNode> entities = getAllEntities();
             if (entities.size() > 0) {
-                PiiGenerator piiGenerator = new PiiGenerator(hubConfig.newFinalClient());
+                PiiGenerator piiGenerator = new PiiGenerator(hubConfig.newReverseFlowClient());
 
                 String v3Config = piiGenerator.piiGenerate(entities);
                 JsonNode v3ConfigAsJson = null;

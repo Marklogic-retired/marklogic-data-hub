@@ -16,6 +16,8 @@
 package com.marklogic.hub.core;
 
 import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.document.DocumentPage;
+import com.marklogic.client.document.DocumentRecord;
 import com.marklogic.client.ext.modulesloader.impl.PropertiesModuleManager;
 import com.marklogic.client.io.DOMHandle;
 import com.marklogic.client.io.StringHandle;
@@ -27,7 +29,6 @@ import com.marklogic.hub.util.Versions;
 
 import org.apache.commons.io.FileUtils;
 import org.custommonkey.xmlunit.XMLUnit;
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 
@@ -109,6 +110,14 @@ public class DataHubInstallTest extends HubTestBase {
         afterTelemetryInstallCount = getTelemetryInstallCount();
     }
 
+    private DocumentRecord getFinalModulesDocument(String... uris) {
+        return
+            finalModulesClient
+                .newDocumentManager()
+                .read("/Default/" + HubConfig.DEFAULT_FINAL_NAME + "/rest-api/options/patients.xml")
+                .next();
+    }
+
     @Test
     @Ignore
     public void testTelemetryInstallCount() throws IOException {
@@ -136,7 +145,7 @@ public class DataHubInstallTest extends HubTestBase {
 
         //checking if modules are written to correct db
         Assert.assertNotNull(getModulesFile("/ext/sample-trigger.xqy"));
-        Assert.assertNotNull(finalModulesClient.newDocumentManager().read("/ext/sample-trigger.xqy").next().getContent(new StringHandle()).get());
+        Assert.assertNotNull(getFinalModulesDocument("/ext/sample-trigger.xqy").getContent(new StringHandle()).get());
 
         ////checking if tdes are written to correct db
         Document expectedXml = getXmlFromResource("data-hub-test/scaffolding/tdedoc.xml");
@@ -254,12 +263,13 @@ public class DataHubInstallTest extends HubTestBase {
 
         assertXMLEqual(
             getXmlFromResource("data-hub-test/plugins/entities/test-entity/harmonize/REST/options/patients.xml"),
-                finalModulesClient.newDocumentManager().read("/Default/" + HubConfig.DEFAULT_FINAL_NAME + "/rest-api/options/patients.xml")
-                    .next().getContent(new DOMHandle()).get());
+                getFinalModulesDocument("/Default/" + HubConfig.DEFAULT_FINAL_NAME + "/rest-api/options/patients.xml")
+                    .getContent(new DOMHandle()).get());
 
         assertXMLEqual(
             getXmlFromResource("data-hub-helpers/test-conf-metadata.xml"),
-            getModulesDocument("/marklogic.rest.transform/test-conf-transform/assets/metadata.xml"));
+            getFinalModulesDocument("/marklogic.rest.transform/test-conf-transform/assets/metadata.xml").getContent(new DOMHandle()).get());
+
         assertEquals(
             getResource("data-hub-test/plugins/entities/test-entity/harmonize/REST/transforms/test-conf-transform.xqy"),
             getModulesFile("/marklogic.rest.transform/test-conf-transform/assets/transform.xqy"));

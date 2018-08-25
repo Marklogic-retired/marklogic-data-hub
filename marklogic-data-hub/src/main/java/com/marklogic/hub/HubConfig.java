@@ -526,20 +526,19 @@ public interface HubConfig {
 
     /**
      * Gets a new DatabaseClient that queries the staging database and appserver
-     * Uses mlUsername and mlPassword
-     * @return A client without elevated administrative privileges.
+     * @return A client that accesses the hub's staging appserver and staging database.
      */
     DatabaseClient newStagingClient();
 
     /**
      * Gets a new DatabaseClient that queries the Final database using the staging appserver.
-     * Uses mlUsername and mlPassword
-     * @return A database client configured for fetching from final database.
+     * @return A database client configured for fetching from final database, but using DHF's staging modules.
      */
     DatabaseClient newReverseFlowClient();
 
     /**
-     * Gets a new DatabaseClient that queries the Final database using the staging appserver.
+     * Gets a new DatabaseClient that queries the Final database using the final appserver.
+     * and final modules database.  (Future, will be same behavior as newReverseFlowClient when modules databases are merged.)
      * @return A DatabaseClient
      */
     DatabaseClient newFinalClient();

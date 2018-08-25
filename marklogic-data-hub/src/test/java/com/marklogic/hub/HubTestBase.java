@@ -140,6 +140,7 @@ public class HubTestBase {
     public  DatabaseClient stagingModulesClient = null;
     public  DatabaseClient finalClient = null;
     public  DatabaseClient finalFlowRunnerClient = null;
+    public  DatabaseClient finalModulesClientStagingModulesDatabase = null;
     public  DatabaseClient finalModulesClient = null;
     public  DatabaseClient jobClient = null;
     public  DatabaseClient jobModulesClient = null;
@@ -274,7 +275,8 @@ public class HubTestBase {
             stagingModulesClient  = getClient(host, stagingPort, HubConfig.DEFAULT_STAGING_MODULES_DB_NAME, manageUser, managePassword, stagingAuthMethod);
             // NOTE finalClient must use staging port and final database to use DHF enode code.
             finalClient = getClient(host, stagingPort, HubConfig.DEFAULT_FINAL_NAME, user, password, finalAuthMethod);
-            finalModulesClient  = getClient(host, finalPort, HubConfig.DEFAULT_STAGING_MODULES_DB_NAME, manageUser, managePassword, stagingAuthMethod);
+            finalModulesClientStagingModulesDatabase = getClient(host, finalPort, HubConfig.DEFAULT_STAGING_MODULES_DB_NAME, manageUser, managePassword, stagingAuthMethod);
+            finalModulesClient = getClient(host, finalPort, HubConfig.DEFAULT_FINAL_MODULES_DB_NAME, manageUser, managePassword, stagingAuthMethod);
             jobClient = getClient(host, jobPort, HubConfig.DEFAULT_JOB_NAME, user, password, jobAuthMethod);
             jobModulesClient  = getClient(host, stagingPort, HubConfig.DEFAULT_STAGING_MODULES_DB_NAME, manageUser, managePassword, jobAuthMethod);
         }
