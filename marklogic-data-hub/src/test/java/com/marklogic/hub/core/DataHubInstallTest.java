@@ -145,7 +145,7 @@ public class DataHubInstallTest extends HubTestBase {
 
         //checking if modules are written to correct db
         Assert.assertNotNull(getModulesFile("/ext/sample-trigger.xqy"));
-        Assert.assertNotNull(getFinalModulesDocument("/ext/sample-trigger.xqy").getContent(new StringHandle()).get());
+        Assert.assertNotNull(getFinalModulesFile("/ext/sample-trigger.xqy"));
 
         ////checking if tdes are written to correct db
         Document expectedXml = getXmlFromResource("data-hub-test/scaffolding/tdedoc.xml");
@@ -263,16 +263,15 @@ public class DataHubInstallTest extends HubTestBase {
 
         assertXMLEqual(
             getXmlFromResource("data-hub-test/plugins/entities/test-entity/harmonize/REST/options/patients.xml"),
-                getFinalModulesDocument("/Default/" + HubConfig.DEFAULT_FINAL_NAME + "/rest-api/options/patients.xml")
-                    .getContent(new DOMHandle()).get());
+            getFinalModulesDocument("/Default/" + HubConfig.DEFAULT_FINAL_NAME + "/rest-api/options/patients.xml"));
 
         assertXMLEqual(
             getXmlFromResource("data-hub-helpers/test-conf-metadata.xml"),
-            getFinalModulesDocument("/marklogic.rest.transform/test-conf-transform/assets/metadata.xml").getContent(new DOMHandle()).get());
+            getFinalModulesDocument("/marklogic.rest.transform/test-conf-transform/assets/metadata.xml"));
 
         assertEquals(
             getResource("data-hub-test/plugins/entities/test-entity/harmonize/REST/transforms/test-conf-transform.xqy"),
-            getModulesFile("/marklogic.rest.transform/test-conf-transform/assets/transform.xqy"));
+            getFinalModulesFile("/marklogic.rest.transform/test-conf-transform/assets/transform.xqy"));
 
         assertXMLEqual(
             getXmlFromResource("data-hub-helpers/test-input-metadata.xml"),
