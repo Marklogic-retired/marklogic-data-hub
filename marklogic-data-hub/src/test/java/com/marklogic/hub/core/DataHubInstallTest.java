@@ -110,14 +110,6 @@ public class DataHubInstallTest extends HubTestBase {
         afterTelemetryInstallCount = getTelemetryInstallCount();
     }
 
-    private DocumentRecord getFinalModulesDocument(String... uris) {
-        return
-            finalModulesClient
-                .newDocumentManager()
-                .read("/Default/" + HubConfig.DEFAULT_FINAL_NAME + "/rest-api/options/patients.xml")
-                .next();
-    }
-
     @Test
     @Ignore
     public void testTelemetryInstallCount() throws IOException {
