@@ -156,7 +156,7 @@ public class DataHubInstallTest extends HubTestBase {
         assertTrue("trace options not installed", getModulesFile("/Default/data-hub-JOBS/rest-api/options/traces.xml").length() > 0);
         assertTrue("jobs options not installed", getModulesFile("/Default/data-hub-JOBS/rest-api/options/jobs.xml").length() > 0);
         assertTrue("staging options not installed", getModulesFile("/Default/data-hub-STAGING/rest-api/options/default.xml").length() > 0);
-        //assertTrue("final options not installed", getModulesFile("/Default/data-hub-FINAL/rest-api/options/default.xml").length() > 0);
+        assertTrue("final options not installed", getFinalModulesFile("/Default/data-hub-FINAL/rest-api/options/default.xml").length() > 0);
     }
 
     @Test
