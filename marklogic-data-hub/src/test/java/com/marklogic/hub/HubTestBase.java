@@ -163,6 +163,7 @@ public class HubTestBase {
     public  JSONDocumentManager jobDocMgr;
     public  GenericDocumentManager traceDocMgr;
     public  GenericDocumentManager modMgr;
+    public  GenericDocumentManager finalModMgr;
     public  String bootStrapHost = null;
 	private  TrustManagerFactory tmf;
 	private List<DatabaseClient> clients = new ArrayList<DatabaseClient>();
@@ -172,6 +173,10 @@ public class HubTestBase {
 
     private GenericDocumentManager getModMgr() {
         return stagingModulesClient.newDocumentManager();
+    }
+
+    private GenericDocumentManager getFinalModMgr() {
+        return finalModulesClient.newDocumentManager();
     }
 
     private GenericDocumentManager getFinalMgr() {
@@ -290,6 +295,7 @@ public class HubTestBase {
         jobDocMgr = getJobMgr();
         traceDocMgr = getTraceMgr();
         modMgr = getModMgr();
+        finalModMgr = getFinalModMgr();
     }
 
     protected DatabaseClient getClient(String host, int port, String dbName, String user,String password, Authentication authMethod) throws Exception {
@@ -552,8 +558,21 @@ public class HubTestBase {
         return null;
     }
 
+    protected String getFinalModulesFile(String uri) {
+        try {
+            String contents = finalModMgr.read(uri).next().getContent(new StringHandle()).get();
+            return contents.replaceFirst("(\\(:|//)\\s+cache\\sbuster:.+\\n", "");
+        }
+        catch(Exception e) {}
+        return null;
+    }
+
     protected Document getModulesDocument(String uri) {
         return modMgr.read(uri).next().getContent(new DOMHandle()).get();
+    }
+
+    protected Document getFinalModulesDocument(String uri) {
+        return finalModMgr.read(uri).next().getContent(new DOMHandle()).get();
     }
 
     protected Document getXmlFromResource(String resourceName) {
