@@ -1,6 +1,8 @@
 package com.marklogic.hub;
 
 import com.google.gson.*;
+import com.marklogic.appdeployer.AppConfig;
+import com.marklogic.appdeployer.ConfigDir;
 import com.marklogic.appdeployer.command.Command;
 import com.marklogic.appdeployer.command.security.DeployProtectedPathsCommand;
 import com.marklogic.appdeployer.command.security.DeployQueryRolesetsCommand;
@@ -243,16 +245,16 @@ public class PiiE2E extends HubTestBase {
 		securityCommands.add(new DeployHubUsersCommand(hubConfig));
 		securityCommands.add(new DeployUserRolesCommand(hubConfig));
 		securityCommands.add(new DeployUserUsersCommand(hubConfig));
-
-        // force deploy of protected paths
-		LoadUserFinalModulesCommand userFinalModulesCommand = new LoadUserFinalModulesCommand(hubConfig);
-		userFinalModulesCommand.setForceLoad(true);
-        securityCommands.add(userFinalModulesCommand);
+        securityCommands.add(new DeployProtectedPathsCommand());
+        securityCommands.add(new DeployQueryRolesetsCommand());
 
         SimpleAppDeployer deployer = new SimpleAppDeployer(hubConfig.getManageClient(), hubConfig.getAdminManager());
-
         deployer.setCommands(securityCommands);
-        deployer.deploy(hubConfig.getStagingAppConfig());
+
+        AppConfig appConfig = hubConfig.getStagingAppConfig();
+        appConfig.setConfigDir(new ConfigDir(hubConfig.getUserConfigDir().toFile()));
+
+        deployer.deploy(appConfig);
     }
 
     private void installEntities() {
