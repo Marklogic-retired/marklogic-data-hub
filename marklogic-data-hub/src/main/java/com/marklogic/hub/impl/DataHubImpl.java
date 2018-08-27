@@ -536,11 +536,6 @@ public class DataHubImpl implements DataHub {
         serverCommands.add(otherServersCommand);
         commandMap.put("mlServerCommands", serverCommands);
 
-        // this custom hub deploy is no longer in use, TODO remove
-        //List<Command> moduleCommands = new ArrayList<>();
-        //moduleCommands.add(new LoadUserFinalModulesCommand(hubConfig));
-        //commandMap.put("mlModuleCommands", moduleCommands);
-
         // this is the vanilla load-modules command from ml-gradle, to be included in this
         // command list for install
         List<Command> moduleCommands = new ArrayList<>();

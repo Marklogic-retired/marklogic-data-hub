@@ -49,6 +49,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import com.marklogic.appdeployer.command.modules.LoadModulesCommand;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -877,6 +878,10 @@ public class HubTestBase {
         LoadUserStagingModulesCommand loadUserModulesCommand = new LoadUserStagingModulesCommand(hubConfig);
         loadUserModulesCommand.setForceLoad(force);
         commands.add(loadUserModulesCommand);
+
+        LoadModulesCommand loadModulesCommand = new LoadModulesCommand();
+        commands.add(loadModulesCommand);
+
 
         SimpleAppDeployer deployer = new SimpleAppDeployer(((HubConfigImpl)hubConfig).getManageClient(), ((HubConfigImpl)hubConfig).getAdminManager());
         deployer.setCommands(commands);
