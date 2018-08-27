@@ -19,6 +19,7 @@ package com.marklogic.quickstart.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jcraft.jsch.IO;
 import com.marklogic.quickstart.model.MappingModel;
 import org.junit.After;
 import org.junit.Assert;
@@ -30,6 +31,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
+import java.nio.file.Paths;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest()
@@ -40,16 +42,29 @@ public class MappingManagerServiceTest extends AbstractServiceTest {
     @Autowired
     MappingManagerService mappingManagerService;
 
-    @Before
-    public void setup() {
-        deleteProjectDir();
+    @Autowired
+    FileSystemWatcherService fileSystemWatcherService;
 
+    @Before
+    public void setup() throws IOException {
+        // watcher service is not compatible with this test.
+        try {
+            fileSystemWatcherService.unwatch(PROJECT_PATH);
+        } catch (IOException e) {
+            // ignore... might be a problem but probably just a forced delete.
+        }
         createProjectDir();
     }
 
     @After
     public void tearDown() {
-        deleteProjectDir();
+        try {
+            fileSystemWatcherService.unwatch(PROJECT_PATH);
+            deleteProjectDir();
+        } catch (Exception e) {
+            // ignore... might be a problem but probably just trying to delete
+            // from under an unstopped service.
+        }
     }
 
     @Test
