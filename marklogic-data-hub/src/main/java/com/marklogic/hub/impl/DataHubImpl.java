@@ -21,6 +21,7 @@ import com.marklogic.appdeployer.command.Command;
 import com.marklogic.appdeployer.command.CommandMapBuilder;
 import com.marklogic.appdeployer.command.appservers.DeployOtherServersCommand;
 import com.marklogic.appdeployer.command.forests.DeployCustomForestsCommand;
+import com.marklogic.appdeployer.command.modules.LoadModulesCommand;
 import com.marklogic.appdeployer.command.security.*;
 import com.marklogic.appdeployer.impl.SimpleAppDeployer;
 import com.marklogic.client.FailedRequestException;
@@ -404,7 +405,6 @@ public class DataHubImpl implements DataHub {
 
     @Override
     public void installStaging(HubDeployStatusListener listener) {
-
         // i know it's weird that the final client installs staging, but it's needed
         AppConfig stagingConfig = hubConfig.getStagingAppConfig();
         HubAppDeployer stagingDeployer = new HubAppDeployer(getManageClient(), getAdminManager(),  listener, hubConfig.newFinalClient());
@@ -536,9 +536,16 @@ public class DataHubImpl implements DataHub {
         serverCommands.add(otherServersCommand);
         commandMap.put("mlServerCommands", serverCommands);
 
+        // this custom hub deploy is no longer in use, TODO remove
         //List<Command> moduleCommands = new ArrayList<>();
         //moduleCommands.add(new LoadUserFinalModulesCommand(hubConfig));
         //commandMap.put("mlModuleCommands", moduleCommands);
+
+        // this is the vanilla load-modules command from ml-gradle, to be included in this
+        // command list for install
+        List<Command> moduleCommands = new ArrayList<>();
+        moduleCommands.add(new LoadModulesCommand());
+        commandMap.put("mlModuleCommands", moduleCommands);
 
         List<Command> forestCommands = commandMap.get("mlForestCommands");
         DeployCustomForestsCommand deployCustomForestsCommand = (DeployCustomForestsCommand)forestCommands.get(0);

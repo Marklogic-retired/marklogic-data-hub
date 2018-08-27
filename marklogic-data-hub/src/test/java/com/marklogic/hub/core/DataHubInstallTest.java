@@ -77,7 +77,7 @@ public class DataHubInstallTest extends HubTestBase {
 
         	//creating directories for adding final schemas/ modules and trigger files
             Path userSchemasDir = Paths.get(PROJECT_PATH).resolve(HubProject.PATH_PREFIX).resolve("ml-schemas");
-            Path userModulesDir = project.getUserStagingModulesDir();
+            Path userModulesDir = project.getUserFinalModulesDir();
             Path userTriggersDir = project.getUserConfigDir().resolve("triggers");
 
             userSchemasDir.resolve("tde").toFile().mkdirs();

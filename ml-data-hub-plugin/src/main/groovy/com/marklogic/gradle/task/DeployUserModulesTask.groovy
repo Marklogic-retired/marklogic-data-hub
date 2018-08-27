@@ -17,7 +17,7 @@
 
 package com.marklogic.gradle.task
 
-import com.marklogic.hub.deploy.commands.LoadUserFinalModulesCommand
+import com.marklogic.client.ext.modulesloader.impl.DefaultModulesLoader
 import com.marklogic.hub.deploy.commands.LoadUserStagingModulesCommand
 import org.gradle.api.tasks.TaskAction
 
@@ -32,11 +32,11 @@ class DeployUserModulesTask extends HubTask {
         }
         def cmd = new LoadUserStagingModulesCommand(getHubConfig())
         // TODO: make this user configurable
-        cmd.setForceLoad(false);
+        cmd.setForceLoad(true);
 
         cmd.execute(getCommandContext())
 
-        cmd = new LoadUserFinalModulesCommand(getHubConfig())
+        cmd = new DefaultModulesLoader()
 
         cmd.execute(getCommandContext())
     }

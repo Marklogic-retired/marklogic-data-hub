@@ -513,6 +513,11 @@ public class HubTestBase {
                 getDataHub().initProject();
             }
 
+            // force module loads for new test runs.
+            File timestampDirectory = new File(projectDir + "/.tmp");
+            if ( timestampDirectory.exists() ) {
+                FileUtils.forceDelete(timestampDirectory);
+            }
             Path devProperties = Paths.get(".").resolve("gradle.properties");
             Path projectProperties = projectDir.toPath().resolve("gradle.properties");
             FileUtils.copyFile(devProperties.toFile(), projectProperties.toFile());
