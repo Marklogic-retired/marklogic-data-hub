@@ -171,7 +171,7 @@ public class DataHubImpl implements DataHub {
                     alteredString = StringUtils.rightPad(alteredString, 4, "0");
                 }
                 int ver = Integer.parseInt(alteredString.substring(0, 4));
-                if (!isNightly && ver < 9040) {
+                if (!isNightly && ver < 9050) {
                     return false;
                 }
             }
