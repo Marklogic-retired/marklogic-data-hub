@@ -57,6 +57,17 @@ local:check-then-remove-amp("http://marklogic.com/rest-api/models/document-model
 local:check-then-remove-amp("http://marklogic.com/rest-api/models/document-model-update", "remove-properties", "/data-hub/4/rest-api/models/document-model-update.xqy", $modules-db-name),
 local:check-then-remove-amp("http://marklogic.com/rest-api/models/document-model-update", "reset-quality", "/data-hub/4/rest-api/models/document-model-update.xqy", $modules-db-name),
 local:check-then-remove-amp("http://marklogic.com/rest-api/models/document-model-update", "cpf-config", "/data-hub/4/rest-api/models/document-model-update.xqy", $modules-db-name),
+
+local:check-then-remove-amp("http://marklogic.com/rest-api/models/config-query", "put", "/MarkLogic/rest-api/models/config-query-model.xqy", $modules-db-name),
+local:check-then-remove-amp("http://marklogic.com/rest-api/models/config-query", "post", "/MarkLogic/rest-api/models/config-query-model.xqy", $modules-db-name),
+local:check-then-remove-amp("http://marklogic.com/rest-api/models/config-query", "put-child", "/MarkLogic/rest-api/models/config-query-model.xqy", $modules-db-name),
+local:check-then-remove-amp("http://marklogic.com/rest-api/models/config-query", "post-child", "/MarkLogic/rest-api/models/config-query-model.xqy", $modules-db-name),
+local:check-then-remove-amp("http://marklogic.com/rest-api/models/config-query", "get", "/MarkLogic/rest-api/models/config-query-model.xqy", $modules-db-name),
+local:check-then-remove-amp("http://marklogic.com/rest-api/models/config-query", "get-child", "/MarkLogic/rest-api/models/config-query-model.xqy", $modules-db-name),
+local:check-then-remove-amp("http://marklogic.com/rest-api/models/config-query", "get-options", "/MarkLogic/rest-api/models/config-query-model.xqy", $modules-db-name),
+local:check-then-remove-amp("http://marklogic.com/rest-api/lib/search-util", "search-to-json", "/MarkLogic/rest-api/lib/search-util.xqy", $modules-db-name),
+local:check-then-remove-amp("http://marklogic.com/rest-api/lib/search-util", "search-from-json", "/MarkLogic/rest-api/lib/search-util.xqy", $modules-db-name),
+
 local:check-then-remove-amp("http://marklogic.com/rest-api/forestinfo", "get-forest-info", "/data-hub/4/rest-api/models/forest-info-model.xqy", $modules-db-name),
 local:check-then-remove-amp("http://marklogic.com/rest-api/models/search-model-update", "delete", "/data-hub/4/rest-api/models/search-model-update.xqy", $modules-db-name),
 local:check-then-remove-amp("http://marklogic.com/rest-api/models/search-model-update", "clear", "/data-hub/4/rest-api/models/search-model-update.xqy", $modules-db-name),

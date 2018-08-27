@@ -567,12 +567,12 @@
                     <set-transaction-mode>update</set-transaction-mode>
                 </match-query-param>
                 <match-accept any-of="application/json application/xml text/json text/xml */*">
-                    <dispatch>/MarkLogic/rest-api/endpoints/search-list-update.xqy</dispatch>
+                    <dispatch>/data-hub/4/rest-api/endpoints/search-list-update.xqy</dispatch>
                 </match-accept>
                 <match-header name="accept">
-                    <dispatch>/MarkLogic/rest-api/endpoints/unacceptable-type.xqy</dispatch>
+                    <dispatch>/data-hub/4/rest-api/endpoints/unacceptable-type.xqy</dispatch>
                 </match-header>
-                <dispatch>/MarkLogic/rest-api/endpoints/search-list-update.xqy</dispatch>
+                <dispatch>/data-hub/4/rest-api/endpoints/search-list-update.xqy</dispatch>
             </match-method>
             <match-query-param name="txid">
                 <set-transaction>$0</set-transaction>
@@ -582,12 +582,12 @@
                 <set-transaction-timestamp>$0</set-transaction-timestamp>
             </match-query-param>
             <match-accept any-of="application/json application/xml text/json text/xml multipart/mixed */*">
-                <dispatch>/MarkLogic/rest-api/endpoints/search-list-query.xqy</dispatch>
+                <dispatch>/data-hub/4/rest-api/endpoints/search-list-query.xqy</dispatch>
             </match-accept>
             <match-header name="accept">
-                <dispatch>/MarkLogic/rest-api/endpoints/unacceptable-type.xqy</dispatch>
+                <dispatch>/data-hub/4/rest-api/endpoints/unacceptable-type.xqy</dispatch>
             </match-header>
-            <dispatch>/MarkLogic/rest-api/endpoints/search-list-query.xqy</dispatch>
+            <dispatch>/data-hub/4/rest-api/endpoints/search-list-query.xqy</dispatch>
         </match-path>
 
         <match-path matches="^/(v1|LATEST)/suggest/?$">
