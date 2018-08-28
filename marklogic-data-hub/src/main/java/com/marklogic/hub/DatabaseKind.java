@@ -41,7 +41,6 @@ public enum DatabaseKind {
            "final",
            "jobs",
            "jobs",
-           "schemas",
            "staging_schemas",
            "final_schemas",
            "staging_triggers",
