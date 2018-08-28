@@ -178,6 +178,8 @@ class InstalledTests extends BaseTest {
         def inputDir = entityDir.resolve("input")
         inputDir.toFile().mkdirs()
         org.gradle.internal.impldep.org.apache.commons.io.FileUtils.copyDirectory(new File("src/test/resources/legacy-input-flow"), inputDir.resolve("legacy-input-flow").toFile())
+        // force load
+
 
         when:
         def result = runFailTask('mlLoadModules')

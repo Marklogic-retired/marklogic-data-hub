@@ -402,7 +402,9 @@ declare function service:generate-vars($model as map:map, $entity-type-name, $ma
       else
         map:get($property, "$ref")
     let $path-to-property :=
-      if (service:mapping-present($mapping, $property-name) and $parent-entity eq $entity-type-name) then (fn:concat("source.xpath('",service:map-value($property-name, $mapping), "')"))  else (fn:concat("source.xpath('/", $property-name, "')"))
+      if (service:mapping-present($mapping, $property-name) and $parent-entity eq $entity-type-name)
+      then (fn:concat("fn.head(source.xpath('",service:map-value($property-name, $mapping), "'))"))
+      else (fn:concat("fn.head(source.xpath('/", $property-name, "'))"))
     let $property-comment :=
       if (fn:empty($ref)) then ()
       else if (fn:contains($ref, "#/definitions")) then
@@ -474,7 +476,7 @@ declare function service:generate-vars($model as map:map, $entity-type-name, $ma
             " null;",
             "  if (" || service:get-property($path-to-property, $ref-name) || ") {",
             "    " || service:camel-case($property-name) || " = " || service:get-property($path-to-property, $ref-name) || ".map(function(item) {",
-            "      return makeReferenceObject('" || $ref-name || "', source.xpath('/"|| $property-name || "'));",
+            "      return makeReferenceObject('" || $ref-name || "', fn.head(source.xpath('/"|| $property-name || "')));",
             "    });",
             "  }"
           ), "&#10;")
