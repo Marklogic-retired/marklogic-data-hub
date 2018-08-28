@@ -519,6 +519,10 @@ public class HubTestBase {
             if ( timestampDirectory.exists() ) {
                 FileUtils.forceDelete(timestampDirectory);
             }
+            File finalTimestampDirectory = new File( "build/ml-javaclient-util");
+            if ( finalTimestampDirectory.exists() ) {
+                FileUtils.forceDelete(finalTimestampDirectory);
+            }
             Path devProperties = Paths.get(".").resolve("gradle.properties");
             Path projectProperties = projectDir.toPath().resolve("gradle.properties");
             FileUtils.copyFile(devProperties.toFile(), projectProperties.toFile());
