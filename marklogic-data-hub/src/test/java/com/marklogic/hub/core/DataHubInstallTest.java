@@ -137,6 +137,7 @@ public class DataHubInstallTest extends HubTestBase {
 
         //checking if modules are written to correct db
         Assert.assertNotNull(getModulesFile("/ext/sample-trigger.xqy"));
+
         Assert.assertNotNull(getFinalModulesFile("/ext/sample-trigger.xqy"));
 
         ////checking if tdes are written to correct db

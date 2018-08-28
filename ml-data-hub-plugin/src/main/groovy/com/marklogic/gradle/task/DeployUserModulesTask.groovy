@@ -36,8 +36,5 @@ class DeployUserModulesTask extends HubTask {
 
         cmd.execute(getCommandContext())
 
-        cmd = new DefaultModulesLoader()
-
-        cmd.execute(getCommandContext())
     }
 }

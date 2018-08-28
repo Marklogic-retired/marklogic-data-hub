@@ -36,10 +36,7 @@ import com.marklogic.hub.*;
 import com.marklogic.hub.deploy.HubAppDeployer;
 import com.marklogic.hub.deploy.commands.*;
 import com.marklogic.hub.deploy.util.HubDeployStatusListener;
-import com.marklogic.hub.error.CantUpgradeException;
-import com.marklogic.hub.error.DataHubConfigurationException;
-import com.marklogic.hub.error.InvalidDBOperationError;
-import com.marklogic.hub.error.ServerValidationException;
+import com.marklogic.hub.error.*;
 import com.marklogic.hub.util.Versions;
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.admin.AdminManager;
@@ -54,6 +51,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.client.HttpClientErrorException;
 
 import java.io.File;
@@ -122,7 +120,14 @@ public class DataHubImpl implements DataHub {
 
         InstallInfo installInfo = InstallInfo.create();
 
-        ResourcesFragment srf = getServerManager().getAsXml();
+        ResourcesFragment srf = null;
+        try {
+            srf = getServerManager().getAsXml();
+        } catch (HttpClientErrorException e) {
+            if (e.getStatusCode() == HttpStatus.UNAUTHORIZED) {
+                throw new DataHubSecurityNotInstalledException();
+            }
+        }
         installInfo.setAppServerExistent(DatabaseKind.STAGING, srf.resourceExists(hubConfig.getHttpName(DatabaseKind.STAGING)));
         installInfo.setAppServerExistent(DatabaseKind.FINAL, srf.resourceExists(hubConfig.getHttpName(DatabaseKind.FINAL)));
         installInfo.setAppServerExistent(DatabaseKind.JOB, srf.resourceExists(hubConfig.getHttpName(DatabaseKind.JOB)));
