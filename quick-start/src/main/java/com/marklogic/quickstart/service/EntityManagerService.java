@@ -123,7 +123,7 @@ public class EntityManagerService extends EnvironmentAware {
     }
 
     public EntityModel createEntity(String projectDir, EntityModel newEntity) throws IOException {
-        Scaffolding scaffolding = Scaffolding.create(projectDir, envConfig().getFinalClient());
+        Scaffolding scaffolding = Scaffolding.create(projectDir, envConfig().getReverseFlowClient());
         scaffolding.createEntity(newEntity.getName());
 
         if (newEntity.inputFlows != null) {
@@ -304,7 +304,7 @@ public class EntityManagerService extends EnvironmentAware {
     }
 
     public FlowModel createFlow(String projectDir, String entityName, FlowType flowType, FlowModel newFlow) throws IOException {
-        Scaffolding scaffolding = Scaffolding.create(projectDir, envConfig().getFinalClient());
+        Scaffolding scaffolding = Scaffolding.create(projectDir, envConfig().getReverseFlowClient());
         newFlow.entityName = entityName;
         if(newFlow.mappingName != null) {
             try {
@@ -319,7 +319,7 @@ public class EntityManagerService extends EnvironmentAware {
     }
 
     public void deleteFlow(String projectDir, String entityName, String flowName, FlowType flowType) throws IOException {
-        Scaffolding scaffolding = Scaffolding.create(projectDir, envConfig().getFinalClient());
+        Scaffolding scaffolding = Scaffolding.create(projectDir, envConfig().getReverseFlowClient());
         Path flowDir = scaffolding.getFlowDir(entityName, flowName, flowType);
         FileUtils.deleteDirectory(flowDir.toFile());
     }

@@ -170,7 +170,8 @@ public class LoadUserStagingModulesCommand extends AbstractCommand {
         modulesLoader.loadModules("classpath*:/ml-modules-final", new SearchOptionsFinder(), finalClient);
 
         //for now we'll use two different document managers
-        JSONDocumentManager entityDocMgr = finalClient.newJSONDocumentManager();
+        JSONDocumentManager finalEntityDocMgr = finalClient.newJSONDocumentManager();
+        JSONDocumentManager stagingEntityDocMgr = stagingClient.newJSONDocumentManager();
         JSONDocumentManager mappingDocMgr = finalClient.newJSONDocumentManager();
         DocumentWriteSet mappingDocumentWriteSet = mappingDocMgr.newWriteSet();
 
@@ -218,7 +219,10 @@ public class LoadUserStagingModulesCommand extends AbstractCommand {
                                     InputStream inputStream = r.getInputStream();
                                     StringHandle handle = new StringHandle(IOUtils.toString(inputStream));
                                     inputStream.close();
-                                    entityDocMgr.write("/entities/" + r.getFilename(), meta, handle);
+                                    finalEntityDocMgr.write("/entities/" + r.getFilename(), meta, handle);
+
+                                    // Uncomment to send entity model to staging db as well
+                                    // stagingEntityDocMgr.write("/entities/" + r.getFilename(), meta, handle);
                                     modulesManager.saveLastLoadedTimestamp(r.getFile(), new Date());
                                 }
                             }

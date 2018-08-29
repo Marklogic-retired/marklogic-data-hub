@@ -135,6 +135,14 @@ public class EnvironmentConfig {
         return _finalClient;
     }
 
+    @JsonIgnore
+    public DatabaseClient getReverseFlowClient() {
+        if (_finalClient == null) {
+            _finalClient = mlSettings.newReverseFlowClient();
+        }
+        return _finalClient;
+    }
+
     private DatabaseClient _jobClient = null;
     @JsonIgnore
     public DatabaseClient getJobClient() {
