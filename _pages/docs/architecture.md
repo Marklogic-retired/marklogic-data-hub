@@ -19,42 +19,39 @@ As far as maintaining data goes, DHF provides the following services:
 * records job and tracing metadata.
 * exposes code to operate upon data in the hub.
 
-## Databases
+## Servers and databases.
 
 In installing a data hub, the following databases are created:
 
-| Database    | Default Name     | Triggers DB       | Schema DB  |
-|-------------|------------------|-------------------|------------|
-| Staging     | data-hub-STAGING | TRIGGERS          | SCHEMAS    |
-| Final       | data-hub-FINAL   | TRIGGERS          | SCHEMAS    |
-| Jobs        | data-hub-JOBS    | TRIGGERS          | SCHEMAS    |
-| Triggers    | data-hub-TRIGGERS| none              | none       |
-| Modules     | data-hub-MODULES | none              | none       |
+* Staging.  The staging database contains data that has been ingested into DHF for further processing.
+  * Appserver:   data-hub-STAGING, port 8010.
+  * Content db:  data-hub-STAGING
+  * Modules db:  data-hub-staging-MODULES
+  * Triggers db: data-hub-staging-TRIGGERS
+  * Schemas db:  data-hub-staging-SCHEMAS
+
+* Final.  The final appserver is for downstream applications to access harmonized data.  harmonization flows write to the final database.
+
+  * Appserver:   data-hub-FINAL, port 8011.
+  * Content db:  data-hub-FINAL
+  * Triggers db: data-hub-final-TRIGGERS
+  * Modules db:  data-hub-final-MODULES
+  * Schemas db:  data-hub-final-SCHEMAS
+
+* Jobs.  The jobs subsystem stores records of job  (flow runs) activity and traces of what happened during flows runs.  Note that this appserver shares databases with STAGING.
+  * Appserver:   data-hub-JOBS, port 8011.
+  * Content db:  data-hub-JOBS
+  * Triggers db: data-hub-staging-TRIGGERS
+  * Modules db:  data-hub-staging-MODULES
+  * Schemas db:  data-hub-staging-SCHEMAS
 
 The names of these databases are all configurable using values in `gradle.properties`.
 
-Note: as of 3.1 there is no separate TRACING database.  JOBS holds tracing and jobs info.
-
-## Application Servers
-
-The following application servers are in use by a Data hub:
-
-| Appserver   | Default Name     | Default Port      | Modules DB |
-|-------------|------------------|-------------------|------------------|
-| Final       | data-hub-FINAL   | 8011              | data-hub-MODULES |
-| Staging     | data-hub-STAGING | 8010              | data-hub-MODULES |
-| Jobs        | data-hub-JOBS    | 8013              | data-hub-MODULES |
-
-Note: deployment of DHF also makes use of the MarkLogic management API on port 8002.
-
-Data Hub Framework creates the "Final" App Server as a provisioned location
-from which to serve your harmonized data. Data Hub Framework does not make use
-of this App Server itself.
-
+Note: as of 4.0.0 there is no separate TRACING database.  JOBS holds tracing and jobs info.
 
 ## REST Extensions
 
-The core of the DHF runs on MarkLogic.  This code is explosed to clients as REST API
+The core of the DHF runs on MarkLogic.  This code is exposed to clients as REST API
 extensions, which include both *transforms* and *service extensions*.  These extensions
 work identically to other [REST API Extensions](https://docs.marklogic.com/guide/rest-dev/extensions) except that they are provided as out-of-the-box for DHF use.
 
