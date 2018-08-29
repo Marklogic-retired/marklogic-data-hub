@@ -65,7 +65,7 @@ public class MappingManagerService extends EnvironmentAware {
 
     public MappingModel createMapping(String projectDir, MappingModel newMapping) throws IOException {
         mappingManager = MappingManager.getMappingManager(envConfig().getMlSettings());
-        Scaffolding scaffolding = Scaffolding.create(projectDir, envConfig().getFinalClient());
+        Scaffolding scaffolding = Scaffolding.create(projectDir, envConfig().getReverseFlowClient());
         scaffolding.createMappingDir(newMapping.getName());
         Path dir = envConfig().getMlSettings().getHubMappingsDir().resolve(newMapping.getName());
         Mapping mapping = mappingManager.createMappingFromJSON(newMapping.toJson());
