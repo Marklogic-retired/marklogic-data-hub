@@ -20,7 +20,7 @@ package com.marklogic.gradle.task
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
 
-import java.nio.file.Path
+import java.nio.file.Paths
 
 class ExportJobsTask extends HubTask {
     @Input
@@ -50,7 +50,7 @@ class ExportJobsTask extends HubTask {
             println("Data Hub is not installed.")
             return
         }
-        def exportPath = getHubConfig().hubConfigDir.getParent().resolve(filename)
+        def exportPath = Paths.get(getHubConfig().projectDir).resolve(filename)
         def jobExportResponse = jobManager.exportJobs(exportPath, jobIds)
         print jobExportResponse
     }
