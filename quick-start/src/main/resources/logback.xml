@@ -27,8 +27,8 @@
   </appender>
 
   <logger name="org.springframework" level="WARN"/>
-  <logger name="org.springframework.core.io.support" level="DEBUG"/>)
-  <logger name="org.springframework.context.annotation" level="DEBUG"/>)
+  <logger name="org.springframework.core.io.support" level="WARN"/>)
+  <logger name="org.springframework.context.annotation" level="WARN"/>)
   <logger name="org.apache.http" level="WARN"/>
 
   <logger name="com.marklogic.spring.batch.core.repository.dao.MarkLogicStepExecutionDao" level="WARN"/>
