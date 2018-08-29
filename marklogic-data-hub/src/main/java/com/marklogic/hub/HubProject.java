@@ -18,6 +18,7 @@ package com.marklogic.hub;
 
 import com.marklogic.hub.impl.HubProjectImpl;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Map;
 
@@ -160,4 +161,10 @@ public interface HubProject {
      * @param customTokens - some custom tokens to start with
      */
     void init(Map<String, String> customTokens);
+
+    /**
+     * Performs an upgrade to a pre-4.0 project by copying folders
+     * to their new positions as defined in hubproject.
+     */
+    void upgradeProject() throws IOException;
 }
