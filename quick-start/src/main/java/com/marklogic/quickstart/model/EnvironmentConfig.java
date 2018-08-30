@@ -98,8 +98,8 @@ public class EnvironmentConfig {
             .withProperties(overrides)
             .build();
         if (username != null) {
-            mlSettings.getAppConfig().setAppServicesUsername(username);
-            mlSettings.getAppConfig().setAppServicesPassword(password);
+            mlSettings.getStagingAppConfig().setAppServicesUsername(username);
+            mlSettings.getStagingAppConfig().setAppServicesPassword(password);
         }
         dataHub = DataHub.create(mlSettings);
 
@@ -131,6 +131,14 @@ public class EnvironmentConfig {
     public DatabaseClient getFinalClient() {
         if (_finalClient == null) {
             _finalClient = mlSettings.newFinalClient();
+        }
+        return _finalClient;
+    }
+
+    @JsonIgnore
+    public DatabaseClient getReverseFlowClient() {
+        if (_finalClient == null) {
+            _finalClient = mlSettings.newReverseFlowClient();
         }
         return _finalClient;
     }

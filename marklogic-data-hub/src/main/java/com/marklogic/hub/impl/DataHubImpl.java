@@ -21,6 +21,9 @@ import com.marklogic.appdeployer.command.Command;
 import com.marklogic.appdeployer.command.CommandMapBuilder;
 import com.marklogic.appdeployer.command.appservers.DeployOtherServersCommand;
 import com.marklogic.appdeployer.command.forests.DeployCustomForestsCommand;
+import com.marklogic.appdeployer.command.modules.LoadModulesCommand;
+import com.marklogic.appdeployer.command.security.*;
+import com.marklogic.appdeployer.impl.SimpleAppDeployer;
 import com.marklogic.client.FailedRequestException;
 import com.marklogic.client.admin.QueryOptionsManager;
 import com.marklogic.client.admin.ResourceExtensionsManager;
@@ -33,10 +36,7 @@ import com.marklogic.hub.*;
 import com.marklogic.hub.deploy.HubAppDeployer;
 import com.marklogic.hub.deploy.commands.*;
 import com.marklogic.hub.deploy.util.HubDeployStatusListener;
-import com.marklogic.hub.error.CantUpgradeException;
-import com.marklogic.hub.error.DataHubConfigurationException;
-import com.marklogic.hub.error.InvalidDBOperationError;
-import com.marklogic.hub.error.ServerValidationException;
+import com.marklogic.hub.error.*;
 import com.marklogic.hub.util.Versions;
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.admin.AdminManager;
@@ -51,6 +51,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.client.HttpClientErrorException;
 
 import java.io.File;
@@ -119,7 +120,14 @@ public class DataHubImpl implements DataHub {
 
         InstallInfo installInfo = InstallInfo.create();
 
-        ResourcesFragment srf = getServerManager().getAsXml();
+        ResourcesFragment srf = null;
+        try {
+            srf = getServerManager().getAsXml();
+        } catch (HttpClientErrorException e) {
+            if (e.getStatusCode() == HttpStatus.UNAUTHORIZED) {
+                throw new DataHubSecurityNotInstalledException();
+            }
+        }
         installInfo.setAppServerExistent(DatabaseKind.STAGING, srf.resourceExists(hubConfig.getHttpName(DatabaseKind.STAGING)));
         installInfo.setAppServerExistent(DatabaseKind.FINAL, srf.resourceExists(hubConfig.getHttpName(DatabaseKind.FINAL)));
         installInfo.setAppServerExistent(DatabaseKind.JOB, srf.resourceExists(hubConfig.getHttpName(DatabaseKind.JOB)));
@@ -255,7 +263,7 @@ public class DataHubImpl implements DataHub {
                     "    fn:matches(., \"/marklogic.rest.transform/(" + String.join("|", transforms) + ")/assets/(metadata\\.xml|transform\\.(xqy|sjs))\")\n" +
                     "  )\n" +
                     "] ! xdmp:document-delete(.)\n";
-            runInDatabase(query, hubConfig.getDbName(DatabaseKind.MODULES));
+            runInDatabase(query, hubConfig.getDbName(DatabaseKind.STAGING_MODULES));
         }
         catch(FailedRequestException e) {
             logger.error("Failed to clear user modules");
@@ -264,8 +272,8 @@ public class DataHubImpl implements DataHub {
         }
     }
 
-    public List<Command> getCommandList() {
-        Map<String, List<Command>> commandMap = getCommands();
+    public List<Command> getStagingCommandList() {
+        Map<String, List<Command>> commandMap = getStagingCommands();
         List<Command> commands = new ArrayList<>();
         for (String name : commandMap.keySet()) {
             commands.addAll(commandMap.get(name));
@@ -273,11 +281,30 @@ public class DataHubImpl implements DataHub {
         return commands;
     }
 
+    public List<Command> getFinalCommandList() {
+        Map<String, List<Command>> commandMap = getFinalCommands();
+        List<Command> commands = new ArrayList<>();
+        for (String name : commandMap.keySet()) {
+            commands.addAll(commandMap.get(name));
+        }
+        return commands;
+    }
+
+    public List<Command> getSecurityCommandList() {
+        Map<String, List<Command>> commandMap = getSecurityCommands();
+        List<Command> commands = new ArrayList<>();
+        for (String name : commandMap.keySet()) {
+            commands.addAll(commandMap.get(name));
+        }
+        return commands;
+    }
+
+
     @Override public HashMap runPreInstallCheck() {
        return runPreInstallCheck(null);
     }
 
-    @Override public HashMap runPreInstallCheck(Versions versions) {
+    @Override public HashMap<String, Boolean> runPreInstallCheck(Versions versions) {
 
 
         Map<Integer, String> portsInUse = null;
@@ -288,7 +315,8 @@ public class DataHubImpl implements DataHub {
             logger.warn("Used non-existing user to verify data hub.  Usually this means a fresh system, ready to install.");
             HashMap response = new HashMap();
             response.put("serverVersion", serverVersion);
-            response.put("serverVersionOk", serverVersionOk);
+            // no server means give it a shot.
+            response.put("serverVersionOk", true);
             response.put("stagingPortInUse", stagingPortInUse);
             response.put("stagingPortInUseBy", stagingPortInUseBy);
             response.put("finalPortInUse", finalPortInUse);
@@ -355,14 +383,42 @@ public class DataHubImpl implements DataHub {
 
         logger.warn("Installing the Data Hub into MarkLogic");
 
-        AppConfig config = hubConfig.getAppConfig();
-        HubAppDeployer deployer = new HubAppDeployer(getManageClient(), getAdminManager(),  listener, hubConfig.newStagingClient());
-        deployer.setCommands(getCommandList());
-        deployer.deploy(config);
+        AppConfig roleConfig = hubConfig.getStagingAppConfig();
+        SimpleAppDeployer roleDeployer = new SimpleAppDeployer(getManageClient(), getAdminManager());
+        roleDeployer.setCommands(getSecurityCommandList());
+        roleDeployer.deploy(roleConfig);
+
+        AppConfig finalConfig = hubConfig.getFinalAppConfig();
+        HubAppDeployer finalDeployer = new HubAppDeployer(getManageClient(), getAdminManager(), listener, hubConfig.newStagingClient());
+        finalDeployer.setFinalCommandsList(getFinalCommandList());
+
+        AppConfig stagingConfig = hubConfig.getStagingAppConfig();
+        finalDeployer.setStagingCommandsList(getStagingCommandList());
+
+        finalDeployer.deployAll(finalConfig, stagingConfig);
+    }
+
+    @Override
+    public void installFinal(HubDeployStatusListener listener) {
+
+        logger.warn("Installing the Data Hub into MarkLogic");
+        AppConfig finalConfig = hubConfig.getFinalAppConfig();
+        HubAppDeployer finalDeployer = new HubAppDeployer(getManageClient(), getAdminManager(), listener, hubConfig.newFinalClient());
+        finalDeployer.setCommands(getFinalCommandList());
+        finalDeployer.deploy(finalConfig);
+    }
+
+    @Override
+    public void installStaging(HubDeployStatusListener listener) {
+        // i know it's weird that the final client installs staging, but it's needed
+        AppConfig stagingConfig = hubConfig.getStagingAppConfig();
+        HubAppDeployer stagingDeployer = new HubAppDeployer(getManageClient(), getAdminManager(),  listener, hubConfig.newFinalClient());
+        stagingDeployer.setCommands(getStagingCommandList());
+        stagingDeployer.deploy(stagingConfig);
     }
 
     @Override public void updateIndexes() {
-        AppConfig config = hubConfig.getAppConfig();
+        AppConfig config = hubConfig.getStagingAppConfig();
         HubAppDeployer deployer = new HubAppDeployer(getManageClient(), getAdminManager(), null, hubConfig.newStagingClient());
         List<Command> commands = new ArrayList<>();
         commands.add(new DeployHubDatabasesCommand(hubConfig));
@@ -382,13 +438,30 @@ public class DataHubImpl implements DataHub {
      * @param listener - the callback method to receive status updates
      */
     @Override public void uninstall(HubDeployStatusListener listener) {
-        logger.warn("Uninstalling the Data Hub from MarkLogic");
+        logger.warn("Uninstalling the Data Hub and Final Databases/Servers from MarkLogic");
 
-        AppConfig config = hubConfig.getAppConfig();
-        HubAppDeployer deployer = new HubAppDeployer(getManageClient(), getAdminManager(), listener, hubConfig.newStagingClient());
-        deployer.setCommands(getCommandList());
-        deployer.undeploy(config);
+        uninstallFinal(null);
+        uninstallStaging(listener);
     }
+
+    @Override
+    public void uninstallStaging(HubDeployStatusListener listener) {
+
+        AppConfig config = hubConfig.getStagingAppConfig();
+        HubAppDeployer stagingDeployer = new HubAppDeployer(getManageClient(), getAdminManager(), listener, hubConfig.newStagingClient());
+        stagingDeployer.setCommands(getStagingCommandList());
+        stagingDeployer.undeploy(config);
+    }
+
+    @Override
+    public void uninstallFinal(HubDeployStatusListener listener) {
+
+        AppConfig finalAppConfig = hubConfig.getFinalAppConfig();
+        HubAppDeployer finalDeployer = new HubAppDeployer(getManageClient(), getAdminManager(), listener, hubConfig.newFinalClient());
+        finalDeployer.setCommands(getFinalCommandList());
+        finalDeployer.undeploy(finalAppConfig);
+    }
+
 
     private void runInDatabase(String query, String databaseName) {
         ServerEvaluationCall eval = hubConfig.newModulesDbClient().newServerEval();
@@ -403,21 +476,22 @@ public class DataHubImpl implements DataHub {
         eval.xquery(xqy).eval();
     }
 
-    private Map<String, List<Command>> getCommands() {
-        Map<String, List<Command>> commandMap = new CommandMapBuilder().buildCommandMap();
 
-        List<Command> securityCommands = commandMap.get("mlSecurityCommands");
-        securityCommands.set(0, new DeployHubRolesCommand(hubConfig));
-        securityCommands.set(1, new DeployHubUsersCommand(hubConfig));
-        // mlDeploySecurity is not finding these classes.
-        commandMap.put("mlSecurityCommands", securityCommands);
+    private Map<String, List<Command>> getStagingCommands() {
+        Map<String, List<Command>> commandMap = new CommandMapBuilder().buildCommandMap();
 
         List<Command> dbCommands = new ArrayList<>();
         dbCommands.add(new DeployHubDatabasesCommand(hubConfig));
-        dbCommands.add(new DeployHubOtherDatabasesCommand(hubConfig));
-        dbCommands.add(new DeployHubTriggersDatabaseCommand(hubConfig));
-        dbCommands.add(new DeployHubSchemasDatabaseCommand(hubConfig));
+        dbCommands.add(new DeployHubStagingTriggersDatabaseCommand(hubConfig));
+        dbCommands.add(new DeployHubStagingSchemasDatabaseCommand(hubConfig));
         commandMap.put("mlDatabaseCommands", dbCommands);
+
+        // staging deploys amps.
+        List<Command> securityCommands = commandMap.get("mlSecurityCommands");
+        securityCommands.set(0, new DeployHubAmpsCommand(hubConfig));
+        securityCommands.set(1, new DeployHubRolesCommand(hubConfig));
+        securityCommands.set(2, new DeployHubUsersCommand(hubConfig));
+        commandMap.put("mlSecurityCommands", securityCommands);
 
         // don't deploy rest api servers
         commandMap.remove("mlRestApiCommands");
@@ -431,7 +505,46 @@ public class DataHubImpl implements DataHub {
 
         List<Command> moduleCommands = new ArrayList<>();
         moduleCommands.add(new LoadHubModulesCommand(hubConfig));
-        moduleCommands.add(new LoadUserModulesCommand(hubConfig));
+        moduleCommands.add(new LoadUserStagingModulesCommand(hubConfig));
+        commandMap.put("mlModuleCommands", moduleCommands);
+
+        List<Command> forestCommands = commandMap.get("mlForestCommands");
+        DeployCustomForestsCommand deployCustomForestsCommand = (DeployCustomForestsCommand)forestCommands.get(0);
+        deployCustomForestsCommand.setCustomForestsPath(hubConfig.getCustomForestPath());
+
+        return commandMap;
+    }
+
+    private Map<String, List<Command>> getFinalCommands() {
+        Map<String, List<Command>> commandMap = new CommandMapBuilder().buildCommandMap();
+
+        // final bootstraps users and roles for the hub
+        List<Command> securityCommands = commandMap.get("mlSecurityCommands");
+        securityCommands.set(0, new DeployUserRolesCommand(hubConfig));
+        securityCommands.set(1, new DeployUserUsersCommand(hubConfig));
+
+        commandMap.put("mlSecurityCommands", securityCommands);
+
+        List<Command> dbCommands = new ArrayList<>();
+        dbCommands.add(new DeployHubOtherDatabasesCommand(hubConfig));
+        dbCommands.add(new DeployHubFinalTriggersDatabaseCommand(hubConfig));
+        dbCommands.add(new DeployHubFinalSchemasDatabaseCommand(hubConfig));
+        commandMap.put("mlDatabaseCommands", dbCommands);
+
+        // don't deploy rest api servers
+        commandMap.remove("mlRestApiCommands");
+
+        List<Command> serverCommands = new ArrayList<>();
+        serverCommands.add(new DeployUserServersCommand(hubConfig));
+        DeployOtherServersCommand otherServersCommand = new DeployOtherServersCommand();
+        otherServersCommand.setFilenamesToIgnore("staging-server.json", "final-server.json", "job-server.json", "trace-server.json");
+        serverCommands.add(otherServersCommand);
+        commandMap.put("mlServerCommands", serverCommands);
+
+        // this is the vanilla load-modules command from ml-gradle, to be included in this
+        // command list for install
+        List<Command> moduleCommands = new ArrayList<>();
+        moduleCommands.add(new LoadModulesCommand());
         commandMap.put("mlModuleCommands", moduleCommands);
 
         List<Command> forestCommands = commandMap.get("mlForestCommands");
@@ -450,6 +563,23 @@ public class DataHubImpl implements DataHub {
             portsInUse.put(port, s);
         });
         return portsInUse;
+    }
+
+    private Map<String, List<Command>> getSecurityCommands() {
+        Map<String, List<Command>> commandMap = new HashMap<>();
+        List<Command> securityCommands = new ArrayList<Command>();
+        securityCommands.add(new DeployRolesCommand());
+        securityCommands.add(new DeployUsersCommand());
+        securityCommands.add(new DeployCertificateTemplatesCommand());
+        securityCommands.add(new DeployCertificateAuthoritiesCommand());
+        securityCommands.add(new InsertCertificateHostsTemplateCommand());
+        securityCommands.add(new DeployExternalSecurityCommand());
+        securityCommands.add(new DeployPrivilegesCommand());
+        securityCommands.add(new DeployProtectedCollectionsCommand());
+        securityCommands.add(new DeployProtectedPathsCommand());
+        securityCommands.add(new DeployQueryRolesetsCommand());
+        commandMap.put("mlSecurityCommands", securityCommands);
+        return commandMap;
     }
 
 
@@ -579,7 +709,7 @@ public class DataHubImpl implements DataHub {
                 updatedFlows.addAll(flows);
             }
 
-            runInDatabase("cts:uris(\"\", (), cts:and-not-query(cts:collection-query(\"hub-core-module\"), cts:document-query((\"/com.marklogic.hub/config.sjs\", \"/com.marklogic.hub/config.xqy\")))) ! xdmp:document-delete(.)", hubConfig.getDbName(DatabaseKind.MODULES));
+            runInDatabase("cts:uris(\"\", (), cts:and-not-query(cts:collection-query(\"hub-core-module\"), cts:document-query((\"/com.marklogic.hub/config.sjs\", \"/com.marklogic.hub/config.xqy\")))) ! xdmp:document-delete(.)", hubConfig.getDbName(DatabaseKind.STAGING_MODULES));
 
             if (isHubInstalled) {
                 // install hub modules into MarkLogic

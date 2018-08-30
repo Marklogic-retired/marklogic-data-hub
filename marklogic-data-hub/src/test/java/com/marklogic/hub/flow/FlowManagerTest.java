@@ -212,7 +212,7 @@ public class FlowManagerTest extends HubTestBase {
 
     @Test
     public void testGetFlows() {
-        clearDatabases(HubConfig.DEFAULT_MODULES_DB_NAME);
+        getDataHub().clearUserModules();
 
         installHubModules();
 
@@ -313,7 +313,7 @@ public class FlowManagerTest extends HubTestBase {
             .withFlow(flow1)
             .withBatchSize(10)
             .withThreadCount(1)
-            .withSourceClient(getHubFlowRunnerConfig().newFinalClient())
+            .withSourceClient(getHubFlowRunnerConfig().newReverseFlowClient())
             .withDestinationDatabase(HubConfig.DEFAULT_STAGING_NAME);
         flowRunner.run();
         flowRunner.awaitCompletion();

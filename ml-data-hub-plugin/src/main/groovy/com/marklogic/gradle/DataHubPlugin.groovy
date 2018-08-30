@@ -17,6 +17,7 @@
 
 package com.marklogic.gradle
 
+import com.marklogic.appdeployer.command.Command
 import com.marklogic.appdeployer.impl.SimpleAppDeployer
 import com.marklogic.gradle.task.*
 import com.marklogic.hub.DataHub
@@ -83,13 +84,17 @@ class DataHubPlugin implements Plugin<Project> {
             description: "Generates TDE Templates from the entity definition files. It is possible to only generate TDE templates" +
                 " for specific entities by setting the (comma separated) project property 'entityNames'. E.g. -PentityNames=Entity1,Entity2")
 
-        project.tasks.replace("mlLoadModules", DeployUserModulesTask)
+        project.task("hubDeployUserModules", group: deployGroup, type: DeployUserModulesTask,
+            description: "Installs user modules into the STAGING modules database for DHF extension.")
+        project.tasks.mlLoadModules.getDependsOn().add("hubDeployUserModules")
         project.tasks.replace("mlWatch", HubWatchTask)
         project.tasks.replace("mlDeleteModuleTimestampsFile", DeleteHubModuleTimestampsFileTask)
         project.tasks.replace("mlDeployRoles", DeployHubRolesTask);
         project.tasks.replace("mlDeployUsers", DeployHubUsersTask);
+        project.tasks.replace("mlDeployAmps", DeployHubAmpsTask);
         project.tasks.replace("mlUndeployRoles", UndeployHubRolesTask);
         project.tasks.replace("mlUndeployUsers", UndeployHubUsersTask);
+        project.tasks.replace("mlUndeployAmps", UndeployHubAmpsTask);
         project.tasks.mlDeploySecurity.getDependsOn().add("mlDeployRoles");
         project.tasks.mlDeploySecurity.getDependsOn().add("mlDeployUsers");
         project.tasks.mlUndeploySecurity.getDependsOn().add("mlUndeployRoles");
@@ -115,7 +120,7 @@ class DataHubPlugin implements Plugin<Project> {
 
         def hubConfig = HubConfigBuilder.newHubConfigBuilder(projectDir)
             .withProperties(properties)
-            .withAppConfig(extensions.getByName("mlAppConfig"))
+            .withStagingAppConfig(extensions.getByName("mlAppConfig"))
             .withAdminConfig(extensions.getByName("mlAdminConfig"))
             .withAdminManager(extensions.getByName("mlAdminManager"))
             .withManageConfig(extensions.getByName("mlManageConfig"))
@@ -132,7 +137,9 @@ class DataHubPlugin implements Plugin<Project> {
         if (mlAppDeployer == null) {
             throw new RuntimeException("You must apply the ml-gradle plugin before the ml-datahub plugin.")
         }
-
-        mlAppDeployer.setCommands(((DataHubImpl)dataHub).getCommandList())
+        List <Command> allCommands = new ArrayList()
+        allCommands.addAll(((DataHubImpl)dataHub).getFinalCommandList())
+        allCommands.addAll(((DataHubImpl)dataHub).getStagingCommandList())
+        mlAppDeployer.setCommands(allCommands)
     }
 }

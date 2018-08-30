@@ -66,8 +66,9 @@ abstract class HubTask extends DefaultTask {
     }
 
     @Internal
+    // all the groovy tasks that getFinalClient actually need the DHF modules.
     DatabaseClient getFinalClient() {
-        return getHubConfig().newFinalClient()
+        return getHubConfig().newReverseFlowClient()
     }
 
     @Internal

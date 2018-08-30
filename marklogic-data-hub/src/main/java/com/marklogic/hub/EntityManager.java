@@ -56,5 +56,8 @@ public interface EntityManager {
      * required ELS configurations to support those properties.
      * @return - true if successfully saved, false if it did not
      */
-    public boolean savePii();
+    boolean savePii();
+
+    boolean deployFinalQueryOptions();
+    boolean deployStagingQueryOptions();
 }

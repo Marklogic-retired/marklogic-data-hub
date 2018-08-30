@@ -33,7 +33,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 public class MlcpRunner extends ProcessRunner {
@@ -87,8 +86,8 @@ public class MlcpRunner extends ProcessRunner {
             }
 
             // Assume that the HTTP credentials will work for mlcp
-            bean.setUsername(hubConfig.getAppConfig().getAppServicesUsername());
-            bean.setPassword(hubConfig.getAppConfig().getAppServicesPassword());
+            bean.setUsername(hubConfig.getStagingAppConfig().getAppServicesUsername());
+            bean.setPassword(hubConfig.getStagingAppConfig().getAppServicesPassword());
 
             File file = new File(mlcpOptions.get("input_file_path").asText());
             String canonicalPath = file.getCanonicalPath();

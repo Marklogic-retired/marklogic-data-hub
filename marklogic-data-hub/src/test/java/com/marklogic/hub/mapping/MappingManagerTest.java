@@ -26,9 +26,7 @@ import com.marklogic.hub.scaffold.impl.ScaffoldingImpl;
 import com.marklogic.hub.util.FileUtil;
 import com.marklogic.hub.util.HubModuleManager;
 import org.apache.commons.io.FileUtils;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.*;
 import org.xml.sax.SAXException;
 
 import java.io.File;
@@ -48,14 +46,19 @@ public class MappingManagerTest extends HubTestBase {
     private        MappingManager manager = MappingManager.getMappingManager(getHubAdminConfig());
     private        String mappingName = "my-fun-test";
 
-    @Before
-    public void clearDbs() {
-        deleteProjectDir();
+    @BeforeEach
+    public void setup() {
         basicSetup();
-        //clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_MODULES_DB_NAME);
+        //clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_STAGING_MODULES_DB_NAME);
         //installHubModules();
-        getPropsMgr().deletePropertiesFile();
+        //getPropsMgr().deletePropertiesFile();
     }
+
+    @AfterEach
+    public void teardown() {
+        deleteProjectDir();
+    }
+
 
     @Test
     public void createMapping() {
@@ -109,6 +112,8 @@ public class MappingManagerTest extends HubTestBase {
         copyTestMap();
         //Now let's get the same mapping, but out of band off disk as JSON
         String json = manager.getMappingAsJSON(mappingName);
+
+        logger.debug(json);
         assertTrue(json.length() == 253);
         //now let's see if this parses properly
         ObjectMapper mapper = new ObjectMapper();

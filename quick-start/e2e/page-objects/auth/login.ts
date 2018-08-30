@@ -111,12 +111,8 @@ export class LoginPage extends AppPage {
     return element(by.name('stagingHttpName'));
   }
 
-  get stagingAppserverName() {
-    return element(by.css('mdl-textfield[label="Staging Appserver Name"] input'));
-  }
-
-  get modulesDbName() {
-    return element(by.css('mdl-textfield[label="Modules Database Name"] input'));
+  advancedSettingsValue(labelName: string) {
+    return element(by.css(`mdl-textfield[label="${labelName}"] input`));
   }
 
   clickRestoreDefaults() {

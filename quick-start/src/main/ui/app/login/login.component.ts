@@ -356,15 +356,18 @@ export class LoginComponent implements OnInit {
     const name = this.initSettings.name;
     this.initSettings.stagingHttpName = name + '-STAGING';
     this.initSettings.stagingDbName = name + '-STAGING';
+    this.initSettings.stagingModulesDbName = name + '-staging-MODULES';
+    this.initSettings.stagingTriggersDbName = name + '-staging-TRIGGERS';
+    this.initSettings.stagingSchemasDbName = name + '-staging-SCHEMAS';
     this.initSettings.finalHttpName = name + '-FINAL';
     this.initSettings.finalDbName = name + '-FINAL';
+    this.initSettings.finalModulesDbName = name + '-final-MODULES';
+    this.initSettings.finalTriggersDbName = name + '-final-TRIGGERS';
+    this.initSettings.finalSchemasDbName = name + '-final-SCHEMAS';
     this.initSettings.traceHttpName = name + '-JOBS';
     this.initSettings.traceDbName = name + '-JOBS';
     this.initSettings.jobHttpName = name + '-JOBS';
     this.initSettings.jobDbName = name + '-JOBS';
-    this.initSettings.modulesDbName = name + '-MODULES';
-    this.initSettings.triggersDbName = name + '-TRIGGERS';
-    this.initSettings.schemasDbName = name + '-SCHEMAS';
   }
 
   hubUpdateUrl() {

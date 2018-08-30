@@ -90,7 +90,7 @@ public class ProjectsController {
             HubConfig config = HubConfigBuilder.newHubConfigBuilder(project.path)
                 .build();
             config = om.readerForUpdating(config).readValue(hubConfig);
-            AppConfig appConfig = config.getAppConfig();
+            AppConfig appConfig = config.getStagingAppConfig();
             if (hubConfig.get("host") != null) {
                 appConfig.setHost(hubConfig.get("host").asText());
             }
@@ -100,7 +100,7 @@ public class ProjectsController {
             project.initialize(config);
             return project;
         }
-        catch (IOException e) {
+        catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException(e);
         }

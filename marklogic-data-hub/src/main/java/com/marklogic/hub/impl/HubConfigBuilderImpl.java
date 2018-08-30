@@ -62,7 +62,9 @@ public class HubConfigBuilderImpl implements HubConfigBuilder {
     private ManageClient manageClient;
     private AdminConfig adminConfig;
     private AdminManager adminManager;
-    private AppConfig appConfig;
+    private AppConfig stagingAppConfig;
+    private AppConfig finalAppConfig;
+
 
     public HubConfigBuilderImpl(String projectDir) {
         this.projectDir = projectDir;
@@ -85,8 +87,14 @@ public class HubConfigBuilderImpl implements HubConfigBuilder {
     }
 
     @Deprecated
-    @Override public HubConfigBuilder withAppConfig(AppConfig appConfig) {
-        this.appConfig = appConfig;
+    @Override public HubConfigBuilder withStagingAppConfig(AppConfig appConfig) {
+        this.stagingAppConfig = appConfig;
+        return this;
+    }
+
+    @Deprecated
+    @Override public HubConfigBuilder withFinalAppConfig(AppConfig appConfig) {
+        this.finalAppConfig = appConfig;
         return this;
     }
 
@@ -134,12 +142,21 @@ public class HubConfigBuilderImpl implements HubConfigBuilder {
 
         SimplePropertySource propertySource = new SimplePropertySource(actualProperties);
 
-        if (appConfig != null) {
-            hubConfig.setAppConfig(appConfig);
+        if (stagingAppConfig != null) {
+            hubConfig.setStagingAppConfig(stagingAppConfig);
         }
         else {
-            hubConfig.setAppConfig(new DefaultAppConfigFactory(propertySource).newAppConfig());
+            hubConfig.setStagingAppConfig(new DefaultAppConfigFactory(propertySource).newAppConfig());
         }
+        hubConfig.getStagingAppConfig().setSortOtherDatabaseByDependencies(false);
+
+        if (finalAppConfig != null) {
+            hubConfig.setFinalAppConfig(finalAppConfig);
+        }
+        else {
+            hubConfig.setFinalAppConfig(new DefaultAppConfigFactory(propertySource).newAppConfig());
+        }
+        hubConfig.getFinalAppConfig().setSortOtherDatabaseByDependencies(false);
 
         if (adminConfig != null) {
             hubConfig.setAdminConfig(adminConfig);

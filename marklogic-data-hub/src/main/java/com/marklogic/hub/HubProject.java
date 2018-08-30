@@ -27,8 +27,9 @@ import java.util.Map;
  * This handles what is initially created on disk for the project.
  */
 public interface HubProject {
-    String HUB_CONFIG_DIR = "hub-internal-config";
-    String USER_CONFIG_DIR = "user-config";
+    String PATH_PREFIX = "src/main/";
+    String HUB_CONFIG_DIR = PATH_PREFIX + "hub-internal-config";
+    String USER_CONFIG_DIR = PATH_PREFIX + "ml-config";
 
     /**
      * Creates a HubProject object and returns it in the base project directory
@@ -68,6 +69,12 @@ public interface HubProject {
      * @return the path for the hub's database directory
      */
     Path getHubDatabaseDir();
+
+    /**
+     * Gets the path for the hub/staging schemas directory
+     * @return the path for the hub/staging schemas directory
+     */
+    Path getHubSchemasDir();
 
     /**
      * Gets the path for the hub servers directory
@@ -122,6 +129,24 @@ public interface HubProject {
      * @return the path for the entity's database directory
      */
     Path getEntityDatabaseDir();
+
+    /**
+     * Gets the path for the hub staging modules
+     * @return the path for the hub staging modules
+     */
+    Path getHubStagingModulesDir();
+
+    /**
+     * Gets the path for the user staging modules
+     * @return the path for the user staging modules
+     */
+    Path getUserStagingModulesDir();
+
+    /**
+     * Gets the path for the user final modules
+     * @return the path for the user final modules
+     */
+    Path getUserFinalModulesDir();
 
     /**
      * Checks if the project has been initialized or not

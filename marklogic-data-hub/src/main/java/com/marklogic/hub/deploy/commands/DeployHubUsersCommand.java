@@ -33,8 +33,7 @@ public class DeployHubUsersCommand extends DeployUsersCommand {
     @Override
     protected File[] getResourceDirs(CommandContext context) {
         return new File[] {
-            hubConfig.getHubSecurityDir().resolve("users").toFile(),
-            hubConfig.getUserSecurityDir().resolve("users").toFile()
+            hubConfig.getHubSecurityDir().resolve("users").toFile()
         };
     }
 }

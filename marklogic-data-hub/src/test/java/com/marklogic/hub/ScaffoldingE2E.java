@@ -137,6 +137,7 @@ public class ScaffoldingE2E extends HubTestBase {
 
         if (useEsModel) {
             try {
+                // FIXME every time the codegen changes these assertions break.  is that what we really want?
                 assertEquals(
                     getResource("scaffolding-test/es-" + flowType.toString() + "-content." + codeFormat.toString())
                         .replaceAll("\\s+", " ")
