@@ -1,8 +1,8 @@
 package com.marklogic.quickstart.auth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.google.gson.Gson;
+import okhttp3.internal.connection.ConnectInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
@@ -12,21 +12,27 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class LoginFailureHandler implements AuthenticationFailureHandler {
 
     public LoginFailureHandler() {
     }
 
-    @Autowired
-    private ObjectMapper customObjectMapper;
-
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
                                         AuthenticationException exception) throws IOException, ServletException {
-        Exception error = (Exception) request.getSession().getAttribute("SPRING_SECURITY_LAST_EXCEPTION");
 
-        response.getOutputStream().print(exception.getMessage());
+        Map<String, String> output = new LinkedHashMap<String, String>();
+        output.put("message", exception.getMessage());
+        String json = new Gson().toJson(output);
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        response.getWriter().write(json);
+
+
     }
 
 }
