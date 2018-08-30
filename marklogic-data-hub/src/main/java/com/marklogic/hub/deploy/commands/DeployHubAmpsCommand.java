@@ -26,6 +26,7 @@ import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.error.DataHubConfigurationException;
 import com.marklogic.mgmt.ManageConfig;
+import org.apache.commons.io.IOUtils;
 import org.springframework.core.io.ClassPathResource;
 
 import java.io.File;
@@ -56,7 +57,10 @@ public class DeployHubAmpsCommand extends DeployAmpsCommand {
         //new AmpsInstaller(securityStagingClient).installAmps(stagingModulesDatabaseName);
         ServerEvaluationCall call = installerClient.newServerEval();
         try (InputStream is = new ClassPathResource("installer-util/install-amps.xqy").getInputStream()) {
-            call.xquery( new InputStreamHandle(is));
+            String ampCall = IOUtils.toString(is, "utf-8");
+            is.close();
+            ampCall.replace("data-hub-staging-MODULES", stagingModulesDatabaseName);
+            call.xquery(ampCall);
             call.eval();
         } catch (IOException e) {
             throw new DataHubConfigurationException(e);
@@ -78,7 +82,10 @@ public class DeployHubAmpsCommand extends DeployAmpsCommand {
         //new AmpsInstaller(securityStagingClient).unInstallAmps(stagingModulesDatabaseName);
         ServerEvaluationCall call = installerClient.newServerEval();
         try (InputStream is = new ClassPathResource("installer-util/uninstall-amps.xqy").getInputStream()) {
-            call.xquery(new InputStreamHandle(is));
+            String ampCall = IOUtils.toString(is, "utf-8");
+            is.close();
+            ampCall.replace("data-hub-staging-MODULES", stagingModulesDatabaseName);
+            call.xquery(ampCall);
             call.eval();
         } catch (IOException e) {
             throw new DataHubConfigurationException(e);
