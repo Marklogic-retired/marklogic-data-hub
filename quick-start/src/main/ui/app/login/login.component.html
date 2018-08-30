@@ -337,6 +337,15 @@
                   <tr>
                     <td>Job Forests Installed:</td><td><i class="fa" [ngClass]="getInstalledIcon(currentEnvironment.installInfo.jobForestsExist)"></i></td>
                   </tr>
+                  <tr>
+                    <td>Staging Modules DB Installed:</td><td><i class="fa" [ngClass]="getInstalledIcon(currentEnvironment.installInfo.stagingModulesExist)"></i></td>
+                  </tr>
+                  <tr>
+                    <td>Staging Schemas DB Installed:</td><td><i class="fa" [ngClass]="getInstalledIcon(currentEnvironment.installInfo.stagingSchemasExist)"></i></td>
+                  </tr>
+                  <tr>
+                    <td>Staging Triggers DB Installed:</td><td><i class="fa" [ngClass]="getInstalledIcon(currentEnvironment.installInfo.stagingTriggersExist)"></i></td>
+                  </tr>
                 </tbody>
               </table>
               <div class="action-button center-text">
