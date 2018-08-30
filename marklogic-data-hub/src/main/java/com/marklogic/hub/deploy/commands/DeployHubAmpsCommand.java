@@ -58,7 +58,7 @@ public class DeployHubAmpsCommand extends DeployAmpsCommand {
         try (InputStream is = new ClassPathResource("installer-util/install-amps.xqy").getInputStream()) {
             String ampCall = new InputStreamHandle(is).toString();
             is.close();
-            ampCall.replace("data-hub-staging-MODULES", hubConfig.getDbName(DatabaseKind.STAGING_MODULES));
+            ampCall.replace("data-hub-staging-MODULES", stagingModulesDatabaseName);
             call.xquery(ampCall);
             call.eval();
         } catch (IOException e) {
@@ -83,7 +83,7 @@ public class DeployHubAmpsCommand extends DeployAmpsCommand {
         try (InputStream is = new ClassPathResource("installer-util/uninstall-amps.xqy").getInputStream()) {
             String ampCall = new InputStreamHandle(is).toString();
             is.close();
-            ampCall.replace("data-hub-staging-MODULES", hubConfig.getDbName(DatabaseKind.STAGING_MODULES));
+            ampCall.replace("data-hub-staging-MODULES", stagingModulesDatabaseName);
             call.xquery(ampCall);
             call.eval();
         } catch (IOException e) {
