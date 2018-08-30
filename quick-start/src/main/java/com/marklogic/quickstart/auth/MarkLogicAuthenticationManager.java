@@ -86,7 +86,7 @@ public class MarkLogicAuthenticationManager implements AuthenticationProvider, A
             restTemplate.getForObject(uri, String.class);
         }
         catch(ResourceAccessException ex) {
-            throw new RuntimeException("Cannot connect to MarkLogic at " + hostname + ". Are you sure MarkLogic is running?");
+            throw new BadCredentialsException("Cannot connect to MarkLogic at " + hostname + ". Are you sure MarkLogic is running?");
         }
         catch(HttpClientErrorException ex) {
             if (HttpStatus.NOT_FOUND.equals(ex.getStatusCode())) {
