@@ -56,7 +56,10 @@ public class DeployHubAmpsCommand extends DeployAmpsCommand {
         //new AmpsInstaller(securityStagingClient).installAmps(stagingModulesDatabaseName);
         ServerEvaluationCall call = installerClient.newServerEval();
         try (InputStream is = new ClassPathResource("installer-util/install-amps.xqy").getInputStream()) {
-            call.xquery( new InputStreamHandle(is));
+            String ampCall = new InputStreamHandle(is).toString();
+            is.close();
+            ampCall.replace("data-hub-staging-MODULES", hubConfig.getDbName(DatabaseKind.STAGING_MODULES));
+            call.xquery(ampCall);
             call.eval();
         } catch (IOException e) {
             throw new DataHubConfigurationException(e);
@@ -78,7 +81,10 @@ public class DeployHubAmpsCommand extends DeployAmpsCommand {
         //new AmpsInstaller(securityStagingClient).unInstallAmps(stagingModulesDatabaseName);
         ServerEvaluationCall call = installerClient.newServerEval();
         try (InputStream is = new ClassPathResource("installer-util/uninstall-amps.xqy").getInputStream()) {
-            call.xquery(new InputStreamHandle(is));
+            String ampCall = new InputStreamHandle(is).toString();
+            is.close();
+            ampCall.replace("data-hub-staging-MODULES", hubConfig.getDbName(DatabaseKind.STAGING_MODULES));
+            call.xquery(ampCall);
             call.eval();
         } catch (IOException e) {
             throw new DataHubConfigurationException(e);
