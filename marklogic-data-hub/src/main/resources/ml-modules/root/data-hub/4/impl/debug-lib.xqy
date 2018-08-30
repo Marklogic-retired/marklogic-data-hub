@@ -95,7 +95,7 @@ declare function debug:dump-env($name as xs:string?)
   if (debug:on()) then
     let $request-path := xdmp:get-request-path()
     let $request-path :=
-      if ($request-path = '/MarkLogic/rest-api/endpoints/resource-service-query.xqy') then
+      if ($request-path = '/data-hub/4/rest-api/endpoints/resource-service-query.xqy') then
         let $params := fn:string-join(
           for $f in xdmp:get-request-field-names()[fn:starts-with(., "rs:")]
           let $value := xdmp:get-request-field($f)
