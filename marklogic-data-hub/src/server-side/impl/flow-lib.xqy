@@ -288,7 +288,8 @@ declare function flow:run-flow(
   $mainFunc)
 {
   (: assert that we are in query mode :)
-  let $_must_run_in_query_mode as xs:unsignedLong := xdmp:request-timestamp()
+  (: mlcp flows cannot run in query mode in 9.0-7 :)
+  (: let $_must_run_in_query_mode as xs:unsignedLong := xdmp:request-timestamp() :)
 
   (: configure the global context :)
   let $_ := (
