@@ -33,6 +33,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.PosixFilePermission;
 import java.util.HashSet;
 import java.util.Map;
@@ -324,6 +325,7 @@ public class HubProjectImpl implements HubProject {
     private void upgradeProjectDir(Path sourceDir, Path destDir, Path renamedSourceDir) throws IOException {
         if (Files.exists(sourceDir)) {
             FileUtils.copyDirectory(sourceDir.toFile(), destDir.toFile(), false);
+           // Files.copy(sourceDir, destDir, StandardCopyOption.REPLACE_EXISTING);
             FileUtils.moveDirectory(sourceDir.toFile(), renamedSourceDir.toFile());
         }
     }

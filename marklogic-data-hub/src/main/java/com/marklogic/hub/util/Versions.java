@@ -37,6 +37,10 @@ public class Versions extends ResourceManager {
         this.stagingClient.init(NAME, this);
     }
 
+    public String getDHFVersion() {
+        return hubConfig.getDHFVersion();
+    }
+
     public String getHubVersion() {
         try {
             ResourceServices.ServiceResultIterator resultItr = this.getServices().get(new RequestParameters());

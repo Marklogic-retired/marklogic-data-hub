@@ -216,10 +216,9 @@
           </section>
           <section flex layout="column" layout-align="center center" *ngIf="!hubUpdateFailed && !hubUpdating">
             <h3 *ngIf="currentEnvironment">Congratulations on updating to version<br>{{currentEnvironment.runningVersion}}</h3>
-            <p>
-              In order to continue we need to update a few things.
-            </p>
-            <button mdl-button mdl-button-type="raised" mdl-colored="primary" mdl-ripple (click)="updateProject()">Update It</button>
+            <p>But...your project doesn't seem to match this version of DHF!</p>
+            <p>Please update your project before proceeding onward!</p>
+            <!-- <button mdl-button mdl-button-type="raised" mdl-colored="primary" mdl-ripple (click)="updateProject()">Update It</button> -->
 
             <div class="manual">
               <p>Curious about what that button does? Prefer to do it yourself?</p>
