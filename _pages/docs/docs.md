@@ -9,3 +9,4 @@ permalink: /docs/
 1. [Javadocs](./javadocs.md)
 1. [Architecture](./architecture.md)
 1. [Security](./security.md)
+1. [Gradle Property Reference](./gradleproperties.md)
