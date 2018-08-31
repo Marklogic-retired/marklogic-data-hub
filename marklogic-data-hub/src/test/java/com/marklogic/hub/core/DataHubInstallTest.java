@@ -22,6 +22,7 @@ import com.marklogic.client.ext.modulesloader.impl.PropertiesModuleManager;
 import com.marklogic.client.io.DOMHandle;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.hub.DataHub;
+import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubProject;
 import com.marklogic.hub.HubTestBase;
@@ -41,10 +42,13 @@ import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
+import java.net.Socket;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual;
 import static org.junit.Assert.*;
@@ -62,53 +66,103 @@ public class DataHubInstallTest extends HubTestBase {
         createProjectDir();
         try {
             if (!setupDone) {
-            	getDataHub().uninstall();
+            	Map preInstall = null;
+            	if(!(isSslRun()||isCertAuth())) {
+            		preInstall = runPreInstallCheck();
+	            	Assert.assertTrue((boolean) preInstall.get("stagingPortInUse"));
+	            	Assert.assertTrue((boolean) preInstall.get("finalPortInUse"));
+            	}
+            	getDataHub().uninstallFinal(null);
+            	            	
+            	if(!(isSslRun()||isCertAuth())) {
+            		preInstall = runPreInstallCheck();
+	            	Assert.assertTrue((boolean) preInstall.get("stagingPortInUse"));
+	            	Assert.assertFalse((boolean) preInstall.get("finalPortInUse"));
+            	}
+            	
+            	getDataHub().uninstallStaging(null);
+
+            	if(!(isSslRun()||isCertAuth())) {
+            		preInstall = runPreInstallCheck();
+	            	Assert.assertFalse((boolean) preInstall.get("stagingPortInUse"));
+	            	Assert.assertFalse((boolean) preInstall.get("finalPortInUse"));
+            	}
             }
-        } catch (HttpClientErrorException e) {
+        } 
+        catch (HttpClientErrorException e) {
             if (e.getStatusCode() == HttpStatus.UNAUTHORIZED) {
                 //pass
             }
             else throw e;
         }
-        getDataHub().runPreInstallCheck();
-
+                
         if (!setupDone) {
         	HubProject project =  getHubAdminConfig().getHubProject();
-
+            
         	//creating directories for adding final schemas/ modules and trigger files
             Path userSchemasDir = Paths.get(PROJECT_PATH).resolve(HubProject.PATH_PREFIX).resolve("ml-schemas");
             Path userModulesDir = project.getUserFinalModulesDir();
             Path userTriggersDir = project.getUserConfigDir().resolve("triggers");
-
+            
             userSchemasDir.resolve("tde").toFile().mkdirs();
             userModulesDir.resolve("ext").toFile().mkdirs();
             userTriggersDir.toFile().mkdirs();
-
+            
           //creating directories for adding staging schemas/ modules and trigger files
             Path hubSchemasDir = project.getHubConfigDir().resolve("schemas");
             Path hubModulesDir = project.getHubStagingModulesDir();
             Path hubTriggersDir = project.getHubConfigDir().resolve("triggers");
-
+            
             hubSchemasDir.resolve("tde").toFile().mkdirs();
             hubModulesDir.resolve("ext").toFile().mkdirs();
-            hubTriggersDir.toFile().mkdirs();
+            hubTriggersDir.toFile().mkdirs();     
             //Copying files to their locations
             try {
                 FileUtils.copyFileToDirectory(getResourceFile("data-hub-test/scaffolding/tdedoc.xml"), userSchemasDir.resolve("tde").toFile());
                 FileUtils.copyFileToDirectory(getResourceFile("data-hub-test/scaffolding/sample-trigger.xqy"), userModulesDir.resolve("ext").toFile());
                 FileUtils.copyFileToDirectory(getResourceFile("data-hub-test/scaffolding/final-trigger.json"),  userTriggersDir.toFile());
-
+                
                 FileUtils.copyFileToDirectory(getResourceFile("data-hub-test/scaffolding/tdedoc.xml"), hubSchemasDir.resolve("tde").toFile());
                 FileUtils.copyFileToDirectory(getResourceFile("data-hub-test/scaffolding/sample-trigger.xqy"), hubModulesDir.resolve("ext").toFile());
                 FileUtils.copyFileToDirectory(getResourceFile("data-hub-test/scaffolding/staging-trigger.json"),  hubTriggersDir.toFile());
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-        	getDataHub().install();
+        	Map preInstall = null;
+        	if(!(isSslRun()||isCertAuth())) {
+        		preInstall = runPreInstallCheck();
+	           	Assert.assertFalse((boolean) preInstall.get("stagingPortInUse"));
+	        	Assert.assertFalse((boolean) preInstall.get("finalPortInUse"));    
+        	}
+        	getDataHub().install(null);      	
         	setupDone=true;
+        	if(!(isSslRun()||isCertAuth())) {
+	        	preInstall = runPreInstallCheck();
+	           	Assert.assertTrue((boolean) preInstall.get("stagingPortInUse"));
+	        	Assert.assertTrue((boolean) preInstall.get("finalPortInUse"));
+        	}       	
         }
         afterTelemetryInstallCount = getTelemetryInstallCount();
     }
+    
+    //should be removed after DHFPROD-1263 is fixed.
+	private Map<String, Boolean> runPreInstallCheck(){
+		Map<String, Boolean> resp = new HashMap<>(); 
+		try (Socket ignored = new Socket(getHubAdminConfig().getHost(), getHubAdminConfig().getPort(DatabaseKind.STAGING))) {
+	    	resp.put("stagingPortInUse", true);
+	    } 
+	    catch (IOException ignored) {
+	    	resp.put("stagingPortInUse", false);
+	    }
+	    
+	    try (Socket ignored = new Socket(getHubAdminConfig().getHost(), getHubAdminConfig().getPort(DatabaseKind.FINAL))) {
+	    	resp.put("finalPortInUse", true);
+	    } 
+	    catch (IOException ignored) {
+	    	resp.put("finalPortInUse", false);
+	    }
+		return resp;
+	}
 
     @Test
     @Ignore
