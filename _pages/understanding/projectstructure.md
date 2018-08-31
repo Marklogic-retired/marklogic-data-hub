@@ -71,9 +71,6 @@ For example: gradle-dev.properties, gradle-qa.properties, gradle-prod.properties
 ### gradlew, gradlew.bat
 These are the \*nix and Windows executable files to run the gradle wrapper. Gradle wrapper is a specific, local version of gradle. You can use the wrapper to avoid having to install gradle on your system.
 
-
-Each of the above JSON files conforms to the MarkLogic REST API for creating [databases](https://docs.marklogic.com/REST/PUT/manage/v2/databases/[id-or-name]/properties), [mimetypes](https://docs.marklogic.com/REST/PUT/manage/v2/mimetypes/[id-or-name]/properties), [roles](https://docs.marklogic.com/REST/PUT/manage/v2/roles/[id-or-name]/properties), [users](https://docs.marklogic.com/REST/PUT/manage/v2/users/[id-or-name]/properties), or [servers](https://docs.marklogic.com/REST/PUT/manage/v2/servers/[id-or-name]/properties).
-
 ## plugins folder
 This folder contains your server-side modules that get deployed into MarkLogic. You can put any server-side files in here that you like. When deployed to MarkLogic ./plugins is equivalent to the root uri **/**, so a library module at `./plugins/my-folder/my-lib.xqy` would be loaded into the modules database as `/my-folder/my-lib.xqy`. 
 
@@ -165,6 +162,8 @@ This folder contains sub-folders and JSON files used to configure your MarkLogic
   |- job-server.json
   |- staging-server.json
 ```
+
+Each of the above JSON files conforms to the MarkLogic REST API for creating [databases](https://docs.marklogic.com/REST/PUT/manage/v2/databases/[id-or-name]/properties), [mimetypes](https://docs.marklogic.com/REST/PUT/manage/v2/mimetypes/[id-or-name]/properties), [roles](https://docs.marklogic.com/REST/PUT/manage/v2/roles/[id-or-name]/properties), [users](https://docs.marklogic.com/REST/PUT/manage/v2/users/[id-or-name]/properties), or [servers](https://docs.marklogic.com/REST/PUT/manage/v2/servers/[id-or-name]/properties).
 
 ### src/main/ml-config folder
 This folder contains sub-folders and JSON files used to configure your MarkLogic server.

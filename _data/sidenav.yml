@@ -9,6 +9,7 @@ main:
         { url: '/understanding/how-it-works/', text: 'How It Works'},
         { url: '/understanding/flowtracing/', text: 'Flow Tracing'},
         { url: '/understanding/project-structure/', text: 'Project Structure'}
+        { url: '/understanding/updating/', text: 'Updating to 4.0.0'}
       ]
     }
     - {
