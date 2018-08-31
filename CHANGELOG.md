@@ -516,7 +516,7 @@
 
 **Implemented enhancements:**
 
-- Cannot specify default permissions for data-hub-staging-MODULES db [\#434](https://github.com/marklogic/marklogic-data-hub/issues/434)
+- Cannot specify default permissions for data-hub-MODULES db [\#434](https://github.com/marklogic/marklogic-data-hub/issues/434)
 
 **Fixed bugs:**
 
