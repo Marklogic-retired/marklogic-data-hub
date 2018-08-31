@@ -1,0 +1,14 @@
+{
+  "server-name": "%%mlTraceAppserverName%%",
+  "server-type": "http",
+  "root": "/",
+  "group-name": "%%GROUP%%",
+  "port": "%%mlTracePort%%",
+  "modules-database": "%%mlModulesDbName%%",
+  "content-database": "%%mlTraceDbName%%",
+  "authentication": "%%mlTraceAuth%%",
+  "default-error-format": "json",
+  "error-handler": "/MarkLogic/rest-api/error-handler.xqy",
+  "url-rewriter": "/MarkLogic/data-hub-framework/tracing/tracing-rewriter.xml",
+  "rewrite-resolves-globally": true
+}
