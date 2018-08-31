@@ -72,7 +72,7 @@ export default function(tmpDir) {
       expect(loginPage.advancedSettingsValue('Staging Triggers Database Name').getAttribute('value'))
         .toEqual('data-hub-staging-TRIGGERS');
       expect(loginPage.advancedSettingsValue('Staging Modules Database Name').getAttribute('value'))
-        .toEqual('data-hub-staging-MODULES');
+        .toEqual('data-hub-MODULES');
       expect(loginPage.advancedSettingsValue('Staging Schemas Database Name').getAttribute('value'))
         .toEqual('data-hub-staging-SCHEMAS');
       expect(loginPage.advancedSettingsValue('Final Triggers Database Name').getAttribute('value'))

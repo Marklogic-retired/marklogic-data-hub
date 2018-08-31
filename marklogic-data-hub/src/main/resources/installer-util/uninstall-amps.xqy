@@ -3,7 +3,7 @@ xquery version "1.0-ml";
 import module namespace sec="http://marklogic.com/xdmp/security"
 at "/MarkLogic/security.xqy";
 
-declare variable $modules-db-name := xdmp:database("data-hub-staging-MODULES");
+declare variable $modules-db-name := xdmp:database("data-hub-MODULES");
 
 declare function local:check-then-remove-amp($namespace, $local-name, $document-uri, $database-name) {
   if(sec:amp-exists($namespace, $local-name, $document-uri, $database-name)) then (

@@ -71,7 +71,7 @@ public class HubConfigJsonTest {
             "  \"jobForestsPerHost\": 1,\n" +
             "  \"jobPort\": 8013,\n" +
             "  \"jobAuthMethod\": \"digest\",\n" +
-            "  \"stagingModulesDbName\": \"data-hub-staging-MODULES\",\n" +
+            "  \"stagingModulesDbName\": \"data-hub-MODULES\",\n" +
             "  \"stagingTriggersDbName\": \"data-hub-staging-TRIGGERS\",\n" +
             "  \"stagingSchemasDbName\": \"data-hub-staging-SCHEMAS\",\n" +
             "  \"finalModulesDbName\": \"data-hub-final-MODULES\",\n" +
@@ -115,7 +115,7 @@ public class HubConfigJsonTest {
             "  \"jobForestsPerHost\": 1,\n" +
             "  \"jobPort\": 8013,\n" +
             "  \"jobAuthMethod\": \"digest\",\n" +
-            "  \"stagingModulesDbName\": \"data-hub-staging-MODULES\",\n" +
+            "  \"stagingModulesDbName\": \"data-hub-MODULES\",\n" +
             "  \"stagingTriggersDbName\": \"data-hub-staging-TRIGGERS\",\n" +
             "  \"stagingSchemasDbName\": \"data-hub-staging-SCHEMAS\",\n" +
             "  \"finalModulesDbName\": \"data-hub-final-MODULES\",\n" +
