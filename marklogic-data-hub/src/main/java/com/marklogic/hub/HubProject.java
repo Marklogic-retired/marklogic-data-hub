@@ -165,6 +165,7 @@ public interface HubProject {
     /**
      * Performs an upgrade to a pre-4.0 project by copying folders
      * to their new positions as defined in hubproject.
+     * @throws IOException if problem happens with the on-disk project.
      */
     void upgradeProject() throws IOException;
 }
