@@ -731,6 +731,7 @@ public class DataHubImpl implements DataHub {
         boolean result = false;
         boolean alreadyInitialized = hubConfig.getHubProject().isInitialized();
         File buildGradle = Paths.get(hubConfig.getProjectDir(), "build.gradle").toFile();
+
         // update the hub-internal-config files
         hubConfig.initHubProject();
         try {

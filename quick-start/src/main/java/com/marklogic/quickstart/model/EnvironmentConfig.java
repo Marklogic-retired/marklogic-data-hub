@@ -46,6 +46,8 @@ public class EnvironmentConfig {
 
     private String marklogicVersion;
 
+    private String DHFVersion;
+
     public InstallInfo getInstallInfo() {
         return installInfo;
     }
@@ -86,6 +88,10 @@ public class EnvironmentConfig {
         return marklogicVersion;
     }
 
+    public String getDHFVersion() {
+        return DHFVersion;
+    }
+
     public EnvironmentConfig(String projectDir, String environment, String username, String password) {
         this.projectDir = projectDir;
         this.environment = environment;
@@ -112,6 +118,7 @@ public class EnvironmentConfig {
         this.installedVersion = versions.getHubVersion();
         this.marklogicVersion = versions.getMarkLogicVersion();
         this.runningVersion = this.mlSettings.getJarVersion();
+        this.DHFVersion = versions.getDHFVersion();
     }
 
     private DatabaseClient _stagingClient = null;

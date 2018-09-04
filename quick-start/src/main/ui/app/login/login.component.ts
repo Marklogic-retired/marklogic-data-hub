@@ -269,7 +269,8 @@ export class LoginComponent implements OnInit {
         if (this.currentEnvironment.runningVersion !== '0.1.2' &&
             this.currentEnvironment.runningVersion !== '%%mlHubVersion%%' &&
             this.currentEnvironment.installedVersion !== '%%mlHubVersion%%' &&
-            SemVer.gt(this.currentEnvironment.runningVersion, this.currentEnvironment.installedVersion)) {
+          (SemVer.gt(this.currentEnvironment.runningVersion, this.currentEnvironment.installedVersion)
+          || this.currentEnvironment.runningVersion !== this.currentEnvironment.dhfversion )) {
           this.gotoTab('RequiresUpdate');
         } else {
           // goto login tab
