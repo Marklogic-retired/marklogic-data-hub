@@ -116,7 +116,8 @@ public class HubConfigImpl implements HubConfig {
     private String hubAdminRoleName = DEFAULT_ADMIN_ROLE_NAME;
     private String hubAdminUserName = DEFAULT_ADMIN_USER_NAME;
 
-    private String DHFVersion;
+    //we assume DHF 2.x unless otherwise told, our earliest 'from' version
+    private String DHFVersion = "2.0.0";
 
     // these hold runtime credentials for flows.
     private String mlUsername = null;
@@ -1150,11 +1151,8 @@ public class HubConfigImpl implements HubConfig {
     }
 
     @Override public String getDHFVersion() {
-        String version = "2.0.0";
-        if(this.DHFVersion != null && this.DHFVersion != "") {
-            version = this.DHFVersion;
-        }
-        return version;
+
+        return this.DHFVersion;
     }
 
 
