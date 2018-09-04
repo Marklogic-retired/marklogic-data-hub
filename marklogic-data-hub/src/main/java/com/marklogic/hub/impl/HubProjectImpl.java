@@ -15,9 +15,11 @@
  */
 package com.marklogic.hub.impl;
 
+import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubProject;
 import com.marklogic.hub.error.DataHubConfigurationException;
 import com.marklogic.hub.util.FileUtil;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,10 +33,12 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.PosixFilePermission;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 /**
  * Class for creating a hub Project
@@ -286,6 +290,43 @@ public class HubProjectImpl implements HubProject {
         }
         catch(IOException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void upgradeProject() throws IOException {
+
+        //let's check if we have legacy config directories, then we copy them to their new places, and rename the previous ones as .old
+        Path entityConfigDir = this.projectDir.resolve("entity-config");
+        Path hubInternalConfigDir = this.projectDir.resolve("hub-internal-config");
+        Path userConfigDir = this.projectDir.resolve("user-config");
+
+        //let's set paths for dest directories
+        Path newEntityConfigDir = Paths.get(HubConfig.ENTITY_CONFIG_DIR);
+        Path newHubInternalConfigDir = Paths.get(HUB_CONFIG_DIR);
+        Path mlConfigDir = Paths.get(USER_CONFIG_DIR);
+
+        //and now what we want to name the old directories so they're not copied over again in another update
+        Path oldEntityConfigDir = this.projectDir.resolve("entity-config.old");
+        Path oldHubInternalConfigDir = this.projectDir.resolve("hub-internal-config.old");
+        Path oldUserConfigDir = this.projectDir.resolve("user-config.old");
+
+        //if the entity-config directory exists, we'll copy it to the src/main/entity-config
+        upgradeProjectDir(entityConfigDir, newEntityConfigDir, oldEntityConfigDir);
+
+        //if the hub-internal-config directory exists, we'll copy it to the src/main/hub-internal-config
+        upgradeProjectDir(hubInternalConfigDir, newHubInternalConfigDir, oldHubInternalConfigDir);
+
+        //if the user-config directory exists, we'll copy it to src/main/ml-config and rename this folder.old
+        upgradeProjectDir(userConfigDir, mlConfigDir, oldUserConfigDir);
+
+    }
+
+    private void upgradeProjectDir(Path sourceDir, Path destDir, Path renamedSourceDir) throws IOException {
+        if (Files.exists(sourceDir)) {
+            FileUtils.copyDirectory(sourceDir.toFile(), destDir.toFile(), false);
+           // Files.copy(sourceDir, destDir, StandardCopyOption.REPLACE_EXISTING);
+            FileUtils.moveDirectory(sourceDir.toFile(), renamedSourceDir.toFile());
         }
     }
 }

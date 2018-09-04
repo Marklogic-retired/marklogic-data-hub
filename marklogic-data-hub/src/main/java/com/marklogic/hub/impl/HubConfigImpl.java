@@ -116,6 +116,9 @@ public class HubConfigImpl implements HubConfig {
     private String hubAdminRoleName = DEFAULT_ADMIN_ROLE_NAME;
     private String hubAdminUserName = DEFAULT_ADMIN_USER_NAME;
 
+    //we assume DHF 2.x unless otherwise told, our earliest 'from' version
+    private String DHFVersion = "2.0.0";
+
     // these hold runtime credentials for flows.
     private String mlUsername = null;
     private String mlPassword = null;
@@ -897,6 +900,7 @@ public class HubConfigImpl implements HubConfig {
             hubRoleName = getEnvPropString(environmentProperties, "mlHubUserRole", hubRoleName);
             hubUserName = getEnvPropString(environmentProperties, "mlHubUserName", hubUserName);
 
+            DHFVersion = getEnvPropString(environmentProperties, "mlDHFVersion", DHFVersion);
 
             // this is a runtime username/password for running flows
             // could be factored away with FlowRunner
@@ -1146,6 +1150,11 @@ public class HubConfigImpl implements HubConfig {
         return version;
     }
 
+    @Override public String getDHFVersion() {
+
+        return this.DHFVersion;
+    }
+
 
     private Map<String, String> getCustomTokens() {
         AppConfig appConfig = getStagingAppConfig();
@@ -1204,6 +1213,9 @@ public class HubConfigImpl implements HubConfig {
         customTokens.put("%%mlHubAdminUserPassword%%", randomStringGenerator.generate(20));
 
         customTokens.put("%%mlCustomForestPath%%", customForestPath);
+
+        //version of DHF the user INTENDS to use
+        customTokens.put("%%mlDHFVersion%%", DHFVersion);
 
         if (environmentProperties != null) {
             Enumeration keyEnum = environmentProperties.propertyNames();

@@ -54,7 +54,7 @@ public interface HubConfig {
     String DEFAULT_STAGING_NAME = "data-hub-STAGING";
     String DEFAULT_FINAL_NAME = "data-hub-FINAL";
     String DEFAULT_JOB_NAME = "data-hub-JOBS";
-    String DEFAULT_STAGING_MODULES_DB_NAME = "data-hub-staging-MODULES";
+    String DEFAULT_STAGING_MODULES_DB_NAME = "data-hub-MODULES";
     String DEFAULT_FINAL_MODULES_DB_NAME = "data-hub-final-MODULES";
     String DEFAULT_STAGING_TRIGGERS_DB_NAME = "data-hub-staging-TRIGGERS";
     String DEFAULT_FINAL_TRIGGERS_DB_NAME = "data-hub-final-TRIGGERS";
@@ -523,6 +523,12 @@ public interface HubConfig {
      * @return Version of DHF Jar file as string
      */
     String getJarVersion();
+
+    /**
+     * Gets the current version of the project properties file is targetting
+     * @return Version of DHF that the project properties file is targetting
+     */
+    String getDHFVersion();
 
     /**
      * Gets a new DatabaseClient that queries the staging database and appserver

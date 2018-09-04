@@ -63,6 +63,8 @@ public class ConnectionAuthenticationFilter extends
     private String hostnameParameter = SPRING_SECURITY_FORM_HOST_KEY;
     private boolean postOnly = true;
 
+    public Authentication authAttempt = null;
+
     private ProjectManagerService pm;
 
     // ~ Constructors
@@ -107,8 +109,8 @@ public class ConnectionAuthenticationFilter extends
 
         // Allow subclasses to set the "details" property
         setDetails(request, authRequest);
-
-        return this.getAuthenticationManager().authenticate(authRequest);
+        authAttempt = this.getAuthenticationManager().authenticate(authRequest);
+        return authAttempt;
     }
 
     /**

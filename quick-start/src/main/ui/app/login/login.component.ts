@@ -269,7 +269,8 @@ export class LoginComponent implements OnInit {
         if (this.currentEnvironment.runningVersion !== '0.1.2' &&
             this.currentEnvironment.runningVersion !== '%%mlHubVersion%%' &&
             this.currentEnvironment.installedVersion !== '%%mlHubVersion%%' &&
-            SemVer.gt(this.currentEnvironment.runningVersion, this.currentEnvironment.installedVersion)) {
+          (SemVer.gt(this.currentEnvironment.runningVersion, this.currentEnvironment.installedVersion)
+          || this.currentEnvironment.runningVersion !== this.currentEnvironment.dhfversion )) {
           this.gotoTab('RequiresUpdate');
         } else {
           // goto login tab
@@ -343,10 +344,14 @@ export class LoginComponent implements OnInit {
         this.loggingIn = false;
       },
       error => {
-        this.loginError = error;
-        if(error && error.status === 401){
-          this.loginError = "Authentication Failed: Invalid credentials";
+      let errorMsg = error;
+        try {
+          errorMsg = error.json().message;
+        } catch (e) {
+          //not valid json, so we suppress error and report it straight
         }
+        this.loginError = errorMsg;
+        console.log(error);
         this.auth.setAuthenticated(false);
         this.loggingIn = false;
       });

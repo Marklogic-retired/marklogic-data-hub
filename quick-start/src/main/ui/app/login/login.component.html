@@ -216,11 +216,13 @@
           </section>
           <section flex layout="column" layout-align="center center" *ngIf="!hubUpdateFailed && !hubUpdating">
             <h3 *ngIf="currentEnvironment">Congratulations on updating to version<br>{{currentEnvironment.runningVersion}}</h3>
-            <p>
-              In order to continue we need to update a few things.
-            </p>
-            <button mdl-button mdl-button-type="raised" mdl-colored="primary" mdl-ripple (click)="updateProject()">Update It</button>
-
+            <span *ngIf="hubUpdating && currentEnvironment.runningVersion !== currentEnvironment.dhfversion">
+              <p>But...your project doesn't seem to match this version of DHF!</p>
+              <p>Please update your project before proceeding onward!</p>
+            </span>
+            <span *ngIf="hubUpdating && currentEnvironment.runningVersion === currentEnvironment.dhfversion">
+              <button mdl-button mdl-button-type="raised" mdl-colored="primary" mdl-ripple (click)="updateProject()">Update It</button>
+            </span>
             <div class="manual">
               <p>Curious about what that button does? Prefer to do it yourself?</p>
               <p>We have a documentation page that describes the changes necessary. You can poke the button for an automatic update or you can do it yourself.</p>
@@ -282,7 +284,7 @@
       <div id="InstallerTab" class="tab-content" [hidden]="!tabs.Installer" *ngIf="currentEnvironment">
         <div layout="column" layout-align="center center">
           <div [hidden]="uninstalling || installing || currentEnvironment.installInfo.installed" layout="column" layout-align="center center">
-            <div style="width: 100%" *ngIf="!currentEnvironment.installInfo.partiallyInstalled">
+            <div style="width: 100%" *ngIf="!currentEnvironment.installInfo.partiallyInstalled && currentEnvironment.runningVersion === currentEnvironment.dhfversion">
               <h3>Installation Needed</h3>
               <p>In order to continue you must install the Data Hub Framework into
               MarkLogic server.
@@ -291,7 +293,7 @@
                 <button type="button" id="installer-button" mdl-button mdl-button-type="raised" (click)="install()">Install</button>
               </div>
             </div>
-            <div class="partial-install" *ngIf="currentEnvironment.installInfo.partiallyInstalled">
+            <div class="partial-install" *ngIf="currentEnvironment.installInfo.partiallyInstalled && currentEnvironment.runningVersion === currentEnvironment.dhfversion">
               <h3>You Have a Partially Installed Hub</h3>
               <p>You must either re-install, uninstall, or fix the issues to continue</p>
 
@@ -337,6 +339,15 @@
                   <tr>
                     <td>Job Forests Installed:</td><td><i class="fa" [ngClass]="getInstalledIcon(currentEnvironment.installInfo.jobForestsExist)"></i></td>
                   </tr>
+                  <tr>
+                    <td>Staging Modules DB Installed:</td><td><i class="fa" [ngClass]="getInstalledIcon(currentEnvironment.installInfo.stagingModulesExist)"></i></td>
+                  </tr>
+                  <tr>
+                    <td>Staging Schemas DB Installed:</td><td><i class="fa" [ngClass]="getInstalledIcon(currentEnvironment.installInfo.stagingSchemasExist)"></i></td>
+                  </tr>
+                  <tr>
+                    <td>Staging Triggers DB Installed:</td><td><i class="fa" [ngClass]="getInstalledIcon(currentEnvironment.installInfo.stagingTriggersExist)"></i></td>
+                  </tr>
                 </tbody>
               </table>
               <div class="action-button center-text">
@@ -346,6 +357,12 @@
                 <button type="button" id="uninstaller-button" mdl-button mdl-button-type="raised" (click)="unInstall()">UnInstall</button>
               </div>
             </div>
+          </div>
+          <div *ngIf="currentEnvironment.runningVersion !== currentEnvironment.dhfversion">
+            <h3>DHF Project Version Mismatch!</h3>
+            <p>Your project ({{currentEnvironment.dhfversion}}) does not match the DHF version running ({{currentEnvironment.runningVersion}}). Please upgrade your project first before
+              attempting to install DHF.
+            </p>
           </div>
           <div id="install-progress" class="install-progress shrinky" *ngIf="(installing || uninstalling)" layout="column" layout-align="center center">
             <mdl-progress [progress]="percentComplete"></mdl-progress>

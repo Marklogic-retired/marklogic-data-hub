@@ -52,7 +52,7 @@ export default function(tmpDir) {
       expect(loginPage.advancedSettingsValue('Staging Triggers Database Name').getAttribute('value'))
         .toEqual('data-hub-ol-staging-TRIGGERS');
       expect(loginPage.advancedSettingsValue('Staging Modules Database Name').getAttribute('value'))
-        .toEqual('data-hub-ol-staging-MODULES');
+        .toEqual('data-hub-ol-MODULES');
       expect(loginPage.advancedSettingsValue('Staging Schemas Database Name').getAttribute('value'))
         .toEqual('data-hub-ol-staging-SCHEMAS');
       expect(loginPage.advancedSettingsValue('Final Triggers Database Name').getAttribute('value'))
@@ -72,7 +72,7 @@ export default function(tmpDir) {
       expect(loginPage.advancedSettingsValue('Staging Triggers Database Name').getAttribute('value'))
         .toEqual('data-hub-staging-TRIGGERS');
       expect(loginPage.advancedSettingsValue('Staging Modules Database Name').getAttribute('value'))
-        .toEqual('data-hub-staging-MODULES');
+        .toEqual('data-hub-MODULES');
       expect(loginPage.advancedSettingsValue('Staging Schemas Database Name').getAttribute('value'))
         .toEqual('data-hub-staging-SCHEMAS');
       expect(loginPage.advancedSettingsValue('Final Triggers Database Name').getAttribute('value'))
@@ -80,8 +80,18 @@ export default function(tmpDir) {
       expect(loginPage.advancedSettingsValue('Final Modules Database Name').getAttribute('value'))
         .toEqual('data-hub-final-MODULES');
       expect(loginPage.advancedSettingsValue('Final Schemas Database Name').getAttribute('value'))
-        .toEqual('data-hub-final-SCHEMAS');  
+        .toEqual('data-hub-final-SCHEMAS');
+      loginPage.clickAdvancedSettings();
       expect(loginPage.dataHubName.getAttribute('value')).toEqual('data-hub');
+      //use custom advanced settings
+      loginPage.setDataHubName('data-hub-qa');
+      //verify custom advanced settings
+      loginPage.clickAdvancedSettings();
+      expect(loginPage.advancedSettingsValue('Staging Triggers Database Name').getAttribute('value'))
+        .toEqual('data-hub-qa-staging-TRIGGERS');
+        expect(loginPage.advancedSettingsValue('Final Schemas Database Name').getAttribute('value'))
+        .toEqual('data-hub-qa-final-SCHEMAS');
+      loginPage.clickAdvancedSettings();
       browser.driver.sleep(3000);
       expect(loginPage.projectDirTab.isDisplayed()).toBe(false);
       expect(loginPage.initIfNeededTab.isDisplayed()).toBe(true);

@@ -23,6 +23,9 @@ import com.marklogic.hub.mapping.Mapping;
 import java.io.IOException;
 import java.util.ArrayList;
 
+/**
+ * Handles the artifacts associated with mapping of source documents into entity services models.
+ */
 public interface MappingManager {
 
     /**
