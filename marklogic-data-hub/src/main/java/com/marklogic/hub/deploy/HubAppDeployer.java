@@ -176,6 +176,83 @@ public class HubAppDeployer extends SimpleAppDeployer {
         logger.info(format("Deployed app %s", appConfig.getName()));
     }
 
+    public void undeployAll(AppConfig finalAppConfig, AppConfig stagingAppConfig){
+
+        List<UndoableCommand> stagingUndoableCommands = new ArrayList<>();
+        for (Command command : stagingCommandsList) {
+            if (command instanceof UndoableCommand) {
+                stagingUndoableCommands.add((UndoableCommand) command);
+            }
+        }
+
+        List<UndoableCommand> finalUndoableCommands = new ArrayList<>();
+        for (Command command : finalCommandsList) {
+            if (command instanceof UndoableCommand) {
+                finalUndoableCommands.add((UndoableCommand) command);
+            }
+        }
+
+        Collections.sort(stagingUndoableCommands, new Comparator<UndoableCommand>() {
+            @Override
+            public int compare(UndoableCommand o1, UndoableCommand o2) {
+                return o1.getUndoSortOrder().compareTo(o2.getUndoSortOrder());
+            }
+
+            @Override
+            public boolean equals(Object obj) {
+                return this.equals(obj);
+            }
+        });
+
+        Collections.sort(finalUndoableCommands, new Comparator<UndoableCommand>() {
+            @Override
+            public int compare(UndoableCommand o1, UndoableCommand o2) {
+                return o1.getUndoSortOrder().compareTo(o2.getUndoSortOrder());
+            }
+
+            @Override
+            public boolean equals(Object obj) {
+                return this.equals(obj);
+            }
+        });
+
+        int count = stagingUndoableCommands.size() + finalUndoableCommands.size();
+        int completed = 0;
+        float percent = 0;
+        onStatusChange(0, "Un-installing Final App...");
+
+        CommandContext finalContext = new CommandContext(finalAppConfig, manageClient, adminManager);
+
+        for (UndoableCommand command : finalUndoableCommands) {
+            String name = command.getClass().getName();
+            logger.info(format("Undoing command [%s] with sort order [%d]", name, command.getUndoSortOrder()));
+            percent = ((float)completed / (float)count) * 100;
+            onStatusChange((int)percent, format("[Step %d of %d]  %s", completed + 1, count, name));
+            command.undo(finalContext);
+            logger.info(format("Finished undoing command [%s]\n", name));
+            completed++;
+        }
+        onStatusChange((int)percent, "Final App Un-installation Complete");
+
+        CommandContext stagingContext = new CommandContext(stagingAppConfig, manageClient, adminManager);
+
+        onStatusChange((int)percent, "Un-installing Staging App...");
+        for (UndoableCommand command : stagingUndoableCommands) {
+            String name = command.getClass().getName();
+            logger.info(format("Undoing command [%s] with sort order [%d]", name, command.getUndoSortOrder()));
+            percent = ((float)completed / (float)count) * 100;
+            onStatusChange((int)percent, format("[Step %d of %d]  %s", completed + 1, count, name));
+            command.undo(stagingContext);
+            logger.info(format("Finished undoing command [%s]\n", name));
+            completed++;
+        }
+
+        onStatusChange(100, "Un-installation Complete");
+
+        logger.info(format("Undeployed app %s and %s", stagingAppConfig.getName(), finalAppConfig.getName()));
+    }
+
+
     @Override
     public void undeploy(AppConfig appConfig) {
         logger.info(format("Undeploying app %s with config dir: %s\n", appConfig.getName(), appConfig.getFirstConfigDir()
