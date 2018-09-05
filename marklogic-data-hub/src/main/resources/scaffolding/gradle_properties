@@ -7,6 +7,7 @@
 # named gradle-prod.properties.
 #
 # ....
+mlDHFVersion=4.0.0
 mlHost=%%mlHost%%
 
 # Your MarkLogic Username and Password
