@@ -8,7 +8,8 @@ main:
         { url: '/understanding/architecture/', text: 'Organization' },
         { url: '/understanding/how-it-works/', text: 'How It Works'},
         { url: '/understanding/flowtracing/', text: 'Flow Tracing'},
-        { url: '/understanding/project-structure/', text: 'Project Structure'}
+        { url: '/understanding/project-structure/', text: 'Project Structure'},
+        { url: '/understanding/updating/', text: 'Updating to 4.0.0'}
       ]
     }
     - {
@@ -94,7 +95,8 @@ main:
         { url: '/docs/gradle-tasks/', text: 'Gradle Tasks' },
         { url: '/javadocs/', text: 'Javadocs' },
         { url: '/docs/architecture/', text: 'Architecture' },
-        { url: '/docs/security/', text: 'Security' }
+        { url: '/docs/security/', text: 'Security' },
+        { url: '/docs/gradleproperties/', text: 'Property Reference' }
       ]
     }
     - { url: '/faqs/', text: 'FAQs' }
