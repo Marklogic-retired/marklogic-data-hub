@@ -137,7 +137,7 @@
           <h3>Project Initialized <i class="fa fa-thumbs-up"></i></h3>
           <p>Project files have been created in</p>
           <p class="project-path">{{currentProject.path}}</p>
-          <p>Read more about the project structure on the <a target="_blank" href="https://github.com/marklogic/marklogic-data-hub/wiki/Project-Directory-Structure">github wiki</a>.</p>
+          <p>Read more about the project structure in the <a target="_blank" href="https://marklogic.github.io/marklogic-data-hub/understanding/project-structure/">DHF Documentation</a>.</p>
         </section>
         <div layout="row" layout-align="end center" class="init-buttons">
           <button type="button" mdl-button (click)="back()">&lt; Back</button>
@@ -218,7 +218,7 @@
             <h3 *ngIf="currentEnvironment">Congratulations on updating to version<br>{{currentEnvironment.runningVersion}}</h3>
             <span *ngIf="currentEnvironment && currentEnvironment.runningVersion !== currentEnvironment.dhfversion">
               <p>But...your project doesn't seem to match this version of DHF!</p>
-              <p>Please update your project before proceeding onward!</p>
+              <p>Please update your project before proceeding onward! <a target="_blank" [href]="hubUpdateUrl()">How to update a Hub Project</a></p>
             </span>
             <span *ngIf="currentEnvironment && currentEnvironment.runningVersion === currentEnvironment.dhfversion">
               <button mdl-button mdl-button-type="raised" mdl-colored="primary" mdl-ripple (click)="updateProject()">Update It</button>
@@ -228,7 +228,6 @@
                 <a target="_blank" [href]="hubUpdateUrl()">How to update a Hub Project</a>
               </div>
             </span>
-            <a target="_blank" [href]="hubUpdateUrl()">How to update a Hub Project</a>
           </section>
           <section flex layout="column" layout-align="center center" *ngIf="hubUpdateFailed && !hubUpdating">
             <h3>Automatic Hub Update Failed!</h3>
@@ -236,7 +235,7 @@
               Sorry. We failed to update you to version <span class="version">{{currentEnvironment.runningVersion}}</span>.
               <span>{{hubUpdateError}}.</span>
             </p>
-            <p>Go read the wiki page that describes the changes necessary and try them manually.</p>
+            <p>Go read the documentation page that describes the changes necessary and try them manually.</p>
             <a target="_blank" [href]="hubUpdateUrl()">How to update a Hub Project</a>
           </section>
         </section>

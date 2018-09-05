@@ -1,0 +1,74 @@
+{
+  "database-name": "%%mlJobDbName%%",
+  "range-element-index": [
+    {
+      "scalar-type": "string",
+      "namespace-uri": "",
+      "localname": "jobId",
+      "collation": "http://marklogic.com/collation/codepoint",
+      "range-value-positions": false,
+      "invalid-values": "reject"
+    },
+    {
+      "scalar-type": "string",
+      "namespace-uri": "",
+      "localname": "jobName",
+      "collation": "http://marklogic.com/collation/codepoint",
+      "range-value-positions": false,
+      "invalid-values": "reject"
+    },
+    {
+      "scalar-type": "dateTime",
+      "namespace-uri": "",
+      "localname": "startTime",
+      "collation": "",
+      "range-value-positions": false,
+      "invalid-values": "reject"
+    },
+    {
+      "scalar-type": "dateTime",
+      "namespace-uri": "",
+      "localname": "endTime",
+      "collation": "",
+      "range-value-positions": false,
+      "invalid-values": "reject"
+    },
+    {
+      "scalar-type": "string",
+      "namespace-uri": "",
+      "localname": "status",
+      "collation": "http://marklogic.com/collation/codepoint",
+      "range-value-positions": false,
+      "invalid-values": "reject"
+    },
+    {
+      "scalar-type": "string",
+      "namespace-uri": "",
+      "localname": "entityName",
+      "collation": "http://marklogic.com/collation/codepoint",
+      "range-value-positions": false,
+      "invalid-values": "reject"
+    },
+    {
+      "scalar-type": "string",
+      "namespace-uri": "",
+      "localname": "flowName",
+      "collation": "http://marklogic.com/collation/codepoint",
+      "range-value-positions": false,
+      "invalid-values": "reject"
+    },
+    {
+      "scalar-type": "string",
+      "namespace-uri": "",
+      "localname": "flowType",
+      "collation": "http://marklogic.com/collation/codepoint",
+      "range-value-positions": false,
+      "invalid-values": "reject"
+    }
+  ],
+  "schema-database": "%%SCHEMAS_DATABASE%%",
+  "triggers-database": "%%TRIGGERS_DATABASE%%",
+  "triple-index": true,
+  "collection-lexicon": true,
+  "uri-lexicon": true
+}

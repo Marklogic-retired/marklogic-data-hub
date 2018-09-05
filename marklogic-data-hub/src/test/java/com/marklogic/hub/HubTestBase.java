@@ -151,7 +151,7 @@ public class HubTestBase {
     private  AdminConfig adminConfig = null;
     private  AdminManager adminManager = null;
     private  CertificateTemplateManagerPlus certManager;
-    private  HashMap<File, String> serverFiles= new HashMap<File, String>();
+    private  HashMap<File, String> originalServerFiles= new HashMap<File, String>();
 	private  boolean sslRun = false;
     private  boolean certAuth = false;
     private  SSLContext datahubadmincertContext = null;
@@ -445,12 +445,16 @@ public class HubTestBase {
 
 	    	manageConfig.setConfigureSimpleSsl(true);
 	    	manageConfig.setSslContext(SimpleX509TrustManager.newSSLContext());
+	    	
+	    	adminConfig.setConfigureSimpleSsl(true);
+	    	adminConfig.setSslContext(SimpleX509TrustManager.newSSLContext());
         }
         if(isCertAuth()) {
         	if(requireAdmin) {
 	           	stagingAppConfig.setAppServicesCertFile("src/test/resources/ssl/client-hub-admin-user.p12");
 	           	finalAppConfig.setAppServicesCertFile("src/test/resources/ssl/client-hub-admin-user.p12");
 	           	hubConfig.setCertFile(DatabaseKind.STAGING, "src/test/resources/ssl/client-hub-admin-user.p12");
+	           	hubConfig.setCertFile(DatabaseKind.FINAL, "src/test/resources/ssl/client-hub-admin-user.p12");
 	           	hubConfig.setSslContext(DatabaseKind.JOB,datahubadmincertContext);
 	           	manageConfig.setSslContext(datahubadmincertContext);
 	           	adminConfig.setSslContext(datahubadmincertContext);
@@ -459,6 +463,7 @@ public class HubTestBase {
         		stagingAppConfig.setAppServicesCertFile("src/test/resources/ssl/client-data-hub-user.p12");
         		finalAppConfig.setAppServicesCertFile("src/test/resources/ssl/client-data-hub-user.p12");
         		hubConfig.setCertFile(DatabaseKind.STAGING, "src/test/resources/ssl/client-data-hub-user.p12");
+        		hubConfig.setCertFile(DatabaseKind.FINAL, "src/test/resources/ssl/client-data-hub-user.p12");
 	           	hubConfig.setSslContext(DatabaseKind.JOB,flowRunnercertContext);
 	           	manageConfig.setSslContext(flowRunnercertContext);
 	           	adminConfig.setSslContext(flowRunnercertContext);
@@ -489,6 +494,10 @@ public class HubTestBase {
         	manageConfig.setSecuritySslContext(certContext);
         	manageConfig.setPassword(null);
         	manageConfig.setSecurityPassword(null);
+        	
+        	adminConfig.setConfigureSimpleSsl(false);
+        	adminConfig.setPassword(null);
+        	
         }
         hubConfig.setStagingAppConfig(stagingAppConfig);
         hubConfig.setFinalAppConfig(finalAppConfig);
@@ -940,24 +949,13 @@ public class HubTestBase {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		List<File> files = new ArrayList<>();
-		files.add(new File(System.getProperty("java.io.tmpdir")+"/ssl-server.json"));
-		File file = getResourceFile("ml-config/servers");
-		Path serverPath = file.toPath();
-		try {
-			Files.list(serverPath).forEach(filePath ->
-				{	File server = filePath.toFile();
-					files.add(server);
-					try {
-						ObjectNode serverFiles = (ObjectNode) JsonNodeUtil.mergeJsonFiles(files);
-						FileUtils.writeStringToFile(server, serverFiles.toString());
-					} catch (IOException e) {
-						throw new RuntimeException(e);
-					}
-				});
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
+
+		File finalServerFile = getResourceFile("ml-config/servers");
+		File hubServerFile = getResourceFile("hub-internal-config/servers");
+		
+		//set servers to ssl/ cert-auth
+		mergeFiles(finalServerFile);
+		mergeFiles(hubServerFile);
 
 	    manageClient.putJson("/manage/v2/servers/Admin/properties?group-id=Default", node.toString());
 	    manageClient.putJson("/manage/v2/servers/App-Services/properties?group-id=Default", node.toString());
@@ -969,6 +967,27 @@ public class HubTestBase {
 			throw new RuntimeException(e);
 		}
 
+	}
+	
+	private void mergeFiles(File file) {
+		List<File> files = new ArrayList<>();
+		files.add(new File(System.getProperty("java.io.tmpdir")+"/ssl-server.json"));
+		Path serverPath = file.toPath();
+		try {
+			Files.list(serverPath).forEach(filePath ->
+				{	File server = filePath.toFile();
+					files.add(server);
+					try {
+						originalServerFiles.put(server, FileUtils.readFileToString(server));
+						ObjectNode serverFiles = (ObjectNode) JsonNodeUtil.mergeJsonFiles(files);
+						FileUtils.writeStringToFile(server, serverFiles.toString());
+					} catch (IOException e) {
+						throw new RuntimeException(e);
+					}
+				});
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	public void sslCleanup() {
@@ -984,7 +1003,7 @@ public class HubTestBase {
 		manageConfig.setSslContext(certContext);
 		manageConfig.setSecuritySslContext(certContext);
 		manageClient = new ManageClient(manageConfig);
-		serverFiles.entrySet().stream().forEach(e -> {
+		originalServerFiles.entrySet().stream().forEach(e -> {
 			try {
 				FileUtils.writeStringToFile(e.getKey(), e.getValue());
 			} catch (IOException e1) {
