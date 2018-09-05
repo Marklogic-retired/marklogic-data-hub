@@ -216,18 +216,19 @@
           </section>
           <section flex layout="column" layout-align="center center" *ngIf="!hubUpdateFailed && !hubUpdating">
             <h3 *ngIf="currentEnvironment">Congratulations on updating to version<br>{{currentEnvironment.runningVersion}}</h3>
-            <span *ngIf="hubUpdating && currentEnvironment.runningVersion !== currentEnvironment.dhfversion">
+            <span *ngIf="currentEnvironment && currentEnvironment.runningVersion !== currentEnvironment.dhfversion">
               <p>But...your project doesn't seem to match this version of DHF!</p>
               <p>Please update your project before proceeding onward!</p>
             </span>
-            <span *ngIf="hubUpdating && currentEnvironment.runningVersion === currentEnvironment.dhfversion">
+            <span *ngIf="currentEnvironment && currentEnvironment.runningVersion === currentEnvironment.dhfversion">
               <button mdl-button mdl-button-type="raised" mdl-colored="primary" mdl-ripple (click)="updateProject()">Update It</button>
+              <div class="manual">
+                <p>Curious about what that button does? Prefer to do it yourself?</p>
+                <p>We have a wiki page that describes the changes necessary. You can poke the button for an automatic update or you can do it yourself.</p>
+                <a target="_blank" [href]="hubUpdateUrl()">How to update a Hub Project</a>
+              </div>
             </span>
-            <div class="manual">
-              <p>Curious about what that button does? Prefer to do it yourself?</p>
-              <p>We have a wiki page that describes the changes necessary. You can poke the button for an automatic update or you can do it yourself.</p>
-              <a target="_blank" [href]="hubUpdateUrl()">How to update a Hub Project</a>
-            </div>
+            <a target="_blank" [href]="hubUpdateUrl()">How to update a Hub Project</a>
           </section>
           <section flex layout="column" layout-align="center center" *ngIf="hubUpdateFailed && !hubUpdating">
             <h3>Automatic Hub Update Failed!</h3>
@@ -340,13 +341,13 @@
                     <td>Job Forests Installed:</td><td><i class="fa" [ngClass]="getInstalledIcon(currentEnvironment.installInfo.jobForestsExist)"></i></td>
                   </tr>
                   <tr>
-                    <td>Staging Modules DB Installed:</td><td><i class="fa" [ngClass]="getInstalledIcon(currentEnvironment.installInfo.stagingModulesExist)"></i></td>
+                    <td>Staging Modules DB Installed:</td><td><i class="fa" [ngClass]="getInstalledIcon(currentEnvironment.installInfo.stagingModulesDbExists)"></i></td>
                   </tr>
                   <tr>
-                    <td>Staging Schemas DB Installed:</td><td><i class="fa" [ngClass]="getInstalledIcon(currentEnvironment.installInfo.stagingSchemasExist)"></i></td>
+                    <td>Staging Schemas DB Installed:</td><td><i class="fa" [ngClass]="getInstalledIcon(currentEnvironment.installInfo.stagingSchemasDbExists)"></i></td>
                   </tr>
                   <tr>
-                    <td>Staging Triggers DB Installed:</td><td><i class="fa" [ngClass]="getInstalledIcon(currentEnvironment.installInfo.stagingTriggersExist)"></i></td>
+                    <td>Staging Triggers DB Installed:</td><td><i class="fa" [ngClass]="getInstalledIcon(currentEnvironment.installInfo.stagingTriggersDbExists)"></i></td>
                   </tr>
                 </tbody>
               </table>
