@@ -26,7 +26,7 @@ In installing a data hub, the following databases are created:
 * Staging.  The staging database contains data that has been ingested into DHF for further processing.
   * Appserver:   data-hub-STAGING, port 8010.
   * Content db:  data-hub-STAGING
-  * Modules db:  data-hub-staging-MODULES
+  * Modules db:  data-hub-MODULES
   * Triggers db: data-hub-staging-TRIGGERS
   * Schemas db:  data-hub-staging-SCHEMAS
 
@@ -39,10 +39,10 @@ In installing a data hub, the following databases are created:
   * Schemas db:  data-hub-final-SCHEMAS
 
 * Jobs.  The jobs subsystem stores records of job  (flow runs) activity and traces of what happened during flows runs.  Note that this appserver shares databases with STAGING.
-  * Appserver:   data-hub-JOBS, port 8011.
+  * Appserver:   data-hub-JOBS, port 8013.
   * Content db:  data-hub-JOBS
   * Triggers db: data-hub-staging-TRIGGERS
-  * Modules db:  data-hub-staging-MODULES
+  * Modules db:  data-hub-MODULES
   * Schemas db:  data-hub-staging-SCHEMAS
 
 The names of these databases are all configurable using values in `gradle.properties`.
