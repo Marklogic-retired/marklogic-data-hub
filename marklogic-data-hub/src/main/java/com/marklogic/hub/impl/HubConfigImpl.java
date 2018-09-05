@@ -1215,7 +1215,7 @@ public class HubConfigImpl implements HubConfig {
         customTokens.put("%%mlCustomForestPath%%", customForestPath);
 
         //version of DHF the user INTENDS to use
-        customTokens.put("%%mlDHFVersion%%", DHFVersion);
+        customTokens.put("%%mlDHFVersion%%", getJarVersion());
 
         if (environmentProperties != null) {
             Enumeration keyEnum = environmentProperties.propertyNames();
