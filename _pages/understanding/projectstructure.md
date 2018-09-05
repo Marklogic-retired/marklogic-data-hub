@@ -5,10 +5,7 @@ lead_text: ''
 permalink: /understanding/project-structure/
 ---
 
-<!--- DHFPROD-646 TODO a couple intro sentences. Is this a required layout? Suggested layout? The layout created by running some particular setup command? -->
-
-This page describes the directory structure for a Data Hub Framework project.
-Note that the structure has changed significantly from DHF 2.x, and now is more aligned with ml-gradle
+When you initialize a Data Hub Framework project using QuickStart or the `hubInit` gradle task, it sets up the following directory hierarchy. The diagram includes some placeholder entries so you can see, for example, how creation of entities, flows, and mappings interacts with the layout. An explanation of the sub-directories and files follows the diagram.
 
 ```
 |- your-data-hub-dir
@@ -43,6 +40,11 @@ Note that the structure has changed significantly from DHF 2.x, and now is more 
                   |- writer.(sjs|xqy)
                |- ...
                |- harmonizeflow N
+      |- mappings
+        |- mappingName 1
+          |- mappingName-0.mapping.json
+          |- ...
+          |- mappingName-N.mapping.json
    |- src
       |- main
          |- hub-internal-config
@@ -52,7 +54,7 @@ Note that the structure has changed significantly from DHF 2.x, and now is more 
    |- .tmp
 ```
 ### build.gradle
-This file allows you to use [Gradle](https://gradle.org/) to configure and manage your data hub instance. Visit the [Gradle website](https://gradle.org/) for full documentation on how to configure it.
+This file enables you to use [Gradle](https://gradle.org/) to configure and manage your data hub instance. Visit the [Gradle website](https://gradle.org/) for full documentation on how to configure it.
 
 ### gradle
 This directory houses the gradle wrapper. When you provision a new DHF project you get the gradle wrapper. Gradle wrapper is a specific, local version of gradle. You can use the wrapper to avoid having to install gradle on your system.
@@ -72,12 +74,12 @@ For example: gradle-dev.properties, gradle-qa.properties, gradle-prod.properties
 These are the \*nix and Windows executable files to run the gradle wrapper. Gradle wrapper is a specific, local version of gradle. You can use the wrapper to avoid having to install gradle on your system.
 
 ## plugins folder
-This folder contains your server-side modules that get deployed into MarkLogic. You can put any server-side files in here that you like. When deployed to MarkLogic ./plugins is equivalent to the root uri **/**, so a library module at `./plugins/my-folder/my-lib.xqy` would be loaded into the modules database as `/my-folder/my-lib.xqy`. 
+This folder contains project-specific server-side modules that get deployed into MarkLogic. You can put any server-side files in here that you like. When deployed to MarkLogic ./plugins is equivalent to the root uri **/**, so a library module at `./plugins/my-folder/my-lib.xqy` would be loaded into the modules database as `/my-folder/my-lib.xqy`.
 
 The only caveat is that the **entities** folder is reserved for Hub use and is treated as a special case by the deploy process.
 
 ### plugins/entities
-This folder contains your entity definitions. An entity is a domain object like Employee or SalesOrder. Each entity folder contains two sub-folders: **input** and **harmonize**. DHF has custom logic to handle the deployment of this folder to MarkLogic. 
+This folder contains your entity definitions. An entity is a domain object like Employee or SalesOrder. Each entity folder contains two sub-folders: **input** and **harmonize**. DHF has custom logic to handle the deployment of this folder to MarkLogic.
 
 ### plugins/entities/{entity}/input
 The input sub-folder contains all of the input flows for a given entity. Input flows are responsible for creating an XML or JSON envelope during content ingest. This folder contains one server-side module for each part of the envelope: content, headers, and triples. You may also optionally include a REST folder that contains custom MarkLogic REST extensions related to this input flow.
@@ -139,6 +141,15 @@ The server-side module (XQuery or JavaScript) responsible for persisting your en
 ### plugins/entities/{entity}/harmonize/REST
 In DHF 4.0, items that used to be here should be placed in `src/main/ml-modules`
 
+### plugins/mappings
+This folder contains model-to-model mapping configuration artifacts that can be used to configure an input flow. For details, see [Using Model-to-Model Mapping]({{site.baseurl}}/harmonize/mapping/).
+
+### plugins/mappings/{mapping}
+This folder contains all versions of a given model-to-model mapping. The name of the folder is the same as mapping name. For details, see For details, see [Using Model-to-Model Mapping]({{site.baseurl}}/harmonize/mapping/).
+
+### plugins/mappings/{mapping}/{mapping}-{version}.json
+A model to model mapping configuration files. There may be multiple versions. For example, QuickStart creates a new version each time you modify a mapping. For details, see For details, see [Using Model-to-Model Mapping]({{site.baseurl}}/harmonize/mapping/).
+
 ### src/main/hub-internal-config folder
 Note: for DHF 4.0.0 the internal structure of all configuration directories aligns with that of `ml-gradle` and should work as documented in that project.
 
@@ -166,6 +177,7 @@ This folder contains sub-folders and JSON files used to configure your MarkLogic
 Each of the above JSON files conforms to the MarkLogic REST API for creating [databases](https://docs.marklogic.com/REST/PUT/manage/v2/databases/[id-or-name]/properties), [mimetypes](https://docs.marklogic.com/REST/PUT/manage/v2/mimetypes/[id-or-name]/properties), [roles](https://docs.marklogic.com/REST/PUT/manage/v2/roles/[id-or-name]/properties), [users](https://docs.marklogic.com/REST/PUT/manage/v2/users/[id-or-name]/properties), or [servers](https://docs.marklogic.com/REST/PUT/manage/v2/servers/[id-or-name]/properties).
 
 ### src/main/ml-config folder
+
 This folder contains sub-folders and JSON files used to configure your MarkLogic server.
 It contains some configuration that is used to bootstrap a DHF's FINAL environment.  In addition, users can place more configuration artifacts here to customize the system
 See [ml-gradle wiki](https://github.com/marklogic/ml-gradle/wiki) for details on what goes in here.
@@ -180,5 +192,5 @@ This folder is the standard `ml-gradle` location for artifacts to be deployed to
 ### src/main/ml-modules-jobs
 This folder is the standard `ml-gradle` location for artifacts to be deployed to the STAGING modules database, but to be used with the JOBS appserver (specifically, the jobs and traces search options configuration.  Users probably have no need to add to this directory.
 
-### .tmp folder
+## .tmp folder
 This folder contains temporary hub artifacts. You may safely ignore it.
