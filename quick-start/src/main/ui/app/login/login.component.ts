@@ -361,7 +361,7 @@ export class LoginComponent implements OnInit {
     const name = this.initSettings.name;
     this.initSettings.stagingHttpName = name + '-STAGING';
     this.initSettings.stagingDbName = name + '-STAGING';
-    this.initSettings.stagingModulesDbName = name + '-staging-MODULES';
+    this.initSettings.stagingModulesDbName = name + '-MODULES';
     this.initSettings.stagingTriggersDbName = name + '-staging-TRIGGERS';
     this.initSettings.stagingSchemasDbName = name + '-staging-SCHEMAS';
     this.initSettings.finalHttpName = name + '-FINAL';
