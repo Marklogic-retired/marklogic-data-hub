@@ -210,7 +210,7 @@ export class LoginPage extends AppPage {
 
   //login invalid credential error message
   get loginInvalidCredentialsError() {
-    return element(by.cssContainingText('#LoginTab', 'Authentication Failed: Invalid credentials'));
+    return element(by.cssContainingText('#LoginTab', 'Invalid credentials'));
   }
 }
 
