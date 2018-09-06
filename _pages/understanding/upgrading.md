@@ -27,7 +27,7 @@ The following table lists the minimum version of MarkLogic required by supported
 |-------------|------------------------|
 | 2.0.4+ | 9.0-4 |
 | 3.0.0 | 9.0-5 |
-| 4.0.0 | 9.0-4 |
+| 4.0.0 | 9.0-5 |
 
 ## Supported Upgrade Paths
 
@@ -38,7 +38,7 @@ You must be running at least DHF 2.0.4 before upgrading to version 4.0.0 or late
 | 3.0.0 | 4.x |
 | 2.0.4+ | 4.x |
 
-If you are upgrading both DHF and MarkLogic, you should first upgrade DHF. After you get your flows working, upgrade MarkLogic.  
+If you are upgrading both DHF and MarkLogic, you can upgrade them independently of each other.
 
 ## How to Upgrade Data Hub Framework
 You can upgrade Data Hub Framework using the following methods. We recommend using `ml-gradle`.
@@ -52,7 +52,7 @@ Use the following procedure to upgrade your project to a new version of DHF usin
 
 1. Back up your project. For example, ensure your project is under source control and all changes are checked in.
 1. Review the [upgrade notes](#notes-for-upgrading-to-the-latest-version) on this page.
-1. Update the `dependencies` section of `YOUR_PROJECT/build.gradle` to use the latest version of DHF. For example, if your build.gradle contains the following dependencies, change the version in the `com.marklogic:marklogic-data-hub` line from 3.0.0 to 4.0.0:
+1. Update the `dependencies` section of `YOUR_PROJECT/build.gradle` to use the latest version of DHF. For example, if your build.gradle file contains the following dependencies, change the DHF version on the `com.marklogic:marklogic-data-hub` line from 3.0.0 to 4.0.0:
 
        dependencies {
          compile 'com.marklogic:marklogic-data-hub:3.0.0'
@@ -64,25 +64,23 @@ Use the following procedure to upgrade your project to a new version of DHF usin
 
 The `hubUpdate` task might report incompatibilities that you must correct.
 
-If you also plan to upgrade MarkLogic, you should ensure your flows are working before doing so.
+You should also update the DHF version in the `dependencies` section of any custom build.gradle files that depend on DHF.
 
 ### Upgrading Using QuickStart
-Use the following procedure to upgrade your project to a new version of DHF using QuickStart. You do not need to perform these steps if you have already upgraded using `ml-gradle`.
+Use the following procedure to upgrade your project to a new version of DHF using QuickStart. You do not need to perform these steps if you already upgraded using `ml-gradle`.
 
 1. Back up your project. For example, ensure your project is under source control and all changes are checked in.
-Download the latest QuickStart. For details, see [Install the Data Hub Framework](../tutorial/install/).
+1. Download the latest QuickStart. For details, see [Install the Data Hub Framework](../tutorial/install/).
 1. Launch the new QuickStart and navigate to it in your browser. For details, see [Install the Data Hub Framework](../tutorial/install/).
 1. Select the project to upgrade and click **NEXT**.
-1. Choose the project environment and click **NEXT**.
+1. Choose your project environment and click **NEXT**.
 1. Enter your MarkLogic Server username and password, then click **LOGIN**.
 
 At this point, QuickStart should detect that your project requires an upgrade and present you with the upgrade dialog. Follow the instructions displayed in the dialog.
 
 The upgrade may not be able to change everything in your project impacted by the upgrade. Review the upgrade notes for more details.
 
-If you also plan to upgrade MarkLogic, you should ensure your flows are working before doing so.
-
-To ensure that any project automation you drive with `ml-gradle` uses the same version of DHF, also update the DHF version in the `dependencies` section of any custom build.gradle files. The upgrade automatically updates `YOUR_PROJECT/build.gradle` for you.
+Upgrading using QuickStart automatically updates `YOUR_PROJECT/build.gradle` for you. However, you should also update the DHF version in the `dependencies` section of any custom build.gradle files that depend on DHF.
 
 ## Notes for Upgrading to the Latest Version
 
