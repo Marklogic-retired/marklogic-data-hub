@@ -121,7 +121,7 @@ public class EndToEndFlowTests extends HubTestBase {
 
     @AfterAll
     public static void teardown() {
-        new Installer().uninstallHub();
+    	new Installer().uninstallHub();
     }
 
     private static boolean isSetup = false;
@@ -795,6 +795,37 @@ public class EndToEndFlowTests extends HubTestBase {
         });
         return tests;
     }
+    
+    @TestFactory
+    public List<DynamicTest> generateDefaultPluginsTests() {        
+        createFlow("default-plugins", CodeFormat.JAVASCRIPT, DataFormat.XML, FlowType.INPUT, true, (CreateFlowListener)null);
+        createFlow("default-plugins", CodeFormat.XQUERY, DataFormat.JSON, FlowType.INPUT, true, (CreateFlowListener)null);
+        createFlow("default-plugins", CodeFormat.XQUERY, DataFormat.XML, FlowType.INPUT, true, (CreateFlowListener)null);
+        createFlow("default-plugins", CodeFormat.JAVASCRIPT, DataFormat.JSON, FlowType.INPUT, true, (CreateFlowListener)null);
+        List<DynamicTest> tests = new ArrayList<>();
+        allCombos((codeFormat, dataFormat, flowType, useEs) -> {
+            String prefix = "default-plugins";
+            String flowName = getFlowName(prefix, codeFormat, dataFormat, flowType, useEs);
+            if (flowType.equals(FlowType.INPUT) && useEs ) {
+	            tests.add(DynamicTest.dynamicTest(flowName + " MLCP", () -> {
+	                Map<String, Object> options = new HashMap<>();
+	                FinalCounts finalCounts = new FinalCounts(1, 0, 1, 1, 0, 0, 1, 0, 0, 0, "FINISHED");
+	                testInputFlowViaMlcp(prefix, "-es", flowRunnerClient, codeFormat, dataFormat, true, options, finalCounts);
+	            }));
+	            tests.add(DynamicTest.dynamicTest(flowName + " REST", () -> {
+	                Map<String, Object> options = new HashMap<>();
+	                FinalCounts finalCounts = new FinalCounts(1, 0, 1, 0, 0, 0, 0, 0, 0, 0, "FINISHED");
+	                testInputFlowViaREST(prefix, "-es", codeFormat, dataFormat, true, false, options, finalCounts);
+	            }));
+	            tests.add(DynamicTest.dynamicTest(flowName + " DMSDK", () -> {
+	                Map<String, Object> options = new HashMap<>();
+	                FinalCounts finalCounts = new FinalCounts(1, 0, 1, 0, 0, 0, 0, 0, 0, 0, "FINISHED");
+	                testInputFlowViaDMSDK(prefix, "-es", codeFormat, dataFormat, true, false, options, finalCounts);
+	            }));
+            }
+        });
+        return tests;
+    }
 
     private String getFlowName(String prefix, CodeFormat codeFormat, DataFormat dataFormat, FlowType flowType, boolean useEs) {
         return prefix + "-" + flowType.toString() + "-" + codeFormat.toString() + "-" + dataFormat.toString() + (useEs ? "-es" : "" );
@@ -908,29 +939,30 @@ public class EndToEndFlowTests extends HubTestBase {
         if (useEs) {
             copyFile("e2e-test/" + ENTITY + ".entity.json", entityDir.resolve(ENTITY + ".entity.json"));
         }
-
+        
         scaffolding.createFlow(ENTITY, flowName, flowType, codeFormat, dataFormat, useEs);
 
         String srcDir = "e2e-test/" + codeFormat.toString() + "-flow/";
-        if (flowType.equals(FlowType.HARMONIZE)) {
-            copyFile(srcDir + "collector." + codeFormat.toString(), flowDir.resolve("collector." + codeFormat.toString()));
-            copyFile(srcDir + "writer." + codeFormat.toString(), flowDir.resolve("writer." + codeFormat.toString()));
+        if(! prefix.toLowerCase().equals("default-plugins")) {
+	        if (flowType.equals(FlowType.HARMONIZE)) {
+	            copyFile(srcDir + "collector." + codeFormat.toString(), flowDir.resolve("collector." + codeFormat.toString()));
+	            copyFile(srcDir + "writer." + codeFormat.toString(), flowDir.resolve("writer." + codeFormat.toString()));
+	        }
+	
+	        if (useEs) {
+	            copyFile(srcDir + "es-content-" + flowType.toString() + "-" + dataFormat.toString() + "." + codeFormat.toString(), flowDir.resolve("content." + codeFormat.toString()));
+	        }
+	        else {
+	            if (codeFormat.equals(CodeFormat.JAVASCRIPT)) {
+	                copyFile(srcDir + "headers." + codeFormat.toString(), flowDir.resolve("headers." + codeFormat.toString()));
+	            } else {
+	                copyFile(srcDir + "headers-" + dataFormat.toString() + "." + codeFormat.toString(), flowDir.resolve("headers." + codeFormat.toString()));
+	            }
+	
+	            copyFile(srcDir + "content-" + flowType.toString() + "." + codeFormat.toString(), flowDir.resolve("content." + codeFormat.toString()));
+	            copyFile(srcDir + "triples." + codeFormat.toString(), flowDir.resolve("triples." + codeFormat.toString()));
+	        }
         }
-
-        if (useEs) {
-            copyFile(srcDir + "es-content-" + flowType.toString() + "-" + dataFormat.toString() + "." + codeFormat.toString(), flowDir.resolve("content." + codeFormat.toString()));
-        }
-        else {
-            if (codeFormat.equals(CodeFormat.JAVASCRIPT)) {
-                copyFile(srcDir + "headers." + codeFormat.toString(), flowDir.resolve("headers." + codeFormat.toString()));
-            } else {
-                copyFile(srcDir + "headers-" + dataFormat.toString() + "." + codeFormat.toString(), flowDir.resolve("headers." + codeFormat.toString()));
-            }
-
-            copyFile(srcDir + "content-" + flowType.toString() + "." + codeFormat.toString(), flowDir.resolve("content." + codeFormat.toString()));
-            copyFile(srcDir + "triples." + codeFormat.toString(), flowDir.resolve("triples." + codeFormat.toString()));
-        }
-
         if (listener != null) {
             listener.onFlowCreated(codeFormat, dataFormat, flowType, srcDir, flowDir, useEs);
         }
