@@ -570,7 +570,8 @@ function {service:camel-case("extractInstance-" || $entity-type-name)}(source) {
   }
   "
     else (
-  "// now check to see if we have XML or json, then create a node clone to operate of off
+  "let attachments = source;
+  // now check to see if we have XML or json, then create a node clone to operate of off
   if (source instanceof Element || source instanceof ObjectNode) {
     let instancePath = '/';
     if(source instanceof Element) {
