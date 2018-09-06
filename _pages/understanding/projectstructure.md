@@ -96,26 +96,6 @@ The server-side module (XQuery or JavaScript) responsible for orchestrating your
 ### plugins/entities/{entity}/input/triples.(sjs|xqy)
 The server-side module (XQuery or JavaScript) responsible for creating the triples section of your envelope.
 
-### plugins/entities/{entity}/input/REST
-This optional sub-folder contains server-side modules (XQuery or JavaScript) and option definitions (XML or JSON) for MarkLogic's REST API.
-
-A typical REST folder looks like this.
-
-```
-|- REST
-   |- options
-   |- transforms
-   |- services
-```
-
-### plugins/entities/{entity}/input/REST/options
-This folder contains REST search option definitions (XML or JSON). See the [MarkLogic Query Options Docs](https://docs.marklogic.com/REST/GET/v1/config/query/%5B'default'-or-name%5D) for details. Once deployed, these options are available on the STAGING server.
-
-### plugins/entities/{entity}/input/REST/transforms
-This folder contains REST transform modules (XQuery or JavaScript). See the [MarkLogic REST API Docs](https://docs.marklogic.com/guide/rest-dev/transforms) for details.
-
-### plugins/entities/{entity}/input/REST/services
-This folder contains REST extension modules (XQuery or JavaScript). See the [MarkLogic REST API Docs](https://docs.marklogic.com/guide/rest-dev/extensions) for details. Once deployed, these services are available on the STAGING server.
 
 ### plugins/entities/{entity}/harmonize
 The harmonize sub-folder contains all of the harmonize flows for a given entity. Harmonize flows are responsible for creating an XML or JSON envelope during content harmonization. This folder contains one server-side module for each part of the envelope: content, headers, and triples. It also contains **collector** and **writer** modules as described below. You may also optionally include a REST folder that contains custom MarkLogic REST extensions that are related to this input flow.
