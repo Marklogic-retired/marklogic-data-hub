@@ -37,16 +37,18 @@ function createContent(id, rawContent, options) {
 *   metadata about the instance.
 */
 function extractInstanceMyFunTest(source) {
-  // the original source documents
   let attachments = source;
-  // now check to see if we have XML or json, then create a node clone from the root of the instance
+  // now check to see if we have XML or json, then create a node clone to operate of off
   if (source instanceof Element || source instanceof ObjectNode) {
-    let instancePath = '/*:envelope/*:instance';
+    let instancePath = '/';
     if(source instanceof Element) {
       //make sure we grab content root only
-      instancePath += '/node()[not(. instance of processing-instruction() or . instance of comment())]';
+      instancePath = '/node()[not(. instance of processing-instruction() or . instance of comment())]';
     }
     source = new NodeBuilder().addNode(fn.head(source.xpath(instancePath))).toNode();
+  }
+  else{
+    source = new NodeBuilder().addNode(fn.head(source)).toNode();
   }
   let name = !fn.empty(fn.head(source.xpath('/name'))) ? xs.string(fn.head(fn.head(source.xpath('/name')))) : null;
   let price = !fn.empty(fn.head(source.xpath('/price'))) ? xs.decimal(fn.head(fn.head(source.xpath('/price')))) : null;
@@ -100,6 +102,7 @@ function extractInstanceMyFunTest(source) {
 *   metadata about the instance.
 */
 function extractInstanceEmployee(source) {
+  let attachments = source;
   // now check to see if we have XML or json, then create a node clone to operate of off
   if (source instanceof Element || source instanceof ObjectNode) {
     let instancePath = '/';
@@ -108,6 +111,9 @@ function extractInstanceEmployee(source) {
       instancePath = '/node()[not(. instance of processing-instruction() or . instance of comment())]';
     }
     source = new NodeBuilder().addNode(fn.head(source.xpath(instancePath))).toNode();
+  }
+  else{
+    source = new NodeBuilder().addNode(fn.head(source)).toNode();
   }
   let id = !fn.empty(fn.head(source.xpath('/id'))) ? xs.string(fn.head(fn.head(source.xpath('/id')))) : null;
   let name = !fn.empty(fn.head(source.xpath('/name'))) ? xs.string(fn.head(fn.head(source.xpath('/name')))) : null;
