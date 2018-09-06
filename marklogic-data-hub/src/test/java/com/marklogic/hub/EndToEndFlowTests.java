@@ -938,14 +938,15 @@ public class EndToEndFlowTests extends HubTestBase {
 
         if (useEs) {
             copyFile("e2e-test/" + ENTITY + ".entity.json", entityDir.resolve(ENTITY + ".entity.json"));
+            installUserModules(getHubAdminConfig(), true);
         }
         
         scaffolding.createFlow(ENTITY, flowName, flowType, codeFormat, dataFormat, useEs);
 
         String srcDir = "e2e-test/" + codeFormat.toString() + "-flow/";
         if(! prefix.toLowerCase().equals("default-plugins")) {
-	        if (flowType.equals(FlowType.HARMONIZE)) {
-	            copyFile(srcDir + "collector." + codeFormat.toString(), flowDir.resolve("collector." + codeFormat.toString()));
+        	if (flowType.equals(FlowType.HARMONIZE)) {
+        		copyFile(srcDir + "collector." + codeFormat.toString(), flowDir.resolve("collector." + codeFormat.toString()));
 	            copyFile(srcDir + "writer." + codeFormat.toString(), flowDir.resolve("writer." + codeFormat.toString()));
 	        }
 	
