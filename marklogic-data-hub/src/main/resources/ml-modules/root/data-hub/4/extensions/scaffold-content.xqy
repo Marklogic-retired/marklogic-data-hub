@@ -553,7 +553,7 @@ return <extract-instance>
 */
 function {service:camel-case("extractInstance-" || $entity-type-name)}(source) {{
   {
-    if ($entity eq $entity-type-name) then
+    if (($entity eq $entity-type-name) and ($flow-type eq $consts:HARMONIZE_FLOW)) then
   "// the original source documents
   let attachments = source;
   // now check to see if we have XML or json, then create a node clone from the root of the instance
@@ -565,6 +565,9 @@ function {service:camel-case("extractInstance-" || $entity-type-name)}(source) {
     }
     source = new NodeBuilder().addNode(fn.head(source.xpath(instancePath))).toNode();
   }
+  else{
+    source = new NodeBuilder().addNode(fn.head(source)).toNode();
+  }
   "
     else (
   "// now check to see if we have XML or json, then create a node clone to operate of off
@@ -575,6 +578,9 @@ function {service:camel-case("extractInstance-" || $entity-type-name)}(source) {
       instancePath = '/node()[not(. instance of processing-instruction() or . instance of comment())]';
     }
     source = new NodeBuilder().addNode(fn.head(source.xpath(instancePath))).toNode();
+  }
+  else{
+    source = new NodeBuilder().addNode(fn.head(source)).toNode();
   }
   "
     )
