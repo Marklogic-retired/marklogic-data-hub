@@ -17,7 +17,7 @@ export default function() {
         appPage.dashboardTab.click();
         dashboardPage.isLoaded();
         //count jobs and traces
-        expect(dashboardPage.jobCount().getText()).toEqual('2,707');
+        expect(dashboardPage.jobCount().getText()).toEqual('2,258');
         appPage.jobsTab.click();
         jobsPage.isLoaded();
       });
@@ -87,7 +87,7 @@ export default function() {
         appPage.dashboardTab.click();
         dashboardPage.isLoaded();
         //count jobs and traces
-        expect(dashboardPage.jobCount().getText()).toEqual('1,805');
+        expect(dashboardPage.jobCount().getText()).toEqual('1,356');
         appPage.jobsTab.click();
         jobsPage.isLoaded();
       });
