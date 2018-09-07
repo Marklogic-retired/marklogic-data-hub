@@ -46,12 +46,11 @@ You can upgrade Data Hub Framework using the following methods. We recommend usi
 * [Upgrading Using ml-gradle](#upgrading-using-ml-gradle)
 * [Upgrading Using QuickStart](#upgrading-using-quickstart)
 
-
 ### Upgrading Using ml-gradle
 Use the following procedure to upgrade your project to a new version of DHF using `ml-gradle`. You should not perform these steps if you have already upgraded using QuickStart.
 
 1. Back up your project. For example, ensure your project is under source control and all changes are checked in.
-1. Review the [upgrade notes](#notes-for-upgrading-to-the-latest-version) on this page.
+1. Review the [release notes]({{site.baseurl}}/docs/release-notes) and the [upgrade notes](#notes-for-upgrading-to-the-latest-version) on this page.
 1. Update the `dependencies` section of `YOUR_PROJECT/build.gradle` to use the latest version of DHF. For example, if your build.gradle file contains the following dependencies, change the DHF version on the `com.marklogic:marklogic-data-hub` line from 3.0.0 to 4.0.0:
 
        dependencies {
@@ -70,6 +69,7 @@ You should also update the DHF version in the `dependencies` section of any cust
 Use the following procedure to upgrade your project to a new version of DHF using QuickStart. You do not need to perform these steps if you already upgraded using `ml-gradle`.
 
 1. Back up your project. For example, ensure your project is under source control and all changes are checked in.
+1. Review the [release notes]({{site.baseurl}}/docs/release-notes) and the [upgrade notes](#notes-for-upgrading-to-the-latest-version) on this page.
 1. Download the latest QuickStart. For details, see [Install the Data Hub Framework](../tutorial/install/).
 1. Launch the new QuickStart and navigate to it in your browser. For details, see [Install the Data Hub Framework](../tutorial/install/).
 1. Select the project to upgrade and click **NEXT**.
@@ -84,65 +84,26 @@ Upgrading using QuickStart automatically updates `YOUR_PROJECT/build.gradle` for
 
 ## Notes for Upgrading to the Latest Version
 
-This section contains information you should review before upgrading to DHF 4.0.0. The notes are divided into general information and information specific to your current DHF version.
-
-The following notes apply to upgrading from DHF 2.0.4 or later to DHF 4.0.0.
-
-* [**TRACES** database no longer used](#traces-database-no-longer-used)
-* [Independent **STAGING** and **FINAL** App Server Stacks Stacks](#independent-staging-and-final-app-server-stacks)
-* [New DHF Core Server-Side Module Paths](#new-dhf-core-server-side-module-paths)
-
-You should also review the following notes specific to your current version:
+Before upgrading your DHF project, you should review the [Changes and Incompatibilities]({{site.baseurl}}/docs/release-notes#changes-and-incompatibilities) section of the release notes and the following additional notes appropriate to your current DHF version:
 
 * [Upgrading from 2.0.4+ to 4.0.0](#upgrading-from-204-to-400) for upgrading from any 2.0.x from 2.0.4 onwards.
 * [Upgrading from 3.0.0 to 4.0.0](#upgrading-from-300-to-400)
 
-### **TRACES** database no longer used
-The **TRACES** database is no longer used by Data Hub Framework. As of version 4.0.0, Data Hub Framework records trace data in the **JOBS** database.
-
-Upgrading does not affect any existing **TRACES** database. However, DHF will not store any future traces in your existing **TRACES** database.
-
-### Independent **STAGING** and **FINAL** App Server Stacks
-
-As of DHF 4.0.0, the **STAGING** and **FINAL** final App Servers each have their own content, modules, schemas, and triggers databases. In previous versions, the **STAGING** and **FINAL** application servers shared the same modules, triggers, and schemas databases.
-
-XXX _what do you need to do about it?_ XXX
-
-### New DHF Core Server-Side Module Paths
-
-Data Hub Framework includes a core set of library modules that get deployed to the **STAGING** modules database. The URIs of these modules have changed, so any code that imports these modules must be updated.
-
-When you upgrade your DHF project using QuickStart or the `hubUpdate` ml-gradle task, the upgrade attempts to fix the module paths for you, but it cannot update custom modules or heavily modified code. You are responsible for updating the DHF module paths in XQuery `import` and JavaScript `require` statements in any such code.
-
-The Data Hub Framework core modules are now installed with a URI prefix of the following form:
-```
-/data-hub/majorVersion/
-```
-For example, for DHF 4.0.0, the modules are installed with the URI prefix `/data-hub/4/`.
-
-Older versions of DHF used the following URI prefix:
-
-* DHF 2.0.4: `/com.marklogic.hub/modulename/`
-* DHF 3.0.0: `/MarkLogic/data-hub-framework/modulename/`
-
-### Security Model Changes
-
-DHF 4.0.0 includes
 ### Upgrading from 3.0.0 to 4.0.0
-Before upgrading from DHF 3.0.0 to DHF 4.0.0, review the following notes, plus [Upgrading to 4.0.0](#upgrading-to-400).
+The upgrades notes in this section apply specifically to upgrading from DHF 3.0.0 to DHF 4.0.0. You should also review the [release notes]({{site.baseurl}}/docs/release-notes) for more generally applicable information.
 
 * [DHF Core Library Installation Changes](#dhf-core-library-installation-changes)
 
 #### DHF Core Library Installation Changes
 
-When you upgrade to DHF 4.0.0 or install it for the first, the DHF core library modules are automatically installed on MarkLogic in the modules database of your **STAGING** App Server.
-
 The DHF core library modules for DHF 3.0.0 were installed with MarkLogic. Those modules are now obsolete, and upgrading MarkLogic will no longer introduce new versions of the DHF core.
 
-This change should be transparent to your application, aside from the module path change described in [New DHF Core Server-Side Module Paths](#new-dhf-core-server-side-module-paths).
+When you upgrade to DHF 4.0.0 or install it for the first time, the DHF core library modules are automatically installed on MarkLogic in the modules database of your **STAGING** App Server.
+
+This change should be transparent to your application, aside from the module path change described in [New DHF Core Server-Side Module Paths]({{site.baseurl}}/docs/release-notes#new-dhf-core-server-side-module-paths).
 
 ### Upgrading from 2.0.4+ to 4.0.0
-The upgrades notes in this section apply specifically to upgrading from DHF 2.0.4 or a later 2.0.x release to DHF 4.0.0. You should also review the notes in [Upgrading to DHF 4.0.0](#upgrading-to-dhf-400) for more general guidelines.
+The upgrades notes in this section apply specifically to upgrading from DHF 2.0.4 or a later 2.0.x release to DHF 4.0.0. You should also review the [release notes]({{site.baseurl}}/docs/release-notes) for more generally applicable information.
 
 If you are upgrading from a DHF version older than 2.0.4, you should first upgrade to the latest 2.0.x version.
 
