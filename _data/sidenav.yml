@@ -96,7 +96,8 @@ main:
         { url: '/javadocs/', text: 'Javadocs' },
         { url: '/docs/architecture/', text: 'Architecture' },
         { url: '/docs/security/', text: 'Security' },
-        { url: '/docs/gradleproperties/', text: 'Property Reference' }
+        { url: '/docs/gradleproperties/', text: 'Property Reference' },
+        { url: '/docs/release-notes/', text: 'Release Notes' }
       ]
     }
     - { url: '/faqs/', text: 'FAQs' }
