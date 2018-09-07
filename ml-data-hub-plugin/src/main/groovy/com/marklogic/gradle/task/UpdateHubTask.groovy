@@ -31,6 +31,7 @@ class UpdateHubTask extends HubTask {
             println "Legacy Flows Updated:\n\t" + String.join("\n\t", updatedFlows)
         }
         else {
+            DataHub.create(hubConfig).upgradeHub()
             println "No Legacy Flows to Update"
         }
     }
