@@ -1,0 +1,81 @@
+{
+  "config": {
+    "privilege": [
+      {
+        "privilege-name": "securityAdmin-inherit",
+        "action": "http://marklogic.com/xdmp/privileges/role/inherit/$$role-id(securityAdmin)",
+        "kind": "execute"
+      },
+      {
+        "privilege-name": "dba-inherit",
+        "action": "http://marklogic.com/xdmp/privileges/role/inherit/$$role-id(dba)",
+        "kind": "execute"
+      },
+      {
+        "privilege-name": "stagingWriter-inherit",
+        "action": "http://marklogic.com/xdmp/privileges/role/inherit/$$role-id(stagingWriter)",
+        "kind": "execute"
+      },
+      {
+        "privilege-name": "stagingReader-inherit",
+        "action": "http://marklogic.com/xdmp/privileges/role/inherit/$$role-id(stagingReader)",
+        "kind": "execute"
+      },
+      {
+        "privilege-name": "finalReader-inherit",
+        "action": "http://marklogic.com/xdmp/privileges/role/inherit/$$role-id(finalReader)",
+        "kind": "execute"
+      },
+      {
+        "privilege-name": "finalWriter-inherit",
+        "action": "http://marklogic.com/xdmp/privileges/role/inherit/$$role-id(finalWriter)",
+        "kind": "execute"
+      },
+      {
+        "privilege-name": "moduleExecutor-inherit",
+        "action": "http://marklogic.com/xdmp/privileges/role/inherit/$$role-id(moduleExecutor)",
+        "kind": "execute"
+      },
+      {
+        "privilege-name": "flowDeveloper-inherit",
+        "action": "http://marklogic.com/xdmp/privileges/role/inherit/$$role-id(flowDeveloper)",
+        "kind": "execute"
+      },
+      {
+        "privilege-name": "flowOperator-inherit",
+        "action": "http://marklogic.com/xdmp/privileges/role/inherit/$$role-id(flowOperator)",
+        "kind": "execute"
+      },
+      {
+        "privilege-name": "endpointDeveloper-inherit",
+        "action": "http://marklogic.com/xdmp/privileges/role/inherit/$$role-id(endpointDeveloper)",
+        "kind": "execute"
+      },
+      {
+        "privilege-name": "endpointUser-inherit",
+        "action": "http://marklogic.com/xdmp/privileges/role/inherit/$$role-id(endpointUser)",
+        "kind": "execute"
+      },
+      {
+        "privilege-name": "flowDeveloper-edit",
+        "action": "http://marklogic.com/xdmp/privileges/role/edit/$$role-id(flowDeveloper)",
+        "kind": "execute"
+      },
+      {
+        "privilege-name": "flowOperator-edit",
+        "action": "http://marklogic.com/xdmp/privileges/role/edit/$$role-id(flowOperator)",
+        "kind": "execute"
+      },
+      {
+        "privilege-name": "endpointDeveloper-edit",
+        "action": "http://marklogic.com/xdmp/privileges/role/edit/$$role-id(endpointDeveloper)",
+        "kind": "execute"
+      },
+      {
+        "privilege-name": "endpointUser-edit",
+        "action": "http://marklogic.com/xdmp/privileges/role/edit/$$role-id(endpointUser)",
+        "kind": "execute"
+      }
+    ]
+  }
+}

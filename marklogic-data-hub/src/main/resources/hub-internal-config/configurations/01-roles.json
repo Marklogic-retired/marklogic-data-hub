@@ -1,0 +1,18 @@
+{
+  "config": {
+    "role": [
+      { "role-name": "dba" },
+      { "role-name": "endpointDeveloper" },
+      { "role-name": "endpointUser" },
+      { "role-name": "finalReader" },
+      { "role-name": "finalWriter" },
+      { "role-name": "flowDeveloper" },
+      { "role-name": "flowOperator" },
+      { "role-name": "moduleExecutor" },
+      { "role-name": "odbcUser" },
+      { "role-name": "securityAdmin" },
+      { "role-name": "stagingWriter" },
+      { "role-name": "stagingReader" }
+    ]
+  }
+}
