@@ -3,17 +3,21 @@ layout: inner
 title: Release Notes
 permalink: /docs/release-notes/
 ---
+The page provides detailed information about changes in the latest release of the Data Hub Framework (DHF). See the following topics for details:
+
+* [New Features](#new-features)
+* [Changes and Incompatibilities](#changes-and-incompatibilities)
+
 ## New Features
 
 DHF 4.0.0 includes the following new features and capabilities:
 
 * [Declarative Mapping of Harmonization Flows](#declarative-mapping-of-harmonization-flows)
 * [Support for Securing Personally Identifiable Information](#support-for-securing-personally-identifiable-information)
-* [Installation Decoupled from MarkLogic Server Installation](#installation-decoupled-from-marklogic-server-installation)
 
 ### Declarative Mapping of Harmonization Flows
 
-You can now generate harmonization flows from a declarative source-to-entity-model mapping called a _model-to-model mapping_. Use a model-to-model mapping enables quickly and easily define how to harmonize source data into produce entity instances, without writing any code.
+You can now generate harmonization flows from a declarative source-to-entity-model mapping called a _model-to-model mapping_. Use a model-to-model mapping to quickly and easily define how to harmonize source data into produce entity instances, without writing any code.
 
 DHF 4.0.0 also includes a new Mapping interface in QuickStart for definining model-to-model mappings.
 
@@ -21,22 +25,17 @@ For details, see [Create a Model-to-Model Mapping for Product](../../tutorial/ma
 
 ### Support for Securing Personally Identifiable Information
 
-As of DHF 4.0.0, DHF enables you to easily restrict access to Personally Identifiable Information (PII) in your harmonized instances by flagging PII properties in your entity model. DHF then generates MarkLogic Element Level Security configuration artifacts for controlling access to these properties.
+As of DHF 4.0.0, you can easily restrict access to Personally Identifiable Information (PII) in your harmonized instances by flagging PII properties in your entity model. DHF then generates MarkLogic Element Level Security configuration artifacts for controlling access to these properties.
 
 For details, see [Managing Personally Identifiable Information (PII)]({{site.baseurl}}/govern/pii).
 
-### Installation Decoupled from MarkLogic Server Installation
-
-The Data Hub Framework core server-side library modules for DHF 3.0.0 were shipped with MarkLogic. As of DHF 4.0.0, the DHF core library modules are installed on MarkLogic when you install DHF. This change enables DHF to be upgraded independent of MarkLogic.
-
-As a side-effect of this change, the database URIs of DHF's server-side modules has changed, so you may need to make changes to your flows. For details, see [New DHF Core Server-Side Module Paths](#new-dhf-core-server-side-module-paths).
-
-## Changes and incompatibilities
+## Changes and Incompatibilities
 
 Data Hub Framework 4.0.0 includes the following changes, some of which may introduce incompatibilities.
 
 * [Security Model Improvements](#security-model-improvements)
 * [ml-gradle Compatible Project Structure](#ml-gradle-compatible-project-structure)
+* [Installation Decoupled from MarkLogic Server Installation](#installation-decoupled-from-marklogic-server-installation)
 * [New DHF Core Server-Side Module Paths](#new-dhf-core-server-side-module-paths)
 * [**TRACES** database no longer used](#traces-database-no-longer-used)
 * [Independent **STAGING** and **FINAL** App Server Stacks Stacks](#independent-staging-and-final-app-server-stacks)
@@ -53,6 +52,12 @@ Projects created (or upgraded) using DHF 4.0.0 have a structure that is compatib
 When you upgrade an existing project to DHF 4.0.0, _XXX_.
 
 For more details, see [Project Structure]({{site.baseurl}}/understanding/project-structure). To learn more about `ml-gradle`, see the [ml-gradle wiki](https://github.com/marklogic-community/ml-gradle/wiki) on GitHub.
+
+### Installation Decoupled from MarkLogic Server Installation
+
+The Data Hub Framework core server-side library modules for DHF 3.0.0 were shipped with MarkLogic. As of DHF 4.0.0, the DHF core library modules are installed on MarkLogic when you install DHF. This change enables DHF to be upgraded independent of MarkLogic.
+
+As a side-effect of this change, the database URIs of DHF's server-side modules has changed, so you may need to make changes to your flows. For details, see [New DHF Core Server-Side Module Paths](#new-dhf-core-server-side-module-paths).
 
 ### New DHF Core Server-Side Module Paths
 
@@ -71,7 +76,7 @@ Older versions of DHF used the following URI prefix:
 
 When you upgrade your DHF project using QuickStart or the `hubUpdate` ml-gradle task, the upgrade attempts to fix the module paths for you, but it cannot update custom modules or heavily modified code. You are responsible for updating the DHF module paths in XQuery `import` and JavaScript `require` statements in any such code.
 
-### **TRACES** database no longer used
+### **TRACES** Database No Longer Used
 The **TRACES** database is no longer used by Data Hub Framework. As of version 4.0.0, Data Hub Framework records trace data in the **JOBS** database.
 
 Upgrading does not affect any existing **TRACES** database. However, DHF will not store any future traces in your existing **TRACES** database.
@@ -81,3 +86,5 @@ Upgrading does not affect any existing **TRACES** database. However, DHF will no
 As of DHF 4.0.0, the **STAGING** and **FINAL** final App Servers each have their own content, modules, schemas, and triggers databases. In previous versions, the **STAGING** and **FINAL** application servers shared the same modules, triggers, and schemas databases.
 
 You do not need to make changes to your project to accommodate this change.
+
+For more details, see [Servers and Databases]({{site.baseurl}}/docs/architecture#servers-and-databases).
