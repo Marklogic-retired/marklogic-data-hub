@@ -359,12 +359,12 @@ export default function() {
       let lastProperty = entityPage.lastProperty;
       expect(lastProperty.isPresent() && lastProperty.isDisplayed());
       //populate the fields for name, range index, type, and description
-      entityPage.getPropertyName(lastProperty).sendKeys("test");
+      entityPage.getPropertyName(lastProperty).sendKeys("title");
       entityPage.getPropertyRangeIndex(lastProperty).click();
       entityPage.getPropertyType(lastProperty).element(by.cssContainingText('option', 'string')).click();
       entityPage.getPropertyDescription(lastProperty).sendKeys("this is a test property");
       //let's see if our values hold!
-      expect(entityPage.getPropertyName(lastProperty).getAttribute('value')).toEqual("test");
+      expect(entityPage.getPropertyName(lastProperty).getAttribute('value')).toEqual("title");
       expect(entityPage.hasClass(entityPage.getPropertyRangeIndex(lastProperty), 'active')).toBe(true);
       expect(entityPage.getPropertyType(lastProperty).getAttribute('value')).toEqual("24: string");
       expect(entityPage.getPropertyDescription(lastProperty).getAttribute('value')).toEqual("this is a test property");
@@ -421,7 +421,7 @@ export default function() {
       expect(lastProperty.isPresent() && lastProperty.isDisplayed());
       //now let's compare them with our original tests to make sure the values are equal
       //let's see if our values hold!
-      expect(entityPage.getPropertyName(lastProperty).getAttribute('value')).toEqual("test");
+      expect(entityPage.getPropertyName(lastProperty).getAttribute('value')).toEqual("title");
       expect(entityPage.hasClass(entityPage.getPropertyRangeIndex(lastProperty), 'active')).toBe(true);
       expect(entityPage.getPropertyType(lastProperty).getAttribute('value')).toEqual("24: string");
       expect(entityPage.getPropertyDescription(lastProperty).getAttribute('value')).toEqual("this is a test property");
@@ -625,11 +625,11 @@ export default function() {
       browser.wait(EC.elementToBeClickable(flowPage.inputFlowButton('TestEntity')));
     });
 
-    it('should create sjs xml input flow', function() {
+    it('should create sjs xml input flow with ES', function() {
       let codeFormat = 'sjs';
       let dataFormat = 'xml';
       let flowName = `${codeFormat} ${dataFormat} INPUT`;
-      flowPage.createInputFlow('TestEntity', flowName, dataFormat, codeFormat, false);
+      flowPage.createInputFlow('TestEntity', flowName, dataFormat, codeFormat, true);
       browser.wait(EC.elementToBeClickable(flowPage.getFlow('TestEntity', flowName, 'INPUT')));
       expect(flowPage.getFlow('TestEntity', flowName, 'INPUT').isDisplayed()).toBe(true, flowName + ' is not present');
       browser.sleep(3000);
@@ -655,11 +655,11 @@ export default function() {
       browser.sleep(3000);
     });
 
-    it('should create xqy json input flow', function() {
+    it('should create xqy json input flow with ES', function() {
       let codeFormat = 'xqy';
       let dataFormat = 'json';
       let flowName = `${codeFormat} ${dataFormat} INPUT`;
-      flowPage.createInputFlow('TestEntity', flowName, dataFormat, codeFormat, false);
+      flowPage.createInputFlow('TestEntity', flowName, dataFormat, codeFormat, true);
       browser.wait(EC.elementToBeClickable(flowPage.getFlow('TestEntity', flowName, 'INPUT')));
       expect(flowPage.getFlow('TestEntity', flowName, 'INPUT').isDisplayed()).toBe(true, flowName + ' is not present');
       browser.sleep(3000);
