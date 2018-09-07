@@ -49,8 +49,14 @@ export class BrowsePage extends AppPage {
     return element(by.cssContainingText('.results .result a', uri));
   }
 
-  //TODO Locators for Collection facet
+  facetName(collection: string) {
+    return element(by.css(`div.facet-list div.facet-value span[title="${collection}"]`));
+  }
 
+  facetCount(collection: string) {
+    return element(by.css(`div.facet-list div.facet-value span[title="${collection}"]`))
+      .element(by.xpath('following-sibling::span')).getAttribute('data-badge');
+  }
 }
 
 var browsePage = new BrowsePage();
