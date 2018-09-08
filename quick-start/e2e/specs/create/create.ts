@@ -359,12 +359,12 @@ export default function() {
       let lastProperty = entityPage.lastProperty;
       expect(lastProperty.isPresent() && lastProperty.isDisplayed());
       //populate the fields for name, range index, type, and description
-      entityPage.getPropertyName(lastProperty).sendKeys("title");
+      entityPage.getPropertyName(lastProperty).sendKeys("sku");
       entityPage.getPropertyRangeIndex(lastProperty).click();
       entityPage.getPropertyType(lastProperty).element(by.cssContainingText('option', 'string')).click();
       entityPage.getPropertyDescription(lastProperty).sendKeys("this is a test property");
       //let's see if our values hold!
-      expect(entityPage.getPropertyName(lastProperty).getAttribute('value')).toEqual("title");
+      expect(entityPage.getPropertyName(lastProperty).getAttribute('value')).toEqual("sku");
       expect(entityPage.hasClass(entityPage.getPropertyRangeIndex(lastProperty), 'active')).toBe(true);
       expect(entityPage.getPropertyType(lastProperty).getAttribute('value')).toEqual("24: string");
       expect(entityPage.getPropertyDescription(lastProperty).getAttribute('value')).toEqual("this is a test property");
@@ -421,7 +421,7 @@ export default function() {
       expect(lastProperty.isPresent() && lastProperty.isDisplayed());
       //now let's compare them with our original tests to make sure the values are equal
       //let's see if our values hold!
-      expect(entityPage.getPropertyName(lastProperty).getAttribute('value')).toEqual("title");
+      expect(entityPage.getPropertyName(lastProperty).getAttribute('value')).toEqual("sku");
       expect(entityPage.hasClass(entityPage.getPropertyRangeIndex(lastProperty), 'active')).toBe(true);
       expect(entityPage.getPropertyType(lastProperty).getAttribute('value')).toEqual("24: string");
       expect(entityPage.getPropertyDescription(lastProperty).getAttribute('value')).toEqual("this is a test property");
