@@ -1,6 +1,6 @@
 {
   "config": {
-    "amps": [
+    "amp": [
       {
         "namespace": "",
         "local-name": "addResponseHeader",
