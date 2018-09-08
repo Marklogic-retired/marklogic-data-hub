@@ -180,6 +180,13 @@ export default function(tmpDir) {
       flowPage.isLoaded();
     });
 
+    it ('should setup customized input content on ES xqy json INPUT flow', function() {
+      //copy customized content.sjs
+      console.log('copy customized input content.xqy on ES xqy json INPUT flow');
+      let contentWithOptionsFilePath = 'e2e/qa-data/plugins/contentEsSkuXquery.xqy';
+      fs.copy(contentWithOptionsFilePath, tmpDir + '/plugins/entities/TestEntity/input/xqy\ json\ INPUT/content.xqy');
+    });
+
     it ('should redeploy modules', function() {
       flowPage.redeployButton.click();
       browser.sleep(5000);
@@ -190,14 +197,120 @@ export default function(tmpDir) {
       browser.wait(EC.elementToBeClickable(flowPage.getFlow('TestEntity', 'sjs json INPUT', 'INPUT')));
     });
 
-    ['sjs', 'xqy'].forEach((codeFormat) => {
-      ['xml', 'json'].forEach((dataFormat) => {
-        let flowType = 'INPUT';
-        let flowName = `${codeFormat} ${dataFormat} ${flowType}`;
-        it (`should run a ${flowName} flow`, function() {
-          flowPage.runInputFlow('TestEntity', flowName, dataFormat, 'products', 'delimited_text', '/testEntity', '');
-        });
-      });
+    it('should run sjs xml input flow with ES', function() {
+      let codeFormat = 'sjs';
+      let dataFormat = 'xml';
+      let flowName = `${codeFormat} ${dataFormat} INPUT`;
+      flowPage.runInputFlow('TestEntity', flowName, dataFormat, 'xml', 'documents', '/testEntityXmlWithES', '');
+    });
+
+    it('should run sjs json input flow', function() {
+      let codeFormat = 'sjs';
+      let dataFormat = 'json';
+      let flowName = `${codeFormat} ${dataFormat} INPUT`;
+      flowPage.runInputFlow('TestEntity', flowName, dataFormat, 'products', 'delimited_text', '/testEntity', '');
+    });
+
+    it('should run xqy xml input flow', function() {
+      let codeFormat = 'xqy';
+      let dataFormat = 'xml';
+      let flowName = `${codeFormat} ${dataFormat} INPUT`;
+      flowPage.runInputFlow('TestEntity', flowName, dataFormat, 'products', 'delimited_text', '/testEntity', '');
+    });
+
+    it('should run xqy json input flow with ES', function() {
+      let codeFormat = 'xqy';
+      let dataFormat = 'json';
+      let flowName = `${codeFormat} ${dataFormat} INPUT`;
+      flowPage.runInputFlow('TestEntity', flowName, dataFormat, 'products', 'delimited_text', '/testEntityJsonWithES', '');
+    });
+
+    it('should verify the ES json data with small sku', function() {
+      //verify on browse data page
+      appPage.browseDataTab.click();
+      browsePage.isLoaded();
+      browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
+      browsePage.databaseDropDown().click();
+      browsePage.selectDatabase('STAGING').click();
+      browser.wait(EC.elementToBeClickable(browsePage.resultsUri()));
+      browsePage.facetName('xqyjsonINPUT').click();
+      browser.wait(EC.elementToBeClickable(browsePage.resultsUri()));
+      expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 10 of 450');
+      browsePage.searchBox().clear();
+      browsePage.searchBox().sendKeys('442403950907');
+      browsePage.searchButton().click();
+      browser.wait(EC.elementToBeClickable(browsePage.resultsUri()));
+      expect(browsePage.resultsSpecificUri('/board_games_accessories.csv-0-1').getText()).toContain('/testEntityJsonWithES');
+      expect(browsePage.resultsSpecificUri('/board_games_accessories.csv-0-1').getText()).toContain('/board_games_accessories.csv-0-1');
+      //verify on viewer page
+      browsePage.resultsSpecificUri('/board_games_accessories.csv-0-1').click();
+      viewerPage.isLoaded();
+      expect(viewerPage.searchResultUri().getText()).toContain('/board_games_accessories.csv-0-1');
+      expect(viewerPage.verifyVariableName('instance').isPresent()).toBeTruthy();
+      expect(viewerPage.verifyVariableName('TestEntity').isPresent()).toBeTruthy();
+      expect(viewerPage.verifyHarmonizedProperty('sku', '442403950907').isPresent()).toBeTruthy();
+      appPage.flowsTab.click();
+      flowPage.isLoaded();
+    });
+
+    it('should verify the ES json data with big SKU', function() {
+      //verify on browse data page
+      appPage.browseDataTab.click();
+      browsePage.isLoaded();
+      browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
+      browsePage.databaseDropDown().click();
+      browsePage.selectDatabase('STAGING').click();
+      browser.wait(EC.elementToBeClickable(browsePage.resultsUri()));
+      browsePage.facetName('xqyjsonINPUT').click();
+      browser.wait(EC.elementToBeClickable(browsePage.resultsUri()));
+      expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 10 of 450');
+      browsePage.searchBox().clear();
+      browsePage.searchBox().sendKeys('159929577929');
+      browsePage.searchButton().click();
+      browser.wait(EC.elementToBeClickable(browsePage.resultsUri()));
+      expect(browsePage.resultsSpecificUri('/board_games.csv-0-10').getText()).toContain('/testEntityJsonWithES');
+      expect(browsePage.resultsSpecificUri('/board_games.csv-0-10').getText()).toContain('/board_games.csv-0-10');
+      //verify on viewer page
+      browsePage.resultsSpecificUri('/board_games.csv-0-10').click();
+      viewerPage.isLoaded();
+      expect(viewerPage.searchResultUri().getText()).toContain('/board_games.csv-0-10');
+      expect(viewerPage.verifyVariableName('instance').isPresent()).toBeTruthy();
+      expect(viewerPage.verifyVariableName('TestEntity').isPresent()).toBeTruthy();
+      expect(viewerPage.verifyHarmonizedProperty('sku', '159929577929').isPresent()).toBeTruthy();
+      appPage.flowsTab.click();
+      flowPage.isLoaded();
+    });
+
+    it('should verify the ES xml data', function() {
+      //verify on browse data page
+      appPage.browseDataTab.click();
+      browsePage.isLoaded();
+      browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
+      browsePage.databaseDropDown().click();
+      browsePage.selectDatabase('STAGING').click();
+      browser.wait(EC.elementToBeClickable(browsePage.resultsUri()));
+      browsePage.facetName('sjsxmlINPUT').click();
+      browser.wait(EC.elementToBeClickable(browsePage.resultsUri()));
+      expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 1 of 1');
+      browsePage.searchBox().clear();
+      browsePage.searchBox().sendKeys('harry');
+      browsePage.searchButton().click();
+      browser.wait(EC.elementToBeClickable(browsePage.resultsUri()));
+      expect(browsePage.resultsSpecificUri('/bookstore-no-formatting.xml').getText()).toContain('/testEntityXmlWithES');
+      expect(browsePage.resultsSpecificUri('/bookstore-no-formatting.xml').getText()).toContain('/bookstore-no-formatting.xml');
+      //verify on viewer page
+      browsePage.resultsSpecificUri('/bookstore-no-formatting.xml').click();
+      viewerPage.isLoaded();
+      expect(viewerPage.searchResultUri().getText()).toContain('/bookstore-no-formatting.xml');
+      expect(viewerPage.verifyTagName('sku').isPresent()).toBeTruthy();
+      expect(viewerPage.verifyVariableName('TestEntity').isPresent()).toBeTruthy();
+      expect(viewerPage.verifyTagName('TestEntity').isPresent()).toBeTruthy();
+      expect(viewerPage.verifyAttributeName('xmlns').isPresent()).toBeTruthy();
+      expect(viewerPage.verifyTagName('bookstore').isPresent()).toBeTruthy();
+      expect(viewerPage.verifyAttributeName('category').isPresent()).toBeTruthy();
+      expect(viewerPage.verifyStringName('cooking').isPresent()).toBeTruthy();
+      appPage.flowsTab.click();
+      flowPage.isLoaded();
     });
   });
 }

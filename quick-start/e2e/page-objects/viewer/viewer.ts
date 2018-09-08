@@ -25,6 +25,14 @@ export class ViewerPage extends AppPage {
     return element(by.cssContainingText('.cm-string', stringName));
   }
 
+  verifyTagName(tagName: string) {
+    return element(by.cssContainingText('.cm-tag', tagName));
+  }
+
+  verifyAttributeName(attributeName: string) {
+    return element(by.cssContainingText('.cm-attribute', attributeName));
+  }
+
   verifyHarmonizedProperty(propertyName: string, harmonizedValue: string) {
     return element(by.xpath(`//span[@class="cm-variable" and contains(text(), "${propertyName}")]/../span[@class="cm-string" and contains(text(), "${harmonizedValue}")]`));
   }
