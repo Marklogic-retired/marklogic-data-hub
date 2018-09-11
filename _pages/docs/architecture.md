@@ -19,7 +19,7 @@ As far as maintaining data goes, DHF provides the following services:
 * records job and tracing metadata.
 * exposes code to operate upon data in the hub.
 
-## Servers and databases.
+## Servers and Databases
 
 In installing a data hub, the following databases are created:
 

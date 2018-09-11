@@ -9,7 +9,7 @@ main:
         { url: '/understanding/how-it-works/', text: 'How It Works'},
         { url: '/understanding/flowtracing/', text: 'Flow Tracing'},
         { url: '/understanding/project-structure/', text: 'Project Structure'},
-        { url: '/understanding/updating/', text: 'Updating to 4.0.0'}
+        { url: '/understanding/updating/', text: 'Upgrading DHF'}
       ]
     }
     - {
@@ -78,15 +78,15 @@ main:
         }
       ]
     }
-    - {
-      url: '/admin/',
-      text: 'Administering DHF',
-      childPages: [
-        # { url: '/admin/install/', text: 'Installing Data Hub Framework' },
-        { url: '/admin/upgrade/', text: 'Upgrading Data Hub Framework' }
-        #, { url: '/admin/uninstall/', text: 'Uninstalling Data Hub Framework' }
-      ]
-    }
+#    - {
+#      url: '/admin/',
+#      text: 'Administering DHF',
+#      childPages: [
+#        # { url: '/admin/install/', text: 'Installing Data Hub Framework' },
+#        { url: '/admin/upgrade/', text: 'Upgrading Data Hub Framework' }
+#        #, { url: '/admin/uninstall/', text: 'Uninstalling Data Hub Framework' }
+#      ]
+#    }
     - {
       url: '/docs/',
       text: 'Docs',
@@ -96,7 +96,8 @@ main:
         { url: '/javadocs/', text: 'Javadocs' },
         { url: '/docs/architecture/', text: 'Architecture' },
         { url: '/docs/security/', text: 'Security' },
-        { url: '/docs/gradleproperties/', text: 'Property Reference' }
+        { url: '/docs/gradleproperties/', text: 'Property Reference' },
+        { url: '/docs/release-notes/', text: 'Release Notes' }
       ]
     }
     - { url: '/faqs/', text: 'FAQs' }
