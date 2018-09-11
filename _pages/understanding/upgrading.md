@@ -66,6 +66,8 @@ The `hubUpdate` task might report incompatibilities that you must correct.
 You should also update the DHF version in the `dependencies` section of any custom build.gradle files that depend on DHF.
 
 ### Upgrading Using QuickStart
+**NOTE**: Do not use QuickStart to upgrade DHF 3.0.0 to DHF 4.0.0.
+
 Use the following procedure to upgrade your project to a new version of DHF using QuickStart. You do not need to perform these steps if you already upgraded using `ml-gradle`.
 
 1. Back up your project. For example, ensure your project is under source control and all changes are checked in.
@@ -111,6 +113,8 @@ For example, where previously your `gradle.properties` or `gradle-local.properti
 The upgrades notes in this section apply specifically to upgrading from DHF 3.0.0 to DHF 4.0.0. You should also review the [release notes]({{site.baseurl}}/docs/release-notes) for more generally applicable information.
 
 * [DHF Core Library Installation Changes](#dhf-core-library-installation-changes)
+
+**NOTE**: You can only upgrade from DHF 3.0.0 to DHF 4.0.0 using `ml-gradle`. **You cannot upgrade from 3.0.0 to 4.0.0 using QuickStart.**
 
 #### DHF Core Library Installation Changes
 
