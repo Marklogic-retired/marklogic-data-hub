@@ -25,7 +25,7 @@ The following table lists the minimum version of MarkLogic required by supported
 
 | DHF Version | Min. MarkLogic Version |
 |-------------|------------------------|
-| 2.0.4+ | 9.0-4 |
+| 2.0.4+ | 9.0-5 |
 | 3.0.0 | 9.0-5 |
 | 4.0.0 | 9.0-5 |
 
@@ -38,7 +38,7 @@ You must be running at least DHF 2.0.4 before upgrading to version 4.0.0 or late
 | 3.0.0 | 4.x |
 | 2.0.4+ | 4.x |
 
-If you are upgrading both DHF and MarkLogic, you can upgrade them independently of each other.
+If you are upgrading both DHF and MarkLogic, you can upgrade them independently of each other as long as you are running at least the [minimally supported version of MarkLogic](#required-software). If you are running an older version of MarkLogic, then you should upgrade MarkLogic before upgrading DHF.
 
 ## How to Upgrade Data Hub Framework
 You can upgrade Data Hub Framework using the following methods. We recommend using `ml-gradle`.
@@ -86,8 +86,26 @@ Upgrading using QuickStart automatically updates `YOUR_PROJECT/build.gradle` for
 
 Before upgrading your DHF project, you should review the [Changes and Incompatibilities]({{site.baseurl}}/docs/release-notes#changes-and-incompatibilities) section of the release notes and the following additional notes appropriate to your current DHF version:
 
+* [Upgrading a Project with a Custom Hub Name](#upgrading-a-project-with-a-custom-hub-name)
 * [Upgrading from 2.0.4+ to 4.0.0](#upgrading-from-204-to-400) for upgrading from any 2.0.x from 2.0.4 onwards.
 * [Upgrading from 3.0.0 to 4.0.0](#upgrading-from-300-to-400)
+
+## Upgrading a Project with a Custom Hub Name
+
+When you create a project, prefixes the databases and App Servers it configures with "data-hub" by default. For example, DHF creates a database named "data-hub-MODULES" and an App Server named "data-hub-STAGING" by default.
+
+If your project does not use "data-hub" for this prefix, the 4.0.0 upgrade process will not properly upgrade your gradle.properties and other configuration files. We recommend you use the following procedure if your does not use the "data-hub" prefix for database and App Server names:
+
+1. Create a new DHF 4.0.0 project. For example, run the `hubInit` gradle task in a new directory.
+1. Migrate your customizations and flows to the new project. This includes changing the name of your databases and App Servers in gradle.properties (or gradle-local.properties).
+1. Copy the plugins directory from your old project into the new project directory.
+1. Run the `hubUpdate` gradle task in the new project directory.
+
+Note that there a several new gradle properties related to your hub databases and App Servers. You will need to update them to use the desired hub prefix.
+
+For example, where previously your `gradle.properties` or `gradle-local.properties` file contained a setting for `mlModulesDbName`, now it must contain a setting for `mlStagingModulesDbName` and `mlFinalModulesDbName`. This requirement is a side-effect of the following change described in the release notes:
+
+* [Independent **STAGING** and **FINAL** App Server Stacks Stacks]({{site.baseurl}}/docs/release-notes/#independent-staging-and-final-app-server-stacks)  
 
 ### Upgrading from 3.0.0 to 4.0.0
 The upgrades notes in this section apply specifically to upgrading from DHF 3.0.0 to DHF 4.0.0. You should also review the [release notes]({{site.baseurl}}/docs/release-notes) for more generally applicable information.

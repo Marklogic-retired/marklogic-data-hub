@@ -27,7 +27,7 @@ For details, see [Create a Model-to-Model Mapping for Product](../../tutorial/ma
 
 As of DHF 4.0.0, you can easily restrict access to Personally Identifiable Information (PII) in your harmonized instances by flagging PII properties in your entity model. DHF then generates MarkLogic Element Level Security configuration artifacts for controlling access to these properties.
 
-This feature requires MarkLogic 9.0-6.
+This feature requires MarkLogic 9.0-6 or later.
 
 For details, see [Managing Personally Identifiable Information (PII)]({{site.baseurl}}/govern/pii).
 
@@ -48,15 +48,21 @@ You do not have to make changes to your DHF project or data application in respo
 
 ### ml-gradle Compatible Project Structure
 
-Projects created (or upgraded) using DHF 4.0.0 have a structure that is compatible with the `ml-gradle` default project structure. This change eliminates the following project directories:
+Projects created (or upgraded) using DHF 4.0.0 have a structure that is compatible with the `ml-gradle` default project structure. This change eliminates or relocates the following project directories:
 
 * YOUR_PROJECT/plugins/entities/YOUR_ENTITY/input/REST/
 * YOUR_PROJECT/plugins/entities/YOUR_ENTITY/harmonize/REST/
 * YOUR_PROJECT/user-config/
+* YOUR_PROJECT/entity-config/
 
-The content that was previously stored in these directories now belongs in the new directory YOUR_PROJECT/src/main/, in accordance with the standard `ml-gradle` [project structure](https://github.com/marklogic-community/ml-gradle/wiki/Project-layout).
+The content that was previously stored in these directories now belongs under  YOUR_PROJECT/src/main/, in accordance with the standard `ml-gradle` [project structure](https://github.com/marklogic-community/ml-gradle/wiki/Project-layout).
 
-When you upgrade an existing project to DHF 4.0.0, some project directories will be renamed with a ".old" suffix. You should migrate your custom configuration and modules into YOUR_PROJECT/src/main/.
+When you upgrade an existing project to DHF 4.0.0, some project directories will be renamed with a ".old" suffix. You should migrate any customizations not addressed by the DHF upgrade process into YOUR_PROJECT/src/main/.
+
+As a general guideline:
+* Files that used to go in YOUR_PROJECT/user-config/ now belong in YOUR_PROJECT/src/main/ml-config.
+* Files that used to go in YOUR_PROJECT/entity-config/ now belong in YOUR_PROJECT/src/main/entity-config.
+* Customizations you may have made under YOUR_PROJECT/hub-internal-config are better kept in YOUR_PROJECT/src/main/ml-config.
 
 For more details, see [Project Structure]({{site.baseurl}}/understanding/project-structure). To learn more about `ml-gradle`, see the [ml-gradle wiki](https://github.com/marklogic-community/ml-gradle/wiki) on GitHub.
 
@@ -84,8 +90,8 @@ Upgrading does not affect any existing **TRACES** database. However, DHF will no
 
 ### Independent **STAGING** and **FINAL** App Server Stacks
 
-As of DHF 4.0.0, the **STAGING** and **FINAL** final App Servers each have their own content, modules, schemas, and triggers databases. In previous versions, the **STAGING** and **FINAL** application servers shared the same modules, triggers, and schemas databases.
+As of DHF 4.0.0, the **STAGING** and **FINAL** final App Servers each have their own content, modules, schemas, and triggers databases. In previous versions, the **STAGING** and **FINAL** application servers shared the same modules, triggers, and schemas databases. This change introduces several new gradle properties.
 
-You do not need to make changes to your project to accommodate this change.
+You do not need to make changes to your project to accommodate this change unless your hub databases and App Servers use a prefix other than "data-hub". For example, if your **STAGING** database is not named "data-hub-STAGING", then see [Upgrading a Project with a Custom Hub Name]({{site.baseurl}}/understanding/upgrading#upgrading-a-project-with-a-custom-hub-name).
 
-For more details, see [Servers and Databases]({{site.baseurl}}/docs/architecture#servers-and-databases).
+See also [Servers and Databases]({{site.baseurl}}/docs/architecture#servers-and-databases).
