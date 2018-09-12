@@ -40,6 +40,10 @@ export class ViewerPage extends AppPage {
   verifyHarmonizedPropertyAtomicValue(propertyName: string, harmonizedValue: number) {
     return element(by.xpath(`//span[@class="cm-variable" and contains(text(), "${propertyName}")]/../span[@class="cm-atom" and . = ${harmonizedValue}]`));
   }
+
+  verifyHarmonizedPropertyXml(propertyName: string, harmonizedValue: string) {
+    return element(by.xpath(`//span[@class="cm-tag" and contains(text(), "${propertyName}")]/../span[@class="cm-variable" and contains(text(), "${harmonizedValue}")]`));
+  }
 }
 
 var viewerPage = new ViewerPage();
