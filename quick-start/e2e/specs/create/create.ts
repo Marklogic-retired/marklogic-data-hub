@@ -709,18 +709,23 @@ export default function() {
       flowPage.clickEntityDisclosure('Product');
     });
 
-    it ('should create input and harmonize flows on Product entity', function() {
+    it ('should create input flow on Product entity', function() {
       //create Product input flow
       flowPage.createInputFlow('Product', 'Load Products', 'json', 'sjs', false);
-      browser.wait(EC.visibilityOf(flowPage.getFlow('Product', 'Load Products', 'INPUT')));
+      browser.wait(EC.elementToBeClickable(flowPage.getFlow('Product', 'Load Products', 'INPUT')));
       expect(flowPage.getFlow('Product', 'Load Products', 'INPUT').isDisplayed()).toBe(true, 'Load Products' + ' is not present');
+      browser.sleep(3000);
+    });
+
+    it ('should create harmonize flow on Product entity', function() {
       //create Product harmonize flow
       flowPage.createHarmonizeFlow('Product', 'Harmonize Products', 'json', 'sjs', true);
-      browser.wait(EC.visibilityOf(flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE')));
+      browser.wait(EC.elementToBeClickable(flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE')));
       expect(flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE').isDisplayed()).toBe(true, 'Harmonize Products' + ' is not present');
+      browser.sleep(3000);
       //add flow options
       flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE').click();
-      browser.wait(EC.visibilityOf(flowPage.tabs));
+      browser.wait(EC.elementToBeClickable(flowPage.tabs));
       console.log('clicking + button to add options')
       flowPage.addFlowOptionsButton().click();
       flowPage.addFlowOptionsButton().click();
