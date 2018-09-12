@@ -34,8 +34,9 @@
         <th class="col-toggler" title="Primary Key"><i class="fa fa-key"></i></th>
         <th (click)="toggleRangeIndexSelection()" class="col-toggler" title="Element Range Index"><i class="fa fa-bolt"></i></th>
         <th (click)="togglePathRangeIndexSelection()" class="col-toggler" title="Path Range Index"><i class="fa fa-code"></i></th>
-        <th (click)="toggleWordLexiconSelection()"  class="col-toggler" title="Word Lexicon"><i class="fa fa-won"></i></th>
-        <th (click)="toggleRequiredSelection()"  class="col-toggler" title="Required Field"><i class="fa fa-exclamation"></i></th>
+        <th (click)="toggleWordLexiconSelection()" class="col-toggler" title="Word Lexicon"><i class="fa fa-won"></i></th>
+        <th (click)="toggleRequiredSelection()" class="col-toggler" title="Required Field"><i class="fa fa-exclamation"></i></th>
+        <th (click)="togglePiiSelection()" class="col-toggler" title="Personally Identifiable Information"><i class="fa fa-lock"></i></th>
         <th>Name</th>
         <th>Type</th>
         <th>Cardinality</th>
@@ -49,8 +50,8 @@
           <td class="col-toggler" (click)="property.hasRangeIndex = !property.hasRangeIndex"><i [ngClass]="{'active': property.hasRangeIndex}" class="fa fa-code"></i></td>
           <td class="col-toggler" (click)="property.hasWordLexicon = !property.hasWordLexicon"><i [ngClass]="{'active': property.hasWordLexicon}" class="fa fa-won"></i></td>
           <td class="col-toggler" (click)="property.required = !property.required"><i [ngClass]="{'active': property.required}" class="fa fa-exclamation"></i></td>
-
-          <td><input type="text" [(ngModel)]="property.name"></td>
+          <td class="col-toggler" (click)="property.pii = !property.pii"><i [ngClass]="{'active': property.pii}" class="fa fa-lock"></i></td>
+          <td><input type="text" name="name" [ngClass]="{'invalid':!isPropertyValid(property)}" [(ngModel)]="property.name" required></td>
           <td>
             <select [ngModel]="getTypeForEdit(property)" (ngModelChange)="setType(property, $event)">
               <option *ngFor="let option of dataTypes" [disabled]="!!option.disabled" [ngValue]="option.value">{{option.label}}</option>
@@ -68,9 +69,10 @@
         </tr>
       </tbody>
     </table>
+    <span *ngIf="!isValid" class="alert-text">Property names are required, must be unique and whitespaces are not allowed</span>
   </div>
   <div class="mdl-dialog__actions">
-    <button mdl-button mdl-button-type="raised" mdl-colored="primary" (click)="saveEntity()">Save</button>
+    <button mdl-button mdl-button-type="raised" mdl-colored="primary" [disabled]="!isValid" (click)="saveEntity()">Save</button>
     <button mdl-button mdl-button-type="raised" (click)="cancel()">Cancel</button>
   </div>
 </div>

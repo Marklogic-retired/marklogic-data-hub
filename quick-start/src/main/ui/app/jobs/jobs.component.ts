@@ -148,20 +148,6 @@ export class JobsComponent implements OnChanges, OnDestroy, OnInit {
     });
   }
 
-  getJobOutput(job: Job): string {
-    if (job.jobOutput) {
-      return job.jobOutput;
-    } else if (this.hasLiveOutput(job)) {
-      return this.jobListener.getJobOutput(job.jobId);
-    } else {
-      let j: Job = _.find(this.jobs, ['jobId', job.jobId]);
-      if (j) {
-        return j.jobOutput;
-      }
-    }
-    return '';
-  }
-
   getIconClass(flowType: string) {
     if (flowType === 'harmonize') {
       return 'mdi-looks';
@@ -183,7 +169,7 @@ export class JobsComponent implements OnChanges, OnDestroy, OnInit {
     });
   }
 
-  toggleDeleteJob(jobId) {
+  toggleSelectJob(jobId) {
     let index = this.selectedJobs.indexOf(jobId);
     if (index > -1) {
       this.selectedJobs.splice(index, 1);

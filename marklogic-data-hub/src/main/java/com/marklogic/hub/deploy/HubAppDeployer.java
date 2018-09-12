@@ -20,6 +20,7 @@ import com.marklogic.appdeployer.command.Command;
 import com.marklogic.appdeployer.command.CommandContext;
 import com.marklogic.appdeployer.command.UndoableCommand;
 import com.marklogic.appdeployer.impl.SimpleAppDeployer;
+import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.FailedRequestException;
 import com.marklogic.client.eval.ServerEvaluationCall;
 import com.marklogic.hub.deploy.util.HubDeployStatusListener;
@@ -36,12 +37,95 @@ public class HubAppDeployer extends SimpleAppDeployer {
     private ManageClient manageClient;
     private AdminManager adminManager;
     private HubDeployStatusListener listener;
+    // this is for the telemetry hook to use mlUsername/mlPassword
+    private DatabaseClient databaseClient;
+    private List<Command> stagingCommandsList;
+    private List<Command> finalCommandsList;
 
-    public HubAppDeployer(ManageClient manageClient, AdminManager adminManager, HubDeployStatusListener listener) {
+    public HubAppDeployer(ManageClient manageClient, AdminManager adminManager, HubDeployStatusListener listener, DatabaseClient databaseClient) {
         super(manageClient, adminManager);
         this.manageClient = manageClient;
         this.adminManager = adminManager;
+        this.databaseClient = databaseClient;
         this.listener = listener;
+    }
+
+    public void deployAll(AppConfig finalAppConfig, AppConfig stagingAppConfig){
+
+        Collections.sort(stagingCommandsList, new Comparator<Command>() {
+            @Override
+            public int compare(Command o1, Command o2) {
+                return o1.getExecuteSortOrder().compareTo(o2.getExecuteSortOrder());
+            }
+
+            @Override
+            public boolean equals(Object obj) {
+                return this.equals(obj);
+            }
+        });
+
+        Collections.sort(finalCommandsList, new Comparator<Command>() {
+            @Override
+            public int compare(Command o1, Command o2) {
+                return o1.getExecuteSortOrder().compareTo(o2.getExecuteSortOrder());
+            }
+
+            @Override
+            public boolean equals(Object obj) {
+                return this.equals(obj);
+            }
+        });
+
+        int count = stagingCommandsList.size() + finalCommandsList.size();
+        int completed = 0;
+        float percent = 0;
+
+        logger.info(format("Deploying app %s with config dir of: %s\n", finalAppConfig.getName(), finalAppConfig.getFirstConfigDir()
+            .getBaseDir().getAbsolutePath()));
+
+        CommandContext finalContext = new CommandContext(finalAppConfig, manageClient, adminManager);
+
+        onStatusChange(0, "Installing Final App...");
+        for (Command command : finalCommandsList) {
+            String name = command.getClass().getName();
+            logger.info(format("Executing command [%s] with sort order [%d]", name, command.getExecuteSortOrder()));
+            percent = ((float)completed / (float)count) * 100;
+            onStatusChange((int)percent, format("[Step %d of %d]  %s", completed + 1, count, name));
+            command.execute(finalContext);
+            logger.info(format("Finished executing command [%s]\n", name));
+            completed++;
+        }
+        onStatusChange((int)percent, "Final App Installation Complete");
+
+        logger.info(format("Deploying app %s with config dir of: %s\n", stagingAppConfig.getName(), stagingAppConfig.getFirstConfigDir()
+            .getBaseDir().getAbsolutePath()));
+
+        CommandContext stagingContext = new CommandContext(stagingAppConfig, manageClient, adminManager);
+
+        onStatusChange((int)percent, "Installing Staging App...");
+        for (Command command : stagingCommandsList) {
+            String name = command.getClass().getName();
+            logger.info(format("Executing command [%s] with sort order [%d]", name, command.getExecuteSortOrder()));
+            percent = ((float)completed / (float)count) * 100;
+            onStatusChange((int)percent, format("[Step %d of %d]  %s", completed + 1, count, name));
+            command.execute(stagingContext);
+            logger.info(format("Finished executing command [%s]\n", name));
+            completed++;
+        }
+        onStatusChange(100, "Staging App Installation Complete");
+
+        //Below is telemetry metric code for tracking successful dhf installs
+        //TODO: when more uses of telemetry are defined, change this to a more e-node based method
+        ServerEvaluationCall eval = databaseClient.newServerEval();
+        String query = "xdmp:feature-metric-increment(xdmp:feature-metric-register(\"datahub.core.install.count\"))";
+        try {
+            eval.xquery(query).eval().close();
+        }
+        catch(FailedRequestException e) {
+            logger.error("Failed to increment feature metric telemetry count: " + query, e);
+            e.printStackTrace();
+        }
+        logger.info(format("Deployed app %s and %s", stagingAppConfig.getName(), finalAppConfig.getName()));
     }
 
     @Override
@@ -80,7 +164,7 @@ public class HubAppDeployer extends SimpleAppDeployer {
 
         //Below is telemetry metric code for tracking successful dhf installs
         //TODO: when more uses of telemetry are defined, change this to a more e-node based method
-        ServerEvaluationCall eval = appConfig.newDatabaseClient().newServerEval();
+        ServerEvaluationCall eval = databaseClient.newServerEval();
         String query = "xdmp:feature-metric-increment(xdmp:feature-metric-register(\"datahub.core.install.count\"))";
         try {
             eval.xquery(query).eval().close();
@@ -91,6 +175,83 @@ public class HubAppDeployer extends SimpleAppDeployer {
         }
         logger.info(format("Deployed app %s", appConfig.getName()));
     }
+
+    public void undeployAll(AppConfig finalAppConfig, AppConfig stagingAppConfig){
+
+        List<UndoableCommand> stagingUndoableCommands = new ArrayList<>();
+        for (Command command : stagingCommandsList) {
+            if (command instanceof UndoableCommand) {
+                stagingUndoableCommands.add((UndoableCommand) command);
+            }
+        }
+
+        List<UndoableCommand> finalUndoableCommands = new ArrayList<>();
+        for (Command command : finalCommandsList) {
+            if (command instanceof UndoableCommand) {
+                finalUndoableCommands.add((UndoableCommand) command);
+            }
+        }
+
+        Collections.sort(stagingUndoableCommands, new Comparator<UndoableCommand>() {
+            @Override
+            public int compare(UndoableCommand o1, UndoableCommand o2) {
+                return o1.getUndoSortOrder().compareTo(o2.getUndoSortOrder());
+            }
+
+            @Override
+            public boolean equals(Object obj) {
+                return this.equals(obj);
+            }
+        });
+
+        Collections.sort(finalUndoableCommands, new Comparator<UndoableCommand>() {
+            @Override
+            public int compare(UndoableCommand o1, UndoableCommand o2) {
+                return o1.getUndoSortOrder().compareTo(o2.getUndoSortOrder());
+            }
+
+            @Override
+            public boolean equals(Object obj) {
+                return this.equals(obj);
+            }
+        });
+
+        int count = stagingUndoableCommands.size() + finalUndoableCommands.size();
+        int completed = 0;
+        float percent = 0;
+        onStatusChange(0, "Un-installing Final App...");
+
+        CommandContext finalContext = new CommandContext(finalAppConfig, manageClient, adminManager);
+
+        for (UndoableCommand command : finalUndoableCommands) {
+            String name = command.getClass().getName();
+            logger.info(format("Undoing command [%s] with sort order [%d]", name, command.getUndoSortOrder()));
+            percent = ((float)completed / (float)count) * 100;
+            onStatusChange((int)percent, format("[Step %d of %d]  %s", completed + 1, count, name));
+            command.undo(finalContext);
+            logger.info(format("Finished undoing command [%s]\n", name));
+            completed++;
+        }
+        onStatusChange((int)percent, "Final App Un-installation Complete");
+
+        CommandContext stagingContext = new CommandContext(stagingAppConfig, manageClient, adminManager);
+
+        onStatusChange((int)percent, "Un-installing Staging App...");
+        for (UndoableCommand command : stagingUndoableCommands) {
+            String name = command.getClass().getName();
+            logger.info(format("Undoing command [%s] with sort order [%d]", name, command.getUndoSortOrder()));
+            percent = ((float)completed / (float)count) * 100;
+            onStatusChange((int)percent, format("[Step %d of %d]  %s", completed + 1, count, name));
+            command.undo(stagingContext);
+            logger.info(format("Finished undoing command [%s]\n", name));
+            completed++;
+        }
+
+        onStatusChange(100, "Un-installation Complete");
+
+        logger.info(format("Undeployed app %s and %s", stagingAppConfig.getName(), finalAppConfig.getName()));
+    }
+
 
     @Override
     public void undeploy(AppConfig appConfig) {
@@ -146,5 +307,15 @@ public class HubAppDeployer extends SimpleAppDeployer {
         if (this.listener != null) {
             this.listener.onError();
         }
+    }
+
+    public void setStagingCommandsList(List<Command> stagingCommandsList)
+    {
+        this.stagingCommandsList = stagingCommandsList;
+    }
+
+    public void setFinalCommandsList(List<Command> finalCommandsList)
+    {
+        this.finalCommandsList = finalCommandsList;
     }
 }

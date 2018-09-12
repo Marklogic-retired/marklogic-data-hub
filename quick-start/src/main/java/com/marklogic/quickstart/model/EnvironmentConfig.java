@@ -26,7 +26,6 @@ import com.marklogic.hub.HubConfigBuilder;
 import com.marklogic.hub.InstallInfo;
 import com.marklogic.hub.util.Versions;
 
-import java.io.IOException;
 import java.util.Properties;
 
 public class EnvironmentConfig {
@@ -46,6 +45,8 @@ public class EnvironmentConfig {
     private String runningVersion;
 
     private String marklogicVersion;
+
+    private String DHFVersion;
 
     public InstallInfo getInstallInfo() {
         return installInfo;
@@ -87,6 +88,10 @@ public class EnvironmentConfig {
         return marklogicVersion;
     }
 
+    public String getDHFVersion() {
+        return DHFVersion;
+    }
+
     public EnvironmentConfig(String projectDir, String environment, String username, String password) {
         this.projectDir = projectDir;
         this.environment = environment;
@@ -99,8 +104,8 @@ public class EnvironmentConfig {
             .withProperties(overrides)
             .build();
         if (username != null) {
-            mlSettings.getAppConfig().setAppServicesUsername(username);
-            mlSettings.getAppConfig().setAppServicesPassword(password);
+            mlSettings.getStagingAppConfig().setAppServicesUsername(username);
+            mlSettings.getStagingAppConfig().setAppServicesPassword(password);
         }
         dataHub = DataHub.create(mlSettings);
 
@@ -113,6 +118,7 @@ public class EnvironmentConfig {
         this.installedVersion = versions.getHubVersion();
         this.marklogicVersion = versions.getMarkLogicVersion();
         this.runningVersion = this.mlSettings.getJarVersion();
+        this.DHFVersion = versions.getDHFVersion();
     }
 
     private DatabaseClient _stagingClient = null;
@@ -136,13 +142,12 @@ public class EnvironmentConfig {
         return _finalClient;
     }
 
-    private DatabaseClient _traceClient = null;
     @JsonIgnore
-    public DatabaseClient getTraceClient() {
-        if (_traceClient == null) {
-            _traceClient = mlSettings.newTraceDbClient();
+    public DatabaseClient getReverseFlowClient() {
+        if (_finalClient == null) {
+            _finalClient = mlSettings.newReverseFlowClient();
         }
-        return _traceClient ;
+        return _finalClient;
     }
 
     private DatabaseClient _jobClient = null;

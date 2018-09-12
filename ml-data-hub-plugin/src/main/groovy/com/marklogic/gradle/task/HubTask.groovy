@@ -22,6 +22,8 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.marklogic.appdeployer.command.CommandContext
 import com.marklogic.client.DatabaseClient
 import com.marklogic.hub.*
+import com.marklogic.hub.deploy.HubAppDeployer
+import com.marklogic.hub.deploy.util.HubDeployStatusListener
 import com.marklogic.hub.job.JobManager;
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Internal
@@ -55,7 +57,7 @@ abstract class HubTask extends DefaultTask {
 
     @Internal
     JobManager getJobManager() {
-        return JobManager.create(getHubConfig().newJobDbClient(), getHubConfig().newTraceDbClient());
+        return JobManager.create(getHubConfig().newJobDbClient());
     }
 
     @Internal
@@ -64,8 +66,9 @@ abstract class HubTask extends DefaultTask {
     }
 
     @Internal
+    // all the groovy tasks that getFinalClient actually need the DHF modules.
     DatabaseClient getFinalClient() {
-        return getHubConfig().newFinalClient()
+        return getHubConfig().newReverseFlowClient()
     }
 
     @Internal
@@ -95,6 +98,6 @@ abstract class HubTask extends DefaultTask {
         catch(Exception e) {
             return str
         }
-
     }
+
 }

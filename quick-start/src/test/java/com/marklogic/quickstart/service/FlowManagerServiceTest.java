@@ -27,6 +27,7 @@ import com.marklogic.client.io.StringHandle;
 import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubConfigBuilder;
+import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.flow.*;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.FileUtil;
@@ -42,12 +43,9 @@ import org.junit.runner.RunWith;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.ApplicationContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -67,26 +65,25 @@ public class FlowManagerServiceTest extends AbstractServiceTest {
     @Before
     public void setup() {
         createProjectDir();
-
         Scaffolding scaffolding = Scaffolding.create(projectDir.toString(), stagingClient);
         scaffolding.createEntity(ENTITY);
         scaffolding.createFlow(ENTITY, "sjs-json-input-flow", FlowType.INPUT,
-            CodeFormat.JAVASCRIPT, DataFormat.JSON);
+            CodeFormat.JAVASCRIPT, DataFormat.JSON, false);
 
         scaffolding.createFlow(ENTITY, "sjs-xml-input-flow", FlowType.INPUT,
-            CodeFormat.JAVASCRIPT, DataFormat.XML);
+            CodeFormat.JAVASCRIPT, DataFormat.XML, false);
 
         scaffolding.createFlow(ENTITY, "xqy-json-input-flow", FlowType.INPUT,
-            CodeFormat.XQUERY, DataFormat.JSON);
+            CodeFormat.XQUERY, DataFormat.JSON, false);
 
         scaffolding.createFlow(ENTITY, "xqy-xml-input-flow", FlowType.INPUT,
-            CodeFormat.XQUERY, DataFormat.XML);
+            CodeFormat.XQUERY, DataFormat.XML, false);
 
         scaffolding.createFlow(ENTITY, "sjs-json-harmonization-flow", FlowType.HARMONIZE,
-            CodeFormat.JAVASCRIPT, DataFormat.JSON);
+            CodeFormat.JAVASCRIPT, DataFormat.JSON, false);
 
         scaffolding.createFlow(ENTITY, "xqy-xml-harmonization-flow", FlowType.HARMONIZE,
-            CodeFormat.XQUERY, DataFormat.XML);
+            CodeFormat.XQUERY, DataFormat.XML, false);
 
         Path inputDir = projectDir.resolve("plugins/entities/" + ENTITY + "/input");
         FileUtil.copy(getResourceStream("flow-manager/sjs-flow/headers.sjs"), inputDir.resolve("sjs-json-input-flow/headers.sjs").toFile());
@@ -108,7 +105,7 @@ public class FlowManagerServiceTest extends AbstractServiceTest {
         Path harmonizeDir = projectDir.resolve("plugins/entities/" + ENTITY + "/harmonize");
         FileUtil.copy(getResourceStream("flow-manager/sjs-harmonize-flow/headers.sjs"), harmonizeDir.resolve("sjs-json-harmonization-flow/headers.sjs").toFile());
 
-        installUserModules(getHubConfig(), true);
+        installUserModules(getHubAdminConfig(), true);
     }
 
     protected void setEnvConfig(EnvironmentConfig envConfig) {
@@ -145,11 +142,11 @@ public class FlowManagerServiceTest extends AbstractServiceTest {
     // this test fails in some environments because wihen running in test,
     // its classpath is too long to call mlcp as an interprocess communication.
     public void runMlcp() throws IOException, InterruptedException, JSONException {
-        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_TRACE_NAME, HubConfig.DEFAULT_JOB_NAME);
+        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
 
         String flowName = "sjs-json-input-flow";
 
-        FlowManager flowManager = FlowManager.create(getHubConfig());
+        FlowManager flowManager = FlowManager.create(getHubFlowRunnerConfig());
         Flow flow = flowManager.getFlow(ENTITY, flowName, FlowType.INPUT);
 
         ObjectMapper objectMapper = new ObjectMapper();
@@ -163,14 +160,14 @@ public class FlowManagerServiceTest extends AbstractServiceTest {
                 "\"output_permissions\":\"\\\"rest-reader,read,rest-writer,update\\\"\"," +
                 "\"output_uri_replace\":\"\\\"" + basePath.replace("\\", "/").replaceAll("^([A-Za-z]):", "/$1:") + ",''\\\"\"," +
                 "\"document_type\":\"\\\"json\\\"\"," +
-                "\"transform_module\":\"\\\"/MarkLogic/data-hub-framework/transforms/mlcp-flow-transform.sjs\\\"\"," +
+                "\"transform_module\":\"\\\"/data-hub/4/transforms/mlcp-flow-transform.sjs\\\"\"," +
                 "\"transform_namespace\":\"\\\"http://marklogic.com/data-hub/mlcp-flow-transform\\\"\"," +
                 "\"transform_param\":\"\\\"entity-name=" + ENTITY + ",flow-name=" + flowName + "\\\"\"" +
                 "}");
         FlowStatusListener flowStatusListener = (jobId, percentComplete, message) -> {
             logger.error(message);
         };
-        MlcpRunner mlcpRunner = new MlcpRunner(null, "com.marklogic.hub.util.MlcpMain", getHubConfig(), flow, stagingClient, mlcpOptions, flowStatusListener);
+        MlcpRunner mlcpRunner = new MlcpRunner(null, "com.marklogic.hub.util.MlcpMain", getHubFlowRunnerConfig(), flow, stagingClient, mlcpOptions, flowStatusListener);
         mlcpRunner.start();
         mlcpRunner.join();
 
@@ -183,7 +180,7 @@ public class FlowManagerServiceTest extends AbstractServiceTest {
 
     @Test
     public void runHarmonizationFlow() throws InterruptedException {
-        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_TRACE_NAME, HubConfig.DEFAULT_JOB_NAME);
+        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
 
         Assert.assertEquals(0, getFinalDocCount());
 
@@ -197,10 +194,10 @@ public class FlowManagerServiceTest extends AbstractServiceTest {
         setEnvConfig(envConfig);
 
         String flowName = "sjs-json-harmonization-flow";
-        FlowManager flowManager = FlowManager.create(getHubConfig());
+        FlowManager flowManager = FlowManager.create(getHubFlowRunnerConfig());
         Flow flow = flowManager.getFlow(ENTITY, flowName, FlowType.HARMONIZE);
 
-        HubConfig hubConfig = getHubConfig();
+        //HubConfig hubConfig = getHubConfig();
 
         Object monitor = new Object();
         JobTicket jobTicket = fm.runFlow(flow, 1, 1, null, new FlowStatusListener(){
@@ -226,7 +223,7 @@ public class FlowManagerServiceTest extends AbstractServiceTest {
 
     @Test
     public void runHarmonizationFlowWithOptions() throws InterruptedException {
-        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_TRACE_NAME, HubConfig.DEFAULT_JOB_NAME);
+        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
 
         Assert.assertEquals(0, getFinalDocCount());
 
@@ -240,10 +237,10 @@ public class FlowManagerServiceTest extends AbstractServiceTest {
         setEnvConfig(envConfig);
 
         String flowName = "sjs-json-harmonization-flow";
-        FlowManager flowManager = FlowManager.create(getHubConfig());
+        FlowManager flowManager = FlowManager.create(getHubFlowRunnerConfig());
         Flow flow = flowManager.getFlow(ENTITY, flowName, FlowType.HARMONIZE);
 
-        HubConfig hubConfig = getHubConfig();
+        //HubConfig hubConfig = getHubConfig();
 
         final String OPT_VALUE = "test-value";
         Map<String, Object> options = new HashMap<String, Object>();

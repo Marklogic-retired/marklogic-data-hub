@@ -50,4 +50,14 @@ public interface EntityManager {
      * @return boolean - if it fails to do so, false is returned
      */
     boolean saveDbIndexes();
+
+    /**
+     * Scans the entities in the project for pii properties, and saves the
+     * required ELS configurations to support those properties.
+     * @return - true if successfully saved, false if it did not
+     */
+    boolean savePii();
+
+    boolean deployFinalQueryOptions();
+    boolean deployStagingQueryOptions();
 }

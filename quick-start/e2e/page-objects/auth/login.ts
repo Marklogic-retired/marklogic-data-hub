@@ -86,7 +86,7 @@ export class LoginPage extends AppPage {
     return element(by.css('#finished-button'));
   }
 
-  get dataHubNameLabel() {  
+  get dataHubNameLabel() {
     return element(by.cssContainingText('#InitIfNeededTab', 'DataHub Name'));
   }
 
@@ -99,24 +99,20 @@ export class LoginPage extends AppPage {
     return this.dataHubName.sendKeys(dataHubName);
   }
 
-  get marklogicHostLabel() {  
+  get marklogicHostLabel() {
     return element(by.name('host'));
   }
 
   clickAdvancedSettings() {
     return element(by.buttonText('Advanced Settings')).click();
-  } 
+  }
 
   get stagingAppserverNameLabel() {
     return element(by.name('stagingHttpName'));
   }
 
-  get stagingAppserverName() {
-    return element(by.css('mdl-textfield[label="Staging Appserver Name"] input'));
-  }
-
-  get modulesDbName() {
-    return element(by.css('mdl-textfield[label="Modules Database Name"] input'));
+  advancedSettingsValue(labelName: string) {
+    return element(by.css(`mdl-textfield[label="${labelName}"] input`));
   }
 
   clickRestoreDefaults() {
@@ -151,7 +147,7 @@ export class LoginPage extends AppPage {
 
   //get userName element
   get userName(){
-    return element(by.name('username')).element(by.tagName('input'));
+    return element(by.css('input#username'))
   }
 
   //get password element
@@ -214,7 +210,7 @@ export class LoginPage extends AppPage {
 
   //login invalid credential error message
   get loginInvalidCredentialsError() {
-    return element(by.cssContainingText('#LoginTab', 'Authentication Failed: Invalid credentials'));
+    return element(by.cssContainingText('#LoginTab', 'Invalid credentials'));
   }
 }
 

@@ -25,6 +25,8 @@ import com.marklogic.client.DatabaseClientFactory;
 import com.marklogic.hub.impl.HubConfigImpl;
 
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 import java.io.IOException;
 import java.nio.file.Path;
 
@@ -39,26 +41,33 @@ public interface HubConfig {
     String USER_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES = "user-modules-deploy-timestamps.properties";
     String USER_CONTENT_DEPLOY_TIMESTAMPS_PROPERTIES = "user-content-deploy-timestamps.properties";
 
-    String HUB_CONFIG_DIR = "hub-internal-config";
-    String USER_CONFIG_DIR = "user-config";
-    String ENTITY_CONFIG_DIR = "entity-config";
+    String PATH_PREFIX = "src/main/";
+    String HUB_CONFIG_DIR = PATH_PREFIX + "hub-internal-config";
+    String USER_CONFIG_DIR = PATH_PREFIX + "ml-config";
+    String ENTITY_CONFIG_DIR = PATH_PREFIX + "entity-config";
     String STAGING_ENTITY_QUERY_OPTIONS_FILE = "staging-entity-options.xml";
     String FINAL_ENTITY_QUERY_OPTIONS_FILE = "final-entity-options.xml";
+    String STAGING_ENTITY_DATABASE_FILE = "staging-database.json";
+    String FINAL_ENTITY_DATABASE_FILE = "final-database.json";
+
 
     String DEFAULT_STAGING_NAME = "data-hub-STAGING";
     String DEFAULT_FINAL_NAME = "data-hub-FINAL";
-    String DEFAULT_TRACE_NAME = "data-hub-TRACING";
     String DEFAULT_JOB_NAME = "data-hub-JOBS";
-    String DEFAULT_MODULES_DB_NAME = "data-hub-MODULES";
-    String DEFAULT_TRIGGERS_DB_NAME = "data-hub-TRIGGERS";
-    String DEFAULT_SCHEMAS_DB_NAME = "data-hub-SCHEMAS";
+    String DEFAULT_STAGING_MODULES_DB_NAME = "data-hub-MODULES";
+    String DEFAULT_FINAL_MODULES_DB_NAME = "data-hub-final-MODULES";
+    String DEFAULT_STAGING_TRIGGERS_DB_NAME = "data-hub-staging-TRIGGERS";
+    String DEFAULT_FINAL_TRIGGERS_DB_NAME = "data-hub-final-TRIGGERS";
+    String DEFAULT_STAGING_SCHEMAS_DB_NAME = "data-hub-staging-SCHEMAS";
+    String DEFAULT_FINAL_SCHEMAS_DB_NAME = "data-hub-final-SCHEMAS";
 
     String DEFAULT_ROLE_NAME = "data-hub-role";
     String DEFAULT_USER_NAME = "data-hub-user";
+    String DEFAULT_ADMIN_ROLE_NAME = "hub-admin-role";
+    String DEFAULT_ADMIN_USER_NAME = "hub-admin-user";
 
     Integer DEFAULT_STAGING_PORT = 8010;
     Integer DEFAULT_FINAL_PORT = 8011;
-    Integer DEFAULT_TRACE_PORT = 8012;
     Integer DEFAULT_JOB_PORT = 8013;
 
     String DEFAULT_AUTH_METHOD = "digest";
@@ -68,6 +77,8 @@ public interface HubConfig {
     Integer DEFAULT_FORESTS_PER_HOST = 4;
 
     String DEFAULT_CUSTOM_FOREST_PATH = "forests";
+    String PII_QUERY_ROLESET_FILE = "pii-reader.json";
+    String PII_PROTECTED_PATHS_FILE = "pii-protected-paths.json";
 
     /**
      * Gets the hostname of the AppConfig
@@ -181,6 +192,20 @@ public interface HubConfig {
      * @param authMethod - The SSL Auth Method for the database connection
      */
     void setAuthMethod(DatabaseKind kind, String authMethod);
+
+    /**
+     * Returns the TrustManager object for the DatabaseKind in the hub config
+     * @param kind - DatabaseKind enum, eg: STAGING or JOB
+     * @return The TrustManager for the DatabaseKind in hubconfig
+     */
+    X509TrustManager getTrustManager(DatabaseKind kind);
+
+    /**
+     * Sets the Trust Manager for the DatabaseKind in the config
+     * @param kind - DatabaseKind enum, eg: STAGING or JOB
+     * @param trustManager - The Trust Manager for the database connection
+     */
+    void setTrustManager(DatabaseKind kind, X509TrustManager trustManager);
 
     /**
      * Returns the SSL Scheme as string for the DatabaseKind in the hub config
@@ -303,8 +328,8 @@ public interface HubConfig {
     String getProjectDir();
 
     /**
-     *
-     * @param projectDir
+     * Sets the directory for the current project
+     * @param projectDir - a string that represents the path to the project directory
      */
     void setProjectDir(String projectDir);
 
@@ -338,34 +363,17 @@ public interface HubConfig {
     DatabaseClient newAppServicesClient();
 
     /**
-     * Creates a new DatabaseClient for accessing the Staging database
-     * @return - a DatabaseClient
-     */
-     DatabaseClient newStagingClient();
-
-    /**
-     * Creates a new DatabaseClient for accessing the Staging database
-     * @param databaseName - the name of the database for the staging Client to use
-     * @return- a DatabaseClient
-     */
-     DatabaseClient newStagingClient(String databaseName);
-
-    /**
-     * Creates a new DatabaseClient for accessing the Final database
-     * @return - a DatabaseClient
-     */
-    DatabaseClient newFinalClient();
-
-    /**
      * Creates a new DatabaseClient for accessing the Job database
      * @return - a DatabaseClient
      */
     DatabaseClient newJobDbClient();
 
     /**
-     * Creates a new DatabaseClient for accessing the Trace database
+     * Use newJobDbClient instead.  This function returns a client to
+     * the JOBS database.
      * @return - a DatabaseClient
      */
+    @Deprecated
     DatabaseClient newTraceDbClient();
 
     /**
@@ -375,62 +383,92 @@ public interface HubConfig {
     DatabaseClient newModulesDbClient();
 
     /**
-     * Gets the path for the entity database directory
-     * @return the path for the entity's database directory
+     * Gets the path for the hub staging modules
+     * @return the path for the hub staging modules
      */
-    Path getHubPluginsDir();
+    Path getHubStagingModulesDir();
+
+    /**
+     * Gets the path for the user staging modules
+     * @return the path for the user staging modules
+     */
+    Path getUserStagingModulesDir();
+
+    /**
+     * Gets the path for the user final modules
+     * @return the path for the user final modules
+     */
+    Path getUserFinalModulesDir();
 
     /**
      * Gets the path for the hub plugins directory
      * @return the path for the hub plugins directory
      */
+    Path getHubPluginsDir();
+
+    /**
+     * Gets the path for the hub entities directory
+     * @return the path for the hub entities directory
+     */
     Path getHubEntitiesDir();
 
     /**
-     * Gets the path for the hub's entities directory
-     * @return the path for the hub's entities directory
+     * Gets the path for the hub mappings directory
+     * @return the path for the hub mappings directory
      */
-    Path getHubConfigDir();
+    Path getHubMappingsDir();
 
     /**
      * Gets the path for the hub's config directory
      * @return the path for the hub's config directory
      */
-    Path getHubDatabaseDir();
+    Path getHubConfigDir();
 
     /**
      * Gets the path for the hub's database directory
      * @return the path for the hub's database directory
      */
-    Path getHubServersDir();
+    Path getHubDatabaseDir();
 
     /**
      * Gets the path for the hub servers directory
      * @return the path for the hub servers database directory
      */
-    Path getHubSecurityDir();
+    Path getHubServersDir();
 
     /**
-     * Gets the path for the entity database directory
-     * @return the path for the entity's database directory
+     * Gets the path for the hub's security directory
+     * @return the path for the hub's security directory
      */
-    Path getUserConfigDir();
+    Path getHubSecurityDir();
 
     /**
      * Gets the path for the user config directory
      * @return the path for the user config directory
      */
-    Path getUserSecurityDir();
+    Path getUserConfigDir();
 
     /**
      * Gets the path for the user security directory
      * @return the path for the user security directory
      */
+    Path getUserSecurityDir();
+
+    /**
+     * Gets the path for the user database directory
+     * @return the path for the user database directory
+     */
     Path getUserDatabaseDir();
 
     /**
-     * Gets the path for the entity database directory
-     * @return the path for the entity's database directory
+     * Gets the path for the user schemas directory
+     * @return the path for the user schemas directory
+     */
+    Path getUserSchemasDir();
+
+    /**
+     * Gets the path for the user servers directory
+     * @return the path for the user servers database directory
      */
     Path getUserServersDir();
 
@@ -441,28 +479,81 @@ public interface HubConfig {
     Path getEntityDatabaseDir();
 
     /**
-     * Returns the current appconfig object attached to the HubConfig
-     * @return Returns current AppConfig object set for HubConfig
+     * Returns the current staging appconfig object attached to the HubConfig
+     * @return Returns current staging AppConfig object set for HubConfig
      */
     @JsonIgnore
-    AppConfig getAppConfig();
+    AppConfig getStagingAppConfig();
 
     /**
-     * Sets the App Config for the current HubConfig
-     * @param config AppConfig to associate with the HubConfig
+     * Sets the staging App Config for the current HubConfig
+     * @param config staging AppConfig to associate with the HubConfig
      */
-    void setAppConfig(AppConfig config);
+    void setStagingAppConfig(AppConfig config);
 
     /**
-     * Sets the App Config for the current HubConfig, with skipUpdate option
-     * @param config - AppConfig to associate with the HubConfig
-     * @param skipUpdate false to force update of AppConfig, true to skip it
+     * Sets the staging App Config for the current HubConfig, with skipUpdate option
+     * @param config - staging AppConfig to associate with the HubConfig
+     * @param skipUpdate false to force update of staging AppConfig, true to skip it
      */
-    void setAppConfig(AppConfig config, boolean skipUpdate);
+    void setStagingAppConfig(AppConfig config, boolean skipUpdate);
+
+    /**
+     * Returns the current final appconfig object attached to the HubConfig
+     * @return Returns current final AppConfig object set for HubConfig
+     */
+    @JsonIgnore
+    AppConfig getFinalAppConfig();
+
+    /**
+     * Sets the final App Config for the current HubConfig
+     * @param config final AppConfig to associate with the HubConfig
+     */
+    void setFinalAppConfig(AppConfig config);
+
+    /**
+     * Sets the final App Config for the current HubConfig, with skipUpdate option
+     * @param config - final AppConfig to associate with the HubConfig
+     * @param skipUpdate false to force update of final AppConfig, true to skip it
+     */
+    void setFinalAppConfig(AppConfig config, boolean skipUpdate);
 
     /**
      * Gets the current version of the DHF Jar
      * @return Version of DHF Jar file as string
      */
     String getJarVersion();
+
+    /**
+     * Gets the current version of the project properties file is targetting
+     * @return Version of DHF that the project properties file is targetting
+     */
+    String getDHFVersion();
+
+    /**
+     * Gets a new DatabaseClient that queries the staging database and appserver
+     * @return A client that accesses the hub's staging appserver and staging database.
+     */
+    DatabaseClient newStagingClient();
+
+    /**
+     * Gets a new DatabaseClient that queries the Final database using the staging appserver.
+     * @return A database client configured for fetching from final database, but using DHF's staging modules.
+     */
+    DatabaseClient newReverseFlowClient();
+
+    /**
+     * Gets a new DatabaseClient that queries the Final database using the final appserver.
+     * and final modules database.  (Future, will be same behavior as newReverseFlowClient when modules databases are merged.)
+     * @return A DatabaseClient
+     */
+    DatabaseClient newFinalClient();
+
+    /**
+     * Gets information on a datahub configuration
+     * @return information on the datahub configuration as a string
+     */
+    String getInfo();
+
+
 }

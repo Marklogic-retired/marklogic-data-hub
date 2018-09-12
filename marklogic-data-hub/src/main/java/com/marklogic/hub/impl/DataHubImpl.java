@@ -15,20 +15,28 @@
  */
 package com.marklogic.hub.impl;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.appdeployer.command.Command;
 import com.marklogic.appdeployer.command.CommandMapBuilder;
 import com.marklogic.appdeployer.command.appservers.DeployOtherServersCommand;
 import com.marklogic.appdeployer.command.forests.DeployCustomForestsCommand;
+import com.marklogic.appdeployer.command.modules.LoadModulesCommand;
+import com.marklogic.appdeployer.command.security.*;
+import com.marklogic.appdeployer.impl.SimpleAppDeployer;
 import com.marklogic.client.FailedRequestException;
+import com.marklogic.client.admin.QueryOptionsManager;
+import com.marklogic.client.admin.ResourceExtensionsManager;
+import com.marklogic.client.admin.ServerConfigurationManager;
+import com.marklogic.client.admin.TransformExtensionsManager;
 import com.marklogic.client.eval.ServerEvaluationCall;
+import com.marklogic.client.io.JacksonHandle;
+import com.marklogic.client.io.QueryOptionsListHandle;
 import com.marklogic.hub.*;
 import com.marklogic.hub.deploy.HubAppDeployer;
 import com.marklogic.hub.deploy.commands.*;
 import com.marklogic.hub.deploy.util.HubDeployStatusListener;
-import com.marklogic.hub.error.CantUpgradeException;
-import com.marklogic.hub.error.InvalidDBOperationError;
-import com.marklogic.hub.error.ServerValidationException;
+import com.marklogic.hub.error.*;
 import com.marklogic.hub.util.Versions;
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.admin.AdminManager;
@@ -43,9 +51,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -63,7 +75,10 @@ public class DataHubImpl implements DataHub {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     public DataHubImpl(HubConfig hubConfig) {
-        this.hubConfig = ((HubConfigImpl)hubConfig);
+        if (hubConfig == null) {
+            throw new DataHubConfigurationException("HubConfig must not be null when creating a data hub");
+        }
+        this.hubConfig = ((HubConfigImpl) hubConfig);
     }
 
     private ManageClient getManageClient() {
@@ -73,7 +88,8 @@ public class DataHubImpl implements DataHub {
         return this._manageClient;
     }
 
-    @Override public void clearDatabase(String database){
+    @Override
+    public void clearDatabase(String database) {
         DatabaseManager mgr = new DatabaseManager(this.getManageClient());
         mgr.clearDatabase(database);
     }
@@ -84,6 +100,7 @@ public class DataHubImpl implements DataHub {
         }
         return this._adminManager;
     }
+
     void setAdminManager(AdminManager manager) {
         this._adminManager = manager;
     }
@@ -101,23 +118,37 @@ public class DataHubImpl implements DataHub {
         }
         return this._serverManager;
     }
-    public void setServerManager(ServerManager manager) { this._serverManager = manager; }
 
-    @Override public InstallInfo isInstalled() {
+    public void setServerManager(ServerManager manager) {
+        this._serverManager = manager;
+    }
+
+    @Override
+    public InstallInfo isInstalled() {
 
         InstallInfo installInfo = InstallInfo.create();
 
-        ResourcesFragment srf = getServerManager().getAsXml();
+        ResourcesFragment srf = null;
+        try {
+            srf = getServerManager().getAsXml();
+        } catch (HttpClientErrorException e) {
+            if (e.getStatusCode() == HttpStatus.UNAUTHORIZED) {
+                throw new DataHubSecurityNotInstalledException();
+            }
+        }
+
         installInfo.setAppServerExistent(DatabaseKind.STAGING, srf.resourceExists(hubConfig.getHttpName(DatabaseKind.STAGING)));
         installInfo.setAppServerExistent(DatabaseKind.FINAL, srf.resourceExists(hubConfig.getHttpName(DatabaseKind.FINAL)));
-        installInfo.setAppServerExistent(DatabaseKind.TRACE, srf.resourceExists(hubConfig.getHttpName(DatabaseKind.TRACE)));
         installInfo.setAppServerExistent(DatabaseKind.JOB, srf.resourceExists(hubConfig.getHttpName(DatabaseKind.JOB)));
 
         ResourcesFragment drf = getDatabaseManager().getAsXml();
         installInfo.setDbExistent(DatabaseKind.STAGING, drf.resourceExists(hubConfig.getDbName(DatabaseKind.STAGING)));
         installInfo.setDbExistent(DatabaseKind.FINAL, drf.resourceExists(hubConfig.getDbName(DatabaseKind.FINAL)));
-        installInfo.setDbExistent(DatabaseKind.TRACE, drf.resourceExists(hubConfig.getDbName(DatabaseKind.TRACE)));
         installInfo.setDbExistent(DatabaseKind.JOB, drf.resourceExists(hubConfig.getDbName(DatabaseKind.JOB)));
+
+        installInfo.setDbExistent(DatabaseKind.STAGING_MODULES, drf.resourceExists(hubConfig.getDbName(DatabaseKind.STAGING_MODULES)));
+        installInfo.setDbExistent(DatabaseKind.STAGING_SCHEMAS, drf.resourceExists(hubConfig.getDbName(DatabaseKind.STAGING_SCHEMAS)));
+        installInfo.setDbExistent(DatabaseKind.STAGING_TRIGGERS, drf.resourceExists(hubConfig.getDbName(DatabaseKind.STAGING_TRIGGERS)));
 
         if (installInfo.isDbExistent(DatabaseKind.STAGING)) {
             Fragment f = getDatabaseManager().getPropertiesAsXml(hubConfig.getDbName(DatabaseKind.STAGING));
@@ -133,11 +164,6 @@ public class DataHubImpl implements DataHub {
             installInfo.setForestsExistent(DatabaseKind.FINAL, (f.getElements("//m:forest").size() > 0));
         }
 
-        if (installInfo.isDbExistent(DatabaseKind.TRACE)) {
-            Fragment f = getDatabaseManager().getPropertiesAsXml(hubConfig.getDbName(DatabaseKind.TRACE));
-            installInfo.setForestsExistent(DatabaseKind.TRACE, (f.getElements("//m:forest").size() > 0));
-        }
-
         if (installInfo.isDbExistent(DatabaseKind.JOB)) {
             Fragment f = getDatabaseManager().getPropertiesAsXml(hubConfig.getDbName(DatabaseKind.JOB));
             installInfo.setForestsExistent(DatabaseKind.JOB, (f.getElements("//m:forest").size() > 0));
@@ -148,7 +174,8 @@ public class DataHubImpl implements DataHub {
         return installInfo;
     }
 
-    @Override public boolean isServerVersionValid(String versionString) {
+    @Override
+    public boolean isServerVersionValid(String versionString) {
         try {
             if (versionString == null) {
                 versionString = new Versions(hubConfig).getMarkLogicVersion();
@@ -164,37 +191,41 @@ public class DataHubImpl implements DataHub {
                     alteredString = StringUtils.rightPad(alteredString, 4, "0");
                 }
                 int ver = Integer.parseInt(alteredString.substring(0, 4));
-                if (!isNightly && ver < 9011) {
+                if (!isNightly && ver < 9050) {
                     return false;
                 }
             }
             if (isNightly) {
                 String dateString = versionString.replaceAll("[^-]+-(\\d{4})(\\d{2})(\\d{2})", "$1-$2-$3");
-                Date minDate = new GregorianCalendar(2017, 6, 1).getTime();
+                Date minDate = new GregorianCalendar(2018, 4, 5).getTime();
                 Date date = new SimpleDateFormat("y-M-d").parse(dateString);
                 if (date.before(minDate)) {
                     return false;
                 }
             }
 
-        }
-        catch(Exception e) {
+        } catch (Exception e) {
             throw new ServerValidationException(e.toString());
         }
         return true;
     }
 
-    @Override public void initProject() {
+    @Override
+    public void initProject() {
         logger.info("Initializing the Hub Project");
         hubConfig.initHubProject();
     }
 
 
-    @Override public void clearUserModules() {
+    @Override
+    public void clearUserModules() {
         ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver(DataHub.class.getClassLoader());
         try {
-            ArrayList<String> options = new ArrayList<>();
+            HashSet<String> options = new HashSet<>();
             for (Resource r : resolver.getResources("classpath*:/ml-modules/options/*.xml")) {
+                options.add(r.getFilename().replace(".xml", ""));
+            }
+            for (Resource r : resolver.getResources("classpath*:/ml-modules-final/options/*.xml")) {
                 options.add(r.getFilename().replace(".xml", ""));
             }
             for (Resource r : resolver.getResources("classpath*:/ml-modules-traces/options/*.xml")) {
@@ -204,16 +235,51 @@ public class DataHubImpl implements DataHub {
                 options.add(r.getFilename().replace(".xml", ""));
             }
 
-            ArrayList<String> services = new ArrayList<>();
+            HashSet<String> services = new HashSet<>();
             for (Resource r : resolver.getResources("classpath*:/ml-modules/services/*.xqy")) {
                 services.add(r.getFilename().replaceAll("\\.(xqy|sjs)", ""));
             }
 
-
-            ArrayList<String> transforms = new ArrayList<>();
+            HashSet<String> transforms = new HashSet<>();
             for (Resource r : resolver.getResources("classpath*:/ml-modules/transforms/*")) {
                 transforms.add(r.getFilename().replaceAll("\\.(xqy|sjs)", ""));
             }
+
+            ServerConfigurationManager configMgr = hubConfig.newStagingClient().newServerConfigManager();
+            QueryOptionsManager stagingOptionsManager = configMgr.newQueryOptionsManager();
+
+            // remove options using mgr.
+            QueryOptionsListHandle handle = stagingOptionsManager.optionsList(new QueryOptionsListHandle());
+            Map<String, String> optionsMap = handle.getValuesMap();
+            optionsMap.keySet().forEach(
+                optionsName -> {
+                    if (!options.contains(optionsName)) {
+                        stagingOptionsManager.deleteOptions(optionsName);
+                    }
+                }
+            );
+
+            // remove transforms using amped channel
+            TransformExtensionsManager transformExtensionsManager = configMgr.newTransformExtensionsManager();
+            JsonNode transformsList = transformExtensionsManager.listTransforms(new JacksonHandle()).get();
+            transformsList.findValuesAsText("name").forEach(
+                x -> {
+                    if (!transforms.contains(x)) {
+                        transformExtensionsManager.deleteTransform(x);
+                    }
+                }
+            );
+
+            // remove resource extensions using amped channel
+            ResourceExtensionsManager resourceExtensionsManager = configMgr.newResourceExtensionsManager();
+            JsonNode resourceExtensions = resourceExtensionsManager.listServices(new JacksonHandle()).get();
+            resourceExtensions.findValuesAsText("name").forEach(
+                x -> {
+                    if (!services.contains(x)) {
+                        resourceExtensionsManager.deleteServices(x);
+                    }
+                }
+            );
 
             String query =
                 "cts:uris((),(),cts:not-query(cts:collection-query('hub-core-module')))[\n" +
@@ -223,17 +289,16 @@ public class DataHubImpl implements DataHub {
                     "    fn:matches(., \"/marklogic.rest.transform/(" + String.join("|", transforms) + ")/assets/(metadata\\.xml|transform\\.(xqy|sjs))\")\n" +
                     "  )\n" +
                     "] ! xdmp:document-delete(.)\n";
-            runInDatabase(query, hubConfig.getDbName(DatabaseKind.MODULES));
-        }
-        catch(FailedRequestException e) {
+            runInDatabase(query, hubConfig.getDbName(DatabaseKind.STAGING_MODULES));
+        } catch (FailedRequestException e) {
             logger.error("Failed to clear user modules");
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public List<Command> getCommandList() {
-        Map<String, List<Command>> commandMap = getCommands();
+    public List<Command> getStagingCommandList() {
+        Map<String, List<Command>> commandMap = getStagingCommands();
         List<Command> commands = new ArrayList<>();
         for (String name : commandMap.keySet()) {
             commands.addAll(commandMap.get(name));
@@ -241,13 +306,54 @@ public class DataHubImpl implements DataHub {
         return commands;
     }
 
-    @Override public HashMap runPreInstallCheck() {
-       return runPreInstallCheck(null);
+    public List<Command> getFinalCommandList() {
+        Map<String, List<Command>> commandMap = getFinalCommands();
+        List<Command> commands = new ArrayList<>();
+        for (String name : commandMap.keySet()) {
+            commands.addAll(commandMap.get(name));
+        }
+        return commands;
     }
 
-    @Override public HashMap runPreInstallCheck(Versions versions) {
+    public List<Command> getSecurityCommandList() {
+        Map<String, List<Command>> commandMap = getSecurityCommands();
+        List<Command> commands = new ArrayList<>();
+        for (String name : commandMap.keySet()) {
+            commands.addAll(commandMap.get(name));
+        }
+        return commands;
+    }
 
-        Map<Integer, String> portsInUse = getServerPortsInUse();
+
+    @Override
+    public HashMap runPreInstallCheck() {
+        return runPreInstallCheck(null);
+    }
+
+    @Override
+    public HashMap<String, Boolean> runPreInstallCheck(Versions versions) {
+
+
+        Map<Integer, String> portsInUse = null;
+
+        try {
+            portsInUse = getServerPortsInUse();
+        } catch (HttpClientErrorException e) {
+            logger.warn("Used non-existing user to verify data hub.  Usually this means a fresh system, ready to install.");
+            HashMap response = new HashMap();
+            response.put("serverVersion", serverVersion);
+            // no server means give it a shot.
+            response.put("serverVersionOk", true);
+            response.put("stagingPortInUse", stagingPortInUse);
+            response.put("stagingPortInUseBy", stagingPortInUseBy);
+            response.put("finalPortInUse", finalPortInUse);
+            response.put("finalPortInUseBy", finalPortInUseBy);
+            response.put("jobPortInUse", jobPortInUse);
+            response.put("jobPortInUseBy", jobPortInUseBy);
+            response.put("safeToInstall", true);
+            return response;
+        }
+
         Set<Integer> ports = portsInUse.keySet();
 
         String serverName = portsInUse.get(hubConfig.getPort(DatabaseKind.STAGING));
@@ -268,11 +374,6 @@ public class DataHubImpl implements DataHub {
             jobPortInUseBy = serverName;
         }
 
-        serverName = portsInUse.get(hubConfig.getPort(DatabaseKind.TRACE));
-        tracePortInUse = ports.contains(hubConfig.getPort(DatabaseKind.TRACE)) && serverName != null && !serverName.equals(hubConfig.getHttpName(DatabaseKind.TRACE));
-        if (tracePortInUse) {
-            tracePortInUseBy = serverName;
-        }
 
         if (versions == null) {
             versions = new Versions(hubConfig);
@@ -288,8 +389,6 @@ public class DataHubImpl implements DataHub {
         response.put("finalPortInUseBy", finalPortInUseBy);
         response.put("jobPortInUse", jobPortInUse);
         response.put("jobPortInUseBy", jobPortInUseBy);
-        response.put("tracePortInUse", tracePortInUse);
-        response.put("tracePortInUseBy", tracePortInUseBy);
         response.put("safeToInstall", isSafeToInstall());
 
         return response;
@@ -298,28 +397,60 @@ public class DataHubImpl implements DataHub {
     /**
      * Installs the data hub configuration and server-side config files into MarkLogic
      */
-    @Override public void install() {
+    @Override
+    public void install() {
         install(null);
     }
 
     /**
      * Installs the data hub configuration and server-side config files into MarkLogic
+     *
      * @param listener - the callback method to receive status updates
      */
-    @Override public void install(HubDeployStatusListener listener) {
+    @Override
+    public void install(HubDeployStatusListener listener) {
         initProject();
 
         logger.warn("Installing the Data Hub into MarkLogic");
 
-        AppConfig config = hubConfig.getAppConfig();
-        HubAppDeployer deployer = new HubAppDeployer(getManageClient(), getAdminManager(), listener);
-        deployer.setCommands(getCommandList());
-        deployer.deploy(config);
+        AppConfig roleConfig = hubConfig.getStagingAppConfig();
+        SimpleAppDeployer roleDeployer = new SimpleAppDeployer(getManageClient(), getAdminManager());
+        roleDeployer.setCommands(getSecurityCommandList());
+        roleDeployer.deploy(roleConfig);
+
+        AppConfig finalConfig = hubConfig.getFinalAppConfig();
+        HubAppDeployer finalDeployer = new HubAppDeployer(getManageClient(), getAdminManager(), listener, hubConfig.newStagingClient());
+        finalDeployer.setFinalCommandsList(getFinalCommandList());
+
+        AppConfig stagingConfig = hubConfig.getStagingAppConfig();
+        finalDeployer.setStagingCommandsList(getStagingCommandList());
+
+        finalDeployer.deployAll(finalConfig, stagingConfig);
     }
 
-    @Override public void updateIndexes() {
-        AppConfig config = hubConfig.getAppConfig();
-        HubAppDeployer deployer = new HubAppDeployer(getManageClient(), getAdminManager(), null);
+    @Override
+    public void installFinal(HubDeployStatusListener listener) {
+
+        logger.warn("Installing the Data Hub into MarkLogic");
+        AppConfig finalConfig = hubConfig.getFinalAppConfig();
+        HubAppDeployer finalDeployer = new HubAppDeployer(getManageClient(), getAdminManager(), listener, hubConfig.newFinalClient());
+        finalDeployer.setCommands(getFinalCommandList());
+        finalDeployer.deploy(finalConfig);
+    }
+
+    @Override
+    public void installStaging(HubDeployStatusListener listener) {
+        // i know it's weird that the final client installs staging, but it's needed
+        AppConfig stagingConfig = hubConfig.getStagingAppConfig();
+        HubAppDeployer stagingDeployer = new HubAppDeployer(getManageClient(), getAdminManager(), listener, hubConfig.newFinalClient());
+        stagingDeployer.setCommands(getStagingCommandList());
+        stagingDeployer.deploy(stagingConfig);
+    }
+
+    @Override
+    public void updateIndexes() {
+        AppConfig config = hubConfig.getStagingAppConfig();
+        HubAppDeployer deployer = new HubAppDeployer(getManageClient(), getAdminManager(), null, hubConfig.newStagingClient());
         List<Command> commands = new ArrayList<>();
         commands.add(new DeployHubDatabasesCommand(hubConfig));
         deployer.setCommands(commands);
@@ -329,22 +460,48 @@ public class DataHubImpl implements DataHub {
     /**
      * Uninstalls the data hub configuration and server-side config files from MarkLogic
      */
-    @Override public void uninstall() {
+    @Override
+    public void uninstall() {
         uninstall(null);
     }
 
     /**
      * Uninstalls the data hub configuration and server-side config files from MarkLogic
+     *
      * @param listener - the callback method to receive status updates
      */
-    @Override public void uninstall(HubDeployStatusListener listener) {
-        logger.warn("Uninstalling the Data Hub from MarkLogic");
+    @Override
+    public void uninstall(HubDeployStatusListener listener) {
+        logger.warn("Uninstalling the Data Hub and Final Databases/Servers from MarkLogic");
 
-        AppConfig config = hubConfig.getAppConfig();
-        HubAppDeployer deployer = new HubAppDeployer(getManageClient(), getAdminManager(), listener);
-        deployer.setCommands(getCommandList());
-        deployer.undeploy(config);
+        AppConfig finalConfig = hubConfig.getFinalAppConfig();
+        HubAppDeployer finalDeployer = new HubAppDeployer(getManageClient(), getAdminManager(), listener, hubConfig.newStagingClient());
+        finalDeployer.setFinalCommandsList(getFinalCommandList());
+
+        AppConfig stagingConfig = hubConfig.getStagingAppConfig();
+        finalDeployer.setStagingCommandsList(getStagingCommandList());
+
+        finalDeployer.undeployAll(finalConfig, stagingConfig);
     }
+
+    @Override
+    public void uninstallStaging(HubDeployStatusListener listener) {
+
+        AppConfig config = hubConfig.getStagingAppConfig();
+        HubAppDeployer stagingDeployer = new HubAppDeployer(getManageClient(), getAdminManager(), listener, hubConfig.newStagingClient());
+        stagingDeployer.setCommands(getStagingCommandList());
+        stagingDeployer.undeploy(config);
+    }
+
+    @Override
+    public void uninstallFinal(HubDeployStatusListener listener) {
+
+        AppConfig finalAppConfig = hubConfig.getFinalAppConfig();
+        HubAppDeployer finalDeployer = new HubAppDeployer(getManageClient(), getAdminManager(), listener, hubConfig.newFinalClient());
+        finalDeployer.setCommands(getFinalCommandList());
+        finalDeployer.undeploy(finalAppConfig);
+    }
+
 
     private void runInDatabase(String query, String databaseName) {
         ServerEvaluationCall eval = hubConfig.newModulesDbClient().newServerEval();
@@ -359,19 +516,22 @@ public class DataHubImpl implements DataHub {
         eval.xquery(xqy).eval();
     }
 
-    private Map<String, List<Command>> getCommands() {
-        Map<String, List<Command>> commandMap = new CommandMapBuilder().buildCommandMap();
 
-        List<Command> securityCommands = commandMap.get("mlSecurityCommands");
-        securityCommands.set(0, new DeployHubRolesCommand(hubConfig));
-        securityCommands.set(1, new DeployHubUsersCommand(hubConfig));
+    private Map<String, List<Command>> getStagingCommands() {
+        Map<String, List<Command>> commandMap = new CommandMapBuilder().buildCommandMap();
 
         List<Command> dbCommands = new ArrayList<>();
         dbCommands.add(new DeployHubDatabasesCommand(hubConfig));
-        dbCommands.add(new DeployHubOtherDatabasesCommand(hubConfig));
-        dbCommands.add(new DeployHubTriggersDatabaseCommand(hubConfig));
-        dbCommands.add(new DeployHubSchemasDatabaseCommand(hubConfig));
+        dbCommands.add(new DeployHubStagingTriggersDatabaseCommand(hubConfig));
+        dbCommands.add(new DeployHubStagingSchemasDatabaseCommand(hubConfig));
         commandMap.put("mlDatabaseCommands", dbCommands);
+
+        // staging deploys amps.
+        List<Command> securityCommands = commandMap.get("mlSecurityCommands");
+        securityCommands.set(0, new DeployHubAmpsCommand(hubConfig));
+        securityCommands.set(1, new DeployHubRolesCommand(hubConfig));
+        securityCommands.set(2, new DeployHubUsersCommand(hubConfig));
+        commandMap.put("mlSecurityCommands", securityCommands);
 
         // don't deploy rest api servers
         commandMap.remove("mlRestApiCommands");
@@ -385,11 +545,50 @@ public class DataHubImpl implements DataHub {
 
         List<Command> moduleCommands = new ArrayList<>();
         moduleCommands.add(new LoadHubModulesCommand(hubConfig));
-        moduleCommands.add(new LoadUserModulesCommand(hubConfig));
+        moduleCommands.add(new LoadUserStagingModulesCommand(hubConfig));
         commandMap.put("mlModuleCommands", moduleCommands);
 
         List<Command> forestCommands = commandMap.get("mlForestCommands");
-        DeployCustomForestsCommand deployCustomForestsCommand = (DeployCustomForestsCommand)forestCommands.get(0);
+        DeployCustomForestsCommand deployCustomForestsCommand = (DeployCustomForestsCommand) forestCommands.get(0);
+        deployCustomForestsCommand.setCustomForestsPath(hubConfig.getCustomForestPath());
+
+        return commandMap;
+    }
+
+    private Map<String, List<Command>> getFinalCommands() {
+        Map<String, List<Command>> commandMap = new CommandMapBuilder().buildCommandMap();
+
+        // final bootstraps users and roles for the hub
+        List<Command> securityCommands = commandMap.get("mlSecurityCommands");
+        securityCommands.set(0, new DeployUserRolesCommand(hubConfig));
+        securityCommands.set(1, new DeployUserUsersCommand(hubConfig));
+
+        commandMap.put("mlSecurityCommands", securityCommands);
+
+        List<Command> dbCommands = new ArrayList<>();
+        dbCommands.add(new DeployHubOtherDatabasesCommand(hubConfig));
+        dbCommands.add(new DeployHubFinalTriggersDatabaseCommand(hubConfig));
+        dbCommands.add(new DeployHubFinalSchemasDatabaseCommand(hubConfig));
+        commandMap.put("mlDatabaseCommands", dbCommands);
+
+        // don't deploy rest api servers
+        commandMap.remove("mlRestApiCommands");
+
+        List<Command> serverCommands = new ArrayList<>();
+        serverCommands.add(new DeployUserServersCommand(hubConfig));
+        DeployOtherServersCommand otherServersCommand = new DeployOtherServersCommand();
+        otherServersCommand.setFilenamesToIgnore("staging-server.json", "final-server.json", "job-server.json", "trace-server.json");
+        serverCommands.add(otherServersCommand);
+        commandMap.put("mlServerCommands", serverCommands);
+
+        // this is the vanilla load-modules command from ml-gradle, to be included in this
+        // command list for install
+        List<Command> moduleCommands = new ArrayList<>();
+        moduleCommands.add(new LoadModulesCommand());
+        commandMap.put("mlModuleCommands", moduleCommands);
+
+        List<Command> forestCommands = commandMap.get("mlForestCommands");
+        DeployCustomForestsCommand deployCustomForestsCommand = (DeployCustomForestsCommand) forestCommands.get(0);
         deployCustomForestsCommand.setCustomForestsPath(hubConfig.getCustomForestPath());
 
         return commandMap;
@@ -406,6 +605,23 @@ public class DataHubImpl implements DataHub {
         return portsInUse;
     }
 
+    private Map<String, List<Command>> getSecurityCommands() {
+        Map<String, List<Command>> commandMap = new HashMap<>();
+        List<Command> securityCommands = new ArrayList<Command>();
+        securityCommands.add(new DeployRolesCommand());
+        securityCommands.add(new DeployUsersCommand());
+        securityCommands.add(new DeployCertificateTemplatesCommand());
+        securityCommands.add(new DeployCertificateAuthoritiesCommand());
+        securityCommands.add(new InsertCertificateHostsTemplateCommand());
+        securityCommands.add(new DeployExternalSecurityCommand());
+        securityCommands.add(new DeployPrivilegesCommand());
+        securityCommands.add(new DeployProtectedCollectionsCommand());
+        securityCommands.add(new DeployProtectedPathsCommand());
+        securityCommands.add(new DeployQueryRolesetsCommand());
+        commandMap.put("mlSecurityCommands", securityCommands);
+        return commandMap;
+    }
+
 
     // Here is the former PreCheckInstall class stuff
     // We should probably move this into a sub class OR its own class and interface, and create a super at the
@@ -416,19 +632,18 @@ public class DataHubImpl implements DataHub {
     private String finalPortInUseBy;
     private boolean jobPortInUse;
     private String jobPortInUseBy;
-    private boolean tracePortInUse;
-    private String tracePortInUseBy;
     private boolean serverVersionOk;
     private String serverVersion;
 
-    @Override public boolean isSafeToInstall() {
+    @Override
+    public boolean isSafeToInstall() {
         return !(isPortInUse(DatabaseKind.FINAL) ||
             isPortInUse(DatabaseKind.STAGING) ||
-            isPortInUse(DatabaseKind.JOB) ||
-            isPortInUse(DatabaseKind.TRACE)) && isServerVersionOk();
+            isPortInUse(DatabaseKind.JOB)) && isServerVersionOk();
     }
 
-    @Override public boolean isPortInUse(DatabaseKind kind){
+    @Override
+    public boolean isPortInUse(DatabaseKind kind) {
         boolean inUse;
         switch (kind) {
             case STAGING:
@@ -440,16 +655,14 @@ public class DataHubImpl implements DataHub {
             case JOB:
                 inUse = jobPortInUse;
                 break;
-            case TRACE:
-                inUse = tracePortInUse;
-                break;
             default:
                 throw new InvalidDBOperationError(kind, "check for port use");
         }
         return inUse;
     }
 
-    @Override public void setPortInUseBy(DatabaseKind kind, String usedBy){
+    @Override
+    public void setPortInUseBy(DatabaseKind kind, String usedBy) {
         switch (kind) {
             case STAGING:
                 stagingPortInUseBy = usedBy;
@@ -460,15 +673,13 @@ public class DataHubImpl implements DataHub {
             case JOB:
                 jobPortInUseBy = usedBy;
                 break;
-            case TRACE:
-                tracePortInUseBy = usedBy;
-                break;
             default:
                 throw new InvalidDBOperationError(kind, "set if port in use");
         }
     }
 
-   @Override public String getPortInUseBy(DatabaseKind kind){
+    @Override
+    public String getPortInUseBy(DatabaseKind kind) {
         String inUseBy;
         switch (kind) {
             case STAGING:
@@ -480,41 +691,43 @@ public class DataHubImpl implements DataHub {
             case JOB:
                 inUseBy = jobPortInUseBy;
                 break;
-            case TRACE:
-                inUseBy = tracePortInUseBy;
-                break;
             default:
                 throw new InvalidDBOperationError(kind, "check if port is in use");
         }
         return inUseBy;
     }
 
-    @Override public boolean isServerVersionOk() {
+    @Override
+    public boolean isServerVersionOk() {
         return serverVersionOk;
     }
 
-    @Override public void setServerVersionOk(boolean serverVersionOk) {
+    @Override
+    public void setServerVersionOk(boolean serverVersionOk) {
         this.serverVersionOk = serverVersionOk;
     }
 
-    @Override public String getServerVersion() {
+    @Override
+    public String getServerVersion() {
         return serverVersion;
     }
 
-    @Override public void setServerVersion(String serverVersion) {
+    @Override
+    public void setServerVersion(String serverVersion) {
         this.serverVersion = serverVersion;
     }
 
     //DataHubUpgrader stuff
     public static String MIN_UPGRADE_VERSION = "2.0.0";
 
-    @Override public boolean upgradeHub() throws CantUpgradeException {
+    @Override
+    public boolean upgradeHub() throws CantUpgradeException {
         return upgradeHub(null);
     }
 
-    @Override public boolean upgradeHub(List<String> updatedFlows) throws CantUpgradeException {
+    @Override
+    public boolean upgradeHub(List<String> updatedFlows) throws CantUpgradeException {
         boolean isHubInstalled = this.isInstalled().isInstalled();
-
         String currentVersion = new Versions(hubConfig).getHubVersion();
         int compare = Versions.compare(currentVersion, MIN_UPGRADE_VERSION);
         if (compare == -1) {
@@ -524,10 +737,10 @@ public class DataHubImpl implements DataHub {
         boolean result = false;
         boolean alreadyInitialized = hubConfig.getHubProject().isInitialized();
         File buildGradle = Paths.get(hubConfig.getProjectDir(), "build.gradle").toFile();
-        try {
-            // update the hub-internal-config files
-            hubConfig.initHubProject();
 
+        // update the hub-internal-config files
+        hubConfig.initHubProject();
+        try {
             if (alreadyInitialized) {
                 // replace the hub version in build.gradle
                 String text = FileUtils.readFileToString(buildGradle);
@@ -539,24 +752,28 @@ public class DataHubImpl implements DataHub {
                 hubConfig.getHubSecurityDir().resolve("roles").resolve("data-hub-user.json").toFile().delete();
             }
 
+            //now let's try to upgrade the directory structure
+            hubConfig.getHubProject().upgradeProject();
+
             // update legacy flows to include main.(sjs|xqy)
             List<String> flows = FlowManager.create(hubConfig).updateLegacyFlows(currentVersion);
             if (updatedFlows != null) {
                 updatedFlows.addAll(flows);
             }
 
-            runInDatabase("cts:uris(\"\", (), cts:and-not-query(cts:collection-query(\"hub-core-module\"), cts:document-query((\"/com.marklogic.hub/config.sjs\", \"/com.marklogic.hub/config.xqy\")))) ! xdmp:document-delete(.)", hubConfig.getDbName(DatabaseKind.MODULES));
-
             if (isHubInstalled) {
                 // install hub modules into MarkLogic
+                runInDatabase("cts:uris(\"\", (), cts:and-not-query(cts:collection-query(\"hub-core-module\"), cts:document-query((\"/com.marklogic.hub/config.sjs\", \"/com.marklogic.hub/config.xqy\")))) ! xdmp:document-delete(.)", hubConfig.getDbName(DatabaseKind.STAGING_MODULES));
+
                 this.install();
             }
 
+            //if none of this has thrown an exception, we're clear and can set the result to true
             result = true;
-        }
-        catch(IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
+
         return result;
     }
 }

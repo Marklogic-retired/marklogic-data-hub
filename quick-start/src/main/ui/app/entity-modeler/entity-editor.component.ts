@@ -28,6 +28,7 @@ export class EntityEditorComponent {
   indexHeader: boolean = false;
   wordLexiconHeader: boolean = false;
   requiredHeader: boolean = false;
+  piiHeader: boolean = false;
 
   cardinalities: Array<any> = [
     {
@@ -39,6 +40,9 @@ export class EntityEditorComponent {
       value: 'ONE_TO_MANY'
     }
   ];
+
+  // property name pattern: name cannot have space characters in it
+  readonly PROPERTY_NAME_PATTERN = /^[^\s]+$/;
 
   constructor(
     private dialog: MdlDialogReference,
@@ -58,6 +62,7 @@ export class EntityEditorComponent {
       property.hasRangeIndex = this.entity.definition.rangeIndex.indexOf(property.name) >= 0;
       property.hasWordLexicon = this.entity.definition.wordLexicon.indexOf(property.name) >= 0;
       property.required = this.entity.definition.required.indexOf(property.name) >= 0;
+      property.pii = this.entity.definition.pii.indexOf(property.name) >= 0;
     }, this);
   }
 
@@ -181,6 +186,10 @@ export class EntityEditorComponent {
             return (index === value.name);
           });
 
+          _.remove(this.entity.definition.pii, (index: string) => {
+            return (index === value.name);
+          });
+
           _.remove(this.entity.definition.wordLexicon, (index: string) => {
             return (index === value.name);
           });
@@ -206,6 +215,7 @@ export class EntityEditorComponent {
       this.entity.definition.rangeIndex = [];
       this.entity.definition.wordLexicon = [];
       this.entity.definition.required = [];
+      this.entity.definition.pii = [];
       this.entity.definition.properties.forEach(function(property) {
         if (property.isPrimaryKey) {
           this.entity.definition.primaryKey = property.name;
@@ -221,6 +231,9 @@ export class EntityEditorComponent {
         }
         if (property.required) {
           this.entity.definition.required.push(property.name);
+        }
+        if (property.pii) {
+          this.entity.definition.pii.push(property.name);
         }
       }, this);
       this.actions.save();
@@ -286,11 +299,17 @@ export class EntityEditorComponent {
     }
   }
 
-
   toggleRequiredSelection() {
     if (this.selectedCount()) {
       this.requiredHeader = !this.requiredHeader;
       this.toggleArraySelection(this.requiredHeader, 'required');
+    }
+  }
+
+  togglePiiSelection() {
+    if (this.selectedCount()) {
+      this.piiHeader = !this.piiHeader;
+      this.toggleArraySelection(this.piiHeader, 'pii');
     }
   }
 
@@ -309,6 +328,39 @@ export class EntityEditorComponent {
         return indexes.indexOf(idx) >= 0;
       });
     }
+  }
+
+  isPropertyValid(property: PropertyType) {
+    let properties = this.entity.definition.properties;
+    /**
+     * A valid property must not: 
+     *  - be a duplicate
+     *  - have spaces in the name
+     *  - must not be empty
+     */
+    let duplicate = _.filter(properties, { 'name': property.name }).length > 1;
+    let hasSpace = !this.PROPERTY_NAME_PATTERN.test(property.name);
+    let isEmpty = !property.name;
+
+    return !(duplicate || hasSpace || isEmpty);
+  }
+
+  /**
+   * Editor is valid if all names in definition properties are valid.
+   *
+   * Used: for disabling 'Save' button
+   * Used: for rendering error message
+   *
+   * TODO: more properties should be added here for validation
+   * TODO: better model validation framework is planned in MLUI Team
+   *
+   * @returns {boolean} if the property editor is valid and ok to be saved
+   */
+  get isValid() {
+    return this.entity.definition.properties
+      .reduce((accumulated, p) => {
+        return accumulated && this.isPropertyValid(p);
+      }, true);
   }
 
   onDescKey($event: KeyboardEvent, propertyIndex: number) {

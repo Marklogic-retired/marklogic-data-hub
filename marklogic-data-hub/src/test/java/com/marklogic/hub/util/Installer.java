@@ -1,10 +1,9 @@
 package com.marklogic.hub.util;
 
 import com.marklogic.hub.HubTestBase;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class Installer {
-
 
     HubTestBase htb;
 
@@ -15,21 +14,30 @@ public class Installer {
     // A method to manually setup
     // uncomment @Test and run
     // do NOT check in as a a test.
-    // @Test
+    @Test
     public void installHubOnce() {
-        htb.createProjectDir();
+    	htb.createProjectDir();
+        if (htb.isCertAuth() || htb.isSslRun()) {
+        	htb.sslSetup();
+        }
         htb.getDataHub().install();
+        try {
+        	htb.getDataHub().upgradeHub();
+        } catch (Exception e) {
+
+        }
     }
 
     // A method to manually teardown.
     // uncomment @Test and run
     // do NOT check in as a a test.
-    //@Test
+     @Test
     public void uninstallHub() {
-        htb.createProjectDir();
+    	htb.createProjectDir();
         htb.getDataHub().uninstall();
+        if (htb.isCertAuth() || htb.isSslRun()) {
+        	htb.sslCleanup();
+        }
         htb.deleteProjectDir();
-
     }
-
 }

@@ -20,7 +20,11 @@ export class BrowsePage extends AppPage {
   selectDatabase(databaseName: string) {
     return element(by.cssContainingText('div.mdl-list__item-primary-content', databaseName));
   }
-  
+
+  entitiesOnlyChkBox() {
+    return element(by.css('app-search .mdl-checkbox'));
+  }
+
   searchBox() {
     return element(by.css('.search-box > form > input'));
   }
@@ -28,7 +32,11 @@ export class BrowsePage extends AppPage {
   searchButton() {
     return element(by.buttonText('Search'));
   }
-  
+
+  get noDataText() {
+    return element(by.xpath('//div[contains(text(),\'No Data\')]'));
+  }
+
   resultsPagination() {
     return element(by.css('app-pagination > .container'));
   }
@@ -41,6 +49,14 @@ export class BrowsePage extends AppPage {
     return element(by.cssContainingText('.results .result a', uri));
   }
 
+  facetName(collection: string) {
+    return element(by.css(`div.facet-list div.facet-value span[title="${collection}"]`));
+  }
+
+  facetCount(collection: string) {
+    return element(by.css(`div.facet-list div.facet-value span[title="${collection}"]`))
+      .element(by.xpath('following-sibling::span')).getAttribute('data-badge');
+  }
 }
 
 var browsePage = new BrowsePage();

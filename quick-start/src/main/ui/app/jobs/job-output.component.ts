@@ -16,6 +16,7 @@ import * as _ from 'lodash';
 export class JobOutputComponent {
   job: Job;
   jobs: Array<Job>;
+  jobOutput: Array<String>;
 
   constructor(
     private dialog: MdlDialogReference,
@@ -25,6 +26,7 @@ export class JobOutputComponent {
   ) {
     this.job = job;
     this.jobs = jobs;
+    this.jobOutput = this.getJobOutput(this.job);
   }
 
   hide() {
@@ -44,17 +46,25 @@ export class JobOutputComponent {
     return this.jobListener.jobHasOutput(job.jobId);
   }
 
-  getJobOutput(job: Job): string {
+  private formatJobOutput(jobOutput): Array<String> {
+    let arr = _.map(jobOutput, (output) => {
+      return output.replace(/\\n/g, '\n').replace(/\\/g, '');
+    })
+    return arr;
+  }
+
+  getJobOutput(job: Job): Array<String> {
+    let output: String;
     if (job.jobOutput) {
-      return job.jobOutput;
+      output = job.jobOutput;
     } else if (this.hasLiveOutput(job)) {
-      return this.jobListener.getJobOutput(job.jobId);
+      output = this.jobListener.getJobOutput(job.jobId);
     } else {
       let j: Job = _.find(this.jobs, ['jobId', job.jobId]);
       if (j) {
-        return j.jobOutput;
+        output =  j.jobOutput;
       }
     }
-    return '';
+    return this.formatJobOutput(output);
   }
 }

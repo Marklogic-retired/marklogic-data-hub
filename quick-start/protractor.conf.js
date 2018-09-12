@@ -15,7 +15,7 @@ exports.config = {
   capabilities: {
     'browserName': 'chrome',
     chromeOptions: {
-      args: ["--headless", "--disable-gpu", "--window-size=1920,1080"]
+      args: ["--headless", "--disable-gpu", "--window-size=1920x1080"]
     }
   },
   directConnect: true,
@@ -39,6 +39,7 @@ exports.config = {
     jasmine.getEnv().addReporter(new Jasmine2HtmlReporter({
       takeScreenshots: true,
       takeScreenshotsOnlyOnFailures: true,
+      fixedScreenshotName: true,
       consolidateAll: true,
       savePath: './e2e/reports/',
       filePrefix: 'html-report'
@@ -64,7 +65,7 @@ exports.config = {
       browserVersion = caps.get('version');
 
       testConfig = {
-        reportTitle: 'Opsdirector-Test Execution Report',
+        reportTitle: 'DHF-Test Execution Report',
         outputPath: './e2e/reports/',
         screenshotPath: 'screenshots',
         testBrowser: browserName,

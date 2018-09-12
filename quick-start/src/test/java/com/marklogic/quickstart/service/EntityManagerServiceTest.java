@@ -27,8 +27,9 @@ import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.FileUtil;
 import com.marklogic.quickstart.model.FlowModel;
 import com.marklogic.quickstart.model.entity_services.EntityModel;
-import org.apache.commons.io.FileUtils;
-import org.junit.*;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -56,8 +57,16 @@ public class EntityManagerServiceTest extends AbstractServiceTest {
     public void setUp() {
         createProjectDir();
 
-        Scaffolding scaffolding = Scaffolding.create(projectDir.toString(), stagingClient);
+        Scaffolding scaffolding = Scaffolding.create(projectDir.toString(), finalClient);
         scaffolding.createEntity(ENTITY);
+
+        Path entityDir = projectDir.resolve("plugins/entities/" + ENTITY);
+        Path inputDir = entityDir.resolve("input");
+
+        String entityFilename = ENTITY + EntityManagerService.ENTITY_FILE_EXTENSION;
+        FileUtil.copy(getResourceStream(entityFilename), entityDir.resolve(entityFilename).toFile());
+        installUserModules(getHubAdminConfig(), true);
+
         scaffolding.createFlow(ENTITY, "sjs-json-input-flow", FlowType.INPUT,
             CodeFormat.JAVASCRIPT, DataFormat.JSON);
 
@@ -69,12 +78,6 @@ public class EntityManagerServiceTest extends AbstractServiceTest {
 
         scaffolding.createFlow(ENTITY, "xqy-xml-input-flow", FlowType.INPUT,
             CodeFormat.XQUERY, DataFormat.XML);
-
-        Path entityDir = projectDir.resolve("plugins/entities/" + ENTITY);
-        Path inputDir = entityDir.resolve("input");
-
-        String entityFilename = ENTITY + EntityManagerService.ENTITY_FILE_EXTENSION;
-        FileUtil.copy(getResourceStream(entityFilename), entityDir.resolve(entityFilename).toFile());
 
         FileUtil.copy(getResourceStream("flow-manager/sjs-flow/headers.sjs"), inputDir.resolve("sjs-json-input-flow/headers.sjs").toFile());
         FileUtil.copy(getResourceStream("flow-manager/sjs-flow/content-input.sjs"), inputDir.resolve("sjs-json-input-flow/content.sjs").toFile());
@@ -92,7 +95,7 @@ public class EntityManagerServiceTest extends AbstractServiceTest {
         FileUtil.copy(getResourceStream("flow-manager/xqy-flow/content-input.xqy"), inputDir.resolve("xqy-xml-input-flow/content.xqy").toFile());
         FileUtil.copy(getResourceStream("flow-manager/xqy-flow/triples.xqy"), inputDir.resolve("xqy-xml-input-flow/triples.xqy").toFile());
 
-        installUserModules(getHubConfig(), true);
+        installUserModules(getHubAdminConfig(), true);
     }
 
     @Test

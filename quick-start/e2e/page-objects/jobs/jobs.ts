@@ -22,15 +22,19 @@ export class JobsPage extends AppPage {
   }
 
   allJobs() {
-    return element(by.css('table > tbody > tr'));
+    return element.all(by.css('table > tbody > tr'));
   }
 
   get lastFinishedJob() {
-    return element.all(by.css('table > tbody > tr')).first();
+    return this.allJobs().first();
   }
 
   jobsCount() {
-    return element.all(by.css('table > tbody > tr')).count();
+    return this.allJobs().count();
+  }
+
+  getJobByID(id: string) {
+    return element(by.cssContainingText('table > tbody > tr', id))
   }
 
   getJobByPosition(position: number) {
@@ -53,8 +57,16 @@ export class JobsPage extends AppPage {
     return element(by.css('table > tbody > tr:nth-child('+position+') > td:nth-child(5)'));
   }
 
+  jobOutputByID(jobID: ElementFinder) {
+    return jobID.element(by.css('table .mdl-button .fa-terminal'));
+  }
+
   jobOutputByPosition(position: number) {
     return element(by.css('table > tbody > tr:nth-child('+position+') > td:nth-child(8)'));
+  }
+
+  jobCheckboxByID(jobID: ElementFinder) {
+    return element(by.css('table .job-delete-checkbox .mdl-checkbox'));
   }
 
   jobCheckboxByPosition(position: number) {
@@ -104,7 +116,7 @@ export class JobsPage extends AppPage {
   searchButton() {
     return element(by.buttonText('Search'));
   }
-  
+
   jobResults() {
     return element(by.css('app-pagination > .container'));
   }
@@ -112,7 +124,7 @@ export class JobsPage extends AppPage {
   facetButton(facetName: string) {
     return element(by.cssContainingText('.facet-list span', facetName));
   }
-  
+
   removeFacetButton(facetName: string) {
     return element(by.css(`button > span[title=${facetName}]`));
   }

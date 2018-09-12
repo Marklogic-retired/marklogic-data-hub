@@ -1,8 +1,8 @@
-import { protractor , browser, element, by, By, $, $$, ExpectedConditions as EC} from 'protractor';
-import { pages } from '../../page-objects/page';
+import {  browser, ExpectedConditions as EC} from 'protractor';
 import loginPage from '../../page-objects/auth/login';
 import dashboardPage from '../../page-objects/dashboard/dashboard';
 import appPage from '../../page-objects/appPage';
+const fs = require('fs-extra');
 
 export default function(tmpDir) {
   describe('login', () => {
@@ -36,7 +36,6 @@ export default function(tmpDir) {
 
     it ('Should select the temp folder', function() {
       loginPage.setCurrentFolder(tmpDir);
-      //loginPage.selectOnlineStore();
       console.log('clicking next!');
       loginPage.clickNext('ProjectDirTab');
       browser.wait(EC.elementToBeClickable(loginPage.initIfNeededTab));
@@ -50,8 +49,18 @@ export default function(tmpDir) {
       loginPage.clickAdvancedSettings();
       console.log('verify advanced settings');
       expect(loginPage.stagingAppserverNameLabel.isPresent()).toBe(true);
-      expect(loginPage.stagingAppserverName.getAttribute('value')).toEqual('data-hub-ol-STAGING');
-      expect(loginPage.modulesDbName.getAttribute('value')).toEqual('data-hub-ol-MODULES');
+      expect(loginPage.advancedSettingsValue('Staging Triggers Database Name').getAttribute('value'))
+        .toEqual('data-hub-ol-staging-TRIGGERS');
+      expect(loginPage.advancedSettingsValue('Staging Modules Database Name').getAttribute('value'))
+        .toEqual('data-hub-ol-MODULES');
+      expect(loginPage.advancedSettingsValue('Staging Schemas Database Name').getAttribute('value'))
+        .toEqual('data-hub-ol-staging-SCHEMAS');
+      expect(loginPage.advancedSettingsValue('Final Triggers Database Name').getAttribute('value'))
+        .toEqual('data-hub-ol-final-TRIGGERS');
+      expect(loginPage.advancedSettingsValue('Final Modules Database Name').getAttribute('value'))
+        .toEqual('data-hub-ol-final-MODULES');
+      expect(loginPage.advancedSettingsValue('Final Schemas Database Name').getAttribute('value'))
+        .toEqual('data-hub-ol-final-SCHEMAS');    
       loginPage.clickAdvancedSettings();
       console.log('restore to default settings');
       loginPage.clickRestoreDefaults();
@@ -60,9 +69,29 @@ export default function(tmpDir) {
       loginPage.clickAdvancedSettings();
       console.log('verify restored settings');
       expect(loginPage.stagingAppserverNameLabel.isPresent()).toBe(true);
-      expect(loginPage.stagingAppserverName.getAttribute('value')).toEqual('data-hub-STAGING');
-      expect(loginPage.modulesDbName.getAttribute('value')).toEqual('data-hub-MODULES');
+      expect(loginPage.advancedSettingsValue('Staging Triggers Database Name').getAttribute('value'))
+        .toEqual('data-hub-staging-TRIGGERS');
+      expect(loginPage.advancedSettingsValue('Staging Modules Database Name').getAttribute('value'))
+        .toEqual('data-hub-MODULES');
+      expect(loginPage.advancedSettingsValue('Staging Schemas Database Name').getAttribute('value'))
+        .toEqual('data-hub-staging-SCHEMAS');
+      expect(loginPage.advancedSettingsValue('Final Triggers Database Name').getAttribute('value'))
+        .toEqual('data-hub-final-TRIGGERS');
+      expect(loginPage.advancedSettingsValue('Final Modules Database Name').getAttribute('value'))
+        .toEqual('data-hub-final-MODULES');
+      expect(loginPage.advancedSettingsValue('Final Schemas Database Name').getAttribute('value'))
+        .toEqual('data-hub-final-SCHEMAS');
+      loginPage.clickAdvancedSettings();
       expect(loginPage.dataHubName.getAttribute('value')).toEqual('data-hub');
+      //use custom advanced settings
+      loginPage.setDataHubName('data-hub-qa');
+      //verify custom advanced settings
+      loginPage.clickAdvancedSettings();
+      expect(loginPage.advancedSettingsValue('Staging Triggers Database Name').getAttribute('value'))
+        .toEqual('data-hub-qa-staging-TRIGGERS');
+        expect(loginPage.advancedSettingsValue('Final Schemas Database Name').getAttribute('value'))
+        .toEqual('data-hub-qa-final-SCHEMAS');
+      loginPage.clickAdvancedSettings();
       browser.driver.sleep(3000);
       expect(loginPage.projectDirTab.isDisplayed()).toBe(false);
       expect(loginPage.initIfNeededTab.isDisplayed()).toBe(true);
@@ -75,6 +104,20 @@ export default function(tmpDir) {
       expect(loginPage.installerTab.isPresent()).toBe(false);
       loginPage.clickInitialize();
       browser.wait(EC.elementToBeClickable(loginPage.postInitTab));
+    });
+
+    it ('should copy run-flow-user.json file', function() {
+      //copy run-flow-user.json
+      console.log('copy run-flow-user.json');
+      let runFlowUserFilePath = 'e2e/qa-data/users/run-flow-user.json';
+      fs.copy(runFlowUserFilePath, tmpDir + '/src/main/ml-config/security/users/run-flow-user.json');
+    });
+
+    it ('should copy flow-admin-user.json file', function() {
+      //copy flow-admin-user.json
+      console.log('copy flow-admin-user.json');
+      let flowAdminUserFilePath = 'e2e/qa-data/users/flow-admin-user.json';
+      fs.copy(flowAdminUserFilePath, tmpDir + '/src/main/ml-config/security/users/flow-admin-user.json');
     });
 
     it ('Should be on the post init page', function() {
@@ -155,11 +198,8 @@ export default function(tmpDir) {
     });
 
     it ('should complete the install and go to the dashboard', function() {
-      if(!appPage.flowsTab.isPresent()) {
-        console.log('installation is stuck, go to the dashboard page using url');
-        browser.get('/');
-        browser.sleep(5000);
-      }
+      console.log('refresh the browser');
+      browser.refresh();
       console.log('loading dashboard page');
       dashboardPage.isLoaded();
       expect(appPage.flowsTab.isPresent()).toBe(true);
@@ -167,7 +207,7 @@ export default function(tmpDir) {
     });
 
     it ('should logout', function() {
-      dashboardPage.logout();
+      appPage.logout();
       loginPage.isLoaded();
     });
   });

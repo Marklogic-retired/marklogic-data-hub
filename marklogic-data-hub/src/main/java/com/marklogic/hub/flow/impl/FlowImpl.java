@@ -48,6 +48,7 @@ public class FlowImpl implements Flow {
     private CodeFormat codeFormat;
     private Collector collector;
     private MainPlugin main;
+    private String mappingName;
 
     public FlowImpl() {}
 
@@ -69,6 +70,16 @@ public class FlowImpl implements Flow {
     @Override
     public String getName() {
         return name;
+    }
+
+    @Override
+    public void setMappingName(String mappingName) {
+        this.mappingName = mappingName;
+    }
+
+    @Override
+    public String getMappingName() {
+        return mappingName;
     }
 
     @Override
@@ -153,6 +164,12 @@ public class FlowImpl implements Flow {
             serializer.writeCharacters(this.type.toString());
             serializer.writeEndElement();
 
+            if(this.type == FlowType.HARMONIZE && this.mappingName != null) {
+                serializer.writeStartElement("mapping");
+                serializer.writeCharacters(this.mappingName);
+                serializer.writeEndElement();
+            }
+
             serializer.writeStartElement("data-format");
             serializer.writeCharacters(this.dataFormat.toString());
             serializer.writeEndElement();
@@ -190,7 +207,10 @@ public class FlowImpl implements Flow {
 
             return finalWriter.toString().replaceFirst("<!--", "\n<!--").replaceFirst("-->", "-->\n");
         }
-        catch(Exception e) {
+        catch (NullPointerException e) {
+            throw new MarkLogicIOException("Invalid properties file", e);
+        }
+        catch (Exception e) {
             throw new MarkLogicIOException(e);
         }
     }
@@ -200,6 +220,9 @@ public class FlowImpl implements Flow {
         Properties flowProperties = new Properties();
         flowProperties.setProperty("dataFormat", dataFormat.toString());
         flowProperties.setProperty("codeFormat", codeFormat.toString());
+        if(mappingName != null) {
+            flowProperties.setProperty("mapping", mappingName);
+        }
         if (this.collector != null) {
             flowProperties.setProperty("collectorCodeFormat", collector.getCodeFormat().toString());
             flowProperties.setProperty("collectorModule", collector.getModule());
@@ -284,6 +307,9 @@ public class FlowImpl implements Flow {
                         CodeFormat.getCodeFormat(node.getAttributes().getNamedItem("code-format").getNodeValue())
                     );
                     flowBuilder.withMain(main);
+                    break;
+                case "mapping":
+                    flowBuilder.withMapping(node.getTextContent());
                     break;
             }
         }

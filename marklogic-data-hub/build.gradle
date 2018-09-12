@@ -3,7 +3,7 @@ plugins {
     id 'java'
     id 'maven-publish'
     id 'com.jfrog.bintray' version '1.7.2'
-    id 'com.marklogic.ml-gradle' version '3.6.1'
+    id 'com.marklogic.ml-gradle' version '3.8.2'
     id 'com.moowork.node' version '1.1.1'
 }
 
@@ -25,9 +25,9 @@ ext.junitPlatformVersion = '1.0.0-RC3'
 ext.junitJupiterVersion  = '5.0.0-RC3'
 
 dependencies {
-    compile 'com.marklogic:marklogic-client-api:4.0.4'
+    compile 'com.marklogic:marklogic-client-api:4.1.0'
     compile 'com.marklogic:mlcp-util:0.9.0'
-    compile 'com.marklogic:ml-app-deployer:3.6.1'
+    compile 'com.marklogic:ml-app-deployer:3.8.3'
     compile 'com.marklogic:marklogic-data-movement-components:1.0'
     compile 'commons-io:commons-io:2.4'
     compile 'org.apache.commons:commons-text:1.1'
@@ -113,7 +113,7 @@ task buildUI(type: NpmTask) {
 
 task copyUIAssets(type: Copy) {
     from 'src/trace-ui/dist'
-    into 'src/server-side/tracing/dist'
+    into 'src/main/resources/ml-modules/root/trace-ui'
     dependsOn tasks.buildUI
 }
 
@@ -220,9 +220,9 @@ ext {
         moduleTokensPropertiesSources = new ArrayList<>()
 
         // override some default values with our values
-        modulesDatabaseName = mlModulesDbName
-        triggersDatabaseName = mlTriggersDbName
-        schemasDatabaseName = mlSchemasDbName
+        modulesDatabaseName = mlStagingModulesDbName
+        triggersDatabaseName = mlStagingTriggersDbName
+        schemasDatabaseName = mlStagingSchemasDbName
         restPort = Integer.parseInt(mlJobPort)
 
         // Configure custom tokens for our json files
@@ -234,62 +234,77 @@ ext {
         customTokens.put("%%mlFinalPort%%", mlFinalPort)
         customTokens.put("%%mlFinalDbName%%", mlFinalDbName)
 
-        customTokens.put("%%mlTraceAppserverName%%", mlTraceAppserverName)
-        customTokens.put("%%mlTracePort%%", mlTracePort)
-        customTokens.put("%%mlTraceDbName%%", mlTraceDbName)
-
         customTokens.put("%%mlJobAppserverName%%", mlJobAppserverName)
         customTokens.put("%%mlJobPort%%", mlJobPort)
         customTokens.put("%%mlJobDbName%%", mlJobDbName)
 
-        customTokens.put("%%mlModulesDbName%%", mlModulesDbName)
-        customTokens.put("%%mlTriggersDbName%%", mlTriggersDbName)
-        customTokens.put("%%mlSchemasDbName%%", mlSchemasDbName)
+        customTokens.put("%%mlStagingModulesDbName%%", mlStagingModulesDbName)
+        customTokens.put("%%mlStagingTriggersDbName%%", mlStagingTriggersDbName)
+        customTokens.put("%%mlStagingSchemasDbName%%", mlStagingSchemasDbName)
 
         modulePaths = ["marklogic-data-hub/src/main/resources/ml-modules"]
 
-        mlModulePermissions = "rest-reader,read,rest-writer,insert,rest-writer,update,rest-extension-user,execute"
     }
 }
 
-//task createLocalFile() {
-//	boolean sslRun = Boolean.parseBoolean(System.properties['ssl'])
-//	boolean certAuth = Boolean.parseBoolean(System.properties['certauth'])
-//	com.marklogic.mgmt.ManageClient mC = new ManageClient(new com.marklogic.mgmt.ManageConfig());
-//	com.marklogic.mgmt.resource.hosts.HostManager hm = new HostManager(mC);
-//	def	bootStrapHost = hm.getHostNames().get(0);
-//	def fileName = "gradle-local.properties"
-//	def inputFile = new File(fileName)
-//	if(sslRun) {
-//		inputFile.write("# Put your overrides from gradle.properties here\n" +
-//    			"# Don't check this in to version control\n" +
-//    			"mlJobSimpleSsl=true\n" +
-//    			"mlTraceSimpleSsl=true\n" +
-//    			"mlFinalSimpleSsl=true\n" +
-//    			"mlAdminScheme=https\n" +
-//		        "mlManageScheme=https\n" +
-//    			"mlStagingSimpleSsl=true")
-//	}
-//
-//	if(certAuth) {
-//		inputFile.write("# Put your overrides from gradle.properties here\n" +
-//				"# Don't check this in to version control\n" +
-//				"mlStagingAuth=certificate\n" +
-//	    		"mlTraceAuth=certificate\n" +
-//	    		"mlFinalAuth=certificate\n" +
-//	    		"mlHost="+bootStrapHost+"\n"+
-//	    		"mlAdminScheme=https\n" +
-//	   	        "mlManageScheme=https\n" +
-//	    		"mlJobAuth=certificate")
-//	}
-//}
+def propFile = file("gradle.properties")
+String fileContents = propFile.text
+boolean sslRun = Boolean.parseBoolean(System.properties['ssl'])
+boolean certAuth = Boolean.parseBoolean(System.properties['certauth'])
+def props = new Properties()
+propFile.withInputStream { props.load(it) }
 
 test {
     minHeapSize = "128m"
     maxHeapSize = "256m"
+    
+    doFirst{
+		if(sslRun || certAuth){
+			com.marklogic.mgmt.ManageClient manageClient = new ManageClient(new com.marklogic.mgmt.ManageConfig(mlHost, 8002, mlSecurityUsername, mlSecurityPassword))
+			com.marklogic.mgmt.resource.hosts.HostManager hostManager = new HostManager(manageClient)
+			def	bootStrapHost = hostManager.getHostNames().get(0)
+		    if(! bootStrapHost.toLowerCase().contains("marklogic.com")){
+				 throw new GradleException("The test with current options will run only in marklogic.com domain")
+			}
+			if(sslRun) {
+				//checking if one of the property is already set
+				if(props.getProperty('mlJobSimpleSsl')==null){
+					propFile.append("\n" +
+							"mlJobSimpleSsl=true\n" +
+							"mlFinalSimpleSsl=true\n" +
+							"mlAdminScheme=https\n" +
+							"mlManageScheme=https\n" +
+							"mlStagingSimpleSsl=true")
+				}
+			}
+			if(certAuth) {
+				if(props.getProperty('mlStagingAuth')==null){
+					propFile.append("\n" +
+							"mlStagingAuth=certificate\n" +
+							"mlFinalAuth=certificate\n" +
+							"mlHost="+bootStrapHost+"\n"+
+							"mlAdminScheme=https\n" +
+							"mlManageScheme=https\n" +
+							"mlJobAuth=certificate")
+				}
+			}
+		}
+    }
 
-    // include just the three top-level tests.  they include setup/teardown
-    include 'com/marklogic/hub/CoreTestSuite.class'
-    include 'com/marklogic/hub/EndToEndFlowTests.class'
-    include 'com/marklogic/hub/ScaffoldingE2E.class'
+    // include just the top-level tests.  they include setup/teardown
+	include 'com/marklogic/hub/CoreTestSuite.class'
+	include 'com/marklogic/hub/EndToEndFlowTests.class'
+	if (!(certAuth || sslRun)){
+		include 'com/marklogic/hub/PiiE2E.class'
+	}
+	include 'com/marklogic/hub/ScaffoldingE2E.class'
+	include 'com/marklogic/hub/MappingE2E.class'         
 }
+task restoreFile{
+	doFirst{
+    	if(sslRun || certAuth){
+    		propFile.write(fileContents)	
+		}
+    }
+}
+test.finalizedBy(restoreFile)

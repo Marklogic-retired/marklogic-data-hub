@@ -17,6 +17,7 @@
 package com.marklogic.quickstart;
 
 import com.marklogic.quickstart.auth.ConnectionAuthenticationFilter;
+import com.marklogic.quickstart.auth.LoginFailureHandler;
 import com.marklogic.quickstart.auth.MarkLogicAuthenticationManager;
 import com.marklogic.quickstart.auth.RestAuthenticationEntryPoint;
 import com.marklogic.quickstart.web.CurrentProjectController;
@@ -67,7 +68,7 @@ public class AuthConfig extends WebSecurityConfigurerAdapter {
      */
     @Bean
     public MarkLogicAuthenticationManager markLogicAuthenticationManager() {
-        return new MarkLogicAuthenticationManager(restConfig());
+        return new MarkLogicAuthenticationManager();
     }
 
     /**
@@ -96,7 +97,7 @@ public class AuthConfig extends WebSecurityConfigurerAdapter {
         ConnectionAuthenticationFilter authFilter = new ConnectionAuthenticationFilter();
         authFilter.setAuthenticationManager(markLogicAuthenticationManager());
         authFilter.setAuthenticationSuccessHandler(currentProjectController);
-        authFilter.setAuthenticationFailureHandler(new SimpleUrlAuthenticationFailureHandler());
+        authFilter.setAuthenticationFailureHandler(new LoginFailureHandler());
         http
             .headers().frameOptions().disable()
             .and()
@@ -142,7 +143,8 @@ public class AuthConfig extends WebSecurityConfigurerAdapter {
             "/traces/**",
             "/404",
             "/assets/**",
-            "/shutdown"
+            "/shutdown",
+            "/main/ui/assets/img/**"
         };
     }
 }

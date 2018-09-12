@@ -15,12 +15,10 @@
  */
 package com.marklogic.hub;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import static com.marklogic.client.io.DocumentMetadataHandle.Capability.READ;
+import static com.marklogic.client.io.DocumentMetadataHandle.Capability.UPDATE;
+
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -40,12 +38,18 @@ import javax.net.ssl.KeyManager;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
+import javax.net.ssl.X509TrustManager;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
-import com.marklogic.hub.error.DataHubConfigurationException;
-import com.marklogic.hub.util.ComboListener;
+import com.marklogic.appdeployer.command.modules.LoadModulesCommand;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -85,18 +89,19 @@ import com.marklogic.client.io.Format;
 import com.marklogic.client.io.InputStreamHandle;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.hub.deploy.commands.LoadHubModulesCommand;
-import com.marklogic.hub.deploy.commands.LoadUserModulesCommand;
+import com.marklogic.hub.deploy.commands.LoadUserStagingModulesCommand;
+import com.marklogic.hub.error.DataHubConfigurationException;
 import com.marklogic.hub.flow.CodeFormat;
 import com.marklogic.hub.flow.DataFormat;
 import com.marklogic.hub.flow.FlowType;
 import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.util.CertificateTemplateManagerPlus;
+import com.marklogic.hub.util.ComboListener;
 import com.marklogic.hub.util.Versions;
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.ManageConfig;
 import com.marklogic.mgmt.admin.AdminConfig;
 import com.marklogic.mgmt.admin.AdminManager;
-import com.marklogic.mgmt.resource.hosts.HostManager;
 import com.marklogic.mgmt.resource.security.CertificateAuthorityManager;
 import com.marklogic.mgmt.util.ObjectMapperFactory;
 import com.marklogic.rest.util.JsonNodeUtil;
@@ -117,38 +122,49 @@ public class HubTestBase {
 
     public  String host;
     public  int stagingPort;
-    public  int finalPort;
-    public  int tracePort;
+    public int finalPort;
     public  int jobPort;
     public  String user;
     public  String password;
+    public  String manageUser;
+    public  String managePassword;
+    public  String secUser;
+    public  String secPassword;
+    public  String flowRunnerUser;
+    public  String flowRunnerPassword;
     protected  Authentication stagingAuthMethod;
-    private  Authentication finalAuthMethod;
-    private  Authentication traceAuthMethod;
     private  Authentication jobAuthMethod;
+    protected  Authentication finalAuthMethod;
     public  DatabaseClient stagingClient = null;
+    public  DatabaseClient flowRunnerClient = null;
+    // this is needed for some evals in the test suite that are not mainline tests.
     public  DatabaseClient stagingModulesClient = null;
     public  DatabaseClient finalClient = null;
+    public  DatabaseClient finalFlowRunnerClient = null;
+    public  DatabaseClient finalModulesClientStagingModulesDatabase = null;
     public  DatabaseClient finalModulesClient = null;
-    public  DatabaseClient traceClient = null;
-    public  DatabaseClient traceModulesClient = null;
     public  DatabaseClient jobClient = null;
     public  DatabaseClient jobModulesClient = null;
-    private  AdminConfig adminConfig = null;
-    private  AdminManager adminManager = null;
+
     private  ManageConfig manageConfig = null;
     private  ManageClient manageClient = null;
+    private  AdminConfig adminConfig = null;
+    private  AdminManager adminManager = null;
     private  CertificateTemplateManagerPlus certManager;
-    private  HashMap<File, String> serverFiles= new HashMap<File, String>();
-    private  boolean sslRun = false;
+    private  HashMap<File, String> originalServerFiles= new HashMap<File, String>();
+	private  boolean sslRun = false;
     private  boolean certAuth = false;
+    private  SSLContext datahubadmincertContext = null;
+    private  SSLContext flowRunnercertContext = null;
     private  SSLContext certContext = null;
     private  Properties properties = new Properties();
     public  GenericDocumentManager stagingDocMgr;
+    public  GenericDocumentManager flowRunnerDocMgr;
     public  GenericDocumentManager finalDocMgr;
     public  JSONDocumentManager jobDocMgr;
     public  GenericDocumentManager traceDocMgr;
     public  GenericDocumentManager modMgr;
+    public  GenericDocumentManager finalModMgr;
     public  String bootStrapHost = null;
 	private  TrustManagerFactory tmf;
 	private List<DatabaseClient> clients = new ArrayList<DatabaseClient>();
@@ -160,6 +176,10 @@ public class HubTestBase {
         return stagingModulesClient.newDocumentManager();
     }
 
+    private GenericDocumentManager getFinalModMgr() {
+        return finalModulesClient.newDocumentManager();
+    }
+
     private GenericDocumentManager getFinalMgr() {
         return finalClient.newDocumentManager();
     }
@@ -169,9 +189,12 @@ public class HubTestBase {
     }
 
     private GenericDocumentManager getTraceMgr() {
-        return traceClient.newDocumentManager();
+        return jobClient.newDocumentManager();
     }
 
+    private GenericDocumentManager getFlowRunnerMgr() {
+        return flowRunnerClient.newDocumentManager();
+    }
 
     protected void basicSetup() {
         XMLUnit.setIgnoreWhitespace(true);
@@ -200,18 +223,22 @@ public class HubTestBase {
         boolean sslStaging = Boolean.parseBoolean(properties.getProperty("mlStagingSimpleSsl"));
         boolean sslJob = Boolean.parseBoolean(properties.getProperty("mlJobSimpleSsl"));
         boolean sslFinal = Boolean.parseBoolean(properties.getProperty("mlFinalSimpleSsl"));
-        boolean sslTrace = Boolean.parseBoolean(properties.getProperty("mlTraceSimpleSsl"));
-        if(sslStaging && sslJob && sslFinal && sslTrace){
+        if(sslStaging && sslJob && sslFinal){
 	    	setSslRun(true);
 	    }
 
         host = properties.getProperty("mlHost");
         stagingPort = Integer.parseInt(properties.getProperty("mlStagingPort"));
-        finalPort = Integer.parseInt(properties.getProperty("mlFinalPort"));
-        tracePort = Integer.parseInt(properties.getProperty("mlTracePort"));
         jobPort = Integer.parseInt(properties.getProperty("mlJobPort"));
+        finalPort = Integer.parseInt(properties.getProperty("mlFinalPort"));
         user = properties.getProperty("mlUsername");
         password = properties.getProperty("mlPassword");
+        manageUser = properties.getProperty("mlManageUsername");
+        managePassword = properties.getProperty("mlManagePassword");
+        secUser = properties.getProperty("mlSecurityUsername");
+        secPassword = properties.getProperty("mlSecurityPassword");
+        flowRunnerUser = properties.getProperty("mlHubUserName");
+        flowRunnerPassword = properties.getProperty("mlHubUserPassword");
 
         //TODO refactor to new JCL Security context
         String auth = properties.getProperty("mlStagingAuth");
@@ -221,24 +248,12 @@ public class HubTestBase {
         else {
             stagingAuthMethod = Authentication.DIGEST;
         }
-
-
         auth = properties.getProperty("mlFinalAuth");
-
-
         if (auth != null) {
             finalAuthMethod = Authentication.valueOf(auth.toUpperCase());
         }
         else {
             finalAuthMethod = Authentication.DIGEST;
-        }
-
-        auth = properties.getProperty("mlTraceAuth");
-        if (auth != null) {
-            traceAuthMethod = Authentication.valueOf(auth.toUpperCase());
-        }
-        else {
-            traceAuthMethod = Authentication.DIGEST;
         }
 
         auth = properties.getProperty("mlJobAuth");
@@ -248,8 +263,8 @@ public class HubTestBase {
         else {
             jobAuthMethod = Authentication.DIGEST;
         }
-        if(jobAuthMethod.equals(Authentication.CERTIFICATE) && traceAuthMethod.equals(Authentication.CERTIFICATE)
-        && finalAuthMethod.equals(Authentication.CERTIFICATE) && stagingAuthMethod.equals(Authentication.CERTIFICATE)) {
+        if(jobAuthMethod.equals(Authentication.CERTIFICATE)
+        && stagingAuthMethod.equals(Authentication.CERTIFICATE)) {
         	setCertAuth(true);
         	try {
         		installCARootCertIntoStore(getResourceFile("ssl/ca-cert.crt"));
@@ -261,29 +276,35 @@ public class HubTestBase {
 
         try {
         	stagingClient = getClient(host, stagingPort, HubConfig.DEFAULT_STAGING_NAME, user, password, stagingAuthMethod);
-            stagingModulesClient  = getClient(host, stagingPort, HubConfig.DEFAULT_MODULES_DB_NAME, user, password, stagingAuthMethod);
-            finalClient = getClient(host, finalPort, HubConfig.DEFAULT_FINAL_NAME, user, password, finalAuthMethod);
-            finalModulesClient  = getClient(host, stagingPort, HubConfig.DEFAULT_MODULES_DB_NAME, user, password, finalAuthMethod);
-            traceClient = getClient(host, tracePort, HubConfig.DEFAULT_TRACE_NAME, user, password, traceAuthMethod);
-            traceModulesClient  = getClient(host, stagingPort, HubConfig.DEFAULT_MODULES_DB_NAME, user, password, traceAuthMethod);
+            flowRunnerClient = getClient(host, stagingPort, HubConfig.DEFAULT_STAGING_NAME, flowRunnerUser, flowRunnerPassword, stagingAuthMethod);
+            finalFlowRunnerClient = getClient(host, stagingPort, HubConfig.DEFAULT_FINAL_NAME, flowRunnerUser, flowRunnerPassword, stagingAuthMethod);
+            stagingModulesClient  = getClient(host, stagingPort, HubConfig.DEFAULT_STAGING_MODULES_DB_NAME, manageUser, managePassword, stagingAuthMethod);
+            // NOTE finalClient must use staging port and final database to use DHF enode code.
+            finalClient = getClient(host, stagingPort, HubConfig.DEFAULT_FINAL_NAME, user, password, finalAuthMethod);
+            finalModulesClientStagingModulesDatabase = getClient(host, finalPort, HubConfig.DEFAULT_STAGING_MODULES_DB_NAME, manageUser, managePassword, stagingAuthMethod);
+            finalModulesClient = getClient(host, finalPort, HubConfig.DEFAULT_FINAL_MODULES_DB_NAME, manageUser, managePassword, stagingAuthMethod);
             jobClient = getClient(host, jobPort, HubConfig.DEFAULT_JOB_NAME, user, password, jobAuthMethod);
-            jobModulesClient  = getClient(host, stagingPort, HubConfig.DEFAULT_MODULES_DB_NAME, user, password, jobAuthMethod);
+            jobModulesClient  = getClient(host, stagingPort, HubConfig.DEFAULT_STAGING_MODULES_DB_NAME, manageUser, managePassword, jobAuthMethod);
         }
         catch(Exception e) {
         	System.err.println("client objects not created.");
         	e.printStackTrace();
         }
         stagingDocMgr = getStagingMgr();
+        flowRunnerDocMgr = getFlowRunnerMgr();
         finalDocMgr = getFinalMgr();
         jobDocMgr = getJobMgr();
         traceDocMgr = getTraceMgr();
         modMgr = getModMgr();
+        finalModMgr = getFinalModMgr();
     }
 
     protected DatabaseClient getClient(String host, int port, String dbName, String user,String password, Authentication authMethod) throws Exception {
     	if(isCertAuth()) {
     		certContext = createSSLContext(getResourceFile("ssl/client-cert.p12"));
-    		return DatabaseClientFactory.newClient(host, port, dbName, new DatabaseClientFactory.CertificateAuthContext(certContext,SSLHostnameVerifier.ANY));
+    		datahubadmincertContext = createSSLContext(getResourceFile("ssl/client-hub-admin-user.p12"));
+    		flowRunnercertContext = createSSLContext(getResourceFile("ssl/client-data-hub-user.p12"));
+    		return DatabaseClientFactory.newClient(host, port, dbName, new DatabaseClientFactory.CertificateAuthContext((user==flowRunnerUser)?flowRunnercertContext:datahubadmincertContext,SSLHostnameVerifier.ANY));
     	}
     	else if(isSslRun()) {
     		return DatabaseClientFactory.newClient(host, port, dbName, user, password, authMethod, SimpleX509TrustManager.newSSLContext(),SSLHostnameVerifier.ANY);
@@ -297,7 +318,6 @@ public class HubTestBase {
         init();
     }
 
-
 	public boolean isCertAuth() {
 		return certAuth;
 	}
@@ -309,7 +329,6 @@ public class HubTestBase {
 	public boolean isSslRun() {
 		return sslRun;
 	}
-
 
 	public void setSslRun(boolean sslRun) {
 		this.sslRun = sslRun;
@@ -324,7 +343,7 @@ public class HubTestBase {
     }
 
     protected void enableTracing() {
-        ManageClient manageClient = ((HubConfigImpl)getHubConfig()).getManageClient();
+        ManageClient manageClient = ((HubConfigImpl)getHubFlowRunnerConfig()).getManageClient();
         String resp = manageClient.getJson("/manage/v2/hosts?format=json");
         JsonNode actualObj = null;
 		try {
@@ -338,88 +357,181 @@ public class HubTestBase {
         hosts.forEach(serverHost ->
 		{
 			try {
-				DatabaseClient client = getClient(serverHost, stagingPort, HubConfig.DEFAULT_STAGING_NAME, user, password, stagingAuthMethod);
+				DatabaseClient client = getClient(serverHost, stagingPort, HubConfig.DEFAULT_STAGING_NAME, flowRunnerUser, flowRunnerPassword, stagingAuthMethod);
 				Tracing.create(client).enable();
 				clients.add(client);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		});     
+		});
     }
 
     protected void disableTracing() {
         clients.forEach(client ->
-		{	
+		{
 			Tracing.create(client).disable();
 			client.newServerEval().xquery("xquery version \"1.0-ml\";\n" +
-					"import module namespace hul = \"http://marklogic.com/data-hub/hub-utils-lib\" at \"/MarkLogic/data-hub-framework/impl/hub-utils-lib.xqy\";\n" +
+					"import module namespace hul = \"http://marklogic.com/data-hub/hub-utils-lib\" at \"/data-hub/4/impl/hub-utils-lib.xqy\";\n" +
 					"hul:invalidate-field-cache(\"tracing-enabled\")").eval();
-			
+
 		});
     }
 
-    protected HubConfig getHubConfig() {
-        return getHubConfig(PROJECT_PATH);
+    //getHubAdminConfig is used for installation, scaffolding
+    protected HubConfig getHubAdminConfig(String projectDir) {
+        return getHubConfig(projectDir, true);
+    }
+
+    protected HubConfig getHubAdminConfig() {
+        return getHubConfig(PROJECT_PATH, true);
+    }
+
+    //getHubFlowRunnerConfig is used for running flows
+    protected HubConfig getHubFlowRunnerConfig() {
+        return getHubConfig(PROJECT_PATH, false);
     }
 
     public DataHub getDataHub() {
-        return DataHub.create(getHubConfig());
+        return DataHub.create(getHubAdminConfig());
     }
 
-    protected HubConfig getHubConfig(String projectDir) {
-    	HubConfig hubConfig = HubConfigBuilder.newHubConfigBuilder(projectDir)
-            .withPropertiesFromEnvironment()
-            .build();
-        hubConfig.setPort(DatabaseKind.STAGING, stagingPort);
-        hubConfig.setPort(DatabaseKind.FINAL, finalPort);
-        hubConfig.setPort(DatabaseKind.TRACE, tracePort);
-        hubConfig.setPort(DatabaseKind.JOB, jobPort);
-        hubConfig.getAppConfig().setAppServicesUsername(user);
-        hubConfig.getAppConfig().setAppServicesPassword(password);
-        hubConfig.getAppConfig().setHost(host);
-        if(isSslRun()) {
-        	hubConfig.getAppConfig().setSimpleSslConfig();
-        }
-        if(isCertAuth()) {
-        	AppConfig appConfig = hubConfig.getAppConfig();
-        	appConfig.setRestSslContext(certContext);
-        	appConfig.setRestSecurityContextType(SecurityContextType.CERTIFICATE);
+    private HubConfig getHubConfig(String projectDir, boolean requireAdmin) {
+    	HubConfigBuilder builder = HubConfigBuilder.newHubConfigBuilder(projectDir)
+                .withPropertiesFromEnvironment();
 
-        	appConfig.setAppServicesSslContext(certContext);
-        	appConfig.setHost(bootStrapHost);
-        	appConfig.setAppServicesSecurityContextType(SecurityContextType.CERTIFICATE);
-        	hubConfig.setAppConfig(appConfig);
+    	//override 'mlUsername' and 'mlPassword' with flowRunneruser/password if requireAdmin is false
+    	//use 'hub-admin-user' else
+    	if(! requireAdmin) {
+    		Properties updatedProp = new Properties();
+    		updatedProp.setProperty("mlUsername", flowRunnerUser);
+    		updatedProp.setProperty("mlPassword", flowRunnerPassword);
+    		updatedProp.setProperty("mlManageUsername", flowRunnerUser);
+    		updatedProp.setProperty("mlManagePassword", flowRunnerPassword);
+    		builder.withProperties(updatedProp);
+    	}
 
-        	hubConfig.setSslContext(DatabaseKind.STAGING,certContext);
-        	hubConfig.setSslContext(DatabaseKind.FINAL,certContext);
-        	hubConfig.setSslContext(DatabaseKind.TRACE,certContext);
-        	hubConfig.setSslContext(DatabaseKind.JOB,certContext);
+    	HubConfig hubConfig = builder.build();
+        AppConfig stagingAppConfig = hubConfig.getStagingAppConfig();
+        AppConfig finalAppConfig = hubConfig.getFinalAppConfig();
+        manageConfig = ((HubConfigImpl)hubConfig).getManageConfig();
+        adminConfig = ((HubConfigImpl)hubConfig).getAdminConfig();
+
+        if(isSslRun() || isCertAuth()) {
+        	hubConfig.setScheme(DatabaseKind.STAGING,"https");
+        	hubConfig.setScheme(DatabaseKind.FINAL,"https");
+        	hubConfig.setScheme(DatabaseKind.JOB,"https");
+
         	hubConfig.setSslHostnameVerifier(DatabaseKind.STAGING,SSLHostnameVerifier.ANY);
         	hubConfig.setSslHostnameVerifier(DatabaseKind.FINAL,SSLHostnameVerifier.ANY);
-        	hubConfig.setSslHostnameVerifier(DatabaseKind.TRACE,SSLHostnameVerifier.ANY);
         	hubConfig.setSslHostnameVerifier(DatabaseKind.JOB,SSLHostnameVerifier.ANY);
+            manageConfig.setScheme("https");
+            adminConfig.setScheme("https");
+        }
+        if(isSslRun()) {
+           	stagingAppConfig.setAppServicesSslContext(SimpleX509TrustManager.newSSLContext());
+        	stagingAppConfig.setAppServicesSslHostnameVerifier(SSLHostnameVerifier.ANY);
 
+        	finalAppConfig.setAppServicesSslContext(SimpleX509TrustManager.newSSLContext());
+        	finalAppConfig.setAppServicesSslHostnameVerifier(SSLHostnameVerifier.ANY);
+
+            hubConfig.setSimpleSsl(DatabaseKind.STAGING,true);
+        	hubConfig.setSimpleSsl(DatabaseKind.JOB,true);
+        	hubConfig.setSimpleSsl(DatabaseKind.FINAL,true);
+
+        	hubConfig.setSslContext(DatabaseKind.STAGING,SimpleX509TrustManager.newSSLContext());
+        	hubConfig.setSslContext(DatabaseKind.FINAL,SimpleX509TrustManager.newSSLContext());
+        	hubConfig.setSslContext(DatabaseKind.JOB,SimpleX509TrustManager.newSSLContext());
+
+	    	manageConfig.setConfigureSimpleSsl(true);
+	    	manageConfig.setSslContext(SimpleX509TrustManager.newSSLContext());
+	    	
+	    	adminConfig.setConfigureSimpleSsl(true);
+	    	adminConfig.setSslContext(SimpleX509TrustManager.newSSLContext());
         }
-        if(adminConfig != null) {
-        	((HubConfigImpl)hubConfig).setAdminConfig(adminConfig);
-        	((HubConfigImpl)hubConfig).setAdminManager(adminManager);
+        if(isCertAuth()) {
+        	if(requireAdmin) {
+	           	stagingAppConfig.setAppServicesCertFile("src/test/resources/ssl/client-hub-admin-user.p12");
+	           	finalAppConfig.setAppServicesCertFile("src/test/resources/ssl/client-hub-admin-user.p12");
+	           	hubConfig.setCertFile(DatabaseKind.STAGING, "src/test/resources/ssl/client-hub-admin-user.p12");
+	           	hubConfig.setCertFile(DatabaseKind.FINAL, "src/test/resources/ssl/client-hub-admin-user.p12");
+	           	hubConfig.setSslContext(DatabaseKind.JOB,datahubadmincertContext);
+	           	manageConfig.setSslContext(datahubadmincertContext);
+	           	adminConfig.setSslContext(datahubadmincertContext);
+        	}
+        	else {
+        		stagingAppConfig.setAppServicesCertFile("src/test/resources/ssl/client-data-hub-user.p12");
+        		finalAppConfig.setAppServicesCertFile("src/test/resources/ssl/client-data-hub-user.p12");
+        		hubConfig.setCertFile(DatabaseKind.STAGING, "src/test/resources/ssl/client-data-hub-user.p12");
+        		hubConfig.setCertFile(DatabaseKind.FINAL, "src/test/resources/ssl/client-data-hub-user.p12");
+	           	hubConfig.setSslContext(DatabaseKind.JOB,flowRunnercertContext);
+	           	manageConfig.setSslContext(flowRunnercertContext);
+	           	adminConfig.setSslContext(flowRunnercertContext);
+        	}
+           	stagingAppConfig.setAppServicesCertPassword("abcd");
+            stagingAppConfig.setAppServicesTrustManager((X509TrustManager) tmf.getTrustManagers()[0]);
+        	stagingAppConfig.setAppServicesSslHostnameVerifier(SSLHostnameVerifier.ANY);
+        	stagingAppConfig.setAppServicesSecurityContextType(SecurityContextType.CERTIFICATE);
+        	stagingAppConfig.setAppServicesPassword(null);
+
+        	finalAppConfig.setAppServicesCertPassword("abcd");
+        	finalAppConfig.setAppServicesTrustManager((X509TrustManager) tmf.getTrustManagers()[0]);
+        	finalAppConfig.setAppServicesSslHostnameVerifier(SSLHostnameVerifier.ANY);
+        	finalAppConfig.setAppServicesSecurityContextType(SecurityContextType.CERTIFICATE);
+        	finalAppConfig.setAppServicesPassword(null);
+
+         	hubConfig.setAuthMethod(DatabaseKind.STAGING,"certificate");
+        	hubConfig.setAuthMethod(DatabaseKind.JOB,"certificate");
+        	hubConfig.setAuthMethod(DatabaseKind.FINAL,"certificate");
+
+        	hubConfig.setTrustManager(DatabaseKind.STAGING, (X509TrustManager) tmf.getTrustManagers()[0]);
+        	hubConfig.setCertPass(DatabaseKind.STAGING, "abcd");
+
+           	hubConfig.setTrustManager(DatabaseKind.FINAL, (X509TrustManager) tmf.getTrustManagers()[0]);
+        	hubConfig.setCertPass(DatabaseKind.FINAL, "abcd");
+
+        	manageConfig.setConfigureSimpleSsl(false);
+        	manageConfig.setSecuritySslContext(certContext);
+        	manageConfig.setPassword(null);
+        	manageConfig.setSecurityPassword(null);
+        	
+        	adminConfig.setConfigureSimpleSsl(false);
+        	adminConfig.setPassword(null);
+        	
         }
-        if(manageConfig != null) {
-        	((HubConfigImpl)hubConfig).setManageConfig(manageConfig);
-        	manageClient = new ManageClient(manageConfig);
-        	((HubConfigImpl)hubConfig).setManageClient(manageClient);
-        }
+        hubConfig.setStagingAppConfig(stagingAppConfig);
+        hubConfig.setFinalAppConfig(finalAppConfig);
+    	((HubConfigImpl)hubConfig).setManageConfig(manageConfig);
+    	manageClient = new ManageClient(manageConfig);
+    	((HubConfigImpl)hubConfig).setManageClient(manageClient);
+
+    	((HubConfigImpl)hubConfig).setAdminConfig(adminConfig);
+    	adminManager = new AdminManager(adminConfig);
+    	((HubConfigImpl)hubConfig).setAdminManager(adminManager);
         return hubConfig;
     }
 
     public void createProjectDir() {
+        createProjectDir(PROJECT_PATH);
+    }
+
+    // this method creates a project dir and copies the gradle.properties in.
+    public void createProjectDir(String projectDirName) {
         try {
-            File projectDir = new File(PROJECT_PATH);
+            File projectDir = new File(projectDirName);
             if (!projectDir.isDirectory() || !projectDir.exists()) {
                 getDataHub().initProject();
             }
 
+            // force module loads for new test runs.
+            File timestampDirectory = new File(projectDir + "/.tmp");
+            if ( timestampDirectory.exists() ) {
+                FileUtils.forceDelete(timestampDirectory);
+            }
+            File finalTimestampDirectory = new File( "build/ml-javaclient-util");
+            if ( finalTimestampDirectory.exists() ) {
+                FileUtils.forceDelete(finalTimestampDirectory);
+            }
             Path devProperties = Paths.get(".").resolve("gradle.properties");
             Path projectProperties = projectDir.toPath().resolve("gradle.properties");
             FileUtils.copyFile(devProperties.toFile(), projectProperties.toFile());
@@ -465,8 +577,21 @@ public class HubTestBase {
         return null;
     }
 
+    protected String getFinalModulesFile(String uri) {
+        try {
+            String contents = finalModMgr.read(uri).next().getContent(new StringHandle()).get();
+            return contents.replaceFirst("(\\(:|//)\\s+cache\\sbuster:.+\\n", "");
+        }
+        catch(Exception e) {}
+        return null;
+    }
+
     protected Document getModulesDocument(String uri) {
         return modMgr.read(uri).next().getContent(new DOMHandle()).get();
+    }
+
+    protected Document getFinalModulesDocument(String uri) {
+        return finalModMgr.read(uri).next().getContent(new DOMHandle()).get();
     }
 
     protected Document getXmlFromResource(String resourceName) {
@@ -513,14 +638,14 @@ public class HubTestBase {
     }
 
     protected int getTracingDocCount() {
-        return getTracingDocCount(null);
+        return getTracingDocCount("trace");
     }
     protected int getTracingDocCount(String collection) {
-        return getDocCount(HubConfig.DEFAULT_TRACE_NAME, collection);
+        return getDocCount(HubConfig.DEFAULT_JOB_NAME, collection);
     }
 
     protected int getJobDocCount() {
-        return getJobDocCount(null);
+        return getJobDocCount("job");
     }
     protected int getJobDocCount(String collection) {
         return getDocCount(HubConfig.DEFAULT_JOB_NAME, collection);
@@ -553,7 +678,7 @@ public class HubTestBase {
     }
 
     protected int getMlMajorVersion() {
-        return Integer.parseInt(new Versions(getHubConfig()).getMarkLogicVersion().substring(0, 1));
+        return Integer.parseInt(new Versions(getHubFlowRunnerConfig()).getMarkLogicVersion().substring(0, 1));
     }
 
     public void clearDatabases(String... databases) {
@@ -602,16 +727,19 @@ public class HubTestBase {
                 default:
                     handle.setFormat(Format.TEXT);
             }
-            writeSet.add(path, handle);
+            DocumentMetadataHandle permissions = new DocumentMetadataHandle()
+                .withPermission("data-hub-role", DocumentMetadataHandle.Capability.EXECUTE, UPDATE, READ);
+            writeSet.add(path, permissions, handle);
         });
         modMgr.write(writeSet);
         clearFlowCache();
     }
 
     protected void installModule(String path, String localPath) {
-
         InputStreamHandle handle = new InputStreamHandle(HubTestBase.class.getClassLoader().getResourceAsStream(localPath));
         String ext = FilenameUtils.getExtension(path);
+        DocumentMetadataHandle permissions = new DocumentMetadataHandle()
+            .withPermission("data-hub-role", DocumentMetadataHandle.Capability.EXECUTE, UPDATE, READ);
         switch(ext) {
         case "xml":
             handle.setFormat(Format.XML);
@@ -622,8 +750,7 @@ public class HubTestBase {
         default:
             handle.setFormat(Format.TEXT);
         }
-
-        modMgr.write(path, handle);
+        modMgr.write(path, permissions, handle);
         clearFlowCache();
     }
 
@@ -643,7 +770,7 @@ public class HubTestBase {
     }
 
     protected EvalResultIterator runInModules(String query) {
-        return runInDatabase(query, HubConfig.DEFAULT_MODULES_DB_NAME);
+        return runInDatabase(query, HubConfig.DEFAULT_STAGING_MODULES_DB_NAME);
     }
 
     protected EvalResultIterator runInDatabase(String query, String databaseName) {
@@ -655,12 +782,10 @@ public class HubTestBase {
             case HubConfig.DEFAULT_FINAL_NAME:
                 eval = finalClient.newServerEval();
                 break;
-            case HubConfig.DEFAULT_MODULES_DB_NAME:
+            case HubConfig.DEFAULT_STAGING_MODULES_DB_NAME:
                 eval = stagingModulesClient.newServerEval();
                 break;
-            case HubConfig.DEFAULT_TRACE_NAME:
-                eval = traceClient.newServerEval();
-                break;
+
             case HubConfig.DEFAULT_JOB_NAME:
                 eval = jobClient.newServerEval();
                 break;
@@ -732,7 +857,6 @@ public class HubTestBase {
         }
     }
 
-
     public String toJsonString(Object value) {
         try {
             return new ObjectMapper().writeValueAsString(value);
@@ -749,40 +873,41 @@ public class HubTestBase {
         }
     }
 
+    //installHubModules(), installUserModules() and clearUserModules() must be run as 'hub-admin-user'.
     protected void installHubModules() {
         logger.debug("Installing Data Hub Framework modules into MarkLogic");
-
-        HubConfigImpl hubConfig = (HubConfigImpl) getHubConfig();
-
+        HubConfigImpl hubConfig = (HubConfigImpl) getHubAdminConfig();
         List<Command> commands = new ArrayList<>();
         commands.add(new LoadHubModulesCommand(hubConfig));
 
         SimpleAppDeployer deployer = new SimpleAppDeployer(hubConfig.getManageClient(), hubConfig.getAdminManager());
         deployer.setCommands(commands);
-        deployer.deploy(hubConfig.getAppConfig());
+        deployer.deploy(hubConfig.getStagingAppConfig());
     }
 
     protected void installUserModules(HubConfig hubConfig, boolean force) {
         logger.debug("Installing user modules into MarkLogic");
-
         List<Command> commands = new ArrayList<>();
-        LoadUserModulesCommand loadUserModulesCommand = new LoadUserModulesCommand(hubConfig);
+        LoadUserStagingModulesCommand loadUserModulesCommand = new LoadUserStagingModulesCommand(hubConfig);
         loadUserModulesCommand.setForceLoad(force);
         commands.add(loadUserModulesCommand);
 
+        LoadModulesCommand loadModulesCommand = new LoadModulesCommand();
+        commands.add(loadModulesCommand);
+
+
         SimpleAppDeployer deployer = new SimpleAppDeployer(((HubConfigImpl)hubConfig).getManageClient(), ((HubConfigImpl)hubConfig).getAdminManager());
         deployer.setCommands(commands);
-        deployer.deploy(hubConfig.getAppConfig());
+        deployer.deploy(hubConfig.getStagingAppConfig());
     }
 
-	protected  void sslSetup()  {
-		manageClient = ((HubConfigImpl)getHubConfig()).getManageClient();
-		adminConfig = ((HubConfigImpl)getHubConfig()).getAdminConfig();
-		adminManager = new com.marklogic.mgmt.admin.AdminManager(adminConfig);
+    public void clearUserModules() {
+    	getDataHub().clearUserModules();
+    }
 
-		HostManager hm = new HostManager(manageClient);
-		bootStrapHost = hm.getHostNames().get(0);
-
+	public void sslSetup()  {
+		//Setup run with secUser/secPassword as "hub-admin-user" not created yet
+		manageClient = new ManageClient(new com.marklogic.mgmt.ManageConfig(host, 8002, secUser, secPassword));
 		certManager = new CertificateTemplateManagerPlus(manageClient);
 		certManager.save(dhfCert());
 
@@ -824,98 +949,65 @@ public class HubTestBase {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
+
+		File finalServerFile = getResourceFile("ml-config/servers");
+		File hubServerFile = getResourceFile("hub-internal-config/servers");
+		
+		//set servers to ssl/ cert-auth
+		mergeFiles(finalServerFile);
+		mergeFiles(hubServerFile);
+
+	    manageClient.putJson("/manage/v2/servers/Admin/properties?group-id=Default", node.toString());
+	    manageClient.putJson("/manage/v2/servers/App-Services/properties?group-id=Default", node.toString());
+	    manageClient.putJson("/manage/v2/servers/Manage/properties?group-id=Default", node.toString());
+
+	    try {
+			Files.deleteIfExists(Paths.get(System.getProperty("java.io.tmpdir")+"/ssl-server.json"));
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+
+	}
+	
+	private void mergeFiles(File file) {
 		List<File> files = new ArrayList<>();
 		files.add(new File(System.getProperty("java.io.tmpdir")+"/ssl-server.json"));
-		File file = getResourceFile("ml-config/servers");
 		Path serverPath = file.toPath();
 		try {
 			Files.list(serverPath).forEach(filePath ->
 				{	File server = filePath.toFile();
 					files.add(server);
 					try {
+						originalServerFiles.put(server, FileUtils.readFileToString(server));
 						ObjectNode serverFiles = (ObjectNode) JsonNodeUtil.mergeJsonFiles(files);
 						FileUtils.writeStringToFile(server, serverFiles.toString());
 					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						throw new RuntimeException(e);
 					}
 				});
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new RuntimeException(e);
 		}
-
-
-	    Path localPath = getResourceFile("scaffolding/gradle-local_properties").toPath();
-		String localProps = null;
-	    localProps = new String("mlJobSimpleSsl=true\n" +
-		    		"mlTraceSimpleSsl=true\n" +
-		    		"mlFinalSimpleSsl=true\n" +
-		    		"mlStagingSimpleSsl=true\n" +
-		            "mlAdminScheme=https\n" +
-		            "mlManageScheme=https\n" +
-		            "mlAdminSimpleSsl=true\n" +
-		            "mlManageSimpleSsl=true\n" +
-		            "mlAppServicesSimpleSsl=true");
-	    if(isCertAuth()) {
-	    	localProps = new String("mlStagingAuth=certificate\n" +
-	    			"mlTraceAuth=certificate\n" +
-	    			"mlFinalAuth=certificate\n" +
-	    			"mlHost="+bootStrapHost+"\n"+
-	    			"mlAdminScheme=https\n" +
-	   	            "mlManageScheme=https\n" +
-	    			"mlJobAuth=certificate");
-	    }
-	    try {
-			FileUtils.writeStringToFile(localPath.toFile(), localProps);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	    manageClient.putJson("/manage/v2/servers/Admin/properties?group-id=Default", node.toString());
-	    manageClient.putJson("/manage/v2/servers/App-Services/properties?group-id=Default", node.toString());
-	    manageClient.putJson("/manage/v2/servers/Manage/properties?group-id=Default", node.toString());
-
-        adminConfig.setScheme("https");
-        adminConfig.setConfigureSimpleSsl(true);
-
-        manageConfig = ((HubConfigImpl)getHubConfig()).getManageConfig();
-        manageConfig.setScheme("https");
-        manageConfig.setConfigureSimpleSsl(true);
-
-
-        if(isCertAuth()) {
-        	adminConfig.setConfigureSimpleSsl(false);
-        	adminConfig.setSslContext(certContext);
-        	adminConfig.setHost(bootStrapHost);
-        	adminConfig.setPassword(null);
-
-        	manageConfig.setConfigureSimpleSsl(false);
-        	manageConfig.setSslContext(certContext);
-        	manageConfig.setHost(bootStrapHost);
-        	manageConfig.setPassword(null);
-        }
-        adminManager = new com.marklogic.mgmt.admin.AdminManager(adminConfig);
 	}
 
-	public  void sslCleanup() {
-	    Path localPath = getResourceFile("scaffolding/gradle-local_properties").toPath();
-	    String localProps = new String("# Put your overrides from gradle.properties here\n" +
-	    		"# Don't check this in to version control\n" +
-	    		"");
-	    try {
-			FileUtils.writeStringToFile(localPath.toFile(), localProps);
-		} catch (IOException e2) {
-			// TODO Auto-generated catch block
-			e2.printStackTrace();
+	public void sslCleanup() {
+		//'hub-admin-user' and 'data-hub-user' don't exist anymore as this method is called after uninstall().
+		//So security user is used here.
+		manageConfig = ((HubConfigImpl)getHubAdminConfig()).getManageConfig();
+		manageConfig.setUsername(secUser);
+		manageConfig.setSecurityUsername(secUser);
+		if(isSslRun()) {
+			manageConfig.setPassword(secPassword);
+			manageConfig.setSecurityPassword(secPassword);
 		}
-
-		serverFiles.entrySet().stream().forEach(e -> {
+		manageConfig.setSslContext(certContext);
+		manageConfig.setSecuritySslContext(certContext);
+		manageClient = new ManageClient(manageConfig);
+		originalServerFiles.entrySet().stream().forEach(e -> {
 			try {
 				FileUtils.writeStringToFile(e.getKey(), e.getValue());
 			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				throw new RuntimeException(e1);
 			}
 		});
 
@@ -931,23 +1023,10 @@ public class HubTestBase {
 	        manageClient.putJson("/manage/v2/servers/Manage/properties?group-id=Default", node.toString());
 		}
 		catch(Exception e) {
-			e.printStackTrace();
+			throw new RuntimeException(e);
 		}
-
-        adminConfig = ((HubConfigImpl)getHubConfig()).getAdminConfig();
-        adminConfig.setScheme("http");
-        adminConfig.setConfigureSimpleSsl(false);
-        adminConfig.setSslContext(null);
-        adminConfig.setPassword(password);
-        adminManager = new com.marklogic.mgmt.admin.AdminManager(adminConfig);
-
-        manageConfig = ((HubConfigImpl)getHubConfig()).getManageConfig();
-        manageConfig.setScheme("http");
-        manageConfig.setConfigureSimpleSsl(false);
-        manageConfig.setPassword(password);
-        manageConfig.setSslContext(null);
-        manageConfig.setHost("localhost");
-        manageClient = new com.marklogic.mgmt.ManageClient(manageConfig);
+		manageConfig = new ManageConfig(host, 8002, secUser, secPassword);
+		manageClient = new ManageClient(manageConfig);
 		certManager = new CertificateTemplateManagerPlus(manageClient);
 		try {
 			certManager.delete(dhfCert());
@@ -955,7 +1034,6 @@ public class HubTestBase {
 		catch(Exception e) {
 			e.printStackTrace();
 		}
-		FileUtils.deleteQuietly(new File("gradle-local.properties"));
 	}
 
 	private String dhfCert() {
@@ -966,38 +1044,41 @@ public class HubTestBase {
 	private SSLContext createSSLContext(File certFile) throws Exception{
 		String certPassword = "abcd";
 	    SSLContext sslContext = null;
-	      KeyStore keyStore = null;
-	      KeyManagerFactory keyManagerFactory = null;
-	      KeyManager[] keyMgr = null;
-	      try {
-	        keyManagerFactory = KeyManagerFactory.getInstance("SunX509");
-	      } catch (NoSuchAlgorithmException e) {
-	        throw new IllegalStateException(
-	          "CertificateAuthContext requires KeyManagerFactory.getInstance(\"SunX509\")");
-	      }
-	      try {
-	        keyStore = KeyStore.getInstance("PKCS12");
-	      } catch (KeyStoreException e) {
-	        throw new IllegalStateException("CertificateAuthContext requires KeyStore.getInstance(\"PKCS12\")");
-	      }
-	      try {
-	        FileInputStream certFileStream = new FileInputStream(certFile);
-	        try {
-	          keyStore.load(certFileStream, certPassword.toCharArray());
-	        } finally {
-	          if (certFileStream != null)
-	            certFileStream.close();
-	        }
-	        keyManagerFactory.init(keyStore, certPassword.toCharArray());
-	        keyMgr = keyManagerFactory.getKeyManagers();
-	        sslContext = SSLContext.getInstance("TLSv1.2");
-	      } catch (NoSuchAlgorithmException | KeyStoreException e) {
-	        throw new IllegalStateException("The certificate algorithm used or the Key store "
-	          + "Service provider Implementaion (SPI) is invalid. CertificateAuthContext "
-	          + "requires SunX509 algorithm and PKCS12 Key store SPI", e);
-	      }
-	      sslContext.init(keyMgr, tmf.getTrustManagers(), null);
-	      return sslContext;
+	    KeyStore keyStore = null;
+	    KeyManagerFactory keyManagerFactory = null;
+	    KeyManager[] keyMgr = null;
+	    try {
+	    	keyManagerFactory = KeyManagerFactory.getInstance("SunX509");
+	    }
+	    catch (NoSuchAlgorithmException e) {
+	    	throw new IllegalStateException("CertificateAuthContext requires KeyManagerFactory.getInstance(\"SunX509\")");
+	    }
+	    try {
+	    	keyStore = KeyStore.getInstance("PKCS12");
+	    }
+	    catch (KeyStoreException e) {
+		    throw new IllegalStateException("CertificateAuthContext requires KeyStore.getInstance(\"PKCS12\")");
+	    }
+	    try {
+	    	FileInputStream certFileStream = new FileInputStream(certFile);
+		    try {
+		    	keyStore.load(certFileStream, certPassword.toCharArray());
+		    }
+		    finally {
+		      if (certFileStream != null)
+		        certFileStream.close();
+		    }
+		    keyManagerFactory.init(keyStore, certPassword.toCharArray());
+		    keyMgr = keyManagerFactory.getKeyManagers();
+		    sslContext = SSLContext.getInstance("TLSv1.2");
+		  }
+	    catch (NoSuchAlgorithmException | KeyStoreException e) {
+		    throw new IllegalStateException("The certificate algorithm used or the Key store "
+		    + "Service provider Implementaion (SPI) is invalid. CertificateAuthContext "
+		    + "requires SunX509 algorithm and PKCS12 Key store SPI", e);
+		}
+	    sslContext.init(keyMgr, tmf.getTrustManagers(), null);
+	    return sslContext;
 	}
 
 	private void installCARootCertIntoStore(File caRootCert) {
@@ -1009,6 +1090,7 @@ public class HubTestBase {
 			ks.load(null);
 			ks.setCertificateEntry("caCert", caCert);
 			tmf.init(ks);
+
 		} catch (CertificateException e) {
             throw new DataHubConfigurationException(e);
         } catch (NoSuchAlgorithmException e) {
@@ -1020,6 +1102,19 @@ public class HubTestBase {
         }
     }
 
+    protected void debugOutput(Document xmldoc) throws TransformerException {
+        debugOutput(xmldoc, System.out);
+    }
+
+    protected void debugOutput(Document xmldoc, OutputStream os) {
+    	try {
+            TransformerFactory tf = TransformerFactory.newInstance();
+            Transformer transformer = tf.newTransformer();
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+            transformer.transform(new DOMSource(xmldoc), new StreamResult(os));
+        } catch (TransformerException e) {
+            throw new DataHubConfigurationException(e);
+        }
+    }
 }
-
-

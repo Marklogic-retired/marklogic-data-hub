@@ -26,14 +26,14 @@ public class DeployHubUsersCommand extends DeployUsersCommand {
     private HubConfig hubConfig;
 
     public DeployHubUsersCommand(HubConfig hubConfig) {
+        super();
         this.hubConfig = hubConfig;
     }
 
     @Override
     protected File[] getResourceDirs(CommandContext context) {
         return new File[] {
-            hubConfig.getHubSecurityDir().resolve("users").toFile(),
-            hubConfig.getUserSecurityDir().resolve("users").toFile()
+            hubConfig.getHubSecurityDir().resolve("users").toFile()
         };
     }
 }

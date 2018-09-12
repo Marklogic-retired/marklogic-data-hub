@@ -16,9 +16,9 @@
  */
 package com.marklogic.quickstart;
 
-import org.springframework.boot.context.embedded.tomcat.ConnectorStartFailedException;
 import org.springframework.boot.diagnostics.AbstractFailureAnalyzer;
 import org.springframework.boot.diagnostics.FailureAnalysis;
+import org.springframework.boot.web.embedded.tomcat.ConnectorStartFailedException;
 
 public class PortInUseFailureAnalyzer extends AbstractFailureAnalyzer<ConnectorStartFailedException> {
     @Override

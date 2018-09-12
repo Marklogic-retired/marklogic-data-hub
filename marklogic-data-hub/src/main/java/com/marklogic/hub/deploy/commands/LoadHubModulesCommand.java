@@ -29,13 +29,11 @@ import com.marklogic.client.ext.modulesloader.impl.DefaultModulesFinder;
 import com.marklogic.client.ext.modulesloader.impl.DefaultModulesLoader;
 import com.marklogic.client.ext.modulesloader.impl.PropertiesModuleManager;
 import com.marklogic.client.ext.tokenreplacer.DefaultTokenReplacer;
-import com.marklogic.client.ext.tokenreplacer.PropertiesSource;
 import com.marklogic.client.ext.tokenreplacer.TokenReplacer;
 import com.marklogic.com.marklogic.client.ext.file.CacheBusterDocumentFileProcessor;
 import com.marklogic.com.marklogic.client.ext.modulesloader.impl.SearchOptionsFinder;
 import com.marklogic.hub.HubConfig;
 
-import java.io.File;
 import java.util.Map;
 import java.util.Properties;
 
@@ -81,7 +79,7 @@ public class LoadHubModulesCommand extends AbstractCommand {
         assetFileLoader.setDocumentFileReader(jarDocumentFileReader);
 
         DefaultModulesLoader modulesLoader = new DefaultModulesLoader(assetFileLoader);
-        modulesLoader.addFailureListener(throwable -> {
+        modulesLoader.addFailureListener( (throwable, client) -> {
             // ensure we throw the first exception
             if (caughtException == null) {
                 caughtException = throwable;
@@ -90,16 +88,15 @@ public class LoadHubModulesCommand extends AbstractCommand {
         modulesLoader.setModulesManager(propsManager);
         if (caughtException == null) {
             modulesLoader.loadModules("classpath*:/ml-modules", new DefaultModulesFinder(), modulesClient);
+            modulesLoader.loadModules("classpath*:/ml-modules-staging", new SearchOptionsFinder(), hubConfig.newStagingClient());
         }
         if (caughtException == null) {
-            modulesLoader.loadModules("classpath*:/ml-modules-traces", new SearchOptionsFinder(), hubConfig.newTraceDbClient());
+            modulesLoader.loadModules("classpath*:/ml-modules-traces", new SearchOptionsFinder(), hubConfig.newJobDbClient());
         }
         if (caughtException == null) {
             modulesLoader.loadModules("classpath*:/ml-modules-jobs", new SearchOptionsFinder(), hubConfig.newJobDbClient());
         }
-        if (caughtException == null) {
-            modulesLoader.loadModules("classpath*:/ml-modules-final", new SearchOptionsFinder(), hubConfig.newFinalClient());
-        }
+
 
         if (caughtException != null) {
             throw new RuntimeException(caughtException);

@@ -23,6 +23,14 @@
               [initialSelectedItem]="startingScaffoldOption"
               label="label" identifier="value"
               (selectedItem)="flow.useEsModel = $event"></app-select-list>
+            <div *ngIf="flow.useEsModel">
+            <label>Mapping Generation</label>
+              <app-select-list
+                [items]="mappingOptions"
+                [initialSelectedItem]="startingMappingOption"
+                label="label" identifier="value"
+                (selectedItem)="flow.mappingName = $event"></app-select-list>
+            </div>
           </ng-template>
           <label>Plugin Type</label>
           <app-select-list

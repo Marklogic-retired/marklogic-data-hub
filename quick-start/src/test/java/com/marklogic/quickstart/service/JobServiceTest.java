@@ -35,8 +35,8 @@ public class JobServiceTest extends HubTestBase {
 
     @Test
     public void getJobs() {
-        DatabaseClient jobClient = getHubConfig().newJobDbClient();
-        JobService jobService = new JobService(jobClient, jobClient);
+        DatabaseClient jobClient = getHubAdminConfig().newJobDbClient();
+        JobService jobService = new JobService(jobClient);
         JobQuery jobQuery = new JobQuery();
         jobQuery.start = new Long(1);
         jobQuery.count = new Long(10);

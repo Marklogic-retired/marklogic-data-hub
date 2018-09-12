@@ -16,7 +16,6 @@
 package com.marklogic.hub.impl;
 
 import com.marklogic.client.DatabaseClient;
-import com.marklogic.client.datamovement.DataMovementManager;
 import com.marklogic.client.extensions.ResourceManager;
 import com.marklogic.client.extensions.ResourceServices.ServiceResult;
 import com.marklogic.client.extensions.ResourceServices.ServiceResultIterator;
@@ -27,7 +26,6 @@ import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.collector.impl.CollectorImpl;
 import com.marklogic.hub.flow.*;
 import com.marklogic.hub.flow.impl.FlowRunnerImpl;
-import com.marklogic.hub.job.JobManager;
 import com.marklogic.hub.main.impl.MainPluginImpl;
 import com.marklogic.hub.scaffold.Scaffolding;
 import org.apache.commons.io.FileUtils;
@@ -46,25 +44,16 @@ import java.util.Properties;
 import java.util.regex.Pattern;
 
 public class FlowManagerImpl extends ResourceManager implements FlowManager {
-    private static final String HUB_NS = "http://marklogic.com/data-hub";
+
     private static final String NAME = "ml:flow";
 
     private DatabaseClient stagingClient;
-    private DatabaseClient finalClient;
-    private DatabaseClient jobClient;
     private HubConfig hubConfig;
-    private JobManager jobManager;
-
-    private DataMovementManager dataMovementManager;
 
     public FlowManagerImpl(HubConfig hubConfig) {
         super();
         this.hubConfig = hubConfig;
         this.stagingClient = hubConfig.newStagingClient();
-        this.finalClient = hubConfig.newFinalClient();
-        this.jobClient = hubConfig.newJobDbClient();
-        this.jobManager = JobManager.create(this.jobClient, this.hubConfig.newTraceDbClient());
-        this.dataMovementManager = this.stagingClient.newDataMovementManager();
         this.stagingClient.init(NAME, this);
     }
 
@@ -150,6 +139,11 @@ public class FlowManagerImpl extends ResourceManager implements FlowManager {
                 Properties properties = new Properties();
                 FileInputStream fis = new FileInputStream(propertiesFile);
                 properties.load(fis);
+
+                // trim trailing whitespaces for properties.
+                for (String key : properties.stringPropertyNames()){
+                    properties.put(key, properties.get(key).toString().trim());
+                }
                 fis.close();
 
                 FlowBuilder flowBuilder = FlowBuilder.newFlow()
@@ -281,4 +275,4 @@ public class FlowManagerImpl extends ResourceManager implements FlowManager {
         return new FlowRunnerImpl(hubConfig);
     }
 
-    }
+}

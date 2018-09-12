@@ -27,16 +27,11 @@ import com.marklogic.hub.flow.FlowStatusListener;
 import com.marklogic.hub.flow.FlowType;
 import com.marklogic.hub.util.MlcpRunner;
 import com.marklogic.quickstart.EnvironmentAware;
-import com.marklogic.quickstart.auth.ConnectionAuthenticationToken;
-import com.marklogic.quickstart.model.EnvironmentConfig;
 import com.marklogic.quickstart.model.FlowModel;
 import com.marklogic.quickstart.model.PluginModel;
-import com.marklogic.quickstart.util.FileUtil;
+import com.marklogic.hub.util.FileUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedWriter;
@@ -54,7 +49,6 @@ public class FlowManagerService extends EnvironmentAware {
 
     private static final String PROJECT_TMP_FOLDER = ".tmp";
 
-    @Autowired
     private FlowManager flowManager;
 
     // before login, flowManager is null, so check each time.
@@ -119,6 +113,37 @@ public class FlowManagerService extends EnvironmentAware {
             .onStatusChanged(statusListener);
         return flowRunner.run();
     }
+
+    private Path getHarmonizeOptionsFilePath(Path destFolder, String entityName, String flowName) {
+        return destFolder.resolve(entityName + "-harmonize-" + flowName + ".txt");
+    }
+
+    public Map<String, Object> getHarmonizeFlowOptionsFromFile(String entityName, String flowName) throws IOException {
+        Path destFolder = Paths.get(envConfig().getProjectDir(), PROJECT_TMP_FOLDER);
+        Path filePath = getHarmonizeOptionsFilePath(destFolder, entityName, flowName);
+        File file = filePath.toFile();
+        if(file.exists()) {
+            return new ObjectMapper().readValue(file, Map.class);
+        }
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("harmonize_file_path", envConfig().getProjectDir());
+        return result;
+    }
+
+    public void saveOrUpdateHarmonizeFlowOptionsToFile(String entityName, String flowName, String harmonizeOptionsFileContent) throws IOException {
+        Path destFolder = Paths.get(envConfig().getProjectDir(), PROJECT_TMP_FOLDER);
+        File destFolderFile = destFolder.toFile();
+        if (!destFolderFile.exists()) {
+            FileUtils.forceMkdir(destFolderFile);
+        }
+        Path filePath = getHarmonizeOptionsFilePath(destFolder, entityName, flowName);
+        FileWriter fw = new FileWriter(filePath.toString());
+        BufferedWriter bw = new BufferedWriter(fw);
+        bw.write(harmonizeOptionsFileContent);
+        bw.close();
+    }
+
 
     private Path getMlcpOptionsFilePath(Path destFolder, String entityName, String flowName) {
         return destFolder.resolve(entityName + "-" + flowName + ".txt");

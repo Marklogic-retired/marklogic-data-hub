@@ -27,17 +27,15 @@ import com.marklogic.hub.flow.FlowType;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.validate.EntitiesValidator;
 import com.marklogic.quickstart.EnvironmentAware;
-import com.marklogic.quickstart.auth.ConnectionAuthenticationToken;
 import com.marklogic.quickstart.model.EnvironmentConfig;
 import com.marklogic.quickstart.model.FlowModel;
 import com.marklogic.quickstart.model.PluginModel;
 import com.marklogic.quickstart.model.entity_services.EntityModel;
 import com.marklogic.quickstart.model.entity_services.HubUIData;
 import com.marklogic.quickstart.model.entity_services.InfoType;
-import com.marklogic.quickstart.util.FileUtil;
+import com.marklogic.hub.util.FileUtil;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -67,6 +65,9 @@ public class EntityManagerService extends EnvironmentAware {
 
     @Autowired
     private DataHubService dataHubService;
+
+    @Autowired
+    private MappingManagerService mappingManagerService;
 
     public List<EntityModel> getLegacyEntities() throws IOException {
         String projectDir = envConfig().getProjectDir();
@@ -122,7 +123,7 @@ public class EntityManagerService extends EnvironmentAware {
     }
 
     public EntityModel createEntity(String projectDir, EntityModel newEntity) throws IOException {
-        Scaffolding scaffolding = Scaffolding.create(projectDir, envConfig().getFinalClient());
+        Scaffolding scaffolding = Scaffolding.create(projectDir, envConfig().getReverseFlowClient());
         scaffolding.createEntity(newEntity.getName());
 
         if (newEntity.inputFlows != null) {
@@ -199,6 +200,7 @@ public class EntityManagerService extends EnvironmentAware {
         }
     }
 
+    //TODO Autowire in an Entity Manager
     public void deploySearchOptions(EnvironmentConfig environmentConfig) {
         EntityManager em = EntityManager.create(environmentConfig.getMlSettings());
         em.deployQueryOptions();
@@ -207,6 +209,11 @@ public class EntityManagerService extends EnvironmentAware {
     public void saveDbIndexes(EnvironmentConfig environmentConfig) {
         EntityManager em = EntityManager.create(environmentConfig.getMlSettings());
         em.saveDbIndexes();
+    }
+
+    public void savePii(EnvironmentConfig environmentConfig) {
+        EntityManager em = EntityManager.create(environmentConfig.getMlSettings());
+        em.savePii();
     }
 
     public void saveAllUiData(List<EntityModel> entities) throws IOException {
@@ -297,14 +304,22 @@ public class EntityManagerService extends EnvironmentAware {
     }
 
     public FlowModel createFlow(String projectDir, String entityName, FlowType flowType, FlowModel newFlow) throws IOException {
-        Scaffolding scaffolding = Scaffolding.create(projectDir, envConfig().getFinalClient());
+        Scaffolding scaffolding = Scaffolding.create(projectDir, envConfig().getReverseFlowClient());
         newFlow.entityName = entityName;
-        scaffolding.createFlow(entityName, newFlow.flowName, flowType, newFlow.codeFormat, newFlow.dataFormat, newFlow.useEsModel);
+        if(newFlow.mappingName != null) {
+            try {
+                String mappingName = mappingManagerService.getMapping(newFlow.mappingName).getVersionedName();
+                newFlow.mappingName = mappingName;
+            } catch (DataHubProjectException e) {
+                throw new DataHubProjectException("Mapping not found in project: " + newFlow.mappingName);
+            }
+        }
+        scaffolding.createFlow(entityName, newFlow.flowName, flowType, newFlow.codeFormat, newFlow.dataFormat, newFlow.useEsModel, newFlow.mappingName);
         return getFlow(entityName, flowType, newFlow.flowName);
     }
 
     public void deleteFlow(String projectDir, String entityName, String flowName, FlowType flowType) throws IOException {
-        Scaffolding scaffolding = Scaffolding.create(projectDir, envConfig().getFinalClient());
+        Scaffolding scaffolding = Scaffolding.create(projectDir, envConfig().getReverseFlowClient());
         Path flowDir = scaffolding.getFlowDir(entityName, flowName, flowType);
         FileUtils.deleteDirectory(flowDir.toFile());
     }

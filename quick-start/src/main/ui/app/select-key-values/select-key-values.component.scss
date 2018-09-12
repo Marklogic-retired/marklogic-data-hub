@@ -23,3 +23,7 @@
   padding-top:18px;
   padding-left:10px;
 }
+
+/deep/ .mdl-textfield__label:after {
+  bottom: 12px;
+}

@@ -22,6 +22,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FileUtil {
 
@@ -32,5 +35,43 @@ public class FileUtil {
         catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static List<String> listDirectFolders(File rootDirectory) {
+        List<String> folders = new ArrayList<>();
+        if (rootDirectory.exists() && rootDirectory.isDirectory()) {
+            File[] files = rootDirectory.listFiles();
+            for (File file : files) {
+                if (file.isDirectory() && !file.isHidden()) {
+                    folders.add(file.getName());
+                }
+            }
+        }
+        return folders;
+    }
+    public static List<String> listDirectFolders(String rootDirectoryName) {
+        return listDirectFolders(new File(rootDirectoryName));
+    }
+    public static List<String> listDirectFolders(Path rootDirectoryPath) {
+        return listDirectFolders(rootDirectoryPath.toFile());
+    }
+
+    public static List<String> listDirectFiles(File rootDirectory) {
+        List<String> filenames = new ArrayList<>();
+        if (rootDirectory.exists() && rootDirectory.isDirectory()) {
+            File[] files = rootDirectory.listFiles();
+            for (File file : files) {
+                if (!file.isDirectory() && !file.isHidden()) {
+                    filenames.add(file.getName());
+                }
+            }
+        }
+        return filenames;
+    }
+    public static List<String> listDirectFiles(String rootDirectoryName) {
+        return listDirectFiles(new File(rootDirectoryName));
+    }
+    public static List<String> listDirectFiles(Path rootDirectoryPath) {
+        return listDirectFiles(rootDirectoryPath.toFile());
     }
 }

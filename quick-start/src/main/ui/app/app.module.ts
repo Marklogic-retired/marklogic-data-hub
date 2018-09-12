@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { RouterModule } from '@angular/router';
 import { TruncateCharactersPipe } from './truncate';
+import { ListFilterPipe } from './listfilter';
 import { AppComponent } from './app.component';
 import { FlowsComponent } from './flows';
 import { HasBugsDialogComponent } from './has-bugs-dialog';
@@ -21,6 +22,7 @@ import { MdlModule } from '@angular-mdl/core';
 import { MdlPopoverModule } from '@angular-mdl/popover';
 import { MdlSelectModule } from '@angular-mdl/select';
 import { GridManiaModule } from './grid';
+import { BsDropdownModule } from 'ngx-bootstrap';
 
 import { ROUTES } from './app.routes';
 import { AUTH_PROVIDERS } from './auth';
@@ -46,10 +48,12 @@ import { EntitiesService } from './entities/entities.service';
 import { InstallService } from './installer';
 import { JobService } from './jobs/jobs.service';
 import { JobListenerService } from './jobs/job-listener.service';
+import { MapService } from './mappings/map.service';
 import { ProjectService } from './projects/projects.service';
 import { SettingsService } from './settings/settings.service';
 import { STOMPService } from './stomp/stomp.service';
 import { ClipboardDirective } from './clipboard/clipboard.directive';
+import { FocusElementDirective } from './focus-element/focus-element.directive';
 import { TraceService } from './traces/trace.service';
 import { SearchService } from './search/search.service';
 import { HarmonizeFlowOptionsComponent } from './harmonize-flow-options/harmonize-flow-options.component';
@@ -63,6 +67,9 @@ import { DatePipeModule } from './date-pipe/date-pipe.module';
 import { SelectKeyValuesComponent } from './select-key-values/select-key-values.component';
 import {JobExportDialogComponent} from "./jobs/job-export.component";
 
+import { MapComponent } from './mappings';
+import { MappingsComponent } from "./mappings";
+import { NewMapComponent } from "./mappings/new-map.component";
 
 @NgModule({
   declarations: [
@@ -85,6 +92,7 @@ import {JobExportDialogComponent} from "./jobs/job-export.component";
     MlErrorComponent,
     NewEntityComponent,
     NewFlowComponent,
+    NewMapComponent,
     PaginationComponent,
     ResizableComponent,
     SelectComponent,
@@ -96,14 +104,18 @@ import {JobExportDialogComponent} from "./jobs/job-export.component";
     SearchViewerComponent,
     NoContentComponent,
     ClipboardDirective,
+    FocusElementDirective,
     HarmonizeFlowOptionsComponent,
     DashboardComponent,
     InlineEditComponent,
     FacetsComponent,
     TitlecasePipe,
     TruncateCharactersPipe,
+    ListFilterPipe,
     ObjectToArrayPipe,
-    SelectKeyValuesComponent
+    SelectKeyValuesComponent,
+    MapComponent,
+    MappingsComponent
   ],
   entryComponents: [
     HasBugsDialogComponent,
@@ -112,6 +124,7 @@ import {JobExportDialogComponent} from "./jobs/job-export.component";
     EntityEditorComponent,
     NewEntityComponent,
     NewFlowComponent,
+    NewMapComponent,
     JobOutputComponent,
     JobExportDialogComponent
   ],
@@ -125,7 +138,8 @@ import {JobExportDialogComponent} from "./jobs/job-export.component";
     TooltipModule,
     GridManiaModule,
     RouterModule.forRoot(ROUTES, { useHash: true }),
-    DatePipeModule
+    DatePipeModule,
+    BsDropdownModule.forRoot()
   ],
   providers: [
     AUTH_PROVIDERS,
@@ -134,6 +148,7 @@ import {JobExportDialogComponent} from "./jobs/job-export.component";
     InstallService,
     JobService,
     JobListenerService,
+    MapService,
     ProjectService,
     SettingsService,
     STOMPService,

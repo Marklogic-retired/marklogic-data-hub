@@ -8,9 +8,11 @@
  * @return - an object of headers
  */
 function createHeaders(id, content, options) {
-  let headers = {};
-  headers.key1 = options.hello;
-  headers.key2 = xs.decimal(options.myNumber);
+  let headers = {
+    'user': xdmp.getCurrentUser(),
+    'key1': options.hello,
+    'key2': xs.decimal(options.myNumber)
+  };
   return headers;
 }
 

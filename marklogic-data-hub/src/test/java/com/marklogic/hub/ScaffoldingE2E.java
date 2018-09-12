@@ -66,9 +66,8 @@ public class ScaffoldingE2E extends HubTestBase {
         createProjectDir();
     }
 
-    private void createFlow(CodeFormat codeFormat, DataFormat dataFormat, FlowType flowType, boolean useEsModel) {
+    private void installEntity() {
         String entityName = "my-fun-test";
-        String flowName = "test-" + flowType.toString() + "-" + codeFormat.toString() + "-" + dataFormat.toString();
 
         ScaffoldingImpl scaffolding = new ScaffoldingImpl(projectDir.toString(), finalClient);
 
@@ -88,7 +87,14 @@ public class ScaffoldingE2E extends HubTestBase {
         FileUtil.copy(getResourceStream("scaffolding-test/employee.entity.json"), employeeDir.resolve("employee.entity.json").toFile());
         FileUtil.copy(getResourceStream("scaffolding-test/" + entityName + ".json"), entityDir.resolve(entityName + ".entity.json").toFile());
 
-        installUserModules(getHubConfig(), true);
+        installUserModules(getHubAdminConfig(), true);
+
+    }
+    private void createFlow(CodeFormat codeFormat, DataFormat dataFormat, FlowType flowType, boolean useEsModel) {
+        String entityName = "my-fun-test";
+        String flowName = "test-" + flowType.toString() + "-" + codeFormat.toString() + "-" + dataFormat.toString();
+
+        ScaffoldingImpl scaffolding = new ScaffoldingImpl(projectDir.toString(), finalClient);
 
         scaffolding.createFlow(entityName, flowName, flowType, codeFormat, dataFormat, useEsModel);
         Path flowDir = scaffolding.getFlowDir(entityName, flowName, flowType);
@@ -131,13 +137,14 @@ public class ScaffoldingE2E extends HubTestBase {
 
         if (useEsModel) {
             try {
+                // FIXME every time the codegen changes these assertions break.  is that what we really want?
                 assertEquals(
                     getResource("scaffolding-test/es-" + flowType.toString() + "-content." + codeFormat.toString())
                         .replaceAll("\\s+", " ")
-                        .replaceAll("[\r\n]", ""),
+                        .replaceAll("[\r\n]", "").trim(),
                     FileUtils.readFileToString(defaultContent.toFile())
                         .replaceAll("\\s+", " ")
-                        .replaceAll("[\r\n]", ""));
+                        .replaceAll("[\r\n]", "").trim());
             }
             catch(IOException e) {
                 throw new RuntimeException(e);
@@ -163,15 +170,18 @@ public class ScaffoldingE2E extends HubTestBase {
     }
 
     private void createInputFlow(CodeFormat codeFormat, DataFormat dataFormat, boolean useEsModel) throws IOException, SAXException {
+        installEntity();
         createFlow(codeFormat, dataFormat, FlowType.INPUT, useEsModel);
     }
 
     private void createHarmonizeFlow(CodeFormat codeFormat, DataFormat dataFormat, boolean useEsModel) throws IOException, SAXException {
+        installEntity();
         createFlow(codeFormat, dataFormat, FlowType.HARMONIZE, useEsModel);
     }
 
     @TestFactory
     public List<DynamicTest> generateFlowTests() {
+        installEntity();
         List<DynamicTest> tests = new ArrayList<>();
         allCombos((codeFormat, dataFormat, flowType, useEs) -> {
             String flowName = "test-" + flowType.toString() + "-" + codeFormat.toString() + "-" + dataFormat.toString();

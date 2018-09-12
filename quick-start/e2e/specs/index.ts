@@ -5,6 +5,7 @@ import create from './create';
 import runFlows from './run';
 import jobs from './jobs';
 import runTraces from './traces';
+import mappings from './mappings';
 import uninstall from './uninstall';
 
 import CUSTOM_MATCHERS from '../matchers'
@@ -14,7 +15,7 @@ const tmp = require('tmp');
 const fs = require('fs-extra');
 const path = require('path');
 let tmpobj = tmp.dirSync({ unsafeCleanup: true });
-fs.copySync('../examples/online-store/input', path.join(tmpobj.name, 'input'));
+fs.copySync('e2e/qa-data/data/input', path.join(tmpobj.name, 'input'));
 console.log('DIR: ' + tmpobj.name);
 
 describe('QuickStart', function () {
@@ -60,5 +61,6 @@ describe('QuickStart', function () {
   runFlows(tmpobj.name);
   jobs();
   runTraces();
+  mappings();
   uninstall(tmpobj.name);
 });

@@ -26,14 +26,14 @@ public class DeployHubRolesCommand extends DeployRolesCommand {
     private HubConfig hubConfig;
 
     public DeployHubRolesCommand(HubConfig hubConfig) {
+        super();
         this.hubConfig = hubConfig;
     }
 
     @Override
     protected File[] getResourceDirs(CommandContext context) {
         return new File[] {
-            hubConfig.getHubSecurityDir().resolve("roles").toFile(),
-            hubConfig.getUserSecurityDir().resolve("roles").toFile()
+            hubConfig.getHubSecurityDir().resolve("roles").toFile()
         };
     }
 }

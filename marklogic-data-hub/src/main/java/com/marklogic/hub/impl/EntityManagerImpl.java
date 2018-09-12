@@ -15,14 +15,10 @@
  */
 package com.marklogic.hub.impl;
 
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.ext.helper.LoggingObject;
 import com.marklogic.client.ext.modulesloader.impl.AssetFileLoader;
@@ -88,36 +84,43 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
         // save them first
         saveQueryOptions();
 
+        HashMap<Enum, Boolean> loadedResources = new HashMap<>();
+        if (deployFinalQueryOptions()) loadedResources.put(DatabaseKind.FINAL, true);
+        if (deployStagingQueryOptions()) loadedResources.put(DatabaseKind.STAGING, true);
+        return loadedResources;
+    }
+
+
+    public boolean deployFinalQueryOptions() {
+        return deployQueryOptions(hubConfig.newFinalClient(), HubConfig.FINAL_ENTITY_QUERY_OPTIONS_FILE);
+    }
+    public boolean deployStagingQueryOptions() {
+        return deployQueryOptions(hubConfig.newStagingClient(), HubConfig.STAGING_ENTITY_QUERY_OPTIONS_FILE);
+    }
+
+    private boolean deployQueryOptions(DatabaseClient client, String filename) {
+
         HubModuleManager propsManager = getPropsMgr();
         DefaultModulesLoader modulesLoader = new DefaultModulesLoader(new AssetFileLoader(hubConfig.newFinalClient(), propsManager));
+
+        boolean isLoaded = false;
 
         modulesLoader.setModulesManager(propsManager);
         modulesLoader.setShutdownTaskExecutorAfterLoadingModules(false);
 
-        HashMap<Enum, Boolean> loadedResources = new HashMap<>();
-
         Path dir = Paths.get(hubConfig.getProjectDir(), HubConfig.ENTITY_CONFIG_DIR);
-        File stagingFile = Paths.get(dir.toString(), HubConfig.STAGING_ENTITY_QUERY_OPTIONS_FILE).toFile();
+        File stagingFile = Paths.get(dir.toString(), filename).toFile();
         if (stagingFile.exists()) {
-            modulesLoader.setDatabaseClient(hubConfig.newStagingClient());
+            modulesLoader.setDatabaseClient(client);
             Resource r = modulesLoader.installQueryOptions(new FileSystemResource(stagingFile));
             if (r != null) {
-                loadedResources.put(DatabaseKind.STAGING, true);
-            }
-        }
-
-        File finalFile = Paths.get(dir.toString(), HubConfig.FINAL_ENTITY_QUERY_OPTIONS_FILE).toFile();
-        if (finalFile.exists()) {
-            modulesLoader.setDatabaseClient(hubConfig.newFinalClient());
-            Resource r = modulesLoader.installQueryOptions(new FileSystemResource(finalFile));
-            if (r != null) {
-                loadedResources.put(DatabaseKind.FINAL, true);
+                isLoaded = true;
             }
         }
         modulesLoader.setShutdownTaskExecutorAfterLoadingModules(true);
         modulesLoader.waitForTaskExecutorToFinish();
 
-        return loadedResources;
+        return isLoaded;
     }
 
     @Override public boolean saveDbIndexes() {
@@ -126,13 +129,13 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
             if (!dir.toFile().exists()) {
                 dir.toFile().mkdirs();
             }
-            File finalFile = dir.resolve("final-database.json").toFile();
-            File stagingFile = dir.resolve("staging-database.json").toFile();
+            File finalFile = Paths.get(dir.toString(), HubConfig.FINAL_ENTITY_DATABASE_FILE).toFile();
+            File stagingFile = Paths.get(dir.toString(), HubConfig.STAGING_ENTITY_DATABASE_FILE).toFile();
 
             long lastModified = Math.max(finalFile.lastModified(), stagingFile.lastModified());
             List<JsonNode> entities = getModifiedRawEntities(lastModified);
             if (entities.size() > 0) {
-                DbIndexGenerator generator = new DbIndexGenerator(hubConfig.newFinalClient());
+                DbIndexGenerator generator = new DbIndexGenerator(hubConfig.newReverseFlowClient());
                 String indexes = generator.getIndexes(entities);
                 FileUtils.writeStringToFile(finalFile, indexes);
                 FileUtils.writeStringToFile(stagingFile, indexes);
@@ -152,8 +155,37 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
         return propertiesModuleManager;
     }
 
+    private List<JsonNode> getAllEntities() {
+        List<JsonNode> entities = new ArrayList<>();
+        Path entitiesPath = hubConfig.getHubEntitiesDir();
+        File[] entityFiles = entitiesPath.toFile().listFiles(pathname -> pathname.isDirectory() && !pathname.isHidden());
+        List<String> entityNames;
+        if (entityFiles != null) {
+            entityNames = Arrays.stream(entityFiles)
+                .map(file -> file.getName())
+                .collect(Collectors.toList());
+
+            ObjectMapper objectMapper = new ObjectMapper();
+            try {
+                boolean hasOneChanged = false;
+                for (String entityName : entityNames) {
+                    File[] entityDefs = entitiesPath.resolve(entityName).toFile().listFiles((dir, name) -> name.endsWith(ENTITY_FILE_EXTENSION));
+                    for (File entityDef : entityDefs) {
+                        FileInputStream fileInputStream = new FileInputStream(entityDef);
+                        entities.add(objectMapper.readTree(fileInputStream));
+                        fileInputStream.close();
+                    }
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+        }
+        return entities;
+    }
+
     private List<JsonNode> getModifiedRawEntities(long minimumFileTimestampToLoad) {
-        logger.info("min modified: " + minimumFileTimestampToLoad);
+        logger.debug("min modified: " + minimumFileTimestampToLoad);
         HubModuleManager propsManager = getPropsMgr();
         propsManager.setMinimumFileTimestampToLoad(minimumFileTimestampToLoad);
 
@@ -268,6 +300,51 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
             }
             return "{}";
         }
+    }
+
+
+    @Override
+    public boolean savePii() {
+        try {
+
+            Path protectedPaths = hubConfig.getUserSecurityDir().resolve("protected-paths");
+            Path queryRolesets = hubConfig.getUserSecurityDir().resolve("query-rolesets");
+            if (!protectedPaths.toFile().exists()) {
+                protectedPaths.toFile().mkdirs();
+            }
+            if (!queryRolesets.toFile().exists()) {
+                queryRolesets.toFile().mkdirs();
+            }
+            File queryRolesetsConfig = queryRolesets.resolve(HubConfig.PII_QUERY_ROLESET_FILE).toFile();
+
+            ObjectMapper mapper = new ObjectMapper();
+            ObjectWriter writer = mapper.writerWithDefaultPrettyPrinter();
+            // get all the entities.
+            List<JsonNode> entities = getAllEntities();
+            if (entities.size() > 0) {
+                PiiGenerator piiGenerator = new PiiGenerator(hubConfig.newReverseFlowClient());
+
+                String v3Config = piiGenerator.piiGenerate(entities);
+                JsonNode v3ConfigAsJson = null;
+                v3ConfigAsJson = mapper.readTree(v3Config);
+
+                ArrayNode paths = (ArrayNode) v3ConfigAsJson.get("config").get("protected-path");
+                int i=0;
+                // write each path as a separate file for ml-gradle
+                Iterator<JsonNode> pathsIterator = paths.iterator();
+                while (pathsIterator.hasNext()) {
+                    JsonNode n = pathsIterator.next();
+                    i++;
+                    String thisPath = String.format("%02d_%s", i , HubConfig.PII_PROTECTED_PATHS_FILE);
+                    File protectedPathConfig = protectedPaths.resolve(thisPath).toFile();
+                    writer.writeValue(protectedPathConfig, n);
+                }
+                writer.writeValue(queryRolesetsConfig,  v3ConfigAsJson.get("config").get("query-roleset"));
+            }
+        } catch (IOException e) {
+            throw new EntityServicesGenerationException("Protected path writing failed",e);
+        }
+        return true;
     }
 
 }

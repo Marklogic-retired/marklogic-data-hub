@@ -24,6 +24,7 @@ import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.collector.Collector;
 import com.marklogic.hub.collector.DiskQueue;
 import com.marklogic.hub.flow.CodeFormat;
+import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.rest.util.MgmtResponseErrorHandler;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -31,12 +32,11 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.conn.ssl.X509HostnameVerifier;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.springframework.core.io.Resource;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.web.client.RequestCallback;
+import org.springframework.web.client.ResponseExtractor;
 import org.springframework.web.client.RestTemplate;
 
 import javax.naming.InvalidNameException;
@@ -48,17 +48,13 @@ import javax.net.ssl.SSLSession;
 import javax.net.ssl.SSLSocket;
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateParsingException;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class CollectorImpl implements Collector {
     private DatabaseClient client = null;
@@ -113,9 +109,9 @@ public class CollectorImpl implements Collector {
             // https://github.com/marklogic/marklogic-data-hub/issues/632
             // https://github.com/marklogic/marklogic-data-hub/issues/633
             //
-            AppConfig appConfig = hubConfig.getAppConfig();
+            AppConfig appConfig = hubConfig.getStagingAppConfig();
 
-            RestTemplate template = newRestTemplate(appConfig.getAppServicesUsername(), appConfig.getAppServicesPassword());
+            RestTemplate template = newRestTemplate(  ((HubConfigImpl) hubConfig).getMlUsername(), ( (HubConfigImpl) hubConfig).getMlPassword());
             String uriString = String.format(
                 "%s://%s:%d%s?job-id=%s&entity-name=%s&flow-name=%s&database=%s",
                 client.getSecurityContext().getSSLContext() != null ? "https" : "http",
@@ -133,18 +129,21 @@ public class CollectorImpl implements Collector {
                 uriString += "&options=" + URLEncoder.encode(objectMapper.writeValueAsString(options), "UTF-8");
             }
             URI uri = new URI(uriString);
-            HttpHeaders headers = new HttpHeaders();
-            headers.set("Accept", MediaType.TEXT_PLAIN_VALUE);
-            Resource responseBody = template.exchange(uri, HttpMethod.GET, new HttpEntity<>(headers), Resource.class).getBody();
-            if(responseBody != null) {
-                InputStream inputStream = responseBody.getInputStream();
-                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+            RequestCallback requestCallback = request -> request.getHeaders()
+                .setAccept(Arrays.asList(MediaType.APPLICATION_OCTET_STREAM, MediaType.ALL));
+
+            // Streams the response instead of loading it all in memory
+            ResponseExtractor<Void> responseExtractor = response -> {
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(response.getBody()));
                 String line;
                 while((line = bufferedReader.readLine()) != null) {
                     results.add(line);
                 }
-                inputStream.close();
-            }
+                bufferedReader.close();
+                return null;
+            };
+
+            template.execute(uri, HttpMethod.GET, requestCallback, responseExtractor);
 
             return results;
         }
