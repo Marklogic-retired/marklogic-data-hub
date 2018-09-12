@@ -18,6 +18,21 @@ permalink: /faqs/
 #### What if my question is not answered here?
 Use the [#marklogic-dhf tag on StackOverflow](https://stackoverflow.com/questions/ask?tags=marklogic-dhf) to ask us a question.
 
+<bt>
+
+#### What MarkLogic version works with what DHF version?
+
+DHF has evolved in its configuration and deploymen strategy.  With the current
+release, 4.0.0, DHF is compatible with MarkLogic versions 9.0-5 and later.
+
+If you are using an older release of DHF, please upgrade
+
+DHF     MarkLogic
+2.x     Until 9.0-4
+3.0.0   9.0-5 and 9.0-6
+4.0.0   9.0-5 and above
+
+
 <br>
 
 #### How do I deploy my own custom modules?

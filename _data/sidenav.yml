@@ -8,7 +8,8 @@ main:
         { url: '/understanding/architecture/', text: 'Organization' },
         { url: '/understanding/how-it-works/', text: 'How It Works'},
         { url: '/understanding/flowtracing/', text: 'Flow Tracing'},
-        { url: '/understanding/project-structure/', text: 'Project Structure'}
+        { url: '/understanding/project-structure/', text: 'Project Structure'},
+        { url: '/understanding/updating/', text: 'Upgrading DHF'}
       ]
     }
     - {
@@ -53,11 +54,13 @@ main:
             { url: '/ingest/rest/', text: 'REST Client API' }
           ]
         },
-        # {
-        #   url: '/govern/',
-        #   text: 'Govern',
-        #   childPages: []
-        # },
+        {
+          url: '/govern/',
+          text: 'Govern',
+          childPages: [
+            { url: '/govern/pii/', text: 'Managing PII' },
+          ]
+        },
         {
           url: '/harmonize/',
           text: 'Harmonize',
@@ -66,6 +69,7 @@ main:
             { url: '/harmonize/gradle/', text: 'Gradle'},
             { url: '/harmonize/java/', text: 'Java Library'},
             { url: '/harmonize/rest/', text: 'REST'},
+            { url: '/harmonize/mapping/', text: 'Using Model-to-Model Mapping'},
           ]
         },
         {
@@ -74,13 +78,26 @@ main:
         }
       ]
     }
+#    - {
+#      url: '/admin/',
+#      text: 'Administering DHF',
+#      childPages: [
+#        # { url: '/admin/install/', text: 'Installing Data Hub Framework' },
+#        { url: '/admin/upgrade/', text: 'Upgrading Data Hub Framework' }
+#        #, { url: '/admin/uninstall/', text: 'Uninstalling Data Hub Framework' }
+#      ]
+#    }
     - {
       url: '/docs/',
       text: 'Docs',
       childPages: [
         { url: '/docs/server-side/', text: 'Server Side (xqy, sjs)' },
         { url: '/docs/gradle-tasks/', text: 'Gradle Tasks' },
-        { url: '/javadocs/', text: 'Javadocs' }
+        { url: '/javadocs/', text: 'Javadocs' },
+        { url: '/docs/architecture/', text: 'Architecture' },
+        { url: '/docs/security/', text: 'Security' },
+        { url: '/docs/gradleproperties/', text: 'Property Reference' },
+        { url: '/docs/release-notes/', text: 'Release Notes' }
       ]
     }
     - { url: '/faqs/', text: 'FAQs' }

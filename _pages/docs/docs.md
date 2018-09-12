@@ -7,3 +7,6 @@ permalink: /docs/
 1. [DHF Server-Side Library](./serverside.md)
 1. [Gradle Plugin tasks](./gradletasks.md)
 1. [Javadocs](./javadocs.md)
+1. [Architecture](./architecture.md)
+1. [Security](./security.md)
+1. [Gradle Property Reference](./gradleproperties.md)

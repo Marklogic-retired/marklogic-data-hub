@@ -7,38 +7,43 @@ permalink: /tutorial/load-orders-as-is/
 
 ## Ingest Order Data As-Is
 
-Use the QuickStart Input Flow wizard to ingest the order data into MarkLogic.
+In this exercise, you will configure and run an input flow to load order data. We use the same procedure that we used to load product data.
 
-1. <i class="fa fa-hand-pointer-o"></i> Click **Load Orders** under **Input Flows**.
-2. Use the file browser to select the **input/orders** directory.
-3. Under **General Options**, change **Input File Type** to **Delimited Text**.
+We will configure the flow to do the following:
 
-![Configure Load Orders]({{site.baseurl}}/images/3x/load-orders-as-is/configure-load-orders-1.png)
+* Load data from the sample data directory input/order.
+* Interpret the input data as delimited text (CSV).
+* Automatically generate unique URIs as the data is loaded. This prevents one document from overwriting another if multiple rows contain the same value in the first field.
 
-Now expand **Delimited Text Options** and turn on **Generate URI?**.  
-_This setting tells MLCP to generate a unique URI for every document it creates. Normally for CSV files it would use the value in the first column. If there are repeat values then we would end up overwriting documents. This ensures the uniqueness of the URIs._{:.smaller} 
+Follow these steps to configure the input flow:
 
-![Generate Uri]({{site.baseurl}}/images/3x/load-orders-as-is/generate-uri-option.png)
+1. Click **Load Orders** under the Orders **Input Flows**. The Run Input Flow wizard appears.
+1. Under **Input Files**, use the file browser to select the **input/orders** directory.
 
-To recap, you should have set the following options:
+    ![Input Files]({{site.baseurl}}/images/3x/load-orders-as-is/input-files.png){:.screenshot-border}
+    
+1. Under **General Options**, change **Input File Type** to **Delimited Text**.
 
-- Input Files -> Current Folder -> input/orders _(adjust for your folder structure)_{:.smaller}
-- General Options -> Input File Type -> Delimited Text
-- Delimited Text Options -> Generate URI? -> ON
+    ![General Options]({{site.baseurl}}/images/3x/load-orders-as-is/general-options.png)
+    
+1. Under **Delimited Text Options**, slide the **Generate URI?** slider to the right, enabling automatic unique URI generation.
+    
+    ![Delimited Text Options]({{site.baseurl}}/images/3x/load-orders-as-is/delimited-text-options.png)
 
-Finally, <i class="fa fa-hand-pointer-o"></i> click **RUN IMPORT**{:.blue-button} to start the data load.
+1. Scroll to the bottom of the wizard and click **SAVE OPTIONS**.
+1. Click **RUN IMPORT**. MarkLogic begins loading data. Quickstart displays a progress bar at the bottom of your browser.
 
-![Run Import]({{site.baseurl}}/images/3x/load-orders-as-is/load-orders-run.png)
+When the load finishes, QuickStart displays a completion notice at the bottom of your browser.
 
 ## Review Your Finished Input Job
 
-Let's take a moment to look at the Jobs view. <i class="fa fa-hand-pointer-o"></i> Click **Jobs** in the top navigation bar.
+As when we loaded product data, we will inspect the status of our Load Orders job.
 
-![Click Jobs]({{site.baseurl}}/images/3x/load-orders-as-is/click-jobs-2.png)
+Click **Jobs** in the top navigation bar to open the job viewer:
 
-In the Jobs view, you will see a list of previously run jobs, including the most recent one. This interface is searchable either via free text or via the facets on the left.
+![Click Jobs]({{site.baseurl}}/images/3x/load-orders-as-is/select-jobs.png)
 
-![Jobs View]({{site.baseurl}}/images/3x/load-orders-as-is/jobs-view-2.png)
+Examine the Load Orders job results. This job should be the most recent run.
 
 ## Up Next
 

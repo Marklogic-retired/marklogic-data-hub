@@ -33,7 +33,7 @@ plugins {
     // it includes ml-gradle. This plugin is what lets you
     // run DHF (Data Hub Framework) tasks from the
     // command line
-    id 'com.marklogic.ml-data-hub' version '2.0.3'
+    id 'com.marklogic.ml-data-hub' version '4.0.0'
 }
 ```
 
@@ -61,7 +61,7 @@ plugins {
     // it includes ml-gradle. This plugin is what lets you
     // run DHF (Data Hub Framework) tasks from the
     // command line
-    id 'com.marklogic.ml-data-hub' version '2.0.3'
+    id 'com.marklogic.ml-data-hub' version '4.0.0'
 }
 ```
 
@@ -114,7 +114,7 @@ Initialize the current directory as a Data Hub Framework project
 <pre class="cmdline">
 gradle hubInit
 </pre>
----
+
 ### hubCreateEntity
 Create a boilerplate entity
 <pre class="cmdline">
@@ -124,7 +124,6 @@ gradle hubCreateEntity -PentityName=yourentityname
 ##### Required
 - **entityName** - the entity name to create
 
----
 ### hubCreateInputFlow
 Create an input flow
 <pre class="cmdline">
@@ -152,7 +151,8 @@ gradle hubCreateHarmonizeFlow \
   -PentityName=yourentityname \
   -PflowName=yourflowname \
   -PdataFormat=(xml|json) \
-  -PpluginFormat=(xqy|sjs)
+  -PpluginFormat=(xqy|sjs) \
+  -PmappingName=yourmappingname
 </pre>
 #### Parameters
 ##### Required
@@ -161,9 +161,17 @@ gradle hubCreateHarmonizeFlow \
 
 ##### Optional
 - **dataFormat** - xml or json
+- **pluginFormat** - xqy or sjs; the plugin programming language
+- **mappingName** - the name of a model-to-model mapping to use during code generation
 
 ##### Default Values
 - **dataFormat**=json
+
+### hubGeneratePii
+Generate security configuration files for protecting entity properties designated as Personally Identifiable Information (PII). For details, see [Managing Personally Identifiable Information]({{site.baseurl}}/govern/pii).
+<pre class="cmdline">
+gradle hubGeneratePii
+</pre>
 
 ## MarkLogic Data Hub Flow Management tasks
 These tasks allow you to run and clean up after flows.
@@ -256,6 +264,5 @@ Removes all components of your data hub on MarkLogic, including databases, appli
 
 <pre class="cmdline">
 ./gradlew mlUndeploy \
-  -Pconfirm=true 
+  -Pconfirm=true
 </pre>
-

@@ -1,11 +1,11 @@
 require:
   js: |
-    const dhf = require('/com.marklogic.hub/dhf.xqy');
+    const dhf = require('/data-hub/4/dhf.xqy');
   xqy: |
-    import module namespace dhf = "http://marklogic.com/dhf" at "/com.marklogic.hub/dhf.xqy";
+    import module namespace dhf = "http://marklogic.com/dhf" at "/data-hub/4/dhf.xqy";
 run:
   js: |
-    const dhf = require('/com.marklogic.hub/dhf.xqy');
+    const dhf = require('/data-hub/4/dhf.xqy');
 
     var context = dhf.context('My Plugin');
     var result = dhf.run(context, function() {
@@ -13,7 +13,7 @@ run:
     });
   xqy: |
     import module namespace dhf = "http://marklogic.com/dhf"
-      at "/com.marklogic.hub/dhf.xqy";
+      at "/data-hub/4/dhf.xqy";
 
     let $context := dhf:context("My Plugin")
     let $result := dhf:run($context, function() {
@@ -23,7 +23,8 @@ run:
       $result
 runwriter:
   js: |
-    const dhf = require('/com.marklogic.hub/dhf.xqy');
+    const dhf = require('/data-hub/4/dhf.xqy');
+    const writerPlugin = require('./writer.sjs');
 
     // we are hand waving how the envelope gets constructed
     var envelope = {};
@@ -37,10 +38,12 @@ runwriter:
      module.exports = write;
     */
 
-    dhf.runWriter(xdmp.function(null, './writer.sjs'), id, envelope, options);
+    dhf.runWriter(writerPlugin, id, envelope, options);
   xqy: |
     import module namespace dhf = "http://marklogic.com/dhf"
-      at "/com.marklogic.hub/dhf.xqy";
+      at "/data-hub/4/dhf.xqy";
+    import module namespace writer = "http://marklogic.com/data-hub/plugins" 
+      at "writer.xqy";
 
     let $envelope := <envelope/>
     return
@@ -52,7 +55,7 @@ runwriter:
       dhf:run-writer(xdmp:function(xs:QName("writer:write")), $id, $envelope, $options)
 makeenvelope:
   js: |
-    const dhf = require('/com.marklogic.hub/dhf.xqy');
+    const dhf = require('/data-hub/4/dhf.xqy');
 
     var content = { a: 'a!' };
     var headers = {
@@ -71,7 +74,7 @@ makeenvelope:
     var envelope = dhf:makeEnvelope(content, headers, triples, dataFormat);
   xqy: |
     import module namespace dhf = "http://marklogic.com/dhf"
-      at "/com.marklogic.hub/dhf.xqy";
+      at "/data-hub/4/dhf.xqy";
 
     let $content := <a>a!</a>
     let $headers := (<header1>1</header1>, <header1>2</header2>)
@@ -85,7 +88,7 @@ makeenvelope:
       $envelope
 makelegacyenvelope:
   js: |
-    const dhf = require('/com.marklogic.hub/dhf.xqy');
+    const dhf = require('/data-hub/4/dhf.xqy');
 
     var content = { a: 'a!' };
     var headers = {
@@ -104,7 +107,7 @@ makelegacyenvelope:
     var envelope = dhf:makeLegacyEnvelope(content, headers, triples, dataFormat);
   xqy: |
     import module namespace dhf = "http://marklogic.com/dhf"
-      at "/com.marklogic.hub/dhf.xqy";
+      at "/data-hub/4/dhf.xqy";
 
     let $content := <a>a!</a>
     let $headers := (<header1>1</header1>, <header1>2</header2>)
@@ -118,7 +121,7 @@ makelegacyenvelope:
       $envelope
 context:
   js: |
-    const dhf = require('/com.marklogic.hub/dhf.xqy');
+    const dhf = require('/data-hub/4/dhf.xqy');
 
     var context = dhf.context('My Plugin');
     var result = dhf.run(context, function() {
@@ -126,7 +129,7 @@ context:
     });
   xqy: |
     import module namespace dhf = "http://marklogic.com/dhf"
-      at "/com.marklogic.hub/dhf.xqy";
+      at "/data-hub/4/dhf.xqy";
 
     let $context := dhf:context("My Plugin")
     let $result := dhf:run($context, function() {
@@ -136,7 +139,7 @@ context:
       $result
 contentcontext:
   js: |
-    const dhf = require('/com.marklogic.hub/dhf.xqy');
+    const dhf = require('/data-hub/4/dhf.xqy');
 
     var context = dhf.contentContext();
     var result = dhf.run(context, function() {
@@ -145,7 +148,7 @@ contentcontext:
 
   xqy: |
     import module namespace dhf = "http://marklogic.com/dhf"
-      at "/com.marklogic.hub/dhf.xqy";
+      at "/data-hub/4/dhf.xqy";
 
     let $context := dhf:content-context()
     let $result := dhf:run($context, function() {
@@ -155,7 +158,7 @@ contentcontext:
       $result
 headercontext:
   js: |
-    const dhf = require('/com.marklogic.hub/dhf.xqy');
+    const dhf = require('/data-hub/4/dhf.xqy');
 
     var content = {};
     var context = dhf.headersContext(content);
@@ -164,7 +167,7 @@ headercontext:
     });
   xqy: |
     import module namespace dhf = "http://marklogic.com/dhf"
-      at "/com.marklogic.hub/dhf.xqy";
+      at "/data-hub/4/dhf.xqy";
 
     let $content := <content/>
     let $context := dhf:headers-context($content)
@@ -175,7 +178,7 @@ headercontext:
       $result
 triplescontext:
   js: |
-    const dhf = require('/com.marklogic.hub/dhf.xqy');
+    const dhf = require('/data-hub/4/dhf.xqy');
 
     var content = {};
     var headers = {};
@@ -185,7 +188,7 @@ triplescontext:
     });
   xqy: |
     import module namespace dhf = "http://marklogic.com/dhf"
-      at "/com.marklogic.hub/dhf.xqy";
+      at "/data-hub/4/dhf.xqy";
 
     let $content = <content/>
     let $headers = ()
@@ -197,13 +200,13 @@ triplescontext:
       $result
 writercontext:
   js: |
-    const dhf = require('/com.marklogic.hub/dhf.xqy');
+    const dhf = require('/data-hub/4/dhf.xqy');
 
     var envelope = {};
     dhf.logTrace(dhf.writerContext(envelope));
   xqy: |
     import module namespace dhf = "http://marklogic.com/dhf"
-      at "/com.marklogic.hub/dhf.xqy";
+      at "/data-hub/4/dhf.xqy";
 
     let $envelope := <envelope/>
     let $_ := dhf:log-trace(dhf:writer-context($envelope))
@@ -211,7 +214,7 @@ writercontext:
       $envelope
 addtraceinput:
   js: |
-    const dhf = require('/com.marklogic.hub/dhf.xqy');
+    const dhf = require('/data-hub/4/dhf.xqy');
 
     var expenseReport = {};
     var context = dhf.context('My Plugin');
@@ -221,7 +224,7 @@ addtraceinput:
     });
   xqy: |
     import module namespace dhf = "http://marklogic.com/dhf"
-      at "/com.marklogic.hub/dhf.xqy";
+      at "/data-hub/4/dhf.xqy";
 
     let $expense-report := <expense-report/>
     let $context := dhf:context("My Plugin")
@@ -233,13 +236,13 @@ addtraceinput:
       $result
 logtrace:
   js: |
-    const dhf = require('/com.marklogic.hub/dhf.xqy');
+    const dhf = require('/data-hub/4/dhf.xqy');
 
     var envelope = {};
     dhf.logTrace(dhf.writerContext(envelope));
   xqy: |
     import module namespace dhf = "http://marklogic.com/dhf"
-      at "/com.marklogic.hub/dhf.xqy";
+      at "/data-hub/4/dhf.xqy";
 
     let $envelope := <envelope/>
     let $_ := dhf:log-trace(dhf:writer-context($envelope))
