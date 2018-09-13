@@ -15,7 +15,6 @@
  */
 package com.marklogic.hub;
 
-import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.flow.CodeFormat;
 import com.marklogic.hub.flow.DataFormat;
 import com.marklogic.hub.flow.FlowType;
@@ -51,12 +50,12 @@ public class ScaffoldingE2E extends HubTestBase {
     @BeforeAll
     public static void setupHub() {
         XMLUnit.setIgnoreWhitespace(true);
-        new Installer().installHubOnce();
+        new Installer().setupProject();
     }
 
     @AfterAll
     public static void teardown() {
-        new Installer().uninstallHub();
+        new Installer().teardownProject();
     }
 
     @BeforeEach

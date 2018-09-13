@@ -23,28 +23,39 @@ public class Installer {
         htb = new HubTestBase();
     }
 
-    // A method to manually setup
-    // uncomment @Test and run
-    // do NOT check in as a a test.
-    @Test
-    public void installHubOnce() {
-    	htb.createProjectDir();
+    public void setupProject() {
+        htb.createProjectDir();
         if (htb.isCertAuth() || htb.isSslRun()) {
-        	htb.sslSetup();
-        }
-        htb.getDataHub().install();
-        try {
-        	htb.getDataHub().upgradeHub();
-        } catch (Exception e) {
-
+            htb.sslSetup();
         }
     }
 
-    // A method to manually teardown.
-    // uncomment @Test and run
-    // do NOT check in as a a test.
-     @Test
-    public void uninstallHub() {
+    public void teardownProject() {
+        htb.createProjectDir();
+        htb.getDataHub().uninstall();
+        if (htb.isCertAuth() || htb.isSslRun()) {
+            htb.sslCleanup();
+        }
+        htb.deleteProjectDir();
+    }
+
+    public void bootstrapHub() {
+        htb.createProjectDir();
+        if (htb.isCertAuth() || htb.isSslRun()) {
+        htb.sslSetup();
+    }
+        htb.getDataHub().install();
+        try {
+        htb.getDataHub().upgradeHub();
+    } catch (Exception e) {
+    }
+}
+    public static void main(String[] args) {
+        Installer i = new Installer();
+        i.bootstrapHub();
+    }
+
+    public void teardownHub() {
     	htb.createProjectDir();
         htb.getDataHub().uninstall();
         if (htb.isCertAuth() || htb.isSslRun()) {

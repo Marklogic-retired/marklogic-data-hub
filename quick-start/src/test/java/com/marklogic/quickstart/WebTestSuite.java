@@ -30,12 +30,12 @@ public class WebTestSuite {
 
     @BeforeClass
     public static void setUp() {
-        new Installer().installHubOnce();
+        new Installer().setupProject();
     }
 
     @AfterClass
     public static void tearDown() {
-        new Installer().uninstallHub();
+        new Installer().teardownProject();
     }
 
 }

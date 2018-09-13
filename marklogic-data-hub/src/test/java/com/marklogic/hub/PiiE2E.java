@@ -6,8 +6,6 @@ import com.marklogic.appdeployer.ConfigDir;
 import com.marklogic.appdeployer.command.Command;
 import com.marklogic.appdeployer.command.security.DeployProtectedPathsCommand;
 import com.marklogic.appdeployer.command.security.DeployQueryRolesetsCommand;
-import com.marklogic.appdeployer.command.security.DeployRolesCommand;
-import com.marklogic.appdeployer.command.security.DeployUsersCommand;
 import com.marklogic.appdeployer.impl.SimpleAppDeployer;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
@@ -59,7 +57,7 @@ public class PiiE2E extends HubTestBase {
 
     @AfterAll
     public static void teardown() {
-        new Installer().uninstallHub();
+        new Installer().teardownProject();
     }
 
     @BeforeAll
@@ -76,7 +74,7 @@ public class PiiE2E extends HubTestBase {
             }
         });
 
-        new Installer().installHubOnce();
+        new Installer().setupProject();
     }
 
     @BeforeEach
