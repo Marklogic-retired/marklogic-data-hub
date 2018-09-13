@@ -147,7 +147,7 @@ public class HubTestBase {
     public  DatabaseClient jobModulesClient = null;
 
     private  ManageConfig manageConfig = null;
-    private  ManageClient manageClient = null;
+    protected  ManageClient manageClient = null;
     private  AdminConfig adminConfig = null;
     private  AdminManager adminManager = null;
     private  CertificateTemplateManagerPlus certManager;
@@ -445,7 +445,7 @@ public class HubTestBase {
 
 	    	manageConfig.setConfigureSimpleSsl(true);
 	    	manageConfig.setSslContext(SimpleX509TrustManager.newSSLContext());
-	    	
+
 	    	adminConfig.setConfigureSimpleSsl(true);
 	    	adminConfig.setSslContext(SimpleX509TrustManager.newSSLContext());
         }
@@ -494,10 +494,10 @@ public class HubTestBase {
         	manageConfig.setSecuritySslContext(certContext);
         	manageConfig.setPassword(null);
         	manageConfig.setSecurityPassword(null);
-        	
+
         	adminConfig.setConfigureSimpleSsl(false);
         	adminConfig.setPassword(null);
-        	
+
         }
         hubConfig.setStagingAppConfig(stagingAppConfig);
         hubConfig.setFinalAppConfig(finalAppConfig);
@@ -952,7 +952,7 @@ public class HubTestBase {
 
 		File finalServerFile = getResourceFile("ml-config/servers");
 		File hubServerFile = getResourceFile("hub-internal-config/servers");
-		
+
 		//set servers to ssl/ cert-auth
 		mergeFiles(finalServerFile);
 		mergeFiles(hubServerFile);
@@ -968,7 +968,7 @@ public class HubTestBase {
 		}
 
 	}
-	
+
 	private void mergeFiles(File file) {
 		List<File> files = new ArrayList<>();
 		files.add(new File(System.getProperty("java.io.tmpdir")+"/ssl-server.json"));

@@ -25,6 +25,7 @@ import com.marklogic.client.io.InputStreamHandle;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.error.DataHubConfigurationException;
+import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.ManageConfig;
 import org.apache.commons.io.IOUtils;
 import org.springframework.core.io.ClassPathResource;
@@ -42,26 +43,18 @@ public class DeployHubAmpsCommand extends DeployAmpsCommand {
         this.hubConfig = hubConfig;
     }
 
+    /**
+     * Installs the amps for DHF via CMA endpoint
+     * @param context
+     */
     @Override
     public void execute(CommandContext context) {
         String stagingModulesDatabaseName = hubConfig.getStagingAppConfig().getModulesDatabaseName();
-        ManageConfig manageConfig = context.getManageClient().getManageConfig();
-        String securityUsername = manageConfig.getSecurityUsername();
-        String securityPassword = manageConfig.getSecurityPassword();
-        DatabaseClient installerClient = DatabaseClientFactory.newClient(
-            hubConfig.getHost(),
-            8000,
-            "Security",
-            new DatabaseClientFactory.DigestAuthContext(securityUsername, securityPassword)
-        );
-        //new AmpsInstaller(securityStagingClient).installAmps(stagingModulesDatabaseName);
-        ServerEvaluationCall call = installerClient.newServerEval();
-        try (InputStream is = new ClassPathResource("installer-util/install-amps.xqy").getInputStream()) {
-            String ampCall = IOUtils.toString(is, "utf-8");
-            is.close();
-            ampCall = ampCall.replace("data-hub-MODULES", stagingModulesDatabaseName);
-            call.xquery(ampCall);
-            call.eval();
+        ManageClient manageClient = context.getManageClient();
+
+        try (InputStream is = new ClassPathResource("hub-internal-config/configurations/amps.json").getInputStream()) {
+            String payload = IOUtils.toString(is, "utf-8");
+            manageClient.postJsonAsSecurityUser("/manage/v3", payload);
         } catch (IOException e) {
             throw new DataHubConfigurationException(e);
         }
@@ -69,27 +62,7 @@ public class DeployHubAmpsCommand extends DeployAmpsCommand {
 
     @Override
     public void undo(CommandContext context) {
-        String stagingModulesDatabaseName = hubConfig.getStagingAppConfig().getModulesDatabaseName();
-        ManageConfig manageConfig = context.getManageClient().getManageConfig();
-        String securityUsername = manageConfig.getSecurityUsername();
-        String securityPassword = manageConfig.getSecurityPassword();
-        DatabaseClient installerClient = DatabaseClientFactory.newClient(
-            hubConfig.getHost(),
-            8000,
-            "Security",
-            new DatabaseClientFactory.DigestAuthContext(securityUsername, securityPassword)
-        );
-        //new AmpsInstaller(securityStagingClient).unInstallAmps(stagingModulesDatabaseName);
-        ServerEvaluationCall call = installerClient.newServerEval();
-        try (InputStream is = new ClassPathResource("installer-util/uninstall-amps.xqy").getInputStream()) {
-            String ampCall = IOUtils.toString(is, "utf-8");
-            is.close();
-            ampCall = ampCall.replace("data-hub-MODULES", stagingModulesDatabaseName);
-            call.xquery(ampCall);
-            call.eval();
-        } catch (IOException e) {
-            throw new DataHubConfigurationException(e);
-        }
+        logger.warn("Amps from uninstalled data hub framework to remain, but are disabled.");
     }
 
     @Override
