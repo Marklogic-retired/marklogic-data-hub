@@ -86,6 +86,11 @@ export default function(tmpDir) {
       fs.copy(customTriplesFilePath, tmpDir + '/plugins/entities/Product/harmonize/Harmonize\ Products/triples.sjs');
     });
 
+    it ('should redeploy modules', function() {
+      flowPage.redeployButton.click();
+      browser.sleep(5000);
+    });
+
     it ('should logout and login', function() {
       appPage.logout();
       loginPage.isLoaded();
@@ -178,6 +183,13 @@ export default function(tmpDir) {
       expect(viewerPage.verifyHarmonizedProperty('object', 'http://www.marklogic.com/foo/456').isPresent()).toBeTruthy();
       appPage.flowsTab.click();
       flowPage.isLoaded();
+    });
+
+    it ('should setup customized input content on ES sjs xml INPUT flow', function() {
+      //copy customized content.sjs
+      console.log('copy customized input content.sjs on ES sjs xml INPUT flow');
+      let contentWithOptionsFilePath = 'e2e/qa-data/plugins/contentEsSkuXmlDoc.sjs';
+      fs.copy(contentWithOptionsFilePath, tmpDir + '/plugins/entities/TestEntity/input/sjs\ xml\ INPUT/content.sjs');
     });
 
     it ('should setup customized input content on ES xqy json INPUT flow', function() {
@@ -303,6 +315,7 @@ export default function(tmpDir) {
       viewerPage.isLoaded();
       expect(viewerPage.searchResultUri().getText()).toContain('/bookstore-no-formatting.xml');
       expect(viewerPage.verifyTagName('sku').isPresent()).toBeTruthy();
+      expect(viewerPage.verifyHarmonizedPropertyXml('sku', '16384759').isPresent()).toBeTruthy();
       expect(viewerPage.verifyVariableName('TestEntity').isPresent()).toBeTruthy();
       expect(viewerPage.verifyTagName('TestEntity').isPresent()).toBeTruthy();
       expect(viewerPage.verifyAttributeName('xmlns').isPresent()).toBeTruthy();
