@@ -38,6 +38,11 @@ public class Installer {
         if (htb.isCertAuth() || htb.isSslRun()) {
         	htb.sslCleanup();
         }
-        htb.deleteProjectDir();
+        try {
+        	htb.deleteProjectDir();
+        }
+        catch(Exception e) {
+        	//don't do anything
+        }
     }
 }
