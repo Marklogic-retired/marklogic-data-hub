@@ -1,5 +1,5 @@
 {
-  "role" : [ "clerk","qconsole-user", "eval"],
+  "role" : [ "clerk","qconsole-user", "test-eval"],
   "user-name" : "SydneyGardner",
   "description" : "A test clerk",
   "password" : "x"
