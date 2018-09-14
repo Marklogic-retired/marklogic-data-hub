@@ -254,10 +254,20 @@ boolean certAuth = Boolean.parseBoolean(System.properties['certauth'])
 def props = new Properties()
 propFile.withInputStream { props.load(it) }
 
+task bootstrap(type: JavaExec) {
+    classpath = sourceSets.test.runtimeClasspath
+    main = 'com.marklogic.hub.util.Installer'
+}
+
+task teardown(type: JavaExec) {
+    classpath = sourceSets.test.runtimeClasspath
+    main = 'com.marklogic.hub.util.UnInstaller'
+}
+
 test {
     minHeapSize = "128m"
     maxHeapSize = "256m"
-    
+    classpath = project.sourceSets.test.runtimeClasspath
     doFirst{
 		if(sslRun || certAuth){
 			com.marklogic.mgmt.ManageClient manageClient = new ManageClient(new com.marklogic.mgmt.ManageConfig(mlHost, 8002, mlSecurityUsername, mlSecurityPassword))
@@ -291,19 +301,19 @@ test {
 		}
     }
 
-    // include just the top-level tests.  they include setup/teardown
-	include 'com/marklogic/hub/CoreTestSuite.class'
-	include 'com/marklogic/hub/EndToEndFlowTests.class'
+    include 'com/marklogic/hub/**'
+    exclude 'com/marklogic/hub/PiiE2E.class'
 	if (!(certAuth || sslRun)){
 		include 'com/marklogic/hub/PiiE2E.class'
 	}
-	include 'com/marklogic/hub/ScaffoldingE2E.class'
-	include 'com/marklogic/hub/MappingE2E.class'         
 }
+
+test.dependsOn(bootstrap)
+
 task restoreFile{
 	doFirst{
     	if(sslRun || certAuth){
-    		propFile.write(fileContents)	
+    		propFile.write(fileContents)
 		}
     }
 }
