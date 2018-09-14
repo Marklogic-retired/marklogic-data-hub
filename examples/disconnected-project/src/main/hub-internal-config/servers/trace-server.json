@@ -8,7 +8,7 @@
   "content-database": "%%mlTraceDbName%%",
   "authentication": "%%mlTraceAuth%%",
   "default-error-format": "json",
-  "error-handler": "/MarkLogic/rest-api/error-handler.xqy",
-  "url-rewriter": "/MarkLogic/data-hub-framework/tracing/tracing-rewriter.xml",
+  "error-handler": "/data-hub/4/rest-api/error-handler.xqy",
+  "url-rewriter": "/data-hub/4/tracing/tracing-rewriter.xml",
   "rewrite-resolves-globally": true
 }
