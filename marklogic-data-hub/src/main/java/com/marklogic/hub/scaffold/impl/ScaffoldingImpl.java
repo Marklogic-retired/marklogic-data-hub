@@ -313,7 +313,7 @@ public class ScaffoldingImpl implements Scaffolding {
                             writerPath = matcher.group(1);
                         }
                         mainFile = mainFile.replaceFirst("(const\\s+triplesPlugin\\s*=\\s*require.*)", "$1\nconst writerPlugin = require('." + writerPath + "/writer.sjs');");
-                        mainFile = mainFile.replaceFirst("dhf\\.runWriter\\(xdmp\\.function\\.+\\);", "dhf.runWriter(writerPlugin, id, envelope, options);");
+                        mainFile = mainFile.replaceFirst("dhf\\.runWriter\\(([^;]*)\\);", "dhf.runWriter(writerPlugin, id, envelope, options);");
                     }
 
                     FileOutputStream fileOutputStream = new FileOutputStream(mainPath.toFile());
