@@ -1,12 +1,15 @@
 package com.marklogic.hub.util;
 
+
 import com.marklogic.hub.HubTestBase;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Installer {
 
     HubTestBase htb;
-
+    private static Logger logger = LoggerFactory.getLogger(Installer.class);
     public Installer() {
         htb = new HubTestBase();
     }
@@ -42,7 +45,7 @@ public class Installer {
         	htb.deleteProjectDir();
         }
         catch(Exception e) {
-        	//don't do anything
+        	logger.warn("Unable to delete the project directory", e);        	
         }
     }
 }
