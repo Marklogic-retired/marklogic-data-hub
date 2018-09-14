@@ -39,7 +39,7 @@ Data Hub Framework 4.0.0 includes the following changes, some of which may intro
 * [ml-gradle Compatible Project Structure](#ml-gradle-compatible-project-structure)
 * [New DHF Core Server-Side Module Paths](#new-dhf-core-server-side-module-paths)
 * [**TRACES** database no longer used](#traces-database-no-longer-used)
-* [Independent **STAGING** and **FINAL** App Server Stacks Stacks](#independent-staging-and-final-app-server-stacks)
+* [Independent **STAGING** and **FINAL** App Server Stacks](#independent-staging-and-final-app-server-stacks)
 
 ### Security Model Improvements
 DHF 4.0.0 supports better separation of roles and responsibilities between development, deployment, and ingestion tasks. For more details, see the new security model documentation: [Security]({{site.baseurl}}/docs/security).
