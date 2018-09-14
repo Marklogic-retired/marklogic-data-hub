@@ -94,14 +94,14 @@ Before upgrading your DHF project, you should review the [Changes and Incompatib
 
 ## Upgrading a Project with a Custom Hub Name
 
-When you create a project, prefixes the databases and App Servers it configures with "data-hub" by default. For example, DHF creates a database named "data-hub-MODULES" and an App Server named "data-hub-STAGING" by default.
+When you create a project, DHF prefixes the databases and App Servers it configures with "data-hub" by default. For example, DHF creates a database named "data-hub-MODULES" and an App Server named "data-hub-STAGING" by default.
 
-If your project does not use "data-hub" for this prefix, the 4.0.0 upgrade process will not properly upgrade your gradle.properties and other configuration files. We recommend you use the following procedure if your does not use the "data-hub" prefix for database and App Server names:
+If your project does not use "data-hub" for this prefix, the 4.0.0 upgrade process will not properly upgrade your gradle.properties and other configuration files. We recommend you use the following procedure if your project does not use the "data-hub" prefix for database and App Server names:
 
 1. Create a new DHF 4.0.0 project. For example, run the `hubInit` gradle task in a new directory.
 1. Migrate your customizations and flows to the new project. This includes changing the name of your databases and App Servers in gradle.properties (or gradle-local.properties).
 1. Copy the plugins directory from your old project into the new project directory.
-1. Run the `hubUpdate` gradle task in the new project directory.
+1. If you are upgrading from DHF 2.0.x, run the `hubUpdate` gradle task in the new project directory. This step is not necessary when upgrading from DHF 3.0.x.
 
 Note that there a several new gradle properties related to your hub databases and App Servers. You will need to update them to use the desired hub prefix.
 
