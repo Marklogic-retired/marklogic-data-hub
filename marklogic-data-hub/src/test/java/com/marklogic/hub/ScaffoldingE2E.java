@@ -64,6 +64,7 @@ public class ScaffoldingE2E extends HubTestBase {
         deleteProjectDir();
 
         createProjectDir();
+        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
     }
 
     private void installEntity() {

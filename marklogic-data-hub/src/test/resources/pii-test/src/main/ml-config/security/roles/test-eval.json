@@ -1,5 +1,5 @@
 {
-  "role-name": "eval",
+  "role-name": "test-eval",
   "description": "A role for users who have to evaluate expressions to verify tests.",
   "role": [
   ],
