@@ -96,8 +96,8 @@ public class HubConfigImpl implements HubConfig {
     private String jobExternalName;
     private X509TrustManager jobTrustManager;
 
-    protected String stagingModulesDbName = DEFAULT_STAGING_MODULES_DB_NAME;
-    protected Integer stagingModulesForestsPerHost = 1;
+    protected String modulesDbName = DEFAULT_MODULES_DB_NAME;
+    protected Integer modulesForestsPerHost = 1;
     protected String finalModulesDbName = DEFAULT_FINAL_MODULES_DB_NAME;
     protected Integer finalModulesForestsPerHost = 1;
 
@@ -175,7 +175,7 @@ public class HubConfigImpl implements HubConfig {
                 name = jobDbName;
                 break;
             case STAGING_MODULES:
-                name = stagingModulesDbName;
+                name = modulesDbName;
                 break;
             case FINAL_MODULES:
                 name = finalModulesDbName;
@@ -213,7 +213,7 @@ public class HubConfigImpl implements HubConfig {
                 jobDbName = dbName;
                 break;
             case STAGING_MODULES:
-                stagingModulesDbName = dbName;
+                modulesDbName = dbName;
                 break;
             case FINAL_MODULES:
                 finalModulesDbName = dbName;
@@ -291,7 +291,7 @@ public class HubConfigImpl implements HubConfig {
                 forests = jobForestsPerHost;
                 break;
             case STAGING_MODULES:
-                forests = stagingModulesForestsPerHost;
+                forests = modulesForestsPerHost;
                 break;
             case FINAL_MODULES:
                 forests = finalModulesForestsPerHost;
@@ -329,7 +329,7 @@ public class HubConfigImpl implements HubConfig {
                 jobForestsPerHost = forestsPerHost;
                 break;
             case STAGING_MODULES:
-                stagingModulesForestsPerHost = forestsPerHost;
+                modulesForestsPerHost = forestsPerHost;
                 break;
             case FINAL_MODULES:
                 finalModulesForestsPerHost = forestsPerHost;
@@ -877,13 +877,9 @@ public class HubConfigImpl implements HubConfig {
 
             customForestPath = getEnvPropString(environmentProperties, "mlCustomForestPath", customForestPath);
 
-            stagingModulesDbName = getEnvPropString(environmentProperties, "mlStagingModulesDbName", stagingModulesDbName);
-            stagingModulesForestsPerHost = getEnvPropInteger(environmentProperties, "mlStagingModulesForestsPerHost", stagingModulesForestsPerHost);
+            modulesDbName = getEnvPropString(environmentProperties, "mlModulesDbName", modulesDbName);
+            modulesForestsPerHost = getEnvPropInteger(environmentProperties, "mlModulesForestsPerHost", modulesForestsPerHost);
             modulePermissions = getEnvPropString(environmentProperties, "mlStagingModulePermissions", modulePermissions);
-
-            finalModulesDbName = getEnvPropString(environmentProperties, "mlFinalModulesDbName", finalModulesDbName);
-            finalModulesForestsPerHost = getEnvPropInteger(environmentProperties, "mlFinalModulesForestsPerHost", finalModulesForestsPerHost);
-            modulePermissions = getEnvPropString(environmentProperties, "mlFinalModulePermissions", modulePermissions);
 
             stagingTriggersDbName = getEnvPropString(environmentProperties, "mlStagingTriggersDbName", stagingTriggersDbName);
             stagingTriggersForestsPerHost = getEnvPropInteger(environmentProperties, "mlStagingTriggersForestsPerHost", stagingTriggersForestsPerHost);
@@ -1027,17 +1023,9 @@ public class HubConfigImpl implements HubConfig {
     }
 
     @JsonIgnore
-    @Override public Path getHubStagingModulesDir() {
-        return hubProject.getHubStagingModulesDir();
+    @Override public Path getModulesDir() {
+        return hubProject.getModulesDir();
     }
-
-    @JsonIgnore
-    @Override public Path getUserStagingModulesDir() {
-        return hubProject.getUserStagingModulesDir();
-    }
-
-    @JsonIgnore
-    @Override public Path getUserFinalModulesDir() { return hubProject.getUserFinalModulesDir(); }
 
     @JsonIgnore
     @Override public Path getHubPluginsDir() {
@@ -1182,11 +1170,8 @@ public class HubConfigImpl implements HubConfig {
         customTokens.put("%%mlJobForestsPerHost%%", jobForestsPerHost.toString());
         customTokens.put("%%mlJobAuth%%", jobAuthMethod);
 
-        customTokens.put("%%mlStagingModulesDbName%%", stagingModulesDbName);
-        customTokens.put("%%mlStagingModulesForestsPerHost%%", stagingModulesForestsPerHost.toString());
-
-        customTokens.put("%%mlFinalModulesDbName%%", finalModulesDbName);
-        customTokens.put("%%mlFinalModulesForestsPerHost%%", finalModulesForestsPerHost.toString());
+        customTokens.put("%%mlModulesDbName%%", modulesDbName);
+        customTokens.put("%%mlModulesForestsPerHost%%", modulesForestsPerHost.toString());
 
         customTokens.put("%%mlStagingTriggersDbName%%", stagingTriggersDbName);
         customTokens.put("%%mlStagingTriggersForestsPerHost%%", stagingTriggersForestsPerHost.toString());
@@ -1235,7 +1220,7 @@ public class HubConfigImpl implements HubConfig {
 
         config.setTriggersDatabaseName(stagingTriggersDbName);
         config.setSchemasDatabaseName(stagingSchemasDbName);
-        config.setModulesDatabaseName(stagingModulesDbName);
+        config.setModulesDatabaseName(modulesDbName);
 
         config.setReplaceTokensInModules(true);
         config.setUseRoxyTokenPrefix(false);
@@ -1244,7 +1229,7 @@ public class HubConfigImpl implements HubConfig {
         HashMap<String, Integer> forestCounts = new HashMap<>();
         forestCounts.put(stagingDbName, stagingForestsPerHost);
         forestCounts.put(jobDbName, jobForestsPerHost);
-        forestCounts.put(stagingModulesDbName, stagingModulesForestsPerHost);
+        forestCounts.put(modulesDbName, modulesForestsPerHost);
         forestCounts.put(stagingTriggersDbName, stagingTriggersForestsPerHost);
         forestCounts.put(stagingSchemasDbName, stagingSchemasForestsPerHost);
         config.setForestCounts(forestCounts);
@@ -1276,7 +1261,7 @@ public class HubConfigImpl implements HubConfig {
 
         config.setTriggersDatabaseName(finalTriggersDbName);
         config.setSchemasDatabaseName(finalSchemasDbName);
-        config.setModulesDatabaseName(finalModulesDbName);
+        config.setModulesDatabaseName(modulesDbName);
 
         config.setReplaceTokensInModules(true);
         config.setUseRoxyTokenPrefix(false);
@@ -1284,7 +1269,7 @@ public class HubConfigImpl implements HubConfig {
 
         HashMap<String, Integer> forestCounts = new HashMap<>();
         forestCounts.put(finalDbName, finalForestsPerHost);
-        forestCounts.put(finalModulesDbName, finalModulesForestsPerHost);
+        forestCounts.put(modulesDbName, modulesForestsPerHost);
         forestCounts.put(finalTriggersDbName, finalTriggersForestsPerHost);
         forestCounts.put(finalSchemasDbName, finalSchemasForestsPerHost);
         config.setForestCounts(forestCounts);
@@ -1293,7 +1278,7 @@ public class HubConfigImpl implements HubConfig {
         config.setConfigDir(configDir);
         config.setSchemasPath(getUserSchemasDir().toString());
         List<String> modulesPathList = new ArrayList<>();
-        modulesPathList.add(getUserStagingModulesDir().normalize().toAbsolutePath().toString());
+        modulesPathList.add(getModulesDir().normalize().toAbsolutePath().toString());
         config.setModulePaths(modulesPathList);
 
         Map<String, String> customTokens = getCustomTokens(config, config.getCustomTokens());

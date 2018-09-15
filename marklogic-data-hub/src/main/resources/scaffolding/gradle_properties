@@ -82,17 +82,14 @@ mlJobAuth=%%mlJobAuth%%
 # To enable SSL for jobs
 # mlJobSimpleSsl=true
 
-mlStagingModulesDbName=%%mlStagingModulesDbName%%
-mlStagingModulesForestsPerHost=%%mlStagingModulesForestsPerHost%%
+mlModulesDbName=%%mlModulesDbName%%
+mlModulesForestsPerHost=%%mlModulesForestsPerHost%%
 
 mlStagingTriggersDbName=%%mlStagingTriggersDbName%%
 mlStagingTriggersForestsPerHost=%%mlStagingTriggersForestsPerHost%%
 
 mlStagingSchemasDbName=%%mlStagingSchemasDbName%%
 mlStagingSchemasForestsPerHost=%%mlStagingSchemasForestsPerHost%%
-
-mlFinalModulesDbName=%%mlFinalModulesDbName%%
-mlFinalModulesForestsPerHost=%%mlFinalModulesForestsPerHost%%
 
 mlFinalTriggersDbName=%%mlFinalTriggersDbName%%
 mlFinalTriggersForestsPerHost=%%mlFinalTriggersForestsPerHost%%

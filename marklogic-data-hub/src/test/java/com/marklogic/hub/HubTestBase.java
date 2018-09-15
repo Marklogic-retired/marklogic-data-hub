@@ -164,7 +164,6 @@ public class HubTestBase {
     public  JSONDocumentManager jobDocMgr;
     public  GenericDocumentManager traceDocMgr;
     public  GenericDocumentManager modMgr;
-    public  GenericDocumentManager finalModMgr;
     public  String bootStrapHost = null;
 	private  TrustManagerFactory tmf;
 	private List<DatabaseClient> clients = new ArrayList<DatabaseClient>();
@@ -174,10 +173,6 @@ public class HubTestBase {
 
     private GenericDocumentManager getModMgr() {
         return stagingModulesClient.newDocumentManager();
-    }
-
-    private GenericDocumentManager getFinalModMgr() {
-        return finalModulesClient.newDocumentManager();
     }
 
     private GenericDocumentManager getFinalMgr() {
@@ -278,13 +273,13 @@ public class HubTestBase {
         	stagingClient = getClient(host, stagingPort, HubConfig.DEFAULT_STAGING_NAME, user, password, stagingAuthMethod);
             flowRunnerClient = getClient(host, stagingPort, HubConfig.DEFAULT_STAGING_NAME, flowRunnerUser, flowRunnerPassword, stagingAuthMethod);
             finalFlowRunnerClient = getClient(host, stagingPort, HubConfig.DEFAULT_FINAL_NAME, flowRunnerUser, flowRunnerPassword, stagingAuthMethod);
-            stagingModulesClient  = getClient(host, stagingPort, HubConfig.DEFAULT_STAGING_MODULES_DB_NAME, manageUser, managePassword, stagingAuthMethod);
+            stagingModulesClient  = getClient(host, stagingPort, HubConfig.DEFAULT_MODULES_DB_NAME, manageUser, managePassword, stagingAuthMethod);
             // NOTE finalClient must use staging port and final database to use DHF enode code.
             finalClient = getClient(host, stagingPort, HubConfig.DEFAULT_FINAL_NAME, user, password, finalAuthMethod);
-            finalModulesClientStagingModulesDatabase = getClient(host, finalPort, HubConfig.DEFAULT_STAGING_MODULES_DB_NAME, manageUser, managePassword, stagingAuthMethod);
+            finalModulesClientStagingModulesDatabase = getClient(host, finalPort, HubConfig.DEFAULT_MODULES_DB_NAME, manageUser, managePassword, stagingAuthMethod);
             finalModulesClient = getClient(host, finalPort, HubConfig.DEFAULT_FINAL_MODULES_DB_NAME, manageUser, managePassword, stagingAuthMethod);
             jobClient = getClient(host, jobPort, HubConfig.DEFAULT_JOB_NAME, user, password, jobAuthMethod);
-            jobModulesClient  = getClient(host, stagingPort, HubConfig.DEFAULT_STAGING_MODULES_DB_NAME, manageUser, managePassword, jobAuthMethod);
+            jobModulesClient  = getClient(host, stagingPort, HubConfig.DEFAULT_MODULES_DB_NAME, manageUser, managePassword, jobAuthMethod);
         }
         catch(Exception e) {
         	System.err.println("client objects not created.");
@@ -296,7 +291,6 @@ public class HubTestBase {
         jobDocMgr = getJobMgr();
         traceDocMgr = getTraceMgr();
         modMgr = getModMgr();
-        finalModMgr = getFinalModMgr();
     }
 
     protected DatabaseClient getClient(String host, int port, String dbName, String user,String password, Authentication authMethod) throws Exception {
@@ -577,21 +571,8 @@ public class HubTestBase {
         return null;
     }
 
-    protected String getFinalModulesFile(String uri) {
-        try {
-            String contents = finalModMgr.read(uri).next().getContent(new StringHandle()).get();
-            return contents.replaceFirst("(\\(:|//)\\s+cache\\sbuster:.+\\n", "");
-        }
-        catch(Exception e) {}
-        return null;
-    }
-
     protected Document getModulesDocument(String uri) {
         return modMgr.read(uri).next().getContent(new DOMHandle()).get();
-    }
-
-    protected Document getFinalModulesDocument(String uri) {
-        return finalModMgr.read(uri).next().getContent(new DOMHandle()).get();
     }
 
     protected Document getXmlFromResource(String resourceName) {
@@ -770,7 +751,7 @@ public class HubTestBase {
     }
 
     protected EvalResultIterator runInModules(String query) {
-        return runInDatabase(query, HubConfig.DEFAULT_STAGING_MODULES_DB_NAME);
+        return runInDatabase(query, HubConfig.DEFAULT_MODULES_DB_NAME);
     }
 
     protected EvalResultIterator runInDatabase(String query, String databaseName) {
@@ -782,7 +763,7 @@ public class HubTestBase {
             case HubConfig.DEFAULT_FINAL_NAME:
                 eval = finalClient.newServerEval();
                 break;
-            case HubConfig.DEFAULT_STAGING_MODULES_DB_NAME:
+            case HubConfig.DEFAULT_MODULES_DB_NAME:
                 eval = stagingModulesClient.newServerEval();
                 break;
 

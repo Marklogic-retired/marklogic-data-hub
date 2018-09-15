@@ -34,7 +34,7 @@ public enum DatabaseKind {
         STAGING_TRIGGERS,
         FINAL_TRIGGERS,
         STAGING_MODULES,
-        FINAL_MODULES;
+        @Deprecated FINAL_MODULES;
 
        static private String[] databaseNames = {
            "staging",

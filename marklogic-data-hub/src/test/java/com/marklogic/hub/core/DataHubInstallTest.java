@@ -16,11 +16,8 @@
 package com.marklogic.hub.core;
 
 import com.marklogic.client.DatabaseClient;
-import com.marklogic.client.document.DocumentPage;
-import com.marklogic.client.document.DocumentRecord;
 import com.marklogic.client.ext.modulesloader.impl.PropertiesModuleManager;
 import com.marklogic.client.io.DOMHandle;
-import com.marklogic.client.io.StringHandle;
 import com.marklogic.hub.DataHub;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
@@ -72,15 +69,15 @@ public class DataHubInstallTest extends HubTestBase {
 	            	Assert.assertTrue((boolean) preInstall.get("stagingPortInUse"));
 	            	Assert.assertTrue((boolean) preInstall.get("finalPortInUse"));
             	}
-            	getDataHub().uninstallFinal(null);
-            	            	
+            	getDataHub().uninstallStaging(null);
+
             	if(!(isSslRun()||isCertAuth())) {
             		preInstall = runPreInstallCheck();
-	            	Assert.assertTrue((boolean) preInstall.get("stagingPortInUse"));
-	            	Assert.assertFalse((boolean) preInstall.get("finalPortInUse"));
+	            	Assert.assertFalse((boolean) preInstall.get("stagingPortInUse"));
+	            	Assert.assertTrue((boolean) preInstall.get("finalPortInUse"));
             	}
-            	
-            	getDataHub().uninstallStaging(null);
+
+            	getDataHub().uninstallFinal(null);
 
             	if(!(isSslRun()||isCertAuth())) {
             		preInstall = runPreInstallCheck();
@@ -88,42 +85,39 @@ public class DataHubInstallTest extends HubTestBase {
 	            	Assert.assertFalse((boolean) preInstall.get("finalPortInUse"));
             	}
             }
-        } 
+        }
         catch (HttpClientErrorException e) {
             if (e.getStatusCode() == HttpStatus.UNAUTHORIZED) {
                 //pass
             }
             else throw e;
         }
-                
+
         if (!setupDone) {
         	HubProject project =  getHubAdminConfig().getHubProject();
-            
+
         	//creating directories for adding final schemas/ modules and trigger files
             Path userSchemasDir = Paths.get(PROJECT_PATH).resolve(HubProject.PATH_PREFIX).resolve("ml-schemas");
             Path userModulesDir = project.getUserFinalModulesDir();
             Path userTriggersDir = project.getUserConfigDir().resolve("triggers");
-            
+
             userSchemasDir.resolve("tde").toFile().mkdirs();
             userModulesDir.resolve("ext").toFile().mkdirs();
             userTriggersDir.toFile().mkdirs();
-            
+
           //creating directories for adding staging schemas/ modules and trigger files
             Path hubSchemasDir = project.getHubConfigDir().resolve("schemas");
-            Path hubModulesDir = project.getHubStagingModulesDir();
             Path hubTriggersDir = project.getHubConfigDir().resolve("triggers");
-            
+
             hubSchemasDir.resolve("tde").toFile().mkdirs();
-            hubModulesDir.resolve("ext").toFile().mkdirs();
-            hubTriggersDir.toFile().mkdirs();     
+            hubTriggersDir.toFile().mkdirs();
             //Copying files to their locations
             try {
                 FileUtils.copyFileToDirectory(getResourceFile("data-hub-test/scaffolding/tdedoc.xml"), userSchemasDir.resolve("tde").toFile());
                 FileUtils.copyFileToDirectory(getResourceFile("data-hub-test/scaffolding/sample-trigger.xqy"), userModulesDir.resolve("ext").toFile());
                 FileUtils.copyFileToDirectory(getResourceFile("data-hub-test/scaffolding/final-trigger.json"),  userTriggersDir.toFile());
-                
+
                 FileUtils.copyFileToDirectory(getResourceFile("data-hub-test/scaffolding/tdedoc.xml"), hubSchemasDir.resolve("tde").toFile());
-                FileUtils.copyFileToDirectory(getResourceFile("data-hub-test/scaffolding/sample-trigger.xqy"), hubModulesDir.resolve("ext").toFile());
                 FileUtils.copyFileToDirectory(getResourceFile("data-hub-test/scaffolding/staging-trigger.json"),  hubTriggersDir.toFile());
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -132,32 +126,32 @@ public class DataHubInstallTest extends HubTestBase {
         	if(!(isSslRun()||isCertAuth())) {
         		preInstall = runPreInstallCheck();
 	           	Assert.assertFalse((boolean) preInstall.get("stagingPortInUse"));
-	        	Assert.assertFalse((boolean) preInstall.get("finalPortInUse"));    
+	        	Assert.assertFalse((boolean) preInstall.get("finalPortInUse"));
         	}
-        	getDataHub().install(null);      	
+        	getDataHub().install(null);
         	setupDone=true;
         	if(!(isSslRun()||isCertAuth())) {
 	        	preInstall = runPreInstallCheck();
 	           	Assert.assertTrue((boolean) preInstall.get("stagingPortInUse"));
 	        	Assert.assertTrue((boolean) preInstall.get("finalPortInUse"));
-        	}       	
+        	}
         }
         afterTelemetryInstallCount = getTelemetryInstallCount();
     }
-    
+
     //should be removed after DHFPROD-1263 is fixed.
 	private Map<String, Boolean> runPreInstallCheck(){
-		Map<String, Boolean> resp = new HashMap<>(); 
+		Map<String, Boolean> resp = new HashMap<>();
 		try (Socket ignored = new Socket(getHubAdminConfig().getHost(), getHubAdminConfig().getPort(DatabaseKind.STAGING))) {
 	    	resp.put("stagingPortInUse", true);
-	    } 
+	    }
 	    catch (IOException ignored) {
 	    	resp.put("stagingPortInUse", false);
 	    }
-	    
+
 	    try (Socket ignored = new Socket(getHubAdminConfig().getHost(), getHubAdminConfig().getPort(DatabaseKind.FINAL))) {
 	    	resp.put("finalPortInUse", true);
-	    } 
+	    }
 	    catch (IOException ignored) {
 	    	resp.put("finalPortInUse", false);
 	    }
@@ -192,7 +186,7 @@ public class DataHubInstallTest extends HubTestBase {
         //checking if modules are written to correct db
         Assert.assertNotNull(getModulesFile("/ext/sample-trigger.xqy"));
 
-        Assert.assertNotNull(getFinalModulesFile("/ext/sample-trigger.xqy"));
+        Assert.assertNotNull(getModulesFile("/ext/sample-trigger.xqy"));
 
         ////checking if tdes are written to correct db
         Document expectedXml = getXmlFromResource("data-hub-test/scaffolding/tdedoc.xml");
@@ -211,7 +205,7 @@ public class DataHubInstallTest extends HubTestBase {
         assertTrue("trace options not installed", getModulesFile("/Default/data-hub-JOBS/rest-api/options/traces.xml").length() > 0);
         assertTrue("jobs options not installed", getModulesFile("/Default/data-hub-JOBS/rest-api/options/jobs.xml").length() > 0);
         assertTrue("staging options not installed", getModulesFile("/Default/data-hub-STAGING/rest-api/options/default.xml").length() > 0);
-        assertTrue("final options not installed", getFinalModulesFile("/Default/data-hub-FINAL/rest-api/options/default.xml").length() > 0);
+        assertTrue("final options not installed", getModulesFile("/Default/data-hub-FINAL/rest-api/options/default.xml").length() > 0);
     }
 
     @Test
@@ -228,7 +222,7 @@ public class DataHubInstallTest extends HubTestBase {
         createProjectDir(path);
         HubConfig hubConfig = getHubAdminConfig(path);
 
-        int totalCount = getDocCount(HubConfig.DEFAULT_STAGING_MODULES_DB_NAME, null);
+        int totalCount = getDocCount(HubConfig.DEFAULT_MODULES_DB_NAME, null);
         installUserModules(hubConfig, true);
 
         assertEquals(
@@ -310,15 +304,15 @@ public class DataHubInstallTest extends HubTestBase {
 
         assertXMLEqual(
             getXmlFromResource("data-hub-test/plugins/entities/test-entity/harmonize/REST/options/patients.xml"),
-            getFinalModulesDocument("/Default/" + HubConfig.DEFAULT_FINAL_NAME + "/rest-api/options/patients.xml"));
+            getModulesDocument("/Default/" + HubConfig.DEFAULT_FINAL_NAME + "/rest-api/options/patients.xml"));
 
         assertXMLEqual(
             getXmlFromResource("data-hub-helpers/test-conf-metadata.xml"),
-            getFinalModulesDocument("/marklogic.rest.transform/test-conf-transform/assets/metadata.xml"));
+            getModulesDocument("/marklogic.rest.transform/test-conf-transform/assets/metadata.xml"));
 
         assertEquals(
             getResource("data-hub-test/plugins/entities/test-entity/harmonize/REST/transforms/test-conf-transform.xqy"),
-            getFinalModulesFile("/marklogic.rest.transform/test-conf-transform/assets/transform.xqy"));
+            getModulesFile("/marklogic.rest.transform/test-conf-transform/assets/transform.xqy"));
 
         assertXMLEqual(
             getXmlFromResource("data-hub-helpers/test-input-metadata.xml"),

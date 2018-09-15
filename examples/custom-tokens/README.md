@@ -31,7 +31,7 @@ You can see that we are referencing the new custom tokens within the `custom-tok
   "root": "/",
   "group-name": "%%GROUP%%",
   "port": "%%TEST_SERVER_PORT%%",
-  "modules-database": "%%mlStagingModulesDbName%%",
+  "modules-database": "%%mlModulesDbName%%",
   "content-database": "%%TEST_DATABASE_NAME%%",
   "authentication": "%%TEST_TRACE_AUTH%%",
   "default-error-format": "json",

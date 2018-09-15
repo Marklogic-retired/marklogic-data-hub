@@ -259,6 +259,20 @@ public class DataHubImpl implements DataHub {
                 }
             );
 
+            ServerConfigurationManager finalConfigMgr = hubConfig.newFinalClient().newServerConfigManager();
+            QueryOptionsManager finalOptionsManager = finalConfigMgr.newQueryOptionsManager();
+
+            // remove options using mgr.
+            QueryOptionsListHandle finalHandle = finalOptionsManager.optionsList(new QueryOptionsListHandle());
+            Map<String, String> finalOptionsMap = finalHandle.getValuesMap();
+            finalOptionsMap.keySet().forEach(
+                optionsName -> {
+                    if (!options.contains(optionsName)) {
+                        finalOptionsManager.deleteOptions(optionsName);
+                    }
+                }
+            );
+
             // remove transforms using amped channel
             TransformExtensionsManager transformExtensionsManager = configMgr.newTransformExtensionsManager();
             JsonNode transformsList = transformExtensionsManager.listTransforms(new JacksonHandle()).get();
@@ -482,6 +496,11 @@ public class DataHubImpl implements DataHub {
         finalDeployer.setStagingCommandsList(getStagingCommandList());
 
         finalDeployer.undeployAll(finalConfig, stagingConfig);
+
+        AppConfig roleConfig = hubConfig.getStagingAppConfig();
+        SimpleAppDeployer roleDeployer = new SimpleAppDeployer(getManageClient(), getAdminManager());
+        roleDeployer.setCommands(getSecurityCommandList());
+        roleDeployer.undeploy(roleConfig);
     }
 
     @Override
@@ -526,12 +545,12 @@ public class DataHubImpl implements DataHub {
         dbCommands.add(new DeployHubStagingSchemasDatabaseCommand(hubConfig));
         commandMap.put("mlDatabaseCommands", dbCommands);
 
+        commandMap.remove("mlSecurityCommands");
+
         // staging deploys amps.
-        List<Command> securityCommands = commandMap.get("mlSecurityCommands");
-        securityCommands.set(0, new DeployHubAmpsCommand(hubConfig));
-        securityCommands.set(1, new DeployHubRolesCommand(hubConfig));
-        securityCommands.set(2, new DeployHubUsersCommand(hubConfig));
-        commandMap.put("mlSecurityCommands", securityCommands);
+        List<Command> securityCommand = new ArrayList<>();
+        securityCommand.add(new DeployHubAmpsCommand(hubConfig));
+        commandMap.put("mlSecurityComand", securityCommand);
 
         // don't deploy rest api servers
         commandMap.remove("mlRestApiCommands");

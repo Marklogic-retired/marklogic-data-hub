@@ -17,14 +17,11 @@ package com.marklogic.hub.impl;
 
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubProject;
-import com.marklogic.hub.error.DataHubConfigurationException;
 import com.marklogic.hub.util.FileUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -33,12 +30,10 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.PosixFilePermission;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Pattern;
 
 /**
  * Class for creating a hub Project
@@ -46,8 +41,7 @@ import java.util.regex.Pattern;
 public class HubProjectImpl implements HubProject {
 
     public static final String ENTITY_CONFIG_DIR = PATH_PREFIX + "entity-config";
-    public static final String USER_MODULES_DIR = PATH_PREFIX + "ml-modules";
-    public static final String HUB_MODULES_DIR = PATH_PREFIX + "ml-modules-staging";
+    public static final String MODULES_DIR = PATH_PREFIX + "ml-modules";
     public static final String USER_SCHEMAS_DIR = PATH_PREFIX + "ml-schemas";
 
     private Path projectDir;
@@ -116,16 +110,12 @@ public class HubProjectImpl implements HubProject {
         return getEntityConfigDir().resolve("databases");
     }
 
-    @Override public Path getHubStagingModulesDir() {
-        return this.projectDir.resolve(HUB_MODULES_DIR);
-    }
-
-    @Override public Path getUserStagingModulesDir() {
-        return this.projectDir.resolve(USER_MODULES_DIR);
+    @Override public Path getModulesDir() {
+        return this.projectDir.resolve(MODULES_DIR);
     }
 
     @Override public Path getUserFinalModulesDir() {
-        return this.projectDir.resolve(USER_MODULES_DIR);
+        return this.projectDir.resolve(MODULES_DIR);
     }
 
     @Override public boolean isInitialized() {
@@ -158,11 +148,8 @@ public class HubProjectImpl implements HubProject {
     @Override public void init(Map<String, String> customTokens) {
         this.pluginsDir.toFile().mkdirs();
 
-        Path userModules = this.projectDir.resolve(USER_MODULES_DIR);
+        Path userModules = this.projectDir.resolve(MODULES_DIR);
         userModules.toFile().mkdirs();
-
-        Path hubModules = this.projectDir.resolve(HUB_MODULES_DIR);
-        hubModules.toFile().mkdirs();
 
         Path hubServersDir = getHubServersDir();
         hubServersDir.toFile().mkdirs();
@@ -177,14 +164,13 @@ public class HubProjectImpl implements HubProject {
         hubDatabaseDir.toFile().mkdirs();
         writeResourceFile("hub-internal-config/databases/staging-database.json", hubDatabaseDir.resolve("staging-database.json"), true);
         writeResourceFile("hub-internal-config/databases/job-database.json", hubDatabaseDir.resolve("job-database.json"), true);
-        writeResourceFile("hub-internal-config/databases/staging-modules-database.json", hubDatabaseDir.resolve("staging-modules-database.json"), true);
         writeResourceFile("hub-internal-config/databases/staging-schemas-database.json", hubDatabaseDir.resolve("staging-schemas-database.json"), true);
         writeResourceFile("hub-internal-config/databases/staging-triggers-database.json", hubDatabaseDir.resolve("staging-triggers-database.json"), true);
 
         Path userDatabaseDir = getUserDatabaseDir();
         userDatabaseDir.toFile().mkdirs();
         writeResourceFile("ml-config/databases/final-database.json", userDatabaseDir.resolve("final-database.json"), true);
-        writeResourceFile("ml-config/databases/final-modules-database.json", userDatabaseDir.resolve("final-modules-database.json"), true);
+        writeResourceFile("ml-config/databases/modules-database.json", userDatabaseDir.resolve("modules-database.json"), true);
         writeResourceFile("ml-config/databases/final-schemas-database.json", userDatabaseDir.resolve("final-schemas-database.json"), true);
         writeResourceFile("ml-config/databases/final-triggers-database.json", userDatabaseDir.resolve("final-triggers-database.json"), true);
 
