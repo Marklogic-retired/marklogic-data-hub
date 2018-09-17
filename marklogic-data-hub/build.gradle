@@ -305,22 +305,22 @@ test {
 
 task testAcceptance(type: Test) {
     useJUnit {
-        include 'com.marklogic.hub'
-    }
-    if (!(certAuth || sslRun)){
-        include 'com/marklogic/hub/PiiE2E.class'
+        include 'com/marklogic/hub/**'
+        if (!(certAuth || sslRun)){
+            include 'com/marklogic/hub/PiiE2E.class'
+        }
     }
 }
 
 task testIntegration(type: Test) {
     useJUnit {
-        include 'com/marklogic/hub_integration'
+        include 'com/marklogic/hub_integration/**'
     }
 }
 
 task testBootstrap(type: Test) {
     useJUnit {
-        exclude 'com/marklogic/bootstrap'
+        exclude 'com/marklogic/bootstrap/**'
     }
 }
 
