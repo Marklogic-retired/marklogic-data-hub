@@ -302,7 +302,8 @@ test {
     }
 
     include 'com/marklogic/hub/**'
-    exclude 'com/marklogic/hub/PiiE2E.class'
+    exclude 'com/marklogic/hub_integration'
+    exclude 'com/marklogic/bootstrap'
 	if (!(certAuth || sslRun)){
 		include 'com/marklogic/hub/PiiE2E.class'
 	}

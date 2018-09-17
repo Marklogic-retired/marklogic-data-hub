@@ -32,7 +32,6 @@ public class Installer {
 
     public void teardownProject() {
         htb.createProjectDir();
-        htb.getDataHub().uninstall();
         if (htb.isCertAuth() || htb.isSslRun()) {
             htb.sslCleanup();
         }
@@ -42,13 +41,15 @@ public class Installer {
     public void bootstrapHub() {
         htb.createProjectDir();
         if (htb.isCertAuth() || htb.isSslRun()) {
-        htb.sslSetup();
-    }
+            htb.sslSetup();
+        }
         htb.getDataHub().install();
         try {
-        htb.getDataHub().upgradeHub();
-    } catch (Exception e) {
-    }
+            htb.getDataHub().upgradeHub();
+        } catch (Exception e) {
+            logger.warn("Upgrade threw an exception during test bootstrapping");
+
+        }
 }
     public static void main(String[] args) {
         Installer i = new Installer();

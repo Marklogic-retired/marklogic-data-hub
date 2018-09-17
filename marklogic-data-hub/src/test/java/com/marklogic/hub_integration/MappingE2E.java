@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.marklogic.hub;
+package com.marklogic.hub_integration;
 
 import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -35,6 +35,10 @@ import java.util.Map.Entry;
 import java.util.Vector;
 import java.util.concurrent.TimeUnit;
 
+import com.marklogic.hub.FlowManager;
+import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.HubTestBase;
+import com.marklogic.hub.MappingManager;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;

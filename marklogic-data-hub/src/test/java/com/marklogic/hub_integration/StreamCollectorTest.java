@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.marklogic.hub.collector;
+package com.marklogic.hub_integration;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.client.datamovement.DataMovementManager;
