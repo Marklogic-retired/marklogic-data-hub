@@ -301,12 +301,27 @@ test {
 		}
     }
 
-    include 'com/marklogic/hub/**'
-    exclude 'com/marklogic/hub_integration'
-    exclude 'com/marklogic/bootstrap'
-	if (!(certAuth || sslRun)){
-		include 'com/marklogic/hub/PiiE2E.class'
-	}
+}
+
+task testAcceptance(type: Test) {
+    useJUnit {
+        include 'com.marklogic.hub'
+    }
+    if (!(certAuth || sslRun)){
+        include 'com/marklogic/hub/PiiE2E.class'
+    }
+}
+
+task testIntegration(type: Test) {
+    useJUnit {
+        include 'com/marklogic/hub_integration'
+    }
+}
+
+task testBootstrap(type: Test) {
+    useJUnit {
+        exclude 'com/marklogic/bootstrap'
+    }
 }
 
 test.dependsOn(bootstrap)
