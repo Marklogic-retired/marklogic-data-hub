@@ -28,7 +28,7 @@ public class InstallInfoImpl implements InstallInfo {
     public boolean finalDbExists = false;
     public boolean jobDbExists = false;
 
-    public boolean stagingModulesDbExists = false;
+    public boolean modulesDbExists = false;
     public boolean stagingSchemasDbExists = false;
     public boolean stagingTriggersDbExists = false;
 
@@ -56,7 +56,7 @@ public class InstallInfoImpl implements InstallInfo {
                 areForestsExistent(DatabaseKind.STAGING) ||
                 areForestsExistent(DatabaseKind.FINAL) ||
                 areForestsExistent(DatabaseKind.JOB) ||
-                isDbExistent(DatabaseKind.STAGING_MODULES) ||
+                isDbExistent(DatabaseKind.MODULES) ||
                 isDbExistent(DatabaseKind.STAGING_SCHEMAS) ||
                 isDbExistent(DatabaseKind.STAGING_TRIGGERS)
         );
@@ -77,7 +77,7 @@ public class InstallInfoImpl implements InstallInfo {
                 isTripleIndexOn(DatabaseKind.FINAL) &&
                 isCollectionLexiconOn(DatabaseKind.FINAL) &&
                 isDbExistent(DatabaseKind.JOB) &&
-                isDbExistent(DatabaseKind.STAGING_MODULES) &&
+                isDbExistent(DatabaseKind.MODULES) &&
                 isDbExistent(DatabaseKind.STAGING_SCHEMAS) &&
                 isDbExistent(DatabaseKind.STAGING_TRIGGERS)
         );
@@ -111,7 +111,7 @@ public class InstallInfoImpl implements InstallInfo {
             "\t\tFinal:   " + (areForestsExistent(DatabaseKind.FINAL) ? "exists" : "MISSING") + "\n" +
             "\t\tJobs:     " + (areForestsExistent(DatabaseKind.JOB) ? "exists" : "MISSING") + "\n" +
             "\tCore Hub Databases:\n" +
-            "\t\tStaging Modules: " + (isDbExistent(DatabaseKind.STAGING_MODULES) ? "exists" : "MISSING") + "\n" +
+            "\t\tModules: " + (isDbExistent(DatabaseKind.MODULES) ? "exists" : "MISSING") + "\n" +
             "\t\tStaging Schemas: " + (isDbExistent(DatabaseKind.STAGING_SCHEMAS) ? "exists" : "MISSING") + "\n" +
             "\t\tStaging Triggers: " + (isDbExistent(DatabaseKind.STAGING_TRIGGERS) ? "exists" : "MISSING") + "\n" +
             "\n\n" +
@@ -145,7 +145,6 @@ public class InstallInfoImpl implements InstallInfo {
             case FINAL:
                 this.finalAppServerExists = exists;
                 break;
-
             case JOB:
                 this.jobAppServerExists = exists;
                 break;
@@ -166,8 +165,8 @@ public class InstallInfoImpl implements InstallInfo {
             case JOB:
                 exists = jobDbExists;
                 break;
-            case STAGING_MODULES:
-                exists = stagingModulesDbExists;
+            case MODULES:
+                exists = modulesDbExists;
                 break;
             case STAGING_SCHEMAS:
                 exists = stagingSchemasDbExists;
@@ -192,8 +191,8 @@ public class InstallInfoImpl implements InstallInfo {
             case JOB:
                 this.jobDbExists = exists;
                 break;
-            case STAGING_MODULES:
-                this.stagingModulesDbExists = exists;
+            case MODULES:
+                this.modulesDbExists = exists;
                 break;
             case STAGING_SCHEMAS:
                 this.stagingSchemasDbExists = exists;

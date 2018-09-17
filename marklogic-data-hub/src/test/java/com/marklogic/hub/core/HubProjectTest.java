@@ -43,7 +43,7 @@ public class HubProjectTest extends HubTestBase {
         config.setForestsPerHost(DatabaseKind.JOB, 100);
         config.setPort(DatabaseKind.JOB, 3333);
 
-        config.setForestsPerHost(DatabaseKind.STAGING_MODULES,3);
+        config.setForestsPerHost(DatabaseKind.MODULES,3);
         config.setForestsPerHost(DatabaseKind.STAGING_TRIGGERS, 4);
 
         config.setForestsPerHost(DatabaseKind.STAGING_SCHEMAS, 5);
@@ -116,8 +116,8 @@ public class HubProjectTest extends HubTestBase {
         assertEquals(config.getDbName(DatabaseKind.JOB), props.getProperty("mlJobDbName"));
         assertEquals(config.getForestsPerHost(DatabaseKind.JOB).toString(), props.getProperty("mlJobForestsPerHost"));
 
-        assertEquals(config.getDbName(DatabaseKind.STAGING_MODULES), props.getProperty("mlModulesDbName"));
-        assertEquals(config.getForestsPerHost(DatabaseKind.STAGING_MODULES).toString(), props.getProperty("mlModulesForestsPerHost"));
+        assertEquals(config.getDbName(DatabaseKind.MODULES), props.getProperty("mlModulesDbName"));
+        assertEquals(config.getForestsPerHost(DatabaseKind.MODULES).toString(), props.getProperty("mlModulesForestsPerHost"));
 
         assertEquals(config.getDbName(DatabaseKind.STAGING_TRIGGERS), props.getProperty("mlStagingTriggersDbName"));
         assertEquals(config.getForestsPerHost(DatabaseKind.STAGING_TRIGGERS).toString(), props.getProperty("mlStagingTriggersForestsPerHost"));

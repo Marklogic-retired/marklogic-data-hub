@@ -110,6 +110,14 @@ public class HubProjectImpl implements HubProject {
         return getEntityConfigDir().resolve("databases");
     }
 
+    @Override public Path getHubStagingModulesDir() {
+        return this.projectDir.resolve(MODULES_DIR);
+    }
+
+    @Override public Path getUserStagingModulesDir() {
+        return this.projectDir.resolve(MODULES_DIR);
+    }
+
     @Override public Path getModulesDir() {
         return this.projectDir.resolve(MODULES_DIR);
     }

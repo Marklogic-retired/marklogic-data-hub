@@ -98,8 +98,6 @@ public class HubConfigImpl implements HubConfig {
 
     protected String modulesDbName = DEFAULT_MODULES_DB_NAME;
     protected Integer modulesForestsPerHost = 1;
-    protected String finalModulesDbName = DEFAULT_FINAL_MODULES_DB_NAME;
-    protected Integer finalModulesForestsPerHost = 1;
 
     protected String stagingTriggersDbName = DEFAULT_STAGING_TRIGGERS_DB_NAME;
     protected Integer stagingTriggersForestsPerHost = 1;
@@ -174,11 +172,14 @@ public class HubConfigImpl implements HubConfig {
             case TRACE:
                 name = jobDbName;
                 break;
+            case MODULES:
+                name = modulesDbName;
+                break;
             case STAGING_MODULES:
                 name = modulesDbName;
                 break;
             case FINAL_MODULES:
-                name = finalModulesDbName;
+                name = modulesDbName;
                 break;
             case STAGING_TRIGGERS:
                 name = stagingTriggersDbName;
@@ -212,11 +213,14 @@ public class HubConfigImpl implements HubConfig {
             case TRACE:
                 jobDbName = dbName;
                 break;
+            case MODULES:
+                modulesDbName = dbName;
+                break;
             case STAGING_MODULES:
                 modulesDbName = dbName;
                 break;
             case FINAL_MODULES:
-                finalModulesDbName = dbName;
+                modulesDbName = dbName;
                 break;
             case STAGING_TRIGGERS:
                 stagingTriggersDbName = dbName;
@@ -290,11 +294,14 @@ public class HubConfigImpl implements HubConfig {
             case TRACE:
                 forests = jobForestsPerHost;
                 break;
+            case MODULES:
+                forests = modulesForestsPerHost;
+                break;
             case STAGING_MODULES:
                 forests = modulesForestsPerHost;
                 break;
             case FINAL_MODULES:
-                forests = finalModulesForestsPerHost;
+                forests = modulesForestsPerHost;
                 break;
             case STAGING_TRIGGERS:
                 forests = stagingTriggersForestsPerHost;
@@ -328,11 +335,14 @@ public class HubConfigImpl implements HubConfig {
             case TRACE:
                 jobForestsPerHost = forestsPerHost;
                 break;
+            case MODULES:
+                modulesForestsPerHost = forestsPerHost;
+                break;
             case STAGING_MODULES:
                 modulesForestsPerHost = forestsPerHost;
                 break;
             case FINAL_MODULES:
-                finalModulesForestsPerHost = forestsPerHost;
+                modulesForestsPerHost = forestsPerHost;
                 break;
             case STAGING_TRIGGERS:
                 stagingTriggersForestsPerHost = forestsPerHost;

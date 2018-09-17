@@ -132,6 +132,20 @@ public interface HubProject {
     Path getEntityDatabaseDir();
 
     /**
+     * Gets the path for the hub staging modules
+     * @return the path for the hub staging modules
+     */
+    @Deprecated
+    Path getHubStagingModulesDir();
+
+    /**
+     * Gets the path for the user staging modules
+     * @return the path for the user staging modules
+     */
+    @Deprecated
+    Path getUserStagingModulesDir();
+
+    /**
      * Gets the path for the modules directory
      * @return the path for the modules directory
      */
@@ -141,6 +155,7 @@ public interface HubProject {
      * Gets the path for the user final modules
      * @return the path for the user final modules
      */
+    @Deprecated
     Path getUserFinalModulesDir();
 
     /**

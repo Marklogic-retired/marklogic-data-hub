@@ -3,7 +3,6 @@ export class HubSettings {
   name: string = 'data-hub';
 
   stagingDbName: string = null;
-  stagingModulesDbName: string = null;
   stagingTriggersDbName: string = null;
   stagingSchemasDbName: string = null;
   stagingHttpName: string = null;
@@ -12,7 +11,6 @@ export class HubSettings {
   stagingAuthMethod: string = null;
 
   finalDbName: string = null;
-  finalModulesDbName: string = null;
   finalTriggersDbName: string = null;
   finalSchemasDbName: string = null;
   finalHttpName: string = null;
@@ -31,6 +29,8 @@ export class HubSettings {
   jobForestsPerHost: number = null;
   jobPort: number = null;
   jobAuthMethod: string = null;
+
+  modulesDbName: string = null;
 
   username: string = null;
 
