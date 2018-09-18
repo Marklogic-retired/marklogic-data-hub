@@ -51,14 +51,12 @@ export default function(tmpDir) {
       expect(loginPage.stagingAppserverNameLabel.isPresent()).toBe(true);
       expect(loginPage.advancedSettingsValue('Staging Triggers Database Name').getAttribute('value'))
         .toEqual('data-hub-ol-staging-TRIGGERS');
-      expect(loginPage.advancedSettingsValue('Staging Modules Database Name').getAttribute('value'))
+      expect(loginPage.advancedSettingsValue('Modules Database Name').getAttribute('value'))
         .toEqual('data-hub-ol-MODULES');
       expect(loginPage.advancedSettingsValue('Staging Schemas Database Name').getAttribute('value'))
         .toEqual('data-hub-ol-staging-SCHEMAS');
       expect(loginPage.advancedSettingsValue('Final Triggers Database Name').getAttribute('value'))
         .toEqual('data-hub-ol-final-TRIGGERS');
-      expect(loginPage.advancedSettingsValue('Final Modules Database Name').getAttribute('value'))
-        .toEqual('data-hub-ol-final-MODULES');
       expect(loginPage.advancedSettingsValue('Final Schemas Database Name').getAttribute('value'))
         .toEqual('data-hub-ol-final-SCHEMAS');    
       loginPage.clickAdvancedSettings();
@@ -71,14 +69,12 @@ export default function(tmpDir) {
       expect(loginPage.stagingAppserverNameLabel.isPresent()).toBe(true);
       expect(loginPage.advancedSettingsValue('Staging Triggers Database Name').getAttribute('value'))
         .toEqual('data-hub-staging-TRIGGERS');
-      expect(loginPage.advancedSettingsValue('Staging Modules Database Name').getAttribute('value'))
+      expect(loginPage.advancedSettingsValue('Modules Database Name').getAttribute('value'))
         .toEqual('data-hub-MODULES');
       expect(loginPage.advancedSettingsValue('Staging Schemas Database Name').getAttribute('value'))
         .toEqual('data-hub-staging-SCHEMAS');
       expect(loginPage.advancedSettingsValue('Final Triggers Database Name').getAttribute('value'))
         .toEqual('data-hub-final-TRIGGERS');
-      expect(loginPage.advancedSettingsValue('Final Modules Database Name').getAttribute('value'))
-        .toEqual('data-hub-final-MODULES');
       expect(loginPage.advancedSettingsValue('Final Schemas Database Name').getAttribute('value'))
         .toEqual('data-hub-final-SCHEMAS');
       loginPage.clickAdvancedSettings();
