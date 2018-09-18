@@ -548,7 +548,7 @@ public class DataHubImpl implements DataHub {
         // staging deploys amps.
         List<Command> securityCommand = new ArrayList<>();
         securityCommand.add(new DeployHubAmpsCommand(hubConfig));
-        commandMap.put("mlSecurityComand", securityCommand);
+        commandMap.put("mlSecurityCommand", securityCommand);
 
         // don't deploy rest api servers
         commandMap.remove("mlRestApiCommands");
