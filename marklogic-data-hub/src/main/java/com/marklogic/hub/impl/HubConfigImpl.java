@@ -889,7 +889,7 @@ public class HubConfigImpl implements HubConfig {
 
             modulesDbName = getEnvPropString(environmentProperties, "mlModulesDbName", modulesDbName);
             modulesForestsPerHost = getEnvPropInteger(environmentProperties, "mlModulesForestsPerHost", modulesForestsPerHost);
-            modulePermissions = getEnvPropString(environmentProperties, "mlStagingModulePermissions", modulePermissions);
+            modulePermissions = getEnvPropString(environmentProperties, "mlModulePermissions", modulePermissions);
 
             stagingTriggersDbName = getEnvPropString(environmentProperties, "mlStagingTriggersDbName", stagingTriggersDbName);
             stagingTriggersForestsPerHost = getEnvPropInteger(environmentProperties, "mlStagingTriggersForestsPerHost", stagingTriggersForestsPerHost);

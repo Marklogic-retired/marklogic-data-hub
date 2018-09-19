@@ -119,5 +119,4 @@ mlHubAdminUserPassword=%%mlHubAdminUserPassword%%
 # mlLoadBalancerHosts=your-load-balancer-hostnames,separated,by-commas
 
 # Default module permissions which allow data-hub-role to execute flows
-mlStagingModulePermissions=rest-reader,read,rest-writer,insert,rest-writer,update,rest-extension-user,execute,%%mlHubUserRole%%,read,%%mlHubUserRole%%,execute
-mlFinalModulePermissions=rest-reader,read,rest-writer,insert,rest-writer,update,rest-extension-user,execute,%%mlHubUserRole%%,read,%%mlHubUserRole%%,execute
+mlModulePermissions=rest-reader,read,rest-writer,insert,rest-writer,update,rest-extension-user,execute,%%mlHubUserRole%%,read,%%mlHubUserRole%%,execute
