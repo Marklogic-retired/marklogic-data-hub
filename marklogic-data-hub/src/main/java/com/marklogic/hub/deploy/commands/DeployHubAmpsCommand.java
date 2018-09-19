@@ -84,11 +84,12 @@ public class DeployHubAmpsCommand extends DeployAmpsCommand {
             }
         } else {
             logger.info("Using CMA for servers starting with 9.0-6");
-            String stagingModulesDatabaseName = hubConfig.getStagingAppConfig().getModulesDatabaseName();
+            String modulesDatabaseName = hubConfig.getStagingAppConfig().getModulesDatabaseName();
             ManageClient manageClient = context.getManageClient();
 
             try (InputStream is = new ClassPathResource("hub-internal-config/configurations/amps.json").getInputStream()) {
                 String payload = IOUtils.toString(is, "utf-8");
+                payload = payload.replace("data-hub-MODULES", modulesDatabaseName);
                 manageClient.postJsonAsSecurityUser("/manage/v3", payload);
             } catch (IOException e) {
                 throw new DataHubConfigurationException(e);
