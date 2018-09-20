@@ -71,7 +71,7 @@ declare function trace:enable-tracing($enabled as xs:boolean)
 declare function trace:enabled() as xs:boolean
 {
   let $key := "tracing-enabled"
-  let $flag :=  hul:from-field-cache-or-empty($key, xs:dayTimeDuration("PT0.3S"))
+  let $flag :=  hul:from-field-cache-or-empty($key, $hul:EXPIRATION)
   return
     if (exists($flag)) then
       $flag
@@ -88,7 +88,7 @@ declare function trace:enabled() as xs:boolean
             )
           )
         ',(), map:new(map:entry("database", xdmp:modules-database()))),
-        xs:dayTimeDuration("PT0.3S")
+        $hul:EXPIRATION
       )
 };
 

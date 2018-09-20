@@ -1074,7 +1074,7 @@ public class HubTestBase {
         }
     }
 
-    protected void debugOutput(Document xmldoc) throws TransformerException {
+    protected void debugOutput(Document xmldoc) {
         debugOutput(xmldoc, System.out);
     }
 
