@@ -13,7 +13,7 @@
     }
   },
   "module": "ext/sample-trigger.xqy",
-  "module-db": "%%mlStagingModulesDbName%%",
+  "module-db": "%%mlModulesDbName%%",
   "module-root": "/",
   "enabled": true,
   "recursive": true,

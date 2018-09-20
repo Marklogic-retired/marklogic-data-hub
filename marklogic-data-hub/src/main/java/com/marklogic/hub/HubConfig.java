@@ -54,7 +54,7 @@ public interface HubConfig {
     String DEFAULT_STAGING_NAME = "data-hub-STAGING";
     String DEFAULT_FINAL_NAME = "data-hub-FINAL";
     String DEFAULT_JOB_NAME = "data-hub-JOBS";
-    String DEFAULT_STAGING_MODULES_DB_NAME = "data-hub-MODULES";
+    String DEFAULT_MODULES_DB_NAME = "data-hub-MODULES";
     String DEFAULT_FINAL_MODULES_DB_NAME = "data-hub-final-MODULES";
     String DEFAULT_STAGING_TRIGGERS_DB_NAME = "data-hub-staging-TRIGGERS";
     String DEFAULT_FINAL_TRIGGERS_DB_NAME = "data-hub-final-TRIGGERS";
@@ -383,22 +383,10 @@ public interface HubConfig {
     DatabaseClient newModulesDbClient();
 
     /**
-     * Gets the path for the hub staging modules
-     * @return the path for the hub staging modules
+     * Gets the path for the modules directory
+     * @return the path for the modules directory
      */
-    Path getHubStagingModulesDir();
-
-    /**
-     * Gets the path for the user staging modules
-     * @return the path for the user staging modules
-     */
-    Path getUserStagingModulesDir();
-
-    /**
-     * Gets the path for the user final modules
-     * @return the path for the user final modules
-     */
-    Path getUserFinalModulesDir();
+    Path getModulesDir();
 
     /**
      * Gets the path for the hub plugins directory

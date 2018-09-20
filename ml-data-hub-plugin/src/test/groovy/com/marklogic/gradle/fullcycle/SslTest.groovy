@@ -143,7 +143,7 @@ class SslTest extends BaseTest {
         copyResourceToFile("ssl-test/ssl-server.json", new File(BaseTest.testProjectDir.root, "user-config/servers/staging-server.json"))
         createProperties()
         try {
-            clearDatabases(hubConfig().DEFAULT_STAGING_MODULES_DB_NAME)
+            clearDatabases(hubConfig().DEFAULT_MODULES_DB_NAME)
         } catch (e) {
             //pass
         }
