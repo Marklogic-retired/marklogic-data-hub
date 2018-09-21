@@ -27,6 +27,7 @@ import com.marklogic.hub.util.HubModuleManager;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.Tag;
 import org.xml.sax.SAXException;
 
 import java.io.File;
@@ -213,6 +214,7 @@ public class EntityManagerTest extends HubTestBase {
 
 
     @Test
+    @Tag("NoAWS")
     public void testDeployPiiConfigurations() throws IOException {
         installEntities();
 
