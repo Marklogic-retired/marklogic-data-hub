@@ -27,7 +27,6 @@ import com.marklogic.client.io.StringHandle;
 import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubConfigBuilder;
-import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.flow.*;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.FileUtil;
@@ -35,16 +34,16 @@ import com.marklogic.hub.util.MlcpRunner;
 import com.marklogic.quickstart.auth.ConnectionAuthenticationToken;
 import com.marklogic.quickstart.model.EnvironmentConfig;
 import org.json.JSONException;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -52,7 +51,10 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
-@RunWith(SpringRunner.class)
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+
+@ExtendWith(SpringExtension.class)
 @SpringBootTest()
 public class FlowManagerServiceTest extends AbstractServiceTest {
 
@@ -62,7 +64,7 @@ public class FlowManagerServiceTest extends AbstractServiceTest {
     @Autowired
     FlowManagerService fm;
 
-    @Before
+    @BeforeEach
     public void setup() {
         createProjectDir();
         Scaffolding scaffolding = Scaffolding.create(projectDir.toString(), stagingClient);
@@ -138,7 +140,7 @@ public class FlowManagerServiceTest extends AbstractServiceTest {
     }
 
     @Test
-    @Ignore
+    @Disabled
     // this test fails in some environments because wihen running in test,
     // its classpath is too long to call mlcp as an interprocess communication.
     public void runMlcp() throws IOException, InterruptedException, JSONException {
@@ -171,7 +173,7 @@ public class FlowManagerServiceTest extends AbstractServiceTest {
         mlcpRunner.start();
         mlcpRunner.join();
 
-        Assert.assertEquals(1, getStagingDocCount());
+        assertEquals(1, getStagingDocCount());
         String expected = getResource("flow-manager/final.json");
 
         String actual = stagingDocMgr.read("/input.json").next().getContent(new StringHandle()).get();
@@ -182,7 +184,7 @@ public class FlowManagerServiceTest extends AbstractServiceTest {
     public void runHarmonizationFlow() throws InterruptedException {
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
 
-        Assert.assertEquals(0, getFinalDocCount());
+        assertEquals(0, getFinalDocCount());
 
         DocumentMetadataHandle meta = new DocumentMetadataHandle();
         meta.getCollections().add(ENTITY);
@@ -218,14 +220,14 @@ public class FlowManagerServiceTest extends AbstractServiceTest {
             monitor.wait();
         }
 
-        Assert.assertEquals(1, getFinalDocCount());
+        assertEquals(1, getFinalDocCount());
     }
 
     @Test
     public void runHarmonizationFlowWithOptions() throws InterruptedException {
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
 
-        Assert.assertEquals(0, getFinalDocCount());
+        assertEquals(0, getFinalDocCount());
 
         DocumentMetadataHandle meta = new DocumentMetadataHandle();
         meta.getCollections().add(ENTITY);
@@ -265,12 +267,12 @@ public class FlowManagerServiceTest extends AbstractServiceTest {
             monitor.wait();
         }
 
-        Assert.assertEquals(1, getFinalDocCount());
+        assertEquals(1, getFinalDocCount());
 
         DocumentRecord doc = finalDocMgr.read("/staged.json").next();
         JsonNode root = doc.getContent(new JacksonHandle()).get();
         JsonNode optionNode = root.path("envelope").path("headers").path("test-option");
-        Assert.assertFalse(optionNode.isMissingNode());
-        Assert.assertEquals(OPT_VALUE, optionNode.asText());
+        assertFalse(optionNode.isMissingNode());
+        assertEquals(OPT_VALUE, optionNode.asText());
     }
 }
