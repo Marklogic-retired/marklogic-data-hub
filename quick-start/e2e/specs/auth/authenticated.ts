@@ -116,6 +116,20 @@ export default function(tmpDir) {
       fs.copy(flowAdminUserFilePath, tmpDir + '/src/main/ml-config/security/users/flow-admin-user.json');
     });
 
+    it ('should copy pii-user.json file', function() {
+      //copy pii-user.json
+      console.log('copy pii-user.json');
+      let piiUserFilePath = 'e2e/qa-data/users/pii-user.json';
+      fs.copy(piiUserFilePath, tmpDir + '/src/main/ml-config/security/users/pii-user.json');
+    });
+
+    it ('should copy no-pii-user.json file', function() {
+      //copy no-pii-user.json
+      console.log('copy no-pii-user.json');
+      let noPiiUserFilePath = 'e2e/qa-data/users/no-pii-user.json';
+      fs.copy(noPiiUserFilePath, tmpDir + '/src/main/ml-config/security/users/no-pii-user.json');
+    });
+
     it ('Should be on the post init page', function() {
       expect(loginPage.projectDirTab.isDisplayed()).toBe(false);
       expect(loginPage.initIfNeededTab.isDisplayed()).toBe(false);
