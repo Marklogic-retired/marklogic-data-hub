@@ -49,7 +49,7 @@ function extractInstanceProduct(source, opts) {
   }
   let sku = !fn.empty(source.sku || source.SKU) ? xs.string(fn.head(source.sku || source.SKU)) : null;
   let price = !fn.empty(source.price) ? xs.decimal(fn.head(source.xpath('//price'))) : null;
-  let title = !fn.empty(source.title) ? xs.string(fn.head(source.title)) : null;
+  let titlePii = !fn.empty(source.title) ? xs.string(fn.head(source.title)) : null;
   let value1 = !fn.empty(opts.hello) ? xs.string(fn.head(opts.hello)) : null;
   let value2 = !fn.empty(opts.myNumber) ? xs.string(fn.head(opts.myNumber)) : null;
 
@@ -60,7 +60,7 @@ function extractInstanceProduct(source, opts) {
     '$version': '0.0.1',
     'sku': sku,
     'price': price,
-    'title': title,
+    'titlePii': titlePii,
     'opt1': value1,
     'opt2': value2
   }
