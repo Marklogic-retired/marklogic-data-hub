@@ -337,39 +337,11 @@ public class HubTestBase {
     }
 
     protected void enableTracing() {
-        ManageClient manageClient = ((HubConfigImpl)getHubFlowRunnerConfig()).getManageClient();
-        String resp = manageClient.getJson("/manage/v2/hosts?format=json");
-        JsonNode actualObj = null;
-		try {
-			actualObj = new ObjectMapper().readTree(resp);
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		JsonNode nameNode = actualObj.path("host-default-list").path("list-items");
-		List<String> hosts = nameNode.findValuesAsText("nameref");
-        hosts.forEach(serverHost ->
-		{
-			try {
-				DatabaseClient client = getClient(serverHost, stagingPort, HubConfig.DEFAULT_STAGING_NAME, flowRunnerUser, flowRunnerPassword, stagingAuthMethod);
-				Tracing.create(client).enable();
-				clients.add(client);
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		});
+        Tracing.create(stagingClient).enable();
     }
 
     protected void disableTracing() {
-        clients.forEach(client ->
-		{
-			Tracing.create(client).disable();
-			client.newServerEval().xquery("xquery version \"1.0-ml\";\n" +
-					"import module namespace hul = \"http://marklogic.com/data-hub/hub-utils-lib\" at \"/data-hub/4/impl/hub-utils-lib.xqy\";\n" +
-					"hul:invalidate-field-cache(\"tracing-enabled\")").eval();
-
-		});
+        Tracing.create(stagingClient).disable();
     }
 
     //getHubAdminConfig is used for installation, scaffolding
@@ -1083,7 +1055,7 @@ public class HubTestBase {
         }
     }
 
-    protected void debugOutput(Document xmldoc) throws TransformerException {
+    protected void debugOutput(Document xmldoc) {
         debugOutput(xmldoc, System.out);
     }
 

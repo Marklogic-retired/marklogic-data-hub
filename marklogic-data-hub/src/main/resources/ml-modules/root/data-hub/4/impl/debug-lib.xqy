@@ -48,7 +48,7 @@ declare function debug:enable($enabled as xs:boolean)
 declare function debug:on() as xs:boolean
 {
   let $key := "debugging-enabled"
-  let $flag :=  hul:from-field-cache-or-empty($key, ())
+  let $flag :=  hul:from-field-cache-or-empty($key, $hul:EXPIRATION)
   return
     if (exists($flag)) then
       $flag
@@ -65,7 +65,7 @@ declare function debug:on() as xs:boolean
             )
           )
         ',(), map:new(map:entry("database", xdmp:modules-database()))),
-        ()
+        $hul:EXPIRATION
       )
 };
 
