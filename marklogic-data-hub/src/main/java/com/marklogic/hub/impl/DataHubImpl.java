@@ -56,8 +56,6 @@ import org.springframework.web.client.HttpClientErrorException;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -146,7 +144,7 @@ public class DataHubImpl implements DataHub {
         installInfo.setDbExistent(DatabaseKind.FINAL, drf.resourceExists(hubConfig.getDbName(DatabaseKind.FINAL)));
         installInfo.setDbExistent(DatabaseKind.JOB, drf.resourceExists(hubConfig.getDbName(DatabaseKind.JOB)));
 
-        installInfo.setDbExistent(DatabaseKind.STAGING_MODULES, drf.resourceExists(hubConfig.getDbName(DatabaseKind.STAGING_MODULES)));
+        installInfo.setDbExistent(DatabaseKind.MODULES, drf.resourceExists(hubConfig.getDbName(DatabaseKind.MODULES)));
         installInfo.setDbExistent(DatabaseKind.STAGING_SCHEMAS, drf.resourceExists(hubConfig.getDbName(DatabaseKind.STAGING_SCHEMAS)));
         installInfo.setDbExistent(DatabaseKind.STAGING_TRIGGERS, drf.resourceExists(hubConfig.getDbName(DatabaseKind.STAGING_TRIGGERS)));
 
@@ -259,6 +257,20 @@ public class DataHubImpl implements DataHub {
                 }
             );
 
+            ServerConfigurationManager finalConfigMgr = hubConfig.newFinalClient().newServerConfigManager();
+            QueryOptionsManager finalOptionsManager = finalConfigMgr.newQueryOptionsManager();
+
+            // remove options using mgr.
+            QueryOptionsListHandle finalHandle = finalOptionsManager.optionsList(new QueryOptionsListHandle());
+            Map<String, String> finalOptionsMap = finalHandle.getValuesMap();
+            finalOptionsMap.keySet().forEach(
+                optionsName -> {
+                    if (!options.contains(optionsName)) {
+                        finalOptionsManager.deleteOptions(optionsName);
+                    }
+                }
+            );
+
             // remove transforms using amped channel
             TransformExtensionsManager transformExtensionsManager = configMgr.newTransformExtensionsManager();
             JsonNode transformsList = transformExtensionsManager.listTransforms(new JacksonHandle()).get();
@@ -289,7 +301,7 @@ public class DataHubImpl implements DataHub {
                     "    fn:matches(., \"/marklogic.rest.transform/(" + String.join("|", transforms) + ")/assets/(metadata\\.xml|transform\\.(xqy|sjs))\")\n" +
                     "  )\n" +
                     "] ! xdmp:document-delete(.)\n";
-            runInDatabase(query, hubConfig.getDbName(DatabaseKind.STAGING_MODULES));
+            runInDatabase(query, hubConfig.getDbName(DatabaseKind.MODULES));
         } catch (FailedRequestException e) {
             logger.error("Failed to clear user modules");
         } catch (IOException e) {
@@ -482,6 +494,11 @@ public class DataHubImpl implements DataHub {
         finalDeployer.setStagingCommandsList(getStagingCommandList());
 
         finalDeployer.undeployAll(finalConfig, stagingConfig);
+
+        AppConfig roleConfig = hubConfig.getStagingAppConfig();
+        SimpleAppDeployer roleDeployer = new SimpleAppDeployer(getManageClient(), getAdminManager());
+        roleDeployer.setCommands(getSecurityCommandList());
+        roleDeployer.undeploy(roleConfig);
     }
 
     @Override
@@ -526,12 +543,12 @@ public class DataHubImpl implements DataHub {
         dbCommands.add(new DeployHubStagingSchemasDatabaseCommand(hubConfig));
         commandMap.put("mlDatabaseCommands", dbCommands);
 
+        commandMap.remove("mlSecurityCommands");
+
         // staging deploys amps.
-        List<Command> securityCommands = commandMap.get("mlSecurityCommands");
-        securityCommands.set(0, new DeployHubAmpsCommand(hubConfig));
-        securityCommands.set(1, new DeployHubRolesCommand(hubConfig));
-        securityCommands.set(2, new DeployHubUsersCommand(hubConfig));
-        commandMap.put("mlSecurityCommands", securityCommands);
+        List<Command> securityCommand = new ArrayList<>();
+        securityCommand.add(new DeployHubAmpsCommand(hubConfig));
+        commandMap.put("mlSecurityCommand", securityCommand);
 
         // don't deploy rest api servers
         commandMap.remove("mlRestApiCommands");
@@ -763,7 +780,7 @@ public class DataHubImpl implements DataHub {
 
             if (isHubInstalled) {
                 // install hub modules into MarkLogic
-                runInDatabase("cts:uris(\"\", (), cts:and-not-query(cts:collection-query(\"hub-core-module\"), cts:document-query((\"/com.marklogic.hub/config.sjs\", \"/com.marklogic.hub/config.xqy\")))) ! xdmp:document-delete(.)", hubConfig.getDbName(DatabaseKind.STAGING_MODULES));
+                runInDatabase("cts:uris(\"\", (), cts:and-not-query(cts:collection-query(\"hub-core-module\"), cts:document-query((\"/com.marklogic.hub/config.sjs\", \"/com.marklogic.hub/config.xqy\")))) ! xdmp:document-delete(.)", hubConfig.getDbName(DatabaseKind.MODULES));
 
                 this.install();
             }

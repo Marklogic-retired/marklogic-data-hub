@@ -1,5 +1,5 @@
 {
-  "database-name": "%%mlStagingModulesDbName%%",
+  "database-name": "%%mlModulesDbName%%",
   "collection-lexicon": true,
   "uri-lexicon": true
 }

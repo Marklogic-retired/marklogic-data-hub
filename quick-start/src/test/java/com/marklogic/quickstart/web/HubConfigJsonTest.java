@@ -71,16 +71,14 @@ public class HubConfigJsonTest {
             "  \"jobForestsPerHost\": 1,\n" +
             "  \"jobPort\": 8013,\n" +
             "  \"jobAuthMethod\": \"digest\",\n" +
-            "  \"stagingModulesDbName\": \"data-hub-MODULES\",\n" +
+            "  \"modulesDbName\": \"data-hub-MODULES\",\n" +
             "  \"stagingTriggersDbName\": \"data-hub-staging-TRIGGERS\",\n" +
             "  \"stagingSchemasDbName\": \"data-hub-staging-SCHEMAS\",\n" +
-            "  \"finalModulesDbName\": \"data-hub-final-MODULES\",\n" +
             "  \"finalTriggersDbName\": \"data-hub-final-TRIGGERS\",\n" +
             "  \"finalSchemasDbName\": \"data-hub-final-SCHEMAS\",\n" +
-            "  \"stagingModulesForestsPerHost\": 1,\n" +
+            "  \"modulesForestsPerHost\": 1,\n" +
             "  \"stagingTriggersForestsPerHost\": 1,\n" +
             "  \"stagingSchemasForestsPerHost\": 1,\n" +
-            "  \"finalModulesForestsPerHost\": 1,\n" +
             "  \"finalTriggersForestsPerHost\": 1,\n" +
             "  \"finalSchemasForestsPerHost\": 1,\n" +
             "  \"hubRoleName\": \"data-hub-role\",\n" +
@@ -115,16 +113,14 @@ public class HubConfigJsonTest {
             "  \"jobForestsPerHost\": 1,\n" +
             "  \"jobPort\": 8013,\n" +
             "  \"jobAuthMethod\": \"digest\",\n" +
-            "  \"stagingModulesDbName\": \"data-hub-MODULES\",\n" +
+            "  \"modulesDbName\": \"data-hub-MODULES\",\n" +
             "  \"stagingTriggersDbName\": \"data-hub-staging-TRIGGERS\",\n" +
             "  \"stagingSchemasDbName\": \"data-hub-staging-SCHEMAS\",\n" +
-            "  \"finalModulesDbName\": \"data-hub-final-MODULES\",\n" +
             "  \"finalTriggersDbName\": \"data-hub-final-TRIGGERS\",\n" +
             "  \"finalSchemasDbName\": \"data-hub-final-SCHEMAS\",\n" +
-            "  \"stagingModulesForestsPerHost\": 1,\n" +
+            "  \"modulesForestsPerHost\": 1,\n" +
             "  \"stagingTriggersForestsPerHost\": 1,\n" +
             "  \"stagingSchemasForestsPerHost\": 1,\n" +
-            "  \"finalModulesForestsPerHost\": 1,\n" +
             "  \"finalTriggersForestsPerHost\": 1,\n" +
             "  \"finalSchemasForestsPerHost\": 1,\n" +
             "  \"hubRoleName\": \"data-hub-role\",\n" +

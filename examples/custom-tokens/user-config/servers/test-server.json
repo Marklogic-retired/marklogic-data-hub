@@ -4,7 +4,7 @@
   "root": "/",
   "group-name": "%%GROUP%%",
   "port": "%%TEST_SERVER_PORT%%",
-  "modules-database": "%%mlStagingModulesDbName%%",
+  "modules-database": "%%mlModulesDbName%%",
   "content-database": "%%TEST_DATABASE_NAME%%",
   "authentication": "%%TEST_TRACE_AUTH%%",
   "default-error-format": "json",

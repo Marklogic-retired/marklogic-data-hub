@@ -220,7 +220,7 @@ ext {
         moduleTokensPropertiesSources = new ArrayList<>()
 
         // override some default values with our values
-        modulesDatabaseName = mlStagingModulesDbName
+        modulesDatabaseName = mlModulesDbName
         triggersDatabaseName = mlStagingTriggersDbName
         schemasDatabaseName = mlStagingSchemasDbName
         restPort = Integer.parseInt(mlJobPort)
@@ -238,7 +238,7 @@ ext {
         customTokens.put("%%mlJobPort%%", mlJobPort)
         customTokens.put("%%mlJobDbName%%", mlJobDbName)
 
-        customTokens.put("%%mlStagingModulesDbName%%", mlStagingModulesDbName)
+        customTokens.put("%%mlModulesDbName%%", mlModulesDbName)
         customTokens.put("%%mlStagingTriggersDbName%%", mlStagingTriggersDbName)
         customTokens.put("%%mlStagingSchemasDbName%%", mlStagingSchemasDbName)
 

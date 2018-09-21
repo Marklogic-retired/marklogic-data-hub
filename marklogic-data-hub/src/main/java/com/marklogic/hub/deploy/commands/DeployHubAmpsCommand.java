@@ -61,7 +61,7 @@ public class DeployHubAmpsCommand extends DeployAmpsCommand {
         }
         if (serverVersion.startsWith("9.0-5")) {
             logger.info("Using non-SSL-compatable method for 9.0-5 servers, for demos only");
-            String stagingModulesDatabaseName = hubConfig.getStagingAppConfig().getModulesDatabaseName();
+            String modulesDatabaseName = hubConfig.getStagingAppConfig().getModulesDatabaseName();
             ManageConfig manageConfig = context.getManageClient().getManageConfig();
             String securityUsername = manageConfig.getSecurityUsername();
             String securityPassword = manageConfig.getSecurityPassword();
@@ -71,12 +71,12 @@ public class DeployHubAmpsCommand extends DeployAmpsCommand {
                 "Security",
                 new DatabaseClientFactory.DigestAuthContext(securityUsername, securityPassword)
             );
-            //new AmpsInstaller(securityStagingClient).installAmps(stagingModulesDatabaseName);
+            //new AmpsInstaller(securityStagingClient).installAmps(modulesDatabaseName);
             ServerEvaluationCall call = installerClient.newServerEval();
             try (InputStream is = new ClassPathResource("installer-util/install-amps.xqy").getInputStream()) {
                 String ampCall = IOUtils.toString(is, "utf-8");
                 is.close();
-                ampCall = ampCall.replace("data-hub-MODULES", stagingModulesDatabaseName);
+                ampCall = ampCall.replace("data-hub-MODULES", modulesDatabaseName);
                 call.xquery(ampCall);
                 call.eval();
             } catch (IOException e) {
@@ -84,11 +84,12 @@ public class DeployHubAmpsCommand extends DeployAmpsCommand {
             }
         } else {
             logger.info("Using CMA for servers starting with 9.0-6");
-            String stagingModulesDatabaseName = hubConfig.getStagingAppConfig().getModulesDatabaseName();
+            String modulesDatabaseName = hubConfig.getStagingAppConfig().getModulesDatabaseName();
             ManageClient manageClient = context.getManageClient();
 
             try (InputStream is = new ClassPathResource("hub-internal-config/configurations/amps.json").getInputStream()) {
                 String payload = IOUtils.toString(is, "utf-8");
+                payload = payload.replace("data-hub-MODULES", modulesDatabaseName);
                 manageClient.postJsonAsSecurityUser("/manage/v3", payload);
             } catch (IOException e) {
                 throw new DataHubConfigurationException(e);
@@ -106,7 +107,7 @@ public class DeployHubAmpsCommand extends DeployAmpsCommand {
 
         if (serverVersion.startsWith("9.0-5")) {
             logger.info("Using non-SSL-compatable method for 9.0-5 servers");
-            String stagingModulesDatabaseName = hubConfig.getStagingAppConfig().getModulesDatabaseName();
+            String modulesDatabaseName = hubConfig.getStagingAppConfig().getModulesDatabaseName();
             ManageConfig manageConfig = context.getManageClient().getManageConfig();
             String securityUsername = manageConfig.getSecurityUsername();
             String securityPassword = manageConfig.getSecurityPassword();
@@ -116,12 +117,12 @@ public class DeployHubAmpsCommand extends DeployAmpsCommand {
                 "Security",
                 new DatabaseClientFactory.DigestAuthContext(securityUsername, securityPassword)
             );
-            //new AmpsInstaller(securityStagingClient).unInstallAmps(stagingModulesDatabaseName);
+            //new AmpsInstaller(securityStagingClient).unInstallAmps(modulesDatabaseName);
             ServerEvaluationCall call = installerClient.newServerEval();
             try (InputStream is = new ClassPathResource("installer-util/uninstall-amps.xqy").getInputStream()) {
                 String ampCall = IOUtils.toString(is, "utf-8");
                 is.close();
-                ampCall = ampCall.replace("data-hub-MODULES", stagingModulesDatabaseName);
+                ampCall = ampCall.replace("data-hub-MODULES", modulesDatabaseName);
                 call.xquery(ampCall);
                 call.eval();
             } catch (IOException e) {
