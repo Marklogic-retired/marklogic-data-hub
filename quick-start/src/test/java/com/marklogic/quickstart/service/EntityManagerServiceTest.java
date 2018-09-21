@@ -27,6 +27,7 @@ import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.FileUtil;
 import com.marklogic.quickstart.model.FlowModel;
 import com.marklogic.quickstart.model.entity_services.EntityModel;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -97,6 +98,13 @@ public class EntityManagerServiceTest extends AbstractServiceTest {
 
         installUserModules(getHubAdminConfig(), true);
     }
+
+    @After
+    public void teardownProject() {
+        clearUserModules();
+        deleteProjectDir();
+    }
+
 
     @Test
     public void getEntities() throws IOException {
@@ -205,6 +213,7 @@ public class EntityManagerServiceTest extends AbstractServiceTest {
 
         //cleanup.
         entityMgrService.deleteEntity(RENAMED_ENTITY);
+        entityMgrService.deleteEntity(ENTITY);
 
 
     }
