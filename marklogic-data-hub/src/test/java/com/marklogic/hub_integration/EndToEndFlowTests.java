@@ -194,6 +194,7 @@ public class EndToEndFlowTests extends HubTestBase {
     }
 
     @TestFactory
+    @Disabled
     public List<DynamicTest> generateLegacyTests() {
         List<DynamicTest> tests = new ArrayList<>();
         allCombos((codeFormat, dataFormat, flowType, useEs) -> {
@@ -285,6 +286,7 @@ public class EndToEndFlowTests extends HubTestBase {
     }
 
     @TestFactory
+    @Disabled
     public List<DynamicTest> generate1xLegacyTests() {
         List<DynamicTest> tests = new ArrayList<>();
         allCombos((codeFormat, dataFormat, flowType, useEs) -> {
