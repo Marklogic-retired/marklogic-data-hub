@@ -30,6 +30,7 @@ export class MapComponent implements OnInit {
   public sampleDocURI: string = null;
   private sampleDocSrc: any = null;
   private sampleDocSrcProps: Array<any> = [];
+  public valMaxLen: number = 17;
 
   // Connections
   public conns: Object = {};
@@ -191,9 +192,7 @@ export class MapComponent implements OnInit {
 
   updateDesc() {
     this.mapping.description = this.editDescVal;
-    this.mapService.saveMap(this.mapping.name, JSON.stringify(this.mapping)).subscribe((res: any) => {
-      console.log('map saved with edited description');
-    });
+    this.saveMap();
     this.editingDesc = false;
   }
 

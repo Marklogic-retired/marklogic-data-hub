@@ -269,7 +269,8 @@ export class LoginComponent implements OnInit {
         if (this.currentEnvironment.runningVersion !== '0.1.2' &&
             this.currentEnvironment.runningVersion !== '%%mlHubVersion%%' &&
             this.currentEnvironment.installedVersion !== '%%mlHubVersion%%' &&
-            SemVer.gt(this.currentEnvironment.runningVersion, this.currentEnvironment.installedVersion)) {
+          (SemVer.gt(this.currentEnvironment.runningVersion, this.currentEnvironment.installedVersion)
+          || this.currentEnvironment.runningVersion !== this.currentEnvironment.dhfversion )) {
           this.gotoTab('RequiresUpdate');
         } else {
           // goto login tab
@@ -343,7 +344,14 @@ export class LoginComponent implements OnInit {
         this.loggingIn = false;
       },
       error => {
-        this.loginError = error.json().message;
+      let errorMsg = error;
+        try {
+          errorMsg = error.json().message;
+        } catch (e) {
+          //not valid json, so we suppress error and report it straight
+        }
+        this.loginError = errorMsg;
+        console.log(error);
         this.auth.setAuthenticated(false);
         this.loggingIn = false;
       });
@@ -353,21 +361,23 @@ export class LoginComponent implements OnInit {
     const name = this.initSettings.name;
     this.initSettings.stagingHttpName = name + '-STAGING';
     this.initSettings.stagingDbName = name + '-STAGING';
+    this.initSettings.stagingTriggersDbName = name + '-staging-TRIGGERS';
+    this.initSettings.stagingSchemasDbName = name + '-staging-SCHEMAS';
     this.initSettings.finalHttpName = name + '-FINAL';
     this.initSettings.finalDbName = name + '-FINAL';
+    this.initSettings.finalTriggersDbName = name + '-final-TRIGGERS';
+    this.initSettings.finalSchemasDbName = name + '-final-SCHEMAS';
     this.initSettings.traceHttpName = name + '-JOBS';
     this.initSettings.traceDbName = name + '-JOBS';
     this.initSettings.jobHttpName = name + '-JOBS';
     this.initSettings.jobDbName = name + '-JOBS';
     this.initSettings.modulesDbName = name + '-MODULES';
-    this.initSettings.triggersDbName = name + '-TRIGGERS';
-    this.initSettings.schemasDbName = name + '-SCHEMAS';
   }
 
   hubUpdateUrl() {
     if (this.currentEnvironment && this.currentEnvironment.runningVersion) {
       const versionString = this.currentEnvironment.runningVersion.replace(/\./g, '');
-      return `https://github.com/marklogic/marklogic-data-hub/wiki/Updating-to-a-New-Hub-Version#${versionString}`;
+      return `https://marklogic.github.io/marklogic-data-hub/understanding/updating/${versionString}`;
     }
     return '';
   }

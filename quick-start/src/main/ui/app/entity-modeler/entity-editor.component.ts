@@ -330,6 +330,21 @@ export class EntityEditorComponent {
     }
   }
 
+  isPropertyValid(property: PropertyType) {
+    let properties = this.entity.definition.properties;
+    /**
+     * A valid property must not: 
+     *  - be a duplicate
+     *  - have spaces in the name
+     *  - must not be empty
+     */
+    let duplicate = _.filter(properties, { 'name': property.name }).length > 1;
+    let hasSpace = !this.PROPERTY_NAME_PATTERN.test(property.name);
+    let isEmpty = !property.name;
+
+    return !(duplicate || hasSpace || isEmpty);
+  }
+
   /**
    * Editor is valid if all names in definition properties are valid.
    *
@@ -344,10 +359,7 @@ export class EntityEditorComponent {
   get isValid() {
     return this.entity.definition.properties
       .reduce((accumulated, p) => {
-        if (!p.name) {
-          return false;
-        }
-        return accumulated && this.PROPERTY_NAME_PATTERN.test(p.name);
+        return accumulated && this.isPropertyValid(p);
       }, true);
   }
 

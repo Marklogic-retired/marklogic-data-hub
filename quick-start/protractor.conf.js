@@ -65,7 +65,7 @@ exports.config = {
       browserVersion = caps.get('version');
 
       testConfig = {
-        reportTitle: 'Opsdirector-Test Execution Report',
+        reportTitle: 'DHF-Test Execution Report',
         outputPath: './e2e/reports/',
         screenshotPath: 'screenshots',
         testBrowser: browserName,

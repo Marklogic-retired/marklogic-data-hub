@@ -23,7 +23,6 @@ import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.Format;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.client.io.StringHandle;
-import com.marklogic.hub.DataHub;
 import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
@@ -31,6 +30,7 @@ import com.marklogic.hub.flow.*;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.FileUtil;
 import org.custommonkey.xmlunit.XMLUnit;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -60,11 +60,11 @@ public class StreamCollectorTest extends HubTestBase {
     public void setup() throws IOException {
         XMLUnit.setIgnoreWhitespace(true);
 
-        deleteProjectDir();
-
         createProjectDir();
 
-        Path dbDir = projectDir.resolve("user-config").resolve("databases");
+        // it triggers installation of staging db before staging schemas db exists.
+        // a subtle bug. to solve, users must create schemas db hook here too.
+        Path dbDir = projectDir.resolve("src/main/ml-config").resolve("databases");
         dbDir.toFile().mkdirs();
         FileUtil.copy(getResourceStream("stream-collector-test/staging-database.json"), dbDir.resolve("staging-database.json").toFile());
 
@@ -79,9 +79,8 @@ public class StreamCollectorTest extends HubTestBase {
         scaffolding.createFlow(ENTITY, "testharmonize", FlowType.HARMONIZE,
             CodeFormat.XQUERY, DataFormat.XML, false);
 
-        DataHub dh = DataHub.create(getHubConfig());
-        dh.clearUserModules();
-        installUserModules(getHubConfig(), true);
+        clearUserModules();
+        installUserModules(getHubAdminConfig(), true);
         getDataHub().updateIndexes();
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
 
@@ -120,6 +119,11 @@ public class StreamCollectorTest extends HubTestBase {
         assertFalse("Doc install failed: " + installDocError, installDocsFailed);
     }
 
+    @After
+    public void removeProjectDir() {
+        deleteProjectDir();
+    }
+
     @Test
     public void runCollector() {
         // this test relies on a flow that returns DOC_COUNT items from the collector.
@@ -128,7 +132,7 @@ public class StreamCollectorTest extends HubTestBase {
         // having to wait for the entire harmonize flow to finish.
         assertEquals(DOC_COUNT, getStagingDocCount());
         assertEquals(0, getFinalDocCount());
-        FlowManager fm = FlowManager.create(getHubConfig());
+        FlowManager fm = FlowManager.create(getHubFlowRunnerConfig());
         Flow harmonizeFlow = fm.getFlow(ENTITY, "testharmonize",
             FlowType.HARMONIZE);
         HashMap<String, Object> options = new HashMap<>();

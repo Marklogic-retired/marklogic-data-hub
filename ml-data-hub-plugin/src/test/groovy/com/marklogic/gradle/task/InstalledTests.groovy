@@ -20,6 +20,7 @@ package com.marklogic.gradle.task
 import com.marklogic.client.io.DOMHandle
 import com.marklogic.client.io.DocumentMetadataHandle
 import com.marklogic.hub.HubConfig
+import org.apache.commons.io.FileUtils
 import org.gradle.testkit.runner.UnexpectedBuildFailure
 import org.gradle.testkit.runner.UnexpectedBuildSuccess
 import com.marklogic.hub.Tracing;
@@ -37,6 +38,7 @@ class InstalledTests extends BaseTest {
         runTask('hubInit')
         // this will be relatively fast (idempotent) for already-installed hubs
         println(runTask('mlDeploy', '-i').getOutput())
+		clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
     }
 
     def cleanupSpec() {
@@ -177,16 +179,17 @@ class InstalledTests extends BaseTest {
         def entityDir = Paths.get(hubConfig().projectDir).resolve("plugins").resolve("entities").resolve("legacy-test")
         def inputDir = entityDir.resolve("input")
         inputDir.toFile().mkdirs()
-        org.gradle.internal.impldep.org.apache.commons.io.FileUtils.copyDirectory(new File("src/test/resources/legacy-input-flow"), inputDir.resolve("legacy-input-flow").toFile())
+        FileUtils.copyDirectory(new File("src/test/resources/legacy-input-flow"), inputDir.resolve("legacy-input-flow").toFile())
 
         when:
-        def result = runFailTask('mlLoadModules')
+        def result = runFailTask('mlLoadModules', '-i')
 
         then:
         notThrown(UnexpectedBuildSuccess)
-        result.output.contains('The following Flows are legacy flows:')
-        result.output.contains('legacy-test => legacy-input-flow')
-        result.task(":mlLoadModules").outcome == FAILED
+        result.getOutput().contains('The following Flows are legacy flows:')
+        result.getOutput().contains('legacy-test => legacy-input-flow')
+        // it's the hubDeployUserModules task which fails, not mlLoadModules itself
+        result.task(":hubDeployUserModules").getOutcome() == FAILED
     }
 
     def "createHarmonizeFlow with useES flag"() {

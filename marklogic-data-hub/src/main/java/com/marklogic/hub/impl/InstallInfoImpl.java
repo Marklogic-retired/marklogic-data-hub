@@ -20,23 +20,26 @@ import com.marklogic.hub.InstallInfo;
 import com.marklogic.hub.error.InvalidDBOperationError;
 
 public class InstallInfoImpl implements InstallInfo {
-    private boolean stagingAppServerExists = false;
-    private boolean finalAppServerExists = false;
-    private boolean jobAppServerExists = false;
+    public boolean stagingAppServerExists = false;
+    public boolean finalAppServerExists = false;
+    public boolean jobAppServerExists = false;
 
-    private boolean stagingDbExists = false;
-    private boolean finalDbExists = false;
-    private boolean jobDbExists = false;
+    public boolean stagingDbExists = false;
+    public boolean finalDbExists = false;
+    public boolean jobDbExists = false;
 
-    private boolean stagingTripleIndexOn = false;
-    private boolean stagingCollectionLexiconOn = false;
-    private boolean finalTripleIndexOn = false;
-    private boolean finalCollectionLexiconOn = false;
+    public boolean modulesDbExists = false;
+    public boolean stagingSchemasDbExists = false;
+    public boolean stagingTriggersDbExists = false;
 
-    private boolean stagingForestsExist = false;
-    private boolean finalForestsExist = false;
-    private boolean traceForestsExist = false;
-    private boolean jobForestsExist = false;
+    public boolean stagingTripleIndexOn = false;
+    public boolean stagingCollectionLexiconOn = false;
+    public boolean finalTripleIndexOn = false;
+    public boolean finalCollectionLexiconOn = false;
+
+    public boolean stagingForestsExist = false;
+    public boolean finalForestsExist = false;
+    public boolean jobForestsExist = false;
 
     @Override public boolean isPartiallyInstalled() {
         return (
@@ -52,7 +55,10 @@ public class InstallInfoImpl implements InstallInfo {
                 isDbExistent(DatabaseKind.JOB) ||
                 areForestsExistent(DatabaseKind.STAGING) ||
                 areForestsExistent(DatabaseKind.FINAL) ||
-                areForestsExistent(DatabaseKind.JOB)
+                areForestsExistent(DatabaseKind.JOB) ||
+                isDbExistent(DatabaseKind.MODULES) ||
+                isDbExistent(DatabaseKind.STAGING_SCHEMAS) ||
+                isDbExistent(DatabaseKind.STAGING_TRIGGERS)
         );
     }
 
@@ -70,7 +76,10 @@ public class InstallInfoImpl implements InstallInfo {
                 isDbExistent(DatabaseKind.FINAL) &&
                 isTripleIndexOn(DatabaseKind.FINAL) &&
                 isCollectionLexiconOn(DatabaseKind.FINAL) &&
-                isDbExistent(DatabaseKind.JOB)
+                isDbExistent(DatabaseKind.JOB) &&
+                isDbExistent(DatabaseKind.MODULES) &&
+                isDbExistent(DatabaseKind.STAGING_SCHEMAS) &&
+                isDbExistent(DatabaseKind.STAGING_TRIGGERS)
         );
         boolean forestsOk = (
             areForestsExistent(DatabaseKind.STAGING) &&
@@ -101,6 +110,10 @@ public class InstallInfoImpl implements InstallInfo {
             "\t\tStaging: " + (areForestsExistent(DatabaseKind.STAGING) ? "exists" : "MISSING") + "\n" +
             "\t\tFinal:   " + (areForestsExistent(DatabaseKind.FINAL) ? "exists" : "MISSING") + "\n" +
             "\t\tJobs:     " + (areForestsExistent(DatabaseKind.JOB) ? "exists" : "MISSING") + "\n" +
+            "\tCore Hub Databases:\n" +
+            "\t\tModules: " + (isDbExistent(DatabaseKind.MODULES) ? "exists" : "MISSING") + "\n" +
+            "\t\tStaging Schemas: " + (isDbExistent(DatabaseKind.STAGING_SCHEMAS) ? "exists" : "MISSING") + "\n" +
+            "\t\tStaging Triggers: " + (isDbExistent(DatabaseKind.STAGING_TRIGGERS) ? "exists" : "MISSING") + "\n" +
             "\n\n" +
             "OVERALL RESULT: " + (isInstalled() ? "INSTALLED" : "NOT INSTALLED") + "\n";
     }
@@ -132,7 +145,6 @@ public class InstallInfoImpl implements InstallInfo {
             case FINAL:
                 this.finalAppServerExists = exists;
                 break;
-
             case JOB:
                 this.jobAppServerExists = exists;
                 break;
@@ -153,7 +165,15 @@ public class InstallInfoImpl implements InstallInfo {
             case JOB:
                 exists = jobDbExists;
                 break;
-
+            case MODULES:
+                exists = modulesDbExists;
+                break;
+            case STAGING_SCHEMAS:
+                exists = stagingSchemasDbExists;
+                break;
+            case STAGING_TRIGGERS:
+                exists = stagingTriggersDbExists;
+                break;
             default:
                 throw new InvalidDBOperationError(kind, "test database existence");
         }
@@ -168,9 +188,17 @@ public class InstallInfoImpl implements InstallInfo {
             case FINAL:
                 this.finalDbExists = exists;
                 break;
-
             case JOB:
                 this.jobDbExists = exists;
+                break;
+            case MODULES:
+                this.modulesDbExists = exists;
+                break;
+            case STAGING_SCHEMAS:
+                this.stagingSchemasDbExists = exists;
+                break;
+            case STAGING_TRIGGERS:
+                this.stagingTriggersDbExists = exists;
                 break;
             default:
                 throw new InvalidDBOperationError(kind, "set the triple index");

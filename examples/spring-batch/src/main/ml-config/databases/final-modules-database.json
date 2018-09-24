@@ -1,0 +1,5 @@
+{
+  "database-name": "%%mlFinalModulesDbName%%",
+  "collection-lexicon": true,
+  "uri-lexicon": true
+}

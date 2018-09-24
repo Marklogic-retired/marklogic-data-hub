@@ -7,6 +7,7 @@
 # named gradle-prod.properties.
 #
 # ....
+mlDHFVersion=%%mlDHFVersion%%
 mlHost=%%mlHost%%
 
 # Your MarkLogic Username and Password
@@ -84,11 +85,17 @@ mlJobAuth=%%mlJobAuth%%
 mlModulesDbName=%%mlModulesDbName%%
 mlModulesForestsPerHost=%%mlModulesForestsPerHost%%
 
-mlTriggersDbName=%%mlTriggersDbName%%
-mlTriggersForestsPerHost=%%mlTriggersForestsPerHost%%
+mlStagingTriggersDbName=%%mlStagingTriggersDbName%%
+mlStagingTriggersForestsPerHost=%%mlStagingTriggersForestsPerHost%%
 
-mlSchemasDbName=%%mlSchemasDbName%%
-mlSchemasForestsPerHost=%%mlSchemasForestsPerHost%%
+mlStagingSchemasDbName=%%mlStagingSchemasDbName%%
+mlStagingSchemasForestsPerHost=%%mlStagingSchemasForestsPerHost%%
+
+mlFinalTriggersDbName=%%mlFinalTriggersDbName%%
+mlFinalTriggersForestsPerHost=%%mlFinalTriggersForestsPerHost%%
+
+mlFinalSchemasDbName=%%mlFinalSchemasDbName%%
+mlFinalSchemasForestsPerHost=%%mlFinalSchemasForestsPerHost%%
 
 # You can override this to specify an alternate folder for your
 # custom forest info. Defaults to user-config/forests/

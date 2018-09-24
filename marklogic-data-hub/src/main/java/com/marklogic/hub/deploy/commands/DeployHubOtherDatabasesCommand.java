@@ -70,11 +70,6 @@ public class DeployHubOtherDatabasesCommand extends AbstractUndoableCommand {
         File dir = hubConfig.getUserDatabaseDir().toFile();
         if (dir != null && dir.exists()) {
             Set<String> ignore = new HashSet<>();
-            ignore.add("staging-database.json");
-            ignore.add("final-database.json");
-            ignore.add("job-database.json");
-            ignore.add("trace-database.json");
-            ignore.add("modules-database.json");
             ignore.add(DeploySchemasDatabaseCommand.DATABASE_FILENAME);
             ignore.add(DeployTriggersDatabaseCommand.DATABASE_FILENAME);
 

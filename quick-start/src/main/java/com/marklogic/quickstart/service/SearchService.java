@@ -42,11 +42,14 @@ public class SearchService extends SearchableService {
     public SearchService(HubConfig hubConfig) {
         this.hubConfig = hubConfig;
         DatabaseClient stagingClient = hubConfig.newStagingClient();
+        DatabaseClient reverseFlowClient = hubConfig.newReverseFlowClient();
         DatabaseClient finalClient = hubConfig.newFinalClient();
         this.stagingQueryMgr = stagingClient.newQueryManager();
         this.stagingDocMgr = stagingClient.newDocumentManager();
         this.finalQueryMgr = finalClient.newQueryManager();
-        this.finalDocMgr = finalClient.newDocumentManager();
+        // since this call uses a DHF enode transform, it needs the staging modules database
+        // FIXME use one modules database to remove this nonsense.
+        this.finalDocMgr = reverseFlowClient.newDocumentManager();
     }
 
     public StringHandle search(SearchQuery searchQuery) {

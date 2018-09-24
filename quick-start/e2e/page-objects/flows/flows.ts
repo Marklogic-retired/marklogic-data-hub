@@ -204,6 +204,10 @@ export class FlowPage extends AppPage {
     return element(by.cssContainingText('mdl-button', 'Run Import'));
   }
 
+  get mlcpSaveOptionsButton() {
+    return element(by.cssContainingText('mdl-button', 'Save Options'));
+  }
+
   runHarmonizeButton() {
     return element(by.cssContainingText('mdl-button', 'Run Harmonize'));
   }
@@ -232,10 +236,14 @@ export class FlowPage extends AppPage {
   * @dataFolderName: folder name under input directory
   * @inputFileType: aggregates | archive | delimited_text | delimited_json | documents
   *   | forest | rdf | sequencefile
+  * @uriPrefix: document uri prefix to append
   * @uriSuffix: document uri suffix to append
+  * @useInputCompressed: whether using input compressed file, default is false
+  * @compressionCoded: zip | gzip
   */
   runInputFlow(entityName: string, flowName: string, dataFormat: string, 
-      dataFolderName: string, inputFileType: string, uriSuffix: string) {
+      dataFolderName: string, inputFileType: string, uriPrefix: string, 
+      uriSuffix: string, useInputCompressed = false, compressionCodec = '') {
     console.log(`running flow: ${entityName}: ${flowName}: ${dataFormat}`)
     this.getFlow(entityName, flowName, 'INPUT').click();
 
@@ -268,6 +276,10 @@ export class FlowPage extends AppPage {
     browser.actions().mouseMove(this.menuItem(dataFormat)).perform();
     this.menuItem(dataFormat).click();
 
+    // set output uri prefix
+    this.mlcpInput('output_uri_prefix').clear();
+    this.mlcpInput('output_uri_prefix').sendKeys(uriPrefix);
+    
     // set output uri suffix
     this.mlcpInput('output_uri_suffix').clear();
     this.mlcpInput('output_uri_suffix').sendKeys(uriSuffix);
@@ -282,7 +294,19 @@ export class FlowPage extends AppPage {
       browser.wait(EC.elementToBeClickable(this.mlcpSwitch('generate_uri')));
       this.mlcpSwitch('generate_uri').click();
     }
-
+    
+    if(useInputCompressed) {
+      // enable input_compressed
+      browser.wait(EC.elementToBeClickable(this.mlcpSwitch('input_compressed')));
+      this.mlcpSwitch('input_compressed').click();
+      // select compression codec
+      browser.wait(EC.elementToBeClickable(this.mlcpDropdown('input_compression_codec')));
+      this.mlcpDropdown('input_compression_codec').click();
+      browser.wait(EC.elementToBeClickable(this.menuItem(compressionCodec)));
+      this.menuItem(compressionCodec).click();
+    }
+    
+    this.mlcpSaveOptionsButton.click();
     this.mlcpRunButton.click();
     browser.sleep(10000);
     this.jobsTab.click();

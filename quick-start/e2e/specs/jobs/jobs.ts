@@ -1,22 +1,24 @@
-import { browser, ExpectedConditions as EC, element, by} from 'protractor';
+import { browser, ExpectedConditions as EC } from 'protractor';
 import dashboardPage from '../../page-objects/dashboard/dashboard';
 import flowPage from '../../page-objects/flows/flows';
 import jobsPage from '../../page-objects/jobs/jobs';
+import appPage from '../../page-objects/appPage';
 
 export default function() {
     describe('Run Jobs', () => {
-      beforeAll(() => {
+      it ('should go to jobs page', function() {
+        appPage.jobsTab.click();
         jobsPage.isLoaded();
       });
 
       it ('should count the jobs', function() {
         expect(jobsPage.jobResults().getText()).toContain('Showing Results 1 to 6 of 6');
         //verfiy on dashboard page
-        jobsPage.dashboardTab.click();
+        appPage.dashboardTab.click();
         dashboardPage.isLoaded();
         //count jobs and traces
-        expect(dashboardPage.jobCount().getText()).toEqual('2,707');
-        dashboardPage.jobsTab.click();
+        expect(dashboardPage.jobCount().getText()).toEqual('2,258');
+        appPage.jobsTab.click();
         jobsPage.isLoaded();
       });
 
@@ -31,7 +33,6 @@ export default function() {
         browser.wait(EC.visibilityOf(jobsPage.jobResults()));
         jobsPage.facetButton('input').click();
         browser.wait(EC.visibilityOf(jobsPage.jobResults()));
-
         expect(jobsPage.jobResults().getText()).toContain('Showing Results 1 to 5 of 5');
       });
 
@@ -68,9 +69,9 @@ export default function() {
 
       it ('check and delete some jobs', function() {
         //reset the checkboxes by going to another tab
-        jobsPage.flowsTab.click();
+        appPage.flowsTab.click();
         flowPage.isLoaded();
-        flowPage.jobsTab.click();
+        appPage.jobsTab.click();
         jobsPage.isLoaded();
         //verify to delete some jobs
         jobsPage.jobCheckboxByPosition(1).click();
@@ -83,17 +84,12 @@ export default function() {
         browser.wait(EC.visibilityOf(jobsPage.jobResults()));
         expect(jobsPage.jobResults().getText()).toContain('Showing Results 1 to 4 of 4');
         //verify on dashboard page
-        jobsPage.dashboardTab.click();
+        appPage.dashboardTab.click();
         dashboardPage.isLoaded();
         //count jobs and traces
-        expect(dashboardPage.jobCount().getText()).toEqual('1,805');
-        dashboardPage.jobsTab.click();
+        expect(dashboardPage.jobCount().getText()).toEqual('1,356');
+        appPage.jobsTab.click();
         jobsPage.isLoaded();
-      });
-
-      it ('should go to flows page', function() {
-        jobsPage.flowsTab.click();
-        flowPage.isLoaded();
       });
     });
   }

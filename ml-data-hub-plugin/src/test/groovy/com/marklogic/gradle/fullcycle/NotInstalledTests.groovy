@@ -27,6 +27,7 @@ class NotInstalledTests extends BaseTest {
     def setupSpec() {
         createGradleFiles()
         runTask('hubInit')
+        runTask("mlDeploySecurity")
         //runTask('mlUndeploy',  '-Pconfirm=true')
     }
 

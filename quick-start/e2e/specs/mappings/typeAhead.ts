@@ -1,8 +1,5 @@
-import { browser, element, by, ExpectedConditions as EC} from 'protractor';
-import loginPage from '../../page-objects/auth/login';
+import { browser, by, ExpectedConditions as EC} from 'protractor';
 import flowPage from '../../page-objects/flows/flows';
-import tracesPage from '../../page-objects/traces/traces';
-import traceViewerPage from '../../page-objects/traceViewer/traceViewer';
 import appPage from '../../page-objects/appPage';
 import entityPage from '../../page-objects/entities/entities';
 import browsePage from '../../page-objects/browse/browse';
@@ -21,13 +18,13 @@ export default function() {
         browser.sleep(5000);
       });
 
-      it ('should create input flow on TypeAhead entity', function() {  
-        //create TypeAhead input flow
-        flowPage.clickEntityDisclosure('TypeAhead');
-        flowPage.createInputFlow('TypeAhead', 'Load TypeAhead', 'json', 'sjs', false);
-        browser.wait(EC.visibilityOf(flowPage.getFlow('TypeAhead', 'Load TypeAhead', 'INPUT')));
-        expect(flowPage.getFlow('TypeAhead', 'Load TypeAhead', 'INPUT').isDisplayed()).
-          toBe(true, 'Load TypeAhead' + ' is not present');
+      it ('should create input flow on WorldBank entity', function() {  
+        //create WorldBank input flow
+        flowPage.clickEntityDisclosure('WorldBank');
+        flowPage.createInputFlow('WorldBank', 'Load WorldBank', 'json', 'sjs', false);
+        browser.wait(EC.visibilityOf(flowPage.getFlow('WorldBank', 'Load WorldBank', 'INPUT')));
+        expect(flowPage.getFlow('WorldBank', 'Load WorldBank', 'INPUT').isDisplayed()).
+          toBe(true, 'Load WorldBank' + ' is not present');
       });
 
       it ('should redeploy modules', function() {
@@ -35,11 +32,11 @@ export default function() {
         browser.sleep(5000);
       });
 
-      it ('should run Load TypeAhead flow', function() {
-        flowPage.clickEntityDisclosure('TypeAhead');
-        browser.wait(EC.elementToBeClickable(flowPage.getFlow('TypeAhead', 'Load TypeAhead', 'INPUT')));
-        flowPage.runInputFlow('TypeAhead', 'Load TypeAhead', 'json', 'long-props', 'documents', 
-          '?doc=yes&type=foo');
+      it ('should run Load WorldBank flow', function() {
+        flowPage.clickEntityDisclosure('WorldBank');
+        browser.wait(EC.elementToBeClickable(flowPage.getFlow('WorldBank', 'Load WorldBank', 'INPUT')));
+        flowPage.runInputFlow('WorldBank', 'Load WorldBank', 'json', 'worldbank', 'delimited_json', 
+          '/worldbank', '?doc=yes&type=foo', true, 'zip');
       });
 
       it('should verify the loaded data', function() {
@@ -51,40 +48,50 @@ export default function() {
         browsePage.selectDatabase('STAGING').click();
         browser.wait(EC.elementToBeClickable(browsePage.resultsUri()));
         browsePage.searchBox().clear();
-        browsePage.searchBox().sendKeys('thesebillflamethought');
+        browsePage.searchBox().sendKeys('P145160');
         browsePage.searchButton().click();
         browser.wait(EC.elementToBeClickable(browsePage.resultsUri()));
-        expect(browsePage.resultsUri().getText()).toContain('long_props_typeahead');    
+        expect(browsePage.resultsUri().getText()).toContain('/world_bank.zip-0-100');    
       });
 
-      it ('should add properties to TypeAhead entity', function() {
+      it ('should add properties to WorldBank entity', function() {
         appPage.entitiesTab.click();
         entityPage.isLoaded();
         //add properties
-        console.log('add properties to TypeAhead entity');
-        console.log('edit TypeAhead entity');
+        console.log('add properties to WorldBank entity');
+        console.log('edit WorldBank entity');
         let lastProperty = entityPage.lastProperty;
-        entityPage.clickEditEntity('TypeAhead');
+        entityPage.clickEditEntity('WorldBank');
         browser.wait(EC.visibilityOf(entityPage.entityEditor));
         expect(entityPage.entityEditor.isPresent()).toBe(true);
+        // add id property
+        console.log('add id property');
+        entityPage.addProperty.click();
+        entityPage.getPropertyName(lastProperty).sendKeys('id');
+        entityPage.getPropertyType(lastProperty).element(by.cssContainingText('option', 'string')).click();
+        entityPage.getPropertyDescription(lastProperty).sendKeys('id description');
+        entityPage.getPropertyPrimaryKey(lastProperty).click();
+        // add date property
+        console.log('add approvalDate property');
+        entityPage.addProperty.click();
+        entityPage.getPropertyName(lastProperty).sendKeys('approvalDate');
+        entityPage.getPropertyType(lastProperty).element(by.cssContainingText('option', 'dateTime')).click();
+        entityPage.getPropertyDescription(lastProperty).sendKeys('approvalDate description');
+        entityPage.getPropertyRangeIndex(lastProperty).click();
+        // add cost property
+        console.log('add cost property');
+        entityPage.addProperty.click();
+        entityPage.getPropertyName(lastProperty).sendKeys('cost');
+        entityPage.getPropertyType(lastProperty).element(by.cssContainingText('option', 'decimal')).click();
+        entityPage.getPropertyDescription(lastProperty).sendKeys('cost description');
+        entityPage.getPropertyRangeIndex(lastProperty).click();
         // add title property
         console.log('add title property');
         entityPage.addProperty.click();
         entityPage.getPropertyName(lastProperty).sendKeys('title');
         entityPage.getPropertyType(lastProperty).element(by.cssContainingText('option', 'string')).click();
         entityPage.getPropertyDescription(lastProperty).sendKeys('title description');
-        // add date property
-        console.log('add date property');
-        entityPage.addProperty.click();
-        entityPage.getPropertyName(lastProperty).sendKeys('date');
-        entityPage.getPropertyType(lastProperty).element(by.cssContainingText('option', 'date')).click();
-        entityPage.getPropertyDescription(lastProperty).sendKeys('date description');
-        // add count property
-        console.log('add date property');
-        entityPage.addProperty.click();
-        entityPage.getPropertyName(lastProperty).sendKeys('count');
-        entityPage.getPropertyType(lastProperty).element(by.cssContainingText('option', 'decimal')).click();
-        entityPage.getPropertyDescription(lastProperty).sendKeys('count description');
+        entityPage.getPropertyWordLexicon(lastProperty).click();
         entityPage.saveEntity.click();
         browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
         expect(entityPage.confirmDialogYesButton.isPresent()).toBe(true);
@@ -93,66 +100,88 @@ export default function() {
         browser.wait(EC.stalenessOf(entityPage.toast));
       });
 
-      it('should create a mapping for TypeAhead entity', function() {
+      it('should create a mapping for WorldBank entity', function() {
+        // get the document uri - /worldbank/world_bank.zip-0-100
+        appPage.browseDataTab.click()
+        browsePage.isLoaded();
+        browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
+        browsePage.searchBox().clear();
+        browsePage.searchBox().sendKeys('P145160');
+        browsePage.searchButton().click();
+        browser.wait(EC.elementToBeClickable(browsePage.resultsUri()));
+        let sourceDocUri = 
+          browsePage.resultsSpecificUri('/world_bank.zip-0-100?doc=yes&type=foo').getText();
+        // create the map with specific worldbank doc uri  
         appPage.mappingsTab.click();
         mappingsPage.isLoaded();
-        browser.wait(EC.elementToBeClickable(mappingsPage.newMapButton('TypeAhead')));
-        mappingsPage.newMapButton('TypeAhead').click();
+        browser.wait(EC.elementToBeClickable(mappingsPage.newMapButton('WorldBank')));
+        mappingsPage.newMapButton('WorldBank').click();
         browser.wait(EC.elementToBeClickable(mappingsPage.mapNameInputField()));
-        mappingsPage.mapNameInputField().sendKeys('MapTypeAhead');
-        mappingsPage.mapDescriptionInputField().sendKeys('description for TypeAhead map');
+        mappingsPage.mapNameInputField().sendKeys('MapWorldBank');
+        mappingsPage.mapDescriptionInputField().sendKeys('description for WorldBank map');
         mappingsPage.mapCreateButton().click();
-        browser.wait(EC.elementToBeClickable(mappingsPage.entityMapping('MapTypeAhead')));
+        browser.wait(EC.elementToBeClickable(mappingsPage.entityMapping('MapWorldBank')));
         //flicker bug, sleep will be removed once it's fixed
         browser.sleep(8000);
-        browser.wait(EC.elementToBeClickable(mappingsPage.entityMapping('MapTypeAhead')));
-        mappingsPage.entityMapping('MapTypeAhead').click();
+        browser.wait(EC.elementToBeClickable(mappingsPage.entityMapping('MapWorldBank')));
+        mappingsPage.entityMapping('MapWorldBank').click();
         browser.wait(EC.elementToBeClickable(mappingsPage.editMapDescription()));
-        expect(mappingsPage.mapTitle.getText()).toContain('MapTypeAhead');
+        expect(mappingsPage.mapTitle.getText()).toContain('MapWorldBank');
+        // change the source doc URI 
+        mappingsPage.editSourceURI().click()
+        browser.wait(EC.elementToBeClickable(mappingsPage.inputSourceURI()));
+        mappingsPage.inputSourceURI().clear();
+        mappingsPage.inputSourceURI().sendKeys(sourceDocUri);
+        mappingsPage.editSourceURITick().click();
+        browser.wait(EC.elementToBeClickable(mappingsPage.srcPropertyContainer('id')));
         // verify the typeahead on property name
-        mappingsPage.sourcePropertyDropDown('title').click();
-        mappingsPage.sourceTypeAheadInput('title').sendKeys('he');
-        expect(mappingsPage.verifySourcePropertyName('anywhere').isPresent()).toBeTruthy();
-        expect(mappingsPage.verifySourcePropertyName('further').isPresent()).toBeTruthy();
-        expect(mappingsPage.verifySourcePropertyName('leather').isPresent()).toBeTruthy();
-        expect(mappingsPage.verifySourcePropertyName('sheet').isPresent()).toBeTruthy();
-        expect(mappingsPage.verifySourcePropertyName('these').isPresent()).toBeTruthy();
+        mappingsPage.sourcePropertyDropDown('id').click();
+        mappingsPage.sourceTypeAheadInput('id').sendKeys('id');
+        expect(mappingsPage.verifySourcePropertyName('_id').isPresent()).toBeTruthy();
+        expect(mappingsPage.verifySourcePropertyName('id').isPresent()).toBeTruthy();
+        expect(mappingsPage.verifySourcePropertyName('idacommamt').isPresent()).toBeTruthy();
         // verify the list to contain different data types
         expect(mappingsPage.verifySourcePropertyType('string').isPresent()).toBeTruthy();
         expect(mappingsPage.verifySourcePropertyType('number').isPresent()).toBeTruthy();
-        expect(mappingsPage.verifySourcePropertyType('boolean').isPresent()).toBeTruthy();
         // select the source property
-        mappingsPage.mapSourceProperty('anywhere', 'title').click();
+        mappingsPage.mapSourceProperty('id', 'id').click();
         // verify the typeahead on date type
-        mappingsPage.sourcePropertyDropDown('date').click();
-        mappingsPage.sourceTypeAheadInput('date').sendKeys('date');
-        expect(mappingsPage.verifySourcePropertyName('active').isPresent()).toBeTruthy();
-        expect(mappingsPage.verifySourcePropertyName('been').isPresent()).toBeTruthy();
-        expect(mappingsPage.verifySourcePropertyName('birthday').isPresent()).toBeTruthy();
-        expect(mappingsPage.verifySourcePropertyType('date').isPresent()).toBeTruthy();
+        mappingsPage.sourcePropertyDropDown('approvalDate').click();
+        mappingsPage.sourceTypeAheadInput('approvalDate').sendKeys('date');
+        expect(mappingsPage.verifySourcePropertyName('boardapprovaldate').isPresent()).toBeTruthy();
         // select the source property
-        mappingsPage.mapSourceProperty('been', 'date').click();
+        mappingsPage.mapSourceProperty('boardapprovaldate', 'approvalDate').click();
         // verify the typeahead on number type
-        mappingsPage.sourcePropertyDropDown('count').click();
-        mappingsPage.sourceTypeAheadInput('count').sendKeys('buffalo');
-        expect(mappingsPage.verifySourcePropertyName('buffalo').isPresent()).toBeTruthy();
+        mappingsPage.sourcePropertyDropDown('cost').click();
+        mappingsPage.sourceTypeAheadInput('cost').sendKeys('number');
+        expect(mappingsPage.verifySourcePropertyName('grantamt').isPresent()).toBeTruthy();
+        expect(mappingsPage.verifySourcePropertyName('totalamt').isPresent()).toBeTruthy();
+        expect(mappingsPage.verifySourcePropertyName('lendprojectcost').isPresent()).toBeTruthy();
         expect(mappingsPage.verifySourcePropertyType('number').isPresent()).toBeTruthy();
-        expect(mappingsPage.verifySourcePropertyValue('262418957').isPresent()).toBeTruthy();
+        expect(mappingsPage.verifySourcePropertyValue('60000000').isPresent()).toBeTruthy();
         // select the source property
-        mappingsPage.mapSourceProperty('buffalo', 'count').click();
+        mappingsPage.mapSourceProperty('lendprojectcost', 'cost').click();
+        // verify the typeahead on string type
+        mappingsPage.sourcePropertyDropDown('title').click();
+        mappingsPage.sourceTypeAheadInput('title').sendKeys('instr');
+        expect(mappingsPage.verifySourcePropertyName('lendinginstr').isPresent()).toBeTruthy();
+        expect(mappingsPage.verifySourcePropertyName('lendinginstrtype').isPresent()).toBeTruthy();
+        expect(mappingsPage.verifySourcePropertyType('string').isPresent()).toBeTruthy();
+        // select the source property
+        mappingsPage.mapSourceProperty('lendinginstr', 'title').click();
         // save the map
         browser.wait(EC.elementToBeClickable(mappingsPage.saveMapButton()));
         mappingsPage.saveMapButton().click();
-        browser.wait(EC.elementToBeClickable(mappingsPage.entityMapping('MapTypeAhead')));
+        browser.wait(EC.elementToBeClickable(mappingsPage.entityMapping('MapWorldBank')));
         //flicker bug, sleep will be removed once it's fixed
         browser.sleep(8000);
-        browser.wait(EC.elementToBeClickable(mappingsPage.entityMapping('MapTypeAhead')));
-        expect(mappingsPage.verifySourcePropertyName('anywhere').isPresent()).toBeTruthy();
-        expect(mappingsPage.verifySourcePropertyName('been').isPresent()).toBeTruthy();
-        expect(mappingsPage.verifySourcePropertyName('buffalo').isPresent()).toBeTruthy();
+        browser.wait(EC.elementToBeClickable(mappingsPage.entityMapping('MapWorldBank')));
+        expect(mappingsPage.verifySourcePropertyName('id').isPresent()).toBeTruthy();
+        expect(mappingsPage.verifySourcePropertyName('boardapprovaldate').isPresent()).toBeTruthy();
+        expect(mappingsPage.verifySourcePropertyName('lendprojectcost').isPresent()).toBeTruthy();
         // verify that unselected sources are not saved
-        expect(mappingsPage.verifySourcePropertyName('further').isPresent()).toBeFalsy();
-        expect(mappingsPage.verifySourcePropertyName('active').isPresent()).toBeFalsy();
+        expect(mappingsPage.verifySourcePropertyName('_id').isPresent()).toBeFalsy();
+        expect(mappingsPage.verifySourcePropertyName('grantamt').isPresent()).toBeFalsy();
       });
 
       it('should go to flows tab', function() {
@@ -160,12 +189,12 @@ export default function() {
         flowPage.isLoaded();
       });
 
-      it('should create Harmonize TypeAhead flow', function() {
-        flowPage.clickEntityDisclosure('TypeAhead');
-        flowPage.createHarmonizeFlow('TypeAhead', 'Harmonize TypeAhead', 'json', 'sjs', true, 'MapTypeAhead');
-        browser.wait(EC.visibilityOf(flowPage.getFlow('TypeAhead', 'Harmonize TypeAhead', 'HARMONIZE')));
-        expect(flowPage.getFlow('TypeAhead', 'Harmonize TypeAhead', 'HARMONIZE').isDisplayed()).
-          toBe(true, 'Harmonize TypeAhead' + ' is not present');
+      it('should create Harmonize WorldBank flow', function() {
+        flowPage.clickEntityDisclosure('WorldBank');
+        flowPage.createHarmonizeFlow('WorldBank', 'Harmonize WorldBank', 'json', 'sjs', true, 'MapWorldBank');
+        browser.wait(EC.visibilityOf(flowPage.getFlow('WorldBank', 'Harmonize WorldBank', 'HARMONIZE')));
+        expect(flowPage.getFlow('WorldBank', 'Harmonize WorldBank', 'HARMONIZE').isDisplayed()).
+          toBe(true, 'Harmonize WorldBank' + ' is not present');
       });
 
       it ('should redeploy modules', function() {
@@ -173,11 +202,11 @@ export default function() {
         browser.sleep(5000);
       });
       
-      it('should run Harmonize TypeAhead flow with mapping', function() {
-        flowPage.clickEntityDisclosure('TypeAhead');
-        browser.wait(EC.visibilityOf(flowPage.getFlow('TypeAhead', 'Harmonize TypeAhead', 'HARMONIZE')));
-        expect(flowPage.getFlow('TypeAhead', 'Harmonize TypeAhead', 'HARMONIZE').isPresent()).toBe(true);
-        flowPage.getFlow('TypeAhead', 'Harmonize TypeAhead', 'HARMONIZE').click();
+      it('should run Harmonize WorldBank flow with mapping', function() {
+        flowPage.clickEntityDisclosure('WorldBank');
+        browser.wait(EC.visibilityOf(flowPage.getFlow('WorldBank', 'Harmonize WorldBank', 'HARMONIZE')));
+        expect(flowPage.getFlow('WorldBank', 'Harmonize WorldBank', 'HARMONIZE').isPresent()).toBe(true);
+        flowPage.getFlow('WorldBank', 'Harmonize WorldBank', 'HARMONIZE').click();
         browser.wait(EC.visibilityOf(flowPage.runHarmonizeButton()));
         expect(flowPage.runHarmonizeButton().isPresent()).toBe(true);
         flowPage.runHarmonizeButton().click();
@@ -192,20 +221,18 @@ export default function() {
         browsePage.selectDatabase('FINAL').click();
         browser.wait(EC.elementToBeClickable(browsePage.resultsUri()));
         browsePage.searchBox().clear();
-        browsePage.searchBox().sendKeys('passage married child');
+        browsePage.searchBox().sendKeys('P145160');
         browsePage.searchButton().click();
         browser.wait(EC.elementToBeClickable(browsePage.resultsUri()));
         expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 1 of 1');
-        expect(browsePage.resultsUri().getText()).toContain('long_props_typeahead');
+        expect(browsePage.resultsUri().getText()).toContain('/world_bank.zip-0-100');
         browsePage.resultsUri().click();
         viewerPage.isLoaded();
-        expect(viewerPage.searchResultUri().getText()).toContain('long_props_typeahead');
-        expect(viewerPage.verifyHarmonizedProperty('title', 'passage married child').isPresent()).toBeTruthy();
-      });
-
-      it ('should go to flows page', function() {
-        appPage.flowsTab.click();
-        flowPage.isLoaded();
+        expect(viewerPage.searchResultUri().getText()).toContain('/world_bank.zip-0-100');
+        expect(viewerPage.verifyHarmonizedProperty('id', 'P145160').isPresent()).toBeTruthy();
+        expect(viewerPage.verifyHarmonizedProperty('approvalDate', '2013-06-28T00:00:00Z').isPresent()).toBeTruthy();
+        expect(viewerPage.verifyHarmonizedPropertyAtomicValue('cost', 60000000).isPresent()).toBeTruthy();
+        expect(viewerPage.verifyHarmonizedProperty('title', 'Adaptable Program Loan').isPresent()).toBeTruthy();
       });
     });
   }

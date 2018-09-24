@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Http, Response } from '@angular/http';
+import {Http, Response, Headers, RequestOptions} from '@angular/http';
 import { HubSettings } from '../environment/hub-settings.model';
 
 @Injectable()
@@ -38,7 +38,9 @@ export class ProjectService {
   }
 
   login(projectId: string, environment: string, loginInfo: any) {
-    let resp = this.http.post(`/api/login`, loginInfo).share();
+    let headers = new Headers({ 'Content-Type': 'application/json' });
+    let options = new RequestOptions({ headers: headers });
+    let resp = this.http.post(`/api/login`, loginInfo, options).share();
     resp.subscribe(() => {
       this.authenticated = true;
     },

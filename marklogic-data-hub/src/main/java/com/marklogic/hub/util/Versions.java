@@ -37,6 +37,10 @@ public class Versions extends ResourceManager {
         this.stagingClient.init(NAME, this);
     }
 
+    public String getDHFVersion() {
+        return hubConfig.getDHFVersion();
+    }
+
     public String getHubVersion() {
         try {
             ResourceServices.ServiceResultIterator resultItr = this.getServices().get(new RequestParameters());
@@ -54,9 +58,8 @@ public class Versions extends ResourceManager {
     }
 
     public String getMarkLogicVersion() {
-        // get a client for eval on port 8000 with no database
-        DatabaseClient noDbClient = hubConfig.getAppConfig().newAppServicesDatabaseClient(null);
-        ServerEvaluationCall eval = noDbClient.newServerEval();
+        // this call specifically needs to access marklogic without a known database
+        ServerEvaluationCall eval = hubConfig.getStagingAppConfig().newAppServicesDatabaseClient(null).newServerEval();
         String xqy = "xdmp:version()";
         EvalResultIterator result = eval.xquery(xqy).eval();
         if (result.hasNext()) {

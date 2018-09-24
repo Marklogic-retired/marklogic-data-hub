@@ -1,16 +1,16 @@
-import { protractor , browser, element, by, By, $, $$, ExpectedConditions as EC} from 'protractor';
-import { pages } from '../../page-objects/page';
+import {  browser, by, ExpectedConditions as EC} from 'protractor';
 import loginPage from '../../page-objects/auth/login';
 import dashboardPage from '../../page-objects/dashboard/dashboard';
 import entityPage from '../../page-objects/entities/entities';
 import flowPage from '../../page-objects/flows/flows';
-import {assertNotNull} from "@angular/compiler/src/output/output_ast";
 import appPage from '../../page-objects/appPage';
+import settingsPage from '../../page-objects/settings/settings';
+const fs = require('fs-extra');
 
 const selectCardinalityOneToOneOption = 'select option:nth-child(1)';
 const selectCardinalityOneToManyOption = 'select option:nth-child(2)';
 
-export default function() {
+export default function(tmpDir) {
   describe('create entities', () => {
     beforeAll(() => {
       loginPage.isLoaded();
@@ -79,7 +79,7 @@ export default function() {
     });
 
     it ('should go to the entities page', function() {
-      dashboardPage.entitiesTab.click();
+      appPage.entitiesTab.click();
       entityPage.isLoaded();
     });
 
@@ -148,6 +148,14 @@ export default function() {
       entityPage.getPropertyType(lastProperty).element(by.cssContainingText('option', 'decimal')).click();
       entityPage.getPropertyDescription(lastProperty).sendKeys('price description');
       entityPage.getPropertyRangeIndex(lastProperty).click();
+      // add titlePii property
+      console.log('add titlePii property');
+      entityPage.addProperty.click();
+      lastProperty = entityPage.lastProperty;
+      entityPage.getPropertyName(lastProperty).sendKeys('titlePii');
+      entityPage.getPropertyType(lastProperty).element(by.cssContainingText('option', 'string')).click();
+      entityPage.getPropertyDescription(lastProperty).sendKeys('titlePii description');
+      entityPage.getPropertyPii(lastProperty).click();
       entityPage.saveEntity.click();
       browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
       expect(entityPage.confirmDialogYesButton.isPresent()).toBe(true);
@@ -188,11 +196,6 @@ export default function() {
       entityPage.getPropertyCardinality(lastProperty).element(by.css(selectCardinalityOneToManyOption)).click();
       entityPage.getPropertyDescription(lastProperty).sendKeys('products description');
       entityPage.getPropertyWordLexicon(lastProperty).click();
-      // add a duplicate price property, negative test
-      entityPage.addProperty.click();
-      lastProperty = entityPage.lastProperty;
-      entityPage.getPropertyName(lastProperty).sendKeys('price');
-      entityPage.getPropertyType(lastProperty).element(by.cssContainingText('option', 'decimal')).click();
       entityPage.saveEntity.click();
       browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
       expect(entityPage.confirmDialogYesButton.isPresent()).toBe(true);
@@ -216,6 +219,11 @@ export default function() {
       expect(entityPage.getPropertyType(priceProperty).getAttribute('value')).toContain('decimal');
       expect(entityPage.getPropertyDescription(priceProperty).getAttribute('value')).toEqual('price description');
       expect(entityPage.hasClass(entityPage.getPropertyRangeIndex(priceProperty), 'active')).toBe(true);
+      let titlePiiProperty = entityPage.getPropertyByPosition(3);
+      expect(entityPage.getPropertyName(titlePiiProperty).getAttribute('value')).toEqual('titlePii');
+      expect(entityPage.getPropertyType(titlePiiProperty).getAttribute('value')).toContain('string');
+      expect(entityPage.getPropertyDescription(titlePiiProperty).getAttribute('value')).toEqual('titlePii description');
+      expect(entityPage.hasClass(entityPage.getPropertyPii(titlePiiProperty), 'active')).toBe(true);
       entityPage.cancelEntity.click();
       browser.wait(EC.invisibilityOf(entityPage.entityEditor));
     });
@@ -281,9 +289,10 @@ export default function() {
       entityPage.getPropertyCheckBox(removeProp1).click();
       entityPage.getPropertyCheckBox(removeProp2).click();
       entityPage.deleteProperty.click();
-      browser.wait(EC.visibilityOf(entityPage.confirmDialogYesButton));
+      browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
       entityPage.confirmDialogYesButton.click();
       browser.sleep(3000);
+      browser.wait(EC.elementToBeClickable(entityPage.saveEntity));
       entityPage.saveEntity.click();
       browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
       expect(entityPage.confirmDialogYesButton.isPresent()).toBe(true);
@@ -365,12 +374,12 @@ export default function() {
       let lastProperty = entityPage.lastProperty;
       expect(lastProperty.isPresent() && lastProperty.isDisplayed());
       //populate the fields for name, range index, type, and description
-      entityPage.getPropertyName(lastProperty).sendKeys("test");
+      entityPage.getPropertyName(lastProperty).sendKeys("sku");
       entityPage.getPropertyRangeIndex(lastProperty).click();
       entityPage.getPropertyType(lastProperty).element(by.cssContainingText('option', 'string')).click();
       entityPage.getPropertyDescription(lastProperty).sendKeys("this is a test property");
       //let's see if our values hold!
-      expect(entityPage.getPropertyName(lastProperty).getAttribute('value')).toEqual("test");
+      expect(entityPage.getPropertyName(lastProperty).getAttribute('value')).toEqual("sku");
       expect(entityPage.hasClass(entityPage.getPropertyRangeIndex(lastProperty), 'active')).toBe(true);
       expect(entityPage.getPropertyType(lastProperty).getAttribute('value')).toEqual("24: string");
       expect(entityPage.getPropertyDescription(lastProperty).getAttribute('value')).toEqual("this is a test property");
@@ -402,10 +411,11 @@ export default function() {
       expect(lastProperty.isPresent() && lastProperty.isDisplayed());
       entityPage.getPropertyCheckBox(lastProperty).click();
       entityPage.deleteProperty.click();
-      browser.wait(EC.visibilityOf(entityPage.confirmDialogYesButton));
+      browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
       expect(entityPage.confirmDialogYesButton.isPresent()).toBe(true);
       entityPage.confirmDialogYesButton.click();
       browser.sleep(3000);
+      browser.wait(EC.elementToBeClickable(entityPage.saveEntity));
       entityPage.getPropertiesCount().then(function(props){expect(props).toEqual(1)});
       //let's save it now that it's populated
       entityPage.saveEntity.click();
@@ -426,7 +436,7 @@ export default function() {
       expect(lastProperty.isPresent() && lastProperty.isDisplayed());
       //now let's compare them with our original tests to make sure the values are equal
       //let's see if our values hold!
-      expect(entityPage.getPropertyName(lastProperty).getAttribute('value')).toEqual("test");
+      expect(entityPage.getPropertyName(lastProperty).getAttribute('value')).toEqual("sku");
       expect(entityPage.hasClass(entityPage.getPropertyRangeIndex(lastProperty), 'active')).toBe(true);
       expect(entityPage.getPropertyType(lastProperty).getAttribute('value')).toEqual("24: string");
       expect(entityPage.getPropertyDescription(lastProperty).getAttribute('value')).toEqual("this is a test property");
@@ -535,7 +545,25 @@ export default function() {
       entityPage.getPropertyName(lastProperty).sendKeys('test white space');
       // verify the error message on white space in property name
       let errorMessage = entityPage.errorWhiteSpaceMessage;
-      expect(errorMessage.getText()).toBe('Property names are required and whitespaces are not allowed');
+      expect(errorMessage.getText()).toBe('Property names are required, must be unique and whitespaces are not allowed');
+      // verify if the Save button is disabled on white space
+      expect(entityPage.saveEntity.isEnabled()).toBe(false);
+      entityPage.cancelEntity.click();
+      browser.wait(EC.invisibilityOf(entityPage.entityEditor));
+    });
+
+    it ('should not be able to create duplicate properties', function() {
+      entityPage.clickEditEntity('PIIEntity');
+      browser.wait(EC.visibilityOf(entityPage.entityEditor));
+      expect(entityPage.entityEditor.isPresent()).toBe(true);
+      // add test property to verify duplicate property
+      console.log('add duplicate property');
+      entityPage.addProperty.click();
+      let lastProperty = entityPage.lastProperty;
+      entityPage.getPropertyName(lastProperty).sendKeys('pii_test');
+      // verify the error message on white space in property name
+      let errorMessage = entityPage.errorWhiteSpaceMessage;
+      expect(errorMessage.getText()).toBe('Property names are required, must be unique and whitespaces are not allowed');
       // verify if the Save button is disabled on white space
       expect(entityPage.saveEntity.isEnabled()).toBe(false);
       entityPage.cancelEntity.click();
@@ -550,6 +578,11 @@ export default function() {
       loginPage.clickNext('EnvironmentTab');
       browser.wait(EC.elementToBeClickable(loginPage.loginTab));
       loginPage.login();
+      browser.wait(EC.elementToBeClickable(appPage.odhLogo));
+    });
+
+    it ('should go to the entity page', function() {
+      appPage.entitiesTab.click();
       entityPage.isLoaded();
     });
 
@@ -571,75 +604,162 @@ export default function() {
       browser.wait(EC.invisibilityOf(entityPage.entityEditor));
     });
 
-    it ('should create a new entity for TypeAhead', function() {
+    it ('should create a new entity for WorldBank', function() {
       entityPage.toolsButton.click();
       entityPage.newEntityButton.click();
       expect(entityPage.entityEditor.isPresent()).toBe(true);
-      entityPage.entityTitle.sendKeys('TypeAhead');
+      entityPage.entityTitle.sendKeys('WorldBank');
       entityPage.saveEntity.click();
       browser.wait(EC.elementToBeClickable(entityPage.confirmDialogNoButton));
       expect(entityPage.confirmDialogNoButton.isPresent()).toBe(true);
       entityPage.confirmDialogNoButton.click();
-      browser.wait(EC.visibilityOf(entityPage.getEntityBox('TypeAhead')));
-      expect(entityPage.getEntityBox('TypeAhead').isDisplayed()).toBe(true);
+      browser.wait(EC.visibilityOf(entityPage.getEntityBox('WorldBank')));
+      expect(entityPage.getEntityBox('WorldBank').isDisplayed()).toBe(true);
       entityPage.toolsButton.click();
-      // move entity TypeAhead
-      entityPage.selectEntity('TypeAhead');
-      browser.actions().dragAndDrop(entityPage.entityBox('TypeAhead'), {x: 750, y: 750}).perform();
+      // move entity WorldBank
+      entityPage.selectEntity('WorldBank');
+      browser.actions().dragAndDrop(entityPage.entityBox('WorldBank'), {x: 750, y: 750}).perform();
+    });
+
+    it ('should copy attachment-pii.json file to protect title on attachment', function() {
+      //copy attachment-pii.json
+      console.log('copy attachment-pii.json');
+      let attachmentPiiFilePath = 'e2e/qa-data/protected-paths/attachment-pii.json';
+      fs.copy(attachmentPiiFilePath, tmpDir + '/src/main/ml-config/security/protected-paths/attachment-pii.json');
+    });
+
+    it ('should redeploy hub to make the pii takes effect', function() {
+      appPage.settingsTab.click();
+      settingsPage.isLoaded();
+      settingsPage.redeployButton.click();
+      browser.wait(EC.elementToBeClickable(settingsPage.redeployConfirmation));
+      settingsPage.redeployConfirmation.click();
+      browser.wait(EC.visibilityOf(settingsPage.redeployStatus));
+      expect(settingsPage.redeployStatus.isDisplayed()).toBe(true);
+      browser.sleep(120000);
+      browser.wait(EC.invisibilityOf(settingsPage.redeployStatus));
     });
 
     it ('should go to the flow page', function() {
-      entityPage.flowsTab.click();
+      appPage.flowsTab.click();
       flowPage.isLoaded();
     });
 
     it ('should redeploy modules', function() {
       flowPage.redeployButton.click();
       browser.sleep(5000);
+      appPage.dashboardTab.click();
+      dashboardPage.isLoaded();
+      appPage.flowsTab.click();
+      flowPage.isLoaded();
     });
 
     it ('should open the Entity disclosure', function() {
       flowPage.clickEntityDisclosure('TestEntity');
-    });
-    
-    ['sjs', 'xqy'].forEach((codeFormat) => {
-      ['xml', 'json'].forEach((dataFormat) => {
-        let flowName = `${codeFormat} ${dataFormat} INPUT`;
-        it (`should create a ${flowName} input flow`, function() {
-          flowPage.createInputFlow('TestEntity', flowName, dataFormat, codeFormat, false);
-          browser.wait(EC.visibilityOf(flowPage.getFlow('TestEntity', flowName, 'INPUT')));
-          expect(flowPage.getFlow('TestEntity', flowName, 'INPUT').isDisplayed()).toBe(true, flowName + ' is not present');
-        });
-      });
+      browser.wait(EC.elementToBeClickable(flowPage.inputFlowButton('TestEntity')));
     });
 
-    ['sjs', 'xqy'].forEach((codeFormat) => {
-      ['xml', 'json'].forEach((dataFormat) => {
-        let flowName = `${codeFormat} ${dataFormat} HARMONIZE`;
-        it (`should create a ${flowName} harmonize flow`, function() {
-          flowPage.createHarmonizeFlow('TestEntity', flowName, dataFormat, codeFormat, true);
-          browser.wait(EC.visibilityOf(flowPage.getFlow('TestEntity', flowName, 'HARMONIZE')));
-          expect(flowPage.getFlow('TestEntity', flowName, 'HARMONIZE').isDisplayed()).toBe(true, flowName + ' is not present');
-        });
-      });
+    it('should create sjs xml input flow with ES', function() {
+      let codeFormat = 'sjs';
+      let dataFormat = 'xml';
+      let flowName = `${codeFormat} ${dataFormat} INPUT`;
+      flowPage.createInputFlow('TestEntity', flowName, dataFormat, codeFormat, true);
+      browser.wait(EC.elementToBeClickable(flowPage.getFlow('TestEntity', flowName, 'INPUT')));
+      expect(flowPage.getFlow('TestEntity', flowName, 'INPUT').isDisplayed()).toBe(true, flowName + ' is not present');
+      browser.sleep(3000);
+    });
+
+    it('should create sjs json input flow', function() {
+      let codeFormat = 'sjs';
+      let dataFormat = 'json';
+      let flowName = `${codeFormat} ${dataFormat} INPUT`;
+      flowPage.createInputFlow('TestEntity', flowName, dataFormat, codeFormat, false);
+      browser.wait(EC.elementToBeClickable(flowPage.getFlow('TestEntity', flowName, 'INPUT')));
+      expect(flowPage.getFlow('TestEntity', flowName, 'INPUT').isDisplayed()).toBe(true, flowName + ' is not present');
+      browser.sleep(3000);
+    });
+
+    it('should create xqy xml input flow', function() {
+      let codeFormat = 'xqy';
+      let dataFormat = 'xml';
+      let flowName = `${codeFormat} ${dataFormat} INPUT`;
+      flowPage.createInputFlow('TestEntity', flowName, dataFormat, codeFormat, false);
+      browser.wait(EC.elementToBeClickable(flowPage.getFlow('TestEntity', flowName, 'INPUT')));
+      expect(flowPage.getFlow('TestEntity', flowName, 'INPUT').isDisplayed()).toBe(true, flowName + ' is not present');
+      browser.sleep(3000);
+    });
+
+    it('should create xqy json input flow with ES', function() {
+      let codeFormat = 'xqy';
+      let dataFormat = 'json';
+      let flowName = `${codeFormat} ${dataFormat} INPUT`;
+      flowPage.createInputFlow('TestEntity', flowName, dataFormat, codeFormat, true);
+      browser.wait(EC.elementToBeClickable(flowPage.getFlow('TestEntity', flowName, 'INPUT')));
+      expect(flowPage.getFlow('TestEntity', flowName, 'INPUT').isDisplayed()).toBe(true, flowName + ' is not present');
+      browser.sleep(3000);
+    });
+
+    it('should create sjs xml harmonize flow', function() {
+      let codeFormat = 'sjs';
+      let dataFormat = 'xml';
+      let flowName = `${codeFormat} ${dataFormat} HARMONIZE`;
+      flowPage.createHarmonizeFlow('TestEntity', flowName, dataFormat, codeFormat, true);
+      browser.wait(EC.elementToBeClickable(flowPage.getFlow('TestEntity', flowName, 'HARMONIZE')));
+      expect(flowPage.getFlow('TestEntity', flowName, 'HARMONIZE').isDisplayed()).toBe(true, flowName + ' is not present');
+      browser.sleep(3000);
+    });
+
+    it('should create sjs json harmonize flow', function() {
+      let codeFormat = 'sjs';
+      let dataFormat = 'json';
+      let flowName = `${codeFormat} ${dataFormat} HARMONIZE`;
+      flowPage.createHarmonizeFlow('TestEntity', flowName, dataFormat, codeFormat, true);
+      browser.wait(EC.elementToBeClickable(flowPage.getFlow('TestEntity', flowName, 'HARMONIZE')));
+      expect(flowPage.getFlow('TestEntity', flowName, 'HARMONIZE').isDisplayed()).toBe(true, flowName + ' is not present');
+      browser.sleep(3000);
+    });
+
+    it('should create xqy xml harmonize flow', function() {
+      let codeFormat = 'xqy';
+      let dataFormat = 'xml';
+      let flowName = `${codeFormat} ${dataFormat} HARMONIZE`;
+      flowPage.createHarmonizeFlow('TestEntity', flowName, dataFormat, codeFormat, true);
+      browser.wait(EC.elementToBeClickable(flowPage.getFlow('TestEntity', flowName, 'HARMONIZE')));
+      expect(flowPage.getFlow('TestEntity', flowName, 'HARMONIZE').isDisplayed()).toBe(true, flowName + ' is not present');
+      browser.sleep(3000);
+    });
+
+    it('should create xqy json harmonize flow', function() {
+      let codeFormat = 'xqy';
+      let dataFormat = 'json';
+      let flowName = `${codeFormat} ${dataFormat} HARMONIZE`;
+      flowPage.createHarmonizeFlow('TestEntity', flowName, dataFormat, codeFormat, true);
+      browser.wait(EC.elementToBeClickable(flowPage.getFlow('TestEntity', flowName, 'HARMONIZE')));
+      expect(flowPage.getFlow('TestEntity', flowName, 'HARMONIZE').isDisplayed()).toBe(true, flowName + ' is not present');
+      browser.sleep(3000);
     });
     
     it ('should open Product entity disclosure', function() {
       flowPage.clickEntityDisclosure('Product');
     });
 
-    it ('should create input and harmonize flows on Product entity', function() {
+    it ('should create input flow on Product entity', function() {
       //create Product input flow
       flowPage.createInputFlow('Product', 'Load Products', 'json', 'sjs', false);
-      browser.wait(EC.visibilityOf(flowPage.getFlow('Product', 'Load Products', 'INPUT')));
+      browser.wait(EC.elementToBeClickable(flowPage.getFlow('Product', 'Load Products', 'INPUT')));
       expect(flowPage.getFlow('Product', 'Load Products', 'INPUT').isDisplayed()).toBe(true, 'Load Products' + ' is not present');
+      browser.sleep(3000);
+    });
+
+    it ('should create harmonize flow on Product entity', function() {
       //create Product harmonize flow
       flowPage.createHarmonizeFlow('Product', 'Harmonize Products', 'json', 'sjs', true);
-      browser.wait(EC.visibilityOf(flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE')));
+      browser.wait(EC.elementToBeClickable(flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE')));
       expect(flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE').isDisplayed()).toBe(true, 'Harmonize Products' + ' is not present');
+      browser.sleep(3000);
       //add flow options
       flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE').click();
-      browser.wait(EC.visibilityOf(flowPage.tabs));
+      browser.wait(EC.elementToBeClickable(flowPage.tabs));
       console.log('clicking + button to add options')
       flowPage.addFlowOptionsButton().click();
       flowPage.addFlowOptionsButton().click();
@@ -652,8 +772,12 @@ export default function() {
     it ('should retain flow options when moving around', function() {
       //move to other tab and go back to flows tab
       console.log('going to the other tab and back');
-      flowPage.entitiesTab.click();
-      entityPage.flowsTab.click();
+      appPage.entitiesTab.click();
+      entityPage.isLoaded();
+      appPage.flowsTab.click();
+      flowPage.isLoaded();
+      flowPage.clickEntityDisclosure('Product');
+      browser.wait(EC.visibilityOf(flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE')));
       //verify the options are retained
       console.log('verify the flow options');
       flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE').click();
@@ -696,8 +820,10 @@ export default function() {
       flowPage.removeFlowOptionsByPositionButton(4).click();
       //verify the removed option
       console.log('verify the removed option');
-      flowPage.entitiesTab.click();
-      entityPage.flowsTab.click();
+      appPage.entitiesTab.click();
+      entityPage.isLoaded();
+      appPage.flowsTab.click();
+      flowPage.isLoaded();
       flowPage.clickEntityDisclosure('Product');
       browser.wait(EC.visibilityOf(flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE')));
       expect(flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE').isPresent()).toBe(true);

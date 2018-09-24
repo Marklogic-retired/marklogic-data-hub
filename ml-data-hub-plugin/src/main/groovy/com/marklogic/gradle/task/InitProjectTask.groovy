@@ -35,8 +35,8 @@ class InitProjectTask extends HubTask {
         println("     gradle mlDeploy\t# this will bootstrap your application")
         println("     gradle mlLoadModules\t# this will load your custom plugins into MarkLogic\n")
         println(" - Full list of gradle tasks:")
-        println("     https://github.com/marklogic/marklogic-data-hub/wiki/Gradle-Tasks\n")
+        println("     https://marklogic.github.io/marklogic-data-hub/docs/gradle-tasks\n")
         println(" - Curious about the project structure?")
-        println("     Look here: https://github.com/marklogic/marklogic-data-hub/wiki/Project-Directory-Structure")
+        println("     Look here: https://marklogic.github.io/marklogic-data-hub/understanding/project-structure")
     }
 }

@@ -1,6 +1,8 @@
 package com.marklogic.hub;
 
 import com.google.gson.*;
+import com.marklogic.appdeployer.AppConfig;
+import com.marklogic.appdeployer.ConfigDir;
 import com.marklogic.appdeployer.command.Command;
 import com.marklogic.appdeployer.command.security.DeployProtectedPathsCommand;
 import com.marklogic.appdeployer.command.security.DeployQueryRolesetsCommand;
@@ -15,6 +17,7 @@ import com.marklogic.client.datamovement.WriteBatcher;
 import com.marklogic.client.document.ServerTransform;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.FileHandle;
+import com.marklogic.hub.deploy.commands.*;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.FlowRunner;
 import com.marklogic.hub.flow.FlowType;
@@ -33,7 +36,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
-import org.skyscreamer.jsonassert.JSONAssert;
 
 import java.io.*;
 import java.net.URISyntaxException;
@@ -80,16 +82,16 @@ public class PiiE2E extends HubTestBase {
     @BeforeEach
     public void setup() {
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME,  HubConfig.DEFAULT_FINAL_NAME);
-        installUserModules(getHubConfig(), true);
         installHubModules();
+        installUserModules(getHubAdminConfig(), true);
         // Hardcoding to "digest" auth for now
         // needs to be final db
-        clerkClient = DatabaseClientFactory.newClient(finalClient.getHost(),stagingPort, HubConfig.DEFAULT_FINAL_NAME, "SydneyGardner", "x", Authentication.DIGEST);
-        officerClient = DatabaseClientFactory.newClient(finalClient.getHost(),stagingPort, HubConfig.DEFAULT_FINAL_NAME, "GiannaEmerson", "x" , Authentication.DIGEST);
+        clerkClient = DatabaseClientFactory.newClient(finalClient.getHost(),finalPort, HubConfig.DEFAULT_FINAL_NAME, "SydneyGardner", "x", Authentication.DIGEST);
+        officerClient = DatabaseClientFactory.newClient(finalClient.getHost(),finalPort, HubConfig.DEFAULT_FINAL_NAME, "GiannaEmerson", "x" , Authentication.DIGEST);
 
         try {
             runInputFLow();
-            runHarmonizeFlow("harmonizer", stagingClient, HubConfig.DEFAULT_FINAL_NAME);
+            runHarmonizeFlow("harmonizer", flowRunnerClient, HubConfig.DEFAULT_FINAL_NAME);
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }
@@ -160,8 +162,8 @@ public class PiiE2E extends HubTestBase {
         });
 
         // save pii, install user modules and deploy security
-        installUserModules(getHubConfig(), true);
-        EntityManager entityManager = EntityManager.create(getHubConfig());
+        installUserModules(getHubAdminConfig(), true);
+        EntityManager entityManager = EntityManager.create(getHubAdminConfig());
         entityManager.savePii();
 
         deploySecurity();
@@ -184,10 +186,10 @@ public class PiiE2E extends HubTestBase {
     @Test
     public void testSavePii() throws Exception {
     	installEntities();
-    	EntityManager entityManager = EntityManager.create(getHubConfig());
+    	EntityManager entityManager = EntityManager.create(getHubAdminConfig());
     	entityManager.savePii();
 
-        verifyResults(getHubConfig().getUserSecurityDir());
+        verifyResults(getHubAdminConfig().getUserSecurityDir());
 
     }
 
@@ -236,17 +238,23 @@ public class PiiE2E extends HubTestBase {
 
 
     private void deploySecurity() {
-    	HubConfigImpl hubConfig = (HubConfigImpl) getHubConfig();
+    	HubConfigImpl hubConfig = (HubConfigImpl) getHubAdminConfig();
 		// Security
 		List<Command> securityCommands = new ArrayList<Command>();
-		securityCommands.add(new DeployRolesCommand());
-		securityCommands.add(new DeployUsersCommand());
-		securityCommands.add(new DeployProtectedPathsCommand());
-		securityCommands.add(new DeployQueryRolesetsCommand());
+		securityCommands.add(new DeployHubRolesCommand(hubConfig));
+		securityCommands.add(new DeployHubUsersCommand(hubConfig));
+		securityCommands.add(new DeployUserRolesCommand(hubConfig));
+		securityCommands.add(new DeployUserUsersCommand(hubConfig));
+        securityCommands.add(new DeployProtectedPathsCommand());
+        securityCommands.add(new DeployQueryRolesetsCommand());
 
         SimpleAppDeployer deployer = new SimpleAppDeployer(hubConfig.getManageClient(), hubConfig.getAdminManager());
         deployer.setCommands(securityCommands);
-        deployer.deploy(hubConfig.getAppConfig());
+
+        AppConfig appConfig = hubConfig.getStagingAppConfig();
+        appConfig.setConfigDir(new ConfigDir(hubConfig.getUserConfigDir().toFile()));
+
+        deployer.deploy(appConfig);
     }
 
     private void installEntities() {
@@ -266,7 +274,7 @@ public class PiiE2E extends HubTestBase {
         runFlow.addParameter("flow-name", "test-data");
         runFlow.addParameter("job-id", UUID.randomUUID().toString());
 
-        DataMovementManager stagingDataMovementManager = stagingClient.newDataMovementManager();
+        DataMovementManager stagingDataMovementManager = flowRunnerClient.newDataMovementManager();
         WriteBatcher batcher = stagingDataMovementManager.newWriteBatcher();
         batcher.withBatchSize(1).withTransform(runFlow);
         batcher.onBatchSuccess(batch -> {
@@ -296,7 +304,7 @@ public class PiiE2E extends HubTestBase {
     }
 
     private void runHarmonizeFlow(String flowName, DatabaseClient srcClient, String destDb){
-    	FlowManager flowManager = FlowManager.create(getHubConfig());
+    	FlowManager flowManager = FlowManager.create(getHubFlowRunnerConfig());
         Flow harmonizeFlow = flowManager.getFlow("SupportCall", flowName, FlowType.HARMONIZE);
         FlowRunner flowRunner = flowManager.newFlowRunner()
             .withFlow(harmonizeFlow)

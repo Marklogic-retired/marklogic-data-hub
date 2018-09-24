@@ -1,11 +1,11 @@
 <div class="credentials-prompt">
   <div class="marklogic-logo" id="mla-marklogic-logo">
-    <img src="main/ui/assets/img/logo.svg">
+    <img src="/main/ui/assets/img/logo.svg">
   </div>
   <div class="login-wrapper" layout="row" layout-align="center start">
     <section layout="column" layout-align="center center" class="left-pane">
       <h1 id="mla-loginPage-Text">Data Hub QuickStart</h1>
-      <img class="odh-icon" src="main/ui/assets/img/odh.svg">
+      <img class="odh-icon" src="/main/ui/assets/img/odh.svg">
       <section flex layout-padding class="install-status" *ngIf="installationStatus">
         <pre>{{installationStatus}}</pre>
       </section>
@@ -79,11 +79,13 @@
                     <mdl-textfield floating-label label="Staging Appserver Name" type="text" name="stagingHttpName" [(ngModel)]="initSettings.stagingHttpName" required="required"></mdl-textfield>
                     <mdl-textfield floating-label label="Staging Appserver Port" type="number" name="stagingPort" [(ngModel)]="initSettings.stagingPort" required="required"></mdl-textfield>
                     <mdl-textfield floating-label label="Staging Database Name" type="text" name="stagingDbName" [(ngModel)]="initSettings.stagingDbName" required="required"></mdl-textfield>
+                    <mdl-textfield floating-label label="Staging Triggers Database Name" type="text" name="stagingTriggersDbName" [(ngModel)]="initSettings.stagingTriggersDbName" required="required"></mdl-textfield>
+                    <mdl-textfield floating-label label="Staging Schemas Database Name" type="text" name="stagingSchemasDbName" [(ngModel)]="initSettings.stagingSchemasDbName" required="required"></mdl-textfield>
                     <mdl-textfield floating-label label="Staging Forests Per Host" type="number" name="stagingForestsPerHost" [(ngModel)]="initSettings.stagingForestsPerHost" required="required"></mdl-textfield>
                     <div class="auth">
                       <div><label>Authentication Method</label></div>
                       <mdl-radio name="stagingAuthMethod" [(ngModel)]="initSettings.stagingAuthMethod" value="digest">digest</mdl-radio>
-                      <mdl-radio name="stagingAuthMethod" [(ngModel)]="initSettings.stagingAuthMethod" value="basic">basic</mdl-radio>
+                      &nbsp;&nbsp;<mdl-radio name="stagingAuthMethod" [(ngModel)]="initSettings.stagingAuthMethod" value="basic">basic</mdl-radio>
                     </div>
                   </section>
                   <h3 class="md-primary">Final</h3>
@@ -91,11 +93,13 @@
                     <mdl-textfield floating-label label="Final Appserver Name" type="text" name="finalHttpName" [(ngModel)]="initSettings.finalHttpName" required="required"></mdl-textfield>
                     <mdl-textfield floating-label label="Final Appserver Port" type="number" name="finalPort" [(ngModel)]="initSettings.finalPort" required="required"></mdl-textfield>
                     <mdl-textfield floating-label label="Final Database Name" type="text" name="finalDbName" [(ngModel)]="initSettings.finalDbName" required="required"></mdl-textfield>
+                    <mdl-textfield floating-label label="Final Triggers Database Name" type="text" name="finalTriggersDbName" [(ngModel)]="initSettings.finalTriggersDbName" required="required"></mdl-textfield>
+                    <mdl-textfield floating-label label="Final Schemas Database Name" type="text" name="finalSchemasDbName" [(ngModel)]="initSettings.finalSchemasDbName" required="required"></mdl-textfield>
                     <mdl-textfield floating-label label="Final Forests Per Host" type="number" name="finalForestsPerHost" [(ngModel)]="initSettings.finalForestsPerHost" required="required"></mdl-textfield>
                     <div class="auth">
                       <div><label>Authentication Method</label></div>
                       <mdl-radio name="finalAuthMethod" [(ngModel)]="initSettings.finalAuthMethod" value="digest">digest</mdl-radio>
-                      <mdl-radio name="finalAuthMethod" [(ngModel)]="initSettings.finalAuthMethod" value="basic">basic</mdl-radio>
+                      &nbsp;&nbsp;<mdl-radio name="finalAuthMethod" [(ngModel)]="initSettings.finalAuthMethod" value="basic">basic</mdl-radio>
                     </div>
                   </section>
                   <h3 class="md-primary">Job</h3>
@@ -107,14 +111,12 @@
                     <div class="auth">
                       <div><label>Authentication Method</label></div>
                       <mdl-radio name="jobAuthMethod" [(ngModel)]="initSettings.jobAuthMethod" value="digest">digest</mdl-radio>
-                      <mdl-radio name="jobAuthMethod" [(ngModel)]="initSettings.jobAuthMethod" value="basic">basic</mdl-radio>
+                      &nbsp;&nbsp;<mdl-radio name="jobAuthMethod" [(ngModel)]="initSettings.jobAuthMethod" value="basic">basic</mdl-radio>
                     </div>
                   </section>
                   <h3 class="md-primary">Other</h3>
                   <section class="sub-section" layout="column">
                     <mdl-textfield floating-label label="Modules Database Name" type="text" name="modulesDbName" [(ngModel)]="initSettings.modulesDbName" required="required"></mdl-textfield>
-                    <mdl-textfield floating-label label="Triggers Database Name" type="text" name="triggersDbName" [(ngModel)]="initSettings.triggersDbName" required="required"></mdl-textfield>
-                    <mdl-textfield floating-label label="Schemas Database Name" type="text" name="schemasDbName" [(ngModel)]="initSettings.schemasDbName" required="required"></mdl-textfield>
                   </section>
                 </div>
               </div>
@@ -137,7 +139,7 @@
           <h3>Project Initialized <i class="fa fa-thumbs-up"></i></h3>
           <p>Project files have been created in</p>
           <p class="project-path">{{currentProject.path}}</p>
-          <p>Read more about the project structure on the <a target="_blank" href="https://github.com/marklogic/marklogic-data-hub/wiki/Project-Directory-Structure">github wiki</a>.</p>
+          <p>Read more about the project structure in the <a target="_blank" href="https://marklogic.github.io/marklogic-data-hub/understanding/project-structure/">DHF Documentation</a>.</p>
         </section>
         <div layout="row" layout-align="end center" class="init-buttons">
           <button type="button" mdl-button (click)="back()">&lt; Back</button>
@@ -216,16 +218,18 @@
           </section>
           <section flex layout="column" layout-align="center center" *ngIf="!hubUpdateFailed && !hubUpdating">
             <h3 *ngIf="currentEnvironment">Congratulations on updating to version<br>{{currentEnvironment.runningVersion}}</h3>
-            <p>
-              In order to continue we need to update a few things.
-            </p>
-            <button mdl-button mdl-button-type="raised" mdl-colored="primary" mdl-ripple (click)="updateProject()">Update It</button>
-
-            <div class="manual">
-              <p>Curious about what that button does? Prefer to do it yourself?</p>
-              <p>We have a wiki page that describes the changes necessary. You can poke the button for an automatic update or you can do it yourself.</p>
-              <a target="_blank" [href]="hubUpdateUrl()">How to update a Hub Project</a>
-            </div>
+            <span *ngIf="currentEnvironment && currentEnvironment.runningVersion !== currentEnvironment.dhfversion">
+              <p>But...your project doesn't seem to match this version of DHF!</p>
+              <p>Please update your project before proceeding onward! <a target="_blank" [href]="hubUpdateUrl()">How to update a Hub Project</a></p>
+            </span>
+            <span *ngIf="currentEnvironment && currentEnvironment.runningVersion === currentEnvironment.dhfversion">
+              <button mdl-button mdl-button-type="raised" mdl-colored="primary" mdl-ripple (click)="updateProject()">Update It</button>
+              <div class="manual">
+                <p>Curious about what that button does? Prefer to do it yourself?</p>
+                <p>We have a wiki page that describes the changes necessary. You can poke the button for an automatic update or you can do it yourself.</p>
+                <a target="_blank" [href]="hubUpdateUrl()">How to update a Hub Project</a>
+              </div>
+            </span>
           </section>
           <section flex layout="column" layout-align="center center" *ngIf="hubUpdateFailed && !hubUpdating">
             <h3>Automatic Hub Update Failed!</h3>
@@ -233,7 +237,7 @@
               Sorry. We failed to update you to version <span class="version">{{currentEnvironment.runningVersion}}</span>.
               <span>{{hubUpdateError}}.</span>
             </p>
-            <p>Go read the wiki page that describes the changes necessary and try them manually.</p>
+            <p>Go read the documentation page that describes the changes necessary and try them manually.</p>
             <a target="_blank" [href]="hubUpdateUrl()">How to update a Hub Project</a>
           </section>
         </section>
@@ -282,7 +286,7 @@
       <div id="InstallerTab" class="tab-content" [hidden]="!tabs.Installer" *ngIf="currentEnvironment">
         <div layout="column" layout-align="center center">
           <div [hidden]="uninstalling || installing || currentEnvironment.installInfo.installed" layout="column" layout-align="center center">
-            <div style="width: 100%" *ngIf="!currentEnvironment.installInfo.partiallyInstalled">
+            <div style="width: 100%" *ngIf="!currentEnvironment.installInfo.partiallyInstalled && currentEnvironment.runningVersion === currentEnvironment.dhfversion">
               <h3>Installation Needed</h3>
               <p>In order to continue you must install the Data Hub Framework into
               MarkLogic server.
@@ -291,7 +295,7 @@
                 <button type="button" id="installer-button" mdl-button mdl-button-type="raised" (click)="install()">Install</button>
               </div>
             </div>
-            <div class="partial-install" *ngIf="currentEnvironment.installInfo.partiallyInstalled">
+            <div class="partial-install" *ngIf="currentEnvironment.installInfo.partiallyInstalled && currentEnvironment.runningVersion === currentEnvironment.dhfversion">
               <h3>You Have a Partially Installed Hub</h3>
               <p>You must either re-install, uninstall, or fix the issues to continue</p>
 
@@ -337,6 +341,15 @@
                   <tr>
                     <td>Job Forests Installed:</td><td><i class="fa" [ngClass]="getInstalledIcon(currentEnvironment.installInfo.jobForestsExist)"></i></td>
                   </tr>
+                  <tr>
+                    <td>Staging Modules DB Installed:</td><td><i class="fa" [ngClass]="getInstalledIcon(currentEnvironment.installInfo.stagingModulesDbExists)"></i></td>
+                  </tr>
+                  <tr>
+                    <td>Staging Schemas DB Installed:</td><td><i class="fa" [ngClass]="getInstalledIcon(currentEnvironment.installInfo.stagingSchemasDbExists)"></i></td>
+                  </tr>
+                  <tr>
+                    <td>Staging Triggers DB Installed:</td><td><i class="fa" [ngClass]="getInstalledIcon(currentEnvironment.installInfo.stagingTriggersDbExists)"></i></td>
+                  </tr>
                 </tbody>
               </table>
               <div class="action-button center-text">
@@ -346,6 +359,12 @@
                 <button type="button" id="uninstaller-button" mdl-button mdl-button-type="raised" (click)="unInstall()">UnInstall</button>
               </div>
             </div>
+          </div>
+          <div *ngIf="currentEnvironment.runningVersion !== currentEnvironment.dhfversion">
+            <h3>DHF Project Version Mismatch!</h3>
+            <p>Your project ({{currentEnvironment.dhfversion}}) does not match the DHF version running ({{currentEnvironment.runningVersion}}). Please upgrade your project first before
+              attempting to install DHF.
+            </p>
           </div>
           <div id="install-progress" class="install-progress shrinky" *ngIf="(installing || uninstalling)" layout="column" layout-align="center center">
             <mdl-progress [progress]="percentComplete"></mdl-progress>

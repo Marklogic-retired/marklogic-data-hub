@@ -15,8 +15,10 @@
  */
 package com.marklogic.hub.impl;
 
+import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubProject;
 import com.marklogic.hub.util.FileUtil;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,7 +40,9 @@ import java.util.Set;
  */
 public class HubProjectImpl implements HubProject {
 
-    public static final String ENTITY_CONFIG_DIR = "entity-config";
+    public static final String ENTITY_CONFIG_DIR = PATH_PREFIX + "entity-config";
+    public static final String MODULES_DIR = PATH_PREFIX + "ml-modules";
+    public static final String USER_SCHEMAS_DIR = PATH_PREFIX + "ml-schemas";
 
     private Path projectDir;
     private Path pluginsDir;
@@ -78,20 +82,20 @@ public class HubProjectImpl implements HubProject {
         return getHubConfigDir().resolve("security");
     }
 
+    @Override public Path getHubSchemasDir() { return getHubConfigDir().resolve("schemas"); }
+
     @Override public Path getUserConfigDir() {
         return this.projectDir.resolve(USER_CONFIG_DIR);
     }
 
-    @Override public Path getUserSecurityDir() {
-        return getUserConfigDir().resolve("security");
-    }
+    @Override public Path getUserSecurityDir() { return getUserConfigDir().resolve("security"); }
 
     @Override public Path getUserDatabaseDir() {
         return getUserConfigDir().resolve("databases");
     }
 
     @Override public Path getUserSchemasDir() {
-        return getUserConfigDir().resolve("schemas");
+        return this.projectDir.resolve(USER_SCHEMAS_DIR);
     }
 
     @Override public Path getUserServersDir() {
@@ -106,7 +110,21 @@ public class HubProjectImpl implements HubProject {
         return getEntityConfigDir().resolve("databases");
     }
 
+    @Override public Path getHubStagingModulesDir() {
+        return this.projectDir.resolve(MODULES_DIR);
+    }
 
+    @Override public Path getUserStagingModulesDir() {
+        return this.projectDir.resolve(MODULES_DIR);
+    }
+
+    @Override public Path getModulesDir() {
+        return this.projectDir.resolve(MODULES_DIR);
+    }
+
+    @Override public Path getUserFinalModulesDir() {
+        return this.projectDir.resolve(MODULES_DIR);
+    }
 
     @Override public boolean isInitialized() {
         File buildGradle = this.projectDir.resolve("build.gradle").toFile();
@@ -138,35 +156,64 @@ public class HubProjectImpl implements HubProject {
     @Override public void init(Map<String, String> customTokens) {
         this.pluginsDir.toFile().mkdirs();
 
-        Path serversDir = getHubServersDir();
-        serversDir.toFile().mkdirs();
-        writeResourceFile("ml-config/servers/staging-server.json", serversDir.resolve("staging-server.json"), true);
-        writeResourceFile("ml-config/servers/final-server.json", serversDir.resolve("final-server.json"), true);
-        writeResourceFile("ml-config/servers/job-server.json", serversDir.resolve("job-server.json"), true);
+        Path userModules = this.projectDir.resolve(MODULES_DIR);
+        userModules.toFile().mkdirs();
 
-        Path databasesDir = getHubDatabaseDir();
-        databasesDir.toFile().mkdirs();
-        writeResourceFile("ml-config/databases/staging-database.json", databasesDir.resolve("staging-database.json"), true);
-        writeResourceFile("ml-config/databases/final-database.json", databasesDir.resolve("final-database.json"), true);
-        writeResourceFile("ml-config/databases/job-database.json", databasesDir.resolve("job-database.json"), true);
-        writeResourceFile("ml-config/databases/modules-database.json", databasesDir.resolve("modules-database.json"), true);
-        writeResourceFile("ml-config/databases/schemas-database.json", databasesDir.resolve("schemas-database.json"), true);
-        writeResourceFile("ml-config/databases/triggers-database.json", databasesDir.resolve("triggers-database.json"), true);
+        Path hubServersDir = getHubServersDir();
+        hubServersDir.toFile().mkdirs();
+        writeResourceFile("hub-internal-config/servers/staging-server.json", hubServersDir.resolve("staging-server.json"), true);
+        writeResourceFile("hub-internal-config/servers/job-server.json", hubServersDir.resolve("job-server.json"), true);
 
-        Path securityDir = getHubSecurityDir();
-        Path rolesDir = securityDir.resolve("roles");
-        Path usersDir = securityDir.resolve("users");
+        Path userServersDir = getUserServersDir();
+        userServersDir.toFile().mkdirs();
+        writeResourceFile("ml-config/servers/final-server.json", userServersDir.resolve("final-server.json"), true);
+
+        Path hubDatabaseDir = getHubDatabaseDir();
+        hubDatabaseDir.toFile().mkdirs();
+        writeResourceFile("hub-internal-config/databases/staging-database.json", hubDatabaseDir.resolve("staging-database.json"), true);
+        writeResourceFile("hub-internal-config/databases/job-database.json", hubDatabaseDir.resolve("job-database.json"), true);
+        writeResourceFile("hub-internal-config/databases/staging-schemas-database.json", hubDatabaseDir.resolve("staging-schemas-database.json"), true);
+        writeResourceFile("hub-internal-config/databases/staging-triggers-database.json", hubDatabaseDir.resolve("staging-triggers-database.json"), true);
+
+        Path userDatabaseDir = getUserDatabaseDir();
+        userDatabaseDir.toFile().mkdirs();
+        writeResourceFile("ml-config/databases/final-database.json", userDatabaseDir.resolve("final-database.json"), true);
+        writeResourceFile("ml-config/databases/modules-database.json", userDatabaseDir.resolve("modules-database.json"), true);
+        writeResourceFile("ml-config/databases/final-schemas-database.json", userDatabaseDir.resolve("final-schemas-database.json"), true);
+        writeResourceFile("ml-config/databases/final-triggers-database.json", userDatabaseDir.resolve("final-triggers-database.json"), true);
+
+        // the following config has to do with ordering of initialization.
+        // users and roles must be present to install the hub.
+        // amps cannot be installed until after staging modules db exists.
+        Path hubSecurityDir = getHubSecurityDir();
+        Path userSecurityDir = getUserSecurityDir();
+        Path rolesDir = hubSecurityDir.resolve("roles");
+        Path usersDir = hubSecurityDir.resolve("users");
+
+        Path userRolesDir = userSecurityDir.resolve("roles");
+        Path userUsersDir = userSecurityDir.resolve("users");
 
         rolesDir.toFile().mkdirs();
         usersDir.toFile().mkdirs();
+        userRolesDir.toFile().mkdirs();
+        userUsersDir.toFile().mkdirs();
 
-        writeResourceFile("ml-config/security/roles/data-hub-role.json", rolesDir.resolve("data-hub-role.json"), true);
-        writeResourceFile("ml-config/security/users/data-hub-user.json", usersDir.resolve("data-hub-user.json"), true);
-        writeResourceFile("ml-config/security/roles/hub-admin-role.json", rolesDir.resolve("hub-admin-role.json"), true);
-        writeResourceFile("ml-config/security/users/hub-admin-user.json", usersDir.resolve("hub-admin-user.json"), true);
+        writeResourceFile("hub-internal-config/security/roles/data-hub-role.json", rolesDir.resolve("data-hub-role.json"), true);
+        writeResourceFile("hub-internal-config/security/users/data-hub-user.json", usersDir.resolve("data-hub-user.json"), true);
+        writeResourceFile("hub-internal-config/security/roles/hub-admin-role.json", rolesDir.resolve("hub-admin-role.json"), true);
+        writeResourceFile("hub-internal-config/security/users/hub-admin-user.json", usersDir.resolve("hub-admin-user.json"), true);
+
 
         getUserServersDir().toFile().mkdirs();
         getUserDatabaseDir().toFile().mkdirs();
+
+        //scaffold schemas
+        getHubSchemasDir().toFile().mkdirs();
+        getUserSchemasDir().toFile().mkdirs();
+
+        //scaffold triggers
+        getHubConfigDir().resolve("triggers").toFile().mkdirs();
+        getUserConfigDir().resolve("triggers").toFile().mkdirs();
 
         Path gradlew = projectDir.resolve("gradlew");
         writeResourceFile("scaffolding/gradlew", gradlew);
@@ -237,6 +284,43 @@ public class HubProjectImpl implements HubProject {
         }
         catch(IOException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void upgradeProject() throws IOException {
+
+        //let's check if we have legacy config directories, then we copy them to their new places, and rename the previous ones as .old
+        Path entityConfigDir = this.projectDir.resolve("entity-config");
+        Path hubInternalConfigDir = this.projectDir.resolve("hub-internal-config");
+        Path userConfigDir = this.projectDir.resolve("user-config");
+
+        //let's set paths for dest directories
+        Path newEntityConfigDir = Paths.get(HubConfig.ENTITY_CONFIG_DIR);
+        Path newHubInternalConfigDir = Paths.get(HUB_CONFIG_DIR);
+        Path mlConfigDir = Paths.get(USER_CONFIG_DIR);
+
+        //and now what we want to name the old directories so they're not copied over again in another update
+        Path oldEntityConfigDir = this.projectDir.resolve("entity-config.old");
+        Path oldHubInternalConfigDir = this.projectDir.resolve("hub-internal-config.old");
+        Path oldUserConfigDir = this.projectDir.resolve("user-config.old");
+
+        //if the entity-config directory exists, we'll copy it to the src/main/entity-config
+        upgradeProjectDir(entityConfigDir, newEntityConfigDir, oldEntityConfigDir);
+
+        //if the hub-internal-config directory exists, we'll copy it to the src/main/hub-internal-config
+        upgradeProjectDir(hubInternalConfigDir, newHubInternalConfigDir, oldHubInternalConfigDir);
+
+        //if the user-config directory exists, we'll copy it to src/main/ml-config and rename this folder.old
+        upgradeProjectDir(userConfigDir, mlConfigDir, oldUserConfigDir);
+
+    }
+
+    private void upgradeProjectDir(Path sourceDir, Path destDir, Path renamedSourceDir) throws IOException {
+        if (Files.exists(sourceDir)) {
+            FileUtils.copyDirectory(sourceDir.toFile(), destDir.toFile(), false);
+           // Files.copy(sourceDir, destDir, StandardCopyOption.REPLACE_EXISTING);
+            FileUtils.moveDirectory(sourceDir.toFile(), renamedSourceDir.toFile());
         }
     }
 }

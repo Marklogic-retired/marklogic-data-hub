@@ -79,7 +79,7 @@ public class LoadHubModulesCommand extends AbstractCommand {
         assetFileLoader.setDocumentFileReader(jarDocumentFileReader);
 
         DefaultModulesLoader modulesLoader = new DefaultModulesLoader(assetFileLoader);
-        modulesLoader.addFailureListener(throwable -> {
+        modulesLoader.addFailureListener( (throwable, client) -> {
             // ensure we throw the first exception
             if (caughtException == null) {
                 caughtException = throwable;
@@ -88,6 +88,7 @@ public class LoadHubModulesCommand extends AbstractCommand {
         modulesLoader.setModulesManager(propsManager);
         if (caughtException == null) {
             modulesLoader.loadModules("classpath*:/ml-modules", new DefaultModulesFinder(), modulesClient);
+            modulesLoader.loadModules("classpath*:/ml-modules-staging", new SearchOptionsFinder(), hubConfig.newStagingClient());
         }
         if (caughtException == null) {
             modulesLoader.loadModules("classpath*:/ml-modules-traces", new SearchOptionsFinder(), hubConfig.newJobDbClient());
@@ -95,9 +96,7 @@ public class LoadHubModulesCommand extends AbstractCommand {
         if (caughtException == null) {
             modulesLoader.loadModules("classpath*:/ml-modules-jobs", new SearchOptionsFinder(), hubConfig.newJobDbClient());
         }
-        if (caughtException == null) {
-            modulesLoader.loadModules("classpath*:/ml-modules-final", new SearchOptionsFinder(), hubConfig.newFinalClient());
-        }
+
 
         if (caughtException != null) {
             throw new RuntimeException(caughtException);

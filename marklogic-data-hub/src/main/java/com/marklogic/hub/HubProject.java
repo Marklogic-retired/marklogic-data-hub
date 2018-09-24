@@ -18,6 +18,7 @@ package com.marklogic.hub;
 
 import com.marklogic.hub.impl.HubProjectImpl;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Map;
 
@@ -27,8 +28,9 @@ import java.util.Map;
  * This handles what is initially created on disk for the project.
  */
 public interface HubProject {
-    String HUB_CONFIG_DIR = "hub-internal-config";
-    String USER_CONFIG_DIR = "user-config";
+    String PATH_PREFIX = "src/main/";
+    String HUB_CONFIG_DIR = PATH_PREFIX + "hub-internal-config";
+    String USER_CONFIG_DIR = PATH_PREFIX + "ml-config";
 
     /**
      * Creates a HubProject object and returns it in the base project directory
@@ -68,6 +70,12 @@ public interface HubProject {
      * @return the path for the hub's database directory
      */
     Path getHubDatabaseDir();
+
+    /**
+     * Gets the path for the hub/staging schemas directory
+     * @return the path for the hub/staging schemas directory
+     */
+    Path getHubSchemasDir();
 
     /**
      * Gets the path for the hub servers directory
@@ -124,6 +132,33 @@ public interface HubProject {
     Path getEntityDatabaseDir();
 
     /**
+     * Gets the path for the hub staging modules
+     * @return the path for the hub staging modules
+     */
+    @Deprecated
+    Path getHubStagingModulesDir();
+
+    /**
+     * Gets the path for the user staging modules
+     * @return the path for the user staging modules
+     */
+    @Deprecated
+    Path getUserStagingModulesDir();
+
+    /**
+     * Gets the path for the modules directory
+     * @return the path for the modules directory
+     */
+    Path getModulesDir();
+
+    /**
+     * Gets the path for the user final modules
+     * @return the path for the user final modules
+     */
+    @Deprecated
+    Path getUserFinalModulesDir();
+
+    /**
      * Checks if the project has been initialized or not
      * @return true if initialized, false if not
      */
@@ -135,4 +170,11 @@ public interface HubProject {
      * @param customTokens - some custom tokens to start with
      */
     void init(Map<String, String> customTokens);
+
+    /**
+     * Performs an upgrade to a pre-4.0 project by copying folders
+     * to their new positions as defined in hubproject.
+     * @throws IOException if problem happens with the on-disk project.
+     */
+    void upgradeProject() throws IOException;
 }

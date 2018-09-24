@@ -64,6 +64,7 @@ public class ScaffoldingE2E extends HubTestBase {
         deleteProjectDir();
 
         createProjectDir();
+        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
     }
 
     private void installEntity() {
@@ -87,7 +88,7 @@ public class ScaffoldingE2E extends HubTestBase {
         FileUtil.copy(getResourceStream("scaffolding-test/employee.entity.json"), employeeDir.resolve("employee.entity.json").toFile());
         FileUtil.copy(getResourceStream("scaffolding-test/" + entityName + ".json"), entityDir.resolve(entityName + ".entity.json").toFile());
 
-        installUserModules(getHubConfig(), true);
+        installUserModules(getHubAdminConfig(), true);
 
     }
     private void createFlow(CodeFormat codeFormat, DataFormat dataFormat, FlowType flowType, boolean useEsModel) {
@@ -137,6 +138,7 @@ public class ScaffoldingE2E extends HubTestBase {
 
         if (useEsModel) {
             try {
+                // FIXME every time the codegen changes these assertions break.  is that what we really want?
                 assertEquals(
                     getResource("scaffolding-test/es-" + flowType.toString() + "-content." + codeFormat.toString())
                         .replaceAll("\\s+", " ")

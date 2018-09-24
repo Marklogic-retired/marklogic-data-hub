@@ -25,6 +25,8 @@ import com.marklogic.client.DatabaseClientFactory;
 import com.marklogic.hub.impl.HubConfigImpl;
 
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 import java.io.IOException;
 import java.nio.file.Path;
 
@@ -39,18 +41,25 @@ public interface HubConfig {
     String USER_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES = "user-modules-deploy-timestamps.properties";
     String USER_CONTENT_DEPLOY_TIMESTAMPS_PROPERTIES = "user-content-deploy-timestamps.properties";
 
-    String HUB_CONFIG_DIR = "hub-internal-config";
-    String USER_CONFIG_DIR = "user-config";
-    String ENTITY_CONFIG_DIR = "entity-config";
+    String PATH_PREFIX = "src/main/";
+    String HUB_CONFIG_DIR = PATH_PREFIX + "hub-internal-config";
+    String USER_CONFIG_DIR = PATH_PREFIX + "ml-config";
+    String ENTITY_CONFIG_DIR = PATH_PREFIX + "entity-config";
     String STAGING_ENTITY_QUERY_OPTIONS_FILE = "staging-entity-options.xml";
     String FINAL_ENTITY_QUERY_OPTIONS_FILE = "final-entity-options.xml";
+    String STAGING_ENTITY_DATABASE_FILE = "staging-database.json";
+    String FINAL_ENTITY_DATABASE_FILE = "final-database.json";
+
 
     String DEFAULT_STAGING_NAME = "data-hub-STAGING";
     String DEFAULT_FINAL_NAME = "data-hub-FINAL";
     String DEFAULT_JOB_NAME = "data-hub-JOBS";
     String DEFAULT_MODULES_DB_NAME = "data-hub-MODULES";
-    String DEFAULT_TRIGGERS_DB_NAME = "data-hub-TRIGGERS";
-    String DEFAULT_SCHEMAS_DB_NAME = "data-hub-SCHEMAS";
+    String DEFAULT_FINAL_MODULES_DB_NAME = "data-hub-final-MODULES";
+    String DEFAULT_STAGING_TRIGGERS_DB_NAME = "data-hub-staging-TRIGGERS";
+    String DEFAULT_FINAL_TRIGGERS_DB_NAME = "data-hub-final-TRIGGERS";
+    String DEFAULT_STAGING_SCHEMAS_DB_NAME = "data-hub-staging-SCHEMAS";
+    String DEFAULT_FINAL_SCHEMAS_DB_NAME = "data-hub-final-SCHEMAS";
 
     String DEFAULT_ROLE_NAME = "data-hub-role";
     String DEFAULT_USER_NAME = "data-hub-user";
@@ -183,6 +192,20 @@ public interface HubConfig {
      * @param authMethod - The SSL Auth Method for the database connection
      */
     void setAuthMethod(DatabaseKind kind, String authMethod);
+
+    /**
+     * Returns the TrustManager object for the DatabaseKind in the hub config
+     * @param kind - DatabaseKind enum, eg: STAGING or JOB
+     * @return The TrustManager for the DatabaseKind in hubconfig
+     */
+    X509TrustManager getTrustManager(DatabaseKind kind);
+
+    /**
+     * Sets the Trust Manager for the DatabaseKind in the config
+     * @param kind - DatabaseKind enum, eg: STAGING or JOB
+     * @param trustManager - The Trust Manager for the database connection
+     */
+    void setTrustManager(DatabaseKind kind, X509TrustManager trustManager);
 
     /**
      * Returns the SSL Scheme as string for the DatabaseKind in the hub config
@@ -360,6 +383,12 @@ public interface HubConfig {
     DatabaseClient newModulesDbClient();
 
     /**
+     * Gets the path for the modules directory
+     * @return the path for the modules directory
+     */
+    Path getModulesDir();
+
+    /**
      * Gets the path for the hub plugins directory
      * @return the path for the hub plugins directory
      */
@@ -420,6 +449,12 @@ public interface HubConfig {
     Path getUserDatabaseDir();
 
     /**
+     * Gets the path for the user schemas directory
+     * @return the path for the user schemas directory
+     */
+    Path getUserSchemasDir();
+
+    /**
      * Gets the path for the user servers directory
      * @return the path for the user servers database directory
      */
@@ -432,24 +467,44 @@ public interface HubConfig {
     Path getEntityDatabaseDir();
 
     /**
-     * Returns the current appconfig object attached to the HubConfig
-     * @return Returns current AppConfig object set for HubConfig
+     * Returns the current staging appconfig object attached to the HubConfig
+     * @return Returns current staging AppConfig object set for HubConfig
      */
     @JsonIgnore
-    AppConfig getAppConfig();
+    AppConfig getStagingAppConfig();
 
     /**
-     * Sets the App Config for the current HubConfig
-     * @param config AppConfig to associate with the HubConfig
+     * Sets the staging App Config for the current HubConfig
+     * @param config staging AppConfig to associate with the HubConfig
      */
-    void setAppConfig(AppConfig config);
+    void setStagingAppConfig(AppConfig config);
 
     /**
-     * Sets the App Config for the current HubConfig, with skipUpdate option
-     * @param config - AppConfig to associate with the HubConfig
-     * @param skipUpdate false to force update of AppConfig, true to skip it
+     * Sets the staging App Config for the current HubConfig, with skipUpdate option
+     * @param config - staging AppConfig to associate with the HubConfig
+     * @param skipUpdate false to force update of staging AppConfig, true to skip it
      */
-    void setAppConfig(AppConfig config, boolean skipUpdate);
+    void setStagingAppConfig(AppConfig config, boolean skipUpdate);
+
+    /**
+     * Returns the current final appconfig object attached to the HubConfig
+     * @return Returns current final AppConfig object set for HubConfig
+     */
+    @JsonIgnore
+    AppConfig getFinalAppConfig();
+
+    /**
+     * Sets the final App Config for the current HubConfig
+     * @param config final AppConfig to associate with the HubConfig
+     */
+    void setFinalAppConfig(AppConfig config);
+
+    /**
+     * Sets the final App Config for the current HubConfig, with skipUpdate option
+     * @param config - final AppConfig to associate with the HubConfig
+     * @param skipUpdate false to force update of final AppConfig, true to skip it
+     */
+    void setFinalAppConfig(AppConfig config, boolean skipUpdate);
 
     /**
      * Gets the current version of the DHF Jar
@@ -458,14 +513,26 @@ public interface HubConfig {
     String getJarVersion();
 
     /**
+     * Gets the current version of the project properties file is targetting
+     * @return Version of DHF that the project properties file is targetting
+     */
+    String getDHFVersion();
+
+    /**
      * Gets a new DatabaseClient that queries the staging database and appserver
-     * Uses mlUsername and mlPassword
-     * @return A client without elevated administrative privileges.
+     * @return A client that accesses the hub's staging appserver and staging database.
      */
     DatabaseClient newStagingClient();
 
     /**
      * Gets a new DatabaseClient that queries the Final database using the staging appserver.
+     * @return A database client configured for fetching from final database, but using DHF's staging modules.
+     */
+    DatabaseClient newReverseFlowClient();
+
+    /**
+     * Gets a new DatabaseClient that queries the Final database using the final appserver.
+     * and final modules database.  (Future, will be same behavior as newReverseFlowClient when modules databases are merged.)
      * @return A DatabaseClient
      */
     DatabaseClient newFinalClient();
@@ -475,4 +542,6 @@ public interface HubConfig {
      * @return information on the datahub configuration as a string
      */
     String getInfo();
+
+
 }

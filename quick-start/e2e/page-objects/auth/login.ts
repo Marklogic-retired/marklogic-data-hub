@@ -111,12 +111,8 @@ export class LoginPage extends AppPage {
     return element(by.name('stagingHttpName'));
   }
 
-  get stagingAppserverName() {
-    return element(by.css('mdl-textfield[label="Staging Appserver Name"] input'));
-  }
-
-  get modulesDbName() {
-    return element(by.css('mdl-textfield[label="Modules Database Name"] input'));
+  advancedSettingsValue(labelName: string) {
+    return element(by.css(`mdl-textfield[label="${labelName}"] input`));
   }
 
   clickRestoreDefaults() {
@@ -214,7 +210,7 @@ export class LoginPage extends AppPage {
 
   //login invalid credential error message
   get loginInvalidCredentialsError() {
-    return element(by.cssContainingText('#LoginTab', 'Authentication Failed: Invalid credentials'));
+    return element(by.cssContainingText('#LoginTab', 'Invalid credentials'));
   }
 }
 

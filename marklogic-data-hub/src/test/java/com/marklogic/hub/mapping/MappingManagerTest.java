@@ -26,9 +26,7 @@ import com.marklogic.hub.scaffold.impl.ScaffoldingImpl;
 import com.marklogic.hub.util.FileUtil;
 import com.marklogic.hub.util.HubModuleManager;
 import org.apache.commons.io.FileUtils;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.*;
 import org.xml.sax.SAXException;
 
 import java.io.File;
@@ -45,17 +43,22 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class MappingManagerTest extends HubTestBase {
     static Path projectPath = Paths.get(PROJECT_PATH).toAbsolutePath();
     private static File projectDir = projectPath.toFile();
-    private        MappingManager manager = MappingManager.getMappingManager(getHubConfig());
+    private        MappingManager manager = MappingManager.getMappingManager(getHubAdminConfig());
     private        String mappingName = "my-fun-test";
 
-    @Before
-    public void clearDbs() {
-        deleteProjectDir();
+    @BeforeEach
+    public void setup() {
         basicSetup();
         //clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_MODULES_DB_NAME);
         //installHubModules();
-        getPropsMgr().deletePropertiesFile();
+        //getPropsMgr().deletePropertiesFile();
     }
+
+    @AfterEach
+    public void teardown() {
+        deleteProjectDir();
+    }
+
 
     @Test
     public void createMapping() {
@@ -79,7 +82,7 @@ public class MappingManagerTest extends HubTestBase {
 
         //now let's see if it's on disk!
         String mappingFileName = testMap.getName() + "-" + testMap.getVersion() + MappingManager.MAPPING_FILE_EXTENSION;
-        assertTrue(Paths.get((getHubConfig().getHubMappingsDir().toString()), mappingName, mappingFileName).toFile().exists());
+        assertTrue(Paths.get((getHubAdminConfig().getHubMappingsDir().toString()), mappingName, mappingFileName).toFile().exists());
 
     }
 
@@ -109,6 +112,8 @@ public class MappingManagerTest extends HubTestBase {
         copyTestMap();
         //Now let's get the same mapping, but out of band off disk as JSON
         String json = manager.getMappingAsJSON(mappingName);
+
+        logger.debug(json);
         assertTrue(json.length() == 253);
         //now let's see if this parses properly
         ObjectMapper mapper = new ObjectMapper();
@@ -187,22 +192,22 @@ public class MappingManagerTest extends HubTestBase {
         assertTrue(testMap != null);
         //check to make sure its on disk
         String mappingFileName = testMap.getName() + "-" + testMap.getVersion() + MappingManager.MAPPING_FILE_EXTENSION;
-        assertTrue(Paths.get((getHubConfig().getHubMappingsDir().toString()), mappingName, mappingFileName).toFile().exists());
+        assertTrue(Paths.get((getHubAdminConfig().getHubMappingsDir().toString()), mappingName, mappingFileName).toFile().exists());
 
         //now let's delete it
         manager.deleteMapping(mappingName);
 
         //make sure it's gone off disk
-        assertFalse(Paths.get((getHubConfig().getHubMappingsDir().toString()), mappingName, mappingFileName).toFile().exists());
+        assertFalse(Paths.get((getHubAdminConfig().getHubMappingsDir().toString()), mappingName, mappingFileName).toFile().exists());
 
     }
 
     private void copyTestMap() {
-        FileUtil.copy(getResourceStream("scaffolding-test/"+mappingName+"-1"+MappingManager.MAPPING_FILE_EXTENSION), getHubConfig().getHubMappingsDir().resolve(mappingName+"/"+mappingName+"-1"+MappingManager.MAPPING_FILE_EXTENSION).toFile());
+        FileUtil.copy(getResourceStream("scaffolding-test/"+mappingName+"-1"+MappingManager.MAPPING_FILE_EXTENSION), getHubAdminConfig().getHubMappingsDir().resolve(mappingName+"/"+mappingName+"-1"+MappingManager.MAPPING_FILE_EXTENSION).toFile());
     }
 
     private void copySecondTestMap() {
-        FileUtil.copy(getResourceStream("scaffolding-test/"+mappingName+"-2"+MappingManager.MAPPING_FILE_EXTENSION), getHubConfig().getHubMappingsDir().resolve(mappingName+"/"+mappingName+"-2"+MappingManager.MAPPING_FILE_EXTENSION).toFile());
+        FileUtil.copy(getResourceStream("scaffolding-test/"+mappingName+"-2"+MappingManager.MAPPING_FILE_EXTENSION), getHubAdminConfig().getHubMappingsDir().resolve(mappingName+"/"+mappingName+"-2"+MappingManager.MAPPING_FILE_EXTENSION).toFile());
     }
 
     private void installMappings() {
@@ -234,7 +239,7 @@ public class MappingManagerTest extends HubTestBase {
     }
 
     private HubModuleManager getPropsMgr() {
-        String timestampFile = getHubConfig().getUserModulesDeployTimestampFile();
+        String timestampFile = getHubAdminConfig().getUserModulesDeployTimestampFile();
         HubModuleManager propertiesModuleManager = new HubModuleManager(timestampFile);
         return propertiesModuleManager;
     }

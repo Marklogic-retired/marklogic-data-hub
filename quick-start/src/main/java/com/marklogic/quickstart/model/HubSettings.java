@@ -12,12 +12,16 @@ public class HubSettings {
         HubSettings settings = new HubSettings();
         settings.host = config.getHost();
         settings.stagingDbName = config.getDbName(DatabaseKind.STAGING);
+        settings.stagingTriggersDbName = config.getDbName(DatabaseKind.STAGING_TRIGGERS);
+        settings.stagingSchemasDbName = config.getDbName(DatabaseKind.STAGING_SCHEMAS);
         settings.stagingHttpName = config.getHttpName(DatabaseKind.STAGING);
         settings.stagingForestsPerHost = config.getForestsPerHost(DatabaseKind.STAGING);
         settings.stagingPort = config.getPort(DatabaseKind.STAGING);
         settings.stagingAuthMethod = config.getAuthMethod(DatabaseKind.STAGING);
 
         settings.finalDbName = config.getDbName(DatabaseKind.FINAL);
+        settings.finalTriggersDbName = config.getDbName(DatabaseKind.FINAL_TRIGGERS);
+        settings.finalSchemasDbName = config.getDbName(DatabaseKind.FINAL_SCHEMAS);
         settings.finalHttpName = config.getHttpName(DatabaseKind.FINAL);
         settings.finalForestsPerHost = config.getForestsPerHost(DatabaseKind.FINAL);
         settings.finalPort = config.getPort(DatabaseKind.FINAL);
@@ -30,8 +34,6 @@ public class HubSettings {
         settings.jobAuthMethod = config.getAuthMethod(DatabaseKind.JOB);
 
         settings.modulesDbName = config.getDbName(DatabaseKind.MODULES);
-        settings.triggersDbName = config.getDbName(DatabaseKind.TRIGGERS);
-        settings.schemasDbName = config.getDbName(DatabaseKind.SCHEMAS);
 
         settings.username = config.getHubUserName();
         settings.projectDir = config.getProjectDir();
@@ -61,6 +63,31 @@ public class HubSettings {
     public void setStagingDbName(String stagingDbName) {
         this.stagingDbName = stagingDbName;
     }
+
+    public String getModulesDbName() {
+        return modulesDbName;
+    }
+
+    public void setModulesDbName(String modulesDbName) {
+        this.modulesDbName = modulesDbName;
+    }
+
+    public String getStagingTriggersDbName() {
+        return stagingTriggersDbName;
+    }
+
+    public void setStagingTriggersDbName(String stagingTriggersDbName) {
+        this.stagingTriggersDbName = stagingTriggersDbName;
+    }
+
+    public String getStagingSchemasDbName() {
+        return stagingSchemasDbName;
+    }
+
+    public void setStagingSchemasDbName(String stagingSchemasDbName) {
+        this.stagingSchemasDbName = stagingSchemasDbName;
+    }
+
 
     public String getStagingHttpName() {
         return stagingHttpName;
@@ -100,6 +127,22 @@ public class HubSettings {
 
     public void setFinalDbName(String finalDbName) {
         this.finalDbName = finalDbName;
+    }
+
+    public String getFinalTriggersDbName() {
+        return finalTriggersDbName;
+    }
+
+    public void setFinalTriggersDbName(String finalTriggersDbName) {
+        this.finalTriggersDbName = finalTriggersDbName;
+    }
+
+    public String getFinalSchemasDbName() {
+        return finalSchemasDbName;
+    }
+
+    public void setFinalSchemasDbName(String finalSchemasDbName) {
+        this.finalSchemasDbName = finalSchemasDbName;
     }
 
     public String getFinalHttpName() {
@@ -174,30 +217,6 @@ public class HubSettings {
         this.jobAuthMethod = jobAuthMethod;
     }
 
-    public String getModulesDbName() {
-        return modulesDbName;
-    }
-
-    public void setModulesDbName(String modulesDbName) {
-        this.modulesDbName = modulesDbName;
-    }
-
-    public String getTriggersDbName() {
-        return triggersDbName;
-    }
-
-    public void setTriggersDbName(String triggersDbName) {
-        this.triggersDbName = triggersDbName;
-    }
-
-    public String getSchemasDbName() {
-        return schemasDbName;
-    }
-
-    public void setSchemasDbName(String schemasDbName) {
-        this.schemasDbName = schemasDbName;
-    }
-
     public String getUsername() {
         return username;
     }
@@ -218,12 +237,16 @@ public class HubSettings {
     String name = "data-hub";
 
     String stagingDbName = null;
+    String stagingTriggersDbName = null;
+    String stagingSchemasDbName = null;
     String stagingHttpName = null;
     Integer stagingForestsPerHost = null;
     Integer stagingPort = null;
     String stagingAuthMethod = null;
 
     String finalDbName = null;
+    String finalTriggersDbName = null;
+    String finalSchemasDbName = null;
     String finalHttpName = null;
     Integer finalForestsPerHost = null;
     Integer finalPort = null;
@@ -236,8 +259,6 @@ public class HubSettings {
     String jobAuthMethod = null;
 
     String modulesDbName = null;
-    String triggersDbName = null;
-    String schemasDbName = null;
 
     String username = null;
     String projectDir = null;

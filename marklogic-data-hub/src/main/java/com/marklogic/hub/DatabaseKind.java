@@ -29,18 +29,26 @@ public enum DatabaseKind {
         FINAL,
         JOB,
         @Deprecated TRACE,
-        SCHEMAS,
-        TRIGGERS,
-        MODULES;
+        STAGING_SCHEMAS,
+        FINAL_SCHEMAS,
+        STAGING_TRIGGERS,
+        FINAL_TRIGGERS,
+        MODULES,
+        @Deprecated STAGING_MODULES,
+        @Deprecated FINAL_MODULES;
 
        static private String[] databaseNames = {
            "staging",
            "final",
            "jobs",
            "jobs",
-            "schemas",
-            "triggers",
-            "modules"
+           "staging_schemas",
+           "final_schemas",
+           "staging_triggers",
+           "final_triggers",
+           "modules",
+           "modules",
+           "modules"
         };
 
      /**

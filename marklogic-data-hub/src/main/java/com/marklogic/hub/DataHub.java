@@ -71,6 +71,7 @@ public interface DataHub {
      * Runs the pre-install check for the datahub populating the object
      * with variables necessary to perform the install.
      * This is used for running install.
+     * Must be run as a user with sufficient privileges to install a data hub.
      * @return - a hashmap of the results of the preinstall check
      */
     HashMap runPreInstallCheck();
@@ -79,6 +80,7 @@ public interface DataHub {
      * Runs the pre-install check for the datahub populating the object
      * with variables necessary to perform the install.
      * This is used for running install.
+     * Must be run as a user with sufficient privileges to install a data hub.
      * @param versions - the versions that the check is to be run against
      * @return - a hashmap of the results of the preinstall check
      */
@@ -86,33 +88,47 @@ public interface DataHub {
 
     /**
      * Installs the data hub configuration and server-side config files into MarkLogic
+     * Must be run as a user with sufficient privileges to install a data hub.
      */
     void install();
 
     /**
      * Installs the data hub configuration and server-side config files into MarkLogic
+     * Must be run as a user with sufficient privileges to install a data hub.
      * @param listener - the callback method to receive status updates
      */
     void install(HubDeployStatusListener listener);
 
+    void installFinal(HubDeployStatusListener listener);
+
+    void installStaging(HubDeployStatusListener listener);
+
     /**
      * Updates the indexes in the database based on the project
+     * Must be run as a user with hub-admin-role or equivalent
      */
     void updateIndexes();
 
     /**
-     * Uninstalls the data hub configuration and server-side config files from MarkLogic
+     * Uninstalls the data hub configuration, server-side config files and final databases and servers from MarkLogic
+     * Must be run as a user with sufficient privileges to install a data hub.
      */
     void uninstall();
 
     /**
-     * Uninstalls the data hub configuration and server-side config files from MarkLogic
+     * Uninstalls the data hub configuration, server-side config files and final databases and servers from MarkLogic
+     * Must be run as a user with sufficient privileges to install a data hub.
      * @param listener - the callback method to receive status updates
      */
     void uninstall(HubDeployStatusListener listener);
 
+    void uninstallStaging(HubDeployStatusListener listener);
+
+    void uninstallFinal(HubDeployStatusListener listener);
+
     /**
      * Checks to make sure all the versions and database in a valid configuration with version check
+     * Must be run as a user with sufficient privileges to install a data hub.
      * @return boolean - if not, returns false, if safe to proceed ahead returns true
      */
     boolean isSafeToInstall();
@@ -164,6 +180,7 @@ public interface DataHub {
 
     /**
      * Upgrades the installed datahub on the server to this version of the DataHub
+     * Must be run as a user with sufficient privileges to install a data hub.
      * @return true or false based on success of the upgrade
      * @throws CantUpgradeException - exception thrown when an upgrade can't happen
      */
@@ -172,6 +189,7 @@ public interface DataHub {
     /**
      * Upgrades the hub based on list of provided updated flows. All flows SHOULD be provided.
      * The method without params will handle this automatically.
+     * Must be run as a user with sufficient privileges to install a data hub.
      * @param updatedFlows - the list of the name of the flows you want to update
      * @return boolean - false if upgrade fails for a reason other than an upgrade exception
      * @throws CantUpgradeException - should the hub fail to upgrade for incompatibility reasons

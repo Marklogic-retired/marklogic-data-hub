@@ -38,6 +38,7 @@ import com.marklogic.hub.job.JobStatus;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
@@ -209,7 +210,7 @@ public class FlowRunnerImpl implements FlowRunner {
 
         HashMap<String, JobTicket> ticketWrapper = new HashMap<>();
 
-        final FlowResource flowResource = new FlowResource(stagingClient, destinationDatabase, flow);
+        ConcurrentHashMap<DatabaseClient, FlowResource> databaseClientMap = new ConcurrentHashMap<>();
 
         QueryBatcher tempQueryBatcher = dataMovementManager.newQueryBatcher(uris.iterator())
             .withBatchSize(batchSize)
@@ -217,6 +218,16 @@ public class FlowRunnerImpl implements FlowRunner {
             .withJobId(jobId)
             .onUrisReady((QueryBatch batch) -> {
                 try {
+                    FlowResource flowResource;
+
+                    if (databaseClientMap.containsKey(batch.getClient())){
+                        flowResource = databaseClientMap.get(batch.getClient());
+                    }
+                    else {
+                        flowResource = new FlowResource(batch.getClient(), destinationDatabase, flow);
+                        databaseClientMap.put(batch.getClient(), flowResource);
+                    }
+
                     RunFlowResponse response = flowResource.run(jobId, batch.getItems(), options);
                     failedEvents.addAndGet(response.errorCount);
                     successfulEvents.addAndGet(response.totalCount - response.errorCount);
@@ -292,6 +303,8 @@ public class FlowRunnerImpl implements FlowRunner {
         ticketWrapper.put("jobTicket", jobTicket);
         jobManager.saveJob(job.withStatus(JobStatus.RUNNING_HARMONIZE));
 
+        int uriCount = uris.size();
+
         runningThread = new Thread(() -> {
             queryBatcher.awaitCompletion();
 
@@ -307,7 +320,7 @@ public class FlowRunnerImpl implements FlowRunner {
             if (failedEvents.get() > 0 && stopOnFailure) {
                 status = JobStatus.STOP_ON_ERROR;
             }
-            else if (failedEvents.get() + successfulEvents.get() != uris.size()) {
+            else if (failedEvents.get() + successfulEvents.get() != uriCount) {
                 status = JobStatus.CANCELED;
             }
             else if (failedEvents.get() > 0 && successfulEvents.get() > 0) {

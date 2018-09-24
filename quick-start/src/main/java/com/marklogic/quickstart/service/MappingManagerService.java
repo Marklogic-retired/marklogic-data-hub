@@ -65,7 +65,7 @@ public class MappingManagerService extends EnvironmentAware {
 
     public MappingModel createMapping(String projectDir, MappingModel newMapping) throws IOException {
         mappingManager = MappingManager.getMappingManager(envConfig().getMlSettings());
-        Scaffolding scaffolding = Scaffolding.create(projectDir, envConfig().getFinalClient());
+        Scaffolding scaffolding = Scaffolding.create(projectDir, envConfig().getReverseFlowClient());
         scaffolding.createMappingDir(newMapping.getName());
         Path dir = envConfig().getMlSettings().getHubMappingsDir().resolve(newMapping.getName());
         Mapping mapping = mappingManager.createMappingFromJSON(newMapping.toJson());
@@ -81,11 +81,11 @@ public class MappingManagerService extends EnvironmentAware {
         ObjectMapper objectMapper = new ObjectMapper();
         MappingModel mapping = objectMapper.readValue(jsonMapping.toString(), MappingModel.class);
         MappingModel existingMapping = null;
-        try {
-            existingMapping = getMapping(mapName);
+        existingMapping = getMapping(mapName);
+        if (existingMapping != null) {
             mappingManager.saveMapping(mappingManager.createMappingFromJSON(mapping.toJson()), true);
-
-        }catch (DataHubProjectException e){
+        }
+        else {
             String projectDir = envConfig().getProjectDir();
             createMapping(projectDir, mapping);
         }
