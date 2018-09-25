@@ -18,18 +18,12 @@ package com.marklogic.hub.core;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.ext.modulesloader.impl.PropertiesModuleManager;
 import com.marklogic.client.io.DOMHandle;
-import com.marklogic.hub.DataHub;
-import com.marklogic.hub.DatabaseKind;
-import com.marklogic.hub.HubConfig;
-import com.marklogic.hub.HubProject;
-import com.marklogic.hub.HubTestBase;
+import com.marklogic.hub.*;
 import com.marklogic.hub.util.Versions;
-
 import org.apache.commons.io.FileUtils;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Assert;
 import org.junit.Before;
-
 import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
