@@ -1,19 +1,10 @@
 package com.marklogic.hub.util;
 
 
-import com.marklogic.appdeployer.AppConfig;
-import com.marklogic.appdeployer.command.Command;
-import com.marklogic.appdeployer.command.CommandContext;
-import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
-import com.marklogic.hub.deploy.commands.LoadHubModulesCommand;
-import com.marklogic.hub.deploy.commands.LoadUserStagingModulesCommand;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class Installer {
 
