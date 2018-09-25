@@ -1,14 +1,12 @@
 package com.marklogic.hub.core;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.error.DataHubConfigurationException;
-import com.marklogic.hub.impl.HubConfigImpl;
 import org.apache.commons.io.FileUtils;
-//import org.apache.htrace.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -18,14 +16,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
-import com.fasterxml.jackson.databind.JsonNode;
-
-
-import com.fasterxml.jackson.databind.ObjectMapper;
+//import org.apache.htrace.fasterxml.jackson.databind.ObjectMapper;
 
 
 public class HubConfigTest extends HubTestBase {
