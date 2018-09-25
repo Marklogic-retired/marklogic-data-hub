@@ -255,6 +255,7 @@ def props = new Properties()
 propFile.withInputStream { props.load(it) }
 
 task bootstrap(type: JavaExec) {
+	dependsOn 'setupSSL'
     classpath = sourceSets.test.runtimeClasspath
     main = 'com.marklogic.hub.util.Installer'
 }
@@ -267,13 +268,46 @@ task teardown(type: JavaExec) {
 test {
     minHeapSize = "128m"
     maxHeapSize = "256m"
-    classpath = project.sourceSets.test.runtimeClasspath
-    doFirst{
+    classpath = project.sourceSets.test.runtimeClasspath   
+}
+
+task testAcceptance(type: Test) {
+    useJUnit {
+        include 'com/marklogic/hub/**'
+        if (!(certAuth || sslRun)){
+            include 'com/marklogic/hub/PiiE2E.class'
+        }
+    }
+}
+
+task testIntegration(type: Test) {
+    useJUnit {
+        include 'com/marklogic/hub_integration/**'
+    }
+}
+
+task testBootstrap(type: Test) {
+    useJUnit {
+        exclude 'com/marklogic/bootstrap/**'
+    }
+}
+
+task cleanupTask{
+	dependsOn 'teardown'
+	doLast{
+    	if(sslRun || certAuth){
+    		propFile.write(fileContents)
+		}
+    }
+}
+
+task setupSSL{
+	doFirst{
 		if(sslRun || certAuth){
 			com.marklogic.mgmt.ManageClient manageClient = new ManageClient(new com.marklogic.mgmt.ManageConfig(mlHost, 8002, mlSecurityUsername, mlSecurityPassword))
 			com.marklogic.mgmt.resource.hosts.HostManager hostManager = new HostManager(manageClient)
 			def	bootStrapHost = hostManager.getHostNames().get(0)
-		    if(! bootStrapHost.toLowerCase().contains("marklogic.com")){
+			if(! bootStrapHost.toLowerCase().contains("marklogic.com")){
 				 throw new GradleException("The test with current options will run only in marklogic.com domain")
 			}
 			if(sslRun) {
@@ -299,38 +333,9 @@ test {
 				}
 			}
 		}
-    }
-
+	}
 }
-
-task testAcceptance(type: Test) {
-    useJUnit {
-        include 'com/marklogic/hub/**'
-        if (!(certAuth || sslRun)){
-            include 'com/marklogic/hub/PiiE2E.class'
-        }
-    }
-}
-
-task testIntegration(type: Test) {
-    useJUnit {
-        include 'com/marklogic/hub_integration/**'
-    }
-}
-
-task testBootstrap(type: Test) {
-    useJUnit {
-        exclude 'com/marklogic/bootstrap/**'
-    }
-}
-
+		
 test.dependsOn(bootstrap)
-
-task restoreFile{
-	doFirst{
-    	if(sslRun || certAuth){
-    		propFile.write(fileContents)
-		}
-    }
-}
-test.finalizedBy(restoreFile)
+//Uncomment this line if hub has to be uninstalled after test
+//test.finalizedBy(cleanupTask)
