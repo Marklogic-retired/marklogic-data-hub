@@ -206,8 +206,7 @@ public class FlowRunnerImpl implements FlowRunner {
 
         DataMovementManager dataMovementManager;
         if (hubConfig.getIsHostLoadBalancer()){
-            dataMovementManager = hubConfig.newStagingDbClientForLoadBalancerHost().newDataMovementManager();
-
+            dataMovementManager = hubConfig.newStagingDbClientForLoadBalancerHost(stagingClient.getDatabase()).newDataMovementManager();
         }
         else {
             dataMovementManager = stagingClient.newDataMovementManager();

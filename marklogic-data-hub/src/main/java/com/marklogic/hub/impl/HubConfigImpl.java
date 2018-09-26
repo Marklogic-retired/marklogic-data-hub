@@ -996,8 +996,8 @@ public class HubConfigImpl implements HubConfig {
     }
 
     @Override
-    public DatabaseClient newStagingDbClientForLoadBalancerHost(){
-        return getDatabaseClientForLoadBalancerHost(stagingAuthMethod, stagingTrustManager, stagingSslHostnameVerifier, stagingCertFile, stagingCertPassword, stagingSslContext, stagingExternalName, stagingPort, stagingDbName);
+    public DatabaseClient newStagingDbClientForLoadBalancerHost(String database){
+        return getDatabaseClientForLoadBalancerHost(stagingAuthMethod, stagingTrustManager, stagingSslHostnameVerifier, stagingCertFile, stagingCertPassword, stagingSslContext, stagingExternalName, stagingPort, database);
 
     }
 
