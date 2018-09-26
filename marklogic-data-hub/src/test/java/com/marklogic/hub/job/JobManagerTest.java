@@ -16,13 +16,11 @@
 package com.marklogic.hub.job;
 
 import com.marklogic.client.eval.EvalResultIterator;
-import com.marklogic.hub.DataHub;
 import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.flow.*;
 import com.marklogic.hub.scaffold.Scaffolding;
-
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.After;
 import org.junit.Before;

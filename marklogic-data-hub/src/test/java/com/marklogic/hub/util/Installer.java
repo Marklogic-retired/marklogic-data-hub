@@ -3,7 +3,6 @@ package com.marklogic.hub.util;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import com.marklogic.hub.HubTestBase;
 
 public class Installer {

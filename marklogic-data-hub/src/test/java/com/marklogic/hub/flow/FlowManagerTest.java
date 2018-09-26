@@ -39,12 +39,11 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 
-import static com.marklogic.client.io.DocumentMetadataHandle.Capability.EXECUTE;
-import static com.marklogic.client.io.DocumentMetadataHandle.Capability.READ;
-import static com.marklogic.client.io.DocumentMetadataHandle.Capability.UPDATE;
+import static com.marklogic.client.io.DocumentMetadataHandle.Capability.*;
 import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual;
 import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 public class FlowManagerTest extends HubTestBase {
 

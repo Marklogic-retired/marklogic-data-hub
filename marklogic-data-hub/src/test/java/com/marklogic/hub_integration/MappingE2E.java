@@ -49,28 +49,6 @@ import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 import org.w3c.dom.Document;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.marklogic.client.DatabaseClient;
-import com.marklogic.client.datamovement.DataMovementManager;
-import com.marklogic.client.datamovement.JobTicket;
-import com.marklogic.client.datamovement.WriteBatcher;
-import com.marklogic.client.document.GenericDocumentManager;
-import com.marklogic.client.io.DOMHandle;
-import com.marklogic.client.io.DocumentMetadataHandle;
-import com.marklogic.client.io.JacksonHandle;
-import com.marklogic.client.io.StringHandle;
-import com.marklogic.hub.flow.CodeFormat;
-import com.marklogic.hub.flow.DataFormat;
-import com.marklogic.hub.flow.Flow;
-import com.marklogic.hub.flow.FlowRunner;
-import com.marklogic.hub.flow.FlowType;
-import com.marklogic.hub.mapping.Mapping;
-import com.marklogic.hub.scaffold.Scaffolding;
-import com.marklogic.hub.util.FileUtil;
-import com.marklogic.hub.util.Installer;
 
 
 @RunWith(JUnitPlatform.class)
