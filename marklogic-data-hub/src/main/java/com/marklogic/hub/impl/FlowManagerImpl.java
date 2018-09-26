@@ -258,7 +258,7 @@ public class FlowManagerImpl extends ResourceManager implements FlowManager {
 
     @Override public List<String> updateLegacyFlows(String fromVersion) {
 
-        Scaffolding scaffolding = Scaffolding.create(hubConfig.getProjectDir(), hubConfig.newFinalClient());
+        Scaffolding scaffolding = Scaffolding.create(hubConfig.getProjectDir(), hubConfig.newStagingClient());
 
         List<String> updatedFlows = new ArrayList<>();
         File[] entityDirs = hubConfig.getHubEntitiesDir().toFile().listFiles(pathname -> pathname.isDirectory());

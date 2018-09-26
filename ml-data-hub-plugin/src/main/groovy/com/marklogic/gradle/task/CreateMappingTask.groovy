@@ -34,7 +34,7 @@ class CreateMappingTask extends HubTask {
         def projectDir = getHubConfig().projectDir
         println "mappingName: " + mappingName
         println "projectDir: " + projectDir.toString()
-        Scaffolding scaffolding = Scaffolding.create(projectDir, getFinalClient())
+        Scaffolding scaffolding = Scaffolding.create(projectDir, getStagingClient())
         scaffolding.createMappingDir(mappingName)
         MappingManager mappingManager = MappingManager.getMappingManager(hubConfig)
         def mapping = mappingManager.createMapping(mappingName)

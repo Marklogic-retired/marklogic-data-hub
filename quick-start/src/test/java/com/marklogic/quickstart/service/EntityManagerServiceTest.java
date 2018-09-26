@@ -58,7 +58,7 @@ public class EntityManagerServiceTest extends AbstractServiceTest {
     public void setUp() {
         createProjectDir();
 
-        Scaffolding scaffolding = Scaffolding.create(projectDir.toString(), finalClient);
+        Scaffolding scaffolding = Scaffolding.create(projectDir.toString(), stagingClient);
         scaffolding.createEntity(ENTITY);
 
         Path entityDir = projectDir.resolve("plugins/entities/" + ENTITY);

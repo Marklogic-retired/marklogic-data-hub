@@ -167,8 +167,10 @@ public class LoadUserStagingModulesCommand extends AbstractCommand {
         //for now we'll use two different document managers
         JSONDocumentManager finalEntityDocMgr = finalClient.newJSONDocumentManager();
         JSONDocumentManager stagingEntityDocMgr = stagingClient.newJSONDocumentManager();
-        JSONDocumentManager mappingDocMgr = finalClient.newJSONDocumentManager();
-        DocumentWriteSet mappingDocumentWriteSet = mappingDocMgr.newWriteSet();
+        JSONDocumentManager finalMappingDocMgr = finalClient.newJSONDocumentManager();
+        JSONDocumentManager stagingMappingDocMgr = stagingClient.newJSONDocumentManager();
+        DocumentWriteSet finalMappingDocumentWriteSet = finalMappingDocMgr.newWriteSet();
+        DocumentWriteSet stagingMappingDocumentWriteSet = stagingMappingDocMgr.newWriteSet();
 
         AllButAssetsModulesFinder allButAssetsModulesFinder = new AllButAssetsModulesFinder();
 
@@ -217,7 +219,7 @@ public class LoadUserStagingModulesCommand extends AbstractCommand {
                                     finalEntityDocMgr.write("/entities/" + r.getFilename(), meta, handle);
 
                                     // Uncomment to send entity model to staging db as well
-                                    // stagingEntityDocMgr.write("/entities/" + r.getFilename(), meta, handle);
+                                    stagingEntityDocMgr.write("/entities/" + r.getFilename(), meta, handle);
                                     modulesManager.saveLastLoadedTimestamp(r.getFile(), new Date());
                                 }
                             }
@@ -260,7 +262,8 @@ public class LoadUserStagingModulesCommand extends AbstractCommand {
                                         InputStream inputStream = r.getInputStream();
                                         StringHandle handle = new StringHandle(IOUtils.toString(inputStream));
                                         inputStream.close();
-                                        mappingDocumentWriteSet.add("/mappings/" + r.getFile().getParentFile().getName() + "/" + r.getFilename(), meta, handle);
+                                        finalMappingDocumentWriteSet.add("/mappings/" + r.getFile().getParentFile().getName() + "/" + r.getFilename(), meta, handle);
+                                        stagingMappingDocumentWriteSet.add("/mappings/" + r.getFile().getParentFile().getName() + "/" + r.getFilename(), meta, handle);
                                         modulesManager.saveLastLoadedTimestamp(r.getFile(), new Date());
                                     }
                                 }
@@ -289,8 +292,9 @@ public class LoadUserStagingModulesCommand extends AbstractCommand {
                     documentManager.write(documentWriteSet);
                 }
 
-                if (mappingDocumentWriteSet.size() > 0) {
-                    mappingDocMgr.write(mappingDocumentWriteSet);
+                if (stagingMappingDocumentWriteSet.size() > 0) {
+                    finalMappingDocMgr.write(finalMappingDocumentWriteSet);
+                    stagingMappingDocMgr.write(stagingMappingDocumentWriteSet);
                 }
             }
             threadPoolTaskExecutor.shutdown();

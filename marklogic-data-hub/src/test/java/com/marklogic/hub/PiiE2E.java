@@ -278,7 +278,7 @@ public class PiiE2E extends HubTestBase {
 
 
     private void installEntities() {
-        ScaffoldingImpl scaffolding = new ScaffoldingImpl(projectDir.toString(), finalClient);
+        ScaffoldingImpl scaffolding = new ScaffoldingImpl(projectDir.toString(), stagingClient);
         Path employeeDir = scaffolding.getEntityDir("EmployeePii");
         employeeDir.toFile().mkdirs();
         Assert.assertTrue(employeeDir.toFile().exists());
@@ -318,7 +318,7 @@ public class PiiE2E extends HubTestBase {
         stagingCount = getStagingDocCount();
         finalCount = getFinalDocCount();
 
-        assertEquals(12, stagingCount);
+        assertEquals(15, stagingCount);
         assertTrue("After save, pii, this value is 4, before, it's 3.  Actual is " + finalCount, finalCount == 3 ||
             finalCount == 4);
     }

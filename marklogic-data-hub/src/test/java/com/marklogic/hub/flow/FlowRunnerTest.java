@@ -257,7 +257,7 @@ public class FlowRunnerTest extends HubTestBase {
     @Ignore
     public void testCreateandDeployFlowWithHubUser() throws IOException {
 
-        Scaffolding scaffolding = Scaffolding.create(projectDir.toString(), finalFlowRunnerClient);
+        Scaffolding scaffolding = Scaffolding.create(projectDir.toString(), flowRunnerClient);
 
         scaffolding.createFlow(ENTITY, "FlowWithHubUser", FlowType.HARMONIZE,
             CodeFormat.XQUERY, DataFormat.JSON, false);

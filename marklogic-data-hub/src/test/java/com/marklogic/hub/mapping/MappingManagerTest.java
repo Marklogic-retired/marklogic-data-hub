@@ -210,7 +210,7 @@ public class MappingManagerTest extends HubTestBase {
     }
 
     private void installMappings() {
-        ScaffoldingImpl scaffolding = new ScaffoldingImpl(projectDir.toString(), finalClient);
+        ScaffoldingImpl scaffolding = new ScaffoldingImpl(projectDir.toString(), stagingClient);
         Path employeeDir = scaffolding.getEntityDir("employee");
         employeeDir.toFile().mkdirs();
         assertTrue(employeeDir.toFile().exists());
@@ -224,7 +224,7 @@ public class MappingManagerTest extends HubTestBase {
     }
 
     private void updateManagerEntity() {
-        ScaffoldingImpl scaffolding = new ScaffoldingImpl(projectDir.toString(), finalClient);
+        ScaffoldingImpl scaffolding = new ScaffoldingImpl(projectDir.toString(), stagingClient);
         Path managerDir = scaffolding.getEntityDir("manager");
         assertTrue(managerDir.toFile().exists());
         File targetFile = managerDir.resolve("manager.entity.json").toFile();

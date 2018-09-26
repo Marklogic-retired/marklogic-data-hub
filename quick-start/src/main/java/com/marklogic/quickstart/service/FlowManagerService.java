@@ -53,8 +53,8 @@ public class FlowManagerService extends EnvironmentAware {
 
     // before login, flowManager is null, so check each time.
     private FlowManager flowManager() {
-        if (flowManager != null) return flowManager;
-        else return flowManager = FlowManager.create(envConfig().getMlSettings());
+        flowManager = FlowManager.create(envConfig().getMlSettings());
+        return flowManager;
     }
 
     public List<FlowModel> getFlows(String projectDir, String entityName, FlowType flowType) {
@@ -180,5 +180,9 @@ public class FlowManagerService extends EnvironmentAware {
         HubConfig hubConfig = envConfig().getMlSettings();
         MlcpRunner runner = new MlcpRunner(mlcpPath, "com.marklogic.contentpump.ContentPump", hubConfig, flow, hubConfig.newStagingClient(), json.get("mlcpOptions"), statusListener);
         runner.start();
+    }
+
+    public FlowManager getFlowManager() {
+        return flowManager();
     }
 }

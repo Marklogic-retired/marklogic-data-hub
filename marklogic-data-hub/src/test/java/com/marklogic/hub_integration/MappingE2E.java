@@ -92,7 +92,7 @@ public class MappingE2E extends HubTestBase {
         enableDebugging();
         if (!isSetup) {
             isSetup = true;
-            scaffolding = Scaffolding.create(projectDir.toString(), finalClient);
+            scaffolding = Scaffolding.create(projectDir.toString(), stagingClient);
             scaffolding.createEntity(ENTITY);
             Path entityDir = projectDir.resolve("plugins").resolve("entities").resolve(ENTITY);
             copyFile("e2e-test/" + ENTITY + ".entity.json", entityDir.resolve(ENTITY + ".entity.json"));

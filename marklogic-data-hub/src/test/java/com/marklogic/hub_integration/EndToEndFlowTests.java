@@ -140,7 +140,7 @@ public class EndToEndFlowTests extends HubTestBase {
 
         flowManager = FlowManager.create(getHubFlowRunnerConfig());
         flowRunnerDataMovementManager = flowRunnerClient.newDataMovementManager();
-        scaffolding = Scaffolding.create(projectDir.toString(), finalClient);
+        scaffolding = Scaffolding.create(projectDir.toString(), stagingClient);
         scaffolding.createEntity(ENTITY);
 
         // create some flows in a format that pre-dates the 2.0 flow format with properties files
