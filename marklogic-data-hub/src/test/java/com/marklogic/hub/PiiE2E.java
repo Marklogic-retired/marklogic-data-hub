@@ -318,7 +318,8 @@ public class PiiE2E extends HubTestBase {
         stagingCount = getStagingDocCount();
         finalCount = getFinalDocCount();
 
-        assertEquals(15, stagingCount);
+        assertTrue("After save, pii, this value is 16, before, it's 15.  Actual is " + stagingCount, stagingCount == 15 ||
+            stagingCount == 16);
         assertTrue("After save, pii, this value is 4, before, it's 3.  Actual is " + finalCount, finalCount == 3 ||
             finalCount == 4);
     }
