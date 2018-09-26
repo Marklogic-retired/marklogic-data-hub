@@ -10,6 +10,9 @@
 mlDHFVersion=%%mlDHFVersion%%
 mlHost=%%mlHost%%
 
+# If you are working with a load balancer please specify it here
+# mlIsHostLoadBalancer=false
+
 # Your MarkLogic Username and Password
 mlUsername=
 mlPassword=
@@ -112,11 +115,12 @@ mlHubAdminRole=%%mlHubAdminRole%%
 mlHubAdminUserName=%%mlHubAdminUserName%%
 mlHubAdminUserPassword=%%mlHubAdminUserPassword%%
 
-# If you are working with a load balancer you can
-# specify the hostname(s) of the load balancer here separated by commas
-# see: https://docs.marklogic.com/guide/java/data-movement#id_26583
-# for more info about what's happening under the hood
-# mlLoadBalancerHosts=your-load-balancer-hostnames,separated,by-commas
+# Deprecated property
+# If you are working with a load balancer please indicate so using
+# property "mlIsHostLoadBalancer"
+# When "mlIsHostLoadBalancer" is set to "true", the value specified for "mlHost" will be used as the load balancer.
+# You do not need to explicitly set the value of "mlLoadBalancerHosts" but if you do it must match the value of the property "mlHost"
+# mlLoadBalancerHosts=your-load-balancer-hostname
 
 # Default module permissions which allow data-hub-role to execute flows
 mlModulePermissions=rest-reader,read,rest-writer,insert,rest-writer,update,rest-extension-user,execute,%%mlHubUserRole%%,read,%%mlHubUserRole%%,execute

@@ -129,7 +129,7 @@ public class JobManagerTest extends HubTestBase {
     public void deleteOneJob() {
         assertEquals(4, getJobDocCount());
         assertEquals(8, getTracingDocCount());
-        JobManager manager = JobManager.create(jobClient);
+        JobManager manager = JobManager.create(getHubAdminConfig());
         String jobs = jobIds.get(1);
 
         JobDeleteResponse actual = manager.deleteJobs(jobs);
@@ -153,7 +153,7 @@ public class JobManagerTest extends HubTestBase {
         assertEquals(4, getJobDocCount());
         assertEquals(8, getTracingDocCount());
         String jobs = jobIds.get(0) + "," + jobIds.get(2);
-        JobManager manager = JobManager.create(jobClient);
+        JobManager manager = JobManager.create(getHubAdminConfig());
 
         JobDeleteResponse actual = manager.deleteJobs(jobs);
 
@@ -173,7 +173,7 @@ public class JobManagerTest extends HubTestBase {
 
     @Test
     public void deleteInvalidJob() {
-        JobManager manager = JobManager.create(jobClient);
+        JobManager manager = JobManager.create(getHubAdminConfig());
 
         JobDeleteResponse actual = manager.deleteJobs("InvalidId");
 
@@ -185,7 +185,7 @@ public class JobManagerTest extends HubTestBase {
 
     @Test
     public void deleteEmptyStringJob() {
-        JobManager manager = JobManager.create(jobClient);
+        JobManager manager = JobManager.create(getHubAdminConfig());
 
         JobDeleteResponse actual = manager.deleteJobs("");
 
@@ -197,7 +197,7 @@ public class JobManagerTest extends HubTestBase {
 
     @Test
     public void deleteNullJob() {
-        JobManager manager = JobManager.create(jobClient);
+        JobManager manager = JobManager.create(getHubAdminConfig());
 
         JobDeleteResponse actual = manager.deleteJobs(null);
 
@@ -209,7 +209,7 @@ public class JobManagerTest extends HubTestBase {
 
     @Test
     public void exportOneJob() throws IOException {
-        JobManager manager = JobManager.create(jobClient);
+        JobManager manager = JobManager.create(getHubAdminConfig());
 
         File zipFile = exportPath.toFile();
         assertFalse(zipFile.exists());
@@ -228,7 +228,7 @@ public class JobManagerTest extends HubTestBase {
 
     @Test
     public void exportMultipleJobs() throws IOException, InterruptedException {
-        JobManager manager = JobManager.create(jobClient);
+        JobManager manager = JobManager.create(getHubAdminConfig());
 
         File zipFile = exportPath.toFile();
         assertFalse(zipFile.exists());
@@ -246,7 +246,7 @@ public class JobManagerTest extends HubTestBase {
 
     @Test
     public void exportAllJobs() throws IOException {
-        JobManager manager = JobManager.create(jobClient);
+        JobManager manager = JobManager.create(getHubAdminConfig());
 
         File zipFile = exportPath.toFile();
         assertFalse(zipFile.exists());
@@ -267,7 +267,7 @@ public class JobManagerTest extends HubTestBase {
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
 
         // if the jobs database is empty, do not produce a zip file.
-        JobManager manager = JobManager.create(jobClient);
+        JobManager manager = JobManager.create(getHubAdminConfig());
 
         File zipFile = exportPath.toFile();
         assertFalse(zipFile.exists());
@@ -286,7 +286,7 @@ public class JobManagerTest extends HubTestBase {
         assertEquals(0, getJobDocCount());
         assertEquals(0, getTracingDocCount());
 
-        JobManager manager = JobManager.create(jobClient);
+        JobManager manager = JobManager.create(getHubAdminConfig());
         manager.importJobs(Paths.get(url.toURI()));
 
         assertEquals(4, getJobDocCount());

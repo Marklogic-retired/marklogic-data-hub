@@ -73,24 +73,24 @@ public class HubConfigTest extends HubTestBase {
         }
     }
 
-    @Test
+    @Test(expected = DataHubConfigurationException.class)
     public void testLoadBalancerProps() {
         deleteProp("mlLoadBalancerHosts");
         assertNull(getHubFlowRunnerConfig().getLoadBalancerHosts());
 
+        writeProp("mlIsHostLoadBalancer", "true");
+        assertTrue(getHubFlowRunnerConfig().getIsHostLoadBalancer());
+
         writeProp("mlLoadBalancerHosts", "");
         assertNull(getHubFlowRunnerConfig().getLoadBalancerHosts());
 
-        writeProp("mlLoadBalancerHosts", "host1,host2");
-        HubConfig config = getHubFlowRunnerConfig();
-        assertEquals(2, config.getLoadBalancerHosts().length);
-        assertEquals("host1", config.getLoadBalancerHosts()[0]);
-        assertEquals("host2", config.getLoadBalancerHosts()[1]);
-
         writeProp("mlLoadBalancerHosts", "host1");
-        config = getHubFlowRunnerConfig();
+        HubConfig config = getHubFlowRunnerConfig();
         assertEquals(1, config.getLoadBalancerHosts().length);
         assertEquals("host1", config.getLoadBalancerHosts()[0]);
+
+        deleteProp("mlIsHostLoadBalancer");
+        assertNull(getHubFlowRunnerConfig().getIsHostLoadBalancer());
     }
 
 

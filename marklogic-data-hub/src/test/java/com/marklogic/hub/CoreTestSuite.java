@@ -24,27 +24,27 @@ import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
 @SuiteClasses( {
-    DiskQueueTest.class,
-    EmptyCollectorTest.class,
-    StreamCollectorTest.class,
-    DataHubInstallTest.class,
-    DataHubTest.class,
-    DebugLibTest.class,
-    HubConfigTest.class,
-    HubProjectTest.class,
-    GenerateHubTDETemplateCommandTest.class,
-    GeneratePiiCommandTest.class,
-    LoadUserModulesCommandTest.class,
-    EntityManagerTest.class,
+//    DiskQueueTest.class,
+//    EmptyCollectorTest.class,
+//    StreamCollectorTest.class,
+//    DataHubInstallTest.class,
+//    DataHubTest.class,
+//    DebugLibTest.class,
+//    HubConfigTest.class,
+//    HubProjectTest.class,
+//    GenerateHubTDETemplateCommandTest.class,
+//    GeneratePiiCommandTest.class,
+//    LoadUserModulesCommandTest.class,
+//    EntityManagerTest.class,
     FlowManagerTest.class,
-    FlowRunnerTest.class,
-    JobManagerTest.class,
-    TracingTest.class,
-    // these two must be run separately!
-    //EndToEndFlowTests.class,
-    //ScaffoldingE2E.class,
-    ScaffoldingTest.class,
-    ScaffoldingValidatorTest.class
+//    FlowRunnerTest.class,
+//    JobManagerTest.class,
+//    TracingTest.class,
+//    // these two must be run separately!
+//    //EndToEndFlowTests.class,
+//    //ScaffoldingE2E.class,
+//    ScaffoldingTest.class,
+//    ScaffoldingValidatorTest.class
 })
 
 public class CoreTestSuite {
