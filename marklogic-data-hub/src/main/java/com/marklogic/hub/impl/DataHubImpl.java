@@ -26,6 +26,7 @@ import com.marklogic.appdeployer.command.modules.LoadModulesCommand;
 import com.marklogic.appdeployer.command.security.*;
 import com.marklogic.appdeployer.impl.SimpleAppDeployer;
 import com.marklogic.client.FailedRequestException;
+import com.marklogic.client.MarkLogicIOException;
 import com.marklogic.client.admin.QueryOptionsManager;
 import com.marklogic.client.admin.ResourceExtensionsManager;
 import com.marklogic.client.admin.ServerConfigurationManager;
@@ -58,6 +59,7 @@ import org.springframework.web.client.HttpServerErrorException;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.ConnectException;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -146,6 +148,9 @@ public class DataHubImpl implements DataHub {
             else {
                 throw new DataHubConfigurationException(e);
             }
+        } catch ( MarkLogicIOException e) {
+            // in ALB scenario we actually get a connection exception, not gateway
+            return assumedProvisionedInstallInfo(installInfo);
         }
 
         installInfo.setAppServerExistent(DatabaseKind.STAGING, srf.resourceExists(hubConfig.getHttpName(DatabaseKind.STAGING)));
