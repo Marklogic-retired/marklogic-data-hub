@@ -16,11 +16,9 @@ permalink: /faqs/
 ### What if my question is not answered here?
 Use the [#marklogic-dhf tag on StackOverflow](https://stackoverflow.com/questions/ask?tags=marklogic-dhf) to ask us a question.
 
-<bt>
-
 ### What MarkLogic version works with what DHF version?
 
-See [Required Software]({{site.baseurl}}/understanding/upgrading).
+See [Required Software]({{site.baseurl}}/understanding/updating#required-software).
 
 ### How do I deploy my own custom modules?
 
