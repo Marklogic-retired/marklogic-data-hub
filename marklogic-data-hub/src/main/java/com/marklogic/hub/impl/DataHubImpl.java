@@ -18,6 +18,7 @@ package com.marklogic.hub.impl;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.appdeployer.command.Command;
+import com.marklogic.appdeployer.command.CommandContext;
 import com.marklogic.appdeployer.command.CommandMapBuilder;
 import com.marklogic.appdeployer.command.appservers.DeployOtherServersCommand;
 import com.marklogic.appdeployer.command.forests.DeployCustomForestsCommand;
@@ -53,6 +54,7 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
 
 import java.io.File;
 import java.io.IOException;
@@ -133,6 +135,17 @@ public class DataHubImpl implements DataHub {
             if (e.getStatusCode() == HttpStatus.UNAUTHORIZED) {
                 throw new DataHubSecurityNotInstalledException();
             }
+        } catch (HttpServerErrorException e) {
+            // this result comes from a disabled manage client.
+            // DHF gets this response from DHS, which has no public
+            // manage client.  So we'll assume a provisioned DH exists in this case.
+            // TODO I don't know what TODO
+            if (e.getStatusCode() == HttpStatus.SERVICE_UNAVAILABLE) {
+                return assumedProvisionedInstallInfo(installInfo);
+            }
+            else {
+                throw new DataHubConfigurationException(e);
+            }
         }
 
         installInfo.setAppServerExistent(DatabaseKind.STAGING, srf.resourceExists(hubConfig.getHttpName(DatabaseKind.STAGING)));
@@ -170,6 +183,34 @@ public class DataHubImpl implements DataHub {
         logger.info(installInfo.toString());
 
         return installInfo;
+    }
+
+    // this InstallInfo is used as a dummy to return DHS provisioned information
+    private InstallInfo assumedProvisionedInstallInfo(InstallInfo installInfo) {
+        installInfo.setAppServerExistent(DatabaseKind.STAGING, true);
+        installInfo.setAppServerExistent(DatabaseKind.FINAL, true);
+        installInfo.setAppServerExistent(DatabaseKind.JOB, true);
+
+        installInfo.setDbExistent(DatabaseKind.STAGING, true);
+        installInfo.setDbExistent(DatabaseKind.FINAL, true);
+        installInfo.setDbExistent(DatabaseKind.JOB, true);
+
+        installInfo.setDbExistent(DatabaseKind.MODULES, true);
+        installInfo.setDbExistent(DatabaseKind.STAGING_SCHEMAS, true);
+        installInfo.setDbExistent(DatabaseKind.STAGING_TRIGGERS, true);
+
+        installInfo.setTripleIndexOn(DatabaseKind.STAGING, true);
+        installInfo.setCollectionLexiconOn(DatabaseKind.STAGING, true);
+        installInfo.setForestsExistent(DatabaseKind.STAGING, true);
+
+        installInfo.setTripleIndexOn(DatabaseKind.FINAL, true);
+        installInfo.setCollectionLexiconOn(DatabaseKind.FINAL, true);
+        installInfo.setForestsExistent(DatabaseKind.FINAL, true);
+
+        installInfo.setForestsExistent(DatabaseKind.JOB, true);
+
+        return installInfo;
+
     }
 
     @Override
@@ -406,6 +447,24 @@ public class DataHubImpl implements DataHub {
         return response;
     }
 
+    /*
+     * just installs the hub modules, for more granular management of upgrade
+     */
+    private void hubInstallModules() {
+        AppConfig stagingConfig = hubConfig.getStagingAppConfig();
+        CommandContext stagingContext = new CommandContext(stagingConfig, null, null);
+        new LoadHubModulesCommand(hubConfig).execute(stagingContext);
+    }
+
+    /*
+     * just installs the user modules, for more granular management of upgrade
+     */
+    private void loadUserModules() {
+        AppConfig stagingConfig = hubConfig.getStagingAppConfig();
+        CommandContext stagingContext = new CommandContext(stagingConfig, null, null);
+        new LoadUserStagingModulesCommand(hubConfig).execute(stagingContext);
+    }
+
     /**
      * Installs the data hub configuration and server-side config files into MarkLogic
      */
@@ -425,10 +484,20 @@ public class DataHubImpl implements DataHub {
 
         logger.warn("Installing the Data Hub into MarkLogic");
 
-        AppConfig roleConfig = hubConfig.getStagingAppConfig();
-        SimpleAppDeployer roleDeployer = new SimpleAppDeployer(getManageClient(), getAdminManager());
-        roleDeployer.setCommands(getSecurityCommandList());
-        roleDeployer.deploy(roleConfig);
+        // in AWS setting this fails...
+        // for now putting in try/catch
+        try {
+            AppConfig roleConfig = hubConfig.getStagingAppConfig();
+            SimpleAppDeployer roleDeployer = new SimpleAppDeployer(getManageClient(), getAdminManager());
+            roleDeployer.setCommands(getSecurityCommandList());
+            roleDeployer.deploy(roleConfig);
+        } catch (HttpServerErrorException e) {
+            if (e.getStatusCode() == HttpStatus.SERVICE_UNAVAILABLE) {
+                logger.warn("No manage client for security installs.  Assuming DHS provisioning already threre");
+            } else {
+                throw new DataHubConfigurationException(e);
+            }
+        }
 
         AppConfig finalConfig = hubConfig.getFinalAppConfig();
         HubAppDeployer finalDeployer = new HubAppDeployer(getManageClient(), getAdminManager(), listener, hubConfig.newStagingClient());
@@ -782,7 +851,9 @@ public class DataHubImpl implements DataHub {
                 // install hub modules into MarkLogic
                 runInDatabase("cts:uris(\"\", (), cts:and-not-query(cts:collection-query(\"hub-core-module\"), cts:document-query((\"/com.marklogic.hub/config.sjs\", \"/com.marklogic.hub/config.xqy\")))) ! xdmp:document-delete(.)", hubConfig.getDbName(DatabaseKind.MODULES));
 
-                this.install();
+                // should be install user modules and hub modules, not install
+                this.hubInstallModules();
+                this.loadUserModules();
             }
 
             //if none of this has thrown an exception, we're clear and can set the result to true
