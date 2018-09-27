@@ -24,6 +24,7 @@ import com.marklogic.client.query.QueryManager;
 import com.marklogic.client.query.RawCombinedQueryDefinition;
 import com.marklogic.client.query.StructuredQueryBuilder;
 import com.marklogic.client.query.StructuredQueryDefinition;
+import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.job.JobDeleteResponse;
 import com.marklogic.hub.job.JobExportResponse;
 import com.marklogic.hub.job.JobManager;
@@ -44,9 +45,10 @@ public class JobService extends SearchableService {
     private JobManager jobMgr;
 
 
-    public JobService(DatabaseClient jobClient) {
+    public JobService(HubConfig hubConfig) {
+        DatabaseClient jobClient = hubConfig.newJobDbClient();
         this.queryMgr = jobClient.newQueryManager();
-        this.jobMgr = JobManager.create(jobClient);
+        this.jobMgr = JobManager.create(hubConfig);
     }
 
     public StringHandle getJobs(JobQuery jobQuery) {
