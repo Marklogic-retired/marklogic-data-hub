@@ -55,7 +55,6 @@ public interface HubConfig {
     String DEFAULT_FINAL_NAME = "data-hub-FINAL";
     String DEFAULT_JOB_NAME = "data-hub-JOBS";
     String DEFAULT_MODULES_DB_NAME = "data-hub-MODULES";
-    String DEFAULT_FINAL_MODULES_DB_NAME = "data-hub-final-MODULES";
     String DEFAULT_STAGING_TRIGGERS_DB_NAME = "data-hub-staging-TRIGGERS";
     String DEFAULT_FINAL_TRIGGERS_DB_NAME = "data-hub-final-TRIGGERS";
     String DEFAULT_STAGING_SCHEMAS_DB_NAME = "data-hub-staging-SCHEMAS";
