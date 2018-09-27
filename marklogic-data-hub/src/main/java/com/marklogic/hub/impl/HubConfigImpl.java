@@ -121,7 +121,7 @@ public class HubConfigImpl implements HubConfig {
     private String mlUsername = null;
     private String mlPassword = null;
 
-    private String[] loadBalancerHosts;
+    private String loadBalancerHost;
 
     private Boolean isHostLoadBalancer;
 
@@ -780,8 +780,8 @@ public class HubConfigImpl implements HubConfig {
 
 
     @JsonIgnore
-    @Override  public String[] getLoadBalancerHosts() {
-        return loadBalancerHosts;
+    @Override  public String getLoadBalancerHost() {
+        return loadBalancerHost;
     }
 
     @Override
@@ -789,8 +789,8 @@ public class HubConfigImpl implements HubConfig {
         return isHostLoadBalancer;
     }
 
-    public void setLoadBalancerHosts(String[] loadBalancerHosts) {
-        this.loadBalancerHosts = loadBalancerHosts;
+    public void setLoadBalancerHost(String loadBalancerHost) {
+        this.loadBalancerHost = loadBalancerHost;
     }
 
     @Override public String getCustomForestPath() {
@@ -927,6 +927,9 @@ public class HubConfigImpl implements HubConfig {
             if (isHostLoadBalancer) {
                 if (mlHost != null && lbh != null && !mlHost.equals(lbh)){
                     throw new DataHubConfigurationException("mlLoadBalancerHosts must be the same as mlHost");
+                }
+                else {
+                    loadBalancerHost = mlHost;
                 }
             }
 

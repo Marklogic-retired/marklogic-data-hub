@@ -66,24 +66,27 @@ public class HubConfigTest extends HubTestBase {
         }
     }
 
-    @Test(expected = DataHubConfigurationException.class)
+    @Test
     public void testLoadBalancerProps() {
         deleteProp("mlLoadBalancerHosts");
-        assertNull(getHubFlowRunnerConfig().getLoadBalancerHosts());
+        assertNull(getHubFlowRunnerConfig().getLoadBalancerHost());
 
         writeProp("mlIsHostLoadBalancer", "true");
         assertTrue(getHubFlowRunnerConfig().getIsHostLoadBalancer());
 
-        writeProp("mlLoadBalancerHosts", "");
-        assertNull(getHubFlowRunnerConfig().getLoadBalancerHosts());
+        writeProp("mlLoadBalancerHosts", getHubFlowRunnerConfig().getHost());
+        assertEquals(getHubFlowRunnerConfig().getHost(), getHubFlowRunnerConfig().getLoadBalancerHost());
 
-        writeProp("mlLoadBalancerHosts", "host1");
-        HubConfig config = getHubFlowRunnerConfig();
-        assertEquals(1, config.getLoadBalancerHosts().length);
-        assertEquals("host1", config.getLoadBalancerHosts()[0]);
+        try {
+            writeProp("mlLoadBalancerHosts", "host1");
+            getHubFlowRunnerConfig();
+        }
+        catch (DataHubConfigurationException e){
+            assertEquals( "mlLoadBalancerHosts must be the same as mlHost", e.getMessage());
+        }
 
         deleteProp("mlIsHostLoadBalancer");
-        assertNull(getHubFlowRunnerConfig().getIsHostLoadBalancer());
+        assertFalse(getHubFlowRunnerConfig().getIsHostLoadBalancer());
     }
 
 
