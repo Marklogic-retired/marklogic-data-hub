@@ -63,7 +63,11 @@ declare function trace:enable-tracing($enabled as xs:boolean)
   )
   else
     xdmp:eval('
-    xdmp:document-delete("/com.marklogic.hub/settings/__tracing_enabled__.xml")
+    try {
+        xdmp:document-delete("/com.marklogic.hub/settings/__tracing_enabled__.xml")
+    } catch ($e) {
+        ()
+    }
     ',(), map:new((map:entry("database", xdmp:modules-database()), map:entry("ignoreAmps", fn:true())))
     )
 };

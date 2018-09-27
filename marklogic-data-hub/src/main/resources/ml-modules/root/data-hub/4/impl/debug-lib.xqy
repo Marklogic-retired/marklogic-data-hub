@@ -40,7 +40,11 @@ declare function debug:enable($enabled as xs:boolean)
       )
   else
     xdmp:eval('
-    xdmp:document-delete("/com.marklogic.hub/settings/__debug_enabled__.xml")
+    try {
+        xdmp:document-delete("/com.marklogic.hub/settings/__debug_enabled__.xml")
+    } catch ($e) {
+        ()
+    }
     ',(), map:new((map:entry("database", xdmp:modules-database()), map:entry("ignoreAmps", fn:true())))
     )
 

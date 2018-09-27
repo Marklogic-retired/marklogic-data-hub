@@ -91,6 +91,11 @@ public class TracingTest extends HubTestBase {
 
         assertEquals(5, getFinalDocCount());
         assertEquals(0, getTracingDocCount());
+
+        // disable must be idempotent
+        disableTracing();
+        disableDebugging();
+        disableDebugging();
     }
 
     @Test
