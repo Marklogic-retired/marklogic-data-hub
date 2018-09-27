@@ -16,8 +16,8 @@
 
 package com.marklogic.hub.job;
 
-import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.Transaction;
+import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.job.impl.JobManagerImpl;
 
 import java.io.IOException;
@@ -30,11 +30,11 @@ public interface JobManager {
 
     /**
      * Creates and returns a JobManager object
-     * @param jobClient the database client that is used to connect to the jobs database
+     * @param hubConfig the hubConfig for the JobManager to use
      * @return JobManager object
      */
-    static JobManager create(DatabaseClient jobClient){
-        return new JobManagerImpl(jobClient);
+    static JobManager create(HubConfig hubConfig){
+        return new JobManagerImpl(hubConfig);
     }
 
     /**

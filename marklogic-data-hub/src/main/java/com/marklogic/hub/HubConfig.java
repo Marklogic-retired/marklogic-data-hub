@@ -309,6 +309,12 @@ public interface HubConfig {
     String[] getLoadBalancerHosts();
 
     /**
+     * Signifies if the host is a load balancer host.
+     * @return a Boolean.
+     */
+    Boolean getIsHostLoadBalancer();
+
+    /**
      * Returns the path for the custom forests definition
      * @return path where the custom forests are as string
      */
@@ -528,6 +534,19 @@ public interface HubConfig {
      * @return A database client configured for fetching from final database, but using DHF's staging modules.
      */
     DatabaseClient newReverseFlowClient();
+
+    /**
+     * Gets a new DatabaseClient to be use with a load balancer for accessing the database specified in parameter.
+     * @param database name for the client to connect to
+     * @return a DatabaseClient.
+     */
+    DatabaseClient newStagingDbClientForLoadBalancerHost(String database);
+
+    /**
+     * Gets a new DatabaseClient to be use with a load balancer for accessing the Job database.
+     * @return a DatabaseClient.
+     */
+    DatabaseClient newJobDbClientForLoadBalancerHost();
 
     /**
      * Gets a new DatabaseClient that queries the Final database using the final appserver.
