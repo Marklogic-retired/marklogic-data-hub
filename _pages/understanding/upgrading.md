@@ -27,16 +27,20 @@ The following table lists the minimum version of MarkLogic required by supported
 |-------------|------------------------|
 | 2.0.4+ | 9.0-5 |
 | 3.0.0 | 9.0-5 |
-| 4.0.0 | 9.0-5 |
+| 4.0.x | 9.0-5* |
+
+Deploying a DHF project or application into a MarkLogic Data Hub Service environment requires DHF 4.0.1 or later and MarkLogic 9.0-7 or later. For details, refer to the Data Hub Service documentation.
 
 ## Supported Upgrade Paths
 
-You must be running at least DHF 2.0.4 before upgrading to version 4.0.0 or later. If you are running an earlier version of DHF, first upgrade to the latest 2.0.x version.
+DHF supports the following upgrade paths:
 
 | From Version | To Version |
 |--------------|------------|
 | 3.0.0 | 4.x |
 | 2.0.4+ | 4.x |
+
+You must be running at least DHF 2.0.4 before upgrading to version 4.0.0 or later. If you are running an earlier version of DHF, first upgrade to the latest 2.0.x version.
 
 If you are upgrading both DHF and MarkLogic, you can upgrade them independently of each other as long as you are running at least the [minimally supported version of MarkLogic](#required-software). If you are running an older version of MarkLogic, then you should upgrade MarkLogic before upgrading DHF.
 
