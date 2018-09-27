@@ -26,9 +26,6 @@ import module namespace consts = "http://marklogic.com/data-hub/consts"
 import module namespace err = "http://marklogic.com/data-hub/err"
   at "/data-hub/4/impl/error-lib.xqy";
 
-import module namespace hul = "http://marklogic.com/data-hub/hub-utils-lib"
-  at "/data-hub/4/impl/hub-utils-lib.xqy";
-
 import module namespace json="http://marklogic.com/xdmp/json"
   at "/MarkLogic/json/json.xqy";
 
@@ -53,43 +50,29 @@ declare function trace:new-trace() as map:map
 
 declare function trace:enable-tracing($enabled as xs:boolean)
 {
+  if ($enabled)
+  then
   xdmp:eval('
     declare namespace trace = "http://marklogic.com/data-hub/trace";
-    declare variable $enabled external;
     xdmp:document-insert(
       "/com.marklogic.hub/settings/__tracing_enabled__.xml",
-      element trace:is-tracing-enabled { if ($enabled) then 1 else 0 },
+      element trace:is-tracing-enabled { 1 },
       xdmp:default-permissions(),
       "hub-core-module")
-    ',
-    map:new((map:entry("enabled", $enabled))),
-    map:new((map:entry("database", xdmp:modules-database()), map:entry("ignoreAmps", fn:true())))
-  ),
-  hul:invalidate-field-cache("tracing-enabled")
+    ', (), map:new((map:entry("database", xdmp:modules-database()), map:entry("ignoreAmps", fn:true())))
+  )
+  else
+    xdmp:eval('
+    xdmp:document-delete("/com.marklogic.hub/settings/__tracing_enabled__.xml")
+    ',(), map:new((map:entry("database", xdmp:modules-database()), map:entry("ignoreAmps", fn:true())))
+    )
 };
 
 declare function trace:enabled() as xs:boolean
 {
-  let $key := "tracing-enabled"
-  let $flag :=  hul:from-field-cache-or-empty($key, $hul:EXPIRATION)
-  return
-    if (exists($flag)) then
-      $flag
-    else
-      hul:set-field-cache(
-        $key,
-        xdmp:eval('
-          declare namespace trace = "http://marklogic.com/data-hub/trace";
-          fn:exists(
-            cts:search(
-              fn:doc("/com.marklogic.hub/settings/__tracing_enabled__.xml"),
-              cts:element-value-query(xs:QName("trace:is-tracing-enabled"), "1", ("exact")),
-              ("unfiltered", "score-zero", "unchecked", "unfaceted")
-            )
-          )
-        ',(), map:new(map:entry("database", xdmp:modules-database()))),
-        $hul:EXPIRATION
-      )
+    xdmp:eval('
+          fn:doc-available("/com.marklogic.hub/settings/__tracing_enabled__.xml")
+    ',(), map:new(map:entry("database", xdmp:modules-database())))
 };
 
 declare function trace:has-errors() as xs:boolean
