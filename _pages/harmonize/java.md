@@ -8,12 +8,12 @@ permalink: /harmonize/java/
 
 The core of the Data Hub Framework ships as a library .jar file. Calling the DHF Java library directly from your custom Java code is the most powerful way to use the DHF. Before you embark down this path, consider whether you can get by using the [ml-data-hub Gradle Plugin](gradle.md) instead.
 
-The DHF Java library is distributed via bintray so that you can include it easily with your favorite Java build tool. Here's how to include it:
+The DHF Java library is distributed via bintray so that you can include it easily with your favorite Java build tool. The following snippets illustrate how to include it. Adjust the `marklogic-data-hub` version as needed to match your environment.
 
 **Gradle**
 
 ```groovy
-compile('com.marklogic:marklogic-data-hub:4.0.0')
+compile('com.marklogic:marklogic-data-hub:4.0.1')
 ```
 
 **Maven**
@@ -22,7 +22,7 @@ compile('com.marklogic:marklogic-data-hub:4.0.0')
 <dependency>
   <groupId>com.marklogic</groupId>
   <artifactId>marklogic-data-hub</artifactId>
-  <version>4.0.0</version>
+  <version>4.0.1</version>
   <type>pom</type>
 </dependency>
 ```
@@ -30,7 +30,7 @@ compile('com.marklogic:marklogic-data-hub:4.0.0')
 **Ivy**
 
 ```xml
-<dependency org='com.marklogic' name='marklogic-data-hub' rev='4.0.0'>
+<dependency org='com.marklogic' name='marklogic-data-hub' rev='4.0.1'>
   <artifact name='$AID' ext='pom'></artifact>
 </dependency>
 ```
