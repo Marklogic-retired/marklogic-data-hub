@@ -17,7 +17,7 @@ When passing parameters to Gradle tasks you must use the environment variable sy
 
 We recommend the use of the [net.saliman.properties](https://github.com/stevesaliman/gradle-properties-plugin) Gradle plugin to manage different environments.
 
-You can include the plugin by adding this to your `build.gradle` file:
+You can include the plugin by adding the following to your `build.gradle` file. You may need to adjust the com.marklogic.ml-data-hub version to match the DHF version you intend to use.
 
 ```groovy
 plugins {
@@ -33,7 +33,7 @@ plugins {
     // it includes ml-gradle. This plugin is what lets you
     // run DHF (Data Hub Framework) tasks from the
     // command line
-    id 'com.marklogic.ml-data-hub' version '4.0.0'
+    id 'com.marklogic.ml-data-hub' version '4.0.1'
 }
 ```
 
@@ -53,7 +53,7 @@ These tasks are for configuring the Data Hub Framework.
 ### hubUpdate
 Update your DHF instance from a previous version. Run this after you update your build.gradle to point to a newer ml-data-hub plugin.
 
-Before you can run this command you will need to update your build.gradle file manually to point to the latest version of the ml-data-hub plugin.
+Before you can run this command you will need to update your build.gradle file manually to point to the latest version of the ml-data-hub plugin. For example, to use DHF version 4.0.1, your build.gradle file should contain the following:
 
 ```groovy
 plugins {
@@ -61,7 +61,7 @@ plugins {
     // it includes ml-gradle. This plugin is what lets you
     // run DHF (Data Hub Framework) tasks from the
     // command line
-    id 'com.marklogic.ml-data-hub' version '4.0.0'
+    id 'com.marklogic.ml-data-hub' version '4.0.1'
 }
 ```
 
