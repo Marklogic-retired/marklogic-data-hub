@@ -133,7 +133,12 @@ public class MappingE2E extends HubTestBase {
             createFlow("extranodes", CodeFormat.JAVASCRIPT, DataFormat.XML, FlowType.HARMONIZE, true, "validPath1-threeProp", 1, (CreateFlowListener)null);
             flowManager = FlowManager.create(getHubFlowRunnerConfig());
             installUserModules(getHubAdminConfig(), true);
-            stagingDataMovementManager = flowRunnerClient.newDataMovementManager();
+            if (getHubFlowRunnerConfig().getIsHostLoadBalancer()){
+                stagingDataMovementManager = getHubFlowRunnerConfig().newStagingDbClientForLoadBalancerHost(flowRunnerClient.getDatabase()).newDataMovementManager();
+            }
+            else {
+                stagingDataMovementManager = flowRunnerClient.newDataMovementManager();
+            }
         }
     }
 
@@ -304,7 +309,13 @@ public class MappingE2E extends HubTestBase {
     }
 
     private void installDocs(String flowName, DataFormat dataFormat, String collection, DatabaseClient srcClient) {
-        DataMovementManager mgr = srcClient.newDataMovementManager();
+        DataMovementManager mgr;
+        if (getHubAdminConfig().getIsHostLoadBalancer()){
+            mgr = getHubAdminConfig().newStagingDbClientForLoadBalancerHost(srcClient.getDatabase()).newDataMovementManager();
+        }
+        else {
+            mgr = srcClient.newDataMovementManager();
+        }
 
         WriteBatcher writeBatcher = mgr.newWriteBatcher()
             .withBatchSize(100)

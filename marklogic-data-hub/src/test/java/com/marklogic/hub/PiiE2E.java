@@ -294,7 +294,13 @@ public class PiiE2E extends HubTestBase {
         runFlow.addParameter("flow-name", "test-data");
         runFlow.addParameter("job-id", UUID.randomUUID().toString());
 
-        DataMovementManager stagingDataMovementManager = flowRunnerClient.newDataMovementManager();
+        DataMovementManager stagingDataMovementManager;
+        if (getHubFlowRunnerConfig().getIsHostLoadBalancer()){
+            stagingDataMovementManager = getHubFlowRunnerConfig().newStagingDbClientForLoadBalancerHost(flowRunnerClient.getDatabase()).newDataMovementManager();
+        }
+        else {
+            stagingDataMovementManager = flowRunnerClient.newDataMovementManager();
+        }
         WriteBatcher batcher = stagingDataMovementManager.newWriteBatcher();
         batcher.withBatchSize(1).withTransform(runFlow);
         batcher.onBatchSuccess(batch -> {

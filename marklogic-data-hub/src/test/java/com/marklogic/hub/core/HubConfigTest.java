@@ -66,24 +66,27 @@ public class HubConfigTest extends HubTestBase {
         }
     }
 
-    @Test(expected = DataHubConfigurationException.class)
+    @Test
     public void testLoadBalancerProps() {
         deleteProp("mlLoadBalancerHosts");
-        assertNull(getHubFlowRunnerConfig().getLoadBalancerHosts());
+        assertNull(getHubFlowRunnerConfig().getLoadBalancerHost());
 
         writeProp("mlIsHostLoadBalancer", "true");
         assertTrue(getHubFlowRunnerConfig().getIsHostLoadBalancer());
 
-        writeProp("mlLoadBalancerHosts", "");
-        assertNull(getHubFlowRunnerConfig().getLoadBalancerHosts());
+        writeProp("mlLoadBalancerHosts", getHubFlowRunnerConfig().getHost());
+        assertEquals(getHubFlowRunnerConfig().getHost(), getHubFlowRunnerConfig().getLoadBalancerHost());
 
-        writeProp("mlLoadBalancerHosts", "host1");
-        HubConfig config = getHubFlowRunnerConfig();
-        assertEquals(1, config.getLoadBalancerHosts().length);
-        assertEquals("host1", config.getLoadBalancerHosts()[0]);
+        try {
+            writeProp("mlLoadBalancerHosts", "host1");
+            getHubFlowRunnerConfig();
+        }
+        catch (DataHubConfigurationException e){
+            assertEquals( "mlLoadBalancerHosts must be the same as mlHost", e.getMessage());
+        }
 
         deleteProp("mlIsHostLoadBalancer");
-        assertNull(getHubFlowRunnerConfig().getIsHostLoadBalancer());
+        assertFalse(getHubFlowRunnerConfig().getIsHostLoadBalancer());
     }
 
 
@@ -97,13 +100,13 @@ public class HubConfigTest extends HubTestBase {
 
             JsonNode jsonNode = objmapper.readTree(config.getInfo());
 
-            assertTrue(jsonNode.get("stagingDbName").asText().equals(config.getDbName(DatabaseKind.STAGING)));
+            assertEquals(jsonNode.get("stagingDbName").asText(), config.getDbName(DatabaseKind.STAGING));
 
-            assertTrue(jsonNode.get("stagingHttpName").asText().equals(config.getHttpName(DatabaseKind.STAGING)));
+            assertEquals(jsonNode.get("stagingHttpName").asText(), config.getHttpName(DatabaseKind.STAGING));
 
-            assertTrue(jsonNode.get("finalForestsPerHost").asInt() == config.getForestsPerHost(DatabaseKind.FINAL));
+            assertEquals(jsonNode.get("finalForestsPerHost").asInt(), (int) config.getForestsPerHost(DatabaseKind.FINAL));
 
-            assertTrue(jsonNode.get("finalPort").asInt() == config.getPort(DatabaseKind.FINAL));
+            assertEquals(jsonNode.get("finalPort").asInt(), (int) config.getPort(DatabaseKind.FINAL));
 
         }
         catch (Exception e)
