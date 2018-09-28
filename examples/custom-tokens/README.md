@@ -54,4 +54,4 @@ gradle mlDeploy
 ```
 Once the deployment is complete, then you can login to the admin console and see the new test database and test database application server that were created with the values that were specified from our properties file.  Now that you've mastered utilizing custom tokens for your gradle deployment, you can continue on with your DHF app development.
 
-For a complete list of gradle tasks, check here: [https://github.com/marklogic/marklogic-data-hub/wiki/Gradle-Tasks](https://github.com/marklogic/marklogic-data-hub/wiki/Gradle-Tasks)
+For a complete list of gradle tasks, check here: [https://marklogic.github.io/marklogic-data-hub/docs/gradle-tasks](https://marklogic.github.io/marklogic-data-hub/docs/gradle-tasks)
