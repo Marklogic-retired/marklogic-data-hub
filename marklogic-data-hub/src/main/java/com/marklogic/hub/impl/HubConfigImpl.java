@@ -1004,8 +1004,7 @@ public class HubConfigImpl implements HubConfig {
 
     }
 
-    @Override
-    public DatabaseClient newJobDbClientForLoadBalancerHost(){
+    private DatabaseClient newJobDbClientForLoadBalancerHost(){
         return getDatabaseClientForLoadBalancerHost(jobAuthMethod, jobTrustManager, jobSslHostnameVerifier, jobCertFile, jobCertPassword, jobSslContext, jobExternalName, jobPort, jobDbName);
 
     }
@@ -1098,17 +1097,22 @@ public class HubConfigImpl implements HubConfig {
     }
 
     public DatabaseClient newJobDbClient() {
-        AppConfig appConfig = getStagingAppConfig();
-        DatabaseClientConfig config = new DatabaseClientConfig(appConfig.getHost(), jobPort, mlUsername, mlPassword);
-        config.setDatabase(jobDbName);
-        config.setSecurityContextType(SecurityContextType.valueOf(jobAuthMethod.toUpperCase()));
-        config.setSslHostnameVerifier(jobSslHostnameVerifier);
-        config.setSslContext(jobSslContext);
-        config.setCertFile(jobCertFile);
-        config.setCertPassword(jobCertPassword);
-        config.setExternalName(jobExternalName);
-        config.setTrustManager(jobTrustManager);
-        return appConfig.getConfiguredDatabaseClientFactory().newDatabaseClient(config);
+        if (isHostLoadBalancer){
+            return newJobDbClientForLoadBalancerHost();
+        }
+        else {
+            AppConfig appConfig = getStagingAppConfig();
+            DatabaseClientConfig config = new DatabaseClientConfig(appConfig.getHost(), jobPort, mlUsername, mlPassword);
+            config.setDatabase(jobDbName);
+            config.setSecurityContextType(SecurityContextType.valueOf(jobAuthMethod.toUpperCase()));
+            config.setSslHostnameVerifier(jobSslHostnameVerifier);
+            config.setSslContext(jobSslContext);
+            config.setCertFile(jobCertFile);
+            config.setCertPassword(jobCertPassword);
+            config.setExternalName(jobExternalName);
+            config.setTrustManager(jobTrustManager);
+            return appConfig.getConfiguredDatabaseClientFactory().newDatabaseClient(config);
+        }
     }
 
     public DatabaseClient newTraceDbClient() {

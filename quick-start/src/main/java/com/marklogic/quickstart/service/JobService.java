@@ -45,10 +45,9 @@ public class JobService extends SearchableService {
     private JobManager jobMgr;
 
 
-    public JobService(HubConfig hubConfig) {
-        DatabaseClient jobClient = hubConfig.newJobDbClient();
+    public JobService(DatabaseClient jobClient) {
         this.queryMgr = jobClient.newQueryManager();
-        this.jobMgr = JobManager.create(hubConfig);
+        this.jobMgr = JobManager.create(jobClient);
     }
 
     public StringHandle getJobs(JobQuery jobQuery) {
