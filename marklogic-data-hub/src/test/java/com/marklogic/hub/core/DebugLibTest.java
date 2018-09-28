@@ -61,7 +61,14 @@ public class DebugLibTest extends HubTestBase {
         runFlow.addParameter("entity-name", entityName);
         runFlow.addParameter("flow-name", flowName);
         runFlow.addParameter("job-id", UUID.randomUUID().toString());
-        DataMovementManager dataMovementManager = stagingClient.newDataMovementManager();
+
+        DataMovementManager dataMovementManager;
+        if (getHubAdminConfig().getIsHostLoadBalancer()){
+            dataMovementManager = getHubAdminConfig().newStagingDbClientForLoadBalancerHost(stagingClient.getDatabase()).newDataMovementManager();
+        }
+        else {
+            dataMovementManager = stagingClient.newDataMovementManager();
+        }
         runFlowFailed = false;
         WriteBatcher batcher = dataMovementManager.newWriteBatcher();
         batcher

@@ -85,7 +85,13 @@ public class StreamCollectorTest extends HubTestBase {
         installModule("/entities/" + ENTITY + "/harmonize/testharmonize/collector.xqy", "stream-collector-test/collector.xqy");
         installModule("/entities/" + ENTITY + "/harmonize/testharmonize/content.xqy", "stream-collector-test/content.xqy");
 
-        DataMovementManager stagingDataMovementManager = stagingClient.newDataMovementManager();
+        DataMovementManager stagingDataMovementManager;
+        if (getHubAdminConfig().getIsHostLoadBalancer()){
+            stagingDataMovementManager = getHubAdminConfig().newStagingDbClientForLoadBalancerHost(stagingClient.getDatabase()).newDataMovementManager();
+        }
+        else {
+            stagingDataMovementManager = stagingClient.newDataMovementManager();
+        }
         WriteBatcher writeBatcher = stagingDataMovementManager.newWriteBatcher()
             .withBatchSize(2000)
             .withThreadCount(8)
