@@ -48,6 +48,7 @@ import com.marklogic.rest.util.Fragment;
 import com.marklogic.rest.util.ResourcesFragment;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.conn.HttpHostConnectException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
@@ -56,6 +57,7 @@ import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.ResourceAccessException;
 
 import java.io.File;
 import java.io.IOException;
@@ -149,6 +151,10 @@ public class DataHubImpl implements DataHub {
                 throw new DataHubConfigurationException(e);
             }
         } catch ( MarkLogicIOException e) {
+            // If server is off, this happens.
+            // we don't know about install state, so don't assume it's not?
+            return assumedProvisionedInstallInfo(installInfo);
+        } catch (ResourceAccessException e) {
             // in ALB scenario we actually get a connection exception, not gateway
             return assumedProvisionedInstallInfo(installInfo);
         }
