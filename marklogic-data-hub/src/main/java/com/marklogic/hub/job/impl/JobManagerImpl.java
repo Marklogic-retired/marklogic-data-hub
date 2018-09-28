@@ -33,6 +33,7 @@ import com.marklogic.client.io.JacksonDatabindHandle;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.query.*;
 import com.marklogic.client.util.RequestParameters;
+import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.job.Job;
 import com.marklogic.hub.job.JobDeleteResponse;
 import com.marklogic.hub.job.JobExportResponse;

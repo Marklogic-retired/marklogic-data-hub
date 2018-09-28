@@ -204,13 +204,7 @@ public class FlowRunnerImpl implements FlowRunner {
 
         Vector<String> errorMessages = new Vector<>();
 
-        DataMovementManager dataMovementManager;
-        if (hubConfig.getIsHostLoadBalancer()){
-            dataMovementManager = hubConfig.newStagingDbClientForLoadBalancerHost(stagingClient.getDatabase()).newDataMovementManager();
-        }
-        else {
-            dataMovementManager = stagingClient.newDataMovementManager();
-        }
+        DataMovementManager dataMovementManager = stagingClient.newDataMovementManager();
 
         double batchCount = Math.ceil((double)uris.size() / (double)batchSize);
 

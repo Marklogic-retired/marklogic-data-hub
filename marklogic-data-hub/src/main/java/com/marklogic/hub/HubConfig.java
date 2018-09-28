@@ -536,13 +536,6 @@ public interface HubConfig {
     DatabaseClient newReverseFlowClient();
 
     /**
-     * Gets a new DatabaseClient to be use with a load balancer for accessing the database specified in parameter.
-     * @param database name for the client to connect to
-     * @return a DatabaseClient.
-     */
-    DatabaseClient newStagingDbClientForLoadBalancerHost(String database);
-
-    /**
      * Gets a new DatabaseClient that queries the Final database using the final appserver.
      * and final modules database.  (Future, will be same behavior as newReverseFlowClient when modules databases are merged.)
      * @return A DatabaseClient

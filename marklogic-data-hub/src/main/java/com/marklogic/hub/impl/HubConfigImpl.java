@@ -978,27 +978,35 @@ public class HubConfigImpl implements HubConfig {
     }
 
     private DatabaseClient newStagingClient(String dbName) {
-        AppConfig appConfig = getStagingAppConfig();
-        DatabaseClientConfig config = new DatabaseClientConfig(appConfig.getHost(), stagingPort, getMlUsername(), getMlPassword());
-        config.setDatabase(dbName);
-        config.setSecurityContextType(SecurityContextType.valueOf(stagingAuthMethod.toUpperCase()));
-        config.setSslHostnameVerifier(stagingSslHostnameVerifier);
-        config.setSslContext(stagingSslContext);
-        config.setCertFile(stagingCertFile);
-        config.setCertPassword(stagingCertPassword);
-        config.setExternalName(stagingExternalName);
-        config.setTrustManager(stagingTrustManager);
-        return appConfig.getConfiguredDatabaseClientFactory().newDatabaseClient(config);
+        if (isHostLoadBalancer) {
+            return newStagingDbClientForLoadBalancerHost(dbName);
+        }
+        else {
+            AppConfig appConfig = getStagingAppConfig();
+            DatabaseClientConfig config = new DatabaseClientConfig(appConfig.getHost(), stagingPort, getMlUsername(), getMlPassword());
+            config.setDatabase(dbName);
+            config.setSecurityContextType(SecurityContextType.valueOf(stagingAuthMethod.toUpperCase()));
+            config.setSslHostnameVerifier(stagingSslHostnameVerifier);
+            config.setSslContext(stagingSslContext);
+            config.setCertFile(stagingCertFile);
+            config.setCertPassword(stagingCertPassword);
+            config.setExternalName(stagingExternalName);
+            config.setTrustManager(stagingTrustManager);
+            return appConfig.getConfiguredDatabaseClientFactory().newDatabaseClient(config);
+        }
     }
 
     @Override
     // this method uses STAGING appserver but FINAL database.
     // it's only use is for reverse flows, which need to use staging modules.
     public DatabaseClient newReverseFlowClient() {
-        return newStagingClient(finalDbName);
+        if (isHostLoadBalancer) {
+            return newStagingDbClientForLoadBalancerHost(finalDbName);
+        } else {
+            return newStagingClient(finalDbName);
+        }
     }
 
-    @Override
     public DatabaseClient newStagingDbClientForLoadBalancerHost(String database){
         return getDatabaseClientForLoadBalancerHost(stagingAuthMethod, stagingTrustManager, stagingSslHostnameVerifier, stagingCertFile, stagingCertPassword, stagingSslContext, stagingExternalName, stagingPort, database);
 

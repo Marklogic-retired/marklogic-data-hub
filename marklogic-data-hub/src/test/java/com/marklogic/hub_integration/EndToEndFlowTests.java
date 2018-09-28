@@ -139,12 +139,8 @@ public class EndToEndFlowTests extends HubTestBase {
 
 
         flowManager = FlowManager.create(getHubFlowRunnerConfig());
-        if (getHubFlowRunnerConfig().getIsHostLoadBalancer()){
-            flowRunnerDataMovementManager = getHubFlowRunnerConfig().newStagingDbClientForLoadBalancerHost(flowRunnerClient.getDatabase()).newDataMovementManager();
-        }
-        else {
-            flowRunnerDataMovementManager = flowRunnerClient.newDataMovementManager();
-        }
+        flowRunnerDataMovementManager = flowRunnerClient.newDataMovementManager();
+
         scaffolding = Scaffolding.create(projectDir.toString(), stagingClient);
         scaffolding.createEntity(ENTITY);
 
@@ -989,13 +985,7 @@ public class EndToEndFlowTests extends HubTestBase {
     }
 
     private void installDocs(DataFormat dataFormat, String collection, DatabaseClient srcClient, boolean useEs, int testSize) {
-        DataMovementManager mgr;
-        if (getHubAdminConfig().getIsHostLoadBalancer()){
-            mgr = getHubAdminConfig().newStagingDbClientForLoadBalancerHost(srcClient.getDatabase()).newDataMovementManager();
-        }
-        else {
-            mgr = srcClient.newDataMovementManager();
-        }
+        DataMovementManager mgr = srcClient.newDataMovementManager();
 
         WriteBatcher writeBatcher = mgr.newWriteBatcher()
             .withBatchSize(100)
@@ -1080,9 +1070,6 @@ public class EndToEndFlowTests extends HubTestBase {
                 optionsJson +=
                     "\"transform_module\":\"\\\"/data-hub/4/transforms/mlcp-flow-transform.xqy\\\"\"," +
                     "\"transform_namespace\":\"\\\"http://marklogic.com/data-hub/mlcp-flow-transform\\\"\",";
-            }
-            if(getHubAdminConfig().getIsHostLoadBalancer()) {
-                optionsJson += "\"restrict_hosts\":true,";
             }
             optionsJson +=
                 "\"transform_param\":\"entity-name=" + ENTITY + ",flow-name=" + flowName + ",options=" + optionString + "\"" +
