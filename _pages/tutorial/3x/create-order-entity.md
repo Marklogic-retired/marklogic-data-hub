@@ -1,11 +1,11 @@
 ---
 layout: inner
-title: Getting Started Tutorial 3.x<br>Create the Order Entity
+title: Getting Started Tutorial<br>Create the Order Entity
 lead_text: ''
 permalink: /tutorial/create-order-entity/
 ---
 
-Next, we will create an Order entity, following the same procedure we used to create the Product entity. 
+Next, we will create an Order entity, following the same procedure we used to create the Product entity.
 
 Click **Entities** on the top navigation bar.
 

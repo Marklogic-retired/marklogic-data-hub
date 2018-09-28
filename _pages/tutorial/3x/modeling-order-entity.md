@@ -1,6 +1,6 @@
 ---
 layout: inner
-title: Getting Started Tutorial 3.x<br>Model the Order Entity
+title: Getting Started Tutorial<br>Model the Order Entity
 lead_text: ''
 permalink: /tutorial/modeling-order-entity/
 ---

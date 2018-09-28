@@ -1,6 +1,6 @@
 ---
 layout: inner
-title: Getting Started Tutorial 3.x<br>Create the Order Input Flow
+title: Getting Started Tutorial<br>Create the Order Input Flow
 lead_text: ''
 permalink: /tutorial/create-order-input-flow/
 ---

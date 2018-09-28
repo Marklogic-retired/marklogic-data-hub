@@ -1,6 +1,6 @@
 ---
 layout: inner
-title: Getting Started Tutorial 3.x<br>Create the Product Entity
+title: Getting Started Tutorial<br>Create the Product Entity
 lead_text: ''
 permalink: /tutorial/create-product-entity/
 ---

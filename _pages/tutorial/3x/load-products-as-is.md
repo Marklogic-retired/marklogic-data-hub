@@ -1,6 +1,6 @@
 ---
 layout: inner
-title: Getting Started Tutorial 3.x<br>Load the Product Data As-Is
+title: Getting Started Tutorial<br>Load the Product Data As-Is
 lead_text: ''
 permalink: /tutorial/load-products-as-is/
 ---
