@@ -1,6 +1,6 @@
 ---
 layout: inner
-title: Getting Started Tutorial 3.x<br>Browse and Understand the Product Data
+title: Getting Started Tutorial<br>Browse and Understand the Product Data
 lead_text: ''
 permalink: /tutorial/browse-understand-product-data/
 ---

@@ -1,6 +1,6 @@
 ---
 layout: inner
-title: Getting Started Tutorial 3.x<br>Install the Data Hub Framework
+title: Getting Started Tutorial<br>Install the Data Hub Framework
 lead_text: ''
 permalink: /tutorial/install/
 ---
