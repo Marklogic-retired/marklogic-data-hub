@@ -33,7 +33,6 @@ import com.marklogic.client.io.JacksonDatabindHandle;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.query.*;
 import com.marklogic.client.util.RequestParameters;
-import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.job.Job;
 import com.marklogic.hub.job.JobDeleteResponse;
 import com.marklogic.hub.job.JobExportResponse;
@@ -53,7 +52,6 @@ import java.util.zip.ZipFile;
 
 public class JobManagerImpl implements JobManager {
 
-    private HubConfig hubConfig;
     private DatabaseClient jobClient;
     private JSONDocumentManager docMgr;
     private JobDeleteResource jobDeleteRunner = null;
@@ -80,9 +78,8 @@ public class JobManagerImpl implements JobManager {
         .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
         .setDateFormat(simpleDateFormat8601);
 
-    public JobManagerImpl(HubConfig hubConfig) {
-        this.hubConfig = hubConfig;
-        this.jobClient = hubConfig.newJobDbClient();
+    public JobManagerImpl(DatabaseClient jobClient) {
+        this.jobClient = jobClient;
         this.docMgr = jobClient.newJSONDocumentManager();
         this.jobDeleteRunner = new JobDeleteResource(jobClient);
     }
@@ -120,13 +117,7 @@ public class JobManagerImpl implements JobManager {
 
         // Get the job(s) document(s)
         StructuredQueryBuilder sqb = qm.newStructuredQueryBuilder();
-        DataMovementManager dmm;
-        if (hubConfig.getIsHostLoadBalancer()){
-            dmm = hubConfig.newJobDbClientForLoadBalancerHost().newDataMovementManager();
-        }
-        else {
-            dmm = jobClient.newDataMovementManager();
-        }
+        DataMovementManager dmm = jobClient.newDataMovementManager();
         QueryBatcher batcher = null;
         StructuredQueryDefinition query = null;
         if (jobIds == null) {
@@ -149,12 +140,7 @@ public class JobManagerImpl implements JobManager {
         if (jobCount > 0) {
 
             // Get the traces that go with the job(s)
-            if (hubConfig.getIsHostLoadBalancer()){
-                dmm = hubConfig.newJobDbClientForLoadBalancerHost().newDataMovementManager();
-            }
-            else {
-                dmm = jobClient.newDataMovementManager();
-            }
+            dmm = this.jobClient.newDataMovementManager();
             if (jobIds == null) {
                 batcher = dmm.newQueryBatcher(emptyQuery);
             }
@@ -187,13 +173,7 @@ public class JobManagerImpl implements JobManager {
         ZipFile importZip = new ZipFile(importFilePath.toFile());
         Enumeration<? extends ZipEntry> entries = importZip.entries();
 
-        DataMovementManager dmm;
-        if (hubConfig.getIsHostLoadBalancer()){
-            dmm = hubConfig.newJobDbClientForLoadBalancerHost().newDataMovementManager();
-        }
-        else {
-            dmm = jobClient.newDataMovementManager();
-        }
+        DataMovementManager dmm = jobClient.newDataMovementManager();
         WriteBatcher writer = dmm
             .newWriteBatcher()
             .withJobName("Load jobs")
@@ -227,12 +207,7 @@ public class JobManagerImpl implements JobManager {
         dmm.release();
 
         if (traceEntries.size() > 0) {
-            if (hubConfig.getIsHostLoadBalancer()){
-                dmm = hubConfig.newJobDbClientForLoadBalancerHost().newDataMovementManager();
-            }
-            else {
-                dmm = jobClient.newDataMovementManager();
-            }
+            dmm = this.jobClient.newDataMovementManager();
             writer = dmm
                 .newWriteBatcher()
                 .withJobName("Load traces");
