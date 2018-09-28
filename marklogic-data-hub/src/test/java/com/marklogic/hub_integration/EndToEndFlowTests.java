@@ -1081,6 +1081,9 @@ public class EndToEndFlowTests extends HubTestBase {
                     "\"transform_module\":\"\\\"/data-hub/4/transforms/mlcp-flow-transform.xqy\\\"\"," +
                     "\"transform_namespace\":\"\\\"http://marklogic.com/data-hub/mlcp-flow-transform\\\"\",";
             }
+            if(getHubAdminConfig().getIsHostLoadBalancer()) {
+                optionsJson += "\"restrict_hosts\":true,";
+            }
             optionsJson +=
                 "\"transform_param\":\"entity-name=" + ENTITY + ",flow-name=" + flowName + ",options=" + optionString + "\"" +
                 "}";
