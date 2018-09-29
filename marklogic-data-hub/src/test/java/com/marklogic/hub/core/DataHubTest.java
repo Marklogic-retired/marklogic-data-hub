@@ -28,11 +28,7 @@ import org.easymock.EasyMock;
 import org.easymock.EasyMockRule;
 import org.easymock.Mock;
 import org.jdom2.Namespace;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.jupiter.api.Disabled;
+import org.junit.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -190,7 +186,7 @@ public class DataHubTest extends HubTestBase {
     }
 
     @Test
-    @Disabled
+    @Ignore
     // something about jenkins environment makes this test fail.   it's a mocking issue we think.
     public void testPreFlightCheckNoHubInstalled() {
         List<Namespace> list = new ArrayList<>();
@@ -234,7 +230,7 @@ public class DataHubTest extends HubTestBase {
     }
 
     @Test
-    @Disabled
+    @Ignore
     // something about jenkins environment makes this test fail.   it's a mocking issue we think.
     public void testPreFlightCheckStagingPortTaken() {
         List<Namespace> list = new ArrayList<>();
@@ -257,7 +253,7 @@ public class DataHubTest extends HubTestBase {
     }
 
     @Test
-    @Disabled
+    @Ignore
     // something about jenkins environment makes this test fail.   it's a mocking issue we think.
     public void testPreFlightCheckStagingPortTakenAndBadVersion() {
         List<Namespace> list = new ArrayList<>();
