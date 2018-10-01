@@ -29,7 +29,7 @@ The following table lists the minimum version of MarkLogic required by supported
 | 3.0.0 | 9.0-5 |
 | 4.0.x | 9.0-5* |
 
-Deploying a DHF project or application into a MarkLogic Data Hub Service environment requires DHF 4.0.1 or later and MarkLogic 9.0-7 or later. For details, refer to the Data Hub Service documentation.
+Deploying a DHF project or application into a MarkLogic Data Hub Service environment requires DHF 4.0.1 or later and MarkLogic 9.0-7 or later. For details, refer to the Data Hub Service documentation and https://www.marklogic.com/product/marklogic-database-overview/data-hub-service/.
 
 ## Supported Upgrade Paths
 
