@@ -45,3 +45,18 @@ See our [Harmonizing via REST page](harmonize/rest.md) for details on how to run
 ### How do I load binaries via an input flow?
 
 We have a [code example](https://github.com/marklogic/marklogic-data-hub/tree/master/examples/load-binaries) of doing this. The README file there has all the info you need.
+
+#### How can I run DHF in the MarkLogic DHS
+
+DHF is part of the suite of data services that make up Data Hub as a Service.  Using DHF within DHS requires that you no longer rely on bootstrapping or database configuration.  This means that your `gradle.properties` file must:
+
+* Have mlUsername/mlPassword provided to you by your DHS administrator
+* Include the following in order for the DHS-provisioned roles to access artifacts created by flows or by DHF development tasks.
+
+```
+mlModulePermissions=flowDeveloper,read,flowDeveloper,execute,flowDeveloper,insert,flowOperator,read,flowOperator,execute,flowOperator,insert
+```
+
+
+
+
