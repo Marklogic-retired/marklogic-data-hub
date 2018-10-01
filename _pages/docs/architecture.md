@@ -35,7 +35,7 @@ In installing a data hub, the following databases are created:
   * Appserver:   data-hub-FINAL, port 8011.
   * Content db:  data-hub-FINAL
   * Triggers db: data-hub-final-TRIGGERS
-  * Modules db:  data-hub-final-MODULES
+  * Modules db:  data-hub-MODULES
   * Schemas db:  data-hub-final-SCHEMAS
 
 * Jobs.  The jobs subsystem stores records of job  (flow runs) activity and traces of what happened during flows runs.  Note that this appserver shares databases with STAGING.
