@@ -69,6 +69,12 @@ The `hubUpdate` task might report incompatibilities that you must correct.
 
 You should also update the DHF version in the `dependencies` section of any custom build.gradle files that depend on DHF.
 
+From 4.0.0 on, the gradle properties file must indicate the version of the project.  This property is to tell DHF how to interpret
+the project structure so that we can support future upgrade paths more easily.  So as a last step, include
+
+mlDHFVersion=4.0.0
+
+
 ### Upgrading Using QuickStart
 **NOTE**: Do not use QuickStart to upgrade DHF 3.0.0 to DHF 4.0.0 or DHF 4.0.1.
 
