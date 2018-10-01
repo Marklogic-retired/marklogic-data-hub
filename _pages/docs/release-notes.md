@@ -119,4 +119,4 @@ The name of the gradle property that controls the modules database name has chan
 
 You do not need to modify your existing projects in response to this change, but any new projects you create will use this configuration.
 
-If you plan to deploy your data hub application to a MarkLogic Data Hub Service cluster, you must use a shared modules database. For more details, see http://developer.marklogic.com. 
+If you plan to deploy your data hub application to a MarkLogic Data Hub Service cluster, you must use a shared modules database. For more details, see https://www.marklogic.com/product/marklogic-database-overview/data-hub-service/. 
