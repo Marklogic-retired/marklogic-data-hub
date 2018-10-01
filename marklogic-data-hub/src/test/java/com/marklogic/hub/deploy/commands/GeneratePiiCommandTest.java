@@ -46,7 +46,7 @@ public class GeneratePiiCommandTest extends HubTestBase  {
     }
 
     private void installEntities() {
-        ScaffoldingImpl scaffolding = new ScaffoldingImpl(projectDir.toString(), finalClient);
+        ScaffoldingImpl scaffolding = new ScaffoldingImpl(projectDir.toString(), stagingClient);
         Path employeeDir = scaffolding.getEntityDir("employee");
         employeeDir.toFile().mkdirs();
         assertTrue(employeeDir.toFile().exists());

@@ -303,10 +303,16 @@ public interface HubConfig {
     void setHubUserName(String hubUserName);
 
     /**
-     * Gets a string array of hosts
-     * @return String array of hosts
+     * Gets a string of load balancer host
+     * @return String of load balancer host
      */
-    String[] getLoadBalancerHosts();
+    String getLoadBalancerHost();
+
+    /**
+     * Signifies if the host is a load balancer host.
+     * @return a Boolean.
+     */
+    Boolean getIsHostLoadBalancer();
 
     /**
      * Returns the path for the custom forests definition

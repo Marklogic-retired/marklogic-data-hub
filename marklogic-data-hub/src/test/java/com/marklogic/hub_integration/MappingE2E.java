@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.marklogic.hub;
+package com.marklogic.hub_integration;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -28,6 +28,10 @@ import com.marklogic.client.io.DOMHandle;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.client.io.StringHandle;
+import com.marklogic.hub.FlowManager;
+import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.HubTestBase;
+import com.marklogic.hub.MappingManager;
 import com.marklogic.hub.flow.*;
 import com.marklogic.hub.mapping.Mapping;
 import com.marklogic.hub.scaffold.Scaffolding;
@@ -51,6 +55,7 @@ import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual;
 import static org.junit.jupiter.api.Assertions.*;
 
 
+
 @RunWith(JUnitPlatform.class)
 public class MappingE2E extends HubTestBase {
     private static final String ENTITY = "e2eentity";
@@ -69,12 +74,12 @@ public class MappingE2E extends HubTestBase {
     @BeforeAll
     public static void setup() {
         XMLUnit.setIgnoreWhitespace(true);
-        new Installer().installHubOnce();
+        new Installer().setupProject();
     }
 
     @AfterAll
     public static void teardown() {
-        new Installer().uninstallHub();
+        new Installer().teardownProject();
     }
 
     private static boolean isSetup = false;
@@ -87,7 +92,7 @@ public class MappingE2E extends HubTestBase {
         enableDebugging();
         if (!isSetup) {
             isSetup = true;
-            scaffolding = Scaffolding.create(projectDir.toString(), finalClient);
+            scaffolding = Scaffolding.create(projectDir.toString(), stagingClient);
             scaffolding.createEntity(ENTITY);
             Path entityDir = projectDir.resolve("plugins").resolve("entities").resolve(ENTITY);
             copyFile("e2e-test/" + ENTITY + ".entity.json", entityDir.resolve(ENTITY + ".entity.json"));
@@ -299,7 +304,8 @@ public class MappingE2E extends HubTestBase {
     }
 
     private void installDocs(String flowName, DataFormat dataFormat, String collection, DatabaseClient srcClient) {
-        DataMovementManager mgr = srcClient.newDataMovementManager();
+        DataMovementManager mgr;
+        mgr = srcClient.newDataMovementManager();
 
         WriteBatcher writeBatcher = mgr.newWriteBatcher()
             .withBatchSize(100)

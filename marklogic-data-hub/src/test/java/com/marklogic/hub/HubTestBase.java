@@ -15,6 +15,7 @@
  */
 package com.marklogic.hub;
 
+import ch.qos.logback.core.net.ssl.SSL;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -92,8 +93,6 @@ import static com.marklogic.client.io.DocumentMetadataHandle.Capability.READ;
 import static com.marklogic.client.io.DocumentMetadataHandle.Capability.UPDATE;
 
 
-// FIXME remove deprecated methods
-@SuppressWarnings(value="deprecation")
 public class HubTestBase {
 
     // to speedup dev cycle, you can create a hub and set this to true.
@@ -128,6 +127,7 @@ public class HubTestBase {
     public  DatabaseClient finalFlowRunnerClient = null;
     public  DatabaseClient jobClient = null;
     public  DatabaseClient jobModulesClient = null;
+    public Boolean isHostLoadBalancer = false;
 
     private  ManageConfig manageConfig = null;
     protected  ManageClient manageClient = null;
@@ -217,6 +217,11 @@ public class HubTestBase {
         secPassword = properties.getProperty("mlSecurityPassword");
         flowRunnerUser = properties.getProperty("mlHubUserName");
         flowRunnerPassword = properties.getProperty("mlHubUserPassword");
+        String isHostLB = properties.getProperty("mlIsHostLoadBalancer");
+        if (isHostLB != null) {
+            isHostLoadBalancer = Boolean.parseBoolean(isHostLB);
+        }
+
 
         //TODO refactor to new JCL Security context
         String auth = properties.getProperty("mlStagingAuth");
@@ -275,18 +280,49 @@ public class HubTestBase {
     }
 
     protected DatabaseClient getClient(String host, int port, String dbName, String user,String password, Authentication authMethod) throws Exception {
-    	if(isCertAuth()) {
-    		certContext = createSSLContext(getResourceFile("ssl/client-cert.p12"));
-    		datahubadmincertContext = createSSLContext(getResourceFile("ssl/client-hub-admin-user.p12"));
-    		flowRunnercertContext = createSSLContext(getResourceFile("ssl/client-data-hub-user.p12"));
-    		return DatabaseClientFactory.newClient(host, port, dbName, new DatabaseClientFactory.CertificateAuthContext((user==flowRunnerUser)?flowRunnercertContext:datahubadmincertContext,SSLHostnameVerifier.ANY));
-    	}
-    	else if(isSslRun()) {
-    		return DatabaseClientFactory.newClient(host, port, dbName, user, password, authMethod, SimpleX509TrustManager.newSSLContext(),SSLHostnameVerifier.ANY);
-    	}
-    	else {
-    		return DatabaseClientFactory.newClient(host, port, dbName, user, password, authMethod);
-    	}
+        if (isHostLoadBalancer) {
+            if (isCertAuth()) {
+                certContext = createSSLContext(getResourceFile("ssl/client-cert.p12"));
+                datahubadmincertContext = createSSLContext(getResourceFile("ssl/client-hub-admin-user.p12"));
+                flowRunnercertContext = createSSLContext(getResourceFile("ssl/client-data-hub-user.p12"));
+                return DatabaseClientFactory.newClient(
+                    host, port, dbName,
+                    new DatabaseClientFactory.CertificateAuthContext((user == flowRunnerUser) ? flowRunnercertContext : datahubadmincertContext, SSLHostnameVerifier.ANY),
+                    DatabaseClient.ConnectionType.GATEWAY);
+            } else if (isSslRun()) {
+                switch (authMethod) {
+                    case DIGEST: return DatabaseClientFactory.newClient(host, port, dbName, new DatabaseClientFactory.DigestAuthContext(user, password).withSSLHostnameVerifier(SSLHostnameVerifier.ANY),
+                        DatabaseClient.ConnectionType.GATEWAY);
+                    case BASIC: return DatabaseClientFactory.newClient(host, port, dbName, new DatabaseClientFactory.BasicAuthContext(user, password).withSSLHostnameVerifier(SSLHostnameVerifier.ANY),
+                        DatabaseClient.ConnectionType.GATEWAY);
+                }
+            } else {
+                switch (authMethod) {
+                    case DIGEST: return DatabaseClientFactory.newClient(host, port, dbName, new DatabaseClientFactory.DigestAuthContext(user, password), DatabaseClient.ConnectionType.GATEWAY);
+                    case BASIC: return DatabaseClientFactory.newClient(host, port, dbName, new DatabaseClientFactory.BasicAuthContext(user, password), DatabaseClient.ConnectionType.GATEWAY);
+                }
+            }
+        } else {
+            if (isCertAuth()) {
+                certContext = createSSLContext(getResourceFile("ssl/client-cert.p12"));
+                datahubadmincertContext = createSSLContext(getResourceFile("ssl/client-hub-admin-user.p12"));
+                flowRunnercertContext = createSSLContext(getResourceFile("ssl/client-data-hub-user.p12"));
+                return DatabaseClientFactory.newClient(
+                    host, port, dbName,
+                    new DatabaseClientFactory.CertificateAuthContext((user == flowRunnerUser) ? flowRunnercertContext : datahubadmincertContext, SSLHostnameVerifier.ANY));
+            } else if (isSslRun()) {
+                switch (authMethod) {
+                    case DIGEST: return DatabaseClientFactory.newClient(host, port, dbName, new DatabaseClientFactory.DigestAuthContext(user, password).withSSLHostnameVerifier(SSLHostnameVerifier.ANY));
+                    case BASIC: return DatabaseClientFactory.newClient(host, port, dbName, new DatabaseClientFactory.BasicAuthContext(user, password).withSSLHostnameVerifier(SSLHostnameVerifier.ANY));
+                }
+            } else {
+                switch (authMethod) {
+                    case DIGEST: return DatabaseClientFactory.newClient(host, port, dbName, new DatabaseClientFactory.DigestAuthContext(user, password));
+                    case BASIC: return DatabaseClientFactory.newClient(host, port, dbName, new DatabaseClientFactory.BasicAuthContext(user, password));
+                }
+            }
+        }
+        return null;  // unreachable
     }
 
     public HubTestBase() {

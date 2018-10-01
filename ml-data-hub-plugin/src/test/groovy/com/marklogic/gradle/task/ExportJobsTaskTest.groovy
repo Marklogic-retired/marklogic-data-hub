@@ -33,7 +33,8 @@ class ExportJobsTaskTest extends BaseTest {
         createGradleFiles()
         runTask('hubInit')
         // this will be relatively fast (idempotent) for already-installed hubs
-        println(runTask('mlDeploy', '-i').getOutput())
+        println(runTask('hubInstallModules', '-i').getOutput())
+        println(runTask('mlLoadModules', '-i').getOutput())
 
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME)
         DocumentMetadataHandle meta = new DocumentMetadataHandle();

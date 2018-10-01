@@ -49,6 +49,7 @@ public class JobManagerTest extends HubTestBase {
     private static List<String> jobIds = Collections.synchronizedList(new ArrayList<String>());
     private static Path projectDir = Paths.get(".", "ye-olde-project");
     private static Path exportPath = projectDir.resolve("testExport.zip");
+    private JobManager jobManager;
 
     private FlowItemCompleteListener flowItemCompleteListener =
         (jobId, itemId) -> recordJobId(jobId);
@@ -110,6 +111,7 @@ public class JobManagerTest extends HubTestBase {
             .onItemComplete(flowItemCompleteListener);
         flowRunner.run();
         flowRunner.awaitCompletion();
+        jobManager = JobManager.create(getHubAdminConfig().newJobDbClient());
     }
 
     @After
@@ -129,10 +131,9 @@ public class JobManagerTest extends HubTestBase {
     public void deleteOneJob() {
         assertEquals(4, getJobDocCount());
         assertEquals(8, getTracingDocCount());
-        JobManager manager = JobManager.create(jobClient);
         String jobs = jobIds.get(1);
 
-        JobDeleteResponse actual = manager.deleteJobs(jobs);
+        JobDeleteResponse actual = jobManager.deleteJobs(jobs);
 
         assertEquals(3, getJobDocCount());
         assertEquals(6, getTracingDocCount());
@@ -153,9 +154,8 @@ public class JobManagerTest extends HubTestBase {
         assertEquals(4, getJobDocCount());
         assertEquals(8, getTracingDocCount());
         String jobs = jobIds.get(0) + "," + jobIds.get(2);
-        JobManager manager = JobManager.create(jobClient);
 
-        JobDeleteResponse actual = manager.deleteJobs(jobs);
+        JobDeleteResponse actual = jobManager.deleteJobs(jobs);
 
         assertEquals(2, getJobDocCount());
         assertEquals(4, getTracingDocCount());
@@ -173,9 +173,7 @@ public class JobManagerTest extends HubTestBase {
 
     @Test
     public void deleteInvalidJob() {
-        JobManager manager = JobManager.create(jobClient);
-
-        JobDeleteResponse actual = manager.deleteJobs("InvalidId");
+        JobDeleteResponse actual = jobManager.deleteJobs("InvalidId");
 
         assertEquals(4, getJobDocCount());
         assertEquals(8, getTracingDocCount());
@@ -185,9 +183,7 @@ public class JobManagerTest extends HubTestBase {
 
     @Test
     public void deleteEmptyStringJob() {
-        JobManager manager = JobManager.create(jobClient);
-
-        JobDeleteResponse actual = manager.deleteJobs("");
+        JobDeleteResponse actual = jobManager.deleteJobs("");
 
         assertEquals(4, getJobDocCount());
         assertEquals(8, getTracingDocCount());
@@ -197,9 +193,7 @@ public class JobManagerTest extends HubTestBase {
 
     @Test
     public void deleteNullJob() {
-        JobManager manager = JobManager.create(jobClient);
-
-        JobDeleteResponse actual = manager.deleteJobs(null);
+        JobDeleteResponse actual = jobManager.deleteJobs(null);
 
         assertEquals(4, getJobDocCount());
         assertEquals(8, getTracingDocCount());
@@ -209,13 +203,11 @@ public class JobManagerTest extends HubTestBase {
 
     @Test
     public void exportOneJob() throws IOException {
-        JobManager manager = JobManager.create(jobClient);
-
         File zipFile = exportPath.toFile();
         assertFalse(zipFile.exists());
 
         String[] jobs = { jobIds.get(0) };
-        manager.exportJobs(exportPath, jobs);
+        jobManager.exportJobs(exportPath, jobs);
 
         assertTrue(zipFile.exists());
 
@@ -228,13 +220,11 @@ public class JobManagerTest extends HubTestBase {
 
     @Test
     public void exportMultipleJobs() throws IOException, InterruptedException {
-        JobManager manager = JobManager.create(jobClient);
-
         File zipFile = exportPath.toFile();
         assertFalse(zipFile.exists());
 
         String[] jobs = { jobIds.get(0), jobIds.get(1) };
-        manager.exportJobs(exportPath, jobs);
+        jobManager.exportJobs(exportPath, jobs);
 
         assertTrue(zipFile.exists());
         ZipFile actual = new ZipFile(zipFile);
@@ -246,12 +236,10 @@ public class JobManagerTest extends HubTestBase {
 
     @Test
     public void exportAllJobs() throws IOException {
-        JobManager manager = JobManager.create(jobClient);
-
         File zipFile = exportPath.toFile();
         assertFalse(zipFile.exists());
 
-        manager.exportJobs(exportPath, null);
+        jobManager.exportJobs(exportPath, null);
 
         assertTrue(zipFile.exists());
 
@@ -267,12 +255,10 @@ public class JobManagerTest extends HubTestBase {
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
 
         // if the jobs database is empty, do not produce a zip file.
-        JobManager manager = JobManager.create(jobClient);
-
         File zipFile = exportPath.toFile();
         assertFalse(zipFile.exists());
 
-        manager.exportJobs(exportPath, null);
+        jobManager.exportJobs(exportPath, null);
 
         assertFalse(zipFile.exists());
     }
@@ -286,8 +272,7 @@ public class JobManagerTest extends HubTestBase {
         assertEquals(0, getJobDocCount());
         assertEquals(0, getTracingDocCount());
 
-        JobManager manager = JobManager.create(jobClient);
-        manager.importJobs(Paths.get(url.toURI()));
+        jobManager.importJobs(Paths.get(url.toURI()));
 
         assertEquals(4, getJobDocCount());
         assertEquals(8, getTracingDocCount());

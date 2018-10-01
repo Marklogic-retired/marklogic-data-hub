@@ -67,7 +67,9 @@ test {
         // in Gradle output.
         showStandardStreams = true
     }
-    include 'com/marklogic/gradle/fullcycle/**'
+    // fullcycle tests also exercise provisioning, so on thie PR removing
+    // TODO put fullcycle tests in another project?
+    //include 'com/marklogic/gradle/fullcycle/**'
     include 'com/marklogic/gradle/task/**'
     classpath = project.sourceSets.main.runtimeClasspath + project.sourceSets.test.runtimeClasspath
 }
