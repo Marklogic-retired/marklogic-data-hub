@@ -181,7 +181,7 @@ public class LoadUserStagingModulesCommand extends AbstractCommand {
 
         // deploy the auto-generated ES search options
         EntityManager entityManager = EntityManager.create(hubConfig);
-        entityManager.deployStagingQueryOptions();
+        entityManager.deployQueryOptions();
 
         try {
             if (startPath.toFile().exists()) {
