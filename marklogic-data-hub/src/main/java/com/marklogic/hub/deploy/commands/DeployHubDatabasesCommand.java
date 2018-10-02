@@ -25,6 +25,8 @@ import com.marklogic.appdeployer.command.databases.DeployDatabaseCommandComparat
 import com.marklogic.appdeployer.command.databases.DeploySchemasDatabaseCommand;
 import com.marklogic.appdeployer.command.databases.DeployTriggersDatabaseCommand;
 import com.marklogic.hub.HubConfig;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.io.File;
 import java.util.*;
@@ -57,7 +59,18 @@ public class DeployHubDatabasesCommand extends AbstractUndoableCommand {
         List<DeployDatabaseCommand> list = buildDatabaseCommands(context);
         sortCommandsBeforeExecute(list, context);
         for (DeployDatabaseCommand c : list) {
-            c.execute(context);
+            logger.debug("Deploying database command: " + c.buildPayload(context) );
+            try {
+                c.execute(context);
+            } catch (HttpClientErrorException e) {
+                if (e.getStatusCode() == HttpStatus.FORBIDDEN) {
+                    logger.warn("Deployment of database failed with FORBIDDEN.  Assuming a provisioned environment.");
+                }
+                else {
+                    throw(e);
+                }
+
+            }
         }
     }
 

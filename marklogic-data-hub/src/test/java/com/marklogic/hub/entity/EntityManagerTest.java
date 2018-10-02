@@ -133,7 +133,13 @@ public class EntityManagerTest extends HubTestBase {
         assertTrue(Paths.get(dir.toString(), HubConfig.FINAL_ENTITY_QUERY_OPTIONS_FILE).toFile().exists());
         assertEquals(0, getStagingDocCount());
         assertEquals(0, getFinalDocCount());
-        assertXMLEqual(getResource("entity-manager-test/options.xml"), getModulesFile("/Default/" + HubConfig.DEFAULT_STAGING_NAME + "/rest-api/options/" + HubConfig.STAGING_ENTITY_QUERY_OPTIONS_FILE));
+        String expectedFile = getModulesFile("/Default/" + HubConfig.DEFAULT_STAGING_NAME + "/rest-api/options/" + HubConfig.STAGING_ENTITY_QUERY_OPTIONS_FILE);
+        // In DHS, group is 'Curator'
+        if (expectedFile == null) {
+            expectedFile = getModulesFile("/Curator/" + HubConfig.DEFAULT_STAGING_NAME + "/rest-api/options/" + HubConfig.STAGING_ENTITY_QUERY_OPTIONS_FILE);
+        }
+
+        assertXMLEqual(getResource("entity-manager-test/options.xml"), expectedFile);
         // if we re-merge modules this assertion will be true again:
          assertXMLEqual(getResource("entity-manager-test/options.xml"), getModulesFile("/Default/" + HubConfig.DEFAULT_FINAL_NAME + "/rest-api/options/" + HubConfig.FINAL_ENTITY_QUERY_OPTIONS_FILE));
 
@@ -209,6 +215,16 @@ public class EntityManagerTest extends HubTestBase {
 
         // shouldn't save them on round 3 because of timestamps
         assertFalse(entityManager.saveDbIndexes());
+
+
+        // try a deploy too
+        try {
+            getDataHub().updateIndexes();
+            // pass
+        } catch (Exception e) {
+            throw (e);
+        }
+
     }
 
 
