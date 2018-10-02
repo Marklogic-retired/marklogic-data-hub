@@ -77,6 +77,8 @@ public class DataHubImpl implements DataHub {
     private AdminManager _adminManager;
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+	private String finalFile = "final-database.json";
+	private String stagingFile = "staging-database.json";
 
     public DataHubImpl(HubConfig hubConfig) {
         if (hubConfig == null) {
@@ -541,12 +543,20 @@ public class DataHubImpl implements DataHub {
 
     @Override
     public void updateIndexes() {
-        AppConfig config = hubConfig.getStagingAppConfig();
-        HubAppDeployer deployer = new HubAppDeployer(getManageClient(), getAdminManager(), null, hubConfig.newStagingClient());
-        List<Command> commands = new ArrayList<>();
-        commands.add(new DeployHubDatabasesCommand(hubConfig));
-        deployer.setCommands(commands);
-        deployer.deploy(config);
+    	HubAppDeployer deployer = new HubAppDeployer(getManageClient(), getAdminManager(), null, hubConfig.newStagingClient());
+    	
+    	AppConfig finalConfig = hubConfig.getFinalAppConfig();
+        List<Command> finalDBCommand = new ArrayList<>();
+        finalDBCommand.add(new DeployHubDatabaseCommand(hubConfig, finalFile));
+        deployer.setFinalCommandsList(finalDBCommand);
+        //deployer.deploy(finalConfig);
+
+        AppConfig stagingConfig = hubConfig.getStagingAppConfig();
+        List<Command> stagingDBCommand = new ArrayList<>();
+        stagingDBCommand.add(new DeployHubDatabaseCommand(hubConfig, stagingFile));
+        deployer.setStagingCommandsList(stagingDBCommand);
+
+        deployer.deployAll(finalConfig, stagingConfig);
     }
 
     /**
