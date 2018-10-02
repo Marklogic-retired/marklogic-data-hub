@@ -88,7 +88,7 @@ Older versions of DHF used the following URI prefix:
 * DHF 2.0.4: `/com.marklogic.hub/modulename/`
 * DHF 3.0.0: `/MarkLogic/data-hub-framework/modulename/`
 
-When you upgrade your DHF project using QuickStart or the `hubUpdate` ml-gradle task, the upgrade attempts to fix the module paths for you, but it cannot update custom modules or heavily modified code. You are responsible for updating the DHF module paths in XQuery `import` and JavaScript `require` statements in any such code.
+When you upgrade your DHF project using the `hubUpdate` ml-gradle task, the upgrade attempts to fix the module paths for you, but it cannot update custom modules or heavily modified code. You are responsible for updating the DHF module paths in XQuery `import` and JavaScript `require` statements in any such code.
 
 #### **TRACES** Database No Longer Used
 The **TRACES** database is no longer used by Data Hub Framework. As of version 4.0.0, Data Hub Framework records trace data in the **JOBS** database.
@@ -119,4 +119,4 @@ The name of the gradle property that controls the modules database name has chan
 
 You do not need to modify your existing projects in response to this change, but any new projects you create will use this configuration.
 
-If you plan to deploy your data hub application to a MarkLogic Data Hub Service cluster, you must use a shared modules database. For more details, see https://www.marklogic.com/product/marklogic-database-overview/data-hub-service/. 
+If you plan to deploy your data hub application to a MarkLogic Data Hub Service cluster, you must use a shared modules database. For more details, see https://www.marklogic.com/product/marklogic-database-overview/data-hub-service/.
